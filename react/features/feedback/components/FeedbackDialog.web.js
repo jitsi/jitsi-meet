@@ -7,8 +7,8 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
 import {
-    FEEDBACK_OPEN,
-    sendAnalyticsEvent
+    createFeedbackOpenEvent,
+    sendAnalytics
 } from '../../analytics';
 import { Dialog } from '../../base/dialog';
 import { translate } from '../../base/i18n';
@@ -148,7 +148,7 @@ class FeedbackDialog extends Component {
      * @inheritdoc
      */
     componentDidMount() {
-        sendAnalyticsEvent(FEEDBACK_OPEN);
+        sendAnalytics(createFeedbackOpenEvent());
     }
 
     /**

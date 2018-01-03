@@ -4,16 +4,13 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
 import {
-    TOOLBAR_AUDIO_ONLY_ENABLED,
-    TOOLBAR_VIDEO_QUALITY_HIGH,
-    TOOLBAR_VIDEO_QUALITY_LOW,
-    TOOLBAR_VIDEO_QUALITY_STANDARD,
-    sendAnalyticsEvent
+    createToolbarEvent,
+    sendAnalytics
 } from '../../analytics';
 import {
+    VIDEO_QUALITY_LEVELS,
     setAudioOnly,
-    setReceiveVideoQuality,
-    VIDEO_QUALITY_LEVELS
+    setReceiveVideoQuality
 } from '../../base/conference';
 import { translate } from '../../base/i18n';
 import JitsiMeetJS from '../../base/lib-jitsi-meet';
@@ -25,6 +22,22 @@ const {
     STANDARD,
     LOW
 } = VIDEO_QUALITY_LEVELS;
+
+/**
+ * Creates an analytics event for a press of one of the buttons in the video
+ * quality dialog.
+ *
+ * @param {string} quality - The quality which was selected.
+ * @returns {Object} The event in a format suitable for sending via
+ *      sendAnalytics.
+ */
+const createEvent = function(quality) {
+    return createToolbarEvent(
+        'video.quality',
+        {
+            quality
+        });
+};
 
 /**
  * Implements a React {@link Component} which displays a dialog with a slider
@@ -255,12 +268,13 @@ class VideoQualityDialog extends Component {
      * @returns {void}
      */
     _enableAudioOnly() {
-        sendAnalyticsEvent(TOOLBAR_AUDIO_ONLY_ENABLED);
+        sendAnalytics(createEvent('audio.only'));
         logger.log('Video quality: audio only enabled');
         this.props.dispatch(setAudioOnly(true));
     }
 
     /**
+     * Handles the action of the high definition video being selected.
      * Dispatches an action to receive high quality video from remote
      * participants.
      *
@@ -268,7 +282,7 @@ class VideoQualityDialog extends Component {
      * @returns {void}
      */
     _enableHighDefinition() {
-        sendAnalyticsEvent(TOOLBAR_VIDEO_QUALITY_HIGH);
+        sendAnalytics(createEvent('high'));
         logger.log('Video quality: high enabled');
         this.props.dispatch(setReceiveVideoQuality(HIGH));
     }
@@ -281,7 +295,7 @@ class VideoQualityDialog extends Component {
      * @returns {void}
      */
     _enableLowDefinition() {
-        sendAnalyticsEvent(TOOLBAR_VIDEO_QUALITY_LOW);
+        sendAnalytics(createEvent('low'));
         logger.log('Video quality: low enabled');
         this.props.dispatch(setReceiveVideoQuality(LOW));
     }
@@ -294,7 +308,7 @@ class VideoQualityDialog extends Component {
      * @returns {void}
      */
     _enableStandardDefinition() {
-        sendAnalyticsEvent(TOOLBAR_VIDEO_QUALITY_STANDARD);
+        sendAnalytics(createEvent('standard'));
         logger.log('Video quality: standard enabled');
         this.props.dispatch(setReceiveVideoQuality(STANDARD));
     }

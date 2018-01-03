@@ -1,11 +1,10 @@
 /* @flow */
 
 import {
-    START_AUDIO_ONLY_,
-    START_MUTED_CLIENT_AUDIO_,
-    START_MUTED_CLIENT_VIDEO_,
-    SYNC_TRACK_STATE_,
-    sendAnalyticsEvent
+    createStartAudioOnlyEvent,
+    createStartMutedConfigurationEvent,
+    createSyncTrackStateEvent,
+    sendAnalytics
 } from '../../analytics';
 import { SET_ROOM, setAudioOnly } from '../conference';
 import { parseURLParams } from '../config';
@@ -90,12 +89,8 @@ function _setRoom({ dispatch, getState }, next, action) {
     audioMuted = Boolean(audioMuted);
     videoMuted = Boolean(videoMuted);
 
-    // Apply the config.
-
-    sendAnalyticsEvent(
-        `${START_MUTED_CLIENT_AUDIO_}.${audioMuted ? 'muted' : 'unmuted'}`);
-    sendAnalyticsEvent(
-        `${START_MUTED_CLIENT_VIDEO_}.${videoMuted ? 'muted' : 'unmuted'}`);
+    sendAnalytics(createStartMutedConfigurationEvent(
+        'local', audioMuted, videoMuted));
 
     logger.log(`Start muted: ${audioMuted ? 'audio, ' : ''}${
         videoMuted ? 'video' : ''}`);
@@ -128,8 +123,7 @@ function _setRoom({ dispatch, getState }, next, action) {
             audioOnly = true;
         }
 
-        sendAnalyticsEvent(
-            `${START_AUDIO_ONLY_}.${audioOnly ? 'enabled' : 'disabled'}`);
+        sendAnalytics(createStartAudioOnlyEvent(audioOnly));
         logger.log(`Start audio only set to ${audioOnly.toString()}`);
         dispatch(setAudioOnly(audioOnly));
     }
@@ -155,9 +149,7 @@ function _syncTrackMutedState({ getState }, track) {
     // not yet in redux state and JitsiTrackEvents.TRACK_MUTE_CHANGED may be
     // fired before track gets to state.
     if (track.muted !== muted) {
-        sendAnalyticsEvent(
-            `${SYNC_TRACK_STATE_}.${track.mediaType}.${
-                muted ? 'muted' : 'unmuted'}`);
+        sendAnalytics(createSyncTrackStateEvent(track.mediaType, muted));
         logger.log(`Sync ${track.mediaType} track muted state to ${
             muted ? 'muted' : 'unmuted'}`);
         track.muted = muted;

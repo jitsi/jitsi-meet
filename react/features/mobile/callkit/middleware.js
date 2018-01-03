@@ -4,8 +4,8 @@ import { NativeModules } from 'react-native';
 import uuid from 'uuid';
 
 import {
-    CALLKIT_AUDIO_,
-    sendAnalyticsEvent
+    createTrackMutedEvent,
+    sendAnalytics
 } from '../../analytics';
 import { APP_WILL_MOUNT, APP_WILL_UNMOUNT, appNavigate } from '../../app';
 import {
@@ -279,8 +279,7 @@ function _onPerformSetMutedCallAction({ callUUID, muted: newValue }) {
         if (oldValue !== newValue) {
             const value = Boolean(newValue);
 
-            sendAnalyticsEvent(`${CALLKIT_AUDIO_}.${
-                value ? 'muted' : 'unmuted'}`);
+            sendAnalytics(createTrackMutedEvent('audio', 'callkit', value));
             dispatch(setAudioMuted(value));
         }
     }

@@ -1,663 +1,461 @@
 /**
- * The target of a pin or unpin event was the local participant.
- *
- * Known full event names:
- * pinned.local
- * unpinned.local
- *
- * @type {String}
+ * The constant for the event type 'track'.
+ * TODO: keep these constants in a single place. Can we import them from
+ * lib-jitsi-meet's AnalyticsEvents somehow?
+ * @type {string}
  */
-export const _LOCAL = 'local';
+const TYPE_TRACK = 'track';
 
 /**
- * The target of a pin or unpin event was a remote participant.
- *
- * Known full event names:
- * pinned.remote
- * unpinned.remote
- *
- * @type {String}
+ * The constant for the event type 'UI' (User Interaction).
+ * TODO: keep these constants in a single place. Can we import them from
+ * lib-jitsi-meet's AnalyticsEvents somehow?
+ * @type {string}
  */
-export const _REMOTE = 'remote';
+const TYPE_UI = 'ui';
 
 /**
- * Audio mute toggled was triggered through the jitsi-meet api.
+ * The identifier for the "pinned" action. The local participant has pinned a
+ * participant to remain on large video.
  *
  * @type {String}
  */
-export const API_TOGGLE_AUDIO = 'api.toggle.audio';
+export const ACTION_PINNED = 'pinned';
 
 /**
- * Video mute toggling was triggered through the jitsi-meet api.
+ * The identifier for the "unpinned" action. The local participant has unpinned
+ * a participant so the participant doesn't remain permanently on local large
+ * video.
  *
  * @type {String}
  */
-export const API_TOGGLE_VIDEO = 'api.toggle.video';
+export const ACTION_UNPINNED = 'unpinned';
 
 /**
- * Audio only mode has been turned off.
+ * The identifier for the "pressed" action for shortcut events. This action
+ * means that a button was pressed (and not yet released).
  *
  * @type {String}
  */
-export const AUDIO_ONLY_DISABLED = 'audioonly.disabled';
+export const ACTION_SHORTCUT_PRESSED = 'pressed';
 
 /**
- * The login button in the profile pane was clicked.
+ * The identifier for the "released" action for shortcut events. This action
+ * means that a button which was previously pressed was released.
  *
  * @type {String}
  */
-export const AUTHENTICATE_LOGIN_CLICKED = 'authenticate.login.clicked';
+export const ACTION_SHORTCUT_RELEASED = 'released';
 
 /**
- * The logout button in the profile pane was clicked.
+ * The identifier for the "triggered" action for shortcut events. This action
+ * means that a button was pressed, and we don't care about whether it was
+ * released or will be released in the future.
  *
  * @type {String}
  */
-export const AUTHENTICATE_LOGOUT_CLICKED = 'authenticate.logout.clicked';
+export const ACTION_SHORTCUT_TRIGGERED = 'triggered';
 
 /**
- * Performing a mute or unmute event based on a callkit setMuted event.
- *
- * Known full event names:
- * callkit.audio.muted
- * callkit.audio.unmuted
- *
- * @type {String}
+ * The name of the keyboard shortcut or toolbar button for muting audio.
  */
-export const CALLKIT_AUDIO_ = 'callkit.audio';
+export const AUDIO_MUTE = 'audio.mute';
 
 /**
- * Toggling remote and local video display when entering or exiting backgrounded
- * app state.
- *
- * @type {String}
+ * The name of the keyboard shortcut or toolbar button for muting video.
  */
-export const CALLKIT_BACKGROUND_VIDEO_MUTED = 'callkit.background.video.muted';
+export const VIDEO_MUTE = 'video.mute';
 
 /**
- * The local participant joined audio muted.
+ * Creates an event which indicates that a certain action was requested through
+ * the jitsi-meet API.
  *
- * @type {String}
+ * @param {Object} action - The action which was requested through the
+ * jitsi-meet API.
+ * @param {Object} attributes - Attributes to attach to the event.
+ * @returns {Object} The event in a format suitable for sending via
+ * sendAnalytics.
  */
-export const CONFERENCE_AUDIO_INITIALLY_MUTED
-    = 'conference.audio.initiallyMuted';
+export const createApiEvent = function(action, attributes = {}) {
+    return {
+        action,
+        attributes,
+        source: 'jitsi-meet-api'
+    };
+};
 
 /**
- * The local participant has started desktop sharing.
+ * Creates an event which indicates that the audio-only mode has been turned
+ * off.
  *
- * @type {String}
+ * @returns {Object} The event in a format suitable for sending via
+ * sendAnalytics.
  */
-export const CONFERENCE_SHARING_DESKTOP_START
-    = 'conference.sharingDesktop.start';
+export const createAudioOnlyDisableEvent = function() {
+    return {
+        action: 'audio.only.disabled'
+    };
+};
 
 /**
- * The local participant was desktop sharing but has stopped.
+ * Creates an event which indicates that a device was changed.
  *
- * @type {String}
+ * @param {string} mediaType - The media type of the device ('audio' or
+ * 'video').
+ * @param {string} deviceType - The type of the device ('input' or 'output').
+ * @returns {Object} The event in a format suitable for sending via
+ * sendAnalytics.
  */
-export const CONFERENCE_SHARING_DESKTOP_STOP
-    = 'conference.sharingDesktop.stop';
+export const createDeviceChangedEvent = function(mediaType, deviceType) {
+    return {
+        action: 'device.changed',
+        attributes: {
+            'device_type': deviceType,
+            'media_type': mediaType
+        }
+    };
+};
 
 /**
- * The local participant joined video muted.
+ * Creates an event which specifies that the feedback dialog has been opened.
  *
- * @type {String}
+ * @returns {Object} The event in a format suitable for sending via
+ * sendAnalytics.
  */
-export const CONFERENCE_VIDEO_INITIALLY_MUTED
-    = 'conference.video.initiallyMuted';
+export const createFeedbackOpenEvent = function() {
+    return {
+        action: 'feedback.opened'
+    };
+};
 
 /**
- * The list of known input/output devices was changed and new audio input has
- * been used and should start as muted.
+ * Creates an event which indicates that the invite dialog was closed. This is
+ * not a TYPE_UI event, since it is not necessarily the result of a user
+ * interaction.
  *
- * @type {String}
+ * @returns {Object} The event in a format suitable for sending via
+ * sendAnalytics.
  */
-export const DEVICE_LIST_CHANGED_AUDIO_MUTED = 'deviceListChanged.audio.muted';
+export const createInviteDialogClosedEvent = function() {
+    return {
+        action: 'invite.dialog.closed'
+    };
+};
 
 /**
- * The list of known devices was changed and new video input has been used
- * and should start as muted.
+ * Creates a "page reload" event.
  *
- * @type {String}
+ * @param {string} reason - The reason for the reload.
+ * @param {number} timeout - The timeout in seconds after which the page is
+ * scheduled to reload.
+ * @returns {Object} The event in a format suitable for sending via
+ * sendAnalytics.
  */
-export const DEVICE_LIST_CHANGED_VIDEO_MUTED = 'deviceListChanged.video.muted';
+export const createPageReloadScheduledEvent = function(reason, timeout) {
+    return {
+        action: 'page.reload.scheduled',
+        attributes: {
+            reason,
+            timeout
+        }
+    };
+};
 
 /**
- * The feedback dialog is displayed.
+ * Creates a "pinned" or "unpinned" event.
  *
- * @type {String}
+ * @param {string} action - The action ("pinned" or "unpinned").
+ * @param {string} participantId - The ID of the participant which was pinned.
+ * @param {Object} attributes - Attributes to attach to the event.
+ * @returns {Object} The event in a format suitable for sending via
+ * sendAnalytics.
  */
-export const FEEDBACK_OPEN = 'feedback.open';
+export const createPinnedEvent
+        = function(action, participantId, attributes) {
+            return {
+                type: TYPE_TRACK,
+                action,
+                actionSubject: 'participant',
+                objectType: 'participant',
+                objectId: participantId,
+                attributes
+            };
+        };
 
 /**
- * Page reload overlay has been displayed.
+ * Creates an event which indicates that a button in the profile panel was
+ * clicked.
  *
- * Properties: label: reason for reload
- *
- * @type {String}
+ * @param {string} buttonName - The name of the button.
+ * @param {Object} attributes - Attributes to attach to the event.
+ * @returns {Object} The event in a format suitable for sending via
+ * sendAnalytics.
  */
-export const PAGE_RELOAD = 'page.reload';
+export const createProfilePanelButtonEvent
+    = function(buttonName, attributes = {}) {
+        return {
+            action: 'clicked',
+            actionSubject: buttonName,
+            attributes,
+            source: 'profile.panel',
+            type: TYPE_UI
+        };
+    };
 
 /**
- * The local participant has pinned a participant to remain on large video.
+ * Creates an event which indicates that a specific button on one of the
+ * recording-related dialogs was clicked.
  *
- * Known full event names:
- * pinned.local
- * pinned.remote
- *
- * @type {String}
+ * @param {string} dialogName - The name of the dialog (e.g. 'start' or 'stop').
+ * @param {string} buttonName - The name of the button (e.g. 'confirm' or
+ * 'cancel').
+ * @returns {Object} The event in a format suitable for sending via
+ * sendAnalytics.
  */
-export const PINNED_ = 'pinned';
+export const createRecordingDialogEvent = function(dialogName, buttonName) {
+    return {
+        action: 'clicked',
+        actionSubject: buttonName,
+        source: `${dialogName}.recording.dialog`,
+        type: TYPE_UI
+    };
+};
 
 /**
- * Recording start was attempted but the local user canceled the request.
+ * Creates an event which specifies that the "confirm" button on the remote
+ * mute dialog has been clicked.
  *
- * @type {String}
+ * @param {string} participantId - The ID of the participant that was remotely
+ * muted.
+ * @returns {Object} The event in a format suitable for sending via
+ * sendAnalytics.
  */
-export const RECORDING_CANCELED = 'recording.canceled';
+export const createRemoteMuteConfirmedEvent = function(participantId) {
+    return {
+        action: 'clicked',
+        actionSubject: 'remote.mute.dialog.confirm.button',
+        attributes: {
+            'participant_id': participantId
+        },
+        source: 'remote.mute.dialog',
+        type: TYPE_UI
+    };
+};
 
 /**
- * Recording button has been clicked.
+ * Creates an event which indicates that one of the buttons in the "remote
+ * video menu" was clicked.
  *
- * @type {String}
+ * @param {string} buttonName - The name of the button.
+ * @param {Object} attributes - Attributes to attach to the event.
+ * @returns {Object} The event in a format suitable for sending via
+ * sendAnalytics.
  */
-export const RECORDING_CLICKED = 'recording.clicked';
+export const createRemoteVideoMenuButtonEvent
+    = function(buttonName, attributes) {
+        return {
+            action: 'clicked',
+            actionSubject: buttonName,
+            attributes,
+            source: 'remote.video.menu',
+            type: TYPE_UI
+        };
+    };
 
 /**
- * Recording has been started.
+ * Creates an event indicating that an action related to screen sharing
+ * occurred (e.g. it was started or stopped).
  *
- * @type {String}
+ * @param {string} action - The action which occurred.
+ * @returns {Object} The event in a format suitable for sending via
+ * sendAnalytics.
  */
-export const RECORDING_STARTED = 'recording.started';
+export const createScreenSharingEvent = function(action) {
+    return {
+        action,
+        actionSubject: 'screen.sharing'
+    };
+};
 
 /**
- * Recording has been stopped by clicking the recording button.
+ * The local participant failed to send a "selected endpoint" message to the
+ * bridge.
  *
- * @type {String}
+ * @param {Error} error - The error which caused the failure.
+ * @returns {Object} The event in a format suitable for sending via
+ * sendAnalytics.
  */
-export const RECORDING_STOPPED = 'recording.stopped';
+export const createSelectParticipantFailedEvent = function(error) {
+    const event = {
+        action: 'select.participant.failed'
+    };
+
+    if (error) {
+        event.error = error.toString();
+    }
+
+    return event;
+};
 
 /**
- * Clicked on the button to kick a remote participant from the conference.
+ * Creates an event associated with the "shared video" feature.
  *
- * Properties: value: 1, label: participantID
- *
- * @type {String}
+ * @param {string} action - The action that the event represents.
+ * @param {Object} attributes - Attributes to attach to the event.
+ * @returns {Object} The event in a format suitable for sending via
+ * sendAnalytics.
  */
-export const REMOTE_VIDEO_MENU_KICK = 'remotevideomenu.kick';
+export const createSharedVideoEvent = function(action, attributes = {}) {
+    return {
+        action,
+        attributes,
+        actionSubject: 'shared.video'
+    };
+};
 
 /**
- * Clicked on the button to audio mute a remote participant.
+ * Creates an event associated with a shortcut being pressed, released or
+ * triggered. By convention, where appropriate an attribute named 'enable'
+ * should be used to indicate the action which resulted by the shortcut being
+ * pressed (e.g. whether screen sharing was enabled or disabled).
  *
- * Properties: value: 1, label: participantID
- *
- * @type {String}
+ * @param {string} shortcut - The identifier of the shortcut which produced
+ * an action.
+ * @param {string} action - The action that the event represents (one
+ * of ACTION_SHORTCUT_PRESSED, ACTION_SHORTCUT_RELEASED
+ * or ACTION_SHORTCUT_TRIGGERED).
+ * @param {Object} attributes - Attributes to attach to the event.
+ * @returns {Object} The event in a format suitable for sending via
+ * sendAnalytics.
  */
-export const REMOTE_VIDEO_MENU_MUTE_CLICKED = 'remotevideomenu.mute.clicked';
+export const createShortcutEvent
+    = function(shortcut, action = ACTION_SHORTCUT_TRIGGERED, attributes = {}) {
+        return {
+            action,
+            actionSubject: 'keyboard.shortcut',
+            actionSubjectId: shortcut,
+            attributes,
+            source: 'keyboard.shortcut',
+            type: TYPE_UI
+        };
+    };
 
 /**
- * Confirmed the muting of a remote participant.
+ * Creates an event which indicates the "start audio only" configuration.
  *
- * Properties: value: 1, label: participantID
- *
- * @type {String}
+ * @param {boolean} audioOnly - Whether "start audio only" is enabled or not.
+ * @returns {Object} The event in a format suitable for sending via
+ * sendAnalytics.
  */
-export const REMOTE_VIDEO_MENU_MUTE_CONFIRMED
-    = 'remotevideomenu.mute.confirmed';
+export const createStartAudioOnlyEvent = function(audioOnly) {
+    return {
+        action: 'start.audio.only',
+        attributes: {
+            enabled: audioOnly
+        }
+    };
+};
 
 /**
- * Clicked on the remote control option in the remote menu.
+ * Creates an event which indicates the "start muted" configuration.
  *
- * Properties: value: 1, label: participantID
- *
- * Known full event names:
- * remotevideomenu.remotecontrol.stop
- * remotevideomenu.remotecontrol.start
- *
- * @type {String}
+ * @param {string} source - The source of the configuration, 'local' or
+ * 'remote' depending on whether it comes from the static configuration (i.e.
+ * config.js) or comes dynamically from Jicofo.
+ * @param {boolean} audioMute - Whether the configuration requests that audio
+ * is muted.
+ * @param {boolean} videoMute - Whether the configuration requests that video
+ * is muted.
+ * @returns {Object} The event in a format suitable for sending via
+ * sendAnalytics.
  */
-export const REMOTE_VIDEO_MENU_REMOTE_CONTROL_
-    = 'remotevideomenu.remotecontrol';
+export const createStartMutedConfigurationEvent
+    = function(source, audioMute, videoMute) {
+        return {
+            action: 'start.muted.configuration',
+            attributes: {
+                source,
+                'audio_mute': audioMute,
+                'video_mute': videoMute
+            }
+        };
+    };
 
 /**
- * Replacing the currently used track of specified type with a new track of the
- * same type. The event is fired when changing devices.
+ * Creates an event which indicates the delay for switching between simulcast
+ * streams.
  *
- * Known full event names:
- * replacetrack.audio
- * replacetrack.video
- *
- * @type {String}
+ * @param {Object} attributes - Attributes to attach to the event.
+ * @returns {Object} The event in a format suitable for sending via
+ * sendAnalytics.
  */
-export const REPLACE_TRACK_ = 'replacetrack';
-
-/**
- * The local participant failed to start receiving high quality video from
- * a remote participant, which is usually initiated by the remote participant
- * being put on large video.
- *
- * @type {String}
- */
-export const SELECT_PARTICIPANT_FAILED = 'selectParticipant.failed';
-
-/**
- * The local participant began using a different audio input device (mic).
- *
- * @type {String}
- */
-export const SETTINGS_CHANGE_DEVICE_AUDIO_IN = 'settings.changeDevice.audioIn';
-
-/**
- * The local participant began using a different audio output device (speaker).
- *
- * @type {String}
- */
-export const SETTINGS_CHANGE_DEVICE_AUDIO_OUT
-    = 'settings.changeDevice.audioOut';
-
-/**
- * The local participant began using a different camera.
- *
- * @type {String}
- */
-export const SETTINGS_CHANGE_DEVICE_VIDEO = 'settings.changeDevice.video';
-
-/**
- * Attempted to start sharing a YouTube video but one is already being shared.
- *
- * @type {String}
- */
-export const SHARED_VIDEO_ALREADY_SHARED = 'sharedvideo.alreadyshared';
-
-/**
- * The local participant's mic was muted automatically during a shared video.
- *
- * @type {String}
- */
-export const SHARED_VIDEO_AUDIO_MUTED = 'sharedvideo.audio.muted';
-
-/**
- * The local participant's mic was unmuted automatically during a shared video.
- *
- * @type {String}
- */
-export const SHARED_VIDEO_AUDIO_UNMUTED = 'sharedvideo.audio.unmuted';
-
-/**
- * Canceled the prompt to enter a YouTube video to share.
- *
- * @type {String}
- */
-export const SHARED_VIDEO_CANCELED = 'sharedvideo.canceled';
-
-/**
- * The shared YouTube video has been paused.
- *
- * @type {String}
- */
-export const SHARED_VIDEO_PAUSED = 'sharedvideo.paused';
-
-/**
- * Started sharing a YouTube video.
- *
- * @type {String}
- */
-export const SHARED_VIDEO_STARTED = 'sharedvideo.started';
-
-/**
- * Confirmed stoppage of the shared YouTube video.
- *
- * @type {String}
- */
-export const SHARED_VIDEO_STOPPED = 'sharedvideo.stoped';
-
-/**
- * The shared YouTube video had its volume change.
- *
- * @type {String}
- */
-export const SHARED_VIDEO_VOLUME_CHANGED = 'sharedvideo.volumechanged';
-
-/**
- * Pressed the keyboard shortcut for toggling audio mute.
- *
- * @type {String}
- */
-export const SHORTCUT_AUDIO_MUTE_TOGGLED = 'shortcut.audiomute.toggled';
-
-/**
- * Pressed the keyboard shortcut for toggling chat panel display.
- *
- * @type {String}
- */
-export const SHORTCUT_CHAT_TOGGLED = 'shortcut.chat.toggled';
-
-/**
- * Toggled the display of the keyboard shortcuts help dialog.
- *
- * @type {String}
- */
-export const SHORTCUT_HELP = 'shortcut.shortcut.help';
-
-/**
- * Pressed the keyboard shortcut for togglgin raise hand status.
- *
- * @type {String}
- */
-export const SHORTCUT_RAISE_HAND_CLICKED = 'shortcut.raisehand.clicked';
-
-/**
- * Pressed the keyboard shortcut for toggling screenshare.
- *
- * @type {String}
- */
-export const SHORTCUT_SCREEN_TOGGLED = 'shortcut.screen.toggled';
-
-/**
- * Toggled the display of the speaker stats dialog.
- *
- * @type {String}
- */
-export const SHORTCUT_SPEAKER_STATS_CLICKED = 'shortcut.speakerStats.clicked';
-
-/**
- * Started pressing the key that undoes audio mute while the key is pressed.
- *
- * @type {String}
- */
-export const SHORTCUT_TALK_CLICKED = 'shortcut.talk.clicked';
-
-/**
- * Released the key used to talk while audio muted, returning to the audio muted
- * state.
- *
- * @type {String}
- */
-export const SHORTCUT_TALK_RELEASED = 'shortcut.talk.released';
-
-/**
- * Toggling video mute state using a keyboard shortcut.
- *
- * @type {String}
- */
-export const SHORTCUT_VIDEO_MUTE_TOGGLED = 'shortcut.videomute.toggled';
-
-/**
- * The config specifies the local participant should start with audio only mode
- * enabled or disabled.
- *
- * Known full event names:
- * startaudioonly.enabled
- * startaudioonly.disabled
- *
- * @type {String}
- */
-export const START_AUDIO_ONLY_ = 'startaudioonly';
-
-/**
- * The config specifies the local participant should start with audio mute
- * enabled or disabled.
- *
- * Known full event names:
- * startmuted.client.audio.muted
- * startmuted.client.audio.unmuted
- *
- * @type {String}
- */
-export const START_MUTED_CLIENT_AUDIO_ = 'startmuted.client.audio';
-
-/**
- * The config specifies the local participant should start with video mute
- * enabled or disabled.
- *
- * Known full event names:
- * startmuted.client.video.muted
- * startmuted.client.video.unmuted
- *
- * @type {String}
- */
-export const START_MUTED_CLIENT_VIDEO_ = 'startmuted.client.video';
-
-/**
- * The local participant has received an event from the server stating to
- * start audio muted or unmuted.
- *
- * Known full event names:
- * startmuted.server.audio.muted
- * startmuted.server.audio.unmuted
- *
- * @type {String}
- */
-export const START_MUTED_SERVER_AUDIO_ = 'startmuted.server.audio';
-
-/**
- * The local participant has received an event from the server stating to
- * start video muted or unmuted.
- *
- * Known full event names:
- * startmuted.server.video.muted
- * startmuted.server.video.unmuted
- *
- * @type {String}
- */
-export const START_MUTED_SERVER_VIDEO_ = 'startmuted.server.video';
-
-/**
- * How long it took to switch between simulcast streams.
- *
- * Properties: value
- *
- * @type {String}
- */
-export const STREAM_SWITCH_DELAY = 'stream.switch.delay';
+export const createStreamSwitchDelayEvent = function(attributes) {
+    return {
+        action: 'stream.switch.delay',
+        attributes
+    };
+};
 
 /**
  * Automatically changing the mute state of a media track in order to match
  * the current stored state in redux.
  *
- * Known full event names:
- * synctrackstate.audio.muted
- * synctrackstate.audio.unmuted
- * synctrackstate.video.muted
- * synctrackstate.video.unmuted
- *
- * @type {String}
+ * @param {string} mediaType - The track's media type ('audio' or 'video').
+ * @param {boolean} muted - Whether the track is being muted or unmuted as
+ * as result of the sync operation.
+ * @returns {Object} The event in a format suitable for sending via
+ * sendAnalytics.
  */
-export const SYNC_TRACK_STATE_ = 'synctrackstate';
+export const createSyncTrackStateEvent = function(mediaType, muted) {
+    return {
+        action: 'sync.track.state',
+        attributes: {
+            'media_type': mediaType,
+            muted
+        }
+    };
+};
 
 /**
- * Clicked the toolbar button to enter audio mute state.
+ * Creates an event associated with a toolbar button being clicked/pressed. By
+ * convention, where appropriate an attribute named 'enable' should be used to
+ * indicate the action which resulted by the shortcut being pressed (e.g.
+ * whether screen sharing was enabled or disabled).
  *
- * @type {String}
+ * @param {string} buttonName - The identifier of the toolbar button which was
+ * clicked/pressed.
+ * @param {Object} attributes - Attributes to attach to the event.
+ * @returns {Object} The event in a format suitable for sending via
+ * sendAnalytics.
  */
-export const TOOLBAR_AUDIO_MUTED = 'toolbar.audio.muted';
+export const createToolbarEvent = function(buttonName, attributes = {}) {
+    return {
+        action: 'clicked',
+        actionSubject: buttonName,
+        attributes,
+        source: 'toolbar.button',
+        type: TYPE_UI
+    };
+};
 
 /**
- * Clicked within a toolbar menu to enable audio only.
+ * Creates an event which indicates that a local track was muted.
  *
- * @type {String}
+ * @param {string} mediaType - The track's media type ('audio' or 'video').
+ * @param {string} reason - The reason the track was muted (e.g. it was
+ * triggered by the "initial mute" option, or a previously muted track was
+ * replaced (e.g. when a new device was used)).
+ * @param {boolean} muted - Whether the track was muted or unmuted.
+ * @returns {Object} The event in a format suitable for sending via
+ * sendAnalytics.
  */
-export const TOOLBAR_AUDIO_ONLY_ENABLED = 'toolbar.audioonly.enabled';
-
-/**
- * Clicked the toolbar button to exit audio mute state.
- *
- * @type {String}
- */
-export const TOOLBAR_AUDIO_UNMUTED = 'toolbar.audio.unmuted';
-
-/**
- * Clicked the toolbar button for toggling chat panel display.
- *
- * @type {String}
- */
-export const TOOLBAR_CHAT_TOGGLED = 'toolbar.chat.toggled';
-
-/**
- * Clicked the toolbar button for toggling contact list panel display.
- *
- * @type {String}
- */
-export const TOOLBAR_CONTACTS_TOGGLED = 'toolbar.contacts.toggled';
-
-/**
- * Clicked the toolbar button to toggle display of etherpad (collaborative
- * document writing).
- *
- * @type {String}
- */
-export const TOOLBAR_ETHERPACK_CLICKED = 'toolbar.etherpad.clicked';
-
-/**
- * Pressed the keyboard shortcut to open the device selection window while in
- * filmstrip only mode.
- *
- * @type {String}
- */
-export const TOOLBAR_FILMSTRIP_ONLY_DEVICE_SELECTION_TOGGLED
-    = 'toolbar.fodeviceselection.toggled';
-
-/**
- * Visibility of the filmstrip has been toggled.
- *
- * @type {String}
- */
-export const TOOLBAR_FILMSTRIP_TOGGLED = 'toolbar.filmstrip.toggled';
-
-/**
- * Clicked the toolbar button to toggle display full screen mode.
- *
- * @type {String}
- */
-export const TOOLBAR_FULLSCREEN_ENABLED = 'toolbar.fullscreen.enabled';
-
-/**
- * Clicked the toolbar button to leave the conference.
- *
- * @type {String}
- */
-export const TOOLBAR_HANGUP = 'toolbar.hangup';
-
-/**
- * Clicked the toolbar button to open the invite dialog.
- *
- * @type {String}
- */
-export const TOOLBAR_INVITE_CLICKED = 'toolbar.invite.clicked';
-
-/**
- * The invite dialog has been dismissed.
- *
- * @type {String}
- */
-export const TOOLBAR_INVITE_CLOSE = 'toolbar.invite.close';
-
-/**
- * Clicked the toolbar button for toggling the display of the profile panel.
- *
- * @type {String}
- */
-export const TOOLBAR_PROFILE_TOGGLED = 'toolbar.profile.toggled';
-
-/**
- * Clicked the toolbar button for toggling raise hand status.
- *
- * @type {String}
- */
-export const TOOLBAR_RAISE_HAND_CLICKED = 'toolbar.raiseHand.clicked';
-
-/**
- * Clicked the toolbar button to stop screensharing.
- *
- * @type {String}
- */
-export const TOOLBAR_SCREEN_DISABLED = 'toolbar.screen.disabled';
-
-/**
- * Clicked the toolbar button to start screensharing.
- *
- * @type {String}
- */
-export const TOOLBAR_SCREEN_ENABLED = 'toolbar.screen.enabled';
-
-/**
- * Clicked the toolbar button for toggling display of the settings menu.
- *
- * @type {String}
- */
-export const TOOLBAR_SETTINGS_TOGGLED = 'toolbar.settings.toggled';
-
-/**
- * Clicked the toolbar button for toggling a shared YouTube video.
- *
- * @type {String}
- */
-export const TOOLBAR_SHARED_VIDEO_CLICKED = 'toolbar.sharedvideo.clicked';
-
-/**
- * Clicked the toolbar button to open the dial-out feature.
- *
- * @type {String}
- */
-export const TOOLBAR_SIP_DIALPAD_CLICKED = 'toolbar.sip.dialpad.clicked';
-
-/**
- * In the mobile app, clicked on the toolbar button to toggle video mute.
- *
- * Known full event names:
- * toolbar.video.muted
- * toolbar.video.unmuted
- *
- * @type {String}
- */
-export const TOOLBAR_VIDEO_ = 'toolbar.video';
-
-/**
- * Clicked on the toolbar to video unmute.
- *
- * @type {String}
- */
-export const TOOLBAR_VIDEO_DISABLED = 'toolbar.video.disabled';
-
-/**
- * Clicked on the toolbar to video mute.
- *
- * @type {String}
- */
-export const TOOLBAR_VIDEO_ENABLED = 'toolbar.video.enabled';
-
-/**
- * Clicked within a toolbar menu to set max incoming video quality to high
- * definition.
- *
- * @type {String}
- */
-export const TOOLBAR_VIDEO_QUALITY_HIGH = 'toolbar.videoquality.high';
-
-/**
- * Clicked within a toolbar menu to set max incoming video quality to low
- * definition.
- *
- * @type {String}
- */
-export const TOOLBAR_VIDEO_QUALITY_LOW = 'toolbar.videoquality.low';
-
-/**
- * Clicked within a toolbar menu to set max incoming video quality to standard
- * definition.
- *
- * @type {String}
- */
-export const TOOLBAR_VIDEO_QUALITY_STANDARD = 'toolbar.videoquality.standard';
-
-/**
- * The local participant has unpinned a participant so the participant doesn't
- * remain permanently on local large video.
- *
- * Known full event names:
- * unpinned.local
- * unpinned.remote
- *
- * @type {String}
- */
-export const UNPINNED_ = 'unpinned';
+export const createTrackMutedEvent = function(mediaType, reason, muted = true) {
+    return {
+        action: 'track.muted',
+        attributes: {
+            'media_type': mediaType,
+            muted,
+            reason
+        }
+    };
+};

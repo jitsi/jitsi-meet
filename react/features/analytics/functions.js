@@ -9,12 +9,14 @@ import { getJitsiMeetGlobalNS, loadScript } from '../base/util';
 const logger = require('jitsi-meet-logger').getLogger(__filename);
 
 /**
- * Sends an analytics event.
+ * Sends an event through the lib-jitsi-meet AnalyticsAdapter interface.
  *
- * @inheritdoc
+ * @param {Object} event - The event to send. It should be formatted as
+ * described in AnalyticsAdapter.js in lib-jitsi-meet.
+ * @returns {void}
  */
-export function sendAnalyticsEvent(...args: Array<any>) {
-    analytics.sendEvent(...args);
+export function sendAnalytics(event: Object) {
+    analytics.sendEvent(event);
 }
 
 /**
@@ -38,23 +40,17 @@ export function initAnalytics({ getState }: { getState: Function }) {
     const state = getState();
     const config = state['features/base/config'];
     const { analyticsScriptUrls } = config;
-    const machineId = JitsiMeetJS.getMachineId();
     const { user } = state['features/base/jwt'];
     const handlerConstructorOptions = {
-        product: 'lib-jitsi-meet',
         version: JitsiMeetJS.version,
-        session: machineId,
-        user: user ? user.id : `uid-${machineId}`,
-        server: state['features/base/connection'].locationURL.host
+        user
     };
 
     _loadHandlers(analyticsScriptUrls, handlerConstructorOptions)
         .then(handlers => {
-            const permanentProperties: Object = {
-                roomName: state['features/base/conference'].room,
-                userAgent: navigator.userAgent
-            };
+            const roomName = state['features/base/conference'].room;
             const { group, server } = state['features/base/jwt'];
+            const permanentProperties = {};
 
             if (server) {
                 permanentProperties.server = server;
@@ -76,6 +72,9 @@ export function initAnalytics({ getState }: { getState: Function }) {
             }
 
             analytics.addPermanentProperties(permanentProperties);
+            analytics.setConferenceName(roomName);
+
+            // Set the handlers last, since this triggers emptying of the cache
             analytics.setAnalyticsHandlers(handlers);
         },
         error => analytics.dispose() && logger.error(error));

@@ -2,11 +2,10 @@
 
 import { toggleDialog } from '../../react/features/base/dialog';
 import {
-    SHORTCUT_HELP,
-    SHORTCUT_SPEAKER_STATS_CLICKED,
-    SHORTCUT_TALK_CLICKED,
-    SHORTCUT_TALK_RELEASED,
-    sendAnalyticsEvent
+    ACTION_SHORTCUT_PRESSED as PRESSED,
+    ACTION_SHORTCUT_RELEASED as RELEASED,
+    createShortcutEvent,
+    sendAnalytics
 } from '../../react/features/analytics';
 import { KeyboardShortcutsDialog }
     from '../../react/features/keyboard-shortcuts';
@@ -72,8 +71,10 @@ const KeyboardShortcut = {
                 || $(':focus').is('textarea'))) {
                 if (this._getKeyboardKey(e).toUpperCase() === ' ') {
                     if (APP.conference.isLocalAudioMuted()) {
-                        sendAnalyticsEvent(SHORTCUT_TALK_RELEASED);
-                        logger.log('Talk shortcut released');
+                        sendAnalytics(createShortcutEvent(
+                            'push.to.talk',
+                            PRESSED));
+                        logger.log('Talk shortcut pressed');
                         APP.conference.muteAudio(false);
                     }
                 }
@@ -93,7 +94,7 @@ const KeyboardShortcut = {
      * Registers a new shortcut.
      *
      * @param shortcutChar the shortcut character triggering the action
-     * @param shortcutAttr the "shortcut" html element attribute mappring an
+     * @param shortcutAttr the "shortcut" html element attribute mapping an
      * element to this shortcut and used to show the shortcut character on the
      * element tooltip
      * @param exec the function to be executed when the shortcut is pressed
@@ -175,7 +176,7 @@ const KeyboardShortcut = {
      */
     _initGlobalShortcuts() {
         this.registerShortcut('?', null, () => {
-            sendAnalyticsEvent(SHORTCUT_HELP);
+            sendAnalytics(createShortcutEvent('help'));
             APP.store.dispatch(toggleDialog(KeyboardShortcutsDialog, {
                 shortcutDescriptions: _shortcutsHelp
             }));
@@ -184,15 +185,15 @@ const KeyboardShortcut = {
         // register SPACE shortcut in two steps to insure visibility of help
         // message
         this.registerShortcut(' ', null, () => {
-            sendAnalyticsEvent(SHORTCUT_TALK_CLICKED);
-            logger.log('Talk shortcut pressed');
+            sendAnalytics(createShortcutEvent('push.to.talk', RELEASED));
+            logger.log('Talk shortcut released');
             APP.conference.muteAudio(true);
         });
         this._addShortcutToHelp('SPACE', 'keyboardShortcuts.pushToTalk');
 
         if (!interfaceConfig.filmStripOnly) {
             this.registerShortcut('T', null, () => {
-                sendAnalyticsEvent(SHORTCUT_SPEAKER_STATS_CLICKED);
+                sendAnalytics(createShortcutEvent('speaker.stats'));
                 APP.store.dispatch(toggleDialog(SpeakerStats, {
                     conference: APP.conference
                 }));

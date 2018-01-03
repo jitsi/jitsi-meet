@@ -6,8 +6,9 @@ import UIEvents from '../../../service/UI/UIEvents';
 import UIUtil from '../util/UIUtil';
 
 import {
-    TOOLBAR_FILMSTRIP_TOGGLED,
-    sendAnalyticsEvent
+    createShortcutEvent,
+    createToolbarEvent,
+    sendAnalytics
 } from '../../../react/features/analytics';
 
 const Filmstrip = {
@@ -75,8 +76,18 @@ const Filmstrip = {
         // Firing the event instead of executing toggleFilmstrip method because
         // it's important to hide the filmstrip by UI.toggleFilmstrip in order
         // to correctly resize the video area.
-        $('#toggleFilmstripButton').on('click',
-            () => this.eventEmitter.emit(UIEvents.TOGGLE_FILMSTRIP));
+        $('#toggleFilmstripButton').on(
+            'click',
+            () => {
+                // The 'enable' parameter is set to true if the action results
+                // in the filmstrip being hidden.
+                sendAnalytics(createToolbarEvent(
+                    'toggle.filmstrip.button',
+                    {
+                        enable: this.isFilmstripVisible()
+                    }));
+                this.eventEmitter.emit(UIEvents.TOGGLE_FILMSTRIP);
+            });
 
         this._registerToggleFilmstripShortcut();
     },
@@ -94,7 +105,14 @@ const Filmstrip = {
         // Firing the event instead of executing toggleFilmstrip method because
         // it's important to hide the filmstrip by UI.toggleFilmstrip in order
         // to correctly resize the video area.
-        const handler = () => this.eventEmitter.emit(UIEvents.TOGGLE_FILMSTRIP);
+        const handler = () => {
+            sendAnalytics(createShortcutEvent(
+                'toggle.filmstrip',
+                {
+                    enable: this.isFilmstripVisible()
+                }));
+            this.eventEmitter.emit(UIEvents.TOGGLE_FILMSTRIP);
+        };
 
         APP.keyboardshortcut.registerShortcut(
             shortcut,
@@ -129,50 +147,43 @@ const Filmstrip = {
     },
 
     /**
-     * Toggles the visibility of the filmstrip.
+     * Toggles the visibility of the filmstrip, or sets it to a specific value
+     * if the 'visible' parameter is specified.
      *
      * @param visible optional {Boolean} which specifies the desired visibility
      * of the filmstrip. If not specified, the visibility will be flipped
      * (i.e. toggled); otherwise, the visibility will be set to the specified
      * value.
-     * @param {Boolean} sendAnalytics - True to send an analytics event. The
-     * default value is true.
      *
      * Note:
      * This method shouldn't be executed directly to hide the filmstrip.
      * It's important to hide the filmstrip with UI.toggleFilmstrip in order
      * to correctly resize the video area.
      */
-    toggleFilmstrip(visible, sendAnalytics = true) {
-        const isVisibleDefined = typeof visible === 'boolean';
+    toggleFilmstrip(visible) {
+        const wasFilmstripVisible = this.isFilmstripVisible();
 
-        if (!isVisibleDefined) {
-            // eslint-disable-next-line no-param-reassign
-            visible = this.isFilmstripVisible();
-        } else if (this.isFilmstripVisible() === visible) {
+        // If 'visible' is defined and matches the current state, we have
+        // nothing to do. Otherwise (regardless of whether 'visible' is defined)
+        // we need to toggle the state.
+        if (visible === wasFilmstripVisible) {
             return;
         }
-        if (sendAnalytics) {
-            sendAnalyticsEvent(TOOLBAR_FILMSTRIP_TOGGLED);
-        }
+
         this.filmstrip.toggleClass('hidden');
 
-        if (visible) {
+        if (wasFilmstripVisible) {
             this.showMenuUpIcon();
         } else {
             this.showMenuDownIcon();
         }
 
-        // Emit/fire UIEvents.TOGGLED_FILMSTRIP.
-        const eventEmitter = this.eventEmitter;
-        const isFilmstripVisible = this.isFilmstripVisible();
-
-        if (eventEmitter) {
-            eventEmitter.emit(
+        if (this.eventEmitter) {
+            this.eventEmitter.emit(
                 UIEvents.TOGGLED_FILMSTRIP,
-                this.isFilmstripVisible());
+                !wasFilmstripVisible);
         }
-        APP.store.dispatch(setFilmstripVisibility(isFilmstripVisible));
+        APP.store.dispatch(setFilmstripVisibility(!wasFilmstripVisible));
     },
 
     /**

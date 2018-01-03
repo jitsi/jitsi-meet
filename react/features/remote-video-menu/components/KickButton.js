@@ -3,8 +3,8 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
 import {
-    REMOTE_VIDEO_MENU_KICK,
-    sendAnalyticsEvent
+    createRemoteVideoMenuButtonEvent,
+    sendAnalytics
 } from '../../analytics';
 import { translate } from '../../base/i18n';
 import { kickParticipant } from '../../base/participants';
@@ -86,13 +86,12 @@ class KickButton extends Component {
     _onClick() {
         const { dispatch, onClick, participantID } = this.props;
 
-        sendAnalyticsEvent(
-            REMOTE_VIDEO_MENU_KICK,
+        sendAnalytics(createRemoteVideoMenuButtonEvent(
+            'kick.button',
             {
-                value: 1,
-                label: participantID
-            }
-        );
+                'participant_id': participantID
+            }));
+
         dispatch(kickParticipant(participantID));
 
         if (onClick) {

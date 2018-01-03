@@ -3,29 +3,12 @@
 import React from 'react';
 
 import {
-    SHORTCUT_AUDIO_MUTE_TOGGLED,
-    SHORTCUT_CHAT_TOGGLED,
-    SHORTCUT_RAISE_HAND_CLICKED,
-    SHORTCUT_SCREEN_TOGGLED,
-    SHORTCUT_VIDEO_MUTE_TOGGLED,
-    TOOLBAR_AUDIO_MUTED,
-    TOOLBAR_AUDIO_UNMUTED,
-    TOOLBAR_CHAT_TOGGLED,
-    TOOLBAR_CONTACTS_TOGGLED,
-    TOOLBAR_ETHERPACK_CLICKED,
-    TOOLBAR_FILMSTRIP_ONLY_DEVICE_SELECTION_TOGGLED,
-    TOOLBAR_FULLSCREEN_ENABLED,
-    TOOLBAR_HANGUP,
-    TOOLBAR_INVITE_CLICKED,
-    TOOLBAR_RAISE_HAND_CLICKED,
-    TOOLBAR_SCREEN_DISABLED,
-    TOOLBAR_SCREEN_ENABLED,
-    TOOLBAR_SETTINGS_TOGGLED,
-    TOOLBAR_SHARED_VIDEO_CLICKED,
-    TOOLBAR_SIP_DIALPAD_CLICKED,
-    TOOLBAR_VIDEO_DISABLED,
-    TOOLBAR_VIDEO_ENABLED,
-    sendAnalyticsEvent
+    ACTION_SHORTCUT_TRIGGERED as TRIGGERED,
+    AUDIO_MUTE,
+    VIDEO_MUTE,
+    createShortcutEvent,
+    createToolbarEvent,
+    sendAnalytics
 } from '../analytics';
 import { ParticipantCounter } from '../contact-list';
 import { openDeviceSelectionDialog } from '../device-selection';
@@ -63,13 +46,18 @@ export default function getDefaultButtons() {
             isDisplayed: () => true,
             id: 'toolbar_button_camera',
             onClick() {
+                // TODO: Why is this different from the code which handles
+                // a keyboard shortcut?
                 const newVideoMutedState = !APP.conference.isLocalVideoMuted();
 
-                if (newVideoMutedState) {
-                    sendAnalyticsEvent(TOOLBAR_VIDEO_ENABLED);
-                } else {
-                    sendAnalyticsEvent(TOOLBAR_VIDEO_DISABLED);
-                }
+                // The 'enable' attribute in the event is set to true if the
+                // button click triggered a mute action, and set to false if it
+                // triggered an unmute action.
+                sendAnalytics(createToolbarEvent(
+                    VIDEO_MUTE,
+                    {
+                        enable: newVideoMutedState
+                    }));
                 APP.UI.emitEvent(UIEvents.VIDEO_MUTED, newVideoMutedState);
             },
             popups: [
@@ -88,7 +76,13 @@ export default function getDefaultButtons() {
                     return;
                 }
 
-                sendAnalyticsEvent(SHORTCUT_VIDEO_MUTE_TOGGLED);
+                // The 'enable' attribute in the event is set to true if the
+                // shortcut triggered a mute action, and set to false if it
+                // triggered an unmute action.
+                sendAnalytics(createShortcutEvent(
+                    VIDEO_MUTE,
+                    TRIGGERED,
+                    { enable: !APP.conference.isLocalVideoMuted() }));
                 APP.conference.toggleVideoMuted();
             },
             shortcutDescription: 'keyboardShortcuts.videoMute',
@@ -105,13 +99,26 @@ export default function getDefaultButtons() {
                 <span id = 'unreadMessages' /></span>,
             id: 'toolbar_button_chat',
             onClick() {
-                sendAnalyticsEvent(TOOLBAR_CHAT_TOGGLED);
+                // The 'enable' attribute is set to true if the click resulted
+                // in the chat panel being shown, and to false if it was hidden.
+                sendAnalytics(createToolbarEvent(
+                    'toggle.chat',
+                    {
+                        enable: !APP.UI.Chat.isVisible()
+                    }));
                 APP.UI.emitEvent(UIEvents.TOGGLE_CHAT);
             },
             shortcut: 'C',
             shortcutAttr: 'toggleChatPopover',
             shortcutFunc() {
-                sendAnalyticsEvent(SHORTCUT_CHAT_TOGGLED);
+                // The 'enable' attribute is set to true if the shortcut
+                // resulted in the chat panel being shown, and to false if it
+                // was hidden.
+                sendAnalytics(createShortcutEvent(
+                    'toggle.chat',
+                    {
+                        enable: !APP.UI.Chat.isVisible()
+                    }));
                 APP.UI.toggleChat();
             },
             shortcutDescription: 'keyboardShortcuts.toggleChat',
@@ -128,7 +135,9 @@ export default function getDefaultButtons() {
             enabled: true,
             id: 'toolbar_contact_list',
             onClick() {
-                sendAnalyticsEvent(TOOLBAR_CONTACTS_TOGGLED);
+                // TODO: Include an 'enable' attribute which specifies whether
+                // the contacts panel was shown or hidden.
+                sendAnalytics(createToolbarEvent('contacts'));
                 APP.UI.emitEvent(UIEvents.TOGGLE_CONTACT_LIST);
             },
             sideContainerId: 'contacts_container',
@@ -143,11 +152,14 @@ export default function getDefaultButtons() {
             enabled: true,
             id: 'toolbar_button_desktopsharing',
             onClick() {
-                if (APP.conference.isSharingScreen) {
-                    sendAnalyticsEvent(TOOLBAR_SCREEN_DISABLED);
-                } else {
-                    sendAnalyticsEvent(TOOLBAR_SCREEN_ENABLED);
-                }
+                // TODO: Why is the button clicked handled differently that
+                // a keyboard shortcut press (firing a TOGGLE_SCREENSHARING
+                // event vs. directly calling toggleScreenSharing())?
+                sendAnalytics(createToolbarEvent(
+                    'screen.sharing',
+                    {
+                        enable: !APP.conference.isSharingScreen
+                    }));
                 APP.UI.emitEvent(UIEvents.TOGGLE_SCREENSHARING);
             },
             popups: [
@@ -160,7 +172,13 @@ export default function getDefaultButtons() {
             shortcut: 'D',
             shortcutAttr: 'toggleDesktopSharingPopover',
             shortcutFunc() {
-                sendAnalyticsEvent(SHORTCUT_SCREEN_TOGGLED);
+                // The 'enable' attribute is set to true if pressing the
+                // shortcut resulted in screen sharing being enabled, and false
+                // if it resulted in screen sharing being disabled.
+                sendAnalytics(createShortcutEvent(
+                    'toggle.screen.sharing',
+                    TRIGGERED,
+                    { enable: !APP.conference.isSharingScreen }));
 
                 // eslint-disable-next-line no-empty-function
                 APP.conference.toggleScreenSharing().catch(() => {});
@@ -180,8 +198,8 @@ export default function getDefaultButtons() {
             },
             id: 'toolbar_button_fodeviceselection',
             onClick(dispatch: Function) {
-                sendAnalyticsEvent(
-                    TOOLBAR_FILMSTRIP_ONLY_DEVICE_SELECTION_TOGGLED);
+                sendAnalytics(
+                    createToolbarEvent('filmstrip.only.device.selection'));
 
                 dispatch(openDeviceSelectionDialog());
             },
@@ -200,7 +218,7 @@ export default function getDefaultButtons() {
             hidden: true,
             id: 'toolbar_button_dialpad',
             onClick() {
-                sendAnalyticsEvent(TOOLBAR_SIP_DIALPAD_CLICKED);
+                sendAnalytics(createToolbarEvent('dialpad'));
             },
             tooltipKey: 'toolbar.dialpad'
         },
@@ -214,7 +232,13 @@ export default function getDefaultButtons() {
             hidden: true,
             id: 'toolbar_button_etherpad',
             onClick() {
-                sendAnalyticsEvent(TOOLBAR_ETHERPACK_CLICKED);
+                // The 'enable' attribute is set to true if the click resulted
+                // in the etherpad panel being shown, or false it it was hidden.
+                sendAnalytics(createToolbarEvent(
+                    'toggle.etherpad',
+                    {
+                        enable: !APP.UI.isEtherpadVisible()
+                    }));
                 APP.UI.emitEvent(UIEvents.ETHERPAD_CLICKED);
             },
             tooltipKey: 'toolbar.etherpad'
@@ -228,7 +252,18 @@ export default function getDefaultButtons() {
             enabled: true,
             id: 'toolbar_button_fullScreen',
             onClick() {
-                sendAnalyticsEvent(TOOLBAR_FULLSCREEN_ENABLED);
+                // TODO: why is the fullscreen button handled differently than
+                // the fullscreen keyboard shortcut (one results in a direct
+                // call to toggleFullScreen, while the other fires an
+                // UIEvents.TOGGLE_FULLSCREEN event)?
+
+                // The 'enable' attribute is set to true if the action resulted
+                // in fullscreen mode being enabled.
+                sendAnalytics(createToolbarEvent(
+                    'toggle.fullscreen',
+                        {
+                            enable: !APP.UI.isFullScreen()
+                        }));
 
                 APP.UI.emitEvent(UIEvents.TOGGLE_FULLSCREEN);
             },
@@ -236,7 +271,13 @@ export default function getDefaultButtons() {
             shortcutAttr: 'toggleFullscreenPopover',
             shortcutDescription: 'keyboardShortcuts.fullScreen',
             shortcutFunc() {
-                sendAnalyticsEvent('shortcut.fullscreen.toggled');
+                // The 'enable' attribute is set to true if the action resulted
+                // in fullscreen mode being enabled.
+                sendAnalytics(createShortcutEvent(
+                    'toggle.fullscreen',
+                    {
+                        enable: !APP.UI.isFullScreen()
+                    }));
                 APP.UI.toggleFullScreen();
             },
             tooltipKey: 'toolbar.fullscreen'
@@ -252,7 +293,7 @@ export default function getDefaultButtons() {
             isDisplayed: () => true,
             id: 'toolbar_button_hangup',
             onClick() {
-                sendAnalyticsEvent(TOOLBAR_HANGUP);
+                sendAnalytics(createToolbarEvent('hangup'));
                 APP.UI.emitEvent(UIEvents.HANGUP);
             },
             tooltipKey: 'toolbar.hangup'
@@ -275,7 +316,7 @@ export default function getDefaultButtons() {
             enabled: true,
             id: 'toolbar_button_link',
             onClick(dispatch: Function) {
-                sendAnalyticsEvent(TOOLBAR_INVITE_CLICKED);
+                sendAnalytics(createToolbarEvent('invite'));
 
                 dispatch(openInviteDialog());
             },
@@ -293,6 +334,13 @@ export default function getDefaultButtons() {
             onClick() {
                 const sharedVideoManager = APP.UI.getSharedVideoManager();
 
+                // TODO: Clicking the mute button and pressing the mute shortcut
+                // could be handled in a uniform manner. The code below checks
+                // the mute status and fires the appropriate event (MUTED or
+                // UNMUTED), while the code which handles the keyboard shortcut
+                // calls toggleAudioMuted(). Also strangely the the user is
+                // only warned if they click the button (and not if they use
+                // the shortcut).
                 if (APP.conference.isLocalAudioMuted()) {
                     // If there's a shared video with the volume "on" and we
                     // aren't the video owner, we warn the user
@@ -303,11 +351,15 @@ export default function getDefaultButtons() {
                         APP.UI.showCustomToolbarPopup(
                             'microphone', 'unableToUnmutePopup', true, 5000);
                     } else {
-                        sendAnalyticsEvent(TOOLBAR_AUDIO_UNMUTED);
+                        sendAnalytics(createToolbarEvent(
+                            AUDIO_MUTE,
+                            { enable: false }));
                         APP.UI.emitEvent(UIEvents.AUDIO_MUTED, false, true);
                     }
                 } else {
-                    sendAnalyticsEvent(TOOLBAR_AUDIO_MUTED);
+                    sendAnalytics(createToolbarEvent(
+                        AUDIO_MUTE,
+                        { enable: true }));
                     APP.UI.emitEvent(UIEvents.AUDIO_MUTED, true, true);
                 }
             },
@@ -328,7 +380,13 @@ export default function getDefaultButtons() {
             shortcut: 'M',
             shortcutAttr: 'mutePopover',
             shortcutFunc() {
-                sendAnalyticsEvent(SHORTCUT_AUDIO_MUTE_TOGGLED);
+                // The 'enable' attribute in the event is set to true if the
+                // shortcut triggered a mute action, and set to false if it
+                // triggered an unmute action.
+                sendAnalytics(createShortcutEvent(
+                    AUDIO_MUTE,
+                    TRIGGERED,
+                    { enable: !APP.conference.isLocalAudioMuted() }));
                 APP.conference.toggleAudioMuted();
             },
             shortcutDescription: 'keyboardShortcuts.mute',
@@ -351,14 +409,27 @@ export default function getDefaultButtons() {
             enabled: true,
             id: 'toolbar_button_raisehand',
             onClick() {
-                sendAnalyticsEvent(TOOLBAR_RAISE_HAND_CLICKED);
+                // TODO: reduce duplication with shortcutFunc below.
+
+                // The 'enable' attribute is set to true if the pressing of the
+                // shortcut resulted in the hand being raised, and to false
+                // if it resulted in the hand being 'lowered'.
+                sendAnalytics(createToolbarEvent(
+                    'raise.hand',
+                    { enable: !APP.conference.isHandRaised }));
                 APP.conference.maybeToggleRaisedHand();
             },
             shortcut: 'R',
             shortcutAttr: 'raiseHandPopover',
             shortcutDescription: 'keyboardShortcuts.raiseHand',
             shortcutFunc() {
-                sendAnalyticsEvent(SHORTCUT_RAISE_HAND_CLICKED);
+                // The 'enable' attribute is set to true if the pressing of the
+                // shortcut resulted in the hand being raised, and to false
+                // if it resulted in the hand being 'lowered'.
+                sendAnalytics(createShortcutEvent(
+                    'toggle.raise.hand',
+                    TRIGGERED,
+                    { enable: !APP.conference.isHandRaised }));
                 APP.conference.maybeToggleRaisedHand();
             },
             tooltipKey: 'toolbar.raiseHand'
@@ -386,7 +457,9 @@ export default function getDefaultButtons() {
             enabled: true,
             id: 'toolbar_button_settings',
             onClick() {
-                sendAnalyticsEvent(TOOLBAR_SETTINGS_TOGGLED);
+                // TODO: Include an 'enable' attribute which specifies whether
+                // the settings panel was shown or hidden.
+                sendAnalytics(createToolbarEvent('settings'));
                 APP.UI.emitEvent(UIEvents.TOGGLE_SETTINGS);
             },
             sideContainerId: 'settings_container',
@@ -401,7 +474,15 @@ export default function getDefaultButtons() {
             enabled: true,
             id: 'toolbar_button_sharedvideo',
             onClick() {
-                sendAnalyticsEvent(TOOLBAR_SHARED_VIDEO_CLICKED);
+                // The 'enable' attribute is set to true if the click resulted
+                // in the "start sharing video" dialog being shown, and false
+                // if it resulted in the "stop sharing video" dialog being
+                // shown.
+                sendAnalytics(createToolbarEvent(
+                    'shared.video.toggled',
+                    {
+                        enable: !APP.UI.isSharedVideoShown()
+                    }));
                 APP.UI.emitEvent(UIEvents.SHARED_VIDEO_CLICKED);
             },
             popups: [

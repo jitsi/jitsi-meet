@@ -3,8 +3,8 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
 import {
-    REMOTE_VIDEO_MENU_MUTE_CLICKED,
-    sendAnalyticsEvent
+    createRemoteVideoMenuButtonEvent,
+    sendAnalytics
 } from '../../analytics';
 import { translate } from '../../base/i18n';
 import { openDialog } from '../../base/dialog';
@@ -101,13 +101,11 @@ class MuteButton extends Component {
     _onClick() {
         const { dispatch, onClick, participantID } = this.props;
 
-        sendAnalyticsEvent(
-            REMOTE_VIDEO_MENU_MUTE_CLICKED,
+        sendAnalytics(createRemoteVideoMenuButtonEvent(
+            'mute.button',
             {
-                value: 1,
-                label: participantID
-            }
-        );
+                'participant_id': participantID
+            }));
 
         dispatch(openDialog(MuteRemoteParticipantDialog, { participantID }));
 

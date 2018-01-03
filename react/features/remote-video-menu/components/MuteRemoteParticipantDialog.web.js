@@ -6,8 +6,8 @@ import { Dialog } from '../../base/dialog';
 import { translate } from '../../base/i18n';
 
 import {
-    REMOTE_VIDEO_MENU_MUTE_CONFIRMED,
-    sendAnalyticsEvent
+    createRemoteMuteConfirmedEvent,
+    sendAnalytics
 } from '../../analytics';
 import { muteRemoteParticipant } from '../../base/participants';
 
@@ -77,18 +77,12 @@ class MuteRemoteParticipantDialog extends Component {
      * Handles the submit button action.
      *
      * @private
-     * @returns {void}
+     * @returns {boolean} - True (to note that the modal should be closed).
      */
     _onSubmit() {
         const { dispatch, participantID } = this.props;
 
-        sendAnalyticsEvent(
-            REMOTE_VIDEO_MENU_MUTE_CONFIRMED,
-            {
-                value: 1,
-                label: participantID
-            }
-        );
+        sendAnalytics(createRemoteMuteConfirmedEvent(participantID));
 
         dispatch(muteRemoteParticipant(participantID));
 

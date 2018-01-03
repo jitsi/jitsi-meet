@@ -4,9 +4,8 @@ import UIEvents from '../../../../service/UI/UIEvents';
 import Settings from '../../../settings/Settings';
 
 import {
-    AUTHENTICATE_LOGIN_CLICKED,
-    AUTHENTICATE_LOGOUT_CLICKED,
-    sendAnalyticsEvent
+    createProfilePanelButtonEvent,
+    sendAnalytics
 } from '../../../../react/features/analytics';
 
 const sidePanelsContainerId = 'sideToolbarContainer';
@@ -95,7 +94,7 @@ export default {
          *
          */
         function loginClicked() {
-            sendAnalyticsEvent(AUTHENTICATE_LOGIN_CLICKED);
+            sendAnalytics(createProfilePanelButtonEvent('login.button'));
             emitter.emit(UIEvents.AUTH_CLICKED);
         }
 
@@ -108,7 +107,7 @@ export default {
             const titleKey = 'dialog.logoutTitle';
             const msgKey = 'dialog.logoutQuestion';
 
-            sendAnalyticsEvent(AUTHENTICATE_LOGOUT_CLICKED);
+            sendAnalytics(createProfilePanelButtonEvent('logout.button'));
 
             // Ask for confirmation
             APP.UI.messageHandler.openTwoButtonDialog({

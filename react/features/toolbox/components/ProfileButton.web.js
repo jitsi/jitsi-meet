@@ -4,7 +4,10 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
-import { TOOLBAR_PROFILE_TOGGLED, sendAnalyticsEvent } from '../../analytics';
+import {
+    createToolbarEvent,
+    sendAnalytics
+} from '../../analytics';
 import {
     getAvatarURL,
     getLocalParticipant
@@ -115,7 +118,9 @@ class ProfileButton extends Component<*> {
      */
     _onClick() {
         if (!this.props._unclickable) {
-            sendAnalyticsEvent(TOOLBAR_PROFILE_TOGGLED);
+            // TODO: Include an 'enable' attribute, which specifies whether
+            // the profile panel was opened or closed.
+            sendAnalytics(createToolbarEvent('profile'));
             APP.UI.emitEvent(UIEvents.TOGGLE_PROFILE);
         }
     }

@@ -24,11 +24,9 @@ import {
     JitsiRecordingStatus
 } from '../../../react/features/base/lib-jitsi-meet';
 import {
-    RECORDING_CANCELED,
-    RECORDING_CLICKED,
-    RECORDING_STARTED,
-    RECORDING_STOPPED,
-    sendAnalyticsEvent
+    createToolbarEvent,
+    createRecordingDialogEvent,
+    sendAnalytics
 } from '../../../react/features/analytics';
 import { setToolboxEnabled } from '../../../react/features/toolbox';
 import { setNotificationsEnabled } from '../../../react/features/notifications';
@@ -452,12 +450,13 @@ const Recording = {
     },
 
     // checks whether recording is enabled and whether we have params
-    // to start automatically recording
+    // to start automatically recording (XXX: No, it doesn't do that).
     checkAutoRecord() {
         if (_isRecordingButtonEnabled && config.autoRecord) {
             this.predefinedToken = UIUtil.escapeHtml(config.autoRecordToken);
-            this.eventEmitter.emit(UIEvents.RECORDING_TOGGLED,
-                                    this.predefinedToken);
+            this.eventEmitter.emit(
+                UIEvents.RECORDING_TOGGLED,
+                { token: this.predefinedToken });
         }
     },
 
@@ -467,11 +466,16 @@ const Recording = {
      * @returns {void}
      */
     _onToolbarButtonClick() {
+        sendAnalytics(createToolbarEvent(
+            'recording.button',
+            {
+                'dialog_present': Boolean(dialog)
+            }));
+
         if (dialog) {
             return;
         }
 
-        sendAnalyticsEvent(RECORDING_CLICKED);
         switch (this.currentState) {
         case JitsiRecordingStatus.ON:
         case JitsiRecordingStatus.RETRYING:
@@ -479,7 +483,13 @@ const Recording = {
             _showStopRecordingPrompt(this.recordingType).then(
                 () => {
                     this.eventEmitter.emit(UIEvents.RECORDING_TOGGLED);
-                    sendAnalyticsEvent(RECORDING_STOPPED);
+
+                    // The confirm button on the stop recording dialog was
+                    // clicked
+                    sendAnalytics(
+                        createRecordingDialogEvent(
+                            'stop',
+                            'confirm.button'));
                 },
                 () => {}); // eslint-disable-line no-empty-function
             break;
@@ -492,21 +502,32 @@ const Recording = {
                     this.eventEmitter.emit(
                         UIEvents.RECORDING_TOGGLED,
                         { streamId });
-                    sendAnalyticsEvent(RECORDING_STARTED);
+
+                    // The confirm button on the start recording dialog was
+                    // clicked
+                    sendAnalytics(
+                        createRecordingDialogEvent(
+                            'start',
+                            'confirm.button'));
                 })
                 .catch(reason => {
                     if (reason === APP.UI.messageHandler.CANCEL) {
-                        sendAnalyticsEvent(RECORDING_CANCELED);
+                        // The cancel button on the start recording dialog was
+                        // clicked
+                        sendAnalytics(
+                            createRecordingDialogEvent(
+                                'start',
+                                'cancel.button'));
                     } else {
                         logger.error(reason);
                     }
                 });
             } else {
+                // Note that we only fire analytics events for Jibri.
                 if (this.predefinedToken) {
                     this.eventEmitter.emit(
                         UIEvents.RECORDING_TOGGLED,
                         { token: this.predefinedToken });
-                    sendAnalyticsEvent(RECORDING_STARTED);
 
                     return;
                 }
@@ -515,12 +536,9 @@ const Recording = {
                     this.eventEmitter.emit(
                         UIEvents.RECORDING_TOGGLED,
                         { token });
-                    sendAnalyticsEvent(RECORDING_STARTED);
                 })
                 .catch(reason => {
-                    if (reason === APP.UI.messageHandler.CANCEL) {
-                        sendAnalyticsEvent(RECORDING_CANCELED);
-                    } else {
+                    if (reason !== APP.UI.messageHandler.CANCEL) {
                         logger.error(reason);
                     }
                 });

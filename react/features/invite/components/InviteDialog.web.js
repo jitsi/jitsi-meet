@@ -3,8 +3,8 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
 import {
-    TOOLBAR_INVITE_CLOSE,
-    sendAnalyticsEvent
+    createInviteDialogClosedEvent,
+    sendAnalytics
 } from '../../analytics';
 import { getInviteURL } from '../../base/connection';
 import { Dialog } from '../../base/dialog';
@@ -54,7 +54,7 @@ class InviteDialog extends Component {
      * @inheritdoc
      */
     componentWillUnmount() {
-        sendAnalyticsEvent(TOOLBAR_INVITE_CLOSE);
+        sendAnalytics(createInviteDialogClosedEvent());
     }
 
     /**

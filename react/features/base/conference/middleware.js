@@ -3,12 +3,11 @@
 import UIEvents from '../../../../service/UI/UIEvents';
 
 import {
-    _LOCAL,
-    _REMOTE,
-    AUDIO_ONLY_DISABLED,
-    PINNED_,
-    UNPINNED_,
-    sendAnalyticsEvent
+    ACTION_PINNED,
+    ACTION_UNPINNED,
+    createAudioOnlyDisableEvent,
+    createPinnedEvent,
+    sendAnalytics
 } from '../../analytics';
 import { CONNECTION_ESTABLISHED } from '../connection';
 import { setVideoMuted, VIDEO_MUTISM_AUTHORITY } from '../media';
@@ -131,7 +130,7 @@ function _conferenceFailedOrLeft({ dispatch, getState }, next, action) {
     const result = next(action);
 
     if (getState()['features/base/conference'].audioOnly) {
-        sendAnalyticsEvent(AUDIO_ONLY_DISABLED);
+        sendAnalytics(createAudioOnlyDisableEvent());
         logger.log('Audio only disabled');
         dispatch(setAudioOnly(false));
     }
@@ -193,19 +192,19 @@ function _pinParticipant(store, next, action) {
 
     if (typeof APP !== 'undefined') {
         const pinnedParticipant = getPinnedParticipant(participants);
-        const actionName = action.participant.id ? PINNED_ : UNPINNED_;
-        let videoType;
+        const actionName
+            = action.participant.id ? ACTION_PINNED : ACTION_UNPINNED;
+        const local = (participantById && participantById.local)
+                || (!id && pinnedParticipant && pinnedParticipant.local);
 
-        if ((participantById && participantById.local)
-                || (!id && pinnedParticipant && pinnedParticipant.local)) {
-            videoType = _LOCAL;
-        } else {
-            videoType = _REMOTE;
-        }
+        sendAnalytics(createPinnedEvent(
+            actionName,
+            local ? 'local' : id,
+            {
+                'participant_count': conference.getParticipantCount(),
+                local
+            }));
 
-        sendAnalyticsEvent(
-                `${actionName}.${videoType}`,
-                { value: conference.getParticipantCount() });
     }
 
     // The following condition prevents signaling to pin local participant and

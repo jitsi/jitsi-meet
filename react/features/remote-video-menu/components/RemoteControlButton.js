@@ -2,8 +2,8 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 
 import {
-    REMOTE_VIDEO_MENU_REMOTE_CONTROL_,
-    sendAnalyticsEvent
+    createRemoteVideoMenuButtonEvent,
+    sendAnalytics
 } from '../../analytics';
 import { translate } from '../../base/i18n';
 
@@ -122,24 +122,19 @@ class RemoteControlButton extends Component {
     _onClick() {
         const { onClick, participantID, remoteControlState } = this.props;
 
-        let eventName;
+        // TODO: What do we do in case the state is e.g. "requesting"?
+        if (remoteControlState === REMOTE_CONTROL_MENU_STATES.STARTED
+            || remoteControlState === REMOTE_CONTROL_MENU_STATES.NOT_STARTED) {
 
-        if (remoteControlState === REMOTE_CONTROL_MENU_STATES.STARTED) {
-            eventName = 'stop';
-        }
+            const enable
+                = remoteControlState === REMOTE_CONTROL_MENU_STATES.NOT_STARTED;
 
-        if (remoteControlState === REMOTE_CONTROL_MENU_STATES.NOT_STARTED) {
-            eventName = 'start';
-        }
-
-        if (eventName) {
-            sendAnalyticsEvent(
-                `${REMOTE_VIDEO_MENU_REMOTE_CONTROL_}.${eventName}`,
+            sendAnalytics(createRemoteVideoMenuButtonEvent(
+                'remote.control.button',
                 {
-                    value: 1,
-                    label: participantID
-                }
-            );
+                    enable,
+                    'participant_id': participantID
+                }));
         }
 
         if (onClick) {

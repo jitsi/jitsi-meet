@@ -11,15 +11,8 @@ import LargeContainer from '../videolayout/LargeContainer';
 import Filmstrip from '../videolayout/Filmstrip';
 
 import {
-    SHARED_VIDEO_ALREADY_SHARED,
-    SHARED_VIDEO_AUDIO_MUTED,
-    SHARED_VIDEO_AUDIO_UNMUTED,
-    SHARED_VIDEO_CANCELED,
-    SHARED_VIDEO_PAUSED,
-    SHARED_VIDEO_STARTED,
-    SHARED_VIDEO_STOPPED,
-    SHARED_VIDEO_VOLUME_CHANGED,
-    sendAnalyticsEvent
+    createSharedVideoEvent as createEvent,
+    sendAnalytics
 } from '../../../react/features/analytics';
 import {
     participantJoined,
@@ -95,11 +88,11 @@ export default class SharedVideoManager {
                     url => {
                         this.emitter.emit(
                             UIEvents.UPDATE_SHARED_VIDEO, url, 'start');
-                        sendAnalyticsEvent(SHARED_VIDEO_STARTED);
+                        sendAnalytics(createEvent('started'));
                     },
                     err => {
                         logger.log('SHARED VIDEO CANCELED', err);
-                        sendAnalyticsEvent(SHARED_VIDEO_CANCELED);
+                        sendAnalytics(createEvent('canceled'));
                     }
             );
 
@@ -119,7 +112,7 @@ export default class SharedVideoManager {
                     }
                     this.emitter.emit(
                         UIEvents.UPDATE_SHARED_VIDEO, this.url, 'stop');
-                    sendAnalyticsEvent(SHARED_VIDEO_STOPPED);
+                    sendAnalytics(createEvent('stopped'));
                 },
                 () => {}); // eslint-disable-line no-empty-function
         } else {
@@ -127,7 +120,7 @@ export default class SharedVideoManager {
                 descriptionKey: 'dialog.alreadySharedVideoMsg',
                 titleKey: 'dialog.alreadySharedVideoTitle'
             });
-            sendAnalyticsEvent(SHARED_VIDEO_ALREADY_SHARED);
+            sendAnalytics(createEvent('already.shared'));
         }
     }
 
@@ -236,7 +229,7 @@ export default class SharedVideoManager {
                 // eslint-disable-next-line eqeqeq
             } else if (event.data == YT.PlayerState.PAUSED) {
                 self.smartAudioUnmute();
-                sendAnalyticsEvent(SHARED_VIDEO_PAUSED);
+                sendAnalytics(createEvent('paused'));
             }
             // eslint-disable-next-line eqeqeq
             self.fireSharedVideoEvent(event.data == YT.PlayerState.PAUSED);
@@ -268,7 +261,12 @@ export default class SharedVideoManager {
             } else if (event.data.volume <= 0 || event.data.muted) {
                 self.smartAudioUnmute();
             }
-            sendAnalyticsEvent(SHARED_VIDEO_VOLUME_CHANGED);
+            sendAnalytics(createEvent(
+                'volume.changed',
+                {
+                    volume: event.data.volume,
+                    muted: event.data.muted
+                }));
         };
 
         window.onPlayerReady = function(event) {
@@ -434,8 +432,8 @@ export default class SharedVideoManager {
     }
 
     /**
-     * Updates video, if its not playing and needs starting or
-     * if its playing and needs to be paysed
+     * Updates video, if it's not playing and needs starting or if it's playing
+     * and needs to be paused.
      * @param id the id of the sender of the command
      * @param url the video url
      * @param attributes
@@ -574,7 +572,7 @@ export default class SharedVideoManager {
         if (APP.conference.isLocalAudioMuted()
             && !this.mutedWithUserInteraction
             && !this.isSharedVideoVolumeOn()) {
-            sendAnalyticsEvent(SHARED_VIDEO_AUDIO_UNMUTED);
+            sendAnalytics(createEvent('audio.unmuted'));
             logger.log('Shared video: audio unmuted');
             this.emitter.emit(UIEvents.AUDIO_MUTED, false, false);
             this.showMicMutedPopup(false);
@@ -588,7 +586,7 @@ export default class SharedVideoManager {
     smartAudioMute() {
         if (!APP.conference.isLocalAudioMuted()
             && this.isSharedVideoVolumeOn()) {
-            sendAnalyticsEvent(SHARED_VIDEO_AUDIO_MUTED);
+            sendAnalytics(createEvent('audio.muted'));
             logger.log('Shared video: audio muted');
             this.emitter.emit(UIEvents.AUDIO_MUTED, true, false);
             this.showMicMutedPopup(true);

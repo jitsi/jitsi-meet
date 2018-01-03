@@ -16,19 +16,13 @@ import UIUtil from './modules/UI/util/UIUtil';
 import * as JitsiMeetConferenceEvents from './ConferenceEvents';
 
 import {
-    CONFERENCE_AUDIO_INITIALLY_MUTED,
-    CONFERENCE_SHARING_DESKTOP_START,
-    CONFERENCE_SHARING_DESKTOP_STOP,
-    CONFERENCE_VIDEO_INITIALLY_MUTED,
-    DEVICE_LIST_CHANGED_AUDIO_MUTED,
-    DEVICE_LIST_CHANGED_VIDEO_MUTED,
-    SELECT_PARTICIPANT_FAILED,
-    SETTINGS_CHANGE_DEVICE_AUDIO_OUT,
-    SETTINGS_CHANGE_DEVICE_AUDIO_IN,
-    SETTINGS_CHANGE_DEVICE_VIDEO,
-    STREAM_SWITCH_DELAY,
+    createDeviceChangedEvent,
+    createScreenSharingEvent,
+    createSelectParticipantFailedEvent,
+    createStreamSwitchDelayEvent,
+    createTrackMutedEvent,
     initAnalytics,
-    sendAnalyticsEvent
+    sendAnalytics
 } from './react/features/analytics';
 
 import EventEmitter from 'events';
@@ -741,14 +735,13 @@ export default {
             })
             .then(([ tracks, con ]) => {
                 tracks.forEach(track => {
-                    if (track.isAudioTrack() && this.isLocalAudioMuted()) {
-                        sendAnalyticsEvent(CONFERENCE_AUDIO_INITIALLY_MUTED);
-                        logger.log('Audio mute: initially muted');
-                        track.mute();
-                    } else if (track.isVideoTrack()
-                                    && this.isLocalVideoMuted()) {
-                        sendAnalyticsEvent(CONFERENCE_VIDEO_INITIALLY_MUTED);
-                        logger.log('Video mute: initially muted');
+                    if ((track.isAudioTrack() && this.isLocalAudioMuted())
+                        || (track.isVideoTrack() && this.isLocalVideoMuted())) {
+                        const mediaType = track.getType();
+
+                        sendAnalytics(
+                            createTrackMutedEvent(mediaType, 'initial mute'));
+                        logger.log(`${mediaType} mute: initially muted.`);
                         track.mute();
                     }
                 });
@@ -1453,8 +1446,9 @@ export default {
             promise = createLocalTracksF({ devices: [ 'video' ] })
                 .then(([ stream ]) => this.useVideoStream(stream))
                 .then(() => {
-                    sendAnalyticsEvent(CONFERENCE_SHARING_DESKTOP_STOP);
-                    logger.log('switched back to local video');
+                    sendAnalytics(createScreenSharingEvent('stopped'));
+                    logger.log('Screen sharing stopped, switching to video.');
+
                     if (!this.localVideo && wasVideoMuted) {
                         return Promise.reject('No local video to be muted!');
                     } else if (wasVideoMuted && this.localVideo) {
@@ -1609,7 +1603,7 @@ export default {
     },
 
     /**
-     * Tries to switch to the screenshairng mode by disposing camera stream and
+     * Tries to switch to the screensharing mode by disposing camera stream and
      * replacing it with a desktop one.
      *
      * @param {Object} [options] - Screen sharing options that will be passed to
@@ -1632,8 +1626,8 @@ export default {
             .then(stream => this.useVideoStream(stream))
             .then(() => {
                 this.videoSwitchInProgress = false;
-                sendAnalyticsEvent(CONFERENCE_SHARING_DESKTOP_START);
-                logger.log('sharing local desktop');
+                sendAnalytics(createScreenSharingEvent('started'));
+                logger.log('Screen sharing started');
             })
             .catch(error => {
                 this.videoSwitchInProgress = false;
@@ -1928,7 +1922,7 @@ export default {
 
                     room.selectParticipant(id);
                 } catch (e) {
-                    sendAnalyticsEvent(SELECT_PARTICIPANT_FAILED);
+                    sendAnalytics(createSelectParticipantFailedEvent(e));
                     reportError(e);
                 }
             });
@@ -2152,22 +2146,12 @@ export default {
         APP.UI.addListener(
             UIEvents.RESOLUTION_CHANGED,
             (id, oldResolution, newResolution, delay) => {
-                const logObject = {
-                    id: 'resolution_change',
-                    participant: id,
-                    oldValue: oldResolution,
-                    newValue: newResolution,
-                    delay
-                };
-
-                room.sendApplicationLog(JSON.stringify(logObject));
-
-                // We only care about the delay between simulcast streams.
-                // Longer delays will be caused by something else and will just
-                // poison the data.
-                if (delay < 2000) {
-                    sendAnalyticsEvent(STREAM_SWITCH_DELAY, { value: delay });
-                }
+                sendAnalytics(createStreamSwitchDelayEvent(
+                    {
+                        'old_resolution': oldResolution,
+                        'new_resolution': newResolution,
+                        value: delay
+                    }));
             });
 
         /* eslint-enable max-params */
@@ -2193,7 +2177,7 @@ export default {
             cameraDeviceId => {
                 const videoWasMuted = this.isLocalVideoMuted();
 
-                sendAnalyticsEvent(SETTINGS_CHANGE_DEVICE_VIDEO);
+                sendAnalytics(createDeviceChangedEvent('video', 'input'));
                 createLocalTracksF({
                     devices: [ 'video' ],
                     cameraDeviceId,
@@ -2232,7 +2216,7 @@ export default {
             micDeviceId => {
                 const audioWasMuted = this.isLocalAudioMuted();
 
-                sendAnalyticsEvent(SETTINGS_CHANGE_DEVICE_AUDIO_IN);
+                sendAnalytics(createDeviceChangedEvent('audio', 'input'));
                 createLocalTracksF({
                     devices: [ 'audio' ],
                     cameraDeviceId: null,
@@ -2262,7 +2246,7 @@ export default {
         APP.UI.addListener(
             UIEvents.AUDIO_OUTPUT_DEVICE_CHANGED,
             audioOutputDeviceId => {
-                sendAnalyticsEvent(SETTINGS_CHANGE_DEVICE_AUDIO_OUT);
+                sendAnalytics(createDeviceChangedEvent('audio', 'output'));
                 APP.settings.setAudioOutputDeviceId(audioOutputDeviceId)
                     .then(() => logger.log('changed audio output device'))
                     .catch(err => {
@@ -2528,7 +2512,9 @@ export default {
                     // If audio was muted before, or we unplugged current device
                     // and selected new one, then mute new audio track.
                     if (audioWasMuted) {
-                        sendAnalyticsEvent(DEVICE_LIST_CHANGED_AUDIO_MUTED);
+                        sendAnalytics(createTrackMutedEvent(
+                            'audio',
+                            'device list changed'));
                         logger.log('Audio mute: device list changed');
                         muteLocalAudio(true);
                     }
@@ -2536,7 +2522,9 @@ export default {
                     // If video was muted before, or we unplugged current device
                     // and selected new one, then mute new video track.
                     if (!this.isSharingScreen && videoWasMuted) {
-                        sendAnalyticsEvent(DEVICE_LIST_CHANGED_VIDEO_MUTED);
+                        sendAnalytics(createTrackMutedEvent(
+                            'video',
+                            'device list changed'));
                         logger.log('Video mute: device list changed');
                         muteLocalVideo(true);
                     }
@@ -2619,37 +2607,6 @@ export default {
 
             // Update the view
             APP.UI.setLocalRaisedHandStatus(raisedHand);
-        }
-    },
-
-    /**
-     * Log event to callstats and analytics.
-     * @param {string} name the event name
-     * @param {int} value the value (it's int because google analytics supports
-     * only int).
-     * @param {string} label short text which provides more info about the event
-     * which allows to distinguish between few event cases of the same name
-     * NOTE: Should be used after conference.init
-     */
-    logEvent(name, value, label) {
-        sendAnalyticsEvent(name, {
-            value,
-            label
-        });
-        if (room) {
-            room.sendApplicationLog(JSON.stringify({ name,
-                value,
-                label }));
-        }
-    },
-
-    /**
-     * Methods logs an application event given in the JSON format.
-     * @param {string} logJSON an event to be logged in JSON format
-     */
-    logJSON(logJSON) {
-        if (room) {
-            room.sendApplicationLog(logJSON);
         }
     },
 
