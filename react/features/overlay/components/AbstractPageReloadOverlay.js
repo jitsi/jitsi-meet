@@ -162,8 +162,8 @@ export default class AbstractPageReloadOverlay extends Component<*, *> {
         // sent to the backed.
         // FIXME: We should dispatch action for this.
         if (typeof APP !== 'undefined') {
-            if (APP.conference && APP.conference.room) {
-                APP.conference.room.sendApplicationLog(JSON.stringify(
+            if (APP.conference && APP.conference._room) {
+                APP.conference._room.sendApplicationLog(JSON.stringify(
                     {
                         name: 'page.reload',
                         label: this.props.reason
