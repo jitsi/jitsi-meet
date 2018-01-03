@@ -51,7 +51,7 @@
             action = event.actionSubject + '.' + action;
         }
         if (event.source && event.source !== event.action
-                && event.source !== event.action()) {
+                && event.source !== event.action) {
             // eslint-disable-next-line prefer-template
             action = event.source + '.' + action;
         }
