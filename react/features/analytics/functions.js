@@ -40,16 +40,16 @@ export function initAnalytics({ getState }: { getState: Function }) {
     const state = getState();
     const config = state['features/base/config'];
     const { analyticsScriptUrls } = config;
-    const { user } = state['features/base/jwt'];
+    const { group, server, user } = state['features/base/jwt'];
     const handlerConstructorOptions = {
-        version: JitsiMeetJS.version,
-        user
+        group,
+        user,
+        version: JitsiMeetJS.version
     };
 
     _loadHandlers(analyticsScriptUrls, handlerConstructorOptions)
         .then(handlers => {
             const roomName = state['features/base/conference'].room;
-            const { group, server } = state['features/base/jwt'];
             const permanentProperties = {};
 
             if (server) {
