@@ -58,7 +58,7 @@ export default class JitsiMeetLogStorage {
         // on the way that could be uninitialized if the storeLogs
         // attempt would be made very early (which is unlikely)
         try {
-            APP.conference.room.sendApplicationLog(logMessage);
+            APP.conference._room.sendApplicationLog(logMessage);
         } catch (error) {
             // NOTE console is intentional here
             console.error(
