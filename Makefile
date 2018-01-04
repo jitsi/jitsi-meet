@@ -35,6 +35,8 @@ deploy-appbundle:
 		$(BUILD_DIR)/device_selection_popup_bundle.min.map \
 		$(BUILD_DIR)/alwaysontop.min.js \
 		$(BUILD_DIR)/alwaysontop.min.map \
+		$(BUILD_DIR)/close.min.js \
+		$(BUILD_DIR)/close.min.map \
 		$(OUTPUT_DIR)/analytics-ga.js \
 		$(DEPLOY_DIR)
 
