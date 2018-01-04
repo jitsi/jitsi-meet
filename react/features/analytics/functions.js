@@ -39,10 +39,12 @@ export function initAnalytics({ getState }: { getState: Function }) {
 
     const state = getState();
     const config = state['features/base/config'];
-    const { analyticsScriptUrls } = config;
+    const { analyticsScriptUrls, deploymentInfo } = config;
     const { group, server, user } = state['features/base/jwt'];
     const handlerConstructorOptions = {
+        envType: (deploymentInfo && deploymentInfo.envType) || 'dev',
         group,
+        subproduct: deploymentInfo && deploymentInfo.environment,
         user,
         version: JitsiMeetJS.version
     };
@@ -61,8 +63,6 @@ export function initAnalytics({ getState }: { getState: Function }) {
 
             // Optionally, include local deployment information based on the
             // contents of window.config.deploymentInfo.
-            const { deploymentInfo } = config;
-
             if (deploymentInfo) {
                 for (const key in deploymentInfo) {
                     if (deploymentInfo.hasOwnProperty(key)) {
