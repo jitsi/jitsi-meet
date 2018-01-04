@@ -6,12 +6,15 @@ import { connect as reactReduxConnect } from 'react-redux';
 
 import { connect, disconnect } from '../../base/connection';
 import { DialogContainer } from '../../base/dialog';
+import { translate } from '../../base/i18n';
 import { CalleeInfoContainer } from '../../base/jwt';
 import { Filmstrip } from '../../filmstrip';
 import { LargeVideo } from '../../large-video';
 import { NotificationsContainer } from '../../notifications';
 import { showToolbox, Toolbox } from '../../toolbox';
 import { HideNotificationBarStyle } from '../../unsupported-browser';
+
+import { maybeShowSuboptimalExperienceNotification } from '../functions';
 
 declare var APP: Object;
 declare var interfaceConfig: Object;
@@ -26,7 +29,8 @@ type Props = {
      */
     _isRecording: boolean,
 
-    dispatch: Function
+    dispatch: Function,
+    t: Function
 }
 
 /**
@@ -70,7 +74,10 @@ class Conference extends Component<Props> {
         APP.UI.registerListeners();
         APP.UI.bindEvents();
 
-        this.props.dispatch(connect());
+        const { dispatch, t } = this.props;
+
+        dispatch(connect());
+        maybeShowSuboptimalExperienceNotification(dispatch, t);
     }
 
     /**
@@ -161,4 +168,4 @@ function _mapStateToProps(state) {
     };
 }
 
-export default reactReduxConnect(_mapStateToProps)(Conference);
+export default reactReduxConnect(_mapStateToProps)(translate(Conference));

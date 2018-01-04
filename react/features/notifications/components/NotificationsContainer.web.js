@@ -71,9 +71,7 @@ class NotificationsContainer extends Component {
         if (_notifications.length) {
             const notification = _notifications[0];
 
-            if (!_showNotifications) {
-                this._onDismissed(notification.uid);
-            } else if (this._notificationDismissTimeout) {
+            if (!_showNotifications || this._notificationDismissTimeout) {
 
                 // No-op because there should already be a notification that
                 // is waiting for dismissal.
