@@ -3,7 +3,7 @@
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 
-import JitsiMeetJS from '../../base/lib-jitsi-meet';
+import { RTCBrowserType } from '../../base/lib-jitsi-meet';
 import { Watermarks } from '../../base/react';
 import { VideoQualityLabel } from '../../video-quality';
 import { RecordingLabel } from '../../recording';
@@ -31,6 +31,9 @@ export default class LargeVideo extends Component<*> {
      * @returns {ReactElement}
      */
     render() {
+        const supportsVideoBackground = !RTCBrowserType.isFirefox()
+            && !RTCBrowserType.isTemasysPluginUsed();
+
         return (
             <div
                 className = 'videocontainer'
@@ -63,7 +66,7 @@ export default class LargeVideo extends Component<*> {
                          */
                     }
                     {
-                        JitsiMeetJS.util.RTCUIHelper.isVideoFilterSupported()
+                        supportsVideoBackground
                             ? <div id = 'largeVideoBackgroundContainer' />
                             : null
                     }
