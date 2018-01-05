@@ -147,10 +147,12 @@ export class AbstractApp extends Component {
             // Profile is the new React compatible settings.
             const profile = getProfile(this._getStore().getState());
 
-            Object.assign(localParticipant, {
-                email: profile.email,
-                name: profile.displayName
-            });
+            if (profile) {
+                localParticipant.email
+                    = profile.email || localParticipant.email;
+                localParticipant.name
+                    = profile.displayName || localParticipant.name;
+            }
 
             // We set the initialized state here and not in the contructor to
             // make sure that {@code componentWillMount} gets invoked before
