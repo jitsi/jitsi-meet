@@ -539,9 +539,11 @@
         "tooltip": "Get access info about the meeting"
     },
     "profileModal": {
+        "conferenceSection": "Conference",
         "displayName": "Display name",
         "email": "Email",
         "header": "Settings",
+        "profileSection": "Profile",
         "serverURL": "Server URL",
         "startWithAudioMuted": "Start with audio muted",
         "startWithVideoMuted": "Start with video muted"

@@ -1,9 +1,6 @@
 /* @flow */
 
-import {
-    HIDE_APP_SETTINGS,
-    SHOW_APP_SETTINGS
-} from './actionTypes';
+import { HIDE_APP_SETTINGS, SHOW_APP_SETTINGS } from './actionTypes';
 
 /**
 * Redux-signals the request to open the app settings modal.

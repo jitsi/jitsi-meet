@@ -24,7 +24,12 @@
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
 }
-
+.icon-arrow_back:before {
+  content: "\e5c4";
+}
+.icon-navigate_before:before {
+  content: "\e408";
+}
 .icon-event_note:before {
     content: "\e616";
 }

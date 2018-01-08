@@ -1,6 +1,7 @@
 import React from 'react';
 import {
     Modal,
+    ScrollView,
     Switch,
     Text,
     TextInput,
@@ -11,10 +12,16 @@ import {
     _mapStateToProps,
     AbstractAppSettings
 } from './AbstractAppSettings';
+import BackButton from './BackButton';
 import FormRow from './FormRow';
-import styles from './styles';
+import FormSectionHeader from './FormSectionHeader';
+import styles, { HEADER_PADDING } from './styles';
 
+import { getSafetyOffset } from '../functions.native';
+
+import { ASPECT_RATIO_NARROW } from '../../base/aspect-ratio';
 import { translate } from '../../base/i18n';
+import { isIPad } from '../../base/react';
 
 /**
  * The native container rendering the app settings page.
@@ -22,6 +29,16 @@ import { translate } from '../../base/i18n';
  * @extends AbstractAppSettings
  */
 class AppSettings extends AbstractAppSettings {
+    /**
+    * Instantiates a new {@code AppSettings} instance.
+    *
+    * @inheritdoc
+    */
+    constructor(props) {
+        super(props);
+
+        this._getSafetyPadding = this._getSafetyPadding.bind(this);
+    }
 
     /**
      * Implements React's {@link Component#render()}, renders the settings page.
@@ -30,49 +47,62 @@ class AppSettings extends AbstractAppSettings {
      * @returns {ReactElement}
      */
     render() {
-        const { t } = this.props;
+        const { _profile, t } = this.props;
+
+        // FIXME: presentationStyle is added to workaround
+        // orientation issue on iOS
 
         return (
             <Modal
                 animationType = 'slide'
                 onRequestClose = { this._onRequestClose }
-                presentationStyle = 'fullScreen'
-                style = { styles.modal }
+                presentationStyle = 'overFullScreen'
+                supportedOrientations = { [
+                    'landscape',
+                    'portrait'
+                ] }
                 visible = { this.props._visible }>
-                <View style = { styles.headerContainer } >
+                <View
+                    style = { [
+                        styles.headerContainer,
+                        this._getSafetyPadding()
+                    ] } >
+                    <BackButton
+                        onPress = { this._onRequestClose }
+                        style = { styles.settingsBackButton } />
                     <Text style = { [ styles.text, styles.headerTitle ] } >
                         { t('profileModal.header') }
                     </Text>
                 </View>
-                <View style = { styles.settingsContainer } >
-                    <FormRow
-                        fieldSeparator = { true }
-                        i18nLabel = 'profileModal.serverURL' >
-                        <TextInput
-                            autoCapitalize = 'none'
-                            onChangeText = { this._onChangeServerName }
-                            onEndEditing = { this._onSaveServerName }
-                            placeholder = 'https://jitsi.example.com'
-                            value = { this.state.serverURL } />
-                    </FormRow>
+                <ScrollView style = { styles.settingsContainer } >
+                    <FormSectionHeader
+                        i18nLabel = 'profileModal.profileSection' />
                     <FormRow
                         fieldSeparator = { true }
                         i18nLabel = 'profileModal.displayName' >
                         <TextInput
                             onChangeText = { this._onChangeDisplayName }
-                            onEndEditing = { this._onSaveDisplayName }
                             placeholder = 'John Doe'
-                            value = { this.state.displayName } />
+                            value = { _profile.displayName } />
                     </FormRow>
                     <FormRow
-                        fieldSeparator = { true }
                         i18nLabel = 'profileModal.email' >
                         <TextInput
                             keyboardType = { 'email-address' }
                             onChangeText = { this._onChangeEmail }
-                            onEndEditing = { this._onSaveEmail }
                             placeholder = 'email@example.com'
-                            value = { this.state.email } />
+                            value = { _profile.email } />
+                    </FormRow>
+                    <FormSectionHeader
+                        i18nLabel = 'profileModal.conferenceSection' />
+                    <FormRow
+                        fieldSeparator = { true }
+                        i18nLabel = 'profileModal.serverURL' >
+                        <TextInput
+                            autoCapitalize = 'none'
+                            onChangeText = { this._onChangeServerURL }
+                            placeholder = { this.props._serverURL }
+                            value = { _profile.serverURL } />
                     </FormRow>
                     <FormRow
                         fieldSeparator = { true }
@@ -81,7 +111,9 @@ class AppSettings extends AbstractAppSettings {
                             onValueChange = {
                                 this._onStartAudioMutedChange
                             }
-                            value = { this.state.startWithAudioMuted } />
+                            value = {
+                                _profile.startWithAudioMuted
+                            } />
                     </FormRow>
                     <FormRow
                         i18nLabel = 'profileModal.startWithVideoMuted' >
@@ -89,11 +121,32 @@ class AppSettings extends AbstractAppSettings {
                             onValueChange = {
                                 this._onStartVideoMutedChange
                             }
-                            value = { this.state.startWithVideoMuted } />
+                            value = {
+                                _profile.startWithVideoMuted
+                            } />
                     </FormRow>
-                </View>
+                </ScrollView>
             </Modal>
         );
+    }
+
+    /**
+    * Calculates header safety padding for mobile devices.
+    * See comment in functions.js.
+    *
+    * @private
+    * @returns {Object}
+    */
+    _getSafetyPadding() {
+        if (isIPad() || this.props._aspectRatio === ASPECT_RATIO_NARROW) {
+            const safeOffset = Math.max(getSafetyOffset(), HEADER_PADDING);
+
+            return {
+                paddingTop: safeOffset
+            };
+        }
+
+        return undefined;
     }
 }
 

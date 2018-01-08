@@ -1,25 +1,45 @@
+import { Platform } from 'react-native';
 import {
     BoxModel,
     ColorPalette,
     createStyleSheet
 } from '../../base/styles';
 
-const LABEL_TAB = 300;
-
 export const ANDROID_UNDERLINE_COLOR = 'transparent';
+export const CONTAINER_PADDING = 2 * BoxModel.padding;
+export const HEADER_COLOR = ColorPalette.blue;
+export const HEADER_PADDING = BoxModel.padding;
+const TEXT_SIZE = 17;
 
 /**
- * The styles of the React {@code Components} of the feature welcome including
- * {@code WelcomePage} and {@code BlankPage}.
+ * The styles of the React {@code Components} of the feature
+ * {@code AppSettings}.
  */
 export default createStyleSheet({
+
+    /**
+    *The platform specific back button style.
+    */
+    backIcon: {
+        alignSelf: 'center',
+        ...Platform.select({
+            ios: {
+                alignSelf: 'center',
+                fontSize: 30
+            },
+            android: {
+                fontSize: 24,
+                padding: 8
+            }
+        })
+    },
 
     /**
     * Standardized style for a field container {@code View}.
     */
     fieldContainer: {
-        flexDirection: 'row',
         alignItems: 'center',
+        flexDirection: 'row',
         minHeight: 65
     },
 
@@ -27,16 +47,16 @@ export default createStyleSheet({
     * Standard container for a {@code View} containing a field label.
     */
     fieldLabelContainer: {
-        flexDirection: 'row',
         alignItems: 'center',
-        width: LABEL_TAB
+        flexDirection: 'row'
     },
 
     /**
     * Field container style for all but last row {@code View}.
     */
     fieldSeparator: {
-        borderBottomWidth: 1
+        borderBottomWidth: 1,
+        borderColor: 'rgba(0, 0, 0, 0.1)'
     },
 
     /**
@@ -44,26 +64,48 @@ export default createStyleSheet({
     * field values (the actual field).
     */
     fieldValueContainer: {
+        alignItems: 'center',
         flex: 1,
-        justifyContent: 'flex-end',
         flexDirection: 'row',
-        alignItems: 'center'
+        justifyContent: 'flex-end'
+    },
+
+    formSectionTitle: {
+        backgroundColor: 'rgba(0, 0, 0, 0.1)',
+        marginTop: 5,
+        padding: 5
     },
 
     /**
     * Page header {@code View}.
     */
     headerContainer: {
-        backgroundColor: ColorPalette.blue,
-        flexDirection: 'row',
         alignItems: 'center',
-        padding: 2 * BoxModel.margin
+        backgroundColor: HEADER_COLOR,
+        flexDirection: 'row',
+        justifyContent: 'flex-start',
+        padding: HEADER_PADDING
     },
 
     /**
     * The title {@code Text} of the header.
     */
     headerTitle: {
+        color: ColorPalette.white,
+        fontSize: 24
+    },
+
+    /**
+    * Style of the scrollview to be able to scroll the content.
+    */
+    scrollView: {
+        flex: 1
+    },
+
+    /**
+    * The back button style on the settings screen.
+    */
+    settingsBackButton: {
         color: ColorPalette.white,
         fontSize: 25
     },
@@ -76,7 +118,8 @@ export default createStyleSheet({
         flex: 1,
         flexDirection: 'column',
         margin: 0,
-        padding: 2 * BoxModel.padding
+        padding: CONTAINER_PADDING,
+        paddingTop: 0
     },
 
     /**
@@ -84,15 +127,15 @@ export default createStyleSheet({
     */
     text: {
         color: ColorPalette.black,
-        fontSize: 20
+        fontSize: TEXT_SIZE
     },
 
     /**
     * Standard text input field style.
     */
     textInputField: {
-        fontSize: 20,
         flex: 1,
+        fontSize: TEXT_SIZE,
         textAlign: 'right'
     }
 });

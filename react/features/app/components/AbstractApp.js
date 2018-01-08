@@ -179,6 +179,8 @@ export class AbstractApp extends Component {
      * @returns {void}
      */
     componentWillReceiveProps(nextProps) {
+        const currentProps = this.props;
+
         this.init.then(() => {
             // The consumer of this AbstractApp did not provide a redux store.
             if (typeof nextProps.store === 'undefined'
@@ -189,7 +191,7 @@ export class AbstractApp extends Component {
                     // its own internal redux store. If the consumer did not
                     // provide a redux store before, then this instance is
                     // using its own internal redux store already.
-                    && typeof this.props.store !== 'undefined') {
+                    && typeof currentProps.store !== 'undefined') {
                 this.setState({
                     store: this._maybeCreateStore(nextProps)
                 });
@@ -199,11 +201,11 @@ export class AbstractApp extends Component {
             let { url } = nextProps;
 
             url = toURLString(url);
-            if (toURLString(this.props.url) !== url
+            if (toURLString(currentProps.url) !== url
 
                     // XXX Refer to the implementation of loadURLObject: in
                     // ios/sdk/src/JitsiMeetView.m for further information.
-                    || this.props.timestamp !== nextProps.timestamp) {
+                    || currentProps.timestamp !== nextProps.timestamp) {
                 this._openURL(url || this._getDefaultURL());
             }
         });
@@ -373,11 +375,11 @@ export class AbstractApp extends Component {
             }
         }
 
-        const profileDefaultURL = getProfile(
+        const profileServerURL = getProfile(
             this._getStore().getState()
-        ).defaultURL;
+        ).serverURL;
 
-        return this.props.defaultURL || profileDefaultURL || DEFAULT_URL;
+        return this.props.defaultURL || profileServerURL || DEFAULT_URL;
     }
 
     /**

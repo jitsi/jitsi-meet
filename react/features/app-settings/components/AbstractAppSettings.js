@@ -11,6 +11,16 @@ import { getProfile, updateProfile } from '../../base/profile';
 type Props = {
 
     /**
+    * The current aspect ratio of the screen.
+    */
+    _aspectRatio: Symbol,
+
+    /**
+    * The default URL for when there is no custom URL set in the profile.
+    */
+    _serverURL: string,
+
+    /**
     * The current profile object.
     */
     _profile: Object,
@@ -27,44 +37,12 @@ type Props = {
 };
 
 /**
- * The type of the React {@code Component} state of {@link AbstractAppSettings}.
- */
-type State = {
-
-    /**
-    * The display name field value on the settings screen.
-    */
-    displayName: string,
-
-    /**
-    * The email field value on the settings screen.
-    */
-    email: string,
-
-    /**
-    * The server url field value on the settings screen.
-    */
-    serverURL: string,
-
-    /**
-    * The start audio muted switch value on the settings screen.
-    */
-    startWithAudioMuted: boolean,
-
-    /**
-    * The start video muted switch value on the settings screen.
-    */
-    startWithVideoMuted: boolean
-}
-
-/**
  * Base (abstract) class for container component rendering
  * the app settings page.
  *
  * @abstract
  */
-export class AbstractAppSettings extends Component<Props, State> {
-
+export class AbstractAppSettings extends Component<Props> {
     /**
      * Initializes a new {@code AbstractAppSettings} instance.
      *
@@ -76,36 +54,12 @@ export class AbstractAppSettings extends Component<Props, State> {
 
         this._onChangeDisplayName = this._onChangeDisplayName.bind(this);
         this._onChangeEmail = this._onChangeEmail.bind(this);
-        this._onChangeServerName = this._onChangeServerName.bind(this);
+        this._onChangeServerURL = this._onChangeServerURL.bind(this);
         this._onRequestClose = this._onRequestClose.bind(this);
-        this._onSaveDisplayName = this._onSaveDisplayName.bind(this);
-        this._onSaveEmail = this._onSaveEmail.bind(this);
-        this._onSaveServerName = this._onSaveServerName.bind(this);
         this._onStartAudioMutedChange
             = this._onStartAudioMutedChange.bind(this);
         this._onStartVideoMutedChange
             = this._onStartVideoMutedChange.bind(this);
-    }
-
-    /**
-     * Invokes React's {@link Component#componentWillReceiveProps()} to make
-     * sure we have the state Initialized on component mount.
-     *
-     * @inheritdoc
-     */
-    componentWillMount() {
-        this._updateStateFromProps(this.props);
-    }
-
-    /**
-     * Implements React's {@link Component#componentWillReceiveProps()}. Invoked
-     * before this mounted component receives new props.
-     *
-     * @inheritdoc
-     * @param {Props} nextProps - New props component will receive.
-     */
-    componentWillReceiveProps(nextProps: Props) {
-        this._updateStateFromProps(nextProps);
     }
 
     _onChangeDisplayName: (string) => void;
@@ -118,7 +72,7 @@ export class AbstractAppSettings extends Component<Props, State> {
     * @returns {void}
     */
     _onChangeDisplayName(text) {
-        this.setState({
+        this._updateProfile({
             displayName: text
         });
     }
@@ -133,12 +87,12 @@ export class AbstractAppSettings extends Component<Props, State> {
     * @returns {void}
     */
     _onChangeEmail(text) {
-        this.setState({
+        this._updateProfile({
             email: text
         });
     }
 
-    _onChangeServerName: (string) => void;
+    _onChangeServerURL: (string) => void;
 
     /**
     * Handles the server name field value change.
@@ -147,8 +101,8 @@ export class AbstractAppSettings extends Component<Props, State> {
     * @param {string} text - The server URL typed in the server field.
     * @returns {void}
     */
-    _onChangeServerName(text) {
-        this.setState({
+    _onChangeServerURL(text) {
+        this._updateProfile({
             serverURL: text
         });
     }
@@ -156,67 +110,12 @@ export class AbstractAppSettings extends Component<Props, State> {
     _onRequestClose: () => void;
 
     /**
-    * Handles the hardware back button.
+    * Handles the back button.
     *
     * @returns {void}
     */
     _onRequestClose() {
         this.props.dispatch(hideAppSettings());
-    }
-
-    _onSaveDisplayName: () => void;
-
-    /**
-    * Handles the display name field onEndEditing.
-    *
-    * @protected
-    * @returns {void}
-    */
-    _onSaveDisplayName() {
-        this._updateProfile({
-            displayName: this.state.displayName
-        });
-    }
-
-    _onSaveEmail: () => void;
-
-    /**
-    * Handles the email field onEndEditing.
-    *
-    * @protected
-    * @returns {void}
-    */
-    _onSaveEmail() {
-        this._updateProfile({
-            email: this.state.email
-        });
-    }
-
-    _onSaveServerName: () => void;
-
-    /**
-    * Handles the server name field onEndEditing.
-    *
-    * @protected
-    * @returns {void}
-    */
-    _onSaveServerName() {
-        let serverURL;
-
-        if (this.state.serverURL.endsWith('/')) {
-            serverURL = this.state.serverURL.substr(
-                0, this.state.serverURL.length - 1
-            );
-        } else {
-            serverURL = this.state.serverURL;
-        }
-
-        this._updateProfile({
-            defaultURL: serverURL
-        });
-        this.setState({
-            serverURL
-        });
     }
 
     _onStartAudioMutedChange: (boolean) => void;
@@ -230,10 +129,6 @@ export class AbstractAppSettings extends Component<Props, State> {
     * @returns {void}
     */
     _onStartAudioMutedChange(newValue) {
-        this.setState({
-            startWithAudioMuted: newValue
-        });
-
         this._updateProfile({
             startWithAudioMuted: newValue
         });
@@ -250,10 +145,6 @@ export class AbstractAppSettings extends Component<Props, State> {
     * @returns {void}
     */
     _onStartVideoMutedChange(newValue) {
-        this.setState({
-            startWithVideoMuted: newValue
-        });
-
         this._updateProfile({
             startWithVideoMuted: newValue
         });
@@ -274,25 +165,6 @@ export class AbstractAppSettings extends Component<Props, State> {
             ...updateObject
         }));
     }
-
-    _updateStateFromProps: (Object) => void;
-
-    /**
-    * Updates the component state when (new) props are received.
-    *
-    * @private
-    * @param {Object} props - The component's props.
-    * @returns {void}
-    */
-    _updateStateFromProps(props) {
-        this.setState({
-            displayName: props._profile.displayName,
-            email: props._profile.email,
-            serverURL: props._profile.defaultURL,
-            startWithAudioMuted: props._profile.startWithAudioMuted,
-            startWithVideoMuted: props._profile.startWithVideoMuted
-        });
-    }
 }
 
 /**
@@ -304,8 +176,13 @@ export class AbstractAppSettings extends Component<Props, State> {
  * @returns {Object}
  */
 export function _mapStateToProps(state: Object) {
+    const _serverURL = state['features/app'].app._getDefaultURL();
+    const _profile = getProfile(state);
+
     return {
-        _profile: getProfile(state),
+        _aspectRatio: state['features/base/aspect-ratio'].aspectRatio,
+        _serverURL,
+        _profile,
         _visible: state['features/app-settings'].visible
     };
 }

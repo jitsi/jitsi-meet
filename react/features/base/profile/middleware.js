@@ -2,7 +2,10 @@
 import { PROFILE_UPDATED } from './actionTypes';
 import MiddlewareRegistry from '../redux/MiddlewareRegistry';
 
-import { participantUpdated } from '../participants';
+import {
+    getLocalParticipant,
+    participantUpdated
+} from '../participants';
 import { getProfile } from '../profile';
 import { toState } from '../redux';
 
@@ -31,13 +34,11 @@ MiddlewareRegistry.register(store => next => action => {
  * @returns {void}
  */
 function _updateLocalParticipant(store) {
+    const localParticipant = getLocalParticipant(toState(store));
     const profile = getProfile(toState(store));
 
-    const newLocalParticipant = {
-        email: profile.email,
-        local: true,
-        name: profile.displayName
-    };
+    localParticipant.email = profile.email;
+    localParticipant.name = profile.displayName;
 
-    store.dispatch(participantUpdated(newLocalParticipant));
+    store.dispatch(participantUpdated(localParticipant));
 }

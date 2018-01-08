@@ -6,14 +6,22 @@ import {
     View } from 'react-native';
 import { connect } from 'react-redux';
 
-import styles, { ANDROID_UNDERLINE_COLOR } from './styles';
+import styles, { ANDROID_UNDERLINE_COLOR, CONTAINER_PADDING } from './styles';
 
+import { getSafetyOffset } from '../functions';
+
+import { ASPECT_RATIO_WIDE } from '../../base/aspect-ratio';
 import { translate } from '../../base/i18n';
 
 /**
 * The type of the React {@code Component} props of {@link FormRow}
 */
 type Props = {
+
+    /**
+    * The current aspect ratio of the screen.
+    */
+    _aspectRatio: Symbol,
 
     /**
     */
@@ -40,7 +48,6 @@ type Props = {
  * on a form. The component should have exactly one child component.
  */
 class FormRow extends Component<Props> {
-
     /**
      * Initializes a new {@code FormRow} instance.
      *
@@ -118,6 +125,7 @@ class FormRow extends Component<Props> {
 
     /**
     * Assembles the row style array based on the row's props.
+    * For padding, see comment in functions.js.
     *
     * @private
     * @returns {Array<Object>}
@@ -131,8 +139,33 @@ class FormRow extends Component<Props> {
             rowStyle.push(styles.fieldSeparator);
         }
 
+        if (this.props._aspectRatio === ASPECT_RATIO_WIDE) {
+            const safeOffset = Math.max(
+                getSafetyOffset() - CONTAINER_PADDING, 0
+            );
+
+            rowStyle.push({
+                marginLeft: safeOffset,
+                marginRight: safeOffset
+            });
+        }
+
         return rowStyle;
     }
 }
 
-export default translate(connect()(FormRow));
+/**
+ * Maps (parts of) the redux state to the React {@code Component} props of
+ * {@code FormRow}.
+ *
+ * @param {Object} state - The redux state.
+ * @protected
+ * @returns {Object}
+ */
+export function _mapStateToProps(state: Object) {
+    return {
+        _aspectRatio: state['features/base/aspect-ratio'].aspectRatio
+    };
+}
+
+export default translate(connect(_mapStateToProps)(FormRow));
