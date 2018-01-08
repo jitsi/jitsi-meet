@@ -45,7 +45,7 @@ export function initAnalytics({ getState }: { getState: Function }) {
         envType: (deploymentInfo && deploymentInfo.envType) || 'dev',
         group,
         subproduct: deploymentInfo && deploymentInfo.environment,
-        user,
+        user: user && user.id,
         version: JitsiMeetJS.version
     };
 
