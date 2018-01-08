@@ -2,23 +2,19 @@
     "contactlist": "__count__ Membres",
     "contactlist_plural": "",
     "passwordSetRemotely": "défini par un autre membre",
-    "connectionsettings": "Paramètres de connexion",
     "poweredby": "Produit par",
-    "feedback": {
-        "average": "Moyen",
-        "bad": "Mauvais",
-        "good": "",
-        "rateExperience": "Veuillez évaluer votre réunion.",
-        "veryBad": "Très mauvais",
-        "veryGood": "Très bon"
-    },
     "inviteUrlDefaultMsg": "Votre conférence est en cours de création...",
     "me": "moi",
     "speaker": "Haut-parleur",
     "raisedHand": "Aimerait prendre la parole",
     "defaultNickname": "ex. Jean Dupont",
     "defaultLink": "ex. __url__",
-    "callingName": "__name__",
+    "audioDevices": {
+        "bluetooth": "Bluetooth",
+        "headphones": "Écouteurs",
+        "phone": "Téléphone",
+        "speaker": "Haut-parleur"
+    },
     "audioOnly": {
         "audioOnly": "Audio uniquement",
         "featureToggleDisabled": "Le basculement de __feature__ est désactivé en mode audio uniquement"
@@ -101,7 +97,7 @@
         "rejoinKeyTitle": "Rejoindre"
     },
     "toolbar": {
-        "addPeople": "",
+        "addPeople": "Ajouter des personnes à votre appel",
         "audioonly": "Activer / Désactiver le mode audio uniquement (économiser de la bande passante)",
         "mute": "Muet / Actif",
         "videomute": "Démarrer / Arrêter la caméra",
@@ -130,11 +126,9 @@
         "raiseHand": "Lever / Baisser la main"
     },
     "unsupportedBrowser": {
-        "appInstalled": "ou si vous l'avez déjà installé<br /><strong></strong>",
-        "appNotInstalled": "Vous devez installer <strong>__app__</strong> pour rejoindre une conversation sur votre mobile",
-        "downloadApp": "Télécharger l'Application",
-        "joinConversation": "Rejoindre la discussion de groupe",
-        "startConference": "Démarrer une conférence"
+        "appNotInstalled": "Rejoignez cette réunion avec __app__ sur votre téléphone.",
+        "downloadApp": "Télécharger l'application",
+        "openApp": "Continuer sur __app__"
     },
     "bottomtoolbar": {
         "chat": "Ouvrir / fermer le chat",
@@ -214,7 +208,9 @@
     "notify": {
         "disconnected": "déconnecté",
         "moderator": "Droits modérateur accordés !",
-        "connected": "connecté",
+        "connectedOneMember": "__name__ connecté",
+        "connectedTwoMembers": "__first__ et __second__ connectés",
+        "connectedThreePlusMembers": "__name__ and __count__ others connectés",
         "somebody": "Quelqu'un",
         "me": "Moi",
         "focus": "Focus de conférence",
@@ -322,14 +318,11 @@
         "stopRecordingWarning": "Désirez-vous vraiment arrêter l'enregistrement?",
         "stopLiveStreaming": "Arrêter le direct",
         "stopRecording": "Arrêter l'enregistrement",
-        "doNotShowWarningAgain": "Ne plus afficher cet avertissement",
         "doNotShowMessageAgain": "Ne plus afficher ce message",
         "permissionDenied": "Permission refusée",
         "screenSharingFailedToInstall": "Oups! Votre extension de partage d'écran n'a pas pu être installée.",
         "screenSharingFailedToInstallTitle": "L'extension de partage d'écran n'a pas pu être installée",
         "screenSharingPermissionDeniedError": "Oups! Une erreur s'est produite avec vos autorisations d'extension de partage d'écran. Veuillez rafraîchir et réessayer.",
-        "micErrorPresent": "Une erreur est survenue lors de la connexion à votre microphone.",
-        "cameraErrorPresent": "Votre caméra ne satisfait pas certaines des contraintes nécessaires.",
         "cameraUnsupportedResolutionError": "Votre appareil ne prend pas en charge la résolution vidéo requise.",
         "cameraUnknownError": "Vous ne pouvez pas utiliser la caméra pour une raison inconnue.",
         "cameraPermissionDeniedError": "Vous n'avez pas autorisé l'utilisation de votre caméra. Vous pouvez toujours participer à la conférence, mais les autres ne vont pas vous voir. Utilisez le bouton de la caméra dans la barre d'adresse pour résoudre ce problème.",
@@ -413,7 +406,8 @@
         "off": "Enregistrement arrêté",
         "on": "Enregistrement",
         "pending": "Enregistrement en attente de participant...",
-        "unavailable": "Oups! Le service d'enregistrement est actuellement indisponible. Nous travaillons sur la résolution du problème. Veuillez réessayer plus tard.",
+        "serviceName": "Service d'enregistrement",
+        "unavailable": "Oups! Le __serviceName__ est actuellement indisponible. Nous travaillons sur la résolution du problème. Veuillez réessayer plus tard.",
         "unavailableTitle": "Enregistrement indisponible"
     },
     "liveStreaming": {
@@ -425,10 +419,22 @@
         "off": "Le Streaming a été arrêter",
         "on": "Direct",
         "pending": "Commencer le direct...",
+        "serviceName": "Service de diffusion en direct",
         "streamIdRequired": "Merci de renseigner le stream id pour lancer le streaming.",
         "streamIdHelp": "Où puis-je trouver ceci?",
-        "unavailable": "Oups! Le service de Streaming est actuellement indisponible. Nous sommes en train de résoudre le problème. Veuillez réessayer plus tard.",
         "unavailableTitle": "Le Streaming est indisponible"
+    },
+    "videoSIPGW": {
+        "busy": "Nous travaillons sur la libération des ressources. Veuillez réessayez dans quelques minutes.",
+        "busyTitle": "Le service du Salon est actuellement occupé",
+        "errorInvite": "La conférence n'est pas encore établie. Veuillez réessayer plus tard.",
+        "errorInviteTitle": "Erreur lors de l'invitation",
+        "errorAlreadyInvited": "__displayName__ est déjà invité(e)",
+        "errorInviteFailedTitle": "l'invitation de __displayName__ a échoué",
+        "errorInviteFailed": "Nous travaillons sur la résolution du problème. Veuillez réessayer plus tard.",
+        "pending": "__displayName__ a été invité(e)",
+        "serviceName": "Service de salon",
+        "unavailableTitle": "Service indisponible"
     },
     "speakerStats": {
         "hours": "__count__h",
@@ -453,7 +459,7 @@
         "hidePassword": "Cacher le mot de passe",
         "inviteTo": "inviter des participants à __conferenceName__",
         "invitedYouTo": "__userName__ vous a invité(e) à la conférence __inviteURL__",
-        "invitePeople": "Inviter des participants",
+        "invitePeople": "Inviter",
         "locked": "Cet appel est verrouillé. les nouveaux interlocuteurs devraient avoir le lien et saisir le mot de passe pour rejoindre.",
         "showPassword": "Afficher le mot de passe",
         "unlocked": "Cet appel est verrouillé. Tout nouveau participant avec un lien peut rejoindre l'appel."
@@ -466,6 +472,8 @@
         "labelTooltipAudioOnly": "Mode audio uniquement activé",
         "ld": "BD",
         "lowDefinition": "Basse définition",
+        "onlyAudioAvailable": "Seul l'audio est disponible",
+        "onlyAudioSupported": "Nous ne supportons que l'audio sur ce navigateur.",
         "p2pEnabled": "Peer to Peer activé",
         "p2pVideoQualityDescription": "En mode peer to peer, la qualité d'appel reçue ne peut être basculée qu'entre haut et audio. Les autres paramètres ne seront pas respectés tant que l'on n'aura pas quitté peer to peer.",
         "recHighDefinitionOnly": "Va préférer la haute définition",
@@ -498,6 +506,14 @@
         "microphoneError": "Impossible d'accéder à votre microphone",
         "cameraPermission": "Erreur lors de l'obtention de la permission de la caméra ",
         "microphonePermission": "Erreur lors de l'obtention de la permission du microphone"
+    },
+    "feedback": {
+        "average": "Moyen",
+        "bad": "Mauvais",
+        "good": "Bien",
+        "rateExperience": "Veuillez évaluer votre réunion.",
+        "veryBad": "Très mauvais",
+        "veryGood": "Très bon"
     },
     "info": {
         "copy": "Copier le lien",
