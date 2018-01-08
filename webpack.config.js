@@ -151,7 +151,10 @@ module.exports = [
                 './react/features/always-on-top/index.js',
 
             'do_external_connect':
-                './connection_optimization/do_external_connect.js'
+                './connection_optimization/do_external_connect.js',
+
+            'close':
+                './static/close.js'
         }
     }),
 
