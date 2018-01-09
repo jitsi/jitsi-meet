@@ -80,7 +80,15 @@ function _alertPermissionErrorWithSettings(trackType) {
 function _openSettings() {
     switch (Platform.OS) {
     case 'android':
-        NativeModules.AndroidSettings.open();
+        NativeModules.AndroidSettings.open().catch(() => {
+            Alert.alert(
+                'Error opening settings',
+                'Please open settings and grant the required permissions',
+                [
+                    { text: 'OK' }
+                ]
+            );
+        });
         break;
 
     case 'ios':
