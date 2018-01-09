@@ -28,6 +28,11 @@ class InviteDialog extends Component {
      */
     static propTypes = {
         /**
+         * Whether or not the current user can modify the current password.
+         */
+        _canEditPassword: PropTypes.bool,
+
+        /**
          * The redux store representation of the JitsiConference.
          */
         _conference: PropTypes.object,
@@ -36,11 +41,6 @@ class InviteDialog extends Component {
          * The url for the JitsiConference.
          */
         _inviteURL: PropTypes.string,
-
-        /**
-         * Whether or not the current user is a conference moderator.
-         */
-        _isModerator: PropTypes.bool,
 
         /**
          * Invoked to obtain translated strings.
@@ -64,7 +64,7 @@ class InviteDialog extends Component {
      * @returns {ReactElement}
      */
     render() {
-        const { _conference, _inviteURL, t } = this.props;
+        const { _canEditPassword, _conference, _inviteURL, t } = this.props;
         const titleString
             = t('invite.inviteTo', { conferenceName: _conference.room });
 
@@ -80,7 +80,7 @@ class InviteDialog extends Component {
                         conference = { _conference.conference }
                         locked = { _conference.locked }
                         password = { _conference.password }
-                        showPasswordEdit = { this.props._isModerator } />
+                        showPasswordEdit = { _canEditPassword } />
                 </div>
             </Dialog>
         );
@@ -94,17 +94,26 @@ class InviteDialog extends Component {
  * @param {Object} state - The Redux state.
  * @private
  * @returns {{
+ *     _canEditPassword: boolean,
  *     _conference: Object,
- *     _inviteURL: string,
- *     _isModerator: boolean
+ *     _inviteURL: string
  * }}
  */
 function _mapStateToProps(state) {
+    const isModerator
+        = getLocalParticipant(state).role === PARTICIPANT_ROLE.MODERATOR;
+    let canEditPassword;
+
+    if (state['features/base/config'].enableUserRolesBasedOnToken) {
+        canEditPassword = isModerator && !state['features/base/jwt'].isGuest;
+    } else {
+        canEditPassword = isModerator;
+    }
+
     return {
+        _canEditPassword: canEditPassword,
         _conference: state['features/base/conference'],
-        _inviteURL: getInviteURL(state),
-        _isModerator:
-            getLocalParticipant(state).role === PARTICIPANT_ROLE.MODERATOR
+        _inviteURL: getInviteURL(state)
     };
 }
 
