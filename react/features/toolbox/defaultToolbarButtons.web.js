@@ -104,7 +104,7 @@ export default function getDefaultButtons() {
                 sendAnalytics(createToolbarEvent(
                     'toggle.chat',
                     {
-                        enable: !APP.UI.Chat.isVisible()
+                        enable: !APP.UI.isChatVisible()
                     }));
                 APP.UI.emitEvent(UIEvents.TOGGLE_CHAT);
             },
@@ -117,7 +117,7 @@ export default function getDefaultButtons() {
                 sendAnalytics(createShortcutEvent(
                     'toggle.chat',
                     {
-                        enable: !APP.UI.Chat.isVisible()
+                        enable: !APP.UI.isChatVisible()
                     }));
                 APP.UI.toggleChat();
             },
