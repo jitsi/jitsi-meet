@@ -68,6 +68,7 @@ class AppSettings extends AbstractAppSettings {
                         fieldSeparator = { true }
                         i18nLabel = 'profileModal.email' >
                         <TextInput
+                            keyboardType = { 'email-address' }
                             onChangeText = { this._onChangeEmail }
                             onEndEditing = { this._onSaveEmail }
                             placeholder = 'email@example.com'
