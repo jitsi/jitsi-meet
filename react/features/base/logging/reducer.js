@@ -5,6 +5,9 @@ import { SET_LOGGING_CONFIG } from './actionTypes';
 /**
  * The initial state of the feature base/logging.
  *
+ * XXX When making any changes to the INITIAL_STATE make sure to also update
+ * logging_config.js file located in the root directory of this project !!!
+ *
  * @type {{
  *     config: Object
  * }}
@@ -16,7 +19,8 @@ const INITIAL_STATE = {
         // The following are too verbose in their logging with the
         // {@link #defaultLogLevel}:
         'modules/statistics/CallStats.js': 'info',
-        'modules/xmpp/strophe.util.js': 'log'
+        'modules/xmpp/strophe.util.js': 'log',
+        'modules/RTC/TraceablePeerConnection.js': 'info'
     }
 };
 
