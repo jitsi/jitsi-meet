@@ -1,5 +1,5 @@
 import React from 'react';
-import { Animated } from 'react-native';
+import { Animated, View } from 'react-native';
 import { connect } from 'react-redux';
 
 import AbstractVideoTrack from '../AbstractVideoTrack';
@@ -41,8 +41,7 @@ class VideoTrack extends AbstractVideoTrack {
          */
         this.state = {
             ...this.state,
-            fade: new Animated.Value(1),
-            flip: new Animated.Value(1)
+            fade: new Animated.Value(0)
         };
     }
 
@@ -53,11 +52,14 @@ class VideoTrack extends AbstractVideoTrack {
      * @returns {ReactElement}
      */
     render() {
+        const animatedStyles
+            = [ styles.videoCover, this._getAnimationStyles() ];
+
         return (
-            <Animated.View
-                style = { [ styles.video, this._getAnimationStyles() ] }>
+            <View style = { styles.video } >
                 { super.render() }
-            </Animated.View>
+                <Animated.View style = { animatedStyles } />
+            </View>
         );
     }
 
@@ -76,23 +78,14 @@ class VideoTrack extends AbstractVideoTrack {
         if (this._animation) {
             this._animation.stop();
             this._animation = null;
-            this.state.fade.setValue(1);
-            this.state.flip.setValue(1);
+            this.state.fade.setValue(0);
         }
 
-        // If we're switching between two local video tracks, that actually
-        // means we're switching local cameras, so we'll use a flip animation.
-        // Otherwise, we'll use fade animation.
-        const animation
-            = oldValue && newValue && oldValue.local && newValue.local
-                ? 'flip'
-                : 'fade';
-
-        return this._animateVideoTrack(animation, 0)
+        return this._animateVideoTrack(1)
             .then(() => {
                 super._setVideoTrack(newValue);
 
-                return this._animateVideoTrack(animation, 1);
+                return this._animateVideoTrack(0);
             })
             .catch(() => {
                 console.log('Animation was stopped');
@@ -102,17 +95,15 @@ class VideoTrack extends AbstractVideoTrack {
     /**
      * Animates the display of the state videoTrack.
      *
-     * @param {string} animatedValue - The name of the state property which
-     * specifies the Animated.Value to be animated.
      * @param {number} toValue - The value to which the specified animatedValue
      * is to be animated.
      * @private
      * @returns {Promise}
      */
-    _animateVideoTrack(animatedValue, toValue) {
+    _animateVideoTrack(toValue) {
         return new Promise((resolve, reject) => {
             this._animation
-                = Animated.timing(this.state[animatedValue], { toValue });
+                = Animated.timing(this.state.fade, { toValue });
             this._animation.start(result => {
                 this._animation = null;
                 result.finished ? resolve() : reject();
@@ -128,13 +119,7 @@ class VideoTrack extends AbstractVideoTrack {
      */
     _getAnimationStyles() {
         return {
-            opacity: this.state.fade,
-            transform: [ {
-                rotateY: this.state.flip.interpolate({
-                    inputRange: [ 0, 1 ],
-                    outputRange: [ '90deg', '0deg' ]
-                })
-            } ]
+            opacity: this.state.fade
         };
     }
 
