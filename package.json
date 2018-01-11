@@ -32,6 +32,7 @@
     "@atlaskit/theme": "2.2.0",
     "@atlaskit/tooltip": "6.0.0",
     "autosize": "1.18.13",
+    "bowser": "1.9.1",
     "es6-iterator": "2.0.3",
     "es6-symbol": "3.1.1",
     "i18next": "8.4.3",

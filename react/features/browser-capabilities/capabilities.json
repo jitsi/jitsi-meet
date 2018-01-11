@@ -1,0 +1,81 @@
+{
+    "Safari": [
+        {"version": "6.3" },
+        {
+            "version": "10.2",
+            "capabilities": {
+                "audioIn": true,
+                "audioOut": true,
+                "video": true,
+                "screenSharing": true
+            }
+        },
+        {
+            "capabilities": {
+                "audioIn": true,
+                "audioOut": true,
+                "video": false,
+                "screenSharing": false
+            },
+            "iframeCapabilities": {
+                "isSupported": false
+            }
+        }
+    ],
+    "Chrome":
+    [
+        {"version": "34" },
+        {
+            "capabilities": {
+                "audioIn": true,
+                "audioOut": true,
+                "video": true,
+                "screenSharing": true
+            }
+        }
+    ],
+    "Opera":
+    [
+        {"version": "22" },
+        {
+            "capabilities": {
+                "audioIn": true,
+                "audioOut": true,
+                "video": true,
+                "screenSharing": false
+            }
+        }
+    ],
+    "Firefox": [
+        {"version": "52.4" },
+        {
+            "capabilities": {
+                "audioIn": true,
+                "audioOut": true,
+                "video": true,
+                "screenSharing": true
+            }
+        }
+    ],
+    "Internet Explorer": [
+        {"version": "9" },
+        {
+            "capabilities": {
+                "audioIn": true,
+                "audioOut": true,
+                "video": true,
+                "screenSharing": true
+            }
+        }
+    ],
+    "Microsoft Edge": [
+        {
+            "capabilities": {
+                "audioIn": true,
+                "audioOut": true,
+                "video": true,
+                "screenSharing": false
+            }
+        }
+    ]
+}
