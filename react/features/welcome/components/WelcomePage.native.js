@@ -77,8 +77,10 @@ class WelcomePage extends AbstractWelcomePage {
                         autoCorrect = { false }
                         autoFocus = { false }
                         onChangeText = { this._onRoomChange }
+                        onSubmitEditing = { this._onJoin }
                         placeholder = { t('welcomepage.roomname') }
                         placeholderTextColor = { PLACEHOLDER_TEXT_COLOR }
+                        returnKeyType = { 'go' }
                         style = { styles.textInput }
                         underlineColorAndroid = 'transparent'
                         value = { this.state.room } />
