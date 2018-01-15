@@ -177,6 +177,9 @@ export function parseStandardURIString(str: string) {
     let regex;
     let match: Array<string> | null;
 
+    // cleanup spaces
+    str = str.replace(/\s/g, '');
+
     // protocol
     regex = new RegExp(`^${_URI_PROTOCOL_PATTERN}`, 'gi');
     match = regex.exec(str);
