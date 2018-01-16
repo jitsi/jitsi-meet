@@ -105,13 +105,10 @@ export class AbstractApp extends Component {
          * properly initializes. On web it does actually nothing, see
          * {@link #_initStorage}.
          */
-        this.init = new Promise(resolve => {
-            this._initStorage().then(() => {
-                this.setState({
-                    route: undefined,
-                    store: this._maybeCreateStore(props)
-                });
-                resolve();
+        this.init = this._initStorage().then(() => {
+            this.setState({
+                route: undefined,
+                store: this._maybeCreateStore(props)
             });
         });
     }
@@ -249,13 +246,11 @@ export class AbstractApp extends Component {
      * @returns {ReactElement}
      */
     _initStorage() {
-        return new Promise(resolve => {
-            if (window.localStorage._initializing) {
-                window.localStorage._inited.then(resolve);
-            } else {
-                resolve();
-            }
-        });
+        if (typeof window.localStorage._initialized !== 'undefined') {
+            return window.localStorage._initialized;
+        }
+
+        return Promise.resolve();
     }
 
     /**
