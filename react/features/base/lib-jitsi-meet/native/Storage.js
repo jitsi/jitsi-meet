@@ -34,16 +34,7 @@ export default class Storage {
             // Load all previously persisted data items from React Native's
             // AsyncStorage.
 
-            /**
-             * A flag to indicate that the async {@code AsyncStorage} is not
-             * initialized yet. This is native specific but it will work
-             * fine on web as well, as it will have no value (== false) there.
-             * This is required to be available as we need a sync way to check
-             * if the storage is inited or not.
-             */
-            this._initializing = true;
-
-            this._inited = new Promise(resolve => {
+            this._initialized = new Promise(resolve => {
                 AsyncStorage.getAllKeys().then((...getAllKeysCallbackArgs) => {
                     // XXX The keys argument of getAllKeys' callback may
                     // or may not be preceded by an error argument.
@@ -77,7 +68,6 @@ export default class Storage {
                             }
                         }
 
-                        this._initializing = false;
                         resolve();
                     });
                 });

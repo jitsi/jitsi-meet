@@ -105,13 +105,10 @@ export class AbstractApp extends Component {
          * properly initializes. On web it does actually nothing, see
          * {@link #_initStorage}.
          */
-        this.init = new Promise(resolve => {
-            this._initStorage().then(() => {
-                this.setState({
-                    route: undefined,
-                    store: this._maybeCreateStore(props)
-                });
-                resolve();
+        this.init = this._initStorage().then(() => {
+            this.setState({
+                route: undefined,
+                store: this._maybeCreateStore(props)
             });
         });
     }
@@ -179,6 +176,12 @@ export class AbstractApp extends Component {
      * @returns {void}
      */
     componentWillReceiveProps(nextProps) {
+        // Shallow-clone the current props, because we will make comparisons
+        // asynchronously, thus nextProps will already be this.props by the time
+        // the bulk of this function runs.
+        // FIXME: I don't like this at all, it needs a redesign. -saghul
+        const oldProps = { ...this.props };
+
         this.init.then(() => {
             // The consumer of this AbstractApp did not provide a redux store.
             if (typeof nextProps.store === 'undefined'
@@ -189,7 +192,7 @@ export class AbstractApp extends Component {
                     // its own internal redux store. If the consumer did not
                     // provide a redux store before, then this instance is
                     // using its own internal redux store already.
-                    && typeof this.props.store !== 'undefined') {
+                    && typeof oldProps.store !== 'undefined') {
                 this.setState({
                     store: this._maybeCreateStore(nextProps)
                 });
@@ -199,11 +202,11 @@ export class AbstractApp extends Component {
             let { url } = nextProps;
 
             url = toURLString(url);
-            if (toURLString(this.props.url) !== url
+            if (toURLString(oldProps.url) !== url
 
                     // XXX Refer to the implementation of loadURLObject: in
                     // ios/sdk/src/JitsiMeetView.m for further information.
-                    || this.props.timestamp !== nextProps.timestamp) {
+                    || oldProps.timestamp !== nextProps.timestamp) {
                 this._openURL(url || this._getDefaultURL());
             }
         });
@@ -247,13 +250,11 @@ export class AbstractApp extends Component {
      * @returns {ReactElement}
      */
     _initStorage() {
-        return new Promise(resolve => {
-            if (window.localStorage._initializing) {
-                window.localStorage._inited.then(resolve);
-            } else {
-                resolve();
-            }
-        });
+        if (typeof window.localStorage._initialized !== 'undefined') {
+            return window.localStorage._initialized;
+        }
+
+        return Promise.resolve();
     }
 
     /**
