@@ -14,8 +14,8 @@ import {
 } from '../../base/participants';
 import { Fragment, RouteRegistry } from '../../base/react';
 import {
-    getPersistedState,
     MiddlewareRegistry,
+    PersistencyRegistry,
     ReducerRegistry
 } from '../../base/redux';
 import { getProfile } from '../../base/profile';
@@ -346,7 +346,9 @@ export class AbstractApp extends Component {
             middleware = compose(middleware, devToolsExtension());
         }
 
-        return createStore(reducer, getPersistedState(), middleware);
+        return createStore(
+            reducer, PersistencyRegistry.getPersistedState(), middleware
+        );
     }
 
     /**

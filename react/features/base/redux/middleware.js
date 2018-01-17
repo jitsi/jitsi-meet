@@ -1,8 +1,8 @@
 /* @flow */
 import _ from 'lodash';
 
-import { persistState } from './functions';
 import MiddlewareRegistry from './MiddlewareRegistry';
+import PersistencyRegistry from './PersistencyRegistry';
 
 import { toState } from '../redux';
 
@@ -16,7 +16,7 @@ const PERSIST_DELAY = 2000;
  * A throttled function to avoid repetitive state persisting.
  */
 const throttledFunc = _.throttle(state => {
-    persistState(state);
+    PersistencyRegistry.persistState(state);
 }, PERSIST_DELAY);
 
 /**

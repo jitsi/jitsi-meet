@@ -1,12 +1,6 @@
 /* @flow */
 
 import _ from 'lodash';
-import Logger from 'jitsi-meet-logger';
-
-import persisterConfig from './persisterconfig.json';
-
-const logger = Logger.getLogger(__filename);
-const PERSISTED_STATE_NAME = 'jitsi-state';
 
 /**
  * Sets specific properties of a specific state to specific values and prevents
@@ -42,93 +36,6 @@ export function assign(target: Object, source: Object) {
  */
 export function equals(a: any, b: any) {
     return _.isEqual(a, b);
-}
-
-/**
- * Prepares a filtered state-slice (Redux term) based on the config for
- * persisting or for retreival.
- *
- * @private
- * @param {Object} persistedSlice - The redux state-slice.
- * @param {Object} persistedSliceConfig - The related config sub-tree.
- * @returns {Object}
- */
-function _getFilteredSlice(persistedSlice, persistedSliceConfig) {
-    const filteredpersistedSlice = {};
-
-    for (const persistedKey of Object.keys(persistedSlice)) {
-        if (persistedSliceConfig[persistedKey]) {
-            filteredpersistedSlice[persistedKey] = persistedSlice[persistedKey];
-        }
-    }
-
-    return filteredpersistedSlice;
-}
-
-/**
- * Prepares a filtered state from the actual or the
- * persisted Redux state, based on the config.
- *
- * @private
- * @param {Object} state - The actual or persisted redux state.
- * @returns {Object}
- */
-function _getFilteredState(state: Object) {
-    const filteredState = {};
-
-    for (const slice of Object.keys(persisterConfig)) {
-        filteredState[slice] = _getFilteredSlice(
-            state[slice],
-            persisterConfig[slice]
-        );
-    }
-
-    return filteredState;
-}
-
-/**
- *  Returns the persisted redux state. This function takes
- * the persisterConfig into account as we may have persisted something
- * in the past that we don't want to retreive anymore. The next
- * {@link #persistState} will remove those values.
- *
- * @returns {Object}
- */
-export function getPersistedState() {
-    let persistedState = window.localStorage.getItem(PERSISTED_STATE_NAME);
-
-    if (persistedState) {
-        try {
-            persistedState = JSON.parse(persistedState);
-        } catch (error) {
-            return {};
-        }
-
-        const filteredPersistedState = _getFilteredState(persistedState);
-
-        logger.info('Redux state rehydrated', filteredPersistedState);
-
-        return filteredPersistedState;
-    }
-
-    return {};
-}
-
-/**
- * Persists a filtered subtree of the redux state into {@code localStorage}.
- *
- * @param {Object} state - The redux state.
- * @returns {void}
- */
-export function persistState(state: Object) {
-    const filteredState = _getFilteredState(state);
-
-    window.localStorage.setItem(
-        PERSISTED_STATE_NAME,
-        JSON.stringify(filteredState)
-    );
-
-    logger.info('Redux state persisted');
 }
 
 /**

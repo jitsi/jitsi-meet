@@ -5,8 +5,6 @@ import moment from 'moment';
 import { i18next } from '../base/i18n';
 import { parseURIString } from '../base/util';
 
-import { RECENT_URL_STORAGE } from './constants';
-
 /**
  * MomentJS uses static language bundle loading, so in order to support dynamic
  * language selection in the app we need to load all bundles that we support in
@@ -36,76 +34,43 @@ require('moment/locale/tr');
 require('moment/locale/zh-cn');
 
 /**
- * Retreives the recent room list and generates all the data needed to be
+ * Retrieves the recent room list and generates all the data needed to be
  * displayed.
  *
- * @returns {Promise} The {@code Promise} to be resolved when the list is
- * available.
+ * @param {Array<Object>} list - The stored recent list retrieved from Redux.
+ * @returns {Array}
  */
-export function getRecentRooms(): Promise<Array<Object>> {
-    return new Promise((resolve, reject) =>
-        window.localStorage._getItemAsync(RECENT_URL_STORAGE).then(
-            /* onFulfilled */ recentURLs => {
-                const recentRoomDS = [];
+export function getRecentRooms(list: Array<Object>): Array<Object> {
+    const recentRoomDS = [];
 
-                if (recentURLs) {
-                    // We init the locale on every list render, so then it
-                    // changes immediately if a language change happens in the
-                    // app.
-                    const locale = _getSupportedLocale();
+    if (list.length) {
+        // We init the locale on every list render, so then it changes
+        // immediately if a language change happens in the app.
+        const locale = _getSupportedLocale();
 
-                    for (const e of JSON.parse(recentURLs)) {
-                        const location = parseURIString(e.conference);
+        for (const e of list) {
+            const location = parseURIString(e.conference);
 
-                        if (location && location.room && location.hostname) {
-                            recentRoomDS.push({
-                                baseURL:
-                                    `${location.protocol}//${location.host}`,
-                                conference: e.conference,
-                                conferenceDuration: e.conferenceDuration,
-                                conferenceDurationString:
-                                    _getDurationString(
-                                        e.conferenceDuration,
-                                        locale
-                                    ),
-                                dateString: _getDateString(e.date, locale),
-                                dateTimeStamp: e.date,
-                                initials: _getInitials(location.room),
-                                room: location.room,
-                                serverName: location.hostname
-                            });
-                        }
-                    }
-                }
+            if (location && location.room && location.hostname) {
+                recentRoomDS.push({
+                    baseURL: `${location.protocol}//${location.host}`,
+                    conference: e.conference,
+                    conferenceDuration: e.conferenceDuration,
+                    conferenceDurationString:
+                        _getDurationString(
+                            e.conferenceDuration,
+                            locale),
+                    dateString: _getDateString(e.date, locale),
+                    dateTimeStamp: e.date,
+                    initials: _getInitials(location.room),
+                    room: location.room,
+                    serverName: location.hostname
+                });
+            }
+        }
+    }
 
-                resolve(recentRoomDS.reverse());
-            },
-            /* onRejected */ reject)
-    );
-}
-
-/**
- * Retreives the recent URL list as a list of objects.
- *
- * @returns {Array} The list of already stored recent URLs.
- */
-export function getRecentURLs() {
-    const recentURLs = window.localStorage.getItem(RECENT_URL_STORAGE);
-
-    return recentURLs ? JSON.parse(recentURLs) : [];
-}
-
-/**
- * Updates the recent URL list.
- *
- * @param {Array} recentURLs - The new URL list.
- * @returns {void}
- */
-export function updateRecentURLs(recentURLs: Array<Object>) {
-    window.localStorage.setItem(
-        RECENT_URL_STORAGE,
-        JSON.stringify(recentURLs)
-    );
+    return recentRoomDS.reverse();
 }
 
 /**
@@ -142,8 +107,7 @@ function _getDateString(dateTimeStamp: number, locale: string) {
  * @returns {string}
  */
 function _getDurationString(duration: number, locale: string) {
-    return _getLocalizedFormatter(duration, locale)
-            .humanize();
+    return _getLocalizedFormatter(duration, locale).humanize();
 }
 
 /**
@@ -158,22 +122,23 @@ function _getInitials(room: string) {
 }
 
 /**
- * Returns a localized date formatter initialized with the
- * provided date (@code Date) or duration (@code Number).
+ * Returns a localized date formatter initialized with the provided date
+ * (@code Date) or duration (@code number).
  *
  * @private
- * @param {Date | number} dateToFormat - The date or duration to format.
+ * @param {Date | number} dateOrDuration - The date or duration to format.
  * @param {string} locale - The locale to init the formatter with. Note: This
  * locale must be supported by the formatter so ensure this prerequisite before
  * invoking the function.
  * @returns {Object}
  */
-function _getLocalizedFormatter(dateToFormat: Date | number, locale: string) {
-    if (typeof dateToFormat === 'number') {
-        return moment.duration(dateToFormat).locale(locale);
-    }
+function _getLocalizedFormatter(dateOrDuration: Date | number, locale: string) {
+    const m
+        = typeof dateOrDuration === 'number'
+            ? moment.duration(dateOrDuration)
+            : moment(dateOrDuration);
 
-    return moment(dateToFormat).locale(locale);
+    return m.locale(locale);
 }
 
 /**

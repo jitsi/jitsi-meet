@@ -2,10 +2,12 @@ import React from 'react';
 import { ListView, Text, TouchableHighlight, View } from 'react-native';
 import { connect } from 'react-redux';
 
-import { Icon } from '../../base/font-icons';
-
-import AbstractRecentList from './AbstractRecentList';
+import AbstractRecentList, { _mapStateToProps } from './AbstractRecentList';
 import styles, { UNDERLAY_COLOR } from './styles';
+
+import { getRecentRooms } from '../functions';
+
+import { Icon } from '../../base/font-icons';
 
 /**
  * The native container rendering the list of the recently joined rooms.
@@ -14,7 +16,18 @@ import styles, { UNDERLAY_COLOR } from './styles';
  */
 class RecentList extends AbstractRecentList {
     /**
+     * The datasource wrapper to be used for the display.
+     */
+    dataSource = new ListView.DataSource({
+        rowHasChanged: (r1, r2) =>
+            r1.conference !== r2.conference
+                && r1.dateTimeStamp !== r2.dateTimeStamp
+    });
+
+    /**
      * Initializes a new {@code RecentList} instance.
+     *
+     * @inheritdoc
      */
     constructor() {
         super();
@@ -35,14 +48,18 @@ class RecentList extends AbstractRecentList {
      * @returns {ReactElement}
      */
     render() {
-        if (!this.state.dataSource.getRowCount()) {
+        if (!this.props || !this.props._recentList) {
             return null;
         }
+
+        const listViewDataSource = this.dataSource.cloneWithRows(
+            getRecentRooms(this.props._recentList)
+        );
 
         return (
             <View style = { styles.container }>
                 <ListView
-                    dataSource = { this.state.dataSource }
+                    dataSource = { listViewDataSource }
                     enableEmptySections = { true }
                     renderRow = { this._renderRow } />
             </View>
@@ -180,28 +197,6 @@ class RecentList extends AbstractRecentList {
             </TouchableHighlight>
         );
     }
-}
-
-/**
- * Maps (parts of) the Redux state to the associated RecentList's props.
- *
- * @param {Object} state - The Redux state.
- * @private
- * @returns {{
- *     _homeServer: string
- * }}
- */
-function _mapStateToProps(state) {
-    return {
-        /**
-         * The default server name based on which we determine the render
-         * method.
-         *
-         * @private
-         * @type {string}
-         */
-        _homeServer: state['features/app'].app._getDefaultURL()
-    };
 }
 
 export default connect(_mapStateToProps)(RecentList);
