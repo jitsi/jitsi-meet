@@ -14,7 +14,7 @@ import './features/base/react/prop-types-polyfill';
 
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-import { AppRegistry, Linking } from 'react-native';
+import { AppRegistry, Linking, NativeModules } from 'react-native';
 
 import { App } from './features/app';
 import { equals } from './features/base/redux';
@@ -77,7 +77,7 @@ class Root extends Component {
         // Handle the URL, if any, with which the app was launched. But props
         // have precedence.
         if (typeof this.props.url === 'undefined') {
-            Linking.getInitialURL()
+            this._getInitialURL()
                 .then(url => {
                     if (typeof this.state.url === 'undefined') {
                         this.setState({ url });
@@ -93,6 +93,25 @@ class Root extends Component {
                     }
                 });
         }
+    }
+
+    /**
+     * Gets the initial URL the app was launched with. This can be a universal
+     * (or deep) link, or a CallKit intent in iOS. Since the native
+     * {@code Linking} module doesn't provide a way to access intents in iOS,
+     * those are handled with the {@code LaunchOptions} module, which
+     * essentially provides a replacement which takes that into consideration.
+     *
+     * @private
+     * @returns {Promise} - A promise which will be fulfilled with the URL that
+     * the app was launched with.
+     */
+    _getInitialURL() {
+        if (NativeModules.LaunchOptions) {
+            return NativeModules.LaunchOptions.getInitialURL();
+        }
+
+        return Linking.getInitialURL();
     }
 
     /**
