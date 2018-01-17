@@ -16,7 +16,11 @@ const logger = require('jitsi-meet-logger').getLogger(__filename);
  * @returns {void}
  */
 export function sendAnalytics(event: Object) {
-    analytics.sendEvent(event);
+    try {
+        analytics.sendEvent(event);
+    } catch (e) {
+        logger.warn(`Error sending analytics event: ${e}`);
+    }
 }
 
 /**
