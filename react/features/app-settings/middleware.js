@@ -1,9 +1,9 @@
-/* @flow */
-
-import { hideAppSettings } from './actions';
+// @flow
 
 import { SET_ROOM } from '../base/conference';
 import { MiddlewareRegistry } from '../base/redux';
+
+import { hideAppSettings } from './actions';
 
 /**
  * The Redux middleware to trigger settings screen show or hide
@@ -30,8 +30,8 @@ MiddlewareRegistry.register(store => next => action => {
  * @private
  * @returns {Object} The new state.
  */
-function _closeAppSettings(store, next, action) {
-    store.dispatch(hideAppSettings());
+function _closeAppSettings({ dispatch }, next, action) {
+    dispatch(hideAppSettings());
 
     return next(action);
 }

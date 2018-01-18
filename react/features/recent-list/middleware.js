@@ -26,18 +26,18 @@ MiddlewareRegistry.register(store => next => action => {
 });
 
 /**
-* Stores the recently joined room into {@code window.localStorage}.
-*
-* @param {Store} store - The redux store in which the specified action is being
-* dispatched.
-* @param {Dispatch} next - The redux {@code dispatch} function to dispatch the
-* specified action to the specified store.
-* @param {Action} action - The redux action {@code SET_ROOM} which is being
-* dispatched in the specified store.
-* @private
-* @returns {Object} The new state that is the result of the reduction of the
-* specified action.
-*/
+ * Stores the recently joined room into {@code window.localStorage}.
+ *
+ * @param {Store} store - The redux store in which the specified action is being
+ * dispatched.
+ * @param {Dispatch} next - The redux {@code dispatch} function to dispatch the
+ * specified action to the specified store.
+ * @param {Action} action - The redux action {@code SET_ROOM} which is being
+ * dispatched in the specified store.
+ * @private
+ * @returns {Object} The new state that is the result of the reduction of the
+ * specified action.
+ */
 function _storeJoinedRoom(store, next, action) {
     const result = next(action);
 
@@ -70,18 +70,18 @@ function _storeJoinedRoom(store, next, action) {
 }
 
 /**
-* Updates the conference length when left.
-*
-* @param {Store} store - The redux store in which the specified action is being
-* dispatched.
-* @param {Dispatch} next - The redux {@code dispatch} function to dispatch the
-* specified action to the specified store.
-* @param {Action} action - The redux action {@code CONFERENCE_WILL_LEAVE} which
-* is being dispatched in the specified store.
-* @private
-* @returns {Object} The new state that is the result of the reduction of the
-* specified action.
-*/
+ * Updates the conference length when left.
+ *
+ * @param {Store} store - The redux store in which the specified action is being
+ * dispatched.
+ * @param {Dispatch} next - The redux {@code dispatch} function to dispatch the
+ * specified action to the specified store.
+ * @param {Action} action - The redux action {@code CONFERENCE_WILL_LEAVE} which
+ * is being dispatched in the specified store.
+ * @private
+ * @returns {Object} The new state that is the result of the reduction of the
+ * specified action.
+ */
 function _updateConferenceDuration({ getState }, next, action) {
     const result = next(action);
 

@@ -38,8 +38,8 @@ export default createStyleSheet({
     },
 
     /**
-    * Layout of the button container.
-    */
+     * Layout of the button container.
+     */
     buttonRow: {
         flexDirection: 'row'
     },
@@ -54,8 +54,8 @@ export default createStyleSheet({
     },
 
     /**
-    * Style of the join button.
-    */
+     * Style of the join button.
+     */
     joinButton: {
         flex: 1
     },
@@ -126,16 +126,16 @@ export default createStyleSheet({
     },
 
     /**
-    * Style of the settings button.
-    */
+     * Style of the settings button.
+     */
     settingsButton: {
         width: 65,
         marginRight: BoxModel.margin
     },
 
     /**
-    * Style of the settings icon on the settings button.
-    */
+     * Style of the settings icon on the settings button.
+     */
     settingsIcon: {
         fontSize: 24,
         alignSelf: 'center'

@@ -1,34 +1,33 @@
-/* @flow */
+// @flow
 
 import React, { Component } from 'react';
 import { Text, View } from 'react-native';
 import { connect } from 'react-redux';
 
-import styles, { CONTAINER_PADDING } from './styles';
-
-import { getSafetyOffset } from '../functions';
-
 import { ASPECT_RATIO_WIDE } from '../../base/aspect-ratio';
 import { translate } from '../../base/i18n';
 
+import { getSafetyOffset } from '../functions';
+import styles, { CONTAINER_PADDING } from './styles';
+
 /**
-* The type of the React {@code Component} props of {@link FormSectionHeader}
-*/
+ * The type of the React {@code Component} props of {@link FormSectionHeader}
+ */
 type Props = {
 
     /**
-    * The current aspect ratio of the screen.
-    */
+     * The current aspect ratio of the screen.
+     */
     _aspectRatio: Symbol,
 
     /**
-    * The i18n key of the text label of the section.
-    */
+     * The i18n key of the text label of the section.
+     */
     i18nLabel: string,
 
     /**
-    * An external style object passed to the component.
-    */
+     * An external style object passed to the component.
+     */
     style: Object,
 
     /**
@@ -38,8 +37,8 @@ type Props = {
 }
 
 /**
- * Implements a React {@code Component} which renders
- * a section header on a form. This calculates the available safe view as well.
+ * Implements a React {@code Component} which renders a section header on a
+ * form. This calculates the available safe view as well.
  */
 class FormSectionHeader extends Component<Props> {
     /**
@@ -80,17 +79,16 @@ class FormSectionHeader extends Component<Props> {
     _getSafetyMargin: () => Object;
 
     /**
-    * Calculates the safety margin for this header.
-    * See comment in functions.js.
-    *
-    * @private
-    * @returns {Object}
-    */
+     * Calculates the safety margin for this header. See comment in
+     * functions.js.
+     *
+     * @private
+     * @returns {Object}
+     */
     _getSafetyMargin() {
         if (this.props._aspectRatio === ASPECT_RATIO_WIDE) {
-            const safeOffset = Math.max(
-                getSafetyOffset() - CONTAINER_PADDING, 0
-            );
+            const safeOffset
+                = Math.max(getSafetyOffset() - CONTAINER_PADDING, 0);
 
             return {
                 marginLeft: safeOffset,

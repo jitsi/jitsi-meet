@@ -5,23 +5,20 @@ import {
     Switch,
     Text,
     TextInput,
-    View } from 'react-native';
+    View
+} from 'react-native';
 import { connect } from 'react-redux';
-
-import {
-    _mapStateToProps,
-    AbstractAppSettings
-} from './AbstractAppSettings';
-import BackButton from './BackButton';
-import FormRow from './FormRow';
-import FormSectionHeader from './FormSectionHeader';
-import styles, { HEADER_PADDING } from './styles';
-
-import { getSafetyOffset } from '../functions.native';
 
 import { ASPECT_RATIO_NARROW } from '../../base/aspect-ratio';
 import { translate } from '../../base/i18n';
 import { isIPad } from '../../base/react';
+
+import { _mapStateToProps, AbstractAppSettings } from './AbstractAppSettings';
+import BackButton from './BackButton';
+import FormRow from './FormRow';
+import FormSectionHeader from './FormSectionHeader';
+import { getSafetyOffset } from '../functions';
+import styles, { HEADER_PADDING } from './styles';
 
 /**
  * The native container rendering the app settings page.
@@ -30,10 +27,10 @@ import { isIPad } from '../../base/react';
  */
 class AppSettings extends AbstractAppSettings {
     /**
-    * Instantiates a new {@code AppSettings} instance.
-    *
-    * @inheritdoc
-    */
+     * Instantiates a new {@code AppSettings} instance.
+     *
+     * @inheritdoc
+     */
     constructor(props) {
         super(props);
 
@@ -49,8 +46,8 @@ class AppSettings extends AbstractAppSettings {
     render() {
         const { _profile, t } = this.props;
 
-        // FIXME: presentationStyle is added to workaround
-        // orientation issue on iOS
+        // FIXME: presentationStyle is added to workaround orientation issue on
+        // iOS
 
         return (
             <Modal
@@ -131,12 +128,12 @@ class AppSettings extends AbstractAppSettings {
     }
 
     /**
-    * Calculates header safety padding for mobile devices.
-    * See comment in functions.js.
-    *
-    * @private
-    * @returns {Object}
-    */
+     * Calculates header safety padding for mobile devices. See comment in
+     * functions.js.
+     *
+     * @private
+     * @returns {Object}
+     */
     _getSafetyPadding() {
         if (isIPad() || this.props._aspectRatio === ASPECT_RATIO_NARROW) {
             const safeOffset = Math.max(getSafetyOffset(), HEADER_PADDING);

@@ -3,29 +3,29 @@
 import React, { Component } from 'react';
 import { TouchableOpacity } from 'react-native';
 
-import styles from './styles';
-
 import { Icon } from '../../base/font-icons';
 import { Platform } from '../../base/react';
 
+import styles from './styles';
+
 /**
-* The icon glyph to be used on a specific platform.
-*/
+ * The icon glyph to be used on a specific platform.
+ */
 const BACK_ICON = Platform.OS === 'android' ? 'arrow_back' : 'navigate_before';
 
 /**
-* The type of the React {@code Component} props of {@link BackButton}
-*/
+ * The type of the React {@code Component} props of {@link BackButton}
+ */
 type Props = {
 
     /**
-    * The action to be performed when the button is pressed.
-    */
+     * The action to be performed when the button is pressed.
+     */
     onPress: Function,
 
     /**
-    * An external style object passed to the component.
-    */
+     * An external style object passed to the component.
+     */
     style: Object
 };
 

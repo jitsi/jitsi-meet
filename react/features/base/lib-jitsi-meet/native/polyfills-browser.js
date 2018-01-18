@@ -214,6 +214,7 @@ function _visitNode(node, callback) {
             if (console) {
                 const loggerLevels = require('jitsi-meet-logger').levels;
 
+                console.disableYellowBox = true;
                 Object.keys(loggerLevels).forEach(key => {
                     const level = loggerLevels[key];
                     const consoleLog = console[level];

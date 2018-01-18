@@ -1,4 +1,5 @@
 import { Platform } from 'react-native';
+
 import {
     BoxModel,
     ColorPalette,
@@ -13,30 +14,29 @@ const TEXT_SIZE = 17;
 
 /**
  * The styles of the React {@code Components} of the feature
- * {@code AppSettings}.
+ * {@code app-settings}.
  */
 export default createStyleSheet({
 
     /**
-    *The platform specific back button style.
-    */
+     * The platform specific back button style.
+     */
     backIcon: {
         alignSelf: 'center',
         ...Platform.select({
-            ios: {
-                alignSelf: 'center',
-                fontSize: 30
-            },
             android: {
                 fontSize: 24,
                 padding: 8
+            },
+            ios: {
+                fontSize: 30
             }
         })
     },
 
     /**
-    * Standardized style for a field container {@code View}.
-    */
+     * Standardized style for a field container {@code View}.
+     */
     fieldContainer: {
         alignItems: 'center',
         flexDirection: 'row',
@@ -44,25 +44,25 @@ export default createStyleSheet({
     },
 
     /**
-    * Standard container for a {@code View} containing a field label.
-    */
+     * Standard container for a {@code View} containing a field label.
+     */
     fieldLabelContainer: {
         alignItems: 'center',
         flexDirection: 'row'
     },
 
     /**
-    * Field container style for all but last row {@code View}.
-    */
+     * Field container style for all but last row {@code View}.
+     */
     fieldSeparator: {
         borderBottomWidth: 1,
         borderColor: 'rgba(0, 0, 0, 0.1)'
     },
 
     /**
-    * Style for the {@code View} containing each
-    * field values (the actual field).
-    */
+     * Style for the {@code View} containing each
+     * field values (the actual field).
+     */
     fieldValueContainer: {
         alignItems: 'center',
         flex: 1,
@@ -77,8 +77,8 @@ export default createStyleSheet({
     },
 
     /**
-    * Page header {@code View}.
-    */
+     * Page header {@code View}.
+     */
     headerContainer: {
         alignItems: 'center',
         backgroundColor: HEADER_COLOR,
@@ -88,31 +88,31 @@ export default createStyleSheet({
     },
 
     /**
-    * The title {@code Text} of the header.
-    */
+     * The title {@code Text} of the header.
+     */
     headerTitle: {
         color: ColorPalette.white,
         fontSize: 24
     },
 
     /**
-    * Style of the scrollview to be able to scroll the content.
-    */
+     * Style of the ScrollView to be able to scroll the content.
+     */
     scrollView: {
         flex: 1
     },
 
     /**
-    * The back button style on the settings screen.
-    */
+     * The back button style on the settings screen.
+     */
     settingsBackButton: {
         color: ColorPalette.white,
         fontSize: 25
     },
 
     /**
-    * The top level container {@code View}.
-    */
+     * The top level container {@code View}.
+     */
     settingsContainer: {
         backgroundColor: ColorPalette.white,
         flex: 1,
@@ -123,16 +123,16 @@ export default createStyleSheet({
     },
 
     /**
-    * Global {@code Text} color for the page.
-    */
+     * Global {@code Text} color for the page.
+     */
     text: {
         color: ColorPalette.black,
         fontSize: TEXT_SIZE
     },
 
     /**
-    * Standard text input field style.
-    */
+     * Standard text input field style.
+     */
     textInputField: {
         flex: 1,
         fontSize: TEXT_SIZE,

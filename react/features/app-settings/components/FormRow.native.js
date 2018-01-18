@@ -1,40 +1,38 @@
-/* @flow */
+// @flow
 
 import React, { Component } from 'react';
-import {
-    Text,
-    View } from 'react-native';
+import { Text, View } from 'react-native';
 import { connect } from 'react-redux';
-
-import styles, { ANDROID_UNDERLINE_COLOR, CONTAINER_PADDING } from './styles';
-
-import { getSafetyOffset } from '../functions';
 
 import { ASPECT_RATIO_WIDE } from '../../base/aspect-ratio';
 import { translate } from '../../base/i18n';
 
+import { getSafetyOffset } from '../functions';
+import styles, { ANDROID_UNDERLINE_COLOR, CONTAINER_PADDING } from './styles';
+
 /**
-* The type of the React {@code Component} props of {@link FormRow}
-*/
+ * The type of the React {@code Component} props of {@link FormRow}
+ */
 type Props = {
 
     /**
-    * The current aspect ratio of the screen.
-    */
+     * The current aspect ratio of the screen.
+     */
     _aspectRatio: Symbol,
 
     /**
-    */
+     *
+     */
     children: Object,
 
     /**
-    * Prop to decide if a row separator is to be rendered.
-    */
+     * Prop to decide if a row separator is to be rendered.
+     */
     fieldSeparator: boolean,
 
     /**
-    * The i18n key of the text label of the form field.
-    */
+     * The i18n key of the text label of the form field.
+     */
     i18nLabel: string,
 
     /**
@@ -44,8 +42,8 @@ type Props = {
 }
 
 /**
- * Implements a React {@code Component} which renders a standardized row
- * on a form. The component should have exactly one child component.
+ * Implements a React {@code Component} which renders a standardized row on a
+ * form. The component should have exactly one child component.
  */
 class FormRow extends Component<Props> {
     /**
@@ -96,17 +94,17 @@ class FormRow extends Component<Props> {
     _getDefaultFieldProps: (field: Component<*, *>) => Object;
 
     /**
-    * Assembles the default props to the field child component of
-    * this form row.
-    *
-    * Currently tested/supported field types:
-    *       - TextInput
-    *       - Switch (needs no addition props ATM).
-    *
-    * @private
-    * @param {Object} field - The field (child) component.
-    * @returns {Object}
-    */
+     * Assembles the default props to the field child component of this form
+     * row.
+     *
+     * Currently tested/supported field types:
+     *     - TextInput
+     *     - Switch (needs no addition props ATM).
+     *
+     * @private
+     * @param {Object} field - The field (child) component.
+     * @returns {Object}
+     */
     _getDefaultFieldProps(field: Object) {
         if (field && field.type) {
             switch (field.type.displayName) {
@@ -124,12 +122,12 @@ class FormRow extends Component<Props> {
     _getRowStyle: () => Array<Object>;
 
     /**
-    * Assembles the row style array based on the row's props.
-    * For padding, see comment in functions.js.
-    *
-    * @private
-    * @returns {Array<Object>}
-    */
+     * Assembles the row style array based on the row's props. For padding, see
+     * comment in functions.js.
+     *
+     * @private
+     * @returns {Array<Object>}
+     */
     _getRowStyle() {
         const rowStyle = [
             styles.fieldContainer

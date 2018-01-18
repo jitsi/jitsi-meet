@@ -201,11 +201,11 @@ export class AbstractWelcomePage extends Component<*, *> {
     _onSettingsOpen: () => void;
 
     /**
-    * Sets the app settings modal visible.
-    *
-    * @protected
-    * @returns {void}
-    */
+     * Sets the app settings modal visible.
+     *
+     * @protected
+     * @returns {void}
+     */
     _onSettingsOpen() {
         this.props.dispatch(showAppSettings());
     }

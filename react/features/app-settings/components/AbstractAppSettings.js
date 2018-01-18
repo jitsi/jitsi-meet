@@ -2,43 +2,44 @@
 
 import { Component } from 'react';
 
-import { hideAppSettings } from '../actions';
 import { getProfile, updateProfile } from '../../base/profile';
 
+import { hideAppSettings } from '../actions';
+
 /**
-* The type of the React {@code Component} props of {@link AbstractAppSettings}
-*/
+ * The type of the React {@code Component} props of {@link AbstractAppSettings}
+ */
 type Props = {
 
     /**
-    * The current aspect ratio of the screen.
-    */
+     * The current aspect ratio of the screen.
+     */
     _aspectRatio: Symbol,
 
     /**
-    * The default URL for when there is no custom URL set in the profile.
-    */
-    _serverURL: string,
-
-    /**
-    * The current profile object.
-    */
+     * The current profile object.
+     */
     _profile: Object,
 
     /**
-    * The visibility prop of the settings modal.
-    */
+     * The default URL for when there is no custom URL set in the profile.
+     */
+    _serverURL: string,
+
+    /**
+     * The visibility prop of the settings modal.
+     */
     _visible: boolean,
 
     /**
-    * Redux store dispatch function.
-    */
+     * Redux store dispatch function.
+     */
     dispatch: Dispatch<*>
 };
 
 /**
- * Base (abstract) class for container component rendering
- * the app settings page.
+ * Base (abstract) class for container component rendering the app settings
+ * page.
  *
  * @abstract
  */
@@ -65,12 +66,12 @@ export class AbstractAppSettings extends Component<Props> {
     _onChangeDisplayName: (string) => void;
 
     /**
-    * Handles the display name field value change.
-    *
-    * @protected
-    * @param {string} text - The value typed in the name field.
-    * @returns {void}
-    */
+     * Handles the display name field value change.
+     *
+     * @protected
+     * @param {string} text - The value typed in the name field.
+     * @returns {void}
+     */
     _onChangeDisplayName(text) {
         this._updateProfile({
             displayName: text
@@ -80,12 +81,12 @@ export class AbstractAppSettings extends Component<Props> {
     _onChangeEmail: (string) => void;
 
     /**
-    * Handles the email field value change.
-    *
-    * @protected
-    * @param {string} text - The value typed in the email field.
-    * @returns {void}
-    */
+     * Handles the email field value change.
+     *
+     * @protected
+     * @param {string} text - The value typed in the email field.
+     * @returns {void}
+     */
     _onChangeEmail(text) {
         this._updateProfile({
             email: text
@@ -95,12 +96,12 @@ export class AbstractAppSettings extends Component<Props> {
     _onChangeServerURL: (string) => void;
 
     /**
-    * Handles the server name field value change.
-    *
-    * @protected
-    * @param {string} text - The server URL typed in the server field.
-    * @returns {void}
-    */
+     * Handles the server name field value change.
+     *
+     * @protected
+     * @param {string} text - The server URL typed in the server field.
+     * @returns {void}
+     */
     _onChangeServerURL(text) {
         this._updateProfile({
             serverURL: text
@@ -110,10 +111,10 @@ export class AbstractAppSettings extends Component<Props> {
     _onRequestClose: () => void;
 
     /**
-    * Handles the back button.
-    *
-    * @returns {void}
-    */
+     * Handles the back button.
+     *
+     * @returns {void}
+     */
     _onRequestClose() {
         this.props.dispatch(hideAppSettings());
     }
@@ -121,13 +122,13 @@ export class AbstractAppSettings extends Component<Props> {
     _onStartAudioMutedChange: (boolean) => void;
 
     /**
-    * Handles the start audio muted change event.
-    *
-    * @protected
-    * @param {boolean} newValue - The new value for the
-    * start audio muted option.
-    * @returns {void}
-    */
+     * Handles the start audio muted change event.
+     *
+     * @protected
+     * @param {boolean} newValue - The new value for the
+     * start audio muted option.
+     * @returns {void}
+     */
     _onStartAudioMutedChange(newValue) {
         this._updateProfile({
             startWithAudioMuted: newValue
@@ -137,13 +138,13 @@ export class AbstractAppSettings extends Component<Props> {
     _onStartVideoMutedChange: (boolean) => void;
 
     /**
-    * Handles the start video muted change event.
-    *
-    * @protected
-    * @param {boolean} newValue - The new value for the
-    * start video muted option.
-    * @returns {void}
-    */
+     * Handles the start video muted change event.
+     *
+     * @protected
+     * @param {boolean} newValue - The new value for the
+     * start video muted option.
+     * @returns {void}
+     */
     _onStartVideoMutedChange(newValue) {
         this._updateProfile({
             startWithVideoMuted: newValue
@@ -153,12 +154,12 @@ export class AbstractAppSettings extends Component<Props> {
     _updateProfile: (Object) => void;
 
     /**
-    * Updates the persisted profile on any change.
-    *
-    * @private
-    * @param {Object} updateObject - The partial update object for the profile.
-    * @returns {void}
-    */
+     * Updates the persisted profile on any change.
+     *
+     * @private
+     * @param {Object} updateObject - The partial update object for the profile.
+     * @returns {void}
+     */
     _updateProfile(updateObject: Object) {
         this.props.dispatch(updateProfile({
             ...this.props._profile,
@@ -181,8 +182,8 @@ export function _mapStateToProps(state: Object) {
 
     return {
         _aspectRatio: state['features/base/aspect-ratio'].aspectRatio,
-        _serverURL,
         _profile,
+        _serverURL,
         _visible: state['features/app-settings'].visible
     };
 }
