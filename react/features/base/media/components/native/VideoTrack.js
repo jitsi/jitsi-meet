@@ -87,9 +87,7 @@ class VideoTrack extends AbstractVideoTrack {
 
                 return this._animateVideoTrack(0);
             })
-            .catch(() => {
-                console.log('Animation was stopped');
-            });
+            .catch(() => console.log('Animation was stopped'));
     }
 
     /**
