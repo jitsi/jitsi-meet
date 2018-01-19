@@ -94,7 +94,7 @@ var config = {
 
     // w3c spec-compliant video constraints to use for video capture. Currently
     // used by browsers that return true from lib-jitsi-meet's
-    // RTCBrowserType#usesNewGumFlow. The constraints are independency from
+    // util#browser#usesNewGumFlow. The constraints are independency from
     // this config's resolution value. Defaults to requesting an ideal aspect
     // ratio of 16:9 with an ideal resolution of 1080p.
     // constraints: {
