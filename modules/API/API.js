@@ -59,6 +59,10 @@ function initCommands() {
             sendAnalytics(createApiEvent('display.name.changed'));
             APP.conference.changeLocalDisplayName(displayName);
         },
+        'submit-feedback': feedback => {
+            sendAnalytics(createApiEvent('submit.feedback'));
+            APP.conference.submitFeedback(feedback.score, feedback.message);
+        },
         'toggle-audio': () => {
             sendAnalytics(createApiEvent('toggle-audio'));
             logger.log('Audio toggle: API command received');
@@ -456,6 +460,16 @@ class API {
         });
     }
 
+    /**
+     * Notify external application (if API is enabled) that conference feedback
+     * has been submitted. Intended to be used in conjunction with the
+     * submit-feedback command to get notified if feedback was submitted.
+     *
+     * @returns {void}
+     */
+    notifyFeedbackSubmitted() {
+        this._sendEvent({ name: 'feedback-submitted' });
+    }
 
     /**
      * Disposes the allocated resources.

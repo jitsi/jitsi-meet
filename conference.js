@@ -91,7 +91,10 @@ import {
 import { statsEmitter } from './react/features/connection-indicator';
 import { showDesktopPicker } from './react/features/desktop-picker';
 import { appendSuffix } from './react/features/display-name';
-import { maybeOpenFeedbackDialog } from './react/features/feedback';
+import {
+    maybeOpenFeedbackDialog,
+    submitFeedback
+} from './react/features/feedback';
 import {
     mediaPermissionPromptVisibilityChanged,
     suspendDetected
@@ -2798,5 +2801,21 @@ export default {
     setAudioMuteStatus(muted) {
         APP.UI.setAudioMuted(this.getMyUserId(), muted);
         APP.API.notifyAudioMutedStatusChanged(muted);
+    },
+
+    /**
+     * Dispatches the passed in feedback for submission. The submitted score
+     * should be a number inclusively between 1 through 5, or -1 for no score.
+     *
+     * @param {number} score - a number between 1 and 5 (inclusive) or -1 for no
+     * score.
+     * @param {string} message - An optional message to attach to the feedback
+     * in addition to the score.
+     * @returns {void}
+     */
+    submitFeedback(score = -1, message = '') {
+        if (score === -1 || (score >= 1 && score <= 5)) {
+            APP.store.dispatch(submitFeedback(score, message, room));
+        }
     }
 };
