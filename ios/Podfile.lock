@@ -83,15 +83,15 @@ EXTERNAL SOURCES:
     :path: ../node_modules/react-native/ReactCommon/yoga
 
 SPEC CHECKSUMS:
-  React: 352f02f1db6e4744f9a758527e13e3fdefbbd6ba
-  react-native-background-timer: 10063c04bf85d7f8811dff8c74399f0aa715245f
-  react-native-fetch-blob: 2bef9be702de8726f4d7bf58d2345579aaaee60d
-  react-native-keep-awake: bb4dbb6fd21a7879432f9538b0b7d71398fe9f81
-  react-native-locale-detector: bb60716189d4c69c459355d0a4804c9b13f65e84
-  react-native-webrtc: 6fd0b3aa890d7a9b9b4d01d30f958d17ae88a785
-  RNVectorIcons: c1821d56c775cc5a3bca66c77dfc8cb4a90d27e2
-  yoga: b5d96400ca8b2936965a7a6516da7c1177f432a3
+  React: 541ba768b9855e10cdc76f55427a5cd0653ca806
+  react-native-background-timer: 63dcbf37dbcf294b5c6c071afcdc661fa06a7594
+  react-native-fetch-blob: 63394b1d7b0781547b3e4463b3195790177b1222
+  react-native-keep-awake: 0de4bd66de0c23178107dce0c2fcc3354b2a8e94
+  react-native-locale-detector: d1b2c6fe5abb56e3a1efb6c2d6f308c05c4251f1
+  react-native-webrtc: bc044ca9530fc802e7533f247aa08fe1b6bf8dc5
+  RNVectorIcons: c0dbfbf6068fefa240c37b0f71bd03b45dddac44
+  yoga: 17521bbb0dd54a47c0b3ac43253e78cdac7488e0
 
 PODFILE CHECKSUM: fabd6b6c27f8e1849f0668db3f403bf536ac8903
 
-COCOAPODS: 1.3.1
+COCOAPODS: 1.4.0
