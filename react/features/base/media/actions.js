@@ -3,6 +3,9 @@
 import type { Dispatch } from 'redux';
 
 import {
+    ADD_AUDIO,
+    PLAY_AUDIO,
+    REMOVE_AUDIO,
     SET_AUDIO_MUTED,
     SET_AUDIO_AVAILABLE,
     SET_CAMERA_FACING_MODE,
@@ -10,7 +13,61 @@ import {
     SET_VIDEO_MUTED,
     TOGGLE_CAMERA_FACING_MODE
 } from './actionTypes';
+import type { AudioElement } from './components/AbstractAudio';
 import { CAMERA_FACING_MODE, VIDEO_MUTISM_AUTHORITY } from './constants';
+
+/**
+ * Registers given {@link AudioElement} to the Redux store under given
+ * identifier.
+ *
+ * @param {string} audioId - The global sound identifier.
+ * @param {AudioElement} audio - The audio element which will be added to
+ * the Redux store.
+ * @returns {{
+ *     type: ADD_AUDIO,
+ *     audioId: string,
+ *     audio: AudioElement
+ * }}
+ */
+export function addAudio(audioId: string, audio: AudioElement): Object {
+    return {
+        type: ADD_AUDIO,
+        audioId,
+        audio
+    };
+}
+
+/**
+ * Plays the audio identified by the given global identifier.
+ *
+ * @param {string} audioId - The global audio element instance identifier.
+ * @returns {{
+ *     type: PLAY_AUDIO,
+ *     audioId: string
+ * }}
+ */
+export function playAudio(audioId: string): Object {
+    return {
+        type: PLAY_AUDIO,
+        audioId
+    };
+}
+
+/**
+ * Removes the audio element from the Redux store identified by the given id.
+ *
+ * @param {string} audioId - The global audio element instance identifier.
+ * @returns {{
+ *     type: REMOVE_AUDIO,
+ *     audioId: string
+ * }}
+ */
+export function removeAudio(audioId: string): Object {
+    return {
+        type: REMOVE_AUDIO,
+        audioId
+    };
+}
 
 /**
  * Action to adjust the availability of the local audio.

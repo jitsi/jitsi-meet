@@ -135,14 +135,6 @@ class Filmstrip extends Component<*> {
                             onMouseOut = { this._onMouseOut }
                             onMouseOver = { this._onMouseOver } />
                     </div>
-                    <audio
-                        id = 'userJoined'
-                        preload = 'auto'
-                        src = 'sounds/joined.wav' />
-                    <audio
-                        id = 'userLeft'
-                        preload = 'auto'
-                        src = 'sounds/left.wav' />
                 </div>
             </div>
         );

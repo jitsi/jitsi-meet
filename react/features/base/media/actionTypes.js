@@ -1,4 +1,32 @@
 /**
+ * The type of (Redux) action to add register audio element to the Redux store.
+ * {
+ *     type: ADD_SOUND,
+ *     audioId: string,
+ *     audio: AudioElement
+ * }
+ */
+export const ADD_AUDIO = Symbol('ADD_AUDIO');
+
+/**
+ * The type of (Redux) action to play a sound.
+ * {
+ *     type: PLAY_AUDIO,
+ *     audioId: string
+ * }
+ */
+export const PLAY_AUDIO = Symbol('PLAY_AUDIO');
+
+/**
+ * The type of (Redux) action to remove audio element from the Redux store.
+ * {
+ *     type: REMOVE_AUDIO,
+ *     audioId: string
+ * }
+ */
+export const REMOVE_AUDIO = Symbol('REMOVE_AUDIO');
+
+/**
  * The type of (redux) action to set the muted state of the local audio.
  *
  * {
