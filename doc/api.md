@@ -27,6 +27,7 @@ Its constructor gets a number of options:
     * **interfaceConfigOverwrite**: (optional) JS object with overrides for options defined in [interface_config.js].
     * **noSSL**: (optional, defaults to true) Boolean indicating if the server should be contacted using HTTP or HTTPS.
     * **jwt**: (optional) [JWT](https://jwt.io/) token.
+    * **onload**: (optional) handler for the iframe onload event.
 
 Example:
 
