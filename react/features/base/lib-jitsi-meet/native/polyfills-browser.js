@@ -310,7 +310,7 @@ function _visitNode(node, callback) {
         //
         // Required by:
         // - lib-jitsi-meet/modules/RTC/adapter.screenshare.js
-        // - lib-jitsi-meet/modules/RTC/RTCBrowserType.js
+        // - lib-jitsi-meet/modules/browser/BrowserDetection.js
         let userAgent = navigator.userAgent || '';
 
         // react-native/version

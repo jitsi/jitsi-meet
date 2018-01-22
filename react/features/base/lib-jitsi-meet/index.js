@@ -7,7 +7,7 @@ export { JitsiMeetJS as default };
 // undefined imported JitsiMeetJS. It may be caused by import cycles but I have
 // not confirmed the theory.
 export const analytics = JitsiMeetJS.analytics;
-export const RTCBrowserType = JitsiMeetJS.util.RTCBrowserType;
+export const browser = JitsiMeetJS.util.browser;
 export const JitsiConferenceErrors = JitsiMeetJS.errors.conference;
 export const JitsiConferenceEvents = JitsiMeetJS.events.conference;
 export const JitsiConnectionErrors = JitsiMeetJS.errors.connection;
