@@ -8,6 +8,11 @@ import { connect, disconnect } from '../../base/connection';
 import { DialogContainer } from '../../base/dialog';
 import { translate } from '../../base/i18n';
 import { CalleeInfoContainer } from '../../base/jwt';
+import { Audio } from '../../base/media';
+import {
+    PARTICIPANT_JOINED_SOUND_ID,
+    PARTICIPANT_LEFT_SOUND_ID
+} from '../../base/participants';
 import { Filmstrip } from '../../filmstrip';
 import { LargeVideo } from '../../large-video';
 import { NotificationsContainer } from '../../notifications';
@@ -131,6 +136,16 @@ class Conference extends Component<Props> {
                   * dedicated to the respective scenarios.
                   */}
                 <HideNotificationBarStyle />
+                {/*
+                  * The audio resources used for playing sounds for various
+                  * events during the conference.
+                  */}
+                <Audio
+                    audioId = { PARTICIPANT_JOINED_SOUND_ID }
+                    src = 'sounds/joined.wav' />
+                <Audio
+                    audioId = { PARTICIPANT_LEFT_SOUND_ID }
+                    src = 'sounds/left.wav' />
             </div>
         );
     }

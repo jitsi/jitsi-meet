@@ -10,6 +10,11 @@ import { appNavigate } from '../../app';
 import { connect, disconnect } from '../../base/connection';
 import { DialogContainer } from '../../base/dialog';
 import { CalleeInfoContainer } from '../../base/jwt';
+import { Audio } from '../../base/media';
+import {
+    PARTICIPANT_JOINED_SOUND_ID,
+    PARTICIPANT_LEFT_SOUND_ID
+} from '../../base/participants';
 import { Container, LoadingIndicator, TintedView } from '../../base/react';
 import { createDesiredLocalTracks } from '../../base/tracks';
 import { Filmstrip } from '../../filmstrip';
@@ -17,6 +22,18 @@ import { LargeVideo } from '../../large-video';
 import { setToolboxVisible, Toolbox } from '../../toolbox';
 
 import styles from './styles';
+
+/**
+ * Points to the sound file which will be played when new participant joins
+ * the conference.
+ */
+const _JOINED_SOUND = require('../../../../sounds/joined.wav');
+
+/**
+ * Points to the sound file which will be played when any participant leaves
+ * the conference.
+ */
+const _LEFT_SOUND = require('../../../../sounds/left.wav');
 
 /**
  * The timeout in milliseconds after which the Toolbox will be hidden.
@@ -225,6 +242,16 @@ class Conference extends Component<Props> {
                   * The dialogs are in the topmost stacking layers.
                   */}
                 <DialogContainer />
+                {/*
+                  * The audio resources used for playing sounds for various
+                  * events during the conference.
+                  */}
+                <Audio
+                    audioId = { PARTICIPANT_JOINED_SOUND_ID }
+                    src = { _JOINED_SOUND } />
+                <Audio
+                    audioId = { PARTICIPANT_LEFT_SOUND_ID }
+                    src = { _LEFT_SOUND } />
             </Container>
         );
     }

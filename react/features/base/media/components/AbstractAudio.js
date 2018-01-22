@@ -1,35 +1,71 @@
 // @flow
 
-import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import { Component } from 'react';
+
+import { addAudio, removeAudio } from '../actions';
+
+/**
+ * Describes audio element interface used in the base/media feature for audio
+ * playback.
+ */
+export type AudioElement = {
+    play: ?Function,
+    pause: ?Function
+}
+
+/**
+ * {@code AbstractAudio} component's property types.
+ */
+type Props = {
+
+    /**
+     * Dispatches {@link ADD_AUDIO} Redux action which will store the
+     * {@link AudioElement} from the Redux store.
+     */
+    _addAudio: Function,
+
+    /**
+     * Dispatches {@link REMOVE_AUDIO} Redux action which will remove the
+     * {@link AudioElement} from the Redux store.
+     */
+    _removeAudio: Function,
+
+    /**
+     * If both {@code src} and {@code audioId} are specified a reference to the
+     * audio element will be stored in the Redux store, as long as the component
+     * remains in the React's DOM tree. {@code audioId} is a global audio
+     * element identifier which will be used to identify it within Redux audio
+     * related actions.
+     */
+    audioId: string,
+
+    /**
+     * A callback which will be called with {@code AbstractAudio} instance once
+     * the audio element is loaded.
+     */
+    setRef: ?Function,
+
+    /**
+     * The URL of a media resource to use in the element.
+     *
+     * @type {string}
+     */
+    src: string,
+    stream: Object
+}
 
 /**
  * The React {@link Component} which is similar to Web's
  * {@code HTMLAudioElement}.
  */
-export default class AbstractAudio extends Component<*> {
+export default class AbstractAudio extends Component<Props> {
     /**
-     * The (reference to the) {@link ReactElement} which actually implements
-     * this {@code AbstractAudio}.
+     * The {@link AudioElement} instance which implements the audio playback
+     * functionality.
      */
-    _ref: ?Object;
+    _audioElementImpl: ?AudioElement;
 
-    _setRef: Function;
-
-    /**
-     * {@code AbstractAudio} component's property types.
-     *
-     * @static
-     */
-    static propTypes = {
-        /**
-         * The URL of a media resource to use in the element.
-         *
-         * @type {string}
-         */
-        src: PropTypes.string,
-        stream: PropTypes.object
-    };
+    setAudioElementImpl: Function;
 
     /**
      * Initializes a new {@code AbstractAudio} instance.
@@ -41,7 +77,7 @@ export default class AbstractAudio extends Component<*> {
         super(props);
 
         // Bind event handlers so they are only bound once for every instance.
-        this._setRef = this._setRef.bind(this);
+        this.setAudioElementImpl = this.setAudioElementImpl.bind(this);
     }
 
     /**
@@ -51,7 +87,9 @@ export default class AbstractAudio extends Component<*> {
      * @returns {void}
      */
     pause() {
-        this._ref && typeof this._ref.pause === 'function' && this._ref.pause();
+        this._audioElementImpl
+            && typeof this._audioElementImpl.pause === 'function'
+            && this._audioElementImpl.pause();
     }
 
     /**
@@ -61,56 +99,76 @@ export default class AbstractAudio extends Component<*> {
      * @returns {void}
      */
     play() {
-        this._ref && typeof this._ref.play === 'function' && this._ref.play();
+        this._audioElementImpl
+            && typeof this._audioElementImpl.play === 'function'
+            && this._audioElementImpl.play();
     }
 
     /**
-     * Renders this {@code AbstractAudio} as a React {@link Component} of a
-     * specific type.
+     * Set the (reference to the) {@link AudioElement} object which implements
+     * the audio playback functionality.
      *
-     * @param {string|ReactClass} type - The type of the React {@code Component}
-     * which is to be rendered.
-     * @param {Object|undefined} props - The read-only React {@code Component}
-     * properties, if any, to render. If {@code undefined}, the props of this
-     * instance will be rendered.
+     * @param {AudioElement} element - The {@link AudioElement} instance
+     * which implements the audio playback functionality.
      * @protected
-     * @returns {ReactElement}
-     */
-    _render(type, props) {
-        const {
-            children,
-
-            /* eslint-disable no-unused-vars */
-
-            // The following properties are consumed by React itself so they are
-            // to not be propagated.
-            ref,
-
-            /* eslint-enable no-unused-vars */
-
-            ...filteredProps
-        } = props || this.props;
-
-        return (
-            React.createElement(
-                type,
-                {
-                    ...filteredProps,
-                    ref: this._setRef
-                },
-                children));
-    }
-
-    /**
-     * Set the (reference to the) {@link ReactElement} which actually implements
-     * this {@code AbstractAudio}.
-     *
-     * @param {Object} ref - The (reference to the) {@code ReactElement} which
-     * actually implements this {@code AbstractAudio}.
-     * @private
      * @returns {void}
      */
-    _setRef(ref) {
-        this._ref = ref;
+    setAudioElementImpl(element: ?AudioElement) {
+        this._audioElementImpl = element;
+
+        // AudioElements are stored only if both 'src' and 'audioId' properties
+        // are present.
+        if (element && this.props.src && this.props.audioId) {
+            this.props._addAudio(this.props.audioId, element);
+        } else if (!element && this.props.src && this.props.audioId) {
+            this.props._removeAudio(this.props.audioId);
+        }
+
+        if (typeof this.props.setRef === 'function') {
+            this.props.setRef(element ? this : null);
+        }
     }
+}
+
+/**
+ * Maps dispatching of some actions to React component props.
+ *
+ * @param {Function} dispatch - Redux action dispatcher.
+ * @returns {{
+ *     _addSound: void,
+ *     _removeSound: void
+ * }}
+ * @private
+ */
+export function _mapDispatchToProps(dispatch: Function) {
+    return {
+        /**
+         * Dispatches action to store the {@link AudioElement} under
+         * {@code audioId} in the Redux store, so that the playback can be
+         * controlled through the Redux actions.
+         *
+         * @param {string} audioId - A global identifier which will be used to
+         * identify the audio element instance.
+         * @param {AudioElement} audioRef - The {@link AudioElement} instance
+         * that will be stored in the Redux state of the base/media feature.
+         * @returns {void}
+         * @private
+         */
+        _addAudio(audioId: string, audioRef: AudioElement) {
+            dispatch(addAudio(audioId, audioRef));
+        },
+
+        /**
+         * Dispatches action to remove {@link AudioElement} from the Redux
+         * store.
+         *
+         * @param {string} audioId - The id of the {@link AudioElement} instance
+         * to be removed from the Redux store.
+         * @returns {void}
+         * @private
+         */
+        _removeAudio(audioId: string) {
+            dispatch(removeAudio(audioId));
+        }
+    };
 }

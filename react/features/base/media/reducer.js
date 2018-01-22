@@ -3,6 +3,8 @@ import { combineReducers } from 'redux';
 import { ReducerRegistry } from '../redux';
 
 import {
+    ADD_AUDIO,
+    REMOVE_AUDIO,
     SET_AUDIO_AVAILABLE,
     SET_AUDIO_MUTED,
     SET_CAMERA_FACING_MODE,
@@ -52,6 +54,43 @@ function _audio(state = AUDIO_INITIAL_MEDIA_STATE, action) {
             muted: action.muted
         };
 
+    default:
+        return state;
+    }
+}
+
+/**
+ * Initial state of the sounds reducer which is a {@code Map} of globally stored
+ * sounds.
+ *
+ * @type {Map<string, AudioElement>}
+ */
+const SOUNDS_INITIAL_STATE = new Map();
+
+/**
+ * Reducer for the sounds.
+ *
+ * @param {Map<string, AudioElement>} state - State of the sounds map.
+ * @param {Object} action - Action object.
+ * @returns {Map<string, AudioElement>}
+ * @private
+ */
+function _sounds(state = SOUNDS_INITIAL_STATE, action) {
+    switch (action.type) {
+    case ADD_AUDIO: {
+        const newSoundsMap = new Map(state);
+
+        newSoundsMap.set(action.audioId, action.audio);
+
+        return newSoundsMap;
+    }
+    case REMOVE_AUDIO: {
+        const newSoundsMap = new Map(state);
+
+        newSoundsMap.delete(action.audioId);
+
+        return newSoundsMap;
+    }
     default:
         return state;
     }
@@ -136,5 +175,6 @@ function _video(state = VIDEO_INITIAL_MEDIA_STATE, action) {
  */
 ReducerRegistry.register('features/base/media', combineReducers({
     audio: _audio,
+    sounds: _sounds,
     video: _video
 }));

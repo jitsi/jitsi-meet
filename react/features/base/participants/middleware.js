@@ -6,6 +6,7 @@ import {
     CONFERENCE_JOINED,
     CONFERENCE_LEFT
 } from '../conference';
+import { playAudio } from '../media';
 import { MiddlewareRegistry } from '../redux';
 
 import { localParticipantIdChanged } from './actions';
@@ -14,12 +15,18 @@ import {
     MUTE_REMOTE_PARTICIPANT,
     PARTICIPANT_DISPLAY_NAME_CHANGED,
     PARTICIPANT_JOINED,
+    PARTICIPANT_LEFT,
     PARTICIPANT_UPDATED
 } from './actionTypes';
-import { LOCAL_PARTICIPANT_DEFAULT_ID } from './constants';
+import {
+    LOCAL_PARTICIPANT_DEFAULT_ID,
+    PARTICIPANT_JOINED_SOUND_ID,
+    PARTICIPANT_LEFT_SOUND_ID
+} from './constants';
 import {
     getAvatarURLByParticipantId,
-    getLocalParticipant
+    getLocalParticipant,
+    getParticipantCount
 } from './functions';
 
 declare var APP: Object;
@@ -65,8 +72,30 @@ MiddlewareRegistry.register(store => next => action => {
         break;
     }
 
+    case PARTICIPANT_LEFT: {
+        const state = store.getState();
+        const { startAudioMuted } = state['features/base/config'];
+
+        if (!action.participant.local
+                && (!startAudioMuted
+                        || startAudioMuted > getParticipantCount(state))) {
+            store.dispatch(playAudio(PARTICIPANT_LEFT_SOUND_ID));
+        }
+        break;
+    }
+
     case PARTICIPANT_JOINED:
     case PARTICIPANT_UPDATED: {
+        const state = store.getState();
+        const { startAudioMuted } = state['features/base/config'];
+
+        if (action.type === PARTICIPANT_JOINED
+                && !action.participant.local
+                && (!startAudioMuted
+                        || startAudioMuted > getParticipantCount(state))) {
+            store.dispatch(playAudio(PARTICIPANT_JOINED_SOUND_ID));
+        }
+
         if (typeof APP !== 'undefined') {
             const participant = action.participant;
             const { id, local } = participant;
@@ -78,8 +107,7 @@ MiddlewareRegistry.register(store => next => action => {
             // to the new avatar and emit out change events if necessary.
             const result = next(action);
 
-            const postUpdateAvatarURL
-                = getAvatarURLByParticipantId(store.getState(), id);
+            const postUpdateAvatarURL = getAvatarURLByParticipantId(state, id);
 
             if (preUpdateAvatarURL !== postUpdateAvatarURL) {
                 const currentKnownId = local
