@@ -2,6 +2,9 @@
 
 import React, { Component } from 'react';
 
+import { Audio } from '../../base/media';
+
+import { INCOMING_MSG_SOUND_ID } from '../constants';
 import BaseSoundsCollection from './BaseSoundsCollection';
 
 /**
@@ -18,7 +21,11 @@ export default class SoundsCollection extends Component<*> {
         return (
             <BaseSoundsCollection
                 participantJoinedSound = 'sounds/joined.wav'
-                participantLeftSound = { 'sounds/left.wav' } />
+                participantLeftSound = { 'sounds/left.wav' } >
+                <Audio
+                    audioId = { INCOMING_MSG_SOUND_ID }
+                    src = 'sounds/incomingMessage.wav' />
+            </BaseSoundsCollection>
         );
     }
 }
