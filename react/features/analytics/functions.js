@@ -48,6 +48,7 @@ export function initAnalytics({ getState }: { getState: Function }) {
     const handlerConstructorOptions = {
         envType: (deploymentInfo && deploymentInfo.envType) || 'dev',
         group,
+        product: deploymentInfo && deploymentInfo.product,
         subproduct: deploymentInfo && deploymentInfo.environment,
         user: user && user.id,
         version: JitsiMeetJS.version
