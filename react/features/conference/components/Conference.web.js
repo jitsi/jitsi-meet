@@ -19,6 +19,7 @@ import { NotificationsContainer } from '../../notifications';
 import { showToolbox, Toolbox } from '../../toolbox';
 import { HideNotificationBarStyle } from '../../unsupported-browser';
 
+import { INCOMING_MSG_SOUND_ID } from '../../chat';
 import { maybeShowSuboptimalExperienceNotification } from '../functions';
 
 declare var APP: Object;
@@ -140,6 +141,9 @@ class Conference extends Component<Props> {
                   * The audio resources used for playing sounds for various
                   * events during the conference.
                   */}
+                <Audio
+                    audioId = { INCOMING_MSG_SOUND_ID }
+                    src = 'sounds/incomingMessage.wav' />
                 <Audio
                     audioId = { PARTICIPANT_JOINED_SOUND_ID }
                     src = 'sounds/joined.wav' />
