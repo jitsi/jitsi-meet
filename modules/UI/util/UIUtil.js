@@ -67,15 +67,6 @@ const UIUtil = {
     },
 
     /**
-     * Plays the sound given by id.
-     *
-     * @param id the identifier of the audio element.
-     */
-    playSoundNotification(id) {
-        document.getElementById(id).play();
-    },
-
-    /**
      * Escapes the given text.
      */
     escapeHtml(unsafeText) {
