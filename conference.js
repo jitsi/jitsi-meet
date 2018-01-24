@@ -1536,6 +1536,8 @@ export default {
         const wasVideoMuted = this.isLocalVideoMuted();
 
         return createLocalTracksF({
+            screenSharingSourceDeviceId: config.enableScreenSharingWithCamera
+                && APP.settings.getScreenSharingSourceDeviceId(),
             desktopSharingSources: options.desktopSharingSources,
             devices: [ 'desktop' ],
             desktopSharingExtensionExternalInstallation: {
@@ -1707,6 +1709,9 @@ export default {
         if (error.name === JitsiTrackErrors.PERMISSION_DENIED) {
             descriptionKey = 'dialog.screenSharingPermissionDeniedError';
             titleKey = 'dialog.screenSharingFailedToInstallTitle';
+        } else if (error.name === JitsiTrackErrors.CONSTRAINT_FAILED) {
+            descriptionKey = 'dialog.cameraConstraintFailedError';
+            titleKey = 'deviceError.cameraError';
         } else {
             descriptionKey = 'dialog.screenSharingFailedToInstall';
             titleKey = 'dialog.screenSharingFailedToInstallTitle';

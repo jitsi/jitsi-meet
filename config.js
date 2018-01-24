@@ -338,6 +338,7 @@ var config = {
      disableRemoteControl
      displayJids
      enableLocalVideoFlip
+     enableScreenSharingWithCamera
      etherpad_base
      externalConnectUrl
      firefox_fake_device

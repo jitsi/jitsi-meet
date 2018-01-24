@@ -59,6 +59,8 @@ export function createLocalTracksF(
                 desktopSharingExtensionExternalInstallation:
                     options.desktopSharingExtensionExternalInstallation,
                 desktopSharingSources: options.desktopSharingSources,
+                screenSharingSourceDeviceId:
+                    options.screenSharingSourceDeviceId,
 
                 // Copy array to avoid mutations inside library.
                 devices: options.devices.slice(0),
