@@ -10,7 +10,8 @@ import { addAudio, removeAudio } from '../actions';
  */
 export type AudioElement = {
     play: ?Function,
-    pause: ?Function
+    pause: ?Function,
+    setSinkId: ?Function
 }
 
 /**
@@ -102,6 +103,20 @@ export default class AbstractAudio extends Component<Props> {
         this._audioElementImpl
             && typeof this._audioElementImpl.play === 'function'
             && this._audioElementImpl.play();
+    }
+
+    /**
+     * Sets the sink ID (output device ID) on the underlying audio element.
+     * NOTE: Currently implemented only on web.
+     *
+     * @param {string} sinkId - The sink ID (output device ID).
+     * @returns {void}
+     */
+    setSinkId(sinkId: String) {
+        if (this._audioElementImpl
+            && typeof this._audioElementImpl.setSinkId === 'function') {
+            this._audioElementImpl.setSinkId(sinkId);
+        }
     }
 
     /**
