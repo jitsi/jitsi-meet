@@ -1,8 +1,9 @@
-/* @flow */
+// @flow
 
 import React from 'react';
 
 import AbstractAudio from '../AbstractAudio';
+import type { AudioElement } from '../AbstractAudio';
 
 /**
  * The React/Web {@link Component} which is similar to and wraps around
@@ -15,19 +16,9 @@ export default class Audio extends AbstractAudio {
     _audioFileLoaded: boolean;
 
     /**
-     * {@link _onCanPlayThrough} bound to "this".
-     */
-    _onCanPlayThrough: Function;
-
-    /**
      * Reference to the HTML audio element, stored until the file is ready.
      */
-    _ref: HTMLAudioElement;
-
-    /**
-     * {@link _setRef} bound to "this".
-     */
-    _setRef: Function;
+    _ref: ?AudioElement;
 
     /**
      * Creates new <code>Audio</code> element instance with given props.
@@ -54,6 +45,8 @@ export default class Audio extends AbstractAudio {
             <audio
                 onCanPlayThrough = { this._onCanPlayThrough }
                 preload = 'auto'
+
+                // $FlowFixMe
                 ref = { this._setRef }
                 src = { this.props.src } />
         );
@@ -73,6 +66,8 @@ export default class Audio extends AbstractAudio {
         }
     }
 
+    _onCanPlayThrough: () => void;
+
     /**
      * Called when 'canplaythrough' event is triggered on the audio element,
      * which means that the whole file has been loaded.
@@ -85,6 +80,8 @@ export default class Audio extends AbstractAudio {
         this._maybeSetAudioElementImpl();
     }
 
+    _setRef: (?AudioElement) => void;
+
     /**
      * Sets the reference to the HTML audio element.
      *
@@ -92,8 +89,9 @@ export default class Audio extends AbstractAudio {
      * @private
      * @returns {void}
      */
-    _setRef(audioElement: HTMLAudioElement) {
+    _setRef(audioElement: ?AudioElement) {
         this._ref = audioElement;
+
         if (audioElement) {
             this._maybeSetAudioElementImpl();
         } else {

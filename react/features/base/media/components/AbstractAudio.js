@@ -7,8 +7,9 @@ import { Component } from 'react';
  * playback.
  */
 export type AudioElement = {
+    pause: Function,
     play: Function,
-    pause: Function
+    setSinkId: ?Function
 }
 
 /**
@@ -46,20 +47,15 @@ export default class AbstractAudio extends Component<Props> {
     _audioElementImpl: ?AudioElement;
 
     /**
-     * {@link setAudioElementImpl} bound to <code>this</code>.
-     */
-    setAudioElementImpl: Function;
-
-    /**
      * Initializes a new {@code AbstractAudio} instance.
      *
-     * @param {Object} props - The read-only properties with which the new
+     * @param {Props} props - The read-only properties with which the new
      * instance is to be initialized.
      */
-    constructor(props: Object) {
+    constructor(props: Props) {
         super(props);
 
-        // Bind event handlers so they are only bound once for every instance.
+        // Bind event handlers so they are only bound once per instance.
         this.setAudioElementImpl = this.setAudioElementImpl.bind(this);
     }
 
@@ -83,6 +79,8 @@ export default class AbstractAudio extends Component<Props> {
         this._audioElementImpl && this._audioElementImpl.play();
     }
 
+    setAudioElementImpl: (?AudioElement) => void;
+
     /**
      * Set the (reference to the) {@link AudioElement} object which implements
      * the audio playback functionality.
@@ -95,8 +93,22 @@ export default class AbstractAudio extends Component<Props> {
     setAudioElementImpl(element: ?AudioElement) {
         this._audioElementImpl = element;
 
-        if (typeof this.props.setRef === 'function') {
-            this.props.setRef(element ? this : null);
-        }
+        // setRef
+        const { setRef } = this.props;
+
+        typeof setRef === 'function' && setRef(element ? this : null);
+    }
+
+    /**
+     * Sets the sink ID (output device ID) on the underlying audio element.
+     * NOTE: Currently, implemented only on Web.
+     *
+     * @param {string} sinkId - The sink ID (output device ID).
+     * @returns {void}
+     */
+    setSinkId(sinkId: String) {
+        this._audioElementImpl
+            && typeof this._audioElementImpl.setSinkId === 'function'
+            && this._audioElementImpl.setSinkId(sinkId);
     }
 }
