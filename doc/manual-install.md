@@ -98,8 +98,9 @@ prosodyctl cert generate auth.jitsi.example.com
 Add auth.jitsi.example.com to the trusted certificates on the local machine:
 ```sh
 ln -sf /var/lib/prosody/auth.jitsi.example.com.crt /usr/local/share/ca-certificates/auth.jitsi.example.com.crt
-update-ca-certificates
+update-ca-certificates -f
 ```
+Note that the `-f` flag is necessary if there are symlinks left from a previous installation.
 
 Create conference focus user:
 ```sh
