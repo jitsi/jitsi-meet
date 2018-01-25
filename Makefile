@@ -42,6 +42,8 @@ deploy-lib-jitsi-meet:
 	cp \
 		$(LIBJITSIMEET_DIR)/lib-jitsi-meet.min.js \
 		$(LIBJITSIMEET_DIR)/lib-jitsi-meet.min.map \
+		$(LIBJITSIMEET_DIR)/browser_capabilities.min.js \
+		$(LIBJITSIMEET_DIR)/browser_capabilities.min.map \
 		$(LIBJITSIMEET_DIR)/connection_optimization/external_connect.js \
 		$(DEPLOY_DIR)
 
