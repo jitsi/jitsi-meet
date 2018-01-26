@@ -4,8 +4,6 @@ import { Component } from 'react';
 
 import { getProfile, updateProfile } from '../../base/profile';
 
-import { hideAppSettings } from '../actions';
-
 /**
  * The type of the React {@code Component} props of {@link AbstractAppSettings}
  */
@@ -34,7 +32,12 @@ type Props = {
     /**
      * Redux store dispatch function.
      */
-    dispatch: Dispatch<*>
+    dispatch: Dispatch<*>,
+
+    /**
+     * The i18n translate function.
+     */
+    t: Function
 };
 
 /**
@@ -44,6 +47,7 @@ type Props = {
  * @abstract
  */
 export class AbstractAppSettings extends Component<Props> {
+
     /**
      * Initializes a new {@code AbstractAppSettings} instance.
      *
@@ -56,7 +60,6 @@ export class AbstractAppSettings extends Component<Props> {
         this._onChangeDisplayName = this._onChangeDisplayName.bind(this);
         this._onChangeEmail = this._onChangeEmail.bind(this);
         this._onChangeServerURL = this._onChangeServerURL.bind(this);
-        this._onRequestClose = this._onRequestClose.bind(this);
         this._onStartAudioMutedChange
             = this._onStartAudioMutedChange.bind(this);
         this._onStartVideoMutedChange
@@ -106,17 +109,6 @@ export class AbstractAppSettings extends Component<Props> {
         this._updateProfile({
             serverURL: text
         });
-    }
-
-    _onRequestClose: () => void;
-
-    /**
-     * Handles the back button.
-     *
-     * @returns {void}
-     */
-    _onRequestClose() {
-        this.props.dispatch(hideAppSettings());
     }
 
     _onStartAudioMutedChange: (boolean) => void;

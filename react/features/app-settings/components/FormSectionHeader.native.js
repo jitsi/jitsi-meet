@@ -6,8 +6,8 @@ import { connect } from 'react-redux';
 
 import { ASPECT_RATIO_WIDE } from '../../base/aspect-ratio';
 import { translate } from '../../base/i18n';
+import { getSafetyOffset } from '../../base/react';
 
-import { getSafetyOffset } from '../functions';
 import styles, { CONTAINER_PADDING } from './styles';
 
 /**
