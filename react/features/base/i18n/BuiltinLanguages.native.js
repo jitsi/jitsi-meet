@@ -1,144 +1,129 @@
+// @flow
+
 import i18next from 'i18next';
 
 /**
- * Collection of builtin languages.
+ * The builtin languages.
  */
-const languages = [
+const _LANGUAGES = {
 
     // Bulgarian
-    {
-        name: 'bg',
-        mainResource: require('../../../../lang/main-bg'),
-        langResource: require('../../../../lang/languages-bg')
+    'bg': {
+        languages: require('../../../../lang/languages-bg'),
+        main: require('../../../../lang/main-bg')
     },
 
     // German
-    {
-        name: 'de',
-        mainResource: require('../../../../lang/main-de'),
-        langResource: require('../../../../lang/languages-de')
+    'de': {
+        languages: require('../../../../lang/languages-de'),
+        main: require('../../../../lang/main-de')
     },
 
     // Esperanto
-    {
-        name: 'eo',
-        mainResource: require('../../../../lang/main-eo'),
-        langResource: require('../../../../lang/languages-eo')
+    'eo': {
+        languages: require('../../../../lang/languages-eo'),
+        main: require('../../../../lang/main-eo')
     },
 
     // Spanish
-    {
-        name: 'es',
-        mainResource: require('../../../../lang/main-es'),
-        langResource: require('../../../../lang/languages-es')
+    'es': {
+        languages: require('../../../../lang/languages-es'),
+        main: require('../../../../lang/main-es')
     },
 
     // French
-    {
-        name: 'fr',
-        mainResource: require('../../../../lang/main-fr'),
-        langResource: require('../../../../lang/languages-fr')
+    'fr': {
+        languages: require('../../../../lang/languages-fr'),
+        main: require('../../../../lang/main-fr')
     },
 
     // Armenian
-    {
-        name: 'hy',
-        mainResource: require('../../../../lang/main-hy'),
-        langResource: require('../../../../lang/languages-hy')
+    'hy': {
+        languages: require('../../../../lang/languages-hy'),
+        main: require('../../../../lang/main-hy')
     },
 
     // Italian
-    {
-        name: 'it',
-        mainResource: require('../../../../lang/main-it'),
-        langResource: require('../../../../lang/languages-it')
+    'it': {
+        languages: require('../../../../lang/languages-it'),
+        main: require('../../../../lang/main-it')
     },
 
     // Norwegian Bokmal
-    {
-        name: 'nb',
-        mainResource: require('../../../../lang/main-nb'),
-        langResource: require('../../../../lang/languages-nb')
+    'nb': {
+        languages: require('../../../../lang/languages-nb'),
+        main: require('../../../../lang/main-nb')
     },
 
     // Occitan
-    {
-        name: 'oc',
-        mainResource: require('../../../../lang/main-oc'),
-        langResource: require('../../../../lang/languages-oc')
+    'oc': {
+        languages: require('../../../../lang/languages-oc'),
+        main: require('../../../../lang/main-oc')
     },
 
     // Polish
-    {
-        name: 'pl',
-        mainResource: require('../../../../lang/main-pl'),
-        langResource: require('../../../../lang/languages-pl')
+    'pl': {
+        languages: require('../../../../lang/languages-pl'),
+        main: require('../../../../lang/main-pl')
     },
 
     // Portuguese (Brazil)
-    {
-        name: 'ptBR',
-        mainResource: require('../../../../lang/main-ptBR'),
-        langResource: require('../../../../lang/languages-ptBR')
+    'ptBR': {
+        languages: require('../../../../lang/languages-ptBR'),
+        main: require('../../../../lang/main-ptBR')
     },
 
     // Russian
-    {
-        name: 'ru',
-        mainResource: require('../../../../lang/main-ru'),
-        langResource: require('../../../../lang/languages-ru')
+    'ru': {
+        languages: require('../../../../lang/languages-ru'),
+        main: require('../../../../lang/main-ru')
     },
 
     // Slovak
-    {
-        name: 'sk',
-        mainResource: require('../../../../lang/main-sk'),
-        langResource: require('../../../../lang/languages-sk')
+    'sk': {
+        languages: require('../../../../lang/languages-sk'),
+        main: require('../../../../lang/main-sk')
     },
 
     // Slovenian
-    {
-        name: 'sl',
-        mainResource: require('../../../../lang/main-sl'),
-        langResource: require('../../../../lang/languages-sl')
+    'sl': {
+        languages: require('../../../../lang/languages-sl'),
+        main: require('../../../../lang/main-sl')
     },
 
     // Swedish
-    {
-        name: 'sv',
-        mainResource: require('../../../../lang/main-sv'),
-        langResource: require('../../../../lang/languages-sv')
+    'sv': {
+        languages: require('../../../../lang/languages-sv'),
+        main: require('../../../../lang/main-sv')
     },
 
     // Turkish
-    {
-        name: 'tr',
-        mainResource: require('../../../../lang/main-tr'),
-        langResource: require('../../../../lang/languages-tr')
+    'tr': {
+        languages: require('../../../../lang/languages-tr'),
+        main: require('../../../../lang/main-tr')
     },
 
     // Chinese (China)
-    {
-        name: 'zhCN',
-        mainResource: require('../../../../lang/main-zhCN'),
-        langResource: require('../../../../lang/languages-zhCN')
+    'zhCN': {
+        languages: require('../../../../lang/languages-zhCN'),
+        main: require('../../../../lang/main-zhCN')
     }
-];
+};
 
-/**
- * Registers all builtin languages with the i18n library.
- */
-for (const language of languages) {
+// Register all builtin languages with the i18n library.
+for (const name in _LANGUAGES) { // eslint-disable-line guard-for-in
+    const { languages, main } = _LANGUAGES[name];
+
     i18next.addResourceBundle(
-        language.name,
-        'main',
-        language.mainResource,
+        name,
+        'languages',
+        languages,
         /* deep */ true,
         /* overwrite */ true);
     i18next.addResourceBundle(
-        language.name,
-        'languages',
-        language.langResource,
+        name,
+        'main',
+        main,
         /* deep */ true,
         /* overwrite */ true);
 }

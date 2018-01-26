@@ -2,17 +2,17 @@
 
 import moment from 'moment';
 
-import { RECENT_URL_STORAGE } from './constants';
-
 import { i18next } from '../base/i18n';
 import { parseURIString } from '../base/util';
 
+import { RECENT_URL_STORAGE } from './constants';
+
 /**
- * MomentJS uses static language bundle loading, so in order to support
- * dynamic language selection in the app we need to load all bundles that we
- * support in the app.
- * FIXME: If we decide to support MomentJS in other features as well
- * we may need to move this import and the lenient matcher to the i18n feature.
+ * MomentJS uses static language bundle loading, so in order to support dynamic
+ * language selection in the app we need to load all bundles that we support in
+ * the app.
+ * FIXME: If we decide to support MomentJS in other features as well we may need
+ * to move this import and the lenient matcher to the i18n feature.
  */
 require('moment/locale/bg');
 require('moment/locale/de');
@@ -23,8 +23,7 @@ require('moment/locale/hy-am');
 require('moment/locale/it');
 require('moment/locale/nb');
 
-// OC is not available. Please submit OC translation
-// to the MomentJS project.
+// OC is not available. Please submit OC translation to the MomentJS project.
 
 require('moment/locale/pl');
 require('moment/locale/pt');
@@ -50,9 +49,9 @@ export function getRecentRooms(): Promise<Array<Object>> {
                 const recentRoomDS = [];
 
                 if (recentURLs) {
-                    // we init the locale on every list render, so then it
-                    // changes immediately if a language change happens
-                    // in the app.
+                    // We init the locale on every list render, so then it
+                    // changes immediately if a language change happens in the
+                    // app.
                     const locale = _getSupportedLocale();
 
                     for (const e of JSON.parse(recentURLs)) {
@@ -114,8 +113,8 @@ export function updateRecentURLs(recentURLs: Array<Object>) {
  *
  * @param {number} dateTimeStamp - The UTC timestamp to be converted to String.
  * @param {string} locale - The locale to init the formatter with. Note: This
- * locale must be supported by the formatter so ensure this prerequisite
- * before invoking the function.
+ * locale must be supported by the formatter so ensure this prerequisite before
+ * invoking the function.
  * @private
  * @returns {string}
  */
@@ -137,8 +136,8 @@ function _getDateString(dateTimeStamp: number, locale: string) {
  *
  * @param {number} duration - The duration in MS.
  * @param {string} locale - The locale to init the formatter with. Note: This
- * locale must be supported by the formatter so ensure this prerequisite
- * before invoking the function.
+ * locale must be supported by the formatter so ensure this prerequisite before
+ * invoking the function.
  * @private
  * @returns {string}
  */
@@ -165,8 +164,8 @@ function _getInitials(room: string) {
  * @private
  * @param {Date | number} dateToFormat - The date or duration to format.
  * @param {string} locale - The locale to init the formatter with. Note: This
- * locale must be supported by the formatter so ensure this prerequisite
- * before invoking the function.
+ * locale must be supported by the formatter so ensure this prerequisite before
+ * invoking the function.
  * @returns {Object}
  */
 function _getLocalizedFormatter(dateToFormat: Date | number, locale: string) {
@@ -184,20 +183,22 @@ function _getLocalizedFormatter(dateToFormat: Date | number, locale: string) {
  * @returns {string}
  */
 function _getSupportedLocale() {
-    const i18nLocale = i18next.language.toLowerCase();
-    const localeRegexp = new RegExp('^([a-z]{2,2})(-)*([a-z]{2,2})*$');
-    const localeResult = localeRegexp.exec(i18nLocale);
+    const i18nLocale = i18next.language;
+    let supportedLocale;
 
-    if (localeResult) {
-        const currentLocaleRegexp = new RegExp(
-            `^${localeResult[1]}(-)*${`(${localeResult[3]})*` || ''}`
-        );
+    if (i18nLocale) {
+        const localeRegexp = new RegExp('^([a-z]{2,2})(-)*([a-z]{2,2})*$');
+        const localeResult = localeRegexp.exec(i18nLocale.toLowerCase());
 
-        return moment.locales().find(
-            lang => currentLocaleRegexp.exec(lang)
-        ) || 'en';
+        if (localeResult) {
+            const currentLocaleRegexp
+                = new RegExp(
+                    `^${localeResult[1]}(-)*${`(${localeResult[3]})*` || ''}`);
+
+            supportedLocale
+                = moment.locales().find(lang => currentLocaleRegexp.exec(lang));
+        }
     }
 
-    // default fallback
-    return 'en';
+    return supportedLocale || 'en';
 }
