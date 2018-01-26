@@ -1,5 +1,3 @@
-import { Platform } from 'react-native';
-
 import {
     BoxModel,
     ColorPalette,
@@ -19,19 +17,13 @@ const TEXT_SIZE = 17;
 export default createStyleSheet({
 
     /**
-     * The platform specific back button style.
+     * The back button style.
      */
     backIcon: {
         alignSelf: 'center',
-        ...Platform.select({
-            android: {
-                fontSize: 24,
-                padding: 8
-            },
-            ios: {
-                fontSize: 30
-            }
-        })
+        fontSize: 26,
+        padding: 8,
+        paddingRight: 22
     },
 
     /**
@@ -48,7 +40,8 @@ export default createStyleSheet({
      */
     fieldLabelContainer: {
         alignItems: 'center',
-        flexDirection: 'row'
+        flexDirection: 'row',
+        marginRight: 5
     },
 
     /**
@@ -92,7 +85,7 @@ export default createStyleSheet({
      */
     headerTitle: {
         color: ColorPalette.white,
-        fontSize: 24
+        fontSize: 22
     },
 
     /**
@@ -106,8 +99,7 @@ export default createStyleSheet({
      * The back button style on the settings screen.
      */
     settingsBackButton: {
-        color: ColorPalette.white,
-        fontSize: 25
+        color: ColorPalette.white
     },
 
     /**
