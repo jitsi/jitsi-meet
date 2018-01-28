@@ -33,7 +33,7 @@ RCT_EXPORT_MODULE();
     NSString *version = infoDictionary[@"CFBundleShortVersionString"];
     
     if (name == nil) {
-        name = [[[NSBundle mainBundle] infoDictionary] objectForKey:(NSString *)kCFBundleNameKey];
+        name = [infoDictionary[@"kCFBundleNameKey"]];
         if (name == nil) {
             name = @"";
         }
