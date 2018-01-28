@@ -3,7 +3,7 @@
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 
-import { RTCBrowserType } from '../../base/lib-jitsi-meet';
+import { browser } from '../../base/lib-jitsi-meet';
 import { Watermarks } from '../../base/react';
 import { VideoQualityLabel } from '../../video-quality';
 import { RecordingLabel } from '../../recording';
@@ -31,8 +31,8 @@ export default class LargeVideo extends Component<*> {
      * @returns {ReactElement}
      */
     render() {
-        const supportsVideoBackground = !RTCBrowserType.isFirefox()
-            && !RTCBrowserType.isTemasysPluginUsed();
+        const supportsVideoBackground = !browser.isFirefox()
+            && !browser.isTemasysPluginUsed();
 
         return (
             <div
