@@ -31,8 +31,9 @@ export default class AbstractPageReloadOverlay extends Component<*, *> {
      */
     static propTypes = {
         /**
-         * The details.
-         * NOTE: Used by PageReloadOverlay only.
+         * The details. The details is an object containing more inforamation
+         * about the connection failed(shard changes, was the computer
+         * suspended, etc.).
          *
          * @public
          * @type {object}
@@ -279,6 +280,6 @@ export function abstractMapStateToProps(state: Object) {
     return {
         isNetworkFailure: Boolean(configError || connectionError),
         reason: (configError || connectionError || conferenceError).message,
-        details: connectionError.details
+        details: connectionError ? connectionError.details : {}
     };
 }
