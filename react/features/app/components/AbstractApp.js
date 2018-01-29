@@ -12,13 +12,13 @@ import {
     localParticipantJoined,
     localParticipantLeft
 } from '../../base/participants';
+import { getProfile } from '../../base/profile';
 import { Fragment, RouteRegistry } from '../../base/react';
 import {
     MiddlewareRegistry,
     PersistencyRegistry,
     ReducerRegistry
 } from '../../base/redux';
-import { getProfile } from '../../base/profile';
 import { toURLString } from '../../base/util';
 import { OverlayContainer } from '../../overlay';
 import { BlankPage } from '../../welcome';
@@ -346,9 +346,11 @@ export class AbstractApp extends Component {
             middleware = compose(middleware, devToolsExtension());
         }
 
-        return createStore(
-            reducer, PersistencyRegistry.getPersistedState(), middleware
-        );
+        return (
+            createStore(
+                reducer,
+                PersistencyRegistry.getPersistedState(),
+                middleware));
     }
 
     /**

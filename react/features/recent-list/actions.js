@@ -10,8 +10,8 @@ import {
  *
  * @param {Object} locationURL - The current location URL.
  * @returns {{
- *      type: STORE_CURRENT_CONFERENCE,
- *      locationURL: Object
+ *     type: STORE_CURRENT_CONFERENCE,
+ *     locationURL: Object
  * }}
  */
 export function storeCurrentConference(locationURL: Object) {
@@ -26,8 +26,8 @@ export function storeCurrentConference(locationURL: Object) {
  *
  * @param {Object} locationURL - The current location URL.
  * @returns {{
- *      type: UPDATE_CONFERENCE_DURATION,
- *      locationURL: Object
+ *     type: UPDATE_CONFERENCE_DURATION,
+ *     locationURL: Object
  * }}
  */
 export function updateConferenceDuration(locationURL: Object) {

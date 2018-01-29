@@ -1,12 +1,12 @@
 // @flow
 
+import { PersistencyRegistry, ReducerRegistry } from '../base/redux';
+
 import {
     STORE_CURRENT_CONFERENCE,
     UPDATE_CONFERENCE_DURATION
 } from './actionTypes';
 import { LIST_SIZE } from './constants';
-
-import { PersistencyRegistry, ReducerRegistry } from '../base/redux';
 
 /**
  * The initial state of this feature.
@@ -34,8 +34,10 @@ ReducerRegistry.register(STORE_NAME, (state = DEFAULT_STATE, action) => {
     switch (action.type) {
     case STORE_CURRENT_CONFERENCE:
         return _storeCurrentConference(state, action);
+
     case UPDATE_CONFERENCE_DURATION:
         return _updateConferenceDuration(state, action);
+
     default:
         return state;
     }
@@ -54,9 +56,7 @@ function _storeCurrentConference(state, action) {
 
     // If the current conference is already in the list, we remove it to re-add
     // it to the top.
-    const list
-        = state.list
-            .filter(e => e.conference !== conference);
+    const list = state.list.filter(e => e.conference !== conference);
 
     // This is a reverse sorted array (i.e. newer elements at the end).
     list.push({

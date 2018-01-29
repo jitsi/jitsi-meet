@@ -2,16 +2,11 @@
 
 import moment from 'moment';
 
-import { i18next } from '../base/i18n';
-import { parseURIString } from '../base/util';
-
-/**
- * MomentJS uses static language bundle loading, so in order to support dynamic
- * language selection in the app we need to load all bundles that we support in
- * the app.
- * FIXME: If we decide to support MomentJS in other features as well we may need
- * to move this import and the lenient matcher to the i18n feature.
- */
+// MomentJS uses static language bundle loading, so in order to support dynamic
+// language selection in the app we need to load all bundles that we support in
+// the app.
+// FIXME: If we decide to support MomentJS in other features as well we may need
+// to move this import and the lenient matcher to the i18n feature.
 require('moment/locale/bg');
 require('moment/locale/de');
 require('moment/locale/eo');
@@ -32,6 +27,9 @@ require('moment/locale/sl');
 require('moment/locale/sv');
 require('moment/locale/tr');
 require('moment/locale/zh-cn');
+
+import { i18next } from '../base/i18n';
+import { parseURIString } from '../base/util';
 
 /**
  * Retrieves the recent room list and generates all the data needed to be
@@ -122,14 +120,14 @@ function _getInitials(room: string) {
 }
 
 /**
- * Returns a localized date formatter initialized with the provided date
- * (@code Date) or duration (@code number).
+ * Returns a localized date formatter initialized with a specific {@code Date}
+ * or duration ({@code number}).
  *
  * @private
  * @param {Date | number} dateOrDuration - The date or duration to format.
- * @param {string} locale - The locale to init the formatter with. Note: This
- * locale must be supported by the formatter so ensure this prerequisite before
- * invoking the function.
+ * @param {string} locale - The locale to init the formatter with. Note: The
+ * specified locale must be supported by the formatter so ensure the
+ * prerequisite is met before invoking the function.
  * @returns {Object}
  */
 function _getLocalizedFormatter(dateOrDuration: Date | number, locale: string) {

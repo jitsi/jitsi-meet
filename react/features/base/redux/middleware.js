@@ -1,28 +1,29 @@
-/* @flow */
+// @flow
+
 import _ from 'lodash';
 
+import { toState } from './functions';
 import MiddlewareRegistry from './MiddlewareRegistry';
 import PersistencyRegistry from './PersistencyRegistry';
 
-import { toState } from '../redux';
-
 /**
- * The delay that passes between the last state change and the state to be
- * persisted in the storage.
+ * The delay that passes between the last state change and the persisting of
+ * that state in the storage.
  */
-const PERSIST_DELAY = 2000;
+const PERSIST_STATE_DELAY = 2000;
 
 /**
  * A throttled function to avoid repetitive state persisting.
  */
-const throttledFunc = _.throttle(state => {
-    PersistencyRegistry.persistState(state);
-}, PERSIST_DELAY);
+const throttledPersistState
+    = _.throttle(
+        state => PersistencyRegistry.persistState(state),
+        PERSIST_STATE_DELAY);
 
 /**
  * A master MiddleWare to selectively persist state. Please use the
- * {@link persisterconfig.json} to set which subtrees of the Redux state
- * should be persisted.
+ * {@link persisterconfig.json} to set which subtrees of the Redux state should
+ * be persisted.
  *
  * @param {Store} store - The redux store.
  * @returns {Function}
@@ -30,7 +31,7 @@ const throttledFunc = _.throttle(state => {
 MiddlewareRegistry.register(store => next => action => {
     const result = next(action);
 
-    throttledFunc(toState(store));
+    throttledPersistState(toState(store));
 
     return result;
 });

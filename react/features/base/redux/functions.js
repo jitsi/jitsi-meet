@@ -1,4 +1,4 @@
-/* @flow */
+// @flow
 
 import _ from 'lodash';
 

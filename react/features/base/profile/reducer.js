@@ -1,10 +1,8 @@
 // @flow
 
-import {
-    PROFILE_UPDATED
-} from './actionTypes';
-
 import { PersistencyRegistry, ReducerRegistry } from '../redux';
+
+import { PROFILE_UPDATED } from './actionTypes';
 
 const DEFAULT_STATE = {
     profile: {}

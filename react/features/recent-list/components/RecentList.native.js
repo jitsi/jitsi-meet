@@ -2,12 +2,11 @@ import React from 'react';
 import { ListView, Text, TouchableHighlight, View } from 'react-native';
 import { connect } from 'react-redux';
 
-import AbstractRecentList, { _mapStateToProps } from './AbstractRecentList';
-import styles, { UNDERLAY_COLOR } from './styles';
-
-import { getRecentRooms } from '../functions';
-
 import { Icon } from '../../base/font-icons';
+
+import AbstractRecentList, { _mapStateToProps } from './AbstractRecentList';
+import { getRecentRooms } from '../functions';
+import styles, { UNDERLAY_COLOR } from './styles';
 
 /**
  * The native container rendering the list of the recently joined rooms.
@@ -52,9 +51,9 @@ class RecentList extends AbstractRecentList {
             return null;
         }
 
-        const listViewDataSource = this.dataSource.cloneWithRows(
-            getRecentRooms(this.props._recentList)
-        );
+        const listViewDataSource
+            = this.dataSource.cloneWithRows(
+                getRecentRooms(this.props._recentList));
 
         return (
             <View style = { styles.container }>
