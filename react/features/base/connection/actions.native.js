@@ -177,6 +177,7 @@ export function connectionEstablished(connection: Object) {
  * @param {string} [message] - Error message.
  * @param {Object} [credentials] - The invalid credentials that failed
  * the authentication.
+ * @param {Object} [details] - The details about the connection failed event.
  * @public
  * @returns {{
  *     type: CONNECTION_FAILED,
@@ -188,7 +189,8 @@ export function connectionFailed(
         connection: Object,
         error: string,
         message: ?string,
-        credentials: ?Object) {
+        credentials: ?Object,
+        details: ?Object) {
     return {
         type: CONNECTION_FAILED,
         connection,
@@ -201,7 +203,8 @@ export function connectionFailed(
                     ? credentials
                     : undefined,
             message,
-            name: error
+            name: error,
+            details
         }
     };
 }

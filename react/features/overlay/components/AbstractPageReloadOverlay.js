@@ -30,6 +30,15 @@ export default class AbstractPageReloadOverlay extends Component<*, *> {
      * @static
      */
     static propTypes = {
+        /**
+         * The details.
+         * NOTE: Used by PageReloadOverlay only.
+         *
+         * @public
+         * @type {object}
+         */
+        details: PropTypes.object,
+
         dispatch: PropTypes.func,
 
         /**
@@ -172,7 +181,7 @@ export default class AbstractPageReloadOverlay extends Component<*, *> {
         }
 
         sendAnalytics(createPageReloadScheduledEvent(
-            this.props.reason, this.state.timeoutSeconds));
+            this.props.reason, this.state.timeoutSeconds, this.props.details));
 
         logger.info(
             `The conference will be reloaded after ${
@@ -269,6 +278,7 @@ export function abstractMapStateToProps(state: Object) {
 
     return {
         isNetworkFailure: Boolean(configError || connectionError),
-        reason: (configError || connectionError || conferenceError).message
+        reason: (configError || connectionError || conferenceError).message,
+        details: connectionError.details
     };
 }
