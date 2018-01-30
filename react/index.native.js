@@ -1,6 +1,16 @@
-// FIXME: remove once react-native-webrtc and react-native-prompt imports
-// PropTypes from the 'prop-types' lib instead of 'react'.
-import './features/base/react/prop-types-polyfill.js';
+// FIXME The bundler-related (and the browser-related) polyfills were born at
+// the very early days of prototyping the execution of lib-jitsi-meet on
+// react-native. Today, the feature base/lib-jitsi-meet should not be
+// responsible for such polyfills because it is not the only feature relying on
+// them. Additionally, the polyfills are usually necessary earlier than the
+// execution of base/lib-jitsi-meet (which is understandable given that the
+// polyfills are globals). The remaining problem to be solved here is where to
+// collect the polyfills' files.
+import './features/base/lib-jitsi-meet/native/polyfills-bundler';
+
+// FIXME: Remove once react-native-webrtc and react-native-prompt import
+// PropTypes from 'prop-types' instead of 'react'.
+import './features/base/react/prop-types-polyfill';
 
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
