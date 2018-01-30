@@ -472,6 +472,20 @@ class API {
     }
 
     /**
+     * Notify external application (if API is enabled) that the screen sharing
+     * has been turned on/off.
+     *
+     * @param {boolean} on - True if screen sharing is enabled.
+     * @returns {void}
+     */
+    notifyScreenSharingStatusChanged(on: boolean) {
+        this._sendEvent({
+            name: 'screen-sharing-status-changed',
+            on
+        });
+    }
+
+    /**
      * Disposes the allocated resources.
      *
      * @returns {void}

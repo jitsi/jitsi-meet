@@ -1334,17 +1334,33 @@ export default {
             replaceLocalTrack(this.localVideo, newStream, room))
             .then(() => {
                 this.localVideo = newStream;
-
+                this._setSharingScreen(newStream);
                 if (newStream) {
-                    this.isSharingScreen = newStream.videoType === 'desktop';
-
                     APP.UI.addLocalStream(newStream);
-                } else {
-                    this.isSharingScreen = false;
                 }
                 this.setVideoMuteStatus(this.isLocalVideoMuted());
-                APP.UI.updateDesktopSharingButtons();
             });
+    },
+
+    /**
+     * Sets `this.isSharingScreen` depending on provided video stream.
+     * In case new screen sharing status is not equal previous one
+     * it updates desktop sharing buttons in UI
+     * and notifies external application.
+     *
+     * @param {JitsiLocalTrack} [newStream] new stream to use or null
+     * @private
+     * @returns {void}
+     */
+    _setSharingScreen(newStream) {
+        const wasSharingScreen = this.isSharingScreen;
+
+        this.isSharingScreen = newStream && newStream.videoType === 'desktop';
+
+        if (wasSharingScreen !== this.isSharingScreen) {
+            APP.UI.updateDesktopSharingButtons();
+            APP.API.notifyScreenSharingStatusChanged(this.isSharingScreen);
+        }
     },
 
     /**

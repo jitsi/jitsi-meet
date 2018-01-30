@@ -48,7 +48,8 @@ const events = {
     'video-conference-joined': 'videoConferenceJoined',
     'video-conference-left': 'videoConferenceLeft',
     'video-availability-changed': 'videoAvailabilityChanged',
-    'video-mute-status-changed': 'videoMuteStatusChanged'
+    'video-mute-status-changed': 'videoMuteStatusChanged',
+    'screen-sharing-status-changed': 'screenSharingStatusChanged'
 };
 
 /**
@@ -484,6 +485,12 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
      * The listener will receive object with the following structure:
      * {{
      * roomName: room //the room name of the conference
+     * }}
+     * screenSharingStatusChanged - receives event notifications about
+     * turning on/off the local user screen sharing.
+     * The listener will receive object with the following structure:
+     * {{
+     * on: on //whether screen sharing is on
      * }}
      * readyToClose - all hangup operations are completed and Jitsi Meet is
      * ready to be disposed.
