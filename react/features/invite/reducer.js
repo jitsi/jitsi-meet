@@ -29,6 +29,7 @@ ReducerRegistry.register('features/invite', (state = DEFAULT_STATE, action) => {
         const { numbers, numbersEnabled } = action.dialInNumbers;
 
         return {
+            ...state,
             conferenceID: action.conferenceID,
             numbers,
             numbersEnabled

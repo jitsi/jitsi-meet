@@ -33,6 +33,8 @@ deploy-appbundle:
 		$(BUILD_DIR)/external_api.min.map \
 		$(BUILD_DIR)/device_selection_popup_bundle.min.js \
 		$(BUILD_DIR)/device_selection_popup_bundle.min.map \
+		$(BUILD_DIR)/dial_in_info_bundle.min.js \
+		$(BUILD_DIR)/dial_in_info_bundle.min.map \
 		$(BUILD_DIR)/alwaysontop.min.js \
 		$(BUILD_DIR)/alwaysontop.min.map \
 		$(OUTPUT_DIR)/analytics-ga.js \
