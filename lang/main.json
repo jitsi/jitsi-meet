@@ -539,6 +539,9 @@
         "tooltip": "Get access info about the meeting"
     },
     "profileModal": {
+        "alertOk": "OK",
+        "alertTitle": "Warning",
+        "alertURLText": "The entered server URL is invalid",
         "conferenceSection": "Conference",
         "displayName": "Display name",
         "email": "Email",
