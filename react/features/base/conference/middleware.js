@@ -320,9 +320,11 @@ function _setLastN(store, next, action) {
 function _setReceiveVideoQuality({ dispatch, getState }, next, action) {
     const { audioOnly, conference } = getState()['features/base/conference'];
 
-    conference.setReceiverVideoConstraint(action.receiveVideoQuality);
-    if (audioOnly) {
-        dispatch(toggleAudioOnly());
+    if (conference) {
+        conference.setReceiverVideoConstraint(action.receiveVideoQuality);
+        if (audioOnly) {
+            dispatch(toggleAudioOnly());
+        }
     }
 
     return next(action);
