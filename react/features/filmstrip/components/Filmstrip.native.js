@@ -131,6 +131,7 @@ class Filmstrip extends Component<*> {
  */
 function _mapStateToProps(state) {
     const participants = state['features/base/participants'];
+    const { visible } = state['features/filmstrip'];
 
     return {
         /**
@@ -149,7 +150,7 @@ function _mapStateToProps(state) {
          * @private
          * @type {boolean}
          */
-        _visible: participants.length > 1
+        _visible: visible && participants.length > 1
     };
 }
 
