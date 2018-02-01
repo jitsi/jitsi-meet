@@ -1,14 +1,17 @@
-/* @flow */
+// @flow
 
-import { MiddlewareRegistry } from '../base/redux';
+import { setLastN } from '../base/conference';
 import { SET_CALLEE_INFO_VISIBLE } from '../base/jwt';
+import { pinParticipant } from '../base/participants';
+import { MiddlewareRegistry } from '../base/redux';
 
 import Filmstrip from '../../../modules/UI/videolayout/Filmstrip';
 
+import { SET_FILMSTRIP_ENABLED } from './actionTypes';
+
 declare var APP: Object;
 
-// eslint-disable-next-line no-unused-vars
-MiddlewareRegistry.register(({ getState }) => next => action => {
+MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
     switch (action.type) {
     case SET_CALLEE_INFO_VISIBLE:
         if (typeof APP !== 'undefined') {
@@ -31,6 +34,20 @@ MiddlewareRegistry.register(({ getState }) => next => action => {
             return result;
         }
         break;
+
+    case SET_FILMSTRIP_ENABLED:
+        // FIXME: Only do this on mobile for now. The logic for participant
+        // pinning / unpinning is not on React yet so dispatching the action
+        // is not enough.
+        if (typeof APP === 'undefined') {
+            const { audioOnly } = getState()['features/base/conference'];
+            const { enabled } = action;
+
+            !enabled && dispatch(pinParticipant(null));
+            !audioOnly && dispatch(setLastN(enabled ? undefined : 1));
+        }
+        break;
+
     }
 
     return next(action);
