@@ -65,4 +65,13 @@
  */
 - (void)loadConfigError:(NSDictionary *)data;
 
+/**
+ * Called when Picture-in-Picture mode is requested. The app should now resize
+ * iself to a PiP style and then use the JitsiMeetView.onPipModeChanged to
+ * notify the JavaScript side about its action.
+ *
+ * The `data` dictionary is currently empty.
+ */
+- (void)requestPipMode:(NSDictionary *)data;
+
 @end
