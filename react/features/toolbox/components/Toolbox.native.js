@@ -23,6 +23,7 @@ import {
     makeAspectRatioAware
 } from '../../base/responsive-ui';
 import { ColorPalette } from '../../base/styles';
+import { requestPipMode } from '../../mobile/picture-in-picture';
 import { beginRoomLockRequest } from '../../room-lock';
 import { beginShareRoom } from '../../share-room';
 
@@ -81,6 +82,11 @@ class Toolbox extends Component {
         _onHangup: PropTypes.func,
 
         /**
+         * Requests Picture-in-Picture mode.
+         */
+        _onPipRequest: PropTypes.func,
+
+        /**
          * Sets the lock i.e. password protection of the conference/room.
          */
         _onRoomLock: PropTypes.func,
@@ -100,6 +106,11 @@ class Toolbox extends Component {
          * cameras.
          */
         _onToggleCameraFacingMode: PropTypes.func,
+
+        /**
+         * Flag showing whether Picture-in-Picture is available.
+         */
+        _pipAvailable: PropTypes.bool,
 
         /**
          * Flag showing whether video is muted.
@@ -296,6 +307,7 @@ class Toolbox extends Component {
         const underlayColor = 'transparent';
         const {
             _audioOnly: audioOnly,
+            _pipAvailable: pipAvailable,
             _videoMuted: videoMuted
         } = this.props;
 
@@ -305,6 +317,15 @@ class Toolbox extends Component {
             <View
                 key = 'secondaryToolbar'
                 style = { styles.secondaryToolbar }>
+                {
+                    pipAvailable
+                        && <ToolbarButton
+                            iconName = { 'menu-down' }
+                            iconStyle = { iconStyle }
+                            onClick = { this.props._onPipRequest }
+                            style = { style }
+                            underlayColor = { underlayColor } />
+                }
                 {
                     AudioRouteButton
                         && <AudioRouteButton
@@ -392,6 +413,17 @@ function _mapDispatchToProps(dispatch) {
         ...abstractMapDispatchToProps(dispatch),
 
         /**
+         * Requests Picture-in-Picture mode.
+         *
+         * @private
+         * @returns {void}
+         * @type {Function}
+         */
+        _onPipRequest() {
+            dispatch(requestPipMode());
+        },
+
+        /**
          * Sets the lock i.e. password protection of the conference/room.
          *
          * @private
@@ -451,6 +483,7 @@ function _mapDispatchToProps(dispatch) {
 function _mapStateToProps(state) {
     const conference = state['features/base/conference'];
     const { enabled } = state['features/toolbox'];
+    const { app } = state['features/app'];
 
     return {
         ...abstractMapStateToProps(state),
@@ -479,7 +512,15 @@ function _mapStateToProps(state) {
          * @protected
          * @type {boolean}
          */
-        _locked: Boolean(conference.locked)
+        _locked: Boolean(conference.locked),
+
+        /**
+         * The indicator which determines if Picture-in-Picture is available.
+         *
+         * @protected
+         * @type {boolean}
+         */
+        _pipAvailable: Boolean(app && app.props.pipAvailable)
     };
 }
 

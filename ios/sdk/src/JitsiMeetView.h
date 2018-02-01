@@ -25,6 +25,8 @@
 
 @property (copy, nonatomic, nullable) NSURL *defaultURL;
 
+@property (nonatomic) BOOL pipAvailable;
+
 @property (nonatomic) BOOL welcomePageEnabled;
 
 +             (BOOL)application:(UIApplication *_Nonnull)application

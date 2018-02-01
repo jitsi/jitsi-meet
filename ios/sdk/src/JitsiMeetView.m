@@ -109,7 +109,11 @@ void registerFatalErrorHandler() {
 
 @end
 
-@implementation JitsiMeetView
+@implementation JitsiMeetView {
+    NSNumber *_pipAvailable;
+}
+
+@dynamic pipAvailable;
 
 static RCTBridgeWrapper *bridgeWrapper;
 
@@ -265,6 +269,7 @@ static NSMapTable<NSString *, JitsiMeetView *> *views;
     }
 
     props[@"externalAPIScope"] = externalAPIScope;
+    props[@"pipAvailable"] = @(self.pipAvailable);
     props[@"welcomePageEnabled"] = @(self.welcomePageEnabled);
 
     // XXX If urlObject is nil, then it must appear as undefined in the
@@ -313,6 +318,21 @@ static NSMapTable<NSString *, JitsiMeetView *> *views;
  */
 - (void)loadURLString:(NSString *)urlString {
     [self loadURLObject:urlString ? @{ @"url": urlString } : nil];
+}
+
+#pragma pipAvailable getter / setter
+
+- (void) setPipAvailable:(BOOL)pipAvailable {
+    _pipAvailable = [NSNumber numberWithBool:pipAvailable];
+}
+
+- (BOOL) pipAvailable {
+    if (_pipAvailable == nil) {
+        return self.delegate
+            && [self.delegate respondsToSelector:@selector(requestPipMode:)];
+    }
+
+    return [_pipAvailable boolValue];
 }
 
 #pragma mark Private methods

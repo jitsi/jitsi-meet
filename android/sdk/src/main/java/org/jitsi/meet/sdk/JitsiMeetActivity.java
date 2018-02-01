@@ -17,6 +17,7 @@
 package org.jitsi.meet.sdk;
 
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -39,9 +40,7 @@ import com.facebook.react.modules.core.DefaultHardwareBackBtnHandler;
  * hooked to the React Native subsystem via proxy calls through the
  * {@code JKConferenceView} static methods.
  */
-public class JitsiMeetActivity
-    extends AppCompatActivity {
-
+public class JitsiMeetActivity extends AppCompatActivity {
     /**
      * The request code identifying requests for the permission to draw on top
      * of other apps. The value must be 16-bit and is arbitrarily chosen here.
@@ -68,6 +67,12 @@ public class JitsiMeetActivity
     private JitsiMeetView view;
 
     /**
+     * Whether Picture-in-Picture is available. The value is used only while
+     * {@link #view} equals {@code null}.
+     */
+    private Boolean pipAvailable;
+
+    /**
      * Whether the Welcome page is enabled. The value is used only while
      * {@link #view} equals {@code null}.
      */
@@ -87,6 +92,15 @@ public class JitsiMeetActivity
      */
     public URL getDefaultURL() {
         return view == null ? defaultURL : view.getDefaultURL();
+    }
+
+    /**
+     *
+     * @see JitsiMeetView#getPictureInPictureAvailable()
+     */
+    public Boolean getPictureInPictureAvailable() {
+        return view == null
+            ? pipAvailable : view.getPictureInPictureAvailable();
     }
 
     /**
@@ -121,6 +135,7 @@ public class JitsiMeetActivity
         // XXX Before calling JitsiMeetView#loadURL, make sure to call whatever
         // is documented to need such an order in order to take effect:
         view.setDefaultURL(defaultURL);
+        view.setPictureInPictureAvailable(pipAvailable);
         view.setWelcomePageEnabled(welcomePageEnabled);
 
         view.loadURL(null);
@@ -205,19 +220,24 @@ public class JitsiMeetActivity
     }
 
     @Override
-    protected void onPause() {
-        super.onPause();
+    protected void onResume() {
+        super.onResume();
+
+        defaultBackButtonImpl = new DefaultHardwareBackBtnHandlerImpl(this);
+        JitsiMeetView.onHostResume(this, defaultBackButtonImpl);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
 
         JitsiMeetView.onHostPause(this);
         defaultBackButtonImpl = null;
     }
 
     @Override
-    protected void onResume() {
-        super.onResume();
-
-        defaultBackButtonImpl = new DefaultHardwareBackBtnHandlerImpl(this);
-        JitsiMeetView.onHostResume(this, defaultBackButtonImpl);
+    protected void onUserLeaveHint() {
+        JitsiMeetView.onUserLeaveHint();
     }
 
     /**
@@ -229,6 +249,18 @@ public class JitsiMeetActivity
             this.defaultURL = defaultURL;
         } else {
             view.setDefaultURL(defaultURL);
+        }
+    }
+
+    /**
+     *
+     * @see JitsiMeetView#setPictureInPictureAvailable(Boolean)
+     */
+    public void setPictureInPictureAvailable(Boolean pipAvailable) {
+        if (view == null) {
+            this.pipAvailable = pipAvailable;
+        } else {
+            view.setPictureInPictureAvailable(pipAvailable);
         }
     }
 
