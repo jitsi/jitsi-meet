@@ -7,13 +7,7 @@ import {
     UPDATE_CONFERENCE_DURATION
 } from './actionTypes';
 import { LIST_SIZE } from './constants';
-
-/**
- * The initial state of this feature.
- */
-const DEFAULT_STATE = {
-    list: []
-};
+import { getLegacyRecentRoomList } from './functions';
 
 /**
  * The Redux subtree of this feature.
@@ -30,7 +24,9 @@ PersistencyRegistry.register(STORE_NAME, {
 /**
  * Reduces the Redux actions of the feature features/recent-list.
  */
-ReducerRegistry.register(STORE_NAME, (state = DEFAULT_STATE, action) => {
+ReducerRegistry.register(STORE_NAME, (state = {
+    list: getLegacyRecentRoomList()
+}, action) => {
     switch (action.type) {
     case STORE_CURRENT_CONFERENCE:
         return _storeCurrentConference(state, action);

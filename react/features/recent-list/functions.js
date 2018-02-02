@@ -31,6 +31,37 @@ require('moment/locale/zh-cn');
 import { i18next } from '../base/i18n';
 import { parseURIString } from '../base/util';
 
+const logger = require('jitsi-meet-logger').getLogger(__filename);
+
+/**
+ * The name of the {@code window.localStorage} item where recent rooms are
+ * stored.
+ *
+ * @type {string}
+ */
+const RECENT_URL_STORAGE = 'recentURLs';
+
+/**
+ * Retrieves the recent room list that was stored using the legacy way.
+ *
+ * @returns {Array<Object>}
+ */
+export function getLegacyRecentRoomList(): Array<Object> {
+    const legacyListString = window.localStorage.getItem(RECENT_URL_STORAGE);
+
+    try {
+        const legacyList = JSON.parse(legacyListString);
+
+        if (legacyList && legacyList.length) {
+            return legacyList;
+        }
+    } catch (error) {
+        logger.warn('Unable to parse legacy recent list');
+    }
+
+    return [];
+}
+
 /**
  * Retrieves the recent room list and generates all the data needed to be
  * displayed.
