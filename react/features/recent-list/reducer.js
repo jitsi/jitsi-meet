@@ -1,6 +1,7 @@
 // @flow
 
-import { PersistencyRegistry, ReducerRegistry } from '../base/redux';
+import { ReducerRegistry } from '../base/redux';
+import { PersistenceRegistry } from '../base/storage';
 
 import {
     STORE_CURRENT_CONFERENCE,
@@ -30,14 +31,14 @@ export const MAX_LIST_SIZE = 30;
 const STORE_NAME = 'features/recent-list';
 
 /**
- * Registers the redux store subtree of this feature for persistency.
+ * Sets up the persistence of the feature recent-list.
  */
-PersistencyRegistry.register(STORE_NAME, {
+PersistenceRegistry.register(STORE_NAME, {
     list: true
 });
 
 /**
- * Reduces the redux actions of the feature features/recent-list.
+ * Reduces the redux actions of the feature recent-list.
  */
 ReducerRegistry.register(
     STORE_NAME,

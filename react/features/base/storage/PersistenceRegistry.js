@@ -19,13 +19,13 @@ declare type PersistencyConfigMap = { [name: string]: Object };
  * A registry to allow features to register their redux store subtree to be
  * persisted and also handles the persistency calls too.
  */
-class PersistencyRegistry {
+class PersistenceRegistry {
     _checksum: string;
 
     _elements: PersistencyConfigMap;
 
     /**
-     * Initializes a new {@ code PersistencyRegistry} instance.
+     * Initializes a new {@ code PersistenceRegistry} instance.
      */
     constructor() {
         this._elements = {};
@@ -166,4 +166,4 @@ class PersistencyRegistry {
     }
 }
 
-export default new PersistencyRegistry();
+export default new PersistenceRegistry();

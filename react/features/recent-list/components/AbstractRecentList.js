@@ -46,7 +46,7 @@ export default class AbstractRecentList extends Component<Props> {
 }
 
 /**
- * Maps Redux state to component props.
+ * Maps redux state to component props.
  *
  * @param {Object} state - The redux state.
  * @returns {{

@@ -14,11 +14,8 @@ import {
 } from '../../base/participants';
 import { getProfile } from '../../base/profile';
 import { Fragment, RouteRegistry } from '../../base/react';
-import {
-    MiddlewareRegistry,
-    PersistencyRegistry,
-    ReducerRegistry
-} from '../../base/redux';
+import { MiddlewareRegistry, ReducerRegistry } from '../../base/redux';
+import { PersistenceRegistry } from '../../base/storage';
 import { toURLString } from '../../base/util';
 import { OverlayContainer } from '../../overlay';
 import { BlankPage } from '../../welcome';
@@ -349,7 +346,7 @@ export class AbstractApp extends Component {
         return (
             createStore(
                 reducer,
-                PersistencyRegistry.getPersistedState(),
+                PersistenceRegistry.getPersistedState(),
                 middleware));
     }
 

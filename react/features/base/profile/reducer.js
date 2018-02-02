@@ -1,6 +1,7 @@
 // @flow
 
-import { PersistencyRegistry, ReducerRegistry } from '../redux';
+import { ReducerRegistry } from '../redux';
+import { PersistenceRegistry } from '../storage';
 
 import { PROFILE_UPDATED } from './actionTypes';
 
@@ -10,7 +11,10 @@ const DEFAULT_STATE = {
 
 const STORE_NAME = 'features/base/profile';
 
-PersistencyRegistry.register(STORE_NAME, {
+/**
+ * Sets up the persistence of the feature base/profile.
+ */
+PersistenceRegistry.register(STORE_NAME, {
     profile: true
 });
 

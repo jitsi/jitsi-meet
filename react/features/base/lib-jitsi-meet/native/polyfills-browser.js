@@ -4,7 +4,13 @@ import 'url-polyfill'; // Polyfill for URL constructor
 
 import { Platform } from '../../react';
 
-import Storage from './Storage';
+// XXX The library lib-jitsi-meet utilizes window.localStorage at the time of
+// this writing and, consequently, the browser-related polyfills implemented
+// here by the feature base/lib-jitsi-meet for the purposes of the library
+// lib-jitsi-meet are incomplete without the Web Storage API! Should the library
+// lib-jitsi-meet (and its dependencies) stop utilizing window.localStorage,
+// the following import may be removed:
+import '../../storage';
 
 /**
  * Gets the first common prototype of two specified Objects (treating the
@@ -271,11 +277,6 @@ function _visitNode(node, callback) {
         global.document = document;
     }
 
-    // localStorage
-    if (typeof global.localStorage === 'undefined') {
-        global.localStorage = new Storage('@jitsi-meet/');
-    }
-
     // location
     if (typeof global.location === 'undefined') {
         global.location = {
@@ -330,15 +331,6 @@ function _visitNode(node, callback) {
         }
 
         navigator.userAgent = userAgent;
-    }
-
-    // sessionStorage
-    //
-    // Required by:
-    // - herment
-    // - Strophe
-    if (typeof global.sessionStorage === 'undefined') {
-        global.sessionStorage = new Storage();
     }
 
     // WebRTC
