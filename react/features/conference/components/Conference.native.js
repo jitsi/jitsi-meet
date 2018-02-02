@@ -67,6 +67,13 @@ type Props = {
     _onHardwareBackPress: Function,
 
     /**
+     * The indicator which determines if we are in reduced UI mode.
+     *
+     * @private
+     */
+    _reducedUI: boolean,
+
+    /**
      * The handler which dispatches the (redux) action setToolboxVisible to
      * show/hide the Toolbox.
      *
@@ -192,8 +199,9 @@ class Conference extends Component<Props> {
 
                 {/*
                   * If there is a ringing call, show the callee's info.
-                  */}
-                <CalleeInfoContainer />
+                  */
+                    !this.props._reducedUI && <CalleeInfoContainer />
+                }
 
                 {/*
                   * The activity/loading indicator goes above everything, except
@@ -223,8 +231,9 @@ class Conference extends Component<Props> {
 
                 {/*
                   * The dialogs are in the topmost stacking layers.
-                  */}
-                <DialogContainer />
+                  */
+                    !this.props._reducedUI && <DialogContainer />
+                }
             </Container>
         );
     }
@@ -367,6 +376,7 @@ function _mapDispatchToProps(dispatch) {
 function _mapStateToProps(state) {
     const { connecting, connection } = state['features/base/connection'];
     const { conference, joining, leaving } = state['features/base/conference'];
+    const { reducedUI } = state['features/base/responsive-ui'];
 
     // XXX There is a window of time between the successful establishment of the
     // XMPP connection and the subsequent commencement of joining the MUC during
@@ -391,6 +401,14 @@ function _mapStateToProps(state) {
          * @type {boolean}
          */
         _connecting: Boolean(connecting_),
+
+        /**
+         * The indicator which determines if we are in reduced UI mode.
+         *
+         * @private
+         * @type {boolean}
+         */
+        _reducedUI: reducedUI,
 
         /**
          * The indicator which determines whether the Toolbox is visible.

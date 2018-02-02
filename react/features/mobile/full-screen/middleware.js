@@ -12,6 +12,7 @@ import {
 } from '../../base/conference';
 import { HIDE_DIALOG } from '../../base/dialog';
 import { Platform } from '../../base/react';
+import { SET_REDUCED_UI } from '../../base/responsive-ui';
 import { MiddlewareRegistry } from '../../base/redux';
 
 /**
@@ -34,7 +35,9 @@ MiddlewareRegistry.register(({ getState }) => next => action => {
     case APP_STATE_CHANGED:
     case CONFERENCE_WILL_JOIN:
     case HIDE_DIALOG:
-    case SET_AUDIO_ONLY: {
+    case SET_AUDIO_ONLY:
+    case SET_REDUCED_UI: {
+        // FIXME: Simplify this by listening to Immediate events.
         // Check if we just came back from the background and re-enable full
         // screen mode if necessary.
         const { appState } = action;
