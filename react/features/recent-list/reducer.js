@@ -6,11 +6,26 @@ import {
     STORE_CURRENT_CONFERENCE,
     UPDATE_CONFERENCE_DURATION
 } from './actionTypes';
-import { LIST_SIZE } from './constants';
-import { getLegacyRecentRoomList } from './functions';
+
+const logger = require('jitsi-meet-logger').getLogger(__filename);
 
 /**
- * The Redux subtree of this feature.
+ * The name of the {@code window.localStorage} item where recent rooms are
+ * stored.
+ *
+ * @type {string}
+ */
+const LEGACY_STORAGE_KEY = 'recentURLs';
+
+/**
+ * The max size of the list.
+ *
+ * @type {number}
+ */
+export const MAX_LIST_SIZE = 30;
+
+/**
+ * The redux subtree of this feature.
  */
 const STORE_NAME = 'features/recent-list';
 
@@ -22,22 +37,42 @@ PersistencyRegistry.register(STORE_NAME, {
 });
 
 /**
- * Reduces the Redux actions of the feature features/recent-list.
+ * Reduces the redux actions of the feature features/recent-list.
  */
-ReducerRegistry.register(STORE_NAME, (state = {
-    list: getLegacyRecentRoomList()
-}, action) => {
-    switch (action.type) {
-    case STORE_CURRENT_CONFERENCE:
-        return _storeCurrentConference(state, action);
+ReducerRegistry.register(
+    STORE_NAME,
+    (state = { list: _getLegacyRecentRoomList() }, action) => {
+        switch (action.type) {
+        case STORE_CURRENT_CONFERENCE:
+            return _storeCurrentConference(state, action);
 
-    case UPDATE_CONFERENCE_DURATION:
-        return _updateConferenceDuration(state, action);
+        case UPDATE_CONFERENCE_DURATION:
+            return _updateConferenceDuration(state, action);
 
-    default:
-        return state;
+        default:
+            return state;
+        }
+    });
+
+/**
+ * Retrieves the recent room list that was stored using the legacy way.
+ *
+ * @returns {Array<Object>}
+ */
+export function _getLegacyRecentRoomList(): Array<Object> {
+    try {
+        const list
+            = JSON.parse(window.localStorage.getItem(LEGACY_STORAGE_KEY));
+
+        if (list && list.length) {
+            return list;
+        }
+    } catch (error) {
+        logger.warn('Failed to parse legacy recent-room list!');
     }
-});
+
+    return [];
+}
 
 /**
 * Adds a new list entry to the redux store.
@@ -54,15 +89,15 @@ function _storeCurrentConference(state, action) {
     // it to the top.
     const list = state.list.filter(e => e.conference !== conference);
 
-    // This is a reverse sorted array (i.e. newer elements at the end).
+    // The list is a reverse-sorted (i.e. the newer elements are at the end).
     list.push({
         conference,
-        conferenceDuration: 0, // we don't have this data yet
+        conferenceDuration: 0, // We don't have this data yet!
         date: Date.now()
     });
 
-    // maximising the size
-    list.splice(0, list.length - LIST_SIZE);
+    // Ensure the list doesn't exceed a/the maximum size.
+    list.splice(0, list.length - MAX_LIST_SIZE);
 
     return {
         list
