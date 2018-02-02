@@ -534,7 +534,6 @@ export class VideoContainer extends LargeContainer {
             transform: flipX ? 'scaleX(-1)' : 'none'
         });
 
-        this._hideBackground = true;
         this._updateBackground();
 
         // Reset the large video background depending on the stream.
