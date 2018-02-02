@@ -1,5 +1,6 @@
 // @flow
 
+import { setAudioOnly } from '../conference';
 import { getLocalParticipant, participantUpdated } from '../participants';
 import { getProfile } from '../profile';
 import { MiddlewareRegistry, toState } from '../redux';
@@ -18,10 +19,27 @@ MiddlewareRegistry.register(store => next => action => {
     switch (action.type) {
     case PROFILE_UPDATED:
         _updateLocalParticipant(store);
+        _maybeUpdateStartAudioOnly(store, action);
     }
 
     return result;
 });
+
+/**
+ * Updates startAudioOnly flag if it's updated in the profile.
+ *
+ * @private
+ * @param {Store} store - The redux store.
+ * @param {Object} action - The redux action.
+ * @returns {void}
+ */
+function _maybeUpdateStartAudioOnly(store, action) {
+    const { profile } = action;
+
+    if (typeof profile.startAudioOnly === 'boolean') {
+        store.dispatch(setAudioOnly(profile.startAudioOnly));
+    }
+}
 
 /**
  * Updates the local participant according to profile changes.

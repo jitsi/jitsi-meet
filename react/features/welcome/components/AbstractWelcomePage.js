@@ -3,9 +3,8 @@
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 
-import { appNavigate } from '../../app';
-import { showAppSettings } from '../../app-settings';
 import { createWelcomePageEvent, sendAnalytics } from '../../analytics';
+import { appNavigate } from '../../app';
 import { isRoomValid } from '../../base/conference';
 
 import { generateRoomWithoutSeparator } from '../functions';
@@ -14,6 +13,11 @@ import { generateRoomWithoutSeparator } from '../functions';
  * {@code AbstractWelcomePage}'s React {@code Component} prop types.
  */
 type Props = {
+
+    /**
+     * The user's profile.
+     */
+    _profile: Object,
     _room: string,
     dispatch: Dispatch<*>
 };
@@ -72,7 +76,6 @@ export class AbstractWelcomePage extends Component<*, *> {
             = this._animateRoomnameChanging.bind(this);
         this._onJoin = this._onJoin.bind(this);
         this._onRoomChange = this._onRoomChange.bind(this);
-        this._onSettingsOpen = this._onSettingsOpen.bind(this);
         this._updateRoomname = this._updateRoomname.bind(this);
     }
 
@@ -205,18 +208,6 @@ export class AbstractWelcomePage extends Component<*, *> {
         this.setState({ room: value });
     }
 
-    _onSettingsOpen: () => void;
-
-    /**
-     * Sets the app settings modal visible.
-     *
-     * @protected
-     * @returns {void}
-     */
-    _onSettingsOpen() {
-        this.props.dispatch(showAppSettings());
-    }
-
     _updateRoomname: () => void;
 
     /**
@@ -254,6 +245,7 @@ export class AbstractWelcomePage extends Component<*, *> {
  */
 export function _mapStateToProps(state: Object) {
     return {
+        _profile: state['features/base/profile'].profile,
         _room: state['features/base/conference'].room
     };
 }

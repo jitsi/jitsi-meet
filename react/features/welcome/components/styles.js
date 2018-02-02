@@ -5,7 +5,11 @@ import {
     fixAndroidViewClipping
 } from '../../base/styles';
 
+const SIDEBAR_HEADER_HEIGHT = 150;
+
 export const PLACEHOLDER_TEXT_COLOR = 'rgba(255, 255, 255, 0.3)';
+export const SWITCH_THUMB_COLOR = ColorPalette.blueHighlight;
+export const SWITCH_UNDER_COLOR = 'rgba(0, 0, 0, 0.4)';
 
 /**
  * The default color of text on the WelcomePage.
@@ -17,31 +21,44 @@ const TEXT_COLOR = ColorPalette.white;
  * {@code WelcomePage} and {@code BlankPage}.
  */
 export default createStyleSheet({
+
     /**
-     * The style of the top-level container of {@code BlankPage}.
+     * The audio-video switch itself.
      */
-    blankPage: {
+    audioVideoSwitch: {
+        marginHorizontal: 5
+    },
+
+    /**
+     * View that contains the audio-video switch and the labels.
+     */
+    audioVideoSwitchContainer: {
+        flexDirection: 'row'
+    },
+
+    /**
+     * Style of the avatar in te side bar.
+     */
+    avatar: {
+        alignSelf: 'center',
+        borderRadius: 50,
+        flex: 0,
+        height: 100,
+        width: 100
     },
 
     /**
      * Join button style.
      */
     button: {
-        backgroundColor: ColorPalette.white,
-        borderColor: ColorPalette.white,
-        borderRadius: 8,
+        backgroundColor: ColorPalette.blue,
+        borderColor: ColorPalette.blue,
+        borderRadius: 4,
         borderWidth: 1,
-        height: 45,
+        height: 40,
         justifyContent: 'center',
         marginBottom: BoxModel.margin,
         marginTop: BoxModel.margin
-    },
-
-    /**
-     * Layout of the button container.
-     */
-    buttonRow: {
-        flexDirection: 'row'
     },
 
     /**
@@ -49,44 +66,33 @@ export default createStyleSheet({
      */
     buttonText: {
         alignSelf: 'center',
-        color: ColorPalette.blue,
+        color: ColorPalette.white,
         fontSize: 18
     },
 
     /**
-     * Style of the join button.
+     * The style of the display name label in the side bar.
      */
-    joinButton: {
-        flex: 1
+    displayName: {
+        color: ColorPalette.white,
+        fontSize: 16,
+        margin: BoxModel.margin,
+        textAlign: 'center'
     },
 
     /**
-     * The style of the legal-related content such as (hyper)links to Privacy
-     * Policy and Terms of Service displayed on the WelcomePage.
+     * The welcome screen header style.
      */
-    legaleseContainer: {
-        alignItems: 'center',
-        flex: 0,
-        flexDirection: 'row',
-        justifyContent: 'center',
-
-        // XXX Lift the legaleseContainer up above the iPhone X home indicator;
-        // otherwise, the former is partially underneath the latter.
-        marginBottom: BoxModel.margin
+    header: {
+        justifyContent: 'space-between'
     },
 
     /**
-     * The style of a piece of legal-related content such as a (hyper)link to
-     * Privacy Policy or Terms of Service displayed on the WelcomePage.
+     * Container for the items in the side bar.
      */
-    legaleseItem: {
-        // XXX The backgroundColor must be transparent; otherwise, the
-        // backgroundColor of a parent may show through. Moreover, the
-        // legaleseItem is not really expected to have a background of its own.
-        backgroundColor: 'transparent',
-        color: TEXT_COLOR,
-        fontSize: 12,
-        margin: BoxModel.margin
+    itemContainer: {
+        flexDirection: 'column',
+        paddingTop: 10
     },
 
     /**
@@ -100,45 +106,72 @@ export default createStyleSheet({
     }),
 
     /**
+     * Top level screen style
+     */
+    page: {
+        flex: 1,
+        flexDirection: 'column'
+    },
+
+    /**
      * Container for room name input box and 'join' button.
      */
     roomContainer: {
         alignSelf: 'stretch',
         flex: 1,
         flexDirection: 'column',
-
-        // XXX RecentList will eventually push the room name TextInput and the
-        // Join button up from the center. I don't like that movement from
-        // center to top, especially without an animation. Just start with the
-        // room name TextInput and the Join button at the top.
-        justifyContent: 'flex-start',
-        margin: 3 * BoxModel.margin,
-
-        // XXX Be consistent with the marginBottom of legaleseContainer!
-        marginBottom: BoxModel.margin,
-
-        // XXX Push the roomContainer down bellow the iPhone X notchl otherwise,
-        // the former seems glued to the latter. THe amount of visual margin at
-        // the top is pretty much as the visual margin at the bottom (if you sum
-        // all bottom and top margins and account for legaleseItem) which brings
-        // symmetry as well.
-        marginTop: 5 * BoxModel.margin
+        margin: BoxModel.margin,
+        marginTop: BoxModel.margin * 2
     },
 
     /**
-     * Style of the settings button.
+     * The body of the side bar where the items are.
      */
-    settingsButton: {
-        width: 65,
-        marginRight: BoxModel.margin
+    sideBarBody: {
+        backgroundColor: ColorPalette.white,
+        flex: 1
     },
 
     /**
-     * Style of the settings icon on the settings button.
+     * The style of the side bar header.
      */
-    settingsIcon: {
-        fontSize: 24,
-        alignSelf: 'center'
+    sideBarHeader: {
+        flexDirection: 'column',
+        height: SIDEBAR_HEADER_HEIGHT,
+        justifyContent: 'center'
+    },
+
+    /**
+     * Style of the menu items in the side bar.
+     */
+    sideBarItem: {
+        padding: 13
+    },
+
+    /**
+     * The View inside the side bar buttons (icon + text).
+     */
+    sideBarItemButtonContainer: {
+        alignItems: 'center',
+        flexDirection: 'row',
+        justifyContent: 'flex-start'
+    },
+
+    /**
+     * The icon in the side bar item touchables.
+     */
+    sideBarItemIcon: {
+        color: ColorPalette.blueHighlight,
+        fontSize: 20,
+        marginRight: 15
+    },
+
+    /**
+     * The label of the side bar item touchables.
+     */
+    sideBarItemText: {
+        color: ColorPalette.black,
+        fontWeight: 'bold'
     },
 
     /**
@@ -147,7 +180,7 @@ export default createStyleSheet({
     textInput: {
         backgroundColor: 'transparent',
         borderColor: ColorPalette.white,
-        borderRadius: 8,
+        borderRadius: 4,
         borderWidth: 1,
         color: TEXT_COLOR,
         fontSize: 23,
@@ -170,6 +203,7 @@ export default createStyleSheet({
      * The style of the top-level container of {@code WelcomePage}.
      */
     welcomePage: {
-        backgroundColor: ColorPalette.blue
+        backgroundColor: ColorPalette.blue,
+        overflow: 'hidden'
     }
 });

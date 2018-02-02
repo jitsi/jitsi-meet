@@ -11,6 +11,7 @@ const HEADER_HEIGHT = 44;
 const HEADER_PADDING = BoxModel.padding;
 
 export const STATUSBAR_COLOR = ColorPalette.blueHighlight;
+export const SIDEBAR_WIDTH = 250;
 
 /**
  * The styles of the React {@code Components} of the generic components
@@ -35,5 +36,41 @@ export default createStyleSheet({
         height: HEADER_HEIGHT,
         justifyContent: 'flex-start',
         padding: HEADER_PADDING
+    },
+
+    /**
+     * The topmost container of the side bar.
+     */
+    sideMenuContainer: {
+        bottom: 0,
+        flexDirection: 'row',
+        left: -SIDEBAR_WIDTH,
+        position: 'absolute',
+        top: 0,
+        width: SIDEBAR_WIDTH
+    },
+
+    /**
+     * The container of the actual content of the side menu.
+     */
+    sideMenuContent: {
+        width: SIDEBAR_WIDTH
+    },
+
+    /**
+     * The opaque area that covers the rest of the scren, when
+     * the side bar is open.
+     */
+    sideMenuShadow: {
+        backgroundColor: 'rgba(0, 0, 0, 0.5)',
+        flex: 1
+    },
+
+    /**
+     * The touchable area of the rest of the screen that closes the side bar
+     * when tapped.
+     */
+    sideMenuShadowTouchable: {
+        flex: 1
     }
 });

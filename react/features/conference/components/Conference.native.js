@@ -192,7 +192,9 @@ class Conference extends Component<Props> {
                 onClick = { this._onClick }
                 style = { styles.conference }
                 touchFeedback = { false }>
-                <StatusBar translucent = { true } />
+                <StatusBar
+                    hidden = { true }
+                    translucent = { true } />
 
                 {/*
                   * The LargeVideo is the lowermost stacking layer.

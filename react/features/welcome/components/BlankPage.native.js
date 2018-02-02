@@ -9,7 +9,6 @@ import { NetworkActivityIndicator } from '../../mobile/network-activity';
 
 import { isWelcomePageAppEnabled } from '../functions';
 import LocalVideoTrackUnderlay from './LocalVideoTrackUnderlay';
-import styles from './styles';
 
 /**
  * The React {@code Component} displayed by {@code AbstractApp} when it has no
@@ -54,7 +53,7 @@ class BlankPage extends Component<*> {
      */
     render() {
         return (
-            <LocalVideoTrackUnderlay style = { styles.blankPage }>
+            <LocalVideoTrackUnderlay>
                 <NetworkActivityIndicator />
             </LocalVideoTrackUnderlay>
         );

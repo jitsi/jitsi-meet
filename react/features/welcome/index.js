@@ -1,3 +1,4 @@
+import './reducer';
 import './route';
 
 export * from './components';

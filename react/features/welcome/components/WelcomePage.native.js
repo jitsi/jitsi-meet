@@ -1,34 +1,41 @@
 import React from 'react';
-import { TextInput, TouchableHighlight, View } from 'react-native';
+import {
+    SafeAreaView,
+    Switch,
+    TextInput,
+    TouchableHighlight,
+    TouchableOpacity,
+    View
+} from 'react-native';
 import { connect } from 'react-redux';
 
 import { AppSettings } from '../../app-settings';
-import { Icon } from '../../base/font-icons';
 import { translate } from '../../base/i18n';
+import { Icon } from '../../base/font-icons';
 import { MEDIA_TYPE } from '../../base/media';
-import { Link, LoadingIndicator, Text } from '../../base/react';
-import { ColorPalette } from '../../base/styles';
-import { createDesiredLocalTracks } from '../../base/tracks';
+import { updateProfile } from '../../base/profile';
+import {
+    LoadingIndicator,
+    Header,
+    Text
+} from '../../base/react';
+import { ColorPalette, PlatformElements } from '../../base/styles';
+import {
+    createDesiredLocalTracks,
+    destroyLocalTracks
+} from '../../base/tracks';
 import { RecentList } from '../../recent-list';
+
+import { setSideBarVisibility } from '../actions';
 
 import { AbstractWelcomePage, _mapStateToProps } from './AbstractWelcomePage';
 import LocalVideoTrackUnderlay from './LocalVideoTrackUnderlay';
-import styles, { PLACEHOLDER_TEXT_COLOR } from './styles';
-
-/**
- * The URL at which the privacy policy is available to the user.
- */
-const PRIVACY_URL = 'https://jitsi.org/meet/privacy';
-
-/**
- * The URL at which the user may send feedback.
- */
-const SEND_FEEDBACK_URL = 'mailto:support@jitsi.org';
-
-/**
- * The URL at which the terms (of service/use) are available to the user.
- */
-const TERMS_URL = 'https://jitsi.org/meet/terms';
+import styles, {
+    PLACEHOLDER_TEXT_COLOR,
+    SWITCH_THUMB_COLOR,
+    SWITCH_UNDER_COLOR
+} from './styles';
+import WelcomePageSideBar from './WelcomePageSideBar';
 
 /**
  * The native container rendering the welcome page.
@@ -44,6 +51,18 @@ class WelcomePage extends AbstractWelcomePage {
     static propTypes = AbstractWelcomePage.propTypes;
 
     /**
+     * Constructor of the Component.
+     *
+     * @inheritdoc
+     */
+    constructor(props) {
+        super(props);
+
+        this._onShowSideBar = this._onShowSideBar.bind(this);
+        this._onStartAudioOnlyChange = this._onStartAudioOnlyChange.bind(this);
+    }
+
+    /**
      * Implements React's {@link Component#componentWillMount()}. Invoked
      * immediately before mounting occurs. Creates a local video track if none
      * is available.
@@ -54,7 +73,13 @@ class WelcomePage extends AbstractWelcomePage {
     componentWillMount() {
         super.componentWillMount();
 
-        this.props.dispatch(createDesiredLocalTracks(MEDIA_TYPE.VIDEO));
+        const { dispatch } = this.props;
+
+        if (this.props._profile.startAudioOnly) {
+            dispatch(destroyLocalTracks());
+        } else {
+            dispatch(createDesiredLocalTracks(MEDIA_TYPE.VIDEO));
+        }
     }
 
     /**
@@ -65,47 +90,83 @@ class WelcomePage extends AbstractWelcomePage {
      * @returns {ReactElement}
      */
     render() {
-        const { t } = this.props;
+        const { t, _profile } = this.props;
 
         return (
             <LocalVideoTrackUnderlay style = { styles.welcomePage }>
-                <View style = { styles.roomContainer }>
-                    <TextInput
-                        accessibilityLabel = { 'Input room name.' }
-                        autoCapitalize = 'none'
-                        autoComplete = { false }
-                        autoCorrect = { false }
-                        autoFocus = { false }
-                        onChangeText = { this._onRoomChange }
-                        onSubmitEditing = { this._onJoin }
-                        placeholder = { t('welcomepage.roomname') }
-                        placeholderTextColor = { PLACEHOLDER_TEXT_COLOR }
-                        returnKeyType = { 'go' }
-                        style = { styles.textInput }
-                        underlineColorAndroid = 'transparent'
-                        value = { this.state.room } />
-                    <View style = { styles.buttonRow }>
-                        <TouchableHighlight
-                            accessibilityLabel = { 'Tap for Settings.' }
-                            onPress = { this._onSettingsOpen }
-                            style = { [ styles.button, styles.settingsButton ] }
-                            underlayColor = { ColorPalette.white }>
+                <View style = { PlatformElements.page }>
+                    <Header style = { styles.header }>
+                        <TouchableOpacity onPress = { this._onShowSideBar } >
                             <Icon
-                                name = 'settings'
-                                style = { styles.settingsIcon } />
-                        </TouchableHighlight>
+                                name = 'menu'
+                                style = { PlatformElements.headerButton } />
+                        </TouchableOpacity>
+                        <View style = { styles.audioVideoSwitchContainer }>
+                            <Text style = { PlatformElements.headerText } >
+                                { t('welcomepage.videoEnabledLabel') }
+                            </Text>
+                            <Switch
+                                onTintColor = { SWITCH_UNDER_COLOR }
+                                onValueChange = { this._onStartAudioOnlyChange }
+                                style = { styles.audioVideoSwitch }
+                                thumbTintColor = { SWITCH_THUMB_COLOR }
+                                value = { _profile.startAudioOnly } />
+                            <Text style = { PlatformElements.headerText } >
+                                { t('welcomepage.audioOnlyLabel') }
+                            </Text>
+                        </View>
+                    </Header>
+                    <SafeAreaView style = { styles.roomContainer } >
+                        <TextInput
+                            accessibilityLabel = { 'Input room name.' }
+                            autoCapitalize = 'none'
+                            autoComplete = { false }
+                            autoCorrect = { false }
+                            autoFocus = { false }
+                            onChangeText = { this._onRoomChange }
+                            onSubmitEditing = { this._onJoin }
+                            placeholder = { t('welcomepage.roomname') }
+                            placeholderTextColor = { PLACEHOLDER_TEXT_COLOR }
+                            returnKeyType = { 'go' }
+                            style = { styles.textInput }
+                            underlineColorAndroid = 'transparent'
+                            value = { this.state.room } />
                         {
                             this._renderJoinButton()
                         }
-                    </View>
-                    <RecentList />
+                        <RecentList />
+                    </SafeAreaView>
+                    <AppSettings />
                 </View>
-                <AppSettings />
-                {
-                    this._renderLegalese()
-                }
+                <WelcomePageSideBar />
             </LocalVideoTrackUnderlay>
         );
+    }
+
+    /**
+     * Toggles the side bar.
+     *
+     * @private
+     * @returns {void}
+     */
+    _onShowSideBar() {
+        this.props.dispatch(setSideBarVisibility(true));
+    }
+
+    /**
+     * Handles the audio-video switch changes.
+     *
+     * @private
+     * @param {boolean} startAudioOnly - The new startAudioOnly value.
+     * @returns {void}
+     */
+    _onStartAudioOnlyChange(startAudioOnly) {
+        const { dispatch } = this.props;
+
+        dispatch(updateProfile({
+            ...this.props._profile,
+            startAudioOnly
+        }));
     }
 
     /**
@@ -143,43 +204,12 @@ class WelcomePage extends AbstractWelcomePage {
                 accessibilityLabel = { 'Tap to Join.' }
                 disabled = { this._isJoinDisabled() }
                 onPress = { this._onJoin }
-                style = { [ styles.button, styles.joinButton ] }
+                style = { styles.button }
                 underlayColor = { ColorPalette.white }>
                 {
                     children
                 }
             </TouchableHighlight>
-        );
-    }
-
-    /**
-     * Renders legal-related content such as Terms of service/use, Privacy
-     * policy, etc.
-     *
-     * @private
-     * @returns {ReactElement}
-     */
-    _renderLegalese() {
-        const { t } = this.props;
-
-        return (
-            <View style = { styles.legaleseContainer }>
-                <Link
-                    style = { styles.legaleseItem }
-                    url = { TERMS_URL }>
-                    { t('welcomepage.terms') }
-                </Link>
-                <Link
-                    style = { styles.legaleseItem }
-                    url = { PRIVACY_URL }>
-                    { t('welcomepage.privacy') }
-                </Link>
-                <Link
-                    style = { styles.legaleseItem }
-                    url = { SEND_FEEDBACK_URL }>
-                    { t('welcomepage.sendFeedback') }
-                </Link>
-            </View>
         );
     }
 }

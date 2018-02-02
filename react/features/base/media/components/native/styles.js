@@ -19,10 +19,10 @@ export default StyleSheet.create({
      */
     videoCover: {
         backgroundColor: ColorPalette.black,
-        height: '100%',
+        bottom: 0,
         left: 0,
         position: 'absolute',
-        top: 0,
-        width: '100%'
+        right: 0,
+        top: 0
     }
 });

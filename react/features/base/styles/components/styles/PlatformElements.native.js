@@ -13,8 +13,7 @@ export const PlatformElements = createStyleSheet({
         alignSelf: 'center',
         color: ColorPalette.white,
         fontSize: 26,
-        paddingRight: 22,
-        zIndex: 9999
+        paddingRight: 22
     },
 
     /**

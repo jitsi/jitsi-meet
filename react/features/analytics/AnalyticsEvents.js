@@ -85,15 +85,15 @@ export const createApiEvent = function(action, attributes = {}) {
 };
 
 /**
- * Creates an event which indicates that the audio-only mode has been turned
- * off.
+ * Creates an event which indicates that the audio-only mode has been changed.
  *
+ * @param {boolean} enabled - True if audio-only is enabled, false otherwise.
  * @returns {Object} The event in a format suitable for sending via
  * sendAnalytics.
  */
-export const createAudioOnlyDisableEvent = function() {
+export const createAudioOnlyChangedEvent = function(enabled) {
     return {
-        action: 'audio.only.disabled'
+        action: `audio.only.${enabled ? 'enabled' : 'disabled'}`
     };
 };
 

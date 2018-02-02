@@ -1,0 +1,167 @@
+// @flow
+
+import React, { Component } from 'react';
+import { SafeAreaView, ScrollView, Text } from 'react-native';
+import { connect } from 'react-redux';
+
+import SideBarItem from './SideBarItem';
+import styles from './styles';
+
+import { setSideBarVisibility } from '../actions';
+
+import { showAppSettings } from '../../app-settings';
+import {
+    Avatar,
+    getAvatarURL,
+    getLocalParticipant,
+    getParticipantDisplayName
+} from '../../base/participants';
+import {
+    Header,
+    SideBar
+} from '../../base/react';
+
+/**
+ * The URL at which the privacy policy is available to the user.
+ */
+const PRIVACY_URL = 'https://jitsi.org/meet/privacy';
+
+/**
+ * The URL at which the user may send feedback.
+ */
+const SEND_FEEDBACK_URL = 'mailto:support@jitsi.org';
+
+/**
+ * The URL at which the terms (of service/use) are available to the user.
+ */
+const TERMS_URL = 'https://jitsi.org/meet/terms';
+
+type Props = {
+
+    /**
+     * Redux dispatch action
+     */
+    dispatch: Function,
+
+    /**
+     * The avatar URL to be rendered.
+     */
+    _avatar: string,
+
+    /**
+     * Display name of the local participant.
+     */
+    _displayName: string,
+
+    /**
+     * Sets the side bar visible or hidden.
+     */
+    _visible: boolean
+};
+
+/**
+ * A component rendering a welcome page sidebar.
+ */
+class WelcomePageSideBar extends Component<Props> {
+    /**
+     * Constructs a new SideBar instance.
+     *
+     * @inheritdoc
+     */
+    constructor(props) {
+        super(props);
+
+        this._onHideSideBar = this._onHideSideBar.bind(this);
+        this._onOpenSettings = this._onOpenSettings.bind(this);
+    }
+
+    /**
+     * Implements React's {@link Component#render()}, renders the sidebar.
+     *
+     * @inheritdoc
+     * @returns {ReactElement}
+     */
+    render() {
+        return (
+            <SideBar
+                onHide = { this._onHideSideBar }
+                show = { this.props._visible }>
+                <Header style = { styles.sideBarHeader }>
+                    <Avatar
+                        style = { styles.avatar }
+                        uri = { this.props._avatar } />
+                    <Text style = { styles.displayName }>
+                        { this.props._displayName }
+                    </Text>
+                </Header>
+                <SafeAreaView style = { styles.sideBarBody }>
+                    <ScrollView
+                        style = { styles.itemContainer }>
+                        <SideBarItem
+                            i18Label = 'settings.title'
+                            icon = 'settings'
+                            onPress = { this._onOpenSettings } />
+                        <SideBarItem
+                            i18Label = 'welcomepage.terms'
+                            icon = 'info'
+                            url = { TERMS_URL } />
+                        <SideBarItem
+                            i18Label = 'welcomepage.privacy'
+                            icon = 'info'
+                            url = { PRIVACY_URL } />
+                        <SideBarItem
+                            i18Label = 'welcomepage.sendFeedback'
+                            icon = 'info'
+                            url = { SEND_FEEDBACK_URL } />
+                    </ScrollView>
+                </SafeAreaView>
+            </SideBar>
+        );
+    }
+
+    _onHideSideBar: () => void;
+
+    /**
+     * Invoked when the sidebar has closed itslef (e.g. overlay pressed).
+     *
+     * @private
+     * @returns {void}
+     */
+    _onHideSideBar() {
+        this.props.dispatch(setSideBarVisibility(false));
+    }
+
+    _onOpenSettings: () => void;
+
+    /**
+     * Opens the settings screen.
+     *
+     * @private
+     * @returns {void}
+     */
+    _onOpenSettings() {
+        const { dispatch } = this.props;
+
+        dispatch(setSideBarVisibility(false));
+        dispatch(showAppSettings());
+    }
+}
+
+/**
+ * Maps (parts of) the redux state to the React {@code Component} props.
+ *
+ * @param {Object} state - The redux state.
+ * @protected
+ * @returns {Object}
+ */
+function _mapStateToProps(state: Object) {
+    const _localParticipant = getLocalParticipant(state);
+
+    return {
+        _avatar: getAvatarURL(_localParticipant),
+        _displayName: getParticipantDisplayName(state, _localParticipant.id),
+        _visible: state['features/welcome'].sideBarVisible
+    };
+}
+
+export default connect(_mapStateToProps)(WelcomePageSideBar);
