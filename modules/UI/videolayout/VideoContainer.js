@@ -4,6 +4,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 
+import { browser } from '../../../react/features/base/lib-jitsi-meet';
 import {
     ORIENTATION,
     LargeVideoBackground
@@ -220,13 +221,20 @@ export class VideoContainer extends LargeContainer {
 
         /**
          * Whether the background should fit the height of the container
-         * (portrait) or fit the width of the container (landscape). A null
-         * value means do not show the background.
+         * (portrait) or fit the width of the container (landscape).
          *
          * @private
          * @type {string|null}
          */
         this._backgroundOrientation = null;
+
+        /**
+         * Flag indicates whether or not the background should be rendered.
+         * If the background will not be visible then it is hidden to save
+         * on performance.
+         * @type {boolean}
+         */
+        this._hideBackground = true;
 
         /**
          * Flag indicates whether or not the avatar is currently displayed.
@@ -437,9 +445,11 @@ export class VideoContainer extends LargeContainer {
         if ((containerWidth > width) || (containerHeight > height)) {
             this._backgroundOrientation = containerWidth > width
                 ? ORIENTATION.LANDSCAPE : ORIENTATION.PORTRAIT;
+            this._hideBackground = false;
         } else {
-            this._backgroundOrientation = null;
+            this._hideBackground = true;
         }
+
         this._updateBackground();
 
         const { horizontalIndent, verticalIndent }
@@ -524,7 +534,7 @@ export class VideoContainer extends LargeContainer {
             transform: flipX ? 'scaleX(-1)' : 'none'
         });
 
-        this._backgroundOrientation = null;
+        this._hideBackground = true;
         this._updateBackground();
 
         // Reset the large video background depending on the stream.
@@ -678,26 +688,25 @@ export class VideoContainer extends LargeContainer {
      * @returns {void}
      */
     _updateBackground() {
-        const backgroundContainer
-            = document.getElementById('largeVideoBackgroundContainer');
-
-        if (backgroundContainer) {
-            ReactDOM.render(
-                <LargeVideoBackground
-                    hidden = { !this._backgroundOrientation }
-                    mirror = {
-                        this.stream
-                        && this.stream.isLocal()
-                        && this.localFlipX
-                    }
-                    orientationFit = { this._backgroundOrientation }
-                    showLocalProblemFilter
-                        = { this.$video.hasClass(LOCAL_PROBLEM_FILTER_CLASS) }
-                    showRemoteProblemFilter
-                        = { this.$video.hasClass(REMOTE_PROBLEM_FILTER_CLASS) }
-                    videoTrack = { this.stream } />,
-                backgroundContainer
-            );
+        if (browser.isFirefox() || browser.isTemasysPluginUsed()) {
+            return;
         }
+
+        ReactDOM.render(
+            <LargeVideoBackground
+                hidden = { this._hideBackground }
+                mirror = {
+                    this.stream
+                    && this.stream.isLocal()
+                    && this.localFlipX
+                }
+                orientationFit = { this._backgroundOrientation }
+                showLocalProblemFilter
+                    = { this.$video.hasClass(LOCAL_PROBLEM_FILTER_CLASS) }
+                showRemoteProblemFilter
+                    = { this.$video.hasClass(REMOTE_PROBLEM_FILTER_CLASS) }
+                videoTrack = { this.stream } />,
+            document.getElementById('largeVideoBackgroundContainer')
+        );
     }
 }

@@ -3,7 +3,6 @@
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 
-import { browser } from '../../base/lib-jitsi-meet';
 import { Watermarks } from '../../base/react';
 import { VideoQualityLabel } from '../../video-quality';
 import { RecordingLabel } from '../../recording';
@@ -31,9 +30,6 @@ export default class LargeVideo extends Component<*> {
      * @returns {ReactElement}
      */
     render() {
-        const supportsVideoBackground = !browser.isFirefox()
-            && !browser.isTemasysPluginUsed();
-
         return (
             <div
                 className = 'videocontainer'
@@ -54,22 +50,7 @@ export default class LargeVideo extends Component<*> {
                 <div id = 'remotePresenceMessage' />
                 <span id = 'remoteConnectionMessage' />
                 <div>
-                    {
-
-                        /**
-                         * FIXME: The LargeVideo component should be in charge
-                         * of how the large video background is rendered.
-                         * However, in order to coordinate video transition
-                         * timing between large video and the background video,
-                         * the logic for updating the background video is left
-                         * in the non-react large video component.
-                         */
-                    }
-                    {
-                        supportsVideoBackground
-                            ? <div id = 'largeVideoBackgroundContainer' />
-                            : null
-                    }
+                    <div id = 'largeVideoBackgroundContainer' />
                     {
 
                         /**
