@@ -7,7 +7,10 @@ import { Linking } from 'react-native';
 import '../../analytics';
 import '../../authentication';
 import { Platform } from '../../base/react';
-import { AspectRatioDetector } from '../../base/responsive-ui';
+import {
+    AspectRatioDetector,
+    ReducedUIDetector
+} from '../../base/responsive-ui';
 import '../../mobile/audio-mode';
 import '../../mobile/background';
 import '../../mobile/callkit';
@@ -97,7 +100,9 @@ export class App extends AbstractApp {
     _createElement(component, props) {
         return (
             <AspectRatioDetector>
-                { super._createElement(component, props) }
+                <ReducedUIDetector>
+                    { super._createElement(component, props) }
+                </ReducedUIDetector>
             </AspectRatioDetector>
         );
     }

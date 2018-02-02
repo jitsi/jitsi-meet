@@ -1,6 +1,7 @@
 import { AtlasKitThemeProvider } from '@atlaskit/theme';
 import React from 'react';
 
+import '../../base/responsive-ui';
 import { getLocationContextRoot } from '../../base/util';
 import '../../room-lock';
 
