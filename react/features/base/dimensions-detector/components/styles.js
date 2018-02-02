@@ -5,9 +5,9 @@ import { createStyleSheet } from '../../styles';
  */
 export default createStyleSheet({
     /**
-     * The style of {@link AspectRatioDetector} used on react-native.
+     * The style of {@link DimensionsDetector} used on react-native.
      */
-    aspectRatioDetector: {
+    dimensionsDetector: {
         alignSelf: 'stretch',
         flex: 1
     }

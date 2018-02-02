@@ -1,33 +1,33 @@
-import PropTypes from 'prop-types';
+// @flow
+
 import React, { Component } from 'react';
-import { View } from 'react-native';
 import { connect } from 'react-redux';
 
+import { DimensionsDetector } from '../../dimensions-detector';
+
 import { setAspectRatio } from '../actions';
-import styles from './styles';
+
+/**
+ * AspectRatioDetector component's property types.
+ */
+type Props = {
+
+    /**
+     * The "onDimensionsHandler" handler.
+     */
+    _onDimensionsChanged: Function,
+
+    /**
+     * Any nested components.
+     */
+    children: React$Node
+};
 
 /**
  * A root {@link View} which captures the 'onLayout' event and figures out
  * the aspect ratio of the app.
  */
-class AspectRatioDetector extends Component {
-    /**
-     * AspectRatioDetector component's property types.
-     *
-     * @static
-     */
-    static propTypes = {
-        /**
-         * The "onLayout" handler.
-         */
-        _onLayout: PropTypes.func,
-
-        /**
-         * Any nested components.
-         */
-        children: PropTypes.node
-    };
-
+class AspectRatioDetector extends Component<Props> {
     /**
      * Renders the root view and it's children.
      *
@@ -35,11 +35,10 @@ class AspectRatioDetector extends Component {
      */
     render() {
         return (
-            <View
-                onLayout = { this.props._onLayout }
-                style = { styles.aspectRatioDetector } >
+            <DimensionsDetector
+                onDimensionsChanged = { this.props._onDimensionsChanged } >
                 { this.props.children }
-            </View>
+            </DimensionsDetector>
         );
     }
 }
@@ -50,21 +49,21 @@ class AspectRatioDetector extends Component {
  * @param {Function} dispatch - Redux action dispatcher.
  * @private
  * @returns {{
- *     _onLayout: Function
+ *     _onDimensionsChanged: Function
  * }}
  */
 function _mapDispatchToProps(dispatch) {
     return {
         /**
-         * Handles the "on layout" View's event and dispatches aspect ratio
+         * Handles the "on dimensions changed" event and dispatches aspect ratio
          * changed action.
          *
-         * @param {Object} event - The "on layout" event object/structure passed
-         * by react-native.
+         * @param {number} width - The new width for the component.
+         * @param {number} height - The new height for the component.
          * @private
          * @returns {void}
          */
-        _onLayout({ nativeEvent: { layout: { height, width } } }) {
+        _onDimensionsChanged(width: number, height: number) {
             dispatch(setAspectRatio(width, height));
         }
     };
