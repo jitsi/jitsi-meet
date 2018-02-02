@@ -3,7 +3,7 @@
 import React, { Component } from 'react';
 
 // eslint-disable-next-line react-native/split-platform-components
-import { BackAndroid, BackHandler, View } from 'react-native';
+import { BackAndroid, BackHandler, StatusBar, View } from 'react-native';
 import { connect as reactReduxConnect } from 'react-redux';
 
 import { appNavigate } from '../../app';
@@ -192,6 +192,7 @@ class Conference extends Component<Props> {
                 onClick = { this._onClick }
                 style = { styles.conference }
                 touchFeedback = { false }>
+                <StatusBar translucent = { true } />
 
                 {/*
                   * The LargeVideo is the lowermost stacking layer.

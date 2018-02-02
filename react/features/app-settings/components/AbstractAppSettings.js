@@ -10,11 +10,6 @@ import { getProfile, updateProfile } from '../../base/profile';
 type Props = {
 
     /**
-     * The current aspect ratio of the screen.
-     */
-    _aspectRatio: Symbol,
-
-    /**
      * The current profile object.
      */
     _profile: Object,
@@ -25,7 +20,7 @@ type Props = {
     _serverURL: string,
 
     /**
-     * The visibility prop of the settings modal.
+     * The visibility prop of the settings screen.
      */
     _visible: boolean,
 
@@ -173,7 +168,6 @@ export function _mapStateToProps(state: Object) {
     const _profile = getProfile(state);
 
     return {
-        _aspectRatio: state['features/base/responsive-ui'].aspectRatio,
         _profile,
         _serverURL,
         _visible: state['features/app-settings'].visible

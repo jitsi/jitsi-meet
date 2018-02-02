@@ -4,6 +4,7 @@ import React from 'react';
 import {
     Alert,
     Modal,
+    SafeAreaView,
     ScrollView,
     Switch,
     Text,
@@ -13,16 +14,15 @@ import {
 import { connect } from 'react-redux';
 
 import { translate } from '../../base/i18n';
-import { getSafetyOffset, isIPad } from '../../base/react';
-import { ASPECT_RATIO_NARROW } from '../../base/responsive-ui';
+import { Header } from '../../base/react';
+import { PlatformElements } from '../../base/styles';
 
-import { _mapStateToProps, AbstractAppSettings } from './AbstractAppSettings';
 import { hideAppSettings } from '../actions';
-import BackButton from './BackButton.native';
-import FormRow from './FormRow.native';
-import FormSectionHeader from './FormSectionHeader.native';
 import { normalizeUserInputURL } from '../functions';
-import styles, { HEADER_PADDING } from './styles';
+
+import { BackButton, FormRow, FormSectionHeader } from './_';
+import { _mapStateToProps, AbstractAppSettings } from './AbstractAppSettings';
+import styles from './styles';
 
 /**
  * The native container rendering the app settings page.
@@ -40,7 +40,6 @@ class AppSettings extends AbstractAppSettings {
     constructor(props) {
         super(props);
 
-        this._getSafetyPadding = this._getSafetyPadding.bind(this);
         this._onBlurServerURL = this._onBlurServerURL.bind(this);
         this._onRequestClose = this._onRequestClose.bind(this);
         this._setURLFieldReference = this._setURLFieldReference.bind(this);
@@ -56,108 +55,89 @@ class AppSettings extends AbstractAppSettings {
     render() {
         const { _profile, t } = this.props;
 
-        // FIXME: presentationStyle is added to workaround orientation issue on
-        // iOS
-
         return (
             <Modal
                 animationType = 'slide'
                 onRequestClose = { this._onRequestClose }
-                presentationStyle = 'overFullScreen'
+                presentationStyle = 'fullScreen'
                 supportedOrientations = { [
                     'landscape',
                     'portrait'
                 ] }
                 visible = { this.props._visible }>
-                <View
-                    style = { [
-                        styles.headerContainer,
-                        this._getSafetyPadding()
-                    ] } >
-                    <BackButton
-                        onPress = { this._onRequestClose }
-                        style = { styles.settingsBackButton } />
-                    <Text style = { [ styles.text, styles.headerTitle ] } >
-                        { t('profileModal.header') }
-                    </Text>
+                <View style = { PlatformElements.page }>
+                    <Header>
+                        <BackButton
+                            onPress = { this._onRequestClose } />
+                        <Text
+                            style = { [
+                                styles.text,
+                                PlatformElements.headerText
+                            ] } >
+                            { t('settingsScreen.header') }
+                        </Text>
+                    </Header>
+                    <SafeAreaView style = { styles.settingsForm }>
+                        <ScrollView>
+                            <FormSectionHeader
+                                i18nLabel = 'settingsScreen.profileSection' />
+                            <FormRow
+                                fieldSeparator = { true }
+                                i18nLabel = 'settingsScreen.displayName' >
+                                <TextInput
+                                    onChangeText = { this._onChangeDisplayName }
+                                    placeholder = 'John Doe'
+                                    value = { _profile.displayName } />
+                            </FormRow>
+                            <FormRow
+                                i18nLabel = 'settingsScreen.email' >
+                                <TextInput
+                                    keyboardType = { 'email-address' }
+                                    onChangeText = { this._onChangeEmail }
+                                    placeholder = 'email@example.com'
+                                    value = { _profile.email } />
+                            </FormRow>
+                            <FormSectionHeader
+                                i18nLabel
+                                    = 'settingsScreen.conferenceSection' />
+                            <FormRow
+                                fieldSeparator = { true }
+                                i18nLabel = 'settingsScreen.serverURL' >
+                                <TextInput
+                                    autoCapitalize = 'none'
+                                    onBlur = { this._onBlurServerURL }
+                                    onChangeText = { this._onChangeServerURL }
+                                    placeholder = { this.props._serverURL }
+                                    value = { _profile.serverURL } />
+                            </FormRow>
+                            <FormRow
+                                fieldSeparator = { true }
+                                i18nLabel
+                                    = 'settingsScreen.startWithAudioMuted' >
+                                <Switch
+                                    onValueChange = {
+                                        this._onStartAudioMutedChange
+                                    }
+                                    value = {
+                                        _profile.startWithAudioMuted
+                                    } />
+                            </FormRow>
+                            <FormRow
+                                i18nLabel
+                                    = 'settingsScreen.startWithVideoMuted' >
+                                <Switch
+                                    onValueChange = {
+                                        this._onStartVideoMutedChange
+                                    }
+                                    value = {
+                                        _profile.startWithVideoMuted
+                                    } />
+                            </FormRow>
+                        </ScrollView>
+                    </SafeAreaView>
                 </View>
-                <ScrollView style = { styles.settingsContainer } >
-                    <FormSectionHeader
-                        i18nLabel = 'profileModal.profileSection' />
-                    <FormRow
-                        fieldSeparator = { true }
-                        i18nLabel = 'profileModal.displayName' >
-                        <TextInput
-                            onChangeText = { this._onChangeDisplayName }
-                            placeholder = 'John Doe'
-                            value = { _profile.displayName } />
-                    </FormRow>
-                    <FormRow
-                        i18nLabel = 'profileModal.email' >
-                        <TextInput
-                            keyboardType = { 'email-address' }
-                            onChangeText = { this._onChangeEmail }
-                            placeholder = 'email@example.com'
-                            value = { _profile.email } />
-                    </FormRow>
-                    <FormSectionHeader
-                        i18nLabel = 'profileModal.conferenceSection' />
-                    <FormRow
-                        fieldSeparator = { true }
-                        i18nLabel = 'profileModal.serverURL' >
-                        <TextInput
-                            autoCapitalize = 'none'
-                            onBlur = { this._onBlurServerURL }
-                            onChangeText = { this._onChangeServerURL }
-                            placeholder = { this.props._serverURL }
-                            ref = { this._setURLFieldReference }
-                            value = { _profile.serverURL } />
-                    </FormRow>
-                    <FormRow
-                        fieldSeparator = { true }
-                        i18nLabel = 'profileModal.startWithAudioMuted' >
-                        <Switch
-                            onValueChange = {
-                                this._onStartAudioMutedChange
-                            }
-                            value = {
-                                _profile.startWithAudioMuted
-                            } />
-                    </FormRow>
-                    <FormRow
-                        i18nLabel = 'profileModal.startWithVideoMuted' >
-                        <Switch
-                            onValueChange = {
-                                this._onStartVideoMutedChange
-                            }
-                            value = {
-                                _profile.startWithVideoMuted
-                            } />
-                    </FormRow>
-                </ScrollView>
             </Modal>
         );
-    }
-
-    _getSafetyPadding: () => Object;
-
-    /**
-     * Calculates header safety padding for mobile devices. See comment in
-     * functions.js.
-     *
-     * @private
-     * @returns {Object}
-     */
-    _getSafetyPadding() {
-        if (isIPad() || this.props._aspectRatio === ASPECT_RATIO_NARROW) {
-            const safeOffset = Math.max(getSafetyOffset(), HEADER_PADDING);
-
-            return {
-                paddingTop: safeOffset
-            };
-        }
-
-        return undefined;
     }
 
     _onBlurServerURL: () => void;
@@ -183,8 +163,6 @@ class AppSettings extends AbstractAppSettings {
 
     _onStartVideoMutedChange: (boolean) => void;
 
-    _onRequestClose: () => void;
-
     /**
      * Processes the server URL. It normalizes it and an error alert is
      * displayed in case it's incorrect.
@@ -207,6 +185,8 @@ class AppSettings extends AbstractAppSettings {
             }
         }
     }
+
+    _onRequestClose: () => void;
 
     /**
      * Handles the back button.
@@ -243,12 +223,12 @@ class AppSettings extends AbstractAppSettings {
         const { t } = this.props;
 
         Alert.alert(
-            t('profileModal.alertTitle'),
-            t('profileModal.alertURLText'),
+            t('settingsScreen.alertTitle'),
+            t('settingsScreen.alertURLText'),
             [
                 {
                     onPress: () => this._urlField.focus(),
-                    text: t('profileModal.alertOk')
+                    text: t('settingsScreen.alertOk')
                 }
             ]
         );

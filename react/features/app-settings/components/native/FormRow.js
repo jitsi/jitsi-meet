@@ -2,23 +2,15 @@
 
 import React, { Component } from 'react';
 import { Text, View } from 'react-native';
-import { connect } from 'react-redux';
 
-import { translate } from '../../base/i18n';
-import { getSafetyOffset } from '../../base/react';
-import { ASPECT_RATIO_WIDE } from '../../base/responsive-ui';
+import { translate } from '../../../base/i18n';
 
-import styles, { ANDROID_UNDERLINE_COLOR, CONTAINER_PADDING } from './styles';
+import styles, { ANDROID_UNDERLINE_COLOR } from './styles';
 
 /**
  * The type of the React {@code Component} props of {@link FormRow}
  */
 type Props = {
-
-    /**
-     * The current aspect ratio of the screen.
-     */
-    _aspectRatio: Symbol,
 
     /**
      *
@@ -80,7 +72,10 @@ class FormRow extends Component<Props> {
             <View
                 style = { this._getRowStyle() } >
                 <View style = { styles.fieldLabelContainer } >
-                    <Text style = { styles.text } >
+                    <Text
+                        style = { [
+                            styles.text, styles.fieldLabelText
+                        ] } >
                         { t(this.props.i18nLabel) }
                     </Text>
                 </View>
@@ -122,8 +117,7 @@ class FormRow extends Component<Props> {
     _getRowStyle: () => Array<Object>;
 
     /**
-     * Assembles the row style array based on the row's props. For padding, see
-     * comment in functions.js.
+     * Assembles the row style array based on the row's props.
      *
      * @private
      * @returns {Array<Object>}
@@ -137,33 +131,8 @@ class FormRow extends Component<Props> {
             rowStyle.push(styles.fieldSeparator);
         }
 
-        if (this.props._aspectRatio === ASPECT_RATIO_WIDE) {
-            const safeOffset = Math.max(
-                getSafetyOffset() - CONTAINER_PADDING, 0
-            );
-
-            rowStyle.push({
-                marginLeft: safeOffset,
-                marginRight: safeOffset
-            });
-        }
-
         return rowStyle;
     }
 }
 
-/**
- * Maps (parts of) the redux state to the React {@code Component} props of
- * {@code FormRow}.
- *
- * @param {Object} state - The redux state.
- * @protected
- * @returns {Object}
- */
-export function _mapStateToProps(state: Object) {
-    return {
-        _aspectRatio: state['features/base/responsive-ui'].aspectRatio
-    };
-}
-
-export default translate(connect(_mapStateToProps)(FormRow));
+export default translate(FormRow);
