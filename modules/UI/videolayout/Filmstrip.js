@@ -1,6 +1,6 @@
 /* global $, APP, interfaceConfig */
 
-import { setFilmstripVisibility } from '../../../react/features/filmstrip';
+import { setFilmstripVisible } from '../../../react/features/filmstrip';
 
 import UIEvents from '../../../service/UI/UIEvents';
 import UIUtil from '../util/UIUtil';
@@ -183,7 +183,7 @@ const Filmstrip = {
                 UIEvents.TOGGLED_FILMSTRIP,
                 !wasFilmstripVisible);
         }
-        APP.store.dispatch(setFilmstripVisibility(!wasFilmstripVisible));
+        APP.store.dispatch(setFilmstripVisible(!wasFilmstripVisible));
     },
 
     /**

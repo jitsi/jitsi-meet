@@ -1,8 +1,6 @@
 import { ReducerRegistry } from '../base/redux';
-import {
-    SET_FILMSTRIP_HOVERED,
-    SET_FILMSTRIP_VISIBILITY
-} from './actionTypes';
+
+import { SET_FILMSTRIP_HOVERED, SET_FILMSTRIP_VISIBLE } from './actionTypes';
 
 const DEFAULT_STATE = {
     visible: true
@@ -18,7 +16,7 @@ ReducerRegistry.register(
                 hovered: action.hovered
             };
 
-        case SET_FILMSTRIP_VISIBILITY:
+        case SET_FILMSTRIP_VISIBLE:
             return {
                 ...state,
                 visible: action.visible

@@ -1,6 +1,6 @@
 import {
     SET_FILMSTRIP_HOVERED,
-    SET_FILMSTRIP_VISIBILITY
+    SET_FILMSTRIP_VISIBLE
 } from './actionTypes';
 
 /**
@@ -21,17 +21,17 @@ export function setFilmstripHovered(hovered) {
 }
 
 /**
- * Sets if the entire filmstrip should be visible.
+ * Sets if the filmstrip should be visible.
  *
- * @param {boolean} visible - Whether not the filmstrip is visible.
+ * @param {boolean} visible - Whether the filmstrip should be visible.
  * @returns {{
- *     type: SET_FILMSTRIP_VISIBILITY,
+ *     type: SET_FILMSTRIP_VISIBLE,
  *     visible: boolean
  * }}
  */
-export function setFilmstripVisibility(visible) {
+export function setFilmstripVisible(visible) {
     return {
-        type: SET_FILMSTRIP_VISIBILITY,
+        type: SET_FILMSTRIP_VISIBLE,
         visible
     };
 }
