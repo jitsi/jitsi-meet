@@ -73,9 +73,9 @@ class ParticipantView extends Component {
         _videoTrack: PropTypes.object,
 
         /**
-         * The style, if any, of the avatar in addition to the default style.
+         * The avatar size.
          */
-        avatarStyle: PropTypes.object,
+        avatarSize: PropTypes.number,
 
         /**
          * The ID of the participant (to be) depicted by ParticipantView.
@@ -145,7 +145,7 @@ class ParticipantView extends Component {
         }
 
         const {
-            avatarStyle,
+            avatarSize,
             _participantName: displayName,
             t
         } = this.props;
@@ -154,7 +154,7 @@ class ParticipantView extends Component {
         // view and one for the thumbnail. Some of these don't apply to both.
         const containerStyle = {
             ...styles.connectionInfoContainer,
-            width: avatarStyle.width * 1.5
+            width: avatarSize * 1.5
         };
 
         return (
@@ -230,7 +230,7 @@ class ParticipantView extends Component {
                     // rendered.
                     && _toBoolean(this.props.showAvatar, true)
                     && <Avatar
-                        style = { this.props.avatarStyle }
+                        size = { this.props.avatarSize }
                         uri = { avatar } /> }
 
                 { useTint

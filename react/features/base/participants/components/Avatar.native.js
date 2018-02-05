@@ -6,6 +6,8 @@ import { CachedImage, ImageCache } from '../../../mobile/image-cache';
 import { Platform } from '../../react';
 import { ColorPalette } from '../../styles';
 
+import styles from './styles';
+
 /**
  * The default image/source to be used in case none is specified or the
  * specified one fails to load.
@@ -32,10 +34,9 @@ export default class Avatar extends Component {
      */
     static propTypes = {
         /**
-         * The optional style to add to the {@link Avatar} in order to customize
-         * its base look (and feel).
+         * The size for the {@link Avatar}.
          */
-        style: PropTypes.object,
+        size: PropTypes.number,
 
         /**
          * The URI of the {@link Avatar}.
@@ -216,13 +217,26 @@ export default class Avatar extends Component {
 
             /* eslint-enable no-unused-vars */
 
-            style,
+            size,
             ...props
         } = this.props;
         const {
             backgroundColor,
             source
         } = this.state;
+
+        // Compute the base style
+        const style = {
+            ...styles.avatar,
+
+            // XXX Workaround for Android: for radii < 80 the border radius
+            // doesn't work properly, but applying a radius twice as big
+            // seems to do the trick.
+            borderRadius: size / 2 < 80
+                ? Platform.OS === 'android' ? size * 2 : size / 2 : size / 2,
+            height: size,
+            width: size
+        };
 
         // If we're rendering the _DEFAULT_SOURCE, then we want to do some
         // additional fu like having automagical colors generated per

@@ -1,5 +1,9 @@
-import { Platform } from '../../base/react';
 import { ColorPalette } from '../../base/styles';
+
+/**
+ * Size for the Avatar.
+ */
+export const AVATAR_SIZE = 50;
 
 /**
  * The base style of {@link Filmstrip} shared between narrow and wide versions.
@@ -13,20 +17,6 @@ const filmstrip = {
  * The styles of the feature filmstrip common to both Web and native.
  */
 export default {
-    /**
-     * Avatar style.
-     */
-    avatar: {
-        alignSelf: 'center',
-
-        // XXX Workaround for Android: for images < 80 the border radius doesn't
-        // work properly, but applying a radius twice as big does the trick.
-        borderRadius: Platform.OS === 'android' ? 100 : 25,
-        flex: 0,
-        height: 50,
-        width: 50
-    },
-
     /**
      * Dominant speaker indicator style.
      */

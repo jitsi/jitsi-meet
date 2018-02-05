@@ -5,6 +5,14 @@ import { BoxModel, ColorPalette, createStyleSheet } from '../../styles';
  */
 export default createStyleSheet({
     /**
+     * The style of the avatar of the participant.
+     */
+    avatar: {
+        alignSelf: 'center',
+        flex: 0
+    },
+
+    /**
      * Style for the text rendered when there is a connectivity problem.
      */
     connectionInfoText: {

@@ -1,18 +1,11 @@
 import { ColorPalette, createStyleSheet } from '../../base/styles';
 
-export default createStyleSheet({
-    /**
-     * The style of the avatar of the participant displayed in largeVideo. It's
-     * an addition to the default style of Avatar.
-     */
-    avatar: {
-        alignSelf: 'center',
-        borderRadius: 100,
-        flex: 0,
-        height: 200,
-        width: 200
-    },
+/**
+ * Size for the Avatar.
+ */
+export const AVATAR_SIZE = 200;
 
+export default createStyleSheet({
     /**
      * Large video container style.
      */
