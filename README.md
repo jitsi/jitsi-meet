@@ -107,7 +107,7 @@ network but decrypted on the machine that hosts the bridge.
 
 The Jitsi Meet architecture allows you to deploy your own version, including
 all server components, and in that case your security guarantees will be roughly
-equivalent to these of a direct one-to-one WebRTC call. This is what's unique to 
+equivalent to these of a direct one-to-one WebRTC call. This is what's unique to
 Jitsi Meet in terms of security.
 
 The [meet.jit.si](https://meet.jit.si) service is maintained by the Jitsi team
@@ -120,3 +120,4 @@ Instructions on how to build it can be found [here](doc/mobile.md).
 ## Acknowledgements
 
 Jitsi Meet started out as a sample conferencing application using Jitsi Videobridge. It was originally developed by then ESTOS' developer Philipp Hancke who then contributed it to the community where development continues with joint forces!
+
