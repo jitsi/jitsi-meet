@@ -30,14 +30,77 @@ export default class Storage {
          */
         this._keyPrefix = keyPrefix;
 
+        // Perform optional asynchronous initialization.
+        const initializing = this._initializeAsync();
+
+        if (initializing) {
+            // Indicate that asynchronous initialization is under way.
+            this._initializing = initializing;
+
+            // When the asynchronous initialization completes, indicate its
+            // completion.
+            initializing.finally(() => {
+                if (this._initializing === initializing) {
+                    this._initializing = undefined;
+                }
+            });
+        }
+    }
+
+    /**
+     * Removes all keys from this storage.
+     *
+     * @returns {void}
+     */
+    clear() {
+        for (const key of Object.keys(this)) {
+            this.removeItem(key);
+        }
+    }
+
+    /**
+     * Returns the value associated with a specific key in this storage.
+     *
+     * @param {string} key - The name of the key to retrieve the value of.
+     * @returns {string|null} The value associated with {@code key} or
+     * {@code null}.
+     */
+    getItem(key) {
+        return this.hasOwnProperty(key) ? this[key] : null;
+    }
+
+    /**
+     * Returns the value associated with a specific key in this {@code Storage}
+     * in an async manner. The method is required for the cases where we need
+     * the stored data but we're not sure yet whether this {@code Storage} is
+     * already initialized (e.g. on app start).
+     *
+     * @param {string} key - The name of the key to retrieve the value of.
+     * @returns {Promise}
+     */
+    _getItemAsync(key) {
+        return (
+            (this._initializing || Promise.resolve())
+                .catch(() => { /* _getItemAsync should always resolve! */ })
+                .then(() => this.getItem(key)));
+    }
+
+    /**
+     * Performs asynchronous initialization of this {@code Storage} instance
+     * such as loading all keys from {@link AsyncStorage}.
+     *
+     * @private
+     * @returns {Promise}
+     */
+    _initializeAsync() {
         if (typeof this._keyPrefix !== 'undefined') {
             // Load all previously persisted data items from React Native's
             // AsyncStorage.
 
-            this._initialized = new Promise(resolve => {
+            return new Promise(resolve => {
                 AsyncStorage.getAllKeys().then((...getAllKeysCallbackArgs) => {
-                    // XXX The keys argument of getAllKeys' callback may
-                    // or may not be preceded by an error argument.
+                    // XXX The keys argument of getAllKeys' callback may or may
+                    // not be preceded by an error argument.
                     const keys
                         = getAllKeysCallbackArgs[
                             getAllKeysCallbackArgs.length - 1
@@ -73,46 +136,8 @@ export default class Storage {
                 });
             });
         }
-    }
 
-    /**
-     * Removes all keys from this storage.
-     *
-     * @returns {void}
-     */
-    clear() {
-        for (const key of Object.keys(this)) {
-            this.removeItem(key);
-        }
-    }
-
-    /**
-     * Returns the value associated with a specific key in this storage.
-     *
-     * @param {string} key - The name of the key to retrieve the value of.
-     * @returns {string|null} The value associated with {@code key} or
-     * {@code null}.
-     */
-    getItem(key) {
-        return this.hasOwnProperty(key) ? this[key] : null;
-    }
-
-    /**
-     * Returns the value associated with a specific key in this storage in an
-     * async manner. This method is required for those cases where we need the
-     * stored data but we're not sure yet whether the {@code Storage} is already
-     * initialised or not - e.g. on app start.
-     *
-     * @param {string} key - The name of the key to retrieve the value of.
-     * @private
-     * @returns {Promise}
-     */
-    _getItemAsync(key) {
-        return new Promise(
-            resolve =>
-                AsyncStorage.getItem(
-                    `${String(this._keyPrefix)}${key}`,
-                    (error, result) => resolve(result ? result : null)));
+        return undefined;
     }
 
     /**

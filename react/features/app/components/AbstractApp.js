@@ -97,17 +97,22 @@ export class AbstractApp extends Component {
         };
 
         /**
-         * This way we make the mobile version wait until the
-         * {@code AsyncStorage} implementation of {@code Storage}
-         * properly initializes. On web it does actually nothing, see
-         * {@link #_initStorage}.
+         * Make the mobile {@code AbstractApp} wait until the
+         * {@code AsyncStorage} implementation of {@code Storage} initializes
+         * fully.
+         *
+         * @private
+         * @see {@link #_initStorage}
+         * @type {Promise}
          */
-        this.init = this._initStorage().then(() => {
-            this.setState({
-                route: undefined,
-                store: this._maybeCreateStore(props)
-            });
-        });
+        this._init
+            = this._initStorage()
+                .catch(() => { /* AbstractApp should always initialize! */ })
+                .then(() =>
+                    this.setState({
+                        route: undefined,
+                        store: this._maybeCreateStore(props)
+                    }));
     }
 
     /**
@@ -117,7 +122,7 @@ export class AbstractApp extends Component {
      * @inheritdoc
      */
     componentWillMount() {
-        this.init.then(() => {
+        this._init.then(() => {
             const { dispatch } = this._getStore();
 
             dispatch(appWillMount(this));
@@ -175,7 +180,7 @@ export class AbstractApp extends Component {
     componentWillReceiveProps(nextProps) {
         const { props } = this;
 
-        this.init.then(() => {
+        this._init.then(() => {
             // The consumer of this AbstractApp did not provide a redux store.
             if (typeof nextProps.store === 'undefined'
 
@@ -236,18 +241,21 @@ export class AbstractApp extends Component {
     }
 
     /**
-     * Delays app start until the {@code Storage} implementation initialises.
-     * This is instantaneous on web, but is async on mobile.
+     * Delays this {@code AbstractApp}'s startup until the {@code Storage}
+     * implementation of {@code localStorage} initializes. While the
+     * initialization is instantaneous on Web (with Web Storage API), it is
+     * asynchronous on mobile/react-native.
      *
      * @private
-     * @returns {ReactElement}
+     * @returns {Promise}
      */
     _initStorage() {
-        if (typeof window.localStorage._initialized !== 'undefined') {
-            return window.localStorage._initialized;
-        }
+        const localStorageInitializing = window.localStorage._initializing;
 
-        return Promise.resolve();
+        return (
+            typeof localStorageInitializing === 'undefined'
+                ? Promise.resolve()
+                : localStorageInitializing);
     }
 
     /**
