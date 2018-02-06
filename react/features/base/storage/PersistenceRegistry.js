@@ -11,9 +11,17 @@ const logger = Logger.getLogger(__filename);
 const PERSISTED_STATE_NAME = 'jitsi-state';
 
 /**
+ * Mixed type of the element (subtree) config. If it's a boolean,
+ * (and is true) we persist the entire subtree. If it's an object,
+ * we perist a filtered subtree based on the properties in the
+ * config object.
+ */
+declare type ElementConfig = Object | boolean;
+
+/**
  * The type of the name-config pairs stored in this reducer.
  */
-declare type PersistencyConfigMap = { [name: string]: Object };
+declare type PersistencyConfigMap = { [name: string]: ElementConfig };
 
 /**
  * A registry to allow features to register their redux store subtree to be
@@ -94,10 +102,11 @@ class PersistenceRegistry {
      * Registers a new subtree config to be used for the persistency.
      *
      * @param {string} name - The name of the subtree the config belongs to.
-     * @param {Object} config - The config object.
+     * @param {ElementConfig} config - The config object, or boolean
+     * if the entire subtree needs to be persisted.
      * @returns {void}
      */
-    register(name: string, config: Object) {
+    register(name: string, config?: ElementConfig = true) {
         this._elements[name] = config;
     }
 
@@ -134,10 +143,9 @@ class PersistenceRegistry {
 
         for (const name of Object.keys(this._elements)) {
             if (state[name]) {
-                filteredState[name]
-                    = this._getFilteredSubtree(
-                        state[name],
-                        this._elements[name]);
+                filteredState[name] = this._getFilteredSubtree(
+                    state[name],
+                    this._elements[name]);
             }
         }
 
@@ -150,15 +158,23 @@ class PersistenceRegistry {
      *
      * @private
      * @param {Object} subtree - The redux state subtree.
-     * @param {Object} subtreeConfig - The related config.
+     * @param {ElementConfig} subtreeConfig - The related config.
      * @returns {Object}
      */
     _getFilteredSubtree(subtree, subtreeConfig) {
-        const filteredSubtree = {};
+        let filteredSubtree;
 
-        for (const persistedKey of Object.keys(subtree)) {
-            if (subtreeConfig[persistedKey]) {
-                filteredSubtree[persistedKey] = subtree[persistedKey];
+        if (subtreeConfig === true) {
+            // we persist the entire subtree
+            filteredSubtree = subtree;
+        } else if (typeof subtreeConfig === 'object') {
+            // only a filtered subtree gets persisted, based on the
+            // subtreeConfig object.
+            filteredSubtree = {};
+            for (const persistedKey of Object.keys(subtree)) {
+                if (subtreeConfig[persistedKey]) {
+                    filteredSubtree[persistedKey] = subtree[persistedKey];
+                }
             }
         }
 
