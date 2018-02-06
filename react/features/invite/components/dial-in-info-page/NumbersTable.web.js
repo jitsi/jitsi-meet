@@ -38,7 +38,8 @@ class NumbersTable extends Component {
      * @returns {ReactElement}
      */
     render() {
-        const showWithoutCountries = Array.isArray(this.props.numbers);
+        const { numbers, t } = this.props;
+        const showWithoutCountries = Array.isArray(numbers);
 
         return (
             <table className = 'dial-in-numbers-table'>
@@ -46,13 +47,13 @@ class NumbersTable extends Component {
                     <tr>
                         { showWithoutCountries
                             ? null
-                            : <th>{ this.props.t('info.country') }</th> }
-                        <th>{ this.props.t('info.numbers') }</th>
+                            : <th>{ t('info.country') }</th> }
+                        <th>{ t('info.numbers') }</th>
                     </tr>
                 </thead>
                 <tbody>
                     { showWithoutCountries
-                        ? this._renderWithoutCountries()
+                        ? numbers.map(this._renderNumberRow)
                         : this._renderWithCountries() }
                 </tbody>
             </table>);
@@ -68,13 +69,12 @@ class NumbersTable extends Component {
         const rows = [];
 
         for (const [ country, numbers ] of Object.entries(this.props.numbers)) {
-            const formattedNumbers = numbers.map(number =>
-                <div key = { number }>{ number }</div>);
+            const formattedNumbers = numbers.map(this._renderNumberDiv);
 
             rows.push(
                 <tr key = { country }>
                     <td>{ country }</td>
-                    <td>{ formattedNumbers }</td>
+                    <td className = 'dial-in-numbers'>{ formattedNumbers }</td>
                 </tr>
             );
         }
@@ -83,14 +83,37 @@ class NumbersTable extends Component {
     }
 
     /**
-     * Renders a column of phone numbers.
+     * Renders a table row for a phone number.
      *
+     * @param {string} number - The phone number to display.
      * @private
      * @returns {ReactElement[]}
      */
-    _renderWithoutCountries() {
-        return this.props.numbers.map(number =>
-            <tr key = { number }><td>{ number }</td></tr>);
+    _renderNumberRow(number) {
+        return (
+            <tr key = { number }>
+                <td className = 'dial-in-number'>
+                    { number }
+                </td>
+            </tr>
+        );
+    }
+
+    /**
+     * Renders a div container for a phone number.
+     *
+     * @param {string} number - The phone number to display.
+     * @private
+     * @returns {ReactElement[]}
+     */
+    _renderNumberDiv(number) {
+        return (
+            <div
+                className = 'dial-in-number'
+                key = { number }>
+                { number }
+            </div>
+        );
     }
 }
 

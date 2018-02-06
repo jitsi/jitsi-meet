@@ -216,7 +216,9 @@ class InfoDialog extends Component {
                     </div>
                     <div className = 'info-dialog-action-links'>
                         <div className = 'info-dialog-action-link'>
-                            <a onClick = { this._onCopyInviteURL }>
+                            <a
+                                className = 'info-copy'
+                                onClick = { this._onCopyInviteURL }>
                                 { t('dialog.copy') }
                             </a>
                         </div>
@@ -371,6 +373,7 @@ class InfoDialog extends Component {
                     conferenceID = { this.props._dialIn.conferenceID }
                     phoneNumber = { this.state.phoneNumber } />
                 <a
+                    className = 'more-numbers'
                     href = { `static/dialInInfo.html?room=${
                         encodeURIComponent(this.props._conferenceName)}` }
                     rel = 'noopener noreferrer'
@@ -389,42 +392,35 @@ class InfoDialog extends Component {
      */
     _renderPasswordAction() {
         const { t } = this.props;
-        let actionLink;
+        let linkConfig;
 
         if (!this.props._canEditPassword) {
-            actionLink = null;
+            linkConfig = null;
         } else if (this.state.showEditingPassword) {
-            // eslint-disable-next-line no-extra-parens
-            actionLink = (
-                <a
-                    className = 'cancel-password'
-                    onClick = { this._onTogglePasswordEditState }>
-                    { t('info.cancelPassword') }
-                </a>
-            );
+            linkConfig = {
+                className: 'cancel-password',
+                onClick: this._onTogglePasswordEditState,
+                textKey: 'info.cancelPassword'
+            };
         } else if (this.props._locked) {
-            // eslint-disable-next-line no-extra-parens
-            actionLink = (
-                <a
-                    className = 'remove-password'
-                    onClick = { this._onPasswordRemove }>
-                    { t('info.removePassword') }
-                </a>
-            );
+            linkConfig = {
+                className: 'remove-password',
+                onClick: this._onPasswordRemove,
+                textKey: 'dialog.removePassword'
+            };
         } else {
-            // eslint-disable-next-line no-extra-parens
-            actionLink = (
-                <a
-                    className = 'add-password'
-                    onClick = { this._onTogglePasswordEditState }>
-                    { t('invite.addPassword') }
-                </a>
-            );
+            linkConfig = {
+                className: 'add-password',
+                onClick: this._onTogglePasswordEditState,
+                textKey: 'invite.addPassword'
+            };
         }
 
-        return actionLink
+        return linkConfig
             ? <div className = 'info-dialog-action-link'>
-                { actionLink }
+                <a { ...linkConfig }>
+                    { t(linkConfig.textKey) }
+                </a>
             </div>
             : null;
     }
