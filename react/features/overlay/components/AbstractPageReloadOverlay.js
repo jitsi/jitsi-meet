@@ -31,7 +31,7 @@ export default class AbstractPageReloadOverlay extends Component<*, *> {
      */
     static propTypes = {
         /**
-         * The details. The details is an object containing more inforamation
+         * The details is an object containing more information
          * about the connection failed(shard changes, was the computer
          * suspended, etc.).
          *
@@ -269,7 +269,8 @@ export default class AbstractPageReloadOverlay extends Component<*, *> {
  * @protected
  * @returns {{
  *     isNetworkFailure: boolean,
- *     reason: string
+ *     reason: string,
+ *     details: string
  * }}
  */
 export function abstractMapStateToProps(state: Object) {
@@ -280,6 +281,6 @@ export function abstractMapStateToProps(state: Object) {
     return {
         isNetworkFailure: Boolean(configError || connectionError),
         reason: (configError || connectionError || conferenceError).message,
-        details: connectionError ? connectionError.details : {}
+        details: connectionError ? connectionError.details : undefined
     };
 }

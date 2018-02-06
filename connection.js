@@ -99,6 +99,7 @@ function connect(id, password, roomName) {
          *
          */
         function connectionFailedHandler(error, message, credentials, details) {
+        /* eslint-enable max-params */
             APP.store.dispatch(
                 connectionFailed(
                     connection, error, message, credentials, details));
@@ -109,7 +110,6 @@ function connect(id, password, roomName) {
                     connectionFailedHandler);
             }
         }
-        /* eslint-enable max-params */
 
         /**
          *
