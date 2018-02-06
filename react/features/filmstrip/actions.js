@@ -1,7 +1,24 @@
 import {
+    SET_FILMSTRIP_ENABLED,
     SET_FILMSTRIP_HOVERED,
     SET_FILMSTRIP_VISIBLE
 } from './actionTypes';
+
+/**
+ * Sets if the filmstrip should be enabled.
+ *
+ * @param {boolean} enabled - Whether the filmstrip should be enabled.
+ * @returns {{
+ *     type: SET_FILMSTRIP_ENABLED,
+ *     enabled: boolean
+ * }}
+ */
+export function setFilmstripEnabled(enabled) {
+    return {
+        type: SET_FILMSTRIP_ENABLED,
+        enabled
+    };
+}
 
 /**
  * Sets if the filmstrip is currently being hovered over.

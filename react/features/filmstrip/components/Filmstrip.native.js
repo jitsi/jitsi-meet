@@ -1,6 +1,5 @@
 // @flow
 
-import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { ScrollView } from 'react-native';
 import { connect } from 'react-redux';
@@ -15,35 +14,39 @@ import { styles } from './_';
 import Thumbnail from './Thumbnail';
 
 /**
+ * Filmstrip component's property types.
+ */
+type Props = {
+
+    /**
+     * The indicator which determines whether the filmstrip is enabled.
+     *
+     * @private
+     */
+    _enabled: boolean,
+
+    /**
+     * The participants in the conference.
+     *
+     * @private
+     */
+    _participants: Array<any>,
+
+    /**
+     * The indicator which determines whether the filmstrip is visible.
+     *
+     * @private
+     */
+    _visible: boolean
+};
+
+/**
  * Implements a React {@link Component} which represents the filmstrip on
  * mobile/React Native.
  *
  * @extends Component
  */
-class Filmstrip extends Component<*> {
-    /**
-     * Filmstrip component's property types.
-     *
-     * @static
-     */
-    static propTypes = {
-        /**
-         * The participants in the conference.
-         *
-         * @private
-         * @type {Participant[]}
-         */
-        _participants: PropTypes.array,
-
-        /**
-         * The indicator which determines whether the filmstrip is visible.
-         *
-         * @private
-         * @type {boolean}
-         */
-        _visible: PropTypes.bool.isRequired
-    };
-
+class Filmstrip extends Component<Props> {
     /**
      * Implements React's {@link Component#render()}.
      *
@@ -51,6 +54,10 @@ class Filmstrip extends Component<*> {
      * @returns {ReactElement}
      */
     render() {
+        if (!this.props._enabled) {
+            return null;
+        }
+
         const isNarrowAspectRatio_ = isNarrowAspectRatio(this);
         const filmstripStyle
             = isNarrowAspectRatio_
@@ -131,9 +138,17 @@ class Filmstrip extends Component<*> {
  */
 function _mapStateToProps(state) {
     const participants = state['features/base/participants'];
-    const { visible } = state['features/filmstrip'];
+    const { enabled, visible } = state['features/filmstrip'];
 
     return {
+        /**
+         * The indicator which determines whether the filmstrip is enabled.
+         *
+         * @private
+         * @type {boolean}
+         */
+        _enabled: enabled,
+
         /**
          * The participants in the conference.
          *

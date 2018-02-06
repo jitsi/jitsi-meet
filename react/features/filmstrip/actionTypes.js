@@ -1,4 +1,15 @@
 /**
+ * The type of (redux) action which sets whether the filmstrip is enabled or
+ * not.
+ *
+ * {
+ *     type: SET_FILMSTRIP_ENABLED,
+ *     enabled: boolean
+ * }
+ */
+export const SET_FILMSTRIP_ENABLED = Symbol('SET_FILMSTRIP_ENABLED');
+
+/**
  * The type of (redux) action which sets whether or not the filmstrip is being
  * hovered with the cursor.
  *
