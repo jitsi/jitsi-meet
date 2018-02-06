@@ -533,7 +533,6 @@
         "veryGood": "Very Good"
     },
     "info": {
-        "addPassword": "Add password",
         "cancelPassword": "Cancel password",
         "conferenceURL": "Link: __url__",
         "country": "Country",
