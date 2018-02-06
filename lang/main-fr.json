@@ -416,7 +416,7 @@
         "buttonTooltip": "Démarrer / Arrêter le Stream",
         "error": "Le Streaming a échoué. Veuillez réessayer.",
         "failedToStart": "Le Streaming n'as pas réussi à démarrer",
-        "off": "Le Streaming a été arrêter",
+        "off": "Le Streaming a été arrêté",
         "on": "Direct",
         "pending": "Commencer le direct...",
         "serviceName": "Service de diffusion en direct",
