@@ -270,7 +270,7 @@ export default class AbstractPageReloadOverlay extends Component<*, *> {
  * @returns {{
  *     isNetworkFailure: boolean,
  *     reason: string,
- *     details: string
+ *     details: Object
  * }}
  */
 export function abstractMapStateToProps(state: Object) {
