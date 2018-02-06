@@ -41,12 +41,16 @@ class DialInNumber extends Component {
      * @returns {ReactElement}
      */
     render() {
+        const { conferenceID, phoneNumber } = this.props;
+
         return (
-            <div>
-                { this.props.t('info.dialIn', {
-                    pin: this.props.conferenceID,
-                    phoneNumber: this.props.phoneNumber
-                }) }
+            <div className = 'dial-in-number'>
+                <span className = 'phone-number'>
+                    { this.props.t('info.dialInNumber', { phoneNumber }) }
+                </span>
+                <span className = 'pin-number'>
+                    { this.props.t('info.dialInPin', { pin: conferenceID }) }
+                </span>
             </div>
         );
     }
