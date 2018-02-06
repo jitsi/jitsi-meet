@@ -389,28 +389,42 @@ class InfoDialog extends Component {
      */
     _renderPasswordAction() {
         const { t } = this.props;
-        let onClick;
-        let translationKey;
+        let actionLink;
 
         if (!this.props._canEditPassword) {
-            onClick = null;
-            translationKey = null;
+            actionLink = null;
         } else if (this.state.showEditingPassword) {
-            onClick = this._onTogglePasswordEditState;
-            translationKey = 'info.cancelPassword';
+            // eslint-disable-next-line no-extra-parens
+            actionLink = (
+                <a
+                    className = 'cancel-password'
+                    onClick = { this._onTogglePasswordEditState }>
+                    { t('info.cancelPassword') }
+                </a>
+            );
         } else if (this.props._locked) {
-            onClick = this._onPasswordRemove;
-            translationKey = 'dialog.removePassword';
+            // eslint-disable-next-line no-extra-parens
+            actionLink = (
+                <a
+                    className = 'remove-password'
+                    onClick = { this._onPasswordRemove }>
+                    { t('info.removePassword') }
+                </a>
+            );
         } else {
-            onClick = this._onTogglePasswordEditState;
-            translationKey = 'invite.addPassword';
+            // eslint-disable-next-line no-extra-parens
+            actionLink = (
+                <a
+                    className = 'add-password'
+                    onClick = { this._onTogglePasswordEditState }>
+                    { t('invite.addPassword') }
+                </a>
+            );
         }
 
-        return onClick && translationKey
+        return actionLink
             ? <div className = 'info-dialog-action-link'>
-                <a onClick = { onClick }>
-                    { t(translationKey) }
-                </a>
+                { actionLink }
             </div>
             : null;
     }
