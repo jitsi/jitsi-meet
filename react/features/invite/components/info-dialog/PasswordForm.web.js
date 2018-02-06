@@ -125,7 +125,11 @@ class PasswordForm extends Component {
                 </form>
             );
         } else if (this.props.locked === LOCKED_LOCALLY) {
-            return this.props.password;
+            return (
+                <div className = 'info-password-local'>
+                    { this.props.password }
+                </div>
+            );
         } else if (this.props.locked) {
             return (
                 <div className = 'info-password-remote'>
