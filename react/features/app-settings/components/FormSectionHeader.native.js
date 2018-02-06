@@ -4,9 +4,9 @@ import React, { Component } from 'react';
 import { Text, View } from 'react-native';
 import { connect } from 'react-redux';
 
-import { ASPECT_RATIO_WIDE } from '../../base/aspect-ratio';
 import { translate } from '../../base/i18n';
 import { getSafetyOffset } from '../../base/react';
+import { ASPECT_RATIO_WIDE } from '../../base/responsive-ui';
 
 import styles, { CONTAINER_PADDING } from './styles';
 
@@ -110,7 +110,7 @@ class FormSectionHeader extends Component<Props> {
  */
 export function _mapStateToProps(state: Object) {
     return {
-        _aspectRatio: state['features/base/aspect-ratio'].aspectRatio
+        _aspectRatio: state['features/base/responsive-ui'].aspectRatio
     };
 }
 

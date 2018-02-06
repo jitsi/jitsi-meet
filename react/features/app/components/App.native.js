@@ -6,8 +6,8 @@ import { Linking } from 'react-native';
 
 import '../../analytics';
 import '../../authentication';
-import { AspectRatioDetector } from '../../base/aspect-ratio';
 import { Platform } from '../../base/react';
+import { AspectRatioDetector } from '../../base/responsive-ui';
 import '../../mobile/audio-mode';
 import '../../mobile/background';
 import '../../mobile/callkit';

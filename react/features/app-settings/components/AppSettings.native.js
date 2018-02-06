@@ -12,9 +12,9 @@ import {
 } from 'react-native';
 import { connect } from 'react-redux';
 
-import { ASPECT_RATIO_NARROW } from '../../base/aspect-ratio';
 import { translate } from '../../base/i18n';
 import { getSafetyOffset, isIPad } from '../../base/react';
+import { ASPECT_RATIO_NARROW } from '../../base/responsive-ui';
 
 import { _mapStateToProps, AbstractAppSettings } from './AbstractAppSettings';
 import { hideAppSettings } from '../actions';

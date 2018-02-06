@@ -1,7 +1,7 @@
 import { createStyleSheet } from '../../styles';
 
 /**
- * The styles of the feature base/aspect-ratio.
+ * The styles of the feature base/responsive-ui.
  */
 export default createStyleSheet({
     /**

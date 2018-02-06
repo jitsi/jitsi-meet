@@ -25,7 +25,7 @@ export function setAspectRatio(width: number, height: number): Object {
                 = width < height ? ASPECT_RATIO_NARROW : ASPECT_RATIO_WIDE;
 
             if (aspectRatio
-                    !== getState()['features/base/aspect-ratio'].aspectRatio) {
+                    !== getState()['features/base/responsive-ui'].aspectRatio) {
                 return dispatch({
                     type: SET_ASPECT_RATIO,
                     aspectRatio

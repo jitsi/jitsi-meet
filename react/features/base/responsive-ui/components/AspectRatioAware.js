@@ -67,11 +67,11 @@ export function makeAspectRatioAware(
  * @param {Object} state - The whole redux state.
  * @private
  * @returns {{
- *      aspectRatio: Symbol
+ *     aspectRatio: Symbol
  * }}
  */
 function _mapStateToProps(state) {
     return {
-        aspectRatio: state['features/base/aspect-ratio'].aspectRatio
+        aspectRatio: state['features/base/responsive-ui'].aspectRatio
     };
 }

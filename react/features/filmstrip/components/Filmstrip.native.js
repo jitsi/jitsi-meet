@@ -5,14 +5,14 @@ import React, { Component } from 'react';
 import { ScrollView } from 'react-native';
 import { connect } from 'react-redux';
 
+import { Container } from '../../base/react';
 import {
     isNarrowAspectRatio,
     makeAspectRatioAware
-} from '../../base/aspect-ratio';
-import { Container } from '../../base/react';
+} from '../../base/responsive-ui';
 
-import Thumbnail from './Thumbnail';
 import { styles } from './_';
+import Thumbnail from './Thumbnail';
 
 /**
  * Implements a React {@link Component} which represents the filmstrip on

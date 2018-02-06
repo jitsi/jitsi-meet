@@ -173,7 +173,7 @@ export function _mapStateToProps(state: Object) {
     const _profile = getProfile(state);
 
     return {
-        _aspectRatio: state['features/base/aspect-ratio'].aspectRatio,
+        _aspectRatio: state['features/base/responsive-ui'].aspectRatio,
         _profile,
         _serverURL,
         _visible: state['features/app-settings'].visible

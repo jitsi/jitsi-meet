@@ -3,9 +3,8 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
-import { DimensionsDetector } from '../../dimensions-detector';
-
 import { setAspectRatio } from '../actions';
+import DimensionsDetector from './DimensionsDetector';
 
 /**
  * AspectRatioDetector component's property types.

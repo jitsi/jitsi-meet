@@ -9,10 +9,6 @@ import {
     createToolbarEvent,
     sendAnalytics
 } from '../../analytics';
-import {
-    isNarrowAspectRatio,
-    makeAspectRatioAware
-} from '../../base/aspect-ratio';
 import { toggleAudioOnly } from '../../base/conference';
 import {
     MEDIA_TYPE,
@@ -22,6 +18,10 @@ import {
     VIDEO_MUTISM_AUTHORITY
 } from '../../base/media';
 import { Container } from '../../base/react';
+import {
+    isNarrowAspectRatio,
+    makeAspectRatioAware
+} from '../../base/responsive-ui';
 import { ColorPalette } from '../../base/styles';
 import { beginRoomLockRequest } from '../../room-lock';
 import { beginShareRoom } from '../../share-room';
