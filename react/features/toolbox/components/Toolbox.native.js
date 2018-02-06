@@ -66,6 +66,11 @@ class Toolbox extends Component {
         _audioOnly: PropTypes.bool,
 
         /**
+         * Flag showing whether the toolbox is enabled or not.
+         */
+        _enabled: PropTypes.bool,
+
+        /**
          * Flag showing whether room is locked.
          */
         _locked: PropTypes.bool,
@@ -130,6 +135,10 @@ class Toolbox extends Component {
      * @returns {ReactElement}
      */
     render() {
+        if (!this.props._enabled) {
+            return null;
+        }
+
         const toolboxStyle
             = isNarrowAspectRatio(this)
                 ? styles.toolboxNarrow
@@ -441,6 +450,7 @@ function _mapDispatchToProps(dispatch) {
  */
 function _mapStateToProps(state) {
     const conference = state['features/base/conference'];
+    const { enabled } = state['features/toolbox'];
 
     return {
         ...abstractMapStateToProps(state),
@@ -453,6 +463,14 @@ function _mapStateToProps(state) {
          * @type {boolean}
          */
         _audioOnly: Boolean(conference.audioOnly),
+
+        /**
+         * The indicator which determines whether the toolbox is enabled or not.
+         *
+         * @private
+         * @type {boolean}
+         */
+        _enabled: enabled,
 
         /**
          * The indicator which determines whether the conference is
