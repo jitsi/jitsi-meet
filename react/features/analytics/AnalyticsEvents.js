@@ -148,18 +148,21 @@ export const createInviteDialogClosedEvent = function() {
  * @param {string} reason - The reason for the reload.
  * @param {number} timeout - The timeout in seconds after which the page is
  * scheduled to reload.
+ * @param {Object} details - The details for the error.
  * @returns {Object} The event in a format suitable for sending via
  * sendAnalytics.
  */
-export const createPageReloadScheduledEvent = function(reason, timeout) {
-    return {
-        action: 'page.reload.scheduled',
-        attributes: {
-            reason,
-            timeout
-        }
+export const createPageReloadScheduledEvent
+    = function(reason, timeout, details) {
+        return {
+            action: 'page.reload.scheduled',
+            attributes: {
+                reason,
+                timeout,
+                ...details
+            }
+        };
     };
-};
 
 /**
  * Creates a "pinned" or "unpinned" event.

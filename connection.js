@@ -94,12 +94,15 @@ function connect(id, password, roomName) {
             JitsiConnectionEvents.CONNECTION_FAILED,
             connectionFailedHandler);
 
+        /* eslint-disable max-params */
         /**
          *
          */
-        function connectionFailedHandler(error, message, credentials) {
+        function connectionFailedHandler(error, message, credentials, details) {
+        /* eslint-enable max-params */
             APP.store.dispatch(
-                connectionFailed(connection, error, message, credentials));
+                connectionFailed(
+                    connection, error, message, credentials, details));
 
             if (isFatalJitsiConnectionError(error)) {
                 connection.removeEventListener(
