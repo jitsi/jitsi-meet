@@ -11,5 +11,5 @@
 export function getProfile(state: Object) {
     const profileStateSlice = state['features/base/profile'];
 
-    return profileStateSlice ? profileStateSlice.profile || {} : {};
+    return profileStateSlice || {};
 }
