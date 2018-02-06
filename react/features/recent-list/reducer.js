@@ -33,16 +33,14 @@ const STORE_NAME = 'features/recent-list';
 /**
  * Sets up the persistence of the feature recent-list.
  */
-PersistenceRegistry.register(STORE_NAME, {
-    list: true
-});
+PersistenceRegistry.register(STORE_NAME);
 
 /**
  * Reduces the redux actions of the feature recent-list.
  */
 ReducerRegistry.register(
     STORE_NAME,
-    (state = { list: _getLegacyRecentRoomList() }, action) => {
+    (state = _getLegacyRecentRoomList(), action) => {
         switch (action.type) {
         case STORE_CURRENT_CONFERENCE:
             return _storeCurrentConference(state, action);
@@ -88,7 +86,8 @@ function _storeCurrentConference(state, action) {
 
     // If the current conference is already in the list, we remove it to re-add
     // it to the top.
-    const list = state.list.filter(e => e.conference !== conference);
+    const list = (Array.isArray(state) ? state : [])
+        .filter(e => e.conference !== conference);
 
     // The list is a reverse-sorted (i.e. the newer elements are at the end).
     list.push({
@@ -100,9 +99,7 @@ function _storeCurrentConference(state, action) {
     // Ensure the list doesn't exceed a/the maximum size.
     list.splice(0, list.length - MAX_LIST_SIZE);
 
-    return {
-        list
-    };
+    return list;
 }
 
 /**
@@ -116,7 +113,8 @@ function _updateConferenceDuration(state, action) {
     const { locationURL } = action;
 
     if (locationURL && locationURL.href) {
-        const list = state.list;
+        // shallow copy to avoid in-place modification.
+        const list = (Array.isArray(state) ? state : []).slice();
 
         if (list.length > 0) {
             const mostRecentURL = list[list.length - 1];
@@ -127,9 +125,7 @@ function _updateConferenceDuration(state, action) {
                 mostRecentURL.conferenceDuration
                     = Date.now() - mostRecentURL.date;
 
-                return {
-                    list
-                };
+                return list;
             }
         }
     }

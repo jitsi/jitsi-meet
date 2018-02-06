@@ -64,6 +64,6 @@ export default class AbstractRecentList extends Component<Props> {
 export function _mapStateToProps(state: Object) {
     return {
         _homeServer: state['features/app'].app._getDefaultURL(),
-        _recentList: state['features/recent-list'].list
+        _recentList: state['features/recent-list']
     };
 }
