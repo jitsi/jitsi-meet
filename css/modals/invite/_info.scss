@@ -4,16 +4,20 @@
 
     .info-dialog-action-link {
         display: inline-block;
+        line-height: 1.5em;
 
         a {
             cursor: pointer;
+            vertical-align: middle;
         }
     }
 
     .info-dialog-action-link:before {
         color: $linkFontColor;
         content: '\2022';
+        font-size: 1.5em;
         padding: 0 10px;
+        vertical-align: middle;
     }
 
     .info-dialog-action-link:first-child:before {
