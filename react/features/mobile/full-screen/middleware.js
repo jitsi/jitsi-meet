@@ -1,19 +1,21 @@
-/* @flow */
+// @flow
 
 import { StatusBar } from 'react-native';
 import { Immersive } from 'react-native-immersive';
 
-import { APP_STATE_CHANGED } from '../background';
+import { APP_WILL_MOUNT, APP_WILL_UNMOUNT } from '../../app';
 import {
     CONFERENCE_FAILED,
+    CONFERENCE_JOINED,
     CONFERENCE_LEFT,
     CONFERENCE_WILL_JOIN,
     SET_AUDIO_ONLY
 } from '../../base/conference';
-import { HIDE_DIALOG } from '../../base/dialog';
 import { Platform } from '../../base/react';
-import { SET_REDUCED_UI } from '../../base/responsive-ui';
 import { MiddlewareRegistry } from '../../base/redux';
+
+import { _setImmersiveListener } from './actions';
+import { _SET_IMMERSIVE_LISTENER } from './actionTypes';
 
 /**
  * Middleware that captures conference actions and activates or deactivates the
@@ -26,26 +28,43 @@ import { MiddlewareRegistry } from '../../base/redux';
  * @param {Store} store - The redux store.
  * @returns {Function}
  */
-MiddlewareRegistry.register(({ getState }) => next => action => {
+MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
     const result = next(action);
 
     let fullScreen = null;
 
     switch (action.type) {
-    case APP_STATE_CHANGED:
-    case CONFERENCE_WILL_JOIN:
-    case HIDE_DIALOG:
-    case SET_AUDIO_ONLY:
-    case SET_REDUCED_UI: {
-        // FIXME: Simplify this by listening to Immediate events.
-        // Check if we just came back from the background and re-enable full
-        // screen mode if necessary.
-        const { appState } = action;
+    case _SET_IMMERSIVE_LISTENER:
+        // XXX The React Native module Immersive is only implemented on Android
+        // and throws on other platforms.
+        if (Platform.OS === 'android') {
+            // Remove the current/old Immersive listener.
+            const { listener } = getState()['features/full-screen'];
 
-        if (typeof appState !== 'undefined' && appState !== 'active') {
-            break;
+            listener && Immersive.removeImmersiveListener(listener);
+
+            // Add the new listener.
+            action.listener && Immersive.addImmersiveListener(action.listener);
         }
+        break;
 
+    case APP_WILL_MOUNT: {
+        const context = {
+            dispatch,
+            getState
+        };
+
+        dispatch(
+            _setImmersiveListener(_onImmersiveChange.bind(undefined, context)));
+        break;
+    }
+    case APP_WILL_UNMOUNT:
+        _setImmersiveListener(undefined);
+        break;
+
+    case CONFERENCE_WILL_JOIN:
+    case CONFERENCE_JOINED:
+    case SET_AUDIO_ONLY: {
         const { audioOnly, conference, joining }
             = getState()['features/base/conference'];
 
@@ -59,14 +78,32 @@ MiddlewareRegistry.register(({ getState }) => next => action => {
         break;
     }
 
-    if (fullScreen !== null) {
-        _setFullScreen(fullScreen)
-            .catch(err =>
-                console.warn(`Failed to set full screen mode: ${err}`));
-    }
+    fullScreen !== null && _setFullScreen(fullScreen);
 
     return result;
 });
+
+/**
+ * Handler for Immersive mode changes. This will be called when Android's
+ * immersive mode changes. This can happen without us wanting, so re-evaluate if
+ * immersive mode is desired and reactivate it if needed.
+ *
+ * @param {Object} store - The redux store.
+ * @private
+ * @returns {void}
+ */
+function _onImmersiveChange({ getState }) {
+    const state = getState();
+    const { appState } = state['features/background'];
+
+    if (appState === 'active') {
+        const { audioOnly, conference, joining }
+            = state['features/base/conference'];
+        const fullScreen = conference || joining ? !audioOnly : false;
+
+        _setFullScreen(fullScreen);
+    }
+}
 
 /**
  * Activates/deactivates the full screen mode. On iOS it will hide the status
@@ -75,18 +112,18 @@ MiddlewareRegistry.register(({ getState }) => next => action => {
  * @param {boolean} fullScreen - True to set full screen mode, false to
  * deactivate it.
  * @private
- * @returns {Promise}
+ * @returns {void}
  */
 function _setFullScreen(fullScreen: boolean) {
     // XXX The React Native module Immersive is only implemented on Android and
     // throws on other platforms.
     if (Platform.OS === 'android') {
-        return fullScreen ? Immersive.on() : Immersive.off();
+        fullScreen ? Immersive.on() : Immersive.off();
+
+        return;
     }
 
     // On platforms other than Android go with whatever React Native itself
     // supports.
     StatusBar.setHidden(fullScreen, 'slide');
-
-    return Promise.resolve();
 }

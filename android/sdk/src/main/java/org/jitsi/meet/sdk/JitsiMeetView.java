@@ -32,6 +32,7 @@ import com.facebook.react.bridge.NativeModule;
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.common.LifecycleState;
 import com.facebook.react.modules.core.DefaultHardwareBackBtnHandler;
+import com.rnimmersive.RNImmersiveModule;
 
 import java.net.URL;
 import java.util.Arrays;
@@ -412,6 +413,24 @@ public class JitsiMeetView extends FrameLayout {
             urlObject.putString("url", urlString);
         }
         loadURLObject(urlObject);
+    }
+
+    /**
+     * Handler for focus changes which the window where this view is attached to
+     * is experiencing. Here we call into the Immersive mode plugin, so it
+     * triggers an event.
+     *
+     * @param hasFocus - Whether the window / view has focus or not.
+     */
+    @Override
+    public void onWindowFocusChanged(boolean hasFocus) {
+        super.onWindowFocusChanged(hasFocus);
+
+        RNImmersiveModule module = RNImmersiveModule.getInstance();
+
+        if (hasFocus && module != null) {
+            module.emitImmersiveStateChangeEvent();
+        }
     }
 
     /**

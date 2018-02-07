@@ -5,20 +5,26 @@ import {
     APP_STATE_CHANGED
 } from './actionTypes';
 
-ReducerRegistry.register('features/background', (state = {}, action) => {
-    switch (action.type) {
-    case _SET_APP_STATE_LISTENER:
-        return {
-            ...state,
-            appStateListener: action.listener
-        };
+const INITIAL_STATE = {
+    appState: 'active'
+};
 
-    case APP_STATE_CHANGED:
-        return {
-            ...state,
-            appState: action.appState
-        };
-    }
+ReducerRegistry.register(
+    'features/background',
+    (state = INITIAL_STATE, action) => {
+        switch (action.type) {
+        case _SET_APP_STATE_LISTENER:
+            return {
+                ...state,
+                appStateListener: action.listener
+            };
 
-    return state;
-});
+        case APP_STATE_CHANGED:
+            return {
+                ...state,
+                appState: action.appState
+            };
+        }
+
+        return state;
+    });
