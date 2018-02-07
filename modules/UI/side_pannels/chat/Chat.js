@@ -25,8 +25,6 @@ const htmlStr = `
         </div>
 
         <div id="chatconversation"></div>
-        <audio id="chatNotification" src="sounds/incomingMessage.wav"
-            preload="auto"></audio>
         <textarea id="usermsg" autofocus
             data-i18n="[placeholder]chat.messagebox"></textarea>
         <div id="smileysarea">
@@ -285,7 +283,6 @@ const Chat = {
 
             if (!Chat.isVisible()) {
                 unreadMessages++;
-                UIUtil.playSoundNotification('chatNotification');
                 updateVisualNotification();
             }
         }

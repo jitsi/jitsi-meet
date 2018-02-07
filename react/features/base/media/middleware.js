@@ -13,6 +13,7 @@ import { MiddlewareRegistry } from '../redux';
 import { setTrackMuted, TRACK_ADDED } from '../tracks';
 
 import { setAudioMuted, setCameraFacingMode, setVideoMuted } from './actions';
+import { PLAY_AUDIO } from './actionTypes';
 import { CAMERA_FACING_MODE } from './constants';
 
 const logger = require('jitsi-meet-logger').getLogger(__filename);
@@ -25,6 +26,9 @@ const logger = require('jitsi-meet-logger').getLogger(__filename);
  */
 MiddlewareRegistry.register(store => next => action => {
     switch (action.type) {
+    case PLAY_AUDIO:
+        return _playAudio(store, action.audioId);
+
     case SET_ROOM:
         return _setRoom(store, next, action);
 
@@ -39,6 +43,25 @@ MiddlewareRegistry.register(store => next => action => {
 
     return next(action);
 });
+
+/**
+ * Plays sound from audio element registered in the Redux store.
+ *
+ * @param {Store} store - The Redux store instance.
+ * @param {string} audioId - Audio element identifier.
+ * @returns {void}
+ * @private
+ */
+function _playAudio({ getState }, audioId) {
+    const { sounds } = getState()['features/base/media'];
+    const sound = sounds.get(audioId);
+
+    if (sound) {
+        sound.play();
+    } else {
+        console.warn(`Play audio: no sound found for id: ${audioId}`);
+    }
+}
 
 /**
  * Notifies the feature base/media that the action {@link SET_ROOM} is being

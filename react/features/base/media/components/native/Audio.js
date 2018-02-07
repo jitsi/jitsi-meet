@@ -1,19 +1,65 @@
 /* @flow */
 
-import AbstractAudio from '../AbstractAudio';
+import Sound from 'react-native-sound';
+import { connect } from 'react-redux';
+
+import AbstractAudio, { _mapDispatchToProps } from '../AbstractAudio';
 
 /**
  * The React Native/mobile {@link Component} which is similar to Web's
  * {@code HTMLAudioElement} and wraps around react-native-webrtc's
  * {@link RTCView}.
  */
-export default class Audio extends AbstractAudio {
+class Audio extends AbstractAudio {
+
     /**
-     * {@code Audio} component's property types.
-     *
-     * @static
+     * Reference to 'react-native-sound} {@link Sound} instance.
      */
-    static propTypes = AbstractAudio.propTypes;
+    _sound: Sound
+
+    /**
+     * A callback passed to the 'react-native-sound''s {@link Sound} instance,
+     * called when loading sound is finished.
+     *
+     * @param {Object} error - The error object passed by
+     * the 'react-native-sound' library.
+     * @returns {void}
+     * @private
+     */
+    _soundLoadedCallback(error) {
+        if (error) {
+            console.error(`Failed to load sound ${this.props.audioId}`, error);
+        } else {
+            this.setAudioElementImpl(this._sound);
+        }
+    }
+
+    /**
+     * Will load the sound, after the component did mount.
+     *
+     * @returns {void}
+     */
+    componentDidMount() {
+        this._sound
+            = this.props.src
+                ? new Sound(
+                    this.props.src,
+                    this._soundLoadedCallback.bind(this))
+                : null;
+    }
+
+    /**
+     * Will dispose sound resources (if any) when component is about to unmount.
+     *
+     * @returns {void}
+     */
+    componentWillUnmount() {
+        if (this._sound) {
+            this.setAudioElementImpl(null);
+            this._sound.release();
+            this._sound = null;
+        }
+    }
 
     /**
      * Implements React's {@link Component#render()}.
@@ -28,3 +74,5 @@ export default class Audio extends AbstractAudio {
         return null;
     }
 }
+
+export default connect(null, _mapDispatchToProps)(Audio);
