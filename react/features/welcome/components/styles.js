@@ -1,8 +1,7 @@
 import {
     BoxModel,
     ColorPalette,
-    createStyleSheet,
-    fixAndroidViewClipping
+    createStyleSheet
 } from '../../base/styles';
 
 const SIDEBAR_HEADER_HEIGHT = 150;
@@ -99,11 +98,11 @@ export default createStyleSheet({
      * The style of the top-level container/{@code View} of
      * {@code LocalVideoTrackUnderlay}.
      */
-    localVideoTrackUnderlay: fixAndroidViewClipping({
+    localVideoTrackUnderlay: {
         alignSelf: 'stretch',
         backgroundColor: 'transparent',
         flex: 1
-    }),
+    },
 
     /**
      * Top level screen style
