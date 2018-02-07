@@ -22,6 +22,8 @@
     }
 
     .info-dialog-action-links {
+        font-weight: bold;
+        margin-top: 10px;
         white-space: nowrap;
     }
 
@@ -40,6 +42,13 @@
     .info-dialog-column {
         margin-right: 10px;
         overflow: hidden;
+
+        a,
+        a:active,
+        a:focus,
+        a:hover {
+            text-decoration: none;
+        }
     }
 
     .info-dialog-conference-url {
@@ -60,6 +69,7 @@
 
     .info-dialog-title {
         font-weight: bold;
+        margin-bottom: 10px;
     }
 
     .info-password,
