@@ -392,34 +392,31 @@ class InfoDialog extends Component {
      */
     _renderPasswordAction() {
         const { t } = this.props;
-        let linkConfig;
+        let className, onClick, textKey;
+
 
         if (!this.props._canEditPassword) {
-            linkConfig = null;
+            // intentionally left blank to prevent rendering anything
         } else if (this.state.showEditingPassword) {
-            linkConfig = {
-                className: 'cancel-password',
-                onClick: this._onTogglePasswordEditState,
-                textKey: 'info.cancelPassword'
-            };
+            className = 'cancel-password';
+            onClick = this._onTogglePasswordEditState;
+            textKey = 'info.cancelPassword';
         } else if (this.props._locked) {
-            linkConfig = {
-                className: 'remove-password',
-                onClick: this._onPasswordRemove,
-                textKey: 'dialog.removePassword'
-            };
+            className = 'remove-password';
+            onClick = this._onPasswordRemove;
+            textKey = 'dialog.removePassword';
         } else {
-            linkConfig = {
-                className: 'add-password',
-                onClick: this._onTogglePasswordEditState,
-                textKey: 'invite.addPassword'
-            };
+            className = 'add-password';
+            onClick = this._onTogglePasswordEditState;
+            textKey = 'invite.addPassword';
         }
 
-        return linkConfig
+        return className && onClick && textKey
             ? <div className = 'info-dialog-action-link'>
-                <a { ...linkConfig }>
-                    { t(linkConfig.textKey) }
+                <a
+                    className = { className }
+                    onClick = { onClick }>
+                    { t(textKey) }
                 </a>
             </div>
             : null;
