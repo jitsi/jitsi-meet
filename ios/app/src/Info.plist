@@ -55,6 +55,8 @@
 			</dict>
 		</dict>
 	</dict>
+    <key>NSCalendarsUsageDescription</key>
+    <string>Displays the user's meetings in the app.</string>
 	<key>NSCameraUsageDescription</key>
 	<string>Participate in conferences with video.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>

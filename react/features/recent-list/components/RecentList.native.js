@@ -1,5 +1,11 @@
 import React from 'react';
-import { ListView, Text, TouchableHighlight, View } from 'react-native';
+import {
+    ListView,
+    SafeAreaView,
+    Text,
+    TouchableHighlight,
+    View
+} from 'react-native';
 import { connect } from 'react-redux';
 
 import { Icon } from '../../base/font-icons';
@@ -57,7 +63,7 @@ class RecentList extends AbstractRecentList {
             = this.dataSource.cloneWithRows(getRecentRooms(_recentList));
 
         return (
-            <View
+            <SafeAreaView
                 style = { [
                     styles.container,
                     enabled ? null : styles.containerDisabled
@@ -66,7 +72,7 @@ class RecentList extends AbstractRecentList {
                     dataSource = { listViewDataSource }
                     enableEmptySections = { true }
                     renderRow = { this._renderRow } />
-            </View>
+            </SafeAreaView>
         );
     }
 

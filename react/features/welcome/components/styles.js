@@ -149,15 +149,42 @@ export default createStyleSheet({
         flexDirection: 'column'
     },
 
+    pageIndicator: {
+        backgroundColor: 'rgba(255, 255, 255, 0.2)',
+        height: 3,
+        marginHorizontal: 7,
+        width: 20
+    },
+
+    pageIndicatorActive: {
+        backgroundColor: 'rgba(255, 255, 255, 0.8)'
+    },
+
+    pageIndicatorContainer: {
+        alignItems: 'center',
+        flexDirection: 'row',
+        justifyContent: 'center',
+        padding: 12
+    },
+
+    /**
+     * Top level style of the paged list.
+     */
+    pagedList: {
+        flex: 1
+    },
+
+    pagedListContainer: {
+        flex: 1,
+        flexDirection: 'column'
+    },
+
     /**
      * Container for room name input box and 'join' button.
      */
     roomContainer: {
         alignSelf: 'stretch',
-        flex: 1,
-        flexDirection: 'column',
-        margin: BoxModel.margin,
-        marginTop: BoxModel.margin * 2
+        flexDirection: 'column'
     },
 
     /**

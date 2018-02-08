@@ -23,6 +23,8 @@ import org.jitsi.meet.sdk.JitsiMeetActivity;
 import org.jitsi.meet.sdk.JitsiMeetView;
 import org.jitsi.meet.sdk.JitsiMeetViewListener;
 
+import com.calendarevents.CalendarEventsPackage;
+
 import java.util.Map;
 
 /**
@@ -103,4 +105,10 @@ public class MainActivity extends JitsiMeetActivity {
 
         super.onCreate(savedInstanceState);
     }
+
+    @Override
+  public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+      CalendarEventsPackage.onRequestPermissionsResult(requestCode, permissions, grantResults);
+      super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+  }
 }

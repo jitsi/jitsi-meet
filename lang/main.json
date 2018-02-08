@@ -51,6 +51,7 @@
             "audio": "Voice",
             "video": "Video"
         },
+        "calendar": "Calendar",
         "go": "GO",
         "join": "JOIN",
         "privacy": "Privacy",
@@ -526,5 +527,10 @@
         "serverURL": "Server URL",
         "startWithAudioMuted": "Start with audio muted",
         "startWithVideoMuted": "Start with video muted"
+    },
+    "calendarSync": {
+        "later": "Later",
+        "next": "Upcoming",
+        "now": "Now"
     }
 }

@@ -32,6 +32,7 @@ dependencies {
     compile project(':react-native-sound')
     compile project(':react-native-vector-icons')
     compile project(':react-native-webrtc')
+    compile project(':react-native-calendar-events')
 }
 
 // Build process helpers
