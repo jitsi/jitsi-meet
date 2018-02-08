@@ -47,6 +47,7 @@
     },
     "welcomepage":{
         "disable": "Don't show this page again",
+        "easiest": "__app__ is the easiest way to meet face to face with your team. No sign up necessary - you're already one click away from starting your video conference.",
         "feature1": {
             "content": "No downloads required. __app__ works directly within your browser. Simply share your conference URL with others to get started.",
             "title": "Simple to use"
@@ -79,13 +80,15 @@
             "content": "Learn about your users through easy integration with Piwik, Google Analytics, and other usage monitoring and statistics systems.",
             "title": "Usage statistics"
         },
+        "freeAndEasy": "Finally. Free video conferencing that's actually easy.",
         "go": "GO",
         "join": "JOIN",
         "privacy": "Privacy",
         "roomname": "Enter room name",
         "roomnamePlaceHolder": "room name",
         "sendFeedback": "Send feedback",
-        "terms": "Terms"
+        "terms": "Terms",
+        "tryNow": "Try it now"
     },
     "startupoverlay": {
         "policyText": " ",
