@@ -13,7 +13,6 @@ const logger = require('jitsi-meet-logger').getLogger(__filename);
 
 let externalAuthWindow;
 let authRequiredDialog;
-let isForcePopupExternalAuth;
 const isTokenAuthEnabled
     = typeof config.tokenAuthUrl === 'string' && config.tokenAuthUrl.length;
 const getTokenAuthUrl
@@ -28,7 +27,7 @@ const getTokenAuthUrl
  * @param {string} [lockPassword] password to use if the conference is locked
  */
 function doExternalAuth(room, lockPassword) {
-    isForcePopupExternalAuth = config.enablePopupExternalAuth === true;
+    const isForcePopupExternalAuth = config.enablePopupExternalAuth === true;
 
     if (externalAuthWindow) {
         externalAuthWindow.focus();
