@@ -51,5 +51,8 @@ export function sendReaction(reaction: string) {
                 'jitsi-meet-muc-msg-topic': 'xxx',
                 payload
             }));
+
+        // FIXME It's not a received reaction so rename the action creator.
+        dispatch(addReceivedReaction(reaction, /* participant */ undefined));
     };
 }
