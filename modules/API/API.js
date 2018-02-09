@@ -14,6 +14,8 @@ const logger = require('jitsi-meet-logger').getLogger(__filename);
 
 declare var APP: Object;
 
+// blablabla
+
 /**
  * List of the available commands.
  */
