@@ -498,6 +498,7 @@
         "standardDefinition": "Standard definition",
         "qualityButtonTip": "Change received video quality"
     },
+    "reactionsButtonTip": "Send a reaction",
     "dialOut": {
         "dial": "Dial",
         "dialOut": "Call a #",

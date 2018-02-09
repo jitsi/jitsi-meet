@@ -20,7 +20,8 @@ const DEFAULT_BUTTON_CONFIGURATION = {
     buttonName: 'reactions',
     classNames: [ 'button', 'icon-star-full' ],
     enabled: true,
-    id: 'toolbar_button_reactions'
+    id: 'toolbar_button_reactions',
+    tooltipKey: 'reactionsButtonTip'
 };
 
 /**
