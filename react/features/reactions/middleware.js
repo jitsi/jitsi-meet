@@ -3,6 +3,8 @@
 import { CONFERENCE_JOINED } from '../base/conference';
 import { MiddlewareRegistry } from '../base/redux';
 
+import { addReceivedReaction } from './actions';
+
 MiddlewareRegistry.register(store => next => action => {
     switch (action.type) {
     case CONFERENCE_JOINED:
@@ -26,17 +28,18 @@ MiddlewareRegistry.register(store => next => action => {
  * @returns {Object} The new state that is the result of the reduction of the
  * specified {@code action}.
  */
-function _conferenceJoined({ getState }, next, action) {
+function _conferenceJoined({ dispatch, getState }, next, action) {
     const result = next(action);
 
     getState()['features/base/conference'].conference.on(
         'conference.endpoint_message_received',
-        (participant, payload) => {
-            if (payload
-                    && payload.payload
-                    && payload.payload.type === 'reaction') {
-                // TODO Utilize payload (and maybe participant).
-                console.log('Received:', payload);
+        (participant, message) => {
+            let payload;
+
+            if (message
+                    && (payload = message.payload)
+                    && payload.type === 'reaction') {
+                dispatch(addReceivedReaction(payload.reaction, participant));
             }
         });
 

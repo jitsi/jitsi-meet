@@ -1,5 +1,27 @@
 // @flow
 
+import { ADD_RECEIVED_REACTION } from './actionTypes';
+
+/**
+ * Creates a redux action which signals that a specific reaction has been
+ * received by the local participant from a specific remote participant.
+ *
+ * @param {string} reaction - The reaction which has been received.
+ * @param {Object} participant - The remote participant who sent the reaction.
+ * @returns {{
+ *     type: ADD_RECEIVED_REACTION,
+ *     participant: Object,
+ *     reaction: string
+ * }}
+ */
+export function addReceivedReaction(reaction: string, participant: Object) {
+    return {
+        type: ADD_RECEIVED_REACTION,
+        participant,
+        reaction
+    };
+}
+
 /**
  * Sends a specific reaction of the local participant to the remote
  * participants.

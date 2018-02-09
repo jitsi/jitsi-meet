@@ -183,8 +183,9 @@ module.exports = [
  * target, undefined; otherwise, the path to the local file to be served.
  */
 function devServerProxyBypass({ path }) {
-    if (path.startsWith('/css/') || path.startsWith('/doc/')
-        || path.startsWith('/images/')) {
+    if (path.startsWith('/css/')
+            || path.startsWith('/doc/')
+            || path.startsWith('/images/')) {
         return path;
     }
 
