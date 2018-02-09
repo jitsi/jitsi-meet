@@ -6,7 +6,7 @@ import { connect } from 'react-redux';
 import EmojiIcon from './EmojiIcon';
 
 type Props = {
-    _reaction: string
+    _reactions: Array<Object>
 };
 
 /**
@@ -24,9 +24,9 @@ class ReactionsCanvas extends Component<Props> {
      * @returns {ReactElement}
      */
     render() {
-        const reaction = this.props._reaction;
+        const reactions = this.props._reactions;
 
-        if (!reaction) {
+        if (!reactions || !reactions.length) {
             return null;
         }
 
@@ -37,9 +37,17 @@ class ReactionsCanvas extends Component<Props> {
 
         return (
             <div className = 'emotionsCanvas'>
-                <EmojiIcon
-                    emojiName = { reaction }
-                    key = { reaction } />
+                {
+                    /* eslint-disable react/jsx-wrap-multilines */
+
+                    reactions.map(
+                        ({ reaction, uuid }) =>
+                            <EmojiIcon
+                                emojiName = { reaction }
+                                key = { uuid } />)
+
+                    /* eslint-enable react/jsx-wrap-multilines */
+                }
             </div>
         );
     }
@@ -51,7 +59,7 @@ class ReactionsCanvas extends Component<Props> {
  * @param {Object} state - The redux state.
  * @private
  * @returns {{
- *     _reaction: string
+ *     _reactions: Array<Object>
  * }}
  */
 function _mapStateToProps(state) { // eslint-disable-line no-unused-vars
@@ -59,15 +67,8 @@ function _mapStateToProps(state) { // eslint-disable-line no-unused-vars
     const receivedReactions
         = stateFeatureReactions && stateFeatureReactions.receivedReactions;
 
-    // TODO Eventually and wherever appropriate (which is definitely not here),
-    // pop reactions which have been rendered.
-    const reaction
-        = receivedReactions && receivedReactions.length
-            ? receivedReactions[0]
-            : undefined;
-
     return {
-        _reaction: reaction
+        _reactions: receivedReactions || []
     };
 }
 

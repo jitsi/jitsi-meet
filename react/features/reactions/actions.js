@@ -1,5 +1,7 @@
 // @flow
 
+import uuid from 'uuid';
+
 import { ADD_RECEIVED_REACTION } from './actionTypes';
 
 /**
@@ -18,7 +20,8 @@ export function addReceivedReaction(reaction: string, participant: Object) {
     return {
         type: ADD_RECEIVED_REACTION,
         participant,
-        reaction
+        reaction,
+        uuid: uuid.v4()
     };
 }
 

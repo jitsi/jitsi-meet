@@ -15,11 +15,11 @@ ReducerRegistry.register(
             return {
                 ...state,
                 receivedReactions: [
-
-                    // FIXME Push the latest reaction at the top because I'm
-                    // currently rendering only the first reaction.
-                    action.reaction,
-                    ...state.receivedReactions
+                    ...state.receivedReactions,
+                    {
+                        reaction: action.reaction,
+                        uuid: action.uuid
+                    }
                 ]
             };
         }
