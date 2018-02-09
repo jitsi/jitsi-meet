@@ -13,6 +13,7 @@ import SpeakerStatsLabels from './SpeakerStatsLabels';
 declare var interfaceConfig: Object;
 
 /**
+ *
  * React component for displaying a list of speaker stats.
  *
  * @extends Component
@@ -122,6 +123,8 @@ class SpeakerStats extends Component<*, *> {
 
         const isDominantSpeaker = statsModel.isDominantSpeaker();
         const dominantSpeakerTime = statsModel.getTotalDominantSpeakerTime();
+        const poopCount = statsModel.getPoopCount();
+        const heartCount = statsModel.getHeartCount();
         const hasLeft = statsModel.hasLeft();
 
         let displayName;
@@ -143,6 +146,8 @@ class SpeakerStats extends Component<*, *> {
             <SpeakerStatsItem
                 displayName = { displayName }
                 dominantSpeakerTime = { dominantSpeakerTime }
+                poopCount = { poopCount }
+                heartCount = { heartCount }
                 hasLeft = { hasLeft }
                 isDominantSpeaker = { isDominantSpeaker }
                 key = { userId } />

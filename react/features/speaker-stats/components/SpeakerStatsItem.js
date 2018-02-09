@@ -2,6 +2,7 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 
 import TimeElapsed from './TimeElapsed';
+import Count from './Count';
 
 /**
  * React component for display an individual user's speaker stats.
@@ -24,6 +25,9 @@ class SpeakerStatsItem extends Component {
          * The total milliseconds the participant has been dominant speaker.
          */
         dominantSpeakerTime: PropTypes.number,
+
+        poopCount: PropTypes.number,
+        heartCount: PropTypes.number,
 
         /**
          * True if the participant is no longer in the meeting.
@@ -61,6 +65,14 @@ class SpeakerStatsItem extends Component {
                 <div className = 'speaker-stats-item__time'>
                     <TimeElapsed
                         time = { this.props.dominantSpeakerTime } />
+                </div>
+                <div className = 'speaker-stats-item__poop'>
+                    <Count
+                        count = { this.props.poopCount } />
+                </div>
+                <div className = 'speaker-stats-item__heart'>
+                    <Count
+                        count = { this.props.heartCount } />
                 </div>
             </div>
         );
