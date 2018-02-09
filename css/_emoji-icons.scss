@@ -1,0 +1,101 @@
+
+.emoji-icon-background {
+    background-size: contain;
+    background-position: 50%;
+    background-repeat: no-repeat;
+}
+.emoji-icon {
+    background-size: contain;
+    background-position: 50%;
+    background-repeat: no-repeat;
+    position: relative;
+    display: inline-block;
+    width: 3em;
+    line-height: 3em;
+    z-index: 1000;
+}
+.emoji-icon:before {
+    content: "\00a0";
+}
+.emoji-icon-bomb {
+    background-image: url(../images/emojis/bomb.png);
+}
+.emoji-icon-bulb {
+    background-image: url(../images/emojis/bulb.png);
+}
+.emoji-icon-clap {
+    background-image: url(../images/emojis/clap.png);
+}
+.emoji-icon-fistbump {
+    background-image: url(../images/emojis/fistbump.png);
+}
+.emoji-icon-heart {
+    background-image: url(../images/emojis/heart.png);
+}
+.emoji-icon-highfive {
+    background-image: url(../images/emojis/highfive.png);
+}
+
+.emoji-icon-perfect {
+    background-image: url(../images/emojis/perfect.png);
+}
+
+.emoji-icon-sleep {
+    background-image: url(../images/emojis/sleep.png);
+}
+
+.emoji-icon-smiley1 {
+    background-image: url(../images/emojis/smiley1.png);
+}
+
+.emoji-icon-smiley2 {
+    background-image: url(../images/emojis/smiley2.png);
+}
+
+.emoji-icon-smiley3 {
+    background-image: url(../images/emojis/smiley3.png);
+}
+
+.emoji-icon-smiley4 {
+    background-image: url(../images/emojis/smiley4.png);
+}
+
+.emoji-icon-smiley5 {
+    background-image: url(../images/emojis/smiley5.png);
+}
+
+.emoji-icon-smiley6 {
+    background-image: url(../images/emojis/smiley6.png);
+}
+
+.emoji-icon-smiley7 {
+    background-image: url(../images/emojis/smiley7.png);
+}
+
+.emoji-icon-smiley8 {
+    background-image: url(../images/emojis/smiley8.png);
+}
+
+.emoji-icon-smiley9 {
+    background-image: url(../images/emojis/smiley9.png);
+}
+
+.emoji-icon-smiley10 {
+    background-image: url(../images/emojis/smiley10.png);
+}
+
+.emoji-icon-smiley11 {
+    background-image: url(../images/emojis/smiley11.png);
+}
+
+.emoji-icon-star {
+    background-image: url(../images/emojis/star.png);
+}
+
+.emoji-icon-thumbsdown {
+    background-image: url(../images/emojis/thumbsdown.png);
+}
+
+.emoji-icon-thumbsup {
+    background-image: url(../images/emojis/thumbsup.png);
+}

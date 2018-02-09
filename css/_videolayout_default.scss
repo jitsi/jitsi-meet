@@ -517,6 +517,14 @@
     width: auto;
 }
 
+.emotionsCanvas {
+    bottom: 0;
+    height: 50%;
+    max-height: 200px;
+    position: absolute;
+    width: 100%;
+}
+
 #videoNotAvailableScreen {
     text-align: center;
     #avatarContainer {
