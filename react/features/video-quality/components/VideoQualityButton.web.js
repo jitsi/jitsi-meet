@@ -25,7 +25,7 @@ const DEFAULT_BUTTON_CONFIGURATION = {
  *
  * @extends Component
  */
-class VideoQualityButton extends Component {
+export default class VideoQualityButton extends Component {
     /**
      * {@code VideoQualityButton}'s property types.
      *
@@ -54,5 +54,3 @@ class VideoQualityButton extends Component {
         );
     }
 }
-
-export default VideoQualityButton;

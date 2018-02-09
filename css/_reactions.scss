@@ -1,0 +1,20 @@
+.reactions-dialog {
+    .reactions-dialog-title {
+        margin-bottom: 10px;
+    }
+
+    .reactions-dialog-contents {
+        align-items: center;
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        padding: 10px;
+        min-width: 250px;
+    }
+
+    .reactions-dialog-cell {
+        display: inline;
+        height: 50px;
+        width: 50px;
+    }
+}

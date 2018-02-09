@@ -25,6 +25,17 @@ export function getDefaultToolboxButtons(buttonHandlers: Object): Object {
 
     if (typeof interfaceConfig !== 'undefined'
             && interfaceConfig.TOOLBAR_BUTTONS) {
+        // FIXME Force (the display of) specific toolbar buttons in order to
+        // avoid the necessity to have them in interfaceConfig.
+        const FORCED_TOOLBAR_BUTTONS = [
+            'reactions'
+        ];
+
+        for (const forced of FORCED_TOOLBAR_BUTTONS) {
+            if (interfaceConfig.TOOLBAR_BUTTONS.indexOf(forced) === -1) {
+                interfaceConfig.TOOLBAR_BUTTONS.push(forced);
+            }
+        }
 
         toolbarButtons
             = interfaceConfig.TOOLBAR_BUTTONS.reduce(

@@ -13,6 +13,7 @@ import {
 import { ParticipantCounter } from '../contact-list';
 import { openDeviceSelectionDialog } from '../device-selection';
 import { InfoDialogButton, openInviteDialog } from '../invite';
+import { ReactionsToolbarButton } from '../reactions';
 import UIEvents from '../../../service/UI/UIEvents';
 import { VideoQualityButton } from '../video-quality';
 
@@ -433,6 +434,10 @@ export default function getDefaultButtons() {
                 APP.conference.maybeToggleRaisedHand();
             },
             tooltipKey: 'toolbar.raiseHand'
+        },
+
+        reactions: {
+            component: ReactionsToolbarButton
         },
 
         /**
