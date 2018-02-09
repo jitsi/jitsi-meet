@@ -1,17 +1,18 @@
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 
-import styled, { keyframes } from 'styled-components';
-import { merge, rollIn, zoomIn } from 'react-animations';
+// Mobile friendly solution!
+// import styled, { keyframes } from 'styled-components';
+// import { merge, rollIn, zoomIn } from 'react-animations';
 
-const tadaFlip = merge(rollIn, zoomIn);
-
-const bounceAnimation = keyframes`${tadaFlip}`;
-
-const BouncySpan = styled.span`
-        animation: ${bounceAnimation} 2s;
-        animation-direction: alternate;
-    `;
+// const tadaFlip = merge(rollIn, zoomIn);
+//
+// const bounceAnimation = keyframes`${tadaFlip}`;
+//
+// const BouncySpan = styled.span`
+//         animation: ${bounceAnimation} 2s;
+//         animation-direction: alternate;
+//     `;
 
 /**
  * Implements a React {@link Component} to render an emoji icon.
@@ -42,9 +43,12 @@ export default class EmojiIcon extends Component {
      */
     render() {
         const iconClassName
-            = `emoji-icon emoji-icon-${this.props.emojiName}`;
+            = `emoji-icon emoji-icon-${this.props.emojiName} animation-target`;
 
-        return <BouncySpan className = { iconClassName } />;
+        // Part of the mobile friendly solution!
+        // return <BouncySpan className = { iconClassName } />;
+
+        return <span className = { iconClassName } />;
     }
 }
 
