@@ -65,7 +65,7 @@ class ReactionsDialog extends Component<Props> {
      * @returns {void}
      */
     _onClick(reaction) {
-        this.props.onClose();
+        // this.props.onClose();
         this.props._onSendReaction(reaction);
     }
 
