@@ -18,7 +18,19 @@ const REACTIONS = [
 ];
 
 // FIXME Pretend there's a list of supported reactions (i.e. reaction buttons).
-for (let i = 1; i < 21; ++i) {
+REACTIONS.push('bomb');
+REACTIONS.push('bulb');
+REACTIONS.push('clap');
+REACTIONS.push('fistbump');
+REACTIONS.push('heart');
+REACTIONS.push('highfive');
+REACTIONS.push('perfect');
+REACTIONS.push('sleep');
+REACTIONS.push('star');
+REACTIONS.push('thumbsdown');
+REACTIONS.push('thumbsup');
+for (let i = 1; i < 11; ++i) {
+
     REACTIONS.push(`smiley${i}`);
 }
 
@@ -72,7 +84,7 @@ class ReactionsDialog extends Component<Props> {
                 <img
                     className = 'reactions-dialog-cell'
                     onClick = { this._onClick.bind(this, reaction) }
-                    src = { `images/smileys/${reaction}.svg` } />
+                    src = { `images/emojis/${reaction}.png` } />
             );
 
             /* eslint-enable react/jsx-no-bind */
