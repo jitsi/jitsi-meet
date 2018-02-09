@@ -1,7 +1,6 @@
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 
-
 /**
  * React component for displaying a count. For example a number of poops.
  *
@@ -27,11 +26,11 @@ class Count extends Component {
      * @returns {ReactElement}
      */
     render() {
-        const {count} = this.props;
+        const { count } = this.props;
 
         return (
             <div>
-                {count}
+                { count }
             </div>
         );
     }

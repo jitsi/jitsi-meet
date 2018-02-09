@@ -40,10 +40,10 @@ class SpeakerStatsLabels extends Component {
                     { t('speakerStats.speakerTime') }
                 </div>
                 <div className = 'speaker-stats-item__poop'>
-                    { "💩"}
+                    { '💩' }
                 </div>
                 <div className = 'speaker-stats-item__heart'>
-                    { "💖"}
+                    { '💖' }
                 </div>
             </div>
         );

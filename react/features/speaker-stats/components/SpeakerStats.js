@@ -146,11 +146,11 @@ class SpeakerStats extends Component<*, *> {
             <SpeakerStatsItem
                 displayName = { displayName }
                 dominantSpeakerTime = { dominantSpeakerTime }
-                poopCount = { poopCount }
-                heartCount = { heartCount }
                 hasLeft = { hasLeft }
+                heartCount = { heartCount }
                 isDominantSpeaker = { isDominantSpeaker }
-                key = { userId } />
+                key = { userId }
+                poopCount = { poopCount } />
         );
     }
 

@@ -26,18 +26,19 @@ class SpeakerStatsItem extends Component {
          */
         dominantSpeakerTime: PropTypes.number,
 
-        poopCount: PropTypes.number,
-        heartCount: PropTypes.number,
-
         /**
          * True if the participant is no longer in the meeting.
          */
         hasLeft: PropTypes.bool,
 
+        heartCount: PropTypes.number,
+
         /**
          * True if the participant is currently the dominant speaker.
          */
-        isDominantSpeaker: PropTypes.bool
+        isDominantSpeaker: PropTypes.bool,
+
+        poopCount: PropTypes.number
     };
 
     /**
