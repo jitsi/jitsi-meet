@@ -12,10 +12,13 @@ export function sendReaction(reaction: string) {
     // reaction = 'thumbsup', 'heart', etc
 
     return (dispatch: Dispatch, getState: Function) => {
+        const selectedEndpointId
+            = getState()['features/base/conference']
+                .conference.selectedEndpointId;
         const payload = {
             type: 'reaction',
             reaction,
-            targetEndpoint: 'target' // TODO use the selectedEndpoint
+            targetEndpoint: selectedEndpointId || 'target'
         };
 
         getState()['features/base/conference'].conference.sendTextMessage(
