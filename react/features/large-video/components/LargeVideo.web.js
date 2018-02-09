@@ -6,6 +6,7 @@ import React, { Component } from 'react';
 import { Watermarks } from '../../base/react';
 import { VideoQualityLabel } from '../../video-quality';
 import { RecordingLabel } from '../../recording';
+import { ReactionsCanvas } from '../../reactions';
 
 declare var interfaceConfig: Object;
 
@@ -79,6 +80,7 @@ export default class LargeVideo extends Component<*> {
                 { this.props.hideVideoQualityLabel
                     ? null : <VideoQualityLabel /> }
                 <RecordingLabel />
+                <ReactionsCanvas />
             </div>
         );
     }

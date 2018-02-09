@@ -51,6 +51,7 @@
     "postis": "2.2.0",
     "prop-types": "15.6.0",
     "react": "16.2.0",
+    "react-animations": "^1.0.0",
     "react-dom": "16.2.0",
     "react-i18next": "4.8.0",
     "react-native": "0.51.0",
