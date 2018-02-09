@@ -18,17 +18,17 @@ const REACTIONS = [
 ];
 
 // FIXME Pretend there's a list of supported reactions (i.e. reaction buttons).
-REACTIONS.push('bomb');
+REACTIONS.push('heart');
+REACTIONS.push('poop');
+REACTIONS.push('thumbsup');
+REACTIONS.push('thumbsdown');
 REACTIONS.push('bulb');
 REACTIONS.push('clap');
 REACTIONS.push('fistbump');
-REACTIONS.push('heart');
 REACTIONS.push('highfive');
 REACTIONS.push('perfect');
 REACTIONS.push('sleep');
 REACTIONS.push('star');
-REACTIONS.push('thumbsdown');
-REACTIONS.push('thumbsup');
 for (let i = 1; i < 11; ++i) {
 
     REACTIONS.push(`smiley${i}`);
