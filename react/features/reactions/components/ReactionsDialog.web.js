@@ -1,8 +1,13 @@
 // @flow
 
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
+
+import { sendReaction } from '../actions';
 
 type Props = {
+    _onSendReaction: Function,
+
     onClose: Function
 };
 
@@ -21,7 +26,7 @@ for (let i = 1; i < 21; ++i) {
  * Represents the dialog in the terms of {@link ToolbarButtonWithDialog} which
  * renders the list of supported reactions (i.e. reaction buttons).
  */
-export default class ReactionsDialog extends Component<Props> {
+class ReactionsDialog extends Component<Props> {
     /**
      * Implements React's {@link Component#render()}.
      *
@@ -47,9 +52,9 @@ export default class ReactionsDialog extends Component<Props> {
      * @param {*} reaction - The reaction (button) which was clicked.
      * @returns {void}
      */
-    _onClick(reaction) { // eslint-disable-line no-unused-vars
-        // Close this ReactionsDialog.
+    _onClick(reaction) {
         this.props.onClose();
+        this.props._onSendReaction(reaction);
     }
 
     /**
@@ -76,3 +81,43 @@ export default class ReactionsDialog extends Component<Props> {
         return contents;
     }
 }
+
+/**
+ * Maps dispatching of some action to React component props.
+ *
+ * @param {Function} dispatch - Redux action dispatcher.
+ * @private
+ * @returns {{
+ * }}
+ */
+function _mapDispatchToProps(dispatch) {
+    return {
+        /**
+         * Sends a specific reaction of the local participant to the remote
+         * participants.
+         *
+         * @param {string} reaction - The reaction of the local participant to
+         * send to the remote participants.
+         * @private
+         * @returns {void}
+         */
+        _onSendReaction(reaction) {
+            dispatch(sendReaction(reaction));
+        }
+    };
+}
+
+/**
+ * Maps (parts of) the redux state to the associated ReactionsDialog's props.
+ *
+ * @param {Object} state - The redux state.
+ * @private
+ * @returns {{
+ * }}
+ */
+function _mapStateToProps(state) { // eslint-disable-line no-unused-vars
+    return {
+    };
+}
+
+export default connect(_mapStateToProps, _mapDispatchToProps)(ReactionsDialog);
