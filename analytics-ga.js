@@ -4,16 +4,23 @@
     /**
      *
      */
-    function Analytics() {
+    function Analytics(options) {
         /* eslint-disable */
+
+        if (!options.googleAnalyticsTrackingId) {
+            console.log(
+                'Failed to initialize Google Analytics handler, no tracking ID');
+             return;
+        }
 
         /**
          * Google Analytics
+         * TODO: Keep this local, there's no need to add it to window.
          */
         (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
             (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
         })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
-        ga('create', 'UA-319188-14', 'jit.si');
+        ga('create', options.googleAnalyticsTrackingId, 'jit.si');
         ga('send', 'pageview');
 
         /* eslint-enable */
@@ -93,6 +100,7 @@
         // lengthy and is probably included from elsewhere.
         for (const property in event.attributes) {
             if (property !== 'permanent_user_agent'
+                && property !== 'permanent_callstats_name'
                 && event.attributes.hasOwnProperty(property)) {
                 // eslint-disable-next-line prefer-template
                 label += property + '=' + event.attributes[property] + '&';
@@ -114,7 +122,7 @@
      * lib-jitsi-meet.
      */
     Analytics.prototype.sendEvent = function(event) {
-        if (!event) {
+        if (!event || !ga) {
             return;
         }
 

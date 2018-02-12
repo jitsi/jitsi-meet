@@ -313,6 +313,9 @@ var config = {
     //      "https://example.com/my-custom-analytics.js"
     // ],
 
+    // The Google Analytics Tracking ID
+    // googleAnalyticsTrackingId = 'your-tracking-id-here-UA-123456-1',
+
     // Information about the jitsi-meet instance we are connecting to, including
     // the user region as seen by the server.
     deploymentInfo: {
