@@ -52,6 +52,8 @@ class PersistenceRegistry {
         let persistedState = window.localStorage.getItem(PERSISTED_STATE_NAME);
 
         if (persistedState) {
+            // This is the legacy implementation,
+            // must be removed in a later version.
             try {
                 persistedState = JSON.parse(persistedState);
             } catch (error) {
@@ -64,7 +66,36 @@ class PersistenceRegistry {
 
             filteredPersistedState
                 = this._getFilteredState(persistedState);
+
+            // legacy values must be written to the new store format and
+            // old values to be deleted, so then it'll never be used again.
+            this.persistState(filteredPersistedState);
+            window.localStorage.removeItem(PERSISTED_STATE_NAME);
+        } else {
+            // new, split-keys implementation
+            for (const subtreeName of Object.keys(this._elements)) {
+                /*
+                 * this assumes that the persisted value is stored under the
+                 * same key as the feature's redux state name.
+                 * We'll need to introduce functions later that can control
+                 * the persist key's name. Similar to control serialization
+                 * and deserialization.
+                 * But that should be a straightforward change.
+                 */
+                const persistedSubtree
+                    = this._getPersistedSubtree(
+                        subtreeName,
+                        this._elements[subtreeName]
+                    );
+
+                if (persistedSubtree !== undefined) {
+                    filteredPersistedState[subtreeName] = persistedSubtree;
+                }
+            }
         }
+
+        // initialize checksum
+        this._checksum = this._calculateChecksum(filteredPersistedState);
 
         this._checksum = this._calculateChecksum(filteredPersistedState);
         logger.info('redux state rehydrated as', filteredPersistedState);
@@ -84,17 +115,23 @@ class PersistenceRegistry {
         const newCheckSum = this._calculateChecksum(filteredState);
 
         if (newCheckSum !== this._checksum) {
-            try {
-                window.localStorage.setItem(
-                    PERSISTED_STATE_NAME,
-                    JSON.stringify(filteredState));
-                logger.info(
-                    `redux state persisted. ${this._checksum} -> ${
-                        newCheckSum}`);
-                this._checksum = newCheckSum;
-            } catch (error) {
-                logger.error('Error persisting redux state', error);
+            for (const subtreeName of Object.keys(filteredState)) {
+                try {
+                    window.localStorage.setItem(
+                        subtreeName,
+                        JSON.stringify(filteredState[subtreeName]));
+                } catch (error) {
+                    logger.error('Error persisting redux subtree',
+                        subtreeName,
+                        filteredState[subtreeName],
+                        error
+                    );
+                }
             }
+            logger.info(
+                `redux state persisted. ${this._checksum} -> ${
+                    newCheckSum}`);
+            this._checksum = newCheckSum;
         }
     }
 
@@ -128,6 +165,39 @@ class PersistenceRegistry {
 
             return '';
         }
+    }
+
+    /**
+     * Retreives a persisted subtree from the storage.
+     *
+     * @private
+     * @param {string} subtreeName - The name of the subtree.
+     * @param {Object} subtreeConfig - The config of the subtree
+     * from this._elements.
+     * @returns {Object}
+     */
+    _getPersistedSubtree(subtreeName, subtreeConfig) {
+        let persistedSubtree = window.localStorage.getItem(subtreeName);
+
+        if (persistedSubtree) {
+            try {
+                persistedSubtree = JSON.parse(persistedSubtree);
+                const filteredSubtree
+                    = this._getFilteredSubtree(persistedSubtree, subtreeConfig);
+
+                if (filteredSubtree !== undefined) {
+                    return filteredSubtree;
+                }
+            } catch (error) {
+                logger.error(
+                    'Error parsing persisted subtree',
+                    subtreeName,
+                    persistedSubtree,
+                    error);
+            }
+        }
+
+        return null;
     }
 
     /**
