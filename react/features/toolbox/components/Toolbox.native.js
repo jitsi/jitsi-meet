@@ -66,7 +66,7 @@ class Toolbox extends Component {
         _audioOnly: PropTypes.bool,
 
         /**
-         * Flag showing whether the toolbox is enabled or not.
+         * The indicator which determines whether the toolbox is enabled.
          */
         _enabled: PropTypes.bool,
 
@@ -465,7 +465,7 @@ function _mapStateToProps(state) {
         _audioOnly: Boolean(conference.audioOnly),
 
         /**
-         * The indicator which determines whether the toolbox is enabled or not.
+         * The indicator which determines whether the toolbox is enabled.
          *
          * @private
          * @type {boolean}
