@@ -13,14 +13,14 @@ type Props = {
     _recentList: Array<Object>,
 
     /**
-     * The redux store's {@code dispatch} function.
+     * Indicates if the list is disabled or not.
      */
-    dispatch: Dispatch<*>,
+    disabled: boolean,
 
     /**
-     * Whether {@code AbstractRecentList} is enabled.
+     * The redux store's {@code dispatch} function.
      */
-    enabled: boolean
+    dispatch: Dispatch<*>
 };
 
 /**
@@ -40,9 +40,9 @@ export default class AbstractRecentList extends Component<Props> {
      * @returns {void}
      */
     _onJoin(room) {
-        const { dispatch, enabled } = this.props;
+        const { dispatch, disabled } = this.props;
 
-        enabled && room && dispatch(appNavigate(room));
+        !disabled && room && dispatch(appNavigate(room));
     }
 
     /**

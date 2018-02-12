@@ -12,6 +12,7 @@ import { DialogContainer } from '../../base/dialog';
 import { CalleeInfoContainer } from '../../base/jwt';
 import { Container, LoadingIndicator, TintedView } from '../../base/react';
 import { createDesiredLocalTracks } from '../../base/tracks';
+import { ConferenceNotification } from '../../calendar-sync';
 import { Filmstrip } from '../../filmstrip';
 import { LargeVideo } from '../../large-video';
 import { setToolboxVisible, Toolbox } from '../../toolbox';
@@ -232,6 +233,8 @@ class Conference extends Component<Props> {
                       */}
                     <Filmstrip />
                 </View>
+
+                <ConferenceNotification />
 
                 {/*
                   * The dialogs are in the topmost stacking layers.

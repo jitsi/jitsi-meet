@@ -53,7 +53,7 @@ class RecentList extends AbstractRecentList {
      * @returns {ReactElement}
      */
     render() {
-        const { enabled, _recentList } = this.props;
+        const { disabled, _recentList } = this.props;
 
         if (!_recentList) {
             return null;
@@ -66,7 +66,7 @@ class RecentList extends AbstractRecentList {
             <SafeAreaView
                 style = { [
                     styles.container,
-                    enabled ? null : styles.containerDisabled
+                    disabled ? styles.containerDisabled : null
                 ] }>
                 <ListView
                     dataSource = { listViewDataSource }

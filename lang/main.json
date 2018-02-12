@@ -531,6 +531,7 @@
     "calendarSync": {
         "later": "Later",
         "next": "Upcoming",
+        "nextMeeting": "next meeting",
         "now": "Now"
     }
 }

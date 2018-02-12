@@ -117,6 +117,24 @@ function _fetchCalendarEntries(store) {
                 }
             }
 
+            // TEST events to check notification popup.
+            // TODO: Remove this before a PR.
+            eventList.push({
+                endDate: Date.now() + (60 * 60 * 1000),
+                id: -1,
+                startDate: Date.now() + (80 * 1000),
+                title: 'ShipIt 41',
+                url: 'https://meet.jit.si/shipit41'
+            });
+
+            eventList.push({
+                endDate: Date.now() + (2 * 60 * 60 * 1000),
+                id: -2,
+                startDate: Date.now() + (60 * 60 * 1000),
+                title: 'ShipIt 41 demo',
+                url: 'https://meet.jit.si/shipit41'
+            });
+
             store.dispatch(updateCalendarEntryList(eventList.sort((a, b) =>
                 a.startDate - b.startDate
             ).slice(0, MAX_LIST_LENGTH)));
