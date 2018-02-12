@@ -100,6 +100,7 @@
         // lengthy and is probably included from elsewhere.
         for (const property in event.attributes) {
             if (property !== 'permanent_user_agent'
+                && property !== 'permanent_callstats_name'
                 && event.attributes.hasOwnProperty(property)) {
                 // eslint-disable-next-line prefer-template
                 label += property + '=' + event.attributes[property] + '&';
