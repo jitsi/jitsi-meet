@@ -150,10 +150,7 @@ export class AbstractSettingsView extends Component<Props> {
      * @returns {void}
      */
     _updateProfile(updateObject: Object) {
-        this.props.dispatch(updateProfile({
-            ...this.props._profile,
-            ...updateObject
-        }));
+        this.props.dispatch(updateProfile(updateObject));
     }
 }
 

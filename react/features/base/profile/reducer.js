@@ -16,7 +16,10 @@ ReducerRegistry.register(
     STORE_NAME, (state = {}, action) => {
         switch (action.type) {
         case PROFILE_UPDATED:
-            return action.profile;
+            return {
+                ...state,
+                ...action.profile
+            };
         }
 
         return state;
