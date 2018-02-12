@@ -8,8 +8,8 @@ const HEADER_COLOR = ColorPalette.blue;
 
 // Header height is from iOS guidelines. Also, this looks good.
 const HEADER_HEIGHT = 44;
-const HEADER_PADDING = BoxModel.padding;
 
+export const HEADER_PADDING = BoxModel.padding;
 export const STATUSBAR_COLOR = ColorPalette.blueHighlight;
 export const SIDEBAR_WIDTH = 250;
 
