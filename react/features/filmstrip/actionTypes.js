@@ -1,6 +1,5 @@
 /**
- * The type of (redux) action which sets whether the filmstrip is enabled or
- * not.
+ * The type of (redux) action which sets whether the filmstrip is enabled.
  *
  * {
  *     type: SET_FILMSTRIP_ENABLED,
@@ -21,7 +20,7 @@ export const SET_FILMSTRIP_ENABLED = Symbol('SET_FILMSTRIP_ENABLED');
 export const SET_FILMSTRIP_HOVERED = Symbol('SET_FILMSTRIP_HOVERED');
 
 /**
- * The type of (redux) action which sets the visibility of the filmstrip.
+ * The type of (redux) action which sets whether the filmstrip is visible.
  *
  * {
  *     type: SET_FILMSTRIP_VISIBLE,

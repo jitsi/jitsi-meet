@@ -1,3 +1,5 @@
+// @flow
+
 import { ReducerRegistry } from '../base/redux';
 
 import {
@@ -7,7 +9,20 @@ import {
 } from './actionTypes';
 
 const DEFAULT_STATE = {
+    /**
+     * The indicator which determines whether the {@link Filmstrip} is enabled.
+     *
+     * @public
+     * @type {boolean}
+     */
     enabled: true,
+
+    /**
+     * The indicator which determines whether the {@link Filmstrip} is visible.
+     *
+     * @public
+     * @type {boolean}
+     */
     visible: true
 };
 
@@ -24,6 +39,14 @@ ReducerRegistry.register(
         case SET_FILMSTRIP_HOVERED:
             return {
                 ...state,
+
+                /**
+                 * The indicator which determines whether the {@link Filmstrip}
+                 * is being hovered (over).
+                 *
+                 * @public
+                 * @type {boolean}
+                 */
                 hovered: action.hovered
             };
 

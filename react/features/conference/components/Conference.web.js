@@ -25,9 +25,9 @@ declare var interfaceConfig: Object;
 type Props = {
 
     /**
-     * Whether or not the current local user is recording the conference.
+     * Whether the local participant is recording the conference.
      */
-    _isRecording: boolean,
+    _iAmRecorder: boolean,
 
     dispatch: Function,
     t: Function
@@ -102,9 +102,10 @@ class Conference extends Component<Props> {
      */
     render() {
         const { filmStripOnly, VIDEO_QUALITY_LABEL_DISABLED } = interfaceConfig;
-        const hideVideoQualityLabel = filmStripOnly
-            || VIDEO_QUALITY_LABEL_DISABLED
-            || this.props._isRecording;
+        const hideVideoQualityLabel
+            = filmStripOnly
+                || VIDEO_QUALITY_LABEL_DISABLED
+                || this.props._iAmRecorder;
 
         return (
             <div
@@ -153,18 +154,17 @@ class Conference extends Component<Props> {
  * @param {Object} state - The Redux state.
  * @private
  * @returns {{
- *     _isRecording: boolean
+ *     _iAmRecorder: boolean
  * }}
  */
 function _mapStateToProps(state) {
     return {
         /**
-         * Indicates if the current user is recording the conference, ie, they
-         * are a recorder.
+         * Whether the local participant is recording the conference.
          *
          * @private
          */
-        _isRecording: state['features/base/config'].iAmRecorder
+        _iAmRecorder: state['features/base/config'].iAmRecorder
     };
 }
 

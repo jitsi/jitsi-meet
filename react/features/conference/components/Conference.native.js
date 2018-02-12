@@ -355,9 +355,9 @@ function _mapDispatchToProps(dispatch) {
 }
 
 /**
- * Maps (parts of) the Redux state to the associated Conference's props.
+ * Maps (parts of) the redux state to the associated {@code Conference}'s props.
  *
- * @param {Object} state - The Redux state.
+ * @param {Object} state - The redux state.
  * @private
  * @returns {{
  *     _connecting: boolean,
