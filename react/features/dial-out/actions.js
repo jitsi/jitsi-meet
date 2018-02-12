@@ -61,12 +61,12 @@ export function checkDialNumber(dialNumber: string) {
         const fullUrl = `${dialOutAuthUrl}?phone=${dialNumber}`;
 
         $.getJSON(fullUrl)
-            .success(response =>
+            .then(response =>
                 dispatch({
                     type: PHONE_NUMBER_CHECKED,
                     response
                 }))
-            .error(error =>
+            .catch(error =>
                 dispatch({
                     type: DIAL_OUT_SERVICE_FAILED,
                     error
@@ -88,12 +88,12 @@ export function updateDialOutCodes() {
         }
 
         $.getJSON(dialOutCodesUrl)
-            .success(response =>
+            .then(response =>
                 dispatch({
                     type: DIAL_OUT_CODES_UPDATED,
                     response
                 }))
-            .error(error =>
+            .catch(error =>
                 dispatch({
                     type: DIAL_OUT_SERVICE_FAILED,
                     error

@@ -83,6 +83,6 @@ export function searchDirectory( // eslint-disable-line max-params
                 `${serviceUrl}?query=${encodeURIComponent(text)}&queryTypes=${
                     queryTypesString}&jwt=${jwt}`,
                 resolve)
-            .fail((jqxhr, textStatus, error) => reject(error));
+            .catch((jqxhr, textStatus, error) => reject(error));
     });
 }
