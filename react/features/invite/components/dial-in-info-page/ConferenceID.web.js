@@ -16,7 +16,7 @@ class ConferenceID extends Component {
      */
     static propTypes = {
         /**
-         * The conference ID (pin) for dialing in.
+         * The conference ID for dialing in.
          */
         conferenceID: PropTypes.number,
 
@@ -37,7 +37,7 @@ class ConferenceID extends Component {
 
         return (
             <div className = 'dial-in-conference-id'>
-                { t('info.dialANumber', { pin: conferenceID }) }
+                { t('info.dialANumber', { conferenceID }) }
             </div>
         );
     }

@@ -5,7 +5,7 @@ import { translate } from '../../../base/i18n';
 
 /**
  * React {@code Component} responsible for displaying a telephone number and
- * conference ID (pin) for dialing into a conference.
+ * conference ID for dialing into a conference.
  *
  * @extends Component
  */
@@ -48,8 +48,9 @@ class DialInNumber extends Component {
                 <span className = 'phone-number'>
                     { this.props.t('info.dialInNumber', { phoneNumber }) }
                 </span>
-                <span className = 'pin-number'>
-                    { this.props.t('info.dialInPin', { pin: conferenceID }) }
+                <span className = 'conference-id'>
+                    { this.props.t(
+                        'info.dialInConferenceID', { conferenceID }) }
                 </span>
             </div>
         );

@@ -274,7 +274,7 @@ class InfoDialog extends Component {
         if (this._shouldDisplayDialIn()) {
             const dial = t('info.invitePhone', {
                 number: this.state.phoneNumber,
-                pin: this.props._dialIn.conferenceID
+                conferenceID: this.props._dialIn.conferenceID
             });
             const moreNumbers = t('info.invitePhoneAlternatives', {
                 url: `${window.location.origin}/static/dialInInfo.html?room=${
