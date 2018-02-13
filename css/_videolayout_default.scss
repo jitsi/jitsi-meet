@@ -12,7 +12,8 @@
     overflow: hidden;
 }
 
-.video_blurred_container {
+#largeVideoBackgroundContainer,
+.large-video-background {
     height: 100%;
     filter: blur(40px);
     left: 0;
@@ -20,6 +21,16 @@
     position: absolute;
     top: 0;
     width: 100%;
+
+    &.fit-full-height #largeVideoBackground {
+        height: 100%;
+        width: auto;
+    }
+
+    .fit-full-width #largeVideoBackground {
+        height: auto;
+        width: 100%;
+    }
 }
 
 .videocontainer {

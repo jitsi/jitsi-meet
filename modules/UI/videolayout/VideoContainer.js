@@ -1,5 +1,16 @@
 /* global $, APP, interfaceConfig */
 
+/* eslint-disable no-unused-vars */
+import React from 'react';
+import ReactDOM from 'react-dom';
+
+import { browser } from '../../../react/features/base/lib-jitsi-meet';
+import {
+    ORIENTATION,
+    LargeVideoBackground
+} from '../../../react/features/large-video';
+/* eslint-enable no-unused-vars */
+
 import Filmstrip from './Filmstrip';
 import LargeContainer from './LargeContainer';
 import UIEvents from '../../../service/UI/UIEvents';
@@ -10,7 +21,23 @@ export const VIDEO_CONTAINER_TYPE = 'camera';
 
 const FADE_DURATION_MS = 300;
 
-const logger = require('jitsi-meet-logger').getLogger(__filename);
+/**
+ * The CSS class used to add a filter effect on the large video when there is
+ * a problem with local video.
+ *
+ * @private
+ * @type {string}
+ */
+const LOCAL_PROBLEM_FILTER_CLASS = 'videoProblemFilter';
+
+/**
+ * The CSS class used to add a filter effect on the large video when there is
+ * a problem with remote video.
+ *
+ * @private
+ * @type {string}
+ */
+const REMOTE_PROBLEM_FILTER_CLASS = 'remoteVideoProblemFilter';
 
 /**
  * Returns an array of the video dimensions, so that it keeps it's aspect
@@ -170,13 +197,6 @@ export class VideoContainer extends LargeContainer {
     /**
      *
      */
-    get $videoBackground() {
-        return $('#largeVideoBackground');
-    }
-
-    /**
-     *
-     */
     get id() {
         return this.userId;
     }
@@ -198,6 +218,23 @@ export class VideoContainer extends LargeContainer {
         this.resizeContainer = resizeContainer;
 
         this.isVisible = false;
+
+        /**
+         * Whether the background should fit the height of the container
+         * (portrait) or fit the width of the container (landscape).
+         *
+         * @private
+         * @type {string|null}
+         */
+        this._backgroundOrientation = null;
+
+        /**
+         * Flag indicates whether or not the background should be rendered.
+         * If the background will not be visible then it is hidden to save
+         * on performance.
+         * @type {boolean}
+         */
+        this._hideBackground = true;
 
         /**
          * Flag indicates whether or not the avatar is currently displayed.
@@ -277,8 +314,8 @@ export class VideoContainer extends LargeContainer {
      * <tt>false</tt> otherwise.
      */
     enableLocalConnectionProblemFilter(enable) {
-        this.$video.toggleClass('videoProblemFilter', enable);
-        this.$videoBackground.toggleClass('videoProblemFilter', enable);
+        this.$video.toggleClass(LOCAL_PROBLEM_FILTER_CLASS, enable);
+        this._updateBackground();
     }
 
     /**
@@ -402,22 +439,18 @@ export class VideoContainer extends LargeContainer {
             return;
         }
 
-        this._hideVideoBackground();
-
         const [ width, height ]
             = this.getVideoSize(containerWidth, containerHeight);
 
         if ((containerWidth > width) || (containerHeight > height)) {
-            this._showVideoBackground();
-            const css
-                = containerWidth > width
-                    ? { width: '100%',
-                        height: 'auto' }
-                    : { width: 'auto',
-                        height: '100%' };
-
-            this.$videoBackground.css(css);
+            this._backgroundOrientation = containerWidth > width
+                ? ORIENTATION.LANDSCAPE : ORIENTATION.PORTRAIT;
+            this._hideBackground = false;
+        } else {
+            this._hideBackground = true;
         }
+
+        this._updateBackground();
 
         const { horizontalIndent, verticalIndent }
             = this.getVideoPosition(width, height,
@@ -484,7 +517,6 @@ export class VideoContainer extends LargeContainer {
         // detach old stream
         if (this.stream) {
             this.stream.detach(this.$video[0]);
-            this.stream.detach(this.$videoBackground[0]);
         }
 
         this.stream = stream;
@@ -495,18 +527,14 @@ export class VideoContainer extends LargeContainer {
         }
 
         stream.attach(this.$video[0]);
-        stream.attach(this.$videoBackground[0]);
-
-        this._hideVideoBackground();
 
         const flipX = stream.isLocal() && this.localFlipX;
 
         this.$video.css({
             transform: flipX ? 'scaleX(-1)' : 'none'
         });
-        this.$videoBackground.css({
-            transform: flipX ? 'scaleX(-1)' : 'none'
-        });
+
+        this._updateBackground();
 
         // Reset the large video background depending on the stream.
         this.setLargeVideoBackground(this.avatarDisplayed);
@@ -525,9 +553,7 @@ export class VideoContainer extends LargeContainer {
             transform: this.localFlipX ? 'scaleX(-1)' : 'none'
         });
 
-        this.$videoBackground.css({
-            transform: this.localFlipX ? 'scaleX(-1)' : 'none'
-        });
+        this._updateBackground();
     }
 
 
@@ -567,10 +593,9 @@ export class VideoContainer extends LargeContainer {
      * the indication.
      */
     showRemoteConnectionProblemIndicator(show) {
-        this.$video.toggleClass('remoteVideoProblemFilter', show);
-        this.$videoBackground.toggleClass('remoteVideoProblemFilter', show);
-
-        this.$avatar.toggleClass('remoteVideoProblemFilter', show);
+        this.$video.toggleClass(REMOTE_PROBLEM_FILTER_CLASS, show);
+        this.$avatar.toggleClass(REMOTE_PROBLEM_FILTER_CLASS, show);
+        this._updateBackground();
     }
 
 
@@ -644,17 +669,6 @@ export class VideoContainer extends LargeContainer {
     }
 
     /**
-     * Sets the blur background to be invisible and pauses any playing video.
-     *
-     * @private
-     * @returns {void}
-     */
-    _hideVideoBackground() {
-        this.$videoBackground.css({ visibility: 'hidden' });
-        this.$videoBackground[0].pause();
-    }
-
-    /**
      * Callback invoked when the video element changes dimensions.
      *
      * @private
@@ -665,26 +679,33 @@ export class VideoContainer extends LargeContainer {
     }
 
     /**
-     * Sets the blur background to be visible and starts any loaded video.
+     * Attaches and/or updates a React Component to be used as a background for
+     * the large video, to display blurred video and fill up empty space not
+     * taken up by the large video.
      *
      * @private
      * @returns {void}
      */
-    _showVideoBackground() {
-        this.$videoBackground.css({ visibility: 'visible' });
-
-        // XXX HTMLMediaElement.play's Promise may be rejected. Certain
-        // environments such as Google Chrome and React Native will report the
-        // rejection as unhandled. And that may appear scary depending on how
-        // the environment words the report. To reduce the risk of scaring a
-        // developer, make sure that the rejection is handled. We cannot really
-        // do anything substantial about the rejection and, more importantly, we
-        // do not care. Some browsers (at this time, only Edge is known) don't
-        // return a promise from .play(), so check before trying to catch.
-        const res = this.$videoBackground[0].play();
-
-        if (typeof res !== 'undefined') {
-            res.catch(reason => logger.error(reason));
+    _updateBackground() {
+        if (browser.isFirefox() || browser.isTemasysPluginUsed()) {
+            return;
         }
+
+        ReactDOM.render(
+            <LargeVideoBackground
+                hidden = { this._hideBackground }
+                mirror = {
+                    this.stream
+                    && this.stream.isLocal()
+                    && this.localFlipX
+                }
+                orientationFit = { this._backgroundOrientation }
+                showLocalProblemFilter
+                    = { this.$video.hasClass(LOCAL_PROBLEM_FILTER_CLASS) }
+                showRemoteProblemFilter
+                    = { this.$video.hasClass(REMOTE_PROBLEM_FILTER_CLASS) }
+                videoTrack = { this.stream } />,
+            document.getElementById('largeVideoBackgroundContainer')
+        );
     }
 }

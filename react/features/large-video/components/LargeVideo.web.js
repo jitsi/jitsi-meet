@@ -50,12 +50,7 @@ export default class LargeVideo extends Component<*> {
                 <div id = 'remotePresenceMessage' />
                 <span id = 'remoteConnectionMessage' />
                 <div>
-                    <div className = 'video_blurred_container'>
-                        <video
-                            autoPlay = { true }
-                            id = 'largeVideoBackground'
-                            muted = 'true' />
-                    </div>
+                    <div id = 'largeVideoBackgroundContainer' />
                     {
 
                         /**
