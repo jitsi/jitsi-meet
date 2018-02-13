@@ -113,10 +113,11 @@ class InfoDialog extends Component {
     constructor(props) {
         super(props);
 
-        const { numbers } = props._dialIn;
+        const { defaultCountry, numbers } = props._dialIn;
 
         if (numbers) {
-            this.state.phoneNumber = this._getDefaultPhoneNumber(numbers);
+            this.state.phoneNumber
+                = this._getDefaultPhoneNumber(numbers, defaultCountry);
         }
 
         /**
@@ -165,9 +166,11 @@ class InfoDialog extends Component {
         }
 
         if (!this.state.phoneNumber && nextProps._dialIn.numbers) {
+            const { defaultCountry, numbers } = nextProps._dialIn;
+
             this.setState({
-                phoneNumber: this._getDefaultPhoneNumber(
-                    nextProps._dialIn.numbers)
+                phoneNumber:
+                    this._getDefaultPhoneNumber(numbers, defaultCountry)
             });
         }
     }
@@ -234,20 +237,20 @@ class InfoDialog extends Component {
      *
      * @param {Array<string>|Object} dialInNumbers - The array or object of
      * numbers to choose a number from.
+     * @param {string} defaultCountry - The country code for the country
+     * whose phone number should display.
      * @private
      * @returns {string|null}
      */
-    _getDefaultPhoneNumber(dialInNumbers) {
+    _getDefaultPhoneNumber(dialInNumbers, defaultCountry = 'US') {
         if (Array.isArray(dialInNumbers)) {
             // Dumbly return the first number if an array.
             return dialInNumbers[0];
         } else if (Object.keys(dialInNumbers).length > 0) {
-            // Atempt to display the first United States or fall back to the
-            // first available region.
-            const unitedStatesNumbers = dialInNumbers.US;
+            const defaultNumbers = dialInNumbers[defaultCountry];
 
-            if (unitedStatesNumbers) {
-                return unitedStatesNumbers[0];
+            if (defaultNumbers) {
+                return defaultNumbers[0];
             }
 
             const firstRegion = Object.keys(dialInNumbers)[0];
