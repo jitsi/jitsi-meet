@@ -17,6 +17,11 @@ class PasswordForm extends Component {
      */
     static propTypes = {
         /**
+         * Whether or not to show the password editing field.
+         */
+        editEnabled: PropTypes.bool,
+
+        /**
          * The value for how the conference is locked (or undefined if not
          * locked) as defined by room-lock constants.
          */
@@ -32,11 +37,6 @@ class PasswordForm extends Component {
          * The current known password for the JitsiConference.
          */
         password: PropTypes.string,
-
-        /**
-         * Whether or not to show the password editing field.
-         */
-        showEditing: PropTypes.bool,
 
         /**
          * Invoked to obtain translated strings.
@@ -78,7 +78,7 @@ class PasswordForm extends Component {
      * @param {Props} nextProps - New props component will receive.
      */
     componentWillReceiveProps(nextProps) {
-        if (this.props.showEditing && !nextProps.showEditing) {
+        if (this.props.editEnabled && !nextProps.editEnabled) {
             this.setState({ enteredPassword: '' });
         }
     }
@@ -110,7 +110,7 @@ class PasswordForm extends Component {
      * @returns {ReactElement}
      */
     _renderPasswordField() {
-        if (this.props.showEditing) {
+        if (this.props.editEnabled) {
             return (
                 <form
                     className = 'info-password-form'

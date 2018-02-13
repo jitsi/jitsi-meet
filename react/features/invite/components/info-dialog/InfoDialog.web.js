@@ -94,14 +94,14 @@ class InfoDialog extends Component {
      * {@code InfoDialog} component's local state.
      *
      * @type {Object}
-     * @property {boolean} showEditingPassword - Whether or not to show the
+     * @property {boolean} passwordEditEnabled - Whether or not to show the
      * {@code PasswordForm} in its editing state.
      * @property {string} phoneNumber - The number to display for dialing into
      * the conference.
      */
     state = {
-        phoneNumber: '',
-        showEditingPassword: false
+        passwordEditEnabled: false,
+        phoneNumber: ''
     };
 
     /**
@@ -161,7 +161,7 @@ class InfoDialog extends Component {
      */
     componentWillReceiveProps(nextProps) {
         if (!this.props._password && nextProps._password) {
-            this.setState({ showEditingPassword: false });
+            this.setState({ passwordEditEnabled: false });
         }
 
         if (!this.state.phoneNumber && nextProps._dialIn.numbers) {
@@ -209,10 +209,10 @@ class InfoDialog extends Component {
                     </div>
                     <div className = 'info-dialog-password'>
                         <PasswordForm
+                            editEnabled = { this.state.passwordEditEnabled }
                             locked = { this.props._locked }
                             onSubmit = { this._onPasswordSubmit }
-                            password = { this.props._password }
-                            showEditing = { this.state.showEditingPassword } />
+                            password = { this.props._password } />
                     </div>
                     <div className = 'info-dialog-action-links'>
                         <div className = 'info-dialog-action-link'>
@@ -351,7 +351,7 @@ class InfoDialog extends Component {
      */
     _onTogglePasswordEditState() {
         this.setState({
-            showEditingPassword: !this.state.showEditingPassword
+            passwordEditEnabled: !this.state.passwordEditEnabled
         });
     }
 
@@ -397,7 +397,7 @@ class InfoDialog extends Component {
 
         if (!this.props._canEditPassword) {
             // intentionally left blank to prevent rendering anything
-        } else if (this.state.showEditingPassword) {
+        } else if (this.state.passwordEditEnabled) {
             className = 'cancel-password';
             onClick = this._onTogglePasswordEditState;
             textKey = 'info.cancelPassword';
