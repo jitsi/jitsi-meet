@@ -44,6 +44,19 @@ export function getLocalizedDateFormatter(dateOrTimeStamp: Date | number) {
 }
 
 /**
+ * Returns a localized duration formatter initialized with a
+ * specific duration ({@code number}).
+ *
+ * @private
+ * @param {number} duration - The duration (ms)
+ * to format.
+ * @returns {Object}
+ */
+export function getLocalizedDurationFormatter(duration: number) {
+    return moment.duration(duration).locale(_getSupportedLocale());
+}
+
+/**
  * A lenient locale matcher to match language and dialect if possible.
  *
  * @private

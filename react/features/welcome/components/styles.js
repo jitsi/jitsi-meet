@@ -180,6 +180,13 @@ export default createStyleSheet({
     },
 
     /**
+     * Disabled style for the container.
+     */
+    pagedListContainerDisabled: {
+        opacity: 0.2
+    },
+
+    /**
      * Container for room name input box and 'join' button.
      */
     roomContainer: {

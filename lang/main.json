@@ -533,5 +533,10 @@
         "next": "Upcoming",
         "nextMeeting": "next meeting",
         "now": "Now"
+    },
+    "recentList": {
+        "today": "Today",
+        "yesterday": "Yesterday",
+        "earlier": "Earlier"
     }
 }

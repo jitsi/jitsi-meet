@@ -39,7 +39,11 @@ class PagedList extends AbstractPagedList {
         const { disabled, t } = this.props;
 
         return (
-            <View style = { styles.pagedListContainer }>
+            <View
+                style = { [
+                    styles.pagedListContainer,
+                    disabled ? styles.pagedListContainerDisabled : null
+                ] }>
                 <TabBarIOS
                     itemPositioning = 'fill'
                     style = { styles.pagedList }>

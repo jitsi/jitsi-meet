@@ -20,8 +20,9 @@ export default class PagedList extends AbstractPagedList {
      *
      * @inheritdoc
      */
-    constructor() {
-        super();
+    constructor(props) {
+        super(props);
+
         this._getIndicatorStyle = this._getIndicatorStyle.bind(this);
         this._onPageSelected = this._onPageSelected.bind(this);
     }
@@ -35,7 +36,11 @@ export default class PagedList extends AbstractPagedList {
         const { disabled } = this.props;
 
         return (
-            <View style = { styles.pagedListContainer }>
+            <View
+                style = { [
+                    styles.pagedListContainer,
+                    disabled ? styles.pagedListContainerDisabled : null
+                ] }>
                 <ViewPagerAndroid
                     initialPage = { DEFAULT_PAGE }
                     keyboardDismissMode = 'on-drag'
