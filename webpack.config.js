@@ -150,6 +150,18 @@ module.exports = [
             'alwaysontop':
                 './react/features/always-on-top/index.js',
 
+            'dial_in_info_bundle': [
+
+                // babel-polyfill and fetch polyfill are required for IE11.
+                'babel-polyfill',
+                'whatwg-fetch',
+
+                // atlaskit does not support React 16 prop-types
+                './react/features/base/react/prop-types-polyfill.js',
+
+                './react/features/invite/components/dial-in-info-page'
+            ],
+
             'do_external_connect':
                 './connection_optimization/do_external_connect.js'
         }

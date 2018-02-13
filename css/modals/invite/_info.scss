@@ -4,16 +4,20 @@
 
     .info-dialog-action-link {
         display: inline-block;
+        line-height: 1.5em;
 
         a {
             cursor: pointer;
+            vertical-align: middle;
         }
     }
 
     .info-dialog-action-link:before {
         color: $linkFontColor;
         content: '\2022';
+        font-size: 1.5em;
         padding: 0 10px;
+        vertical-align: middle;
     }
 
     .info-dialog-action-link:first-child:before {
@@ -22,6 +26,8 @@
     }
 
     .info-dialog-action-links {
+        font-weight: bold;
+        margin-top: 10px;
         white-space: nowrap;
     }
 
@@ -39,13 +45,24 @@
 
     .info-dialog-column {
         margin-right: 10px;
+        overflow: hidden;
+
+        a,
+        a:active,
+        a:focus,
+        a:hover {
+            text-decoration: none;
+        }
     }
 
     .info-dialog-conference-url {
-        margin: 10px 0;
         max-width: 250px;
         overflow: hidden;
         text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .info-dialog-dial-in {
         white-space: nowrap;
     }
 
@@ -56,5 +73,55 @@
 
     .info-dialog-title {
         font-weight: bold;
+        margin-bottom: 10px;
+    }
+
+    .info-password,
+    .info-dialog-password,
+    .info-password-form {
+        display: flex;
+    }
+
+    .info-password-field {
+        margin-left: 2px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .info-password-none,
+    .info-password-remote {
+        opacity: 0.5;
+    }
+
+    .info-password-input {
+        background-color: transparent;
+        border: none;
+        color: inherit;
+        padding-left: 0;
+    }
+
+    .conference-id {
+        margin-left: 5px;
+    }
+}
+
+.dial-in-page {
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+    font-size: 24px;
+    height: 100%;
+    justify-content: center;
+    width: 100%;
+
+    .dial-in-numbers-list {
+        font-size: 24px;
+        margin-top: 20px;
+    }
+
+    .dial-in-conference-id {
+        text-align: center;
+        width: 30%;
     }
 }

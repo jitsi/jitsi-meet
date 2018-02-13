@@ -533,9 +533,22 @@
         "veryGood": "Very Good"
     },
     "info": {
-        "copy": "Copy link",
-        "invite": "Invite in __app__",
-        "title": "Call access info",
+        "cancelPassword": "Cancel password",
+        "conferenceURL": "Link: __url__",
+        "country": "Country",
+        "dialANumber": "To join your meeting, dial one of these numbers and then enter this PIN: __conferenceID__#",
+        "dialInNumber": "Dial-in: __phoneNumber__",
+        "dialInConferenceID": "PIN: __conferenceID__#",
+        "dialInNotSupported": "Sorry, dialing in is currently not suppported.",
+        "genericError": "Whoops, something went wrong.",
+        "invitePhone": "To join by phone, dial __number__ and enter this PIN: __pin__#",
+        "invitePhoneAlternatives": "To view more phone numbers, click this link: __url__",
+        "inviteURL": "To join the video meeting, click this link: __url__",
+        "moreNumbers": "More numbers",
+        "noPassword": "None",
+        "numbers": "Dial-in Numbers",
+        "password": "Password:",
+        "title": "Call info",
         "tooltip": "Get access info about the meeting"
     },
     "profileModal": {

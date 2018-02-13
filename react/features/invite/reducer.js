@@ -26,10 +26,16 @@ ReducerRegistry.register('features/invite', (state = DEFAULT_STATE, action) => {
         };
 
     case UPDATE_DIAL_IN_NUMBERS_SUCCESS: {
-        const { numbers, numbersEnabled } = action.dialInNumbers;
+        const {
+            defaultCountry,
+            numbers,
+            numbersEnabled
+        } = action.dialInNumbers;
 
         return {
+            ...state,
             conferenceID: action.conferenceID,
+            defaultCountry,
             numbers,
             numbersEnabled
         };

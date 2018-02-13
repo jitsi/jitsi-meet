@@ -8,7 +8,7 @@ import { connect } from 'react-redux';
 import { ToolbarButton, TOOLTIP_TO_POPUP_POSITION } from '../../toolbox';
 
 import { setInfoDialogVisibility } from '../actions';
-import InfoDialog from './InfoDialog';
+import { InfoDialog } from './info-dialog';
 
 const { INITIAL_TOOLBAR_TIMEOUT } = interfaceConfig;
 
