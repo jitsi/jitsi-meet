@@ -6,7 +6,7 @@ import React, { Component } from 'react';
 import { translate } from '../../../base/i18n';
 
 import ConferenceID from './ConferenceID';
-import NumbersTable from './NumbersTable';
+import NumbersList from './NumbersList';
 
 /**
  * Displays a page listing numbers for dialing into a conference and pin to
@@ -114,7 +114,7 @@ class DialInInfoPage extends Component {
                         conferenceID = { conferenceID }
                         key = 'conferenceID' />
                     : null,
-                <NumbersTable
+                <NumbersList
                     key = 'numbers'
                     numbers = { this.state.numbers } />
             ];

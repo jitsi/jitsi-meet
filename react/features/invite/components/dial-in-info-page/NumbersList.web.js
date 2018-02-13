@@ -8,9 +8,9 @@ import { translate } from '../../../base/i18n';
  *
  * @extends Component
  */
-class NumbersTable extends Component {
+class NumbersList extends Component {
     /**
-     * {@code NumbersTable} component's property types.
+     * {@code NumbersList} component's property types.
      *
      * @static
      */
@@ -42,7 +42,7 @@ class NumbersTable extends Component {
         const showWithoutCountries = Array.isArray(numbers);
 
         return (
-            <table className = 'dial-in-numbers-table'>
+            <table className = 'dial-in-numbers-list'>
                 <thead>
                     <tr>
                         { showWithoutCountries
@@ -117,4 +117,4 @@ class NumbersTable extends Component {
     }
 }
 
-export default translate(NumbersTable);
+export default translate(NumbersList);
