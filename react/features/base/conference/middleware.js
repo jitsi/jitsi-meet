@@ -1,7 +1,5 @@
 // @flow
 
-import UIEvents from '../../../../service/UI/UIEvents';
-
 import {
     ACTION_PINNED,
     ACTION_UNPINNED,
@@ -18,6 +16,7 @@ import {
     PIN_PARTICIPANT
 } from '../participants';
 import { MiddlewareRegistry } from '../redux';
+import UIEvents from '../../../../service/UI/UIEvents';
 import { TRACK_ADDED, TRACK_REMOVED } from '../tracks';
 
 import {
@@ -97,16 +96,15 @@ MiddlewareRegistry.register(store => next => action => {
  * @param {Action} action - The redux action CONNECTION_ESTABLISHED which is
  * being dispatched in the specified store.
  * @private
- * @returns {Object} The new state that is the result of the reduction of the
- * specified action.
+ * @returns {Object} The value returned by {@code next(action)}.
  */
-function _connectionEstablished(store, next, action) {
+function _connectionEstablished({ dispatch }, next, action) {
     const result = next(action);
 
     // FIXME: workaround for the web version. Currently the creation of the
     // conference is handled by /conference.js
     if (typeof APP === 'undefined') {
-        store.dispatch(createConference());
+        dispatch(createConference());
     }
 
     return result;
@@ -123,8 +121,7 @@ function _connectionEstablished(store, next, action) {
  * @param {Action} action - The redux action {@link CONFERENCE_FAILED} or
  * {@link CONFERENCE_LEFT} which is being dispatched in the specified store.
  * @private
- * @returns {Object} The new state that is the result of the reduction of the
- * specified action.
+ * @returns {Object} The value returned by {@code next(action)}.
  */
 function _conferenceFailedOrLeft({ dispatch, getState }, next, action) {
     const result = next(action);
@@ -149,20 +146,17 @@ function _conferenceFailedOrLeft({ dispatch, getState }, next, action) {
  * @param {Action} action - The redux action CONFERENCE_JOINED which is being
  * dispatched in the specified store.
  * @private
- * @returns {Object} The new state that is the result of the reduction of the
- * specified action.
+ * @returns {Object} The value returned by {@code next(action)}.
  */
-function _conferenceJoined(store, next, action) {
+function _conferenceJoined({ dispatch, getState }, next, action) {
     const result = next(action);
-    const { audioOnly, conference }
-        = store.getState()['features/base/conference'];
+
+    const { audioOnly, conference } = getState()['features/base/conference'];
 
     // FIXME On Web the audio only mode for "start audio only" is toggled before
     // conference is added to the redux store ("on conference joined" action)
     // and the LastN value needs to be synchronized here.
-    if (audioOnly && conference.getLastN() !== 0) {
-        store.dispatch(setLastN(0));
-    }
+    audioOnly && (conference.getLastN() !== 0) && dispatch(setLastN(0));
 
     return result;
 }
@@ -179,11 +173,10 @@ function _conferenceJoined(store, next, action) {
  * @param {Action} action - The redux action PIN_PARTICIPANT which is being
  * dispatched in the specified store.
  * @private
- * @returns {Object} The new state that is the result of the reduction of the
- * specified action.
+ * @returns {Object} The value returned by {@code next(action)}.
  */
-function _pinParticipant(store, next, action) {
-    const state = store.getState();
+function _pinParticipant({ getState }, next, action) {
+    const state = getState();
     const { conference } = state['features/base/conference'];
 
     if (!conference) {
@@ -248,8 +241,7 @@ function _pinParticipant(store, next, action) {
  * @param {Action} action - The redux action SET_AUDIO_ONLY which is being
  * dispatched in the specified store.
  * @private
- * @returns {Object} The new state that is the result of the reduction of the
- * specified action.
+ * @returns {Object} The value returned by {@code next(action)}.
  */
 function _setAudioOnly({ dispatch, getState }, next, action) {
     const result = next(action);
@@ -286,11 +278,10 @@ function _setAudioOnly({ dispatch, getState }, next, action) {
  * @param {Action} action - The redux action SET_LASTN which is being dispatched
  * in the specified store.
  * @private
- * @returns {Object} The new state that is the result of the reduction of the
- * specified action.
+ * @returns {Object} The value returned by {@code next(action)}.
  */
-function _setLastN(store, next, action) {
-    const { conference } = store.getState()['features/base/conference'];
+function _setLastN({ getState }, next, action) {
+    const { conference } = getState()['features/base/conference'];
 
     if (conference) {
         try {
@@ -307,24 +298,21 @@ function _setLastN(store, next, action) {
  * Sets the maximum receive video quality and will turn off audio only mode if
  * enabled.
  *
- * @param {Store} store - The Redux store in which the specified action is being
+ * @param {Store} store - The redux store in which the specified action is being
  * dispatched.
- * @param {Dispatch} next - The Redux dispatch function to dispatch the
+ * @param {Dispatch} next - The redux dispatch function to dispatch the
  * specified action to the specified store.
- * @param {Action} action - The Redux action SET_RECEIVE_VIDEO_QUALITY which is
+ * @param {Action} action - The redux action SET_RECEIVE_VIDEO_QUALITY which is
  * being dispatched in the specified store.
  * @private
- * @returns {Object} The new state that is the result of the reduction of the
- * specified action.
+ * @returns {Object} The value returned by {@code next(action)}.
  */
 function _setReceiveVideoQuality({ dispatch, getState }, next, action) {
     const { audioOnly, conference } = getState()['features/base/conference'];
 
     if (conference) {
         conference.setReceiverVideoConstraint(action.receiveVideoQuality);
-        if (audioOnly) {
-            dispatch(toggleAudioOnly());
-        }
+        audioOnly && dispatch(toggleAudioOnly());
     }
 
     return next(action);
@@ -362,15 +350,14 @@ function _syncConferenceLocalTracksWithState({ getState }, action) {
 /**
  * Sets the maximum receive video quality.
  *
- * @param {Store} store - The Redux store in which the specified action is being
+ * @param {Store} store - The redux store in which the specified action is being
  * dispatched.
- * @param {Dispatch} next - The Redux dispatch function to dispatch the
+ * @param {Dispatch} next - The redux dispatch function to dispatch the
  * specified action to the specified store.
- * @param {Action} action - The Redux action DATA_CHANNEL_STATUS_CHANGED which
+ * @param {Action} action - The redux action DATA_CHANNEL_STATUS_CHANGED which
  * is being dispatched in the specified store.
  * @private
- * @returns {Object} The new state that is the result of the reduction of the
- * specified action.
+ * @returns {Object} The value returned by {@code next(action)}.
  */
 function _syncReceiveVideoQuality({ getState }, next, action) {
     const state = getState()['features/base/conference'];
@@ -391,8 +378,7 @@ function _syncReceiveVideoQuality({ getState }, next, action) {
  * @param {Action} action - The redux action TRACK_ADDED or TRACK_REMOVED which
  * is being dispatched in the specified store.
  * @private
- * @returns {Object} The new state that is the result of the reduction of the
- * specified action.
+ * @returns {Object} The value returned by {@code next(action)}.
  */
 function _trackAddedOrRemoved(store, next, action) {
     const track = action.track;
