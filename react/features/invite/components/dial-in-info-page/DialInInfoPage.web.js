@@ -190,6 +190,9 @@ class DialInInfoPage extends Component {
      * internal to show the numbers.
      *
      * @param {Object} response - The response from fetching dial-in numbers.
+     * @param {Array|Object} response.numbers - The dial-in numbers.
+     * @param {boolean} reponse.numbersEnabled - Whether or not dial-in is
+     * enabled.
      * @private
      * @returns {void}
      */
