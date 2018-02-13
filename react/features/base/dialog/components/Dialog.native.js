@@ -42,7 +42,7 @@ type Props = {
     /**
      * I18n key to put as body title.
      */
-    bodyKey: String,
+    bodyKey: string,
 
     textInputProps: Object
 };

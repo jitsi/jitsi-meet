@@ -1,9 +1,8 @@
-import PropTypes from 'prop-types';
+// @flow
+
 import React, { Component } from 'react';
 import { Text, View } from 'react-native';
 import { connect } from 'react-redux';
-
-import { prefetch } from '../../../mobile/image-cache';
 
 import { translate } from '../../i18n';
 import { JitsiParticipantConnectionStatus } from '../../lib-jitsi-meet';
@@ -12,15 +11,109 @@ import {
     shouldRenderVideoTrack,
     VideoTrack
 } from '../../media';
+import { prefetch } from '../../../mobile/image-cache';
 import { Container, TintedView } from '../../react';
 import { getTrackByMediaTypeAndParticipant } from '../../tracks';
 
-import {
-    getAvatarURL, getParticipantById, getParticipantDisplayName
-} from '../functions';
-
 import Avatar from './Avatar';
+import {
+    getAvatarURL,
+    getParticipantById,
+    getParticipantDisplayName
+} from '../functions';
 import styles from './styles';
+
+/**
+ * The type of the React {@link Component} props of {@link ParticipantView}.
+ */
+type Props = {
+
+    /**
+     * The indicator which determines whether conferencing is in audio-only
+     * mode.
+     *
+     * @private
+     */
+    _audioOnly: boolean,
+
+    /**
+     * The source (e.g. URI, URL) of the avatar image of the participant with
+     * {@link #participantId}.
+     *
+     * @private
+     */
+    _avatar: string,
+
+    /**
+     * The connection status of the participant. Her video will only be rendered
+     * if the connection status is 'active'; otherwise, the avatar will be
+     * rendered. If undefined, 'active' is presumed.
+     *
+     * @private
+     */
+    _connectionStatus: string,
+
+    /**
+     * The name of the participant which this component represents.
+     *
+     * @private
+     */
+    _participantName: string,
+
+    /**
+     * The video Track of the participant with {@link #participantId}.
+     */
+    _videoTrack: Object,
+
+    /**
+     * The avatar size.
+     */
+    avatarSize: number,
+
+    /**
+     * The ID of the participant (to be) depicted by {@link ParticipantView}.
+     *
+     * @public
+     */
+    participantId: string,
+
+    /**
+     * True if the avatar of the depicted participant is to be shown should the
+     * avatar be available and the video of the participant is not to be shown;
+     * otherwise, false. If undefined, defaults to true.
+     */
+    showAvatar: boolean,
+
+    /**
+     * True if the video of the depicted participant is to be shown should the
+     * video be available. If undefined, defaults to true.
+     */
+    showVideo: boolean,
+
+    /**
+     * The style, if any, to apply to {@link ParticipantView} in addition to its
+     * default style.
+     */
+    style: Object,
+
+    /**
+     * The function to translate human-readable text.
+     */
+    t: Function,
+
+    /**
+     * Indicates if the connectivity info label should be shown, if appropriate.
+     * It will be shown in case the connection is interrupted.
+     */
+    useConnectivityInfoLabel: boolean,
+
+    /**
+     * The z-order of the {@link Video} of {@link ParticipantView} in the
+     * stacking space of all {@code Video}s. For more details, refer to the
+     * {@code zOrder} property of the {@code Video} class for React Native.
+     */
+    zOrder: number
+};
 
 /**
  * Implements a React Component which depicts a specific participant's avatar
@@ -28,100 +121,7 @@ import styles from './styles';
  *
  * @extends Component
  */
-class ParticipantView extends Component {
-    /**
-     * ParticipantView component's property types.
-     *
-     * @static
-     */
-    static propTypes = {
-        /**
-         * The indicator which determines whether conferencing is in audio-only
-         * mode.
-         *
-         * @private
-         */
-        _audioOnly: PropTypes.bool,
-
-        /**
-         * The source (e.g. URI, URL) of the avatar image of the participant
-         * with {@link #participantId}.
-         *
-         * @private
-         */
-        _avatar: PropTypes.string,
-
-        /**
-         * The connection status of the participant. Her video will only be
-         * rendered if the connection status is 'active'; otherwise, the avatar
-         * will be rendered. If undefined, 'active' is presumed.
-         *
-         * @private
-         */
-        _connectionStatus: PropTypes.string,
-
-        /**
-         * The name of the participant which this component represents.
-         *
-         * @private
-         */
-        _participantName: PropTypes.string,
-
-        /**
-         * The video Track of the participant with {@link #participantId}.
-         */
-        _videoTrack: PropTypes.object,
-
-        /**
-         * The avatar size.
-         */
-        avatarSize: PropTypes.number,
-
-        /**
-         * The ID of the participant (to be) depicted by ParticipantView.
-         *
-         * @public
-         */
-        participantId: PropTypes.string,
-
-        /**
-         * True if the avatar of the depicted participant is to be shown should
-         * the avatar be available and the video of the participant is not to be
-         * shown; otherwise, false. If undefined, defaults to true.
-         */
-        showAvatar: PropTypes.bool,
-
-        /**
-         * True if the video of the depicted participant is to be shown should
-         * the video be available. If undefined, defaults to true.
-         */
-        showVideo: PropTypes.bool,
-
-        /**
-         * The style, if any, to apply to ParticipantView in addition to its
-         * default style.
-         */
-        style: PropTypes.object,
-
-        /**
-         * The function to translate human-readable text.
-         */
-        t: PropTypes.func,
-
-        /**
-         * Indicates if the connectivity info label should be shown, if
-         * appropriate. It will be shown in case the connection is interrupted.
-         */
-        useConnectivityInfoLabel: PropTypes.bool,
-
-        /**
-         * The z-order of the Video of ParticipantView in the stacking space of
-         * all Videos. For more details, refer to the zOrder property of the
-         * Video class for React Native.
-         */
-        zOrder: PropTypes.number
-    };
-
+class ParticipantView extends Component<Props> {
     /**
      * Renders the connection status label, if appropriate.
      *
@@ -150,8 +150,8 @@ class ParticipantView extends Component {
             t
         } = this.props;
 
-        // XXX Consider splitting this component into 2: one for the large
-        // view and one for the thumbnail. Some of these don't apply to both.
+        // XXX Consider splitting this component into 2: one for the large view
+        // and one for the thumbnail. Some of these don't apply to both.
         const containerStyle = {
             ...styles.connectionInfoContainer,
             width: avatarSize * 1.5
@@ -261,16 +261,18 @@ function _toBoolean(value, undefinedValue) {
 }
 
 /**
- * Maps (parts of) the Redux state to the associated ParticipantView's props.
+ * Maps (parts of) the redux state to the associated {@link ParticipantView}'s
+ * props.
  *
- * @param {Object} state - The Redux state.
- * @param {Object} ownProps - The React Component props passed to the associated
- * (instance of) ParticipantView.
+ * @param {Object} state - The redux state.
+ * @param {Object} ownProps - The React {@code Component} props passed to the
+ * associated (instance of) {@code ParticipantView}.
  * @private
  * @returns {{
  *     _audioOnly: boolean,
  *     _avatar: string,
  *     _connectionStatus: string,
+ *     _participantName: string,
  *     _videoTrack: Track
  * }}
  */
@@ -287,7 +289,7 @@ function _mapStateToProps(state, ownProps) {
     if (participant) {
         avatar = getAvatarURL(participant);
         connectionStatus = participant.connectionStatus;
-        participantName = getParticipantDisplayName(state);
+        participantName = getParticipantDisplayName(state, participant.id);
 
         // Avatar (on React Native) now has the ability to generate an
         // automatically-colored default image when no URI/URL is specified or

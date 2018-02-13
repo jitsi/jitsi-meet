@@ -18,11 +18,11 @@ import {
     styles,
     VideoMutedIndicator
 } from './_';
-
 import { AVATAR_SIZE } from './styles';
 
 /**
  * React component for video thumbnail.
+ *
  * @extends Component
  */
 class Thumbnail extends Component {

@@ -8,6 +8,9 @@ import { DimensionsDetector } from '../../base/responsive-ui';
 
 import styles, { AVATAR_SIZE } from './styles';
 
+/**
+ * The type of the React {@link Component} props of {@link LargeVideo}.
+ */
 type Props = {
 
     /**
@@ -18,6 +21,9 @@ type Props = {
     _participantId: string
 };
 
+/**
+ * The type of the React {@link Component} state of {@link LargeVideo}.
+ */
 type State = {
 
     /**
@@ -57,6 +63,7 @@ class LargeVideo extends Component<Props, State> {
     constructor(props) {
         super(props);
 
+        // Bind event handlers so they are only bound once per instance.
         this._onDimensionsChanged = this._onDimensionsChanged.bind(this);
     }
 
@@ -75,19 +82,18 @@ class LargeVideo extends Component<Props, State> {
     _onDimensionsChanged(width: number, height: number) {
         // Get the size, rounded to the nearest even number.
         const size = 2 * Math.round(Math.min(height, width) / 2);
-
-        let newState;
+        let nextState;
 
         if (size < AVATAR_SIZE * 1.5) {
-            newState = {
+            nextState = {
                 avatarSize: size - 15, // Leave some margin.
                 useConnectivityInfoLabel: false
             };
         } else {
-            newState = DEFAULT_STATE;
+            nextState = DEFAULT_STATE;
         }
 
-        this.setState(newState);
+        this.setState(nextState);
     }
 
     /**

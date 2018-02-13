@@ -160,7 +160,8 @@ export function getParticipantCount(stateful: Object | Function) {
  * @returns {string}
  */
 export function getParticipantDisplayName(
-        stateful: Object | Function, id: string) {
+        stateful: Object | Function,
+        id: string) {
     const participant = getParticipantById(stateful, id);
 
     if (participant) {
