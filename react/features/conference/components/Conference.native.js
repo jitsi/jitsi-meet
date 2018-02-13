@@ -67,7 +67,8 @@ type Props = {
     _onHardwareBackPress: Function,
 
     /**
-     * The indicator which determines if we are in reduced UI mode.
+     * The indicator which determines whether the UI is reduced (to accommodate
+     * smaller display areas).
      *
      * @private
      */
@@ -200,7 +201,7 @@ class Conference extends Component<Props> {
                 {/*
                   * If there is a ringing call, show the callee's info.
                   */
-                    !this.props._reducedUI && <CalleeInfoContainer />
+                    this.props._reducedUI || <CalleeInfoContainer />
                 }
 
                 {/*
@@ -232,7 +233,7 @@ class Conference extends Component<Props> {
                 {/*
                   * The dialogs are in the topmost stacking layers.
                   */
-                    !this.props._reducedUI && <DialogContainer />
+                    this.props._reducedUI || <DialogContainer />
                 }
             </Container>
         );
@@ -370,6 +371,7 @@ function _mapDispatchToProps(dispatch) {
  * @private
  * @returns {{
  *     _connecting: boolean,
+ *     _reducedUI: boolean,
  *     _toolboxVisible: boolean
  * }}
  */
@@ -403,7 +405,8 @@ function _mapStateToProps(state) {
         _connecting: Boolean(connecting_),
 
         /**
-         * The indicator which determines if we are in reduced UI mode.
+         * The indicator which determines whether the UI is reduced (to
+         * accommodate smaller display areas).
          *
          * @private
          * @type {boolean}
