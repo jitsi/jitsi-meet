@@ -12,7 +12,7 @@ import { getLocalParticipant, PARTICIPANT_ROLE } from '../../base/participants';
 import { openDialog } from '../../base/dialog';
 import { AddPeopleDialog } from '.';
 import { DialOutDialog } from '../../dial-out';
-import { isInviteOptionEnabled, getInviteOptionPosition } from '../functions';
+import { isInviteOptionEnabled } from '../functions';
 
 const DIAL_OUT_OPTION = 'dialout';
 const ADD_TO_CALL_OPTION = 'addtocall';
@@ -144,31 +144,29 @@ class InviteButton extends Component {
      * @returns {void}
      */
     _updateInviteItems(props) {
-        const { t } = this.props;
+        const { INVITE_OPTIONS = [] } = interfaceConfig;
+        const validOptions = INVITE_OPTIONS.filter(option =>
+            (option === DIAL_OUT_OPTION && props._isDialOutAvailable)
+            || (option === ADD_TO_CALL_OPTION && props._isAddToCallAvailable));
 
-        const inviteItems = [];
+        /* eslint-disable array-callback-return */
 
-        if (props._isDialOutAvailable) {
-            inviteItems.splice(
-                getInviteOptionPosition(DIAL_OUT_OPTION),
-                0,
-                {
-                    content: t('dialOut.dialOut'),
+        const inviteItems = validOptions.map(option => {
+            switch (option) {
+            case DIAL_OUT_OPTION:
+                return {
+                    content: this.props.t('dialOut.dialOut'),
                     action: () => this.props.openDialog(DialOutDialog)
-                }
-            );
-        }
-
-        if (props._isAddToCallAvailable) {
-            inviteItems.splice(
-                getInviteOptionPosition(ADD_TO_CALL_OPTION),
-                0,
-                {
+                };
+            case ADD_TO_CALL_OPTION:
+                return {
                     content: interfaceConfig.ADD_PEOPLE_APP_NAME,
                     action: () => this.props.openDialog(AddPeopleDialog)
-                }
-            );
-        }
+                };
+            }
+        });
+
+        /* eslint-enable array-callback-return */
 
         const buttonOption = inviteItems[0];
         const dropdownOptions = inviteItems.splice(1, inviteItems.length);
