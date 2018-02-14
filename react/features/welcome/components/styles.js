@@ -150,21 +150,31 @@ export default createStyleSheet({
     },
 
     pageIndicator: {
-        backgroundColor: 'rgba(255, 255, 255, 0.2)',
-        height: 3,
-        marginHorizontal: 7,
-        width: 20
-    },
-
-    pageIndicatorActive: {
-        backgroundColor: 'rgba(255, 255, 255, 0.8)'
+        alignItems: 'center',
+        flex: 1,
+        flexDirection: 'column',
+        justifyContent: 'center'
     },
 
     pageIndicatorContainer: {
-        alignItems: 'center',
+        alignItems: 'stretch',
+        backgroundColor: ColorPalette.blue,
         flexDirection: 'row',
-        justifyContent: 'center',
-        padding: 12
+        height: 56,
+        justifyContent: 'center'
+    },
+
+    pageIndicatorIcon: {
+        color: ColorPalette.blueHighlight,
+        fontSize: 24
+    },
+
+    pageIndicatorText: {
+        color: ColorPalette.blueHighlight
+    },
+
+    pageIndicatorTextActive: {
+        color: ColorPalette.white
     },
 
     /**
