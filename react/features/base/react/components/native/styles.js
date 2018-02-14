@@ -71,7 +71,7 @@ const HEADER_STYLES = {
     }
 };
 
-const SECTIONLIST_STYLES = {
+const SECTION_LIST_STYLES = {
     /**
      * The style of the actual avatar.
      */
@@ -229,6 +229,6 @@ const SIDEBAR_STYLES = {
  */
 export default createStyleSheet({
     ...HEADER_STYLES,
-    ...SECTIONLIST_STYLES,
+    ...SECTION_LIST_STYLES,
     ...SIDEBAR_STYLES
 });

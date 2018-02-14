@@ -9,6 +9,7 @@ import { parseURIString } from '../base/util';
 import { APP_WILL_MOUNT } from '../app';
 
 import { maybeAddNewKnownDomain, updateCalendarEntryList } from './actions';
+import { REFRESH_CALENDAR_ENTRY_LIST } from './actionTypes';
 
 const FETCH_END_DAYS = 10;
 const FETCH_START_DAYS = -1;
@@ -21,6 +22,9 @@ MiddlewareRegistry.register(store => next => action => {
     switch (action.type) {
     case APP_WILL_MOUNT:
         _ensureDefaultServer(store);
+        _fetchCalendarEntries(store);
+        break;
+    case REFRESH_CALENDAR_ENTRY_LIST:
         _fetchCalendarEntries(store);
         break;
     case SET_ROOM:

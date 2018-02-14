@@ -23,6 +23,11 @@ type Props = {
     onPress: Function,
 
     /**
+     * Function to be invoked when pull-to-refresh is performed.
+     */
+    onRefresh: Function,
+
+    /**
      * Sections to be rendered in the following format:
      *
      * [
@@ -60,6 +65,7 @@ export default class NavigateSectionList extends Component<Props> {
         this._getAvatarColor = this._getAvatarColor.bind(this);
         this._getItemKey = this._getItemKey.bind(this);
         this._onPress = this._onPress.bind(this);
+        this._onRefresh = this._onRefresh.bind(this);
         this._renderItem = this._renderItem.bind(this);
         this._renderItemLine = this._renderItemLine.bind(this);
         this._renderItemLines = this._renderItemLines.bind(this);
@@ -68,6 +74,8 @@ export default class NavigateSectionList extends Component<Props> {
 
     /**
      * Implements React's Component.render function.
+     * Note: we don't use the refreshing value yet, because refreshing of these
+     * lists is super quick, no need to complicate the code - yet.
      *
      * @inheritdoc
      */
@@ -79,6 +87,8 @@ export default class NavigateSectionList extends Component<Props> {
                 style = { styles.container } >
                 <SectionList
                     keyExtractor = { this._getItemKey }
+                    onRefresh = { this._onRefresh }
+                    refreshing = { false }
                     renderItem = { this._renderItem }
                     renderSectionHeader = { this._renderSection }
                     sections = { sections }
@@ -156,6 +166,22 @@ export default class NavigateSectionList extends Component<Props> {
 
             !disabled && url && typeof onPress === 'function' && onPress(url);
         };
+    }
+
+    _onRefresh: () => void
+
+    /**
+     * Invokes the onRefresh callback if present.
+     *
+     * @private
+     * @returns {void}
+     */
+    _onRefresh() {
+        const { onRefresh } = this.props;
+
+        if (typeof onRefresh === 'function') {
+            onRefresh();
+        }
     }
 
     _renderItem: Object => Object;

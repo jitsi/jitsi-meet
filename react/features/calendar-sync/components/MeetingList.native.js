@@ -2,6 +2,8 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
+import { refreshCalendarEntryList } from '../actions';
+
 import { appNavigate } from '../../app';
 import { translate } from '../../base/i18n';
 import { NavigateSectionList } from '../../base/react';
@@ -51,6 +53,7 @@ class MeetingList extends Component<Props> {
         super(props);
 
         this._onPress = this._onPress.bind(this);
+        this._onRefresh = this._onRefresh.bind(this);
         this._toDisplayableItem = this._toDisplayableItem.bind(this);
         this._toDisplayableList = this._toDisplayableList.bind(this);
         this._toDateString = this._toDateString.bind(this);
@@ -68,6 +71,7 @@ class MeetingList extends Component<Props> {
             <NavigateSectionList
                 disabled = { disabled }
                 onPress = { this._onPress }
+                onRefresh = { this._onRefresh }
                 sections = { this._toDisplayableList() } />
         );
     }
@@ -85,6 +89,20 @@ class MeetingList extends Component<Props> {
         const { dispatch } = this.props;
 
         dispatch(appNavigate(url));
+    }
+
+    _onRefresh: () => void
+
+    /**
+     * Callback to execute when the list is doing a pull-to-refresh.
+     *
+     * @private
+     * @returns {void}
+     */
+    _onRefresh() {
+        const { dispatch } = this.props;
+
+        dispatch(refreshCalendarEntryList());
     }
 
     _toDisplayableItem: Object => Object
