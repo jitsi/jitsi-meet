@@ -2,29 +2,29 @@
 import Logger from 'jitsi-meet-logger';
 import RNCalendarEvents from 'react-native-calendar-events';
 
+import { SET_ROOM } from '../base/conference';
 import { MiddlewareRegistry } from '../base/redux';
+import { parseURIString } from '../base/util';
 
 import { APP_WILL_MOUNT } from '../app';
 
-import { updateCalendarEntryList } from './actions';
+import { maybeAddNewKnownDomain, updateCalendarEntryList } from './actions';
 
 const FETCH_END_DAYS = 10;
 const FETCH_START_DAYS = -1;
 const MAX_LIST_LENGTH = 10;
 const logger = Logger.getLogger(__filename);
 
-// this is to be dynamic later.
-const domainList = [
-    'meet.jit.si',
-    'beta.meet.jit.si'
-];
-
 MiddlewareRegistry.register(store => next => action => {
     const result = next(action);
 
     switch (action.type) {
     case APP_WILL_MOUNT:
+        _ensureDefaultServer(store);
         _fetchCalendarEntries(store);
+        break;
+    case SET_ROOM:
+        _parseAndAddDomain(store);
     }
 
     return result;
@@ -65,6 +65,22 @@ function _ensureCalendarAccess() {
 }
 
 /**
+ * Ensures presence of the default server in the known domains list.
+ *
+ * @private
+ * @param {Object} store - The redux store.
+ * @returns {Promise}
+ */
+function _ensureDefaultServer(store) {
+    const state = store.getState();
+    const defaultURL = parseURIString(
+        state['features/app'].app._getDefaultURL()
+    );
+
+    store.dispatch(maybeAddNewKnownDomain(defaultURL.host));
+}
+
+/**
  * Reads the user's calendar and updates the stored entries if need be.
  *
  * @private
@@ -86,11 +102,12 @@ function _fetchCalendarEntries(store) {
             []
         )
         .then(events => {
+            const { knownDomains } = store.getState()['features/calendar-sync'];
             const eventList = [];
 
             if (events && events.length) {
                 for (const event of events) {
-                    const jitsiURL = _getURLFromEvent(event);
+                    const jitsiURL = _getURLFromEvent(event, knownDomains);
                     const now = Date.now();
 
                     if (jitsiURL) {
@@ -117,24 +134,6 @@ function _fetchCalendarEntries(store) {
                 }
             }
 
-            // TEST events to check notification popup.
-            // TODO: Remove this before a PR.
-            eventList.push({
-                endDate: Date.now() + (60 * 60 * 1000),
-                id: -1,
-                startDate: Date.now() + (80 * 1000),
-                title: 'ShipIt 41',
-                url: 'https://meet.jit.si/shipit41'
-            });
-
-            eventList.push({
-                endDate: Date.now() + (2 * 60 * 60 * 1000),
-                id: -2,
-                startDate: Date.now() + (60 * 60 * 1000),
-                title: 'ShipIt 41 demo',
-                url: 'https://meet.jit.si/shipit41'
-            });
-
             store.dispatch(updateCalendarEntryList(eventList.sort((a, b) =>
                 a.startDate - b.startDate
             ).slice(0, MAX_LIST_LENGTH)));
@@ -153,12 +152,13 @@ function _fetchCalendarEntries(store) {
  *
  * @private
  * @param {Object} event - The event to parse.
+ * @param {Array<string>} knownDomains - The known domain names.
  * @returns {string}
  *
  */
-function _getURLFromEvent(event) {
+function _getURLFromEvent(event, knownDomains) {
     const urlRegExp
-        = new RegExp(`http(s)?://(${domainList.join('|')})/[^\\s<>$]+`, 'gi');
+        = new RegExp(`http(s)?://(${knownDomains.join('|')})/[^\\s<>$]+`, 'gi');
     const fieldsToSearch = [
         event.title,
         event.url,
@@ -179,4 +179,18 @@ function _getURLFromEvent(event) {
     }
 
     return null;
+}
+
+/**
+ * Retreives the domain name of a room upon join and stores it
+ * in the known domain list, if not present yet.
+ *
+ * @private
+ * @param {Object} store - The redux store.
+ * @returns {Promise}
+ */
+function _parseAndAddDomain(store) {
+    const { locationURL } = store.getState()['features/base/connection'];
+
+    store.dispatch(maybeAddNewKnownDomain(locationURL.host));
 }
