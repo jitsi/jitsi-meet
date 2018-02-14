@@ -416,20 +416,20 @@ public class JitsiMeetView extends FrameLayout {
     }
 
     /**
-     * Handler for focus changes which the window where this view is attached to
-     * is experiencing. Here we call into the Immersive mode plugin, so it
-     * triggers an event.
+     * Called when the window containing this view gains or loses focus.
      *
-     * @param hasFocus - Whether the window / view has focus or not.
+     * @param hasFocus If the window of this view now has focus, {@code true};
+     * otherwise, {@code false}.
      */
     @Override
     public void onWindowFocusChanged(boolean hasFocus) {
         super.onWindowFocusChanged(hasFocus);
 
-        RNImmersiveModule module = RNImmersiveModule.getInstance();
+        // https://github.com/mockingbot/react-native-immersive#restore-immersive-state
+        RNImmersiveModule immersive = RNImmersiveModule.getInstance();
 
-        if (hasFocus && module != null) {
-            module.emitImmersiveStateChangeEvent();
+        if (hasFocus && immersive != null) {
+            immersive.emitImmersiveStateChangeEvent();
         }
     }
 

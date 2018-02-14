@@ -1,3 +1,5 @@
+// @flow
+
 import { ReducerRegistry } from '../redux';
 
 import {
@@ -8,18 +10,18 @@ import {
 } from './actionTypes';
 
 /**
- * The initial state of the feature base/lib-jitsi-meet.
+ * The default/initial redux state of the feature base/lib-jitsi-meet.
  *
  * @type {Object}
  */
-const INITIAL_STATE = {};
+const DEFAULT_STATE = {};
 
 ReducerRegistry.register(
     'features/base/lib-jitsi-meet',
-    (state = INITIAL_STATE, action) => {
+    (state = DEFAULT_STATE, action) => {
         switch (action.type) {
         case LIB_DID_DISPOSE:
-            return INITIAL_STATE;
+            return DEFAULT_STATE;
 
         case LIB_DID_INIT:
             return {

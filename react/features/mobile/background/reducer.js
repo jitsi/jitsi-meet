@@ -1,3 +1,5 @@
+// @flow
+
 import { ReducerRegistry } from '../../base/redux';
 
 import {
@@ -5,13 +7,16 @@ import {
     APP_STATE_CHANGED
 } from './actionTypes';
 
-const INITIAL_STATE = {
+/**
+ * The default/initial redux state of the feature background.
+ */
+const DEFAULT_STATE = {
     appState: 'active'
 };
 
 ReducerRegistry.register(
     'features/background',
-    (state = INITIAL_STATE, action) => {
+    (state = DEFAULT_STATE, action) => {
         switch (action.type) {
         case _SET_APP_STATE_LISTENER:
             return {

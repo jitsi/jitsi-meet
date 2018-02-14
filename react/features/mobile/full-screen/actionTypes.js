@@ -1,5 +1,6 @@
 /**
- * The type of redux action to set the Immersive change event listener.
+ * The type of (redux) action to set the react-native-immersive's change event
+ * listener.
  *
  * {
  *     type: _SET_IMMERSIVE_LISTENER,

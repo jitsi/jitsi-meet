@@ -3,13 +3,14 @@
 import { _SET_IMMERSIVE_LISTENER } from './actionTypes';
 
 /**
- * Sets the listener to be used with React Native's Immersive API.
+ * Sets the change event listener to be used with react-native-immersive's API.
  *
- * @param {Function} listener - Function to be set as the change event listener.
+ * @param {Function} [listener] - The function to be used with
+ * react-native-immersive's API as the change event listener.
  * @protected
  * @returns {{
  *     type: _SET_IMMERSIVE_LISTENER,
- *     listener: Function
+ *     listener: ?Function
  * }}
  */
 export function _setImmersiveListener(listener: ?Function) {

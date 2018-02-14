@@ -5,7 +5,7 @@ import { equals, set, ReducerRegistry } from '../redux';
 import { SET_CALLEE_INFO_VISIBLE, SET_JWT } from './actionTypes';
 
 /**
- * The initial redux state of the feature jwt.
+ * The default/initial redux state of the feature jwt.
  *
  * @private
  * @type {{
@@ -13,7 +13,7 @@ import { SET_CALLEE_INFO_VISIBLE, SET_JWT } from './actionTypes';
  *     isGuest: boolean
  * }}
  */
-const _INITIAL_STATE = {
+const DEFAULT_STATE = {
     /**
      * The indicator which determines whether (the) {@code CalleeInfo} is
      * visible.
@@ -42,7 +42,7 @@ const _INITIAL_STATE = {
  */
 ReducerRegistry.register(
     'features/base/jwt',
-    (state = _INITIAL_STATE, action) => {
+    (state = DEFAULT_STATE, action) => {
         switch (action.type) {
         case SET_CALLEE_INFO_VISIBLE:
             return set(state, 'calleeInfoVisible', action.calleeInfoVisible);
@@ -51,7 +51,7 @@ ReducerRegistry.register(
             // eslint-disable-next-line no-unused-vars
             const { type, ...payload } = action;
             const nextState = {
-                ..._INITIAL_STATE,
+                ...DEFAULT_STATE,
                 ...payload
             };
 

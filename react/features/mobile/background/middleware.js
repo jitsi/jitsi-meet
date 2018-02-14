@@ -1,16 +1,13 @@
-/* @flow */
+// @flow
 
 import { AppState } from 'react-native';
 import type { Dispatch } from 'redux';
 
-import {
-    APP_WILL_MOUNT,
-    APP_WILL_UNMOUNT
-} from '../../app';
+import { APP_WILL_MOUNT, APP_WILL_UNMOUNT } from '../../app';
 import { MiddlewareRegistry } from '../../base/redux';
 
 import {
-    _setAppStateListener,
+    _setAppStateListener as _setAppStateListenerA,
     _setBackgroundVideoMuted,
     appStateChanged
 } from './actions';
@@ -25,39 +22,29 @@ import {
  * required to mute or unmute the local video in case the application goes to
  * the background or comes back from it.
  *
- * @param {Store} store - Redux store.
+ * @param {Store} store - The redux store.
  * @returns {Function}
  * @see {@link https://facebook.github.io/react-native/docs/appstate.html}
  */
 MiddlewareRegistry.register(store => next => action => {
     switch (action.type) {
-    case _SET_APP_STATE_LISTENER: {
-        // Remove the current/old AppState listener.
-        const { appStateListener } = store.getState()['features/background'];
-
-        if (appStateListener) {
-            AppState.removeEventListener('change', appStateListener);
-        }
-
-        // Add the new AppState listener.
-        if (action.listener) {
-            AppState.addEventListener('change', action.listener);
-        }
-        break;
-    }
+    case _SET_APP_STATE_LISTENER:
+        return _setAppStateListenerF(store, next, action);
 
     case APP_STATE_CHANGED:
         _appStateChanged(store.dispatch, action.appState);
         break;
 
-    case APP_WILL_MOUNT:
-        store.dispatch(
-            _setAppStateListener(
-                _onAppStateChange.bind(undefined, store.dispatch)));
+    case APP_WILL_MOUNT: {
+        const { dispatch } = store;
+
+        dispatch(
+            _setAppStateListenerA(_onAppStateChange.bind(undefined, dispatch)));
         break;
+    }
 
     case APP_WILL_UNMOUNT:
-        store.dispatch(_setAppStateListener(null));
+        store.dispatch(_setAppStateListenerA(undefined));
         break;
     }
 
@@ -65,11 +52,11 @@ MiddlewareRegistry.register(store => next => action => {
 });
 
 /**
- * Handles app state changes. Dispatches the necessary Redux actions for the
+ * Handles app state changes. Dispatches the necessary redux actions for the
  * local video to be muted when the app goes to the background, and to be
  * unmuted when the app comes back.
  *
- * @param {Dispatch} dispatch - Redux dispatch function.
+ * @param {Dispatch} dispatch - The redux {@code dispatch} function.
  * @param {string} appState - The current app state.
  * @private
  * @returns {void}
@@ -97,13 +84,41 @@ function _appStateChanged(dispatch: Function, appState: string) {
 
 /**
  * Called by React Native's AppState API to notify that the application state
- * has changed. Dispatches the change within the (associated) Redux store.
+ * has changed. Dispatches the change within the (associated) redux store.
  *
- * @param {Dispatch} dispatch - Redux dispatch function.
+ * @param {Dispatch} dispatch - The redux {@code dispatch} function.
  * @param {string} appState - The current application execution state.
  * @private
  * @returns {void}
  */
 function _onAppStateChange(dispatch: Dispatch<*>, appState: string) {
     dispatch(appStateChanged(appState));
+}
+
+/**
+ * Notifies the feature filmstrip that the action
+ * {@link _SET_IMMERSIVE_LISTENER} is being dispatched within a specific redux
+ * store.
+ *
+ * @param {Store} store - The redux store in which the specified action is being
+ * dispatched.
+ * @param {Dispatch} next - The redux dispatch function to dispatch the
+ * specified action to the specified store.
+ * @param {Action} action - The redux action {@code _SET_IMMERSIVE_LISTENER}
+ * which is being dispatched in the specified store.
+ * @private
+ * @returns {Object} The value returned by {@code next(action)}.
+ */
+function _setAppStateListenerF({ getState }, next, action) {
+    // Remove the old AppState listener and add the new one.
+    const { appStateListener: oldListener } = getState()['features/background'];
+    const result = next(action);
+    const { appStateListener: newListener } = getState()['features/background'];
+
+    if (oldListener !== newListener) {
+        oldListener && AppState.removeEventListener('change', oldListener);
+        newListener && AppState.addEventListener('change', newListener);
+    }
+
+    return result;
 }

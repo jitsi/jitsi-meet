@@ -1,4 +1,4 @@
-/* @flow */
+// @flow
 
 import { ReducerRegistry, set } from '../../base/redux';
 
@@ -9,13 +9,13 @@ import {
 } from './actionTypes';
 
 /**
- * The initial redux state of the feature network-activity.
+ * The default/initial redux state of the feature network-activity.
  *
  * @type {{
  *     requests: Map
  * }}
  */
-const _INITIAL_STATE = {
+const DEFAULT_STATE = {
     /**
      * The ongoing network requests i.e. the network request which have been
      * added to the redux store/state and have not been removed.
@@ -27,7 +27,7 @@ const _INITIAL_STATE = {
 
 ReducerRegistry.register(
     'features/network-activity',
-    (state = _INITIAL_STATE, action) => {
+    (state = DEFAULT_STATE, action) => {
         switch (action.type) {
         case _ADD_NETWORK_REQUEST: {
             const {
@@ -44,7 +44,7 @@ ReducerRegistry.register(
         }
 
         case _REMOVE_ALL_NETWORK_REQUESTS:
-            return set(state, 'requests', _INITIAL_STATE.requests);
+            return set(state, 'requests', DEFAULT_STATE.requests);
 
         case _REMOVE_NETWORK_REQUEST: {
             const { request: key } = action;
