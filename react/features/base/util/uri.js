@@ -1,6 +1,12 @@
 // @flow
 
 /**
+ * The app linking scheme.
+ * TODO: This should be read from the manifest files later.
+ */
+export const APP_LINK_SCHEME = 'org.jitsi.meet:';
+
+/**
  * The {@link RegExp} pattern of the authority of a URI.
  *
  * @private
@@ -395,7 +401,7 @@ export function urlObjectToString(o: Object): ?string {
                     // XXX The value of domain in supposed to be host/hostname
                     // and, optionally, pathname. Make sure it is not taken for
                     // a pathname only.
-                    _fixURIStringScheme(`org.jitsi.meet://${domain}`));
+                    _fixURIStringScheme(`${APP_LINK_SCHEME}//${domain}`));
 
             // authority
             if (host) {

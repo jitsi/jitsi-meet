@@ -4,7 +4,7 @@ import RNCalendarEvents from 'react-native-calendar-events';
 
 import { SET_ROOM } from '../base/conference';
 import { MiddlewareRegistry } from '../base/redux';
-import { parseURIString } from '../base/util';
+import { APP_LINK_SCHEME, parseURIString } from '../base/util';
 
 import { APP_WILL_MOUNT } from '../app';
 
@@ -161,8 +161,13 @@ function _fetchCalendarEntries(store) {
  *
  */
 function _getURLFromEvent(event, knownDomains) {
+    const linkTerminatorPattern = '[^\\s<>$]';
+    /* eslint-disable max-len */
     const urlRegExp
-        = new RegExp(`http(s)?://(${knownDomains.join('|')})/[^\\s<>$]+`, 'gi');
+        = new RegExp(`http(s)?://(${knownDomains.join('|')})/${linkTerminatorPattern}+`, 'gi');
+    /* eslint-enable max-len */
+    const schemeRegExp
+        = new RegExp(`${APP_LINK_SCHEME}${linkTerminatorPattern}+`, 'gi');
     const fieldsToSearch = [
         event.title,
         event.url,
@@ -175,7 +180,9 @@ function _getURLFromEvent(event, knownDomains) {
     for (const field of fieldsToSearch) {
         if (typeof field === 'string') {
             if (
-                (matchArray = urlRegExp.exec(field)) !== null
+                (matchArray
+                    = urlRegExp.exec(field) || schemeRegExp.exec(field))
+                        !== null
             ) {
                 return matchArray[0];
             }
