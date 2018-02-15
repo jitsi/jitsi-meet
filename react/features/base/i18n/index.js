@@ -1,4 +1,4 @@
-
+export * from './dateUtil';
 export * from './functions';
 
 // TODO Eventually (e.g. when the non-React Web app is rewritten into React), it

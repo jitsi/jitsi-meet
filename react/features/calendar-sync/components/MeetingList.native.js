@@ -5,9 +5,8 @@ import { connect } from 'react-redux';
 import { refreshCalendarEntryList } from '../actions';
 
 import { appNavigate } from '../../app';
-import { translate } from '../../base/i18n';
+import { getLocalizedDateFormatter, translate } from '../../base/i18n';
 import { NavigateSectionList } from '../../base/react';
-import { getLocalizedDateFormatter } from '../../base/util';
 
 type Props = {
 

@@ -1,4 +1,3 @@
-export * from './dateUtil';
 export * from './helpers';
 export * from './loadScript';
 export * from './randomUtil';
