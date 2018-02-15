@@ -1,5 +1,6 @@
 import React from 'react';
 import {
+    Keyboard,
     SafeAreaView,
     Switch,
     TextInput,
@@ -150,6 +151,7 @@ class WelcomePage extends AbstractWelcomePage {
      * @returns {void}
      */
     _onShowSideBar() {
+        Keyboard.dismiss();
         this.props.dispatch(setSideBarVisibility(true));
     }
 
