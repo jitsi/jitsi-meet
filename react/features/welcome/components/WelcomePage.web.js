@@ -98,10 +98,11 @@ class WelcomePage extends AbstractWelcomePage {
                         <Watermarks />
                         <div className = 'header-text'>
                             <h1 className = 'header-text-title'>
-                                { t('welcomepage.freeAndEasy') }
+                                { t('welcomepage.title') }
                             </h1>
                             <p className = 'header-text-description'>
-                                { t('welcomepage.easiest', { app: APP_NAME }) }
+                                { t('welcomepage.appDescription',
+                                    { app: APP_NAME }) }
                             </p>
                         </div>
                         <div id = 'new_enter_room'>
