@@ -126,7 +126,7 @@ class WelcomePage extends AbstractWelcomePage {
                                 id = 'enter_room_button'
                                 onClick = { this._onJoin }
                                 type = 'button'>
-                                { t('welcomepage.tryNow') }
+                                { t('welcomepage.go') }
                             </Button>
                         </div>
                     </div>

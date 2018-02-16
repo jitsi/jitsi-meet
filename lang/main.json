@@ -47,13 +47,13 @@
     },
     "welcomepage":{
         "appDescription": "Go ahead, video chat with the whole team. In fact, invite everyone you know. __app__ is a fully encrypted, 100% open source video conferencing solution that you can use all day, every day, for free — with no account needed.",
+        "go": "GO",
         "join": "JOIN",
         "privacy": "Privacy",
         "roomname": "Enter room name",
         "sendFeedback": "Send feedback",
         "terms": "Terms",
-        "title": "More secure, more flexible, and completely free video conferencing",
-        "tryNow": "Try it now"
+        "title": "More secure, more flexible, and completely free video conferencing"
     },
     "startupoverlay": {
         "policyText": " ",
