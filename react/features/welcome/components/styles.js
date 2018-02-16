@@ -54,10 +54,17 @@ export default createStyleSheet({
         borderColor: ColorPalette.blue,
         borderRadius: 4,
         borderWidth: 1,
-        height: 40,
+        height: 30,
         justifyContent: 'center',
-        marginBottom: BoxModel.margin,
-        marginTop: BoxModel.margin
+        paddingHorizontal: 20
+    },
+
+    /**
+     * Renders the button visually disabled.
+     */
+    buttonDisabled: {
+        backgroundColor: '#cccccc',
+        borderColor: '#999999'
     },
 
     /**
@@ -66,7 +73,7 @@ export default createStyleSheet({
     buttonText: {
         alignSelf: 'center',
         color: ColorPalette.white,
-        fontSize: 18
+        fontSize: 14
     },
 
     /**
@@ -84,6 +91,36 @@ export default createStyleSheet({
      */
     header: {
         justifyContent: 'space-between'
+    },
+
+    /**
+     * Container for the button on the hint box.
+     */
+    hintButtonContainer: {
+        flexDirection: 'row',
+        justifyContent: 'flex-end'
+    },
+
+    /**
+     * Container for the text on the hint box.
+     */
+    hintTextContainer: {
+        marginBottom: 2 * BoxModel.margin
+    },
+
+    /**
+     * Container for the hint box.
+     */
+    hintContainer: {
+        backgroundColor: ColorPalette.white,
+        borderColor: ColorPalette.white,
+        borderRadius: 4,
+        borderWidth: 1,
+        flexDirection: 'column',
+        marginVertical: 5,
+        overflow: 'hidden',
+        paddingHorizontal: BoxModel.padding,
+        paddingVertical: 2 * BoxModel.padding
     },
 
     /**

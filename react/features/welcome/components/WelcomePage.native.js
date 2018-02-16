@@ -1,5 +1,6 @@
 import React from 'react';
 import {
+    Animated,
     Keyboard,
     SafeAreaView,
     Switch,
@@ -59,8 +60,13 @@ class WelcomePage extends AbstractWelcomePage {
     constructor(props) {
         super(props);
 
+        this.state.hintBoxAnimation = new Animated.Value(0);
+
+        this._getHintBoxStyle = this._getHintBoxStyle.bind(this);
+        this._onFieldFocusChange = this._onFieldFocusChange.bind(this);
         this._onShowSideBar = this._onShowSideBar.bind(this);
         this._onStartAudioOnlyChange = this._onStartAudioOnlyChange.bind(this);
+        this._renderHintBox = this._renderHintBox.bind(this);
     }
 
     /**
@@ -124,7 +130,9 @@ class WelcomePage extends AbstractWelcomePage {
                             autoComplete = { false }
                             autoCorrect = { false }
                             autoFocus = { false }
+                            onBlur = { this._onFieldFocusChange(false) }
                             onChangeText = { this._onRoomChange }
+                            onFocus = { this._onFieldFocusChange(true) }
                             onSubmitEditing = { this._onJoin }
                             placeholder = { t('welcomepage.roomname') }
                             placeholderTextColor = { PLACEHOLDER_TEXT_COLOR }
@@ -133,15 +141,59 @@ class WelcomePage extends AbstractWelcomePage {
                             underlineColorAndroid = 'transparent'
                             value = { this.state.room } />
                         {
-                            this._renderJoinButton()
+                            this._renderHintBox()
                         }
-                        <RecentList />
+                        <RecentList disabled = { this.state._fieldFocused } />
                     </SafeAreaView>
                     <AppSettings />
                 </View>
                 <WelcomePageSideBar />
             </LocalVideoTrackUnderlay>
         );
+    }
+
+    /**
+     * Constructs a style array to handle the hint box animation.
+     *
+     * @private
+     * @returns {Array<Object>}
+     */
+    _getHintBoxStyle() {
+        return [
+            styles.hintContainer,
+            {
+                opacity: this.state.hintBoxAnimation
+            }
+        ];
+    }
+
+    /**
+     * Callback for when the room field's focus changes so the hint box
+     * must be rendered or removed.
+     *
+     * @private
+     * @param {boolean} focused - The focused state of the field.
+     * @returns {Function}
+     */
+    _onFieldFocusChange(focused) {
+        return () => {
+            if (focused) {
+                this.setState({
+                    _fieldFocused: true
+                });
+            }
+
+            Animated.timing(this.state.hintBoxAnimation, {
+                duration: 300,
+                toValue: focused ? 1 : 0
+            }).start(animationState => {
+                if (animationState.finished && !focused) {
+                    this.setState({
+                        _fieldFocused: false
+                    });
+                }
+            });
+        };
     }
 
     /**
@@ -172,6 +224,36 @@ class WelcomePage extends AbstractWelcomePage {
     }
 
     /**
+     * Renders the hint box if necessary.
+     *
+     * @private
+     * @returns {React$Node}
+     */
+    _renderHintBox() {
+        if (this.state._fieldFocused) {
+            const { t } = this.props;
+
+            return (
+                <Animated.View
+                    style = { this._getHintBoxStyle() }>
+                    <View style = { styles.hintTextContainer } >
+                        <Text>
+                            { t('welcomepage.hintText') }
+                        </Text>
+                    </View>
+                    <View style = { styles.hintButtonContainer } >
+                        {
+                            this._renderJoinButton()
+                        }
+                    </View>
+                </Animated.View>
+            );
+        }
+
+        return null;
+    }
+
+    /**
      * Renders the join button.
      *
      * @private
@@ -188,7 +270,9 @@ class WelcomePage extends AbstractWelcomePage {
             // modify non-native children.
             children = (
                 <View>
-                    <LoadingIndicator color = { styles.buttonText.color } />
+                    <LoadingIndicator
+                        color = { styles.buttonText.color }
+                        size = 'small' />
                 </View>
             );
         } else {
@@ -201,12 +285,17 @@ class WelcomePage extends AbstractWelcomePage {
 
         /* eslint-enable no-extra-parens */
 
+        const buttonDisabled = this._isJoinDisabled();
+
         return (
             <TouchableHighlight
                 accessibilityLabel = { 'Tap to Join.' }
-                disabled = { this._isJoinDisabled() }
+                disabled = { buttonDisabled }
                 onPress = { this._onJoin }
-                style = { styles.button }
+                style = { [
+                    styles.button,
+                    buttonDisabled ? styles.buttonDisabled : null
+                ] }
                 underlayColor = { ColorPalette.white }>
                 {
                     children

@@ -10,6 +10,11 @@ import { appNavigate } from '../../app';
 type Props = {
 
     /**
+     * Indicates if the list is disabled or not.
+     */
+    disabled: boolean,
+
+    /**
      * The redux store's {@code dispatch} function.
      */
     dispatch: Dispatch<*>
@@ -31,7 +36,9 @@ export default class AbstractRecentList extends Component<Props> {
      * @returns {void}
      */
     _onJoin(room) {
-        room && this.props.dispatch(appNavigate(room));
+        const { disabled, dispatch } = this.props;
+
+        !disabled && room && dispatch(appNavigate(room));
     }
 
     /**

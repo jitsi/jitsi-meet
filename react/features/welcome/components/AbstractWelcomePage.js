@@ -15,6 +15,11 @@ import { generateRoomWithoutSeparator } from '../functions';
 type Props = {
 
     /**
+     * Boolean to indicate if the room field is focused or not.
+     */
+    _fieldFocused: boolean,
+
+    /**
      * The user's profile.
      */
     _profile: Object,

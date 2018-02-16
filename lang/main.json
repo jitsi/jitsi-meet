@@ -49,6 +49,7 @@
         "appDescription": "Go ahead, video chat with the whole team. In fact, invite everyone you know. __app__ is a fully encrypted, 100% open source video conferencing solution that you can use all day, every day, for free — with no account needed.",
         "audioOnlyLabel": "Voice",
         "go": "GO",
+        "hintText": "Enter a room name you want to join to, or simply create a new room name, eg. MeetingWithJohn",
         "join": "JOIN",
         "privacy": "Privacy",
         "roomname": "Enter room name",

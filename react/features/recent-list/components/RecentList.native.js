@@ -28,8 +28,8 @@ class RecentList extends AbstractRecentList {
      *
      * @inheritdoc
      */
-    constructor() {
-        super();
+    constructor(props) {
+        super(props);
 
         // Bind event handlers so they are only bound once per instance.
         this._getAvatarStyle = this._getAvatarStyle.bind(this);
@@ -47,16 +47,22 @@ class RecentList extends AbstractRecentList {
      * @returns {ReactElement}
      */
     render() {
-        if (!this.props || !this.props._recentList) {
+        const { _recentList, disabled } = this.props;
+
+        if (!_recentList) {
             return null;
         }
 
         const listViewDataSource
             = this.dataSource.cloneWithRows(
-                getRecentRooms(this.props._recentList));
+                getRecentRooms(_recentList));
 
         return (
-            <View style = { styles.container }>
+            <View
+                style = { [
+                    styles.container,
+                    disabled ? styles.containerDisabled : null
+                ] }>
                 <ListView
                     dataSource = { listViewDataSource }
                     enableEmptySections = { true }

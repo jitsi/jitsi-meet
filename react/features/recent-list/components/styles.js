@@ -88,6 +88,13 @@ export default createStyleSheet({
     },
 
     /**
+     * Shows the container disabled.
+     */
+    containerDisabled: {
+        opacity: 0.2
+    },
+
+    /**
      * Second line of the list (date). May be extended with server name later.
      */
     date: {
