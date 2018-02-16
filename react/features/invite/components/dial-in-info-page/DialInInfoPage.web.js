@@ -104,7 +104,7 @@ class DialInInfoPage extends Component {
         if (loading) {
             contents = '';
         } else if (numbersEnabled === false) {
-            contents = this.props.t('invite.disabled');
+            contents = this.props.t('info.dialInNotSupported');
         } else if (error) {
             contents = error;
         } else {

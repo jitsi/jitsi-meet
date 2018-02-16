@@ -291,9 +291,6 @@
         "Save": "Save",
         "recording": "Recording",
         "recordingToken": "Enter recording token",
-        "passwordCheck": "Are you sure you would like to remove your password?",
-        "passwordMsg": "Set a password to lock your room",
-        "yourPassword": "Enter new password",
         "Back": "Back",
         "serviceUnavailable": "Service unavailable",
         "gracefulShutdown": "Our service is currently down for maintenance. Please try again later.",
@@ -464,11 +461,6 @@
         "selectADevice": "Select a device",
         "testAudio": "Test sound"
     },
-    "invite": {
-        "addPassword": "Add password",
-        "inviteTo": "Invite people to __conferenceName__",
-        "invitePeople": "Invite"
-    },
     "videoStatus": {
         "callQuality": "Call Quality",
         "hd": "HD",
@@ -488,7 +480,7 @@
     },
     "dialOut": {
         "dial": "Dial",
-        "dialOut": "Call a #",
+        "dialOut": "Call a number",
         "statusMessage": "is now __status__",
         "enterPhone": "Enter phone number",
         "phoneNotAllowed": "Oh, we don't support that destination yet! Sorry!"
@@ -521,6 +513,7 @@
         "veryGood": "Very Good"
     },
     "info": {
+        "addPassword": "Add password",
         "cancelPassword": "Cancel password",
         "conferenceURL": "Link: __url__",
         "country": "Country",
