@@ -411,7 +411,7 @@ class InfoDialog extends Component {
         } else {
             className = 'add-password';
             onClick = this._onTogglePasswordEditState;
-            textKey = 'invite.addPassword';
+            textKey = 'info.addPassword';
         }
 
         return className && onClick && textKey

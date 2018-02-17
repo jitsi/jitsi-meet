@@ -12,7 +12,7 @@ import {
 } from '../analytics';
 import { ParticipantCounter } from '../contact-list';
 import { openDeviceSelectionDialog } from '../device-selection';
-import { InfoDialogButton, openInviteDialog } from '../invite';
+import { InfoDialogButton } from '../invite';
 import UIEvents from '../../../service/UI/UIEvents';
 import { VideoQualityButton } from '../video-quality';
 
@@ -305,22 +305,6 @@ export default function getDefaultButtons() {
          */
         info: {
             component: InfoDialogButton
-        },
-
-        /**
-         * The descriptor of the toolbar button which shows the invite user
-         * dialog.
-         */
-        invite: {
-            classNames: [ 'button', 'icon-link' ],
-            enabled: true,
-            id: 'toolbar_button_link',
-            onClick(dispatch: Function) {
-                sendAnalytics(createToolbarEvent('invite'));
-
-                dispatch(openInviteDialog());
-            },
-            tooltipKey: 'toolbar.invite'
         },
 
         /**

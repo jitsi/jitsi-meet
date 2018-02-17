@@ -10,11 +10,10 @@ import { translate } from '../../base/i18n';
 import { getLocalParticipant, PARTICIPANT_ROLE } from '../../base/participants';
 
 import { openDialog } from '../../base/dialog';
-import { AddPeopleDialog, InviteDialog } from '.';
+import { AddPeopleDialog } from '.';
 import { DialOutDialog } from '../../dial-out';
-import { isInviteOptionEnabled, getInviteOptionPosition } from '../functions';
+import { isInviteOptionEnabled } from '../functions';
 
-const SHARE_LINK_OPTION = 'invite';
 const DIAL_OUT_OPTION = 'dialout';
 const ADD_TO_CALL_OPTION = 'addtocall';
 
@@ -58,7 +57,6 @@ class InviteButton extends Component {
     constructor(props) {
         super(props);
 
-        this._onInviteClick = this._onInviteClick.bind(this);
         this._onInviteOptionSelected = this._onInviteOptionSelected.bind(this);
         this._updateInviteItems = this._updateInviteItems.bind(this);
 
@@ -87,7 +85,13 @@ class InviteButton extends Component {
      * @returns {ReactElement}
      */
     render() {
-        const { t } = this.props;
+        // HACK ALERT: Normally children should not be controlling their own
+        // visibility; parents should control that. However, this component is
+        // in a transitionary state while the Invite Dialog is being redone.
+        // This hack will go away when the Invite Dialog is back.
+        if (!this.state.buttonOption) {
+            return null;
+        }
 
         const { VERTICAL_FILMSTRIP } = interfaceConfig;
 
@@ -95,12 +99,12 @@ class InviteButton extends Component {
             <div className = 'filmstrip__invite'>
                 <div className = 'invite-button-group'>
                     <Button
-                        onClick = { this._onInviteClick }
+                        // eslint-disable-next-line react/jsx-handler-names
+                        onClick = { this.state.buttonOption.action }
                         shouldFitContainer = { true }>
-                        { t('invite.invitePeople') }
+                        { this.state.buttonOption.content }
                     </Button>
-                    { this.props._isDialOutAvailable
-                        || this.props._isAddToCallAvailable
+                    { this.state.inviteOptions[0].items.length
                         ? <DropdownMenu
                             items = { this.state.inviteOptions }
                             onItemActivated = { this._onInviteOptionSelected }
@@ -113,16 +117,6 @@ class InviteButton extends Component {
                 </div>
             </div>
         );
-    }
-
-    /**
-     * Handles the click of the invite button.
-     *
-     * @private
-     * @returns {void}
-     */
-    _onInviteClick() {
-        this.props.openDialog(InviteDialog);
     }
 
     /**
@@ -150,48 +144,46 @@ class InviteButton extends Component {
      * @returns {void}
      */
     _updateInviteItems(props) {
-        const { t } = this.props;
+        const { INVITE_OPTIONS = [] } = interfaceConfig;
+        const validOptions = INVITE_OPTIONS.filter(option =>
+            (option === DIAL_OUT_OPTION && props._isDialOutAvailable)
+            || (option === ADD_TO_CALL_OPTION && props._isAddToCallAvailable));
 
-        const inviteItems = [];
+        /* eslint-disable array-callback-return */
 
-        inviteItems.splice(
-            getInviteOptionPosition(SHARE_LINK_OPTION),
-            0,
-            {
-                content: t('toolbar.invite'),
-                action: () => this.props.openDialog(InviteDialog)
-            }
-        );
-
-        if (props._isDialOutAvailable) {
-            inviteItems.splice(
-                getInviteOptionPosition(DIAL_OUT_OPTION),
-                0,
-                {
-                    content: t('dialOut.dialOut'),
+        const inviteItems = validOptions.map(option => {
+            switch (option) {
+            case DIAL_OUT_OPTION:
+                return {
+                    content: this.props.t('dialOut.dialOut'),
                     action: () => this.props.openDialog(DialOutDialog)
-                }
-            );
-        }
-
-        if (props._isAddToCallAvailable) {
-            inviteItems.splice(
-                getInviteOptionPosition(ADD_TO_CALL_OPTION),
-                0,
-                {
+                };
+            case ADD_TO_CALL_OPTION:
+                return {
                     content: interfaceConfig.ADD_PEOPLE_APP_NAME,
                     action: () => this.props.openDialog(AddPeopleDialog)
-                }
-            );
-        }
+                };
+            }
+        });
+
+        /* eslint-enable array-callback-return */
+
+        const buttonOption = inviteItems[0];
+        const dropdownOptions = inviteItems.splice(1, inviteItems.length);
 
         const nextState = {
             /**
-             * The list of invite options.
+             * The configuration for how the invite button should display and
+             * behave on click.
+             */
+            buttonOption,
+
+            /**
+             * The list of invite options in the dropdown.
              */
             inviteOptions: [
                 {
-                    items: inviteItems
+                    items: dropdownOptions
                 }
             ]
         };

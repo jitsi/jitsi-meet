@@ -103,7 +103,6 @@
         "videomute": "Start / Stop camera",
         "authenticate": "Authenticate",
         "lock": "Lock / Unlock room",
-        "invite": "Share the link",
         "chat": "Open / Close chat",
         "etherpad": "Open / Close shared document",
         "sharedvideo": "Share a YouTube video",
@@ -228,7 +227,6 @@
         "suboptimalExperienceDescription": "Eer... we are afraid your experience with __appName__ isn't going to be that great here. We are looking for ways to improve this but, until then, please try using one of the <a href='static/recommendedBrowsers.html' target='_blank'>fully supported browsers</a>."
     },
     "dialog": {
-        "add": "Add",
         "allow": "Allow",
         "kickMessage": "Ouch! You have been kicked out of the meet!",
         "popupErrorTitle": "Pop-up blocked",
@@ -243,7 +241,6 @@
         "copy": "Copy",
         "contactSupport": "Contact support",
         "error": "Error",
-        "createPassword": "Create password",
         "detectext": "Error when trying to detect desktopsharing extension.",
         "failedpermissions": "Failed to obtain permissions to use the local microphone and/or camera.",
         "conferenceReloadTitle": "Unfortunately, something went wrong.",
@@ -294,10 +291,6 @@
         "Save": "Save",
         "recording": "Recording",
         "recordingToken": "Enter recording token",
-        "passwordCheck": "Are you sure you would like to remove your password?",
-        "passwordMsg": "Set a password to lock your room",
-        "shareLink": "Share the link to the call",
-        "yourPassword": "Enter new password",
         "Back": "Back",
         "serviceUnavailable": "Service unavailable",
         "gracefulShutdown": "Our service is currently down for maintenance. Please try again later.",
@@ -468,19 +461,6 @@
         "selectADevice": "Select a device",
         "testAudio": "Test sound"
     },
-    "invite": {
-        "addPassword": "Add password",
-        "callNumber": "Call __number__",
-        "enterID": "Enter Meeting ID: __conferenceID__ following by # to dial in from a phone",
-        "howToDialIn": "To dial in, use one of the following numbers and meeting ID",
-        "hidePassword": "Hide password",
-        "inviteTo": "Invite people to __conferenceName__",
-        "invitedYouTo": "__userName__ has invited you to the __inviteURL__ conference",
-        "invitePeople": "Invite",
-        "locked": "This call is locked. New callers must have the link and enter the password to join.",
-        "showPassword": "Show password",
-        "unlocked": "This call is unlocked. Any new caller with the link may join the call."
-    },
     "videoStatus": {
         "callQuality": "Call Quality",
         "hd": "HD",
@@ -500,7 +480,7 @@
     },
     "dialOut": {
         "dial": "Dial",
-        "dialOut": "Call a #",
+        "dialOut": "Call a number",
         "statusMessage": "is now __status__",
         "enterPhone": "Enter phone number",
         "phoneNotAllowed": "Oh, we don't support that destination yet! Sorry!"
@@ -533,6 +513,7 @@
         "veryGood": "Very Good"
     },
     "info": {
+        "addPassword": "Add password",
         "cancelPassword": "Cancel password",
         "conferenceURL": "Link: __url__",
         "country": "Country",

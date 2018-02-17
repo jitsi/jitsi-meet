@@ -1,24 +1,12 @@
 // @flow
 
-import { openDialog } from '../../features/base/dialog';
-
 import {
     SET_INFO_DIALOG_VISIBILITY,
     UPDATE_DIAL_IN_NUMBERS_FAILED,
     UPDATE_DIAL_IN_NUMBERS_SUCCESS
 } from './actionTypes';
-import { InviteDialog } from './components';
 
 declare var $: Function;
-
-/**
- * Opens the Invite Dialog.
- *
- * @returns {Function}
- */
-export function openInviteDialog() {
-    return openDialog(InviteDialog);
-}
 
 /**
  * Opens the inline conference info dialog.

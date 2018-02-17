@@ -40,7 +40,7 @@ var interfaceConfig = {
     TOOLBAR_BUTTONS: [
 
         // main toolbar
-        'microphone', 'camera', 'desktop', 'invite', 'fullscreen', 'fodeviceselection', 'hangup',
+        'microphone', 'camera', 'desktop', 'fullscreen', 'fodeviceselection', 'hangup',
 
         // extended toolbar
         'profile', 'contacts', 'info', 'chat', 'recording', 'etherpad', 'sharedvideo', 'settings', 'raisehand', 'videoquality', 'filmstrip' ],
@@ -49,7 +49,7 @@ var interfaceConfig = {
      * Main Toolbar Buttons
      * All of them should be in TOOLBAR_BUTTONS
      */
-    MAIN_TOOLBAR_BUTTONS: [ 'microphone', 'camera', 'desktop', 'invite', 'fullscreen', 'fodeviceselection', 'hangup' ],
+    MAIN_TOOLBAR_BUTTONS: [ 'microphone', 'camera', 'desktop', 'fullscreen', 'fodeviceselection', 'hangup' ],
     SETTINGS_SECTIONS: [ 'language', 'devices', 'moderator' ],
     INVITE_OPTIONS: [ 'invite', 'dialout', 'addtocall' ],
 
