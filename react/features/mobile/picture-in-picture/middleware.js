@@ -5,9 +5,8 @@ import { DeviceEventEmitter } from 'react-native';
 import { APP_WILL_MOUNT, APP_WILL_UNMOUNT } from '../../app';
 import { MiddlewareRegistry } from '../../base/redux';
 
-import { _setListeners } from './actions';
-import { _SET_PIP_LISTENERS, REQUEST_PIP_MODE } from './actionTypes';
-import { enterPictureInPictureMode } from './functions';
+import { enterPictureInPicture, _setEmitterSubscriptions } from './actions';
+import { _SET_EMITTER_SUBSCRIPTIONS } from './actionTypes';
 
 /**
  * Middleware that handles Picture-in-Picture requests. Currently it enters
@@ -18,30 +17,28 @@ import { enterPictureInPictureMode } from './functions';
  */
 MiddlewareRegistry.register(store => next => action => {
     switch (action.type) {
-    case _SET_PIP_LISTENERS: {
-        // Remove the current/old listeners.
-        const { listeners } = store.getState()['features/pip'];
+    case APP_WILL_MOUNT:
+        return _appWillMount(store, next, action);
 
-        if (listeners) {
-            for (const listener of listeners) {
-                listener.remove();
+    case APP_WILL_UNMOUNT:
+        store.dispatch(_setEmitterSubscriptions(undefined));
+        break;
+
+    case _SET_EMITTER_SUBSCRIPTIONS: {
+        // Remove the current/old EventEmitter subscriptions.
+        const { emitterSubscriptions } = store.getState()['features/pip'];
+
+        if (emitterSubscriptions) {
+            for (const emitterSubscription of emitterSubscriptions) {
+                // XXX We may be removing an EventEmitter subscription which is
+                // in both the old and new Array of EventEmitter subscriptions!
+                // Thankfully, we don't have such a practical use case at the
+                // time of this writing.
+                emitterSubscription.remove();
             }
         }
         break;
     }
-
-    case APP_WILL_MOUNT:
-        _appWillMount(store);
-        break;
-
-    case APP_WILL_UNMOUNT:
-        store.dispatch(_setListeners(undefined));
-        break;
-
-    case REQUEST_PIP_MODE:
-        _enterPictureInPicture(store);
-        break;
-
     }
 
     return next(action);
@@ -58,43 +55,16 @@ MiddlewareRegistry.register(store => next => action => {
  * @param {Action} action - The redux action {@code APP_WILL_MOUNT} which is
  * being dispatched in the specified {@code store}.
  * @private
- * @returns {*}
+ * @returns {*} The value returned by {@code next(action)}.
  */
-function _appWillMount({ dispatch, getState }) {
-    const context = {
-        dispatch,
-        getState
-    };
-
-    const listeners = [
+function _appWillMount({ dispatch }, next, action) {
+    dispatch(_setEmitterSubscriptions([
 
         // Android's onUserLeaveHint activity lifecycle callback
-        DeviceEventEmitter.addListener('onUserLeaveHint', () => {
-            _enterPictureInPicture(context);
-        })
-    ];
+        DeviceEventEmitter.addListener(
+            'onUserLeaveHint',
+            () => dispatch(enterPictureInPicture()))
+    ]));
 
-    dispatch(_setListeners(listeners));
-}
-
-/**
- * Helper function to enter PiP mode. This is triggered by user request
- * (either pressing the button in the toolbox or the home button on Android)
- * ans this triggers the PiP mode, iff it's available and we are in a
- * conference.
- *
- * @param {Object} store - Redux store.
- * @private
- * @returns {void}
- */
-function _enterPictureInPicture({ getState }) {
-    const state = getState();
-    const { app } = state['features/app'];
-    const { conference, joining } = state['features/base/conference'];
-
-    if (app.props.pipAvailable && (conference || joining)) {
-        enterPictureInPictureMode().catch(e => {
-            console.warn(`Error entering PiP mode: ${e}`);
-        });
-    }
+    return next(action);
 }

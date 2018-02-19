@@ -69,10 +69,10 @@ public class JitsiMeetActivity extends AppCompatActivity {
     private JitsiMeetView view;
 
     /**
-     * Whether Picture-in-Picture is available. The value is used only while
+     * Whether Picture-in-Picture is enabled. The value is used only while
      * {@link #view} equals {@code null}.
      */
-    private Boolean pipAvailable;
+    private Boolean pictureInPictureEnabled;
 
     /**
      * Whether the Welcome page is enabled. The value is used only while
@@ -98,11 +98,13 @@ public class JitsiMeetActivity extends AppCompatActivity {
 
     /**
      *
-     * @see JitsiMeetView#getPictureInPictureAvailable()
+     * @see JitsiMeetView#getPictureInPictureEnabled()
      */
-    public Boolean getPictureInPictureAvailable() {
-        return view == null
-            ? pipAvailable : view.getPictureInPictureAvailable();
+    public boolean getPictureInPictureEnabled() {
+        return
+            view == null
+                ? pictureInPictureEnabled
+                : view.getPictureInPictureEnabled();
     }
 
     /**
@@ -137,7 +139,10 @@ public class JitsiMeetActivity extends AppCompatActivity {
         // XXX Before calling JitsiMeetView#loadURL, make sure to call whatever
         // is documented to need such an order in order to take effect:
         view.setDefaultURL(defaultURL);
-        view.setPictureInPictureAvailable(pipAvailable);
+        if (pictureInPictureEnabled != null) {
+            view.setPictureInPictureEnabled(
+                pictureInPictureEnabled.booleanValue());
+        }
         view.setWelcomePageEnabled(welcomePageEnabled);
 
         view.loadURL(null);
@@ -273,13 +278,14 @@ public class JitsiMeetActivity extends AppCompatActivity {
 
     /**
      *
-     * @see JitsiMeetView#setPictureInPictureAvailable(Boolean)
+     * @see JitsiMeetView#setPictureInPictureEnabled(boolean)
      */
-    public void setPictureInPictureAvailable(Boolean pipAvailable) {
+    public void setPictureInPictureEnabled(boolean pictureInPictureEnabled) {
         if (view == null) {
-            this.pipAvailable = pipAvailable;
+            this.pictureInPictureEnabled
+                = Boolean.valueOf(pictureInPictureEnabled);
         } else {
-            view.setPictureInPictureAvailable(pipAvailable);
+            view.setPictureInPictureEnabled(pictureInPictureEnabled);
         }
     }
 

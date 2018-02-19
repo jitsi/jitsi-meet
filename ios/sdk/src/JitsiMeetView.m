@@ -110,10 +110,10 @@ void registerFatalErrorHandler() {
 @end
 
 @implementation JitsiMeetView {
-    NSNumber *_pipAvailable;
+    NSNumber *_pictureInPictureEnabled;
 }
 
-@dynamic pipAvailable;
+@dynamic pictureInPictureEnabled;
 
 static RCTBridgeWrapper *bridgeWrapper;
 
@@ -269,7 +269,7 @@ static NSMapTable<NSString *, JitsiMeetView *> *views;
     }
 
     props[@"externalAPIScope"] = externalAPIScope;
-    props[@"pipAvailable"] = @(self.pipAvailable);
+    props[@"pictureInPictureEnabled"] = @(self.pictureInPictureEnabled);
     props[@"welcomePageEnabled"] = @(self.welcomePageEnabled);
 
     // XXX If urlObject is nil, then it must appear as undefined in the
@@ -320,19 +320,26 @@ static NSMapTable<NSString *, JitsiMeetView *> *views;
     [self loadURLObject:urlString ? @{ @"url": urlString } : nil];
 }
 
-#pragma pipAvailable getter / setter
+#pragma pictureInPictureEnabled getter / setter
 
-- (void) setPipAvailable:(BOOL)pipAvailable {
-    _pipAvailable = [NSNumber numberWithBool:pipAvailable];
+- (void) setPictureInPictureEnabled:(BOOL)pictureInPictureEnabled {
+    _pictureInPictureEnabled
+        = [NSNumber numberWithBool:pictureInPictureEnabled];
 }
 
-- (BOOL) pipAvailable {
-    if (_pipAvailable == nil) {
-        return self.delegate
-            && [self.delegate respondsToSelector:@selector(requestPipMode:)];
+- (BOOL) pictureInPictureEnabled {
+    if (_pictureInPictureEnabled) {
+        return [_pictureInPictureEnabled boolValue];
     }
 
-    return [_pipAvailable boolValue];
+    // The SDK/JitsiMeetView client/consumer did not explicitly enable/disable
+    // Picture-in-Picture. However, we may automatically deduce their
+    // intentions: we need the support of the client in order to implement
+    // Picture-in-Picture on iOS (in contrast to Android) so if the client
+    // appears to have provided the support then we can assume that they did it
+    // with the intention to have Picture-in-Picture enabled.
+    return self.delegate
+        && [self.delegate respondsToSelector:@selector(enterPictureInPicture:)];
 }
 
 #pragma mark Private methods

@@ -1,13 +1,15 @@
+// @flow
+
 import { ReducerRegistry } from '../../base/redux';
 
-import { _SET_PIP_LISTENERS } from './actionTypes';
+import { _SET_EMITTER_SUBSCRIPTIONS } from './actionTypes';
 
 ReducerRegistry.register('features/pip', (state = {}, action) => {
     switch (action.type) {
-    case _SET_PIP_LISTENERS:
+    case _SET_EMITTER_SUBSCRIPTIONS:
         return {
             ...state,
-            listeners: action.listeners
+            emitterSubscriptions: action.emitterSubscriptions
         };
     }
 

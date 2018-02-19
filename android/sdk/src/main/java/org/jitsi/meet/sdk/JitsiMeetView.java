@@ -300,10 +300,11 @@ public class JitsiMeetView extends FrameLayout {
     private JitsiMeetViewListener listener;
 
     /**
-     * Whether Picture-in-Picture is available. If {@code null}  it will default
-     * to {@code true} iff the platform supports it.
+     * Whether Picture-in-Picture is enabled. If {@code null}, defaults to
+     * {@code true} iff the Android platform supports Picture-in-Picture
+     * natively.
      */
-    private Boolean pipAvailable;
+    private Boolean pictureInPictureEnabled;
 
     /**
      * React Native root view.
@@ -370,14 +371,18 @@ public class JitsiMeetView extends FrameLayout {
     }
 
     /**
-     * Gets whether Picture-in-Picture is currently available. It's only
-     * supported on Android API >= 26 (Oreo), so it should not be enabled on
-     * older platform versions.
+     * Gets whether Picture-in-Picture is enabled. Picture-in-Picture is
+     * natively supported on Android API >= 26 (Oreo), so it should not be
+     * enabled on older platform versions.
      *
-     * @return {@code true} if PiP is available, {@code false} otherwise.
+     * @return If Picture-in-Picture is enabled, {@code true}; {@code false},
+     * otherwise.
      */
-    public Boolean getPictureInPictureAvailable() {
-        return pipAvailable;
+    public boolean getPictureInPictureEnabled() {
+        return
+            PictureInPictureModule.isPictureInPictureSupported()
+                && (pictureInPictureEnabled == null
+                    || pictureInPictureEnabled.booleanValue());
     }
 
     /**
@@ -425,15 +430,10 @@ public class JitsiMeetView extends FrameLayout {
         // externalAPIScope
         props.putString("externalAPIScope", externalAPIScope);
 
-        // pipAvailable
-        boolean pipAvailable_;
-        if (pipAvailable == null) {
-            // set it based on platform availability
-            pipAvailable_ = Build.VERSION.SDK_INT >= Build.VERSION_CODES.O;
-        } else {
-            pipAvailable_ = pipAvailable.booleanValue();
-        }
-        props.putBoolean("pipAvailable", pipAvailable_);
+        // pictureInPictureEnabled
+        props.putBoolean(
+            "pictureInPictureEnabled",
+            getPictureInPictureEnabled());
 
         // url
         if (urlObject != null) {
@@ -457,7 +457,9 @@ public class JitsiMeetView extends FrameLayout {
         if (reactRootView == null) {
             reactRootView = new ReactRootView(getContext());
             reactRootView.startReactApplication(
-                reactInstanceManager, "App", props);
+                reactInstanceManager,
+                "App",
+                props);
             reactRootView.setBackgroundColor(BACKGROUND_COLOR);
             addView(reactRootView);
         } else {
@@ -528,13 +530,15 @@ public class JitsiMeetView extends FrameLayout {
     }
 
     /**
-     * Sets whether Picture-in-Picture is currently available.
+     * Sets whether Picture-in-Picture is enabled. Because Picture-in-Picture is
+     * natively supported only since certain platform versions, specifying
+     * {@code true} will have no effect on unsupported platform versions.
      *
-     * @param pipAvailable {@code true} if PiP is available, {@code false}
-     * otherwise.
+     * @param pictureInPictureEnabled To enable Picture-in-Picture,
+     * {@code true}; otherwise, {@code false}.
      */
-    public void setPictureInPictureAvailable(Boolean pipAvailable) {
-        this.pipAvailable = pipAvailable;
+    public void setPictureInPictureEnabled(boolean pictureInPictureEnabled) {
+        this.pictureInPictureEnabled = Boolean.valueOf(pictureInPictureEnabled);
     }
 
     /**

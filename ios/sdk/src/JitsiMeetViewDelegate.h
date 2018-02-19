@@ -56,6 +56,17 @@
 - (void)conferenceWillLeave:(NSDictionary *)data;
 
 /**
+ * Called when entering Picture-in-Picture is requested by the user. The app
+ * should now activate its Picture-in-Picture implementation (and resize the
+ * associated `JitsiMeetView`. The latter will automatically detect its new size
+ * and adjust its user interface to a variant appropriate for the small size
+ * ordinarily associated with Picture-in-Picture.)
+ *
+ * The `data` dictionary is empty.
+ */
+- (void)enterPictureInPicture:(NSDictionary *)data;
+
+/**
  * Called when loading the main configuration file from the Jitsi Meet
  * deployment file.
  *
@@ -64,14 +75,5 @@
  * file.
  */
 - (void)loadConfigError:(NSDictionary *)data;
-
-/**
- * Called when Picture-in-Picture mode is requested. The app should now resize
- * iself to a PiP style and then use the JitsiMeetView.onPipModeChanged to
- * notify the JavaScript side about its action.
- *
- * The `data` dictionary is currently empty.
- */
-- (void)requestPipMode:(NSDictionary *)data;
 
 @end

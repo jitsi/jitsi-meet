@@ -53,21 +53,24 @@ partial URL (e.g. a room name only) is specified to
 `loadURLString:`/`loadURLObject:`. If not set or if set to `nil`, the default
 built in JavaScript is used: https://meet.jit.si.
 
-NOTE: Must be set before `loadURL:`/`loadURLString:` for it to take effect.
+NOTE: Must be set (if at all) before `loadURL:`/`loadURLString:` for it to take
+effect.
 
-#### pipAvailable
+#### pictureInPictureEnabled
 
-Property to get / set wether a Picture-in-Picture mode is available. This must
-be implemented by the application at the moment.
+Property to get / set whether Picture-in-Picture is enabled. Defaults to `YES`
+if `delegate` implements `enterPictureInPicture:`; otherwise, `NO`.
 
-NOTE: Must be set before `loadURL:`/`loadURLString:` for it to take effect.
+NOTE: Must be set (if at all) before `loadURL:`/`loadURLString:` for it to take
+effect.
 
 #### welcomePageEnabled
 
 Property to get/set whether the Welcome page is enabled. If `NO`, a black empty
 view will be rendered when not in a conference. Defaults to `NO`.
 
-NOTE: Must be set before `loadURL:`/`loadURLString:` for it to take effect.
+NOTE: Must be set (if at all) before `loadURL:`/`loadURLString:` for it to take
+effect.
 
 #### loadURL:NSURL
 
@@ -177,6 +180,16 @@ Called before a conference is left.
 
 The `data` dictionary contains a "url" key with the conference URL.
 
+#### enterPictureInPicture
+
+Called when entering Picture-in-Picture is requested by the user. The app should
+now activate its Picture-in-Picture implementation (and resize the associated
+`JitsiMeetView`. The latter will automatically detect its new size and adjust
+its user interface to a variant appropriate for the small size ordinarily
+associated with Picture-in-Picture.)
+
+The `data` dictionary is empty.
+
 #### loadConfigError
 
 Called when loading the main configuration file from the Jitsi Meet deployment
@@ -186,23 +199,16 @@ The `data` dictionary contains an "error" key with the error and a "url" key
 with the conference URL which necessitated the loading of the configuration
 file.
 
-#### requestPipMode
-
-Called when the user requested Picture-in-Picture mode to be entered. At this
-point the application should resize the SDK view to a smaller size if it so
-desires.
-
 ### Picture-in-Picture
 
-The Jitsi Meet SDK implements a "reduced UI mode" which will automatically
-adjust the UI when presented in a Picture-in-Picture style scenario. Enabling
-a native Picture-in-Picture mode on iOS is not currently implemented on the SDK
-so applications need to do it themselves.
+`JitsiMeetView` will automatically adjust its UI when presented in a
+Picture-in-Picture style scenario, in a rectangle too small to accommodate its
+"full" UI.
 
-When `pipAvailable` is set to `YES` or the `requestPipMode` delegate method is
-implemented, the in-call toolbar will show a button to enter PiP mode. It's up
-to the application to reduce the size of the SDK view and put it in such mode.
+Jitsi Meet SDK does not currently implement native Picture-in-Picture on iOS. If
+desired, apps need to implement non-native Picture-in-Picture themselves and
+resize `JitsiMeetView`.
 
-Once PiP mode has been entered, the SDK will automatically adjust its UI
-elements.
-
+If `pictureInPictureEnabled` is set to `YES` or `delegate` implements
+`enterPictureInPicture:`, the in-call toolbar will render a button to afford the
+user to request entering Picture-in-Picture.

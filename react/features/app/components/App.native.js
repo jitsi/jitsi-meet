@@ -38,10 +38,11 @@ export class App extends AbstractApp {
         ...AbstractApp.propTypes,
 
         /**
-         * Whether Picture-in-Picture is available. If available, a button will
-         * be shown in the {@link Conference} view so the user can enter it.
+         * Whether Picture-in-Picture is enabled. If {@code true}, a toolbar
+         * button is rendered in the {@link Conference} view to afford entering
+         * Picture-in-Picture.
          */
-        pipAvailable: PropTypes.bool,
+        pictureInPictureEnabled: PropTypes.bool,
 
         /**
          * Whether the Welcome page is enabled. If {@code true}, the Welcome

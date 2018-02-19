@@ -13,8 +13,7 @@ import {
 import { LOAD_CONFIG_ERROR } from '../../base/config';
 import { MiddlewareRegistry } from '../../base/redux';
 import { toURLString } from '../../base/util';
-
-import { REQUEST_PIP_MODE } from '../picture-in-picture';
+import { ENTER_PICTURE_IN_PICTURE } from '../picture-in-picture';
 
 /**
  * Middleware that captures Redux actions and uses the ExternalAPI module to
@@ -55,6 +54,10 @@ MiddlewareRegistry.register(store => next => action => {
         _sendConferenceEvent(store, action);
         break;
 
+    case ENTER_PICTURE_IN_PICTURE:
+        _sendEvent(store, _getSymbolDescription(action.type), /* data */ {});
+        break;
+
     case LOAD_CONFIG_ERROR: {
         const { error, locationURL, type } = action;
 
@@ -64,10 +67,6 @@ MiddlewareRegistry.register(store => next => action => {
         });
         break;
     }
-
-    case REQUEST_PIP_MODE:
-        _sendEvent(store, _getSymbolDescription(action.type), /* data */ {});
-
     }
 
     return result;

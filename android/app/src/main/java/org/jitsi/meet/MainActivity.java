@@ -97,9 +97,8 @@ public class MainActivity extends JitsiMeetActivity {
         // As this is the Jitsi Meet app (i.e. not the Jitsi Meet SDK), we do
         // want to enable some options.
 
-        // The welcome page defaults to disabled in the
-        // SDK at the time of this writing but it is clearer to be explicit
-        // about what we want anyway.
+        // The welcome page defaults to disabled in the SDK at the time of this
+        // writing but it is clearer to be explicit about what we want anyway.
         setWelcomePageEnabled(true);
 
         super.onCreate(savedInstanceState);

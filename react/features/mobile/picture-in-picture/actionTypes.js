@@ -1,22 +1,24 @@
 /**
- * The type of redux action to set the PiP related event listeners.
+ * The type of redux action to enter (or rather initiate entering)
+ * picture-in-picture.
  *
  * {
- *     type: _SET_PIP_MODE_LISTENER,
- *     listeners: Array|undefined
- * }
- *
- * @protected
- */
-export const _SET_PIP_LISTENERS = Symbol('_SET_PIP_LISTENERS');
-
-/**
- * The type of redux action which signals that the PiP mode is requested.
- *
- * {
- *      type: REQUEST_PIP_MODE
+ *      type: ENTER_PICTURE_IN_PICTURE
  * }
  *
  * @public
  */
-export const REQUEST_PIP_MODE = Symbol('REQUEST_PIP_MODE');
+export const ENTER_PICTURE_IN_PICTURE = Symbol('ENTER_PICTURE_IN_PICTURE');
+
+/**
+ * The type of redux action to set the {@code EventEmitter} subscriptions
+ * utilized by the feature picture-in-picture.
+ *
+ * {
+ *     type: _SET_EMITTER_SUBSCRIPTIONS,
+ *     emitterSubscriptions: Array|undefined
+ * }
+ *
+ * @protected
+ */
+export const _SET_EMITTER_SUBSCRIPTIONS = Symbol('_SET_EMITTER_SUBSCRIPTIONS');

@@ -14,48 +14,54 @@ import com.facebook.react.bridge.ReactMethod;
 public class PictureInPictureModule extends ReactContextBaseJavaModule {
     private final static String TAG = "PictureInPicture";
 
+    static boolean isPictureInPictureSupported() {
+        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.O;
+    }
+
     public PictureInPictureModule(ReactApplicationContext reactContext) {
         super(reactContext);
     }
 
-    @Override
-    public String getName() {
-        return TAG;
-    }
-
     /**
-     * Enters Picture-in-Picture mode for the current activity. This is only
-     * supported in Android API >= 26.
+     * Enters Picture-in-Picture (mode) for the current {@link Activity}.
+     * Supported on Android API >= 26 (Oreo) only.
      *
      * @param promise a {@code Promise} which will resolve with a {@code null}
-     *                value in case of success, and an error otherwise.
+     * value upon success, and an {@link Exception} otherwise.
      */
     @ReactMethod
-    public void enterPictureInPictureMode(Promise promise) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            final Activity currentActivity = getCurrentActivity();
+    public void enterPictureInPicture(Promise promise) {
+        if (isPictureInPictureSupported()) {
+            Activity currentActivity = getCurrentActivity();
 
             if (currentActivity == null) {
                 promise.reject(new Exception("No current Activity!"));
                 return;
             }
 
-            Log.d(TAG, "Entering PiP mode");
+            Log.d(TAG, "Entering Picture-in-Picture");
 
-            final PictureInPictureParams.Builder pipParamsBuilder
-                = new PictureInPictureParams.Builder();
-            pipParamsBuilder.setAspectRatio(new Rational(1, 1)).build();
-            final boolean r
-                = currentActivity.enterPictureInPictureMode(pipParamsBuilder.build());
+            PictureInPictureParams.Builder builder
+                = new PictureInPictureParams.Builder()
+                    .setAspectRatio(new Rational(1, 1));
+            boolean r
+                = currentActivity.enterPictureInPictureMode(builder.build());
+
             if (r) {
                 promise.resolve(null);
             } else {
-                promise.reject(new Exception("Error entering PiP mode"));
+                promise.reject(
+                    new Exception("Failed to enter Picture-in-Picture"));
             }
 
             return;
         }
 
-        promise.reject(new Exception("PiP not supported"));
+        promise.reject(new Exception("Picture-in-Picture not supported"));
+    }
+
+    @Override
+    public String getName() {
+        return TAG;
     }
 }

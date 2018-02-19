@@ -1,4 +1,5 @@
-import PropTypes from 'prop-types';
+// @flow
+
 import React, { Component } from 'react';
 import { View } from 'react-native';
 import { connect } from 'react-redux';
@@ -23,7 +24,9 @@ import {
     makeAspectRatioAware
 } from '../../base/responsive-ui';
 import { ColorPalette } from '../../base/styles';
-import { requestPipMode } from '../../mobile/picture-in-picture';
+import {
+    EnterPictureInPictureToolbarButton
+} from '../../mobile/picture-in-picture';
 import { beginRoomLockRequest } from '../../room-lock';
 import { beginShareRoom } from '../../share-room';
 
@@ -47,91 +50,81 @@ import ToolbarButton from './ToolbarButton';
 const _SHARE_ROOM_TOOLBAR_BUTTON = true;
 
 /**
+ * The type of {@link Toolbox}'s React {@code Component} props.
+ */
+type Props = {
+
+    /**
+     * Flag showing that audio is muted.
+     */
+    _audioMuted: boolean,
+
+    /**
+     * Flag showing whether the audio-only mode is in use.
+     */
+    _audioOnly: boolean,
+
+    /**
+     * The indicator which determines whether the toolbox is enabled.
+     */
+    _enabled: boolean,
+
+    /**
+     * Flag showing whether room is locked.
+     */
+    _locked: boolean,
+
+    /**
+     * Handler for hangup.
+     */
+    _onHangup: Function,
+
+    /**
+     * Sets the lock i.e. password protection of the conference/room.
+     */
+    _onRoomLock: Function,
+
+    /**
+     * Begins the UI procedure to share the conference/room URL.
+     */
+    _onShareRoom: Function,
+
+    /**
+     * Toggles the audio-only flag of the conference.
+     */
+    _onToggleAudioOnly: Function,
+
+    /**
+     * Switches between the front/user-facing and back/environment-facing
+     * cameras.
+     */
+    _onToggleCameraFacingMode: Function,
+
+    /**
+     * Flag showing whether video is muted.
+     */
+    _videoMuted: boolean,
+
+    /**
+     * Flag showing whether toolbar is visible.
+     */
+    _visible: boolean,
+
+    dispatch: Function
+};
+
+
+/**
  * Implements the conference toolbox on React Native.
  */
-class Toolbox extends Component {
-    /**
-     * Toolbox component's property types.
-     *
-     * @static
-     */
-    static propTypes = {
-        /**
-         * Flag showing that audio is muted.
-         */
-        _audioMuted: PropTypes.bool,
-
-        /**
-         * Flag showing whether the audio-only mode is in use.
-         */
-        _audioOnly: PropTypes.bool,
-
-        /**
-         * The indicator which determines whether the toolbox is enabled.
-         */
-        _enabled: PropTypes.bool,
-
-        /**
-         * Flag showing whether room is locked.
-         */
-        _locked: PropTypes.bool,
-
-        /**
-         * Handler for hangup.
-         */
-        _onHangup: PropTypes.func,
-
-        /**
-         * Requests Picture-in-Picture mode.
-         */
-        _onPipRequest: PropTypes.func,
-
-        /**
-         * Sets the lock i.e. password protection of the conference/room.
-         */
-        _onRoomLock: PropTypes.func,
-
-        /**
-         * Begins the UI procedure to share the conference/room URL.
-         */
-        _onShareRoom: PropTypes.func,
-
-        /**
-         * Toggles the audio-only flag of the conference.
-         */
-        _onToggleAudioOnly: PropTypes.func,
-
-        /**
-         * Switches between the front/user-facing and back/environment-facing
-         * cameras.
-         */
-        _onToggleCameraFacingMode: PropTypes.func,
-
-        /**
-         * Flag showing whether Picture-in-Picture is available.
-         */
-        _pipAvailable: PropTypes.bool,
-
-        /**
-         * Flag showing whether video is muted.
-         */
-        _videoMuted: PropTypes.bool,
-
-        /**
-         * Flag showing whether toolbar is visible.
-         */
-        _visible: PropTypes.bool,
-
-        dispatch: PropTypes.func
-    };
-
+class Toolbox extends Component<Props> {
     /**
      * Initializes a new {@code Toolbox} instance.
      *
-     * @param {Object} props - The read-only React {@code Component} props with
+     * @param {Props} props - The read-only React {@code Component} props with
      * which the new instance is to be initialized.
      */
-    constructor(props) {
+    constructor(props: Props) {
         super(props);
 
         // Bind event handlers so they are only bound once per instance.
@@ -183,21 +176,25 @@ class Toolbox extends Component {
         let style;
 
         if (this.props[`_${mediaType}Muted`]) {
-            iconName = this[`${mediaType}MutedIcon`];
+            iconName = `${mediaType}MutedIcon`;
             iconStyle = styles.whitePrimaryToolbarButtonIcon;
             style = styles.whitePrimaryToolbarButton;
         } else {
-            iconName = this[`${mediaType}Icon`];
+            iconName = `${mediaType}Icon`;
             iconStyle = styles.primaryToolbarButtonIcon;
             style = styles.primaryToolbarButton;
         }
 
         return {
-            iconName,
+
+            // $FlowExpectedError
+            iconName: this[iconName],
             iconStyle,
             style
         };
     }
+
+    _onToggleAudio: () => void;
 
     /**
      * Dispatches an action to toggle the mute state of the audio/microphone.
@@ -225,6 +222,8 @@ class Toolbox extends Component {
                 VIDEO_MUTISM_AUTHORITY.USER,
                 /* ensureTrack */ true));
     }
+
+    _onToggleVideo: () => void;
 
     /**
      * Dispatches an action to toggle the mute state of the video/camera.
@@ -307,7 +306,6 @@ class Toolbox extends Component {
         const underlayColor = 'transparent';
         const {
             _audioOnly: audioOnly,
-            _pipAvailable: pipAvailable,
             _videoMuted: videoMuted
         } = this.props;
 
@@ -317,15 +315,6 @@ class Toolbox extends Component {
             <View
                 key = 'secondaryToolbar'
                 style = { styles.secondaryToolbar }>
-                {
-                    pipAvailable
-                        && <ToolbarButton
-                            iconName = { 'menu-down' }
-                            iconStyle = { iconStyle }
-                            onClick = { this.props._onPipRequest }
-                            style = { style }
-                            underlayColor = { underlayColor } />
-                }
                 {
                     AudioRouteButton
                         && <AudioRouteButton
@@ -364,6 +353,10 @@ class Toolbox extends Component {
                             style = { style }
                             underlayColor = { underlayColor } />
                 }
+                <EnterPictureInPictureToolbarButton
+                    iconStyle = { iconStyle }
+                    style = { style }
+                    underlayColor = { underlayColor } />
             </View>
         );
 
@@ -390,6 +383,7 @@ class Toolbox extends Component {
  * TODO As soon as we have common font sets for web and native, this will no
  * longer be required.
  */
+// $FlowExpectedError
 Object.assign(Toolbox.prototype, {
     audioIcon: 'microphone',
     audioMutedIcon: 'mic-disabled',
@@ -398,30 +392,19 @@ Object.assign(Toolbox.prototype, {
 });
 
 /**
- * Maps actions to React component props.
+ * Maps redux actions to {@link Toolbox}'s React {@code Component} props.
  *
- * @param {Function} dispatch - Redux action dispatcher.
+ * @param {Function} dispatch - The redux action {@code dispatch} function.
+ * @private
  * @returns {{
  *     _onRoomLock: Function,
  *     _onToggleAudioOnly: Function,
  *     _onToggleCameraFacingMode: Function,
  * }}
- * @private
  */
 function _mapDispatchToProps(dispatch) {
     return {
         ...abstractMapDispatchToProps(dispatch),
-
-        /**
-         * Requests Picture-in-Picture mode.
-         *
-         * @private
-         * @returns {void}
-         * @type {Function}
-         */
-        _onPipRequest() {
-            dispatch(requestPipMode());
-        },
 
         /**
          * Sets the lock i.e. password protection of the conference/room.
@@ -471,19 +454,20 @@ function _mapDispatchToProps(dispatch) {
 }
 
 /**
- * Maps part of Redux store to React component props.
+ * Maps (parts of) the redux state to {@link Toolbox}'s React {@code Component}
+ * props.
  *
- * @param {Object} state - Redux store.
+ * @param {Object} state - The redux store/state.
+ * @private
  * @returns {{
  *     _audioOnly: boolean,
+ *     _enabled: boolean,
  *     _locked: boolean
  * }}
- * @private
  */
 function _mapStateToProps(state) {
     const conference = state['features/base/conference'];
     const { enabled } = state['features/toolbox'];
-    const { app } = state['features/app'];
 
     return {
         ...abstractMapStateToProps(state),
@@ -512,15 +496,7 @@ function _mapStateToProps(state) {
          * @protected
          * @type {boolean}
          */
-        _locked: Boolean(conference.locked),
-
-        /**
-         * The indicator which determines if Picture-in-Picture is available.
-         *
-         * @protected
-         * @type {boolean}
-         */
-        _pipAvailable: Boolean(app && app.props.pipAvailable)
+        _locked: Boolean(conference.locked)
     };
 }
 

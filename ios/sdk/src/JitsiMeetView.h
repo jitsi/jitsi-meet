@@ -25,7 +25,7 @@
 
 @property (copy, nonatomic, nullable) NSURL *defaultURL;
 
-@property (nonatomic) BOOL pipAvailable;
+@property (nonatomic) BOOL pictureInPictureEnabled;
 
 @property (nonatomic) BOOL welcomePageEnabled;
 

@@ -1,21 +1,21 @@
-/* @flow */
-
-import type { Dispatch } from 'redux';
+// @flow
 
 import { appNavigate } from '../app';
 import { MEDIA_TYPE } from '../base/media';
 import { isLocalTrackMuted } from '../base/tracks';
 
+import type { Dispatch } from 'redux';
+
 /**
  * Maps redux actions to {@link Toolbox} (React {@code Component}) props.
  *
  * @param {Function} dispatch - The redux {@code dispatch} function.
+ * @private
  * @returns {{
  *     _onHangup: Function,
  *     _onToggleAudio: Function,
  *     _onToggleVideo: Function
  * }}
- * @private
  */
 export function abstractMapDispatchToProps(dispatch: Dispatch<*>): Object {
     return {

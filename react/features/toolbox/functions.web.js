@@ -7,7 +7,11 @@ import getDefaultButtons from './defaultToolbarButtons';
 
 declare var interfaceConfig: Object;
 
-export { abstractMapStateToProps, getButton } from './functions.native';
+export {
+    abstractMapDispatchToProps,
+    abstractMapStateToProps,
+    getButton
+} from './functions.native';
 
 /**
  * Returns an object which contains the default buttons for the primary and
