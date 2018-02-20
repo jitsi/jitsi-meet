@@ -21,6 +21,8 @@ let displayName = UIUtil.unescapeHtml(
     jitsiLocalStorage.getItem('displayname') || '');
 let cameraDeviceId = jitsiLocalStorage.getItem('cameraDeviceId') || '';
 let micDeviceId = jitsiLocalStorage.getItem('micDeviceId') || '';
+let screenSharingSourceDeviceId
+    = jitsiLocalStorage.getItem('screenSharingSourceDeviceId') || '';
 let welcomePageDisabled = JSON.parse(
     jitsiLocalStorage.getItem('welcomePageDisabled') || false);
 
@@ -135,6 +137,10 @@ export default {
         return cameraDeviceId;
     },
 
+    getScreenSharingSourceDeviceId() {
+        return screenSharingSourceDeviceId;
+    },
+
     /**
      * Set device id of the camera which is currently in use.
      * Empty string stands for default device.
@@ -145,6 +151,13 @@ export default {
         cameraDeviceId = newId;
         if (store) {
             jitsiLocalStorage.setItem('cameraDeviceId', newId);
+        }
+    },
+
+    setScreenSharingSourceDeviceId(newId, store) {
+        screenSharingSourceDeviceId = newId;
+        if (store) {
+            jitsiLocalStorage.setItem('screenSharingSourceDeviceId', newId);
         }
     },
 
