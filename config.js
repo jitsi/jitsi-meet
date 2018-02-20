@@ -167,6 +167,12 @@ var config = {
     // The URL to the Firefox extension for desktop sharing.
     desktopSharingFirefoxExtensionURL: null,
 
+    // Optional desktop sharing frame rate options. Default value: min:5, max:5.
+    // desktopSharingFrameRate: {
+    //     min: 5,
+    //     max: 5
+    // },
+
     // Try to start calls with screen-sharing instead of camera video.
     // startScreenSharing: false,
 

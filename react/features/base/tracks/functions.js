@@ -47,6 +47,7 @@ export function createLocalTracksF(
 
     const {
         constraints,
+        desktopSharingFrameRate,
         firefox_fake_device, // eslint-disable-line camelcase
         resolution
     } = store.getState()['features/base/config'];
@@ -58,7 +59,9 @@ export function createLocalTracksF(
                 constraints,
                 desktopSharingExtensionExternalInstallation:
                     options.desktopSharingExtensionExternalInstallation,
+                desktopSharingFrameRate,
                 desktopSharingSources: options.desktopSharingSources,
+
 
                 // Copy array to avoid mutations inside library.
                 devices: options.devices.slice(0),
