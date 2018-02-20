@@ -189,7 +189,6 @@ class Conference extends Component<Props> {
             <Container
                 accessibilityLabel = 'Conference'
                 accessible = { false }
-                onClick = { this._onClick }
                 style = { styles.conference }
                 touchFeedback = { false }>
                 <StatusBar
@@ -199,7 +198,7 @@ class Conference extends Component<Props> {
                 {/*
                   * The LargeVideo is the lowermost stacking layer.
                   */}
-                <LargeVideo />
+                <LargeVideo onPress = { this._onClick } />
 
                 {/*
                   * If there is a ringing call, show the callee's info.

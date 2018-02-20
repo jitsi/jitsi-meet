@@ -19,8 +19,15 @@ export default class Video extends Component<*> {
      */
     static propTypes = {
         mirror: PropTypes.bool,
+
         onPlaying: PropTypes.func,
+
         stream: PropTypes.object,
+
+        /**
+         * Type of the stream being rendered, such as camera or desktop.
+         */
+        type: PropTypes.oneOf([ 'camera', 'desktop' ]),
 
         /**
          * Similarly to the CSS property z-index, specifies the z-order of this
@@ -45,7 +52,12 @@ export default class Video extends Component<*> {
          * values: 0 for the remote video(s) which appear in the background, and
          * 1 for the local video(s) which appear above the remote video(s).
          */
-        zOrder: PropTypes.number
+        zOrder: PropTypes.number,
+
+        /**
+         * Indicates if zooming (pinch & zoom and/or drag) is enabled or not.
+         */
+        zoomEnabled: PropTypes.bool
     };
 
     /**
@@ -68,19 +80,17 @@ export default class Video extends Component<*> {
      * @returns {ReactElement|null}
      */
     render() {
-        const { stream } = this.props;
+        const { stream, type, zoomEnabled } = this.props;
 
         if (stream) {
             const streamURL = stream.toURL();
 
-            // XXX The CSS style object-fit that we utilize on Web is not
-            // supported on React Native. Adding objectFit to React Native's
-            // StyleSheet appears to be impossible without hacking and an
-            // unjustified amount of effort. Consequently, I've chosen to define
-            // objectFit on RTCView itself. Anyway, prepare to accommodate a
-            // future definition of objectFit in React Native's StyleSheet.
-            const style = styles.video;
-            const objectFit = (style && style.objectFit) || 'cover';
+            // Actual zoom is only enabled if the stream
+            // is also a desktop stream.
+            const _zoomEnabled = zoomEnabled && type === 'desktop';
+
+            const objectFit = (_zoomEnabled && 'contain')
+                || 'cover';
 
             // eslint-disable-next-line no-extra-parens
             return (
@@ -88,7 +98,7 @@ export default class Video extends Component<*> {
                     mirror = { this.props.mirror }
                     objectFit = { objectFit }
                     streamURL = { streamURL }
-                    style = { style }
+                    style = { styles.video }
                     zOrder = { this.props.zOrder } />
             );
         }
