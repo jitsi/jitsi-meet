@@ -23,14 +23,14 @@
         }
 
         .header-text-title {
-            color: #172B4D;
+            color: $welcomePageTitleColor;
             font-size: 48px;
             letter-spacing: -1px;
             line-height: 58px;
         }
 
         .header-text-description {
-            color: #42526E;
+            color: $welcomePageDescriptionColor;
             font-size: 20px;
             line-height: 28px;
             opacity: 0.8;
