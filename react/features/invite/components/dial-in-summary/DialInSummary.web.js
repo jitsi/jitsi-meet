@@ -14,13 +14,24 @@ import NumbersList from './NumbersList';
  *
  * @extends Component
  */
-class DialInInfoPage extends Component {
+class DialInSummary extends Component {
     /**
-     * {@code DialInInfoPage} component's property types.
+     * {@code DialInSummary} component's property types.
      *
      * @static
      */
     static propTypes = {
+        /**
+         * Additional CSS classnames to append to the root of the component.
+         */
+        className: PropTypes.string,
+
+        /**
+         * Whether or not numbers should include links with the telephone
+         * protocol.
+         */
+        clickableNumbers: PropTypes.bool,
+
         /**
          * The name of the conference to show a conferenceID for.
          */
@@ -33,7 +44,7 @@ class DialInInfoPage extends Component {
     };
 
     /**
-     * {@code DialInInfoPage} component's local state.
+     * {@code DialInSummary} component's local state.
      *
      * @type {Object}
      * @property {number} conferenceID - The numeric ID of the conference, used
@@ -53,12 +64,13 @@ class DialInInfoPage extends Component {
     };
 
     /**
-     * Initializes a new {@code DialInInfoPage} instance.
+     * Initializes a new {@code DialInSummary} instance.
      *
      * @param {Object} props - The read-only properties with which the new
      * instance is to be initialized.
      */
     constructor(props) {
+        console.warn(props);
         super(props);
 
         // Bind event handlers so they are only bound once for every instance.
@@ -97,6 +109,7 @@ class DialInInfoPage extends Component {
      * @returns {ReactElement}
      */
     render() {
+        let className = '';
         let contents;
 
         const { conferenceID, error, loading, numbersEnabled } = this.state;
@@ -108,6 +121,7 @@ class DialInInfoPage extends Component {
         } else if (error) {
             contents = error;
         } else {
+            className = 'has-numbers';
             contents = [
                 conferenceID
                     ? <ConferenceID
@@ -115,13 +129,14 @@ class DialInInfoPage extends Component {
                         key = 'conferenceID' />
                     : null,
                 <NumbersList
+                    clickableNumbers = { this.props.clickableNumbers }
                     key = 'numbers'
                     numbers = { this.state.numbers } />
             ];
         }
 
         return (
-            <div className = 'dial-in-page'>
+            <div className = { `${this.props.className} ${className}` }>
                 { contents }
             </div>
         );
@@ -217,4 +232,4 @@ class DialInInfoPage extends Component {
     }
 }
 
-export default translate(DialInInfoPage);
+export default translate(DialInSummary);
