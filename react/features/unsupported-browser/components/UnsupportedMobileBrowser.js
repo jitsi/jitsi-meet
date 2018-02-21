@@ -2,10 +2,11 @@
 
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 
 import { translate, translateToHTML } from '../../base/i18n';
 import { Platform } from '../../base/react';
-
+import { DialInSummary } from '../../invite';
 import HideNotificationBarStyle from './HideNotificationBarStyle';
 
 declare var interfaceConfig: Object;
@@ -54,6 +55,11 @@ class UnsupportedMobileBrowser extends Component<*, *> {
      * @static
      */
     static propTypes = {
+        /**
+         * The name of the conference attempting to being joined.
+         */
+        _room: PropTypes.string,
+
         /**
          * The function to translate human-readable text.
          *
@@ -122,12 +128,31 @@ class UnsupportedMobileBrowser extends Component<*, *> {
                             { t(`${_TNS}.downloadApp`) }
                         </button>
                     </a>
+                    <DialInSummary
+                        className = 'unsupported-dial-in'
+                        clickableNumbers = { true }
+                        room = { this.props._room } />
                 </div>
-
                 <HideNotificationBarStyle />
             </div>
         );
     }
 }
 
-export default translate(UnsupportedMobileBrowser);
+/**
+ * Maps (parts of) the Redux state to the associated props for the
+ * {@code UnsupportedMobileBrowser} component.
+ *
+ * @param {Object} state - The Redux state.
+ * @private
+ * @returns {{
+ *     _room: string
+ * }}
+ */
+function _mapStateToProps(state) {
+    return {
+        _room: state['features/base/conference'].room
+    };
+}
+
+export default translate(connect(_mapStateToProps)(UnsupportedMobileBrowser));

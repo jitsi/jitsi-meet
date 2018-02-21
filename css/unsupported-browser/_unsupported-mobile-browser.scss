@@ -1,7 +1,9 @@
 .unsupported-mobile-browser {
     background-color: #fff;
     height: 100vh;
+    overflow: auto;
     padding: 35px 0;
+    position: relative;
     width: 100vw;
 
     a {
@@ -12,6 +14,7 @@
         color: $unsupportedBrowserTextColor;
         margin: auto;
         max-width: 40em;
+        padding-bottom: 40px;
         text-align: center;
         width: 75%;
 
@@ -20,7 +23,8 @@
         }
     }
 
-    &__text {
+    &__text,
+    .unsupported-dial-in  {
         font-size: 1.2em;
         line-height: em(29px, 21px);
         margin-bottom: 0.65em;
@@ -63,6 +67,24 @@
             &:active {
                 background-color: $primaryUnsupportedBrowserButtonBgColor;
             }
+        }
+    }
+
+    .unsupported-dial-in {
+        display: none;
+
+        &.has-numbers {
+            align-items: center;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .dial-in-numbers-list {
+            color: $unsupportedBrowserTextColor;
+        }
+
+        .dial-in-numbers-body {
+            vertical-align: top;
         }
     }
 }

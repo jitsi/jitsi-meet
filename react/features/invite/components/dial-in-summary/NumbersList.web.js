@@ -16,6 +16,12 @@ class NumbersList extends Component {
      */
     static propTypes = {
         /**
+         * Whether or not numbers should include links with the telephone
+         * protocol.
+         */
+        clickableNumbers: PropTypes.bool,
+
+        /**
          * The phone numbers to display. Can be an array of numbers
          * or an object with countries as keys and an array of numbers
          * as values.
@@ -51,7 +57,7 @@ class NumbersList extends Component {
                         <th>{ t('info.numbers') }</th>
                     </tr>
                 </thead>
-                <tbody>
+                <tbody className = 'dial-in-numbers-body'>
                     { showWithoutCountries
                         ? numbers.map(this._renderNumberRow)
                         : this._renderWithCountries() }
@@ -69,7 +75,8 @@ class NumbersList extends Component {
         const rows = [];
 
         for (const [ country, numbers ] of Object.entries(this.props.numbers)) {
-            const formattedNumbers = numbers.map(this._renderNumberDiv);
+            const formattedNumbers = numbers.map(
+                number => this._renderNumberDiv(number));
 
             rows.push(
                 <tr key = { country }>
@@ -93,7 +100,7 @@ class NumbersList extends Component {
         return (
             <tr key = { number }>
                 <td className = 'dial-in-number'>
-                    { number }
+                    { this._renderNumberLink(number) }
                 </td>
             </tr>
         );
@@ -111,10 +118,34 @@ class NumbersList extends Component {
             <div
                 className = 'dial-in-number'
                 key = { number }>
-                { number }
+                { this._renderNumberLink(number) }
             </div>
         );
     }
+
+    /**
+     * Renders a ReactElement for displaying a telephone number. If the
+     * component prop {@code clickableNumbers} is true, then the number will
+     * have a link with the telephone protocol.
+     *
+     * @param {string} number - The phone number to display.
+     * @private
+     * @returns {ReactElement}
+     */
+    _renderNumberLink(number) {
+        if (this.props.clickableNumbers) {
+            return (
+                <a
+                    href = { `tel:${number}` }
+                    key = { number } >
+                    { number }
+                </a>
+            );
+        }
+
+        return number;
+    }
+
 }
 
 export default translate(NumbersList);
