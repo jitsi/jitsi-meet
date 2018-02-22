@@ -1,208 +1,85 @@
-#welcome_page {
+.welcome {
+    font-family: Helvetica;
     height: 100%;
     overflow: auto;
     position: relative;
-}
 
-#disable_welcome {
-    display:none;
-}
-
-.disable_welcome_position
-{
-    margin: -139px auto 0px auto;
-    padding-left: 39px;
-    padding-top: 7px;
-    width: 269px;
-    height: 31px;
-    display:block;
-}
-
-#disable_welcome + label
-{
-    background-image: url(../images/welcome_page/disable-welcome.png);
-    cursor: pointer;
-    -webkit-user-select: none;
-    -moz-user-select: none;
-    background-repeat: no-repeat;
-    font-weight: 500;
-    font-size: 16px;
-    color: #acacac;
-    z-index: $zindex2;
-}
-
-#disable_welcome:checked + label
-{
-    background-image: url(../images/welcome_page/disable-welcome-selected.png);
-    cursor: pointer;
-    -webkit-user-select: none;
-    -moz-user-select: none;
-    background-repeat: no-repeat;
-    font-weight: 500;
-    font-size: 16px;
-    color: #acacac;
-    z-index: $zindex2;
-}
-
-#enter_room_form {
-    border-radius: 1px;
-    background-color: #FFFFFF;
-    border: none;
-    -moz-border-radius: 1px;
-    -webkit-border-radius: 1px;
-    -webkit-appearance: none;
-    height: 55px;
-    box-shadow: none;
-    float: left;
-}
-
-.domain-name
-{
-    float: left;
-    height: 55px;
-    line-height: 55px;
-    font-size: 18px;
-    font-weight: 500;
-    padding-left: 20px;
-    color: $defaultDarkColor;
-}
-
-.enter-room {
-    &__field {
-        font-size: 15px;
-        border: none;
-        -webkit-appearance: none;
-        width: 228px;
-        height: 55px;
-        line-height: 55px;
-        font-weight: 500;
-        box-shadow: none;
-        float: left;
-        background-color: #FFFFFF;
+    .header {
+        align-items: center;
+        background: $welcomePageHeaderBackground;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
         position: relative;
-        z-index: $zindex2;
-    }
-
-    &__reload {
-        display: block;
-        width: 30px;
-        color: #acacac;
-        font-size: 1.9em;
-        line-height: 55px;
-        z-index: $zindex3;
-        float:  left;
-        cursor: pointer;
         text-align: center;
+
+        .header-text {
+            display: flex;
+            flex-direction: column;
+            height: 286px;
+            justify-content: space-around;
+            margin-top: 120px;
+            width: 645px;
+        }
+
+        .header-text-title {
+            color: $welcomePageTitleColor;
+            font-size: 48px;
+            letter-spacing: -1px;
+            line-height: 58px;
+        }
+
+        .header-text-description {
+            color: $welcomePageDescriptionColor;
+            font-size: 20px;
+            line-height: 28px;
+            opacity: 0.8;
+        }
+
+        .header-image {
+            background-image: url(../images/welcome_page/curves.png);
+            background-size: contain;
+            height: 209px;
+            position: absolute;
+            width: 1070px;
+        }
+
+        #new_enter_room {
+            align-items: center;
+            display: flex;
+            margin-top: 25px;
+            position: relative;
+            z-index: 2;
+
+            .enter-room-input {
+                display: inline-block;
+                margin-right: 15px;
+                width: 350px;
+            }
+        }
     }
 
-    &__button {
-        width: 73px;
-        height: 45px;
-        background-color: #21B9FC;
-        moz-border-radius: 1px;
-        -webkit-border-radius: 1px;
-        color: #ffffff;
-        font-weight: 600;
-        border: none;
-        margin-top: 5px;
-        font-size: 19px;
-        padding-top: 6px;
-        outline: none;
-        float:left;
-        position: relative;
-        z-index: $zindex2;
+    .welcome-page-button {
+        font-size: 16px;
     }
 }
 
-#enter_room_container {
-    margin: 70px auto 0px auto;
-    display: table;
+.welcome.with-content {
+    .header {
+        height: 552px;
+    }
+    .header-image {
+        left: -61px;
+        top: 401px;
+    }
 }
 
-#enter_room{
-    float:left;
-    padding-right: 5px;
-}
-
-#welcome_page_header
-{
-    background-image: url(../images/welcome_page/pattern-header.png);
-    height: 290px;
-    width: 100%;
-    position: absolute;
-}
-
-#welcome_page_main
-{
-    background-image:url(../images/welcome_page/pattern-body.png);
-    width: 100%;
-    position: absolute;
-    margin-top: 290px;
-}
-
-#brand_header
-{
-    background-image:url(../images/welcome_page/header-big.png);
-    width: 583px;
-    height: 274px;
-    margin: -110px auto 0px auto;
-}
-
-#header_text
-{
-    width: 885px;
-    height: 100px;
-    color: #ffffff;
-    font-size: 24px;
-    text-align: center;
-    margin: 0px auto 0px auto;
-}
-
-#features
-{
-    margin-top: 30px;
-    position: relative;
-}
-
-.feature_row
-{
-    position: relative;
-    width: 976px;
-    margin: 0px auto 30px auto;
-    padding-right: 75px;
-
-}
-
-.feature_holder
-{
-    display: inline-block;
-    width: 169px;
-    padding-left: 75px;
-    padding-bottom: 30px;
-    vertical-align: top;
-}
-
-.feature_icon
-{
-    background-image:url(../images/welcome_page/bubble.png);
-    background-repeat: no-repeat;
-    width: 169px;
-    height: 169px;
-    color: #ffffff;
-    font-size: 22px;
-    /*font-weight: bold;*/
-    text-align: center;
-    display: table-cell;
-    padding: 0px 26px 0px 20px;
-    vertical-align: middle;
-}
-
-.feature_description
-{
-    width: 190px;
-    color: #ffffff;
-    font-size: 16px;
-    padding-top: 30px;
-    line-height: 22px;
-    font-weight: 200;
+.welcome.without-content {
+    .header {
+        height: 100%;
+    }
+    .header-image {
+        bottom: -20px;
+        left: 0;
+    }
 }

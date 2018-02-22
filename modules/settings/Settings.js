@@ -21,8 +21,6 @@ let displayName = UIUtil.unescapeHtml(
     jitsiLocalStorage.getItem('displayname') || '');
 let cameraDeviceId = jitsiLocalStorage.getItem('cameraDeviceId') || '';
 let micDeviceId = jitsiLocalStorage.getItem('micDeviceId') || '';
-let welcomePageDisabled = JSON.parse(
-    jitsiLocalStorage.getItem('welcomePageDisabled') || false);
 
 // Currently audio output device change is supported only in Chrome and
 // default output always has 'default' device ID
@@ -189,22 +187,5 @@ export default {
         return JitsiMeetJS.mediaDevices.setAudioOutputDevice(newId)
             .then(() =>
                 jitsiLocalStorage.setItem('audioOutputDeviceId', newId));
-    },
-
-    /**
-     * Check if welcome page is enabled or not.
-     * @returns {boolean}
-     */
-    isWelcomePageEnabled() {
-        return !welcomePageDisabled;
-    },
-
-    /**
-     * Enable or disable welcome page.
-     * @param {boolean} enabled if welcome page should be enabled or not
-     */
-    setWelcomePageEnabled(enabled) {
-        welcomePageDisabled = !enabled;
-        jitsiLocalStorage.setItem('welcomePageDisabled', welcomePageDisabled);
     }
 };

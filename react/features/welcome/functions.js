@@ -52,6 +52,6 @@ export function isWelcomePageUserEnabled(stateOrGetState: Object | Function) {
     return (
         typeof APP === 'undefined'
             ? true
-            : toState(stateOrGetState)['features/base/config'].enableWelcomePage
-                && APP.settings.isWelcomePageEnabled());
+            : toState(stateOrGetState)['features/base/config']
+                .enableWelcomePage);
 }

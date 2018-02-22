@@ -234,7 +234,6 @@ function maybeRedirectToWelcomePage(options) {
     if (config.enableWelcomePage) {
         setTimeout(
             () => {
-                APP.settings.setWelcomePageEnabled(true);
                 assignWindowLocationPathname('./');
             },
             3000);

@@ -1,5 +1,8 @@
-/* global APP, interfaceConfig */
+/* global interfaceConfig */
 
+import Button from '@atlaskit/button';
+import { FieldTextStateless } from '@atlaskit/field-text';
+import { AtlasKitThemeProvider } from '@atlaskit/theme';
 import React from 'react';
 import { connect } from 'react-redux';
 
@@ -26,15 +29,33 @@ class WelcomePage extends AbstractWelcomePage {
         this.state = {
             ...this.state,
 
-            enableWelcomePage: true,
             generateRoomnames:
                 interfaceConfig.GENERATE_ROOMNAMES_ON_WELCOME_PAGE
         };
 
+        /**
+         * The HTML Element used as the container for additional content. Used
+         * for directly appending the additional content template to the dom
+         *
+         * @private
+         * @type {HTMLTemplateElement|null}
+         */
+        this._additionalContentRef = null;
+
+        /**
+         * The template to use as the main content for the welcome page. If
+         * not found then only the welcome page head will display.
+         *
+         * @private
+         * @type {HTMLTemplateElement|null}
+         */
+        this._additionalContentTemplate = document.getElementById(
+            'welcome-page-additional-content-template');
+
         // Bind event handlers so they are only bound once per instance.
-        this._onDisableWelcomeChange = this._onDisableWelcomeChange.bind(this);
-        this._onKeyDown = this._onKeyDown.bind(this);
         this._onRoomChange = this._onRoomChange.bind(this);
+        this._setAdditionalContentRef
+            = this._setAdditionalContentRef.bind(this);
     }
 
     /**
@@ -48,6 +69,11 @@ class WelcomePage extends AbstractWelcomePage {
         if (this.state.generateRoomnames) {
             this._updateRoomname();
         }
+
+        if (this._shouldShowAdditionalContent()) {
+            this._additionalContentRef.appendChild(
+                this._additionalContentTemplate.content.cloneNode(true));
+        }
     }
 
     /**
@@ -57,61 +83,61 @@ class WelcomePage extends AbstractWelcomePage {
      * @returns {ReactElement|null}
      */
     render() {
+        const { t } = this.props;
+        const { APP_NAME } = interfaceConfig;
+        const showAdditionalContent = this._shouldShowAdditionalContent();
+
         return (
-            <div id = 'welcome_page'>
-                {
-                    this._renderHeader()
-                }
-                {
-                    this._renderMain()
-                }
-            </div>
+            <AtlasKitThemeProvider mode = 'light'>
+                <div
+                    className = { `welcome ${showAdditionalContent
+                        ? 'with-content' : 'without-content'}` }
+                    id = 'new_welcome_page'>
+                    <div className = 'header'>
+                        <div className = 'header-image' />
+                        <Watermarks />
+                        <div className = 'header-text'>
+                            <h1 className = 'header-text-title'>
+                                { t('welcomepage.title') }
+                            </h1>
+                            <p className = 'header-text-description'>
+                                { t('welcomepage.appDescription',
+                                    { app: APP_NAME }) }
+                            </p>
+                        </div>
+                        <div id = 'new_enter_room'>
+                            <form
+                                className = 'enter-room-input'
+                                onSubmit = { this._onJoin }>
+                                <FieldTextStateless
+                                    autoFocus = { true }
+                                    id = 'enter_room_field'
+                                    isLabelHidden = { true }
+                                    label = 'enter_room_field'
+                                    onChange = { this._onRoomChange }
+                                    placeholder = { this.state.roomPlaceholder }
+                                    shouldFitContainer = { true }
+                                    type = 'text'
+                                    value = { this.state.room } />
+                            </form>
+                            <Button
+                                appearance = 'primary'
+                                className = 'welcome-page-button'
+                                id = 'enter_room_button'
+                                onClick = { this._onJoin }
+                                type = 'button'>
+                                { t('welcomepage.go') }
+                            </Button>
+                        </div>
+                    </div>
+                    { showAdditionalContent
+                        ? <div
+                            className = 'welcome-page-content'
+                            ref = { this._setAdditionalContentRef } />
+                        : null }
+                </div>
+            </AtlasKitThemeProvider>
         );
-    }
-
-    /**
-     * Returns the URL of this WelcomePage for display purposes. For
-     * historic/legacy reasons, the return value is referred to as domain.
-     *
-     * @private
-     * @returns {string} The URL of this WelcomePage for display purposes.
-     */
-    _getDomain() {
-        // As the returned URL is for display purposes, do not return the
-        // userinfo, query and fragment URI parts.
-        const wl = window.location;
-
-        return `${wl.protocol}//${wl.host}${wl.pathname}`;
-    }
-
-    /**
-     * Handles {@code change} event of the checkbox which allows specifying
-     * whether the WelcomePage is disabled.
-     *
-     * @param {Event} event - The (HTML) Event which details the change such as
-     * the EventTarget.
-     * @returns {void}
-     */
-    _onDisableWelcomeChange(event) {
-        this.setState({
-            enableWelcomePage: !event.target.checked
-        }, () => {
-            APP.settings.setWelcomePageEnabled(this.state.enableWelcomePage);
-        });
-    }
-
-    /**
-     * Handles 'keydown' event to initiate joining the room when the
-     * 'Enter/Return' button is pressed.
-     *
-     * @param {Event} event - Key down event object.
-     * @private
-     * @returns {void}
-     */
-    _onKeyDown(event) {
-        if (event.keyCode === /* Enter */ 13) {
-            this._onJoin();
-        }
     }
 
     /**
@@ -129,141 +155,30 @@ class WelcomePage extends AbstractWelcomePage {
     }
 
     /**
-     * Renders a feature with a specific index.
+     * Sets the internal reference to the HTMLDivElement used to hold the
+     * welcome page content.
      *
-     * @param {number} index - The index of the feature to render.
+     * @param {HTMLDivElement} el - The HTMLElement for the div that is the root
+     * of the welcome page content.
      * @private
-     * @returns {ReactElement}
+     * @returns {void}
      */
-    _renderFeature(index) {
-        const { t } = this.props;
-        const tns = `welcomepage.feature${index}`;
-
-        return (
-            <div
-                className = 'feature_holder'
-                key = { index } >
-                <div className = 'feature_icon'>
-                    { t(`${tns}.title`) }
-                </div>
-                <div className = 'feature_description'>
-                    { t(`${tns}.content`, { postProcess: 'resolveAppName' }) }
-                </div>
-            </div>
-        );
+    _setAdditionalContentRef(el) {
+        this._additionalContentRef = el;
     }
 
     /**
-     * Renders a row of features.
-     *
-     * @param {number} beginIndex - The inclusive feature index to begin the row
-     * with.
-     * @param {number} endIndex - The exclusive feature index to end the row
-     * with.
-     * @private
-     * @returns {ReactElement}
-     */
-    _renderFeatureRow(beginIndex, endIndex) {
-        const features = [];
-
-        for (let index = beginIndex; index < endIndex; ++index) {
-            features.push(this._renderFeature(index));
-        }
-
-        return (
-            <div className = 'feature_row'>
-                {
-                    features
-                }
-            </div>
-        );
-    }
-
-    /**
-     * Renders the header part of this WelcomePage.
+     * Returns whether or not additional content should be displayed belowed
+     * the welcome page's header for entering a room name.
      *
      * @private
-     * @returns {ReactElement|null}
+     * @returns {boolean}
      */
-    _renderHeader() {
-        const { t } = this.props;
-
-        return (
-            <div id = 'welcome_page_header'>
-                <Watermarks />
-
-                <div id = 'enter_room_container'>
-                    <div id = 'enter_room_form'>
-                        <div className = 'domain-name'>
-                            {
-                                this._getDomain()
-                            }
-                        </div>
-                        <div id = 'enter_room'>
-                            <input
-                                autoFocus = { true }
-                                className = 'enter-room__field'
-                                data-room-name
-                                    = { this.state.generatedRoomname }
-                                id = 'enter_room_field'
-                                onChange = { this._onRoomChange }
-                                onKeyDown = { this._onKeyDown }
-                                placeholder = { this.state.roomPlaceholder }
-                                type = 'text'
-                                value = { this.state.room } />
-
-                            { /* eslint-disable react/jsx-handler-names */ }
-                            <div
-                                className = 'icon-reload enter-room__reload'
-                                onClick = { this._updateRoomname } />
-                            { /* eslint-enable react/jsx-handler-names */ }
-
-                            <button
-                                className = 'enter-room__button'
-                                id = 'enter_room_button'
-                                onClick = { this._onJoin }
-                                type = 'button'>
-                                { t('welcomepage.go') }
-                            </button>
-                        </div>
-                    </div>
-                </div>
-                <div id = 'brand_header' />
-                <input
-                    checked = { !this.state.enableWelcomePage }
-                    id = 'disable_welcome'
-                    name = 'checkbox'
-                    onChange = { this._onDisableWelcomeChange }
-                    type = 'checkbox' />
-                <label
-                    className = 'disable_welcome_position'
-                    htmlFor = 'disable_welcome'>
-                    { t('welcomepage.disable') }
-                </label>
-                <div id = 'header_text' />
-            </div>
-        );
-    }
-
-    /**
-     * Renders the main part of this WelcomePage.
-     *
-     * @private
-     * @returns {ReactElement|null}
-     */
-    _renderMain() {
-        return (
-            <div id = 'welcome_page_main'>
-                <div id = 'features'>
-                    {
-                        this._renderFeatureRow(1, 5)
-                    }
-                    {
-                        this._renderFeatureRow(5, 9)
-                    }
-                </div>
-            </div>
-        );
+    _shouldShowAdditionalContent() {
+        return interfaceConfig.DISPLAY_WELCOME_PAGE_CONTENT
+            && this._additionalContentTemplate
+            && this._additionalContentTemplate.content
+            && this._additionalContentTemplate.innerHTML.trim();
     }
 }
 
