@@ -62,7 +62,6 @@ export function createLocalTracksF(
                 desktopSharingFrameRate,
                 desktopSharingSources: options.desktopSharingSources,
 
-
                 // Copy array to avoid mutations inside library.
                 devices: options.devices.slice(0),
                 firefox_fake_device, // eslint-disable-line camelcase
