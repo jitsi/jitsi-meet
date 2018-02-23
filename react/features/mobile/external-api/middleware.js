@@ -14,6 +14,8 @@ import { LOAD_CONFIG_ERROR } from '../../base/config';
 import { MiddlewareRegistry } from '../../base/redux';
 import { toURLString } from '../../base/util';
 
+import { REQUEST_PIP_MODE } from '../picture-in-picture';
+
 /**
  * Middleware that captures Redux actions and uses the ExternalAPI module to
  * turn them into native events so the application knows about them.
@@ -62,6 +64,10 @@ MiddlewareRegistry.register(store => next => action => {
         });
         break;
     }
+
+    case REQUEST_PIP_MODE:
+        _sendEvent(store, _getSymbolDescription(action.type), /* data */ {});
+
     }
 
     return result;

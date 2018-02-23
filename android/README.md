@@ -118,8 +118,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onPause() {
-        super.onPause();
+    protected void onStop() {
+        super.onStop();
 
         JitsiMeetView.onHostPause(this);
     }
@@ -142,6 +142,10 @@ which displays a single `JitsiMeetView`.
 
 See JitsiMeetView.getDefaultURL.
 
+#### getPictureInPictureAvailable()
+
+See JitsiMeetView.getPictureInPictureAvailable.
+
 #### getWelcomePageEnabled()
 
 See JitsiMeetView.getWelcomePageEnabled.
@@ -153,6 +157,10 @@ See JitsiMeetView.loadURL.
 #### setDefaultURL(URL)
 
 See JitsiMeetView.setDefaultURL.
+
+#### setPictureInPictureAvailable(Boolean)
+
+See JitsiMeetView.setPictureInPictureAvailable.
 
 #### setWelcomePageEnabled(boolean)
 
@@ -178,6 +186,12 @@ if set to `null`, the default built in JavaScript is used: https://meet.jit.si.
 #### getListener()
 
 Returns the `JitsiMeetViewListener` instance attached to the view.
+
+#### getPictureInPictureAvailable()
+
+turns true if Picture-in-Picture is available, false otherwise. If the user
+doesn't explicitly set it, it will default to true if the platform supports it,
+false otherwise. See the Picture-in-Picture section.
 
 #### getWelcomePageEnabled()
 
@@ -227,6 +241,13 @@ NOTE: Must be called before `loadURL`/`loadURLString` for it to take effect.
 Sets the given listener (class implementing the `JitsiMeetViewListener`
 interface) on the view.
 
+#### setPictureInPictureAvailable(Boolean)
+
+Sets wether Picture-in-Picture is available. When set to `null` if will be
+detected at runtime based on platform support.
+
+NOTE: Must be called before `loadURL`/`loadURLString` for it to take effect.
+
 #### setWelcomePageEnabled(boolean)
 
 Sets whether the Welcome page is enabled. See `getWelcomePageEnabled` for more
@@ -257,7 +278,8 @@ This is a static method.
 
 #### onHostResume(activity)
 
-Helper method which should be called from the activity's `onResume` method.
+Helper method which should be called from the activity's `onResume` or `onStop`
+method.
 
 This is a static method.
 
@@ -266,6 +288,13 @@ This is a static method.
 Helper method for integrating the *deep linking* functionality. If your app's
 activity is launched in "singleTask" mode this method should be called from the
 activity's `onNewIntent` method.
+
+This is a static method.
+
+#### onUserLeaveHint()
+
+Helper method for integrating automatic Picture-in-Picture. It should be called
+from the activity's `onUserLeaveHint` method.
 
 This is a static method.
 
@@ -384,4 +413,16 @@ rules file:
 
 -keep class org.jitsi.meet.sdk.** { *; }
 ```
+
+## Picture-in-Picture
+
+The Jitsi Meet app and SDK will enable Android's native Picture-in-Picture mode
+iff the platform is supported: for Android >= Oreo.
+
+If the SDK is integrated in an application which calls
+`enterPictureInPictureMode` for the Jitsi Meet activity, the it will self-adjust
+by removing some UI elements.
+
+Alternatively, this can be explicitly disabled with the
+`setPctureInPictureAvailable` methods in the Jitsi Meet view or activity.
 

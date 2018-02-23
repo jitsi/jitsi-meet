@@ -95,7 +95,9 @@ public class MainActivity extends JitsiMeetActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         // As this is the Jitsi Meet app (i.e. not the Jitsi Meet SDK), we do
-        // want the Welcome page to be enabled. It defaults to disabled in the
+        // want to enable some options.
+
+        // The welcome page defaults to disabled in the
         // SDK at the time of this writing but it is clearer to be explicit
         // about what we want anyway.
         setWelcomePageEnabled(true);
