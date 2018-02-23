@@ -164,6 +164,13 @@ changes. The listener will receive an object with the following structure:
 }
 ```
 
+* **screenSharingStatusChanged** - receives event notifications about turning on/off the local user screen sharing. The listener will receive object with the following structure:
+```javascript
+{
+"on": on //whether screen sharing is on
+}
+```
+
 * **incomingMessage** - Event notifications about incoming
 messages. The listener will receive an object with the following structure:
 ```javascript
