@@ -23,10 +23,12 @@ import android.os.Bundle;
 import android.provider.Settings;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+import android.view.KeyEvent;
+
+import com.facebook.react.ReactInstanceManager;
+import com.facebook.react.modules.core.DefaultHardwareBackBtnHandler;
 
 import java.net.URL;
-
-import com.facebook.react.modules.core.DefaultHardwareBackBtnHandler;
 
 /**
  * Base Activity for applications integrating Jitsi Meet at a higher level. It
@@ -197,6 +199,23 @@ public class JitsiMeetActivity
         }
 
         JitsiMeetView.onHostDestroy(this);
+    }
+
+    // ReactAndroid/src/main/java/com/facebook/react/ReactActivity.java
+    @Override
+    public boolean onKeyUp(int keyCode, KeyEvent event) {
+        ReactInstanceManager reactInstanceManager;
+
+        if (!super.onKeyUp(keyCode, event)
+                && BuildConfig.DEBUG
+                && (reactInstanceManager
+                        = JitsiMeetView.getReactInstanceManager())
+                    != null
+                && keyCode == KeyEvent.KEYCODE_MENU) {
+            reactInstanceManager.showDevOptionsDialog();
+            return true;
+        }
+        return false;
     }
 
     @Override

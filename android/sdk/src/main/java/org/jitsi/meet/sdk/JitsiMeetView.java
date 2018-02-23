@@ -83,6 +83,11 @@ public class JitsiMeetView extends FrameLayout {
         return null;
     }
 
+    // XXX Strictly internal use only (at the time of this writing)!
+    static ReactInstanceManager getReactInstanceManager() {
+        return reactInstanceManager;
+    }
+
     /**
      * Internal method to initialize the React Native instance manager. We
      * create a single instance in order to load the JavaScript bundle a single
