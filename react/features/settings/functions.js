@@ -14,6 +14,7 @@ export function normalizeUserInputURL(url: string) {
 
     if (url) {
         url = url.replace(/\s/g, '').toLowerCase();
+
         const urlRegExp = new RegExp('^(\\w+://)?(.+)$');
         const urlComponents = urlRegExp.exec(url);
 
@@ -21,8 +22,7 @@ export function normalizeUserInputURL(url: string) {
             url = `https://${urlComponents[2]}`;
         }
 
-        const parsedURI
-            = parseStandardURIString(url);
+        const parsedURI = parseStandardURIString(url);
 
         if (!parsedURI.host) {
             return null;

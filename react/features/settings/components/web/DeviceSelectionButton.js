@@ -3,8 +3,8 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
-import { translate } from '../../base/i18n';
-import { openDeviceSelectionDialog } from '../../device-selection';
+import { translate } from '../../../base/i18n';
+import { openDeviceSelectionDialog } from '../../../device-selection';
 
 /**
  * Implements a React {@link Component} which displays a button for opening the

@@ -5,7 +5,7 @@ import DropdownMenu, {
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 
-import { DEFAULT_LANGUAGE, LANGUAGES, translate } from '../../base/i18n';
+import { DEFAULT_LANGUAGE, LANGUAGES, translate } from '../../../base/i18n';
 
 /**
  * Implements a React {@link Component} which displays a dropdown for changing

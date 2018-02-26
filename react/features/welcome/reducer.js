@@ -1,23 +1,20 @@
-import { ReducerRegistry } from '../base/redux';
-import { SET_SIDEBAR_VISIBILITY } from './actionTypes';
+// @flow
 
-const DEFAULT_STATE = {
-    sideBarVisible: false
-};
+import { ReducerRegistry } from '../base/redux';
+import { SET_SIDEBAR_VISIBLE } from './actionTypes';
 
 /**
- * Reduces the Redux actions of the feature features/recording.
+ * Reduces redux actions for the purposes of {@code features/welcome}.
  */
-ReducerRegistry.register('features/welcome',
-    (state = DEFAULT_STATE, action) => {
-        switch (action.type) {
-        case SET_SIDEBAR_VISIBILITY:
-            return {
-                ...state,
-                sideBarVisible: action.sideBarVisible
-            };
+ReducerRegistry.register('features/welcome', (state = {}, action) => {
+    switch (action.type) {
+    case SET_SIDEBAR_VISIBLE:
+        return {
+            ...state,
+            sideBarVisible: action.visible
+        };
 
-        default:
-            return state;
-        }
-    });
+    default:
+        return state;
+    }
+});

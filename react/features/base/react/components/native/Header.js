@@ -32,7 +32,36 @@ type Props = {
 export default class Header extends Component<Props> {
 
     /**
-     * Constructor of the Header component.
+     * The style of button-like React {@code Component}s rendered in
+     * {@code Header}.
+     *
+     * @returns {Object}
+     */
+    static get buttonStyle() {
+        return styles.headerButton;
+    }
+
+    /**
+     * The style of a React {@code Component} rendering a {@code Header} as its
+     * child.
+     *
+     * @returns {Object}
+     */
+    static get pageStyle() {
+        return styles.page;
+    }
+
+    /**
+     * The style of text rendered in {@code Header}.
+     *
+     * @returns {Object}
+     */
+    static get textStyle() {
+        return styles.headerText;
+    }
+
+    /**
+     * Initializes a new {@code Header} instance.
      *
      * @inheritdoc
      */
@@ -77,8 +106,8 @@ export default class Header extends Component<Props> {
     _getIOS10CompatiblePadding: () => Object;
 
     /**
-     * Adds a padding for iOS 10 (and older) devices to avoid clipping
-     * with the status bar.
+     * Adds a padding for iOS 10 (and older) devices to avoid clipping with the
+     * status bar.
      * Note: This is a workaround for iOS 10 (and older) devices only to fix
      * usability, but it doesn't take orientation into account, so unnecessary
      * padding is rendered in some cases.
@@ -99,5 +128,4 @@ export default class Header extends Component<Props> {
 
         return null;
     }
-
 }

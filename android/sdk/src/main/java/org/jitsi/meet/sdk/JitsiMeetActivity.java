@@ -33,14 +33,14 @@ import java.net.URL;
 
 /**
  * Base Activity for applications integrating Jitsi Meet at a higher level. It
- * contains all the required wiring between the {@code JKConferenceView} and
+ * contains all the required wiring between the {@code JitsiMeetView} and
  * the Activity lifecycle methods already implemented.
  *
- * In this activity we use a single {@code JKConferenceView} instance. This
+ * In this activity we use a single {@code JitsiMeetView} instance. This
  * instance gives us access to a view which displays the welcome page and the
  * conference itself. All lifetime methods associated with this Activity are
  * hooked to the React Native subsystem via proxy calls through the
- * {@code JKConferenceView} static methods.
+ * {@code JitsiMeetView} static methods.
  */
 public class JitsiMeetActivity extends AppCompatActivity {
     /**

@@ -4,12 +4,6 @@ import React, { Component } from 'react';
 import { SafeAreaView, ScrollView, Text } from 'react-native';
 import { connect } from 'react-redux';
 
-import SideBarItem from './SideBarItem';
-import styles from './styles';
-
-import { setSideBarVisibility } from '../actions';
-
-import { showAppSettings } from '../../app-settings';
 import {
     Avatar,
     getAvatarURL,
@@ -20,6 +14,11 @@ import {
     Header,
     SideBar
 } from '../../base/react';
+import { setSettingsViewVisible } from '../../settings';
+
+import { setSideBarVisible } from '../actions';
+import SideBarItem from './SideBarItem';
+import styles from './styles';
 
 /**
  * The URL at which the privacy policy is available to the user.
@@ -71,6 +70,7 @@ class WelcomePageSideBar extends Component<Props> {
     constructor(props) {
         super(props);
 
+        // Bind event handlers so they are only bound once per instance.
         this._onHideSideBar = this._onHideSideBar.bind(this);
         this._onOpenSettings = this._onOpenSettings.bind(this);
     }
@@ -122,19 +122,19 @@ class WelcomePageSideBar extends Component<Props> {
     _onHideSideBar: () => void;
 
     /**
-     * Invoked when the sidebar has closed itslef (e.g. overlay pressed).
+     * Invoked when the sidebar has closed itself (e.g. overlay pressed).
      *
      * @private
      * @returns {void}
      */
     _onHideSideBar() {
-        this.props.dispatch(setSideBarVisibility(false));
+        this.props.dispatch(setSideBarVisible(false));
     }
 
     _onOpenSettings: () => void;
 
     /**
-     * Opens the settings screen.
+     * Shows the {@link SettingsView}.
      *
      * @private
      * @returns {void}
@@ -142,8 +142,8 @@ class WelcomePageSideBar extends Component<Props> {
     _onOpenSettings() {
         const { dispatch } = this.props;
 
-        dispatch(setSideBarVisibility(false));
-        dispatch(showAppSettings());
+        dispatch(setSideBarVisible(false));
+        dispatch(setSettingsViewVisible(true));
     }
 }
 

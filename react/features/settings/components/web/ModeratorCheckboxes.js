@@ -2,8 +2,8 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
-import { setFollowMe, setStartMutedPolicy } from '../../base/conference';
-import { translate } from '../../base/i18n';
+import { setFollowMe, setStartMutedPolicy } from '../../../base/conference';
+import { translate } from '../../../base/i18n';
 
 /**
  * Implements a React {@link Component} which displays checkboxes for enabling

@@ -47,6 +47,7 @@ class FormRow extends Component<Props> {
         super(props);
 
         React.Children.only(this.props.children);
+
         this._getDefaultFieldProps = this._getDefaultFieldProps.bind(this);
         this._getRowStyle = this._getRowStyle.bind(this);
     }
@@ -63,10 +64,10 @@ class FormRow extends Component<Props> {
 
         // Some field types need additional props to look good and standardized
         // on a form.
-        const newChild = React.cloneElement(
-            this.props.children,
-            this._getDefaultFieldProps(this.props.children)
-        );
+        const newChild
+            = React.cloneElement(
+                this.props.children,
+                this._getDefaultFieldProps(this.props.children));
 
         return (
             <View
@@ -74,7 +75,8 @@ class FormRow extends Component<Props> {
                 <View style = { styles.fieldLabelContainer } >
                     <Text
                         style = { [
-                            styles.text, styles.fieldLabelText
+                            styles.text,
+                            styles.fieldLabelText
                         ] } >
                         { t(this.props.i18nLabel) }
                     </Text>
@@ -96,8 +98,8 @@ class FormRow extends Component<Props> {
      *     - TextInput
      *     - Switch (needs no addition props ATM).
      *
-     * @private
      * @param {Object} field - The field (child) component.
+     * @private
      * @returns {Object}
      */
     _getDefaultFieldProps(field: Object) {

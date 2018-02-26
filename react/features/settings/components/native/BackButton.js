@@ -4,7 +4,7 @@ import React, { Component } from 'react';
 import { TouchableOpacity } from 'react-native';
 
 import { Icon } from '../../../base/font-icons';
-import { PlatformElements } from '../../../base/styles';
+import { Header } from '../../../base/react';
 
 /**
  * The type of the React {@code Component} props of {@link BackButton}
@@ -40,7 +40,7 @@ export default class BackButton extends Component<Props> {
                 <Icon
                     name = { 'arrow_back' }
                     style = { [
-                        PlatformElements.headerButton,
+                        Header.buttonStyle,
                         this.props.style
                     ] } />
             </TouchableOpacity>

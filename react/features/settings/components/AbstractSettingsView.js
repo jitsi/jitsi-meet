@@ -5,7 +5,8 @@ import { Component } from 'react';
 import { getProfile, updateProfile } from '../../base/profile';
 
 /**
- * The type of the React {@code Component} props of {@link AbstractAppSettings}
+ * The type of the React {@code Component} props of
+ * {@link AbstractSettingsView}.
  */
 type Props = {
 
@@ -20,7 +21,7 @@ type Props = {
     _serverURL: string,
 
     /**
-     * The visibility prop of the settings screen.
+     * Whether {@link AbstractSettingsView} is visible.
      */
     _visible: boolean,
 
@@ -41,10 +42,10 @@ type Props = {
  *
  * @abstract
  */
-export class AbstractAppSettings extends Component<Props> {
+export class AbstractSettingsView extends Component<Props> {
 
     /**
-     * Initializes a new {@code AbstractAppSettings} instance.
+     * Initializes a new {@code AbstractSettingsView} instance.
      *
      * @param {Props} props - The React {@code Component} props to initialize
      * the component.
@@ -52,6 +53,7 @@ export class AbstractAppSettings extends Component<Props> {
     constructor(props: Props) {
         super(props);
 
+        // Bind event handlers so they are only bound once per instance.
         this._onChangeDisplayName = this._onChangeDisplayName.bind(this);
         this._onChangeEmail = this._onChangeEmail.bind(this);
         this._onChangeServerURL = this._onChangeServerURL.bind(this);
@@ -66,8 +68,8 @@ export class AbstractAppSettings extends Component<Props> {
     /**
      * Handles the display name field value change.
      *
-     * @protected
      * @param {string} text - The value typed in the name field.
+     * @protected
      * @returns {void}
      */
     _onChangeDisplayName(text) {
@@ -81,8 +83,8 @@ export class AbstractAppSettings extends Component<Props> {
     /**
      * Handles the email field value change.
      *
-     * @protected
      * @param {string} text - The value typed in the email field.
+     * @protected
      * @returns {void}
      */
     _onChangeEmail(text) {
@@ -96,8 +98,8 @@ export class AbstractAppSettings extends Component<Props> {
     /**
      * Handles the server name field value change.
      *
-     * @protected
      * @param {string} text - The server URL typed in the server field.
+     * @protected
      * @returns {void}
      */
     _onChangeServerURL(text) {
@@ -111,9 +113,9 @@ export class AbstractAppSettings extends Component<Props> {
     /**
      * Handles the start audio muted change event.
      *
+     * @param {boolean} newValue - The new value for the start audio muted
+     * option.
      * @protected
-     * @param {boolean} newValue - The new value for the
-     * start audio muted option.
      * @returns {void}
      */
     _onStartAudioMutedChange(newValue) {
@@ -127,9 +129,9 @@ export class AbstractAppSettings extends Component<Props> {
     /**
      * Handles the start video muted change event.
      *
+     * @param {boolean} newValue - The new value for the start video muted
+     * option.
      * @protected
-     * @param {boolean} newValue - The new value for the
-     * start video muted option.
      * @returns {void}
      */
     _onStartVideoMutedChange(newValue) {
@@ -143,8 +145,8 @@ export class AbstractAppSettings extends Component<Props> {
     /**
      * Updates the persisted profile on any change.
      *
-     * @private
      * @param {Object} updateObject - The partial update object for the profile.
+     * @private
      * @returns {void}
      */
     _updateProfile(updateObject: Object) {
@@ -157,19 +159,20 @@ export class AbstractAppSettings extends Component<Props> {
 
 /**
  * Maps (parts of) the redux state to the React {@code Component} props of
- * {@code AbstractAppSettings}.
+ * {@code AbstractSettingsView}.
  *
  * @param {Object} state - The redux state.
  * @protected
- * @returns {Object}
+ * @returns {{
+ *     _profile: Object,
+ *     _serverURL: string,
+ *     _visible: boolean
+ * }}
  */
 export function _mapStateToProps(state: Object) {
-    const _serverURL = state['features/app'].app._getDefaultURL();
-    const _profile = getProfile(state);
-
     return {
-        _profile,
-        _serverURL,
-        _visible: state['features/app-settings'].visible
+        _profile: getProfile(state),
+        _serverURL: state['features/app'].app._getDefaultURL(),
+        _visible: state['features/settings'].visible
     };
 }

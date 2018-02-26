@@ -1,19 +1,20 @@
 // @flow
 
-import { SET_SIDEBAR_VISIBILITY } from './actionTypes';
+import { SET_SIDEBAR_VISIBLE } from './actionTypes';
 
 /**
- * Redux action to hide or show the status bar.
+ * Sets the visibility of {@link WelcomePageSideBar}.
  *
- * @param {boolean} visible - The new value of the visibility.
+ * @param {boolean} visible - If the {@code WelcomePageSideBar} is to be made
+ * visible, {@code true}; otherwise, {@code false}.
  * @returns {{
- *     type: SET_SIDEBAR_VISIBILITY,
- *     sideBarVisible: boolean
+ *     type: SET_SIDEBAR_VISIBLE,
+ *     visible: boolean
  * }}
  */
-export function setSideBarVisibility(visible: boolean) {
+export function setSideBarVisible(visible: boolean) {
     return {
-        type: SET_SIDEBAR_VISIBILITY,
-        sideBarVisible: visible
+        type: SET_SIDEBAR_VISIBLE,
+        visible
     };
 }

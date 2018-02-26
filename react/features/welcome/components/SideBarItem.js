@@ -3,10 +3,10 @@
 import React, { Component } from 'react';
 import { Linking, Text, TouchableOpacity, View } from 'react-native';
 
-import styles from './styles';
-
 import { Icon } from '../../base/font-icons';
 import { translate } from '../../base/i18n';
+
+import styles from './styles';
 
 type Props = {
 
@@ -43,13 +43,14 @@ type Props = {
 class SideBarItem extends Component<Props> {
 
     /**
-     * Contructor of the SideBarItem Component.
+     * Initializes a new {@code SideBarItem} instance.
      *
      * @inheritdoc
      */
     constructor(props: Props) {
         super(props);
 
+        // Bind event handlers so they are only bound once per instance.
         this._onOpenURL = this._onOpenURL.bind(this);
     }
 

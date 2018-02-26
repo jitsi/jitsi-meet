@@ -14,16 +14,48 @@ export const STATUSBAR_COLOR = ColorPalette.blueHighlight;
 export const SIDEBAR_WIDTH = 250;
 
 /**
- * The styles of the React {@code Components} of the generic components
- * in the app.
+ * The styles of the generic React {@code Components} of the app.
  */
 export default createStyleSheet({
+
+    /**
+     * Platform specific header button (e.g. back, menu...etc).
+     */
+    headerButton: {
+        alignSelf: 'center',
+        color: ColorPalette.white,
+        fontSize: 26,
+        paddingRight: 22
+    },
 
     /**
      * Style of the header overlay to cover the unsafe areas.
      */
     headerOverlay: {
         backgroundColor: HEADER_COLOR
+    },
+
+    /**
+     * Generic style for a label placed in the header.
+     */
+    headerText: {
+        color: ColorPalette.white,
+        fontSize: 20
+    },
+
+    /**
+     * The top-level element of a page.
+     */
+    page: {
+        alignItems: 'stretch',
+        bottom: 0,
+        flex: 1,
+        flexDirection: 'column',
+        left: 0,
+        overflow: 'hidden',
+        position: 'absolute',
+        right: 0,
+        top: 0
     },
 
     /**

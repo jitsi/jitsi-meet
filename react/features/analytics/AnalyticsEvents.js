@@ -76,13 +76,13 @@ export const VIDEO_MUTE = 'video.mute';
  * @returns {Object} The event in a format suitable for sending via
  * sendAnalytics.
  */
-export const createApiEvent = function(action, attributes = {}) {
+export function createApiEvent(action, attributes = {}) {
     return {
         action,
         attributes,
         source: 'jitsi-meet-api'
     };
-};
+}
 
 /**
  * Creates an event which indicates that the audio-only mode has been changed.
@@ -91,11 +91,11 @@ export const createApiEvent = function(action, attributes = {}) {
  * @returns {Object} The event in a format suitable for sending via
  * sendAnalytics.
  */
-export const createAudioOnlyChangedEvent = function(enabled) {
+export function createAudioOnlyChangedEvent(enabled) {
     return {
         action: `audio.only.${enabled ? 'enabled' : 'disabled'}`
     };
-};
+}
 
 /**
  * Creates an event which indicates that a device was changed.
@@ -106,7 +106,7 @@ export const createAudioOnlyChangedEvent = function(enabled) {
  * @returns {Object} The event in a format suitable for sending via
  * sendAnalytics.
  */
-export const createDeviceChangedEvent = function(mediaType, deviceType) {
+export function createDeviceChangedEvent(mediaType, deviceType) {
     return {
         action: 'device.changed',
         attributes: {
@@ -114,7 +114,7 @@ export const createDeviceChangedEvent = function(mediaType, deviceType) {
             'media_type': mediaType
         }
     };
-};
+}
 
 /**
  * Creates an event which specifies that the feedback dialog has been opened.
@@ -122,11 +122,11 @@ export const createDeviceChangedEvent = function(mediaType, deviceType) {
  * @returns {Object} The event in a format suitable for sending via
  * sendAnalytics.
  */
-export const createFeedbackOpenEvent = function() {
+export function createFeedbackOpenEvent() {
     return {
         action: 'feedback.opened'
     };
-};
+}
 
 /**
  * Creates an event which indicates that the invite dialog was closed. This is
@@ -136,11 +136,11 @@ export const createFeedbackOpenEvent = function() {
  * @returns {Object} The event in a format suitable for sending via
  * sendAnalytics.
  */
-export const createInviteDialogClosedEvent = function() {
+export function createInviteDialogClosedEvent() {
     return {
         action: 'invite.dialog.closed'
     };
-};
+}
 
 /**
  * Creates a "page reload" event.
@@ -152,17 +152,16 @@ export const createInviteDialogClosedEvent = function() {
  * @returns {Object} The event in a format suitable for sending via
  * sendAnalytics.
  */
-export const createPageReloadScheduledEvent
-    = function(reason, timeout, details) {
-        return {
-            action: 'page.reload.scheduled',
-            attributes: {
-                reason,
-                timeout,
-                ...details
-            }
-        };
+export function createPageReloadScheduledEvent(reason, timeout, details) {
+    return {
+        action: 'page.reload.scheduled',
+        attributes: {
+            reason,
+            timeout,
+            ...details
+        }
     };
+}
 
 /**
  * Creates a "pinned" or "unpinned" event.
@@ -173,17 +172,16 @@ export const createPageReloadScheduledEvent
  * @returns {Object} The event in a format suitable for sending via
  * sendAnalytics.
  */
-export const createPinnedEvent
-        = function(action, participantId, attributes) {
-            return {
-                type: TYPE_TRACK,
-                action,
-                actionSubject: 'participant',
-                objectType: 'participant',
-                objectId: participantId,
-                attributes
-            };
-        };
+export function createPinnedEvent(action, participantId, attributes) {
+    return {
+        type: TYPE_TRACK,
+        action,
+        actionSubject: 'participant',
+        objectType: 'participant',
+        objectId: participantId,
+        attributes
+    };
+}
 
 /**
  * Creates an event which indicates that a button in the profile panel was
@@ -194,16 +192,15 @@ export const createPinnedEvent
  * @returns {Object} The event in a format suitable for sending via
  * sendAnalytics.
  */
-export const createProfilePanelButtonEvent
-    = function(buttonName, attributes = {}) {
-        return {
-            action: 'clicked',
-            actionSubject: buttonName,
-            attributes,
-            source: 'profile.panel',
-            type: TYPE_UI
-        };
+export function createProfilePanelButtonEvent(buttonName, attributes = {}) {
+    return {
+        action: 'clicked',
+        actionSubject: buttonName,
+        attributes,
+        source: 'profile.panel',
+        type: TYPE_UI
     };
+}
 
 /**
  * Creates an event which indicates that a specific button on one of the
@@ -215,14 +212,14 @@ export const createProfilePanelButtonEvent
  * @returns {Object} The event in a format suitable for sending via
  * sendAnalytics.
  */
-export const createRecordingDialogEvent = function(dialogName, buttonName) {
+export function createRecordingDialogEvent(dialogName, buttonName) {
     return {
         action: 'clicked',
         actionSubject: buttonName,
         source: `${dialogName}.recording.dialog`,
         type: TYPE_UI
     };
-};
+}
 
 /**
  * Creates an event which specifies that the "confirm" button on the remote
@@ -233,7 +230,7 @@ export const createRecordingDialogEvent = function(dialogName, buttonName) {
  * @returns {Object} The event in a format suitable for sending via
  * sendAnalytics.
  */
-export const createRemoteMuteConfirmedEvent = function(participantId) {
+export function createRemoteMuteConfirmedEvent(participantId) {
     return {
         action: 'clicked',
         actionSubject: 'remote.mute.dialog.confirm.button',
@@ -243,7 +240,7 @@ export const createRemoteMuteConfirmedEvent = function(participantId) {
         source: 'remote.mute.dialog',
         type: TYPE_UI
     };
-};
+}
 
 /**
  * Creates an event which indicates that one of the buttons in the "remote
@@ -254,16 +251,15 @@ export const createRemoteMuteConfirmedEvent = function(participantId) {
  * @returns {Object} The event in a format suitable for sending via
  * sendAnalytics.
  */
-export const createRemoteVideoMenuButtonEvent
-    = function(buttonName, attributes) {
-        return {
-            action: 'clicked',
-            actionSubject: buttonName,
-            attributes,
-            source: 'remote.video.menu',
-            type: TYPE_UI
-        };
+export function createRemoteVideoMenuButtonEvent(buttonName, attributes) {
+    return {
+        action: 'clicked',
+        actionSubject: buttonName,
+        attributes,
+        source: 'remote.video.menu',
+        type: TYPE_UI
     };
+}
 
 /**
  * Creates an event indicating that an action related to screen sharing
@@ -273,12 +269,12 @@ export const createRemoteVideoMenuButtonEvent
  * @returns {Object} The event in a format suitable for sending via
  * sendAnalytics.
  */
-export const createScreenSharingEvent = function(action) {
+export function createScreenSharingEvent(action) {
     return {
         action,
         actionSubject: 'screen.sharing'
     };
-};
+}
 
 /**
  * The local participant failed to send a "selected endpoint" message to the
@@ -288,7 +284,7 @@ export const createScreenSharingEvent = function(action) {
  * @returns {Object} The event in a format suitable for sending via
  * sendAnalytics.
  */
-export const createSelectParticipantFailedEvent = function(error) {
+export function createSelectParticipantFailedEvent(error) {
     const event = {
         action: 'select.participant.failed'
     };
@@ -298,7 +294,7 @@ export const createSelectParticipantFailedEvent = function(error) {
     }
 
     return event;
-};
+}
 
 /**
  * Creates an event associated with the "shared video" feature.
@@ -308,13 +304,13 @@ export const createSelectParticipantFailedEvent = function(error) {
  * @returns {Object} The event in a format suitable for sending via
  * sendAnalytics.
  */
-export const createSharedVideoEvent = function(action, attributes = {}) {
+export function createSharedVideoEvent(action, attributes = {}) {
     return {
         action,
         attributes,
         actionSubject: 'shared.video'
     };
-};
+}
 
 /**
  * Creates an event associated with a shortcut being pressed, released or
@@ -331,17 +327,19 @@ export const createSharedVideoEvent = function(action, attributes = {}) {
  * @returns {Object} The event in a format suitable for sending via
  * sendAnalytics.
  */
-export const createShortcutEvent
-    = function(shortcut, action = ACTION_SHORTCUT_TRIGGERED, attributes = {}) {
-        return {
-            action,
-            actionSubject: 'keyboard.shortcut',
-            actionSubjectId: shortcut,
-            attributes,
-            source: 'keyboard.shortcut',
-            type: TYPE_UI
-        };
+export function createShortcutEvent(
+        shortcut,
+        action = ACTION_SHORTCUT_TRIGGERED,
+        attributes = {}) {
+    return {
+        action,
+        actionSubject: 'keyboard.shortcut',
+        actionSubjectId: shortcut,
+        attributes,
+        source: 'keyboard.shortcut',
+        type: TYPE_UI
     };
+}
 
 /**
  * Creates an event which indicates the "start audio only" configuration.
@@ -350,14 +348,14 @@ export const createShortcutEvent
  * @returns {Object} The event in a format suitable for sending via
  * sendAnalytics.
  */
-export const createStartAudioOnlyEvent = function(audioOnly) {
+export function createStartAudioOnlyEvent(audioOnly) {
     return {
         action: 'start.audio.only',
         attributes: {
             enabled: audioOnly
         }
     };
-};
+}
 
 /**
  * Creates an event which indicates the "start muted" configuration.
@@ -372,17 +370,19 @@ export const createStartAudioOnlyEvent = function(audioOnly) {
  * @returns {Object} The event in a format suitable for sending via
  * sendAnalytics.
  */
-export const createStartMutedConfigurationEvent
-    = function(source, audioMute, videoMute) {
-        return {
-            action: 'start.muted.configuration',
-            attributes: {
-                source,
-                'audio_mute': audioMute,
-                'video_mute': videoMute
-            }
-        };
+export function createStartMutedConfigurationEvent(
+        source,
+        audioMute,
+        videoMute) {
+    return {
+        action: 'start.muted.configuration',
+        attributes: {
+            source,
+            'audio_mute': audioMute,
+            'video_mute': videoMute
+        }
     };
+}
 
 /**
  * Creates an event which indicates the delay for switching between simulcast
@@ -392,12 +392,12 @@ export const createStartMutedConfigurationEvent
  * @returns {Object} The event in a format suitable for sending via
  * sendAnalytics.
  */
-export const createStreamSwitchDelayEvent = function(attributes) {
+export function createStreamSwitchDelayEvent(attributes) {
     return {
         action: 'stream.switch.delay',
         attributes
     };
-};
+}
 
 /**
  * Automatically changing the mute state of a media track in order to match
@@ -409,7 +409,7 @@ export const createStreamSwitchDelayEvent = function(attributes) {
  * @returns {Object} The event in a format suitable for sending via
  * sendAnalytics.
  */
-export const createSyncTrackStateEvent = function(mediaType, muted) {
+export function createSyncTrackStateEvent(mediaType, muted) {
     return {
         action: 'sync.track.state',
         attributes: {
@@ -417,7 +417,7 @@ export const createSyncTrackStateEvent = function(mediaType, muted) {
             muted
         }
     };
-};
+}
 
 /**
  * Creates an event associated with a toolbar button being clicked/pressed. By
@@ -431,7 +431,7 @@ export const createSyncTrackStateEvent = function(mediaType, muted) {
  * @returns {Object} The event in a format suitable for sending via
  * sendAnalytics.
  */
-export const createToolbarEvent = function(buttonName, attributes = {}) {
+export function createToolbarEvent(buttonName, attributes = {}) {
     return {
         action: 'clicked',
         actionSubject: buttonName,
@@ -439,7 +439,7 @@ export const createToolbarEvent = function(buttonName, attributes = {}) {
         source: 'toolbar.button',
         type: TYPE_UI
     };
-};
+}
 
 /**
  * Creates an event which indicates that a local track was muted.
@@ -452,7 +452,7 @@ export const createToolbarEvent = function(buttonName, attributes = {}) {
  * @returns {Object} The event in a format suitable for sending via
  * sendAnalytics.
  */
-export const createTrackMutedEvent = function(mediaType, reason, muted = true) {
+export function createTrackMutedEvent(mediaType, reason, muted = true) {
     return {
         action: 'track.muted',
         attributes: {
@@ -461,7 +461,7 @@ export const createTrackMutedEvent = function(mediaType, reason, muted = true) {
             reason
         }
     };
-};
+}
 
 /**
  * Creates an event for an action on the welcome page.
@@ -472,12 +472,11 @@ export const createTrackMutedEvent = function(mediaType, reason, muted = true) {
  * @returns {Object} The event in a format suitable for sending via
  * sendAnalytics.
  */
-export const createWelcomePageEvent
-    = function(action, actionSubject, attributes = {}) {
-        return {
-            action,
-            actionSubject,
-            attributes,
-            source: 'welcomePage'
-        };
+export function createWelcomePageEvent(action, actionSubject, attributes = {}) {
+    return {
+        action,
+        actionSubject,
+        attributes,
+        source: 'welcomePage'
     };
+}

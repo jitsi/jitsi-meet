@@ -98,14 +98,7 @@ export default createStyleSheet({
      */
     hintButtonContainer: {
         flexDirection: 'row',
-        justifyContent: 'flex-end'
-    },
-
-    /**
-     * Container for the text on the hint box.
-     */
-    hintTextContainer: {
-        marginBottom: 2 * BoxModel.margin
+        justifyContent: 'center'
     },
 
     /**
@@ -121,6 +114,13 @@ export default createStyleSheet({
         overflow: 'hidden',
         paddingHorizontal: BoxModel.padding,
         paddingVertical: 2 * BoxModel.padding
+    },
+
+    /**
+     * Container for the text on the hint box.
+     */
+    hintTextContainer: {
+        marginBottom: 2 * BoxModel.margin
     },
 
     /**
@@ -142,7 +142,7 @@ export default createStyleSheet({
     },
 
     /**
-     * Top level screen style
+     * Top-level screen style.
      */
     page: {
         flex: 1,

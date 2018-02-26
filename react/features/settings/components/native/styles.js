@@ -7,8 +7,7 @@ export const ANDROID_UNDERLINE_COLOR = 'transparent';
 const TEXT_SIZE = 17;
 
 /**
- * The styles of the native components of the feature
- * {@code app-settings}.
+ * The styles of the native components of the feature {@code settings}.
  */
 export default createStyleSheet({
     /**

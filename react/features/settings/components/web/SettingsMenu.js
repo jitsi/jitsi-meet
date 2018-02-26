@@ -2,8 +2,11 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
-import { translate } from '../../base/i18n';
-import { getLocalParticipant, PARTICIPANT_ROLE } from '../../base/participants';
+import { translate } from '../../../base/i18n';
+import {
+    getLocalParticipant,
+    PARTICIPANT_ROLE
+} from '../../../base/participants';
 
 import DeviceSelectionButton from './DeviceSelectionButton';
 import LanguageSelectDropdown from './LanguageSelectDropdown';

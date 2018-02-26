@@ -125,17 +125,20 @@ function _connectionEstablished({ dispatch }, next, action) {
  */
 function _conferenceFailedOrLeft({ dispatch, getState }, next, action) {
     const result = next(action);
+
     const state = getState();
     const { audioOnly } = state['features/base/conference'];
     const { startAudioOnly } = state['features/base/profile'].profile;
 
-    // FIXME: Consider implementing a standalone audio-only feature
-    // that handles all these state changes.
-    if (audioOnly && !startAudioOnly) {
-        sendAnalytics(createAudioOnlyChangedEvent(false));
-        logger.log('Audio only disabled');
-        dispatch(setAudioOnly(false));
-    } else if (!audioOnly && startAudioOnly) {
+    // FIXME: Consider implementing a standalone audio-only feature that handles
+    // all these state changes.
+    if (audioOnly) {
+        if (!startAudioOnly) {
+            sendAnalytics(createAudioOnlyChangedEvent(false));
+            logger.log('Audio only disabled');
+            dispatch(setAudioOnly(false));
+        }
+    } else if (startAudioOnly) {
         sendAnalytics(createAudioOnlyChangedEvent(true));
         logger.log('Audio only enabled');
         dispatch(setAudioOnly(true));

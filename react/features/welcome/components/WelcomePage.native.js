@@ -11,26 +11,21 @@ import {
 } from 'react-native';
 import { connect } from 'react-redux';
 
-import { AppSettings } from '../../app-settings';
 import { translate } from '../../base/i18n';
 import { Icon } from '../../base/font-icons';
 import { MEDIA_TYPE } from '../../base/media';
 import { updateProfile } from '../../base/profile';
-import {
-    LoadingIndicator,
-    Header,
-    Text
-} from '../../base/react';
-import { ColorPalette, PlatformElements } from '../../base/styles';
+import { LoadingIndicator, Header, Text } from '../../base/react';
+import { ColorPalette } from '../../base/styles';
 import {
     createDesiredLocalTracks,
     destroyLocalTracks
 } from '../../base/tracks';
 import { RecentList } from '../../recent-list';
-
-import { setSideBarVisibility } from '../actions';
+import { SettingsView } from '../../settings';
 
 import { AbstractWelcomePage, _mapStateToProps } from './AbstractWelcomePage';
+import { setSideBarVisible } from '../actions';
 import LocalVideoTrackUnderlay from './LocalVideoTrackUnderlay';
 import styles, {
     PLACEHOLDER_TEXT_COLOR,
@@ -62,6 +57,7 @@ class WelcomePage extends AbstractWelcomePage {
 
         this.state.hintBoxAnimation = new Animated.Value(0);
 
+        // Bind event handlers so they are only bound once per instance.
         this._getHintBoxStyle = this._getHintBoxStyle.bind(this);
         this._onFieldFocusChange = this._onFieldFocusChange.bind(this);
         this._onShowSideBar = this._onShowSideBar.bind(this);
@@ -97,20 +93,21 @@ class WelcomePage extends AbstractWelcomePage {
      * @returns {ReactElement}
      */
     render() {
+        const { buttonStyle, pageStyle, textStyle } = Header;
         const { t, _profile } = this.props;
 
         return (
             <LocalVideoTrackUnderlay style = { styles.welcomePage }>
-                <View style = { PlatformElements.page }>
+                <View style = { pageStyle }>
                     <Header style = { styles.header }>
                         <TouchableOpacity onPress = { this._onShowSideBar } >
                             <Icon
                                 name = 'menu'
-                                style = { PlatformElements.headerButton } />
+                                style = { buttonStyle } />
                         </TouchableOpacity>
                         <View style = { styles.audioVideoSwitchContainer }>
-                            <Text style = { PlatformElements.headerText } >
-                                { t('welcomepage.videoEnabledLabel') }
+                            <Text style = { textStyle } >
+                                { t('welcomepage.audioVideoSwitch.video') }
                             </Text>
                             <Switch
                                 onTintColor = { SWITCH_UNDER_COLOR }
@@ -118,8 +115,8 @@ class WelcomePage extends AbstractWelcomePage {
                                 style = { styles.audioVideoSwitch }
                                 thumbTintColor = { SWITCH_THUMB_COLOR }
                                 value = { _profile.startAudioOnly } />
-                            <Text style = { PlatformElements.headerText } >
-                                { t('welcomepage.audioOnlyLabel') }
+                            <Text style = { textStyle } >
+                                { t('welcomepage.audioVideoSwitch.audio') }
                             </Text>
                         </View>
                     </Header>
@@ -145,7 +142,7 @@ class WelcomePage extends AbstractWelcomePage {
                         }
                         <RecentList disabled = { this.state._fieldFocused } />
                     </SafeAreaView>
-                    <AppSettings />
+                    <SettingsView />
                 </View>
                 <WelcomePageSideBar />
             </LocalVideoTrackUnderlay>
@@ -204,7 +201,7 @@ class WelcomePage extends AbstractWelcomePage {
      */
     _onShowSideBar() {
         Keyboard.dismiss();
-        this.props.dispatch(setSideBarVisibility(true));
+        this.props.dispatch(setSideBarVisible(true));
     }
 
     /**
@@ -234,17 +231,14 @@ class WelcomePage extends AbstractWelcomePage {
             const { t } = this.props;
 
             return (
-                <Animated.View
-                    style = { this._getHintBoxStyle() }>
+                <Animated.View style = { this._getHintBoxStyle() }>
                     <View style = { styles.hintTextContainer } >
                         <Text>
-                            { t('welcomepage.hintText') }
+                            { t('welcomepage.roomnameHint') }
                         </Text>
                     </View>
                     <View style = { styles.hintButtonContainer } >
-                        {
-                            this._renderJoinButton()
-                        }
+                        { this._renderJoinButton() }
                     </View>
                 </Animated.View>
             );

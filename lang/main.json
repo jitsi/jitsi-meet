@@ -47,16 +47,18 @@
     },
     "welcomepage":{
         "appDescription": "Go ahead, video chat with the whole team. In fact, invite everyone you know. __app__ is a fully encrypted, 100% open source video conferencing solution that you can use all day, every day, for free — with no account needed.",
-        "audioOnlyLabel": "Voice",
+        "audioVideoSwitch": {
+            "audio": "Voice",
+            "video": "Video"
+        },
         "go": "GO",
-        "hintText": "Enter a room name you want to join to, or simply create a new room name, eg. MeetingWithJohn",
         "join": "JOIN",
         "privacy": "Privacy",
         "roomname": "Enter room name",
+        "roomnameHint": "Enter the name or URL of the room you want to join. You may make a name up, just let the people you are meeting know it so that they enter the same name.",
         "sendFeedback": "Send feedback",
         "terms": "Terms",
-        "title": "More secure, more flexible, and completely free video conferencing",
-        "videoEnabledLabel": "Video"
+        "title": "More secure, more flexible, and completely free video conferencing"
     },
     "startupoverlay": {
         "policyText": " ",
@@ -503,7 +505,7 @@
         "title": "Call info",
         "tooltip": "Get access info about the meeting"
     },
-    "settingsScreen": {
+    "settingsView": {
         "alertOk": "OK",
         "alertTitle": "Warning",
         "alertURLText": "The entered server URL is invalid",
@@ -515,8 +517,5 @@
         "serverURL": "Server URL",
         "startWithAudioMuted": "Start with audio muted",
         "startWithVideoMuted": "Start with video muted"
-    },
-    "sideBar": {
-        "settings": "Settings"
     }
 }

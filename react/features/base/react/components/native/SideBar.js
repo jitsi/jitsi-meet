@@ -1,4 +1,4 @@
-/* @flow */
+// @flow
 
 import React, { Component } from 'react';
 import {
@@ -10,9 +10,8 @@ import {
 
 import styles, { SIDEBAR_WIDTH } from './styles';
 
-
 /**
- * The type of the React {@code Component} props of {@link SideBar}
+ * The type of the React {@code Component} props of {@link SideBar}.
  */
 type Props = {
 
@@ -38,17 +37,20 @@ type Props = {
     show: boolean
 }
 
+/**
+ * The type of the React {@code Component} state of {@link SideBar}.
+ */
 type State = {
-
-    /**
-     * Indicates whether the side bar is visible or not.
-     */
-    showSideBar: boolean,
 
     /**
      * Indicates whether the side overlay should be rendered or not.
      */
     showOverlay: boolean,
+
+    /**
+     * Indicates whether the side bar is visible or not.
+     */
+    showSideBar: boolean,
 
     /**
      * The native animation object.
@@ -63,7 +65,7 @@ export default class SideBar extends Component<Props, State> {
     _mounted: boolean;
 
     /**
-     * Component's contructor.
+     * Initializes a new {@code SideBar} instance.
      *
      * @inheritdoc
      */
@@ -71,15 +73,15 @@ export default class SideBar extends Component<Props, State> {
         super(props);
 
         this.state = {
-            showSideBar: false,
             showOverlay: false,
+            showSideBar: false,
             sliderAnimation: new Animated.Value(-SIDEBAR_WIDTH)
         };
 
-        this._setShow = this._setShow.bind(this);
-
         this._getContainerStyle = this._getContainerStyle.bind(this);
         this._onHideMenu = this._onHideMenu.bind(this);
+        this._setShow = this._setShow.bind(this);
+
         this._setShow(props.show);
     }
 
@@ -171,8 +173,8 @@ export default class SideBar extends Component<Props, State> {
     /**
      * Sets the side menu visible or hidden.
      *
-     * @private
      * @param {boolean} show - The new expected visibility value.
+     * @private
      * @returns {void}
      */
     _setShow(show) {
@@ -183,15 +185,17 @@ export default class SideBar extends Component<Props, State> {
                 });
             }
 
-            Animated.timing(this.state.sliderAnimation, {
-                toValue: show ? 0 : -SIDEBAR_WIDTH
-            }).start(animationState => {
-                if (animationState.finished && !show) {
-                    this.setState({
-                        showOverlay: false
-                    });
-                }
-            });
+            Animated
+                .timing(
+                    this.state.sliderAnimation,
+                    { toValue: show ? 0 : -SIDEBAR_WIDTH })
+                .start(animationState => {
+                    if (animationState.finished && !show) {
+                        this.setState({
+                            showOverlay: false
+                        });
+                    }
+                });
         }
 
         if (this._mounted) {
@@ -200,5 +204,4 @@ export default class SideBar extends Component<Props, State> {
             });
         }
     }
-
 }
