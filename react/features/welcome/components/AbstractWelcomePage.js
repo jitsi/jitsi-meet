@@ -5,6 +5,7 @@ import { Component } from 'react';
 
 import { appNavigate } from '../../app';
 import { showAppSettings } from '../../app-settings';
+import { createWelcomePageEvent, sendAnalytics } from '../../analytics';
 import { isRoomValid } from '../../base/conference';
 
 import { generateRoomWithoutSeparator } from '../functions';
@@ -170,6 +171,12 @@ export class AbstractWelcomePage extends Component<*, *> {
      */
     _onJoin() {
         const room = this.state.room || this.state.generatedRoomname;
+
+        sendAnalytics(
+            createWelcomePageEvent('clicked', 'joinButton', {
+                isGenerated: !this.state.room,
+                room
+            }));
 
         if (room) {
             this.setState({ joining: true });
