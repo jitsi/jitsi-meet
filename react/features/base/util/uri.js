@@ -327,12 +327,12 @@ function _standardURIToString(thiz: ?Object) {
  * the one accepted by the constructor of Web's ExternalAPI is supported on both
  * mobile/React Native and Web/React.
  *
- * @param {string|Object} obj - The URL to return a {@code String}
+ * @param {Object|string} obj - The URL to return a {@code String}
  * representation of.
  * @returns {string} - A {@code String} representation of the specified
  * {@code obj} which is supposed to represent a URL.
  */
-export function toURLString(obj: ?(string | Object)): ?string {
+export function toURLString(obj: ?(Object | string)): ?string {
     let str;
 
     switch (typeof obj) {

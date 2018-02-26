@@ -15,6 +15,7 @@ import {
 import '../../base/profile';
 import { Fragment, RouteRegistry } from '../../base/react';
 import { MiddlewareRegistry, ReducerRegistry } from '../../base/redux';
+import { SoundCollection } from '../../base/sounds';
 import { PersistenceRegistry } from '../../base/storage';
 import { toURLString } from '../../base/util';
 import { OverlayContainer } from '../../overlay';
@@ -274,6 +275,7 @@ export class AbstractApp extends Component {
                     <Provider store = { this._getStore() }>
                         <Fragment>
                             { this._createElement(component) }
+                            <SoundCollection />
                             <OverlayContainer />
                         </Fragment>
                     </Provider>
@@ -501,7 +503,7 @@ export class AbstractApp extends Component {
     /**
      * Navigates this {@code AbstractApp} to (i.e. opens) a specific URL.
      *
-     * @param {string|Object} url - The URL to navigate this {@code AbstractApp}
+     * @param {Object|string} url - The URL to navigate this {@code AbstractApp}
      * to (i.e. the URL to open).
      * @protected
      * @returns {void}

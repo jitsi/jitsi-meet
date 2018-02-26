@@ -122,6 +122,7 @@ public class JitsiMeetView extends FrameLayout {
                 .addPackage(new com.oney.WebRTCModule.WebRTCModulePackage())
                 .addPackage(new com.RNFetchBlob.RNFetchBlobPackage())
                 .addPackage(new com.rnimmersive.RNImmersivePackage())
+                .addPackage(new com.zmxv.RNSound.RNSoundPackage())
                 .addPackage(new ReactPackageAdapter() {
                     @Override
                     public List<NativeModule> createNativeModules(

@@ -503,11 +503,6 @@ UI.addUser = function(user) {
         APP.store.dispatch(showParticipantJoinedNotification(displayName));
     }
 
-    if (!config.startAudioMuted
-        || config.startAudioMuted > APP.conference.membersCount) {
-        UIUtil.playSoundNotification('userJoined');
-    }
-
     // Add Peer's container
     VideoLayout.addParticipantContainer(user);
 
@@ -528,11 +523,6 @@ UI.addUser = function(user) {
 UI.removeUser = function(id, displayName) {
     messageHandler.participantNotification(
         displayName, 'notify.somebody', 'disconnected', 'notify.disconnected');
-
-    if (!config.startAudioMuted
-            || config.startAudioMuted > APP.conference.membersCount) {
-        UIUtil.playSoundNotification('userLeft');
-    }
 
     VideoLayout.removeParticipantContainer(id);
 };

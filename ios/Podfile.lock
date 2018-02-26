@@ -41,6 +41,11 @@ PODS:
     - React/Core
     - React/fishhook
     - React/RCTBlob
+  - RNSound (0.10.4):
+    - React/Core
+    - RNSound/Core (= 0.10.4)
+  - RNSound/Core (0.10.4):
+    - React/Core
   - RNVectorIcons (4.4.2):
     - React
   - yoga (0.51.0.React)
@@ -61,6 +66,7 @@ DEPENDENCIES:
   - React/RCTNetwork (from `../node_modules/react-native`)
   - React/RCTText (from `../node_modules/react-native`)
   - React/RCTWebSocket (from `../node_modules/react-native`)
+  - RNSound (from `../node_modules/react-native-sound`)
   - RNVectorIcons (from `../node_modules/react-native-vector-icons`)
   - yoga (from `../node_modules/react-native/ReactCommon/yoga`)
 
@@ -77,6 +83,8 @@ EXTERNAL SOURCES:
     :path: ../node_modules/react-native-locale-detector
   react-native-webrtc:
     :path: ../node_modules/react-native-webrtc
+  RNSound:
+    :path: ../node_modules/react-native-sound
   RNVectorIcons:
     :path: ../node_modules/react-native-vector-icons
   yoga:
@@ -89,9 +97,10 @@ SPEC CHECKSUMS:
   react-native-keep-awake: 0de4bd66de0c23178107dce0c2fcc3354b2a8e94
   react-native-locale-detector: d1b2c6fe5abb56e3a1efb6c2d6f308c05c4251f1
   react-native-webrtc: bc044ca9530fc802e7533f247aa08fe1b6bf8dc5
+  RNSound: d0818fe2435254fe30540fae48a429c5ffb72e09
   RNVectorIcons: c0dbfbf6068fefa240c37b0f71bd03b45dddac44
   yoga: 17521bbb0dd54a47c0b3ac43253e78cdac7488e0
 
-PODFILE CHECKSUM: fabd6b6c27f8e1849f0668db3f403bf536ac8903
+PODFILE CHECKSUM: 1e6ce4da1b385720c726f3f131a6aaf08bf9c0ba
 
 COCOAPODS: 1.4.0
