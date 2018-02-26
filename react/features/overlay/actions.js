@@ -1,6 +1,5 @@
-import { appNavigate } from '../app';
+import { appNavigate, reloadWithStoredParams } from '../app';
 import { toURLString } from '../base/util';
-import { reload, replace } from '../../../modules/util/helpers';
 
 import {
     MEDIA_PERMISSION_PROMPT_VISIBILITY_CHANGED,
@@ -44,12 +43,8 @@ export function _reloadNow() {
 
         if (navigator.product === 'ReactNative') {
             dispatch(appNavigate(toURLString(locationURL)));
-        } else if (window.self === window.top) {
-            replace(locationURL);
         } else {
-            // In an iframe reload with the reload() utility because the
-            // replace() utility does not work on an iframe.
-            reload();
+            dispatch(reloadWithStoredParams());
         }
     };
 }

@@ -66,6 +66,8 @@ function doExternalAuth(room, lockPassword) {
  * @param {string} [roomName] the name of the conference room.
  */
 function redirectToTokenAuthService(roomName) {
+    // FIXME: This method will not preserve the other URL params that were
+    // originally passed.
     UIUtil.redirect(getTokenAuthUrl(roomName, false));
 }
 

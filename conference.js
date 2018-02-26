@@ -7,7 +7,7 @@ import Recorder from './modules/recorder/Recorder';
 
 import mediaDeviceHelper from './modules/devices/mediaDeviceHelper';
 
-import { reload, reportError } from './modules/util/helpers';
+import { reportError } from './modules/util/helpers';
 
 import * as RemoteControlEvents
     from './service/remotecontrol/RemoteControlEvents';
@@ -24,6 +24,10 @@ import {
     initAnalytics,
     sendAnalytics
 } from './react/features/analytics';
+import {
+    redirectWithStoredParams,
+    reloadWithStoredParams
+} from './react/features/app';
 
 import EventEmitter from 'events';
 
@@ -216,7 +220,7 @@ function maybeRedirectToWelcomePage(options) {
         // save whether current user is guest or not, before navigating
         // to close page
         window.sessionStorage.setItem('guest', isGuest);
-        assignWindowLocationPathname(`static/${
+        redirectToStaticPage(`static/${
             options.feedbackSubmitted ? 'close.html' : 'close2.html'}`);
 
         return;
@@ -234,7 +238,7 @@ function maybeRedirectToWelcomePage(options) {
     if (config.enableWelcomePage) {
         setTimeout(
             () => {
-                assignWindowLocationPathname('./');
+                APP.store.dispatch(redirectWithStoredParams('/'));
             },
             3000);
     }
@@ -250,7 +254,7 @@ function maybeRedirectToWelcomePage(options) {
  * assigning it to window.location.pathname.
  * @return {void}
  */
-function assignWindowLocationPathname(pathname) {
+function redirectToStaticPage(pathname) {
     const windowLocation = window.location;
     let newPathname = pathname;
 
@@ -310,7 +314,7 @@ class ConferenceConnector {
 
         case JitsiConferenceErrors.NOT_ALLOWED_ERROR: {
             // let's show some auth not allowed page
-            assignWindowLocationPathname('static/authError.html');
+            redirectToStaticPage('static/authError.html');
             break;
         }
 
@@ -378,7 +382,7 @@ class ConferenceConnector {
             break;
 
         case JitsiConferenceErrors.INCOMPATIBLE_SERVER_VERSIONS:
-            reload();
+            APP.store.dispatch(reloadWithStoredParams());
             break;
 
         default:

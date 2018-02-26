@@ -17,24 +17,6 @@ export function createDeferred() {
 }
 
 /**
- * Reload page.
- */
-export function reload() {
-    window.location.reload();
-}
-
-/**
- * Redirects to a specific new URL by replacing the current location (in the
- * history).
- *
- * @param {string} url the URL pointing to the location where the user should
- * be redirected to.
- */
-export function replace(url) {
-    window.location.replace(url);
-}
-
-/**
  * Prints the error and reports it to the global error handler.
  *
  * @param e {Error} the error
