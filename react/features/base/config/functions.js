@@ -36,6 +36,7 @@ const WHITELISTED_KEYS = [
     'desktopSharingChromeExtId',
     'desktopSharingChromeMinExtVersion',
     'desktopSharingChromeSources',
+    'desktopSharingFrameRate',
     'desktopSharingFirefoxDisabled',
     'desktopSharingSources',
     'disable1On1Mode',
