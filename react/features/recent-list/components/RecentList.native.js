@@ -47,21 +47,20 @@ class RecentList extends AbstractRecentList {
      * @returns {ReactElement}
      */
     render() {
-        const { _recentList, disabled } = this.props;
+        const { enabled, _recentList } = this.props;
 
         if (!_recentList) {
             return null;
         }
 
         const listViewDataSource
-            = this.dataSource.cloneWithRows(
-                getRecentRooms(_recentList));
+            = this.dataSource.cloneWithRows(getRecentRooms(_recentList));
 
         return (
             <View
                 style = { [
                     styles.container,
-                    disabled ? styles.containerDisabled : null
+                    enabled ? null : styles.containerDisabled
                 ] }>
                 <ListView
                     dataSource = { listViewDataSource }
@@ -72,19 +71,19 @@ class RecentList extends AbstractRecentList {
     }
 
     /**
-     * Assembles the style array of the avatar based on if the conference was a
-     * home or remote server conference (based on current app setting).
+     * Assembles the style array of the avatar based on if the conference was
+     * hosted on the default Jitsi Meet deployment or on a non-default one
+     * (based on current app setting).
      *
      * @param {Object} recentListEntry - The recent list entry being rendered.
      * @private
      * @returns {Array<Object>}
      */
-    _getAvatarStyle(recentListEntry) {
+    _getAvatarStyle({ baseURL, serverName }) {
         const avatarStyles = [ styles.avatar ];
 
-        if (recentListEntry.baseURL !== this.props._homeServer) {
-            avatarStyles.push(
-                this._getColorForServerName(recentListEntry.serverName));
+        if (baseURL !== this.props._defaultURL) {
+            avatarStyles.push(this._getColorForServerName(serverName));
         }
 
         return avatarStyles;
@@ -115,40 +114,15 @@ class RecentList extends AbstractRecentList {
      * @private
      * @returns {ReactElement}
      */
-    _renderConfDuration({ conferenceDurationString }) {
-        if (conferenceDurationString) {
+    _renderConfDuration({ durationString }) {
+        if (durationString) {
             return (
                 <View style = { styles.infoWithIcon } >
                     <Icon
                         name = 'timer'
                         style = { styles.inlineIcon } />
                     <Text style = { styles.confLength }>
-                        { conferenceDurationString }
-                    </Text>
-                </View>
-            );
-        }
-
-        return null;
-    }
-
-    /**
-     * Renders the server info component based on if the entry was on a
-     * different server or not.
-     *
-     * @param {Object} recentListEntry - The recent list entry being rendered.
-     * @private
-     * @returns {ReactElement}
-     */
-    _renderServerInfo(recentListEntry) {
-        if (recentListEntry.baseURL !== this.props._homeServer) {
-            return (
-                <View style = { styles.infoWithIcon } >
-                    <Icon
-                        name = 'public'
-                        style = { styles.inlineIcon } />
-                    <Text style = { styles.serverName }>
-                        { recentListEntry.serverName }
+                        { durationString }
                     </Text>
                 </View>
             );
@@ -191,16 +165,37 @@ class RecentList extends AbstractRecentList {
                                 { data.dateString }
                             </Text>
                         </View>
-                        {
-                            this._renderConfDuration(data)
-                        }
-                        {
-                            this._renderServerInfo(data)
-                        }
+                        { this._renderConfDuration(data) }
+                        { this._renderServerInfo(data) }
                     </View>
                 </View>
             </TouchableHighlight>
         );
+    }
+
+    /**
+     * Renders the server info component based on whether the entry was on a
+     * different server.
+     *
+     * @param {Object} recentListEntry - The recent list entry being rendered.
+     * @private
+     * @returns {ReactElement}
+     */
+    _renderServerInfo({ baseURL, serverName }) {
+        if (baseURL !== this.props._defaultURL) {
+            return (
+                <View style = { styles.infoWithIcon } >
+                    <Icon
+                        name = 'public'
+                        style = { styles.inlineIcon } />
+                    <Text style = { styles.serverName }>
+                        { serverName }
+                    </Text>
+                </View>
+            );
+        }
+
+        return null;
     }
 }
 

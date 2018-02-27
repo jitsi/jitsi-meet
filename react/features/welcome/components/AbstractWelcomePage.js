@@ -1,6 +1,5 @@
 // @flow
 
-import PropTypes from 'prop-types';
 import { Component } from 'react';
 
 import { createWelcomePageEvent, sendAnalytics } from '../../analytics';
@@ -15,11 +14,6 @@ import { generateRoomWithoutSeparator } from '../functions';
 type Props = {
 
     /**
-     * Boolean to indicate if the room field is focused or not.
-     */
-    _fieldFocused: boolean,
-
-    /**
      * The user's profile.
      */
     _profile: Object,
@@ -32,17 +26,7 @@ type Props = {
  *
  * @abstract
  */
-export class AbstractWelcomePage extends Component<*, *> {
-    /**
-     * {@code AbstractWelcomePage}'s React {@code Component} prop types.
-     *
-     * @static
-     */
-    static propTypes = {
-        _room: PropTypes.string,
-        dispatch: PropTypes.func
-    };
-
+export class AbstractWelcomePage extends Component<Props, *> {
     _mounted: ?boolean;
 
     /**
@@ -245,12 +229,13 @@ export class AbstractWelcomePage extends Component<*, *> {
  * @param {Object} state - The redux state.
  * @protected
  * @returns {{
+ *     _profile: Object,
  *     _room: string
  * }}
  */
 export function _mapStateToProps(state: Object) {
     return {
-        _profile: state['features/base/profile'].profile,
+        _profile: state['features/base/profile'],
         _room: state['features/base/conference'].room
     };
 }

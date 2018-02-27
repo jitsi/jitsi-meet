@@ -2,7 +2,7 @@
 
 import { Component } from 'react';
 
-import { getProfile, updateProfile } from '../../base/profile';
+import { updateProfile } from '../../base/profile';
 
 /**
  * The type of the React {@code Component} props of
@@ -12,16 +12,22 @@ type Props = {
 
     /**
      * The current profile object.
+     *
+     * @protected
      */
     _profile: Object,
 
     /**
      * The default URL for when there is no custom URL set in the profile.
+     *
+     * @protected
      */
     _serverURL: string,
 
     /**
      * Whether {@link AbstractSettingsView} is visible.
+     *
+     * @protected
      */
     _visible: boolean,
 
@@ -168,7 +174,7 @@ export class AbstractSettingsView extends Component<Props> {
  */
 export function _mapStateToProps(state: Object) {
     return {
-        _profile: getProfile(state),
+        _profile: state['features/base/profile'],
         _serverURL: state['features/app'].app._getDefaultURL(),
         _visible: state['features/settings'].visible
     };

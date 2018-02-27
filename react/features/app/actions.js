@@ -4,7 +4,6 @@ import { setRoom } from '../base/conference';
 import { configWillLoad, loadConfigError, setConfig } from '../base/config';
 import { setLocationURL } from '../base/connection';
 import { loadConfig } from '../base/lib-jitsi-meet';
-import { getProfile } from '../base/profile';
 import { parseURIString } from '../base/util';
 
 import { APP_WILL_MOUNT, APP_WILL_UNMOUNT } from './actionTypes';
@@ -15,7 +14,7 @@ declare var APP: Object;
  * Triggers an in-app navigation to a specific route. Allows navigation to be
  * abstracted between the mobile/React Native and Web/React applications.
  *
- * @param {(string|undefined)} uri - The URI to which to navigate. It may be a
+ * @param {string|undefined} uri - The URI to which to navigate. It may be a
  * full URL with an HTTP(S) scheme, a full or partial URI with the app-specific
  * scheme, or a mere room name.
  * @returns {Function}
@@ -83,11 +82,10 @@ function _appNavigateToMandatoryLocation(
             });
         }
 
-        const profile = getProfile(getState());
+        const profile = getState()['features/base/profile'];
 
-        return promise.then(() => dispatch(setConfig(
-            _mergeConfigWithProfile(config, profile)
-        )));
+        return promise.then(() =>
+            dispatch(setConfig(_mergeConfigWithProfile(config, profile))));
     }
 }
 

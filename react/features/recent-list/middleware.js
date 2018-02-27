@@ -15,11 +15,11 @@ import { storeCurrentConference, updateConferenceDuration } from './actions';
 MiddlewareRegistry.register(store => next => action => {
     switch (action.type) {
     case CONFERENCE_WILL_LEAVE:
-        _updateConferenceDuration(store, next);
+        _updateConferenceDuration(store);
         break;
 
     case SET_ROOM:
-        _maybeStoreCurrentConference(store, next, action);
+        _maybeStoreCurrentConference(store, action);
         break;
     }
 
@@ -36,12 +36,11 @@ MiddlewareRegistry.register(store => next => action => {
  * @private
  * @returns {void}
  */
-function _maybeStoreCurrentConference(store, next, action) {
-    const { locationURL } = store.getState()['features/base/connection'];
-    const { room } = action;
-
+function _maybeStoreCurrentConference({ dispatch, getState }, { room }) {
     if (room) {
-        next(storeCurrentConference(locationURL));
+        const { locationURL } = getState()['features/base/connection'];
+
+        dispatch(storeCurrentConference(locationURL));
     }
 }
 
@@ -49,13 +48,11 @@ function _maybeStoreCurrentConference(store, next, action) {
  * Updates the duration of the last conference stored in the list.
  *
  * @param {Store} store - The redux store.
- * @param {Dispatch} next - The redux {@code dispatch} function.
- * @param {Action} action - The redux action.
  * @private
  * @returns {void}
  */
-function _updateConferenceDuration(store, next) {
-    const { locationURL } = store.getState()['features/base/connection'];
+function _updateConferenceDuration({ dispatch, getState }) {
+    const { locationURL } = getState()['features/base/connection'];
 
-    next(updateConferenceDuration(locationURL));
+    dispatch(updateConferenceDuration(locationURL));
 }

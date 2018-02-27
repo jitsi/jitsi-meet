@@ -41,13 +41,6 @@ import WelcomePageSideBar from './WelcomePageSideBar';
  */
 class WelcomePage extends AbstractWelcomePage {
     /**
-     * WelcomePage component's property types.
-     *
-     * @static
-     */
-    static propTypes = AbstractWelcomePage.propTypes;
-
-    /**
      * Constructor of the Component.
      *
      * @inheritdoc
@@ -140,7 +133,7 @@ class WelcomePage extends AbstractWelcomePage {
                         {
                             this._renderHintBox()
                         }
-                        <RecentList disabled = { this.state._fieldFocused } />
+                        <RecentList enabled = { !this.state._fieldFocused } />
                     </SafeAreaView>
                     <SettingsView />
                 </View>

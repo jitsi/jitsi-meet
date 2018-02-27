@@ -12,7 +12,7 @@ import {
     localParticipantJoined,
     localParticipantLeft
 } from '../../base/participants';
-import { getProfile } from '../../base/profile';
+import '../../base/profile';
 import { Fragment, RouteRegistry } from '../../base/react';
 import { MiddlewareRegistry, ReducerRegistry } from '../../base/redux';
 import { PersistenceRegistry } from '../../base/storage';
@@ -123,7 +123,7 @@ export class AbstractApp extends Component {
      */
     componentWillMount() {
         this._init.then(() => {
-            const { dispatch } = this._getStore();
+            const { dispatch, getState } = this._getStore();
 
             dispatch(appWillMount(this));
 
@@ -144,7 +144,7 @@ export class AbstractApp extends Component {
             }
 
             // Profile is the new React compatible settings.
-            const profile = getProfile(this._getStore().getState());
+            const profile = getState()['features/base/profile'];
 
             if (profile) {
                 localParticipant.email
@@ -381,7 +381,8 @@ export class AbstractApp extends Component {
 
         return (
             this.props.defaultURL
-                || getProfile(this._getStore().getState()).serverURL
+                || this._getStore().getState()['features/base/profile']
+                    .serverURL
                 || DEFAULT_URL);
     }
 

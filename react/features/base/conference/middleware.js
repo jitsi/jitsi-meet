@@ -128,7 +128,7 @@ function _conferenceFailedOrLeft({ dispatch, getState }, next, action) {
 
     const state = getState();
     const { audioOnly } = state['features/base/conference'];
-    const { startAudioOnly } = state['features/base/profile'].profile;
+    const { startAudioOnly } = state['features/base/profile'];
 
     // FIXME: Consider implementing a standalone audio-only feature that handles
     // all these state changes.

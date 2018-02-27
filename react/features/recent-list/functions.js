@@ -17,7 +17,6 @@ require('moment/locale/it');
 require('moment/locale/nb');
 
 // OC is not available. Please submit OC translation to the MomentJS project.
-
 require('moment/locale/pl');
 require('moment/locale/pt');
 require('moment/locale/pt-br');
@@ -47,22 +46,22 @@ export function getRecentRooms(list: Array<Object>): Array<Object> {
         const locale = _getSupportedLocale();
 
         for (const e of list) {
-            const location = parseURIString(e.conference);
+            const uri = parseURIString(e.conference);
 
-            if (location && location.room && location.hostname) {
+            if (uri && uri.room && uri.hostname) {
+                const duration
+                    = e.duration || /* legacy */ e.conferenceDuration;
+
                 recentRoomDS.push({
-                    baseURL: `${location.protocol}//${location.host}`,
+                    baseURL: `${uri.protocol}//${uri.host}`,
                     conference: e.conference,
-                    conferenceDuration: e.conferenceDuration,
-                    conferenceDurationString:
-                        _getDurationString(
-                            e.conferenceDuration,
-                            locale),
                     dateString: _getDateString(e.date, locale),
                     dateTimeStamp: e.date,
-                    initials: _getInitials(location.room),
-                    room: location.room,
-                    serverName: location.hostname
+                    duration,
+                    durationString: _getDurationString(duration, locale),
+                    initials: _getInitials(uri.room),
+                    room: uri.room,
+                    serverName: uri.hostname
                 });
             }
         }
@@ -124,7 +123,7 @@ function _getInitials(room: string) {
  * or duration ({@code number}).
  *
  * @private
- * @param {Date | number} dateOrDuration - The date or duration to format.
+ * @param {Date|number} dateOrDuration - The date or duration to format.
  * @param {string} locale - The locale to init the formatter with. Note: The
  * specified locale must be supported by the formatter so ensure the
  * prerequisite is met before invoking the function.

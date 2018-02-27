@@ -2,7 +2,6 @@
 
 import { setAudioOnly } from '../conference';
 import { getLocalParticipant, participantUpdated } from '../participants';
-import { getProfile } from '../profile';
 import { MiddlewareRegistry, toState } from '../redux';
 
 import { PROFILE_UPDATED } from './actionTypes';
@@ -33,11 +32,11 @@ MiddlewareRegistry.register(store => next => action => {
  * @param {Object} action - The redux action.
  * @returns {void}
  */
-function _maybeUpdateStartAudioOnly(store, action) {
-    const { profile } = action;
-
-    if (typeof profile.startAudioOnly === 'boolean') {
-        store.dispatch(setAudioOnly(profile.startAudioOnly));
+function _maybeUpdateStartAudioOnly(
+        { dispatch },
+        { profile: { startAudioOnly } }) {
+    if (typeof startAudioOnly === 'boolean') {
+        dispatch(setAudioOnly(startAudioOnly));
     }
 }
 
@@ -50,7 +49,7 @@ function _maybeUpdateStartAudioOnly(store, action) {
 function _updateLocalParticipant(store) {
     const state = toState(store);
     const localParticipant = getLocalParticipant(state);
-    const profile = getProfile(state);
+    const profile = state['features/base/profile'];
 
     store.dispatch(participantUpdated({
         // Identify that the participant to update i.e. the local participant:
