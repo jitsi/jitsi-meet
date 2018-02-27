@@ -17,7 +17,7 @@ import {
 } from '../participants';
 import { MiddlewareRegistry } from '../redux';
 import UIEvents from '../../../../service/UI/UIEvents';
-import { TRACK_ADDED, TRACK_REMOVED } from '../tracks';
+import { TRACK_ADDED, TRACK_REMOVED, destroyLocalTracks } from '../tracks';
 
 import {
     createConference,
@@ -142,6 +142,11 @@ function _conferenceFailedOrLeft({ dispatch, getState }, next, action) {
         sendAnalytics(createAudioOnlyChangedEvent(true));
         logger.log('Audio only enabled');
         dispatch(setAudioOnly(true));
+    }
+
+    if (typeof APP === 'object') {
+        dispatch(destroyLocalTracks());
+        APP.UI.resetLargeVideo();
     }
 
     return result;
