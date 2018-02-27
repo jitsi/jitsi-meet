@@ -19,22 +19,24 @@ declare var APP: Object;
  */
 MiddlewareRegistry.register(store => next => action => {
     switch (action.type) {
-    case APP_WILL_MOUNT: {
-        // Register chat msg sound only on web
-        typeof APP !== 'undefined'
-            && store.dispatch(
+    case APP_WILL_MOUNT:
+        // Register the chat message sound on Web only because there's no chat
+        // on mobile.
+        typeof APP === 'undefined'
+            || store.dispatch(
                 registerSound(INCOMING_MSG_SOUND_ID, INCOMING_MSG_SOUND_SRC));
         break;
-    }
-    case APP_WILL_UNMOUNT: {
-        // Register chat msg sound only on web
-        typeof APP !== 'undefined'
-            && store.dispatch(unregisterSound(INCOMING_MSG_SOUND_ID));
+
+    case APP_WILL_UNMOUNT:
+        // Unregister the chat message sound on Web because it's registered
+        // there only.
+        typeof APP === 'undefined'
+            || store.dispatch(unregisterSound(INCOMING_MSG_SOUND_ID));
         break;
-    }
+
     case CONFERENCE_JOINED:
-        typeof APP !== 'undefined'
-            && _addChatMsgListener(action.conference, store);
+        typeof APP === 'undefined'
+            || _addChatMsgListener(action.conference, store);
         break;
     }
 
@@ -49,18 +51,17 @@ MiddlewareRegistry.register(store => next => action => {
  * new event listener will be registered.
  * @param {Dispatch} next - The redux dispatch function to dispatch the
  * specified action to the specified store.
- * @returns {void}
  * @private
+ * @returns {void}
  */
 function _addChatMsgListener(conference, { dispatch }) {
-    // XXX Currently there's no need to remove the listener, because
-    // conference instance can not be re-used. Listener will be gone with
-    // the conference instance.
+    // XXX Currently, there's no need to remove the listener, because the
+    // JitsiConference instance cannot be reused. Hence, the listener will be
+    // gone with the JitsiConference instance.
     conference.on(
         JitsiConferenceEvents.MESSAGE_RECEIVED,
         () => {
-            if (!APP.UI.isChatVisible()) {
-                dispatch(playSound(INCOMING_MSG_SOUND_ID));
-            }
+            APP.UI.isChatVisible()
+                || dispatch(playSound(INCOMING_MSG_SOUND_ID));
         });
 }

@@ -7,10 +7,10 @@ import { Component } from 'react';
  * playback.
  */
 export type AudioElement = {
-    pause: Function,
-    play: Function,
-    setSinkId: ?Function
-}
+    pause: () => void,
+    play: () => void,
+    setSinkId?: string => void
+};
 
 /**
  * {@code AbstractAudio} component's property types.
@@ -21,7 +21,7 @@ type Props = {
      * A callback which will be called with {@code AbstractAudio} instance once
      * the audio element is loaded.
      */
-    setRef: ?Function,
+    setRef?: ?AudioElement => void,
 
     /**
      * The URL of a media resource to use in the element.
@@ -59,15 +59,19 @@ export default class AbstractAudio extends Component<Props> {
         this.setAudioElementImpl = this.setAudioElementImpl.bind(this);
     }
 
+    pause: () => void;
+
     /**
      * Attempts to pause the playback of the media.
      *
      * @public
      * @returns {void}
      */
-    pause() {
+    pause(): void {
         this._audioElementImpl && this._audioElementImpl.pause();
     }
+
+    play: () => void;
 
     /**
      * Attempts to being the playback of the media.
@@ -75,11 +79,11 @@ export default class AbstractAudio extends Component<Props> {
      * @public
      * @returns {void}
      */
-    play() {
+    play(): void {
         this._audioElementImpl && this._audioElementImpl.play();
     }
 
-    setAudioElementImpl: (?AudioElement) => void;
+    setAudioElementImpl: ?AudioElement => void;
 
     /**
      * Set the (reference to the) {@link AudioElement} object which implements
@@ -90,14 +94,17 @@ export default class AbstractAudio extends Component<Props> {
      * @protected
      * @returns {void}
      */
-    setAudioElementImpl(element: ?AudioElement) {
+    setAudioElementImpl(element: ?AudioElement): void {
         this._audioElementImpl = element;
 
         // setRef
         const { setRef } = this.props;
 
+        // $FlowFixMe
         typeof setRef === 'function' && setRef(element ? this : null);
     }
+
+    setSinkId: string => void;
 
     /**
      * Sets the sink ID (output device ID) on the underlying audio element.
@@ -106,7 +113,7 @@ export default class AbstractAudio extends Component<Props> {
      * @param {string} sinkId - The sink ID (output device ID).
      * @returns {void}
      */
-    setSinkId(sinkId: String) {
+    setSinkId(sinkId: string): void {
         this._audioElementImpl
             && typeof this._audioElementImpl.setSinkId === 'function'
             && this._audioElementImpl.setSinkId(sinkId);
