@@ -50,7 +50,7 @@ export function getRecentRooms(list: Array<Object>): Array<Object> {
 
             if (uri && uri.room && uri.hostname) {
                 const duration
-                    = e.duration || /* legacy */ e.conferenceDuration;
+                    = e.duration || /* legacy */ e.conferenceDuration || 0;
 
                 recentRoomDS.push({
                     baseURL: `${uri.protocol}//${uri.host}`,
