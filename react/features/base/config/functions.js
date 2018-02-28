@@ -67,6 +67,7 @@ const WHITELISTED_KEYS = [
     'hosts',
     'iAmRecorder',
     'iAmSipGateway',
+    'iceTransportPolicy',
     'ignoreStartMuted',
     'nick',
     'openBridgeChannel',
