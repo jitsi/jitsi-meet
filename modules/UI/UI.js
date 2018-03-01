@@ -377,12 +377,11 @@ UI.start = function() {
 };
 
 /**
- * Invokes cleanup of large video so it stops running polling tasks and stops
- * displaying.
+ * Invokes cleanup of any deferred execution within relevant UI modules.
  *
  * @returns {void}
  */
-UI.resetLargeVideo = () => {
+UI.stopDaemons = () => {
     VideoLayout.resetLargeVideo();
 };
 
