@@ -70,7 +70,6 @@ class DialInSummary extends Component {
      * instance is to be initialized.
      */
     constructor(props) {
-        console.warn(props);
         super(props);
 
         // Bind event handlers so they are only bound once for every instance.
