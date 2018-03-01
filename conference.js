@@ -2645,6 +2645,7 @@ export default {
      */
     hangup(requestFeedback = false) {
         eventEmitter.emit(JitsiMeetConferenceEvents.BEFORE_HANGUP);
+        APP.UI.removeLocalMedia();
 
         let requestFeedbackPromise;
 
