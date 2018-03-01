@@ -28,6 +28,7 @@ import {
     participantPresenceChanged,
     showParticipantJoinedNotification
 } from '../../react/features/base/participants';
+import { destroyLocalTracks } from '../../react/features/base/tracks';
 import { openDisplayNamePrompt } from '../../react/features/display-name';
 import {
     setNotificationsEnabled,
@@ -374,15 +375,6 @@ UI.start = function() {
     }
 
     document.title = interfaceConfig.APP_NAME;
-};
-
-/**
- * Invokes cleanup of any deferred execution within relevant UI modules.
- *
- * @returns {void}
- */
-UI.stopDaemons = () => {
-    VideoLayout.resetLargeVideo();
 };
 
 /**
@@ -1289,6 +1281,18 @@ UI.setRemoteControlActiveStatus = function(participantID, isActive) {
  */
 UI.setLocalRemoteControlActiveChanged = function() {
     VideoLayout.setLocalRemoteControlActiveChanged();
+};
+
+/**
+ * Remove media tracks and UI elements so the user no longer sees media in the
+ * UI. The intent is to provide a feeling that the meeting has ended.
+ *
+ * @returns {void}
+ */
+UI.removeLocalMedia = function() {
+    APP.store.dispatch(destroyLocalTracks());
+    VideoLayout.resetLargeVideo();
+    $('#videospace').hide();
 };
 
 // TODO: Export every function separately. For now there is no point of doing
