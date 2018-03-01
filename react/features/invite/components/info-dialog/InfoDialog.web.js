@@ -262,13 +262,24 @@ class InfoDialog extends Component {
     }
 
     /**
+     * Generates the URL for the static dial in info page.
+     *
+     * @private
+     * @returns {string}
+     */
+    _getDialInfoPageURL() {
+        return `${window.location.origin}/static/dialInInfo.html?room=${
+            encodeURIComponent(this.props._conferenceName)}`;
+    }
+
+    /**
      * Creates a message describing how to dial in to the conference.
      *
      * @private
      * @returns {string}
      */
     _getTextToCopy() {
-        const { _conferenceName, t } = this.props;
+        const { t } = this.props;
 
         let invite = t('info.inviteURL', {
             url: this.props._inviteURL
@@ -280,8 +291,7 @@ class InfoDialog extends Component {
                 conferenceID: this.props._dialIn.conferenceID
             });
             const moreNumbers = t('info.invitePhoneAlternatives', {
-                url: `${window.location.origin}/static/dialInInfo.html?room=${
-                    encodeURIComponent(_conferenceName)}`
+                url: this._getDialInfoPageURL()
             });
 
             invite = `${invite}\n${dial}\n${moreNumbers}`;
@@ -377,8 +387,7 @@ class InfoDialog extends Component {
                     phoneNumber = { this.state.phoneNumber } />
                 <a
                     className = 'more-numbers'
-                    href = { `static/dialInInfo.html?room=${
-                        encodeURIComponent(this.props._conferenceName)}` }
+                    href = { this._getDialInfoPageURL() }
                     rel = 'noopener noreferrer'
                     target = '_blank'>
                     { this.props.t('info.moreNumbers') }
