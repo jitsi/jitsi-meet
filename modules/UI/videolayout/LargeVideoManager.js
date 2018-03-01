@@ -129,8 +129,6 @@ export default class LargeVideoManager {
             this._onVideoResolutionUpdate);
 
         this.removePresenceLabel();
-
-        this.$container.remove();
     }
 
     /**
