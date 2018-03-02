@@ -11,17 +11,11 @@
                 padding-left: 5px;
             }
         }
-    }
-}
 
-/**
- * Styles the loading element in the MultiSelectAutocomplete.
- */
-.autocomplete-loading {
-    justify-content: center;
-    display: flex;
-    min-width: 260px;
-    padding: 20px;
+        .add-telephone-icon {
+            transform: scaleX(-1);
+        }
+    }
 }
 
 /**

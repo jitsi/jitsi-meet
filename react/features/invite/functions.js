@@ -75,7 +75,7 @@ export function searchDirectory( // eslint-disable-line max-params
         jwt: string,
         text: string,
         queryTypes: Array<string> = [ 'conferenceRooms', 'user', 'room' ]
-): Promise<void> {
+): Promise<Array<Object>> {
     const queryTypesString = JSON.stringify(queryTypes);
 
     return new Promise((resolve, reject) => {
@@ -84,5 +84,33 @@ export function searchDirectory( // eslint-disable-line max-params
                     queryTypesString}&jwt=${jwt}`,
                 resolve)
             .catch((jqxhr, textStatus, error) => reject(error));
+    });
+}
+
+/**
+ * Sends an ajax request to check if the phone number can be called.
+ *
+ * @param {string} dialNumber - The dial number to check for validity.
+ * @param {string} dialOutAuthUrl - The endpoint to use for checking validity.
+ * @returns {Promise} - The promise created by the request.
+ */
+export function checkDialNumber(
+        dialNumber: string, dialOutAuthUrl: string): Promise<Object> {
+    if (!dialOutAuthUrl) {
+        // no auth url, let's say it is valid
+        const response = {
+            allow: true,
+            phone: dialNumber
+        };
+
+        return Promise.resolve(response);
+    }
+
+    const fullUrl = `${dialOutAuthUrl}?phone=${dialNumber}`;
+
+    return new Promise((resolve, reject) => {
+        $.getJSON(fullUrl)
+            .then(resolve)
+            .catch(reject);
     });
 }
