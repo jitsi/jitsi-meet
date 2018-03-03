@@ -282,6 +282,7 @@ export default class SharedVideoManager {
 
             thumb.setDisplayName('YouTube');
             VideoLayout.addRemoteVideoContainer(self.url, thumb);
+            VideoLayout.resizeThumbnails(false, true);
 
             const iframe = player.getIframe();
 
