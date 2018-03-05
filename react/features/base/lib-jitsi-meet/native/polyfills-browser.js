@@ -372,6 +372,6 @@ function _visitNode(node, callback) {
     global.clearTimeout = BackgroundTimer.clearTimeout.bind(BackgroundTimer);
     global.clearInterval = BackgroundTimer.clearInterval.bind(BackgroundTimer);
     global.setInterval = BackgroundTimer.setInterval.bind(BackgroundTimer);
-    global.setTimeout = BackgroundTimer.setTimeout.bind(BackgroundTimer);
+    global.setTimeout = (fn, ms = 0) => BackgroundTimer.setTimeout(fn, ms);
 
 })(global || window || this); // eslint-disable-line no-invalid-this
