@@ -20,6 +20,7 @@ import UIEvents from '../../../../service/UI/UIEvents';
 import { TRACK_ADDED, TRACK_REMOVED } from '../tracks';
 
 import {
+    conferenceLeft,
     createConference,
     setAudioOnly,
     setLastN,
@@ -32,8 +33,10 @@ import {
     DATA_CHANNEL_OPENED,
     SET_AUDIO_ONLY,
     SET_LASTN,
-    SET_RECEIVE_VIDEO_QUALITY
+    SET_RECEIVE_VIDEO_QUALITY,
+    SET_ROOM
 } from './actionTypes';
+import { JITSI_CONFERENCE_URL_KEY } from './constants';
 import {
     _addLocalTracksToConference,
     _handleParticipantError,
@@ -76,6 +79,9 @@ MiddlewareRegistry.register(store => next => action => {
 
     case SET_RECEIVE_VIDEO_QUALITY:
         return _setReceiveVideoQuality(store, next, action);
+
+    case SET_ROOM:
+        return _setRoom(store, next, action);
 
     case TRACK_ADDED:
     case TRACK_REMOVED:
@@ -328,6 +334,62 @@ function _setReceiveVideoQuality({ dispatch, getState }, next, action) {
     }
 
     return next(action);
+}
+
+/**
+ * Notifies the feature {@code base/conference} that the redix action
+ * {@link SET_ROOM} is being dispatched within a specific redux store.
+ *
+ * @param {Store} store - The redux store in which the specified action is being
+ * dispatched.
+ * @param {Dispatch} next - The redux dispatch function to dispatch the
+ * specified action to the specified store.
+ * @param {Action} action - The redux action {@code SET_ROOM} which is being
+ * dispatched in the specified store.
+ * @private
+ * @returns {Object} The value returned by {@code next(action)}.
+ */
+function _setRoom({ dispatch, getState }, next, action) {
+    const result = next(action);
+
+    // By the time SET_ROOM is dispatched, base/connection's locationURL and
+    // base/conference's leaving should be the only conference-related sources
+    // of truth.
+    const state = getState();
+    const {
+        leaving,
+        ...stateFeaturesBaseConference
+    } = state['features/base/conference'];
+    const { locationURL } = state['features/base/connection'];
+    const dispatchConferenceLeft = new Set();
+
+    // Figure out which of the JitsiConferences referenced by base/conference
+    // have not dispatched or are not likely to dispatch CONFERENCE_FAILED and
+    // CONFERENCE_LEFT.
+
+    // eslint-disable-next-line guard-for-in
+    for (const p in stateFeaturesBaseConference) {
+        const v = stateFeaturesBaseConference[p];
+
+        // Does the value of the base/conference's property look like a
+        // JitsiConference?
+        if (v && typeof v === 'object') {
+            const url = v[JITSI_CONFERENCE_URL_KEY];
+
+            if (url && v !== leaving && url !== locationURL) {
+                dispatchConferenceLeft.add(v);
+            }
+        }
+    }
+
+    // Dispatch CONFERENCE_LEFT for the JitsiConferences referenced by
+    // base/conference which have not dispatched or are not likely to dispatch
+    // CONFERENCE_FAILED or CONFERENCE_LEFT.
+    for (const conference of dispatchConferenceLeft) {
+        dispatch(conferenceLeft(conference));
+    }
+
+    return result;
 }
 
 /**

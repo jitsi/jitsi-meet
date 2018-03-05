@@ -3,7 +3,7 @@
 import _ from 'lodash';
 import type { Dispatch } from 'redux';
 
-import { conferenceWillLeave } from '../conference';
+import { conferenceLeft, conferenceWillLeave } from '../conference';
 import JitsiMeetJS, { JitsiConnectionEvents } from '../lib-jitsi-meet';
 import { parseStandardURIString } from '../util';
 
@@ -281,7 +281,16 @@ export function disconnect() {
             // intention to leave the conference.
             dispatch(conferenceWillLeave(conference_));
 
-            promise = conference_.leave();
+            promise
+                = conference_.leave()
+                    .catch(() => {
+                        // The library lib-jitsi-meet failed to make the
+                        // JitsiConference leave. Which may be because
+                        // JitsiConference thinks it has already left.
+                        // Regardless of the failure reason, continue in
+                        // jitsi-meet as if the leave has succeeded.
+                        dispatch(conferenceLeft(conference_));
+                    });
         } else {
             promise = Promise.resolve();
         }
