@@ -254,7 +254,7 @@ class CalleeInfo extends Component<Props, State> {
         if (this.state.renderAudio && this.state.ringing) {
             return (
                 <Audio
-                    ref = { this._setAudio }
+                    setRef = { this._setAudio }
                     src = './sounds/ring.ogg' />
             );
         }

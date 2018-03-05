@@ -18,6 +18,7 @@ import { MiddlewareRegistry, ReducerRegistry } from '../../base/redux';
 import { PersistenceRegistry } from '../../base/storage';
 import { toURLString } from '../../base/util';
 import { OverlayContainer } from '../../overlay';
+import { SoundsCollection } from '../../sounds';
 import { BlankPage } from '../../welcome';
 
 import { appNavigate, appWillMount, appWillUnmount } from '../actions';
@@ -274,6 +275,7 @@ export class AbstractApp extends Component {
                     <Provider store = { this._getStore() }>
                         <Fragment>
                             { this._createElement(component) }
+                            <SoundsCollection />
                             <OverlayContainer />
                         </Fragment>
                     </Provider>
