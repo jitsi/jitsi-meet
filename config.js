@@ -245,8 +245,11 @@ var config = {
     // Stats
     //
 
-    // Whether to enable stats collection or not.
-    // disableStats: false,
+    // Whether to enable stats collection or not in the TraceablePeerConnection.
+    // This can be useful for debugging purposes (post-processing/analysis of
+    // the webrtc stats) as it is done in the jitsi-meet-torture bandwidth
+    // estimation tests.
+    // gatherStats: false,
 
     // To enable sending statistics to callstats.io you must provide the
     // Application ID and Secret.
