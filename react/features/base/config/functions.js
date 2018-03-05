@@ -64,6 +64,7 @@ const WHITELISTED_KEYS = [
     'failICE',
     'firefox_fake_device',
     'forceJVB121Ratio',
+    'gatherStats',
     'hiddenDomain',
     'hosts',
     'iAmRecorder',
