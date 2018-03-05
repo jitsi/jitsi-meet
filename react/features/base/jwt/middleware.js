@@ -77,10 +77,10 @@ function _maybeSetCalleeInfoVisible({ dispatch, getState }, next, action) {
     const result = next(action);
 
     const state = getState();
-    const stateFeaturesJWT = state['features/base/jwt'];
+    const stateFeaturesBaseJWT = state['features/base/jwt'];
     let calleeInfoVisible;
 
-    if (stateFeaturesJWT.callee) {
+    if (stateFeaturesBaseJWT.callee) {
         const { conference, leaving, room } = state['features/base/conference'];
 
         // XXX The CalleeInfo is to be displayed/visible as soon as possible
@@ -112,7 +112,7 @@ function _maybeSetCalleeInfoVisible({ dispatch, getState }, next, action) {
                 // However, the CallDialog is not to be displayed/visible again
                 // after all remote participants leave.
                 if (calleeInfoVisible
-                        && stateFeaturesJWT.calleeInfoVisible === false) {
+                        && stateFeaturesBaseJWT.calleeInfoVisible === false) {
                     calleeInfoVisible = false;
                 }
                 break;
