@@ -273,13 +273,7 @@ class InfoDialog extends Component {
             = encodeURIComponent(this.props._conferenceName);
         const pathParts = window.location.pathname.split('/');
 
-        // More than two parts implies the path consists of more than the first
-        // forward slash and the meeting name. If that is the case, drop the
-        // last segment of the path, which we assume is the meeting name. This
-        // is necessary when is hosted on a url with a path.
-        if (pathParts.length > 2) {
-            pathParts.length = pathParts.length - 1;
-        }
+        pathParts.length = pathParts.length - 1;
 
         const newPath = pathParts.reduce((accumulator, currentValue) => {
             if (currentValue) {
