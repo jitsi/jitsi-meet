@@ -21,6 +21,14 @@ type Props = {
     dispatch: Function,
 
     /**
+     * Tells the component if it's being displayed at the moment, or not.
+     * Note: as an example, on Android it can happen that the component
+     * is rendered but not displayed, because components like ViewPagerAndroid
+     * render their children even if they are not visible at the moment.
+     */
+    displayed: boolean,
+
+    /**
      * The calendar event list.
      */
     _eventList: Array<Object>,
@@ -35,6 +43,7 @@ type Props = {
  * Component to display a list of events from the (mobile) user's calendar.
  */
 class MeetingList extends Component<Props> {
+    _initialLoaded: boolean
 
     /**
      * Default values for the component's props.
@@ -56,6 +65,26 @@ class MeetingList extends Component<Props> {
         this._toDisplayableItem = this._toDisplayableItem.bind(this);
         this._toDisplayableList = this._toDisplayableList.bind(this);
         this._toDateString = this._toDateString.bind(this);
+    }
+
+    /**
+     * Implements React Component's componentWillReceiveProps function.
+     *
+     * @inheritdoc
+     */
+    componentWillReceiveProps(newProps) {
+        // This is a conditional logic to refresh the calendar entries (thus
+        // to request access to calendar) on component first receives a
+        // displayed=true prop - to avoid requesting calendar access on
+        // app start.
+        if (!this._initialLoaded
+                && newProps.displayed
+                && !this.props.displayed) {
+            const { dispatch } = this.props;
+
+            this._initialLoaded = true;
+            dispatch(refreshCalendarEntryList());
+        }
     }
 
     /**

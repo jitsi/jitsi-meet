@@ -58,7 +58,9 @@ class PagedList extends AbstractPagedList {
                         onPress = { this._onTabSelected(1) }
                         selected = { pageIndex === 1 }
                         title = { t('welcomepage.calendar') } >
-                        <MeetingList disabled = { disabled } />
+                        <MeetingList
+                            disabled = { disabled }
+                            displayed = { pageIndex === 1 } />
                     </TabBarIOS.Item>
                 </TabBarIOS>
             </View>

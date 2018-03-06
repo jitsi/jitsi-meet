@@ -41,6 +41,7 @@ export default class PagedList extends AbstractPagedList {
      */
     render() {
         const { disabled } = this.props;
+        const { pageIndex } = this.state;
 
         return (
             <View
@@ -59,7 +60,9 @@ export default class PagedList extends AbstractPagedList {
                         <RecentList disabled = { disabled } />
                     </View>
                     <View key = { 1 }>
-                        <MeetingList disabled = { disabled } />
+                        <MeetingList
+                            disabled = { disabled }
+                            displayed = { pageIndex === 1 } />
                     </View>
                 </ViewPagerAndroid>
                 <View style = { styles.pageIndicatorContainer }>

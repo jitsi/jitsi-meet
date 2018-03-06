@@ -22,10 +22,10 @@ MiddlewareRegistry.register(store => next => action => {
     switch (action.type) {
     case APP_WILL_MOUNT:
         _ensureDefaultServer(store);
-        _fetchCalendarEntries(store);
+        _fetchCalendarEntries(store, false);
         break;
     case REFRESH_CALENDAR_ENTRY_LIST:
-        _fetchCalendarEntries(store);
+        _fetchCalendarEntries(store, true);
         break;
     case SET_ROOM:
         _parseAndAddDomain(store);
@@ -38,15 +38,17 @@ MiddlewareRegistry.register(store => next => action => {
  * Ensures calendar access if possible and resolves the promise if it's granted.
  *
  * @private
+ * @param {boolean} promptForPermission - Flag to tell the app if it should
+ * prompt for a calendar permission if it wasn't granted yet.
  * @returns {Promise}
  */
-function _ensureCalendarAccess() {
+function _ensureCalendarAccess(promptForPermission) {
     return new Promise((resolve, reject) => {
         RNCalendarEvents.authorizationStatus()
             .then(status => {
                 if (status === 'authorized') {
                     resolve();
-                } else if (status === 'undetermined') {
+                } else if (promptForPermission) {
                     RNCalendarEvents.authorizeEventStore()
                         .then(result => {
                             if (result === 'authorized') {
@@ -89,10 +91,12 @@ function _ensureDefaultServer(store) {
  *
  * @private
  * @param {Object} store - The redux store.
+ * @param {boolean} promptForPermission - Flag to tell the app if it should
+ * prompt for a calendar permission if it wasn't granted yet.
  * @returns {void}
  */
-function _fetchCalendarEntries(store) {
-    _ensureCalendarAccess()
+function _fetchCalendarEntries(store, promptForPermission) {
+    _ensureCalendarAccess(promptForPermission)
     .then(() => {
         const startDate = new Date();
         const endDate = new Date();
