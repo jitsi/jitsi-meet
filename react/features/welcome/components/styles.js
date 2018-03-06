@@ -132,6 +132,13 @@ export default createStyleSheet({
     },
 
     /**
+     * A view that contains the field and hint box.
+     */
+    joinControls: {
+        padding: BoxModel.padding
+    },
+
+    /**
      * The style of the top-level container/{@code View} of
      * {@code LocalVideoTrackUnderlay}.
      */

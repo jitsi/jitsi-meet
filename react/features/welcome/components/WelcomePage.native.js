@@ -16,7 +16,7 @@ import { Icon } from '../../base/font-icons';
 import { MEDIA_TYPE } from '../../base/media';
 import { updateProfile } from '../../base/profile';
 import { LoadingIndicator, Header, Text } from '../../base/react';
-import { ColorPalette, PlatformElements } from '../../base/styles';
+import { ColorPalette } from '../../base/styles';
 import {
     createDesiredLocalTracks,
     destroyLocalTracks
@@ -114,7 +114,7 @@ class WelcomePage extends AbstractWelcomePage {
                         </View>
                     </Header>
                     <SafeAreaView style = { styles.roomContainer } >
-                        <View style = { PlatformElements.paddedView } >
+                        <View style = { styles.joinControls } >
                             <TextInput
                                 accessibilityLabel = { 'Input room name.' }
                                 autoCapitalize = 'none'
