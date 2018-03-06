@@ -1,12 +1,14 @@
 # Jitsi Meet - Secure, Simple and Scalable Video Conferences
 
-Jitsi Meet is an open-source (Apache) WebRTC JavaScript application that uses [Jitsi Videobridge](https://jitsi.org/videobridge) to provide high quality, [secure](#security) and scalable video conferences. You can see [Jitsi Meet in action](http://youtu.be/7vFUVClsNh0) here at the session #482 of the VoIP Users Conference.
+Jitsi Meet is an open-source (Apache) WebRTC JavaScript application that uses [Jitsi Videobridge](https://jitsi.org/videobridge) to provide high quality, [secure](#security) and scalable video conferences. You can see Jitsi Meet in action [here at the session #482 of the VoIP Users Conference](http://youtu.be/7vFUVClsNh0).
 
-You can also try it out yourself at https://meet.jit.si .
+The Jitsi Meet client runs in your browser, without the need for installing anything on your computer. You can also try it out yourself at https://meet.jit.si .
 
 Jitsi Meet allows for very efficient collaboration. It allows users to stream their desktop or only some windows. It also supports shared document editing with Etherpad.
 
 ## Installation
+
+On the client side, no installation is necessary. You just point your browser to the URL of your deployment. This section is about installing the Jitsi Meet suite on your server and hosting your own conferencing service.
 
 Installing Jitsi Meet is quite a simple experience. For Debian-based systems, we recommend following the [quick-install](https://github.com/jitsi/jitsi-meet/blob/master/doc/quick-install.md) document, which uses the package system.
 
