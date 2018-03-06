@@ -149,6 +149,38 @@ function _visitNode(node, callback) {
             document.cookie = '';
         }
 
+        // document.implementation
+        //
+        // Required by:
+        // - jQuery
+        if (typeof document.implementation === 'undefined') {
+            document.implementation = {};
+        }
+
+        // document.implementation.createHTMLDocument
+        //
+        // Required by:
+        // - jQuery
+        if (typeof document.implementation.createHTMLDocument === 'undefined') {
+            document.implementation.createHTMLDocument = function(title = '') {
+                const htmlDocument
+                    = new DOMParser().parseFromString(
+                        `<html>
+                            <head><title>${title}</title></head>
+                            <body></body>
+                        </html>`,
+                        'text/xml');
+
+                Object.defineProperty(htmlDocument, 'body', {
+                    get() {
+                        return htmlDocument.getElementsByTagName('body')[0];
+                    }
+                });
+
+                return htmlDocument;
+            };
+        }
+
         // Element.querySelector
         //
         // Required by:
