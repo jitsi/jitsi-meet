@@ -59,11 +59,17 @@
         max-width: 250px;
         overflow: hidden;
         text-overflow: ellipsis;
+        user-select: text;
         white-space: nowrap;
     }
 
     .info-dialog-dial-in {
         white-space: nowrap;
+
+        .conference-id,
+        .phone-number {
+            user-select: text;
+        }
     }
 
     .info-dialog-icon {
@@ -99,6 +105,10 @@
         border: none;
         color: inherit;
         padding-left: 0;
+    }
+
+    .info-password-local {
+        user-select: text;
     }
 
     .conference-id {
