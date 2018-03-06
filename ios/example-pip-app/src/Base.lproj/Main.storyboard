@@ -27,6 +27,7 @@
                                 </connections>
                             </button>
                         </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>
                             <constraint firstItem="QxY-C8-fwD" firstAttribute="centerX" secondItem="6Tk-OE-BBY" secondAttribute="centerX" id="6a6-l1-7Ct"/>
                             <constraint firstItem="QxY-C8-fwD" firstAttribute="centerY" secondItem="6Tk-OE-BBY" secondAttribute="centerY" id="Hfg-TH-0g2"/>
@@ -40,21 +41,6 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="32.799999999999997" y="658.92053973013503"/>
-        </scene>
-        <!--JitsiViewController-->
-        <scene sceneID="V5C-nQ-uqb">
-            <objects>
-                <viewController id="B84-hY-B21" userLabel="JitsiViewController" customClass="JitsiViewController" customModule="PiPApp" customModuleProvider="target" sceneMemberID="viewController">
-                    <view key="view" contentMode="scaleToFill" id="nMf-dX-t08" customClass="JitsiMeetView">
-                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
-                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                        <viewLayoutGuide key="safeArea" id="W4q-U5-6O5"/>
-                    </view>
-                </viewController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="Zdh-Kt-gVo" userLabel="First Responder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="1023" y="643"/>
         </scene>
     </scenes>
 </document>

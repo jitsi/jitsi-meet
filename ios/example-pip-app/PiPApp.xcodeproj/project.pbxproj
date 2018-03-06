@@ -7,8 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		C6245F57205044120040BE68 /* JitsiMeet.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C6F99C4F204DE79F0001F710 /* JitsiMeet.framework */; };
+		C6245F58205044150040BE68 /* WebRTC.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C6A34247204DF18000E062DD /* WebRTC.framework */; };
 		C6A34249204DF18000E062DD /* WebRTC.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = C6A34247204DF18000E062DD /* WebRTC.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		C6A3424C204DF98E00E062DD /* JitsiViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6A3424B204DF98E00E062DD /* JitsiViewController.swift */; };
 		C6F99C3B204DE6BE0001F710 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6F99C3A204DE6BE0001F710 /* AppDelegate.swift */; };
 		C6F99C3D204DE6BE0001F710 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6F99C3C204DE6BE0001F710 /* ViewController.swift */; };
 		C6F99C40204DE6BE0001F710 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = C6F99C3E204DE6BE0001F710 /* Main.storyboard */; };
@@ -34,7 +35,6 @@
 
 /* Begin PBXFileReference section */
 		C6A34247204DF18000E062DD /* WebRTC.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WebRTC.framework; path = "../../node_modules/react-native-webrtc/ios/WebRTC.framework"; sourceTree = "<group>"; };
-		C6A3424B204DF98E00E062DD /* JitsiViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JitsiViewController.swift; sourceTree = "<group>"; };
 		C6F99C37204DE6BE0001F710 /* PiPApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PiPApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		C6F99C3A204DE6BE0001F710 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		C6F99C3C204DE6BE0001F710 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -50,6 +50,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C6245F57205044120040BE68 /* JitsiMeet.framework in Frameworks */,
+				C6245F58205044150040BE68 /* WebRTC.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -78,7 +80,6 @@
 			children = (
 				C6F99C3A204DE6BE0001F710 /* AppDelegate.swift */,
 				C6F99C3C204DE6BE0001F710 /* ViewController.swift */,
-				C6A3424B204DF98E00E062DD /* JitsiViewController.swift */,
 				C6F99C3E204DE6BE0001F710 /* Main.storyboard */,
 				C6F99C41204DE6BE0001F710 /* Assets.xcassets */,
 				C6F99C43204DE6BE0001F710 /* LaunchScreen.storyboard */,
@@ -103,12 +104,13 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = C6F99C49204DE6BE0001F710 /* Build configuration list for PBXNativeTarget "PiPApp" */;
 			buildPhases = (
+				C6A3424A204DF91D00E062DD /* Run Adjust ATS for loading JS bundle */,
+				C6F99C62204DEFFE0001F710 /* Run React Packager */,
 				C6F99C33204DE6BE0001F710 /* Sources */,
 				C6F99C34204DE6BE0001F710 /* Frameworks */,
-				C6F99C61204DEDC20001F710 /* Embed Frameworks */,
 				C6F99C35204DE6BE0001F710 /* Resources */,
-				C6F99C62204DEFFE0001F710 /* Run React Packager */,
-				C6A3424A204DF91D00E062DD /* Run Adjust ATS for loading JS bundle */,
+				C6F99C61204DEDC20001F710 /* Embed Frameworks */,
+				C6A3426E20503ECC00E062DD /* Adjust embedded framework architectures */,
 			);
 			buildRules = (
 			);
@@ -132,6 +134,11 @@
 					C6F99C36204DE6BE0001F710 = {
 						CreatedOnToolsVersion = 9.2;
 						ProvisioningStyle = Automatic;
+						SystemCapabilities = {
+							com.apple.BackgroundModes = {
+								enabled = 1;
+							};
+						};
 					};
 				};
 			};
@@ -181,6 +188,20 @@
 			shellPath = /bin/sh;
 			shellScript = "../scripts/fixup-ats.sh";
 		};
+		C6A3426E20503ECC00E062DD /* Adjust embedded framework architectures */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Adjust embedded framework architectures";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "../scripts/fixup-frameworks.sh";
+		};
 		C6F99C62204DEFFE0001F710 /* Run React Packager */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -204,7 +225,6 @@
 			files = (
 				C6F99C3D204DE6BE0001F710 /* ViewController.swift in Sources */,
 				C6F99C3B204DE6BE0001F710 /* AppDelegate.swift in Sources */,
-				C6A3424C204DF98E00E062DD /* JitsiViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -342,7 +362,9 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
+				FRAMEWORK_SEARCH_PATHS = "../../node_modules/react-native-webrtc/ios";
 				INFOPLIST_FILE = src/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.3;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.jitsi.PiPApp;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -356,7 +378,9 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
+				FRAMEWORK_SEARCH_PATHS = "../../node_modules/react-native-webrtc/ios";
 				INFOPLIST_FILE = src/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.3;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.jitsi.PiPApp;
 				PRODUCT_NAME = "$(TARGET_NAME)";

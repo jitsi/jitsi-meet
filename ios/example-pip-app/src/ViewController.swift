@@ -13,6 +13,8 @@ class ViewController: UIViewController {
 
     @IBOutlet weak var videoButton: UIButton?
     
+    private var jitsiMeetManager: JitsiMeetManager?
+    
     override func viewDidLoad() {
         super.viewDidLoad()
     }
@@ -20,7 +22,10 @@ class ViewController: UIViewController {
     // MARK: - Actions
     
     @IBAction func startMeeting(sender: Any?) {
-        print("test")
+        //let url = URL(string: "")
+        self.jitsiMeetManager = JitsiMeetManager()
+        jitsiMeetManager?.welcomeScreenEnabled = true
+        jitsiMeetManager?.load(withUrl: nil)
     }
 
 }

@@ -27,7 +27,10 @@
 		0BCA496C1EC4BBF900B793EE /* jitsi.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 0BCA496B1EC4BBF900B793EE /* jitsi.ttf */; };
 		0BD906EA1EC0C00300C8C18E /* JitsiMeet.h in Headers */ = {isa = PBXBuildFile; fileRef = 0BD906E81EC0C00300C8C18E /* JitsiMeet.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		0F65EECE1D95DA94561BB47E /* libPods-JitsiMeet.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 03F2ADC957FF109849B7FCA1 /* libPods-JitsiMeet.a */; };
-		C6F99C14204DB63E0001F710 /* JitsiManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6F99C12204DB63D0001F710 /* JitsiManager.swift */; };
+		C6A3425F204EF76800E062DD /* JitsiMeetWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6A3425C204EF76800E062DD /* JitsiMeetWindow.swift */; };
+		C6A34260204EF76800E062DD /* JitsiMeetManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6A3425D204EF76800E062DD /* JitsiMeetManager.swift */; };
+		C6A34261204EF76800E062DD /* DragGestureController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6A3425E204EF76800E062DD /* DragGestureController.swift */; };
+		C6A3426D204F1C3300E062DD /* JitsiMeetViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6A3426C204F1C3300E062DD /* JitsiMeetViewController.swift */; };
 		C6F99C15204DB63E0001F710 /* JitsiMeetView+Private.h in Headers */ = {isa = PBXBuildFile; fileRef = C6F99C13204DB63D0001F710 /* JitsiMeetView+Private.h */; };
 /* End PBXBuildFile section */
 
@@ -57,7 +60,10 @@
 		0BD906E91EC0C00300C8C18E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		98E09B5C73D9036B4ED252FC /* Pods-JitsiMeet.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-JitsiMeet.debug.xcconfig"; path = "../Pods/Target Support Files/Pods-JitsiMeet/Pods-JitsiMeet.debug.xcconfig"; sourceTree = "<group>"; };
 		9C77CA3CC919B081F1A52982 /* Pods-JitsiMeet.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-JitsiMeet.release.xcconfig"; path = "../Pods/Target Support Files/Pods-JitsiMeet/Pods-JitsiMeet.release.xcconfig"; sourceTree = "<group>"; };
-		C6F99C12204DB63D0001F710 /* JitsiManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = JitsiManager.swift; sourceTree = "<group>"; };
+		C6A3425C204EF76800E062DD /* JitsiMeetWindow.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = JitsiMeetWindow.swift; sourceTree = "<group>"; };
+		C6A3425D204EF76800E062DD /* JitsiMeetManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = JitsiMeetManager.swift; sourceTree = "<group>"; };
+		C6A3425E204EF76800E062DD /* DragGestureController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DragGestureController.swift; sourceTree = "<group>"; };
+		C6A3426C204F1C3300E062DD /* JitsiMeetViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JitsiMeetViewController.swift; sourceTree = "<group>"; };
 		C6F99C13204DB63D0001F710 /* JitsiMeetView+Private.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "JitsiMeetView+Private.h"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -107,13 +113,13 @@
 		0BD906E71EC0C00300C8C18E /* src */ = {
 			isa = PBXGroup;
 			children = (
+				C6A3426B204F127900E062DD /* JitsiMeetManager */,
 				0BCA495C1EC4B6C600B793EE /* AudioMode.m */,
 				0BB9AD7C1F60356D001C08DB /* AppInfo.m */,
 				0BB9AD7A1F5EC8F4001C08DB /* CallKit.m */,
 				0BA13D301EE83FF8007BEF7F /* ExternalAPI.m */,
 				0BD906E91EC0C00300C8C18E /* Info.plist */,
 				0B7C2CFC200F51D60060D076 /* LaunchOptions.m */,
-				C6F99C12204DB63D0001F710 /* JitsiManager.swift */,
 				0BD906E81EC0C00300C8C18E /* JitsiMeet.h */,
 				0B412F161EDEC65D00B1A0A6 /* JitsiMeetView.h */,
 				0B412F171EDEC65D00B1A0A6 /* JitsiMeetView.m */,
@@ -147,6 +153,17 @@
 				9C77CA3CC919B081F1A52982 /* Pods-JitsiMeet.release.xcconfig */,
 			);
 			name = Pods;
+			sourceTree = "<group>";
+		};
+		C6A3426B204F127900E062DD /* JitsiMeetManager */ = {
+			isa = PBXGroup;
+			children = (
+				C6A3425C204EF76800E062DD /* JitsiMeetWindow.swift */,
+				C6A3425D204EF76800E062DD /* JitsiMeetManager.swift */,
+				C6A3426C204F1C3300E062DD /* JitsiMeetViewController.swift */,
+				C6A3425E204EF76800E062DD /* DragGestureController.swift */,
+			);
+			path = JitsiMeetManager;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -312,15 +329,18 @@
 			buildActionMask = 2147483647;
 			files = (
 				0BB9AD7B1F5EC8F4001C08DB /* CallKit.m in Sources */,
+				C6A34260204EF76800E062DD /* JitsiMeetManager.swift in Sources */,
 				0BB9AD7D1F60356D001C08DB /* AppInfo.m in Sources */,
 				0B93EF7F1EC9DDCD0030D24D /* RCTBridgeWrapper.m in Sources */,
 				0BA13D311EE83FF8007BEF7F /* ExternalAPI.m in Sources */,
 				0BCA49601EC4B6C600B793EE /* POSIX.m in Sources */,
 				0B7C2CFD200F51D60060D076 /* LaunchOptions.m in Sources */,
-				C6F99C14204DB63E0001F710 /* JitsiManager.swift in Sources */,
+				C6A3426D204F1C3300E062DD /* JitsiMeetViewController.swift in Sources */,
+				C6A3425F204EF76800E062DD /* JitsiMeetWindow.swift in Sources */,
 				0BCA495F1EC4B6C600B793EE /* AudioMode.m in Sources */,
 				0B44A0191F902126009D1D64 /* MPVolumeViewManager.m in Sources */,
 				0BCA49611EC4B6C600B793EE /* Proximity.m in Sources */,
+				C6A34261204EF76800E062DD /* DragGestureController.swift in Sources */,
 				0B412F191EDEC65D00B1A0A6 /* JitsiMeetView.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

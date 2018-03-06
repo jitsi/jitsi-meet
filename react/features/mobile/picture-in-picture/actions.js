@@ -2,6 +2,8 @@
 
 import { NativeModules } from 'react-native';
 
+import { Platform } from '../../base/react';
+
 import {
     ENTER_PICTURE_IN_PICTURE,
     _SET_EMITTER_SUBSCRIPTIONS
@@ -28,10 +30,12 @@ export function enterPictureInPicture() {
                 && (conference || joining)) {
             const { PictureInPicture } = NativeModules;
             const p
-                = PictureInPicture
-                    ? PictureInPicture.enterPictureInPicture()
-                    : Promise.reject(
-                        new Error('Picture-in-Picture not supported'));
+                = Platform.OS === 'android'
+                    ? PictureInPicture
+                        ? PictureInPicture.enterPictureInPicture()
+                        : Promise.reject(
+                            new Error('Picture-in-Picture not supported'))
+                    : Promise.resolve();
 
             p.then(
                 () => dispatch({ type: ENTER_PICTURE_IN_PICTURE }),
