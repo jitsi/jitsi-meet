@@ -2,7 +2,6 @@
     background-color: #fff;
     height: 100vh;
     overflow: auto;
-    padding: 35px 0;
     position: relative;
     width: 100vw;
 
@@ -14,7 +13,7 @@
         color: $unsupportedBrowserTextColor;
         margin: auto;
         max-width: 40em;
-        padding-bottom: 40px;
+        padding: 35px 0 40px 0;
         text-align: center;
         width: 75%;
 

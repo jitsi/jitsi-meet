@@ -96,7 +96,7 @@ class UnsupportedMobileBrowser extends Component<*, *> {
      * @returns {ReactElement}
      */
     render() {
-        const { t } = this.props;
+        const { _room, t } = this.props;
 
         const openAppButtonClassName
             = `${_SNS}__button ${_SNS}__button_primary`;
@@ -128,10 +128,12 @@ class UnsupportedMobileBrowser extends Component<*, *> {
                             { t(`${_TNS}.downloadApp`) }
                         </button>
                     </a>
-                    <DialInSummary
-                        className = 'unsupported-dial-in'
-                        clickableNumbers = { true }
-                        room = { this.props._room } />
+                    { _room
+                        ? <DialInSummary
+                            className = 'unsupported-dial-in'
+                            clickableNumbers = { true }
+                            room = { _room } />
+                        : null }
                 </div>
                 <HideNotificationBarStyle />
             </div>
