@@ -31,6 +31,7 @@ import {
     LOCK_STATE_CHANGED,
     P2P_STATUS_CHANGED,
     SET_AUDIO_ONLY,
+    SET_DESKTOP_SHARING_ENABLED,
     SET_FOLLOW_ME,
     SET_LASTN,
     SET_PASSWORD,
@@ -357,6 +358,7 @@ export function dataChannelOpened() {
     };
 }
 
+
 /**
  * Signals that the lock state of a specific JitsiConference changed.
  *
@@ -430,6 +432,22 @@ export function setAudioOnly(audioOnly: boolean) {
     return {
         type: SET_AUDIO_ONLY,
         audioOnly
+    };
+}
+
+/**
+ * Sets the flag for indicidating if desktop sharing is enabled.
+ *
+ * @param {boolean} desktopSharingEnabled - True if deskop sharing is enabled.
+ * @returns {{
+ *     type: SET_DESKTOP_SHARING_ENABLED,
+ *     desktopSharingEnabled: boolean
+ * }}
+ */
+export function setDesktopSharingEnabled(desktopSharingEnabled: boolean) {
+    return {
+        type: SET_DESKTOP_SHARING_ENABLED,
+        desktopSharingEnabled
     };
 }
 

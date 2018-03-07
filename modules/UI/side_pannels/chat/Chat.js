@@ -9,6 +9,7 @@ import UIEvents from '../../../../service/UI/UIEvents';
 
 import { smileys } from './smileys';
 
+import { addMessage, markAllRead } from '../../../../react/features/chat';
 import { dockToolbox, setSubject } from '../../../../react/features/toolbox';
 
 let unreadMessages = 0;
@@ -249,6 +250,7 @@ const Chat = {
                 }
 
                 unreadMessages = 0;
+                APP.store.dispatch(markAllRead());
                 updateVisualNotification();
 
                 // Undock the toolbar when the chat is shown and if we're in a
@@ -274,9 +276,10 @@ const Chat = {
      */
     // eslint-disable-next-line max-params
     updateChatConversation(id, displayName, message, stamp) {
+        const isFromLocalParticipant = APP.conference.isLocalId(id);
         let divClassName = '';
 
-        if (APP.conference.isLocalId(id)) {
+        if (isFromLocalParticipant) {
             divClassName = 'localuser';
         } else {
             divClassName = 'remoteuser';
@@ -294,6 +297,7 @@ const Chat = {
             .replace(/>/g, '&gt;')
 .replace(/\n/g, '<br/>');
         const escDisplayName = UIUtil.escapeHtml(displayName);
+        const timestamp = getCurrentTime(stamp);
 
         // eslint-disable-next-line no-param-reassign
         message = processReplacements(escMessage);
@@ -302,13 +306,18 @@ const Chat = {
             = `${'<div class="chatmessage">'
                 + '<img src="images/chatArrow.svg" class="chatArrow">'
                 + '<div class="username '}${divClassName}">${escDisplayName
-            }</div><div class="timestamp">${getCurrentTime(stamp)
+            }</div><div class="timestamp">${timestamp
             }</div><div class="usermessage">${message}</div>`
             + '</div>';
 
         $('#chatconversation').append(messageContainer);
         $('#chatconversation').animate(
                 { scrollTop: $('#chatconversation')[0].scrollHeight }, 1000);
+
+        const markAsRead = Chat.isVisible() || isFromLocalParticipant;
+
+        APP.store.dispatch(addMessage(
+            escDisplayName, timestamp, message, markAsRead));
     },
 
     /**

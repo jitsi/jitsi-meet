@@ -165,7 +165,18 @@ var interfaceConfig = {
     /**
      * Specify mobile app scheme for opening the app from the mobile browser.
      */
-    // MOBILE_APP_SCHEME: 'org.jitsi.meet'
+    // MOBILE_APP_SCHEME: 'org.jitsi.meet',
+
+    /**
+     * This is a temporary feature flag used to gate access to the toolbox so it
+     * can be developed through smaller changesets. This feature flag will be
+     * removed at some point, as well as the old toolbox. This new toolbox will
+     * be horizontal and support for horizontal filmstrip will be removed,
+     * except in the case of interfaceConfig.filmStripOnly being true.
+     *
+     * @type {boolean}
+     */
+    // _USE_NEW_TOOLBOX: true,
 };
 
 /* eslint-enable no-unused-vars, no-var, max-len */

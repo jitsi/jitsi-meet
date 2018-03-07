@@ -7,10 +7,12 @@ import { connect } from 'react-redux';
 
 import { getLocalParticipant, PARTICIPANT_ROLE } from '../../base/participants';
 import { InviteButton } from '../../invite';
-import { Toolbox } from '../../toolbox';
+import { Toolbox, ToolboxFilmstrip } from '../../toolbox';
 
 import { setFilmstripHovered } from '../actions';
 import { shouldRemoteVideosBeVisible } from '../functions';
+
+declare var interfaceConfig: Object;
 
 /**
  * Implements a React {@link Component} which represents the filmstrip on
@@ -63,6 +65,12 @@ class Filmstrip extends Component<*> {
         _remoteVideosVisible: PropTypes.bool,
 
         /**
+         * Whether or not the toolbox is visible. The height of the vertical
+         * filmstrip needs to adjust to accomodate the horizontal toolbox.
+         */
+        _toolboxVisible: PropTypes.bool,
+
+        /**
          * Updates the redux store with filmstrip hover changes.
          */
         dispatch: PropTypes.func,
@@ -111,6 +119,7 @@ class Filmstrip extends Component<*> {
             _isAddToCallAvailable,
             _isDialOutAvailable,
             _remoteVideosVisible,
+            _toolboxVisible,
             filmstripOnly
         } = this.props;
 
@@ -122,13 +131,15 @@ class Filmstrip extends Component<*> {
          * will get updated without replacing the DOM. If the known DOM gets
          * modified, then the views will get blown away.
          */
+        const filmstripClassNames = `filmstrip ${_remoteVideosVisible
+            ? '' : 'hide-videos'} ${_toolboxVisible ? 'reduce-height' : ''}`;
 
-        const filmstripClassNames = `filmstrip ${_remoteVideosVisible ? ''
-            : 'hide-videos'}`;
+        const ToolboxToUse = interfaceConfig._USE_NEW_TOOLBOX
+            ? ToolboxFilmstrip : Toolbox;
 
         return (
             <div className = { filmstripClassNames }>
-                { filmstripOnly ? <Toolbox /> : null }
+                { filmstripOnly ? <ToolboxToUse /> : null }
                 <div
                     className = 'filmstrip__videos'
                     id = 'remoteVideos'>
@@ -211,7 +222,8 @@ class Filmstrip extends Component<*> {
  *     _hovered: boolean,
  *     _isAddToCallAvailable: boolean,
  *     _isDialOutAvailable: boolean,
- *     _remoteVideosVisible: boolean
+ *     _remoteVideosVisible: boolean,
+ *     _toolboxVisible: boolean
  * }}
  */
 function _mapStateToProps(state) {
@@ -231,11 +243,13 @@ function _mapStateToProps(state) {
 
     return {
         _hideInviteButton: iAmRecorder
-            || (!isAddToCallAvailable && !isDialOutAvailable),
+            || (!isAddToCallAvailable && !isDialOutAvailable)
+            || interfaceConfig._USE_NEW_TOOLBOX,
         _hovered: hovered,
         _isAddToCallAvailable: isAddToCallAvailable,
         _isDialOutAvailable: isDialOutAvailable,
-        _remoteVideosVisible: shouldRemoteVideosBeVisible(state)
+        _remoteVideosVisible: shouldRemoteVideosBeVisible(state),
+        _toolboxVisible: state['features/toolbox'].visible
     };
 }
 

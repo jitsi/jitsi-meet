@@ -43,7 +43,8 @@ import {
     lockStateChanged,
     onStartMutedPolicyChanged,
     p2pStatusChanged,
-    sendLocalParticipant
+    sendLocalParticipant,
+    setDesktopSharingEnabled
 } from './react/features/base/conference';
 import { updateDeviceList } from './react/features/base/devices';
 import {
@@ -104,6 +105,7 @@ import {
     mediaPermissionPromptVisibilityChanged,
     suspendDetected
 } from './react/features/overlay';
+import { setSharedVideoStatus } from './react/features/shared-video';
 import {
     isButtonEnabled,
     showDesktopSharingButton
@@ -773,6 +775,8 @@ export default {
                     JitsiMeetConferenceEvents.DESKTOP_SHARING_ENABLED_CHANGED,
                     this.isDesktopSharingEnabled);
 
+                APP.store.dispatch(
+                  setDesktopSharingEnabled(this.isDesktopSharingEnabled));
                 APP.store.dispatch(showDesktopSharingButton());
 
                 this._createRoom(tracks);
@@ -1899,14 +1903,8 @@ export default {
 
             if (this.isLocalId(id)) {
                 this.isDominantSpeaker = true;
-                this.setRaisedHand(false);
             } else {
                 this.isDominantSpeaker = false;
-                const participant = room.getParticipantById(id);
-
-                if (participant) {
-                    APP.UI.setRaisedHandStatus(participant, false);
-                }
             }
             APP.UI.markDominantSpeaker(id);
         });
@@ -2022,7 +2020,10 @@ export default {
             (participant, name, oldValue, newValue) => {
                 switch (name) {
                 case 'raisedHand':
-                    APP.UI.setRaisedHandStatus(participant, newValue);
+                    APP.store.dispatch(participantUpdated({
+                        id: participant.getId(),
+                        raisedHand: newValue === 'true'
+                    }));
                     break;
                 case 'remoteControlSessionStatus':
                     APP.UI.setRemoteControlActiveStatus(
@@ -2361,6 +2362,8 @@ export default {
                         }
                     });
                 }
+
+                APP.store.dispatch(setSharedVideoStatus(state));
             });
         room.addCommandListener(
             this.commands.defaults.SHARED_VIDEO,
@@ -2627,24 +2630,14 @@ export default {
      * Toggles the local "raised hand" status.
      */
     maybeToggleRaisedHand() {
-        this.setRaisedHand(!this.isHandRaised);
-    },
+        const localParticipant = getLocalParticipant(APP.store.getState());
+        const currentRaisedHand = localParticipant.raisedHand;
 
-    /**
-     * Sets the local "raised hand" status to a particular value.
-     */
-    setRaisedHand(raisedHand) {
-        if (raisedHand !== this.isHandRaised) {
-            APP.UI.onLocalRaiseHandChanged(raisedHand);
-
-            this.isHandRaised = raisedHand;
-
-            // Advertise the updated status
-            room.setLocalParticipantProperty('raisedHand', raisedHand);
-
-            // Update the view
-            APP.UI.setLocalRaisedHandStatus(raisedHand);
-        }
+        APP.store.dispatch(participantUpdated({
+            id: localParticipant.id,
+            local: true,
+            raisedHand: !currentRaisedHand
+        }));
     },
 
     /**

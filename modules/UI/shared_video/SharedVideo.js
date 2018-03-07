@@ -18,7 +18,11 @@ import {
     participantJoined,
     participantLeft
 } from '../../../react/features/base/participants';
-import { dockToolbox, showToolbox } from '../../../react/features/toolbox';
+import {
+    dockToolbox,
+    getToolboxHeight,
+    showToolbox
+} from '../../../react/features/toolbox';
 
 import SharedVideoThumb from './SharedVideoThumb';
 
@@ -695,7 +699,8 @@ class SharedVideoContainer extends LargeContainer {
         let height, width;
 
         if (interfaceConfig.VERTICAL_FILMSTRIP) {
-            height = containerHeight;
+            height = interfaceConfig._USE_NEW_TOOLBOX
+                ? containerHeight - getToolboxHeight() : containerHeight;
             width = containerWidth - Filmstrip.getFilmstripWidth();
         } else {
             height = containerHeight - Filmstrip.getFilmstripHeight();

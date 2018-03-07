@@ -227,10 +227,10 @@ const UIUtil = {
      * mode, {false} otherwise
      */
     isFullScreen() {
-        return document.fullscreenElement
+        return Boolean(document.fullscreenElement
             || document.mozFullScreenElement
             || document.webkitFullscreenElement
-            || document.msFullscreenElement;
+            || document.msFullscreenElement);
     },
 
     /**

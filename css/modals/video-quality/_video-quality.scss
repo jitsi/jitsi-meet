@@ -135,6 +135,12 @@
     }
 }
 
+.modal-dialog-form {
+    .video-quality-dialog-title {
+        display: none;
+    }
+}
+
 .video-state-indicator {
     background: $videoStateIndicatorBackground;
     cursor: default;
@@ -162,11 +168,11 @@
 }
 
 .centeredVideoLabel.moveToCorner {
-    z-index: $tooltipsZ;
+    z-index: $zindex3;
 }
 
 #videoResolutionLabel {
-    z-index: #{$tooltipsZ + 1};
+    z-index: $zindex3 + 1;
 }
 
 .centeredVideoLabel {

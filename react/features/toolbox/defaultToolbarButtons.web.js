@@ -2,6 +2,7 @@
 
 import React from 'react';
 
+import { setFullScreen } from '../toolbox';
 import {
     ACTION_SHORTCUT_TRIGGERED as TRIGGERED,
     AUDIO_MUTE,
@@ -252,33 +253,37 @@ export default function getDefaultButtons() {
             enabled: true,
             id: 'toolbar_button_fullScreen',
             onClick() {
-                // TODO: why is the fullscreen button handled differently than
-                // the fullscreen keyboard shortcut (one results in a direct
-                // call to toggleFullScreen, while the other fires an
-                // UIEvents.TOGGLE_FULLSCREEN event)?
+                const state = APP.store.getState();
+                const isFullScreen = Boolean(
+                    state['features/toolbox'].fullScreen);
 
                 // The 'enable' attribute is set to true if the action resulted
                 // in fullscreen mode being enabled.
                 sendAnalytics(createToolbarEvent(
                     'toggle.fullscreen',
                         {
-                            enable: !APP.UI.isFullScreen()
+                            enable: !isFullScreen
                         }));
 
-                APP.UI.emitEvent(UIEvents.TOGGLE_FULLSCREEN);
+                APP.store.dispatch(setFullScreen(!isFullScreen));
             },
             shortcut: 'S',
             shortcutAttr: 'toggleFullscreenPopover',
             shortcutDescription: 'keyboardShortcuts.fullScreen',
             shortcutFunc() {
+                const state = APP.store.getState();
+                const isFullScreen = Boolean(
+                    state['features/toolbox'].fullScreen);
+
                 // The 'enable' attribute is set to true if the action resulted
                 // in fullscreen mode being enabled.
                 sendAnalytics(createShortcutEvent(
                     'toggle.fullscreen',
                     {
-                        enable: !APP.UI.isFullScreen()
+                        enable: !isFullScreen
                     }));
-                APP.UI.toggleFullScreen();
+
+                APP.store.dispatch(setFullScreen(!isFullScreen));
             },
             tooltipKey: 'toolbar.fullscreen'
         },

@@ -14,6 +14,7 @@ import {
     LOCK_STATE_CHANGED,
     P2P_STATUS_CHANGED,
     SET_AUDIO_ONLY,
+    SET_DESKTOP_SHARING_ENABLED,
     SET_FOLLOW_ME,
     SET_PASSWORD,
     SET_RECEIVE_VIDEO_QUALITY,
@@ -56,6 +57,9 @@ ReducerRegistry.register('features/base/conference', (state = {}, action) => {
 
     case SET_AUDIO_ONLY:
         return _setAudioOnly(state, action);
+
+    case SET_DESKTOP_SHARING_ENABLED:
+        return _setDesktopSharingEnabled(state, action);
 
     case SET_FOLLOW_ME:
         return {
@@ -327,6 +331,21 @@ function _p2pStatusChanged(state, action) {
  */
 function _setAudioOnly(state, action) {
     return set(state, 'audioOnly', action.audioOnly);
+}
+
+/**
+ * Reduces a specific Redux action SET_DESKTOP_SHARING_ENABLED of the feature
+ * base/conference.
+ *
+ * @param {Object} state - The Redux state of the feature base/conference.
+ * @param {Action} action - The Redux action SET_DESKTOP_SHARING_ENABLED to
+ * reduce.
+ * @private
+ * @returns {Object} The new state of the feature base/conference after the
+ * reduction of the specified action.
+ */
+function _setDesktopSharingEnabled(state, action) {
+    return set(state, 'desktopSharingEnabled', action.desktopSharingEnabled);
 }
 
 /**

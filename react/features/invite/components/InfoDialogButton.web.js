@@ -5,6 +5,7 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
+import { createToolbarEvent, sendAnalytics } from '../../analytics';
 import { ToolbarButton, TOOLTIP_TO_POPUP_POSITION } from '../../toolbox';
 
 import { setInfoDialogVisibility } from '../actions';
@@ -32,7 +33,7 @@ const DEFAULT_BUTTON_CONFIGURATION = {
  *
  * @extends Component
  */
-class InfoDialogButton extends Component {
+export class InfoDialogButton extends Component {
     /**
      * {@code InfoDialogButton} component's property types.
      *
@@ -208,6 +209,8 @@ class InfoDialogButton extends Component {
      * @returns {void}
      */
     _onDialogToggle() {
+        sendAnalytics(createToolbarEvent('info'));
+
         this.props.dispatch(setInfoDialogVisibility(!this.props._showDialog));
     }
 
@@ -240,7 +243,7 @@ class InfoDialogButton extends Component {
  *     _toolboxVisible: boolean
  * }}
  */
-function _mapStateToProps(state) {
+export function mapStateToProps(state) {
     const {
         infoDialogVisible,
         infoDialogWillAutoClose
@@ -253,4 +256,4 @@ function _mapStateToProps(state) {
     };
 }
 
-export default connect(_mapStateToProps)(InfoDialogButton);
+export default connect(mapStateToProps)(InfoDialogButton);

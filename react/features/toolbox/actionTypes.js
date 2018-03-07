@@ -8,6 +8,17 @@
 export const CLEAR_TOOLBOX_TIMEOUT = Symbol('CLEAR_TOOLBOX_TIMEOUT');
 
 /**
+ * The type of (redux) action which updates whether the conference is or is not
+ * currently in full screen view.
+ *
+ * {
+ *     type: FULL_SCREEN_CHANGED,
+ *     fullScreen: boolean
+ * }
+ */
+export const FULL_SCREEN_CHANGED = Symbol('FULL_SCREEN_CHANGED');
+
+/**
  * The type of the action which sets the default toolbar buttons of the Toolbox.
  *
  * {
@@ -18,6 +29,17 @@ export const CLEAR_TOOLBOX_TIMEOUT = Symbol('CLEAR_TOOLBOX_TIMEOUT');
  */
 export const SET_DEFAULT_TOOLBOX_BUTTONS
     = Symbol('SET_DEFAULT_TOOLBOX_BUTTONS');
+
+/**
+ * The type of (redux) action which requests full screen mode be entered or
+ * exited.
+ *
+ * {
+ *     type: SET_FULL_SCREEN,
+ *     fullScreen: boolean
+ * }
+ */
+export const SET_FULL_SCREEN = Symbol('SET_FULL_SCREEN');
 
 /**
  * The type of the action which sets the conference subject.
