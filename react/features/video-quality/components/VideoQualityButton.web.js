@@ -3,7 +3,7 @@ import React, { Component } from 'react';
 
 import { ToolbarButtonWithDialog } from '../../toolbox';
 
-import { VideoQualityDialog } from './';
+import VideoQualitySlider from './VideoQualitySlider';
 
 /**
  * A configuration object to describe how {@code ToolbarButton} should render
@@ -49,7 +49,7 @@ class VideoQualityButton extends Component {
         return (
             <ToolbarButtonWithDialog
                 button = { DEFAULT_BUTTON_CONFIGURATION }
-                content = { VideoQualityDialog }
+                content = { VideoQualitySlider }
                 tooltipPosition = { this.props.tooltipPosition } />
         );
     }

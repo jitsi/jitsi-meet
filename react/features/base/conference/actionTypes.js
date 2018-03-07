@@ -97,6 +97,18 @@ export const P2P_STATUS_CHANGED = Symbol('P2P_STATUS_CHANGED');
 export const SET_AUDIO_ONLY = Symbol('SET_AUDIO_ONLY');
 
 /**
+ * The type of (redux) action which sets the desktop sharing enabled flag for
+ * the current conference.
+ *
+ * {
+ *     type: SET_DESKTOP_SHARING_ENABLED,
+ *     desktopSharingEnabled: boolean
+ * }
+ */
+export const SET_DESKTOP_SHARING_ENABLED
+    = Symbol('SET_DESKTOP_SHARING_ENABLED');
+
+/**
  * The type of (redux) action which updates the current known status of the
  * Follow Me feature.
  *

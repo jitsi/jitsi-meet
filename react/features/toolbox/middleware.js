@@ -1,4 +1,4 @@
-/* @flow */
+// @flow
 
 import {
     MEDIA_TYPE,
@@ -8,8 +8,15 @@ import {
 import { MiddlewareRegistry } from '../base/redux';
 import { isLocalTrackMuted, TRACK_UPDATED } from '../base/tracks';
 
-import { setToolbarButton } from './actions';
-import { CLEAR_TOOLBOX_TIMEOUT, SET_TOOLBOX_TIMEOUT } from './actionTypes';
+import { setToolbarButton, toggleFullScreen } from './actions';
+import {
+    CLEAR_TOOLBOX_TIMEOUT,
+    FULL_SCREEN_CHANGED,
+    SET_TOOLBOX_TIMEOUT,
+    SET_FULL_SCREEN
+} from './actionTypes';
+
+declare var APP: Object;
 
 /**
  * Middleware which intercepts Toolbox actions to handle changes to the
@@ -27,8 +34,14 @@ MiddlewareRegistry.register(store => next => action => {
         break;
     }
 
+    case FULL_SCREEN_CHANGED:
+        return _fullScreenChanged(store, next, action);
+
     case SET_AUDIO_AVAILABLE:
         return _setMediaAvailableOrMuted(store, next, action);
+
+    case SET_FULL_SCREEN:
+        return _setFullScreen(next, action);
 
     case SET_TOOLBOX_TIMEOUT: {
         const { timeoutID } = store.getState()['features/toolbox'];
@@ -53,6 +66,26 @@ MiddlewareRegistry.register(store => next => action => {
 
     return next(action);
 });
+
+/**
+ * Updates the the redux state with the current known state of full screen.
+ *
+ * @param {Store} store - The redux store in which the specified action is being
+ * dispatched.
+ * @param {Dispatch} next - The redux dispatch function to dispatch the
+ * specified action to the specified store.
+ * @param {Action} action - The redux action FULL_SCREEN_CHANGED which is being
+ * dispatched in the specified store.
+ * @private
+ * @returns {Object} The value returned by {@code next(action)}.
+ */
+function _fullScreenChanged({ dispatch }, next, action) {
+    if (typeof APP === 'object') {
+        dispatch(toggleFullScreen(action.fullScreen));
+    }
+
+    return next(action);
+}
 
 /**
  * Adjusts the state of toolbar's microphone or camera button.
@@ -109,4 +142,47 @@ function _setMediaAvailableOrMuted({ dispatch, getState }, next, action) {
             }));
 
     return result;
+}
+
+/**
+ * Makes an external request to enter or exit full screen mode.
+ *
+ * @param {Dispatch} next - The redux dispatch function to dispatch the
+ * specified action to the specified store.
+ * @param {Action} action - The redux action SET_FULL_SCREEN which is being
+ * dispatched in the specified store.
+ * @private
+ * @returns {Object} The value returned by {@code next(action)}.
+ */
+function _setFullScreen(next, action) {
+    if (typeof APP === 'object') {
+        const { fullScreen } = action;
+
+        if (fullScreen) {
+            const documentElement = document.documentElement || {};
+
+            if (typeof documentElement.requestFullscreen === 'function') {
+                documentElement.requestFullscreen();
+            } else if (
+                typeof documentElement.msRequestFullscreen === 'function') {
+                documentElement.msRequestFullscreen();
+            } else if (
+                typeof documentElement.mozRequestFullScreen === 'function') {
+                documentElement.mozRequestFullScreen();
+            } else if (
+                typeof documentElement.webkitRequestFullscreen === 'function') {
+                documentElement.webkitRequestFullscreen();
+            }
+        } else if (typeof document.exitFullscreen === 'function') {
+            document.exitFullscreen();
+        } else if (typeof document.msExitFullscreen === 'function') {
+            document.msExitFullscreen();
+        } else if (typeof document.mozCancelFullScreen === 'function') {
+            document.mozCancelFullScreen();
+        } else if (typeof document.webkitExitFullscreen === 'function') {
+            document.webkitExitFullscreen();
+        }
+    }
+
+    return next(action);
 }

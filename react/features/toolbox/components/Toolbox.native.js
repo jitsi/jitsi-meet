@@ -4,26 +4,16 @@ import React, { Component } from 'react';
 import { View } from 'react-native';
 import { connect } from 'react-redux';
 
-import {
-    AUDIO_MUTE,
-    VIDEO_MUTE,
-    createToolbarEvent,
-    sendAnalytics
-} from '../../analytics';
 import { toggleAudioOnly } from '../../base/conference';
 import {
     MEDIA_TYPE,
-    setAudioMuted,
-    setVideoMuted,
-    toggleCameraFacingMode,
-    VIDEO_MUTISM_AUTHORITY
+    toggleCameraFacingMode
 } from '../../base/media';
 import { Container } from '../../base/react';
 import {
     isNarrowAspectRatio,
     makeAspectRatioAware
 } from '../../base/responsive-ui';
-import { ColorPalette } from '../../base/styles';
 import {
     EnterPictureInPictureToolbarButton
 } from '../../mobile/picture-in-picture';
@@ -38,6 +28,8 @@ import {
 import AudioRouteButton from './AudioRouteButton';
 import styles from './styles';
 import ToolbarButton from './ToolbarButton';
+
+import { AudioMuteButton, HangupButton, VideoMuteButton } from './buttons';
 
 /**
  * The indicator which determines (at bundle time) whether there should be a
@@ -119,20 +111,6 @@ type Props = {
  */
 class Toolbox extends Component<Props> {
     /**
-     * Initializes a new {@code Toolbox} instance.
-     *
-     * @param {Props} props - The read-only React {@code Component} props with
-     * which the new instance is to be initialized.
-     */
-    constructor(props: Props) {
-        super(props);
-
-        // Bind event handlers so they are only bound once per instance.
-        this._onToggleAudio = this._onToggleAudio.bind(this);
-        this._onToggleVideo = this._onToggleVideo.bind(this);
-    }
-
-    /**
      * Implements React's {@link Component#render()}.
      *
      * @inheritdoc
@@ -194,64 +172,6 @@ class Toolbox extends Component<Props> {
         };
     }
 
-    _onToggleAudio: () => void;
-
-    /**
-     * Dispatches an action to toggle the mute state of the audio/microphone.
-     *
-     * @private
-     * @returns {void}
-     */
-    _onToggleAudio() {
-        const mute = !this.props._audioMuted;
-
-        sendAnalytics(createToolbarEvent(
-            AUDIO_MUTE,
-            {
-                enable: mute
-            }));
-
-        // The user sees the reality i.e. the state of base/tracks and intends
-        // to change reality by tapping on the respective button i.e. the user
-        // sets the state of base/media. Whether the user's intention will turn
-        // into reality is a whole different story which is of no concern to the
-        // tapping.
-        this.props.dispatch(
-            setAudioMuted(
-                mute,
-                VIDEO_MUTISM_AUTHORITY.USER,
-                /* ensureTrack */ true));
-    }
-
-    _onToggleVideo: () => void;
-
-    /**
-     * Dispatches an action to toggle the mute state of the video/camera.
-     *
-     * @private
-     * @returns {void}
-     */
-    _onToggleVideo() {
-        const mute = !this.props._videoMuted;
-
-        sendAnalytics(createToolbarEvent(
-            VIDEO_MUTE,
-            {
-                enable: mute
-            }));
-
-        // The user sees the reality i.e. the state of base/tracks and intends
-        // to change reality by tapping on the respective button i.e. the user
-        // sets the state of base/media. Whether the user's intention will turn
-        // into reality is a whole different story which is of no concern to the
-        // tapping.
-        this.props.dispatch(
-            setVideoMuted(
-                !this.props._videoMuted,
-                VIDEO_MUTISM_AUTHORITY.USER,
-                /* ensureTrack */ true));
-    }
-
     /**
      * Renders the toolbar which contains the primary buttons such as hangup,
      * audio and video mute.
@@ -269,24 +189,9 @@ class Toolbox extends Component<Props> {
             <View
                 key = 'primaryToolbar'
                 style = { styles.primaryToolbar }>
-                <ToolbarButton
-                    iconName = { audioButtonStyles.iconName }
-                    iconStyle = { audioButtonStyles.iconStyle }
-                    onClick = { this._onToggleAudio }
-                    style = { audioButtonStyles.style } />
-                <ToolbarButton
-                    accessibilityLabel = 'Hangup'
-                    iconName = 'hangup'
-                    iconStyle = { styles.whitePrimaryToolbarButtonIcon }
-                    onClick = { this.props._onHangup }
-                    style = { styles.hangup }
-                    underlayColor = { ColorPalette.buttonUnderlay } />
-                <ToolbarButton
-                    disabled = { this.props._audioOnly }
-                    iconName = { videoButtonStyles.iconName }
-                    iconStyle = { videoButtonStyles.iconStyle }
-                    onClick = { this._onToggleVideo }
-                    style = { videoButtonStyles.style } />
+                <AudioMuteButton buttonStyles = { audioButtonStyles } />
+                <HangupButton />
+                <VideoMuteButton buttonStyles = { videoButtonStyles } />
             </View>
         );
 

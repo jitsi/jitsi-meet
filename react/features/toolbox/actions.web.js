@@ -14,10 +14,13 @@ import {
     setToolboxTimeout,
     setToolboxTimeoutMS,
     setToolboxVisible,
-    toggleFullScreen,
     toggleToolbarButton
 } from './actions.native';
-import { SET_DEFAULT_TOOLBOX_BUTTONS } from './actionTypes';
+import {
+    FULL_SCREEN_CHANGED,
+    SET_DEFAULT_TOOLBOX_BUTTONS,
+    SET_FULL_SCREEN
+} from './actionTypes';
 import {
     getButton,
     getDefaultToolboxButtons,
@@ -96,6 +99,23 @@ export function dockToolbox(dock: boolean): Function {
 }
 
 /**
+ * Signals that full screen mode has been entered or exited.
+ *
+ * @param {boolean} fullScreen - Whether or not full screen mode is currently
+ * enabled.
+ * @returns {{
+ *     type: FULL_SCREEN_CHANGED,
+ *     fullScreen: boolean
+ * }}
+ */
+export function fullScreenChanged(fullScreen: boolean) {
+    return {
+        type: FULL_SCREEN_CHANGED,
+        fullScreen
+    };
+}
+
+/**
  * Returns button on mount/unmount handlers with dispatch function stored in
  * closure.
  *
@@ -106,8 +126,6 @@ export function dockToolbox(dock: boolean): Function {
 function _getButtonHandlers(dispatch) {
     const localRaiseHandHandler
         = (...args) => dispatch(changeLocalRaiseHand(...args));
-    const toggleFullScreenHandler
-        = (...args) => dispatch(toggleFullScreen(...args));
 
     return {
         /**
@@ -117,22 +135,6 @@ function _getButtonHandlers(dispatch) {
          */
         desktop: {
             onMount: () => dispatch(showDesktopSharingButton())
-        },
-
-        /**
-         * Mount/Unmount handler for toggling fullscreen button.
-         *
-         * @type {Object}
-         */
-        fullscreen: {
-            onMount: () =>
-                APP.UI.addListener(
-                    UIEvents.FULLSCREEN_TOGGLED,
-                    toggleFullScreenHandler),
-            onUnmount: () =>
-                APP.UI.removeListener(
-                    UIEvents.FULLSCREEN_TOGGLED,
-                    toggleFullScreenHandler)
         },
 
         /**
@@ -288,6 +290,22 @@ export function showDialPadButton(show: boolean): Function {
                 hidden: false
             }));
         }
+    };
+}
+
+/**
+ * Signals a request to enter or exit full screen mode.
+ *
+ * @param {boolean} fullScreen - True to enter full screen mode, false to exit.
+ * @returns {{
+ *     type: SET_FULL_SCREEN,
+ *     fullScreen: boolean
+ * }}
+ */
+export function setFullScreen(fullScreen: boolean) {
+    return {
+        type: SET_FULL_SCREEN,
+        fullScreen
     };
 }
 

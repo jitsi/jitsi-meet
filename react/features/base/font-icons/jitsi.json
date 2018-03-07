@@ -4,6 +4,33 @@
     {
       "icon": {
         "paths": [
+          "M598 128h298v298h-86v-152l-418 418-60-60 418-418h-152v-86zM810 810v-298h86v298c0 46-40 86-86 86h-596c-48 0-86-40-86-86v-596c0-46 38-86 86-86h298v86h-298v596h596z"
+        ],
+        "attrs": [],
+        "isMulticolor": false,
+        "isMulticolor2": false,
+        "tags": [
+          "open_in_new"
+        ],
+        "defaultCode": 59550,
+        "grid": 24
+      },
+      "attrs": [],
+      "properties": {
+        "ligatures": "launch, open_in_new",
+        "id": 761,
+        "order": 932,
+        "prevSize": 24,
+        "name": "open_in_new",
+        "code": 59550
+      },
+      "setIdx": 0,
+      "setId": 1,
+      "iconIdx": 0
+    },
+    {
+      "icon": {
+        "paths": [
           "M512 342h64v180l150 90-32 52-182-110v-212zM554 128c212 0 384 172 384 384s-172 384-384 384c-106 0-200-42-270-112l60-62c54 54 128 88 210 88 166 0 300-132 300-298s-134-298-300-298-298 132-298 298h128l-172 172-4-6-166-166h128c0-212 172-384 384-384z"
         ],
         "attrs": [],
@@ -18,15 +45,15 @@
       "attrs": [],
       "properties": {
         "ligatures": "history, restore",
-        "id": 385,
-        "order": 930,
+        "id": 762,
+        "order": 933,
         "prevSize": 24,
         "code": 59571,
         "name": "restore"
       },
       "setIdx": 0,
-      "setId": 2,
-      "iconIdx": 385
+      "setId": 1,
+      "iconIdx": 1
     },
     {
       "icon": {
@@ -45,15 +72,15 @@
       "attrs": [],
       "properties": {
         "ligatures": "chevron_right, navigate_next",
-        "id": 153,
-        "order": 927,
+        "id": 763,
+        "order": 934,
         "prevSize": 24,
         "code": 58377,
         "name": "navigate_next"
       },
-      "setIdx": 1,
+      "setIdx": 0,
       "setId": 1,
-      "iconIdx": 0
+      "iconIdx": 2
     },
     {
       "icon": {
@@ -72,15 +99,15 @@
       "attrs": [],
       "properties": {
         "ligatures": "menu",
-        "id": 489,
-        "order": 926,
+        "id": 764,
+        "order": 935,
         "prevSize": 24,
         "code": 58834,
         "name": "menu"
       },
-      "setIdx": 1,
+      "setIdx": 0,
       "setId": 1,
-      "iconIdx": 1
+      "iconIdx": 3
     },
     {
       "icon": {
@@ -99,15 +126,15 @@
       "attrs": [],
       "properties": {
         "ligatures": "arrow_back",
-        "id": 45,
-        "order": 924,
+        "id": 765,
+        "order": 936,
         "prevSize": 24,
         "code": 58820,
         "name": "arrow_back"
       },
-      "setIdx": 1,
+      "setIdx": 0,
       "setId": 1,
-      "iconIdx": 2
+      "iconIdx": 4
     },
     {
       "icon": {
@@ -126,15 +153,15 @@
       "attrs": [],
       "properties": {
         "ligatures": "chevron_left, navigate_before",
-        "id": 152,
-        "order": 923,
+        "id": 766,
+        "order": 937,
         "prevSize": 24,
         "code": 58376,
         "name": "navigate_before"
       },
-      "setIdx": 1,
+      "setIdx": 0,
       "setId": 1,
-      "iconIdx": 3
+      "iconIdx": 5
     },
     {
       "icon": {
@@ -153,15 +180,15 @@
       "attrs": [],
       "properties": {
         "ligatures": "public",
-        "id": 605,
-        "order": 920,
+        "id": 767,
+        "order": 938,
         "prevSize": 24,
         "code": 59403,
         "name": "public"
       },
-      "setIdx": 1,
+      "setIdx": 0,
       "setId": 1,
-      "iconIdx": 4
+      "iconIdx": 6
     },
     {
       "icon": {
@@ -180,15 +207,15 @@
       "attrs": [],
       "properties": {
         "ligatures": "event_note",
-        "id": 252,
-        "order": 919,
+        "id": 768,
+        "order": 939,
         "prevSize": 24,
         "code": 58902,
         "name": "event_note"
       },
-      "setIdx": 1,
+      "setIdx": 0,
       "setId": 1,
-      "iconIdx": 5
+      "iconIdx": 7
     },
     {
       "icon": {
@@ -207,15 +234,15 @@
       "attrs": [],
       "properties": {
         "ligatures": "timer",
-        "id": 760,
-        "order": 928,
+        "id": 769,
+        "order": 940,
         "prevSize": 24,
         "code": 58405,
         "name": "timer"
       },
-      "setIdx": 1,
+      "setIdx": 0,
       "setId": 1,
-      "iconIdx": 6
+      "iconIdx": 8
     },
     {
       "icon": {
@@ -234,15 +261,15 @@
       "attrs": [],
       "properties": {
         "ligatures": "bluetooth_audio, bluetooth_searching",
-        "id": 79,
-        "order": 911,
+        "id": 770,
+        "order": 941,
         "prevSize": 24,
         "code": 57770,
         "name": "bluetooth"
       },
-      "setIdx": 1,
+      "setIdx": 0,
       "setId": 1,
-      "iconIdx": 7
+      "iconIdx": 9
     },
     {
       "icon": {
@@ -261,15 +288,15 @@
       "attrs": [],
       "properties": {
         "ligatures": "headset",
-        "id": 376,
-        "order": 910,
+        "id": 771,
+        "order": 942,
         "prevSize": 24,
         "code": 58128,
         "name": "headset"
       },
-      "setIdx": 1,
+      "setIdx": 0,
       "setId": 1,
-      "iconIdx": 8
+      "iconIdx": 10
     },
     {
       "icon": {
@@ -288,15 +315,15 @@
       "attrs": [],
       "properties": {
         "ligatures": "phone_in_talk",
-        "id": 566,
-        "order": 912,
+        "id": 772,
+        "order": 943,
         "prevSize": 24,
         "code": 58909,
         "name": "phone-talk"
       },
-      "setIdx": 1,
+      "setIdx": 0,
       "setId": 1,
-      "iconIdx": 9
+      "iconIdx": 11
     },
     {
       "icon": {
@@ -315,15 +342,15 @@
       "attrs": [],
       "properties": {
         "ligatures": "more_vert",
-        "id": 0,
-        "order": 897,
+        "id": 773,
+        "order": 944,
         "prevSize": 24,
         "code": 58836,
         "name": "thumb-menu"
       },
-      "setIdx": 1,
+      "setIdx": 0,
       "setId": 1,
-      "iconIdx": 10
+      "iconIdx": 12
     },
     {
       "icon": {
@@ -344,15 +371,15 @@
         {}
       ],
       "properties": {
-        "order": 850,
-        "id": 1,
+        "order": 945,
+        "id": 774,
         "name": "ninja",
         "prevSize": 24,
         "code": 59657
       },
-      "setIdx": 1,
+      "setIdx": 0,
       "setId": 1,
-      "iconIdx": 11
+      "iconIdx": 13
     },
     {
       "icon": {
@@ -371,15 +398,15 @@
       "attrs": [],
       "properties": {
         "ligatures": "call, local_phone, phone",
-        "id": 2,
-        "order": 851,
+        "id": 775,
+        "order": 946,
         "prevSize": 24,
         "code": 57549,
         "name": "phone"
       },
-      "setIdx": 1,
+      "setIdx": 0,
       "setId": 1,
-      "iconIdx": 12
+      "iconIdx": 14
     },
     {
       "icon": {
@@ -398,15 +425,15 @@
       "attrs": [],
       "properties": {
         "ligatures": "add",
-        "id": 3,
-        "order": 896,
+        "id": 776,
+        "order": 947,
         "prevSize": 24,
         "code": 57669,
         "name": "add"
       },
-      "setIdx": 1,
+      "setIdx": 0,
       "setId": 1,
-      "iconIdx": 13
+      "iconIdx": 15
     },
     {
       "icon": {
@@ -427,15 +454,15 @@
         {}
       ],
       "properties": {
-        "order": 901,
-        "id": 0,
+        "order": 948,
+        "id": 777,
         "name": "gsm-bars-black",
         "prevSize": 32,
         "code": 59686
       },
-      "setIdx": 1,
+      "setIdx": 0,
       "setId": 1,
-      "iconIdx": 14
+      "iconIdx": 16
     },
     {
       "icon": {
@@ -456,15 +483,15 @@
         {}
       ],
       "properties": {
-        "order": 898,
-        "id": 0,
+        "order": 949,
+        "id": 778,
         "name": "info",
         "prevSize": 32,
         "code": 59682
       },
-      "setIdx": 1,
+      "setIdx": 0,
       "setId": 1,
-      "iconIdx": 15
+      "iconIdx": 17
     },
     {
       "icon": {
@@ -485,15 +512,15 @@
         {}
       ],
       "properties": {
-        "order": 856,
-        "id": 0,
+        "order": 950,
+        "id": 779,
         "name": "mic-camera-combined",
         "prevSize": 32,
         "code": 59651
       },
-      "setIdx": 1,
+      "setIdx": 0,
       "setId": 1,
-      "iconIdx": 16
+      "iconIdx": 18
     },
     {
       "icon": {
@@ -514,15 +541,15 @@
         {}
       ],
       "properties": {
-        "order": 857,
-        "id": 1,
+        "order": 951,
+        "id": 780,
         "name": "feedback",
         "prevSize": 32,
         "code": 59677
       },
-      "setIdx": 1,
+      "setIdx": 0,
       "setId": 1,
-      "iconIdx": 17
+      "iconIdx": 19
     },
     {
       "icon": {
@@ -543,15 +570,15 @@
         {}
       ],
       "properties": {
-        "order": 858,
-        "id": 2,
+        "order": 952,
+        "id": 781,
         "name": "toggle-filmstrip",
         "prevSize": 32,
         "code": 59676
       },
-      "setIdx": 1,
+      "setIdx": 0,
       "setId": 1,
-      "iconIdx": 18
+      "iconIdx": 20
     },
     {
       "icon": {
@@ -568,16 +595,16 @@
       },
       "attrs": [],
       "properties": {
-        "id": 3,
-        "order": 859,
+        "id": 782,
+        "order": 953,
         "ligatures": "account_circle",
         "prevSize": 32,
         "code": 59649,
         "name": "avatar"
       },
-      "setIdx": 1,
+      "setIdx": 0,
       "setId": 1,
-      "iconIdx": 19
+      "iconIdx": 21
     },
     {
       "icon": {
@@ -594,16 +621,16 @@
       },
       "attrs": [],
       "properties": {
-        "id": 4,
-        "order": 860,
+        "id": 783,
+        "order": 954,
         "ligatures": "call_end",
         "prevSize": 32,
         "code": 59653,
         "name": "hangup"
       },
-      "setIdx": 1,
+      "setIdx": 0,
       "setId": 1,
-      "iconIdx": 20
+      "iconIdx": 22
     },
     {
       "icon": {
@@ -620,16 +647,16 @@
       },
       "attrs": [],
       "properties": {
-        "id": 5,
-        "order": 861,
+        "id": 784,
+        "order": 955,
         "ligatures": "chat_bubble_outline",
         "prevSize": 32,
         "code": 59654,
         "name": "chat"
       },
-      "setIdx": 1,
+      "setIdx": 0,
       "setId": 1,
-      "iconIdx": 21
+      "iconIdx": 23
     },
     {
       "icon": {
@@ -646,16 +673,16 @@
       },
       "attrs": [],
       "properties": {
-        "id": 6,
-        "order": 862,
+        "id": 785,
+        "order": 956,
         "ligatures": "cloud_download",
         "prevSize": 32,
         "code": 59650,
         "name": "download"
       },
-      "setIdx": 1,
+      "setIdx": 0,
       "setId": 1,
-      "iconIdx": 22
+      "iconIdx": 24
     },
     {
       "icon": {
@@ -672,16 +699,16 @@
       },
       "attrs": [],
       "properties": {
-        "id": 7,
-        "order": 863,
+        "id": 786,
+        "order": 957,
         "ligatures": "create, edit, mode_edit",
         "prevSize": 32,
         "code": 59655,
         "name": "edit"
       },
-      "setIdx": 1,
+      "setIdx": 0,
       "setId": 1,
-      "iconIdx": 23
+      "iconIdx": 25
     },
     {
       "icon": {
@@ -698,16 +725,16 @@
       },
       "attrs": [],
       "properties": {
-        "id": 8,
-        "order": 864,
+        "id": 787,
+        "order": 958,
         "ligatures": "description",
         "prevSize": 32,
         "code": 59656,
         "name": "share-doc"
       },
-      "setIdx": 1,
+      "setIdx": 0,
       "setId": 1,
-      "iconIdx": 24
+      "iconIdx": 26
     },
     {
       "icon": {
@@ -724,16 +751,16 @@
       },
       "attrs": [],
       "properties": {
-        "id": 9,
-        "order": 865,
+        "id": 788,
+        "order": 959,
         "ligatures": "eject",
         "prevSize": 32,
         "code": 59652,
         "name": "kick"
       },
-      "setIdx": 1,
+      "setIdx": 0,
       "setId": 1,
-      "iconIdx": 25
+      "iconIdx": 27
     },
     {
       "icon": {
@@ -750,16 +777,16 @@
       },
       "attrs": [],
       "properties": {
-        "id": 10,
-        "order": 922,
+        "id": 789,
+        "order": 960,
         "ligatures": "expand_less",
         "prevSize": 32,
         "code": 59679,
         "name": "menu-up"
       },
-      "setIdx": 1,
+      "setIdx": 0,
       "setId": 1,
-      "iconIdx": 26
+      "iconIdx": 28
     },
     {
       "icon": {
@@ -776,16 +803,16 @@
       },
       "attrs": [],
       "properties": {
-        "id": 11,
-        "order": 867,
+        "id": 790,
+        "order": 961,
         "ligatures": "expand_more",
         "prevSize": 32,
         "code": 59680,
         "name": "menu-down"
       },
-      "setIdx": 1,
+      "setIdx": 0,
       "setId": 1,
-      "iconIdx": 27
+      "iconIdx": 29
     },
     {
       "icon": {
@@ -802,16 +829,16 @@
       },
       "attrs": [],
       "properties": {
-        "id": 12,
-        "order": 868,
+        "id": 791,
+        "order": 962,
         "ligatures": "fullscreen",
         "prevSize": 32,
         "code": 59659,
         "name": "full-screen"
       },
-      "setIdx": 1,
+      "setIdx": 0,
       "setId": 1,
-      "iconIdx": 28
+      "iconIdx": 30
     },
     {
       "icon": {
@@ -828,16 +855,16 @@
       },
       "attrs": [],
       "properties": {
-        "id": 13,
-        "order": 869,
+        "id": 792,
+        "order": 963,
         "ligatures": "fullscreen_exit",
         "prevSize": 32,
         "code": 59660,
         "name": "exit-full-screen"
       },
-      "setIdx": 1,
+      "setIdx": 0,
       "setId": 1,
-      "iconIdx": 29
+      "iconIdx": 31
     },
     {
       "icon": {
@@ -854,16 +881,16 @@
       },
       "attrs": [],
       "properties": {
-        "id": 14,
-        "order": 870,
+        "id": 793,
+        "order": 964,
         "ligatures": "grade, star",
         "prevSize": 32,
         "code": 59658,
         "name": "star-full"
       },
-      "setIdx": 1,
+      "setIdx": 0,
       "setId": 1,
-      "iconIdx": 30
+      "iconIdx": 32
     },
     {
       "icon": {
@@ -880,16 +907,16 @@
       },
       "attrs": [],
       "properties": {
-        "id": 15,
-        "order": 871,
+        "id": 794,
+        "order": 965,
         "ligatures": "lock_open",
         "prevSize": 32,
         "code": 59661,
         "name": "security"
       },
-      "setIdx": 1,
+      "setIdx": 0,
       "setId": 1,
-      "iconIdx": 31
+      "iconIdx": 33
     },
     {
       "icon": {
@@ -906,16 +933,16 @@
       },
       "attrs": [],
       "properties": {
-        "id": 16,
-        "order": 872,
+        "id": 795,
+        "order": 966,
         "ligatures": "lock_outline",
         "prevSize": 32,
         "code": 59662,
         "name": "security-locked"
       },
-      "setIdx": 1,
+      "setIdx": 0,
       "setId": 1,
-      "iconIdx": 32
+      "iconIdx": 34
     },
     {
       "icon": {
@@ -932,16 +959,16 @@
       },
       "attrs": [],
       "properties": {
-        "id": 17,
-        "order": 873,
+        "id": 796,
+        "order": 967,
         "ligatures": "loop, sync",
         "prevSize": 32,
         "code": 59663,
         "name": "reload"
       },
-      "setIdx": 1,
+      "setIdx": 0,
       "setId": 1,
-      "iconIdx": 33
+      "iconIdx": 35
     },
     {
       "icon": {
@@ -958,16 +985,16 @@
       },
       "attrs": [],
       "properties": {
-        "id": 18,
-        "order": 874,
+        "id": 797,
+        "order": 968,
         "ligatures": "mic",
         "prevSize": 32,
         "code": 59664,
         "name": "microphone"
       },
-      "setIdx": 1,
+      "setIdx": 0,
       "setId": 1,
-      "iconIdx": 34
+      "iconIdx": 36
     },
     {
       "icon": {
@@ -984,16 +1011,16 @@
       },
       "attrs": [],
       "properties": {
-        "id": 19,
-        "order": 875,
+        "id": 798,
+        "order": 969,
         "ligatures": "mic_none",
         "prevSize": 32,
         "code": 59665,
         "name": "mic-empty"
       },
-      "setIdx": 1,
+      "setIdx": 0,
       "setId": 1,
-      "iconIdx": 35
+      "iconIdx": 37
     },
     {
       "icon": {
@@ -1010,16 +1037,16 @@
       },
       "attrs": [],
       "properties": {
-        "id": 20,
-        "order": 876,
+        "id": 799,
+        "order": 970,
         "ligatures": "mic_off",
         "prevSize": 32,
         "code": 59666,
         "name": "mic-disabled"
       },
-      "setIdx": 1,
+      "setIdx": 0,
       "setId": 1,
-      "iconIdx": 36
+      "iconIdx": 38
     },
     {
       "icon": {
@@ -1036,16 +1063,16 @@
       },
       "attrs": [],
       "properties": {
-        "id": 21,
-        "order": 899,
+        "id": 800,
+        "order": 971,
         "ligatures": "pan_tool",
         "prevSize": 32,
         "code": 59678,
         "name": "raised-hand"
       },
-      "setIdx": 1,
+      "setIdx": 0,
       "setId": 1,
-      "iconIdx": 37
+      "iconIdx": 39
     },
     {
       "icon": {
@@ -1062,16 +1089,16 @@
       },
       "attrs": [],
       "properties": {
-        "id": 22,
-        "order": 878,
+        "id": 801,
+        "order": 972,
         "ligatures": "people_outline",
         "prevSize": 32,
         "code": 59675,
         "name": "contactList"
       },
-      "setIdx": 1,
+      "setIdx": 0,
       "setId": 1,
-      "iconIdx": 38
+      "iconIdx": 40
     },
     {
       "icon": {
@@ -1088,16 +1115,16 @@
       },
       "attrs": [],
       "properties": {
-        "id": 23,
-        "order": 879,
+        "id": 802,
+        "order": 973,
         "ligatures": "person_add",
         "prevSize": 32,
         "code": 59667,
         "name": "link"
       },
-      "setIdx": 1,
+      "setIdx": 0,
       "setId": 1,
-      "iconIdx": 39
+      "iconIdx": 41
     },
     {
       "icon": {
@@ -1114,16 +1141,16 @@
       },
       "attrs": [],
       "properties": {
-        "id": 24,
-        "order": 880,
+        "id": 803,
+        "order": 974,
         "ligatures": "play_circle_outline",
         "prevSize": 32,
         "code": 59668,
         "name": "shared-video"
       },
-      "setIdx": 1,
+      "setIdx": 0,
       "setId": 1,
-      "iconIdx": 40
+      "iconIdx": 42
     },
     {
       "icon": {
@@ -1140,16 +1167,16 @@
       },
       "attrs": [],
       "properties": {
-        "id": 25,
-        "order": 881,
+        "id": 804,
+        "order": 975,
         "ligatures": "settings",
         "prevSize": 32,
         "code": 59669,
         "name": "settings"
       },
-      "setIdx": 1,
+      "setIdx": 0,
       "setId": 1,
-      "iconIdx": 41
+      "iconIdx": 43
     },
     {
       "icon": {
@@ -1166,16 +1193,16 @@
       },
       "attrs": [],
       "properties": {
-        "id": 26,
-        "order": 882,
+        "id": 805,
+        "order": 976,
         "ligatures": "star_border",
         "prevSize": 32,
         "code": 59670,
         "name": "star"
       },
-      "setIdx": 1,
+      "setIdx": 0,
       "setId": 1,
-      "iconIdx": 42
+      "iconIdx": 44
     },
     {
       "icon": {
@@ -1192,16 +1219,16 @@
       },
       "attrs": [],
       "properties": {
-        "id": 27,
-        "order": 883,
+        "id": 806,
+        "order": 977,
         "ligatures": "switch_camera",
         "prevSize": 32,
         "code": 59681,
         "name": "switch-camera"
       },
-      "setIdx": 1,
+      "setIdx": 0,
       "setId": 1,
-      "iconIdx": 43
+      "iconIdx": 45
     },
     {
       "icon": {
@@ -1218,16 +1245,16 @@
       },
       "attrs": [],
       "properties": {
-        "id": 28,
-        "order": 884,
+        "id": 807,
+        "order": 978,
         "ligatures": "tv",
         "prevSize": 32,
         "code": 59671,
         "name": "share-desktop"
       },
-      "setIdx": 1,
+      "setIdx": 0,
       "setId": 1,
-      "iconIdx": 44
+      "iconIdx": 46
     },
     {
       "icon": {
@@ -1244,16 +1271,16 @@
       },
       "attrs": [],
       "properties": {
-        "id": 29,
-        "order": 885,
+        "id": 808,
+        "order": 979,
         "ligatures": "videocam",
         "prevSize": 32,
         "code": 59672,
         "name": "camera"
       },
-      "setIdx": 1,
+      "setIdx": 0,
       "setId": 1,
-      "iconIdx": 45
+      "iconIdx": 47
     },
     {
       "icon": {
@@ -1270,16 +1297,16 @@
       },
       "attrs": [],
       "properties": {
-        "id": 30,
-        "order": 886,
+        "id": 809,
+        "order": 980,
         "ligatures": "videocam_off",
         "prevSize": 32,
         "code": 59673,
         "name": "camera-disabled"
       },
-      "setIdx": 1,
+      "setIdx": 0,
       "setId": 1,
-      "iconIdx": 46
+      "iconIdx": 48
     },
     {
       "icon": {
@@ -1296,16 +1323,16 @@
       },
       "attrs": [],
       "properties": {
-        "id": 31,
-        "order": 887,
+        "id": 810,
+        "order": 981,
         "ligatures": "volume_up",
         "prevSize": 32,
         "code": 59674,
         "name": "volume"
       },
-      "setIdx": 1,
+      "setIdx": 0,
       "setId": 1,
-      "iconIdx": 47
+      "iconIdx": 49
     },
     {
       "icon": {
@@ -1325,16 +1352,16 @@
       },
       "attrs": [],
       "properties": {
-        "order": 890,
-        "id": 34,
+        "order": 982,
+        "id": 811,
         "prevSize": 32,
         "code": 58899,
         "name": "recDisable",
         "ligatures": ""
       },
-      "setIdx": 1,
+      "setIdx": 0,
       "setId": 1,
-      "iconIdx": 48
+      "iconIdx": 50
     },
     {
       "icon": {
@@ -1355,16 +1382,16 @@
       },
       "attrs": [],
       "properties": {
-        "order": 891,
-        "id": 35,
+        "order": 983,
+        "id": 812,
         "prevSize": 32,
         "code": 58900,
         "name": "recEnable",
         "ligatures": ""
       },
-      "setIdx": 1,
+      "setIdx": 0,
       "setId": 1,
-      "iconIdx": 49
+      "iconIdx": 51
     },
     {
       "icon": {
@@ -1385,16 +1412,16 @@
       },
       "attrs": [],
       "properties": {
-        "order": 892,
-        "id": 36,
+        "order": 984,
+        "id": 813,
         "prevSize": 32,
         "code": 58883,
         "name": "presentation",
         "ligatures": ""
       },
-      "setIdx": 1,
+      "setIdx": 0,
       "setId": 1,
-      "iconIdx": 50
+      "iconIdx": 52
     },
     {
       "icon": {
@@ -1411,16 +1438,16 @@
       },
       "attrs": [],
       "properties": {
-        "order": 893,
+        "order": 985,
         "ligatures": "dialpad",
-        "id": 37,
+        "id": 814,
         "prevSize": 32,
         "code": 59685,
         "name": "dialpad"
       },
-      "setIdx": 1,
+      "setIdx": 0,
       "setId": 1,
-      "iconIdx": 51
+      "iconIdx": 53
     },
     {
       "icon": {
@@ -1437,16 +1464,16 @@
       },
       "attrs": [],
       "properties": {
-        "order": 894,
+        "order": 986,
         "ligatures": "remove_red_eye, visibility",
-        "id": 38,
+        "id": 815,
         "prevSize": 32,
         "code": 59683,
         "name": "visibility"
       },
-      "setIdx": 1,
+      "setIdx": 0,
       "setId": 1,
-      "iconIdx": 52
+      "iconIdx": 54
     },
     {
       "icon": {
@@ -1463,16 +1490,16 @@
       },
       "attrs": [],
       "properties": {
-        "order": 895,
+        "order": 987,
         "ligatures": "visibility_off",
-        "id": 39,
+        "id": 816,
         "prevSize": 32,
         "code": 59684,
         "name": "visibility-off"
       },
-      "setIdx": 1,
+      "setIdx": 0,
       "setId": 1,
-      "iconIdx": 53
+      "iconIdx": 55
     }
   ],
   "height": 1024,

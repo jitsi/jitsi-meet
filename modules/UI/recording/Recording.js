@@ -35,6 +35,7 @@ import {
     StartLiveStreamDialog,
     StopLiveStreamDialog,
     hideRecordingLabel,
+    setRecordingType,
     updateRecordingState
 } from '../../../react/features/recording';
 
@@ -202,6 +203,8 @@ const Recording = {
         this.eventEmitter = eventEmitter;
         this.recordingType = recordingType;
 
+        APP.store.dispatch(setRecordingType(recordingType));
+
         this.updateRecordingState(APP.conference.getRecordingState());
 
         if (recordingType === 'jibri') {
@@ -218,6 +221,9 @@ const Recording = {
             'click',
             '#toolbar_button_record',
             ev => this._onToolbarButtonClick(ev));
+
+        this.eventEmitter.on(UIEvents.TOGGLE_RECORDING,
+            () => this._onToolbarButtonClick());
 
         // If I am a recorder then I publish my recorder custom role to notify
         // everyone.
@@ -287,6 +293,7 @@ const Recording = {
         this.currentState = recordingState;
 
         let labelDisplayConfiguration;
+        let isRecording = false;
 
         switch (recordingState) {
         case JitsiRecordingStatus.ON:
@@ -298,6 +305,7 @@ const Recording = {
             };
 
             this._setToolbarButtonToggled(true);
+            isRecording = true;
 
             break;
         }
@@ -362,6 +370,7 @@ const Recording = {
         }
 
         APP.store.dispatch(updateRecordingState({
+            isRecording,
             labelDisplayConfiguration,
             recordingState
         }));

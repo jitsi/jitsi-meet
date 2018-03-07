@@ -2,6 +2,7 @@
 
 import React from 'react';
 
+import { setFullScreen } from '../toolbox';
 import {
     ACTION_SHORTCUT_TRIGGERED as TRIGGERED,
     AUDIO_MUTE,
@@ -10,6 +11,10 @@ import {
     createToolbarEvent,
     sendAnalytics
 } from '../analytics';
+import {
+    getLocalParticipant,
+    participantUpdated
+} from '../base/participants';
 import { ParticipantCounter } from '../contact-list';
 import { openDeviceSelectionDialog } from '../device-selection';
 import { InfoDialogButton } from '../invite';
@@ -252,33 +257,37 @@ export default function getDefaultButtons() {
             enabled: true,
             id: 'toolbar_button_fullScreen',
             onClick() {
-                // TODO: why is the fullscreen button handled differently than
-                // the fullscreen keyboard shortcut (one results in a direct
-                // call to toggleFullScreen, while the other fires an
-                // UIEvents.TOGGLE_FULLSCREEN event)?
+                const state = APP.store.getState();
+                const isFullScreen = Boolean(
+                    state['features/toolbox'].fullScreen);
 
                 // The 'enable' attribute is set to true if the action resulted
                 // in fullscreen mode being enabled.
                 sendAnalytics(createToolbarEvent(
                     'toggle.fullscreen',
                         {
-                            enable: !APP.UI.isFullScreen()
+                            enable: !isFullScreen
                         }));
 
-                APP.UI.emitEvent(UIEvents.TOGGLE_FULLSCREEN);
+                APP.store.dispatch(setFullScreen(!isFullScreen));
             },
             shortcut: 'S',
             shortcutAttr: 'toggleFullscreenPopover',
             shortcutDescription: 'keyboardShortcuts.fullScreen',
             shortcutFunc() {
+                const state = APP.store.getState();
+                const isFullScreen = Boolean(
+                    state['features/toolbox'].fullScreen);
+
                 // The 'enable' attribute is set to true if the action resulted
                 // in fullscreen mode being enabled.
                 sendAnalytics(createShortcutEvent(
                     'toggle.fullscreen',
                     {
-                        enable: !APP.UI.isFullScreen()
+                        enable: !isFullScreen
                     }));
-                APP.UI.toggleFullScreen();
+
+                APP.store.dispatch(setFullScreen(!isFullScreen));
             },
             tooltipKey: 'toolbar.fullscreen'
         },
@@ -394,27 +403,44 @@ export default function getDefaultButtons() {
             id: 'toolbar_button_raisehand',
             onClick() {
                 // TODO: reduce duplication with shortcutFunc below.
+                const localParticipant
+                    = getLocalParticipant(APP.store.getState());
+                const currentRaisedHand = localParticipant.raisedHand;
 
                 // The 'enable' attribute is set to true if the pressing of the
                 // shortcut resulted in the hand being raised, and to false
                 // if it resulted in the hand being 'lowered'.
                 sendAnalytics(createToolbarEvent(
                     'raise.hand',
-                    { enable: !APP.conference.isHandRaised }));
-                APP.conference.maybeToggleRaisedHand();
+                    { enable: !currentRaisedHand }));
+
+                APP.store.dispatch(participantUpdated({
+                    id: localParticipant.id,
+                    local: true,
+                    raisedHand: !currentRaisedHand
+                }));
             },
             shortcut: 'R',
             shortcutAttr: 'raiseHandPopover',
             shortcutDescription: 'keyboardShortcuts.raiseHand',
             shortcutFunc() {
+                const localParticipant
+                    = getLocalParticipant(APP.store.getState());
+                const currentRaisedHand = localParticipant.raisedHand;
+
                 // The 'enable' attribute is set to true if the pressing of the
                 // shortcut resulted in the hand being raised, and to false
                 // if it resulted in the hand being 'lowered'.
                 sendAnalytics(createShortcutEvent(
                     'toggle.raise.hand',
                     TRIGGERED,
-                    { enable: !APP.conference.isHandRaised }));
-                APP.conference.maybeToggleRaisedHand();
+                    { enable: !currentRaisedHand }));
+
+                APP.store.dispatch(participantUpdated({
+                    id: localParticipant.id,
+                    local: true,
+                    raisedHand: !currentRaisedHand
+                }));
             },
             tooltipKey: 'toolbar.raiseHand'
         },

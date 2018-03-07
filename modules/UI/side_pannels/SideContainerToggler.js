@@ -1,5 +1,6 @@
-/* global $ */
+/* global $, APP */
 import UIEvents from '../../../service/UI/UIEvents';
+import { setVisiblePanel } from '../../../react/features/side-panel';
 
 /**
  * Handles open and close of the extended toolbar side panel
@@ -57,6 +58,7 @@ const SideContainerToggler = {
 
         if (isSelectorVisible) {
             this.hide();
+            APP.store.dispatch(setVisiblePanel(null));
         } else {
             if (this.isVisible()) {
                 $('#sideToolbarContainer').children()
@@ -74,6 +76,7 @@ const SideContainerToggler = {
             }
 
             this.showInnerContainer(elementSelector);
+            APP.store.dispatch(setVisiblePanel(elementId));
         }
     },
 

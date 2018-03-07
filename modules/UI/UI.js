@@ -30,6 +30,7 @@ import {
 } from '../../react/features/base/participants';
 import { destroyLocalTracks } from '../../react/features/base/tracks';
 import { openDisplayNamePrompt } from '../../react/features/display-name';
+import { setEtherpadHasInitialzied } from '../../react/features/etherpad';
 import {
     setNotificationsEnabled,
     showWarningNotification
@@ -101,9 +102,6 @@ const UIListeners = new Map([
         UIEvents.SHARED_VIDEO_CLICKED,
         () => sharedVideoManager && sharedVideoManager.toggleSharedVideo()
     ], [
-        UIEvents.TOGGLE_FULLSCREEN,
-        () => UI.toggleFullScreen()
-    ], [
         UIEvents.TOGGLE_CHAT,
         () => UI.toggleChat()
     ], [
@@ -134,14 +132,6 @@ const UIListeners = new Map([
         enabled => followMeHandler && followMeHandler.enableFollowMe(enabled)
     ]
 ]);
-
-/**
- * Toggles the application in and out of full screen mode
- * (a.k.a. presentation mode in Chrome).
- */
-UI.toggleFullScreen = function() {
-    UIUtil.isFullScreen() ? UIUtil.exitFullScreen() : UIUtil.enterFullScreen();
-};
 
 /**
  * Indicates if we're currently in full screen mode.
@@ -255,12 +245,20 @@ UI.showLocalConnectionInterrupted = function(isInterrupted) {
 
 /**
  * Sets the "raised hand" status for a participant.
+ *
+ * @param {string} id - The id of the participant whose raised hand UI should
+ * be updated.
+ * @param {string} name - The name of the participant with the raised hand
+ * update.
+ * @param {boolean} raisedHandStatus - Whether the participant's hand is raised
+ * or not.
+ * @returns {void}
  */
-UI.setRaisedHandStatus = (participant, raisedHandStatus) => {
-    VideoLayout.setRaisedHandStatus(participant.getId(), raisedHandStatus);
+UI.setRaisedHandStatus = (id, name, raisedHandStatus) => {
+    VideoLayout.setRaisedHandStatus(id, raisedHandStatus);
     if (raisedHandStatus) {
         messageHandler.participantNotification(
-            participant.getDisplayName(),
+            name,
             'notify.somebody',
             'connected',
             'notify.raisedHand');
@@ -374,6 +372,14 @@ UI.start = function() {
         $('body').addClass('vertical-filmstrip');
     }
 
+
+    // TODO: remove this class once the old toolbar has been removed. This class
+    // is set so that any CSS changes needed to adjust elements outside of the
+    // new toolbar can be scoped to just the app with the new toolbar enabled.
+    if (interfaceConfig._USE_NEW_TOOLBOX && !interfaceConfig.filmStripOnly) {
+        $('body').addClass('use-new-toolbox');
+    }
+
     document.title = interfaceConfig.APP_NAME;
 };
 
@@ -404,12 +410,7 @@ UI.bindEvents = () => {
     // Resize and reposition videos in full screen mode.
     $(document).on(
             'webkitfullscreenchange mozfullscreenchange fullscreenchange',
-            () => {
-                eventEmitter.emit(
-                        UIEvents.FULLSCREEN_TOGGLED,
-                        UIUtil.isFullScreen());
-                onResize();
-            });
+            onResize);
 
     $(window).resize(onResize);
 };
@@ -474,6 +475,7 @@ UI.initEtherpad = name => {
     etherpadManager
         = new EtherpadManager(config.etherpad_base, name, eventEmitter);
 
+    APP.store.dispatch(setEtherpadHasInitialzied());
     APP.store.dispatch(showEtherpadButton());
 };
 

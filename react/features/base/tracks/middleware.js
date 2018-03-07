@@ -1,4 +1,4 @@
-/* @flow */
+// @flow
 
 import {
     CAMERA_FACING_MODE,
@@ -10,9 +10,15 @@ import {
     toggleCameraFacingMode
 } from '../media';
 import { MiddlewareRegistry } from '../redux';
+import UIEvents from '../../../../service/UI/UIEvents';
 
 import { createLocalTracksA } from './actions';
-import { TRACK_ADDED, TRACK_REMOVED, TRACK_UPDATED } from './actionTypes';
+import {
+    TOGGLE_SCREENSHARING,
+    TRACK_ADDED,
+    TRACK_REMOVED,
+    TRACK_UPDATED
+} from './actionTypes';
 import { getLocalTrack, setTrackMuted } from './functions';
 
 declare var APP: Object;
@@ -80,6 +86,12 @@ MiddlewareRegistry.register(store => next => action => {
         }
         break;
     }
+
+    case TOGGLE_SCREENSHARING:
+        if (typeof APP === 'object') {
+            APP.UI.emitEvent(UIEvents.TOGGLE_SCREENSHARING);
+        }
+        break;
 
     case TRACK_ADDED:
         // TODO Remove this middleware case once all UI interested in new tracks

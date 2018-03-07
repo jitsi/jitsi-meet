@@ -25,6 +25,15 @@ const logger = require('jitsi-meet-logger').getLogger(__filename);
  */
 class InfoDialog extends Component {
     /**
+     * Default values for {@code InfoDialog} component's properties.
+     *
+     * @static
+     */
+    static defaultProps = {
+        autoUpdateNumbers: true
+    };
+
+    /**
      * {@code InfoDialog} component's property types.
      *
      * @static
@@ -68,6 +77,13 @@ class InfoDialog extends Component {
          * The current known password for the JitsiConference.
          */
         _password: PropTypes.string,
+
+        /**
+         * Whether or not this component should make a request for dial-in
+         * numbers. If false, this component will rely on an outside source
+         * updating and passing in numbers through the _dialIn prop.
+         */
+        autoUpdateNumbers: PropTypes.bool,
 
         /**
          * Invoked to open a dialog for adding participants to the conference.
@@ -148,7 +164,7 @@ class InfoDialog extends Component {
      * @returns {void}
      */
     componentDidMount() {
-        if (!this.state.phoneNumber) {
+        if (!this.state.phoneNumber && this.props.autoUpdateNumbers) {
             this.props.dispatch(updateDialInNumbers());
         }
     }

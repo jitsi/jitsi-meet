@@ -40,6 +40,12 @@ type Props = {
     disableBlanketClickDismiss: boolean,
 
     /**
+     * If true, the cancel button will not display but cancel actions, like
+     * clicking the blanket, will cancel.
+     */
+    hideCancelButton: boolean,
+
+    /**
      * Whether the dialog is modal. This means clicking on the blanket will
      * leave the dialog open. No cancel button.
      */
@@ -263,7 +269,9 @@ class StatelessDialog extends Component<Props> {
      * not modal.
      */
     _renderCancelButton(options = {}) {
-        if (options.cancelDisabled || options.isModal) {
+        if (options.cancelDisabled
+                || options.isModal
+                || options.hideCancelButton) {
             return null;
         }
 
