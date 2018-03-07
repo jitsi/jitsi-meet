@@ -73,6 +73,8 @@
     "toolbar": {
         "addPeople": "Add people to your call",
         "audioonly": "Enable / Disable audio only mode (saves bandwidth)",
+        "feedback": "Leave feedback",
+        "moreActions": "View more actions",
         "mute": "Mute / Unmute",
         "videomute": "Start / Stop camera",
         "authenticate": "Authenticate",
@@ -96,7 +98,9 @@
         "micDisabled": "Microphone is not available",
         "filmstrip": "Show / Hide videos",
         "profile": "Edit your profile",
-        "raiseHand": "Raise / Lower your hand"
+        "raiseHand": "Raise / Lower your hand",
+        "shortcuts": "View shortcuts",
+        "speakerStats": "Speaker stats"
     },
     "unsupportedBrowser": {
         "appNotInstalled": "Join this meeting with __app__ on your phone.",
@@ -466,6 +470,7 @@
         "loadingPeople": "Searching for people to invite",
         "noResults": "No matching search results",
         "noValidNumbers": "Please enter a phone number",
+        "notAvailable": "You can't invite people.",
         "searchNumbers": "Enter a phone number to invite",
         "searchPeople": "Enter a name to invite",
         "searchPeopleAndNumbers": "Enter a name or phone number to invite",

@@ -1,22 +1,13 @@
 // @flow
 
-import React, { Component } from 'react';
+import React from 'react';
 import { View } from 'react-native';
 import { connect } from 'react-redux';
 
-import {
-    AUDIO_MUTE,
-    VIDEO_MUTE,
-    createToolbarEvent,
-    sendAnalytics
-} from '../../analytics';
 import { toggleAudioOnly } from '../../base/conference';
 import {
     MEDIA_TYPE,
-    setAudioMuted,
-    setVideoMuted,
-    toggleCameraFacingMode,
-    VIDEO_MUTISM_AUTHORITY
+    toggleCameraFacingMode
 } from '../../base/media';
 import { Container } from '../../base/react';
 import {
@@ -35,6 +26,8 @@ import {
     abstractMapStateToProps
 } from '../functions';
 
+import AbstractToolbox from './AbstractToolbox';
+import type { Props as AbstractToolboxProps } from './AbstractToolbox';
 import AudioRouteButton from './AudioRouteButton';
 import styles from './styles';
 import ToolbarButton from './ToolbarButton';
@@ -54,10 +47,7 @@ const _SHARE_ROOM_TOOLBAR_BUTTON = true;
  */
 type Props = {
 
-    /**
-     * Flag showing that audio is muted.
-     */
-    _audioMuted: boolean,
+    ...AbstractToolboxProps,
 
     /**
      * Flag showing whether the audio-only mode is in use.
@@ -101,23 +91,16 @@ type Props = {
     _onToggleCameraFacingMode: Function,
 
     /**
-     * Flag showing whether video is muted.
-     */
-    _videoMuted: boolean,
-
-    /**
      * Flag showing whether toolbar is visible.
      */
-    _visible: boolean,
-
-    dispatch: Function
+    _visible: boolean
 };
 
 
 /**
  * Implements the conference toolbox on React Native.
  */
-class Toolbox extends Component<Props> {
+class Toolbox extends AbstractToolbox {
     /**
      * Initializes a new {@code Toolbox} instance.
      *
@@ -196,61 +179,7 @@ class Toolbox extends Component<Props> {
 
     _onToggleAudio: () => void;
 
-    /**
-     * Dispatches an action to toggle the mute state of the audio/microphone.
-     *
-     * @private
-     * @returns {void}
-     */
-    _onToggleAudio() {
-        const mute = !this.props._audioMuted;
-
-        sendAnalytics(createToolbarEvent(
-            AUDIO_MUTE,
-            {
-                enable: mute
-            }));
-
-        // The user sees the reality i.e. the state of base/tracks and intends
-        // to change reality by tapping on the respective button i.e. the user
-        // sets the state of base/media. Whether the user's intention will turn
-        // into reality is a whole different story which is of no concern to the
-        // tapping.
-        this.props.dispatch(
-            setAudioMuted(
-                mute,
-                VIDEO_MUTISM_AUTHORITY.USER,
-                /* ensureTrack */ true));
-    }
-
     _onToggleVideo: () => void;
-
-    /**
-     * Dispatches an action to toggle the mute state of the video/camera.
-     *
-     * @private
-     * @returns {void}
-     */
-    _onToggleVideo() {
-        const mute = !this.props._videoMuted;
-
-        sendAnalytics(createToolbarEvent(
-            VIDEO_MUTE,
-            {
-                enable: mute
-            }));
-
-        // The user sees the reality i.e. the state of base/tracks and intends
-        // to change reality by tapping on the respective button i.e. the user
-        // sets the state of base/media. Whether the user's intention will turn
-        // into reality is a whole different story which is of no concern to the
-        // tapping.
-        this.props.dispatch(
-            setVideoMuted(
-                !this.props._videoMuted,
-                VIDEO_MUTISM_AUTHORITY.USER,
-                /* ensureTrack */ true));
-    }
 
     /**
      * Renders the toolbar which contains the primary buttons such as hangup,

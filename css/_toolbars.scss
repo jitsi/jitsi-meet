@@ -261,6 +261,114 @@
     }
 }
 
+/**
+ * TODO: when the old filmstrip has been removed, remove the "new-" prefix.
+ */
+.new-toolbox {
+    background-color: rgba(40, 52, 71, 0.5);
+    bottom: calc((#{$defaultToolbarSize} * 2) * -1);
+    box-sizing: border-box;
+    display: flex;
+    justify-content: space-between;
+    padding: 5px 20px;
+    position: absolute;
+    transition: bottom .3s ease-in;
+    width: 100%;
+    z-index: $toolbarZ;
+
+    &.visible {
+        bottom: 0;
+    }
+
+    .button-group-center,
+    .button-group-left,
+    .button-group-right {
+        display: flex;
+        width: 33%;
+    }
+
+    .button-group-center {
+        justify-content: center;
+    }
+
+    .button-group-right {
+        justify-content: flex-end;
+    }
+
+    i {
+        border-radius: 5px;
+        cursor: pointer;
+        display: block;
+        height: 100%;
+        line-height: inherit;
+        width: 100%;
+    }
+
+    i:hover {
+        background-color: rgba(40, 52, 71, 0.7);
+    }
+
+    i.toggled {
+        background: rgba(40, 52, 71, 1);
+    }
+
+    i.toggled:hover {
+        background-color: rgba(40, 52, 71, 1);
+    }
+
+    .overflow-menu {
+        font-size: 1.2em;
+        list-style-type: none;
+        /**
+         * Undo atlaskit padding by reducing margins.
+         */
+        margin: -15px -24px;
+        padding: 0;
+
+        .overflow-menu-item {
+            align-items: center;
+            cursor: pointer;
+            display: flex;
+            padding: 5px 10px;
+
+            &:hover {
+                background: rgba(0255, 255, 255, 0.2);
+            }
+        }
+
+        .overflow-menu-item-icon {
+            margin-right: 10px;
+
+            i {
+                display: inline;
+            }
+
+            i:hover {
+                background-color: initial;
+            }
+        }
+    }
+
+    .toolbox-button {
+        color: $toolbarButtonColor;
+        cursor: pointer;
+        display: inline-block;
+        font-size: $toolbarFontSize;
+        line-height: $defaultToolbarSize;
+        margin: 0 10px;
+        text-align: center;
+    }
+
+    .toolbox-button-wth-dialog {
+        display: inline-block;
+    }
+
+    .toolbox-icon {
+        height: $defaultToolbarSize;
+        width: $defaultToolbarSize;
+    }
+}
+
 .filmstrip-only {
     .toolbox,
     .toolbox-toolbars {

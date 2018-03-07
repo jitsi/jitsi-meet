@@ -32,7 +32,7 @@ const DEFAULT_BUTTON_CONFIGURATION = {
  *
  * @extends Component
  */
-class InfoDialogButton extends Component {
+export class InfoDialogButton extends Component {
     /**
      * {@code InfoDialogButton} component's property types.
      *
@@ -240,7 +240,7 @@ class InfoDialogButton extends Component {
  *     _toolboxVisible: boolean
  * }}
  */
-function _mapStateToProps(state) {
+export function mapStateToProps(state) {
     const {
         infoDialogVisible,
         infoDialogWillAutoClose
@@ -253,4 +253,4 @@ function _mapStateToProps(state) {
     };
 }
 
-export default connect(_mapStateToProps)(InfoDialogButton);
+export default connect(mapStateToProps)(InfoDialogButton);
