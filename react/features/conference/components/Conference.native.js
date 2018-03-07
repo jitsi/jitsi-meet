@@ -15,6 +15,7 @@ import { createDesiredLocalTracks } from '../../base/tracks';
 import { ConferenceNotification } from '../../calendar-sync';
 import { Filmstrip } from '../../filmstrip';
 import { LargeVideo } from '../../large-video';
+import { TestConnectionInfo } from '../../testing';
 import { setToolboxVisible, Toolbox } from '../../toolbox';
 
 import styles from './styles';
@@ -233,6 +234,7 @@ class Conference extends Component<Props> {
                       */}
                     <Filmstrip />
                 </View>
+                <TestConnectionInfo />
 
                 <ConferenceNotification />
 
