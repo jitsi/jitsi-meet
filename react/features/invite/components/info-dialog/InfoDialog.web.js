@@ -5,6 +5,7 @@ import { connect } from 'react-redux';
 import { setPassword } from '../../../base/conference';
 import { getInviteURL } from '../../../base/connection';
 import { translate } from '../../../base/i18n';
+import { browser } from '../../../base/lib-jitsi-meet';
 import {
     PARTICIPANT_ROLE,
     getLocalParticipant
@@ -404,7 +405,7 @@ class InfoDialog extends Component {
                     className = 'more-numbers'
                     href = { this._getDialInfoPageURL() }
                     rel = 'noopener noreferrer'
-                    target = '_blank'>
+                    target = { browser.isElectron() ? undefined : '_blank' }>
                     { this.props.t('info.moreNumbers') }
                 </a>
             </div>
