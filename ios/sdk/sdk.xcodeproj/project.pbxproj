@@ -27,7 +27,7 @@
 		0BCA496C1EC4BBF900B793EE /* jitsi.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 0BCA496B1EC4BBF900B793EE /* jitsi.ttf */; };
 		0BD906EA1EC0C00300C8C18E /* JitsiMeet.h in Headers */ = {isa = PBXBuildFile; fileRef = 0BD906E81EC0C00300C8C18E /* JitsiMeet.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		0F65EECE1D95DA94561BB47E /* libPods-JitsiMeet.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 03F2ADC957FF109849B7FCA1 /* libPods-JitsiMeet.a */; };
-		C6A3425F204EF76800E062DD /* JitsiMeetWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6A3425C204EF76800E062DD /* JitsiMeetWindow.swift */; };
+		C6A3425F204EF76800E062DD /* PiPWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6A3425C204EF76800E062DD /* PiPWindow.swift */; };
 		C6A34260204EF76800E062DD /* JitsiMeetManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6A3425D204EF76800E062DD /* JitsiMeetManager.swift */; };
 		C6A34261204EF76800E062DD /* DragGestureController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6A3425E204EF76800E062DD /* DragGestureController.swift */; };
 		C6A3426D204F1C3300E062DD /* JitsiMeetViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6A3426C204F1C3300E062DD /* JitsiMeetViewController.swift */; };
@@ -60,7 +60,7 @@
 		0BD906E91EC0C00300C8C18E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		98E09B5C73D9036B4ED252FC /* Pods-JitsiMeet.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-JitsiMeet.debug.xcconfig"; path = "../Pods/Target Support Files/Pods-JitsiMeet/Pods-JitsiMeet.debug.xcconfig"; sourceTree = "<group>"; };
 		9C77CA3CC919B081F1A52982 /* Pods-JitsiMeet.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-JitsiMeet.release.xcconfig"; path = "../Pods/Target Support Files/Pods-JitsiMeet/Pods-JitsiMeet.release.xcconfig"; sourceTree = "<group>"; };
-		C6A3425C204EF76800E062DD /* JitsiMeetWindow.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = JitsiMeetWindow.swift; sourceTree = "<group>"; };
+		C6A3425C204EF76800E062DD /* PiPWindow.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PiPWindow.swift; sourceTree = "<group>"; };
 		C6A3425D204EF76800E062DD /* JitsiMeetManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = JitsiMeetManager.swift; sourceTree = "<group>"; };
 		C6A3425E204EF76800E062DD /* DragGestureController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DragGestureController.swift; sourceTree = "<group>"; };
 		C6A3426C204F1C3300E062DD /* JitsiMeetViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JitsiMeetViewController.swift; sourceTree = "<group>"; };
@@ -155,13 +155,21 @@
 			name = Pods;
 			sourceTree = "<group>";
 		};
+		C6245F5A2052043F0040BE68 /* PiPWindow */ = {
+			isa = PBXGroup;
+			children = (
+				C6A3425E204EF76800E062DD /* DragGestureController.swift */,
+				C6A3425C204EF76800E062DD /* PiPWindow.swift */,
+			);
+			path = PiPWindow;
+			sourceTree = "<group>";
+		};
 		C6A3426B204F127900E062DD /* JitsiMeetManager */ = {
 			isa = PBXGroup;
 			children = (
-				C6A3425C204EF76800E062DD /* JitsiMeetWindow.swift */,
+				C6245F5A2052043F0040BE68 /* PiPWindow */,
 				C6A3425D204EF76800E062DD /* JitsiMeetManager.swift */,
 				C6A3426C204F1C3300E062DD /* JitsiMeetViewController.swift */,
-				C6A3425E204EF76800E062DD /* DragGestureController.swift */,
 			);
 			path = JitsiMeetManager;
 			sourceTree = "<group>";
@@ -336,7 +344,7 @@
 				0BCA49601EC4B6C600B793EE /* POSIX.m in Sources */,
 				0B7C2CFD200F51D60060D076 /* LaunchOptions.m in Sources */,
 				C6A3426D204F1C3300E062DD /* JitsiMeetViewController.swift in Sources */,
-				C6A3425F204EF76800E062DD /* JitsiMeetWindow.swift in Sources */,
+				C6A3425F204EF76800E062DD /* PiPWindow.swift in Sources */,
 				0BCA495F1EC4B6C600B793EE /* AudioMode.m in Sources */,
 				0B44A0191F902126009D1D64 /* MPVolumeViewManager.m in Sources */,
 				0BCA49611EC4B6C600B793EE /* Proximity.m in Sources */,

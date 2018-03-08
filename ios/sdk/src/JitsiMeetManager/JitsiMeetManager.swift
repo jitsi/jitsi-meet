@@ -2,26 +2,19 @@
 
 import Foundation
 
-/// Creates and present a JitsiMeetView inside of an external window that can be dragged
-/// when minimized (if PiP mode is enabled)
+/// Creates and coordinates the presentation of JitsiMeetViewController inside of an external window
+/// which can be resized and dragged with custom PiP mode
 open class JitsiMeetManager: NSObject {
     
-    /// The Jitsi meet view delegate
-    public weak var delegate: JitsiMeetViewDelegate? = nil
-    /// Limits the boundries of meet view position on screen when minimized
-    public var dragBoundInsets: UIEdgeInsets = UIEdgeInsets(top: 25, left: 5, bottom: 5, right: 5)
-    /// Enables PiP mode for this jitsiMeet
-    public var allowPiP: Bool = true
-    /// The size ratio for jitsiMeetView when in PiP mode
-    public var pipSizeRatio: CGFloat = 0.333
     /// Defines if welcome screen should be on
-    public var welcomeScreenEnabled: Bool = false
-    
-    fileprivate let dragController: DragGestureController = DragGestureController()
+    public var welcomeScreenEnabled: Bool = false {
+        didSet {
+            meetViewController.jitsiMeetView.welcomePageEnabled = welcomeScreenEnabled
+        }
+    }
     
     fileprivate lazy var meetViewController: JitsiMeetViewController = { return self.makeMeetViewController() }()
-    fileprivate lazy var meetWindow: JitsiMeetWindow = { return self.makeMeetWindow() }()
-    fileprivate var meetingInPiP: Bool = false
+    fileprivate lazy var meetWindow: PiPWindow = { return self.makeMeetWindow() }()
     
     /// Presents and loads a jitsi meet view
     ///
@@ -39,29 +32,8 @@ open class JitsiMeetManager: NSObject {
         meetViewController.jitsiMeetView.loadURLObject(urlObject)
     }
     
-    // MARK: - Manage PiP switching
-    
-    // update size animation
-    fileprivate func updateMeetViewSize(isPiP: Bool) {
-        UIView.animate(withDuration: 0.25) {
-            self.meetViewController.view.frame = self.meetViewRect(isPiP: isPiP)
-            self.meetViewController.view.setNeedsLayout()
-        }
-    }
-
-    private func meetViewRect(isPiP: Bool) -> CGRect {
-        guard isPiP else {
-            return meetWindow.bounds
-        }
-        let bounds = meetWindow.bounds
-
-        // resize to suggested ratio and position to the bottom right
-        let adjustedBounds = UIEdgeInsetsInsetRect(bounds, dragBoundInsets)
-        let size = CGSize(width: bounds.size.width * pipSizeRatio,
-                          height: bounds.size.height * pipSizeRatio)
-        let x: CGFloat = adjustedBounds.maxX - size.width
-        let y: CGFloat = adjustedBounds.maxY - size.height
-        return CGRect(x: x, y: y, width: size.width, height: size.height)
+    deinit {
+        cleanUp()
     }
     
     // MARK: - helpers
@@ -69,20 +41,20 @@ open class JitsiMeetManager: NSObject {
     fileprivate func cleanUp() {
         // TODO: more clean up work on this
         
-        dragController.stopDragListener()
         meetWindow.isHidden = true
+        meetWindow.stopDragGesture()
     }
     
     private func makeMeetViewController() -> JitsiMeetViewController {
         let vc = JitsiMeetViewController()
-        vc.jitsiMeetView.delegate = self
         vc.jitsiMeetView.welcomePageEnabled = self.welcomeScreenEnabled
-        vc.jitsiMeetView.pictureInPictureEnabled = self.allowPiP
+        vc.jitsiMeetView.pictureInPictureEnabled = true
+        vc.delegate = self
         return vc
     }
     
-    private func makeMeetWindow() -> JitsiMeetWindow {
-        let window = JitsiMeetWindow(frame: UIScreen.main.bounds)
+    private func makeMeetWindow() -> PiPWindow {
+        let window = PiPWindow(frame: UIScreen.main.bounds)
         window.backgroundColor = .clear
         window.windowLevel = UIWindowLevelStatusBar + 100
         window.rootViewController = self.meetViewController
@@ -90,57 +62,26 @@ open class JitsiMeetManager: NSObject {
     }
 }
 
-extension JitsiMeetManager: JitsiMeetViewDelegate {
+extension JitsiMeetManager: JitsiMeetViewControllerDelegate {
     
-    public func conferenceWillJoin(_ data: [AnyHashable : Any]!) {
-        DispatchQueue.main.async {
-            self.delegate?.conferenceWillJoin!(data)
-        }
-    }
-
-    public func conferenceJoined(_ data: [AnyHashable : Any]!) {
-        DispatchQueue.main.async {
-            self.delegate?.conferenceJoined!(data)
-        }
-    }
-    
-    public func conferenceWillLeave(_ data: [AnyHashable : Any]!) {
-        DispatchQueue.main.async {
-            self.delegate?.conferenceWillLeave!(data)
-        }
-    }
-
-    public func conferenceLeft(_ data: [AnyHashable : Any]!) {
-        DispatchQueue.main.async {
-            self.cleanUp()
-            
-            self.delegate?.conferenceLeft!(data)
+    open func performPresentationUpdate(to: JitsiMeetPresentationUpdate) {
+        switch to {
+        case .enterPiP:
+            meetWindow.goToPiP()
+        case .traitChange:
+            // resize to full screen if rotation happens
+            if meetWindow.isInPiP {
+                meetWindow.goToFullScreen()
+            }
         }
     }
     
-    public func conferenceFailed(_ data: [AnyHashable : Any]!) {
-        DispatchQueue.main.async {
-            self.cleanUp()
-
-            self.delegate?.conferenceFailed!(data)
-        }
+    open func meetingStarted() {
+        // do something
     }
     
-    public func loadConfigError(_ data: [AnyHashable : Any]!) {
-        DispatchQueue.main.async {
-            self.delegate?.loadConfigError!(data)
-        }
-    }
-    
-    public func enterPicture(inPicture data: [AnyHashable : Any]!) {
-        DispatchQueue.main.async {
-            self.dragController.startDragListener(inView: self.meetViewController.view)
-            self.dragController.insets = self.dragBoundInsets
-            
-            self.meetingInPiP = true
-            self.updateMeetViewSize(isPiP: true)
-            
-            self.delegate?.enterPicture!(inPicture: data)
-        }
+    open func meetingEnded(wasFailure: Bool) {
+        cleanUp()
     }
 }
+
