@@ -161,7 +161,6 @@ function _makePromiseAware(
         afterCallbacks: number) {
     return function(...args) {
         return new Promise((resolve, reject) => {
-
             if (args.length <= beforeCallbacks + afterCallbacks) {
                 args.splice(beforeCallbacks, 0, resolve, reject);
             }
