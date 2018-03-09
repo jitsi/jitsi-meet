@@ -464,7 +464,7 @@
         "loadingNumber": "Validating phone number",
         "loadingPeople": "Searching for people to invite",
         "noResults": "No matching search results",
-        "noValidNumbers": "No supported phone number was detected",
+        "noValidNumbers": "Please enter a phone number",
         "searchNumbers": "Enter a phone number to invite",
         "searchPeople": "Enter a name to invite",
         "searchPeopleAndNumbers": "Enter a name or phone number to invite",

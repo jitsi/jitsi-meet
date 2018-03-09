@@ -150,8 +150,7 @@ class MultiSelectAutocomplete extends Component {
                 <MultiSelectStateless
                     filterValue = { this.state.filterValue }
                     isDisabled = { isDisabled }
-                    isLoading = { this.state.loading
-                        && Boolean(this.state.filterValue) }
+                    isLoading = { this.state.loading }
                     isOpen = { this.state.isOpen }
                     items = { this.state.items }
                     loadingMessage = { this.props.loadingMessage }
@@ -182,7 +181,7 @@ class MultiSelectAutocomplete extends Component {
             filterValue,
             isOpen: Boolean(this.state.items.length) && Boolean(filterValue),
             items: filterValue ? this.state.items : [],
-            loading: true
+            loading: Boolean(filterValue)
         });
         if (filterValue) {
             this._sendQuery(filterValue);

@@ -23,6 +23,9 @@ const logger = require('jitsi-meet-logger').getLogger(__filename);
 
 declare var interfaceConfig: Object;
 
+const isPhoneNumberRegex
+    = new RegExp(interfaceConfig.PHONE_NUMBER_REGEX || '^[0-9+()-\\s]*$');
+
 /**
  * The dialog that allows to invite people to the call.
  */
@@ -40,7 +43,7 @@ class AddPeopleDialog extends Component<*, *> {
         _conference: PropTypes.object,
 
         /**
-         * The URL pointing for validating if a phone number can be called.
+         * The URL for validating if a phone number can be called.
          */
         _dialOutAuthUrl: PropTypes.string,
 
@@ -261,10 +264,13 @@ class AddPeopleDialog extends Component<*, *> {
      * number.
      */
     _isMaybeAPhoneNumber(text) {
-        const alphabet = /[a-zA-Z]+/;
+        if (!isPhoneNumberRegex.test(text)) {
+            return false;
+        }
+
         const digits = this._getDigitsOnly(text);
 
-        return Boolean(!alphabet.test(text) && digits.length);
+        return Boolean(digits.length);
     }
 
     _onItemSelected: (Object) => Object;
