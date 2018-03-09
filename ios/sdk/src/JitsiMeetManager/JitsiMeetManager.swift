@@ -9,27 +9,39 @@ open class JitsiMeetManager: NSObject {
     /// Defines if welcome screen should be on
     public var welcomeScreenEnabled: Bool = false {
         didSet {
-            meetViewController.jitsiMeetView.welcomePageEnabled = welcomeScreenEnabled
+            meetViewController?.jitsiMeetView.welcomePageEnabled = welcomeScreenEnabled
         }
     }
     
-    fileprivate lazy var meetViewController: JitsiMeetViewController = { return self.makeMeetViewController() }()
-    fileprivate lazy var meetWindow: PiPWindow = { return self.makeMeetWindow() }()
+    private(set) var meetViewController: JitsiMeetViewController?
+    private(set) var meetWindow: PiPWindow?
+    
+    override public init() {
+        super.init()
+        self.meetViewController = makeMeetViewController()
+        self.meetWindow = makeMeetWindow()
+    }
+    
+    public init(meetViewController: JitsiMeetViewController? = nil, meetWindow: PiPWindow? = nil) {
+        super.init()
+        self.meetViewController = meetViewController ?? makeMeetViewController()
+        self.meetWindow = meetWindow ?? makeMeetWindow()
+    }
     
     /// Presents and loads a jitsi meet view
     ///
     /// - Parameter url: The url of the presentation
     public func load(withUrl url: URL?) {
-        meetWindow.show()
-        meetViewController.jitsiMeetView.load(url)
+        meetWindow?.show()
+        meetViewController?.jitsiMeetView.load(url)
     }
     
     /// Presents and loads a jitsi meet view with configuration
     ///
     /// - Parameter urlObject: A dictionary of keys to be used for configuration
     public func load(withUrlObject urlObject: [AnyHashable : Any]?) {
-        meetWindow.show()
-        meetViewController.jitsiMeetView.loadURLObject(urlObject)
+        meetWindow?.show()
+        meetViewController?.jitsiMeetView.loadURLObject(urlObject)
     }
     
     deinit {
@@ -41,8 +53,8 @@ open class JitsiMeetManager: NSObject {
     fileprivate func cleanUp() {
         // TODO: more clean up work on this
         
-        meetWindow.isHidden = true
-        meetWindow.stopDragGesture()
+        meetWindow?.isHidden = true
+        meetWindow?.stopDragGesture()
     }
     
     private func makeMeetViewController() -> JitsiMeetViewController {
@@ -65,6 +77,8 @@ open class JitsiMeetManager: NSObject {
 extension JitsiMeetManager: JitsiMeetViewControllerDelegate {
     
     open func performPresentationUpdate(to: JitsiMeetPresentationUpdate) {
+        guard let meetWindow = self.meetWindow else { return }
+        
         switch to {
         case .enterPiP:
             meetWindow.goToPiP()

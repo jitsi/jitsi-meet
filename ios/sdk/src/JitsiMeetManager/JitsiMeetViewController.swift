@@ -78,7 +78,7 @@ extension JitsiMeetViewController: JitsiMeetViewDelegate {
     
     open func enterPicture(inPicture data: [AnyHashable : Any]!) {
         DispatchQueue.main.async {
-            self.delegate?.performPresentationUpdate(to: .enterPiP)
+           self.delegate?.performPresentationUpdate(to: .enterPiP)
         }
     }
 }
