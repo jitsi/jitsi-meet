@@ -27,6 +27,8 @@
 		0BCA496C1EC4BBF900B793EE /* jitsi.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 0BCA496B1EC4BBF900B793EE /* jitsi.ttf */; };
 		0BD906EA1EC0C00300C8C18E /* JitsiMeet.h in Headers */ = {isa = PBXBuildFile; fileRef = 0BD906E81EC0C00300C8C18E /* JitsiMeet.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		0F65EECE1D95DA94561BB47E /* libPods-JitsiMeet.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 03F2ADC957FF109849B7FCA1 /* libPods-JitsiMeet.a */; };
+		C6245F5D2053091D0040BE68 /* image-resize@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = C6245F5B2053091D0040BE68 /* image-resize@2x.png */; };
+		C6245F5E2053091D0040BE68 /* image-resize@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = C6245F5C2053091D0040BE68 /* image-resize@3x.png */; };
 		C6A3425F204EF76800E062DD /* PiPWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6A3425C204EF76800E062DD /* PiPWindow.swift */; };
 		C6A34260204EF76800E062DD /* JitsiMeetManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6A3425D204EF76800E062DD /* JitsiMeetManager.swift */; };
 		C6A34261204EF76800E062DD /* DragGestureController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6A3425E204EF76800E062DD /* DragGestureController.swift */; };
@@ -60,6 +62,8 @@
 		0BD906E91EC0C00300C8C18E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		98E09B5C73D9036B4ED252FC /* Pods-JitsiMeet.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-JitsiMeet.debug.xcconfig"; path = "../Pods/Target Support Files/Pods-JitsiMeet/Pods-JitsiMeet.debug.xcconfig"; sourceTree = "<group>"; };
 		9C77CA3CC919B081F1A52982 /* Pods-JitsiMeet.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-JitsiMeet.release.xcconfig"; path = "../Pods/Target Support Files/Pods-JitsiMeet/Pods-JitsiMeet.release.xcconfig"; sourceTree = "<group>"; };
+		C6245F5B2053091D0040BE68 /* image-resize@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "image-resize@2x.png"; sourceTree = "<group>"; };
+		C6245F5C2053091D0040BE68 /* image-resize@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "image-resize@3x.png"; sourceTree = "<group>"; };
 		C6A3425C204EF76800E062DD /* PiPWindow.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PiPWindow.swift; sourceTree = "<group>"; };
 		C6A3425D204EF76800E062DD /* JitsiMeetManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = JitsiMeetManager.swift; sourceTree = "<group>"; };
 		C6A3425E204EF76800E062DD /* DragGestureController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DragGestureController.swift; sourceTree = "<group>"; };
@@ -86,6 +90,8 @@
 			isa = PBXGroup;
 			children = (
 				0BC4B8681F8C01E100CE8B21 /* CallKitIcon.png */,
+				C6245F5B2053091D0040BE68 /* image-resize@2x.png */,
+				C6245F5C2053091D0040BE68 /* image-resize@3x.png */,
 				0BCA496B1EC4BBF900B793EE /* jitsi.ttf */,
 			);
 			name = Resources;
@@ -252,7 +258,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				0BCA496C1EC4BBF900B793EE /* jitsi.ttf in Resources */,
+				C6245F5D2053091D0040BE68 /* image-resize@2x.png in Resources */,
 				0BC4B8691F8C03A700CE8B21 /* CallKitIcon.png in Resources */,
+				C6245F5E2053091D0040BE68 /* image-resize@3x.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -472,7 +480,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 98E09B5C73D9036B4ED252FC /* Pods-JitsiMeet.debug.xcconfig */;
 			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = NO;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
@@ -499,7 +507,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 9C77CA3CC919B081F1A52982 /* Pods-JitsiMeet.release.xcconfig */;
 			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = NO;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";

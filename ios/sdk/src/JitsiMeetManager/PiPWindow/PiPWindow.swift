@@ -19,6 +19,10 @@ open class PiPWindow: UIWindow {
     
     private let dragController: DragGestureController = DragGestureController()
     
+    /// Used when in PiP mode to enable/disable exit PiP UI
+    private var tapGestureRecognizer: UITapGestureRecognizer?
+    private var exitPiPButton: UIButton?
+    
     /// Help out to bubble up the gesture detection outside of the rootVC frame
     open override func point(inside point: CGPoint, with event: UIEvent?) -> Bool {
         guard let vc = rootViewController else {
@@ -66,6 +70,11 @@ open class PiPWindow: UIWindow {
         animateRootViewChange()
         dragController.startDragListener(inView: view)
         dragController.insets = dragBoundInsets
+        
+        // add single tap gesture recognition for displaying exit PiP UI
+        let tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(toggleExitPiP))
+        self.tapGestureRecognizer = tapGestureRecognizer
+        view.addGestureRecognizer(tapGestureRecognizer)
     }
     
     /// Resize the root view to full screen
@@ -73,11 +82,35 @@ open class PiPWindow: UIWindow {
         isInPiP = false
         animateRootViewChange()
         dragController.stopDragListener()
+        
+        // hide PiP UI
+        exitPiPButton?.removeFromSuperview()
+        exitPiPButton = nil
+        
+        // remove gesture
+        tapGestureRecognizer?.removeTarget(self, action: #selector(toggleExitPiP))
+        tapGestureRecognizer = nil
     }
     
     /// Stop the dragging gesture of the root view
     public func stopDragGesture() {
         dragController.stopDragListener()
+    }
+    
+    /// Customize the presentation of exit pip button
+    open func configureExitPiPButton(target: Any, action: Selector) -> UIButton {
+        let buttonImage = UIImage.init(named: "image-resize", in: Bundle(for: type(of: self)), compatibleWith: nil)
+        let button = UIButton(type: .custom)
+        let size: CGSize = CGSize(width: 44, height: 44)
+        button.setImage(buttonImage, for: .normal)
+        button.backgroundColor = .gray
+        button.layer.cornerRadius = size.width / 2
+        button.frame = CGRect(origin: CGPoint.zero, size: size)
+        if let view = rootViewController?.view {
+            button.center = view.convert(view.center, from:view.superview)
+        }
+        button.addTarget(target, action: action, for: .touchUpInside)
+        return button
     }
     
     // MARK: - Manage presentation switching
@@ -101,5 +134,28 @@ open class PiPWindow: UIWindow {
         let x: CGFloat = adjustedBounds.maxX - size.width
         let y: CGFloat = adjustedBounds.maxY - size.height
         return CGRect(x: x, y: y, width: size.width, height: size.height)
+    }
+    
+    // MARK: - Exit PiP
+    
+    @objc private func toggleExitPiP() {
+        guard let view = rootViewController?.view else { return }
+        
+        if exitPiPButton == nil {
+            // show button
+            let button = configureExitPiPButton(target: self, action: #selector(exitPiP))
+            view.addSubview(button)
+            exitPiPButton = button
+            
+        } else {
+            // hide button
+            exitPiPButton?.removeFromSuperview()
+            exitPiPButton = nil
+        }
+        
+    }
+    
+    @objc private func exitPiP() {
+        goToFullScreen()
     }
 }
