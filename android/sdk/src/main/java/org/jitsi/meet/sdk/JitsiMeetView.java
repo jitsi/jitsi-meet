@@ -25,6 +25,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.util.Log;
 import android.widget.FrameLayout;
 
 import com.facebook.react.ReactInstanceManager;
@@ -52,6 +53,12 @@ public class JitsiMeetView extends FrameLayout {
      * view.
      */
     private static final int BACKGROUND_COLOR = 0xFF111111;
+
+    /**
+     * The {@link Log} tag which identifies the source of the log messages of
+     * {@code JitsiMeetView}.
+     */
+    private final static String TAG = JitsiMeetView.class.getSimpleName();
 
     /**
      * React Native bridge. The instance manager allows embedding applications
@@ -266,13 +273,15 @@ public class JitsiMeetView extends FrameLayout {
      * @param params {@code WritableMap} optional ancillary data for the event.
      */
     private static void sendEvent(
-            String eventName, @Nullable WritableMap params) {
+            String eventName,
+            @Nullable WritableMap params) {
         if (reactInstanceManager != null) {
             ReactContext reactContext
                 = reactInstanceManager.getCurrentReactContext();
             if (reactContext != null) {
                 reactContext
-                    .getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class)
+                    .getJSModule(
+                        DeviceEventManagerModule.RCTDeviceEventEmitter.class)
                     .emit(eventName, params);
             }
         }
@@ -498,10 +507,29 @@ public class JitsiMeetView extends FrameLayout {
         super.onWindowFocusChanged(hasFocus);
 
         // https://github.com/mockingbot/react-native-immersive#restore-immersive-state
+
+        // FIXME The singleton pattern employed by RNImmersiveModule is not
+        // advisable because a react-native mobule is consumable only after its
+        // BaseJavaModule#initialize() has completed and here we have no
+        // knowledge of whether the precondition is really met.
         RNImmersiveModule immersive = RNImmersiveModule.getInstance();
 
         if (hasFocus && immersive != null) {
-            immersive.emitImmersiveStateChangeEvent();
+            try {
+                immersive.emitImmersiveStateChangeEvent();
+            } catch (RuntimeException re) {
+                // FIXME I don't know how to check myself whether
+                // BaseJavaModule#initialize() has been invoked and thus
+                // RNImmersiveModule is consumable. A safe workaround is to
+                // swallow the failure because the whole full-screen/immersive
+                // functionality is brittle anyway, akin to the icing on the
+                // cake, and has been working without onWindowFocusChanged for a
+                // very long time.
+                Log.e(
+                    TAG,
+                    "RNImmersiveModule#emitImmersiveStateChangeEvent() failed!",
+                    re);
+            }
         }
     }
 
