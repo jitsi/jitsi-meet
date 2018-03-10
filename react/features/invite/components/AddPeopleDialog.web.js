@@ -458,9 +458,12 @@ class AddPeopleDialog extends Component<*, *> {
         const telephoneIcon = this._renderTelephoneIcon();
 
         const numberDisplayItems = numbers.map(number => {
-            const description = number.allowed
-                ? t('addPeople.countryReminder')
-                : t('addPeople.countryNotAllowed');
+            const numberNotAllowedMessage
+                = number.allowed ? '' : t('addPeople.countryNotSupported');
+            const countryCodeReminder = number.showCountryCodeReminder
+                ? t('addPeople.countryReminder') : '';
+            const description
+                = `${numberNotAllowedMessage} ${countryCodeReminder}`.trim();
 
             return {
                 filterValues: [
@@ -490,11 +493,12 @@ class AddPeopleDialog extends Component<*, *> {
     /**
      * Performs a people and phone number search request.
      *
-     * @param {string} text - The search text.
+     * @param {string} query - The search text.
      * @private
      * @returns {Promise}
      */
-    _query(text) {
+    _query(query = '') {
+        const text = query.trim();
         const {
             _dialOutAuthUrl,
             _jwt,
@@ -514,14 +518,27 @@ class AddPeopleDialog extends Component<*, *> {
             peopleSearchPromise = Promise.resolve([]);
         }
 
+
+        const hasCountryCode = text.startsWith('+');
         let phoneNumberPromise;
 
-        // TODO: It is currently the responsibility of the user to properly
-        // provide a country code. Maybe there is a way to make that experience
-        // more user friendly or at least more obvious.
         if (this.props.enableDialOut && this._isMaybeAPhoneNumber(text)) {
+            let numberToVerify = text;
+
+            // When the number to verify does not start with a +, we assume no
+            // proper country code has been entered. In such a case, prepend 1
+            // for the country code. The service currently takes care of
+            // prepending the +.
+            if (!hasCountryCode && !text.startsWith('1')) {
+                numberToVerify = `1${numberToVerify}`;
+            }
+
+            // The validation service works properly when the query is digits
+            // only so ensure only digits get sent.
+            numberToVerify = this._getDigitsOnly(numberToVerify);
+
             phoneNumberPromise
-                = checkDialNumber(this._getDigitsOnly(text), _dialOutAuthUrl);
+                = checkDialNumber(numberToVerify, _dialOutAuthUrl);
         } else {
             phoneNumberPromise = Promise.resolve({});
         }
@@ -550,7 +567,8 @@ class AddPeopleDialog extends Component<*, *> {
                         country: phoneResults.country,
                         type: 'phone',
                         number: phoneResults.phone,
-                        originalEntry: text
+                        originalEntry: text,
+                        showCountryCodeReminder: !hasCountryCode
                     });
                 }
 

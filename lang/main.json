@@ -456,8 +456,8 @@
     },
     "addPeople": {
         "add": "Add",
-        "countryNotAllowed": "This destination is not allowed yet.",
-        "countryReminder": "The starting digits should be your country code!",
+        "countryNotSupported": "We do not support this destination yet.",
+        "countryReminder": "Calling outside the US? Please make sure you start with the country code!",
         "disabled": "You can't invite people.",
         "invite": "Invite",
         "loading": "Searching for people and phone numbers",
