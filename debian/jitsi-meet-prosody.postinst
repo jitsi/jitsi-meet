@@ -125,8 +125,11 @@ case "$1" in
             # echo for using all default values
             echo | prosodyctl cert generate $JICOFO_AUTH_DOMAIN
 
-            ln -sf /var/lib/prosody/$JICOFO_AUTH_DOMAIN.key /etc/prosody/certs/$JICOFO_AUTH_DOMAIN.key
-            ln -sf /var/lib/prosody/$JICOFO_AUTH_DOMAIN.crt /etc/prosody/certs/$JICOFO_AUTH_DOMAIN.crt
+            AUTH_KEY_FILE="/etc/prosody/certs/$JICOFO_AUTH_DOMAIN.key"
+            AUTH_CRT_FILE="/etc/prosody/certs/$JICOFO_AUTH_DOMAIN.crt"
+
+            ln -sf /var/lib/prosody/$JICOFO_AUTH_DOMAIN.key $AUTH_KEY_FILE
+            ln -sf /var/lib/prosody/$JICOFO_AUTH_DOMAIN.crt $AUTH_CRT_FILE
             ln -sf /var/lib/prosody/$JICOFO_AUTH_DOMAIN.crt /usr/local/share/ca-certificates/$JICOFO_AUTH_DOMAIN.crt
 
             update-ca-certificates
