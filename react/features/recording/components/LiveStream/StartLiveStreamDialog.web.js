@@ -14,6 +14,36 @@ import GoogleSignInButton from './GoogleSignInButton';
 import StreamKeyForm from './StreamKeyForm';
 
 /**
+ * An enumeration of the different states the Google API can be in while
+ * interacting with {@code StartLiveStreamDialog}.
+  *
+ * @private
+ * @type {Object}
+ */
+const GOOGLE_API_STATES = {
+    /**
+     * The state in which the Google API still needs to be loaded.
+     */
+    NEEDS_LOADING: 0,
+
+    /**
+     * The state in which the Google API is loaded and ready for use.
+     */
+    LOADED: 1,
+
+    /**
+     * The state in which a user has been logged in through the Google API.
+     */
+    SIGNED_IN: 2,
+
+    /**
+     * The state in which the Google API encountered an error either loading
+     * or with an API request.
+     */
+    ERROR: 3
+};
+
+/**
  * A React Component for requesting a YouTube stream key to use for live
  * streaming of the current conference.
  *
@@ -52,24 +82,21 @@ class StartLiveStreamDialog extends Component {
     /**
      * {@code StartLiveStreamDialog} component's local state.
      *
+     * @property {boolean} googleAPIState - The current state of interactions
+     * with the Google API. Determines what Google related UI should display.
      * @property {Object[]|undefined} broadcasts - Details about the broadcasts
      * available for use for the logged in Google user's YouTube account.
-     * @property {boolean} googleApiLoaded - Whether or not the Google
-     * javascript client library has been loaded.
      * @property {string} googleProfileName - The name of the user currently
      * logged in to the Google web client application.
-     * @property {boolean} showGoogleApiError - Whether or not the fatal error
-     * message regarding the Google API should display.
      * @property {string} streamKey - The selected or entered stream key to use
      * for YouTube live streaming.
      */
     state = {
         broadcasts: undefined,
-        googleApiLoaded: false,
+        googleAPIState: GOOGLE_API_STATES.NEEDS_LOADING,
         googleProfileName: '',
-        showGoogleApiError: false,
         streamKey: ''
-    }
+    };
 
     /**
      * Initializes a new {@code StartLiveStreamDialog} instance.
@@ -170,16 +197,18 @@ class StartLiveStreamDialog extends Component {
         return googleApi.get()
             .then(() => googleApi.initializeClient(
                 this.props._googleApiApplicationClientID))
+            .then(() => this._setStateIfMounted({
+                googleAPIState: GOOGLE_API_STATES.LOADED
+            }))
             .then(() => googleApi.isSignedIn())
             .then(isSignedIn => {
                 if (isSignedIn) {
                     return this._onGetYouTubeBroadcasts();
                 }
             })
-            .then(() => this._setStateIfMounted({ googleApiLoaded: true }))
             .catch(() => {
                 this._setStateIfMounted({
-                    showGoogleApiError: true
+                    googleAPIState: GOOGLE_API_STATES.ERROR
                 });
             });
     }
@@ -210,7 +239,8 @@ class StartLiveStreamDialog extends Component {
             .then(() => googleApi.getCurrentUserProfile())
             .then(profile => {
                 this._setStateIfMounted({
-                    googleProfileName: profile.getName()
+                    googleProfileName: profile.getName(),
+                    googleAPIState: GOOGLE_API_STATES.SIGNED_IN
                 });
             })
             .then(() => googleApi.requestAvailableYouTubeBroadcasts())
@@ -224,8 +254,7 @@ class StartLiveStreamDialog extends Component {
                 });
 
                 this._setStateIfMounted({
-                    broadcasts,
-                    showGoogleApiError: false
+                    broadcasts
                 });
             })
             .catch(response => {
@@ -233,7 +262,7 @@ class StartLiveStreamDialog extends Component {
                 // Google api. Do not error if the login in canceled.
                 if (response && response.result) {
                     this._setStateIfMounted({
-                        showGoogleApiError: true
+                        googleAPIState: GOOGLE_API_STATES.ERROR
                     });
                 }
             });
@@ -248,6 +277,7 @@ class StartLiveStreamDialog extends Component {
      */
     _onRequestGoogleSignIn() {
         return googleApi.showAccountSelection()
+            .then(() => this._setStateIfMounted({ broadcasts: undefined }))
             .then(() => this._onGetYouTubeBroadcasts());
     }
 
@@ -312,15 +342,33 @@ class StartLiveStreamDialog extends Component {
      */
     _renderYouTubePanel() {
         const { t } = this.props;
-        const {
-            googleApiLoaded,
-            googleProfileName,
-            showGoogleApiError
-        } = this.state;
 
         let googleContent;
 
-        if (showGoogleApiError) {
+        switch (this.state.googleAPIState) {
+        case GOOGLE_API_STATES.LOADED:
+            googleContent = ( // eslint-disable-line no-extra-parens
+                <GoogleSignInButton
+                    onClick = { this._onGetYouTubeBroadcasts }
+                    text = { t('liveStreaming.signIn') } />
+            );
+            break;
+
+        case GOOGLE_API_STATES.SIGNED_IN:
+            googleContent = ( // eslint-disable-line no-extra-parens
+                <div>
+                    <div>
+                        { t('liveStreaming.currentSignIn',
+                            { name: this.state.googleProfileName }) }
+                    </div>
+                    <GoogleSignInButton
+                        onClick = { this._onRequestGoogleSignIn }
+                        text = { t('liveStreaming.changeSignIn') } />
+                </div>
+            );
+            break;
+
+        case GOOGLE_API_STATES.ERROR:
             googleContent = ( // eslint-disable-line no-extra-parens
                 <div>
                     <div>
@@ -331,30 +379,16 @@ class StartLiveStreamDialog extends Component {
                         text = { t('liveStreaming.changeSignIn') } />
                 </div>
             );
-        } else if (googleProfileName) {
-            googleContent = ( // eslint-disable-line no-extra-parens
-                <div>
-                    <div>
-                        { t('liveStreaming.currentSignIn',
-                            { name: googleProfileName }) }
-                    </div>
-                    <GoogleSignInButton
-                        onClick = { this._onRequestGoogleSignIn }
-                        text = { t('liveStreaming.changeSignIn') } />
-                </div>
-            );
-        } else if (googleApiLoaded) {
-            googleContent = ( // eslint-disable-line no-extra-parens
-                <GoogleSignInButton
-                    onClick = { this._onGetYouTubeBroadcasts }
-                    text = { t('liveStreaming.signIn') } />
-            );
-        } else {
+            break;
+
+        case GOOGLE_API_STATES.NEEDS_LOADING:
+        default:
             googleContent = ( // eslint-disable-line no-extra-parens
                 <Spinner
                     isCompleting = { false }
                     size = 'medium' />
             );
+            break;
         }
 
         return (
