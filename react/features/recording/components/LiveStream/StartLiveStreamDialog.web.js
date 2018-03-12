@@ -41,7 +41,7 @@ class StartLiveStreamDialog extends Component {
         /**
          * Callback to invoke when a stream key is submitted for use.
          */
-        onSuccess: PropTypes.func,
+        onSubmit: PropTypes.func,
 
         /**
          * Invoked to obtain translated strings.
@@ -93,12 +93,12 @@ class StartLiveStreamDialog extends Component {
         // Bind event handlers so they are only bound once per instance.
         this._onCancel = this._onCancel.bind(this);
         this._onGetYouTubeBroadcasts = this._onGetYouTubeBroadcasts.bind(this);
-        this._onGoogleSignIn = this._onGoogleSignIn.bind(this);
         this._onInitializeGoogleApi = this._onInitializeGoogleApi.bind(this);
+        this._onRequestGoogleSignIn = this._onRequestGoogleSignIn.bind(this);
         this._onStreamKeyChange = this._onStreamKeyChange.bind(this);
         this._onSubmit = this._onSubmit.bind(this);
-        this._onYouTubeBroadcastClicked
-            = this._onYouTubeBroadcastClicked.bind(this);
+        this._onYouTubeBroadcastIDSelected
+            = this._onYouTubeBroadcastIDSelected.bind(this);
     }
 
     /**
@@ -150,7 +150,8 @@ class StartLiveStreamDialog extends Component {
                         broadcasts = { this.state.broadcasts }
                         helpURL = { interfaceConfig.LIVE_STREAMING_HELP_LINK }
                         onChange = { this._onStreamKeyChange }
-                        onStreamSelected = { this._onYouTubeBroadcastClicked }
+                        onStreamSelected
+                            = { this._onYouTubeBroadcastIDSelected }
                         value = { this.state.streamKey } />
                 </div>
             </Dialog>
@@ -205,7 +206,7 @@ class StartLiveStreamDialog extends Component {
      */
     _onGetYouTubeBroadcasts() {
         return googleApi.get()
-            .then(() => googleApi.signIn())
+            .then(() => googleApi.signInIfNotSignedIn())
             .then(() => googleApi.getCurrentUserProfile())
             .then(profile => {
                 this._setStateIfMounted({
@@ -245,8 +246,8 @@ class StartLiveStreamDialog extends Component {
      * @private
      * @returns {Promise}
      */
-    _onGoogleSignIn() {
-        return googleApi.forceSignIn()
+    _onRequestGoogleSignIn() {
+        return googleApi.showAccountSelection()
             .then(() => this._onGetYouTubeBroadcasts());
     }
 
@@ -265,7 +266,7 @@ class StartLiveStreamDialog extends Component {
     }
 
     /**
-     * Invokes the passed in {@link onSuccess} callback with the entered stream
+     * Invokes the passed in {@link onSubmit} callback with the entered stream
      * key, and then closes {@code StartLiveStreamDialog}.
      *
      * @private
@@ -277,7 +278,7 @@ class StartLiveStreamDialog extends Component {
             return false;
         }
 
-        this.props.onSuccess(this.state.streamKey);
+        this.props.onSubmit(this.state.streamKey);
 
         return true;
     }
@@ -291,7 +292,7 @@ class StartLiveStreamDialog extends Component {
      * @private
      * @returns {Promise}
      */
-    _onYouTubeBroadcastClicked(boundStreamID) {
+    _onYouTubeBroadcastIDSelected(boundStreamID) {
         return googleApi.requestLiveStreamsForYouTubeBroadcast(boundStreamID)
             .then(response => {
                 const found = response.result.items[0];
@@ -326,7 +327,7 @@ class StartLiveStreamDialog extends Component {
                         { t('liveStreaming.error') }
                     </div>
                     <GoogleSignInButton
-                        onClick = { this._onGoogleSignIn }
+                        onClick = { this._onRequestGoogleSignIn }
                         text = { t('liveStreaming.changeSignIn') } />
                 </div>
             );
@@ -338,7 +339,7 @@ class StartLiveStreamDialog extends Component {
                             { name: googleProfileName }) }
                     </div>
                     <GoogleSignInButton
-                        onClick = { this._onGoogleSignIn }
+                        onClick = { this._onRequestGoogleSignIn }
                         text = { t('liveStreaming.changeSignIn') } />
                 </div>
             );

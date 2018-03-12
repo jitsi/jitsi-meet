@@ -108,7 +108,7 @@ function _requestLiveStreamId() {
     return new Promise((resolve, reject) =>
         APP.store.dispatch(openDialog(StartLiveStreamDialog, {
             onCancel: reject,
-            onSuccess: resolve
+            onSubmit: resolve
         })));
 }
 

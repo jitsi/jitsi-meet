@@ -120,17 +120,6 @@ const googleApi = {
     },
 
     /**
-     * Prompts the participant to sign in to the Google API Client Library, even
-     * if already signed in.
-     *
-     * @returns {Promise}
-     */
-    forceSignIn() {
-        return this.get()
-            .then(api => api.auth2.getAuthInstance().signIn());
-    },
-
-    /**
      * Executes a request for a list of all YouTube broadcasts associated with
      * user currently signed in to the Google API Client Library.
      *
@@ -159,17 +148,28 @@ const googleApi = {
     },
 
     /**
+     * Prompts the participant to sign in to the Google API Client Library, even
+     * if already signed in.
+     *
+     * @returns {Promise}
+     */
+    showAccountSelection() {
+        return this.get()
+            .then(api => api.auth2.getAuthInstance().signIn());
+    },
+
+    /**
      * Prompts the participant to sign in to the Google API Client Library, if
      * not already signed in.
      *
      * @returns {Promise}
      */
-    signIn() {
+    signInIfNotSignedIn() {
         return this.get()
             .then(() => this.isSignedIn())
             .then(isSignedIn => {
                 if (!isSignedIn) {
-                    return this.forceSignIn();
+                    return this.showAccountSelection();
                 }
             });
     },
