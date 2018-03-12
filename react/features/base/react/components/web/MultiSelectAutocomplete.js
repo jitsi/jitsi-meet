@@ -1,6 +1,5 @@
 import { MultiSelectStateless } from '@atlaskit/multi-select';
 import AKInlineDialog from '@atlaskit/inline-dialog';
-import Spinner from '@atlaskit/spinner';
 import _debounce from 'lodash/debounce';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
@@ -29,9 +28,20 @@ class MultiSelectAutocomplete extends Component {
         isDisabled: PropTypes.bool,
 
         /**
+         * Text to display while a query is executing.
+         */
+        loadingMessage: PropTypes.string,
+
+        /**
          * The text to show when no matches are found.
          */
         noMatchesFound: PropTypes.string,
+
+        /**
+         * The function called immediately before a selection has been actually
+         * selected. Provides an opportunity to do any formatting.
+         */
+        onItemSelected: PropTypes.func,
 
         /**
          * The function called when the selection changes.
@@ -113,14 +123,14 @@ class MultiSelectAutocomplete extends Component {
     }
 
     /**
-     * Clears the selected items.
+     * Sets the items to display as selected.
      *
+     * @param {Array<Object>} selectedItems - The list of items to display as
+     * having been selected.
      * @returns {void}
      */
-    clear() {
-        this.setState({
-            selectedItems: []
-        });
+    setSelectedItems(selectedItems = []) {
+        this.setState({ selectedItems });
     }
 
     /**
@@ -140,8 +150,10 @@ class MultiSelectAutocomplete extends Component {
                 <MultiSelectStateless
                     filterValue = { this.state.filterValue }
                     isDisabled = { isDisabled }
+                    isLoading = { this.state.loading }
                     isOpen = { this.state.isOpen }
                     items = { this.state.items }
+                    loadingMessage = { this.props.loadingMessage }
                     noMatchesFound = { noMatchesFound }
                     onFilterChange = { this._onFilterChange }
                     onRemoved = { this._onSelectionChange }
@@ -150,7 +162,6 @@ class MultiSelectAutocomplete extends Component {
                     selectedItems = { this.state.selectedItems }
                     shouldFitContainer = { shouldFitContainer }
                     shouldFocus = { shouldFocus } />
-                { this._renderLoadingIndicator() }
                 { this._renderError() }
             </div>
         );
@@ -169,7 +180,8 @@ class MultiSelectAutocomplete extends Component {
             error: this.state.error && Boolean(filterValue),
             filterValue,
             isOpen: Boolean(this.state.items.length) && Boolean(filterValue),
-            items: filterValue ? this.state.items : []
+            items: filterValue ? this.state.items : [],
+            loading: Boolean(filterValue)
         });
         if (filterValue) {
             this._sendQuery(filterValue);
@@ -201,7 +213,7 @@ class MultiSelectAutocomplete extends Component {
         if (existing) {
             selectedItems = selectedItems.filter(k => k !== existing);
         } else {
-            selectedItems.push(item);
+            selectedItems.push(this.props.onItemSelected(item));
         }
         this.setState({
             isOpen: false,
@@ -237,33 +249,6 @@ class MultiSelectAutocomplete extends Component {
     }
 
     /**
-     * Renders the loading indicator.
-     *
-     * @returns {ReactElement|null}
-     */
-    _renderLoadingIndicator() {
-        if (!(this.state.loading
-            && !this.state.items.length
-            && this.state.filterValue.length)) {
-            return null;
-        }
-
-        const content = ( // eslint-disable-line no-extra-parens
-            <div className = 'autocomplete-loading'>
-                <Spinner
-                    isCompleting = { false }
-                    size = 'medium' />
-            </div>
-        );
-
-        return (
-            <AKInlineDialog
-                content = { content }
-                isOpen = { true } />
-        );
-    }
-
-    /**
      * Sends a query to the resourceClient.
      *
      * @param {string} filterValue - The string to use for the search.
@@ -275,7 +260,6 @@ class MultiSelectAutocomplete extends Component {
         }
 
         this.setState({
-            loading: true,
             error: false
         });
 
@@ -288,7 +272,6 @@ class MultiSelectAutocomplete extends Component {
             .then(results => {
                 if (this.state.filterValue !== filterValue) {
                     this.setState({
-                        loading: false,
                         error: false
                     });
 

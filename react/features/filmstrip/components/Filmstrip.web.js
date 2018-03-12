@@ -5,6 +5,7 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
+import { getLocalParticipant, PARTICIPANT_ROLE } from '../../base/participants';
 import { InviteButton } from '../../invite';
 import { Toolbox } from '../../toolbox';
 
@@ -42,6 +43,18 @@ class Filmstrip extends Component<*> {
          * Whether or not remote videos are currently being hovered over.
          */
         _hovered: PropTypes.bool,
+
+        /**
+         * Whether or not the feature to directly invite people into the
+         * conference is available.
+         */
+        _isAddToCallAvailable: PropTypes.bool,
+
+        /**
+         * Whether or not the feature to dial out to number to join the
+         * conference is available.
+         */
+        _isDialOutAvailable: PropTypes.bool,
 
         /**
          * Whether or not the remote videos should be visible. Will toggle
@@ -93,6 +106,14 @@ class Filmstrip extends Component<*> {
      * @returns {ReactElement}
      */
     render() {
+        const {
+            _hideInviteButton,
+            _isAddToCallAvailable,
+            _isDialOutAvailable,
+            _remoteVideosVisible,
+            filmstripOnly
+        } = this.props;
+
         /**
          * Note: Appending of {@code RemoteVideo} views is handled through
          * VideoLayout. The views do not get blown away on render() because
@@ -102,12 +123,12 @@ class Filmstrip extends Component<*> {
          * modified, then the views will get blown away.
          */
 
-        const filmstripClassNames = `filmstrip ${this.props._remoteVideosVisible
-            ? '' : 'hide-videos'}`;
+        const filmstripClassNames = `filmstrip ${_remoteVideosVisible ? ''
+            : 'hide-videos'}`;
 
         return (
             <div className = { filmstripClassNames }>
-                { this.props.filmstripOnly ? <Toolbox /> : null }
+                { filmstripOnly ? <Toolbox /> : null }
                 <div
                     className = 'filmstrip__videos'
                     id = 'remoteVideos'>
@@ -116,9 +137,11 @@ class Filmstrip extends Component<*> {
                         id = 'filmstripLocalVideo'
                         onMouseOut = { this._onMouseOut }
                         onMouseOver = { this._onMouseOver }>
-                        { this.props.filmstripOnly
-                            || this.props._hideInviteButton
-                            ? null : <InviteButton /> }
+                        { filmstripOnly || _hideInviteButton
+                            ? null
+                            : <InviteButton
+                                enableAddPeople = { _isAddToCallAvailable }
+                                enableDialOut = { _isDialOutAvailable } /> }
                         <div id = 'filmstripLocalVideoThumbnail' />
                     </div>
                     <div
@@ -192,15 +215,34 @@ class Filmstrip extends Component<*> {
  * @param {Object} state - The Redux state.
  * @private
  * @returns {{
- *     _hovered: boolean,
  *     _hideInviteButton: boolean,
+ *     _hovered: boolean,
+ *     _isAddToCallAvailable: boolean,
+ *     _isDialOutAvailable: boolean,
  *     _remoteVideosVisible: boolean
  * }}
  */
 function _mapStateToProps(state) {
+    const { conference } = state['features/base/conference'];
+    const {
+        enableUserRolesBasedOnToken,
+        iAmRecorder
+    } = state['features/base/config'];
+    const { isGuest } = state['features/base/jwt'];
+    const { hovered } = state['features/filmstrip'];
+
+    const isAddToCallAvailable = !isGuest;
+    const isDialOutAvailable
+        = getLocalParticipant(state).role === PARTICIPANT_ROLE.MODERATOR
+                && conference && conference.isSIPCallingSupported()
+                && (!enableUserRolesBasedOnToken || !isGuest);
+
     return {
-        _hovered: state['features/filmstrip'].hovered,
-        _hideInviteButton: state['features/base/config'].iAmRecorder,
+        _hideInviteButton: iAmRecorder
+            || (!isAddToCallAvailable && !isDialOutAvailable),
+        _hovered: hovered,
+        _isAddToCallAvailable: isAddToCallAvailable,
+        _isDialOutAvailable: isDialOutAvailable,
         _remoteVideosVisible: shouldRemoteVideosBeVisible(state)
     };
 }
