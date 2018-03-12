@@ -100,7 +100,7 @@ export function checkDialNumber(
         // no auth url, let's say it is valid
         const response = {
             allow: true,
-            phone: dialNumber
+            phone: `+${dialNumber}`
         };
 
         return Promise.resolve(response);
