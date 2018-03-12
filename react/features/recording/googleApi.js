@@ -108,15 +108,15 @@ const googleApi = {
             scriptTag.src = GOOGLE_API_CLIENT_LIBRARY_URL;
 
             document.head.appendChild(scriptTag);
-        });
-
-        return googleClientLoadPromise
+        })
             .then(() => new Promise((resolve, reject) =>
                 this._getGoogleApiClient().load('client:auth2', {
                     callback: resolve,
                     onerror: reject
                 })))
             .then(() => this._getGoogleApiClient());
+
+        return googleClientLoadPromise;
     },
 
     /**
