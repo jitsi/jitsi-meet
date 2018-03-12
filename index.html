@@ -9,6 +9,42 @@
 
     <script>
         window.indexLoadedTime = window.performance.now();
+
+        var defaultConsole = console;
+        function argsToJSON(args) {
+            var msg = '';
+            for (var idx = 1; idx < args.length; idx += 1) {
+                const arg = args[idx];
+
+                if (typeof arg === 'object') {
+                    msg += ' [obj] ';
+                } else {
+                    msg += arg + ' ';
+                }
+            }
+            return msg;
+        }
+        console = {
+            log() {
+                defaultConsole.log.apply(defaultConsole, [argsToJSON(arguments)]);
+            },
+            info(msg) {
+                defaultConsole.info.apply(defaultConsole, [argsToJSON(arguments)]);
+            },
+            debug(msg) {
+                defaultConsole.debug.apply(defaultConsole, [argsToJSON(arguments)]);
+            },
+            warn(msg) {
+                defaultConsole.warn.apply(defaultConsole, [argsToJSON(arguments)]);
+            },
+            error(msg) {
+                defaultConsole.error.apply(defaultConsole, [argsToJSON(arguments)]);
+            },
+            trace(msg) {
+                defaultConsole.trace.apply(defaultConsole, [argsToJSON(arguments)]);
+            }
+        }
+
         console.log("(TIME) index.html loaded:\t", indexLoadedTime);
         // XXX the code below listeners for errors and displays an error message
         // in the document body when any of the required files fails to load.
