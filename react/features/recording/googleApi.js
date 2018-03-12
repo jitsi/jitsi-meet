@@ -60,9 +60,19 @@ const googleApi = {
      */
     initializeClient(clientId) {
         return this.get()
-            .then(api => api.client.init({
-                clientId,
-                scope: GOOGLE_API_SCOPES
+            .then(api => new Promise((resolve, reject) => {
+                // setTimeout 1 is used as a workaround for api.client.init not
+                // resolving consistently when the Google API Client Library is
+                // loaded asynchronously. See:
+                // github.com/google/google-api-javascript-client/issues/399
+                setTimeout(() => {
+                    api.client.init({
+                        clientId,
+                        scope: GOOGLE_API_SCOPES
+                    })
+                    .then(resolve)
+                    .catch(reject);
+                }, 1);
             }));
     },
 
