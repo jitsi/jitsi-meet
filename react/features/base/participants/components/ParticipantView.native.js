@@ -7,6 +7,7 @@ import { connect } from 'react-redux';
 import { translate } from '../../i18n';
 import { JitsiParticipantConnectionStatus } from '../../lib-jitsi-meet';
 import {
+    getVideoTrackType,
     MEDIA_TYPE,
     shouldRenderVideoTrack,
     VideoTrack
@@ -14,6 +15,12 @@ import {
 import { prefetch } from '../../../mobile/image-cache';
 import { Container, TintedView } from '../../react';
 import { getTrackByMediaTypeAndParticipant } from '../../tracks';
+import {
+    getTransformForParticipant,
+    TransformAwareView,
+    updateVideoTransformation
+} from '../../video-transform';
+import type { Transform } from '../../video-transform';
 
 import Avatar from './Avatar';
 import {
@@ -61,6 +68,11 @@ type Props = {
     _participantName: string,
 
     /**
+     * The transform applied to the video.
+     */
+    _transform: Transform,
+
+    /**
      * The video Track of the participant with {@link #participantId}.
      */
     _videoTrack: Object,
@@ -69,6 +81,11 @@ type Props = {
      * The avatar size.
      */
     avatarSize: number,
+
+    /**
+     * The Redux dispatch function.
+     */
+    dispatch: Function,
 
     /**
      * The ID of the participant (to be) depicted by {@link ParticipantView}.
@@ -112,7 +129,12 @@ type Props = {
      * stacking space of all {@code Video}s. For more details, refer to the
      * {@code zOrder} property of the {@code Video} class for React Native.
      */
-    zOrder: number
+    zOrder: number,
+
+    /**
+     * Indicates if zooming (pinch & zoom and/or drag) is enabled or not.
+     */
+    zoomEnabled: boolean
 };
 
 /**
@@ -122,6 +144,36 @@ type Props = {
  * @extends Component
  */
 class ParticipantView extends Component<Props> {
+    videoProperties: Map<string, Object>;
+
+    /**
+     * Instantiates a new {@code ParticipantView} component.
+     *
+     * @inheritdoc
+     */
+    constructor(props: Props) {
+        super(props);
+
+        this.videoProperties = new Map();
+
+        this._onTransformUpdate = this._onTransformUpdate.bind(this);
+    }
+
+    _onTransformUpdate: (Object) => void
+
+    /**
+     * Updates the video transformation for a participant based on an override
+     * from the {@code TransformAwareView} component.
+     *
+     * @param {Transform} transform - The values of the applied transformation.
+     * @returns {void}
+     */
+    _onTransformUpdate(transform) {
+        const { dispatch, participantId } = this.props;
+
+        dispatch(updateVideoTransformation(participantId, transform));
+    }
+
     /**
      * Renders the connection status label, if appropriate.
      *
@@ -174,8 +226,11 @@ class ParticipantView extends Component<Props> {
      */
     render() {
         const {
+            participantId,
+            zoomEnabled,
             _avatar: avatar,
             _connectionStatus: connectionStatus,
+            _transform,
             _videoTrack: videoTrack
         } = this.props;
 
@@ -193,6 +248,11 @@ class ParticipantView extends Component<Props> {
                 && (connectionStatus
                     === JitsiParticipantConnectionStatus.ACTIVE)
                 && shouldRenderVideoTrack(videoTrack, waitForVideoStarted);
+
+        // Transform is only enabled for desktop streams rendered in a
+        // large video component (zoomEnabled = true).
+        const transformEnabled
+            = zoomEnabled && getVideoTrackType(videoTrack) === 'desktop';
 
         // Is the avatar to be rendered?
         const renderAvatar = Boolean(!renderVideo && avatar);
@@ -217,10 +277,18 @@ class ParticipantView extends Component<Props> {
                     // ParticipantView determines that the video could be
                     // rendered.
                     && _toBoolean(this.props.showVideo, true)
-                    && <VideoTrack
-                        videoTrack = { videoTrack }
-                        waitForVideoStarted = { waitForVideoStarted }
-                        zOrder = { this.props.zOrder } /> }
+                    && <TransformAwareView
+                        onTransformUpdate = { this._onTransformUpdate }
+                        style = { styles.transformAwareView }
+                        transform = { _transform }
+                        transformEnabled = { transformEnabled }
+                        transformSession = { participantId } >
+                        <VideoTrack
+                            videoTrack = { videoTrack }
+                            waitForVideoStarted = { waitForVideoStarted }
+                            zOrder = { this.props.zOrder }
+                            zoomEnabled = { zoomEnabled } />
+                    </TransformAwareView> }
 
                 { renderAvatar
 
@@ -314,6 +382,7 @@ function _mapStateToProps(state, ownProps) {
             connectionStatus
                 || JitsiParticipantConnectionStatus.ACTIVE,
         _participantName: participantName,
+        _transform: getTransformForParticipant(state, participantId),
         _videoTrack:
             getTrackByMediaTypeAndParticipant(
                 state['features/base/tracks'],

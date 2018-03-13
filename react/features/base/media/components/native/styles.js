@@ -6,6 +6,7 @@ import { ColorPalette } from '../../../styles';
  * The styles of the feature base/media.
  */
 export default StyleSheet.create({
+
     /**
      * Make {@code Video} fill its container.
      */

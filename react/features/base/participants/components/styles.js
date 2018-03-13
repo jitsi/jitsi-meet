@@ -41,5 +41,12 @@ export default createStyleSheet({
         alignItems: 'stretch',
         flex: 1,
         justifyContent: 'center'
+    },
+
+    /**
+     * The TransformAwareView should fill the entire available space.
+     */
+    transformAwareView: {
+        flex: 1
     }
 });

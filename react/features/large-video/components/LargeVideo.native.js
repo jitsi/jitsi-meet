@@ -5,6 +5,10 @@ import { connect } from 'react-redux';
 
 import { ParticipantView } from '../../base/participants';
 import { DimensionsDetector } from '../../base/responsive-ui';
+import {
+    applyVideoTransformation,
+    GestureResponderView
+} from '../../base/video-transform';
 
 import styles, { AVATAR_SIZE } from './styles';
 
@@ -12,6 +16,16 @@ import styles, { AVATAR_SIZE } from './styles';
  * The type of the React {@link Component} props of {@link LargeVideo}.
  */
 type Props = {
+
+    /**
+     * The redux dispatch function.
+     */
+    dispatch: Function,
+
+    /**
+     * Callback to invoke when the video is pressed.
+     */
+    onPress: Function,
 
     /**
      * The ID of the participant (to be) depicted by LargeVideo.
@@ -65,6 +79,7 @@ class LargeVideo extends Component<Props, State> {
 
         // Bind event handlers so they are only bound once per instance.
         this._onDimensionsChanged = this._onDimensionsChanged.bind(this);
+        this._onGesture = this._onGesture.bind(this);
     }
 
     _onDimensionsChanged: (width: number, height: number) => void;
@@ -111,14 +126,59 @@ class LargeVideo extends Component<Props, State> {
         return (
             <DimensionsDetector
                 onDimensionsChanged = { this._onDimensionsChanged } >
-                <ParticipantView
-                    avatarSize = { avatarSize }
-                    participantId = { this.props._participantId }
-                    style = { styles.largeVideo }
-                    useConnectivityInfoLabel = { useConnectivityInfoLabel }
-                    zOrder = { 0 } />
+                <GestureResponderView
+                    onGesture = { this._onGesture }
+                    style = { styles.largeVideo } >
+                    <ParticipantView
+                        avatarSize = { avatarSize }
+                        participantId = { this.props._participantId }
+                        style = { styles.largeVideo }
+                        useConnectivityInfoLabel = { useConnectivityInfoLabel }
+                        zOrder = { 1 }
+                        zoomEnabled = { true } />
+                </GestureResponderView>
             </DimensionsDetector>
         );
+    }
+
+    _onGesture: Object => void
+
+    /**
+     * Translates a gesture into an event that other components can handle,
+     * such as a press event or a transform object.
+     *
+     * @private
+     * @param {Object} gesture - The recently detected gesture.
+     * @returns {void}
+     */
+    _onGesture(gesture) {
+        const { dispatch, onPress, _participantId } = this.props;
+        const { value } = gesture;
+
+        console.log('ZB:_onGesture', gesture);
+
+        switch (gesture.type) {
+        case 'move':
+            dispatch(applyVideoTransformation(
+                _participantId,
+                {
+                    translateX: value.x,
+                    translateY: value.y
+                }
+            ));
+            break;
+        case 'scale':
+            dispatch(applyVideoTransformation(
+                _participantId,
+                {
+                    scale: value
+                }
+            ));
+            break;
+        case 'press':
+            typeof onPress === 'function' && onPress();
+            break;
+        }
     }
 }
 
