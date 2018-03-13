@@ -43,6 +43,16 @@ To build the Jitsi Meet application, just type
 ```
 make
 ```
+For a development server, webpack-dev-server can be used   
+Install it globally, type
+
+```npm install webpack-dev-server -g```
+
+Use at the terminal
+
+```webpack-dev-server```
+
+The app should be running at https://localhost:8080/
 
 ## Working with the library sources (lib-jitsi-meet)
 
