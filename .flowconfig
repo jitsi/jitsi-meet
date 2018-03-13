@@ -18,6 +18,7 @@
 
 ; Ignore packages in node_modules which we (i.e. the jitsi-meet project) have
 ; seen to cause errors and we have chosen not to fix.
+.*/node_modules/@atlaskit/.*/*.js.flow
 .*/node_modules/@atlassian
 .*/node_modules/bower/lib/node_modules/bower-json/test/.*
 .*/node_modules/immutable/dist/immutable.js.flow

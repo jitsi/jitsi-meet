@@ -1,5 +1,6 @@
 /* global interfaceConfig */
 
+import { FieldTextAreaStateless } from '@atlaskit/field-text-area';
 import StarIcon from '@atlaskit/icon/glyph/star';
 import StarFilledIcon from '@atlaskit/icon/glyph/star-filled';
 import PropTypes from 'prop-types';
@@ -219,12 +220,14 @@ class FeedbackDialog extends Component {
                         </div>
                     </div>
                     <div className = 'details'>
-                        <textarea
+                        <FieldTextAreaStateless
                             autoFocus = { true }
                             className = 'input-control'
                             id = 'feedbackTextArea'
+                            isLabelHidden = { true }
                             onChange = { this._onMessageChange }
                             placeholder = { t('dialog.feedbackHelp') }
+                            shouldFitContainer = { true }
                             value = { message } />
                     </div>
                 </div>
