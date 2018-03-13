@@ -1,5 +1,6 @@
 /* global JitsiMeetJS */
 
+import { AtlasKitThemeProvider } from '@atlaskit/theme';
 import Logger from 'jitsi-meet-logger';
 import React from 'react';
 import ReactDOM from 'react-dom';
@@ -234,7 +235,9 @@ export default class DeviceSelectionPopup {
         ReactDOM.render(
             <I18nextProvider
                 i18n = { this._i18next }>
-                <DeviceSelectionDialogBase { ...props } />
+                <AtlasKitThemeProvider mode = 'dark'>
+                    <DeviceSelectionDialogBase { ...props } />
+                </AtlasKitThemeProvider>
             </I18nextProvider>,
             document.getElementById('react'));
     }

@@ -1,6 +1,4 @@
 .device-selection {
-    color: $feedbackInputTextColor;
-
     .device-selectors {
         font-size: 14px;
 
@@ -22,19 +20,15 @@
 
         /* device-selector-trigger stylings attempt to mimic AtlasKit button */
         .device-selector-trigger {
-            background-color: rgba(9, 30, 66, 0.04);
-            border-radius: 3px;
-            color: #505f79;
+            background-color: #0E1624;
+            border: 1px solid #455166;
+            border-radius: 5px;
             display: flex;
             height: 2.3em;
             justify-content: space-between;
             line-height: 2.3em;
             overflow: hidden;
             padding: 0 8px;
-
-            &:hover {
-                background-color: rgba(9,30,66,.08);
-            }
         }
         .device-selector-trigger-disabled {
             .device-selector-trigger {
@@ -108,19 +102,21 @@
     .audio-output-preview {
         font-size: 14px;
         margin-top: 10px;
+
         a {
+            color: 4C9AFF;
             cursor: pointer;
             text-decoration: none;
         }
     }
 
     .audio-input-preview {
-        background: #f4f5f7;
+        background: #7b7b7b;
         border-radius: 5px;
         height: 6px;
 
         .audio-input-preview-level {
-            background: #0052cc;
+            background: #4C9AFF;
             border-radius: 5px;
             height: 100%;
             -webkit-transition: width .1s ease-in-out;

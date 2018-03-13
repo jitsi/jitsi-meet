@@ -101,7 +101,7 @@
             }
 
             &-content {
-                background-color: $auiDialogContentBg;
+                background-color: $auiDialogBg;
                 box-sizing: border-box;
                 color: $auiDialogColor;
                 font-size: em(14, 12);
@@ -126,6 +126,11 @@
         }
     }
 
+    .input-control {
+        background-color: $auiDialogContentBg;
+        color: $auiDialogColor;
+    }
+
     .form-control:not(:last-child) {
         border-bottom: 1px solid $auiBorderColor;
     }
@@ -138,7 +143,6 @@
 }
 
 .modal-dialog-form {
-    color: $modalTextColor;
     margin-top: 5px !important;
 
     .input-control {
