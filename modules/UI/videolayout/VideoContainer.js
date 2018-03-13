@@ -687,7 +687,11 @@ export class VideoContainer extends LargeContainer {
      * @returns {void}
      */
     _updateBackground() {
-        if (browser.isFirefox() || browser.isTemasysPluginUsed()) {
+        // Do not the background display on browsers that might experience
+        // performance issues from the presence of the background.
+        if (browser.isFirefox()
+                || browser.isSafariWithWebrtc()
+                || browser.isTemasysPluginUsed()) {
             return;
         }
 
