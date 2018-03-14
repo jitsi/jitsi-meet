@@ -17,7 +17,7 @@ import {
 } from '../../base/participants';
 import { getLocalVideoTrack, toggleScreenshare } from '../../base/tracks';
 import { openFeedbackDialog } from '../../feedback';
-import { AddPeopleDialog, InfoDialogButtonV2 } from '../../invite';
+import { AddPeopleDialog, InfoDialogButton } from '../../invite';
 import { openKeyboardShortcutsDialog } from '../../keyboard-shortcuts';
 import { SpeakerStats } from '../../speaker-stats';
 
@@ -187,7 +187,7 @@ class ToolboxV2 extends AbstractToolbox {
                         tooltip = { _addPeopleAvailable || _dialOutAvailable
                             ? t('addPeople.title')
                             : t('addPeople.notAvailable') } />
-                    <InfoDialogButtonV2 />
+                    <InfoDialogButton />
                     <OverflowMenuButton
                         isOpen = { this.state.showOverflowMenu }
                         onVisibilityChange = { this._onSetOverflowVisible }>
