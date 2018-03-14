@@ -42,12 +42,12 @@ export default class AbstractToolbox extends Component<*, *> {
      * @returns {void}
      */
     _onToggleAudio() {
-        const mute = !this.props._audioMuted;
+        const newMuteState = !this.props._audioMuted;
 
         sendAnalytics(createToolbarEvent(
             AUDIO_MUTE,
             {
-                enable: mute
+                enable: newMuteState
             }));
 
         // The user sees the reality i.e. the state of base/tracks and intends
@@ -57,7 +57,7 @@ export default class AbstractToolbox extends Component<*, *> {
         // tapping.
         this.props.dispatch(
             setAudioMuted(
-                mute,
+                newMuteState,
                 VIDEO_MUTISM_AUTHORITY.USER,
                 /* ensureTrack */ true));
     }
@@ -71,12 +71,12 @@ export default class AbstractToolbox extends Component<*, *> {
      * @returns {void}
      */
     _onToggleVideo() {
-        const mute = !this.props._videoMuted;
+        const newMuteState = !this.props._videoMuted;
 
         sendAnalytics(createToolbarEvent(
             VIDEO_MUTE,
             {
-                enable: mute
+                enable: newMuteState
             }));
 
         // The user sees the reality i.e. the state of base/tracks and intends
@@ -86,7 +86,7 @@ export default class AbstractToolbox extends Component<*, *> {
         // tapping.
         this.props.dispatch(
             setVideoMuted(
-                !this.props._videoMuted,
+                newMuteState,
                 VIDEO_MUTISM_AUTHORITY.USER,
                 /* ensureTrack */ true));
     }
