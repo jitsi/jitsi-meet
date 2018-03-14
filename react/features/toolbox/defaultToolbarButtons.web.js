@@ -401,7 +401,7 @@ export default function getDefaultButtons() {
                 sendAnalytics(createToolbarEvent(
                     'raise.hand',
                     { enable: !APP.conference.isHandRaised }));
-                APP.conference.maybeToggleRaisedHand();
+                APP.conference.toggleRaisedHand();
             },
             shortcut: 'R',
             shortcutAttr: 'raiseHandPopover',
@@ -414,7 +414,7 @@ export default function getDefaultButtons() {
                     'toggle.raise.hand',
                     TRIGGERED,
                     { enable: !APP.conference.isHandRaised }));
-                APP.conference.maybeToggleRaisedHand();
+                APP.conference.toggleRaisedHand();
             },
             tooltipKey: 'toolbar.raiseHand'
         },

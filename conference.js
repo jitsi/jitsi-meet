@@ -2602,7 +2602,7 @@ export default {
     /**
      * Toggles the local "raised hand" status.
      */
-    maybeToggleRaisedHand() {
+    toggleRaisedHand() {
         const localParticipant = getLocalParticipant(APP.store.getState());
         const currentRaisedHand = localParticipant.raisedHand;
 
