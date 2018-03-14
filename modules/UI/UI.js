@@ -276,13 +276,17 @@ UI.setRaisedHandStatus = (id, name, raisedHandStatus) => {
 };
 
 /**
- * Sets the local "raised hand" status.
+ * Sets the local "raised hand" status and notifies interested listeners that
+ * the raise hand property has changed.
+ * @param {boolean} raisedHandStatus indicates the current state of the
+ * "raised hand"
  */
-UI.setLocalRaisedHandStatus
-    = raisedHandStatus =>
-        VideoLayout.setRaisedHandStatus(
-            APP.conference.getMyUserId(),
-            raisedHandStatus);
+UI.setLocalRaisedHandStatus = raisedHandStatus => {
+    eventEmitter.emit(UIEvents.LOCAL_RAISE_HAND_CHANGED, raisedHandStatus);
+    VideoLayout.setRaisedHandStatus(
+         APP.conference.getMyUserId(),
+        raisedHandStatus);
+};
 
 /**
  * Initialize conference UI.
@@ -1009,16 +1013,6 @@ UI.updateAuthInfo = function(isAuthEnabled, login) {
         Profile.showLoginButton(!loggedIn);
         Profile.showLogoutButton(loggedIn);
     }
-};
-
-/**
- * Notifies interested listeners that the raise hand property has changed.
- *
- * @param {boolean} isRaisedHand indicates the current state of the
- * "raised hand"
- */
-UI.onLocalRaiseHandChanged = function(isRaisedHand) {
-    eventEmitter.emit(UIEvents.LOCAL_RAISE_HAND_CHANGED, isRaisedHand);
 };
 
 /**
