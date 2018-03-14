@@ -88,7 +88,11 @@ class OverflowMenuButton extends Component {
      * @returns {void}
      */
     _onCloseDialog() {
-        this.props.onVisibilityChange(false);
+        const { onVisibilityChange } = this.props;
+
+        if (onVisibilityChange) {
+            onVisibilityChange(false);
+        }
     }
 
     /**
@@ -99,7 +103,11 @@ class OverflowMenuButton extends Component {
      * @returns {void}
      */
     _onToggleDialogVisibility() {
-        this.props.onVisibilityChange(!this.props.isOpen);
+        const { isOpen, onVisibilityChange } = this.props;
+
+        if (onVisibilityChange) {
+            onVisibilityChange(!isOpen);
+        }
     }
 }
 
