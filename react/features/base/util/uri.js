@@ -7,6 +7,18 @@
 export const APP_LINK_SCHEME = 'org.jitsi.meet:';
 
 /**
+ * XXX: The URL class exposed by JavaScript will not include the double dots in
+ * the protocol field. Also in other places (at the time of this writing:
+ * the UnsupportedMobileBrowser.js) the APP_LINK_SCHEME does not include
+ * the double dots, so things are inconsistent.
+ *
+ * The default protocol added to the URI in case it's missing or invalid.
+ *
+ * @type {string}
+ */
+export const DEFAULT_PROTOCOL = 'https:';
+
+/**
  * The {@link RegExp} pattern of the authority of a URI.
  *
  * @private
@@ -95,8 +107,8 @@ function _fixURIStringScheme(uri: string) {
         // sure that it is a well-known one.
         let protocol = match[match.length - 1].toLowerCase();
 
-        if (protocol !== 'http:' && protocol !== 'https:') {
-            protocol = 'https:';
+        if (protocol !== 'http:' && protocol !== DEFAULT_PROTOCOL) {
+            protocol = DEFAULT_PROTOCOL;
         }
 
         /* eslint-disable no-param-reassign */

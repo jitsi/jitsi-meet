@@ -6,6 +6,7 @@ import { connect } from 'react-redux';
 
 import { translate, translateToHTML } from '../../base/i18n';
 import { Platform } from '../../base/react';
+import { DEFAULT_PROTOCOL, parseURIString } from '../../base/util';
 import { DialInSummary } from '../../invite';
 import HideNotificationBarStyle from './HideNotificationBarStyle';
 
@@ -82,10 +83,21 @@ class UnsupportedMobileBrowser extends Component<*, *> {
         // appears to be a link with an app-specific scheme, not a Universal
         // Link.
         const appScheme = interfaceConfig.MOBILE_APP_SCHEME || 'org.jitsi.meet';
-        const joinURL = `${appScheme}:${window.location.href}`;
+        const joinURL = parseURIString(window.location.href);
+
+        // Drop the protocol only if it's the https, because that's the app's
+        // default scheme which will be eventually added later on when
+        // the intent URI is being processed. We'd like to preserve the protocol
+        // otherwise to not introduce unexpected side effect of using https when
+        // the site runs on http.
+        if (joinURL.protocol === DEFAULT_PROTOCOL) {
+            joinURL.protocol = `${appScheme}:`;
+        } else {
+            joinURL.protocol = `${appScheme}:${joinURL.protocol}`;
+        }
 
         this.setState({
-            joinURL
+            joinURL: joinURL.toString()
         });
     }
 
