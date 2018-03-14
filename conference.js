@@ -510,11 +510,6 @@ export default {
      */
     isHandRaised: false,
 
-    /*
-     * Whether the local participant is the dominant speaker in the conference.
-     */
-    isDominantSpeaker: false,
-
     /**
      * The local audio track (if any).
      * FIXME tracks from redux store should be the single source of truth
@@ -1887,13 +1882,6 @@ export default {
             });
         room.on(JitsiConferenceEvents.DOMINANT_SPEAKER_CHANGED, id => {
             APP.store.dispatch(dominantSpeakerChanged(id));
-
-            if (this.isLocalId(id)) {
-                this.isDominantSpeaker = true;
-            } else {
-                this.isDominantSpeaker = false;
-            }
-            APP.UI.markDominantSpeaker(id);
         });
 
         if (!interfaceConfig.filmStripOnly) {
