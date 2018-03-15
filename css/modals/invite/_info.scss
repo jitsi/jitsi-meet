@@ -56,11 +56,14 @@
     }
 
     .info-dialog-conference-url {
-        max-width: 250px;
-        overflow: hidden;
-        text-overflow: ellipsis;
         user-select: text;
-        white-space: nowrap;
+        -moz-user-select: text;
+        -webkit-user-select: text;
+        max-width: 400px;
+        width: max-content;
+        width: -moz-max-content;
+        width: -webkit-max-content;
+        word-break: break-all;
     }
 
     .info-dialog-dial-in {
