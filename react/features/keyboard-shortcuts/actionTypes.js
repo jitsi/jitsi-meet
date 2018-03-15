@@ -1,3 +1,5 @@
+// @flow
+
 /**
  * The type of the action which signals the keyboard shortcuts dialog should
  * be displayed.

@@ -1,3 +1,5 @@
+// @flow
+
 import Tooltip from '@atlaskit/tooltip';
 import React from 'react';
 

@@ -1,3 +1,5 @@
+// @flow
+
 import { OPEN_KEYBOARD_SHORTCUTS_DIALOG } from './actionTypes';
 
 /**

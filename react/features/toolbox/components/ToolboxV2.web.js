@@ -327,8 +327,6 @@ class ToolboxV2 extends AbstractToolbox {
 
     _onToggleAudio: () => void;
 
-    _onToggleVideo: () => void;
-
     _onToggleOverflowMenu: () => void;
 
     /**
@@ -372,6 +370,7 @@ class ToolboxV2 extends AbstractToolbox {
         this.props.dispatch(toggleScreenshare());
     }
 
+    _onToggleVideo: () => void;
 }
 
 /**

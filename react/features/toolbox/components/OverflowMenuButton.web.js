@@ -1,44 +1,41 @@
+// @flow
+
 import InlineDialog from '@atlaskit/inline-dialog';
-import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 
 import { translate } from '../../base/i18n';
 
 import ToolbarButtonV2 from './ToolbarButtonV2';
 
+type Props = {
+
+    /**
+     * A child React Element to display within {@code InlineDialog}.
+     */
+    children: React$Node,
+
+    /**
+     * Whether or not the OverflowMenu popover should display.
+     */
+    isOpen: boolean,
+
+    /**
+     * Calback to change the visiblility of the overflow menu.
+     */
+    onVisibilityChange: Function,
+
+    /**
+     * Invoked to obtain translated strings.
+     */
+    t: Function
+};
+
 /**
  * A React {@code Component} for opening or closing the {@code OverflowMenu}.
  *
  * @extends Component
  */
-class OverflowMenuButton extends Component {
-    /**
-     * {@code OverflowMenuButton} component's property types.
-     *
-     * @static
-     */
-    static propTypes = {
-        /**
-         * A child React Element to display within {@code InlineDialog}.
-         */
-        children: PropTypes.object,
-
-        /**
-         * Whether or not the OverflowMenu popover should display.
-         */
-        isOpen: PropTypes.bool,
-
-        /**
-         * Calback to change the visiblility of the overflow menu.
-         */
-        onVisibilityChange: PropTypes.func,
-
-        /**
-         * Invoked to obtain translated strings.
-         */
-        t: PropTypes.func
-    };
-
+class OverflowMenuButton extends Component<Props> {
     /**
      * Initializes a new {@code OverflowMenuButton} instance.
      *
@@ -80,6 +77,8 @@ class OverflowMenuButton extends Component {
         );
     }
 
+    _onCloseDialog: () => void;
+
     /**
      * Callback invoked when {@code InlineDialog} signals that it should be
      * close.
@@ -94,6 +93,8 @@ class OverflowMenuButton extends Component {
             onVisibilityChange(false);
         }
     }
+
+    _onToggleDialogVisibility: () => void;
 
     /**
      * Callback invoked to signal that an event has occurred that should change
