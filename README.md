@@ -90,17 +90,16 @@ cd jitsi-meet
 npm unlink lib-jitsi-meet
 npm install
 ```
-For a development server, webpack-dev-server can be used   
-Install it globally, type
+## Running with webpack-dev-server for development   
 
+Use it at the CLI, type
 ```
-npm install webpack-dev-server -g
+node_modules/.bin/webpack-dev-server
 ```
 
-Use at the terminal
-
+Alternatively, you can use a proxy server as the backend server by setting the WEBPACK_DEV_SERVER_PROXY_TARGET variable. To do that type  
 ```
-webpack-dev-server
+WEBPACK_DEV_SERVER_PROXY_TARGET=https://your-example-server.com node_modules/.bin/webpack-dev-server
 ```
 
 The app should be running at https://localhost:8080/
