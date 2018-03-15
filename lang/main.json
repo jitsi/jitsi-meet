@@ -502,7 +502,7 @@
         "dialInConferenceID": "PIN: __conferenceID__#",
         "dialInNotSupported": "Sorry, dialing in is currently not suppported.",
         "genericError": "Whoops, something went wrong.",
-        "invitePhone": "To join by phone, dial __number__ and enter this PIN: __pin__#",
+        "invitePhone": "To join by phone, dial __number__ and enter this PIN: __conferenceID__#",
         "invitePhoneAlternatives": "To view more phone numbers, click this link: __url__",
         "inviteURL": "To join the video meeting, click this link: __url__",
         "moreNumbers": "More numbers",
