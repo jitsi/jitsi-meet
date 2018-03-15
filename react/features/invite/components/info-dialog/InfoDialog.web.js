@@ -214,8 +214,13 @@ class InfoDialog extends Component {
                         { t('info.title') }
                     </div>
                     <div className = 'info-dialog-conference-url'>
-                        { t('info.conferenceURL',
-                            { url: this._getURLToDisplay() }) }
+                        <span className = 'info-label'>
+                            { t('info.conferenceURL') }
+                        </span>
+                        <span className = 'spacer'>&nbsp;</span>
+                        <span className = 'info-value'>
+                            { this._getURLToDisplay() }
+                        </span>
                         <textarea
                             className = 'info-dialog-copy-element'
                             readOnly = { true }

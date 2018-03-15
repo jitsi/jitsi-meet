@@ -516,11 +516,11 @@
     "info": {
         "addPassword": "Add password",
         "cancelPassword": "Cancel password",
-        "conferenceURL": "Link: __url__",
+        "conferenceURL": "Link:",
         "country": "Country",
         "dialANumber": "To join your meeting, dial one of these numbers and then enter this PIN: __conferenceID__#",
-        "dialInNumber": "Dial-in: __phoneNumber__",
-        "dialInConferenceID": "PIN: __conferenceID__#",
+        "dialInNumber": "Dial-in:",
+        "dialInConferenceID": "PIN:",
         "dialInNotSupported": "Sorry, dialing in is currently not suppported.",
         "genericError": "Whoops, something went wrong.",
         "invitePhone": "To join by phone, dial __number__ and enter this PIN: __conferenceID__#",
@@ -532,7 +532,7 @@
         "noRoom": "No room was specified to dial-in into.",
         "numbers": "Dial-in Numbers",
         "password": "Password:",
-        "title": "Call info",
+        "title": "Share",
         "tooltip": "Get access info about the meeting"
     },
     "settingsView": {

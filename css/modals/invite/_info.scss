@@ -82,14 +82,18 @@
         margin-bottom: 10px;
     }
 
-    .info-password,
     .info-dialog-password,
+    .info-password,
     .info-password-form {
+        align-items: baseline;
         display: flex;
     }
 
+    .info-label {
+        font-weight: bold;
+    }
+
     .info-password-field {
-        margin-left: 2px;
         overflow: hidden;
         text-overflow: ellipsis;
         white-space: nowrap;
@@ -109,10 +113,6 @@
 
     .info-password-local {
         user-select: text;
-    }
-
-    .conference-id {
-        margin-left: 5px;
     }
 }
 

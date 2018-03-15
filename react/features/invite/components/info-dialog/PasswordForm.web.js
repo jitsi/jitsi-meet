@@ -94,10 +94,13 @@ class PasswordForm extends Component {
 
         return (
             <div className = 'info-password'>
-                <div>{ t('info.password') }</div>
-                <div className = 'info-password-field'>
+                <span className = 'info-label'>
+                    { t('info.password') }
+                </span>
+                <span className = 'spacer'>&nbsp;</span>
+                <span className = 'info-password-field info-value'>
                     { this._renderPasswordField() }
-                </div>
+                </span>
             </div>
         );
     }
