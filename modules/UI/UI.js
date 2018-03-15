@@ -388,9 +388,8 @@ UI.start = function() {
 
 
     // TODO: remove this class once the old toolbar has been removed. This class
-    // is setSet so that any CSS changes needed to adjust elements outside of
-    // the new toolbar can be scoped to just the app with the new toolbar
-    // enabled.
+    // is set so that any CSS changes needed to adjust elements outside of the
+    // new toolbar can be scoped to just the app with the new toolbar enabled.
     if (interfaceConfig._USE_NEW_TOOLBOX && !interfaceConfig.filmStripOnly) {
         $('body').addClass('use-new-toolbox');
     }
