@@ -6,6 +6,7 @@ import { connect } from 'react-redux';
 
 import { translate, translateToHTML } from '../../base/i18n';
 import { Platform } from '../../base/react';
+import { URI_PROTOCOL_PATTERN } from '../../base/util';
 import { DialInSummary } from '../../invite';
 import HideNotificationBarStyle from './HideNotificationBarStyle';
 
@@ -82,7 +83,11 @@ class UnsupportedMobileBrowser extends Component<*, *> {
         // appears to be a link with an app-specific scheme, not a Universal
         // Link.
         const appScheme = interfaceConfig.MOBILE_APP_SCHEME || 'org.jitsi.meet';
-        const joinURL = `${appScheme}:${window.location.href}`;
+
+        // Replace the protocol part with the app scheme.
+        const joinURL
+            = window.location.href.replace(
+                new RegExp(`^${URI_PROTOCOL_PATTERN}`), `${appScheme}:`);
 
         this.setState({
             joinURL

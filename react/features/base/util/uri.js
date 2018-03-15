@@ -25,10 +25,14 @@ const _URI_PATH_PATTERN = '([^?#]*)';
 /**
  * The {@link RegExp} pattern of the protocol of a URI.
  *
- * @private
+ * FIXME: The URL class exposed by JavaScript will not include the colon in
+ * the protocol field. Also in other places (at the time of this writing:
+ * the UnsupportedMobileBrowser.js) the APP_LINK_SCHEME does not include
+ * the double dots, so things are inconsistent.
+ *
  * @type {string}
  */
-const _URI_PROTOCOL_PATTERN = '([a-z][a-z0-9\\.\\+-]*:)';
+export const URI_PROTOCOL_PATTERN = '([a-z][a-z0-9\\.\\+-]*:)';
 
 /**
  * Fixes the hier-part of a specific URI (string) so that the URI is well-known.
@@ -47,7 +51,7 @@ function _fixURIStringHierPart(uri) {
     // hipchat.com
     let regex
         = new RegExp(
-            `^${_URI_PROTOCOL_PATTERN}//hipchat\\.com/video/call/`,
+            `^${URI_PROTOCOL_PATTERN}//hipchat\\.com/video/call/`,
             'gi');
     let match: Array<string> | null = regex.exec(uri);
 
@@ -55,7 +59,7 @@ function _fixURIStringHierPart(uri) {
         // enso.me
         regex
             = new RegExp(
-                `^${_URI_PROTOCOL_PATTERN}//enso\\.me/(?:call|meeting)/`,
+                `^${URI_PROTOCOL_PATTERN}//enso\\.me/(?:call|meeting)/`,
                 'gi');
         match = regex.exec(uri);
     }
@@ -87,7 +91,7 @@ function _fixURIStringHierPart(uri) {
  * @returns {string}
  */
 function _fixURIStringScheme(uri: string) {
-    const regex = new RegExp(`^${_URI_PROTOCOL_PATTERN}+`, 'gi');
+    const regex = new RegExp(`^${URI_PROTOCOL_PATTERN}+`, 'gi');
     const match: Array<string> | null = regex.exec(uri);
 
     if (match) {
@@ -191,7 +195,7 @@ export function parseStandardURIString(str: string) {
     str = str.replace(/\s/g, '');
 
     // protocol
-    regex = new RegExp(`^${_URI_PROTOCOL_PATTERN}`, 'gi');
+    regex = new RegExp(`^${URI_PROTOCOL_PATTERN}`, 'gi');
     match = regex.exec(str);
     if (match) {
         obj.protocol = match[1].toLowerCase();
