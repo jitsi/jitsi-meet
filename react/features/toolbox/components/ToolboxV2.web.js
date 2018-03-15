@@ -51,6 +51,12 @@ type Props = {
     _dialOutAvailable: boolean,
 
     /**
+     * Whether or not a dialog is currently visible. The overflow menu should
+     * be closed if so.
+     */
+    _dialogVisible: boolean,
+
+    /**
      * The ID of the local participant.
      */
     _localParticipantID: String,
@@ -117,8 +123,12 @@ class ToolboxV2 extends AbstractToolbox {
      * @inheritdoc
      */
     componentWillReceiveProps(nextProps) {
-        // Ensure the dialog is closed when the toolbox becomes hidden.
-        if (this.state.showOverflowMenu && !nextProps._visible) {
+        const { showOverflowMenu } = this.state;
+
+        // Ensure the dialog is closed when the toolbox becomes hidden or
+        // a dialog is opened.
+        if (showOverflowMenu
+                && (!nextProps._visible || nextProps._dialogVisible)) {
             this._onSetOverflowVisible(false);
         }
     }
@@ -258,8 +268,6 @@ class ToolboxV2 extends AbstractToolbox {
      */
     _onOpenFeedback() {
         this.props.dispatch(openFeedbackDialog());
-
-        this._onSetOverflowVisible(false);
     }
 
     _onOpenKeyboardShortcuts: () => void;
@@ -272,8 +280,6 @@ class ToolboxV2 extends AbstractToolbox {
      */
     _onOpenKeyboardShortcuts() {
         this.props.dispatch(openKeyboardShortcutsDialog());
-
-        this._onSetOverflowVisible(false);
     }
 
     _onOpenSpeakerStats: () => void;
@@ -288,8 +294,6 @@ class ToolboxV2 extends AbstractToolbox {
         this.props.dispatch(openDialog(SpeakerStats, {
             conference: this.props._conference
         }));
-
-        this._onSetOverflowVisible(false);
     }
 
     _onSetOverflowVisible: (boolean) => void;
@@ -397,6 +401,7 @@ function _mapStateToProps(state) {
         _dialOutAvailable: localParticipant.role === PARTICIPANT_ROLE.MODERATOR
             && conference && conference.isSIPCallingSupported()
             && (!enableUserRolesBasedOnToken || !isGuest),
+        _dialogVisible: Boolean(state['features/base/dialog'].component),
         _localParticipantID: localParticipant.id,
         _raisedHand: localParticipant.raisedHand,
         _screensharing: localVideo && localVideo.videoType === 'desktop',
