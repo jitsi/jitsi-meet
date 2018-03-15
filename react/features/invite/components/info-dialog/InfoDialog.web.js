@@ -221,12 +221,6 @@ class InfoDialog extends Component {
                         <span className = 'info-value'>
                             { this._getURLToDisplay() }
                         </span>
-                        <textarea
-                            className = 'info-dialog-copy-element'
-                            readOnly = { true }
-                            ref = { this._setCopyElement }
-                            tabIndex = '-1'
-                            value = { this._getTextToCopy() } />
                     </div>
                     <div className = 'info-dialog-dial-in'>
                         { this._renderDialInDisplay() }
@@ -249,6 +243,12 @@ class InfoDialog extends Component {
                         { this._renderPasswordAction() }
                     </div>
                 </div>
+                <textarea
+                    className = 'info-dialog-copy-element'
+                    readOnly = { true }
+                    ref = { this._setCopyElement }
+                    tabIndex = '-1'
+                    value = { this._getTextToCopy() } />
             </div>
         );
     }
