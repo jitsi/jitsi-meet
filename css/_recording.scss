@@ -3,12 +3,31 @@
 }
 
 .live-stream-dialog {
+    /**
+     * Set font-size to be consistent with Atlaskit FieldText.
+     */
+    font-size: 14px;
+
+    .broadcast-dropdown,
+    .broadcast-dropdown-trigger {
+        text-align: left;
+    }
+
     .form-footer {
         text-align: right;
     }
 
+    .live-stream-cta {
+        a {
+            cursor: pointer;
+        }
+    }
+
     .google-api {
+        margin-top: 10px;
         min-height: 36px;
+        text-align: center;
+        width: 100%;
     }
 
     /**
@@ -49,27 +68,10 @@
         border-bottom: 2px solid rgba(0, 0, 0, 0.3);
         display: flex;
         flex-direction: column;
-        padding-bottom: 15px;
-    }
-
-
-    .stream-key-form-trigger {
-        position: relative;
-
-        .broadcasts-available {
-            position: absolute;
-            bottom: 0;
-            right: 0;
-        }
+        padding-bottom: 10px;
     }
 
     .stream-key-form {
-        margin-top: 15px;
-
-        &.without-dropdown * {
-            cursor: initial;
-        }
-
         .helper-link {
             display: inline-block;
             cursor: pointer;

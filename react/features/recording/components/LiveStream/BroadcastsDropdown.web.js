@@ -101,20 +101,23 @@ class BroadcastsDropdown extends PureComponent {
             || t('liveStreaming.choose');
 
         return (
-            <DropdownMenuStateless
-                isOpen = { this.state.isDropdownOpen }
-                onItemActivated = { this._onSelect }
-                onOpenChange = { this._onDropdownOpenChange }
-                shouldFitContainer = { true }
-                trigger = { triggerText }
-                triggerButtonProps = {{
-                    shouldFitContainer: true
-                }}
-                triggerType = 'button'>
-                <DropdownItemGroup>
-                    { dropdownItems }
-                </DropdownItemGroup>
-            </DropdownMenuStateless>
+            <div className = 'broadcast-dropdown'>
+                <DropdownMenuStateless
+                    isOpen = { this.state.isDropdownOpen }
+                    onItemActivated = { this._onSelect }
+                    onOpenChange = { this._onDropdownOpenChange }
+                    shouldFitContainer = { true }
+                    trigger = { triggerText }
+                    triggerButtonProps = {{
+                        className: 'broadcast-dropdown-trigger',
+                        shouldFitContainer: true
+                    }}
+                    triggerType = 'button'>
+                    <DropdownItemGroup>
+                        { dropdownItems }
+                    </DropdownItemGroup>
+                </DropdownMenuStateless>
+            </div>
         );
     }
 

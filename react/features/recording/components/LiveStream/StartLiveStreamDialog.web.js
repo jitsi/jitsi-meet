@@ -364,13 +364,10 @@ class StartLiveStreamDialog extends Component {
 
         case GOOGLE_API_STATES.SIGNED_IN:
             googleContent = ( // eslint-disable-line no-extra-parens
-                <div>
-                    <BroadcastsDropdown
-                        broadcasts = { broadcasts }
-                        onBroadcastSelected
-                            = { this._onYouTubeBroadcastIDSelected }
-                        selectedBroadcastID = { selectedBroadcastID } />
-                </div>
+                <BroadcastsDropdown
+                    broadcasts = { broadcasts }
+                    onBroadcastSelected = { this._onYouTubeBroadcastIDSelected }
+                    selectedBroadcastID = { selectedBroadcastID } />
             );
             helpText = ( // eslint-disable-line no-extra-parens
                 <div>
@@ -386,13 +383,11 @@ class StartLiveStreamDialog extends Component {
 
         case GOOGLE_API_STATES.ERROR:
             googleContent = ( // eslint-disable-line no-extra-parens
-                <div>
-                    <GoogleSignInButton
-                        onClick = { this._onRequestGoogleSignIn }
-                        text = { t('liveStreaming.changeSignIn') } />
-                </div>
+                <GoogleSignInButton
+                    onClick = { this._onRequestGoogleSignIn }
+                    text = { t('liveStreaming.signIn') } />
             );
-            helpText = t('liveStreaming.error');
+            helpText = t('liveStreaming.errorAPI');
 
             break;
 
@@ -409,7 +404,7 @@ class StartLiveStreamDialog extends Component {
 
         return (
             <div className = 'google-panel'>
-                <div>
+                <div className = 'live-stream-cta'>
                     { helpText }
                 </div>
                 <div className = 'google-api'>
