@@ -398,7 +398,7 @@
         "buttonTooltip": "Start / Stop Live Stream",
         "changeSignIn": "Switch accounts.",
         "choose": "Choose a live stream",
-        "chooseCTA": "Choose a streaming options. You are currently logged in as __email__.",
+        "chooseCTA": "Choose a streaming option. You're currently logged in as __email__.",
         "enterStreamKey": "Enter your YouTube live stream key here.",
         "error": "Live Streaming failed. Please try again.",
         "errorAPI": "An error occurred while accessing your YouTube broadcasts. Please try logging in again.",

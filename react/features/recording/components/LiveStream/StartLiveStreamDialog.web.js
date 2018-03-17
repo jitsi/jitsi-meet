@@ -369,6 +369,12 @@ class StartLiveStreamDialog extends Component {
                     onBroadcastSelected = { this._onYouTubeBroadcastIDSelected }
                     selectedBroadcastID = { selectedBroadcastID } />
             );
+
+            /**
+             * FIXME: Ideally this help text would be one translation string
+             * that also accepts the anchor. This can be done using the Trans
+             * component of react-i18next but I couldn't get it working...
+             */
             helpText = ( // eslint-disable-line no-extra-parens
                 <div>
                     { `${t('liveStreaming.chooseCTA',
