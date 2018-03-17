@@ -10,6 +10,7 @@ import { translate } from '../../../base/i18n';
 
 import googleApi from '../../googleApi';
 
+import BroadcastsDropdown from './BroadcastsDropdown';
 import GoogleSignInButton from './GoogleSignInButton';
 import StreamKeyForm from './StreamKeyForm';
 
@@ -86,7 +87,7 @@ class StartLiveStreamDialog extends Component {
      * with the Google API. Determines what Google related UI should display.
      * @property {Object[]|undefined} broadcasts - Details about the broadcasts
      * available for use for the logged in Google user's YouTube account.
-     * @property {string} googleProfileName - The name of the user currently
+     * @property {string} googleProfileEmail - The email of the user currently
      * logged in to the Google web client application.
      * @property {string} streamKey - The selected or entered stream key to use
      * for YouTube live streaming.
@@ -94,7 +95,8 @@ class StartLiveStreamDialog extends Component {
     state = {
         broadcasts: undefined,
         googleAPIState: GOOGLE_API_STATES.NEEDS_LOADING,
-        googleProfileName: '',
+        googleProfileEmail: '',
+        selectedBroadcastID: undefined,
         streamKey: ''
     };
 
@@ -174,11 +176,8 @@ class StartLiveStreamDialog extends Component {
                     { _googleApiApplicationClientID
                         ? this._renderYouTubePanel() : null }
                     <StreamKeyForm
-                        broadcasts = { this.state.broadcasts }
                         helpURL = { interfaceConfig.LIVE_STREAMING_HELP_LINK }
                         onChange = { this._onStreamKeyChange }
-                        onStreamSelected
-                            = { this._onYouTubeBroadcastIDSelected }
                         value = { this.state.streamKey } />
                 </div>
             </Dialog>
@@ -239,7 +238,7 @@ class StartLiveStreamDialog extends Component {
             .then(() => googleApi.getCurrentUserProfile())
             .then(profile => {
                 this._setStateIfMounted({
-                    googleProfileName: profile.getName(),
+                    googleProfileEmail: profile.getEmail(),
                     googleAPIState: GOOGLE_API_STATES.SIGNED_IN
                 });
             })
@@ -291,7 +290,8 @@ class StartLiveStreamDialog extends Component {
      */
     _onStreamKeyChange(event) {
         this._setStateIfMounted({
-            streamKey: event.target.value
+            streamKey: event.target.value,
+            selectedBroadcastID: undefined
         });
     }
 
@@ -329,7 +329,8 @@ class StartLiveStreamDialog extends Component {
                 const streamKey = found.cdn.ingestionInfo.streamName;
 
                 this._setStateIfMounted({
-                    streamKey
+                    streamKey,
+                    selectedBroadcastID: boundStreamID
                 });
             });
     }
@@ -342,8 +343,13 @@ class StartLiveStreamDialog extends Component {
      */
     _renderYouTubePanel() {
         const { t } = this.props;
+        const {
+            broadcasts,
+            googleProfileEmail,
+            selectedBroadcastID
+        } = this.state;
 
-        let googleContent;
+        let googleContent, helpText;
 
         switch (this.state.googleAPIState) {
         case GOOGLE_API_STATES.LOADED:
@@ -352,33 +358,42 @@ class StartLiveStreamDialog extends Component {
                     onClick = { this._onGetYouTubeBroadcasts }
                     text = { t('liveStreaming.signIn') } />
             );
+            helpText = t('liveStreaming.signInCTA');
+
             break;
 
         case GOOGLE_API_STATES.SIGNED_IN:
             googleContent = ( // eslint-disable-line no-extra-parens
                 <div>
-                    <div>
-                        { t('liveStreaming.currentSignIn',
-                            { name: this.state.googleProfileName }) }
-                    </div>
-                    <GoogleSignInButton
-                        onClick = { this._onRequestGoogleSignIn }
-                        text = { t('liveStreaming.changeSignIn') } />
+                    <BroadcastsDropdown
+                        broadcasts = { broadcasts }
+                        onBroadcastSelected
+                            = { this._onYouTubeBroadcastIDSelected }
+                        selectedBroadcastID = { selectedBroadcastID } />
                 </div>
             );
+            helpText = ( // eslint-disable-line no-extra-parens
+                <div>
+                    { `${t('liveStreaming.chooseCTA',
+                        { email: googleProfileEmail })} ` }
+                    <a onClick = { this._onRequestGoogleSignIn }>
+                        { t('liveStreaming.changeSignIn') }
+                    </a>
+                </div>
+            );
+
             break;
 
         case GOOGLE_API_STATES.ERROR:
             googleContent = ( // eslint-disable-line no-extra-parens
                 <div>
-                    <div>
-                        { t('liveStreaming.error') }
-                    </div>
                     <GoogleSignInButton
                         onClick = { this._onRequestGoogleSignIn }
                         text = { t('liveStreaming.changeSignIn') } />
                 </div>
             );
+            helpText = t('liveStreaming.error');
+
             break;
 
         case GOOGLE_API_STATES.NEEDS_LOADING:
@@ -388,19 +403,17 @@ class StartLiveStreamDialog extends Component {
                     isCompleting = { false }
                     size = 'medium' />
             );
+
             break;
         }
 
         return (
             <div className = 'google-panel'>
                 <div>
-                    { t('liveStreaming.help') }
+                    { helpText }
                 </div>
                 <div className = 'google-api'>
                     { googleContent }
-                </div>
-                <div>
-                    { t('liveStreaming.or') }
                 </div>
             </div>
         );
