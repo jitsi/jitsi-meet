@@ -61,7 +61,7 @@ const googleApi = {
     initializeClient(clientId) {
         return this.get()
             .then(api => new Promise((resolve, reject) => {
-                // setTimeout 1 is used as a workaround for api.client.init not
+                // setTimeout is used as a workaround for api.client.init not
                 // resolving consistently when the Google API Client Library is
                 // loaded asynchronously. See:
                 // github.com/google/google-api-javascript-client/issues/399
@@ -72,7 +72,7 @@ const googleApi = {
                     })
                     .then(resolve)
                     .catch(reject);
-                }, 1);
+                }, 500);
             }));
     },
 
