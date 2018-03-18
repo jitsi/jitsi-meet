@@ -97,7 +97,7 @@ Use it at the CLI, type
 node_modules/.bin/webpack-dev-server
 ```
 
-Alternatively, you can use a proxy server as the backend server by setting the WEBPACK_DEV_SERVER_PROXY_TARGET variable. To do that type  
+By default the backend deployment used is `beta.meet.jit.si`, you can point the Jitsi-Meet app at a different backend by using a proxy server. To do this set the WEBPACK_DEV_SERVER_PROXY_TARGET variable, type 
 ```
 WEBPACK_DEV_SERVER_PROXY_TARGET=https://your-example-server.com node_modules/.bin/webpack-dev-server
 ```
