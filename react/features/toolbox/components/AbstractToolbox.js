@@ -30,7 +30,10 @@ export type Props = {
 };
 
 /**
- * Some doc here.
+ * A React {@link Component} which implements toolbox/toolbar logic common to
+ * both react and react-native implementations of toolbox/toolbar.
+ *
+ * @extends Component
  */
 export default class AbstractToolbox extends Component<*, *> {
     _onToggleAudio: () => void;
