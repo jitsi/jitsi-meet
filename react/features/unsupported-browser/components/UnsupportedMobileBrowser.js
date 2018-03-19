@@ -6,8 +6,9 @@ import { connect } from 'react-redux';
 
 import { translate, translateToHTML } from '../../base/i18n';
 import { Platform } from '../../base/react';
-import { URI_PROTOCOL_PATTERN } from '../../base/util';
+import { generateDeeplinkingURL } from '../../deeplinking';
 import { DialInSummary } from '../../invite';
+
 import HideNotificationBarStyle from './HideNotificationBarStyle';
 
 declare var interfaceConfig: Object;
@@ -77,20 +78,8 @@ class UnsupportedMobileBrowser extends Component<*, *> {
      * @inheritdoc
      */
     componentWillMount() {
-        // If the user installed the app while this Component was displayed
-        // (e.g. the user clicked the Download the App button), then we would
-        // like to open the current URL in the mobile app. The only way to do it
-        // appears to be a link with an app-specific scheme, not a Universal
-        // Link.
-        const appScheme = interfaceConfig.MOBILE_APP_SCHEME || 'org.jitsi.meet';
-
-        // Replace the protocol part with the app scheme.
-        const joinURL
-            = window.location.href.replace(
-                new RegExp(`^${URI_PROTOCOL_PATTERN}`), `${appScheme}:`);
-
         this.setState({
-            joinURL
+            joinURL: generateDeeplinkingURL()
         });
     }
 

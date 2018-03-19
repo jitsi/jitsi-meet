@@ -1,0 +1,66 @@
+.deeplinking {
+    background-color: #fff;
+    width: 100%;
+    height: 100%;
+    .header {
+        width: 100%;
+        height: 70px;
+        background-color: #f1f2f5;
+        .logo {
+            margin-top: 15px;
+            margin-left: 50px;
+            height: 40px;
+            float: left;
+        }
+    }
+    .content {
+        top: 110px;
+        bottom: 40px;
+        left: 0px;
+        right: 0px;
+        position: fixed;
+        .leftColumn {
+            float: left;
+            left: 0px;
+            width: 50%;
+            height: 100%;
+            display: table;
+            .leftColumnContent{
+                display: table-cell;
+                vertical-align: middle;
+                padding: 20px;
+                .image {
+                    background-image: url('../images/deeplinking-image.png');
+                    background-repeat: no-repeat;
+                    background-position: center;
+                    background-size: contain;
+                    // display: none;
+                    height: 100%;
+                    width: 100%;
+                }
+            }
+
+        }
+        .rightColumn {
+            float: left;
+            width: 50%;
+            height: 100%;
+            display: table;
+            .rightColumnContent {
+                display: table-cell;
+                vertical-align: middle;
+                padding: 20px 20px 20px 60px;
+                .title {
+                    color: #1c2946;
+                }
+                .description {
+                    color: #606a80;
+                    margin-top: 8px;
+                }
+                .buttons {
+                    margin-top: 16px;
+                }
+            }
+        }
+    }
+}

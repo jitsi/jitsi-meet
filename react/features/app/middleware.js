@@ -77,9 +77,9 @@ function _connectionEstablished(store, next, action) {
 function _navigate({ getState }) {
     const state = getState();
     const { app } = state['features/app'];
-    const routeToRender = _getRouteToRender(state);
 
-    return app._navigate(routeToRender);
+    _getRouteToRender(state)
+        .then(routeToRender => app._navigate(routeToRender));
 }
 
 /**

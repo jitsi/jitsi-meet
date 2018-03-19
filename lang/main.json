@@ -561,5 +561,11 @@
     },
     "sectionList": {
         "pullToRefresh": "Pull to refresh"
+    },
+    "deeplinking": {
+        "title": "Launching your meeting in __app__...",
+        "description": "Nothing happened? We tried launching your meeting in the __app__ desktop app. Try again or launch it in the __app__ web app.",
+        "tryAgainButton": "Try again in desktop",
+        "launchWebButton": "Launch in web"
     }
 }
