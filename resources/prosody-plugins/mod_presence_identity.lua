@@ -6,7 +6,6 @@ local core_post_stanza = prosody.core_post_stanza;
 -- for that session.
 function on_message(event)
     if event["stanza"] then
-      local presence = event["stanza"]
       if event.origin["jitsi_meet_context_user"] then
           local new_stanza = stanza.clone(event.stanza)
           -- First remove any 'identity' element if it already
