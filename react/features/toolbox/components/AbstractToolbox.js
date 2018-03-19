@@ -35,7 +35,8 @@ export type Props = {
  *
  * @extends Component
  */
-export default class AbstractToolbox extends Component<*, *> {
+export default class AbstractToolbox<P : Props, S : *>
+    extends Component<P, S> {
     _onToggleAudio: () => void;
 
     /**

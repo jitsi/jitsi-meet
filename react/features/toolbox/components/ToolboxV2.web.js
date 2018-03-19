@@ -30,8 +30,7 @@ import OverflowMenuButton from './OverflowMenuButton';
 import OverflowMenuItem from './OverflowMenuItem';
 import ToolbarButtonV2 from './ToolbarButtonV2';
 
-type Props = {
-    ...AbstractToolboxProps,
+type Props = AbstractToolboxProps & {
 
     /**
      * Whether or not the feature for adding people directly into the call
@@ -82,12 +81,16 @@ type Props = {
     t: Function
 }
 
+type State = {
+    showOverflowMenu: boolean
+};
+
 /**
  * Implements the conference toolbox on React/Web.
  *
  * @extends Component
  */
-class ToolboxV2 extends AbstractToolbox {
+class ToolboxV2 extends AbstractToolbox<Props, State> {
     state = {
         showOverflowMenu: false
     };

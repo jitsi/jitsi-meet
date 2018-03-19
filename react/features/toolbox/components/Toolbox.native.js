@@ -45,9 +45,7 @@ const _SHARE_ROOM_TOOLBAR_BUTTON = true;
 /**
  * The type of {@link Toolbox}'s React {@code Component} props.
  */
-type Props = {
-
-    ...AbstractToolboxProps,
+type Props = AbstractToolboxProps & {
 
     /**
      * Flag showing whether the audio-only mode is in use.
@@ -100,7 +98,7 @@ type Props = {
 /**
  * Implements the conference toolbox on React Native.
  */
-class Toolbox extends AbstractToolbox {
+class Toolbox extends AbstractToolbox<Props, *> {
     /**
      * Initializes a new {@code Toolbox} instance.
      *
