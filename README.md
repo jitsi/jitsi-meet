@@ -90,6 +90,19 @@ cd jitsi-meet
 npm unlink lib-jitsi-meet
 npm install
 ```
+## Running with webpack-dev-server for development   
+
+Use it at the CLI, type
+```
+node_modules/.bin/webpack-dev-server
+```
+
+By default the backend deployment used is `beta.meet.jit.si`, you can point the Jitsi-Meet app at a different backend by using a proxy server. To do this set the WEBPACK_DEV_SERVER_PROXY_TARGET variable, type 
+```
+WEBPACK_DEV_SERVER_PROXY_TARGET=https://your-example-server.com node_modules/.bin/webpack-dev-server
+```
+
+The app should be running at https://localhost:8080/
 
 ## Contributing
 
