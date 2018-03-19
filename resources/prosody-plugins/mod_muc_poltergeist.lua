@@ -7,6 +7,7 @@ local st = require "util.stanza";
 local get_room_from_jid = module:require "util".get_room_from_jid;
 local wrap_async_run = module:require "util".wrap_async_run;
 local timer = require "util.timer";
+local MUC_NS = "http://jabber.org/protocol/muc";
 
 -- Options
 local poltergeist_component
@@ -200,12 +201,12 @@ end);
 -- @param avatar the avatar to use for the new occupant (optional)
 -- @param status the initial status to use for the new occupant (optional)
 function create_poltergeist_occupant(room, nick, name, avatar, status)
-    log("debug", "create_poltergeist_occupant %s:", nick);
+    log("debug", "create_poltergeist_occupant %s", nick);
     -- Join poltergeist occupant to room, with the invited JID as their nick
     local join_presence = st.presence({
         to = room.jid.."/"..nick,
         from = poltergeist_component.."/"..nick
-    }):tag("x", { xmlns = "http://jabber.org/protocol/muc" }):up();
+    }):tag("x", { xmlns = MUC_NS }):up();
 
     if (name) then
         join_presence:tag(
@@ -217,6 +218,13 @@ function create_poltergeist_occupant(room, nick, name, avatar, status)
     end
     if (status) then
         join_presence:tag("status"):text(status):up();
+    end
+
+    -- If the room has a password set, let the poltergeist enter using it
+    local room_password = room:get_password();
+    if room_password then
+        local join = join_presence:get_child("x", MUC_NS);
+        join:tag("password", { xmlns = MUC_NS }):text(room_password);
     end
 
     room:handle_first_presence(
