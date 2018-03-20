@@ -72,6 +72,7 @@
          * vertical filmstrip layout.
          */
         #filmstripLocalVideo {
+            align-self: initial;
             bottom: 5px;
             display: flex;
             flex-direction: column-reverse;
