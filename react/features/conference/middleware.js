@@ -1,10 +1,14 @@
 // @flow
 
+import { appNavigate } from '../app';
 import {
     CONFERENCE_JOINED,
+    KICKED_OUT,
     VIDEO_QUALITY_LEVELS,
+    conferenceFailed,
     setReceiveVideoQuality
 } from '../base/conference';
+import { JitsiConferenceEvents } from '../base/lib-jitsi-meet';
 import { SET_REDUCED_UI } from '../base/responsive-ui';
 import { MiddlewareRegistry } from '../base/redux';
 import { setFilmstripEnabled } from '../filmstrip';
@@ -33,6 +37,15 @@ MiddlewareRegistry.register(store => next => action => {
                         ? VIDEO_QUALITY_LEVELS.LOW
                         : VIDEO_QUALITY_LEVELS.HIGH));
 
+        break;
+    }
+
+    case KICKED_OUT: {
+        const { dispatch } = store;
+
+        dispatch(
+            conferenceFailed(action.conference, JitsiConferenceEvents.KICKED));
+        dispatch(appNavigate(undefined));
         break;
     }
     }

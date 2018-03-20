@@ -63,6 +63,17 @@ export const CONFERENCE_WILL_LEAVE = Symbol('CONFERENCE_WILL_LEAVE');
 export const DATA_CHANNEL_OPENED = Symbol('DATA_CHANNEL_OPENED');
 
 /**
+ * The type of action which signals that the user has been kicked out from
+ * the conference.
+ *
+ * {
+ *     type: KICKED_OUT,
+ *     conference: JitsiConference
+ * }
+ */
+export const KICKED_OUT = Symbol('KICKED_OUT');
+
+/**
  * The type of (redux) action which signals that the lock state of a specific
  * {@code JitsiConference} changed.
  *

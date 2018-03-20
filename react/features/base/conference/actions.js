@@ -28,6 +28,7 @@ import {
     CONFERENCE_WILL_JOIN,
     CONFERENCE_WILL_LEAVE,
     DATA_CHANNEL_OPENED,
+    KICKED_OUT,
     LOCK_STATE_CHANGED,
     P2P_STATUS_CHANGED,
     SET_AUDIO_ONLY,
@@ -77,6 +78,10 @@ function _addConferenceListeners(conference, dispatch) {
     conference.on(
         JitsiConferenceEvents.CONFERENCE_LEFT,
         (...args) => dispatch(conferenceLeft(conference, ...args)));
+
+    conference.on(
+        JitsiConferenceEvents.KICKED,
+        () => dispatch(kickedOut(conference)));
 
     conference.on(
         JitsiConferenceEvents.LOCK_STATE_CHANGED,
@@ -355,6 +360,23 @@ export function checkIfCanJoin() {
 export function dataChannelOpened() {
     return {
         type: DATA_CHANNEL_OPENED
+    };
+}
+
+/**
+ * Signals that we've been kicked out of the conference.
+ *
+ * @param {JitsiConference} conference - The {@link JitsiConference} instance
+ * for which the event is being signaled.
+ * @returns {{
+ *     type: KICKED_OUT,
+ *     conference: JitsiConference
+ * }}
+ */
+export function kickedOut(conference: Object) {
+    return {
+        type: KICKED_OUT,
+        conference
     };
 }
 
