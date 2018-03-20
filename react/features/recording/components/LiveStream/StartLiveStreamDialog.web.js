@@ -255,6 +255,12 @@ class StartLiveStreamDialog extends Component {
                 this._setStateIfMounted({
                     broadcasts
                 });
+
+                if (broadcasts.length === 1 && !this.state.streamKey) {
+                    const broadcast = broadcasts[0];
+
+                    this._onYouTubeBroadcastIDSelected(broadcast.boundStreamID);
+                }
             })
             .catch(response => {
                 // Only show an error if an external request was made with the
