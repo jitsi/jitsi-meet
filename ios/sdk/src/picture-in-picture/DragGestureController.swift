@@ -1,4 +1,18 @@
-//  Copyright © 2018 Jitsi. All rights reserved.
+/*
+ * Copyright @ 2017-present Atlassian Pty Ltd
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
 final class DragGestureController {
     
@@ -7,7 +21,8 @@ final class DragGestureController {
     private var frameBeforeDragging: CGRect = CGRect.zero
     private weak var view: UIView?
     private lazy var panGesture: UIPanGestureRecognizer = {
-        return UIPanGestureRecognizer(target: self, action: #selector(handlePan(gesture:)))
+        return UIPanGestureRecognizer(target: self,
+                                      action: #selector(handlePan(gesture:)))
     }()
     
     func startDragListener(inView view: UIView) {
@@ -47,7 +62,8 @@ final class DragGestureController {
             let distanceMagnitude = magnitude(vector: distance)
             let velocityMagnitude = magnitude(vector: velocity)
             let animationDuration = 0.5
-            let initialSpringVelocity = velocityMagnitude / distanceMagnitude / CGFloat(animationDuration)
+            let initialSpringVelocity =
+                velocityMagnitude / distanceMagnitude / CGFloat(animationDuration)
             
             frame.origin = CGPoint(x: finalPos.x, y: finalPos.y)
             
@@ -91,8 +107,14 @@ final class DragGestureController {
             goUp = location.y < bounds.midY
         }
         
-        let finalPosX: CGFloat = goLeft ? adjustedBounds.origin.x : bounds.size.width - insets.right  - currentSize.width
-        let finalPosY: CGFloat = goUp ? adjustedBounds.origin.y : bounds.size.height - insets.bottom - currentSize.height
+        let finalPosX: CGFloat =
+            goLeft
+                ? adjustedBounds.origin.x
+                : bounds.size.width - insets.right  - currentSize.width
+        let finalPosY: CGFloat =
+            goUp
+                ? adjustedBounds.origin.y
+                : bounds.size.height - insets.bottom - currentSize.height
         
         return CGPoint(x: finalPosX, y: finalPosY)
     }
@@ -101,4 +123,3 @@ final class DragGestureController {
         return sqrt(pow(vector.x, 2) + pow(vector.y, 2))
     }
 }
-

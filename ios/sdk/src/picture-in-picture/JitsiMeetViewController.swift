@@ -1,21 +1,42 @@
-//  Copyright © 2018 Jitsi. All rights reserved.
+/*
+ * Copyright @ 2017-present Atlassian Pty Ltd
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
 public enum JitsiMeetPresentationUpdate {
     
+    /// The conference wants to enter Picture-in-Picture
+    case enterPictureInPicture
+    
     /// A system traitCollectionChange (usually screen rotation)
     case traitChange
-    /// Meeting wants to enter PiP mode
-    case enterPiP
 }
 
 public protocol JitsiMeetViewControllerDelegate: class {
     
-    /// Notifies a change of the meeting presentation style.
+    /// Notifies a change of the conference presentation style.
     ///
     /// - Parameter to: The presentation state that will be changed to
     func performPresentationUpdate(to: JitsiMeetPresentationUpdate)
-    func meetingStarted()
-    func meetingEnded(wasFailure: Bool)
+    
+    /// The conference started
+    func conferenceStarted()
+    
+    /// The conference ended
+    ///
+    /// - Parameter didFail: The reason of ending the conference
+    func conferenceEnded(didFail: Bool)
 }
 
 /// Wrapper ViewController of a JitsiMeetView
@@ -52,7 +73,7 @@ extension JitsiMeetViewController: JitsiMeetViewDelegate {
     
     open func conferenceJoined(_ data: [AnyHashable : Any]!) {
         DispatchQueue.main.async {
-            self.delegate?.meetingStarted()
+            self.delegate?.conferenceStarted()
         }
     }
     
@@ -62,13 +83,13 @@ extension JitsiMeetViewController: JitsiMeetViewDelegate {
     
     open func conferenceLeft(_ data: [AnyHashable : Any]!) {
         DispatchQueue.main.async {
-            self.delegate?.meetingEnded(wasFailure: true)
+            self.delegate?.conferenceEnded(didFail: true)
         }
     }
     
     open func conferenceFailed(_ data: [AnyHashable : Any]!) {
         DispatchQueue.main.async {
-            self.delegate?.meetingEnded(wasFailure: true)
+            self.delegate?.conferenceEnded(didFail: true)
         }
     }
     
@@ -78,7 +99,7 @@ extension JitsiMeetViewController: JitsiMeetViewDelegate {
     
     open func enterPicture(inPicture data: [AnyHashable : Any]!) {
         DispatchQueue.main.async {
-           self.delegate?.performPresentationUpdate(to: .enterPiP)
+           self.delegate?.performPresentationUpdate(to: .enterPictureInPicture)
         }
     }
 }

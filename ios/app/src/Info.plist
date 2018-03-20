@@ -55,14 +55,14 @@
 			</dict>
 		</dict>
 	</dict>
-    <key>NSCalendarsUsageDescription</key>
-    <string>Displays the user's meetings in the app.</string>
+        <key>NSCalendarsUsageDescription</key>
+        <string>See your scheduled conferences in the app.</string>
 	<key>NSCameraUsageDescription</key>
 	<string>Participate in conferences with video.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string></string>
 	<key>NSMicrophoneUsageDescription</key>
-	<string>Participate in conferences with audio.</string>
+	<string>Participate in conferences with voice.</string>
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>audio</string>

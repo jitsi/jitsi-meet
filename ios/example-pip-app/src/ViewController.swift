@@ -1,10 +1,18 @@
-//
-//  ViewController.swift
-//  ExampleAppUsingJitsiWithPiP
-//
-//  Created by Daniel Ornelas on 3/5/18.
-//  Copyright © 2018 Atlassian Inc. All rights reserved.
-//
+/*
+ * Copyright @ 2017-present Atlassian Pty Ltd
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
 import UIKit
 import JitsiMeet
@@ -13,7 +21,7 @@ class ViewController: UIViewController {
 
     @IBOutlet weak var videoButton: UIButton?
     
-    private var jitsiMeetManager: JitsiMeetManager?
+    private var jitsiMeetCoordinator: JitsiMeetPresentationCoordinator?
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -21,12 +29,11 @@ class ViewController: UIViewController {
     
     // MARK: - Actions
     
-    @IBAction func startMeeting(sender: Any?) {
-        //let url = URL(string: "")
-        self.jitsiMeetManager = JitsiMeetManager()
-        jitsiMeetManager?.welcomeScreenEnabled = true
-        jitsiMeetManager?.load(withUrl: nil)
+    @IBAction func openJitsiMeet(sender: Any?) {
+        let jitsiMeetCoordinator = JitsiMeetPresentationCoordinator()
+        self.jitsiMeetCoordinator = jitsiMeetCoordinator
+        jitsiMeetCoordinator.jitsiMeetView().welcomePageEnabled = true
+        jitsiMeetCoordinator.jitsiMeetView().load(nil)
+        jitsiMeetCoordinator.show()
     }
-
 }
-

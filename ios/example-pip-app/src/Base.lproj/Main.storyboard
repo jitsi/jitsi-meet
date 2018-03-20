@@ -13,17 +13,17 @@
         <!--View Controller-->
         <scene sceneID="tne-QT-ifu">
             <objects>
-                <viewController id="BYZ-38-t0r" customClass="ViewController" customModule="PiPApp" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController id="BYZ-38-t0r" customClass="ViewController" customModule="example-pip-app" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="8bC-Xf-vdC">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="QxY-C8-fwD">
-                                <rect key="frame" x="144.5" y="324.5" width="86" height="38"/>
+                                <rect key="frame" x="116" y="324.5" width="143" height="38"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="21"/>
-                                <state key="normal" title="Start Jitsi"/>
+                                <state key="normal" title="Open Jitsi Meet"/>
                                 <connections>
-                                    <action selector="startMeetingWithSender:" destination="BYZ-38-t0r" eventType="touchUpInside" id="79C-XR-05w"/>
+                                    <action selector="openJitsiMeetWithSender:" destination="BYZ-38-t0r" eventType="touchUpInside" id="79C-XR-05w"/>
                                 </connections>
                             </button>
                         </subviews>

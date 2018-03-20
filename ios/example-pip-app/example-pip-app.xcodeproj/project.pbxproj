@@ -35,7 +35,7 @@
 
 /* Begin PBXFileReference section */
 		C6A34247204DF18000E062DD /* WebRTC.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WebRTC.framework; path = "../../node_modules/react-native-webrtc/ios/WebRTC.framework"; sourceTree = "<group>"; };
-		C6F99C37204DE6BE0001F710 /* PiPApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PiPApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		C6F99C37204DE6BE0001F710 /* example-pip-app.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = example-pip-app.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		C6F99C3A204DE6BE0001F710 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		C6F99C3C204DE6BE0001F710 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
 		C6F99C3F204DE6BE0001F710 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
@@ -70,7 +70,7 @@
 		C6F99C38204DE6BE0001F710 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				C6F99C37204DE6BE0001F710 /* PiPApp.app */,
+				C6F99C37204DE6BE0001F710 /* example-pip-app.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -100,9 +100,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		C6F99C36204DE6BE0001F710 /* PiPApp */ = {
+		C6F99C36204DE6BE0001F710 /* example-pip-app */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = C6F99C49204DE6BE0001F710 /* Build configuration list for PBXNativeTarget "PiPApp" */;
+			buildConfigurationList = C6F99C49204DE6BE0001F710 /* Build configuration list for PBXNativeTarget "example-pip-app" */;
 			buildPhases = (
 				C6A3424A204DF91D00E062DD /* Run Adjust ATS for loading JS bundle */,
 				C6F99C62204DEFFE0001F710 /* Run React Packager */,
@@ -116,9 +116,9 @@
 			);
 			dependencies = (
 			);
-			name = PiPApp;
-			productName = ExampleAppUsingJitsiWithPiP;
-			productReference = C6F99C37204DE6BE0001F710 /* PiPApp.app */;
+			name = example-pip-app;
+			productName = example-pip-app;
+			productReference = C6F99C37204DE6BE0001F710 /* example-pip-app.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -142,7 +142,7 @@
 					};
 				};
 			};
-			buildConfigurationList = C6F99C32204DE6BE0001F710 /* Build configuration list for PBXProject "PiPApp" */;
+			buildConfigurationList = C6F99C32204DE6BE0001F710 /* Build configuration list for PBXProject "example-pip-app" */;
 			compatibilityVersion = "Xcode 8.0";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
@@ -155,7 +155,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				C6F99C36204DE6BE0001F710 /* PiPApp */,
+				C6F99C36204DE6BE0001F710 /* example-pip-app */,
 			);
 		};
 /* End PBXProject section */
@@ -366,7 +366,7 @@
 				INFOPLIST_FILE = src/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 10.3;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = com.jitsi.PiPApp;
+				PRODUCT_BUNDLE_IDENTIFIER = com.jitsi.example-pip-app;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 4.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -382,7 +382,7 @@
 				INFOPLIST_FILE = src/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 10.3;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = com.jitsi.PiPApp;
+				PRODUCT_BUNDLE_IDENTIFIER = com.jitsi.example-pip-app;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 4.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -392,7 +392,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		C6F99C32204DE6BE0001F710 /* Build configuration list for PBXProject "PiPApp" */ = {
+		C6F99C32204DE6BE0001F710 /* Build configuration list for PBXProject "example-pip-app" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				C6F99C47204DE6BE0001F710 /* Debug */,
@@ -401,7 +401,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		C6F99C49204DE6BE0001F710 /* Build configuration list for PBXNativeTarget "PiPApp" */ = {
+		C6F99C49204DE6BE0001F710 /* Build configuration list for PBXNativeTarget "example-pip-app" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				C6F99C4A204DE6BE0001F710 /* Debug */,
