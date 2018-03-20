@@ -1,9 +1,27 @@
 // @flow
 import {
+    CALENDAR_ACCESS_REQUESTED,
     NEW_CALENDAR_ENTRY_LIST,
     NEW_KNOWN_DOMAIN,
     REFRESH_CALENDAR_ENTRY_LIST
 } from './actionTypes';
+
+/**
+ * Sends an action to signal that a calendar access has been requested. For
+ * more info see the {@link CALENDAR_ACCESS_REQUESTED}.
+ *
+ * @param {string | undefined} status - The result of the last calendar
+ * access request.
+ * @returns {{
+ *   type: CALENDAR_ACCESS_REQUESTED
+ * }}
+ */
+export function updateCalendarAccessStatus(status: ?string) {
+    return {
+        status,
+        type: CALENDAR_ACCESS_REQUESTED
+    };
+}
 
 /**
  * Sends an action to add a new known domain if not present yet.
@@ -24,12 +42,16 @@ export function maybeAddNewKnownDomain(domainName: string) {
 /**
  * Sends an action to refresh the entry list (fetches new data).
  *
+ * @param {boolean|undefined} forcePermission - Whether to force to re-ask
+ * for the permission or not.
  * @returns {{
- *   type: REFRESH_CALENDAR_ENTRY_LIST
+ *   type: REFRESH_CALENDAR_ENTRY_LIST,
+ *   forcePermission: boolean
  * }}
  */
-export function refreshCalendarEntryList() {
+export function refreshCalendarEntryList(forcePermission: boolean = false) {
     return {
+        forcePermission,
         type: REFRESH_CALENDAR_ENTRY_LIST
     };
 }

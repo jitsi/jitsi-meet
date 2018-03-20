@@ -1,12 +1,16 @@
 // @flow
 import React, { Component } from 'react';
+import { Text, TouchableOpacity, View } from 'react-native';
 import { connect } from 'react-redux';
+
+import styles from './styles';
 
 import { refreshCalendarEntryList } from '../actions';
 
 import { appNavigate } from '../../app';
 import { getLocalizedDateFormatter, translate } from '../../base/i18n';
 import { NavigateSectionList } from '../../base/react';
+import { openSettings } from '../../mobile/permissions';
 
 type Props = {
 
@@ -29,6 +33,11 @@ type Props = {
     displayed: boolean,
 
     /**
+     * The current state of the calendar access permission.
+     */
+    _calendarAccessStatus: string,
+
+    /**
      * The calendar event list.
      */
     _eventList: Array<Object>,
@@ -43,8 +52,6 @@ type Props = {
  * Component to display a list of events from the (mobile) user's calendar.
  */
 class MeetingList extends Component<Props> {
-    _initialLoaded: boolean
-
     /**
      * Default values for the component's props.
      */
@@ -60,6 +67,14 @@ class MeetingList extends Component<Props> {
     constructor(props) {
         super(props);
 
+        const { dispatch, displayed } = props;
+
+        if (displayed) {
+            dispatch(refreshCalendarEntryList());
+        }
+
+        this._getRenderListEmptyComponent
+            = this._getRenderListEmptyComponent.bind(this);
         this._onPress = this._onPress.bind(this);
         this._onRefresh = this._onRefresh.bind(this);
         this._toDisplayableItem = this._toDisplayableItem.bind(this);
@@ -73,16 +88,11 @@ class MeetingList extends Component<Props> {
      * @inheritdoc
      */
     componentWillReceiveProps(newProps) {
-        // This is a conditional logic to refresh the calendar entries (thus
-        // to request access to calendar) on component first receives a
-        // displayed=true prop - to avoid requesting calendar access on
-        // app start.
-        if (!this._initialLoaded
-                && newProps.displayed
-                && !this.props.displayed) {
+        const { displayed } = this.props;
+
+        if (newProps.displayed && !displayed) {
             const { dispatch } = this.props;
 
-            this._initialLoaded = true;
             dispatch(refreshCalendarEntryList());
         }
     }
@@ -100,8 +110,43 @@ class MeetingList extends Component<Props> {
                 disabled = { disabled }
                 onPress = { this._onPress }
                 onRefresh = { this._onRefresh }
+                renderListEmptyComponent = {
+                    this._getRenderListEmptyComponent
+                }
                 sections = { this._toDisplayableList() } />
         );
+    }
+
+    _getRenderListEmptyComponent: () => Object
+
+    /**
+     * Returns a list empty component if a custom one has to be rendered instead
+     * of the default one in the {@link NavigateSectionList}.
+     *
+     * @private
+     * @returns {Component}
+     */
+    _getRenderListEmptyComponent() {
+        const { _calendarAccessStatus, t } = this.props;
+
+        if (_calendarAccessStatus === 'denied') {
+            return (
+                <View style = { styles.noPermissionMessageView }>
+                    <Text style = { styles.noPermissionMessageText }>
+                        { t('calendarSync.permissionMessage') }
+                    </Text>
+                    <TouchableOpacity
+                        onPress = { openSettings }
+                        style = { styles.noPermissionMessageButton } >
+                        <Text style = { styles.noPermissionMessageButtonText }>
+                            { t('calendarSync.permissionButton') }
+                        </Text>
+                    </TouchableOpacity>
+                </View>
+            );
+        }
+
+        return null;
     }
 
     _onPress: string => Function
@@ -130,7 +175,7 @@ class MeetingList extends Component<Props> {
     _onRefresh() {
         const { dispatch } = this.props;
 
-        dispatch(refreshCalendarEntryList());
+        dispatch(refreshCalendarEntryList(true));
     }
 
     _toDisplayableItem: Object => Object
@@ -219,12 +264,12 @@ class MeetingList extends Component<Props> {
      * @returns {string}
      */
     _toDateString(event) {
-        /* eslint-disable max-len */
-        const startDateTime = getLocalizedDateFormatter(event.startDate).format('lll');
-        const endTime = getLocalizedDateFormatter(event.endDate).format('LT');
+        const startDateTime
+            = getLocalizedDateFormatter(event.startDate).format('lll');
+        const endTime
+            = getLocalizedDateFormatter(event.endDate).format('LT');
 
         return `${startDateTime} - ${endTime}`;
-        /* eslint-enable max-len */
     }
 }
 
@@ -237,8 +282,11 @@ class MeetingList extends Component<Props> {
  * }}
  */
 export function _mapStateToProps(state: Object) {
+    const calendarSyncState = state['features/calendar-sync'];
+
     return {
-        _eventList: state['features/calendar-sync'].events
+        _calendarAccessStatus: calendarSyncState.calendarAccessStatus,
+        _eventList: calendarSyncState.events
     };
 }
 

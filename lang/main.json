@@ -539,11 +539,16 @@
         "later": "Later",
         "next": "Upcoming",
         "nextMeeting": "next meeting",
-        "now": "Now"
+        "now": "Now",
+        "permissionButton": "Open settings",
+        "permissionMessage": "Calendar permission is required to list your meetings in the app."
     },
     "recentList": {
         "today": "Today",
         "yesterday": "Yesterday",
         "earlier": "Earlier"
+    },
+    "sectionList": {
+        "pullToRefresh": "Pull to refresh"
     }
 }
