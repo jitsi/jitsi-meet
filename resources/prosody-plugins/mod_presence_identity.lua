@@ -21,11 +21,11 @@ function on_message(event)
           module:log("debug", "Presence after previous identity stripped: %s", tostring(event.stanza))
 
           event.stanza:tag("identity"):tag("user")
-          for k, v in pairs(event.origin["jitsi_meet_context_user"]) do
+          for k, v in pairs(event.origin.jitsi_meet_context_user) do
               event.stanza:tag(k):text(v):up()
           end
           event.stanza:up()
-          event.stanza:tag("group"):text(event.origin["jitsi_meet_context_group"])
+          event.stanza:tag("group"):text(event.origin.jitsi_meet_context_group)
 
           module:log("debug", "Sending presence with identity inserted %s", tostring(event.stanza))
       end
