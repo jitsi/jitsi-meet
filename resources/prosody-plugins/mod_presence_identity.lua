@@ -5,7 +5,7 @@ local stanza = require "util.stanza";
 -- for that session.
 function on_message(event)
     if event and event["stanza"] then
-      if event.origin and event.origin.jitsi_meet_context_user and event.origin.jitsi_meet_context_group then
+      if event.origin and event.origin.jitsi_meet_context_user then
           -- First remove any 'identity' element if it already
           -- exists
           event.stanza:maptags(
@@ -25,7 +25,11 @@ function on_message(event)
               event.stanza:tag(k):text(v):up()
           end
           event.stanza:up()
-          event.stanza:tag("group"):text(event.origin.jitsi_meet_context_group)
+            
+          -- Add the group information if it is present
+          if event.origin.jitsi_meet_context_group then
+              event.stanza:tag("group"):text(event.origin.jitsi_meet_context_group)
+          end
 
           module:log("debug", "Sending presence with identity inserted %s", tostring(event.stanza))
       end
