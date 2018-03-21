@@ -38,12 +38,19 @@ open class JitsiMeetPresentationCoordinator: NSObject {
         return meetViewController.jitsiMeetView
     }
     
-    public func show() {
-        meetWindow.show()
+    open func show(completion: CompletionAction? = nil) {
+        meetWindow.show(completion: completion)
     }
     
-    public func hide() {
-        meetWindow.hide()
+    open func hide(completion: CompletionAction? = nil) {
+        meetWindow.hide(completion: completion)
+    }
+    
+    open func cleanUp() {
+        // TODO: more clean up work on this
+        
+        meetWindow.isHidden = true
+        meetWindow.stopDragGesture()
     }
     
     deinit {
@@ -51,13 +58,6 @@ open class JitsiMeetPresentationCoordinator: NSObject {
     }
     
     // MARK: - helpers
-    
-    fileprivate func cleanUp() {
-        // TODO: more clean up work on this
-        
-        meetWindow.isHidden = true
-        meetWindow.stopDragGesture()
-    }
     
     private func configureMeetViewController() {
         meetViewController.jitsiMeetView.pictureInPictureEnabled = true

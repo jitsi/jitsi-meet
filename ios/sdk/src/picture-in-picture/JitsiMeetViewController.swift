@@ -83,7 +83,7 @@ extension JitsiMeetViewController: JitsiMeetViewDelegate {
     
     open func conferenceLeft(_ data: [AnyHashable : Any]!) {
         DispatchQueue.main.async {
-            self.delegate?.conferenceEnded(didFail: true)
+            self.delegate?.conferenceEnded(didFail: false)
         }
     }
     
@@ -94,7 +94,9 @@ extension JitsiMeetViewController: JitsiMeetViewDelegate {
     }
     
     open func loadConfigError(_ data: [AnyHashable : Any]!) {
-        // do something
+        DispatchQueue.main.async {
+            self.delegate?.conferenceEnded(didFail: true)
+        }
     }
     
     open func enterPicture(inPicture data: [AnyHashable : Any]!) {

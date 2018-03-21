@@ -14,6 +14,9 @@
  * limitations under the License.
  */
 
+/// Alias defining a completion closure that returns a Bool
+public typealias CompletionAction = (Bool) -> Void
+
 /// A window that allows its root view controller to be presented
 /// in full screen or in a custom Picture in Picture mode
 open class PiPWindow: UIWindow {
@@ -50,23 +53,23 @@ open class PiPWindow: UIWindow {
     }
     
     /// animate in the window
-    open func show() {
+    open func show(completion: CompletionAction? = nil) {
         if self.isHidden || self.alpha < 1 {
             self.isHidden = false
             self.alpha = 0
-            animateTransition {
+            
+            animateTransition(animations: {
                 self.alpha = 1
-            }
+            }, completion: completion)
         }
     }
     
     /// animate out the window
-    open func hide() {
+    open func hide(completion: CompletionAction? = nil) {
         if !self.isHidden || self.alpha > 0 {
-            animateTransition {
-                self.alpha = 0
-                self.isHidden = true
-            }
+            animateTransition(animations: {
+                self.alpha = 1
+            }, completion: completion)
         }
     }
     
@@ -175,11 +178,12 @@ open class PiPWindow: UIWindow {
     
     // MARK: - Animation transition
     
-    private func animateTransition(animations: @escaping () -> Void) {
+    private func animateTransition(animations: @escaping () -> Void,
+                                   completion: CompletionAction?) {
         UIView.animate(withDuration: 0.1,
                        delay: 0,
                        options: .beginFromCurrentState,
                        animations: animations,
-                       completion: nil)
+                       completion: completion)
     }
 }
