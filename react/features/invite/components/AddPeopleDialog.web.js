@@ -2,7 +2,6 @@
 
 import Avatar from '@atlaskit/avatar';
 import InlineMessage from '@atlaskit/inline-message';
-import { Immutable } from 'nuclear-js';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
@@ -114,16 +113,10 @@ class AddPeopleDialog extends Component<*, *> {
          */
         addToCallInProgress: false,
 
-
-        // FIXME: Remove usage of Immutable. {@code MultiSelectAutocomplete}
-        // will default to having its internal implementation use a plain array
-        // if no {@link defaultValue} is passed in. As such is the case, this
-        // instance of Immutable.List gets overridden with an array on the first
-        // search.
         /**
          * The list of invite items.
          */
-        inviteItems: new Immutable.List()
+        inviteItems: []
     };
 
     /**

@@ -49,7 +49,6 @@
     "lib-jitsi-meet": "github:jitsi/lib-jitsi-meet#0503ec4d3f175b154b1c6fd7037520ce0768fa58",
     "lodash": "4.17.4",
     "moment": "2.19.4",
-    "nuclear-js": "1.4.0",
     "postis": "2.2.0",
     "prop-types": "15.6.0",
     "react": "16.2.0",
