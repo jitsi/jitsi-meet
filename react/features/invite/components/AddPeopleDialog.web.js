@@ -7,6 +7,7 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
+import { createInviteDialogEvent, sendAnalytics } from '../../analytics';
 import { getInviteURL } from '../../base/connection';
 import { Dialog, hideDialog } from '../../base/dialog';
 import { translate } from '../../base/i18n';
@@ -151,6 +152,17 @@ class AddPeopleDialog extends Component<*, *> {
     }
 
     /**
+     * Sends an analytics event to record the dialog has been shown.
+     *
+     * @inheritdoc
+     * @returns {void}
+     */
+    componentDidMount() {
+        sendAnalytics(createInviteDialogEvent(
+            'invite.dialog.opened', 'dialog'));
+    }
+
+    /**
      * React Component method that executes once component is updated.
      *
      * @param {Object} prevState - The state object before the update.
@@ -167,6 +179,17 @@ class AddPeopleDialog extends Component<*, *> {
                 && this._multiselect) {
             this._multiselect.setSelectedItems([]);
         }
+    }
+
+    /**
+     * Sends an analytics event to record the dialog has been closed.
+     *
+     * @inheritdoc
+     * @returns {void}
+     */
+    componentWillUnmount() {
+        sendAnalytics(createInviteDialogEvent(
+            'invite.dialog.closed', 'dialog'));
     }
 
     /**
@@ -236,6 +259,32 @@ class AddPeopleDialog extends Component<*, *> {
      */
     _getDigitsOnly(text = '') {
         return text.replace(/\D/g, '');
+    }
+
+    /**
+     * Helper for determining how many of each type of user is being invited.
+     * Used for logging and sending analytics related to invites.
+     *
+     * @param {Array} inviteItems - An array with the invite items, as created
+     * in {@link _parseQueryResults}.
+     * @private
+     * @returns {Object} An object with keys as user types and values as the
+     * number of invites for that type.
+     */
+    _getInviteTypeCounts(inviteItems = []) {
+        const inviteTypeCounts = {};
+
+        inviteItems.forEach(i => {
+            const type = i.item.type;
+
+            if (inviteTypeCounts[type]) {
+                inviteTypeCounts[type]++;
+            } else {
+                inviteTypeCounts[type] = 1;
+            }
+        });
+
+        return inviteTypeCounts;
     }
 
     _isAddDisabled: () => boolean;
@@ -320,6 +369,15 @@ class AddPeopleDialog extends Component<*, *> {
      * @returns {void}
      */
     _onSubmit() {
+        const inviteTypeCounts
+            = this._getInviteTypeCounts(this.state.inviteItems);
+
+        sendAnalytics(createInviteDialogEvent(
+            'clicked', 'inviteButton', {
+                ...inviteTypeCounts,
+                inviteAllowed: this._isAddDisabled()
+            }));
+
         if (this._isAddDisabled()) {
             return;
         }
@@ -400,7 +458,17 @@ class AddPeopleDialog extends Component<*, *> {
                 // If any invites are left that means something failed to send
                 // so treat it as an error.
                 if (invitesLeftToSend.length) {
-                    logger.error(`${invitesLeftToSend.length} invites failed`);
+                    const erroredInviteTypeCounnts
+                        = this._getInviteTypeCounts(invitesLeftToSend);
+
+                    logger.error(`${invitesLeftToSend.length} invites failed`,
+                        erroredInviteTypeCounnts);
+
+                    sendAnalytics(createInviteDialogEvent(
+                        'error', 'invite', {
+                            ...erroredInviteTypeCounnts,
+                            inviteAllowed: this._isAddDisabled()
+                        }));
 
                     this.setState({
                         addToCallInProgress: false,
