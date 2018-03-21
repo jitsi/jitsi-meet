@@ -1040,16 +1040,6 @@ UI.getLargeVideo = function() {
 UI.isPinned = userId => VideoLayout.getPinnedId() === userId;
 
 /**
- * Shows dialog with a link to FF extension.
- */
-UI.showExtensionRequiredDialog = function(url) {
-    messageHandler.openMessageDialog(
-        'dialog.extensionRequired',
-        '[html]dialog.firefoxExtensionPrompt',
-        { url });
-};
-
-/**
  * Shows "Please go to chrome webstore to install the desktop sharing extension"
  * 2 button dialog with buttons - cancel and go to web store.
  * @param url {string} the url of the extension.

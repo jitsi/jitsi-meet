@@ -278,8 +278,6 @@
         "tokenAuthFailed": "Sorry, you're not allowed to join this call.",
         "displayNameRequired": "Display name is required",
         "enterDisplayName": "Please enter your display name",
-        "extensionRequired": "Extension required:",
-        "firefoxExtensionPrompt": "You need to install a Firefox extension in order to use screen sharing. Please try again after you <a href='__url__'>get it from here</a>!",
         "feedbackHelp": "Your feedback will help us to improve our video experience.",
         "feedbackQuestion": "Tell us about your call!",
         "thankYou": "Thank you for using __appName__!",

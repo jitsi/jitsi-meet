@@ -150,22 +150,8 @@ var config = {
     // Required version of Chrome extension
     desktopSharingChromeMinExtVersion: '0.1',
 
-    // The ID of the jidesha extension for Firefox. If null, we assume that no
-    // extension is required.
-    desktopSharingFirefoxExtId: null,
-
     // Whether desktop sharing should be disabled on Firefox.
     desktopSharingFirefoxDisabled: false,
-
-    // The maximum version of Firefox which requires a jidesha extension.
-    // Example: if set to 41, we will require the extension for Firefox versions
-    // up to and including 41. On Firefox 42 and higher, we will run without the
-    // extension.
-    // If set to -1, an extension will be required for all versions of Firefox.
-    desktopSharingFirefoxMaxVersionExtRequired: 51,
-
-    // The URL to the Firefox extension for desktop sharing.
-    desktopSharingFirefoxExtensionURL: null,
 
     // Optional desktop sharing frame rate options. Default value: min:5, max:5.
     // desktopSharingFrameRate: {

@@ -1710,12 +1710,6 @@ export default {
             );
 
             return;
-        } else if (error.name === JitsiTrackErrors.FIREFOX_EXTENSION_NEEDED) {
-            APP.UI.showExtensionRequiredDialog(
-                config.desktopSharingFirefoxExtensionURL
-            );
-
-            return;
         }
 
         // Handling:
