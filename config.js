@@ -333,7 +333,6 @@ var config = {
         // userRegion: "asia"
     }
 
-
     // List of undocumented settings used in jitsi-meet
     /**
      alwaysVisibleToolbar
@@ -353,6 +352,7 @@ var config = {
      etherpad_base
      externalConnectUrl
      firefox_fake_device
+     googleApiApplicationClientID
      iAmRecorder
      iAmSipGateway
      peopleSearchQueryTypes
