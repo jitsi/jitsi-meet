@@ -19,8 +19,8 @@ public enum JitsiMeetPresentationUpdate {
     /// The conference wants to enter Picture-in-Picture
     case enterPictureInPicture
     
-    /// A system traitCollectionChange (usually screen rotation)
-    case traitChange
+    /// A screen size change (usually screen rotation)
+    case sizeChange
 }
 
 public protocol JitsiMeetViewControllerDelegate: class {
@@ -59,9 +59,10 @@ open class JitsiMeetViewController: UIViewController {
         
         jitsiMeetView.delegate = self
     }
-    
-    open override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
-        delegate?.performPresentationUpdate(to: .traitChange)
+ 
+    open override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
+        super.viewWillTransition(to: size, with: coordinator)
+        delegate?.performPresentationUpdate(to: .sizeChange)
     }
 }
 

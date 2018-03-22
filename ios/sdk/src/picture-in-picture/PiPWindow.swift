@@ -32,7 +32,17 @@ open class PiPWindow: UIWindow {
     }
     
     /// The size ratio for root view controller view when in PiP mode
-    public var pipSizeRatio: CGFloat = 0.333
+    public var pipSizeRatio: CGFloat = {
+        let deviceIdiom = UIScreen.main.traitCollection.userInterfaceIdiom
+        switch (deviceIdiom) {
+        case .pad:
+            return 0.25
+        case .phone:
+            return 0.33
+        default:
+            return 0.25
+        }
+    }()
     
     /// The PiP state of this contents of the window
     private(set) var isInPiP: Bool = false

@@ -32,8 +32,8 @@ class ViewController: UIViewController {
     @IBAction func openJitsiMeet(sender: Any?) {
         let jitsiMeetCoordinator = JitsiMeetPresentationCoordinator()
         self.jitsiMeetCoordinator = jitsiMeetCoordinator
-        jitsiMeetCoordinator.jitsiMeetView().welcomePageEnabled = true
-        jitsiMeetCoordinator.jitsiMeetView().load(nil)
+        jitsiMeetCoordinator.jitsiMeetView.welcomePageEnabled = true
+        jitsiMeetCoordinator.jitsiMeetView.load(nil)
         jitsiMeetCoordinator.show()
     }
 }

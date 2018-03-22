@@ -20,8 +20,20 @@ import Foundation
 /// an external window that can be resized and dragged with custom PiP mode
 open class JitsiMeetPresentationCoordinator: NSObject {
     
-    fileprivate let meetViewController: JitsiMeetViewController
-    fileprivate let meetWindow: PiPWindow
+    public let meetViewController: JitsiMeetViewController
+    public let meetWindow: PiPWindow
+    
+    public var isInPiP: Bool {
+        get {
+            return meetWindow.isInPiP
+        }
+    }
+    
+    public var jitsiMeetView: JitsiMeetView {
+        get {
+            return meetViewController.jitsiMeetView
+        }
+    }
     
     public init(meetViewController: JitsiMeetViewController? = nil,
                 meetWindow: PiPWindow? = nil) {
@@ -34,14 +46,12 @@ open class JitsiMeetPresentationCoordinator: NSObject {
         configureMeetViewController()
     }
     
-    public func jitsiMeetView() -> JitsiMeetView {
-        return meetViewController.jitsiMeetView
-    }
-    
+    /// Show window with jitsi meet and perform a completion closure
     open func show(completion: CompletionAction? = nil) {
         meetWindow.show(completion: completion)
     }
     
+    /// Hide window with jitsi meet and perform a completion closure
     open func hide(completion: CompletionAction? = nil) {
         meetWindow.hide(completion: completion)
     }
@@ -77,7 +87,7 @@ extension JitsiMeetPresentationCoordinator: JitsiMeetViewControllerDelegate {
         switch to {
         case .enterPictureInPicture:
             meetWindow.enterPictureInPicture()
-        case .traitChange:
+        case .sizeChange:
             // resize to full screen if rotation happens
             if meetWindow.isInPiP {
                 meetWindow.exitPictureInPicture()

@@ -7,8 +7,16 @@ import type { Dispatch } from 'redux';
 
 /**
  * Size threshold for determining if we are in reduced UI mode or not.
+ *
+ * FIXME The logic to base {@code reducedUI} on a hardcoded width or height is
+ * very brittle because it's completely disconnected from the UI which wants to
+ * be rendered and, naturally, it broke on iPad where even the secondary Toolbar
+ * didn't fit in the height. We do need to measure the actual UI at runtime and
+ * determine whether and how to render it. I'm bumping from 240 to 300 because I
+ * don't have the time now to refactor {@code ReducedUIDetector} or rip it out
+ * completely.
  */
-const REDUCED_UI_THRESHOLD = 240;
+const REDUCED_UI_THRESHOLD = 300;
 
 /**
  * Sets the aspect ratio of the app's user interface based on specific width and
