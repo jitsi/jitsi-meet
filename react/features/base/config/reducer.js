@@ -157,7 +157,7 @@ function _translateLegacyConfig(oldValue: Object) {
 
     /* eslint-enable indent */
 
-        if (oldKey in newValue) {
+        if (oldKey in newValue && !(newKey in newValue.p2p)) {
             const v = newValue[oldKey];
 
             // Do not modify oldValue.
