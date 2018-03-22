@@ -277,11 +277,11 @@ class AddPeopleDialog extends Component<*, *> {
         inviteItems.forEach(i => {
             const type = i.item.type;
 
-            if (inviteTypeCounts[type]) {
-                inviteTypeCounts[type]++;
-            } else {
-                inviteTypeCounts[type] = 1;
+            if (!inviteTypeCounts[type]) {
+                inviteTypeCounts[type] = 0;
             }
+
+            inviteTypeCounts[type]++;
         });
 
         return inviteTypeCounts;
@@ -458,16 +458,15 @@ class AddPeopleDialog extends Component<*, *> {
                 // If any invites are left that means something failed to send
                 // so treat it as an error.
                 if (invitesLeftToSend.length) {
-                    const erroredInviteTypeCounnts
+                    const erroredInviteTypeCounts
                         = this._getInviteTypeCounts(invitesLeftToSend);
 
                     logger.error(`${invitesLeftToSend.length} invites failed`,
-                        erroredInviteTypeCounnts);
+                        erroredInviteTypeCounts);
 
                     sendAnalytics(createInviteDialogEvent(
                         'error', 'invite', {
-                            ...erroredInviteTypeCounnts,
-                            inviteAllowed: this._isAddDisabled()
+                            ...erroredInviteTypeCounts
                         }));
 
                     this.setState({
