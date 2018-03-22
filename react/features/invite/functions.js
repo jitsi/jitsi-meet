@@ -6,6 +6,71 @@ declare var interfaceConfig: Object;
 const logger = require('jitsi-meet-logger').getLogger(__filename);
 
 /**
+ * Sends a GET request to obtain the conference ID necessary for identifying
+ * which conference to join after diaing the dial-in service.
+ *
+ * @param {string} baseUrl - The url for obtaining the conference ID (pin) for
+ * dialing into a conference.
+ * @param {string} roomName - The conference name to find the associated
+ * conference ID.
+ * @param {string} mucURL - In which MUC the conference exists.
+ * @returns {Promise} - The promise created by the request.
+ */
+export function getDialInConferenceID(
+        baseUrl: string,
+        roomName: string,
+        mucURL: string): Promise<Object> {
+    const conferenceIDURL = `${baseUrl}?conference=${roomName}@${mucURL}`;
+
+    return fetch(conferenceIDURL)
+        .then(response => {
+            const jsonify = response.json();
+
+            if (response.ok) {
+                return jsonify;
+            }
+
+            return jsonify
+                .then(result => Promise.reject(result));
+        })
+        .catch(error => {
+            logger.error(
+                'Error obtaining dial in conference ID:',
+                conferenceIDURL,
+                error);
+
+            return Promise.reject(error);
+        });
+}
+
+/**
+ * Sends a GET request for phone numbers used to dial into a conference.
+ *
+ * @param {string} url - The service that returns confernce dial-in numbers.
+ * @returns {Promise} - The promise created by the request. The returned numbers
+ * may be an array of numbers or an object with countries as keys and arrays of
+ * phone number strings.
+ */
+export function getDialInNumbers(url: string): Promise<*> {
+    return fetch(url)
+        .then(response => {
+            const jsonify = response.json();
+
+            if (response.ok) {
+                return jsonify;
+            }
+
+            return jsonify
+                .then(result => Promise.reject(result));
+        })
+        .catch(error => {
+            logger.error('Error obtaining dial in numbers:', url, error);
+
+            return Promise.reject(error);
+        });
+}
+
+/**
  * Get the position of the invite option in the interfaceConfig.INVITE_OPTIONS
  * list.
  *

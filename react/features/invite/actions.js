@@ -5,8 +5,7 @@ import {
     UPDATE_DIAL_IN_NUMBERS_FAILED,
     UPDATE_DIAL_IN_NUMBERS_SUCCESS
 } from './actionTypes';
-
-declare var $: Function;
+import { getDialInConferenceID, getDialInNumbers } from './functions';
 
 /**
  * Opens the inline conference info dialog.
@@ -48,12 +47,10 @@ export function updateDialInNumbers() {
         }
 
         const { room } = state['features/base/conference'];
-        const conferenceIDURL
-            = `${dialInConfCodeUrl}?conference=${room}@${mucURL}`;
 
         Promise.all([
-            $.getJSON(dialInNumbersUrl),
-            $.getJSON(conferenceIDURL)
+            getDialInNumbers(dialInNumbersUrl),
+            getDialInConferenceID(dialInConfCodeUrl, room, mucURL)
         ])
             .then(([ dialInNumbers, { conference, id, message } ]) => {
                 if (!conference || !id) {
