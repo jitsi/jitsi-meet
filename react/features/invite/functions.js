@@ -1,5 +1,7 @@
 // @flow
 
+import { doGetJSON } from '../base/util';
+
 declare var $: Function;
 declare var interfaceConfig: Object;
 
@@ -22,25 +24,7 @@ export function getDialInConferenceID(
         mucURL: string): Promise<Object> {
     const conferenceIDURL = `${baseUrl}?conference=${roomName}@${mucURL}`;
 
-    return fetch(conferenceIDURL)
-        .then(response => {
-            const jsonify = response.json();
-
-            if (response.ok) {
-                return jsonify;
-            }
-
-            return jsonify
-                .then(result => Promise.reject(result));
-        })
-        .catch(error => {
-            logger.error(
-                'Error obtaining dial in conference ID:',
-                conferenceIDURL,
-                error);
-
-            return Promise.reject(error);
-        });
+    return doGetJSON(conferenceIDURL);
 }
 
 /**
@@ -52,22 +36,7 @@ export function getDialInConferenceID(
  * phone number strings.
  */
 export function getDialInNumbers(url: string): Promise<*> {
-    return fetch(url)
-        .then(response => {
-            const jsonify = response.json();
-
-            if (response.ok) {
-                return jsonify;
-            }
-
-            return jsonify
-                .then(result => Promise.reject(result));
-        })
-        .catch(error => {
-            logger.error('Error obtaining dial in numbers:', url, error);
-
-            return Promise.reject(error);
-        });
+    return doGetJSON(url);
 }
 
 /**
