@@ -30,7 +30,7 @@ export function invitePeopleAndChatRooms( // eslint-disable-line max-params
         inviteServiceUrl: string,
         inviteUrl: string,
         jwt: string,
-        inviteItems: Object): Promise<void> {
+        inviteItems: Array<Object>): Promise<void> {
     if (!inviteItems || inviteItems.length === 0) {
         return Promise.resolve();
     }
