@@ -62,19 +62,24 @@ function get_room(room_name, group)
     return get_room_from_jid(room_address);
 end
 
--- Stores the username in the table where we store poltergeist usernames
--- based on their room names
+-- Stores the username and context in the table where we store poltergeist info
+-- based on their room names and user_id
 -- @param room the room instance
 -- @param user_id the user id
 -- @param username the username to store
-function store_username(room, user_id, username)
+-- @param context the context for the poltergeist, contains user and group
+-- for the poltergeist and for the user creating it (extracted from the token)
+function store_poltergeist_info(room, user_id, username, context)
     local room_name = jid.node(room.jid);
 
     -- we store in poltergeist user ids for room names
     if (not poltergeists[room_name]) then
         poltergeists[room_name] = {};
     end
-    poltergeists[room_name][user_id] = username;
+    poltergeists[room_name][user_id] = {
+        username = username;
+        context = context;
+    };
     log("debug", "stored in session: %s", username);
 end
 
@@ -89,23 +94,31 @@ function get_username(room, user_id)
         return nil;
     end
 
-    return poltergeists[room_name][user_id];
+    local user_data = poltergeists[room_name][user_id];
+    if (user_data) then
+        return user_data.username;
+    end
+
+    return nil;
 end
 
 -- Removes poltergeist values from table
 -- @param room the room instance
 -- @param nick the user nick
+-- @return the stored information for that username
 function remove_username(room, nick)
     local room_name = jid.node(room.jid);
     if (poltergeists[room_name]) then
         local user_id_to_remove;
-        for name,username in pairs(poltergeists[room_name]) do
-            if (string.sub(username, 0, 8) == nick) then
-                user_id_to_remove = name;
+        for user_id,info in pairs(poltergeists[room_name]) do
+            if (string.sub(info.username, 0, 8) == nick) then
+                user_id_to_remove = user_id;
             end
         end
         if (user_id_to_remove) then
+            local user_data = poltergeists[room_name][user_id_to_remove];
             poltergeists[room_name][user_id_to_remove] = nil;
+            return user_data;
         end
     end
 end
@@ -114,8 +127,9 @@ end
 -- @param token the token we received
 -- @param room_name the room name
 -- @param group name of the group (optional)
+-- @param session the session to use for storing token specific fields
 -- @return true if values are ok or false otherwise
-function verify_token(token, room_name, group)
+function verify_token(token, room_name, group, session)
     if disableTokenVerification then
         return true;
     end
@@ -129,7 +143,6 @@ function verify_token(token, room_name, group)
         return false;
     end
 
-    local session = {};
     session.auth_token = token;
     local verified, reason = token_util:process_and_verify_token(session);
     if not verified then
@@ -200,7 +213,8 @@ end);
 -- @param name the display name fot the occupant (optional)
 -- @param avatar the avatar to use for the new occupant (optional)
 -- @param status the initial status to use for the new occupant (optional)
-function create_poltergeist_occupant(room, nick, name, avatar, status)
+-- @param context the information that we will store for this poltergeist
+function create_poltergeist_occupant(room, nick, name, avatar, status, context)
     log("debug", "create_poltergeist_occupant %s", nick);
     -- Join poltergeist occupant to room, with the invited JID as their nick
     local join_presence = st.presence({
@@ -229,6 +243,11 @@ function create_poltergeist_occupant(room, nick, name, avatar, status)
 
     room:handle_first_presence(
         prosody.hosts[poltergeist_component], join_presence);
+
+    module:fire_event("muc-poltergeist-joined", {
+        room = room;
+        context = context;
+    });
 
     local timeout = poltergeist_timeout;
     -- the timeout before removing so participants can see the status update
@@ -273,7 +292,12 @@ function remove_poltergeist_occupant(room, nick, ignore)
     end
     room:handle_normal_presence(
         prosody.hosts[poltergeist_component], leave_presence);
-    remove_username(room, nick);
+    local user_data = remove_username(room, nick);
+
+    module:fire_event("muc-poltergeist-left", {
+        room = room;
+        context = user_data.context;
+    });
 end
 
 -- Updates poltergeist occupant status
@@ -390,8 +414,9 @@ function handle_create_poltergeist (event)
     local name = params["name"];
     local avatar = params["avatar"];
     local status = params["status"];
+    local session = {};
 
-    if not verify_token(params["token"], room_name, group) then
+    if not verify_token(params["token"], room_name, group, session) then
         return 403;
     end
 
@@ -409,9 +434,15 @@ function handle_create_poltergeist (event)
         return 202;
     else
         username = generate_uuid();
-        store_username(room, user_id, username);
+        local context = {
+            user = user_id;
+            group = group;
+            creator_user = session.jitsi_meet_context_user;
+            creator_group = session.jitsi_meet_context_group;
+        };
+        store_poltergeist_info(room, user_id, username, context);
         create_poltergeist_occupant(
-            room, string.sub(username, 0, 8), name, avatar, status);
+            room, string.sub(username, 0, 8), name, avatar, status, context);
         return 200;
     end
 end
@@ -430,7 +461,7 @@ function handle_update_poltergeist (event)
     local group = params["group"];
     local status = params["status"];
 
-    if not verify_token(params["token"], room_name, group) then
+    if not verify_token(params["token"], room_name, group, {}) then
         return 403;
     end
 
@@ -467,7 +498,7 @@ function handle_remove_poltergeist (event)
     local room_name = params["room"];
     local group = params["group"];
 
-    if not verify_token(params["token"], room_name, group) then
+    if not verify_token(params["token"], room_name, group, {}) then
         return 403;
     end
 
