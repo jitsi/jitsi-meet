@@ -3,6 +3,8 @@
 declare var $: Function;
 declare var interfaceConfig: Object;
 
+const logger = require('jitsi-meet-logger').getLogger(__filename);
+
 /**
  * Get the position of the invite option in the interfaceConfig.INVITE_OPTIONS
  * list.
@@ -78,13 +80,24 @@ export function searchDirectory( // eslint-disable-line max-params
 ): Promise<Array<Object>> {
     const queryTypesString = JSON.stringify(queryTypes);
 
-    return new Promise((resolve, reject) => {
-        $.getJSON(
-                `${serviceUrl}?query=${encodeURIComponent(text)}&queryTypes=${
-                    queryTypesString}&jwt=${jwt}`,
-                resolve)
-            .catch((jqxhr, textStatus, error) => reject(error));
-    });
+    return fetch(`${serviceUrl}?query=${encodeURIComponent(text)}&queryTypes=${
+        queryTypesString}&jwt=${jwt}`)
+            .then(response => {
+                const jsonify = response.json();
+
+                if (response.ok) {
+                    return jsonify;
+                }
+
+                return jsonify
+                    .then(result => Promise.reject(result));
+            })
+            .catch(error => {
+                logger.error(
+                    'Error searching directory:', error);
+
+                return Promise.reject(error);
+            });
 }
 
 /**

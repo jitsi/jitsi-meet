@@ -6,6 +6,8 @@ import React, { Component } from 'react';
 
 import InlineDialogFailure from './InlineDialogFailure';
 
+const logger = require('jitsi-meet-logger').getLogger(__filename);
+
 /**
  * A MultiSelect that is also auto-completing.
  */
@@ -290,7 +292,9 @@ class MultiSelectAutocomplete extends Component {
                     error: false
                 });
             })
-            .catch(() => {
+            .catch(error => {
+                logger.error('MultiSelectAutocomplete error in query', error);
+
                 this.setState({
                     error: true,
                     loading: false,
