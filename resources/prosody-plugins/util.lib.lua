@@ -73,8 +73,67 @@ function wrap_async_run(event,handler)
     return result;
 end
 
+--- Updates presence stanza, by adding identity node
+-- @param stanza the presence stanza
+-- @param user the user to which presence we are updating identity
+-- @param group the group of the user to which presence we are updating identity
+-- @param creator_user the user who created the user which presence we
+-- are updating (this is the poltergeist case, where a user creates
+-- a poltergeist), optional.
+-- @param creator_group the group of the user who created the user which
+-- presence we are updating (this is the poltergeist case, where a user creates
+-- a poltergeist), optional.
+function update_presence_identity(
+    stanza, user, group, creator_user, creator_group)
+
+    -- First remove any 'identity' element if it already
+    -- exists, so it cannot be spoofed by a client
+    stanza:maptags(
+        function(tag)
+            for k, v in pairs(tag) do
+                if k == "name" and v == "identity" then
+                    return nil
+                end
+            end
+            return tag
+        end
+    )
+    module:log("debug",
+        "Presence after previous identity stripped: %s", tostring(stanza));
+
+    stanza:tag("identity"):tag("user");
+    for k, v in pairs(user) do
+        stanza:tag(k):text(v):up();
+    end
+    stanza:up();
+
+    -- Add the group information if it is present
+    if group then
+        stanza:tag("group"):text(group):up();
+    end
+
+    -- Add the creator user information if it is present
+    if creator_user then
+        stanza:tag("creator_user");
+        for k, v in pairs(creator_user) do
+            stanza:tag(k):text(v):up();
+        end
+        stanza:up();
+
+        -- Add the creator group information if it is present
+        if creator_group then
+            stanza:tag("creator_group"):text(creator_group):up();
+        end
+        stanza:up();
+    end
+
+    module:log("debug",
+        "Presence with identity inserted %s", tostring(stanza))
+end
+
 return {
     get_room_from_jid = get_room_from_jid;
     wrap_async_run = wrap_async_run;
-    room_jid_match_rewrite= room_jid_match_rewrite;
+    room_jid_match_rewrite = room_jid_match_rewrite;
+    update_presence_identity = update_presence_identity;
 };
