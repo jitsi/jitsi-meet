@@ -129,16 +129,21 @@ export function createFeedbackOpenEvent() {
 }
 
 /**
- * Creates an event which indicates that the invite dialog was closed. This is
- * not a TYPE_UI event, since it is not necessarily the result of a user
- * interaction.
+ * Creates an event for an action regarding the AddPeopleDialog (invites).
  *
+ * @param {string} action - The action that the event represents.
+ * @param {string} actionSubject - The subject that was acted upon.
+ * @param {boolean} attributes - Additional attributes to attach to the event.
  * @returns {Object} The event in a format suitable for sending via
  * sendAnalytics.
  */
-export function createInviteDialogClosedEvent() {
+export function createInviteDialogEvent(
+        action, actionSubject, attributes = {}) {
     return {
-        action: 'invite.dialog.closed'
+        action,
+        actionSubject,
+        attributes,
+        source: 'inviteDialog'
     };
 }
 
