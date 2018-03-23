@@ -65,6 +65,7 @@ const WHITELISTED_KEYS = [
     'firefox_fake_device',
     'forceJVB121Ratio',
     'gatherStats',
+    'googleApiApplicationClientID',
     'hiddenDomain',
     'hosts',
     'iAmRecorder',
