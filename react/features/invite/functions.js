@@ -1,7 +1,43 @@
 // @flow
 
+import { doGetJSON } from '../base/util';
+
 declare var $: Function;
 declare var interfaceConfig: Object;
+
+const logger = require('jitsi-meet-logger').getLogger(__filename);
+
+/**
+ * Sends a GET request to obtain the conference ID necessary for identifying
+ * which conference to join after diaing the dial-in service.
+ *
+ * @param {string} baseUrl - The url for obtaining the conference ID (pin) for
+ * dialing into a conference.
+ * @param {string} roomName - The conference name to find the associated
+ * conference ID.
+ * @param {string} mucURL - In which MUC the conference exists.
+ * @returns {Promise} - The promise created by the request.
+ */
+export function getDialInConferenceID(
+        baseUrl: string,
+        roomName: string,
+        mucURL: string): Promise<Object> {
+    const conferenceIDURL = `${baseUrl}?conference=${roomName}@${mucURL}`;
+
+    return doGetJSON(conferenceIDURL);
+}
+
+/**
+ * Sends a GET request for phone numbers used to dial into a conference.
+ *
+ * @param {string} url - The service that returns confernce dial-in numbers.
+ * @returns {Promise} - The promise created by the request. The returned numbers
+ * may be an array of numbers or an object with countries as keys and arrays of
+ * phone number strings.
+ */
+export function getDialInNumbers(url: string): Promise<*> {
+    return doGetJSON(url);
+}
 
 /**
  * Get the position of the invite option in the interfaceConfig.INVITE_OPTIONS
@@ -78,13 +114,24 @@ export function searchDirectory( // eslint-disable-line max-params
 ): Promise<Array<Object>> {
     const queryTypesString = JSON.stringify(queryTypes);
 
-    return new Promise((resolve, reject) => {
-        $.getJSON(
-                `${serviceUrl}?query=${encodeURIComponent(text)}&queryTypes=${
-                    queryTypesString}&jwt=${jwt}`,
-                resolve)
-            .catch((jqxhr, textStatus, error) => reject(error));
-    });
+    return fetch(`${serviceUrl}?query=${encodeURIComponent(text)}&queryTypes=${
+        queryTypesString}&jwt=${jwt}`)
+            .then(response => {
+                const jsonify = response.json();
+
+                if (response.ok) {
+                    return jsonify;
+                }
+
+                return jsonify
+                    .then(result => Promise.reject(result));
+            })
+            .catch(error => {
+                logger.error(
+                    'Error searching directory:', error);
+
+                return Promise.reject(error);
+            });
 }
 
 /**

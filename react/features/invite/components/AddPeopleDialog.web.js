@@ -568,7 +568,7 @@ class AddPeopleDialog extends Component<*, *> {
 
         let peopleSearchPromise;
 
-        if (this.props.enableAddPeople) {
+        if (this.props.enableAddPeople && text) {
             peopleSearchPromise = searchDirectory(
                 _peopleSearchUrl,
                 _jwt,

@@ -139,8 +139,9 @@ module.exports = [
         entry: {
             'app.bundle': [
 
-                // XXX Required by at least IE11 at the time of this writing.
+                // babel-polyfill and fetch polyfill are required for IE11.
                 'babel-polyfill',
+                'whatwg-fetch',
                 './app.js'
             ],
 
