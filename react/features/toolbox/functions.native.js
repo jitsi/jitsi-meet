@@ -1,6 +1,5 @@
 // @flow
 
-import { appNavigate } from '../app';
 import { MEDIA_TYPE } from '../base/media';
 import { isLocalTrackMuted } from '../base/tracks';
 
@@ -22,23 +21,7 @@ export function abstractMapDispatchToProps(dispatch: Dispatch<*>): Object {
         // Inject {@code dispatch} into the React Component's props in case it
         // needs to dispatch an action in the redux store without
         // {@code mapDispatchToProps}.
-        dispatch,
-
-        /**
-         * Dispatches action to leave the current conference.
-         *
-         * @private
-         * @returns {void}
-         * @type {Function}
-         */
-        _onHangup() {
-            // XXX We don't know here which value is effectively/internally
-            // used when there's no valid room name to join. It isn't our
-            // business to know that anyway. The undefined value is our
-            // expression of (1) the lack of knowledge & (2) the desire to no
-            // longer have a valid room name to join.
-            dispatch(appNavigate(undefined));
-        }
+        dispatch
     };
 }
 
