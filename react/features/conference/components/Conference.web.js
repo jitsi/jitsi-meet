@@ -11,7 +11,12 @@ import { CalleeInfoContainer } from '../../base/jwt';
 import { Filmstrip } from '../../filmstrip';
 import { LargeVideo } from '../../large-video';
 import { NotificationsContainer } from '../../notifications';
-import { showToolbox, Toolbox } from '../../toolbox';
+import {
+    Toolbox,
+    ToolboxV2,
+    setToolboxAlwaysVisible,
+    showToolbox
+} from '../../toolbox';
 import { HideNotificationBarStyle } from '../../unsupported-browser';
 
 import { maybeShowSuboptimalExperienceNotification } from '../functions';
@@ -23,6 +28,11 @@ declare var interfaceConfig: Object;
  * The type of the React {@code Component} props of {@link Conference}.
  */
 type Props = {
+
+    /**
+     * Whether the toolbar should stay visible or be able to autohide.
+     */
+    _alwaysVisibleToolbar: boolean,
 
     /**
      * Whether the local participant is recording the conference.
@@ -74,10 +84,13 @@ class Conference extends Component<Props> {
         APP.UI.registerListeners();
         APP.UI.bindEvents();
 
-        const { dispatch, t } = this.props;
+        const { _alwaysVisibleToolbar, dispatch, t } = this.props;
 
         dispatch(connect());
         maybeShowSuboptimalExperienceNotification(dispatch, t);
+
+        dispatch(setToolboxAlwaysVisible(
+            _alwaysVisibleToolbar || interfaceConfig.filmStripOnly));
     }
 
     /**
@@ -100,11 +113,24 @@ class Conference extends Component<Props> {
      * @returns {ReactElement}
      */
     render() {
-        const { filmStripOnly, VIDEO_QUALITY_LABEL_DISABLED } = interfaceConfig;
+        const {
+            _USE_NEW_TOOLBOX,
+            VIDEO_QUALITY_LABEL_DISABLED,
+            filmStripOnly
+        } = interfaceConfig;
         const hideVideoQualityLabel
             = filmStripOnly
                 || VIDEO_QUALITY_LABEL_DISABLED
                 || this.props._iAmRecorder;
+        let ToolboxToUse;
+
+        if (filmStripOnly) {
+            ToolboxToUse = null;
+        } else if (_USE_NEW_TOOLBOX) {
+            ToolboxToUse = ToolboxV2;
+        } else {
+            ToolboxToUse = Toolbox;
+        }
 
         return (
             <div
@@ -113,10 +139,12 @@ class Conference extends Component<Props> {
                 <div id = 'videospace'>
                     <LargeVideo
                         hideVideoQualityLabel = { hideVideoQualityLabel } />
-                    <Filmstrip filmstripOnly = { filmStripOnly } />
+                    <Filmstrip
+                        filmstripOnly = { filmStripOnly }
+                        useNewToolbox = { _USE_NEW_TOOLBOX } />
                 </div>
 
-                { filmStripOnly ? null : <Toolbox /> }
+                { ToolboxToUse && <ToolboxToUse /> }
 
                 <DialogContainer />
                 <NotificationsContainer />
@@ -153,17 +181,30 @@ class Conference extends Component<Props> {
  * @param {Object} state - The Redux state.
  * @private
  * @returns {{
+ *      _alwaysVisibleToolbar: boolean,
  *     _iAmRecorder: boolean
  * }}
  */
 function _mapStateToProps(state) {
+    const {
+        alwaysVisibleToolbar,
+        iAmRecorder
+    } = state['features/base/config'];
+
     return {
+        /**
+         * Whether the toolbar should stay visible or be able to autohide.
+         *
+         * @private
+         */
+        _alwaysVisibleToolbar: alwaysVisibleToolbar,
+
         /**
          * Whether the local participant is recording the conference.
          *
          * @private
          */
-        _iAmRecorder: state['features/base/config'].iAmRecorder
+        _iAmRecorder: iAmRecorder
     };
 }
 

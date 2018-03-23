@@ -54,10 +54,12 @@ export function connect() {
 /**
  * Closes connection.
  *
+ * @param {boolean} requestFeedback - Whether or not to attempt showing a
+ * request for call feedback.
  * @returns {Function}
  */
-export function disconnect() {
+export function disconnect(requestFeedback: boolean = false) {
     // XXX For web based version we use conference hanging up logic from the old
     // app.
-    return () => APP.conference.hangup();
+    return () => APP.conference.hangup(requestFeedback);
 }

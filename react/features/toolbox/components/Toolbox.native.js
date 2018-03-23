@@ -23,7 +23,6 @@ import {
     isNarrowAspectRatio,
     makeAspectRatioAware
 } from '../../base/responsive-ui';
-import { ColorPalette } from '../../base/styles';
 import {
     EnterPictureInPictureToolbarButton
 } from '../../mobile/picture-in-picture';
@@ -36,6 +35,7 @@ import {
 } from '../functions';
 
 import AudioRouteButton from './AudioRouteButton';
+import { HangupButton } from './buttons';
 import styles from './styles';
 import ToolbarButton from './ToolbarButton';
 
@@ -73,11 +73,6 @@ type Props = {
      * Flag showing whether room is locked.
      */
     _locked: boolean,
-
-    /**
-     * Handler for hangup.
-     */
-    _onHangup: Function,
 
     /**
      * Sets the lock i.e. password protection of the conference/room.
@@ -274,13 +269,7 @@ class Toolbox extends Component<Props> {
                     iconStyle = { audioButtonStyles.iconStyle }
                     onClick = { this._onToggleAudio }
                     style = { audioButtonStyles.style } />
-                <ToolbarButton
-                    accessibilityLabel = 'Hangup'
-                    iconName = 'hangup'
-                    iconStyle = { styles.whitePrimaryToolbarButtonIcon }
-                    onClick = { this.props._onHangup }
-                    style = { styles.hangup }
-                    underlayColor = { ColorPalette.buttonUnderlay } />
+                <HangupButton />
                 <ToolbarButton
                     disabled = { this.props._audioOnly }
                     iconName = { videoButtonStyles.iconName }

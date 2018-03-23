@@ -150,7 +150,19 @@ var interfaceConfig = {
      *
      * @type {boolean}
      */
-    VIDEO_QUALITY_LABEL_DISABLED: false
+    VIDEO_QUALITY_LABEL_DISABLED: false,
+
+    /**
+     * This is a temporary feature flag used to gate access to the toolbox so it
+     * can be developed through smaller changesets. This feature flag will be
+     * removed at some point, as well as the old toolbox. The new toolbox is a
+     * rewrite that will be horizontal in the full UI and vertical in filmstrip
+     * only node. Support for ordering of toolbar buttons will be removed, but
+     * support for declaring which buttons display will be continued.
+     *
+     * @type {boolean}
+     */
+    _USE_NEW_TOOLBOX: false
 
     /**
      * Specify custom URL for downloading android mobile app.

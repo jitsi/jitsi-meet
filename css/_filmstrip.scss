@@ -206,3 +206,22 @@
         }
     }
 }
+
+/**
+ * TODO: the "use-new-toolbox" class is used to override the above filmstrip
+ * stylings through greater specificity. When the old toolbox is being removed,
+ * the stylings below should be merged with the stylings above.
+ */
+.use-new-toolbox {
+    .filmstrip.toolbox-visible {
+        bottom: $defaultToolbarSize;
+    }
+
+    .filmstrip {
+        transition: bottom .3s;
+    }
+
+    .filmstrip__videos.hidden {
+        bottom: calc(-196px - #{$defaultToolbarSize});
+    }
+}
