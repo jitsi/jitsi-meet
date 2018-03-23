@@ -510,11 +510,6 @@ export default {
      */
     isHandRaised: false,
 
-    /*
-     * Whether the local participant is the dominant speaker in the conference.
-     */
-    isDominantSpeaker: false,
-
     /**
      * The local audio track (if any).
      * FIXME tracks from redux store should be the single source of truth
@@ -1896,19 +1891,6 @@ export default {
             });
         room.on(JitsiConferenceEvents.DOMINANT_SPEAKER_CHANGED, id => {
             APP.store.dispatch(dominantSpeakerChanged(id));
-
-            if (this.isLocalId(id)) {
-                this.isDominantSpeaker = true;
-                this.setRaisedHand(false);
-            } else {
-                this.isDominantSpeaker = false;
-                const participant = room.getParticipantById(id);
-
-                if (participant) {
-                    APP.UI.setRaisedHandStatus(participant, false);
-                }
-            }
-            APP.UI.markDominantSpeaker(id);
         });
 
         if (!interfaceConfig.filmStripOnly) {
@@ -2022,7 +2004,10 @@ export default {
             (participant, name, oldValue, newValue) => {
                 switch (name) {
                 case 'raisedHand':
-                    APP.UI.setRaisedHandStatus(participant, newValue);
+                    APP.store.dispatch(participantUpdated({
+                        id: participant.getId(),
+                        raisedHand: newValue === 'true'
+                    }));
                     break;
                 case 'remoteControlSessionStatus':
                     APP.UI.setRemoteControlActiveStatus(
@@ -2626,25 +2611,15 @@ export default {
     /**
      * Toggles the local "raised hand" status.
      */
-    maybeToggleRaisedHand() {
-        this.setRaisedHand(!this.isHandRaised);
-    },
+    toggleRaisedHand() {
+        const localParticipant = getLocalParticipant(APP.store.getState());
+        const currentRaisedHand = localParticipant.raisedHand;
 
-    /**
-     * Sets the local "raised hand" status to a particular value.
-     */
-    setRaisedHand(raisedHand) {
-        if (raisedHand !== this.isHandRaised) {
-            APP.UI.onLocalRaiseHandChanged(raisedHand);
-
-            this.isHandRaised = raisedHand;
-
-            // Advertise the updated status
-            room.setLocalParticipantProperty('raisedHand', raisedHand);
-
-            // Update the view
-            APP.UI.setLocalRaisedHandStatus(raisedHand);
-        }
+        APP.store.dispatch(participantUpdated({
+            id: localParticipant.id,
+            local: true,
+            raisedHand: !currentRaisedHand
+        }));
     },
 
     /**

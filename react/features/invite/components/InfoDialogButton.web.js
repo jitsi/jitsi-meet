@@ -5,9 +5,14 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
-import { ToolbarButton, TOOLTIP_TO_POPUP_POSITION } from '../../toolbox';
+import { translate } from '../../base/i18n';
+import {
+    ToolbarButton,
+    ToolbarButtonV2,
+    TOOLTIP_TO_POPUP_POSITION
+} from '../../toolbox';
 
-import { setInfoDialogVisibility } from '../actions';
+import { updateDialInNumbers, setInfoDialogVisibility } from '../actions';
 import { InfoDialog } from './info-dialog';
 
 const { INITIAL_TOOLBAR_TIMEOUT } = interfaceConfig;
@@ -40,6 +45,14 @@ class InfoDialogButton extends Component {
      */
     static propTypes = {
         /**
+         * Phone numbers for dialing into the conference.
+         */
+        _dialInNumbers: PropTypes.oneOfType([
+            PropTypes.object,
+            PropTypes.array
+        ]),
+
+        /**
          * Whether or not the {@code InfoDialog} should close by itself after a
          * a timeout.
          */
@@ -60,6 +73,11 @@ class InfoDialogButton extends Component {
          * Invoked to toggle display of the info dialog
          */
         dispatch: PropTypes.func,
+
+        /**
+         * Invoked to obtain translated strings.
+         */
+        t: PropTypes.func,
 
         /**
          * From which side tooltips should display. Will be re-used for
@@ -99,6 +117,10 @@ class InfoDialogButton extends Component {
     componentDidMount() {
         if (this.props._shouldAutoClose) {
             this._setAutoCloseTimeout();
+        }
+
+        if (!this.props._dialInNumbers) {
+            this.props.dispatch(updateDialInNumbers());
         }
     }
 
@@ -145,29 +167,9 @@ class InfoDialogButton extends Component {
      * @returns {ReactElement}
      */
     render() {
-        const { _showDialog, _toolboxVisible, tooltipPosition } = this.props;
-        const buttonConfiguration = {
-            ...DEFAULT_BUTTON_CONFIGURATION,
-            classNames: [
-                ...DEFAULT_BUTTON_CONFIGURATION.classNames,
-                _showDialog ? 'toggled button-active' : ''
-            ]
-        };
-
-        return (
-            <InlineDialog
-                content = { <InfoDialog
-                    onClose = { this._onDialogClose }
-                    onMouseOver = { this._onDialogMouseOver } /> }
-                isOpen = { _toolboxVisible && _showDialog }
-                onClose = { this._onDialogClose }
-                position = { TOOLTIP_TO_POPUP_POSITION[tooltipPosition] }>
-                <ToolbarButton
-                    button = { buttonConfiguration }
-                    onClick = { this._onDialogToggle }
-                    tooltipPosition = { tooltipPosition } />
-            </InlineDialog>
-        );
+        return interfaceConfig._USE_NEW_TOOLBOX
+            ? this._renderNewToolbarButton()
+            : this._renderOldToolbarButton();
     }
 
     /**
@@ -212,6 +214,70 @@ class InfoDialogButton extends Component {
     }
 
     /**
+     * Renders a React Element for the {@code InfoDialog} using legacy
+     * {@code ToolbarButton}.
+     *
+     * @private
+     * @returns {ReactElement}
+     */
+    _renderOldToolbarButton() {
+        const { _showDialog, _toolboxVisible, tooltipPosition } = this.props;
+        const buttonConfiguration = {
+            ...DEFAULT_BUTTON_CONFIGURATION,
+            classNames: [
+                ...DEFAULT_BUTTON_CONFIGURATION.classNames,
+                _showDialog ? 'toggled button-active' : ''
+            ]
+        };
+
+        return (
+            <InlineDialog
+                content = { <InfoDialog
+                    autoUpdateNumbers = { false }
+                    onClose = { this._onDialogClose }
+                    onMouseOver = { this._onDialogMouseOver } /> }
+                isOpen = { _toolboxVisible && _showDialog }
+                onClose = { this._onDialogClose }
+                position = { TOOLTIP_TO_POPUP_POSITION[tooltipPosition] }>
+                <ToolbarButton
+                    button = { buttonConfiguration }
+                    onClick = { this._onDialogToggle }
+                    tooltipPosition = { tooltipPosition } />
+            </InlineDialog>
+        );
+    }
+
+    /**
+     * Renders a React Element for the {@code InfoDialog} using the newer
+     * {@code ToolbarButtonV2}.
+     *
+     * @private
+     * @returns {ReactElement}
+     */
+    _renderNewToolbarButton() {
+        const { _showDialog, _toolboxVisible, t } = this.props;
+        const iconClass = `icon-info ${_showDialog ? 'toggled' : ''}`;
+
+        return (
+            <div className = 'toolbox-button-wth-dialog'>
+                <InlineDialog
+                    content = { <InfoDialog
+                        autoUpdateNumbers = { false }
+                        onClose = { this._onDialogClose }
+                        onMouseOver = { this._onDialogMouseOver } /> }
+                    isOpen = { _toolboxVisible && _showDialog }
+                    onClose = { this._onDialogClose }
+                    position = { 'top right' }>
+                    <ToolbarButtonV2
+                        iconName = { iconClass }
+                        onClick = { this._onDialogToggle }
+                        tooltip = { t('info.tooltip') } />
+                </InlineDialog>
+            </div>
+        );
+    }
+
+    /**
      * Set a timeout to automatically hide the {@code InfoDialog}.
      *
      * @private
@@ -235,22 +301,25 @@ class InfoDialogButton extends Component {
  * @param {Object} state - The Redux state.
  * @private
  * @returns {{
+ *     _dialInNumbers: Array,
  *     _shouldAutoClose: boolean,
  *     _showDialog: boolean,
  *     _toolboxVisible: boolean
  * }}
  */
-function _mapStateToProps(state) {
+function mapStateToProps(state) {
     const {
         infoDialogVisible,
-        infoDialogWillAutoClose
+        infoDialogWillAutoClose,
+        numbers
     } = state['features/invite'];
 
     return {
+        _dialInNumbers: numbers,
         _shouldAutoClose: infoDialogWillAutoClose,
         _showDialog: infoDialogVisible,
         _toolboxVisible: state['features/toolbox'].visible
     };
 }
 
-export default connect(_mapStateToProps)(InfoDialogButton);
+export default translate(connect(mapStateToProps)(InfoDialogButton));

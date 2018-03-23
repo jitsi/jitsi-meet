@@ -1,5 +1,7 @@
 /* @flow */
 
+import UIEvents from '../../../../service/UI/UIEvents';
+
 import {
     CAMERA_FACING_MODE,
     MEDIA_TYPE,
@@ -12,7 +14,12 @@ import {
 import { MiddlewareRegistry } from '../redux';
 
 import { createLocalTracksA } from './actions';
-import { TRACK_ADDED, TRACK_REMOVED, TRACK_UPDATED } from './actionTypes';
+import {
+    TOGGLE_SCREENSHARE,
+    TRACK_ADDED,
+    TRACK_REMOVED,
+    TRACK_UPDATED
+} from './actionTypes';
 import { getLocalTrack, setTrackMuted } from './functions';
 
 declare var APP: Object;
@@ -27,6 +34,12 @@ declare var APP: Object;
  */
 MiddlewareRegistry.register(store => next => action => {
     switch (action.type) {
+    case TOGGLE_SCREENSHARE:
+        if (typeof APP === 'object') {
+            APP.UI.emitEvent(UIEvents.TOGGLE_SCREENSHARING);
+        }
+        break;
+
     case SET_AUDIO_MUTED:
         _setMuted(store, action, MEDIA_TYPE.AUDIO);
         break;

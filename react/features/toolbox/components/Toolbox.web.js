@@ -5,8 +5,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
 import {
-    setDefaultToolboxButtons,
-    setToolboxAlwaysVisible
+    setDefaultToolboxButtons
 } from '../actions';
 import {
     abstractMapStateToProps
@@ -40,11 +39,6 @@ class Toolbox extends Component<*> {
         _setDefaultToolboxButtons: PropTypes.func,
 
         /**
-         * Handler dispatching reset always visible toolbox action.
-         */
-        _setToolboxAlwaysVisible: PropTypes.func,
-
-        /**
          * Represents conference subject.
          */
         _subject: PropTypes.string,
@@ -67,8 +61,6 @@ class Toolbox extends Component<*> {
      * @returns {void}
      */
     componentDidMount(): void {
-        this.props._setToolboxAlwaysVisible();
-
         // FIXME The redux action SET_DEFAULT_TOOLBOX_BUTTONS and related source
         // code such as the redux action creator setDefaultToolboxButtons and
         // _setDefaultToolboxButtons were introduced to solve the following bug
@@ -168,8 +160,7 @@ class Toolbox extends Component<*> {
  *
  * @param {Function} dispatch - Redux action dispatcher.
  * @returns {{
- *     _setDefaultToolboxButtons: Function,
- *     _setToolboxAlwaysVisible: Function
+ *     _setDefaultToolboxButtons: Function
  * }}
  * @private
  */
@@ -182,18 +173,6 @@ function _mapDispatchToProps(dispatch: Function): Object {
          */
         _setDefaultToolboxButtons() {
             dispatch(setDefaultToolboxButtons());
-        },
-
-        /**
-         * Dispatches a (redux) action to reset the permanent visibility of
-         * the Toolbox.
-         *
-         * @returns {Object} Dispatched action.
-         */
-        _setToolboxAlwaysVisible() {
-            dispatch(setToolboxAlwaysVisible(
-                config.alwaysVisibleToolbar === true
-                    || interfaceConfig.filmStripOnly));
         }
     };
 }

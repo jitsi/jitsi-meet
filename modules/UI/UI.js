@@ -255,12 +255,20 @@ UI.showLocalConnectionInterrupted = function(isInterrupted) {
 
 /**
  * Sets the "raised hand" status for a participant.
+ *
+ * @param {string} id - The id of the participant whose raised hand UI should
+ * be updated.
+ * @param {string} name - The name of the participant with the raised hand
+ * update.
+ * @param {boolean} raisedHandStatus - Whether the participant's hand is raised
+ * or not.
+ * @returns {void}
  */
-UI.setRaisedHandStatus = (participant, raisedHandStatus) => {
-    VideoLayout.setRaisedHandStatus(participant.getId(), raisedHandStatus);
+UI.setRaisedHandStatus = (id, name, raisedHandStatus) => {
+    VideoLayout.setRaisedHandStatus(id, raisedHandStatus);
     if (raisedHandStatus) {
         messageHandler.participantNotification(
-            participant.getDisplayName(),
+            name,
             'notify.somebody',
             'connected',
             'notify.raisedHand');
@@ -268,13 +276,17 @@ UI.setRaisedHandStatus = (participant, raisedHandStatus) => {
 };
 
 /**
- * Sets the local "raised hand" status.
+ * Sets the local "raised hand" status and notifies interested listeners that
+ * the raise hand property has changed.
+ * @param {boolean} raisedHandStatus indicates the current state of the
+ * "raised hand"
  */
-UI.setLocalRaisedHandStatus
-    = raisedHandStatus =>
-        VideoLayout.setRaisedHandStatus(
-            APP.conference.getMyUserId(),
-            raisedHandStatus);
+UI.setLocalRaisedHandStatus = raisedHandStatus => {
+    eventEmitter.emit(UIEvents.LOCAL_RAISE_HAND_CHANGED, raisedHandStatus);
+    VideoLayout.setRaisedHandStatus(
+         APP.conference.getMyUserId(),
+        raisedHandStatus);
+};
 
 /**
  * Initialize conference UI.
@@ -372,6 +384,14 @@ UI.start = function() {
 
     if (interfaceConfig.VERTICAL_FILMSTRIP) {
         $('body').addClass('vertical-filmstrip');
+    }
+
+
+    // TODO: remove this class once the old toolbar has been removed. This class
+    // is set so that any CSS changes needed to adjust elements outside of the
+    // new toolbar can be scoped to just the app with the new toolbar enabled.
+    if (interfaceConfig._USE_NEW_TOOLBOX && !interfaceConfig.filmStripOnly) {
+        $('body').addClass('use-new-toolbox');
     }
 
     document.title = interfaceConfig.APP_NAME;
@@ -992,16 +1012,6 @@ UI.updateAuthInfo = function(isAuthEnabled, login) {
         Profile.showLoginButton(!loggedIn);
         Profile.showLogoutButton(loggedIn);
     }
-};
-
-/**
- * Notifies interested listeners that the raise hand property has changed.
- *
- * @param {boolean} isRaisedHand indicates the current state of the
- * "raised hand"
- */
-UI.onLocalRaiseHandChanged = function(isRaisedHand) {
-    eventEmitter.emit(UIEvents.LOCAL_RAISE_HAND_CHANGED, isRaisedHand);
 };
 
 /**

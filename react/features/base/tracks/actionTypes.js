@@ -1,4 +1,14 @@
 /**
+ * The type of redux action dispatched to disable screensharing or to start the
+ * flow for enabling screenshare.
+ *
+ * {
+ *     type: TOGGLE_SCREENSHARE
+ * }
+ */
+export const TOGGLE_SCREENSHARE = Symbol('TOGGLE_SCREENSHARE');
+
+/**
  * The type of redux action dispatched when a track has been (locally or
  * remotely) added to the conference.
  *
