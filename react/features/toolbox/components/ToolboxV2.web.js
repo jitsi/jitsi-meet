@@ -21,7 +21,7 @@ import { ChatCounter } from '../../chat';
 import { openDeviceSelectionDialog } from '../../device-selection';
 import { toggleDocument } from '../../etherpad';
 import { openFeedbackDialog } from '../../feedback';
-import { AddPeopleDialog, InfoDialogButtonV2 } from '../../invite';
+import { AddPeopleDialog, InfoDialogButton } from '../../invite';
 import { openKeyboardShortcutsDialog } from '../../keyboard-shortcuts';
 import { RECORDING_TYPES, toggleRecording } from '../../recording';
 import { toggleSharedVideo } from '../../shared-video';
@@ -36,7 +36,6 @@ import OverflowMenuButton from './OverflowMenuButton';
 import OverflowMenuItem from './OverflowMenuItem';
 import OverflowMenuProfileItem from './OverflowMenuProfileItem';
 import ToolbarButtonV2 from './ToolbarButtonV2';
-
 import { AudioMuteButton, HangupButton, VideoMuteButton } from './buttons';
 
 type Props = {
@@ -222,8 +221,6 @@ class ToolboxV2 extends Component<Props, State> {
      * @returns {void}
      */
     componentDidMount() {
-        // I don't know how to make flow shutup about "indexable signature" so
-        // I'm making these config scoped to componentDidMount.
         const KEYBOARD_SHORTCUTS = [
             this._shouldShowButton('chat') && {
                 character: 'C',
@@ -272,6 +269,7 @@ class ToolboxV2 extends Component<Props, State> {
         if (this.state.showOverflowMenu
             && !this.props._dialog
             && nextProps._dialog) {
+            this._onSetOverflowVisible(false);
             this.props.dispatch(setToolbarHovered(false));
         }
     }
@@ -350,7 +348,7 @@ class ToolboxV2 extends Component<Props, State> {
                             tooltip = { _addPeopleAvailable || _dialOutAvailable
                                 ? t('addPeople.title')
                                 : t('addPeople.notAvailable') } /> }
-                    { this._shouldShowButton('info') && <InfoDialogButtonV2 /> }
+                    { this._shouldShowButton('info') && <InfoDialogButton /> }
                     { overflowHasItems
                         && <OverflowMenuButton
                             isOpen = { this.state.showOverflowMenu }

@@ -12,7 +12,7 @@ import {
  */
 export default class AbstractHangupButton extends Component<*> {
     /**
-     * Initializes a new {@code HangupButton} instance.
+     * Initializes a new {@code AbstractHangupButton} instance.
      *
      * @param {Props} props - The read-only React {@code Component} props with
      * which the new instance is to be initialized.
@@ -25,8 +25,7 @@ export default class AbstractHangupButton extends Component<*> {
     }
 
     /**
-     * Creates an analytics toolbar event for and dispatches an action for
-     * leaving the current conference.
+     * Dispatches an action for leaving the current conference.
      *
      * @private
      * @returns {void}

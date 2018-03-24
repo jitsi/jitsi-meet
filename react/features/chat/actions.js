@@ -45,7 +45,7 @@ export function markAllRead() {
 
 /**
  * Updates the last read message cursor to be set at the passed in message. The
- * assumption is that message will be ordered chronologically.
+ * assumption is that messages will be ordered chronologically.
  *
  * @param {Object} message - The message from the redux state.
  * @returns {{

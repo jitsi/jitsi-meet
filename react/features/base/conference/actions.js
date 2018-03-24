@@ -436,9 +436,9 @@ export function setAudioOnly(audioOnly: boolean) {
 }
 
 /**
- * Sets the flag for indicidating if desktop sharing is enabled.
+ * Sets the flag for indicating if desktop sharing is enabled.
  *
- * @param {boolean} desktopSharingEnabled - True if deskop sharing is enabled.
+ * @param {boolean} desktopSharingEnabled - True if desktop sharing is enabled.
  * @returns {{
  *     type: SET_DESKTOP_SHARING_ENABLED,
  *     desktopSharingEnabled: boolean

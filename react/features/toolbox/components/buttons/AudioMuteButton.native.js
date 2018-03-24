@@ -11,15 +11,14 @@ import ToolbarButton from '../ToolbarButton';
 
 import AbstractAudioMuteButton from './AbstractAudioMuteButton';
 
-declare var APP: Object;
-
 /**
- * Component that renders a toolbar button for toggling video mute.
+ * Component that renders a toolbar button for toggling audio mute.
  *
  * @extends AbstractAudioMuteButton
  */
 export class AudioMuteButton extends AbstractAudioMuteButton {
     static propTypes = {
+        ...AbstractAudioMuteButton.propTypes,
         buttonStyles: PropTypes.object
     };
 

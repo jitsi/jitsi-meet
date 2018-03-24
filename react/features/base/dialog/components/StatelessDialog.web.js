@@ -268,7 +268,7 @@ class StatelessDialog extends Component<Props> {
      * @returns {ReactElement|null} The Cancel button if enabled and dialog is
      * not modal.
      */
-    _renderCancelButton(options) {
+    _renderCancelButton(options = {}) {
         if (options.cancelDisabled
             || options.isModal
             || options.hideCancelButton) {

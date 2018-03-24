@@ -66,7 +66,7 @@ class Filmstrip extends Component<*> {
 
         /**
          * Whether or not the toolbox is visible. The height of the vertical
-         * filmstrip needs to adjust to accomodate the horizontal toolbox.
+         * filmstrip needs to adjust to accommodate the horizontal toolbox.
          */
         _toolboxVisible: PropTypes.bool,
 

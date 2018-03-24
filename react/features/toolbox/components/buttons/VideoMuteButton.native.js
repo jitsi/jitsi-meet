@@ -18,6 +18,7 @@ import AbstractVideoMuteButton from './AbstractVideoMuteButton';
  */
 class VideoMuteButton extends AbstractVideoMuteButton {
     static propTypes = {
+        ...AbstractVideoMuteButton.propTypes,
         _audioOnly: PropTypes.bool,
         styles: PropTypes.object
     };
@@ -51,6 +52,8 @@ class VideoMuteButton extends AbstractVideoMuteButton {
  * @param {Object} state - The Redux state.
  * @private
  * @returns {{
+ *     _audioOnly: boolean,
+ *     _videoMuted: boolean
  * }}
  */
 function _mapStateToProps(state) {

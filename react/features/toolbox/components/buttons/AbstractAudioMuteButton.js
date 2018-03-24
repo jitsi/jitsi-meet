@@ -1,5 +1,6 @@
 // @flow
 
+import PropTypes from 'prop-types';
 import { Component } from 'react';
 
 import {
@@ -16,8 +17,13 @@ import {
  * An abstract implementation of button for toggling audio mute.
  */
 export default class AbstractAudioMuteButton extends Component<*> {
+    static propTypes = {
+        _audioMuted: PropTypes.bool,
+        dispatch: PropTypes.func
+    };
+
     /**
-     * Initializes a new {@code HangupButton} instance.
+     * Initializes a new {@code AbstractAudioMuteButton} instance.
      *
      * @param {Props} props - The read-only React {@code Component} props with
      * which the new instance is to be initialized.
@@ -30,7 +36,7 @@ export default class AbstractAudioMuteButton extends Component<*> {
     }
 
     /**
-     * Dispatches an action to toggle the display of chat.
+     * Dispatches an action to toggle audio mute.
      *
      * @private
      * @returns {void}
@@ -52,7 +58,7 @@ export default class AbstractAudioMuteButton extends Component<*> {
 
     /**
      * Creates an analytics toolbar event for and dispatches an action for
-     * leaving the current conference.
+     * toggling audio mute.
      *
      * @private
      * @returns {void}

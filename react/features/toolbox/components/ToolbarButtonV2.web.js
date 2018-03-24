@@ -1,4 +1,5 @@
 import Tooltip from '@atlaskit/tooltip';
+import PropTypes from 'prop-types';
 import React from 'react';
 
 import AbstractToolbarButton from './AbstractToolbarButton';
@@ -12,6 +13,21 @@ class ToolbarButtonV2 extends AbstractToolbarButton {
     static defaultProps = {
         tooltipPosition: 'top'
     };
+
+    static propTypes = {
+        ...AbstractToolbarButton.propTypes,
+
+        /**
+         * The text to display in the tooltip.
+         */
+        tooltip: PropTypes.string,
+
+        /**
+         * From which direction the tooltip should appear, relative to the
+         * button.
+         */
+        tooltipPosition: PropTypes.string
+    }
 
     /**
      * Renders the button of this {@code ToolbarButton}.

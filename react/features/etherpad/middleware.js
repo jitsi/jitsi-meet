@@ -9,7 +9,7 @@ import { TOGGLE_DOCUMENT_EDITING } from './actionTypes';
 declare var APP: Object;
 
 /**
- * Middleware that captures actions related to collaborative document updating
+ * Middleware that captures actions related to collaborative document editing
  * and notifies components not hooked into redux.
  *
  * @param {Store} store - The redux store.

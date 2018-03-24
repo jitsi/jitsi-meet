@@ -5,7 +5,15 @@ import { connect } from 'react-redux';
 import { getUnreadCount } from '../functions';
 
 /**
- * Combine with ParticipantsCounter
+ * FIXME: Move this logic UI element to a generic one that can be used for
+ * {@code ParticipantCounter} as well.
+ */
+
+/**
+ * Implements a React {@link Component} which displays a count of the number of
+ * unread chat messages.
+ *
+ * @extends Component
  */
 class ChatCounter extends Component {
     static propTypes = {
@@ -24,7 +32,7 @@ class ChatCounter extends Component {
     render() {
         return (
             <span className = 'badge-round'>
-                <span id = 'numberOfParticipants'>
+                <span>
                     { this.props._count || null }
                 </span>
             </span>

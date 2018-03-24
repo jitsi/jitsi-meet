@@ -4,6 +4,7 @@ import React, { Component } from 'react';
 import { View } from 'react-native';
 import { connect } from 'react-redux';
 
+import { toggleAudioOnly } from '../../base/conference';
 import {
     MEDIA_TYPE,
     toggleCameraFacingMode
@@ -94,7 +95,9 @@ type Props = {
     /**
      * Flag showing whether toolbar is visible.
      */
-    _visible: boolean
+    _visible: boolean,
+
+    dispatch: Function
 };
 
 
@@ -295,6 +298,7 @@ Object.assign(Toolbox.prototype, {
  * @private
  * @returns {{
  *     _onRoomLock: Function,
+ *     _onToggleAudioOnly: Function,
  *     _onToggleCameraFacingMode: Function,
  * }}
  */
@@ -322,6 +326,17 @@ function _mapDispatchToProps(dispatch) {
          */
         _onShareRoom() {
             dispatch(beginShareRoom());
+        },
+
+        /**
+         * Toggles the audio-only flag of the conference.
+         *
+         * @private
+         * @returns {void}
+         * @type {Function}
+         */
+        _onToggleAudioOnly() {
+            dispatch(toggleAudioOnly());
         },
 
         /**

@@ -1,5 +1,6 @@
 // @flow
 
+import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 
@@ -17,6 +18,13 @@ import AbstractHangupButton from './AbstractHangupButton';
  * @extends Component
  */
 class HangupButton extends AbstractHangupButton {
+    static propTypes = {
+        /**
+         * Invoked to leave the conference.
+         */
+        dispatch: PropTypes.func
+    };
+
     /**
      * Implements React's {@link Component#render()}.
      *
@@ -35,11 +43,8 @@ class HangupButton extends AbstractHangupButton {
         );
     }
 
-    _onToolbarHangup: () => void;
-
     /**
-     * Creates an analytics toolbar event for and dispatches an action for
-     * leaving the current conference.
+     * Dispatches an action for leaving the current conference.
      *
      * @private
      * @returns {void}
@@ -47,6 +52,8 @@ class HangupButton extends AbstractHangupButton {
     _doHangup() {
         this.props.dispatch(appNavigate(undefined));
     }
+
+    _onToolbarHangup: () => void;
 }
 
 export default connect()(HangupButton);

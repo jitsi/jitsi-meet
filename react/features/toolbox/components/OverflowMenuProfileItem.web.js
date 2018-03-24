@@ -99,13 +99,14 @@ class OverflowMenuProfileItem extends Component {
 }
 
 /**
- * Maps (parts of) the Redux state to the associated {@code ProfileButton}
- * component's props.
+ * Maps (parts of) the Redux state to the associated
+ * {@code OverflowMenuProfileItem} component's props.
  *
  * @param {Object} state - The Redux state.
  * @private
  * @returns {{
- *     _localParticipant: Object
+ *     _localParticipant: Object,
+ *     _unclickable: boolean
  * }}
  */
 function _mapStateToProps(state) {

@@ -10,7 +10,7 @@
 export const SET_SHARED_VIDEO_STATUS = Symbol('SET_SHARED_VIDEO_STATUS');
 
 /**
- * The type of the action which signalts to start the flow for starting or
+ * The type of the action which signals to start the flow for starting or
  * stopping a shared YouTube video.
  *
  * {

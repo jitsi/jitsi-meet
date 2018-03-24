@@ -1,5 +1,6 @@
 // @flow
 
+import PropTypes from 'prop-types';
 import { Component } from 'react';
 
 import {
@@ -16,6 +17,11 @@ import {
  * An abstract implementation of button for toggling video mute.
  */
 export default class AbstractVideoMuteButton extends Component<*> {
+    static propTypes = {
+        _videoMuted: PropTypes.bool,
+        dispatch: PropTypes.func
+    };
+
     /**
      * Initializes a new {@code AbstractVideoMuteButton} instance.
      *

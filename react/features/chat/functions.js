@@ -1,5 +1,5 @@
 /**
- * Selector for calculating how the number of unread messages.
+ * Selector for calculating the number of unread chat messages.
  *
  * @param {Object} state - The redux state.
  * @returns {number} The number of unread messages.

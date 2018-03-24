@@ -1,7 +1,6 @@
 // @flow
 
 import { appNavigate } from '../app';
-import { toggleAudioOnly } from '../base/conference';
 import { MEDIA_TYPE } from '../base/media';
 import { isLocalTrackMuted } from '../base/tracks';
 
@@ -39,17 +38,6 @@ export function abstractMapDispatchToProps(dispatch: Dispatch<*>): Object {
             // expression of (1) the lack of knowledge & (2) the desire to no
             // longer have a valid room name to join.
             dispatch(appNavigate(undefined));
-        },
-
-        /**
-         * Toggles the audio-only flag of the conference.
-         *
-         * @private
-         * @returns {void}
-         * @type {Function}
-         */
-        _onToggleAudioOnly() {
-            dispatch(toggleAudioOnly());
         }
     };
 }
@@ -63,13 +51,11 @@ export function abstractMapDispatchToProps(dispatch: Dispatch<*>): Object {
  * @protected
  * @returns {{
  *     _audioMuted: boolean,
- *     _audioOnly: boolean,
  *     _videoMuted: boolean,
  *     _visible: boolean
  * }}
  */
 export function abstractMapStateToProps(state: Object): Object {
-    const conference = state['features/base/conference'];
     const tracks = state['features/base/tracks'];
     const { visible } = state['features/toolbox'];
 
@@ -81,15 +67,6 @@ export function abstractMapStateToProps(state: Object): Object {
          * @type {boolean}
          */
         _audioMuted: isLocalTrackMuted(tracks, MEDIA_TYPE.AUDIO),
-
-        /**
-         * The indicator which determines whether the conference is in
-         * audio-only mode.
-         *
-         * @protected
-         * @type {boolean}
-         */
-        _audioOnly: Boolean(conference.audioOnly),
 
         /**
          * Flag showing whether video is muted.
