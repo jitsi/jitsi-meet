@@ -300,7 +300,8 @@ class ToolboxV2 extends Component<Props, State> {
             _visible,
             t
         } = this.props;
-        const rootClassNames = `new-toolbox ${_visible ? 'visible' : ''}`;
+        const rootClassNames = `new-toolbox ${_visible ? 'visible' : ''} ${
+            this._visibleButtons.size ? '' : 'no-buttons'}`;
         const overflowMenuContent = this._renderOverflowMenuContent();
         const overflowHasItems = Boolean(overflowMenuContent.filter(
             child => child).length);

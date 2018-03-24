@@ -280,6 +280,10 @@
         bottom: 0;
     }
 
+    &.no-buttons {
+        display: none;
+    }
+
     .button-group-center,
     .button-group-left,
     .button-group-right {
