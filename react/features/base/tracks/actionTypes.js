@@ -3,10 +3,10 @@
  * flow for enabling screenshare.
  *
  * {
- *     type: TOGGLE_SCREENSHARE
+ *     type: TOGGLE_SCREENSHARING
  * }
  */
-export const TOGGLE_SCREENSHARE = Symbol('TOGGLE_SCREENSHARE');
+export const TOGGLE_SCREENSHARING = Symbol('TOGGLE_SCREENSHARING');
 
 /**
  * The type of redux action dispatched when a track has been (locally or

@@ -358,7 +358,6 @@ export function dataChannelOpened() {
     };
 }
 
-
 /**
  * Signals that the lock state of a specific JitsiConference changed.
  *

@@ -8,6 +8,11 @@ import React, { Component } from 'react';
  * @extends Component
  */
 class OverflowMenuItem extends Component {
+    /**
+     * {@code OverflowMenuItem} component's property types.
+     *
+     * @static
+     */
     static propTypes = {
         /**
          * The icon class to use for displaying an icon before the link text.

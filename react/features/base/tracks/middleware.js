@@ -15,7 +15,7 @@ import { MiddlewareRegistry } from '../redux';
 
 import { createLocalTracksA } from './actions';
 import {
-    TOGGLE_SCREENSHARE,
+    TOGGLE_SCREENSHARING,
     TRACK_ADDED,
     TRACK_REMOVED,
     TRACK_UPDATED
@@ -34,7 +34,7 @@ declare var APP: Object;
  */
 MiddlewareRegistry.register(store => next => action => {
     switch (action.type) {
-    case TOGGLE_SCREENSHARE:
+    case TOGGLE_SCREENSHARING:
         if (typeof APP === 'object') {
             APP.UI.emitEvent(UIEvents.TOGGLE_SCREENSHARING);
         }

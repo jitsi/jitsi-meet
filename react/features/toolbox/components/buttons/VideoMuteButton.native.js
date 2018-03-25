@@ -17,10 +17,24 @@ import AbstractVideoMuteButton from './AbstractVideoMuteButton';
  * @extends AbstractVideoMuteButton
  */
 class VideoMuteButton extends AbstractVideoMuteButton {
+    /**
+     * {@code VideoMuteButton} component's property types.
+     *
+     * @static
+     */
     static propTypes = {
         ...AbstractVideoMuteButton.propTypes,
+
+        /**
+         * Whether or not the local participant is current in audio only mode.
+         * Video mute toggling is disabled in audio only mode.
+         */
         _audioOnly: PropTypes.bool,
-        styles: PropTypes.object
+
+        /**
+         * Styles to be applied to the button and the icon to show.
+         */
+        buttonStyles: PropTypes.object
     };
 
     /**
@@ -60,28 +74,8 @@ function _mapStateToProps(state) {
     const conference = state['features/base/conference'];
     const tracks = state['features/base/tracks'];
 
-    /**
-     * Flag showing whether audio is muted.
-     *
-     * @protected
-     * @type {boolean}
-     */
     return {
-        /**
-         * The indicator which determines whether the conference is in
-         * audio-only mode.
-         *
-         * @protected
-         * @type {boolean}
-         */
         _audioOnly: Boolean(conference.audioOnly),
-
-        /**
-         * Flag showing whether video is muted.
-         *
-         * @protected
-         * @type {boolean}
-         */
         _videoMuted: isLocalTrackMuted(tracks, MEDIA_TYPE.VIDEO)
     };
 }

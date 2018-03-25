@@ -10,13 +10,6 @@ import { openDeviceSelectionDialog } from '../../device-selection';
 import ToolbarButtonV2 from './ToolbarButtonV2';
 import { AudioMuteButton, HangupButton, VideoMuteButton } from './buttons';
 
-const validToolbarButtons = [
-    'microphone',
-    'camera',
-    'fodeviceselection',
-    'hangup'
-];
-
 declare var interfaceConfig: Object;
 
 /**
@@ -36,9 +29,7 @@ class ToolboxFilmstrip extends Component<*> {
     constructor(props) {
         super(props);
 
-        this._visibleButtons = new Set(
-            interfaceConfig.TOOLBAR_BUTTONS.filter(button =>
-                validToolbarButtons.includes(button)));
+        this._visibleButtons = new Set(interfaceConfig.TOOLBAR_BUTTONS);
 
         // Bind event handlers so they are only bound once per instance.
         this._onToolbarOpenSettings = this._onToolbarOpenSettings.bind(this);

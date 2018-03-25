@@ -39,20 +39,12 @@ export class VideoMuteButton extends AbstractVideoMuteButton {
      * @static
      */
     static propTypes = {
+        ...AbstractVideoMuteButton.propTypes,
+
         /**
          * The {@code JitsiConference} for the current conference.
          */
         _conference: PropTypes.object,
-
-        /**
-         * Whether or not the local participant is video muted.
-         */
-        _videoMuted: PropTypes.bool,
-
-        /**
-         * Invoked to update the audio mute status.
-         */
-        dispatch: PropTypes.func,
 
         /**
          * Invoked to obtain translated strings.
@@ -159,21 +151,8 @@ export class VideoMuteButton extends AbstractVideoMuteButton {
 function _mapStateToProps(state) {
     const tracks = state['features/base/tracks'];
 
-    /**
-     * Flag showing whether audio is muted.
-     *
-     * @protected
-     * @type {boolean}
-     */
     return {
         _conference: state['features/base/conference'].conference,
-
-        /**
-         * Flag showing whether video is muted.
-         *
-         * @protected
-         * @type {boolean}
-         */
         _videoMuted: isLocalTrackMuted(tracks, MEDIA_TYPE.VIDEO)
     };
 }

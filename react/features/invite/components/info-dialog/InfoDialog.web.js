@@ -24,6 +24,11 @@ const logger = require('jitsi-meet-logger').getLogger(__filename);
  * @extends Component
  */
 class InfoDialog extends Component {
+    /**
+     * Default values for {@code InfoDialog} component's properties.
+     *
+     * @static
+     */
     static defaultProps = {
         autoUpdateNumbers: true
     };

@@ -317,7 +317,7 @@ const Chat = {
         const markAsRead = Chat.isVisible() || isFromLocalParticipant;
 
         APP.store.dispatch(addMessage(
-            escDisplayName, timestamp, message, markAsRead));
+            escDisplayName, message, timestamp, markAsRead));
     },
 
     /**

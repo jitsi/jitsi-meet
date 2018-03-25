@@ -8,7 +8,7 @@ import {
 } from '../../../analytics';
 
 /**
- * An abstract implementation of button for leaving the conference.
+ * An abstract implementation of a button for leaving the conference.
  */
 export default class AbstractHangupButton extends Component<*> {
     /**
@@ -31,14 +31,14 @@ export default class AbstractHangupButton extends Component<*> {
      * @returns {void}
      */
     _doHangup() {
-        /** to be implemented by children */
+        /* to be implemented by descendants */
     }
 
     _onToolbarHangup: () => void;
 
     /**
-     * Creates an analytics toolbar event for and dispatches an action for
-     * leaving the current conference.
+     * Creates an analytics toolbar event and dispatches an action for leaving
+     * the current conference.
      *
      * @private
      * @returns {void}

@@ -41,10 +41,7 @@ export class AudioMuteButton extends AbstractAudioMuteButton {
      * @static
      */
     static propTypes = {
-        /**
-         * Whether or not the local participant is audio muted.
-         */
-        _audioMuted: PropTypes.bool,
+        ...AbstractAudioMuteButton.propTypes,
 
         /**
          * The {@code JitsiConference} for the current conference.
@@ -76,7 +73,7 @@ export class AudioMuteButton extends AbstractAudioMuteButton {
     constructor(props: Object) {
         super(props);
 
-        // Bind event handlers so they are only bound once per instance.
+        // Bind event handlers so it is only bound once per instance.
         this._onShortcutToggleAudio = this._onShortcutToggleAudio.bind(this);
     }
 
@@ -129,8 +126,8 @@ export class AudioMuteButton extends AbstractAudioMuteButton {
     _onShortcutToggleAudio: () => void;
 
     /**
-     * Creates an analytics keyboard shortcut event for and dispatches an action
-     * for toggling audio mute.
+     * Creates an analytics keyboard shortcut event and dispatches an action for
+     * toggling audio mute.
      *
      * @private
      * @returns {void}

@@ -120,7 +120,7 @@ MiddlewareRegistry.register(store => next => action => {
         const { id, local, raisedHand } = participant;
 
         // Send an external update of the local participant's raised hand state
-        // if a new raised hand state is defined the action.
+        // if a new raised hand state is defined in the action.
         if (typeof raisedHand !== 'undefined') {
             if (local) {
                 conference.setLocalParticipantProperty(

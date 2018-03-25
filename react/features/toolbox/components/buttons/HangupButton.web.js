@@ -70,8 +70,7 @@ export class HangupButton extends AbstractHangupButton {
     _onToolbarHangup: () => void;
 
     /**
-     * Creates an analytics toolbar event for and dispatches an action for
-     * leaving the current conference.
+     * Dispatches an action for leaving the current conference.
      *
      * @private
      * @returns {void}

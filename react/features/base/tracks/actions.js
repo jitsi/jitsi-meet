@@ -12,7 +12,7 @@ import {
 import { getLocalParticipant } from '../participants';
 
 import {
-    TOGGLE_SCREENSHARE,
+    TOGGLE_SCREENSHARING,
     TRACK_ADDED,
     TRACK_CREATE_CANCELED,
     TRACK_CREATE_ERROR,
@@ -178,12 +178,12 @@ export function destroyLocalTracks() {
  * screensharing flow.
  *
  * @returns {{
- *     type: TOGGLE_SCREENSHARE,
+ *     type: TOGGLE_SCREENSHARING,
  * }}
  */
-export function toggleScreenshare() {
+export function toggleScreensharing() {
     return {
-        type: TOGGLE_SCREENSHARE
+        type: TOGGLE_SCREENSHARING
     };
 }
 

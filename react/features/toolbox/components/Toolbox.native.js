@@ -47,6 +47,11 @@ const _SHARE_ROOM_TOOLBAR_BUTTON = true;
 type Props = {
 
     /**
+     * Flag showing that audio is muted.
+     */
+    _audioMuted: boolean,
+
+    /**
      * Flag showing whether the audio-only mode is in use.
      */
     _audioOnly: boolean,

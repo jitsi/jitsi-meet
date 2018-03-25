@@ -6,25 +6,25 @@ import { ADD_MESSAGE, SET_LAST_READ_MESSAGE } from './actionTypes';
  *
  * @param {string} userName - The username to display of the participant that
  * authored the message.
+ * @param {string} message - The received message to display.
  * @param {string} timestamp - A timestamp to display for when the message was
  * received.
- * @param {string} message - The received message to display.
  * @param {boolean} hasRead - Whether or not to immediately mark the message as
  * read.
  * @returns {{
  *     type: ADD_MESSAGE,
  *     hasRead: boolean,
- *     timestamp: string,
  *     message: string,
+ *     timestamp: string,
  *     userName: string
  * }}
  */
-export function addMessage(userName, timestamp, message, hasRead) {
+export function addMessage(userName, message, timestamp, hasRead) {
     return {
         type: ADD_MESSAGE,
         hasRead,
-        timestamp,
         message,
+        timestamp,
         userName
     };
 }

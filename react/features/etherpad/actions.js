@@ -5,7 +5,7 @@ import {
 } from './actionTypes';
 
 /**
- * Dispatches an action set whether document editing has started or stopped.
+ * Dispatches an action to set whether document editing has started or stopped.
  *
  * @param {boolean} editing - Whether or not a document is currently being
  * edited.

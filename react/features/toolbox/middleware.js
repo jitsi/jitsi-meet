@@ -127,7 +127,7 @@ function _setMediaAvailableOrMuted({ dispatch, getState }, next, action) {
 
 
 /**
- * Updates the UI not hooked into redux about changes to full screen.
+ * Updates the the redux state with the current known state of full screen.
  *
  * @param {Store} store - The redux store in which the specified action is being
  * dispatched.

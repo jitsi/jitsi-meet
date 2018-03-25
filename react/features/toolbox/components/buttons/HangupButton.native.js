@@ -18,6 +18,11 @@ import AbstractHangupButton from './AbstractHangupButton';
  * @extends Component
  */
 class HangupButton extends AbstractHangupButton {
+    /**
+     * {@code HangupButton} component's property types.
+     *
+     * @static
+     */
     static propTypes = {
         /**
          * Invoked to leave the conference.

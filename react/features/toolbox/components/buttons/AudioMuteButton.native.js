@@ -17,8 +17,17 @@ import AbstractAudioMuteButton from './AbstractAudioMuteButton';
  * @extends AbstractAudioMuteButton
  */
 export class AudioMuteButton extends AbstractAudioMuteButton {
+    /**
+     * {@code AbstractAudioMuteButton} component's property types.
+     *
+     * @static
+     */
     static propTypes = {
         ...AbstractAudioMuteButton.propTypes,
+
+        /**
+         * Styles to be applied to the button and the icon to show.
+         */
         buttonStyles: PropTypes.object
     };
 

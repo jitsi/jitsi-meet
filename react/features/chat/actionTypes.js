@@ -4,8 +4,8 @@
  * {
  *     type: ADD_MESSAGE,
  *     hasRead: boolean,
- *     timestamp: string,
  *     message: string,
+ *     timestamp: string,
  *     userName: string
  * }
  */

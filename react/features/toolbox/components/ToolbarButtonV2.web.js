@@ -5,15 +5,25 @@ import React from 'react';
 import AbstractToolbarButton from './AbstractToolbarButton';
 
 /**
- * Represents a button in {@link Toolbar}.
+ * Represents a button in the toolbar.
  *
  * @extends AbstractToolbarButton
  */
 class ToolbarButtonV2 extends AbstractToolbarButton {
+    /**
+     * Default values for {@code ToolbarButtonV2} component's properties.
+     *
+     * @static
+     */
     static defaultProps = {
         tooltipPosition: 'top'
     };
 
+    /**
+     * {@code ToolbarButtonV2} component's property types.
+     *
+     * @static
+     */
     static propTypes = {
         ...AbstractToolbarButton.propTypes,
 

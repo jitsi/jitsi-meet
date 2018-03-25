@@ -14,11 +14,23 @@ import {
 } from '../../../base/media';
 
 /**
- * An abstract implementation of button for toggling audio mute.
+ * An abstract implementation of a button for toggling audio mute.
  */
 export default class AbstractAudioMuteButton extends Component<*> {
+    /**
+     * {@code AbstractAudioMuteButton} component's property types.
+     *
+     * @static
+     */
     static propTypes = {
+        /**
+         * Whether or not the local microphone is muted.
+         */
         _audioMuted: PropTypes.bool,
+
+        /**
+         * Invoked to toggle audio mute.
+         */
         dispatch: PropTypes.func
     };
 
@@ -57,8 +69,8 @@ export default class AbstractAudioMuteButton extends Component<*> {
     _onToolbarToggleAudio: () => void;
 
     /**
-     * Creates an analytics toolbar event for and dispatches an action for
-     * toggling audio mute.
+     * Creates an analytics toolbar event and dispatches an action for toggling
+     * audio mute.
      *
      * @private
      * @returns {void}

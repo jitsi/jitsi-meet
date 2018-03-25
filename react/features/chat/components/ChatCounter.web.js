@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 import { getUnreadCount } from '../functions';
 
 /**
- * FIXME: Move this logic UI element to a generic one that can be used for
+ * FIXME: Move this UI logic to a generic component that can be used for
  * {@code ParticipantCounter} as well.
  */
 

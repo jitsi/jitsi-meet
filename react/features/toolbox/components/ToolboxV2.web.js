@@ -16,7 +16,7 @@ import {
     getLocalParticipant,
     participantUpdated
 } from '../../base/participants';
-import { getLocalVideoTrack, toggleScreenshare } from '../../base/tracks';
+import { getLocalVideoTrack, toggleScreensharing } from '../../base/tracks';
 import { ChatCounter } from '../../chat';
 import { openDeviceSelectionDialog } from '../../device-selection';
 import { toggleDocument } from '../../etherpad';
@@ -30,7 +30,6 @@ import { SpeakerStats } from '../../speaker-stats';
 import { VideoQualityDialog } from '../../video-quality';
 
 import { setFullScreen, setToolbarHovered } from '../actions';
-import { abstractMapDispatchToProps } from '../functions';
 
 import OverflowMenuButton from './OverflowMenuButton';
 import OverflowMenuItem from './OverflowMenuItem';
@@ -70,7 +69,7 @@ type Props = {
     /**
      * Whether or not a dialog is displayed.
      */
-    _dialog: Object,
+    _dialog: boolean,
 
     /**
      * Whether or not the local participant is currently editing a document.
@@ -134,6 +133,9 @@ type Props = {
      */
     _visible: boolean,
 
+    /**
+     * Invoked to active other features of the app.
+     */
     dispatch: Function,
 
     /**
@@ -143,6 +145,10 @@ type Props = {
 }
 
 type State = {
+
+    /**
+     * Whether or not the overflow menu is visible.
+     */
     showOverflowMenu: boolean
 }
 
@@ -275,7 +281,7 @@ class ToolboxV2 extends Component<Props, State> {
     }
 
     /**
-     * Removes all keyboardShortcuts.
+     * Removes keyboard shortcuts registered by this component.
      *
      * @inheritdoc
      * @returns {void}
@@ -498,7 +504,7 @@ class ToolboxV2 extends Component<Props, State> {
      */
     _doToggleScreenshare() {
         if (this.props._desktopSharingEnabled) {
-            this.props.dispatch(toggleScreenshare());
+            this.props.dispatch(toggleScreensharing());
         }
     }
 
@@ -526,20 +532,6 @@ class ToolboxV2 extends Component<Props, State> {
      */
     _doToggleSharedVideo() {
         this.props.dispatch(toggleSharedVideo());
-    }
-
-    _shouldShowButton: (string) => boolean;
-
-    /**
-     * Returns if a button name has been explicitly configured to be displayed.
-     *
-     * @param {string} buttonName - The name of the button, as expected in
-     * {@link intefaceConfig}.
-     * @private
-     * @returns {boolean} True if the button should be displayed.
-     */
-    _shouldShowButton(buttonName) {
-        return this._visibleButtons.has(buttonName);
     }
 
     _onMouseOut: () => void;
@@ -583,8 +575,8 @@ class ToolboxV2 extends Component<Props, State> {
     _onShortcutToggleChat: () => void;
 
     /**
-     * Creates an analytics keyboard shortcut event for and dispatches an action
-     * for toggling the display of chat.
+     * Creates an analytics keyboard shortcut event and dispatches an action for
+     * toggling the display of chat.
      *
      * @private
      * @returns {void}
@@ -602,8 +594,8 @@ class ToolboxV2 extends Component<Props, State> {
     _onShortcutToggleFullScreen: () => void;
 
     /**
-     * Creates an analytics keyboard shortcut event for and dispatches an action
-     * for toggling full screen mode.
+     * Creates an analytics keyboard shortcut event and dispatches an action for
+     * toggling full screen mode.
      *
      * @private
      * @returns {void}
@@ -621,8 +613,8 @@ class ToolboxV2 extends Component<Props, State> {
     _onShortcutToggleRaiseHand: () => void;
 
     /**
-     * Creates an analytics keyboard shortcut event for and dispatches an action
-     * for toggling raise hand.
+     * Creates an analytics keyboard shortcut event and dispatches an action for
+     * toggling raise hand.
      *
      * @private
      * @returns {void}
@@ -639,8 +631,8 @@ class ToolboxV2 extends Component<Props, State> {
     _onShortcutToggleScreenshare: () => void;
 
     /**
-     * Creates an analytics keyboard shortcut event for and dispatches an action
-     * for toggling screensharing.
+     * Creates an analytics keyboard shortcut event and dispatches an action for
+     * toggling screensharing.
      *
      * @private
      * @returns {void}
@@ -658,8 +650,8 @@ class ToolboxV2 extends Component<Props, State> {
     _onToolbarOpenFeedback: () => void;
 
     /**
-     * Creates an analytics toolbar event for and dispatches an action for
-     * toggling display of feedback.
+     * Creates an analytics toolbar event and dispatches an action for toggling
+     * display of feedback.
      *
      * @private
      * @returns {void}
@@ -673,8 +665,8 @@ class ToolboxV2 extends Component<Props, State> {
     _onToolbarOpenInvite: () => void;
 
     /**
-     * Creates an analytics toolbar event for and dispatches an action for
-     * opening the modal for inviting people directly into the conference.
+     * Creates an analytics toolbar event and dispatches an action for opening
+     * the modal for inviting people directly into the conference.
      *
      * @private
      * @returns {void}
@@ -688,8 +680,8 @@ class ToolboxV2 extends Component<Props, State> {
     _onToolbarOpenKeyboardShortcuts: () => void;
 
     /**
-     * Creates an analytics toolbar event for and dispatches an action for
-     * opening the modal for showing available keyboard shortcuts.
+     * Creates an analytics toolbar event and dispatches an action for opening
+     * the modal for showing available keyboard shortcuts.
      *
      * @private
      * @returns {void}
@@ -703,8 +695,8 @@ class ToolboxV2 extends Component<Props, State> {
     _onToolbarOpenSpeakerStats: () => void;
 
     /**
-     * Creates an analytics toolbar event for and dispatches an action for
-     * opening the speaker stats modal.
+     * Creates an analytics toolbar event and dispatches an action for opening
+     * the speaker stats modal.
      *
      * @private
      * @returns {void}
@@ -718,8 +710,8 @@ class ToolboxV2 extends Component<Props, State> {
     _onToolbarOpenVideoQuality: () => void;
 
     /**
-     * Creates an analytics toolbar event for and dispatches an action for
-     * toggling open the video quality dialog.
+     * Creates an analytics toolbar event and dispatches an action for toggling
+     * open the video quality dialog.
      *
      * @private
      * @returns {void}
@@ -733,8 +725,8 @@ class ToolboxV2 extends Component<Props, State> {
     _onToolbarToggleChat: () => void;
 
     /**
-     * Creates an analytics toolbar event for and dispatches an action for
-     * toggling the display of chat.
+     * Creates an analytics toolbar event and dispatches an action for toggling
+     * the display of chat.
      *
      * @private
      * @returns {void}
@@ -752,8 +744,8 @@ class ToolboxV2 extends Component<Props, State> {
     _onToolbarToggleEtherpad: () => void;
 
     /**
-     * Creates an analytics toolbar event for and dispatches an action for
-     * toggling the display of document editing.
+     * Creates an analytics toolbar event and dispatches an action for toggling
+     * the display of document editing.
      *
      * @private
      * @returns {void}
@@ -771,8 +763,8 @@ class ToolboxV2 extends Component<Props, State> {
     _onToolbarToggleFullScreen: () => void;
 
     /**
-     * Creates an analytics toolbar event for and dispatches an action for
-     * toggling full screen mode.
+     * Creates an analytics toolbar event and dispatches an action for toggling
+     * full screen mode.
      *
      * @private
      * @returns {void}
@@ -805,8 +797,8 @@ class ToolboxV2 extends Component<Props, State> {
     _onToolbarToggleProfile: () => void;
 
     /**
-     * Creates an analytics toolbar event for and dispatches an action for
-     * showing or hiding the profile edit panel.
+     * Creates an analytics toolbar event and dispatches an action for showing
+     * or hiding the profile edit panel.
      *
      * @private
      * @returns {void}
@@ -820,8 +812,8 @@ class ToolboxV2 extends Component<Props, State> {
     _onToolbarToggleRaiseHand: () => void;
 
     /**
-     * Creates an analytics toolbar event for and dispatches an action for
-     * toggling raise hand.
+     * Creates an analytics toolbar event and dispatches an action for toggling
+     * raise hand.
      *
      * @private
      * @returns {void}
@@ -852,8 +844,8 @@ class ToolboxV2 extends Component<Props, State> {
     _onToolbarToggleScreenshare: () => void;
 
     /**
-     * Creates an analytics toolbar event for and dispatches an action for
-     * toggling screensharing.
+     * Creates an analytics toolbar event and dispatches an action for toggling
+     * screensharing.
      *
      * @private
      * @returns {void}
@@ -870,8 +862,8 @@ class ToolboxV2 extends Component<Props, State> {
     _onToolbarToggleSettings: () => void;
 
     /**
-     * Creates an analytics toolbar event for and dispatches an action for
-     * toggling settings display.
+     * Creates an analytics toolbar event and dispatches an action for toggling
+     * settings display.
      *
      * @private
      * @returns {void}
@@ -885,8 +877,8 @@ class ToolboxV2 extends Component<Props, State> {
     _onToolbarToggleSharedVideo: () => void;
 
     /**
-     * Creates an analytics toolbar event for and dispatches an action for
-     * toggling YouTube video sharing.
+     * Creates an analytics toolbar event and dispatches an action for toggling
+     * the sharing of a YouTube video.
      *
      * @private
      * @returns {void}
@@ -1044,19 +1036,20 @@ class ToolboxV2 extends Component<Props, State> {
                 text = { t(translationKey) } />
         );
     }
-}
 
-/**
- * Maps redux actions to {@link Toolbox}'s React {@code Component} props.
- *
- * @param {Function} dispatch - The redux action {@code dispatch} function.
- * @private
- * @returns {Object}
- */
-function _mapDispatchToProps(dispatch) {
-    return {
-        ...abstractMapDispatchToProps(dispatch)
-    };
+    _shouldShowButton: (string) => boolean;
+
+    /**
+     * Returns if a button name has been explicitly configured to be displayed.
+     *
+     * @param {string} buttonName - The name of the button, as expected in
+     * {@link intefaceConfig}.
+     * @private
+     * @returns {boolean} True if the button should be displayed.
+     */
+    _shouldShowButton(buttonName) {
+        return this._visibleButtons.has(buttonName);
+    }
 }
 
 /**
@@ -1118,5 +1111,4 @@ function _mapStateToProps(state) {
     };
 }
 
-export default translate(connect(_mapStateToProps, _mapDispatchToProps)(
-    ToolboxV2));
+export default translate(connect(_mapStateToProps)(ToolboxV2));

@@ -234,39 +234,6 @@ const UIUtil = {
     },
 
     /**
-     * Exits full screen mode.
-     * @see https://developer.mozilla.org/en-US/docs/Web/API/Fullscreen_API
-     */
-    exitFullScreen() {
-        if (document.exitFullscreen) {
-            document.exitFullscreen();
-        } else if (document.msExitFullscreen) {
-            document.msExitFullscreen();
-        } else if (document.mozCancelFullScreen) {
-            document.mozCancelFullScreen();
-        } else if (document.webkitExitFullscreen) {
-            document.webkitExitFullscreen();
-        }
-    },
-
-    /**
-     * Enter full screen mode.
-     * @see https://developer.mozilla.org/en-US/docs/Web/API/Fullscreen_API
-     */
-    enterFullScreen() {
-        if (document.documentElement.requestFullscreen) {
-            document.documentElement.requestFullscreen();
-        } else if (document.documentElement.msRequestFullscreen) {
-            document.documentElement.msRequestFullscreen();
-        } else if (document.documentElement.mozRequestFullScreen) {
-            document.documentElement.mozRequestFullScreen();
-        } else if (document.documentElement.webkitRequestFullscreen) {
-            document.documentElement
-                .webkitRequestFullscreen(Element.ALLOW_KEYBOARD_INPUT);
-        }
-    },
-
-    /**
       * Create html attributes string out of object properties.
       * @param {Object} attrs object with properties
       * @returns {String} string of html element attributes

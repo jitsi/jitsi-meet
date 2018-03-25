@@ -14,11 +14,23 @@ import {
 } from '../../../base/media';
 
 /**
- * An abstract implementation of button for toggling video mute.
+ * An abstract implementation of a button for toggling video mute.
  */
 export default class AbstractVideoMuteButton extends Component<*> {
+    /**
+     * {@code AbstractVideoMuteButton} component's property types.
+     *
+     * @static
+     */
     static propTypes = {
+        /**
+         * Whether or not the local camera is muted.
+         */
         _videoMuted: PropTypes.bool,
+
+        /**
+         * Invoked to toggle video mute.
+         */
         dispatch: PropTypes.func
     };
 
@@ -58,8 +70,8 @@ export default class AbstractVideoMuteButton extends Component<*> {
     _onToolbarToggleVideo: () => void;
 
     /**
-     * Creates an analytics toolbar event for and dispatches an action for
-     * toggling video mute.
+     * Creates an analytics toolbar event and dispatches an action for toggling
+     * video mute.
      *
      * @private
      * @returns {void}
