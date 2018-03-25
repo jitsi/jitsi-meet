@@ -11,6 +11,10 @@ import {
     createToolbarEvent,
     sendAnalytics
 } from '../analytics';
+import {
+    getLocalParticipant,
+    participantUpdated
+} from '../base/participants';
 import { ParticipantCounter } from '../contact-list';
 import { openDeviceSelectionDialog } from '../device-selection';
 import { InfoDialogButton } from '../invite';
@@ -399,27 +403,44 @@ export default function getDefaultButtons() {
             id: 'toolbar_button_raisehand',
             onClick() {
                 // TODO: reduce duplication with shortcutFunc below.
+                const localParticipant
+                    = getLocalParticipant(APP.store.getState());
+                const currentRaisedHand = localParticipant.raisedHand;
 
                 // The 'enable' attribute is set to true if the pressing of the
                 // shortcut resulted in the hand being raised, and to false
                 // if it resulted in the hand being 'lowered'.
                 sendAnalytics(createToolbarEvent(
                     'raise.hand',
-                    { enable: !APP.conference.isHandRaised }));
-                APP.conference.maybeToggleRaisedHand();
+                    { enable: !currentRaisedHand }));
+
+                APP.store.dispatch(participantUpdated({
+                    id: localParticipant.id,
+                    local: true,
+                    raisedHand: !currentRaisedHand
+                }));
             },
             shortcut: 'R',
             shortcutAttr: 'raiseHandPopover',
             shortcutDescription: 'keyboardShortcuts.raiseHand',
             shortcutFunc() {
+                const localParticipant
+                    = getLocalParticipant(APP.store.getState());
+                const currentRaisedHand = localParticipant.raisedHand;
+
                 // The 'enable' attribute is set to true if the pressing of the
                 // shortcut resulted in the hand being raised, and to false
                 // if it resulted in the hand being 'lowered'.
                 sendAnalytics(createShortcutEvent(
                     'toggle.raise.hand',
                     TRIGGERED,
-                    { enable: !APP.conference.isHandRaised }));
-                APP.conference.maybeToggleRaisedHand();
+                    { enable: !currentRaisedHand }));
+
+                APP.store.dispatch(participantUpdated({
+                    id: localParticipant.id,
+                    local: true,
+                    raisedHand: !currentRaisedHand
+                }));
             },
             tooltipKey: 'toolbar.raiseHand'
         },

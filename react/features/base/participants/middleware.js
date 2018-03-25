@@ -85,6 +85,10 @@ MiddlewareRegistry.register(store => next => action => {
             }));
         }
 
+        if (typeof APP === 'object') {
+            APP.UI.markDominantSpeaker(action.participant.id);
+        }
+
         break;
     }
 
