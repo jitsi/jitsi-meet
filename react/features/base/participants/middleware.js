@@ -129,7 +129,6 @@ MiddlewareRegistry.register(store => next => action => {
 
 
             if (typeof APP === 'object' && local) {
-                APP.conference.isHandRaised = raisedHand;
                 APP.UI.onLocalRaiseHandChanged(raisedHand);
                 APP.UI.setLocalRaisedHandStatus(raisedHand);
             } else if (typeof APP === 'object') {
