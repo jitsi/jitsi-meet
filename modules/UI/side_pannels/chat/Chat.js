@@ -1,4 +1,4 @@
-/* global APP, $ */
+/* global APP, $, interfaceConfig */
 
 import { processReplacements, linkify } from './Replacement';
 import CommandsProcessor from './Commands';
@@ -10,7 +10,11 @@ import UIEvents from '../../../../service/UI/UIEvents';
 import { smileys } from './smileys';
 
 import { addMessage, markAllRead } from '../../../../react/features/chat';
-import { dockToolbox, setSubject } from '../../../../react/features/toolbox';
+import {
+    dockToolbox,
+    getToolboxHeight,
+    setSubject
+} from '../../../../react/features/toolbox';
 
 let unreadMessages = 0;
 const sidePanelsContainerId = 'sideToolbarContainer';
@@ -164,6 +168,8 @@ function addSmileys() {
  * Resizes the chat conversation.
  */
 function resizeChatConversation() {
+    // FIXME: this function can all be done with CSS. If Chat is ever rewritten,
+    // do not copy over this logic.
     const msgareaHeight = $('#usermsg').outerHeight();
     const chatspace = $(`#${CHAT_CONTAINER_ID}`);
     const width = chatspace.width();
@@ -174,7 +180,16 @@ function resizeChatConversation() {
     $('#smileys').css('bottom', (msgareaHeight - 26) / 2);
     $('#smileysContainer').css('bottom', msgareaHeight);
     chat.width(width - 10);
-    chat.height(window.innerHeight - 15 - msgareaHeight);
+
+    if (interfaceConfig._USE_NEW_TOOLBOX) {
+        const maybeAMagicNumberForPaddingAndMargin = 100;
+        const offset = maybeAMagicNumberForPaddingAndMargin
+            + msgareaHeight + getToolboxHeight();
+
+        chat.height(window.innerHeight - offset);
+    } else {
+        chat.height(window.innerHeight - 15 - msgareaHeight);
+    }
 }
 
 /**
