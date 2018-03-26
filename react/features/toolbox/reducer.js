@@ -4,6 +4,7 @@ import { ReducerRegistry } from '../base/redux';
 
 import {
     CLEAR_TOOLBOX_TIMEOUT,
+    FULL_SCREEN_CHANGED,
     SET_DEFAULT_TOOLBOX_BUTTONS,
     SET_SUBJECT,
     SET_SUBJECT_SLIDE_IN,
@@ -130,6 +131,12 @@ ReducerRegistry.register(
             return {
                 ...state,
                 timeoutID: undefined
+            };
+
+        case FULL_SCREEN_CHANGED:
+            return {
+                ...state,
+                fullScreen: action.fullScreen
             };
 
         case SET_DEFAULT_TOOLBOX_BUTTONS: {

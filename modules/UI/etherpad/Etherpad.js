@@ -1,4 +1,7 @@
-/* global $, interfaceConfig */
+/* global $, APP, interfaceConfig */
+
+import { setDocumentEditingState } from '../../../react/features/etherpad';
+import { getToolboxHeight } from '../../../react/features/toolbox';
 
 import VideoLayout from '../videolayout/VideoLayout';
 import LargeContainer from '../videolayout/LargeContainer';
@@ -126,7 +129,8 @@ class Etherpad extends LargeContainer {
         let height, width;
 
         if (interfaceConfig.VERTICAL_FILMSTRIP) {
-            height = containerHeight;
+            height = interfaceConfig._USE_NEW_TOOLBOX
+                ? containerHeight - getToolboxHeight() : containerHeight;
             width = containerWidth - Filmstrip.getFilmstripWidth();
         } else {
             height = containerHeight - Filmstrip.getFilmstripHeight();
@@ -242,5 +246,7 @@ export default class EtherpadManager {
 
         this.eventEmitter
             .emit(UIEvents.TOGGLED_SHARED_DOCUMENT, !isVisible);
+
+        APP.store.dispatch(setDocumentEditingState(!isVisible));
     }
 }

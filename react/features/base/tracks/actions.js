@@ -12,6 +12,7 @@ import {
 import { getLocalParticipant } from '../participants';
 
 import {
+    TOGGLE_SCREENSHARING,
     TRACK_ADDED,
     TRACK_CREATE_CANCELED,
     TRACK_CREATE_ERROR,
@@ -169,6 +170,20 @@ export function destroyLocalTracks() {
                         getState()['features/base/tracks']
                             .filter(t => t.local)
                             .map(t => t.jitsiTrack))));
+    };
+}
+
+/**
+ * Signals that the local participant is ending screensharing or beginning the
+ * screensharing flow.
+ *
+ * @returns {{
+ *     type: TOGGLE_SCREENSHARING,
+ * }}
+ */
+export function toggleScreensharing() {
+    return {
+        type: TOGGLE_SCREENSHARING
     };
 }
 

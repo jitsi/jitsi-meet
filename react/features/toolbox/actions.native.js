@@ -229,9 +229,10 @@ export function toggleFullScreen(isFullScreen: boolean): Function {
         const buttonName = 'fullscreen';
         const button = getButton(buttonName, getState());
 
-        button.toggled = isFullScreen;
-
-        dispatch(setToolbarButton(buttonName, button));
+        if (button) {
+            button.toggled = isFullScreen;
+            dispatch(setToolbarButton(buttonName, button));
+        }
     };
 }
 

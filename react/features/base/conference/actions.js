@@ -31,6 +31,7 @@ import {
     LOCK_STATE_CHANGED,
     P2P_STATUS_CHANGED,
     SET_AUDIO_ONLY,
+    SET_DESKTOP_SHARING_ENABLED,
     SET_FOLLOW_ME,
     SET_LASTN,
     SET_PASSWORD,
@@ -430,6 +431,22 @@ export function setAudioOnly(audioOnly: boolean) {
     return {
         type: SET_AUDIO_ONLY,
         audioOnly
+    };
+}
+
+/**
+ * Sets the flag for indicating if desktop sharing is enabled.
+ *
+ * @param {boolean} desktopSharingEnabled - True if desktop sharing is enabled.
+ * @returns {{
+ *     type: SET_DESKTOP_SHARING_ENABLED,
+ *     desktopSharingEnabled: boolean
+ * }}
+ */
+export function setDesktopSharingEnabled(desktopSharingEnabled: boolean) {
+    return {
+        type: SET_DESKTOP_SHARING_ENABLED,
+        desktopSharingEnabled
     };
 }
 

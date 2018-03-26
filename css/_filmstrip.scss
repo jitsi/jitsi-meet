@@ -5,6 +5,20 @@
     justify-content: flex-start;
 }
 
+.use-new-toolbox {
+    .filmstrip.reduce-height {
+        bottom: $newToolbarSize;
+    }
+
+    .filmstrip {
+        transition: bottom .3s;
+    }
+
+    .filmstrip__videos.hidden {
+        bottom: calc(-196px - #{$newToolbarSize});
+    }
+}
+
 .filmstrip {
     position: absolute;
     bottom: 0;

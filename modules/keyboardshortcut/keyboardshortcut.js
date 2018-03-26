@@ -91,6 +91,17 @@ const KeyboardShortcut = {
     },
 
     /**
+     * Opens the {@KeyboardShortcutsDialog} dialog.
+     *
+     * @returns {void}
+     */
+    openDialog() {
+        APP.store.dispatch(toggleDialog(KeyboardShortcutsDialog, {
+            shortcutDescriptions: _shortcutsHelp
+        }));
+    },
+
+    /**
      * Registers a new shortcut.
      *
      * @param shortcutChar the shortcut character triggering the action
@@ -177,9 +188,7 @@ const KeyboardShortcut = {
     _initGlobalShortcuts() {
         this.registerShortcut('?', null, () => {
             sendAnalytics(createShortcutEvent('help'));
-            APP.store.dispatch(toggleDialog(KeyboardShortcutsDialog, {
-                shortcutDescriptions: _shortcutsHelp
-            }));
+            this.openDialog();
         }, 'keyboardShortcuts.toggleShortcuts');
 
         // register SPACE shortcut in two steps to insure visibility of help

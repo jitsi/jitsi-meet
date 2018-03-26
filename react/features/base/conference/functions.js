@@ -41,6 +41,41 @@ export function _addLocalTracksToConference(
 }
 
 /**
+ * Sends a request to the environment to either enter or exit full screen mode.
+ *
+ * @param {boolean} fullScreen - True to enter full screen mode, false to exit.
+ * @returns {void}
+ */
+export function changeFullScreenMode(fullScreen: boolean) {
+    if (fullScreen) {
+        const documentElement = document.documentElement || {};
+
+        if (typeof documentElement.requestFullscreen === 'function') {
+            documentElement.requestFullscreen();
+        } else if (typeof documentElement.msRequestFullscreen === 'function') {
+            documentElement.msRequestFullscreen();
+        } else if (typeof documentElement.mozRequestFullScreen === 'function') {
+            documentElement.mozRequestFullScreen();
+        } else if (typeof documentElement.webkitRequestFullscreen
+            === 'function') {
+            documentElement.webkitRequestFullscreen();
+        }
+
+        return;
+    }
+
+    if (typeof document.exitFullscreen === 'function') {
+        document.exitFullscreen();
+    } else if (typeof document.msExitFullscreen === 'function') {
+        document.msExitFullscreen();
+    } else if (typeof document.mozCancelFullScreen === 'function') {
+        document.mozCancelFullScreen();
+    } else if (typeof document.webkitExitFullscreen === 'function') {
+        document.webkitExitFullscreen();
+    }
+}
+
+/**
  * Returns the current {@code JitsiConference} which is joining or joined and is
  * not leaving. Please note the contrast with merely reading the
  * {@code conference} state of the feature base/conference which is not joining

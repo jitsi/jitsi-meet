@@ -261,6 +261,217 @@
     }
 }
 
+/**
+ * TODO: when the old filmstrip has been removed, remove the "new-" prefix.
+ */
+.new-toolbox {
+    background-color: rgba(40, 52, 71, 0.5);
+    bottom: calc((#{$newToolbarSize} * 2) * -1);
+    box-sizing: border-box;
+    display: flex;
+    justify-content: space-between;
+    padding: 5px 20px;
+    position: absolute;
+    transition: bottom .3s ease-in;
+    width: 100%;
+    z-index: $toolbarZ;
+
+    &.visible {
+        bottom: 0;
+    }
+
+    &.no-buttons {
+        display: none;
+    }
+
+    .button-group-center,
+    .button-group-left,
+    .button-group-right {
+        display: flex;
+        width: 33%;
+    }
+
+    .button-group-center {
+        justify-content: center;
+    }
+
+    .button-group-right {
+        justify-content: flex-end;
+    }
+
+    /**
+     * Overwrite font-awesome styling to match jitsi-icon styling.
+     */
+    .fa {
+        font-size: 1.22em;
+    }
+
+    i {
+        border-radius: 5px;
+        cursor: pointer;
+        display: block;
+        height: 100%;
+        line-height: inherit;
+        width: 100%;
+    }
+
+    i:hover {
+        background-color: rgba(40, 52, 71, 0.7);
+    }
+
+    i.toggled {
+        background: rgba(40, 52, 71, 1);
+    }
+
+    i.toggled:hover {
+        background-color: rgba(40, 52, 71, 1);
+    }
+
+    i.disabled {
+        cursor: initial
+    }
+
+    i.disabled:hover {
+        background-color: initial;
+    }
+
+    .icon-hangup {
+        color: $hangupColor;
+    }
+
+    .overflow-menu {
+        font-size: 1.2em;
+        list-style-type: none;
+        /**
+         * Undo atlaskit padding by reducing margins.
+         */
+        margin: -15px -24px;
+        padding: 0;
+
+        .overflow-menu-item {
+            align-items: center;
+            cursor: pointer;
+            display: flex;
+            padding: 5px 10px;
+
+            &:hover {
+                background: rgba(0255, 255, 255, 0.2);
+            }
+
+            &.unclickable {
+                cursor: default;
+            }
+            &.unclickable:hover {
+                background: inherit;
+            }
+        }
+
+        .overflow-menu-item-icon {
+            margin-right: 10px;
+
+            i {
+                display: inline;
+            }
+
+            i:hover {
+                background-color: initial;
+            }
+
+            img {
+                max-width: 18px;
+                max-height: 18px;
+            }
+        }
+
+        .profile-text {
+            max-width: 150px;
+            text-overflow: ellipsis;
+            overflow: hidden;
+            white-space: nowrap;
+        }
+    }
+
+    .toolbox-button {
+        color: $toolbarButtonColor;
+        cursor: pointer;
+        display: inline-block;
+        font-size: $newToolbarFontSize;
+        line-height: $newToolbarSize;
+        margin: 0 10px;
+        text-align: center;
+    }
+
+    .toolbar-button-with-badge {
+        position: relative;
+
+        .badge-round {
+            bottom: 9px;
+            position: absolute;
+            right: 9px;
+        }
+    }
+
+    .toolbox-button-wth-dialog {
+        display: inline-block;
+    }
+
+    .toolbox-icon {
+        height: $newToolbarSize;
+        width: $newToolbarSize;
+    }
+}
+
+.filmstrip-toolbox {
+    background-color: rgba(40, 52, 71, 0.5);
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    z-index: $toolbarZ;
+
+    i {
+        cursor: pointer;
+        display: block;
+        font-size: $newToolbarFontSize;
+        height: 37px;
+        line-height: 37px;
+        width: 37px;
+    }
+
+    i:hover {
+        background-color: rgba(40, 52, 71, 0.7);
+    }
+
+    i.toggled {
+        background: rgba(40, 52, 71, 1);
+    }
+
+    i.toggled:hover {
+        background-color: rgba(40, 52, 71, 1);
+    }
+
+    .icon-hangup {
+        color: $hangupColor;
+    }
+
+    .toolbox-button {
+        color: $toolbarButtonColor;
+        cursor: pointer;
+        text-align: center;
+    }
+
+    border-radius: 3px;
+
+    .toolbox-button:first-child i {
+        border-top-left-radius: 3px;
+        border-top-right-radius: 3px;
+    }
+
+    .toolbox-button:last-child i {
+        border-bottom-left-radius: 3px;
+        border-bottom-right-radius: 3px;
+    }
+}
+
 .filmstrip-only {
     .toolbox,
     .toolbox-toolbars {

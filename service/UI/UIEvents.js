@@ -66,7 +66,7 @@ export default {
      * @see {TOGGLE_FILMSTRIP}
      */
     TOGGLED_FILMSTRIP: 'UI.toggled_filmstrip',
-
+    TOGGLE_RECORDING: 'UI.toggle_recording',
     TOGGLE_SCREENSHARING: 'UI.toggle_screensharing',
     TOGGLED_SHARED_DOCUMENT: 'UI.toggled_shared_document',
     CONTACT_CLICKED: 'UI.contact_clicked',

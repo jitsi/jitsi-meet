@@ -1,6 +1,37 @@
 /**
  * Toolbar side panel main container element.
  */
+.use-new-toolbox #sideToolbarContainer {
+    background-color: rgba(40, 52, 71, 0.5);
+
+    /**
+     * Make the sidebar flush with the top of the toolbar. Take the size of
+     * the toolbar, plus its padding, and subtract from 100%.
+     */
+    height: calc(100% - #{$newToolbarSize} - 10px);
+    left: 0;
+
+    .side-toolbar-close {
+        background: gray;
+        border: 3px solid rgba(255, 255, 255, 0.1);
+        border-radius: 100%;
+        color: white;
+        cursor:pointer;
+        height: 10px;
+        line-height: 10px;
+        padding: 4px;
+        position: absolute;
+        right: 5px;
+        text-align: center;
+        top: 5px;
+        width: 10px;
+        z-index: 1;
+    }
+
+    #chatconversation {
+        top: 15px;
+    }
+}
 #sideToolbarContainer {
     background-color: $sideToolbarContainerBg;
     height: 100%;
