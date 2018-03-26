@@ -962,7 +962,9 @@ class ToolboxV2 extends Component<Props, State> {
                         : t('toolbar.documentOpen') } />,
             this._shouldShowButton('fullscreen')
                 && <OverflowMenuItem
-                    icon = 'icon-full-screen'
+                    icon = { _fullScreen
+                        ? 'icon-exit-full-screen'
+                        : 'icon-full-screen' }
                     key = 'fullscreen'
                     onClick = { this._onToolbarToggleFullScreen }
                     text = { _fullScreen

@@ -44,7 +44,10 @@ var interfaceConfig = {
         'microphone', 'camera', 'desktop', 'fullscreen', 'fodeviceselection', 'hangup',
 
         // extended toolbar
-        'profile', 'contacts', 'info', 'chat', 'recording', 'etherpad', 'sharedvideo', 'settings', 'raisehand', 'videoquality', 'filmstrip' ],
+        'profile', 'contacts', 'info', 'chat', 'recording', 'etherpad',
+        'sharedvideo', 'settings', 'raisehand', 'videoquality', 'filmstrip',
+        'invite', 'feedback', 'stats', 'shortcuts'
+    ],
 
     /**
      * Main Toolbar Buttons
