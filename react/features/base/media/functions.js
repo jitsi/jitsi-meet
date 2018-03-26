@@ -5,6 +5,16 @@ import { toState } from '../redux';
 import { VIDEO_MUTISM_AUTHORITY } from './constants';
 
 /**
+ * Returns the video track type, such as video or desktop.
+ *
+ * @param {Track} videoTrack - The video track.
+ * @returns {string}
+ */
+export function getVideoTrackType(videoTrack: { videoType: string }) {
+    return videoTrack ? videoTrack.videoType : undefined;
+}
+
+/**
  * Determines whether video is currently muted by the audio-only authority.
  *
  * @param {Function|Object} stateful - The redux store, state, or
