@@ -7,7 +7,7 @@ import { connect } from 'react-redux';
 
 import { getLocalParticipant, PARTICIPANT_ROLE } from '../../base/participants';
 import { InviteButton } from '../../invite';
-import { Toolbox, ToolboxFilmstrip } from '../../toolbox';
+import { Toolbox, ToolboxFilmstrip, dockToolbox } from '../../toolbox';
 
 import { setFilmstripHovered } from '../actions';
 import { shouldRemoteVideosBeVisible } from '../functions';
@@ -185,6 +185,9 @@ class Filmstrip extends Component<*> {
      */
     _notifyOfHoveredStateUpdate() {
         if (this.props._hovered !== this._isHovered) {
+            if (interfaceConfig._USE_NEW_TOOLBOX) {
+                this.props.dispatch(dockToolbox(this._isHovered));
+            }
             this.props.dispatch(setFilmstripHovered(this._isHovered));
         }
     }
