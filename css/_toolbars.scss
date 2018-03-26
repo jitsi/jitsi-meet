@@ -264,8 +264,6 @@
 /**
  * TODO: when the old filmstrip has been removed, remove the "new-" prefix.
  */
-$newToolbarSize: 50px;
-$newToolbarFontSize: 1.9em;
 .new-toolbox {
     background-color: rgba(40, 52, 71, 0.5);
     bottom: calc((#{$newToolbarSize} * 2) * -1);
