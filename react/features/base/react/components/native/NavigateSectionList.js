@@ -10,12 +10,21 @@ import {
 
 import styles, { UNDERLAY_COLOR } from './styles';
 
+import { translate } from '../../../i18n';
+
+import { Icon } from '../../../font-icons';
+
 type Props = {
 
     /**
      * Indicates if the list is disabled or not.
      */
     disabled: boolean,
+
+    /**
+     * The translate function.
+     */
+    t: Function,
 
     /**
      * Function to be invoked when an item is pressed. The item's URL is passed.
@@ -26,6 +35,11 @@ type Props = {
      * Function to be invoked when pull-to-refresh is performed.
      */
     onRefresh: Function,
+
+    /**
+     * Function to override the rendered default empty list component.
+     */
+    renderListEmptyComponent: Function,
 
     /**
      * Sections to be rendered in the following format:
@@ -53,7 +67,7 @@ type Props = {
  * property and navigates to (probably) meetings, such as the recent list
  * or the meeting list components.
  */
-export default class NavigateSectionList extends Component<Props> {
+class NavigateSectionList extends Component<Props> {
     /**
      * Constructor of the NavigateSectionList component.
      *
@@ -69,6 +83,8 @@ export default class NavigateSectionList extends Component<Props> {
         this._renderItem = this._renderItem.bind(this);
         this._renderItemLine = this._renderItemLine.bind(this);
         this._renderItemLines = this._renderItemLines.bind(this);
+        this._renderListEmptyComponent
+            = this._renderListEmptyComponent.bind(this);
         this._renderSection = this._renderSection.bind(this);
     }
 
@@ -80,12 +96,16 @@ export default class NavigateSectionList extends Component<Props> {
      * @inheritdoc
      */
     render() {
-        const { sections } = this.props;
+        const { renderListEmptyComponent, sections } = this.props;
 
         return (
             <SafeAreaView
                 style = { styles.container } >
                 <SectionList
+                    ListEmptyComponent = {
+                        renderListEmptyComponent
+                        || this._renderListEmptyComponent
+                    }
                     keyExtractor = { this._getItemKey }
                     onRefresh = { this._onRefresh }
                     refreshing = { false }
@@ -274,6 +294,34 @@ export default class NavigateSectionList extends Component<Props> {
         return null;
     }
 
+    _renderListEmptyComponent: () => Object
+
+    /**
+     * Renders a component to display when the list is empty.
+     *
+     * @private
+     * @param {Object} section - The section being rendered.
+     * @returns {React$Node}
+     */
+    _renderListEmptyComponent() {
+        const { t, onRefresh } = this.props;
+
+        if (typeof onRefresh === 'function') {
+            return (
+                <View style = { styles.pullToRefresh }>
+                    <Text style = { styles.pullToRefreshText }>
+                        { t('sectionList.pullToRefresh') }
+                    </Text>
+                    <Icon
+                        name = 'menu-down'
+                        style = { styles.pullToRefreshIcon } />
+                </View>
+            );
+        }
+
+        return null;
+    }
+
     _renderSection: Object => Object
 
     /**
@@ -293,3 +341,5 @@ export default class NavigateSectionList extends Component<Props> {
         );
     }
 }
+
+export default translate(NavigateSectionList);

@@ -3,13 +3,19 @@
 import { ReducerRegistry } from '../base/redux';
 import { PersistenceRegistry } from '../base/storage';
 
-import { NEW_CALENDAR_ENTRY_LIST, NEW_KNOWN_DOMAIN } from './actionTypes';
+import {
+    CALENDAR_ACCESS_REQUESTED,
+    NEW_CALENDAR_ENTRY_LIST,
+    NEW_KNOWN_DOMAIN
+} from './actionTypes';
 
-/**
- * ZB: this is an object, as further data is to come here, like:
- * - known domain list
- */
 const DEFAULT_STATE = {
+    /**
+     * Note: If features/calendar-sync ever gets persisted, do not persist the
+     * calendarAccessStatus value as it's needed to remain a runtime value to
+     * see if we need to re-request the calendar permission from the user.
+     */
+    calendarAccessStatus: undefined,
     events: [],
     knownDomains: []
 };
@@ -26,6 +32,12 @@ ReducerRegistry.register(
     STORE_NAME,
     (state = DEFAULT_STATE, action) => {
         switch (action.type) {
+        case CALENDAR_ACCESS_REQUESTED:
+            return {
+                ...state,
+                calendarAccessStatus: action.status
+            };
+
         case NEW_CALENDAR_ENTRY_LIST:
             return {
                 ...state,

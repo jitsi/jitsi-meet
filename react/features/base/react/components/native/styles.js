@@ -180,6 +180,25 @@ const SECTION_LIST_STYLES = {
         fontWeight: 'normal'
     },
 
+    pullToRefresh: {
+        alignItems: 'center',
+        flex: 1,
+        flexDirection: 'column',
+        justifyContent: 'center',
+        padding: 20
+    },
+
+    pullToRefreshIcon: {
+        backgroundColor: 'transparent',
+        color: OVERLAY_FONT_COLOR,
+        fontSize: 20
+    },
+
+    pullToRefreshText: {
+        backgroundColor: 'transparent',
+        color: OVERLAY_FONT_COLOR
+    },
+
     touchableView: {
         flexDirection: 'row'
     }

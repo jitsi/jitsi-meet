@@ -1,4 +1,4 @@
-import { createStyleSheet } from '../../base/styles';
+import { ColorPalette, createStyleSheet } from '../../base/styles';
 
 const NOTIFICATION_SIZE = 55;
 
@@ -7,6 +7,46 @@ const NOTIFICATION_SIZE = 55;
  * {@code MeetingList}.
  */
 export default createStyleSheet({
+
+    /**
+     * Button style of the open settings button.
+     */
+    noPermissionMessageButton: {
+        backgroundColor: ColorPalette.blue,
+        borderColor: ColorPalette.blue,
+        borderRadius: 4,
+        borderWidth: 1,
+        height: 30,
+        justifyContent: 'center',
+        margin: 15,
+        paddingHorizontal: 20
+    },
+
+    /**
+     * Text style of the open settings button.
+     */
+    noPermissionMessageButtonText: {
+        color: ColorPalette.white
+    },
+
+    /**
+     * Text style of the no permission message.
+     */
+    noPermissionMessageText: {
+        backgroundColor: 'transparent',
+        color: 'rgba(255, 255, 255, 0.6)'
+    },
+
+    /**
+     * Top level view of the no permission message.
+     */
+    noPermissionMessageView: {
+        alignItems: 'center',
+        flex: 1,
+        flexDirection: 'column',
+        justifyContent: 'center',
+        padding: 20
+    },
 
     /**
      * The top level container of the notification.

@@ -1,9 +1,10 @@
 /* @flow */
 
-import { Alert, Linking, NativeModules } from 'react-native';
+import { Alert } from 'react-native';
+
+import { openSettings } from './functions';
 
 import { isRoomValid } from '../../base/conference';
-import { Platform } from '../../base/react';
 import { MiddlewareRegistry } from '../../base/redux';
 import { TRACK_CREATE_ERROR } from '../../base/tracks';
 
@@ -64,35 +65,9 @@ function _alertPermissionErrorWithSettings(trackType) {
         [
             { text: 'Cancel' },
             {
-                onPress: _openSettings,
+                onPress: openSettings,
                 text: 'Settings'
             }
         ],
         { cancelable: false });
-}
-
-/**
- * Opens the settings panel for the current platform.
- *
- * @private
- * @returns {void}
- */
-function _openSettings() {
-    switch (Platform.OS) {
-    case 'android':
-        NativeModules.AndroidSettings.open().catch(() => {
-            Alert.alert(
-                'Error opening settings',
-                'Please open settings and grant the required permissions',
-                [
-                    { text: 'OK' }
-                ]
-            );
-        });
-        break;
-
-    case 'ios':
-        Linking.openURL('app-settings:');
-        break;
-    }
 }

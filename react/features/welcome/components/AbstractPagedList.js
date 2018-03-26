@@ -15,6 +15,11 @@ type Props = {
     disabled: boolean,
 
     /**
+     * The Redux dispatch function.
+     */
+    dispatch: Function,
+
+    /**
      * The i18n translate function
      */
     t: Function
