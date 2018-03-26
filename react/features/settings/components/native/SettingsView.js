@@ -157,6 +157,7 @@ class SettingsView extends AbstractSettingsView {
                     </FormRow>
                     <FormRow i18nLabel = 'settingsView.email'>
                         <TextInput
+                            autoCapitalize = 'none'
                             keyboardType = { 'email-address' }
                             onChangeText = { this._onChangeEmail }
                             placeholder = 'email@example.com'
