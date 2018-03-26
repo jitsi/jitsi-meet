@@ -264,9 +264,11 @@
 /**
  * TODO: when the old filmstrip has been removed, remove the "new-" prefix.
  */
+$newToolbarSize: 50px;
+$newToolbarFontSize: 1.9em;
 .new-toolbox {
     background-color: rgba(40, 52, 71, 0.5);
-    bottom: calc((#{$defaultToolbarSize} * 2) * -1);
+    bottom: calc((#{$newToolbarSize} * 2) * -1);
     box-sizing: border-box;
     display: flex;
     justify-content: space-between;
@@ -395,8 +397,8 @@
         color: $toolbarButtonColor;
         cursor: pointer;
         display: inline-block;
-        font-size: $toolbarFontSize;
-        line-height: $defaultToolbarSize;
+        font-size: $newToolbarFontSize;
+        line-height: $newToolbarSize;
         margin: 0 10px;
         text-align: center;
     }
@@ -416,8 +418,8 @@
     }
 
     .toolbox-icon {
-        height: $defaultToolbarSize;
-        width: $defaultToolbarSize;
+        height: $newToolbarSize;
+        width: $newToolbarSize;
     }
 }
 
@@ -431,7 +433,7 @@
     i {
         cursor: pointer;
         display: block;
-        font-size: $toolbarFontSize;
+        font-size: $newToolbarFontSize;
         height: 37px;
         line-height: 37px;
         width: 37px;
