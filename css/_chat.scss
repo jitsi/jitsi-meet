@@ -62,6 +62,23 @@
 .localuser {
     color: #087dba;
 }
+.use-new-toolbox {
+    .chatmessage {
+        color: whitesmoke;
+    }
+
+    .localuser {
+        color: #619df9;
+    }
+
+    .remoteuser {
+        color: #dadada;
+    }
+
+    #usermsg {
+        color: white;
+    }
+}
 
 .errorMessage {
     color: red;

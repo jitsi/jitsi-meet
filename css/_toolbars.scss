@@ -265,7 +265,7 @@
  * TODO: when the old filmstrip has been removed, remove the "new-" prefix.
  */
 .new-toolbox {
-    background-color: rgba(40, 52, 71, 0.5);
+    background-color: $newToolbarBackgroundColor;
     bottom: calc((#{$newToolbarSize} * 2) * -1);
     box-sizing: border-box;
     display: flex;
@@ -316,15 +316,15 @@
     }
 
     i:hover {
-        background-color: rgba(40, 52, 71, 0.7);
+        background-color: $newToolbarButtonHoverColor;
     }
 
     i.toggled {
-        background: rgba(40, 52, 71, 1);
+        background: $newToolbarButtonToggleColor;
     }
 
     i.toggled:hover {
-        background-color: rgba(40, 52, 71, 1);
+        background-color: $newToolbarButtonHoverColor;
     }
 
     i.disabled {
@@ -422,7 +422,7 @@
 }
 
 .filmstrip-toolbox {
-    background-color: rgba(40, 52, 71, 0.5);
+    background-color: $newToolbarBackgroundColor;
     box-sizing: border-box;
     display: flex;
     flex-direction: column;
@@ -438,15 +438,15 @@
     }
 
     i:hover {
-        background-color: rgba(40, 52, 71, 0.7);
+        background-color: $newToolbarButtonHoverColor;
     }
 
     i.toggled {
-        background: rgba(40, 52, 71, 1);
+        background: $newToolbarButtonToggleColor;
     }
 
     i.toggled:hover {
-        background-color: rgba(40, 52, 71, 1);
+        background-color: $newToolbarButtonHoverColor;
     }
 
     .icon-hangup {
