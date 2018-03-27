@@ -2,7 +2,7 @@
  * Toolbar side panel main container element.
  */
 .use-new-toolbox #sideToolbarContainer {
-    background-color: rgba(40, 52, 71, 0.5);
+    background-color: $newToolbarBackgroundColor;
 
     /**
      * Make the sidebar flush with the top of the toolbar. Take the size of
