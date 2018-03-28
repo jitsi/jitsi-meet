@@ -19,6 +19,17 @@
     vertical-align: middle;
 }
 
+.use-new-toolbox {
+    .cxGWJB{
+        bottom: calc(#{$newToolbarSize} + 15px);
+    }
+    .gXSEsl:nth-child(n+2) {
+        transform: translateX(0) translateY(100%) translateY(calc(#{$newToolbarSize} + 25px));
+        -ms-transform: translateX(0) translateY(100%) translateY(calc(#{$newToolbarSize} + 25px));
+        -webkit-transform: translateX(0) translateY(100%) translateY(calc(#{$newToolbarSize} + 25px));
+    }
+}
+
 .toolbar-container {
     display: block;
     left:0;
