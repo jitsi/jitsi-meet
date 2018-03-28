@@ -236,13 +236,14 @@ function maybeRedirectToWelcomePage(options) {
         }));
     }
 
-    // if Welcome page is enabled redirect to welcome page after 3 sec.
+    // if Welcome page is enabled redirect to welcome page after 3 sec, if
+    // there is a thank you message to be shown, 0.5s otherwise.
     if (config.enableWelcomePage) {
         setTimeout(
             () => {
                 APP.store.dispatch(redirectWithStoredParams('/'));
             },
-            3000);
+            options.showThankYou ? 3000 : 500);
     }
 }
 
