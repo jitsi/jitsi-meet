@@ -4,6 +4,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 
+import UIEvents from '../../../../../service/UI/UIEvents';
 import {
     ACTION_SHORTCUT_TRIGGERED,
     VIDEO_MUTE,
@@ -116,6 +117,16 @@ export class VideoMuteButton extends AbstractVideoMuteButton {
     }
 
     _doToggleVideo: () => void;
+
+    /**
+     * Emits an event to signal video mute should be toggled.
+     *
+     * @private
+     * @returns {void}
+     */
+    _doToggleVideo() {
+        APP.UI.emitEvent(UIEvents.VIDEO_MUTED, !this.props._videoMuted);
+    }
 
     _onShortcutToggleVideo: () => void;
 
