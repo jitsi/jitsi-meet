@@ -37,6 +37,10 @@ export class App extends AbstractApp {
     static propTypes = {
         ...AbstractApp.propTypes,
 
+        addPeopleEnabled: PropTypes.bool,
+
+        dialOutEnabled: PropTypes.bool,
+
         /**
          * Whether Picture-in-Picture is enabled. If {@code true}, a toolbar
          * button is rendered in the {@link Conference} view to afford entering

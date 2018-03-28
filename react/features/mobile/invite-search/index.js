@@ -1,6 +1,5 @@
 export * from './actions';
-export * from './components';
-export * from './functions';
+export * from './actionTypes';
 
 import './reducer';
 import './middleware';

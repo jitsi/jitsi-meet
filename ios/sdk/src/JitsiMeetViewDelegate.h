@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+@class InviteSearchController;
+
 @protocol JitsiMeetViewDelegate <NSObject>
 
 @optional
@@ -54,6 +56,15 @@
  * The `data` dictionary contains a `url` key with the conference URL.
  */
 - (void)conferenceWillLeave:(NSDictionary *)data;
+
+
+/**
+ * Called when the invite button in the conference is tapped.
+ *
+ * The search controller provided can be used to query user search within the
+ * conference.
+ */
+- (void)launchNativeInviteForSearchController:(InviteSearchController *)searchController;
 
 /**
  * Called when entering Picture-in-Picture is requested by the user. The app

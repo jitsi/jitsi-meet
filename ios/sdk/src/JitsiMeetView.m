@@ -268,6 +268,8 @@ static NSMapTable<NSString *, JitsiMeetView *> *views;
         props[@"defaultURL"] = [self.defaultURL absoluteString];
     }
 
+    props[@"addPeopleEnabled"] = @(self.addPeopleEnabled);
+    props[@"dialOutEnabled"] = @(self.dialOutEnabled);
     props[@"externalAPIScope"] = externalAPIScope;
     props[@"pictureInPictureEnabled"] = @(self.pictureInPictureEnabled);
     props[@"welcomePageEnabled"] = @(self.welcomePageEnabled);

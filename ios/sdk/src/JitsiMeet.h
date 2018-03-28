@@ -16,3 +16,4 @@
 
 #import <JitsiMeet/JitsiMeetView.h>
 #import <JitsiMeet/JitsiMeetViewDelegate.h>
+#import <JitsiMeet/InviteSearch.h>

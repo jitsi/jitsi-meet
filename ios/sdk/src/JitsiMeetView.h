@@ -21,9 +21,13 @@
 
 @interface JitsiMeetView : UIView
 
-@property (nonatomic, nullable, weak) id<JitsiMeetViewDelegate> delegate;
+@property (nonatomic) BOOL addPeopleEnabled;
 
 @property (copy, nonatomic, nullable) NSURL *defaultURL;
+
+@property (nonatomic, nullable, weak) id<JitsiMeetViewDelegate> delegate;
+
+@property (nonatomic) BOOL dialOutEnabled;
 
 @property (nonatomic) BOOL pictureInPictureEnabled;
 

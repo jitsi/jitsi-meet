@@ -14,17 +14,13 @@ import { MultiSelectAutocomplete } from '../../base/react';
 import { inviteVideoRooms } from '../../videosipgw';
 
 import {
-    checkDialNumber,
-    invitePeopleAndChatRooms,
-    searchDirectory
+    sendInvitesForItems,
+    getInviteResultsForQuery
 } from '../functions';
 
 const logger = require('jitsi-meet-logger').getLogger(__filename);
 
 declare var interfaceConfig: Object;
-
-const isPhoneNumberRegex
-    = new RegExp(interfaceConfig.PHONE_NUMBER_REGEX || '^[0-9+()-\\s]*$');
 
 /**
  * The dialog that allows to invite people to the call.
@@ -240,20 +236,6 @@ class AddPeopleDialog extends Component<*, *> {
         );
     }
 
-    _getDigitsOnly: (string) => string;
-
-    /**
-     * Removes all non-numeric characters from a string.
-     *
-     * @param {string} text - The string from which to remove all characters
-     * except numbers.
-     * @private
-     * @returns {string} A string with only numbers.
-     */
-    _getDigitsOnly(text = '') {
-        return text.replace(/\D/g, '');
-    }
-
     /**
      * Helper for determining how many of each type of user is being invited.
      * Used for logging and sending analytics related to invites.
@@ -292,27 +274,6 @@ class AddPeopleDialog extends Component<*, *> {
     _isAddDisabled() {
         return !this.state.inviteItems.length
             || this.state.addToCallInProgress;
-    }
-
-    _isMaybeAPhoneNumber: (string) => boolean;
-
-    /**
-     * Checks whether a string looks like it could be for a phone number.
-     *
-     * @param {string} text - The text to check whether or not it could be a
-     * phone number.
-     * @private
-     * @returns {boolean} True if the string looks like it could be a phone
-     * number.
-     */
-    _isMaybeAPhoneNumber(text) {
-        if (!isPhoneNumberRegex.test(text)) {
-            return false;
-        }
-
-        const digits = this._getDigitsOnly(text);
-
-        return Boolean(digits.length);
     }
 
     _onItemSelected: (Object) => Object;
@@ -379,75 +340,26 @@ class AddPeopleDialog extends Component<*, *> {
             addToCallInProgress: true
         });
 
-        let allInvitePromises = [];
-        let invitesLeftToSend = [
-            ...this.state.inviteItems
-        ];
+        const {
+            _conference,
+            _inviteServiceUrl,
+            _inviteUrl,
+            _jwt
+        } = this.props;
 
-        // First create all promises for dialing out.
-        if (this.props.enableDialOut && this.props._conference) {
-            const phoneNumbers = invitesLeftToSend.filter(
-                ({ item }) => item.type === 'phone');
+        const inviteItems = this.state.inviteItems;
+        const items = inviteItems.map(item => item.item);
 
-            // For each number, dial out. On success, remove the number from
-            // {@link invitesLeftToSend}.
-            const phoneInvitePromises = phoneNumbers.map(number => {
-                const numberToInvite = this._getDigitsOnly(number.item.number);
+        const options = {
+            conference: _conference,
+            inviteServiceUrl: _inviteServiceUrl,
+            inviteUrl: _inviteUrl,
+            inviteVideoRooms: this.props.inviteVideoRooms,
+            jwt: _jwt
+        };
 
-                return this.props._conference.dial(numberToInvite)
-                        .then(() => {
-                            invitesLeftToSend
-                                = invitesLeftToSend.filter(invite =>
-                                    invite !== number);
-                        })
-                        .catch(error => logger.error(
-                            'Error inviting phone number:', error));
-
-            });
-
-            allInvitePromises = allInvitePromises.concat(phoneInvitePromises);
-        }
-
-        if (this.props.enableAddPeople) {
-            const usersAndRooms = invitesLeftToSend.filter(i =>
-                i.item.type === 'user' || i.item.type === 'room')
-                .map(i => i.item);
-
-            if (usersAndRooms.length) {
-                // Send a request to invite all the rooms and users. On success,
-                // filter all rooms and users from {@link invitesLeftToSend}.
-                const peopleInvitePromise = invitePeopleAndChatRooms(
-                    this.props._inviteServiceUrl,
-                    this.props._inviteUrl,
-                    this.props._jwt,
-                    usersAndRooms)
-                    .then(() => {
-                        invitesLeftToSend = invitesLeftToSend.filter(i =>
-                            i.item.type !== 'user' && i.item.type !== 'room');
-                    })
-                    .catch(error => logger.error(
-                        'Error inviting people:', error));
-
-                allInvitePromises.push(peopleInvitePromise);
-            }
-
-            // Sipgw calls are fire and forget. Invite them to the conference
-            // then immediately remove them from {@link invitesLeftToSend}.
-            const vrooms = invitesLeftToSend.filter(i =>
-                i.item.type === 'videosipgw')
-                .map(i => i.item);
-
-            this.props._conference
-                && vrooms.length > 0
-                && this.props.inviteVideoRooms(
-                    this.props._conference, vrooms);
-
-            invitesLeftToSend = invitesLeftToSend.filter(i =>
-                i.item.type !== 'videosipgw');
-        }
-
-        Promise.all(allInvitePromises)
-            .then(() => {
+        sendInvitesForItems(items, options)
+            .then(invitesLeftToSend => {
                 // If any invites are left that means something failed to send
                 // so treat it as an error.
                 if (invitesLeftToSend.length) {
@@ -467,8 +379,18 @@ class AddPeopleDialog extends Component<*, *> {
                         addToCallError: true
                     });
 
+                    const unsentInviteIDs = invitesLeftToSend.map(invite =>
+                        invite.id || invite.number
+                    );
+
+                    const itemsToSelect = inviteItems.filter(invite =>
+                        unsentInviteIDs.includes(
+                            invite.item.id || invite.item.number
+                        )
+                    );
+
                     if (this._multiselect) {
-                        this._multiselect.setSelectedItems(invitesLeftToSend);
+                        this._multiselect.setSelectedItems(itemsToSelect);
                     }
 
                     return;
@@ -558,82 +480,25 @@ class AddPeopleDialog extends Component<*, *> {
      * @returns {Promise}
      */
     _query(query = '') {
-        const text = query.trim();
         const {
+            enableAddPeople,
+            enableDialOut,
             _dialOutAuthUrl,
             _jwt,
             _peopleSearchQueryTypes,
             _peopleSearchUrl
         } = this.props;
 
-        let peopleSearchPromise;
+        const options = {
+            dialOutAuthUrl: _dialOutAuthUrl,
+            enableAddPeople,
+            enableDialOut,
+            jwt: _jwt,
+            peopleSearchQueryTypes: _peopleSearchQueryTypes,
+            peopleSearchUrl: _peopleSearchUrl
+        };
 
-        if (this.props.enableAddPeople && text) {
-            peopleSearchPromise = searchDirectory(
-                _peopleSearchUrl,
-                _jwt,
-                text,
-                _peopleSearchQueryTypes);
-        } else {
-            peopleSearchPromise = Promise.resolve([]);
-        }
-
-
-        const hasCountryCode = text.startsWith('+');
-        let phoneNumberPromise;
-
-        if (this.props.enableDialOut && this._isMaybeAPhoneNumber(text)) {
-            let numberToVerify = text;
-
-            // When the number to verify does not start with a +, we assume no
-            // proper country code has been entered. In such a case, prepend 1
-            // for the country code. The service currently takes care of
-            // prepending the +.
-            if (!hasCountryCode && !text.startsWith('1')) {
-                numberToVerify = `1${numberToVerify}`;
-            }
-
-            // The validation service works properly when the query is digits
-            // only so ensure only digits get sent.
-            numberToVerify = this._getDigitsOnly(numberToVerify);
-
-            phoneNumberPromise
-                = checkDialNumber(numberToVerify, _dialOutAuthUrl);
-        } else {
-            phoneNumberPromise = Promise.resolve({});
-        }
-
-        return Promise.all([ peopleSearchPromise, phoneNumberPromise ])
-            .then(([ peopleResults, phoneResults ]) => {
-                const results = [
-                    ...peopleResults
-                ];
-
-                /**
-                 * This check for phone results is for the day the call to
-                 * searching people might return phone results as well. When
-                 * that day comes this check will make it so the server checks
-                 * are honored and the local appending of the number is not
-                 * done. The local appending of the phone number can then be
-                 * cleaned up when convenient.
-                 */
-                const hasPhoneResult = peopleResults.find(
-                    result => result.type === 'phone');
-
-                if (!hasPhoneResult
-                        && typeof phoneResults.allow === 'boolean') {
-                    results.push({
-                        allowed: phoneResults.allow,
-                        country: phoneResults.country,
-                        type: 'phone',
-                        number: phoneResults.phone,
-                        originalEntry: text,
-                        showCountryCodeReminder: !hasCountryCode
-                    });
-                }
-
-                return results;
-            });
+        return getInviteResultsForQuery(query, options);
     }
 
     /**
