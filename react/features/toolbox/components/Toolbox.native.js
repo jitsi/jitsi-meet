@@ -15,6 +15,11 @@ import {
     makeAspectRatioAware
 } from '../../base/responsive-ui';
 import {
+    InviteButton,
+    isAddPeopleEnabled,
+    isDialOutEnabled
+} from '../../invite';
+import {
     EnterPictureInPictureToolbarButton
 } from '../../mobile/picture-in-picture';
 import { beginRoomLockRequest } from '../../room-lock';
@@ -39,7 +44,7 @@ import { AudioMuteButton, HangupButton, VideoMuteButton } from './buttons';
  * @private
  * @type {boolean}
  */
-const _SHARE_ROOM_TOOLBAR_BUTTON = true;
+const _SHARE_ROOM_TOOLBAR_BUTTON = false;
 
 /**
  * The type of {@link Toolbox}'s React {@code Component} props.
@@ -55,6 +60,18 @@ type Props = {
      * Flag showing whether the audio-only mode is in use.
      */
     _audioOnly: boolean,
+
+    /**
+     * Whether or not the feature to directly invite people into the
+     * conference is available.
+     */
+    _enableAddPeople: boolean,
+
+    /**
+     * Whether or not the feature to dial out to number to join the
+     * conference is available.
+     */
+    _enableDialOut: boolean,
 
     /**
      * The indicator which determines whether the toolbox is enabled.
@@ -212,8 +229,12 @@ class Toolbox extends Component<Props> {
         const underlayColor = 'transparent';
         const {
             _audioOnly: audioOnly,
+            _enableAddPeople: enableAddPeople,
+            _enableDialOut: enableDialOut,
             _videoMuted: videoMuted
         } = this.props;
+
+        const showInviteButton = enableAddPeople || enableDialOut;
 
         /* eslint-disable react/jsx-curly-spacing,react/jsx-handler-names */
 
@@ -252,11 +273,20 @@ class Toolbox extends Component<Props> {
                     style = { style }
                     underlayColor = { underlayColor } />
                 {
-                    _SHARE_ROOM_TOOLBAR_BUTTON
+                    _SHARE_ROOM_TOOLBAR_BUTTON && !showInviteButton
                         && <ToolbarButton
                             iconName = 'link'
                             iconStyle = { iconStyle }
                             onClick = { this.props._onShareRoom }
+                            style = { style }
+                            underlayColor = { underlayColor } />
+                }
+                {
+                    showInviteButton
+                        && <InviteButton
+                            enableAddPeople = { enableAddPeople }
+                            enableDialOut = { enableDialOut }
+                            iconStyle = { iconStyle }
                             style = { style }
                             underlayColor = { underlayColor } />
                 }
@@ -387,6 +417,22 @@ function _mapStateToProps(state) {
          * @type {boolean}
          */
         _audioOnly: Boolean(conference.audioOnly),
+
+        /**
+         * Whether or not the feature to directly invite people into the
+         * conference is available.
+         *
+         * @type {boolean}
+         */
+        _enableAddPeople: isAddPeopleEnabled(state),
+
+        /**
+         * Whether or not the feature to dial out to number to join the
+         * conference is available.
+         *
+         * @type {boolean}
+         */
+        _enableDialOut: isDialOutEnabled(state),
 
         /**
          * The indicator which determines whether the toolbox is enabled.

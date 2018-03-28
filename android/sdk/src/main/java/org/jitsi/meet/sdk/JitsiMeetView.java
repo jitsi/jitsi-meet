@@ -32,7 +32,9 @@ import com.facebook.react.ReactRootView;
 import com.facebook.react.bridge.NativeModule;
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContext;
+import com.facebook.react.bridge.WritableArray;
 import com.facebook.react.bridge.WritableMap;
+import com.facebook.react.bridge.WritableNativeMap;
 import com.facebook.react.common.LifecycleState;
 import com.facebook.react.modules.core.DefaultHardwareBackBtnHandler;
 import com.facebook.react.modules.core.DeviceEventManagerModule;
@@ -42,6 +44,7 @@ import java.net.URL;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 import java.util.WeakHashMap;
@@ -75,6 +78,7 @@ public class JitsiMeetView extends FrameLayout {
             new AppInfoModule(reactContext),
             new AudioModeModule(reactContext),
             new ExternalAPIModule(reactContext),
+            new InviteSearchModule(reactContext),
             new PictureInPictureModule(reactContext),
             new ProximityModule(reactContext),
             new WiFiStatsModule(reactContext),
@@ -269,14 +273,42 @@ public class JitsiMeetView extends FrameLayout {
     }
 
     /**
+     * Starts a query for users to invite to the conference.  Results will be
+     * returned through the {@link InviteSearchController.InviteSearchControllerDelegate#onReceiveResults(InviteSearchController, List, String)}
+     * method.
+     *
+     * @param query {@code String} to use for the query
+     */
+    public static void onInviteQuery(String query, String inviteSearchControllerScope) {
+        WritableNativeMap params = new WritableNativeMap();
+        params.putString("query", query);
+        params.putString("inviteScope", inviteSearchControllerScope);
+        sendEvent("performQueryAction", params);
+    }
+
+    /**
+     * Sends JavaScript event to submit invitations to the given item ids
+     *
+     * @param selectedItems a WritableArray of WritableNativeMaps representing selected items.
+     *                  Each map representing a selected item should match the data passed
+     *                  back in the return from a query.
+     */
+    public static void submitSelectedItems(WritableArray selectedItems, String inviteSearchControllerScope) {
+        WritableNativeMap params = new WritableNativeMap();
+        params.putArray("selectedItems", selectedItems);
+        params.putString("inviteScope", inviteSearchControllerScope);
+        sendEvent("performSubmitInviteAction", params);
+    }
+
+    /**
      * Helper function to send an event to JavaScript.
      *
      * @param eventName {@code String} containing the event name.
-     * @param params {@code WritableMap} optional ancillary data for the event.
+     * @param data {@code Object} optional ancillary data for the event.
      */
     private static void sendEvent(
             String eventName,
-            @Nullable WritableMap params) {
+            @Nullable Object data) {
         if (reactInstanceManager != null) {
             ReactContext reactContext
                 = reactInstanceManager.getCurrentReactContext();
@@ -284,10 +316,15 @@ public class JitsiMeetView extends FrameLayout {
                 reactContext
                     .getJSModule(
                         DeviceEventManagerModule.RCTDeviceEventEmitter.class)
-                    .emit(eventName, params);
+                    .emit(eventName, data);
             }
         }
     }
+
+    /**
+     * Whether user invitation is enabled.
+     */
+    private boolean addPeopleEnabled;
 
     /**
      * The default base {@code URL} used to join a conference when a partial URL
@@ -295,6 +332,11 @@ public class JitsiMeetView extends FrameLayout {
      * {@link #loadURLObject(Bundle)}.
      */
     private URL defaultURL;
+
+    /**
+     * Whether the ability to add users by phone number is enabled.
+     */
+    private boolean dialOutEnabled;
 
     /**
      * The unique identifier of this {@code JitsiMeetView} within the process
@@ -454,6 +496,9 @@ public class JitsiMeetView extends FrameLayout {
         // welcomePageEnabled
         props.putBoolean("welcomePageEnabled", welcomePageEnabled);
 
+        props.putBoolean("addPeopleEnabled", addPeopleEnabled);
+        props.putBoolean("dialOutEnabled", dialOutEnabled);
+
         // XXX The method loadURLObject: is supposed to be imperative i.e.
         // a second invocation with one and the same URL is expected to join
         // the respective conference again if the first invocation was followed
@@ -536,6 +581,18 @@ public class JitsiMeetView extends FrameLayout {
     }
 
     /**
+     * Sets whether the ability to add users to the call is enabled.
+     * If this is enabled, an add user button will appear on the {@link JitsiMeetView}.
+     * If enabled, and the user taps the add user button,
+     * {@link JitsiMeetViewListener#launchNativeInvite(Map)} will be called.
+     *
+     * @param addPeopleEnabled {@code true} to enable the add people button; otherwise, {@code false}
+     */
+    public void setAddPeopleEnabled(boolean addPeopleEnabled) {
+        this.addPeopleEnabled = addPeopleEnabled;
+    }
+
+    /**
      * Sets the default base {@code URL} used to join a conference when a
      * partial URL (e.g. a room name only) is specified to
      * {@link #loadURLString(String)} or {@link #loadURLObject(Bundle)}. Must be
@@ -546,6 +603,18 @@ public class JitsiMeetView extends FrameLayout {
      */
     public void setDefaultURL(URL defaultURL) {
         this.defaultURL = defaultURL;
+    }
+
+    /**
+     * Sets whether the ability to add phone numbers to the call is enabled.
+     * Must be enabled along with {@link #setAddPeopleEnabled(boolean)} to
+     * be effective.
+     *
+     * @param dialOutEnabled {@code true} to enable the ability to add
+     *                       phone numbers to the call; otherwise, {@code false}
+     */
+    public void setDialOutEnabled(boolean dialOutEnabled) {
+        this.dialOutEnabled = dialOutEnabled;
     }
 
     /**
