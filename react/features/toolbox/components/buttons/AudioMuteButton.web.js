@@ -4,6 +4,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 
+import UIEvents from '../../../../../service/UI/UIEvents';
 import {
     ACTION_SHORTCUT_TRIGGERED,
     AUDIO_MUTE,
@@ -121,6 +122,19 @@ export class AudioMuteButton extends AbstractAudioMuteButton {
     }
 
     _doToggleAudio: () => void;
+
+    /**
+     * Emits an event to signal audio mute should be toggled.
+     *
+     * @private
+     * @returns {void}
+     */
+    _doToggleAudio() {
+        // The old conference logic must be used for now as the redux flows do
+        // not handle all cases, such as unmuting when the config
+        // startWithAudioMuted is true.
+        APP.UI.emitEvent(UIEvents.AUDIO_MUTED, !this.props._audioMuted, true);
+    }
 
     _onShortcutToggleAudio: () => void;
 
