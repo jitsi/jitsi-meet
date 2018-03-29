@@ -7,6 +7,7 @@ import {
 const SIDEBAR_HEADER_HEIGHT = 150;
 
 export const PLACEHOLDER_TEXT_COLOR = 'rgba(255, 255, 255, 0.3)';
+export const SIDEBAR_AVATAR_SIZE = 100;
 export const SWITCH_THUMB_COLOR = ColorPalette.blueHighlight;
 export const SWITCH_UNDER_COLOR = 'rgba(0, 0, 0, 0.4)';
 
@@ -40,10 +41,7 @@ export default createStyleSheet({
      */
     avatar: {
         alignSelf: 'center',
-        borderRadius: 50,
-        flex: 0,
-        height: 100,
-        width: 100
+        flex: 0
     },
 
     /**
@@ -82,7 +80,7 @@ export default createStyleSheet({
     displayName: {
         color: ColorPalette.white,
         fontSize: 16,
-        margin: BoxModel.margin,
+        marginTop: BoxModel.margin,
         textAlign: 'center'
     },
 
@@ -223,9 +221,11 @@ export default createStyleSheet({
      * The style of the side bar header.
      */
     sideBarHeader: {
+        alignItems: 'center',
         flexDirection: 'column',
         height: SIDEBAR_HEADER_HEIGHT,
-        justifyContent: 'center'
+        justifyContent: 'center',
+        padding: BoxModel.padding
     },
 
     /**
