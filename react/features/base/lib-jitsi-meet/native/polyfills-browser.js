@@ -195,6 +195,18 @@ function _visitNode(node, callback) {
                 };
             }
 
+            // Element.remove
+            //
+            // Required by:
+            // - lib-jitsi-meet ChatRoom#onPresence parsing
+            if (typeof elementPrototype.remove === 'undefined') {
+                elementPrototype.remove = function() {
+                    if (this.parentNode !== null) {
+                        this.parentNode.removeChild(this);
+                    }
+                };
+            }
+
             // Element.innerHTML
             //
             // Required by:
@@ -228,6 +240,31 @@ function _visitNode(node, callback) {
                         while (child = documentElement.firstChild) {
                             this.appendChild(child);
                         }
+                    }
+                });
+            }
+
+            // Element.children
+            //
+            // Required by:
+            // - lib-jitsi-meet ChatRoom#onPresence parsing
+            if (!elementPrototype.hasOwnProperty('children')) {
+                Object.defineProperty(elementPrototype, 'children', {
+                    get() {
+                        const nodes = this.childNodes;
+                        const children = [];
+                        let i = 0;
+                        let node = nodes[i];
+
+                        while (node) {
+                            if (node.nodeType === 1) {
+                                children.push(node);
+                            }
+                            i += 1;
+                            node = nodes[i];
+                        }
+
+                        return children;
                     }
                 });
             }
