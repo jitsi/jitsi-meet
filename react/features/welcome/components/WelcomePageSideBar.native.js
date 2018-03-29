@@ -18,7 +18,7 @@ import { setSettingsViewVisible } from '../../settings';
 
 import { setSideBarVisible } from '../actions';
 import SideBarItem from './SideBarItem';
-import styles from './styles';
+import styles, { SIDEBAR_AVATAR_SIZE } from './styles';
 
 /**
  * The URL at which the privacy policy is available to the user.
@@ -88,6 +88,7 @@ class WelcomePageSideBar extends Component<Props> {
                 show = { this.props._visible }>
                 <Header style = { styles.sideBarHeader }>
                     <Avatar
+                        size = { SIDEBAR_AVATAR_SIZE }
                         style = { styles.avatar }
                         uri = { this.props._avatar } />
                     <Text style = { styles.displayName }>
