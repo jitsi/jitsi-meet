@@ -78,6 +78,19 @@
     #usermsg {
         color: white;
     }
+
+    .chatmessage,
+    #smileysarea,
+    #smileysContainer,
+    #usermsg {
+        background-color: $newToolbarBackgroundColor;
+    }
+
+    .smileyContainer:hover {
+        background-color: $newToolbarButtonToggleColor;
+        border-radius: 5px;
+        cursor: pointer;
+    }
 }
 
 .errorMessage {
