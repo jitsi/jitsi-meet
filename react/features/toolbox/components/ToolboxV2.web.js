@@ -92,6 +92,12 @@ type Props = {
     _fullScreen: boolean,
 
     /**
+     * Whether or not invite should be hidden, regardless of feature
+     * availability.
+     */
+    _hideInviteButton: boolean,
+
+    /**
      * Whether or not the conference is currently being recorded by the local
      * participant.
      */
@@ -299,9 +305,8 @@ class ToolboxV2 extends Component<Props, State> {
      */
     render() {
         const {
-            _addPeopleAvailable,
             _chatOpen,
-            _dialOutAvailable,
+            _hideInviteButton,
             _raisedHand,
             _visible,
             t
@@ -349,12 +354,11 @@ class ToolboxV2 extends Component<Props, State> {
                 </div>
                 <div className = 'button-group-right'>
                     { this._shouldShowButton('invite')
+                        && !_hideInviteButton
                         && <ToolbarButtonV2
                             iconName = 'icon-add'
                             onClick = { this._onToolbarOpenInvite }
-                            tooltip = { _addPeopleAvailable || _dialOutAvailable
-                                ? t('addPeople.title')
-                                : t('addPeople.notAvailable') } /> }
+                            tooltip = { t('addPeople.title') } /> }
                     { this._shouldShowButton('info') && <InfoDialogButton /> }
                     { overflowHasItems
                         && <OverflowMenuButton
@@ -1070,7 +1074,8 @@ function _mapStateToProps(state) {
     const {
         callStatsID,
         enableRecording,
-        enableUserRolesBasedOnToken
+        enableUserRolesBasedOnToken,
+        iAmRecorder
     } = state['features/base/config'];
     const { isGuest } = state['features/base/jwt'];
     const { isRecording, recordingType } = state['features/recording'];
@@ -1085,19 +1090,24 @@ function _mapStateToProps(state) {
     const localParticipant = getLocalParticipant(state);
     const localVideo = getLocalVideoTrack(state['features/base/tracks']);
     const isModerator = localParticipant.role === PARTICIPANT_ROLE.MODERATOR;
+    const isAddPeopleAvailable = !isGuest;
+    const isDialOutAvailable
+        = isModerator
+            && conference && conference.isSIPCallingSupported()
+            && (!enableUserRolesBasedOnToken || !isGuest);
 
     return {
-        _addPeopleAvailable: !isGuest,
+        _addPeopleAvailable: isAddPeopleAvailable,
         _chatOpen: current === 'chat_container',
         _conference: conference,
         _desktopSharingEnabled: desktopSharingEnabled,
-        _dialOutAvailable: isModerator
-            && conference && conference.isSIPCallingSupported()
-            && (!enableUserRolesBasedOnToken || !isGuest),
+        _dialOutAvailable: isDialOutAvailable,
         _dialog: Boolean(state['features/base/dialog'].component),
         _editingDocument: Boolean(state['features/etherpad'].editing),
         _etherpadInitialized: Boolean(state['features/etherpad'].initialized),
         _feedbackConfigured: Boolean(callStatsID),
+        _hideInviteButton: iAmRecorder
+            || (!isAddPeopleAvailable && !isDialOutAvailable),
         _isRecording: isRecording,
         _fullScreen: fullScreen,
         _localParticipantID: localParticipant.id,
