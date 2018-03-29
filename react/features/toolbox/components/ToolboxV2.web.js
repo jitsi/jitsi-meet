@@ -56,6 +56,11 @@ type Props = {
     _conference: Object,
 
     /**
+     * Whether or not desktopsharing was explicitly configured to be disabled.
+     */
+    _desktopSharingDisabledByConfig: boolean,
+
+    /**
      * Whether or not screensharing is initialized.
      */
     _desktopSharingEnabled: boolean,
@@ -855,6 +860,10 @@ class ToolboxV2 extends Component<Props, State> {
      * @returns {void}
      */
     _onToolbarToggleScreenshare() {
+        if (!this.props._desktopSharingEnabled) {
+            return;
+        }
+
         sendAnalytics(createShortcutEvent(
             'toggle.screen.sharing',
             ACTION_SHORTCUT_TRIGGERED,
@@ -897,20 +906,35 @@ class ToolboxV2 extends Component<Props, State> {
     }
 
     /**
-     * Renders a button for togglein screen sharing.
+     * Renders a button for toggleing screen sharing.
      *
      * @private
-     * @returns {ReactElement}
+     * @returns {ReactElement|null}
      */
     _renderDesktopSharingButton() {
-        const { _desktopSharingEnabled, _screensharing, t } = this.props;
+        const {
+            _desktopSharingDisabledByConfig,
+            _desktopSharingEnabled,
+            _screensharing,
+            t
+        } = this.props;
+
+        const disabledTooltipText
+            = interfaceConfig.DESKTOP_SHARING_BUTTON_DISABLED_TOOLTIP;
+        const showDisabledTooltip
+            = disabledTooltipText && _desktopSharingDisabledByConfig;
+        const visible = _desktopSharingEnabled || showDisabledTooltip;
+
+        if (!visible) {
+            return null;
+        }
+
         const classNames = `icon-share-desktop ${
             _screensharing ? 'toggled' : ''} ${
             _desktopSharingEnabled ? '' : 'disabled'}`;
-        const tooltip = _desktopSharingEnabled
-            ? t('toolbar.sharescreen')
-            : interfaceConfig.DESKTOP_SHARING_BUTTON_DISABLED_TOOLTIP
-                || t('toolbar.sharescreenDisabled');
+        const tooltip = showDisabledTooltip
+            ? disabledTooltipText
+            : t('toolbar.sharescreen');
 
         return (
             <ToolbarButtonV2
@@ -1073,6 +1097,7 @@ function _mapStateToProps(state) {
     } = state['features/base/conference'];
     const {
         callStatsID,
+        disableDesktopSharing,
         enableRecording,
         enableUserRolesBasedOnToken,
         iAmRecorder
@@ -1101,6 +1126,7 @@ function _mapStateToProps(state) {
         _chatOpen: current === 'chat_container',
         _conference: conference,
         _desktopSharingEnabled: desktopSharingEnabled,
+        _desktopSharingDisabledByConfig: disableDesktopSharing,
         _dialOutAvailable: isDialOutAvailable,
         _dialog: Boolean(state['features/base/dialog'].component),
         _editingDocument: Boolean(state['features/etherpad'].editing),
