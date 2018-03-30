@@ -1060,7 +1060,7 @@ class ToolboxV2 extends Component<Props, State> {
 
         return (
             <OverflowMenuItem
-                icon = { `fa fa-play-circle ${_isRecording ? 'toggled' : ''}` }
+                icon = 'fa fa-play-circle'
                 key = 'recording'
                 onClick = { this._onToolbarToggleRecording }
                 text = { t(translationKey) } />
