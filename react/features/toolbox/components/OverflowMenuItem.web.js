@@ -15,8 +15,8 @@ class OverflowMenuItem extends Component {
      */
     static propTypes = {
         /**
-         * A string describing what the item is for. Used for screen-readers and
-         * torture tests.
+         * A succinct description of what the item does. Used by accessibility
+         * tools and torture tests.
          */
         accessibilityLabel: PropTypes.string,
 

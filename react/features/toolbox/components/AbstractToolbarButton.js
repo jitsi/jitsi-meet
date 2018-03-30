@@ -14,6 +14,12 @@ export default class AbstractToolbarButton extends Component {
      */
     static propTypes = {
         /**
+         * A succinct description of what the button does. Used by accessibility
+         * tools and torture tests.
+         */
+        accessibilityLabel: PropTypes.string,
+
+        /**
          * The name of the Icon of this {@code AbstractToolbarButton}.
          */
         iconName: PropTypes.string,
