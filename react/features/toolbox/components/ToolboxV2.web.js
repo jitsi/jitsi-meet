@@ -385,7 +385,9 @@ class ToolboxV2 extends Component<Props, State> {
      * @returns {void}
      */
     _doOpenFeedback() {
-        this.props.dispatch(openFeedbackDialog());
+        const { _conference } = this.props;
+
+        this.props.dispatch(openFeedbackDialog(_conference));
     }
 
     /**
