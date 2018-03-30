@@ -55,6 +55,7 @@ class WelcomePage extends AbstractWelcomePage {
             'welcome-page-additional-content-template');
 
         // Bind event handlers so they are only bound once per instance.
+        this._onFormSubmit = this._onFormSubmit.bind(this);
         this._onRoomChange = this._onRoomChange.bind(this);
         this._setAdditionalContentRef
             = this._setAdditionalContentRef.bind(this);
@@ -121,7 +122,7 @@ class WelcomePage extends AbstractWelcomePage {
                         <div id = 'new_enter_room'>
                             <form
                                 className = 'enter-room-input'
-                                onSubmit = { this._onJoin }>
+                                onSubmit = { this._onFormSubmit }>
                                 <FieldTextStateless
                                     autoFocus = { true }
                                     id = 'enter_room_field'
@@ -151,6 +152,19 @@ class WelcomePage extends AbstractWelcomePage {
                 </div>
             </AtlasKitThemeProvider>
         );
+    }
+
+    /**
+     * Prevents submission of the form and delagates join logic.
+     *
+     * @param {Event} event - The HTML Event which details the form submission.
+     * @private
+     * @returns {void}
+     */
+    _onFormSubmit(event) {
+        event.preventDefault();
+
+        this._onJoin();
     }
 
     /**
