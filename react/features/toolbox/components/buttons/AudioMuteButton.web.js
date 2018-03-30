@@ -112,6 +112,7 @@ export class AudioMuteButton extends AbstractAudioMuteButton {
 
         return (
             <ToolbarButtonV2
+                accessibilityLabel = 'Audio mute'
                 iconName = { _audioMuted && _conference
                     ? 'icon-mic-disabled toggled'
                     : 'icon-microphone' }

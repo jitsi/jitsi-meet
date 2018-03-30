@@ -333,6 +333,7 @@ class ToolboxV2 extends Component<Props, State> {
                         && this._renderDesktopSharingButton() }
                     { this._shouldShowButton('raisehand')
                         && <ToolbarButtonV2
+                            accessibilityLabel = 'Raised hand'
                             iconName = { _raisedHand
                                 ? 'icon-raised-hand toggled'
                                 : 'icon-raised-hand' }
@@ -341,6 +342,7 @@ class ToolboxV2 extends Component<Props, State> {
                     { this._shouldShowButton('chat')
                         && <div className = 'toolbar-button-with-badge'>
                             <ToolbarButtonV2
+                                accessibilityLabel = 'Chat'
                                 iconName = { _chatOpen
                                     ? 'icon-chat toggled'
                                     : 'icon-chat' }
@@ -361,6 +363,7 @@ class ToolboxV2 extends Component<Props, State> {
                     { this._shouldShowButton('invite')
                         && !_hideInviteButton
                         && <ToolbarButtonV2
+                            accessibilityLabel = 'Invite'
                             iconName = 'icon-add'
                             onClick = { this._onToolbarOpenInvite }
                             tooltip = { t('addPeople.title') } /> }
@@ -369,7 +372,9 @@ class ToolboxV2 extends Component<Props, State> {
                         && <OverflowMenuButton
                             isOpen = { this.state.showOverflowMenu }
                             onVisibilityChange = { this._onSetOverflowVisible }>
-                            <ul className = 'overflow-menu'>
+                            <ul
+                                aria-label = 'Overflow menu'
+                                className = 'overflow-menu'>
                                 { overflowMenuContent }
                             </ul>
                         </OverflowMenuButton> }
@@ -940,6 +945,7 @@ class ToolboxV2 extends Component<Props, State> {
 
         return (
             <ToolbarButtonV2
+                accessibilityLabel = 'Screenshare'
                 iconName = { classNames }
                 onClick = { this._onToolbarToggleScreenshare }
                 tooltip = { tooltip } />
@@ -969,12 +975,14 @@ class ToolboxV2 extends Component<Props, State> {
                     onClick = { this._onToolbarToggleProfile } />,
             this._shouldShowButton('settings')
                 && <OverflowMenuItem
+                    accessibilityLabel = 'Settings'
                     icon = 'icon-settings'
                     key = 'settings'
                     onClick = { this._onToolbarToggleSettings }
                     text = { t('toolbar.Settings') } />,
             this._shouldShowButton('sharedvideo')
                 && <OverflowMenuItem
+                    accessibilityLabel = 'Shared video'
                     icon = 'icon-shared-video'
                     key = 'sharedvideo'
                     onClick = { this._onToolbarToggleSharedVideo }
@@ -984,6 +992,7 @@ class ToolboxV2 extends Component<Props, State> {
             this._shouldShowButton('etherpad')
                 && _etherpadInitialized
                 && <OverflowMenuItem
+                    accessibilityLabel = 'Etherpad'
                     icon = 'icon-share-doc'
                     key = 'etherpad'
                     onClick = { this._onToolbarToggleEtherpad }
@@ -992,6 +1001,7 @@ class ToolboxV2 extends Component<Props, State> {
                         : t('toolbar.documentOpen') } />,
             this._shouldShowButton('fullscreen')
                 && <OverflowMenuItem
+                    accessibilityLabel = 'Full screen'
                     icon = { _fullScreen
                         ? 'icon-exit-full-screen'
                         : 'icon-full-screen' }
@@ -1003,12 +1013,14 @@ class ToolboxV2 extends Component<Props, State> {
             this._renderRecordingButton(),
             this._shouldShowButton('videoquality')
                 && <OverflowMenuItem
+                    accessibilityLabel = 'Call quality'
                     icon = { 'icon-visibility' }
                     key = 'videoquality'
                     onClick = { this._onToolbarOpenVideoQuality }
                     text = { t('toolbar.callQuality') } />,
             this._shouldShowButton('stats')
                 && <OverflowMenuItem
+                    accessibilityLabel = 'Speaker stats'
                     icon = 'icon-presentation'
                     key = 'stats'
                     onClick = { this._onToolbarOpenSpeakerStats }
@@ -1016,12 +1028,14 @@ class ToolboxV2 extends Component<Props, State> {
             this._shouldShowButton('feedback')
                 && _feedbackConfigured
                 && <OverflowMenuItem
+                    accessibilityLabel = 'Feedback'
                     icon = 'icon-feedback'
                     key = 'feedback'
                     onClick = { this._onToolbarOpenFeedback }
                     text = { t('toolbar.feedback') } />,
             this._shouldShowButton('shortcuts')
                 && <OverflowMenuItem
+                    accessibilityLabel = 'Shortcuts'
                     icon = 'icon-open_in_new'
                     key = 'shortcuts'
                     onClick = { this._onToolbarOpenKeyboardShortcuts }
@@ -1062,6 +1076,7 @@ class ToolboxV2 extends Component<Props, State> {
 
         return (
             <OverflowMenuItem
+                accessibilityLabel = 'Record'
                 icon = 'fa fa-play-circle'
                 key = 'recording'
                 onClick = { this._onToolbarToggleRecording }

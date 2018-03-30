@@ -107,6 +107,7 @@ export class VideoMuteButton extends AbstractVideoMuteButton {
 
         return (
             <ToolbarButtonV2
+                accessibilityLabel = 'Video mute'
                 iconName = { _videoMuted && _conference
                     ? 'icon-camera-disabled toggled'
                     : 'icon-camera' }

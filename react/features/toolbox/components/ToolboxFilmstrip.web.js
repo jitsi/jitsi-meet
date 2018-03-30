@@ -45,13 +45,16 @@ class ToolboxFilmstrip extends Component<*> {
         const { t } = this.props;
 
         return (
-            <div className = 'filmstrip-toolbox'>
+            <div
+                className = 'filmstrip-toolbox'
+                id = 'new-toolbox'>
                 { this._shouldShowButton('microphone')
                     && <AudioMuteButton tooltipPosition = 'left' /> }
                 { this._shouldShowButton('camera')
                     && <VideoMuteButton tooltipPosition = 'left' /> }
                 { this._shouldShowButton('fodeviceselection')
                     && <ToolbarButtonV2
+                        accessibilityLabel = 'Settings'
                         iconName = 'icon-settings'
                         onClick = { this._onToolbarOpenSettings }
                         tooltip = { t('toolbar.Settings') }
