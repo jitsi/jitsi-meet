@@ -1,6 +1,5 @@
 // @flow
 
-import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 
@@ -8,6 +7,9 @@ import { appNavigate } from '../../../app';
 import { ColorPalette } from '../../../base/styles';
 
 import AbstractHangupButton from './AbstractHangupButton';
+import type {
+    Props as AbstractHangupButtonProps
+} from './AbstractHangupButton';
 import ToolbarButton from '../ToolbarButton';
 import styles from '../styles';
 
@@ -16,19 +18,7 @@ import styles from '../styles';
  *
  * @extends Component
  */
-class HangupButton extends AbstractHangupButton {
-    /**
-     * {@code HangupButton} component's property types.
-     *
-     * @static
-     */
-    static propTypes = {
-        /**
-         * Invoked to leave the conference.
-         */
-        dispatch: PropTypes.func
-    };
-
+class HangupButton extends AbstractHangupButton<AbstractHangupButtonProps> {
     /**
      * Implements React's {@link Component#render()}.
      *

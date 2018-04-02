@@ -1,22 +1,39 @@
 // @flow
 
 import React from 'react';
-import PropTypes from 'prop-types';
-
 import { connect } from 'react-redux';
 
 import { disconnect } from '../../../base/connection';
 import { translate } from '../../../base/i18n';
 
 import AbstractHangupButton from './AbstractHangupButton';
+import type {
+    Props as AbstractHangupButtonProps
+} from './AbstractHangupButton';
 import ToolbarButtonV2 from '../ToolbarButtonV2';
+
+/**
+ * The type of the React {@link Component} props of {@link HangupButton}.
+ */
+type Props = AbstractHangupButtonProps & {
+
+    /**
+     * Invoked to obtain translated strings.
+     */
+    t: Function,
+
+    /**
+     * Where the tooltip should display, relative to the button.
+     */
+    tooltipPosition: string
+};
 
 /**
  * Component that renders a toolbar button for leaving the current conference.
  *
  * @extends Component
  */
-export class HangupButton extends AbstractHangupButton {
+export class HangupButton extends AbstractHangupButton<Props> {
     /**
      * Default values for {@code HangupButton} component's properties.
      *
@@ -25,28 +42,6 @@ export class HangupButton extends AbstractHangupButton {
     static defaultProps = {
         tooltipPosition: 'top'
     };
-
-    /**
-     * {@code HangupButton} component's property types.
-     *
-     * @static
-     */
-    static propTypes = {
-        /**
-         * Invoked to trigger conference leave.
-         */
-        dispatch: PropTypes.func,
-
-        /**
-         * Invoked to obtain translated strings.
-         */
-        t: PropTypes.func,
-
-        /**
-         * Where the tooltip should display, relative to the button.
-         */
-        tooltipPosition: PropTypes.string
-    }
 
     /**
      * Implements React's {@link Component#render()}.

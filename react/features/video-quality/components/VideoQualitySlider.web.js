@@ -1,5 +1,6 @@
+// @flow
+
 import InlineMessage from '@atlaskit/inline-message';
-import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
@@ -39,51 +40,64 @@ const createEvent = function(quality) {
         });
 };
 
+
+/**
+ * The type of slider option configuration for each slider value selectable in
+ * {@link VideoQualitySlider}.
+ */
+type SliderOption = {
+    audioOnly: boolean,
+    onSelect: Function,
+    textKey: string,
+    videoQuality: ?string
+};
+
+/**
+ * The type of the React {@link Component} props of {@link VideoQualitySlider}.
+ */
+type Props = {
+
+    /**
+     * Whether or not the conference is in audio only mode.
+     */
+    _audioOnly: boolean,
+
+    /**
+     * Whether or not the conference is in peer to peer mode.
+     */
+    _p2p: boolean,
+
+    /**
+     * The currently configured maximum quality resolution to be received
+     * from remote participants.
+     */
+    _receiveVideoQuality: number,
+
+    /**
+     * Whether or not displaying video is supported in the current
+     * environment. If false, the slider will be disabled.
+     */
+    _videoSupported: boolean,
+
+    /**
+     * Invoked to request toggling of audio only mode.
+     */
+    dispatch: Dispatch<*>,
+
+    /**
+     * Invoked to obtain translated strings.
+     */
+    t: Function
+};
+
 /**
  * Implements a React {@link Component} which displays a slider for selecting a
  * new receive video quality.
  *
  * @extends Component
  */
-class VideoQualitySlider extends Component {
-    /**
-     * {@code VideoQualitySlider}'s property types.
-     *
-     * @static
-     */
-    static propTypes = {
-        /**
-         * Whether or not the conference is in audio only mode.
-         */
-        _audioOnly: PropTypes.bool,
-
-        /**
-         * Whether or not the conference is in peer to peer mode.
-         */
-        _p2p: PropTypes.bool,
-
-        /**
-         * The currently configured maximum quality resolution to be received
-         * from remote participants.
-         */
-        _receiveVideoQuality: PropTypes.number,
-
-        /**
-         * Whether or not displaying video is supported in the current
-         * environment. If false, the slider will be disabled.
-         */
-        _videoSupported: PropTypes.bool,
-
-        /**
-         * Invoked to request toggling of audio only mode.
-         */
-        dispatch: PropTypes.func,
-
-        /**
-         * Invoked to obtain translated strings.
-         */
-        t: PropTypes.func
-    };
+class VideoQualitySlider extends Component<Props> {
+    _sliderOptions: Array<SliderOption>;
 
     /**
      * Initializes a new {@code VideoQualitySlider} instance.
@@ -91,7 +105,7 @@ class VideoQualitySlider extends Component {
      * @param {Object} props - The read-only React Component props with which
      * the new instance is to be initialized.
      */
-    constructor(props) {
+    constructor(props: Props) {
         super(props);
 
         // Bind event handlers so they are only bound once for every instance.
@@ -109,25 +123,29 @@ class VideoQualitySlider extends Component {
          * the currently active quality level.
          *
          * @private
-         * @type {Object[]}
+         * @type {Array<SliderOption>}
          */
         this._sliderOptions = [
             {
                 audioOnly: true,
                 onSelect: this._enableAudioOnly,
-                textKey: 'audioOnly.audioOnly'
+                textKey: 'audioOnly.audioOnly',
+                videoQuality: null
             },
             {
+                audioOnly: false,
                 onSelect: this._enableLowDefinition,
                 textKey: 'videoStatus.lowDefinition',
                 videoQuality: LOW
             },
             {
+                audioOnly: false,
                 onSelect: this._enableStandardDefinition,
                 textKey: 'videoStatus.standardDefinition',
                 videoQuality: STANDARD
             },
             {
+                audioOnly: false,
                 onSelect: this._enableHighDefinition,
                 textKey: 'videoStatus.highDefinition',
                 videoQuality: HIGH
@@ -178,8 +196,7 @@ class VideoQualitySlider extends Component {
                             onMouseUp = { this._onSliderChange }
                             step = '1'
                             type = 'range'
-                            value
-                                = { activeSliderOption } />
+                            value = { activeSliderOption } />
 
                     </div>
                     <div className = 'video-quality-dialog-labels'>
@@ -187,42 +204,6 @@ class VideoQualitySlider extends Component {
                     </div>
                 </div>
             </div>
-        );
-    }
-
-    /**
-     * Creates a React Element for notifying that the browser is in audio only
-     * and cannot be changed.
-     *
-     * @private
-     * @returns {ReactElement}
-     */
-    _renderAudioOnlyLockedMessage() {
-        const { t } = this.props;
-
-        return (
-            <InlineMessage
-                title = { t('videoStatus.onlyAudioAvailable') }>
-                { t('videoStatus.onlyAudioSupported') }
-            </InlineMessage>
-        );
-    }
-
-    /**
-     * Creates React Elements for notifying that peer to peer is enabled.
-     *
-     * @private
-     * @returns {ReactElement}
-     */
-    _renderP2PMessage() {
-        const { t } = this.props;
-
-        return (
-            <InlineMessage
-                secondaryText = { t('videoStatus.recHighDefinitionOnly') }
-                title = { t('videoStatus.p2pEnabled') }>
-                { t('videoStatus.p2pVideoQualityDescription') }
-            </InlineMessage>
         );
     }
 
@@ -261,6 +242,8 @@ class VideoQualitySlider extends Component {
         });
     }
 
+    _enableAudioOnly: () => void;
+
     /**
      * Dispatches an action to enable audio only mode.
      *
@@ -272,6 +255,8 @@ class VideoQualitySlider extends Component {
         logger.log('Video quality: audio only enabled');
         this.props.dispatch(setAudioOnly(true));
     }
+
+    _enableHighDefinition: () => void;
 
     /**
      * Handles the action of the high definition video being selected.
@@ -287,6 +272,8 @@ class VideoQualitySlider extends Component {
         this.props.dispatch(setReceiveVideoQuality(HIGH));
     }
 
+    _enableLowDefinition: () => void;
+
     /**
      * Dispatches an action to receive low quality video from remote
      * participants.
@@ -299,6 +286,8 @@ class VideoQualitySlider extends Component {
         logger.log('Video quality: low enabled');
         this.props.dispatch(setReceiveVideoQuality(LOW));
     }
+
+    _enableStandardDefinition: () => void;
 
     /**
      * Dispatches an action to receive standard quality video from remote
@@ -318,24 +307,30 @@ class VideoQualitySlider extends Component {
      * component's slider options.
      *
      * @private
-     * @returns {void}
+     * @returns {number}
      */
     _mapCurrentQualityToSliderValue() {
         const { _audioOnly, _receiveVideoQuality } = this.props;
         const { _sliderOptions } = this;
 
         if (_audioOnly) {
-            const audioOnlyOption = _sliderOptions.find(
-                ({ audioOnly }) => audioOnly);
+            const audioOnlyOption: ?SliderOption = _sliderOptions.find(
+                (option: SliderOption) => option.audioOnly);
 
-            return _sliderOptions.indexOf(audioOnlyOption);
+            return audioOnlyOption
+                ? _sliderOptions.indexOf(audioOnlyOption)
+                : -1;
         }
 
-        const matchingOption = _sliderOptions.find(
+        const matchingOption: ?SliderOption = _sliderOptions.find(
             ({ videoQuality }) => videoQuality === _receiveVideoQuality);
 
-        return _sliderOptions.indexOf(matchingOption);
+        return matchingOption
+            ? _sliderOptions.indexOf(matchingOption)
+            : -1;
     }
+
+    _onSliderChange: () => void;
 
     /**
      * Invokes a callback when the selected video quality changes.
@@ -360,6 +355,42 @@ class VideoQualitySlider extends Component {
         }
 
         onSelect();
+    }
+
+    /**
+     * Creates a React Element for notifying that the browser is in audio only
+     * and cannot be changed.
+     *
+     * @private
+     * @returns {ReactElement}
+     */
+    _renderAudioOnlyLockedMessage() {
+        const { t } = this.props;
+
+        return (
+            <InlineMessage
+                title = { t('videoStatus.onlyAudioAvailable') }>
+                { t('videoStatus.onlyAudioSupported') }
+            </InlineMessage>
+        );
+    }
+
+    /**
+     * Creates React Elements for notifying that peer to peer is enabled.
+     *
+     * @private
+     * @returns {ReactElement}
+     */
+    _renderP2PMessage() {
+        const { t } = this.props;
+
+        return (
+            <InlineMessage
+                secondaryText = { t('videoStatus.recHighDefinitionOnly') }
+                title = { t('videoStatus.p2pEnabled') }>
+                { t('videoStatus.p2pVideoQualityDescription') }
+            </InlineMessage>
+        );
     }
 }
 

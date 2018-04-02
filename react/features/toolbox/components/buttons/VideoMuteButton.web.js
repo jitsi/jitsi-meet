@@ -1,6 +1,5 @@
 // @flow
 
-import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 
@@ -16,16 +15,40 @@ import { MEDIA_TYPE } from '../../../base/media';
 import { isLocalTrackMuted } from '../../../base/tracks';
 
 import AbstractVideoMuteButton from './AbstractVideoMuteButton';
+import type {
+    Props as AbstractVideoMuteButtonProps
+} from './AbstractVideoMuteButton';
 import ToolbarButtonV2 from '../ToolbarButtonV2';
 
 declare var APP: Object;
+
+/**
+ * The type of the React {@link Component} props of {@link VideoMuteButton}.
+ */
+type Props = AbstractVideoMuteButtonProps & {
+
+    /**
+     * The {@code JitsiConference} for the current conference.
+     */
+    _conference: Object,
+
+    /**
+     * Invoked to obtain translated strings.
+     */
+    t: Function,
+
+    /**
+     * Where the tooltip should display, relative to the button.
+     */
+    tooltipPosition: string
+};
 
 /**
  * Component that renders a toolbar button for toggling video mute.
  *
  * @extends AbstractVideoMuteButton
  */
-export class VideoMuteButton extends AbstractVideoMuteButton {
+export class VideoMuteButton extends AbstractVideoMuteButton<Props> {
     /**
      * Default values for {@code VideoMuteButton} component's properties.
      *
@@ -36,36 +59,12 @@ export class VideoMuteButton extends AbstractVideoMuteButton {
     };
 
     /**
-     * {@code VideoMuteButton} component's property types.
-     *
-     * @static
-     */
-    static propTypes = {
-        ...AbstractVideoMuteButton.propTypes,
-
-        /**
-         * The {@code JitsiConference} for the current conference.
-         */
-        _conference: PropTypes.object,
-
-        /**
-         * Invoked to obtain translated strings.
-         */
-        t: PropTypes.func,
-
-        /**
-         * Where the tooltip should display, relative to the button.
-         */
-        tooltipPosition: PropTypes.string
-    };
-
-    /**
      * Initializes a new {@code VideoMuteButton} instance.
      *
      * @param {Props} props - The read-only React {@code Component} props with
      * which the new instance is to be initialized.
      */
-    constructor(props: Object) {
+    constructor(props: Props) {
         super(props);
 
         // Bind event handlers so they are only bound once per instance.

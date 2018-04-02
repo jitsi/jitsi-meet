@@ -1,4 +1,5 @@
-import PropTypes from 'prop-types';
+// @flow
+
 import React from 'react';
 import { TouchableHighlight } from 'react-native';
 import { connect } from 'react-redux';
@@ -6,26 +7,28 @@ import { connect } from 'react-redux';
 import { Icon } from '../../base/font-icons';
 
 import AbstractToolbarButton from './AbstractToolbarButton';
+import type {
+    Props as AbstractToolbarButtonProps
+} from './AbstractToolbarButton';
+
+/**
+ * The type of the React {@link Component} props of {@link ToolbarButton}.
+ */
+type Props = AbstractToolbarButtonProps & {
+
+    /**
+     * Indicates whether this {@code ToolbarButton} is disabled.
+     */
+    disabled: boolean
+};
 
 /**
  * Represents a button in {@link Toolbar} on React Native.
  *
  * @extends AbstractToolbarButton
  */
-class ToolbarButton extends AbstractToolbarButton {
-    /**
-     * {@code ToolbarButton} component's property types.
-     *
-     * @static
-     */
-    static propTypes = {
-        ...AbstractToolbarButton.propTypes,
-
-        /**
-         * Indicates whether this {@code ToolbarButton} is disabled.
-         */
-        disabled: PropTypes.bool
-    };
+class ToolbarButton extends AbstractToolbarButton<Props> {
+    _onClick: () => void;
 
     /**
      * Renders the button of this {@code ToolbarButton}.
