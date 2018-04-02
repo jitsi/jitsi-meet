@@ -23,6 +23,7 @@
       "react-nativeGrantPermissions": "Select <b><i>Allow</i></b> when your browser asks for permissions.",
       "chromeGrantPermissions": "Select <b><i>Allow</i></b> when your browser asks for permissions.",
       "androidGrantPermissions": "Select <b><i>Allow</i></b> when your browser asks for permissions.",
+      "electronGrantPermissions": "Please grant permissions to use your camera and microphone",
       "firefoxGrantPermissions": "Select <b><i>Share Selected Device</i></b> when your browser asks for permissions.",
       "operaGrantPermissions": "Select <b><i>Allow</i></b> when your browser asks for permissions.",
       "iexplorerGrantPermissions": "Select <b><i>OK</i></b> when your browser asks for permissions.",
