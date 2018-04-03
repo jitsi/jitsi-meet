@@ -53,6 +53,24 @@ export function getURLWithoutParams(url: URL): URL {
 }
 
 /**
+ * Gets a URL string without hash and query/search params from a specific
+ * {@code URL}.
+ *
+ * @param {URL} url - The {@code URL} which may have hash and query/search
+ * params.
+ * @returns {string}
+ */
+export function getURLWithoutParamsNormalized(url: URL): string {
+    const urlWithoutParams = getURLWithoutParams(url).href;
+
+    if (urlWithoutParams) {
+        return urlWithoutParams.toLowerCase();
+    }
+
+    return '';
+}
+
+/**
  * Converts a specific id to jid if it's not jid yet.
  *
  * @param {string} id - User id or jid.
