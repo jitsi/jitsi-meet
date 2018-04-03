@@ -45,6 +45,7 @@ export default class Audio extends AbstractAudio {
             = this.props.src
                 ? new Sound(
                     this.props.src,
+                    Sound.MAIN_BUNDLE,
                     this._soundLoadedCallback.bind(this))
                 : null;
     }
