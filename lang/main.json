@@ -451,11 +451,13 @@
     "videoStatus": {
         "callQuality": "Call Quality",
         "hd": "HD",
+        "hdTooltip": "Viewing high definition video",
         "highDefinition": "High definition",
         "labelTooltipAudioOnly":  "Audio-only mode enabled",
         "labelTooiltipNoVideo": "No video",
         "labelTooltipVideo": "Current video quality",
         "ld": "LD",
+        "ldTooltip": "Viewing low definition video",
         "lowDefinition": "Low definition",
         "onlyAudioAvailable": "Only audio is available",
         "onlyAudioSupported": "We only support audio in this browser.",
@@ -463,6 +465,7 @@
         "p2pVideoQualityDescription": "In peer to peer mode, received call quality can only be toggled between high and audio only. Other settings will not be honored until peer to peer is exited.",
         "recHighDefinitionOnly": "Will prefer high definition.",
         "sd": "SD",
+        "sdTooltip": "Viewing standard definition video",
         "standardDefinition": "Standard definition",
         "qualityButtonTip": "Change received video quality"
     },

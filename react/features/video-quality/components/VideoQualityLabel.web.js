@@ -153,8 +153,11 @@ export class VideoQualityLabel extends Component {
             labelContent = <i className = 'icon-visibility-off' />;
             tooltipKey = 'videoStatus.labelTooiltipNoVideo';
         } else {
-            labelContent = this._mapResolutionToTranslation(_resolution);
-            tooltipKey = 'videoStatus.labelTooltipVideo';
+            const translationKeys
+                = this._mapResolutionToTranslationsKeys(_resolution);
+
+            labelContent = t(translationKeys.labelKey);
+            tooltipKey = translationKeys.tooltipKey;
         }
 
 
@@ -174,16 +177,16 @@ export class VideoQualityLabel extends Component {
     }
 
     /**
-     * Matches the passed in resolution with a translation key for describing
+     * Matches the passed in resolution with a translation keys for describing
      * the resolution. The passed in resolution will be matched with a known
      * resolution that it is at least greater than or equal to.
      *
      * @param {number} resolution - The video height to match with a
      * translation.
      * @private
-     * @returns {string}
+     * @returns {Object}
      */
-    _mapResolutionToTranslation(resolution) {
+    _mapResolutionToTranslationsKeys(resolution) {
         // Set the default matching resolution of the lowest just in case a
         // match is not found.
         let highestMatchingResolution = RESOLUTIONS[0];
@@ -198,8 +201,13 @@ export class VideoQualityLabel extends Component {
             }
         }
 
-        return this.props.t(
-            RESOLUTION_TO_TRANSLATION_KEY[highestMatchingResolution]);
+        const labelKey
+            = RESOLUTION_TO_TRANSLATION_KEY[highestMatchingResolution];
+
+        return {
+            labelKey,
+            tooltipKey: `${labelKey}Tooltip`
+        };
     }
 }
 
