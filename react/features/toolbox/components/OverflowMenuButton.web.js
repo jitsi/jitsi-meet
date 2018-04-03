@@ -72,6 +72,7 @@ class OverflowMenuButton extends Component {
                     onClose = { this._onCloseDialog }
                     position = { 'top right' }>
                     <ToolbarButtonV2
+                        accessibilityLabel = 'Overflow'
                         iconName = { iconClasses }
                         onClick = { this._onToggleDialogVisibility }
                         tooltip = { t('toolbar.moreActions') } />

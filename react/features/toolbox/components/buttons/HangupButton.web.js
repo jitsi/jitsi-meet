@@ -59,6 +59,7 @@ export class HangupButton extends AbstractHangupButton {
 
         return (
             <ToolbarButtonV2
+                accessibilityLabel = 'Hangup'
                 iconName = 'icon-hangup'
                 onClick = { this._onToolbarHangup }
                 tooltip = { t('toolbar.hangup') }

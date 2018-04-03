@@ -15,6 +15,12 @@ class OverflowMenuItem extends Component {
      */
     static propTypes = {
         /**
+         * A succinct description of what the item does. Used by accessibility
+         * tools and torture tests.
+         */
+        accessibilityLabel: PropTypes.string,
+
+        /**
          * The icon class to use for displaying an icon before the link text.
          */
         icon: PropTypes.string,
@@ -39,6 +45,7 @@ class OverflowMenuItem extends Component {
     render() {
         return (
             <li
+                aria-label = { this.props.accessibilityLabel }
                 className = 'overflow-menu-item'
                 onClick = { this.props.onClick }>
                 <span className = 'overflow-menu-item-icon'>

@@ -50,6 +50,7 @@ class ToolbarButtonV2 extends AbstractToolbarButton {
     _renderButton(children) {
         return (
             <div
+                aria-label = { this.props.accessibilityLabel }
                 className = 'toolbox-button'
                 onClick = { this.props.onClick }>
                 <Tooltip
