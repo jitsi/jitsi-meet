@@ -31,9 +31,9 @@ const _INTERCEPT_COMPONENT_RULES = [
 
     /**
      * This rule describes case when user opens application using mobile
-     * browser. In order to promote the app, we choose to suggest the mobile
-     * app even if the browser supports the app (e.g. Google Chrome with
-     * WebRTC support on Android).
+     * browser and is attempting to join a conference. In order to promote the
+     * app, we choose to suggest the mobile app even if the browser supports the
+     * app (e.g. Google Chrome with WebRTC support on Android).
      *
      * @param {Object} state - The redux state of the app.
      * @returns {UnsupportedMobileBrowser|void} If the rule is satisfied then
@@ -42,8 +42,15 @@ const _INTERCEPT_COMPONENT_RULES = [
     // eslint-disable-next-line no-unused-vars
     state => {
         const OS = Platform.OS;
+        const { room } = state['features/base/conference'];
+        const isUsingMobileBrowser = OS === 'android' || OS === 'ios';
 
-        if (OS === 'android' || OS === 'ios') {
+        /**
+         * Checking for presence of a room is done so that interception only
+         * occurs when trying to enter a meeting but pages outside of meeting,
+         * like WelcomePage, can still display.
+         */
+        if (room && isUsingMobileBrowser) {
             const mobileAppPromo
                 = typeof interfaceConfig === 'object'
                     && interfaceConfig.MOBILE_APP_PROMO;

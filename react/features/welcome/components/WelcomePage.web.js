@@ -10,6 +10,7 @@ import { initAnalytics } from '../../analytics';
 import { translate } from '../../base/i18n';
 import { isAnalyticsEnabled } from '../../base/lib-jitsi-meet';
 import { Watermarks } from '../../base/react';
+import { HideNotificationBarStyle } from '../../unsupported-browser';
 
 import { AbstractWelcomePage, _mapStateToProps } from './AbstractWelcomePage';
 
@@ -150,6 +151,7 @@ class WelcomePage extends AbstractWelcomePage {
                             ref = { this._setAdditionalContentRef } />
                         : null }
                 </div>
+                <HideNotificationBarStyle />
             </AtlasKitThemeProvider>
         );
     }
