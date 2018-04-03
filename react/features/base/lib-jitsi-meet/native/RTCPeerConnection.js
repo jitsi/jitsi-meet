@@ -231,8 +231,54 @@ function _setRemoteDescription(sessionDescription) {
     });
 }
 
+// XXX The function _synthesizeIPv6FromIPv4Address is not placed relative to the
+// other functions in the file according to alphabetical sorting rule of the
+// coding style. But eslint wants constants to be defined before they are used.
+
 /**
- * Synthesize IPv6 addresses on iOS in order to support IPv6 NAT64 networks.
+ * Synthesizes an IPv6 address from a specific IPv4 address.
+ *
+ * @param {string} ipv4 - The IPv4 address from which an IPv6 address is to be
+ * synthesized.
+ * @returns {Promise<?string>} A {@code Promise} which gets resolved with the
+ * IPv6 address synthesized from the specified {@code ipv4} or a falsy value to
+ * be treated as inability to synthesize an IPv6 address from the specified
+ * {@code ipv4}.
+ */
+const _synthesizeIPv6FromIPv4Address: string => Promise<?string> = (function() {
+    // POSIX.getaddrinfo
+    const { POSIX } = NativeModules;
+
+    if (POSIX) {
+        const { getaddrinfo } = POSIX;
+
+        if (typeof getaddrinfo === 'function') {
+            return ipv4 =>
+                getaddrinfo(/* hostname */ ipv4, /* servname */ undefined)
+                    .then(([ { ai_addr: ipv6 } ]) => ipv6);
+        }
+    }
+
+    // NAT64AddrInfo.getIPv6Address
+    const { NAT64AddrInfo } = NativeModules;
+
+    if (NAT64AddrInfo) {
+        const { getIPv6Address } = NAT64AddrInfo;
+
+        if (typeof getIPv6Address === 'function') {
+            return getIPv6Address;
+        }
+    }
+
+    // There's no POSIX.getaddrinfo or NAT64AddrInfo.getIPv6Address.
+    return () =>
+        Promise.reject(
+            'The impossible just happened! No POSIX.getaddrinfo or'
+                + ' NAT64AddrInfo.getIPv6Address!');
+})();
+
+/**
+ * Synthesizes IPv6 addresses on iOS in order to support IPv6 NAT64 networks.
  *
  * @param {RTCSessionDescription} sdp - The RTCSessionDescription which
  * specifies the configuration of the remote end of the connection.
@@ -240,12 +286,6 @@ function _setRemoteDescription(sessionDescription) {
  * @returns {Promise}
  */
 function _synthesizeIPv6Addresses(sdp) {
-    // The synthesis of IPv6 addresses is implemented on iOS only at the time of
-    // this writing.
-    if (!NativeModules.POSIX) {
-        return Promise.resolve(sdp);
-    }
-
     return (
         new Promise(resolve => resolve(_synthesizeIPv6Addresses0(sdp)))
             .then(({ ips, lines }) =>
@@ -272,7 +312,6 @@ function _synthesizeIPv6Addresses0(sessionDescription) {
     let start = 0;
     const lines = [];
     const ips = new Map();
-    const { getaddrinfo } = NativeModules.POSIX;
 
     do {
         const end = sdp.indexOf('\r\n', start);
@@ -311,9 +350,10 @@ function _synthesizeIPv6Addresses0(sessionDescription) {
                                 if (v && typeof v === 'string') {
                                     resolve(v);
                                 } else {
-                                    getaddrinfo(ip, undefined).then(
-                                        ([ { ai_addr: value } ]) => {
-                                            if (value.indexOf(':') === -1
+                                    _synthesizeIPv6FromIPv4Address(ip).then(
+                                        value => {
+                                            if (!value
+                                                    || value.indexOf(':') === -1
                                                     || value === ips.get(ip)) {
                                                 ips.delete(ip);
                                             } else {

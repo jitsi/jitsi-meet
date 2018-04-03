@@ -33,6 +33,8 @@ dependencies {
     compile project(':react-native-vector-icons')
     compile project(':react-native-webrtc')
     compile project(':react-native-calendar-events')
+
+    testCompile 'junit:junit:4.12'
 }
 
 // Build process helpers
