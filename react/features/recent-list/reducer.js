@@ -1,6 +1,7 @@
 // @flow
 
 import { APP_WILL_MOUNT } from '../app';
+import { getURLWithoutParamsNormalized } from '../base/connection';
 import { ReducerRegistry } from '../base/redux';
 import { PersistenceRegistry } from '../base/storage';
 
@@ -186,8 +187,8 @@ function _updateConferenceDuration(state, { locationURL }) {
  * @returns {boolean}
  */
 function _urlStringEquals(a: string, b: string) {
-    // FIXME Case-sensitive comparison is wrong because the room name at least
-    // is case insensitive on the server and elsewhere (where it matters) in the
-    // client. I don't think domain names are case-sensitive either.
-    return a === b;
+    const aHref = getURLWithoutParamsNormalized(new URL(a));
+    const bHref = getURLWithoutParamsNormalized(new URL(b));
+
+    return aHref === bHref;
 }
