@@ -115,6 +115,13 @@ export default createStyleSheet({
     },
 
     /**
+     * The text of the hint box.
+     */
+    hintText: {
+        textAlign: 'center'
+    },
+
+    /**
      * Container for the text on the hint box.
      */
     hintTextContainer: {

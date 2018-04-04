@@ -230,7 +230,7 @@ class WelcomePage extends AbstractWelcomePage {
             return (
                 <Animated.View style = { this._getHintBoxStyle() }>
                     <View style = { styles.hintTextContainer } >
-                        <Text>
+                        <Text style = { styles.hintText }>
                             { t('welcomepage.roomnameHint') }
                         </Text>
                     </View>
