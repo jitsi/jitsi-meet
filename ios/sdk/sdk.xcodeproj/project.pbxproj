@@ -31,10 +31,8 @@
 		75635B0B20751D6D00F29C9F /* left.wav in Resources */ = {isa = PBXBuildFile; fileRef = 75635B0920751D6D00F29C9F /* left.wav */; };
 		C6245F5D2053091D0040BE68 /* image-resize@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = C6245F5B2053091D0040BE68 /* image-resize@2x.png */; };
 		C6245F5E2053091D0040BE68 /* image-resize@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = C6245F5C2053091D0040BE68 /* image-resize@3x.png */; };
-		C6A3425F204EF76800E062DD /* PiPWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6A3425C204EF76800E062DD /* PiPWindow.swift */; };
-		C6A34260204EF76800E062DD /* JitsiMeetPresentationCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6A3425D204EF76800E062DD /* JitsiMeetPresentationCoordinator.swift */; };
 		C6A34261204EF76800E062DD /* DragGestureController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6A3425E204EF76800E062DD /* DragGestureController.swift */; };
-		C6A3426D204F1C3300E062DD /* JitsiMeetViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6A3426C204F1C3300E062DD /* JitsiMeetViewController.swift */; };
+		C6CC49AF207412CF000DFA42 /* PiPViewCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6CC49AE207412CF000DFA42 /* PiPViewCoordinator.swift */; };
 		C6F99C15204DB63E0001F710 /* JitsiMeetView+Private.h in Headers */ = {isa = PBXBuildFile; fileRef = C6F99C13204DB63D0001F710 /* JitsiMeetView+Private.h */; };
 /* End PBXBuildFile section */
 
@@ -68,10 +66,8 @@
 		9C77CA3CC919B081F1A52982 /* Pods-JitsiMeet.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-JitsiMeet.release.xcconfig"; path = "../Pods/Target Support Files/Pods-JitsiMeet/Pods-JitsiMeet.release.xcconfig"; sourceTree = "<group>"; };
 		C6245F5B2053091D0040BE68 /* image-resize@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "image-resize@2x.png"; path = "src/picture-in-picture/image-resize@2x.png"; sourceTree = "<group>"; };
 		C6245F5C2053091D0040BE68 /* image-resize@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "image-resize@3x.png"; path = "src/picture-in-picture/image-resize@3x.png"; sourceTree = "<group>"; };
-		C6A3425C204EF76800E062DD /* PiPWindow.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PiPWindow.swift; sourceTree = "<group>"; };
-		C6A3425D204EF76800E062DD /* JitsiMeetPresentationCoordinator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = JitsiMeetPresentationCoordinator.swift; sourceTree = "<group>"; };
 		C6A3425E204EF76800E062DD /* DragGestureController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DragGestureController.swift; sourceTree = "<group>"; };
-		C6A3426C204F1C3300E062DD /* JitsiMeetViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JitsiMeetViewController.swift; sourceTree = "<group>"; };
+		C6CC49AE207412CF000DFA42 /* PiPViewCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PiPViewCoordinator.swift; sourceTree = "<group>"; };
 		C6F99C13204DB63D0001F710 /* JitsiMeetView+Private.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "JitsiMeetView+Private.h"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -171,9 +167,7 @@
 			isa = PBXGroup;
 			children = (
 				C6A3425E204EF76800E062DD /* DragGestureController.swift */,
-				C6A3425D204EF76800E062DD /* JitsiMeetPresentationCoordinator.swift */,
-				C6A3426C204F1C3300E062DD /* JitsiMeetViewController.swift */,
-				C6A3425C204EF76800E062DD /* PiPWindow.swift */,
+				C6CC49AE207412CF000DFA42 /* PiPViewCoordinator.swift */,
 			);
 			path = "picture-in-picture";
 			sourceTree = "<group>";
@@ -345,14 +339,12 @@
 			buildActionMask = 2147483647;
 			files = (
 				0BB9AD7B1F5EC8F4001C08DB /* CallKit.m in Sources */,
-				C6A34260204EF76800E062DD /* JitsiMeetPresentationCoordinator.swift in Sources */,
 				0BB9AD7D1F60356D001C08DB /* AppInfo.m in Sources */,
 				0B93EF7F1EC9DDCD0030D24D /* RCTBridgeWrapper.m in Sources */,
 				0BA13D311EE83FF8007BEF7F /* ExternalAPI.m in Sources */,
 				0BCA49601EC4B6C600B793EE /* POSIX.m in Sources */,
 				0B7C2CFD200F51D60060D076 /* LaunchOptions.m in Sources */,
-				C6A3426D204F1C3300E062DD /* JitsiMeetViewController.swift in Sources */,
-				C6A3425F204EF76800E062DD /* PiPWindow.swift in Sources */,
+				C6CC49AF207412CF000DFA42 /* PiPViewCoordinator.swift in Sources */,
 				0BCA495F1EC4B6C600B793EE /* AudioMode.m in Sources */,
 				0B44A0191F902126009D1D64 /* MPVolumeViewManager.m in Sources */,
 				0BCA49611EC4B6C600B793EE /* Proximity.m in Sources */,
