@@ -3,6 +3,7 @@
 import Sound from 'react-native-sound';
 
 import AbstractAudio from '../AbstractAudio';
+import { getSdkBundlePath } from '../../../../app';
 
 const logger = require('jitsi-meet-logger').getLogger(__filename);
 
@@ -45,6 +46,7 @@ export default class Audio extends AbstractAudio {
             = this.props.src
                 ? new Sound(
                     this.props.src,
+                    getSdkBundlePath(),
                     this._soundLoadedCallback.bind(this))
                 : null;
     }
