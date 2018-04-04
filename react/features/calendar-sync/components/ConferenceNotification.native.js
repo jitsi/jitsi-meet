@@ -8,7 +8,7 @@ import {
 import { connect } from 'react-redux';
 
 import { appNavigate } from '../../app';
-import { getURLWithoutParams } from '../../base/connection';
+import { getURLWithoutParamsNormalized } from '../../base/connection';
 import { getLocalizedDateFormatter, translate } from '../../base/i18n';
 import { Icon } from '../../base/font-icons';
 import { ASPECT_RATIO_NARROW } from '../../base/responsive-ui';
@@ -223,7 +223,11 @@ class ConferenceNotification extends Component<Props, State> {
             const now = Date.now();
 
             for (const event of _eventList) {
-                if (event.url !== _currentConferenceURL) {
+                const eventUrl = getURLWithoutParamsNormalized(
+                    new URL(event.url)
+                );
+
+                if (eventUrl !== _currentConferenceURL) {
                     if ((!eventToShow
                         && event.startDate > now
                         && event.startDate < now + ALERT_MILLISECONDS)
@@ -275,7 +279,8 @@ export function _mapStateToProps(state: Object) {
     return {
         _aspectRatio: state['features/base/responsive-ui'].aspectRatio,
         _currentConferenceURL:
-            locationURL ? getURLWithoutParams(locationURL)._url : '',
+            locationURL
+                ? getURLWithoutParamsNormalized(locationURL) : '',
         _eventList: state['features/calendar-sync'].events
     };
 }
