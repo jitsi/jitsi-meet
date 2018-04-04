@@ -70,6 +70,8 @@ class WelcomePage extends AbstractWelcomePage {
      * @returns {void}
      */
     componentDidMount() {
+        document.body.classList.add('welcome-page');
+
         // FIXME: This is not the best place for this logic. Ideally we should
         // use features/base/lib-jitsi-meet#initLib() action for this use case.
         // But currently lib-jitsi-meet#initLib()'s logic works for mobile only
@@ -89,6 +91,16 @@ class WelcomePage extends AbstractWelcomePage {
             this._additionalContentRef.appendChild(
                 this._additionalContentTemplate.content.cloneNode(true));
         }
+    }
+
+    /**
+     * Removes the classname used for custom styling of the welcome page.
+     *
+     * @inheritdoc
+     * @returns {void}
+     */
+    componentWillUnmount() {
+        document.body.classList.remove('welcome-page');
     }
 
     /**

@@ -1,7 +1,11 @@
+body.welcome-page {
+    background: inherit;
+    overflow: auto;
+}
+
 .welcome {
     font-family: $welcomePageFontFamily;
     height: 100%;
-    overflow: auto;
     position: relative;
 
     .header {
