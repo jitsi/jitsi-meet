@@ -38,7 +38,7 @@
     .info-dialog-copy-element {
         opacity: 0;
         pointer-events: none;
-        position: fixed;
+        position: absolute;
         -webkit-user-select: text;
         user-select: text;
     }
@@ -56,11 +56,11 @@
     }
 
     .info-dialog-conference-url {
-        max-width: 250px;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        user-select: text;
-        white-space: nowrap;
+        width: max-content;
+        width: -moz-max-content;
+        width: -webkit-max-content;
+        word-break: break-all;
+        max-width: 400px;
     }
 
     .info-dialog-dial-in {
@@ -82,14 +82,18 @@
         margin-bottom: 10px;
     }
 
-    .info-password,
     .info-dialog-password,
+    .info-password,
     .info-password-form {
+        align-items: baseline;
         display: flex;
     }
 
+    .info-label {
+        font-weight: bold;
+    }
+
     .info-password-field {
-        margin-left: 2px;
         overflow: hidden;
         text-overflow: ellipsis;
         white-space: nowrap;
@@ -110,10 +114,6 @@
     .info-password-local {
         user-select: text;
     }
-
-    .conference-id {
-        margin-left: 5px;
-    }
 }
 
 .dial-in-page {
@@ -125,10 +125,6 @@
     justify-content: center;
     width: 100%;
 
-    * {
-        user-select: text;
-    }
-
     .dial-in-numbers-list {
         font-size: 24px;
         margin-top: 20px;
@@ -137,5 +133,14 @@
     .dial-in-conference-id {
         text-align: center;
         width: 30%;
+    }
+}
+
+.info-dialog,
+.dial-in-page {
+    * {
+        user-select: text;
+        -moz-user-select: text;
+        -webkit-user-select: text;
     }
 }

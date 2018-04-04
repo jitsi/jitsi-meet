@@ -7,16 +7,16 @@ import { connect } from 'react-redux';
 
 import { createToolbarEvent, sendAnalytics } from '../../analytics';
 import { translate } from '../../base/i18n';
+import { getParticipantCount } from '../../base/participants';
 import {
     ToolbarButton,
     ToolbarButtonV2,
     TOOLTIP_TO_POPUP_POSITION
 } from '../../toolbox';
 
-import { setInfoDialogVisibility, updateDialInNumbers } from '../actions';
-import { InfoDialog } from './info-dialog';
+import { updateDialInNumbers } from '../actions';
 
-const { INITIAL_TOOLBAR_TIMEOUT } = interfaceConfig;
+import { InfoDialog } from './info-dialog';
 
 /**
  * A configuration object to describe how {@code ToolbarButton} should render
@@ -31,6 +31,14 @@ const DEFAULT_BUTTON_CONFIGURATION = {
     id: 'toolbar_button_info',
     tooltipKey: 'info.tooltip'
 };
+
+/**
+ * The amount of time, in milliseconds, to wait until automatically showing
+ * the {@code InfoDialog}. This is essentially a hack as automatic showing
+ * should happen in a lonely call and some time is needed to populate
+ * participants already in the call.
+ */
+const INFO_DIALOG_AUTO_SHOW_TIMEOUT = 1500;
 
 /**
  * A React Component for displaying a button which opens a dialog with
@@ -55,15 +63,16 @@ class InfoDialogButton extends Component {
         ]),
 
         /**
-         * Whether or not the {@code InfoDialog} should close by itself after a
-         * a timeout.
+         * Whether or not the {@code InfoDialog} should display automatically
+         * after {@link INFO_DIALOG_AUTO_SHOW_TIMEOUT}.
          */
-        _shouldAutoClose: PropTypes.bool,
+        _disableAutoShow: PropTypes.bool,
 
         /**
-         * Whether or not {@code InfoDialog} should be displayed.
+         * The number of real participants in the call. If in a lonely call,
+         * the {@code InfoDialog} will be automatically shown.
          */
-        _showDialog: PropTypes.bool,
+        _participantCount: PropTypes.number,
 
         /**
          * Whether or not the toolbox, in which this component exists, are
@@ -98,16 +107,23 @@ class InfoDialogButton extends Component {
         super(props);
 
         /**
-         * The timeout to automatically hide the {@code InfoDialog} if it has
-         * not been interacted with.
+         * The timeout to automatically show the {@code InfoDialog} if it has
+         * not been shown yet in a lonely call.
          *
          * @type {timeoutID}
          */
-        this._autoHideDialogTimeout = null;
+        this._autoShowTimeout = null;
+
+
+        this.state = {
+            /**
+             * Whether or not {@code InfoDialog} should be visible.
+             */
+            showDialog: false
+        };
 
         // Bind event handlers so they are only bound once for every instance.
         this._onDialogClose = this._onDialogClose.bind(this);
-        this._onDialogMouseOver = this._onDialogMouseOver.bind(this);
         this._onDialogToggle = this._onDialogToggle.bind(this);
     }
 
@@ -117,27 +133,12 @@ class InfoDialogButton extends Component {
      * @inheritdoc
      */
     componentDidMount() {
-        if (this.props._shouldAutoClose) {
-            this._setAutoCloseTimeout();
-        }
+        this._autoShowTimeout = setTimeout(() => {
+            this._maybeAutoShowDialog();
+        }, INFO_DIALOG_AUTO_SHOW_TIMEOUT);
 
         if (!this.props._dialInNumbers) {
             this.props.dispatch(updateDialInNumbers());
-        }
-    }
-
-    /**
-     * Set or clear the timeout to automatically hide the {@code InfoDialog}.
-     *
-     * @inheritdoc
-     */
-    componentDidUpdate(prevProps) {
-        // If the _shouldAutoClose flag has been updated to be true then make
-        // sure to set _autoHideDialogTimeout.
-        if (this.props._shouldAutoClose && !prevProps._shouldAutoClose) {
-            this._setAutoCloseTimeout();
-        } else {
-            this._clearAutoCloseTimeout();
         }
     }
 
@@ -148,7 +149,7 @@ class InfoDialogButton extends Component {
      */
     componentWillReceiveProps(nextProps) {
         // Ensure the dialog is closed when the toolbox becomes hidden.
-        if (nextProps._showDialog && !nextProps._toolboxVisible) {
+        if (this.state.showDialog && !nextProps._toolboxVisible) {
             this._onDialogClose();
         }
     }
@@ -159,7 +160,7 @@ class InfoDialogButton extends Component {
      * @inheritdoc
      */
     componentWillUnmount() {
-        this._clearAutoCloseTimeout();
+        clearTimeout(this._autoShowTimeout);
     }
 
     /**
@@ -175,14 +176,16 @@ class InfoDialogButton extends Component {
     }
 
     /**
-     * Cancels the timeout to automatically hide the {@code InfoDialog}.
+     * Callback invoked after a timeout to trigger display of the
+     * {@code InfoDialog} if certain conditions are met.
      *
      * @private
      * @returns {void}
      */
-    _clearAutoCloseTimeout() {
-        clearTimeout(this._autoHideDialogTimeout);
-        this._autoHideDialogTimeout = null;
+    _maybeAutoShowDialog() {
+        if (this.props._participantCount < 2 && !this.props._disableAutoShow) {
+            this.setState({ showDialog: true });
+        }
     }
 
     /**
@@ -192,17 +195,7 @@ class InfoDialogButton extends Component {
      * @returns {void}
      */
     _onDialogClose() {
-        this.props.dispatch(setInfoDialogVisibility(false));
-    }
-
-    /**
-     * Cancels the timeout to automatically hide the {@code InfoDialog}.
-     *
-     * @private
-     * @returns {void}
-     */
-    _onDialogMouseOver() {
-        this._clearAutoCloseTimeout();
+        this.setState({ showDialog: false });
     }
 
     /**
@@ -214,7 +207,7 @@ class InfoDialogButton extends Component {
     _onDialogToggle() {
         sendAnalytics(createToolbarEvent('info'));
 
-        this.props.dispatch(setInfoDialogVisibility(!this.props._showDialog));
+        this.setState({ showDialog: !this.state.showDialog });
     }
 
     /**
@@ -225,22 +218,21 @@ class InfoDialogButton extends Component {
      * @returns {ReactElement}
      */
     _renderOldToolbarButton() {
-        const { _showDialog, _toolboxVisible, tooltipPosition } = this.props;
+        const { tooltipPosition } = this.props;
+        const { showDialog } = this.state;
+
         const buttonConfiguration = {
             ...DEFAULT_BUTTON_CONFIGURATION,
             classNames: [
                 ...DEFAULT_BUTTON_CONFIGURATION.classNames,
-                _showDialog ? 'toggled button-active' : ''
+                showDialog ? 'toggled button-active' : ''
             ]
         };
 
         return (
             <InlineDialog
-                content = { <InfoDialog
-                    autoUpdateNumbers = { false }
-                    onClose = { this._onDialogClose }
-                    onMouseOver = { this._onDialogMouseOver } /> }
-                isOpen = { _toolboxVisible && _showDialog }
+                content = { <InfoDialog onClose = { this._onDialogClose } /> }
+                isOpen = { showDialog }
                 onClose = { this._onDialogClose }
                 position = { TOOLTIP_TO_POPUP_POSITION[tooltipPosition] }>
                 <ToolbarButton
@@ -259,17 +251,16 @@ class InfoDialogButton extends Component {
      * @returns {ReactElement}
      */
     _renderNewToolbarButton() {
-        const { _showDialog, _toolboxVisible, t } = this.props;
-        const iconClass = `icon-info ${_showDialog ? 'toggled' : ''}`;
+        const { t } = this.props;
+        const { showDialog } = this.state;
+        const iconClass = `icon-info ${showDialog ? 'toggled' : ''}`;
 
         return (
             <div className = 'toolbox-button-wth-dialog'>
                 <InlineDialog
-                    content = { <InfoDialog
-                        autoUpdateNumbers = { false }
-                        onClose = { this._onDialogClose }
-                        onMouseOver = { this._onDialogMouseOver } /> }
-                    isOpen = { _toolboxVisible && _showDialog }
+                    content = {
+                        <InfoDialog onClose = { this._onDialogClose } /> }
+                    isOpen = { showDialog }
                     onClose = { this._onDialogClose }
                     position = { 'top right' }>
                     <ToolbarButtonV2
@@ -281,22 +272,6 @@ class InfoDialogButton extends Component {
             </div>
         );
     }
-
-    /**
-     * Set a timeout to automatically hide the {@code InfoDialog}.
-     *
-     * @private
-     * @returns {void}
-     */
-    _setAutoCloseTimeout() {
-        this._clearAutoCloseTimeout();
-
-        this._autoHideDialogTimeout = setTimeout(() => {
-            if (this.props._showDialog) {
-                this._onDialogClose();
-            }
-        }, INITIAL_TOOLBAR_TIMEOUT);
-    }
 }
 
 /**
@@ -307,22 +282,17 @@ class InfoDialogButton extends Component {
  * @private
  * @returns {{
  *     _dialInNumbers: Array,
- *     _shouldAutoClose: boolean,
- *     _showDialog: boolean,
+ *     _disableAutoShow: bolean,
+ *     _participantCount: number,
  *     _toolboxVisible: boolean
  * }}
  */
 function _mapStateToProps(state) {
-    const {
-        infoDialogVisible,
-        infoDialogWillAutoClose,
-        numbers
-    } = state['features/invite'];
-
     return {
-        _dialInNumbers: numbers,
-        _shouldAutoClose: infoDialogWillAutoClose,
-        _showDialog: infoDialogVisible,
+        _dialInNumbers: state['features/invite'].numbers,
+        _disableAutoShow: state['features/base/config'].iAmRecorder,
+        _participantCount:
+            getParticipantCount(state['features/base/participants']),
         _toolboxVisible: state['features/toolbox'].visible
     };
 }

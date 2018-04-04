@@ -214,14 +214,13 @@ class InfoDialog extends Component {
                         { t('info.title') }
                     </div>
                     <div className = 'info-dialog-conference-url'>
-                        { t('info.conferenceURL',
-                            { url: this._getURLToDisplay() }) }
-                        <textarea
-                            className = 'info-dialog-copy-element'
-                            readOnly = { true }
-                            ref = { this._setCopyElement }
-                            tabIndex = '-1'
-                            value = { this._getTextToCopy() } />
+                        <span className = 'info-label'>
+                            { t('info.conferenceURL') }
+                        </span>
+                        <span className = 'spacer'>&nbsp;</span>
+                        <span className = 'info-value'>
+                            { this._getURLToDisplay() }
+                        </span>
                     </div>
                     <div className = 'info-dialog-dial-in'>
                         { this._renderDialInDisplay() }
@@ -244,6 +243,12 @@ class InfoDialog extends Component {
                         { this._renderPasswordAction() }
                     </div>
                 </div>
+                <textarea
+                    className = 'info-dialog-copy-element'
+                    readOnly = { true }
+                    ref = { this._setCopyElement }
+                    tabIndex = '-1'
+                    value = { this._getTextToCopy() } />
             </div>
         );
     }

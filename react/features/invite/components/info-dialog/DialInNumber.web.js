@@ -41,16 +41,28 @@ class DialInNumber extends Component {
      * @returns {ReactElement}
      */
     render() {
-        const { conferenceID, phoneNumber } = this.props;
+        const { conferenceID, phoneNumber, t } = this.props;
 
         return (
             <div className = 'dial-in-number'>
                 <span className = 'phone-number'>
-                    { this.props.t('info.dialInNumber', { phoneNumber }) }
+                    <span className = 'info-label'>
+                        { t('info.dialInNumber') }
+                    </span>
+                    <span className = 'spacer'>&nbsp;</span>
+                    <span className = 'info-value'>
+                        { phoneNumber }
+                    </span>
                 </span>
+                <span className = 'spacer'>&nbsp;</span>
                 <span className = 'conference-id'>
-                    { this.props.t(
-                        'info.dialInConferenceID', { conferenceID }) }
+                    <span className = 'info-label'>
+                        { t('info.dialInConferenceID') }
+                    </span>
+                    <span className = 'spacer'>&nbsp;</span>
+                    <span className = 'info-value'>
+                        { `${conferenceID}#` }
+                    </span>
                 </span>
             </div>
         );
