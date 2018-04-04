@@ -14,14 +14,15 @@
  * limitations under the License.
  */
 
-/// Alias defining a completion closure that returns a Bool
-public typealias CompletionAction = (Bool) -> Void
+public typealias AnimationCompletion = (Bool) -> Void
 
-/// A window that allows its root view controller to be presented
-/// in full screen or in a custom Picture in Picture mode
-open class PiPWindow: UIWindow {
+/// Coordinates the view state of a specified view to allow
+/// to be presented in full screen or in a custom Picture in Picture mode.
+/// This object will also provide the drag and tap interactions of the view
+/// when is presented in Picure in Picture mode.
+public class PiPViewCoordinator {
     
-    /// Limits the boundries of root view position on screen when minimized
+    /// Limits the boundries of view position on screen when minimized
     public var dragBoundInsets: UIEdgeInsets = UIEdgeInsets(top: 25,
                                                             left: 5,
                                                             bottom: 5,
@@ -31,10 +32,10 @@ open class PiPWindow: UIWindow {
         }
     }
     
-    /// The size ratio for root view controller view when in PiP mode
+    /// The size ratio of the view when in PiP mode
     public var pipSizeRatio: CGFloat = {
         let deviceIdiom = UIScreen.main.traitCollection.userInterfaceIdiom
-        switch (deviceIdiom) {
+        switch deviceIdiom {
         case .pad:
             return 0.25
         case .phone:
@@ -44,50 +45,62 @@ open class PiPWindow: UIWindow {
         }
     }()
     
-    /// The PiP state of this contents of the window
-    private(set) var isInPiP: Bool = false
+    private(set) var isInPiP: Bool = false // true if view is in PiP mode
     
-    private let dragController: DragGestureController = DragGestureController()
+    private(set) var view: UIView
+    private var currentBounds: CGRect = CGRect.zero
     
-    /// Used when in PiP mode to enable/disable exit PiP UI
     private var tapGestureRecognizer: UITapGestureRecognizer?
     private var exitPiPButton: UIButton?
     
-    /// Help out to bubble up the gesture detection outside of the rootVC frame
-    open override func point(inside point: CGPoint,
-                             with event: UIEvent?) -> Bool {
-        guard let vc = rootViewController else {
-            return super.point(inside: point, with: event)
-        }
-        return vc.view.frame.contains(point)
+    private let dragController: DragGestureController = DragGestureController()
+    
+    public init(withView view: UIView) {
+        self.view = view
     }
     
-    /// animate in the window
-    open func show(completion: CompletionAction? = nil) {
-        if self.isHidden || self.alpha < 1 {
-            self.isHidden = false
-            self.alpha = 0
+    /// Configure the view to be always on top of all the contents
+    /// of the provided parent view.
+    /// If a parentView is not provided it will try to use the main window
+    public func configureAsStickyView(withParentView parentView: UIView? = nil) {
+        guard
+            let parentView = parentView ?? UIApplication.shared.keyWindow
+            else { return }
+        
+        parentView.addSubview(view)
+        currentBounds = parentView.bounds
+        view.frame = currentBounds
+        view.layer.zPosition = CGFloat(Float.greatestFiniteMagnitude)
+    }
+    
+    /// Show view with fade in animation
+    public func show(completion: AnimationCompletion? = nil) {
+        if view.isHidden || view.alpha < 1 {
+            view.isHidden = false
+            view.alpha = 0
             
-            animateTransition(animations: {
-                self.alpha = 1
+            animateTransition(animations: { [weak self] in
+                self?.view.alpha = 1
             }, completion: completion)
         }
     }
     
-    /// animate out the window
-    open func hide(completion: CompletionAction? = nil) {
-        if !self.isHidden || self.alpha > 0 {
-            animateTransition(animations: {
-                self.alpha = 1
+    /// Hide view with fade out animation
+    public func hide(completion: AnimationCompletion? = nil) {
+        if view.isHidden || view.alpha > 0 {
+            animateTransition(animations: { [weak self] in
+                self?.view.alpha = 0
+                self?.view.isHidden = true
             }, completion: completion)
         }
     }
     
-    /// Resize the root view to PiP mode
-    open func enterPictureInPicture() {
-        guard let view = rootViewController?.view else { return }
+    /// Resize view to and change state to custom PictureInPicture mode
+    /// This will resize view, add a  gesture to enable user to "drag" view
+    /// around screen, and add a button of top of the view to be able to exit mode
+    public func enterPictureInPicture() {
         isInPiP = true
-        animateRootViewChange()
+        animateViewChange()
         dragController.startDragListener(inView: view)
         dragController.insets = dragBoundInsets
         
@@ -99,10 +112,11 @@ open class PiPWindow: UIWindow {
         view.addGestureRecognizer(tapGestureRecognizer)
     }
     
-    /// Resize the root view to full screen
-    open func exitPictureInPicture() {
+    /// Exit Picture in picture mode, this will resize view, remove
+    /// exit pip button, and disable the drag gesture
+    @objc public func exitPictureInPicture() {
         isInPiP = false
-        animateRootViewChange()
+        animateViewChange()
         dragController.stopDragListener()
         
         // hide PiP UI
@@ -113,6 +127,13 @@ open class PiPWindow: UIWindow {
         let exitSelector = #selector(toggleExitPiP)
         tapGestureRecognizer?.removeTarget(self, action: exitSelector)
         tapGestureRecognizer = nil
+    }
+    
+    /// Reset view to provide bounds, use this method on rotation or
+    /// screen size changes
+    public func resetBounds(bounds: CGRect) {
+        currentBounds = bounds
+        exitPictureInPicture()
     }
     
     /// Stop the dragging gesture of the root view
@@ -132,41 +153,14 @@ open class PiPWindow: UIWindow {
         button.backgroundColor = .gray
         button.layer.cornerRadius = size.width / 2
         button.frame = CGRect(origin: CGPoint.zero, size: size)
-        if let view = rootViewController?.view {
-            button.center = view.convert(view.center, from:view.superview)
-        }
+        button.center = view.convert(view.center, from: view.superview)
         button.addTarget(target, action: action, for: .touchUpInside)
         return button
     }
     
-    // MARK: - Manage presentation switching
-    
-    private func animateRootViewChange() {
-        UIView.animate(withDuration: 0.25) {
-            self.rootViewController?.view.frame = self.changeRootViewRect()
-            self.rootViewController?.view.setNeedsLayout()
-        }
-    }
-    
-    private func changeRootViewRect() -> CGRect {
-        guard isInPiP else {
-            return self.bounds
-        }
-        
-        // resize to suggested ratio and position to the bottom right
-        let adjustedBounds = UIEdgeInsetsInsetRect(self.bounds, dragBoundInsets)
-        let size = CGSize(width: bounds.size.width * pipSizeRatio,
-                          height: bounds.size.height * pipSizeRatio)
-        let x: CGFloat = adjustedBounds.maxX - size.width
-        let y: CGFloat = adjustedBounds.maxY - size.height
-        return CGRect(x: x, y: y, width: size.width, height: size.height)
-    }
-    
-    // MARK: - Exit PiP
+    // MARK: - Interactions
     
     @objc private func toggleExitPiP() {
-        guard let view = rootViewController?.view else { return }
-        
         if exitPiPButton == nil {
             // show button
             let exitSelector = #selector(exitPictureInPicture)
@@ -182,18 +176,40 @@ open class PiPWindow: UIWindow {
         }
     }
     
-    @objc private func exitPiP() {
-        exitPictureInPicture()
+    // MARK: - Size calculation
+    
+    private func animateViewChange() {
+        UIView.animate(withDuration: 0.25) {
+            self.view.frame = self.changeViewRect()
+            self.view.setNeedsLayout()
+        }
     }
     
-    // MARK: - Animation transition
+    private func changeViewRect() -> CGRect {
+        let bounds = currentBounds
+        
+        guard isInPiP else {
+            return bounds
+        }
+        
+        // resize to suggested ratio and position to the bottom right
+        let adjustedBounds = UIEdgeInsetsInsetRect(bounds, dragBoundInsets)
+        let size = CGSize(width: bounds.size.width * pipSizeRatio,
+                          height: bounds.size.height * pipSizeRatio)
+        let x: CGFloat = adjustedBounds.maxX - size.width
+        let y: CGFloat = adjustedBounds.maxY - size.height
+        return CGRect(x: x, y: y, width: size.width, height: size.height)
+    }
+    
+    // MARK: - Animation helpers
     
     private func animateTransition(animations: @escaping () -> Void,
-                                   completion: CompletionAction?) {
+                                   completion: AnimationCompletion?) {
         UIView.animate(withDuration: 0.1,
                        delay: 0,
                        options: .beginFromCurrentState,
                        animations: animations,
                        completion: completion)
     }
+    
 }
