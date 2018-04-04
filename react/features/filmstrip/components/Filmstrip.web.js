@@ -5,9 +5,7 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
-import { getLocalParticipant, PARTICIPANT_ROLE } from '../../base/participants';
-import { InviteButton } from '../../invite';
-import { Toolbox, ToolboxFilmstrip, dockToolbox } from '../../toolbox';
+import { ToolboxFilmstrip, dockToolbox } from '../../toolbox';
 
 import { setFilmstripHovered } from '../actions';
 import { shouldRemoteVideosBeVisible } from '../functions';
@@ -36,27 +34,9 @@ class Filmstrip extends Component<*> {
      */
     static propTypes = {
         /**
-         * Whether invite button rendering should be skipped,
-         * by default it is. false
-         */
-        _hideInviteButton: PropTypes.bool,
-
-        /**
          * Whether or not remote videos are currently being hovered over.
          */
         _hovered: PropTypes.bool,
-
-        /**
-         * Whether or not the feature to directly invite people into the
-         * conference is available.
-         */
-        _isAddToCallAvailable: PropTypes.bool,
-
-        /**
-         * Whether or not the feature to dial out to number to join the
-         * conference is available.
-         */
-        _isDialOutAvailable: PropTypes.bool,
 
         /**
          * Whether or not the remote videos should be visible. Will toggle
@@ -115,9 +95,6 @@ class Filmstrip extends Component<*> {
      */
     render() {
         const {
-            _hideInviteButton,
-            _isAddToCallAvailable,
-            _isDialOutAvailable,
             _remoteVideosVisible,
             _toolboxVisible,
             filmstripOnly
@@ -136,12 +113,9 @@ class Filmstrip extends Component<*> {
         const filmstripClassNames = `filmstrip ${_remoteVideosVisible
             ? '' : 'hide-videos'} ${reduceHeight ? 'reduce-height' : ''}`;
 
-        const ToolboxToUse = interfaceConfig._USE_NEW_TOOLBOX
-            ? ToolboxFilmstrip : Toolbox;
-
         return (
             <div className = { filmstripClassNames }>
-                { filmstripOnly ? <ToolboxToUse /> : null }
+                { filmstripOnly && <ToolboxFilmstrip /> }
                 <div
                     className = 'filmstrip__videos'
                     id = 'remoteVideos'>
@@ -150,11 +124,6 @@ class Filmstrip extends Component<*> {
                         id = 'filmstripLocalVideo'
                         onMouseOut = { this._onMouseOut }
                         onMouseOver = { this._onMouseOver }>
-                        { filmstripOnly || _hideInviteButton
-                            ? null
-                            : <InviteButton
-                                enableAddPeople = { _isAddToCallAvailable }
-                                enableDialOut = { _isDialOutAvailable } /> }
                         <div id = 'filmstripLocalVideoThumbnail' />
                     </div>
                     <div
@@ -185,9 +154,7 @@ class Filmstrip extends Component<*> {
      */
     _notifyOfHoveredStateUpdate() {
         if (this.props._hovered !== this._isHovered) {
-            if (interfaceConfig._USE_NEW_TOOLBOX) {
-                this.props.dispatch(dockToolbox(this._isHovered));
-            }
+            this.props.dispatch(dockToolbox(this._isHovered));
             this.props.dispatch(setFilmstripHovered(this._isHovered));
         }
     }
@@ -223,36 +190,16 @@ class Filmstrip extends Component<*> {
  * @param {Object} state - The Redux state.
  * @private
  * @returns {{
- *     _hideInviteButton: boolean,
  *     _hovered: boolean,
- *     _isAddToCallAvailable: boolean,
- *     _isDialOutAvailable: boolean,
  *     _remoteVideosVisible: boolean,
  *     _toolboxVisible: boolean
  * }}
  */
 function _mapStateToProps(state) {
-    const { conference } = state['features/base/conference'];
-    const {
-        enableUserRolesBasedOnToken,
-        iAmRecorder
-    } = state['features/base/config'];
-    const { isGuest } = state['features/base/jwt'];
     const { hovered } = state['features/filmstrip'];
 
-    const isAddToCallAvailable = !isGuest;
-    const isDialOutAvailable
-        = getLocalParticipant(state).role === PARTICIPANT_ROLE.MODERATOR
-                && conference && conference.isSIPCallingSupported()
-                && (!enableUserRolesBasedOnToken || !isGuest);
-
     return {
-        _hideInviteButton: iAmRecorder
-            || (!isAddToCallAvailable && !isDialOutAvailable)
-            || interfaceConfig._USE_NEW_TOOLBOX,
         _hovered: hovered,
-        _isAddToCallAvailable: isAddToCallAvailable,
-        _isDialOutAvailable: isDialOutAvailable,
         _remoteVideosVisible: shouldRemoteVideosBeVisible(state),
         _toolboxVisible: state['features/toolbox'].visible
     };

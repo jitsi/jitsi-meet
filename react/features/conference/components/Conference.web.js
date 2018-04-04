@@ -14,7 +14,6 @@ import { NotificationsContainer } from '../../notifications';
 import { SidePanel } from '../../side-panel';
 import {
     Toolbox,
-    ToolboxV2,
     fullScreenChanged,
     setToolboxAlwaysVisible,
     showToolbox
@@ -139,7 +138,6 @@ class Conference extends Component<Props> {
      */
     render() {
         const {
-            _USE_NEW_TOOLBOX,
             VIDEO_QUALITY_LABEL_DISABLED,
             filmStripOnly
         } = interfaceConfig;
@@ -147,16 +145,6 @@ class Conference extends Component<Props> {
             = filmStripOnly
                 || VIDEO_QUALITY_LABEL_DISABLED
                 || this.props._iAmRecorder;
-
-        let ToolboxToUse;
-
-        if (filmStripOnly) {
-            ToolboxToUse = null;
-        } else if (interfaceConfig._USE_NEW_TOOLBOX) {
-            ToolboxToUse = ToolboxV2;
-        } else {
-            ToolboxToUse = Toolbox;
-        }
 
         return (
             <div
@@ -168,10 +156,8 @@ class Conference extends Component<Props> {
                     <Filmstrip filmstripOnly = { filmStripOnly } />
                 </div>
 
-                { ToolboxToUse && <ToolboxToUse /> }
-
-                { _USE_NEW_TOOLBOX && !filmStripOnly
-                    && <SidePanel /> }
+                { !filmStripOnly && <Toolbox /> }
+                { !filmStripOnly && <SidePanel /> }
 
                 <DialogContainer />
                 <NotificationsContainer />

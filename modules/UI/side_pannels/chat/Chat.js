@@ -1,4 +1,4 @@
-/* global APP, $, interfaceConfig */
+/* global APP, $ */
 
 import { processReplacements, linkify } from './Replacement';
 import CommandsProcessor from './Commands';
@@ -181,15 +181,11 @@ function resizeChatConversation() {
     $('#smileysContainer').css('bottom', msgareaHeight);
     chat.width(width - 10);
 
-    if (interfaceConfig._USE_NEW_TOOLBOX) {
-        const maybeAMagicNumberForPaddingAndMargin = 100;
-        const offset = maybeAMagicNumberForPaddingAndMargin
-            + msgareaHeight + getToolboxHeight();
+    const maybeAMagicNumberForPaddingAndMargin = 100;
+    const offset = maybeAMagicNumberForPaddingAndMargin
+        + msgareaHeight + getToolboxHeight();
 
-        chat.height(window.innerHeight - offset);
-    } else {
-        chat.height(window.innerHeight - 15 - msgareaHeight);
-    }
+    chat.height(window.innerHeight - offset);
 }
 
 /**

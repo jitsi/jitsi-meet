@@ -36,14 +36,7 @@ import {
     showWarningNotification
 } from '../../react/features/notifications';
 import {
-    checkAutoEnableDesktopSharing,
-    clearButtonPopup,
     dockToolbox,
-    setButtonPopupTimeout,
-    setToolbarButton,
-    showDialPadButton,
-    showEtherpadButton,
-    showSharedVideoButton,
     showToolbox
 } from '../../react/features/toolbox';
 
@@ -278,7 +271,7 @@ UI.setLocalRaisedHandStatus
  * Initialize conference UI.
  */
 UI.initConference = function() {
-    const { dispatch, getState } = APP.store;
+    const { getState } = APP.store;
     const { email, id, name } = getLocalParticipant(getState);
 
     // Update default button states before showing the toolbar
@@ -297,8 +290,6 @@ UI.initConference = function() {
     if (email) {
         UI.setUserEmail(id, email);
     }
-
-    dispatch(checkAutoEnableDesktopSharing());
 
     // FollowMe attempts to copy certain aspects of the moderator's UI into the
     // other participants' UI. Consequently, it needs (1) read and write access
@@ -372,11 +363,10 @@ UI.start = function() {
         $('body').addClass('vertical-filmstrip');
     }
 
-
     // TODO: remove this class once the old toolbar has been removed. This class
     // is set so that any CSS changes needed to adjust elements outside of the
     // new toolbar can be scoped to just the app with the new toolbar enabled.
-    if (interfaceConfig._USE_NEW_TOOLBOX && !interfaceConfig.filmStripOnly) {
+    if (!interfaceConfig.filmStripOnly) {
         $('body').addClass('use-new-toolbox');
     }
 
@@ -476,7 +466,6 @@ UI.initEtherpad = name => {
         = new EtherpadManager(config.etherpad_base, name, eventEmitter);
 
     APP.store.dispatch(setEtherpadHasInitialzied());
-    APP.store.dispatch(showEtherpadButton());
 };
 
 /**
@@ -543,8 +532,6 @@ UI.onPeerVideoTypeChanged
  */
 UI.updateLocalRole = isModerator => {
     VideoLayout.showModeratorIndicator();
-
-    APP.store.dispatch(showSharedVideoButton());
 
     Recording.showRecordingButton(isModerator);
 
@@ -672,14 +659,9 @@ UI.inputDisplayNameHandler = function(newDisplayName) {
  * @param {number} timeout - The time to show the popup
  * @returns {void}
  */
-// eslint-disable-next-line max-params
+// eslint-disable-next-line max-params, no-unused-vars
 UI.showCustomToolbarPopup = function(buttonName, popupID, show, timeout) {
-    const action
-        = show
-            ? setButtonPopupTimeout(buttonName, popupID, timeout)
-            : clearButtonPopup(buttonName);
-
-    APP.store.dispatch(action);
+    // TODO: this is no longer implemented as of Toolbox v2. Remove?
 };
 
 /**
@@ -905,17 +887,6 @@ UI.promptDisplayName = () => {
 UI.setAudioLevel = (id, lvl) => VideoLayout.setAudioLevel(id, lvl);
 
 /**
- * Update state of desktop sharing buttons.
- *
- * @returns {void}
- */
-UI.updateDesktopSharingButtons
-    = () =>
-        APP.store.dispatch(setToolbarButton('desktop', {
-            toggled: APP.conference.isSharingScreen
-        }));
-
-/**
  * Hide connection quality statistics from UI.
  */
 UI.hideStats = function() {
@@ -946,8 +917,9 @@ UI.addMessage = function(from, displayName, message, stamp) {
     Chat.updateChatConversation(from, displayName, message, stamp);
 };
 
-UI.updateDTMFSupport
-    = isDTMFSupported => APP.store.dispatch(showDialPadButton(isDTMFSupported));
+// TODO: With Toolbox v2 this got scrapped. Remove?
+// eslint-disable-next-line no-empty-function
+UI.updateDTMFSupport = () => { };
 
 UI.updateRecordingState = function(state) {
     Recording.updateRecordingState(state);

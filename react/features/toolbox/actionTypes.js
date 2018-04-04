@@ -62,17 +62,6 @@ export const SET_SUBJECT = Symbol('SET_SUBJECT');
 export const SET_SUBJECT_SLIDE_IN = Symbol('SET_SUBJECT_SLIDE_IN');
 
 /**
- * The type of the action which sets the descriptor of a toolbar button.
- *
- * {
- *     type: SET_TOOLBAR_BUTTON,
- *     button: Object,
- *     key: string
- * }
- */
-export const SET_TOOLBAR_BUTTON = Symbol('SET_TOOLBAR_BUTTON');
-
-/**
  * The type of the action which sets the indicator which determiens whether a
  * fToolbar in the Toolbox is hovered.
  *

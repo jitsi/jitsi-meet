@@ -106,10 +106,7 @@ import {
     suspendDetected
 } from './react/features/overlay';
 import { setSharedVideoStatus } from './react/features/shared-video';
-import {
-    isButtonEnabled,
-    showDesktopSharingButton
-} from './react/features/toolbox';
+import { isButtonEnabled } from './react/features/toolbox';
 
 const logger = require('jitsi-meet-logger').getLogger(__filename);
 
@@ -768,7 +765,6 @@ export default {
 
                 APP.store.dispatch(
                     setDesktopSharingEnabled(this.isDesktopSharingEnabled));
-                APP.store.dispatch(showDesktopSharingButton());
 
                 this._createRoom(tracks);
                 APP.remoteControl.init();
@@ -1359,7 +1355,6 @@ export default {
         this.isSharingScreen = newStream && newStream.videoType === 'desktop';
 
         if (wasSharingScreen !== this.isSharingScreen) {
-            APP.UI.updateDesktopSharingButtons();
             APP.API.notifyScreenSharingStatusChanged(this.isSharingScreen);
         }
     },
