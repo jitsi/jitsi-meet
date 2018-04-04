@@ -51,7 +51,6 @@ export default class PagedList extends AbstractPagedList {
                 ] }>
                 <ViewPagerAndroid
                     initialPage = { DEFAULT_PAGE }
-                    keyboardDismissMode = 'on-drag'
                     onPageSelected = { this._onPageSelected }
                     peekEnabled = { true }
                     ref = { this._setPagerReference }
@@ -67,6 +66,7 @@ export default class PagedList extends AbstractPagedList {
                 </ViewPagerAndroid>
                 <View style = { styles.pageIndicatorContainer }>
                     <TouchableOpacity
+                        disabled = { disabled }
                         onPress = { this._onSelectPage(0) }
                         style = { styles.pageIndicator } >
                         <View style = { styles.pageIndicator }>
@@ -86,6 +86,7 @@ export default class PagedList extends AbstractPagedList {
                         </View>
                     </TouchableOpacity>
                     <TouchableOpacity
+                        disabled = { disabled }
                         onPress = { this._onSelectPage(1) }
                         style = { styles.pageIndicator } >
                         <View style = { styles.pageIndicator }>

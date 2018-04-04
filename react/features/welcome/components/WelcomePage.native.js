@@ -48,6 +48,7 @@ class WelcomePage extends AbstractWelcomePage {
     constructor(props) {
         super(props);
 
+        this.state._fieldFocused = false;
         this.state.hintBoxAnimation = new Animated.Value(0);
 
         // Bind event handlers so they are only bound once per instance.
@@ -230,7 +231,7 @@ class WelcomePage extends AbstractWelcomePage {
             return (
                 <Animated.View style = { this._getHintBoxStyle() }>
                     <View style = { styles.hintTextContainer } >
-                        <Text>
+                        <Text style = { styles.hintText }>
                             { t('welcomepage.roomnameHint') }
                         </Text>
                     </View>
