@@ -19,5 +19,6 @@ export function getName() {
  * @returns {string|undefined}
  */
 export function getSdkBundlePath() {
-    return NativeModules.AppInfo.sdkBundlePath;
+    // FIXME now this is clearly a "sounds location"
+    return NativeModules.AppInfo.sdkBundlePath || 'asset:/sounds';
 }
