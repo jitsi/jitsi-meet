@@ -7,7 +7,7 @@
 
 .use-new-toolbox {
     .filmstrip.reduce-height {
-        bottom: $newToolbarSize;
+        bottom: $newToolbarSizeWithPadding;
     }
 
     .filmstrip {
@@ -15,7 +15,7 @@
     }
 
     .filmstrip__videos.hidden {
-        bottom: calc(-196px - #{$newToolbarSize});
+        bottom: calc(-196px - #{$newToolbarSizeWithPadding});
     }
 }
 

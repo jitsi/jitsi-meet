@@ -21,12 +21,12 @@
 
 .use-new-toolbox {
     .cxGWJB{
-        bottom: calc(#{$newToolbarSize} + 15px);
+        bottom: calc(#{$newToolbarSizeWithPadding});
     }
     .gXSEsl:nth-child(n+2) {
-        transform: translateX(0) translateY(100%) translateY(calc(#{$newToolbarSize} + 25px));
-        -ms-transform: translateX(0) translateY(100%) translateY(calc(#{$newToolbarSize} + 25px));
-        -webkit-transform: translateX(0) translateY(100%) translateY(calc(#{$newToolbarSize} + 25px));
+        transform: translateX(0) translateY(100%) translateY(16px);
+        -ms-transform: translateX(0) translateY(100%) translateY(16px);
+        -webkit-transform: translateX(0) translateY(100%) translateY(16px);
     }
 }
 
@@ -281,7 +281,7 @@
     box-sizing: border-box;
     display: flex;
     justify-content: space-between;
-    padding: 5px 20px;
+    padding: 16px 8px;
     position: absolute;
     transition: bottom .3s ease-in;
     width: 100%;
@@ -321,6 +321,7 @@
         border-radius: 5px;
         cursor: pointer;
         display: block;
+        font-size: inherit;
         height: 100%;
         line-height: inherit;
         width: 100%;
@@ -361,12 +362,15 @@
 
         .overflow-menu-item {
             align-items: center;
+            color: #B8C7E0;
             cursor: pointer;
             display: flex;
-            padding: 5px 10px;
+            font-size: 14px;
+            height: 32px;
+            padding: 5px 12px;
 
             &:hover {
-                background: rgba(0255, 255, 255, 0.2);
+                background: #313D52;
             }
 
             &.unclickable {
@@ -382,6 +386,7 @@
 
             i {
                 display: inline;
+                font-size: 24px;
             }
 
             i:hover {
@@ -389,8 +394,8 @@
             }
 
             img {
-                max-width: 18px;
-                max-height: 18px;
+                max-width: 24px;
+                max-height: 24px;
             }
         }
 
@@ -406,9 +411,8 @@
         color: $toolbarButtonColor;
         cursor: pointer;
         display: inline-block;
-        font-size: $newToolbarFontSize;
         line-height: $newToolbarSize;
-        margin: 0 10px;
+        margin: 0 8px;
         text-align: center;
     }
 
@@ -417,6 +421,9 @@
 
         .badge-round {
             bottom: 9px;
+            font-size: 12px;
+            line-height: 20px;
+            min-width: 20px;
             position: absolute;
             right: 9px;
         }
@@ -428,6 +435,7 @@
 
     .toolbox-icon {
         height: $newToolbarSize;
+        font-size: 36px;
         width: $newToolbarSize;
     }
 }
@@ -442,7 +450,7 @@
     i {
         cursor: pointer;
         display: block;
-        font-size: $newToolbarFontSize;
+        font-size: 1.9em;
         height: 37px;
         line-height: 37px;
         width: 37px;

@@ -6,9 +6,9 @@
 
     /**
      * Make the sidebar flush with the top of the toolbar. Take the size of
-     * the toolbar, plus its padding, and subtract from 100%.
+     * the toolbar and subtract from 100%.
      */
-    height: calc(100% - #{$newToolbarSize} - 10px);
+    height: calc(100% - #{$newToolbarSizeWithPadding});
     left: 0;
 
     .side-toolbar-close {
