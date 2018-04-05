@@ -45,8 +45,11 @@ RCT_EXPORT_MODULE();
         }
     }
 
+    NSString *sdkBundlePath = [[NSBundle bundleForClass:self.class] bundlePath];
+
     return @{
         @"name": name,
+        @"sdkBundlePath": sdkBundlePath,
         @"version": version
     };
 };

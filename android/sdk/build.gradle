@@ -71,6 +71,22 @@ gradle.projectsEvaluated {
         runBefore("processUniversal${buildNameCapitalized}Resources", currentFontTask)
         runBefore("process${buildNameCapitalized}Resources", currentFontTask)
 
+        def currentSoundsTask = tasks.create(
+                name: "copy${buildNameCapitalized}Sounds",
+                type: Copy) {
+             from("${projectDir}/../../sounds/joined.wav")
+             from("${projectDir}/../../sounds/left.wav")
+             into("${bundlePath}/assets/sounds")
+        }
+
+        currentSoundsTask.dependsOn("merge${buildNameCapitalized}Resources")
+        currentSoundsTask.dependsOn("merge${buildNameCapitalized}Assets")
+
+        runBefore("processArmeabi-v7a${buildNameCapitalized}Resources", currentSoundsTask)
+        runBefore("processX86${buildNameCapitalized}Resources", currentSoundsTask)
+        runBefore("processUniversal${buildNameCapitalized}Resources", currentSoundsTask)
+        runBefore("process${buildNameCapitalized}Resources", currentSoundsTask)
+
         // Bundle JavaScript and React resources.
         // (adapted from react-native/react.gradle)
         //

@@ -43,10 +43,10 @@ PODS:
     - React/Core
     - React/fishhook
     - React/RCTBlob
-  - RNSound (0.10.4):
+  - RNSound (0.10.9):
     - React/Core
-    - RNSound/Core (= 0.10.4)
-  - RNSound/Core (0.10.4):
+    - RNSound/Core (= 0.10.9)
+  - RNSound/Core (0.10.9):
     - React/Core
   - RNVectorIcons (4.4.2):
     - React
@@ -103,7 +103,7 @@ SPEC CHECKSUMS:
   react-native-keep-awake: 0de4bd66de0c23178107dce0c2fcc3354b2a8e94
   react-native-locale-detector: d1b2c6fe5abb56e3a1efb6c2d6f308c05c4251f1
   react-native-webrtc: bc044ca9530fc802e7533f247aa08fe1b6bf8dc5
-  RNSound: d0818fe2435254fe30540fae48a429c5ffb72e09
+  RNSound: b360b3862d3118ed1c74bb9825696b5957686ac4
   RNVectorIcons: c0dbfbf6068fefa240c37b0f71bd03b45dddac44
   yoga: 17521bbb0dd54a47c0b3ac43253e78cdac7488e0
 

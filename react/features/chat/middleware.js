@@ -7,7 +7,7 @@ import { MiddlewareRegistry } from '../base/redux';
 import { playSound, registerSound, unregisterSound } from '../base/sounds';
 
 import { INCOMING_MSG_SOUND_ID } from './constants';
-import { INCOMING_MSG_SOUND_SRC } from './sounds';
+import { INCOMING_MSG_SOUND_FILE } from './sounds';
 
 declare var APP: Object;
 
@@ -24,7 +24,7 @@ MiddlewareRegistry.register(store => next => action => {
         // on mobile.
         typeof APP === 'undefined'
             || store.dispatch(
-                registerSound(INCOMING_MSG_SOUND_ID, INCOMING_MSG_SOUND_SRC));
+                registerSound(INCOMING_MSG_SOUND_ID, INCOMING_MSG_SOUND_FILE));
         break;
 
     case APP_WILL_UNMOUNT:

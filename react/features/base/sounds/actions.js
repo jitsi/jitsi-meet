@@ -9,6 +9,7 @@ import {
     REGISTER_SOUND,
     UNREGISTER_SOUND
 } from './actionTypes';
+import { getSoundsPath } from './functions';
 
 /**
  * Adds {@link AudioElement} instance to the base/sounds feature state for the
@@ -81,20 +82,19 @@ export function playSound(soundId: string): Object {
  *
  * @param {string} soundId - The global identifier which identify the sound
  * created for given source object.
- * @param {Object|string} src - Either path to an audio file or a raw object
- * which specifies the audio resource that will be associated with the given
- * {@code soundId}.
+ * @param {string} soundName - The name of bundled audio file that will be
+ * associated with the given {@code soundId}.
  * @returns {{
  *     type: REGISTER_SOUND,
  *     soundId: string,
- *     src: (Object | string)
+ *     src: string
  * }}
  */
-export function registerSound(soundId: string, src: Object | string): Object {
+export function registerSound(soundId: string, soundName: string): Object {
     return {
         type: REGISTER_SOUND,
         soundId,
-        src
+        src: `${getSoundsPath()}/${soundName}`
     };
 }
 
