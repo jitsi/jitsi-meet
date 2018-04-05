@@ -188,6 +188,7 @@ class Toolbox extends Component<Props> {
         return (
             <View
                 key = 'primaryToolbar'
+                pointerEvents = 'box-none'
                 style = { styles.primaryToolbar }>
                 <AudioMuteButton buttonStyles = { audioButtonStyles } />
                 <HangupButton />
@@ -219,6 +220,7 @@ class Toolbox extends Component<Props> {
         return (
             <View
                 key = 'secondaryToolbar'
+                pointerEvents = 'box-none'
                 style = { styles.secondaryToolbar }>
                 {
                     AudioRouteButton

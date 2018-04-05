@@ -43,10 +43,17 @@ export default class Container extends AbstractContainer {
             return null;
         }
 
-        let element = super._render(View, props);
+        const onClickOrTouchFeedback = onClick || touchFeedback;
+        let element
+            = super._render(
+                View,
+                {
+                    pointerEvents: onClickOrTouchFeedback ? 'auto' : 'box-none',
+                    ...props
+                });
 
         // onClick & touchFeedback
-        if (element && (onClick || touchFeedback)) {
+        if (element && onClickOrTouchFeedback) {
             element
                 = React.createElement(
                     touchFeedback

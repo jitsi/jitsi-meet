@@ -58,7 +58,9 @@ class VideoTrack extends AbstractVideoTrack {
         return (
             <View style = { styles.video } >
                 { super.render() }
-                <Animated.View style = { animatedStyles } />
+                <Animated.View
+                    pointerEvents = 'none'
+                    style = { animatedStyles } />
             </View>
         );
     }

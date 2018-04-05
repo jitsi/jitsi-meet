@@ -218,7 +218,9 @@ class Conference extends Component<Props> {
                         </TintedView>
                 }
 
-                <View style = { styles.toolboxAndFilmstripContainer } >
+                <View
+                    pointerEvents = 'box-none'
+                    style = { styles.toolboxAndFilmstripContainer }>
                     {/*
                       * The Toolbox is in a stacking layer bellow the Filmstrip.
                       */}

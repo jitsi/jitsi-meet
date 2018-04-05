@@ -158,8 +158,10 @@ class ParticipantView extends Component<Props> {
         };
 
         return (
-            <View style = { containerStyle } >
-                <Text style = { styles.connectionInfoText } >
+            <View
+                pointerEvents = 'box-none'
+                style = { containerStyle }>
+                <Text style = { styles.connectionInfoText }>
                     { t(messageKey, { displayName }) }
                 </Text>
             </View>

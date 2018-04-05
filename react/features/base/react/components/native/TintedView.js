@@ -135,9 +135,15 @@ export default class TintedView extends Component<Props, State> {
     render() {
         // XXX Don't tint the children, tint the background only.
         return (
-            <View style = { BASE_STYLE }>
-                <View style = { this.state.style } />
-                <View style = { BASE_STYLE }>
+            <View
+                pointerEvents = 'box-none'
+                style = { BASE_STYLE }>
+                <View
+                    pointerEvents = 'none'
+                    style = { this.state.style } />
+                <View
+                    pointerEvents = 'box-none'
+                    style = { BASE_STYLE }>
                     { this.props.children }
                 </View>
             </View>
