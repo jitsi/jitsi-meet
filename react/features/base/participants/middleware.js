@@ -34,10 +34,7 @@ import {
     getParticipantById,
     getParticipantCount
 } from './functions';
-import {
-    PARTICIPANT_JOINED_SRC,
-    PARTICIPANT_LEFT_SRC
-} from './sounds';
+import { PARTICIPANT_JOINED_FILE, PARTICIPANT_LEFT_FILE } from './sounds';
 
 declare var APP: Object;
 
@@ -214,9 +211,9 @@ function _maybePlaySounds({ getState, dispatch }, action) {
  */
 function _registerSounds({ dispatch }) {
     dispatch(
-        registerSound(PARTICIPANT_JOINED_SOUND_ID, PARTICIPANT_JOINED_SRC));
+        registerSound(PARTICIPANT_JOINED_SOUND_ID, PARTICIPANT_JOINED_FILE));
     dispatch(
-        registerSound(PARTICIPANT_LEFT_SOUND_ID, PARTICIPANT_LEFT_SRC));
+        registerSound(PARTICIPANT_LEFT_SOUND_ID, PARTICIPANT_LEFT_FILE));
 }
 
 /**
@@ -228,7 +225,7 @@ function _registerSounds({ dispatch }) {
  */
 function _unregisterSounds({ dispatch }) {
     dispatch(
-        unregisterSound(PARTICIPANT_JOINED_SOUND_ID, PARTICIPANT_JOINED_SRC));
+        unregisterSound(PARTICIPANT_JOINED_SOUND_ID));
     dispatch(
-        unregisterSound(PARTICIPANT_LEFT_SOUND_ID, PARTICIPANT_LEFT_SRC));
+        unregisterSound(PARTICIPANT_LEFT_SOUND_ID));
 }
