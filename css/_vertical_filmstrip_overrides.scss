@@ -28,7 +28,7 @@
             transition: height .3s ease-in;
 
             &.reduce-height {
-                height: calc(100% - #{$newToolbarSize});
+                height: calc(100% - #{$newToolbarSizeWithPadding});
             }
         }
     }
