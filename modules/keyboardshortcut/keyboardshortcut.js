@@ -15,9 +15,9 @@ const logger = require('jitsi-meet-logger').getLogger(__filename);
 
 /**
  * Map of shortcuts. When a shortcut is registered it enters the mapping.
- * @type {{}}
+ * @type {Map}
  */
-const _shortcuts = {};
+const _shortcuts = new Map();
 
 /**
  * Map of registered keyboard keys and translation keys describing the
@@ -49,8 +49,8 @@ const KeyboardShortcut = {
             if (!($(':focus').is('input[type=text]')
                 || $(':focus').is('input[type=password]')
                 || $(':focus').is('textarea'))) {
-                if (_shortcuts.hasOwnProperty(key)) {
-                    _shortcuts[key].function(e);
+                if (_shortcuts.has(key)) {
+                    _shortcuts.get(key).function(e);
                 } else if (!isNaN(num) && num >= 0 && num <= 9) {
                     APP.UI.clickOnVideo(num);
                 }
@@ -117,11 +117,11 @@ const KeyboardShortcut = {
             shortcutAttr,
             exec,
             helpDescription) {
-        _shortcuts[shortcutChar] = {
+        _shortcuts.set(shortcutChar, {
             character: shortcutChar,
-            shortcutAttr,
-            function: exec
-        };
+            function: exec,
+            shortcutAttr
+        });
 
         if (helpDescription) {
             this._addShortcutToHelp(shortcutChar, helpDescription);
@@ -135,7 +135,7 @@ const KeyboardShortcut = {
      * no longer be usable
      */
     unregisterShortcut(shortcutChar) {
-        _shortcuts.remove(shortcutChar);
+        _shortcuts.delete(shortcutChar);
         _shortcutsHelp.delete(shortcutChar);
     },
 
