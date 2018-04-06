@@ -14,6 +14,11 @@ import styles, { AVATAR_SIZE } from './styles';
 type Props = {
 
     /**
+     * Callback to invoke when the {@code LargeVideo} is clicked/pressed.
+     */
+    onPress: Function,
+
+    /**
      * The ID of the participant (to be) depicted by LargeVideo.
      *
      * @private
@@ -107,13 +112,18 @@ class LargeVideo extends Component<Props, State> {
             avatarSize,
             useConnectivityInfoLabel
         } = this.state;
+        const {
+            onPress,
+            _participantId
+        } = this.props;
 
         return (
             <DimensionsDetector
-                onDimensionsChanged = { this._onDimensionsChanged } >
+                onDimensionsChanged = { this._onDimensionsChanged }>
                 <ParticipantView
                     avatarSize = { avatarSize }
-                    participantId = { this.props._participantId }
+                    onPress = { onPress }
+                    participantId = { _participantId }
                     style = { styles.largeVideo }
                     useConnectivityInfoLabel = { useConnectivityInfoLabel }
                     zOrder = { 0 } />

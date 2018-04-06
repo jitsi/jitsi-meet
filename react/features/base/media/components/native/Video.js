@@ -1,8 +1,10 @@
-/* @flow */
+// @flow
 
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { RTCView } from 'react-native-webrtc';
+
+import { Pressable } from '../../../react';
 
 import styles from './styles';
 
@@ -19,7 +21,14 @@ export default class Video extends Component<*> {
      */
     static propTypes = {
         mirror: PropTypes.bool,
+
         onPlaying: PropTypes.func,
+
+        /**
+         * Callback to invoke when the {@code Video} is clicked/pressed.
+         */
+        onPress: PropTypes.func,
+
         stream: PropTypes.object,
 
         /**
@@ -82,14 +91,15 @@ export default class Video extends Component<*> {
             const style = styles.video;
             const objectFit = (style && style.objectFit) || 'cover';
 
-            // eslint-disable-next-line no-extra-parens
             return (
-                <RTCView
-                    mirror = { this.props.mirror }
-                    objectFit = { objectFit }
-                    streamURL = { streamURL }
-                    style = { style }
-                    zOrder = { this.props.zOrder } />
+                <Pressable onPress = { this.props.onPress }>
+                    <RTCView
+                        mirror = { this.props.mirror }
+                        objectFit = { objectFit }
+                        streamURL = { streamURL }
+                        style = { style }
+                        zOrder = { this.props.zOrder } />
+                </Pressable>
             );
         }
 

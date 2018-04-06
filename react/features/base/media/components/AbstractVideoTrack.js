@@ -21,6 +21,12 @@ export default class AbstractVideoTrack extends Component {
     static propTypes = {
         dispatch: PropTypes.func,
 
+        /**
+         * Callback to invoke when the {@link Video} of
+         * {@code AbstractVideoTrack} is clicked/pressed.
+         */
+        onPress: PropTypes.func,
+
         videoTrack: PropTypes.object,
 
         waitForVideoStarted: PropTypes.bool,
@@ -106,6 +112,7 @@ export default class AbstractVideoTrack extends Component {
             <Video
                 mirror = { videoTrack && videoTrack.mirror }
                 onPlaying = { this._onVideoPlaying }
+                onPress = { this.props.onPress }
                 stream = { stream }
                 zOrder = { this.props.zOrder } />
         );
@@ -120,8 +127,7 @@ export default class AbstractVideoTrack extends Component {
     _onVideoPlaying() {
         const videoTrack = this.props.videoTrack;
 
-        if (videoTrack
-            && !videoTrack.videoStarted) {
+        if (videoTrack && !videoTrack.videoStarted) {
             this.props.dispatch(trackVideoStarted(videoTrack.jitsiTrack));
         }
     }

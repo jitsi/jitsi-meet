@@ -71,6 +71,11 @@ type Props = {
     avatarSize: number,
 
     /**
+     * Callback to invoke when the {@code ParticipantView} is clicked/pressed.
+     */
+    onPress: Function,
+
+    /**
      * The ID of the participant (to be) depicted by {@link ParticipantView}.
      *
      * @public
@@ -176,6 +181,7 @@ class ParticipantView extends Component<Props> {
      */
     render() {
         const {
+            onPress,
             _avatar: avatar,
             _connectionStatus: connectionStatus,
             _videoTrack: videoTrack
@@ -190,16 +196,26 @@ class ParticipantView extends Component<Props> {
         // doesn't retain the last frame forever, so we would end up with a
         // black screen.
         const waitForVideoStarted = false;
-        const renderVideo
+        let renderVideo
             = !this.props._audioOnly
                 && (connectionStatus
                     === JitsiParticipantConnectionStatus.ACTIVE)
                 && shouldRenderVideoTrack(videoTrack, waitForVideoStarted);
 
         // Is the avatar to be rendered?
-        const renderAvatar = Boolean(!renderVideo && avatar);
+        let renderAvatar = Boolean(!renderVideo && avatar);
 
-        // If the connection has problems we will "tint" the video / avatar.
+        // The consumer of this ParticipantView is allowed to forbid showing the
+        // video if the private logic of this ParticipantView determines that
+        // the video could be rendered.
+        renderVideo = renderVideo && _toBoolean(this.props.showVideo, true);
+
+        // The consumer of this ParticipantView is allowed to forbid showing the
+        // avatar if the private logic of this ParticipantView determines that
+        // the avatar could be rendered.
+        renderAvatar = renderAvatar && _toBoolean(this.props.showAvatar, true);
+
+        // If the connection has problems, we will "tint" the video / avatar.
         const useTint
             = connectionStatus === JitsiParticipantConnectionStatus.INACTIVE
                 || connectionStatus
@@ -207,30 +223,21 @@ class ParticipantView extends Component<Props> {
 
         return (
             <Container
+                onClick = { renderVideo ? undefined : onPress }
                 style = {{
                     ...styles.participantView,
                     ...this.props.style
-                }}>
+                }}
+                touchFeedback = { false }>
 
                 { renderVideo
-
-                    // The consumer of this ParticipantView is allowed to forbid
-                    // showing the video if the private logic of this
-                    // ParticipantView determines that the video could be
-                    // rendered.
-                    && _toBoolean(this.props.showVideo, true)
                     && <VideoTrack
+                        onPress = { renderVideo ? onPress : undefined }
                         videoTrack = { videoTrack }
                         waitForVideoStarted = { waitForVideoStarted }
                         zOrder = { this.props.zOrder } /> }
 
                 { renderAvatar
-
-                    // The consumer of this ParticipantView is allowed to forbid
-                    // showing the avatar if the private logic of this
-                    // ParticipantView determines that the avatar could be
-                    // rendered.
-                    && _toBoolean(this.props.showAvatar, true)
                     && <Avatar
                         size = { this.props.avatarSize }
                         uri = { avatar } /> }
