@@ -58,7 +58,7 @@
     "react-native-background-timer": "2.0.0",
     "react-native-calendar-events": "1.4.3",
     "react-native-callstats": "3.27.0",
-    "react-native-fetch-blob": "0.10.8",
+    "react-native-fetch-blob": "github:flatfox-ag/react-native-fetch-blob#exception_fixes",
     "react-native-img-cache": "1.5.2",
     "react-native-immersive": "1.1.0",
     "react-native-keep-awake": "2.0.6",
