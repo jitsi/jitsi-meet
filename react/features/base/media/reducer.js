@@ -1,6 +1,8 @@
 import { combineReducers } from 'redux';
 
+import { CONFERENCE_FAILED, CONFERENCE_LEFT } from '../conference';
 import { ReducerRegistry } from '../redux';
+import { TRACK_REMOVED } from '../tracks';
 
 import {
     SET_AUDIO_AVAILABLE,
@@ -8,6 +10,7 @@ import {
     SET_CAMERA_FACING_MODE,
     SET_VIDEO_AVAILABLE,
     SET_VIDEO_MUTED,
+    STORE_VIDEO_TRANSFORM,
     TOGGLE_CAMERA_FACING_MODE
 } from './actionTypes';
 import { CAMERA_FACING_MODE } from './constants';
@@ -73,7 +76,13 @@ function _audio(state = AUDIO_INITIAL_MEDIA_STATE, action) {
 const VIDEO_INITIAL_MEDIA_STATE = {
     available: true,
     facingMode: CAMERA_FACING_MODE.USER,
-    muted: 0
+    muted: 0,
+
+    /**
+     * The video {@link Transform}s applied to {@code MediaStream}s by
+     * {@code id} i.e. "pinch to zoom".
+     */
+    transforms: {}
 };
 
 /**
@@ -87,6 +96,10 @@ const VIDEO_INITIAL_MEDIA_STATE = {
  */
 function _video(state = VIDEO_INITIAL_MEDIA_STATE, action) {
     switch (action.type) {
+    case CONFERENCE_FAILED:
+    case CONFERENCE_LEFT:
+        return _clearAllVideoTransforms(state);
+
     case SET_CAMERA_FACING_MODE:
         return {
             ...state,
@@ -105,6 +118,9 @@ function _video(state = VIDEO_INITIAL_MEDIA_STATE, action) {
             muted: action.muted
         };
 
+    case STORE_VIDEO_TRANSFORM:
+        return _storeVideoTransform(state, action);
+
     case TOGGLE_CAMERA_FACING_MODE: {
         let cameraFacingMode = state.facingMode;
 
@@ -118,6 +134,9 @@ function _video(state = VIDEO_INITIAL_MEDIA_STATE, action) {
             facingMode: cameraFacingMode
         };
     }
+
+    case TRACK_REMOVED:
+        return _trackRemoved(state, action);
 
     default:
         return state;
@@ -138,3 +157,65 @@ ReducerRegistry.register('features/base/media', combineReducers({
     audio: _audio,
     video: _video
 }));
+
+/**
+ * Removes all stored video {@link Transform}s.
+ *
+ * @param {Object} state - The {@code video} state of the feature base/media.
+ * @private
+ * @returns {Object}
+ */
+function _clearAllVideoTransforms(state) {
+    return {
+        ...state,
+        transforms: VIDEO_INITIAL_MEDIA_STATE.transforms
+    };
+}
+
+/**
+ * Stores the last applied transform to a stream.
+ *
+ * @param {Object} state - The {@code video} state of the feature base/media.
+ * @param {Object} action - The redux action {@link STORE_VIDEO_TRANSFORM}.
+ * @private
+ * @returns {Object}
+ */
+function _storeVideoTransform(state, { streamId, transform }) {
+    return {
+        ...state,
+        transforms: {
+            ...state.transforms,
+            [streamId]: transform
+        }
+    };
+}
+
+/**
+ * Removes the stored video {@link Transform} associated with a
+ * {@code MediaStream} when its respective track is removed.
+ *
+ * @param {Object} state - The {@code video} state of the feature base/media.
+ * @param {Object} action - The redux action {@link TRACK_REMOVED}.
+ * @private
+ * @returns {Object}
+ */
+function _trackRemoved(state, { track: { jitsiTrack } }) {
+    if (jitsiTrack) {
+        const streamId = jitsiTrack.getStreamId();
+
+        if (streamId && streamId in state.transforms) {
+            const nextTransforms = {
+                ...state.transforms
+            };
+
+            delete nextTransforms[streamId];
+
+            return {
+                ...state,
+                transforms: nextTransforms
+            };
+        }
+    }
+
+    return state;
+}

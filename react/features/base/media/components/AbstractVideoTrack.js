@@ -36,7 +36,12 @@ export default class AbstractVideoTrack extends Component {
          * of all Videos. For more details, refer to the zOrder property of the
          * Video class for React Native.
          */
-        zOrder: PropTypes.number
+        zOrder: PropTypes.number,
+
+        /**
+         * Indicates whether zooming (pinch to zoom and/or drag) is enabled.
+         */
+        zoomEnabled: PropTypes.bool
     };
 
     /**
@@ -80,7 +85,7 @@ export default class AbstractVideoTrack extends Component {
      * @returns {ReactElement}
      */
     render() {
-        const videoTrack = this.state.videoTrack;
+        const { videoTrack } = this.state;
         let render;
 
         if (this.props.waitForVideoStarted) {
@@ -108,13 +113,21 @@ export default class AbstractVideoTrack extends Component {
         const stream
             = render ? videoTrack.jitsiTrack.getOriginalStream() : null;
 
+        // Actual zoom is currently only enabled if the stream is a desktop
+        // stream.
+        const zoomEnabled
+            = this.props.zoomEnabled
+                && stream
+                && videoTrack.videoType === 'desktop';
+
         return (
             <Video
                 mirror = { videoTrack && videoTrack.mirror }
                 onPlaying = { this._onVideoPlaying }
                 onPress = { this.props.onPress }
                 stream = { stream }
-                zOrder = { this.props.zOrder } />
+                zOrder = { this.props.zOrder }
+                zoomEnabled = { zoomEnabled } />
         );
     }
 
@@ -125,7 +138,7 @@ export default class AbstractVideoTrack extends Component {
      * @returns {void}
      */
     _onVideoPlaying() {
-        const videoTrack = this.props.videoTrack;
+        const { videoTrack } = this.props;
 
         if (videoTrack && !videoTrack.videoStarted) {
             this.props.dispatch(trackVideoStarted(videoTrack.jitsiTrack));

@@ -117,7 +117,12 @@ type Props = {
      * stacking space of all {@code Video}s. For more details, refer to the
      * {@code zOrder} property of the {@code Video} class for React Native.
      */
-    zOrder: number
+    zOrder: number,
+
+    /**
+     * Indicates whether zooming (pinch to zoom and/or drag) is enabled.
+     */
+    zoomEnabled: boolean
 };
 
 /**
@@ -127,6 +132,7 @@ type Props = {
  * @extends Component
  */
 class ParticipantView extends Component<Props> {
+
     /**
      * Renders the connection status label, if appropriate.
      *
@@ -235,7 +241,8 @@ class ParticipantView extends Component<Props> {
                         onPress = { renderVideo ? onPress : undefined }
                         videoTrack = { videoTrack }
                         waitForVideoStarted = { waitForVideoStarted }
-                        zOrder = { this.props.zOrder } /> }
+                        zOrder = { this.props.zOrder }
+                        zoomEnabled = { this.props.zoomEnabled } /> }
 
                 { renderAvatar
                     && <Avatar

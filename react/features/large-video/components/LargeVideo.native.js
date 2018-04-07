@@ -126,7 +126,8 @@ class LargeVideo extends Component<Props, State> {
                     participantId = { _participantId }
                     style = { styles.largeVideo }
                     useConnectivityInfoLabel = { useConnectivityInfoLabel }
-                    zOrder = { 0 } />
+                    zOrder = { 0 }
+                    zoomEnabled = { true } />
             </DimensionsDetector>
         );
     }

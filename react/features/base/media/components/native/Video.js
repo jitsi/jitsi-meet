@@ -4,9 +4,8 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { RTCView } from 'react-native-webrtc';
 
-import { Pressable } from '../../../react';
-
 import styles from './styles';
+import VideoTransform from './VideoTransform';
 
 /**
  * The React Native {@link Component} which is similar to Web's
@@ -54,7 +53,12 @@ export default class Video extends Component<*> {
          * values: 0 for the remote video(s) which appear in the background, and
          * 1 for the local video(s) which appear above the remote video(s).
          */
-        zOrder: PropTypes.number
+        zOrder: PropTypes.number,
+
+        /**
+         * Indicates whether zooming (pinch to zoom and/or drag) is enabled.
+         */
+        zoomEnabled: PropTypes.bool
     };
 
     /**
@@ -77,29 +81,29 @@ export default class Video extends Component<*> {
      * @returns {ReactElement|null}
      */
     render() {
-        const { stream } = this.props;
+        const { stream, zoomEnabled } = this.props;
 
         if (stream) {
             const streamURL = stream.toURL();
-
-            // XXX The CSS style object-fit that we utilize on Web is not
-            // supported on React Native. Adding objectFit to React Native's
-            // StyleSheet appears to be impossible without hacking and an
-            // unjustified amount of effort. Consequently, I've chosen to define
-            // objectFit on RTCView itself. Anyway, prepare to accommodate a
-            // future definition of objectFit in React Native's StyleSheet.
             const style = styles.video;
-            const objectFit = (style && style.objectFit) || 'cover';
+            const objectFit
+                = zoomEnabled
+                    ? 'contain'
+                    : (style && style.objectFit) || 'cover';
 
             return (
-                <Pressable onPress = { this.props.onPress }>
+                <VideoTransform
+                    enabled = { zoomEnabled }
+                    onPress = { this.props.onPress }
+                    streamId = { stream.id }
+                    style = { style }>
                     <RTCView
                         mirror = { this.props.mirror }
                         objectFit = { objectFit }
                         streamURL = { streamURL }
                         style = { style }
                         zOrder = { this.props.zOrder } />
-                </Pressable>
+                </VideoTransform>
             );
         }
 
