@@ -147,6 +147,7 @@ class InfoDialog extends Component {
         this._copyElement = null;
 
         // Bind event handlers so they are only bound once for every instance.
+        this._onClickInviteURL = this._onClickInviteURL.bind(this);
         this._onCopyInviteURL = this._onCopyInviteURL.bind(this);
         this._onPasswordRemove = this._onPasswordRemove.bind(this);
         this._onPasswordSubmit = this._onPasswordSubmit.bind(this);
@@ -219,7 +220,12 @@ class InfoDialog extends Component {
                         </span>
                         <span className = 'spacer'>&nbsp;</span>
                         <span className = 'info-value'>
-                            { this._getURLToDisplay() }
+                            <a
+                                className = 'info-dialog-invite-link'
+                                href = { this.props._inviteURL }
+                                onClick = { this._onClickInviteURL } >
+                                { this._getURLToDisplay() }
+                            </a>
                         </span>
                     </div>
                     <div className = 'info-dialog-dial-in'>
@@ -344,6 +350,20 @@ class InfoDialog extends Component {
      */
     _getURLToDisplay() {
         return this.props._inviteURL.replace(/^https?:\/\//i, '');
+    }
+
+    /**
+     * Callback invoked when the displayed invite URL link is clicked to prevent
+     * actual navigation from happening. The invite URL link has an href to
+     * display "Copy Link Address" in the context menu but otherwise it should
+     * not behave like a link.
+     *
+     * @param {Object} event - The click event from clicking on the link.
+     * @private
+     * @returns {void}
+     */
+    _onClickInviteURL(event) {
+        event.preventDefault();
     }
 
     /**
