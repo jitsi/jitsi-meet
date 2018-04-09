@@ -1,5 +1,3 @@
-/* global interfaceConfig */
-
 import InlineDialog from '@atlaskit/inline-dialog';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
@@ -8,29 +6,11 @@ import { connect } from 'react-redux';
 import { createToolbarEvent, sendAnalytics } from '../../analytics';
 import { translate } from '../../base/i18n';
 import { getParticipantCount } from '../../base/participants';
-import {
-    ToolbarButton,
-    ToolbarButtonV2,
-    TOOLTIP_TO_POPUP_POSITION
-} from '../../toolbox';
+import { ToolbarButtonV2 } from '../../toolbox';
 
 import { updateDialInNumbers } from '../actions';
 
 import { InfoDialog } from './info-dialog';
-
-/**
- * A configuration object to describe how {@code ToolbarButton} should render
- * the button.
- *
- * @type {object}
- */
-const DEFAULT_BUTTON_CONFIGURATION = {
-    buttonName: 'info',
-    classNames: [ 'button', 'icon-info' ],
-    enabled: true,
-    id: 'toolbar_button_info',
-    tooltipKey: 'info.tooltip'
-};
 
 /**
  * The amount of time, in milliseconds, to wait until automatically showing
@@ -170,9 +150,26 @@ class InfoDialogButton extends Component {
      * @returns {ReactElement}
      */
     render() {
-        return interfaceConfig._USE_NEW_TOOLBOX
-            ? this._renderNewToolbarButton()
-            : this._renderOldToolbarButton();
+        const { t } = this.props;
+        const { showDialog } = this.state;
+        const iconClass = `icon-info ${showDialog ? 'toggled' : ''}`;
+
+        return (
+            <div className = 'toolbox-button-wth-dialog'>
+                <InlineDialog
+                    content = {
+                        <InfoDialog onClose = { this._onDialogClose } /> }
+                    isOpen = { showDialog }
+                    onClose = { this._onDialogClose }
+                    position = { 'top right' }>
+                    <ToolbarButtonV2
+                        accessibilityLabel = 'Info'
+                        iconName = { iconClass }
+                        onClick = { this._onDialogToggle }
+                        tooltip = { t('info.tooltip') } />
+                </InlineDialog>
+            </div>
+        );
     }
 
     /**
@@ -208,69 +205,6 @@ class InfoDialogButton extends Component {
         sendAnalytics(createToolbarEvent('info'));
 
         this.setState({ showDialog: !this.state.showDialog });
-    }
-
-    /**
-     * Renders a React Element for the {@code InfoDialog} using legacy
-     * {@code ToolbarButton}.
-     *
-     * @private
-     * @returns {ReactElement}
-     */
-    _renderOldToolbarButton() {
-        const { tooltipPosition } = this.props;
-        const { showDialog } = this.state;
-
-        const buttonConfiguration = {
-            ...DEFAULT_BUTTON_CONFIGURATION,
-            classNames: [
-                ...DEFAULT_BUTTON_CONFIGURATION.classNames,
-                showDialog ? 'toggled button-active' : ''
-            ]
-        };
-
-        return (
-            <InlineDialog
-                content = { <InfoDialog onClose = { this._onDialogClose } /> }
-                isOpen = { showDialog }
-                onClose = { this._onDialogClose }
-                position = { TOOLTIP_TO_POPUP_POSITION[tooltipPosition] }>
-                <ToolbarButton
-                    button = { buttonConfiguration }
-                    onClick = { this._onDialogToggle }
-                    tooltipPosition = { tooltipPosition } />
-            </InlineDialog>
-        );
-    }
-
-    /**
-     * Renders a React Element for the {@code InfoDialog} using the newer
-     * {@code ToolbarButtonV2}.
-     *
-     * @private
-     * @returns {ReactElement}
-     */
-    _renderNewToolbarButton() {
-        const { t } = this.props;
-        const { showDialog } = this.state;
-        const iconClass = `icon-info ${showDialog ? 'toggled' : ''}`;
-
-        return (
-            <div className = 'toolbox-button-wth-dialog'>
-                <InlineDialog
-                    content = {
-                        <InfoDialog onClose = { this._onDialogClose } /> }
-                    isOpen = { showDialog }
-                    onClose = { this._onDialogClose }
-                    position = { 'top right' }>
-                    <ToolbarButtonV2
-                        accessibilityLabel = 'Info'
-                        iconName = { iconClass }
-                        onClick = { this._onDialogToggle }
-                        tooltip = { t('info.tooltip') } />
-                </InlineDialog>
-            </div>
-        );
     }
 }
 

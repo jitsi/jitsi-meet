@@ -699,8 +699,7 @@ class SharedVideoContainer extends LargeContainer {
         let height, width;
 
         if (interfaceConfig.VERTICAL_FILMSTRIP) {
-            height = interfaceConfig._USE_NEW_TOOLBOX
-                ? containerHeight - getToolboxHeight() : containerHeight;
+            height = containerHeight - getToolboxHeight();
             width = containerWidth - Filmstrip.getFilmstripWidth();
         } else {
             height = containerHeight - Filmstrip.getFilmstripHeight();
