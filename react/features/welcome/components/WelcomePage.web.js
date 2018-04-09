@@ -10,6 +10,7 @@ import { initAnalytics } from '../../analytics';
 import { translate } from '../../base/i18n';
 import { isAnalyticsEnabled } from '../../base/lib-jitsi-meet';
 import { Watermarks } from '../../base/react';
+import { HideNotificationBarStyle } from '../../unsupported-browser';
 
 import { AbstractWelcomePage, _mapStateToProps } from './AbstractWelcomePage';
 
@@ -69,6 +70,8 @@ class WelcomePage extends AbstractWelcomePage {
      * @returns {void}
      */
     componentDidMount() {
+        document.body.classList.add('welcome-page');
+
         // FIXME: This is not the best place for this logic. Ideally we should
         // use features/base/lib-jitsi-meet#initLib() action for this use case.
         // But currently lib-jitsi-meet#initLib()'s logic works for mobile only
@@ -88,6 +91,16 @@ class WelcomePage extends AbstractWelcomePage {
             this._additionalContentRef.appendChild(
                 this._additionalContentTemplate.content.cloneNode(true));
         }
+    }
+
+    /**
+     * Removes the classname used for custom styling of the welcome page.
+     *
+     * @inheritdoc
+     * @returns {void}
+     */
+    componentWillUnmount() {
+        document.body.classList.remove('welcome-page');
     }
 
     /**
@@ -150,6 +163,7 @@ class WelcomePage extends AbstractWelcomePage {
                             ref = { this._setAdditionalContentRef } />
                         : null }
                 </div>
+                <HideNotificationBarStyle />
             </AtlasKitThemeProvider>
         );
     }

@@ -1,7 +1,11 @@
+body.welcome-page {
+    background: inherit;
+    overflow: auto;
+}
+
 .welcome {
     font-family: $welcomePageFontFamily;
     height: 100%;
-    overflow: auto;
     position: relative;
 
     .header {
@@ -19,6 +23,7 @@
             justify-content: space-around;
             margin-top: 120px;
             margin-bottom: 20px;
+            max-width: calc(100% - 40px);
             min-height: 286px;
             width: 645px;
         }
@@ -50,6 +55,7 @@
             align-items: center;
             display: flex;
             margin-bottom: 20px;
+            max-width: calc(100% - 40px);
             position: relative;
             z-index: 2;
 
