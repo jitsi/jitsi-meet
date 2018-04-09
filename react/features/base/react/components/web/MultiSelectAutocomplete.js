@@ -151,6 +151,7 @@ class MultiSelectAutocomplete extends Component {
             <div>
                 <MultiSelectStateless
                     filterValue = { this.state.filterValue }
+                    icon = { null }
                     isDisabled = { isDisabled }
                     isLoading = { this.state.loading }
                     isOpen = { this.state.isOpen }
