@@ -44,6 +44,7 @@ class StopLiveStreamDialog extends Component {
         super(props);
 
         // Bind event handler so it is only bound once for every instance.
+        this._onCancel = this._onCancel.bind(this);
         this._onSubmit = this._onSubmit.bind(this);
     }
 
@@ -57,13 +58,25 @@ class StopLiveStreamDialog extends Component {
         return (
             <Dialog
                 okTitleKey = 'dialog.stopLiveStreaming'
-                onCancel = { this.props.onCancel }
+                onCancel = { this._onCancel }
                 onSubmit = { this._onSubmit }
                 titleKey = 'dialog.liveStreaming'
                 width = 'small'>
                 { this.props.t('dialog.stopStreamingWarning') }
             </Dialog>
         );
+    }
+
+    /**
+     * Callback invoked when stopping of live streaming is canceled.
+     *
+     * @private
+     * @returns {boolean} True to close the modal.
+     */
+    _onCancel() {
+        this.props.onCancel();
+
+        return true;
     }
 
     /**
