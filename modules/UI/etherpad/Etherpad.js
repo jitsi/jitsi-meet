@@ -155,6 +155,9 @@ class Etherpad extends LargeContainer {
                 document.body.style.background = '#eeeeee';
                 $iframe.css({ visibility: 'visible' });
                 $container.css({ zIndex: 2 });
+
+                APP.store.dispatch(setDocumentEditingState(true));
+
                 resolve();
             });
         });
@@ -173,6 +176,9 @@ class Etherpad extends LargeContainer {
             $iframe.fadeOut(300, () => {
                 $iframe.css({ visibility: 'hidden' });
                 $container.css({ zIndex: 0 });
+
+                APP.store.dispatch(setDocumentEditingState(false));
+
                 resolve();
             });
         });
