@@ -438,12 +438,11 @@ const Filmstrip = {
      * Resizes thumbnails
      * @param local
      * @param remote
-     * @param animate
      * @param forceUpdate
      * @returns {Promise}
      */
-    // eslint-disable-next-line max-params, no-unused-vars
-    resizeThumbnails(local, remote, animate = false, forceUpdate = false) {
+    // eslint-disable-next-line max-params
+    resizeThumbnails(local, remote, forceUpdate = false) {
         const thumbs = this.getThumbs(!forceUpdate);
 
         if (thumbs.localThumb) {

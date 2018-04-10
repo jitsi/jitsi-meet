@@ -95,7 +95,7 @@ RemoteVideo.prototype.addRemoteVideoContainer = function() {
 
     this.updateRemoteVideoMenu();
 
-    this.VideoLayout.resizeThumbnails(false, true);
+    this.VideoLayout.resizeThumbnails(true);
 
     this.addAudioLevelIndicator();
 
