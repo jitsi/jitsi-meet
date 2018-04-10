@@ -16,7 +16,6 @@ declare var APP: Object;
  * Represents a button in Toolbar on React.
  *
  * @class ToolbarButton
- * @extends AbstractToolbarButton
  */
 class ToolbarButton extends Component<*> {
     button: Object;

@@ -1,6 +1,5 @@
 // @flow
 
-import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 
@@ -8,34 +7,34 @@ import { MEDIA_TYPE } from '../../../base/media';
 import { isLocalTrackMuted } from '../../../base/tracks';
 
 import AbstractVideoMuteButton from './AbstractVideoMuteButton';
+import type {
+    Props as AbstractVideoMuteButtonProps
+} from './AbstractVideoMuteButton';
 import ToolbarButton from '../ToolbarButton';
+
+/**
+ * The type of the React {@link Component} props of {@link VideoMuteButton}.
+ */
+type Props = AbstractVideoMuteButtonProps & {
+
+    /**
+     * Whether or not the local participant is current in audio only mode. Video
+     * mute toggling is disabled in audio only mode.
+     */
+    _audioOnly: boolean,
+
+    /**
+     * Styles to be applied to the button and the icon to show.
+     */
+    buttonStyles: Object
+};
 
 /**
  * Component that renders a toolbar button for toggling video mute.
  *
  * @extends AbstractVideoMuteButton
  */
-class VideoMuteButton extends AbstractVideoMuteButton {
-    /**
-     * {@code VideoMuteButton} component's property types.
-     *
-     * @static
-     */
-    static propTypes = {
-        ...AbstractVideoMuteButton.propTypes,
-
-        /**
-         * Whether or not the local participant is current in audio only mode.
-         * Video mute toggling is disabled in audio only mode.
-         */
-        _audioOnly: PropTypes.bool,
-
-        /**
-         * Styles to be applied to the button and the icon to show.
-         */
-        buttonStyles: PropTypes.object
-    };
-
+class VideoMuteButton extends AbstractVideoMuteButton<Props> {
     /**
      * Implements React's {@link Component#render()}.
      *

@@ -8,16 +8,28 @@ import {
 } from '../../../analytics';
 
 /**
+ * The type of the React {@link Component} props of
+ * {@link AbstractHangupButton}.
+ */
+export type Props = {
+
+    /**
+     * Invoked to toggle audio mute.
+     */
+    dispatch: Dispatch<*>
+};
+
+/**
  * An abstract implementation of a button for leaving the conference.
  */
-export default class AbstractHangupButton extends Component<*> {
+export default class AbstractHangupButton<P : Props> extends Component<P> {
     /**
      * Initializes a new {@code AbstractHangupButton} instance.
      *
      * @param {Props} props - The read-only React {@code Component} props with
      * which the new instance is to be initialized.
      */
-    constructor(props: Object) {
+    constructor(props: P) {
         super(props);
 
         // Bind event handler so it is only bound once per instance.

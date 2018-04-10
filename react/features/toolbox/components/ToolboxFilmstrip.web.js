@@ -13,11 +13,27 @@ import { AudioMuteButton, HangupButton, VideoMuteButton } from './buttons';
 declare var interfaceConfig: Object;
 
 /**
+ * The type of the React {@link Component} props of {@link ToolboxFilmstrip}.
+ */
+type Props = {
+
+    /**
+     * Invoked open the DeviceSelectionDialog.
+     */
+    dispatch: Dispatch<*>,
+
+    /**
+     * Invoked to obtain translated strings.
+     */
+    t: Function
+};
+
+/**
  * Implements the conference toolbox on React/Web for filmstrip only mode.
  *
  * @extends Component
  */
-class ToolboxFilmstrip extends Component<*> {
+class ToolboxFilmstrip extends Component<Props> {
     _visibleButtons: Object;
 
     /**
@@ -26,12 +42,12 @@ class ToolboxFilmstrip extends Component<*> {
      * @param {Props} props - The read-only React {@code Component} props with
      * which the new instance is to be initialized.
      */
-    constructor(props) {
+    constructor(props: Props) {
         super(props);
 
         this._visibleButtons = new Set(interfaceConfig.TOOLBAR_BUTTONS);
 
-        // Bind event handlers so they are only bound once per instance.
+        // Bind event handler so it is only bound once per instance.
         this._onToolbarOpenSettings = this._onToolbarOpenSettings.bind(this);
     }
 

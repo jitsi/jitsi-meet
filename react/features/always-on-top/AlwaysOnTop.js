@@ -8,10 +8,18 @@ import StatelessToolbarButton
 
 const { api } = window.alwaysOnTop;
 
+type ButtonConfig = {
+    classNames: Array<string>,
+    enabled: boolean,
+    id: string,
+    onClick: Function
+};
+
 /**
  * Map with toolbar button descriptors.
  */
-const TOOLBAR_BUTTONS = {
+const TOOLBAR_BUTTONS: { [key: string]: ButtonConfig } = {
+
     /**
      * The descriptor of the camera toolbar button.
      */
@@ -396,49 +404,54 @@ export default class AlwaysOnTop extends Component<*, State> {
                     onMouseOut = { this._onMouseOut }
                     onMouseOver = { this._onMouseOver }>
                     {
-                        Object.entries(TOOLBAR_BUTTONS).map(
-                            ([ key, button ]) => {
-                                // XXX The following silences a couple of flow
-                                // errors:
-                                if (button === null
-                                        || typeof button !== 'object') {
-                                    return null;
-                                }
 
-                                const { onClick } = button;
-                                let enabled = false;
-                                let toggled = false;
+                        /**
+                         * Object.keys is used here explicitly to get around
+                         * flow bugs with custom types.
+                         */
+                        Object.keys(TOOLBAR_BUTTONS).map(key => {
+                            const button = TOOLBAR_BUTTONS[key];
 
-                                switch (key) {
-                                case 'microphone':
-                                    enabled = this.state.audioAvailable;
-                                    toggled = enabled
-                                        ? this.state.audioMuted : true;
-                                    break;
-                                case 'camera':
-                                    enabled = this.state.videoAvailable;
-                                    toggled = enabled
-                                        ? this.state.videoMuted : true;
-                                    break;
-                                default: // hangup button
-                                    toggled = false;
-                                    enabled = true;
-                                }
-
-                                const updatedButton = {
-                                    ...button,
-                                    enabled,
-                                    toggled
-                                };
-
-                                return (
-                                    <StatelessToolbarButton
-                                        button = { updatedButton }
-                                        key = { key }
-                                        onClick = { onClick } />
-                                );
+                            // XXX The following silences a couple of flow
+                            // errors:
+                            if (button === null
+                                    || typeof button !== 'object') {
+                                return null;
                             }
-                        )
+
+                            const { onClick } = button;
+                            let enabled = false;
+                            let toggled = false;
+
+                            switch (key) {
+                            case 'microphone':
+                                enabled = this.state.audioAvailable;
+                                toggled = enabled
+                                    ? this.state.audioMuted : true;
+                                break;
+                            case 'camera':
+                                enabled = this.state.videoAvailable;
+                                toggled = enabled
+                                    ? this.state.videoMuted : true;
+                                break;
+                            default: // hangup button
+                                toggled = false;
+                                enabled = true;
+                            }
+
+                            const updatedButton = {
+                                ...button,
+                                enabled,
+                                toggled
+                            };
+
+                            return (
+                                <StatelessToolbarButton
+                                    button = { updatedButton }
+                                    key = { key }
+                                    onClick = { onClick } />
+                            );
+                        })
                     }
                 </StatelessToolbar>
                 {

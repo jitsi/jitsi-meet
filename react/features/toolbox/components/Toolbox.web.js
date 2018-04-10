@@ -56,7 +56,7 @@ type Props = {
     _conference: Object,
 
     /**
-     * Whether or not desktopsharing was explicitly configured to be disabled.
+     * Whether or not desktop sharing was explicitly configured to be disabled.
      */
     _desktopSharingDisabledByConfig: boolean,
 
@@ -111,7 +111,7 @@ type Props = {
     /**
      * The ID of the local participant.
      */
-    _localParticipantID: String,
+    _localParticipantID: string,
 
     /**
      * Whether or not the local participant's hand is raised.
@@ -127,7 +127,7 @@ type Props = {
      * Whether the recording feature is live streaming (jibri) or is file
      * recording (jirecon).
      */
-    _recordingType: String,
+    _recordingType: string,
 
     /**
      * Whether or not the local participant is screensharing.
@@ -147,7 +147,7 @@ type Props = {
     /**
      * Invoked to active other features of the app.
      */
-    dispatch: Function,
+    dispatch: Dispatch<*>,
 
     /**
      * Invoked to obtain translated strings.
@@ -913,7 +913,7 @@ class Toolbox extends Component<Props, State> {
     }
 
     /**
-     * Renders a button for toggleing screen sharing.
+     * Renders a button for togglsing screen sharing.
      *
      * @private
      * @returns {ReactElement|null}

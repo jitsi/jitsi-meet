@@ -1,12 +1,13 @@
-/* @flow */
+// @flow
 
-import PropTypes from 'prop-types';
 import React from 'react';
 
 import AbstractToolbarButton from './AbstractToolbarButton';
+import type {
+    Props as AbstractToolbarButtonProps
+} from './AbstractToolbarButton';
 
 type MapOfAttributes = { [key: string]: * };
-
 
 /* eslint-disable flowtype/space-before-type-colon */
 
@@ -50,27 +51,30 @@ function getButtonAttributesByProps(props: Object = {})
 /* eslint-enable flowtype/space-before-type-colon */
 
 /**
+ * The type of the React {@link Component} props of
+ * {@link StatelessToolbarButton}.
+ */
+type Props = AbstractToolbarButtonProps & {
+
+    /**
+     * Object describing button.
+     */
+    button: Object,
+
+    /**
+     * A child React Element to show within the button.
+     */
+    children?: React$Node
+};
+
+/**
  * Represents a button in Toolbar on React.
  *
  * @class ToolbarButton
  * @extends AbstractToolbarButton
  */
-export default class StatelessToolbarButton extends AbstractToolbarButton {
-    _onClick: Function;
-
-    /**
-     * Toolbar button component's property types.
-     *
-     * @static
-     */
-    static propTypes = {
-        ...AbstractToolbarButton.propTypes,
-
-        /**
-         * Object describing button.
-         */
-        button: PropTypes.object.isRequired
-    };
+export default class StatelessToolbarButton
+    extends AbstractToolbarButton<Props> {
 
     /**
      * Initializes new ToolbarButton instance.
@@ -78,7 +82,7 @@ export default class StatelessToolbarButton extends AbstractToolbarButton {
      * @param {Object} props - The read-only properties with which the new
      * instance is to be initialized.
      */
-    constructor(props: Object) {
+    constructor(props: Props) {
         super(props);
 
         // Bind methods to save the context
@@ -105,6 +109,8 @@ export default class StatelessToolbarButton extends AbstractToolbarButton {
             </div>
         );
     }
+
+    _onClick: () => void;
 
     /**
      * Wrapper on on click handler props for current button.

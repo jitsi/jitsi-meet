@@ -1,6 +1,5 @@
 // @flow
 
-import PropTypes from 'prop-types';
 import { Component } from 'react';
 
 import {
@@ -14,33 +13,33 @@ import {
 } from '../../../base/media';
 
 /**
+ * The type of the React {@link Component} props of
+ * {@link AbstractAudioMuteButton}.
+ */
+export type Props = {
+
+    /**
+     * Whether or not the local microphone is muted.
+     */
+    _audioMuted: boolean,
+
+    /**
+     * Invoked to toggle audio mute.
+     */
+    dispatch: Dispatch<*>
+};
+
+/**
  * An abstract implementation of a button for toggling audio mute.
  */
-export default class AbstractAudioMuteButton extends Component<*> {
-    /**
-     * {@code AbstractAudioMuteButton} component's property types.
-     *
-     * @static
-     */
-    static propTypes = {
-        /**
-         * Whether or not the local microphone is muted.
-         */
-        _audioMuted: PropTypes.bool,
-
-        /**
-         * Invoked to toggle audio mute.
-         */
-        dispatch: PropTypes.func
-    };
-
+export default class AbstractAudioMuteButton<P : Props> extends Component<P> {
     /**
      * Initializes a new {@code AbstractAudioMuteButton} instance.
      *
      * @param {Props} props - The read-only React {@code Component} props with
      * which the new instance is to be initialized.
      */
-    constructor(props: Object) {
+    constructor(props: P) {
         super(props);
 
         // Bind event handler so it is only bound once per instance.

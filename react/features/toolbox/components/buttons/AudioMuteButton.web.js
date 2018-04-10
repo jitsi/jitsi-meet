@@ -1,6 +1,5 @@
 // @flow
 
-import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 
@@ -16,16 +15,45 @@ import { MEDIA_TYPE } from '../../../base/media';
 import { isLocalTrackMuted } from '../../../base/tracks';
 
 import AbstractAudioMuteButton from './AbstractAudioMuteButton';
+import type {
+    Props as AbstractAudioMuteButtonProps
+} from './AbstractAudioMuteButton';
 import ToolbarButtonV2 from '../ToolbarButtonV2';
 
 declare var APP: Object;
+
+/**
+ * The type of the React {@link Component} props of {@link AudioMuteButton}.
+ */
+type Props = AbstractAudioMuteButtonProps & {
+
+    /**
+     * The {@code JitsiConference} for the current conference.
+     */
+    _conference: Object,
+
+    /**
+     * Invoked to update the audio mute status.
+     */
+    dispatch: Function,
+
+    /**
+     * Invoked to obtain translated strings.
+     */
+    t: Function,
+
+    /**
+     * Where the tooltip should display, relative to the button.
+     */
+    tooltipPosition: string
+};
 
 /**
  * Component that renders a toolbar button for toggling audio mute.
  *
  * @extends Component
  */
-export class AudioMuteButton extends AbstractAudioMuteButton {
+export class AudioMuteButton extends AbstractAudioMuteButton<Props> {
     /**
      * Default values for {@code AudioMuteButton} component's properties.
      *
@@ -36,44 +64,15 @@ export class AudioMuteButton extends AbstractAudioMuteButton {
     };
 
     /**
-     * {@code AudioMuteButton} component's property types.
-     *
-     * @static
-     */
-    static propTypes = {
-        ...AbstractAudioMuteButton.propTypes,
-
-        /**
-         * The {@code JitsiConference} for the current conference.
-         */
-        _conference: PropTypes.object,
-
-        /**
-         * Invoked to update the audio mute status.
-         */
-        dispatch: PropTypes.func,
-
-        /**
-         * Invoked to obtain translated strings.
-         */
-        t: PropTypes.func,
-
-        /**
-         * Where the tooltip should display, relative to the button.
-         */
-        tooltipPosition: PropTypes.string
-    };
-
-    /**
      * Initializes a new {@code AudioMuteButton} instance.
      *
      * @param {Props} props - The read-only React {@code Component} props with
      * which the new instance is to be initialized.
      */
-    constructor(props: Object) {
+    constructor(props: Props) {
         super(props);
 
-        // Bind event handlers so it is only bound once per instance.
+        // Bind event handler so it is only bound once per instance.
         this._onShortcutToggleAudio = this._onShortcutToggleAudio.bind(this);
     }
 

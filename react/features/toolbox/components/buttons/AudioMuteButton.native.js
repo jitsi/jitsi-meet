@@ -1,6 +1,5 @@
 // @flow
 
-import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 
@@ -8,28 +7,28 @@ import { MEDIA_TYPE } from '../../../base/media';
 import { isLocalTrackMuted } from '../../../base/tracks';
 
 import AbstractAudioMuteButton from './AbstractAudioMuteButton';
+import type {
+    Props as AbstractAudioMuteButtonProps
+} from './AbstractAudioMuteButton';
 import ToolbarButton from '../ToolbarButton';
+
+/**
+ * The type of the React {@link Component} props of {@link AudioMuteButton}.
+ */
+type Props = AbstractAudioMuteButtonProps & {
+
+    /**
+     * Styles to be applied to the button and the icon to show.
+     */
+    buttonStyles: Object
+};
 
 /**
  * Component that renders a toolbar button for toggling audio mute.
  *
  * @extends AbstractAudioMuteButton
  */
-export class AudioMuteButton extends AbstractAudioMuteButton {
-    /**
-     * {@code AbstractAudioMuteButton} component's property types.
-     *
-     * @static
-     */
-    static propTypes = {
-        ...AbstractAudioMuteButton.propTypes,
-
-        /**
-         * Styles to be applied to the button and the icon to show.
-         */
-        buttonStyles: PropTypes.object
-    };
-
+export class AudioMuteButton extends AbstractAudioMuteButton<Props> {
     /**
      * Implements React's {@link Component#render()}.
      *
