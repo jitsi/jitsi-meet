@@ -18,7 +18,6 @@ export default {
      */
     AUDIO_MUTED: 'UI.audio_muted',
     VIDEO_MUTED: 'UI.video_muted',
-    VIDEO_UNMUTING_WHILE_AUDIO_ONLY: 'UI.video_unmuting_while_audio_only',
     ETHERPAD_CLICKED: 'UI.etherpad_clicked',
     SHARED_VIDEO_CLICKED: 'UI.start_shared_video',
 

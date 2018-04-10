@@ -641,22 +641,6 @@ UI.inputDisplayNameHandler = function(newDisplayName) {
 };
 
 /**
- * Show custom popup/tooltip for a specified button.
- *
- * @param {string} buttonName - The name of the button as specified in the
- * button configurations for the toolbar.
- * @param {string} popupSelectorID - The id of the popup to show as specified in
- * the button configurations for the toolbar.
- * @param {boolean} show - True or false/show or hide the popup
- * @param {number} timeout - The time to show the popup
- * @returns {void}
- */
-// eslint-disable-next-line max-params, no-unused-vars
-UI.showCustomToolbarPopup = function(buttonName, popupID, show, timeout) {
-    // TODO: this is no longer implemented as of Toolbox v2. Remove?
-};
-
-/**
  * Return the type of the remote video.
  * @param jid the jid for the remote video
  * @returns the video type video or screen.

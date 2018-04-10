@@ -364,7 +364,6 @@ export default class SharedVideoManager {
 
                 player.setVolume(attributes.volume);
                 logger.info(`Player change of volume:${attributes.volume}`);
-                this.showSharedVideoMutedPopup(false);
             }
 
             if (isPlayerPaused) {
@@ -564,8 +563,6 @@ export default class SharedVideoManager {
                 this.smartAudioMute();
             }
         }
-
-        this.showSharedVideoMutedPopup(mute);
     }
 
     /**
@@ -580,7 +577,6 @@ export default class SharedVideoManager {
             sendAnalytics(createEvent('audio.unmuted'));
             logger.log('Shared video: audio unmuted');
             this.emitter.emit(UIEvents.AUDIO_MUTED, false, false);
-            this.showMicMutedPopup(false);
         }
     }
 
@@ -594,37 +590,7 @@ export default class SharedVideoManager {
             sendAnalytics(createEvent('audio.muted'));
             logger.log('Shared video: audio muted');
             this.emitter.emit(UIEvents.AUDIO_MUTED, true, false);
-            this.showMicMutedPopup(true);
         }
-    }
-
-    /**
-     * Shows a popup under the microphone toolbar icon that notifies the user
-     * of automatic mute after a shared video has started.
-     * @param show boolean, show or hide the notification
-     */
-    showMicMutedPopup(show) {
-        if (show) {
-            this.showSharedVideoMutedPopup(false);
-        }
-
-        APP.UI.showCustomToolbarPopup(
-            'microphone', 'micMutedPopup', show, 5000);
-    }
-
-    /**
-     * Shows a popup under the shared video toolbar icon that notifies the user
-     * of automatic mute of the shared video after the user has unmuted their
-     * mic.
-     * @param show boolean, show or hide the notification
-     */
-    showSharedVideoMutedPopup(show) {
-        if (show) {
-            this.showMicMutedPopup(false);
-        }
-
-        APP.UI.showCustomToolbarPopup(
-            'sharedvideo', 'sharedVideoMutedPopup', show, 5000);
     }
 }
 
