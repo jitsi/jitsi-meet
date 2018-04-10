@@ -47,10 +47,6 @@
 
 .feedback-dialog {
     .details {
-        margin-top: 20px;
-        padding-left: 60px;
-        padding-right: 60px;
-
         textarea {
             min-height: 100px;
         }
@@ -82,10 +78,10 @@
         }
 
         .star-btn {
-            color: $rateStarDefault;
+            color: inherit;
             cursor: pointer;
             display: inline-block;
-            font-size: $rateStarSize;
+            font-size: 34px;
             outline: none;
             position: relative;
             text-decoration: none;
@@ -94,7 +90,7 @@
             &.active,
             &:hover,
             &.starHover {
-                color: $rateStarActivity;
+                color: #36B37E;
             };
 
         }
