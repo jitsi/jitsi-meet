@@ -66,9 +66,6 @@ const VideoLayout = {
     init(emitter) {
         eventEmitter = emitter;
 
-        // Unregister listeners in case of reinitialization
-        this.unregisterListeners();
-
         localVideoThumbnail = new LocalVideo(VideoLayout, emitter);
 
         // sets default video type of local video
@@ -104,20 +101,6 @@ const VideoLayout = {
     registerListeners() {
         eventEmitter.addListener(UIEvents.LOCAL_FLIPX_CHANGED,
             onLocalFlipXChanged);
-        eventEmitter.addListener(UIEvents.CONTACT_CLICKED,
-            this.handleVideoThumbClicked);
-    },
-
-    /**
-     * Unregistering listeners for UI events in Video layout component.
-     *
-     * @returns {void}
-     */
-    unregisterListeners() {
-        if (this._onContactClicked) {
-            eventEmitter.removeListener(UIEvents.CONTACT_CLICKED,
-                this.handleVideoThumbClicked);
-        }
     },
 
     initLargeVideo() {

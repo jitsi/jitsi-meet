@@ -81,10 +81,6 @@ function initCommands() {
             sendAnalytics(createApiEvent('chat.toggled'));
             APP.UI.toggleChat();
         },
-        'toggle-contact-list': () => {
-            sendAnalytics(createApiEvent('contact.list.toggled'));
-            APP.UI.toggleContactList();
-        },
         'toggle-share-screen': () => {
             sendAnalytics(createApiEvent('screen.sharing.toggled'));
             toggleScreenSharing();

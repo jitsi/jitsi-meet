@@ -24,7 +24,6 @@ const commands = {
     submitFeedback: 'submit-feedback',
     toggleAudio: 'toggle-audio',
     toggleChat: 'toggle-chat',
-    toggleContactList: 'toggle-contact-list',
     toggleFilmStrip: 'toggle-film-strip',
     toggleShareScreen: 'toggle-share-screen',
     toggleVideo: 'toggle-video'
@@ -551,7 +550,6 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
      * toggleVideo - mutes / unmutes video. no arguments
      * toggleFilmStrip - hides / shows the filmstrip. no arguments
      * toggleChat - hides / shows chat. no arguments.
-     * toggleContactList - hides / shows contact list. no arguments.
      * toggleShareScreen - starts / stops screen sharing. no arguments.
      *
      * @param {Object} commandList - The object with commands to be executed.

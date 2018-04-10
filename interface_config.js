@@ -44,16 +44,11 @@ var interfaceConfig = {
         'microphone', 'camera', 'desktop', 'fullscreen', 'fodeviceselection', 'hangup',
 
         // extended toolbar
-        'profile', 'contacts', 'info', 'chat', 'recording', 'etherpad',
+        'profile', 'info', 'chat', 'recording', 'etherpad',
         'sharedvideo', 'settings', 'raisehand', 'videoquality', 'filmstrip',
         'invite', 'feedback', 'stats', 'shortcuts'
     ],
 
-    /**
-     * Main Toolbar Buttons
-     * All of them should be in TOOLBAR_BUTTONS
-     */
-    MAIN_TOOLBAR_BUTTONS: [ 'microphone', 'camera', 'desktop', 'fullscreen', 'fodeviceselection', 'hangup' ],
     SETTINGS_SECTIONS: [ 'language', 'devices', 'moderator' ],
     INVITE_OPTIONS: [ 'invite', 'dialout', 'addtocall' ],
 
@@ -62,7 +57,6 @@ var interfaceConfig = {
     // screen, 'width' would fit the original video width to the width of the
     // screen respecting ratio.
     VIDEO_LAYOUT_FIT: 'both',
-    SHOW_CONTACTLIST_AVATARS: true,
 
     /**
      * Whether to only show the filmstrip (and hide the toolbar).

@@ -112,9 +112,6 @@ const UIListeners = new Map([
             }
         }
     ], [
-        UIEvents.TOGGLE_CONTACT_LIST,
-        () => UI.toggleContactList()
-    ], [
         UIEvents.TOGGLE_PROFILE,
         () => UI.toggleSidePanel('profile_container')
     ], [
@@ -627,11 +624,6 @@ UI.isChatVisible = () => Chat.isVisible();
  * Toggles chat panel.
  */
 UI.toggleChat = () => UI.toggleSidePanel('chat_container');
-
-/**
- * Toggles contact list panel.
- */
-UI.toggleContactList = () => UI.toggleSidePanel('contacts_container');
 
 /**
  * Toggles the given side panel.
