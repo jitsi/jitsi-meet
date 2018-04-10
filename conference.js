@@ -2060,13 +2060,6 @@ export default {
             }
         });
 
-        room.on(
-            JitsiConferenceEvents.DTMF_SUPPORT_CHANGED,
-            isDTMFSupported => {
-                APP.UI.updateDTMFSupport(isDTMFSupported);
-            }
-        );
-
         APP.UI.addListener(UIEvents.AUDIO_MUTED, muted => {
             this.muteAudio(muted);
         });

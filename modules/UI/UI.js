@@ -909,10 +909,6 @@ UI.addMessage = function(from, displayName, message, stamp) {
     Chat.updateChatConversation(from, displayName, message, stamp);
 };
 
-// TODO: With Toolbox v2 this got scrapped. Remove?
-// eslint-disable-next-line no-empty-function
-UI.updateDTMFSupport = () => { };
-
 UI.updateRecordingState = function(state) {
     Recording.updateRecordingState(state);
 };

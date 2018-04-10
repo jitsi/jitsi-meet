@@ -95,7 +95,6 @@
         "hangup": "Leave",
         "login": "Login",
         "logout": "Logout",
-        "dialpad": "Open / Close dialpad",
         "sharedVideoMutedPopup": "Your shared video has been muted so that you can talk to the other members.",
         "micMutedPopup": "Your microphone has been muted so that you would fully enjoy your shared video.",
         "talkWhileMutedPopup": "Trying to speak? You are muted.",
