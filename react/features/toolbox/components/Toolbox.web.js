@@ -973,13 +973,25 @@ class Toolbox extends Component<Props, State> {
                 && <OverflowMenuProfileItem
                     key = 'profile'
                     onClick = { this._onToolbarToggleProfile } />,
-            this._shouldShowButton('settings')
+            this._shouldShowButton('videoquality')
                 && <OverflowMenuItem
-                    accessibilityLabel = 'Settings'
-                    icon = 'icon-settings'
-                    key = 'settings'
-                    onClick = { this._onToolbarToggleSettings }
-                    text = { t('toolbar.Settings') } />,
+                    accessibilityLabel = 'Call quality'
+                    icon = { 'icon-visibility' }
+                    key = 'videoquality'
+                    onClick = { this._onToolbarOpenVideoQuality }
+                    text = { t('toolbar.callQuality') } />,
+            this._shouldShowButton('fullscreen')
+                && <OverflowMenuItem
+                    accessibilityLabel = 'Full screen'
+                    icon = { _fullScreen
+                        ? 'icon-exit-full-screen'
+                        : 'icon-full-screen' }
+                    key = 'fullscreen'
+                    onClick = { this._onToolbarToggleFullScreen }
+                    text = { _fullScreen
+                        ? t('toolbar.exitFullScreen')
+                        : t('toolbar.enterFullScreen') } />,
+            this._renderRecordingButton(),
             this._shouldShowButton('sharedvideo')
                 && <OverflowMenuItem
                     accessibilityLabel = 'Shared video'
@@ -999,25 +1011,13 @@ class Toolbox extends Component<Props, State> {
                     text = { _editingDocument
                         ? t('toolbar.documentClose')
                         : t('toolbar.documentOpen') } />,
-            this._shouldShowButton('fullscreen')
+            this._shouldShowButton('settings')
                 && <OverflowMenuItem
-                    accessibilityLabel = 'Full screen'
-                    icon = { _fullScreen
-                        ? 'icon-exit-full-screen'
-                        : 'icon-full-screen' }
-                    key = 'fullscreen'
-                    onClick = { this._onToolbarToggleFullScreen }
-                    text = { _fullScreen
-                        ? t('toolbar.exitFullScreen')
-                        : t('toolbar.enterFullScreen') } />,
-            this._renderRecordingButton(),
-            this._shouldShowButton('videoquality')
-                && <OverflowMenuItem
-                    accessibilityLabel = 'Call quality'
-                    icon = { 'icon-visibility' }
-                    key = 'videoquality'
-                    onClick = { this._onToolbarOpenVideoQuality }
-                    text = { t('toolbar.callQuality') } />,
+                    accessibilityLabel = 'Settings'
+                    icon = 'icon-settings'
+                    key = 'settings'
+                    onClick = { this._onToolbarToggleSettings }
+                    text = { t('toolbar.Settings') } />,
             this._shouldShowButton('stats')
                 && <OverflowMenuItem
                     accessibilityLabel = 'Speaker stats'
