@@ -450,25 +450,23 @@ const Filmstrip = {
 
             if (thumbs.localThumb) {
                 // eslint-disable-next-line no-shadow
-                promises.push(new Promise(resolve => {
-                    thumbs.localThumb.animate({
-                        height: local.thumbHeight,
-                        'min-height': local.thumbHeight,
-                        'min-width': local.thumbWidth,
-                        width: local.thumbWidth
-                    }, this._getAnimateOptions(animate, resolve));
-                }));
+                thumbs.localThumb.css({
+                    display: 'inline-block',
+                    height: `${local.thumbHeight}px`,
+                    'min-height': `${local.thumbHeight}px`,
+                    'min-width': `${local.thumbWidth}px`,
+                    width: `${local.thumbWidth}px`
+                });
             }
+
             if (thumbs.remoteThumbs) {
-                // eslint-disable-next-line no-shadow
-                promises.push(new Promise(resolve => {
-                    thumbs.remoteThumbs.animate({
-                        height: remote.thumbHeight,
-                        'min-height': remote.thumbHeight,
-                        'min-width': remote.thumbWidth,
-                        width: remote.thumbWidth
-                    }, this._getAnimateOptions(animate, resolve));
-                }));
+                thumbs.remoteThumbs.css({
+                    display: 'inline-block',
+                    height: `${remote.thumbHeight}px`,
+                    'min-height': `${remote.thumbHeight}px`,
+                    'min-width': `${remote.thumbWidth}px`,
+                    width: `${remote.thumbWidth}px`
+                });
             }
             // eslint-disable-next-line no-shadow
             promises.push(new Promise(resolve => {
