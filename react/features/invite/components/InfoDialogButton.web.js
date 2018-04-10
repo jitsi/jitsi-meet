@@ -6,7 +6,7 @@ import { connect } from 'react-redux';
 import { createToolbarEvent, sendAnalytics } from '../../analytics';
 import { translate } from '../../base/i18n';
 import { getParticipantCount } from '../../base/participants';
-import { ToolbarButtonV2 } from '../../toolbox';
+import { ToolbarButton } from '../../toolbox';
 
 import { updateDialInNumbers } from '../actions';
 
@@ -162,7 +162,7 @@ class InfoDialogButton extends Component {
                     isOpen = { showDialog }
                     onClose = { this._onDialogClose }
                     position = { 'top right' }>
-                    <ToolbarButtonV2
+                    <ToolbarButton
                         accessibilityLabel = 'Info'
                         iconName = { iconClass }
                         onClick = { this._onDialogToggle }

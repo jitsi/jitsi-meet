@@ -16,7 +16,7 @@ import { MEDIA_TYPE } from '../../../base/media';
 import { isLocalTrackMuted } from '../../../base/tracks';
 
 import AbstractAudioMuteButton from './AbstractAudioMuteButton';
-import ToolbarButtonV2 from '../ToolbarButtonV2';
+import ToolbarButton from '../ToolbarButton';
 
 declare var APP: Object;
 
@@ -111,7 +111,7 @@ export class AudioMuteButton extends AbstractAudioMuteButton {
         const { _audioMuted, _conference, t, tooltipPosition } = this.props;
 
         return (
-            <ToolbarButtonV2
+            <ToolbarButton
                 accessibilityLabel = 'Audio mute'
                 iconName = { _audioMuted && _conference
                     ? 'icon-mic-disabled toggled'

@@ -1,207 +1,79 @@
-/* @flow */
-
-import InlineDialog from '@atlaskit/inline-dialog';
 import Tooltip from '@atlaskit/tooltip';
 import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import React from 'react';
 
-import { translate } from '../../base/i18n';
-
-import { TOOLTIP_TO_POPUP_POSITION } from '../constants';
-import StatelessToolbarButton from './StatelessToolbarButton';
-
-declare var APP: Object;
+import AbstractToolbarButton from './AbstractToolbarButton';
 
 /**
- * Represents a button in Toolbar on React.
+ * Represents a button in the toolbar.
  *
- * @class ToolbarButton
  * @extends AbstractToolbarButton
  */
-class ToolbarButton extends Component<*> {
-    button: Object;
-
-    _onClick: Function;
+class ToolbarButton extends AbstractToolbarButton {
+    /**
+     * Default values for {@code ToolbarButton} component's properties.
+     *
+     * @static
+     */
+    static defaultProps = {
+        tooltipPosition: 'top'
+    };
 
     /**
-     * Toolbar button component's property types.
+     * {@code ToolbarButton} component's property types.
      *
      * @static
      */
     static propTypes = {
-        ...StatelessToolbarButton.propTypes,
+        ...AbstractToolbarButton.propTypes,
 
         /**
-         * Object describing button.
+         * The text to display in the tooltip.
          */
-        button: PropTypes.object.isRequired,
+        tooltip: PropTypes.string,
 
         /**
-         * Handler for component mount.
+         * From which direction the tooltip should appear, relative to the
+         * button.
          */
-        onMount: PropTypes.func,
-
-        /**
-         * Handler for component unmount.
-         */
-        onUnmount: PropTypes.func,
-
-        /**
-         * Translation helper function.
-         */
-        t: PropTypes.func,
-
-        /**
-         * Indicates the position of the tooltip.
-         */
-        tooltipPosition: PropTypes.oneOf([ 'bottom', 'left', 'right', 'top' ])
-    };
-
-    /**
-     * Initializes new ToolbarButton instance.
-     *
-     * @param {Object} props - The read-only properties with which the new
-     * instance is to be initialized.
-     */
-    constructor(props: Object) {
-        super(props);
-
-        // Bind methods to save the context
-        this._onClick = this._onClick.bind(this);
+        tooltipPosition: PropTypes.string
     }
 
     /**
-     * Sets shortcut/tooltip
-     * after mounting of the component.
+     * Renders the button of this {@code ToolbarButton}.
      *
-     * @inheritdoc
-     * @returns {void}
+     * @param {Object} children - The children, if any, to be rendered inside
+     * the button. Presumably, contains the icon of this {@code ToolbarButton}.
+     * @protected
+     * @returns {ReactElement} The button of this {@code ToolbarButton}.
      */
-    componentDidMount(): void {
-        this._setShortcut();
-
-        if (this.props.onMount) {
-            this.props.onMount();
-        }
-    }
-
-    /**
-     * Invokes on unmount handler if it was passed to the props.
-     *
-     * @inheritdoc
-     * @returns {void}
-     */
-    componentWillUnmount(): void {
-        if (this.props.onUnmount) {
-            this.props.onUnmount();
-        }
-    }
-
-    /**
-     * Implements React's {@link Component#render()}.
-     *
-     * @inheritdoc
-     * @returns {ReactElement}
-     */
-    render(): React$Element<*> {
-        const { button, t, tooltipPosition } = this.props;
-        const props = {
-            ...this.props,
-            onClick: this._onClick
-        };
-
-        const buttonComponent = ( // eslint-disable-line no-extra-parens
-            <Tooltip
-                description = { button.tooltipText || t(button.tooltipKey) }
-                position = { tooltipPosition }>
-                <StatelessToolbarButton { ...props }>
-                    { this.props.children }
-                </StatelessToolbarButton>
-            </Tooltip>
-        );
-        let children = buttonComponent;
-
-        const popupConfig = this._getPopupDisplayConfiguration();
-
-        if (popupConfig) {
-            const { dataAttr, dataInterpolate, position } = popupConfig;
-
-            children = ( // eslint-disable-line no-extra-parens
-                <InlineDialog
-                    content = {
-                        <div className = 'button-popover-message'>
-                            { t(dataAttr, dataInterpolate) }
-                        </div>
-                    }
-                    isOpen = { Boolean(popupConfig) }
-                    position = { position }>
-                    { buttonComponent }
-                </InlineDialog>
-            );
-        }
-
+    _renderButton(children) {
         return (
-            <div className = { `toolbar-button-wrapper ${button.id}-wrapper` }>
-                { children }
+            <div
+                aria-label = { this.props.accessibilityLabel }
+                className = 'toolbox-button'
+                onClick = { this.props.onClick }>
+                <Tooltip
+                    description = { this.props.tooltip }
+                    position = { this.props.tooltipPosition }>
+                    { children }
+                </Tooltip>
             </div>
         );
     }
 
     /**
-     * Wrapper on on click handler props for current button.
+     * Renders the icon of this {@code ToolbarButton}.
      *
-     * @param {Event} event - Click event object.
-     * @returns {void}
-     * @private
+     * @inheritdoc
      */
-    _onClick(event) {
-        this.props.onClick(event);
-    }
-
-    /**
-     * Parses the props and state to find any popup that should be displayed
-     * and returns an object describing how the popup should display.
-     *
-     * @private
-     * @returns {Object|null}
-     */
-    _getPopupDisplayConfiguration() {
-        const { button, tooltipPosition } = this.props;
-        const { popups, popupDisplay } = button;
-
-        if (!popups || !popupDisplay) {
-            return null;
-        }
-
-        const { popupID } = popupDisplay;
-        const currentPopup = popups.find(popup => popup.id === popupID);
-
-        return Object.assign(
-            {},
-            currentPopup || {},
-            {
-                position: TOOLTIP_TO_POPUP_POSITION[tooltipPosition]
-            });
-    }
-
-    /**
-     * Sets shortcut and tooltip for current toolbar button.
-     *
-     * @private
-     * @returns {void}
-     */
-    _setShortcut(): void {
-        const { button } = this.props;
-
-        if (button.shortcut && APP && APP.keyboardshortcut) {
-            APP.keyboardshortcut.registerShortcut(
-                button.shortcut,
-                button.shortcutAttr,
-                button.shortcutFunc,
-                button.shortcutDescription
-            );
-        }
+    _renderIcon() {
+        return (
+            <div className = 'toolbox-icon'>
+                <i className = { this.props.iconName } />
+            </div>
+        );
     }
 }
 
-export default translate(ToolbarButton);
+export default ToolbarButton;

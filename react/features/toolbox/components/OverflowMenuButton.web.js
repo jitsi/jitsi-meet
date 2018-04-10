@@ -4,7 +4,7 @@ import React, { Component } from 'react';
 
 import { translate } from '../../base/i18n';
 
-import ToolbarButtonV2 from './ToolbarButtonV2';
+import ToolbarButton from './ToolbarButton';
 
 /**
  * A React {@code Component} for opening or closing the {@code OverflowMenu}.
@@ -71,7 +71,7 @@ class OverflowMenuButton extends Component {
                     isOpen = { isOpen }
                     onClose = { this._onCloseDialog }
                     position = { 'top right' }>
-                    <ToolbarButtonV2
+                    <ToolbarButton
                         accessibilityLabel = 'Overflow'
                         iconName = { iconClasses }
                         onClick = { this._onToggleDialogVisibility }
