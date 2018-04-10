@@ -342,7 +342,6 @@ var config = {
     // List of undocumented settings used in jitsi-meet
     /**
      alwaysVisibleToolbar
-     autoEnableDesktopSharing
      autoRecord
      autoRecordToken
      debug
