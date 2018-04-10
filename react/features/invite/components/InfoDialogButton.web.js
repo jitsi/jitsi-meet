@@ -78,7 +78,7 @@ class InfoDialogButton extends Component {
     };
 
     /**
-     * Initializes new {@code ToolbarButtonWithDialog} instance.
+     * Initializes new {@code InfoDialogButton} instance.
      *
      * @param {Object} props - The read-only properties with which the new
      * instance is to be initialized.
