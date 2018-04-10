@@ -192,7 +192,11 @@ function _getURLFromEvent(event, knownDomains) {
             const matches = urlRegExp.exec(field) || schemeRegExp.exec(field);
 
             if (matches) {
-                return matches[0];
+                const url = parseURIString(matches[0]);
+
+                if (url) {
+                    return url.toString();
+                }
             }
         }
     }
