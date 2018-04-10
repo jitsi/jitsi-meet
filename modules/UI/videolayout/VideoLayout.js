@@ -582,12 +582,11 @@ const VideoLayout = {
             = Filmstrip.calculateThumbnailSize();
 
         Filmstrip.resizeThumbnails(localVideo, remoteVideo,
-            animate, forceUpdate)
-            .then(() => {
-                if (onComplete && typeof onComplete === 'function') {
-                    onComplete();
-                }
-            });
+            animate, forceUpdate);
+
+        if (onComplete && typeof onComplete === 'function') {
+            onComplete();
+        }
 
         return { localVideo,
             remoteVideo };
