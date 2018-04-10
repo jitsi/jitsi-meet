@@ -34,7 +34,7 @@ import { setFullScreen, setToolbarHovered } from '../actions';
 import OverflowMenuButton from './OverflowMenuButton';
 import OverflowMenuItem from './OverflowMenuItem';
 import OverflowMenuProfileItem from './OverflowMenuProfileItem';
-import ToolbarButtonV2 from './ToolbarButtonV2';
+import ToolbarButton from './ToolbarButton';
 import { AudioMuteButton, HangupButton, VideoMuteButton } from './buttons';
 
 type Props = {
@@ -332,7 +332,7 @@ class Toolbox extends Component<Props, State> {
                     { this._shouldShowButton('desktop')
                         && this._renderDesktopSharingButton() }
                     { this._shouldShowButton('raisehand')
-                        && <ToolbarButtonV2
+                        && <ToolbarButton
                             accessibilityLabel = 'Raised hand'
                             iconName = { _raisedHand
                                 ? 'icon-raised-hand toggled'
@@ -341,7 +341,7 @@ class Toolbox extends Component<Props, State> {
                             tooltip = { t('toolbar.raiseHand') } /> }
                     { this._shouldShowButton('chat')
                         && <div className = 'toolbar-button-with-badge'>
-                            <ToolbarButtonV2
+                            <ToolbarButton
                                 accessibilityLabel = 'Chat'
                                 iconName = { _chatOpen
                                     ? 'icon-chat toggled'
@@ -362,7 +362,7 @@ class Toolbox extends Component<Props, State> {
                 <div className = 'button-group-right'>
                     { this._shouldShowButton('invite')
                         && !_hideInviteButton
-                        && <ToolbarButtonV2
+                        && <ToolbarButton
                             accessibilityLabel = 'Invite'
                             iconName = 'icon-add'
                             onClick = { this._onToolbarOpenInvite }
@@ -944,7 +944,7 @@ class Toolbox extends Component<Props, State> {
             : t('toolbar.sharescreen');
 
         return (
-            <ToolbarButtonV2
+            <ToolbarButton
                 accessibilityLabel = 'Screenshare'
                 iconName = { classNames }
                 onClick = { this._onToolbarToggleScreenshare }

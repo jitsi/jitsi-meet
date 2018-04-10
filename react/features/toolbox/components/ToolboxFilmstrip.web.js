@@ -7,7 +7,7 @@ import { createToolbarEvent, sendAnalytics } from '../../analytics';
 import { translate } from '../../base/i18n';
 import { openDeviceSelectionDialog } from '../../device-selection';
 
-import ToolbarButtonV2 from './ToolbarButtonV2';
+import ToolbarButton from './ToolbarButton';
 import { AudioMuteButton, HangupButton, VideoMuteButton } from './buttons';
 
 declare var interfaceConfig: Object;
@@ -53,7 +53,7 @@ class ToolboxFilmstrip extends Component<*> {
                 { this._shouldShowButton('camera')
                     && <VideoMuteButton tooltipPosition = 'left' /> }
                 { this._shouldShowButton('fodeviceselection')
-                    && <ToolbarButtonV2
+                    && <ToolbarButton
                         accessibilityLabel = 'Settings'
                         iconName = 'icon-settings'
                         onClick = { this._onToolbarOpenSettings }

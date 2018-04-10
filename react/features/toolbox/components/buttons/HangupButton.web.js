@@ -9,7 +9,7 @@ import { disconnect } from '../../../base/connection';
 import { translate } from '../../../base/i18n';
 
 import AbstractHangupButton from './AbstractHangupButton';
-import ToolbarButtonV2 from '../ToolbarButtonV2';
+import ToolbarButton from '../ToolbarButton';
 
 /**
  * Component that renders a toolbar button for leaving the current conference.
@@ -58,7 +58,7 @@ export class HangupButton extends AbstractHangupButton {
         const { t, tooltipPosition } = this.props;
 
         return (
-            <ToolbarButtonV2
+            <ToolbarButton
                 accessibilityLabel = 'Hangup'
                 iconName = 'icon-hangup'
                 onClick = { this._onToolbarHangup }
