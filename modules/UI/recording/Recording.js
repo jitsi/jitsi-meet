@@ -1,4 +1,4 @@
-/* global APP, $, config, interfaceConfig */
+/* global APP, config, interfaceConfig */
 /*
  * Copyright @ 2015 Atlassian Pty Ltd
  *
@@ -192,8 +192,7 @@ function isStartingStatus(status) {
 
 /**
  * Manages the recording user interface and user experience.
- * @type {{init, initRecordingButton, showRecordingButton, updateRecordingState,
- * updateRecordingUI, checkAutoRecord}}
+ * @type {{init, updateRecordingState, updateRecordingUI, checkAutoRecord}}
  */
 const Recording = {
     /**
@@ -215,13 +214,6 @@ const Recording = {
             Object.assign(this, RECORDING_TRANSLATION_KEYS);
         }
 
-        // XXX Due to the React-ification of Toolbox, the HTMLElement with id
-        // toolbar_button_record may not exist yet.
-        $(document).on(
-            'click',
-            '#toolbar_button_record',
-            ev => this._onToolbarButtonClick(ev));
-
         this.eventEmitter.on(UIEvents.TOGGLE_RECORDING,
             () => this._onToolbarButtonClick());
 
@@ -240,28 +232,6 @@ const Recording = {
             APP.store.dispatch(setNotificationsEnabled(false));
             APP.UI.messageHandler.enablePopups(false);
         }
-    },
-
-    /**
-     * Initialise the recording button.
-     */
-    initRecordingButton() {
-        const selector = $('#toolbar_button_record');
-
-        selector.addClass(this.baseClass);
-        selector.attr('data-i18n', `[content]${this.recordingButtonTooltip}`);
-        APP.translation.translateElement(selector);
-    },
-
-    /**
-     * Shows or hides the 'recording' button.
-     * @param show {true} to show the recording button, {false} to hide it
-     */
-    showRecordingButton(show) {
-        const shouldShow = show && _isRecordingButtonEnabled();
-        const id = 'toolbar_button_record';
-
-        UIUtil.setVisible(id, shouldShow);
     },
 
     /**
@@ -304,7 +274,6 @@ const Recording = {
                 showSpinner: recordingState === JitsiRecordingStatus.RETRYING
             };
 
-            this._setToolbarButtonToggled(true);
             isRecording = true;
 
             break;
@@ -330,8 +299,6 @@ const Recording = {
                     : this.recordingOffKey
             };
 
-            this._setToolbarButtonToggled(false);
-
             setTimeout(() => {
                 APP.store.dispatch(hideRecordingLabel());
             }, 5000);
@@ -345,8 +312,6 @@ const Recording = {
                 key: this.recordingPendingKey
             };
 
-            this._setToolbarButtonToggled(false);
-
             break;
         }
 
@@ -355,8 +320,6 @@ const Recording = {
                 centered: true,
                 key: this.recordingErrorKey
             };
-
-            this._setToolbarButtonToggled(false);
 
             break;
         }
@@ -488,16 +451,6 @@ const Recording = {
             });
         }
         }
-    },
-
-    /**
-     * Sets the toggled state of the recording toolbar button.
-     *
-     * @param {boolean} isToggled indicates if the button should be toggled
-     * or not
-     */
-    _setToolbarButtonToggled(isToggled) {
-        $('#toolbar_button_record').toggleClass('toggled', isToggled);
     }
 };
 
