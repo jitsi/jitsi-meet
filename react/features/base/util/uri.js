@@ -7,6 +7,13 @@
 export const APP_LINK_SCHEME = 'org.jitsi.meet:';
 
 /**
+ * A list of characters to be excluded/removed from the room component/segment
+ * of a conference/meeting URI/URL. The list is based on RFC 3986 and the jxmpp
+ * library utilized by jicofo.
+ */
+const _ROOM_EXCLUDE_PATTERN = '[\\:\\?#\\[\\]@!$&\'()*+,;=></"]';
+
+/**
  * The {@link RegExp} pattern of the authority of a URI.
  *
  * @private
@@ -33,6 +40,20 @@ const _URI_PATH_PATTERN = '([^?#]*)';
  * @type {string}
  */
 export const URI_PROTOCOL_PATTERN = '([a-z][a-z0-9\\.\\+-]*:)';
+
+/**
+ * Excludes/removes certain characters from a specific room (name) which are
+ * incompatible with Jitsi Meet on the client and/or server sides.
+ *
+ * @param {?string} room - The room (name) to fix.
+ * @private
+ * @returns {?string}
+ */
+function _fixRoom(room: ?string) {
+    return room
+        ? room.replace(new RegExp(_ROOM_EXCLUDE_PATTERN, 'g'), '')
+        : room;
+}
 
 /**
  * Fixes the hier-part of a specific URI (string) so that the URI is well-known.
@@ -295,10 +316,27 @@ export function parseURIString(uri: ?string) {
     // contextRoot
     obj.contextRoot = getLocationContextRoot(obj);
 
-    // The room (name) is the last component of pathname.
+    // The room (name) is the last component/segment of pathname.
     const { pathname } = obj;
 
-    obj.room = pathname.substring(pathname.lastIndexOf('/') + 1) || undefined;
+    // XXX While the components/segments of pathname are URI encoded, Jitsi Meet
+    // on the client and/or server sides still don't support certain characters.
+    const contextRootEndIndex = pathname.lastIndexOf('/');
+    let room = pathname.substring(contextRootEndIndex + 1) || undefined;
+
+    if (room) {
+        const fixedRoom = _fixRoom(room);
+
+        if (fixedRoom !== room) {
+            room = fixedRoom;
+
+            // XXX Drive fixedRoom into pathname (because room is derived from
+            // pathname).
+            obj.pathname
+                = pathname.substring(0, contextRootEndIndex + 1) + (room || '');
+        }
+    }
+    obj.room = room;
 
     return obj;
 }
