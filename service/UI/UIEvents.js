@@ -38,7 +38,6 @@ export default {
     TOGGLE_AUDIO_ONLY: 'UI.toggle_audioonly',
     TOGGLE_CHAT: 'UI.toggle_chat',
     TOGGLE_SETTINGS: 'UI.toggle_settings',
-    TOGGLE_CONTACT_LIST: 'UI.toggle_contact_list',
 
     /**
      * Notifies that the profile toolbar button has been clicked.
@@ -69,7 +68,6 @@ export default {
     TOGGLE_RECORDING: 'UI.toggle_recording',
     TOGGLE_SCREENSHARING: 'UI.toggle_screensharing',
     TOGGLED_SHARED_DOCUMENT: 'UI.toggled_shared_document',
-    CONTACT_CLICKED: 'UI.contact_clicked',
     HANGUP: 'UI.hangup',
     LOGOUT: 'UI.logout',
     RECORDING_TOGGLED: 'UI.recording_toggled',

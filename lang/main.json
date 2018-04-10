@@ -1,5 +1,4 @@
 {
-    "contactlist": "__count__ Member",
     "contactlist_plural": "__count__ Members",
     "passwordSetRemotely": "set by another member",
     "poweredby": "powered by",
@@ -113,11 +112,6 @@
         "appNotInstalled": "Join this meeting with __app__ on your phone.",
         "downloadApp": "Download the app",
         "openApp": "Continue to __app__"
-    },
-    "bottomtoolbar": {
-        "chat": "Open / close chat",
-        "filmstrip": "Show / hide videos",
-        "contactlist": "View and invite members"
     },
     "chat":{
         "nickname": {

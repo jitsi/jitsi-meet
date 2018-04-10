@@ -97,11 +97,6 @@ api.executeCommand('toggleFilmStrip')
 api.executeCommand('toggleChat')
 ```
 
-* **toggleContactList** - Hides / shows the contact list. No arguments are required.
-```javascript
-api.executeCommand('toggleContactList')
-```
-
 * **toggleShareScreen** - Starts / stops screen sharing. No arguments are required.
 ```javascript
 api.executeCommand('toggleShareScreen')
