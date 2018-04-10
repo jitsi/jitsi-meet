@@ -530,8 +530,6 @@ UI.onPeerVideoTypeChanged
 UI.updateLocalRole = isModerator => {
     VideoLayout.showModeratorIndicator();
 
-    Recording.showRecordingButton(isModerator);
-
     if (isModerator) {
         if (!interfaceConfig.DISABLE_FOCUS_INDICATOR) {
             messageHandler.participantNotification(
