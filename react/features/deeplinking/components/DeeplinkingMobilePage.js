@@ -5,29 +5,21 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
 import { translate, translateToHTML } from '../../base/i18n';
-import { Platform } from '../../base/react';
-import { generateDeeplinkingURL } from '../../deeplinking';
+import { HideNotificationBarStyle, Platform } from '../../base/react';
 import { DialInSummary } from '../../invite';
 
-import HideNotificationBarStyle from './HideNotificationBarStyle';
+import { _TNS } from '../constants';
+import { generateDeeplinkingURL } from '../functions';
 
 declare var interfaceConfig: Object;
 
 /**
- * The namespace of the CSS styles of UnsupportedMobileBrowser.
+ * The namespace of the CSS styles of DeeplinkingMobilePage.
  *
  * @private
  * @type {string}
  */
-const _SNS = 'unsupported-mobile-browser';
-
-/**
- * The namespace of the i18n/translation keys of UnsupportedMobileBrowser.
- *
- * @private
- * @type {string}
- */
-const _TNS = 'unsupportedBrowser';
+const _SNS = 'deeplinking-mobile';
 
 /**
  * The map of platforms to URLs at which the mobile app for the associated
@@ -46,13 +38,13 @@ const _URLS = {
 /**
  * React component representing mobile browser page.
  *
- * @class UnsupportedMobileBrowser
+ * @class DeeplinkingMobilePage
  */
-class UnsupportedMobileBrowser extends Component<*, *> {
+class DeeplinkingMobilePage extends Component<*, *> {
     state: Object;
 
     /**
-     * UnsupportedMobileBrowser component's property types.
+     * DeeplinkingMobilePage component's property types.
      *
      * @static
      */
@@ -137,7 +129,7 @@ class UnsupportedMobileBrowser extends Component<*, *> {
 
 /**
  * Maps (parts of) the Redux state to the associated props for the
- * {@code UnsupportedMobileBrowser} component.
+ * {@code DeeplinkingMobilePage} component.
  *
  * @param {Object} state - The Redux state.
  * @private
@@ -151,4 +143,4 @@ function _mapStateToProps(state) {
     };
 }
 
-export default translate(connect(_mapStateToProps)(UnsupportedMobileBrowser));
+export default translate(connect(_mapStateToProps)(DeeplinkingMobilePage));

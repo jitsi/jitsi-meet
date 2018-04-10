@@ -27,7 +27,7 @@ const _URI_PATH_PATTERN = '([^?#]*)';
  *
  * FIXME: The URL class exposed by JavaScript will not include the colon in
  * the protocol field. Also in other places (at the time of this writing:
- * the UnsupportedMobileBrowser.js) the APP_LINK_SCHEME does not include
+ * the DeeplinkingMobilePage.js) the APP_LINK_SCHEME does not include
  * the double dots, so things are inconsistent.
  *
  * @type {string}

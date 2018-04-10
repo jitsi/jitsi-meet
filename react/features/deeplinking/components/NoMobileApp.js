@@ -2,7 +2,7 @@
 
 import React, { Component } from 'react';
 
-import HideNotificationBarStyle from './HideNotificationBarStyle';
+import { HideNotificationBarStyle } from '../../base/react';
 
 declare var interfaceConfig: Object;
 

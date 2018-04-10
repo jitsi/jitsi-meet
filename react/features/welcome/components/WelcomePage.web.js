@@ -9,8 +9,7 @@ import { connect } from 'react-redux';
 import { initAnalytics } from '../../analytics';
 import { translate } from '../../base/i18n';
 import { isAnalyticsEnabled } from '../../base/lib-jitsi-meet';
-import { Watermarks } from '../../base/react';
-import { HideNotificationBarStyle } from '../../unsupported-browser';
+import { HideNotificationBarStyle, Watermarks } from '../../base/react';
 
 import { AbstractWelcomePage, _mapStateToProps } from './AbstractWelcomePage';
 

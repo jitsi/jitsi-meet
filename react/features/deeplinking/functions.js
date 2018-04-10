@@ -1,6 +1,15 @@
 /* global interfaceConfig */
 
 import { URI_PROTOCOL_PATTERN } from '../base/util';
+import { Platform } from '../base/react';
+
+import {
+    DeeplinkingDesktopPage,
+    DeeplinkingMobilePage,
+    NoMobileApp
+} from './components';
+import { _shouldShowDeeplinkingDesktopPage }
+    from './shouldShowDeeplinkingDesktopPage';
 
 /**
  * Generates a deep linking URL based on the current window URL.
@@ -22,22 +31,43 @@ export function generateDeeplinkingURL() {
 }
 
 /**
- * Returns <tt>true</tt> if deeplinking is enabled and <tt>false</tt> otherwise.
+ * Resolves with the component that should be displayed if the deeplinking page
+ * should be shown and with <tt>undefined</tt> otherwise.
  *
- * @returns {boolean}
+ * @param {Object} state - Object containing current redux state.
+ * @returns {Promise<Component>}
  */
-export function isDeeplinkingEnabled() {
-    return false;
-}
+export function getDeeplinkingPage(state) {
+    const { room } = state['features/base/conference'];
 
-/**
- * Resolves with <tt>true</tt> if the deeplinking page should be shown and with
- * <tt>false</tt> otherwise.
- *
- * @returns {Promise<boolean>}
- */
-export function shouldShowDeeplinkingPage() {
-    return Promise.resolve(false);
+    // Show only if we are about to join a conference.
+    if (!room) {
+        return Promise.resolve();
+    }
+
+    const OS = Platform.OS;
+    const isUsingMobileBrowser = OS === 'android' || OS === 'ios';
+
+    if (isUsingMobileBrowser) { // mobile
+        const mobileAppPromo
+            = typeof interfaceConfig === 'object'
+                && interfaceConfig.MOBILE_APP_PROMO;
+
+        return Promise.resolve(
+            typeof mobileAppPromo === 'undefined' || Boolean(mobileAppPromo)
+                ? DeeplinkingMobilePage : NoMobileApp);
+    }
+
+    // desktop
+    const { launchInWeb } = state['features/deeplinking'];
+
+    if (launchInWeb) {
+        return Promise.resolve();
+    }
+
+    return _shouldShowDeeplinkingDesktopPage().then(
+        // eslint-disable-next-line no-confusing-arrow
+        show => show ? DeeplinkingDesktopPage : undefined);
 }
 
 /**

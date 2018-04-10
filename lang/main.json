@@ -108,11 +108,6 @@
         "shortcuts": "View shortcuts",
         "speakerStats": "Speaker stats"
     },
-    "unsupportedBrowser": {
-        "appNotInstalled": "Join this meeting with __app__ on your phone.",
-        "downloadApp": "Download the app",
-        "openApp": "Continue to __app__"
-    },
     "chat":{
         "nickname": {
             "title": "Enter a nickname in the box below",
@@ -566,6 +561,9 @@
         "title": "Launching your meeting in __app__...",
         "description": "Nothing happened? We tried launching your meeting in the __app__ desktop app. Try again or launch it in the __app__ web app.",
         "tryAgainButton": "Try again in desktop",
-        "launchWebButton": "Launch in web"
+        "launchWebButton": "Launch in web",
+        "appNotInstalled": "Join this meeting with __app__ on your phone.",
+        "downloadApp": "Download the app",
+        "openApp": "Continue to __app__"
     }
 }

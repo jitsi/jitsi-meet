@@ -11,6 +11,7 @@ import {
     openWebApp,
     openDesktopApp
 } from '../actions';
+import { _TNS } from '../constants';
 
 declare var interfaceConfig: Object;
 
@@ -74,7 +75,7 @@ class DeeplinkingDesktopPage<P : Props> extends Component<P> {
 
             // Enabling light theme because of the color of the buttons.
             <AtlasKitThemeProvider mode = 'light'>
-                <div className = 'deeplinking'>
+                <div className = 'deeplinking-desktop'>
                     <div className = 'header'>
                         <img
                             className = 'logo'
@@ -90,13 +91,13 @@ class DeeplinkingDesktopPage<P : Props> extends Component<P> {
                             <div className = 'rightColumnContent'>
                                 <h1 className = 'title'>
                                     {
-                                        t('deeplinking.title',
+                                        t(`${_TNS}.title`,
                                         { app: APP_NAME })
                                     }
                                 </h1>
                                 <p className = 'description'>
                                     {
-                                        t('deeplinking.description',
+                                        t(`${_TNS}.description`,
                                             { app: APP_NAME })
                                     }
                                 </p>
@@ -105,10 +106,10 @@ class DeeplinkingDesktopPage<P : Props> extends Component<P> {
                                         <Button
                                             appearance = 'default'
                                             onClick = { this._onTryAgain }>
-                                            { t('deeplinking.tryAgainButton') }
+                                            { t(`${_TNS}.tryAgainButton`) }
                                         </Button>
                                         <Button onClick = { this._onLaunchWeb }>
-                                            { t('deeplinking.launchWebButton') }
+                                            { t(`${_TNS}.launchWebButton`) }
                                         </Button>
                                     </ButtonGroup>
                                 </div>
