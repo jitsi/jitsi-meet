@@ -80,37 +80,6 @@
         &#filmstripLocalVideo {
             align-self: flex-end;
             display: block;
-
-            /**
-             * The invite button style.
-             */
-            .filmstrip__invite {
-                padding-bottom: 5px;
-                margin-left: 2px;
-            }
-
-            /**
-             * The invite button group style.
-             * TOFIX: use AtlasKit.ButtonGroup if it starts supporting different
-             * flex grow options for the buttons.
-             */
-            .invite-button-group {
-                display: inline-flex;
-                justify-content: space-between;
-                width: 100%;
-
-                & button {
-                    flex-grow: 1;
-                    flex-shrink: 1;
-                    overflow: hidden;
-                }
-
-                & > * {
-                    flex-grow: 0;
-                    flex-shrink: 0;
-                    margin-left: 2px;
-                }
-            }
         }
 
         &.hidden {

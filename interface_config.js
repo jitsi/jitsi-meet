@@ -50,7 +50,6 @@ var interfaceConfig = {
     ],
 
     SETTINGS_SECTIONS: [ 'language', 'devices', 'moderator' ],
-    INVITE_OPTIONS: [ 'invite', 'dialout', 'addtocall' ],
 
     // Determines how the video would fit the screen. 'both' would fit the whole
     // screen, 'height' would fit the original video height to the height of the

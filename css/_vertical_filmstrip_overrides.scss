@@ -75,8 +75,7 @@
         }
 
         /**
-         * Re-styles the local Video and invite button to better fit the
-         * vertical filmstrip layout.
+         * Re-styles the local Video to better fit vertical filmstrip layout.
          */
         #filmstripLocalVideo {
             align-self: initial;
@@ -85,12 +84,6 @@
             flex-direction: column-reverse;
             height: auto;
             justify-content: flex-start;
-
-            .filmstrip__invite {
-                padding-bottom: 0px;
-                padding-top: 5px;
-                z-index: $dropdownZ;
-            }
         }
 
         /**

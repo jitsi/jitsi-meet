@@ -40,18 +40,6 @@ export function getDialInNumbers(url: string): Promise<*> {
 }
 
 /**
- * Get the position of the invite option in the interfaceConfig.INVITE_OPTIONS
- * list.
- *
- * @param {string} name - The invite option name.
- * @private
- * @returns {number} - The position of the option in the list.
- */
-export function getInviteOptionPosition(name: string): number {
-    return interfaceConfig.INVITE_OPTIONS.indexOf(name);
-}
-
-/**
  * Sends a post request to an invite service.
  *
  * @param {string} inviteServiceUrl - The invite service that generates the
@@ -82,18 +70,6 @@ export function invitePeopleAndChatRooms( // eslint-disable-line max-params
                 'json')
             .fail((jqxhr, textStatus, error) => reject(error));
     });
-}
-
-/**
- * Indicates if an invite option is enabled in the configuration.
- *
- * @param {string} name - The name of the option defined in
- * interfaceConfig.INVITE_OPTIONS.
- * @returns {boolean} - True to indicate that the given invite option is
- * enabled, false - otherwise.
- */
-export function isInviteOptionEnabled(name: string) {
-    return getInviteOptionPosition(name) !== -1;
 }
 
 /**
