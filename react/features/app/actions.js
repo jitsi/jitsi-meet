@@ -124,10 +124,8 @@ function _appNavigateToMandatoryLocation(
             });
         }
 
-        const profile = getState()['features/base/profile'];
-
         return promise.then(() =>
-            dispatch(setConfig(_mergeConfigWithProfile(config, profile))));
+            dispatch(setConfig(config)));
     }
 }
 
@@ -289,24 +287,4 @@ function _loadConfig({ contextRoot, host, protocol, room }) {
 
             throw error;
         });
-}
-
-/**
- * Merges the downloaded config with the current profile values. The profile
- * values are named the same way as the config values in the config.js so
- * a clean merge is possible.
- *
- * @param {Object|undefined} config - The downloaded config.
- * @param {Object} profile - The persisted profile.
- * @returns {Object}
- */
-function _mergeConfigWithProfile(config, profile) {
-    if (!config) {
-        return;
-    }
-
-    return {
-        ...config,
-        ...profile
-    };
 }
