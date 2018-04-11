@@ -224,9 +224,8 @@ class FeedbackDialog extends Component {
                             autoFocus = { true }
                             className = 'input-control'
                             id = 'feedbackTextArea'
-                            isLabelHidden = { true }
+                            label = { t('feedback.detailsLabel') }
                             onChange = { this._onMessageChange }
-                            placeholder = { t('dialog.feedbackHelp') }
                             shouldFitContainer = { true }
                             value = { message } />
                     </div>

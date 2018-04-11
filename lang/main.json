@@ -506,7 +506,8 @@
         "average": "Average",
         "bad": "Bad",
         "good": "Good",
-        "rateExperience": "Please rate your meeting experience.",
+        "detailsLabel": "Tell us more about it.",
+        "rateExperience": "Rate your meeting experience",
         "veryBad": "Very Bad",
         "veryGood": "Very Good"
     },
