@@ -83,18 +83,23 @@ class DeeplinkingMobilePage extends Component<*, *> {
      */
     render() {
         const { _room, t } = this.props;
-
-        const openAppButtonClassName
-            = `${_SNS}__button ${_SNS}__button_primary`;
         const appName
             = interfaceConfig.ADD_PEOPLE_APP_NAME || interfaceConfig.APP_NAME;
+        const downloadButtonClassName
+            = `${_SNS}__button ${_SNS}__button_primary`;
 
         return (
             <div className = { _SNS }>
-                <div className = { `${_SNS}__body` }>
+                <div className = 'header'>
                     <img
-                        className = { `${_SNS}__logo` }
-                        src = 'images/logo-blue.svg' />
+                        className = 'logo'
+                        src = '../images/logo-deeplinking.png' />
+                </div>
+                <div className = { `${_SNS}__body` }>
+                    {/* <div className = 'image' /> */}
+                    <img
+                        className = 'image'
+                        src = '../images/deeplinking-image.png' />
                     <p className = { `${_SNS}__text` }>
                         {
                             translateToHTML(
@@ -103,23 +108,22 @@ class DeeplinkingMobilePage extends Component<*, *> {
                                 { app: appName })
                         }
                     </p>
-                    <a href = { this.state.joinURL }>
-                        <button className = { openAppButtonClassName }>
-                            { t(`${_TNS}.openApp`,
-                                { app: appName }) }
-                        </button>
-                    </a>
                     <a href = { _URLS[Platform.OS] }>
-                        <button className = { `${_SNS}__button` }>
+                        <button className = { downloadButtonClassName }>
                             { t(`${_TNS}.downloadApp`) }
                         </button>
                     </a>
-                    { _room
-                        ? <DialInSummary
-                            className = 'unsupported-dial-in'
-                            clickableNumbers = { true }
-                            room = { _room } />
-                        : null }
+                    <a
+                        className = { `${_SNS}__href` }
+                        href = { this.state.joinURL }>
+                        {/* <button className = { `${_SNS}__button` }> */}
+                        { t(`${_TNS}.openApp`) }
+                        {/* </button> */}
+                    </a>
+                    <DialInSummary
+                        className = 'deeplinking-dial-in'
+                        clickableNumbers = { true }
+                        room = { _room } />
                 </div>
                 <HideNotificationBarStyle />
             </div>

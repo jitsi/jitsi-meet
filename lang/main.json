@@ -562,8 +562,8 @@
         "description": "Nothing happened? We tried launching your meeting in the __app__ desktop app. Try again or launch it in the __app__ web app.",
         "tryAgainButton": "Try again in desktop",
         "launchWebButton": "Launch in web",
-        "appNotInstalled": "Join this meeting with __app__ on your phone.",
+        "appNotInstalled": "You need the __app__ mobile app to join this meeting on your phone.",
         "downloadApp": "Download the app",
-        "openApp": "Continue to __app__"
+        "openApp": "Continue to the app"
     }
 }

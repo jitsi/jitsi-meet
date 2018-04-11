@@ -5,6 +5,19 @@
     position: relative;
     width: 100vw;
 
+    .header {
+        width: 100%;
+        height: 70px;
+        background-color: #f1f2f5;
+        text-align: center;
+        .logo {
+            margin-top: 15px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 40px;
+        }
+    }
+
     a {
         text-decoration: none
     }
@@ -20,10 +33,19 @@
         a:active {
             text-decoration: none;
         }
+
+        .image {
+            max-width: 80%;
+        }
+    }
+
+    &__text {
+        font-weight: bolder;
+        padding: 10px 10px 0px 10px;
     }
 
     &__text,
-    .unsupported-dial-in  {
+    .deeplinking-dial-in  {
         font-size: 1.2em;
         line-height: em(29px, 21px);
         margin-bottom: 0.65em;
@@ -39,21 +61,27 @@
         }
     }
 
-    &__logo {
-        height: 108px;
-        width: 77px;
+    &__href {
+        height: 2.2857142857142856em;
+        line-height: 2.2857142857142856em;
+        margin: 18px auto 20px;
+        max-width: 300px;
+        width: auto;
+        font-weight: bolder;
     }
 
     &__button {
         border: 0;
         height: 2.2857142857142856em;
         line-height: 2.2857142857142856em;
-        margin: 18px auto 20px;
+        margin: 18px auto 10px;
+        padding: 0px 10px 0px 10px;
         max-width: 300px;
         width: auto;
         @include border-radius(3px);
         background-color: $unsupportedBrowserButtonBgColor;
         color: #505F79;
+        font-weight: bold;
 
         &:active {
             background-color: $unsupportedBrowserButtonBgColor;
@@ -69,7 +97,7 @@
         }
     }
 
-    .unsupported-dial-in {
+    .deeplinking-dial-in {
         display: none;
 
         &.has-numbers {
