@@ -27,7 +27,10 @@ import { RECORDING_TYPES, toggleRecording } from '../../recording';
 import { toggleSharedVideo } from '../../shared-video';
 import { toggleChat, toggleProfile, toggleSettings } from '../../side-panel';
 import { SpeakerStats } from '../../speaker-stats';
-import { VideoQualityDialog } from '../../video-quality';
+import {
+    OverflowMenuVideoQualityItem,
+    VideoQualityDialog
+} from '../../video-quality';
 
 import { setFullScreen, setToolbarHovered } from '../actions';
 
@@ -974,12 +977,9 @@ class Toolbox extends Component<Props, State> {
                     key = 'profile'
                     onClick = { this._onToolbarToggleProfile } />,
             this._shouldShowButton('videoquality')
-                && <OverflowMenuItem
-                    accessibilityLabel = 'Call quality'
-                    icon = { 'icon-visibility' }
+                && <OverflowMenuVideoQualityItem
                     key = 'videoquality'
-                    onClick = { this._onToolbarOpenVideoQuality }
-                    text = { t('toolbar.callQuality') } />,
+                    onClick = { this._onToolbarOpenVideoQuality } />,
             this._shouldShowButton('fullscreen')
                 && <OverflowMenuItem
                     accessibilityLabel = 'Full screen'
