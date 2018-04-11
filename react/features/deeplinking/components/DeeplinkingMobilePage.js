@@ -83,8 +83,7 @@ class DeeplinkingMobilePage extends Component<*, *> {
      */
     render() {
         const { _room, t } = this.props;
-        const appName
-            = interfaceConfig.ADD_PEOPLE_APP_NAME || interfaceConfig.APP_NAME;
+        const appName = interfaceConfig.NATIVE_APP_NAME;
         const downloadButtonClassName
             = `${_SNS}__button ${_SNS}__button_primary`;
 

@@ -69,7 +69,7 @@ class DeeplinkingDesktopPage<P : Props> extends Component<P> {
      */
     render() {
         const { t } = this.props;
-        const { APP_NAME } = interfaceConfig;
+        const { NATIVE_APP_NAME } = interfaceConfig;
 
         return (
 
@@ -92,13 +92,13 @@ class DeeplinkingDesktopPage<P : Props> extends Component<P> {
                                 <h1 className = 'title'>
                                     {
                                         t(`${_TNS}.title`,
-                                        { app: APP_NAME })
+                                        { app: NATIVE_APP_NAME })
                                     }
                                 </h1>
                                 <p className = 'description'>
                                     {
                                         t(`${_TNS}.description`,
-                                            { app: APP_NAME })
+                                            { app: NATIVE_APP_NAME })
                                     }
                                 </p>
                                 <div className = 'buttons'>
