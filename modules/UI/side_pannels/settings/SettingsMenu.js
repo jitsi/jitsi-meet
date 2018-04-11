@@ -8,7 +8,10 @@ import { I18nextProvider } from 'react-i18next';
 import { Provider } from 'react-redux';
 
 import { i18next } from '../../../../react/features/base/i18n';
-import { SettingsMenu } from '../../../../react/features/settings';
+import {
+    SettingsMenu,
+    isSettingEnabled
+} from '../../../../react/features/settings';
 import UIUtil from '../../util/UIUtil';
 
 /* eslint-enable no-unused-vars */
@@ -23,9 +26,9 @@ export default {
         $('#sideToolbarContainer').append(settingsMenuContainer);
 
         const props = {
-            showDeviceSettings: UIUtil.isSettingEnabled('devices'),
-            showLanguageSettings: UIUtil.isSettingEnabled('language'),
-            showModeratorSettings: UIUtil.isSettingEnabled('moderator'),
+            showDeviceSettings: isSettingEnabled('devices'),
+            showLanguageSettings: isSettingEnabled('language'),
+            showModeratorSettings: isSettingEnabled('moderator'),
             showTitles: interfaceConfig.SETTINGS_SECTIONS.length > 1
         };
 

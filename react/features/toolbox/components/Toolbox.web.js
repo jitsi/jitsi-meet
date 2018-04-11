@@ -25,6 +25,7 @@ import { AddPeopleDialog, InfoDialogButton } from '../../invite';
 import { openKeyboardShortcutsDialog } from '../../keyboard-shortcuts';
 import { RECORDING_TYPES, toggleRecording } from '../../recording';
 import { toggleSharedVideo } from '../../shared-video';
+import { shouldShowOnlyDeviceSelection } from '../../settings';
 import { toggleChat, toggleProfile, toggleSettings } from '../../side-panel';
 import { SpeakerStats } from '../../speaker-stats';
 import {
@@ -535,8 +536,7 @@ class Toolbox extends Component<Props, State> {
      * @returns {void}
      */
     _doToggleSettings() {
-        if (interfaceConfig.SETTINGS_SECTIONS.length === 1
-            && interfaceConfig.SETTINGS_SECTIONS.includes('devices')) {
+        if (shouldShowOnlyDeviceSelection()) {
             this.props.dispatch(openDeviceSelectionDialog());
         } else {
             this.props.dispatch(toggleSettings());

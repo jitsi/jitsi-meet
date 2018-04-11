@@ -5,6 +5,8 @@ import { StatelessDialog } from '../../base/dialog';
 import { translate } from '../../base/i18n';
 import { createLocalTrack } from '../../base/lib-jitsi-meet';
 
+import { shouldShowOnlyDeviceSelection } from '../../settings';
+
 import AudioInputPreview from './AudioInputPreview';
 import AudioOutputPreview from './AudioOutputPreview';
 import DeviceSelector from './DeviceSelector';
@@ -218,7 +220,7 @@ class DeviceSelectionDialogBase extends Component {
                 okTitleKey = { 'dialog.Save' }
                 onCancel = { this._onCancel }
                 onSubmit = { this._onSubmit }
-                titleKey = 'deviceSelection.deviceSettings'>
+                titleKey = { this._getModalTitle() }>
                 <div className = 'device-selection'>
                     <div className = 'device-selection-column column-video'>
                         <div className = 'device-selection-video-container'>
@@ -273,6 +275,22 @@ class DeviceSelectionDialogBase extends Component {
     _disposeVideoPreview() {
         return this.state.previewVideoTrack
             ? this.state.previewVideoTrack.dispose() : Promise.resolve();
+    }
+
+    /**
+     * Returns what the title of the device selection modal should be.
+     *
+     * Note: This is temporary logic to appease design sooner. Device selection
+     * and all other settings will be combined into one modal.
+     *
+     * @returns {string}
+     */
+    _getModalTitle() {
+        if (shouldShowOnlyDeviceSelection()) {
+            return 'settings.title';
+        }
+
+        return 'deviceSelection.deviceSettings';
     }
 
     /**
@@ -362,12 +380,18 @@ class DeviceSelectionDialogBase extends Component {
      * Creates a DeviceSelector instance based on the passed in configuration.
      *
      * @private
-     * @param {Object} props - The props for the DeviceSelector.
+     * @param {Object} deviceSelectorProps - The props for the DeviceSelector.
      * @returns {ReactElement}
      */
-    _renderSelector(props) {
+    _renderSelector(deviceSelectorProps) {
+
         return (
-            <DeviceSelector { ...props } />
+            <div key = { deviceSelectorProps.label }>
+                <div className = 'device-selector-label'>
+                    { this.props.t(deviceSelectorProps.label) }
+                </div>
+                <DeviceSelector { ...deviceSelectorProps } />
+            </div>
         );
     }
 
@@ -419,7 +443,7 @@ class DeviceSelectionDialogBase extends Component {
             });
         }
 
-        return configurations.map(this._renderSelector);
+        return configurations.map(config => this._renderSelector(config));
     }
 
     /**
