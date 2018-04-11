@@ -129,6 +129,7 @@ class DialInSummary extends Component {
                     : null,
                 <NumbersList
                     clickableNumbers = { this.props.clickableNumbers }
+                    conferenceID = { conferenceID }
                     key = 'numbers'
                     numbers = { this.state.numbers } />
             ];

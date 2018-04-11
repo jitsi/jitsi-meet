@@ -22,6 +22,11 @@ class NumbersList extends Component {
         clickableNumbers: PropTypes.bool,
 
         /**
+         * The conference ID for dialing in.
+         */
+        conferenceID: PropTypes.number,
+
+        /**
          * The phone numbers to display. Can be an array of numbers
          * or an object with countries as keys and an array of numbers
          * as values.
@@ -136,7 +141,7 @@ class NumbersList extends Component {
         if (this.props.clickableNumbers) {
             return (
                 <a
-                    href = { `tel:${number}` }
+                    href = { `tel:${number}p${this.props.conferenceID}#` }
                     key = { number } >
                     { number }
                 </a>
