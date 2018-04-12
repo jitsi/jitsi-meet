@@ -3,9 +3,11 @@
 import { parseURLParams } from '../config';
 import { toState } from '../redux';
 
+
 /**
  * Returns the effective value of a configuration/preference/setting by applying
- * a precedence among the values specified by JWT, URL, profile, and config.
+ * a precedence among the values specified by JWT, URL, settings,
+ * and config.
  *
  * @param {Object|Function} stateful - The redux state object or
  * {@code getState} function.
@@ -14,7 +16,7 @@ import { toState } from '../redux';
  * @param {{
  *     config: boolean,
  *     jwt: boolean,
- *     profile: boolean,
+ *     settings: boolean,
  *     urlParams: boolean
  * }} [sources] - A set/structure of {@code boolean} flags indicating the
  * configuration/preference/setting sources to consider/retrieve values from.
@@ -31,13 +33,13 @@ export function getPropertyValue(
         // Defaults:
         config: true,
         jwt: true,
-        profile: true,
+        settings: true,
         urlParams: true,
 
         ...sources
     };
 
-    // Precedence: jwt -> urlParams -> profile -> config.
+    // Precedence: jwt -> urlParams -> settings -> config.
 
     const state = toState(stateful);
 
@@ -61,9 +63,9 @@ export function getPropertyValue(
         }
     }
 
-    // profile
-    if (sources.profile) {
-        const value = state['features/base/profile'][propertyName];
+    // settings
+    if (sources.settings) {
+        const value = state['features/base/settings'][propertyName];
 
         if (typeof value !== 'undefined') {
             return value;

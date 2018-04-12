@@ -74,17 +74,6 @@ const UIUtil = {
             .html();
     },
 
-    /**
-     * Unescapes the given text.
-     *
-     * @param {string} safe string which contains escaped html
-     * @returns {string} unescaped html string.
-     */
-    unescapeHtml(safe) {
-        return $('<div />').html(safe)
-            .text();
-    },
-
     imageToGrayScale(canvas) {
         const context = canvas.getContext('2d');
         const imgData = context.getImageData(0, 0, canvas.width, canvas.height);

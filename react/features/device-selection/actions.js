@@ -1,18 +1,20 @@
 /* globals APP, interfaceConfig */
 
-import { openDialog } from '../base/dialog';
-import JitsiMeetJS from '../base/lib-jitsi-meet';
 import { API_ID } from '../../../modules/API/constants';
-import {
-    setAudioInputDevice,
-    setAudioOutputDevice,
-    setVideoInputDevice
-} from '../base/devices';
-import { i18next } from '../base/i18n';
 import {
     PostMessageTransportBackend,
     Transport
 } from '../../../modules/transport';
+
+import {
+    getAudioOutputDeviceId,
+    setAudioInputDevice,
+    setAudioOutputDevice,
+    setVideoInputDevice
+} from '../base/devices';
+import { openDialog } from '../base/dialog';
+import { i18next } from '../base/i18n';
+import JitsiMeetJS from '../base/lib-jitsi-meet';
 
 import { SET_DEVICE_SELECTION_POPUP_DATA } from './actionTypes';
 import { DeviceSelectionDialog } from './components';
@@ -42,10 +44,12 @@ function _openDeviceSelectionDialogHere() {
     return dispatch =>
         JitsiMeetJS.mediaDevices.isDeviceListAvailable()
             .then(isDeviceListAvailable => {
+                const settings = APP.store.getState()['features/base/settings'];
+
                 dispatch(openDialog(DeviceSelectionDialog, {
-                    currentAudioInputId: APP.settings.getMicDeviceId(),
-                    currentAudioOutputId: APP.settings.getAudioOutputDeviceId(),
-                    currentVideoInputId: APP.settings.getCameraDeviceId(),
+                    currentAudioInputId: settings.micDeviceId,
+                    currentAudioOutputId: getAudioOutputDeviceId(),
+                    currentVideoInputId: settings.cameraDeviceId,
                     disableAudioInputChange:
                         !JitsiMeetJS.isMultipleAudioInputSupported(),
                     disableDeviceChange: !isDeviceListAvailable
@@ -135,6 +139,9 @@ function _openDeviceSelectionDialogInPopup() {
  */
 function _processRequest(dispatch, getState, request, responseCallback) { // eslint-disable-line max-len, max-params
     if (request.type === 'devices') {
+        const state = getState();
+        const settings = state['features/base/settings'];
+
         switch (request.name) {
         case 'isDeviceListAvailable':
             JitsiMeetJS.mediaDevices.isDeviceListAvailable()
@@ -152,9 +159,9 @@ function _processRequest(dispatch, getState, request, responseCallback) { // esl
             break;
         case 'getCurrentDevices':
             responseCallback({
-                audioInput: APP.settings.getMicDeviceId(),
-                audioOutput: APP.settings.getAudioOutputDeviceId(),
-                videoInput: APP.settings.getCameraDeviceId()
+                audioInput: settings.micDeviceId,
+                audioOutput: getAudioOutputDeviceId(),
+                videoInput: settings.cameraDeviceId
             });
             break;
         case 'getAvailableDevices':

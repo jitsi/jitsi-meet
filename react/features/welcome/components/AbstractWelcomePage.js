@@ -14,10 +14,18 @@ import { generateRoomWithoutSeparator } from '../functions';
 type Props = {
 
     /**
-     * The user's profile.
+     * Room name to join to.
      */
-    _profile: Object,
     _room: string,
+
+    /**
+     * The current settings.
+     */
+    _settings: Object,
+
+    /**
+     * The Redux dispatch Function.
+     */
     dispatch: Dispatch<*>
 };
 
@@ -229,13 +237,13 @@ export class AbstractWelcomePage extends Component<Props, *> {
  * @param {Object} state - The redux state.
  * @protected
  * @returns {{
- *     _profile: Object,
- *     _room: string
+ *     _room: string,
+ *     _settings: Object
  * }}
  */
 export function _mapStateToProps(state: Object) {
     return {
-        _profile: state['features/base/profile'],
-        _room: state['features/base/conference'].room
+        _room: state['features/base/conference'].room,
+        _settings: state['features/base/settings']
     };
 }

@@ -1,5 +1,7 @@
 /* global APP, JitsiMeetJS */
 
+import { getAudioOutputDeviceId } from '../../react/features/base/devices';
+
 let currentAudioInputDevices,
     currentAudioOutputDevices,
     currentVideoInputDevices;
@@ -16,7 +18,7 @@ function getNewAudioOutputDevice(newDevices) {
         return;
     }
 
-    const selectedAudioOutputDeviceId = APP.settings.getAudioOutputDeviceId();
+    const selectedAudioOutputDeviceId = getAudioOutputDeviceId();
     const availableAudioOutputDevices = newDevices.filter(
         d => d.kind === 'audiooutput');
 
@@ -40,7 +42,8 @@ function getNewAudioOutputDevice(newDevices) {
 function getNewAudioInputDevice(newDevices, localAudio) {
     const availableAudioInputDevices = newDevices.filter(
         d => d.kind === 'audioinput');
-    const selectedAudioInputDeviceId = APP.settings.getMicDeviceId();
+    const settings = APP.store.getState()['features/base/settings'];
+    const selectedAudioInputDeviceId = settings.micDeviceId;
     const selectedAudioInputDevice = availableAudioInputDevices.find(
         d => d.deviceId === selectedAudioInputDeviceId);
 
@@ -76,7 +79,8 @@ function getNewAudioInputDevice(newDevices, localAudio) {
 function getNewVideoInputDevice(newDevices, localVideo) {
     const availableVideoInputDevices = newDevices.filter(
         d => d.kind === 'videoinput');
-    const selectedVideoInputDeviceId = APP.settings.getCameraDeviceId();
+    const settings = APP.store.getState()['features/base/settings'];
+    const selectedVideoInputDeviceId = settings.cameraDeviceId;
     const selectedVideoInputDevice = availableVideoInputDevices.find(
         d => d.deviceId === selectedVideoInputDeviceId);
 

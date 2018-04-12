@@ -46,7 +46,10 @@ import {
     sendLocalParticipant,
     setDesktopSharingEnabled
 } from './react/features/base/conference';
-import { updateDeviceList } from './react/features/base/devices';
+import {
+    setAudioOutputDeviceId,
+    updateDeviceList
+} from './react/features/base/devices';
 import {
     isFatalJitsiConnectionError,
     JitsiConferenceErrors,
@@ -82,6 +85,7 @@ import {
     participantRoleChanged,
     participantUpdated
 } from './react/features/base/participants';
+import { updateSettings } from './react/features/base/settings';
 import {
     createLocalTracksF,
     isLocalTrackMuted,
@@ -1273,7 +1277,7 @@ export default {
                     : 'colibri';
         }
 
-        const nick = APP.settings.getDisplayName();
+        const nick = APP.store.getState()['features/base/settings'].displayName;
 
         if (nick) {
             options.displayName = nick;
@@ -2131,7 +2135,9 @@ export default {
                 })
                 .then(() => {
                     logger.log('switched local video device');
-                    APP.settings.setCameraDeviceId(cameraDeviceId, true);
+                    APP.store.dispatch(updateSettings({
+                        cameraDeviceId
+                    }));
                 })
                 .catch(err => {
                     APP.UI.showCameraErrorNotification(err);
@@ -2163,7 +2169,9 @@ export default {
                 .then(stream => {
                     this.useAudioStream(stream);
                     logger.log('switched local audio device');
-                    APP.settings.setMicDeviceId(micDeviceId, true);
+                    APP.store.dispatch(updateSettings({
+                        micDeviceId
+                    }));
                 })
                 .catch(err => {
                     APP.UI.showMicErrorNotification(err);
@@ -2175,7 +2183,7 @@ export default {
             UIEvents.AUDIO_OUTPUT_DEVICE_CHANGED,
             audioOutputDeviceId => {
                 sendAnalytics(createDeviceChangedEvent('audio', 'output'));
-                APP.settings.setAudioOutputDeviceId(audioOutputDeviceId)
+                setAudioOutputDeviceId(audioOutputDeviceId)
                     .then(() => logger.log('changed audio output device'))
                     .catch(err => {
                         logger.warn('Failed to change audio output device. '
@@ -2317,7 +2325,8 @@ export default {
         APP.store.dispatch(conferenceJoined(room));
 
         APP.UI.mucJoined();
-        const displayName = APP.settings.getDisplayName();
+        const displayName
+            = APP.store.getState()['features/base/settings'].displayName;
 
         APP.API.notifyConferenceJoined(
             this.roomName,
@@ -2367,14 +2376,18 @@ export default {
                         // storage and settings menu. This is a workaround until
                         // getConstraints() method will be implemented
                         // in browsers.
+                        const { dispatch } = APP.store;
+
                         if (this.localAudio) {
-                            APP.settings.setMicDeviceId(
-                                this.localAudio.getDeviceId(), false);
+                            dispatch(updateSettings({
+                                micDeviceId: this.localAudio.getDeviceId()
+                            }));
                         }
 
                         if (this.localVideo) {
-                            APP.settings.setCameraDeviceId(
-                                this.localVideo.getDeviceId(), false);
+                            dispatch(updateSettings({
+                                cameraDeviceId: this.localVideo.getDeviceId()
+                            }));
                         }
 
                         mediaDeviceHelper.setCurrentMediaDevices(devices);
@@ -2426,8 +2439,7 @@ export default {
 
         if (typeof newDevices.audiooutput !== 'undefined') {
             // Just ignore any errors in catch block.
-            promises.push(APP.settings
-                .setAudioOutputDeviceId(newDevices.audiooutput)
+            promises.push(setAudioOutputDeviceId(newDevices.audiooutput)
                 .catch());
         }
 
@@ -2576,7 +2588,10 @@ export default {
             email: formattedEmail
         }));
 
-        APP.settings.setEmail(formattedEmail);
+        APP.store.dispatch(updateSettings({
+            email: formattedEmail
+        }));
+
         APP.UI.setUserEmail(localId, formattedEmail);
         sendData(commands.EMAIL, formattedEmail);
     },
@@ -2600,7 +2615,9 @@ export default {
             avatarURL: formattedUrl
         }));
 
-        APP.settings.setAvatarUrl(url);
+        APP.store.dispatch(updateSettings({
+            avatarURL: formattedUrl
+        }));
         sendData(commands.AVATAR_URL, url);
     },
 
@@ -2654,7 +2671,10 @@ export default {
             name: formattedNickname
         }));
 
-        APP.settings.setDisplayName(formattedNickname);
+        APP.store.dispatch(updateSettings({
+            displayName: formattedNickname
+        }));
+
         APP.API.notifyDisplayNameChanged(id, {
             displayName: formattedNickname,
             formattedDisplayName:

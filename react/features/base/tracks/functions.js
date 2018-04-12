@@ -35,14 +35,16 @@ export function createLocalTracksF(
     if (typeof APP !== 'undefined') {
         // TODO The app's settings should go in the redux store and then the
         // reliance on the global variable APP will go away.
+        store || (store = APP.store); // eslint-disable-line no-param-reassign
+
+        const settings = store.getState()['features/base/settings'];
+
         if (typeof cameraDeviceId === 'undefined' || cameraDeviceId === null) {
-            cameraDeviceId = APP.settings.getCameraDeviceId();
+            cameraDeviceId = settings.cameraDeviceId;
         }
         if (typeof micDeviceId === 'undefined' || micDeviceId === null) {
-            micDeviceId = APP.settings.getMicDeviceId();
+            micDeviceId = settings.micDeviceId;
         }
-
-        store || (store = APP.store); // eslint-disable-line no-param-reassign
     }
 
     const {

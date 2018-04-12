@@ -66,7 +66,7 @@ class WelcomePage extends AbstractWelcomePage {
 
         const { dispatch } = this.props;
 
-        if (this.props._profile.startAudioOnly) {
+        if (this.props._settings.startAudioOnly) {
             dispatch(destroyLocalTracks());
         } else {
             dispatch(createDesiredLocalTracks(MEDIA_TYPE.VIDEO));

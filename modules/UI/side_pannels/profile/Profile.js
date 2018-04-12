@@ -1,7 +1,6 @@
 /* global $, APP */
 import UIUtil from '../../util/UIUtil';
 import UIEvents from '../../../../service/UI/UIEvents';
-import Settings from '../../../settings/Settings';
 
 import {
     createProfilePanelButtonEvent,
@@ -54,6 +53,8 @@ export default {
     init(emitter) {
         initHTML();
 
+        const settings = APP.store.getState()['features/base/settings'];
+
         /**
          * Updates display name.
          *
@@ -64,7 +65,7 @@ export default {
         }
 
         $('#setDisplayName')
-            .val(Settings.getDisplayName())
+            .val(settings.displayName)
             .keyup(event => {
                 if (event.keyCode === 13) { // enter
                     updateDisplayName();
@@ -82,7 +83,7 @@ export default {
         }
 
         $('#setEmail')
-            .val(Settings.getEmail())
+            .val(settings.email)
             .keyup(event => {
                 if (event.keyCode === 13) { // enter
                     updateEmail();
