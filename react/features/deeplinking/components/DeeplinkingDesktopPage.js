@@ -48,7 +48,7 @@ class DeeplinkingDesktopPage<P : Props> extends Component<P> {
         super(props);
 
         // Bind event handlers so they are only bound once per instance.
-        this._openDestopApp = this._openDestopApp.bind(this);
+        this._openDesktopApp = this._openDesktopApp.bind(this);
         this._onLaunchWeb = this._onLaunchWeb.bind(this);
         this._onTryAgain = this._onTryAgain.bind(this);
     }
@@ -59,7 +59,7 @@ class DeeplinkingDesktopPage<P : Props> extends Component<P> {
      * @inheritdoc
      */
     componentDidMount() {
-        this._openDestopApp();
+        this._openDesktopApp();
     }
 
     /**
@@ -69,7 +69,9 @@ class DeeplinkingDesktopPage<P : Props> extends Component<P> {
      */
     render() {
         const { t } = this.props;
-        const { NATIVE_APP_NAME } = interfaceConfig;
+        const { NATIVE_APP_NAME, SHOW_DEEP_LINKING_IMAGE } = interfaceConfig;
+        const rightColumnStyle
+            = SHOW_DEEP_LINKING_IMAGE ? null : { width: '100%' };
 
         return (
 
@@ -82,12 +84,17 @@ class DeeplinkingDesktopPage<P : Props> extends Component<P> {
                             src = 'images/logo-deeplinking.png' />
                     </div>
                     <div className = 'content'>
-                        <div className = 'leftColumn'>
-                            <div className = 'leftColumnContent'>
-                                <div className = 'image' />
-                            </div>
-                        </div>
-                        <div className = 'rightColumn'>
+                        {
+                            SHOW_DEEP_LINKING_IMAGE
+                                ? <div className = 'leftColumn'>
+                                    <div className = 'leftColumnContent'>
+                                        <div className = 'image' />
+                                    </div>
+                                </div> : null
+                        }
+                        <div
+                            className = 'rightColumn'
+                            style = { rightColumnStyle }>
                             <div className = 'rightColumnContent'>
                                 <h1 className = 'title'>
                                     {
@@ -121,14 +128,14 @@ class DeeplinkingDesktopPage<P : Props> extends Component<P> {
         );
     }
 
-    _openDestopApp: () => {}
+    _openDesktopApp: () => {}
 
     /**
      * Dispatches the <tt>openDesktopApp</tt> action.
      *
      * @returns {void}
      */
-    _openDestopApp() {
+    _openDesktopApp() {
         this.props.dispatch(openDesktopApp());
     }
 
@@ -140,7 +147,7 @@ class DeeplinkingDesktopPage<P : Props> extends Component<P> {
      * @returns {void}
      */
     _onTryAgain() {
-        this._openDestopApp();
+        this._openDesktopApp();
     }
 
     _onLaunchWeb: () => {}

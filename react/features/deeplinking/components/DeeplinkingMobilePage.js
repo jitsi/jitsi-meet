@@ -83,7 +83,7 @@ class DeeplinkingMobilePage extends Component<*, *> {
      */
     render() {
         const { _room, t } = this.props;
-        const appName = interfaceConfig.NATIVE_APP_NAME;
+        const { NATIVE_APP_NAME, SHOW_DEEP_LINKING_IMAGE } = interfaceConfig;
         const downloadButtonClassName
             = `${_SNS}__button ${_SNS}__button_primary`;
 
@@ -95,16 +95,19 @@ class DeeplinkingMobilePage extends Component<*, *> {
                         src = '../images/logo-deeplinking.png' />
                 </div>
                 <div className = { `${_SNS}__body` }>
-                    {/* <div className = 'image' /> */}
-                    <img
-                        className = 'image'
-                        src = '../images/deeplinking-image.png' />
+                    {
+                        SHOW_DEEP_LINKING_IMAGE
+                            ? <img
+                                className = 'image'
+                                src = '../images/deeplinking-image.png' />
+                            : null
+                    }
                     <p className = { `${_SNS}__text` }>
                         {
                             translateToHTML(
                                 t,
                                 `${_TNS}.appNotInstalled`,
-                                { app: appName })
+                                { app: NATIVE_APP_NAME })
                         }
                     </p>
                     <a href = { _URLS[Platform.OS] }>
