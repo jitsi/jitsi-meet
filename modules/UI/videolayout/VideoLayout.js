@@ -1092,7 +1092,7 @@ const VideoLayout = {
      * Currently used by tests (torture).
      */
     getLargeVideoID() {
-        return largeVideo.id;
+        return largeVideo && largeVideo.id;
     },
 
     /**
