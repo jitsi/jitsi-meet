@@ -53,11 +53,13 @@ class ToolbarButton extends AbstractToolbarButton {
                 aria-label = { this.props.accessibilityLabel }
                 className = 'toolbox-button'
                 onClick = { this.props.onClick }>
-                <Tooltip
-                    description = { this.props.tooltip }
-                    position = { this.props.tooltipPosition }>
-                    { children }
-                </Tooltip>
+                { this.props.tooltip
+                    ? <Tooltip
+                        description = { this.props.tooltip }
+                        position = { this.props.tooltipPosition }>
+                        { children }
+                    </Tooltip>
+                    : children }
             </div>
         );
     }
