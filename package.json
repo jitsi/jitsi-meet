@@ -32,7 +32,7 @@
     "@atlaskit/spinner": "4.0.0",
     "@atlaskit/tabs": "4.0.1",
     "@atlaskit/theme": "2.4.0",
-    "@atlaskit/tooltip": "7.0.0",
+    "@atlaskit/tooltip": "9.1.1",
     "autosize": "1.18.13",
     "es6-iterator": "2.0.3",
     "es6-symbol": "3.1.1",
