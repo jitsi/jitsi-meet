@@ -100,6 +100,8 @@ class WelcomePage extends AbstractWelcomePage {
      * @returns {void}
      */
     componentWillUnmount() {
+        super.componentWillUnmount();
+
         document.body.classList.remove('welcome-page');
     }
 
