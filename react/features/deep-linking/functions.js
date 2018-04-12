@@ -4,19 +4,19 @@ import { URI_PROTOCOL_PATTERN } from '../base/util';
 import { Platform } from '../base/react';
 
 import {
-    DeeplinkingDesktopPage,
-    DeeplinkingMobilePage,
+    DeepLinkingDesktopPage,
+    DeepLinkingMobilePage,
     NoMobileApp
 } from './components';
-import { _shouldShowDeeplinkingDesktopPage }
-    from './shouldShowDeeplinkingDesktopPage';
+import { _shouldShowDeepLinkingDesktopPage }
+    from './shouldShowDeepLinkingDesktopPage';
 
 /**
  * Generates a deep linking URL based on the current window URL.
  *
  * @returns {string} - The generated URL.
  */
-export function generateDeeplinkingURL() {
+export function generateDeepLinkingURL() {
     // If the user installed the app while this Component was displayed
     // (e.g. the user clicked the Download the App button), then we would
     // like to open the current URL in the mobile app. The only way to do it
@@ -31,13 +31,13 @@ export function generateDeeplinkingURL() {
 }
 
 /**
- * Resolves with the component that should be displayed if the deeplinking page
+ * Resolves with the component that should be displayed if the deep linking page
  * should be shown and with <tt>undefined</tt> otherwise.
  *
  * @param {Object} state - Object containing current redux state.
  * @returns {Promise<Component>}
  */
-export function getDeeplinkingPage(state) {
+export function getDeepLinkingPage(state) {
     const { room } = state['features/base/conference'];
 
     // Show only if we are about to join a conference.
@@ -55,19 +55,19 @@ export function getDeeplinkingPage(state) {
 
         return Promise.resolve(
             typeof mobileAppPromo === 'undefined' || Boolean(mobileAppPromo)
-                ? DeeplinkingMobilePage : NoMobileApp);
+                ? DeepLinkingMobilePage : NoMobileApp);
     }
 
     // desktop
-    const { launchInWeb } = state['features/deeplinking'];
+    const { launchInWeb } = state['features/deep-linking'];
 
     if (launchInWeb) {
         return Promise.resolve();
     }
 
-    return _shouldShowDeeplinkingDesktopPage().then(
+    return _shouldShowDeepLinkingDesktopPage().then(
         // eslint-disable-next-line no-confusing-arrow
-        show => show ? DeeplinkingDesktopPage : undefined);
+        show => show ? DeepLinkingDesktopPage : undefined);
 }
 
 /**
@@ -76,5 +76,5 @@ export function getDeeplinkingPage(state) {
  * @returns {void}
  */
 export function openDesktopApp() {
-    window.location.href = generateDeeplinkingURL();
+    window.location.href = generateDeepLinkingURL();
 }

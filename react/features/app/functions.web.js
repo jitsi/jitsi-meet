@@ -1,7 +1,7 @@
 /* @flow */
 
 import { toState } from '../base/redux';
-import { getDeeplinkingPage } from '../deeplinking';
+import { getDeepLinkingPage } from '../deep-linking';
 import {
     PluginRequiredBrowser,
     UnsupportedDesktopBrowser
@@ -26,7 +26,7 @@ declare var loggingConfig: Object;
  * @type {Function[]}
  */
 const _INTERCEPT_COMPONENT_RULES = [
-    getDeeplinkingPage,
+    getDeepLinkingPage,
     state => {
         const { webRTCReady } = state['features/base/lib-jitsi-meet'];
 

@@ -9,17 +9,17 @@ import { HideNotificationBarStyle, Platform } from '../../base/react';
 import { DialInSummary } from '../../invite';
 
 import { _TNS } from '../constants';
-import { generateDeeplinkingURL } from '../functions';
+import { generateDeepLinkingURL } from '../functions';
 
 declare var interfaceConfig: Object;
 
 /**
- * The namespace of the CSS styles of DeeplinkingMobilePage.
+ * The namespace of the CSS styles of DeepLinkingMobilePage.
  *
  * @private
  * @type {string}
  */
-const _SNS = 'deeplinking-mobile';
+const _SNS = 'deep-linking-mobile';
 
 /**
  * The map of platforms to URLs at which the mobile app for the associated
@@ -38,13 +38,13 @@ const _URLS = {
 /**
  * React component representing mobile browser page.
  *
- * @class DeeplinkingMobilePage
+ * @class DeepLinkingMobilePage
  */
-class DeeplinkingMobilePage extends Component<*, *> {
+class DeepLinkingMobilePage extends Component<*, *> {
     state: Object;
 
     /**
-     * DeeplinkingMobilePage component's property types.
+     * DeepLinkingMobilePage component's property types.
      *
      * @static
      */
@@ -71,7 +71,7 @@ class DeeplinkingMobilePage extends Component<*, *> {
      */
     componentWillMount() {
         this.setState({
-            joinURL: generateDeeplinkingURL()
+            joinURL: generateDeepLinkingURL()
         });
     }
 
@@ -92,14 +92,14 @@ class DeeplinkingMobilePage extends Component<*, *> {
                 <div className = 'header'>
                     <img
                         className = 'logo'
-                        src = '../images/logo-deeplinking.png' />
+                        src = '../images/logo-deep-linking.png' />
                 </div>
                 <div className = { `${_SNS}__body` }>
                     {
                         SHOW_DEEP_LINKING_IMAGE
                             ? <img
                                 className = 'image'
-                                src = '../images/deeplinking-image.png' />
+                                src = '../images/deep-linking-image.png' />
                             : null
                     }
                     <p className = { `${_SNS}__text` }>
@@ -123,7 +123,7 @@ class DeeplinkingMobilePage extends Component<*, *> {
                         {/* </button> */}
                     </a>
                     <DialInSummary
-                        className = 'deeplinking-dial-in'
+                        className = 'deep-linking-dial-in'
                         clickableNumbers = { true }
                         room = { _room } />
                 </div>
@@ -135,7 +135,7 @@ class DeeplinkingMobilePage extends Component<*, *> {
 
 /**
  * Maps (parts of) the Redux state to the associated props for the
- * {@code DeeplinkingMobilePage} component.
+ * {@code DeepLinkingMobilePage} component.
  *
  * @param {Object} state - The Redux state.
  * @private
@@ -149,4 +149,4 @@ function _mapStateToProps(state) {
     };
 }
 
-export default translate(connect(_mapStateToProps)(DeeplinkingMobilePage));
+export default translate(connect(_mapStateToProps)(DeepLinkingMobilePage));

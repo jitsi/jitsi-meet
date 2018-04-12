@@ -6,7 +6,7 @@ import { OPEN_DESKTOP_APP } from './actionTypes';
 import { openDesktopApp } from './functions';
 
 /**
- * Implements the middleware of the deeplinking feature.
+ * Implements the middleware of the deep linking feature.
  *
  * @param {Store} store - The redux store.
  * @returns {Function}

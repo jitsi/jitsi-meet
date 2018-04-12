@@ -3,4 +3,4 @@
  *
  * @type {string}
  */
-export const _TNS = 'deeplinking';
+export const _TNS = 'deepLinking';

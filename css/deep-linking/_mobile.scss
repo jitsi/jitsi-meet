@@ -1,4 +1,4 @@
-.deeplinking-mobile {
+.deep-linking-mobile {
     background-color: #fff;
     height: 100vh;
     overflow: auto;
@@ -45,7 +45,7 @@
     }
 
     &__text,
-    .deeplinking-dial-in  {
+    .deep-linking-dial-in  {
         font-size: 1.2em;
         line-height: em(29px, 21px);
         margin-bottom: 0.65em;
@@ -97,7 +97,7 @@
         }
     }
 
-    .deeplinking-dial-in {
+    .deep-linking-dial-in {
         display: none;
 
         &.has-numbers {

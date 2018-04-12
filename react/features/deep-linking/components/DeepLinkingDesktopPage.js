@@ -17,7 +17,7 @@ declare var interfaceConfig: Object;
 
 /**
  * The type of the React {@code Component} props of
- * {@link DeeplinkingDesktopPage}.
+ * {@link DeepLinkingDesktopPage}.
  */
  type Props = {
 
@@ -33,13 +33,13 @@ declare var interfaceConfig: Object;
 };
 
 /**
- * React component representing unsupported browser page.
+ * React component representing the deep linking page.
  *
- * @class UnsupportedDesktopBrowser
+ * @class DeepLinkingDesktopPage
  */
-class DeeplinkingDesktopPage<P : Props> extends Component<P> {
+class DeepLinkingDesktopPage<P : Props> extends Component<P> {
     /**
-     * Initializes a new {@code AbstractDialog} instance.
+     * Initializes a new {@code DeepLinkingDesktopPage} instance.
      *
      * @param {Object} props - The read-only React {@code Component} props with
      * which the new instance is to be initialized.
@@ -77,11 +77,11 @@ class DeeplinkingDesktopPage<P : Props> extends Component<P> {
 
             // Enabling light theme because of the color of the buttons.
             <AtlasKitThemeProvider mode = 'light'>
-                <div className = 'deeplinking-desktop'>
+                <div className = 'deep-linking-desktop'>
                     <div className = 'header'>
                         <img
                             className = 'logo'
-                            src = '../images/logo-deeplinking.png' />
+                            src = '../images/logo-deep-linking.png' />
                     </div>
                     <div className = 'content'>
                         {
@@ -162,4 +162,4 @@ class DeeplinkingDesktopPage<P : Props> extends Component<P> {
     }
 }
 
-export default translate(connect()(DeeplinkingDesktopPage));
+export default translate(connect()(DeepLinkingDesktopPage));
