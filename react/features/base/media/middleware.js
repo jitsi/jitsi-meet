@@ -8,8 +8,8 @@ import {
 } from '../../analytics';
 import { isRoomValid, SET_ROOM, setAudioOnly } from '../conference';
 import JitsiMeetJS from '../lib-jitsi-meet';
-import { getPropertyValue } from '../profile';
 import { MiddlewareRegistry } from '../redux';
+import { getPropertyValue } from '../settings';
 import { setTrackMuted, TRACK_ADDED } from '../tracks';
 
 import { setAudioMuted, setCameraFacingMode, setVideoMuted } from './actions';
@@ -79,11 +79,11 @@ function _setRoom({ dispatch, getState }, next, action) {
     const mutedSources = {
         // We have startWithAudioMuted and startWithVideoMuted here:
         config: true,
-        profile: true,
+        settings: true,
 
         // XXX We've already overwritten base/config with urlParams. However,
-        // profile is more important than the server-side config. Consequently,
-        // we need to read from urlParams anyway:
+        // settings are more important than the server-side config.
+        // Consequently, we need to read from urlParams anyway:
         urlParams: true,
 
         // We don't have startWithAudioMuted and startWithVideoMuted here:
@@ -141,7 +141,7 @@ function _setRoom({ dispatch, getState }, next, action) {
                         config: roomIsValid,
 
                         // XXX We've already overwritten base/config with
-                        // urlParams if roomIsValid. However, profile is more
+                        // urlParams if roomIsValid. However, settings are more
                         // important than the server-side config. Consequently,
                         // we need to read from urlParams anyway. We also
                         // probably want to read from urlParams when
@@ -151,7 +151,7 @@ function _setRoom({ dispatch, getState }, next, action) {
                         // The following don't have complications around whether
                         // they are defined or not:
                         jwt: false,
-                        profile: true
+                        settings: true
                     }));
     } else {
         // Default to audio-only if the (execution) environment does not

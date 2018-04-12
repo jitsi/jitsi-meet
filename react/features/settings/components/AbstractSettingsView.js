@@ -2,7 +2,7 @@
 
 import { Component } from 'react';
 
-import { updateProfile } from '../../base/profile';
+import { updateSettings } from '../../base/settings';
 
 /**
  * The type of the React {@code Component} props of
@@ -11,18 +11,16 @@ import { updateProfile } from '../../base/profile';
 type Props = {
 
     /**
-     * The current profile object.
-     *
-     * @protected
-     */
-    _profile: Object,
-
-    /**
-     * The default URL for when there is no custom URL set in the profile.
+     * The default URL for when there is no custom URL set in the settings.
      *
      * @protected
      */
     _serverURL: string,
+
+    /**
+     * The current settings object.
+     */
+    _settings: Object,
 
     /**
      * Whether {@link AbstractSettingsView} is visible.
@@ -79,7 +77,7 @@ export class AbstractSettingsView extends Component<Props> {
      * @returns {void}
      */
     _onChangeDisplayName(text) {
-        this._updateProfile({
+        this._updateSettings({
             displayName: text
         });
     }
@@ -94,7 +92,7 @@ export class AbstractSettingsView extends Component<Props> {
      * @returns {void}
      */
     _onChangeEmail(text) {
-        this._updateProfile({
+        this._updateSettings({
             email: text
         });
     }
@@ -109,7 +107,7 @@ export class AbstractSettingsView extends Component<Props> {
      * @returns {void}
      */
     _onChangeServerURL(text) {
-        this._updateProfile({
+        this._updateSettings({
             serverURL: text
         });
     }
@@ -125,7 +123,7 @@ export class AbstractSettingsView extends Component<Props> {
      * @returns {void}
      */
     _onStartAudioMutedChange(newValue) {
-        this._updateProfile({
+        this._updateSettings({
             startWithAudioMuted: newValue
         });
     }
@@ -141,22 +139,23 @@ export class AbstractSettingsView extends Component<Props> {
      * @returns {void}
      */
     _onStartVideoMutedChange(newValue) {
-        this._updateProfile({
+        this._updateSettings({
             startWithVideoMuted: newValue
         });
     }
 
-    _updateProfile: (Object) => void;
+    _updateSettings: (Object) => void;
 
     /**
-     * Updates the persisted profile on any change.
+     * Updates the persisted settings on any change.
      *
-     * @param {Object} updateObject - The partial update object for the profile.
+     * @param {Object} updateObject - The partial update object for the
+     * settings.
      * @private
      * @returns {void}
      */
-    _updateProfile(updateObject: Object) {
-        this.props.dispatch(updateProfile(updateObject));
+    _updateSettings(updateObject: Object) {
+        this.props.dispatch(updateSettings(updateObject));
     }
 }
 
@@ -167,15 +166,15 @@ export class AbstractSettingsView extends Component<Props> {
  * @param {Object} state - The redux state.
  * @protected
  * @returns {{
- *     _profile: Object,
  *     _serverURL: string,
+ *     _settings: Object,
  *     _visible: boolean
  * }}
  */
 export function _mapStateToProps(state: Object) {
     return {
-        _profile: state['features/base/profile'],
         _serverURL: state['features/app'].app._getDefaultURL(),
+        _settings: state['features/base/settings'],
         _visible: state['features/settings'].visible
     };
 }

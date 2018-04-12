@@ -10,6 +10,7 @@ import { VideoTrack } from '../../../react/features/base/media';
 import {
     getAvatarURLByParticipantId
 } from '../../../react/features/base/participants';
+import { updateSettings } from '../../../react/features/base/settings';
 /* eslint-enable no-unused-vars */
 
 const logger = require('jitsi-meet-logger').getLogger(__filename);
@@ -121,9 +122,10 @@ LocalVideo.prototype.changeVideo = function(stream) {
 
     // eslint-disable-next-line eqeqeq
     const isVideo = stream.videoType != 'desktop';
+    const settings = APP.store.getState()['features/base/settings'];
 
     this._enableDisableContextMenu(isVideo);
-    this.setFlipX(isVideo ? APP.settings.getLocalFlipX() : false);
+    this.setFlipX(isVideo ? settings.localFlipX : false);
 
     const endedHandler = () => {
 
@@ -194,10 +196,14 @@ LocalVideo.prototype._buildContextMenu = function() {
             flip: {
                 name: 'Flip',
                 callback: () => {
-                    const val = !APP.settings.getLocalFlipX();
+                    const { store } = APP;
+                    const val = !store.getState()['features/base/settings']
+                    .localFlipX;
 
                     this.setFlipX(val);
-                    APP.settings.setLocalFlipX(val);
+                    store.dispatch(updateSettings({
+                        localFlipX: val
+                    }));
                 }
             }
         },

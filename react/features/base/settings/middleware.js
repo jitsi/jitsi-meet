@@ -4,12 +4,13 @@ import { setAudioOnly } from '../conference';
 import { getLocalParticipant, participantUpdated } from '../participants';
 import { MiddlewareRegistry, toState } from '../redux';
 
-import { PROFILE_UPDATED } from './actionTypes';
+import { SETTINGS_UPDATED } from './actionTypes';
+import { getSettings } from './functions';
 
 /**
- * The middleware of the feature base/profile. Distributes changes to the state
- * of base/profile to the states of other features computed from the state of
- * base/profile.
+ * The middleware of the feature base/settings. Distributes changes to the state
+ * of base/settings to the states of other features computed from the state of
+ * base/settings.
  *
  * @param {Store} store - The redux store.
  * @returns {Function}
@@ -18,16 +19,16 @@ MiddlewareRegistry.register(store => next => action => {
     const result = next(action);
 
     switch (action.type) {
-    case PROFILE_UPDATED:
-        _updateLocalParticipant(store);
+    case SETTINGS_UPDATED:
         _maybeSetAudioOnly(store, action);
+        _updateLocalParticipant(store);
     }
 
     return result;
 });
 
 /**
- * Updates {@code startAudioOnly} flag if it's updated in the profile.
+ * Updates {@code startAudioOnly} flag if it's updated in the settings.
  *
  * @param {Store} store - The redux store.
  * @param {Object} action - The redux action.
@@ -36,14 +37,14 @@ MiddlewareRegistry.register(store => next => action => {
  */
 function _maybeSetAudioOnly(
         { dispatch },
-        { profile: { startAudioOnly } }) {
+        { settings: { startAudioOnly } }) {
     if (typeof startAudioOnly === 'boolean') {
         dispatch(setAudioOnly(startAudioOnly));
     }
 }
 
 /**
- * Updates the local participant according to profile changes.
+ * Updates the local participant according to settings changes.
  *
  * @param {Store} store - The redux store.
  * @private
@@ -52,7 +53,7 @@ function _maybeSetAudioOnly(
 function _updateLocalParticipant(store) {
     const state = toState(store);
     const localParticipant = getLocalParticipant(state);
-    const profile = state['features/base/profile'];
+    const settings = getSettings(state);
 
     store.dispatch(participantUpdated({
         // Identify that the participant to update i.e. the local participant:
@@ -60,7 +61,7 @@ function _updateLocalParticipant(store) {
         local: true,
 
         // Specify the updates to be applied to the identified participant:
-        email: profile.email,
-        name: profile.displayName
+        email: settings.email,
+        name: settings.displayName
     }));
 }

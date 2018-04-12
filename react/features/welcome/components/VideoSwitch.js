@@ -5,8 +5,8 @@ import { Switch, TouchableWithoutFeedback, View } from 'react-native';
 import { connect } from 'react-redux';
 
 import { translate } from '../../base/i18n';
-import { updateProfile } from '../../base/profile';
 import { Header, Text } from '../../base/react';
+import { updateSettings } from '../../base/settings';
 
 import styles, { SWITCH_THUMB_COLOR, SWITCH_UNDER_COLOR } from './styles';
 
@@ -26,9 +26,9 @@ type Props = {
     t: Function,
 
     /**
-     * The current profile settings from redux.
+     * The current settings from redux.
      */
-    _profile: Object
+    _settings: Object
 };
 
 /**
@@ -55,7 +55,7 @@ class VideoSwitch extends Component<Props> {
      * @inheritdoc
      */
     render() {
-        const { t, _profile } = this.props;
+        const { t, _settings } = this.props;
         const { textStyle } = Header;
 
         return (
@@ -71,7 +71,7 @@ class VideoSwitch extends Component<Props> {
                     onValueChange = { this._onStartAudioOnlyChange }
                     style = { styles.audioVideoSwitch }
                     thumbTintColor = { SWITCH_THUMB_COLOR }
-                    value = { _profile.startAudioOnly } />
+                    value = { _settings.startAudioOnly } />
                 <TouchableWithoutFeedback
                     onPress = { this._onStartAudioOnlyTrue }>
                     <Text style = { textStyle }>
@@ -94,8 +94,7 @@ class VideoSwitch extends Component<Props> {
     _onStartAudioOnlyChange(startAudioOnly) {
         const { dispatch } = this.props;
 
-        dispatch(updateProfile({
-            ...this.props._profile,
+        dispatch(updateSettings({
             startAudioOnly
         }));
     }
@@ -124,12 +123,12 @@ class VideoSwitch extends Component<Props> {
  * @param {Object} state - The redux state.
  * @protected
  * @returns {{
- *     _profile: Object
+ *     _settings: Object
  * }}
  */
 export function _mapStateToProps(state: Object) {
     return {
-        _profile: state['features/base/profile']
+        _settings: state['features/base/settings']
     };
 }
 
