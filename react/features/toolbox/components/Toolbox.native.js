@@ -127,30 +127,23 @@ class Toolbox extends Component<Props> {
      * button to get styles for.
      * @protected
      * @returns {{
-     *     iconName: string,
      *     iconStyle: Object,
      *     style: Object
      * }}
      */
     _getMuteButtonStyles(mediaType) {
-        let iconName;
         let iconStyle;
         let style;
 
         if (this.props[`_${mediaType}Muted`]) {
-            iconName = `${mediaType}MutedIcon`;
             iconStyle = styles.whitePrimaryToolbarButtonIcon;
             style = styles.whitePrimaryToolbarButton;
         } else {
-            iconName = `${mediaType}Icon`;
             iconStyle = styles.primaryToolbarButtonIcon;
             style = styles.primaryToolbarButton;
         }
 
         return {
-
-            // $FlowExpectedError
-            iconName: this[iconName],
             iconStyle,
             style
         };
@@ -174,9 +167,9 @@ class Toolbox extends Component<Props> {
                 key = 'primaryToolbar'
                 pointerEvents = 'box-none'
                 style = { styles.primaryToolbar }>
-                <AudioMuteButton buttonStyles = { audioButtonStyles } />
+                <AudioMuteButton styles = { audioButtonStyles } />
                 <HangupButton />
-                <VideoMuteButton buttonStyles = { videoButtonStyles } />
+                <VideoMuteButton styles = { videoButtonStyles } />
             </View>
         );
 
@@ -262,20 +255,6 @@ class Toolbox extends Component<Props> {
         ];
     }
 }
-
-/**
- * Additional properties for various icons, which are now platform-dependent.
- * This is done to have common logic of generating styles for web and native.
- * TODO As soon as we have common font sets for web and native, this will no
- * longer be required.
- */
-// $FlowExpectedError
-Object.assign(Toolbox.prototype, {
-    audioIcon: 'microphone',
-    audioMutedIcon: 'mic-disabled',
-    videoIcon: 'camera',
-    videoMutedIcon: 'camera-disabled'
-});
 
 /**
  * Maps redux actions to {@link Toolbox}'s React {@code Component} props.
