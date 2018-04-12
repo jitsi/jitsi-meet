@@ -2,53 +2,9 @@
 
 import React, { Component } from 'react';
 
-import StatelessToolbar from '../toolbox/components/StatelessToolbar';
-import StatelessToolbarButton
-    from '../toolbox/components/StatelessToolbarButton';
+import ToolboxAlwaysOnTop from './ToolboxAlwaysOnTop';
 
 const { api } = window.alwaysOnTop;
-
-/**
- * Map with toolbar button descriptors.
- */
-const TOOLBAR_BUTTONS = {
-    /**
-     * The descriptor of the camera toolbar button.
-     */
-    camera: {
-        classNames: [ 'button', 'icon-camera' ],
-        enabled: true,
-        id: 'toolbar_button_camera',
-        onClick() {
-            api.executeCommand('toggleVideo');
-        }
-    },
-
-    /**
-     * The descriptor of the toolbar button which hangs up the call/conference.
-     */
-    hangup: {
-        classNames: [ 'button', 'icon-hangup', 'button_hangup' ],
-        enabled: true,
-        id: 'toolbar_button_hangup',
-        onClick() {
-            api.executeCommand('hangup');
-            window.close();
-        }
-    },
-
-    /**
-     * The descriptor of the microphone toolbar button.
-     */
-    microphone: {
-        classNames: [ 'button', 'icon-microphone' ],
-        enabled: true,
-        id: 'toolbar_button_mute',
-        onClick() {
-            api.executeCommand('toggleAudio');
-        }
-    }
-};
 
 /**
  * The timeout in ms for hidding the toolbar.
@@ -385,62 +341,16 @@ export default class AlwaysOnTop extends Component<*, State> {
      * @returns {ReactElement}
      */
     render() {
-        const className
-            = `toolbar_primary always-on-top ${
-                this.state.visible ? 'fadeIn' : 'fadeOut'}`;
-
         return (
             <div id = 'alwaysOnTop'>
-                <StatelessToolbar
-                    className = { className }
+                <ToolboxAlwaysOnTop
+                    audioAvailable = { this.state.audioAvailable }
+                    audioMuted = { this.state.audioMuted }
+                    className = { this.state.visible ? 'fadeIn' : 'fadeOut' }
                     onMouseOut = { this._onMouseOut }
-                    onMouseOver = { this._onMouseOver }>
-                    {
-                        Object.entries(TOOLBAR_BUTTONS).map(
-                            ([ key, button ]) => {
-                                // XXX The following silences a couple of flow
-                                // errors:
-                                if (button === null
-                                        || typeof button !== 'object') {
-                                    return null;
-                                }
-
-                                const { onClick } = button;
-                                let enabled = false;
-                                let toggled = false;
-
-                                switch (key) {
-                                case 'microphone':
-                                    enabled = this.state.audioAvailable;
-                                    toggled = enabled
-                                        ? this.state.audioMuted : true;
-                                    break;
-                                case 'camera':
-                                    enabled = this.state.videoAvailable;
-                                    toggled = enabled
-                                        ? this.state.videoMuted : true;
-                                    break;
-                                default: // hangup button
-                                    toggled = false;
-                                    enabled = true;
-                                }
-
-                                const updatedButton = {
-                                    ...button,
-                                    enabled,
-                                    toggled
-                                };
-
-                                return (
-                                    <StatelessToolbarButton
-                                        button = { updatedButton }
-                                        key = { key }
-                                        onClick = { onClick } />
-                                );
-                            }
-                        )
-                    }
-                </StatelessToolbar>
+                    onMouseOver = { this._onMouseOver }
+                    videoAvailable = { this.state.videoAvailable }
+                    videoMuted = { this.state.videoMuted } />
                 {
                     this._renderVideoNotAvailableScreen()
                 }

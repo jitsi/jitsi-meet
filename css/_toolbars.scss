@@ -440,6 +440,7 @@
     }
 }
 
+.always-on-top-toolbox,
 .filmstrip-toolbox {
     background-color: $newToolbarBackgroundColor;
     box-sizing: border-box;
@@ -450,10 +451,6 @@
     i {
         cursor: pointer;
         display: block;
-        font-size: 1.9em;
-        height: 37px;
-        line-height: 37px;
-        width: 37px;
     }
 
     i:hover {
@@ -464,7 +461,7 @@
         background: $newToolbarButtonToggleColor;
     }
 
-    i.toggled:hover {
+    i.toggled:hover:not(.disabled) {
         background-color: $newToolbarButtonHoverColor;
     }
 
@@ -479,6 +476,45 @@
     }
 
     border-radius: 3px;
+}
+
+.always-on-top-toolbox {
+    flex-direction: row;
+    left: 50%;
+    position: absolute;
+    top: 10px;
+    transform: translateX(-50%);
+    z-index: $toolbarZ;
+
+    i {
+        font-size: $alwaysOnTopToolbarFontSize;
+        height: $alwaysOnTopToolbarSize;
+        line-height: $alwaysOnTopToolbarSize;
+        width: $alwaysOnTopToolbarSize;
+    }
+
+    .disabled {
+        cursor: initial;
+    }
+
+    .toolbox-button:first-child i {
+        border-top-left-radius: 3px;
+        border-bottom-left-radius: 3px;
+    }
+
+    .toolbox-button:last-child i {
+        border-top-right-radius: 3px;
+        border-bottom-right-radius: 3px;
+    }
+}
+
+.filmstrip-toolbox {
+    i {
+        font-size: 1.9em;
+        height: 37px;
+        line-height: 37px;
+        width: 37px;
+    }
 
     .toolbox-button:first-child i {
         border-top-left-radius: 3px;
