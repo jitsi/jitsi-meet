@@ -358,7 +358,7 @@
          * Undo atlaskit padding by reducing margins.
          */
         margin: -15px -24px;
-        padding: 0;
+        padding: 4px 0;
 
         .overflow-menu-item {
             align-items: center;
@@ -366,7 +366,7 @@
             cursor: pointer;
             display: flex;
             font-size: 14px;
-            height: 32px;
+            height: 22px;
             padding: 5px 12px;
 
             &:hover {
@@ -412,7 +412,7 @@
         cursor: pointer;
         display: inline-block;
         line-height: $newToolbarSize;
-        margin: 0 8px;
+        margin: 0 4px;
         text-align: center;
     }
 
@@ -435,7 +435,7 @@
 
     .toolbox-icon {
         height: $newToolbarSize;
-        font-size: 36px;
+        font-size: 24px;
         width: $newToolbarSize;
     }
 }
