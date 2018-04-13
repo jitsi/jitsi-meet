@@ -341,37 +341,30 @@ class StartLiveStreamDialog extends Component {
     /**
      * Takes in a list of broadcasts from the YouTube API, removes dupes,
      * removes broadcasts that cannot get a stream key, and parses the
-     * broacasts into flat objects.
+     * broadcasts into flat objects.
      *
-     * @param {Array} broadcasts - Broadcast descriptions as obtains from
+     * @param {Array} broadcasts - Broadcast descriptions as obtained from
      * calling the YouTube API.
      * @private
-     * @returns {Array} An array of objects that are flat and contain only data
-     * that is needed. The objects have the shape: {{
-     *     boundStreamID: string
-     *     status: string,
-     *     title: string
-     * }}
+     * @returns {Array} An array of objects describing each unique broadcast.
      */
     _parseBroadcasts(broadcasts) {
-        const parsedIds = new Set();
-        const parsedBroadcasts = [];
+        const parsedBroadcasts = {};
 
         for (let i = 0; i < broadcasts.length; i++) {
             const broadcast = broadcasts[i];
             const boundStreamID = broadcast.contentDetails.boundStreamId;
 
-            if (boundStreamID && !parsedIds.has(boundStreamID)) {
-                parsedBroadcasts.push({
+            if (boundStreamID && !parsedBroadcasts[boundStreamID]) {
+                parsedBroadcasts[boundStreamID] = {
                     boundStreamID,
                     status: broadcast.status.lifeCycleStatus,
                     title: broadcast.snippet.title
-                });
-                parsedIds.add(boundStreamID);
+                };
             }
         }
 
-        return parsedBroadcasts;
+        return Object.values(parsedBroadcasts);
     }
 
     /**
