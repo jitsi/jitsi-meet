@@ -22,12 +22,16 @@ import { CAMERA_FACING_MODE } from './constants';
  * @property {boolean} muted=false - Audio muted state.
  */
 
+// FIXME Technically, _AUDIO_INITIAL_MEDIA_STATE is a constant internal to the
+// feature base/media and used in multiple files so it should be in
+// constants.js. Practically though, AudioMediaState would then be used in
+// multiple files as well so I don't know where and how to move it.
 /**
  * Initial state for local audio.
  *
  * @type {AudioMediaState}
  */
-const AUDIO_INITIAL_MEDIA_STATE = {
+export const _AUDIO_INITIAL_MEDIA_STATE = {
     available: true,
     muted: false
 };
@@ -41,7 +45,7 @@ const AUDIO_INITIAL_MEDIA_STATE = {
  * @private
  * @returns {AudioMediaState}
  */
-function _audio(state = AUDIO_INITIAL_MEDIA_STATE, action) {
+function _audio(state = _AUDIO_INITIAL_MEDIA_STATE, action) {
     switch (action.type) {
     case SET_AUDIO_AVAILABLE:
         return {
@@ -68,12 +72,16 @@ function _audio(state = AUDIO_INITIAL_MEDIA_STATE, action) {
  * @property {boolean} muted=false - Video muted state.
  */
 
+// FIXME Technically, _VIDEO_INITIAL_MEDIA_STATE is a constant internal to the
+// feature base/media and used in multiple files so it should be in
+// constants.js. Practically though, VideoMediaState would then be used in
+// multiple files as well so I don't know where and how to move it.
 /**
  * Initial state for video.
  *
  * @type {VideoMediaState}
  */
-const VIDEO_INITIAL_MEDIA_STATE = {
+export const _VIDEO_INITIAL_MEDIA_STATE = {
     available: true,
     facingMode: CAMERA_FACING_MODE.USER,
     muted: 0,
@@ -94,7 +102,7 @@ const VIDEO_INITIAL_MEDIA_STATE = {
  * @private
  * @returns {VideoMediaState}
  */
-function _video(state = VIDEO_INITIAL_MEDIA_STATE, action) {
+function _video(state = _VIDEO_INITIAL_MEDIA_STATE, action) {
     switch (action.type) {
     case CONFERENCE_FAILED:
     case CONFERENCE_LEFT:
@@ -168,7 +176,7 @@ ReducerRegistry.register('features/base/media', combineReducers({
 function _clearAllVideoTransforms(state) {
     return {
         ...state,
-        transforms: VIDEO_INITIAL_MEDIA_STATE.transforms
+        transforms: _VIDEO_INITIAL_MEDIA_STATE.transforms
     };
 }
 
