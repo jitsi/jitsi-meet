@@ -66,8 +66,9 @@
             &#remoteVideos {
                 /**
                  * Remove horizontal filmstrip padding used to prevent videos
-                 * from overlapping the left-side toolbar. An id selector is
-                 * used to match id specificity with filmstrip styles.
+                 * from overlapping getting near the left-side of the screen.
+                 * An id selector is used to match id specificity with filmstrip
+                 * styles.
                  */
                 padding-left: 0;
                 transition: right 2s;
@@ -168,20 +169,6 @@
         .filmstrip__videos-filmstripOnly {
             height: 100%;
         }
-
-        /**
-         * In filmstrip only mode, the toolbar is normally displayed in the
-         * vertical center of the filmstrip strip. In vertical filmstrip mode,
-         * that alignment makes the toolbar appear floating and detached from
-         * the filmstrip. So, instead anchor the toolbar next to the local
-         * video.
-         */
-        .toolbar_filmstrip-only {
-            bottom: 0;
-            top: auto;
-            transform: none;
-        }
-
     }
 
     /**

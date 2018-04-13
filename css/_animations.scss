@@ -3,42 +3,6 @@
 **/
 
 /**
- *   Slide in animation for extended toolbar.
- */
-@include keyframes(slideInX) {
-    0% { transform: translateX(-100%); }
-    100% { transform: translateX(0%); }
-}
-
-@include keyframes(slideOutX) {
-    0% { transform: translateX(0%); }
-    100% { transform: translateX(-100%); }
-}
-
-@include keyframes(slideInExtX) {
-    0% { transform: translateX(-500%); }
-    100% { transform: translateX(0%); }
-}
-
-@include keyframes(slideOutExtX) {
-    0% { transform: translateX(0%); }
-    100% { transform: translateX(-500%); }
-}
-
-/**
- *   Slide in / out animation for main toolbar.
- */
-
-@include keyframes(slideInY) {
-    100% { transform: translateY(0%); }
-}
-
-@include keyframes(slideOutY) {
-    0% { transform: translateY(0%); }
-    100% { transform: translateY(-100%); }
-}
-
-/**
  *   Slide in animation for extended toolbar (inner) panel.
  */
 
@@ -52,18 +16,4 @@
 @include keyframes(slideOutExt) {
     from { left: 0; }
     to   { left: -$sidebarWidth; }
-}
-
-/**
-*   Slide in animation for extended toolbar container
-**/
-
-@include keyframes(slideOutExtContainer) {
-    from { width: $sidebarWidth; }
-    to { width: 0; }
-}
-
-@include keyframes(slideInExtContainer) {
-    from { width: 0; }
-    to { width: $sidebarWidth; }
 }
