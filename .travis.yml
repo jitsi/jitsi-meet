@@ -1,3 +1,6 @@
+branches:
+  only:
+  - master
 osx_image:
 language: objective-c
 script:

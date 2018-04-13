@@ -1,5 +1,3 @@
-dsfdsf1
-
 # Jitsi Meet SDK for iOS
 
 ## Build
