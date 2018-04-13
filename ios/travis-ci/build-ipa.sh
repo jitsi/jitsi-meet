@@ -31,10 +31,12 @@ security import ${CERT_DIR}/AppleWWDRCA.cer -k ios-build.keychain -A
 echo "importing dev-cert.cer"
 security import ${CERT_DIR}/dev-cert.cer -k ios-build.keychain -A
 echo "importing dev-key.p12"
-security import ${CERT_DIR}/dev-key.p12 -k ios-build.keychain -P "$IOS_SIGNING_CERT_PASSWORD" -A
+security import ${CERT_DIR}/dev-key.p12 -k ios-build.keychain -P ${IOS_SIGNING_CERT_PASSWORD} -A
 
+echo "will set-key-partition-list"
 # Fix for OS X Sierra that hungs in the codesign step
-security set-key-partition-list -S apple-tool:,apple: -s -k "$IOS_SIGNING_CERT_PASSWORD" ios-build.keychain > /dev/null
+security set-key-partition-list -S apple-tool:,apple: -s -k ${IOS_SIGNING_CERT_PASSWORD} ios-build.keychain > /dev/null
+echo "done set-key-partition-list"
 
 mkdir -p ~/Library/MobileDevice/Provisioning\ Profiles
 
