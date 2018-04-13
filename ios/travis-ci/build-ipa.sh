@@ -1,3 +1,7 @@
+cd ios
+pod install
+cd ..
+
 CERT_DIR="ios/travis-ci/certs"
 
 mkdir $CERT_DIR
