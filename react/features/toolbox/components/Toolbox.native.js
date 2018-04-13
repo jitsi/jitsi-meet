@@ -14,6 +14,7 @@ import {
     isNarrowAspectRatio,
     makeAspectRatioAware
 } from '../../base/responsive-ui';
+import { ColorPalette } from '../../base/styles';
 import { InviteButton } from '../../invite';
 import {
     EnterPictureInPictureToolbarButton
@@ -159,6 +160,11 @@ class Toolbox extends Component<Props> {
     _renderPrimaryToolbar() {
         const audioButtonStyles = this._getMuteButtonStyles(MEDIA_TYPE.AUDIO);
         const videoButtonStyles = this._getMuteButtonStyles(MEDIA_TYPE.VIDEO);
+        const hangupButtonStyles = {
+            iconStyle: styles.whitePrimaryToolbarButtonIcon,
+            style: styles.hangup,
+            underlayColor: ColorPalette.buttonUnderlay
+        };
 
         /* eslint-disable react/jsx-handler-names */
 
@@ -168,7 +174,7 @@ class Toolbox extends Component<Props> {
                 pointerEvents = 'box-none'
                 style = { styles.primaryToolbar }>
                 <AudioMuteButton styles = { audioButtonStyles } />
-                <HangupButton />
+                <HangupButton styles = { hangupButtonStyles } />
                 <VideoMuteButton styles = { videoButtonStyles } />
             </View>
         );

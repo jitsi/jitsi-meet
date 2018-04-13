@@ -1,87 +1,62 @@
 // @flow
 
-import PropTypes from 'prop-types';
-import { Component } from 'react';
-
-import {
-    AUDIO_MUTE,
-    createToolbarEvent,
-    sendAnalytics
-} from '../../../analytics';
-import {
-    VIDEO_MUTISM_AUTHORITY,
-    setAudioMuted
-} from '../../../base/media';
+import AbstractButton from './AbstractButton';
+import type { Props } from './AbstractButton';
 
 /**
  * An abstract implementation of a button for toggling audio mute.
  */
-export default class AbstractAudioMuteButton extends Component<*> {
-    /**
-     * {@code AbstractAudioMuteButton} component's property types.
-     *
-     * @static
-     */
-    static propTypes = {
-        /**
-         * Whether or not the local microphone is muted.
-         */
-        _audioMuted: PropTypes.bool,
-
-        /**
-         * Invoked to toggle audio mute.
-         */
-        dispatch: PropTypes.func
-    };
+class AbstractAudioMuteButton<P: Props, S: *> extends AbstractButton<P, S> {
+    accessibilityLabel = 'Audio mute';
+    iconName = 'icon-microphone';
+    toggledIconName = 'icon-mic-disabled toggled';
 
     /**
-     * Initializes a new {@code AbstractAudioMuteButton} instance.
+     * Handles clicking / pressing the button, and toggles the audio mute state
+     * accordingly.
      *
-     * @param {Props} props - The read-only React {@code Component} props with
-     * which the new instance is to be initialized.
-     */
-    constructor(props: Object) {
-        super(props);
-
-        // Bind event handler so it is only bound once per instance.
-        this._onToolbarToggleAudio = this._onToolbarToggleAudio.bind(this);
-    }
-
-    /**
-     * Dispatches an action to toggle audio mute.
-     *
+     * @override
      * @private
      * @returns {void}
      */
-    _doToggleAudio() {
-        // The user sees the reality i.e. the state of base/tracks and intends
-        // to change reality by tapping on the respective button i.e. the user
-        // sets the state of base/media. Whether the user's intention will turn
-        // into reality is a whole different story which is of no concern to the
-        // tapping.
-        this.props.dispatch(
-            setAudioMuted(
-                !this.props._audioMuted,
-                VIDEO_MUTISM_AUTHORITY.USER,
-                /* ensureTrack */ true));
+    _handleClick() {
+        this._setAudioMuted(!this._isAudioMuted());
     }
 
-    _onToolbarToggleAudio: () => void;
+    /**
+     * Helper function to be implemented by subclasses, which must return a
+     * boolean value indicating if audio is muted or not.
+     *
+     * @abstract
+     * @private
+     * @returns {boolean}
+     */
+    _isAudioMuted() {
+        // To be implemented by subclass.
+    }
 
     /**
-     * Creates an analytics toolbar event and dispatches an action for toggling
-     * audio mute.
+     * Indicates whether this button is in toggled state or not.
      *
+     * @override
+     * @private
+     * @returns {boolean}
+     */
+    _isToggled() {
+        return this._isAudioMuted();
+    }
+
+    /**
+     * Helper function to perform the actual setting of the audio mute / unmute
+     * action.
+     *
+     * @param {boolean} audioMuted - Whether video should be muted or not.
      * @private
      * @returns {void}
      */
-    _onToolbarToggleAudio() {
-        sendAnalytics(createToolbarEvent(
-            AUDIO_MUTE,
-            {
-                enable: !this.props._audioMuted
-            }));
-
-        this._doToggleAudio();
+    _setAudioMuted(audioMuted: boolean) { // eslint-disable-line no-unused-vars
+        // To be implemented by subclass.
     }
 }
+
+export default AbstractAudioMuteButton;

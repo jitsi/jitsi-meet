@@ -1,51 +1,35 @@
 // @flow
 
-import { Component } from 'react';
-
-import {
-    createToolbarEvent,
-    sendAnalytics
-} from '../../../analytics';
+import AbstractButton from './AbstractButton';
+import type { Props } from './AbstractButton';
 
 /**
- * An abstract implementation of a button for leaving the conference.
+ * An abstract implementation of a button for disconnecting a conference.
  */
-export default class AbstractHangupButton extends Component<*> {
-    /**
-     * Initializes a new {@code AbstractHangupButton} instance.
-     *
-     * @param {Props} props - The read-only React {@code Component} props with
-     * which the new instance is to be initialized.
-     */
-    constructor(props: Object) {
-        super(props);
+class AbstractHangupButton<P : Props, S: *> extends AbstractButton<P, S> {
+    accessibilityLabel = 'Hangup';
+    iconName = 'icon-hangup';
 
-        // Bind event handler so it is only bound once per instance.
-        this._onToolbarHangup = this._onToolbarHangup.bind(this);
+    /**
+     * Handles clicking / pressing the button, and disconnects the conference.
+     *
+     * @private
+     * @returns {void}
+     */
+    _handleClick() {
+        this._doHangup();
     }
 
     /**
-     * Dispatches an action for leaving the current conference.
+     * Helper function to perform the actual hangup action.
      *
+     * @abstract
      * @private
      * @returns {void}
      */
     _doHangup() {
-        /* to be implemented by descendants */
-    }
-
-    _onToolbarHangup: () => void;
-
-    /**
-     * Creates an analytics toolbar event and dispatches an action for leaving
-     * the current conference.
-     *
-     * @private
-     * @returns {void}
-     */
-    _onToolbarHangup() {
-        sendAnalytics(createToolbarEvent('hangup'));
-
-        this._doHangup();
+        // To be implemented by subclass.
     }
 }
+
+export default AbstractHangupButton;

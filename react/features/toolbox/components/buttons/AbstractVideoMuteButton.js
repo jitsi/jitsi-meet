@@ -1,88 +1,61 @@
 // @flow
 
-import PropTypes from 'prop-types';
-import { Component } from 'react';
-
-import {
-    VIDEO_MUTE,
-    createToolbarEvent,
-    sendAnalytics
-} from '../../../analytics';
-import {
-    VIDEO_MUTISM_AUTHORITY,
-    setVideoMuted
-} from '../../../base/media';
+import AbstractButton from './AbstractButton';
+import type { Props } from './AbstractButton';
 
 /**
  * An abstract implementation of a button for toggling video mute.
  */
-export default class AbstractVideoMuteButton extends Component<*> {
-    /**
-     * {@code AbstractVideoMuteButton} component's property types.
-     *
-     * @static
-     */
-    static propTypes = {
-        /**
-         * Whether or not the local camera is muted.
-         */
-        _videoMuted: PropTypes.bool,
-
-        /**
-         * Invoked to toggle video mute.
-         */
-        dispatch: PropTypes.func
-    };
+class AbstractVideoMuteButton<P : Props, S : *> extends AbstractButton<P, S> {
+    accessibilityLabel = 'Video mute';
+    iconName = 'icon-camera';
+    toggledIconName = 'icon-camera-disabled toggled';
 
     /**
-     * Initializes a new {@code AbstractVideoMuteButton} instance.
-     *
-     * @param {Props} props - The read-only React {@code Component} props with
-     * which the new instance is to be initialized.
-     */
-    constructor(props: Object) {
-        super(props);
-
-        // Bind event handler so it is only bound once per instance.
-        this._onToolbarToggleVideo = this._onToolbarToggleVideo.bind(this);
-    }
-
-    /**
-     * Dispatches an action to toggle the mute state of the video/camera.
+     * Handles clicking / pressing the button, and toggles the video mute state
+     * accordingly.
      *
      * @private
      * @returns {void}
      */
-    _doToggleVideo() {
-        // The user sees the reality i.e. the state of base/tracks and intends
-        // to change reality by tapping on the respective button i.e. the user
-        // sets the state of base/media. Whether the user's intention will turn
-        // into reality is a whole different story which is of no concern to the
-        // tapping.
-        this.props.dispatch(
-            setVideoMuted(
-                !this.props._videoMuted,
-                VIDEO_MUTISM_AUTHORITY.USER,
-                /* ensureTrack */ true));
+    _handleClick() {
+        this._setVideoMuted(!this._isVideoMuted());
     }
 
-
-    _onToolbarToggleVideo: () => void;
+    /**
+     * Indicates whether this button is in toggled state or not.
+     *
+     * @override
+     * @private
+     * @returns {boolean}
+     */
+    _isToggled() {
+        return this._isVideoMuted();
+    }
 
     /**
-     * Creates an analytics toolbar event and dispatches an action for toggling
-     * video mute.
+     * Helper function to be implemented by subclasses, which must return a
+     * boolean value indicating if video is muted or not.
      *
+     * @abstract
+     * @private
+     * @returns {boolean}
+     */
+    _isVideoMuted() {
+        // To be implemented by subclass.
+    }
+
+    /**
+     * Helper function to perform the actual setting of the video mute / unmute
+     * action.
+     *
+     * @param {boolean} videoMuted - Whether video should be muted or not.
      * @private
      * @returns {void}
      */
-    _onToolbarToggleVideo() {
-        sendAnalytics(createToolbarEvent(
-            VIDEO_MUTE,
-            {
-                enable: !this.props._videoMuted
-            }));
-
-        this._doToggleVideo();
+    _setVideoMuted(videoMuted: boolean) { // eslint-disable-line no-unused-vars
+        // To be implemented by subclass.
     }
 }
+
+export default AbstractVideoMuteButton;

@@ -354,12 +354,12 @@ class Toolbox extends Component<Props, State> {
                         </div> }
                 </div>
                 <div className = 'button-group-center'>
-                    { this._shouldShowButton('microphone')
-                        && <AudioMuteButton /> }
-                    { this._shouldShowButton('hangup')
-                        && <HangupButton /> }
-                    { this._shouldShowButton('camera')
-                        && <VideoMuteButton /> }
+                    <AudioMuteButton
+                        visible = { this._shouldShowButton('microphone') } />
+                    <HangupButton
+                        visible = { this._shouldShowButton('hangup') } />
+                    <VideoMuteButton
+                        visible = { this._shouldShowButton('camera') } />
                 </div>
                 <div className = 'button-group-right'>
                     { this._shouldShowButton('invite')
