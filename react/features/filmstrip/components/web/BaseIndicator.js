@@ -89,7 +89,7 @@ class BaseIndicator extends Component {
         return (
             <div className = 'indicator-container'>
                 <Tooltip
-                    description = { t(tooltipKey) }
+                    content = { t(tooltipKey) }
                     position = { tooltipPosition }>
                     <span
                         className = { iconContainerClassName }
