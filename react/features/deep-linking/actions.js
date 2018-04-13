@@ -11,6 +11,10 @@ import { OPEN_DESKTOP_APP, OPEN_WEB_APP } from './actionTypes';
  */
 export function openWebApp() {
     return (dispatch: Dispatch<*>) => {
+        // In order to go to the web app we need to skip the deep linking
+        // interceptor. OPEN_WEB_APP action should set launchInWeb to true in
+        // the redux store. After this when appNavigate() is called the
+        // deep linking interceptor will be skipped (will return undefined).
         dispatch({ type: OPEN_WEB_APP });
         dispatch(appNavigate());
     };
