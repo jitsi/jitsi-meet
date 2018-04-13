@@ -29,8 +29,13 @@ RCT_EXPORT_MODULE();
 - (NSDictionary *)constantsToExport {
     NSDictionary<NSString *, id> *infoDictionary
         = [[NSBundle mainBundle] infoDictionary];
+
+    // calendarEnabled
+    BOOL calendarEnabled
+        = infoDictionary[@"NSCalendarsUsageDescription"] != nil;
+
+    // name
     NSString *name = infoDictionary[@"CFBundleDisplayName"];
-    NSString *version = infoDictionary[@"CFBundleShortVersionString"];
 
     if (name == nil) {
         name = infoDictionary[@"CFBundleName"];
@@ -38,6 +43,13 @@ RCT_EXPORT_MODULE();
             name = @"";
         }
     }
+
+    // sdkBundlePath
+    NSString *sdkBundlePath = [[NSBundle bundleForClass:self.class] bundlePath];
+
+    // version
+    NSString *version = infoDictionary[@"CFBundleShortVersionString"];
+
     if (version == nil) {
         version = infoDictionary[@"CFBundleVersion"];
         if (version == nil) {
@@ -45,9 +57,8 @@ RCT_EXPORT_MODULE();
         }
     }
 
-    NSString *sdkBundlePath = [[NSBundle bundleForClass:self.class] bundlePath];
-
     return @{
+        @"calendarEnabled": [NSNumber numberWithBool:calendarEnabled],
         @"name": name,
         @"sdkBundlePath": sdkBundlePath,
         @"version": version

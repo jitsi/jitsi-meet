@@ -1,5 +1,6 @@
 // @flow
 
+import { NativeModules } from 'react-native';
 import RNCalendarEvents from 'react-native-calendar-events';
 
 import { APP_WILL_MOUNT } from '../app';
@@ -123,6 +124,11 @@ function _fetchCalendarEntries(
         { dispatch, getState },
         maybePromptForPermission,
         forcePermission) {
+    if (!_isCalendarEnabled()) {
+        // The calendar feature is not enabled.
+        return;
+    }
+
     const state = getState()['features/calendar-sync'];
     const promptForPermission
         = (maybePromptForPermission && !state.authorization)
@@ -192,6 +198,20 @@ function _getURLFromEvent(event, knownDomains) {
     }
 
     return null;
+}
+
+/**
+ * Determines whether the calendar feature is enabled by the app. For
+ * example, Apple through its App Store requires NSCalendarsUsageDescription in
+ * the app's Info.plist or App Store rejects the app.
+ *
+ * @returns {boolean} If the app has enabled the calendar feature, {@code true};
+ * otherwise, {@code false}.
+ */
+export function _isCalendarEnabled() {
+    const { calendarEnabled } = NativeModules.AppInfo;
+
+    return typeof calendarEnabled === 'undefined' ? true : calendarEnabled;
 }
 
 /**
