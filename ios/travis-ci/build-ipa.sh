@@ -26,9 +26,11 @@ security default-keychain -s ios-build.keychain
 security unlock-keychain -p $ENCRYPTION_PASSWORD ios-build.keychain
 security set-keychain-settings -t 3600 -l ~/Library/Keychains/ios-build.keychain
 
-
+echo "importing Apple cert"
 security import ${CERT_DIR}/AppleWWDRCA.cer -k ios-build.keychain -A
+echo "importing dev-cert.cer"
 security import ${CERT_DIR}/dev-cert.cer -k ios-build.keychain -A
+echo "importing dev-key.p12"
 security import ${CERT_DIR}/dev-key.p12 -k ios-build.keychain -P "$IOS_SIGNING_CERT_PASSWORD" -A
 
 # Fix for OS X Sierra that hungs in the codesign step
