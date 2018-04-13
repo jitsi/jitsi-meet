@@ -1,0 +1,4 @@
+osx_image:
+language: objective-c
+script:
+- "./ios/travis-ci/build-ipa.sh"
