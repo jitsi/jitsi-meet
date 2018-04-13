@@ -60,12 +60,13 @@ function _setRoom({ dispatch, getState }, next, action) {
     // Read the config.
 
     const state = getState();
+    const hasRoom = Boolean(room);
 
     const audioMuted = Boolean(getPropertyValue(state, 'startWithAudioMuted', {
-        ignoreUrlParams: !room
+        urlParams: hasRoom
     }));
     const videoMuted = Boolean(getPropertyValue(state, 'startWithVideoMuted', {
-        ignoreUrlParams: !room
+        urlParams: hasRoom
     }));
 
     sendAnalytics(createStartMutedConfigurationEvent(

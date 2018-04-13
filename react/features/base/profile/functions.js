@@ -4,64 +4,79 @@ import { parseURLParams } from '../config';
 import { toState } from '../redux';
 
 /**
- * Returns the effective value of a property by applying a precedence
- * between values in URL, config and profile.
+ * Returns the effective value of a configuration/preference/setting by applying
+ * a precedence among the values specified by JWT, URL, profile, and config.
  *
- * @param {Object|Function} stateful - The redux state object or function
- * to retreive the state.
- * @param {string} propertyName - The name of the property we need.
+ * @param {Object|Function} stateful - The redux state object or
+ * {@code getState} function.
+ * @param {string} propertyName - The name of the
+ * configuration/preference/setting (property) to retrieve.
  * @param {{
- *     ignoreJWT: boolean,
- *     ignoreUrlParams: boolean,
- *     ignoreProfile: boolean,
- *     ignoreConfig: boolean
- * }} precedence - A structure of booleans to set which property sources
- * should be ignored.
+ *     config: boolean,
+ *     jwt: boolean,
+ *     profile: boolean,
+ *     urlParams: boolean
+ * }} [sources] - A set/structure of {@code boolean} flags indicating the
+ * configuration/preference/setting sources to consider/retrieve values from.
  * @returns {any}
  */
 export function getPropertyValue(
         stateful: Object | Function,
         propertyName: string,
-        precedence: Object = {
-            ignoreJWT: false,
-            ignoreUrlParams: false,
-            ignoreProfile: false,
-            ignoreConfig: false
-        }
+        sources?: Object
 ) {
+    // Default values don't play nicely with partial objects and we want to make
+    // the function easy to use without exhaustively defining all flags:
+    sources = { // eslint-disable-line no-param-reassign
+        // Defaults:
+        config: true,
+        jwt: true,
+        profile: true,
+        urlParams: true,
+
+        ...sources
+    };
+
+    // Precedence: jwt -> urlParams -> profile -> config.
+
     const state = toState(stateful);
-    const jwt = state['features/base/jwt'];
-    const urlParams
-        = parseURLParams(state['features/base/connection'].locationURL);
-    const profile = state['features/base/profile'];
-    const config = state['features/base/config'];
-    const urlParamName = `config.${propertyName}`;
 
-    // Precedence: jwt -> urlParams -> profile -> config
+    // jwt
+    if (sources.jwt) {
+        const value = state['features/base/jwt'][propertyName];
 
-    if (
-        !precedence.ignoreJWT
-        && typeof jwt[propertyName] !== 'undefined'
-    ) {
-        return jwt[propertyName];
+        if (typeof value !== 'undefined') {
+            return value[propertyName];
+        }
     }
 
-    if (
-        !precedence.ignoreUrlParams
-        && typeof urlParams[urlParamName] !== 'undefined'
-    ) {
-        return urlParams[urlParamName];
+    // urlParams
+    if (sources.urlParams) {
+        const urlParams
+            = parseURLParams(state['features/base/connection'].locationURL);
+        const value = urlParams[`config.${propertyName}`];
+
+        if (typeof value !== 'undefined') {
+            return value;
+        }
     }
 
-    if (
-        !precedence.ignoreProfile
-        && typeof profile[propertyName] !== 'undefined'
-    ) {
-        return profile[propertyName];
+    // profile
+    if (sources.profile) {
+        const value = state['features/base/profile'][propertyName];
+
+        if (typeof value !== 'undefined') {
+            return value;
+        }
     }
 
-    if (!precedence.ignoreConfig) {
-        return config[propertyName];
+    // config
+    if (sources.config) {
+        const value = state['features/base/config'][propertyName];
+
+        if (typeof value !== 'undefined') {
+            return value;
+        }
     }
 
     return undefined;
