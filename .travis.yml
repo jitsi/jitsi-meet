@@ -1,0 +1,19 @@
+branches:
+  only:
+  - master
+osx_image:
+language: objective-c
+script:
+- "./ios/travis-ci/build-ipa.sh"
+before_deploy:
+- git config --local user.name "${GITHUB_USERNAME}"
+- git config --local user.email "${GITHUB_EMAIL}"
+- git tag "$(date +'%Y%m%d%H%M%S')-$(git log --format=%h -1)"
+deploy:
+  provider: releases
+  api_key:
+    secure: IWdgPFW9egN2wHmJQonsJ1OHmT245oOeyqXffg7mm/lwa+8d4y92IBc8WKxTDoNgDooT6uJiRpDowCPgtvT/Pd+VOL8y1yikUgNyM9YYkiKelFqVcXyKHXcNQYForC157kTbO9ww4S0VzncQJciIxe3v8i/lO/7MK80RvmQDEnMEwXYQj3JX6kJxsNXqV/Rb847veqL1qyfX16lj2VqHCqZ/FeqS9qFGwkHBxpBaZeCEqZ4eEovKmTXL4tZO8rTuVCa9FwoVpQgeqle+kfpTrxaYq9tbWJ18c8PpdVNLAdvp9Y2ZFWQ5Uj2X7UEvHSGbPYapDhsRED0ll7KuEn2YVBw36JfZrgeNPgsYobAsb2CmL76KyMQ/BNKYgvim5vI+sMYtaVXuREMckcmb9wVCCmy9Lec486p1MoHmuqjtIqIFqoVAI4l3mX3gYJIRkCy866KfqHUqkRIlB9eU0ZCM7zgCRMbg4PC7qZWQ4YoA/nPLdDSZcFAEOAwlMGYQ65Ia8bFXpxMReznL6kqvVHxccwbRVt/+eWIXo/wkOVPUhJXLFZLnRLPxSPpRGY/umHBzFOorb2EPDsWnMUQbohCK6v/wg8xEuk3+1TF3buwSAeeL9O30zNr//DB0nlXc5PBzptiy6tkfIbwWIipWlyM2XKv/+E0JtjfIzH8xXUAIGkg=
+  file_glob: true
+  file: /tmp/jitsi-meet/jitsi-meet-ipa/*
+  on:
+    repo: paweldomas/jitsi-meet
