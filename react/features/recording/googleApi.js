@@ -205,7 +205,7 @@ const googleApi = {
     _getURLForLiveBroadcasts() {
         return [
             'https://content.googleapis.com/youtube/v3/liveBroadcasts',
-            '?broadcastType=persistent',
+            '?broadcastType=all',
             '&mine=true&part=id%2Csnippet%2CcontentDetails%2Cstatus'
         ].join('');
     },

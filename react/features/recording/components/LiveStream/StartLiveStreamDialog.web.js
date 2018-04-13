@@ -244,13 +244,7 @@ class StartLiveStreamDialog extends Component {
             })
             .then(() => googleApi.requestAvailableYouTubeBroadcasts())
             .then(response => {
-                const broadcasts = response.result.items.map(item => {
-                    return {
-                        title: item.snippet.title,
-                        boundStreamID: item.contentDetails.boundStreamId,
-                        status: item.status.lifeCycleStatus
-                    };
-                });
+                const broadcasts = this._parseBroadcasts(response.result.items);
 
                 this._setStateIfMounted({
                     broadcasts
@@ -331,14 +325,46 @@ class StartLiveStreamDialog extends Component {
     _onYouTubeBroadcastIDSelected(boundStreamID) {
         return googleApi.requestLiveStreamsForYouTubeBroadcast(boundStreamID)
             .then(response => {
-                const found = response.result.items[0];
-                const streamKey = found.cdn.ingestionInfo.streamName;
+                const broadcasts = response.result.items;
+                const streamName = broadcasts
+                    && broadcasts[0]
+                    && broadcasts[0].cdn.ingestionInfo.streamName;
+                const streamKey = streamName || '';
 
                 this._setStateIfMounted({
                     streamKey,
                     selectedBroadcastID: boundStreamID
                 });
             });
+    }
+
+    /**
+     * Takes in a list of broadcasts from the YouTube API, removes dupes,
+     * removes broadcasts that cannot get a stream key, and parses the
+     * broadcasts into flat objects.
+     *
+     * @param {Array} broadcasts - Broadcast descriptions as obtained from
+     * calling the YouTube API.
+     * @private
+     * @returns {Array} An array of objects describing each unique broadcast.
+     */
+    _parseBroadcasts(broadcasts) {
+        const parsedBroadcasts = {};
+
+        for (let i = 0; i < broadcasts.length; i++) {
+            const broadcast = broadcasts[i];
+            const boundStreamID = broadcast.contentDetails.boundStreamId;
+
+            if (boundStreamID && !parsedBroadcasts[boundStreamID]) {
+                parsedBroadcasts[boundStreamID] = {
+                    boundStreamID,
+                    status: broadcast.status.lifeCycleStatus,
+                    title: broadcast.snippet.title
+                };
+            }
+        }
+
+        return Object.values(parsedBroadcasts);
     }
 
     /**
