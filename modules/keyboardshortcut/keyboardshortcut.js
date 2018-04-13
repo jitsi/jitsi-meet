@@ -144,7 +144,7 @@ const KeyboardShortcut = {
      * @returns {string} e.key or something close if not supported
      */
     _getKeyboardKey(e) {
-        if (typeof e.key === 'string') {
+        if (typeof e.key === 'string' && e.key !== 'Unidentified') {
             return e.key;
         }
         if (e.type === 'keypress'
