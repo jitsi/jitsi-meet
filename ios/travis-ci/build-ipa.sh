@@ -11,7 +11,7 @@ CERT_DIR="ios/travis-ci/certs"
 
 mkdir $CERT_DIR
 
-curl -L -o ${CERT_DIR}/AppleWWDRCA1.cer 'http://developer.apple.com/certificationauthority/AppleWWDRCA.cer'
+curl -L -o ${CERT_DIR}/AppleWWDRCA.cer 'http://developer.apple.com/certificationauthority/AppleWWDRCA.cer'
 curl -L -o ${CERT_DIR}/dev-cert.cer.enc ${IOS_DEV_CERT_URL}
 curl -L -o ${CERT_DIR}/dev-key.p12.enc ${IOS_DEV_CERT_KEY_URL}
 curl -L -o ${CERT_DIR}/dev-profile.mobileprovision.enc ${IOS_DEV_PROV_PROFILE_URL}
