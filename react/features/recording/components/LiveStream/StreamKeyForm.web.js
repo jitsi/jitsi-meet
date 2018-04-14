@@ -66,6 +66,7 @@ class StreamKeyForm extends Component {
                 <FieldTextStateless
                     autoFocus = { true }
                     compact = { true }
+                    isSpellCheckEnabled = { false }
                     label = { t('dialog.streamKey') }
                     name = 'streamId'
                     okDisabled = { !this.props.value }
