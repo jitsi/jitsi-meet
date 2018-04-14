@@ -4,10 +4,9 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 
 import { translate } from '../../base/i18n';
-import { Platform } from '../../base/react';
+import { HideNotificationBarStyle, Platform } from '../../base/react';
 
 import { CHROME, FIREFOX, IE, SAFARI } from './browserLinks';
-import HideNotificationBarStyle from './HideNotificationBarStyle';
 
 /**
  * The namespace of the CSS styles of UnsupportedDesktopBrowser.

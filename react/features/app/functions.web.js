@@ -1,12 +1,10 @@
 /* @flow */
 
-import { Platform } from '../base/react';
 import { toState } from '../base/redux';
+import { getDeepLinkingPage } from '../deep-linking';
 import {
-    NoMobileApp,
     PluginRequiredBrowser,
-    UnsupportedDesktopBrowser,
-    UnsupportedMobileBrowser
+    UnsupportedDesktopBrowser
 } from '../unsupported-browser';
 
 import {
@@ -24,50 +22,18 @@ declare var loggingConfig: Object;
  *
  * @private
  * @param {Object} state - Object containing current redux state.
- * @returns {ReactElement|void}
+ * @returns {Promise<ReactElement>|void}
  * @type {Function[]}
  */
 const _INTERCEPT_COMPONENT_RULES = [
-
-    /**
-     * This rule describes case when user opens application using mobile
-     * browser and is attempting to join a conference. In order to promote the
-     * app, we choose to suggest the mobile app even if the browser supports the
-     * app (e.g. Google Chrome with WebRTC support on Android).
-     *
-     * @param {Object} state - The redux state of the app.
-     * @returns {UnsupportedMobileBrowser|void} If the rule is satisfied then
-     * we should intercept existing component by UnsupportedMobileBrowser.
-     */
-    // eslint-disable-next-line no-unused-vars
-    state => {
-        const OS = Platform.OS;
-        const { room } = state['features/base/conference'];
-        const isUsingMobileBrowser = OS === 'android' || OS === 'ios';
-
-        /**
-         * Checking for presence of a room is done so that interception only
-         * occurs when trying to enter a meeting but pages outside of meeting,
-         * like WelcomePage, can still display.
-         */
-        if (room && isUsingMobileBrowser) {
-            const mobileAppPromo
-                = typeof interfaceConfig === 'object'
-                    && interfaceConfig.MOBILE_APP_PROMO;
-
-            return (
-                typeof mobileAppPromo === 'undefined' || Boolean(mobileAppPromo)
-                    ? UnsupportedMobileBrowser
-                    : NoMobileApp);
-        }
-    },
+    getDeepLinkingPage,
     state => {
         const { webRTCReady } = state['features/base/lib-jitsi-meet'];
 
         switch (typeof webRTCReady) {
         case 'boolean':
             if (webRTCReady === false) {
-                return UnsupportedDesktopBrowser;
+                return Promise.resolve(UnsupportedDesktopBrowser);
             }
             break;
 
@@ -76,8 +42,10 @@ const _INTERCEPT_COMPONENT_RULES = [
             break;
 
         default:
-            return PluginRequiredBrowser;
+            return Promise.resolve(PluginRequiredBrowser);
         }
+
+        return Promise.resolve();
     }
 ];
 
@@ -87,16 +55,19 @@ const _INTERCEPT_COMPONENT_RULES = [
  *
  * @param {(Object|Function)} stateOrGetState - The redux state or
  * {@link getState} function.
- * @returns {Route}
+ * @returns {Promise<Route>}
  */
-export function _getRouteToRender(stateOrGetState: Object | Function) {
+export function _getRouteToRender(stateOrGetState: Object | Function): Object {
     const route = _super_getRouteToRender(stateOrGetState);
 
     // Intercepts route components if any of component interceptor rules is
     // satisfied.
-    route.component = _interceptComponent(stateOrGetState, route.component);
+    return _interceptComponent(stateOrGetState, route.component).then(
+        (component: React$Element<*>) => {
+            route.component = component;
 
-    return route;
+            return route;
+        }, () => Promise.resolve(route));
 }
 
 /**
@@ -106,23 +77,24 @@ export function _getRouteToRender(stateOrGetState: Object | Function) {
  * {@link getState} function.
  * @param {ReactElement} component - Current route component to render.
  * @private
- * @returns {ReactElement} If any of the pre-defined rules is satisfied, returns
- * intercepted component.
+ * @returns {Promise<ReactElement>} If any of the pre-defined rules is
+ * satisfied, returns intercepted component.
  */
 function _interceptComponent(
         stateOrGetState: Object | Function,
         component: React$Element<*>) {
-    let result;
     const state = toState(stateOrGetState);
 
-    for (const rule of _INTERCEPT_COMPONENT_RULES) {
-        result = rule(state);
-        if (result) {
-            break;
-        }
-    }
+    const promises = [];
 
-    return result || component;
+    _INTERCEPT_COMPONENT_RULES.forEach(rule => {
+        promises.push(rule(state));
+    });
+
+    return Promise.all(promises).then(
+        results =>
+            results.find(result => typeof result !== 'undefined') || component,
+        () => Promise.resolve(component));
 }
 
 /**

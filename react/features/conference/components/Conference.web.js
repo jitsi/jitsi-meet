@@ -8,6 +8,7 @@ import { connect, disconnect } from '../../base/connection';
 import { DialogContainer } from '../../base/dialog';
 import { translate } from '../../base/i18n';
 import { CalleeInfoContainer } from '../../base/jwt';
+import { HideNotificationBarStyle } from '../../base/react';
 import { Filmstrip } from '../../filmstrip';
 import { LargeVideo } from '../../large-video';
 import { NotificationsContainer } from '../../notifications';
@@ -18,7 +19,6 @@ import {
     setToolboxAlwaysVisible,
     showToolbox
 } from '../../toolbox';
-import { HideNotificationBarStyle } from '../../unsupported-browser';
 
 import { maybeShowSuboptimalExperienceNotification } from '../functions';
 

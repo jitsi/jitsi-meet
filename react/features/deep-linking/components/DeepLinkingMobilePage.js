@@ -5,28 +5,21 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
 import { translate, translateToHTML } from '../../base/i18n';
-import { Platform } from '../../base/react';
-import { URI_PROTOCOL_PATTERN } from '../../base/util';
+import { HideNotificationBarStyle, Platform } from '../../base/react';
 import { DialInSummary } from '../../invite';
-import HideNotificationBarStyle from './HideNotificationBarStyle';
+
+import { _TNS } from '../constants';
+import { generateDeepLinkingURL } from '../functions';
 
 declare var interfaceConfig: Object;
 
 /**
- * The namespace of the CSS styles of UnsupportedMobileBrowser.
+ * The namespace of the CSS styles of DeepLinkingMobilePage.
  *
  * @private
  * @type {string}
  */
-const _SNS = 'unsupported-mobile-browser';
-
-/**
- * The namespace of the i18n/translation keys of UnsupportedMobileBrowser.
- *
- * @private
- * @type {string}
- */
-const _TNS = 'unsupportedBrowser';
+const _SNS = 'deep-linking-mobile';
 
 /**
  * The map of platforms to URLs at which the mobile app for the associated
@@ -45,13 +38,13 @@ const _URLS = {
 /**
  * React component representing mobile browser page.
  *
- * @class UnsupportedMobileBrowser
+ * @class DeepLinkingMobilePage
  */
-class UnsupportedMobileBrowser extends Component<*, *> {
+class DeepLinkingMobilePage extends Component<*, *> {
     state: Object;
 
     /**
-     * UnsupportedMobileBrowser component's property types.
+     * DeepLinkingMobilePage component's property types.
      *
      * @static
      */
@@ -77,20 +70,8 @@ class UnsupportedMobileBrowser extends Component<*, *> {
      * @inheritdoc
      */
     componentWillMount() {
-        // If the user installed the app while this Component was displayed
-        // (e.g. the user clicked the Download the App button), then we would
-        // like to open the current URL in the mobile app. The only way to do it
-        // appears to be a link with an app-specific scheme, not a Universal
-        // Link.
-        const appScheme = interfaceConfig.MOBILE_APP_SCHEME || 'org.jitsi.meet';
-
-        // Replace the protocol part with the app scheme.
-        const joinURL
-            = window.location.href.replace(
-                new RegExp(`^${URI_PROTOCOL_PATTERN}`), `${appScheme}:`);
-
         this.setState({
-            joinURL
+            joinURL: generateDeepLinkingURL()
         });
     }
 
@@ -102,43 +83,49 @@ class UnsupportedMobileBrowser extends Component<*, *> {
      */
     render() {
         const { _room, t } = this.props;
-
-        const openAppButtonClassName
+        const { NATIVE_APP_NAME, SHOW_DEEP_LINKING_IMAGE } = interfaceConfig;
+        const downloadButtonClassName
             = `${_SNS}__button ${_SNS}__button_primary`;
-        const appName
-            = interfaceConfig.ADD_PEOPLE_APP_NAME || interfaceConfig.APP_NAME;
 
         return (
             <div className = { _SNS }>
-                <div className = { `${_SNS}__body` }>
+                <div className = 'header'>
                     <img
-                        className = { `${_SNS}__logo` }
-                        src = 'images/logo-blue.svg' />
+                        className = 'logo'
+                        src = '../images/logo-deep-linking.png' />
+                </div>
+                <div className = { `${_SNS}__body` }>
+                    {
+                        SHOW_DEEP_LINKING_IMAGE
+                            ? <img
+                                className = 'image'
+                                src = '../images/deep-linking-image.png' />
+                            : null
+                    }
                     <p className = { `${_SNS}__text` }>
                         {
                             translateToHTML(
                                 t,
                                 `${_TNS}.appNotInstalled`,
-                                { app: appName })
+                                { app: NATIVE_APP_NAME })
                         }
                     </p>
-                    <a href = { this.state.joinURL }>
-                        <button className = { openAppButtonClassName }>
-                            { t(`${_TNS}.openApp`,
-                                { app: appName }) }
-                        </button>
-                    </a>
                     <a href = { _URLS[Platform.OS] }>
-                        <button className = { `${_SNS}__button` }>
+                        <button className = { downloadButtonClassName }>
                             { t(`${_TNS}.downloadApp`) }
                         </button>
                     </a>
-                    { _room
-                        ? <DialInSummary
-                            className = 'unsupported-dial-in'
-                            clickableNumbers = { true }
-                            room = { _room } />
-                        : null }
+                    <a
+                        className = { `${_SNS}__href` }
+                        href = { this.state.joinURL }>
+                        {/* <button className = { `${_SNS}__button` }> */}
+                        { t(`${_TNS}.openApp`) }
+                        {/* </button> */}
+                    </a>
+                    <DialInSummary
+                        className = 'deep-linking-dial-in'
+                        clickableNumbers = { true }
+                        room = { _room } />
                 </div>
                 <HideNotificationBarStyle />
             </div>
@@ -148,7 +135,7 @@ class UnsupportedMobileBrowser extends Component<*, *> {
 
 /**
  * Maps (parts of) the Redux state to the associated props for the
- * {@code UnsupportedMobileBrowser} component.
+ * {@code DeepLinkingMobilePage} component.
  *
  * @param {Object} state - The Redux state.
  * @private
@@ -162,4 +149,4 @@ function _mapStateToProps(state) {
     };
 }
 
-export default translate(connect(_mapStateToProps)(UnsupportedMobileBrowser));
+export default translate(connect(_mapStateToProps)(DeepLinkingMobilePage));
