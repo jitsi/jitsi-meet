@@ -102,9 +102,8 @@ function _ensureCalendarAccess(promptForPermission, dispatch) {
  * @returns {Promise}
  */
 function _ensureDefaultServer({ dispatch, getState }) {
-    const state = getState();
     const defaultURL
-        = parseURIString(state['features/app'].app._getDefaultURL());
+        = parseURIString(getState()['features/app'].app._getDefaultURL());
 
     dispatch(addKnownDomain(defaultURL.host));
 }
@@ -164,7 +163,7 @@ function _fetchCalendarEntries(
 }
 
 /**
- * Retreives a jitsi URL from an event if present.
+ * Retrieves a Jitsi Meet URL from an event if present.
  *
  * @param {Object} event - The event to parse.
  * @param {Array<string>} knownDomains - The known domain names.
@@ -219,7 +218,7 @@ export function _isCalendarEnabled() {
 }
 
 /**
- * Retreives the domain name of a room upon join and stores it in the known
+ * Retrieves the domain name of a room upon join and stores it in the known
  * domain list, if not present yet.
  *
  * @param {Object} store - The redux store.

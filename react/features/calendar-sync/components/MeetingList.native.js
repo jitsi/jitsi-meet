@@ -83,7 +83,7 @@ class MeetingList extends Component<Props> {
     }
 
     /**
-     * Implements React Component's componentWillReceiveProps function.
+     * Implements React Component's componentWillReceiveProps.
      *
      * @inheritdoc
      */
@@ -98,7 +98,7 @@ class MeetingList extends Component<Props> {
     }
 
     /**
-     * Implements the React Components's render method.
+     * Implements the React Components's render.
      *
      * @inheritdoc
      */
@@ -115,7 +115,7 @@ class MeetingList extends Component<Props> {
         );
     }
 
-    _getRenderListEmptyComponent: () => Object
+    _getRenderListEmptyComponent: () => Object;
 
     /**
      * Returns a list empty component if a custom one has to be rendered instead
@@ -147,7 +147,7 @@ class MeetingList extends Component<Props> {
         return null;
     }
 
-    _onPress: string => Function
+    _onPress: string => Function;
 
     /**
      * Handles the list's navigate action.
@@ -160,7 +160,7 @@ class MeetingList extends Component<Props> {
         this.props.dispatch(appNavigate(url));
     }
 
-    _onRefresh: () => void
+    _onRefresh: () => void;
 
     /**
      * Callback to execute when the list is doing a pull-to-refresh.
@@ -172,7 +172,7 @@ class MeetingList extends Component<Props> {
         this.props.dispatch(refreshCalendar(true));
     }
 
-    _toDisplayableItem: Object => Object
+    _toDisplayableItem: Object => Object;
 
     /**
      * Creates a displayable object from an event.
@@ -193,7 +193,7 @@ class MeetingList extends Component<Props> {
         };
     }
 
-    _toDisplayableList: () => Array<Object>
+    _toDisplayableList: () => Array<Object>;
 
     /**
      * Transforms the event list to a displayable list with sections.
@@ -204,18 +204,10 @@ class MeetingList extends Component<Props> {
     _toDisplayableList() {
         const { _eventList, t } = this.props;
         const now = Date.now();
-        const nowSection = NavigateSectionList.createSection(
-            t('calendarSync.now'),
-            'now'
-        );
-        const nextSection = NavigateSectionList.createSection(
-            t('calendarSync.next'),
-            'next'
-        );
-        const laterSection = NavigateSectionList.createSection(
-            t('calendarSync.later'),
-            'later'
-        );
+        const { createSection } = NavigateSectionList;
+        const nowSection = createSection(t('calendarSync.now'), 'now');
+        const nextSection = createSection(t('calendarSync.next'), 'next');
+        const laterSection = createSection(t('calendarSync.later'), 'later');
 
         for (const event of _eventList) {
             const displayableEvent = this._toDisplayableItem(event);
@@ -224,7 +216,7 @@ class MeetingList extends Component<Props> {
                 nowSection.data.push(displayableEvent);
             } else if (event.startDate > now) {
                 if (nextSection.data.length
-                && nextSection.data[0].startDate !== event.startDate) {
+                        && nextSection.data[0].startDate !== event.startDate) {
                     laterSection.data.push(displayableEvent);
                 } else {
                     nextSection.data.push(displayableEvent);
@@ -247,7 +239,7 @@ class MeetingList extends Component<Props> {
         return sectionList;
     }
 
-    _toDateString: Object => string
+    _toDateString: Object => string;
 
     /**
      * Generates a date (interval) string for a given event.

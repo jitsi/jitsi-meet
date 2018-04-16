@@ -1,4 +1,5 @@
 // @flow
+
 import React, { Component } from 'react';
 import {
     SafeAreaView,
@@ -8,11 +9,10 @@ import {
     View
 } from 'react-native';
 
-import styles, { UNDERLAY_COLOR } from './styles';
-
+import { Icon } from '../../../font-icons';
 import { translate } from '../../../i18n';
 
-import { Icon } from '../../../font-icons';
+import styles, { UNDERLAY_COLOR } from './styles';
 
 type Props = {
 
@@ -60,14 +60,30 @@ type Props = {
      * ]
      */
     sections: Array<Object>
-}
+};
 
 /**
- * Implements a general section list to display items that have a URL
- * property and navigates to (probably) meetings, such as the recent list
- * or the meeting list components.
+ * Implements a general section list to display items that have a URL property
+ * and navigates to (probably) meetings, such as the recent list or the meeting
+ * list components.
  */
 class NavigateSectionList extends Component<Props> {
+    /**
+     * Creates an empty section object.
+     *
+     * @param {string} title - The title of the section.
+     * @param {string} key - The key of the section. It must be unique.
+     * @private
+     * @returns {Object}
+     */
+    static createSection(title, key) {
+        return {
+            data: [],
+            key,
+            title
+        };
+    }
+
     /**
      * Constructor of the NavigateSectionList component.
      *
@@ -89,23 +105,23 @@ class NavigateSectionList extends Component<Props> {
     }
 
     /**
-     * Implements React's Component.render function.
+     * Implements React's Component.render.
      * Note: we don't use the refreshing value yet, because refreshing of these
      * lists is super quick, no need to complicate the code - yet.
      *
      * @inheritdoc
      */
     render() {
-        const { renderListEmptyComponent, sections } = this.props;
+        const {
+            renderListEmptyComponent = this._renderListEmptyComponent,
+            sections
+        } = this.props;
 
         return (
             <SafeAreaView
                 style = { styles.container } >
                 <SectionList
-                    ListEmptyComponent = {
-                        renderListEmptyComponent
-                        || this._renderListEmptyComponent
-                    }
+                    ListEmptyComponent = { renderListEmptyComponent }
                     keyExtractor = { this._getItemKey }
                     onRefresh = { this._onRefresh }
                     refreshing = { false }
@@ -117,27 +133,11 @@ class NavigateSectionList extends Component<Props> {
         );
     }
 
-    /**
-     * Creates an empty section object.
-     *
-     * @private
-     * @param {string} title - The title of the section.
-     * @param {string} key - The key of the section. It must be unique.
-     * @returns {Object}
-     */
-    static createSection(title, key) {
-        return {
-            data: [],
-            key,
-            title
-        };
-    }
-
-    _getAvatarColor: string => Object
+    _getAvatarColor: string => Object;
 
     /**
-     * Returns a style (color) based on the string that determines the
-     * color of the avatar.
+     * Returns a style (color) based on the string that determines the color of
+     * the avatar.
      *
      * @param {string} colorBase - The string that is the base of the color.
      * @private
@@ -162,22 +162,22 @@ class NavigateSectionList extends Component<Props> {
     /**
      * Generates a unique id to every item.
      *
-     * @private
      * @param {Object} item - The item.
      * @param {number} index - The item index.
+     * @private
      * @returns {string}
      */
     _getItemKey(item, index) {
         return `${index}-${item.key}`;
     }
 
-    _onPress: string => Function
+    _onPress: string => Function;
 
     /**
      * Returns a function that is used in the onPress callback of the items.
      *
-     * @private
      * @param {string} url - The URL of the item to navigate to.
+     * @private
      * @returns {Function}
      */
     _onPress(url) {
@@ -188,7 +188,7 @@ class NavigateSectionList extends Component<Props> {
         };
     }
 
-    _onRefresh: () => void
+    _onRefresh: () => void;
 
     /**
      * Invokes the onRefresh callback if present.
@@ -209,26 +209,35 @@ class NavigateSectionList extends Component<Props> {
     /**
      * Renders a single item in the list.
      *
-     * @private
      * @param {Object} listItem - The item to render.
+     * @private
      * @returns {Component}
      */
     _renderItem(listItem) {
-        const { item } = listItem;
+        const { item: { colorBase, lines, title, url } } = listItem;
+
+        // XXX The value of title cannot be undefined; otherwise, react-native
+        // will throw a TypeError: Cannot read property of undefined. While it's
+        // difficult to get an undefined title and very likely requires the
+        // execution of incorrect source code, it is undesirable to break the
+        // whole app because of an undefined string.
+        if (typeof title === 'undefined') {
+            return null;
+        }
 
         return (
             <TouchableHighlight
-                onPress = { this._onPress(item.url) }
+                onPress = { this._onPress(url) }
                 underlayColor = { UNDERLAY_COLOR }>
                 <View style = { styles.listItem }>
                     <View style = { styles.avatarContainer } >
                         <View
                             style = { [
                                 styles.avatar,
-                                this._getAvatarColor(item.colorBase)
+                                this._getAvatarColor(colorBase)
                             ] } >
                             <Text style = { styles.avatarContent }>
-                                { item.title.substr(0, 1).toUpperCase() }
+                                { title.substr(0, 1).toUpperCase() }
                             </Text>
                         </View>
                     </View>
@@ -239,11 +248,9 @@ class NavigateSectionList extends Component<Props> {
                                 styles.listItemText,
                                 styles.listItemTitle
                             ] }>
-                            { item.title }
+                            { title }
                         </Text>
-                        {
-                            this._renderItemLines(item.lines)
-                        }
+                        { this._renderItemLines(lines) }
                     </View>
                 </View>
             </TouchableHighlight>
@@ -255,9 +262,9 @@ class NavigateSectionList extends Component<Props> {
     /**
      * Renders a single line from the additional lines.
      *
-     * @private
      * @param {string} line - The line text.
      * @param {number} index - The index of the line.
+     * @private
      * @returns {React$Node}
      */
     _renderItemLine(line, index) {
@@ -275,32 +282,26 @@ class NavigateSectionList extends Component<Props> {
         );
     }
 
-    _renderItemLines: (Array<string>) => Array<React$Node>;
+    _renderItemLines: Array<string> => Array<React$Node>;
 
     /**
      * Renders the additional item lines, if any.
      *
-     * @private
      * @param {Array<string>} lines - The lines to render.
+     * @private
      * @returns {Array<React$Node>}
      */
     _renderItemLines(lines) {
-        if (lines && lines.length) {
-            return lines.map((line, index) =>
-                this._renderItemLine(line, index)
-            );
-        }
-
-        return null;
+        return lines && lines.length ? lines.map(this._renderItemLine) : null;
     }
 
-    _renderListEmptyComponent: () => Object
+    _renderListEmptyComponent: () => Object;
 
     /**
      * Renders a component to display when the list is empty.
      *
-     * @private
      * @param {Object} section - The section being rendered.
+     * @private
      * @returns {React$Node}
      */
     _renderListEmptyComponent() {
@@ -322,13 +323,13 @@ class NavigateSectionList extends Component<Props> {
         return null;
     }
 
-    _renderSection: Object => Object
+    _renderSection: Object => Object;
 
     /**
      * Renders a section title.
      *
-     * @private
      * @param {Object} section - The section being rendered.
+     * @private
      * @returns {React$Node}
      */
     _renderSection(section) {

@@ -78,7 +78,7 @@ class RecentList extends Component<Props> {
         );
     }
 
-    _onPress: string => Function
+    _onPress: string => Function;
 
     /**
      * Handles the list's navigate action.
@@ -93,7 +93,7 @@ class RecentList extends Component<Props> {
         dispatch(appNavigate(url));
     }
 
-    _toDisplayableItem: Object => Object
+    _toDisplayableItem: Object => Object;
 
     /**
      * Creates a displayable list item of a recent list entry.
@@ -121,7 +121,7 @@ class RecentList extends Component<Props> {
         };
     }
 
-    _toDisplayableList: () => Array<Object>
+    _toDisplayableList: () => Array<Object>;
 
     /**
      * Transforms the history list to a displayable list
@@ -132,18 +132,12 @@ class RecentList extends Component<Props> {
      */
     _toDisplayableList() {
         const { _recentList, t } = this.props;
-        const todaySection = NavigateSectionList.createSection(
-            t('recentList.today'),
-            'today'
-        );
-        const yesterdaySection = NavigateSectionList.createSection(
-            t('recentList.yesterday'),
-            'yesterday'
-        );
-        const earlierSection = NavigateSectionList.createSection(
-            t('recentList.earlier'),
-            'earlier'
-        );
+        const { createSection } = NavigateSectionList;
+        const todaySection = createSection(t('recentList.today'), 'today');
+        const yesterdaySection
+            = createSection(t('recentList.yesterday'), 'yesterday');
+        const earlierSection
+            = createSection(t('recentList.earlier'), 'earlier');
         const today = new Date().toDateString();
         const yesterdayDate = new Date();
 
@@ -182,7 +176,7 @@ class RecentList extends Component<Props> {
         return displayableList;
     }
 
-    _toDateString: number => string
+    _toDateString: number => string;
 
     /**
      * Generates a date string for the item.
@@ -203,7 +197,7 @@ class RecentList extends Component<Props> {
         return m.format('lll');
     }
 
-    _toDurationString: number => string
+    _toDurationString: number => string;
 
     /**
      * Generates a duration string for the item.
@@ -226,8 +220,8 @@ class RecentList extends Component<Props> {
  *
  * @param {Object} state - The redux state.
  * @returns {{
- *      _defaultServerURL: string,
- *      _recentList: Array
+ *     _defaultServerURL: string,
+ *     _recentList: Array
  * }}
  */
 export function _mapStateToProps(state: Object) {
