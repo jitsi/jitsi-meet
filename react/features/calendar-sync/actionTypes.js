@@ -1,24 +1,44 @@
 // @flow
 
 /**
- * Action to signal that calendar access has already been requested
- * since the app started, so no new request should be done unless the
- * user explicitly tries to refresh the calendar view.
+ * Action to add a new domain to the list of domain known to the feature
+ * calendar-sync.
+ *
+ * {
+ *     type: ADD_KNOWN_DOMAIN,
+ *     knownDomain: string
+ * }
  */
-export const CALENDAR_ACCESS_REQUESTED = Symbol('CALENDAR_ACCESS_REQUESTED');
-
-/**
- * Action to update the current calendar entry list in the store.
- */
-export const NEW_CALENDAR_ENTRY_LIST = Symbol('NEW_CALENDAR_ENTRY_LIST');
-
-/**
- * Action to add a new known domain to the list.
- */
-export const NEW_KNOWN_DOMAIN = Symbol('NEW_KNOWN_DOMAIN');
+export const ADD_KNOWN_DOMAIN = Symbol('ADD_KNOWN_DOMAIN');
 
 /**
  * Action to refresh (re-fetch) the entry list.
+ *
+ * {
+ *     type: REFRESH_CALENDAR,
+ *     forcePermission: boolean
+ * }
  */
-export const REFRESH_CALENDAR_ENTRY_LIST
-    = Symbol('REFRESH_CALENDAR_ENTRY_LIST');
+export const REFRESH_CALENDAR = Symbol('REFRESH_CALENDAR');
+
+/**
+ * Action to signal that calendar access has already been requested since the
+ * app started, so no new request should be done unless the user explicitly
+ * tries to refresh the calendar view.
+ *
+ * {
+ *     type: SET_CALENDAR_AUTHORIZATION,
+ *     authorization: ?string
+ * }
+ */
+export const SET_CALENDAR_AUTHORIZATION = Symbol('SET_CALENDAR_AUTHORIZATION');
+
+/**
+ * Action to update the current calendar entry list in the store.
+ *
+ * {
+ *     type: SET_CALENDAR_EVENTS,
+ *     events: Array<Object>
+ * }
+ */
+export const SET_CALENDAR_EVENTS = Symbol('SET_CALENDAR_EVENTS');

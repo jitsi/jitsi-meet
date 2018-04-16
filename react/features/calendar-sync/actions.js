@@ -1,58 +1,60 @@
 // @flow
-import {
-    CALENDAR_ACCESS_REQUESTED,
-    NEW_CALENDAR_ENTRY_LIST,
-    NEW_KNOWN_DOMAIN,
-    REFRESH_CALENDAR_ENTRY_LIST
-} from './actionTypes';
 
-/**
- * Sends an action to signal that a calendar access has been requested. For
- * more info see the {@link CALENDAR_ACCESS_REQUESTED}.
- *
- * @param {string | undefined} status - The result of the last calendar
- * access request.
- * @returns {{
- *   type: CALENDAR_ACCESS_REQUESTED
- * }}
- */
-export function updateCalendarAccessStatus(status: ?string) {
-    return {
-        status,
-        type: CALENDAR_ACCESS_REQUESTED
-    };
-}
+import {
+    SET_CALENDAR_AUTHORIZATION,
+    SET_CALENDAR_EVENTS,
+    ADD_KNOWN_DOMAIN,
+    REFRESH_CALENDAR
+} from './actionTypes';
 
 /**
  * Sends an action to add a new known domain if not present yet.
  *
- * @param {string} domainName - The new domain.
+ * @param {string} knownDomain - The new domain.
  * @returns {{
- *   type: NEW_KNOWN_DOMAIN,
- *   domainName: string
+ *     type: ADD_KNOWN_DOMAIN,
+ *     knownDomain: string
  * }}
  */
-export function maybeAddNewKnownDomain(domainName: string) {
+export function addKnownDomain(knownDomain: string) {
     return {
-        type: NEW_KNOWN_DOMAIN,
-        domainName
+        type: ADD_KNOWN_DOMAIN,
+        knownDomain
     };
 }
 
 /**
  * Sends an action to refresh the entry list (fetches new data).
  *
- * @param {boolean|undefined} forcePermission - Whether to force to re-ask
- * for the permission or not.
+ * @param {boolean|undefined} forcePermission - Whether to force to re-ask for
+ * the permission or not.
  * @returns {{
- *   type: REFRESH_CALENDAR_ENTRY_LIST,
- *   forcePermission: boolean
+ *     type: REFRESH_CALENDAR,
+ *     forcePermission: boolean
  * }}
  */
-export function refreshCalendarEntryList(forcePermission: boolean = false) {
+export function refreshCalendar(forcePermission: boolean = false) {
     return {
-        forcePermission,
-        type: REFRESH_CALENDAR_ENTRY_LIST
+        type: REFRESH_CALENDAR,
+        forcePermission
+    };
+}
+
+/**
+ * Sends an action to signal that a calendar access has been requested. For more
+ * info, see {@link SET_CALENDAR_AUTHORIZATION}.
+ *
+ * @param {string | undefined} authorization - The result of the last calendar
+ * authorization request.
+ * @returns {{
+ *     type: SET_CALENDAR_AUTHORIZATION,
+ *     authorization: ?string
+ * }}
+ */
+export function setCalendarAuthorization(authorization: ?string) {
+    return {
+        type: SET_CALENDAR_AUTHORIZATION,
+        authorization
     };
 }
 
@@ -61,13 +63,13 @@ export function refreshCalendarEntryList(forcePermission: boolean = false) {
  *
  * @param {Array<Object>} events - The new list.
  * @returns {{
- *   type: NEW_CALENDAR_ENTRY_LIST,
- *   events: Array<Object>
+ *     type: SET_CALENDAR_EVENTS,
+ *     events: Array<Object>
  * }}
  */
-export function updateCalendarEntryList(events: Array<Object>) {
+export function setCalendarEvents(events: Array<Object>) {
     return {
-        type: NEW_CALENDAR_ENTRY_LIST,
+        type: SET_CALENDAR_EVENTS,
         events
     };
 }

@@ -5,7 +5,7 @@ import { View, TabBarIOS } from 'react-native';
 import { connect } from 'react-redux';
 
 import { translate } from '../../base/i18n';
-import { MeetingList, refreshCalendarEntryList } from '../../calendar-sync';
+import { MeetingList, refreshCalendar } from '../../calendar-sync';
 import { RecentList } from '../../recent-list';
 
 import AbstractPagedList from './AbstractPagedList';
@@ -85,10 +85,10 @@ class PagedList extends AbstractPagedList {
             if (tabIndex === 1) {
                 /**
                  * This is a workaround as TabBarIOS doesn't invoke
-                 * componentWillReciveProps on prop change of the
-                 * MeetingList component.
+                 * componentWillReciveProps on prop change of the MeetingList
+                 * component.
                  */
-                this.props.dispatch(refreshCalendarEntryList());
+                this.props.dispatch(refreshCalendar());
             }
         };
     }

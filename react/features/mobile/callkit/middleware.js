@@ -1,13 +1,17 @@
 // @flow
 
-import { NativeModules } from 'react-native';
 import uuid from 'uuid';
 
 import {
     createTrackMutedEvent,
     sendAnalytics
 } from '../../analytics';
-import { APP_WILL_MOUNT, APP_WILL_UNMOUNT, appNavigate } from '../../app';
+import {
+    APP_WILL_MOUNT,
+    APP_WILL_UNMOUNT,
+    appNavigate,
+    getName
+} from '../../app';
 import {
     CONFERENCE_FAILED,
     CONFERENCE_LEFT,
@@ -97,7 +101,7 @@ function _appWillMount({ dispatch, getState }, next, action) {
 
     CallKit.setProviderConfiguration({
         iconTemplateImageName: 'CallKitIcon',
-        localizedName: NativeModules.AppInfo.name
+        localizedName: getName()
     });
 
     const context = {
