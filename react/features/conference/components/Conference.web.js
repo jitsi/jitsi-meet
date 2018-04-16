@@ -44,11 +44,6 @@ const FULL_SCREEN_EVENTS = [
 type Props = {
 
     /**
-     * Whether the toolbar should stay visible or be able to autohide.
-     */
-    _alwaysVisibleToolbar: boolean,
-
-    /**
      * Whether the local participant is recording the conference.
      */
     _iAmRecorder: boolean,
@@ -105,13 +100,14 @@ class Conference extends Component<Props> {
         FULL_SCREEN_EVENTS.forEach(name =>
             document.addEventListener(name, this._onFullScreenChange));
 
-        const { _alwaysVisibleToolbar, dispatch, t } = this.props;
+        const { dispatch, t } = this.props;
 
         dispatch(connect());
+
         maybeShowSuboptimalExperienceNotification(dispatch, t);
 
-        dispatch(setToolboxAlwaysVisible(
-            _alwaysVisibleToolbar || interfaceConfig.filmStripOnly));
+        interfaceConfig.filmStripOnly
+            && dispatch(setToolboxAlwaysVisible(true));
     }
 
     /**
@@ -208,24 +204,13 @@ class Conference extends Component<Props> {
  * @param {Object} state - The Redux state.
  * @private
  * @returns {{
- *     _alwaysVisibleToolbar: boolean,
  *     _iAmRecorder: boolean
  * }}
  */
 function _mapStateToProps(state) {
-    const {
-        alwaysVisibleToolbar,
-        iAmRecorder
-    } = state['features/base/config'];
+    const { iAmRecorder } = state['features/base/config'];
 
     return {
-        /**
-         * Whether the toolbar should stay visible or be able to autohide.
-         *
-         * @private
-         */
-        _alwaysVisibleToolbar: alwaysVisibleToolbar,
-
         /**
          * Whether the local participant is recording the conference.
          *
