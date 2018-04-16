@@ -36,14 +36,6 @@ type Props = {
     dispatch: Function,
 
     /**
-     * Tells the component if it's being displayed at the moment, or not. Note:
-     * as an example, on Android it can happen that the component is rendered
-     * but not displayed, because components like ViewPagerAndroid render their
-     * children even if they are not visible at the moment.
-     */
-    displayed: boolean,
-
-    /**
      * The translate function.
      */
     t: Function
@@ -84,12 +76,6 @@ class MeetingList extends Component<Props> {
      */
     constructor(props) {
         super(props);
-
-        const { dispatch, displayed } = props;
-
-        if (displayed) {
-            dispatch(refreshCalendar());
-        }
 
         this._getRenderListEmptyComponent
             = this._getRenderListEmptyComponent.bind(this);

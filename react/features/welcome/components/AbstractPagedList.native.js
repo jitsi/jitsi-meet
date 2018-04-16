@@ -2,7 +2,8 @@
 
 import React, { Component } from 'react';
 import { View } from 'react-native';
-import { isCalendarEnabled } from '../../calendar-sync';
+
+import { MeetingList } from '../../calendar-sync';
 import { RecentList } from '../../recent-list';
 
 import styles from './styles';
@@ -28,7 +29,7 @@ type Props = {
      * The i18n translate function
      */
     t: Function
-}
+};
 
 type State = {
 
@@ -36,16 +37,16 @@ type State = {
      * The currently selected page.
      */
     pageIndex: number
-}
+};
 
 /**
  * Abstract class for the platform specific paged lists.
  */
 export default class AbstractPagedList extends Component<Props, State> {
     /**
-     * True if the calendar feature is enabled on the platform, false otherwise.
+     * The list of pages displayed in the component, referenced by page index.
      */
-    _calendarEnabled: boolean
+    _pages: Array<Object>;
 
     /**
      * Constructor of the component.
@@ -55,7 +56,13 @@ export default class AbstractPagedList extends Component<Props, State> {
     constructor(props: Props) {
         super(props);
 
-        this._calendarEnabled = isCalendarEnabled();
+        this._pages = [];
+        for (const component of [ RecentList, MeetingList ]) {
+            // XXX Certain pages may be contributed by optional features. For
+            // example, MeetingList is contributed by the calendar feature and
+            // apps i.e. SDK consumers may not enable the calendar feature.
+            component && this._pages.push(component);
+        }
 
         this.state = {
             pageIndex: DEFAULT_PAGE
@@ -77,15 +84,43 @@ export default class AbstractPagedList extends Component<Props, State> {
                     disabled ? styles.pagedListContainerDisabled : null
                 ] }>
                 {
-                    (this._calendarEnabled && this._renderPagedList(disabled))
-                    || <RecentList
-                        disabled = { disabled }
-                        style = { styles.pagedList } />
+                    this._pages.length > 1
+                        ? this._renderPagedList(disabled)
+                        : React.createElement(
+                            /* type */ this._pages[0],
+                            /* props */ {
+                                disabled,
+                                style: styles.pagedList
+                            })
                 }
             </View>
         );
     }
 
-    _renderPagedList: boolean => Object
+    _renderPagedList: boolean => React$Node;
 
+    _selectPage: number => void;
+
+    /**
+     * Sets the selected page.
+     *
+     * @param {number} pageIndex - The index of the active page.
+     * @protected
+     * @returns {void}
+     */
+    _selectPage(pageIndex: number) {
+        this.setState({
+            pageIndex
+        });
+
+        // The page's Component may have a refresh(dispatch) function which we
+        // invoke when the page is selected.
+        const selectedPageComponent = this._pages[pageIndex];
+
+        if (selectedPageComponent) {
+            const { refresh } = selectedPageComponent;
+
+            typeof refresh === 'function' && refresh(this.props.dispatch);
+        }
+    }
 }

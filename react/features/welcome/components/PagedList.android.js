@@ -1,6 +1,8 @@
 // @flow
+
 import React from 'react';
 import { Text, TouchableOpacity, View, ViewPagerAndroid } from 'react-native';
+import { connect } from 'react-redux';
 
 import { Icon } from '../../base/font-icons';
 import { MeetingList } from '../../calendar-sync';
@@ -14,24 +16,74 @@ import styles from './styles';
  *
  * @extends PagedList
  */
-export default class PagedList extends AbstractPagedList {
+class PagedList extends AbstractPagedList {
     /**
      * A reference to the viewpager.
      */
     _viewPager: Object;
 
     /**
-     * Constructor of the PagedList Component.
+     * Initializes a new {@code PagedList} instance.
      *
      * @inheritdoc
      */
     constructor(props) {
         super(props);
 
+        // Bind event handlers so they are only bound once per instance.
         this._getIndicatorStyle = this._getIndicatorStyle.bind(this);
         this._onPageSelected = this._onPageSelected.bind(this);
         this._onSelectPage = this._onSelectPage.bind(this);
-        this._setPagerReference = this._setPagerReference.bind(this);
+        this._setViewPager = this._setViewPager.bind(this);
+    }
+
+    _getIndicatorStyle: number => Object;
+
+    /**
+     * Constructs the style of an indicator.
+     *
+     * @param {number} indicatorIndex - The index of the indicator.
+     * @private
+     * @returns {Object}
+     */
+    _getIndicatorStyle(indicatorIndex) {
+        if (this.state.pageIndex === indicatorIndex) {
+            return styles.pageIndicatorTextActive;
+        }
+
+        return null;
+    }
+
+    _onPageSelected: Object => void;
+
+    /**
+     * Updates the index of the currently selected page.
+     *
+     * @param {Object} event - The native event of the callback.
+     * @private
+     * @returns {void}
+     */
+    _onPageSelected({ nativeEvent: { position } }) {
+        if (this.state.pageIndex !== position) {
+            this._selectPage(position);
+        }
+    }
+
+    _onSelectPage: number => Function;
+
+    /**
+     * Constructs a function to be used as a callback for the tab bar.
+     *
+     * @param {number} pageIndex - The index of the page to activate via the
+     * callback.
+     * @private
+     * @returns {Function}
+     */
+    _onSelectPage(pageIndex) {
+        return () => {
+            this._viewPager.setPage(pageIndex);
+            this._selectPage(pageIndex);
+        };
     }
 
     /**
@@ -42,23 +94,19 @@ export default class PagedList extends AbstractPagedList {
      * @returns {ReactElement}
      */
     _renderPagedList(disabled) {
-        const { pageIndex } = this.state;
-
         return (
             <View style = { styles.pagedListContainer }>
                 <ViewPagerAndroid
                     initialPage = { DEFAULT_PAGE }
                     onPageSelected = { this._onPageSelected }
                     peekEnabled = { true }
-                    ref = { this._setPagerReference }
+                    ref = { this._setViewPager }
                     style = { styles.pagedList }>
                     <View key = { 0 }>
                         <RecentList disabled = { disabled } />
                     </View>
                     <View key = { 1 }>
-                        <MeetingList
-                            disabled = { disabled }
-                            displayed = { pageIndex === 1 } />
+                        <MeetingList disabled = { disabled } />
                     </View>
                 </ViewPagerAndroid>
                 <View style = { styles.pageIndicatorContainer }>
@@ -107,69 +155,19 @@ export default class PagedList extends AbstractPagedList {
         );
     }
 
-    _getIndicatorStyle: number => Object;
+    _setViewPager: Object => void;
 
     /**
-     * Constructs the style of an indicator.
+     * Sets the {@link ViewPagerAndroid} instance.
      *
+     * @param {ViewPagerAndroid} viewPager - The {@code ViewPagerAndroid}
+     * instance.
      * @private
-     * @param {number} indicatorIndex - The index of the indicator.
-     * @returns {Object}
-     */
-    _getIndicatorStyle(indicatorIndex) {
-        if (this.state.pageIndex === indicatorIndex) {
-            return styles.pageIndicatorTextActive;
-        }
-
-        return null;
-    }
-
-    _onPageSelected: Object => void;
-
-    /**
-     * Updates the index of the currently selected page.
-     *
-     * @private
-     * @param {Object} event - The native event of the callback.
      * @returns {void}
      */
-    _onPageSelected({ nativeEvent: { position } }) {
-        if (this.state.pageIndex !== position) {
-            this.setState({
-                pageIndex: position
-            });
-        }
-    }
-
-    _onSelectPage: number => Function
-
-    /**
-     * Constructs a function to be used as a callback for the tab bar.
-     *
-     * @private
-     * @param {number} pageIndex - The index of the page to activate via the
-     * callback.
-     * @returns {Function}
-     */
-    _onSelectPage(pageIndex) {
-        return () => {
-            this._viewPager.setPage(pageIndex);
-            this.setState({
-                pageIndex
-            });
-        };
-    }
-
-    _setPagerReference: Object => void
-
-    /**
-     * Sets the pager's reference for direct modification.
-     *
-     * @private
-     * @param {React@Node} component - The pager component.
-     * @returns {void}
-     */
-    _setPagerReference(component) {
-        this._viewPager = component;
+    _setViewPager(viewPager) {
+        this._viewPager = viewPager;
     }
 }
+
+export default connect()(PagedList);
