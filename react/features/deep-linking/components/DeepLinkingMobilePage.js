@@ -4,6 +4,7 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
+import { createDeepLinkingPageEvent, sendAnalytics } from '../../analytics';
 import { translate, translateToHTML } from '../../base/i18n';
 import { HideNotificationBarStyle, Platform } from '../../base/react';
 import { DialInSummary } from '../../invite';
@@ -64,6 +65,20 @@ class DeepLinkingMobilePage extends Component<*, *> {
     };
 
     /**
+     * Initializes a new {@code DeepLinkingMobilePage} instance.
+     *
+     * @param {Object} props - The read-only React {@code Component} props with
+     * which the new instance is to be initialized.
+     */
+    constructor(props) {
+        super(props);
+
+        // Bind event handlers so they are only bound once per instance.
+        this._onDownloadApp = this._onDownloadApp.bind(this);
+        this._onOpenApp = this._onOpenApp.bind(this);
+    }
+
+    /**
      * Initializes the text and URL of the `Start a conference` / `Join the
      * conversation` button which takes the user to the mobile app.
      *
@@ -73,6 +88,17 @@ class DeepLinkingMobilePage extends Component<*, *> {
         this.setState({
             joinURL: generateDeepLinkingURL()
         });
+    }
+
+    /**
+     * Implements the Component's componentDidMount method.
+     *
+     * @inheritdoc
+     */
+    componentDidMount() {
+        sendAnalytics(
+            createDeepLinkingPageEvent(
+                'displayed', 'DeepLinkingMobile', { isMobileBrowser: true }));
     }
 
     /**
@@ -110,14 +136,17 @@ class DeepLinkingMobilePage extends Component<*, *> {
                                 { app: NATIVE_APP_NAME })
                         }
                     </p>
-                    <a href = { _URLS[Platform.OS] }>
+                    <a
+                        href = { _URLS[Platform.OS] }
+                        onClick = { this._onDownloadApp } >
                         <button className = { downloadButtonClassName }>
                             { t(`${_TNS}.downloadApp`) }
                         </button>
                     </a>
                     <a
                         className = { `${_SNS}__href` }
-                        href = { this.state.joinURL }>
+                        href = { this.state.joinURL }
+                        onClick = { this._onOpenApp }>
                         {/* <button className = { `${_SNS}__button` }> */}
                         { t(`${_TNS}.openApp`) }
                         {/* </button> */}
@@ -130,6 +159,32 @@ class DeepLinkingMobilePage extends Component<*, *> {
                 <HideNotificationBarStyle />
             </div>
         );
+    }
+
+    _onDownloadApp: () => {};
+
+    /**
+     * Handles download app button clicks.
+     *
+     * @returns {void}
+     */
+    _onDownloadApp() {
+        sendAnalytics(
+            createDeepLinkingPageEvent(
+                'clicked', 'downloadAppButton', { isMobileBrowser: true }));
+    }
+
+    _onOpenApp: () => {};
+
+    /**
+     * Handles open app button clicks.
+     *
+     * @returns {void}
+     */
+    _onOpenApp() {
+        sendAnalytics(
+            createDeepLinkingPageEvent(
+                'clicked', 'openAppButton', { isMobileBrowser: true }));
     }
 }
 

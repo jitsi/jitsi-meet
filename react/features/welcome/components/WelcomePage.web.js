@@ -1,4 +1,4 @@
-/* global APP, config, interfaceConfig, JitsiMeetJS */
+/* global interfaceConfig */
 
 import Button from '@atlaskit/button';
 import { FieldTextStateless } from '@atlaskit/field-text';
@@ -6,9 +6,7 @@ import { AtlasKitThemeProvider } from '@atlaskit/theme';
 import React from 'react';
 import { connect } from 'react-redux';
 
-import { initAnalytics } from '../../analytics';
 import { translate } from '../../base/i18n';
-import { isAnalyticsEnabled } from '../../base/lib-jitsi-meet';
 import { HideNotificationBarStyle, Watermarks } from '../../base/react';
 
 import { AbstractWelcomePage, _mapStateToProps } from './AbstractWelcomePage';
@@ -70,17 +68,6 @@ class WelcomePage extends AbstractWelcomePage {
      */
     componentDidMount() {
         document.body.classList.add('welcome-page');
-
-        // FIXME: This is not the best place for this logic. Ideally we should
-        // use features/base/lib-jitsi-meet#initLib() action for this use case.
-        // But currently lib-jitsi-meet#initLib()'s logic works for mobile only
-        // (on web it ends up with infinite loop over initLib).
-        JitsiMeetJS.init({
-            enableAnalyticsLogging: isAnalyticsEnabled(APP.store),
-            ...config
-        }).then(() => {
-            initAnalytics(APP.store);
-        });
 
         if (this.state.generateRoomnames) {
             this._updateRoomname();

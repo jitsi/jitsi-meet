@@ -5,6 +5,7 @@ import { AtlasKitThemeProvider } from '@atlaskit/theme';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
+import { createDeepLinkingPageEvent, sendAnalytics } from '../../analytics';
 import { translate } from '../../base/i18n';
 
 import {
@@ -60,6 +61,9 @@ class DeepLinkingDesktopPage<P : Props> extends Component<P> {
      */
     componentDidMount() {
         this._openDesktopApp();
+        sendAnalytics(
+            createDeepLinkingPageEvent(
+                'displayed', 'DeepLinkingDesktop', { isMobileBrowser: false }));
     }
 
     /**
@@ -147,6 +151,9 @@ class DeepLinkingDesktopPage<P : Props> extends Component<P> {
      * @returns {void}
      */
     _onTryAgain() {
+        sendAnalytics(
+            createDeepLinkingPageEvent(
+                'clicked', 'tryAgainButton', { isMobileBrowser: false }));
         this._openDesktopApp();
     }
 
@@ -158,6 +165,9 @@ class DeepLinkingDesktopPage<P : Props> extends Component<P> {
      * @returns {void}
      */
     _onLaunchWeb() {
+        sendAnalytics(
+            createDeepLinkingPageEvent(
+                'clicked', 'launchWebButton', { isMobileBrowser: false }));
         this.props.dispatch(openWebApp());
     }
 }

@@ -2,6 +2,7 @@
 
 import React, { Component } from 'react';
 
+import { createDeepLinkingPageEvent, sendAnalytics } from '../../analytics';
 import { HideNotificationBarStyle } from '../../base/react';
 
 declare var interfaceConfig: Object;
@@ -12,6 +13,17 @@ declare var interfaceConfig: Object;
  * @class NoMobileApp
  */
 export default class NoMobileApp extends Component<*> {
+    /**
+     * Implements the Component's componentDidMount method.
+     *
+     * @inheritdoc
+     */
+    componentDidMount() {
+        sendAnalytics(
+            createDeepLinkingPageEvent(
+                'displayed', 'noMobileApp', { isMobileBrowser: true }));
+    }
+
     /**
      * Renders the component.
      *

@@ -98,6 +98,25 @@ export function createAudioOnlyChangedEvent(enabled) {
 }
 
 /**
+ * Creates an event for an action on the deep linking page.
+ *
+ * @param {string} action - The action that the event represents.
+ * @param {string} actionSubject - The subject that was acted upon.
+ * @param {boolean} attributes - Additional attributes to attach to the event.
+ * @returns {Object} The event in a format suitable for sending via
+ * sendAnalytics.
+ */
+export function createDeepLinkingPageEvent(
+        action, actionSubject, attributes = {}) {
+    return {
+        action,
+        actionSubject,
+        source: 'deepLinkingPage',
+        attributes
+    };
+}
+
+/**
  * Creates an event which indicates that a device was changed.
  *
  * @param {string} mediaType - The media type of the device ('audio' or
