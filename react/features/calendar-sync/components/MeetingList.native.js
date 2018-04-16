@@ -10,6 +10,7 @@ import { NavigateSectionList } from '../../base/react';
 import { openSettings } from '../../mobile/permissions';
 
 import { refreshCalendar } from '../actions';
+import { CALENDAR_ENABLED } from '../constants';
 import styles from './styles';
 
 type Props = {
@@ -60,6 +61,23 @@ class MeetingList extends Component<Props> {
     };
 
     /**
+     * Public API method for {@code Component}s rendered in
+     * {@link AbstractPagedList}. When invoked, refreshes the calendar entries
+     * in the app.
+     *
+     * Note: It is a static method as the {@code Component} may not be
+     * initialized yet when the UI invokes refresh (e.g. {@link TabBarIOS} tab
+     * change).
+     *
+     * @param {Function} dispatch - The Redux dispatch function.
+     * @public
+     * @returns {void}
+     */
+    static refresh(dispatch) {
+        dispatch(refreshCalendar());
+    }
+
+    /**
      * Constructor of the MeetingList component.
      *
      * @inheritdoc
@@ -80,21 +98,6 @@ class MeetingList extends Component<Props> {
         this._toDisplayableItem = this._toDisplayableItem.bind(this);
         this._toDisplayableList = this._toDisplayableList.bind(this);
         this._toDateString = this._toDateString.bind(this);
-    }
-
-    /**
-     * Implements React Component's componentWillReceiveProps.
-     *
-     * @inheritdoc
-     */
-    componentWillReceiveProps(newProps) {
-        const { displayed } = this.props;
-
-        if (newProps.displayed && !displayed) {
-            const { dispatch } = this.props;
-
-            dispatch(refreshCalendar());
-        }
     }
 
     /**
@@ -266,7 +269,7 @@ class MeetingList extends Component<Props> {
  *     _eventList: Array
  * }}
  */
-export function _mapStateToProps(state: Object) {
+function _mapStateToProps(state: Object) {
     const calendarSyncState = state['features/calendar-sync'];
 
     return {
@@ -275,4 +278,6 @@ export function _mapStateToProps(state: Object) {
     };
 }
 
-export default translate(connect(_mapStateToProps)(MeetingList));
+export default CALENDAR_ENABLED
+    ? translate(connect(_mapStateToProps)(MeetingList))
+    : undefined;

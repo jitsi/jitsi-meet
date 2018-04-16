@@ -8,6 +8,7 @@ import {
     SET_CALENDAR_AUTHORIZATION,
     SET_CALENDAR_EVENTS
 } from './actionTypes';
+import { CALENDAR_ENABLED } from './constants';
 
 const DEFAULT_STATE = {
     /**
@@ -24,31 +25,33 @@ const MAX_DOMAIN_LIST_SIZE = 10;
 
 const STORE_NAME = 'features/calendar-sync';
 
-PersistenceRegistry.register(STORE_NAME, {
-    knownDomains: true
-});
+CALENDAR_ENABLED
+    && PersistenceRegistry.register(STORE_NAME, {
+        knownDomains: true
+    });
 
-ReducerRegistry.register(STORE_NAME, (state = DEFAULT_STATE, action) => {
-    switch (action.type) {
-    case ADD_KNOWN_DOMAIN:
-        return _addKnownDomain(state, action);
+CALENDAR_ENABLED
+    && ReducerRegistry.register(STORE_NAME, (state = DEFAULT_STATE, action) => {
+        switch (action.type) {
+        case ADD_KNOWN_DOMAIN:
+            return _addKnownDomain(state, action);
 
-    case SET_CALENDAR_AUTHORIZATION:
-        return {
-            ...state,
-            authorization: action.status
-        };
+        case SET_CALENDAR_AUTHORIZATION:
+            return {
+                ...state,
+                authorization: action.status
+            };
 
-    case SET_CALENDAR_EVENTS:
-        return {
-            ...state,
-            events: action.events
-        };
+        case SET_CALENDAR_EVENTS:
+            return {
+                ...state,
+                events: action.events
+            };
 
-    default:
-        return state;
-    }
-});
+        default:
+            return state;
+        }
+    });
 
 /**
  * Adds a new domain to the known domain list if not present yet.

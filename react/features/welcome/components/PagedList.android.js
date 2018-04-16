@@ -35,20 +35,17 @@ export default class PagedList extends AbstractPagedList {
     }
 
     /**
-     * Renders the paged list.
+     * Renders the entire paged list if calendar is enabled.
      *
-     * @inheritdoc
+     * @param {boolean} disabled - True if the rendered lists should be
+     * disabled.
+     * @returns {ReactElement}
      */
-    render() {
-        const { disabled } = this.props;
+    _renderPagedList(disabled) {
         const { pageIndex } = this.state;
 
         return (
-            <View
-                style = { [
-                    styles.pagedListContainer,
-                    disabled ? styles.pagedListContainerDisabled : null
-                ] }>
+            <View style = { styles.pagedListContainer }>
                 <ViewPagerAndroid
                     initialPage = { DEFAULT_PAGE }
                     onPageSelected = { this._onPageSelected }

@@ -267,7 +267,7 @@ class ConferenceNotification extends Component<Props, State> {
  *     _eventList: Array
  * }}
  */
-export function _mapStateToProps(state: Object) {
+function _mapStateToProps(state: Object) {
     const { locationURL } = state['features/base/connection'];
 
     return {

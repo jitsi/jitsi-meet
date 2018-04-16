@@ -1,7 +1,7 @@
 // @flow
 
 import React from 'react';
-import { View, TabBarIOS } from 'react-native';
+import { TabBarIOS } from 'react-native';
 import { connect } from 'react-redux';
 
 import { translate } from '../../base/i18n';
@@ -31,39 +31,35 @@ class PagedList extends AbstractPagedList {
     }
 
     /**
-     * Renders the paged list.
+     * Renders the entire paged list if calendar is enabled.
      *
-     * @inheritdoc
+     * @param {boolean} disabled - True if the rendered lists should be
+     * disabled.
+     * @returns {ReactElement}
      */
-    render() {
+    _renderPagedList(disabled) {
         const { pageIndex } = this.state;
-        const { disabled, t } = this.props;
+        const { t } = this.props;
 
         return (
-            <View
-                style = { [
-                    styles.pagedListContainer,
-                    disabled ? styles.pagedListContainerDisabled : null
-                ] }>
-                <TabBarIOS
-                    itemPositioning = 'fill'
-                    style = { styles.pagedList }>
-                    <TabBarIOS.Item
-                        onPress = { this._onTabSelected(0) }
-                        selected = { pageIndex === 0 }
-                        systemIcon = 'history' >
-                        <RecentList disabled = { disabled } />
-                    </TabBarIOS.Item>
-                    <TabBarIOS.Item
-                        icon = { CALENDAR_ICON }
-                        onPress = { this._onTabSelected(1) }
-                        selected = { pageIndex === 1 }
-                        title = { t('welcomepage.calendar') } >
-                        <MeetingList
-                            disabled = { disabled } />
-                    </TabBarIOS.Item>
-                </TabBarIOS>
-            </View>
+            <TabBarIOS
+                itemPositioning = 'fill'
+                style = { styles.pagedList }>
+                <TabBarIOS.Item
+                    onPress = { this._onTabSelected(0) }
+                    selected = { pageIndex === 0 }
+                    systemIcon = 'history' >
+                    <RecentList disabled = { disabled } />
+                </TabBarIOS.Item>
+                <TabBarIOS.Item
+                    icon = { CALENDAR_ICON }
+                    onPress = { this._onTabSelected(1) }
+                    selected = { pageIndex === 1 }
+                    title = { t('welcomepage.calendar') } >
+                    <MeetingList
+                        disabled = { disabled } />
+                </TabBarIOS.Item>
+            </TabBarIOS>
         );
     }
 

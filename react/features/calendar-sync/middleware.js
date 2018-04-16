@@ -1,6 +1,5 @@
 // @flow
 
-import { NativeModules } from 'react-native';
 import RNCalendarEvents from 'react-native-calendar-events';
 
 import { APP_WILL_MOUNT } from '../app';
@@ -15,6 +14,7 @@ import {
     setCalendarEvents
 } from './actions';
 import { REFRESH_CALENDAR } from './actionTypes';
+import { CALENDAR_ENABLED } from './constants';
 
 const logger = require('jitsi-meet-logger').getLogger(__filename);
 
@@ -22,30 +22,31 @@ const FETCH_END_DAYS = 10;
 const FETCH_START_DAYS = -1;
 const MAX_LIST_LENGTH = 10;
 
-MiddlewareRegistry.register(store => next => action => {
-    const result = next(action);
+CALENDAR_ENABLED
+    && MiddlewareRegistry.register(store => next => action => {
+        const result = next(action);
 
-    switch (action.type) {
-    case APP_STATE_CHANGED:
-        _maybeClearAccessStatus(store, action);
-        break;
+        switch (action.type) {
+        case APP_STATE_CHANGED:
+            _maybeClearAccessStatus(store, action);
+            break;
 
-    case APP_WILL_MOUNT:
-        _ensureDefaultServer(store);
-        _fetchCalendarEntries(store, false, false);
-        break;
+        case APP_WILL_MOUNT:
+            _ensureDefaultServer(store);
+            _fetchCalendarEntries(store, false, false);
+            break;
 
-    case REFRESH_CALENDAR:
-        _fetchCalendarEntries(store, true, action.forcePermission);
-        break;
+        case REFRESH_CALENDAR:
+            _fetchCalendarEntries(store, true, action.forcePermission);
+            break;
 
-    case SET_ROOM:
-        _parseAndAddKnownDomain(store);
-        break;
-    }
+        case SET_ROOM:
+            _parseAndAddKnownDomain(store);
+            break;
+        }
 
-    return result;
-});
+        return result;
+    });
 
 /**
  * Clears the calendar access status when the app comes back from the
@@ -123,11 +124,6 @@ function _fetchCalendarEntries(
         { dispatch, getState },
         maybePromptForPermission,
         forcePermission) {
-    if (!_isCalendarEnabled()) {
-        // The calendar feature is not enabled.
-        return;
-    }
-
     const state = getState()['features/calendar-sync'];
     const promptForPermission
         = (maybePromptForPermission && !state.authorization)
@@ -201,20 +197,6 @@ function _getURLFromEvent(event, knownDomains) {
     }
 
     return null;
-}
-
-/**
- * Determines whether the calendar feature is enabled by the app. For
- * example, Apple through its App Store requires NSCalendarsUsageDescription in
- * the app's Info.plist or App Store rejects the app.
- *
- * @returns {boolean} If the app has enabled the calendar feature, {@code true};
- * otherwise, {@code false}.
- */
-export function _isCalendarEnabled() {
-    const { calendarEnabled } = NativeModules.AppInfo;
-
-    return typeof calendarEnabled === 'undefined' ? true : calendarEnabled;
 }
 
 /**
