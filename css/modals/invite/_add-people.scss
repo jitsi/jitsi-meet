@@ -13,7 +13,15 @@
         }
 
         .add-telephone-icon {
+            display: flex;
+            height: 28px;
             transform: scaleX(-1);
+            width: 28px;
+
+            i {
+                line-height: 28px;
+                margin: auto;
+            }
         }
     }
 }

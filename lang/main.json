@@ -467,7 +467,7 @@
         "statusMessage": "is now __status__"
     },
     "addPeople": {
-        "add": "Add",
+        "add": "Invite",
         "countryNotSupported": "We do not support this destination yet.",
         "countryReminder": "Calling outside the US? Please make sure you start with the country code!",
         "disabled": "You can't invite people.",
@@ -478,11 +478,11 @@
         "noResults": "No matching search results",
         "noValidNumbers": "Please enter a phone number",
         "notAvailable": "You can't invite people.",
-        "searchNumbers": "Enter a phone number to invite",
-        "searchPeople": "Enter a name to invite",
-        "searchPeopleAndNumbers": "Enter a name or phone number to invite",
+        "searchNumbers": "Add phone numbers",
+        "searchPeople": "Search for people",
+        "searchPeopleAndNumbers": "Search for people or add their phone numbers",
         "telephone": "Telephone: __number__",
-        "title": "Invite people to your meeting",
+        "title": "Invite people to this meeting",
         "failedToAdd": "Failed to add members"
     },
     "inlineDialogFailure": {

@@ -502,7 +502,7 @@ class AddPeopleDialog extends Component<*, *> {
             return {
                 content: user.name,
                 elemBefore: <Avatar
-                    size = 'medium'
+                    size = 'small'
                     src = { user.avatar } />,
                 item: user,
                 tag: {
