@@ -22,6 +22,7 @@ clean:
 deploy: deploy-init deploy-appbundle deploy-lib-jitsi-meet deploy-css deploy-local
 
 deploy-init:
+	rm -fr $(DEPLOY_DIR)
 	mkdir -p $(DEPLOY_DIR)
 
 deploy-appbundle:
