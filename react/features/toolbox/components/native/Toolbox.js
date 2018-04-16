@@ -237,10 +237,10 @@ class Toolbox extends Component<Props, State> {
  * }}
  */
 function _mapStateToProps(state: Object): Object {
-    const { enabled, visible } = state['features/toolbox'];
+    const { alwaysVisible, enabled, visible } = state['features/toolbox'];
 
     return {
-        _visible: enabled && visible
+        _visible: enabled && (alwaysVisible || visible)
     };
 }
 

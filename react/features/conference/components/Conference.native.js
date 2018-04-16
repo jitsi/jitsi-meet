@@ -90,7 +90,14 @@ type Props = {
      *
      * @private
      */
-    _toolboxVisible: boolean
+    _toolboxVisible: boolean,
+
+    /**
+     * The indicator which determines whether the Toolbox is always visible.
+     *
+     * @private
+     */
+    _toolboxAlwaysVisible: boolean
 };
 
 /**
@@ -278,6 +285,10 @@ class Conference extends Component<Props> {
      * @returns {void}
      */
     _onClick() {
+        if (this.props._toolboxAlwaysVisible) {
+            return;
+        }
+
         const toolboxVisible = !this.props._toolboxVisible;
 
         this.props._setToolboxVisible(toolboxVisible);
@@ -384,13 +395,15 @@ function _mapDispatchToProps(dispatch) {
  *     _connecting: boolean,
  *     _participantCount: number,
  *     _reducedUI: boolean,
- *     _toolboxVisible: boolean
+ *     _toolboxVisible: boolean,
+ *     _toolboxAlwaysVisible: boolean
  * }}
  */
 function _mapStateToProps(state) {
     const { connecting, connection } = state['features/base/connection'];
     const { conference, joining, leaving } = state['features/base/conference'];
     const { reducedUI } = state['features/base/responsive-ui'];
+    const { alwaysVisible, visible } = state['features/toolbox'];
 
     // XXX There is a window of time between the successful establishment of the
     // XMPP connection and the subsequent commencement of joining the MUC during
@@ -439,7 +452,15 @@ function _mapStateToProps(state) {
          * @private
          * @type {boolean}
          */
-        _toolboxVisible: state['features/toolbox'].visible
+        _toolboxVisible: visible,
+
+        /**
+         * The indicator which determines whether the Toolbox is always visible.
+         *
+         * @private
+         * @type {boolean}
+         */
+        _toolboxAlwaysVisible: alwaysVisible
     };
 }
 

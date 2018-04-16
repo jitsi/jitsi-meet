@@ -20,7 +20,6 @@ const WHITELISTED_KEYS = [
     '_peerConnStatusOutOfLastNTimeout',
     '_peerConnStatusRtcMuteTimeout',
     'abTesting',
-    'alwaysVisibleToolbar',
     'autoRecord',
     'autoRecordToken',
     'avgRtpStatsN',
