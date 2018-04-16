@@ -166,7 +166,7 @@ export class VideoQualityLabel extends Component {
                 className = { classNames }
                 id = 'videoResolutionLabel'>
                 <Tooltip
-                    description = { t(tooltipKey) }
+                    content = { t(tooltipKey) }
                     position = { 'left' }>
                     <div className = 'video-quality-label-status'>
                         { labelContent }

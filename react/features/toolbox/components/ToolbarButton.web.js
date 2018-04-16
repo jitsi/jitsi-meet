@@ -55,7 +55,7 @@ class ToolbarButton extends AbstractToolbarButton {
                 onClick = { this.props.onClick }>
                 { this.props.tooltip
                     ? <Tooltip
-                        description = { this.props.tooltip }
+                        content = { this.props.tooltip }
                         position = { this.props.tooltipPosition }>
                         { children }
                     </Tooltip>
