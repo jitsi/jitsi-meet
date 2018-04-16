@@ -77,9 +77,20 @@ function _connectionEstablished(store, next, action) {
 function _navigate({ getState }) {
     const state = getState();
     const { app } = state['features/app'];
+    const routeToRender = _getRouteToRender(state);
 
-    _getRouteToRender(state)
-        .then(routeToRender => app._navigate(routeToRender));
+    // XXX Web changed _getRouteToRender to return Promsie instead of Route.
+    // Unfortunately, the commit left mobile to return Route.
+    let routeToRenderPromise;
+
+    if (routeToRender && typeof routeToRender.then === 'function') {
+        routeToRenderPromise = routeToRender;
+    }
+    if (!routeToRenderPromise) {
+        routeToRenderPromise = Promise.resolve(routeToRender);
+    }
+
+    routeToRenderPromise.then(app._navigate.bind(app));
 }
 
 /**
