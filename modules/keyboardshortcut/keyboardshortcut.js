@@ -144,7 +144,12 @@ const KeyboardShortcut = {
      * @returns {string} e.key or something close if not supported
      */
     _getKeyboardKey(e) {
-        if (typeof e.key === 'string') {
+        // If e.key is a string, then it is assumed it already plainly states
+        // the key pressed. This may not be true in all cases, such as with Edge
+        // and "?", when the browser cannot properly map a key press event to a
+        // keyboard key. To be safe, when a key is "Unidentified" it must be
+        // further analyzed by jitsi to a key using e.which.
+        if (typeof e.key === 'string' && e.key !== 'Unidentified') {
             return e.key;
         }
         if (e.type === 'keypress'
