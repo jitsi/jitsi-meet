@@ -114,7 +114,11 @@ function _initLogging(loggingConfig, isTestingEnabled) {
  * specified {@code action}.
  */
 function _libWillInit({ getState }, next, action) {
-    _setLogLevels(JitsiMeetJS, getState()['features/base/logging'].config);
+    // Adding the if in order to preserve the logic for web after enabling
+    // LIB_WILL_INIT action for web in initLib action.
+    if (typeof APP === 'undefined') {
+        _setLogLevels(JitsiMeetJS, getState()['features/base/logging'].config);
+    }
 
     return next(action);
 }
