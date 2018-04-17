@@ -11,11 +11,11 @@ import { connect, disconnect } from '../../base/connection';
 import { DialogContainer } from '../../base/dialog';
 import { CalleeInfoContainer } from '../../base/jwt';
 import { Container, LoadingIndicator, TintedView } from '../../base/react';
+import { TestConnectionInfo } from '../../base/testing';
 import { createDesiredLocalTracks } from '../../base/tracks';
 import { ConferenceNotification } from '../../calendar-sync';
 import { Filmstrip } from '../../filmstrip';
 import { LargeVideo } from '../../large-video';
-import { TestConnectionInfo } from '../../testing';
 import { setToolboxVisible, Toolbox } from '../../toolbox';
 
 import styles from './styles';
