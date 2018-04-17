@@ -44,14 +44,26 @@ public class PictureInPictureModule extends ReactContextBaseJavaModule {
             PictureInPictureParams.Builder builder
                 = new PictureInPictureParams.Builder()
                     .setAspectRatio(new Rational(1, 1));
-            boolean r
-                = currentActivity.enterPictureInPictureMode(builder.build());
+            Throwable error;
 
-            if (r) {
+            // https://developer.android.com/reference/android/app/Activity.html#enterPictureInPictureMode(android.app.PictureInPictureParams)
+            //
+            // The system may disallow entering picture-in-picture in various
+            // cases, including when the activity is not visible, if the screen
+            // is locked or if the user has an activity pinned.
+            try {
+                error
+                    = currentActivity.enterPictureInPictureMode(builder.build())
+                        ? null
+                        : new Exception("Failed to enter Picture-in-Picture");
+            } catch (RuntimeException re) {
+                error = re;
+            }
+
+            if (error == null) {
                 promise.resolve(null);
             } else {
-                promise.reject(
-                    new Exception("Failed to enter Picture-in-Picture"));
+                promise.reject(error);
             }
 
             return;
