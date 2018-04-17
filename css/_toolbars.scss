@@ -178,12 +178,13 @@
         position: relative;
 
         .badge-round {
-            bottom: 9px;
+            bottom: -5px;
             font-size: 12px;
             line-height: 20px;
             min-width: 20px;
+            pointer-events: none;
             position: absolute;
-            right: 9px;
+            right: -5px;
         }
     }
 
