@@ -7,7 +7,8 @@ import {
     CAMERA_FACING_MODE,
     MEDIA_TYPE,
     setAudioMuted,
-    setVideoMuted
+    setVideoMuted,
+    VIDEO_MUTISM_AUTHORITY
 } from '../media';
 import { getLocalParticipant } from '../participants';
 
@@ -41,7 +42,19 @@ export function createDesiredLocalTracks(...desiredTypes) {
             const { audio, video } = state['features/base/media'];
 
             audio.muted || desiredTypes.push(MEDIA_TYPE.AUDIO);
-            video.muted || desiredTypes.push(MEDIA_TYPE.VIDEO);
+
+            // XXX When the app is coming into the foreground from the
+            // background in order to handle a URL, it may realize the new
+            // background state soon after it has tried to create the local
+            // tracks requested by the URL. Ignore
+            // VIDEO_MUTISM_AUTHORITY.BACKGROUND and create the local video
+            // track if no other VIDEO_MUTISM_AUTHORITY has muted it. The local
+            // video track will be muted until the app realizes the new
+            // background state.
+
+            // eslint-disable-next-line no-bitwise
+            (video.muted & ~VIDEO_MUTISM_AUTHORITY.BACKGROUND)
+                || desiredTypes.push(MEDIA_TYPE.VIDEO);
         }
 
         const availableTypes

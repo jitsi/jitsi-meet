@@ -22,14 +22,11 @@ import { TRACK_ADDED, TRACK_REMOVED } from '../tracks';
 import {
     conferenceLeft,
     createConference,
-    setAudioOnly,
     setLastN,
     toggleAudioOnly
 } from './actions';
 import {
-    CONFERENCE_FAILED,
     CONFERENCE_JOINED,
-    CONFERENCE_LEFT,
     DATA_CHANNEL_OPENED,
     SET_AUDIO_ONLY,
     SET_LASTN,
@@ -57,10 +54,6 @@ MiddlewareRegistry.register(store => next => action => {
     switch (action.type) {
     case CONNECTION_ESTABLISHED:
         return _connectionEstablished(store, next, action);
-
-    case CONFERENCE_FAILED:
-    case CONFERENCE_LEFT:
-        return _conferenceFailedOrLeft(store, next, action);
 
     case CONFERENCE_JOINED:
         return _conferenceJoined(store, next, action);
@@ -111,43 +104,6 @@ function _connectionEstablished({ dispatch }, next, action) {
     // conference is handled by /conference.js
     if (typeof APP === 'undefined') {
         dispatch(createConference());
-    }
-
-    return result;
-}
-
-/**
- * Does extra sync up on properties that may need to be updated after the
- * conference failed or was left.
- *
- * @param {Store} store - The redux store in which the specified action is being
- * dispatched.
- * @param {Dispatch} next - The redux dispatch function to dispatch the
- * specified action to the specified store.
- * @param {Action} action - The redux action {@link CONFERENCE_FAILED} or
- * {@link CONFERENCE_LEFT} which is being dispatched in the specified store.
- * @private
- * @returns {Object} The value returned by {@code next(action)}.
- */
-function _conferenceFailedOrLeft({ dispatch, getState }, next, action) {
-    const result = next(action);
-
-    const state = getState();
-    const { audioOnly } = state['features/base/conference'];
-    const { startAudioOnly } = state['features/base/profile'];
-
-    // FIXME: Consider implementing a standalone audio-only feature that handles
-    // all these state changes.
-    if (audioOnly) {
-        if (!startAudioOnly) {
-            sendAnalytics(createAudioOnlyChangedEvent(false));
-            logger.log('Audio only disabled');
-            dispatch(setAudioOnly(false));
-        }
-    } else if (startAudioOnly) {
-        sendAnalytics(createAudioOnlyChangedEvent(true));
-        logger.log('Audio only enabled');
-        dispatch(setAudioOnly(true));
     }
 
     return result;
@@ -262,25 +218,34 @@ function _pinParticipant({ getState }, next, action) {
  * @returns {Object} The value returned by {@code next(action)}.
  */
 function _setAudioOnly({ dispatch, getState }, next, action) {
+    const { audioOnly: oldValue } = getState()['features/base/conference'];
     const result = next(action);
+    const { audioOnly: newValue } = getState()['features/base/conference'];
 
-    const { audioOnly } = getState()['features/base/conference'];
+    // Send analytics. We could've done it in the action creator setAudioOnly.
+    // I don't know why it has to happen as early as possible but the analytics
+    // were originally sent before the SET_AUDIO_ONLY action was even dispatched
+    // in the redux store so I'm now sending the analytics as early as possible.
+    if (oldValue !== newValue) {
+        sendAnalytics(createAudioOnlyChangedEvent(newValue));
+        logger.log(`Audio-only ${newValue ? 'enabled' : 'disabled'}`);
+    }
 
     // Set lastN to 0 in case audio-only is desired; leave it as undefined,
     // otherwise, and the default lastN value will be chosen automatically.
-    dispatch(setLastN(audioOnly ? 0 : undefined));
+    dispatch(setLastN(newValue ? 0 : undefined));
 
     // Mute/unmute the local video.
     dispatch(
         setVideoMuted(
-            audioOnly,
+            newValue,
             VIDEO_MUTISM_AUTHORITY.AUDIO_ONLY,
             /* ensureTrack */ true));
 
     if (typeof APP !== 'undefined') {
         // TODO This should be a temporary solution that lasts only until
         // video tracks and all ui is moved into react/redux on the web.
-        APP.UI.emitEvent(UIEvents.TOGGLE_AUDIO_ONLY, audioOnly);
+        APP.UI.emitEvent(UIEvents.TOGGLE_AUDIO_ONLY, newValue);
     }
 
     return result;
