@@ -72,7 +72,9 @@
      * Overwrite font-awesome styling to match jitsi-icon styling.
      */
     .fa {
-        font-size: 1.22em;
+        height: 24px;
+        margin-left: 2px;
+        width: 24px;
     }
 
     i {
