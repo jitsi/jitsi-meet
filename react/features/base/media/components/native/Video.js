@@ -4,6 +4,8 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { RTCView } from 'react-native-webrtc';
 
+import { Pressable } from '../../../react';
+
 import styles from './styles';
 import VideoTransform from './VideoTransform';
 
@@ -81,29 +83,49 @@ export default class Video extends Component<*> {
      * @returns {ReactElement|null}
      */
     render() {
-        const { stream, zoomEnabled } = this.props;
+        const { onPress, stream, zoomEnabled } = this.props;
 
         if (stream) {
-            const streamURL = stream.toURL();
+            // RTCView
             const style = styles.video;
             const objectFit
                 = zoomEnabled
                     ? 'contain'
                     : (style && style.objectFit) || 'cover';
-
-            return (
-                <VideoTransform
-                    enabled = { zoomEnabled }
-                    onPress = { this.props.onPress }
-                    streamId = { stream.id }
-                    style = { style }>
+            const rtcView
+                = ( // eslint-disable-line no-extra-parens
                     <RTCView
                         mirror = { this.props.mirror }
                         objectFit = { objectFit }
-                        streamURL = { streamURL }
+                        streamURL = { stream.toURL() }
                         style = { style }
                         zOrder = { this.props.zOrder } />
-                </VideoTransform>
+                );
+
+            // VideoTransform implements "pinch to zoom". As part of "pinch to
+            // zoom", it implements onPress, of course.
+            if (zoomEnabled) {
+                return (
+                    <VideoTransform
+                        enabled = { zoomEnabled }
+                        onPress = { onPress }
+                        streamId = { stream.id }
+                        style = { style }>
+                        { rtcView }
+                    </VideoTransform>
+                );
+            }
+
+            // XXX Unfortunately, VideoTransform implements a custom press
+            // detection which has been observed to be very picky about the
+            // precision of the press unlike the builtin/default/standard press
+            // detection which is forgiving to imperceptible movements while
+            // pressing. It's not acceptable to be so picky, especially when
+            // "pinch to zoom" is not enabled.
+            return (
+                <Pressable onPress = { onPress }>
+                    { rtcView }
+                </Pressable>
             );
         }
 
