@@ -68,6 +68,11 @@ class InfoDialog extends Component {
         _inviteURL: PropTypes.string,
 
         /**
+         * The current known URL for a live stream in progress.
+         */
+        _liveStreamViewURL: PropTypes.string,
+
+        /**
          * The value for how the conference is locked (or undefined if not
          * locked) as defined by room-lock constants.
          */
@@ -147,7 +152,7 @@ class InfoDialog extends Component {
         this._copyElement = null;
 
         // Bind event handlers so they are only bound once for every instance.
-        this._onClickInviteURL = this._onClickInviteURL.bind(this);
+        this._onClickHiddenURL = this._onClickHiddenURL.bind(this);
         this._onCopyInviteURL = this._onCopyInviteURL.bind(this);
         this._onPasswordRemove = this._onPasswordRemove.bind(this);
         this._onPasswordSubmit = this._onPasswordSubmit.bind(this);
@@ -199,7 +204,7 @@ class InfoDialog extends Component {
      * @returns {ReactElement}
      */
     render() {
-        const { onMouseOver, t } = this.props;
+        const { _liveStreamViewURL, onMouseOver, t } = this.props;
 
         return (
             <div
@@ -221,9 +226,9 @@ class InfoDialog extends Component {
                         <span className = 'spacer'>&nbsp;</span>
                         <span className = 'info-value'>
                             <a
-                                className = 'info-dialog-invite-link'
+                                className = 'info-dialog-hidden-link'
                                 href = { this.props._inviteURL }
-                                onClick = { this._onClickInviteURL } >
+                                onClick = { this._onClickHiddenURL } >
                                 { this._getURLToDisplay() }
                             </a>
                         </span>
@@ -231,6 +236,7 @@ class InfoDialog extends Component {
                     <div className = 'info-dialog-dial-in'>
                         { this._renderDialInDisplay() }
                     </div>
+                    { _liveStreamViewURL && this._renderLiveStreamURL() }
                     <div className = 'info-dialog-password'>
                         <PasswordForm
                             editEnabled = { this.state.passwordEditEnabled }
@@ -362,7 +368,7 @@ class InfoDialog extends Component {
      * @private
      * @returns {void}
      */
-    _onClickInviteURL(event) {
+    _onClickHiddenURL(event) {
         event.preventDefault();
     }
 
@@ -491,6 +497,34 @@ class InfoDialog extends Component {
     }
 
     /**
+     * Returns a ReactElement for display a link to the current url of a
+     * live stream in progress.
+     *
+     * @private
+     * @returns {null|ReactElement}
+     */
+    _renderLiveStreamURL() {
+        const { _liveStreamViewURL, t } = this.props;
+
+        return (
+            <div className = 'info-dialog-live-stream-url'>
+                <span className = 'info-label'>
+                    { t('info.livestreamURL') }
+                </span>
+                <span className = 'spacer'>&nbsp;</span>
+                <span className = 'info-value'>
+                    <a
+                        className = 'info-dialog-hidden-link'
+                        href = { _liveStreamViewURL }
+                        onClick = { this._onClickHiddenURL } >
+                        { _liveStreamViewURL }
+                    </a>
+                </span>
+            </div>
+        );
+    }
+
+    /**
      * Returns whether or not dial-in related UI should be displayed.
      *
      * @private
@@ -533,6 +567,7 @@ class InfoDialog extends Component {
  *     _conferenceName: string,
  *     _dialIn: Object,
  *     _inviteURL: string,
+ *     _liveStreamViewURL: string,
  *     _locked: string,
  *     _password: string
  * }}
@@ -560,6 +595,7 @@ function _mapStateToProps(state) {
         _conferenceName: room,
         _dialIn: state['features/invite'],
         _inviteURL: getInviteURL(state),
+        _liveStreamViewURL: state['features/recording'].liveStreamViewURL,
         _locked: locked,
         _password: password
     };

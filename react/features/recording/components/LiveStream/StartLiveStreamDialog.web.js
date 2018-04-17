@@ -89,6 +89,8 @@ class StartLiveStreamDialog extends Component {
      * available for use for the logged in Google user's YouTube account.
      * @property {string} googleProfileEmail - The email of the user currently
      * logged in to the Google web client application.
+     * @property {string} selectedBoundStreamID - The boundStreamID of the
+     * broadcast currently selected in the broadcast dropdown.
      * @property {string} streamKey - The selected or entered stream key to use
      * for YouTube live streaming.
      */
@@ -96,7 +98,7 @@ class StartLiveStreamDialog extends Component {
         broadcasts: undefined,
         googleAPIState: GOOGLE_API_STATES.NEEDS_LOADING,
         googleProfileEmail: '',
-        selectedBroadcastID: undefined,
+        selectedBoundStreamID: undefined,
         streamKey: ''
     };
 
@@ -291,7 +293,7 @@ class StartLiveStreamDialog extends Component {
     _onStreamKeyChange(event) {
         this._setStateIfMounted({
             streamKey: event.target.value,
-            selectedBroadcastID: undefined
+            selectedBoundStreamID: undefined
         });
     }
 
@@ -304,11 +306,22 @@ class StartLiveStreamDialog extends Component {
      * closing, true to close the modal.
      */
     _onSubmit() {
-        if (!this.state.streamKey) {
+        const { streamKey, selectedBoundStreamID } = this.state;
+
+        if (!streamKey) {
             return false;
         }
 
-        this.props.onSubmit(this.state.streamKey);
+        let selectedBroadcastID = null;
+
+        if (selectedBoundStreamID) {
+            const selectedBroadcast = this.state.broadcasts.find(
+                broadcast => broadcast.boundStreamID === selectedBoundStreamID);
+
+            selectedBroadcastID = selectedBroadcast && selectedBroadcast.id;
+        }
+
+        this.props.onSubmit(streamKey, selectedBroadcastID);
 
         return true;
     }
@@ -333,7 +346,7 @@ class StartLiveStreamDialog extends Component {
 
                 this._setStateIfMounted({
                     streamKey,
-                    selectedBroadcastID: boundStreamID
+                    selectedBoundStreamID: boundStreamID
                 });
             });
     }
@@ -358,6 +371,7 @@ class StartLiveStreamDialog extends Component {
             if (boundStreamID && !parsedBroadcasts[boundStreamID]) {
                 parsedBroadcasts[boundStreamID] = {
                     boundStreamID,
+                    id: broadcast.id,
                     status: broadcast.status.lifeCycleStatus,
                     title: broadcast.snippet.title
                 };
@@ -378,7 +392,7 @@ class StartLiveStreamDialog extends Component {
         const {
             broadcasts,
             googleProfileEmail,
-            selectedBroadcastID
+            selectedBoundStreamID
         } = this.state;
 
         let googleContent, helpText;
@@ -399,7 +413,7 @@ class StartLiveStreamDialog extends Component {
                 <BroadcastsDropdown
                     broadcasts = { broadcasts }
                     onBroadcastSelected = { this._onYouTubeBroadcastIDSelected }
-                    selectedBroadcastID = { selectedBroadcastID } />
+                    selectedBoundStreamID = { selectedBoundStreamID } />
             );
 
             /**
