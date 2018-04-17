@@ -4,9 +4,11 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
 
-import { Fragment } from '../../base/react';
-import { getLocalParticipant } from '../../base/participants';
-import { statsEmitter } from '../../connection-indicator';
+import { Fragment } from '../../react';
+import { getLocalParticipant } from '../../participants';
+
+// FIXME this imports feature to 'base'
+import { statsEmitter } from '../../../connection-indicator';
 
 import { TestHint } from './index';
 

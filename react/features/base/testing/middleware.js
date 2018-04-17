@@ -4,10 +4,10 @@ import Logger from 'jitsi-meet-logger';
 
 const logger = Logger.getLogger(__filename);
 
-import { MiddlewareRegistry } from '../base/redux';
+import { MiddlewareRegistry } from '../redux';
 
-import { CONFERENCE_WILL_JOIN } from '../base/conference';
-import { JitsiConferenceEvents } from '../base/lib-jitsi-meet';
+import { CONFERENCE_WILL_JOIN } from '../conference';
+import { JitsiConferenceEvents } from '../lib-jitsi-meet';
 import { setConnectionState } from './actions';
 
 /**
