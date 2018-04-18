@@ -1,9 +1,11 @@
 /* @flow */
 
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import { Text } from 'react-native';
 
 import type { TestHintProps } from './AbstractTestHint';
+import { _mapStateToProps } from './AbstractTestHint';
 
 /**
  * This is the iOS version of the TestHint.
@@ -12,13 +14,17 @@ import type { TestHintProps } from './AbstractTestHint';
  * files to understand what a test hint is and why different iOS and Android
  * components are necessary.
  */
-export default class TestHint extends Component<TestHintProps> {
+class TestHint extends Component<TestHintProps> {
     /**
      *  Renders the test hint on Android.
      *
      * @returns {ReactElement}
      */
     render() {
+        if (!this.props._testModeEnabled) {
+            return null;
+        }
+
         return (
             <Text
                 accessibilityLabel = { this.props.value }
@@ -26,3 +32,5 @@ export default class TestHint extends Component<TestHintProps> {
         );
     }
 }
+
+export default connect(_mapStateToProps)(TestHint);

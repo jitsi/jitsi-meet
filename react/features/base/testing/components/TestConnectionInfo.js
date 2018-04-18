@@ -11,6 +11,7 @@ import { getLocalParticipant } from '../../participants';
 import { statsEmitter } from '../../../connection-indicator';
 
 import { TestHint } from './index';
+import { isTestModeEnabled } from '../functions';
 
 /**
  * Defines the TestConnectionInfo's properties.
@@ -209,14 +210,11 @@ function _mapStateToProps(state) {
         = Boolean(state['features/base/conference'].conference);
     const localParticipant = getLocalParticipant(state);
 
-    const testingConfig = state['features/base/config'].testing;
-    const testMode = Boolean(testingConfig && testingConfig.testMode);
-
     return {
         _conferenceConnectionState: state['features/testing'].connectionState,
         _conferenceJoinedState: conferenceJoined.toString(),
         _localUserId: localParticipant && localParticipant.id,
-        _testMode: testMode
+        _testMode: isTestModeEnabled(state)
     };
 }
 
