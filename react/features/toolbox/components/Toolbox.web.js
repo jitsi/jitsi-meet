@@ -18,7 +18,6 @@ import {
 } from '../../base/participants';
 import { getLocalVideoTrack, toggleScreensharing } from '../../base/tracks';
 import { ChatCounter } from '../../chat';
-import { openDeviceSelectionDialog } from '../../device-selection';
 import { toggleDocument } from '../../etherpad';
 import { openFeedbackDialog } from '../../feedback';
 import {
@@ -30,8 +29,7 @@ import {
 import { openKeyboardShortcutsDialog } from '../../keyboard-shortcuts';
 import { RECORDING_TYPES, toggleRecording } from '../../recording';
 import { toggleSharedVideo } from '../../shared-video';
-import { shouldShowOnlyDeviceSelection } from '../../settings';
-import { toggleChat, toggleProfile, toggleSettings } from '../../side-panel';
+import { toggleChat, toggleProfile } from '../../side-panel';
 import { SpeakerStats } from '../../speaker-stats';
 import {
     OverflowMenuVideoQualityItem,
@@ -44,7 +42,12 @@ import OverflowMenuButton from './OverflowMenuButton';
 import OverflowMenuItem from './OverflowMenuItem';
 import OverflowMenuProfileItem from './OverflowMenuProfileItem';
 import ToolbarButton from './ToolbarButton';
-import { AudioMuteButton, HangupButton, VideoMuteButton } from './buttons';
+import {
+    AudioMuteButton,
+    HangupButton,
+    SettingsButton,
+    VideoMuteButton
+} from './buttons';
 
 type Props = {
 
@@ -227,8 +230,6 @@ class Toolbox extends Component<Props, State> {
             = this._onToolbarToggleRecording.bind(this);
         this._onToolbarToggleScreenshare
             = this._onToolbarToggleScreenshare.bind(this);
-        this._onToolbarToggleSettings
-            = this._onToolbarToggleSettings.bind(this);
         this._onToolbarToggleSharedVideo
             = this._onToolbarToggleSharedVideo.bind(this);
     }
@@ -506,21 +507,6 @@ class Toolbox extends Component<Props, State> {
     _doToggleScreenshare() {
         if (this.props._desktopSharingEnabled) {
             this.props.dispatch(toggleScreensharing());
-        }
-    }
-
-    /**
-     * Dispatches an action to toggle display of settings, be it the settings
-     * panel or directly to device selection.
-     *
-     * @private
-     * @returns {void}
-     */
-    _doToggleSettings() {
-        if (shouldShowOnlyDeviceSelection()) {
-            this.props.dispatch(openDeviceSelectionDialog());
-        } else {
-            this.props.dispatch(toggleSettings());
         }
     }
 
@@ -862,21 +848,6 @@ class Toolbox extends Component<Props, State> {
         this._doToggleScreenshare();
     }
 
-    _onToolbarToggleSettings: () => void;
-
-    /**
-     * Creates an analytics toolbar event and dispatches an action for toggling
-     * settings display.
-     *
-     * @private
-     * @returns {void}
-     */
-    _onToolbarToggleSettings() {
-        sendAnalytics(createToolbarEvent('settings'));
-
-        this._doToggleSettings();
-    }
-
     _onToolbarToggleSharedVideo: () => void;
 
     /**
@@ -993,13 +964,10 @@ class Toolbox extends Component<Props, State> {
                     text = { _editingDocument
                         ? t('toolbar.documentClose')
                         : t('toolbar.documentOpen') } />,
-            this._shouldShowButton('settings')
-                && <OverflowMenuItem
-                    accessibilityLabel = 'Settings'
-                    icon = 'icon-settings'
-                    key = 'settings'
-                    onClick = { this._onToolbarToggleSettings }
-                    text = { t('toolbar.Settings') } />,
+            <SettingsButton
+                key = 'settings'
+                showLabel = { true }
+                visible = { this._shouldShowButton('settings') } />,
             this._shouldShowButton('stats')
                 && <OverflowMenuItem
                     accessibilityLabel = 'Speaker stats'
