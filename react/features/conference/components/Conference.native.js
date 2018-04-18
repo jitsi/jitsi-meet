@@ -188,10 +188,7 @@ class Conference extends Component<Props> {
      */
     render() {
         return (
-            <Container
-                accessibilityLabel = 'Conference'
-                accessible = { false }
-                style = { styles.conference }>
+            <Container style = { styles.conference }>
                 <StatusBar
                     barStyle = 'light-content'
                     hidden = { true }
