@@ -26,6 +26,12 @@ export type TestHintProps = {
     id: string,
 
     /**
+     * The optional "on press" handler which can be used to bind a click handler
+     * to a {@link TestHint}.
+     */
+    onPress: ?Function,
+
+    /**
      * The test hint's (text) value which is to be consumed by the tests.
      */
     value: string

@@ -28,6 +28,7 @@ class TestHint extends Component<TestHintProps> {
         return (
             <Text
                 accessibilityLabel = { this.props.value }
+                onPress = { this.props.onPress }
                 testID = { this.props.id } />
         );
     }
