@@ -5,10 +5,12 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
-import { ToolboxFilmstrip, dockToolbox } from '../../toolbox';
+import { dockToolbox } from '../../toolbox';
 
 import { setFilmstripHovered } from '../actions';
 import { shouldRemoteVideosBeVisible } from '../functions';
+
+import Toolbar from './Toolbar';
 
 declare var interfaceConfig: Object;
 
@@ -34,6 +36,11 @@ class Filmstrip extends Component<*> {
      */
     static propTypes = {
         /**
+         * Whether or not the conference is in filmstripOnly mode.
+         */
+        _filmStripOnly: PropTypes.bool,
+
+        /**
          * Whether or not remote videos are currently being hovered over.
          */
         _hovered: PropTypes.bool,
@@ -53,12 +60,7 @@ class Filmstrip extends Component<*> {
         /**
          * Updates the redux store with filmstrip hover changes.
          */
-        dispatch: PropTypes.func,
-
-        /**
-         * Whether or not the conference is in filmstripOnly mode.
-         */
-        filmstripOnly: PropTypes.bool
+        dispatch: PropTypes.func
     };
 
     /**
@@ -95,9 +97,9 @@ class Filmstrip extends Component<*> {
      */
     render() {
         const {
+            _filmStripOnly,
             _remoteVideosVisible,
-            _toolboxVisible,
-            filmstripOnly
+            _toolboxVisible
         } = this.props;
 
         /**
@@ -115,7 +117,7 @@ class Filmstrip extends Component<*> {
 
         return (
             <div className = { filmstripClassNames }>
-                { filmstripOnly && <ToolboxFilmstrip /> }
+                { _filmStripOnly && <Toolbar /> }
                 <div
                     className = 'filmstrip__videos'
                     id = 'remoteVideos'>
@@ -190,6 +192,7 @@ class Filmstrip extends Component<*> {
  * @param {Object} state - The Redux state.
  * @private
  * @returns {{
+ *     _filmStripOnly: boolean,
  *     _hovered: boolean,
  *     _remoteVideosVisible: boolean,
  *     _toolboxVisible: boolean
@@ -199,6 +202,7 @@ function _mapStateToProps(state) {
     const { hovered } = state['features/filmstrip'];
 
     return {
+        _filmStripOnly: Boolean(interfaceConfig.filmStripOnly),
         _hovered: hovered,
         _remoteVideosVisible: shouldRemoteVideosBeVisible(state),
         _toolboxVisible: state['features/toolbox'].visible
