@@ -235,10 +235,12 @@ function _conferenceWillJoin({ getState }, next, action) {
     const state = getState();
     const url = getInviteURL(state);
     const hasVideo = !isVideoMutedByAudioOnly(state);
+    const { callUUID } = state['features/base/config'];
 
     // When assigning the call UUID, do so in upper case, since iOS will
     // return it upper cased.
-    conference.callUUID = uuid.v4().toUpperCase();
+    conference.callUUID = (callUUID || uuid.v4()).toUpperCase();
+
     CallKit.startCall(conference.callUUID, url.toString(), hasVideo)
         .then(() => {
             const { room } = state['features/base/conference'];

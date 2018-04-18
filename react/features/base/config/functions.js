@@ -26,6 +26,7 @@ const WHITELISTED_KEYS = [
     'callStatsConfIDNamespace',
     'callStatsID',
     'callStatsSecret',
+    'callUUID',
     'channelLastN',
     'constraints',
     'debug',

@@ -27,6 +27,8 @@
 #import <React/RCTEventEmitter.h>
 #import <React/RCTUtils.h>
 
+#import <JitsiMeet/JitsiMeet-Swift.h>
+
 // The events emitted/supported by RNCallKit:
 static NSString * const RNCallKitPerformAnswerCallAction
     = @"performAnswerCallAction";
@@ -37,14 +39,10 @@ static NSString * const RNCallKitPerformSetMutedCallAction
 static NSString * const RNCallKitProviderDidReset
     = @"providerDidReset";
 
-@interface RNCallKit : RCTEventEmitter <CXProviderDelegate>
+@interface RNCallKit : RCTEventEmitter <JMCallKitEventListener>
 @end
 
 @implementation RNCallKit
-{
-    CXCallController *_callController;
-    CXProvider *_provider;
-}
 
 RCT_EXTERN void RCTRegisterModule(Class);
 
@@ -70,35 +68,8 @@ RCT_EXTERN void RCTRegisterModule(Class);
     ];
 }
 
-// Display the incoming call to the user
-RCT_EXPORT_METHOD(displayIncomingCall:(NSString *)callUUID
-                               handle:(NSString *)handle
-                             hasVideo:(BOOL)hasVideo
-                              resolve:(RCTPromiseResolveBlock)resolve
-                               reject:(RCTPromiseRejectBlock)reject) {
-#ifdef DEBUG
-    NSLog(@"[RNCallKit][displayIncomingCall] callUUID = %@", callUUID);
-#endif
-
-    NSUUID *callUUID_ = [[NSUUID alloc] initWithUUIDString:callUUID];
-    CXCallUpdate *callUpdate = [[CXCallUpdate alloc] init];
-    callUpdate.remoteHandle
-        = [[CXHandle alloc] initWithType:CXHandleTypeGeneric value:handle];
-    callUpdate.supportsDTMF = NO;
-    callUpdate.supportsHolding = NO;
-    callUpdate.supportsGrouping = NO;
-    callUpdate.supportsUngrouping = NO;
-    callUpdate.hasVideo = hasVideo;
-
-    [self.provider reportNewIncomingCallWithUUID:callUUID_
-                                          update:callUpdate
-                                      completion:^(NSError * _Nullable error) {
-        if (error) {
-            reject(nil, @"Error reporting new incoming call", error);
-        } else {
-            resolve(nil);
-        }
-    }];
+- (void)dealloc {
+    [JMCallKitProxy removeListener:self];
 }
 
 // End call
@@ -141,14 +112,12 @@ RCT_EXPORT_METHOD(setProviderConfiguration:(NSDictionary *)dictionary) {
         dictionary);
 #endif
 
-    CXProviderConfiguration *configuration
-        = [self providerConfigurationFromDictionary:dictionary];
-    if (_provider) {
-        _provider.configuration = configuration;
-    } else {
-        _provider = [[CXProvider alloc] initWithConfiguration:configuration];
-        [_provider setDelegate:self queue:nil];
+    if (![JMCallKitProxy hasProviderBeenConfigurated]) {
+        [self configureProviderFromDictionary:dictionary];
     }
+    
+    // register to receive CallKit proxy events
+    [JMCallKitProxy addListener: self];
 }
 
 // Start outgoing call
@@ -162,6 +131,15 @@ RCT_EXPORT_METHOD(startCall:(NSString *)callUUID
 #endif
 
     NSUUID *callUUID_ = [[NSUUID alloc] initWithUUIDString:callUUID];
+    
+    // Don't start a call action if there's
+    // an active call for this UUID
+    // (i.e. JitsiMeetView was configured from an incoming call
+    if ([JMCallKitProxy hasActiveCallForUUID:callUUID]) {
+        resolve(nil);
+        return;
+    }
+    
     CXHandle *handle_
         = [[CXHandle alloc] initWithType:CXHandleTypeGeneric value:handle];
     CXStartCallAction *action
@@ -177,9 +155,9 @@ RCT_EXPORT_METHOD(reportCallFailed:(NSString *)callUUID
                            resolve:(RCTPromiseResolveBlock)resolve
                             reject:(RCTPromiseRejectBlock)reject) {
     NSUUID *callUUID_ = [[NSUUID alloc] initWithUUIDString:callUUID];
-    [self.provider reportCallWithUUID:callUUID_
-                          endedAtDate:[NSDate date]
-                               reason:CXCallEndedReasonFailed];
+    [JMCallKitProxy reportCallWith:callUUID_
+                         endedAt:nil
+                          reason:CXCallEndedReasonFailed];
     resolve(nil);
 }
 
@@ -188,8 +166,8 @@ RCT_EXPORT_METHOD(reportConnectedOutgoingCall:(NSString *)callUUID
                                       resolve:(RCTPromiseResolveBlock)resolve
                                        reject:(RCTPromiseRejectBlock)reject) {
     NSUUID *callUUID_ = [[NSUUID alloc] initWithUUIDString:callUUID];
-    [self.provider reportOutgoingCallWithUUID:callUUID_
-                              connectedAtDate:[NSDate date]];
+    [JMCallKitProxy reportOutgoingCallWith:callUUID_
+                             connectedAt:nil];
     resolve(nil);
 }
 
@@ -206,36 +184,20 @@ RCT_EXPORT_METHOD(updateCall:(NSString *)callUUID
 #endif
 
     NSUUID *callUUID_ = [[NSUUID alloc] initWithUUIDString:callUUID];
-    CXCallUpdate *callUpdate = [[CXCallUpdate alloc] init];
-    if (options[@"displayName"]) {
-        callUpdate.localizedCallerName = options[@"displayName"];
-    }
-    if (options[@"hasVideo"]) {
-        callUpdate.hasVideo = [(NSNumber*)options[@"hasVideo"] boolValue];
-    }
-    [self.provider reportCallWithUUID:callUUID_ updated:callUpdate];
+    NSString *displayName = options[@"displayName"];
+    BOOL hasVideo = [(NSNumber*)options[@"hasVideo"] boolValue];
+    
+    [JMCallKitProxy reportCallUpdateWith:callUUID_
+                                handle:nil
+                           displayName:displayName
+                              hasVideo:hasVideo];
+    
     resolve(nil);
 }
 
 #pragma mark - Helper methods
 
-- (CXCallController *)callController {
-    if (!_callController) {
-        _callController = [[CXCallController alloc] init];
-    }
-
-    return _callController;
-}
-
-- (CXProvider *)provider {
-    if (!_provider) {
-        [self setProviderConfiguration:nil];
-    }
-
-    return _provider;
-}
-
-- (CXProviderConfiguration *)providerConfigurationFromDictionary:(NSDictionary* )dictionary {
+- (void)configureProviderFromDictionary:(NSDictionary* )dictionary {
 #ifdef DEBUG
     NSLog(@"[RNCallKit][providerConfigurationFromDictionary:]");
 #endif
@@ -251,30 +213,25 @@ RCT_EXPORT_METHOD(updateCall:(NSString *)callUUID
             = [[NSBundle mainBundle] infoDictionary][@"CFBundleDisplayName"];
     }
 
-    CXProviderConfiguration *providerConfiguration
-        = [[CXProviderConfiguration alloc] initWithLocalizedName:localizedName];
-
     // iconTemplateImageData
     NSString *iconTemplateImageName = dictionary[@"iconTemplateImageName"];
+    NSData *iconTemplateImageData;
     if (iconTemplateImageName) {
         UIImage *iconTemplateImage
             = [UIImage imageNamed:iconTemplateImageName
                          inBundle:[NSBundle bundleForClass:self.class]
     compatibleWithTraitCollection:nil];
         if (iconTemplateImage) {
-            providerConfiguration.iconTemplateImageData
+            iconTemplateImageData
                 = UIImagePNGRepresentation(iconTemplateImage);
         }
     }
 
-    providerConfiguration.maximumCallGroups = 1;
-    providerConfiguration.maximumCallsPerCallGroup = 1;
-    providerConfiguration.ringtoneSound = dictionary[@"ringtoneSound"];
-    providerConfiguration.supportedHandleTypes
-        = [NSSet setWithObjects:@(CXHandleTypeGeneric), nil];
-    providerConfiguration.supportsVideo = YES;
-
-    return providerConfiguration;
+    NSString *ringtoneSound = dictionary[@"ringtoneSound"];
+    
+    [JMCallKitProxy configureCallKitProviderWithLocalizedName:localizedName
+                                              ringtoneSound:ringtoneSound
+                                      iconTemplateImageData:iconTemplateImageData];
 }
 
 - (void)requestTransaction:(CXTransaction *)transaction
@@ -284,8 +241,8 @@ RCT_EXPORT_METHOD(updateCall:(NSString *)callUUID
     NSLog(@"[RNCallKit][requestTransaction] transaction = %@", transaction);
 #endif
 
-    [self.callController requestTransaction:transaction
-                                 completion:^(NSError * _Nullable error) {
+    [JMCallKitProxy request:transaction
+               completion:^(NSError * _Nullable error) {
         if (error) {
             NSLog(
                 @"[RNCallKit][requestTransaction] Error requesting transaction (%@): (%@)",
@@ -298,10 +255,10 @@ RCT_EXPORT_METHOD(updateCall:(NSString *)callUUID
     }];
 }
 
-#pragma mark - CXProviderDelegate
+#pragma mark - JitsiMeetCallKitListener
 
 // Called when the provider has been reset. We should terminate all calls.
-- (void)providerDidReset:(CXProvider *)provider {
+- (void)providerDidReset {
 #ifdef DEBUG
     NSLog(@"[RNCallKit][CXProviderDelegate][providerDidReset:]");
 #endif
@@ -310,84 +267,61 @@ RCT_EXPORT_METHOD(updateCall:(NSString *)callUUID
 }
 
 // Answering incoming call
-- (void)         provider:(CXProvider *)provider
-  performAnswerCallAction:(CXAnswerCallAction *)action {
+- (void) performAnswerCallWithUUID:(NSUUID *)UUID {
 #ifdef DEBUG
     NSLog(@"[RNCallKit][CXProviderDelegate][provider:performAnswerCallAction:]");
 #endif
 
     [self sendEventWithName:RNCallKitPerformAnswerCallAction
-                       body:@{ @"callUUID": action.callUUID.UUIDString }];
-    [action fulfill];
+                       body:@{ @"callUUID": UUID.UUIDString }];
 }
 
 // Call ended, user request
-- (void)      provider:(CXProvider *)provider
-  performEndCallAction:(CXEndCallAction *)action {
+- (void) performEndCallWithUUID:(NSUUID *)UUID {
 #ifdef DEBUG
     NSLog(@"[RNCallKit][CXProviderDelegate][provider:performEndCallAction:]");
 #endif
 
     [self sendEventWithName:RNCallKitPerformEndCallAction
-                       body:@{ @"callUUID": action.callUUID.UUIDString }];
-    [action fulfill];
+                       body:@{ @"callUUID": UUID.UUIDString }];
 }
 
 // Handle audio mute from CallKit view
-- (void)           provider:(CXProvider *)provider
-  performSetMutedCallAction:(CXSetMutedCallAction *)action {
+- (void) performSetMutedCallWithUUID:(NSUUID *)UUID
+                             isMuted:(BOOL)isMuted {
 #ifdef DEBUG
     NSLog(@"[RNCallKit][CXProviderDelegate][provider:performSetMutedCallAction:]");
 #endif
 
     [self sendEventWithName:RNCallKitPerformSetMutedCallAction
                        body:@{
-                           @"callUUID": action.callUUID.UUIDString,
-                           @"muted": @(action.muted)
+                           @"callUUID": UUID.UUIDString,
+                           @"muted": @(isMuted)
                        }];
-    [action fulfill];
 }
 
 // Starting outgoing call
-- (void)        provider:(CXProvider *)provider
-  performStartCallAction:(CXStartCallAction *)action {
+- (void) performStartCallWithUUID:(NSUUID *)UUID
+                          isVideo:(BOOL)isVideo {
 #ifdef DEBUG
     NSLog(@"[RNCallKit][CXProviderDelegate][provider:performStartCallAction:]");
 #endif
-
-    [action fulfill];
-
-    // Update call info.
-    NSUUID *callUUID = action.callUUID;
-    CXCallUpdate *callUpdate = [[CXCallUpdate alloc] init];
-    callUpdate.remoteHandle = action.handle;
-    callUpdate.supportsDTMF = NO;
-    callUpdate.supportsHolding = NO;
-    callUpdate.supportsGrouping = NO;
-    callUpdate.supportsUngrouping = NO;
-    callUpdate.hasVideo = action.isVideo;
-    [provider reportCallWithUUID:callUUID updated:callUpdate];
-
-    // Notify the system about the outgoing call.
-    [provider reportOutgoingCallWithUUID:callUUID
-                 startedConnectingAtDate:[NSDate date]];
+    [JMCallKitProxy reportOutgoingCallWith:UUID
+                     startedConnectingAt:nil];
 }
 
 // The following just help with debugging:
 #ifdef DEBUG
 
-- (void)         provider:(CXProvider *)provider
-  didActivateAudioSession:(AVAudioSession *)audioSession {
+- (void) providerDidActivateAudioSessionWithSession:(AVAudioSession *)session {
     NSLog(@"[RNCallKit][CXProviderDelegate][provider:didActivateAudioSession:]");
 }
 
-- (void)           provider:(CXProvider *)provider
-  didDeactivateAudioSession:(AVAudioSession *)audioSession {
+- (void) providerDidDeactivateAudioSessionWithSession:(AVAudioSession *)session {
     NSLog(@"[RNCallKit][CXProviderDelegate][provider:didDeactivateAudioSession:]");
 }
 
-- (void)          provider:(CXProvider *)provider
-  timedOutPerformingAction:(CXAction *)action {
+- (void) providerTimedOutPerformingActionWithAction:(CXAction *)action {
     NSLog(@"[RNCallKit][CXProviderDelegate][provider:timedOutPerformingAction:]");
 }
 

@@ -38,6 +38,9 @@
 		B386B85D20981A75000DEF7A /* Invite.m in Sources */ = {isa = PBXBuildFile; fileRef = B386B85620981A75000DEF7A /* Invite.m */; };
 		C6245F5D2053091D0040BE68 /* image-resize@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = C6245F5B2053091D0040BE68 /* image-resize@2x.png */; };
 		C6245F5E2053091D0040BE68 /* image-resize@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = C6245F5C2053091D0040BE68 /* image-resize@3x.png */; };
+		C69EFA0C209A0F660027712B /* JMCallKitNotifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = C69EFA09209A0F650027712B /* JMCallKitNotifier.swift */; };
+		C69EFA0D209A0F660027712B /* JMCallKitProxy.swift in Sources */ = {isa = PBXBuildFile; fileRef = C69EFA0A209A0F660027712B /* JMCallKitProxy.swift */; };
+		C69EFA0E209A0F660027712B /* JMCallKitEventListener.swift in Sources */ = {isa = PBXBuildFile; fileRef = C69EFA0B209A0F660027712B /* JMCallKitEventListener.swift */; };
 		C6A34261204EF76800E062DD /* DragGestureController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6A3425E204EF76800E062DD /* DragGestureController.swift */; };
 		C6CC49AF207412CF000DFA42 /* PiPViewCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6CC49AE207412CF000DFA42 /* PiPViewCoordinator.swift */; };
 		C6F99C15204DB63E0001F710 /* JitsiMeetView+Private.h in Headers */ = {isa = PBXBuildFile; fileRef = C6F99C13204DB63D0001F710 /* JitsiMeetView+Private.h */; };
@@ -83,6 +86,9 @@
 		B386B85620981A75000DEF7A /* Invite.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Invite.m; sourceTree = "<group>"; };
 		C6245F5B2053091D0040BE68 /* image-resize@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "image-resize@2x.png"; path = "src/picture-in-picture/image-resize@2x.png"; sourceTree = "<group>"; };
 		C6245F5C2053091D0040BE68 /* image-resize@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "image-resize@3x.png"; path = "src/picture-in-picture/image-resize@3x.png"; sourceTree = "<group>"; };
+		C69EFA09209A0F650027712B /* JMCallKitNotifier.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = JMCallKitNotifier.swift; sourceTree = "<group>"; };
+		C69EFA0A209A0F660027712B /* JMCallKitProxy.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = JMCallKitProxy.swift; sourceTree = "<group>"; };
+		C69EFA0B209A0F660027712B /* JMCallKitEventListener.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = JMCallKitEventListener.swift; sourceTree = "<group>"; };
 		C6A3425E204EF76800E062DD /* DragGestureController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DragGestureController.swift; sourceTree = "<group>"; };
 		C6CC49AE207412CF000DFA42 /* PiPViewCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PiPViewCoordinator.swift; sourceTree = "<group>"; };
 		C6F99C13204DB63D0001F710 /* JitsiMeetView+Private.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "JitsiMeetView+Private.h"; sourceTree = "<group>"; };
@@ -138,6 +144,7 @@
 		0BD906E71EC0C00300C8C18E /* src */ = {
 			isa = PBXGroup;
 			children = (
+				C69EFA02209A0EFD0027712B /* callkit */,
 				B386B84F20981A11000DEF7A /* invite */,
 				C6A3426B204F127900E062DD /* picture-in-picture */,
 				0BCA495C1EC4B6C600B793EE /* AudioMode.m */,
@@ -196,6 +203,16 @@
 				9C77CA3CC919B081F1A52982 /* Pods-JitsiMeet.release.xcconfig */,
 			);
 			name = Pods;
+			sourceTree = "<group>";
+		};
+		C69EFA02209A0EFD0027712B /* callkit */ = {
+			isa = PBXGroup;
+			children = (
+				C69EFA0B209A0F660027712B /* JMCallKitEventListener.swift */,
+				C69EFA09209A0F650027712B /* JMCallKitNotifier.swift */,
+				C69EFA0A209A0F660027712B /* JMCallKitProxy.swift */,
+			);
+			path = callkit;
 			sourceTree = "<group>";
 		};
 		C6A3426B204F127900E062DD /* picture-in-picture */ = {
@@ -390,7 +407,10 @@
 				0BCA495F1EC4B6C600B793EE /* AudioMode.m in Sources */,
 				0B44A0191F902126009D1D64 /* MPVolumeViewManager.m in Sources */,
 				0BCA49611EC4B6C600B793EE /* Proximity.m in Sources */,
+				C69EFA0C209A0F660027712B /* JMCallKitNotifier.swift in Sources */,
 				C6A34261204EF76800E062DD /* DragGestureController.swift in Sources */,
+				C69EFA0D209A0F660027712B /* JMCallKitProxy.swift in Sources */,
+				C69EFA0E209A0F660027712B /* JMCallKitEventListener.swift in Sources */,
 				0B412F191EDEC65D00B1A0A6 /* JitsiMeetView.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
