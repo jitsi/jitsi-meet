@@ -134,7 +134,7 @@ class InfoDialog extends Component {
         this._copyElement = null;
 
         // Bind event handlers so they are only bound once for every instance.
-        this._onClickHiddenURL = this._onClickHiddenURL.bind(this);
+        this._onClickURLText = this._onClickURLText.bind(this);
         this._onCopyInviteURL = this._onCopyInviteURL.bind(this);
         this._onPasswordRemove = this._onPasswordRemove.bind(this);
         this._onPasswordSubmit = this._onPasswordSubmit.bind(this);
@@ -196,7 +196,7 @@ class InfoDialog extends Component {
                             <a
                                 className = 'info-dialog-url-text'
                                 href = { this.props._inviteURL }
-                                onClick = { this._onClickHiddenURL } >
+                                onClick = { this._onClickURLText } >
                                 { this._getURLToDisplay() }
                             </a>
                         </span>
@@ -335,16 +335,16 @@ class InfoDialog extends Component {
     }
 
     /**
-     * Callback invoked when the displayed invite URL link is clicked to prevent
-     * actual navigation from happening. The invite URL link has an href to
-     * display "Copy Link Address" in the context menu but otherwise it should
-     * not behave like a link.
+     * Callback invoked when a displayed URL link is clicked to prevent actual
+     * navigation from happening. The URL links have an href to display "Copy
+     * Link Address" in the context menu but otherwise it should not behave like
+     * links.
      *
      * @param {Object} event - The click event from clicking on the link.
      * @private
      * @returns {void}
      */
-    _onClickHiddenURL(event) {
+    _onClickURLText(event) {
         event.preventDefault();
     }
 
@@ -492,7 +492,7 @@ class InfoDialog extends Component {
                     <a
                         className = 'info-dialog-url-text'
                         href = { liveStreamViewURL }
-                        onClick = { this._onClickHiddenURL } >
+                        onClick = { this._onClickURLText } >
                         { liveStreamViewURL }
                     </a>
                 </span>
