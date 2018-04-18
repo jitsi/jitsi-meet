@@ -1,9 +1,11 @@
 /* @flow */
 
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import { Text } from 'react-native';
 
 import type { TestHintProps } from './AbstractTestHint';
+import { _mapStateToProps } from './AbstractTestHint';
 
 /**
  * The Android version of <code>TestHint</code>. It will put the identifier,
@@ -22,7 +24,7 @@ import type { TestHintProps } from './AbstractTestHint';
  * the TestHint class is to be the abstraction layer which masks the problem by
  * exposing id and value properties.
  */
-export default class TestHint extends Component<TestHintProps> {
+class TestHint extends Component<TestHintProps> {
 
     /**
      * Renders the test hint on Android.
@@ -30,6 +32,10 @@ export default class TestHint extends Component<TestHintProps> {
      * @returns {ReactElement}
      */
     render() {
+        if (!this.props._testModeEnabled) {
+            return null;
+        }
+
         return (
             <Text accessibilityLabel = { this.props.id } >
                 { this.props.value }
@@ -37,3 +43,5 @@ export default class TestHint extends Component<TestHintProps> {
         );
     }
 }
+
+export default connect(_mapStateToProps)(TestHint);
