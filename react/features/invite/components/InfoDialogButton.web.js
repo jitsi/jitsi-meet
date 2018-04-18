@@ -13,14 +13,6 @@ import { updateDialInNumbers } from '../actions';
 import { InfoDialog } from './info-dialog';
 
 /**
- * The amount of time, in milliseconds, to wait until automatically showing
- * the {@code InfoDialog}. This is essentially a hack as automatic showing
- * should happen in a lonely call and some time is needed to populate
- * participants already in the call.
- */
-const INFO_DIALOG_AUTO_SHOW_TIMEOUT = 1500;
-
-/**
  * A React Component for displaying a button which opens a dialog with
  * information about the conference and with ways to invite people.
  *
@@ -35,13 +27,18 @@ class InfoDialogButton extends Component {
     static propTypes = {
 
         /**
+         * The {@code JitsiConference} for the current conference.
+         */
+        _conference: PropTypes.object,
+
+        /**
          * The redux state representing the dial-in numbers feature.
          */
         _dialIn: PropTypes.object,
 
         /**
          * Whether or not the {@code InfoDialog} should display automatically
-         * after {@link INFO_DIALOG_AUTO_SHOW_TIMEOUT}.
+         * when in a lonely call.
          */
         _disableAutoShow: PropTypes.bool,
 
@@ -88,15 +85,6 @@ class InfoDialogButton extends Component {
     constructor(props) {
         super(props);
 
-        /**
-         * The timeout to automatically show the {@code InfoDialog} if it has
-         * not been shown yet in a lonely call.
-         *
-         * @type {timeoutID}
-         */
-        this._autoShowTimeout = null;
-
-
         this.state = {
             /**
              * Whether or not {@code InfoDialog} should be visible.
@@ -110,15 +98,11 @@ class InfoDialogButton extends Component {
     }
 
     /**
-     * Set a timeout to automatically hide the {@code InfoDialog}.
+     * Update dial-in numbers {@code InfoDialog}.
      *
      * @inheritdoc
      */
     componentDidMount() {
-        this._autoShowTimeout = setTimeout(() => {
-            this._maybeAutoShowDialog();
-        }, INFO_DIALOG_AUTO_SHOW_TIMEOUT);
-
         if (!this.props._dialIn.numbers) {
             this.props.dispatch(updateDialInNumbers());
         }
@@ -134,15 +118,10 @@ class InfoDialogButton extends Component {
         if (this.state.showDialog && !nextProps._toolboxVisible) {
             this._onDialogClose();
         }
-    }
 
-    /**
-     * Clear the timeout to automatically show the {@code InfoDialog}.
-     *
-     * @inheritdoc
-     */
-    componentWillUnmount() {
-        clearTimeout(this._autoShowTimeout);
+        if (!this.props._conference && nextProps._conference) {
+            this._maybeAutoShowDialog();
+        }
     }
 
     /**
@@ -178,8 +157,8 @@ class InfoDialogButton extends Component {
     }
 
     /**
-     * Callback invoked after a timeout to trigger display of the
-     * {@code InfoDialog} if certain conditions are met.
+     * Invoked to trigger display of the {@code InfoDialog} if certain
+     * conditions are met.
      *
      * @private
      * @returns {void}
@@ -220,6 +199,7 @@ class InfoDialogButton extends Component {
  * @param {Object} state - The Redux state.
  * @private
  * @returns {{
+ *     _conference: Object,
  *     _dialIn: Object,
  *     _disableAutoShow: boolean,
  *     _liveStreamViewURL: string,
@@ -229,6 +209,7 @@ class InfoDialogButton extends Component {
  */
 function _mapStateToProps(state) {
     return {
+        _conference: state['features/base/conference'].conference,
         _dialIn: state['features/invite'],
         _disableAutoShow: state['features/base/config'].iAmRecorder,
         _liveStreamViewURL: state['features/recording'].liveStreamViewURL,
