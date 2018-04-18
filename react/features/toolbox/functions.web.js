@@ -2,12 +2,6 @@
 
 declare var interfaceConfig: Object;
 
-export {
-    abstractMapDispatchToProps,
-    abstractMapStateToProps,
-    getButton
-} from './functions.native';
-
 /**
  * Helper for getting the height of the toolbox.
  *

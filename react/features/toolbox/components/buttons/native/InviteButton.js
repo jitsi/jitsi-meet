@@ -1,29 +1,18 @@
 // @flow
 
-import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
-import { beginShareRoom } from '../../share-room';
-import { ToolbarButton } from '../../toolbox';
+import {
+    beginAddPeople,
+    isAddPeopleEnabled,
+    isDialOutEnabled
+} from '../../../../invite';
+import { beginShareRoom } from '../../../../share-room';
 
-import { beginAddPeople } from '../actions';
-import { isAddPeopleEnabled, isDialOutEnabled } from '../functions';
+import AbstractButton from '../AbstractButton';
+import type { Props as AbstractButtonProps } from '../AbstractButton';
 
-/**
- * The indicator which determines (at bundle time) whether there should be a
- * {@code ToolbarButton} in {@code Toolbox} to expose the functionality of the
- * feature share-room in the user interface of the app.
- *
- * @private
- * @type {boolean}
- */
-const _SHARE_ROOM_TOOLBAR_BUTTON = true;
-
-/**
- * The type of {@link EnterPictureInPictureToobarButton}'s React
- * {@code Component} props.
- */
-type Props = {
+type Props = AbstractButtonProps & {
 
     /**
      * Whether or not the feature to directly invite people into the
@@ -51,44 +40,70 @@ type Props = {
 };
 
 /**
+ * The indicator which determines (at bundle time) whether there should be a
+ * button in {@code Toolbox} to expose the functionality of the feature
+ * share-room in the user interface of the app.
+ *
+ * @private
+ * @type {boolean}
+ */
+const _SHARE_ROOM_TOOLBAR_BUTTON = true;
+
+/**
  * Implements a {@link ToolbarButton} to enter Picture-in-Picture.
  */
-class InviteButton extends Component<Props> {
+class InviteButton extends AbstractButton<Props, *> {
+    accessibilityLabel = 'Share room';
+    iconName = 'icon-link';
+    label = 'toolbar.shareRoom';
+
+    /**
+     * Handles clicking / pressing the button, and opens the appropriate dialog.
+     *
+     * @private
+     * @returns {void}
+     */
+    _handleClick() {
+        const {
+            _addPeopleEnabled,
+            _dialOutEnabled,
+            _onAddPeople,
+            _onShareRoom
+        } = this.props;
+
+        if (_addPeopleEnabled || _dialOutEnabled) {
+            _onAddPeople();
+        } else if (_SHARE_ROOM_TOOLBAR_BUTTON) {
+            _onShareRoom();
+        }
+    }
+
+    /**
+     * Indicates whether this button is disabled or not.
+     *
+     * @override
+     * @private
+     * @returns {boolean}
+     */
+    _isDisabled() {
+        return false;
+    }
 
     /**
      * Implements React's {@link Component#render()}.
      *
      * @inheritdoc
-     * @returns {ReactElement}
+     * @returns {React$Node}
      */
     render() {
-        const {
-            _addPeopleEnabled,
-            _dialOutEnabled,
-            _onAddPeople,
-            _onShareRoom,
-            ...props
-        } = this.props;
+        const { _addPeopleEnabled, _dialOutEnabled } = this.props;
 
-        if (_addPeopleEnabled || _dialOutEnabled) {
-            return (
-                <ToolbarButton
-                    iconName = { 'link' }
-                    onClick = { _onAddPeople }
-                    { ...props } />
-            );
-        }
-
-        if (_SHARE_ROOM_TOOLBAR_BUTTON) {
-            return (
-                <ToolbarButton
-                    iconName = 'link'
-                    onClick = { _onShareRoom }
-                    { ...props } />
-            );
-        }
-
-        return null;
+        return (
+            _SHARE_ROOM_TOOLBAR_BUTTON
+                    || _addPeopleEnabled
+                    || _dialOutEnabled
+                ? super.render()
+                : null);
     }
 }
 

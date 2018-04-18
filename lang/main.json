@@ -74,6 +74,7 @@
     "toolbar": {
         "addPeople": "Add people to your call",
         "audioonly": "Enable / Disable audio only mode (saves bandwidth)",
+        "audioRoute": "Select the audio route",
         "callQuality": "Manage call quality",
         "enterFullScreen": "View full screen",
         "exitFullScreen": "Exit full screen",
@@ -87,6 +88,7 @@
         "etherpad": "Open / Close shared document",
         "documentOpen": "Open shared document",
         "documentClose": "Close shared document",
+        "shareRoom": "Share room",
         "sharedvideo": "Share a YouTube video",
         "stopSharedVideo": "Stop YouTube video",
         "fullscreen": "View / Exit full screen",
@@ -102,6 +104,7 @@
         "cameraDisabled": "Camera is not available",
         "micDisabled": "Microphone is not available",
         "filmstrip": "Show / Hide videos",
+        "pip": "Enter Picture-in-Picture mode",
         "profile": "Edit your profile",
         "raiseHand": "Raise / Lower your hand",
         "shortcuts": "View shortcuts",

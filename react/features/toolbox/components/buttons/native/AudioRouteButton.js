@@ -1,6 +1,6 @@
 // @flow
 
-import React, { Component } from 'react';
+import React from 'react';
 import {
     findNodeHandle,
     NativeModules,
@@ -9,10 +9,13 @@ import {
 } from 'react-native';
 import { connect } from 'react-redux';
 
-import { openDialog } from '../../base/dialog';
-import { AudioRoutePickerDialog } from '../../mobile/audio-mode';
+import { openDialog } from '../../../../base/dialog';
+import { translate } from '../../../../base/i18n';
+import { AudioRoutePickerDialog } from '../../../../mobile/audio-mode';
 
-import ToolbarButton from './ToolbarButton';
+import AbstractButton from '../AbstractButton';
+import type { Props as AbstractButtonProps } from '../AbstractButton';
+
 
 /**
  * The {@code MPVolumeView} React {@code Component}. It will only be available
@@ -28,48 +31,32 @@ const MPVolumeView
  */
 const HIDE_VIEW_STYLE = { display: 'none' };
 
-type Props = {
+type Props = AbstractButtonProps & {
 
     /**
      * The redux {@code dispatch} function used to open/show the
      * {@code AudioRoutePickerDialog}.
      */
-    dispatch: Function,
-
-    /**
-     * The name of the Icon of this {@code AudioRouteButton}.
-     */
-    iconName: string,
-
-    /**
-     * The style of the Icon of this {@code AudioRouteButton}.
-     */
-    iconStyle: Object,
-
-    /**
-     * The style(s) of {@code AudioRouteButton}.
-     */
-    style: Array<*> | Object,
-
-    /**
-     * The color underlaying the button.
-     */
-    underlayColor: string
+    dispatch: Function
 };
 
 /**
  * A toolbar button which triggers an audio route picker when pressed.
  */
-class AudioRouteButton extends Component<Props> {
+class AudioRouteButton extends AbstractButton<Props, *> {
+    accessibilityLabel = 'Audio route';
+    iconName = 'icon-volume';
+    label = 'toolbar.audioRoute';
+
     _volumeComponent: ?Object;
 
     /**
      * Initializes a new {@code AudioRouteButton} instance.
      *
-     * @param {Object} props - The React {@code Component} props to initialize
+     * @param {Props} props - The React {@code Component} props to initialize
      * the new {@code AudioRouteButton} instance with.
      */
-    constructor(props) {
+    constructor(props: Props) {
         super(props);
 
         /**
@@ -77,25 +64,21 @@ class AudioRouteButton extends Component<Props> {
          * showing the volume control view.
          *
          * @private
-         * @type {ReactComponent}
+         * @type {ReactElement}
          */
         this._volumeComponent = null;
 
         // Bind event handlers so they are only bound once per instance.
-        this._onClick = this._onClick.bind(this);
         this._setVolumeComponent = this._setVolumeComponent.bind(this);
     }
 
-    _onClick: () => void;
-
     /**
-     * Handles clicking/pressing this {@code AudioRouteButton} by showing an
-     * audio route picker.
+     * Handles clicking / pressing the button, and opens the appropriate dialog.
      *
      * @private
      * @returns {void}
      */
-    _onClick() {
+    _handleClick() {
         if (MPVolumeView) {
             NativeModules.MPVolumeViewManager.show(
                 findNodeHandle(this._volumeComponent));
@@ -105,22 +88,48 @@ class AudioRouteButton extends Component<Props> {
     }
 
     /**
+     * Indicates whether this button is disabled or not.
+     *
+     * @override
+     * @private
+     * @returns {boolean}
+     */
+    _isDisabled() {
+        return false;
+    }
+
+    _setVolumeComponent: (?Object) => void;
+
+    /**
+     * Sets the internal reference to the React Component wrapping the
+     * {@code MPVolumeView} component.
+     *
+     * @param {ReactElement} component - React Component.
+     * @private
+     * @returns {void}
+     */
+    _setVolumeComponent(component) {
+        this._volumeComponent = component;
+    }
+
+    /**
      * Implements React's {@link Component#render()}.
      *
      * @inheritdoc
-     * @returns {ReactElement}
+     * @returns {?ReactElement}
      */
     render() {
-        const { iconName, iconStyle, style, underlayColor } = this.props;
+        if (!MPVolumeView && !AudioRoutePickerDialog) {
+
+            // $FlowFixMe
+            return null;
+        }
+
+        const element = super.render();
 
         return (
             <View>
-                <ToolbarButton
-                    iconName = { iconName }
-                    iconStyle = { iconStyle }
-                    onClick = { this._onClick }
-                    style = { style }
-                    underlayColor = { underlayColor } />
+                { element }
                 {
                     MPVolumeView
                         && <MPVolumeView
@@ -130,21 +139,6 @@ class AudioRouteButton extends Component<Props> {
             </View>
         );
     }
-
-    _setVolumeComponent: (?Object) => void;
-
-    /**
-     * Sets the internal reference to the React Component wrapping the
-     * {@code MPVolumeView} component.
-     *
-     * @param {ReactComponent} component - React Component.
-     * @private
-     * @returns {void}
-     */
-    _setVolumeComponent(component) {
-        this._volumeComponent = component;
-    }
 }
 
-export default (MPVolumeView || AudioRoutePickerDialog)
-  && connect()(AudioRouteButton);
+export default translate(connect()(AudioRouteButton));

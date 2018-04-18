@@ -37,7 +37,7 @@ export type Props = {
 /**
  * An abstract implementation of a button.
  */
-export default class AbstractButton<P: Props, S : *> extends Component<P, S> {
+export default class AbstractButton<P: Props, S: *> extends Component<P, S> {
     static defaultProps = {
         showLabel: false,
         styles: undefined,
@@ -173,9 +173,9 @@ export default class AbstractButton<P: Props, S : *> extends Component<P, S> {
      * Implements React's {@link Component#render()}.
      *
      * @inheritdoc
-     * @returns {ReactElement}
+     * @returns {React$Node}
      */
-    render() {
+    render(): React$Node {
         const props = {
             ...this.props,
             accessibilityLabel: this.accessibilityLabel,

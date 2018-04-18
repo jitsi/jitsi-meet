@@ -81,6 +81,15 @@ export default createStyleSheet({
     },
 
     /**
+     * The icon style of toolbar buttons in {@link #primaryToolbar} which
+     * hangs the current conference up.
+     */
+    hangupButtonIcon: {
+        ...primaryToolbarButtonIcon,
+        color: ColorPalette.white
+    },
+
+    /**
      * The style of the toolbar which contains the primary buttons such as
      * hangup, audio and video mute.
      */
