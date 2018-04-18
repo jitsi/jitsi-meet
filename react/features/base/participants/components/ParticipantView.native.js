@@ -13,6 +13,7 @@ import {
 } from '../../media';
 import { prefetch } from '../../../mobile/image-cache';
 import { Container, TintedView } from '../../react';
+import { TestHint } from '../../testing/components';
 import { getTrackByMediaTypeAndParticipant } from '../../tracks';
 
 import Avatar from './Avatar';
@@ -105,6 +106,14 @@ type Props = {
      * The function to translate human-readable text.
      */
     t: Function,
+
+    /**
+     * The test hint id which can be used to locate the {@code ParticipantView}
+     * on the jitsi-meet-torture side. If not provided, the
+     * {@code participantId} with the following format will be used:
+     * {@code `org.jitsi.meet.Participant#${participantId}`}
+     */
+    testHintId: ?string,
 
     /**
      * Indicates if the connectivity info label should be shown, if appropriate.
@@ -227,6 +236,11 @@ class ParticipantView extends Component<Props> {
                 || connectionStatus
                     === JitsiParticipantConnectionStatus.INTERRUPTED;
 
+        const testHintId
+            = this.props.testHintId
+                ? this.props.testHintId
+                : `org.jitsi.meet.Participant#${this.props.participantId}`;
+
         return (
             <Container
                 onClick = { renderVideo ? undefined : onPress }
@@ -235,6 +249,11 @@ class ParticipantView extends Component<Props> {
                     ...this.props.style
                 }}
                 touchFeedback = { false }>
+
+                <TestHint
+                    id = { testHintId }
+                    onPress = { onPress }
+                    value = '' />
 
                 { renderVideo
                     && <VideoTrack
