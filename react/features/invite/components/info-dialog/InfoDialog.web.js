@@ -194,7 +194,7 @@ class InfoDialog extends Component {
                         <span className = 'spacer'>&nbsp;</span>
                         <span className = 'info-value'>
                             <a
-                                className = 'info-dialog-hidden-link'
+                                className = 'info-dialog-url-text'
                                 href = { this.props._inviteURL }
                                 onClick = { this._onClickHiddenURL } >
                                 { this._getURLToDisplay() }
@@ -490,7 +490,7 @@ class InfoDialog extends Component {
                 <span className = 'spacer'>&nbsp;</span>
                 <span className = 'info-value'>
                     <a
-                        className = 'info-dialog-hidden-link'
+                        className = 'info-dialog-url-text'
                         href = { liveStreamViewURL }
                         onClick = { this._onClickHiddenURL } >
                         { liveStreamViewURL }
