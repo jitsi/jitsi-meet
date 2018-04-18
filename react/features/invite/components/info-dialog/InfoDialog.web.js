@@ -295,11 +295,19 @@ class InfoDialog extends Component {
      * @returns {string}
      */
     _getTextToCopy() {
-        const { t } = this.props;
+        const { liveStreamViewURL, t } = this.props;
 
         let invite = t('info.inviteURL', {
             url: this.props._inviteURL
         });
+
+        if (liveStreamViewURL) {
+            const liveStream = t('info.inviteLiveStream', {
+                url: liveStreamViewURL
+            });
+
+            invite = `${invite}\n${liveStream}`;
+        }
 
         if (this._shouldDisplayDialIn()) {
             const dial = t('info.invitePhone', {
@@ -477,7 +485,7 @@ class InfoDialog extends Component {
         return (
             <div className = 'info-dialog-live-stream-url'>
                 <span className = 'info-label'>
-                    { t('info.livestreamURL') }
+                    { t('info.liveStreamURL') }
                 </span>
                 <span className = 'spacer'>&nbsp;</span>
                 <span className = 'info-value'>
