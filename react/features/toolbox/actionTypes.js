@@ -19,18 +19,6 @@ export const CLEAR_TOOLBOX_TIMEOUT = Symbol('CLEAR_TOOLBOX_TIMEOUT');
 export const FULL_SCREEN_CHANGED = Symbol('FULL_SCREEN_CHANGED');
 
 /**
- * The type of the action which sets the default toolbar buttons of the Toolbox.
- *
- * {
- *     type: SET_DEFAULT_TOOLBOX_BUTTONS,
- *     primaryToolbarButtons: Map,
- *     secondaryToolbarButtons: Map
- * }
- */
-export const SET_DEFAULT_TOOLBOX_BUTTONS
-    = Symbol('SET_DEFAULT_TOOLBOX_BUTTONS');
-
-/**
  * The type of (redux) action which requests full screen mode be entered or
  * exited.
  *
@@ -40,26 +28,6 @@ export const SET_DEFAULT_TOOLBOX_BUTTONS
  * }
  */
 export const SET_FULL_SCREEN = Symbol('SET_FULL_SCREEN');
-
-/**
- * The type of the action which sets the conference subject.
- *
- * {
- *     type: SET_SUBJECT,
- *     subject: string
- * }
- */
-export const SET_SUBJECT = Symbol('SET_SUBJECT');
-
-/**
- * The type of the action which sets the subject slide in.
- *
- * {
- *     type: SET_SUBJECT_SLIDE_IN,
- *     subjectSlideIn: boolean
- * }
- */
-export const SET_SUBJECT_SLIDE_IN = Symbol('SET_SUBJECT_SLIDE_IN');
 
 /**
  * The type of the action which sets the indicator which determiens whether a

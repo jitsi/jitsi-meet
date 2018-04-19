@@ -445,12 +445,6 @@ UI.addRemoteStream = track => VideoLayout.onRemoteStreamAdded(track);
 UI.removeRemoteStream = track => VideoLayout.onRemoteStreamRemoved(track);
 
 /**
- * Update chat subject.
- * @param {string} subject new chat subject
- */
-UI.setSubject = subject => Chat.setSubject(subject);
-
-/**
  * Setup and show Etherpad.
  * @param {string} name etherpad id
  */

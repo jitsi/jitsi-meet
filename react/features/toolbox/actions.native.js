@@ -2,8 +2,6 @@
 
 import {
     CLEAR_TOOLBOX_TIMEOUT,
-    SET_SUBJECT,
-    SET_SUBJECT_SLIDE_IN,
     SET_TOOLBAR_HOVERED,
     SET_TOOLBOX_ALWAYS_VISIBLE,
     SET_TOOLBOX_ENABLED,
@@ -23,36 +21,6 @@ import {
 export function clearToolboxTimeout(): Object {
     return {
         type: CLEAR_TOOLBOX_TIMEOUT
-    };
-}
-
-/**
- * Signals that value of conference subject should be changed.
- *
- * @param {string} subject - Conference subject string.
- * @returns {Object}
- */
-export function setSubject(subject: string): Object {
-    return {
-        type: SET_SUBJECT,
-        subject
-    };
-}
-
-/**
- * Signals that toolbox subject slide in value should be changed.
- *
- * @param {boolean} subjectSlideIn - True if the subject is shown; otherwise,
- * false.
- * @returns {{
- *     type: SET_SUBJECT_SLIDE_IN,
- *     subjectSlideIn: boolean
- * }}
- */
-export function setSubjectSlideIn(subjectSlideIn: boolean): Object {
-    return {
-        type: SET_SUBJECT_SLIDE_IN,
-        subjectSlideIn
     };
 }
 

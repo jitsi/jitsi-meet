@@ -1,7 +1,6 @@
 /* global APP, $ */
 
-import { processReplacements, linkify } from './Replacement';
-import CommandsProcessor from './Commands';
+import { processReplacements } from './Replacement';
 import VideoLayout from '../../videolayout/VideoLayout';
 
 import UIUtil from '../../util/UIUtil';
@@ -12,8 +11,7 @@ import { smileys } from './smileys';
 import { addMessage, markAllRead } from '../../../../react/features/chat';
 import {
     dockToolbox,
-    getToolboxHeight,
-    setSubject
+    getToolboxHeight
 } from '../../../../react/features/toolbox';
 
 let unreadMessages = 0;
@@ -235,15 +233,10 @@ const Chat = {
 
                 usermsg.val('').trigger('autosize.resize');
                 this.focus();// eslint-disable-line no-invalid-this
-                const command = new CommandsProcessor(value, eventEmitter);
 
-                if (command.isCommand()) {
-                    command.processCommand();
-                } else {
-                    const message = UIUtil.escapeHtml(value);
+                const message = UIUtil.escapeHtml(value);
 
-                    eventEmitter.emit(UIEvents.MESSAGE_CREATED, message);
-                }
+                eventEmitter.emit(UIEvents.MESSAGE_CREATED, message);
             }
         });
 
@@ -349,21 +342,6 @@ const Chat = {
                 errorMessage ? ` Reason: ${errorMessage}` : ''}</div>`);
         $('#chatconversation').animate(
             { scrollTop: $('#chatconversation')[0].scrollHeight }, 1000);
-    },
-
-    /**
-     * Sets the subject to the UI
-     * @param subject the subject
-     */
-    setSubject(subject) {
-        if (subject) {
-            // eslint-disable-next-line no-param-reassign
-            subject = subject.trim();
-        }
-
-        const html = linkify(UIUtil.escapeHtml(subject));
-
-        APP.store.dispatch(setSubject(html));
     },
 
     /**
