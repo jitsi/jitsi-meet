@@ -11,7 +11,8 @@ PODS:
     - React
   - react-native-locale-detector (1.0.0):
     - React
-  - react-native-webrtc (1.58.2)
+  - react-native-webrtc (1.58.2):
+    - React
   - React/BatchedBridge (0.51.0):
     - React/Core
     - React/cxxreact_legacy
@@ -102,7 +103,7 @@ SPEC CHECKSUMS:
   react-native-fetch-blob: 63394b1d7b0781547b3e4463b3195790177b1222
   react-native-keep-awake: 0de4bd66de0c23178107dce0c2fcc3354b2a8e94
   react-native-locale-detector: d1b2c6fe5abb56e3a1efb6c2d6f308c05c4251f1
-  react-native-webrtc: bc044ca9530fc802e7533f247aa08fe1b6bf8dc5
+  react-native-webrtc: 31b6d3f1e3e2ce373aa43fd682b04367250f807d
   RNSound: b360b3862d3118ed1c74bb9825696b5957686ac4
   RNVectorIcons: c0dbfbf6068fefa240c37b0f71bd03b45dddac44
   yoga: 17521bbb0dd54a47c0b3ac43253e78cdac7488e0
