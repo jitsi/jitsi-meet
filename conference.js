@@ -2124,13 +2124,6 @@ export default {
             room.toggleRecording(options);
         });
 
-        APP.UI.addListener(UIEvents.SUBJECT_CHANGED, topic => {
-            room.setSubject(topic);
-        });
-        room.on(JitsiConferenceEvents.SUBJECT_CHANGED, subject => {
-            APP.UI.setSubject(subject);
-        });
-
         APP.UI.addListener(UIEvents.AUTH_CLICKED, () => {
             AuthHandler.authenticate(room);
         });

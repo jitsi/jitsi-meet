@@ -70,7 +70,6 @@ export default {
     HANGUP: 'UI.hangup',
     LOGOUT: 'UI.logout',
     RECORDING_TOGGLED: 'UI.recording_toggled',
-    SUBJECT_CHANGED: 'UI.subject_changed',
     VIDEO_DEVICE_CHANGED: 'UI.video_device_changed',
     AUDIO_DEVICE_CHANGED: 'UI.audio_device_changed',
     AUDIO_OUTPUT_DEVICE_CHANGED: 'UI.audio_output_device_changed',

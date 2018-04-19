@@ -5,9 +5,6 @@ import { ReducerRegistry } from '../base/redux';
 import {
     CLEAR_TOOLBOX_TIMEOUT,
     FULL_SCREEN_CHANGED,
-    SET_DEFAULT_TOOLBOX_BUTTONS,
-    SET_SUBJECT,
-    SET_SUBJECT_SLIDE_IN,
     SET_TOOLBAR_HOVERED,
     SET_TOOLBOX_ALWAYS_VISIBLE,
     SET_TOOLBOX_ENABLED,
@@ -24,11 +21,8 @@ declare var interfaceConfig: Object;
  * @private
  * @returns {{
  *     alwaysVisible: boolean,
+ *     enabled: boolean,
  *     hovered: boolean,
- *     primaryToolbarButtons: Map,
- *     secondaryToolbarButtons: Map,
- *     subject: string,
- *     subjectSlideIn: boolean,
  *     timeoutID: number,
  *     timeoutMS: number,
  *     visible: boolean
@@ -69,34 +63,6 @@ function _getInitialState() {
         hovered: false,
 
         /**
-         * A Map of the default buttons of the PrimaryToolbar.
-         *
-         * @type {Map}
-         */
-        primaryToolbarButtons: new Map(),
-
-        /**
-         * A Map of the default buttons of the SecondaryToolbar.
-         *
-         * @type {Map}
-         */
-        secondaryToolbarButtons: new Map(),
-
-        /**
-         * The text of the conference subject.
-         *
-         * @type {string}
-         */
-        subject: '',
-
-        /**
-         * The indicator which determines whether the subject is sliding in.
-         *
-         * @type {boolean}
-         */
-        subjectSlideIn: false,
-
-        /**
          * A number, non-zero value which identifies the timer created by a call
          * to setTimeout() with timeoutMS.
          *
@@ -135,28 +101,6 @@ ReducerRegistry.register(
             return {
                 ...state,
                 fullScreen: action.fullScreen
-            };
-
-        case SET_DEFAULT_TOOLBOX_BUTTONS: {
-            const { primaryToolbarButtons, secondaryToolbarButtons } = action;
-
-            return {
-                ...state,
-                primaryToolbarButtons,
-                secondaryToolbarButtons
-            };
-        }
-
-        case SET_SUBJECT:
-            return {
-                ...state,
-                subject: action.subject
-            };
-
-        case SET_SUBJECT_SLIDE_IN:
-            return {
-                ...state,
-                subjectSlideIn: action.subjectSlideIn
             };
 
         case SET_TOOLBAR_HOVERED:

@@ -5,7 +5,6 @@ import SideContainerToggler
 
 import {
     clearToolboxTimeout,
-    setSubjectSlideIn,
     setToolboxTimeout,
     setToolboxTimeoutMS,
     setToolboxVisible
@@ -98,7 +97,6 @@ export function hideToolbox(force: boolean = false): Function {
                     timeoutMS));
         } else {
             dispatch(setToolboxVisible(false));
-            dispatch(setSubjectSlideIn(false));
         }
     };
 }
@@ -137,7 +135,6 @@ export function showToolbox(timeout: number = 0): Object {
 
         if (enabled && !visible) {
             dispatch(setToolboxVisible(true));
-            dispatch(setSubjectSlideIn(true));
 
             // If the Toolbox is always visible, there's no need for a timeout
             // to toggle its visibility.
