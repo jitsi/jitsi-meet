@@ -193,6 +193,7 @@ class Conference extends Component<Props> {
                 accessible = { false }
                 style = { styles.conference }>
                 <StatusBar
+                    barStyle = 'light-content'
                     hidden = { true }
                     translucent = { true } />
 
