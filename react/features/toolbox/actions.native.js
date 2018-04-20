@@ -2,6 +2,7 @@
 
 import {
     CLEAR_TOOLBOX_TIMEOUT,
+    SET_OVERFLOW_MENU_VISIBLE,
     SET_TOOLBAR_HOVERED,
     SET_TOOLBOX_ALWAYS_VISIBLE,
     SET_TOOLBOX_ENABLED,
@@ -21,6 +22,22 @@ import {
 export function clearToolboxTimeout(): Object {
     return {
         type: CLEAR_TOOLBOX_TIMEOUT
+    };
+}
+
+/**
+ * Shows/hides the overflow menu.
+ *
+ * @param {boolean} visible - True to show it or false to hide it.
+ * @returns {{
+ *     type: SET_OVERFLOW_MENU_VISIBLE,
+ *     visible: boolean
+ * }}
+ */
+export function setOverflowMenuVisible(visible: boolean): Object {
+    return {
+        type: SET_OVERFLOW_MENU_VISIBLE,
+        visible
     };
 }
 

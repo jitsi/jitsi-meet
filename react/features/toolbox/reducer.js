@@ -5,6 +5,7 @@ import { ReducerRegistry } from '../base/redux';
 import {
     CLEAR_TOOLBOX_TIMEOUT,
     FULL_SCREEN_CHANGED,
+    SET_OVERFLOW_MENU_VISIBLE,
     SET_TOOLBAR_HOVERED,
     SET_TOOLBOX_ALWAYS_VISIBLE,
     SET_TOOLBOX_ENABLED,
@@ -23,6 +24,7 @@ declare var interfaceConfig: Object;
  *     alwaysVisible: boolean,
  *     enabled: boolean,
  *     hovered: boolean,
+ *     overflowMenuVisible: boolean,
  *     timeoutID: number,
  *     timeoutMS: number,
  *     visible: boolean
@@ -63,6 +65,13 @@ function _getInitialState() {
         hovered: false,
 
         /**
+         * The indicator which determines whether the OverflowMenu is visible.
+         *
+         * @type {boolean}
+         */
+        overflowMenuVisible: false,
+
+        /**
          * A number, non-zero value which identifies the timer created by a call
          * to setTimeout() with timeoutMS.
          *
@@ -101,6 +110,12 @@ ReducerRegistry.register(
             return {
                 ...state,
                 fullScreen: action.fullScreen
+            };
+
+        case SET_OVERFLOW_MENU_VISIBLE:
+            return {
+                ...state,
+                overflowMenuVisible: action.visible
             };
 
         case SET_TOOLBAR_HOVERED:

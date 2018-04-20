@@ -36,7 +36,11 @@ import {
     VideoQualityDialog
 } from '../../video-quality';
 
-import { setFullScreen, setToolbarHovered } from '../actions';
+import {
+    setFullScreen,
+    setOverflowMenuVisible,
+    setToolbarHovered
+} from '../actions';
 
 import OverflowMenuButton from './OverflowMenuButton';
 import OverflowMenuItem from './OverflowMenuItem';
@@ -119,6 +123,11 @@ type Props = {
     _localParticipantID: String,
 
     /**
+     * Whether or not the overflow menu is visible.
+     */
+    _overflowMenuVisible: boolean,
+
+    /**
      * Whether or not the local participant's hand is raised.
      */
     _raisedHand: boolean,
@@ -160,14 +169,6 @@ type Props = {
     t: Function
 }
 
-type State = {
-
-    /**
-     * Whether or not the overflow menu is visible.
-     */
-    showOverflowMenu: boolean
-}
-
 declare var APP: Object;
 declare var interfaceConfig: Object;
 
@@ -176,12 +177,8 @@ declare var interfaceConfig: Object;
  *
  * @extends Component
  */
-class Toolbox extends Component<Props, State> {
+class Toolbox extends Component<Props> {
     _visibleButtons: Object;
-
-    state = {
-        showOverflowMenu: false
-    }
 
     /**
      * Initializes a new {@code Toolbox} instance.
@@ -282,11 +279,11 @@ class Toolbox extends Component<Props, State> {
      */
     componentWillReceiveProps(nextProps) {
         // Ensure the dialog is closed when the toolbox becomes hidden.
-        if (this.state.showOverflowMenu && !nextProps._visible) {
+        if (this.props._overflowMenuVisible && !nextProps._visible) {
             this._onSetOverflowVisible(false);
         }
 
-        if (this.state.showOverflowMenu
+        if (this.props._overflowMenuVisible
             && !this.props._dialog
             && nextProps._dialog) {
             this._onSetOverflowVisible(false);
@@ -315,6 +312,7 @@ class Toolbox extends Component<Props, State> {
         const {
             _chatOpen,
             _hideInviteButton,
+            _overflowMenuVisible,
             _raisedHand,
             _visible,
             t
@@ -373,7 +371,7 @@ class Toolbox extends Component<Props, State> {
                     { this._shouldShowButton('info') && <InfoDialogButton /> }
                     { overflowHasItems
                         && <OverflowMenuButton
-                            isOpen = { this.state.showOverflowMenu }
+                            isOpen = { _overflowMenuVisible }
                             onVisibilityChange = { this._onSetOverflowVisible }>
                             <ul
                                 aria-label = 'Overflow menu'
@@ -555,7 +553,7 @@ class Toolbox extends Component<Props, State> {
      * @returns {void}
      */
     _onSetOverflowVisible(visible) {
-        this.setState({ showOverflowMenu: visible });
+        this.props.dispatch(setOverflowMenuVisible(visible));
     }
 
     _onShortcutToggleChat: () => void;
@@ -762,21 +760,6 @@ class Toolbox extends Component<Props, State> {
                 }));
 
         this._doToggleFullScreen();
-    }
-
-    _onToolbarToggleOverflowMenu: () => void;
-
-    /**
-     * Callback invoked to change whether the {@code OverflowMenu} is displayed
-     * or not.
-     *
-     * @private
-     * @returns {void}
-     */
-    _onToolbarToggleOverflowMenu() {
-        sendAnalytics(createToolbarEvent('overflow'));
-
-        this.setState({ showOverflowMenu: !this.state.showOverflowMenu });
     }
 
     _onToolbarToggleProfile: () => void;
@@ -1076,6 +1059,7 @@ function _mapStateToProps(state) {
     const {
         alwaysVisible,
         fullScreen,
+        overflowMenuVisible,
         timeoutID,
         visible
     } = state['features/toolbox'];
@@ -1100,6 +1084,7 @@ function _mapStateToProps(state) {
         _isRecording: isRecording,
         _fullScreen: fullScreen,
         _localParticipantID: localParticipant.id,
+        _overflowMenuVisible: overflowMenuVisible,
         _raisedHand: localParticipant.raisedHand,
         _recordingEnabled: isModerator && enableRecording
             && (conference && conference.isRecordingSupported()),

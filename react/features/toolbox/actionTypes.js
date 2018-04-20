@@ -30,6 +30,16 @@ export const FULL_SCREEN_CHANGED = Symbol('FULL_SCREEN_CHANGED');
 export const SET_FULL_SCREEN = Symbol('SET_FULL_SCREEN');
 
 /**
+ * The type of the (redux) action which shows/hides the OverflowMenu.
+ *
+ * {
+ *     type: SET_OVERFLOW_MENU_VISIBLE,
+ *     visible: boolean
+ * }
+ */
+export const SET_OVERFLOW_MENU_VISIBLE = Symbol('SET_OVERFLOW_MENU_VISIBLE');
+
+/**
  * The type of the action which sets the indicator which determiens whether a
  * fToolbar in the Toolbox is hovered.
  *

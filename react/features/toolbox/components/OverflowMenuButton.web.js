@@ -2,6 +2,7 @@ import InlineDialog from '@atlaskit/inline-dialog';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 
+import { createToolbarEvent, sendAnalytics } from '../../analytics';
 import { translate } from '../../base/i18n';
 
 import ToolbarButton from './ToolbarButton';
@@ -100,6 +101,8 @@ class OverflowMenuButton extends Component {
      * @returns {void}
      */
     _onToggleDialogVisibility() {
+        sendAnalytics(createToolbarEvent('overflow'));
+
         this.props.onVisibilityChange(!this.props.isOpen);
     }
 }
