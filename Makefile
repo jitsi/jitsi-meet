@@ -9,6 +9,7 @@ STYLES_BUNDLE = css/all.bundle.css
 STYLES_DESTINATION = css/all.css
 STYLES_MAIN = css/main.scss
 WEBPACK = ./node_modules/.bin/webpack
+WEBPACK_DEV_SERVER = ./node_modules/.bin/webpack-dev-server
 
 all: compile deploy clean
 
@@ -55,6 +56,9 @@ deploy-css:
 
 deploy-local:
 	([ ! -x deploy-local.sh ] || ./deploy-local.sh)
+
+dev: deploy-init deploy-css deploy-lib-jitsi-meet
+	$(WEBPACK_DEV_SERVER)
 
 source-package:
 	mkdir -p source_package/jitsi-meet/css && \

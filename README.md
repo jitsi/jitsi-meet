@@ -44,7 +44,7 @@ To build the Jitsi Meet application, just type
 make
 ```
 
-## Working with the library sources (lib-jitsi-meet)
+### Working with the library sources (lib-jitsi-meet)
 
 By default the library is build from its git repository sources. The default dependency path in package.json is :
 ```json
@@ -72,12 +72,12 @@ It allows to link `lib-jitsi-meet` dependency to local source in few steps:
 ```bash
 cd lib-jitsi-meet
 
-# create global symlink for lib-jitsi-meet package
+#### create global symlink for lib-jitsi-meet package
 npm link
 
 cd ../jitsi-meet
 
-# create symlink from the local node_modules folder to the global lib-jitsi-meet symlink
+#### create symlink from the local node_modules folder to the global lib-jitsi-meet symlink
 npm link lib-jitsi-meet
 ```
 
@@ -90,16 +90,17 @@ cd jitsi-meet
 npm unlink lib-jitsi-meet
 npm install
 ```
-## Running with webpack-dev-server for development   
+### Running with webpack-dev-server for development
 
 Use it at the CLI, type
 ```
-node_modules/.bin/webpack-dev-server
+make dev
 ```
 
-By default the backend deployment used is `beta.meet.jit.si`, you can point the Jitsi-Meet app at a different backend by using a proxy server. To do this set the WEBPACK_DEV_SERVER_PROXY_TARGET variable, type 
+By default the backend deployment used is `beta.meet.jit.si`, you can point the Jitsi-Meet app at a different backend by using a proxy server. To do this set the WEBPACK_DEV_SERVER_PROXY_TARGET variable:
 ```
-WEBPACK_DEV_SERVER_PROXY_TARGET=https://your-example-server.com node_modules/.bin/webpack-dev-server
+export WEBPACK_DEV_SERVER_PROXY_TARGET=https://your-example-server.com
+make dev
 ```
 
 The app should be running at https://localhost:8080/
@@ -122,7 +123,7 @@ network but decrypted on the machine that hosts the bridge.
 
 The Jitsi Meet architecture allows you to deploy your own version, including
 all server components, and in that case your security guarantees will be roughly
-equivalent to these of a direct one-to-one WebRTC call. This is what's unique to 
+equivalent to these of a direct one-to-one WebRTC call. This is what's unique to
 Jitsi Meet in terms of security.
 
 The [meet.jit.si](https://meet.jit.si) service is maintained by the Jitsi team
