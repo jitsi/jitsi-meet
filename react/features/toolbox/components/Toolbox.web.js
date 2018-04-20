@@ -159,6 +159,11 @@ type Props = {
     _visible: boolean,
 
     /**
+     * Set with the buttons which this Toolbox should display.
+     */
+    _visibleButtons: Set<string>,
+
+    /**
      * Invoked to active other features of the app.
      */
     dispatch: Function,
@@ -178,8 +183,6 @@ declare var interfaceConfig: Object;
  * @extends Component
  */
 class Toolbox extends Component<Props> {
-    _visibleButtons: Object;
-
     /**
      * Initializes a new {@code Toolbox} instance.
      *
@@ -188,8 +191,6 @@ class Toolbox extends Component<Props> {
      */
     constructor(props: Props) {
         super(props);
-
-        this._visibleButtons = new Set(interfaceConfig.TOOLBAR_BUTTONS);
 
         // Bind event handlers so they are only bound once per instance.
         this._onMouseOut = this._onMouseOut.bind(this);
@@ -315,10 +316,11 @@ class Toolbox extends Component<Props> {
             _overflowMenuVisible,
             _raisedHand,
             _visible,
+            _visibleButtons,
             t
         } = this.props;
         const rootClassNames = `new-toolbox ${_visible ? 'visible' : ''} ${
-            this._visibleButtons.size ? '' : 'no-buttons'}`;
+            _visibleButtons.size ? '' : 'no-buttons'}`;
         const overflowMenuContent = this._renderOverflowMenuContent();
         const overflowHasItems = Boolean(overflowMenuContent.filter(
             child => child).length);
@@ -1030,7 +1032,7 @@ class Toolbox extends Component<Props> {
      * @returns {boolean} True if the button should be displayed.
      */
     _shouldShowButton(buttonName) {
-        return this._visibleButtons.has(buttonName);
+        return this.props._visibleButtons.has(buttonName);
     }
 }
 
@@ -1093,7 +1095,11 @@ function _mapStateToProps(state) {
         _sharingVideo: sharedVideoStatus === 'playing'
             || sharedVideoStatus === 'start'
             || sharedVideoStatus === 'pause',
-        _visible: Boolean(timeoutID || visible || alwaysVisible)
+        _visible: Boolean(timeoutID || visible || alwaysVisible),
+
+        // XXX: We are not currently using state here, but in the future, when
+        // interfaceConfig is part of redux we will.
+        _visibleButtons: new Set(interfaceConfig.TOOLBAR_BUTTONS)
     };
 }
 
