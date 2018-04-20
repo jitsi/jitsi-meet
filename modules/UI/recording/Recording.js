@@ -109,7 +109,10 @@ function _requestLiveStreamId() {
     return new Promise((resolve, reject) =>
         APP.store.dispatch(openDialog(StartLiveStreamDialog, {
             onCancel: reject,
-            onSubmit: resolve
+            onSubmit: (streamId, broadcastId) => resolve({
+                broadcastId,
+                streamId
+            })
         })));
 }
 
@@ -257,7 +260,6 @@ const Recording = {
      * @param recordingState gives us the current recording state
      */
     updateRecordingUI(recordingState) {
-
         const oldState = this.currentState;
 
         this.currentState = recordingState;
@@ -388,10 +390,13 @@ const Recording = {
         case JitsiRecordingStatus.OFF: {
             if (this.recordingType === 'jibri') {
                 _requestLiveStreamId()
-                .then(streamId => {
+                .then(({ broadcastId, streamId }) => {
                     this.eventEmitter.emit(
                         UIEvents.RECORDING_TOGGLED,
-                        { streamId });
+                        {
+                            broadcastId,
+                            streamId
+                        });
 
                     // The confirm button on the start recording dialog was
                     // clicked

@@ -28,6 +28,7 @@ import {
     redirectWithStoredParams,
     reloadWithStoredParams
 } from './react/features/app';
+import { updateRecordingState } from './react/features/recording';
 
 import EventEmitter from 'events';
 
@@ -1850,6 +1851,12 @@ export default {
         room.on(JitsiConferenceEvents.DOMINANT_SPEAKER_CHANGED, id => {
             APP.store.dispatch(dominantSpeakerChanged(id));
         });
+
+        room.on(JitsiConferenceEvents.LIVE_STREAM_URL_CHANGED,
+            (from, liveStreamViewURL) =>
+                APP.store.dispatch(updateRecordingState({
+                    liveStreamViewURL
+                })));
 
         if (!interfaceConfig.filmStripOnly) {
             room.on(JitsiConferenceEvents.CONNECTION_INTERRUPTED, () => {

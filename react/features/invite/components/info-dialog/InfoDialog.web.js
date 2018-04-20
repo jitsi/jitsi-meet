@@ -10,8 +10,6 @@ import {
     getLocalParticipant
 } from '../../../base/participants';
 
-import { updateDialInNumbers } from '../../actions';
-
 import DialInNumber from './DialInNumber';
 import PasswordForm from './PasswordForm';
 
@@ -24,15 +22,6 @@ const logger = require('jitsi-meet-logger').getLogger(__filename);
  * @extends Component
  */
 class InfoDialog extends Component {
-    /**
-     * Default values for {@code InfoDialog} component's properties.
-     *
-     * @static
-     */
-    static defaultProps = {
-        autoUpdateNumbers: true
-    };
-
     /**
      * {@code InfoDialog} component's property types.
      *
@@ -58,11 +47,6 @@ class InfoDialog extends Component {
         _conferenceName: PropTypes.string,
 
         /**
-         * The redux state representing the dial-in numbers feature.
-         */
-        _dialIn: PropTypes.object,
-
-        /**
          * The current url of the conference to be copied onto the clipboard.
          */
         _inviteURL: PropTypes.string,
@@ -79,16 +63,19 @@ class InfoDialog extends Component {
         _password: PropTypes.string,
 
         /**
-         * Whether or not this component should make a request for dial-in
-         * numbers. If false, this component will rely on an outside source
-         * updating and passing in numbers through the _dialIn prop.
+         * The object representing the dialIn feature.
          */
-        autoUpdateNumbers: PropTypes.bool,
+        dialIn: PropTypes.object,
 
         /**
          * Invoked to open a dialog for adding participants to the conference.
          */
         dispatch: PropTypes.func,
+
+        /**
+         * The current known URL for a live stream in progress.
+         */
+        liveStreamViewURL: PropTypes.string,
 
         /**
          * Callback invoked when the dialog should be closed.
@@ -129,7 +116,7 @@ class InfoDialog extends Component {
     constructor(props) {
         super(props);
 
-        const { defaultCountry, numbers } = props._dialIn;
+        const { defaultCountry, numbers } = props.dialIn;
 
         if (numbers) {
             this.state.phoneNumber
@@ -147,27 +134,13 @@ class InfoDialog extends Component {
         this._copyElement = null;
 
         // Bind event handlers so they are only bound once for every instance.
-        this._onClickInviteURL = this._onClickInviteURL.bind(this);
+        this._onClickURLText = this._onClickURLText.bind(this);
         this._onCopyInviteURL = this._onCopyInviteURL.bind(this);
         this._onPasswordRemove = this._onPasswordRemove.bind(this);
         this._onPasswordSubmit = this._onPasswordSubmit.bind(this);
         this._onTogglePasswordEditState
             = this._onTogglePasswordEditState.bind(this);
         this._setCopyElement = this._setCopyElement.bind(this);
-    }
-
-    /**
-     * Implements {@link Component#componentDidMount()}. Invoked immediately
-     * after this component is mounted. Requests dial-in numbers if not
-     * already known.
-     *
-     * @inheritdoc
-     * @returns {void}
-     */
-    componentDidMount() {
-        if (!this.state.phoneNumber && this.props.autoUpdateNumbers) {
-            this.props.dispatch(updateDialInNumbers());
-        }
     }
 
     /**
@@ -182,8 +155,8 @@ class InfoDialog extends Component {
             this.setState({ passwordEditEnabled: false });
         }
 
-        if (!this.state.phoneNumber && nextProps._dialIn.numbers) {
-            const { defaultCountry, numbers } = nextProps._dialIn;
+        if (!this.state.phoneNumber && nextProps.dialIn.numbers) {
+            const { defaultCountry, numbers } = nextProps.dialIn;
 
             this.setState({
                 phoneNumber:
@@ -199,7 +172,7 @@ class InfoDialog extends Component {
      * @returns {ReactElement}
      */
     render() {
-        const { onMouseOver, t } = this.props;
+        const { liveStreamViewURL, onMouseOver, t } = this.props;
 
         return (
             <div
@@ -221,9 +194,9 @@ class InfoDialog extends Component {
                         <span className = 'spacer'>&nbsp;</span>
                         <span className = 'info-value'>
                             <a
-                                className = 'info-dialog-invite-link'
+                                className = 'info-dialog-url-text'
                                 href = { this.props._inviteURL }
-                                onClick = { this._onClickInviteURL } >
+                                onClick = { this._onClickURLText } >
                                 { this._getURLToDisplay() }
                             </a>
                         </span>
@@ -231,6 +204,7 @@ class InfoDialog extends Component {
                     <div className = 'info-dialog-dial-in'>
                         { this._renderDialInDisplay() }
                     </div>
+                    { liveStreamViewURL && this._renderLiveStreamURL() }
                     <div className = 'info-dialog-password'>
                         <PasswordForm
                             editEnabled = { this.state.passwordEditEnabled }
@@ -321,16 +295,24 @@ class InfoDialog extends Component {
      * @returns {string}
      */
     _getTextToCopy() {
-        const { t } = this.props;
+        const { liveStreamViewURL, t } = this.props;
 
         let invite = t('info.inviteURL', {
             url: this.props._inviteURL
         });
 
+        if (liveStreamViewURL) {
+            const liveStream = t('info.inviteLiveStream', {
+                url: liveStreamViewURL
+            });
+
+            invite = `${invite}\n${liveStream}`;
+        }
+
         if (this._shouldDisplayDialIn()) {
             const dial = t('info.invitePhone', {
                 number: this.state.phoneNumber,
-                conferenceID: this.props._dialIn.conferenceID
+                conferenceID: this.props.dialIn.conferenceID
             });
             const moreNumbers = t('info.invitePhoneAlternatives', {
                 url: this._getDialInfoPageURL()
@@ -353,16 +335,16 @@ class InfoDialog extends Component {
     }
 
     /**
-     * Callback invoked when the displayed invite URL link is clicked to prevent
-     * actual navigation from happening. The invite URL link has an href to
-     * display "Copy Link Address" in the context menu but otherwise it should
-     * not behave like a link.
+     * Callback invoked when a displayed URL link is clicked to prevent actual
+     * navigation from happening. The URL links have an href to display "Copy
+     * Link Address" in the context menu but otherwise it should not behave like
+     * links.
      *
      * @param {Object} event - The click event from clicking on the link.
      * @private
      * @returns {void}
      */
-    _onClickInviteURL(event) {
+    _onClickURLText(event) {
         event.preventDefault();
     }
 
@@ -439,7 +421,7 @@ class InfoDialog extends Component {
         return (
             <div>
                 <DialInNumber
-                    conferenceID = { this.props._dialIn.conferenceID }
+                    conferenceID = { this.props.dialIn.conferenceID }
                     phoneNumber = { this.state.phoneNumber } />
                 <a
                     className = 'more-numbers'
@@ -491,13 +473,41 @@ class InfoDialog extends Component {
     }
 
     /**
+     * Returns a ReactElement for display a link to the current url of a
+     * live stream in progress.
+     *
+     * @private
+     * @returns {null|ReactElement}
+     */
+    _renderLiveStreamURL() {
+        const { liveStreamViewURL, t } = this.props;
+
+        return (
+            <div className = 'info-dialog-live-stream-url'>
+                <span className = 'info-label'>
+                    { t('info.liveStreamURL') }
+                </span>
+                <span className = 'spacer'>&nbsp;</span>
+                <span className = 'info-value'>
+                    <a
+                        className = 'info-dialog-url-text'
+                        href = { liveStreamViewURL }
+                        onClick = { this._onClickURLText } >
+                        { liveStreamViewURL }
+                    </a>
+                </span>
+            </div>
+        );
+    }
+
+    /**
      * Returns whether or not dial-in related UI should be displayed.
      *
      * @private
      * @returns {boolean}
      */
     _shouldDisplayDialIn() {
-        const { conferenceID, numbers, numbersEnabled } = this.props._dialIn;
+        const { conferenceID, numbers, numbersEnabled } = this.props.dialIn;
         const { phoneNumber } = this.state;
 
         return Boolean(
@@ -531,7 +541,6 @@ class InfoDialog extends Component {
  *     _canEditPassword: boolean,
  *     _conference: Object,
  *     _conferenceName: string,
- *     _dialIn: Object,
  *     _inviteURL: string,
  *     _locked: string,
  *     _password: string
@@ -558,7 +567,6 @@ function _mapStateToProps(state) {
         _canEditPassword: canEditPassword,
         _conference: conference,
         _conferenceName: room,
-        _dialIn: state['features/invite'],
         _inviteURL: getInviteURL(state),
         _locked: locked,
         _password: password

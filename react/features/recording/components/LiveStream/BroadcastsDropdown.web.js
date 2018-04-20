@@ -44,7 +44,7 @@ class BroadcastsDropdown extends PureComponent {
          * The boundStreamID of the broadcast that should display as selected in
          * the dropdown.
          */
-        selectedBroadcastID: PropTypes.string,
+        selectedBoundStreamID: PropTypes.string,
 
         /**
          * Invoked to obtain translated strings.
@@ -84,7 +84,7 @@ class BroadcastsDropdown extends PureComponent {
      * @returns {ReactElement}
      */
     render() {
-        const { broadcasts, selectedBroadcastID, t } = this.props;
+        const { broadcasts, selectedBoundStreamID, t } = this.props;
 
         const dropdownItems = broadcasts.map(broadcast =>
             // eslint-disable-next-line react/jsx-wrap-multilines
@@ -96,7 +96,7 @@ class BroadcastsDropdown extends PureComponent {
             </DropdownItem>
         );
         const selected = this.props.broadcasts.find(
-            broadcast => broadcast.boundStreamID === selectedBroadcastID);
+            broadcast => broadcast.boundStreamID === selectedBoundStreamID);
         const triggerText = (selected && selected.title)
             || t('liveStreaming.choose');
 

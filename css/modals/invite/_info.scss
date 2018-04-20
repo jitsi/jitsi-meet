@@ -59,7 +59,8 @@
         }
     }
 
-    .info-dialog-conference-url {
+    .info-dialog-conference-url,
+    .info-dialog-live-stream-url {
         width: max-content;
         width: -moz-max-content;
         width: -webkit-max-content;
@@ -81,8 +82,8 @@
         font-size: 16px;
     }
 
-    .info-dialog-invite-link,
-    .info-dialog-invite-link:hover {
+    .info-dialog-url-text,
+    .info-dialog-url-text:hover {
         color: inherit;
         cursor: inherit;
     }
