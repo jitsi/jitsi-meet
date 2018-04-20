@@ -9,7 +9,6 @@ export const AVATAR_SIZE = 50;
  * The base style of {@link Filmstrip} shared between narrow and wide versions.
  */
 const filmstrip = {
-    flexDirection: 'column',
     flexGrow: 0
 };
 
@@ -43,7 +42,8 @@ export default {
      */
     filmstripNarrow: {
         ...filmstrip,
-        alignItems: 'flex-end',
+        flexDirection: 'row',
+        justifyContent: 'flex-end',
         height: 90
     },
 
@@ -54,9 +54,21 @@ export default {
     filmstripWide: {
         ...filmstrip,
         bottom: 0,
+        flexDirection: 'column',
         left: 0,
         position: 'absolute',
         top: 0
+    },
+
+    /**
+     * Container of the {@link LocalThumbnail}.
+     */
+    localThumbnail: {
+        alignContent: 'stretch',
+        alignSelf: 'stretch',
+        aspectRatio: 1,
+        flexShrink: 0,
+        flexDirection: 'row'
     },
 
     /**
@@ -68,6 +80,13 @@ export default {
         color: ColorPalette.white,
         position: 'absolute',
         right: 4
+    },
+
+    /**
+     * The style of the scrollview containing the remote thumbnails.
+     */
+    scrollView: {
+        flexGrow: 0
     },
 
     /**
