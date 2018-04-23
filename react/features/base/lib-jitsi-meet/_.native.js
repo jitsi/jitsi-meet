@@ -21,5 +21,6 @@ import './native';
 // used it from source. As an intermediate step, start using the library
 // lib-jitsi-meet as a binary on mobile at the time of this writing. In the
 // future, implement not packaging it in the application bundle.
+window.DOMParser = require('xmldom').DOMParser;
 import JitsiMeetJS from 'lib-jitsi-meet/lib-jitsi-meet.min';
 export { JitsiMeetJS as default };
