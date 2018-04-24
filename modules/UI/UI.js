@@ -340,32 +340,28 @@ UI.start = function() {
     VideoLayout.resizeVideoArea(true, true);
 
     sharedVideoManager = new SharedVideoManager(eventEmitter);
-    // eslint-disable-next-line no-negated-condition
-    if (!interfaceConfig.filmStripOnly) {
+
+    if (interfaceConfig.filmStripOnly) {
+        $('body').addClass('filmstrip-only');
+        Filmstrip.setFilmstripOnly();
+        APP.store.dispatch(setNotificationsEnabled(false));
+    } else {
         // Initialise the recording module.
-        if (config.enableRecording) {
-            Recording.init(eventEmitter, config.recordingType);
-        }
+        config.enableRecording
+            && Recording.init(eventEmitter, config.recordingType);
 
         // Initialize side panels
         SidePanels.init(eventEmitter);
-    } else {
-        $('body').addClass('filmstrip-only');
-        UI.showToolbar();
-        Filmstrip.setFilmstripOnly();
-        APP.store.dispatch(setNotificationsEnabled(false));
-    }
 
-    if (interfaceConfig.VERTICAL_FILMSTRIP) {
-        $('body').addClass('vertical-filmstrip');
-    }
-
-    // TODO: remove this class once the old toolbar has been removed. This class
-    // is set so that any CSS changes needed to adjust elements outside of the
-    // new toolbar can be scoped to just the app with the new toolbar enabled.
-    if (!interfaceConfig.filmStripOnly) {
+        // TODO: remove this class once the old toolbar has been removed. This
+        // class is set so that any CSS changes needed to adjust elements
+        // outside of the new toolbar can be scoped to just the app with the new
+        // toolbar enabled.
         $('body').addClass('use-new-toolbox');
     }
+
+    interfaceConfig.VERTICAL_FILMSTRIP
+        && $('body').addClass('vertical-filmstrip');
 
     document.title = interfaceConfig.APP_NAME;
 };
