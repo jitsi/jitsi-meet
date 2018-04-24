@@ -1,7 +1,7 @@
 // @flow
 
 import React, { Component } from 'react';
-import { PanResponder, View } from 'react-native';
+import { PanResponder, PixelRatio, View } from 'react-native';
 import { connect } from 'react-redux';
 
 import { storeVideoTransform } from '../../actions';
@@ -37,10 +37,10 @@ const MAX_OFFSET = 100;
 const MAX_SCALE = 5;
 
 /**
- * The length of a minimum movement after which we consider a gesture a move
- * instead of a tap/long tap.
+ * The threshold to allow the fingers move before we consider a gesture a
+ * move instead of a touch.
  */
-const MOVE_THRESHOLD_DISMISSES_TOUCH = 2;
+const MOVE_THRESHOLD_DISMISSES_TOUCH = 5;
 
 /**
  * A tap timeout after which we consider a gesture a long tap and will not
@@ -132,6 +132,11 @@ class VideoTransform extends Component<Props, State> {
     };
 
     /**
+     * The actual move threshold that is calculated for this device/screen.
+     */
+    moveThreshold: number;
+
+    /**
      * Time of the last tap.
      */
     lastTap: number;
@@ -149,6 +154,7 @@ class VideoTransform extends Component<Props, State> {
             transform: DEFAULT_TRANSFORM
         };
 
+        this._didMove = this._didMove.bind(this);
         this._getTransformStyle = this._getTransformStyle.bind(this);
         this._onGesture = this._onGesture.bind(this);
         this._onLayout = this._onLayout.bind(this);
@@ -167,6 +173,12 @@ class VideoTransform extends Component<Props, State> {
      * @inheritdoc
      */
     componentWillMount() {
+        // The move threshold should be adaptive to the pixel ratio of the
+        // screen to avoid making it too sensitive or difficult to handle on
+        // different pixel ratio screens.
+        this.moveThreshold
+            = PixelRatio.get() * MOVE_THRESHOLD_DISMISSES_TOUCH;
+
         this.gestureHandlers = PanResponder.create({
             onPanResponderGrant: this._onPanResponderGrant,
             onPanResponderMove: this._onPanResponderMove,
@@ -276,8 +288,8 @@ class VideoTransform extends Component<Props, State> {
      * @returns {boolean}
      */
     _didMove({ dx, dy }) {
-        return Math.abs(dx) > MOVE_THRESHOLD_DISMISSES_TOUCH
-                || Math.abs(dy) > MOVE_THRESHOLD_DISMISSES_TOUCH;
+        return Math.abs(dx) > this.moveThreshold
+                || Math.abs(dy) > this.moveThreshold;
     }
 
     _getTouchDistance: Object => number;
