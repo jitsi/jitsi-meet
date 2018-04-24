@@ -86,16 +86,16 @@ function _initLogging(loggingConfig, isTestingEnabled) {
         APP.logCollector = new Logger.LogCollector(new JitsiMeetLogStorage());
         Logger.addGlobalTransport(APP.logCollector);
         JitsiMeetJS.addGlobalLogTransport(APP.logCollector);
-    }
 
-    if (isTestingEnabled) {
-        APP.debugLogs = new JitsiMeetInMemoryLogStorage();
-        const debugLogCollector = new Logger.LogCollector(
-            APP.debugLogs, { storeInterval: 1000 });
+        if (isTestingEnabled) {
+            APP.debugLogs = new JitsiMeetInMemoryLogStorage();
+            const debugLogCollector = new Logger.LogCollector(
+                APP.debugLogs, { storeInterval: 1000 });
 
-        Logger.addGlobalTransport(debugLogCollector);
-        JitsiMeetJS.addGlobalLogTransport(debugLogCollector);
-        debugLogCollector.start();
+            Logger.addGlobalTransport(debugLogCollector);
+            JitsiMeetJS.addGlobalLogTransport(debugLogCollector);
+            debugLogCollector.start();
+        }
     }
 }
 

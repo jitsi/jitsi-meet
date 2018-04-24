@@ -15,7 +15,7 @@ export default class JitsiMeetInMemoryLogStorage {
     }
 
     /**
-     * @return {boolean} <tt>true</tt> when this storage is ready or
+     * @returns {boolean} <tt>true</tt> when this storage is ready or
      * <tt>false</tt> otherwise.
      */
     isReady() {
@@ -25,7 +25,7 @@ export default class JitsiMeetInMemoryLogStorage {
     /**
      * Called by the <tt>LogCollector</tt> to store a series of log lines into
      * batch.
-     * @param {string|object[]}logEntries an array containing strings
+     * @param {string|object[]} logEntries an array containing strings
      * representing log lines or aggregated lines objects.
      */
     storeLogs(logEntries) {
