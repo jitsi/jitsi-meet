@@ -10,6 +10,8 @@ import JitsiMeetInMemoryLogStorage
     from '../../../../modules/util/JitsiMeetInMemoryLogStorage';
 import JitsiMeetLogStorage from '../../../../modules/util/JitsiMeetLogStorage';
 
+import { isTestModeEnabled } from '../testing';
+
 import { SET_LOGGING_CONFIG } from './actionTypes';
 
 declare var APP: Object;
@@ -69,11 +71,11 @@ function _appWillMount({ getState }, next, action) {
  *
  * @param {Object} loggingConfig - The configuration with which logging is to be
  * initialized.
- * @param {boolean} isDebugEnabled - Is debug logging enabled.
+ * @param {boolean} isTestingEnabled - Is debug logging enabled.
  * @private
  * @returns {void}
  */
-function _initLogging(loggingConfig, isDebugEnabled) {
+function _initLogging(loggingConfig, isTestingEnabled) {
     // Create the LogCollector and register it as the global log transport. It
     // is done early to capture as much logs as possible. Captured logs will be
     // cached, before the JitsiMeetLogStorage gets ready (statistics module is
@@ -86,7 +88,7 @@ function _initLogging(loggingConfig, isDebugEnabled) {
         JitsiMeetJS.addGlobalLogTransport(APP.logCollector);
     }
 
-    if (isDebugEnabled) {
+    if (isTestingEnabled) {
         APP.debugLogs = new JitsiMeetInMemoryLogStorage();
         const debugLogCollector = new Logger.LogCollector(
             APP.debugLogs, { storeInterval: 1000 });
@@ -134,7 +136,7 @@ function _libWillInit({ getState }, next, action) {
 function _setLoggingConfig({ getState }, next, action) {
     const result = next(action);
     const newValue = getState()['features/base/logging'].config;
-    const isDebugEnabled = getState()['features/base/config'].debug;
+    const isTestingEnabled = isTestModeEnabled(getState());
 
     // TODO Generally, we'll want to _setLogLevels and _initLogging only if the
     // logging config values actually change.
@@ -145,7 +147,7 @@ function _setLoggingConfig({ getState }, next, action) {
     _setLogLevels(Logger, newValue);
     _setLogLevels(JitsiMeetJS, newValue);
 
-    _initLogging(newValue, isDebugEnabled);
+    _initLogging(newValue, isTestingEnabled);
 
     return result;
 }
