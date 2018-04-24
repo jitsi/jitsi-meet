@@ -234,7 +234,9 @@ class Conference extends Component<Props> {
                 </View>
                 <TestConnectionInfo />
 
-                <ConferenceNotification />
+                {
+                    this._renderConferenceNotification()
+                }
 
                 {/*
                   * The dialogs are in the topmost stacking layers.
@@ -288,6 +290,21 @@ class Conference extends Component<Props> {
      */
     _onHardwareBackPress() {
         return this._backHandler && this.props._onHardwareBackPress();
+    }
+
+    /**
+     * Renders the conference notification badge if the feature is enabled.
+     *
+     * Note: If the calendar feature is disabled on a platform, then we don't
+     * have its components exported so an undefined check is necessary.
+     *
+     * @private
+     * @returns {React$Node}
+     */
+    _renderConferenceNotification() {
+        return ConferenceNotification
+            ? <ConferenceNotification />
+            : undefined;
     }
 
     /**
