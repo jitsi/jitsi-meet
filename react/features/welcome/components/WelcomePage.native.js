@@ -26,12 +26,12 @@ import { SettingsView } from '../../settings';
 import { AbstractWelcomePage, _mapStateToProps } from './AbstractWelcomePage';
 import { setSideBarVisible } from '../actions';
 import LocalVideoTrackUnderlay from './LocalVideoTrackUnderlay';
-import PagedList from './PagedList';
 import styles, {
     PLACEHOLDER_TEXT_COLOR,
     SWITCH_THUMB_COLOR,
     SWITCH_UNDER_COLOR
 } from './styles';
+import WelcomePageLists from './WelcomePageLists';
 import WelcomePageSideBar from './WelcomePageSideBar';
 
 /**
@@ -139,7 +139,7 @@ class WelcomePage extends AbstractWelcomePage {
                             }
                         </View>
                     </SafeAreaView>
-                    <PagedList disabled = { this.state._fieldFocused } />
+                    <WelcomePageLists disabled = { this.state._fieldFocused } />
                     <SettingsView />
                 </View>
                 <WelcomePageSideBar />

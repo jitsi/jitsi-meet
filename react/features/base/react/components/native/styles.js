@@ -71,6 +71,77 @@ const HEADER_STYLES = {
     }
 };
 
+/**
+ * Style classes of the PagedList-based components.
+ */
+const PAGED_LIST_STYLES = {
+
+    /**
+     * Style of the page indicator (Android).
+     */
+    pageIndicator: {
+        alignItems: 'center',
+        flex: 1,
+        flexDirection: 'column',
+        justifyContent: 'center'
+    },
+
+    /**
+     * Additional style for the active indicator icon (Android).
+     */
+    pageIndicatorActive: {
+        color: ColorPalette.white
+    },
+
+    /**
+     * Container for the page indicators (Android).
+     */
+    pageIndicatorContainer: {
+        alignItems: 'stretch',
+        backgroundColor: ColorPalette.blue,
+        flexDirection: 'row',
+        height: 56,
+        justifyContent: 'center'
+    },
+
+    /**
+     * Icon of the page indicator (Android).
+     */
+    pageIndicatorIcon: {
+        color: ColorPalette.blueHighlight,
+        fontSize: 24
+    },
+
+    /**
+     * Label of the page indicator (Android).
+     */
+    pageIndicatorText: {
+        color: ColorPalette.blueHighlight
+    },
+
+    /**
+     * Top level style of the paged list.
+     */
+    pagedList: {
+        flex: 1
+    },
+
+    /**
+     * The paged list container View.
+     */
+    pagedListContainer: {
+        flex: 1,
+        flexDirection: 'column'
+    },
+
+    /**
+     * Disabled style for the container.
+     */
+    pagedListContainerDisabled: {
+        opacity: 0.2
+    }
+};
+
 const SECTION_LIST_STYLES = {
     /**
      * The style of the actual avatar.
@@ -248,6 +319,7 @@ const SIDEBAR_STYLES = {
  */
 export default createStyleSheet({
     ...HEADER_STYLES,
+    ...PAGED_LIST_STYLES,
     ...SECTION_LIST_STYLES,
     ...SIDEBAR_STYLES
 });

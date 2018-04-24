@@ -3,17 +3,15 @@
 import React, { Component } from 'react';
 import { View } from 'react-native';
 
-import { MeetingList } from '../../calendar-sync';
-import { RecentList } from '../../recent-list';
-
 import styles from './styles';
 
-/**
- * The page to be displayed on render.
- */
-export const DEFAULT_PAGE = 0;
-
 type Props = {
+
+    /**
+     * The index (starting from 0) of the page that should be rendered
+     * active as default.
+     */
+    defaultPage: number,
 
     /**
      * Indicates if the list is disabled or not.
@@ -26,9 +24,15 @@ type Props = {
     dispatch: Function,
 
     /**
-     * The i18n translate function
+     * The pages of the PagedList component to be rendered.
+     * Note: page.component may be undefined and then they don't need to be
+     * rendered.
      */
-    t: Function
+    pages: Array<{
+        component: Object,
+        icon: string | number,
+        title: string
+    }>
 };
 
 type State = {
@@ -40,14 +44,9 @@ type State = {
 };
 
 /**
- * Abstract class for the platform specific paged lists.
+ * Abstract class containing the platform independent logic of the paged lists.
  */
 export default class AbstractPagedList extends Component<Props, State> {
-    /**
-     * The list of pages displayed in the component, referenced by page index.
-     */
-    _pages: Array<Object>;
-
     /**
      * Constructor of the component.
      *
@@ -56,16 +55,13 @@ export default class AbstractPagedList extends Component<Props, State> {
     constructor(props: Props) {
         super(props);
 
-        this._pages = [];
-        for (const component of [ RecentList, MeetingList ]) {
-            // XXX Certain pages may be contributed by optional features. For
-            // example, MeetingList is contributed by the calendar feature and
-            // apps i.e. SDK consumers may not enable the calendar feature.
-            component && this._pages.push(component);
-        }
+        // props.defaultPage may point to a non existing page if some of the
+        // pages are disabled.
+        const maxPageIndex
+            = props.pages.filter(page => page.component).length - 1;
 
         this.state = {
-            pageIndex: DEFAULT_PAGE
+            pageIndex: Math.max(0, Math.min(maxPageIndex, props.defaultPage))
         };
     }
 
@@ -75,7 +71,8 @@ export default class AbstractPagedList extends Component<Props, State> {
      * @inheritdoc
      */
     render() {
-        const { disabled } = this.props;
+        const { disabled, pages } = this.props;
+        const enabledPages = pages.filter(page => page.component);
 
         return (
             <View
@@ -84,14 +81,15 @@ export default class AbstractPagedList extends Component<Props, State> {
                     disabled ? styles.pagedListContainerDisabled : null
                 ] }>
                 {
-                    this._pages.length > 1
+                    enabledPages.length > 1
                         ? this._renderPagedList(disabled)
-                        : React.createElement(
-                            /* type */ this._pages[0],
-                            /* props */ {
-                                disabled,
-                                style: styles.pagedList
-                            })
+                        : enabledPages.length === 1
+                            ? React.createElement(
+                                /* type */ enabledPages[0].component,
+                                /* props */ {
+                                    disabled,
+                                    style: styles.pagedList
+                                }) : null
                 }
             </View>
         );
@@ -115,10 +113,10 @@ export default class AbstractPagedList extends Component<Props, State> {
 
         // The page's Component may have a refresh(dispatch) function which we
         // invoke when the page is selected.
-        const selectedPageComponent = this._pages[pageIndex];
+        const selectedPage = this.props.pages[pageIndex];
 
-        if (selectedPageComponent) {
-            const { refresh } = selectedPageComponent;
+        if (selectedPage && selectedPage.component) {
+            const { refresh } = selectedPage.component;
 
             typeof refresh === 'function' && refresh(this.props.dispatch);
         }
