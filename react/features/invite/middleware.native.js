@@ -5,8 +5,6 @@ import { NativeEventEmitter, NativeModules } from 'react-native';
 
 import { MiddlewareRegistry } from '../base/redux';
 import { APP_WILL_MOUNT, APP_WILL_UNMOUNT } from '../app';
-import { getInviteURL } from '../base/connection';
-import { inviteVideoRooms } from '../videosipgw';
 
 import {
     BEGIN_ADD_PEOPLE,
@@ -15,9 +13,9 @@ import {
 import {
     getInviteResultsForQuery,
     isAddPeopleEnabled,
-    isDialOutEnabled,
-    sendInvitesForItems
+    isDialOutEnabled
 } from './functions';
+import { sendInvitesForItems } from './actions';
 import './middleware.any';
 
 /**
@@ -137,27 +135,17 @@ function _beginAddPeople({ getState }, next, action) {
  */
 function _onInvite(
         { addPeopleControllerScope, externalAPIScope, invitees }) {
-    const { getState } = this; // eslint-disable-line no-invalid-this
-    const state = getState();
+    const { dispatch, getState } = this; // eslint-disable-line no-invalid-this
 
     // If there are multiple JitsiMeetView instances alive, they will all get
     // the event, since there is a single bridge, so make sure we don't act if
     // the event is not for us.
-    if (state['features/app'].app.props.externalAPIScope !== externalAPIScope) {
+    if (getState()['features/app'].app.props.externalAPIScope
+            !== externalAPIScope) {
         return;
     }
 
-    const { conference } = state['features/base/conference'];
-    const { inviteServiceUrl } = state['features/base/config'];
-    const options = {
-        conference,
-        inviteServiceUrl,
-        inviteUrl: getInviteURL(state),
-        inviteVideoRooms,
-        jwt: state['features/base/jwt'].jwt
-    };
-
-    sendInvitesForItems(invitees, options)
+    dispatch(sendInvitesForItems(invitees))
         .then(failedInvitees =>
             Invite.inviteSettled(
                 externalAPIScope,

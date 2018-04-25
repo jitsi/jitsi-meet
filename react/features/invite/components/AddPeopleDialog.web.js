@@ -7,16 +7,15 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
 import { createInviteDialogEvent, sendAnalytics } from '../../analytics';
-import { getInviteURL } from '../../base/connection';
 import { Dialog, hideDialog } from '../../base/dialog';
 import { translate } from '../../base/i18n';
 import { MultiSelectAutocomplete } from '../../base/react';
-import { inviteVideoRooms } from '../../videosipgw';
 
 import {
-    sendInvitesForItems,
-    getInviteResultsForQuery
+    getInviteResultsForQuery,
+    getInviteTypeCounts
 } from '../functions';
+import { sendInvitesForItems } from '../actions';
 
 const logger = require('jitsi-meet-logger').getLogger(__filename);
 
@@ -44,16 +43,6 @@ class AddPeopleDialog extends Component<*, *> {
         _dialOutAuthUrl: PropTypes.string,
 
         /**
-         * The URL pointing to the service allowing for people invite.
-         */
-        _inviteServiceUrl: PropTypes.string,
-
-        /**
-         * The url of the conference to invite people to.
-         */
-        _inviteUrl: PropTypes.string,
-
-        /**
          * The JWT token.
          */
         _jwt: PropTypes.string,
@@ -79,14 +68,9 @@ class AddPeopleDialog extends Component<*, *> {
         dialOutEnabled: PropTypes.bool,
 
         /**
-         * The function closing the dialog.
+         * The redux dispatch method.
          */
-        hideDialog: PropTypes.func,
-
-        /**
-         * Used to invite video rooms.
-         */
-        inviteVideoRooms: PropTypes.func,
+        dispatch: PropTypes.func,
 
         /**
          * Invoked to obtain translated strings.
@@ -236,32 +220,6 @@ class AddPeopleDialog extends Component<*, *> {
         );
     }
 
-    /**
-     * Helper for determining how many of each type of user is being invited.
-     * Used for logging and sending analytics related to invites.
-     *
-     * @param {Array} inviteItems - An array with the invite items, as created
-     * in {@link _parseQueryResults}.
-     * @private
-     * @returns {Object} An object with keys as user types and values as the
-     * number of invites for that type.
-     */
-    _getInviteTypeCounts(inviteItems = []) {
-        const inviteTypeCounts = {};
-
-        inviteItems.forEach(i => {
-            const type = i.item.type;
-
-            if (!inviteTypeCounts[type]) {
-                inviteTypeCounts[type] = 0;
-            }
-
-            inviteTypeCounts[type]++;
-        });
-
-        return inviteTypeCounts;
-    }
-
     _isAddDisabled: () => boolean;
 
     /**
@@ -323,8 +281,9 @@ class AddPeopleDialog extends Component<*, *> {
      * @returns {void}
      */
     _onSubmit() {
-        const inviteTypeCounts
-            = this._getInviteTypeCounts(this.state.inviteItems);
+        const { inviteItems } = this.state;
+        const items = inviteItems.map(item => item.item);
+        const inviteTypeCounts = getInviteTypeCounts(items);
 
         sendAnalytics(createInviteDialogEvent(
             'clicked', 'inviteButton', {
@@ -340,31 +299,15 @@ class AddPeopleDialog extends Component<*, *> {
             addToCallInProgress: true
         });
 
-        const {
-            _conference,
-            _inviteServiceUrl,
-            _inviteUrl,
-            _jwt
-        } = this.props;
+        const { dispatch } = this.props;
 
-        const inviteItems = this.state.inviteItems;
-        const items = inviteItems.map(item => item.item);
-
-        const options = {
-            conference: _conference,
-            inviteServiceUrl: _inviteServiceUrl,
-            inviteUrl: _inviteUrl,
-            inviteVideoRooms: this.props.inviteVideoRooms,
-            jwt: _jwt
-        };
-
-        sendInvitesForItems(items, options)
+        dispatch(sendInvitesForItems(items))
             .then(invitesLeftToSend => {
                 // If any invites are left that means something failed to send
                 // so treat it as an error.
                 if (invitesLeftToSend.length) {
                     const erroredInviteTypeCounts
-                        = this._getInviteTypeCounts(invitesLeftToSend);
+                        = getInviteTypeCounts(invitesLeftToSend);
 
                     logger.error(`${invitesLeftToSend.length} invites failed`,
                         erroredInviteTypeCounts);
@@ -400,7 +343,7 @@ class AddPeopleDialog extends Component<*, *> {
                     addToCallInProgress: false
                 });
 
-                this.props.hideDialog();
+                dispatch(hideDialog());
             });
     }
 
@@ -580,40 +523,25 @@ class AddPeopleDialog extends Component<*, *> {
  * @param {Object} state - The Redux state.
  * @private
  * @returns {{
- *     _conference: Object,
  *     _dialOutAuthUrl: string,
- *     _inviteServiceUrl: string,
- *     _inviteUrl: string,
  *     _jwt: string,
  *     _peopleSearchQueryTypes: Array<string>,
  *     _peopleSearchUrl: string
  * }}
  */
 function _mapStateToProps(state) {
-    const { conference } = state['features/base/conference'];
     const {
         dialOutAuthUrl,
-        inviteServiceUrl,
         peopleSearchQueryTypes,
         peopleSearchUrl
     } = state['features/base/config'];
 
     return {
-        _conference: conference,
         _dialOutAuthUrl: dialOutAuthUrl,
-        _inviteServiceUrl: inviteServiceUrl,
-        _inviteUrl: getInviteURL(state),
         _jwt: state['features/base/jwt'].jwt,
         _peopleSearchQueryTypes: peopleSearchQueryTypes,
         _peopleSearchUrl: peopleSearchUrl
     };
 }
 
-export default translate(
-    connect(
-            _mapStateToProps,
-            /* mapDispatchToProps */ {
-                hideDialog,
-                inviteVideoRooms
-            })(
-        AddPeopleDialog));
+export default translate(connect(_mapStateToProps)(AddPeopleDialog));
