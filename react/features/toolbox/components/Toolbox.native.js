@@ -37,16 +37,6 @@ import ToolbarButton from './ToolbarButton';
 import { AudioMuteButton, HangupButton, VideoMuteButton } from './buttons';
 
 /**
- * The indicator which determines (at bundle time) whether there should be a
- * {@code ToolbarButton} in {@code Toolbox} to expose the functionality of the
- * feature share-room in the user interface of the app.
- *
- * @private
- * @type {boolean}
- */
-const _SHARE_ROOM_TOOLBAR_BUTTON = false;
-
-/**
  * The type of {@link Toolbox}'s React {@code Component} props.
  */
 type Props = {
@@ -273,7 +263,7 @@ class Toolbox extends Component<Props> {
                     style = { style }
                     underlayColor = { underlayColor } />
                 {
-                    _SHARE_ROOM_TOOLBAR_BUTTON && !showInviteButton
+                    !showInviteButton
                         && <ToolbarButton
                             iconName = 'link'
                             iconStyle = { iconStyle }
