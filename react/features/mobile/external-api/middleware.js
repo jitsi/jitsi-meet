@@ -13,6 +13,7 @@ import {
     isRoomValid
 } from '../../base/conference';
 import { LOAD_CONFIG_ERROR } from '../../base/config';
+import { CONNECTION_FAILED } from '../../base/connection';
 import { MiddlewareRegistry } from '../../base/redux';
 import { toURLString } from '../../base/util';
 import { ENTER_PICTURE_IN_PICTURE } from '../picture-in-picture';
@@ -54,6 +55,10 @@ MiddlewareRegistry.register(store => next => action => {
     case CONFERENCE_WILL_JOIN:
     case CONFERENCE_WILL_LEAVE:
         _sendConferenceEvent(store, action);
+        break;
+
+    case CONNECTION_FAILED:
+        _sendConferenceFailedOnConnectionError(store, action);
         break;
 
     case ENTER_PICTURE_IN_PICTURE:
@@ -173,6 +178,28 @@ function _sendConferenceEvent(
 
     _swallowEvent(store, action, data)
         || _sendEvent(store, _getSymbolDescription(type), data);
+}
+
+/**
+ * Sends {@link CONFERENCE_FAILED} event when the {@link CONNECTION_FAILED}
+ * occurs. Otherwise the external API will not emit such event, because at this
+ * point conference has not been created yet and the base/conference feature
+ * will not emit it.
+ *
+ * @param {Store} store - The redux store.
+ * @param {Action} action - The redux action.
+ * @returns {void}
+ */
+function _sendConferenceFailedOnConnectionError(store, action) {
+    const { locationURL } = store.getState()['features/base/connection'];
+
+    locationURL && _sendEvent(
+        store,
+        _getSymbolDescription(CONFERENCE_FAILED),
+        /* data */ {
+            url: toURLString(locationURL),
+            error: action.error.name
+        });
 }
 
 /**
