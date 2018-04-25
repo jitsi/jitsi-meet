@@ -99,6 +99,8 @@ function _visitNode(node, callback) {
 (global => {
     const { DOMParser } = require('xmldom');
 
+    global.DOMParser = DOMParser;
+
     // addEventListener
     //
     // Required by:
