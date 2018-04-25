@@ -8,7 +8,9 @@ import {
     CONFERENCE_LEFT,
     CONFERENCE_WILL_JOIN,
     CONFERENCE_WILL_LEAVE,
-    JITSI_CONFERENCE_URL_KEY
+    JITSI_CONFERENCE_URL_KEY,
+    SET_ROOM,
+    isRoomValid
 } from '../../base/conference';
 import { LOAD_CONFIG_ERROR } from '../../base/config';
 import { MiddlewareRegistry } from '../../base/redux';
@@ -67,6 +69,10 @@ MiddlewareRegistry.register(store => next => action => {
         });
         break;
     }
+
+    case SET_ROOM:
+        _maybeTriggerEarlyConferenceWillJoin(store, action);
+        break;
     }
 
     return result;
@@ -113,6 +119,32 @@ function _getSymbolDescription(symbol: Symbol) {
     }
 
     return description;
+}
+
+/**
+ * If {@link SET_ROOM} action happens for a valid conference room this method
+ * will emit an early {@link CONFERENCE_WILL_JOIN} event to let the external API
+ * know that a conference is being joined. Before that happens a connection must
+ * be created and only then base/conference feature would emit
+ * {@link CONFERENCE_WILL_JOIN}. That is fine for the Jitsi Meet app, because
+ * that's the a conference instance gets created, but it's too late for
+ * the external API to learn that. The latter {@link CONFERENCE_WILL_JOIN} is
+ * swallowed in {@link _swallowEvent}.
+ *
+ * @param {Store} store - The redux store.
+ * @param {Action} action - The redux action.
+ * @returns {void}
+ */
+function _maybeTriggerEarlyConferenceWillJoin(store, action) {
+    const { locationURL } = store.getState()['features/base/connection'];
+    const { room } = action;
+
+    isRoomValid(room) && locationURL && _sendEvent(
+        store,
+        _getSymbolDescription(CONFERENCE_WILL_JOIN),
+        /* data */ {
+            url: toURLString(locationURL)
+        });
 }
 
 /**
@@ -232,6 +264,11 @@ function _swallowEvent(store, action, data) {
     switch (action.type) {
     case CONFERENCE_LEFT:
         return _swallowConferenceLeft(store, action, data);
+    case CONFERENCE_WILL_JOIN:
+        // CONFERENCE_WILL_JOIN is dispatched to the external API on SET_ROOM,
+        // before the connection is created, so we need to swallow the original
+        // one emitted by base/conference.
+        return true;
 
     default:
         return false;
