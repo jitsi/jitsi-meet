@@ -1062,13 +1062,15 @@ class Toolbox extends Component<Props, State> {
             return null;
         }
 
-        let translationKey;
+        let iconClass, translationKey;
 
         if (_recordingType === RECORDING_TYPES.JIBRI) {
+            iconClass = 'icon-public';
             translationKey = _isRecording
                 ? 'dialog.stopLiveStreaming'
                 : 'dialog.startLiveStreaming';
         } else {
+            iconClass = 'icon-camera-take-picture';
             translationKey = _isRecording
                 ? 'dialog.stopRecording'
                 : 'dialog.startRecording';
@@ -1077,7 +1079,7 @@ class Toolbox extends Component<Props, State> {
         return (
             <OverflowMenuItem
                 accessibilityLabel = 'Record'
-                icon = 'fa fa-play-circle'
+                icon = { iconClass }
                 key = 'recording'
                 onClick = { this._onToolbarToggleRecording }
                 text = { t(translationKey) } />
