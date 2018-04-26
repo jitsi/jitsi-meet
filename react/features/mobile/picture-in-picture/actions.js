@@ -21,14 +21,10 @@ export function enterPictureInPicture() {
         const state = getState();
         const { app } = state['features/app'];
 
-        // FIXME We want to be able to enter Picture-in-Picture as soon as we
-        // are on the Conference page i.e. even before `joining` was set in the
-        // reducer.
-        const { conference, joining } = state['features/base/conference'];
-
-        if (app
-                && app.props.pictureInPictureEnabled
-                && (conference || joining)) {
+        // XXX At the time of this writing this action can only be dispatched by
+        // the button which is on the conference view, which means that it's
+        // fine to enter PiP mode.
+        if (app && app.props.pictureInPictureEnabled) {
             const { PictureInPicture } = NativeModules;
             const p
                 = Platform.OS === 'android'
