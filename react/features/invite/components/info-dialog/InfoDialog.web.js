@@ -336,9 +336,9 @@ class InfoDialog extends Component {
 
     /**
      * Callback invoked when a displayed URL link is clicked to prevent actual
-     * navigation from happening. The URL links have an href to display "Copy
-     * Link Address" in the context menu but otherwise it should not behave like
-     * links.
+     * navigation from happening. The URL links have an href to display the
+     * action "Copy Link Address" in the context menu but otherwise it should
+     * not behave like links.
      *
      * @param {Object} event - The click event from clicking on the link.
      * @private
