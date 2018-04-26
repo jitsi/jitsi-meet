@@ -23,6 +23,7 @@
 #import <React/RCTLinkingManager.h>
 #import <React/RCTRootView.h>
 
+#import "InviteSearch+Private.h"
 #import "JitsiMeetView+Private.h"
 #import "RCTBridgeWrapper.h"
 
@@ -239,6 +240,17 @@ static NSMapTable<NSString *, JitsiMeetView *> *views;
 }
 
 #pragma mark API
+
+/**
+ * Invites the given participants to the conference.
+ *
+ * @param items An array of participants, described as a dictionary, which will
+ *        be used as the JSON payload for the invitation service.
+ */
+- (void)inviteParticipants:(NSArray<NSDictionary *> * _Nonnull)items {
+    InviteSearch *module = [bridgeWrapper.bridge moduleForName:@"InviteSearch"];
+    [module invitePeople:items withScope:externalAPIScope];
+}
 
 /**
  * Loads a specific `NSURL` which may identify a conference to join. If the

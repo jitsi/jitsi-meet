@@ -21,26 +21,3 @@ export const _SET_INVITE_SEARCH_SUBSCRIPTIONS
  * }
  */
 export const LAUNCH_NATIVE_INVITE = Symbol('LAUNCH_NATIVE_INVITE');
-
-/**
- * The type of the action which signals that native invites were sent
- * successfully.
- *
- * {
- *     type: SEND_INVITE_SUCCESS,
- *     inviteScope: string
- * }
- */
-export const SEND_INVITE_SUCCESS = Symbol('SEND_INVITE_SUCCESS');
-
-/**
- * The type of the action which signals that native invites failed to send
- * successfully.
- *
- * {
- *     type: SEND_INVITE_FAILURE,
- *     items: Array<*>,
- *     inviteScope: string
- * }
- */
-export const SEND_INVITE_FAILURE = Symbol('SEND_INVITE_FAILURE');

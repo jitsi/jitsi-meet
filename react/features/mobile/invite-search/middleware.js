@@ -14,13 +14,12 @@ import {
 } from '../../invite';
 import { inviteVideoRooms } from '../../videosipgw';
 
-import { sendInviteSuccess, sendInviteFailure } from './actions';
 import {
     _SET_INVITE_SEARCH_SUBSCRIPTIONS,
-    LAUNCH_NATIVE_INVITE,
-    SEND_INVITE_SUCCESS,
-    SEND_INVITE_FAILURE
+    LAUNCH_NATIVE_INVITE
 } from './actionTypes';
+
+const { InviteSearch } = NativeModules;
 
 /**
  * Middleware that captures Redux actions and uses the InviteSearch module to
@@ -47,14 +46,6 @@ MiddlewareRegistry.register(store => next => action => {
     case LAUNCH_NATIVE_INVITE:
         launchNativeInvite(store);
         break;
-
-    case SEND_INVITE_SUCCESS:
-        onSendInviteSuccess(action);
-        break;
-
-    case SEND_INVITE_FAILURE:
-        onSendInviteFailure(action);
-        break;
     }
 
     return result;
@@ -76,7 +67,7 @@ MiddlewareRegistry.register(store => next => action => {
 function _appWillMount({ dispatch, getState }, next, action) {
     const result = next(action);
 
-    const emitter = new NativeEventEmitter(NativeModules.InviteSearch);
+    const emitter = new NativeEventEmitter(InviteSearch);
 
     const context = {
         dispatch,
@@ -119,33 +110,9 @@ function launchNativeInvite(store: { getState: Function }) {
         const { externalAPIScope } = app.props;
 
         if (externalAPIScope) {
-            NativeModules.InviteSearch.launchNativeInvite(externalAPIScope);
+            InviteSearch.launchNativeInvite(externalAPIScope);
         }
     }
-}
-
-/**
- * Sends a notification to the native counterpart of InviteSearch that all
- * invites were sent successfully.
- *
- * @param  {Object} action - The redux action {@code SEND_INVITE_SUCCESS} which
- * is being dispatched.
- * @returns {void}
- */
-function onSendInviteSuccess({ inviteScope }) {
-    NativeModules.InviteSearch.inviteSucceeded(inviteScope);
-}
-
-/**
- * Sends a notification to the native counterpart of InviteSearch that some
- * invite items failed to send successfully.
- *
- * @param  {Object} action - The redux action {@code SEND_INVITE_FAILURE} which
- * is being dispatched.
- * @returns {void}
- */
-function onSendInviteFailure({ items, inviteScope }) {
-    NativeModules.InviteSearch.inviteFailedForItems(items, inviteScope);
 }
 
 /**
@@ -155,10 +122,18 @@ function onSendInviteFailure({ items, inviteScope }) {
  * {@code performQueryAction}.
  * @returns {void}
  */
-function _onPerformQueryAction({ query, inviteScope }) {
+function _onPerformQueryAction({ query, scope }) {
     const { getState } = this; // eslint-disable-line no-invalid-this
 
     const state = getState();
+    const { app } = state['features/app'];
+
+    if (app.props.externalAPIScope !== scope) {
+        // If there are multiple JitsiMeetView instances alive, they will all
+        // get the event, since there is a single bridge, so make sure we don't
+        // act if the event is not for us.
+        return;
+    }
 
     const {
         dialOutAuthUrl,
@@ -194,10 +169,7 @@ function _onPerformQueryAction({ query, inviteScope }) {
                 return result;
             }).filter(result => result.type !== 'phone' || result.allowed);
 
-            NativeModules.InviteSearch.receivedResults(
-                translatedResults,
-                query,
-                inviteScope);
+            InviteSearch.receivedResults(translatedResults, query, scope);
         });
 }
 
@@ -207,9 +179,18 @@ function _onPerformQueryAction({ query, inviteScope }) {
  * @param {Object} event - The details of the InviteSearch event.
  * @returns {void}
  */
-function _onPerformSubmitInviteAction({ selectedItems, inviteScope }) {
-    const { dispatch, getState } = this; // eslint-disable-line no-invalid-this
+function _onPerformSubmitInviteAction({ selectedItems, scope }) {
+    const { getState } = this; // eslint-disable-line no-invalid-this
     const state = getState();
+    const { app } = state['features/app'];
+
+    if (app.props.externalAPIScope !== scope) {
+        // If there are multiple JitsiMeetView instances alive, they will all
+        // get the event, since there is a single bridge, so make sure we don't
+        // act if the event is not for us.
+        return;
+    }
+
     const { conference } = state['features/base/conference'];
     const {
         inviteServiceUrl
@@ -225,9 +206,9 @@ function _onPerformSubmitInviteAction({ selectedItems, inviteScope }) {
     sendInvitesForItems(selectedItems, options)
         .then(invitesLeftToSend => {
             if (invitesLeftToSend.length) {
-                dispatch(sendInviteFailure(invitesLeftToSend, inviteScope));
+                InviteSearch.inviteFailedForItems(invitesLeftToSend);
             } else {
-                dispatch(sendInviteSuccess(inviteScope));
+                InviteSearch.inviteSucceeded(scope);
             }
         });
 }
