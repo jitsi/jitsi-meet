@@ -10,6 +10,7 @@ import {
     makeAspectRatioAware
 } from '../../base/responsive-ui';
 
+import LocalThumbnail from './LocalThumbnail';
 import styles from './styles';
 import Thumbnail from './Thumbnail';
 
@@ -68,10 +69,14 @@ class Filmstrip extends Component<Props> {
             <Container
                 style = { filmstripStyle }
                 visible = { this.props._visible }>
+                {
+                    !isNarrowAspectRatio_ && <LocalThumbnail />
+                }
                 <ScrollView
                     horizontal = { isNarrowAspectRatio_ }
                     showsHorizontalScrollIndicator = { false }
-                    showsVerticalScrollIndicator = { false }>
+                    showsVerticalScrollIndicator = { false }
+                    style = { styles.scrollView } >
                     {
                         /* eslint-disable react/jsx-wrap-multilines */
 
@@ -86,6 +91,9 @@ class Filmstrip extends Component<Props> {
                         /* eslint-enable react/jsx-wrap-multilines */
                     }
                 </ScrollView>
+                {
+                    isNarrowAspectRatio_ && <LocalThumbnail />
+                }
             </Container>
         );
     }
@@ -106,12 +114,7 @@ class Filmstrip extends Component<Props> {
         // in place and (2) it is not necessarily stable.
 
         const sortedParticipants = [
-
-            // First put the local participant.
-            ...participants.filter(p => p.local),
-
-            // Then the remote participants, which are sorted by join order.
-            ...participants.filter(p => !p.local)
+            ...participants
         ];
 
         if (isNarrowAspectRatio_) {
@@ -149,12 +152,12 @@ function _mapStateToProps(state) {
         _enabled: enabled,
 
         /**
-         * The participants in the conference.
+         * The remote participants in the conference.
          *
          * @private
          * @type {Participant[]}
          */
-        _participants: participants,
+        _participants: participants.filter(p => !p.local),
 
         /**
          * The indicator which determines whether the filmstrip is visible. The
