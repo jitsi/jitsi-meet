@@ -153,6 +153,12 @@
     position: absolute;
     box-sizing: border-box;
 
+    &.is-recording {
+        background: none;
+        opacity: 0.9;
+        padding: 0;
+    }
+
     i {
         line-height: $videoStateIndicatorSize;
     }
@@ -164,6 +170,30 @@
         line-height: $videoStateIndicatorSize;
         min-width: $videoStateIndicatorSize;
         text-align: center;
+    }
+
+    .recording-icon,
+    .recording-icon i {
+        color: rgb(255, 86, 48);
+        line-height: $videoStateIndicatorSize;
+        font-size: $videoStateIndicatorSize;
+        opacity: 0.9;
+        position: relative;
+    }
+
+    .recording-icon-background {
+        background: white;
+        height: 25%;
+        left: 50%;
+        opacity: 0.9;
+        position: absolute;
+        top: 50%;
+        transform: translate(-50%, -50%);
+        width: 80%;
+    }
+
+    #recordingLabelText {
+        display: inline-block;
     }
 }
 
@@ -186,8 +216,6 @@
     &.moveToCorner {
         bottom: auto;
         transform: none;
-        -webkit-transition: all 2s 2s linear;
-        transition: all 2s 2s linear;
     }
 }
 
