@@ -99,6 +99,10 @@ function _visitNode(node, callback) {
 (global => {
     const { DOMParser } = require('xmldom');
 
+    // DOMParser
+    //
+    // Required by:
+    // - lib-jitsi-meet if using WebSockets
     global.DOMParser = DOMParser;
 
     // addEventListener
