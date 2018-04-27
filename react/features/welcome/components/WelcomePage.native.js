@@ -3,7 +3,6 @@ import {
     Animated,
     Keyboard,
     SafeAreaView,
-    Switch,
     TextInput,
     TouchableHighlight,
     TouchableOpacity,
@@ -14,7 +13,6 @@ import { connect } from 'react-redux';
 import { translate } from '../../base/i18n';
 import { Icon } from '../../base/font-icons';
 import { MEDIA_TYPE } from '../../base/media';
-import { updateProfile } from '../../base/profile';
 import { LoadingIndicator, Header, Text } from '../../base/react';
 import { ColorPalette } from '../../base/styles';
 import {
@@ -27,10 +25,9 @@ import { AbstractWelcomePage, _mapStateToProps } from './AbstractWelcomePage';
 import { setSideBarVisible } from '../actions';
 import LocalVideoTrackUnderlay from './LocalVideoTrackUnderlay';
 import styles, {
-    PLACEHOLDER_TEXT_COLOR,
-    SWITCH_THUMB_COLOR,
-    SWITCH_UNDER_COLOR
+    PLACEHOLDER_TEXT_COLOR
 } from './styles';
+import VideoSwitch from './VideoSwitch';
 import WelcomePageLists from './WelcomePageLists';
 import WelcomePageSideBar from './WelcomePageSideBar';
 
@@ -55,7 +52,6 @@ class WelcomePage extends AbstractWelcomePage {
         this._getHintBoxStyle = this._getHintBoxStyle.bind(this);
         this._onFieldFocusChange = this._onFieldFocusChange.bind(this);
         this._onShowSideBar = this._onShowSideBar.bind(this);
-        this._onStartAudioOnlyChange = this._onStartAudioOnlyChange.bind(this);
         this._renderHintBox = this._renderHintBox.bind(this);
     }
 
@@ -87,8 +83,8 @@ class WelcomePage extends AbstractWelcomePage {
      * @returns {ReactElement}
      */
     render() {
-        const { buttonStyle, pageStyle, textStyle } = Header;
-        const { t, _profile } = this.props;
+        const { buttonStyle, pageStyle } = Header;
+        const { t } = this.props;
 
         return (
             <LocalVideoTrackUnderlay style = { styles.welcomePage }>
@@ -99,20 +95,7 @@ class WelcomePage extends AbstractWelcomePage {
                                 name = 'menu'
                                 style = { buttonStyle } />
                         </TouchableOpacity>
-                        <View style = { styles.audioVideoSwitchContainer }>
-                            <Text style = { textStyle } >
-                                { t('welcomepage.audioVideoSwitch.video') }
-                            </Text>
-                            <Switch
-                                onTintColor = { SWITCH_UNDER_COLOR }
-                                onValueChange = { this._onStartAudioOnlyChange }
-                                style = { styles.audioVideoSwitch }
-                                thumbTintColor = { SWITCH_THUMB_COLOR }
-                                value = { _profile.startAudioOnly } />
-                            <Text style = { textStyle } >
-                                { t('welcomepage.audioVideoSwitch.audio') }
-                            </Text>
-                        </View>
+                        <VideoSwitch />
                     </Header>
                     <SafeAreaView style = { styles.roomContainer } >
                         <View style = { styles.joinControls } >
@@ -200,22 +183,6 @@ class WelcomePage extends AbstractWelcomePage {
     _onShowSideBar() {
         Keyboard.dismiss();
         this.props.dispatch(setSideBarVisible(true));
-    }
-
-    /**
-     * Handles the audio-video switch changes.
-     *
-     * @private
-     * @param {boolean} startAudioOnly - The new startAudioOnly value.
-     * @returns {void}
-     */
-    _onStartAudioOnlyChange(startAudioOnly) {
-        const { dispatch } = this.props;
-
-        dispatch(updateProfile({
-            ...this.props._profile,
-            startAudioOnly
-        }));
     }
 
     /**
