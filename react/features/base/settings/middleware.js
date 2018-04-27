@@ -2,10 +2,9 @@
 
 import { setAudioOnly } from '../conference';
 import { getLocalParticipant, participantUpdated } from '../participants';
-import { MiddlewareRegistry, toState } from '../redux';
+import { MiddlewareRegistry } from '../redux';
 
 import { SETTINGS_UPDATED } from './actionTypes';
-import { getSettings } from './functions';
 
 /**
  * The middleware of the feature base/settings. Distributes changes to the state
@@ -21,11 +20,28 @@ MiddlewareRegistry.register(store => next => action => {
     switch (action.type) {
     case SETTINGS_UPDATED:
         _maybeSetAudioOnly(store, action);
-        _updateLocalParticipant(store);
+        _updateLocalParticipant(store, action);
     }
 
     return result;
 });
+
+/**
+ * Maps the settings field names to participant names where they don't match.
+ * Currently there is only one such field, but may be extended in the future.
+ *
+ * @private
+ * @param {string} settingsField - The name of the settings field to map.
+ * @returns {string}
+ */
+function _mapSettingsFieldToParticipant(settingsField) {
+    switch (settingsField) {
+    case 'displayName':
+        return 'name';
+    }
+
+    return settingsField;
+}
 
 /**
  * Updates {@code startAudioOnly} flag if it's updated in the settings.
@@ -47,21 +63,23 @@ function _maybeSetAudioOnly(
  * Updates the local participant according to settings changes.
  *
  * @param {Store} store - The redux store.
+ * @param {Object} action - The dispatched action.
  * @private
  * @returns {void}
  */
-function _updateLocalParticipant(store) {
-    const state = toState(store);
-    const localParticipant = getLocalParticipant(state);
-    const settings = getSettings(state);
+function _updateLocalParticipant({ dispatch, getState }, action) {
+    const { settings } = action;
+    const localParticipant = getLocalParticipant(getState());
+    const newLocalParticipant = {
+        ...localParticipant
+    };
 
-    store.dispatch(participantUpdated({
-        // Identify that the participant to update i.e. the local participant:
-        id: localParticipant && localParticipant.id,
-        local: true,
+    for (const key in settings) {
+        if (settings.hasOwnProperty(key)) {
+            newLocalParticipant[_mapSettingsFieldToParticipant(key)]
+                = settings[key];
+        }
+    }
 
-        // Specify the updates to be applied to the identified participant:
-        email: settings.email,
-        name: settings.displayName
-    }));
+    dispatch(participantUpdated(newLocalParticipant));
 }
