@@ -102,7 +102,7 @@ function _visitNode(node, callback) {
     // DOMParser
     //
     // Required by:
-    // - lib-jitsi-meet if using WebSockets
+    // - lib-jitsi-meet requires this if using WebSockets
     global.DOMParser = DOMParser;
 
     // addEventListener
