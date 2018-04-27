@@ -1,97 +1,123 @@
-import PropTypes from 'prop-types';
+// @flow
+
 import React, { Component } from 'react';
-import { connect } from 'react-redux';
-
 import { translate } from '../../base/i18n';
-import { JitsiRecordingStatus } from '../../base/lib-jitsi-meet';
+import JitsiMeetJS from '../../base/lib-jitsi-meet';
 
-import { RECORDING_TYPES } from '../constants';
+const {
+    error: errorConstants,
+    mode: modeConstants,
+    status: statusConstants
+} = JitsiMeetJS.constants.recording;
+
+/**
+ * The translation keys to use when displaying messages.
+ *
+ * @private
+ * @type {Object}
+ */
+const TRANSLATION_KEYS_FOR_MODES = {
+    [modeConstants.FILE]: {
+        status: {
+            [statusConstants.PENDING]: 'recording.pending',
+            [statusConstants.OFF]: 'recording.off'
+        },
+        errors: {
+            [errorConstants.BUSY]: 'recording.failedToStart',
+            [errorConstants.ERROR]: 'recording.error'
+        }
+    },
+    [modeConstants.STREAM]: {
+        status: {
+            [statusConstants.PENDING]: 'liveStreaming.pending',
+            [statusConstants.OFF]: 'liveStreaming.off'
+        },
+        errors: {
+            [errorConstants.BUSY]: 'liveStreaming.busy',
+            [errorConstants.ERROR]: 'liveStreaming.error'
+        }
+    }
+};
+
+/**
+ * The type of the React {@code Component} props of {@link RecordingLabel}.
+ */
+type Props = {
+
+    /**
+     * The redux representation of a recording session.
+     */
+    session: Object,
+
+    /**
+     * Invoked to obtain translated strings.
+     */
+    t: Function
+};
+
+/**
+ * The type of the React {@code Component} state of {@link RecordingLabel}.
+ */
+type State = {
+
+    /**
+     * Whether or not the {@link RecordingLabel} should be invisible.
+     */
+    hidden: boolean
+};
 
 /**
  * Implements a React {@link Component} which displays the current state of
- * conference recording. Currently it uses CSS to display itself automatically
- * when there is a recording state update.
+ * conference recording.
  *
  * @extends {Component}
  */
-class RecordingLabel extends Component {
-    /**
-     * {@code RecordingLabel} component's property types.
-     *
-     * @static
-     */
-    static propTypes = {
-        /**
-         * Whether or not the filmstrip is currently visible or toggled to
-         * hidden. Depending on the filmstrip state, different CSS classes will
-         * be set to allow for adjusting of {@code RecordingLabel} positioning.
-         */
-        _filmstripVisible: PropTypes.bool,
+class RecordingLabel extends Component<Props, State> {
+    _autohideTimeout: number;
 
-        /**
-         * Whether or not the conference is currently being recorded.
-         */
-        _isRecording: PropTypes.bool,
+    state = {
+        hidden: false
+    };
 
-        /**
-         * An object to describe the {@code RecordingLabel} content. If no
-         * translation key to display is specified, the label will apply CSS to
-         * itself so it can be made invisible.
-         * {{
-         *     centered: boolean,
-         *     key: string,
-         *     showSpinner: boolean
-         * }}
-         */
-        _labelDisplayConfiguration: PropTypes.object,
-
-        /**
-         * Whether the recording feature is live streaming (jibri) or is file
-         * recording (jirecon).
-         */
-        _recordingType: PropTypes.string,
-
-        /**
-         * Invoked to obtain translated string.
-         */
-        t: PropTypes.func
+    static defaultProps = {
+        session: {}
     };
 
     /**
-     * Initializes a new {@code RecordingLabel} instance.
+     * Sets a timeout to automatically hide the {@link RecordingLabel} if the
+     * recording session started as failed.
      *
-     * @param {Object} props - The read-only properties with which the new
-     * instance is to be initialized.
+     * @inheritdoc
      */
-    constructor(props) {
-        super(props);
-
-        this.state = {
-            /**
-             * Whether or not the filmstrip was not visible but has transitioned
-             * in the latest component update to visible. This boolean is used
-             * to set a class for position animations.
-             *
-             * @type {boolean}
-             */
-            filmstripBecomingVisible: false
-        };
+    componentDidMount() {
+        if (this.props.session.status === statusConstants.OFF) {
+            this._setHideTimeout();
+        }
     }
 
     /**
-     * Updates the state for whether or not the filmstrip is being toggled to
-     * display after having being hidden.
+     * Sets a timeout to automatically hide {the @link RecordingLabel} if it has
+     * transitioned to off.
      *
      * @inheritdoc
-     * @param {Object} nextProps - The read-only props which this Component will
-     * receive.
-     * @returns {void}
      */
     componentWillReceiveProps(nextProps) {
-        this.setState({
-            filmstripBecomingVisible: nextProps._filmstripVisible
-                && !this.props._filmstripVisible
-        });
+        const { status } = this.props.session;
+        const nextStatus = nextProps.session.status;
+
+        if (status !== statusConstants.OFF
+            && nextStatus === statusConstants.OFF) {
+            this._setHideTimeout();
+        }
+    }
+
+    /**
+     * Clears the timeout for automatically hiding the {@link RecordingLabel}.
+     *
+     * @inheritdoc
+     */
+    componentWillUnmount() {
+        this._clearAutoHideTimeout();
     }
 
     /**
@@ -101,78 +127,70 @@ class RecordingLabel extends Component {
      * @returns {ReactElement}
      */
     render() {
-        const {
-            _isRecording,
-            _labelDisplayConfiguration,
-            _recordingType
-        } = this.props;
-        const { centered, key, showSpinner } = _labelDisplayConfiguration || {};
+        if (this.state.hidden) {
+            return null;
+        }
 
-        const isVisible = Boolean(key);
-        const rootClassName = [
-            'video-state-indicator centeredVideoLabel',
-            _isRecording ? 'is-recording' : '',
-            isVisible ? 'show-inline' : '',
-            centered ? '' : 'moveToCorner',
-            this.state.filmstripBecomingVisible ? 'opening' : '',
-            this.props._filmstripVisible
-                ? 'with-filmstrip' : 'without-filmstrip'
-        ].join(' ');
+        const { session } = this.props;
+        const translationKeys = TRANSLATION_KEYS_FOR_MODES[session.mode];
+        let icon, key;
+
+        switch (session.status) {
+        case statusConstants.OFF: {
+            if (session.error) {
+                key = translationKeys.errors[session.error]
+                    || translationKeys.errors[errorConstants.ERROR];
+            } else {
+                key = translationKeys.status[statusConstants.OFF];
+            }
+            break;
+        }
+        case statusConstants.ON:
+            icon = session.mode === modeConstants.STREAM
+                ? 'icon-live' : 'icon-rec';
+            break;
+        case statusConstants.PENDING:
+            key = translationKeys.status[statusConstants.PENDING];
+            break;
+        }
+
+        const className = `recording-label ${key ? 'center-message' : ''}`;
 
         return (
-            <div
-                className = { rootClassName }
-                id = 'recordingLabel'>
-                { _isRecording
-                    ? <div className = 'recording-icon'>
-                        <div className = 'recording-icon-background' />
-                        <i
-                            className = {
-                                _recordingType === RECORDING_TYPES.JIBRI
-                                    ? 'icon-live'
-                                    : 'icon-rec' } />
-                    </div>
-                    : <div id = 'recordingLabelText'>
+            <div className = { className }>
+                { key
+                    ? <div>
                         { this.props.t(key) }
+                    </div>
+                    : <div className = 'recording-icon'>
+                        <div className = 'recording-icon-background' />
+                        <i className = { icon } />
                     </div> }
-                { !_isRecording
-                    && showSpinner
-                    && <img
-                        className = 'recordingSpinner'
-                        id = 'recordingSpinner'
-                        src = 'images/spin.svg' /> }
             </div>
         );
     }
+
+    /**
+     * Clears the timeout for automatically hiding {@link RecordingLabel}.
+     *
+     * @private
+     * @returns {void}
+     */
+    _clearAutoHideTimeout() {
+        clearTimeout(this._autohideTimeout);
+    }
+
+    /**
+     * Sets a timeout to automatically hide {@link RecordingLabel}.
+     *
+     * @private
+     * @returns {void}
+     */
+    _setHideTimeout() {
+        this._autohideTimeout = setTimeout(() => {
+            this.setState({ hidden: true });
+        }, 5000);
+    }
 }
 
-/**
- * Maps (parts of) the Redux state to the associated {@code RecordingLabel}
- * component's props.
- *
- * @param {Object} state - The Redux state.
- * @private
- * @returns {{
- *     _filmstripVisible: boolean,
- *     _isRecording: boolean,
- *     _labelDisplayConfiguration: Object,
- *     _recordingType: string
- * }}
- */
-function _mapStateToProps(state) {
-    const { visible } = state['features/filmstrip'];
-    const {
-        labelDisplayConfiguration,
-        recordingState,
-        recordingType
-    } = state['features/recording'];
-
-    return {
-        _filmstripVisible: visible,
-        _isRecording: recordingState === JitsiRecordingStatus.ON,
-        _labelDisplayConfiguration: labelDisplayConfiguration,
-        _recordingType: recordingType
-    };
-}
-
-export default translate(connect(_mapStateToProps)(RecordingLabel));
+export default translate(RecordingLabel);

@@ -52,76 +52,9 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
 
         break;
     }
-    case SIP_GW_INVITE_ROOMS: {
-        const { status } = getState()['features/videosipgw'];
-
-        if (status === JitsiSIPVideoGWStatus.STATUS_UNDEFINED) {
-            dispatch(showErrorNotification({
-                descriptionKey: 'recording.unavailable',
-                descriptionArguments: {
-                    serviceName: '$t(videoSIPGW.serviceName)'
-                },
-                titleKey: 'videoSIPGW.unavailableTitle'
-            }));
-
-            return;
-        } else if (status === JitsiSIPVideoGWStatus.STATUS_BUSY) {
-            dispatch(showWarningNotification({
-                descriptionKey: 'videoSIPGW.busy',
-                titleKey: 'videoSIPGW.busyTitle'
-            }));
-
-            return;
-        } else if (status !== JitsiSIPVideoGWStatus.STATUS_AVAILABLE) {
-            logger.error(`Unknown sip videogw status ${status}`);
-
-            return;
-        }
-
-        for (const room of action.rooms) {
-            const { id: sipAddress, name: displayName } = room;
-
-            if (sipAddress && displayName) {
-                const newSession = action.conference
-                    .createVideoSIPGWSession(sipAddress, displayName);
-
-                if (newSession instanceof Error) {
-                    const e = newSession;
-
-                    if (e) {
-                        switch (e.message) {
-                        case JitsiSIPVideoGWStatus.ERROR_NO_CONNECTION: {
-                            dispatch(showErrorNotification({
-                                descriptionKey: 'videoSIPGW.errorInvite',
-                                titleKey: 'videoSIPGW.errorInviteTitle'
-                            }));
-
-                            return;
-                        }
-                        case JitsiSIPVideoGWStatus.ERROR_SESSION_EXISTS: {
-                            dispatch(showWarningNotification({
-                                titleKey: 'videoSIPGW.errorAlreadyInvited',
-                                titleArguments: { displayName }
-                            }));
-
-                            return;
-                        }
-                        }
-                    }
-                    logger.error(
-                        'Unknown error trying to create sip videogw session',
-                        e);
-
-                    return;
-                }
-
-                newSession.start();
-            } else {
-                logger.error(`No display name or sip number for ${
-                    JSON.stringify(room)}`);
-            }
-        }
-    }
+    case SIP_GW_INVITE_ROOMS:
+        _inviteRooms(action.rooms, action.conference, dispatch);
+        break;
     }
 
     return result;
@@ -142,6 +75,62 @@ function _availabilityChanged(status: string) {
         type: SIP_GW_AVAILABILITY_CHANGED,
         status
     };
+}
+
+/**
+ * Processes the action from the actionType {@code SIP_GW_INVITE_ROOMS} by
+ * inviting rooms into the conference or showing an error message.
+ *
+ * @param {Array} rooms - The conference rooms to invite.
+ * @param {Object} conference - The JitsiConference to invite the rooms to.
+ * @param {Function} dispatch - The redux dispatch function for emitting state
+ * changes (queuing error notifications).
+ * @private
+ * @returns {void}
+ */
+function _inviteRooms(rooms, conference, dispatch) {
+    for (const room of rooms) {
+        const { id: sipAddress, name: displayName } = room;
+
+        if (sipAddress && displayName) {
+            const newSession = conference
+                .createVideoSIPGWSession(sipAddress, displayName);
+
+            if (newSession instanceof Error) {
+                const e = newSession;
+
+                switch (e.message) {
+                case JitsiSIPVideoGWStatus.ERROR_NO_CONNECTION: {
+                    dispatch(showErrorNotification({
+                        descriptionKey: 'videoSIPGW.errorInvite',
+                        titleKey: 'videoSIPGW.errorInviteTitle'
+                    }));
+
+                    return;
+                }
+                case JitsiSIPVideoGWStatus.ERROR_SESSION_EXISTS: {
+                    dispatch(showWarningNotification({
+                        titleKey: 'videoSIPGW.errorAlreadyInvited',
+                        titleArguments: { displayName }
+                    }));
+
+                    return;
+                }
+                }
+
+                logger.error(
+                    'Unknown error trying to create sip videogw session',
+                    e);
+
+                return;
+            }
+
+            newSession.start();
+        } else {
+            logger.error(`No display name or sip number for ${
+                JSON.stringify(room)}`);
+        }
+    }
 }
 
 /**
@@ -172,6 +161,17 @@ function _sessionStateChanged(
             },
             descriptionKey: 'videoSIPGW.errorInviteFailed'
         });
+    }
+    case JitsiSIPVideoGWStatus.STATE_OFF: {
+        if (event.failureReason === JitsiSIPVideoGWStatus.STATUS_BUSY) {
+            return showErrorNotification({
+                descriptionKey: 'videoSIPGW.busy',
+                titleKey: 'videoSIPGW.busyTitle'
+            });
+        } else if (event.failureReason) {
+            logger.error(`Unknown sip videogw error ${event.newState} ${
+                event.failureReason}`);
+        }
     }
     }
 

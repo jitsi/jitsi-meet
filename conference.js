@@ -27,7 +27,7 @@ import {
     redirectWithStoredParams,
     reloadWithStoredParams
 } from './react/features/app';
-import { updateRecordingState } from './react/features/recording';
+import { updateRecordingSession } from './react/features/recording';
 
 import EventEmitter from 'events';
 
@@ -1101,20 +1101,6 @@ export default {
     },
 
     /**
-     * Indicates if recording is supported in this conference.
-     */
-    isRecordingSupported() {
-        return this._room && this._room.isRecordingSupported();
-    },
-
-    /**
-     * Returns the recording state or undefined if the room is not defined.
-     */
-    getRecordingState() {
-        return this._room ? this._room.getRecordingState() : undefined;
-    },
-
-    /**
      * Will be filled with values only when config.debug is enabled.
      * Its used by torture to check audio levels.
      */
@@ -1821,12 +1807,6 @@ export default {
             APP.store.dispatch(dominantSpeakerChanged(id));
         });
 
-        room.on(JitsiConferenceEvents.LIVE_STREAM_URL_CHANGED,
-            (from, liveStreamViewURL) =>
-                APP.store.dispatch(updateRecordingState({
-                    liveStreamViewURL
-                })));
-
         if (!interfaceConfig.filmStripOnly) {
             room.on(JitsiConferenceEvents.CONNECTION_INTERRUPTED, () => {
                 APP.UI.markVideoInterrupted(true);
@@ -1951,14 +1931,82 @@ export default {
             });
 
         /* eslint-enable max-params */
-
         room.on(
             JitsiConferenceEvents.RECORDER_STATE_CHANGED,
-            (status, error) => {
-                logger.log('Received recorder status change: ', status, error);
-                APP.UI.updateRecordingState(status);
-            }
-        );
+            recorderSession => {
+                if (!recorderSession) {
+                    logger.error(
+                        'Received invalid recorder status update',
+                        recorderSession);
+
+                    return;
+                }
+
+                const error = recorderSession.getError();
+
+                logger.log(
+                    'Received recorder status update:',
+                    recorderSession.getStatus(), error);
+
+                // These errors fire when the local participant has requested a
+                // recording but the request itself failed, hence the missing
+                // session ID because the recorder never started.
+                if (error && !recorderSession.getID()) {
+                    const {
+                        error: errorConstants,
+                        mode: modeConstants
+                    } = JitsiMeetJS.constants.recording;
+                    const isStreamMode
+                        = recorderSession.getMode() === modeConstants.STREAM;
+
+                    if (error === errorConstants.SERVICE_UNAVAILABLE) {
+                        APP.UI.messageHandler.showError({
+                            descriptionKey: 'recording.unavailable',
+                            descriptionArguments: {
+                                serviceName: isStreamMode
+                                    ? 'Live Streaming service'
+                                    : 'Recording service'
+                            },
+                            titleKey: isStreamMode
+                                ? 'liveStreaming.unavailableTitle'
+                                : 'recording.unavailableTitle'
+                        });
+
+                        return;
+                    } else if (error === errorConstants.RESOURCE_CONSTRAINT) {
+                        APP.UI.messageHandler.showError({
+                            descriptionKey: isStreamMode
+                                ? 'liveStreaming.busy'
+                                : 'recording.busy',
+                            titleKey: isStreamMode
+                                ? 'liveStreaming.busyTitle'
+                                : 'recording.busyTitle'
+                        });
+
+                        return;
+                    }
+
+                    APP.UI.messageHandler.showError({
+                        descriptionKey: isStreamMode
+                            ? 'liveStreaming.error'
+                            : 'recording.error',
+                        titleKey: isStreamMode
+                            ? 'liveStreaming.failedToStart'
+                            : 'recording.failedToStart'
+                    });
+
+                    return;
+                }
+
+                if (!recorderSession.getID()) {
+                    logger.error(
+                        'Received a recorder status update with no ID');
+
+                    return;
+                }
+
+                APP.store.dispatch(updateRecordingSession(recorderSession));
+            });
 
         room.on(JitsiConferenceEvents.KICKED, () => {
             APP.UI.hideStats();
@@ -2092,13 +2140,6 @@ export default {
                         value: delay
                     }));
             });
-
-        /* eslint-enable max-params */
-
-        // Starts or stops the recording for the conference.
-        APP.UI.addListener(UIEvents.RECORDING_TOGGLED, options => {
-            room.toggleRecording(options);
-        });
 
         APP.UI.addListener(UIEvents.AUTH_CLICKED, () => {
             AuthHandler.authenticate(room);

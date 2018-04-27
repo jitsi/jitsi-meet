@@ -1,34 +1,56 @@
 import { ReducerRegistry } from '../base/redux';
-import {
-    HIDE_RECORDING_LABEL,
-    RECORDING_STATE_UPDATED,
-    SET_RECORDING_TYPE
-} from './actionTypes';
+import { RECORDING_SESSION_UPDATED } from './actionTypes';
+
+const DEFAULT_STATE = {
+    sessions: []
+};
 
 /**
  * Reduces the Redux actions of the feature features/recording.
  */
-ReducerRegistry.register('features/recording', (state = {}, action) => {
-    switch (action.type) {
-    case HIDE_RECORDING_LABEL:
-        return {
-            ...state,
-            labelDisplayConfiguration: null
-        };
+ReducerRegistry.register('features/recording',
+    (state = DEFAULT_STATE, action) => {
+        switch (action.type) {
+        case RECORDING_SESSION_UPDATED:
+            return {
+                ...state,
+                sessions: _updateSessions(state.sessions, action.session)
+            };
 
-    case RECORDING_STATE_UPDATED:
-        return {
-            ...state,
-            ...action.recordingState
-        };
+        default:
+            return state;
+        }
+    });
 
-    case SET_RECORDING_TYPE:
-        return {
-            ...state,
-            recordingType: action.recordingType
-        };
+/**
+ * Updates the known information on recording sessions.
+ *
+ * @param {Array} sessions - The current sessions in the redux store.
+ * @param {Object} newSession - The updated session data.
+ * @private
+ * @returns {Array} The sessions with the updated session data added.
+ */
+function _updateSessions(sessions, newSession) {
+    const hasSession = sessions.find(session => session.id === newSession.id);
 
-    default:
-        return state;
+    let newSessions;
+
+    if (hasSession) {
+        newSessions = sessions.map(session => {
+            if (session.id !== newSession.id) {
+                return session;
+            }
+
+            return {
+                ...newSession
+            };
+        });
+    } else {
+        newSessions = [
+            ...sessions,
+            { ...newSession }
+        ];
     }
-});
+
+    return newSessions;
+}

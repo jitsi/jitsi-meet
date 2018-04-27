@@ -49,8 +49,7 @@ function _getInitialState() {
         alwaysVisible: false,
 
         /**
-         * The indicator which determines whether the Toolbox is enabled. For
-         * example, modules/UI/recording/Recording.js disables the Toolbox.
+         * The indicator which determines whether the Toolbox is enabled.
          *
          * @type {boolean}
          */

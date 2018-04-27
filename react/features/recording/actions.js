@@ -1,66 +1,24 @@
-import {
-    HIDE_RECORDING_LABEL,
-    RECORDING_STATE_UPDATED,
-    SET_RECORDING_TYPE,
-    TOGGLE_RECORDING
-} from './actionTypes';
+import { RECORDING_SESSION_UPDATED } from './actionTypes';
 
 /**
- * Hides any displayed recording label, regardless of current recording state.
+ * Updates the known state for a given recording session.
  *
- * @returns {{
- *     type: HIDE_RECORDING_LABEL
- * }}
- */
-export function hideRecordingLabel() {
-    return {
-        type: HIDE_RECORDING_LABEL
-    };
-}
-
-/**
- * Sets what type of recording service will be used.
- *
- * @param {string} recordingType - The type of recording service to be used.
- * Should be one of the enumerated types in {@link RECORDING_TYPES}.
- * @returns {{
- *     type: SET_RECORDING_TYPE,
- *     recordingType: string
- * }}
- */
-export function setRecordingType(recordingType) {
-    return {
-        type: SET_RECORDING_TYPE,
-        recordingType
-    };
-}
-
-/**
- * Start or stop recording.
- *
- * @returns {{
- *     type: TOGGLE_RECORDING
- * }}
- */
-export function toggleRecording() {
-    return {
-        type: TOGGLE_RECORDING
-    };
-}
-
-/**
- * Updates the redux state for the recording feature.
- *
- * @param {Object} recordingState - The new state to merge with the existing
+ * @param {Object} session - The new state to merge with the existing
  * state in redux.
  * @returns {{
- *     type: RECORDING_STATE_UPDATED,
- *     recordingState: Object
+ *     type: RECORDING_SESSION_UPDATED,
+ *     session: Object
  * }}
  */
-export function updateRecordingState(recordingState = {}) {
+export function updateRecordingSession(session) {
     return {
-        type: RECORDING_STATE_UPDATED,
-        recordingState
+        type: RECORDING_SESSION_UPDATED,
+        session: {
+            error: session.getError(),
+            id: session.getID(),
+            liveStreamViewURL: session.getLiveStreamViewURL(),
+            mode: session.getMode(),
+            status: session.getStatus()
+        }
     };
 }

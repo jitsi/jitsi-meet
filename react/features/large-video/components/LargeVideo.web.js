@@ -4,8 +4,8 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 
 import { Watermarks } from '../../base/react';
-import { VideoQualityLabel } from '../../video-quality';
-import { RecordingLabel } from '../../recording';
+
+import Labels from './Labels';
 
 declare var interfaceConfig: Object;
 
@@ -72,8 +72,7 @@ export default class LargeVideo extends Component<*> {
                 </div>
                 <span id = 'localConnectionMessage' />
                 { this.props.hideVideoQualityLabel
-                    ? null : <VideoQualityLabel /> }
-                <RecordingLabel />
+                    ? null : <Labels /> }
             </div>
         );
     }

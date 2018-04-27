@@ -854,6 +854,8 @@ const VideoLayout = {
     /**
      * Resizes the video area.
      *
+     * TODO: Remove the "animate" param as it is no longer passed in as true.
+     *
      * @param forceUpdate indicates that hidden thumbnails will be shown
      * @param completeFunction a function to be called when the video area is
      * resized.

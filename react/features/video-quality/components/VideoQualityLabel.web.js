@@ -49,17 +49,6 @@ export class VideoQualityLabel extends Component {
         _audioOnly: PropTypes.bool,
 
         /**
-         * Whether or not a connection to a conference has been established.
-         */
-        _conferenceStarted: PropTypes.bool,
-
-        /**
-         * Whether or not the filmstrip is displayed with remote videos. Used to
-         * determine display classes to set.
-         */
-        _filmstripVisible: PropTypes.bool,
-
-        /**
          * The current video resolution (height) to display a label for.
          */
         _resolution: PropTypes.number,
@@ -96,22 +85,6 @@ export class VideoQualityLabel extends Component {
     }
 
     /**
-     * Updates the state for whether or not the filmstrip is being toggled to
-     * display after having being hidden.
-     *
-     * @inheritdoc
-     * @param {Object} nextProps - The read-only props which this Component will
-     * receive.
-     * @returns {void}
-     */
-    componentWillReceiveProps(nextProps) {
-        this.setState({
-            togglingToVisible: nextProps._filmstripVisible
-                && !this.props._filmstripVisible
-        });
-    }
-
-    /**
      * Implements React's {@link Component#render()}.
      *
      * @inheritdoc
@@ -120,31 +93,13 @@ export class VideoQualityLabel extends Component {
     render() {
         const {
             _audioOnly,
-            _conferenceStarted,
-            _filmstripVisible,
             _resolution,
             _videoTrack,
             t
         } = this.props;
 
-        // FIXME The _conferenceStarted check is used to be defensive against
-        // toggling audio only mode while there is no conference and hides the
-        // need for error handling around audio only mode toggling.
-        if (!_conferenceStarted) {
-            return null;
-        }
 
-        // Determine which classes should be set on the component. These classes
-        // will used to help with animations and setting position.
-        const baseClasses = 'video-state-indicator moveToCorner';
-        const filmstrip
-            = _filmstripVisible ? 'with-filmstrip' : 'without-filmstrip';
-        const opening = this.state.togglingToVisible ? 'opening' : '';
-        const classNames
-            = `${baseClasses} ${filmstrip} ${opening}`;
-
-        let labelContent;
-        let tooltipKey;
+        let labelContent, tooltipKey;
 
         if (_audioOnly) {
             labelContent = <i className = 'icon-visibility-off' />;
@@ -163,7 +118,7 @@ export class VideoQualityLabel extends Component {
 
         return (
             <div
-                className = { classNames }
+                className = 'video-quality-label'
                 id = 'videoResolutionLabel'>
                 <Tooltip
                     content = { t(tooltipKey) }
@@ -219,15 +174,12 @@ export class VideoQualityLabel extends Component {
  * @private
  * @returns {{
  *     _audioOnly: boolean,
- *     _conferenceStarted: boolean,
- *     _filmstripVisible: true,
  *     _resolution: number,
  *     _videoTrack: Object
  * }}
  */
 function _mapStateToProps(state) {
-    const { audioOnly, conference } = state['features/base/conference'];
-    const { visible } = state['features/filmstrip'];
+    const { audioOnly } = state['features/base/conference'];
     const { resolution, participantId } = state['features/large-video'];
     const videoTrackOnLargeVideo = getTrackByMediaTypeAndParticipant(
         state['features/base/tracks'],
@@ -237,8 +189,6 @@ function _mapStateToProps(state) {
 
     return {
         _audioOnly: audioOnly,
-        _conferenceStarted: Boolean(conference),
-        _filmstripVisible: visible,
         _resolution: resolution,
         _videoTrack: videoTrackOnLargeVideo
     };

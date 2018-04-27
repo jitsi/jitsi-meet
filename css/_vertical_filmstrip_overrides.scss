@@ -182,17 +182,9 @@
      * The class opening is for when the filmstrip is transitioning from hidden
      * to visible.
      */
-    .video-state-indicator.moveToCorner {
-        transition: right 0.5s;
-
+    .large-video-labels {
         &.with-filmstrip {
-            &#recordingLabel {
-                right: 200px;
-            }
-
-            &#videoResolutionLabel {
-                right: 150px;
-            }
+            right: 150px;
         }
 
         &.with-filmstrip.opening {
