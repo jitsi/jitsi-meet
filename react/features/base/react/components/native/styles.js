@@ -8,8 +8,8 @@ const AVATAR_OPACITY = 0.4;
 const AVATAR_SIZE = 65;
 const HEADER_COLOR = ColorPalette.blue;
 
-// Header height is from iOS guidelines. Also, this looks good.
-const HEADER_HEIGHT = 44;
+// Header height is from Android guidelines. Also, this looks good.
+const HEADER_HEIGHT = 56;
 const OVERLAY_FONT_COLOR = 'rgba(255, 255, 255, 0.6)';
 
 export const HEADER_PADDING = BoxModel.padding;
