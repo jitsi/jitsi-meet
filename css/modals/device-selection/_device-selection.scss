@@ -4,11 +4,7 @@
 
         > div {
             display: block;
-            margin-bottom: 10px;
-        }
-
-        > div:last-child {
-            margin-bottom: 5px;
+            margin-bottom: 4px;
         }
 
         .device-selector-icon {
@@ -16,6 +12,10 @@
             color: inherit;
             font-size: 20px;
             margin-left: 3px;
+        }
+
+        .device-selector-label {
+            margin-bottom: 1px;
         }
 
         /* device-selector-trigger stylings attempt to mimic AtlasKit button */
@@ -101,7 +101,6 @@
 
     .audio-output-preview {
         font-size: 14px;
-        margin-top: 10px;
 
         a {
             color: 4C9AFF;
@@ -111,9 +110,9 @@
     }
 
     .audio-input-preview {
-        background: #7b7b7b;
+        background: #1B2638;
         border-radius: 5px;
-        height: 6px;
+        height: 8px;
 
         .audio-input-preview-level {
             background: #4C9AFF;

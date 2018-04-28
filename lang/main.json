@@ -440,7 +440,7 @@
         "noPermission": "Permission not granted",
         "previewUnavailable": "Preview unavailable",
         "selectADevice": "Select a device",
-        "testAudio": "Test sound"
+        "testAudio": "Play a test sound"
     },
     "videoStatus": {
         "callQuality": "Call Quality",

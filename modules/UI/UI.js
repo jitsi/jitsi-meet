@@ -35,6 +35,7 @@ import {
     setNotificationsEnabled,
     showWarningNotification
 } from '../../react/features/notifications';
+import { shouldShowOnlyDeviceSelection } from '../../react/features/settings';
 import {
     dockToolbox,
     showToolbox
@@ -104,8 +105,7 @@ const UIListeners = new Map([
             // opened through a button in settings and not directly displayed in
             // settings itself. As it is not useful to only have a settings menu
             // with a button to open a dialog, open the dialog directly instead.
-            if (interfaceConfig.SETTINGS_SECTIONS.length === 1
-                    && UIUtil.isSettingEnabled('devices')) {
+            if (shouldShowOnlyDeviceSelection()) {
                 APP.store.dispatch(openDeviceSelectionDialog());
             } else {
                 UI.toggleSidePanel('settings_container');

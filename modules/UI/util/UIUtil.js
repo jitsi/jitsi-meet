@@ -122,18 +122,6 @@ const UIUtil = {
     },
 
     /**
-     * Indicates if the setting section is enabled.
-     *
-     * @param name the name of the setting section as defined in
-     * interface_config.js and SettingsMenu.js
-     * @returns {boolean} {true} to indicate that the given setting section
-     * is enabled, {false} - otherwise
-     */
-    isSettingEnabled(name) {
-        return interfaceConfig.SETTINGS_SECTIONS.indexOf(name) !== -1;
-    },
-
-    /**
      * Indicates if Authentication Section should be shown
      *
      * @returns {boolean}
