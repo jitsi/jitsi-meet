@@ -50,17 +50,21 @@ case "$1" in
 
         db_get jicofo/jicofo-authpassword
         if [ -z "$RET" ] ; then
-            db_input critical jicofo/jicofo-authpassword || true
-            db_go
+            # if password is missing generate it, and store it
+            JICOFO_AUTH_PASSWORD=`head -c 8 /dev/urandom | tr '\0-\377' 'a-zA-Z0-9a-zA-Z0-9a-zA-Z0-9a-zA-Z0-9@@@@####'`
+            db_set jicofo/jicofo-authpassword "$JICOFO_AUTH_PASSWORD"
+        else
+            JICOFO_AUTH_PASSWORD="$RET"
         fi
-        JICOFO_AUTH_PASSWORD="$RET"
 
         db_get jicofo/jicofosecret
         if [ -z "$RET" ] ; then
-            db_input critical jicofo/jicofosecret || true
-            db_go
+            # if secret is missing generate it, and store it
+            JICOFO_SECRET=`head -c 8 /dev/urandom | tr '\0-\377' 'a-zA-Z0-9a-zA-Z0-9a-zA-Z0-9a-zA-Z0-9@@@@####'`
+            db_set jicofo/jicofosecret "$JICOFO_SECRET"
+        else
+            JICOFO_SECRET="$RET"
         fi
-        JICOFO_SECRET="$RET"
 
         JICOFO_AUTH_DOMAIN="auth.$JVB_HOSTNAME"
 
@@ -88,6 +92,7 @@ case "$1" in
         if [ ! -f $PROSODY_HOST_CONFIG ] && ! grep -q "VirtualHost \"$JVB_HOSTNAME\"" $PROSODY_CONFIG_OLD; then
             PROSODY_CONFIG_PRESENT="false"
             mkdir -p /etc/prosody/conf.avail/
+            mkdir -p /etc/prosody/conf.d/
             cp /usr/share/doc/jitsi-meet-prosody/prosody.cfg.lua-jvb.example $PROSODY_HOST_CONFIG
             sed -i "s/jitmeet.example.com/$JVB_HOSTNAME/g" $PROSODY_HOST_CONFIG
             sed -i "s/jitmeetSecret/$JVB_SECRET/g" $PROSODY_HOST_CONFIG
@@ -132,7 +137,9 @@ case "$1" in
             ln -sf /var/lib/prosody/$JICOFO_AUTH_DOMAIN.crt $AUTH_CRT_FILE
             ln -sf /var/lib/prosody/$JICOFO_AUTH_DOMAIN.crt /usr/local/share/ca-certificates/$JICOFO_AUTH_DOMAIN.crt
 
-            update-ca-certificates
+            # we need to force updating certificates, in some cases java trust
+            # store not get re-generated with latest changes
+            update-ca-certificates -f
 
             # don't fail on systems with custom config ($PROSODY_HOST_CONFIG is missing)
             if [ -f $PROSODY_HOST_CONFIG ]; then
