@@ -6,6 +6,7 @@ import {
     createApiEvent,
     sendAnalytics
 } from '../../react/features/analytics';
+import { sendInvitesForItems } from '../../react/features/invite';
 import { getJitsiMeetTransport } from '../transport';
 
 import { API_ID } from './constants';
@@ -107,8 +108,24 @@ function initCommands() {
 
         return false;
     });
-    transport.on('request', ({ name }, callback) => {
+    transport.on('request', (request, callback) => {
+        const { name } = request;
+
         switch (name) {
+        case 'invite':
+            APP.store.dispatch(
+                sendInvitesForItems(request.invitees))
+                .then(failedInvites => {
+                    const failed = failedInvites.length === 0;
+
+                    callback({
+                        result: failed ? undefined : true,
+                        error: failed
+                            ? new Error('One or more invites failed!')
+                            : undefined
+                    });
+                });
+            break;
         case 'is-audio-muted':
             callback(APP.conference.isLocalAudioMuted());
             break;

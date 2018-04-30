@@ -200,6 +200,8 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
      * authentication.
      * @param {string} [options.onload] - The onload function that will listen
      * for iframe onload event.
+     * @param {Array<Object>} [options.invitees] - Array of objects containing
+     * information about new participants that will be invited in the call.
      */
     constructor(domain, ...args) {
         super();
@@ -212,7 +214,8 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
             interfaceConfigOverwrite = {},
             noSSL = false,
             jwt = undefined,
-            onload = undefined
+            onload = undefined,
+            invitees
         } = parseArguments(args);
 
         this._parentNode = parentNode;
@@ -232,6 +235,7 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
                 }
             })
         });
+        this._invitees = invitees;
         this._isLargeVideoVisible = true;
         this._numberOfParticipants = 0;
         this._participants = {};
@@ -362,6 +366,9 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
 
             switch (name) {
             case 'video-conference-joined':
+                if (this._invitees) {
+                    this.invite(this._invitees);
+                }
                 this._myUserID = userID;
                 this._participants[userID] = {
                     avatarURL: data.avatarURL
@@ -572,6 +579,19 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
     isAudioAvailable() {
         return this._transport.sendRequest({
             name: 'is-audio-available'
+        });
+    }
+
+    /**
+     * Invite people to the call.
+     *
+     * @param {Array<Object>} invitees - The invitees.
+     * @returns {Promise} - Resolves on success and rejects on failure.
+     */
+    invite(invitees) {
+        return this._transport.sendRequest({
+            name: 'invite',
+            invitees
         });
     }
 
