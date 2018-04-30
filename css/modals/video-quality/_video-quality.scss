@@ -174,22 +174,30 @@
 
     .recording-icon,
     .recording-icon i {
-        color: rgb(255, 86, 48);
         line-height: $videoStateIndicatorSize;
         font-size: $videoStateIndicatorSize;
         opacity: 0.9;
         position: relative;
     }
 
+    .icon-rec {
+        color: #FF5630;
+    }
+
+    .icon-live {
+        color: #0065FF;
+    }
+
     .recording-icon-background {
         background: white;
-        height: 25%;
+        border-radius: 50%;
+        height: calc(#{$videoStateIndicatorSize} - 1px);
         left: 50%;
         opacity: 0.9;
         position: absolute;
         top: 50%;
         transform: translate(-50%, -50%);
-        width: 80%;
+        width: calc(#{$videoStateIndicatorSize} - 1px);
     }
 
     #recordingLabelText {

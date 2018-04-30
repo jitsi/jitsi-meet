@@ -5,6 +5,8 @@ import { connect } from 'react-redux';
 import { translate } from '../../base/i18n';
 import { JitsiRecordingStatus } from '../../base/lib-jitsi-meet';
 
+import { RECORDING_TYPES } from '../constants';
+
 /**
  * Implements a React {@link Component} which displays the current state of
  * conference recording. Currently it uses CSS to display itself automatically
@@ -42,6 +44,12 @@ class RecordingLabel extends Component {
          * }}
          */
         _labelDisplayConfiguration: PropTypes.object,
+
+        /**
+         * Whether the recording feature is live streaming (jibri) or is file
+         * recording (jirecon).
+         */
+        _recordingType: PropTypes.string,
 
         /**
          * Invoked to obtain translated string.
@@ -93,7 +101,11 @@ class RecordingLabel extends Component {
      * @returns {ReactElement}
      */
     render() {
-        const { _isRecording, _labelDisplayConfiguration } = this.props;
+        const {
+            _isRecording,
+            _labelDisplayConfiguration,
+            _recordingType
+        } = this.props;
         const { centered, key, showSpinner } = _labelDisplayConfiguration || {};
 
         const isVisible = Boolean(key);
@@ -114,7 +126,11 @@ class RecordingLabel extends Component {
                 { _isRecording
                     ? <div className = 'recording-icon'>
                         <div className = 'recording-icon-background' />
-                        <i className = 'icon-rec' />
+                        <i
+                            className = {
+                                _recordingType === RECORDING_TYPES.JIBRI
+                                    ? 'icon-live'
+                                    : 'icon-rec' } />
                     </div>
                     : <div id = 'recordingLabelText'>
                         { this.props.t(key) }
@@ -139,20 +155,23 @@ class RecordingLabel extends Component {
  * @returns {{
  *     _filmstripVisible: boolean,
  *     _isRecording: boolean,
- *     _labelDisplayConfiguration: Object
+ *     _labelDisplayConfiguration: Object,
+ *     _recordingType: string
  * }}
  */
 function _mapStateToProps(state) {
     const { visible } = state['features/filmstrip'];
     const {
         labelDisplayConfiguration,
-        recordingState
+        recordingState,
+        recordingType
     } = state['features/recording'];
 
     return {
         _filmstripVisible: visible,
         _isRecording: recordingState === JitsiRecordingStatus.ON,
-        _labelDisplayConfiguration: labelDisplayConfiguration
+        _labelDisplayConfiguration: labelDisplayConfiguration,
+        _recordingType: recordingType
     };
 }
 
