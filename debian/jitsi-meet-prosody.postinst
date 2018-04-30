@@ -50,17 +50,21 @@ case "$1" in
 
         db_get jicofo/jicofo-authpassword
         if [ -z "$RET" ] ; then
-            db_input critical jicofo/jicofo-authpassword || true
-            db_go
+            # if password is missing generate it, and store it
+            JICOFO_AUTH_PASSWORD=`head -c 8 /dev/urandom | tr '\0-\377' 'a-zA-Z0-9a-zA-Z0-9a-zA-Z0-9a-zA-Z0-9@@@@####'`
+            db_set jicofo/jicofo-authpassword "$JICOFO_AUTH_PASSWORD"
+        else
+            JICOFO_AUTH_PASSWORD="$RET"
         fi
-        JICOFO_AUTH_PASSWORD="$RET"
 
         db_get jicofo/jicofosecret
         if [ -z "$RET" ] ; then
-            db_input critical jicofo/jicofosecret || true
-            db_go
+            # if secret is missing generate it, and store it
+            JICOFO_SECRET=`head -c 8 /dev/urandom | tr '\0-\377' 'a-zA-Z0-9a-zA-Z0-9a-zA-Z0-9a-zA-Z0-9@@@@####'`
+            db_set jicofo/jicofosecret "$JICOFO_SECRET"
+        else
+            JICOFO_SECRET="$RET"
         fi
-        JICOFO_SECRET="$RET"
 
         JICOFO_AUTH_DOMAIN="auth.$JVB_HOSTNAME"
 
