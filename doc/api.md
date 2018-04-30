@@ -28,6 +28,7 @@ Its constructor gets a number of options:
     * **noSSL**: (optional, defaults to true) Boolean indicating if the server should be contacted using HTTP or HTTPS.
     * **jwt**: (optional) [JWT](https://jwt.io/) token.
     * **onload**: (optional) handler for the iframe onload event.
+    * **invitees**: (optional) Array of objects containing information about new participants that will be invited in the call.
 
 Example:
 
@@ -296,31 +297,41 @@ var iframe = api.getIFrame();
 
 You can check whether the audio is muted with the following API function:
 ```javascript
-isAudioMuted().then(function(muted) {
+api.isAudioMuted().then(function(muted) {
     ...
 });
 ```
 
 You can check whether the video is muted with the following API function:
 ```javascript
-isVideoMuted().then(function(muted) {
+api.isVideoMuted().then(function(muted) {
     ...
 });
 ```
 
 You can check whether the audio is available with the following API function:
 ```javascript
-isAudioAvailable().then(function(available) {
+api.isAudioAvailable().then(function(available) {
     ...
 });
 ```
 
 You can check whether the video is available with the following API function:
 ```javascript
-isVideoAvailable().then(function(available) {
+api.isVideoAvailable().then(function(available) {
     ...
 });
 ```
+
+You can invite new participants to the call with the following API function:
+```javascript
+api.invite([{...}, {...}, {...}]).then(function() {
+    // success
+}).catch(function() {
+    // failure
+});
+```
+**NOTE: The format of the invitees in the array depends on the invite service used for the deployment.**
 
 You can remove the embedded Jitsi Meet Conference with the following API function:
 ```javascript
