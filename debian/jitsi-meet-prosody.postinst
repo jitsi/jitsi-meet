@@ -133,7 +133,9 @@ case "$1" in
             ln -sf /var/lib/prosody/$JICOFO_AUTH_DOMAIN.crt $AUTH_CRT_FILE
             ln -sf /var/lib/prosody/$JICOFO_AUTH_DOMAIN.crt /usr/local/share/ca-certificates/$JICOFO_AUTH_DOMAIN.crt
 
-            update-ca-certificates
+            # we need to force updating certificates, in some cases java trust
+            # store not get re-generated with latest changes
+            update-ca-certificates -f
 
             # don't fail on systems with custom config ($PROSODY_HOST_CONFIG is missing)
             if [ -f $PROSODY_HOST_CONFIG ]; then
