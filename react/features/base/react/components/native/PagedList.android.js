@@ -123,6 +123,7 @@ class PagedList extends AbstractPagedList {
         return page.component
             ? <TouchableOpacity
                 disabled = { disabled }
+                key = { index }
                 onPress = { this._onIconPress(index) }
                 style = { styles.pageIndicator } >
                 <View style = { styles.pageIndicator }>
