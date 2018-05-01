@@ -2525,6 +2525,11 @@ export default {
         eventEmitter.emit(JitsiMeetConferenceEvents.BEFORE_HANGUP);
         APP.UI.removeLocalMedia();
 
+        // Remove unnecessary event listeners from firing callbacks.
+        JitsiMeetJS.mediaDevices.removeEventListener(
+            JitsiMediaDevicesEvents.DEVICE_LIST_CHANGED,
+            this.deviceChangeListener);
+
         let requestFeedbackPromise;
 
         if (requestFeedback) {
