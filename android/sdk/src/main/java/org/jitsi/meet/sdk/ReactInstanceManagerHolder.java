@@ -61,7 +61,7 @@ public class ReactInstanceManagerHolder {
             @Nullable Object data) {
         ReactInstanceManager reactInstanceManager
             = ReactInstanceManagerHolder.getReactInstanceManager();
-        
+
         if (reactInstanceManager != null) {
             ReactContext reactContext
                 = reactInstanceManager.getCurrentReactContext();
@@ -75,6 +75,26 @@ public class ReactInstanceManagerHolder {
         }
 
         return false;
+    }
+
+    /**
+     * Finds a native React module for given class.
+     *
+     * @param nativeModuleClass the native module's class for which an instance
+     * is to be retrieved from the {@link #reactInstanceManager}.
+     * @param <T> the module's type.
+     * @return {@link NativeModule} instance for given interface type or
+     * {@code null} if no instance for this interface is available, or if
+     * {@link #reactInstanceManager} has not been initialized yet.
+     */
+    static <T extends NativeModule> T getNativeModule(
+            Class<T> nativeModuleClass) {
+        ReactContext reactContext
+            = reactInstanceManager != null
+                ? reactInstanceManager.getCurrentReactContext() : null;
+
+        return reactContext != null
+                ? reactContext.getNativeModule(nativeModuleClass) : null;
     }
 
     static ReactInstanceManager getReactInstanceManager() {
