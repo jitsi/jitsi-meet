@@ -260,7 +260,9 @@ public class JitsiMeetActivity extends AppCompatActivity {
 
     @Override
     protected void onUserLeaveHint() {
-        JitsiMeetView.onUserLeaveHint();
+        if (view != null) {
+            view.onUserLeaveHint();
+        }
     }
 
     /**

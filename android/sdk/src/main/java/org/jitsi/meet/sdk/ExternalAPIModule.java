@@ -112,6 +112,34 @@ class ExternalAPIModule extends ReactContextBaseJavaModule {
     }
 
     /**
+     * The internal processing for the conference URL set on
+     * a {@link JitsiMeetView} instance.
+     *
+     * @param eventName the name of the external API event to be processed.
+     * @param view the {@link JitsiMeetView} instance.
+     * @param url the "url" attribute value retrieved from the "data" carried by
+     * the event.
+     */
+    private void maybeSetConferenceUrlOnTheView(
+            String eventName, JitsiMeetView view, String url)
+    {
+        switch(eventName) {
+        case "CONFERENCE_WILL_JOIN":
+            view.setCurrentConferenceUrl(url);
+            break;
+
+        case "CONFERENCE_FAILED":
+        case "CONFERENCE_WILL_LEAVE":
+        case "LOAD_CONFIG_ERROR":
+            // Abandon the conference only if it's for the current URL
+            if (url != null && url.equals(view.getCurrentConferenceUrl())) {
+                view.setCurrentConferenceUrl(null);
+            }
+            break;
+        }
+    }
+
+    /**
      * Dispatches an event that occurred on JavaScript to the view's listener.
      *
      * @param name The name of the event.
@@ -130,6 +158,8 @@ class ExternalAPIModule extends ReactContextBaseJavaModule {
             return;
         }
 
+        maybeSetConferenceUrlOnTheView(name, view, data.getString("url"));
+
         JitsiMeetViewListener listener = view.getListener();
 
         if (listener == null) {
@@ -141,7 +171,17 @@ class ExternalAPIModule extends ReactContextBaseJavaModule {
         if (method != null) {
             try {
                 method.invoke(listener, toHashMap(data));
-            } catch (IllegalAccessException | InvocationTargetException e) {
+            } catch (IllegalAccessException e) {
+                // FIXME There was a multicatch for IllegalAccessException and
+                // InvocationTargetException, but Android Studio complained
+                // with:
+                // "Multi-catch with these reflection exceptions requires
+                // API level 19 (current min is 16) because they get compiled to
+                // the common but new super type ReflectiveOperationException.
+                // As a workaround either create individual catch statements, or
+                // catch Exception."
+                throw new RuntimeException(e);
+            } catch (InvocationTargetException e) {
                 throw new RuntimeException(e);
             }
         }

@@ -167,7 +167,7 @@ public class JitsiMeetView extends FrameLayout {
             DefaultHardwareBackBtnHandler defaultBackButtonImpl) {
         ReactInstanceManager reactInstanceManager
             = ReactInstanceManagerHolder.getReactInstanceManager();
-        
+
         if (reactInstanceManager != null) {
             reactInstanceManager.onHostResume(activity, defaultBackButtonImpl);
         }
@@ -205,15 +205,13 @@ public class JitsiMeetView extends FrameLayout {
     }
 
     /**
-     * Activity lifecycle method which should be called from
-     * {@code Activity.onUserLeaveHint} so we can do the required internal
-     * processing.
+     * Stores the current conference URL. Will have a value when the app is in
+     * a conference.
      *
-     * This is currently not mandatory.
+     * Currently one thread writes and one thread reads, so it should be fine to
+     * have this field volatile without additional synchronization.
      */
-    public static void onUserLeaveHint() {
-        ReactInstanceManagerHolder.emitEvent("onUserLeaveHint", null);
-    }
+    private volatile String conferenceUrl;
 
     /**
      * The default base {@code URL} used to join a conference when a partial URL
@@ -291,6 +289,16 @@ public class JitsiMeetView extends FrameLayout {
             reactRootView.unmountReactApplication();
             reactRootView = null;
         }
+    }
+
+    /**
+     * Retrieves the current conferences URL.
+     *
+     * @return a string with conference URL if the view is currently in
+     * a conference or {@code null} otherwise.
+     */
+    public String getCurrentConferenceUrl() {
+        return conferenceUrl;
     }
 
     /**
@@ -459,6 +467,33 @@ public class JitsiMeetView extends FrameLayout {
     }
 
     /**
+     * Activity lifecycle method which should be called from
+     * {@code Activity.onUserLeaveHint} so we can do the required internal
+     * processing.
+     *
+     * This is currently not mandatory, but if used will provide automatic
+     * handling of the picture in picture mode when user minimizes the app. It
+     * will be probably the most useful in case the app is using the welcome
+     * page.
+     */
+    public void onUserLeaveHint() {
+        if (getPictureInPictureEnabled() && conferenceUrl != null) {
+            PictureInPictureModule pipModule
+                = ReactInstanceManagerHolder.getNativeModule(
+                        PictureInPictureModule.class);
+
+            if (pipModule != null) {
+                try {
+                    pipModule.enterPictureInPicture();
+                } catch (RuntimeException exc) {
+                    Log.e(
+                        TAG, "onUserLeaveHint: failed to enter PiP mode", exc);
+                }
+            }
+        }
+    }
+
+    /**
      * Called when the window containing this view gains or loses focus.
      *
      * @param hasFocus If the window of this view now has focus, {@code true};
@@ -493,6 +528,17 @@ public class JitsiMeetView extends FrameLayout {
                     re);
             }
         }
+    }
+
+    /**
+     * Sets the current conference URL.
+     *
+     * @param conferenceUrl a string with new conference URL to set if the view
+     * is entering the conference or {@code null} if the view is no longer in
+     * the conference.
+     */
+    void setCurrentConferenceUrl(String conferenceUrl) {
+        this.conferenceUrl = conferenceUrl;
     }
 
     /**

@@ -4,10 +4,7 @@ import { NativeModules } from 'react-native';
 
 import { Platform } from '../../base/react';
 
-import {
-    ENTER_PICTURE_IN_PICTURE,
-    _SET_EMITTER_SUBSCRIPTIONS
-} from './actionTypes';
+import { ENTER_PICTURE_IN_PICTURE } from './actionTypes';
 
 /**
  * Enters (or rather initiates entering) picture-in-picture.
@@ -45,24 +42,5 @@ export function enterPictureInPicture() {
                 () => dispatch({ type: ENTER_PICTURE_IN_PICTURE }),
                 e => console.warn(`Error entering PiP mode: ${e}`));
         }
-    };
-}
-
-/**
- * Sets the {@code EventEmitter} subscriptions utilized by the feature
- * picture-in-picture.
- *
- * @param {Array<Object>} emitterSubscriptions - The {@code EventEmitter}
- * subscriptions to be set.
- * @protected
- * @returns {{
- *     type: _SET_EMITTER_SUBSCRIPTIONS,
- *     emitterSubscriptions: Array<Object>
- * }}
- */
-export function _setEmitterSubscriptions(emitterSubscriptions: ?Array<Object>) {
-    return {
-        type: _SET_EMITTER_SUBSCRIPTIONS,
-        emitterSubscriptions
     };
 }
