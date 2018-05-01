@@ -58,7 +58,8 @@ MiddlewareRegistry.register(store => next => action => {
         break;
 
     case CONNECTION_FAILED:
-        _sendConferenceFailedOnConnectionError(store, action);
+        !action.error.recoverable
+            && _sendConferenceFailedOnConnectionError(store, action);
         break;
 
     case ENTER_PICTURE_IN_PICTURE:

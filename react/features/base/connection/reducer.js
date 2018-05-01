@@ -1,7 +1,8 @@
 /* @flow */
 
 import { SET_ROOM } from '../conference';
-import { assign, set, ReducerRegistry } from '../redux';
+import { JitsiConnectionErrors } from '../lib-jitsi-meet';
+import { assign, ReducerRegistry } from '../redux';
 import { parseURIString } from '../util';
 
 import {
@@ -80,7 +81,8 @@ function _connectionEstablished(
     return assign(state, {
         connecting: undefined,
         connection,
-        error: undefined
+        error: undefined,
+        passwordRequired: undefined
     });
 }
 
@@ -113,7 +115,10 @@ function _connectionFailed(
     return assign(state, {
         connecting: undefined,
         connection: undefined,
-        error
+        error,
+        passwordRequired:
+            error.name === JitsiConnectionErrors.PASSWORD_REQUIRED
+                ? connection : undefined
     });
 }
 
@@ -132,7 +137,8 @@ function _connectionWillConnect(
         { connection }: { connection: Object }) {
     return assign(state, {
         connecting: connection,
-        error: undefined
+        error: undefined,
+        passwordRequired: undefined
     });
 }
 
@@ -209,5 +215,8 @@ function _setLocationURL(
  * reduction of the specified action.
  */
 function _setRoom(state: Object) {
-    return set(state, 'error', undefined);
+    return assign(state, {
+        error: undefined,
+        passwordRequired: undefined
+    });
 }
