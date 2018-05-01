@@ -184,7 +184,7 @@ messages. The listener will receive an object with the following structure:
 }
 ```
 
-* **displayNameChanged** - event notifications about display name
+* **displayNameChange** - event notifications about display name
 changes. The listener will receive an object with the following structure:
 ```javascript
 {
