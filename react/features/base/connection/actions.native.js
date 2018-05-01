@@ -178,6 +178,8 @@ export function connectionEstablished(connection: Object) {
  * @param {Object} [credentials] - The invalid credentials that failed
  * the authentication.
  * @param {Object} [details] - The details about the connection failed event.
+ * @param {boolean} [recoverable] - Indicates whether this event is recoverable
+ * or not.
  * @public
  * @returns {{
  *     type: CONNECTION_FAILED,
@@ -190,7 +192,8 @@ export function connectionFailed(
         error: string,
         message: ?string,
         credentials: ?Object,
-        details: ?Object) {
+        details: ?Object,
+        recoverable: ?boolean) {
     return {
         type: CONNECTION_FAILED,
         connection,
@@ -204,7 +207,8 @@ export function connectionFailed(
                     : undefined,
             message,
             name: error,
-            details
+            details,
+            recoverable
         }
     };
 }

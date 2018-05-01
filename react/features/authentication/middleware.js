@@ -108,9 +108,12 @@ MiddlewareRegistry.register(store => next => action => {
     case CONNECTION_FAILED: {
         const { error } = action;
 
-        error
-            && error.name === JitsiConnectionErrors.PASSWORD_REQUIRED
-            && store.dispatch(_openLoginDialog());
+        if (error
+                && error.name === JitsiConnectionErrors.PASSWORD_REQUIRED
+                && typeof error.recoverable === 'undefined') {
+            error.recoverable = true;
+            store.dispatch(_openLoginDialog());
+        }
         break;
     }
 

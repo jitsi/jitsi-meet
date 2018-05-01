@@ -2,6 +2,7 @@
 
 import { appNavigate } from '../app';
 import { checkIfCanJoin, conferenceLeft } from '../base/conference';
+import { connectionFailed } from '../base/connection';
 import { openDialog } from '../base/dialog';
 
 import {
@@ -71,11 +72,28 @@ export function authenticateAndUpgradeRole(
  * }}
  */
 export function cancelLogin() {
-    // FIXME Like cancelWaitForOwner, dispatch conferenceLeft to notify the
-    // external-api.
+    return (dispatch: Dispatch<*>, getState: Function) => {
+        dispatch({ type: CANCEL_LOGIN });
 
-    return {
-        type: CANCEL_LOGIN
+        // XXX The error associated with CONNECTION_FAILED was marked as
+        // recoverable by the authentication feature  and, consequently,
+        // recoverable-aware features such as mobile's external-api did not
+        // deliver the CONFERENCE_FAILED to the SDK clients/consumers (as
+        // a reaction to CONNECTION_FAILED). Since the
+        // app/user is going to navigate to WelcomePage, the SDK
+        // clients/consumers need an event.
+        const { error, passwordRequired }
+            = getState()['features/base/connection'];
+
+        passwordRequired
+            && dispatch(
+                connectionFailed(
+                    passwordRequired,
+                    error && error.name,
+                    error && error.message,
+                    error && error.credentials,
+                    error && error.details,
+                    /* recoverable */ false));
     };
 }
 
