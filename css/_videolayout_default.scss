@@ -15,7 +15,6 @@
 #largeVideoBackgroundContainer,
 .large-video-background {
     height: 100%;
-    filter: blur(40px);
     left: 0;
     overflow: hidden;
     position: absolute;
@@ -31,6 +30,9 @@
         height: auto;
         width: 100%;
     }
+}
+#largeVideoBackgroundContainer {
+    filter: blur(40px);
 }
 
 .videocontainer {
