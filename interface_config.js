@@ -163,7 +163,17 @@ var interfaceConfig = {
     /**
      * Specify mobile app scheme for opening the app from the mobile browser.
      */
-    // APP_SCHEME: 'org.jitsi.meet'
+    // APP_SCHEME: 'org.jitsi.meet',
+
+    /**
+     * Temporary feature flag to debug performance with the large video
+     * background blur. On initial implementation, blur was always enabled so a
+     * falsy value here will be used to keep blur enabled, as will the value
+     * "video", and will render the blur over a video element. The value
+     * "canvas" will display the blur over a canvas element, while the value
+     * "off" will prevent the background from rendering.
+     */
+    // _BACKGROUND_BLUR: undefined
 };
 
 /* eslint-enable no-unused-vars, no-var, max-len */

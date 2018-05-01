@@ -23,7 +23,7 @@ export const ORIENTATION = {
  * @private
  * @type {Object}
  */
-const ORIENTATION_TO_CLASS = {
+export const ORIENTATION_TO_CLASS = {
     [ORIENTATION.LANDSCAPE]: 'fit-full-width',
     [ORIENTATION.PORTRAIT]: 'fit-full-height'
 };
