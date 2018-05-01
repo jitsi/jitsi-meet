@@ -60,16 +60,6 @@ public interface JitsiMeetViewListener {
     void onConferenceWillLeave(Map<String, Object> data);
 
     /**
-     * Called when the add user button is tapped.
-     *
-     * @param inviteSearchController {@code InviteSearchController} scoped
-     * for this user invite flow. The {@code InviteSearchController} is used
-     * to start user queries and accepts an {@code InviteSearchControllerDelegate}
-     * for receiving user query responses.
-     */
-    void launchNativeInvite(InviteSearchController inviteSearchController);
-
-    /**
      * Called when loading the main configuration file from the Jitsi Meet
      * deployment fails.
      *

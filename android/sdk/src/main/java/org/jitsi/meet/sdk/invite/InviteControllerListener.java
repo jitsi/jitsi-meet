@@ -14,10 +14,16 @@
  * limitations under the License.
  */
 
-#import <UIKit/UIKit.h>
+package org.jitsi.meet.sdk.invite;
 
-#import <JitsiMeet/JitsiMeet.h>
-
-@interface ViewController : UIViewController<JitsiMeetViewDelegate, InviteControllerDelegate>
-
-@end
+public interface InviteControllerListener {
+    /**
+     * Called when the add user button is tapped.
+     *
+     * @param addPeopleController {@code AddPeopleController} scoped
+     * for this user invite flow. The {@code AddPeopleController} is used
+     * to start user queries and accepts an {@code AddPeopleControllerListener}
+     * for receiving user query responses.
+     */
+    void beginAddPeople(AddPeopleController addPeopleController);
+}

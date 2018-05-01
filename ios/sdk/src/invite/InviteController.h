@@ -14,10 +14,19 @@
  * limitations under the License.
  */
 
-#import <UIKit/UIKit.h>
+#import <Foundation/Foundation.h>
 
-#import <JitsiMeet/JitsiMeet.h>
+#import "InviteControllerDelegate.h"
 
-@interface ViewController : UIViewController<JitsiMeetViewDelegate, InviteControllerDelegate>
+@interface InviteController : NSObject
+
+@property (nonatomic) BOOL addPeopleEnabled;
+
+@property (nonatomic) BOOL dialOutEnabled;
+
+@property (nonatomic, nullable, weak) id<InviteControllerDelegate> delegate;
+
+- (void)  invite:(NSArray *)invitees
+  withCompletion:(void (^)(NSArray<NSDictionary *> *failedInvitees))completion;
 
 @end

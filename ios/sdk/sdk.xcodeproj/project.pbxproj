@@ -29,8 +29,13 @@
 		0F65EECE1D95DA94561BB47E /* libPods-JitsiMeet.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 03F2ADC957FF109849B7FCA1 /* libPods-JitsiMeet.a */; };
 		75635B0A20751D6D00F29C9F /* joined.wav in Resources */ = {isa = PBXBuildFile; fileRef = 75635B0820751D6D00F29C9F /* joined.wav */; };
 		75635B0B20751D6D00F29C9F /* left.wav in Resources */ = {isa = PBXBuildFile; fileRef = 75635B0920751D6D00F29C9F /* left.wav */; };
-		412BF89D206AA66F0053B9E5 /* InviteSearch.m in Sources */ = {isa = PBXBuildFile; fileRef = 412BF89C206AA66F0053B9E5 /* InviteSearch.m */; };
-		412BF89F206ABAE40053B9E5 /* InviteSearch.h in Headers */ = {isa = PBXBuildFile; fileRef = 412BF89E206AA82F0053B9E5 /* InviteSearch.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		B386B85720981A75000DEF7A /* InviteController.m in Sources */ = {isa = PBXBuildFile; fileRef = B386B85020981A74000DEF7A /* InviteController.m */; };
+		B386B85820981A75000DEF7A /* AddPeopleController.m in Sources */ = {isa = PBXBuildFile; fileRef = B386B85120981A74000DEF7A /* AddPeopleController.m */; };
+		B386B85920981A75000DEF7A /* AddPeopleControllerDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = B386B85220981A74000DEF7A /* AddPeopleControllerDelegate.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		B386B85A20981A75000DEF7A /* AddPeopleController.h in Headers */ = {isa = PBXBuildFile; fileRef = B386B85320981A74000DEF7A /* AddPeopleController.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		B386B85B20981A75000DEF7A /* InviteControllerDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = B386B85420981A74000DEF7A /* InviteControllerDelegate.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		B386B85C20981A75000DEF7A /* InviteController.h in Headers */ = {isa = PBXBuildFile; fileRef = B386B85520981A75000DEF7A /* InviteController.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		B386B85D20981A75000DEF7A /* Invite.m in Sources */ = {isa = PBXBuildFile; fileRef = B386B85620981A75000DEF7A /* Invite.m */; };
 		C6245F5D2053091D0040BE68 /* image-resize@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = C6245F5B2053091D0040BE68 /* image-resize@2x.png */; };
 		C6245F5E2053091D0040BE68 /* image-resize@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = C6245F5C2053091D0040BE68 /* image-resize@3x.png */; };
 		C6A34261204EF76800E062DD /* DragGestureController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6A3425E204EF76800E062DD /* DragGestureController.swift */; };
@@ -44,6 +49,9 @@
 		0B412F171EDEC65D00B1A0A6 /* JitsiMeetView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JitsiMeetView.m; sourceTree = "<group>"; };
 		0B412F1B1EDEC80100B1A0A6 /* JitsiMeetViewDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JitsiMeetViewDelegate.h; sourceTree = "<group>"; };
 		0B44A0181F902126009D1D64 /* MPVolumeViewManager.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MPVolumeViewManager.m; sourceTree = "<group>"; };
+		0B6F414F20987DE600FF6789 /* Invite+Private.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Invite+Private.h"; sourceTree = "<group>"; };
+		0B6F41502098840600FF6789 /* InviteController+Private.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "InviteController+Private.h"; sourceTree = "<group>"; };
+		0B6F4151209884E500FF6789 /* AddPeopleController+Private.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "AddPeopleController+Private.h"; sourceTree = "<group>"; };
 		0B7C2CFC200F51D60060D076 /* LaunchOptions.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = LaunchOptions.m; sourceTree = "<group>"; };
 		0B93EF7A1EC608550030D24D /* CoreText.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreText.framework; path = System/Library/Frameworks/CoreText.framework; sourceTree = SDKROOT; };
 		0B93EF7C1EC9DDCD0030D24D /* RCTBridgeWrapper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RCTBridgeWrapper.h; sourceTree = "<group>"; };
@@ -64,10 +72,15 @@
 		0BD906E91EC0C00300C8C18E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		75635B0820751D6D00F29C9F /* joined.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; name = joined.wav; path = ../../sounds/joined.wav; sourceTree = "<group>"; };
 		75635B0920751D6D00F29C9F /* left.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; name = left.wav; path = ../../sounds/left.wav; sourceTree = "<group>"; };
-		412BF89C206AA66F0053B9E5 /* InviteSearch.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = InviteSearch.m; sourceTree = "<group>"; };
-		412BF89E206AA82F0053B9E5 /* InviteSearch.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = InviteSearch.h; sourceTree = "<group>"; };
 		98E09B5C73D9036B4ED252FC /* Pods-JitsiMeet.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-JitsiMeet.debug.xcconfig"; path = "../Pods/Target Support Files/Pods-JitsiMeet/Pods-JitsiMeet.debug.xcconfig"; sourceTree = "<group>"; };
 		9C77CA3CC919B081F1A52982 /* Pods-JitsiMeet.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-JitsiMeet.release.xcconfig"; path = "../Pods/Target Support Files/Pods-JitsiMeet/Pods-JitsiMeet.release.xcconfig"; sourceTree = "<group>"; };
+		B386B85020981A74000DEF7A /* InviteController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = InviteController.m; sourceTree = "<group>"; };
+		B386B85120981A74000DEF7A /* AddPeopleController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AddPeopleController.m; sourceTree = "<group>"; };
+		B386B85220981A74000DEF7A /* AddPeopleControllerDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AddPeopleControllerDelegate.h; sourceTree = "<group>"; };
+		B386B85320981A74000DEF7A /* AddPeopleController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AddPeopleController.h; sourceTree = "<group>"; };
+		B386B85420981A74000DEF7A /* InviteControllerDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InviteControllerDelegate.h; sourceTree = "<group>"; };
+		B386B85520981A75000DEF7A /* InviteController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InviteController.h; sourceTree = "<group>"; };
+		B386B85620981A75000DEF7A /* Invite.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Invite.m; sourceTree = "<group>"; };
 		C6245F5B2053091D0040BE68 /* image-resize@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "image-resize@2x.png"; path = "src/picture-in-picture/image-resize@2x.png"; sourceTree = "<group>"; };
 		C6245F5C2053091D0040BE68 /* image-resize@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "image-resize@3x.png"; path = "src/picture-in-picture/image-resize@3x.png"; sourceTree = "<group>"; };
 		C6A3425E204EF76800E062DD /* DragGestureController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DragGestureController.swift; sourceTree = "<group>"; };
@@ -125,12 +138,11 @@
 		0BD906E71EC0C00300C8C18E /* src */ = {
 			isa = PBXGroup;
 			children = (
+				B386B84F20981A11000DEF7A /* invite */,
 				C6A3426B204F127900E062DD /* picture-in-picture */,
 				0BCA495C1EC4B6C600B793EE /* AudioMode.m */,
 				0BB9AD7C1F60356D001C08DB /* AppInfo.m */,
 				0BB9AD7A1F5EC8F4001C08DB /* CallKit.m */,
-				412BF89E206AA82F0053B9E5 /* InviteSearch.h */,
-				412BF89C206AA66F0053B9E5 /* InviteSearch.m */,
 				0BA13D301EE83FF8007BEF7F /* ExternalAPI.m */,
 				0BD906E91EC0C00300C8C18E /* Info.plist */,
 				0B7C2CFC200F51D60060D076 /* LaunchOptions.m */,
@@ -160,6 +172,23 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
+		B386B84F20981A11000DEF7A /* invite */ = {
+			isa = PBXGroup;
+			children = (
+				B386B85320981A74000DEF7A /* AddPeopleController.h */,
+				B386B85120981A74000DEF7A /* AddPeopleController.m */,
+				0B6F4151209884E500FF6789 /* AddPeopleController+Private.h */,
+				B386B85220981A74000DEF7A /* AddPeopleControllerDelegate.h */,
+				B386B85620981A75000DEF7A /* Invite.m */,
+				0B6F414F20987DE600FF6789 /* Invite+Private.h */,
+				B386B85520981A75000DEF7A /* InviteController.h */,
+				B386B85020981A74000DEF7A /* InviteController.m */,
+				0B6F41502098840600FF6789 /* InviteController+Private.h */,
+				B386B85420981A74000DEF7A /* InviteControllerDelegate.h */,
+			);
+			path = invite;
+			sourceTree = "<group>";
+		};
 		C5E72ADFC30ED96F9B35F076 /* Pods */ = {
 			isa = PBXGroup;
 			children = (
@@ -185,11 +214,14 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B386B85C20981A75000DEF7A /* InviteController.h in Headers */,
+				B386B85B20981A75000DEF7A /* InviteControllerDelegate.h in Headers */,
 				C6F99C15204DB63E0001F710 /* JitsiMeetView+Private.h in Headers */,
-				412BF89F206ABAE40053B9E5 /* InviteSearch.h in Headers */,
 				0B412F181EDEC65D00B1A0A6 /* JitsiMeetView.h in Headers */,
+				B386B85920981A75000DEF7A /* AddPeopleControllerDelegate.h in Headers */,
 				0B93EF7E1EC9DDCD0030D24D /* RCTBridgeWrapper.h in Headers */,
 				0B412F221EDEF6EA00B1A0A6 /* JitsiMeetViewDelegate.h in Headers */,
+				B386B85A20981A75000DEF7A /* AddPeopleController.h in Headers */,
 				0BD906EA1EC0C00300C8C18E /* JitsiMeet.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -350,11 +382,13 @@
 				0B93EF7F1EC9DDCD0030D24D /* RCTBridgeWrapper.m in Sources */,
 				0BA13D311EE83FF8007BEF7F /* ExternalAPI.m in Sources */,
 				0BCA49601EC4B6C600B793EE /* POSIX.m in Sources */,
+				B386B85D20981A75000DEF7A /* Invite.m in Sources */,
 				0B7C2CFD200F51D60060D076 /* LaunchOptions.m in Sources */,
 				C6CC49AF207412CF000DFA42 /* PiPViewCoordinator.swift in Sources */,
+				B386B85720981A75000DEF7A /* InviteController.m in Sources */,
+				B386B85820981A75000DEF7A /* AddPeopleController.m in Sources */,
 				0BCA495F1EC4B6C600B793EE /* AudioMode.m in Sources */,
 				0B44A0191F902126009D1D64 /* MPVolumeViewManager.m in Sources */,
-				412BF89D206AA66F0053B9E5 /* InviteSearch.m in Sources */,
 				0BCA49611EC4B6C600B793EE /* Proximity.m in Sources */,
 				C6A34261204EF76800E062DD /* DragGestureController.swift in Sources */,
 				0B412F191EDEC65D00B1A0A6 /* JitsiMeetView.m in Sources */,

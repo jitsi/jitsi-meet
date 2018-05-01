@@ -1,5 +1,5 @@
 /*
- * Copyright @ 2017-present Atlassian Pty Ltd
+ * Copyright @ 2018-present Atlassian Pty Ltd
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,10 +14,17 @@
  * limitations under the License.
  */
 
-#import <UIKit/UIKit.h>
+#import <React/RCTBridge.h>
+#import <React/RCTEventEmitter.h>
 
-#import <JitsiMeet/JitsiMeet.h>
+@interface Invite : RCTEventEmitter <RCTBridgeModule>
 
-@interface ViewController : UIViewController<JitsiMeetViewDelegate, InviteControllerDelegate>
+- (void)            invite:(NSArray<NSDictionary *> * _Nonnull)invitees
+          externalAPIScope:(NSString * _Nonnull)externalAPIScope
+  addPeopleControllerScope:(NSString * _Nonnull)addPeopleControllerScope;
+
+- (void)      performQuery:(NSString * _Nonnull)query
+          externalAPIScope:(NSString * _Nonnull)externalAPIScope
+  addPeopleControllerScope:(NSString * _Nonnull)addPeopleControllerScope;
 
 @end

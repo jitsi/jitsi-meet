@@ -3,8 +3,21 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
-import { launchNativeInvite } from '../../mobile/invite-search';
+import { beginShareRoom } from '../../share-room';
 import { ToolbarButton } from '../../toolbox';
+
+import { beginAddPeople } from '../actions';
+import { isAddPeopleEnabled, isDialOutEnabled } from '../functions';
+
+/**
+ * The indicator which determines (at bundle time) whether there should be a
+ * {@code ToolbarButton} in {@code Toolbox} to expose the functionality of the
+ * feature share-room in the user interface of the app.
+ *
+ * @private
+ * @type {boolean}
+ */
+const _SHARE_ROOM_TOOLBAR_BUTTON = true;
 
 /**
  * The type of {@link EnterPictureInPictureToobarButton}'s React
@@ -13,21 +26,28 @@ import { ToolbarButton } from '../../toolbox';
 type Props = {
 
     /**
-     * Indicates if the "Add to call" feature is available.
+     * Whether or not the feature to directly invite people into the
+     * conference is available.
      */
-    enableAddPeople: boolean,
+    _addPeopleEnabled: boolean,
 
     /**
-     * Indicates if the "Dial out" feature is available.
+     * Whether or not the feature to dial out to number to join the
+     * conference is available.
      */
-    enableDialOut: boolean,
+    _dialOutEnabled: boolean,
 
     /**
      * Launches native invite dialog.
      *
      * @protected
      */
-    onLaunchNativeInvite: Function,
+    _onAddPeople: Function,
+
+    /**
+     * Begins the UI procedure to share the conference/room URL.
+     */
+    _onShareRoom: Function
 };
 
 /**
@@ -43,22 +63,32 @@ class InviteButton extends Component<Props> {
      */
     render() {
         const {
-            enableAddPeople,
-            enableDialOut,
-            onLaunchNativeInvite,
+            _addPeopleEnabled,
+            _dialOutEnabled,
+            _onAddPeople,
+            _onShareRoom,
             ...props
         } = this.props;
 
-        if (!enableAddPeople && !enableDialOut) {
-            return null;
+        if (_SHARE_ROOM_TOOLBAR_BUTTON) {
+            return (
+                <ToolbarButton
+                    iconName = 'link'
+                    onClick = { _onShareRoom }
+                    { ...props } />
+            );
         }
 
-        return (
-            <ToolbarButton
-                iconName = { 'add' }
-                onClick = { onLaunchNativeInvite }
-                { ...props } />
-        );
+        if (_addPeopleEnabled || _dialOutEnabled) {
+            return (
+                <ToolbarButton
+                    iconName = { 'link' }
+                    onClick = { _onAddPeople }
+                    { ...props } />
+            );
+        }
+
+        return null;
     }
 }
 
@@ -68,13 +98,13 @@ class InviteButton extends Component<Props> {
  *
  * @param {Function} dispatch - The redux action {@code dispatch} function.
  * @returns {{
-*      onLaunchNativeInvite
+ *     _onAddPeople,
+ *     _onShareRoom
  * }}
  * @private
  */
 function _mapDispatchToProps(dispatch) {
     return {
-
         /**
          * Launches native invite dialog.
          *
@@ -82,10 +112,50 @@ function _mapDispatchToProps(dispatch) {
          * @returns {void}
          * @type {Function}
          */
-        onLaunchNativeInvite() {
-            dispatch(launchNativeInvite());
+        _onAddPeople() {
+            dispatch(beginAddPeople());
+        },
+
+        /**
+         * Begins the UI procedure to share the conference/room URL.
+         *
+         * @private
+         * @returns {void}
+         * @type {Function}
+         */
+        _onShareRoom() {
+            dispatch(beginShareRoom());
         }
     };
 }
 
-export default connect(undefined, _mapDispatchToProps)(InviteButton);
+/**
+ * Maps (parts of) the redux state to {@link Toolbox}'s React {@code Component}
+ * props.
+ *
+ * @param {Object} state - The redux store/state.
+ * @private
+ * @returns {{
+ * }}
+ */
+function _mapStateToProps(state) {
+    return {
+        /**
+         * Whether or not the feature to directly invite people into the
+         * conference is available.
+         *
+         * @type {boolean}
+         */
+        _addPeopleEnabled: isAddPeopleEnabled(state),
+
+        /**
+         * Whether or not the feature to dial out to number to join the
+         * conference is available.
+         *
+         * @type {boolean}
+         */
+        _dialOutEnabled: isDialOutEnabled(state)
+    };
+}
+
+export default connect(_mapStateToProps, _mapDispatchToProps)(InviteButton);

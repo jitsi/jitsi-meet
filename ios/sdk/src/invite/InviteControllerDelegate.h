@@ -14,10 +14,16 @@
  * limitations under the License.
  */
 
-#import <UIKit/UIKit.h>
+#import "AddPeopleController.h"
 
-#import <JitsiMeet/JitsiMeet.h>
+@protocol InviteControllerDelegate <NSObject>
 
-@interface ViewController : UIViewController<JitsiMeetViewDelegate, InviteControllerDelegate>
+/**
+ * Called when the invite button in the conference is tapped.
+ *
+ * The search controller provided can be used to query user search within the
+ * conference.
+ */
+- (void)beginAddPeople:(AddPeopleController *)addPeopleController;
 
 @end

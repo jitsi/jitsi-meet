@@ -19,10 +19,11 @@ package org.jitsi.meet;
 import android.os.Bundle;
 import android.util.Log;
 
-import org.jitsi.meet.sdk.InviteSearchController;
 import org.jitsi.meet.sdk.JitsiMeetActivity;
 import org.jitsi.meet.sdk.JitsiMeetView;
 import org.jitsi.meet.sdk.JitsiMeetViewListener;
+import org.jitsi.meet.sdk.invite.AddPeopleController;
+import org.jitsi.meet.sdk.invite.InviteControllerListener;
 
 import com.calendarevents.CalendarEventsPackage;
 
@@ -87,15 +88,23 @@ public class MainActivity extends JitsiMeetActivity {
                 }
 
                 @Override
-                public void launchNativeInvite(InviteSearchController inviteSearchController) {
-                    on("LAUNCH_NATIVE_INVITE", new HashMap<String, Object>());
-                }
-
-                @Override
                 public void onLoadConfigError(Map<String, Object> data) {
                     on("LOAD_CONFIG_ERROR", data);
                 }
             });
+
+            view.getInviteController().setListener(
+                new InviteControllerListener() {
+                    public void beginAddPeople(
+                            AddPeopleController addPeopleController) {
+                        // Log with the tag "ReactNative" in order to have the
+                        // log visible in react-native log-android as well.
+                        Log.d(
+                            "ReactNative",
+                            InviteControllerListener.class.getSimpleName()
+                                + ".beginAddPeople");
+                    }
+                });
         }
 
         return view;

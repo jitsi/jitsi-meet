@@ -27,12 +27,25 @@
 
     JitsiMeetView *view = (JitsiMeetView *) self.view;
 
+#ifdef DEBUG
+
     view.delegate = self;
+
+    // inviteController
+    InviteController *inviteController = view.inviteController;
+
+    //inviteController.addPeopleEnabled = TRUE;
+    //inviteController.dialOutEnabled = TRUE;
+    inviteController.delegate = self;
+
+#endif // #ifdef DEBUG
+
     // As this is the Jitsi Meet app (i.e. not the Jitsi Meet SDK), we do want
     // the Welcome page to be enabled. It defaults to disabled in the SDK at the
     // time of this writing but it is clearer to be explicit about what we want
     // anyway.
     view.welcomePageEnabled = YES;
+
     [view loadURL:nil];
 }
 
@@ -68,6 +81,17 @@ void _onJitsiMeetViewDelegateEvent(NSString *name, NSDictionary *data) {
     _onJitsiMeetViewDelegateEvent(@"LOAD_CONFIG_ERROR", data);
 }
 
-#endif
+- (void)beginAddPeople:(AddPeopleController *)addPeopleController {
+    NSLog(
+        @"[%s:%d] InviteControllerDelegate %s",
+        __FILE__, __LINE__, __FUNCTION__);
+
+    // XXX Explicitly invoke endAddPeople on addPeopleController; otherwise, it
+    // is going to be memory-leaked in the associated InviteController and no
+    // subsequent InviteButton clicks/taps will be delivered.
+    [addPeopleController endAddPeople];
+}
+
+#endif // #ifdef DEBUG
 
 @end

@@ -17,17 +17,16 @@
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
 
+#import "InviteController.h"
 #import "JitsiMeetViewDelegate.h"
 
 @interface JitsiMeetView : UIView
-
-@property (nonatomic) BOOL addPeopleEnabled;
 
 @property (copy, nonatomic, nullable) NSURL *defaultURL;
 
 @property (nonatomic, nullable, weak) id<JitsiMeetViewDelegate> delegate;
 
-@property (nonatomic) BOOL dialOutEnabled;
+@property (nonatomic, readonly) InviteController *inviteController;
 
 @property (nonatomic) BOOL pictureInPictureEnabled;
 
