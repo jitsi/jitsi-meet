@@ -17,7 +17,6 @@
 package org.jitsi.meet.sdk;
 
 import android.app.Activity;
-import android.app.Application;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
@@ -29,22 +28,13 @@ import android.widget.FrameLayout;
 
 import com.facebook.react.ReactInstanceManager;
 import com.facebook.react.ReactRootView;
-import com.facebook.react.bridge.NativeModule;
-import com.facebook.react.bridge.ReactApplicationContext;
-import com.facebook.react.bridge.ReactContext;
-import com.facebook.react.bridge.WritableArray;
-import com.facebook.react.bridge.WritableMap;
-import com.facebook.react.bridge.WritableNativeMap;
-import com.facebook.react.common.LifecycleState;
 import com.facebook.react.modules.core.DefaultHardwareBackBtnHandler;
-import com.facebook.react.modules.core.DeviceEventManagerModule;
 import com.rnimmersive.RNImmersiveModule;
 
+import org.jitsi.meet.sdk.invite.InviteController;
+
 import java.net.URL;
-import java.util.Arrays;
 import java.util.Collections;
-import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 import java.util.WeakHashMap;
@@ -62,29 +52,8 @@ public class JitsiMeetView extends FrameLayout {
      */
     private final static String TAG = JitsiMeetView.class.getSimpleName();
 
-    /**
-     * React Native bridge. The instance manager allows embedding applications
-     * to create multiple root views off the same JavaScript bundle.
-     */
-    private static ReactInstanceManager reactInstanceManager;
-
     private static final Set<JitsiMeetView> views
         = Collections.newSetFromMap(new WeakHashMap<JitsiMeetView, Boolean>());
-
-    private static List<NativeModule> createNativeModules(
-            ReactApplicationContext reactContext) {
-        return Arrays.<NativeModule>asList(
-            new AndroidSettingsModule(reactContext),
-            new AppInfoModule(reactContext),
-            new AudioModeModule(reactContext),
-            new ExternalAPIModule(reactContext),
-            new InviteSearchModule(reactContext),
-            new PictureInPictureModule(reactContext),
-            new ProximityModule(reactContext),
-            new WiFiStatsModule(reactContext),
-            new org.jitsi.meet.sdk.net.NAT64AddrInfoModule(reactContext)
-        );
-    }
 
     public static JitsiMeetView findViewByExternalAPIScope(
             String externalAPIScope) {
@@ -97,47 +66,6 @@ public class JitsiMeetView extends FrameLayout {
         }
 
         return null;
-    }
-
-    // XXX Strictly internal use only (at the time of this writing)!
-    static ReactInstanceManager getReactInstanceManager() {
-        return reactInstanceManager;
-    }
-
-    /**
-     * Internal method to initialize the React Native instance manager. We
-     * create a single instance in order to load the JavaScript bundle a single
-     * time. All {@code ReactRootView} instances will be tied to the one and
-     * only {@code ReactInstanceManager}.
-     *
-     * @param application {@code Application} instance which is running.
-     */
-    private static void initReactInstanceManager(Application application) {
-        reactInstanceManager
-            = ReactInstanceManager.builder()
-                .setApplication(application)
-                .setBundleAssetName("index.android.bundle")
-                .setJSMainModulePath("index.android")
-                .addPackage(new com.calendarevents.CalendarEventsPackage())
-                .addPackage(new com.corbt.keepawake.KCKeepAwakePackage())
-                .addPackage(new com.facebook.react.shell.MainReactPackage())
-                .addPackage(new com.i18n.reactnativei18n.ReactNativeI18n())
-                .addPackage(new com.oblador.vectoricons.VectorIconsPackage())
-                .addPackage(new com.ocetnik.timer.BackgroundTimerPackage())
-                .addPackage(new com.oney.WebRTCModule.WebRTCModulePackage())
-                .addPackage(new com.RNFetchBlob.RNFetchBlobPackage())
-                .addPackage(new com.rnimmersive.RNImmersivePackage())
-                .addPackage(new com.zmxv.RNSound.RNSoundPackage())
-                .addPackage(new ReactPackageAdapter() {
-                    @Override
-                    public List<NativeModule> createNativeModules(
-                            ReactApplicationContext reactContext) {
-                        return JitsiMeetView.createNativeModules(reactContext);
-                    }
-                })
-                .setUseDeveloperSupport(BuildConfig.DEBUG)
-                .setInitialLifecycleState(LifecycleState.RESUMED)
-                .build();
     }
 
     /**
@@ -174,6 +102,9 @@ public class JitsiMeetView extends FrameLayout {
      * implementation.
      */
     public static boolean onBackPressed() {
+        ReactInstanceManager reactInstanceManager
+            = ReactInstanceManagerHolder.getReactInstanceManager();
+
         if (reactInstanceManager == null) {
             return false;
         } else {
@@ -190,6 +121,9 @@ public class JitsiMeetView extends FrameLayout {
      * @param activity {@code Activity} being destroyed.
      */
     public static void onHostDestroy(Activity activity) {
+        ReactInstanceManager reactInstanceManager
+            = ReactInstanceManagerHolder.getReactInstanceManager();
+
         if (reactInstanceManager != null) {
             reactInstanceManager.onHostDestroy(activity);
         }
@@ -202,6 +136,9 @@ public class JitsiMeetView extends FrameLayout {
      * @param activity {@code Activity} being paused.
      */
     public static void onHostPause(Activity activity) {
+        ReactInstanceManager reactInstanceManager
+            = ReactInstanceManagerHolder.getReactInstanceManager();
+
         if (reactInstanceManager != null) {
             reactInstanceManager.onHostPause(activity);
         }
@@ -228,6 +165,9 @@ public class JitsiMeetView extends FrameLayout {
     public static void onHostResume(
             Activity activity,
             DefaultHardwareBackBtnHandler defaultBackButtonImpl) {
+        ReactInstanceManager reactInstanceManager
+            = ReactInstanceManagerHolder.getReactInstanceManager();
+        
         if (reactInstanceManager != null) {
             reactInstanceManager.onHostResume(activity, defaultBackButtonImpl);
         }
@@ -256,6 +196,9 @@ public class JitsiMeetView extends FrameLayout {
             return;
         }
 
+        ReactInstanceManager reactInstanceManager
+            = ReactInstanceManagerHolder.getReactInstanceManager();
+
         if (reactInstanceManager != null) {
             reactInstanceManager.onNewIntent(intent);
         }
@@ -269,62 +212,8 @@ public class JitsiMeetView extends FrameLayout {
      * This is currently not mandatory.
      */
     public static void onUserLeaveHint() {
-        sendEvent("onUserLeaveHint", null);
+        ReactInstanceManagerHolder.emitEvent("onUserLeaveHint", null);
     }
-
-    /**
-     * Starts a query for users to invite to the conference.  Results will be
-     * returned through the {@link InviteSearchController.InviteSearchControllerDelegate#onReceiveResults(InviteSearchController, List, String)}
-     * method.
-     *
-     * @param query {@code String} to use for the query
-     */
-    public static void onInviteQuery(String query, String inviteSearchControllerScope) {
-        WritableNativeMap params = new WritableNativeMap();
-        params.putString("query", query);
-        params.putString("inviteScope", inviteSearchControllerScope);
-        sendEvent("performQueryAction", params);
-    }
-
-    /**
-     * Sends JavaScript event to submit invitations to the given item ids
-     *
-     * @param selectedItems a WritableArray of WritableNativeMaps representing selected items.
-     *                  Each map representing a selected item should match the data passed
-     *                  back in the return from a query.
-     */
-    public static void submitSelectedItems(WritableArray selectedItems, String inviteSearchControllerScope) {
-        WritableNativeMap params = new WritableNativeMap();
-        params.putArray("selectedItems", selectedItems);
-        params.putString("inviteScope", inviteSearchControllerScope);
-        sendEvent("performSubmitInviteAction", params);
-    }
-
-    /**
-     * Helper function to send an event to JavaScript.
-     *
-     * @param eventName {@code String} containing the event name.
-     * @param data {@code Object} optional ancillary data for the event.
-     */
-    private static void sendEvent(
-            String eventName,
-            @Nullable Object data) {
-        if (reactInstanceManager != null) {
-            ReactContext reactContext
-                = reactInstanceManager.getCurrentReactContext();
-            if (reactContext != null) {
-                reactContext
-                    .getJSModule(
-                        DeviceEventManagerModule.RCTDeviceEventEmitter.class)
-                    .emit(eventName, data);
-            }
-        }
-    }
-
-    /**
-     * Whether user invitation is enabled.
-     */
-    private boolean addPeopleEnabled;
 
     /**
      * The default base {@code URL} used to join a conference when a partial URL
@@ -334,17 +223,18 @@ public class JitsiMeetView extends FrameLayout {
     private URL defaultURL;
 
     /**
-     * Whether the ability to add users by phone number is enabled.
-     */
-    private boolean dialOutEnabled;
-
-    /**
      * The unique identifier of this {@code JitsiMeetView} within the process
      * for the purposes of {@link ExternalAPI}. The name scope was inspired by
      * postis which we use on Web for the similar purposes of the iframe-based
      * external API.
      */
     private final String externalAPIScope;
+
+    /**
+     * The entry point into the invite feature of Jitsi Meet. The Java
+     * counterpart of the JavaScript {@code InviteButton}.
+     */
+    private final InviteController inviteController;
 
     /**
      * {@link JitsiMeetViewListener} instance for reporting events occurring in
@@ -374,15 +264,18 @@ public class JitsiMeetView extends FrameLayout {
 
         setBackgroundColor(BACKGROUND_COLOR);
 
-        if (reactInstanceManager == null) {
-            initReactInstanceManager(((Activity) context).getApplication());
-        }
+        ReactInstanceManagerHolder.initReactInstanceManager(
+            ((Activity) context).getApplication());
 
         // Hook this JitsiMeetView into ExternalAPI.
         externalAPIScope = UUID.randomUUID().toString();
         synchronized (views) {
             views.add(this);
         }
+
+        // The entry point into the invite feature of Jitsi Meet. The Java
+        // counterpart of the JavaScript InviteButton.
+        inviteController = new InviteController(externalAPIScope);
     }
 
     /**
@@ -411,6 +304,19 @@ public class JitsiMeetView extends FrameLayout {
      */
     public URL getDefaultURL() {
         return defaultURL;
+    }
+
+    /**
+     * Gets the {@link InviteController} which represents the entry point into
+     * the invite feature of Jitsi Meet and is the Java counterpart of the
+     * JavaScript {@code InviteButton}.
+     *
+     * @return the {@link InviteController} which represents the entry point
+     * into the invite feature of Jitsi Meet and is the Java counterpart of the
+     * JavaScript {@code InviteButton}
+     */
+    public InviteController getInviteController() {
+        return inviteController;
     }
 
     /**
@@ -483,6 +389,18 @@ public class JitsiMeetView extends FrameLayout {
         // externalAPIScope
         props.putString("externalAPIScope", externalAPIScope);
 
+        // inviteController
+        InviteController inviteController = getInviteController();
+
+        if (inviteController != null) {
+            props.putBoolean(
+                "addPeopleEnabled",
+                inviteController.isAddPeopleEnabled());
+            props.putBoolean(
+                "dialOutEnabled",
+                inviteController.isDialOutEnabled());
+        }
+
         // pictureInPictureEnabled
         props.putBoolean(
             "pictureInPictureEnabled",
@@ -495,9 +413,6 @@ public class JitsiMeetView extends FrameLayout {
 
         // welcomePageEnabled
         props.putBoolean("welcomePageEnabled", welcomePageEnabled);
-
-        props.putBoolean("addPeopleEnabled", addPeopleEnabled);
-        props.putBoolean("dialOutEnabled", dialOutEnabled);
 
         // XXX The method loadURLObject: is supposed to be imperative i.e.
         // a second invocation with one and the same URL is expected to join
@@ -513,7 +428,7 @@ public class JitsiMeetView extends FrameLayout {
         if (reactRootView == null) {
             reactRootView = new ReactRootView(getContext());
             reactRootView.startReactApplication(
-                reactInstanceManager,
+                ReactInstanceManagerHolder.getReactInstanceManager(),
                 "App",
                 props);
             reactRootView.setBackgroundColor(BACKGROUND_COLOR);
@@ -581,18 +496,6 @@ public class JitsiMeetView extends FrameLayout {
     }
 
     /**
-     * Sets whether the ability to add users to the call is enabled.
-     * If this is enabled, an add user button will appear on the {@link JitsiMeetView}.
-     * If enabled, and the user taps the add user button,
-     * {@link JitsiMeetViewListener#launchNativeInvite(Map)} will be called.
-     *
-     * @param addPeopleEnabled {@code true} to enable the add people button; otherwise, {@code false}
-     */
-    public void setAddPeopleEnabled(boolean addPeopleEnabled) {
-        this.addPeopleEnabled = addPeopleEnabled;
-    }
-
-    /**
      * Sets the default base {@code URL} used to join a conference when a
      * partial URL (e.g. a room name only) is specified to
      * {@link #loadURLString(String)} or {@link #loadURLObject(Bundle)}. Must be
@@ -603,18 +506,6 @@ public class JitsiMeetView extends FrameLayout {
      */
     public void setDefaultURL(URL defaultURL) {
         this.defaultURL = defaultURL;
-    }
-
-    /**
-     * Sets whether the ability to add phone numbers to the call is enabled.
-     * Must be enabled along with {@link #setAddPeopleEnabled(boolean)} to
-     * be effective.
-     *
-     * @param dialOutEnabled {@code true} to enable the ability to add
-     *                       phone numbers to the call; otherwise, {@code false}
-     */
-    public void setDialOutEnabled(boolean dialOutEnabled) {
-        this.dialOutEnabled = dialOutEnabled;
     }
 
     /**

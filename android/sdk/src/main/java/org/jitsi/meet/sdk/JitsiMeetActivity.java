@@ -17,7 +17,6 @@
 package org.jitsi.meet.sdk;
 
 import android.content.Intent;
-import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -229,7 +228,7 @@ public class JitsiMeetActivity extends AppCompatActivity {
         if (!super.onKeyUp(keyCode, event)
                 && BuildConfig.DEBUG
                 && (reactInstanceManager
-                        = JitsiMeetView.getReactInstanceManager())
+                        = ReactInstanceManagerHolder.getReactInstanceManager())
                     != null
                 && keyCode == KeyEvent.KEYCODE_MENU) {
             reactInstanceManager.showDevOptionsDialog();

@@ -14,16 +14,11 @@ import {
     isNarrowAspectRatio,
     makeAspectRatioAware
 } from '../../base/responsive-ui';
-import {
-    InviteButton,
-    isAddPeopleEnabled,
-    isDialOutEnabled
-} from '../../invite';
+import { InviteButton } from '../../invite';
 import {
     EnterPictureInPictureToolbarButton
 } from '../../mobile/picture-in-picture';
 import { beginRoomLockRequest } from '../../room-lock';
-import { beginShareRoom } from '../../share-room';
 
 import {
     abstractMapDispatchToProps,
@@ -52,18 +47,6 @@ type Props = {
     _audioOnly: boolean,
 
     /**
-     * Whether or not the feature to directly invite people into the
-     * conference is available.
-     */
-    _enableAddPeople: boolean,
-
-    /**
-     * Whether or not the feature to dial out to number to join the
-     * conference is available.
-     */
-    _enableDialOut: boolean,
-
-    /**
      * The indicator which determines whether the toolbox is enabled.
      */
     _enabled: boolean,
@@ -82,11 +65,6 @@ type Props = {
      * Sets the lock i.e. password protection of the conference/room.
      */
     _onRoomLock: Function,
-
-    /**
-     * Begins the UI procedure to share the conference/room URL.
-     */
-    _onShareRoom: Function,
 
     /**
      * Toggles the audio-only flag of the conference.
@@ -111,7 +89,6 @@ type Props = {
 
     dispatch: Function
 };
-
 
 /**
  * Implements the conference toolbox on React Native.
@@ -219,12 +196,8 @@ class Toolbox extends Component<Props> {
         const underlayColor = 'transparent';
         const {
             _audioOnly: audioOnly,
-            _enableAddPeople: enableAddPeople,
-            _enableDialOut: enableDialOut,
             _videoMuted: videoMuted
         } = this.props;
-
-        const showInviteButton = enableAddPeople || enableDialOut;
 
         /* eslint-disable react/jsx-curly-spacing,react/jsx-handler-names */
 
@@ -262,24 +235,10 @@ class Toolbox extends Component<Props> {
                     onClick = { this.props._onRoomLock }
                     style = { style }
                     underlayColor = { underlayColor } />
-                {
-                    !showInviteButton
-                        && <ToolbarButton
-                            iconName = 'link'
-                            iconStyle = { iconStyle }
-                            onClick = { this.props._onShareRoom }
-                            style = { style }
-                            underlayColor = { underlayColor } />
-                }
-                {
-                    showInviteButton
-                        && <InviteButton
-                            enableAddPeople = { enableAddPeople }
-                            enableDialOut = { enableDialOut }
-                            iconStyle = { iconStyle }
-                            style = { style }
-                            underlayColor = { underlayColor } />
-                }
+                <InviteButton
+                    iconStyle = { iconStyle }
+                    style = { style }
+                    underlayColor = { underlayColor } />
                 <EnterPictureInPictureToolbarButton
                     iconStyle = { iconStyle }
                     style = { style }
@@ -345,17 +304,6 @@ function _mapDispatchToProps(dispatch) {
         },
 
         /**
-         * Begins the UI procedure to share the conference/room URL.
-         *
-         * @private
-         * @returns {void}
-         * @type {Function}
-         */
-        _onShareRoom() {
-            dispatch(beginShareRoom());
-        },
-
-        /**
          * Toggles the audio-only flag of the conference.
          *
          * @private
@@ -407,22 +355,6 @@ function _mapStateToProps(state) {
          * @type {boolean}
          */
         _audioOnly: Boolean(conference.audioOnly),
-
-        /**
-         * Whether or not the feature to directly invite people into the
-         * conference is available.
-         *
-         * @type {boolean}
-         */
-        _enableAddPeople: isAddPeopleEnabled(state),
-
-        /**
-         * Whether or not the feature to dial out to number to join the
-         * conference is available.
-         *
-         * @type {boolean}
-         */
-        _enableDialOut: isDialOutEnabled(state),
 
         /**
          * The indicator which determines whether the toolbox is enabled.

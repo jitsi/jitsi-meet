@@ -9,125 +9,6 @@ declare var interfaceConfig: Object;
 const logger = require('jitsi-meet-logger').getLogger(__filename);
 
 /**
- * Sends a GET request to obtain the conference ID necessary for identifying
- * which conference to join after diaing the dial-in service.
- *
- * @param {string} baseUrl - The url for obtaining the conference ID (pin) for
- * dialing into a conference.
- * @param {string} roomName - The conference name to find the associated
- * conference ID.
- * @param {string} mucURL - In which MUC the conference exists.
- * @returns {Promise} - The promise created by the request.
- */
-export function getDialInConferenceID(
-        baseUrl: string,
-        roomName: string,
-        mucURL: string): Promise<Object> {
-    const conferenceIDURL = `${baseUrl}?conference=${roomName}@${mucURL}`;
-
-    return doGetJSON(conferenceIDURL);
-}
-
-/**
- * Sends a GET request for phone numbers used to dial into a conference.
- *
- * @param {string} url - The service that returns confernce dial-in numbers.
- * @returns {Promise} - The promise created by the request. The returned numbers
- * may be an array of numbers or an object with countries as keys and arrays of
- * phone number strings.
- */
-export function getDialInNumbers(url: string): Promise<*> {
-    return doGetJSON(url);
-}
-
-/**
- * Sends a post request to an invite service.
- *
- * @param {string} inviteServiceUrl - The invite service that generates the
- * invitation.
- * @param {string} inviteUrl - The url to the conference.
- * @param {string} jwt - The jwt token to pass to the search service.
- * @param {Immutable.List} inviteItems - The list of the "user" or "room"
- * type items to invite.
- * @returns {Promise} - The promise created by the request.
- */
-function invitePeopleAndChatRooms( // eslint-disable-line max-params
-        inviteServiceUrl: string,
-        inviteUrl: string,
-        jwt: string,
-        inviteItems: Array<Object>): Promise<void> {
-    if (!inviteItems || inviteItems.length === 0) {
-        return Promise.resolve();
-    }
-
-    return new Promise((resolve, reject) => {
-        $.post(
-                `${inviteServiceUrl}?token=${jwt}`,
-                JSON.stringify({
-                    'invited': inviteItems,
-                    'url': inviteUrl
-                }),
-                resolve,
-                'json')
-            .fail((jqxhr, textStatus, error) => reject(error));
-    });
-}
-
-/**
- * Sends an ajax request to a directory service.
- *
- * @param {string} serviceUrl - The service to query.
- * @param {string} jwt - The jwt token to pass to the search service.
- * @param {string} text - Text to search.
- * @param {Array<string>} queryTypes - Array with the query types that will be
- * executed - "conferenceRooms" | "user" | "room".
- * @returns {Promise} - The promise created by the request.
- */
-export function searchDirectory( // eslint-disable-line max-params
-        serviceUrl: string,
-        jwt: string,
-        text: string,
-        queryTypes: Array<string> = [ 'conferenceRooms', 'user', 'room' ]
-): Promise<Array<Object>> {
-    const query = encodeURIComponent(text);
-    const queryTypesString = encodeURIComponent(JSON.stringify(queryTypes));
-
-    return fetch(`${serviceUrl}?query=${query}&queryTypes=${
-        queryTypesString}&jwt=${jwt}`)
-            .then(response => {
-                const jsonify = response.json();
-
-                if (response.ok) {
-                    return jsonify;
-                }
-
-                return jsonify
-                    .then(result => Promise.reject(result));
-            })
-            .catch(error => {
-                logger.error(
-                    'Error searching directory:', error);
-
-                return Promise.reject(error);
-            });
-}
-
-/**
- * RegExp to use to determine if some text might be a phone number.
- *
- * @returns {RegExp}
- */
-function isPhoneNumberRegex(): RegExp {
-    let regexString = '^[0-9+()-\\s]*$';
-
-    if (typeof interfaceConfig !== 'undefined') {
-        regexString = interfaceConfig.PHONE_NUMBER_REGEX || regexString;
-    }
-
-    return new RegExp(regexString);
-}
-
-/**
  * Sends an ajax request to check if the phone number can be called.
  *
  * @param {string} dialNumber - The dial number to check for validity.
@@ -135,7 +16,10 @@ function isPhoneNumberRegex(): RegExp {
  * @returns {Promise} - The promise created by the request.
  */
 export function checkDialNumber(
-        dialNumber: string, dialOutAuthUrl: string): Promise<Object> {
+        dialNumber: string,
+        dialOutAuthUrl: string
+): Promise<Object> {
+
     if (!dialOutAuthUrl) {
         // no auth url, let's say it is valid
         const response = {
@@ -153,6 +37,40 @@ export function checkDialNumber(
             .then(resolve)
             .catch(reject);
     });
+}
+
+/**
+ * Sends a GET request to obtain the conference ID necessary for identifying
+ * which conference to join after diaing the dial-in service.
+ *
+ * @param {string} baseUrl - The url for obtaining the conference ID (pin) for
+ * dialing into a conference.
+ * @param {string} roomName - The conference name to find the associated
+ * conference ID.
+ * @param {string} mucURL - In which MUC the conference exists.
+ * @returns {Promise} - The promise created by the request.
+ */
+export function getDialInConferenceID(
+        baseUrl: string,
+        roomName: string,
+        mucURL: string
+): Promise<Object> {
+
+    const conferenceIDURL = `${baseUrl}?conference=${roomName}@${mucURL}`;
+
+    return doGetJSON(conferenceIDURL);
+}
+
+/**
+ * Sends a GET request for phone numbers used to dial into a conference.
+ *
+ * @param {string} url - The service that returns confernce dial-in numbers.
+ * @returns {Promise} - The promise created by the request. The returned numbers
+ * may be an array of numbers or an object with countries as keys and arrays of
+ * phone number strings.
+ */
+export function getDialInNumbers(url: string): Promise<*> {
+    return doGetJSON(url);
 }
 
 /**
@@ -180,12 +98,12 @@ export type GetInviteResultsOptions = {
     /**
      * Whether or not to search for people.
      */
-    enableAddPeople: boolean,
+    addPeopleEnabled: boolean,
 
     /**
      * Whether or not to check phone numbers.
      */
-    enableDialOut: boolean,
+    dialOutEnabled: boolean,
 
     /**
      * Array with the query types that will be executed -
@@ -214,13 +132,15 @@ export type GetInviteResultsOptions = {
  */
 export function getInviteResultsForQuery(
         query: string,
-        options: GetInviteResultsOptions): Promise<*> {
+        options: GetInviteResultsOptions
+): Promise<*> {
+
     const text = query.trim();
 
     const {
         dialOutAuthUrl,
-        enableAddPeople,
-        enableDialOut,
+        addPeopleEnabled,
+        dialOutEnabled,
         peopleSearchQueryTypes,
         peopleSearchUrl,
         jwt
@@ -228,7 +148,7 @@ export function getInviteResultsForQuery(
 
     let peopleSearchPromise;
 
-    if (enableAddPeople && text) {
+    if (addPeopleEnabled && text) {
         peopleSearchPromise = searchDirectory(
             peopleSearchUrl,
             jwt,
@@ -242,7 +162,7 @@ export function getInviteResultsForQuery(
     const hasCountryCode = text.startsWith('+');
     let phoneNumberPromise;
 
-    if (enableDialOut && isMaybeAPhoneNumber(text)) {
+    if (dialOutEnabled && isMaybeAPhoneNumber(text)) {
         let numberToVerify = text;
 
         // When the number to verify does not start with a +, we assume no
@@ -297,6 +217,82 @@ export function getInviteResultsForQuery(
 }
 
 /**
+ * Sends a post request to an invite service.
+ *
+ * @param {string} inviteServiceUrl - The invite service that generates the
+ * invitation.
+ * @param {string} inviteUrl - The url to the conference.
+ * @param {string} jwt - The jwt token to pass to the search service.
+ * @param {Immutable.List} inviteItems - The list of the "user" or "room"
+ * type items to invite.
+ * @returns {Promise} - The promise created by the request.
+ */
+function invitePeopleAndChatRooms( // eslint-disable-line max-params
+        inviteServiceUrl: string,
+        inviteUrl: string,
+        jwt: string,
+        inviteItems: Array<Object>
+): Promise<void> {
+
+    if (!inviteItems || inviteItems.length === 0) {
+        return Promise.resolve();
+    }
+
+    return new Promise((resolve, reject) => {
+        $.post(
+                `${inviteServiceUrl}?token=${jwt}`,
+                JSON.stringify({
+                    'invited': inviteItems,
+                    'url': inviteUrl
+                }),
+                resolve,
+                'json')
+            .fail((jqxhr, textStatus, error) => reject(error));
+    });
+}
+
+/**
+ * Determines if adding people is currently enabled.
+ *
+ * @param {boolean} state - Current state.
+ * @returns {boolean} Indication of whether adding people is currently enabled.
+ */
+export function isAddPeopleEnabled(state: Object): boolean {
+    const { isGuest } = state['features/base/jwt'];
+
+    if (!isGuest) {
+        // XXX The mobile/react-native app is capable of disabling the
+        // adding/inviting of people in the current conference. Anyway, the
+        // Web/React app does not have that capability so default appropriately.
+        const { app } = state['features/app'];
+        const addPeopleEnabled = app && app.props.addPeopleEnabled;
+
+        return (
+            (typeof addPeopleEnabled === 'undefined')
+                || Boolean(addPeopleEnabled));
+    }
+
+    return false;
+}
+
+/**
+ * Determines if dial out is currently enabled or not.
+ *
+ * @param {boolean} state - Current state.
+ * @returns {boolean} Indication of whether dial out is currently enabled.
+ */
+export function isDialOutEnabled(state: Object): boolean {
+    const { conference } = state['features/base/conference'];
+    const { isGuest } = state['features/base/jwt'];
+    const { enableUserRolesBasedOnToken } = state['features/base/config'];
+    const participant = getLocalParticipant(state);
+
+    return participant && participant.role === PARTICIPANT_ROLE.MODERATOR
+                && conference && conference.isSIPCallingSupported()
+                && (!enableUserRolesBasedOnToken || !isGuest);
+}
+
+/**
  * Checks whether a string looks like it could be for a phone number.
  *
  * @param {string} text - The text to check whether or not it could be a
@@ -313,6 +309,61 @@ function isMaybeAPhoneNumber(text: string): boolean {
     const digits = getDigitsOnly(text);
 
     return Boolean(digits.length);
+}
+
+/**
+ * RegExp to use to determine if some text might be a phone number.
+ *
+ * @returns {RegExp}
+ */
+function isPhoneNumberRegex(): RegExp {
+    let regexString = '^[0-9+()-\\s]*$';
+
+    if (typeof interfaceConfig !== 'undefined') {
+        regexString = interfaceConfig.PHONE_NUMBER_REGEX || regexString;
+    }
+
+    return new RegExp(regexString);
+}
+
+/**
+ * Sends an ajax request to a directory service.
+ *
+ * @param {string} serviceUrl - The service to query.
+ * @param {string} jwt - The jwt token to pass to the search service.
+ * @param {string} text - Text to search.
+ * @param {Array<string>} queryTypes - Array with the query types that will be
+ * executed - "conferenceRooms" | "user" | "room".
+ * @returns {Promise} - The promise created by the request.
+ */
+export function searchDirectory( // eslint-disable-line max-params
+        serviceUrl: string,
+        jwt: string,
+        text: string,
+        queryTypes: Array<string> = [ 'conferenceRooms', 'user', 'room' ]
+): Promise<Array<Object>> {
+
+    const query = encodeURIComponent(text);
+    const queryTypesString = encodeURIComponent(JSON.stringify(queryTypes));
+
+    return fetch(`${serviceUrl}?query=${query}&queryTypes=${
+        queryTypesString}&jwt=${jwt}`)
+            .then(response => {
+                const jsonify = response.json();
+
+                if (response.ok) {
+                    return jsonify;
+                }
+
+                return jsonify
+                    .then(result => Promise.reject(result));
+            })
+            .catch(error => {
+                logger.error(
+                    'Error searching directory:', error);
+
+                return Promise.reject(error);
+            });
 }
 
 /**
@@ -435,34 +486,4 @@ export function sendInvitesForItems(
 
     return Promise.all(allInvitePromises)
         .then(() => invitesLeftToSend);
-}
-
-/**
- * Determines if adding people is currently enabled.
- *
- * @param {boolean} state - Current state.
- * @returns {boolean} Indication of whether adding people is currently enabled.
- */
-export function isAddPeopleEnabled(state: Object): boolean {
-    const { app } = state['features/app'];
-    const { isGuest } = state['features/base/jwt'];
-
-    return !isGuest && Boolean(app && app.props.addPeopleEnabled);
-}
-
-/**
- * Determines if dial out is currently enabled or not.
- *
- * @param {boolean} state - Current state.
- * @returns {boolean} Indication of whether dial out is currently enabled.
- */
-export function isDialOutEnabled(state: Object): boolean {
-    const { conference } = state['features/base/conference'];
-    const { isGuest } = state['features/base/jwt'];
-    const { enableUserRolesBasedOnToken } = state['features/base/config'];
-    const participant = getLocalParticipant(state);
-
-    return participant && participant.role === PARTICIPANT_ROLE.MODERATOR
-                && conference && conference.isSIPCallingSupported()
-                && (!enableUserRolesBasedOnToken || !isGuest);
 }

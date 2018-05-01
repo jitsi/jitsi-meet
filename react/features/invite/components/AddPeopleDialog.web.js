@@ -71,12 +71,12 @@ class AddPeopleDialog extends Component<*, *> {
         /**
          * Whether or not to show Add People functionality.
          */
-        enableAddPeople: PropTypes.bool,
+        addPeopleEnabled: PropTypes.bool,
 
         /**
          * Whether or not to show Dial Out functionality.
          */
-        enableDialOut: PropTypes.bool,
+        dialOutEnabled: PropTypes.bool,
 
         /**
          * The function closing the dialog.
@@ -187,21 +187,21 @@ class AddPeopleDialog extends Component<*, *> {
      * @returns {ReactElement}
      */
     render() {
-        const { enableAddPeople, enableDialOut, t } = this.props;
+        const { addPeopleEnabled, dialOutEnabled, t } = this.props;
         let isMultiSelectDisabled = this.state.addToCallInProgress || false;
         let placeholder;
         let loadingMessage;
         let noMatches;
 
-        if (enableAddPeople && enableDialOut) {
+        if (addPeopleEnabled && dialOutEnabled) {
             loadingMessage = 'addPeople.loading';
             noMatches = 'addPeople.noResults';
             placeholder = 'addPeople.searchPeopleAndNumbers';
-        } else if (enableAddPeople) {
+        } else if (addPeopleEnabled) {
             loadingMessage = 'addPeople.loadingPeople';
             noMatches = 'addPeople.noResults';
             placeholder = 'addPeople.searchPeople';
-        } else if (enableDialOut) {
+        } else if (dialOutEnabled) {
             loadingMessage = 'addPeople.loadingNumber';
             noMatches = 'addPeople.noValidNumbers';
             placeholder = 'addPeople.searchNumbers';
@@ -481,8 +481,8 @@ class AddPeopleDialog extends Component<*, *> {
      */
     _query(query = '') {
         const {
-            enableAddPeople,
-            enableDialOut,
+            addPeopleEnabled,
+            dialOutEnabled,
             _dialOutAuthUrl,
             _jwt,
             _peopleSearchQueryTypes,
@@ -491,8 +491,8 @@ class AddPeopleDialog extends Component<*, *> {
 
         const options = {
             dialOutAuthUrl: _dialOutAuthUrl,
-            enableAddPeople,
-            enableDialOut,
+            addPeopleEnabled,
+            dialOutEnabled,
             jwt: _jwt,
             peopleSearchQueryTypes: _peopleSearchQueryTypes,
             peopleSearchUrl: _peopleSearchUrl
@@ -609,7 +609,11 @@ function _mapStateToProps(state) {
     };
 }
 
-export default translate(connect(_mapStateToProps, {
-    hideDialog,
-    inviteVideoRooms })(
-    AddPeopleDialog));
+export default translate(
+    connect(
+            _mapStateToProps,
+            /* mapDispatchToProps */ {
+                hideDialog,
+                inviteVideoRooms
+            })(
+        AddPeopleDialog));

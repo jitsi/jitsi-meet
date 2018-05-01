@@ -159,9 +159,9 @@ function _sendEvent(
         { getState }: { getState: Function },
         name: string,
         data: Object) {
-    // The JavaScript App needs to provide uniquely identifying information
-    // to the native ExternalAPI module so that the latter may match the former
-    // to the native JitsiMeetView which hosts it.
+    // The JavaScript App needs to provide uniquely identifying information to
+    // the native ExternalAPI module so that the latter may match the former to
+    // the native JitsiMeetView which hosts it.
     const { app } = getState()['features/app'];
 
     if (app) {

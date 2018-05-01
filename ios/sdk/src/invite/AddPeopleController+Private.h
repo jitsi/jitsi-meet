@@ -1,5 +1,5 @@
 /*
- * Copyright @ 2017-present Atlassian Pty Ltd
+ * Copyright @ 2018-present Atlassian Pty Ltd
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,10 +14,20 @@
  * limitations under the License.
  */
 
-#import <UIKit/UIKit.h>
+#import "AddPeopleController.h"
+#import "InviteController.h"
 
-#import <JitsiMeet/JitsiMeet.h>
+@interface AddPeopleController ()
 
-@interface ViewController : UIViewController<JitsiMeetViewDelegate, InviteControllerDelegate>
+@property (nonatomic, strong) NSMutableDictionary* _Nonnull items;
+@property (nonatomic, weak) InviteController *owner;
+@property (nonatomic, readonly) NSString* _Nonnull uuid;
+
+- (instancetype)initWithOwner:(InviteController *)owner;
+
+- (void)inviteSettled:(NSArray<NSDictionary *> *)failedInvitees;
+
+- (void)receivedResults:(NSArray<NSDictionary*> * _Nonnull)results
+               forQuery:(NSString * _Nonnull)query;
 
 @end

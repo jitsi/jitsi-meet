@@ -1,5 +1,5 @@
 /*
- * Copyright @ 2017-present Atlassian Pty Ltd
+ * Copyright @ 2018-present Atlassian Pty Ltd
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,10 +14,18 @@
  * limitations under the License.
  */
 
-#import <UIKit/UIKit.h>
+#import <Foundation/Foundation.h>
 
-#import <JitsiMeet/JitsiMeet.h>
+#import "AddPeopleControllerDelegate.h"
 
-@interface ViewController : UIViewController<JitsiMeetViewDelegate, InviteControllerDelegate>
+@interface AddPeopleController: NSObject
+
+@property (nonatomic, nullable, weak) id<AddPeopleControllerDelegate> delegate;
+
+- (void)endAddPeople;
+
+- (void)inviteById:(NSArray<NSString *> * _Nonnull)ids;
+
+- (void)performQuery:(NSString * _Nonnull)query;
 
 @end

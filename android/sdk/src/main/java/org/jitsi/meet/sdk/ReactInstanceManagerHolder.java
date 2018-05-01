@@ -1,0 +1,125 @@
+/*
+ * Copyright @ 2017-present Atlassian Pty Ltd
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package org.jitsi.meet.sdk;
+
+import android.app.Application;
+import android.support.annotation.Nullable;
+
+import com.facebook.react.ReactInstanceManager;
+import com.facebook.react.bridge.NativeModule;
+import com.facebook.react.bridge.ReactContext;
+import com.facebook.react.bridge.ReactApplicationContext;
+import com.facebook.react.common.LifecycleState;
+
+import java.util.Arrays;
+import java.util.List;
+
+public class ReactInstanceManagerHolder {
+    /**
+     * React Native bridge. The instance manager allows embedding applications
+     * to create multiple root views off the same JavaScript bundle.
+     */
+    private static ReactInstanceManager reactInstanceManager;
+
+    private static List<NativeModule> createNativeModules(
+            ReactApplicationContext reactContext) {
+        return Arrays.<NativeModule>asList(
+            new AndroidSettingsModule(reactContext),
+            new AppInfoModule(reactContext),
+            new AudioModeModule(reactContext),
+            new ExternalAPIModule(reactContext),
+            new PictureInPictureModule(reactContext),
+            new ProximityModule(reactContext),
+            new WiFiStatsModule(reactContext),
+            new org.jitsi.meet.sdk.invite.InviteModule(reactContext),
+            new org.jitsi.meet.sdk.net.NAT64AddrInfoModule(reactContext)
+        );
+    }
+
+    /**
+     * Helper function to send an event to JavaScript.
+     *
+     * @param eventName {@code String} containing the event name.
+     * @param data {@code Object} optional ancillary data for the event.
+     */
+    public static boolean emitEvent(
+            String eventName,
+            @Nullable Object data) {
+        ReactInstanceManager reactInstanceManager
+            = ReactInstanceManagerHolder.getReactInstanceManager();
+        
+        if (reactInstanceManager != null) {
+            ReactContext reactContext
+                = reactInstanceManager.getCurrentReactContext();
+
+            return
+                reactContext != null
+                    && ReactContextUtils.emitEvent(
+                        reactContext,
+                        eventName,
+                        data);
+        }
+
+        return false;
+    }
+
+    static ReactInstanceManager getReactInstanceManager() {
+        return reactInstanceManager;
+    }
+
+    /**
+     * Internal method to initialize the React Native instance manager. We
+     * create a single instance in order to load the JavaScript bundle a single
+     * time. All {@code ReactRootView} instances will be tied to the one and
+     * only {@code ReactInstanceManager}.
+     *
+     * @param application {@code Application} instance which is running.
+     */
+    static void initReactInstanceManager(Application application) {
+        if (reactInstanceManager != null) {
+            return;
+        }
+
+        reactInstanceManager
+            = ReactInstanceManager.builder()
+                .setApplication(application)
+                .setBundleAssetName("index.android.bundle")
+                .setJSMainModulePath("index.android")
+                .addPackage(new com.calendarevents.CalendarEventsPackage())
+                .addPackage(new com.corbt.keepawake.KCKeepAwakePackage())
+                .addPackage(new com.facebook.react.shell.MainReactPackage())
+                .addPackage(new com.i18n.reactnativei18n.ReactNativeI18n())
+                .addPackage(new com.oblador.vectoricons.VectorIconsPackage())
+                .addPackage(new com.ocetnik.timer.BackgroundTimerPackage())
+                .addPackage(new com.oney.WebRTCModule.WebRTCModulePackage())
+                .addPackage(new com.RNFetchBlob.RNFetchBlobPackage())
+                .addPackage(new com.rnimmersive.RNImmersivePackage())
+                .addPackage(new com.zmxv.RNSound.RNSoundPackage())
+                .addPackage(new ReactPackageAdapter() {
+                    @Override
+                    public List<NativeModule> createNativeModules(
+                            ReactApplicationContext reactContext) {
+                        return
+                            ReactInstanceManagerHolder.createNativeModules(
+                                reactContext);
+                    }
+                })
+                .setUseDeveloperSupport(BuildConfig.DEBUG)
+                .setInitialLifecycleState(LifecycleState.RESUMED)
+                .build();
+    }
+}
