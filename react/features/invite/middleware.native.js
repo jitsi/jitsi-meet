@@ -139,6 +139,14 @@ function _onInvite(
         { addPeopleControllerScope, externalAPIScope, invitees }) {
     const { getState } = this; // eslint-disable-line no-invalid-this
     const state = getState();
+
+    // If there are multiple JitsiMeetView instances alive, they will all get
+    // the event, since there is a single bridge, so make sure we don't act if
+    // the event is not for us.
+    if (state['features/app'].app.props.externalAPIScope !== externalAPIScope) {
+        return;
+    }
+
     const { conference } = state['features/base/conference'];
     const { inviteServiceUrl } = state['features/base/config'];
     const options = {
@@ -167,8 +175,15 @@ function _onInvite(
 function _onPerformQuery(
         { addPeopleControllerScope, externalAPIScope, query }) {
     const { getState } = this; // eslint-disable-line no-invalid-this
-
     const state = getState();
+
+    // If there are multiple JitsiMeetView instances alive, they will all get
+    // the event, since there is a single bridge, so make sure we don't act if
+    // the event is not for us.
+    if (state['features/app'].app.props.externalAPIScope !== externalAPIScope) {
+        return;
+    }
+
     const {
         dialOutAuthUrl,
         peopleSearchQueryTypes,
