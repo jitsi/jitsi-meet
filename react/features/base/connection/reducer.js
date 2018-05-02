@@ -13,6 +13,8 @@ import {
     SET_LOCATION_URL
 } from './actionTypes';
 
+import type { ConnectionFailedError } from './actions.native';
+
 /**
  * Reduces the Redux actions of the feature base/connection.
  */
@@ -100,7 +102,7 @@ function _connectionFailed(
         state: Object,
         { connection, error }: {
             connection: Object,
-            error: Object | string
+            error: ConnectionFailedError
         }) {
 
     // The current (similar to getCurrentConference in
