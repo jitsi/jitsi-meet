@@ -101,17 +101,17 @@ export default class ToolboxAlwaysOnTop extends Component<Props> {
                 onMouseOut = { onMouseOut }
                 onMouseOver = { onMouseOver }>
                 <ToolbarButton
-                    accessibilityLabel = 'Video mute'
-                    iconName = { videoMuteIcon }
-                    onClick = { this._onToolbarToggleVideo } />
+                    accessibilityLabel = 'Audio mute'
+                    iconName = { audioMuteIcon }
+                    onClick = { this._onToolbarToggleAudio } />
                 <ToolbarButton
                     accessibilityLabel = 'Hangup'
                     iconName = 'icon-hangup'
                     onClick = { this._onToolbarHangup } />
                 <ToolbarButton
-                    accessibilityLabel = 'Audio mute'
-                    iconName = { audioMuteIcon }
-                    onClick = { this._onToolbarToggleAudio } />
+                    accessibilityLabel = 'Video mute'
+                    iconName = { videoMuteIcon }
+                    onClick = { this._onToolbarToggleVideo } />
             </div>
         );
     }
