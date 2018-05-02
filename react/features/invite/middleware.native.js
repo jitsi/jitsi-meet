@@ -33,6 +33,9 @@ const { Invite } = NativeModules;
  */
 Invite && MiddlewareRegistry.register(store => next => action => {
     switch (action.type) {
+    case _SET_EMITTER_SUBSCRIPTIONS:
+        return _setEmitterSubscriptions(store, next, action);
+
     case APP_WILL_MOUNT:
         return _appWillMount(store, next, action);
 
@@ -205,4 +208,30 @@ function _onPerformQuery(
                 query,
                 translatedResults);
         });
+}
+
+/**
+ * Notifies the feature invite that the action
+ * {@link _SET_EMITTER_SUBSCRIPTIONS} is being dispatched within a specific
+ * redux {@code store}.
+ *
+ * @param {Store} store - The redux store in which the specified {@code action}
+ * is being dispatched.
+ * @param {Dispatch} next - The redux dispatch function to dispatch the
+ * specified {@code action} to the specified {@code store}.
+ * @param {Action} action - The redux action {@code _SET_EMITTER_SUBSCRIPTIONS}
+ * which is being dispatched in the specified {@code store}.
+ * @private
+ * @returns {*}
+ */
+function _setEmitterSubscriptions({ getState }, next, action) {
+    const { emitterSubscriptions } = getState()['features/invite'];
+
+    if (emitterSubscriptions) {
+        for (const subscription of emitterSubscriptions) {
+            subscription.remove();
+        }
+    }
+
+    return next(action);
 }
