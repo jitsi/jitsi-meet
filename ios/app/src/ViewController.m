@@ -33,9 +33,6 @@
 
     // inviteController
     InviteController *inviteController = view.inviteController;
-
-    //inviteController.addPeopleEnabled = TRUE;
-    //inviteController.dialOutEnabled = TRUE;
     inviteController.delegate = self;
 
 #endif // #ifdef DEBUG

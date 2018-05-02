@@ -17,7 +17,15 @@
 #import "InviteController+Private.h"
 #import "AddPeopleController+Private.h"
 
-@implementation InviteController
+@implementation InviteController {
+    NSNumber *_addPeopleEnabled;
+    NSNumber *_dialOutEnabled;
+}
+
+@dynamic addPeopleEnabled;
+@dynamic dialOutEnabled;
+
+#pragma mark Constructor
 
 -(instancetype)initWithExternalAPIScope:(NSString * _Nonnull)externalAPIScope
                         andInviteModule:(Invite * _Nonnull)inviteModule {
@@ -29,6 +37,8 @@
 
     return self;
 }
+
+#pragma mark Public API
 
 -(void)beginAddPeople {
     if (_delegate == nil) {
@@ -55,6 +65,34 @@
     if (self.addPeopleController == controller) {
         self.addPeopleController = nil;
     }
+}
+
+#pragma mark Property getters / setters
+
+- (void) setAddPeopleEnabled:(BOOL)addPeopleEnabled {
+    _addPeopleEnabled = [NSNumber numberWithBool:addPeopleEnabled];
+}
+
+- (BOOL) addPeopleEnabled {
+    if (_addPeopleEnabled == nil || [_addPeopleEnabled boolValue]) {
+        return self.delegate
+            && [self.delegate respondsToSelector:@selector(beginAddPeople:)];
+    }
+
+    return NO;
+}
+
+- (void) setDialOutEnabled:(BOOL)dialOutEnabled {
+    _dialOutEnabled = [NSNumber numberWithBool:dialOutEnabled];
+}
+
+- (BOOL) dialOutEnabled {
+    if (_dialOutEnabled == nil || [_dialOutEnabled boolValue]) {
+        return self.delegate
+            && [self.delegate respondsToSelector:@selector(beginAddPeople:)];
+    }
+
+    return NO;
 }
 
 #pragma mark Result handling
