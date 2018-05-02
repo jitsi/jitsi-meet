@@ -4,6 +4,7 @@ import { appNavigate } from '../app';
 import { checkIfCanJoin, conferenceLeft } from '../base/conference';
 import { connectionFailed } from '../base/connection';
 import { openDialog } from '../base/dialog';
+import { set } from '../base/redux';
 
 import {
     CANCEL_LOGIN,
@@ -89,11 +90,7 @@ export function cancelLogin() {
             && dispatch(
                 connectionFailed(
                     passwordRequired,
-                    error && error.name,
-                    error && error.message,
-                    error && error.credentials,
-                    error && error.details,
-                    /* recoverable */ false));
+                    set(error, 'recoverable', false)));
     };
 }
 

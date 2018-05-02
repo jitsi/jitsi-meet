@@ -102,7 +102,12 @@ function connect(id, password, roomName) {
         /* eslint-enable max-params */
             APP.store.dispatch(
                 connectionFailed(
-                    connection, error, message, credentials, details));
+                    connection, {
+                        credentials,
+                        details,
+                        message,
+                        name: error
+                    }));
 
             if (isFatalJitsiConnectionError(error)) {
                 connection.removeEventListener(

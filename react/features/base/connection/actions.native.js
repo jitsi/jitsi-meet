@@ -16,6 +16,53 @@ import {
 } from './actionTypes';
 
 /**
+ * The error structure passed to the {@link connectionFailed} action.
+ *
+ * Note there was an intention to make the error resemble an Error instance (to
+ * the extent that jitsi-meet needs it).
+ */
+export type ConnectionFailedError = {
+
+    /**
+     * The invalid credentials that were used to authenticate and the
+     * authentication failed.
+     */
+    credentials?: {
+
+        /**
+         * The XMPP user's ID.
+         */
+        jid: string,
+
+        /**
+         * The XMPP user's password.
+         */
+        password: string
+    },
+
+    /**
+     * The details about the connection failed event.
+     */
+    details?: string,
+
+    /**
+     * Error message.
+     */
+    message?: string,
+
+    /**
+     * One of {@link JitsiConnectionError} constants (defined in
+     * lib-jitsi-meet).
+     */
+    name: string,
+
+    /**
+     * Indicates whether this event is recoverable or not.
+     */
+    recoverable?: boolean
+}
+
+/**
  * Opens new connection.
  *
  * @param {string} [id] - The XMPP user's ID (e.g. user@server.com).
@@ -89,10 +136,18 @@ export function connect(id: ?string, password: ?string) {
          * @private
          * @returns {void}
          */
-        function _onConnectionFailed(err, msg, credentials) {
+        function _onConnectionFailed(
+                err: string, msg: string, credentials: Object) {
             unsubscribe();
             console.error('CONNECTION FAILED:', err, msg);
-            dispatch(connectionFailed(connection, err, msg, credentials));
+            dispatch(
+                connectionFailed(
+                    connection, {
+                        credentials,
+                        name: err,
+                        message: msg
+                    }
+                ));
         }
 
         /**
@@ -167,53 +222,33 @@ export function connectionEstablished(connection: Object) {
     };
 }
 
-/* eslint-disable max-params */
-
 /**
  * Create an action for when the signaling connection could not be created.
  *
  * @param {JitsiConnection} connection - The JitsiConnection which failed.
- * @param {string} error - Error.
- * @param {string} [message] - Error message.
- * @param {Object} [credentials] - The invalid credentials that failed
- * the authentication.
- * @param {Object} [details] - The details about the connection failed event.
- * @param {boolean} [recoverable] - Indicates whether this event is recoverable
- * or not.
+ * @param {ConnectionFailedError} error - Error.
  * @public
  * @returns {{
  *     type: CONNECTION_FAILED,
  *     connection: JitsiConnection,
- *     error: Object
+ *     error: ConnectionFailedError
  * }}
  */
 export function connectionFailed(
         connection: Object,
-        error: string,
-        message: ?string,
-        credentials: ?Object,
-        details: ?Object,
-        recoverable: ?boolean) {
+        error: ConnectionFailedError) {
+    const { credentials } = error;
+
+    if (credentials && !Object.keys(credentials).length) {
+        error.credentials = undefined;
+    }
+
     return {
         type: CONNECTION_FAILED,
         connection,
-
-        // Make the error resemble an Error instance (to the extent that
-        // jitsi-meet needs it).
-        error: {
-            credentials:
-                credentials && Object.keys(credentials).length
-                    ? credentials
-                    : undefined,
-            message,
-            name: error,
-            details,
-            recoverable
-        }
+        error
     };
 }
-
-/* eslint-enable max-params */
 
 /**
  * Constructs options to be passed to the constructor of {@code JitsiConnection}
