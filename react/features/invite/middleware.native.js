@@ -80,12 +80,12 @@ function _appWillMount({ dispatch, getState }, next, action) {
         type: _SET_EMITTER_SUBSCRIPTIONS,
         emitterSubscriptions: [
             emitter.addListener(
-                'org.jitsi.meet:features/invite#performQuery',
-                _onPerformQuery,
-                context),
-            emitter.addListener(
                 'org.jitsi.meet:features/invite#invite',
                 _onInvite,
+                context),
+            emitter.addListener(
+                'org.jitsi.meet:features/invite#performQuery',
+                _onPerformQuery,
                 context)
         ]
     });

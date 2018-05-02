@@ -24,10 +24,10 @@
 // like it emits within the bounderies of a react-native module ony, it actually
 // also emits through DeviceEventEmitter. (Of course, Android emits only through
 // DeviceEventEmitter.)
-static NSString * const InvitePerformQueryAction
-    = @"org.jitsi.meet:features/invite#performQuery";
-static NSString * const InvitePerformSubmitInviteAction
+static NSString * const InviteEmitterEvent
     = @"org.jitsi.meet:features/invite#invite";
+static NSString * const PerformQueryEmitterEvent
+    = @"org.jitsi.meet:features/invite#performQuery";
 
 @implementation Invite
 
@@ -35,8 +35,8 @@ RCT_EXPORT_MODULE();
 
 - (NSArray<NSString *> *)supportedEvents {
     return @[
-        InvitePerformQueryAction,
-        InvitePerformSubmitInviteAction
+        InviteEmitterEvent,
+        PerformQueryEmitterEvent
     ];
 }
 
@@ -72,7 +72,7 @@ RCT_EXPORT_METHOD(receivedResults:(NSString *)externalAPIScope
 - (void)            invite:(NSArray<NSDictionary *> * _Nonnull)invitees
           externalAPIScope:(NSString * _Nonnull)externalAPIScope
   addPeopleControllerScope:(NSString * _Nonnull) addPeopleControllerScope {
-    [self sendEventWithName:InvitePerformSubmitInviteAction
+    [self sendEventWithName:InviteEmitterEvent
                        body:@{ @"addPeopleControllerScope": addPeopleControllerScope,
                                @"externalAPIScope": externalAPIScope,
                                @"invitees": invitees }];
@@ -81,7 +81,7 @@ RCT_EXPORT_METHOD(receivedResults:(NSString *)externalAPIScope
 - (void)      performQuery:(NSString * _Nonnull)query
           externalAPIScope:(NSString * _Nonnull)externalAPIScope
   addPeopleControllerScope:(NSString * _Nonnull) addPeopleControllerScope {
-    [self sendEventWithName:InvitePerformQueryAction
+    [self sendEventWithName:PerformQueryEmitterEvent
                        body:@{ @"addPeopleControllerScope": addPeopleControllerScope,
                                @"externalAPIScope": externalAPIScope,
                                @"query": query }];

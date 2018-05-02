@@ -55,7 +55,8 @@
 
 #pragma mark Internal API, used to call the delegate and report to the user
 
-- (void)receivedResults:(NSArray<NSDictionary *> *)results forQuery:(NSString *)query {
+- (void)receivedResults:(NSArray<NSDictionary *> *)results
+               forQuery:(NSString *)query {
     for (NSDictionary* item in results) {
         NSString* itemId = item[@"id"];
         NSString* itemType = item[@"type"];
@@ -69,7 +70,9 @@
         }
     }
 
-    [self.delegate addPeopleController:self didReceiveResults:results forQuery:query];
+    [self.delegate addPeopleController:self
+                     didReceiveResults:results
+                              forQuery:query];
 }
 
 - (void)inviteSettled:(NSArray<NSDictionary *> *)failedInvitees {
