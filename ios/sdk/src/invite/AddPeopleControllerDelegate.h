@@ -23,14 +23,17 @@
 @protocol AddPeopleControllerDelegate
 
 /**
- * Called when an AddPeopleController has results for a query that was previously provided.
+ * Called when an AddPeopleController has results for a query that was
+ * previously provided.
  */
 - (void)addPeopleController:(AddPeopleController * _Nonnull)controller
           didReceiveResults:(NSArray<NSDictionary*> * _Nonnull)results
                    forQuery:(NSString * _Nonnull)query;
 
 /**
- * TODO.
+ * Called when an AddPeopleController has finished the inviting process, either
+ * succesfully or not. In case of failure the failedInvitees array will contain
+ * the items for which invitations failed.
  */
 - (void)inviteSettled:(NSArray<NSDictionary *> * _Nonnull)failedInvitees
  fromSearchController:(AddPeopleController * _Nonnull)addPeopleController;

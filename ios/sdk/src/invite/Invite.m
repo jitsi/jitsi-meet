@@ -41,10 +41,12 @@ RCT_EXPORT_MODULE();
 }
 
 /**
- * Calls the corresponding JitsiMeetView's delegate to request that the native
- * invite search be presented.
+ * Initiates the process to add people. This involves calling a delegate method
+ * in the InviteControllerDelegate so the native host application can start
+ * the query process.
  *
- * @param scope
+ * @param externalAPIScope - Scope identifying the JitsiMeetView where the
+ * calling JS code is being executed.
  */
 RCT_EXPORT_METHOD(beginAddPeople:(NSString *)externalAPIScope) {
     JitsiMeetView *view = [JitsiMeetView viewForExternalAPIScope:externalAPIScope];
@@ -52,6 +54,16 @@ RCT_EXPORT_METHOD(beginAddPeople:(NSString *)externalAPIScope) {
     [controller beginAddPeople];
 }
 
+/**
+ * Indicates the the invite process has settled / finished.
+ *
+ * @param externalAPIScope - Scope identifying the JitsiMeetView where the
+ * calling JS code is being executed.
+ * @param addPeopleControllerScope - Scope identifying the AddPeopleController
+ * wich was settled.
+ * @param failedInvitees - Array with the invitees which were not invited due
+ * to a failure.
+ */
 RCT_EXPORT_METHOD(inviteSettled:(NSString *)externalAPIScope
        addPeopleControllerScope:(NSString *)addPeopleControllerScope
                  failedInvitees:(NSArray *)failedInvitees) {
@@ -60,6 +72,18 @@ RCT_EXPORT_METHOD(inviteSettled:(NSString *)externalAPIScope
     [controller inviteSettled:addPeopleControllerScope failedInvitees:failedInvitees];
 }
 
+/**
+ * Process results received for the given query. This involves calling a
+ * delegate method in AddPeopleControllerDelegate so the native host application
+ * is made aware of the query results.
+ *
+ * @param externalAPIScope - Scope identifying the JitsiMeetView where the
+ * calling JS code is being executed.
+ * @param addPeopleControllerScope - Scope identifying the AddPeopleController
+ * for which the results were received.
+ * @param query - The actual query for which the results were received.
+ * @param results - The query results.
+ */
 RCT_EXPORT_METHOD(receivedResults:(NSString *)externalAPIScope
          addPeopleControllerScope:(NSString *)addPeopleControllerScope
                             query:(NSString *)query
