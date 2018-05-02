@@ -14,23 +14,16 @@
  * limitations under the License.
  */
 
-#import <React/RCTBridge.h>
-#import <React/RCTEventEmitter.h>
 #import <React/RCTUtils.h>
 
 #import "JitsiMeetView+Private.h"
 
 #import "InviteSearch.h"
+#import "InviteSearch+Private.h"
 
 // The events emitted/supported by InviteSearch:
 static NSString * const InviteSearchPerformQueryAction = @"performQueryAction";
 static NSString * const InviteSearchPerformSubmitInviteAction = @"performSubmitInviteAction";
-
-
-@interface InviteSearch : RCTEventEmitter
-
-@end
-
 
 @interface InviteSearchController ()
 
@@ -38,7 +31,8 @@ static NSString * const InviteSearchPerformSubmitInviteAction = @"performSubmitI
 @property (nonatomic, strong) NSMutableDictionary* _Nonnull items;
 @property (nonatomic, nullable, weak) InviteSearch* module;
 
-- (instancetype)initWithSearchModule:(InviteSearch *)module;
+- (instancetype)initWithSearchModule:(InviteSearch *)module
+                            andScope:(NSString * _Nonnull)scope;
 
 - (void)didReceiveResults:(NSArray<NSDictionary*> * _Nonnull)results
                  forQuery:(NSString * _Nonnull)query;
@@ -49,21 +43,18 @@ static NSString * const InviteSearchPerformSubmitInviteAction = @"performSubmitI
 
 @end
 
-
 @implementation InviteSearch
+
+RCT_EXPORT_MODULE();
 
 static NSMutableDictionary* searchControllers;
 
-RCT_EXTERN void RCTRegisterModule(Class);
-
-+ (void)load {
-    RCTRegisterModule(self);
-
-    searchControllers = [[NSMutableDictionary alloc] init];
-}
-
-+ (NSString *)moduleName {
-    return @"InviteSearch";
+-(instancetype)init {
+    self = [super init];
+    if (self) {
+        searchControllers = [[NSMutableDictionary alloc] init];
+    }
+    return self;
 }
 
 - (NSArray<NSString *> *)supportedEvents {
@@ -98,52 +89,58 @@ RCT_EXPORT_METHOD(launchNativeInvite:(NSString *)scope) {
     if ([delegate respondsToSelector:@selector(launchNativeInviteForSearchController:)]) {
         InviteSearchController* searchController = [searchControllers objectForKey:scope];
         if (!searchController) {
-            searchController = [self makeInviteSearchController];
+            searchController = [self makeInviteSearchController:scope];
         }
 
         [delegate launchNativeInviteForSearchController:searchController];
     }
 }
 
-RCT_EXPORT_METHOD(inviteSucceeded:(NSString *)inviteScope) {
-    InviteSearchController* searchController = [searchControllers objectForKey:inviteScope];
+RCT_EXPORT_METHOD(inviteSucceeded:(NSString *)scope) {
+    InviteSearchController* searchController = [searchControllers objectForKey:scope];
 
     [searchController inviteDidSucceed];
 
-    [searchControllers removeObjectForKey:inviteScope];
+    [searchControllers removeObjectForKey:scope];
 }
 
-RCT_EXPORT_METHOD(inviteFailedForItems:(NSArray<NSDictionary *> *)items inviteScope:(NSString *)inviteScope) {
-    InviteSearchController* searchController = [searchControllers objectForKey:inviteScope];
+RCT_EXPORT_METHOD(inviteFailedForItems:(NSArray<NSDictionary *> *)items scope:(NSString *)scope) {
+    InviteSearchController* searchController = [searchControllers objectForKey:scope];
 
     [searchController inviteDidFailForItems:items];
 }
 
-RCT_EXPORT_METHOD(receivedResults:(NSArray *)results forQuery:(NSString *)query inviteScope:(NSString *)inviteScope) {
+RCT_EXPORT_METHOD(receivedResults:(NSArray *)results
+                  forQuery:(NSString *)query
+                  scope:(NSString *)scope) {
 
-    InviteSearchController* searchController = [searchControllers objectForKey:inviteScope];
+    InviteSearchController* searchController = [searchControllers objectForKey:scope];
 
     [searchController didReceiveResults:results forQuery:query];
 }
 
-- (InviteSearchController *)makeInviteSearchController {
-    InviteSearchController* searchController = [[InviteSearchController alloc] initWithSearchModule:self];
+- (InviteSearchController *)makeInviteSearchController:(NSString * _Nonnull)scope {
+    InviteSearchController* searchController
+        = [[InviteSearchController alloc] initWithSearchModule:self
+                                                      andScope:scope];
 
-    [searchControllers setObject:searchController forKey:searchController.identifier];
+    [searchControllers setObject:searchController forKey:scope];
 
     return searchController;
 }
 
-- (void)performQuery:(NSString * _Nonnull)query inviteScope:(NSString * _Nonnull)inviteScope  {
-    [self sendEventWithName:InviteSearchPerformQueryAction body:@{ @"query": query, @"inviteScope": inviteScope }];
+- (void)invitePeople:(NSArray<NSDictionary *> * _Nonnull)items
+           withScope:(NSString * _Nonnull)scope {
+    [self sendEventWithName:InviteSearchPerformSubmitInviteAction
+                       body:@{ @"selectedItems": items, @"scope": scope }];
 }
 
-- (void)cancelSearchForInviteScope:(NSString * _Nonnull)inviteScope {
-    [searchControllers removeObjectForKey:inviteScope];
+- (void)performQuery:(NSString * _Nonnull)query scope:(NSString * _Nonnull)scope  {
+    [self sendEventWithName:InviteSearchPerformQueryAction body:@{ @"query": query, @"scope": scope }];
 }
 
-- (void)submitSelectedItems:(NSArray<NSDictionary *> * _Nonnull)items inviteScope:(NSString * _Nonnull)inviteScope {
-    [self sendEventWithName:InviteSearchPerformSubmitInviteAction body:@{ @"selectedItems": items, @"inviteScope": inviteScope }];
+- (void)cancelSearch:(NSString * _Nonnull)scope {
+    [searchControllers removeObjectForKey:scope];
 }
 
 @end
@@ -151,10 +148,11 @@ RCT_EXPORT_METHOD(receivedResults:(NSArray *)results forQuery:(NSString *)query 
 
 @implementation InviteSearchController
 
-- (instancetype)initWithSearchModule:(InviteSearch *)module {
+- (instancetype)initWithSearchModule:(InviteSearch *)module
+                            andScope:(NSString * _Nonnull)scope {
     self = [super init];
     if (self) {
-        _identifier = [[NSUUID UUID] UUIDString];
+        _identifier = scope;
 
         self.items = [[NSMutableDictionary alloc] init];
         self.module = module;
@@ -163,11 +161,11 @@ RCT_EXPORT_METHOD(receivedResults:(NSArray *)results forQuery:(NSString *)query 
 }
 
 - (void)performQuery:(NSString *)query {
-    [self.module performQuery:query inviteScope:self.identifier];
+    [self.module performQuery:query scope:self.identifier];
 }
 
 - (void)cancelSearch {
-    [self.module cancelSearchForInviteScope:self.identifier];
+    [self.module cancelSearch:self.identifier];
 }
 
 - (void)submitSelectedItemIds:(NSArray<NSString *> * _Nonnull)ids {
@@ -181,7 +179,7 @@ RCT_EXPORT_METHOD(receivedResults:(NSArray *)results forQuery:(NSString *)query 
         }
     }
 
-    [self.module submitSelectedItems:items inviteScope:self.identifier];
+    [self.module invitePeople:items withScope:self.identifier];
 }
 
 - (void)didReceiveResults:(NSArray<NSDictionary *> *)results forQuery:(NSString *)query {
