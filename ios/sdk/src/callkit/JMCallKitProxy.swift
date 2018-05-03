@@ -20,138 +20,142 @@ import Foundation
 /// JitsiMeet CallKit proxy
 @available(iOS 10.0, *)
 @objc public final class JMCallKitProxy: NSObject {
-    
-    override private init() {}
-    
+
+    private override init() {}
+
     // MARK: - CallKit proxy
-    
-    internal static let cxProvider: CXProvider = {
-        let config = CXProviderConfiguration(localizedName: "")
-        let provider = CXProvider(configuration: config)
-        return provider
+
+    private static let provider: CXProvider = {
+        let configuration = CXProviderConfiguration(localizedName: "")
+        return CXProvider(configuration: configuration)
     }()
-    
-    internal static let cxCallController: CXCallController = {
-        return CXCallController()
-    }()
-    
-    internal static let callKitNotifier: JMCallKitNotifier = {
-        return JMCallKitNotifier()
-    }()
-    
-    internal static var cxProviderConfiguration: CXProviderConfiguration? {
+
+    private static var providerConfiguration: CXProviderConfiguration? {
         didSet {
-            guard let providerConfiguration = cxProviderConfiguration else { return }
-            cxProvider.configuration = providerConfiguration
-            cxProvider.setDelegate(callKitNotifier, queue: nil)
+            guard let configuration = providerConfiguration else { return }
+            provider.configuration = configuration
+            provider.setDelegate(emitter, queue: nil)
         }
     }
-    
-    /// Enables the proxy in between callkit and the consumers of the SDK
-    /// Default to enabled, set to false when you don't want to use callkit
+
+    private static let callController: CXCallController = {
+        return CXCallController()
+    }()
+
+    private static let emitter: JMCallKitEmitter = {
+        return JMCallKitEmitter()
+    }()
+
+    /// Enables the proxy in between CallKit and the consumers of the SDK.
+    /// Defaults to enabled, set to false when you don't want to use CallKit.
     @objc public static var enabled: Bool = true {
         didSet {
             if enabled == false {
-                cxProvider.setDelegate(nil, queue: nil)
+                provider.setDelegate(nil, queue: nil)
             }
         }
     }
-    
-    @objc public static func hasProviderBeenConfigurated() -> Bool {
-        return cxProviderConfiguration != nil
-    }
-        
-    @objc public static func configureCallKitProvider(localizedName: String,
-                                                      ringtoneSound: String?,
-                                                      iconTemplateImageData: Data?) {
+
+    @objc public static func configureProvider(localizedName: String,
+                                               ringtoneSound: String?,
+                                               iconTemplateImageData: Data?) {
         let configuration = CXProviderConfiguration(localizedName: localizedName)
-        configuration.ringtoneSound = ringtoneSound
         configuration.iconTemplateImageData = iconTemplateImageData
-        
         configuration.maximumCallGroups = 1
         configuration.maximumCallsPerCallGroup = 1
+        configuration.ringtoneSound = ringtoneSound
         configuration.supportedHandleTypes = [CXHandle.HandleType.generic]
         configuration.supportsVideo = true
-        cxProviderConfiguration = configuration
+
+        providerConfiguration = configuration
     }
-    
-    @objc public static func addListener(_ listener: JMCallKitEventListener) {
-        callKitNotifier.addListener(listener)
+
+    @objc public static func isProviderConfigured() -> Bool {
+        return providerConfiguration != nil
     }
-    
-    @objc public static func removeListener(_ listener: JMCallKitEventListener) {
-        callKitNotifier.removeListener(listener)
+
+    @objc public static func addListener(_ listener: JMCallKitListener) {
+        emitter.addListener(listener)
     }
-    
+
+    @objc public static func removeListener(_ listener: JMCallKitListener) {
+        emitter.removeListener(listener)
+    }
+
     @objc public static func hasActiveCallForUUID(_ callUUID: String) -> Bool {
-        let activeCallForUUID = cxCallController.callObserver.calls.first {
+        let activeCallForUUID = callController.callObserver.calls.first {
             $0.uuid == UUID(uuidString: callUUID)
         }
         guard activeCallForUUID != nil else { return false }
         return true
     }
-    
-    @objc public static func reportNewIncomingCall(UUID: UUID,
-                                             handle: String?,
-                                             displayName: String?,
-                                             hasVideo: Bool,
-                                             completion: @escaping (Error?) -> Void) {
+
+    @objc public static func reportNewIncomingCall(
+            UUID: UUID,
+            handle: String?,
+            displayName: String?,
+            hasVideo: Bool,
+            completion: @escaping (Error?) -> Void) {
         guard enabled else { return }
-        
+
         let callUpdate = makeCXUpdate(handle: handle,
                                       displayName: displayName,
                                       hasVideo: hasVideo)
-        cxProvider.reportNewIncomingCall(with: UUID,
-                                         update: callUpdate,
-                                         completion: completion)
+        provider.reportNewIncomingCall(with: UUID,
+                                       update: callUpdate,
+                                       completion: completion)
     }
-    
+
     @objc public static func reportCallUpdate(with UUID: UUID,
-                                        handle: String?,
-                                        displayName: String?,
-                                        hasVideo: Bool) {
+                                              handle: String?,
+                                              displayName: String?,
+                                              hasVideo: Bool) {
         guard enabled else { return }
-        
+
         let callUpdate = makeCXUpdate(handle: handle,
                                       displayName: displayName,
                                       hasVideo: hasVideo)
-        cxProvider.reportCall(with: UUID, updated: callUpdate)
+        provider.reportCall(with: UUID, updated: callUpdate)
     }
-    
-    @objc public static func reportCall(with UUID: UUID,
-                           endedAt dateEnded: Date?,
-                           reason endedReason: CXCallEndedReason) {
+
+    @objc public static func reportCall(
+            with UUID: UUID,
+            endedAt dateEnded: Date?,
+            reason endedReason: CXCallEndedReason) {
         guard enabled else { return }
-        
-        cxProvider.reportCall(with: UUID,
-                              endedAt: dateEnded,
-                              reason: endedReason)
+
+        provider.reportCall(with: UUID,
+                            endedAt: dateEnded,
+                            reason: endedReason)
     }
-    
-    @objc public static func reportOutgoingCall(with UUID: UUID,
-          startedConnectingAt dateStartedConnecting: Date?) {
+
+    @objc public static func reportOutgoingCall(
+            with UUID: UUID,
+            startedConnectingAt dateStartedConnecting: Date?) {
         guard enabled else { return }
-        
-        cxProvider.reportOutgoingCall(with: UUID,
-                                      startedConnectingAt: dateStartedConnecting)
+
+        provider.reportOutgoingCall(with: UUID,
+                                    startedConnectingAt: dateStartedConnecting)
     }
-    
-    @objc public static func reportOutgoingCall(with UUID: UUID,
-                                          connectedAt dateConnected: Date?) {
+
+    @objc public static func reportOutgoingCall(
+            with UUID: UUID,
+            connectedAt dateConnected: Date?) {
         guard enabled else { return }
-        
-        cxProvider.reportOutgoingCall(with: UUID, connectedAt: dateConnected)
+
+        provider.reportOutgoingCall(with: UUID, connectedAt: dateConnected)
     }
-    
-    @objc public static func request(_ transaction: CXTransaction,
-                                completion: @escaping (Error?) -> Swift.Void) {
+
+    @objc public static func request(
+            _ transaction: CXTransaction,
+            completion: @escaping (Error?) -> Swift.Void) {
         guard enabled else { return }
-        
-        cxCallController.request(transaction, completion: completion)
+
+        callController.request(transaction, completion: completion)
     }
-    
+
     // MARK: - Callkit Proxy helpers
-    
+
     private static func makeCXUpdate(handle: String?,
                                      displayName: String?,
                                      hasVideo: Bool) -> CXCallUpdate {
@@ -161,17 +165,16 @@ import Foundation
         update.supportsGrouping = false
         update.supportsUngrouping = false
         update.hasVideo = hasVideo
-        
+
         if let handle = handle {
             update.remoteHandle = CXHandle(type: .generic,
                                            value: handle)
         }
-        
+
         if let displayName = displayName {
             update.localizedCallerName = displayName
         }
-        
+
         return update
     }
-
 }

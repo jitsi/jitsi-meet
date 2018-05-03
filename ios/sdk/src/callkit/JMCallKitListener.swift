@@ -18,46 +18,29 @@ import AVKit
 import CallKit
 import Foundation
 
-@objc public protocol JMCallKitEventListener: NSObjectProtocol {
-    
+@objc public protocol JMCallKitListener: NSObjectProtocol {
+
     @available(iOS 10.0, *)
     @objc optional func providerDidReset()
-    
+
     @available(iOS 10.0, *)
     @objc optional func performAnswerCall(UUID: UUID)
-    
+
     @available(iOS 10.0, *)
     @objc optional func performEndCall(UUID: UUID)
-    
+
     @available(iOS 10.0, *)
     @objc optional func performSetMutedCall(UUID: UUID, isMuted: Bool)
-    
+
     @available(iOS 10.0, *)
     @objc optional func performStartCall(UUID: UUID, isVideo: Bool)
-    
+
     @available(iOS 10.0, *)
     @objc optional func providerDidActivateAudioSession(session: AVAudioSession)
-    
+
     @available(iOS 10.0, *)
     @objc optional func providerDidDeactivateAudioSession(session: AVAudioSession)
-    
+
     @available(iOS 10.0, *)
     @objc optional func providerTimedOutPerformingAction(action: CXAction)
-}
-
-internal struct JMCallKitEventListenerWrapper: Hashable {
-    
-    public var hashValue: Int
-    
-    internal weak var listener: JMCallKitEventListener?
-    
-    public init(listener: JMCallKitEventListener) {
-        self.listener = listener
-        self.hashValue = listener.hash
-    }
-    
-    public static func ==(lhs: JMCallKitEventListenerWrapper,
-                          rhs: JMCallKitEventListenerWrapper) -> Bool {
-        return lhs.hashValue == rhs.hashValue
-    }
 }

@@ -20,27 +20,27 @@ import JitsiMeet
 class ViewController: UIViewController {
 
     @IBOutlet weak var videoButton: UIButton?
-    
+
     fileprivate var pipViewCoordinator: PiPViewCoordinator?
     fileprivate var jitsiMeetView: JitsiMeetView?
-    
+
     override func viewDidLoad() {
         super.viewDidLoad()
     }
-    
+
     override func viewWillTransition(to size: CGSize,
                                      with coordinator: UIViewControllerTransitionCoordinator) {
         super.viewWillTransition(to: size, with: coordinator)
-        
+
         let rect = CGRect(origin: CGPoint.zero, size: size)
         pipViewCoordinator?.resetBounds(bounds: rect)
     }
-    
+
     // MARK: - Actions
-    
+
     @IBAction func openJitsiMeet(sender: Any?) {
         cleanUp()
-        
+
         // create and configure jitsimeet view
         let jitsiMeetView = JitsiMeetView()
         jitsiMeetView.welcomePageEnabled = true
@@ -48,18 +48,18 @@ class ViewController: UIViewController {
         jitsiMeetView.load(nil)
         jitsiMeetView.delegate = self
         self.jitsiMeetView = jitsiMeetView
-        
+
         // Enable jitsimeet view to be a view that can be displayed
         // on top of all the things, and let the coordinator to manage
         // the view state and interactions
         pipViewCoordinator = PiPViewCoordinator(withView: jitsiMeetView)
         pipViewCoordinator?.configureAsStickyView(withParentView: view)
-        
+
         // animate in
         jitsiMeetView.alpha = 0
         pipViewCoordinator?.show()
     }
-    
+
     fileprivate func cleanUp() {
         jitsiMeetView?.removeFromSuperview()
         jitsiMeetView = nil
@@ -68,21 +68,21 @@ class ViewController: UIViewController {
 }
 
 extension ViewController: JitsiMeetViewDelegate {
-    
+
     func conferenceFailed(_ data: [AnyHashable : Any]!) {
         hideJitsiMeetViewAndCleanUp()
     }
-    
+
     func conferenceLeft(_ data: [AnyHashable : Any]!) {
         hideJitsiMeetViewAndCleanUp()
     }
-    
+
     func enterPicture(inPicture data: [AnyHashable : Any]!) {
         DispatchQueue.main.async {
             self.pipViewCoordinator?.enterPictureInPicture()
         }
     }
-    
+
     private func hideJitsiMeetViewAndCleanUp() {
         DispatchQueue.main.async {
             self.pipViewCoordinator?.hide() { _ in

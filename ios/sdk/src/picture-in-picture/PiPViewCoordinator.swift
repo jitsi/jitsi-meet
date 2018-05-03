@@ -21,7 +21,7 @@ public typealias AnimationCompletion = (Bool) -> Void
 /// This object will also provide the drag and tap interactions of the view
 /// when is presented in Picure in Picture mode.
 public class PiPViewCoordinator {
-    
+
     /// Limits the boundries of view position on screen when minimized
     public var dragBoundInsets: UIEdgeInsets = UIEdgeInsets(top: 25,
                                                             left: 5,
@@ -31,7 +31,7 @@ public class PiPViewCoordinator {
             dragController.insets = dragBoundInsets
         }
     }
-    
+
     /// The size ratio of the view when in PiP mode
     public var pipSizeRatio: CGFloat = {
         let deviceIdiom = UIScreen.main.traitCollection.userInterfaceIdiom
@@ -44,21 +44,21 @@ public class PiPViewCoordinator {
             return 0.25
         }
     }()
-    
+
     private(set) var isInPiP: Bool = false // true if view is in PiP mode
-    
+
     private(set) var view: UIView
     private var currentBounds: CGRect = CGRect.zero
-    
+
     private var tapGestureRecognizer: UITapGestureRecognizer?
     private var exitPiPButton: UIButton?
-    
+
     private let dragController: DragGestureController = DragGestureController()
-    
+
     public init(withView view: UIView) {
         self.view = view
     }
-    
+
     /// Configure the view to be always on top of all the contents
     /// of the provided parent view.
     /// If a parentView is not provided it will try to use the main window
@@ -66,25 +66,25 @@ public class PiPViewCoordinator {
         guard
             let parentView = parentView ?? UIApplication.shared.keyWindow
             else { return }
-        
+
         parentView.addSubview(view)
         currentBounds = parentView.bounds
         view.frame = currentBounds
         view.layer.zPosition = CGFloat(Float.greatestFiniteMagnitude)
     }
-    
+
     /// Show view with fade in animation
     public func show(completion: AnimationCompletion? = nil) {
         if view.isHidden || view.alpha < 1 {
             view.isHidden = false
             view.alpha = 0
-            
+
             animateTransition(animations: { [weak self] in
                 self?.view.alpha = 1
             }, completion: completion)
         }
     }
-    
+
     /// Hide view with fade out animation
     public func hide(completion: AnimationCompletion? = nil) {
         if view.isHidden || view.alpha > 0 {
@@ -94,7 +94,7 @@ public class PiPViewCoordinator {
             }, completion: completion)
         }
     }
-    
+
     /// Resize view to and change state to custom PictureInPicture mode
     /// This will resize view, add a  gesture to enable user to "drag" view
     /// around screen, and add a button of top of the view to be able to exit mode
@@ -103,7 +103,7 @@ public class PiPViewCoordinator {
         animateViewChange()
         dragController.startDragListener(inView: view)
         dragController.insets = dragBoundInsets
-        
+
         // add single tap gesture recognition for displaying exit PiP UI
         let exitSelector = #selector(toggleExitPiP)
         let tapGestureRecognizer = UITapGestureRecognizer(target: self,
@@ -111,36 +111,36 @@ public class PiPViewCoordinator {
         self.tapGestureRecognizer = tapGestureRecognizer
         view.addGestureRecognizer(tapGestureRecognizer)
     }
-    
+
     /// Exit Picture in picture mode, this will resize view, remove
     /// exit pip button, and disable the drag gesture
     @objc public func exitPictureInPicture() {
         isInPiP = false
         animateViewChange()
         dragController.stopDragListener()
-        
+
         // hide PiP UI
         exitPiPButton?.removeFromSuperview()
         exitPiPButton = nil
-        
+
         // remove gesture
         let exitSelector = #selector(toggleExitPiP)
         tapGestureRecognizer?.removeTarget(self, action: exitSelector)
         tapGestureRecognizer = nil
     }
-    
+
     /// Reset view to provide bounds, use this method on rotation or
     /// screen size changes
     public func resetBounds(bounds: CGRect) {
         currentBounds = bounds
         exitPictureInPicture()
     }
-    
+
     /// Stop the dragging gesture of the root view
     public func stopDragGesture() {
         dragController.stopDragListener()
     }
-    
+
     /// Customize the presentation of exit pip button
     open func configureExitPiPButton(target: Any,
                                      action: Selector) -> UIButton {
@@ -157,9 +157,9 @@ public class PiPViewCoordinator {
         button.addTarget(target, action: action, for: .touchUpInside)
         return button
     }
-    
+
     // MARK: - Interactions
-    
+
     @objc private func toggleExitPiP() {
         if exitPiPButton == nil {
             // show button
@@ -168,30 +168,30 @@ public class PiPViewCoordinator {
                                                 action: exitSelector)
             view.addSubview(button)
             exitPiPButton = button
-            
+
         } else {
             // hide button
             exitPiPButton?.removeFromSuperview()
             exitPiPButton = nil
         }
     }
-    
+
     // MARK: - Size calculation
-    
+
     private func animateViewChange() {
         UIView.animate(withDuration: 0.25) {
             self.view.frame = self.changeViewRect()
             self.view.setNeedsLayout()
         }
     }
-    
+
     private func changeViewRect() -> CGRect {
         let bounds = currentBounds
-        
+
         guard isInPiP else {
             return bounds
         }
-        
+
         // resize to suggested ratio and position to the bottom right
         let adjustedBounds = UIEdgeInsetsInsetRect(bounds, dragBoundInsets)
         let size = CGSize(width: bounds.size.width * pipSizeRatio,
@@ -200,9 +200,9 @@ public class PiPViewCoordinator {
         let y: CGFloat = adjustedBounds.maxY - size.height
         return CGRect(x: x, y: y, width: size.width, height: size.height)
     }
-    
+
     // MARK: - Animation helpers
-    
+
     private func animateTransition(animations: @escaping () -> Void,
                                    completion: AnimationCompletion?) {
         UIView.animate(withDuration: 0.1,
@@ -211,5 +211,5 @@ public class PiPViewCoordinator {
                        animations: animations,
                        completion: completion)
     }
-    
+
 }

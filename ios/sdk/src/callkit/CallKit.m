@@ -39,7 +39,7 @@ static NSString * const RNCallKitPerformSetMutedCallAction
 static NSString * const RNCallKitProviderDidReset
     = @"providerDidReset";
 
-@interface RNCallKit : RCTEventEmitter <JMCallKitEventListener>
+@interface RNCallKit : RCTEventEmitter <JMCallKitListener>
 @end
 
 @implementation RNCallKit
@@ -112,12 +112,12 @@ RCT_EXPORT_METHOD(setProviderConfiguration:(NSDictionary *)dictionary) {
         dictionary);
 #endif
 
-    if (![JMCallKitProxy hasProviderBeenConfigurated]) {
+    if (![JMCallKitProxy isProviderConfigured]) {
         [self configureProviderFromDictionary:dictionary];
     }
-    
+
     // register to receive CallKit proxy events
-    [JMCallKitProxy addListener: self];
+    [JMCallKitProxy addListener:self];
 }
 
 // Start outgoing call
@@ -130,18 +130,16 @@ RCT_EXPORT_METHOD(startCall:(NSString *)callUUID
     NSLog(@"[RNCallKit][startCall] callUUID = %@", callUUID);
 #endif
 
-    NSUUID *callUUID_ = [[NSUUID alloc] initWithUUIDString:callUUID];
-    
-    // Don't start a call action if there's
-    // an active call for this UUID
-    // (i.e. JitsiMeetView was configured from an incoming call
+    // Don't start a new call if there's an active call for the specified
+    // callUUID. JitsiMeetView was configured for an incoming call.
     if ([JMCallKitProxy hasActiveCallForUUID:callUUID]) {
         resolve(nil);
         return;
     }
-    
+
     CXHandle *handle_
         = [[CXHandle alloc] initWithType:CXHandleTypeGeneric value:handle];
+    NSUUID *callUUID_ = [[NSUUID alloc] initWithUUIDString:callUUID];
     CXStartCallAction *action
         = [[CXStartCallAction alloc] initWithCallUUID:callUUID_
                                                handle:handle_];
@@ -156,8 +154,8 @@ RCT_EXPORT_METHOD(reportCallFailed:(NSString *)callUUID
                             reject:(RCTPromiseRejectBlock)reject) {
     NSUUID *callUUID_ = [[NSUUID alloc] initWithUUIDString:callUUID];
     [JMCallKitProxy reportCallWith:callUUID_
-                         endedAt:nil
-                          reason:CXCallEndedReasonFailed];
+                           endedAt:nil
+                            reason:CXCallEndedReasonFailed];
     resolve(nil);
 }
 
@@ -167,7 +165,7 @@ RCT_EXPORT_METHOD(reportConnectedOutgoingCall:(NSString *)callUUID
                                        reject:(RCTPromiseRejectBlock)reject) {
     NSUUID *callUUID_ = [[NSUUID alloc] initWithUUIDString:callUUID];
     [JMCallKitProxy reportOutgoingCallWith:callUUID_
-                             connectedAt:nil];
+                               connectedAt:nil];
     resolve(nil);
 }
 
@@ -186,12 +184,12 @@ RCT_EXPORT_METHOD(updateCall:(NSString *)callUUID
     NSUUID *callUUID_ = [[NSUUID alloc] initWithUUIDString:callUUID];
     NSString *displayName = options[@"displayName"];
     BOOL hasVideo = [(NSNumber*)options[@"hasVideo"] boolValue];
-    
+
     [JMCallKitProxy reportCallUpdateWith:callUUID_
-                                handle:nil
-                           displayName:displayName
-                              hasVideo:hasVideo];
-    
+                                  handle:nil
+                             displayName:displayName
+                                hasVideo:hasVideo];
+
     resolve(nil);
 }
 
@@ -228,10 +226,11 @@ RCT_EXPORT_METHOD(updateCall:(NSString *)callUUID
     }
 
     NSString *ringtoneSound = dictionary[@"ringtoneSound"];
-    
-    [JMCallKitProxy configureCallKitProviderWithLocalizedName:localizedName
-                                              ringtoneSound:ringtoneSound
-                                      iconTemplateImageData:iconTemplateImageData];
+
+    [JMCallKitProxy
+        configureProviderWithLocalizedName:localizedName
+                             ringtoneSound:ringtoneSound
+                     iconTemplateImageData:iconTemplateImageData];
 }
 
 - (void)requestTransaction:(CXTransaction *)transaction
@@ -242,7 +241,7 @@ RCT_EXPORT_METHOD(updateCall:(NSString *)callUUID
 #endif
 
     [JMCallKitProxy request:transaction
-               completion:^(NSError * _Nullable error) {
+                 completion:^(NSError * _Nullable error) {
         if (error) {
             NSLog(
                 @"[RNCallKit][requestTransaction] Error requesting transaction (%@): (%@)",
@@ -255,7 +254,7 @@ RCT_EXPORT_METHOD(updateCall:(NSString *)callUUID
     }];
 }
 
-#pragma mark - JitsiMeetCallKitListener
+#pragma mark - JMCallKitListener
 
 // Called when the provider has been reset. We should terminate all calls.
 - (void)providerDidReset {
@@ -307,7 +306,7 @@ RCT_EXPORT_METHOD(updateCall:(NSString *)callUUID
     NSLog(@"[RNCallKit][CXProviderDelegate][provider:performStartCallAction:]");
 #endif
     [JMCallKitProxy reportOutgoingCallWith:UUID
-                     startedConnectingAt:nil];
+                       startedConnectingAt:nil];
 }
 
 // The following just help with debugging:

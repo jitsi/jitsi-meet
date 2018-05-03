@@ -110,7 +110,7 @@ public class AddPeopleController {
 
         if (owner != null) {
             WritableArray invitees = new WritableNativeArray();
-    
+
             for(int i = 0, size = ids.size(); i < size; i++) {
                 String id = ids.get(i);
 
@@ -123,7 +123,7 @@ public class AddPeopleController {
                     // so just skip it.
                 }
             }
-    
+
             owner.invite(this, invitees);
         }
     }

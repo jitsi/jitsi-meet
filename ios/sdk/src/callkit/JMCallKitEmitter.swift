@@ -18,87 +18,113 @@ import AVKit
 import CallKit
 import Foundation
 
-internal final class JMCallKitNotifier: NSObject, CXProviderDelegate {
-    
+internal final class JMCallKitEmitter: NSObject, CXProviderDelegate {
+
     private var listeners = Set<JMCallKitEventListenerWrapper>()
-    
+
     internal override init() {}
-    
+
     // MARK: - Add/remove listeners
-    
-    func addListener(_ listener: JMCallKitEventListener) {
+
+    func addListener(_ listener: JMCallKitListener) {
         let wrapper = JMCallKitEventListenerWrapper(listener: listener)
         objc_sync_enter(listeners)
         listeners.insert(wrapper)
         objc_sync_exit(listeners)
     }
-    
-    func removeListener(_ listener: JMCallKitEventListener) {
+
+    func removeListener(_ listener: JMCallKitListener) {
         let wrapper = JMCallKitEventListenerWrapper(listener: listener)
         objc_sync_enter(listeners)
         listeners.remove(wrapper)
         objc_sync_exit(listeners)
     }
-    
+
     // MARK: - CXProviderDelegate
-    
+
     func providerDidReset(_ provider: CXProvider) {
         objc_sync_enter(listeners)
         listeners.forEach { $0.listener?.providerDidReset?() }
         objc_sync_exit(listeners)
     }
-    
+
     func provider(_ provider: CXProvider, perform action: CXAnswerCallAction) {
         objc_sync_enter(listeners)
-        listeners.forEach { $0.listener?.performAnswerCall?(UUID: action.callUUID) }
+        listeners.forEach {
+            $0.listener?.performAnswerCall?(UUID: action.callUUID)
+        }
         objc_sync_exit(listeners)
-        
+
         action.fulfill()
     }
-    
+
     func provider(_ provider: CXProvider, perform action: CXEndCallAction) {
         objc_sync_enter(listeners)
-        listeners.forEach { $0.listener?.performEndCall?(UUID: action.callUUID) }
+        listeners.forEach {
+            $0.listener?.performEndCall?(UUID: action.callUUID)
+        }
         objc_sync_exit(listeners)
-        
+
         action.fulfill()
     }
-    
+
     func provider(_ provider: CXProvider, perform action: CXSetMutedCallAction) {
         objc_sync_enter(listeners)
         listeners.forEach {
             $0.listener?.performSetMutedCall?(UUID: action.callUUID,
-                                             isMuted: action.isMuted)
+                                              isMuted: action.isMuted)
         }
         objc_sync_exit(listeners)
-        
+
         action.fulfill()
     }
-    
+
     func provider(_ provider: CXProvider, perform action: CXStartCallAction) {
         objc_sync_enter(listeners)
         listeners.forEach {
             $0.listener?.performStartCall?(UUID: action.callUUID,
-                                          isVideo: action.isVideo)
+                                           isVideo: action.isVideo)
         }
         objc_sync_exit(listeners)
-        
+
         action.fulfill()
     }
-    
-    func provider(_ provider: CXProvider, didActivate audioSession: AVAudioSession) {
+
+    func provider(_ provider: CXProvider,
+                  didActivate audioSession: AVAudioSession) {
         objc_sync_enter(listeners)
         listeners.forEach {
             $0.listener?.providerDidActivateAudioSession?(session: audioSession)
         }
         objc_sync_exit(listeners)
     }
-    
-    func provider(_ provider: CXProvider, didDeactivate audioSession: AVAudioSession) {
+
+    func provider(_ provider: CXProvider,
+                  didDeactivate audioSession: AVAudioSession) {
         objc_sync_enter(listeners)
         listeners.forEach {
-            $0.listener?.providerDidDeactivateAudioSession?(session: audioSession)
+            $0.listener?.providerDidDeactivateAudioSession?(
+                session: audioSession)
         }
         objc_sync_exit(listeners)
+    }
+}
+
+fileprivate struct JMCallKitEventListenerWrapper: Hashable {
+
+    public var hashValue: Int
+
+    internal weak var listener: JMCallKitListener?
+
+    public init(listener: JMCallKitListener) {
+        self.listener = listener
+        self.hashValue = listener.hash
+    }
+
+    public static func ==(lhs: JMCallKitEventListenerWrapper,
+                          rhs: JMCallKitEventListenerWrapper) -> Bool {
+        // XXX We're aware that "[t]wo instances with equal hash values are not
+        // necessarily equal to each other."
+        return lhs.hashValue == rhs.hashValue
     }
 }
