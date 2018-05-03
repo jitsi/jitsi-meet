@@ -8,10 +8,7 @@ import { compose, createStore } from 'redux';
 import Thunk from 'redux-thunk';
 
 import { i18next } from '../../base/i18n';
-import {
-    localParticipantJoined,
-    localParticipantLeft
-} from '../../base/participants';
+import { localParticipantLeft } from '../../base/participants';
 import { Fragment, RouteRegistry } from '../../base/react';
 import { MiddlewareRegistry, ReducerRegistry } from '../../base/redux';
 import { SoundCollection } from '../../base/sounds';
@@ -126,23 +123,9 @@ export class AbstractApp extends Component {
      */
     componentWillMount() {
         this._init.then(() => {
-            const { dispatch, getState } = this._getStore();
+            const { dispatch } = this._getStore();
 
             dispatch(appWillMount(this));
-
-            // FIXME I believe it makes more sense for a middleware to dispatch
-            // localParticipantJoined on APP_WILL_MOUNT because the order of
-            // actions is important, not the call site. Moreover, we've got
-            // localParticipant business logic in the React Component
-            // (i.e. UI) AbstractApp now.
-
-            const settings = getState()['features/base/settings'];
-            const localParticipant = {
-                avatarID: settings.avatarID,
-                avatarURL: settings.avatarURL,
-                email: settings.email,
-                name: settings.displayName
-            };
 
             // We set the initialized state here and not in the contructor to
             // make sure that {@code componentWillMount} gets invoked before
@@ -150,8 +133,6 @@ export class AbstractApp extends Component {
             this.setState({
                 appAsyncInitialized: true
             });
-
-            dispatch(localParticipantJoined(localParticipant));
 
             // If a URL was explicitly specified to this React Component,
             // then open it; otherwise, use a default.

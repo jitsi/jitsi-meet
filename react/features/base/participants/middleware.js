@@ -12,6 +12,7 @@ import { playSound, registerSound, unregisterSound } from '../sounds';
 
 import {
     localParticipantIdChanged,
+    localParticipantJoined,
     participantUpdated
 } from './actions';
 import {
@@ -56,7 +57,8 @@ MiddlewareRegistry.register(store => next => action => {
     switch (action.type) {
     case APP_WILL_MOUNT:
         _registerSounds(store);
-        break;
+
+        return _localParticipantJoined(store, next, action);
     case APP_WILL_UNMOUNT:
         _unregisterSounds(store);
         break;
@@ -173,6 +175,33 @@ MiddlewareRegistry.register(store => next => action => {
 
     return next(action);
 });
+
+/**
+ * Initializes the local participant and signals that it joined.
+ *
+ * @private
+ * @param {Store} store - The Redux store.
+ * @param {Dispatch} next - The redux dispatch function to dispatch the
+ * specified action to the specified store.
+ * @param {Action} action - The redux action which is being dispatched
+ * in the specified store.
+ * @private
+ * @returns {Object} The value returned by {@code next(action)}.
+ */
+function _localParticipantJoined({ getState, dispatch }, next, action) {
+    const result = next(action);
+    const settings = getState()['features/base/settings'];
+    const localParticipant = {
+        avatarID: settings.avatarID,
+        avatarURL: settings.avatarURL,
+        email: settings.email,
+        name: settings.displayName
+    };
+
+    dispatch(localParticipantJoined(localParticipant));
+
+    return result;
+}
 
 /**
  * Plays sounds when participants join/leave conference.
