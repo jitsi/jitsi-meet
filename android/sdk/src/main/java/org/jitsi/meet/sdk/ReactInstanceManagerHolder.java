@@ -42,6 +42,7 @@ public class ReactInstanceManagerHolder {
             new AppInfoModule(reactContext),
             new AudioModeModule(reactContext),
             new ExternalAPIModule(reactContext),
+            new IncomingCallExternalAPIModule(reactContext),
             new PictureInPictureModule(reactContext),
             new ProximityModule(reactContext),
             new WiFiStatsModule(reactContext),

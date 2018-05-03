@@ -643,5 +643,10 @@
         "rejected": "Rejected",
         "ignored": "Ignored",
         "expired": "Expired"
+    },
+    "incomingCall": {
+        "title": "Incoming call",
+        "answer": "Answer",
+        "decline": "Decline"
     }
 }
