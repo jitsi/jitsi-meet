@@ -1,12 +1,12 @@
 // @flow
 
 import * as JitsiMeetConferenceEvents from '../../ConferenceEvents';
-import { parseJWTFromURLParams } from '../../react/features/base/jwt';
 import {
     createApiEvent,
     sendAnalytics
 } from '../../react/features/analytics';
-import { sendInvitesForItems } from '../../react/features/invite';
+import { parseJWTFromURLParams } from '../../react/features/base/jwt';
+import { invite } from '../../react/features/invite';
 import { getJitsiMeetTransport } from '../transport';
 
 import { API_ID } from './constants';
@@ -114,15 +114,20 @@ function initCommands() {
         switch (name) {
         case 'invite':
             APP.store.dispatch(
-                sendInvitesForItems(request.invitees))
-                .then(failedInvites => {
-                    const failed = failedInvites.length === 0;
+                invite(request.invitees))
+                .then(failedInvitees => {
+                    let error;
+                    let result;
+
+                    if (failedInvitees.length) {
+                        error = new Error('One or more invites failed!');
+                    } else {
+                        result = true;
+                    }
 
                     callback({
-                        result: failed ? undefined : true,
-                        error: failed
-                            ? new Error('One or more invites failed!')
-                            : undefined
+                        error,
+                        result
                     });
                 });
             break;
