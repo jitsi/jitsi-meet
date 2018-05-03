@@ -33,6 +33,91 @@ export function beginAddPeople() {
 }
 
 /**
+ * Invites (i.e. sends invites to) an array of invitees (which may be a
+ * combination of users, rooms, phone numbers, and video rooms).
+ *
+ * @param  {Array<Object>} invitees - The recepients to send invites to.
+ * @returns {Promise<Array<Object>>} A {@code Promise} resolving with an array
+ * of invitees who were not invited (i.e. invites were not sent to them).
+ */
+export function invite(invitees: Array<Object>) {
+    return (
+            dispatch: Dispatch<*>,
+            getState: Function): Promise<Array<Object>> => {
+        let allInvitePromises = [];
+        let invitesLeftToSend = [ ...invitees ];
+
+        const state = getState();
+        const { conference } = state['features/base/conference'];
+        const { inviteServiceUrl } = state['features/base/config'];
+        const inviteUrl = getInviteURL(state);
+        const { jwt } = state['features/base/jwt'];
+
+        // First create all promises for dialing out.
+        if (conference) {
+            const phoneNumbers
+                = invitesLeftToSend.filter(({ type }) => type === 'phone');
+
+            // For each number, dial out. On success, remove the number from
+            // {@link invitesLeftToSend}.
+            const phoneInvitePromises = phoneNumbers.map(item => {
+                const numberToInvite = getDigitsOnly(item.number);
+
+                return conference.dial(numberToInvite)
+                    .then(() => {
+                        invitesLeftToSend
+                            = invitesLeftToSend.filter(
+                                invitee => invitee !== item);
+                    })
+                    .catch(error =>
+                        logger.error('Error inviting phone number:', error));
+            });
+
+            allInvitePromises = allInvitePromises.concat(phoneInvitePromises);
+        }
+
+        const usersAndRooms
+            = invitesLeftToSend.filter(
+                ({ type }) => type === 'user' || type === 'room');
+
+        if (usersAndRooms.length) {
+            // Send a request to invite all the rooms and users. On success,
+            // filter all rooms and users from {@link invitesLeftToSend}.
+            const peopleInvitePromise
+                = invitePeopleAndChatRooms(
+                    inviteServiceUrl,
+                    inviteUrl,
+                    jwt,
+                    usersAndRooms)
+                .then(() => {
+                    invitesLeftToSend
+                        = invitesLeftToSend.filter(
+                            ({ type }) => type !== 'user' && type !== 'room');
+                })
+                .catch(error => logger.error('Error inviting people:', error));
+
+            allInvitePromises.push(peopleInvitePromise);
+        }
+
+        // Sipgw calls are fire and forget. Invite them to the conference, then
+        // immediately remove them from invitesLeftToSend.
+        const vrooms
+            = invitesLeftToSend.filter(({ type }) => type === 'videosipgw');
+
+        conference
+            && vrooms.length > 0
+            && dispatch(inviteVideoRooms(conference, vrooms));
+
+        invitesLeftToSend
+            = invitesLeftToSend.filter(({ type }) => type !== 'videosipgw');
+
+        return (
+            Promise.all(allInvitePromises)
+                .then(() => invitesLeftToSend));
+    };
+}
+
+/**
  * Sends AJAX requests for dial-in numbers and conference ID.
  *
  * @returns {Function}
@@ -72,87 +157,5 @@ export function updateDialInNumbers() {
                     error
                 });
             });
-    };
-}
-
-/**
- * Send invites for a list of items (may be a combination of users, rooms, phone
- * numbers, and video rooms).
- *
- * @param  {Array<Object>} invites - Items for which invites should be sent.
- * @returns {Promise} Promise containing the list of invites that were not sent.
- */
-export function sendInvitesForItems(invites: Array<Object>) {
-    return (
-            dispatch: Dispatch<*>,
-            getState: Function): Promise<Array<Object>> => {
-        let allInvitePromises = [];
-        let invitesLeftToSend = [ ...invites ];
-        const state = getState();
-        const { conference } = state['features/base/conference'];
-        const { inviteServiceUrl } = state['features/base/config'];
-        const inviteUrl = getInviteURL(state);
-        const jwt = state['features/base/jwt'].jwt;
-
-        // First create all promises for dialing out.
-        if (conference) {
-            const phoneNumbers
-                = invitesLeftToSend.filter(({ type }) => type === 'phone');
-
-            // For each number, dial out. On success, remove the number from
-            // {@link invitesLeftToSend}.
-            const phoneInvitePromises = phoneNumbers.map(item => {
-                const numberToInvite = getDigitsOnly(item.number);
-
-                return conference.dial(numberToInvite)
-                     .then(() => {
-                         invitesLeftToSend
-                             = invitesLeftToSend.filter(invite =>
-                                 invite !== item);
-                     })
-                     .catch(error => logger.error(
-                         'Error inviting phone number:', error));
-            });
-
-            allInvitePromises = allInvitePromises.concat(phoneInvitePromises);
-        }
-
-        const usersAndRooms = invitesLeftToSend.filter(item =>
-            item.type === 'user' || item.type === 'room');
-
-        if (usersAndRooms.length) {
-            // Send a request to invite all the rooms and users. On success,
-            // filter all rooms and users from {@link invitesLeftToSend}.
-            const peopleInvitePromise = invitePeopleAndChatRooms(
-                inviteServiceUrl,
-                inviteUrl,
-                jwt,
-                usersAndRooms)
-                .then(() => {
-                    invitesLeftToSend = invitesLeftToSend.filter(item =>
-                        item.type !== 'user' && item.type !== 'room');
-                })
-                .catch(error => logger.error(
-                    'Error inviting people:', error));
-
-            allInvitePromises.push(peopleInvitePromise);
-        }
-
-        // Sipgw calls are fire and forget. Invite them to the conference
-        // then immediately remove them from {@link invitesLeftToSend}.
-        const vrooms = invitesLeftToSend.filter(item =>
-            item.type === 'videosipgw');
-
-        conference
-            && vrooms.length > 0
-            && dispatch(inviteVideoRooms(conference, vrooms));
-
-        invitesLeftToSend = invitesLeftToSend.filter(item =>
-            item.type !== 'videosipgw');
-
-        return (
-            Promise.all(allInvitePromises)
-                .then(() => invitesLeftToSend)
-        );
     };
 }

@@ -6,6 +6,7 @@ import { NativeEventEmitter, NativeModules } from 'react-native';
 import { MiddlewareRegistry } from '../base/redux';
 import { APP_WILL_MOUNT, APP_WILL_UNMOUNT } from '../app';
 
+import { invite } from './actions';
 import {
     BEGIN_ADD_PEOPLE,
     _SET_EMITTER_SUBSCRIPTIONS
@@ -15,7 +16,6 @@ import {
     isAddPeopleEnabled,
     isDialOutEnabled
 } from './functions';
-import { sendInvitesForItems } from './actions';
 import './middleware.any';
 
 /**
@@ -133,8 +133,7 @@ function _beginAddPeople({ getState }, next, action) {
  * @param {Object} event - The details of the event.
  * @returns {void}
  */
-function _onInvite(
-        { addPeopleControllerScope, externalAPIScope, invitees }) {
+function _onInvite({ addPeopleControllerScope, externalAPIScope, invitees }) {
     const { dispatch, getState } = this; // eslint-disable-line no-invalid-this
 
     // If there are multiple JitsiMeetView instances alive, they will all get
@@ -145,7 +144,7 @@ function _onInvite(
         return;
     }
 
-    dispatch(sendInvitesForItems(invitees))
+    dispatch(invite(invitees))
         .then(failedInvitees =>
             Invite.inviteSettled(
                 externalAPIScope,

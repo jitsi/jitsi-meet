@@ -11,11 +11,8 @@ import { Dialog, hideDialog } from '../../base/dialog';
 import { translate } from '../../base/i18n';
 import { MultiSelectAutocomplete } from '../../base/react';
 
-import {
-    getInviteResultsForQuery,
-    getInviteTypeCounts
-} from '../functions';
-import { sendInvitesForItems } from '../actions';
+import { invite } from '../actions';
+import { getInviteResultsForQuery, getInviteTypeCounts } from '../functions';
 
 const logger = require('jitsi-meet-logger').getLogger(__filename);
 
@@ -68,7 +65,7 @@ class AddPeopleDialog extends Component<*, *> {
         dialOutEnabled: PropTypes.bool,
 
         /**
-         * The redux dispatch method.
+         * The redux {@code dispatch} function.
          */
         dispatch: PropTypes.func,
 
@@ -282,8 +279,8 @@ class AddPeopleDialog extends Component<*, *> {
      */
     _onSubmit() {
         const { inviteItems } = this.state;
-        const items = inviteItems.map(item => item.item);
-        const inviteTypeCounts = getInviteTypeCounts(items);
+        const invitees = inviteItems.map(({ item }) => item);
+        const inviteTypeCounts = getInviteTypeCounts(invitees);
 
         sendAnalytics(createInviteDialogEvent(
             'clicked', 'inviteButton', {
@@ -301,7 +298,7 @@ class AddPeopleDialog extends Component<*, *> {
 
         const { dispatch } = this.props;
 
-        dispatch(sendInvitesForItems(items))
+        dispatch(invite(invitees))
             .then(invitesLeftToSend => {
                 // If any invites are left that means something failed to send
                 // so treat it as an error.
@@ -322,15 +319,12 @@ class AddPeopleDialog extends Component<*, *> {
                         addToCallError: true
                     });
 
-                    const unsentInviteIDs = invitesLeftToSend.map(invite =>
-                        invite.id || invite.number
-                    );
-
-                    const itemsToSelect = inviteItems.filter(invite =>
-                        unsentInviteIDs.includes(
-                            invite.item.id || invite.item.number
-                        )
-                    );
+                    const unsentInviteIDs
+                        = invitesLeftToSend.map(invitee =>
+                            invitee.id || invitee.number);
+                    const itemsToSelect
+                        = inviteItems.filter(({ item }) =>
+                            unsentInviteIDs.includes(item.id || item.number));
 
                     if (this._multiselect) {
                         this._multiselect.setSelectedItems(itemsToSelect);
@@ -431,7 +425,6 @@ class AddPeopleDialog extends Component<*, *> {
             _peopleSearchQueryTypes,
             _peopleSearchUrl
         } = this.props;
-
         const options = {
             dialOutAuthUrl: _dialOutAuthUrl,
             addPeopleEnabled,

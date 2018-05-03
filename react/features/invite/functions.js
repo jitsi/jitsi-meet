@@ -76,9 +76,8 @@ export function getDialInNumbers(url: string): Promise<*> {
 /**
  * Removes all non-numeric characters from a string.
  *
- * @param {string} text - The string from which to remove all characters
- * except numbers.
- * @private
+ * @param {string} text - The string from which to remove all characters except
+ * numbers.
  * @returns {string} A string with only numbers.
  */
 export function getDigitsOnly(text: string = ''): string {
@@ -126,8 +125,8 @@ export type GetInviteResultsOptions = {
  * Combines directory search with phone number validation to produce a single
  * set of invite search results.
  *
- * @param  {string} query - Text to search.
- * @param  {GetInviteResultsOptions} options - Options to use when searching.
+ * @param {string} query - Text to search.
+ * @param {GetInviteResultsOptions} options - Options to use when searching.
  * @returns {Promise<*>}
  */
 export function getInviteResultsForQuery(
@@ -166,19 +165,18 @@ export function getInviteResultsForQuery(
         let numberToVerify = text;
 
         // When the number to verify does not start with a +, we assume no
-        // proper country code has been entered. In such a case, prepend 1
-        // for the country code. The service currently takes care of
-        // prepending the +.
+        // proper country code has been entered. In such a case, prepend 1 for
+        // the country code. The service currently takes care of prepending the
+        // +.
         if (!hasCountryCode && !text.startsWith('1')) {
             numberToVerify = `1${numberToVerify}`;
         }
 
-        // The validation service works properly when the query is digits
-        // only so ensure only digits get sent.
+        // The validation service works properly when the query is digits only
+        // so ensure only digits get sent.
         numberToVerify = getDigitsOnly(numberToVerify);
 
-        phoneNumberPromise
-            = checkDialNumber(numberToVerify, dialOutAuthUrl);
+        phoneNumberPromise = checkDialNumber(numberToVerify, dialOutAuthUrl);
     } else {
         phoneNumberPromise = Promise.resolve({});
     }
@@ -190,18 +188,16 @@ export function getInviteResultsForQuery(
             ];
 
             /**
-             * This check for phone results is for the day the call to
-             * searching people might return phone results as well. When
-             * that day comes this check will make it so the server checks
-             * are honored and the local appending of the number is not
-             * done. The local appending of the phone number can then be
-             * cleaned up when convenient.
+             * This check for phone results is for the day the call to searching
+             * people might return phone results as well. When that day comes
+             * this check will make it so the server checks are honored and the
+             * local appending of the number is not done. The local appending of
+             * the phone number can then be cleaned up when convenient.
              */
-            const hasPhoneResult = peopleResults.find(
-                result => result.type === 'phone');
+            const hasPhoneResult
+                = peopleResults.find(result => result.type === 'phone');
 
-            if (!hasPhoneResult
-                    && typeof phoneResults.allow === 'boolean') {
+            if (!hasPhoneResult && typeof phoneResults.allow === 'boolean') {
                 results.push({
                     allowed: phoneResults.allow,
                     country: phoneResults.country,
@@ -217,14 +213,36 @@ export function getInviteResultsForQuery(
 }
 
 /**
+ * Helper for determining how many of each type of user is being invited. Used
+ * for logging and sending analytics related to invites.
+ *
+ * @param {Array} inviteItems - An array with the invite items, as created in
+ * {@link _parseQueryResults}.
+ * @returns {Object} An object with keys as user types and values as the number
+ * of invites for that type.
+ */
+export function getInviteTypeCounts(inviteItems: Array<Object> = []) {
+    const inviteTypeCounts = {};
+
+    inviteItems.forEach(({ type }) => {
+        if (!inviteTypeCounts[type]) {
+            inviteTypeCounts[type] = 0;
+        }
+        inviteTypeCounts[type]++;
+    });
+
+    return inviteTypeCounts;
+}
+
+/**
  * Sends a post request to an invite service.
  *
  * @param {string} inviteServiceUrl - The invite service that generates the
  * invitation.
  * @param {string} inviteUrl - The url to the conference.
  * @param {string} jwt - The jwt token to pass to the search service.
- * @param {Immutable.List} inviteItems - The list of the "user" or "room"
- * type items to invite.
+ * @param {Immutable.List} inviteItems - The list of the "user" or "room" type
+ * items to invite.
  * @returns {Promise} - The promise created by the request.
  */
 export function invitePeopleAndChatRooms( // eslint-disable-line max-params
@@ -282,24 +300,37 @@ export function isAddPeopleEnabled(state: Object): boolean {
  * @returns {boolean} Indication of whether dial out is currently enabled.
  */
 export function isDialOutEnabled(state: Object): boolean {
+    const participant = getLocalParticipant(state);
     const { conference } = state['features/base/conference'];
     const { isGuest } = state['features/base/jwt'];
     const { enableUserRolesBasedOnToken } = state['features/base/config'];
-    const participant = getLocalParticipant(state);
+    let dialOutEnabled
+        = participant && participant.role === PARTICIPANT_ROLE.MODERATOR
+            && conference && conference.isSIPCallingSupported()
+            && (!enableUserRolesBasedOnToken || !isGuest);
 
-    return participant && participant.role === PARTICIPANT_ROLE.MODERATOR
-                && conference && conference.isSIPCallingSupported()
-                && (!enableUserRolesBasedOnToken || !isGuest);
+    if (dialOutEnabled) {
+        // XXX The mobile/react-native app is capable of disabling of dial-out.
+        // Anyway, the Web/React app does not have that capability so default
+        // appropriately.
+        const { app } = state['features/app'];
+
+        dialOutEnabled = app && app.props.dialoOutEnabled;
+
+        return (
+            (typeof dialOutEnabled === 'undefined') || Boolean(dialOutEnabled));
+    }
+
+    return false;
 }
 
 /**
  * Checks whether a string looks like it could be for a phone number.
  *
- * @param {string} text - The text to check whether or not it could be a
- * phone number.
- * @private
- * @returns {boolean} True if the string looks like it could be a phone
+ * @param {string} text - The text to check whether or not it could be a phone
  * number.
+ * @private
+ * @returns {boolean} True if the string looks like it could be a phone number.
  */
 function isMaybeAPhoneNumber(text: string): boolean {
     if (!isPhoneNumberRegex().test(text)) {
@@ -364,29 +395,4 @@ export function searchDirectory( // eslint-disable-line max-params
 
                 return Promise.reject(error);
             });
-}
-
-/**
- * Helper for determining how many of each type of user is being invited.
- * Used for logging and sending analytics related to invites.
- *
- * @param {Array} inviteItems - An array with the invite items, as created
- * in {@link _parseQueryResults}.
- * @private
- * @returns {Object} An object with keys as user types and values as the
- * number of invites for that type.
- */
-export function getInviteTypeCounts(inviteItems: Array<Object> = []) {
-    const inviteTypeCounts = {};
-
-    inviteItems.forEach(({ type }) => {
-
-        if (!inviteTypeCounts[type]) {
-            inviteTypeCounts[type] = 0;
-        }
-
-        inviteTypeCounts[type]++;
-    });
-
-    return inviteTypeCounts;
 }
