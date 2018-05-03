@@ -9,7 +9,6 @@ import { dockToolbox } from '../../toolbox';
 
 import { setFilmstripHovered } from '../actions';
 import { shouldRemoteVideosBeVisible } from '../functions';
-
 import Toolbar from './Toolbar';
 
 declare var interfaceConfig: Object;
@@ -36,9 +35,9 @@ class Filmstrip extends Component<*> {
      */
     static propTypes = {
         /**
-         * Whether or not the conference is in filmstripOnly mode.
+         * Whether the UI/UX is filmstrip-only.
          */
-        _filmStripOnly: PropTypes.bool,
+        _filmstripOnly: PropTypes.bool,
 
         /**
          * Whether or not remote videos are currently being hovered over.
@@ -58,7 +57,7 @@ class Filmstrip extends Component<*> {
         _toolboxVisible: PropTypes.bool,
 
         /**
-         * Updates the redux store with filmstrip hover changes.
+         * The redux {@code dispatch} function.
          */
         dispatch: PropTypes.func
     };
@@ -85,8 +84,8 @@ class Filmstrip extends Component<*> {
         this._isHovered = false;
 
         // Bind event handlers so they are only bound once for every instance.
-        this._onMouseOver = this._onMouseOver.bind(this);
         this._onMouseOut = this._onMouseOut.bind(this);
+        this._onMouseOver = this._onMouseOver.bind(this);
     }
 
     /**
@@ -97,27 +96,27 @@ class Filmstrip extends Component<*> {
      */
     render() {
         const {
-            _filmStripOnly,
+            _filmstripOnly,
             _remoteVideosVisible,
             _toolboxVisible
         } = this.props;
 
-        /**
-         * Note: Appending of {@code RemoteVideo} views is handled through
-         * VideoLayout. The views do not get blown away on render() because
-         * ReactDOMComponent is only aware of the given JSX and not new appended
-         * DOM. As such, when updateDOMProperties gets called, only attributes
-         * will get updated without replacing the DOM. If the known DOM gets
-         * modified, then the views will get blown away.
-         */
+        // Note: Appending of {@code RemoteVideo} views is handled through
+        // VideoLayout. The views do not get blown away on render() because
+        // ReactDOMComponent is only aware of the given JSX and not new appended
+        // DOM. As such, when updateDOMProperties gets called, only attributes
+        // will get updated without replacing the DOM. If the known DOM gets
+        // modified, then the views will get blown away.
         const reduceHeight
             = _toolboxVisible && interfaceConfig.TOOLBAR_BUTTONS.length;
-        const filmstripClassNames = `filmstrip ${_remoteVideosVisible
-            ? '' : 'hide-videos'} ${reduceHeight ? 'reduce-height' : ''}`;
+        const classNames
+            = `filmstrip ${
+                _remoteVideosVisible ? '' : 'hide-videos'} ${
+                reduceHeight ? 'reduce-height' : ''}`;
 
         return (
-            <div className = { filmstripClassNames }>
-                { _filmStripOnly && <Toolbar /> }
+            <div className = { classNames }>
+                { _filmstripOnly && <Toolbar /> }
                 <div
                     className = 'filmstrip__videos'
                     id = 'remoteVideos'>
@@ -131,9 +130,9 @@ class Filmstrip extends Component<*> {
                     <div
                         className = 'filmstrip__videos'
                         id = 'filmstripRemoteVideos'>
-                        {/**
-                          * This extra video container is needed for scrolling
-                          * thumbnails in Firefox; otherwise, the flex
+                        {/*
+                          * XXX This extra video container is needed for
+                          * scrolling thumbnails in Firefox; otherwise, the flex
                           * thumbnails resize instead of causing overflow.
                           */}
                         <div
@@ -192,7 +191,7 @@ class Filmstrip extends Component<*> {
  * @param {Object} state - The Redux state.
  * @private
  * @returns {{
- *     _filmStripOnly: boolean,
+ *     _filmstripOnly: boolean,
  *     _hovered: boolean,
  *     _remoteVideosVisible: boolean,
  *     _toolboxVisible: boolean
@@ -202,7 +201,7 @@ function _mapStateToProps(state) {
     const { hovered } = state['features/filmstrip'];
 
     return {
-        _filmStripOnly: Boolean(interfaceConfig.filmStripOnly),
+        _filmstripOnly: Boolean(interfaceConfig.filmStripOnly),
         _hovered: hovered,
         _remoteVideosVisible: shouldRemoteVideosBeVisible(state),
         _toolboxVisible: state['features/toolbox'].visible

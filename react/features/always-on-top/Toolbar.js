@@ -24,7 +24,7 @@ type Props = {
     /**
      * Callback invoked when the mouse has moved over the toolbar.
      */
-     onMouseOver: Function
+    onMouseOver: Function
 };
 
 /**

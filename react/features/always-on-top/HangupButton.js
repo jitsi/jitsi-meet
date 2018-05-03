@@ -1,8 +1,7 @@
 // @flow
 
-// XXX: AlwaysOnTop imports the button directly in order to avoid bringing in
-// other components that use lib-jitsi-meet, which always on top does not
-// import.
+// XXX Import the button directly in order to avoid bringing in other components
+// that use lib-jitsi-meet, which always-on-top does not import.
 import AbstractHangupButton
     from '../toolbox/components/buttons/AbstractHangupButton';
 import type { Props } from '../toolbox/components/buttons/AbstractButton';

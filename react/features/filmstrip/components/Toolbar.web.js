@@ -12,16 +12,19 @@ import {
 
 declare var interfaceConfig: Object;
 
+/**
+ * The type of the React {@code Component} props of {@link Toolbar}.
+ */
 type Props = {
 
     /**
-     * Set of buttons which should be visible in this toolbar.
+     * The set of buttons which should be visible in this {@code Toolbar}.
      */
     _visibleButtons: Set<string>
 };
 
 /**
- * Implements the conference toolbar on React/Web for filmstrip only mode.
+ * Implements the conference toolbar on React/Web for filmstrip-only mode.
  *
  * @extends Component
  */

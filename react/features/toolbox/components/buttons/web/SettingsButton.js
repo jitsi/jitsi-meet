@@ -17,7 +17,7 @@ type Props = AbstractButtonProps & {
     /**
      * Whether we are in filmstrip only mode or not.
      */
-    _filmStripOnly: boolean,
+    _filmstripOnly: boolean,
 
     /**
      * Array containing the enabled settings sections.
@@ -46,10 +46,10 @@ class SettingsButton extends AbstractButton<Props, *> {
      * @returns {void}
      */
     _handleClick() {
-        const { _filmStripOnly, _sections, dispatch } = this.props;
+        const { _filmstripOnly, _sections, dispatch } = this.props;
 
         sendAnalytics(createToolbarEvent('settings'));
-        if (_filmStripOnly
+        if (_filmstripOnly
                 || (_sections.length === 1 && _sections.includes('devices'))) {
             dispatch(openDeviceSelectionDialog());
         } else {
@@ -76,7 +76,7 @@ class SettingsButton extends AbstractButton<Props, *> {
  * @param {Object} state - The Redux state.
  * @private
  * @returns {{
- *     _filmStripOnly: boolean
+ *     _filmstripOnly: boolean
  * }}
  */
 function _mapStateToProps(state): Object { // eslint-disable-line no-unused-vars
@@ -84,7 +84,7 @@ function _mapStateToProps(state): Object { // eslint-disable-line no-unused-vars
     // interfaceConfig is part of redux we will.
 
     return {
-        _filmStripOnly: Boolean(interfaceConfig.filmStripOnly),
+        _filmstripOnly: Boolean(interfaceConfig.filmStripOnly),
         _sections: interfaceConfig.SETTINGS_SECTIONS || []
     };
 }

@@ -1,14 +1,16 @@
 // @flow
 
-// XXX: AlwaysOnTop imports the button directly in order to avoid bringing in
-// other components that use lib-jitsi-meet, which always on top does not
-// import.
+// XXX Import the button directly in order to avoid bringing in other components
+// that use lib-jitsi-meet, which always-on-top does not import.
 import AbstractAudioMuteButton
     from '../toolbox/components/buttons/AbstractAudioMuteButton';
 import type { Props } from '../toolbox/components/buttons/AbstractButton';
 
 const { api } = window.alwaysOnTop;
 
+/**
+ * The type of the React {@code Component} state of {@link AudioMuteButton}.
+ */
 type State = {
 
     /**
@@ -23,7 +25,7 @@ type State = {
 };
 
 /**
- * Stateless hangup button for the Always-on-Top windows.
+ * Stateless "mute/unmute audio" button for the Always-on-Top windows.
  */
 export default class AudioMuteButton
     extends AbstractAudioMuteButton<Props, State> {
@@ -62,14 +64,11 @@ export default class AudioMuteButton
             api.isAudioAvailable(),
             api.isAudioMuted()
         ])
-            .then(values => {
-                const [ audioAvailable, audioMuted ] = values;
-
+            .then(([ audioAvailable, audioMuted ]) =>
                 this.setState({
                     audioAvailable,
                     audioMuted
-                });
-            })
+                }))
             .catch(console.error);
     }
 
@@ -80,43 +79,12 @@ export default class AudioMuteButton
      * @returns {void}
      */
     componentWillUnmount() {
-        api.removeListener('audioAvailabilityChanged',
+        api.removeListener(
+            'audioAvailabilityChanged',
             this._audioAvailabilityListener);
-        api.removeListener('audioMuteStatusChanged',
+        api.removeListener(
+            'audioMuteStatusChanged',
             this._audioMutedListener);
-    }
-
-    /**
-     * Indicates whether this button is disabled or not.
-     *
-     * @override
-     * @private
-     * @returns {boolean}
-     */
-    _isDisabled() {
-        return !this.state.audioAvailable;
-    }
-
-    /**
-     * Indicates if audio is currently muted ot nor.
-     *
-     * @override
-     * @private
-     * @returns {boolean}
-     */
-    _isAudioMuted() {
-        return this.state.audioMuted;
-    }
-
-    /**
-     * Changes the muted state.
-     *
-     * @param {boolean} audioMuted - Whether audio should be muted or not.
-     * @private
-     * @returns {void}
-     */
-    _setAudioMuted(audioMuted: boolean) { // eslint-disable-line no-unused-vars
-        this.state.audioAvailable && api.executeCommand('toggleAudio');
     }
 
     _audioAvailabilityListener: ({ available: boolean }) => void;
@@ -141,5 +109,38 @@ export default class AudioMuteButton
      */
     _audioMutedListener({ muted }) {
         this.setState({ audioMuted: muted });
+    }
+
+    /**
+     * Indicates if audio is currently muted ot nor.
+     *
+     * @override
+     * @private
+     * @returns {boolean}
+     */
+    _isAudioMuted() {
+        return this.state.audioMuted;
+    }
+
+    /**
+     * Indicates whether this button is disabled or not.
+     *
+     * @override
+     * @private
+     * @returns {boolean}
+     */
+    _isDisabled() {
+        return !this.state.audioAvailable;
+    }
+
+    /**
+     * Changes the muted state.
+     *
+     * @param {boolean} audioMuted - Whether audio should be muted or not.
+     * @private
+     * @returns {void}
+     */
+    _setAudioMuted(audioMuted: boolean) { // eslint-disable-line no-unused-vars
+        this.state.audioAvailable && api.executeCommand('toggleAudio');
     }
 }

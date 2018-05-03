@@ -139,10 +139,13 @@ class Conference extends Component<Props> {
     render() {
         const {
             VIDEO_QUALITY_LABEL_DISABLED,
-            filmStripOnly
+
+            // XXX The character casing of the name filmStripOnly utilized by
+            // interfaceConfig is obsolete but legacy support is required.
+            filmStripOnly: filmstripOnly
         } = interfaceConfig;
         const hideVideoQualityLabel
-            = filmStripOnly
+            = filmstripOnly
                 || VIDEO_QUALITY_LABEL_DISABLED
                 || this.props._iAmRecorder;
 
@@ -153,11 +156,11 @@ class Conference extends Component<Props> {
                 <div id = 'videospace'>
                     <LargeVideo
                         hideVideoQualityLabel = { hideVideoQualityLabel } />
-                    <Filmstrip filmstripOnly = { filmStripOnly } />
+                    <Filmstrip filmstripOnly = { filmstripOnly } />
                 </div>
 
-                { !filmStripOnly && <Toolbox /> }
-                { !filmStripOnly && <SidePanel /> }
+                { filmstripOnly || <Toolbox /> }
+                { filmstripOnly || <SidePanel /> }
 
                 <DialogContainer />
                 <NotificationsContainer />

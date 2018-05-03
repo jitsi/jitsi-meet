@@ -1,14 +1,16 @@
 // @flow
 
-// XXX: AlwaysOnTop imports the button directly in order to avoid bringing in
-// other components that use lib-jitsi-meet, which always on top does not
-// import.
+// XXX Import the button directly in order to avoid bringing in other components
+// that use lib-jitsi-meet, which always-on-top does not import.
 import AbstractVideoMuteButton
     from '../toolbox/components/buttons/AbstractVideoMuteButton';
 import type { Props } from '../toolbox/components/buttons/AbstractButton';
 
 const { api } = window.alwaysOnTop;
 
+/**
+ * The type of the React {@code Component} state of {@link VideoMuteButton}.
+ */
 type State = {
 
     /**
@@ -23,7 +25,7 @@ type State = {
 };
 
 /**
- * Stateless hangup button for the Always-on-Top windows.
+ * Stateless "mute/unmute video" button for the Always-on-Top windows.
  */
 export default class VideoMuteButton
     extends AbstractVideoMuteButton<Props, State> {
@@ -62,14 +64,11 @@ export default class VideoMuteButton
             api.isVideoAvailable(),
             api.isVideoMuted()
         ])
-            .then(values => {
-                const [ videoAvailable, videoMuted ] = values;
-
+            .then(([ videoAvailable, videoMuted ]) =>
                 this.setState({
                     videoAvailable,
                     videoMuted
-                });
-            })
+                }))
             .catch(console.error);
     }
 
@@ -80,9 +79,11 @@ export default class VideoMuteButton
      * @returns {void}
      */
     componentWillUnmount() {
-        api.removeListener('videoAvailabilityChanged',
+        api.removeListener(
+            'videoAvailabilityChanged',
             this._videoAvailabilityListener);
-        api.removeListener('videoMuteStatusChanged',
+        api.removeListener(
+            'videoMuteStatusChanged',
             this._videoMutedListener);
     }
 

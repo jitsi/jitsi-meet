@@ -7,12 +7,12 @@ import Toolbar from './Toolbar';
 const { api } = window.alwaysOnTop;
 
 /**
- * The timeout in ms for hidding the toolbar.
+ * The timeout in ms for hiding the toolbar.
  */
 const TOOLBAR_TIMEOUT = 4000;
 
 /**
- * The type of the React {@code Component} state of {@link FeedbackButton}.
+ * The type of the React {@code Component} state of {@link AlwaysOnTop}.
  */
 type State = {
     avatarURL: string,
@@ -40,18 +40,18 @@ export default class AlwaysOnTop extends Component<*, State> {
         super(props);
 
         this.state = {
-            visible: true,
+            avatarURL: '',
             displayName: '',
             isVideoDisplayed: true,
-            avatarURL: ''
+            visible: true
         };
 
         // Bind event handlers so they are only bound once per instance.
         this._avatarChangedListener = this._avatarChangedListener.bind(this);
-        this._largeVideoChangedListener
-            = this._largeVideoChangedListener.bind(this);
         this._displayNameChangedListener
             = this._displayNameChangedListener.bind(this);
+        this._largeVideoChangedListener
+            = this._largeVideoChangedListener.bind(this);
         this._mouseMove = this._mouseMove.bind(this);
         this._onMouseOut = this._onMouseOut.bind(this);
         this._onMouseOver = this._onMouseOver.bind(this);
@@ -65,11 +65,8 @@ export default class AlwaysOnTop extends Component<*, State> {
      * @returns {void}
      */
     _avatarChangedListener({ avatarURL, id }) {
-        if (api._getOnStageParticipant() !== id) {
-            return;
-        }
-
-        if (avatarURL !== this.state.avatarURL) {
+        if (api._getOnStageParticipant() === id
+                && avatarURL !== this.state.avatarURL) {
             this.setState({ avatarURL });
         }
     }
@@ -82,11 +79,8 @@ export default class AlwaysOnTop extends Component<*, State> {
      * @returns {void}
      */
     _displayNameChangedListener({ formattedDisplayName, id }) {
-        if (api._getOnStageParticipant() !== id) {
-            return;
-        }
-
-        if (formattedDisplayName !== this.state.displayName) {
+        if (api._getOnStageParticipant() === id
+                && formattedDisplayName !== this.state.displayName) {
             this.setState({ displayName: formattedDisplayName });
         }
     }
@@ -97,14 +91,15 @@ export default class AlwaysOnTop extends Component<*, State> {
      * @returns {void}
      */
     _hideToolbarAfterTimeout() {
-        setTimeout(() => {
-            if (this._hovered) {
-                this._hideToolbarAfterTimeout();
-
-                return;
-            }
-            this.setState({ visible: false });
-        }, TOOLBAR_TIMEOUT);
+        setTimeout(
+            () => {
+                if (this._hovered) {
+                    this._hideToolbarAfterTimeout();
+                } else {
+                    this.setState({ visible: false });
+                }
+            },
+            TOOLBAR_TIMEOUT);
     }
 
     _largeVideoChangedListener: () => void;
@@ -116,8 +111,8 @@ export default class AlwaysOnTop extends Component<*, State> {
      */
     _largeVideoChangedListener() {
         const userID = api._getOnStageParticipant();
-        const displayName = api._getFormattedDisplayName(userID);
         const avatarURL = api.getAvatarURL(userID);
+        const displayName = api._getFormattedDisplayName(userID);
         const isVideoDisplayed = Boolean(api._getLargeVideo());
 
         this.setState({
@@ -135,9 +130,7 @@ export default class AlwaysOnTop extends Component<*, State> {
      * @returns {void}
      */
     _mouseMove() {
-        if (!this.state.visible) {
-            this.setState({ visible: true });
-        }
+        this.state.visible || this.setState({ visible: true });
     }
 
     _onMouseOut: () => void;
@@ -201,9 +194,9 @@ export default class AlwaysOnTop extends Component<*, State> {
      * @returns {void}
      */
     componentDidMount() {
-        api.on('largeVideoChanged', this._largeVideoChangedListener);
-        api.on('displayNameChange', this._displayNameChangedListener);
         api.on('avatarChanged', this._avatarChangedListener);
+        api.on('displayNameChange', this._displayNameChangedListener);
+        api.on('largeVideoChanged', this._largeVideoChangedListener);
 
         this._largeVideoChangedListener();
 
@@ -219,11 +212,14 @@ export default class AlwaysOnTop extends Component<*, State> {
      * @returns {void}
      */
     componentWillUnmount() {
-        api.removeListener('largeVideoChanged',
-            this._largeVideoChangedListener);
-        api.removeListener('displayNameChange',
-            this._displayNameChangedListener);
         api.removeListener('avatarChanged', this._avatarChangedListener);
+        api.removeListener(
+            'displayNameChange',
+            this._displayNameChangedListener);
+        api.removeListener(
+            'largeVideoChanged',
+            this._largeVideoChangedListener);
+
         window.removeEventListener('mousemove', this._mouseMove);
     }
 
@@ -252,9 +248,7 @@ export default class AlwaysOnTop extends Component<*, State> {
                     className = { this.state.visible ? 'fadeIn' : 'fadeOut' }
                     onMouseOut = { this._onMouseOut }
                     onMouseOver = { this._onMouseOver } />
-                {
-                    this._renderVideoNotAvailableScreen()
-                }
+                { this._renderVideoNotAvailableScreen() }
             </div>
         );
     }
