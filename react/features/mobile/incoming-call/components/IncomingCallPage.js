@@ -5,10 +5,16 @@ import { Text, View } from 'react-native';
 import { connect } from 'react-redux';
 
 import { translate } from '../../../base/i18n';
+import { ToolbarButton } from '../../../toolbox';
+import { ColorPalette } from '../../../base/styles';
+import { Avatar } from '../../../base/participants';
+
 import {
     incomingCallAnswered,
     incomingCallDeclined
 } from '../actions';
+
+import styles, { CALLER_AVATAR_SIZE } from './styles';
 
 type Props = {
     _callerName: string,
@@ -30,17 +36,73 @@ class IncomingCallPage extends Component<Props> {
      * @returns {ReactElement}
      */
     render() {
-        const { t } = this.props;
+        const { t, _callerName } = this.props;
 
-        return ( // TODO: layout and styles
-            <View>
-                <Text>{ this.props._callerName }</Text>
-                <Text onPress = { this.props._onAnswered }>
-                    { t('incomingCall.answer') }
+        return (
+            <View style = { styles.pageContainer }>
+                <Text style = { styles.title }>
+                    { t('incomingCall.title') }
                 </Text>
-                <Text onPress = { this.props._onDeclined }>
-                    { t('incomingCall.decline') }
+                <Text style = { styles.callerName }>
+                    { _callerName }
                 </Text>
+                { this._renderCallerAvatar() }
+                { this._renderButtons() }
+            </View>
+        );
+    }
+
+    /**
+     * Renders caller avatar.
+     *
+     * @private
+     * @returns {React$Node}
+     */
+    _renderCallerAvatar() {
+        return (
+            <View style = { styles.avatar }>
+                <Avatar
+                    size = { CALLER_AVATAR_SIZE }
+                    uri = { this.props._callerAvatarUrl } />
+            </View>
+        );
+    }
+
+    /**
+     * Renders buttons.
+     *
+     * @private
+     * @returns {React$Node}
+     */
+    _renderButtons() {
+        const { t, _onAnswered, _onDeclined } = this.props;
+
+        return (
+            <View style = { styles.buttonContainer }>
+                <View>
+                    <ToolbarButton
+                        accessibilityLabel = 'Decline'
+                        iconName = 'hangup'
+                        iconStyle = { styles.buttonIcon }
+                        onClick = { _onDeclined }
+                        style = { styles.declineButton }
+                        underlayColor = { ColorPalette.buttonUnderlay } />
+                    <Text style = { styles.buttonText }>
+                        { t('incomingCall.decline') }
+                    </Text>
+                </View>
+                <View>
+                    <ToolbarButton
+                        accessibilityLabel = 'Answer'
+                        iconName = 'hangup'
+                        iconStyle = { styles.buttonIcon }
+                        onClick = { _onAnswered }
+                        style = { styles.answerButton }
+                        underlayColor = { ColorPalette.buttonUnderlay } />
+                    <Text style = { styles.buttonText }>
+                        { t('incomingCall.answer') }
+                    </Text>
+                </View>
             </View>
         );
     }

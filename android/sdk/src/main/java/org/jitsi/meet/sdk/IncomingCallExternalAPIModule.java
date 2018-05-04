@@ -1,6 +1,8 @@
 package org.jitsi.meet.sdk;
 
 import com.facebook.react.bridge.ReactApplicationContext;
+import com.facebook.react.bridge.ReactMethod;
+import com.facebook.react.bridge.ReadableMap;
 
 class IncomingCallExternalAPIModule extends AbstractExternalAPIModule<IncomingCallViewListener> {
 
@@ -30,5 +32,11 @@ class IncomingCallExternalAPIModule extends AbstractExternalAPIModule<IncomingCa
         IncomingCallView view = IncomingCallView.findViewByExternalAPIScope(scope);
 
         return view != null ? view.getListener() : null;
+    }
+
+    @Override
+    @ReactMethod
+    public void sendEvent(String name, ReadableMap data, String scope) {
+        super.sendEvent(name, data, scope);
     }
 }
