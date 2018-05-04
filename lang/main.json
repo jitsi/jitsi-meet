@@ -88,7 +88,6 @@
         "documentOpen": "Open shared document",
         "documentClose": "Close shared document",
         "sharedvideo": "Share a YouTube video",
-        "sharescreen": "Screen share",
         "stopSharedVideo": "Stop YouTube video",
         "fullscreen": "View / Exit full screen",
         "sip": "Call SIP number",
@@ -106,7 +105,8 @@
         "profile": "Edit your profile",
         "raiseHand": "Raise / Lower your hand",
         "shortcuts": "View shortcuts",
-        "speakerStats": "Speaker stats"
+        "speakerStats": "Speaker stats",
+        "invite": "Invite people"
     },
     "chat":{
         "nickname": {
@@ -529,7 +529,7 @@
         "numbers": "Dial-in Numbers",
         "password": "Password:",
         "title": "Share",
-        "tooltip": "Get access info about the meeting"
+        "tooltip": "Share link and dial-in info for this meeting"
     },
     "settingsView": {
         "alertOk": "OK",

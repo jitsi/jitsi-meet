@@ -363,7 +363,7 @@ class Toolbox extends Component<Props, State> {
                             accessibilityLabel = 'Invite'
                             iconName = 'icon-add'
                             onClick = { this._onToolbarOpenInvite }
-                            tooltip = { t('addPeople.title') } /> }
+                            tooltip = { t('toolbar.invite') } /> }
                     { this._shouldShowButton('info') && <InfoDialogButton /> }
                     { overflowHasItems
                         && <OverflowMenuButton
@@ -919,7 +919,7 @@ class Toolbox extends Component<Props, State> {
             _desktopSharingEnabled ? '' : 'disabled'}`;
         const tooltip = showDisabledTooltip
             ? disabledTooltipText
-            : t('toolbar.sharescreen');
+            : t('dialog.shareYourScreen');
 
         return (
             <ToolbarButton
