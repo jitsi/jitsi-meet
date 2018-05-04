@@ -39,7 +39,7 @@
     box-sizing: border-box;
     display: flex;
     justify-content: space-between;
-    padding: 16px 8px;
+    padding: 12px 8px;
     position: absolute;
     transition: bottom .3s ease-in;
     width: 100%;
@@ -100,6 +100,7 @@
 
     .icon-hangup {
         color: $hangupColor;
+        font-size: $newToolbarHangupFontSize;
     }
 
     .overflow-menu {
@@ -239,10 +240,14 @@
     z-index: $toolbarZ;
 
     i {
-        font-size: $alwaysOnTopToolbarFontSize;
-        height: $alwaysOnTopToolbarSize;
-        line-height: $alwaysOnTopToolbarSize;
-        width: $alwaysOnTopToolbarSize;
+        font-size: $newToolbarFontSize;
+        height: $newToolbarSize;
+        line-height: $newToolbarSize;
+        width: $newToolbarSize;
+    }
+
+    .icon-hangup {
+        font-size: $newToolbarHangupFontSize;
     }
 
     .disabled {
