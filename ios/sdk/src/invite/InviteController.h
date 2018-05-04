@@ -26,7 +26,7 @@
 
 @property (nonatomic, nullable, weak) id<InviteControllerDelegate> delegate;
 
-- (void)  invite:(NSArray *)invitees
-  withCompletion:(void (^)(NSArray<NSDictionary *> *failedInvitees))completion;
+- (void)  invite:(NSArray * _Nonnull)invitees
+  withCompletion:(void (^ _Nullable)(NSArray<NSDictionary *> * _Nonnull failedInvitees))completion;
 
 @end

@@ -20,12 +20,12 @@
 @interface AddPeopleController ()
 
 @property (nonatomic, strong) NSMutableDictionary* _Nonnull items;
-@property (nonatomic, weak) InviteController *owner;
+@property (nonatomic, weak, nullable) InviteController *owner;
 @property (nonatomic, readonly) NSString* _Nonnull uuid;
 
-- (instancetype)initWithOwner:(InviteController *)owner;
+- (instancetype _Nonnull)initWithOwner:(InviteController * _Nonnull)owner;
 
-- (void)inviteSettled:(NSArray<NSDictionary *> *)failedInvitees;
+- (void)inviteSettled:(NSArray<NSDictionary *> * _Nonnull)failedInvitees;
 
 - (void)receivedResults:(NSArray<NSDictionary*> * _Nonnull)results
                forQuery:(NSString * _Nonnull)query;

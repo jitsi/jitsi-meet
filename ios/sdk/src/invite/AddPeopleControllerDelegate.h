@@ -27,7 +27,7 @@
  * previously provided.
  */
 - (void)addPeopleController:(AddPeopleController * _Nonnull)controller
-          didReceiveResults:(NSArray<NSDictionary*> * _Nonnull)results
+          didReceiveResults:(NSArray<NSDictionary *> * _Nonnull)results
                    forQuery:(NSString * _Nonnull)query;
 
 /**

@@ -23,28 +23,28 @@
 
 @property (nonatomic, nullable) AddPeopleController *addPeopleController;
 
-@property (nonatomic) NSString *externalAPIScope;
+@property (nonatomic) NSString * _Nonnull externalAPIScope;
 
 @property (nonatomic, nullable, weak) Invite *inviteModule;
 
-- (instancetype)initWithExternalAPIScope:(NSString * _Nonnull)externalAPIScope
+- (instancetype _Nonnull)initWithExternalAPIScope:(NSString * _Nonnull)externalAPIScope
                          andInviteModule:(Invite * _Nonnull)inviteModule;
 
 - (void)beginAddPeople;
 
-- (void)endAddPeopleForController:(AddPeopleController *)controller;
+- (void)endAddPeopleForController:(AddPeopleController * _Nonnull)controller;
 
-- (void) invite:(NSArray *)invitees
+- (void) invite:(NSArray * _Nonnull)invitees
   forController:(AddPeopleController * _Nonnull)controller;
 
 - (void)inviteSettled:(NSString * _Nonnull)addPeopleControllerScope
-       failedInvitees:(NSArray *)failedInvitees;
+       failedInvitees:(NSArray * _Nonnull)failedInvitees;
 
 - (void)performQuery:(NSString * _Nonnull)query
        forController:(AddPeopleController * _Nonnull)controller;
 
 - (void)receivedResults:(NSString * _Nonnull)addPeopleControllerScope
                   query:(NSString * _Nonnull)query
-                results:(NSArray *)results;
+                results:(NSArray * _Nonnull)results;
 
 @end
