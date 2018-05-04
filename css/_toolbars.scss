@@ -240,10 +240,14 @@
     z-index: $toolbarZ;
 
     i {
-        font-size: $alwaysOnTopToolbarFontSize;
-        height: $alwaysOnTopToolbarSize;
-        line-height: $alwaysOnTopToolbarSize;
-        width: $alwaysOnTopToolbarSize;
+        font-size: $newToolbarFontSize;
+        height: $newToolbarSize;
+        line-height: $newToolbarSize;
+        width: $newToolbarSize;
+    }
+
+    .icon-hangup {
+        font-size: $newToolbarHangupFontSize;
     }
 
     .disabled {
