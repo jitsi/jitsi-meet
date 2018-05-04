@@ -100,6 +100,10 @@
 
     .icon-hangup {
         color: $hangupColor;
+        font-size: 32px;
+        /*
+          Video icon is too small relative to other icons in Stride Meetings.
+        */
     }
 
     .overflow-menu {
@@ -137,7 +141,7 @@
 
             i {
                 display: inline;
-                font-size: 24px;
+                font-size: 20px;
             }
 
             i:hover {
@@ -145,8 +149,8 @@
             }
 
             img {
-                max-width: 24px;
-                max-height: 24px;
+                max-width: 20px;
+                max-height: 20px;
             }
         }
 
