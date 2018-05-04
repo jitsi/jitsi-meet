@@ -12,7 +12,14 @@ export default createStyleSheet({
     /**
      * {@code Conference} style.
      */
-    conference: fixAndroidViewClipping({
+    conference: {
+        flex: 1
+    },
+
+    /**
+     * Style for {@code Conference} wrapper.
+     */
+    conferenceWrapper: fixAndroidViewClipping({
         alignSelf: 'stretch',
         backgroundColor: ColorPalette.appBackground,
         flex: 1
@@ -24,16 +31,14 @@ export default createStyleSheet({
      * the {@link Toolbox}.
      */
     toolboxAndFilmstripContainer: {
-        bottom: BoxModel.margin,
+        bottom: 0,
         flexDirection: 'column',
         justifyContent: 'flex-end',
-        left: BoxModel.margin,
+        left: 0,
+        marginHorizontal: BoxModel.margin,
+        marginVertical: BoxModel.margin / 2,
         position: 'absolute',
-        right: BoxModel.margin,
-
-        // Both on Android and iOS there is the status bar which may be visible.
-        // On iPhone X there is the notch. In the two cases BoxModel.margin is
-        // not enough.
-        top: BoxModel.margin * 3
+        right: 0,
+        top: 0
     }
 });

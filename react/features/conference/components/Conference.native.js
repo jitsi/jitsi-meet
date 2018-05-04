@@ -2,8 +2,14 @@
 
 import React, { Component } from 'react';
 
-// eslint-disable-next-line react-native/split-platform-components
-import { BackAndroid, BackHandler, StatusBar, View } from 'react-native';
+import {
+    // eslint-disable-next-line react-native/split-platform-components
+    BackAndroid,
+    BackHandler,
+    SafeAreaView,
+    StatusBar,
+    View
+} from 'react-native';
 import { connect as reactReduxConnect } from 'react-redux';
 
 import { appNavigate } from '../../app';
@@ -181,12 +187,12 @@ class Conference extends Component<Props> {
     }
 
     /**
-     * Implements React's {@link Component#render()}.
+     * Helper for rendering the conference itself.
      *
-     * @inheritdoc
+     * @private
      * @returns {ReactElement}
      */
-    render() {
+    _renderConference() {
         return (
             <Container style = { styles.conference }>
                 <StatusBar
@@ -244,6 +250,22 @@ class Conference extends Component<Props> {
                     this.props._reducedUI || <DialogContainer />
                 }
             </Container>
+        );
+    }
+
+    /**
+     * Implements React's {@link Component#render()}.
+     *
+     * @inheritdoc
+     * @returns {ReactElement}
+     */
+    render() {
+        // Wrap the conference in a SafeAreaView so the notch doesn't obstruct
+        // the filmstrip, amongst other things.
+        return (
+            <SafeAreaView style = { styles.conferenceWrapper }>
+                { this._renderConference() }
+            </SafeAreaView>
         );
     }
 
