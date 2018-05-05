@@ -497,8 +497,7 @@
     visibility: hidden;
     width: 300px;
     height: 300px;
-    margin: auto;
-    position: relative;
+    @include absoluteAligning();
 }
 
 #mixedstream {
@@ -507,25 +506,18 @@
 
 #dominantSpeakerAvatar,
 .dynamic-shadow {
-    width: 200px;
-    height: 200px;
+    border-radius: 50%;
+    height: 120px;
+    width: 120px;
+    @include absoluteAligning();
 }
 
 #dominantSpeakerAvatar {
-    top: 50px;
-    margin: auto;
-    position: relative;
-    border-radius: 100px;
     visibility: inherit;
     background-color: #000000;
 }
 
 .dynamic-shadow {
-    border-radius: 50%;
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    margin: -100px 0 0 -100px;
     transition: box-shadow 0.3s ease;
 }
 
