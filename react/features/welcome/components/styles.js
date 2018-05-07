@@ -1,14 +1,15 @@
-import {
-    BoxModel,
-    ColorPalette,
-    createStyleSheet
-} from '../../base/styles';
+// @flow
+
+import { BoxModel, ColorPalette, createStyleSheet } from '../../base/styles';
+
+export const PLACEHOLDER_TEXT_COLOR = 'rgba(255, 255, 255, 0.3)';
+
+export const SIDEBAR_AVATAR_SIZE = 100;
 
 const SIDEBAR_HEADER_HEIGHT = 150;
 
-export const PLACEHOLDER_TEXT_COLOR = 'rgba(255, 255, 255, 0.3)';
-export const SIDEBAR_AVATAR_SIZE = 100;
 export const SWITCH_THUMB_COLOR = ColorPalette.blueHighlight;
+
 export const SWITCH_UNDER_COLOR = 'rgba(0, 0, 0, 0.4)';
 
 /**

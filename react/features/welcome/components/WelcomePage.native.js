@@ -13,7 +13,7 @@ import { connect } from 'react-redux';
 import { translate } from '../../base/i18n';
 import { Icon } from '../../base/font-icons';
 import { MEDIA_TYPE } from '../../base/media';
-import { LoadingIndicator, Header, Text } from '../../base/react';
+import { Header, LoadingIndicator, Text } from '../../base/react';
 import { ColorPalette } from '../../base/styles';
 import {
     createDesiredLocalTracks,
@@ -24,9 +24,7 @@ import { SettingsView } from '../../settings';
 import { AbstractWelcomePage, _mapStateToProps } from './AbstractWelcomePage';
 import { setSideBarVisible } from '../actions';
 import LocalVideoTrackUnderlay from './LocalVideoTrackUnderlay';
-import styles, {
-    PLACEHOLDER_TEXT_COLOR
-} from './styles';
+import styles, { PLACEHOLDER_TEXT_COLOR } from './styles';
 import VideoSwitch from './VideoSwitch';
 import WelcomePageLists from './WelcomePageLists';
 import WelcomePageSideBar from './WelcomePageSideBar';
@@ -155,22 +153,23 @@ class WelcomePage extends AbstractWelcomePage {
      */
     _onFieldFocusChange(focused) {
         return () => {
-            if (focused) {
-                this.setState({
+            focused
+                && this.setState({
                     _fieldFocused: true
                 });
-            }
 
-            Animated.timing(this.state.hintBoxAnimation, {
-                duration: 300,
-                toValue: focused ? 1 : 0
-            }).start(animationState => {
-                if (animationState.finished && !focused) {
-                    this.setState({
-                        _fieldFocused: false
-                    });
-                }
-            });
+            Animated.timing(
+                this.state.hintBoxAnimation,
+                {
+                    duration: 300,
+                    toValue: focused ? 1 : 0
+                })
+                .start(animationState =>
+                    animationState.finished
+                        && !focused
+                        && this.setState({
+                            _fieldFocused: false
+                        }));
         };
     }
 
@@ -256,9 +255,7 @@ class WelcomePage extends AbstractWelcomePage {
                     buttonDisabled ? styles.buttonDisabled : null
                 ] }
                 underlayColor = { ColorPalette.white }>
-                {
-                    children
-                }
+                { children }
             </TouchableHighlight>
         );
     }

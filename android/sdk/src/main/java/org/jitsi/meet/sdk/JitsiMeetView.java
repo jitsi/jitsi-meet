@@ -205,15 +205,6 @@ public class JitsiMeetView extends FrameLayout {
     }
 
     /**
-     * Stores the current conference URL. Will have a value when the app is in
-     * a conference.
-     *
-     * Currently one thread writes and one thread reads, so it should be fine to
-     * have this field volatile without additional synchronization.
-     */
-    private volatile String conferenceUrl;
-
-    /**
      * The default base {@code URL} used to join a conference when a partial URL
      * (e.g. a room name only) is specified to {@link #loadURLString(String)} or
      * {@link #loadURLObject(Bundle)}.
@@ -253,6 +244,13 @@ public class JitsiMeetView extends FrameLayout {
     private ReactRootView reactRootView;
 
     /**
+     * The URL of the current conference.
+     */
+    // XXX Currently, one thread writes and one thread reads, so it should be
+    // fine to have this field volatile without additional synchronization.
+    private volatile String url;
+
+    /**
      * Whether the Welcome page is enabled.
      */
     private boolean welcomePageEnabled;
@@ -289,16 +287,6 @@ public class JitsiMeetView extends FrameLayout {
             reactRootView.unmountReactApplication();
             reactRootView = null;
         }
-    }
-
-    /**
-     * Retrieves the current conferences URL.
-     *
-     * @return a string with conference URL if the view is currently in
-     * a conference or {@code null} otherwise.
-     */
-    public String getCurrentConferenceUrl() {
-        return conferenceUrl;
     }
 
     /**
@@ -350,6 +338,19 @@ public class JitsiMeetView extends FrameLayout {
             PictureInPictureModule.isPictureInPictureSupported()
                 && (pictureInPictureEnabled == null
                     || pictureInPictureEnabled.booleanValue());
+    }
+
+    /**
+     * Gets the URL of the current conference.
+     *
+     * XXX The method is meant for internal purposes only at the time of this
+     * writing because there is no equivalent API on iOS.
+     *
+     * @return the URL {@code String} of the current conference if any;
+     * otherwise, {@code null}.
+     */
+    String getURL() {
+        return url;
     }
 
     /**
@@ -477,7 +478,7 @@ public class JitsiMeetView extends FrameLayout {
      * page.
      */
     public void onUserLeaveHint() {
-        if (getPictureInPictureEnabled() && conferenceUrl != null) {
+        if (getPictureInPictureEnabled() && getURL() != null) {
             PictureInPictureModule pipModule
                 = ReactInstanceManagerHolder.getNativeModule(
                         PictureInPictureModule.class);
@@ -485,9 +486,8 @@ public class JitsiMeetView extends FrameLayout {
             if (pipModule != null) {
                 try {
                     pipModule.enterPictureInPicture();
-                } catch (RuntimeException exc) {
-                    Log.e(
-                        TAG, "onUserLeaveHint: failed to enter PiP mode", exc);
+                } catch (RuntimeException re) {
+                    Log.e(TAG, "onUserLeaveHint: failed to enter PiP mode", re);
                 }
             }
         }
@@ -531,17 +531,6 @@ public class JitsiMeetView extends FrameLayout {
     }
 
     /**
-     * Sets the current conference URL.
-     *
-     * @param conferenceUrl a string with new conference URL to set if the view
-     * is entering the conference or {@code null} if the view is no longer in
-     * the conference.
-     */
-    void setCurrentConferenceUrl(String conferenceUrl) {
-        this.conferenceUrl = conferenceUrl;
-    }
-
-    /**
      * Sets the default base {@code URL} used to join a conference when a
      * partial URL (e.g. a room name only) is specified to
      * {@link #loadURLString(String)} or {@link #loadURLObject(Bundle)}. Must be
@@ -575,6 +564,19 @@ public class JitsiMeetView extends FrameLayout {
      */
     public void setPictureInPictureEnabled(boolean pictureInPictureEnabled) {
         this.pictureInPictureEnabled = Boolean.valueOf(pictureInPictureEnabled);
+    }
+
+    /**
+     * Sets the URL of the current conference.
+     *
+     * XXX The method is meant for internal purposes only. It does not
+     * {@code loadURL}, it merely remembers the specified URL.
+     *
+     * @param url the URL {@code String} which to be set as the URL of the
+     * current conference.
+     */
+    void setURL(String url) {
+        this.url = url;
     }
 
     /**

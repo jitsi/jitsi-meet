@@ -112,28 +112,30 @@ class ExternalAPIModule extends ReactContextBaseJavaModule {
     }
 
     /**
-     * The internal processing for the conference URL set on
-     * a {@link JitsiMeetView} instance.
+     * The internal processing for the URL of the current conference set on the
+     * associated {@link JitsiMeetView}.
      *
-     * @param eventName the name of the external API event to be processed.
+     * @param eventName the name of the external API event to be processed
+     * @param eventData the details/specifics of the event to process determined
+     * by/associated with the specified {@code eventName}.
      * @param view the {@link JitsiMeetView} instance.
-     * @param url the "url" attribute value retrieved from the "data" carried by
-     * the event.
      */
-    private void maybeSetConferenceUrlOnTheView(
-            String eventName, JitsiMeetView view, String url)
-    {
+    private void maybeSetViewURL(
+            String eventName,
+            ReadableMap eventData,
+            JitsiMeetView view) {
         switch(eventName) {
         case "CONFERENCE_WILL_JOIN":
-            view.setCurrentConferenceUrl(url);
+            view.setURL(eventData.getString("url"));
             break;
 
         case "CONFERENCE_FAILED":
         case "CONFERENCE_WILL_LEAVE":
         case "LOAD_CONFIG_ERROR":
-            // Abandon the conference only if it's for the current URL
-            if (url != null && url.equals(view.getCurrentConferenceUrl())) {
-                view.setCurrentConferenceUrl(null);
+            String url = eventData.getString("url");
+
+            if (url != null && url.equals(view.getURL())) {
+                view.setURL(null);
             }
             break;
         }
@@ -158,7 +160,7 @@ class ExternalAPIModule extends ReactContextBaseJavaModule {
             return;
         }
 
-        maybeSetConferenceUrlOnTheView(name, view, data.getString("url"));
+        maybeSetViewURL(name, data, view);
 
         JitsiMeetViewListener listener = view.getListener();
 
