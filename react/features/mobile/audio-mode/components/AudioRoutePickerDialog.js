@@ -2,15 +2,45 @@
 
 import _ from 'lodash';
 import React, { Component } from 'react';
-import { NativeModules } from 'react-native';
+import { NativeModules, Text, TouchableHighlight, View } from 'react-native';
 import { connect } from 'react-redux';
 
-import { hideDialog, SimpleBottomSheet } from '../../../base/dialog';
+import { hideDialog, BottomSheet } from '../../../base/dialog';
 import { translate } from '../../../base/i18n';
 
+import { Icon } from '../../../base/font-icons';
+
+import styles, { UNDERLAY_COLOR } from './styles';
 
 /**
- * {@code PasswordRequiredPrompt}'s React {@code Component} prop types.
+ * Type definition for a single entry in the device list.
+ */
+type Device = {
+
+    /**
+     * Name of the icon which will be rendered on the right.
+     */
+    iconName: string,
+
+    /**
+     * True if the element is selected (will be highlighted in blue),
+     * false otherwise.
+     */
+    selected: boolean,
+
+    /**
+     * Text which will be rendered in the row.
+     */
+    text: string,
+
+    /**
+     * Device type.
+     */
+    type: string
+};
+
+/**
+ * {@code AudioRoutePickerDialog}'s React {@code Component} prop types.
  */
 type Props = {
 
@@ -25,12 +55,15 @@ type Props = {
     t: Function
 };
 
+/**
+ * {@code AudioRoutePickerDialog}'s React {@code Component} state types.
+ */
 type State = {
 
     /**
      * Array of available devices.
      */
-    devices: Array<string>
+    devices: Array<Device>
 };
 
 const { AudioMode } = NativeModules;
@@ -87,12 +120,11 @@ class AudioRoutePickerDialog extends Component<Props, State> {
      * @param {Props} props - The read-only React {@code Component} props with
      * which the new instance is to be initialized.
      */
-    constructor(props) {
+    constructor(props: Props) {
         super(props);
 
         // Bind event handlers so they are only bound once per instance.
         this._onCancel = this._onCancel.bind(this);
-        this._onSubmit = this._onSubmit.bind(this);
     }
 
     /**
@@ -146,19 +178,49 @@ class AudioRoutePickerDialog extends Component<Props, State> {
         this._hide();
     }
 
-    _onSubmit: (?Object) => void;
+    _onSelectDeviceFn: (Device) => Function;
 
     /**
-     * Handles the selection of a device on the sheet. The selected device will
-     * be used by {@code AudioMode}.
+     * Builds and returns a function which handles the selection of a device
+     * on the sheet. The selected device will be used by {@code AudioMode}.
      *
-     * @param {Object} device - Object representing the selected device.
+     * @param {Device} device - Object representing the selected device.
      * @private
-     * @returns {void}
+     * @returns {Function}
      */
-    _onSubmit(device) {
-        this._hide();
-        AudioMode.setAudioDevice(device.type);
+    _onSelectDeviceFn(device: Device) {
+        return () => {
+            this._hide();
+            AudioMode.setAudioDevice(device.type);
+        };
+    }
+
+    /**
+     * Renders a single device.
+     *
+     * @param {Device} device - Object representing a single device.
+     * @private
+     * @returns {ReactElement}
+     */
+    _renderDevice(device: Device) {
+        const { iconName, selected, text } = device;
+        const selectedStyle = selected ? styles.selectedText : {};
+
+        return (
+            <TouchableHighlight
+                key = { device.type }
+                onPress = { this._onSelectDeviceFn(device) }
+                underlayColor = { UNDERLAY_COLOR } >
+                <View style = { styles.deviceRow } >
+                    <Icon
+                        name = { iconName }
+                        style = { [ styles.deviceIcon, selectedStyle ] } />
+                    <Text style = { [ styles.deviceText, selectedStyle ] } >
+                        { text }
+                    </Text>
+                </View>
+            </TouchableHighlight>
+        );
     }
 
     /**
@@ -175,10 +237,9 @@ class AudioRoutePickerDialog extends Component<Props, State> {
         }
 
         return (
-            <SimpleBottomSheet
-                onCancel = { this._onCancel }
-                onSubmit = { this._onSubmit }
-                options = { devices } />
+            <BottomSheet onCancel = { this._onCancel }>
+                { this.state.devices.map(this._renderDevice, this) }
+            </BottomSheet>
         );
     }
 }

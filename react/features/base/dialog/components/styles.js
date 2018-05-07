@@ -21,21 +21,36 @@ export const dialog = createStyleSheet({
 });
 
 /**
- * The React {@code Component} styles of {@code SimpleBottomSheet}. These have
+ * The React {@code Component} styles of {@code BottomSheet}. These have
  * been implemented as per the Material Design guidelines:
  * {@link https://material.io/guidelines/components/bottom-sheets.html}.
  */
-export const simpleBottomSheet = createStyleSheet({
+export const bottomSheetStyles = createStyleSheet({
+    /**
+     * Style for a backdrop which dims the view in the background. This view
+     * will also be clickable. The backgroundColor is applied to the overlay
+     * view instead, so the modal animation doesn't affect the backdrop.
+     */
+    backdrop: {
+        bottom: 0,
+        left: 0,
+        position: 'absolute',
+        right: 0,
+        top: 0
+    },
+
     /**
      * Style for the container of the sheet.
      */
     container: {
+        alignItems: 'flex-end',
         flex: 1,
-        flexDirection: 'row'
+        flexDirection: 'row',
+        justifyContent: 'center'
     },
 
     /**
-     * Style for a backdrop overlay covering the screen while the
+     * Style for an overlay on top of which the sheet will be displayed.
      */
     overlay: {
         backgroundColor: 'rgba(0, 0, 0, 0.8)',
@@ -47,56 +62,12 @@ export const simpleBottomSheet = createStyleSheet({
     },
 
     /**
-     * Base style for each row.
-     */
-    row: {
-        alignItems: 'center',
-        flexDirection: 'row',
-        height: 48
-    },
-
-    /**
-     * Style for the {@code Icon} element in a row.
-     */
-    rowIcon: {
-        fontSize: 24
-    },
-
-    /**
-     * Helper for adding some padding between the icon and text in a row.
-     */
-    rowPadding: {
-        width: 32
-    },
-
-    /**
-     * Style for a row which is marked as selected.
-     */
-    rowSelectedText: {
-        color: ColorPalette.blue
-    },
-
-    /**
-     * Style for the {@code Text} element in a row.
-     */
-    rowText: {
-        fontSize: 16
-    },
-
-    /**
-     * Wrapper for all rows, it adds a margin to the sheet container.
-     */
-    rowsWrapper: {
-        marginHorizontal: 16,
-        marginVertical: 8
-    },
-
-    /**
      * Bottom sheet's base style.
      */
     sheet: {
-        alignSelf: 'flex-end',
+        flex: 1,
         backgroundColor: ColorPalette.white,
-        flex: 1
+        paddingHorizontal: 16,
+        paddingVertical: 8
     }
 });
