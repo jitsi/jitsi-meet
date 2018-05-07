@@ -61,10 +61,6 @@ public class InviteController {
         this.externalAPIScope = externalAPIScope;
     }
 
-    public InviteControllerListener getListener() {
-        return listener;
-    }
-
     void beginAddPeople(ReactApplicationContext reactContext) {
         InviteControllerListener listener = getListener();
 
@@ -100,6 +96,10 @@ public class InviteController {
         if (this.addPeopleController == addPeopleController) {
             this.addPeopleController = null;
         }
+    }
+
+    public InviteControllerListener getListener() {
+        return listener;
     }
 
     /**
@@ -203,7 +203,7 @@ public class InviteController {
 
     /**
      * Starts a query for users to invite to the conference.  Results will be
-     * returned through the {@link AddPeopleControllerListener#onReceiveResults(AddPeopleController, List, String)}
+     * returned through the {@link AddPeopleControllerListener#onReceivedResults(AddPeopleController, List, String)}
      * method.
      *
      * @param query {@code String} to use for the query
@@ -211,8 +211,8 @@ public class InviteController {
     void performQuery(AddPeopleController addPeopleController, String query) {
         WritableNativeMap params = new WritableNativeMap();
 
-        params.putString("externalAPIScope", externalAPIScope);
         params.putString("addPeopleControllerScope", addPeopleController.getUuid());
+        params.putString("externalAPIScope", externalAPIScope);
         params.putString("query", query);
         ReactContextUtils.emitEvent(
             addPeopleController.getReactApplicationContext(),

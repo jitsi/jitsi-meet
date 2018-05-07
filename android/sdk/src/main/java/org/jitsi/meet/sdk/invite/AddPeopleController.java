@@ -116,7 +116,7 @@ public class AddPeopleController {
 
                 if(items.containsKey(id)) {
                     WritableNativeMap map = new WritableNativeMap();
-                    map.merge(items.get(ids));
+                    map.merge(items.get(id));
                     invitees.pushMap(map);
                 } else {
                     // If the id doesn't exist in the map, we can't do anything,
@@ -138,14 +138,14 @@ public class AddPeopleController {
                 jFailedInvitees.add(failedInvitees.getMap(i).toHashMap());
             }
 
-            listener.inviteSettled(this, jFailedInvitees);
+            listener.onInviteSettled(this, jFailedInvitees);
         }
     }
 
     /**
      * Start a search for entities to invite with the given query. Results will
      * be returned through the associated AddPeopleControllerListener's
-     * onReceiveResults method.
+     * onReceivedResults method.
      *
      * @param query
      */
@@ -188,7 +188,7 @@ public class AddPeopleController {
                 jvmResults.add(map.toHashMap());
             }
 
-            listener.onReceiveResults(this, jvmResults, query);
+            listener.onReceivedResults(this, jvmResults, query);
         }
     }
 

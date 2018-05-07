@@ -23,11 +23,15 @@ import org.jitsi.meet.sdk.JitsiMeetActivity;
 import org.jitsi.meet.sdk.JitsiMeetView;
 import org.jitsi.meet.sdk.JitsiMeetViewListener;
 import org.jitsi.meet.sdk.invite.AddPeopleController;
+import org.jitsi.meet.sdk.invite.AddPeopleControllerListener;
+import org.jitsi.meet.sdk.invite.InviteController;
 import org.jitsi.meet.sdk.invite.InviteControllerListener;
 
 import com.calendarevents.CalendarEventsPackage;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -43,6 +47,14 @@ import java.util.Map;
  * {@code react-native run-android}.
  */
 public class MainActivity extends JitsiMeetActivity {
+    /**
+     * The query to perform through {@link AddPeopleController} when the
+     * {@code InviteButton} is tapped in order to exercise the public API of the
+     * feature invite. If {@code null}, the {@code InviteButton} will not be
+     * rendered.
+     */
+    private static final String ADD_PEOPLE_CONTROLLER_QUERY = null;
+
     @Override
     protected JitsiMeetView initializeView() {
         JitsiMeetView view = super.initializeView();
@@ -93,21 +105,66 @@ public class MainActivity extends JitsiMeetActivity {
                 }
             });
 
-            view.getInviteController().setListener(
-                new InviteControllerListener() {
-                    public void beginAddPeople(
-                            AddPeopleController addPeopleController) {
-                        // Log with the tag "ReactNative" in order to have the
-                        // log visible in react-native log-android as well.
-                        Log.d(
-                            "ReactNative",
-                            InviteControllerListener.class.getSimpleName()
-                                + ".beginAddPeople");
-                    }
-                });
+            // inviteController
+            final InviteController inviteController
+                = view.getInviteController();
+
+            inviteController.setListener(new InviteControllerListener() {
+                public void beginAddPeople(
+                        AddPeopleController addPeopleController) {
+                    onInviteControllerBeginAddPeople(
+                        inviteController,
+                        addPeopleController);
+                }
+            });
+            inviteController.setAddPeopleEnabled(
+                ADD_PEOPLE_CONTROLLER_QUERY != null);
+            inviteController.setDialOutEnabled(
+                inviteController.isAddPeopleEnabled());
         }
 
         return view;
+    }
+
+    private void onAddPeopleControllerInviteSettled(
+            AddPeopleController addPeopleController,
+            List<Map<String, Object>> failedInvitees) {
+        // XXX Explicitly invoke endAddPeople on addPeopleController; otherwise,
+        // it is going to be memory-leaked in the associated InviteController
+        // and no subsequent InviteButton clicks/taps will be delivered.
+        // Technically, endAddPeople will automatically be invoked if there are
+        // no failedInviteees i.e. the invite succeeeded for all specified
+        // invitees.
+        addPeopleController.endAddPeople();
+    }
+
+    private void onAddPeopleControllerReceivedResults(
+            AddPeopleController addPeopleController,
+            List<Map<String, Object>> results,
+            String query) {
+        int size = results.size();
+
+        if (size > 0) {
+            // Exercise AddPeopleController's inviteById implementation.
+            List<String> ids = new ArrayList<>(size);
+
+            for (Map<String, Object> result : results) {
+                Object id = result.get("id");
+
+                if (id != null) {
+                    ids.add(id.toString());
+                }
+            }
+
+            addPeopleController.inviteById(ids);
+
+            return;
+        }
+
+        // XXX Explicitly invoke endAddPeople on addPeopleController; otherwise,
+        // it is going to be memory-leaked in the associated InviteController
+        // and no subsequent InviteButton clicks/taps will be delivered.
+        addPeopleController.endAddPeople();
     }
 
     @Override
@@ -122,9 +179,61 @@ public class MainActivity extends JitsiMeetActivity {
         super.onCreate(savedInstanceState);
     }
 
+    private void onInviteControllerBeginAddPeople(
+            InviteController inviteController,
+            AddPeopleController addPeopleController) {
+        // Log with the tag "ReactNative" in order to have the log visible in
+        // react-native log-android as well.
+        Log.d(
+            "ReactNative",
+            InviteControllerListener.class.getSimpleName() + ".beginAddPeople");
+
+        String query = ADD_PEOPLE_CONTROLLER_QUERY;
+    
+        if (query != null
+                && (inviteController.isAddPeopleEnabled()
+                    || inviteController.isDialOutEnabled())) {
+            addPeopleController.setListener(new AddPeopleControllerListener() {
+                public void onInviteSettled(
+                        AddPeopleController addPeopleController,
+                        List<Map<String, Object>> failedInvitees) {
+                    onAddPeopleControllerInviteSettled(
+                        addPeopleController,
+                        failedInvitees);
+                }
+
+                public void onReceivedResults(
+                        AddPeopleController addPeopleController,
+                        List<Map<String, Object>> results,
+                        String query) {
+                    onAddPeopleControllerReceivedResults(
+                        addPeopleController,
+                        results, query);
+                }
+            });
+            addPeopleController.performQuery(query);
+        } else {
+            // XXX Explicitly invoke endAddPeople on addPeopleController;
+            // otherwise, it is going to be memory-leaked in the associated
+            // InviteController and no subsequent InviteButton clicks/taps will
+            // be delivered.
+            addPeopleController.endAddPeople();
+        }
+    }
+
     @Override
-  public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
-      CalendarEventsPackage.onRequestPermissionsResult(requestCode, permissions, grantResults);
-      super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-  }
+    public void onRequestPermissionsResult(
+            int requestCode,
+            String[] permissions,
+            int[] grantResults) {
+        CalendarEventsPackage.onRequestPermissionsResult(
+            requestCode,
+            permissions,
+            grantResults);
+
+        super.onRequestPermissionsResult(
+            requestCode,
+            permissions,
+            grantResults);
+    }
 }

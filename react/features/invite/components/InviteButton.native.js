@@ -70,20 +70,20 @@ class InviteButton extends Component<Props> {
             ...props
         } = this.props;
 
-        if (_SHARE_ROOM_TOOLBAR_BUTTON) {
-            return (
-                <ToolbarButton
-                    iconName = 'link'
-                    onClick = { _onShareRoom }
-                    { ...props } />
-            );
-        }
-
         if (_addPeopleEnabled || _dialOutEnabled) {
             return (
                 <ToolbarButton
                     iconName = { 'link' }
                     onClick = { _onAddPeople }
+                    { ...props } />
+            );
+        }
+
+        if (_SHARE_ROOM_TOOLBAR_BUTTON) {
+            return (
+                <ToolbarButton
+                    iconName = 'link'
+                    onClick = { _onShareRoom }
                     { ...props } />
             );
         }

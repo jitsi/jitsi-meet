@@ -122,6 +122,11 @@ public class JitsiMeetActivity extends AppCompatActivity {
         JitsiMeetView view = initializeView();
 
         if (view != null) {
+            // XXX Allow extenders who override initializeView() to configure
+            // the view before the first loadURL(). Probably works around a
+            // problem related to ReactRootView#setAppProperties().
+            view.loadURL(null);
+
             this.view = view;
             setContentView(this.view);
         }
@@ -143,8 +148,6 @@ public class JitsiMeetActivity extends AppCompatActivity {
                 pictureInPictureEnabled.booleanValue());
         }
         view.setWelcomePageEnabled(welcomePageEnabled);
-
-        view.loadURL(null);
 
         return view;
     }

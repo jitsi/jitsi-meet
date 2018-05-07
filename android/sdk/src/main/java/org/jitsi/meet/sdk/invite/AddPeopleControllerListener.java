@@ -21,29 +21,36 @@ import java.util.Map;
 
 public interface AddPeopleControllerListener {
     /**
-     * Called when results are received for a query called through AddPeopleController.query()
+     * Called when the call to {@link AddPeopleController#inviteById(List)}
+     * completes.
      *
-     * @param addPeopleController
-     * @param results a List of Map<String, Object> objects that represent items returned by the query.
-     *                The object at key "type" describes the type of item: "user", "videosipgw" (conference room), or "phone".
-     *                "user" types have properties at "id", "name", and "avatar"
-     *                "videosipgw" types have properties at "id" and "name"
-     *                "phone" types have properties at "number", "title", "and "subtitle"
-     * @param query the query that generated the given results
+     * @param addPeopleController the active {@link AddPeopleController} for
+     * this invite flow.  This object should be cleaned up by calling
+     * {@link AddPeopleController#endAddPeople()} if the user exits the invite
+     * flow. Otherwise, it can stay active if the user will attempt to invite
+     * @param failedInvitees a {@code List} of {@code Map<String, Object>}
+     * dictionaries that represent the invitations that failed. The data type of
+     * the objects is identical to the results returned in onReceivedResuls.
      */
-    void onReceiveResults(AddPeopleController addPeopleController, List<Map<String, Object>> results, String query);
+    void onInviteSettled(
+        AddPeopleController addPeopleController,
+        List<Map<String, Object>> failedInvitees);
 
     /**
-     * Called when the call to {@link AddPeopleController#inviteById(List)} completes, but the
-     * invitation fails for one or more of the selected items.
+     * Called when results are received for a query called through
+     * AddPeopleController.query().
      *
-     * @param addPeopleController the active {@link AddPeopleController} for this invite flow.  This object
-     *                         should be cleaned up by calling {@link AddPeopleController#endAddPeople()} if
-     *                         the user exits the invite flow.  Otherwise, it can stay active if the user
-     *                         will attempt to invite
-     * @param failedInvitees a {@code List} of {@code Map<String, Object>} dictionaries that represent the
-     *                          invitations that failed.  The data type of the objects is identical to the results
-     *                          returned in onReceiveResuls.
+     * @param addPeopleController
+     * @param results a List of Map<String, Object> objects that represent items
+     * returned by the query. The object at key "type" describes the type of
+     * item: "user", "videosipgw" (conference room), or "phone". "user" types
+     * have properties at "id", "name", and "avatar". "videosipgw" types have
+     * properties at "id" and "name". "phone" types have properties at "number",
+     * "title", "and "subtitle"
+     * @param query the query that generated the given results
      */
-    void inviteSettled(AddPeopleController addPeopleController, List<Map<String, Object>> failedInvitees);
+    void onReceivedResults(
+        AddPeopleController addPeopleController,
+        List<Map<String, Object>> results,
+        String query);
 }

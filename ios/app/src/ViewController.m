@@ -16,6 +16,13 @@
 
 #import "ViewController.h"
 
+/**
+ * The query to perform through JMAddPeopleController when the InviteButton is
+ * tapped in order to exercise the public API of the feature invite. If nil, the
+ * InviteButton will not be rendered.
+ */
+static NSString * const ADD_PEOPLE_CONTROLLER_QUERY = nil;
+
 @interface ViewController ()
 
 @end
@@ -31,7 +38,12 @@
 
     view.delegate = self;
 
-    view.inviteController.delegate = self;
+    // inviteController
+    JMInviteController *inviteController = view.inviteController;
+    inviteController.delegate = self;
+    inviteController.addPeopleEnabled
+        = inviteController.dialOutEnabled
+        = ADD_PEOPLE_CONTROLLER_QUERY != nil;
 
 #endif // #ifdef DEBUG
 
@@ -45,6 +57,8 @@
 }
 
 #if DEBUG
+
+// JitsiMeetViewDelegate
 
 void _onJitsiMeetViewDelegateEvent(NSString *name, NSDictionary *data) {
     NSLog(
@@ -76,14 +90,72 @@ void _onJitsiMeetViewDelegateEvent(NSString *name, NSDictionary *data) {
     _onJitsiMeetViewDelegateEvent(@"LOAD_CONFIG_ERROR", data);
 }
 
+// JMInviteControllerDelegate
+
 - (void)beginAddPeople:(JMAddPeopleController *)addPeopleController {
     NSLog(
         @"[%s:%d] JMInviteControllerDelegate %s",
         __FILE__, __LINE__, __FUNCTION__);
 
+    NSString *query = ADD_PEOPLE_CONTROLLER_QUERY;
+    JitsiMeetView *view = (JitsiMeetView *) self.view;
+    JMInviteController *inviteController = view.inviteController;
+
+    if (query
+            && (inviteController.addPeopleEnabled
+                || inviteController.dialOutEnabled)) {
+        addPeopleController.delegate = self;
+        [addPeopleController performQuery:query];
+    } else {
+        // XXX Explicitly invoke endAddPeople on addPeopleController; otherwise,
+        // it is going to be memory-leaked in the associated JMInviteController
+        // and no subsequent InviteButton clicks/taps will be delivered.
+        [addPeopleController endAddPeople];
+    }
+}
+
+// JMAddPeopleControllerDelegate
+
+- (void)addPeopleController:(JMAddPeopleController * _Nonnull)controller
+          didReceiveResults:(NSArray<NSDictionary *> * _Nonnull)results
+                   forQuery:(NSString * _Nonnull)query {
+    NSUInteger count = results.count;
+
+    if (count) {
+        // Exercise JMAddPeopleController's inviteById: implementation.
+        NSMutableArray *ids = [NSMutableArray arrayWithCapacity:count];
+
+        for (NSUInteger i = 0; i < count; ++i) {
+            ids[i] = results[i][@"id"];
+        }
+
+        [controller inviteById:ids];
+
+        // Exercise JMInviteController's invite:withCompletion: implementation.
+        //
+        // XXX Technically, only at most one of the two exercises will result in
+        // an actual invitation eventually.
+        JitsiMeetView *view = (JitsiMeetView *) self.view;
+        JMInviteController *inviteController = view.inviteController;
+
+        [inviteController invite:results withCompletion:nil];
+
+        return;
+    }
+
     // XXX Explicitly invoke endAddPeople on addPeopleController; otherwise, it
     // is going to be memory-leaked in the associated JMInviteController and no
     // subsequent InviteButton clicks/taps will be delivered.
+    [controller endAddPeople];
+}
+
+- (void) inviteSettled:(NSArray<NSDictionary *> * _Nonnull)failedInvitees
+  fromSearchController:(JMAddPeopleController * _Nonnull)addPeopleController {
+    // XXX Explicitly invoke endAddPeople on addPeopleController; otherwise, it
+    // is going to be memory-leaked in the associated JMInviteController and no
+    // subsequent InviteButton clicks/taps will be delivered. Technically,
+    // endAddPeople will automatically be invoked if there are no
+    // failedInviteees i.e. the invite succeeeded for all specified invitees.
     [addPeopleController endAddPeople];
 }
 
