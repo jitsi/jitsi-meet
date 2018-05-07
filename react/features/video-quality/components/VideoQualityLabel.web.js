@@ -8,8 +8,17 @@ import { MEDIA_TYPE } from '../../base/media';
 import { getTrackByMediaTypeAndParticipant } from '../../base/tracks';
 
 /**
+ * The icon class name for the audio only icon.
+ *
+ * @private
+ * @type string
+ */
+const AUDIO_ONLY_ICON = 'icon-AUD';
+
+/**
  * A map of video resolution (number) to translation key.
  *
+ * @private
  * @type {Object}
  */
 const RESOLUTION_TO_TRANSLATION_KEY = {
@@ -19,13 +28,25 @@ const RESOLUTION_TO_TRANSLATION_KEY = {
 };
 
 /**
+ * A map of video resolution (number) to an icon classname.
+ *
+ * @private
+ * @type {Object}
+ */
+const RESOLUTION_TO_TRANSLATION_ICON = {
+    720: 'icon-HD',
+    360: 'icon-SD',
+    180: 'icon-LD'
+};
+
+/**
  * Expected video resolutions placed into an array, sorted from lowest to
  * highest resolution.
  *
  * @type {number[]}
  */
 const RESOLUTIONS
-    = Object.keys(RESOLUTION_TO_TRANSLATION_KEY)
+    = Object.keys(RESOLUTION_TO_TRANSLATION_ICON)
         .map(resolution => parseInt(resolution, 10))
         .sort((a, b) => a - b);
 
@@ -143,21 +164,21 @@ export class VideoQualityLabel extends Component {
         const classNames
             = `${baseClasses} ${filmstrip} ${opening}`;
 
-        let labelContent;
+        let labelIcon;
         let tooltipKey;
 
         if (_audioOnly) {
-            labelContent = <i className = 'icon-visibility-off' />;
+            labelIcon = AUDIO_ONLY_ICON;
             tooltipKey = 'videoStatus.labelTooltipAudioOnly';
         } else if (!_videoTrack || _videoTrack.muted) {
-            labelContent = <i className = 'icon-visibility-off' />;
+            labelIcon = AUDIO_ONLY_ICON;
             tooltipKey = 'videoStatus.labelTooiltipNoVideo';
         } else {
-            const translationKeys
-                = this._mapResolutionToTranslationsKeys(_resolution);
+            const displayConfig
+                = this._mapResolutionToDisplayConfig(_resolution);
 
-            labelContent = t(translationKeys.labelKey);
-            tooltipKey = translationKeys.tooltipKey;
+            labelIcon = displayConfig.icon;
+            tooltipKey = displayConfig.tooltipKey;
         }
 
 
@@ -169,7 +190,7 @@ export class VideoQualityLabel extends Component {
                     content = { t(tooltipKey) }
                     position = { 'left' }>
                     <div className = 'video-quality-label-status'>
-                        { labelContent }
+                        <i className = { labelIcon } />
                     </div>
                 </Tooltip>
             </div>
@@ -177,16 +198,16 @@ export class VideoQualityLabel extends Component {
     }
 
     /**
-     * Matches the passed in resolution with a translation keys for describing
-     * the resolution. The passed in resolution will be matched with a known
-     * resolution that it is at least greater than or equal to.
+     * Matches the passed in resolution with a known resolution that it is at
+     * least greater than or equal to, and returns an object describing how the
+     * label should be displayed.
      *
      * @param {number} resolution - The video height to match with a
      * translation.
      * @private
      * @returns {Object}
      */
-    _mapResolutionToTranslationsKeys(resolution) {
+    _mapResolutionToDisplayConfig(resolution) {
         // Set the default matching resolution of the lowest just in case a
         // match is not found.
         let highestMatchingResolution = RESOLUTIONS[0];
@@ -205,7 +226,7 @@ export class VideoQualityLabel extends Component {
             = RESOLUTION_TO_TRANSLATION_KEY[highestMatchingResolution];
 
         return {
-            labelKey,
+            icon: RESOLUTION_TO_TRANSLATION_ICON[highestMatchingResolution],
             tooltipKey: `${labelKey}Tooltip`
         };
     }

@@ -142,13 +142,14 @@
 }
 
 .video-state-indicator {
-    background: $videoStateIndicatorBackground;
+    background: white;
     cursor: default;
     font-size: 13px;
     height: $videoStateIndicatorSize;
     line-height: 13px;
     text-align: left;
     min-width: $videoStateIndicatorSize;
+    opacity: 0.9;
     border-radius: 50%;
     position: absolute;
     box-sizing: border-box;
@@ -161,6 +162,9 @@
 
     i {
         line-height: $videoStateIndicatorSize;
+        height: $videoStateIndicatorSize;
+        width: $videoStateIndicatorSize;
+        font-size: $videoStateIndicatorSize;
     }
 
     /**
@@ -191,13 +195,13 @@
     .recording-icon-background {
         background: white;
         border-radius: 50%;
-        height: calc(#{$videoStateIndicatorSize} - 1px);
+        height: $videoStateIndicatorSize;
         left: 50%;
         opacity: 0.9;
         position: absolute;
         top: 50%;
         transform: translate(-50%, -50%);
-        width: calc(#{$videoStateIndicatorSize} - 1px);
+        width: $videoStateIndicatorSize;
     }
 
     #recordingLabelText {
