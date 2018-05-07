@@ -16,7 +16,14 @@ if not muc_domain_base then
 end
 
 -- Status strings that trigger call events.
-local invited_status = "Invited"
+local invited_status  = "Invited"
+local calling_status  = "Calling"
+local ringing_status  = "Ringing"
+local busy_status     = "Busy"
+local rejected_status = "Rejected"
+local connected_status = "connected"
+
+
 
 -- url_from_room_jid will determine the url for a conference
 -- provided a room jid. It is required that muc domain mapping
@@ -44,9 +51,14 @@ end
 -- event should be triggered. Call events are triggered by status strings
 -- the status strings supported are:
 --    -------------------------
---    Status     | Event Type
+--    Status      | Event Type
 --    _________________________
---    "Invited"  | Invite
+--    "Calling"   | INVITE
+--    "Invited"   | INVITE
+--    "Ringing"   | CANCEL
+--    "Busy"      | CANCEL
+--    "Rejected"  | CANCEL
+--    "connected" | CANCEL
 module:hook("muc-broadcast-presence", function (event)
     -- Detect if the presence is for a poltergeist or not.
     if not
@@ -57,8 +69,28 @@ module:hook("muc-broadcast-presence", function (event)
 	   return
     end
 
-    if event.stanza:get_child_text("status") == invited_status then
+	local invite = function()
+		 local url = assert(url_from_room_jid(event.stanza.attr.from))
+		 ext_events.invite(event.stanza, url)
+	end
+
+	local cancel = function()
 	   local url = assert(url_from_room_jid(event.stanza.attr.from))
-	   ext_events.invite(event.stanza, url)
-    end
+	   local status = event.stanza:get_child_text("status")
+	   ext_events.cancel(event.stanza, url, string.lower(status))
+	end
+
+	local switch = function(status)
+	   case = {
+		  [invited_status]   = function() invite() end,
+		  [calling_status]   = function() invite() end,
+		  [ringing_status]   = function() cancel() end,
+		  [busy_status]      = function() cancel() end,
+		  [rejected_status]  = function() cancel() end,
+		  [connected_status] = function() cancel() end
+	   }
+	   if case[status] then case[status]() end
+	end
+
+	switch(event.stanza:get_child_text("status"))
 end, -101);
