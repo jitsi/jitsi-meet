@@ -16,7 +16,7 @@
 
 #import "AddPeopleController.h"
 
-@protocol InviteControllerDelegate <NSObject>
+@protocol JMInviteControllerDelegate <NSObject>
 
 /**
  * Called when the invite button in the conference is tapped.
@@ -24,6 +24,6 @@
  * The search controller provided can be used to query user search within the
  * conference.
  */
-- (void)beginAddPeople:(AddPeopleController *)addPeopleController;
+- (void)beginAddPeople:(JMAddPeopleController *)addPeopleController;
 
 @end

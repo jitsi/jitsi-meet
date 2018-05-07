@@ -42,16 +42,17 @@ RCT_EXPORT_MODULE();
 
 /**
  * Initiates the process to add people. This involves calling a delegate method
- * in the InviteControllerDelegate so the native host application can start
+ * in the JMInviteControllerDelegate so the native host application can start
  * the query process.
  *
  * @param externalAPIScope - Scope identifying the JitsiMeetView where the
  * calling JS code is being executed.
  */
 RCT_EXPORT_METHOD(beginAddPeople:(NSString *)externalAPIScope) {
-    JitsiMeetView *view = [JitsiMeetView viewForExternalAPIScope:externalAPIScope];
-    InviteController *controller = view.inviteController;
-    [controller beginAddPeople];
+    JitsiMeetView *view
+        = [JitsiMeetView viewForExternalAPIScope:externalAPIScope];
+    JMInviteController *inviteController = view.inviteController;
+    [inviteController beginAddPeople];
 }
 
 /**
@@ -59,7 +60,7 @@ RCT_EXPORT_METHOD(beginAddPeople:(NSString *)externalAPIScope) {
  *
  * @param externalAPIScope - Scope identifying the JitsiMeetView where the
  * calling JS code is being executed.
- * @param addPeopleControllerScope - Scope identifying the AddPeopleController
+ * @param addPeopleControllerScope - Scope identifying the JMAddPeopleController
  * wich was settled.
  * @param failedInvitees - Array with the invitees which were not invited due
  * to a failure.
@@ -67,19 +68,21 @@ RCT_EXPORT_METHOD(beginAddPeople:(NSString *)externalAPIScope) {
 RCT_EXPORT_METHOD(inviteSettled:(NSString *)externalAPIScope
        addPeopleControllerScope:(NSString *)addPeopleControllerScope
                  failedInvitees:(NSArray *)failedInvitees) {
-    JitsiMeetView *view = [JitsiMeetView viewForExternalAPIScope:externalAPIScope];
-    InviteController *controller = view.inviteController;
-    [controller inviteSettled:addPeopleControllerScope failedInvitees:failedInvitees];
+    JitsiMeetView *view
+        = [JitsiMeetView viewForExternalAPIScope:externalAPIScope];
+    JMInviteController *inviteController = view.inviteController;
+    [inviteController inviteSettled:addPeopleControllerScope
+                     failedInvitees:failedInvitees];
 }
 
 /**
  * Process results received for the given query. This involves calling a
- * delegate method in AddPeopleControllerDelegate so the native host application
- * is made aware of the query results.
+ * delegate method in JMAddPeopleControllerDelegate so the native host
+ * application is made aware of the query results.
  *
  * @param externalAPIScope - Scope identifying the JitsiMeetView where the
  * calling JS code is being executed.
- * @param addPeopleControllerScope - Scope identifying the AddPeopleController
+ * @param addPeopleControllerScope - Scope identifying the JMAddPeopleController
  * for which the results were received.
  * @param query - The actual query for which the results were received.
  * @param results - The query results.
@@ -88,9 +91,12 @@ RCT_EXPORT_METHOD(receivedResults:(NSString *)externalAPIScope
          addPeopleControllerScope:(NSString *)addPeopleControllerScope
                             query:(NSString *)query
                           results:(NSArray *)results) {
-    JitsiMeetView *view = [JitsiMeetView viewForExternalAPIScope:externalAPIScope];
-    InviteController *controller = view.inviteController;
-    [controller receivedResults:addPeopleControllerScope query:query results:results];
+    JitsiMeetView *view
+        = [JitsiMeetView viewForExternalAPIScope:externalAPIScope];
+    JMInviteController *inviteController = view.inviteController;
+    [inviteController receivedResults:addPeopleControllerScope
+                                query:query
+                              results:results];
 }
 
 - (void)            invite:(NSArray<NSDictionary *> * _Nonnull)invitees

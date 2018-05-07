@@ -17,13 +17,13 @@
 #import "AddPeopleController.h"
 #import "InviteController.h"
 
-@interface AddPeopleController ()
+@interface JMAddPeopleController ()
 
 @property (nonatomic, strong) NSMutableDictionary* _Nonnull items;
-@property (nonatomic, weak, nullable) InviteController *owner;
+@property (nonatomic, weak, nullable) JMInviteController *owner;
 @property (nonatomic, readonly) NSString* _Nonnull uuid;
 
-- (instancetype _Nonnull)initWithOwner:(InviteController * _Nonnull)owner;
+- (instancetype _Nonnull)initWithOwner:(JMInviteController * _Nonnull)owner;
 
 - (void)inviteSettled:(NSArray<NSDictionary *> * _Nonnull)failedInvitees;
 

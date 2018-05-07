@@ -18,9 +18,9 @@
 
 #import "AddPeopleControllerDelegate.h"
 
-@interface AddPeopleController: NSObject
+@interface JMAddPeopleController: NSObject
 
-@property (nonatomic, nullable, weak) id<AddPeopleControllerDelegate> delegate;
+@property (nonatomic, nullable, weak) id<JMAddPeopleControllerDelegate> delegate;
 
 - (void)endAddPeople;
 

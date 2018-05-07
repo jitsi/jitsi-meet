@@ -17,9 +17,9 @@
 #import "AddPeopleController+Private.h"
 #import "InviteController+Private.h"
 
-@implementation AddPeopleController
+@implementation JMAddPeopleController
 
-- (instancetype)initWithOwner:(InviteController *)owner {
+- (instancetype)initWithOwner:(JMInviteController *)owner {
     self = [super init];
     if (self) {
         _uuid = [[NSUUID UUID] UUIDString];

@@ -17,7 +17,7 @@
 #import "InviteController+Private.h"
 #import "AddPeopleController+Private.h"
 
-@implementation InviteController {
+@implementation JMInviteController {
     NSNumber *_addPeopleEnabled;
     NSNumber *_dialOutEnabled;
 }
@@ -49,7 +49,7 @@
         return;
     }
 
-    _addPeopleController = [[AddPeopleController alloc] initWithOwner:self];
+    _addPeopleController = [[JMAddPeopleController alloc] initWithOwner:self];
 
     @try {
         if (self.delegate
@@ -61,7 +61,7 @@
     }
 }
 
--(void)endAddPeopleForController:(AddPeopleController *)controller {
+-(void)endAddPeopleForController:(JMAddPeopleController *)controller {
     if (self.addPeopleController == controller) {
         self.addPeopleController = nil;
     }
@@ -99,7 +99,7 @@
 
 - (void)inviteSettled:(NSString *)addPeopleControllerScope
        failedInvitees:(NSArray *)failedInvitees {
-    AddPeopleController *controller = self.addPeopleController;
+    JMAddPeopleController *controller = self.addPeopleController;
 
     if (controller != nil
             && [controller.uuid isEqualToString:addPeopleControllerScope]) {
@@ -116,7 +116,7 @@
 - (void)receivedResults:(NSString *)addPeopleControllerScope
                   query:(NSString *)query
                 results:(NSArray *)results {
-    AddPeopleController *controller = self.addPeopleController;
+    JMAddPeopleController *controller = self.addPeopleController;
 
     if (controller != nil
             && [controller.uuid isEqualToString:addPeopleControllerScope]) {
@@ -127,7 +127,7 @@
 #pragma mark Use the Invite react-native module to emit the search / submission events
 
 - (void) invite:(NSArray *)invitees
-  forController:(AddPeopleController * _Nonnull)controller {
+  forController:(JMAddPeopleController * _Nonnull)controller {
     [self        invite:invitees
      forControllerScope:controller.uuid];
 }
@@ -147,7 +147,7 @@
 }
 
 - (void)performQuery:(NSString * _Nonnull)query
-       forController:(AddPeopleController * _Nonnull)controller {
+       forController:(JMAddPeopleController * _Nonnull)controller {
     [self.inviteModule performQuery:query
                    externalAPIScope:self.externalAPIScope
            addPeopleControllerScope:controller.uuid];

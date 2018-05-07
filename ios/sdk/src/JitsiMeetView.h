@@ -26,7 +26,7 @@
 
 @property (nonatomic, nullable, weak) id<JitsiMeetViewDelegate> delegate;
 
-@property (nonatomic, readonly, nonnull) InviteController *inviteController;
+@property (nonatomic, readonly, nonnull) JMInviteController *inviteController;
 
 @property (nonatomic) BOOL pictureInPictureEnabled;
 

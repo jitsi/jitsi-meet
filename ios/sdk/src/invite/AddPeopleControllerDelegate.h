@@ -18,24 +18,24 @@
 
 #import "AddPeopleController.h"
 
-@class AddPeopleController;
+@class JMAddPeopleController;
 
-@protocol AddPeopleControllerDelegate
+@protocol JMAddPeopleControllerDelegate
 
 /**
- * Called when an AddPeopleController has results for a query that was
+ * Called when a JMAddPeopleController has results for a query that was
  * previously provided.
  */
-- (void)addPeopleController:(AddPeopleController * _Nonnull)controller
+- (void)addPeopleController:(JMAddPeopleController * _Nonnull)controller
           didReceiveResults:(NSArray<NSDictionary *> * _Nonnull)results
                    forQuery:(NSString * _Nonnull)query;
 
 /**
- * Called when an AddPeopleController has finished the inviting process, either
+ * Called when a JMAddPeopleController has finished the inviting process, either
  * succesfully or not. In case of failure the failedInvitees array will contain
  * the items for which invitations failed.
  */
-- (void)inviteSettled:(NSArray<NSDictionary *> * _Nonnull)failedInvitees
- fromSearchController:(AddPeopleController * _Nonnull)addPeopleController;
+- (void) inviteSettled:(NSArray<NSDictionary *> * _Nonnull)failedInvitees
+  fromSearchController:(JMAddPeopleController * _Nonnull)addPeopleController;
 
 @end

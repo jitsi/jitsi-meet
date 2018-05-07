@@ -19,9 +19,9 @@
 #import "AddPeopleController.h"
 #import "Invite+Private.h"
 
-@interface InviteController ()
+@interface JMInviteController ()
 
-@property (nonatomic, nullable) AddPeopleController *addPeopleController;
+@property (nonatomic, nullable) JMAddPeopleController *addPeopleController;
 
 @property (nonatomic) NSString * _Nonnull externalAPIScope;
 
@@ -32,16 +32,16 @@
 
 - (void)beginAddPeople;
 
-- (void)endAddPeopleForController:(AddPeopleController * _Nonnull)controller;
+- (void)endAddPeopleForController:(JMAddPeopleController * _Nonnull)controller;
 
 - (void) invite:(NSArray * _Nonnull)invitees
-  forController:(AddPeopleController * _Nonnull)controller;
+  forController:(JMAddPeopleController * _Nonnull)controller;
 
 - (void)inviteSettled:(NSString * _Nonnull)addPeopleControllerScope
        failedInvitees:(NSArray * _Nonnull)failedInvitees;
 
 - (void)performQuery:(NSString * _Nonnull)query
-       forController:(AddPeopleController * _Nonnull)controller;
+       forController:(JMAddPeopleController * _Nonnull)controller;
 
 - (void)receivedResults:(NSString * _Nonnull)addPeopleControllerScope
                   query:(NSString * _Nonnull)query

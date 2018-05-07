@@ -31,9 +31,7 @@
 
     view.delegate = self;
 
-    // inviteController
-    InviteController *inviteController = view.inviteController;
-    inviteController.delegate = self;
+    view.inviteController.delegate = self;
 
 #endif // #ifdef DEBUG
 
@@ -78,13 +76,13 @@ void _onJitsiMeetViewDelegateEvent(NSString *name, NSDictionary *data) {
     _onJitsiMeetViewDelegateEvent(@"LOAD_CONFIG_ERROR", data);
 }
 
-- (void)beginAddPeople:(AddPeopleController *)addPeopleController {
+- (void)beginAddPeople:(JMAddPeopleController *)addPeopleController {
     NSLog(
-        @"[%s:%d] InviteControllerDelegate %s",
+        @"[%s:%d] JMInviteControllerDelegate %s",
         __FILE__, __LINE__, __FUNCTION__);
 
     // XXX Explicitly invoke endAddPeople on addPeopleController; otherwise, it
-    // is going to be memory-leaked in the associated InviteController and no
+    // is going to be memory-leaked in the associated JMInviteController and no
     // subsequent InviteButton clicks/taps will be delivered.
     [addPeopleController endAddPeople];
 }

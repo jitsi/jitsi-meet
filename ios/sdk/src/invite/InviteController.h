@@ -18,13 +18,13 @@
 
 #import "InviteControllerDelegate.h"
 
-@interface InviteController : NSObject
+@interface JMInviteController : NSObject
 
 @property (nonatomic) BOOL addPeopleEnabled;
 
 @property (nonatomic) BOOL dialOutEnabled;
 
-@property (nonatomic, nullable, weak) id<InviteControllerDelegate> delegate;
+@property (nonatomic, nullable, weak) id<JMInviteControllerDelegate> delegate;
 
 - (void)  invite:(NSArray * _Nonnull)invitees
   withCompletion:(void (^ _Nullable)(NSArray<NSDictionary *> * _Nonnull failedInvitees))completion;
