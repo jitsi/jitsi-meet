@@ -609,7 +609,9 @@ RemoteVideo.prototype.addPresenceLabel = function() {
     if (presenceLabelContainer) {
         ReactDOM.render(
             <Provider store = { APP.store }>
-                <PresenceLabel participantID = { this.id } />
+                <I18nextProvider i18n = { i18next }>
+                    <PresenceLabel participantID = { this.id } />
+                </I18nextProvider>
             </Provider>,
             presenceLabelContainer);
     }

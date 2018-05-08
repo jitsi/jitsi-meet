@@ -2,7 +2,10 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
+import { translate } from '../../base/i18n';
 import { getParticipantById } from '../../base/participants';
+
+import { STATUS_TO_I18N_KEY } from '../constants';
 
 /**
  * React {@code Component} for displaying the current presence status of a
@@ -35,7 +38,12 @@ class PresenceLabel extends Component {
         /**
          * The ID of the participant whose presence status shoul display.
          */
-        participantID: PropTypes.string
+        participantID: PropTypes.string,
+
+        /**
+         * Invoked to obtain translated strings.
+         */
+        t: PropTypes.func
     };
 
     /**
@@ -51,9 +59,30 @@ class PresenceLabel extends Component {
             <div
                 className
                     = { `presence-label ${_presence ? '' : 'no-presence'}` }>
-                { _presence }
+                { this._getPresenceText() }
             </div>
         );
+    }
+
+    /**
+     * Returns the text associated with the current presence status.
+     *
+     * @returns {string}
+     */
+    _getPresenceText() {
+        const { _presence, t } = this.props;
+
+        if (!_presence) {
+            return null;
+        }
+
+        const i18nKey = STATUS_TO_I18N_KEY[_presence];
+
+        if (!i18nKey) { // fallback to status value
+            return _presence;
+        }
+
+        return t(i18nKey);
     }
 }
 
@@ -79,4 +108,4 @@ function _mapStateToProps(state, ownProps) {
     };
 }
 
-export default connect(_mapStateToProps)(PresenceLabel);
+export default translate(connect(_mapStateToProps)(PresenceLabel));
