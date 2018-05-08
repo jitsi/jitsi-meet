@@ -8,7 +8,7 @@ Jitsi Meet allows for very efficient collaboration. It allows users to stream th
 
 ## Installation
 
-DO NOT MERGE ME PLEASE !
+DO NOT MERGE ME PLEASE !1
 
 On the client side, no installation is necessary. You just point your browser to the URL of your deployment. This section is about installing the Jitsi Meet suite on your server and hosting your own conferencing service.
 
