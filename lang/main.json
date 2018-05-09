@@ -572,7 +572,9 @@
     "presenceStatus": {
         "invited": "Invited",
         "ringing": "Ringing",
+        "calling": "Calling",
         "connected": "Connected",
+        "connecting": "Connecting",
         "busy": "Busy",
         "rejected": "Rejected",
         "ignored": "Ignored"
