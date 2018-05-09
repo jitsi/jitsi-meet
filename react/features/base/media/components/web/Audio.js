@@ -41,8 +41,11 @@ export default class Audio extends AbstractAudio {
      * @returns {ReactElement}
      */
     render() {
+        const loop = this.props.loop ? 'true' : null;
+
         return (
             <audio
+                loop = { loop }
                 onCanPlayThrough = { this._onCanPlayThrough }
                 preload = 'auto'
 
@@ -50,6 +53,20 @@ export default class Audio extends AbstractAudio {
                 ref = { this._setRef }
                 src = { this.props.src } />
         );
+    }
+
+    /**
+     * Stops the audio HTML element.
+     *
+     * @returns {void}
+     */
+    stop() {
+        if (this._ref) {
+            this._ref.pause();
+
+            // $FlowFixMe
+            this._ref.currentTime = 0;
+        }
     }
 
     /**

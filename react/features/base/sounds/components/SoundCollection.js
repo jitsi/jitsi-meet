@@ -55,12 +55,15 @@ class SoundCollection extends Component<Props> {
         const sounds = [];
 
         for (const [ soundId, sound ] of this.props._sounds.entries()) {
+            const { options, src } = sound;
+
             sounds.push(
                 React.createElement(
                     Audio, {
                         key,
                         setRef: this._setRef.bind(this, soundId),
-                        src: sound.src
+                        src,
+                        loop: options.loop
                     }));
             key += 1;
         }
