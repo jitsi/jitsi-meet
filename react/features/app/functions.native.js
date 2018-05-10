@@ -2,6 +2,7 @@
 
 import { NativeModules } from 'react-native';
 
+export * from './functions.any';
 export * from './getRouteToRender';
 
 /**

@@ -2,6 +2,7 @@
 
 import { NativeModules } from 'react-native';
 
+import { getAppProp } from '../../app';
 import { Platform } from '../../base/react';
 
 import { ENTER_PICTURE_IN_PICTURE } from './actionTypes';
@@ -18,13 +19,10 @@ import { ENTER_PICTURE_IN_PICTURE } from './actionTypes';
  */
 export function enterPictureInPicture() {
     return (dispatch: Dispatch, getState: Function) => {
-        const state = getState();
-        const { app } = state['features/app'];
-
         // XXX At the time of this writing this action can only be dispatched by
         // the button which is on the conference view, which means that it's
         // fine to enter PiP mode.
-        if (app && app.props.pictureInPictureEnabled) {
+        if (getAppProp(getState, 'pictureInPictureEnabled')) {
             const { PictureInPicture } = NativeModules;
             const p
                 = Platform.OS === 'android'

@@ -3,6 +3,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
+import { getAppProp } from '../../../app';
 import { ToolbarButton } from '../../../toolbox';
 
 import { enterPictureInPicture } from '../actions';
@@ -93,8 +94,6 @@ function _mapDispatchToProps(dispatch) {
  * }}
  */
 function _mapStateToProps(state) {
-    const { app } = state['features/app'];
-
     return {
 
         /**
@@ -104,7 +103,7 @@ function _mapStateToProps(state) {
          * @type {boolean}
          */
         _pictureInPictureEnabled:
-            Boolean(app && app.props.pictureInPictureEnabled)
+            Boolean(getAppProp(state, 'pictureInPictureEnabled'))
     };
 }
 

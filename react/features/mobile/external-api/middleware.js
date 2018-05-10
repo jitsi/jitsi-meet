@@ -1,7 +1,8 @@
-/* @flow */
+// @flow
 
 import { NativeModules } from 'react-native';
 
+import { getAppProp } from '../../app';
 import {
     CONFERENCE_FAILED,
     CONFERENCE_JOINED,
@@ -215,22 +216,14 @@ function _sendConferenceFailedOnConnectionError(store, action) {
  * @private
  * @returns {void}
  */
-function _sendEvent(
-        { getState }: { getState: Function },
-        name: string,
-        data: Object) {
+function _sendEvent(store: Object, name: string, data: Object) {
     // The JavaScript App needs to provide uniquely identifying information to
     // the native ExternalAPI module so that the latter may match the former to
     // the native JitsiMeetView which hosts it.
-    const { app } = getState()['features/app'];
+    const externalAPIScope = getAppProp(store, 'externalAPIScope');
 
-    if (app) {
-        const { externalAPIScope } = app.props;
-
-        if (externalAPIScope) {
-            NativeModules.ExternalAPI.sendEvent(name, data, externalAPIScope);
-        }
-    }
+    externalAPIScope
+        && NativeModules.ExternalAPI.sendEvent(name, data, externalAPIScope);
 }
 
 /**

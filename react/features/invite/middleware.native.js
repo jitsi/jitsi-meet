@@ -4,7 +4,7 @@ import i18next from 'i18next';
 import { NativeEventEmitter, NativeModules } from 'react-native';
 
 import { MiddlewareRegistry } from '../base/redux';
-import { APP_WILL_MOUNT, APP_WILL_UNMOUNT } from '../app';
+import { APP_WILL_MOUNT, APP_WILL_UNMOUNT, getAppProp } from '../app';
 
 import { invite } from './actions';
 import {
@@ -107,21 +107,15 @@ function _appWillMount({ dispatch, getState }, next, action) {
  * @private
  * @returns {*} The value returned by {@code next(action)}.
  */
-function _beginAddPeople({ getState }, next, action) {
+function _beginAddPeople(store, next, action) {
     const result = next(action);
 
     // The JavaScript App needs to provide uniquely identifying information to
     // the native Invite module so that the latter may match the former to the
     // native JitsiMeetView which hosts it.
-    const { app } = getState()['features/app'];
+    const externalAPIScope = getAppProp(store, 'externalAPIScope');
 
-    if (app) {
-        const { externalAPIScope } = app.props;
-
-        if (externalAPIScope) {
-            Invite.beginAddPeople(externalAPIScope);
-        }
-    }
+    externalAPIScope && Invite.beginAddPeople(externalAPIScope);
 
     return result;
 }
@@ -139,8 +133,7 @@ function _onInvite({ addPeopleControllerScope, externalAPIScope, invitees }) {
     // If there are multiple JitsiMeetView instances alive, they will all get
     // the event, since there is a single bridge, so make sure we don't act if
     // the event is not for us.
-    if (getState()['features/app'].app.props.externalAPIScope
-            !== externalAPIScope) {
+    if (getAppProp(getState, 'externalAPIScope') !== externalAPIScope) {
         return;
     }
 
@@ -167,7 +160,7 @@ function _onPerformQuery(
     // If there are multiple JitsiMeetView instances alive, they will all get
     // the event, since there is a single bridge, so make sure we don't act if
     // the event is not for us.
-    if (state['features/app'].app.props.externalAPIScope !== externalAPIScope) {
+    if (getAppProp(state, 'externalAPIScope') !== externalAPIScope) {
         return;
     }
 
