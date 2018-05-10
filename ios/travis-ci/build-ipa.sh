@@ -77,8 +77,8 @@ fi
 if [ ! -z ${LIB_JITSI_MEET_PKG} ];
 then
     echo "Adjusting lib-jitsi-meet package in package.json to ${LIB_JITSI_MEET_PKG}"
-    # escape / for the sed
-    LIB_JITSI_MEET_PKG=${LIB_JITSI_MEET_PKG/\//\\/}
+    # escape for the sed
+    LIB_JITSI_MEET_PKG=$(echo $LIB_JITSI_MEET_PKG | sed -e 's/\\/\\\\/g; s/\//\\\//g; s/&/\\\&/g')
     sed -i.bak -e "s/\"lib-jitsi-meet.*/\"lib-jitsi-meet\"\: \"${LIB_JITSI_MEET_PKG}\",/g" package.json
     echo "Package.json lib-jitsi-meet line:"
     grep lib-jitsi-meet package.json
