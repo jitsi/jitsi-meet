@@ -1,4 +1,4 @@
-/* @flow */
+// @flow
 
 import { toState } from '../base/redux';
 import { getDeepLinkingPage } from '../deep-linking';
@@ -48,6 +48,8 @@ const _INTERCEPT_COMPONENT_RULES = [
         return Promise.resolve();
     }
 ];
+
+export * from './functions.any';
 
 /**
  * Determines which route is to be rendered in order to depict a specific redux

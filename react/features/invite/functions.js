@@ -1,5 +1,6 @@
 // @flow
 
+import { getAppProp } from '../app';
 import { getLocalParticipant, PARTICIPANT_ROLE } from '../base/participants';
 import { doGetJSON } from '../base/util';
 
@@ -282,8 +283,7 @@ export function isAddPeopleEnabled(state: Object): boolean {
         // XXX The mobile/react-native app is capable of disabling the
         // adding/inviting of people in the current conference. Anyway, the
         // Web/React app does not have that capability so default appropriately.
-        const { app } = state['features/app'];
-        const addPeopleEnabled = app && app.props.addPeopleEnabled;
+        const addPeopleEnabled = getAppProp(state, 'addPeopleEnabled');
 
         return (
             (typeof addPeopleEnabled === 'undefined')
@@ -313,9 +313,7 @@ export function isDialOutEnabled(state: Object): boolean {
         // XXX The mobile/react-native app is capable of disabling of dial-out.
         // Anyway, the Web/React app does not have that capability so default
         // appropriately.
-        const { app } = state['features/app'];
-
-        dialOutEnabled = app && app.props.dialoOutEnabled;
+        dialOutEnabled = getAppProp(state, 'dialOutEnabled');
 
         return (
             (typeof dialOutEnabled === 'undefined') || Boolean(dialOutEnabled));

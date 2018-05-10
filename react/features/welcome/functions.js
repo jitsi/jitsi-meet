@@ -1,5 +1,6 @@
-/* @flow */
+// @flow
 
+import { getAppProp } from '../app';
 import { toState } from '../base/redux';
 
 declare var APP: Object;
@@ -12,12 +13,12 @@ export * from './roomnameGenerator';
  * (e.g. programmatically via the Jitsi Meet SDK for Android and iOS). Not to be
  * confused with {@link isWelcomePageUserEnabled}.
  *
- * @param {Object|Function} stateOrGetState - The redux state or
- * {@link getState} function.
+ * @param {Function|Object} stateful - The redux state or {@link getState}
+ * function.
  * @returns {boolean} If the {@code WelcomePage} is enabled by the app, then
  * {@code true}; otherwise, {@code false}.
  */
-export function isWelcomePageAppEnabled(stateOrGetState: Object | Function) {
+export function isWelcomePageAppEnabled(stateful: Function | Object) {
     let b;
 
     if (navigator.product === 'ReactNative') {
@@ -28,9 +29,7 @@ export function isWelcomePageAppEnabled(stateOrGetState: Object | Function) {
         // - Enabling/disabling the Welcome page on Web historically
         // automatically redirects to a random room and that does not make sense
         // on mobile (right now).
-        const { app } = toState(stateOrGetState)['features/app'];
-
-        b = Boolean(app && app.props.welcomePageEnabled);
+        b = Boolean(getAppProp(stateful, 'welcomePageEnabled'));
     } else {
         b = true;
     }
@@ -43,15 +42,14 @@ export function isWelcomePageAppEnabled(stateOrGetState: Object | Function) {
  * herself or through her deployment config(uration). Not to be confused with
  * {@link isWelcomePageAppEnabled}.
  *
- * @param {Object|Function} stateOrGetState - The redux state or
- * {@link getState} function.
+ * @param {Function|Object} stateful - The redux state or {@link getState}
+ * function.
  * @returns {boolean} If the {@code WelcomePage} is enabled by the user, then
  * {@code true}; otherwise, {@code false}.
  */
-export function isWelcomePageUserEnabled(stateOrGetState: Object | Function) {
+export function isWelcomePageUserEnabled(stateful: Function | Object) {
     return (
         typeof APP === 'undefined'
             ? true
-            : toState(stateOrGetState)['features/base/config']
-                .enableWelcomePage);
+            : toState(stateful)['features/base/config'].enableWelcomePage);
 }
