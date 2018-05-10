@@ -10,7 +10,7 @@ import {
 } from '../../../analytics';
 import { Dialog } from '../../../base/dialog';
 import { translate } from '../../../base/i18n';
-import JitsiMeetJS from '../../../base/lib-jitsi-meet';
+import { JitsiRecordingConstants } from '../../../base/lib-jitsi-meet';
 
 import googleApi from '../../googleApi';
 
@@ -361,7 +361,7 @@ class StartLiveStreamDialog extends Component<Props, State> {
 
         this.props._conference.startRecording({
             broadcastId: selectedBroadcastID,
-            mode: JitsiMeetJS.constants.recording.mode.STREAM,
+            mode: JitsiRecordingConstants.mode.STREAM,
             streamId: streamKey
         });
 

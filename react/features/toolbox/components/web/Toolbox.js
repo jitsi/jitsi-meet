@@ -11,7 +11,7 @@ import {
 } from '../../../analytics';
 import { openDialog } from '../../../base/dialog';
 import { translate } from '../../../base/i18n';
-import JitsiMeetJS from '../../../base/lib-jitsi-meet';
+import { JitsiRecordingConstants } from '../../../base/lib-jitsi-meet';
 import {
     PARTICIPANT_ROLE,
     getLocalParticipant,
@@ -56,8 +56,6 @@ import OverflowMenuItem from './OverflowMenuItem';
 import OverflowMenuProfileItem from './OverflowMenuProfileItem';
 import ToolbarButton from './ToolbarButton';
 import VideoMuteButton from '../VideoMuteButton';
-
-const { mode: recordingModeConstants } = JitsiMeetJS.constants.recording;
 
 /**
  * The type of the React {@code Component} props of {@link Toolbox}.
@@ -806,7 +804,7 @@ class Toolbox extends Component<Props> {
             'livestreaming.button',
             {
                 'is_streaming': Boolean(this.props._liveStreamingSession),
-                type: recordingModeConstants.STREAM
+                type: JitsiRecordingConstants.mode.STREAM
             }));
 
         this._doToggleLiveStreaming();
@@ -857,7 +855,7 @@ class Toolbox extends Component<Props> {
             'recording.button',
             {
                 'is_recording': Boolean(this.props._fileRecordingSession),
-                type: recordingModeConstants.FILE
+                type: JitsiRecordingConstants.mode.FILE
             }));
 
         this._doToggleRecording();
@@ -1146,10 +1144,10 @@ function _mapStateToProps(state) {
             iAmRecorder || (!addPeopleEnabled && !dialOutEnabled),
         _isGuest: state['features/base/jwt'].isGuest,
         _fileRecordingSession:
-            getActiveSession(state, recordingModeConstants.FILE),
+            getActiveSession(state, JitsiRecordingConstants.mode.FILE),
         _fullScreen: fullScreen,
         _liveStreamingSession:
-             getActiveSession(state, recordingModeConstants.STREAM),
+             getActiveSession(state, JitsiRecordingConstants.mode.STREAM),
         _localParticipantID: localParticipant.id,
         _overflowMenuVisible: overflowMenuVisible,
         _raisedHand: localParticipant.raisedHand,

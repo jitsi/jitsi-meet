@@ -2,42 +2,59 @@
 
 import React, { Component } from 'react';
 import { translate } from '../../base/i18n';
-import JitsiMeetJS from '../../base/lib-jitsi-meet';
-
-const {
-    error: errorConstants,
-    mode: modeConstants,
-    status: statusConstants
-} = JitsiMeetJS.constants.recording;
+import { JitsiRecordingConstants } from '../../base/lib-jitsi-meet';
 
 /**
- * The translation keys to use when displaying messages.
+ * The translation keys to use when displaying messages. The values are set
+ * lazily to work around circular dependency issues with lib-jitsi-meet causing
+ * undefined imports.
  *
  * @private
  * @type {Object}
  */
-const TRANSLATION_KEYS_FOR_MODES = {
-    [modeConstants.FILE]: {
-        status: {
-            [statusConstants.PENDING]: 'recording.pending',
-            [statusConstants.OFF]: 'recording.off'
-        },
-        errors: {
-            [errorConstants.BUSY]: 'recording.failedToStart',
-            [errorConstants.ERROR]: 'recording.error'
-        }
-    },
-    [modeConstants.STREAM]: {
-        status: {
-            [statusConstants.PENDING]: 'liveStreaming.pending',
-            [statusConstants.OFF]: 'liveStreaming.off'
-        },
-        errors: {
-            [errorConstants.BUSY]: 'liveStreaming.busy',
-            [errorConstants.ERROR]: 'liveStreaming.error'
-        }
+let TRANSLATION_KEYS_BY_MODE = null;
+
+/**
+ * Lazily initializes TRANSLATION_KEYS_BY_MODE with translation keys to be used
+ * by the {@code RecordingLabel} for messaging recording session state.
+ *
+ * @private
+ * @returns {Object}
+ */
+function _getTranslationKeysByMode() {
+    if (!TRANSLATION_KEYS_BY_MODE) {
+        const {
+            error: errorConstants,
+            mode: modeConstants,
+            status: statusConstants
+        } = JitsiRecordingConstants;
+
+        TRANSLATION_KEYS_BY_MODE = {
+            [modeConstants.FILE]: {
+                status: {
+                    [statusConstants.PENDING]: 'recording.pending',
+                    [statusConstants.OFF]: 'recording.off'
+                },
+                errors: {
+                    [errorConstants.BUSY]: 'recording.failedToStart',
+                    [errorConstants.ERROR]: 'recording.error'
+                }
+            },
+            [modeConstants.STREAM]: {
+                status: {
+                    [statusConstants.PENDING]: 'liveStreaming.pending',
+                    [statusConstants.OFF]: 'liveStreaming.off'
+                },
+                errors: {
+                    [errorConstants.BUSY]: 'liveStreaming.busy',
+                    [errorConstants.ERROR]: 'liveStreaming.error'
+                }
+            }
+        };
     }
-};
+
+    return TRANSLATION_KEYS_BY_MODE;
+}
 
 /**
  * The type of the React {@code Component} props of {@link RecordingLabel}.
@@ -90,7 +107,7 @@ class RecordingLabel extends Component<Props, State> {
      * @inheritdoc
      */
     componentDidMount() {
-        if (this.props.session.status === statusConstants.OFF) {
+        if (this.props.session.status === JitsiRecordingConstants.status.OFF) {
             this._setHideTimeout();
         }
     }
@@ -105,8 +122,8 @@ class RecordingLabel extends Component<Props, State> {
         const { status } = this.props.session;
         const nextStatus = nextProps.session.status;
 
-        if (status !== statusConstants.OFF
-            && nextStatus === statusConstants.OFF) {
+        if (status !== JitsiRecordingConstants.status.OFF
+            && nextStatus === JitsiRecordingConstants.status.OFF) {
             this._setHideTimeout();
         }
     }
@@ -131,8 +148,14 @@ class RecordingLabel extends Component<Props, State> {
             return null;
         }
 
+        const {
+            error: errorConstants,
+            mode: modeConstants,
+            status: statusConstants
+        } = JitsiRecordingConstants;
         const { session } = this.props;
-        const translationKeys = TRANSLATION_KEYS_FOR_MODES[session.mode];
+        const allTranslationKeys = _getTranslationKeysByMode();
+        const translationKeys = allTranslationKeys[session.mode];
         let icon, key;
 
         switch (session.status) {

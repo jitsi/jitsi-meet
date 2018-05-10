@@ -9,7 +9,7 @@ import {
 } from '../../../analytics';
 import { Dialog } from '../../../base/dialog';
 import { translate } from '../../../base/i18n';
-import JitsiMeetJS from '../../../base/lib-jitsi-meet';
+import { JitsiRecordingConstants } from '../../../base/lib-jitsi-meet';
 
 /**
  * The type of the React {@code Component} props of
@@ -77,7 +77,7 @@ class StartRecordingDialog extends Component<Props> {
         sendAnalytics(createRecordingDialogEvent('start', 'confirm.button'));
 
         this.props._conference.startRecording({
-            mode: JitsiMeetJS.constants.recording.mode.FILE
+            mode: JitsiRecordingConstants.mode.FILE
         });
 
         return true;

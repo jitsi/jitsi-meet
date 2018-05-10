@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 
 import { createToolbarEvent, sendAnalytics } from '../../analytics';
 import { translate } from '../../base/i18n';
-import JitsiMeetJS from '../../base/lib-jitsi-meet';
+import { JitsiRecordingConstants } from '../../base/lib-jitsi-meet';
 import { getParticipantCount } from '../../base/participants';
 import { getActiveSession } from '../../recording';
 import { ToolbarButton } from '../../toolbox';
@@ -13,8 +13,6 @@ import { ToolbarButton } from '../../toolbox';
 import { updateDialInNumbers } from '../actions';
 
 import { InfoDialog } from './info-dialog';
-
-const { mode: recordingModeConstants } = JitsiMeetJS.constants.recording;
 
 /**
  * The amount of time, in milliseconds, to wait until automatically showing
@@ -233,7 +231,7 @@ class InfoDialogButton extends Component {
  */
 function _mapStateToProps(state) {
     const currentLiveStreamingSession
-        = getActiveSession(state, recordingModeConstants.STREAM);
+        = getActiveSession(state, JitsiRecordingConstants.mode.STREAM);
 
     return {
         _dialIn: state['features/invite'],

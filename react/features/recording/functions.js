@@ -1,6 +1,4 @@
-import JitsiMeetJS from '../base/lib-jitsi-meet';
-
-const { status: statusConstants } = JitsiMeetJS.constants.recording;
+import { JitsiRecordingConstants } from '../base/lib-jitsi-meet';
 
 /**
  * Searches in the passed in redux state for an active recording session of the
@@ -12,6 +10,7 @@ const { status: statusConstants } = JitsiMeetJS.constants.recording;
  */
 export function getActiveSession(state, mode) {
     const { sessions } = state['features/recording'];
+    const { status: statusConstants } = JitsiRecordingConstants;
 
     return sessions.find(session => session.mode === mode
         && (session.status === statusConstants.ON
