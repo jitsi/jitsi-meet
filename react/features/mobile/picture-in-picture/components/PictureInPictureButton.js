@@ -41,17 +41,6 @@ class PictureInPictureButton extends AbstractButton<Props, *> {
     }
 
     /**
-     * Indicates whether this button is disabled or not.
-     *
-     * @override
-     * @private
-     * @returns {boolean}
-     */
-    _isDisabled() {
-        return false;
-    }
-
-    /**
      * Implements React's {@link Component#render()}.
      *
      * @inheritdoc

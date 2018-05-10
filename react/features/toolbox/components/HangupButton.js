@@ -44,17 +44,6 @@ class HangupButton extends AbstractHangupButton<Props, *> {
             this.props.dispatch(disconnect(true));
         }
     }
-
-    /**
-     * Indicates if this button should be disabled or not.
-     *
-     * @override
-     * @private
-     * @returns {boolean}
-     */
-    _isDisabled() {
-        return false;
-    }
 }
 
 export default translate(connect()(HangupButton));

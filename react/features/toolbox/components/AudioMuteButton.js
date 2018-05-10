@@ -36,17 +36,6 @@ class AudioMuteButton extends AbstractAudioMuteButton<Props, *> {
     tooltip = 'toolbar.mute';
 
     /**
-     * Indicates if this button should be disabled or not.
-     *
-     * @override
-     * @private
-     * @returns {boolean}
-     */
-    _isDisabled() {
-        return false;
-    }
-
-    /**
      * Indicates if audio is currently muted ot nor.
      *
      * @override
@@ -68,7 +57,6 @@ class AudioMuteButton extends AbstractAudioMuteButton<Props, *> {
         sendAnalytics(createToolbarEvent(AUDIO_MUTE, { enable: audioMuted }));
         this.props.dispatch(setAudioMuted(audioMuted));
     }
-
 }
 
 /**

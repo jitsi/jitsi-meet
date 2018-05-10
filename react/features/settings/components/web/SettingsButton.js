@@ -55,17 +55,6 @@ class SettingsButton extends AbstractButton<Props, *> {
             dispatch(toggleSettings());
         }
     }
-
-    /**
-     * Indicates whether this button is disabled or not.
-     *
-     * @override
-     * @private
-     * @returns {boolean}
-     */
-    _isDisabled() {
-        return false;
-    }
 }
 
 /**

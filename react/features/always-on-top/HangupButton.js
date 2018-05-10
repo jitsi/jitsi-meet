@@ -20,15 +20,4 @@ export default class HangupButton extends AbstractHangupButton<Props, *> {
         api.executeCommand('hangup');
         window.close();
     }
-
-    /**
-     * Indicates whether this button is disabled or not.
-     *
-     * @override
-     * @private
-     * @returns {boolean}
-     */
-    _isDisabled() {
-        return false;
-    }
 }

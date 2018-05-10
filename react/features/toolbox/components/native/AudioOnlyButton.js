@@ -40,17 +40,6 @@ class AudioOnlyButton extends AbstractButton<Props, *> {
     }
 
     /**
-     * Indicates whether this button is disabled or not.
-     *
-     * @override
-     * @private
-     * @returns {boolean}
-     */
-    _isDisabled() {
-        return false;
-    }
-
-    /**
      * Indicates whether this button is in toggled state or not.
      *
      * @override

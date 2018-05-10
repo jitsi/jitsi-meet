@@ -81,7 +81,6 @@ class VideoMuteButton extends AbstractVideoMuteButton<Props, *> {
                 VIDEO_MUTISM_AUTHORITY.USER,
                 /* ensureTrack */ true));
     }
-
 }
 
 /**
