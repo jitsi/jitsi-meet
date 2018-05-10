@@ -1,3 +1,6 @@
-export { default as ToolbarButton } from './ToolbarButton';
-export { default as Toolbox } from './Toolbox';
-export * from './buttons';
+// @flow
+
+export * from './_';
+export { default as AudioMuteButton } from './AudioMuteButton';
+export { default as HangupButton } from './HangupButton';
+export { default as VideoMuteButton } from './VideoMuteButton';

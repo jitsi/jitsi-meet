@@ -18,12 +18,6 @@ const indicator = {
  * The styles of the feature filmstrip.
  */
 export default createStyleSheet(platformIndependentStyles, {
-
-    /**
-     * Audio muted indicator style.
-     */
-    thumbnailIndicator: indicator,
-
     dominantSpeakerIndicator: {
         fontSize: 12
     },
@@ -47,5 +41,10 @@ export default createStyleSheet(platformIndependentStyles, {
     thumbnail: {
         height: 80,
         width: 80
-    }
+    },
+
+    /**
+     * Audio muted indicator style.
+     */
+    thumbnailIndicator: indicator
 });

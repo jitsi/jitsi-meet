@@ -1,10 +1,7 @@
 // @flow
 
-// XXX Import the button directly in order to avoid bringing in other components
-// that use lib-jitsi-meet, which always-on-top does not import.
-import AbstractVideoMuteButton
-    from '../toolbox/components/buttons/AbstractVideoMuteButton';
-import type { Props } from '../toolbox/components/buttons/AbstractButton';
+import { AbstractVideoMuteButton } from '../base/toolbox';
+import type { AbstractButtonProps as Props } from '../base/toolbox';
 
 const { api } = window.alwaysOnTop;
 

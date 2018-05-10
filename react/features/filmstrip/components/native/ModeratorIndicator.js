@@ -6,7 +6,7 @@ import styles from './styles';
 /**
  * Thumbnail badge showing that the participant is a conference moderator.
  */
-export class ModeratorIndicator extends Component {
+export default class ModeratorIndicator extends Component {
     /**
      * Implements React's {@link Component#render()}.
      *

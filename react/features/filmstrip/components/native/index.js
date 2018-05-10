@@ -1,5 +1,2 @@
-export * from './AudioMutedIndicator';
-export * from './DominantSpeakerIndicator';
-export * from './ModeratorIndicator';
+export { default as Filmstrip } from './Filmstrip';
 export { default as styles } from './styles';
-export * from './VideoMutedIndicator';

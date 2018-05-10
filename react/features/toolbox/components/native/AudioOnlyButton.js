@@ -1,0 +1,83 @@
+// @flow
+
+import { connect } from 'react-redux';
+
+import { toggleAudioOnly } from '../../../base/conference';
+import { translate } from '../../../base/i18n';
+import { AbstractButton } from '../../../base/toolbox';
+import type { AbstractButtonProps } from '../../../base/toolbox';
+
+type Props = AbstractButtonProps & {
+
+    /**
+     * Whether the current conference is in audio only mode or not.
+     */
+    _audioOnly: boolean,
+
+    /**
+     * The redux {@code dispatch} function.
+     */
+    dispatch: Function
+};
+
+/**
+ * An implementation of a button for toggling the audio-only mode.
+ */
+class AudioOnlyButton extends AbstractButton<Props, *> {
+    accessibilityLabel = 'Audio only mode';
+    iconName = 'visibility';
+    label = 'toolbar.audioonly';
+    toggledIconName = 'visibility-off';
+
+    /**
+     * Handles clicking / pressing the button.
+     *
+     * @private
+     * @returns {void}
+     */
+    _handleClick() {
+        this.props.dispatch(toggleAudioOnly());
+    }
+
+    /**
+     * Indicates whether this button is disabled or not.
+     *
+     * @override
+     * @private
+     * @returns {boolean}
+     */
+    _isDisabled() {
+        return false;
+    }
+
+    /**
+     * Indicates whether this button is in toggled state or not.
+     *
+     * @override
+     * @private
+     * @returns {boolean}
+     */
+    _isToggled() {
+        return this.props._audioOnly;
+    }
+}
+
+/**
+ * Maps (parts of) the redux state to the associated props for the
+ * {@code AudioOnlyButton} component.
+ *
+ * @param {Object} state - The Redux state.
+ * @private
+ * @returns {{
+ *     _audioOnly: boolean
+ * }}
+ */
+function _mapStateToProps(state): Object {
+    const { audioOnly } = state['features/base/conference'];
+
+    return {
+        _audioOnly: Boolean(audioOnly)
+    };
+}
+
+export default translate(connect(_mapStateToProps)(AudioOnlyButton));

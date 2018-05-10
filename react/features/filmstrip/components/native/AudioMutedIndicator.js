@@ -7,7 +7,7 @@ import styles from './styles';
 /**
  * Thumbnail badge for displaying the audio mute status of a participant.
  */
-export class AudioMutedIndicator extends Component {
+export default class AudioMutedIndicator extends Component {
     /**
      * Implements React's {@link Component#render()}.
      *
