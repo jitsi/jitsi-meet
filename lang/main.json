@@ -390,9 +390,11 @@
         "buttonTooltip": "Start / Stop recording",
         "error": "Recording failed. Please try again.",
         "failedToStart": "Recording failed to start",
+        "live": "LIVE",
         "off": "Recording stopped",
         "on": "Recording",
         "pending": "Recording waiting for a member to join...",
+        "rec": "REC",
         "serviceName": "Recording service",
         "startRecordingBody": "Are you sure you would like to start recording?",
         "unavailable": "Oops! The __serviceName__ is currently unavailable. We're working on resolving the issue. Please try again later.",
@@ -450,6 +452,7 @@
         "testAudio": "Play a test sound"
     },
     "videoStatus": {
+        "audioOnly": "AUD",
         "callQuality": "Call Quality",
         "hd": "HD",
         "hdTooltip": "Viewing high definition video",

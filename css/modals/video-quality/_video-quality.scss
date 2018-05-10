@@ -153,72 +153,46 @@
     transition: right 0.5s;
     z-index: $zindex3;
 
-    .recording-label {
-        &.is-recording {
-            display: block;
-            margin-left: 5px;
-        }
-
-        &.center-message {
-            background: $videoStateIndicatorBackground;
-            bottom: 50%;
-            display: block;
-            left: 50%;
-            padding: 10px;
-            position: fixed;
-            transform: translate(-50%, -50%);
-            z-index: $centeredVideoLabelZ;
-        }
-
-        .icon-live {
-            color: #0065FF
-        }
-
-        .icon-rec {
-            color: #FF5630;
-        }
-
-        .recording-icon {
-            margin-left: 5px;
-        }
-
-        .recording-icon,
-        .recording-icon i {
-            line-height: $videoStateIndicatorSize;
-            font-size: $videoStateIndicatorSize;
-            opacity: 0.9;
-            position: relative;
-        }
-
-        .recording-icon-background {
-            background: white;
-            height: 25%;
-            left: 50%;
-            opacity: 0.9;
-            position: absolute;
-            top: 50%;
-            transform: translate(-50%, -50%);
-            width: 80%;
-        }
+    .circular-label {
+        color: white;
+        font-family: -apple-system, BlinkMacSystemFont, $baseFontFamily;
+        font-weight: bold;
+        margin-left: 8px;
+        opacity: 0.8;
     }
 
-    .video-quality-label {
+    .circular-label {
+        background: #B8C7E0;
+    }
+
+    .circular-label.file {
+        background: #FF5630;
+    }
+
+    .circular-label.stream {
+        background: #0065FF;
+    }
+
+    .recording-label.center-message {
         background: $videoStateIndicatorBackground;
-        border-radius: 50%;
-        box-sizing: border-box;
-        cursor: default;
-        font-size: 13px;
-        height: $videoStateIndicatorSize;
-        line-height: 20px;
-        text-align: left;
-        margin-left: 5px;
-        min-width: $videoStateIndicatorSize;
-
-        .video-quality-label-status,
-        i {
-            line-height: $videoStateIndicatorSize;
-            min-width: $videoStateIndicatorSize;
-            text-align: center;
-        }
+        bottom: 50%;
+        display: block;
+        left: 50%;
+        padding: 10px;
+        position: fixed;
+        transform: translate(-50%, -50%);
+        z-index: $centeredVideoLabelZ;
     }
+}
+
+.circular-label {
+    background: $videoStateIndicatorBackground;
+    border-radius: 50%;
+    box-sizing: border-box;
+    cursor: default;
+    font-size: 13px;
+    height: $videoStateIndicatorSize;
+    line-height: $videoStateIndicatorSize;
+    text-align: center;
+    min-width: $videoStateIndicatorSize;
 }

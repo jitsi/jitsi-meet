@@ -1,6 +1,8 @@
 // @flow
 
 import React, { Component } from 'react';
+
+import { CircularLabel } from '../../base/label';
 import { translate } from '../../base/i18n';
 import { JitsiRecordingConstants } from '../../base/lib-jitsi-meet';
 
@@ -156,39 +158,40 @@ class RecordingLabel extends Component<Props, State> {
         const { session } = this.props;
         const allTranslationKeys = _getTranslationKeysByMode();
         const translationKeys = allTranslationKeys[session.mode];
-        let icon, key;
+        let circularLabelClass, circularLabelKey, messageKey;
 
         switch (session.status) {
         case statusConstants.OFF: {
             if (session.error) {
-                key = translationKeys.errors[session.error]
+                messageKey = translationKeys.errors[session.error]
                     || translationKeys.errors[errorConstants.ERROR];
             } else {
-                key = translationKeys.status[statusConstants.OFF];
+                messageKey = translationKeys.status[statusConstants.OFF];
             }
             break;
         }
         case statusConstants.ON:
-            icon = session.mode === modeConstants.STREAM
-                ? 'icon-live' : 'icon-rec';
+            circularLabelClass = session.mode;
+            circularLabelKey = session.mode === modeConstants.STREAM
+                ? 'recording.live' : 'recording.rec';
             break;
         case statusConstants.PENDING:
-            key = translationKeys.status[statusConstants.PENDING];
+            messageKey = translationKeys.status[statusConstants.PENDING];
             break;
         }
 
-        const className = `recording-label ${key ? 'center-message' : ''}`;
+        const className = `recording-label ${
+            messageKey ? 'center-message' : ''}`;
 
         return (
             <div className = { className }>
-                { key
+                { messageKey
                     ? <div>
-                        { this.props.t(key) }
+                        { this.props.t(messageKey) }
                     </div>
-                    : <div className = 'recording-icon'>
-                        <div className = 'recording-icon-background' />
-                        <i className = { icon } />
-                    </div> }
+                    : <CircularLabel className = { circularLabelClass }>
+                        { this.props.t(circularLabelKey) }
+                    </CircularLabel> }
             </div>
         );
     }

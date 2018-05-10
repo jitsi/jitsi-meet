@@ -4,6 +4,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
 import { translate } from '../../base/i18n';
+import { CircularLabel } from '../../base/label';
 import { MEDIA_TYPE } from '../../base/media';
 import { getTrackByMediaTypeAndParticipant } from '../../base/tracks';
 
@@ -102,10 +103,10 @@ export class VideoQualityLabel extends Component {
         let labelContent, tooltipKey;
 
         if (_audioOnly) {
-            labelContent = <i className = 'icon-visibility-off' />;
+            labelContent = t('videoStatus.audioOnly');
             tooltipKey = 'videoStatus.labelTooltipAudioOnly';
         } else if (!_videoTrack || _videoTrack.muted) {
-            labelContent = <i className = 'icon-visibility-off' />;
+            labelContent = t('videoStatus.audioOnly');
             tooltipKey = 'videoStatus.labelTooiltipNoVideo';
         } else {
             const translationKeys
@@ -117,17 +118,15 @@ export class VideoQualityLabel extends Component {
 
 
         return (
-            <div
-                className = 'video-quality-label'
-                id = 'videoResolutionLabel'>
-                <Tooltip
-                    content = { t(tooltipKey) }
-                    position = { 'left' }>
-                    <div className = 'video-quality-label-status'>
-                        { labelContent }
-                    </div>
-                </Tooltip>
-            </div>
+            <Tooltip
+                content = { t(tooltipKey) }
+                position = { 'left' }>
+                <CircularLabel
+                    className = 'vid-quality'
+                    id = 'videoResolutionLabel'>
+                    { labelContent }
+                </CircularLabel>
+            </Tooltip>
         );
     }
 
