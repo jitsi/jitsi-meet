@@ -86,15 +86,18 @@ export class VideoQualityLabel extends Component {
         } = this.props;
 
 
-        let labelContent, tooltipKey;
+        let className, labelContent, tooltipKey;
 
         if (_audioOnly) {
+            className = 'audio-only';
             labelContent = t('videoStatus.audioOnly');
             tooltipKey = 'videoStatus.labelTooltipAudioOnly';
         } else if (!_videoTrack || _videoTrack.muted) {
+            className = 'no-video';
             labelContent = t('videoStatus.audioOnly');
             tooltipKey = 'videoStatus.labelTooiltipNoVideo';
         } else {
+            className = 'current-video-quality';
             labelContent = t(_labelKey);
             tooltipKey = _tooltipKey;
         }
@@ -105,7 +108,7 @@ export class VideoQualityLabel extends Component {
                 content = { t(tooltipKey) }
                 position = { 'left' }>
                 <CircularLabel
-                    className = 'vid-quality'
+                    className = { className }
                     id = 'videoResolutionLabel'>
                     { labelContent }
                 </CircularLabel>
