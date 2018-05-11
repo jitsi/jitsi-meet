@@ -399,14 +399,6 @@ export default class LargeVideoManager {
         // resize all containers
         Object.keys(this.containers)
             .forEach(type => this.resizeContainer(type, animate));
-
-        this.$container.animate({
-            width: this.width,
-            height: this.height
-        }, {
-            queue: false,
-            duration: animate ? 500 : 0
-        });
     }
 
     /**
