@@ -4,6 +4,8 @@
 
 #videospace {
     display: block;
+    height: 100%;
+    width: 100%;
     min-height: 100%;
     position: absolute;
     top: 0px;
@@ -222,6 +224,11 @@
 #largeVideoContainer {
     overflow: hidden;
     text-align: center;
+}
+
+#largeVideoContainer {
+    height: 100%;
+    width: 100%;
 }
 
 #largeVideoWrapper {

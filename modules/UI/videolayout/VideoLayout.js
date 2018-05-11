@@ -855,13 +855,10 @@ const VideoLayout = {
      * Resizes the video area.
      *
      * @param forceUpdate indicates that hidden thumbnails will be shown
-     * @param completeFunction a function to be called when the video area is
-     * resized.
      */
     resizeVideoArea(
             forceUpdate = false,
-            animate = false,
-            completeFunction = null) {
+            animate = false) {
         if (largeVideo) {
             largeVideo.updateContainerSize();
             largeVideo.resize(animate);
@@ -877,17 +874,6 @@ const VideoLayout = {
 
         // Resize the thumbnails first.
         this.resizeThumbnails(forceUpdate);
-
-        // Resize the video area element.
-        $('#videospace').animate({
-            right: window.innerWidth - availableWidth,
-            width: availableWidth,
-            height: availableHeight
-        }, {
-            queue: false,
-            duration: animate ? 500 : 1,
-            complete: completeFunction
-        });
     },
 
     getSmallVideo(id) {
