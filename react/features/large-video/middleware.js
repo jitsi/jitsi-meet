@@ -4,7 +4,8 @@ import {
     DOMINANT_SPEAKER_CHANGED,
     PARTICIPANT_JOINED,
     PARTICIPANT_LEFT,
-    PIN_PARTICIPANT
+    PIN_PARTICIPANT,
+    getLocalParticipant
 } from '../base/participants';
 import { MiddlewareRegistry } from '../base/redux';
 import {
@@ -27,7 +28,16 @@ MiddlewareRegistry.register(store => next => action => {
     const result = next(action);
 
     switch (action.type) {
-    case DOMINANT_SPEAKER_CHANGED:
+    case DOMINANT_SPEAKER_CHANGED: {
+        const localParticipant = getLocalParticipant(store.getState());
+
+        if (localParticipant && localParticipant.id !== action.participant.id) {
+            store.dispatch(selectParticipantInLargeVideo());
+        }
+
+        break;
+    }
+
     case PARTICIPANT_JOINED:
     case PARTICIPANT_LEFT:
     case PIN_PARTICIPANT:
