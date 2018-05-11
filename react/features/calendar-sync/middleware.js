@@ -3,13 +3,12 @@
 import RNCalendarEvents from 'react-native-calendar-events';
 
 import { APP_WILL_MOUNT } from '../app';
-import { SET_ROOM } from '../base/conference';
+import { ADD_KNOWN_DOMAINS } from '../base/domains';
 import { MiddlewareRegistry } from '../base/redux';
 import { APP_LINK_SCHEME, parseURIString } from '../base/util';
 import { APP_STATE_CHANGED } from '../mobile/background';
 
 import {
-    addKnownDomain,
     setCalendarAuthorization,
     setCalendarEvents
 } from './actions';
@@ -18,8 +17,19 @@ import { CALENDAR_ENABLED } from './constants';
 
 const logger = require('jitsi-meet-logger').getLogger(__filename);
 
+/**
+ * The no. of days to fetch.
+ */
 const FETCH_END_DAYS = 10;
+
+/**
+ * The no. of days to go back when fetching.
+ */
 const FETCH_START_DAYS = -1;
+
+/**
+ * The max number of events to fetch from the calendar.
+ */
 const MAX_LIST_LENGTH = 10;
 
 CALENDAR_ENABLED
@@ -31,17 +41,13 @@ CALENDAR_ENABLED
             _maybeClearAccessStatus(store, action);
             break;
 
+        case ADD_KNOWN_DOMAINS:
         case APP_WILL_MOUNT:
-            _ensureDefaultServer(store);
             _fetchCalendarEntries(store, false, false);
             break;
 
         case REFRESH_CALENDAR:
             _fetchCalendarEntries(store, true, action.forcePermission);
-            break;
-
-        case SET_ROOM:
-            _parseAndAddKnownDomain(store);
             break;
         }
 
@@ -96,20 +102,6 @@ function _ensureCalendarAccess(promptForPermission, dispatch) {
 }
 
 /**
- * Ensures presence of the default server in the known domains list.
- *
- * @param {Object} store - The redux store.
- * @private
- * @returns {Promise}
- */
-function _ensureDefaultServer({ dispatch, getState }) {
-    const defaultURL
-        = parseURIString(getState()['features/app'].app._getDefaultURL());
-
-    dispatch(addKnownDomain(defaultURL.host));
-}
-
-/**
  * Reads the user's calendar and updates the stored entries if need be.
  *
  * @param {Object} store - The redux store.
@@ -124,9 +116,10 @@ function _fetchCalendarEntries(
         { dispatch, getState },
         maybePromptForPermission,
         forcePermission) {
-    const state = getState()['features/calendar-sync'];
+    const featureState = getState()['features/calendar-sync'];
+    const knownDomains = getState()['features/base/domains'];
     const promptForPermission
-        = (maybePromptForPermission && !state.authorization)
+        = (maybePromptForPermission && !featureState.authorization)
             || forcePermission;
 
     _ensureCalendarAccess(promptForPermission, dispatch)
@@ -145,7 +138,7 @@ function _fetchCalendarEntries(
                     .then(events =>
                         _updateCalendarEntries(
                             events,
-                            state.knownDomains,
+                            knownDomains,
                             dispatch))
                     .catch(error =>
                         logger.error('Error fetching calendar.', error));
@@ -197,20 +190,6 @@ function _getURLFromEvent(event, knownDomains) {
     }
 
     return null;
-}
-
-/**
- * Retrieves the domain name of a room upon join and stores it in the known
- * domain list, if not present yet.
- *
- * @param {Object} store - The redux store.
- * @private
- * @returns {Promise}
- */
-function _parseAndAddKnownDomain({ dispatch, getState }) {
-    const { locationURL } = getState()['features/base/connection'];
-
-    dispatch(addKnownDomain(locationURL.host));
 }
 
 /**

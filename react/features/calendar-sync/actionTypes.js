@@ -1,17 +1,6 @@
 // @flow
 
 /**
- * Action to add a new domain to the list of domain known to the feature
- * calendar-sync.
- *
- * {
- *     type: ADD_KNOWN_DOMAIN,
- *     knownDomain: string
- * }
- */
-export const ADD_KNOWN_DOMAIN = Symbol('ADD_KNOWN_DOMAIN');
-
-/**
  * Action to refresh (re-fetch) the entry list.
  *
  * {
