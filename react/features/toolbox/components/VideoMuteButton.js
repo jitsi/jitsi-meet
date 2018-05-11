@@ -3,7 +3,9 @@
 import { connect } from 'react-redux';
 
 import {
+    ACTION_SHORTCUT_TRIGGERED,
     VIDEO_MUTE,
+    createShortcutEvent,
     createToolbarEvent,
     sendAnalytics
 } from '../../analytics';
@@ -16,6 +18,8 @@ import {
 import { AbstractVideoMuteButton } from '../../base/toolbox';
 import type { AbstractButtonProps } from '../../base/toolbox';
 import { isLocalTrackMuted } from '../../base/tracks';
+
+declare var APP: Object;
 
 /**
  * The type of the React {@code Component} props of {@link VideoMuteButton}.
@@ -48,6 +52,45 @@ class VideoMuteButton extends AbstractVideoMuteButton<Props, *> {
     tooltip = 'toolbar.videomute';
 
     /**
+     * Initializes a new {@code VideoMuteButton} instance.
+     *
+     * @param {Props} props - The read-only React {@code Component} props with
+     * which the new instance is to be initialized.
+     */
+    constructor(props: Props) {
+        super(props);
+
+        // Bind event handlers so they are only bound once per instance.
+        this._onKeyboardShortcut = this._onKeyboardShortcut.bind(this);
+    }
+
+    /**
+     * Registers the keyboard shortcut that toggles the video muting.
+     *
+     * @inheritdoc
+     * @returns {void}
+     */
+    componentDidMount() {
+        typeof APP === 'undefined'
+            || APP.keyboardshortcut.registerShortcut(
+                'V',
+                null,
+                this._onKeyboardShortcut,
+                'keyboardShortcuts.videoMute');
+    }
+
+    /**
+     * Unregisters the keyboard shortcut that toggles the video muting.
+     *
+     * @inheritdoc
+     * @returns {void}
+     */
+    componentWillUnmount() {
+        typeof APP === 'undefined'
+            || APP.keyboardshortcut.unregisterShortcut('V');
+    }
+
+    /**
      * Indicates if this button should be disabled or not.
      *
      * @override
@@ -67,6 +110,25 @@ class VideoMuteButton extends AbstractVideoMuteButton<Props, *> {
      */
     _isVideoMuted() {
         return this.props._videoMuted;
+    }
+
+    _onKeyboardShortcut: () => void;
+
+    /**
+     * Creates an analytics keyboard shortcut event and dispatches an action to
+     * toggle the video muting.
+     *
+     * @private
+     * @returns {void}
+     */
+    _onKeyboardShortcut() {
+        sendAnalytics(
+            createShortcutEvent(
+                VIDEO_MUTE,
+                ACTION_SHORTCUT_TRIGGERED,
+                { enable: !this._isVideoMuted() }));
+
+        super._handleClick();
     }
 
     /**

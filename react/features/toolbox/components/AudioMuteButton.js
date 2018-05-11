@@ -3,7 +3,9 @@
 import { connect } from 'react-redux';
 
 import {
+    ACTION_SHORTCUT_TRIGGERED,
     AUDIO_MUTE,
+    createShortcutEvent,
     createToolbarEvent,
     sendAnalytics
 } from '../../analytics';
@@ -12,6 +14,8 @@ import { MEDIA_TYPE, setAudioMuted } from '../../base/media';
 import { AbstractAudioMuteButton } from '../../base/toolbox';
 import type { AbstractButtonProps } from '../../base/toolbox';
 import { isLocalTrackMuted } from '../../base/tracks';
+
+declare var APP: Object;
 
 /**
  * The type of the React {@code Component} props of {@link AudioMuteButton}.
@@ -39,6 +43,45 @@ class AudioMuteButton extends AbstractAudioMuteButton<Props, *> {
     tooltip = 'toolbar.mute';
 
     /**
+     * Initializes a new {@code AudioMuteButton} instance.
+     *
+     * @param {Props} props - The read-only React {@code Component} props with
+     * which the new instance is to be initialized.
+     */
+    constructor(props: Props) {
+        super(props);
+
+        // Bind event handlers so they are only bound once per instance.
+        this._onKeyboardShortcut = this._onKeyboardShortcut.bind(this);
+    }
+
+    /**
+     * Registers the keyboard shortcut that toggles the audio muting.
+     *
+     * @inheritdoc
+     * @returns {void}
+     */
+    componentDidMount() {
+        typeof APP === 'undefined'
+            || APP.keyboardshortcut.registerShortcut(
+                'M',
+                null,
+                this._onKeyboardShortcut,
+                'keyboardShortcuts.mute');
+    }
+
+    /**
+     * Unregisters the keyboard shortcut that toggles the audio muting.
+     *
+     * @inheritdoc
+     * @returns {void}
+     */
+    componentWillUnmount() {
+        typeof APP === 'undefined'
+            || APP.keyboardshortcut.unregisterShortcut('M');
+    }
+
+    /**
      * Indicates if audio is currently muted ot nor.
      *
      * @override
@@ -47,6 +90,25 @@ class AudioMuteButton extends AbstractAudioMuteButton<Props, *> {
      */
     _isAudioMuted() {
         return this.props._audioMuted;
+    }
+
+    _onKeyboardShortcut: () => void;
+
+    /**
+     * Creates an analytics keyboard shortcut event and dispatches an action to
+     * toggle the audio muting.
+     *
+     * @private
+     * @returns {void}
+     */
+    _onKeyboardShortcut() {
+        sendAnalytics(
+            createShortcutEvent(
+                AUDIO_MUTE,
+                ACTION_SHORTCUT_TRIGGERED,
+                { enable: !this._isAudioMuted() }));
+
+        super._handleClick();
     }
 
     /**
