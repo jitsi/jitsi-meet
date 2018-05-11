@@ -18,6 +18,7 @@ import {
     getAvatarURLByParticipantId
 } from '../../../react/features/base/participants';
 import {
+    setParticipantDisplayedOnLargeVideo,
     updateKnownLargeVideoResolution
 } from '../../../react/features/large-video';
 import { createDeferred } from '../../util/helpers';
@@ -307,6 +308,7 @@ export default class LargeVideoManager {
             // new streams.
             this.updateInProcess = false;
             this.eventEmitter.emit(UIEvents.LARGE_VIDEO_ID_CHANGED, this.id);
+            APP.store.dispatch(setParticipantDisplayedOnLargeVideo(this.id));
             this.scheduleLargeVideoUpdate();
         });
     }

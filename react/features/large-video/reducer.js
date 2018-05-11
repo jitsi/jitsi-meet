@@ -5,6 +5,7 @@ import { ReducerRegistry } from '../base/redux';
 
 import {
     SELECT_LARGE_VIDEO_PARTICIPANT,
+    SET_PARTICIPANT_ON_LARGE_VIDEO,
     UPDATE_KNOWN_LARGE_VIDEO_RESOLUTION
 } from './actionTypes';
 
@@ -29,6 +30,12 @@ ReducerRegistry.register('features/large-video', (state = {}, action) => {
         return {
             ...state,
             participantId: action.participantId
+        };
+
+    case SET_PARTICIPANT_ON_LARGE_VIDEO:
+        return {
+            ...state,
+            displayedParticipantId: action.participantId
         };
 
     case UPDATE_KNOWN_LARGE_VIDEO_RESOLUTION:
