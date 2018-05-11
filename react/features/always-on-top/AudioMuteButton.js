@@ -112,7 +112,7 @@ export default class AudioMuteButton
      * Indicates if audio is currently muted ot nor.
      *
      * @override
-     * @private
+     * @protected
      * @returns {boolean}
      */
     _isAudioMuted() {
@@ -123,7 +123,7 @@ export default class AudioMuteButton
      * Indicates whether this button is disabled or not.
      *
      * @override
-     * @private
+     * @protected
      * @returns {boolean}
      */
     _isDisabled() {
@@ -133,8 +133,9 @@ export default class AudioMuteButton
     /**
      * Changes the muted state.
      *
+     * @override
      * @param {boolean} audioMuted - Whether audio should be muted or not.
-     * @private
+     * @protected
      * @returns {void}
      */
     _setAudioMuted(audioMuted: boolean) { // eslint-disable-line no-unused-vars

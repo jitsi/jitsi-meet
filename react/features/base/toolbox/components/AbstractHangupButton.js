@@ -15,7 +15,7 @@ export default class AbstractHangupButton<P : Props, S: *>
     /**
      * Handles clicking / pressing the button, and disconnects the conference.
      *
-     * @private
+     * @protected
      * @returns {void}
      */
     _handleClick() {
@@ -25,8 +25,7 @@ export default class AbstractHangupButton<P : Props, S: *>
     /**
      * Helper function to perform the actual hangup action.
      *
-     * @abstract
-     * @private
+     * @protected
      * @returns {void}
      */
     _doHangup() {

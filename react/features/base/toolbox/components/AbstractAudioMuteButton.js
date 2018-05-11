@@ -18,7 +18,7 @@ export default class AbstractAudioMuteButton<P: Props, S: *>
      * accordingly.
      *
      * @override
-     * @private
+     * @protected
      * @returns {void}
      */
     _handleClick() {
@@ -29,8 +29,7 @@ export default class AbstractAudioMuteButton<P: Props, S: *>
      * Helper function to be implemented by subclasses, which must return a
      * boolean value indicating if audio is muted or not.
      *
-     * @abstract
-     * @private
+     * @protected
      * @returns {boolean}
      */
     _isAudioMuted() {
@@ -41,7 +40,7 @@ export default class AbstractAudioMuteButton<P: Props, S: *>
      * Indicates whether this button is in toggled state or not.
      *
      * @override
-     * @private
+     * @protected
      * @returns {boolean}
      */
     _isToggled() {
@@ -53,7 +52,7 @@ export default class AbstractAudioMuteButton<P: Props, S: *>
      * action.
      *
      * @param {boolean} audioMuted - Whether video should be muted or not.
-     * @private
+     * @protected
      * @returns {void}
      */
     _setAudioMuted(audioMuted: boolean) { // eslint-disable-line no-unused-vars

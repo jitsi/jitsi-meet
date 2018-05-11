@@ -88,7 +88,7 @@ export default class VideoMuteButton
      * Indicates whether this button is disabled or not.
      *
      * @override
-     * @private
+     * @protected
      * @returns {boolean}
      */
     _isDisabled() {
@@ -99,7 +99,7 @@ export default class VideoMuteButton
      * Indicates if video is currently muted ot nor.
      *
      * @override
-     * @private
+     * @protected
      * @returns {boolean}
      */
     _isVideoMuted() {
@@ -109,8 +109,9 @@ export default class VideoMuteButton
     /**
      * Changes the muted state.
      *
+     * @override
      * @param {boolean} videoMuted - Whether video should be muted or not.
-     * @private
+     * @protected
      * @returns {void}
      */
     _setVideoMuted(videoMuted: boolean) { // eslint-disable-line no-unused-vars

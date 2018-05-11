@@ -104,12 +104,10 @@ class AudioRouteButton extends AbstractButton<Props, *> {
      * Implements React's {@link Component#render()}.
      *
      * @inheritdoc
-     * @returns {?ReactElement}
+     * @returns {React$Node}
      */
     render() {
         if (!MPVolumeView && !AudioRoutePickerDialog) {
-
-            // $FlowFixMe
             return null;
         }
 

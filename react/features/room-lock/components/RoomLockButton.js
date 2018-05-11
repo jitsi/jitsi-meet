@@ -38,7 +38,8 @@ class RoomLockButton extends AbstractButton<Props, *> {
     /**
      * Handles clicking / pressing the button.
      *
-     * @private
+     * @override
+     * @protected
      * @returns {void}
      */
     _handleClick() {
@@ -49,7 +50,7 @@ class RoomLockButton extends AbstractButton<Props, *> {
      * Indicates whether this button is disabled or not.
      *
      * @override
-     * @private
+     * @protected
      * @returns {boolean}
      */
     _isDisabled() {
@@ -60,7 +61,7 @@ class RoomLockButton extends AbstractButton<Props, *> {
      * Indicates whether this button is in toggled state or not.
      *
      * @override
-     * @private
+     * @protected
      * @returns {boolean}
      */
     _isToggled() {

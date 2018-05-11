@@ -13,7 +13,7 @@ export default class HangupButton extends AbstractHangupButton<Props, *> {
      * Helper function to perform the actual hangup action.
      *
      * @override
-     * @private
+     * @protected
      * @returns {void}
      */
     _doHangup() {

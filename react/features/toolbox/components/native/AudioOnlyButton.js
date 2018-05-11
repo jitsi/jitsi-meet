@@ -7,6 +7,9 @@ import { translate } from '../../../base/i18n';
 import { AbstractButton } from '../../../base/toolbox';
 import type { AbstractButtonProps } from '../../../base/toolbox';
 
+/**
+ * The type of the React {@code Component} props of {@link AudioOnlyButton}.
+ */
 type Props = AbstractButtonProps & {
 
     /**
@@ -32,7 +35,8 @@ class AudioOnlyButton extends AbstractButton<Props, *> {
     /**
      * Handles clicking / pressing the button.
      *
-     * @private
+     * @override
+     * @protected
      * @returns {void}
      */
     _handleClick() {
@@ -43,7 +47,7 @@ class AudioOnlyButton extends AbstractButton<Props, *> {
      * Indicates whether this button is in toggled state or not.
      *
      * @override
-     * @private
+     * @protected
      * @returns {boolean}
      */
     _isToggled() {

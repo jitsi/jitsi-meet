@@ -13,6 +13,9 @@ import { AbstractAudioMuteButton } from '../../base/toolbox';
 import type { AbstractButtonProps } from '../../base/toolbox';
 import { isLocalTrackMuted } from '../../base/tracks';
 
+/**
+ * The type of the React {@code Component} props of {@link AudioMuteButton}.
+ */
 type Props = AbstractButtonProps & {
 
     /**
@@ -39,7 +42,7 @@ class AudioMuteButton extends AbstractAudioMuteButton<Props, *> {
      * Indicates if audio is currently muted ot nor.
      *
      * @override
-     * @private
+     * @protected
      * @returns {boolean}
      */
     _isAudioMuted() {
@@ -50,7 +53,7 @@ class AudioMuteButton extends AbstractAudioMuteButton<Props, *> {
      * Changes the muted state.
      *
      * @param {boolean} audioMuted - Whether audio should be muted or not.
-     * @private
+     * @protected
      * @returns {void}
      */
     _setAudioMuted(audioMuted: boolean) {

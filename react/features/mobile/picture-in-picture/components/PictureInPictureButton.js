@@ -33,7 +33,7 @@ class PictureInPictureButton extends AbstractButton<Props, *> {
     /**
      * Handles clicking / pressing the button.
      *
-     * @private
+     * @protected
      * @returns {void}
      */
     _handleClick() {
@@ -44,16 +44,10 @@ class PictureInPictureButton extends AbstractButton<Props, *> {
      * Implements React's {@link Component#render()}.
      *
      * @inheritdoc
-     * @returns {?ReactElement}
+     * @returns {React$Node}
      */
     render() {
-        if (!this.props._enabled) {
-
-            // $FlowFixMe
-            return null;
-        }
-
-        return super.render();
+        return this.props._enabled ? super.render() : null;
     }
 }
 

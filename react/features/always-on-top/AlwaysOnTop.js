@@ -31,7 +31,7 @@ export default class AlwaysOnTop extends Component<*, State> {
     _hovered: boolean;
 
     /**
-     * Initializes new AlwaysOnTop instance.
+     * Initializes a new {@code AlwaysOnTop} instance.
      *
      * @param {*} props - The read-only properties with which the new instance
      * is to be initialized.

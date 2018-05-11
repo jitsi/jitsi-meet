@@ -169,7 +169,7 @@ class Toolbox extends Component<Props> {
  *
  * @param {Object} state - The redux state of which parts are to be mapped to
  * {@code Toolbox} props.
- * @protected
+ * @private
  * @returns {{
  *     _enabled: boolean,
  *     _visible: boolean

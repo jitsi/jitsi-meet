@@ -17,6 +17,9 @@ import { AbstractVideoMuteButton } from '../../base/toolbox';
 import type { AbstractButtonProps } from '../../base/toolbox';
 import { isLocalTrackMuted } from '../../base/tracks';
 
+/**
+ * The type of the React {@code Component} props of {@link VideoMuteButton}.
+ */
 type Props = AbstractButtonProps & {
 
     /**
@@ -48,7 +51,7 @@ class VideoMuteButton extends AbstractVideoMuteButton<Props, *> {
      * Indicates if this button should be disabled or not.
      *
      * @override
-     * @private
+     * @protected
      * @returns {boolean}
      */
     _isDisabled() {
@@ -59,7 +62,7 @@ class VideoMuteButton extends AbstractVideoMuteButton<Props, *> {
      * Indicates if video is currently muted ot nor.
      *
      * @override
-     * @private
+     * @protected
      * @returns {boolean}
      */
     _isVideoMuted() {
@@ -69,8 +72,9 @@ class VideoMuteButton extends AbstractVideoMuteButton<Props, *> {
     /**
      * Changes the muted state.
      *
+     * @override
      * @param {boolean} videoMuted - Whether video should be muted or not.
-     * @private
+     * @protected
      * @returns {void}
      */
     _setVideoMuted(videoMuted: boolean) {

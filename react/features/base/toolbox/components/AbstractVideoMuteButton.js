@@ -17,7 +17,7 @@ export default class AbstractVideoMuteButton<P : Props, S : *>
      * Handles clicking / pressing the button, and toggles the video mute state
      * accordingly.
      *
-     * @private
+     * @protected
      * @returns {void}
      */
     _handleClick() {
@@ -28,7 +28,7 @@ export default class AbstractVideoMuteButton<P : Props, S : *>
      * Indicates whether this button is in toggled state or not.
      *
      * @override
-     * @private
+     * @protected
      * @returns {boolean}
      */
     _isToggled() {
@@ -37,10 +37,9 @@ export default class AbstractVideoMuteButton<P : Props, S : *>
 
     /**
      * Helper function to be implemented by subclasses, which must return a
-     * boolean value indicating if video is muted or not.
+     * {@code boolean} value indicating if video is muted or not.
      *
-     * @abstract
-     * @private
+     * @protected
      * @returns {boolean}
      */
     _isVideoMuted() {
@@ -52,7 +51,7 @@ export default class AbstractVideoMuteButton<P : Props, S : *>
      * action.
      *
      * @param {boolean} videoMuted - Whether video should be muted or not.
-     * @private
+     * @protected
      * @returns {void}
      */
     _setVideoMuted(videoMuted: boolean) { // eslint-disable-line no-unused-vars

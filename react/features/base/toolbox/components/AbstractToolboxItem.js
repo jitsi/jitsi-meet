@@ -150,11 +150,7 @@ export default class AbstractToolboxItem<P : Props> extends Component<P> {
     _maybeTranslateAttribute(text) {
         const { t } = this.props;
 
-        if (typeof t === 'function') {
-            return t(text);
-        }
-
-        return text;
+        return typeof t === 'function' ? t(text) : text;
     }
 
     _onClick: (*) => void;
@@ -169,7 +165,7 @@ export default class AbstractToolboxItem<P : Props> extends Component<P> {
     _onClick(...args) {
         const { disabled, onClick } = this.props;
 
-        !disabled && onClick && onClick(...args);
+        disabled || (onClick && onClick(...args));
     }
 
     /**
@@ -189,10 +185,6 @@ export default class AbstractToolboxItem<P : Props> extends Component<P> {
      * @returns {ReactElement}
      */
     render() {
-        if (!this.props.visible) {
-            return null;
-        }
-
-        return this._renderItem();
+        return this.props.visible ? this._renderItem() : null;
     }
 }

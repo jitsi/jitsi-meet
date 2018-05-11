@@ -8,6 +8,9 @@ import { AbstractButton } from '../../../base/toolbox';
 import type { AbstractButtonProps } from '../../../base/toolbox';
 import { isLocalTrackMuted } from '../../../base/tracks';
 
+/**
+ * The type of the React {@code Component} props of {@link ToggleCameraButton}.
+ */
 type Props = AbstractButtonProps & {
 
     /**
@@ -37,7 +40,8 @@ class ToggleCameraButton extends AbstractButton<Props, *> {
     /**
      * Handles clicking / pressing the button.
      *
-     * @private
+     * @override
+     * @protected
      * @returns {void}
      */
     _handleClick() {
@@ -48,7 +52,7 @@ class ToggleCameraButton extends AbstractButton<Props, *> {
      * Indicates whether this button is disabled or not.
      *
      * @override
-     * @private
+     * @protected
      * @returns {boolean}
      */
     _isDisabled() {

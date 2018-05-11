@@ -50,6 +50,9 @@ import OverflowMenuProfileItem from './OverflowMenuProfileItem';
 import ToolbarButton from './ToolbarButton';
 import VideoMuteButton from '../VideoMuteButton';
 
+/**
+ * The type of the React {@code Component} props of {@link Toolbox}.
+ */
 type Props = {
 
     /**
@@ -169,7 +172,7 @@ type Props = {
      * Invoked to obtain translated strings.
      */
     t: Function
-}
+};
 
 declare var APP: Object;
 declare var interfaceConfig: Object;

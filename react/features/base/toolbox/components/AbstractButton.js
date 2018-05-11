@@ -23,8 +23,7 @@ export type Props = {
     toggledStyles: ?Styles,
 
     /**
-     * From which direction the tooltip should appear, relative to the
-     * button.
+     * From which direction the tooltip should appear, relative to the button.
      */
     tooltipPosition: string,
 
@@ -87,11 +86,12 @@ export default class AbstractButton<P: Props, S: *> extends Component<P, S> {
      * Initializes a new {@code AbstractButton} instance.
      *
      * @param {Props} props - The React {@code Component} props to initialize
-     * the new {@code AbstractAudioMuteButton} instance with.
+     * the new {@code AbstractButton} instance with.
      */
     constructor(props: P) {
         super(props);
 
+        // Bind event handlers so they are only bound once per instance.
         this._onClick = this._onClick.bind(this);
     }
 
@@ -99,8 +99,7 @@ export default class AbstractButton<P: Props, S: *> extends Component<P, S> {
      * Helper function to be implemented by subclasses, which should be used
      * to handle the button being clicked / pressed.
      *
-     * @abstract
-     * @private
+     * @protected
      * @returns {void}
      */
     _handleClick() {
@@ -138,7 +137,7 @@ export default class AbstractButton<P: Props, S: *> extends Component<P, S> {
      * Helper function to be implemented by subclasses, which must return a
      * boolean value indicating if this button is disabled or not.
      *
-     * @private
+     * @protected
      * @returns {boolean}
      */
     _isDisabled() {
@@ -147,9 +146,9 @@ export default class AbstractButton<P: Props, S: *> extends Component<P, S> {
 
     /**
      * Helper function to be implemented by subclasses, which must return a
-     * boolean value indicating if this button is toggled or not.
+     * {@code boolean} value indicating if this button is toggled or not.
      *
-     * @private
+     * @protected
      * @returns {boolean}
      */
     _isToggled() {

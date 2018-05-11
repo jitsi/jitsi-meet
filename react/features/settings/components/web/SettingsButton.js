@@ -11,6 +11,9 @@ import { toggleSettings } from '../../../side-panel';
 
 declare var interfaceConfig: Object;
 
+/**
+ * The type of the React {@code Component} props of {@link SettingsButton}.
+ */
 type Props = AbstractButtonProps & {
 
     /**
@@ -41,7 +44,7 @@ class SettingsButton extends AbstractButton<Props, *> {
     /**
      * Handles clicking / pressing the button, and opens the appropriate dialog.
      *
-     * @private
+     * @protected
      * @returns {void}
      */
     _handleClick() {
