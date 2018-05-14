@@ -3,27 +3,24 @@
 import RNCalendarEvents from 'react-native-calendar-events';
 
 import { APP_WILL_MOUNT } from '../app';
-import { ADD_KNOWN_DOMAINS } from '../base/domains';
+import { ADD_KNOWN_DOMAINS } from '../base/known-domains';
 import { MiddlewareRegistry } from '../base/redux';
 import { APP_LINK_SCHEME, parseURIString } from '../base/util';
 import { APP_STATE_CHANGED } from '../mobile/background';
 
-import {
-    setCalendarAuthorization,
-    setCalendarEvents
-} from './actions';
+import { setCalendarAuthorization, setCalendarEvents } from './actions';
 import { REFRESH_CALENDAR } from './actionTypes';
 import { CALENDAR_ENABLED } from './constants';
 
 const logger = require('jitsi-meet-logger').getLogger(__filename);
 
 /**
- * The no. of days to fetch.
+ * The number of days to fetch.
  */
 const FETCH_END_DAYS = 10;
 
 /**
- * The no. of days to go back when fetching.
+ * The number of days to go back when fetching.
  */
 const FETCH_START_DAYS = -1;
 
@@ -37,13 +34,13 @@ CALENDAR_ENABLED
         const result = next(action);
 
         switch (action.type) {
-        case APP_STATE_CHANGED:
-            _maybeClearAccessStatus(store, action);
-            break;
-
         case ADD_KNOWN_DOMAINS:
         case APP_WILL_MOUNT:
             _fetchCalendarEntries(store, false, false);
+            break;
+
+        case APP_STATE_CHANGED:
+            _maybeClearAccessStatus(store, action);
             break;
 
         case REFRESH_CALENDAR:
@@ -53,23 +50,6 @@ CALENDAR_ENABLED
 
         return result;
     });
-
-/**
- * Clears the calendar access status when the app comes back from the
- * background. This is needed as some users may never quit the app, but puts it
- * into the background and we need to try to request for a permission as often
- * as possible, but not annoyingly often.
- *
- * @param {Object} store - The redux store.
- * @param {Object} action - The Redux action.
- * @private
- * @returns {void}
- */
-function _maybeClearAccessStatus(store, { appState }) {
-    if (appState === 'background') {
-        store.dispatch(setCalendarAuthorization(undefined));
-    }
-}
 
 /**
  * Ensures calendar access if possible and resolves the promise if it's granted.
@@ -113,13 +93,13 @@ function _ensureCalendarAccess(promptForPermission, dispatch) {
  * @returns {void}
  */
 function _fetchCalendarEntries(
-        { dispatch, getState },
+        store,
         maybePromptForPermission,
         forcePermission) {
-    const featureState = getState()['features/calendar-sync'];
-    const knownDomains = getState()['features/base/domains'];
+    const { dispatch, getState } = store;
     const promptForPermission
-        = (maybePromptForPermission && !featureState.authorization)
+        = (maybePromptForPermission
+                && !getState()['features/calendar-sync'].authorization)
             || forcePermission;
 
     _ensureCalendarAccess(promptForPermission, dispatch)
@@ -135,11 +115,7 @@ function _fetchCalendarEntries(
                         startDate.getTime(),
                         endDate.getTime(),
                         [])
-                    .then(events =>
-                        _updateCalendarEntries(
-                            events,
-                            knownDomains,
-                            dispatch))
+                    .then(_updateCalendarEntries.bind(store))
                     .catch(error =>
                         logger.error('Error fetching calendar.', error));
             } else {
@@ -193,6 +169,22 @@ function _getURLFromEvent(event, knownDomains) {
 }
 
 /**
+ * Clears the calendar access status when the app comes back from the
+ * background. This is needed as some users may never quit the app, but puts it
+ * into the background and we need to try to request for a permission as often
+ * as possible, but not annoyingly often.
+ *
+ * @param {Object} store - The redux store.
+ * @param {Object} action - The Redux action.
+ * @private
+ * @returns {void}
+ */
+function _maybeClearAccessStatus(store, { appState }) {
+    appState === 'background'
+        && store.dispatch(setCalendarAuthorization(undefined));
+}
+
+/**
  * Updates the calendar entries in Redux when new list is received.
  *
  * @param {Object} event - An event returned from the native calendar.
@@ -231,26 +223,30 @@ function _parseCalendarEntry(event, knownDomains) {
 }
 
 /**
- * Updates the calendar entries in Redux when new list is received.
+ * Updates the calendar entries in redux when new list is received.
+ *
+ * XXX The function's {@code this} is the redux store.
  *
  * @param {Array<CalendarEntry>} events - The new event list.
- * @param {Array<string>} knownDomains - The known domain list.
- * @param {Function} dispatch - The Redux dispatch function.
  * @private
  * @returns {void}
  */
-function _updateCalendarEntries(events, knownDomains, dispatch) {
+function _updateCalendarEntries(events) {
     if (events && events.length) {
+        // eslint-disable-next-line no-invalid-this
+        const { dispatch, getState } = this;
+
+        const knownDomains = getState()['features/base/known-domains'];
         const eventList = [];
 
-        for (const event of events) {
-            const calendarEntry
-                = _parseCalendarEntry(event, knownDomains);
-            const now = Date.now();
+        const now = Date.now();
 
-            if (calendarEntry && calendarEntry.endDate > now) {
-                eventList.push(calendarEntry);
-            }
+        for (const event of events) {
+            const calendarEntry = _parseCalendarEntry(event, knownDomains);
+
+            calendarEntry
+                && calendarEntry.endDate > now
+                && eventList.push(calendarEntry);
         }
 
         dispatch(

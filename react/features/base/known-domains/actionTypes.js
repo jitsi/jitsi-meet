@@ -1,8 +1,8 @@
 // @flow
 
 /**
- * Action to add new domains to the list of domains known to the feature
- * base/domains.
+ * The type of (redux) action to add known domains to the list of domains known
+ * to the feature base/known-domains.
  *
  * {
  *     type: ADD_KNOWN_DOMAINS,

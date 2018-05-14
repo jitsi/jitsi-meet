@@ -6,19 +6,17 @@ import { MiddlewareRegistry } from '../redux';
 import { parseURIString } from '../util';
 
 import { addKnownDomains } from './actions';
-import { JITSI_KNOWN_DOMAINS } from './constants';
 
 MiddlewareRegistry.register(store => next => action => {
     const result = next(action);
 
     switch (action.type) {
-
     case APP_WILL_MOUNT:
-        _ensureDefaultServer(store);
+        _appWillMount(store);
         break;
 
     case SET_ROOM:
-        _parseAndAddKnownDomain(store);
+        _setRoom(store);
         break;
     }
 
@@ -26,34 +24,33 @@ MiddlewareRegistry.register(store => next => action => {
 });
 
 /**
- * Ensures presence of the default server in the known domains list.
+ * Adds the domain of the app's {@code defaultURL} to the list of domains known
+ * to the feature base/known-domains.
  *
  * @param {Object} store - The redux store.
  * @private
  * @returns {Promise}
  */
-function _ensureDefaultServer({ dispatch, getState }) {
-    const { app } = getState()['features/app'];
-    const defaultURL = parseURIString(app._getDefaultURL());
+function _appWillMount({ dispatch, getState }) {
+    const defaultURL
+        = parseURIString(getState()['features/app'].app._getDefaultURL());
 
-    dispatch(addKnownDomains([
-        defaultURL.host,
-        ...JITSI_KNOWN_DOMAINS
-    ]));
+    dispatch(addKnownDomains(defaultURL.host));
 }
 
 /**
- * Retrieves the domain name of a room upon join and stores it in the known
- * domain list, if not present yet.
+ * Adds the domain of {@code locationURL} to the list of domains known to the
+ * feature base/known-domains.
  *
  * @param {Object} store - The redux store.
  * @private
  * @returns {Promise}
  */
-function _parseAndAddKnownDomain({ dispatch, getState }) {
+function _setRoom({ dispatch, getState }) {
     const { locationURL } = getState()['features/base/connection'];
+    let host;
 
     locationURL
-        && locationURL.host
-        && dispatch(addKnownDomains(locationURL.host));
+        && (host = locationURL.host)
+        && dispatch(addKnownDomains(host));
 }
