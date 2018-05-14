@@ -1942,70 +1942,23 @@ export default {
                     return;
                 }
 
-                const error = recorderSession.getError();
+                if (recorderSession.getID()) {
+                    APP.store.dispatch(updateRecordingSession(recorderSession));
 
-                logger.log(
-                    'Received recorder status update:',
-                    recorderSession.getStatus(), error);
+                    return;
+                }
 
                 // These errors fire when the local participant has requested a
                 // recording but the request itself failed, hence the missing
                 // session ID because the recorder never started.
-                if (error && !recorderSession.getID()) {
-                    const {
-                        error: errorConstants,
-                        mode: modeConstants
-                    } = JitsiMeetJS.constants.recording;
-                    const isStreamMode
-                        = recorderSession.getMode() === modeConstants.STREAM;
-
-                    if (error === errorConstants.SERVICE_UNAVAILABLE) {
-                        APP.UI.messageHandler.showError({
-                            descriptionKey: 'recording.unavailable',
-                            descriptionArguments: {
-                                serviceName: isStreamMode
-                                    ? 'Live Streaming service'
-                                    : 'Recording service'
-                            },
-                            titleKey: isStreamMode
-                                ? 'liveStreaming.unavailableTitle'
-                                : 'recording.unavailableTitle'
-                        });
-
-                        return;
-                    } else if (error === errorConstants.RESOURCE_CONSTRAINT) {
-                        APP.UI.messageHandler.showError({
-                            descriptionKey: isStreamMode
-                                ? 'liveStreaming.busy'
-                                : 'recording.busy',
-                            titleKey: isStreamMode
-                                ? 'liveStreaming.busyTitle'
-                                : 'recording.busyTitle'
-                        });
-
-                        return;
-                    }
-
-                    APP.UI.messageHandler.showError({
-                        descriptionKey: isStreamMode
-                            ? 'liveStreaming.error'
-                            : 'recording.error',
-                        titleKey: isStreamMode
-                            ? 'liveStreaming.failedToStart'
-                            : 'recording.failedToStart'
-                    });
+                if (recorderSession.getError()) {
+                    this._showRecordingErrorNotification(recorderSession);
 
                     return;
                 }
 
-                if (!recorderSession.getID()) {
-                    logger.error(
-                        'Received a recorder status update with no ID');
-
-                    return;
-                }
-
-                APP.store.dispatch(updateRecordingSession(recorderSession));
+                logger.error(
+                    'Received a recorder status update with no ID or error');
             });
 
         room.on(JitsiConferenceEvents.KICKED, () => {
@@ -2786,6 +2739,58 @@ export default {
     submitFeedback(score = -1, message = '') {
         if (score === -1 || (score >= 1 && score <= 5)) {
             APP.store.dispatch(submitFeedback(score, message, room));
+        }
+    },
+
+    /**
+     * Shows a notification about an error in the recording session. A
+     * default notification will display if no error is specified in the passed
+     * in recording session.
+     *
+     * @param {Object} recorderSession - The recorder session model from the
+     * lib.
+     * @private
+     * @returns {void}
+     */
+    _showRecordingErrorNotification(recorderSession) {
+        const isStreamMode
+            = recorderSession.getMode()
+                === JitsiMeetJS.constants.recording.mode.STREAM;
+
+        switch (recorderSession.getError()) {
+        case JitsiMeetJS.constants.recording.error.SERVICE_UNAVAILABLE:
+            APP.UI.messageHandler.showError({
+                descriptionKey: 'recording.unavailable',
+                descriptionArguments: {
+                    serviceName: isStreamMode
+                        ? 'Live Streaming service'
+                        : 'Recording service'
+                },
+                titleKey: isStreamMode
+                    ? 'liveStreaming.unavailableTitle'
+                    : 'recording.unavailableTitle'
+            });
+            break;
+        case JitsiMeetJS.constants.recording.error.RESOURCE_CONSTRAINT:
+            APP.UI.messageHandler.showError({
+                descriptionKey: isStreamMode
+                    ? 'liveStreaming.busy'
+                    : 'recording.busy',
+                titleKey: isStreamMode
+                    ? 'liveStreaming.busyTitle'
+                    : 'recording.busyTitle'
+            });
+            break;
+        default:
+            APP.UI.messageHandler.showError({
+                descriptionKey: isStreamMode
+                    ? 'liveStreaming.error'
+                    : 'recording.error',
+                titleKey: isStreamMode
+                    ? 'liveStreaming.failedToStart'
+                    : 'recording.failedToStart'
+            });
+            break;
         }
     }
 };
