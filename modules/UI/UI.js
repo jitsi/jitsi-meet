@@ -337,6 +337,11 @@ UI.start = function() {
     if (!interfaceConfig.filmStripOnly) {
         VideoLayout.initLargeVideo();
     }
+
+    // Do not animate the video area on UI start (second argument passed into
+    // resizeVideoArea) because the animation is not visible anyway. Plus with
+    // the current dom layout, the quality label is part of the video layout and
+    // will be seen animating in.
     VideoLayout.resizeVideoArea(true, false);
 
     sharedVideoManager = new SharedVideoManager(eventEmitter);
