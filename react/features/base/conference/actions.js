@@ -140,13 +140,14 @@ function _addConferenceListeners(conference, dispatch) {
     conference.on(
         JitsiConferenceEvents.USER_JOINED,
         (id, user) => dispatch(participantJoined({
+            conference,
             id,
             name: user.getDisplayName(),
             role: user.getRole()
         })));
     conference.on(
         JitsiConferenceEvents.USER_LEFT,
-        (...args) => dispatch(participantLeft(...args)));
+        (...args) => dispatch(participantLeft(conference, ...args)));
     conference.on(
         JitsiConferenceEvents.USER_ROLE_CHANGED,
         (...args) => dispatch(participantRoleChanged(...args)));

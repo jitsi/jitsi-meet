@@ -1702,6 +1702,7 @@ export default {
             const displayName = user.getDisplayName();
 
             APP.store.dispatch(participantJoined({
+                conference: room,
                 id,
                 name: displayName,
                 role: user.getRole()
@@ -1723,7 +1724,7 @@ export default {
             if (user.isHidden()) {
                 return;
             }
-            APP.store.dispatch(participantLeft(id, user));
+            APP.store.dispatch(participantLeft(room, id));
             logger.log('USER %s LEFT', id, user);
             APP.API.notifyUserLeft(id);
             APP.UI.removeUser(id, user.getDisplayName());

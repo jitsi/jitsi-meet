@@ -5,7 +5,7 @@ import UIEvents from '../../../../service/UI/UIEvents';
 import { APP_WILL_MOUNT, APP_WILL_UNMOUNT } from '../../app';
 import {
     CONFERENCE_JOINED,
-    CONFERENCE_LEFT
+    CONFERENCE_WILL_LEAVE
 } from '../conference';
 import { MiddlewareRegistry } from '../redux';
 import { playSound, registerSound, unregisterSound } from '../sounds';
@@ -13,6 +13,7 @@ import { playSound, registerSound, unregisterSound } from '../sounds';
 import {
     localParticipantIdChanged,
     localParticipantJoined,
+    participantLeft,
     participantUpdated
 } from './actions';
 import {
@@ -33,7 +34,8 @@ import {
     getAvatarURLByParticipantId,
     getLocalParticipant,
     getParticipantById,
-    getParticipantCount
+    getParticipantCount,
+    getParticipants
 } from './functions';
 import { PARTICIPANT_JOINED_FILE, PARTICIPANT_LEFT_FILE } from './sounds';
 
@@ -66,8 +68,9 @@ MiddlewareRegistry.register(store => next => action => {
         store.dispatch(localParticipantIdChanged(action.conference.myUserId()));
         break;
 
-    case CONFERENCE_LEFT:
+    case CONFERENCE_WILL_LEAVE:
         store.dispatch(localParticipantIdChanged(LOCAL_PARTICIPANT_DEFAULT_ID));
+        _earlyParticipantsCleanup(store, action);
         break;
 
     case DOMINANT_SPEAKER_CHANGED: {
@@ -175,6 +178,26 @@ MiddlewareRegistry.register(store => next => action => {
 
     return next(action);
 });
+
+/**
+ * Because it's not guaranteed when PARTICIPANT_LEFT events will come from
+ * lib-jitsi-meet and because it happens in an asynchronous manner we want to
+ * remove all participant as soon as we start the disconnection process.
+ *
+ * @param {Store} store - The Redux store.
+ * @param {Dispatch} next - The redux dispatch function to dispatch the
+ * specified action to the specified store.
+ * @param {JitsiConference} conference - The {@link JitsiConference} for which
+ * the disconnection process has been started and for which the participant's
+ * cleanup is to be performed.
+ * @returns {void}
+ * @private
+ */
+function _earlyParticipantsCleanup({ dispatch, getState }, { conference }) {
+    getParticipants(getState)
+        .filter(p => p.conference === conference)
+        .forEach(p => dispatch(participantLeft(p.conference, p.id)));
+}
 
 /**
  * Initializes the local participant and signals that it joined.

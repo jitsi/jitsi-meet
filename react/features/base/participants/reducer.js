@@ -71,6 +71,7 @@ function _participant(state: Object = {}, action) {
         const { participant } = action; // eslint-disable-line no-shadow
         const {
             avatarURL,
+            conference,
             connectionStatus,
             dominantSpeaker,
             email,
@@ -101,6 +102,7 @@ function _participant(state: Object = {}, action) {
         return {
             avatarID,
             avatarURL,
+            conference,
             connectionStatus,
             dominantSpeaker: dominantSpeaker || false,
             email,
@@ -169,7 +171,9 @@ ReducerRegistry.register('features/base/participants', (state = [], action) => {
         return [ ...state, _participant(undefined, action) ];
 
     case PARTICIPANT_LEFT:
-        return state.filter(p => p.id !== action.participant.id);
+        return state.filter(
+            p => p.id !== action.participant.id
+                || p.conference !== action.participant.conference);
 
     default:
         return state;
