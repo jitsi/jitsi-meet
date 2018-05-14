@@ -100,6 +100,11 @@ type Props = {
     _hideInviteButton: boolean,
 
     /**
+     * Whether or not the current user is logged in through a JWT.
+     */
+    _isGuest: boolean,
+
+    /**
      * Whether or not the conference is currently being recorded by the local
      * participant.
      */
@@ -942,12 +947,14 @@ class Toolbox extends Component<Props, State> {
             _etherpadInitialized,
             _feedbackConfigured,
             _fullScreen,
+            _isGuest,
             _sharingVideo,
             t
         } = this.props;
 
         return [
-            this._shouldShowButton('profile')
+            _isGuest
+                && this._shouldShowButton('profile')
                 && <OverflowMenuProfileItem
                     key = 'profile'
                     onClick = { this._onToolbarToggleProfile } />,
@@ -1121,6 +1128,7 @@ function _mapStateToProps(state) {
         _feedbackConfigured: Boolean(callStatsID),
         _hideInviteButton:
             iAmRecorder || (!addPeopleEnabled && !dialOutEnabled),
+        _isGuest: state['features/base/jwt'].isGuest,
         _isRecording: isRecording,
         _fullScreen: fullScreen,
         _localParticipantID: localParticipant.id,
