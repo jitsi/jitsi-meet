@@ -4,7 +4,7 @@
  *
  * {
  *     type: RECORDING_SESSION_UPDATED,
- *     recordingSession: Object
+ *     sessionData: Object
  * }
  * @public
  */

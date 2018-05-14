@@ -9,10 +9,10 @@ import { JitsiRecordingConstants } from '../base/lib-jitsi-meet';
  * @returns {Object|undefined}
  */
 export function getActiveSession(state, mode) {
-    const { sessions } = state['features/recording'];
+    const { sessionDatas } = state['features/recording'];
     const { status: statusConstants } = JitsiRecordingConstants;
 
-    return sessions.find(session => session.mode === mode
-        && (session.status === statusConstants.ON
-            || session.status === statusConstants.PENDING));
+    return sessionDatas.find(sessionData => sessionData.mode === mode
+        && (sessionData.status === statusConstants.ON
+            || sessionData.status === statusConstants.PENDING));
 }

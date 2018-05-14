@@ -2,7 +2,7 @@ import { ReducerRegistry } from '../base/redux';
 import { RECORDING_SESSION_UPDATED } from './actionTypes';
 
 const DEFAULT_STATE = {
-    sessions: []
+    sessionDatas: []
 };
 
 /**
@@ -14,7 +14,8 @@ ReducerRegistry.register('features/recording',
         case RECORDING_SESSION_UPDATED:
             return {
                 ...state,
-                sessions: _updateSessions(state.sessions, action.session)
+                sessionDatas:
+                    _updateSessionDatas(state.sessionDatas, action.sessionData)
             };
 
         default:
@@ -25,32 +26,35 @@ ReducerRegistry.register('features/recording',
 /**
  * Updates the known information on recording sessions.
  *
- * @param {Array} sessions - The current sessions in the redux store.
- * @param {Object} newSession - The updated session data.
+ * @param {Array} sessionDatas - The current sessions in the redux store.
+ * @param {Object} newSessionData - The updated session data.
  * @private
- * @returns {Array} The sessions with the updated session data added.
+ * @returns {Array} The session datas with the updated session data added.
  */
-function _updateSessions(sessions, newSession) {
-    const hasSession = sessions.find(session => session.id === newSession.id);
+function _updateSessionDatas(sessionDatas, newSessionData) {
+    const hasExistingSessionData = sessionDatas.find(
+        sessionData => sessionData.id === newSessionData.id);
+    let newSessionDatas;
 
-    let newSessions;
-
-    if (hasSession) {
-        newSessions = sessions.map(session => {
-            if (session.id !== newSession.id) {
-                return session;
+    if (hasExistingSessionData) {
+        newSessionDatas = sessionDatas.map(sessionData => {
+            if (sessionData.id === newSessionData.id) {
+                return {
+                    ...newSessionData
+                };
             }
 
-            return {
-                ...newSession
-            };
+            // Nothing to update for this session data so pass it back in.
+            return sessionData;
         });
     } else {
-        newSessions = [
-            ...sessions,
-            { ...newSession }
+        // If the session data is not present, then there is nothing to update
+        // and instead it needs to be added to the known session datas.
+        newSessionDatas = [
+            ...sessionDatas,
+            { ...newSessionData }
         ];
     }
 
-    return newSessions;
+    return newSessionDatas;
 }

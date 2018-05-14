@@ -132,7 +132,7 @@ class Labels extends Component<Props, State> {
 function _mapStateToProps(state) {
     return {
         _filmstripVisible: state['features/filmstrip'].visible,
-        _recordingSessions: state['features/recording'].sessions
+        _recordingSessions: state['features/recording'].sessionDatas
     };
 }
 

@@ -27,7 +27,7 @@ import {
     redirectWithStoredParams,
     reloadWithStoredParams
 } from './react/features/app';
-import { updateRecordingSession } from './react/features/recording';
+import { updateRecordingSessionData } from './react/features/recording';
 
 import EventEmitter from 'events';
 
@@ -1943,7 +1943,8 @@ export default {
                 }
 
                 if (recorderSession.getID()) {
-                    APP.store.dispatch(updateRecordingSession(recorderSession));
+                    APP.store.dispatch(
+                        updateRecordingSessionData(recorderSession));
 
                     return;
                 }
