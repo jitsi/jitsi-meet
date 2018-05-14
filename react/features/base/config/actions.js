@@ -2,11 +2,15 @@
 
 import type { Dispatch } from 'redux';
 
+import { addKnownDomains } from '../known-domains';
+import { parseURIString } from '../util';
+
 import {
     CONFIG_WILL_LOAD,
     LOAD_CONFIG_ERROR,
     SET_CONFIG
 } from './actionTypes';
+import { _CONFIG_STORE_PREFIX } from './constants';
 import { setConfigFromURLParams } from './functions';
 
 /**
@@ -85,5 +89,46 @@ export function setConfig(config: Object = {}) {
             type: SET_CONFIG,
             config
         });
+    };
+}
+
+/**
+ * Stores a specific Jitsi Meet config.js object into {@code localStorage}.
+ *
+ * @param {string} baseURL - The base URL from which the config.js was
+ * downloaded.
+ * @param {Object} config - The Jitsi Meet config.js to store.
+ * @returns {Function}
+ */
+export function storeConfig(baseURL: string, config: Object) {
+    return (dispatch: Dispatch<*>) => {
+        // Try to store the configuration in localStorage. If the deployment
+        // specified 'getroom' as a function, for example, it does not make
+        // sense to and it will not be stored.
+        let b = false;
+
+        try {
+            if (typeof window.config === 'undefined'
+                    || window.config !== config) {
+                window.localStorage.setItem(
+                    `${_CONFIG_STORE_PREFIX}/${baseURL}`,
+                    JSON.stringify(config));
+                b = true;
+            }
+        } catch (e) {
+            // Ignore the error because the caching is optional.
+        }
+
+        // If base/config knows a domain, then the app knows it.
+        if (b) {
+            try {
+                dispatch(addKnownDomains(parseURIString(baseURL).host));
+            } catch (e) {
+                // Ignore the error because the fiddling with "known domains" is
+                // a side effect here.
+            }
+        }
+
+        return b;
     };
 }
