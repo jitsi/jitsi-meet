@@ -27,6 +27,8 @@ import { sendEvent } from './functions';
  * @returns {Function}
  */
 MiddlewareRegistry.register(store => next => action => {
+    action.type && console.info(`ACTION ${getSymbolDescription(action.type)}`);
+
     const result = next(action);
     const { type } = action;
 
