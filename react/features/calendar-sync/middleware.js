@@ -3,7 +3,7 @@
 import RNCalendarEvents from 'react-native-calendar-events';
 
 import { APP_WILL_MOUNT } from '../app';
-import { ADD_KNOWN_DOMAINS } from '../base/known-domains';
+import { ADD_KNOWN_DOMAINS, addKnownDomains } from '../base/known-domains';
 import { MiddlewareRegistry } from '../base/redux';
 import { APP_LINK_SCHEME, parseURIString } from '../base/util';
 import { APP_STATE_CHANGED } from '../mobile/background';
@@ -31,24 +31,58 @@ const MAX_LIST_LENGTH = 10;
 
 CALENDAR_ENABLED
     && MiddlewareRegistry.register(store => next => action => {
-        const result = next(action);
-
         switch (action.type) {
-        case ADD_KNOWN_DOMAINS:
-        case APP_WILL_MOUNT:
-            _fetchCalendarEntries(store, false, false);
-            break;
+        case ADD_KNOWN_DOMAINS: {
+            // XXX Fetch new calendar entries only when an actual domain has
+            // become known.
+            const { getState } = store;
+            const oldValue = getState()['features/base/known-domains'];
+            const result = next(action);
+            const newValue = getState()['features/base/known-domains'];
 
-        case APP_STATE_CHANGED:
-            _maybeClearAccessStatus(store, action);
-            break;
+            oldValue === newValue || _fetchCalendarEntries(store, false, false);
 
-        case REFRESH_CALENDAR:
-            _fetchCalendarEntries(store, true, action.forcePermission);
-            break;
+            return result;
         }
 
-        return result;
+        case APP_STATE_CHANGED: {
+            const result = next(action);
+
+            _maybeClearAccessStatus(store, action);
+
+            return result;
+        }
+
+        case APP_WILL_MOUNT: {
+            // For legacy purposes, we've allowed the deserialization of
+            // knownDomains and now we're to translate it to base/known-domains.
+            const state = store.getState()['features/calendar-sync'];
+
+            if (state) {
+                const { knownDomains } = state;
+
+                Array.isArray(knownDomains)
+                    && knownDomains.length
+                    && store.dispatch(addKnownDomains(knownDomains));
+            }
+
+            const result = next(action);
+
+            _fetchCalendarEntries(store, false, false);
+
+            return result;
+        }
+
+        case REFRESH_CALENDAR: {
+            const result = next(action);
+
+            _fetchCalendarEntries(store, true, action.forcePermission);
+
+            return result;
+        }
+        }
+
+        return next(action);
     });
 
 /**
@@ -122,9 +156,7 @@ function _fetchCalendarEntries(
                 logger.warn('Calendar access not granted.');
             }
         })
-        .catch(reason => {
-            logger.error('Error accessing calendar.', reason);
-        });
+        .catch(reason => logger.error('Error accessing calendar.', reason));
 }
 
 /**
