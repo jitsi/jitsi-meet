@@ -6,8 +6,8 @@ import { ReducerRegistry } from '../base/redux';
 import { PersistenceRegistry } from '../base/storage';
 
 import {
-    STORE_CURRENT_CONFERENCE,
-    UPDATE_CONFERENCE_DURATION
+    _STORE_CURRENT_CONFERENCE,
+    _UPDATE_CONFERENCE_DURATION
 } from './actionTypes';
 
 const logger = require('jitsi-meet-logger').getLogger(__filename);
@@ -54,10 +54,10 @@ ReducerRegistry.register(
         case APP_WILL_MOUNT:
             return _appWillMount(state);
 
-        case STORE_CURRENT_CONFERENCE:
+        case _STORE_CURRENT_CONFERENCE:
             return _storeCurrentConference(state, action);
 
-        case UPDATE_CONFERENCE_DURATION:
+        case _UPDATE_CONFERENCE_DURATION:
             return _updateConferenceDuration(state, action);
 
         default:

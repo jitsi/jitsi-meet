@@ -1,22 +1,23 @@
 // @flow
 
 import {
-    STORE_CURRENT_CONFERENCE,
-    UPDATE_CONFERENCE_DURATION
+    _STORE_CURRENT_CONFERENCE,
+    _UPDATE_CONFERENCE_DURATION
 } from './actionTypes';
 
 /**
  * Action to initiate a new addition to the list.
  *
  * @param {Object} locationURL - The current location URL.
+ * @protected
  * @returns {{
- *     type: STORE_CURRENT_CONFERENCE,
+ *     type: _STORE_CURRENT_CONFERENCE,
  *     locationURL: Object
  * }}
  */
-export function storeCurrentConference(locationURL: Object) {
+export function _storeCurrentConference(locationURL: Object) {
     return {
-        type: STORE_CURRENT_CONFERENCE,
+        type: _STORE_CURRENT_CONFERENCE,
         locationURL
     };
 }
@@ -25,14 +26,15 @@ export function storeCurrentConference(locationURL: Object) {
  * Action to initiate the update of the duration of the last conference.
  *
  * @param {Object} locationURL - The current location URL.
+ * @protected
  * @returns {{
- *     type: UPDATE_CONFERENCE_DURATION,
+ *     type: _UPDATE_CONFERENCE_DURATION,
  *     locationURL: Object
  * }}
  */
-export function updateConferenceDuration(locationURL: Object) {
+export function _updateConferenceDuration(locationURL: Object) {
     return {
-        type: UPDATE_CONFERENCE_DURATION,
+        type: _UPDATE_CONFERENCE_DURATION,
         locationURL
     };
 }
