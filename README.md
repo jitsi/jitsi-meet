@@ -33,11 +33,11 @@ You can get our mobile versions from here:
 
 ## Building the sources
 
-Node.js >= 6 is required.
+Node.js >= 8 is required.
 
 On Debian/Ubuntu systems, the required packages can be installed with:
 ```
-sudo apt-get install npm nodejs-legacy
+sudo apt-get install npm nodejs
 cd jitsi-meet
 npm install
 ```
