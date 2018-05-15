@@ -40,11 +40,11 @@ declare var interfaceConfig: Object;
  * @param {Store} store - The redux store.
  * @returns {Function}
  */
-// eslint-disable-next-line no-unused-vars
 MiddlewareRegistry.register(store => next => action => {
     let oldParticipantPresence;
 
-    if (action.type === PARTICIPANT_UPDATED) {
+    if (action.type === PARTICIPANT_UPDATED
+        || action.type === PARTICIPANT_LEFT) {
         oldParticipantPresence
             = _getParticipantPresence(store.getState(), action.participant.id);
     }

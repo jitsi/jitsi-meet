@@ -76,6 +76,37 @@ export function playSound(soundId: string): Object {
 }
 
 /**
+ * Registers a new sound for given id and a source object which can be either a
+ * path or a raw object depending on the platform (native vs web). It will make
+ * the {@link SoundCollection} render extra HTMLAudioElement which will make it
+ * available for playback through the {@link playSound} action.
+ *
+ * @param {string} soundId - The global identifier which identify the sound
+ * created for given source object.
+ * @param {string} soundName - The name of bundled audio file that will be
+ * associated with the given {@code soundId}.
+ * @param {Object} options - Optional paramaters.
+ * @param {boolean} options.loop - True in order to loop the sound.
+ * @returns {{
+ *     type: REGISTER_SOUND,
+ *     soundId: string,
+ *     src: string,
+ *     options: {
+ *          loop: boolean
+ *     }
+ * }}
+ */
+export function registerSound(
+        soundId: string, soundName: string, options: Object = {}): Object {
+    return {
+        type: REGISTER_SOUND,
+        soundId,
+        src: `${getSoundsPath()}/${soundName}`,
+        options
+    };
+}
+
+/**
  * Stops playback of the sound identified by the given sound id.
  *
  * @param {string} soundId - The id of the sound to be stopped (the same one
@@ -89,34 +120,6 @@ export function stopSound(soundId: string): Object {
     return {
         type: STOP_SOUND,
         soundId
-    };
-}
-
-/**
- * Registers a new sound for given id and a source object which can be either a
- * path or a raw object depending on the platform (native vs web). It will make
- * the {@link SoundCollection} render extra HTMLAudioElement which will make it
- * available for playback through the {@link playSound} action.
- *
- * @param {string} soundId - The global identifier which identify the sound
- * created for given source object.
- * @param {string} soundName - The name of bundled audio file that will be
- * associated with the given {@code soundId}.
- * @param {Object} options - Optional paramaters.
- * @returns {{
- *     type: REGISTER_SOUND,
- *     soundId: string,
- *     src: string,
- *     options: Object
- * }}
- */
-export function registerSound(
-        soundId: string, soundName: string, options: Object = {}): Object {
-    return {
-        type: REGISTER_SOUND,
-        soundId,
-        src: `${getSoundsPath()}/${soundName}`,
-        options
     };
 }
 
