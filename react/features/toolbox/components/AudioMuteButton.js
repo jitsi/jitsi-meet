@@ -14,6 +14,7 @@ import { MEDIA_TYPE, setAudioMuted } from '../../base/media';
 import { AbstractAudioMuteButton } from '../../base/toolbox';
 import type { AbstractButtonProps } from '../../base/toolbox';
 import { isLocalTrackMuted } from '../../base/tracks';
+import UIEvents from '../../../../service/UI/UIEvents';
 
 declare var APP: Object;
 
@@ -121,6 +122,11 @@ class AudioMuteButton extends AbstractAudioMuteButton<Props, *> {
     _setAudioMuted(audioMuted: boolean) {
         sendAnalytics(createToolbarEvent(AUDIO_MUTE, { enable: audioMuted }));
         this.props.dispatch(setAudioMuted(audioMuted));
+
+        // FIXME: The old conference logic as well as the shared video feature
+        // still rely on this event being emitted.
+        typeof APP === 'undefined'
+            || APP.UI.emitEvent(UIEvents.AUDIO_MUTED, audioMuted, true);
     }
 }
 

@@ -18,6 +18,7 @@ import {
 import { AbstractVideoMuteButton } from '../../base/toolbox';
 import type { AbstractButtonProps } from '../../base/toolbox';
 import { isLocalTrackMuted } from '../../base/tracks';
+import UIEvents from '../../../../service/UI/UIEvents';
 
 declare var APP: Object;
 
@@ -146,6 +147,11 @@ class VideoMuteButton extends AbstractVideoMuteButton<Props, *> {
                 videoMuted,
                 VIDEO_MUTISM_AUTHORITY.USER,
                 /* ensureTrack */ true));
+
+        // FIXME: The old conference logic still relies on this event being
+        // emitted.
+        typeof APP === 'undefined'
+            || APP.UI.emitEvent(UIEvents.VIDEO_MUTED, videoMuted, true);
     }
 }
 
