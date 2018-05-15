@@ -23,6 +23,21 @@ allprojects {
         maven { url "$rootDir/../node_modules/react-native/android" }
     }
 
+    // Make sure we use the react-native version in node_modules and not the one
+    // published in jcenter / elsewhere.
+    configurations.all {
+        resolutionStrategy {
+            eachDependency { DependencyResolveDetails details ->
+                if (details.requested.group == 'com.facebook.react'
+                        && details.requested.name == 'react-native') {
+                    def file = new File("$rootDir/../node_modules/react-native/package.json")
+                    def version = new groovy.json.JsonSlurper().parseText(file.text).version
+                    details.useVersion version
+                }
+            }
+        }
+    }
+
     // Third-party react-native modules which Jitsi Meet SDK for Android depends
     // on and which are not available in third-party Maven repositories need to
     // be deployed in a Maven repository of ours.
