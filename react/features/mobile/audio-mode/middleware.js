@@ -6,7 +6,7 @@ import { APP_WILL_MOUNT } from '../../app';
 import {
     CONFERENCE_FAILED,
     CONFERENCE_LEFT,
-    CONFERENCE_WILL_JOIN,
+    CONFERENCE_JOINED,
     SET_AUDIO_ONLY
 } from '../../base/conference';
 import { MiddlewareRegistry } from '../../base/redux';
@@ -32,7 +32,16 @@ MiddlewareRegistry.register(({ getState }) => next => action => {
             mode = AudioMode.DEFAULT;
             break;
 
-        case CONFERENCE_WILL_JOIN:
+        /*
+         * NOTE: We moved the audio mode setting from CONFERENCE_WILL_JOIN to
+         * CONFERENCE_JOINED because in case of a locked room, the app goes
+         * through CONFERENCE_FAILED state and gets to CONFERENCE_JOINED only
+         * after a correct password, so we want to make sure we have the correct
+         * audio mode set up when we finally get to the conf, but also make sure
+         * that the app is in the right audio mode if the user leaves the
+         * conference after the password prompt appears.
+         */
+        case CONFERENCE_JOINED:
         case SET_AUDIO_ONLY: {
             if (getState()['features/base/conference'].conference
                     || action.conference) {
