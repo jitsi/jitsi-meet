@@ -26,6 +26,7 @@ import {
     toggleAudioOnly
 } from './actions';
 import {
+    CONFERENCE_FAILED,
     CONFERENCE_JOINED,
     DATA_CHANNEL_OPENED,
     SET_AUDIO_ONLY,
@@ -54,6 +55,9 @@ MiddlewareRegistry.register(store => next => action => {
     switch (action.type) {
     case CONNECTION_ESTABLISHED:
         return _connectionEstablished(store, next, action);
+
+    case CONFERENCE_FAILED:
+        return _conferenceFailed(next, action);
 
     case CONFERENCE_JOINED:
         return _conferenceJoined(store, next, action);
@@ -105,6 +109,33 @@ function _connectionEstablished({ dispatch }, next, action) {
     if (typeof APP === 'undefined') {
         dispatch(createConference());
     }
+
+    return result;
+}
+
+/**
+ * Makes sure to leave a failed conference in order to release any allocated
+ * resources like peerconnections, emit participant left events etc.
+ *
+ * @param {Dispatch} next - The redux dispatch function to dispatch the
+ * specified action to the specified store.
+ * @param {Action} action - The redux action CONFERENCE_FAILED which is being
+ * dispatched in the specified store.
+ * @private
+ * @returns {Object} The value returned by {@code next(action)}.
+ */
+function _conferenceFailed(next, action) {
+    const result = next(action);
+    const { conference, error } = action;
+
+    !error.recoverable
+        && conference
+        && conference.leave().catch(leaveError => {
+            // Even though we don't care too much about the failure it may be
+            // good to now that it happen, so log it on the info level.
+            logger.info(
+                'There was an error leaving a failed conference: ', leaveError);
+        });
 
     return result;
 }
