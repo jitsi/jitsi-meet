@@ -34,6 +34,7 @@ export default createStyleSheet({
      * View that contains the audio-video switch and the labels.
      */
     audioVideoSwitchContainer: {
+        alignItems: 'center',
         flexDirection: 'row'
     },
 
@@ -220,6 +221,13 @@ export default createStyleSheet({
     sideBarItemText: {
         color: ColorPalette.black,
         fontWeight: 'bold'
+    },
+
+    /**
+     * The container of the label of the audio-video switch.
+     */
+    switchLabel: {
+        paddingHorizontal: 3
     },
 
     /**
