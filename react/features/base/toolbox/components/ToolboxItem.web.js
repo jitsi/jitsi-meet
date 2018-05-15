@@ -10,9 +10,6 @@ import type { Props } from './AbstractToolboxItem';
  * Web implementation of {@code AbstractToolboxItem}.
  */
 export default class ToolboxItem extends AbstractToolboxItem<Props> {
-    _label: string;
-    _tooltip: string;
-
     /**
      * Handles rendering of the actual item. If the label is being shown, which
      * is controlled with the `showLabel` prop, the item is rendered for its
@@ -40,7 +37,7 @@ export default class ToolboxItem extends AbstractToolboxItem<Props> {
             // $FlowFixMe
             <React.Fragment>
                 { this._renderIcon() }
-                { showLabel && this._label }
+                { showLabel && this.label }
             </React.Fragment>
         );
 
@@ -61,7 +58,7 @@ export default class ToolboxItem extends AbstractToolboxItem<Props> {
             = showLabel ? 'overflow-menu-item-icon' : 'toolbox-icon';
         const iconWrapper
             = React.createElement(elementType, { className }, icon);
-        const tooltip = this._tooltip;
+        const tooltip = this.tooltip;
         const useTooltip = !showLabel && tooltip && tooltip.length > 0;
 
         if (useTooltip) {

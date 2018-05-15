@@ -122,9 +122,9 @@ export default class AbstractToolboxItem<P : Props> extends Component<P> {
      * provided then it will be translated using it.
      *
      * @protected
-     * @returns {string}
+     * @returns {?string}
      */
-    get _label() {
+    get label(): ?string {
         return this._maybeTranslateAttribute(this.props.label);
     }
 
@@ -133,9 +133,9 @@ export default class AbstractToolboxItem<P : Props> extends Component<P> {
      * provided then it will be translated using it.
      *
      * @protected
-     * @returns {string}
+     * @returns {?string}
      */
-    get _tooltip() {
+    get tooltip(): ?string {
         return this._maybeTranslateAttribute(this.props.tooltip);
     }
 
