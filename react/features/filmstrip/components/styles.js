@@ -55,8 +55,8 @@ export default {
         ...filmstrip,
         bottom: 0,
         flexDirection: 'column',
-        left: 0,
         position: 'absolute',
+        right: 0,
         top: 0
     },
 

@@ -9,52 +9,28 @@ import {
     isNarrowAspectRatio,
     makeAspectRatioAware
 } from '../../../base/responsive-ui';
-import { ColorPalette } from '../../../base/styles';
 import { InviteButton } from '../../../invite';
-import { AudioRouteButton } from '../../../mobile/audio-mode';
-import { PictureInPictureButton } from '../../../mobile/picture-in-picture';
-import { RoomLockButton } from '../../../room-lock';
 
 import AudioMuteButton from '../AudioMuteButton';
-import AudioOnlyButton from './AudioOnlyButton';
 import HangupButton from '../HangupButton';
-import styles from './styles';
-import ToggleCameraButton from './ToggleCameraButton';
 import VideoMuteButton from '../VideoMuteButton';
 
-/**
- * Styles for the hangup button.
- */
-const hangupButtonStyles = {
-    iconStyle: styles.whitePrimaryToolbarButtonIcon,
-    style: styles.hangup,
-    underlayColor: ColorPalette.buttonUnderlay
-};
+import OverflowMenuButton from './OverflowMenuButton';
+import styles, {
+    hangupButtonStyles,
+    toolbarButtonStyles,
+    toolbarToggledButtonStyles
+} from './styles';
 
 /**
- * Styles for buttons in the primary toolbar.
+ * Number of buttons in the toolbar.
  */
-const primaryToolbarButtonStyles = {
-    iconStyle: styles.primaryToolbarButtonIcon,
-    style: styles.primaryToolbarButton
-};
+const NUM_TOOLBAR_BUTTONS = 4;
 
 /**
- * Styles for buttons in the primary toolbar.
+ * Factor relating the hangup button and other toolbar buttons.
  */
-const primaryToolbarToggledButtonStyles = {
-    iconStyle: styles.whitePrimaryToolbarButtonIcon,
-    style: styles.whitePrimaryToolbarButton
-};
-
-/**
- * Styles for buttons in the secondary toolbar.
- */
-const secondaryToolbarButtonStyles = {
-    iconStyle: styles.secondaryToolbarButtonIcon,
-    style: styles.secondaryToolbarButton,
-    underlayColor: 'transparent'
-};
+const TOOLBAR_BUTTON_SIZE_FACTOR = 0.8;
 
 /**
  * The type of {@link Toolbox}'s React {@code Component} props.
@@ -62,20 +38,85 @@ const secondaryToolbarButtonStyles = {
 type Props = {
 
     /**
-     * The indicator which determines whether the toolbox is enabled.
+     * The indicator which determines whether the toolbox is visible.
      */
-    _enabled: boolean,
+    _visible: boolean,
 
     /**
-     * Flag showing whether toolbar is visible.
+     * The redux {@code dispatch} function.
      */
-    _visible: boolean
+    dispatch: Function
+};
+
+/**
+ * The type of {@link Toolbox}'s React {@code Component} state.
+ */
+type State = {
+
+    /**
+     * The detected width for this component.
+     */
+    width: number
 };
 
 /**
  * Implements the conference toolbox on React Native.
  */
-class Toolbox extends Component<Props> {
+class Toolbox extends Component<Props, State> {
+    state = {
+        width: 0
+    };
+
+    /**
+     *  Initializes a new {@code Toolbox} instance.
+     *
+     * @inheritdoc
+     */
+    constructor(props: Props) {
+        super(props);
+
+        this._onLayout = this._onLayout.bind(this);
+    }
+
+    _onLayout: (Object) => void;
+
+    /**
+     * Handles the "on layout" View's event and stores the width as state.
+     *
+     * @param {Object} event - The "on layout" event object/structure passed
+     * by react-native.
+     * @private
+     * @returns {void}
+     */
+    _onLayout({ nativeEvent: { layout: { width } } }) {
+        this.setState({ width });
+    }
+
+    /**
+     * Calculates how large our toolbar buttons can be, given the available
+     * width. In the future we might want to have a size threshold, and once
+     * it's passed a completely different style could be used, akin to the web.
+     *
+     * @private
+     * @returns {number}
+     */
+    _calculateToolbarButtonSize() {
+        const width = this.state.width;
+        const hangupButtonSize = styles.hangupButton.width;
+
+        let buttonSize
+            = (width - hangupButtonSize
+                - (NUM_TOOLBAR_BUTTONS * styles.toolbarButton.margin * 2))
+                    / NUM_TOOLBAR_BUTTONS;
+
+        // Make sure it's an even number.
+        buttonSize = 2 * Math.round(buttonSize / 2);
+
+        // The button should be at most 80% of the hangup button's size.
+        return Math.min(
+            buttonSize, hangupButtonSize * TOOLBAR_BUTTON_SIZE_FACTOR);
+    }
+
     /**
      * Implements React's {@link Component#render()}.
      *
@@ -83,83 +124,53 @@ class Toolbox extends Component<Props> {
      * @returns {ReactElement}
      */
     render() {
-        if (!this.props._enabled) {
-            return null;
-        }
-
         const toolboxStyle
             = isNarrowAspectRatio(this)
                 ? styles.toolboxNarrow
                 : styles.toolboxWide;
+        const { _visible } = this.props;
+        const buttonStyles = {
+            ...toolbarButtonStyles
+        };
+        const toggledButtonStyles = {
+            ...toolbarToggledButtonStyles
+        };
+
+        if (_visible && this.state.width) {
+            const buttonSize = this._calculateToolbarButtonSize();
+            const extraStyle = {
+                borderRadius: buttonSize / 2,
+                height: buttonSize,
+                width: buttonSize
+            };
+
+            buttonStyles.style = [ buttonStyles.style, extraStyle ];
+            toggledButtonStyles.style
+                = [ toggledButtonStyles.style, extraStyle ];
+        }
 
         return (
             <Container
+                onLayout = { this._onLayout }
                 style = { toolboxStyle }
-                visible = { this.props._visible } >
-                { this._renderToolbars() }
+                visible = { _visible } >
+                <View
+                    pointerEvents = 'box-none'
+                    style = { styles.toolbar }>
+                    <InviteButton styles = { buttonStyles } />
+                    <AudioMuteButton
+                        styles = { buttonStyles }
+                        toggledStyles = { toggledButtonStyles } />
+                    <HangupButton styles = { hangupButtonStyles } />
+                    <VideoMuteButton
+                        styles = { buttonStyles }
+                        toggledStyles = { toggledButtonStyles } />
+                    <OverflowMenuButton
+                        styles = { buttonStyles }
+                        toggledStyles = { toggledButtonStyles } />
+                </View>
             </Container>
         );
-    }
-
-    /**
-     * Renders the toolbar which contains the primary buttons such as hangup,
-     * audio and video mute.
-     *
-     * @private
-     * @returns {ReactElement}
-     */
-    _renderPrimaryToolbar() {
-        return (
-            <View
-                key = 'primaryToolbar'
-                pointerEvents = 'box-none'
-                style = { styles.primaryToolbar }>
-                <AudioMuteButton
-                    styles = { primaryToolbarButtonStyles }
-                    toggledStyles = { primaryToolbarToggledButtonStyles } />
-                <HangupButton styles = { hangupButtonStyles } />
-                <VideoMuteButton
-                    styles = { primaryToolbarButtonStyles }
-                    toggledStyles = { primaryToolbarToggledButtonStyles } />
-            </View>
-        );
-    }
-
-    /**
-     * Renders the toolbar which contains the secondary buttons such as toggle
-     * camera facing mode.
-     *
-     * @private
-     * @returns {ReactElement}
-     */
-    _renderSecondaryToolbar() {
-        return (
-            <View
-                key = 'secondaryToolbar'
-                pointerEvents = 'box-none'
-                style = { styles.secondaryToolbar }>
-                <AudioRouteButton styles = { secondaryToolbarButtonStyles } />
-                <ToggleCameraButton styles = { secondaryToolbarButtonStyles } />
-                <AudioOnlyButton styles = { secondaryToolbarButtonStyles } />
-                <RoomLockButton styles = { secondaryToolbarButtonStyles } />
-                <InviteButton styles = { secondaryToolbarButtonStyles } />
-                <PictureInPictureButton
-                    styles = { secondaryToolbarButtonStyles } />
-            </View>
-        );
-    }
-
-    /**
-     * Renders the primary and the secondary toolbars.
-     *
-     * @private
-     * @returns {[ReactElement, ReactElement]}
-     */
-    _renderToolbars() {
-        return [
-            this._renderSecondaryToolbar(),
-            this._renderPrimaryToolbar()
-        ];
     }
 }
 
@@ -179,21 +190,7 @@ function _mapStateToProps(state: Object): Object {
     const { enabled, visible } = state['features/toolbox'];
 
     return {
-        /**
-         * The indicator which determines whether the toolbox is enabled.
-         *
-         * @private
-         * @type {boolean}
-         */
-        _enabled: enabled,
-
-        /**
-         * Flag showing whether toolbox is visible.
-         *
-         * @protected
-         * @type {boolean}
-         */
-        _visible: visible
+        _visible: enabled && visible
     };
 }
 

@@ -10,6 +10,11 @@ export type Styles = {
     iconStyle: Object,
 
     /**
+     * Style for te item's label.
+     */
+    labelStyle: Object,
+
+    /**
      * Style for the item itself.
      */
     style: Object,

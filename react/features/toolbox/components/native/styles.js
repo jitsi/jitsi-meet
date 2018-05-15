@@ -1,152 +1,83 @@
 import { BoxModel, ColorPalette, createStyleSheet } from '../../../base/styles';
 
 /**
- * The base style for toolbars.
- *
- * @type {Object}
+ * The style of toolbar buttons.
  */
-const _toolbar = {
-    flex: 0,
-    position: 'absolute'
-};
-
-/**
- * The base style of toolbar buttons (in primaryToolbar and secondaryToolbar).
- *
- * @type {Object}
- */
-const _toolbarButton = {
-    flex: 0,
-    justifyContent: 'center',
-    opacity: 0.7
-};
-
-/**
- * The base icon style of toolbar buttons (in primaryToolbar and
- * secondaryToolbar).
- *
- * @type {Object}
- */
-const _toolbarButtonIcon = {
-    alignSelf: 'center'
-};
-
-/**
- * The style of toolbar buttons in primaryToolbar.
- */
-const primaryToolbarButton = {
-    ..._toolbarButton,
+const toolbarButton = {
     backgroundColor: ColorPalette.white,
-    borderRadius: 30,
+    borderRadius: 20,
     borderWidth: 0,
+    flex: 0,
     flexDirection: 'row',
-    height: 60,
+    height: 40,
+    justifyContent: 'center',
     margin: BoxModel.margin,
-    width: 60
+    marginBottom: BoxModel.margin / 2,
+    opacity: 0.7,
+    width: 40
 };
 
 /**
- * The icon style of the toolbar buttons in primaryToolbar.
- *
- * @type {Object}
+ * The icon style of the toolbar buttons.
  */
-const primaryToolbarButtonIcon = {
-    ..._toolbarButtonIcon,
+const toolbarButtonIcon = {
+    alignSelf: 'center',
     color: ColorPalette.darkGrey,
-    fontSize: 24
+    fontSize: 22
 };
 
 /**
- * The icon style of the toolbar buttons in secondaryToolbar.
- *
- * @type {Object}
+ * The Toolbox and toolbar related styles.
  */
-const secondaryToolbarButtonIcon = {
-    ..._toolbarButtonIcon,
-    color: ColorPalette.white,
-    fontSize: 18
-};
-
-/**
- * The (conference) Toolbox/Toolbar related styles.
- */
-export default createStyleSheet({
+const styles = createStyleSheet({
     /**
-     * The style of the toolbar button in {@link #primaryToolbar} which
-     * hangs the current conference up.
+     * The style of the toolbar button which hangs the current conference up.
      */
-    hangup: {
-        ...primaryToolbarButton,
-        backgroundColor: ColorPalette.red
+    hangupButton: {
+        ...toolbarButton,
+        backgroundColor: ColorPalette.red,
+        borderRadius: 30,
+        height: 60,
+        width: 60
     },
 
     /**
-     * The icon style of toolbar buttons in {@link #primaryToolbar} which
-     * hangs the current conference up.
+     * The icon style of toolbar buttons which hangs the current conference up.
      */
     hangupButtonIcon: {
-        ...primaryToolbarButtonIcon,
-        color: ColorPalette.white
+        ...toolbarButtonIcon,
+        color: ColorPalette.white,
+        fontSize: 24
     },
 
     /**
-     * The style of the toolbar which contains the primary buttons such as
-     * hangup, audio and video mute.
+     * The style of the toolbar.
      */
-    primaryToolbar: {
-        ..._toolbar,
+    toolbar: {
+        alignItems: 'center',
         bottom: 0,
+        flex: 0,
         flexDirection: 'row',
         justifyContent: 'center',
         left: 0,
+        position: 'absolute',
         right: 0
     },
 
     /**
-     * The style of toolbar buttons in {@link #primaryToolbar}.
+     * The style of toolbar buttons.
      */
-    primaryToolbarButton,
+    toolbarButton,
 
     /**
-     * The icon style of the toolbar buttons in {@link #primaryToolbar}.
+     * The icon style of the toolbar buttons.
      */
-    primaryToolbarButtonIcon,
+    toolbarButtonIcon,
 
     /**
-     * The style of the toolbar which contains the secondary buttons such as
-     * toggle camera facing mode.
-     */
-    secondaryToolbar: {
-        ..._toolbar,
-        bottom: 0,
-        flexDirection: 'column',
-        right: 0,
-        top: 0
-    },
-
-    /**
-     * The style of toolbar buttons in {@link #secondaryToolbar}.
-     */
-    secondaryToolbarButton: {
-        ..._toolbarButton,
-        backgroundColor: ColorPalette.darkGrey,
-        borderRadius: 20,
-        flexDirection: 'column',
-        height: 40,
-        margin: BoxModel.margin / 2,
-        width: 40
-    },
-
-    /**
-     * The icon style of the toolbar buttons in {@link #secondaryToolbar}.
-     */
-    secondaryToolbarButtonIcon,
-
-    /**
-     * The style of the root/top-level {@link Container} of {@link Toolbox}
-     * which contains {@link Toolbar}s. This is narrow layout version which
-     * spans from the top of the screen to the top of the filmstrip located at
-     * the bottom of the screen.
+     * The style of the root/top-level {@link Container} of {@link Toolbox}.
+     * This is the narrow layout version which locates the toolbar on top of
+     * the filmstrip, at the bottom of the screen.
      */
     toolboxNarrow: {
         flexDirection: 'column',
@@ -154,11 +85,9 @@ export default createStyleSheet({
     },
 
     /**
-     * The style of the root/top-level {@link Container} of {@link Toolbox}
-     * which contains {@link Toolbar}s. This is wide layout version which spans
-     * from the top to the bottom of the screen and is located to the right of
-     * the filmstrip which is displayed as a column on the left side of the
-     * screen.
+     * The style of the root/top-level {@link Container} of {@link Toolbox}.
+     * This is the wide layout version which locates the toolbar at the bottom
+     * of the screen.
      */
     toolboxWide: {
         bottom: 0,
@@ -169,20 +98,89 @@ export default createStyleSheet({
     },
 
     /**
-     * The style of toolbar buttons in {@link #primaryToolbar} which display
-     * white icons.
+     * The style of toolbar buttons which display white icons.
      */
-    whitePrimaryToolbarButton: {
-        ...primaryToolbarButton,
+    whiteToolbarButton: {
+        ...toolbarButton,
         backgroundColor: ColorPalette.buttonUnderlay
     },
 
     /**
-     * The icon style of toolbar buttons in {@link #primaryToolbar} which
-     * display white icons.
+     * The icon style of toolbar buttons which display white icons.
      */
-    whitePrimaryToolbarButtonIcon: {
-        ...primaryToolbarButtonIcon,
+    whiteToolbarButtonIcon: {
+        ...toolbarButtonIcon,
         color: ColorPalette.white
     }
 });
+
+export default styles;
+
+/**
+ * Styles for the hangup button.
+ */
+export const hangupButtonStyles = {
+    iconStyle: styles.whiteToolbarButtonIcon,
+    style: styles.hangupButton,
+    underlayColor: ColorPalette.buttonUnderlay
+};
+
+/**
+ * Styles for buttons in the toolbar.
+ */
+export const toolbarButtonStyles = {
+    iconStyle: styles.toolbarButtonIcon,
+    style: styles.toolbarButton
+};
+
+/**
+ * Styles for toggled buttons in the toolbar.
+ */
+export const toolbarToggledButtonStyles = {
+    iconStyle: styles.whiteToolbarButtonIcon,
+    style: styles.whiteToolbarButton
+};
+
+/**
+ * Styles for the {@code OverflowMenu} items.
+ *
+ * These have been implemented as per the Material Design guidelines:
+ * {@link https://material.io/guidelines/components/bottom-sheets.html}.
+ */
+const overflowMenuStyles = createStyleSheet({
+    /**
+     * Container style for a {@code ToolboxItem} rendered in the
+     * {@code OverflowMenu}.
+     */
+    container: {
+        alignItems: 'center',
+        flexDirection: 'row',
+        height: 48
+    },
+
+    /**
+     * Style for the {@code Icon} element in a {@code ToolboxItem} rendered in
+     * the {@code OverflowMenu}.
+     */
+    icon: {
+        fontSize: 24
+    },
+
+    /**
+     * Style for the label in a {@code ToolboxItem} rendered in the
+     * {@code OverflowMenu}.
+     */
+    label: {
+        flex: 1,
+        fontSize: 16,
+        marginLeft: 32,
+        opacity: 0.87
+    }
+});
+
+export const overflowMenuItemStyles = {
+    iconStyle: overflowMenuStyles.icon,
+    labelStyle: overflowMenuStyles.label,
+    style: overflowMenuStyles.container,
+    underlayColor: '#eee'
+};

@@ -1,7 +1,7 @@
 // @flow
 
 import React from 'react';
-import { TouchableHighlight } from 'react-native';
+import { Text, TouchableHighlight, View } from 'react-native';
 
 import { Icon } from '../../../base/font-icons';
 
@@ -26,9 +26,23 @@ export default class ToolboxItem extends AbstractToolboxItem<Props> {
     }
 
     /**
-     * Handles rendering of the actual item.
+     * Helper function to render the {@code Icon} part of this item.
      *
-     * TODO: currently no handling for labels is implemented.
+     * @private
+     * @returns {ReactElement}
+     */
+    _renderIcon() {
+        const { styles } = this.props;
+
+        return (
+            <Icon
+                name = { this._getIconName() }
+                style = { styles && styles.iconStyle } />
+        );
+    }
+
+    /**
+     * Handles rendering of the actual item.
      *
      * @protected
      * @returns {ReactElement}
@@ -38,19 +52,38 @@ export default class ToolboxItem extends AbstractToolboxItem<Props> {
             accessibilityLabel,
             disabled,
             onClick,
+            showLabel,
             styles
         } = this.props;
+
+        let children;
+
+        if (showLabel) {
+            // eslint-disable-next-line no-extra-parens
+            children = (
+                <View style = { styles && styles.style } >
+                    { this._renderIcon() }
+                    <Text style = { styles && styles.labelStyle } >
+                        { this.label }
+                    </Text>
+                </View>
+            );
+        } else {
+            children = this._renderIcon();
+        }
+
+        // When using a wrapper view, apply the style to it instead of
+        // applying it to the TouchableHighlight.
+        const style = showLabel ? undefined : styles && styles.style;
 
         return (
             <TouchableHighlight
                 accessibilityLabel = { accessibilityLabel }
                 disabled = { disabled }
                 onPress = { onClick }
-                style = { styles && styles.style }
+                style = { style }
                 underlayColor = { styles && styles.underlayColor } >
-                <Icon
-                    name = { this._getIconName() }
-                    style = { styles && styles.iconStyle } />
+                { children }
             </TouchableHighlight>
         );
     }
