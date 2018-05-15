@@ -34,9 +34,29 @@ internal final class JMCallKitEmitter: NSObject, CXProviderDelegate {
     }
 
     func removeListener(_ listener: JMCallKitListener) {
-        let wrapper = JMCallKitEventListenerWrapper(listener: listener)
         objc_sync_enter(listeners)
-        listeners.remove(wrapper)
+        // XXX Constructing a new JMCallKitEventListenerWrapper instance in
+        // order to remove the specified listener from listeners is (1) a bit
+        // funny (though may make a statement about performance) and (2) not
+        // really an option because the specified listener may already be
+        // executing its dealloc (like RNCallKit).
+        listeners.forEach {
+            // 1. JMCallKitEventListenerWrapper weakly references
+            //    JMCallKitListener so it may be nice to clean
+            //    JMCallKitEventListenerWrapperinstances up if they've lost
+            //    their associated JMCallKitListener instances (e.g. for
+            //    example, because whoever did addListener forgot to
+            //    removeListener). Unfortunately, I don't know how to do it
+            //    because JMCallKitEventListenerWrapper is a struct.
+            //
+            // 2. XXX JMCallKitEventListenerWrapper implements the weird
+            //    equality by JMCallKitListener hash which (1) I don't
+            //    understand and (2) I don't know how to invoke without
+            //    duplicating.
+            if ($0.hashValue == listener.hash) {
+                listeners.remove($0)
+            }
+        }
         objc_sync_exit(listeners)
     }
 
