@@ -33,9 +33,9 @@ type Props = AbstractButtonProps & {
  * An implementation of a button for toggling the camera facing mode.
  */
 class ToggleCameraButton extends AbstractButton<Props, *> {
-    accessibilityLabel = 'Share room';
+    accessibilityLabel = 'Toggle camera';
     iconName = 'icon-switch-camera';
-    label = 'toolbar.switchCamera';
+    label = 'toolbar.toggleCamera';
 
     /**
      * Handles clicking / pressing the button.

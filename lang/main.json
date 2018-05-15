@@ -98,6 +98,7 @@
         "login": "Login",
         "logout": "Logout",
         "sharedVideoMutedPopup": "Your shared video has been muted so that you can talk to the other members.",
+        "toggleCamera": "Toggle camera",
         "micMutedPopup": "Your microphone has been muted so that you would fully enjoy your shared video.",
         "talkWhileMutedPopup": "Trying to speak? You are muted.",
         "unableToUnmutePopup": "You cannot un-mute while the shared video is on.",
