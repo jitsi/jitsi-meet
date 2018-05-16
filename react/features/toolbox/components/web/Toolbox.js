@@ -11,6 +11,7 @@ import {
 } from '../../../analytics';
 import { openDialog } from '../../../base/dialog';
 import { translate } from '../../../base/i18n';
+import { JitsiRecordingConstants } from '../../../base/lib-jitsi-meet';
 import {
     PARTICIPANT_ROLE,
     getLocalParticipant,
@@ -27,7 +28,13 @@ import {
     isDialOutEnabled
 } from '../../../invite';
 import { openKeyboardShortcutsDialog } from '../../../keyboard-shortcuts';
-import { RECORDING_TYPES, toggleRecording } from '../../../recording';
+import {
+    StartLiveStreamDialog,
+    StartRecordingDialog,
+    StopLiveStreamDialog,
+    StopRecordingDialog,
+    getActiveSession
+} from '../../../recording';
 import { SettingsButton } from '../../../settings';
 import { toggleSharedVideo } from '../../../shared-video';
 import { toggleChat, toggleProfile } from '../../../side-panel';
@@ -96,6 +103,11 @@ type Props = {
     _feedbackConfigured: boolean,
 
     /**
+     * The current file recording session, if any.
+     */
+    _fileRecordingSession: Object,
+
+    /**
      * Whether or not the app is currently in full screen.
      */
     _fullScreen: boolean,
@@ -112,10 +124,9 @@ type Props = {
     _isGuest: boolean,
 
     /**
-     * Whether or not the conference is currently being recorded by the local
-     * participant.
+     * The current live streaming session, if any.
      */
-    _isRecording: boolean,
+    _liveStreamingSession: ?Object,
 
     /**
      * The ID of the local participant.
@@ -136,12 +147,6 @@ type Props = {
      * Whether or not the recording feature is enabled for use.
      */
     _recordingEnabled: boolean,
-
-    /**
-     * Whether the recording feature is live streaming (jibri) or is file
-     * recording (jirecon).
-     */
-    _recordingType: String,
 
     /**
      * Whether or not the local participant is screensharing.
@@ -214,12 +219,13 @@ class Toolbox extends Component<Props> {
             = this._onToolbarOpenSpeakerStats.bind(this);
         this._onToolbarOpenVideoQuality
             = this._onToolbarOpenVideoQuality.bind(this);
-
         this._onToolbarToggleChat = this._onToolbarToggleChat.bind(this);
         this._onToolbarToggleEtherpad
             = this._onToolbarToggleEtherpad.bind(this);
         this._onToolbarToggleFullScreen
             = this._onToolbarToggleFullScreen.bind(this);
+        this._onToolbarToggleLiveStreaming
+            = this._onToolbarToggleLiveStreaming.bind(this);
         this._onToolbarToggleProfile
             = this._onToolbarToggleProfile.bind(this);
         this._onToolbarToggleRaiseHand
@@ -463,6 +469,22 @@ class Toolbox extends Component<Props> {
     }
 
     /**
+     * Dispatches an action to show a dialog for starting or stopping a live
+     * streaming session.
+     *
+     * @private
+     * @returns {void}
+     */
+    _doToggleLiveStreaming() {
+        const { _liveStreamingSession } = this.props;
+        const dialogToDisplay = _liveStreamingSession
+            ? StopLiveStreamDialog : StartLiveStreamDialog;
+
+        this.props.dispatch(
+            openDialog(dialogToDisplay, { session: _liveStreamingSession }));
+    }
+
+    /**
      * Dispatches an action to show or hide the profile edit panel.
      *
      * @private
@@ -495,7 +517,12 @@ class Toolbox extends Component<Props> {
      * @returns {void}
      */
     _doToggleRecording() {
-        this.props.dispatch(toggleRecording());
+        const { _fileRecordingSession } = this.props;
+        const dialog = _fileRecordingSession
+            ? StopRecordingDialog : StartRecordingDialog;
+
+        this.props.dispatch(
+            openDialog(dialog, { session: _fileRecordingSession }));
     }
 
     /**
@@ -764,6 +791,25 @@ class Toolbox extends Component<Props> {
         this._doToggleFullScreen();
     }
 
+    _onToolbarToggleLiveStreaming: () => void;
+
+    /**
+     * Starts the process for enabling or disabling live streaming.
+     *
+     * @private
+     * @returns {void}
+     */
+    _onToolbarToggleLiveStreaming() {
+        sendAnalytics(createToolbarEvent(
+            'livestreaming.button',
+            {
+                'is_streaming': Boolean(this.props._liveStreamingSession),
+                type: JitsiRecordingConstants.mode.STREAM
+            }));
+
+        this._doToggleLiveStreaming();
+    }
+
     _onToolbarToggleProfile: () => void;
 
     /**
@@ -805,8 +851,12 @@ class Toolbox extends Component<Props> {
      * @returns {void}
      */
     _onToolbarToggleRecording() {
-        // No analytics handling is added here for the click as this action will
-        // exercise the old toolbar UI flow, which includes analytics handling.
+        sendAnalytics(createToolbarEvent(
+            'recording.button',
+            {
+                'is_recording': Boolean(this.props._fileRecordingSession),
+                type: JitsiRecordingConstants.mode.FILE
+            }));
 
         this._doToggleRecording();
     }
@@ -892,6 +942,30 @@ class Toolbox extends Component<Props> {
     }
 
     /**
+     * Renders an {@code OverflowMenuItem} for starting or stopping a live
+     * streaming of the current conference.
+     *
+     * @private
+     * @returns {ReactElement}
+     */
+    _renderLiveStreamingButton() {
+        const { _liveStreamingSession, t } = this.props;
+
+        const translationKey = _liveStreamingSession
+            ? 'dialog.stopLiveStreaming'
+            : 'dialog.startLiveStreaming';
+
+        return (
+            <OverflowMenuItem
+                accessibilityLabel = 'Live stream'
+                icon = 'icon-public'
+                key = 'liveStreaming'
+                onClick = { this._onToolbarToggleLiveStreaming }
+                text = { t(translationKey) } />
+        );
+    }
+
+    /**
      * Renders the list elements of the overflow menu.
      *
      * @private
@@ -904,6 +978,7 @@ class Toolbox extends Component<Props> {
             _feedbackConfigured,
             _fullScreen,
             _isGuest,
+            _recordingEnabled,
             _sharingVideo,
             t
         } = this.props;
@@ -929,7 +1004,12 @@ class Toolbox extends Component<Props> {
                     text = { _fullScreen
                         ? t('toolbar.exitFullScreen')
                         : t('toolbar.enterFullScreen') } />,
-            this._renderRecordingButton(),
+            _recordingEnabled
+                && this._shouldShowButton('livestreaming')
+                && this._renderLiveStreamingButton(),
+            _recordingEnabled
+                && this._shouldShowButton('recording')
+                && this._renderRecordingButton(),
             this._shouldShowButton('sharedvideo')
                 && <OverflowMenuItem
                     accessibilityLabel = 'Shared video'
@@ -979,42 +1059,23 @@ class Toolbox extends Component<Props> {
     }
 
     /**
-     * Renders an {@code OverflowMenuItem} depending on the current recording
-     * state.
+     * Renders an {@code OverflowMenuItem} to start or stop recording of the
+     * current conference.
      *
      * @private
      * @returns {ReactElement|null}
      */
     _renderRecordingButton() {
-        const {
-            _isRecording,
-            _recordingEnabled,
-            _recordingType,
-            t
-        } = this.props;
+        const { _fileRecordingSession, t } = this.props;
 
-        if (!_recordingEnabled || !this._shouldShowButton('recording')) {
-            return null;
-        }
-
-        let iconClass, translationKey;
-
-        if (_recordingType === RECORDING_TYPES.JIBRI) {
-            iconClass = 'icon-public';
-            translationKey = _isRecording
-                ? 'dialog.stopLiveStreaming'
-                : 'dialog.startLiveStreaming';
-        } else {
-            iconClass = 'icon-camera-take-picture';
-            translationKey = _isRecording
-                ? 'dialog.stopRecording'
-                : 'dialog.startRecording';
-        }
+        const translationKey = _fileRecordingSession
+            ? 'dialog.stopRecording'
+            : 'dialog.startRecording';
 
         return (
             <OverflowMenuItem
                 accessibilityLabel = 'Record'
-                icon = { iconClass }
+                icon = 'icon-camera-take-picture'
                 key = 'recording'
                 onClick = { this._onToolbarToggleRecording }
                 text = { t(translationKey) } />
@@ -1055,7 +1116,6 @@ function _mapStateToProps(state) {
         enableRecording,
         iAmRecorder
     } = state['features/base/config'];
-    const { isRecording, recordingType } = state['features/recording'];
     const sharedVideoStatus = state['features/shared-video'].status;
     const { current } = state['features/side-panel'];
     const {
@@ -1083,14 +1143,15 @@ function _mapStateToProps(state) {
         _hideInviteButton:
             iAmRecorder || (!addPeopleEnabled && !dialOutEnabled),
         _isGuest: state['features/base/jwt'].isGuest,
-        _isRecording: isRecording,
+        _fileRecordingSession:
+            getActiveSession(state, JitsiRecordingConstants.mode.FILE),
         _fullScreen: fullScreen,
+        _liveStreamingSession:
+             getActiveSession(state, JitsiRecordingConstants.mode.STREAM),
         _localParticipantID: localParticipant.id,
         _overflowMenuVisible: overflowMenuVisible,
         _raisedHand: localParticipant.raisedHand,
-        _recordingEnabled: isModerator && enableRecording
-            && (conference && conference.isRecordingSupported()),
-        _recordingType: recordingType,
+        _recordingEnabled: isModerator && enableRecording,
         _screensharing: localVideo && localVideo.videoType === 'desktop',
         _sharingVideo: sharedVideoStatus === 'playing'
             || sharedVideoStatus === 'start'

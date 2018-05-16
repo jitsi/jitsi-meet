@@ -46,7 +46,7 @@ var interfaceConfig = {
         'microphone', 'camera', 'desktop', 'fullscreen', 'fodeviceselection', 'hangup',
 
         // extended toolbar
-        'profile', 'info', 'chat', 'recording', 'etherpad',
+        'profile', 'info', 'chat', 'recording', 'livestreaming', 'etherpad',
         'sharedvideo', 'settings', 'raisehand', 'videoquality', 'filmstrip',
         'invite', 'feedback', 'stats', 'shortcuts'
     ],

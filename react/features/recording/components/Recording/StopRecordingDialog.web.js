@@ -3,16 +3,15 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
-import { Dialog } from '../../../base/dialog';
-import { translate } from '../../../base/i18n';
 import {
     createRecordingDialogEvent,
     sendAnalytics
 } from '../../../analytics';
+import { Dialog } from '../../../base/dialog';
+import { translate } from '../../../base/i18n';
 
 /**
- * The type of the React {@code Component} props of
- * {@link StopLiveStreamDialog}.
+ * The type of the React {@code Component} props of {@link StopRecordingDialog}.
  */
 type Props = {
 
@@ -22,7 +21,7 @@ type Props = {
     _conference: Object,
 
     /**
-     * The redux representation of the live stremaing to be stopped.
+     * The redux representation of the recording session to be stopped.
      */
     session: Object,
 
@@ -33,19 +32,19 @@ type Props = {
 };
 
 /**
- * A React Component for confirming the participant wishes to stop the currently
- * active live stream of the conference.
+ * React Component for getting confirmation to stop a file recording session in
+ * progress.
  *
  * @extends Component
  */
-class StopLiveStreamDialog extends Component<Props> {
+class StopRecordingDialog extends Component<Props> {
     /**
-     * Initializes a new {@code StopLiveStreamDialog} instance.
+     * Initializes a new {@code StopRecordingDialog} instance.
      *
-     * @param {Object} props - The read-only properties with which the new
+     * @param {Props} props - The read-only properties with which the new
      * instance is to be initialized.
      */
-    constructor(props: Props) {
+    constructor(props) {
         super(props);
 
         // Bind event handler so it is only bound once for every instance.
@@ -61,11 +60,11 @@ class StopLiveStreamDialog extends Component<Props> {
     render() {
         return (
             <Dialog
-                okTitleKey = 'dialog.stopLiveStreaming'
+                okTitleKey = 'dialog.stopRecording'
                 onSubmit = { this._onSubmit }
-                titleKey = 'dialog.liveStreaming'
+                titleKey = 'dialog.recording'
                 width = 'small'>
-                { this.props.t('dialog.stopStreamingWarning') }
+                { this.props.t('dialog.stopRecordingWarning') }
             </Dialog>
         );
     }
@@ -73,10 +72,10 @@ class StopLiveStreamDialog extends Component<Props> {
     _onSubmit: () => boolean;
 
     /**
-     * Callback invoked when stopping of live streaming is confirmed.
+     * Stops the recording session.
      *
      * @private
-     * @returns {boolean} True to close the modal.
+     * @returns {boolean} - True (to note that the modal should be closed).
      */
     _onSubmit() {
         sendAnalytics(createRecordingDialogEvent('stop', 'confirm.button'));
@@ -92,13 +91,13 @@ class StopLiveStreamDialog extends Component<Props> {
 }
 
 /**
- * Maps (parts of) the redux state to the React {@code Component} props of
- * {@code StopLiveStreamDialog}.
+ * Maps (parts of) the Redux state to the associated props for the
+ * {@code StopRecordingDialog} component.
  *
- * @param {Object} state - The redux state.
+ * @param {Object} state - The Redux state.
  * @private
  * @returns {{
- *     _conference: Object
+ *     _conference: JitsiConference
  * }}
  */
 function _mapStateToProps(state) {
@@ -107,4 +106,4 @@ function _mapStateToProps(state) {
     };
 }
 
-export default translate(connect(_mapStateToProps)(StopLiveStreamDialog));
+export default translate(connect(_mapStateToProps)(StopRecordingDialog));

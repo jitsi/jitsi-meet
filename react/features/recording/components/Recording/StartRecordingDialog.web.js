@@ -3,16 +3,17 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
-import { Dialog } from '../../../base/dialog';
-import { translate } from '../../../base/i18n';
 import {
     createRecordingDialogEvent,
     sendAnalytics
 } from '../../../analytics';
+import { Dialog } from '../../../base/dialog';
+import { translate } from '../../../base/i18n';
+import { JitsiRecordingConstants } from '../../../base/lib-jitsi-meet';
 
 /**
  * The type of the React {@code Component} props of
- * {@link StopLiveStreamDialog}.
+ * {@link StartRecordingDialog}.
  */
 type Props = {
 
@@ -22,27 +23,21 @@ type Props = {
     _conference: Object,
 
     /**
-     * The redux representation of the live stremaing to be stopped.
-     */
-    session: Object,
-
-    /**
      * Invoked to obtain translated strings.
      */
     t: Function
 };
 
 /**
- * A React Component for confirming the participant wishes to stop the currently
- * active live stream of the conference.
+ * React Component for getting confirmation to start a file recording session.
  *
  * @extends Component
  */
-class StopLiveStreamDialog extends Component<Props> {
+class StartRecordingDialog extends Component<Props> {
     /**
-     * Initializes a new {@code StopLiveStreamDialog} instance.
+     * Initializes a new {@code StartRecordingDialog} instance.
      *
-     * @param {Object} props - The read-only properties with which the new
+     * @param {Props} props - The read-only properties with which the new
      * instance is to be initialized.
      */
     constructor(props: Props) {
@@ -61,11 +56,11 @@ class StopLiveStreamDialog extends Component<Props> {
     render() {
         return (
             <Dialog
-                okTitleKey = 'dialog.stopLiveStreaming'
+                okTitleKey = 'dialog.confirm'
                 onSubmit = { this._onSubmit }
-                titleKey = 'dialog.liveStreaming'
+                titleKey = 'dialog.recording'
                 width = 'small'>
-                { this.props.t('dialog.stopStreamingWarning') }
+                { this.props.t('recording.startRecordingBody') }
             </Dialog>
         );
     }
@@ -73,32 +68,30 @@ class StopLiveStreamDialog extends Component<Props> {
     _onSubmit: () => boolean;
 
     /**
-     * Callback invoked when stopping of live streaming is confirmed.
+     * Starts a file recording session.
      *
      * @private
-     * @returns {boolean} True to close the modal.
+     * @returns {boolean} - True (to note that the modal should be closed).
      */
     _onSubmit() {
-        sendAnalytics(createRecordingDialogEvent('stop', 'confirm.button'));
+        sendAnalytics(createRecordingDialogEvent('start', 'confirm.button'));
 
-        const { session } = this.props;
-
-        if (session) {
-            this.props._conference.stopRecording(session.id);
-        }
+        this.props._conference.startRecording({
+            mode: JitsiRecordingConstants.mode.FILE
+        });
 
         return true;
     }
 }
 
 /**
- * Maps (parts of) the redux state to the React {@code Component} props of
- * {@code StopLiveStreamDialog}.
+ * Maps (parts of) the Redux state to the associated props for the
+ * {@code StartRecordingDialog} component.
  *
- * @param {Object} state - The redux state.
+ * @param {Object} state - The Redux state.
  * @private
  * @returns {{
- *     _conference: Object
+ *     _conference: JitsiConference
  * }}
  */
 function _mapStateToProps(state) {
@@ -107,4 +100,4 @@ function _mapStateToProps(state) {
     };
 }
 
-export default translate(connect(_mapStateToProps)(StopLiveStreamDialog));
+export default translate(connect(_mapStateToProps)(StartRecordingDialog));

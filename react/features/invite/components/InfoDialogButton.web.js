@@ -5,7 +5,9 @@ import { connect } from 'react-redux';
 
 import { createToolbarEvent, sendAnalytics } from '../../analytics';
 import { translate } from '../../base/i18n';
+import { JitsiRecordingConstants } from '../../base/lib-jitsi-meet';
 import { getParticipantCount } from '../../base/participants';
+import { getActiveSession } from '../../recording';
 import { ToolbarButton } from '../../toolbox';
 
 import { updateDialInNumbers } from '../actions';
@@ -228,10 +230,14 @@ class InfoDialogButton extends Component {
  * }}
  */
 function _mapStateToProps(state) {
+    const currentLiveStreamingSession
+        = getActiveSession(state, JitsiRecordingConstants.mode.STREAM);
+
     return {
         _dialIn: state['features/invite'],
         _disableAutoShow: state['features/base/config'].iAmRecorder,
-        _liveStreamViewURL: state['features/recording'].liveStreamViewURL,
+        _liveStreamViewURL: currentLiveStreamingSession
+            && currentLiveStreamingSession.liveStreamViewURL,
         _participantCount:
             getParticipantCount(state['features/base/participants']),
         _toolboxVisible: state['features/toolbox'].visible

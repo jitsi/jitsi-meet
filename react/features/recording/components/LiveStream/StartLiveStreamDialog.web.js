@@ -1,18 +1,24 @@
-/* globals APP, interfaceConfig */
+// @flow
 
 import Spinner from '@atlaskit/spinner';
-import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
+import {
+    createRecordingDialogEvent,
+    sendAnalytics
+} from '../../../analytics';
 import { Dialog } from '../../../base/dialog';
 import { translate } from '../../../base/i18n';
+import { JitsiRecordingConstants } from '../../../base/lib-jitsi-meet';
 
 import googleApi from '../../googleApi';
 
 import BroadcastsDropdown from './BroadcastsDropdown';
 import GoogleSignInButton from './GoogleSignInButton';
 import StreamKeyForm from './StreamKeyForm';
+
+declare var interfaceConfig: Object;
 
 /**
  * An enumeration of the different states the Google API can be in while
@@ -45,62 +51,72 @@ const GOOGLE_API_STATES = {
 };
 
 /**
+ * The type of the React {@code Component} props of
+ * {@link StartLiveStreamDialog}.
+ */
+type Props = {
+
+    /**
+     * The {@code JitsiConference} for the current conference.
+     */
+    _conference: Object,
+
+    /**
+     * The ID for the Google web client application used for making stream key
+     * related requests.
+     */
+    _googleApiApplicationClientID: string,
+
+    /**
+     * Invoked to obtain translated strings.
+     */
+    t: Function
+};
+
+/**
+ * The type of the React {@code Component} state of
+ * {@link StartLiveStreamDialog}.
+ */
+type State = {
+
+    /**
+     * Details about the broadcasts available for use for the logged in Google
+     * user's YouTube account.
+     */
+    broadcasts: ?Array<Object>,
+
+    /**
+     * The current state of interactions with the Google API. Determines what
+     * Google related UI should display.
+     */
+    googleAPIState: number,
+
+    /**
+     * The email of the user currently logged in to the Google web client
+     * application.
+     */
+    googleProfileEmail: string,
+
+    /**
+     * The boundStreamID of the broadcast currently selected in the broadcast
+     * dropdown.
+     */
+    selectedBoundStreamID: ?string,
+
+    /**
+     * The selected or entered stream key to use for YouTube live streaming.
+     */
+    streamKey: string
+};
+
+/**
  * A React Component for requesting a YouTube stream key to use for live
  * streaming of the current conference.
  *
  * @extends Component
  */
-class StartLiveStreamDialog extends Component {
-    /**
-     * {@code StartLiveStreamDialog} component's property types.
-     *
-     * @static
-     */
-    static propTypes = {
-        /**
-         * The ID for the Google web client application used for making stream
-         * key related requests.
-         */
-        _googleApiApplicationClientID: PropTypes.string,
-
-        /**
-         * Callback to invoke when the dialog is dismissed without submitting a
-         * stream key.
-         */
-        onCancel: PropTypes.func,
-
-        /**
-         * Callback to invoke when a stream key is submitted for use.
-         */
-        onSubmit: PropTypes.func,
-
-        /**
-         * Invoked to obtain translated strings.
-         */
-        t: PropTypes.func
-    };
-
-    /**
-     * {@code StartLiveStreamDialog} component's local state.
-     *
-     * @property {boolean} googleAPIState - The current state of interactions
-     * with the Google API. Determines what Google related UI should display.
-     * @property {Object[]|undefined} broadcasts - Details about the broadcasts
-     * available for use for the logged in Google user's YouTube account.
-     * @property {string} googleProfileEmail - The email of the user currently
-     * logged in to the Google web client application.
-     * @property {string} selectedBoundStreamID - The boundStreamID of the
-     * broadcast currently selected in the broadcast dropdown.
-     * @property {string} streamKey - The selected or entered stream key to use
-     * for YouTube live streaming.
-     */
-    state = {
-        broadcasts: undefined,
-        googleAPIState: GOOGLE_API_STATES.NEEDS_LOADING,
-        googleProfileEmail: '',
-        selectedBoundStreamID: undefined,
-        streamKey: ''
-    };
+class StartLiveStreamDialog extends Component<Props, State> {
+    _isMounted: boolean;
 
     /**
      * Initializes a new {@code StartLiveStreamDialog} instance.
@@ -108,8 +124,16 @@ class StartLiveStreamDialog extends Component {
      * @param {Props} props - The React {@code Component} props to initialize
      * the new {@code StartLiveStreamDialog} instance with.
      */
-    constructor(props) {
+    constructor(props: Props) {
         super(props);
+
+        this.state = {
+            broadcasts: undefined,
+            googleAPIState: GOOGLE_API_STATES.NEEDS_LOADING,
+            googleProfileEmail: '',
+            selectedBoundStreamID: undefined,
+            streamKey: ''
+        };
 
         /**
          * Instance variable used to flag whether the component is or is not
@@ -186,6 +210,8 @@ class StartLiveStreamDialog extends Component {
         );
     }
 
+    _onInitializeGoogleApi: () => Object;
+
     /**
      * Loads the Google web client application used for fetching stream keys.
      * If the user is already logged in, then a request for available YouTube
@@ -214,6 +240,8 @@ class StartLiveStreamDialog extends Component {
             });
     }
 
+    _onCancel: () => boolean;
+
     /**
      * Invokes the passed in {@link onCancel} callback and closes
      * {@code StartLiveStreamDialog}.
@@ -222,10 +250,12 @@ class StartLiveStreamDialog extends Component {
      * @returns {boolean} True is returned to close the modal.
      */
     _onCancel() {
-        this.props.onCancel(APP.UI.messageHandler.CANCEL);
+        sendAnalytics(createRecordingDialogEvent('start', 'cancel.button'));
 
         return true;
     }
+
+    _onGetYouTubeBroadcasts: () => Object;
 
     /**
      * Asks the user to sign in, if not already signed in, and then requests a
@@ -269,6 +299,8 @@ class StartLiveStreamDialog extends Component {
             });
     }
 
+    _onRequestGoogleSignIn: () => Object;
+
     /**
      * Forces the Google web client application to prompt for a sign in, such as
      * when changing account, and will then fetch available YouTube broadcasts.
@@ -281,6 +313,8 @@ class StartLiveStreamDialog extends Component {
             .then(() => this._setStateIfMounted({ broadcasts: undefined }))
             .then(() => this._onGetYouTubeBroadcasts());
     }
+
+    _onStreamKeyChange: () => void;
 
     /**
      * Callback invoked to update the {@code StartLiveStreamDialog} component's
@@ -297,6 +331,8 @@ class StartLiveStreamDialog extends Component {
         });
     }
 
+    _onSubmit: () => boolean;
+
     /**
      * Invokes the passed in {@link onSubmit} callback with the entered stream
      * key, and then closes {@code StartLiveStreamDialog}.
@@ -306,7 +342,7 @@ class StartLiveStreamDialog extends Component {
      * closing, true to close the modal.
      */
     _onSubmit() {
-        const { streamKey, selectedBoundStreamID } = this.state;
+        const { broadcasts, streamKey, selectedBoundStreamID } = this.state;
 
         if (!streamKey) {
             return false;
@@ -315,16 +351,24 @@ class StartLiveStreamDialog extends Component {
         let selectedBroadcastID = null;
 
         if (selectedBoundStreamID) {
-            const selectedBroadcast = this.state.broadcasts.find(
+            const selectedBroadcast = broadcasts && broadcasts.find(
                 broadcast => broadcast.boundStreamID === selectedBoundStreamID);
 
             selectedBroadcastID = selectedBroadcast && selectedBroadcast.id;
         }
 
-        this.props.onSubmit(streamKey, selectedBroadcastID);
+        sendAnalytics(createRecordingDialogEvent('start', 'confirm.button'));
+
+        this.props._conference.startRecording({
+            broadcastId: selectedBroadcastID,
+            mode: JitsiRecordingConstants.mode.STREAM,
+            streamId: streamKey
+        });
 
         return true;
     }
+
+    _onYouTubeBroadcastIDSelected: (string) => Object;
 
     /**
      * Fetches the stream key for a YouTube broadcast and updates the internal
@@ -350,6 +394,8 @@ class StartLiveStreamDialog extends Component {
                 });
             });
     }
+
+    _parseBroadcasts: (Array<Object>) => Array<Object>;
 
     /**
      * Takes in a list of broadcasts from the YouTube API, removes dupes,
@@ -487,13 +533,15 @@ class StartLiveStreamDialog extends Component {
  * {@code StartLiveStreamDialog}.
  *
  * @param {Object} state - The redux state.
- * @protected
+ * @private
  * @returns {{
+ *     _conference: Object,
  *     _googleApiApplicationClientID: string
  * }}
  */
 function _mapStateToProps(state) {
     return {
+        _conference: state['features/base/conference'].conference,
         _googleApiApplicationClientID:
             state['features/base/config'].googleApiApplicationClientID
     };

@@ -12,7 +12,6 @@ import UIUtil from './util/UIUtil';
 import UIEvents from '../../service/UI/UIEvents';
 import EtherpadManager from './etherpad/Etherpad';
 import SharedVideoManager from './shared_video/SharedVideo';
-import Recording from './recording/Recording';
 
 import VideoLayout from './videolayout/VideoLayout';
 import Filmstrip from './videolayout/Filmstrip';
@@ -38,6 +37,7 @@ import {
 import { shouldShowOnlyDeviceSelection } from '../../react/features/settings';
 import {
     dockToolbox,
+    setToolboxEnabled,
     showToolbox
 } from '../../react/features/toolbox';
 
@@ -337,7 +337,12 @@ UI.start = function() {
     if (!interfaceConfig.filmStripOnly) {
         VideoLayout.initLargeVideo();
     }
-    VideoLayout.resizeVideoArea(true, true);
+
+    // Do not animate the video area on UI start (second argument passed into
+    // resizeVideoArea) because the animation is not visible anyway. Plus with
+    // the current dom layout, the quality label is part of the video layout and
+    // will be seen animating in.
+    VideoLayout.resizeVideoArea(true, false);
 
     sharedVideoManager = new SharedVideoManager(eventEmitter);
 
@@ -346,9 +351,20 @@ UI.start = function() {
         Filmstrip.setFilmstripOnly();
         APP.store.dispatch(setNotificationsEnabled(false));
     } else {
-        // Initialise the recording module.
-        config.enableRecording
-            && Recording.init(eventEmitter, config.recordingType);
+        // Initialize recording mode UI.
+        if (config.enableRecording && config.iAmRecorder) {
+            VideoLayout.enableDeviceAvailabilityIcons(
+                APP.conference.getMyUserId(), false);
+
+            // in case of iAmSipGateway keep local video visible
+            if (!config.iAmSipGateway) {
+                VideoLayout.setLocalVideoVisible(false);
+            }
+
+            APP.store.dispatch(setToolboxEnabled(false));
+            APP.store.dispatch(setNotificationsEnabled(false));
+            UI.messageHandler.enablePopups(false);
+        }
 
         // Initialize side panels
         SidePanels.init(eventEmitter);
@@ -520,13 +536,9 @@ UI.onPeerVideoTypeChanged
 UI.updateLocalRole = isModerator => {
     VideoLayout.showModeratorIndicator();
 
-    if (isModerator) {
-        if (!interfaceConfig.DISABLE_FOCUS_INDICATOR) {
-            messageHandler.participantNotification(
-                null, 'notify.me', 'connected', 'notify.moderator');
-        }
-
-        Recording.checkAutoRecord();
+    if (isModerator && !interfaceConfig.DISABLE_FOCUS_INDICATOR) {
+        messageHandler.participantNotification(
+            null, 'notify.me', 'connected', 'notify.moderator');
     }
 };
 
@@ -879,10 +891,6 @@ UI.markVideoInterrupted = function(interrupted) {
 // eslint-disable-next-line max-params
 UI.addMessage = function(from, displayName, message, stamp) {
     Chat.updateChatConversation(from, displayName, message, stamp);
-};
-
-UI.updateRecordingState = function(state) {
-    Recording.updateRecordingState(state);
 };
 
 UI.notifyTokenAuthFailed = function() {
