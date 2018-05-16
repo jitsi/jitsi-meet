@@ -11,6 +11,7 @@ import {
     CONFERENCE_WILL_LEAVE,
     JITSI_CONFERENCE_URL_KEY,
     SET_ROOM,
+    forEachConference,
     isRoomValid
 } from '../../base/conference';
 import { LOAD_CONFIG_ERROR } from '../../base/config';
@@ -249,28 +250,18 @@ function _swallowConferenceLeft({ getState }, action, { url }) {
     // the same URL string multiple times) to try to send CONFERENCE_LEFT
     // externally for a URL string which identifies a JitsiConference that the
     // app is internally legitimately working with.
+    let swallowConferenceLeft = false;
 
-    if (url) {
-        const stateFeaturesBaseConference
-            = getState()['features/base/conference'];
-
-        // eslint-disable-next-line guard-for-in
-        for (const p in stateFeaturesBaseConference) {
-            const v = stateFeaturesBaseConference[p];
-
-            // Does the value of the base/conference's property look like a
-            // JitsiConference?
-            if (v && typeof v === 'object') {
-                const vURL = v[JITSI_CONFERENCE_URL_KEY];
-
-                if (vURL && vURL.toString() === url) {
-                    return true;
-                }
+    url
+        && forEachConference(getState, (conference, conferenceURL) => {
+            if (conferenceURL && conferenceURL.toString() === url) {
+                swallowConferenceLeft = true;
             }
-        }
-    }
 
-    return false;
+            return !swallowConferenceLeft;
+        });
+
+    return swallowConferenceLeft;
 }
 
 /**

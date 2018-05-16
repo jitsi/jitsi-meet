@@ -1,7 +1,7 @@
 // @flow
 
 import { APP_WILL_MOUNT, APP_WILL_UNMOUNT } from '../../app';
-import { CONFERENCE_LEFT, CONFERENCE_WILL_JOIN } from '../conference';
+import { CONFERENCE_WILL_JOIN, forEachConference } from '../conference';
 import { CALLING, INVITED } from '../../presence-status';
 import { MiddlewareRegistry, StateListenerRegistry } from '../redux';
 import UIEvents from '../../../../service/UI/UIEvents';
@@ -57,10 +57,6 @@ MiddlewareRegistry.register(store => next => action => {
 
     case CONFERENCE_WILL_JOIN:
         store.dispatch(localParticipantIdChanged(action.conference.myUserId()));
-        break;
-
-    case CONFERENCE_LEFT:
-        store.dispatch(localParticipantIdChanged(LOCAL_PARTICIPANT_DEFAULT_ID));
         break;
 
     case DOMINANT_SPEAKER_CHANGED: {
@@ -144,6 +140,41 @@ StateListenerRegistry.register(
                 && (!conference || p.conference !== conference)
                 && dispatch(participantLeft(p.id, p.conference));
         }
+    });
+
+/**
+ * Reset the ID of the local participant to
+ * {@link LOCAL_PARTICIPANT_DEFAULT_ID}. Such a reset is deemed possible only if
+ * the local participant and, respectively, her ID is not involved in a
+ * conference which is still of interest to the user and, consequently, the app.
+ * For example, a conference which is in the process of leaving is no longer of
+ * interest the user, is unrecoverable from the perspective of the user and,
+ * consequently, the app.
+ */
+StateListenerRegistry.register(
+    /* selector */ state => state['features/base/conference'],
+    /* listener */ ({ leaving }, { dispatch, getState }) => {
+        const state = getState();
+        const localParticipant = getLocalParticipant(state);
+        let id;
+
+        if (!localParticipant
+                || (id = localParticipant.id)
+                    === LOCAL_PARTICIPANT_DEFAULT_ID) {
+            // The ID of the local participant has been reset already.
+            return;
+        }
+
+        // The ID of the local may be reset only if it is not in use.
+        const dispatchLocalParticipantIdChanged
+            = forEachConference(
+                state,
+                conference =>
+                    conference === leaving || conference.myUserId() !== id);
+
+        dispatchLocalParticipantIdChanged
+            && dispatch(
+                localParticipantIdChanged(LOCAL_PARTICIPANT_DEFAULT_ID));
     });
 
 /**
