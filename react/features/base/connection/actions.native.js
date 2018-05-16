@@ -15,6 +15,8 @@ import {
     SET_LOCATION_URL
 } from './actionTypes';
 
+const logger = require('jitsi-meet-logger').getLogger(__filename);
+
 /**
  * The error structure passed to the {@link connectionFailed} action.
  *
@@ -322,7 +324,20 @@ export function disconnect() {
 
             promise
                 = conference_.leave()
-                    .catch(() => {
+                    .then(() => {
+                        // If the conference is still in the leaving flag it
+                        // means that for some reason lib-jitsi-meet has not
+                        // dispatched the left event.
+                        const { leaving }
+                            = getState()['features/base/conference'];
+
+                        if (leaving === conference_) {
+                            dispatch(conferenceLeft(conference_));
+                            logger.warn(
+                                'JitsiMeetConference.leave resolved without'
+                                    + 'dispatching the left event');
+                        }
+                    }, () => {
                         // The library lib-jitsi-meet failed to make the
                         // JitsiConference leave. Which may be because
                         // JitsiConference thinks it has already left.
