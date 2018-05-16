@@ -43,6 +43,16 @@ export const PLAY_SOUND = Symbol('PLAY_SOUND');
 export const REGISTER_SOUND = Symbol('REGISTER_SOUND');
 
 /**
+ * The type of (redux) action to stop a sound from the sounds collection.
+ *
+ * {
+ *     type: STOP_SOUND,
+ *     soundId: string
+ * }
+ */
+export const STOP_SOUND = Symbol('STOP_SOUND');
+
+/**
  * The type of (redux) action to unregister an existing sound from the sounds
  * collection.
  *

@@ -577,5 +577,15 @@
         "appNotInstalled": "You need the __app__ mobile app to join this meeting on your phone.",
         "downloadApp": "Download the app",
         "openApp": "Continue to the app"
+    },
+    "presenceStatus": {
+        "invited": "Invited",
+        "ringing": "Ringing",
+        "calling": "Calling",
+        "connected": "Connected",
+        "connecting": "Connecting",
+        "busy": "Busy",
+        "rejected": "Rejected",
+        "ignored": "Ignored"
     }
 }

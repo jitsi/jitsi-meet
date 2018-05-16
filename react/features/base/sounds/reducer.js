@@ -29,7 +29,12 @@ export type Sound = {
      * can be either a path to the file or an object depending on the platform
      * (native vs web).
      */
-    src: Object | string
+    src: Object | string,
+
+    /**
+     * This field is container for all optional parameters related to the sound.
+     */
+    options: Object
 }
 
 /**
@@ -115,7 +120,8 @@ function _registerSound(state, action) {
     const nextState = new Map(state);
 
     nextState.set(action.soundId, {
-        src: action.src
+        src: action.src,
+        options: action.options
     });
 
     return nextState;

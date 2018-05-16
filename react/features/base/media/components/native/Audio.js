@@ -74,4 +74,17 @@ export default class Audio extends AbstractAudio {
         // writing to not render anything.
         return null;
     }
+
+    /**
+     * Stops the sound if it's currently playing.
+     *
+     * @returns {void}
+     */
+    stop() {
+        // Currently not implemented for mobile. If needed, a possible
+        // implementation is:
+        // if (this._sound) {
+        //     this._sound.stop();
+        // }
+    }
 }

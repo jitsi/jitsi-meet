@@ -7,6 +7,7 @@ import { Component } from 'react';
  * playback.
  */
 export type AudioElement = {
+    currentTime?: number,
     pause: () => void,
     play: () => void,
     setSinkId?: string => void
@@ -32,7 +33,8 @@ type Props = {
      * @type {Object | string}
      */
     src: Object | string,
-    stream: Object
+    stream: Object,
+    loop?: ?boolean
 }
 
 /**

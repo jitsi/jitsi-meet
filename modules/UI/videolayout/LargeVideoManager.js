@@ -2,8 +2,10 @@
 /* eslint-disable no-unused-vars */
 import React from 'react';
 import ReactDOM from 'react-dom';
+import { I18nextProvider } from 'react-i18next';
 import { Provider } from 'react-redux';
 
+import { i18next } from '../../../react/features/base/i18n';
 import { PresenceLabel } from '../../../react/features/presence-status';
 /* eslint-enable no-unused-vars */
 
@@ -456,7 +458,9 @@ export default class LargeVideoManager {
         if (presenceLabelContainer.length) {
             ReactDOM.render(
                 <Provider store = { APP.store }>
-                    <PresenceLabel participantID = { id } />
+                    <I18nextProvider i18n = { i18next }>
+                        <PresenceLabel participantID = { id } />
+                    </I18nextProvider>
                 </Provider>,
                 presenceLabelContainer.get(0));
         }

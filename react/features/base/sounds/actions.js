@@ -7,6 +7,7 @@ import {
     _REMOVE_AUDIO_ELEMENT,
     PLAY_SOUND,
     REGISTER_SOUND,
+    STOP_SOUND,
     UNREGISTER_SOUND
 } from './actionTypes';
 import { getSoundsPath } from './functions';
@@ -84,17 +85,41 @@ export function playSound(soundId: string): Object {
  * created for given source object.
  * @param {string} soundName - The name of bundled audio file that will be
  * associated with the given {@code soundId}.
+ * @param {Object} options - Optional paramaters.
+ * @param {boolean} options.loop - True in order to loop the sound.
  * @returns {{
  *     type: REGISTER_SOUND,
  *     soundId: string,
- *     src: string
+ *     src: string,
+ *     options: {
+ *          loop: boolean
+ *     }
  * }}
  */
-export function registerSound(soundId: string, soundName: string): Object {
+export function registerSound(
+        soundId: string, soundName: string, options: Object = {}): Object {
     return {
         type: REGISTER_SOUND,
         soundId,
-        src: `${getSoundsPath()}/${soundName}`
+        src: `${getSoundsPath()}/${soundName}`,
+        options
+    };
+}
+
+/**
+ * Stops playback of the sound identified by the given sound id.
+ *
+ * @param {string} soundId - The id of the sound to be stopped (the same one
+ * which was used in {@link registerSound} to register the sound).
+ * @returns {{
+ *     type: STOP_SOUND,
+ *     soundId: string
+ * }}
+ */
+export function stopSound(soundId: string): Object {
+    return {
+        type: STOP_SOUND,
+        soundId
     };
 }
 
