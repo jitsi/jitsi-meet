@@ -53,6 +53,10 @@ export default class BottomSheet extends Component<Props> {
                 animationType = { 'slide' }
                 key = 'modal'
                 onRequestClose = { this._onCancel }
+                supportedOrientations = { [
+                    'landscape',
+                    'portrait'
+                ] }
                 transparent = { true }
                 visible = { true }>
                 <View style = { styles.container }>
