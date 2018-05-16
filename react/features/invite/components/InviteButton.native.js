@@ -2,9 +2,10 @@
 
 import { connect } from 'react-redux';
 
+import { openDialog } from '../../base/dialog';
 import { AbstractButton } from '../../base/toolbox';
 import type { AbstractButtonProps } from '../../base/toolbox';
-import { beginShareRoom } from '../../share-room';
+import { ShareMeetingMenu } from '../../mobile/share-meeting';
 
 import { beginAddPeople } from '../actions';
 import { isAddPeopleEnabled, isDialOutEnabled } from '../functions';
@@ -13,15 +14,9 @@ type Props = AbstractButtonProps & {
 
     /**
      * Whether or not the feature to directly invite people into the
-     * conference is available.
+     * conference (via an external service or a phone number) is available.
      */
     _addPeopleEnabled: boolean,
-
-    /**
-     * Whether or not the feature to dial out to number to join the
-     * conference is available.
-     */
-    _dialOutEnabled: boolean,
 
     /**
      * Launches native invite dialog.
@@ -31,9 +26,9 @@ type Props = AbstractButtonProps & {
     _onAddPeople: Function,
 
     /**
-     * Begins the UI procedure to share the conference/room URL.
+     * Begins the UI procedure to share the meeting dial-in information.
      */
-    _onShareRoom: Function
+    _onShareMeeting: Function
 };
 
 /**
@@ -44,7 +39,7 @@ type Props = AbstractButtonProps & {
  * @private
  * @type {boolean}
  */
-const _SHARE_ROOM_TOOLBAR_BUTTON = true;
+const _SHARE_MEETING_TOOLBAR_BUTTON = true;
 
 /**
  * Implements an {@link AbstractButton} to enter add/invite people to the
@@ -56,6 +51,17 @@ class InviteButton extends AbstractButton<Props, *> {
     label = 'toolbar.shareRoom';
 
     /**
+     * XXX Export this constant so other features can check it. It cannot be a
+     * static attribute because it's lost when connect()-ing with redux.
+     *
+     * @private
+     * @returns {boolean}
+     */
+    static get _SHARE_MEETING_TOOLBAR_BUTTON() {
+        return _SHARE_MEETING_TOOLBAR_BUTTON;
+    }
+
+    /**
      * Handles clicking / pressing the button, and opens the appropriate dialog.
      *
      * @private
@@ -64,15 +70,14 @@ class InviteButton extends AbstractButton<Props, *> {
     _handleClick() {
         const {
             _addPeopleEnabled,
-            _dialOutEnabled,
             _onAddPeople,
-            _onShareRoom
+            _onShareMeeting
         } = this.props;
 
-        if (_addPeopleEnabled || _dialOutEnabled) {
+        if (_SHARE_MEETING_TOOLBAR_BUTTON) {
+            _onShareMeeting();
+        } else if (_addPeopleEnabled) {
             _onAddPeople();
-        } else if (_SHARE_ROOM_TOOLBAR_BUTTON) {
-            _onShareRoom();
         }
     }
 
@@ -83,12 +88,10 @@ class InviteButton extends AbstractButton<Props, *> {
      * @returns {React$Node}
      */
     render() {
-        const { _addPeopleEnabled, _dialOutEnabled } = this.props;
+        const { _addPeopleEnabled } = this.props;
 
         return (
-            _SHARE_ROOM_TOOLBAR_BUTTON
-                    || _addPeopleEnabled
-                    || _dialOutEnabled
+            _SHARE_MEETING_TOOLBAR_BUTTON || _addPeopleEnabled
                 ? super.render()
                 : null);
     }
@@ -101,7 +104,7 @@ class InviteButton extends AbstractButton<Props, *> {
  * @param {Function} dispatch - The redux action {@code dispatch} function.
  * @returns {{
  *     _onAddPeople,
- *     _onShareRoom
+ *     _onShareMeeting
  * }}
  * @private
  */
@@ -125,8 +128,8 @@ function _mapDispatchToProps(dispatch) {
          * @returns {void}
          * @type {Function}
          */
-        _onShareRoom() {
-            dispatch(beginShareRoom());
+        _onShareMeeting() {
+            dispatch(openDialog(ShareMeetingMenu));
         }
     };
 }
@@ -144,19 +147,11 @@ function _mapStateToProps(state) {
     return {
         /**
          * Whether or not the feature to directly invite people into the
-         * conference is available.
+         * conference (via an external service or a phone number) is available.
          *
          * @type {boolean}
          */
-        _addPeopleEnabled: isAddPeopleEnabled(state),
-
-        /**
-         * Whether or not the feature to dial out to number to join the
-         * conference is available.
-         *
-         * @type {boolean}
-         */
-        _dialOutEnabled: isDialOutEnabled(state)
+        _addPeopleEnabled: isAddPeopleEnabled(state) || isDialOutEnabled(state)
     };
 }
 

@@ -4,9 +4,10 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
 import { BottomSheet, hideDialog } from '../../../base/dialog';
+import { InviteButton } from '../../../invite';
 import { AudioRouteButton } from '../../../mobile/audio-mode';
 import { PictureInPictureButton } from '../../../mobile/picture-in-picture';
-import { RoomLockButton } from '../../../room-lock';
+import { ShareMeetingMenuButton } from '../../../mobile/share-meeting';
 
 import AudioOnlyButton from './AudioOnlyButton';
 import { overflowMenuItemStyles } from './styles';
@@ -67,7 +68,15 @@ class OverflowMenu extends Component<Props> {
                 <AudioRouteButton { ...buttonProps } />
                 <ToggleCameraButton { ...buttonProps } />
                 <AudioOnlyButton { ...buttonProps } />
-                <RoomLockButton { ...buttonProps } />
+                {/*
+                  * If the invite button was configured (at build time) to
+                  * directly show the share meeting sheet, there is no need
+                  * to have the same option here.
+                  */
+                }
+                <ShareMeetingMenuButton
+                    visible = { !InviteButton._SHARE_MEETING_TOOLBAR_BUTTON }
+                    { ...buttonProps } />
                 <PictureInPictureButton { ...buttonProps } />
             </BottomSheet>
         );
