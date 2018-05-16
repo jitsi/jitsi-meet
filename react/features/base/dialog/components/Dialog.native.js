@@ -153,7 +153,8 @@ class Dialog extends AbstractDialog<Props, State> {
                 //   because we've removed Prompt and we're preserving whatever
                 //   it's rendered only.
                 return this._cloneElement(el, /* props */ {
-                    onRequestClose: this._onCancel
+                    onRequestClose: this._onCancel,
+                    supportedOrientations: [ 'landscape', 'portrait' ]
                 });
             }
 
