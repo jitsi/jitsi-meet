@@ -1,7 +1,7 @@
 // @flow
 
 import React, { Component, type Node } from 'react';
-import { Modal, TouchableWithoutFeedback, View } from 'react-native';
+import { Modal, Text, TouchableWithoutFeedback, View } from 'react-native';
 
 import { bottomSheetStyles as styles } from './styles';
 
@@ -19,7 +19,12 @@ type Props = {
      * Handler for the cancel event, which happens when the user dismisses
      * the sheet.
      */
-    onCancel: ?Function
+    onCancel: ?Function,
+
+    /**
+     * (Optional) title for the sheet.
+     */
+    title: ?string
 };
 
 /**
@@ -36,6 +41,28 @@ export default class BottomSheet extends Component<Props> {
         super(props);
 
         this._onCancel = this._onCancel.bind(this);
+    }
+
+    /**
+     * Renders the sheet title, if available.
+     *
+     * @private
+     * @returns {ReactElement}
+     */
+    _renderTitle() {
+        const { title } = this.props;
+
+        if (!title || !title.length) {
+            return undefined;
+        }
+
+        return (
+            <View style = { styles.titleRow }>
+                <Text style = { styles.titleText }>
+                    { title }
+                </Text>
+            </View>
+        );
     }
 
     /**
@@ -65,6 +92,7 @@ export default class BottomSheet extends Component<Props> {
                         <View style = { styles.backdrop } />
                     </TouchableWithoutFeedback>
                     <View style = { styles.sheet }>
+                        { this._renderTitle() }
                         { this.props.children }
                     </View>
                 </View>

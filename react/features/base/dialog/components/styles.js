@@ -63,5 +63,22 @@ export const bottomSheetStyles = createStyleSheet({
         backgroundColor: ColorPalette.white,
         paddingHorizontal: 16,
         paddingVertical: 8
+    },
+
+    /**
+     * Style for the row containing the title.
+     */
+    titleRow: {
+        alignItems: 'center',
+        flexDirection: 'row',
+        height: 56
+    },
+
+    /**
+     * Style for the title itself.
+     */
+    titleText: {
+        fontSize: 16,
+        opacity: 0.54
     }
 });
