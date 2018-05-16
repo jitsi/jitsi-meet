@@ -13,24 +13,29 @@ import { InviteButton } from '../../../invite';
 
 import AudioMuteButton from '../AudioMuteButton';
 import HangupButton from '../HangupButton';
-import VideoMuteButton from '../VideoMuteButton';
-
 import OverflowMenuButton from './OverflowMenuButton';
 import styles, {
     hangupButtonStyles,
     toolbarButtonStyles,
     toolbarToggledButtonStyles
 } from './styles';
+import VideoMuteButton from '../VideoMuteButton';
 
 /**
- * Number of buttons in the toolbar.
+ * The number of buttons to render in {@link Toolbox}.
+ *
+ * @private
+ * @type number
  */
-const NUM_TOOLBAR_BUTTONS = 4;
+const _BUTTON_COUNT = 4;
 
 /**
  * Factor relating the hangup button and other toolbar buttons.
+ *
+ * @private
+ * @type number
  */
-const TOOLBAR_BUTTON_SIZE_FACTOR = 0.8;
+const _BUTTON_SIZE_FACTOR = 0.8;
 
 /**
  * The type of {@link Toolbox}'s React {@code Component} props.
@@ -75,46 +80,8 @@ class Toolbox extends Component<Props, State> {
     constructor(props: Props) {
         super(props);
 
+        // Bind event handlers so they are only bound once per instance.
         this._onLayout = this._onLayout.bind(this);
-    }
-
-    _onLayout: (Object) => void;
-
-    /**
-     * Handles the "on layout" View's event and stores the width as state.
-     *
-     * @param {Object} event - The "on layout" event object/structure passed
-     * by react-native.
-     * @private
-     * @returns {void}
-     */
-    _onLayout({ nativeEvent: { layout: { width } } }) {
-        this.setState({ width });
-    }
-
-    /**
-     * Calculates how large our toolbar buttons can be, given the available
-     * width. In the future we might want to have a size threshold, and once
-     * it's passed a completely different style could be used, akin to the web.
-     *
-     * @private
-     * @returns {number}
-     */
-    _calculateToolbarButtonSize() {
-        const width = this.state.width;
-        const hangupButtonSize = styles.hangupButton.width;
-
-        let buttonSize
-            = (width - hangupButtonSize
-                - (NUM_TOOLBAR_BUTTONS * styles.toolbarButton.margin * 2))
-                    / NUM_TOOLBAR_BUTTONS;
-
-        // Make sure it's an even number.
-        buttonSize = 2 * Math.round(buttonSize / 2);
-
-        // The button should be at most 80% of the hangup button's size.
-        return Math.min(
-            buttonSize, hangupButtonSize * TOOLBAR_BUTTON_SIZE_FACTOR);
     }
 
     /**
@@ -129,31 +96,35 @@ class Toolbox extends Component<Props, State> {
                 ? styles.toolboxNarrow
                 : styles.toolboxWide;
         const { _visible } = this.props;
-        const buttonStyles = {
-            ...toolbarButtonStyles
-        };
-        const toggledButtonStyles = {
-            ...toolbarToggledButtonStyles
-        };
+        let buttonStyles = toolbarButtonStyles;
+        let toggledButtonStyles = toolbarToggledButtonStyles;
 
-        if (_visible && this.state.width) {
-            const buttonSize = this._calculateToolbarButtonSize();
-            const extraStyle = {
-                borderRadius: buttonSize / 2,
-                height: buttonSize,
-                width: buttonSize
-            };
+        if (_visible) {
+            const buttonSize = this._calculateButtonSize();
 
-            buttonStyles.style = [ buttonStyles.style, extraStyle ];
-            toggledButtonStyles.style
-                = [ toggledButtonStyles.style, extraStyle ];
+            if (buttonSize > 0) {
+                const extraButtonStyle = {
+                    borderRadius: buttonSize / 2,
+                    height: buttonSize,
+                    width: buttonSize
+                };
+
+                buttonStyles = {
+                    ...buttonStyles,
+                    style: [ buttonStyles.style, extraButtonStyle ]
+                };
+                toggledButtonStyles = {
+                    ...toggledButtonStyles,
+                    style: [ toggledButtonStyles.style, extraButtonStyle ]
+                };
+            }
         }
 
         return (
             <Container
                 onLayout = { this._onLayout }
                 style = { toolboxStyle }
-                visible = { _visible } >
+                visible = { _visible }>
                 <View
                     pointerEvents = 'box-none'
                     style = { styles.toolbar }>
@@ -172,6 +143,47 @@ class Toolbox extends Component<Props, State> {
             </Container>
         );
     }
+
+    /**
+     * Calculates how large our toolbar buttons can be, given the available
+     * width. In the future we might want to have a size threshold, and once
+     * it's passed a completely different style could be used, akin to the web.
+     *
+     * @private
+     * @returns {number}
+     */
+    _calculateButtonSize() {
+        const { width } = this.state;
+        const hangupButtonSize = styles.hangupButton.width;
+
+        let buttonSize
+            = (width
+                    - hangupButtonSize
+                    - (_BUTTON_COUNT * styles.toolbarButton.margin * 2))
+                / _BUTTON_COUNT;
+
+        // Make sure it's an even number.
+        buttonSize = 2 * Math.round(buttonSize / 2);
+
+        // The button should be at most 80% of the hangup button's size.
+        return Math.min(
+            buttonSize,
+            hangupButtonSize * _BUTTON_SIZE_FACTOR);
+    }
+
+    _onLayout: (Object) => void;
+
+    /**
+     * Handles the "on layout" View's event and stores the width as state.
+     *
+     * @param {Object} event - The "on layout" event object/structure passed
+     * by react-native.
+     * @private
+     * @returns {void}
+     */
+    _onLayout({ nativeEvent: { layout: { width } } }) {
+        this.setState({ width });
+    }
 }
 
 /**
@@ -182,7 +194,6 @@ class Toolbox extends Component<Props, State> {
  * {@code Toolbox} props.
  * @private
  * @returns {{
- *     _enabled: boolean,
  *     _visible: boolean
  * }}
  */

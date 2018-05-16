@@ -10,7 +10,7 @@ export type Styles = {
     iconStyle: Object,
 
     /**
-     * Style for te item's label.
+     * Style for the item's label.
      */
     labelStyle: Object,
 
@@ -174,7 +174,9 @@ export default class AbstractToolboxItem<P : Props> extends Component<P> {
     }
 
     /**
-     * Handles rendering of the actual item.
+     * Renders this {@code AbstractToolboxItem} (if it is {@code visible}). To
+     * be implemented/overridden by extenders. The default implementation of
+     * {@code AbstractToolboxItem} does nothing.
      *
      * @protected
      * @returns {ReactElement}

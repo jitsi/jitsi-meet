@@ -1,4 +1,8 @@
+// @flow
+
 import { BoxModel, ColorPalette, createStyleSheet } from '../../../base/styles';
+
+// Toolbox, toolbar:
 
 /**
  * The style of toolbar buttons.
@@ -140,6 +144,8 @@ export const toolbarToggledButtonStyles = {
     iconStyle: styles.whiteToolbarButtonIcon,
     style: styles.whiteToolbarButton
 };
+
+// Overflow menu:
 
 /**
  * Styles for the {@code OverflowMenu} items.

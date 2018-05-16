@@ -3,16 +3,18 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
-import { hideDialog, BottomSheet } from '../../../base/dialog';
+import { BottomSheet, hideDialog } from '../../../base/dialog';
 import { AudioRouteButton } from '../../../mobile/audio-mode';
 import { PictureInPictureButton } from '../../../mobile/picture-in-picture';
 import { RoomLockButton } from '../../../room-lock';
 
 import AudioOnlyButton from './AudioOnlyButton';
+import { overflowMenuItemStyles } from './styles';
 import ToggleCameraButton from './ToggleCameraButton';
 
-import { overflowMenuItemStyles } from './styles';
-
+/**
+ * The type of the React {@code Component} props of {@link OverflowMenu}.
+ */
 type Props = {
 
     /**
@@ -22,12 +24,13 @@ type Props = {
 };
 
 /**
- * The exported React {@code Component}. We need a reference to the wrapped
- * component in order to be able to hide it using the dialog hiding logic.
+ * The exported React {@code Component}. We need it to execute
+ * {@link hideDialog}.
+ *
+ * XXX It does not break our coding style rule to not utilize globals for state,
+ * because it is merely another name for {@code export}'s {@code default}.
  */
-
-// eslint-disable-next-line prefer-const
-let OverflowMenu_;
+let OverflowMenu_; // eslint-disable-line prefer-const
 
 /**
  * Implements a React {@code Component} with some extra actions in addition to
@@ -42,6 +45,7 @@ class OverflowMenu extends Component<Props> {
     constructor(props: Props) {
         super(props);
 
+        // Bind event handlers so they are only bound once per instance.
         this._onCancel = this._onCancel.bind(this);
     }
 
@@ -76,7 +80,7 @@ class OverflowMenu extends Component<Props> {
     _onCancel: () => void;
 
     /**
-     * Hides the dialog.
+     * Hides this {@code OverflowMenu}.
      *
      * @private
      * @returns {void}

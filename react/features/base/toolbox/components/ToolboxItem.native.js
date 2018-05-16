@@ -26,7 +26,7 @@ export default class ToolboxItem extends AbstractToolboxItem<Props> {
     }
 
     /**
-     * Helper function to render the {@code Icon} part of this item.
+     * Renders the {@code Icon} part of this {@code ToolboxItem}.
      *
      * @private
      * @returns {ReactElement}
@@ -42,8 +42,9 @@ export default class ToolboxItem extends AbstractToolboxItem<Props> {
     }
 
     /**
-     * Handles rendering of the actual item.
+     * Renders this {@code ToolboxItem}. Invoked by {@link AbstractToolboxItem}.
      *
+     * @override
      * @protected
      * @returns {ReactElement}
      */
@@ -56,25 +57,29 @@ export default class ToolboxItem extends AbstractToolboxItem<Props> {
             styles
         } = this.props;
 
-        let children;
+        let children = this._renderIcon();
+
+        // XXX When using a wrapper View, apply the style to it instead of
+        // applying it to the TouchableHighlight.
+        let style = styles && styles.style;
 
         if (showLabel) {
-            // eslint-disable-next-line no-extra-parens
-            children = (
-                <View style = { styles && styles.style } >
-                    { this._renderIcon() }
-                    <Text style = { styles && styles.labelStyle } >
+            // XXX TouchableHighlight requires 1 child. If there's a need to
+            // show both the icon and the label, then these two need to be
+            // wrapped in a View.
+            children = ( // eslint-disable-line no-extra-parens
+                <View style = { style }>
+                    { children }
+                    <Text style = { styles && styles.labelStyle }>
                         { this.label }
                     </Text>
                 </View>
             );
-        } else {
-            children = this._renderIcon();
-        }
 
-        // When using a wrapper view, apply the style to it instead of
-        // applying it to the TouchableHighlight.
-        const style = showLabel ? undefined : styles && styles.style;
+            // XXX As stated earlier, the style was applied to the wrapper View
+            // (above).
+            style = undefined;
+        }
 
         return (
             <TouchableHighlight

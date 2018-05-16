@@ -47,7 +47,8 @@ type Props = AbstractButtonProps & {
 const _SHARE_ROOM_TOOLBAR_BUTTON = true;
 
 /**
- * Implements a {@link ToolbarButton} to enter Picture-in-Picture.
+ * Implements an {@link AbstractButton} to enter add/invite people to the
+ * current call/conference/meeting.
  */
 class InviteButton extends AbstractButton<Props, *> {
     accessibilityLabel = 'Share room';

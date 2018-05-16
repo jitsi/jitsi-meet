@@ -9,13 +9,16 @@ import type { AbstractButtonProps } from '../../../base/toolbox';
 
 import OverflowMenu from './OverflowMenu';
 
+/**
+ * The type of the React {@code Component} props of {@link OverflowMenuButton}.
+ */
 type Props = AbstractButtonProps & {
 
     /**
      * The redux {@code dispatch} function.
      */
     dispatch: Function
-}
+};
 
 /**
  * An implementation of a button for showing the {@code OverflowMenu}.
@@ -26,9 +29,9 @@ class OverflowMenuButton extends AbstractButton<Props, *> {
     label = 'toolbar.moreActions';
 
     /**
-     * Handles clicking / pressing the button.
+     * Handles clicking / pressing this {@code OverflowMenuButton}.
      *
-     * @private
+     * @protected
      * @returns {void}
      */
     _handleClick() {
