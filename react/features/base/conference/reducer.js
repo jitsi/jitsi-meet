@@ -126,6 +126,7 @@ function _conferenceFailed(state, { conference, error }) {
         authRequired,
         conference: undefined,
         error,
+        failed: conference,
         joining: undefined,
         leaving: undefined,
 
@@ -175,6 +176,7 @@ function _conferenceJoined(state, { conference }) {
          * @type {JitsiConference}
          */
         conference,
+        failed: undefined,
         joining: undefined,
         leaving: undefined,
 
@@ -250,6 +252,7 @@ function _conferenceLeft(state, { conference }) {
 function _conferenceWillJoin(state, { conference }) {
     return assign(state, {
         error: undefined,
+        failed: undefined,
         joining: conference
     });
 }
@@ -265,12 +268,14 @@ function _conferenceWillJoin(state, { conference }) {
  * reduction of the specified action.
  */
 function _conferenceWillLeave(state, { conference }) {
-    if (state.conference !== conference) {
+    // Either the current or a failed conference can be "left".
+    if (state.conference !== conference && state.failed !== conference) {
         return state;
     }
 
     return assign(state, {
         authRequired: undefined,
+        failed: undefined,
         joining: undefined,
 
         /**

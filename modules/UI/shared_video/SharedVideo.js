@@ -306,6 +306,7 @@ export default class SharedVideoManager {
                 SHARED_VIDEO_CONTAINER_TYPE, self.sharedVideo);
 
             APP.store.dispatch(participantJoined({
+                conference: null,
                 id: self.url,
                 isBot: true,
                 name: 'YouTube'
@@ -516,7 +517,7 @@ export default class SharedVideoManager {
                     UIEvents.UPDATE_SHARED_VIDEO, null, 'removed');
             });
 
-        APP.store.dispatch(participantLeft(this.url));
+        APP.store.dispatch(participantLeft(/* conference */ null, this.url));
 
         this.url = null;
         this.isSharedVideoShown = false;

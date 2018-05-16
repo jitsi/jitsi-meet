@@ -303,10 +303,15 @@ function _constructOptions(state) {
 export function disconnect() {
     return (dispatch: Dispatch<*>, getState: Function): Promise<void> => {
         const state = getState();
-        const { conference, joining } = state['features/base/conference'];
+        const { conference, failed, joining }
+            = state['features/base/conference'];
 
-        // The conference we have already joined or are joining.
-        const conference_ = conference || joining;
+        // The conference we have already joined or are joining. A failed
+        // conference also needs to be "left" in order to release any resources
+        // allocated so far. That's because a conference can fail not only
+        // before it's established, but also in the middle of the call
+        // (ICE_FAILED, FOCUS_LEFT etc.)
+        const conference_ = conference || failed || joining;
 
         // Promise which completes when the conference has been left and the
         // connection has been disconnected.

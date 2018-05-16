@@ -16,7 +16,7 @@ import {
     PIN_PARTICIPANT
 } from './actionTypes';
 import { MAX_DISPLAY_NAME_LENGTH } from './constants';
-import { getLocalParticipant } from './functions';
+import { getLocalParticipant, getParticipantById } from './functions';
 
 /**
  * Create an action for when dominant speaker changes.
@@ -123,7 +123,7 @@ export function localParticipantLeft() {
         const participant = getLocalParticipant(getState);
 
         if (participant) {
-            return dispatch(participantLeft(participant.id));
+            return dispatch(participantLeft(undefined, participant.id));
         }
     };
 }
@@ -228,6 +228,8 @@ export function participantJoined(participant) {
 /**
  * Action to signal that a participant has left.
  *
+ * @param {JitsiConference} conference - The {@link JitsiConference} instance
+ * which owns the participant.
  * @param {string} id - Participant's ID.
  * @returns {{
  *     type: PARTICIPANT_LEFT,
@@ -236,11 +238,21 @@ export function participantJoined(participant) {
  *     }
  * }}
  */
-export function participantLeft(id) {
-    return {
-        type: PARTICIPANT_LEFT,
-        participant: {
-            id
+export function participantLeft(conference, id) {
+    return (dispatch, getState) => {
+        const participant = getParticipantById(getState, id);
+
+        // Because PARTICIPANT_LEFT events are dispatched early by
+        // the base/participant feature's middleware, we don't want to dispatch
+        // duplicated events in case they arrive later from lib-jitsi-meet.
+        if (participant && participant.conference === conference) {
+            dispatch({
+                type: PARTICIPANT_LEFT,
+                participant: {
+                    conference,
+                    id
+                }
+            });
         }
     };
 }
