@@ -1,6 +1,8 @@
 /* @flow */
-
-import { SET_CONFIG } from '../config';
+// FIXME: Using '../config/actionTypes' instead of '../config' is a quick fix
+// for the dial-in info page. Importing '../config' results in JitsiMeetJS
+// undefined error (/base/config imports /app which import /lib-jitsi-meet/).
+import { SET_CONFIG } from '../config/actionTypes';
 import { MiddlewareRegistry } from '../redux';
 
 declare var APP: Object;
