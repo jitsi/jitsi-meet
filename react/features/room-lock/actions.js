@@ -98,3 +98,20 @@ export function endRoomLockRequest(
 export function _openPasswordRequiredPrompt(conference: Object) {
     return openDialog(PasswordRequiredPrompt, { conference });
 }
+
+/**
+ * Unlocks the current jitsi conference.
+ *
+ * @returns {Function}
+ */
+export function unlockRoom() {
+    return (dispatch: Dispatch<Function>, getState: Function) => {
+        const { conference } = getState()['features/base/conference'];
+
+        return dispatch(setPassword(
+            conference,
+            conference.lock,
+            ''
+        ));
+    };
+}

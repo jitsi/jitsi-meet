@@ -3,17 +3,19 @@
 import { connect } from 'react-redux';
 
 import { translate } from '../../base/i18n';
+import { isLocalParticipantModerator } from '../../base/participants';
 import { AbstractButton } from '../../base/toolbox';
 import type { AbstractButtonProps } from '../../base/toolbox';
 
-import { beginRoomLockRequest } from '../actions';
+import { beginRoomLockRequest, unlockRoom } from '../actions';
 
 type Props = AbstractButtonProps & {
 
     /**
-     * The current conference.
+     * Whether the current local participant is a moderator, therefore is
+     * allowed to lock or unlock the conference.
      */
-    _conference: Object,
+    _localParticipantModerator: boolean,
 
     /**
      * Whether the current conference is locked or not.
@@ -43,7 +45,13 @@ class RoomLockButton extends AbstractButton<Props, *> {
      * @returns {void}
      */
     _handleClick() {
-        this.props.dispatch(beginRoomLockRequest());
+        const { dispatch, _locked } = this.props;
+
+        if (_locked) {
+            dispatch(unlockRoom());
+        } else {
+            dispatch(beginRoomLockRequest());
+        }
     }
 
     /**
@@ -54,7 +62,7 @@ class RoomLockButton extends AbstractButton<Props, *> {
      * @returns {boolean}
      */
     _isDisabled() {
-        return !this.props._conference;
+        return !this.props._localParticipantModerator;
     }
 
     /**
@@ -76,14 +84,16 @@ class RoomLockButton extends AbstractButton<Props, *> {
  * @param {Object} state - The Redux state.
  * @private
  * @returns {{
- *     _audioOnly: boolean
+ *     _localParticipantModerator: boolean,
+ *     _locked: boolean
  * }}
  */
 function _mapStateToProps(state): Object {
     const { conference, locked } = state['features/base/conference'];
 
     return {
-        _conference: conference,
+        _localParticipantModerator:
+            Boolean(conference && isLocalParticipantModerator(state)),
         _locked: Boolean(conference && locked)
     };
 }

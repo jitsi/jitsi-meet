@@ -230,6 +230,7 @@
         "rejoinNow": "Rejoin now",
         "maxUsersLimitReachedTitle": "Maximum members limit reached",
         "maxUsersLimitReached": "The limit for maximum number of members has been reached. The conference is full. Please contact the meeting owner or try again later!",
+        "lockRoom": "Lock room",
         "lockTitle": "Lock failed",
         "lockMessage": "Failed to lock the conference.",
         "warning": "Warning",
