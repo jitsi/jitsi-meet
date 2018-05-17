@@ -1,7 +1,7 @@
 // @flow
 
 import { getAppProp } from '../app';
-import { getLocalParticipant, PARTICIPANT_ROLE } from '../base/participants';
+import { isLocalParticipantModerator } from '../base/participants';
 import { doGetJSON } from '../base/util';
 
 declare var $: Function;
@@ -300,14 +300,10 @@ export function isAddPeopleEnabled(state: Object): boolean {
  * @returns {boolean} Indication of whether dial out is currently enabled.
  */
 export function isDialOutEnabled(state: Object): boolean {
-    const participant = getLocalParticipant(state);
     const { conference } = state['features/base/conference'];
-    const { isGuest } = state['features/base/jwt'];
-    const { enableUserRolesBasedOnToken } = state['features/base/config'];
-    let dialOutEnabled
-        = participant && participant.role === PARTICIPANT_ROLE.MODERATOR
-            && conference && conference.isSIPCallingSupported()
-            && (!enableUserRolesBasedOnToken || !isGuest);
+    let dialOutEnabled = isLocalParticipantModerator(state)
+        && conference
+        && conference.isSIPCallingSupported();
 
     if (dialOutEnabled) {
         // XXX The mobile/react-native app is capable of disabling of dial-out.

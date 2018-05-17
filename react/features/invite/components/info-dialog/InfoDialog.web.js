@@ -5,10 +5,7 @@ import { connect } from 'react-redux';
 import { setPassword } from '../../../base/conference';
 import { getInviteURL } from '../../../base/connection';
 import { translate } from '../../../base/i18n';
-import {
-    PARTICIPANT_ROLE,
-    getLocalParticipant
-} from '../../../base/participants';
+import { isLocalParticipantModerator } from '../../../base/participants';
 
 import DialInNumber from './DialInNumber';
 import PasswordForm from './PasswordForm';
@@ -553,18 +550,9 @@ function _mapStateToProps(state) {
         password,
         room
     } = state['features/base/conference'];
-    const isModerator
-        = getLocalParticipant(state).role === PARTICIPANT_ROLE.MODERATOR;
-    let canEditPassword;
-
-    if (state['features/base/config'].enableUserRolesBasedOnToken) {
-        canEditPassword = isModerator && !state['features/base/jwt'].isGuest;
-    } else {
-        canEditPassword = isModerator;
-    }
 
     return {
-        _canEditPassword: canEditPassword,
+        _canEditPassword: isLocalParticipantModerator(state),
         _conference: conference,
         _conferenceName: room,
         _inviteURL: getInviteURL(state),
