@@ -15,6 +15,8 @@ import {
     SET_LOCATION_URL
 } from './actionTypes';
 
+const logger = require('jitsi-meet-logger').getLogger(__filename);
+
 /**
  * The error structure passed to the {@link connectionFailed} action.
  *
@@ -322,7 +324,11 @@ export function disconnect() {
 
             promise
                 = conference_.leave()
-                    .catch(() => {
+                    .catch(error => {
+                        logger.warn(
+                            'JitsiConference.leave() rejected with: ',
+                            error);
+
                         // The library lib-jitsi-meet failed to make the
                         // JitsiConference leave. Which may be because
                         // JitsiConference thinks it has already left.
