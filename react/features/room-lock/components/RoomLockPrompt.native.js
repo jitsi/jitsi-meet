@@ -65,7 +65,7 @@ class RoomLockPrompt extends Component<*> {
                 onCancel = { this._onCancel }
                 onSubmit = { this._onSubmit }
                 textInputProps = { _TEXT_INPUT_PROPS }
-                titleKey = 'toolbar.lock' />
+                titleKey = 'dialog.lockRoom' />
         );
     }
 
