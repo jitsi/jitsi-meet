@@ -76,6 +76,8 @@ gradle.projectsEvaluated {
                 type: Copy) {
              from("${projectDir}/../../sounds/joined.wav")
              from("${projectDir}/../../sounds/left.wav")
+             from("${projectDir}/../../sounds/outgoingRinging.wav")
+             from("${projectDir}/../../sounds/outgoingStart.wav")
              into("${bundlePath}/assets/sounds")
         }
 
