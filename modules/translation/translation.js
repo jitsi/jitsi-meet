@@ -23,20 +23,7 @@ class Translation {
     /**
      *
      */
-    generateTranslationHTML(key: string, options: Object) {
-        const optAttr
-            = options ? ` data-i18n-options='${JSON.stringify(options)}'` : '';
-
-        // XXX i18next expects undefined if options are missing.
-        const text = i18next.t(key, options ? options : undefined);
-
-        return `<span data-i18n="${key}"${optAttr}>${text}</span>`;
-    }
-
-    /**
-     *
-     */
-    init() {
+    constructor() {
         jqueryI18next.init(i18next, $, { useOptionsAttr: true });
 
         if (i18next.isInitialized) {
@@ -46,6 +33,19 @@ class Translation {
         }
 
         i18next.on('languageChanged', _onI18nInitialized);
+    }
+
+    /**
+     *
+     */
+    generateTranslationHTML(key: string, options: Object) {
+        const optAttr
+            = options ? ` data-i18n-options='${JSON.stringify(options)}'` : '';
+
+        // XXX i18next expects undefined if options are missing.
+        const text = i18next.t(key, options ? options : undefined);
+
+        return `<span data-i18n="${key}"${optAttr}>${text}</span>`;
     }
 
     /**
