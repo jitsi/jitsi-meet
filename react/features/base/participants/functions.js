@@ -5,7 +5,8 @@ import { toState } from '../redux';
 
 import {
     DEFAULT_AVATAR_RELATIVE_PATH,
-    LOCAL_PARTICIPANT_DEFAULT_ID
+    LOCAL_PARTICIPANT_DEFAULT_ID,
+    PARTICIPANT_ROLE
 } from './constants';
 
 declare var config: Object;
@@ -223,4 +224,29 @@ function _getAllParticipants(stateful) {
         Array.isArray(stateful)
             ? stateful
             : toState(stateful)['features/base/participants'] || []);
+}
+
+/**
+ * Returns true if the current local participant is a moderator in the
+ * conference.
+ *
+ * @param {Object|Function} stateful - Object or function that can be resolved
+ * to the Redux state.
+ * @returns {boolean}
+ */
+export function isLocalParticipantModerator(stateful: Object | Function) {
+    const state = toState(stateful);
+    const localParticipant = getLocalParticipant(state);
+
+    if (!localParticipant) {
+        return false;
+    }
+
+    const isModerator = localParticipant.role === PARTICIPANT_ROLE.MODERATOR;
+
+    if (state['features/base/config'].enableUserRolesBasedOnToken) {
+        return isModerator && !state['features/base/jwt'].isGuest;
+    }
+
+    return isModerator;
 }
