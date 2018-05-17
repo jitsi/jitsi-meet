@@ -5,6 +5,7 @@ import '../../base/responsive-ui';
 import { getLocationContextRoot } from '../../base/util';
 import '../../chat';
 import '../../room-lock';
+import '../../video-layout';
 
 import { AbstractApp } from './AbstractApp';
 
