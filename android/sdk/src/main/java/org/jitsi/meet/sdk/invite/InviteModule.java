@@ -22,6 +22,7 @@ import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContextBaseJavaModule;
 import com.facebook.react.bridge.ReactMethod;
 import com.facebook.react.bridge.ReadableArray;
+import com.facebook.react.bridge.UiThreadUtil;
 
 import org.jitsi.meet.sdk.JitsiMeetView;
 
@@ -42,13 +43,18 @@ public class InviteModule extends ReactContextBaseJavaModule {
      * {@code JitsiMeetView} whose {@code InviteButton} was clicked/tapped.
      */
     @ReactMethod
-    public void beginAddPeople(String externalAPIScope) {
-        InviteController inviteController
-            = findInviteControllerByExternalAPIScope(externalAPIScope);
+    public void beginAddPeople(final String externalAPIScope) {
+        UiThreadUtil.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                InviteController inviteController
+                    = findInviteControllerByExternalAPIScope(externalAPIScope);
 
-        if (inviteController != null) {
-            inviteController.beginAddPeople(getReactApplicationContext());
-        }
+                if (inviteController != null) {
+                    inviteController.beginAddPeople(getReactApplicationContext());
+                }
+            }
+        });
     }
 
     private InviteController findInviteControllerByExternalAPIScope(
@@ -72,21 +78,26 @@ public class InviteModule extends ReactContextBaseJavaModule {
      */
     @ReactMethod
     public void inviteSettled(
-            String externalAPIScope,
-            String addPeopleControllerScope,
-            ReadableArray failedInvitees) {
-        InviteController inviteController
-            = findInviteControllerByExternalAPIScope(externalAPIScope);
+            final String externalAPIScope,
+            final String addPeopleControllerScope,
+            final ReadableArray failedInvitees) {
+        UiThreadUtil.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                InviteController inviteController
+                    = findInviteControllerByExternalAPIScope(externalAPIScope);
 
-        if (inviteController == null) {
-            Log.w(
-                "InviteModule",
-                "Invite settled, but failed to find active controller to notify");
-        } else {
-            inviteController.inviteSettled(
-                addPeopleControllerScope,
-                failedInvitees);
-        }
+                if (inviteController == null) {
+                    Log.w(
+                        "InviteModule",
+                        "Invite settled, but failed to find active controller to notify");
+                } else {
+                    inviteController.inviteSettled(
+                        addPeopleControllerScope,
+                        failedInvitees);
+                }
+            }
+        });
     }
 
     /**
@@ -98,22 +109,27 @@ public class InviteModule extends ReactContextBaseJavaModule {
      */
     @ReactMethod
     public void receivedResults(
-            String externalAPIScope,
-            String addPeopleControllerScope,
-            String query,
-            ReadableArray results) {
-        InviteController inviteController
-            = findInviteControllerByExternalAPIScope(externalAPIScope);
+            final String externalAPIScope,
+            final String addPeopleControllerScope,
+            final String query,
+            final ReadableArray results) {
+        UiThreadUtil.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                InviteController inviteController
+                    = findInviteControllerByExternalAPIScope(externalAPIScope);
 
-        if (inviteController == null) {
-            Log.w(
-                "InviteModule",
-                "Received results, but failed to find active controller to send results back");
-        } else {
-            inviteController.receivedResultsForQuery(
-                addPeopleControllerScope,
-                query,
-                results);
-        }
+                if (inviteController == null) {
+                    Log.w(
+                        "InviteModule",
+                        "Received results, but failed to find active controller to send results back");
+                } else {
+                    inviteController.receivedResultsForQuery(
+                        addPeopleControllerScope,
+                        query,
+                        results);
+                }
+            }
+        });
     }
 }

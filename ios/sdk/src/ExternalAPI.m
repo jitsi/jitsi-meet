@@ -26,6 +26,13 @@
 RCT_EXPORT_MODULE();
 
 /**
+ * Make sure all methods in this module are called in the main (i.e. UI) thread.
+ */
+- (dispatch_queue_t)methodQueue {
+    return dispatch_get_main_queue();
+}
+
+/**
  * Dispatches an event that occurred on JavaScript to the view's delegate.
  *
  * @param name The name of the event.

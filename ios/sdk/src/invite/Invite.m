@@ -41,6 +41,13 @@ RCT_EXPORT_MODULE();
 }
 
 /**
+ * Make sure all methods in this module are called in the main (i.e. UI) thread.
+ */
+- (dispatch_queue_t)methodQueue {
+    return dispatch_get_main_queue();
+}
+
+/**
  * Initiates the process to add people. This involves calling a delegate method
  * in the JMInviteControllerDelegate so the native host application can start
  * the query process.

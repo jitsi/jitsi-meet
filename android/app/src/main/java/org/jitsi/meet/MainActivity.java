@@ -28,6 +28,7 @@ import org.jitsi.meet.sdk.invite.InviteController;
 import org.jitsi.meet.sdk.invite.InviteControllerListener;
 
 import com.calendarevents.CalendarEventsPackage;
+import com.facebook.react.bridge.UiThreadUtil;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -65,6 +66,8 @@ public class MainActivity extends JitsiMeetActivity {
         if (BuildConfig.DEBUG && view != null) {
             view.setListener(new JitsiMeetViewListener() {
                 private void on(String name, Map<String, Object> data) {
+                    UiThreadUtil.assertOnUiThread();
+
                     // Log with the tag "ReactNative" in order to have the log
                     // visible in react-native log-android as well.
                     Log.d(
@@ -112,6 +115,8 @@ public class MainActivity extends JitsiMeetActivity {
             inviteController.setListener(new InviteControllerListener() {
                 public void beginAddPeople(
                         AddPeopleController addPeopleController) {
+                    UiThreadUtil.assertOnUiThread();
+
                     onInviteControllerBeginAddPeople(
                         inviteController,
                         addPeopleController);
@@ -129,6 +134,8 @@ public class MainActivity extends JitsiMeetActivity {
     private void onAddPeopleControllerInviteSettled(
             AddPeopleController addPeopleController,
             List<Map<String, Object>> failedInvitees) {
+        UiThreadUtil.assertOnUiThread();
+
         // XXX Explicitly invoke endAddPeople on addPeopleController; otherwise,
         // it is going to be memory-leaked in the associated InviteController
         // and no subsequent InviteButton clicks/taps will be delivered.
@@ -142,6 +149,8 @@ public class MainActivity extends JitsiMeetActivity {
             AddPeopleController addPeopleController,
             List<Map<String, Object>> results,
             String query) {
+        UiThreadUtil.assertOnUiThread();
+
         int size = results.size();
 
         if (size > 0) {
@@ -182,6 +191,8 @@ public class MainActivity extends JitsiMeetActivity {
     private void onInviteControllerBeginAddPeople(
             InviteController inviteController,
             AddPeopleController addPeopleController) {
+        UiThreadUtil.assertOnUiThread();
+
         // Log with the tag "ReactNative" in order to have the log visible in
         // react-native log-android as well.
         Log.d(

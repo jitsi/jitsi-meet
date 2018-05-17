@@ -21,9 +21,7 @@ import com.facebook.react.bridge.ReactContextBaseJavaModule;
 import com.facebook.react.bridge.ReactMethod;
 import com.facebook.react.bridge.ReadableMap;
 import com.facebook.react.bridge.ReadableMapKeySetIterator;
-
-import org.jitsi.meet.sdk.JitsiMeetView;
-import org.jitsi.meet.sdk.JitsiMeetViewListener;
+import com.facebook.react.bridge.UiThreadUtil;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -150,43 +148,53 @@ class ExternalAPIModule extends ReactContextBaseJavaModule {
      * @param scope
      */
     @ReactMethod
-    public void sendEvent(String name, ReadableMap data, String scope) {
-        // The JavaScript App needs to provide uniquely identifying information
-        // to the native ExternalAPI module so that the latter may match the
-        // former to the native JitsiMeetView which hosts it.
-        JitsiMeetView view = JitsiMeetView.findViewByExternalAPIScope(scope);
+    public void sendEvent(final String name,
+                          final ReadableMap data,
+                          final String scope) {
+        UiThreadUtil.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                // The JavaScript App needs to provide uniquely identifying
+                // information to the native ExternalAPI module so that the
+                // latter may match the former to the native JitsiMeetView which
+                // hosts it.
+                JitsiMeetView view
+                    = JitsiMeetView.findViewByExternalAPIScope(scope);
 
-        if (view == null) {
-            return;
-        }
+                if (view == null) {
+                    return;
+                }
 
-        maybeSetViewURL(name, data, view);
+                maybeSetViewURL(name, data, view);
 
-        JitsiMeetViewListener listener = view.getListener();
+                JitsiMeetViewListener listener = view.getListener();
 
-        if (listener == null) {
-            return;
-        }
+                if (listener == null) {
+                    return;
+                }
 
-        Method method = JITSI_MEET_VIEW_LISTENER_METHODS.get(name);
+                Method method = JITSI_MEET_VIEW_LISTENER_METHODS.get(name);
 
-        if (method != null) {
-            try {
-                method.invoke(listener, toHashMap(data));
-            } catch (IllegalAccessException e) {
-                // FIXME There was a multicatch for IllegalAccessException and
-                // InvocationTargetException, but Android Studio complained
-                // with:
-                // "Multi-catch with these reflection exceptions requires
-                // API level 19 (current min is 16) because they get compiled to
-                // the common but new super type ReflectiveOperationException.
-                // As a workaround either create individual catch statements, or
-                // catch Exception."
-                throw new RuntimeException(e);
-            } catch (InvocationTargetException e) {
-                throw new RuntimeException(e);
+                if (method != null) {
+                    try {
+                        method.invoke(listener, toHashMap(data));
+                    } catch (IllegalAccessException e) {
+                        // FIXME There was a multicatch for
+                        // IllegalAccessException and InvocationTargetException,
+                        // but Android Studio complained with: "Multi-catch with
+                        // these reflection exceptions requires API level 19
+                        // (current min is 16) because they get compiled to the
+                        // common but new super type
+                        // ReflectiveOperationException. As a workaround either
+                        // create individual catch statements, or
+                        // catch Exception."
+                        throw new RuntimeException(e);
+                    } catch (InvocationTargetException e) {
+                        throw new RuntimeException(e);
+                    }
+                }
             }
-        }
+        });
     }
 
     /**

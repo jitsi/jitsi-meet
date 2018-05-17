@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+#import <assert.h>
+
 #import "ViewController.h"
 
 /**
@@ -64,6 +66,9 @@ void _onJitsiMeetViewDelegateEvent(NSString *name, NSDictionary *data) {
     NSLog(
         @"[%s:%d] JitsiMeetViewDelegate %@ %@",
         __FILE__, __LINE__, name, data);
+
+    assert([NSThread isMainThread]
+        && "Delegate method called in a non-main thread");
 }
 
 - (void)conferenceFailed:(NSDictionary *)data {
@@ -97,6 +102,9 @@ void _onJitsiMeetViewDelegateEvent(NSString *name, NSDictionary *data) {
         @"[%s:%d] JMInviteControllerDelegate %s",
         __FILE__, __LINE__, __FUNCTION__);
 
+    assert([NSThread isMainThread]
+        && "Delegate method called in a non-main thread");
+
     NSString *query = ADD_PEOPLE_CONTROLLER_QUERY;
     JitsiMeetView *view = (JitsiMeetView *) self.view;
     JMInviteController *inviteController = view.inviteController;
@@ -119,6 +127,9 @@ void _onJitsiMeetViewDelegateEvent(NSString *name, NSDictionary *data) {
 - (void)addPeopleController:(JMAddPeopleController * _Nonnull)controller
           didReceiveResults:(NSArray<NSDictionary *> * _Nonnull)results
                    forQuery:(NSString * _Nonnull)query {
+    assert([NSThread isMainThread]
+        && "Delegate method called in a non-main thread");
+
     NSUInteger count = results.count;
 
     if (count) {
@@ -151,6 +162,9 @@ void _onJitsiMeetViewDelegateEvent(NSString *name, NSDictionary *data) {
 
 - (void) inviteSettled:(NSArray<NSDictionary *> * _Nonnull)failedInvitees
   fromSearchController:(JMAddPeopleController * _Nonnull)addPeopleController {
+    assert([NSThread isMainThread]
+        && "Delegate method called in a non-main thread");
+
     // XXX Explicitly invoke endAddPeople on addPeopleController; otherwise, it
     // is going to be memory-leaked in the associated JMInviteController and no
     // subsequent InviteButton clicks/taps will be delivered. Technically,
