@@ -85,6 +85,62 @@ class Toolbox extends Component<Props, State> {
     }
 
     /**
+     * Renders the toolbar. It will only be rendered if the {@code Toolbox} is
+     * visible and we have already calculated the available width. This avoids
+     * a weird effect in which the toolbar is displayed and then changes size.
+     *
+     * @returns {ReactElement}
+     */
+    _renderToolbar() {
+        const { _visible } = this.props;
+        const { width } = this.state;
+
+        if (!_visible || !width) {
+            return null;
+        }
+
+        let buttonStyles = toolbarButtonStyles;
+        let toggledButtonStyles = toolbarToggledButtonStyles;
+
+        const buttonSize = this._calculateButtonSize();
+
+        if (buttonSize > 0) {
+            const extraButtonStyle = {
+                borderRadius: buttonSize / 2,
+                height: buttonSize,
+                width: buttonSize
+            };
+
+            buttonStyles = {
+                ...buttonStyles,
+                style: [ buttonStyles.style, extraButtonStyle ]
+            };
+            toggledButtonStyles = {
+                ...toggledButtonStyles,
+                style: [ toggledButtonStyles.style, extraButtonStyle ]
+            };
+        }
+
+        return (
+            <View
+                pointerEvents = 'box-none'
+                style = { styles.toolbar }>
+                <InviteButton styles = { buttonStyles } />
+                <AudioMuteButton
+                    styles = { buttonStyles }
+                    toggledStyles = { toggledButtonStyles } />
+                <HangupButton styles = { hangupButtonStyles } />
+                <VideoMuteButton
+                    styles = { buttonStyles }
+                    toggledStyles = { toggledButtonStyles } />
+                <OverflowMenuButton
+                    styles = { buttonStyles }
+                    toggledStyles = { toggledButtonStyles } />
+            </View>
+        );
+    }
+
+    /**
      * Implements React's {@link Component#render()}.
      *
      * @inheritdoc
@@ -96,50 +152,13 @@ class Toolbox extends Component<Props, State> {
                 ? styles.toolboxNarrow
                 : styles.toolboxWide;
         const { _visible } = this.props;
-        let buttonStyles = toolbarButtonStyles;
-        let toggledButtonStyles = toolbarToggledButtonStyles;
-
-        if (_visible) {
-            const buttonSize = this._calculateButtonSize();
-
-            if (buttonSize > 0) {
-                const extraButtonStyle = {
-                    borderRadius: buttonSize / 2,
-                    height: buttonSize,
-                    width: buttonSize
-                };
-
-                buttonStyles = {
-                    ...buttonStyles,
-                    style: [ buttonStyles.style, extraButtonStyle ]
-                };
-                toggledButtonStyles = {
-                    ...toggledButtonStyles,
-                    style: [ toggledButtonStyles.style, extraButtonStyle ]
-                };
-            }
-        }
 
         return (
             <Container
                 onLayout = { this._onLayout }
                 style = { toolboxStyle }
                 visible = { _visible }>
-                <View
-                    pointerEvents = 'box-none'
-                    style = { styles.toolbar }>
-                    <InviteButton styles = { buttonStyles } />
-                    <AudioMuteButton
-                        styles = { buttonStyles }
-                        toggledStyles = { toggledButtonStyles } />
-                    <HangupButton styles = { hangupButtonStyles } />
-                    <VideoMuteButton
-                        styles = { buttonStyles }
-                        toggledStyles = { toggledButtonStyles } />
-                    <OverflowMenuButton
-                        styles = { buttonStyles }
-                        toggledStyles = { toggledButtonStyles } />
-                </View>
+                { this._renderToolbar() }
             </Container>
         );
     }
