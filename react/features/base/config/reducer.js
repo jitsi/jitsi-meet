@@ -53,15 +53,21 @@ ReducerRegistry.register(
         switch (action.type) {
         case CONFIG_WILL_LOAD:
             return {
-                error: undefined
+                error: undefined,
+                locationURL: action.locationURL
             };
 
         case LOAD_CONFIG_ERROR:
-            return {
-                error: action.error
-            };
+            return state.locationURL === action.locationURL
+                ? {
+                    error: action.error,
+                    locationURL: undefined
+                }
+                : state;
 
         case SET_CONFIG:
+            // XXX I guess we don't need the URL check here given that only
+            // the most recent call is supposed to emit SET_CONFIG
             return _setConfig(state, action);
 
         default:
