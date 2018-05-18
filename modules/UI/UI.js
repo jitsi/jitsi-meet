@@ -822,14 +822,6 @@ UI.notifyInitiallyMuted = function() {
         null);
 };
 
-/**
- * Mark user as dominant speaker.
- * @param {string} id user id
- */
-UI.markDominantSpeaker = function(id) {
-    VideoLayout.onDominantSpeakerChanged(id);
-};
-
 UI.handleLastNEndpoints = function(leavingIds, enteringIds) {
     VideoLayout.onLastNEndpointsChanged(leavingIds, enteringIds);
 };

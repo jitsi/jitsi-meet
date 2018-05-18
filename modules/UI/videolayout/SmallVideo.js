@@ -679,6 +679,10 @@ SmallVideo.prototype.showDominantSpeakerIndicator = function(show) {
         return;
     }
 
+    if (this._showDominantSpeaker === show) {
+        return;
+    }
+
     this._showDominantSpeaker = show;
 
     this.updateIndicators();

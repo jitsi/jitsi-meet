@@ -5,6 +5,7 @@ import {
     JitsiParticipantConnectionStatus
 } from '../../../react/features/base/lib-jitsi-meet';
 import {
+    getParticipants,
     getPinnedParticipant,
     pinParticipant
 } from '../../../react/features/base/participants';
@@ -20,8 +21,6 @@ import LocalVideo from './LocalVideo';
 
 const remoteVideos = {};
 let localVideoThumbnail = null;
-
-let currentDominantSpeaker = null;
 
 let eventEmitter = null;
 
@@ -41,6 +40,24 @@ function onLocalFlipXChanged(val) {
     if (largeVideo) {
         largeVideo.onLocalFlipXChange(val);
     }
+}
+
+/**
+ * Returns the user ID of the remote participant that is current the dominant
+ * speaker.
+ *
+ * @private
+ * @returns {string|null}
+ */
+function getCurrentRemoteDominantSpeakerID() {
+    const dominantSpeaker = getParticipants(APP.store.getState)
+        .find(participant => participant.dominantSpeaker);
+
+    if (dominantSpeaker) {
+        return dominantSpeaker.local ? null : dominantSpeaker.id;
+    }
+
+    return null;
 }
 
 /**
@@ -228,8 +245,8 @@ const VideoLayout = {
 
         if (pinnedId) {
             newId = pinnedId;
-        } else if (currentDominantSpeaker) {
-            newId = currentDominantSpeaker;
+        } else if (getCurrentRemoteDominantSpeakerID()) {
+            newId = getCurrentRemoteDominantSpeakerID();
         } else { // Otherwise select last visible video
             newId = this.electLastVisibleVideo();
         }
@@ -392,8 +409,8 @@ const VideoLayout = {
             this.pinParticipant(null);
 
             // Enable the currently set dominant speaker.
-            if (currentDominantSpeaker) {
-                this.updateLargeVideo(currentDominantSpeaker);
+            if (getCurrentRemoteDominantSpeakerID()) {
+                this.updateLargeVideo(getCurrentRemoteDominantSpeakerID());
             } else {
                 // if there is no currentDominantSpeaker, it can also be
                 // that local participant is the dominant speaker
@@ -501,11 +518,11 @@ const VideoLayout = {
         const pinnedId = this.getPinnedId();
 
         if ((!pinnedId
-            && !currentDominantSpeaker
+            && !getCurrentRemoteDominantSpeakerID()
             && this.isLargeContainerTypeVisible(VIDEO_CONTAINER_TYPE))
             || pinnedId === resourceJid
             || (!pinnedId && resourceJid
-                && currentDominantSpeaker === resourceJid)
+                && getCurrentRemoteDominantSpeakerID() === resourceJid)
 
             /* Playback started while we're on the stage - may need to update
                video source with the new stream */
@@ -662,42 +679,21 @@ const VideoLayout = {
 
     /**
      * On dominant speaker changed event.
+     *
+     * @param {string} id - The participant ID of the new dominant speaker.
+     * @returns {void}
      */
     onDominantSpeakerChanged(id) {
-        if (id === currentDominantSpeaker) {
+        Object.values(remoteVideos).forEach(remoteVideo =>
+            remoteVideo.showDominantSpeakerIndicator(
+                id === remoteVideo.getId()));
+
+        localVideoThumbnail.showDominantSpeakerIndicator(
+            APP.conference.isLocalId(id));
+
+        if (!remoteVideos[id]) {
             return;
         }
-
-        const oldSpeakerRemoteVideo = remoteVideos[currentDominantSpeaker];
-
-        // We ignore local user events, but just unmark remote user as dominant
-        // while we are talking
-
-        if (APP.conference.isLocalId(id)) {
-            if (oldSpeakerRemoteVideo) {
-                oldSpeakerRemoteVideo.showDominantSpeakerIndicator(false);
-                currentDominantSpeaker = null;
-            }
-            localVideoThumbnail.showDominantSpeakerIndicator(true);
-
-            return;
-        }
-
-        const remoteVideo = remoteVideos[id];
-
-        if (!remoteVideo) {
-            return;
-        }
-
-        // Update the current dominant speaker.
-        remoteVideo.showDominantSpeakerIndicator(true);
-        localVideoThumbnail.showDominantSpeakerIndicator(false);
-
-        // let's remove the indications from the remote video if any
-        if (oldSpeakerRemoteVideo) {
-            oldSpeakerRemoteVideo.showDominantSpeakerIndicator(false);
-        }
-        currentDominantSpeaker = id;
 
         // Local video will not have container found, but that's ok
         // since we don't want to switch to local video.
@@ -802,11 +798,6 @@ const VideoLayout = {
         if (this.getPinnedId() === id) {
             logger.info('Focused video owner has left the conference');
             this.pinParticipant(null);
-        }
-
-        if (currentDominantSpeaker === id) {
-            logger.info('Dominant speaker has left the conference');
-            currentDominantSpeaker = null;
         }
 
         const remoteVideo = remoteVideos[id];
