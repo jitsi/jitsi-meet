@@ -129,7 +129,8 @@ class Conference extends Component<Props> {
                 this._onHardwareBackPress);
         }
 
-        // Show the toolbox if we are the only participant.
+        // Show the toolbox if we are the only participant; otherwise, the whole
+        // UI looks too unpopulated the LargeVideo visible.
         const { _participantCount, _setToolboxVisible } = this.props;
 
         _participantCount === 1 && _setToolboxVisible(true);

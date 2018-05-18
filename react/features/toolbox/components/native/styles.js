@@ -15,6 +15,9 @@ const toolbarButton = {
     flexDirection: 'row',
     height: 40,
     justifyContent: 'center',
+
+    // XXX We probably tested BoxModel.margin and discovered it to be too small
+    // for our taste.
     marginHorizontal: 7,
     opacity: 0.7,
     width: 40
@@ -181,7 +184,7 @@ const overflowMenuStyles = createStyleSheet({
         flex: 1,
         fontSize: 16,
         marginLeft: 32,
-        opacity: 0.87
+        opacity: 0.90
     }
 });
 
