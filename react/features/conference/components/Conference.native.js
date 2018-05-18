@@ -61,7 +61,7 @@ type Props = {
     _onHardwareBackPress: Function,
 
     /**
-     * Number of participants in the conference.
+     * The number of participants in the conference.
      *
      * @private
      */
@@ -129,12 +129,10 @@ class Conference extends Component<Props> {
                 this._onHardwareBackPress);
         }
 
-        // Show the toolbar if we are the only participant.
+        // Show the toolbox if we are the only participant.
         const { _participantCount, _setToolboxVisible } = this.props;
 
-        if (_participantCount === 1) {
-            _setToolboxVisible(true);
-        }
+        _participantCount === 1 && _setToolboxVisible(true);
     }
 
     /**
@@ -159,14 +157,16 @@ class Conference extends Component<Props> {
      * that this instance will receive.
      * @returns {void}
      */
-    componentWillReceiveProps(nextProps) {
-        const oldParticipantCount = this.props._participantCount;
-        const newParticipantCount = nextProps._participantCount;
+    componentWillReceiveProps({ _participantCount: newParticipantCount }) {
+        const {
+            _participantCount: oldParticipantCount,
+            _setToolboxVisible
+        } = this.props;
 
-        if (oldParticipantCount === 1 && newParticipantCount > 1) {
-            this.props._setToolboxVisible(false);
-        } else if (oldParticipantCount > 1 && newParticipantCount === 1) {
-            this.props._setToolboxVisible(true);
+        if (oldParticipantCount === 1) {
+            newParticipantCount > 1 && _setToolboxVisible(false);
+        } else if (oldParticipantCount > 1) {
+            newParticipantCount === 1 && _setToolboxVisible(true);
         }
     }
 
@@ -373,6 +373,7 @@ function _mapDispatchToProps(dispatch) {
  * @private
  * @returns {{
  *     _connecting: boolean,
+ *     _participantCount: number,
  *     _reducedUI: boolean,
  *     _toolboxVisible: boolean
  * }}
@@ -408,7 +409,7 @@ function _mapStateToProps(state) {
         _connecting: Boolean(connecting_),
 
         /**
-         * Number of participants in the conference.
+         * The number of participants in the conference.
          *
          * @private
          * @type {number}

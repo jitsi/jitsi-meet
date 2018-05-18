@@ -1,6 +1,6 @@
 // @flow
 
-import { ReducerRegistry } from '../base/redux';
+import { ReducerRegistry, set } from '../base/redux';
 
 import {
     CLEAR_TOOLBOX_TIMEOUT,
@@ -149,10 +149,7 @@ ReducerRegistry.register(
             };
 
         case SET_TOOLBOX_VISIBLE:
-            return {
-                ...state,
-                visible: action.visible
-            };
+            return set(state, 'visible', action.visible);
         }
 
         return state;
