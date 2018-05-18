@@ -4,7 +4,7 @@ import UIEvents from '../../../../service/UI/UIEvents';
 
 import { APP_WILL_MOUNT, APP_WILL_UNMOUNT } from '../../app';
 import {
-    CONFERENCE_JOINED,
+    CONFERENCE_WILL_JOIN,
     CONFERENCE_LEFT
 } from '../conference';
 import { MiddlewareRegistry } from '../redux';
@@ -59,10 +59,12 @@ MiddlewareRegistry.register(store => next => action => {
         _registerSounds(store);
 
         return _localParticipantJoined(store, next, action);
+
     case APP_WILL_UNMOUNT:
         _unregisterSounds(store);
         break;
-    case CONFERENCE_JOINED:
+
+    case CONFERENCE_WILL_JOIN:
         store.dispatch(localParticipantIdChanged(action.conference.myUserId()));
         break;
 
