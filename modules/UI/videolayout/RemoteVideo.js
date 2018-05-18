@@ -11,7 +11,10 @@ import { i18next } from '../../../react/features/base/i18n';
 import {
     JitsiParticipantConnectionStatus
 } from '../../../react/features/base/lib-jitsi-meet';
-
+import {
+    getPinnedParticipant,
+    pinParticipant
+} from '../../../react/features/base/participants';
 import { PresenceLabel } from '../../../react/features/presence-status';
 import {
     REMOTE_CONTROL_MENU_STATES,
@@ -234,10 +237,12 @@ RemoteVideo.prototype._requestRemoteControlPermissions = function() {
         if (result === true) {
             // the remote control permissions has been granted
             // pin the controlled participant
-            const pinnedId = this.VideoLayout.getPinnedId();
+            const pinnedParticipant
+                = getPinnedParticipant(APP.store.getState()) || {};
+            const pinnedId = pinnedParticipant.id;
 
             if (pinnedId !== this.id) {
-                this.VideoLayout.handleVideoThumbClicked(this.id);
+                APP.store.dispatch(pinParticipant(this.id));
             }
         }
     }, error => {
@@ -648,7 +653,7 @@ RemoteVideo.prototype._onContainerClick = function(event) {
             || classList.contains('popover');
 
     if (!ignoreClick) {
-        this.VideoLayout.handleVideoThumbClicked(this.id);
+        this._togglePin();
     }
 
     // On IE we need to populate this handler on video <object> and it does not

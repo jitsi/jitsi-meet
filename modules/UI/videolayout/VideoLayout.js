@@ -5,7 +5,6 @@ import {
     JitsiParticipantConnectionStatus
 } from '../../../react/features/base/lib-jitsi-meet';
 import {
-    getParticipants,
     getPinnedParticipant,
     pinParticipant
 } from '../../../react/features/base/participants';
@@ -43,6 +42,29 @@ function onLocalFlipXChanged(val) {
 }
 
 /**
+ * Returns the redux representation of all known users.
+ *
+ * @private
+ * @returns {Array}
+ */
+function getAllParticipants() {
+    return APP.store.getState()['features/base/participants'];
+}
+
+/**
+ * Returns an array of all thumbnails in the filmstrip.
+ *
+ * @private
+ * @returns {Array}
+ */
+function getAllThumbnails() {
+    return [
+        localVideoThumbnail,
+        ...Object.values(remoteVideos)
+    ];
+}
+
+/**
  * Returns the user ID of the remote participant that is current the dominant
  * speaker.
  *
@@ -50,7 +72,7 @@ function onLocalFlipXChanged(val) {
  * @returns {string|null}
  */
 function getCurrentRemoteDominantSpeakerID() {
-    const dominantSpeaker = getParticipants(APP.store.getState)
+    const dominantSpeaker = getAllParticipants()
         .find(participant => participant.dominantSpeaker);
 
     if (dominantSpeaker) {
@@ -92,8 +114,6 @@ const VideoLayout = {
         // if we do not resize the thumbs here, if there is no video device
         // the local video thumb maybe one pixel
         this.resizeThumbnails(true);
-
-        this.handleVideoThumbClicked = this.handleVideoThumbClicked.bind(this);
 
         this.registerListeners();
     },
@@ -376,61 +396,36 @@ const VideoLayout = {
     },
 
     /**
-     * Updates the desired pinned participant and notifies web UI of the change.
+     * Callback invoked to update display when the pin participant has changed.
      *
-     * @param {string|null} id - The participant id of the participant to be
-     * pinned. Pass in null to unpin without pinning another participant.
+     * @paramn {string|null} pinnedParticipantID - The participant ID of the
+     * participant that is pinned or null if no one is pinned.
      * @returns {void}
      */
-    pinParticipant(id) {
-        APP.store.dispatch(pinParticipant(id));
-        APP.UI.emitEvent(UIEvents.PINNED_ENDPOINT, id, Boolean(id));
-    },
-
-    /**
-     * Handles the click on a video thumbnail.
-     *
-     * @param id the identifier of the video thumbnail
-     */
-    handleVideoThumbClicked(id) {
-        const smallVideo = VideoLayout.getSmallVideo(id);
-        const pinnedId = this.getPinnedId();
-
-        if (pinnedId) {
-            const oldSmallVideo = VideoLayout.getSmallVideo(pinnedId);
-
-            if (oldSmallVideo && !interfaceConfig.filmStripOnly) {
-                oldSmallVideo.focus(false);
-            }
+    onPinChange(pinnedParticipantID) {
+        if (interfaceConfig.filmStripOnly) {
+            return;
         }
 
-        // Unpin if currently pinned.
-        if (pinnedId === id) {
-            this.pinParticipant(null);
+        getAllThumbnails().forEach(thumbnail =>
+            thumbnail.focus(pinnedParticipantID === thumbnail.getId()));
 
-            // Enable the currently set dominant speaker.
-            if (getCurrentRemoteDominantSpeakerID()) {
-                this.updateLargeVideo(getCurrentRemoteDominantSpeakerID());
+        if (pinnedParticipantID) {
+            this.updateLargeVideo(pinnedParticipantID);
+        } else {
+            const currentDominantSpeakerID
+                = getCurrentRemoteDominantSpeakerID();
+
+            if (currentDominantSpeakerID) {
+                this.updateLargeVideo(currentDominantSpeakerID);
             } else {
-                // if there is no currentDominantSpeaker, it can also be
+                // if there is no currentDominantSpeakerID, it can also be
                 // that local participant is the dominant speaker
                 // we should act as a participant has left and was on large
                 // and we should choose somebody (electLastVisibleVideo)
                 this.updateLargeVideo(this.electLastVisibleVideo());
             }
-
-            return;
         }
-
-        // Update focused/pinned interface.
-        if (id) {
-            if (smallVideo && !interfaceConfig.filmStripOnly) {
-                smallVideo.focus(true);
-                this.pinParticipant(id);
-            }
-        }
-
-        this.updateLargeVideo(id);
     },
 
     /**
@@ -684,12 +679,9 @@ const VideoLayout = {
      * @returns {void}
      */
     onDominantSpeakerChanged(id) {
-        Object.values(remoteVideos).forEach(remoteVideo =>
-            remoteVideo.showDominantSpeakerIndicator(
-                id === remoteVideo.getId()));
+        getAllThumbnails().forEach(thumbnail =>
+            thumbnail.showDominantSpeakerIndicator(id === thumbnail.getId()));
 
-        localVideoThumbnail.showDominantSpeakerIndicator(
-            APP.conference.isLocalId(id));
 
         if (!remoteVideos[id]) {
             return;
@@ -797,7 +789,7 @@ const VideoLayout = {
         // Unlock large video
         if (this.getPinnedId() === id) {
             logger.info('Focused video owner has left the conference');
-            this.pinParticipant(null);
+            APP.store.dispatch(pinParticipant(null));
         }
 
         const remoteVideo = remoteVideos[id];

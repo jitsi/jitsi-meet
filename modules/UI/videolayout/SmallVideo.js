@@ -12,7 +12,9 @@ import { AudioLevelIndicator }
     from '../../../react/features/audio-level-indicator';
 import {
     Avatar as AvatarDisplay,
-    getAvatarURLByParticipantId
+    getAvatarURLByParticipantId,
+    getPinnedParticipant,
+    pinParticipant
 } from '../../../react/features/base/participants';
 import {
     ConnectionIndicator
@@ -817,6 +819,22 @@ SmallVideo.prototype.updateIndicators = function() {
             </I18nextProvider>,
         indicatorToolbar
     );
+};
+
+/**
+ * Pins the participant displayed by this thumbnail or unpins if already pinned.
+ *
+ * @private
+ * @returns {void}
+ */
+SmallVideo.prototype._togglePin = function() {
+    const pinnedParticipant
+        = getPinnedParticipant(APP.store.getState()) || {};
+    const participantIdToPin
+        = pinnedParticipant && pinnedParticipant.id === this.id
+            ? null : this.id;
+
+    APP.store.dispatch(pinParticipant(participantIdToPin));
 };
 
 /**

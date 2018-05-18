@@ -59,7 +59,7 @@ SharedVideoThumb.prototype.createContainer = function(spanId) {
  * The thumb click handler.
  */
 SharedVideoThumb.prototype.videoClick = function() {
-    this.VideoLayout.handleVideoThumbClicked(this.url);
+    this._togglePin();
 };
 
 /**
