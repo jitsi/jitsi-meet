@@ -27,9 +27,9 @@ export default createStyleSheet({
         bottom: BoxModel.margin,
         flexDirection: 'column',
         justifyContent: 'flex-end',
-        left: BoxModel.margin,
+        left: 0,
         position: 'absolute',
-        right: BoxModel.margin,
+        right: 0,
 
         // Both on Android and iOS there is the status bar which may be visible.
         // On iPhone X there is the notch. In the two cases BoxModel.margin is

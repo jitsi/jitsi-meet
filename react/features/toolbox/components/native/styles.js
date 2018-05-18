@@ -15,8 +15,7 @@ const toolbarButton = {
     flexDirection: 'row',
     height: 40,
     justifyContent: 'center',
-    margin: BoxModel.margin,
-    marginBottom: BoxModel.margin / 2,
+    marginHorizontal: 7,
     opacity: 0.7,
     width: 40
 };
@@ -64,6 +63,8 @@ const styles = createStyleSheet({
         flexDirection: 'row',
         justifyContent: 'center',
         left: 0,
+        marginBottom: BoxModel.margin / 2,
+        paddingHorizontal: BoxModel.margin,
         position: 'absolute',
         right: 0
     },

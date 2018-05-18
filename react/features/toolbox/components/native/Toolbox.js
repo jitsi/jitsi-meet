@@ -35,7 +35,7 @@ const _BUTTON_COUNT = 4;
  * @private
  * @type number
  */
-const _BUTTON_SIZE_FACTOR = 0.8;
+const _BUTTON_SIZE_FACTOR = 0.85;
 
 /**
  * The type of {@link Toolbox}'s React {@code Component} props.
@@ -159,7 +159,8 @@ class Toolbox extends Component<Props, State> {
         let buttonSize
             = (width
                     - hangupButtonSize
-                    - (_BUTTON_COUNT * styles.toolbarButton.margin * 2))
+                    - (_BUTTON_COUNT
+                        * styles.toolbarButton.marginHorizontal * 2))
                 / _BUTTON_COUNT;
 
         // Make sure it's an even number.
