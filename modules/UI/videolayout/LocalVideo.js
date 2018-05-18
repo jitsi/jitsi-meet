@@ -260,7 +260,7 @@ LocalVideo.prototype._onContainerClick = function(event) {
     }
 
     if (!ignoreClick) {
-        this.VideoLayout.handleVideoThumbClicked(this.id);
+        this._togglePin();
     }
 };
 

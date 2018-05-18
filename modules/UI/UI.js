@@ -960,15 +960,6 @@ UI.getLargeVideo = function() {
 };
 
 /**
- * Returns whether or not the passed in user id is currently pinned to the large
- * video.
- *
- * @param {string} userId - The id of the user to check is pinned or not.
- * @returns {boolean} True if the user is currently pinned to the large video.
- */
-UI.isPinned = userId => VideoLayout.getPinnedId() === userId;
-
-/**
  * Shows "Please go to chrome webstore to install the desktop sharing extension"
  * 2 button dialog with buttons - cancel and go to web store.
  * @param url {string} the url of the extension.

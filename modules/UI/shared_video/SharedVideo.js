@@ -317,7 +317,7 @@ export default class SharedVideoManager {
                 name: 'YouTube'
             }));
 
-            VideoLayout.handleVideoThumbClicked(self.url);
+            thumb.videoClick();
 
             // If we are sending the command and we are starting the player
             // we need to continuously send the player current time position

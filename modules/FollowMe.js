@@ -1,3 +1,5 @@
+/* global APP */
+
 /*
  * Copyright @ 2015 Atlassian Pty Ltd
  *
@@ -15,6 +17,10 @@
  */
 const logger = require('jitsi-meet-logger').getLogger(__filename);
 
+import {
+    getPinnedParticipant,
+    pinParticipant
+} from '../react/features/base/participants';
 import UIEvents from '../service/UI/UIEvents';
 import VideoLayout from './UI/videolayout/VideoLayout';
 
@@ -444,11 +450,15 @@ class FollowMe {
         if (smallVideo) {
             this.nextOnStageTimer = 0;
             clearTimeout(this.nextOnStageTimout);
-            /* eslint-disable no-mixed-operators */
-            if (pin && !VideoLayout.isPinned(clickId)
-                || !pin && VideoLayout.isPinned(clickId)) {
-                /* eslint-disable no-mixed-operators */
-                VideoLayout.handleVideoThumbClicked(clickId);
+
+            if (pin) {
+                APP.store.dispatch(pinParticipant(clickId));
+            } else {
+                const { id } = getPinnedParticipant(APP.store.getState()) || {};
+
+                if (id === clickId) {
+                    APP.store.dispatch(pinParticipant(null));
+                }
             }
         } else {
             // If there's no SmallVideo object for the given id, lets wait and
