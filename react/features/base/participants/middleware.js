@@ -73,8 +73,6 @@ MiddlewareRegistry.register(store => next => action => {
                 raisedHand: false
             }));
 
-        typeof APP === 'object' && APP.UI.markDominantSpeaker(id);
-
         break;
     }
 

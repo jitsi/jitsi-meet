@@ -1,3 +1,6 @@
+import VideoLayout from '../../../modules/UI/videolayout/VideoLayout.js';
+
+import { DOMINANT_SPEAKER_CHANGED } from '../base/participants';
 import { MiddlewareRegistry } from '../base/redux';
 
 /**
@@ -9,4 +12,14 @@ import { MiddlewareRegistry } from '../base/redux';
  * @returns {Function}
  */
 // eslint-disable-next-line no-unused-vars
-MiddlewareRegistry.register(store => next => action => next(action));
+MiddlewareRegistry.register(store => next => action => {
+    const result = next(action);
+
+    switch (action.type) {
+    case DOMINANT_SPEAKER_CHANGED:
+        VideoLayout.onDominantSpeakerChanged(action.participant.id);
+        break;
+    }
+
+    return result;
+});
