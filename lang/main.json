@@ -163,11 +163,15 @@
         "selectMic": "Microphone",
         "selectAudioOutput": "Audio output",
         "followMe": "Everyone follows me",
+        "language": "Language",
+        "loggedIn": "Logged in as __name__",
         "noDevice": "None",
         "cameraAndMic": "Camera and microphone",
-        "moderator": "MODERATOR",
+        "moderator": "Moderator",
+        "more": "More",
         "password": "SET PASSWORD",
-        "audioVideo": "AUDIO AND VIDEO"
+        "audioVideo": "AUDIO AND VIDEO",
+        "devices": "Devices"
     },
     "profile": {
         "title": "Profile",

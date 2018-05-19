@@ -12,7 +12,7 @@ import {
 } from '../../../modules/transport';
 import { parseURLParams } from '../base/config';
 
-import DeviceSelectionDialogBase from './components/DeviceSelectionDialogBase';
+import SettingsDialog from './components/web/SettingsDialog';
 
 const logger = Logger.getLogger(__filename);
 
@@ -29,10 +29,9 @@ export default class DeviceSelectionPopup {
      */
     constructor(i18next) {
         this.close = this.close.bind(this);
-        this._setVideoInputDevice = this._setVideoInputDevice.bind(this);
-        this._setAudioInputDevice = this._setAudioInputDevice.bind(this);
-        this._setAudioOutputDevice = this._setAudioOutputDevice.bind(this);
         this._i18next = i18next;
+        this._onSubmit = this._onSubmit.bind(this);
+
         const { scope } = parseURLParams(window.location);
 
         this._transport = new Transport({
@@ -66,7 +65,11 @@ export default class DeviceSelectionPopup {
             hasVideoPermission: JitsiMeetJS.mediaDevices
                 .isDevicePermissionGranted.bind(null, 'video'),
             hideAudioInputPreview: !JitsiMeetJS.isCollectingLocalStats(),
-            hideAudioOutputSelect: true
+            hideAudioOutputSelect: true,
+            showDeviceSettings: true,
+            disableBlanketClickDismiss: true,
+            onCancel: this.close,
+            onSubmit: this._onSubmit
         };
         this._initState();
     }
@@ -218,25 +221,47 @@ export default class DeviceSelectionPopup {
     }
 
     /**
+     * Callback invoked to save changes to selected devices and close the
+     * dialog.
+     *
+     * @param {Object} newSettings - The chosen device IDs.
+     * @private
+     * @returns {void}
+     */
+    _onSubmit(newSettings) {
+        const promises = [];
+
+        if (newSettings.selectedVideoInputId
+                !== this._dialogProps.currentVideoInputId) {
+            promises.push(
+                this._setVideoInputDevice(newSettings.selectedVideoInputId));
+        }
+
+        if (newSettings.selectedAudioInputId
+                !== this._dialogProps.currentAudioInputId) {
+            promises.push(
+                this._setAudioInputDevice(newSettings.selectedAudioInputId));
+        }
+
+        if (newSettings.selectedAudioOutputId
+                !== this._dialogProps.currentAudioOutputId) {
+            promises.push(
+                this._setAudioOutputDevice(newSettings.selectedAudioOutputId));
+        }
+
+        Promise.all(promises).then(this.close, this.close);
+    }
+
+    /**
      * Renders the React components for the popup page.
      *
      * @returns {void}
      */
     _render() {
-        const props = {
-            ...this._dialogProps,
-            closeModal: this.close,
-            disableBlanketClickDismiss: true,
-            setAudioInputDevice: this._setAudioInputDevice,
-            setAudioOutputDevice: this._setAudioOutputDevice,
-            setVideoInputDevice: this._setVideoInputDevice
-        };
-
         ReactDOM.render(
-            <I18nextProvider
-                i18n = { this._i18next }>
+            <I18nextProvider i18n = { this._i18next }>
                 <AtlasKitThemeProvider mode = 'dark'>
-                    <DeviceSelectionDialogBase { ...props } />
+                    <SettingsDialog { ...this._dialogProps } />
                 </AtlasKitThemeProvider>
             </I18nextProvider>,
             document.getElementById('react'));

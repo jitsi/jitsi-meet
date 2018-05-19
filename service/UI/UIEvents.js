@@ -36,12 +36,6 @@ export default {
      */
     TOGGLE_AUDIO_ONLY: 'UI.toggle_audioonly',
     TOGGLE_CHAT: 'UI.toggle_chat',
-    TOGGLE_SETTINGS: 'UI.toggle_settings',
-
-    /**
-     * Notifies that the profile toolbar button has been clicked.
-     */
-    TOGGLE_PROFILE: 'UI.toggle_profile',
 
     /**
      * Notifies that a command to toggle the filmstrip has been issued. The

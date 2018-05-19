@@ -6,8 +6,10 @@ import { createToolbarEvent, sendAnalytics } from '../../../analytics';
 import { translate } from '../../../base/i18n';
 import { AbstractButton } from '../../../base/toolbox';
 import type { AbstractButtonProps } from '../../../base/toolbox';
-import { openDeviceSelectionDialog } from '../../../device-selection';
-import { toggleSettings } from '../../../side-panel';
+import { openDeviceSelectionPopup } from '../../../device-selection';
+
+import { openSettingsDialog } from '../../actions';
+import { SETTINGS_TABS } from '../../constants';
 
 declare var interfaceConfig: Object;
 
@@ -20,11 +22,6 @@ type Props = AbstractButtonProps & {
      * Whether we are in filmstrip only mode or not.
      */
     _filmstripOnly: boolean,
-
-    /**
-     * Array containing the enabled settings sections.
-     */
-    _sections: Array<string>,
 
     /**
      * The redux {@code dispatch} function.
@@ -48,14 +45,13 @@ class SettingsButton extends AbstractButton<Props, *> {
      * @returns {void}
      */
     _handleClick() {
-        const { _filmstripOnly, _sections, dispatch } = this.props;
+        const { _filmstripOnly, dispatch } = this.props;
 
         sendAnalytics(createToolbarEvent('settings'));
-        if (_filmstripOnly
-                || (_sections.length === 1 && _sections.includes('devices'))) {
-            dispatch(openDeviceSelectionDialog());
+        if (_filmstripOnly) {
+            dispatch(openDeviceSelectionPopup());
         } else {
-            dispatch(toggleSettings());
+            dispatch(openSettingsDialog(SETTINGS_TABS.DEVICES));
         }
     }
 }
@@ -75,8 +71,7 @@ function _mapStateToProps(state): Object { // eslint-disable-line no-unused-vars
     // interfaceConfig is part of redux we will.
 
     return {
-        _filmstripOnly: Boolean(interfaceConfig.filmStripOnly),
-        _sections: interfaceConfig.SETTINGS_SECTIONS || []
+        _filmstripOnly: Boolean(interfaceConfig.filmStripOnly)
     };
 }
 
