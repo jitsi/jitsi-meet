@@ -33,6 +33,7 @@ import EventEmitter from 'events';
 import {
     AVATAR_ID_COMMAND,
     AVATAR_URL_COMMAND,
+    authStatusChanged,
     conferenceFailed,
     conferenceJoined,
     conferenceLeft,
@@ -1669,7 +1670,7 @@ export default {
         room.on(
             JitsiConferenceEvents.AUTH_STATUS_CHANGED,
             (authEnabled, authLogin) =>
-                APP.UI.updateAuthInfo(authEnabled, authLogin));
+                APP.store.dispatch(authStatusChanged(authEnabled, authLogin)));
 
         room.on(JitsiConferenceEvents.PARTCIPANT_FEATURES_CHANGED,
             user => APP.UI.onUserFeaturesChanged(user));
@@ -2008,7 +2009,6 @@ export default {
                 id: from,
                 email: data.value
             }));
-            APP.UI.setUserEmail(from, data.value);
         });
 
         room.addCommandListener(
@@ -2586,7 +2586,6 @@ export default {
             email: formattedEmail
         }));
 
-        APP.UI.setUserEmail(localId, formattedEmail);
         sendData(commands.EMAIL, formattedEmail);
     },
 

@@ -1,3 +1,4 @@
-export { default as DeviceSelectionDialog } from './DeviceSelectionDialog';
-export { default as DeviceSelectionDialogBase }
-    from './DeviceSelectionDialogBase';
+// @flow
+
+export { default as DeviceSelection } from './DeviceSelection';
+export type { Props as DeviceSelectionProps } from './DeviceSelection';

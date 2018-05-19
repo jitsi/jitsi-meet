@@ -35,9 +35,13 @@ import {
     StopRecordingDialog,
     getActiveSession
 } from '../../../recording';
-import { SettingsButton } from '../../../settings';
+import {
+    SETTINGS_TABS,
+    SettingsButton,
+    openSettingsDialog
+} from '../../../settings';
 import { toggleSharedVideo } from '../../../shared-video';
-import { toggleChat, toggleProfile } from '../../../side-panel';
+import { toggleChat } from '../../../side-panel';
 import { SpeakerStats } from '../../../speaker-stats';
 import {
     OverflowMenuVideoQualityItem,
@@ -501,7 +505,7 @@ class Toolbox extends Component<Props> {
      * @returns {void}
      */
     _doToggleProfile() {
-        this.props.dispatch(toggleProfile());
+        this.props.dispatch(openSettingsDialog(SETTINGS_TABS.PROFILE));
     }
 
     /**

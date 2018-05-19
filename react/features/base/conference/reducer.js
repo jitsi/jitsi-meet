@@ -6,6 +6,7 @@ import { assign, ReducerRegistry, set } from '../redux';
 import { LOCKED_LOCALLY, LOCKED_REMOTELY } from '../../room-lock';
 
 import {
+    AUTH_STATUS_CHANGED,
     CONFERENCE_FAILED,
     CONFERENCE_JOINED,
     CONFERENCE_LEFT,
@@ -31,6 +32,9 @@ import { isRoomValid } from './functions';
  */
 ReducerRegistry.register('features/base/conference', (state = {}, action) => {
     switch (action.type) {
+    case AUTH_STATUS_CHANGED:
+        return _authStatusChanged(state, action);
+
     case CONFERENCE_FAILED:
         return _conferenceFailed(state, action);
 
@@ -84,6 +88,23 @@ ReducerRegistry.register('features/base/conference', (state = {}, action) => {
 
     return state;
 });
+
+/**
+ * Reduces a specific Redux action AUTH_STATUS_CHANGED of the feature
+ * base/conference.
+ *
+ * @param {Object} state - The Redux state of the feature base/conference.
+ * @param {Action} action - The Redux action AUTH_STATUS_CHANGED to reduce.
+ * @private
+ * @returns {Object} The new state of the feature base/conference after the
+ * reduction of the specified action.
+ */
+function _authStatusChanged(state, { authEnabled, authLogin }) {
+    return assign(state, {
+        authEnabled,
+        authLogin
+    });
+}
 
 /**
  * Reduces a specific Redux action CONFERENCE_FAILED of the feature
