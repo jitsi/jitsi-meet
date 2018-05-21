@@ -2,9 +2,10 @@
 
 import { APP_WILL_MOUNT, APP_WILL_UNMOUNT } from '../app';
 import {
-    getParticipantById,
-    PARTICIPANT_UPDATED,
-    PARTICIPANT_LEFT
+    getParticipantPresenceStatus,
+    PARTICIPANT_JOINED_SOUND_ID,
+    PARTICIPANT_LEFT,
+    PARTICIPANT_UPDATED
 } from '../base/participants';
 import { MiddlewareRegistry } from '../base/redux';
 import {
@@ -15,23 +16,38 @@ import {
 } from '../base/sounds';
 import {
     CALLING,
+    CONNECTED_USER,
+    EXPIRED,
     INVITED,
+    REJECTED,
     RINGING
 } from '../presence-status';
 
 import { UPDATE_DIAL_IN_NUMBERS_FAILED } from './actionTypes';
 import {
-    OUTGOING_CALL_START_SOUND_ID,
-    OUTGOING_CALL_RINGING_SOUND_ID
+    OUTGOING_CALL_EXPIRED_SOUND_ID,
+    OUTGOING_CALL_REJECTED_SOUND_ID,
+    OUTGOING_CALL_RINGING_SOUND_ID,
+    OUTGOING_CALL_START_SOUND_ID
 } from './constants';
-import {
-    OUTGOING_CALL_START_FILE,
-    OUTGOING_CALL_RINGING_FILE
-} from './sounds';
+import { sounds } from './sounds';
 
 const logger = require('jitsi-meet-logger').getLogger(__filename);
 
 declare var interfaceConfig: Object;
+
+/**
+ * Maps the presence status with the ID of the sound that will be played when
+ * the status is received.
+ */
+const statusToRingtone = {
+    [CALLING]: OUTGOING_CALL_START_SOUND_ID,
+    [CONNECTED_USER]: PARTICIPANT_JOINED_SOUND_ID,
+    [EXPIRED]: OUTGOING_CALL_EXPIRED_SOUND_ID,
+    [INVITED]: OUTGOING_CALL_START_SOUND_ID,
+    [REJECTED]: OUTGOING_CALL_REJECTED_SOUND_ID,
+    [RINGING]: OUTGOING_CALL_RINGING_SOUND_ID
+};
 
 /**
  * The middleware of the feature invite common to mobile/react-native and
@@ -46,56 +62,55 @@ MiddlewareRegistry.register(store => next => action => {
     if (action.type === PARTICIPANT_UPDATED
         || action.type === PARTICIPANT_LEFT) {
         oldParticipantPresence
-            = _getParticipantPresence(store.getState(), action.participant.id);
+            = getParticipantPresenceStatus(
+                store.getState(),
+                action.participant.id);
     }
 
     const result = next(action);
 
     switch (action.type) {
     case APP_WILL_MOUNT:
-        store.dispatch(
-            registerSound(
-                OUTGOING_CALL_START_SOUND_ID,
-                OUTGOING_CALL_START_FILE));
-
-        store.dispatch(
-            registerSound(
-                OUTGOING_CALL_RINGING_SOUND_ID,
-                OUTGOING_CALL_RINGING_FILE,
-                { loop: true }));
+        for (const [ soundId, sound ] of sounds.entries()) {
+            store.dispatch(registerSound(soundId, sound.file, sound.options));
+        }
         break;
 
     case APP_WILL_UNMOUNT:
-        store.dispatch(unregisterSound(OUTGOING_CALL_START_SOUND_ID));
-        store.dispatch(unregisterSound(OUTGOING_CALL_RINGING_SOUND_ID));
+        for (const soundId of sounds.keys()) {
+            store.dispatch(unregisterSound(soundId));
+        }
         break;
 
     case PARTICIPANT_LEFT:
     case PARTICIPANT_UPDATED: {
         const newParticipantPresence
-            = _getParticipantPresence(store.getState(), action.participant.id);
+            = getParticipantPresenceStatus(
+                store.getState(),
+                action.participant.id);
 
         if (oldParticipantPresence === newParticipantPresence) {
             break;
         }
 
-        switch (oldParticipantPresence) {
-        case CALLING:
-        case INVITED:
-            store.dispatch(stopSound(OUTGOING_CALL_START_SOUND_ID));
-            break;
-        case RINGING:
-            store.dispatch(stopSound(OUTGOING_CALL_RINGING_SOUND_ID));
+        const oldSoundId
+            = oldParticipantPresence
+                && statusToRingtone[oldParticipantPresence];
+        const newSoundId
+            = newParticipantPresence
+                && statusToRingtone[newParticipantPresence];
+
+
+        if (oldSoundId === newSoundId) {
             break;
         }
 
-        switch (newParticipantPresence) {
-        case CALLING:
-        case INVITED:
-            store.dispatch(playSound(OUTGOING_CALL_START_SOUND_ID));
-            break;
-        case RINGING:
-            store.dispatch(playSound(OUTGOING_CALL_RINGING_SOUND_ID));
+        if (oldSoundId) {
+            store.dispatch(stopSound(oldSoundId));
+        }
+
+        if (newSoundId) {
+            store.dispatch(playSound(newSoundId));
         }
 
         break;
@@ -109,22 +124,3 @@ MiddlewareRegistry.register(store => next => action => {
 
     return result;
 });
-
-/**
- * Returns the presence status of a participant associated with the passed id.
- *
- * @param {Object} state - The redux state.
- * @param {string} id - The id of the participant.
- * @returns {string} - The presence status.
- */
-function _getParticipantPresence(state, id) {
-    if (id) {
-        const participantById = getParticipantById(state, id);
-
-        if (participantById) {
-            return participantById.presence;
-        }
-    }
-
-    return undefined;
-}
