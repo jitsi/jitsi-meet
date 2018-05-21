@@ -140,7 +140,8 @@ class ExternalAPIModule extends ReactContextBaseJavaModule {
     }
 
     /**
-     * Dispatches an event that occurred on JavaScript to the view's listener.
+     * Dispatches an event that occurred on the JavaScript side of the SDK to
+     * the specified {@link JitsiMeetView}'s listener.
      *
      * @param name The name of the event.
      * @param data The details/specifics of the event to send determined
@@ -151,50 +152,81 @@ class ExternalAPIModule extends ReactContextBaseJavaModule {
     public void sendEvent(final String name,
                           final ReadableMap data,
                           final String scope) {
-        UiThreadUtil.runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                // The JavaScript App needs to provide uniquely identifying
-                // information to the native ExternalAPI module so that the
-                // latter may match the former to the native JitsiMeetView which
-                // hosts it.
-                JitsiMeetView view
-                    = JitsiMeetView.findViewByExternalAPIScope(scope);
+        // The JavaScript App needs to provide uniquely identifying information
+        // to the native ExternalAPI module so that the latter may match the
+        // former to the native JitsiMeetView which hosts it.
+        JitsiMeetView view = JitsiMeetView.findViewByExternalAPIScope(scope);
 
-                if (view == null) {
-                    return;
+        if (view == null) {
+            return;
+        }
+
+        // XXX The JitsiMeetView property URL was introduced in order to address
+        // an exception in the Picture-in-Picture functionality which arose
+        // because of delays related to bridging between JavaScript and Java. To
+        // reduce these delays do not wait for the call to be transfered to the
+        // UI thread.
+        maybeSetViewURL(name, data, view);
+
+        // Make sure JitsiMeetView's listener is invoked on the UI thread. It
+        // was requested by SDK consumers.
+        if (UiThreadUtil.isOnUiThread()) {
+            sendEventOnUiThread(name, data, scope);
+        } else {
+            UiThreadUtil.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    sendEventOnUiThread(name, data, scope);
                 }
+            });
+        }
+    }
 
-                maybeSetViewURL(name, data, view);
+    /**
+     * Dispatches an event that occurred on the JavaScript side of the SDK to
+     * the specified {@link JitsiMeetView}'s listener on the UI thread.
+     *
+     * @param name The name of the event.
+     * @param data The details/specifics of the event to send determined
+     * by/associated with the specified {@code name}.
+     * @param scope
+     */
+    private void sendEventOnUiThread(final String name,
+                          final ReadableMap data,
+                          final String scope) {
+        // The JavaScript App needs to provide uniquely identifying information
+        // to the native ExternalAPI module so that the latter may match the
+        // former to the native JitsiMeetView which hosts it.
+        JitsiMeetView view = JitsiMeetView.findViewByExternalAPIScope(scope);
 
-                JitsiMeetViewListener listener = view.getListener();
+        if (view == null) {
+            return;
+        }
 
-                if (listener == null) {
-                    return;
-                }
+        JitsiMeetViewListener listener = view.getListener();
 
-                Method method = JITSI_MEET_VIEW_LISTENER_METHODS.get(name);
+        if (listener == null) {
+            return;
+        }
 
-                if (method != null) {
-                    try {
-                        method.invoke(listener, toHashMap(data));
-                    } catch (IllegalAccessException e) {
-                        // FIXME There was a multicatch for
-                        // IllegalAccessException and InvocationTargetException,
-                        // but Android Studio complained with: "Multi-catch with
-                        // these reflection exceptions requires API level 19
-                        // (current min is 16) because they get compiled to the
-                        // common but new super type
-                        // ReflectiveOperationException. As a workaround either
-                        // create individual catch statements, or
-                        // catch Exception."
-                        throw new RuntimeException(e);
-                    } catch (InvocationTargetException e) {
-                        throw new RuntimeException(e);
-                    }
-                }
+        Method method = JITSI_MEET_VIEW_LISTENER_METHODS.get(name);
+
+        if (method != null) {
+            try {
+                method.invoke(listener, toHashMap(data));
+            } catch (IllegalAccessException e) {
+                // FIXME There was a multicatch for IllegalAccessException and
+                // InvocationTargetException, but Android Studio complained
+                // with: "Multi-catch with these reflection exceptions requires
+                // API level 19 (current min is 16) because they get compiled to
+                // the common but new super type ReflectiveOperationException.
+                // As a workaround either create individual catch statements, or
+                // catch Exception."
+                throw new RuntimeException(e);
+            } catch (InvocationTargetException e) {
+                throw new RuntimeException(e);
             }
-        });
+        }
     }
 
     /**

@@ -44,17 +44,24 @@ public class InviteModule extends ReactContextBaseJavaModule {
      */
     @ReactMethod
     public void beginAddPeople(final String externalAPIScope) {
-        UiThreadUtil.runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                InviteController inviteController
-                    = findInviteControllerByExternalAPIScope(externalAPIScope);
-
-                if (inviteController != null) {
-                    inviteController.beginAddPeople(getReactApplicationContext());
+        // Make sure InviteControllerListener (like all other listeners of the
+        // SDK) is invoked on the UI thread. It was requested by SDK consumers.
+        if (!UiThreadUtil.isOnUiThread()) {
+            UiThreadUtil.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    beginAddPeople(externalAPIScope);
                 }
-            }
-        });
+            });
+            return;
+        }
+
+        InviteController inviteController
+            = findInviteControllerByExternalAPIScope(externalAPIScope);
+
+        if (inviteController != null) {
+            inviteController.beginAddPeople(getReactApplicationContext());
+        }
     }
 
     private InviteController findInviteControllerByExternalAPIScope(
@@ -81,23 +88,34 @@ public class InviteModule extends ReactContextBaseJavaModule {
             final String externalAPIScope,
             final String addPeopleControllerScope,
             final ReadableArray failedInvitees) {
-        UiThreadUtil.runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                InviteController inviteController
-                    = findInviteControllerByExternalAPIScope(externalAPIScope);
-
-                if (inviteController == null) {
-                    Log.w(
-                        "InviteModule",
-                        "Invite settled, but failed to find active controller to notify");
-                } else {
-                    inviteController.inviteSettled(
+        // Make sure AddPeopleControllerListener (like all other listeners of
+        // the SDK) is invoked on the UI thread. It was requested by SDK
+        // consumers.
+        if (!UiThreadUtil.isOnUiThread()) {
+            UiThreadUtil.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    inviteSettled(
+                        externalAPIScope, 
                         addPeopleControllerScope,
                         failedInvitees);
                 }
-            }
-        });
+            });
+            return;
+        }
+
+        InviteController inviteController
+            = findInviteControllerByExternalAPIScope(externalAPIScope);
+
+        if (inviteController == null) {
+            Log.w(
+                "InviteModule",
+                "Invite settled, but failed to find active controller to notify");
+        } else {
+            inviteController.inviteSettled(
+                addPeopleControllerScope,
+                failedInvitees);
+        }
     }
 
     /**
@@ -113,23 +131,35 @@ public class InviteModule extends ReactContextBaseJavaModule {
             final String addPeopleControllerScope,
             final String query,
             final ReadableArray results) {
-        UiThreadUtil.runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                InviteController inviteController
-                    = findInviteControllerByExternalAPIScope(externalAPIScope);
-
-                if (inviteController == null) {
-                    Log.w(
-                        "InviteModule",
-                        "Received results, but failed to find active controller to send results back");
-                } else {
-                    inviteController.receivedResultsForQuery(
+        // Make sure AddPeopleControllerListener (like all other listeners of
+        // the SDK) is invoked on the UI thread. It was requested by SDK
+        // consumers.
+        if (!UiThreadUtil.isOnUiThread()) {
+            UiThreadUtil.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    receivedResults(
+                        externalAPIScope,
                         addPeopleControllerScope,
                         query,
                         results);
                 }
-            }
-        });
+            });
+            return;
+        }
+
+        InviteController inviteController
+            = findInviteControllerByExternalAPIScope(externalAPIScope);
+
+        if (inviteController == null) {
+            Log.w(
+                "InviteModule",
+                "Received results, but failed to find active controller to send results back");
+        } else {
+            inviteController.receivedResultsForQuery(
+                addPeopleControllerScope,
+                query,
+                results);
+        }
     }
 }

@@ -115,8 +115,6 @@ public class MainActivity extends JitsiMeetActivity {
             inviteController.setListener(new InviteControllerListener() {
                 public void beginAddPeople(
                         AddPeopleController addPeopleController) {
-                    UiThreadUtil.assertOnUiThread();
-
                     onInviteControllerBeginAddPeople(
                         inviteController,
                         addPeopleController);

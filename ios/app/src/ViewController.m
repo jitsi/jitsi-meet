@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 
-#import <assert.h>
-
 #import "ViewController.h"
 
 /**
@@ -62,37 +60,40 @@ static NSString * const ADD_PEOPLE_CONTROLLER_QUERY = nil;
 
 // JitsiMeetViewDelegate
 
-void _onJitsiMeetViewDelegateEvent(NSString *name, NSDictionary *data) {
+- (void)_onJitsiMeetViewDelegateEvent:(NSString *)name
+                             withData:(NSDictionary *)data {
     NSLog(
         @"[%s:%d] JitsiMeetViewDelegate %@ %@",
         __FILE__, __LINE__, name, data);
 
-    assert([NSThread isMainThread]
-        && "Delegate method called in a non-main thread");
+    NSAssert(
+        [NSThread isMainThread],
+        @"JitsiMeetViewDelegate %@ method invoked on a non-main thread",
+        name);
 }
 
 - (void)conferenceFailed:(NSDictionary *)data {
-    _onJitsiMeetViewDelegateEvent(@"CONFERENCE_FAILED", data);
+    [self _onJitsiMeetViewDelegateEvent:@"CONFERENCE_FAILED" withData:data];
 }
 
 - (void)conferenceJoined:(NSDictionary *)data {
-    _onJitsiMeetViewDelegateEvent(@"CONFERENCE_JOINED", data);
+    [self _onJitsiMeetViewDelegateEvent:@"CONFERENCE_JOINED" withData:data];
 }
 
 - (void)conferenceLeft:(NSDictionary *)data {
-    _onJitsiMeetViewDelegateEvent(@"CONFERENCE_LEFT", data);
+    [self _onJitsiMeetViewDelegateEvent:@"CONFERENCE_LEFT" withData:data];
 }
 
 - (void)conferenceWillJoin:(NSDictionary *)data {
-    _onJitsiMeetViewDelegateEvent(@"CONFERENCE_WILL_JOIN", data);
+    [self _onJitsiMeetViewDelegateEvent:@"CONFERENCE_WILL_JOIN" withData:data];
 }
 
 - (void)conferenceWillLeave:(NSDictionary *)data {
-    _onJitsiMeetViewDelegateEvent(@"CONFERENCE_WILL_LEAVE", data);
+    [self _onJitsiMeetViewDelegateEvent:@"CONFERENCE_WILL_LEAVE" withData:data];
 }
 
 - (void)loadConfigError:(NSDictionary *)data {
-    _onJitsiMeetViewDelegateEvent(@"LOAD_CONFIG_ERROR", data);
+    [self _onJitsiMeetViewDelegateEvent:@"LOAD_CONFIG_ERROR" withData:data];
 }
 
 // JMInviteControllerDelegate
@@ -102,8 +103,9 @@ void _onJitsiMeetViewDelegateEvent(NSString *name, NSDictionary *data) {
         @"[%s:%d] JMInviteControllerDelegate %s",
         __FILE__, __LINE__, __FUNCTION__);
 
-    assert([NSThread isMainThread]
-        && "Delegate method called in a non-main thread");
+    NSAssert(
+        [NSThread isMainThread],
+        @"JMInviteControllerDelegate beginAddPeople: invoked on a non-main thread");
 
     NSString *query = ADD_PEOPLE_CONTROLLER_QUERY;
     JitsiMeetView *view = (JitsiMeetView *) self.view;
@@ -127,8 +129,9 @@ void _onJitsiMeetViewDelegateEvent(NSString *name, NSDictionary *data) {
 - (void)addPeopleController:(JMAddPeopleController * _Nonnull)controller
           didReceiveResults:(NSArray<NSDictionary *> * _Nonnull)results
                    forQuery:(NSString * _Nonnull)query {
-    assert([NSThread isMainThread]
-        && "Delegate method called in a non-main thread");
+    NSAssert(
+        [NSThread isMainThread],
+        @"JMAddPeopleControllerDelegate addPeopleController:didReceiveResults:forQuery: invoked on a non-main thread");
 
     NSUInteger count = results.count;
 
@@ -162,8 +165,9 @@ void _onJitsiMeetViewDelegateEvent(NSString *name, NSDictionary *data) {
 
 - (void) inviteSettled:(NSArray<NSDictionary *> * _Nonnull)failedInvitees
   fromSearchController:(JMAddPeopleController * _Nonnull)addPeopleController {
-    assert([NSThread isMainThread]
-        && "Delegate method called in a non-main thread");
+    NSAssert(
+        [NSThread isMainThread],
+        @"JMAddPeopleControllerDelegate inviteSettled:fromSearchController: invoked on a non-main thread");
 
     // XXX Explicitly invoke endAddPeople on addPeopleController; otherwise, it
     // is going to be memory-leaked in the associated JMInviteController and no
