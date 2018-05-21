@@ -366,14 +366,7 @@ RemoteVideo.prototype.removeRemoteStreamElement = function(stream) {
     logger.info(`${isVideo ? 'Video' : 'Audio'
     } removed ${this.id}`, select);
 
-    // when removing only the video element and we are on stage
-    // update the stage
-    if (isVideo && this.isCurrentlyOnLargeVideo()) {
-        this.VideoLayout.updateLargeVideo(this.id);
-    } else {
-        // Missing video stream will affect display mode
-        this.updateView();
-    }
+    this.updateView();
 };
 
 /**

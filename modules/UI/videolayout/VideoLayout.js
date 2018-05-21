@@ -347,6 +347,11 @@ const VideoLayout = {
         if (remoteVideo) {
             remoteVideo.removeRemoteStreamElement(stream);
         }
+
+        if (stream.isVideoTrack() && this.isCurrentlyOnLarge(id)) {
+            this.updateLargeVideo(id);
+        }
+
         this.updateMutedForNoTracks(id, stream.getType());
     },
 
