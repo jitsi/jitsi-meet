@@ -3,6 +3,7 @@
 import { APP_WILL_MOUNT, APP_WILL_UNMOUNT } from '../app';
 import {
     getParticipantPresenceStatus,
+    PARTICIPANT_JOINED,
     PARTICIPANT_JOINED_SOUND_ID,
     PARTICIPANT_LEFT,
     PARTICIPANT_UPDATED
@@ -82,6 +83,7 @@ MiddlewareRegistry.register(store => next => action => {
         }
         break;
 
+    case PARTICIPANT_JOINED:
     case PARTICIPANT_LEFT:
     case PARTICIPANT_UPDATED: {
         const newParticipantPresence

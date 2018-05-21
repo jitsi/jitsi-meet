@@ -24,7 +24,6 @@ import { updateDeviceList } from '../../react/features/base/devices';
 import { JitsiTrackErrors } from '../../react/features/base/lib-jitsi-meet';
 import {
     getLocalParticipant,
-    participantPresenceChanged,
     showParticipantJoinedNotification
 } from '../../react/features/base/participants';
 import { destroyLocalTracks } from '../../react/features/base/tracks';
@@ -487,10 +486,6 @@ UI.addUser = function(user) {
     const status = user.getStatus();
 
     if (status) {
-        // if user has initial status dispatch it
-        // and skip 'connected' notifications
-        APP.store.dispatch(participantPresenceChanged(id, status));
-
         // FIXME: move updateUserStatus in participantPresenceChanged action
         UI.updateUserStatus(user, status);
     } else {

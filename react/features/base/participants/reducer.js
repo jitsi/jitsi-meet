@@ -175,6 +175,7 @@ function _participantJoined({ participant }) {
         local,
         name,
         pinned,
+        presence,
         role
     } = participant;
     let { avatarID, conference, id } = participant;
@@ -208,6 +209,7 @@ function _participantJoined({ participant }) {
         local: local || false,
         name,
         pinned: pinned || false,
+        presence,
         role: role || PARTICIPANT_ROLE.NONE
     };
 }
