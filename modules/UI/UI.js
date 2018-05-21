@@ -505,18 +505,6 @@ UI.addUser = function(user) {
 };
 
 /**
- * Remove user from UI.
- * @param {string} id   user id
- * @param {string} displayName user nickname
- */
-UI.removeUser = function(id, displayName) {
-    messageHandler.participantNotification(
-        displayName, 'notify.somebody', 'disconnected', 'notify.disconnected');
-
-    VideoLayout.removeParticipantContainer(id);
-};
-
-/**
  * Update videotype for specified user.
  * @param {string} id user id
  * @param {string} newVideoType new videotype

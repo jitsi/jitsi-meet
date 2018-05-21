@@ -476,10 +476,6 @@ RemoteVideo.prototype.remove = function() {
 
     this.removeRemoteVideoMenu();
 
-    // Make sure that the large video is updated if are removing its
-    // corresponding small video.
-    this.VideoLayout.updateAfterThumbRemoved(this.id);
-
     // Remove whole container
     if (this.container.parentNode) {
         this.container.parentNode.removeChild(this.container);

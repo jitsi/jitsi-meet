@@ -253,7 +253,7 @@ const VideoLayout = {
      * Uses focusedID if any or dominantSpeakerID if any,
      * otherwise elects new video, in this order.
      */
-    updateAfterThumbRemoved(id) {
+    _updateAfterThumbRemoved(id) {
         // Always trigger an update if large video is empty.
         if (!largeVideo
             || (this.getLargeVideoID() && !this.isCurrentlyOnLarge(id))) {
@@ -804,6 +804,7 @@ const VideoLayout = {
         }
 
         VideoLayout.resizeThumbnails();
+        VideoLayout._updateAfterThumbRemoved(id);
     },
 
     onVideoTypeChanged(id, newVideoType) {

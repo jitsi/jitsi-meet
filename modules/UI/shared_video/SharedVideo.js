@@ -497,7 +497,7 @@ export default class SharedVideoManager {
             this.localAudioMutedListener);
         this.localAudioMutedListener = null;
 
-        VideoLayout.removeParticipantContainer(this.url);
+        APP.store.dispatch(participantLeft(this.url, APP.conference._room));
 
         VideoLayout.showLargeVideoContainer(SHARED_VIDEO_CONTAINER_TYPE, false)
             .then(() => {
@@ -521,8 +521,6 @@ export default class SharedVideoManager {
                 this.emitter.emit(
                     UIEvents.UPDATE_SHARED_VIDEO, null, 'removed');
             });
-
-        APP.store.dispatch(participantLeft(this.url, APP.conference._room));
 
         this.url = null;
         this.isSharedVideoShown = false;
