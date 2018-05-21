@@ -133,6 +133,17 @@
             }
         }
 
+        .beta-tag {
+            background: #B8C7E0;
+            border-radius: 2px;
+            color: $newToolbarBackgroundColor;
+            font-family: -apple-system, BlinkMacSystemFont, $baseFontFamily;
+            font-size: 11px;
+            font-weight: bold;
+            margin-left: 8px;
+            padding: 0 6px;
+        }
+
         .overflow-menu-item-icon {
             margin-right: 10px;
 
