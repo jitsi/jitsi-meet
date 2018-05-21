@@ -2,6 +2,7 @@
 
 import { APP_WILL_MOUNT, APP_WILL_UNMOUNT } from '../../app';
 import { CONFERENCE_LEFT, CONFERENCE_WILL_JOIN } from '../conference';
+import { CALLING, INVITED } from '../../presence-status';
 import { MiddlewareRegistry, StateListenerRegistry } from '../redux';
 import UIEvents from '../../../../service/UI/UIEvents';
 import { playSound, registerSound, unregisterSound } from '../sounds';
@@ -193,7 +194,12 @@ function _maybePlaySounds({ getState, dispatch }, action) {
             && (!startAudioMuted
                 || getParticipantCount(state) < startAudioMuted)) {
         if (action.type === PARTICIPANT_JOINED) {
-            dispatch(playSound(PARTICIPANT_JOINED_SOUND_ID));
+            const { presence } = action.participant;
+
+            // The sounds for the poltergeist are handled by features/invite.
+            if (presence !== INVITED && presence !== CALLING) {
+                dispatch(playSound(PARTICIPANT_JOINED_SOUND_ID));
+            }
         } else if (action.type === PARTICIPANT_LEFT) {
             dispatch(playSound(PARTICIPANT_LEFT_SOUND_ID));
         }

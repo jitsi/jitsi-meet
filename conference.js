@@ -1691,6 +1691,7 @@ export default {
                 conference: room,
                 id,
                 name: displayName,
+                presence: user.getStatus(),
                 role: user.getRole()
             }));
 
