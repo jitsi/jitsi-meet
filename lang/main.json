@@ -290,11 +290,11 @@
         "sorryFeedback": "We're sorry to hear that. Would you like to tell us more?",
         "liveStreaming": "Live Streaming",
         "streamKey": "Live stream key",
-        "startLiveStreaming": "Go live now",
+        "startLiveStreaming": "Start live stream",
         "startRecording": "Start recording",
         "stopStreamingWarning": "Are you sure you would like to stop the live streaming?",
         "stopRecordingWarning": "Are you sure you would like to stop the recording?",
-        "stopLiveStreaming": "Stop live streaming",
+        "stopLiveStreaming": "Stop live stream",
         "stopRecording": "Stop recording",
         "doNotShowMessageAgain": "Don't show this message again",
         "permissionDenied": "Permission Denied",
@@ -386,6 +386,7 @@
     },
     "recording":
     {
+        "beta": "BETA",
         "busy": "We're working on freeing recording resources. Please try again in a few minutes.",
         "busyTitle": "All recorders are currently busy",
         "buttonTooltip": "Start / Stop recording",
