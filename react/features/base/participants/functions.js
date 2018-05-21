@@ -181,6 +181,28 @@ export function getParticipantDisplayName(
 }
 
 /**
+ * Returns the presence status of a participant associated with the passed id.
+ *
+ * @param {(Function|Object)} stateful - The (whole) redux state, or redux's
+ * {@code getState} function to be used to retrieve the state.
+ * @param {string} id - The id of the participant.
+ * @returns {string} - The presence status.
+ */
+export function getParticipantPresenceStatus(
+        stateful: Object | Function, id: string) {
+    if (!id) {
+        return undefined;
+    }
+    const participantById = getParticipantById(stateful, id);
+
+    if (!participantById) {
+        return undefined;
+    }
+
+    return participantById.presence;
+}
+
+/**
  * Selectors for getting all known participants with fake participants filtered
  * out.
  *
