@@ -5,6 +5,7 @@ import UIEvents from '../../../service/UI/UIEvents';
 
 import {
     DOMINANT_SPEAKER_CHANGED,
+    PARTICIPANT_LEFT,
     PARTICIPANT_UPDATED,
     PIN_PARTICIPANT
 } from '../base/participants';
@@ -27,6 +28,9 @@ MiddlewareRegistry.register(store => next => action => {
     const result = next(action);
 
     switch (action.type) {
+    case PARTICIPANT_LEFT:
+        VideoLayout.removeParticipantContainer(action.participant.id);
+        break;
 
     case PARTICIPANT_UPDATED: {
         // Look for actions that triggered a change to connectionStatus. This is

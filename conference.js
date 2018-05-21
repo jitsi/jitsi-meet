@@ -1713,7 +1713,11 @@ export default {
             APP.store.dispatch(participantLeft(id, room));
             logger.log('USER %s LEFT', id, user);
             APP.API.notifyUserLeft(id);
-            APP.UI.removeUser(id, user.getDisplayName());
+            APP.UI.messageHandler.participantNotification(
+                user.getDisplayName(),
+                'notify.somebody',
+                'disconnected',
+                'notify.disconnected');
             APP.UI.onSharedVideoStop(id);
         });
 

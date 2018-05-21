@@ -68,10 +68,6 @@ SharedVideoThumb.prototype.videoClick = function() {
 SharedVideoThumb.prototype.remove = function() {
     logger.log('Remove shared video thumb', this.id);
 
-    // Make sure that the large video is updated if are removing its
-    // corresponding small video.
-    this.VideoLayout.updateAfterThumbRemoved(this.id);
-
     // Remove whole container
     if (this.container.parentNode) {
         this.container.parentNode.removeChild(this.container);
