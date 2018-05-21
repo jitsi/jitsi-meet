@@ -587,10 +587,14 @@
         "invited": "Invited",
         "ringing": "Ringing",
         "calling": "Calling",
+        "initializingCall": "Initializing Call",
         "connected": "Connected",
         "connecting": "Connecting",
+        "connecting2": "Connecting*",
+        "disconnected": "Disconnected",
         "busy": "Busy",
         "rejected": "Rejected",
-        "ignored": "Ignored"
+        "ignored": "Ignored",
+        "expired": "Expired"
     }
 }

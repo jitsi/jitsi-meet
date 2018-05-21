@@ -36,10 +36,6 @@ local token_util = module:require "token/util".new(parentCtx);
 local disableTokenVerification
     = module:get_option_boolean("disable_polergeist_token_verification", false);
 
--- option to expire poltergeist with custom status text
-local poltergeistExpiredStatus
-    = module:get_option_string("poltergeist_expired_status");
-
 -- table to store all poltergeists we create
 local poltergeists = {};
 -- table to mark that outgoing unavailable presences
@@ -240,31 +236,22 @@ function create_poltergeist_occupant(room, nick, name, avatar, status, context)
     room:handle_first_presence(
         prosody.hosts[poltergeist_component], join_presence);
 
-    local timeout = poltergeist_timeout;
     -- the timeout before removing so participants can see the status update
     local removeTimeout = 5;
-    if (poltergeistExpiredStatus) then
-        timeout = timeout - removeTimeout;
-    end
+    local timeout = poltergeist_timeout - removeTimeout;
 
     timer.add_task(timeout,
         function ()
-            if (poltergeistExpiredStatus) then
-                update_poltergeist_occupant_status(
-                    room, nick, poltergeistExpiredStatus);
-                -- and remove it after some time so participant can see
-                -- the update
-                timer.add_task(removeTimeout,
-                    function ()
-                        if (have_poltergeist_occupant(room, nick)) then
-                            remove_poltergeist_occupant(room, nick, false);
-                        end
-                    end);
-            else
-                if (have_poltergeist_occupant(room, nick)) then
-                    remove_poltergeist_occupant(room, nick, false);
-                end
-            end
+            update_poltergeist_occupant_status(
+                room, nick, "Expired");
+            -- and remove it after some time so participant can see
+            -- the update
+            timer.add_task(removeTimeout,
+                function ()
+                    if (have_poltergeist_occupant(room, nick)) then
+                        remove_poltergeist_occupant(room, nick, false);
+                    end
+                end);
         end);
 end
 
