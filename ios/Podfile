@@ -7,7 +7,7 @@ target 'JitsiMeet' do
 
   pod 'React', :path => '../node_modules/react-native', :subspecs => [
     'Core',
-    'BatchedBridge',
+    'CxxBridge',
     'DevSupport',
     'RCTActionSheet',
     'RCTAnimation',
@@ -18,6 +18,13 @@ target 'JitsiMeet' do
     'RCTWebSocket',
   ]
   pod 'yoga', :path => '../node_modules/react-native/ReactCommon/yoga'
+
+  pod 'DoubleConversion',
+    :podspec => '../node_modules/react-native/third-party-podspecs/DoubleConversion.podspec'
+  pod 'GLog',
+    :podspec => '../node_modules/react-native/third-party-podspecs/GLog.podspec'
+  pod 'Folly',
+    :podspec => '../node_modules/react-native/third-party-podspecs/Folly.podspec'
 
   pod 'react-native-background-timer',
     :path => '../node_modules/react-native-background-timer'
