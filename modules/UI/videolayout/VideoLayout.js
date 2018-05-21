@@ -105,7 +105,10 @@ const VideoLayout = {
     init(emitter) {
         eventEmitter = emitter;
 
-        localVideoThumbnail = new LocalVideo(VideoLayout, emitter);
+        localVideoThumbnail = new LocalVideo(
+            VideoLayout,
+            emitter,
+            this._updateLargeVideoIfDisplayed.bind(this));
 
         // sets default video type of local video
         // FIXME container type is totally different thing from the video type
@@ -175,10 +178,7 @@ const VideoLayout = {
 
         localVideoThumbnail.changeVideo(stream);
 
-        /* Update if we're currently being displayed */
-        if (this.isCurrentlyOnLarge(localId)) {
-            this.updateLargeVideo(localId);
-        }
+        this._updateLargeVideoIfDisplayed(localId);
     },
 
     /**
@@ -348,8 +348,8 @@ const VideoLayout = {
             remoteVideo.removeRemoteStreamElement(stream);
         }
 
-        if (stream.isVideoTrack() && this.isCurrentlyOnLarge(id)) {
-            this.updateLargeVideo(id);
+        if (stream.isVideoTrack()) {
+            this._updateLargeVideoIfDisplayed(id);
         }
 
         this.updateMutedForNoTracks(id, stream.getType());
@@ -1147,6 +1147,20 @@ const VideoLayout = {
         Object.values(remoteVideos).forEach(
             remoteVideo => remoteVideo.updateRemoteVideoMenu()
         );
+    },
+
+    /**
+     * Triggers an update of large video if the passed in participant is
+     * currently displayed on large video.
+     *
+     * @param {string} participantId - The participant ID that should trigger an
+     * update of large video if displayed.
+     * @returns {void}
+     */
+    _updateLargeVideoIfDisplayed(participantId) {
+        if (this.isCurrentlyOnLarge(participantId)) {
+            this.updateLargeVideo(participantId);
+        }
     }
 };
 

@@ -21,9 +21,9 @@ import SmallVideo from './SmallVideo';
 /**
  *
  */
-function LocalVideo(VideoLayout, emitter) {
+function LocalVideo(VideoLayout, emitter, streamEndedCallback) {
     this.videoSpanId = 'localVideoContainer';
-
+    this.streamEndedCallback = streamEndedCallback;
     this.container = this.createContainer();
     this.$container = $(this.container);
     $('#filmstripLocalVideoThumbnail').append(this.container);
@@ -137,15 +137,23 @@ LocalVideo.prototype.changeVideo = function(stream) {
             ReactDOM.unmountComponentAtNode(localVideoContainer);
         }
 
-        // when removing only the video element and we are on stage
-        // update the stage
-        if (this.isCurrentlyOnLargeVideo()) {
-            this.VideoLayout.updateLargeVideo(this.id);
-        }
+        this._notifyOfStreamEnded();
         stream.off(JitsiTrackEvents.LOCAL_TRACK_STOPPED, endedHandler);
     };
 
     stream.on(JitsiTrackEvents.LOCAL_TRACK_STOPPED, endedHandler);
+};
+
+/**
+ * Notify any subscribers of the local video stream ending.
+ *
+ * @private
+ * @returns {void}
+ */
+LocalVideo.prototype._notifyOfStreamEnded = function() {
+    if (this.streamEndedCallback) {
+        this.streamEndedCallback(this.id);
+    }
 };
 
 /**
