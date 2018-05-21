@@ -18,7 +18,6 @@ package org.jitsi.meet.sdk;
 
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContextBaseJavaModule;
-import com.facebook.react.bridge.ReactMethod;
 import com.facebook.react.bridge.ReadableMap;
 import com.facebook.react.bridge.ReadableMapKeySetIterator;
 import com.facebook.react.bridge.UiThreadUtil;
@@ -31,9 +30,11 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.regex.Pattern;
 
-abstract class AbstractExternalAPIModule<T> extends ReactContextBaseJavaModule {
+public abstract class AbstractExternalAPIModule<T>
+        extends ReactContextBaseJavaModule {
 
-    private static Map<String, Method> createAPIMethodMap(Class<?> listenerClass) {
+    private static Map<String, Method> createAPIMethodMap(
+            Class<?> listenerClass) {
         Map<String, Method> result = new HashMap<>();
         // Figure out the mapping between the JitsiMeetViewListener methods
         // and the events i.e. redux action types.
@@ -81,17 +82,22 @@ abstract class AbstractExternalAPIModule<T> extends ReactContextBaseJavaModule {
     private final Map<String, Method> methodMap;
 
     /**
-     * Initializes a new module instance. There shall be a single instance of
-     * this module throughout the lifetime of the application.
+     * Initializes a new {@code AbstractExternalAPIModule} instance. There shall
+     * be a single instance of a module throughout the lifetime of the
+     * application.
      *
      * @param reactContext the {@link ReactApplicationContext} where this module
      * is created.
      */
-    AbstractExternalAPIModule(ReactApplicationContext reactContext,
-                             Class<T> listenerClass) {
+    public AbstractExternalAPIModule(
+            ReactApplicationContext reactContext,
+            Class<T> listenerClass) {
         super(reactContext);
+
         this.methodMap = createAPIMethodMap(listenerClass);
     }
+
+    protected abstract T findListenerByExternalAPIScope(String scope);
 
     /**
      * Dispatches an event that occurred on the JavaScript side of the SDK to
@@ -102,14 +108,13 @@ abstract class AbstractExternalAPIModule<T> extends ReactContextBaseJavaModule {
      * by/associated with the specified {@code name}.
      * @param scope
      */
-    @ReactMethod
     public void sendEvent(
             final String name,
             final ReadableMap data,
             final String scope) {
         // Make sure listener is invoked on the UI thread. It was requested by
         // SDK consumers.
-        if (!UiThreadUtil.isOnUiThread()) {
+        if (UiThreadUtil.isOnUiThread()) {
             sendEventOnUiThread(name, data, scope);
         } else {
             UiThreadUtil.runOnUiThread(new Runnable() {
@@ -152,8 +157,6 @@ abstract class AbstractExternalAPIModule<T> extends ReactContextBaseJavaModule {
             }
         }
     }
-
-    public abstract T findListenerByExternalAPIScope(String scope);
 
     /**
      * Initializes a new {@code HashMap} instance with the key-value

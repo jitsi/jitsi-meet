@@ -42,10 +42,10 @@ public class ReactInstanceManagerHolder {
             new AppInfoModule(reactContext),
             new AudioModeModule(reactContext),
             new ExternalAPIModule(reactContext),
-            new IncomingCallExternalAPIModule(reactContext),
             new PictureInPictureModule(reactContext),
             new ProximityModule(reactContext),
             new WiFiStatsModule(reactContext),
+            new org.jitsi.meet.sdk.incoming_call.IncomingCallExternalAPIModule(reactContext),
             new org.jitsi.meet.sdk.invite.InviteModule(reactContext),
             new org.jitsi.meet.sdk.net.NAT64AddrInfoModule(reactContext)
         );
@@ -98,7 +98,7 @@ public class ReactInstanceManagerHolder {
                 ? reactContext.getNativeModule(nativeModuleClass) : null;
     }
 
-    static ReactInstanceManager getReactInstanceManager() {
+    public static ReactInstanceManager getReactInstanceManager() {
         return reactInstanceManager;
     }
 
@@ -110,7 +110,7 @@ public class ReactInstanceManagerHolder {
      *
      * @param application {@code Application} instance which is running.
      */
-    static void initReactInstanceManager(Application application) {
+    public static void initReactInstanceManager(Application application) {
         if (reactInstanceManager != null) {
             return;
         }

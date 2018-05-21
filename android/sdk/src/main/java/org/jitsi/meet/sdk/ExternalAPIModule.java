@@ -10,16 +10,30 @@ import com.facebook.react.bridge.ReadableMap;
  * object it will dim the screen and disable touch controls. The functionality
  * is used with the conference audio-only mode.
  */
-class ExternalAPIModule extends AbstractExternalAPIModule<JitsiMeetViewListener> {
+class ExternalAPIModule
+        extends AbstractExternalAPIModule<JitsiMeetViewListener> {
+
     /**
-     * Initializes a new module instance. There shall be a single instance of
-     * this module throughout the lifetime of the application.
+     * Initializes a new {@code ExternalAPIModule} instance. There shall be a
+     * single instance of this module throughout the lifetime of the
+     * application.
      *
      * @param reactContext  the {@link ReactApplicationContext} where this module
      *                      is created.
      */
     public ExternalAPIModule(ReactApplicationContext reactContext) {
         super(reactContext, JitsiMeetViewListener.class);
+    }
+
+    @Override
+    protected JitsiMeetViewListener findListenerByExternalAPIScope(
+            String scope) {
+        // The JavaScript App needs to provide uniquely identifying information
+        // to the native ExternalAPI module so that the latter may match the
+        // former to the native JitsiMeetView which hosts it.
+        JitsiMeetView view = JitsiMeetView.findViewByExternalAPIScope(scope);
+
+        return view != null ? view.getListener() : null;
     }
 
     /**
@@ -60,16 +74,6 @@ class ExternalAPIModule extends AbstractExternalAPIModule<JitsiMeetViewListener>
             }
             break;
         }
-    }
-
-    @Override
-    public JitsiMeetViewListener findListenerByExternalAPIScope(String scope) {
-        // The JavaScript App needs to provide uniquely identifying information
-        // to the native ExternalAPI module so that the latter may match the
-        // former to the native JitsiMeetView which hosts it.
-        JitsiMeetView view = JitsiMeetView.findViewByExternalAPIScope(scope);
-
-        return view != null ? view.getListener() : null;
     }
 
     /**
