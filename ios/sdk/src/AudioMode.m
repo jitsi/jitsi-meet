@@ -35,6 +35,10 @@ typedef enum {
     kAudioModeVideoCall
 } JitsiMeetAudioMode;
 
++ (BOOL)requiresMainQueueSetup {
+    return NO;
+}
+
 - (NSDictionary *)constantsToExport {
     return @{
         @"AUDIO_CALL" : [NSNumber numberWithInt: kAudioModeAudioCall],
