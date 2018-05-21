@@ -78,6 +78,7 @@ gradle.projectsEvaluated {
              from("${projectDir}/../../sounds/left.wav")
              from("${projectDir}/../../sounds/outgoingRinging.wav")
              from("${projectDir}/../../sounds/outgoingStart.wav")
+             from("${projectDir}/../../sounds/rejected.wav")
              into("${bundlePath}/assets/sounds")
         }
 

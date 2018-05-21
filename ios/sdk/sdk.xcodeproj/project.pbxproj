@@ -31,6 +31,7 @@
 		0F65EECE1D95DA94561BB47E /* libPods-JitsiMeet.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 03F2ADC957FF109849B7FCA1 /* libPods-JitsiMeet.a */; };
 		75635B0A20751D6D00F29C9F /* joined.wav in Resources */ = {isa = PBXBuildFile; fileRef = 75635B0820751D6D00F29C9F /* joined.wav */; };
 		75635B0B20751D6D00F29C9F /* left.wav in Resources */ = {isa = PBXBuildFile; fileRef = 75635B0920751D6D00F29C9F /* left.wav */; };
+		A4414AE020B37F1A003546E6 /* rejected.wav in Resources */ = {isa = PBXBuildFile; fileRef = A4414ADF20B37F1A003546E6 /* rejected.wav */; };
 		B386B85720981A75000DEF7A /* InviteController.m in Sources */ = {isa = PBXBuildFile; fileRef = B386B85020981A74000DEF7A /* InviteController.m */; };
 		B386B85820981A75000DEF7A /* AddPeopleController.m in Sources */ = {isa = PBXBuildFile; fileRef = B386B85120981A74000DEF7A /* AddPeopleController.m */; };
 		B386B85920981A75000DEF7A /* AddPeopleControllerDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = B386B85220981A74000DEF7A /* AddPeopleControllerDelegate.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -81,6 +82,7 @@
 		75635B0920751D6D00F29C9F /* left.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; name = left.wav; path = ../../sounds/left.wav; sourceTree = "<group>"; };
 		98E09B5C73D9036B4ED252FC /* Pods-JitsiMeet.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-JitsiMeet.debug.xcconfig"; path = "../Pods/Target Support Files/Pods-JitsiMeet/Pods-JitsiMeet.debug.xcconfig"; sourceTree = "<group>"; };
 		9C77CA3CC919B081F1A52982 /* Pods-JitsiMeet.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-JitsiMeet.release.xcconfig"; path = "../Pods/Target Support Files/Pods-JitsiMeet/Pods-JitsiMeet.release.xcconfig"; sourceTree = "<group>"; };
+		A4414ADF20B37F1A003546E6 /* rejected.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; name = rejected.wav; path = ../../sounds/rejected.wav; sourceTree = "<group>"; };
 		B386B85020981A74000DEF7A /* InviteController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = InviteController.m; sourceTree = "<group>"; };
 		B386B85120981A74000DEF7A /* AddPeopleController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AddPeopleController.m; sourceTree = "<group>"; };
 		B386B85220981A74000DEF7A /* AddPeopleControllerDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AddPeopleControllerDelegate.h; sourceTree = "<group>"; };
@@ -116,6 +118,7 @@
 		0BCA49681EC4BBE500B793EE /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				A4414ADF20B37F1A003546E6 /* rejected.wav */,
 				0BC4B8681F8C01E100CE8B21 /* CallKitIcon.png */,
 				C6245F5B2053091D0040BE68 /* image-resize@2x.png */,
 				C6245F5C2053091D0040BE68 /* image-resize@3x.png */,
@@ -312,6 +315,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				0B49424520AD8DBD00BD2DE0 /* outgoingStart.wav in Resources */,
+				A4414AE020B37F1A003546E6 /* rejected.wav in Resources */,
 				0B49424620AD8DBD00BD2DE0 /* outgoingRinging.wav in Resources */,
 				0BCA496C1EC4BBF900B793EE /* jitsi.ttf in Resources */,
 				C6245F5D2053091D0040BE68 /* image-resize@2x.png in Resources */,
