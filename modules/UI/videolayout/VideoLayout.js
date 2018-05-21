@@ -432,18 +432,11 @@ const VideoLayout = {
      * Creates or adds a participant container for the given id and smallVideo.
      *
      * @param {JitsiParticipant} user the participant to add
-     * @param {SmallVideo} smallVideo optional small video instance to add as a
-     * remote video, if undefined <tt>RemoteVideo</tt> will be created
      */
-    addParticipantContainer(user, smallVideo) {
+    addParticipantContainer(user) {
         const id = user.getId();
-        let remoteVideo;
+        const remoteVideo = new RemoteVideo(user, VideoLayout, eventEmitter);
 
-        if (smallVideo) {
-            remoteVideo = smallVideo;
-        } else {
-            remoteVideo = new RemoteVideo(user, VideoLayout, eventEmitter);
-        }
         this._setRemoteControlProperties(user, remoteVideo);
         this.addRemoteVideoContainer(id, remoteVideo);
 
