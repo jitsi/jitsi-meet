@@ -1799,12 +1799,9 @@ export default {
 
         room.on(
             JitsiConferenceEvents.PARTICIPANT_CONN_STATUS_CHANGED,
-            (id, connectionStatus) => {
-                APP.store.dispatch(participantConnectionStatusChanged(
-                    id, connectionStatus));
+            (id, connectionStatus) => APP.store.dispatch(
+                participantConnectionStatusChanged(id, connectionStatus)));
 
-                APP.UI.participantConnectionStatusChanged(id);
-            });
         room.on(
             JitsiConferenceEvents.DOMINANT_SPEAKER_CHANGED,
             id => APP.store.dispatch(dominantSpeakerChanged(id, room)));

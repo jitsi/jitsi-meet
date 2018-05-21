@@ -827,15 +827,6 @@ UI.handleLastNEndpoints = function(leavingIds, enteringIds) {
 };
 
 /**
- * Will handle notification about participant's connectivity status change.
- *
- * @param {string} id the id of remote participant(MUC jid)
- */
-UI.participantConnectionStatusChanged = function(id) {
-    VideoLayout.onParticipantConnectionStatusChanged(id);
-};
-
-/**
  * Prompt user for nickname.
  */
 UI.promptDisplayName = () => {
