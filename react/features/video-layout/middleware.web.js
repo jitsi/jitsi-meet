@@ -5,6 +5,7 @@ import UIEvents from '../../../service/UI/UIEvents';
 
 import {
     DOMINANT_SPEAKER_CHANGED,
+    PARTICIPANT_UPDATED,
     PIN_PARTICIPANT
 } from '../base/participants';
 import { MiddlewareRegistry } from '../base/redux';
@@ -26,6 +27,18 @@ MiddlewareRegistry.register(store => next => action => {
     const result = next(action);
 
     switch (action.type) {
+
+    case PARTICIPANT_UPDATED: {
+        // Look for actions that triggered a change to connectionStatus. This is
+        // done instead of changing the connection status change action to be
+        // explicit in order to minimize changes to other code.
+        if (typeof action.participant.connectionStatus !== 'undefined') {
+            VideoLayout.onParticipantConnectionStatusChanged(
+                action.participant.id);
+        }
+        break;
+    }
+
     case DOMINANT_SPEAKER_CHANGED:
         VideoLayout.onDominantSpeakerChanged(action.participant.id);
         break;
