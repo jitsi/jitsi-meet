@@ -58,7 +58,7 @@
     "react-native-background-timer": "2.0.0",
     "react-native-calendar-events": "github:jitsi/react-native-calendar-events#dabfabc4bacc1424a8b93ebdda6f3820dee198cb",
     "react-native-callstats": "3.50.4",
-    "react-native-fetch-blob": "github:flatfox-ag/react-native-fetch-blob#exception_fixes",
+    "react-native-fetch-blob": "github:joltup/react-native-fetch-blob#1f9a1761aea4e37bd672bd0d233f3adf0e113a11",
     "react-native-img-cache": "1.5.2",
     "react-native-immersive": "1.1.0",
     "react-native-keep-awake": "2.0.6",
