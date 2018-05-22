@@ -386,14 +386,13 @@ export class AbstractApp extends Component {
      * @returns {Store} - The redux store to be used by this
      * {@code AbstractApp}.
      */
-    _maybeCreateStore(props) {
+    _maybeCreateStore({ store }) {
         // The application Jitsi Meet is architected with redux. However, I do
         // not want consumers of the App React Component to be forced into
         // dealing with redux. If the consumer did not provide an external redux
         // store, utilize an internal redux store.
-        let store = props.store;
-
         if (typeof store === 'undefined') {
+            // eslint-disable-next-line no-param-reassign
             store = this._createStore();
 
             // This is temporary workaround to be able to dispatch actions from
