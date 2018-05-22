@@ -5,9 +5,11 @@ import UIEvents from '../../../service/UI/UIEvents';
 
 import {
     DOMINANT_SPEAKER_CHANGED,
+    PARTICIPANT_JOINED,
     PARTICIPANT_LEFT,
     PARTICIPANT_UPDATED,
-    PIN_PARTICIPANT
+    PIN_PARTICIPANT,
+    getParticipantById
 } from '../base/participants';
 import { MiddlewareRegistry } from '../base/redux';
 
@@ -28,6 +30,13 @@ MiddlewareRegistry.register(store => next => action => {
     const result = next(action);
 
     switch (action.type) {
+    case PARTICIPANT_JOINED:
+        if (!action.participant.local) {
+            VideoLayout.addRemoteParticipantContainer(
+                getParticipantById(store.getState(), action.participant.id));
+        }
+        break;
+
     case PARTICIPANT_LEFT:
         VideoLayout.removeParticipantContainer(action.participant.id);
         break;

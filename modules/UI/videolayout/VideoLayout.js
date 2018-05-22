@@ -9,6 +9,9 @@ import {
     pinParticipant
 } from '../../../react/features/base/participants';
 
+import { SHARED_VIDEO_CONTAINER_TYPE } from '../shared_video/SharedVideo';
+import SharedVideoThumb from '../shared_video/SharedVideoThumb';
+
 import Filmstrip from './Filmstrip';
 import UIEvents from '../../../service/UI/UIEvents';
 import UIUtil from '../util/UIUtil';
@@ -16,6 +19,7 @@ import UIUtil from '../util/UIUtil';
 import RemoteVideo from './RemoteVideo';
 import LargeVideoManager from './LargeVideoManager';
 import { VIDEO_CONTAINER_TYPE } from './VideoContainer';
+
 import LocalVideo from './LocalVideo';
 
 const remoteVideos = {};
@@ -434,15 +438,32 @@ const VideoLayout = {
     },
 
     /**
-     * Creates or adds a participant container for the given id and smallVideo.
+     * Creates a participant container for the given id.
      *
-     * @param {JitsiParticipant} user the participant to add
+     * @param {Object} participant - The redux representation of a remote
+     * participant.
+     * @returns {void}
      */
-    addParticipantContainer(user) {
-        const id = user.getId();
-        const remoteVideo = new RemoteVideo(user, VideoLayout, eventEmitter);
+    addRemoteParticipantContainer(participant) {
+        if (!participant || participant.local) {
+            return;
+        } else if (participant.isBot) {
+            const sharedVideoThumb = new SharedVideoThumb(
+                participant,
+                SHARED_VIDEO_CONTAINER_TYPE,
+                VideoLayout);
 
-        this._setRemoteControlProperties(user, remoteVideo);
+            this.addRemoteVideoContainer(participant.id, sharedVideoThumb);
+
+            return;
+        }
+
+        const id = participant.id;
+        const jitsiParticipant = APP.conference.getParticipantById(id);
+        const remoteVideo
+            = new RemoteVideo(jitsiParticipant, VideoLayout, eventEmitter);
+
+        this._setRemoteControlProperties(jitsiParticipant, remoteVideo);
         this.addRemoteVideoContainer(id, remoteVideo);
 
         this.updateMutedForNoTracks(id, 'audio');
