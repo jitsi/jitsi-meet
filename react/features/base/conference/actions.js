@@ -125,13 +125,14 @@ function _addConferenceListeners(conference, dispatch) {
     conference.on(
         JitsiConferenceEvents.DISPLAY_NAME_CHANGED,
         (id, displayName) => dispatch(participantUpdated({
+            conference,
             id,
             name: displayName.substr(0, MAX_DISPLAY_NAME_LENGTH)
         })));
 
     conference.on(
         JitsiConferenceEvents.DOMINANT_SPEAKER_CHANGED,
-        (...args) => dispatch(dominantSpeakerChanged(...args)));
+        id => dispatch(dominantSpeakerChanged(id, conference)));
 
     conference.on(
         JitsiConferenceEvents.PARTICIPANT_CONN_STATUS_CHANGED,
@@ -155,18 +156,21 @@ function _addConferenceListeners(conference, dispatch) {
     conference.addCommandListener(
         AVATAR_ID_COMMAND,
         (data, id) => dispatch(participantUpdated({
+            conference,
             id,
             avatarID: data.value
         })));
     conference.addCommandListener(
         AVATAR_URL_COMMAND,
         (data, id) => dispatch(participantUpdated({
+            conference,
             id,
             avatarURL: data.value
         })));
     conference.addCommandListener(
         EMAIL_COMMAND,
         (data, id) => dispatch(participantUpdated({
+            conference,
             id,
             email: data.value
         })));

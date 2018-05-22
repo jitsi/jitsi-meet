@@ -32,12 +32,24 @@ import { LOCAL_PARTICIPANT_DEFAULT_ID, PARTICIPANT_ROLE } from './constants';
 declare var APP: Object;
 
 /**
- * These properties should not be bulk assigned when updating a particular
- * @see Participant.
+ * The participant properties which cannot be updated through
+ * {@link PARTICIPANT_UPDATED}. They either identify the participant or can only
+ * be modified through property-dedicated actions.
+ *
  * @type {string[]}
  */
-const PARTICIPANT_PROPS_TO_OMIT_WHEN_UPDATE
-    = [ 'dominantSpeaker', 'id', 'local', 'pinned' ];
+const PARTICIPANT_PROPS_TO_OMIT_WHEN_UPDATE = [
+
+    // The following properties identify the participant:
+    'conference',
+    'id',
+    'local',
+
+    // The following properties can only be modified through property-dedicated
+    // actions:
+    'dominantSpeaker',
+    'pinned'
+];
 
 /**
  * Listen for actions which add, remove, or update the set of participants in

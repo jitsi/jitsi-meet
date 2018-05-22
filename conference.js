@@ -1804,9 +1804,9 @@ export default {
 
                 APP.UI.participantConnectionStatusChanged(id);
             });
-        room.on(JitsiConferenceEvents.DOMINANT_SPEAKER_CHANGED, id => {
-            APP.store.dispatch(dominantSpeakerChanged(id));
-        });
+        room.on(
+            JitsiConferenceEvents.DOMINANT_SPEAKER_CHANGED,
+            id => APP.store.dispatch(dominantSpeakerChanged(id, room)));
 
         if (!interfaceConfig.filmStripOnly) {
             room.on(JitsiConferenceEvents.CONNECTION_INTERRUPTED, () => {
@@ -1883,6 +1883,7 @@ export default {
                     = displayName.substr(0, MAX_DISPLAY_NAME_LENGTH);
 
                 APP.store.dispatch(participantUpdated({
+                    conference: room,
                     id,
                     name: formattedDisplayName
                 }));
@@ -1916,6 +1917,7 @@ export default {
                 switch (name) {
                 case 'raisedHand':
                     APP.store.dispatch(participantUpdated({
+                        conference: room,
                         id: participant.getId(),
                         raisedHand: newValue === 'true'
                     }));
@@ -2015,6 +2017,7 @@ export default {
         APP.UI.addListener(UIEvents.EMAIL_CHANGED, this.changeLocalEmail);
         room.addCommandListener(this.commands.defaults.EMAIL, (data, from) => {
             APP.store.dispatch(participantUpdated({
+                conference: room,
                 id: from,
                 email: data.value
             }));
@@ -2026,6 +2029,7 @@ export default {
             (data, from) => {
                 APP.store.dispatch(
                     participantUpdated({
+                        conference: room,
                         id: from,
                         avatarURL: data.value
                     }));
@@ -2035,6 +2039,7 @@ export default {
             (data, from) => {
                 APP.store.dispatch(
                     participantUpdated({
+                        conference: room,
                         id: from,
                         avatarID: data.value
                     }));
@@ -2579,6 +2584,12 @@ export default {
         const localId = localParticipant.id;
 
         APP.store.dispatch(participantUpdated({
+            // XXX Only the local participant is allowed to update without
+            // stating the JitsiConference instance (i.e. participant property
+            // `conference` for a remote participant) because the local
+            // participant is uniquely identified by the very fact that there is
+            // only one local participant.
+
             id: localId,
             local: true,
             email: formattedEmail
@@ -2606,6 +2617,12 @@ export default {
         }
 
         APP.store.dispatch(participantUpdated({
+            // XXX Only the local participant is allowed to update without
+            // stating the JitsiConference instance (i.e. participant property
+            // `conference` for a remote participant) because the local
+            // participant is uniquely identified by the very fact that there is
+            // only one local participant.
+
             id,
             local: true,
             avatarURL: formattedUrl
@@ -2662,6 +2679,12 @@ export default {
         }
 
         APP.store.dispatch(participantUpdated({
+            // XXX Only the local participant is allowed to update without
+            // stating the JitsiConference instance (i.e. participant property
+            // `conference` for a remote participant) because the local
+            // participant is uniquely identified by the very fact that there is
+            // only one local participant.
+
             id,
             local: true,
             name: formattedNickname
