@@ -10,7 +10,11 @@ import Thunk from 'redux-thunk';
 import { i18next } from '../../base/i18n';
 import { localParticipantLeft } from '../../base/participants';
 import { Fragment, RouteRegistry } from '../../base/react';
-import { MiddlewareRegistry, ReducerRegistry } from '../../base/redux';
+import {
+    MiddlewareRegistry,
+    ReducerRegistry,
+    StateListenerRegistry
+} from '../../base/redux';
 import { SoundCollection } from '../../base/sounds';
 import { PersistenceRegistry } from '../../base/storage';
 import { toURLString } from '../../base/util';
@@ -403,6 +407,9 @@ export class AbstractApp extends Component {
                 APP.store = store;
             }
         }
+
+        // StateListenerRegistry
+        store && StateListenerRegistry.subscribe(store);
 
         return store;
     }
