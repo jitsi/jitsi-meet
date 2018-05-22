@@ -1,6 +1,3 @@
-// flow-typed signature: 3eaa1f24c7397b78a7481992d2cddcb2
-// flow-typed version: a1a20d4928/prop-types_v15.x.x/flow_>=v0.41.x
-
 type $npm$propTypes$ReactPropsCheckType = (
   props: any,
   propName: string,
@@ -14,6 +11,7 @@ declare module 'prop-types' {
   declare var number: React$PropType$Primitive<number>;
   declare var object: React$PropType$Primitive<Object>;
   declare var string: React$PropType$Primitive<string>;
+  declare var symbol: React$PropType$Primitive<Symbol>;
   declare var any: React$PropType$Primitive<any>;
   declare var arrayOf: React$PropType$ArrayOf;
   declare var element: React$PropType$Primitive<any>; /* TODO */

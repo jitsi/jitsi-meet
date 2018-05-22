@@ -1,27 +1,13 @@
 PODS:
-  - boost (1.59.0):
-    - boost/graph-includes (= 1.59.0)
-    - boost/math-includes (= 1.59.0)
-    - boost/numeric-includes (= 1.59.0)
-    - boost/pointer_cast-includes (= 1.59.0)
-    - boost/preprocessor-includes (= 1.59.0)
-    - boost/shared_ptr-includes (= 1.59.0)
-    - boost/string_algorithms-includes (= 1.59.0)
-  - boost/graph-includes (1.59.0)
-  - boost/math-includes (1.59.0)
-  - boost/numeric-includes (1.59.0)
-  - boost/pointer_cast-includes (1.59.0)
-  - boost/preprocessor-includes (1.59.0)
-  - boost/shared_ptr-includes (1.59.0)
-  - boost/string_algorithms-includes (1.59.0)
+  - boost-for-react-native (1.63.0)
   - DoubleConversion (1.1.5)
   - Folly (2016.09.26.00):
-    - boost
+    - boost-for-react-native
     - DoubleConversion
-    - GLog
-  - GLog (0.3.4)
-  - React (0.51.0):
-    - React/Core (= 0.51.0)
+    - glog
+  - glog (0.3.4)
+  - React (0.55.4):
+    - React/Core (= 0.55.4)
   - react-native-background-timer (2.0.0):
     - React
   - react-native-calendar-events (1.5.0):
@@ -34,40 +20,42 @@ PODS:
     - React
   - react-native-webrtc (1.58.2):
     - React
-  - React/Core (0.51.0):
-    - yoga (= 0.51.0.React)
-  - React/CxxBridge (0.51.0):
+  - React/Core (0.55.4):
+    - yoga (= 0.55.4.React)
+  - React/CxxBridge (0.55.4):
     - Folly (= 2016.09.26.00)
     - React/Core
     - React/cxxreact
-  - React/cxxreact (0.51.0):
-    - boost
+  - React/cxxreact (0.55.4):
+    - boost-for-react-native (= 1.63.0)
     - Folly (= 2016.09.26.00)
     - React/jschelpers
-  - React/DevSupport (0.51.0):
+    - React/jsinspector
+  - React/DevSupport (0.55.4):
     - React/Core
     - React/RCTWebSocket
-  - React/fishhook (0.51.0)
-  - React/jschelpers (0.51.0):
+  - React/fishhook (0.55.4)
+  - React/jschelpers (0.55.4):
     - Folly (= 2016.09.26.00)
     - React/PrivateDatabase
-  - React/PrivateDatabase (0.51.0)
-  - React/RCTActionSheet (0.51.0):
+  - React/jsinspector (0.55.4)
+  - React/PrivateDatabase (0.55.4)
+  - React/RCTActionSheet (0.55.4):
     - React/Core
-  - React/RCTAnimation (0.51.0):
+  - React/RCTAnimation (0.55.4):
     - React/Core
-  - React/RCTBlob (0.51.0):
+  - React/RCTBlob (0.55.4):
     - React/Core
-  - React/RCTImage (0.51.0):
+  - React/RCTImage (0.55.4):
     - React/Core
     - React/RCTNetwork
-  - React/RCTLinkingIOS (0.51.0):
+  - React/RCTLinkingIOS (0.55.4):
     - React/Core
-  - React/RCTNetwork (0.51.0):
+  - React/RCTNetwork (0.55.4):
     - React/Core
-  - React/RCTText (0.51.0):
+  - React/RCTText (0.55.4):
     - React/Core
-  - React/RCTWebSocket (0.51.0):
+  - React/RCTWebSocket (0.55.4):
     - React/Core
     - React/fishhook
     - React/RCTBlob
@@ -78,12 +66,12 @@ PODS:
     - React/Core
   - RNVectorIcons (4.4.2):
     - React
-  - yoga (0.51.0.React)
+  - yoga (0.55.4.React)
 
 DEPENDENCIES:
   - DoubleConversion (from `../node_modules/react-native/third-party-podspecs/DoubleConversion.podspec`)
   - Folly (from `../node_modules/react-native/third-party-podspecs/Folly.podspec`)
-  - GLog (from `../node_modules/react-native/third-party-podspecs/GLog.podspec`)
+  - glog (from `../node_modules/react-native/third-party-podspecs/glog.podspec`)
   - react-native-background-timer (from `../node_modules/react-native-background-timer`)
   - react-native-calendar-events (from `../node_modules/react-native-calendar-events`)
   - react-native-fetch-blob (from `../node_modules/react-native-fetch-blob`)
@@ -109,8 +97,8 @@ EXTERNAL SOURCES:
     :podspec: ../node_modules/react-native/third-party-podspecs/DoubleConversion.podspec
   Folly:
     :podspec: ../node_modules/react-native/third-party-podspecs/Folly.podspec
-  GLog:
-    :podspec: ../node_modules/react-native/third-party-podspecs/GLog.podspec
+  glog:
+    :podspec: ../node_modules/react-native/third-party-podspecs/glog.podspec
   React:
     :path: ../node_modules/react-native
   react-native-background-timer:
@@ -133,11 +121,11 @@ EXTERNAL SOURCES:
     :path: ../node_modules/react-native/ReactCommon/yoga
 
 SPEC CHECKSUMS:
-  boost: 30a15ffb6d9aa4646dd3caffc960753f4cb4ca4e
-  DoubleConversion: ebb6747c5b66026ad4f97b789c3ceac6f18e57a6
-  Folly: b7255b29f1d693c375d642d0f04f0592181156d9
-  GLog: 3e4e4ae9746ce6bf6e9420c7fc1e08ad59c8ba1a
-  React: 541ba768b9855e10cdc76f55427a5cd0653ca806
+  boost-for-react-native: 39c7adb57c4e60d6c5479dd8623128eb5b3f0f2c
+  DoubleConversion: e22e0762848812a87afd67ffda3998d9ef29170c
+  Folly: 211775e49d8da0ca658aebc8eab89d642935755c
+  glog: 1de0bb937dccdc981596d3b5825ebfb765017ded
+  React: aa2040dbb6f317b95314968021bd2888816e03d5
   react-native-background-timer: 63dcbf37dbcf294b5c6c071afcdc661fa06a7594
   react-native-calendar-events: fe6fbc8ed337a7423c98f2c9012b25f20444de09
   react-native-fetch-blob: 63394b1d7b0781547b3e4463b3195790177b1222
@@ -146,8 +134,8 @@ SPEC CHECKSUMS:
   react-native-webrtc: 31b6d3f1e3e2ce373aa43fd682b04367250f807d
   RNSound: b360b3862d3118ed1c74bb9825696b5957686ac4
   RNVectorIcons: c0dbfbf6068fefa240c37b0f71bd03b45dddac44
-  yoga: 17521bbb0dd54a47c0b3ac43253e78cdac7488e0
+  yoga: a23273df0088bf7f2bb7e5d7b00044ea57a2a54a
 
-PODFILE CHECKSUM: fb462dc2d5d01656ec1f4ae39253903a702ba30c
+PODFILE CHECKSUM: fb12a5ae406b901e95aeb1ab5ebbb02773c46ede
 
 COCOAPODS: 1.4.0

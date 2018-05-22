@@ -16,17 +16,12 @@
 ; Ignore polyfills
 .*/Libraries/polyfills/.*
 
+; Ignore metro
+.*/node_modules/metro/.*
+
 ; Ignore packages in node_modules which we (i.e. the jitsi-meet project) have
 ; seen to cause errors and we have chosen not to fix.
 .*/node_modules/@atlaskit/.*/*.js.flow
-.*/node_modules/@atlassian
-.*/node_modules/bower/lib/node_modules/bower-json/test/.*
-.*/node_modules/immutable/dist/immutable.js.flow
-.*/node_modules/jsonlint/test/.*
-
-; FIXME Remove once we update past commit
-; https://github.com/facebook/react-native/commit/df8d0d1db9203cc87ad3682e6138b2a9ed714365
-.*/node_modules/react-native/local-cli/link/link.js
 .*/node_modules/react-native-keep-awake/.*
 .*/node_modules/styled-components/.*
 
@@ -37,6 +32,7 @@
 [libs]
 node_modules/react-native/Libraries/react-native/react-native-interface.js
 node_modules/react-native/flow/
+node_modules/react-native/flow-github/
 
 [options]
 emoji=true
@@ -45,24 +41,17 @@ module.system=haste
 
 munge_underscores=true
 
-; FIXME Remove once we update past commit
-; https://github.com/facebook/react-native/commit/df8d0d1db9203cc87ad3682e6138b2a9ed714365
-module.name_mapper='^./link/link$' -> 'emptyObject'
-
 module.name_mapper='^[./a-zA-Z0-9$_-]+\.\(bmp\|gif\|jpg\|jpeg\|png\|psd\|svg\|webp\|m4v\|mov\|mp4\|mpeg\|mpg\|webm\|aac\|aiff\|caf\|m4a\|mp3\|wav\|html\|pdf\)$' -> 'RelativeImageStub'
 
 suppress_type=$FlowIssue
 suppress_type=$FlowFixMe
 suppress_type=$FlowFixMeProps
 suppress_type=$FlowFixMeState
-suppress_type=$FixMe
 
-suppress_comment=\\(.\\|\n\\)*\\$FlowFixMe\\($\\|[^(]\\|(\\(>=0\\.\\(5[0-7]\\|[1-4][0-9]\\|[0-9]\\).[0-9]\\)? *\\(site=[a-z,_]*react_native[a-z,_]*\\)?)\\)
-suppress_comment=\\(.\\|\n\\)*\\$FlowIssue\\((\\(>=0\\.\\(5[0-7]\\|[1-4][0-9]\\|[0-9]\\).[0-9]\\)? *\\(site=[a-z,_]*react_native[a-z,_]*\\)?)\\)?:? #[0-9]+
+suppress_comment=\\(.\\|\n\\)*\\$FlowFixMe\\($\\|[^(]\\|(\\(<VERSION>\\)? *\\(site=[a-z,_]*react_native[a-z,_]*\\)?)\\)
+suppress_comment=\\(.\\|\n\\)*\\$FlowIssue\\((\\(<VERSION>\\)? *\\(site=[a-z,_]*react_native[a-z,_]*\\)?)\\)?:? #[0-9]+
 suppress_comment=\\(.\\|\n\\)*\\$FlowFixedInNextDeploy
 suppress_comment=\\(.\\|\n\\)*\\$FlowExpectedError
-
-unsafe.enable_getters_and_setters=true
 
 ; We (i.e. the jitsi-meet project) are using the haste module system on Web as
 ; well, not only on React Native. Unfortunately, Flow does not support .web.js
@@ -77,4 +66,4 @@ module.file_ext=.jsx
 module.file_ext=.json
 
 [version]
-^0.57.0
+^0.67.0

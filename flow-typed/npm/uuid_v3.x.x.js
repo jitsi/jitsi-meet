@@ -1,6 +1,3 @@
-// flow-typed signature: 615e568e95029d58f116dd157e320137
-// flow-typed version: 2b95c0dfc1/uuid_v3.x.x/flow_>=v0.32.x
-
 declare module "uuid" {
   declare class uuid {
     static (
@@ -52,6 +49,23 @@ declare module "uuid/v1" {
   declare module.exports: Class<v1>;
 }
 
+declare module "uuid/v3" {
+  declare class v3 {
+    static (
+      name?: string | number[],
+      namespace?: string | number[],
+      buffer?: number[] | Buffer,
+      offset?: number
+    ): string,
+
+     static name: string,
+     static DNS: string,
+     static URL: string
+  }
+
+  declare module.exports: Class<v3>;
+}
+
 declare module "uuid/v4" {
   declare class v4 {
     static (
@@ -74,7 +88,11 @@ declare module "uuid/v5" {
       namespace?: string | number[],
       buffer?: number[] | Buffer,
       offset?: number
-    ): string
+    ): string,
+
+     static name: string,
+     static DNS: string,
+     static URL: string
   }
 
   declare module.exports: Class<v5>;
