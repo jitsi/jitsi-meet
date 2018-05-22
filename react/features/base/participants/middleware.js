@@ -139,15 +139,15 @@ MiddlewareRegistry.register(store => next => action => {
  */
 function _localParticipantJoined({ getState, dispatch }, next, action) {
     const result = next(action);
+
     const settings = getState()['features/base/settings'];
-    const localParticipant = {
+
+    dispatch(localParticipantJoined({
         avatarID: settings.avatarID,
         avatarURL: settings.avatarURL,
         email: settings.email,
         name: settings.displayName
-    };
-
-    dispatch(localParticipantJoined(localParticipant));
+    }));
 
     return result;
 }
@@ -204,7 +204,10 @@ function _participantJoinedOrUpdated({ getState }, next, action) {
         if (local) {
             const { conference } = getState()['features/base/conference'];
 
-            conference.setLocalParticipantProperty('raisedHand', raisedHand);
+            conference
+                && conference.setLocalParticipantProperty(
+                    'raisedHand',
+                    raisedHand);
         }
 
         if (typeof APP === 'object') {

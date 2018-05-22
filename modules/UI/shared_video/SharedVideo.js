@@ -306,6 +306,7 @@ export default class SharedVideoManager {
                 SHARED_VIDEO_CONTAINER_TYPE, self.sharedVideo);
 
             APP.store.dispatch(participantJoined({
+                conference: APP.conference,
                 id: self.url,
                 isBot: true,
                 name: 'YouTube'
