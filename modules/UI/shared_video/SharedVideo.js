@@ -16,15 +16,14 @@ import {
 } from '../../../react/features/analytics';
 import {
     participantJoined,
-    participantLeft
+    participantLeft,
+    pinParticipant
 } from '../../../react/features/base/participants';
 import {
     dockToolbox,
     getToolboxHeight,
     showToolbox
 } from '../../../react/features/toolbox';
-
-import SharedVideoThumb from './SharedVideoThumb';
 
 export const SHARED_VIDEO_CONTAINER_TYPE = 'sharedvideo';
 
@@ -281,13 +280,6 @@ export default class SharedVideoManager {
 
             player.playVideo();
 
-            const thumb = new SharedVideoThumb(
-                self.url, SHARED_VIDEO_CONTAINER_TYPE, VideoLayout);
-
-            thumb.setDisplayName('YouTube');
-            VideoLayout.addRemoteVideoContainer(self.url, thumb);
-            VideoLayout.resizeThumbnails(true);
-
             const iframe = player.getIframe();
 
             // eslint-disable-next-line no-use-before-define
@@ -317,7 +309,7 @@ export default class SharedVideoManager {
                 name: 'YouTube'
             }));
 
-            thumb.videoClick();
+            APP.store.dispatch(pinParticipant(self.url));
 
             // If we are sending the command and we are starting the player
             // we need to continuously send the player current time position

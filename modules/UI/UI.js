@@ -492,9 +492,6 @@ UI.addUser = function(user) {
         APP.store.dispatch(showParticipantJoinedNotification(displayName));
     }
 
-    // Add Peer's container
-    VideoLayout.addParticipantContainer(user);
-
     // Configure avatar
     UI.setUserEmail(id);
 
