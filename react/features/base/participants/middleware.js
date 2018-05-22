@@ -2,13 +2,14 @@
 
 import { APP_WILL_MOUNT, APP_WILL_UNMOUNT } from '../../app';
 import { CONFERENCE_LEFT, CONFERENCE_WILL_JOIN } from '../conference';
-import { MiddlewareRegistry } from '../redux';
+import { MiddlewareRegistry, StateListenerRegistry } from '../redux';
 import UIEvents from '../../../../service/UI/UIEvents';
 import { playSound, registerSound, unregisterSound } from '../sounds';
 
 import {
     localParticipantIdChanged,
     localParticipantJoined,
+    participantLeft,
     participantUpdated
 } from './actions';
 import {
@@ -123,6 +124,26 @@ MiddlewareRegistry.register(store => next => action => {
 
     return next(action);
 });
+
+/**
+ * Syncs the redux state features/base/participants up with the redux state
+ * features/base/conference by ensuring that the former does not contain remote
+ * participants no longer relevant to the latter. Introduced to address an issue
+ * with multiplying thumbnails in the filmstrip.
+ */
+StateListenerRegistry.register(
+    /* selector */ state => {
+        const { conference, joining } = state['features/base/conference'];
+
+        return conference || joining;
+    },
+    /* listener */ (conference, { dispatch, getState }) => {
+        for (const p of getState()['features/base/participants']) {
+            !p.local
+                && (!conference || p.conference !== conference)
+                && dispatch(participantLeft(p.id, p.conference));
+        }
+    });
 
 /**
  * Initializes the local participant and signals that it joined.
