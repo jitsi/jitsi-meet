@@ -56,23 +56,19 @@ class OverflowMenu extends Component<Props> {
      * @returns {ReactElement}
      */
     render() {
+        const buttonProps = {
+            afterClick: this._onCancel,
+            showLabel: true,
+            styles: overflowMenuItemStyles
+        };
+
         return (
             <BottomSheet onCancel = { this._onCancel }>
-                <AudioRouteButton
-                    showLabel = { true }
-                    styles = { overflowMenuItemStyles } />
-                <ToggleCameraButton
-                    showLabel = { true }
-                    styles = { overflowMenuItemStyles } />
-                <AudioOnlyButton
-                    showLabel = { true }
-                    styles = { overflowMenuItemStyles } />
-                <RoomLockButton
-                    showLabel = { true }
-                    styles = { overflowMenuItemStyles } />
-                <PictureInPictureButton
-                    showLabel = { true }
-                    styles = { overflowMenuItemStyles } />
+                <AudioRouteButton { ...buttonProps } />
+                <ToggleCameraButton { ...buttonProps } />
+                <AudioOnlyButton { ...buttonProps } />
+                <RoomLockButton { ...buttonProps } />
+                <PictureInPictureButton { ...buttonProps } />
             </BottomSheet>
         );
     }

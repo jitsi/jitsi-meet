@@ -8,6 +8,11 @@ import ToolboxItem from './ToolboxItem';
 export type Props = {
 
     /**
+     * Function to be called after the click handler has been processed.
+     */
+    afterClick: ?Function,
+
+    /**
      * Whether to show the label or not.
      */
     showLabel: boolean,
@@ -38,6 +43,7 @@ export type Props = {
  */
 export default class AbstractButton<P: Props, S: *> extends Component<P, S> {
     static defaultProps = {
+        afterClick: undefined,
         showLabel: false,
         styles: undefined,
         toggledStyles: undefined,
@@ -165,7 +171,10 @@ export default class AbstractButton<P: Props, S: *> extends Component<P, S> {
      * @returns {void}
      */
     _onClick() {
+        const { afterClick } = this.props;
+
         this._handleClick();
+        afterClick && afterClick();
     }
 
     /**
