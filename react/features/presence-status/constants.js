@@ -12,7 +12,7 @@ export const INVITED = 'Invited';
  *
  * @type {string}
  */
-export const CALLING = 'Calling';
+export const CALLING = 'calling';
 
 /**
  * Тhe status for a participant when the invite is received and its device(s)
@@ -20,7 +20,7 @@ export const CALLING = 'Calling';
  *
  * @type {string}
  */
-export const RINGING = 'Ringing';
+export const RINGING = 'ringing';
 
 /**
  * A status for a participant that indicates the call is connected.
@@ -35,28 +35,28 @@ export const CONNECTED_USER = 'connected';
  *
  * @type {string}
  */
-export const BUSY = 'Busy';
+export const BUSY = 'busy';
 
 /**
  * The status for a participant when the invitation is rejected.
  *
  * @type {string}
  */
-export const REJECTED = 'Rejected';
+export const REJECTED = 'rejected';
 
 /**
  * The status for a participant when the invitation is ignored.
  *
  * @type {string}
  */
-export const IGNORED = 'Ignored';
+export const IGNORED = 'ignored';
 
 /**
   * The status for a participant when the invitation is expired.
  *
  * @type {string}
  */
-export const EXPIRED = 'Expired';
+export const EXPIRED = 'expired';
 
 // Phone call statuses
 

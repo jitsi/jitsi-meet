@@ -9,6 +9,7 @@ local wrap_async_run = module:require "util".wrap_async_run;
 local update_presence_identity = module:require "util".update_presence_identity;
 local timer = require "util.timer";
 local MUC_NS = "http://jabber.org/protocol/muc";
+local expired_status  = "expired";
 
 -- Options
 local poltergeist_component
@@ -243,7 +244,7 @@ function create_poltergeist_occupant(room, nick, name, avatar, status, context)
     timer.add_task(timeout,
         function ()
             update_poltergeist_occupant_status(
-                room, nick, "Expired");
+                room, nick, expired_status);
             -- and remove it after some time so participant can see
             -- the update
             timer.add_task(removeTimeout,
