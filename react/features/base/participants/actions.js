@@ -123,7 +123,19 @@ export function localParticipantLeft() {
         const participant = getLocalParticipant(getState);
 
         if (participant) {
-            return dispatch(participantLeft(participant.id));
+            return (
+                dispatch(
+                    participantLeft(
+                        participant.id,
+
+                        // XXX Only the local participant is allowed to leave
+                        // without stating the JitsiConference instance because
+                        // the local participant is uniquely identified by the
+                        // very fact that there is only one local participant
+                        // (and the fact that the local participant "joins" at
+                        // the beginning of the app and "leaves" at the end of
+                        // the app).
+                        undefined)));
         }
     };
 }
@@ -234,17 +246,23 @@ export function participantJoined(participant) {
  * Action to signal that a participant has left.
  *
  * @param {string} id - Participant's ID.
+ * @param {JitsiConference} conference - The {@code JitsiConference} associated
+ * with the participant identified by the specified {@code id}. Only the local
+ * participant is allowed to not specify an associated {@code JitsiConference}
+ * instance.
  * @returns {{
  *     type: PARTICIPANT_LEFT,
  *     participant: {
+ *         conference: JitsiConference,
  *         id: string
  *     }
  * }}
  */
-export function participantLeft(id) {
+export function participantLeft(id, conference) {
     return {
         type: PARTICIPANT_LEFT,
         participant: {
+            conference,
             id
         }
     };

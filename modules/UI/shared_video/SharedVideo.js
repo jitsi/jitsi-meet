@@ -517,7 +517,7 @@ export default class SharedVideoManager {
                     UIEvents.UPDATE_SHARED_VIDEO, null, 'removed');
             });
 
-        APP.store.dispatch(participantLeft(this.url));
+        APP.store.dispatch(participantLeft(this.url, APP.conference));
 
         this.url = null;
         this.isSharedVideoShown = false;
