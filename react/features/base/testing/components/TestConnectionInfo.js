@@ -1,10 +1,8 @@
 // @flow
 
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 
-
-import { Fragment } from '../../react';
 import { getLocalParticipant } from '../../participants';
 
 // FIXME this imports feature to 'base'

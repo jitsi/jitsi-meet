@@ -1,7 +1,7 @@
 /* global APP */
 
 import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 import { I18nextProvider } from 'react-i18next';
 import { Provider } from 'react-redux';
 import { compose, createStore } from 'redux';
@@ -9,7 +9,7 @@ import Thunk from 'redux-thunk';
 
 import { i18next } from '../../base/i18n';
 import { localParticipantLeft } from '../../base/participants';
-import { Fragment, RouteRegistry } from '../../base/react';
+import { RouteRegistry } from '../../base/react';
 import {
     MiddlewareRegistry,
     ReducerRegistry,
@@ -131,7 +131,7 @@ export class AbstractApp extends Component {
 
             dispatch(appWillMount(this));
 
-            // We set the initialized state here and not in the contructor to
+            // We set the initialized state here and not in the constructor to
             // make sure that {@code componentWillMount} gets invoked before
             // the app tries to render the actual app content.
             this.setState({

@@ -5,7 +5,6 @@ import { connect } from 'react-redux';
 
 import { Audio } from '../../media';
 import type { AudioElement } from '../../media';
-import { Fragment } from '../../react';
 
 import { _addAudioElement, _removeAudioElement } from '../actions';
 import type { Sound } from '../reducer';
@@ -68,13 +67,7 @@ class SoundCollection extends Component<Props> {
             key += 1;
         }
 
-        return (
-            <Fragment>
-                {
-                    sounds
-                }
-            </Fragment>
-        );
+        return sounds;
     }
 
     /**
