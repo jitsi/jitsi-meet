@@ -140,6 +140,7 @@ function _addConferenceListeners(conference, dispatch) {
     conference.on(
         JitsiConferenceEvents.USER_JOINED,
         (id, user) => dispatch(participantJoined({
+            conference,
             id,
             name: user.getDisplayName(),
             role: user.getRole()

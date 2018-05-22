@@ -214,11 +214,16 @@ export function participantDisplayNameChanged(id, displayName = '') {
  *
  * @param {Participant} participant - Information about participant.
  * @returns {{
- *      type: PARTICIPANT_JOINED,
- *      participant: Participant
+ *     type: PARTICIPANT_JOINED,
+ *     participant: Participant
  * }}
  */
 export function participantJoined(participant) {
+    if (!participant.local && !participant.conference) {
+        throw Error(
+            'A remote participant must be associated with a JitsiConference!');
+    }
+
     return {
         type: PARTICIPANT_JOINED,
         participant
@@ -393,7 +398,5 @@ export function showParticipantJoinedNotification(displayName) {
     joinedParticipantsNames.push(
         displayName || interfaceConfig.DEFAULT_REMOTE_DISPLAY_NAME);
 
-    return dispatch => {
-        _throttledNotifyParticipantConnected(dispatch);
-    };
+    return dispatch => _throttledNotifyParticipantConnected(dispatch);
 }

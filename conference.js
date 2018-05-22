@@ -1688,6 +1688,7 @@ export default {
             const displayName = user.getDisplayName();
 
             APP.store.dispatch(participantJoined({
+                conference: room,
                 id,
                 name: displayName,
                 role: user.getRole()
