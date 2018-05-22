@@ -74,20 +74,21 @@ MiddlewareRegistry.register(store => next => action => {
 
     case DOMINANT_SPEAKER_CHANGED: {
         // Ensure the raised hand state is cleared for the dominant speaker.
+
+        const { id } = action.participant;
         const participant = getLocalParticipant(store.getState());
 
         if (participant) {
-            const local = participant.id === action.participant.id;
-
             store.dispatch(participantUpdated({
-                id: action.participant.id,
-                local,
+                conference: action.participant.conference,
+                id,
+                local: participant.id === id,
                 raisedHand: false
             }));
         }
 
         if (typeof APP === 'object') {
-            APP.UI.markDominantSpeaker(action.participant.id);
+            APP.UI.markDominantSpeaker(id);
         }
 
         break;

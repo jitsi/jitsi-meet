@@ -127,9 +127,7 @@ export function getLocalParticipant(stateful: Object | Function) {
  * @private
  * @returns {(Participant|undefined)}
  */
-export function getParticipantById(
-        stateful: Object | Function,
-        id: string) {
+export function getParticipantById(stateful: Object | Function, id: string) {
     const participants = _getAllParticipants(stateful);
 
     return participants.find(p => p.id === id);

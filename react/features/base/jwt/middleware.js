@@ -143,7 +143,10 @@ function _overwriteLocalParticipant(
 
     if ((avatarURL || email || name)
             && (localParticipant = getLocalParticipant(getState))) {
-        const newProperties: Object = { id: localParticipant.id };
+        const newProperties: Object = {
+            id: localParticipant.id,
+            local: true
+        };
 
         if (avatarURL) {
             newProperties.avatarURL = avatarURL;
@@ -264,7 +267,10 @@ function _undoOverwriteLocalParticipant(
 
     if ((avatarURL || name || email)
             && (localParticipant = getLocalParticipant(getState))) {
-        const newProperties: Object = { id: localParticipant.id };
+        const newProperties: Object = {
+            id: localParticipant.id,
+            local: true
+        };
 
         if (avatarURL === localParticipant.avatarURL) {
             newProperties.avatarURL = undefined;
