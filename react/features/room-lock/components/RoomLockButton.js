@@ -34,8 +34,9 @@ type Props = AbstractButtonProps & {
 class RoomLockButton extends AbstractButton<Props, *> {
     accessibilityLabel = 'Room lock';
     iconName = 'security';
-    label = 'toolbar.lock';
+    label = 'dialog.lockRoom';
     toggledIconName = 'security-locked';
+    toggledLabel = 'dialog.unlockRoom';
 
     /**
      * Handles clicking / pressing the button.
