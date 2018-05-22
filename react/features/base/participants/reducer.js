@@ -70,8 +70,20 @@ ReducerRegistry.register('features/base/participants', (state = [], action) => {
         break;
     }
 
-    case PARTICIPANT_LEFT:
-        return state.filter(p => p.id !== action.participant.id);
+    case PARTICIPANT_LEFT: {
+        // XXX A remote participant is uniquely identified by their id in a
+        // specific JitsiConference instance. The local participant is uniquely
+        // identified by the very fact that there is only one local participant
+        // (and the fact that the local participant "joins" at the beginning of
+        // the app and "leaves" at the end of the app).
+        const { conference, id } = action.participant;
+
+        return state.filter(p =>
+            !(
+                p.id === id
+                    && (p.local
+                        || (conference && p.conference === conference))));
+    }
     }
 
     return state;
