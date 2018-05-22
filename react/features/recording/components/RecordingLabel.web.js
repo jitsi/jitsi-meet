@@ -189,9 +189,9 @@ class RecordingLabel extends Component<Props, State> {
                     ? <div>
                         { this.props.t(messageKey) }
                     </div>
-                    : <CircularLabel className = { circularLabelClass }>
-                        { this.props.t(circularLabelKey) }
-                    </CircularLabel> }
+                    : <CircularLabel
+                        className = { circularLabelClass }
+                        label = { this.props.t(circularLabelKey) } /> }
             </div>
         );
     }
