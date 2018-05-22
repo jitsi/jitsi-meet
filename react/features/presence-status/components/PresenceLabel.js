@@ -99,9 +99,7 @@ class PresenceLabel extends Component {
  * }}
  */
 function _mapStateToProps(state, ownProps) {
-    const participant
-        = getParticipantById(
-            state['features/base/participants'], ownProps.participantID);
+    const participant = getParticipantById(state, ownProps.participantID);
 
     return {
         _presence: participant && participant.presence

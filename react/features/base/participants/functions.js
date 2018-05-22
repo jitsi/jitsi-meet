@@ -240,11 +240,8 @@ export function isLocalParticipantModerator(stateful: Object | Function) {
         return false;
     }
 
-    const isModerator = localParticipant.role === PARTICIPANT_ROLE.MODERATOR;
-
-    if (state['features/base/config'].enableUserRolesBasedOnToken) {
-        return isModerator && !state['features/base/jwt'].isGuest;
-    }
-
-    return isModerator;
+    return (
+        localParticipant.role === PARTICIPANT_ROLE.MODERATOR
+            && (!state['features/base/config'].enableUserRolesBasedOnToken
+                || !state['features/base/jwt'].isGuest));
 }

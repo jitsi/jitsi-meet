@@ -236,10 +236,10 @@ function _mapStateToProps(state) {
     return {
         _dialIn: state['features/invite'],
         _disableAutoShow: state['features/base/config'].iAmRecorder,
-        _liveStreamViewURL: currentLiveStreamingSession
-            && currentLiveStreamingSession.liveStreamViewURL,
-        _participantCount:
-            getParticipantCount(state['features/base/participants']),
+        _liveStreamViewURL:
+            currentLiveStreamingSession
+                && currentLiveStreamingSession.liveStreamViewURL,
+        _participantCount: getParticipantCount(state),
         _toolboxVisible: state['features/toolbox'].visible
     };
 }

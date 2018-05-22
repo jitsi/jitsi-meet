@@ -156,11 +156,11 @@ class WelcomePageSideBar extends Component<Props> {
  * @returns {Object}
  */
 function _mapStateToProps(state: Object) {
-    const _localParticipant = getLocalParticipant(state);
+    const localParticipant = getLocalParticipant(state);
 
     return {
-        _avatar: getAvatarURL(_localParticipant),
-        _displayName: getParticipantDisplayName(state, _localParticipant.id),
+        _avatar: getAvatarURL(localParticipant),
+        _displayName: getParticipantDisplayName(state, localParticipant.id),
         _visible: state['features/welcome'].sideBarVisible
     };
 }

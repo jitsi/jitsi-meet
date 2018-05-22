@@ -10,6 +10,7 @@ import { appNavigate } from '../../app';
 import { connect, disconnect } from '../../base/connection';
 import { DialogContainer } from '../../base/dialog';
 import { CalleeInfoContainer } from '../../base/jwt';
+import { getParticipantCount } from '../../base/participants';
 import { Container, LoadingIndicator, TintedView } from '../../base/react';
 import { TestConnectionInfo } from '../../base/testing';
 import { createDesiredLocalTracks } from '../../base/tracks';
@@ -383,7 +384,6 @@ function _mapStateToProps(state) {
     const { connecting, connection } = state['features/base/connection'];
     const { conference, joining, leaving } = state['features/base/conference'];
     const { reducedUI } = state['features/base/responsive-ui'];
-    const participants = state['features/base/participants'];
 
     // XXX There is a window of time between the successful establishment of the
     // XMPP connection and the subsequent commencement of joining the MUC during
@@ -415,7 +415,7 @@ function _mapStateToProps(state) {
          * @private
          * @type {number}
          */
-        _participantCount: participants.length,
+        _participantCount: getParticipantCount(state),
 
         /**
          * The indicator which determines whether the UI is reduced (to
