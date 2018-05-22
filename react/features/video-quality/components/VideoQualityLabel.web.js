@@ -1,6 +1,7 @@
+// @flow
+
 import Tooltip from '@atlaskit/tooltip';
-import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import React from 'react';
 import { connect } from 'react-redux';
 
 import { translate } from '../../base/i18n';
@@ -8,15 +9,38 @@ import { CircularLabel } from '../../base/label';
 import { MEDIA_TYPE } from '../../base/media';
 import { getTrackByMediaTypeAndParticipant } from '../../base/tracks';
 
+import AbstractVideoQualityLabel, {
+    _abstractMapStateToProps,
+    type Props as AbstractProps
+} from './AbstractVideoQualityLabel';
+
+type Props = AbstractProps & {
+
+    /**
+     * The message to show within the label.
+     */
+    _labelKey: string,
+
+    /**
+     * The message to show within the label's tooltip.
+     */
+    _tooltipKey: string,
+
+    /**
+     * The redux representation of the JitsiTrack displayed on large video.
+     */
+    _videoTrack: Object
+};
+
 /**
  * A map of video resolution (number) to translation key.
  *
  * @type {Object}
  */
 const RESOLUTION_TO_TRANSLATION_KEY = {
-    720: 'videoStatus.hd',
-    360: 'videoStatus.sd',
-    180: 'videoStatus.ld'
+    '720': 'videoStatus.hd',
+    '360': 'videoStatus.sd',
+    '180': 'videoStatus.ld'
 };
 
 /**
@@ -37,38 +61,7 @@ const RESOLUTIONS
  * will display if not in audio only mode and a high-definition large video is
  * being displayed.
  */
-export class VideoQualityLabel extends Component {
-    /**
-     * {@code VideoQualityLabel}'s property types.
-     *
-     * @static
-     */
-    static propTypes = {
-        /**
-         * Whether or not the conference is in audio only mode.
-         */
-        _audioOnly: PropTypes.bool,
-
-        /**
-         * The message to show within the label.
-         */
-        _labelKey: PropTypes.string,
-
-        /**
-         * The message to show within the label's tooltip.
-         */
-        _tooltipKey: PropTypes.string,
-
-        /**
-         * The redux representation of the JitsiTrack displayed on large video.
-         */
-        _videoTrack: PropTypes.object,
-
-        /**
-         * Invoked to obtain translated strings.
-         */
-        t: PropTypes.func
-    };
+export class VideoQualityLabel extends AbstractVideoQualityLabel<Props> {
 
     /**
      * Implements React's {@link Component#render()}.
@@ -157,7 +150,6 @@ function _mapResolutionToTranslationsKeys(resolution) {
  * @param {Object} state - The Redux state.
  * @private
  * @returns {{
- *     _audioOnly: boolean,
  *     _labelKey: string,
  *     _tooltipKey: string,
  *     _videoTrack: Object
@@ -176,7 +168,7 @@ function _mapStateToProps(state) {
         = audioOnly ? {} : _mapResolutionToTranslationsKeys(resolution);
 
     return {
-        _audioOnly: audioOnly,
+        ..._abstractMapStateToProps(state),
         _labelKey: translationKeys.labelKey,
         _tooltipKey: translationKeys.tooltipKey,
         _videoTrack: videoTrackOnLargeVideo

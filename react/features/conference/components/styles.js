@@ -35,5 +35,11 @@ export default createStyleSheet({
         // On iPhone X there is the notch. In the two cases BoxModel.margin is
         // not enough.
         top: BoxModel.margin * 3
+    },
+
+    videoQualityLabel: {
+        right: 0,
+        top: 0,
+        position: 'absolute'
     }
 });

@@ -22,6 +22,7 @@ export const ColorPalette = {
     blueHighlight: '#1081b2',
     buttonUnderlay: '#495258',
     darkGrey: '#555555',
+    green: '#40b183',
     red: '#D00000',
     white: 'white'
 };

@@ -18,6 +18,7 @@ import { ConferenceNotification } from '../../calendar-sync';
 import { Filmstrip } from '../../filmstrip';
 import { LargeVideo } from '../../large-video';
 import { setToolboxVisible, Toolbox } from '../../toolbox';
+import { VideoQualityLabel } from '../../video-quality';
 
 import styles from './styles';
 
@@ -245,6 +246,7 @@ class Conference extends Component<Props> {
                       * participants.
                       */}
                     <Filmstrip />
+                    <VideoQualityLabel style = { styles.videoQualityLabel } />
                 </View>
                 <TestConnectionInfo />
 
