@@ -29,8 +29,9 @@ type Props = AbstractButtonProps & {
 class AudioOnlyButton extends AbstractButton<Props, *> {
     accessibilityLabel = 'Audio only mode';
     iconName = 'visibility';
-    label = 'toolbar.audioonly';
+    label = 'toolbar.audioOnlyOn';
     toggledIconName = 'visibility-off';
+    toggledLabel = 'toolbar.audioOnlyOff';
 
     /**
      * Handles clicking / pressing the button.

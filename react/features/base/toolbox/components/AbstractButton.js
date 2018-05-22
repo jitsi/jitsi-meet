@@ -75,6 +75,11 @@ export default class AbstractButton<P: Props, S: *> extends Component<P, S> {
     label: string;
 
     /**
+     * The label for this button, when toggled.
+     */
+    toggledLabel: string;
+
+    /**
      * The name of the icon of this button, when toggled.
      *
      * @abstract
@@ -123,6 +128,19 @@ export default class AbstractButton<P: Props, S: *> extends Component<P, S> {
     _getIconName() {
         return (this._isToggled() ? this.toggledIconName : this.iconName)
             || this.iconName;
+    }
+
+    /**
+     * Gets the current label, taking the toggled state into account. If no
+     * toggled label is provided, the regular label will also be used in the
+     * toggled state.
+     *
+     * @private
+     * @returns {string}
+     */
+    _getLabel() {
+        return (this._isToggled() ? this.toggledLabel : this.label)
+            || this.label;
     }
 
     /**
@@ -188,7 +206,7 @@ export default class AbstractButton<P: Props, S: *> extends Component<P, S> {
             ...this.props,
             accessibilityLabel: this.accessibilityLabel,
             iconName: this._getIconName(),
-            label: this.label,
+            label: this._getLabel(),
             styles: this._getStyles(),
             tooltip: this.tooltip
         };
