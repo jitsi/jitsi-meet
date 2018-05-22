@@ -2,6 +2,8 @@
 
 import React, { Component } from 'react';
 
+import { combineStyles } from '../../styles';
+
 import type { Styles } from './AbstractToolboxItem';
 import ToolboxItem from './ToolboxItem';
 
@@ -11,6 +13,12 @@ export type Props = {
      * Function to be called after the click handler has been processed.
      */
     afterClick: ?Function,
+
+    /**
+     * Extra styles which will be applied in conjunction with `styles` or
+     * `toggledStyles` when the button is disabled;
+     */
+    disabledStyles: ?Styles,
 
     /**
      * Whether to show the label or not.
@@ -39,11 +47,26 @@ export type Props = {
 };
 
 /**
+ * Default style for disabled buttons.
+ */
+export const defaultDisabledButtonStyles = {
+    iconStyle: {
+        opacity: 0.5
+    },
+    labelStyle: {
+        opacity: 0.5
+    },
+    style: undefined,
+    underlayColor: undefined
+};
+
+/**
  * An abstract implementation of a button.
  */
 export default class AbstractButton<P: Props, S: *> extends Component<P, S> {
     static defaultProps = {
         afterClick: undefined,
+        disabledStyles: defaultDisabledButtonStyles,
         showLabel: false,
         styles: undefined,
         toggledStyles: undefined,
@@ -151,10 +174,25 @@ export default class AbstractButton<P: Props, S: *> extends Component<P, S> {
      * @private
      * @returns {?Styles}
      */
-    _getStyles() {
-        const { styles, toggledStyles } = this.props;
+    _getStyles(): ?Styles {
+        const { disabledStyles, styles, toggledStyles } = this.props;
+        const buttonStyles
+            = (this._isToggled() ? toggledStyles : styles) || styles;
 
-        return (this._isToggled() ? toggledStyles : styles) || styles;
+        if (this._isDisabled() && buttonStyles && disabledStyles) {
+            return {
+                iconStyle: combineStyles(
+                    buttonStyles.iconStyle, disabledStyles.iconStyle),
+                labelStyle: combineStyles(
+                    buttonStyles.labelStyle, disabledStyles.labelStyle),
+                style: combineStyles(
+                    buttonStyles.style, disabledStyles.style),
+                underlayColor:
+                    disabledStyles.underlayColor || buttonStyles.underlayColor
+            };
+        }
+
+        return buttonStyles;
     }
 
     /**

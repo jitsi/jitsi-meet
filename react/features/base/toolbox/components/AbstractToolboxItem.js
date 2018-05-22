@@ -2,27 +2,29 @@
 
 import { Component } from 'react';
 
+import type { StyleType } from '../../styles';
+
 export type Styles = {
 
     /**
      * Style for the item's icon.
      */
-    iconStyle: Object,
+    iconStyle: StyleType,
 
     /**
      * Style for the item's label.
      */
-    labelStyle: Object,
+    labelStyle: StyleType,
 
     /**
      * Style for the item itself.
      */
-    style: Object,
+    style: StyleType,
 
     /**
      * Color for the item underlay (shows when clicked).
      */
-    underlayColor: string
+    underlayColor: ?string
 };
 
 export type Props = {
