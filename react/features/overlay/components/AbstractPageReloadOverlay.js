@@ -76,7 +76,7 @@ export default class AbstractPageReloadOverlay extends Component<*, *> {
      * @returns {boolean} - If this overlay needs to be rendered, {@code true};
      * {@code false}, otherwise.
      */
-    static needsRender(state) {
+    static needsRender(state: Object) {
         const conferenceError = state['features/base/conference'].error;
         const configError = state['features/base/config'].error;
         const connectionError = state['features/base/connection'].error;
@@ -88,7 +88,7 @@ export default class AbstractPageReloadOverlay extends Component<*, *> {
                 || configError);
     }
 
-    _interval: ?number
+    _interval: *;
 
     state: {
 
@@ -120,7 +120,7 @@ export default class AbstractPageReloadOverlay extends Component<*, *> {
          * @type {string}
          */
         title: string
-    }
+    };
 
     /**
      * Initializes a new AbstractPageReloadOverlay instance.
@@ -222,7 +222,7 @@ export default class AbstractPageReloadOverlay extends Component<*, *> {
     }
 
     /**
-     * Renders the button for relaod the page if necessary.
+     * Renders the button for reloading the page if necessary.
      *
      * @protected
      * @returns {ReactElement|null}

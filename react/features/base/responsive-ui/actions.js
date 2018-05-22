@@ -29,7 +29,7 @@ const REDUCED_UI_THRESHOLD = 300;
  *     aspectRatio: Symbol
  * }}
  */
-export function setAspectRatio(width: number, height: number): Object {
+export function setAspectRatio(width: number, height: number): Function {
     return (dispatch: Dispatch<*>, getState: Function) => {
         // Don't change the aspect ratio if width and height are the same, that
         // is, if we transition to a 1:1 aspect ratio.
@@ -59,7 +59,7 @@ export function setAspectRatio(width: number, height: number): Object {
  *     reducedUI: boolean
  * }}
  */
-export function setReducedUI(width: number, height: number) {
+export function setReducedUI(width: number, height: number): Function {
     return (dispatch: Dispatch<*>, getState: Function) => {
         const reducedUI = Math.min(width, height) < REDUCED_UI_THRESHOLD;
 

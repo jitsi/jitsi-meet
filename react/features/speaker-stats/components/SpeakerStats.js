@@ -45,7 +45,7 @@ class SpeakerStats extends Component<*, *> {
         stats: {}
     };
 
-    _updateInterval: number;
+    _updateInterval: *;
 
     /**
      * Initializes a new SpeakerStats instance.

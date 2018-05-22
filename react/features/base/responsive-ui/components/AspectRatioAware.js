@@ -58,6 +58,7 @@ export function makeAspectRatioAware(
         }
     }
 
+    // $FlowFixMe
     return connect(_mapStateToProps)(AspectRatioAware);
 }
 

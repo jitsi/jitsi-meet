@@ -1,6 +1,6 @@
 // @flow
 
-import React, { Component } from 'react';
+import React, { Component, type Node } from 'react';
 import { Platform, SafeAreaView, StatusBar, View } from 'react-native';
 
 import styles, { HEADER_PADDING, STATUSBAR_COLOR } from './styles';
@@ -11,14 +11,14 @@ import styles, { HEADER_PADDING, STATUSBAR_COLOR } from './styles';
 const IOS10_PADDING = 20;
 
 /**
- * The type of the React {@code Component} props of {@link ScreenHeader}
+ * The type of the React {@code Component} props of {@link Header}
  */
 type Props = {
 
     /**
      * Children component(s).
      */
-    children: React$Node,
+    children: Node,
 
     /**
      * The component's external style
@@ -37,7 +37,7 @@ export default class Header extends Component<Props> {
      *
      * @returns {Object}
      */
-    static get buttonStyle() {
+    static get buttonStyle(): Object {
         return styles.headerButton;
     }
 
@@ -47,7 +47,7 @@ export default class Header extends Component<Props> {
      *
      * @returns {Object}
      */
-    static get pageStyle() {
+    static get pageStyle(): Object {
         return styles.page;
     }
 
@@ -56,7 +56,7 @@ export default class Header extends Component<Props> {
      *
      * @returns {Object}
      */
-    static get textStyle() {
+    static get textStyle(): Object {
         return styles.headerText;
     }
 

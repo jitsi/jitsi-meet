@@ -1,6 +1,7 @@
 // @flow
 
 import { connect } from 'react-redux';
+import type { Dispatch } from 'redux';
 
 import { AbstractButton } from '../../base/toolbox';
 import type { AbstractButtonProps } from '../../base/toolbox';
@@ -105,7 +106,7 @@ class InviteButton extends AbstractButton<Props, *> {
  * }}
  * @private
  */
-function _mapDispatchToProps(dispatch) {
+function _mapDispatchToProps(dispatch: Dispatch<*>) {
     return {
         /**
          * Launches native invite dialog.

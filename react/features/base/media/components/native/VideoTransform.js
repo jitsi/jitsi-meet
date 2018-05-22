@@ -3,6 +3,7 @@
 import React, { Component } from 'react';
 import { PanResponder, PixelRatio, View } from 'react-native';
 import { connect } from 'react-redux';
+import { type Dispatch } from 'redux';
 
 import { storeVideoTransform } from '../../actions';
 import styles from './styles';
@@ -684,7 +685,7 @@ class VideoTransform extends Component<Props, State> {
  *     _onUnmount: Function
  * }}
  */
-function _mapDispatchToProps(dispatch) {
+function _mapDispatchToProps(dispatch: Dispatch<*>) {
     return {
         /**
          * Dispatches actions to store the last applied transform to a video.
@@ -712,7 +713,7 @@ function _mapDispatchToProps(dispatch) {
 function _mapStateToProps(state) {
     return {
         /**
-         * The stored transforms retreived from Redux to be initially applied to
+         * The stored transforms retrieved from Redux to be initially applied to
          * different streams.
          *
          * @private

@@ -98,7 +98,7 @@ type State = {
  * @extends {Component}
  */
 class RecordingLabel extends AbstractRecordingLabel<Props, State> {
-    _autohideTimeout: number;
+    _autohideTimeout: *;
 
     state = {
         hidden: false

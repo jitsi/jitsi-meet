@@ -1,7 +1,8 @@
 // @flow
 
-import React, { Component } from 'react';
+import React, { Component, type Node } from 'react';
 import { connect } from 'react-redux';
+import { type Dispatch } from 'redux';
 
 import { setReducedUI } from '../actions';
 import DimensionsDetector from './DimensionsDetector';
@@ -20,7 +21,7 @@ type Props = {
     /**
      * Any nested components.
      */
-    children: React$Node
+    children: Node
 };
 
 /**
@@ -52,7 +53,7 @@ class ReducedUIDetector extends Component<Props> {
  *     _onDimensionsChanged: Function
  * }}
  */
-function _mapDispatchToProps(dispatch) {
+function _mapDispatchToProps(dispatch: Dispatch<*>) {
     return {
         /**
          * Handles the "on dimensions changed" event and dispatches the

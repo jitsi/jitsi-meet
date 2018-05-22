@@ -173,6 +173,7 @@ class Dialog extends AbstractDialog<Props, State> {
                 if (style
                         && (style = StyleSheet.flatten(style))
                         && _TAG_KEY in style) {
+                    // $FlowFixMe
                     switch (style[_TAG_KEY]) {
                     case _SUBMIT_TEXT_TAG_VALUE:
                         if (this.state.submitting) {

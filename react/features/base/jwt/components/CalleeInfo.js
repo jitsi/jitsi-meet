@@ -75,9 +75,9 @@ class CalleeInfo extends Component<Props, State> {
 
     _onLargeVideoAvatarVisible: Function;
 
-    _playAudioInterval: ?number;
+    _playAudioInterval: *;
 
-    _ringingTimeout: ?number
+    _ringingTimeout: *;
 
     _setAudio: Function;
 

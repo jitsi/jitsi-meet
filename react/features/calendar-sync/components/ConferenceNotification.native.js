@@ -56,14 +56,14 @@ type State = {
  * screen when another meeting is about to start.
  */
 class ConferenceNotification extends Component<Props, State> {
-    updateIntervalId: number;
+    updateIntervalId: *;
 
     /**
      * Constructor of the ConferenceNotification component.
      *
      * @inheritdoc
      */
-    constructor(props) {
+    constructor(props: Props) {
         super(props);
 
         this.state = {
@@ -97,7 +97,7 @@ class ConferenceNotification extends Component<Props, State> {
      * @inheritdoc
      */
     componentWillUnmount() {
-        clearTimeout(this.updateIntervalId);
+        clearInterval(this.updateIntervalId);
     }
 
     /**
@@ -160,7 +160,7 @@ class ConferenceNotification extends Component<Props, State> {
         return null;
     }
 
-    _getNotificationContentStyle: () => Array<Object>
+    _getNotificationContentStyle: () => Array<Object>;
 
     /**
      * Decides the color of the notification and some additional
@@ -251,7 +251,6 @@ class ConferenceNotification extends Component<Props, State> {
     /**
      * Opens the meeting URL that the notification shows.
      *
-     * @param {string} url - The URL to open.
      * @private
      * @returns {void}
      */
