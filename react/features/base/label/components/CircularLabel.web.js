@@ -1,13 +1,12 @@
 // @flow
 
-import React, { Component } from 'react';
+import React from 'react';
 
-type Props = {
+import AbstractCircularLabel, {
+    type Props as AbstractProps
+} from './AbstractCircularLabel';
 
-    /**
-     * The children to be displayed within {@code CircularLabel}.
-     */
-    children: React$Node,
+type Props = AbstractProps & {
 
     /**
      * Additional CSS class names to add to the root of {@code CircularLabel}.
@@ -26,7 +25,7 @@ type Props = {
  *
  * @extends Component
  */
-export default class CircularLabel extends Component<Props> {
+export default class CircularLabel extends AbstractCircularLabel<Props> {
     /**
      * Default values for {@code CircularLabel} component's properties.
      *
@@ -44,16 +43,16 @@ export default class CircularLabel extends Component<Props> {
      */
     render() {
         const {
-            children,
             className,
-            id
+            id,
+            label
         } = this.props;
 
         return (
             <div
                 className = { `circular-label ${className}` }
                 id = { id }>
-                { children }
+                { label }
             </div>
         );
     }

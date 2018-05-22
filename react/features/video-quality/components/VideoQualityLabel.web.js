@@ -109,9 +109,8 @@ export class VideoQualityLabel extends Component {
                 position = { 'left' }>
                 <CircularLabel
                     className = { className }
-                    id = 'videoResolutionLabel'>
-                    { labelContent }
-                </CircularLabel>
+                    id = 'videoResolutionLabel'
+                    label = { labelContent } />
             </Tooltip>
         );
     }
