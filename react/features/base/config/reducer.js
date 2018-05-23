@@ -53,7 +53,8 @@ ReducerRegistry.register(
         switch (action.type) {
         case CONFIG_WILL_LOAD:
             return {
-                error: undefined
+                error: undefined,
+                locationURL: action.locationURL
             };
 
         case LOAD_CONFIG_ERROR:

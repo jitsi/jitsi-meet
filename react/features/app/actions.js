@@ -1,5 +1,7 @@
 /* @flow */
 
+import type { Dispatch } from 'redux';
+
 import { setRoom } from '../base/conference';
 import {
     configWillLoad,
@@ -71,9 +73,17 @@ function _appNavigateToMandatoryLocation(
      * @returns {void}
      */
     function loadConfigSettled(error, config) {
-        // FIXME Due to the asynchronous nature of the loading, the specified
+        // Due to the asynchronous nature of the loading, the specified
         // config may or may not be required by the time the notification
-        // arrives.
+        // arrives. If we receive the config for a location we are no longer
+        // interested in, just dump it.
+
+        const { locationURL: currentLocationURL }
+            = getState()['features/base/config'];
+
+        if (currentLocationURL !== newLocation) {
+            throw new Error('Config no longer needed');
+        }
 
         const promise
             = dispatch(setLocationURL(new URL(newLocation.toString())));
