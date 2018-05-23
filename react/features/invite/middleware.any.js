@@ -118,15 +118,13 @@ MiddlewareRegistry.register(store => next => action => {
  * @returns {string} - The presence status.
  */
 function _getParticipantPresence(state, id) {
-    if (!id) {
-        return undefined;
-    }
-    const participants = state['features/base/participants'];
-    const participantById = getParticipantById(participants, id);
+    if (id) {
+        const participantById = getParticipantById(state, id);
 
-    if (!participantById) {
-        return undefined;
+        if (participantById) {
+            return participantById.presence;
+        }
     }
 
-    return participantById.presence;
+    return undefined;
 }

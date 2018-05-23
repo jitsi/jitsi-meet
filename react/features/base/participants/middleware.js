@@ -1,18 +1,15 @@
 // @flow
 
-import UIEvents from '../../../../service/UI/UIEvents';
-
 import { APP_WILL_MOUNT, APP_WILL_UNMOUNT } from '../../app';
-import {
-    CONFERENCE_WILL_JOIN,
-    CONFERENCE_LEFT
-} from '../conference';
-import { MiddlewareRegistry } from '../redux';
+import { CONFERENCE_LEFT, CONFERENCE_WILL_JOIN } from '../conference';
+import { MiddlewareRegistry, StateListenerRegistry } from '../redux';
+import UIEvents from '../../../../service/UI/UIEvents';
 import { playSound, registerSound, unregisterSound } from '../sounds';
 
 import {
     localParticipantIdChanged,
     localParticipantJoined,
+    participantLeft,
     participantUpdated
 } from './actions';
 import {
@@ -43,17 +40,10 @@ declare var APP: Object;
  * Middleware that captures CONFERENCE_JOINED and CONFERENCE_LEFT actions and
  * updates respectively ID of local participant.
  *
- * @param {Store} store - Redux store.
+ * @param {Store} store - The redux store.
  * @returns {Function}
  */
 MiddlewareRegistry.register(store => next => action => {
-    const { conference } = store.getState()['features/base/conference'];
-
-    if (action.type === PARTICIPANT_JOINED
-            || action.type === PARTICIPANT_LEFT) {
-        _maybePlaySounds(store, action);
-    }
-
     switch (action.type) {
     case APP_WILL_MOUNT:
         _registerSounds(store);
@@ -74,32 +64,36 @@ MiddlewareRegistry.register(store => next => action => {
 
     case DOMINANT_SPEAKER_CHANGED: {
         // Ensure the raised hand state is cleared for the dominant speaker.
+
+        const { conference, id } = action.participant;
         const participant = getLocalParticipant(store.getState());
 
-        if (participant) {
-            const local = participant.id === action.participant.id;
-
-            store.dispatch(participantUpdated({
-                id: action.participant.id,
-                local,
+        participant
+            && store.dispatch(participantUpdated({
+                conference,
+                id,
+                local: participant.id === id,
                 raisedHand: false
             }));
-        }
 
-        if (typeof APP === 'object') {
-            APP.UI.markDominantSpeaker(action.participant.id);
-        }
+        typeof APP === 'object' && APP.UI.markDominantSpeaker(id);
 
         break;
     }
 
-    case KICK_PARTICIPANT:
+    case KICK_PARTICIPANT: {
+        const { conference } = store.getState()['features/base/conference'];
+
         conference.kickParticipant(action.id);
         break;
+    }
 
-    case MUTE_REMOTE_PARTICIPANT:
+    case MUTE_REMOTE_PARTICIPANT: {
+        const { conference } = store.getState()['features/base/conference'];
+
         conference.muteParticipant(action.id);
         break;
+    }
 
     // TODO Remove this middleware when the local display name update flow is
     // fully brought into redux.
@@ -116,73 +110,46 @@ MiddlewareRegistry.register(store => next => action => {
     }
 
     case PARTICIPANT_JOINED:
-    case PARTICIPANT_UPDATED: {
-        const { participant } = action;
-        const { id, local, raisedHand } = participant;
+        _maybePlaySounds(store, action);
 
-        // Send an external update of the local participant's raised hand state
-        // if a new raised hand state is defined in the action.
-        if (typeof raisedHand !== 'undefined') {
-            if (local) {
-                conference.setLocalParticipantProperty(
-                    'raisedHand',
-                    raisedHand);
-            }
+        return _participantJoinedOrUpdated(store, next, action);
 
-            if (typeof APP === 'object') {
-                if (local) {
-                    APP.UI.onLocalRaiseHandChanged(raisedHand);
-                    APP.UI.setLocalRaisedHandStatus(raisedHand);
-                } else {
-                    const remoteParticipant
-                        = getParticipantById(store.getState(), id);
-
-                    remoteParticipant
-                        && APP.UI.setRaisedHandStatus(
-                            remoteParticipant.id,
-                            remoteParticipant.name,
-                            raisedHand);
-                }
-            }
-        }
-
-        // Notify external listeners of potential avatarURL changes.
-        if (typeof APP === 'object') {
-            const preUpdateAvatarURL
-                = getAvatarURLByParticipantId(store.getState(), id);
-
-            // Allow the redux update to go through and compare the old avatar
-            // to the new avatar and emit out change events if necessary.
-            const result = next(action);
-
-            const postUpdateAvatarURL
-                = getAvatarURLByParticipantId(store.getState(), id);
-
-            if (preUpdateAvatarURL !== postUpdateAvatarURL) {
-                const currentKnownId = local
-                    ? APP.conference.getMyUserId() : id;
-
-                APP.UI.refreshAvatarDisplay(
-                    currentKnownId, postUpdateAvatarURL);
-                APP.API.notifyAvatarChanged(
-                    currentKnownId, postUpdateAvatarURL);
-            }
-
-            return result;
-        }
-
+    case PARTICIPANT_LEFT:
+        _maybePlaySounds(store, action);
         break;
-    }
+
+    case PARTICIPANT_UPDATED:
+        return _participantJoinedOrUpdated(store, next, action);
     }
 
     return next(action);
 });
 
 /**
+ * Syncs the redux state features/base/participants up with the redux state
+ * features/base/conference by ensuring that the former does not contain remote
+ * participants no longer relevant to the latter. Introduced to address an issue
+ * with multiplying thumbnails in the filmstrip.
+ */
+StateListenerRegistry.register(
+    /* selector */ state => {
+        const { conference, joining } = state['features/base/conference'];
+
+        return conference || joining;
+    },
+    /* listener */ (conference, { dispatch, getState }) => {
+        for (const p of getState()['features/base/participants']) {
+            !p.local
+                && (!conference || p.conference !== conference)
+                && dispatch(participantLeft(p.id, p.conference));
+        }
+    });
+
+/**
  * Initializes the local participant and signals that it joined.
  *
  * @private
- * @param {Store} store - The Redux store.
+ * @param {Store} store - The redux store.
  * @param {Dispatch} next - The redux dispatch function to dispatch the
  * specified action to the specified store.
  * @param {Action} action - The redux action which is being dispatched
@@ -192,15 +159,15 @@ MiddlewareRegistry.register(store => next => action => {
  */
 function _localParticipantJoined({ getState, dispatch }, next, action) {
     const result = next(action);
+
     const settings = getState()['features/base/settings'];
-    const localParticipant = {
+
+    dispatch(localParticipantJoined({
         avatarID: settings.avatarID,
         avatarURL: settings.avatarURL,
         email: settings.email,
         name: settings.displayName
-    };
-
-    dispatch(localParticipantJoined(localParticipant));
+    }));
 
     return result;
 }
@@ -208,8 +175,8 @@ function _localParticipantJoined({ getState, dispatch }, next, action) {
 /**
  * Plays sounds when participants join/leave conference.
  *
- * @param {Store} store - The Redux store.
- * @param {Action} action - The Redux action. Should be either
+ * @param {Store} store - The redux store.
+ * @param {Action} action - The redux action. Should be either
  * {@link PARTICIPANT_JOINED} or {@link PARTICIPANT_LEFT}.
  * @private
  * @returns {void}
@@ -223,8 +190,8 @@ function _maybePlaySounds({ getState, dispatch }, action) {
     // The intention there was to not play user joined notification in big
     // conferences where 100th person is joining.
     if (!action.participant.local
-        && (!startAudioMuted
-            || getParticipantCount(state) < startAudioMuted)) {
+            && (!startAudioMuted
+                || getParticipantCount(state) < startAudioMuted)) {
         if (action.type === PARTICIPANT_JOINED) {
             dispatch(playSound(PARTICIPANT_JOINED_SOUND_ID));
         } else if (action.type === PARTICIPANT_LEFT) {
@@ -234,29 +201,94 @@ function _maybePlaySounds({ getState, dispatch }, action) {
 }
 
 /**
+ * Notifies the feature base/participants that the action
+ * {@code PARTICIPANT_JOINED} or {@code PARTICIPANT_UPDATED} is being dispatched
+ * within a specific redux store.
+ *
+ * @param {Store} store - The redux store in which the specified {@code action}
+ * is being dispatched.
+ * @param {Dispatch} next - The redux {@code dispatch} function to dispatch the
+ * specified {@code action} in the specified {@code store}.
+ * @param {Action} action - The redux action {@code PARTICIPANT_JOINED} or
+ * {@code PARTICIPANT_UPDATED} which is being dispatched in the specified
+ * {@code store}.
+ * @private
+ * @returns {Object} The value returned by {@code next(action)}.
+ */
+function _participantJoinedOrUpdated({ getState }, next, action) {
+    const { participant: { id, local, raisedHand } } = action;
+
+    // Send an external update of the local participant's raised hand state
+    // if a new raised hand state is defined in the action.
+    if (typeof raisedHand !== 'undefined') {
+        if (local) {
+            const { conference } = getState()['features/base/conference'];
+
+            conference
+                && conference.setLocalParticipantProperty(
+                    'raisedHand',
+                    raisedHand);
+        }
+
+        if (typeof APP === 'object') {
+            if (local) {
+                APP.UI.onLocalRaiseHandChanged(raisedHand);
+                APP.UI.setLocalRaisedHandStatus(raisedHand);
+            } else {
+                const remoteParticipant = getParticipantById(getState(), id);
+
+                remoteParticipant
+                    && APP.UI.setRaisedHandStatus(
+                        remoteParticipant.id,
+                        remoteParticipant.name,
+                        raisedHand);
+            }
+        }
+    }
+
+    // Notify external listeners of potential avatarURL changes.
+    if (typeof APP === 'object') {
+        const oldAvatarURL = getAvatarURLByParticipantId(getState(), id);
+
+        // Allow the redux update to go through and compare the old avatar
+        // to the new avatar and emit out change events if necessary.
+        const result = next(action);
+        const newAvatarURL = getAvatarURLByParticipantId(getState(), id);
+
+        if (oldAvatarURL !== newAvatarURL) {
+            const currentKnownId = local ? APP.conference.getMyUserId() : id;
+
+            APP.UI.refreshAvatarDisplay(currentKnownId, newAvatarURL);
+            APP.API.notifyAvatarChanged(currentKnownId, newAvatarURL);
+        }
+
+        return result;
+    }
+
+    return next(action);
+}
+
+/**
  * Registers sounds related with the participants feature.
  *
- * @param {Store} store - The Redux store.
+ * @param {Store} store - The redux store.
  * @private
  * @returns {void}
  */
 function _registerSounds({ dispatch }) {
     dispatch(
         registerSound(PARTICIPANT_JOINED_SOUND_ID, PARTICIPANT_JOINED_FILE));
-    dispatch(
-        registerSound(PARTICIPANT_LEFT_SOUND_ID, PARTICIPANT_LEFT_FILE));
+    dispatch(registerSound(PARTICIPANT_LEFT_SOUND_ID, PARTICIPANT_LEFT_FILE));
 }
 
 /**
  * Unregisters sounds related with the participants feature.
  *
- * @param {Store} store - The Redux store.
+ * @param {Store} store - The redux store.
  * @private
  * @returns {void}
  */
 function _unregisterSounds({ dispatch }) {
-    dispatch(
-        unregisterSound(PARTICIPANT_JOINED_SOUND_ID));
-    dispatch(
-        unregisterSound(PARTICIPANT_LEFT_SOUND_ID));
+    dispatch(unregisterSound(PARTICIPANT_JOINED_SOUND_ID));
+    dispatch(unregisterSound(PARTICIPANT_LEFT_SOUND_ID));
 }

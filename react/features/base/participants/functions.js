@@ -127,9 +127,7 @@ export function getLocalParticipant(stateful: Object | Function) {
  * @private
  * @returns {(Participant|undefined)}
  */
-export function getParticipantById(
-        stateful: Object | Function,
-        id: string) {
+export function getParticipantById(stateful: Object | Function, id: string) {
     const participants = _getAllParticipants(stateful);
 
     return participants.find(p => p.id === id);
@@ -242,11 +240,8 @@ export function isLocalParticipantModerator(stateful: Object | Function) {
         return false;
     }
 
-    const isModerator = localParticipant.role === PARTICIPANT_ROLE.MODERATOR;
-
-    if (state['features/base/config'].enableUserRolesBasedOnToken) {
-        return isModerator && !state['features/base/jwt'].isGuest;
-    }
-
-    return isModerator;
+    return (
+        localParticipant.role === PARTICIPANT_ROLE.MODERATOR
+            && (!state['features/base/config'].enableUserRolesBasedOnToken
+                || !state['features/base/jwt'].isGuest));
 }

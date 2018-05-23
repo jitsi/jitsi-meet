@@ -32,12 +32,65 @@ import { LOCAL_PARTICIPANT_DEFAULT_ID, PARTICIPANT_ROLE } from './constants';
 declare var APP: Object;
 
 /**
- * These properties should not be bulk assigned when updating a particular
- * @see Participant.
+ * The participant properties which cannot be updated through
+ * {@link PARTICIPANT_UPDATED}. They either identify the participant or can only
+ * be modified through property-dedicated actions.
+ *
  * @type {string[]}
  */
-const PARTICIPANT_PROPS_TO_OMIT_WHEN_UPDATE
-    = [ 'dominantSpeaker', 'id', 'local', 'pinned' ];
+const PARTICIPANT_PROPS_TO_OMIT_WHEN_UPDATE = [
+
+    // The following properties identify the participant:
+    'conference',
+    'id',
+    'local',
+
+    // The following properties can only be modified through property-dedicated
+    // actions:
+    'dominantSpeaker',
+    'pinned'
+];
+
+/**
+ * Listen for actions which add, remove, or update the set of participants in
+ * the conference.
+ *
+ * @param {Participant[]} state - List of participants to be modified.
+ * @param {Object} action - Action object.
+ * @param {string} action.type - Type of action.
+ * @param {Participant} action.participant - Information about participant to be
+ * added/removed/modified.
+ * @returns {Participant[]}
+ */
+ReducerRegistry.register('features/base/participants', (state = [], action) => {
+    switch (action.type) {
+    case DOMINANT_SPEAKER_CHANGED:
+    case PARTICIPANT_ID_CHANGED:
+    case PARTICIPANT_UPDATED:
+    case PIN_PARTICIPANT:
+        return state.map(p => _participant(p, action));
+
+    case PARTICIPANT_JOINED:
+        return [ ...state, _participantJoined(action) ];
+
+    case PARTICIPANT_LEFT: {
+        // XXX A remote participant is uniquely identified by their id in a
+        // specific JitsiConference instance. The local participant is uniquely
+        // identified by the very fact that there is only one local participant
+        // (and the fact that the local participant "joins" at the beginning of
+        // the app and "leaves" at the end of the app).
+        const { conference, id } = action.participant;
+
+        return state.filter(p =>
+            !(
+                p.id === id
+                    && (p.local
+                        || (conference && p.conference === conference))));
+    }
+    }
+
+    return state;
+});
 
 /**
  * Reducer function for a single participant.
@@ -66,52 +119,6 @@ function _participant(state: Object = {}, action) {
             };
         }
         break;
-
-    case PARTICIPANT_JOINED: {
-        const { participant } = action; // eslint-disable-line no-shadow
-        const {
-            avatarURL,
-            connectionStatus,
-            dominantSpeaker,
-            email,
-            isBot,
-            local,
-            name,
-            pinned,
-            role
-        } = participant;
-        let { avatarID, id } = participant;
-
-        // avatarID
-        //
-        // TODO Get the avatarID of the local participant from localStorage.
-        if (!avatarID && local) {
-            avatarID = randomHexString(32);
-        }
-
-        // id
-        //
-        // XXX The situation of not having an ID for a remote participant should
-        // not happen. Maybe we should raise an error in this case or generate a
-        // random ID.
-        if (!id && local) {
-            id = LOCAL_PARTICIPANT_DEFAULT_ID;
-        }
-
-        return {
-            avatarID,
-            avatarURL,
-            connectionStatus,
-            dominantSpeaker: dominantSpeaker || false,
-            email,
-            id,
-            isBot,
-            local: local || false,
-            name,
-            pinned: pinned || false,
-            role: role || PARTICIPANT_ROLE.NONE
-        };
-    }
 
     case PARTICIPANT_UPDATED: {
         const { participant } = action; // eslint-disable-line no-shadow
@@ -147,31 +154,60 @@ function _participant(state: Object = {}, action) {
 }
 
 /**
- * Listen for actions which add, remove, or update the set of participants in
- * the conference.
+ * Reduces a specific redux action of type {@link PARTICIPANT_JOINED} in the
+ * feature base/participants.
  *
- * @param {Participant[]} state - List of participants to be modified.
- * @param {Object} action - Action object.
- * @param {string} action.type - Type of action.
- * @param {Participant} action.participant - Information about participant to be
- * added/removed/modified.
- * @returns {Participant[]}
+ * @param {Action} action - The redux action of type {@code PARTICIPANT_JOINED}
+ * to reduce.
+ * @private
+ * @returns {Object} The new participant derived from the payload of the
+ * specified {@code action} to be added into the redux state of the feature
+ * base/participants after the reduction of the specified
+ * {@code action}.
  */
-ReducerRegistry.register('features/base/participants', (state = [], action) => {
-    switch (action.type) {
-    case DOMINANT_SPEAKER_CHANGED:
-    case PARTICIPANT_ID_CHANGED:
-    case PARTICIPANT_UPDATED:
-    case PIN_PARTICIPANT:
-        return state.map(p => _participant(p, action));
+function _participantJoined({ participant }) {
+    const {
+        avatarURL,
+        connectionStatus,
+        dominantSpeaker,
+        email,
+        isBot,
+        local,
+        name,
+        pinned,
+        role
+    } = participant;
+    let { avatarID, conference, id } = participant;
 
-    case PARTICIPANT_JOINED:
-        return [ ...state, _participant(undefined, action) ];
+    if (local) {
+        // avatarID
+        //
+        // TODO Get the avatarID of the local participant from localStorage.
+        avatarID || (avatarID = randomHexString(32));
 
-    case PARTICIPANT_LEFT:
-        return state.filter(p => p.id !== action.participant.id);
+        // conference
+        //
+        // XXX The local participant is not identified in association with a
+        // JitsiConference because it is identified by the very fact that it is
+        // the local participant.
+        conference = undefined;
 
-    default:
-        return state;
+        // id
+        id || (id = LOCAL_PARTICIPANT_DEFAULT_ID);
     }
-});
+
+    return {
+        avatarID,
+        avatarURL,
+        conference,
+        connectionStatus,
+        dominantSpeaker: dominantSpeaker || false,
+        email,
+        id,
+        isBot,
+        local: local || false,
+        name,
+        pinned: pinned || false,
+        role: role || PARTICIPANT_ROLE.NONE
+    };
+}

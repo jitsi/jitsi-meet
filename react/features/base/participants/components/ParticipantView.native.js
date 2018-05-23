@@ -313,10 +313,7 @@ function _toBoolean(value, undefinedValue) {
  */
 function _mapStateToProps(state, ownProps) {
     const { participantId } = ownProps;
-    const participant
-        = getParticipantById(
-            state['features/base/participants'],
-            participantId);
+    const participant = getParticipantById(state, participantId);
     let avatar;
     let connectionStatus;
     let participantName;

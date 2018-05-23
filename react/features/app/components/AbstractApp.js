@@ -10,7 +10,11 @@ import Thunk from 'redux-thunk';
 import { i18next } from '../../base/i18n';
 import { localParticipantLeft } from '../../base/participants';
 import { Fragment, RouteRegistry } from '../../base/react';
-import { MiddlewareRegistry, ReducerRegistry } from '../../base/redux';
+import {
+    MiddlewareRegistry,
+    ReducerRegistry,
+    StateListenerRegistry
+} from '../../base/redux';
 import { SoundCollection } from '../../base/sounds';
 import { PersistenceRegistry } from '../../base/storage';
 import { toURLString } from '../../base/util';
@@ -386,14 +390,13 @@ export class AbstractApp extends Component {
      * @returns {Store} - The redux store to be used by this
      * {@code AbstractApp}.
      */
-    _maybeCreateStore(props) {
+    _maybeCreateStore({ store }) {
         // The application Jitsi Meet is architected with redux. However, I do
         // not want consumers of the App React Component to be forced into
         // dealing with redux. If the consumer did not provide an external redux
         // store, utilize an internal redux store.
-        let store = props.store;
-
         if (typeof store === 'undefined') {
+            // eslint-disable-next-line no-param-reassign
             store = this._createStore();
 
             // This is temporary workaround to be able to dispatch actions from
@@ -404,6 +407,9 @@ export class AbstractApp extends Component {
                 APP.store = store;
             }
         }
+
+        // StateListenerRegistry
+        store && StateListenerRegistry.subscribe(store);
 
         return store;
     }

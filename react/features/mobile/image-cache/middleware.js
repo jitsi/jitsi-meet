@@ -1,7 +1,6 @@
 /* @flow */
 
 import { APP_WILL_MOUNT } from '../../app';
-import { CONFERENCE_FAILED, CONFERENCE_LEFT } from '../../base/conference';
 import {
     getAvatarURL,
     getLocalParticipant,
@@ -37,8 +36,15 @@ const _PREFETCH_AVATAR_URLS = false;
 MiddlewareRegistry.register(({ getState }) => next => action => {
     switch (action.type) {
     case APP_WILL_MOUNT:
-    case CONFERENCE_FAILED:
-    case CONFERENCE_LEFT:
+        // XXX CONFERENCE_FAILED/LEFT are no longer used here because they
+        // are tricky to get right as detectors of the moments in time at which
+        // CachedImage is not used. Anyway, if ImageCache is to be cleared from
+        // time to time, SET_LOCATION_URL is a much easier detector of such
+        // opportune times. Fixes at least one 100%-reproducible case of
+        // "TypeError: Cannot read property handlers of undefined." Anyway, in
+        // order to reduce the re-downloading of the same avatars, eventually we
+        // decided to not clear during the runtime of the app (other that at the
+        // beginning that is).
         ImageCache && ImageCache.get().clear();
         break;
 

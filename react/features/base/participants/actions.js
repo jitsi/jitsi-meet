@@ -22,17 +22,23 @@ import { getLocalParticipant } from './functions';
  * Create an action for when dominant speaker changes.
  *
  * @param {string} id - Participant's ID.
+ * @param {JitsiConference} conference - The {@code JitsiConference} associated
+ * with the participant identified by the specified {@code id}. Only the local
+ * participant is allowed to not specify an associated {@code JitsiConference}
+ * instance.
  * @returns {{
  *     type: DOMINANT_SPEAKER_CHANGED,
  *     participant: {
+ *         conference: JitsiConference,
  *         id: string
  *     }
  * }}
  */
-export function dominantSpeakerChanged(id) {
+export function dominantSpeakerChanged(id, conference) {
     return {
         type: DOMINANT_SPEAKER_CHANGED,
         participant: {
+            conference,
             id
         }
     };
@@ -123,7 +129,19 @@ export function localParticipantLeft() {
         const participant = getLocalParticipant(getState);
 
         if (participant) {
-            return dispatch(participantLeft(participant.id));
+            return (
+                dispatch(
+                    participantLeft(
+                        participant.id,
+
+                        // XXX Only the local participant is allowed to leave
+                        // without stating the JitsiConference instance because
+                        // the local participant is uniquely identified by the
+                        // very fact that there is only one local participant
+                        // (and the fact that the local participant "joins" at
+                        // the beginning of the app and "leaves" at the end of
+                        // the app).
+                        undefined)));
         }
     };
 }
@@ -214,11 +232,16 @@ export function participantDisplayNameChanged(id, displayName = '') {
  *
  * @param {Participant} participant - Information about participant.
  * @returns {{
- *      type: PARTICIPANT_JOINED,
- *      participant: Participant
+ *     type: PARTICIPANT_JOINED,
+ *     participant: Participant
  * }}
  */
 export function participantJoined(participant) {
+    if (!participant.local && !participant.conference) {
+        throw Error(
+            'A remote participant must be associated with a JitsiConference!');
+    }
+
     return {
         type: PARTICIPANT_JOINED,
         participant
@@ -229,17 +252,23 @@ export function participantJoined(participant) {
  * Action to signal that a participant has left.
  *
  * @param {string} id - Participant's ID.
+ * @param {JitsiConference} conference - The {@code JitsiConference} associated
+ * with the participant identified by the specified {@code id}. Only the local
+ * participant is allowed to not specify an associated {@code JitsiConference}
+ * instance.
  * @returns {{
  *     type: PARTICIPANT_LEFT,
  *     participant: {
+ *         conference: JitsiConference,
  *         id: string
  *     }
  * }}
  */
-export function participantLeft(id) {
+export function participantLeft(id, conference) {
     return {
         type: PARTICIPANT_LEFT,
         participant: {
+            conference,
             id
         }
     };
@@ -393,7 +422,5 @@ export function showParticipantJoinedNotification(displayName) {
     joinedParticipantsNames.push(
         displayName || interfaceConfig.DEFAULT_REMOTE_DISPLAY_NAME);
 
-    return dispatch => {
-        _throttledNotifyParticipantConnected(dispatch);
-    };
+    return dispatch => _throttledNotifyParticipantConnected(dispatch);
 }

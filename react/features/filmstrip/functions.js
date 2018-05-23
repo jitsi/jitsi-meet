@@ -1,6 +1,9 @@
 // @flow
 
-import { getPinnedParticipant } from '../base/participants';
+import {
+    getParticipantCount,
+    getPinnedParticipant
+} from '../base/participants';
 
 declare var interfaceConfig: Object;
 
@@ -13,8 +16,7 @@ declare var interfaceConfig: Object;
  * in the filmstrip, then {@code true}; otherwise, {@code false}.
  */
 export function shouldRemoteVideosBeVisible(state: Object) {
-    const participants = state['features/base/participants'];
-    const participantCount = participants.length;
+    const participantCount = getParticipantCount(state);
     let pinnedParticipant;
 
     return Boolean(
@@ -26,7 +28,7 @@ export function shouldRemoteVideosBeVisible(state: Object) {
             || (participantCount > 1
                 && (state['features/filmstrip'].hovered
                     || state['features/toolbox'].visible
-                    || ((pinnedParticipant = getPinnedParticipant(participants))
+                    || ((pinnedParticipant = getPinnedParticipant(state))
                         && pinnedParticipant.local)))
 
             || (typeof interfaceConfig === 'object'

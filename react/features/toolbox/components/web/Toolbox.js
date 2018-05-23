@@ -505,6 +505,12 @@ class Toolbox extends Component<Props> {
         const { _localParticipantID, _raisedHand } = this.props;
 
         this.props.dispatch(participantUpdated({
+            // XXX Only the local participant is allowed to update without
+            // stating the JitsiConference instance (i.e. participant property
+            // `conference` for a remote participant) because the local
+            // participant is uniquely identified by the very fact that there is
+            // only one local participant.
+
             id: _localParticipantID,
             local: true,
             raisedHand: !_raisedHand
