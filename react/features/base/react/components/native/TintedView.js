@@ -1,7 +1,7 @@
 // @flow
 
 import React, { Component } from 'react';
-import { View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 
 import { ColorPalette } from '../../../styles';
 
@@ -9,13 +9,9 @@ import { ColorPalette } from '../../../styles';
  * Base style for the {@code TintedView} component.
  */
 const BASE_STYLE = {
+    ...StyleSheet.absoluteFillObject,
     alignItems: 'center',
-    bottom: 0,
-    justifyContent: 'center',
-    left: 0,
-    position: 'absolute',
-    right: 0,
-    top: 0
+    justifyContent: 'center'
 };
 
 /**

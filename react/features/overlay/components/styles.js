@@ -1,3 +1,5 @@
+import { StyleSheet } from 'react-native';
+
 import { BoxModel, ColorPalette, createStyleSheet } from '../../base/styles';
 
 /**
@@ -14,12 +16,8 @@ export const overlayFrame = createStyleSheet({
      * rendered.
      */
     container: {
-        backgroundColor: ColorPalette.red,
-        bottom: 0,
-        left: 0,
-        position: 'absolute',
-        right: 0,
-        top: 0
+        ...StyleSheet.absoluteFillObject,
+        backgroundColor: ColorPalette.red
     }
 });
 
@@ -52,22 +50,16 @@ export const pageReloadOverlay = createStyleSheet({
      */
     container: {
         flex: 1,
-        marginBottom: BoxModel.margin,
-        marginHorizontal: BoxModel.margin,
-        marginTop: BoxModel.margin * 3
+        margin: BoxModel.margin * 2
     },
 
     /**
      * Style for the {@code LoadingIndicator}.
      */
     loadingIndicator: {
+        ...StyleSheet.absoluteFillObject,
         alignItems: 'center',
-        bottom: 0,
-        justifyContent: 'center',
-        left: 0,
-        position: 'absolute',
-        right: 0,
-        top: 0
+        justifyContent: 'center'
     },
 
     /**

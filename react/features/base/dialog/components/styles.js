@@ -1,3 +1,5 @@
+import { StyleSheet } from 'react-native';
+
 import { ColorPalette, createStyleSheet } from '../../styles';
 
 /**
@@ -32,11 +34,7 @@ export const bottomSheetStyles = createStyleSheet({
      * view instead, so the modal animation doesn't affect the backdrop.
      */
     backdrop: {
-        bottom: 0,
-        left: 0,
-        position: 'absolute',
-        right: 0,
-        top: 0
+        ...StyleSheet.absoluteFillObject
     },
 
     /**
@@ -53,12 +51,8 @@ export const bottomSheetStyles = createStyleSheet({
      * Style for an overlay on top of which the sheet will be displayed.
      */
     overlay: {
-        backgroundColor: 'rgba(0, 0, 0, 0.8)',
-        bottom: 0,
-        left: 0,
-        position: 'absolute',
-        right: 0,
-        top: 0
+        ...StyleSheet.absoluteFillObject,
+        backgroundColor: 'rgba(0, 0, 0, 0.8)'
     },
 
     /**

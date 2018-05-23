@@ -1,3 +1,5 @@
+import { StyleSheet } from 'react-native';
+
 import {
     BoxModel,
     ColorPalette,
@@ -47,15 +49,11 @@ const HEADER_STYLES = {
      * The top-level element of a page.
      */
     page: {
+        ...StyleSheet.absoluteFillObject,
         alignItems: 'stretch',
-        bottom: 0,
         flex: 1,
         flexDirection: 'column',
-        left: 0,
-        overflow: 'hidden',
-        position: 'absolute',
-        right: 0,
-        top: 0
+        overflow: 'hidden'
     },
 
     /**
