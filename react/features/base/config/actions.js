@@ -16,14 +16,14 @@ import { setConfigFromURLParams } from './functions';
 /**
  * Signals that the configuration for a specific locationURL will be loaded now.
  *
- * @param {string|URL} locationURL - The URL of the location which necessitated
+ * @param {URL} locationURL - The URL of the location which necessitated
  * the loading of a configuration.
  * @returns {{
  *     type: CONFIG_WILL_LOAD,
  *     locationURL
  * }}
  */
-export function configWillLoad(locationURL: string | URL) {
+export function configWillLoad(locationURL: URL) {
     return {
         type: CONFIG_WILL_LOAD,
         locationURL
@@ -35,15 +35,19 @@ export function configWillLoad(locationURL: string | URL) {
  *
  * @param {Error} error - The {@code Error} which prevented the successful
  * loading of a configuration.
- * @param {string|URL} locationURL - The URL of the location which necessitated
+ * @param {URL} locationURL - The URL of the location which necessitated
  * the loading of a configuration.
+ *
+ * FIXME cleanup around the fact that only URL and not a string is used as
+ * locationURL
+ *
  * @returns {{
  *     type: LOAD_CONFIG_ERROR,
  *     error: Error,
  *     locationURL
  * }}
  */
-export function loadConfigError(error: Error, locationURL: string | URL) {
+export function loadConfigError(error: Error, locationURL: URL) {
     return {
         type: LOAD_CONFIG_ERROR,
         error,

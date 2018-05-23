@@ -49,11 +49,18 @@ function _appNavigateToMandatoryLocation(
         newLocation: Object
 ): Promise<void> {
     const { room } = newLocation;
+    const locationURL = new URL(newLocation.toString());
 
-    dispatch(configWillLoad(newLocation));
+    dispatch(configWillLoad(locationURL));
 
+    // FIXME obviously passing both newLocation and locationURL doesn't make
+    // sense, but it is required to do the is relevant check.
+    // It's confusing that we're using custom URI object in one place
+    // and the URL in setLocationURL action. Another thing is that custom URI is
+    // not described by a flow type and if we're adding custom fields to URI
+    // (room) it should have a different name (JitsiURI or whatever).
     return (
-        _loadConfig(dispatch, getState, newLocation)
+        _loadConfig(dispatch, getState, newLocation, locationURL)
             .then(
                 config => loadConfigSettled(/* error */ undefined, config),
                 error => loadConfigSettled(error, /* config */ undefined))
@@ -71,23 +78,31 @@ function _appNavigateToMandatoryLocation(
      * @returns {void}
      */
     function loadConfigSettled(error, config) {
-        // FIXME Due to the asynchronous nature of the loading, the specified
-        // config may or may not be required by the time the notification
-        // arrives.
+        // FIXME having the logic to reject in _loadConfig requires us to have
+        // a duplicated check here for the purpose of eventual setLocationURL.
+        const { locationURL: currentLocationURL }
+            = getState()['features/base/config'];
 
+        // XXX I have not investigated it thoroughly, but it seem like it was
+        // the intention to set the locationURL, before emitting
+        // 'loadConfigError' or 'setConfig' actions.
         const promise
-            = dispatch(setLocationURL(new URL(newLocation.toString())));
+            = locationURL === currentLocationURL
+                ? dispatch(setLocationURL(locationURL))
+                : Promise.resolve();
 
         if (error) {
             // XXX The failure could be, for example, because of a
             // certificate-related error. In which case the connection will
             // fail later in Strophe anyway.
             return promise.then(() => {
-                dispatch(loadConfigError(error, newLocation));
+                dispatch(loadConfigError(error, locationURL));
                 throw error;
             });
         }
 
+        // FIXME is the promise returned by the setLocationURL dispatch
+        // a requirement for yet another "is still relevant check" ?
         return promise.then(() =>
             dispatch(setConfig(config)));
     }
@@ -175,6 +190,8 @@ export function appWillUnmount(app: Object) {
     };
 }
 
+/* eslint-disable max-params */
+
 /**
  * Loads config.js from a specific host.
  *
@@ -182,13 +199,15 @@ export function appWillUnmount(app: Object) {
  * @param {Function} getState - The redux {@code getState} function.
  * @param {Object} location - The location URI which specifies the host to load
  * the config.js from.
+ * @param {URL} newLocation - FIXME - feels bad.
  * @private
  * @returns {Promise<Object>}
  */
 function _loadConfig(
         dispatch: Dispatch<*>,
         getState: Function,
-        { contextRoot, host, protocol, room }) {
+        { contextRoot, host, protocol, room },
+        newLocation: URL) {
     // XXX As the mobile/React Native app does not employ config on the
     // WelcomePage, do not download config.js from the deployment when
     // navigating to the WelcomePage - the perceived/visible navigation will be
@@ -216,24 +235,37 @@ function _loadConfig(
     /* eslint-enable no-param-reassign */
 
     return loadConfig(url).then(
-        /* onFulfilled */ config => {
-            dispatch(storeConfig(baseURL, config));
+        config => {
+            const { locationURL } = getState()['features/base/config'];
 
-            return config;
-        },
-        /* onRejected */ error => {
-            // XXX The (down)loading of config failed. Try to use the last
-            // successfully fetched for that deployment. It may not match the
-            // shard.
-            const config = restoreConfig(baseURL);
-
-            if (config) {
-                return config;
+            if (locationURL !== newLocation) {
+                throw new Error(
+                    `The load config is no longer relevant for ${url}`);
             }
 
-            throw error;
-        });
+            return config;
+        })
+        .then(
+            /* onFulfilled */ config => {
+                dispatch(storeConfig(baseURL, config));
+
+                return config;
+            },
+            /* onRejected */ error => {
+                // XXX The (down)loading of config failed. Try to use the last
+                // successfully fetched for that deployment. It may not match
+                // the shard.
+                const config = restoreConfig(baseURL);
+
+                if (config) {
+                    return config;
+                }
+
+                throw error;
+            });
 }
+
+/* eslint-enable max-params */
 
 /**
  * Redirects to another page generated by replacing the path in the original URL
