@@ -1,22 +1,22 @@
 /**
- * The redux action which signals that a configuration will be loaded for a
- * specific locationURL.
+ * The redux action which signals that a configuration (commonly known in Jitsi
+ * Meet as config.js) will be loaded for a specific locationURL.
  *
  * {
  *     type: CONFIG_WILL_LOAD,
- *     locationURL: string | URL
+ *     locationURL: URL
  * }
  */
 export const CONFIG_WILL_LOAD = Symbol('CONFIG_WILL_LOAD');
 
 /**
- * The redux action which signals that a configuration could not be loaded due
- * to a specific error.
+ * The redux action which signals that a configuration (commonly known in Jitsi
+ * Meet as config.js) could not be loaded due to a specific error.
  *
  * {
  *     type: LOAD_CONFIG_ERROR,
  *     error: Error,
- *     locationURL: string | URL
+ *     locationURL: URL
  * }
  */
 export const LOAD_CONFIG_ERROR = Symbol('LOAD_CONFIG_ERROR');

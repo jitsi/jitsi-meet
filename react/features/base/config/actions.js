@@ -5,25 +5,22 @@ import type { Dispatch } from 'redux';
 import { addKnownDomains } from '../known-domains';
 import { parseURIString } from '../util';
 
-import {
-    CONFIG_WILL_LOAD,
-    LOAD_CONFIG_ERROR,
-    SET_CONFIG
-} from './actionTypes';
+import { CONFIG_WILL_LOAD, LOAD_CONFIG_ERROR, SET_CONFIG } from './actionTypes';
 import { _CONFIG_STORE_PREFIX } from './constants';
 import { setConfigFromURLParams } from './functions';
 
 /**
- * Signals that the configuration for a specific locationURL will be loaded now.
+ * Signals that the configuration (commonly known in Jitsi Meet as config.js)
+ * for a specific locationURL will be loaded now.
  *
- * @param {string|URL} locationURL - The URL of the location which necessitated
- * the loading of a configuration.
+ * @param {URL} locationURL - The URL of the location which necessitated the
+ * loading of a configuration.
  * @returns {{
  *     type: CONFIG_WILL_LOAD,
- *     locationURL
+ *     locationURL: URL
  * }}
  */
-export function configWillLoad(locationURL: string | URL) {
+export function configWillLoad(locationURL: URL) {
     return {
         type: CONFIG_WILL_LOAD,
         locationURL
@@ -31,19 +28,20 @@ export function configWillLoad(locationURL: string | URL) {
 }
 
 /**
- * Signals that a configuration could not be loaded due to a specific error.
+ * Signals that a configuration (commonly known in Jitsi Meet as config.js)
+ * could not be loaded due to a specific error.
  *
  * @param {Error} error - The {@code Error} which prevented the successful
  * loading of a configuration.
- * @param {string|URL} locationURL - The URL of the location which necessitated
- * the loading of a configuration.
+ * @param {URL} locationURL - The URL of the location which necessitated the
+ * loading of a configuration.
  * @returns {{
  *     type: LOAD_CONFIG_ERROR,
  *     error: Error,
- *     locationURL
+ *     locationURL: URL
  * }}
  */
-export function loadConfigError(error: Error, locationURL: string | URL) {
+export function loadConfigError(error: Error, locationURL: URL) {
     return {
         type: LOAD_CONFIG_ERROR,
         error,

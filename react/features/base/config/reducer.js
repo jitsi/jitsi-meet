@@ -1,14 +1,10 @@
-/* @flow */
+// @flow
 
 import _ from 'lodash';
 
 import { equals, ReducerRegistry, set } from '../redux';
 
-import {
-    CONFIG_WILL_LOAD,
-    LOAD_CONFIG_ERROR,
-    SET_CONFIG
-} from './actionTypes';
+import { CONFIG_WILL_LOAD, LOAD_CONFIG_ERROR, SET_CONFIG } from './actionTypes';
 
 /**
  * The initial state of the feature base/config when executing in a
@@ -54,20 +50,41 @@ ReducerRegistry.register(
         case CONFIG_WILL_LOAD:
             return {
                 error: undefined,
+
+                /**
+                 * The URL of the location associated with/configured by this
+                 * configuration.
+                 *
+                 * @type URL
+                 */
                 locationURL: action.locationURL
             };
 
         case LOAD_CONFIG_ERROR:
-            return {
-                error: action.error
-            };
+            // XXX LOAD_CONFIG_ERROR is one of the settlement execution paths of
+            // the asynchronous "loadConfig procedure/process" started with
+            // CONFIG_WILL_LOAD. Due to the asynchronous nature of it, whoever
+            // is settling the process needs to provide proof that they have
+            // started it and that the iteration of the process being completed
+            // now is still of interest to the app.
+            if (state.locationURL === action.locationURL) {
+                return {
+                    /**
+                     * The {@link Error} which prevented the loading of the
+                     * configuration of the associated {@code locationURL}.
+                     *
+                     * @type Error
+                     */
+                    error: action.error
+                };
+            }
+            break;
 
         case SET_CONFIG:
             return _setConfig(state, action);
-
-        default:
-            return state;
         }
+
+        return state;
     });
 
 /**

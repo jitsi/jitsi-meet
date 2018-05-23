@@ -28,8 +28,9 @@ import { ENTER_PICTURE_IN_PICTURE } from '../picture-in-picture';
  */
 MiddlewareRegistry.register(store => next => action => {
     const result = next(action);
+    const { type } = action;
 
-    switch (action.type) {
+    switch (type) {
     case CONFERENCE_FAILED: {
         const { error, ...data } = action;
 
@@ -64,16 +65,19 @@ MiddlewareRegistry.register(store => next => action => {
         break;
 
     case ENTER_PICTURE_IN_PICTURE:
-        _sendEvent(store, _getSymbolDescription(action.type), /* data */ {});
+        _sendEvent(store, _getSymbolDescription(type), /* data */ {});
         break;
 
     case LOAD_CONFIG_ERROR: {
-        const { error, locationURL, type } = action;
+        const { error, locationURL } = action;
 
-        _sendEvent(store, _getSymbolDescription(type), /* data */ {
-            error: _toErrorString(error),
-            url: toURLString(locationURL)
-        });
+        _sendEvent(
+            store,
+            _getSymbolDescription(type),
+            /* data */ {
+                error: _toErrorString(error),
+                url: toURLString(locationURL)
+            });
         break;
     }
 

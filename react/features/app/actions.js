@@ -1,4 +1,4 @@
-/* @flow */
+// @flow
 
 import type { Dispatch } from 'redux';
 
@@ -51,8 +51,9 @@ function _appNavigateToMandatoryLocation(
         newLocation: Object
 ): Promise<void> {
     const { room } = newLocation;
+    const locationURL = new URL(newLocation.toString());
 
-    dispatch(configWillLoad(newLocation));
+    dispatch(configWillLoad(locationURL));
 
     return (
         _loadConfig(dispatch, getState, newLocation)
@@ -73,33 +74,32 @@ function _appNavigateToMandatoryLocation(
      * @returns {void}
      */
     function loadConfigSettled(error, config) {
-        // Due to the asynchronous nature of the loading, the specified
-        // config may or may not be required by the time the notification
-        // arrives. If we receive the config for a location we are no longer
-        // interested in, just dump it.
+        let promise;
 
-        const { locationURL: currentLocationURL }
-            = getState()['features/base/config'];
-
-        if (currentLocationURL !== newLocation) {
-            throw new Error('Config no longer needed');
+        // Due to the asynchronous nature of the loading, the specified config
+        // may or may not be required by the time the notification arrives.
+        // If we receive the config for a location we are no longer interested
+        // in, "ignore" it - deliver it to the external API, for example, but do
+        // not proceed with the appNavigate procedure/process.
+        if (getState()['features/base/config'].locationURL === locationURL) {
+            promise = dispatch(setLocationURL(locationURL));
+        } else {
+            // eslint-disable-next-line no-param-reassign
+            error || (error = new Error('Config no longer needed!'));
+            promise = Promise.resolve();
         }
 
-        const promise
-            = dispatch(setLocationURL(new URL(newLocation.toString())));
-
-        if (error) {
-            // XXX The failure could be, for example, because of a
-            // certificate-related error. In which case the connection will
-            // fail later in Strophe anyway.
-            return promise.then(() => {
-                dispatch(loadConfigError(error, newLocation));
+        return promise.then(() => {
+            if (error) {
+                // XXX The failure could be, for example, because of a
+                // certificate-related error. In which case the connection will
+                // fail later in Strophe anyway.
+                dispatch(loadConfigError(error, locationURL));
                 throw error;
-            });
-        }
+            }
 
-        return promise.then(() =>
-            dispatch(setConfig(config)));
+            return dispatch(setConfig(config));
+        });
     }
 }
 
@@ -227,6 +227,10 @@ function _loadConfig(
 
     return loadConfig(url).then(
         /* onFulfilled */ config => {
+            // FIXME If the config is no longer needed (in the terms of
+            // _loadConfig) and that happened because of an intervening
+            // _loadConfig for the same baseURL, then the unneeded config may be
+            // stored after the needed config. Anyway.
             dispatch(storeConfig(baseURL, config));
 
             return config;
