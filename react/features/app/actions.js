@@ -8,11 +8,13 @@ import {
     setConfig,
     storeConfig
 } from '../base/config';
-import { setLocationURL } from '../base/connection';
+import { setLocationURL, setPendingLocationURL } from '../base/connection';
 import { loadConfig } from '../base/lib-jitsi-meet';
 import { parseURIString } from '../base/util';
 
 import { APP_WILL_MOUNT, APP_WILL_UNMOUNT } from './actionTypes';
+
+const logger = require('jitsi-meet-logger').getLogger(__filename);
 
 declare var APP: Object;
 
@@ -49,15 +51,20 @@ function _appNavigateToMandatoryLocation(
         newLocation: Object
 ): Promise<void> {
     const { room } = newLocation;
+    const locationURL = new URL(newLocation.toString());
 
     dispatch(configWillLoad(newLocation));
+    dispatch(setPendingLocationURL(locationURL));
 
     return (
         _loadConfig(dispatch, getState, newLocation)
             .then(
                 config => loadConfigSettled(/* error */ undefined, config),
                 error => loadConfigSettled(error, /* config */ undefined))
-            .then(() => dispatch(setRoom(room))));
+            .then(
+                () => dispatch(setRoom(room)),
+                error => logger.warn(
+                    'Load config request failed to settle', error)));
 
     /**
      * Notifies that an attempt to load a configuration has completed. Due to
@@ -71,12 +78,15 @@ function _appNavigateToMandatoryLocation(
      * @returns {void}
      */
     function loadConfigSettled(error, config) {
-        // FIXME Due to the asynchronous nature of the loading, the specified
-        // config may or may not be required by the time the notification
-        // arrives.
+        const { pendingLocationURL } = getState()['features/base/connection'];
 
-        const promise
-            = dispatch(setLocationURL(new URL(newLocation.toString())));
+        if (pendingLocationURL !== locationURL) {
+            throw new Error(
+                'The load config operation is no longer relevant for: '
+                    + `${locationURL.toString()}`);
+        }
+
+        const promise = dispatch(setLocationURL(locationURL));
 
         if (error) {
             // XXX The failure could be, for example, because of a

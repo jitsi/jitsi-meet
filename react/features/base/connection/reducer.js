@@ -2,7 +2,7 @@
 
 import { SET_ROOM } from '../conference';
 import { JitsiConnectionErrors } from '../lib-jitsi-meet';
-import { assign, ReducerRegistry } from '../redux';
+import { assign, ReducerRegistry, set } from '../redux';
 import { parseURIString } from '../util';
 
 import {
@@ -10,7 +10,8 @@ import {
     CONNECTION_ESTABLISHED,
     CONNECTION_FAILED,
     CONNECTION_WILL_CONNECT,
-    SET_LOCATION_URL
+    SET_LOCATION_URL,
+    SET_PENDING_LOCATION_URL
 } from './actionTypes';
 
 import type { ConnectionFailedError } from './actions.native';
@@ -36,6 +37,9 @@ ReducerRegistry.register(
 
         case SET_LOCATION_URL:
             return _setLocationURL(state, action);
+
+        case SET_PENDING_LOCATION_URL:
+            return _setPendingLocationURL(state, action);
 
         case SET_ROOM:
             return _setRoom(state);
@@ -203,8 +207,25 @@ function _setLocationURL(
         { locationURL }: { locationURL: ?URL }) {
     return assign(state, {
         locationURL,
-        options: locationURL ? _constructOptions(locationURL) : undefined
+        options: locationURL ? _constructOptions(locationURL) : undefined,
+        pendingLocationURL: undefined
     });
+}
+
+/**
+ * Updates the latest pending URL. Check {@link SET_PENDING_LOCATION_URL}
+ * description for more details.
+ *
+ * @param {Object} state - The redux state of the feature base/connection.
+ * @param {Action} action - The redux action {@code SET_PENDING_LOCATION_URL} to
+ * reduce.
+ * @returns {Object}
+ * @private
+ */
+function _setPendingLocationURL(
+        state: Object,
+        { pendingLocationURL }: { pendingLocationURL: ?URL }) {
+    return set(state, 'pendingLocationURL', pendingLocationURL);
 }
 
 /**

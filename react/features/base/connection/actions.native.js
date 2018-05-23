@@ -12,7 +12,8 @@ import {
     CONNECTION_ESTABLISHED,
     CONNECTION_FAILED,
     CONNECTION_WILL_CONNECT,
-    SET_LOCATION_URL
+    SET_LOCATION_URL,
+    SET_PENDING_LOCATION_URL
 } from './actionTypes';
 
 const logger = require('jitsi-meet-logger').getLogger(__filename);
@@ -371,5 +372,19 @@ export function setLocationURL(locationURL: ?URL) {
     return {
         type: SET_LOCATION_URL,
         locationURL
+    };
+}
+
+/**
+ * Sets a pending location URL for which the config is being resolved - that's
+ * an async operation which may take unknown amount of time.
+ *
+ * @param {URL} pendingLocationURL - The candidate location URL.
+ * @returns {{type, pendingLocationURL: URL}}
+ */
+export function setPendingLocationURL(pendingLocationURL: ?URL) {
+    return {
+        type: SET_PENDING_LOCATION_URL,
+        pendingLocationURL
     };
 }
