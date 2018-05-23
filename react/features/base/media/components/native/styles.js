@@ -35,11 +35,7 @@ export default StyleSheet.create({
      * and create a fade-in effect.
      */
     videoCover: {
-        backgroundColor: ColorPalette.black,
-        bottom: 0,
-        left: 0,
-        position: 'absolute',
-        right: 0,
-        top: 0
+        ...StyleSheet.absoluteFillObject,
+        backgroundColor: ColorPalette.black
     }
 });

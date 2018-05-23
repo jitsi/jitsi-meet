@@ -1,4 +1,5 @@
 // @flow
+import { StyleSheet } from 'react-native';
 
 import { BoxModel, ColorPalette, createStyleSheet } from '../../../base/styles';
 
@@ -98,11 +99,7 @@ const styles = createStyleSheet({
      * of the screen.
      */
     toolboxWide: {
-        bottom: 0,
-        left: 0,
-        position: 'absolute',
-        right: 0,
-        top: 0
+        ...StyleSheet.absoluteFillObject
     },
 
     /**

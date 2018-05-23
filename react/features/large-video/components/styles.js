@@ -1,3 +1,5 @@
+import { StyleSheet } from 'react-native';
+
 import { ColorPalette, createStyleSheet } from '../../base/styles';
 
 /**
@@ -10,14 +12,10 @@ export default createStyleSheet({
      * Large video container style.
      */
     largeVideo: {
+        ...StyleSheet.absoluteFillObject,
         alignItems: 'stretch',
         backgroundColor: ColorPalette.appBackground,
-        bottom: 0,
         flex: 1,
-        justifyContent: 'center',
-        left: 0,
-        position: 'absolute',
-        right: 0,
-        top: 0
+        justifyContent: 'center'
     }
 });

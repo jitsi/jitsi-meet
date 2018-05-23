@@ -1,3 +1,5 @@
+import { StyleSheet } from 'react-native';
+
 import { ColorPalette, createStyleSheet } from '../../styles';
 
 export default createStyleSheet({
@@ -8,17 +10,13 @@ export default createStyleSheet({
      * The style of {@code CalleeInfo}.
      */
     ringing: {
+        ...StyleSheet.absoluteFillObject,
         alignItems: 'center',
         backgroundColor: ColorPalette.black,
-        bottom: 0,
         flex: 0,
         flexDirection: 'column',
         justifyContent: 'center',
-        left: 0,
-        opacity: 0.8,
-        position: 'absolute',
-        right: 0,
-        top: 0
+        opacity: 0.8
     },
 
     'ringing__avatar': {
