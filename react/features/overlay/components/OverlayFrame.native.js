@@ -1,7 +1,7 @@
 // @flow
 
-import React, { Component } from 'react';
-import { View } from 'react-native';
+import React, { Component, type Node } from 'react';
+import { SafeAreaView } from 'react-native';
 
 import { overlayFrame as styles } from './styles';
 
@@ -13,7 +13,7 @@ type Props = {
     /**
      * The children components to be displayed into the overlay frame.
      */
-    children?: React$Node,
+    children: Node,
 };
 
 /**
@@ -24,13 +24,13 @@ export default class OverlayFrame extends Component<Props> {
      * Implements React's {@link Component#render()}.
      *
      * @inheritdoc
-     * @returns {React$Element}
+     * @returns {ReactElement}
      */
     render() {
         return (
-            <View style = { styles.container }>
+            <SafeAreaView style = { styles.container }>
                 { this.props.children }
-            </View>
+            </SafeAreaView>
         );
     }
 }
