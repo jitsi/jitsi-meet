@@ -5,6 +5,7 @@ import { Platform } from '../react';
 import { ColorPalette } from './components';
 
 declare type StyleSheet = Object;
+export type StyleType = StyleSheet | Array<StyleSheet>;
 
 /**
  * The list of the well-known style properties which may not be numbers on Web
@@ -14,7 +15,35 @@ declare type StyleSheet = Object;
  */
 const _WELL_KNOWN_NUMBER_PROPERTIES = [ 'height', 'width' ];
 
-/* eslint-disable flowtype/space-before-type-colon */
+/**
+ * Combines the given 2 styles into a single one.
+ *
+ * @param {StyleType} a - An object or array of styles.
+ * @param {StyleType} b - An object or array of styles.
+ * @private
+ * @returns {StyleType} - The merged styles.
+ */
+export function combineStyles(a: StyleType, b: StyleType): StyleType {
+    const result = [];
+
+    if (a) {
+        if (Array.isArray(a)) {
+            result.push(...a);
+        } else {
+            result.push(a);
+        }
+    }
+
+    if (b) {
+        if (Array.isArray(b)) {
+            result.push(...b);
+        } else {
+            result.push(b);
+        }
+    }
+
+    return result;
+}
 
 /**
  * Create a style sheet using the provided style definitions.
@@ -25,11 +54,8 @@ const _WELL_KNOWN_NUMBER_PROPERTIES = [ 'height', 'width' ];
  * (often platform-independent) styles.
  * @returns {StyleSheet}
  */
-export function createStyleSheet(styles: StyleSheet, overrides: StyleSheet = {})
-        : StyleSheet {
-
-/* eslint-enable flowtype/space-before-type-colon */
-
+export function createStyleSheet(
+        styles: StyleSheet, overrides: StyleSheet = {}): StyleSheet {
     const combinedStyles = {};
 
     for (const k of Object.keys(styles)) {
