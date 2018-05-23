@@ -24,6 +24,7 @@ const WHITELISTED_KEYS = [
     'autoRecord',
     'autoRecordToken',
     'avgRtpStatsN',
+    'callFlowsEnabled',
     'callStatsConfIDNamespace',
     'callStatsID',
     'callStatsSecret',
