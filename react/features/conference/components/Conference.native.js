@@ -10,6 +10,7 @@ import { appNavigate } from '../../app';
 import { connect, disconnect } from '../../base/connection';
 import { DialogContainer } from '../../base/dialog';
 import { CalleeInfoContainer } from '../../base/jwt';
+import { JitsiRecordingConstants } from '../../base/lib-jitsi-meet';
 import { getParticipantCount } from '../../base/participants';
 import { Container, LoadingIndicator, TintedView } from '../../base/react';
 import { TestConnectionInfo } from '../../base/testing';
@@ -17,6 +18,7 @@ import { createDesiredLocalTracks } from '../../base/tracks';
 import { ConferenceNotification } from '../../calendar-sync';
 import { Filmstrip } from '../../filmstrip';
 import { LargeVideo } from '../../large-video';
+import { RecordingLabel } from '../../recording';
 import { setToolboxVisible, Toolbox } from '../../toolbox';
 import { VideoQualityLabel } from '../../video-quality';
 
@@ -246,7 +248,14 @@ class Conference extends Component<Props> {
                       * participants.
                       */}
                     <Filmstrip />
-                    <VideoQualityLabel style = { styles.videoQualityLabel } />
+
+                    <View style = { styles.indicatorContainer }>
+                        <RecordingLabel
+                            mode = { JitsiRecordingConstants.mode.FILE } />
+                        <RecordingLabel
+                            mode = { JitsiRecordingConstants.mode.STREAM } />
+                        <VideoQualityLabel />
+                    </View>
                 </View>
                 <TestConnectionInfo />
 
