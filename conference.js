@@ -27,7 +27,6 @@ import {
     redirectWithStoredParams,
     reloadWithStoredParams
 } from './react/features/app';
-import { updateRecordingSessionData } from './react/features/recording';
 
 import EventEmitter from 'events';
 
@@ -1942,13 +1941,6 @@ export default {
                     logger.error(
                         'Received invalid recorder status update',
                         recorderSession);
-
-                    return;
-                }
-
-                if (recorderSession.getID()) {
-                    APP.store.dispatch(
-                        updateRecordingSessionData(recorderSession));
 
                     return;
                 }
