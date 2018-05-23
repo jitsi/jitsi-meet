@@ -19,6 +19,18 @@ export default createStyleSheet({
     }),
 
     /**
+     * View that contains the indicators.
+     */
+    indicatorContainer: {
+        flex: 1,
+        flexDirection: 'row',
+        margin: BoxModel.margin,
+        position: 'absolute',
+        right: 0,
+        top: 0
+    },
+
+    /**
      * The style of the {@link View} which expands over the whole
      * {@link Conference} area and splits it between the {@link Filmstrip} and
      * the {@link Toolbox}.
@@ -35,11 +47,5 @@ export default createStyleSheet({
         // On iPhone X there is the notch. In the two cases BoxModel.margin is
         // not enough.
         top: BoxModel.margin * 3
-    },
-
-    videoQualityLabel: {
-        right: 0,
-        top: 0,
-        position: 'absolute'
     }
 });

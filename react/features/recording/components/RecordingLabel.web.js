@@ -1,10 +1,16 @@
 // @flow
 
-import React, { Component } from 'react';
+import React from 'react';
+import { connect } from 'react-redux';
 
 import { CircularLabel } from '../../base/label';
 import { translate } from '../../base/i18n';
 import { JitsiRecordingConstants } from '../../base/lib-jitsi-meet';
+
+import AbstractRecordingLabel, {
+    type Props as AbstractProps,
+    _abstractMapStateToProps
+} from './AbstractRecordingLabel';
 
 /**
  * The translation keys to use when displaying messages. The values are set
@@ -61,7 +67,7 @@ function _getTranslationKeysByMode() {
 /**
  * The type of the React {@code Component} props of {@link RecordingLabel}.
  */
-type Props = {
+type Props = AbstractProps & {
 
     /**
      * The redux representation of a recording session.
@@ -91,7 +97,7 @@ type State = {
  *
  * @extends {Component}
  */
-class RecordingLabel extends Component<Props, State> {
+class RecordingLabel extends AbstractRecordingLabel<Props, State> {
     _autohideTimeout: number;
 
     state = {
@@ -219,4 +225,23 @@ class RecordingLabel extends Component<Props, State> {
     }
 }
 
-export default translate(RecordingLabel);
+/**
+ * Maps (parts of) the Redux state to the associated
+ * {@code RecordingLabel}'s props.
+ *
+ * NOTE: This component has no props other than the abstract ones but keeping
+ * the coding style the same for consistency reasons.
+ *
+ * @param {Object} state - The Redux state.
+ * @param {Object} ownProps - The component's own props.
+ * @private
+ * @returns {{
+ * }}
+ */
+function _mapStateToProps(state: Object, ownProps: Object) {
+    return {
+        ..._abstractMapStateToProps(state, ownProps)
+    };
+}
+
+export default translate(connect(_mapStateToProps)(RecordingLabel));
