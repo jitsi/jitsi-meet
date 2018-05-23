@@ -49,7 +49,11 @@ export function invite(invitees: Array<Object>) {
 
         const state = getState();
         const { conference } = state['features/base/conference'];
-        const { inviteServiceUrl } = state['features/base/config'];
+        const {
+            callFlowsEnabled,
+            inviteServiceUrl,
+            inviteServiceCallFlowsUrl
+        } = state['features/base/config'];
         const inviteUrl = getInviteURL(state);
         const { jwt } = state['features/base/jwt'];
 
@@ -85,7 +89,8 @@ export function invite(invitees: Array<Object>) {
             // filter all rooms and users from {@link invitesLeftToSend}.
             const peopleInvitePromise
                 = invitePeopleAndChatRooms(
-                    inviteServiceUrl,
+                    callFlowsEnabled
+                        ? inviteServiceCallFlowsUrl : inviteServiceUrl,
                     inviteUrl,
                     jwt,
                     usersAndRooms)
