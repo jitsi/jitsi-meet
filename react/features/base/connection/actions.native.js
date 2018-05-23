@@ -108,10 +108,7 @@ export function connect(id: ?string, password: ?string) {
          * @returns {void}
          */
         function _onConnectionDisconnected(message: string) {
-            connection.removeEventListener(
-                JitsiConnectionEvents.CONNECTION_DISCONNECTED,
-                _onConnectionDisconnected);
-
+            unsubscribe();
             dispatch(_connectionDisconnected(connection, message));
         }
 
@@ -122,7 +119,9 @@ export function connect(id: ?string, password: ?string) {
          * @returns {void}
          */
         function _onConnectionEstablished() {
-            unsubscribe();
+            connection.removeEventListener(
+                JitsiConnectionEvents.CONNECTION_ESTABLISHED,
+                _onConnectionEstablished);
             dispatch(connectionEstablished(connection));
         }
 
@@ -141,7 +140,6 @@ export function connect(id: ?string, password: ?string) {
         function _onConnectionFailed(
                 err: string, msg: string, credentials: Object) {
             unsubscribe();
-            console.error('CONNECTION FAILED:', err, msg);
             dispatch(
                 connectionFailed(
                     connection, {
@@ -153,15 +151,15 @@ export function connect(id: ?string, password: ?string) {
         }
 
         /**
-         * Unsubscribes connection instance from {@code CONNECTION_ESTABLISHED}
-         * and {@code CONNECTION_FAILED} events.
+         * Unsubscribe the connection instance from
+         * {@code CONNECTION_DISCONNECTED} and {@code CONNECTION_FAILED} events.
          *
          * @returns {void}
          */
         function unsubscribe() {
             connection.removeEventListener(
-                JitsiConnectionEvents.CONNECTION_ESTABLISHED,
-                _onConnectionEstablished);
+                JitsiConnectionEvents.CONNECTION_DISCONNECTED,
+                _onConnectionDisconnected);
             connection.removeEventListener(
                 JitsiConnectionEvents.CONNECTION_FAILED,
                 _onConnectionFailed);
