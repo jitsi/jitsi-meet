@@ -16,6 +16,11 @@
 
 public typealias AnimationCompletion = (Bool) -> Void
 
+public protocol PiPViewCoordinatorDelegate: class {
+    
+    func exitPictureInPicture()
+}
+
 /// Coordinates the view state of a specified view to allow
 /// to be presented in full screen or in a custom Picture in Picture mode.
 /// This object will also provide the drag and tap interactions of the view
@@ -44,6 +49,8 @@ public class PiPViewCoordinator {
             return 0.25
         }
     }()
+    
+    public weak var delegate: PiPViewCoordinatorDelegate?
 
     private(set) var isInPiP: Bool = false // true if view is in PiP mode
 
@@ -127,6 +134,8 @@ public class PiPViewCoordinator {
         let exitSelector = #selector(toggleExitPiP)
         tapGestureRecognizer?.removeTarget(self, action: exitSelector)
         tapGestureRecognizer = nil
+        
+        delegate?.exitPictureInPicture()
     }
 
     /// Reset view to provide bounds, use this method on rotation or
