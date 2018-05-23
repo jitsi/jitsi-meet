@@ -563,6 +563,7 @@
         "next": "Upcoming",
         "nextMeeting": "next meeting",
         "now": "Now",
+        "ongoingMeeting": "ongoing meeting",
         "permissionButton": "Open settings",
         "permissionMessage": "Calendar permission is required to list your meetings in the app."
     },

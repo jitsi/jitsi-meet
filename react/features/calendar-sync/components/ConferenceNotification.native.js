@@ -110,6 +110,12 @@ class ConferenceNotification extends Component<Props, State> {
         const { t } = this.props;
 
         if (event) {
+            const now = Date.now();
+            const label
+                = event.startDate < now && event.endDate > now
+                    ? 'calendarSync.ongoingMeeting'
+                    : 'calendarSync.nextMeeting';
+
             return (
                 <View
                     style = { [
@@ -126,7 +132,7 @@ class ConferenceNotification extends Component<Props, State> {
                                         styles.notificationTextContainer
                                     }>
                                     <Text style = { styles.notificationText }>
-                                        { t('calendarSync.nextMeeting') }
+                                        { t(label) }
                                     </Text>
                                     <Text style = { styles.notificationText }>
                                         {
