@@ -72,12 +72,19 @@ class AudioModeModule extends ReactContextBaseJavaModule {
     private static final int VIDEO_CALL = 2;
 
     /**
-     *
+     * Constant defining the action for plugging in a headset. This is used on
+     * our device detection system for API < 23.
      */
     private static final String ACTION_HEADSET_PLUG
         = (Build.VERSION.SDK_INT >= 21)
             ? AudioManager.ACTION_HEADSET_PLUG
             : Intent.ACTION_HEADSET_PLUG;
+
+    /**
+     * Constant defining a USB headset. Only available on API level >= 26.
+     * The value of: AudioDeviceInfo.TYPE_USB_HEADSET
+     */
+    private static final int TYPE_USB_HEADSET = 22;
 
     /**
      * The name of {@code AudioModeModule} to be used in the React Native
@@ -133,6 +140,7 @@ class AudioModeModule extends ReactContextBaseJavaModule {
                     break;
                 case AudioDeviceInfo.TYPE_WIRED_HEADPHONES:
                 case AudioDeviceInfo.TYPE_WIRED_HEADSET:
+                case TYPE_USB_HEADSET:
                     devices.add(DEVICE_HEADPHONES);
                     break;
                 }
