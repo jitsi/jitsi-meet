@@ -484,27 +484,13 @@ export default {
 
     /**
      * Indicates if the desktop sharing functionality has been enabled.
-     * It takes into consideration {@link isDesktopSharingDisabledByConfig}
-     * as well as the status returned by
+     * It takes into consideration the status returned by
      * {@link JitsiMeetJS.isDesktopSharingEnabled()}. The latter can be false
      * either if the desktop sharing is not supported by the current browser
      * or if it was disabled through lib-jitsi-meet specific options (check
      * config.js for listed options).
      */
     isDesktopSharingEnabled: false,
-
-    /**
-     * Set to <tt>true</tt> if the desktop sharing functionality has been
-     * explicitly disabled in the config.
-     */
-    isDesktopSharingDisabledByConfig: false,
-
-    /**
-     * The text displayed when the desktop sharing button is disabled through
-     * the config. The value is set through
-     * {@link interfaceConfig.DESKTOP_SHARING_BUTTON_DISABLED_TOOLTIP}.
-     */
-    desktopSharingDisabledTooltip: null,
 
     /**
      * The local audio track (if any).
@@ -720,13 +706,8 @@ export default {
                 APP.connection = connection = con;
 
                 // Desktop sharing related stuff:
-                this.isDesktopSharingDisabledByConfig
-                    = config.disableDesktopSharing;
                 this.isDesktopSharingEnabled
-                    = !this.isDesktopSharingDisabledByConfig
-                        && JitsiMeetJS.isDesktopSharingEnabled();
-                this.desktopSharingDisabledTooltip
-                    = interfaceConfig.DESKTOP_SHARING_BUTTON_DISABLED_TOOLTIP;
+                    = JitsiMeetJS.isDesktopSharingEnabled();
                 eventEmitter.emit(
                     JitsiMeetConferenceEvents.DESKTOP_SHARING_ENABLED_CHANGED,
                     this.isDesktopSharingEnabled);
@@ -1909,6 +1890,14 @@ export default {
             JitsiConferenceEvents.PARTICIPANT_PROPERTY_CHANGED,
             (participant, name, oldValue, newValue) => {
                 switch (name) {
+                case 'features_screen-sharing': {
+                    APP.store.dispatch(participantUpdated({
+                        conference: room,
+                        id: participant.getId(),
+                        features: { 'screen-sharing': true }
+                    }));
+                    break;
+                }
                 case 'raisedHand':
                     APP.store.dispatch(participantUpdated({
                         conference: room,

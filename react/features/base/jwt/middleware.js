@@ -138,7 +138,7 @@ function _maybeSetCalleeInfoVisible({ dispatch, getState }, next, action) {
  */
 function _overwriteLocalParticipant(
         { dispatch, getState },
-        { avatarURL, email, name }) {
+        { avatarURL, email, name, features }) {
     let localParticipant;
 
     if ((avatarURL || email || name)
@@ -156,6 +156,9 @@ function _overwriteLocalParticipant(
         }
         if (name) {
             newProperties.name = name;
+        }
+        if (features) {
+            newProperties.features = features;
         }
         dispatch(participantUpdated(newProperties));
     }
@@ -229,7 +232,9 @@ function _setJWT(store, next, action) {
                     action.server = context.server;
                     action.user = user;
 
-                    user && _overwriteLocalParticipant(store, user);
+                    user && _overwriteLocalParticipant(
+                        store, { ...user,
+                            features: context.features });
                 }
             }
         } else if (typeof APP === 'undefined') {
@@ -281,6 +286,8 @@ function _undoOverwriteLocalParticipant(
         if (name === localParticipant.name) {
             newProperties.name = undefined;
         }
+        newProperties.features = undefined;
+
         dispatch(participantUpdated(newProperties));
     }
 }

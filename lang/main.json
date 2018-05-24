@@ -371,6 +371,8 @@
         "remoteControlStopMessage": "The remote control session ended!",
         "close": "Close",
         "shareYourScreen": "Share your screen",
+        "shareYourScreenDisabled": "Screen sharing disabled.",
+        "shareYourScreenDisabledForGuest": "Guests can't screen share.",
         "yourEntireScreen": "Your entire screen",
         "applicationWindow": "Application window"
     },

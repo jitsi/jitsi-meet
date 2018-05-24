@@ -95,7 +95,8 @@
     }
 
     i.disabled {
-        cursor: initial
+        cursor: initial;
+        color: #3b475c;
     }
 
     i.disabled:hover {

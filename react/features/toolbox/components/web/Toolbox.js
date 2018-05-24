@@ -15,6 +15,7 @@ import { JitsiRecordingConstants } from '../../../base/lib-jitsi-meet';
 import {
     PARTICIPANT_ROLE,
     getLocalParticipant,
+    getParticipants,
     participantUpdated
 } from '../../../base/participants';
 import { getLocalVideoTrack, toggleScreensharing } from '../../../base/tracks';
@@ -74,9 +75,10 @@ type Props = {
     _conference: Object,
 
     /**
-     * Whether or not desktopsharing was explicitly configured to be disabled.
+     * The tooltip key to use when screensharing is disabled. Or undefined
+     * if non to be shown and the button to be hidden.
      */
-    _desktopSharingDisabledByConfig: boolean,
+    _desktopSharingDisabledTooltipKey: boolean,
 
     /**
      * Whether or not screensharing is initialized.
@@ -925,17 +927,14 @@ class Toolbox extends Component<Props> {
      */
     _renderDesktopSharingButton() {
         const {
-            _desktopSharingDisabledByConfig,
             _desktopSharingEnabled,
+            _desktopSharingDisabledTooltipKey,
             _screensharing,
             t
         } = this.props;
 
-        const disabledTooltipText
-            = interfaceConfig.DESKTOP_SHARING_BUTTON_DISABLED_TOOLTIP;
-        const showDisabledTooltip
-            = disabledTooltipText && _desktopSharingDisabledByConfig;
-        const visible = _desktopSharingEnabled || showDisabledTooltip;
+        const visible
+            = _desktopSharingEnabled || _desktopSharingDisabledTooltipKey;
 
         if (!visible) {
             return null;
@@ -944,9 +943,9 @@ class Toolbox extends Component<Props> {
         const classNames = `icon-share-desktop ${
             _screensharing ? 'toggled' : ''} ${
             _desktopSharingEnabled ? '' : 'disabled'}`;
-        const tooltip = showDisabledTooltip
-            ? disabledTooltipText
-            : t('dialog.shareYourScreen');
+        const tooltip = t(
+            _desktopSharingEnabled
+                ? 'dialog.shareYourScreen' : _desktopSharingDisabledTooltipKey);
 
         return (
             <ToolbarButton
@@ -1111,13 +1110,10 @@ class Toolbox extends Component<Props> {
  * @returns {{}}
  */
 function _mapStateToProps(state) {
-    const {
-        conference,
-        desktopSharingEnabled
-    } = state['features/base/conference'];
+    const { conference } = state['features/base/conference'];
+    let { desktopSharingEnabled } = state['features/base/conference'];
     const {
         callStatsID,
-        disableDesktopSharing,
         fileRecordingsEnabled,
         iAmRecorder,
         liveStreamingEnabled
@@ -1136,12 +1132,30 @@ function _mapStateToProps(state) {
     const isModerator = localParticipant.role === PARTICIPANT_ROLE.MODERATOR;
     const addPeopleEnabled = isAddPeopleEnabled(state);
     const dialOutEnabled = isDialOutEnabled(state);
+    let desktopSharingDisabledTooltipKey;
+
+    if (state['features/base/config'].enableFeaturesBasedOnToken) {
+        // we enable desktop sharing if any participant already have this
+        // feature enabled
+        desktopSharingEnabled = getParticipants(state)
+            .find(({ features = {} }) =>
+                String(features['screen-sharing']) === 'true') !== undefined;
+
+        // we want to show button and tooltip
+        if (state['features/base/jwt'].isGuest) {
+            desktopSharingDisabledTooltipKey
+                = 'dialog.shareYourScreenDisabledForGuest';
+        } else {
+            desktopSharingDisabledTooltipKey
+                = 'dialog.shareYourScreenDisabled';
+        }
+    }
 
     return {
         _chatOpen: current === 'chat_container',
         _conference: conference,
         _desktopSharingEnabled: desktopSharingEnabled,
-        _desktopSharingDisabledByConfig: disableDesktopSharing,
+        _desktopSharingDisabledTooltipKey: desktopSharingDisabledTooltipKey,
         _dialog: Boolean(state['features/base/dialog'].component),
         _editingDocument: Boolean(state['features/etherpad'].editing),
         _etherpadInitialized: Boolean(state['features/etherpad'].initialized),

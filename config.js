@@ -142,9 +142,6 @@ var config = {
 
     // Desktop sharing
 
-    // Enable / disable desktop sharing
-    // disableDesktopSharing: false,
-
     // The ID of the jidesha extension for Chrome.
     desktopSharingChromeExtId: null,
 
@@ -247,6 +244,9 @@ var config = {
     // with token will be considered non-guests. Only guests will be allowed to
     // edit their profile.
     enableUserRolesBasedOnToken: false,
+
+    // Whether or not some features are checked based on token.
+    // enableFeaturesBasedOnToken: false,
 
     // Message to show the users. Example: 'The service will be down for
     // maintenance at 01:00 AM GMT,
