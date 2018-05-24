@@ -4,16 +4,9 @@ import { StatusBar } from 'react-native';
 import { Immersive } from 'react-native-immersive';
 
 import { APP_WILL_MOUNT, APP_WILL_UNMOUNT } from '../../app';
-import {
-    CONFERENCE_FAILED,
-    CONFERENCE_JOINED,
-    CONFERENCE_LEFT,
-    CONFERENCE_WILL_JOIN,
-    SET_AUDIO_ONLY,
-    getCurrentConference
-} from '../../base/conference';
+import { getCurrentConference } from '../../base/conference';
 import { Platform } from '../../base/react';
-import { MiddlewareRegistry } from '../../base/redux';
+import { MiddlewareRegistry, StateListenerRegistry } from '../../base/redux';
 
 import { _setImmersiveListener as _setImmersiveListenerA } from './actions';
 import { _SET_IMMERSIVE_LISTENER } from './actionTypes';
@@ -47,30 +40,20 @@ MiddlewareRegistry.register(store => next => action => {
         store.dispatch(_setImmersiveListenerA(undefined));
         break;
 
-    case CONFERENCE_WILL_JOIN:
-    case CONFERENCE_JOINED:
-    case SET_AUDIO_ONLY: {
-        const result = next(action);
-        const { audioOnly } = store.getState()['features/base/conference'];
-        const conference = getCurrentConference(store);
-
-        _setFullScreen(conference ? !audioOnly : false);
-
-        return result;
-    }
-
-    case CONFERENCE_FAILED:
-    case CONFERENCE_LEFT: {
-        const result = next(action);
-
-        _setFullScreen(false);
-
-        return result;
-    }
     }
 
     return next(action);
 });
+
+StateListenerRegistry.register(
+    /* selector */ state => {
+        const { audioOnly } = state['features/base/conference'];
+        const conference = getCurrentConference(state);
+
+        return conference ? !audioOnly : false;
+    },
+    /* listener */ fullScreen => _setFullScreen(fullScreen)
+);
 
 /**
  * Handler for Immersive mode changes. This will be called when Android's
