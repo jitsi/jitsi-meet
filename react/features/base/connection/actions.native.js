@@ -3,7 +3,11 @@
 import _ from 'lodash';
 import type { Dispatch } from 'redux';
 
-import { conferenceLeft, conferenceWillLeave } from '../conference';
+import {
+    conferenceLeft,
+    conferenceWillLeave,
+    getCurrentConference
+} from '../conference';
 import JitsiMeetJS, { JitsiConnectionEvents } from '../lib-jitsi-meet';
 import { parseStandardURIString } from '../util';
 
@@ -306,10 +310,9 @@ function _constructOptions(state) {
 export function disconnect() {
     return (dispatch: Dispatch<*>, getState: Function): Promise<void> => {
         const state = getState();
-        const { conference, joining } = state['features/base/conference'];
 
         // The conference we have already joined or are joining.
-        const conference_ = conference || joining;
+        const conference_ = getCurrentConference(state);
 
         // Promise which completes when the conference has been left and the
         // connection has been disconnected.

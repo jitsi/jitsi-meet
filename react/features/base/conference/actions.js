@@ -49,6 +49,7 @@ import {
 } from './constants';
 import {
     _addLocalTracksToConference,
+    getCurrentConference,
     sendLocalParticipant
 } from './functions';
 
@@ -643,9 +644,9 @@ export function setRoom(room: ?string) {
 export function setStartMutedPolicy(
         startAudioMuted: boolean, startVideoMuted: boolean) {
     return (dispatch: Dispatch<*>, getState: Function) => {
-        const { conference } = getState()['features/base/conference'];
+        const conference = getCurrentConference(getState());
 
-        conference.setStartMutedPolicy({
+        conference && conference.setStartMutedPolicy({
             audio: startAudioMuted,
             video: startVideoMuted
         });
