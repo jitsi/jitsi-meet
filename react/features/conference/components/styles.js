@@ -31,6 +31,13 @@ export default createStyleSheet({
     },
 
     /**
+     * Indicator container for wide aspect ratio.
+     */
+    indicatorContainerWide: {
+        right: 80
+    },
+
+    /**
      * The style of the {@link View} which expands over the whole
      * {@link Conference} area and splits it between the {@link Filmstrip} and
      * the {@link Toolbox}.
