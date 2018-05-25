@@ -4,7 +4,7 @@ import React, { Component } from 'react';
 import { ScrollView } from 'react-native';
 import { connect } from 'react-redux';
 
-import { Container } from '../../../base/react';
+import { Container, Platform } from '../../../base/react';
 import {
     isNarrowAspectRatio,
     makeAspectRatioAware
@@ -49,6 +49,40 @@ type Props = {
  */
 class Filmstrip extends Component<Props> {
     /**
+     * Whether the local participant should be rendered separately from the
+     * remote participants i.e. outside of their {@link ScrollView}.
+     */
+    _separateLocalThumbnail: boolean;
+
+    /**
+     * Constructor of the component.
+     *
+     * @inheritdoc
+     */
+    constructor(props) {
+        super(props);
+
+        // XXX Our current design is to have the local participant separate from
+        // the remote participants. Unfortunately, Android's Video
+        // implementation cannot accommodate that because remote participants'
+        // videos appear on top of the local participant's video at times.
+        // That's because Android's Video utilizes EGL and EGL gives us only two
+        // practical layers in which we can place our participants' videos:
+        // layer #0 sits behind the window, creates a hole in the window, and
+        // there we render the LargeVideo; layer #1 is known as media overlay in
+        // EGL terms, renders on top of layer #0, and, consequently, is for the
+        // Filmstrip. With the separate LocalThumnail, we should have left the
+        // remote participants' Thumbnails in layer #1 and utilized layer #2 for
+        // LocalThumbnail. Unfortunately, layer #2 is not practical (that's why
+        // I said we had two practical layers only) because it renders on top of
+        // everything which in our case means on top of participant-related
+        // indicators such as moderator, audio and video muted, etc. For now we
+        // do not have much of a choice but to continue rendering LocalThumbnail
+        // as any other remote Thumbnail on Android.
+        this._separateLocalThumbnail = Platform.OS !== 'android';
+    }
+
+    /**
      * Implements React's {@link Component#render()}.
      *
      * @inheritdoc
@@ -70,13 +104,20 @@ class Filmstrip extends Component<Props> {
                 style = { filmstripStyle }
                 visible = { this.props._visible }>
                 {
-                    !isNarrowAspectRatio_ && <LocalThumbnail />
+                    this._separateLocalThumbnail
+                        && !isNarrowAspectRatio_
+                        && <LocalThumbnail />
                 }
                 <ScrollView
                     horizontal = { isNarrowAspectRatio_ }
                     showsHorizontalScrollIndicator = { false }
                     showsVerticalScrollIndicator = { false }
                     style = { styles.scrollView } >
+                    {
+                        !this._separateLocalThumbnail
+                            && !isNarrowAspectRatio_
+                            && <LocalThumbnail />
+                    }
                     {
                         /* eslint-disable react/jsx-wrap-multilines */
 
@@ -90,9 +131,16 @@ class Filmstrip extends Component<Props> {
 
                         /* eslint-enable react/jsx-wrap-multilines */
                     }
+                    {
+                        !this._separateLocalThumbnail
+                            && isNarrowAspectRatio_
+                            && <LocalThumbnail />
+                    }
                 </ScrollView>
                 {
-                    isNarrowAspectRatio_ && <LocalThumbnail />
+                    this._separateLocalThumbnail
+                        && isNarrowAspectRatio_
+                        && <LocalThumbnail />
                 }
             </Container>
         );
