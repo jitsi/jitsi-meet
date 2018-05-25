@@ -237,15 +237,18 @@ function _conferenceWillJoin({ getState }, next, action) {
 
     CallKit.startCall(conference.callUUID, url.toString(), hasVideo)
         .then(() => {
-            const { room } = state['features/base/conference'];
             const { callee } = state['features/base/jwt'];
-            const tracks = state['features/base/tracks'];
-            const muted = isLocalTrackMuted(tracks, MEDIA_TYPE.AUDIO);
+            const displayName
+                 = state['features/base/config'].callDisplayName
+                     || (callee && callee.name)
+                     || state['features/base/conference'].room;
 
-            CallKit.updateCall(
-                conference.callUUID,
-                { displayName: (callee && callee.name) || room });
+            const muted
+                = isLocalTrackMuted(
+                    state['features/base/tracks'],
+                    MEDIA_TYPE.AUDIO);
 
+            CallKit.updateCall(conference.callUUID, { displayName });
             CallKit.setMuted(conference.callUUID, muted);
         });
 
