@@ -85,7 +85,6 @@ function SmallVideo(VideoLayout) {
     this.audioStream = null;
     this.VideoLayout = VideoLayout;
     this.videoIsHovered = false;
-    this.hideDisplayName = false;
 
     // we can stop updating the thumbnail
     this.disableUpdateView = false;
@@ -599,33 +598,30 @@ SmallVideo.prototype.updateView = function() {
         }
     }
 
+    this.$container.removeClass((index, classNames) =>
+        classNames.split(' ').filter(name => name.startsWith('display-')));
+
     // Determine whether video, avatar or blackness should be displayed
     const displayMode = this.selectDisplayMode();
 
-    // Show/hide video.
-
-    UIUtil.setVisibleBySelector(this.selectVideoElement(),
-                                displayMode === DISPLAY_VIDEO
-                                || displayMode === DISPLAY_VIDEO_WITH_NAME);
-
-    // Show/hide the avatar.
-    UIUtil.setVisibleBySelector(this.$avatar(),
-                                displayMode === DISPLAY_AVATAR
-                                || displayMode === DISPLAY_AVATAR_WITH_NAME);
-
-    // Show/hide the display name.
-    UIUtil.setVisibleBySelector(this.$displayName(),
-                                !this.hideDisplayName
-                                && (displayMode === DISPLAY_BLACKNESS_WITH_NAME
-                                || displayMode === DISPLAY_VIDEO_WITH_NAME
-                                || displayMode === DISPLAY_AVATAR_WITH_NAME));
-
-    // show hide overlay when there is a video or avatar under
-    // the display name
-    UIUtil.setVisibleBySelector(this.$container.find(
-                                '.videocontainer__hoverOverlay'),
-                                displayMode === DISPLAY_AVATAR_WITH_NAME
-                                || displayMode === DISPLAY_VIDEO_WITH_NAME);
+    switch (displayMode) {
+    case DISPLAY_AVATAR_WITH_NAME:
+        this.$container.addClass('display-avatar-with-name');
+        break;
+    case DISPLAY_BLACKNESS_WITH_NAME:
+        this.$container.addClass('display-name-on-black');
+        break;
+    case DISPLAY_VIDEO:
+        this.$container.addClass('display-video');
+        break;
+    case DISPLAY_VIDEO_WITH_NAME:
+        this.$container.addClass('display-name-on-video');
+        break;
+    case DISPLAY_AVATAR:
+    default:
+        this.$container.addClass('display-avatar-only');
+        break;
+    }
 };
 
 /**
