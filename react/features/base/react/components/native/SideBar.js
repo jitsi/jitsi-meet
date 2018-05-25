@@ -1,9 +1,8 @@
 // @flow
 
-import React, { Component } from 'react';
+import React, { Component, type Node } from 'react';
 import {
     Animated,
-    Dimensions,
     TouchableWithoutFeedback,
     View
 } from 'react-native';
@@ -16,14 +15,9 @@ import styles, { SIDEBAR_WIDTH } from './styles';
 type Props = {
 
     /**
-     * The local participant's avatar
-     */
-    _avatar: string,
-
-    /**
      * The children of the Component
      */
-    children: React$Node,
+    children: Node,
 
     /**
      * Callback to notify the containing Component that the sidebar is
@@ -48,11 +42,6 @@ type State = {
     showOverlay: boolean,
 
     /**
-     * Indicates whether the side bar is visible or not.
-     */
-    showSideBar: boolean,
-
-    /**
      * The native animation object.
      */
     sliderAnimation: Object
@@ -62,8 +51,6 @@ type State = {
  * A generic animated side bar to be used for left side menus
  */
 export default class SideBar extends Component<Props, State> {
-    _mounted: boolean;
-
     /**
      * Initializes a new {@code SideBar} instance.
      *
@@ -74,15 +61,10 @@ export default class SideBar extends Component<Props, State> {
 
         this.state = {
             showOverlay: false,
-            showSideBar: false,
-            sliderAnimation: new Animated.Value(-SIDEBAR_WIDTH)
+            sliderAnimation: new Animated.Value(0)
         };
 
-        this._getContainerStyle = this._getContainerStyle.bind(this);
         this._onHideMenu = this._onHideMenu.bind(this);
-        this._setShow = this._setShow.bind(this);
-
-        this._setShow(props.show);
     }
 
     /**
@@ -91,7 +73,7 @@ export default class SideBar extends Component<Props, State> {
      * @inheritdoc
      */
     componentDidMount() {
-        this._mounted = true;
+        this._setShow(this.props.show);
     }
 
     /**
@@ -112,42 +94,37 @@ export default class SideBar extends Component<Props, State> {
      */
     render() {
         return (
-            <Animated.View
-                style = { this._getContainerStyle() } >
-                <View style = { styles.sideMenuContent }>
-                    {
-                        this.props.children
-                    }
-                </View>
-                <TouchableWithoutFeedback
-                    onPress = { this._onHideMenu }
-                    style = { styles.sideMenuShadowTouchable } >
-                    <View style = { styles.sideMenuShadow } />
-                </TouchableWithoutFeedback>
-            </Animated.View>
+            <View
+                pointerEvents = 'box-none'
+                style = { styles.sideMenuContainer } >
+                {
+                    this.state.showOverlay
+                        && <TouchableWithoutFeedback
+                            onPress = { this._onHideMenu } >
+                            <View style = { styles.sideMenuShadow } />
+                        </TouchableWithoutFeedback>
+                }
+                <Animated.View style = { this._getContentStyle() }>
+                    { this.props.children }
+                </Animated.View>
+            </View>
         );
     }
 
-    _getContainerStyle: () => Array<Object>
+    _getContentStyle: () => Array<Object>;
 
     /**
-     * Assembles a style array for the container.
+     * Assembles a style array for the sidebar content.
      *
      * @private
      * @returns {Array<Object>}
      */
-    _getContainerStyle() {
+    _getContentStyle() {
         const { sliderAnimation } = this.state;
-        const { height, width } = Dimensions.get('window');
+        const transformStyle
+            = { transform: [ { translateX: sliderAnimation } ] };
 
-        return [
-            styles.sideMenuContainer,
-            {
-                left: sliderAnimation,
-                width: this.state.showOverlay
-                    ? Math.max(height, width) + SIDEBAR_WIDTH : SIDEBAR_WIDTH
-            }
-        ];
+        return [ styles.sideMenuContent, transformStyle ];
     }
 
     _onHideMenu: () => void;
@@ -163,9 +140,7 @@ export default class SideBar extends Component<Props, State> {
 
         const { onHide } = this.props;
 
-        if (typeof onHide === 'function') {
-            onHide();
-        }
+        onHide && onHide();
     }
 
     _setShow: (boolean) => void;
@@ -178,30 +153,21 @@ export default class SideBar extends Component<Props, State> {
      * @returns {void}
      */
     _setShow(show) {
-        if (this.state.showSideBar !== show) {
-            if (show) {
-                this.setState({
-                    showOverlay: true
-                });
-            }
-
-            Animated
-                .timing(
-                    this.state.sliderAnimation,
-                    { toValue: show ? 0 : -SIDEBAR_WIDTH })
-                .start(animationState => {
-                    if (animationState.finished && !show) {
-                        this.setState({
-                            showOverlay: false
-                        });
-                    }
-                });
+        if (show) {
+            this.setState({ showOverlay: true });
         }
 
-        if (this._mounted) {
-            this.setState({
-                showSideBar: show
+        Animated
+            .timing(
+                this.state.sliderAnimation,
+                {
+                    toValue: show ? SIDEBAR_WIDTH : 0,
+                    useNativeDriver: true
+                })
+            .start(animationState => {
+                if (animationState.finished && !show) {
+                    this.setState({ showOverlay: false });
+                }
             });
-        }
     }
 }

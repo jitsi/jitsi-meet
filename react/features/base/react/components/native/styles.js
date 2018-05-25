@@ -278,8 +278,14 @@ const SIDEBAR_STYLES = {
      * The topmost container of the side bar.
      */
     sideMenuContainer: {
+        ...StyleSheet.absoluteFillObject
+    },
+
+    /**
+     * The container of the actual content of the side menu.
+     */
+    sideMenuContent: {
         bottom: 0,
-        flexDirection: 'row',
         left: -SIDEBAR_WIDTH,
         position: 'absolute',
         top: 0,
@@ -287,27 +293,12 @@ const SIDEBAR_STYLES = {
     },
 
     /**
-     * The container of the actual content of the side menu.
-     */
-    sideMenuContent: {
-        width: SIDEBAR_WIDTH
-    },
-
-    /**
-     * The opaque area that covers the rest of the scren, when
+     * The opaque area that covers the rest of the screen, when
      * the side bar is open.
      */
     sideMenuShadow: {
-        backgroundColor: 'rgba(0, 0, 0, 0.5)',
-        flex: 1
-    },
-
-    /**
-     * The touchable area of the rest of the screen that closes the side bar
-     * when tapped.
-     */
-    sideMenuShadowTouchable: {
-        flex: 1
+        ...StyleSheet.absoluteFillObject,
+        backgroundColor: 'rgba(0, 0, 0, 0.5)'
     }
 };
 
