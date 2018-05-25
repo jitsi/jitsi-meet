@@ -13,9 +13,9 @@ import { openDialog } from '../../../base/dialog';
 import { translate } from '../../../base/i18n';
 import { JitsiRecordingConstants } from '../../../base/lib-jitsi-meet';
 import {
-    PARTICIPANT_ROLE,
     getLocalParticipant,
     getParticipants,
+    isLocalParticipantModerator,
     participantUpdated
 } from '../../../base/participants';
 import { getLocalVideoTrack, toggleScreensharing } from '../../../base/tracks';
@@ -106,6 +106,12 @@ type Props = {
     _feedbackConfigured: boolean,
 
     /**
+     * The tooltip key to use when file recording is disabled. Or undefined
+     * if non to be shown and the button to be hidden.
+     */
+    _fileRecordingsDisabledTooltipKey: boolean,
+
+    /**
      * Whether or not the file recording feature is enabled for use.
      */
     _fileRecordingsEnabled: boolean,
@@ -130,6 +136,12 @@ type Props = {
      * Whether or not the current user is logged in through a JWT.
      */
     _isGuest: boolean,
+
+    /**
+     * The tooltip key to use when live streaming is disabled. Or undefined
+     * if non to be shown and the button to be hidden.
+     */
+    _liveStreamingDisabledTooltipKey: boolean,
 
     /**
      * Whether or not the live streaming feature is enabled for use.
@@ -968,9 +980,11 @@ class Toolbox extends Component<Props> {
             _editingDocument,
             _etherpadInitialized,
             _feedbackConfigured,
+            _fileRecordingsDisabledTooltipKey,
             _fileRecordingsEnabled,
             _fullScreen,
             _isGuest,
+            _liveStreamingDisabledTooltipKey,
             _liveStreamingEnabled,
             _liveStreamingSession,
             _sharingVideo,
@@ -999,13 +1013,15 @@ class Toolbox extends Component<Props> {
                     text = { _fullScreen
                         ? t('toolbar.exitFullScreen')
                         : t('toolbar.enterFullScreen') } />,
-            _liveStreamingEnabled
+            (_liveStreamingEnabled || _liveStreamingDisabledTooltipKey)
                 && this._shouldShowButton('livestreaming')
                 && <OverflowMenuLiveStreamingItem
+                    disabled = { !_liveStreamingEnabled }
                     key = 'livestreaming'
                     onClick = { this._onToolbarToggleLiveStreaming }
-                    session = { _liveStreamingSession } />,
-            _fileRecordingsEnabled
+                    session = { _liveStreamingSession }
+                    tooltip = { t(_liveStreamingDisabledTooltipKey) } />,
+            (_fileRecordingsEnabled || _fileRecordingsDisabledTooltipKey)
                 && this._shouldShowButton('recording')
                 && this._renderRecordingButton(),
             this._shouldShowButton('sharedvideo')
@@ -1069,7 +1085,11 @@ class Toolbox extends Component<Props> {
      * @returns {ReactElement|null}
      */
     _renderRecordingButton() {
-        const { _fileRecordingSession, t } = this.props;
+        const {
+            _fileRecordingSession,
+            _fileRecordingsDisabledTooltipKey,
+            _fileRecordingsEnabled,
+            t } = this.props;
 
         const translationKey = _fileRecordingSession
             ? 'dialog.stopRecording'
@@ -1079,10 +1099,12 @@ class Toolbox extends Component<Props> {
             <OverflowMenuItem
                 accessibilityLabel =
                     { t('toolbar.accessibilityLabel.recording') }
+                disabled = { !_fileRecordingsEnabled }
                 icon = 'icon-camera-take-picture'
                 key = 'recording'
                 onClick = { this._onToolbarToggleRecording }
-                text = { t(translationKey) } />
+                text = { t(translationKey) }
+                tooltip = { t(_fileRecordingsDisabledTooltipKey) } />
         );
     }
 
@@ -1129,10 +1151,16 @@ function _mapStateToProps(state) {
     } = state['features/toolbox'];
     const localParticipant = getLocalParticipant(state);
     const localVideo = getLocalVideoTrack(state['features/base/tracks']);
-    const isModerator = localParticipant.role === PARTICIPANT_ROLE.MODERATOR;
     const addPeopleEnabled = isAddPeopleEnabled(state);
     const dialOutEnabled = isDialOutEnabled(state);
+    let recordingEnabled
+        = isLocalParticipantModerator(state) && fileRecordingsEnabled;
+    let streamingEnabled
+        = isLocalParticipantModerator(state) && liveStreamingEnabled;
+
     let desktopSharingDisabledTooltipKey;
+    let fileRecordingsDisabledTooltipKey;
+    let liveStreamingDisabledTooltipKey;
 
     if (state['features/base/config'].enableFeaturesBasedOnToken) {
         // we enable desktop sharing if any participant already have this
@@ -1149,6 +1177,42 @@ function _mapStateToProps(state) {
             desktopSharingDisabledTooltipKey
                 = 'dialog.shareYourScreenDisabled';
         }
+
+        // we enable recording if the local participant have this
+        // feature enabled
+        const { features = {} } = localParticipant;
+        const { isGuest } = state['features/base/jwt'];
+
+        recordingEnabled
+            = recordingEnabled && String(features.recording) === 'true';
+
+        // if the feature is disabled on purpose, do no show it, no tooltip
+        if (!recordingEnabled && String(features.recording) !== 'disabled') {
+            // button and tooltip
+            if (isGuest) {
+                fileRecordingsDisabledTooltipKey
+                    = 'dialog.recordingDisabledForGuestTooltip';
+            } else {
+                fileRecordingsDisabledTooltipKey
+                    = 'dialog.recordingDisabledTooltip';
+            }
+        }
+
+        streamingEnabled
+            = streamingEnabled && String(features.livestreaming) === 'true';
+
+        // if the feature is disabled on purpose, do no show it, no tooltip
+        if (!streamingEnabled
+            && String(features.livestreaming) !== 'disabled') {
+            // button and tooltip
+            if (isGuest) {
+                liveStreamingDisabledTooltipKey
+                    = 'dialog.liveStreamingDisabledForGuestTooltip';
+            } else {
+                liveStreamingDisabledTooltipKey
+                    = 'dialog.liveStreamingDisabledTooltip';
+            }
+        }
     }
 
     return {
@@ -1163,11 +1227,13 @@ function _mapStateToProps(state) {
         _hideInviteButton:
             iAmRecorder || (!addPeopleEnabled && !dialOutEnabled),
         _isGuest: state['features/base/jwt'].isGuest,
-        _fileRecordingsEnabled: isModerator && fileRecordingsEnabled,
+        _fileRecordingsDisabledTooltipKey: fileRecordingsDisabledTooltipKey,
+        _fileRecordingsEnabled: recordingEnabled,
         _fileRecordingSession:
             getActiveSession(state, JitsiRecordingConstants.mode.FILE),
         _fullScreen: fullScreen,
-        _liveStreamingEnabled: isModerator && liveStreamingEnabled,
+        _liveStreamingDisabledTooltipKey: liveStreamingDisabledTooltipKey,
+        _liveStreamingEnabled: streamingEnabled,
         _liveStreamingSession:
              getActiveSession(state, JitsiRecordingConstants.mode.STREAM),
         _localParticipantID: localParticipant.id,

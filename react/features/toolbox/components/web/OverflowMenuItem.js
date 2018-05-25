@@ -1,3 +1,4 @@
+import Tooltip from '@atlaskit/tooltip';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 
@@ -9,6 +10,16 @@ import React, { Component } from 'react';
  */
 class OverflowMenuItem extends Component {
     /**
+     * Default values for {@code OverflowMenuItem} component's properties.
+     *
+     * @static
+     */
+    static defaultProps = {
+        tooltipPosition: 'left',
+        disabled: false
+    };
+
+    /**
      * {@code OverflowMenuItem} component's property types.
      *
      * @static
@@ -19,6 +30,11 @@ class OverflowMenuItem extends Component {
          * tools and torture tests.
          */
         accessibilityLabel: PropTypes.string,
+
+        /**
+         * Whether menu item is disabled or not.
+         */
+        disabled: PropTypes.bool,
 
         /**
          * The icon class to use for displaying an icon before the link text.
@@ -33,7 +49,18 @@ class OverflowMenuItem extends Component {
         /**
          * The text to display in the {@code OverflowMenuItem}.
          */
-        text: PropTypes.string
+        text: PropTypes.string,
+
+        /**
+         * The text to display in the tooltip.
+         */
+        tooltip: PropTypes.string,
+
+        /**
+         * From which direction the tooltip should appear, relative to the
+         * button.
+         */
+        tooltipPosition: PropTypes.string
     };
 
     /**
@@ -43,15 +70,25 @@ class OverflowMenuItem extends Component {
      * @returns {ReactElement}
      */
     render() {
+        let className = 'overflow-menu-item';
+
+        className += this.props.disabled ? ' disabled' : '';
+
         return (
             <li
                 aria-label = { this.props.accessibilityLabel }
-                className = 'overflow-menu-item'
-                onClick = { this.props.onClick }>
+                className = { className }
+                onClick = { this.props.disabled ? null : this.props.onClick }>
                 <span className = 'overflow-menu-item-icon'>
                     <i className = { this.props.icon } />
                 </span>
-                { this.props.text }
+                { this.props.tooltip
+                    ? <Tooltip
+                        content = { this.props.tooltip }
+                        position = { this.props.tooltipPosition }>
+                        <span>{ this.props.text }</span>
+                    </Tooltip>
+                    : this.props.text }
             </li>
         );
     }
