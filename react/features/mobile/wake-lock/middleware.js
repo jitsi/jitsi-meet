@@ -1,42 +1,21 @@
 import KeepAwake from 'react-native-keep-awake';
 
-import {
-    CONFERENCE_FAILED,
-    CONFERENCE_JOINED,
-    CONFERENCE_LEFT,
-    SET_AUDIO_ONLY
-} from '../../base/conference';
-import { MiddlewareRegistry } from '../../base/redux';
+import { getCurrentConference } from '../../base/conference';
+import { StateListenerRegistry } from '../../base/redux';
 
 /**
- * Middleware that captures conference actions and activates or deactivates the
- * wake lock accordingly. If the wake lock is active, it will prevent the screen
- * from dimming.
- *
- * @param {Store} store - Redux store.
- * @returns {Function}
+ * State listener that activates or deactivates the wake lock accordingly. If
+ * the wake lock is active, it will prevent the screen from dimming.
  */
-MiddlewareRegistry.register(store => next => action => {
-    switch (action.type) {
-    case CONFERENCE_JOINED: {
-        const { audioOnly } = store.getState()['features/base/conference'];
+StateListenerRegistry.register(
+    /* selector */ state => {
+        const { audioOnly } = state['features/base/conference'];
+        const conference = getCurrentConference(state);
 
-        _setWakeLock(!audioOnly);
-        break;
-    }
-
-    case CONFERENCE_FAILED:
-    case CONFERENCE_LEFT:
-        _setWakeLock(false);
-        break;
-
-    case SET_AUDIO_ONLY:
-        _setWakeLock(!action.audioOnly);
-        break;
-    }
-
-    return next(action);
-});
+        return Boolean(conference && !audioOnly);
+    },
+    /* listener */ wakeLock => _setWakeLock(wakeLock)
+);
 
 /**
  * Activates/deactivates the wake lock. If the wake lock is active, it will
