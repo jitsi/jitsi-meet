@@ -704,7 +704,6 @@ function _mapDispatchToProps(dispatch) {
  * Maps (parts of) the redux state to the component's props.
  *
  * @param {Object} state - The redux state.
- * @param {Object} ownProps - The component's own props.
  * @private
  * @returns {{
  *     _transforms: Object
