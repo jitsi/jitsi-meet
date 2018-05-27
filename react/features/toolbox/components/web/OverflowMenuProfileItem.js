@@ -114,6 +114,7 @@ function _mapStateToProps(state) {
     return {
         _localParticipant: getLocalParticipant(state),
         _unclickable: !state['features/base/jwt'].isGuest
+            || !interfaceConfig.SETTINGS_SECTIONS.includes('profile')
     };
 }
 
