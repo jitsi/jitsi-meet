@@ -48,6 +48,7 @@ export const PARTICIPANT_DISPLAY_NAME_CHANGED
  *
  * {
  *     type: PARTICIPANT_ID_CHANGED,
+ *     conference: JitsiConference
  *     newValue: string,
  *     oldValue: string
  * }

@@ -97,6 +97,10 @@ export function localParticipantIdChanged(id) {
         if (participant) {
             return dispatch({
                 type: PARTICIPANT_ID_CHANGED,
+
+                // XXX A participant is identified by an id-conference pair.
+                // Only the local participant is with an undefined conference.
+                conference: undefined,
                 newValue: id,
                 oldValue: participant.id
             });

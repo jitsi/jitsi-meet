@@ -84,8 +84,13 @@ ReducerRegistry.register('features/base/participants', (state = [], action) => {
         return state.filter(p =>
             !(
                 p.id === id
-                    && (p.local
-                        || (conference && p.conference === conference))));
+
+                    // XXX Do not allow collisions in the IDs of the local
+                    // participant and a remote participant cause the removal of
+                    // the local participant when the remote participant's
+                    // removal is requested.
+                    && p.conference === conference
+                    && (conference || p.local)));
     }
     }
 
@@ -111,14 +116,21 @@ function _participant(state: Object = {}, action) {
         return (
             set(state, 'dominantSpeaker', state.id === action.participant.id));
 
-    case PARTICIPANT_ID_CHANGED:
-        if (state.id === action.oldValue) {
+    case PARTICIPANT_ID_CHANGED: {
+        // A participant is identified by an id-conference pair. Only the local
+        // participant is with an undefined conference.
+        const { conference } = action;
+
+        if (state.id === action.oldValue
+                && state.conference === conference
+                && (conference || state.local)) {
             return {
                 ...state,
                 id: action.newValue
             };
         }
         break;
+    }
 
     case PARTICIPANT_UPDATED: {
         const { participant } = action; // eslint-disable-line no-shadow
