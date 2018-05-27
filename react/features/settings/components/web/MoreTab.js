@@ -81,7 +81,7 @@ export type Props = {
 };
 
 /**
- * The type of the React {@code Component} state of {@link AlwaysOnTop}.
+ * The type of the React {@code Component} state of {@link MoreTab}.
  */
 type State = {
 
@@ -92,7 +92,7 @@ type State = {
 };
 
 /**
- * Returns a react element for modifying language and moderator settings.
+ * React {@code Component} for modifying language and moderator settings.
  *
  * @extends Component
  */
@@ -139,7 +139,7 @@ class MoreTab extends Component<Props, State> {
     _onLanguageDropdownOpenChange: (Object) => void;
 
     /**
-     * Callback invoked to toggle display of the language selection dropdown.
+     * Callback invoked to toggle display of the language select dropdown.
      *
      * @param {Object} event - The event for opening or closing the dropdown.
      * @private
@@ -201,7 +201,7 @@ class MoreTab extends Component<Props, State> {
     }
 
     /**
-     * Returns the view for modifying conference-wide settings.
+     * Returns the React Element for modifying conference-wide settings.
      *
      * @private
      * @returns {ReactElement}

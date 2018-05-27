@@ -30,6 +30,10 @@ import type { Props as SettingsDialogProps } from './SettingsDialog';
 declare var APP: Object;
 declare var interfaceConfig: Object;
 
+/**
+ * The type of the React {@code Component} props of
+ * {@link ConnectedSettingsDialog}.
+ */
 type Props = SettingsDialogProps & {
 
     /**
@@ -60,6 +64,7 @@ class ConnectedSettingsDialog extends Component<Props> {
     constructor(props: Props) {
         super(props);
 
+        // Bind event handlers so they are only bound once for every instance.
         this._onAuthToggle = this._onAuthToggle.bind(this);
         this._onCloseDialog = this._onCloseDialog.bind(this);
         this._onSubmit = this._onSubmit.bind(this);
@@ -185,7 +190,7 @@ class ConnectedSettingsDialog extends Component<Props> {
 
 /**
  * Maps (parts of) the Redux state to the associated props for the
- * {@code SettingsDialog} component.
+ * {@code ConnectedSettingsDialog} component.
  *
  * @param {Object} state - The Redux state.
  * @private

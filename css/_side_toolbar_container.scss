@@ -92,7 +92,7 @@
         /**
          * Titles and subtitles of inner containers.
          */
-        div.title, div.subTitle {
+        div.title {
             margin: 24px 0 11px;
         }
 
@@ -110,32 +110,6 @@
          */
         .first {
             margin-top: 0 !important;
-        }
-    }
-}
-
-/**
- * Profile
- */
-.auth_container {
-    ul {
-        padding: 0;
-
-        li {
-            list-style-type: none;
-
-            a.authButton {
-                width: 160px;
-                margin: 10px 20px;
-                padding: 3px 29px;
-                box-sizing: border-box;
-                background-color: #06a5df;
-                border-radius: 4px;
-                cursor: pointer;
-                color: $defaultColor;
-                text-decoration: none;
-                text-align: center;
-            }
         }
     }
 }

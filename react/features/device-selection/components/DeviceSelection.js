@@ -2,8 +2,8 @@
 
 import React, { Component } from 'react';
 
-import { createLocalTrack } from '../../base/lib-jitsi-meet';
 import { translate } from '../../base/i18n';
+import { createLocalTrack } from '../../base/lib-jitsi-meet';
 
 import AudioInputPreview from './AudioInputPreview';
 import AudioOutputPreview from './AudioOutputPreview';
@@ -63,17 +63,17 @@ export type Props = {
     hideAudioOutputSelect: boolean,
 
     /**
-     * Function that sets the audio input device.
+     * Callback invoked when the selected audio input device changes.
      */
     onAudioInputChange: Function,
 
     /**
-     * Function that sets the audio output device.
+     * Callback invoked when the selected audio output device changes.
      */
     onAudioOutputChange: Function,
 
     /**
-     * Function that sets the video input device.
+     * Callback invoked when the selected video input device changes.
      */
     onVideoInputChange: Function,
 

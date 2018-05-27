@@ -53,7 +53,7 @@ export type Props = {
 }
 
 /**
- * Returns a react element for modifying the local user's profile.
+ * React {@code Component} for modifying the local user's profile.
  *
  * @extends Component
  */

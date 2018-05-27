@@ -3,10 +3,10 @@
 import Tabs from '@atlaskit/tabs';
 import React, { Component } from 'react';
 
-import { DeviceSelection } from '../../../device-selection';
-import type { DeviceSelectionProps } from '../../../device-selection';
 import { StatelessDialog } from '../../../base/dialog';
 import { LANGUAGES, translate } from '../../../base/i18n';
+import { DeviceSelection } from '../../../device-selection';
+import type { DeviceSelectionProps } from '../../../device-selection';
 
 import { SETTINGS_TABS } from '../../constants';
 
@@ -17,6 +17,9 @@ import type { Props as ProfileTabProps } from './ProfileTab';
 
 const logger = require('jitsi-meet-logger').getLogger(__filename);
 
+/**
+ * The type of the React {@code Component} props of {@link SettingsDialog}.
+ */
 export type Props = {
     ...$Exact<DeviceSelectionProps>,
     ...$Exact<MoreTabProps>,
@@ -64,53 +67,53 @@ export type Props = {
     t: Function
 };
 
+/**
+ * The type of the React {@code Component} state of {@link SettingsDialog}.
+ */
 type State = {
 
     /**
-     * The initial value of the local participant's display name on modal open.
+     * The entered value of the local participant's display name.
      */
     displayName: string,
 
     /**
-     * The initial value of the local participant's email on modal open.
+     * The entered valued of the local participant's email.
      */
     email: string,
 
     /**
-     * Whether the follow me feature was initially enabled or disabled on modal
-     * open.
+     * Whether the follow me feature is enabled or disabled.
      */
     followMe: boolean,
 
     /**
-     * The initial selected display language on modal open.
+     * The language selected for display.
      */
     language: string,
 
     /**
-     * The initial value of the selected audio input device on modal open.
+     * The value of the selected audio input device.
      */
     selectedAudioInputId: string,
 
     /**
-     * The initial value of the selected audio output device on modal open.
+     * The value of the selected audio output device.
      */
     selectedAudioOutputId: string,
 
     /**
-     * The initial value of the selected video input device on modal open.
+     * The value of the selected video input device.
      */
     selectedVideoInputId: string,
 
     /**
-     * Whether the start audio muted feature was initially enabled or disabled
-     * on modal open.
+     * Whether the start audio muted feature is enabled or disabled.
      */
     startAudioMuted: boolean,
 
     /**
-     * Whether the start video muted feature was initially enabled or disabled
-     * on modal open.
+     * Whether the start video muted feature is enabled or disabled.
      */
     startVideoMuted: boolean
 };
@@ -210,37 +213,37 @@ class SettingsDialog extends Component<Props, State> {
         let defaultTabChosen = false;
 
         if (showDeviceSettings) {
-            const showByDefault = defaultTab === SETTINGS_TABS.DEVICES;
+            const defaultSelected = defaultTab === SETTINGS_TABS.DEVICES;
 
-            defaultTabChosen = defaultTabChosen || showByDefault;
+            defaultTabChosen = defaultTabChosen || defaultSelected;
 
             tabs.push({
                 content: this._renderDevicesTab(),
-                defaultSelected: showByDefault,
+                defaultSelected,
                 label: t('settings.devices')
             });
         }
 
         if (showProfileSettings) {
-            const showByDefault = defaultTab === SETTINGS_TABS.PROFILE;
+            const defaultSelected = defaultTab === SETTINGS_TABS.PROFILE;
 
-            defaultTabChosen = defaultTabChosen || showByDefault;
+            defaultTabChosen = defaultTabChosen || defaultSelected;
 
             tabs.push({
                 content: this._renderProfileTab(),
-                defaultSelected: showByDefault,
+                defaultSelected,
                 label: t('profile.title')
             });
         }
 
         if (showModeratorSettings || showLanguageSettings) {
-            const showByDefault = defaultTab === SETTINGS_TABS.MORE;
+            const defaultSelected = defaultTab === SETTINGS_TABS.MORE;
 
-            defaultTabChosen = defaultTabChosen || showByDefault;
+            defaultTabChosen = defaultTabChosen || defaultSelected;
 
             tabs.push({
                 content: this._renderMoreTab(),
-                defaultSelected: showByDefault,
+                defaultSelected,
                 label: t('settings.more')
             });
         }

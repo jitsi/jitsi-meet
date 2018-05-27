@@ -1,6 +1,6 @@
 /**
  * The type of (redux) action which signals that server authentication has
- * becoming available or unavailable or the authentication status has changed.
+ * becoming available or unavailable or logged in user has changed.
  *
  * {
  *     type: AUTH_STATUS_CHANGED,
