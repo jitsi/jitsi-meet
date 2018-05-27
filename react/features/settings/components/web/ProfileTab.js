@@ -32,12 +32,6 @@ export type Props = {
     email: string,
 
     /**
-     * Whether or not the current participant is currently a guest user. Used to
-     * disable profile editing.
-     */
-    isGuest: boolean,
-
-    /**
      * Callback invoked when the server side auth flow is triggered.
      */
     onAuthToggle: Function,
@@ -75,7 +69,6 @@ class ProfileTab extends Component<Props> {
             authEnabled,
             displayName,
             email,
-            isGuest,
             onDisplayNameChange,
             onEmailChange,
             t
@@ -88,7 +81,6 @@ class ProfileTab extends Component<Props> {
                         <FieldTextStateless
                             autoFocus = { true }
                             compact = { true }
-                            disabled = { !isGuest }
                             id = 'setDisplayName'
                             label = { t('profile.setDisplayNameLabel') }
                             onChange = { onDisplayNameChange }
@@ -100,7 +92,6 @@ class ProfileTab extends Component<Props> {
                     <div className = 'profile-edit-field'>
                         <FieldTextStateless
                             compact = { true }
-                            disabled = { !isGuest }
                             id = 'setEmail'
                             label = { t('profile.setEmailLabel') }
                             onChange = { onEmailChange }

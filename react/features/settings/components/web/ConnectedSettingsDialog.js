@@ -205,7 +205,6 @@ class ConnectedSettingsDialog extends Component<Props> {
  *     hasVideoPermission: Function,
  *     hideAudioInputPreview: boolean,
  *     hideAudioOutputSelect: boolean,
- *     isGuest: boolean,
  *     showDeviceSettings: boolean,
  *     showLanguageSettings: boolean,
  *     showModeratorSettings: boolean,
@@ -227,7 +226,6 @@ function _mapStateToProps(state) {
         displayName: localParticipant.name,
         email: localParticipant.email,
         followMe: Boolean(conference.followMeEnabled),
-        isGuest: jwt.isGuest,
         startAudioMuted: Boolean(conference.startAudioMutedPolicy),
         startVideoMuted: Boolean(conference.startVideoMutedPolicy),
 
@@ -254,7 +252,7 @@ function _mapStateToProps(state) {
         showLanguageSettings: configuredTabs.includes('language'),
         showModeratorSettings: configuredTabs.includes('moderator')
             && localParticipant.role === PARTICIPANT_ROLE.MODERATOR,
-        showProfileSettings: configuredTabs.includes('profile')
+        showProfileSettings: configuredTabs.includes('profile') && jwt.isGuest
     };
 }
 
