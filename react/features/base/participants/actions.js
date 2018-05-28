@@ -235,14 +235,40 @@ export function participantDisplayNameChanged(id, displayName = '') {
  * }}
  */
 export function participantJoined(participant) {
-    if (!participant.local && !participant.conference) {
+    // Only the local participant is not identified with an id-conference pair.
+    if (participant.local) {
+        return {
+            type: PARTICIPANT_JOINED,
+            participant
+        };
+    }
+
+    // In other words, a remote participant is identified with an id-conference
+    // pair.
+    const { conference } = participant;
+
+    if (!conference) {
         throw Error(
             'A remote participant must be associated with a JitsiConference!');
     }
 
-    return {
-        type: PARTICIPANT_JOINED,
-        participant
+    return (dispatch, getState) => {
+        // A remote participant is only expected to join in a joined or joining
+        // conference. The following check is really necessary because a
+        // JitsiConference may have moved into leaving but may still manage to
+        // sneak a PARTICIPANT_JOINED in if its leave is delayed for any purpose
+        // (which is not outragous given that leaving involves network
+        // requests.)
+        const stateFeaturesBaseConference
+            = getState()['features/base/conference'];
+
+        if (conference === stateFeaturesBaseConference.conference
+                || conference === stateFeaturesBaseConference.joining) {
+            return dispatch({
+                type: PARTICIPANT_JOINED,
+                participant
+            });
+        }
     };
 }
 
