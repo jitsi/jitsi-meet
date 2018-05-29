@@ -61,8 +61,7 @@ function _addKnownDomains(state, knownDomains) {
         nextState = Array.from(state);
         for (let knownDomain of knownDomains) {
             knownDomain = knownDomain.toLowerCase();
-            nextState.indexOf(knownDomain) === -1
-                && nextState.push(knownDomain);
+            !nextState.includes(knownDomain) && nextState.push(knownDomain);
         }
     }
 

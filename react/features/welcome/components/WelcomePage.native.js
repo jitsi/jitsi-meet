@@ -47,10 +47,13 @@ class WelcomePage extends AbstractWelcomePage {
         this.state.hintBoxAnimation = new Animated.Value(0);
 
         // Bind event handlers so they are only bound once per instance.
-        this._getHintBoxStyle = this._getHintBoxStyle.bind(this);
         this._onFieldFocusChange = this._onFieldFocusChange.bind(this);
         this._onShowSideBar = this._onShowSideBar.bind(this);
         this._renderHintBox = this._renderHintBox.bind(this);
+
+        // Specially bind functions to avoid function definition on render.
+        this._onFieldBlur = this._onFieldFocusChange.bind(this, false);
+        this._onFieldFocus = this._onFieldFocusChange.bind(this, true);
     }
 
     /**
@@ -103,9 +106,9 @@ class WelcomePage extends AbstractWelcomePage {
                                 autoComplete = { false }
                                 autoCorrect = { false }
                                 autoFocus = { false }
-                                onBlur = { this._onFieldFocusChange(false) }
+                                onBlur = { this._onFieldBlur }
                                 onChangeText = { this._onRoomChange }
-                                onFocus = { this._onFieldFocusChange(true) }
+                                onFocus = { this._onFieldFocus }
                                 onSubmitEditing = { this._onJoin }
                                 placeholder = { t('welcomepage.roomname') }
                                 placeholderTextColor = {
@@ -149,28 +152,26 @@ class WelcomePage extends AbstractWelcomePage {
      *
      * @private
      * @param {boolean} focused - The focused state of the field.
-     * @returns {Function}
+     * @returns {void}
      */
     _onFieldFocusChange(focused) {
-        return () => {
-            focused
-                && this.setState({
-                    _fieldFocused: true
-                });
+        focused
+            && this.setState({
+                _fieldFocused: true
+            });
 
-            Animated.timing(
-                this.state.hintBoxAnimation,
-                {
-                    duration: 300,
-                    toValue: focused ? 1 : 0
-                })
-                .start(animationState =>
-                    animationState.finished
-                        && !focused
-                        && this.setState({
-                            _fieldFocused: false
-                        }));
-        };
+        Animated.timing(
+            this.state.hintBoxAnimation,
+            {
+                duration: 300,
+                toValue: focused ? 1 : 0
+            })
+            .start(animationState =>
+                animationState.finished
+                    && !focused
+                    && this.setState({
+                        _fieldFocused: false
+                    }));
     }
 
     /**

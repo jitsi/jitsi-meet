@@ -45,7 +45,7 @@ type Props = {
     /**
      * The avatar URL to be rendered.
      */
-    _avatar: string,
+    _avatarURL: string,
 
     /**
      * Display name of the local participant.
@@ -90,7 +90,7 @@ class WelcomePageSideBar extends Component<Props> {
                     <Avatar
                         size = { SIDEBAR_AVATAR_SIZE }
                         style = { styles.avatar }
-                        uri = { this.props._avatar } />
+                        uri = { this.props._avatarURL } />
                     <Text style = { styles.displayName }>
                         { this.props._displayName }
                     </Text>
@@ -99,20 +99,20 @@ class WelcomePageSideBar extends Component<Props> {
                     <ScrollView
                         style = { styles.itemContainer }>
                         <SideBarItem
-                            i18Label = 'settings.title'
                             icon = 'settings'
+                            label = 'settings.title'
                             onPress = { this._onOpenSettings } />
                         <SideBarItem
-                            i18Label = 'welcomepage.terms'
                             icon = 'info'
+                            label = 'welcomepage.terms'
                             url = { TERMS_URL } />
                         <SideBarItem
-                            i18Label = 'welcomepage.privacy'
                             icon = 'info'
+                            label = 'welcomepage.privacy'
                             url = { PRIVACY_URL } />
                         <SideBarItem
-                            i18Label = 'welcomepage.sendFeedback'
                             icon = 'info'
+                            label = 'welcomepage.sendFeedback'
                             url = { SEND_FEEDBACK_URL } />
                     </ScrollView>
                 </SafeAreaView>
@@ -153,13 +153,17 @@ class WelcomePageSideBar extends Component<Props> {
  *
  * @param {Object} state - The redux state.
  * @protected
- * @returns {Object}
+ * @returns {{
+ *     _avatarURL: string,
+ *     _displayName: string,
+ *     _visible: boolean
+ * }}
  */
 function _mapStateToProps(state: Object) {
     const localParticipant = getLocalParticipant(state);
 
     return {
-        _avatar: getAvatarURL(localParticipant),
+        _avatarURL: getAvatarURL(localParticipant),
         _displayName: getParticipantDisplayName(state, localParticipant.id),
         _visible: state['features/welcome'].sideBarVisible
     };
