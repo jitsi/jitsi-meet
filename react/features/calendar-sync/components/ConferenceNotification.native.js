@@ -64,7 +64,7 @@ type State = {
  * screen when another meeting is about to start.
  */
 class ConferenceNotification extends Component<Props, State> {
-    updateIntervalId: *;
+    updateIntervalId: IntervalID;
 
     /**
      * Constructor of the ConferenceNotification component.

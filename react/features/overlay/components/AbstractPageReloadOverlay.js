@@ -88,7 +88,7 @@ export default class AbstractPageReloadOverlay extends Component<*, *> {
                 || configError);
     }
 
-    _interval: *;
+    _interval: ?IntervalID;
 
     state: {
 
