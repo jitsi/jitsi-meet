@@ -119,7 +119,7 @@
 
                     // Call extra handler if defined.
                     if (typeof postLoadErrorHandler === "function") {
-                        postLoadErrorHandler();
+                        postLoadErrorHandler(fileRef);
                     }
                 };
                 window.removeEventListener(
