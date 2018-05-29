@@ -306,7 +306,12 @@ export default class SharedVideoManager {
                 SHARED_VIDEO_CONTAINER_TYPE, self.sharedVideo);
 
             APP.store.dispatch(participantJoined({
-                conference: APP.conference,
+
+                // FIXME The cat is out of the bag already or rather _room is
+                // not private because it is used in multiple other places
+                // already such as AbstractPageReloadOverlay and
+                // JitsiMeetLogStorage.
+                conference: APP.conference._room,
                 id: self.url,
                 isBot: true,
                 name: 'YouTube'
@@ -517,7 +522,7 @@ export default class SharedVideoManager {
                     UIEvents.UPDATE_SHARED_VIDEO, null, 'removed');
             });
 
-        APP.store.dispatch(participantLeft(this.url, APP.conference));
+        APP.store.dispatch(participantLeft(this.url, APP.conference._room));
 
         this.url = null;
         this.isSharedVideoShown = false;
