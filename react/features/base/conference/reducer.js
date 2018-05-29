@@ -60,10 +60,7 @@ ReducerRegistry.register('features/base/conference', (state = {}, action) => {
         return _setDesktopSharingEnabled(state, action);
 
     case SET_FOLLOW_ME:
-        return {
-            ...state,
-            followMeEnabled: action.enabled
-        };
+        return set(state, 'followMeEnabled', action.enabled);
 
     case SET_PASSWORD:
         return _setPassword(state, action);
@@ -206,7 +203,7 @@ function _conferenceJoined(state, { conference }) {
  * reduction of the specified action.
  */
 function _conferenceLeftOrWillLeave(state, { conference, type }) {
-    let nextState = state;
+    const nextState = { ...state };
 
     // The redux action CONFERENCE_LEFT is the last time that we should be
     // hearing from a JitsiConference instance.
@@ -217,20 +214,14 @@ function _conferenceLeftOrWillLeave(state, { conference, type }) {
     // due clean-up like leaving the associated room, but the instance is no
     // longer the focus of the attention of the user and, consequently, the app.
     for (const p in state) {
-        if (p !== 'leaving' && state[p] === conference) {
-            nextState = set(nextState, p, undefined);
+        if (state[p] === conference) {
+            nextState[p] = undefined;
 
             switch (p) {
             case 'conference':
-                // XXX Clear/unset locked & password for a conference which has
-                // been LOCKED_LOCALLY.
-                delete nextState.locked;
-                delete nextState.password;
-                break;
-
             case 'passwordRequired':
                 // XXX Clear/unset locked & password for a conference which has
-                // been LOCKED_REMOTELY.
+                // been LOCKED_LOCALLY or LOCKED_REMOTELY.
                 delete nextState.locked;
                 delete nextState.password;
                 break;
@@ -238,15 +229,7 @@ function _conferenceLeftOrWillLeave(state, { conference, type }) {
         }
     }
 
-    // leaving
-    switch (type) {
-    case CONFERENCE_LEFT:
-        if (state.leaving === conference) {
-            nextState = set(nextState, 'leaving', undefined);
-        }
-        break;
-
-    case CONFERENCE_WILL_LEAVE:
+    if (type === CONFERENCE_WILL_LEAVE) {
         // A CONFERENCE_WILL_LEAVE is of further consequence only if it is
         // expected i.e. if the specified conference is joining or joined.
         if (conference === state.joining || conference === state.conference) {
@@ -256,9 +239,8 @@ function _conferenceLeftOrWillLeave(state, { conference, type }) {
              *
              * @type {JitsiConference}
              */
-            nextState = set(nextState, 'leaving', conference);
+            nextState.leaving = conference;
         }
-        break;
     }
 
     return nextState;
