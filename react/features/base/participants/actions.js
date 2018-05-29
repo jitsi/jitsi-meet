@@ -2,6 +2,7 @@
 
 import throttle from 'lodash/throttle';
 
+import { set } from '../redux';
 import { showNotification } from '../../notifications';
 
 import {
@@ -113,10 +114,7 @@ export function localParticipantIdChanged(id) {
  * }}
  */
 export function localParticipantJoined(participant = {}) {
-    return participantJoined({
-        ...participant,
-        local: true
-    });
+    return participantJoined(set(participant, 'local', true));
 }
 
 /**
