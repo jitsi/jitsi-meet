@@ -15,7 +15,7 @@ type Props = {
     /**
      * The i18n key of the text label of the section.
      */
-    i18nLabel: string,
+    label: string,
 
     /**
      * An external style object passed to the component.
@@ -41,7 +41,7 @@ class FormSectionHeader extends Component<Props> {
      * @returns {ReactElement}
      */
     render() {
-        const { i18nLabel, style, t } = this.props;
+        const { label, style, t } = this.props;
 
         return (
             <View
@@ -50,7 +50,7 @@ class FormSectionHeader extends Component<Props> {
                     style
                 ] } >
                 <Text>
-                    { t(i18nLabel) }
+                    { t(label) }
                 </Text>
             </View>
         );

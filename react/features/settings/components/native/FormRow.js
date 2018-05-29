@@ -25,7 +25,7 @@ type Props = {
     /**
      * The i18n key of the text label of the form field.
      */
-    i18nLabel: string,
+    label: string,
 
     /**
      * Invoked to obtain translated strings.
@@ -78,7 +78,7 @@ class FormRow extends Component<Props> {
                             styles.text,
                             styles.fieldLabelText
                         ] } >
-                        { t(this.props.i18nLabel) }
+                        { t(this.props.label) }
                     </Text>
                 </View>
                 <View style = { styles.fieldValueContainer } >

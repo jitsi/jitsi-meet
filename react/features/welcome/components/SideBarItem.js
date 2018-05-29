@@ -11,14 +11,14 @@ import styles from './styles';
 type Props = {
 
     /**
-     * The i18n label of the item.
-     */
-    i18Label: string,
-
-    /**
      * The icon of the item.
      */
     icon: string,
+
+    /**
+     * The i18n label of the item.
+     */
+    label: string,
 
     /**
      * The function to be invoked when the item is pressed
@@ -61,7 +61,7 @@ class SideBarItem extends Component<Props> {
      * @returns {ReactElement}
      */
     render() {
-        const { onPress, t } = this.props;
+        const { label, onPress, t } = this.props;
         const onPressCalculated
             = typeof onPress === 'function' ? onPress : this._onOpenURL;
 
@@ -74,7 +74,7 @@ class SideBarItem extends Component<Props> {
                         name = { this.props.icon }
                         style = { styles.sideBarItemIcon } />
                     <Text style = { styles.sideBarItemText }>
-                        { t(this.props.i18Label) }
+                        { t(label) }
                     </Text>
                 </View>
             </TouchableOpacity>

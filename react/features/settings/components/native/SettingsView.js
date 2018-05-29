@@ -146,17 +146,17 @@ class SettingsView extends AbstractSettingsView {
             <SafeAreaView style = { styles.settingsForm }>
                 <ScrollView>
                     <FormSectionHeader
-                        i18nLabel = 'settingsView.profileSection' />
+                        label = 'settingsView.profileSection' />
                     <FormRow
                         fieldSeparator = { true }
-                        i18nLabel = 'settingsView.displayName'>
+                        label = 'settingsView.displayName'>
                         <TextInput
                             autoCorrect = { false }
                             onChangeText = { this._onChangeDisplayName }
                             placeholder = 'John Doe'
                             value = { _settings.displayName } />
                     </FormRow>
-                    <FormRow i18nLabel = 'settingsView.email'>
+                    <FormRow label = 'settingsView.email'>
                         <TextInput
                             autoCapitalize = 'none'
                             autoCorrect = { false }
@@ -166,10 +166,10 @@ class SettingsView extends AbstractSettingsView {
                             value = { _settings.email } />
                     </FormRow>
                     <FormSectionHeader
-                        i18nLabel = 'settingsView.conferenceSection' />
+                        label = 'settingsView.conferenceSection' />
                     <FormRow
                         fieldSeparator = { true }
-                        i18nLabel = 'settingsView.serverURL'>
+                        label = 'settingsView.serverURL'>
                         <TextInput
                             autoCapitalize = 'none'
                             autoCorrect = { false }
@@ -180,12 +180,12 @@ class SettingsView extends AbstractSettingsView {
                     </FormRow>
                     <FormRow
                         fieldSeparator = { true }
-                        i18nLabel = 'settingsView.startWithAudioMuted'>
+                        label = 'settingsView.startWithAudioMuted'>
                         <Switch
                             onValueChange = { this._onStartAudioMutedChange }
                             value = { _settings.startWithAudioMuted } />
                     </FormRow>
-                    <FormRow i18nLabel = 'settingsView.startWithVideoMuted'>
+                    <FormRow label = 'settingsView.startWithVideoMuted'>
                         <Switch
                             onValueChange = { this._onStartVideoMutedChange }
                             value = { _settings.startWithVideoMuted } />
