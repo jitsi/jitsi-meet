@@ -86,6 +86,12 @@ type State = {
     broadcasts: ?Array<Object>,
 
     /**
+     * The error type, as provided by Google, for the most recent error
+     * encountered by the Google API.
+     */
+    errorType: ?string,
+
+    /**
      * The current state of interactions with the Google API. Determines what
      * Google related UI should display.
      */
@@ -129,6 +135,7 @@ class StartLiveStreamDialog extends Component<Props, State> {
 
         this.state = {
             broadcasts: undefined,
+            errorType: undefined,
             googleAPIState: GOOGLE_API_STATES.NEEDS_LOADING,
             googleProfileEmail: '',
             selectedBoundStreamID: undefined,
@@ -293,6 +300,7 @@ class StartLiveStreamDialog extends Component<Props, State> {
                 // Google api. Do not error if the login in canceled.
                 if (response && response.result) {
                     this._setStateIfMounted({
+                        errorType: this._parseErrorFromResponse(response),
                         googleAPIState: GOOGLE_API_STATES.ERROR
                     });
                 }
@@ -428,6 +436,23 @@ class StartLiveStreamDialog extends Component<Props, State> {
     }
 
     /**
+     * Searches in a Google API error response for the error type.
+     *
+     * @param {Object} response - The Google API response that may contain an
+     * error.
+     * @private
+     * @returns {string|null}
+     */
+    _parseErrorFromResponse(response) {
+        const result = response.result;
+        const error = result.error;
+        const errors = error && error.errors;
+        const firstError = errors && errors[0];
+
+        return (firstError && firstError.reason) || null;
+    }
+
+    /**
      * Renders a React Element for authenticating with the Google web client.
      *
      * @private
@@ -485,7 +510,7 @@ class StartLiveStreamDialog extends Component<Props, State> {
                     onClick = { this._onRequestGoogleSignIn }
                     text = { t('liveStreaming.signIn') } />
             );
-            helpText = t('liveStreaming.errorAPI');
+            helpText = this._getGoogleErrorMessageToDisplay();
 
             break;
 
@@ -510,6 +535,23 @@ class StartLiveStreamDialog extends Component<Props, State> {
                 </div>
             </div>
         );
+    }
+
+    /**
+     * Returns the error message to display for the current error state.
+     *
+     * @private
+     * @returns {string} The error message to display.
+     */
+    _getGoogleErrorMessageToDisplay() {
+        switch (this.state.errorType) {
+        case 'liveStreamingNotEnabled':
+            return this.props.t(
+                'liveStreaming.errorLiveStreamNotEnabled',
+                { email: this.state.googleProfileEmail });
+        default:
+            return this.props.t('liveStreaming.errorAPI');
+        }
     }
 
     /**
