@@ -147,6 +147,17 @@ export default class AbstractToolboxItem<P : Props> extends Component<P> {
     }
 
     /**
+     * Helper property to get the item accessibilityLabel. If a translation
+     * function was provided then it will be translated using it.
+     *
+     * @protected
+     * @returns {?string}
+     */
+    get accessibilityLabel(): ?string {
+        return this._maybeTranslateAttribute(this.props.accessibilityLabel);
+    }
+
+    /**
      * Utility function to translate the given string, if a translation
      * function is available.
      *

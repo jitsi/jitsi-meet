@@ -21,12 +21,11 @@ export default class ToolboxItem extends AbstractToolboxItem<Props> {
      */
     _renderItem() {
         const {
-            accessibilityLabel,
             onClick,
             showLabel
         } = this.props;
         const props = {
-            'aria-label': accessibilityLabel,
+            'aria-label': this.accessibilityLabel,
             className: showLabel ? 'overflow-menu-item' : 'toolbox-button',
             onClick
         };
