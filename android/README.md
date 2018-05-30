@@ -6,7 +6,30 @@ Jitsi conveniently provides a pre-build SDK artifacts/binaries in its Maven repo
 ### Use pre-build SDK artifacts/binaries
 In your project, add the Maven repository
 `https://github.com/jitsi/jitsi-maven-repository/raw/master/releases` and the
-dependency `org.jitsi.react:jitsi-meet-sdk:1.9.0` into your `build.gradle` file.
+dependency `org.jitsi.react:jitsi-meet-sdk` into your `build.gradle` files.
+
+The repository typically goes into the `build.gradle` file in the root of your project:
+
+```gradle
+allprojects {
+    repositories {
+        google()
+        jcenter()
+        maven {
+            url "https://github.com/jitsi/jitsi-maven-repository/raw/master/releases"
+        }
+    }
+}
+```
+
+Dependency definitions belong in the individual module `build.gradle` files:
+
+```gradle
+dependencies {
+    // (other dependencies)
+    implementation ('org.jitsi.react:jitsi-meet-sdk:+') { transitive = true }
+}
+```
 
 ### Build and use your own SDK artifacts/binaries
 
@@ -39,8 +62,12 @@ dependency `org.jitsi.react:jitsi-meet-sdk:1.9.0` into your `build.gradle` file.
    cd ../
    ```
 5. In _your_ project, add the Maven repository that you configured in step 3, as well
-   as the dependency `org.jitsi.react:jitsi-meet-sdk:1.9.0` into your `build.gradle`
-   file.
+   as the dependency `org.jitsi.react:jitsi-meet-sdk` into your `build.gradle`
+   file. Note that it's needed to pull in the transitive dependencies:
+   
+   ```gradle
+   implementation ('org.jitsi.react:jitsi-meet-sdk:+') { transitive = true }
+   ```
 
 Generally, if you are modifying the JavaScript code of Jitsi Meet SDK for Android only,
 the above will suffice. If you would like to publish a third-party react-native module
