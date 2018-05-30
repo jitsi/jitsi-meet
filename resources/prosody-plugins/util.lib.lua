@@ -62,15 +62,17 @@ end
 
 
 function wrap_async_run(event,handler)
-    local result;
+    -- Grab a local response so that we can send the http response when
+    -- the handler is done.
+    local response = event.response;
     local async_func = runner(function (event)
-        local wait, done = waiter();
-        result=handler(event);
-        done();
-        return result;
+          response.status_code = handler(event);
+          -- Send the response to the waiting http client.
+          response:send();
     end)
     async_func:run(event)
-    return result;
+    -- return true to keep the client http connection open.
+    return true;
 end
 
 --- Updates presence stanza, by adding identity node
