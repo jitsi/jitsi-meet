@@ -47,8 +47,15 @@ the above will suffice. If you would like to publish a third-party react-native 
 which Jitsi Meet SDK for Android depends on (and is not publicly available in Maven
 repositories) continue below.
 
-6. Configure the Maven repositories in which you are going to publish the
-   artifacts/binaries during step 7. 
+6. Create the release assembly for _each_ third-party react-native module that you
+   need, replacing it's name in the example below.
+   
+   ```bash
+   ./gradlew :react-native-webrtc:assembleRelease
+   ```
+   
+7. Configure the Maven repositories in which you are going to publish the
+   artifacts/binaries during step 8. 
    
    In the file `android/build.gradle` (note that this is a different file than the file
    that was modified in step 3) modify the line that contains
@@ -58,7 +65,7 @@ repositories) continue below.
    by the Jitsi Developers) to the location of the repository that you'd like to use.
    You can use the same repository as the one you configured in step 3 if you want.
 
-7. Publish the Maven artifact/binary of _each_  third-party react-native module that
+8. Publish the Maven artifact/binary of _each_ third-party react-native module that
    you need, replacing it's name in the example below. For example, to publish
    react-native-webrtc:
 
