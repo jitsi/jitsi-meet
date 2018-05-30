@@ -9,7 +9,6 @@ import type { Props } from './AbstractButton';
 export default class AbstractVideoMuteButton<P : Props, S : *>
     extends AbstractButton<P, S> {
 
-    accessibilityLabel = 'Video mute';
     iconName = 'icon-camera';
     toggledIconName = 'icon-camera-disabled toggled';
 
