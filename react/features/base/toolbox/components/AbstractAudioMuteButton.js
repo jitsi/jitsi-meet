@@ -9,7 +9,6 @@ import type { Props } from './AbstractButton';
 export default class AbstractAudioMuteButton<P: Props, S: *>
     extends AbstractButton<P, S> {
 
-    accessibilityLabel = 'Audio mute';
     iconName = 'icon-microphone';
     toggledIconName = 'icon-mic-disabled toggled';
 

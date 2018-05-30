@@ -73,7 +73,8 @@
     },
     "toolbar": {
         "accessibilityLabel": {
-            "hangup": "Leave the call"
+            "hangup": "Leave the call",
+            "mute": "Toggle mute audio"
         },
         "addPeople": "Add people to your call",
         "audioonly": "Enable / Disable audio only mode (saves bandwidth)",
