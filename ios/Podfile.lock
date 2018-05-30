@@ -1,4 +1,25 @@
 PODS:
+  - boost (1.59.0):
+    - boost/graph-includes (= 1.59.0)
+    - boost/math-includes (= 1.59.0)
+    - boost/numeric-includes (= 1.59.0)
+    - boost/pointer_cast-includes (= 1.59.0)
+    - boost/preprocessor-includes (= 1.59.0)
+    - boost/shared_ptr-includes (= 1.59.0)
+    - boost/string_algorithms-includes (= 1.59.0)
+  - boost/graph-includes (1.59.0)
+  - boost/math-includes (1.59.0)
+  - boost/numeric-includes (1.59.0)
+  - boost/pointer_cast-includes (1.59.0)
+  - boost/preprocessor-includes (1.59.0)
+  - boost/shared_ptr-includes (1.59.0)
+  - boost/string_algorithms-includes (1.59.0)
+  - DoubleConversion (1.1.5)
+  - Folly (2016.09.26.00):
+    - boost
+    - DoubleConversion
+    - GLog
+  - GLog (0.3.4)
   - React (0.51.0):
     - React/Core (= 0.51.0)
   - react-native-background-timer (2.0.0):
@@ -13,18 +34,24 @@ PODS:
     - React
   - react-native-webrtc (1.58.2):
     - React
-  - React/BatchedBridge (0.51.0):
-    - React/Core
-    - React/cxxreact_legacy
   - React/Core (0.51.0):
     - yoga (= 0.51.0.React)
-  - React/cxxreact_legacy (0.51.0):
-    - React/jschelpers_legacy
+  - React/CxxBridge (0.51.0):
+    - Folly (= 2016.09.26.00)
+    - React/Core
+    - React/cxxreact
+  - React/cxxreact (0.51.0):
+    - boost
+    - Folly (= 2016.09.26.00)
+    - React/jschelpers
   - React/DevSupport (0.51.0):
     - React/Core
     - React/RCTWebSocket
   - React/fishhook (0.51.0)
-  - React/jschelpers_legacy (0.51.0)
+  - React/jschelpers (0.51.0):
+    - Folly (= 2016.09.26.00)
+    - React/PrivateDatabase
+  - React/PrivateDatabase (0.51.0)
   - React/RCTActionSheet (0.51.0):
     - React/Core
   - React/RCTAnimation (0.51.0):
@@ -54,14 +81,17 @@ PODS:
   - yoga (0.51.0.React)
 
 DEPENDENCIES:
+  - DoubleConversion (from `../node_modules/react-native/third-party-podspecs/DoubleConversion.podspec`)
+  - Folly (from `../node_modules/react-native/third-party-podspecs/Folly.podspec`)
+  - GLog (from `../node_modules/react-native/third-party-podspecs/GLog.podspec`)
   - react-native-background-timer (from `../node_modules/react-native-background-timer`)
   - react-native-calendar-events (from `../node_modules/react-native-calendar-events`)
   - react-native-fetch-blob (from `../node_modules/react-native-fetch-blob`)
   - react-native-keep-awake (from `../node_modules/react-native-keep-awake`)
   - react-native-locale-detector (from `../node_modules/react-native-locale-detector`)
   - react-native-webrtc (from `../node_modules/react-native-webrtc`)
-  - React/BatchedBridge (from `../node_modules/react-native`)
   - React/Core (from `../node_modules/react-native`)
+  - React/CxxBridge (from `../node_modules/react-native`)
   - React/DevSupport (from `../node_modules/react-native`)
   - React/RCTActionSheet (from `../node_modules/react-native`)
   - React/RCTAnimation (from `../node_modules/react-native`)
@@ -75,6 +105,12 @@ DEPENDENCIES:
   - yoga (from `../node_modules/react-native/ReactCommon/yoga`)
 
 EXTERNAL SOURCES:
+  DoubleConversion:
+    :podspec: ../node_modules/react-native/third-party-podspecs/DoubleConversion.podspec
+  Folly:
+    :podspec: ../node_modules/react-native/third-party-podspecs/Folly.podspec
+  GLog:
+    :podspec: ../node_modules/react-native/third-party-podspecs/GLog.podspec
   React:
     :path: ../node_modules/react-native
   react-native-background-timer:
@@ -97,6 +133,10 @@ EXTERNAL SOURCES:
     :path: ../node_modules/react-native/ReactCommon/yoga
 
 SPEC CHECKSUMS:
+  boost: 30a15ffb6d9aa4646dd3caffc960753f4cb4ca4e
+  DoubleConversion: ebb6747c5b66026ad4f97b789c3ceac6f18e57a6
+  Folly: b7255b29f1d693c375d642d0f04f0592181156d9
+  GLog: 3e4e4ae9746ce6bf6e9420c7fc1e08ad59c8ba1a
   React: 541ba768b9855e10cdc76f55427a5cd0653ca806
   react-native-background-timer: 63dcbf37dbcf294b5c6c071afcdc661fa06a7594
   react-native-calendar-events: fe6fbc8ed337a7423c98f2c9012b25f20444de09
@@ -108,6 +148,6 @@ SPEC CHECKSUMS:
   RNVectorIcons: c0dbfbf6068fefa240c37b0f71bd03b45dddac44
   yoga: 17521bbb0dd54a47c0b3ac43253e78cdac7488e0
 
-PODFILE CHECKSUM: 4a5a310403b99b9c2d619e0b18da89bf0fe5858c
+PODFILE CHECKSUM: fb462dc2d5d01656ec1f4ae39253903a702ba30c
 
 COCOAPODS: 1.4.0
