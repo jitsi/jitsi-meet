@@ -140,7 +140,7 @@ function _addConferenceListeners(conference, dispatch) {
 
     conference.on(
         JitsiConferenceEvents.USER_JOINED,
-        (id, user) => dispatch(participantJoined({
+        (id, user) => !user.isHidden() && dispatch(participantJoined({
             conference,
             id,
             name: user.getDisplayName(),
@@ -148,7 +148,8 @@ function _addConferenceListeners(conference, dispatch) {
         })));
     conference.on(
         JitsiConferenceEvents.USER_LEFT,
-        id => dispatch(participantLeft(id, conference)));
+        (id, user) => !user.isHidden()
+            && dispatch(participantLeft(id, conference)));
     conference.on(
         JitsiConferenceEvents.USER_ROLE_CHANGED,
         (...args) => dispatch(participantRoleChanged(...args)));
