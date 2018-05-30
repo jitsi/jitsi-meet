@@ -341,6 +341,20 @@ function _setPassword(state, { conference, method, password }) {
     case conference.join:
         if (state.passwordRequired === conference) {
             return assign(state, {
+                // XXX 1. The JitsiConference which transitions away from
+                // passwordRequired MUST remain in the redux state
+                // features/base/conference until it transitions into
+                // conference; otherwise, there is a span of time during which
+                // the redux state does not even know that there is a
+                // JitsiConference whatsoever.
+                //
+                // 2. The redux action setPassword will attempt to join the
+                // JitsiConference so joining is an appropriate transitional
+                // redux state.
+                //
+                // 3. The redux action setPassword will perform the same check
+                // before it proceeds with the re-join.
+                joining: state.conference ? state.joining : conference,
                 locked: LOCKED_REMOTELY,
 
                 /**
