@@ -1,24 +1,58 @@
 # Jitsi Meet SDK for Android
 
-## Build
+## Build your own, or use a pre-build SDK artifacts/binaries
+Jitsi conveniently provides a pre-build SDK artifacts/binaries in its Maven repository. When you do not require any modification to the SDK itself, it's suggested to use the pre-build SDK. This avoids the complexity of building and installing your own SDK artifacts/binaries.
+
+### Use pre-build SDK artifacts/binaries
+In your project, add the Maven repository
+`https://github.com/jitsi/jitsi-maven-repository/raw/master/releases` and the
+dependency `org.jitsi.react:jitsi-meet-sdk` into your `build.gradle` files.
+
+The repository typically goes into the `build.gradle` file in the root of your project:
+
+```gradle
+allprojects {
+    repositories {
+        google()
+        jcenter()
+        maven {
+            url "https://github.com/jitsi/jitsi-maven-repository/raw/master/releases"
+        }
+    }
+}
+```
+
+Dependency definitions belong in the individual module `build.gradle` files:
+
+```gradle
+dependencies {
+    // (other dependencies)
+    implementation ('org.jitsi.react:jitsi-meet-sdk:+') { transitive = true }
+}
+```
+
+### Build and use your own SDK artifacts/binaries
 
 1. Install all required [dependencies](https://github.com/jitsi/jitsi-meet/blob/master/doc/mobile.md).
 
-2. ```bash
+2. Create the SDK-release assembly, by invoking the following in the jitsi-meet
+   project source:
+
+   ```bash
    cd android/
    ./gradlew :sdk:assembleRelease
    ```
+   When this successfully executes, artifacts/binaries are ready to be published 
+   into a Maven repository of your choice.
 
 3. Configure the Maven repositories in which you are going to publish the
-   artifacts/binaries during step 4. Modify
+   artifacts/binaries during step 4. 
+   
+   In the file `android/sdk/build.gradle` modify the line that contains
    `"file:${rootProject.projectDir}/../../../jitsi/jitsi-maven-repository/releases"`
-   in adroid/sdk/build.gradle for Jitsi Meet SDK for Android and/or
-   `"file:${rootProject.projectDir}/../../../jitsi/jitsi-maven-repository/releases"`
-   in android/build.gradle for the third-party react-native modules which Jitsi
-   Meet SDK for Android depends on and are not publicly available in Maven
-   repositories. Generally, if you are modifying the JavaScript code of Jitsi
-   Meet SDK for Android only, you will very likely need to consider the former
-   only.
+   
+   Change this value (which represents the Maven repository location used internally
+   by the Jitsi Developers) to the location of the repository that you'd like to use.
 
 4. Publish the Maven artifact/binary of Jitsi Meet SDK for Android in the Maven
    repository configured in step 3:
@@ -27,23 +61,51 @@
    ./gradlew :sdk:publish
    cd ../
    ```
+5. In _your_ project, add the Maven repository that you configured in step 3, as well
+   as the dependency `org.jitsi.react:jitsi-meet-sdk` into your `build.gradle`
+   file. Note that it's needed to pull in the transitive dependencies:
+   
+   ```gradle
+   implementation ('org.jitsi.react:jitsi-meet-sdk:+') { transitive = true }
+   ```
 
-   If you would like to publish a third-party react-native module which Jitsi
-   Meet SDK for Android depends on and is not publicly available in Maven
-   repositories, replace `sdk` with the name of the react-native module. For
-   example, to publish react-native-webrtc:
+Generally, if you are modifying the JavaScript code of Jitsi Meet SDK for Android only,
+the above will suffice. If you would like to publish a third-party react-native module
+which Jitsi Meet SDK for Android depends on (and is not publicly available in Maven
+repositories) continue below.
+
+6. Create the release assembly for _each_ third-party react-native module that you
+   need, replacing it's name in the example below.
+   
+   ```bash
+   ./gradlew :react-native-webrtc:assembleRelease
+   ```
+   
+7. Configure the Maven repositories in which you are going to publish the
+   artifacts/binaries during step 8. 
+   
+   In the file `android/build.gradle` (note that this is a different file than the file
+   that was modified in step 3) modify the line that contains
+   `"file:${rootProject.projectDir}/../../../jitsi/jitsi-maven-repository/releases"`
+   
+   Change this value (which represents the Maven repository location used internally
+   by the Jitsi Developers) to the location of the repository that you'd like to use.
+   You can use the same repository as the one you configured in step 3 if you want.
+
+8. Publish the Maven artifact/binary of _each_ third-party react-native module that
+   you need, replacing it's name in the example below. For example, to publish
+   react-native-webrtc:
 
    ```bash
    ./gradlew :react-native-webrtc:publish
    ```
 
-## Install
+   Note that there should not be a need to explicitly add these dependencies in
+   _your_ project, as they will be pulled in as transitive dependencies of
+   `jitsi-meet-sdk`.
 
-Add the Maven repository
-`https://github.com/jitsi/jitsi-maven-repository/raw/master/releases` and the
-dependency `org.jitsi.react:jitsi-meet-sdk:1.9.0` into your `build.gradle`.
 
-## API
+## Using the API
 
 Jitsi Meet SDK is an Android library which embodies the whole Jitsi Meet
 experience and makes it reusable by third-party apps.
