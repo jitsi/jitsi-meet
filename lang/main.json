@@ -416,6 +416,7 @@
         "enterStreamKey": "Enter your YouTube live stream key here.",
         "error": "Live Streaming failed. Please try again.",
         "errorAPI": "An error occurred while accessing your YouTube broadcasts. Please try logging in again.",
+        "errorLiveStreamNotEnabled": "Live Streaming is not enabled on __email__. Please enable live streaming or log into an account with live streaming enabled.",
         "failedToStart": "Live Streaming failed to start",
         "off": "Live Streaming stopped",
         "on": "Live Streaming",
