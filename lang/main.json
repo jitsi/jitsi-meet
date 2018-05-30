@@ -72,6 +72,9 @@
         "rejoinKeyTitle": "Rejoin"
     },
     "toolbar": {
+        "accessibilityLabel": {
+            "hangup": "Leave the call"
+        },
         "addPeople": "Add people to your call",
         "audioonly": "Enable / Disable audio only mode (saves bandwidth)",
         "audioOnlyOn": "Enable audio only mode (saves bandwidth)",

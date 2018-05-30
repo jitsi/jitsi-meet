@@ -26,6 +26,7 @@ type Props = AbstractButtonProps & {
  * @extends AbstractHangupButton
  */
 class HangupButton extends AbstractHangupButton<Props, *> {
+    accessibilityLabel = 'toolbar.accessibilityLabel.hangup';
     label = 'toolbar.hangup';
     tooltip = 'toolbar.hangup';
 

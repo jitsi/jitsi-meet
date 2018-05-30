@@ -9,6 +9,9 @@ const { api } = window.alwaysOnTop;
  * Stateless hangup button for the Always-on-Top windows.
  */
 export default class HangupButton extends AbstractHangupButton<Props, *> {
+
+    accessibilityLabel = 'Hangup';
+
     /**
      * Helper function to perform the actual hangup action.
      *
