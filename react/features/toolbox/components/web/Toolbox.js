@@ -983,7 +983,8 @@ class Toolbox extends Component<Props> {
                     onClick = { this._onToolbarOpenVideoQuality } />,
             this._shouldShowButton('fullscreen')
                 && <OverflowMenuItem
-                    accessibilityLabel = 'Full screen'
+                    accessibilityLabel =
+                        { t('toolbar.accessibilityLabel.fullScreen') }
                     icon = { _fullScreen
                         ? 'icon-exit-full-screen'
                         : 'icon-full-screen' }
