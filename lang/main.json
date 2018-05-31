@@ -551,6 +551,7 @@
         "veryGood": "Very Good"
     },
     "info": {
+        "accessibilityLabel": "Show info",
         "addPassword": "Add password",
         "cancelPassword": "Cancel password",
         "conferenceURL": "Link:",
