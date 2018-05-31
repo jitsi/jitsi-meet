@@ -55,14 +55,24 @@ export default class AbstractPagedList extends Component<Props, State> {
     constructor(props: Props) {
         super(props);
 
-        // props.defaultPage may point to a non existing page if some of the
-        // pages are disabled.
-        const maxPageIndex
-            = props.pages.filter(page => page.component).length - 1;
-
         this.state = {
-            pageIndex: Math.max(0, Math.min(maxPageIndex, props.defaultPage))
+            pageIndex: this._validatePageIndex(props.defaultPage)
         };
+    }
+
+    /**
+     * Implements React {@code Component}'s componentWillReceiveProps.
+     *
+     * @inheritdoc
+     */
+    componentWillReceiveProps(newProps: Props) {
+        const { defaultPage } = newProps;
+
+        if (defaultPage !== this.props.defaultPage) {
+            // Default page changed due to a redux update. This is likely to
+            // happen after APP_WILL_MOUNT. So we update the active tab.
+            this._platformSpecificPageSelect(defaultPage);
+        }
     }
 
     /**
@@ -95,6 +105,20 @@ export default class AbstractPagedList extends Component<Props, State> {
         );
     }
 
+    _platformSpecificPageSelect: number => void
+
+    /**
+     * Method to be overriden by the components implementing this abstract class
+     * to handle platform specific actions on page select.
+     *
+     * @protected
+     * @param {number} pageIndex - The selected page index.
+     * @returns {void}
+     */
+    _platformSpecificPageSelect(pageIndex) {
+        this._selectPage(pageIndex);
+    }
+
     _renderPagedList: boolean => React$Node;
 
     _selectPage: number => void;
@@ -107,18 +131,38 @@ export default class AbstractPagedList extends Component<Props, State> {
      * @returns {void}
      */
     _selectPage(pageIndex: number) {
+        const validatedPageIndex = this._validatePageIndex(pageIndex);
+
         this.setState({
-            pageIndex
+            pageIndex: validatedPageIndex
         });
 
         // The page's Component may have a refresh(dispatch) function which we
         // invoke when the page is selected.
-        const selectedPage = this.props.pages[pageIndex];
+        const selectedPage = this.props.pages[validatedPageIndex];
 
         if (selectedPage && selectedPage.component) {
             const { refresh } = selectedPage.component;
 
             typeof refresh === 'function' && refresh(this.props.dispatch);
         }
+    }
+
+    _validatePageIndex: number => number
+
+    /**
+     * Validates the requested page index and returns a safe value.
+     *
+     * @private
+     * @param {number} pageIndex - The requested page index.
+     * @returns {number}
+     */
+    _validatePageIndex(pageIndex) {
+        // pageIndex may point to a non existing page if some of the pages are
+        // disabled (their component property is undefined).
+        const maxPageIndex
+            = this.props.pages.filter(page => page.component).length - 1;
+
+        return Math.max(0, Math.min(maxPageIndex, pageIndex));
     }
 }

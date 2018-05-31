@@ -2,6 +2,7 @@
 
 import React, { Component } from 'react';
 import { Platform } from 'react-native';
+import { connect } from 'react-redux';
 
 import { translate } from '../../base/i18n';
 import { PagedList } from '../../base/react';
@@ -9,6 +10,11 @@ import { MeetingList } from '../../calendar-sync';
 import { RecentList } from '../../recent-list';
 
 type Props = {
+
+    /**
+     * True if the calendar feature has fetched entries, false otherwise
+     */
+    _hasCalendarEntries: boolean,
 
     /**
      * Renders the lists disabled.
@@ -74,15 +80,33 @@ class WelcomePageLists extends Component<Props> {
      * @inheritdoc
      */
     render() {
-        const { disabled } = this.props;
+        const { disabled, _hasCalendarEntries } = this.props;
 
         return (
             <PagedList
-                defaultPage = { 0 }
+                defaultPage = { _hasCalendarEntries ? 1 : 0 }
                 disabled = { disabled }
                 pages = { this.pages } />
         );
     }
 }
 
-export default translate(WelcomePageLists);
+/**
+ * Maps (parts of) the redux state to the React {@code Component} props of
+ * {@code WelcomePageLists}.
+ *
+ * @param {Object} state - The redux state.
+ * @protected
+ * @returns {{
+ *     _hasCalendarEntries: boolean
+ * }}
+ */
+function _mapStateToProps(state: Object) {
+    const { events } = state['features/calendar-sync'];
+
+    return {
+        _hasCalendarEntries: Boolean(events && events.length)
+    };
+}
+
+export default translate(connect(_mapStateToProps)(WelcomePageLists));
