@@ -1015,7 +1015,8 @@ class Toolbox extends Component<Props> {
             this._shouldShowButton('etherpad')
                 && _etherpadInitialized
                 && <OverflowMenuItem
-                    accessibilityLabel = 'Etherpad'
+                    accessibilityLabel =
+                        { t('toolbar.accessibilityLabel.document') }
                     icon = 'icon-share-doc'
                     key = 'etherpad'
                     onClick = { this._onToolbarToggleEtherpad }
