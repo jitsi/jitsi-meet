@@ -16,7 +16,6 @@ if not muc_domain_base then
 end
 
 -- Status strings that trigger call events.
-local invited_status   = "Invited"
 local calling_status   = "calling"
 local ringing_status   = "ringing"
 local busy_status      = "busy"
@@ -54,7 +53,6 @@ end
 --    Status      | Event Type
 --    _________________________
 --    "calling"   | INVITE
---    "Invited"   | INVITE
 --    "ringing"   | CANCEL
 --    "busy"      | CANCEL
 --    "rejected"  | CANCEL
@@ -82,7 +80,6 @@ module:hook("muc-broadcast-presence", function (event)
 
 	local switch = function(status)
 	   case = {
-		  [invited_status]   = function() invite() end,
 		  [calling_status]   = function() invite() end,
 		  [ringing_status]   = function() cancel() end,
 		  [busy_status]      = function() cancel() end,
