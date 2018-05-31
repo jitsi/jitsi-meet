@@ -1004,7 +1004,8 @@ class Toolbox extends Component<Props> {
                 && this._renderRecordingButton(),
             this._shouldShowButton('sharedvideo')
                 && <OverflowMenuItem
-                    accessibilityLabel = 'Shared video'
+                    accessibilityLabel =
+                        { t('toolbar.accessibilityLabel.sharedvideo') }
                     icon = 'icon-shared-video'
                     key = 'sharedvideo'
                     onClick = { this._onToolbarToggleSharedVideo }

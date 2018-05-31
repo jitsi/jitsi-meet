@@ -84,6 +84,7 @@
             "mute": "Toggle mute audio",
             "pip": "Toggle Picture-in-Picture mode",
             "raiseHand": "Toggle raise hand",
+            "sharedvideo": "Toggle Youtube video sharing",
             "shareRoom": "Invite someone",
             "shareYourScreen": "Toggle screenshare",
             "toggleCamera": "Toggle camera",
