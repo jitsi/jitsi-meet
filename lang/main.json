@@ -76,6 +76,7 @@
             "hangup": "Leave the call",
             "moreActions": "Toggle more actions menu",
             "mute": "Toggle mute audio",
+            "shareRoom": "Invite someone",
             "videomute": "Toggle mute video"
         },
         "addPeople": "Add people to your call",
