@@ -77,6 +77,7 @@
             "audioRoute": "Select the audio route",
             "chat": "Toggle chat window",
             "document": "Toggle shared document",
+            "feedback": "Leave feedback",
             "fullScreen": "Toggle full screen",
             "hangup": "Leave the call",
             "invite": "Invite people",

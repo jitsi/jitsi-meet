@@ -1038,7 +1038,8 @@ class Toolbox extends Component<Props> {
             this._shouldShowButton('feedback')
                 && _feedbackConfigured
                 && <OverflowMenuItem
-                    accessibilityLabel = 'Feedback'
+                    accessibilityLabel =
+                        { t('toolbar.accessibilityLabel.feedback') }
                     icon = 'icon-feedback'
                     key = 'feedback'
                     onClick = { this._onToolbarOpenFeedback }
