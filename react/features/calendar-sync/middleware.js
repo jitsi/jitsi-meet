@@ -66,11 +66,9 @@ CALENDAR_ENABLED
                     && store.dispatch(addKnownDomains(knownDomains));
             }
 
-            const result = next(action);
-
             _fetchCalendarEntries(store, false, false);
 
-            return result;
+            return next(action);
         }
 
         case REFRESH_CALENDAR: {
