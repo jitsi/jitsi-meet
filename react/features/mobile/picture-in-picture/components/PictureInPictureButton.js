@@ -26,7 +26,7 @@ type Props = AbstractButtonProps & {
  * An implementation of a button for entering Picture-in-Picture mode.
  */
 class PictureInPictureButton extends AbstractButton<Props, *> {
-    accessibilityLabel = 'Picture in picture';
+    accessibilityLabel = 'toolbar.accessibilityLabel.pip';
     iconName = 'icon-menu-down';
     label = 'toolbar.pip';
 
