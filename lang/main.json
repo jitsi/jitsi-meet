@@ -79,6 +79,7 @@
         "accessibilityLabel": {
             "audioOnly": "Toggle audio only",
             "audioRoute": "Select the audio route",
+            "callQuality": "Manage call quality",
             "chat": "Toggle chat window",
             "document": "Toggle shared document",
             "feedback": "Leave feedback",
@@ -89,6 +90,7 @@
             "moreActions": "Toggle more actions menu",
             "mute": "Toggle mute audio",
             "pip": "Toggle Picture-in-Picture mode",
+            "profile": "Edit your profile",
             "raiseHand": "Toggle raise hand",
             "recording": "Toggle recording",
             "Settings": "Toggle settings",
@@ -235,6 +237,9 @@
         "suboptimalExperienceDescription": "Eer... we are afraid your experience with __appName__ isn't going to be that great here. We are looking for ways to improve this but, until then, please try using one of the <a href='static/recommendedBrowsers.html' target='_blank'>fully supported browsers</a>."
     },
     "dialog": {
+        "accessibilityLabel": {
+            "liveStreaming": "Live Stream"
+        },
         "allow": "Allow",
         "confirm": "Confirm",
         "kickMessage": "Ouch! You have been kicked out of the meet!",

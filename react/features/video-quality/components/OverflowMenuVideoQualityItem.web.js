@@ -68,7 +68,8 @@ class OverflowMenuVideoQualityItem extends Component<Props> {
 
         return (
             <li
-                aria-label = 'Call quality'
+                aria-label =
+                    { this.props.t('toolbar.accessibilityLabel.callQuality') }
                 className = 'overflow-menu-item'
                 onClick = { this.props.onClick }>
                 <span className = 'overflow-menu-item-icon'>

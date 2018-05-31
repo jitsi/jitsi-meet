@@ -331,6 +331,7 @@ class Toolbox extends Component<Props> {
         const overflowMenuContent = this._renderOverflowMenuContent();
         const overflowHasItems = Boolean(overflowMenuContent.filter(
             child => child).length);
+        const toolbarAccLabel = 'toolbar.accessibilityLabel.moreActions';
 
         return (
             <div
@@ -386,7 +387,7 @@ class Toolbox extends Component<Props> {
                             isOpen = { _overflowMenuVisible }
                             onVisibilityChange = { this._onSetOverflowVisible }>
                             <ul
-                                aria-label = 'Overflow menu'
+                                aria-label = { t(toolbarAccLabel) }
                                 className = 'overflow-menu'>
                                 { overflowMenuContent }
                             </ul>
