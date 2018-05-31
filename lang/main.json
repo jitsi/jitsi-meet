@@ -81,6 +81,7 @@
             "moreActions": "Toggle more actions menu",
             "mute": "Toggle mute audio",
             "pip": "Toggle Picture-in-Picture mode",
+            "raiseHand": "Toggle raise hand",
             "shareRoom": "Invite someone",
             "toggleCamera": "Toggle camera",
             "videomute": "Toggle mute video"

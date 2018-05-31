@@ -343,7 +343,8 @@ class Toolbox extends Component<Props> {
                         && this._renderDesktopSharingButton() }
                     { this._shouldShowButton('raisehand')
                         && <ToolbarButton
-                            accessibilityLabel = 'Raised hand'
+                            accessibilityLabel =
+                                { t('toolbar.accessibilityLabel.raiseHand') }
                             iconName = { _raisedHand
                                 ? 'icon-raised-hand toggled'
                                 : 'icon-raised-hand' }
