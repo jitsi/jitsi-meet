@@ -527,6 +527,7 @@
         "countryNotSupported": "We do not support this destination yet.",
         "countryReminder": "Calling outside the US? Please make sure you start with the country code!",
         "disabled": "You can't invite people.",
+        "footerText": "Dialing out is disabled.",
         "invite": "Invite",
         "loading": "Searching for people and phone numbers",
         "loadingNumber": "Validating phone number",

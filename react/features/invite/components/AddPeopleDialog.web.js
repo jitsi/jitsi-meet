@@ -8,7 +8,8 @@ import { connect } from 'react-redux';
 
 import { createInviteDialogEvent, sendAnalytics } from '../../analytics';
 import { Dialog, hideDialog } from '../../base/dialog';
-import { translate } from '../../base/i18n';
+import { translate, translateToHTML } from '../../base/i18n';
+import { getLocalParticipant } from '../../base/participants';
 import { MultiSelectAutocomplete } from '../../base/react';
 
 import { invite } from '../actions';
@@ -38,6 +39,12 @@ class AddPeopleDialog extends Component<*, *> {
          * The URL for validating if a phone number can be called.
          */
         _dialOutAuthUrl: PropTypes.string,
+
+        /**
+         * Whether to show a footer text after the search results
+         * as a last element.
+         */
+        _footerTextEnabled: PropTypes.bool,
 
         /**
          * The JWT token.
@@ -168,11 +175,15 @@ class AddPeopleDialog extends Component<*, *> {
      * @returns {ReactElement}
      */
     render() {
-        const { addPeopleEnabled, dialOutEnabled, t } = this.props;
+        const { _footerTextEnabled,
+            addPeopleEnabled,
+            dialOutEnabled,
+            t } = this.props;
         let isMultiSelectDisabled = this.state.addToCallInProgress || false;
         let placeholder;
         let loadingMessage;
         let noMatches;
+        let footerText;
 
         if (addPeopleEnabled && dialOutEnabled) {
             loadingMessage = 'addPeople.loading';
@@ -192,6 +203,19 @@ class AddPeopleDialog extends Component<*, *> {
             placeholder = 'addPeople.disabled';
         }
 
+        if (_footerTextEnabled) {
+            footerText = {
+                content: <div className = 'footer-text-wrap'>
+                    <div>
+                        <span className = 'footer-telephone-icon'>
+                            <i className = 'icon-telephone' />
+                        </span>
+                    </div>
+                    { translateToHTML(t, 'addPeople.footerText') }
+                </div>
+            };
+        }
+
         return (
             <Dialog
                 okDisabled = { this._isAddDisabled() }
@@ -202,6 +226,7 @@ class AddPeopleDialog extends Component<*, *> {
                 <div className = 'add-people-form-wrap'>
                     { this._renderErrorMessage() }
                     <MultiSelectAutocomplete
+                        footer = { footerText }
                         isDisabled = { isMultiSelectDisabled }
                         loadingMessage = { t(loadingMessage) }
                         noMatchesFound = { t(noMatches) }
@@ -525,12 +550,23 @@ class AddPeopleDialog extends Component<*, *> {
 function _mapStateToProps(state) {
     const {
         dialOutAuthUrl,
+        enableFeaturesBasedOnToken,
         peopleSearchQueryTypes,
         peopleSearchUrl
     } = state['features/base/config'];
+    let footerTextEnabled = false;
+
+    if (enableFeaturesBasedOnToken) {
+        const { features = {} } = getLocalParticipant(state);
+
+        if (String(features['outbound-call']) !== 'true') {
+            footerTextEnabled = true;
+        }
+    }
 
     return {
         _dialOutAuthUrl: dialOutAuthUrl,
+        _footerTextEnabled: footerTextEnabled,
         _jwt: state['features/base/jwt'].jwt,
         _peopleSearchQueryTypes: peopleSearchQueryTypes,
         _peopleSearchUrl: peopleSearchUrl
