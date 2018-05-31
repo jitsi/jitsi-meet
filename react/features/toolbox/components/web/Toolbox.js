@@ -1046,7 +1046,8 @@ class Toolbox extends Component<Props> {
                     text = { t('toolbar.feedback') } />,
             this._shouldShowButton('shortcuts')
                 && <OverflowMenuItem
-                    accessibilityLabel = 'Shortcuts'
+                    accessibilityLabel =
+                        { t('toolbar.accessibilityLabel.shortcuts') }
                     icon = 'icon-open_in_new'
                     key = 'shortcuts'
                     onClick = { this._onToolbarOpenKeyboardShortcuts }
