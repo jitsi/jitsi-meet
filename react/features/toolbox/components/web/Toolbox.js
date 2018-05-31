@@ -1029,7 +1029,8 @@ class Toolbox extends Component<Props> {
                 visible = { this._shouldShowButton('settings') } />,
             this._shouldShowButton('stats')
                 && <OverflowMenuItem
-                    accessibilityLabel = 'Speaker stats'
+                    accessibilityLabel =
+                        { t('toolbar.accessibilityLabel.speakerStats') }
                     icon = 'icon-presentation'
                     key = 'stats'
                     onClick = { this._onToolbarOpenSpeakerStats }
