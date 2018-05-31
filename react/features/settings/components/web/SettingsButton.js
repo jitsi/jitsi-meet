@@ -36,7 +36,7 @@ type Props = AbstractButtonProps & {
  * An abstract implementation of a button for accessing settings.
  */
 class SettingsButton extends AbstractButton<Props, *> {
-    accessibilityLabel = 'Settings';
+    accessibilityLabel = 'toolbar.accessibilityLabel.Settings';
     iconName = 'icon-settings';
     label = 'toolbar.Settings';
     tooltip = 'toolbar.Settings';
