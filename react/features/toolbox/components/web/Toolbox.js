@@ -353,7 +353,8 @@ class Toolbox extends Component<Props> {
                     { this._shouldShowButton('chat')
                         && <div className = 'toolbar-button-with-badge'>
                             <ToolbarButton
-                                accessibilityLabel = 'Chat'
+                                accessibilityLabel =
+                                    { t('toolbar.accessibilityLabel.chat') }
                                 iconName = { _chatOpen
                                     ? 'icon-chat toggled'
                                     : 'icon-chat' }
