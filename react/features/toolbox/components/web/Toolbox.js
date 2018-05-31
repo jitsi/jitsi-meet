@@ -1071,7 +1071,8 @@ class Toolbox extends Component<Props> {
 
         return (
             <OverflowMenuItem
-                accessibilityLabel = 'Record'
+                accessibilityLabel =
+                    { t('toolbar.accessibilityLabel.recording') }
                 icon = 'icon-camera-take-picture'
                 key = 'recording'
                 onClick = { this._onToolbarToggleRecording }
