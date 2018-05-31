@@ -944,7 +944,8 @@ class Toolbox extends Component<Props> {
 
         return (
             <ToolbarButton
-                accessibilityLabel = 'Screenshare'
+                accessibilityLabel
+                    = { t('toolbar.accessibilityLabel.shareYourScreen') }
                 iconName = { classNames }
                 onClick = { this._onToolbarToggleScreenshare }
                 tooltip = { tooltip } />

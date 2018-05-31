@@ -84,6 +84,7 @@
             "pip": "Toggle Picture-in-Picture mode",
             "raiseHand": "Toggle raise hand",
             "shareRoom": "Invite someone",
+            "shareYourScreen": "Toggle screenshare",
             "toggleCamera": "Toggle camera",
             "videomute": "Toggle mute video"
         },
