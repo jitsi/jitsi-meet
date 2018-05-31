@@ -73,6 +73,7 @@
     },
     "toolbar": {
         "accessibilityLabel": {
+            "audioRoute": "Select the audio route",
             "hangup": "Leave the call",
             "moreActions": "Toggle more actions menu",
             "mute": "Toggle mute audio",

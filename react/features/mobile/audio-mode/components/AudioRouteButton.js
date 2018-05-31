@@ -43,7 +43,7 @@ type Props = AbstractButtonProps & {
  * A toolbar button which triggers an audio route picker when pressed.
  */
 class AudioRouteButton extends AbstractButton<Props, *> {
-    accessibilityLabel = 'Audio route';
+    accessibilityLabel = 'toolbar.accessibilityLabel.audioRoute';
     iconName = 'icon-volume';
     label = 'toolbar.audioRoute';
 
