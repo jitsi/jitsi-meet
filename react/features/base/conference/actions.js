@@ -51,7 +51,7 @@ import {
     _addLocalTracksToConference,
     sendLocalParticipant
 } from './functions';
-
+import { endpointMessageReceived } from '../../transcription';
 import type { Dispatch } from 'redux';
 
 const logger = require('jitsi-meet-logger').getLogger(__filename);
@@ -86,6 +86,11 @@ function _addConferenceListeners(conference, dispatch) {
     conference.on(
         JitsiConferenceEvents.LOCK_STATE_CHANGED,
         (...args) => dispatch(lockStateChanged(conference, ...args)));
+
+    // Dispatches into features/transcription follow:
+    conference.on(
+        JitsiConferenceEvents.ENDPOINT_MESSAGE_RECEIVED,
+        (...args) => dispatch(endpointMessageReceived(conference, ...args)));
 
     // Dispatches into features/base/media follow:
 

@@ -109,6 +109,7 @@ import {
 } from './react/features/overlay';
 import { setSharedVideoStatus } from './react/features/shared-video';
 import { isButtonEnabled } from './react/features/toolbox';
+import { endpointMessageReceived } from './react/features/transcription';
 
 const logger = require('jitsi-meet-logger').getLogger(__filename);
 
@@ -1898,6 +1899,12 @@ export default {
                 APP.UI.changeDisplayName(id, formattedDisplayName);
             }
         );
+
+        room.on(
+            JitsiConferenceEvents.ENDPOINT_MESSAGE_RECEIVED,
+            (...args) => {
+                APP.store.dispatch(endpointMessageReceived(room, ...args));
+            });
 
         room.on(
             JitsiConferenceEvents.LOCK_STATE_CHANGED,
