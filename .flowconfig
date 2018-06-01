@@ -23,10 +23,6 @@
 .*/node_modules/bower/lib/node_modules/bower-json/test/.*
 .*/node_modules/immutable/dist/immutable.js.flow
 .*/node_modules/jsonlint/test/.*
-
-; FIXME Remove once we update past commit
-; https://github.com/facebook/react-native/commit/df8d0d1db9203cc87ad3682e6138b2a9ed714365
-.*/node_modules/react-native/local-cli/link/link.js
 .*/node_modules/react-native-keep-awake/.*
 .*/node_modules/styled-components/.*
 
@@ -44,10 +40,6 @@ emoji=true
 module.system=haste
 
 munge_underscores=true
-
-; FIXME Remove once we update past commit
-; https://github.com/facebook/react-native/commit/df8d0d1db9203cc87ad3682e6138b2a9ed714365
-module.name_mapper='^./link/link$' -> 'emptyObject'
 
 module.name_mapper='^[./a-zA-Z0-9$_-]+\.\(bmp\|gif\|jpg\|jpeg\|png\|psd\|svg\|webp\|m4v\|mov\|mp4\|mpeg\|mpg\|webm\|aac\|aiff\|caf\|m4a\|mp3\|wav\|html\|pdf\)$' -> 'RelativeImageStub'
 
