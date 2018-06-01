@@ -1,10 +1,8 @@
+// @flow
+
 import { StyleSheet } from 'react-native';
 
-import {
-    BoxModel,
-    ColorPalette,
-    createStyleSheet
-} from '../../../styles';
+import { BoxModel, ColorPalette, createStyleSheet } from '../../../styles';
 
 const AVATAR_OPACITY = 0.4;
 const AVATAR_SIZE = 65;
@@ -21,7 +19,7 @@ export const UNDERLAY_COLOR = 'rgba(255, 255, 255, 0.2)';
 
 const HEADER_STYLES = {
     /**
-     * Platform specific header button (e.g. back, menu...etc).
+     * Platform specific header button (e.g. back, menu, etc).
      */
     headerButton: {
         alignSelf: 'center',
@@ -57,7 +55,7 @@ const HEADER_STYLES = {
     },
 
     /**
-     * Base style of Header
+     * Base style of Header.
      */
     screenHeader: {
         alignItems: 'center',
@@ -293,8 +291,8 @@ const SIDEBAR_STYLES = {
     },
 
     /**
-     * The opaque area that covers the rest of the screen, when
-     * the side bar is open.
+     * The opaque area that covers the rest of the screen, when the side bar is
+     * open.
      */
     sideMenuShadow: {
         ...StyleSheet.absoluteFillObject,
@@ -303,8 +301,8 @@ const SIDEBAR_STYLES = {
 };
 
 /**
- * The styles of the React {@code Components} of the generic components
- * in the app.
+ * The styles of the generic React {@code Component}s implemented by the feature
+ * base/react.
  */
 export default createStyleSheet({
     ...HEADER_STYLES,

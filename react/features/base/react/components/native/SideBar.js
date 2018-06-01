@@ -1,11 +1,7 @@
 // @flow
 
 import React, { Component, type Node } from 'react';
-import {
-    Animated,
-    TouchableWithoutFeedback,
-    View
-} from 'react-native';
+import { Animated, TouchableWithoutFeedback, View } from 'react-native';
 
 import styles, { SIDEBAR_WIDTH } from './styles';
 
@@ -15,21 +11,21 @@ import styles, { SIDEBAR_WIDTH } from './styles';
 type Props = {
 
     /**
-     * The children of the Component
+     * The children of {@code SideBar}.
      */
     children: Node,
 
     /**
-     * Callback to notify the containing Component that the sidebar is
+     * Callback to notify the containing {@code Component} that the sidebar is
      * closing.
      */
     onHide: Function,
 
     /**
-     * Sets the menu displayed or hidden.
+     * Whether the menu (of the {@code SideBar}?) is displayed/rendered/shown.
      */
     show: boolean
-}
+};
 
 /**
  * The type of the React {@code Component} state of {@link SideBar}.
@@ -37,18 +33,18 @@ type Props = {
 type State = {
 
     /**
-     * Indicates whether the side overlay should be rendered or not.
+     * Whether the side overlay should be displayed/rendered/shown.
      */
     showOverlay: boolean,
 
     /**
      * The native animation object.
      */
-    sliderAnimation: Object
-}
+    sliderAnimation: Animated.Value
+};
 
 /**
- * A generic animated side bar to be used for left side menus
+ * A generic animated side bar to be used for left-side, hamburger-style menus.
  */
 export default class SideBar extends Component<Props, State> {
     /**
@@ -64,11 +60,12 @@ export default class SideBar extends Component<Props, State> {
             sliderAnimation: new Animated.Value(0)
         };
 
+        // Bind event handlers so they are only bound once per instance.
         this._onHideMenu = this._onHideMenu.bind(this);
     }
 
     /**
-     * Implements the Component's componentDidMount method.
+     * Implements React's {@link Component#componentDidMount()}.
      *
      * @inheritdoc
      */
@@ -77,14 +74,12 @@ export default class SideBar extends Component<Props, State> {
     }
 
     /**
-     * Implements the Component's componentWillReceiveProps method.
+     * Implements React's {@link Component#componentWillReceiveProps()}.
      *
      * @inheritdoc
      */
-    componentWillReceiveProps(newProps: Props) {
-        if (newProps.show !== this.props.show) {
-            this._setShow(newProps.show);
-        }
+    componentWillReceiveProps({ show }: Props) {
+        (show === this.props.show) || this._setShow(show);
     }
 
     /**
@@ -120,17 +115,16 @@ export default class SideBar extends Component<Props, State> {
      * @returns {Array<Object>}
      */
     _getContentStyle() {
-        const { sliderAnimation } = this.state;
-        const transformStyle
-            = { transform: [ { translateX: sliderAnimation } ] };
-
-        return [ styles.sideMenuContent, transformStyle ];
+        return [
+            styles.sideMenuContent,
+            { transform: [ { translateX: this.state.sliderAnimation } ] }
+        ];
     }
 
     _onHideMenu: () => void;
 
     /**
-     * Hides the menu.
+     * Hides the side menu.
      *
      * @private
      * @returns {void}
@@ -146,28 +140,30 @@ export default class SideBar extends Component<Props, State> {
     _setShow: (boolean) => void;
 
     /**
-     * Sets the side menu visible or hidden.
+     * Shows/hides the side menu.
      *
-     * @param {boolean} show - The new expected visibility value.
+     * @param {boolean} show - If the side menu is to be made visible,
+     * {@code true}; otherwise, {@code false}.
      * @private
      * @returns {void}
      */
     _setShow(show) {
-        if (show) {
-            this.setState({ showOverlay: true });
-        }
+        show && this.setState({ showOverlay: true });
 
         Animated
             .timing(
-                this.state.sliderAnimation,
-                {
+                /* value */ this.state.sliderAnimation,
+                /* config */ {
                     toValue: show ? SIDEBAR_WIDTH : 0,
                     useNativeDriver: true
                 })
-            .start(animationState => {
-                if (animationState.finished && !show) {
-                    this.setState({ showOverlay: false });
-                }
+            .start(({ finished }) => {
+                finished && !show && this.setState({ showOverlay: false });
+
+                // XXX Technically, the arrow function can further be simplified
+                // by removing the {} and returning the boolean expression
+                // above. Practically and unfortunately though, Flow freaks out
+                // and states that Animated.timing doesn't exist!?
             });
     }
 }
