@@ -1,7 +1,10 @@
 /* @flow */
 
 import { CONFERENCE_WILL_JOIN } from '../base/conference';
-import { JitsiConferenceEvents } from '../base/lib-jitsi-meet';
+import {
+    JitsiConferenceEvents,
+    JitsiRecordingConstants
+} from '../base/lib-jitsi-meet';
 import { MiddlewareRegistry } from '../base/redux';
 import {
     playSound,
@@ -77,13 +80,17 @@ MiddlewareRegistry.register(store => next => action => {
         const updatedSessionData
             = getSessionById(store.getState(), action.sessionData.id);
 
-        if (updatedSessionData.status === 'on'
-            && (!oldSessionData || oldSessionData.status !== 'on')) {
-            store.dispatch(playSound(RECORDING_ON_SOUND_ID));
-        } else if (updatedSessionData.status === 'off'
-            && (!oldSessionData || oldSessionData.status !== 'off')) {
-            store.dispatch(stopSound(RECORDING_ON_SOUND_ID));
-            store.dispatch(playSound(RECORDING_STOPPED_SOUND_ID));
+        if (updatedSessionData.mode === JitsiRecordingConstants.mode.FILE) {
+            const { OFF, ON } = JitsiRecordingConstants.status;
+
+            if (updatedSessionData.status === ON
+                && (!oldSessionData || oldSessionData.status !== ON)) {
+                store.dispatch(playSound(RECORDING_ON_SOUND_ID));
+            } else if (updatedSessionData.status === OFF
+                && (!oldSessionData || oldSessionData.status !== OFF)) {
+                store.dispatch(stopSound(RECORDING_ON_SOUND_ID));
+                store.dispatch(playSound(RECORDING_STOPPED_SOUND_ID));
+            }
         }
 
         break;
