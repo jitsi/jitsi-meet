@@ -88,6 +88,7 @@
             "invite": "Invite people",
             "lockRoom": "Toggle room lock",
             "moreActions": "Toggle more actions menu",
+            "moreActionsMenu": "More actions menu",
             "mute": "Toggle mute audio",
             "pip": "Toggle Picture-in-Picture mode",
             "profile": "Edit your profile",

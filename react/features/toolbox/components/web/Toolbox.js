@@ -331,7 +331,7 @@ class Toolbox extends Component<Props> {
         const overflowMenuContent = this._renderOverflowMenuContent();
         const overflowHasItems = Boolean(overflowMenuContent.filter(
             child => child).length);
-        const toolbarAccLabel = 'toolbar.accessibilityLabel.moreActions';
+        const toolbarAccLabel = 'toolbar.accessibilityLabel.moreActionsMenu';
 
         return (
             <div
