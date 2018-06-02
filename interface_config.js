@@ -142,17 +142,7 @@ var interfaceConfig = {
      *
      * @type {boolean}
      */
-    VIDEO_QUALITY_LABEL_DISABLED: false,
-
-    /**
-     * Temporary feature flag to debug performance with the large video
-     * background blur. On initial implementation, blur was always enabled so a
-     * falsy value here will be used to keep blur enabled, as will the value
-     * "video", and will render the blur over a video element. The value
-     * "canvas" will display the blur over a canvas element, while the value
-     * "off" will prevent the background from rendering.
-     */
-    _BACKGROUND_BLUR: 'canvas'
+    VIDEO_QUALITY_LABEL_DISABLED: false
 
     /**
      * Specify custom URL for downloading android mobile app.

@@ -7,8 +7,7 @@ import ReactDOM from 'react-dom';
 import { browser } from '../../../react/features/base/lib-jitsi-meet';
 import {
     ORIENTATION,
-    LargeVideoBackground,
-    LargeVideoBackgroundCanvas
+    LargeVideoBackground
 } from '../../../react/features/large-video';
 /* eslint-enable no-unused-vars */
 
@@ -690,20 +689,14 @@ export class VideoContainer extends LargeContainer {
     _updateBackground() {
         // Do not the background display on browsers that might experience
         // performance issues from the presence of the background.
-        if (interfaceConfig._BACKGROUND_BLUR === 'off'
-                || browser.isFirefox()
+        if (browser.isFirefox()
                 || browser.isSafariWithWebrtc()
                 || browser.isTemasysPluginUsed()) {
             return;
         }
 
-        // eslint-disable-next-line no-unused-vars
-        const Background = interfaceConfig._BACKGROUND_BLUR === 'canvas'
-            ? LargeVideoBackgroundCanvas
-            : LargeVideoBackground;
-
         ReactDOM.render(
-            <Background
+            <LargeVideoBackground
                 hidden = { this._hideBackground }
                 mirror = {
                     this.stream
