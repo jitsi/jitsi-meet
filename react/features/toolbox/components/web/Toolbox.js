@@ -125,6 +125,11 @@ type Props = {
     _isGuest: boolean,
 
     /**
+     * Whether or not the live streaming feature is enabled for use.
+     */
+    _liveStreamingEnabled: boolean,
+
+    /**
      * The current live streaming session, if any.
      */
     _liveStreamingSession: ?Object,
@@ -145,7 +150,7 @@ type Props = {
     _raisedHand: boolean,
 
     /**
-     * Whether or not the recording feature is enabled for use.
+     * Whether or not the file recording feature is enabled for use.
      */
     _recordingEnabled: boolean,
 
@@ -961,6 +966,7 @@ class Toolbox extends Component<Props> {
             _feedbackConfigured,
             _fullScreen,
             _isGuest,
+            _liveStreamingEnabled,
             _liveStreamingSession,
             _recordingEnabled,
             _sharingVideo,
@@ -988,14 +994,12 @@ class Toolbox extends Component<Props> {
                     text = { _fullScreen
                         ? t('toolbar.exitFullScreen')
                         : t('toolbar.enterFullScreen') } />,
-            _recordingEnabled
-                && this._shouldShowButton('livestreaming')
+            _liveStreamingEnabled
                 && <OverflowMenuLiveStreamingItem
                     key = 'livestreaming'
                     onClick = { this._onToolbarToggleLiveStreaming }
                     session = { _liveStreamingSession } />,
             _recordingEnabled
-                && this._shouldShowButton('recording')
                 && this._renderRecordingButton(),
             this._shouldShowButton('sharedvideo')
                 && <OverflowMenuItem
@@ -1100,6 +1104,7 @@ function _mapStateToProps(state) {
     const {
         callStatsID,
         disableDesktopSharing,
+        enableLiveStreaming,
         enableRecording,
         iAmRecorder
     } = state['features/base/config'];
@@ -1133,6 +1138,7 @@ function _mapStateToProps(state) {
         _fileRecordingSession:
             getActiveSession(state, JitsiRecordingConstants.mode.FILE),
         _fullScreen: fullScreen,
+        _liveStreamingEnabled: isModerator && enableLiveStreaming,
         _liveStreamingSession:
              getActiveSession(state, JitsiRecordingConstants.mode.STREAM),
         _localParticipantID: localParticipant.id,

@@ -1255,13 +1255,6 @@ export default {
     _getConferenceOptions() {
         const options = config;
 
-        if (config.enableRecording && !config.recordingType) {
-            options.recordingType
-                = config.hosts && (typeof config.hosts.jirecon !== 'undefined')
-                    ? 'jirecon'
-                    : 'colibri';
-        }
-
         const nick = APP.store.getState()['features/base/settings'].displayName;
 
         if (nick) {

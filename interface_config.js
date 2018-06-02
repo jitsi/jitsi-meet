@@ -38,16 +38,14 @@ var interfaceConfig = {
     AUTHENTICATION_ENABLE: true,
 
     /**
-     * the toolbar buttons line is intentionally left in one line, to be able
-     * to easily override values or remove them using regex
+     * The name of the toolbar buttons to display in the toolbar. If present,
+     * the button will display. Exceptions are live streaming and recording
+     * which are configured in config.js. Also, the "profile" button will not
+     * display for user's with a jwt.
      */
     TOOLBAR_BUTTONS: [
-
-        // main toolbar
         'microphone', 'camera', 'desktop', 'fullscreen', 'fodeviceselection', 'hangup',
-
-        // extended toolbar
-        'profile', 'info', 'chat', 'recording', 'livestreaming', 'etherpad',
+        'profile', 'info', 'chat', 'etherpad',
         'sharedvideo', 'settings', 'raisehand', 'videoquality', 'filmstrip',
         'invite', 'feedback', 'stats', 'shortcuts'
     ],
