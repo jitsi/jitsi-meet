@@ -4,11 +4,11 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 
 import { Watermarks } from '../../base/react';
+import { TranscriptionSubtitles } from '../../transcription/';
 
 import Labels from './Labels';
 
-import { TranscriptionSubtitles } from '../../transcription/';
-
+declare var config: Object;
 declare var interfaceConfig: Object;
 
 /**
@@ -72,7 +72,8 @@ export default class LargeVideo extends Component<*> {
                             muted = { true } />
                     </div>
                 </div>
-                <TranscriptionSubtitles />
+                { config.disableTranscriptionSubtitles
+                    ? null : <TranscriptionSubtitles /> }
                 <span id = 'localConnectionMessage' />
                 { this.props.hideVideoQualityLabel
                     ? null : <Labels /> }

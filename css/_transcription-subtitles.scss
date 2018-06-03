@@ -1,14 +1,13 @@
 .transcription-subtitles{
-    position: absolute;
     bottom: 10%;
-    width: 100%;
-    z-index: 2;
-    font-weight: 1000;
     font-size: 16px;
-    // color: '#000000';
+    font-weight: 1000;
     opacity: 0.80;
+    position: absolute;
     text-shadow: 0px 0px 1px rgba(0,0,0,0.3),
     0px 1px 1px rgba(0,0,0,0.3),
     1px 0px 1px rgba(0,0,0,0.3),
     0px 0px 1px rgba(0,0,0,0.3);
+    width: 100%;
+    z-index: $zindex2;
 }

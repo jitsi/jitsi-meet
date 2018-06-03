@@ -1,35 +1,11 @@
 // @flow
 
 import {
-    ENDPOINT_MESSAGE_RECEIVED,
     ADD_TRANSCRIPT_MESSAGE,
-    UPDATE_TRANSCRIPT_MESSAGE,
-    REMOVE_TRANSCRIPT_MESSAGE
+    ENDPOINT_MESSAGE_RECEIVED,
+    REMOVE_TRANSCRIPT_MESSAGE,
+    UPDATE_TRANSCRIPT_MESSAGE
 } from './actionTypes';
-
-/**
- * Signals that a participant sent an endpoint message on the data channel.
- *
- * @param {JitsiConference} conference - The JitsiConference which had its lock
- * state changed.
- * @param {Object} participant - The participant details sending the message.
- * @param {Object} p - The payload carried in the message.
- * @returns {{
- *      type: ENDPOINT_MESSAGE_RECEIVED,
- *      conference: JitsiConference,
- *      participant: Object,
- *      p: Object
- * }}
- */
-export function endpointMessageReceived(
-        conference: Object, participant: Object, p: Object) {
-    return {
-        type: ENDPOINT_MESSAGE_RECEIVED,
-        conference,
-        participant,
-        p
-    };
-}
 
 /**
  * Signals that a transcript with a new message_id is received.
@@ -52,6 +28,46 @@ export function addTranscriptMessage(transcriptMessageID: string,
 }
 
 /**
+ * Signals that a participant sent an endpoint message on the data channel.
+ *
+ * @param {JitsiConference} conference - The JitsiConference which had its lock
+ * state changed.
+ * @param {Object} participant - The participant details sending the message.
+ * @param {Object} payload - The payload carried by the endpoint message.
+ * @returns {{
+ *      type: ENDPOINT_MESSAGE_RECEIVED,
+ *      conference: JitsiConference,
+ *      participant: Object,
+ *      payload: Object
+ * }}
+ */
+export function endpointMessageReceived(conference: Object,
+        participant: Object, payload: Object) {
+    return {
+        type: ENDPOINT_MESSAGE_RECEIVED,
+        conference,
+        participant,
+        payload
+    };
+}
+
+/**
+ * Signals that a transcript has to be removed from the state.
+ *
+ * @param {string} transcriptMessageID - The message_id to be removed.
+ * @returns {{
+ *      type: REMOVE_TRANSCRIPT_MESSAGE,
+ *      transcriptMessageID: string,
+ * }}
+ */
+export function removeTranscriptMessage(transcriptMessageID: string) {
+    return {
+        type: REMOVE_TRANSCRIPT_MESSAGE,
+        transcriptMessageID
+    };
+}
+
+/**
  * Signals that a transcript with an existing message_id to be updated
  * is received.
  *
@@ -69,21 +85,5 @@ export function updateTranscriptMessage(transcriptMessageID: string,
         type: UPDATE_TRANSCRIPT_MESSAGE,
         transcriptMessageID,
         newTranscriptMessage
-    };
-}
-
-/**
- * Signals that a transcript has to be removed from the state.
- *
- * @param {string} transcriptMessageID - The message_id to be removed.
- * @returns {{
- *      type: REMOVE_TRANSCRIPT_MESSAGE,
- *      transcriptMessageID: string,
- * }}
- */
-export function removeTranscriptMessage(transcriptMessageID: string) {
-    return {
-        type: REMOVE_TRANSCRIPT_MESSAGE,
-        transcriptMessageID
     };
 }

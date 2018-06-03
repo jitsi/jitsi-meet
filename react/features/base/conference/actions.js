@@ -51,7 +51,6 @@ import {
     _addLocalTracksToConference,
     sendLocalParticipant
 } from './functions';
-import { endpointMessageReceived } from '../../transcription';
 import type { Dispatch } from 'redux';
 
 const logger = require('jitsi-meet-logger').getLogger(__filename);
@@ -88,9 +87,11 @@ function _addConferenceListeners(conference, dispatch) {
         (...args) => dispatch(lockStateChanged(conference, ...args)));
 
     // Dispatches into features/transcription follow:
-    conference.on(
-        JitsiConferenceEvents.ENDPOINT_MESSAGE_RECEIVED,
-        (...args) => dispatch(endpointMessageReceived(conference, ...args)));
+    // Updates the redux store for mobile clients for Transcription Subtitles,
+    // though does not show up subtitles for mobile devices yet.
+    // conference.on(
+    //     JitsiConferenceEvents.ENDPOINT_MESSAGE_RECEIVED,
+    //     (...args) => dispatch(endpointMessageReceived(conference, ...args)));
 
     // Dispatches into features/base/media follow:
 
