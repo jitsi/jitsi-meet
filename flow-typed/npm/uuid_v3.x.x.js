@@ -1,3 +1,6 @@
+// flow-typed signature: 3cf668e64747095cab0bb360cf2fb34f
+// flow-typed version: d659bd0cb8/uuid_v3.x.x/flow_>=v0.32.x
+
 declare module "uuid" {
   declare class uuid {
     static (

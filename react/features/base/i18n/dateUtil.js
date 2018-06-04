@@ -51,6 +51,11 @@ export function getLocalizedDateFormatter(dateOrTimeStamp: Date | number) {
  * @returns {Object}
  */
 export function getLocalizedDurationFormatter(duration: number) {
+    // FIXME The flow-type definition of moment is v2.3 while our package.json
+    // states v2.19 so maybe locale on moment's duration was introduced in
+    // between?
+    //
+    // $FlowFixMe
     return moment.duration(duration).locale(_getSupportedLocale());
 }
 
@@ -74,6 +79,12 @@ function _getSupportedLocale() {
                     `^${localeResult[1]}(-)*${`(${localeResult[3]})*` || ''}`);
 
             supportedLocale
+
+                // FIXME The flow-type definition of moment is v2.3 while our
+                // package.json states v2.19 so maybe locales on moment was
+                // introduced in between?
+                //
+                // $FlowFixMe
                 = moment.locales().find(lang => currentLocaleRegexp.exec(lang));
         }
     }

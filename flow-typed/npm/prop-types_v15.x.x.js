@@ -1,3 +1,6 @@
+// flow-typed signature: d9a983bb1ac458a256c31c139047bdbb
+// flow-typed version: 927687984d/prop-types_v15.x.x/flow_>=v0.41.x
+
 type $npm$propTypes$ReactPropsCheckType = (
   props: any,
   propName: string,

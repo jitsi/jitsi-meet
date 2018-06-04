@@ -1,3 +1,6 @@
+// flow-typed signature: d4e793bc07ef1dc9906a244b12960f7b
+// flow-typed version: cf33ff8762/react-redux_v5.x.x/flow_>=v0.63.0
+
 import type { Dispatch, Store } from "redux";
 
 declare module "react-redux" {
@@ -130,6 +133,24 @@ declare module "react-redux" {
     mergeProps: MergeProps<RSP, RDP, MP, RMP>
   ): (component: Com) => ComponentType<CP & SP & DP & MP>;
 
+  declare export function connect<
+    Com: ComponentType<*>,
+    A,
+    S: Object,
+    DP: Object,
+    SP: Object,
+    RSP: Object,
+    RDP: Object,
+    MDP: Object,
+    MP: Object,
+    RMP: Object,
+    CP: $Diff<ElementConfig<Com>, RMP>
+    >(
+    mapStateToProps: MapStateToProps<S, SP, RSP>,
+    mapDispatchToProps: MDP,
+    mergeProps: MergeProps<RSP, RDP, MP, RMP>
+  ): (component: Com) => ComponentType<CP & SP & DP & MP>;
+
   declare export function connect<Com: ComponentType<*>,
     A,
     S: Object,
@@ -143,6 +164,23 @@ declare module "react-redux" {
     mapStateToProps: ?MapStateToProps<S, SP, RSP>,
     mapDispatchToProps: ?MapDispatchToProps<A, DP, RDP>,
     mergeProps: ?MergeProps<RSP, RDP, MP, RMP>,
+    options: ConnectOptions<S, SP & DP & MP, RSP, RMP>
+  ): (component: Com) => ComponentType<$Diff<ElementConfig<Com>, RMP> & SP & DP & MP>;
+
+  declare export function connect<Com: ComponentType<*>,
+    A,
+    S: Object,
+    DP: Object,
+    SP: Object,
+    RSP: Object,
+    RDP: Object,
+    MDP: Object,
+    MP: Object,
+    RMP: Object
+    >(
+    mapStateToProps: ?MapStateToProps<S, SP, RSP>,
+    mapDispatchToProps: ?MapDispatchToProps<A, DP, RDP>,
+    mergeProps: MDP,
     options: ConnectOptions<S, SP & DP & MP, RSP, RMP>
   ): (component: Com) => ComponentType<$Diff<ElementConfig<Com>, RMP> & SP & DP & MP>;
 
