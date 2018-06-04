@@ -411,10 +411,9 @@ static NSMapTable<NSString *, JitsiMeetView *> *views;
     externalAPIScope = [NSUUID UUID].UUIDString;
     [views setObject:self forKey:externalAPIScope];
 
-    Invite *inviteModule = [bridgeWrapper.bridge moduleForName:@"Invite"];
     _inviteController
         = [[JMInviteController alloc] initWithExternalAPIScope:externalAPIScope
-                                               andInviteModule:inviteModule];
+                                                 bridgeWrapper:bridgeWrapper];
 
     // Set a background color which is in accord with the JavaScript and Android
     // parts of the application and causes less perceived visual flicker than
