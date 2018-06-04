@@ -18,6 +18,7 @@
 
 #import "AddPeopleController.h"
 #import "Invite+Private.h"
+#import "RCTBridgeWrapper.h"
 
 @interface JMInviteController ()
 
@@ -25,10 +26,12 @@
 
 @property (nonatomic) NSString * _Nonnull externalAPIScope;
 
-@property (nonatomic, nullable, weak) Invite *inviteModule;
+@property (nonatomic, nullable, weak) RCTBridgeWrapper *bridgeWrapper;
+
+@property (nonatomic, readonly) Invite * _Nullable inviteModule;
 
 - (instancetype _Nonnull)initWithExternalAPIScope:(NSString * _Nonnull)externalAPIScope
-                         andInviteModule:(Invite * _Nonnull)inviteModule;
+                                    bridgeWrapper:(RCTBridgeWrapper * _Nullable)bridgeWrapper;
 
 - (void)beginAddPeople;
 

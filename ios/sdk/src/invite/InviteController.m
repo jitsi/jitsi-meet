@@ -28,17 +28,21 @@
 #pragma mark Constructor
 
 -(instancetype)initWithExternalAPIScope:(NSString * _Nonnull)externalAPIScope
-                        andInviteModule:(Invite * _Nonnull)inviteModule {
+                          bridgeWrapper:(RCTBridgeWrapper * _Nullable)bridgeWrapper {
     self = [super init];
     if (self) {
         self.externalAPIScope = externalAPIScope;
-        self.inviteModule = inviteModule;
+        self.bridgeWrapper = bridgeWrapper;
     }
 
     return self;
 }
 
 #pragma mark Public API
+
+-(Invite * _Nullable)inviteModule {
+    return [self.bridgeWrapper.bridge moduleForName:@"Invite"];
+}
 
 -(void)beginAddPeople {
     if (_delegate == nil) {
