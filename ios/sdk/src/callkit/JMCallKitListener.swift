@@ -18,6 +18,7 @@ import AVKit
 import CallKit
 import Foundation
 
+@available(iOS 10.0, *)
 @objc public protocol JMCallKitListener: NSObjectProtocol {
 
     @available(iOS 10.0, *)
