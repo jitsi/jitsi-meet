@@ -1,4 +1,5 @@
 import { MiddlewareRegistry } from '../base/redux';
+
 import { ENDPOINT_MESSAGE_RECEIVED } from './actionTypes';
 import {
     addTranscriptMessage,
@@ -45,31 +46,30 @@ MiddlewareRegistry.register(store => next => action => {
  * @returns {Object} The value returned by {@code next(action)}.
  */
 function _endpointMessageReceived({ dispatch, getState }, next, action) {
-    const p = action.p;
+    const payload = action.payload;
 
     try {
 
         // Let's first check if the given object has the correct
         // topic in the payload, which identifies it as a json message send
         // from Jigasi with speech-to-to-text results
-        // let p;
         // if (m['jitsi-meet-muc-msg-topic'] === TRANSCRIPTION_RESULT_TOPIC
-        //         && (p = m.payload))
-        // TODO: To be replaced by if(p['topic']==='transcription-result')\
-        // after jigasi changes
-        if (p.transcript) {
+        //         && (payload = m.payload))
+        // TODO: To be replaced by if(payload['topic']==='transcription-result')
+        // after jigasi changes.
+        if (payload.transcript) {
             // Extract the useful data from the payload of the JSON message
-            const text = p.transcript[0].text;
-            const stability = p.stability;
-            const isInterim = p.is_interim;
-            const transcriptMessageID = p.message_id;
-            const participantName = p.participant.name;
+            const isInterim = payload.is_interim;
+            const participantName = payload.participant.name;
+            const stability = payload.stability;
+            const text = payload.transcript[0].text;
+            const transcriptMessageID = payload.message_id;
 
             // If this is the first result with the unique message ID,
             // we add it to the state along with the name of the participant
             // who said given text
             if (!getState()['features/transcription']
-                .transcriptMessages[transcriptMessageID]) {
+                .transcriptMessages.get(transcriptMessageID)) {
                 dispatch(addTranscriptMessage(transcriptMessageID,
                     participantName));
             }
@@ -80,7 +80,7 @@ function _endpointMessageReceived({ dispatch, getState }, next, action) {
                 const { transcriptMessages }
                     = getState()['features/transcription'];
                 const newTranscriptMessage
-                    = transcriptMessages[transcriptMessageID];
+                    = transcriptMessages.get(transcriptMessageID);
 
                 newTranscriptMessage.final = text;
                 dispatch(updateTranscriptMessage(transcriptMessageID,
@@ -97,7 +97,7 @@ function _endpointMessageReceived({ dispatch, getState }, next, action) {
                 const { transcriptMessages }
                     = getState()['features/transcription'];
                 const newTranscriptMessage
-                    = transcriptMessages[transcriptMessageID];
+                    = transcriptMessages.get(transcriptMessageID);
 
                 newTranscriptMessage.stable = text;
                 newTranscriptMessage.unstable = undefined;
@@ -111,7 +111,7 @@ function _endpointMessageReceived({ dispatch, getState }, next, action) {
                 const { transcriptMessages }
                     = getState()['features/transcription'];
                 const newTranscriptMessage
-                    = transcriptMessages[transcriptMessageID];
+                    = transcriptMessages.get(transcriptMessageID);
 
                 newTranscriptMessage.unstable = text;
                 dispatch(updateTranscriptMessage(transcriptMessageID,
@@ -121,5 +121,6 @@ function _endpointMessageReceived({ dispatch, getState }, next, action) {
     } catch (error) {
         logger.error('Error occurred while updating transcriptions\n', error);
     }
-    next(action);
+
+    return next(action);
 }

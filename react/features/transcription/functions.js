@@ -4,15 +4,15 @@ import React from 'react';
  * Returns the updated list of transcription paragraphs to be rendered after
  * update or delete on timeout.
  *
- * @param {Object} transcriptMessages - The object of transcription messaged of
- * different message_id's as key.
+ * @param {Map} transcriptMessages - The map containing the list of
+ * (transcriptMessageID, transcriptMessage) as (key, value) pairs.
  * @returns {Array} The array of React paragraph elements to be rendered.
  */
 export function getUpdatedTranscriptionParagraphs(transcriptMessages) {
     const paragraphs = [];
 
-    Object.keys(transcriptMessages).forEach(id => {
-        const transcriptMessage = transcriptMessages[id];
+    for (const [ transcriptMessageID, transcriptMessage ]
+        of transcriptMessages) {
         let text;
 
         if (transcriptMessage) {
@@ -29,9 +29,8 @@ export function getUpdatedTranscriptionParagraphs(transcriptMessages) {
                 text += stable + unstable;
             }
         }
-
-        paragraphs.push(<p key = { id }> { text } </p>);
-    });
+        paragraphs.push(<p key = { transcriptMessageID }> { text } </p>);
+    }
 
     return paragraphs;
 }
