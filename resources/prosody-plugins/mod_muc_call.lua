@@ -67,16 +67,28 @@ module:hook("muc-broadcast-presence", function (event)
 	   return
     end
 
-	local invite = function()
-		 local url = assert(url_from_room_jid(event.stanza.attr.from))
-		 ext_events.invite(event.stanza, url)
+	local call_id = event.stanza:get_child_text("call_id")
+	if not call_id then
+	   module:log("info", "A call id was not provided in the status.")
+	   return
 	end
 
-	local cancel = function()
+    local invite = function()
+	    local url = assert(url_from_room_jid(event.stanza.attr.from))
+		ext_events.invite(event.stanza, url, call_id)
+	end
+
+    local cancel = function()
 	   local url = assert(url_from_room_jid(event.stanza.attr.from))
 	   local status = event.stanza:get_child_text("status")
-	   ext_events.cancel(event.stanza, url, string.lower(status))
+	   ext_events.cancel(event.stanza, url, string.lower(status), call_id)
 	end
+
+    local should_cancel = event.stanza:get_child_text("call_cancel")
+    if should_cancel == "true" then
+        cancel()
+        return
+    end
 
 	local switch = function(status)
 	   case = {
