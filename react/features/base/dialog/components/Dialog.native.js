@@ -162,7 +162,7 @@ class Dialog extends AbstractDialog<Props, State> {
                 // * If this Dialog has children, they are to be rendered
                 //   instead of Prompt's TextInput.
                 if (children) {
-                    // $FlowFixMe
+                    // $FlowExpectedError
                     el = children; // eslint-disable-line no-param-reassign
                     children = undefined;
                 }
@@ -173,7 +173,7 @@ class Dialog extends AbstractDialog<Props, State> {
                 if (style
                         && (style = StyleSheet.flatten(style))
                         && _TAG_KEY in style) {
-                    // $FlowFixMe
+                    // $FlowExpectedError
                     switch (style[_TAG_KEY]) {
                     case _SUBMIT_TEXT_TAG_VALUE:
                         if (this.state.submitting) {

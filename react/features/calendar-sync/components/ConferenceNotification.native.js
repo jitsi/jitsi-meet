@@ -15,6 +15,10 @@ import styles from './styles';
 
 const ALERT_MILLISECONDS = 5 * 60 * 1000;
 
+/**
+ * The type of the React {@code Component} props of
+ * {@link ConferenceNotification}.
+ */
 type Props = {
 
     /**
@@ -43,6 +47,10 @@ type Props = {
     t: Function
 };
 
+/**
+ * The type of the React {@code Component} state of
+ * {@link ConferenceNotification}.
+ */
 type State = {
 
     /**
@@ -70,6 +78,7 @@ class ConferenceNotification extends Component<Props, State> {
             event: undefined
         };
 
+        // Bind event handlers so they are only bound once per instance.
         this._getNotificationContentStyle
             = this._getNotificationContentStyle.bind(this);
         this._getNotificationPosition

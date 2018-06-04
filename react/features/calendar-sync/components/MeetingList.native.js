@@ -13,6 +13,9 @@ import { refreshCalendar } from '../actions';
 import { CALENDAR_ENABLED } from '../constants';
 import styles from './styles';
 
+/**
+ * The tyoe of the React {@code Component} props of {@link MeetingList}.
+ */
 type Props = {
 
     /**
@@ -77,6 +80,7 @@ class MeetingList extends Component<Props> {
     constructor(props) {
         super(props);
 
+        // Bind event handlers so they are only bound once per instance.
         this._getRenderListEmptyComponent
             = this._getRenderListEmptyComponent.bind(this);
         this._onPress = this._onPress.bind(this);
