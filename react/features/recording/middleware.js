@@ -17,11 +17,11 @@ import { APP_WILL_MOUNT, APP_WILL_UNMOUNT } from '../app';
 
 import { updateRecordingSessionData } from './actions';
 import { RECORDING_SESSION_UPDATED } from './actionTypes';
-import { RECORDING_ON_SOUND_ID, RECORDING_STOPPED_SOUND_ID } from './constants';
+import { RECORDING_ON_SOUND_ID, RECORDING_OFF_SOUND_ID } from './constants';
 import { getSessionById } from './functions';
 import {
     RECORDING_ON_SOUND_FILE,
-    RECORDING_STOPPED_SOUND_FILE
+    RECORDING_OFF_SOUND_FILE
 } from './sounds';
 
 /**
@@ -47,14 +47,14 @@ MiddlewareRegistry.register(store => next => action => {
             RECORDING_ON_SOUND_FILE));
 
         store.dispatch(registerSound(
-            RECORDING_STOPPED_SOUND_ID,
-            RECORDING_STOPPED_SOUND_FILE));
+            RECORDING_OFF_SOUND_ID,
+            RECORDING_OFF_SOUND_FILE));
 
         break;
 
     case APP_WILL_UNMOUNT:
         store.dispatch(unregisterSound(RECORDING_ON_SOUND_ID));
-        store.dispatch(unregisterSound(RECORDING_STOPPED_SOUND_ID));
+        store.dispatch(unregisterSound(RECORDING_OFF_SOUND_ID));
 
         break;
 
@@ -89,7 +89,7 @@ MiddlewareRegistry.register(store => next => action => {
             } else if (updatedSessionData.status === OFF
                 && (!oldSessionData || oldSessionData.status !== OFF)) {
                 store.dispatch(stopSound(RECORDING_ON_SOUND_ID));
-                store.dispatch(playSound(RECORDING_STOPPED_SOUND_ID));
+                store.dispatch(playSound(RECORDING_OFF_SOUND_ID));
             }
         }
 

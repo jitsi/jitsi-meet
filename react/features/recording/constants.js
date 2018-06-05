@@ -14,7 +14,7 @@ export const RECORDING_ON_SOUND_ID = 'RECORDING_ON_SOUND';
  *
  * @type {string}
  */
-export const RECORDING_STOPPED_SOUND_ID = 'RECORDING_STOPPED_SOUND';
+export const RECORDING_OFF_SOUND_ID = 'RECORDING_OFF_SOUND';
 
 /**
  * Expected supported recording types. JIBRI is known to support live streaming

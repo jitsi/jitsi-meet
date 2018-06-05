@@ -12,5 +12,5 @@ export const RECORDING_ON_SOUND_FILE = 'recordingOn.mp3';
  *
  * @type {string}
  */
-export const RECORDING_STOPPED_SOUND_FILE = 'recordingStopped.mp3';
+export const RECORDING_OFF_SOUND_FILE = 'recordingOff.mp3';
 
