@@ -255,7 +255,7 @@ class ParticipantView extends Component<Props> {
 
                 { renderVideo
                     && <VideoTrack
-                        onPress = { renderVideo ? onPress : undefined }
+                        onPress = { onPress }
                         videoTrack = { videoTrack }
                         waitForVideoStarted = { waitForVideoStarted }
                         zOrder = { this.props.zOrder }
