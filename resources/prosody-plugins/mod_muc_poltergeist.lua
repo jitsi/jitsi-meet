@@ -241,8 +241,14 @@ function create_poltergeist_occupant(room, nick, name, avatar, status, context)
         join:tag("password", { xmlns = MUC_NS }):text(room_password);
     end
 
+    -- Update the nil call id to the initial call id for call flows.
 	local call_id = get_username(room, context.user.id);
-	join_presence:tag("call_id"):text(get_username(room, context.user.id)):up();
+    join_presence:maptags(function (tag)
+        if tag.name == "call_id" then
+           return st.stanza("call_id"):text(call_id);
+        end
+        return tag;
+    end);
 
     update_presence_identity(
         join_presence,
@@ -356,6 +362,7 @@ function update_presence_tags(presence_stanza, status, call_details)
                 return st.stanza("call_cancel"):text("false");
             end
         end
+        return tag;
     end);
 
     return presence_stanza
