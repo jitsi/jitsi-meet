@@ -29,6 +29,8 @@
 		0BCA496C1EC4BBF900B793EE /* jitsi.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 0BCA496B1EC4BBF900B793EE /* jitsi.ttf */; };
 		0BD906EA1EC0C00300C8C18E /* JitsiMeet.h in Headers */ = {isa = PBXBuildFile; fileRef = 0BD906E81EC0C00300C8C18E /* JitsiMeet.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		0F65EECE1D95DA94561BB47E /* libPods-JitsiMeet.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 03F2ADC957FF109849B7FCA1 /* libPods-JitsiMeet.a */; };
+		6C31EDC820C06D490089C899 /* recordingOn.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 6C31EDC720C06D490089C899 /* recordingOn.mp3 */; };
+		6C31EDCA20C06D530089C899 /* recordingOff.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 6C31EDC920C06D530089C899 /* recordingOff.mp3 */; };
 		75635B0A20751D6D00F29C9F /* joined.wav in Resources */ = {isa = PBXBuildFile; fileRef = 75635B0820751D6D00F29C9F /* joined.wav */; };
 		75635B0B20751D6D00F29C9F /* left.wav in Resources */ = {isa = PBXBuildFile; fileRef = 75635B0920751D6D00F29C9F /* left.wav */; };
 		A4414AE020B37F1A003546E6 /* rejected.wav in Resources */ = {isa = PBXBuildFile; fileRef = A4414ADF20B37F1A003546E6 /* rejected.wav */; };
@@ -78,6 +80,8 @@
 		0BD906E51EC0C00300C8C18E /* JitsiMeet.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = JitsiMeet.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		0BD906E81EC0C00300C8C18E /* JitsiMeet.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JitsiMeet.h; sourceTree = "<group>"; };
 		0BD906E91EC0C00300C8C18E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		6C31EDC720C06D490089C899 /* recordingOn.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; name = recordingOn.mp3; path = ../../sounds/recordingOn.mp3; sourceTree = "<group>"; };
+		6C31EDC920C06D530089C899 /* recordingOff.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; name = recordingOff.mp3; path = ../../sounds/recordingOff.mp3; sourceTree = "<group>"; };
 		75635B0820751D6D00F29C9F /* joined.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; name = joined.wav; path = ../../sounds/joined.wav; sourceTree = "<group>"; };
 		75635B0920751D6D00F29C9F /* left.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; name = left.wav; path = ../../sounds/left.wav; sourceTree = "<group>"; };
 		98E09B5C73D9036B4ED252FC /* Pods-JitsiMeet.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-JitsiMeet.debug.xcconfig"; path = "../Pods/Target Support Files/Pods-JitsiMeet/Pods-JitsiMeet.debug.xcconfig"; sourceTree = "<group>"; };
@@ -118,6 +122,8 @@
 		0BCA49681EC4BBE500B793EE /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				6C31EDC720C06D490089C899 /* recordingOn.mp3 */,
+				6C31EDC920C06D530089C899 /* recordingOff.mp3 */,
 				A4414ADF20B37F1A003546E6 /* rejected.wav */,
 				0BC4B8681F8C01E100CE8B21 /* CallKitIcon.png */,
 				C6245F5B2053091D0040BE68 /* image-resize@2x.png */,
@@ -315,10 +321,12 @@
 			buildActionMask = 2147483647;
 			files = (
 				0B49424520AD8DBD00BD2DE0 /* outgoingStart.wav in Resources */,
+				6C31EDCA20C06D530089C899 /* recordingOff.mp3 in Resources */,
 				A4414AE020B37F1A003546E6 /* rejected.wav in Resources */,
 				0B49424620AD8DBD00BD2DE0 /* outgoingRinging.wav in Resources */,
 				0BCA496C1EC4BBF900B793EE /* jitsi.ttf in Resources */,
 				C6245F5D2053091D0040BE68 /* image-resize@2x.png in Resources */,
+				6C31EDC820C06D490089C899 /* recordingOn.mp3 in Resources */,
 				0BC4B8691F8C03A700CE8B21 /* CallKitIcon.png in Resources */,
 				75635B0B20751D6D00F29C9F /* left.wav in Resources */,
 				75635B0A20751D6D00F29C9F /* joined.wav in Resources */,
