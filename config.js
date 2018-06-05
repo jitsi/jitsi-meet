@@ -167,11 +167,11 @@ var config = {
 
     // Recording
 
-    // Whether to enable live streaming or not.
-    // liveStreamingEnabled: false,
-
     // Whether to enable file recording or not.
     // fileRecordingsEnabled: false,
+
+    // Whether to enable live streaming or not.
+    // liveStreamingEnabled: false,
 
     // Misc
 

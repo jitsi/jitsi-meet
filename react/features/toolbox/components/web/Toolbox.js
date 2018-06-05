@@ -994,14 +994,14 @@ class Toolbox extends Component<Props> {
                     text = { _fullScreen
                         ? t('toolbar.exitFullScreen')
                         : t('toolbar.enterFullScreen') } />,
-            this._shouldShowButton('livestreaming')
-                && _liveStreamingEnabled
+            _liveStreamingEnabled
+                && this._shouldShowButton('livestreaming')
                 && <OverflowMenuLiveStreamingItem
                     key = 'livestreaming'
                     onClick = { this._onToolbarToggleLiveStreaming }
                     session = { _liveStreamingSession } />,
-            this._shouldShowButton('recording')
-                && _fileRecordingEnabled
+            _fileRecordingEnabled
+                && this._shouldShowButton('recording')
                 && this._renderRecordingButton(),
             this._shouldShowButton('sharedvideo')
                 && <OverflowMenuItem
