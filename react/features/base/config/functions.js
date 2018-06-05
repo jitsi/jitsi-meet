@@ -86,7 +86,6 @@ const WHITELISTED_KEYS = [
     'displayJids',
     'enableDisplayNameInStats',
     'enableLipSync',
-    'enableLiveStreaming',
     'enableLocalVideoFlip',
     'enableRemb',
     'enableStatsID',

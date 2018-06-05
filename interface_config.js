@@ -40,8 +40,9 @@ var interfaceConfig = {
     /**
      * The name of the toolbar buttons to display in the toolbar. If present,
      * the button will display. Exceptions are "livestreaming" and "recording"
-     * which also require some values in config.js to be enabled. Also, the
-     * "profile" button will not display for user's with a jwt.
+     * which also require being a moderator and some values in config.js to be
+     * enabled. Also, the "profile" button will not display for user's with a
+     * jwt.
      */
     TOOLBAR_BUTTONS: [
         'microphone', 'camera', 'desktop', 'fullscreen', 'fodeviceselection', 'hangup',
