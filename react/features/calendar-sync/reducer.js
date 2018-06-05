@@ -45,7 +45,7 @@ CALENDAR_ENABLED
         case SET_CALENDAR_AUTHORIZATION:
             return {
                 ...state,
-                authorization: action.status
+                authorization: action.authorization
             };
 
         case SET_CALENDAR_EVENTS:

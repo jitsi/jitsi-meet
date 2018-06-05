@@ -24,6 +24,11 @@ type Props = {
     dispatch: Function,
 
     /**
+     * Callback to execute on page change.
+     */
+    onSelectPage: ?Function,
+
+    /**
      * The pages of the PagedList component to be rendered.
      * Note: page.component may be undefined and then they don't need to be
      * rendered.
@@ -61,18 +66,12 @@ export default class AbstractPagedList extends Component<Props, State> {
     }
 
     /**
-     * Implements React {@code Component}'s componentWillReceiveProps.
+     * Implements React's {@code Component} componentDidMount.
      *
      * @inheritdoc
      */
-    componentWillReceiveProps(newProps: Props) {
-        const { defaultPage } = newProps;
-
-        if (defaultPage !== this.props.defaultPage) {
-            // Default page changed due to a redux update. This is likely to
-            // happen after APP_WILL_MOUNT. So we update the active tab.
-            this._platformSpecificPageSelect(defaultPage);
-        }
+    componentDidMount() {
+        this._maybeRefreshActivePage();
     }
 
     /**
@@ -119,6 +118,26 @@ export default class AbstractPagedList extends Component<Props, State> {
         this._selectPage(pageIndex);
     }
 
+    _maybeRefreshActivePage: () => void
+
+    /**
+     * Components that this PagedList displays may have a refresh function to
+     * refresh its content when displayed (or based on custom logic). This
+     * function invokes this logic if it's present.
+     *
+     * @private
+     * @returns {void}
+     */
+    _maybeRefreshActivePage() {
+        const selectedPage = this.props.pages[this.state.pageIndex];
+
+        if (selectedPage && selectedPage.component) {
+            const { refresh } = selectedPage.component;
+
+            typeof refresh === 'function' && refresh(this.props.dispatch);
+        }
+    }
+
     _renderPagedList: boolean => React$Node;
 
     _selectPage: number => void;
@@ -133,19 +152,15 @@ export default class AbstractPagedList extends Component<Props, State> {
     _selectPage(pageIndex: number) {
         const validatedPageIndex = this._validatePageIndex(pageIndex);
 
+        const { onSelectPage } = this.props;
+
+        if (typeof onSelectPage === 'function') {
+            onSelectPage(validatedPageIndex);
+        }
+
         this.setState({
             pageIndex: validatedPageIndex
-        });
-
-        // The page's Component may have a refresh(dispatch) function which we
-        // invoke when the page is selected.
-        const selectedPage = this.props.pages[validatedPageIndex];
-
-        if (selectedPage && selectedPage.component) {
-            const { refresh } = selectedPage.component;
-
-            typeof refresh === 'function' && refresh(this.props.dispatch);
-        }
+        }, () => this._maybeRefreshActivePage());
     }
 
     _validatePageIndex: number => number

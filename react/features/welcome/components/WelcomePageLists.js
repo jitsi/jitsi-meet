@@ -9,17 +9,24 @@ import { PagedList } from '../../base/react';
 import { MeetingList } from '../../calendar-sync';
 import { RecentList } from '../../recent-list';
 
+import { setWelcomePageListDefaultPage } from '../actions';
+
 type Props = {
 
     /**
-     * True if the calendar feature has fetched entries, false otherwise
+     * The stored default page index.
      */
-    _hasCalendarEntries: boolean,
+    _defaultPage: number,
 
     /**
      * Renders the lists disabled.
      */
     disabled: boolean,
+
+    /**
+     * The Redux dispatch function.
+     */
+    dispatch: Function,
 
     /**
      * The i18n translate function.
@@ -72,6 +79,8 @@ class WelcomePageLists extends Component<Props> {
             icon: isAndroid ? 'event_note' : IOS_CALENDAR_ICON,
             title: t('welcomepage.calendar')
         } ];
+
+        this._onSelectPage = this._onSelectPage.bind(this);
     }
 
     /**
@@ -80,14 +89,34 @@ class WelcomePageLists extends Component<Props> {
      * @inheritdoc
      */
     render() {
-        const { disabled, _hasCalendarEntries } = this.props;
+        const { disabled, _defaultPage } = this.props;
+
+        if (typeof _defaultPage === 'undefined') {
+            return null;
+        }
 
         return (
             <PagedList
-                defaultPage = { _hasCalendarEntries ? 1 : 0 }
+                defaultPage = { _defaultPage }
                 disabled = { disabled }
+                onSelectPage = { this._onSelectPage }
                 pages = { this.pages } />
         );
+    }
+
+    _onSelectPage: number => void
+
+    /**
+     * Callback for the {@code PagedList} page select action.
+     *
+     * @private
+     * @param {number} pageIndex - The index of the selected page.
+     * @returns {void}
+     */
+    _onSelectPage(pageIndex) {
+        const { dispatch } = this.props;
+
+        dispatch(setWelcomePageListDefaultPage(pageIndex));
     }
 }
 
@@ -98,14 +127,18 @@ class WelcomePageLists extends Component<Props> {
  * @param {Object} state - The redux state.
  * @protected
  * @returns {{
- *     _hasCalendarEntries: boolean
+ *     _hasRecentListEntries: boolean
  * }}
  */
 function _mapStateToProps(state: Object) {
-    const { events } = state['features/calendar-sync'];
+    const { defaultPage } = state['features/welcome'];
+    const recentList = state['features/recent-list'];
+    const _hasRecentListEntries = Boolean(recentList && recentList.length);
 
     return {
-        _hasCalendarEntries: Boolean(events && events.length)
+        _defaultPage: defaultPage === 'undefined'
+            ? _hasRecentListEntries ? 0 : 1
+            : defaultPage
     };
 }
 

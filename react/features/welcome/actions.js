@@ -1,6 +1,26 @@
 // @flow
 
-import { SET_SIDEBAR_VISIBLE } from './actionTypes';
+import {
+    SET_SIDEBAR_VISIBLE,
+    SET_WELCOME_PAGE_LIST_DEFAULT_PAGE
+} from './actionTypes';
+
+/**
+ * Action to update the default page index of the {@code WelcomePageLists}
+ * component.
+ *
+ * @param {number} pageIndex - The index of the selected page.
+ * @returns {{
+ *     type: SET_WELCOME_PAGE_LIST_DEFAULT_PAGE,
+ *     pageIndex: number
+ * }}
+ */
+export function setWelcomePageListDefaultPage(pageIndex: number) {
+    return {
+        type: SET_WELCOME_PAGE_LIST_DEFAULT_PAGE,
+        pageIndex
+    };
+}
 
 /**
  * Sets the visibility of {@link WelcomePageSideBar}.

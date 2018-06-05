@@ -96,14 +96,21 @@ class MeetingList extends Component<Props> {
      * @inheritdoc
      */
     render() {
-        const { disabled } = this.props;
+        const { _authorization, disabled } = this.props;
 
         return (
             <NavigateSectionList
                 disabled = { disabled }
                 onPress = { this._onPress }
                 onRefresh = { this._onRefresh }
-                renderListEmptyComponent = { this._getRenderListEmptyComponent }
+
+                // If we don't provide a list specific renderListEmptyComponent,
+                // then the default empty component of the NavigateSectionList
+                // will be rendered, which (atm) is a simple "Pull to refresh"
+                // message.
+                renderListEmptyComponent
+                    = { _authorization === 'denied'
+                        ? this._getRenderListEmptyComponent() : undefined }
                 sections = { this._toDisplayableList() } />
         );
     }
@@ -115,29 +122,25 @@ class MeetingList extends Component<Props> {
      * of the default one in the {@link NavigateSectionList}.
      *
      * @private
-     * @returns {Component}
+     * @returns {Function}
      */
     _getRenderListEmptyComponent() {
-        const { _authorization, t } = this.props;
+        const { t } = this.props;
 
-        if (_authorization === 'denied') {
-            return (
-                <View style = { styles.noPermissionMessageView }>
-                    <Text style = { styles.noPermissionMessageText }>
-                        { t('calendarSync.permissionMessage') }
+        return (
+            <View style = { styles.noPermissionMessageView }>
+                <Text style = { styles.noPermissionMessageText }>
+                    { t('calendarSync.permissionMessage') }
+                </Text>
+                <TouchableOpacity
+                    onPress = { openSettings }
+                    style = { styles.noPermissionMessageButton } >
+                    <Text style = { styles.noPermissionMessageButtonText }>
+                        { t('calendarSync.permissionButton') }
                     </Text>
-                    <TouchableOpacity
-                        onPress = { openSettings }
-                        style = { styles.noPermissionMessageButton } >
-                        <Text style = { styles.noPermissionMessageButtonText }>
-                            { t('calendarSync.permissionButton') }
-                        </Text>
-                    </TouchableOpacity>
-                </View>
-            );
-        }
-
-        return null;
+                </TouchableOpacity>
+            </View>
+        );
     }
 
     _onPress: string => Function;
