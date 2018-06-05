@@ -17,11 +17,11 @@ import { APP_WILL_MOUNT, APP_WILL_UNMOUNT } from '../app';
 
 import { updateRecordingSessionData } from './actions';
 import { RECORDING_SESSION_UPDATED } from './actionTypes';
-import { RECORDING_ON_SOUND_ID, RECORDING_OFF_SOUND_ID } from './constants';
+import { RECORDING_OFF_SOUND_ID, RECORDING_ON_SOUND_ID } from './constants';
 import { getSessionById } from './functions';
 import {
-    RECORDING_ON_SOUND_FILE,
-    RECORDING_OFF_SOUND_FILE
+    RECORDING_OFF_SOUND_FILE,
+    RECORDING_ON_SOUND_FILE
 } from './sounds';
 
 /**
@@ -43,18 +43,18 @@ MiddlewareRegistry.register(store => next => action => {
     switch (action.type) {
     case APP_WILL_MOUNT:
         store.dispatch(registerSound(
-            RECORDING_ON_SOUND_ID,
-            RECORDING_ON_SOUND_FILE));
-
-        store.dispatch(registerSound(
             RECORDING_OFF_SOUND_ID,
             RECORDING_OFF_SOUND_FILE));
+
+        store.dispatch(registerSound(
+            RECORDING_ON_SOUND_ID,
+            RECORDING_ON_SOUND_FILE));
 
         break;
 
     case APP_WILL_UNMOUNT:
-        store.dispatch(unregisterSound(RECORDING_ON_SOUND_ID));
         store.dispatch(unregisterSound(RECORDING_OFF_SOUND_ID));
+        store.dispatch(unregisterSound(RECORDING_ON_SOUND_ID));
 
         break;
 
