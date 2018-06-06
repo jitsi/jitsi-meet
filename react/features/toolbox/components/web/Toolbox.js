@@ -106,7 +106,7 @@ type Props = {
     /**
      * Whether or not the file recording feature is enabled for use.
      */
-    _fileRecordingEnabled: boolean,
+    _fileRecordingsEnabled: boolean,
 
     /**
      * The current file recording session, if any.
@@ -964,7 +964,7 @@ class Toolbox extends Component<Props> {
             _editingDocument,
             _etherpadInitialized,
             _feedbackConfigured,
-            _fileRecordingEnabled,
+            _fileRecordingsEnabled,
             _fullScreen,
             _isGuest,
             _liveStreamingEnabled,
@@ -1000,7 +1000,7 @@ class Toolbox extends Component<Props> {
                     key = 'livestreaming'
                     onClick = { this._onToolbarToggleLiveStreaming }
                     session = { _liveStreamingSession } />,
-            _fileRecordingEnabled
+            _fileRecordingsEnabled
                 && this._shouldShowButton('recording')
                 && this._renderRecordingButton(),
             this._shouldShowButton('sharedvideo')
@@ -1137,7 +1137,7 @@ function _mapStateToProps(state) {
         _hideInviteButton:
             iAmRecorder || (!addPeopleEnabled && !dialOutEnabled),
         _isGuest: state['features/base/jwt'].isGuest,
-        _fileRecordingEnabled: isModerator && fileRecordingsEnabled,
+        _fileRecordingsEnabled: isModerator && fileRecordingsEnabled,
         _fileRecordingSession:
             getActiveSession(state, JitsiRecordingConstants.mode.FILE),
         _fullScreen: fullScreen,
