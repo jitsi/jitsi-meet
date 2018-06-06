@@ -10,9 +10,9 @@ import { connect } from 'react-redux';
 type Props = {
 
     /**
-     * Array of transcription paragraphs to be displayed as subtitles.
+     * Map of transcriptMessageID's with corresponding transcriptMessage.
      */
-    transcriptionSubtitles: Array<React$Node>
+    transcriptMessages: Map<string, Object>
 };
 
 /**
@@ -22,20 +22,57 @@ type Props = {
 class TranscriptionSubtitles extends Component<Props> {
 
     /**
+     * Updates the transcription subtitles only if the Map of transcriptMessages
+     * change otherwise prevents the unnecessary re-render..
+     *
+     * @inheritdoc
+     * @param { Object } nextProps - The props passed to the component before
+     * rendering the component.
+     * @returns {boolean} - True if props of the component changes, else false.
+     */
+    shouldComponentUpdate(nextProps) {
+
+        return this.props.transcriptMessages !== nextProps.transcriptMessages;
+    }
+
+    /**
      * Implements React's {@link Component#render()}.
      *
      * @inheritdoc
      * @returns {ReactElement}
      */
     render() {
+        const paragraphs = [];
+
+        for (const [ transcriptMessageID, transcriptMessage ]
+            of this.props.transcriptMessages) {
+            let text;
+
+            if (transcriptMessage) {
+                text = `${transcriptMessage.participantName}: `;
+
+                if (transcriptMessage.final) {
+                    text += transcriptMessage.final;
+                } else {
+                    const stable = transcriptMessage.stable
+                        ? transcriptMessage.stable : '';
+                    const unstable = transcriptMessage.unstable
+                        ? transcriptMessage.unstable : '';
+
+                    text += stable + unstable;
+                }
+            }
+            paragraphs.push(<p key = { transcriptMessageID }> { text } </p>);
+        }
 
         return (
             <div className = 'transcription-subtitles' >
-                { this.props.transcriptionSubtitles }
+                { paragraphs }
             </div>
         );
     }
 }
+
 
 /**
  * Maps the transcriptionSubtitles in the Redux state to the associated
@@ -44,13 +81,12 @@ class TranscriptionSubtitles extends Component<Props> {
  * @param {Object} state - The Redux state.
  * @private
  * @returns {{
- *     transcriptionSubtitles: string
+ *     transcriptMessages: Map
  * }}
  */
 function _mapStateToProps(state) {
     return {
-        transcriptionSubtitles:
-        state['features/transcription'].transcriptionSubtitles
+        transcriptMessages: state['features/transcription'].transcriptMessages
     };
 }
 export default connect(_mapStateToProps)(TranscriptionSubtitles);
