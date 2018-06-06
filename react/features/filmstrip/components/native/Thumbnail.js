@@ -34,6 +34,17 @@ class Thumbnail extends Component {
         _largeVideo: PropTypes.object,
         _videoTrack: PropTypes.object,
         dispatch: PropTypes.func,
+
+        /**
+         * If true, we need to render the avatar instead of the video,
+         * overriding other considerations.
+         */
+        hideVideo: PropTypes.boolean,
+
+        /**
+         * Callback for the onLayout event of the {@code Container}
+         */
+        onLayout: PropTypes.func,
         participant: PropTypes.object
     };
 
@@ -56,10 +67,14 @@ class Thumbnail extends Component {
      * @returns {ReactElement}
      */
     render() {
-        const audioTrack = this.props._audioTrack;
-        const largeVideo = this.props._largeVideo;
-        const participant = this.props.participant;
-        const videoTrack = this.props._videoTrack;
+        const {
+            _audioTrack,
+            _largeVideo,
+            _videoTrack,
+            hideVideo,
+            onLayout,
+            participant
+        } = this.props;
 
         let style = styles.thumbnail;
 
@@ -76,28 +91,30 @@ class Thumbnail extends Component {
         //    silence (& not even comfort noise).
         // 2. The audio is local. If we were to render local audio, the local
         //    participants would be hearing themselves.
-        const audioMuted = !audioTrack || audioTrack.muted;
-        const renderAudio = !audioMuted && !audioTrack.local;
+        const audioMuted = !_audioTrack || _audioTrack.muted;
+        const renderAudio = !audioMuted && !_audioTrack.local;
         const participantId = participant.id;
         const participantNotInLargeVideo
-            = participantId !== largeVideo.participantId;
-        const videoMuted = !videoTrack || videoTrack.muted;
+            = participantId !== _largeVideo.participantId;
+        const videoMuted = !_videoTrack || _videoTrack.muted;
 
         return (
             <Container
                 onClick = { this._onClick }
+                onLayout = { onLayout }
                 style = { style }>
 
                 { renderAudio
                     && <Audio
-                        stream
-                            = { audioTrack.jitsiTrack.getOriginalStream() } /> }
+                        stream = {
+                            _audioTrack.jitsiTrack.getOriginalStream()
+                        } /> }
 
                 <ParticipantView
                     avatarSize = { AVATAR_SIZE }
                     participantId = { participantId }
-                    showAvatar = { participantNotInLargeVideo }
-                    showVideo = { participantNotInLargeVideo }
+                    showAvatar = { hideVideo || participantNotInLargeVideo }
+                    showVideo = { !hideVideo && participantNotInLargeVideo }
                     zOrder = { 1 } />
 
                 { participant.role === PARTICIPANT_ROLE.MODERATOR

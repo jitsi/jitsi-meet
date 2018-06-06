@@ -217,13 +217,15 @@ class ParticipantView extends Component<Props> {
                     === JitsiParticipantConnectionStatus.ACTIVE)
                 && shouldRenderVideoTrack(videoTrack, waitForVideoStarted);
 
-        // Is the avatar to be rendered?
-        let renderAvatar = Boolean(!renderVideo && avatar);
-
         // The consumer of this ParticipantView is allowed to forbid showing the
         // video if the private logic of this ParticipantView determines that
         // the video could be rendered.
         renderVideo = renderVideo && _toBoolean(this.props.showVideo, true);
+
+        // Is the avatar to be rendered?
+        // NOTE: This check was before the previous assignment in the past, but
+        // now we need to take the final renderVideo value into account.
+        let renderAvatar = Boolean(!renderVideo && avatar);
 
         // The consumer of this ParticipantView is allowed to forbid showing the
         // avatar if the private logic of this ParticipantView determines that
