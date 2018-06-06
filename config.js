@@ -167,11 +167,11 @@ var config = {
 
     // Recording
 
-    // Whether to enable recording or not.
-    // enableRecording: false,
+    // Whether to enable file recording or not.
+    // fileRecordingsEnabled: false,
 
-    // Type for recording: one of jibri or jirecon.
-    // recordingType: 'jibri',
+    // Whether to enable live streaming or not.
+    // liveStreamingEnabled: false,
 
     // Misc
 

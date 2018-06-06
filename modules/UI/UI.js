@@ -351,7 +351,7 @@ UI.start = function() {
         APP.store.dispatch(setNotificationsEnabled(false));
     } else {
         // Initialize recording mode UI.
-        if (config.enableRecording && config.iAmRecorder) {
+        if (config.iAmRecorder) {
             VideoLayout.enableDeviceAvailabilityIcons(
                 APP.conference.getMyUserId(), false);
 
