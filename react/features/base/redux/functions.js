@@ -112,6 +112,29 @@ function _set(
 /* eslint-enable max-params */
 
 /**
+ * Returns redux feature's state from the specified {@code stateful} which is
+ * presumed to be related to the redux state (e.g. the redux store, the redux
+ * {@code getState} function). The third option for {@code stateful} is the
+ * redux {@code feature}'s state in which case the whole processing will be
+ * a NOP. It is assumed that if the state returned by {@link getState} for given
+ * {@code stateful} has no value for {@code feature} key it is probably
+ * the feature's state.
+ *
+ * @param {Function|Object} stateful - The entity such as the redux store or the
+ * redux {@code getState} function from which the redux state is to be
+ * returned or the redux feature's state object directly.
+ * @param {string} feature - The Redux feature's name for which the state will
+ * be obtained.
+ * @returns {Object} The redux feature's state for given name obtained from
+ * given {@code stateful}.
+ */
+export function toFeatureState(stateful: Function | Object, feature: string) {
+    const state = toState(stateful);
+
+    return state[feature] ? state[feature] : state;
+}
+
+/**
  * Returns redux state from the specified {@code stateful} which is presumed to
  * be related to the redux state (e.g. the redux store, the redux
  * {@code getState} function).

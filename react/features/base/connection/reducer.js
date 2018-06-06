@@ -12,6 +12,7 @@ import {
     CONNECTION_WILL_CONNECT,
     SET_LOCATION_URL
 } from './actionTypes';
+import { getCurrentConnection } from './functions';
 
 import type { ConnectionFailedError } from './actions.native';
 
@@ -57,7 +58,9 @@ ReducerRegistry.register(
 function _connectionDisconnected(
         state: Object,
         { connection }: { connection: Object }) {
-    if (state.connection !== connection) {
+    const connection_ = getCurrentConnection(state);
+
+    if (connection_ && connection_ !== connection) {
         return state;
     }
 
@@ -108,7 +111,7 @@ function _connectionFailed(
     // The current (similar to getCurrentConference in
     // base/conference/functions.js) connection which is connecting or
     // connected:
-    const connection_ = state.connection || state.connecting;
+    const connection_ = getCurrentConnection(state);
 
     if (connection_ && connection_ !== connection) {
         return state;
@@ -139,6 +142,11 @@ function _connectionWillConnect(
         { connection }: { connection: Object }) {
     return assign(state, {
         connecting: connection,
+
+        // We don't care if the previous connection has been closed already,
+        // because it's an async process and there's no guarantee if it'll be
+        // done before the new one is established.
+        connection: undefined,
         error: undefined,
         passwordRequired: undefined
     });
