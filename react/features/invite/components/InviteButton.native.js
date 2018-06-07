@@ -52,7 +52,7 @@ const _SHARE_ROOM_TOOLBAR_BUTTON = true;
  * current call/conference/meeting.
  */
 class InviteButton extends AbstractButton<Props, *> {
-    accessibilityLabel = 'Share room';
+    accessibilityLabel = 'toolbar.accessibilityLabel.shareRoom';
     iconName = 'icon-link';
     label = 'toolbar.shareRoom';
 

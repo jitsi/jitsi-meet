@@ -27,6 +27,8 @@ type State = {
 export default class AudioMuteButton
     extends AbstractAudioMuteButton<Props, State> {
 
+    accessibilityLabel = 'Audio mute';
+
     /**
      * Initializes a new {@code AudioMuteButton} instance.
      *

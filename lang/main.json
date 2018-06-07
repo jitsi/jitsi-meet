@@ -46,6 +46,10 @@
         "showSpeakerStats": "Show speaker stats"
     },
     "welcomepage":{
+        "accessibilityLabel": {
+            "join": "Tap to join",
+            "roomname": "Enter room name"
+        },
         "appDescription": "Go ahead, video chat with the whole team. In fact, invite everyone you know. __app__ is a fully encrypted, 100% open source video conferencing solution that you can use all day, every day, for free — with no account needed.",
         "audioVideoSwitch": {
             "audio": "Voice",
@@ -72,6 +76,33 @@
         "rejoinKeyTitle": "Rejoin"
     },
     "toolbar": {
+        "accessibilityLabel": {
+            "audioOnly": "Toggle audio only",
+            "audioRoute": "Select the audio route",
+            "callQuality": "Manage call quality",
+            "chat": "Toggle chat window",
+            "document": "Toggle shared document",
+            "feedback": "Leave feedback",
+            "fullScreen": "Toggle full screen",
+            "hangup": "Leave the call",
+            "invite": "Invite people",
+            "lockRoom": "Toggle room lock",
+            "moreActions": "Toggle more actions menu",
+            "moreActionsMenu": "More actions menu",
+            "mute": "Toggle mute audio",
+            "pip": "Toggle Picture-in-Picture mode",
+            "profile": "Edit your profile",
+            "raiseHand": "Toggle raise hand",
+            "recording": "Toggle recording",
+            "Settings": "Toggle settings",
+            "sharedvideo": "Toggle Youtube video sharing",
+            "shareRoom": "Invite someone",
+            "shareYourScreen": "Toggle screenshare",
+            "shortcuts": "Toggle shortcuts",
+            "speakerStats": "Toggle speaker statistics",
+            "toggleCamera": "Toggle camera",
+            "videomute": "Toggle mute video"
+        },
         "addPeople": "Add people to your call",
         "audioonly": "Enable / Disable audio only mode (saves bandwidth)",
         "audioOnlyOn": "Enable audio only mode (saves bandwidth)",
@@ -207,6 +238,9 @@
         "suboptimalExperienceDescription": "Eer... we are afraid your experience with __appName__ isn't going to be that great here. We are looking for ways to improve this but, until then, please try using one of the <a href='static/recommendedBrowsers.html' target='_blank'>fully supported browsers</a>."
     },
     "dialog": {
+        "accessibilityLabel": {
+            "liveStreaming": "Live Stream"
+        },
         "allow": "Allow",
         "confirm": "Confirm",
         "kickMessage": "Ouch! You have been kicked out of the meet!",
@@ -523,6 +557,7 @@
         "veryGood": "Very Good"
     },
     "info": {
+        "accessibilityLabel": "Show info",
         "addPassword": "Add password",
         "cancelPassword": "Cancel password",
         "conferenceURL": "Link:",

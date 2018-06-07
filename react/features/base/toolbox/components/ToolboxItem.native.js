@@ -50,7 +50,6 @@ export default class ToolboxItem extends AbstractToolboxItem<Props> {
      */
     _renderItem() {
         const {
-            accessibilityLabel,
             disabled,
             onClick,
             showLabel,
@@ -83,7 +82,7 @@ export default class ToolboxItem extends AbstractToolboxItem<Props> {
 
         return (
             <TouchableHighlight
-                accessibilityLabel = { accessibilityLabel }
+                accessibilityLabel = { this.accessibilityLabel }
                 disabled = { disabled }
                 onPress = { onClick }
                 style = { style }

@@ -85,6 +85,7 @@ class WelcomePage extends AbstractWelcomePage {
      */
     render() {
         const { buttonStyle, pageStyle } = Header;
+        const roomnameAccLabel = 'welcomepage.accessibilityLabel.roomname';
         const { t } = this.props;
 
         return (
@@ -101,7 +102,7 @@ class WelcomePage extends AbstractWelcomePage {
                     <SafeAreaView style = { styles.roomContainer } >
                         <View style = { styles.joinControls } >
                             <TextInput
-                                accessibilityLabel = { 'Input room name.' }
+                                accessibilityLabel = { t(roomnameAccLabel) }
                                 autoCapitalize = 'none'
                                 autoComplete = { false }
                                 autoCorrect = { false }
@@ -219,6 +220,7 @@ class WelcomePage extends AbstractWelcomePage {
      * @returns {ReactElement}
      */
     _renderJoinButton() {
+        const { t } = this.props;
         let children;
 
         /* eslint-disable no-extra-parens */
@@ -248,7 +250,8 @@ class WelcomePage extends AbstractWelcomePage {
 
         return (
             <TouchableHighlight
-                accessibilityLabel = { 'Tap to Join.' }
+                accessibilityLabel =
+                    { t('welcomepage.accessibilityLabel.join') }
                 disabled = { buttonDisabled }
                 onPress = { this._onJoin }
                 style = { [

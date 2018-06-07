@@ -49,7 +49,7 @@ class OverflowMenuLiveStreamingItem extends Component<Props> {
 
         return (
             <li
-                aria-label = 'Live stream'
+                aria-label = { t('dialog.accessibilityLabel.liveStreaming') }
                 className = 'overflow-menu-item'
                 onClick = { onClick }>
                 <span className = 'overflow-menu-item-icon'>

@@ -170,7 +170,7 @@ class InfoDialogButton extends Component {
                     onClose = { this._onDialogClose }
                     position = { 'top right' }>
                     <ToolbarButton
-                        accessibilityLabel = 'Info'
+                        accessibilityLabel = { t('info.accessibilityLabel') }
                         iconName = { iconClass }
                         onClick = { this._onDialogToggle }
                         tooltip = { t('info.tooltip') } />

@@ -336,6 +336,7 @@ class Toolbox extends Component<Props> {
         const overflowMenuContent = this._renderOverflowMenuContent();
         const overflowHasItems = Boolean(overflowMenuContent.filter(
             child => child).length);
+        const toolbarAccLabel = 'toolbar.accessibilityLabel.moreActionsMenu';
 
         return (
             <div
@@ -348,7 +349,8 @@ class Toolbox extends Component<Props> {
                         && this._renderDesktopSharingButton() }
                     { this._shouldShowButton('raisehand')
                         && <ToolbarButton
-                            accessibilityLabel = 'Raised hand'
+                            accessibilityLabel =
+                                { t('toolbar.accessibilityLabel.raiseHand') }
                             iconName = { _raisedHand
                                 ? 'icon-raised-hand toggled'
                                 : 'icon-raised-hand' }
@@ -357,7 +359,8 @@ class Toolbox extends Component<Props> {
                     { this._shouldShowButton('chat')
                         && <div className = 'toolbar-button-with-badge'>
                             <ToolbarButton
-                                accessibilityLabel = 'Chat'
+                                accessibilityLabel =
+                                    { t('toolbar.accessibilityLabel.chat') }
                                 iconName = { _chatOpen
                                     ? 'icon-chat toggled'
                                     : 'icon-chat' }
@@ -378,7 +381,8 @@ class Toolbox extends Component<Props> {
                     { this._shouldShowButton('invite')
                         && !_hideInviteButton
                         && <ToolbarButton
-                            accessibilityLabel = 'Invite'
+                            accessibilityLabel =
+                                { t('toolbar.accessibilityLabel.invite') }
                             iconName = 'icon-add'
                             onClick = { this._onToolbarOpenInvite }
                             tooltip = { t('toolbar.invite') } /> }
@@ -388,7 +392,7 @@ class Toolbox extends Component<Props> {
                             isOpen = { _overflowMenuVisible }
                             onVisibilityChange = { this._onSetOverflowVisible }>
                             <ul
-                                aria-label = 'Overflow menu'
+                                aria-label = { t(toolbarAccLabel) }
                                 className = 'overflow-menu'>
                                 { overflowMenuContent }
                             </ul>
@@ -946,7 +950,8 @@ class Toolbox extends Component<Props> {
 
         return (
             <ToolbarButton
-                accessibilityLabel = 'Screenshare'
+                accessibilityLabel
+                    = { t('toolbar.accessibilityLabel.shareYourScreen') }
                 iconName = { classNames }
                 onClick = { this._onToolbarToggleScreenshare }
                 tooltip = { tooltip } />
@@ -985,7 +990,8 @@ class Toolbox extends Component<Props> {
                     onClick = { this._onToolbarOpenVideoQuality } />,
             this._shouldShowButton('fullscreen')
                 && <OverflowMenuItem
-                    accessibilityLabel = 'Full screen'
+                    accessibilityLabel =
+                        { t('toolbar.accessibilityLabel.fullScreen') }
                     icon = { _fullScreen
                         ? 'icon-exit-full-screen'
                         : 'icon-full-screen' }
@@ -1005,7 +1011,8 @@ class Toolbox extends Component<Props> {
                 && this._renderRecordingButton(),
             this._shouldShowButton('sharedvideo')
                 && <OverflowMenuItem
-                    accessibilityLabel = 'Shared video'
+                    accessibilityLabel =
+                        { t('toolbar.accessibilityLabel.sharedvideo') }
                     icon = 'icon-shared-video'
                     key = 'sharedvideo'
                     onClick = { this._onToolbarToggleSharedVideo }
@@ -1015,7 +1022,8 @@ class Toolbox extends Component<Props> {
             this._shouldShowButton('etherpad')
                 && _etherpadInitialized
                 && <OverflowMenuItem
-                    accessibilityLabel = 'Etherpad'
+                    accessibilityLabel =
+                        { t('toolbar.accessibilityLabel.document') }
                     icon = 'icon-share-doc'
                     key = 'etherpad'
                     onClick = { this._onToolbarToggleEtherpad }
@@ -1028,7 +1036,8 @@ class Toolbox extends Component<Props> {
                 visible = { this._shouldShowButton('settings') } />,
             this._shouldShowButton('stats')
                 && <OverflowMenuItem
-                    accessibilityLabel = 'Speaker stats'
+                    accessibilityLabel =
+                        { t('toolbar.accessibilityLabel.speakerStats') }
                     icon = 'icon-presentation'
                     key = 'stats'
                     onClick = { this._onToolbarOpenSpeakerStats }
@@ -1036,14 +1045,16 @@ class Toolbox extends Component<Props> {
             this._shouldShowButton('feedback')
                 && _feedbackConfigured
                 && <OverflowMenuItem
-                    accessibilityLabel = 'Feedback'
+                    accessibilityLabel =
+                        { t('toolbar.accessibilityLabel.feedback') }
                     icon = 'icon-feedback'
                     key = 'feedback'
                     onClick = { this._onToolbarOpenFeedback }
                     text = { t('toolbar.feedback') } />,
             this._shouldShowButton('shortcuts')
                 && <OverflowMenuItem
-                    accessibilityLabel = 'Shortcuts'
+                    accessibilityLabel =
+                        { t('toolbar.accessibilityLabel.shortcuts') }
                     icon = 'icon-open_in_new'
                     key = 'shortcuts'
                     onClick = { this._onToolbarOpenKeyboardShortcuts }
@@ -1067,7 +1078,8 @@ class Toolbox extends Component<Props> {
 
         return (
             <OverflowMenuItem
-                accessibilityLabel = 'Record'
+                accessibilityLabel =
+                    { t('toolbar.accessibilityLabel.recording') }
                 icon = 'icon-camera-take-picture'
                 key = 'recording'
                 onClick = { this._onToolbarToggleRecording }

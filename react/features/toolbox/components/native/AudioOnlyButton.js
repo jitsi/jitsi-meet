@@ -27,7 +27,7 @@ type Props = AbstractButtonProps & {
  * An implementation of a button for toggling the audio-only mode.
  */
 class AudioOnlyButton extends AbstractButton<Props, *> {
-    accessibilityLabel = 'Audio only mode';
+    accessibilityLabel = 'toolbar.accessibilityLabel.audioOnly';
     iconName = 'visibility';
     label = 'toolbar.audioOnlyOn';
     toggledIconName = 'visibility-off';

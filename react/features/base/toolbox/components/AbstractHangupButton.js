@@ -9,7 +9,6 @@ import type { Props } from './AbstractButton';
 export default class AbstractHangupButton<P : Props, S: *>
     extends AbstractButton<P, S> {
 
-    accessibilityLabel = 'Hangup';
     iconName = 'icon-hangup';
 
     /**

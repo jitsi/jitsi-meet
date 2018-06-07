@@ -74,7 +74,7 @@ class OverflowMenuProfileItem extends Component {
 
         return (
             <li
-                aria-label = 'Profile'
+                aria-label = 'Edit your profile'
                 className = { classNames }
                 onClick = { this._onClick }>
                 <span className = 'overflow-menu-item-icon'>
