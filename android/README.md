@@ -42,15 +42,15 @@ dependencies {
    cd android/
    ./gradlew :sdk:assembleRelease
    ```
-   When this successfully executes, artifacts/binaries are ready to be published 
+   When this successfully executes, artifacts/binaries are ready to be published
    into a Maven repository of your choice.
 
 3. Configure the Maven repositories in which you are going to publish the
-   artifacts/binaries during step 4. 
-   
+   artifacts/binaries during step 4.
+
    In the file `android/sdk/build.gradle` modify the line that contains
    `"file:${rootProject.projectDir}/../../../jitsi/jitsi-maven-repository/releases"`
-   
+
    Change this value (which represents the Maven repository location used internally
    by the Jitsi Developers) to the location of the repository that you'd like to use.
 
@@ -64,7 +64,7 @@ dependencies {
 5. In _your_ project, add the Maven repository that you configured in step 3, as well
    as the dependency `org.jitsi.react:jitsi-meet-sdk` into your `build.gradle`
    file. Note that it's needed to pull in the transitive dependencies:
-   
+
    ```gradle
    implementation ('org.jitsi.react:jitsi-meet-sdk:+') { transitive = true }
    ```
@@ -76,18 +76,18 @@ repositories) continue below.
 
 6. Create the release assembly for _each_ third-party react-native module that you
    need, replacing it's name in the example below.
-   
+
    ```bash
    ./gradlew :react-native-webrtc:assembleRelease
    ```
-   
+
 7. Configure the Maven repositories in which you are going to publish the
-   artifacts/binaries during step 8. 
-   
+   artifacts/binaries during step 8.
+
    In the file `android/build.gradle` (note that this is a different file than the file
    that was modified in step 3) modify the line that contains
    `"file:${rootProject.projectDir}/../../../jitsi/jitsi-maven-repository/releases"`
-   
+
    Change this value (which represents the Maven repository location used internally
    by the Jitsi Developers) to the location of the repository that you'd like to use.
    You can use the same repository as the one you configured in step 3 if you want.
@@ -106,9 +106,20 @@ repositories) continue below.
 
 
 ## Using the API
+=======
 
 Jitsi Meet SDK is an Android library which embodies the whole Jitsi Meet
 experience and makes it reusable by third-party apps.
+
+First, add Java 1.8 compatibility support to your project by adding the
+following lines into your `build.gradle` file:
+
+```
+compileOptions {
+    sourceCompatibility JavaVersion.VERSION_1_8
+    targetCompatibility JavaVersion.VERSION_1_8
+}
+```
 
 To get started, extends your `android.app.Activity` from
 `org.jitsi.meet.sdk.JitsiMeetActivity`:
