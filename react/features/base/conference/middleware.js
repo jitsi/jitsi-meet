@@ -7,7 +7,7 @@ import {
     createPinnedEvent,
     sendAnalytics
 } from '../../analytics';
-import { CONNECTION_ESTABLISHED } from '../connection';
+import { CONNECTION_ESTABLISHED, CONNECTION_FAILED } from '../connection';
 import { setVideoMuted, VIDEO_MUTISM_AUTHORITY } from '../media';
 import {
     getLocalParticipant,
@@ -20,6 +20,7 @@ import UIEvents from '../../../../service/UI/UIEvents';
 import { TRACK_ADDED, TRACK_REMOVED } from '../tracks';
 
 import {
+    conferenceFailed,
     conferenceLeft,
     createConference,
     setLastN,
@@ -61,6 +62,9 @@ MiddlewareRegistry.register(store => next => action => {
 
     case CONNECTION_ESTABLISHED:
         return _connectionEstablished(store, next, action);
+
+    case CONNECTION_FAILED:
+        return _connectionFailed(store, next, action);
 
     case DATA_CHANNEL_OPENED:
         return _syncReceiveVideoQuality(store, next, action);
@@ -164,6 +168,62 @@ function _connectionEstablished({ dispatch }, next, action) {
     // FIXME: Workaround for the web version. Currently, the creation of the
     // conference is handled by /conference.js.
     typeof APP === 'undefined' && dispatch(createConference());
+
+    return result;
+}
+
+/**
+ * Notifies the feature base/conference that the action
+ * {@code CONNECTION_FAILED} is being dispatched within a specific redux
+ * store.
+ *
+ * @param {Store} store - The redux store in which the specified {@code action}
+ * is being dispatched.
+ * @param {Dispatch} next - The redux {@code dispatch} function to dispatch the
+ * specified {@code action} to the specified {@code store}.
+ * @param {Action} action - The redux action {@code CONNECTION_FAILED} which is
+ * being dispatched in the specified {@code store}.
+ * @private
+ * @returns {Object} The value returned by {@code next(action)}.
+ */
+function _connectionFailed({ dispatch, getState }, next, action) {
+    const result = next(action);
+
+    // FIXME: Workaround for the web version. Currently, the creation of the
+    // conference is handled by /conference.js and appropriate failure handlers
+    // are set there.
+    if (typeof APP === 'undefined') {
+        const { connection } = action;
+        const { error } = action;
+
+        forEachConference(getState, conference => {
+            // It feels that it would make things easier if JitsiConference
+            // in lib-jitsi-meet would monitor it's connection and emit
+            // CONFERENCE_FAILED when it's dropped. It has more knowledge on
+            // whether it can recover or not. But because the reload screen
+            // and the retry logic is implemented in the app maybe it can be
+            // left this way for now.
+            if (conference.getConnection() === connection) {
+                // XXX Note that on mobile the error type passed to
+                // connectionFailed is always an object with .name property.
+                // This fact needs to be checked prior to enabling this logic on
+                // web.
+                const conferenceAction
+                    = conferenceFailed(conference, error.name);
+
+                // Copy the recoverable flag if set on the CONNECTION_FAILED
+                // action to not emit recoverable action caused by
+                // a non-recoverable one.
+                if (typeof error.recoverable !== 'undefined') {
+                    conferenceAction.error.recoverable = error.recoverable;
+                }
+
+                dispatch(conferenceAction);
+            }
+
+            return true;
+        });
+    }
 
     return result;
 }
