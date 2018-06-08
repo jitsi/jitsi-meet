@@ -258,7 +258,9 @@ class Conference extends Component<Props> {
                       * A container that automatically renders indicators such
                       * as VideoQualityLabel or RecordingLabel if need be.
                       */}
-                    <ConferenceIndicators />
+                    {
+                        !this.props._reducedUI && <ConferenceIndicators />
+                    }
                 </View>
                 <TestConnectionInfo />
 
