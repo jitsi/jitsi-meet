@@ -227,7 +227,7 @@ function _conferenceWillJoin({ getState }, next, action) {
 
     const { conference } = action;
     const state = getState();
-    const { callUUID } = state['features/base/config'];
+    const { callUUID, callHandle } = state['features/base/config'];
     const url = getInviteURL(state);
     const hasVideo = !isVideoMutedByAudioOnly(state);
 
@@ -235,7 +235,9 @@ function _conferenceWillJoin({ getState }, next, action) {
     // it upper cased.
     conference.callUUID = (callUUID || uuid.v4()).toUpperCase();
 
-    CallKit.startCall(conference.callUUID, url.toString(), hasVideo)
+    const handleURL = callHandle || url.toString();
+
+    CallKit.startCall(conference.callUUID, handleURL, hasVideo)
         .then(() => {
             const { callee } = state['features/base/jwt'];
             const displayName
