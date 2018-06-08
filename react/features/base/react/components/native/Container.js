@@ -33,6 +33,7 @@ export default class Container extends AbstractContainer {
             accessibilityLabel,
             accessible,
             onClick,
+            onLayout,
             touchFeedback = onClick,
             visible = true,
             ...props
@@ -44,12 +45,14 @@ export default class Container extends AbstractContainer {
         }
 
         const onClickOrTouchFeedback = onClick || touchFeedback;
+
         let element
             = super._render(
                 View,
                 {
                     pointerEvents: onClickOrTouchFeedback ? 'auto' : 'box-none',
-                    ...props
+                    ...props,
+                    onLayout: onClickOrTouchFeedback ? undefined : onLayout
                 });
 
         // onClick & touchFeedback
@@ -62,6 +65,7 @@ export default class Container extends AbstractContainer {
                     {
                         accessibilityLabel,
                         accessible,
+                        onLayout,
                         onPress: onClick
                     },
                     element);
