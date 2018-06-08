@@ -227,17 +227,16 @@ function _conferenceWillJoin({ getState }, next, action) {
 
     const { conference } = action;
     const state = getState();
-    const { callUUID, callHandle } = state['features/base/config'];
+    const { callHandle, callUUID } = state['features/base/config'];
     const url = getInviteURL(state);
+    const handle = callHandle || url.toString();
     const hasVideo = !isVideoMutedByAudioOnly(state);
 
     // When assigning the call UUID, do so in upper case, since iOS will return
     // it upper cased.
     conference.callUUID = (callUUID || uuid.v4()).toUpperCase();
 
-    const handleURL = callHandle || url.toString();
-
-    CallKit.startCall(conference.callUUID, handleURL, hasVideo)
+    CallKit.startCall(conference.callUUID, handle, hasVideo)
         .then(() => {
             const { callee } = state['features/base/jwt'];
             const displayName
