@@ -1,6 +1,5 @@
 /* @flow */
-
-import { Platform } from '../react';
+import Platform from '../react/Platform';
 
 import { ColorPalette } from './components';
 
