@@ -10,7 +10,7 @@ export default class GoogleProfile {
     /**
      * Creates a new {@code GoogleProfile} instance.
      *
-     * @param {Object} data - The profile data a request for Google user data.
+     * @param {Object} data - The profile data from querying the Google API.
      * @returns {void}
      */
     constructor(data: Object = {}) {
