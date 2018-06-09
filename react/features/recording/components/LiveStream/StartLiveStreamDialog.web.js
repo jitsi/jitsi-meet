@@ -282,7 +282,7 @@ class StartLiveStreamDialog extends Component<Props, State> {
             .then(() => this._googleClient.getCurrentUserProfile())
             .then(profile => {
                 this._setStateIfMounted({
-                    googleProfileEmail: profile.getEmail(),
+                    googleProfileEmail: profile.email,
                     googleAPIState: GOOGLE_API_STATES.SIGNED_IN
                 });
             })

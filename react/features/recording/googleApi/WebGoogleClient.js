@@ -1,15 +1,17 @@
 // @flow
 
-import BaseGoogleClient from './BaseGoogleClient';
+import AbstractGoogleClient from './AbstractGoogleClient';
 
 const GOOGLE_API_CLIENT_LIBRARY_URL = 'https://apis.google.com/js/api.js';
 
 /**
  * A class for loading and interacting with the Google API.
  *
- * @extends BaseGoogleClient
+ * @extends AbstractGoogleClient
  */
-export default class WebGoogleClient extends BaseGoogleClient {
+export default class WebGoogleClient extends AbstractGoogleClient {
+    googleClientLoadPromise: ?Promise<*>;
+
     /**
      * Initializes a new WebGoogleClient instance.
      */
@@ -23,42 +25,6 @@ export default class WebGoogleClient extends BaseGoogleClient {
          * @type {Promise|null}
          */
         this.googleClientLoadPromise = null;
-    }
-
-    /**
-     * Obtains Google API Client Library, loading the library dynamically if
-     * needed.
-     *
-     * @returns {Promise}
-     */
-    get(): Promise<*> {
-        const globalGoogleApi = this._getGoogleApiClient();
-
-        if (!globalGoogleApi) {
-            return this.load();
-        }
-
-        return Promise.resolve(globalGoogleApi);
-    }
-
-    /**
-     * Gets the profile for the user signed in to the Google API Client Library.
-     *
-     * @returns {Promise}
-     */
-    getCurrentUserProfile(): Promise<*> {
-        return this.get()
-            .then(() => this.isSignedIn())
-            .then(isSignedIn => {
-                if (!isSignedIn) {
-                    return null;
-                }
-
-                return this._getGoogleApiClient()
-                    .auth2.getAuthInstance()
-                    .currentUser.get()
-                    .getBasicProfile();
-            });
     }
 
     /**
@@ -102,49 +68,6 @@ export default class WebGoogleClient extends BaseGoogleClient {
     }
 
     /**
-     * Generates a script tag and downloads the Google API Client Library.
-     *
-     * @returns {Promise}
-     */
-    load(): Promise<*> {
-        if (this.googleClientLoadPromise) {
-            return this.googleClientLoadPromise;
-        }
-
-        if (this._getGoogleApiClient()) {
-            return Promise.resolve(this._getGoogleApiClient());
-        }
-
-        this.googleClientLoadPromise = new Promise((resolve, reject) => {
-            const scriptTag = document.createElement('script');
-
-            scriptTag.async = true;
-            scriptTag.addEventListener('error', () => {
-                scriptTag.remove();
-
-                this.googleClientLoadPromise = null;
-
-                reject();
-            });
-            scriptTag.addEventListener('load', resolve);
-            scriptTag.type = 'text/javascript';
-
-            scriptTag.src = GOOGLE_API_CLIENT_LIBRARY_URL;
-
-            document.head
-                && document.head.appendChild(scriptTag);
-        })
-            .then(() => new Promise((resolve, reject) =>
-                this._getGoogleApiClient().load('client:auth2', {
-                    callback: resolve,
-                    onerror: reject
-                })))
-            .then(() => this._getGoogleApiClient());
-
-        return this.googleClientLoadPromise;
-    }
-
-    /**
      * Executes a request for a list of all YouTube broadcasts associated with
      * user currently signed in to the Google API Client Library.
      *
@@ -183,22 +106,6 @@ export default class WebGoogleClient extends BaseGoogleClient {
             .then(api => api.auth2.getAuthInstance().signIn());
     }
 
-    /**
-     * Prompts the participant to sign in to the Google API Client Library, if
-     * not already signed in.
-     *
-     * @returns {Promise}
-     */
-    signInIfNotSignedIn(): Promise<*> {
-        return this.get()
-            .then(() => this.isSignedIn())
-            .then(isSignedIn => {
-                if (!isSignedIn) {
-                    return this.showAccountSelection();
-                }
-            });
-    }
-
     _getApiScope: () => string;
 
     /**
@@ -212,7 +119,69 @@ export default class WebGoogleClient extends BaseGoogleClient {
         return window.gapi;
     }
 
+    /**
+     * Fetches the local participant's Google profile information.
+     *
+     * @private
+     * @returns {Promise<Object>}
+     */
+    _getUserProfile(): Promise<*> {
+        return this.get()
+            .then(api => {
+                const profile = api.auth2.getAuthInstance()
+                    .currentUser.get()
+                    .getBasicProfile();
+
+                return {
+                    email: profile.getEmail()
+                };
+            });
+    }
+
     _getURLForLiveBroadcasts: (?Object) => string;
 
     _getURLForLiveStreams: (Object) => string;
+
+    /**
+     * Generates a script tag and downloads the Google API Client Library.
+     *
+     * @returns {Promise}
+     */
+    _load(): Promise<*> {
+        if (this.googleClientLoadPromise) {
+            return this.googleClientLoadPromise;
+        }
+
+        if (this._getGoogleApiClient()) {
+            return Promise.resolve(this._getGoogleApiClient());
+        }
+
+        this.googleClientLoadPromise = new Promise((resolve, reject) => {
+            const scriptTag = document.createElement('script');
+
+            scriptTag.async = true;
+            scriptTag.addEventListener('error', () => {
+                scriptTag.remove();
+
+                this.googleClientLoadPromise = null;
+
+                reject();
+            });
+            scriptTag.addEventListener('load', resolve);
+            scriptTag.type = 'text/javascript';
+
+            scriptTag.src = GOOGLE_API_CLIENT_LIBRARY_URL;
+
+            document.head
+                && document.head.appendChild(scriptTag);
+        })
+            .then(() => new Promise((resolve, reject) =>
+                this._getGoogleApiClient().load('client:auth2', {
+                    callback: resolve,
+                    onerror: reject
+                })))
+            .then(() => this._getGoogleApiClient());
+
+        return this.googleClientLoadPromise;
+    }
 }

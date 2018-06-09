@@ -1,7 +1,6 @@
 // @flow
 
-import BaseGoogleClient from './BaseGoogleClient';
-import GoogleProfile from './GoogleProfile';
+import AbstractGoogleClient from './AbstractGoogleClient';
 
 /**
  * The key to use for storing the last known access token in session storage.
@@ -22,35 +21,10 @@ let clientId;
 
 /**
  * A singleton for loading and interacting with the Google API.
+ *
+ * @extends AbstractGoogleClient
  */
-export default class ElectronGoogleClient extends BaseGoogleClient {
-    /**
-     * Obtains the global variable used for interacting with the Google API.
-     * This method exists to keep parity with the public interface of the web
-     * implementation of the Google API client.
-     *
-     * @returns {Promise<Object>}
-     */
-    get(): Promise<Object> {
-        return Promise.resolve(this._getGoogleApiClient());
-    }
-
-    /**
-     * Gets the profile for the user associated with the {@link accessToken}.
-     *
-     * @returns {Promise}
-     */
-    getCurrentUserProfile(): Promise<*> {
-        return this.isSignedIn()
-            .then(isSignedIn => {
-                if (!isSignedIn) {
-                    return null;
-                }
-
-                return this._getUserProfile();
-            });
-    }
-
+export default class ElectronGoogleClient extends AbstractGoogleClient {
     /**
      * Sets the Google Web Client ID used for authenticating with Google and
      * making Google API requests.
@@ -154,21 +128,6 @@ export default class ElectronGoogleClient extends BaseGoogleClient {
     }
 
     /**
-     * Prompts the participant to sign in to Google in order to get an access
-     * token, if a valid access token is not already known.
-     *
-     * @returns {Promise}
-     */
-    signInIfNotSignedIn(): Promise<*> {
-        return this.isSignedIn()
-            .then(isSignedIn => {
-                if (!isSignedIn) {
-                    return this.showAccountSelection();
-                }
-            });
-    }
-
-    /**
      * Helper method to access the last known valid access token.
      *
      * @private
@@ -207,8 +166,7 @@ export default class ElectronGoogleClient extends BaseGoogleClient {
     _getURLForLiveStreams: (Object) => string;
 
     /**
-     * Fetches the local participant's Google profile information and returns
-     * a {@code GoogleProfile} instance.
+     * Fetches the local participant's Google profile information.
      *
      * @private
      * @returns {Promise<Object>}
@@ -217,13 +175,17 @@ export default class ElectronGoogleClient extends BaseGoogleClient {
         const accessToken = this._getAccessToken();
 
         if (!accessToken) {
-            return Promise.resolve(new GoogleProfile({}));
+            return Promise.resolve({});
         }
 
         return fetch('https://www.googleapis.com/oauth2/v1/userinfo?alt=json'
             + `&access_token=${accessToken}`)
             .then(res => res.json())
-            .then(res => new GoogleProfile(res));
+            .then(res => {
+                return {
+                    email: res.email
+                };
+            });
     }
 
     /**
