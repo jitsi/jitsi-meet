@@ -1,6 +1,5 @@
 // @flow
 
-import { hasElectronIntegration } from './functions';
 import googleElectronClient from './googleElectronClient';
 import googleWebClient from './googleWebClient';
 
@@ -13,7 +12,8 @@ export default {
      * @returns {Object} The client to use for interacting with the Google API.
      */
     getClient() {
-        if (hasElectronIntegration()) {
+        if (typeof JitsiMeetElectron === 'object'
+            && JitsiMeetElectron.googleApi) {
             return googleElectronClient;
         }
 
