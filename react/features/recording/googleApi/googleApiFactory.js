@@ -9,12 +9,16 @@ export default {
     /**
      * Obtains the Google client for the current platform.
      *
-     * @returns {Object} The client to use for interacting with the Google API.
+     * @returns {Object|null} The client to use for accessing the Google API or
+     * null if the Google API cannot be accessed.
      */
     getClient() {
-        if (typeof JitsiMeetElectron === 'object'
-            && JitsiMeetElectron.googleApi) {
-            return googleElectronClient;
+        if (typeof JitsiMeetElectron === 'object') {
+            if (JitsiMeetElectron.googleApi) {
+                return googleElectronClient;
+            }
+
+            return null;
         }
 
         return googleWebClient;
