@@ -12,7 +12,7 @@ import { Dialog } from '../../../base/dialog';
 import { translate } from '../../../base/i18n';
 import { JitsiRecordingConstants } from '../../../base/lib-jitsi-meet';
 
-import { googleApiFactory } from '../../googleApi';
+import { googleClientFactory } from '../../googleApi';
 
 import BroadcastsDropdown from './BroadcastsDropdown';
 import GoogleSignInButton from './GoogleSignInButton';
@@ -122,7 +122,7 @@ type State = {
  * @extends Component
  */
 class StartLiveStreamDialog extends Component<Props, State> {
-    _googleApiClient: Object;
+    _googleClient: Object;
 
     _isMounted: boolean;
 
@@ -135,7 +135,7 @@ class StartLiveStreamDialog extends Component<Props, State> {
     constructor(props: Props) {
         super(props);
 
-        this._googleApiClient = googleApiFactory.getClient();
+        this._googleClient = googleClientFactory.getClient();
 
         this.state = {
             broadcasts: undefined,
@@ -232,9 +232,9 @@ class StartLiveStreamDialog extends Component<Props, State> {
     _onInitializeGoogleApi() {
         const { _googleApiApplicationClientID } = this.props;
 
-        return this._googleApiClient
+        return this._googleClient
             .initializeClientId(_googleApiApplicationClientID)
-            .then(() => this._googleApiClient.isSignedIn())
+            .then(() => this._googleClient.isSignedIn())
             .then(isSignedIn => {
                 if (isSignedIn) {
                     this._setStateIfMounted({
@@ -278,8 +278,8 @@ class StartLiveStreamDialog extends Component<Props, State> {
      * @returns {Promise}
      */
     _onGetYouTubeBroadcasts() {
-        return this._googleApiClient.signInIfNotSignedIn()
-            .then(() => this._googleApiClient.getCurrentUserProfile())
+        return this._googleClient.signInIfNotSignedIn()
+            .then(() => this._googleClient.getCurrentUserProfile())
             .then(profile => {
                 this._setStateIfMounted({
                     googleProfileEmail: profile.getEmail(),
@@ -287,7 +287,7 @@ class StartLiveStreamDialog extends Component<Props, State> {
                 });
             })
             .then(() =>
-                this._googleApiClient.requestAvailableYouTubeBroadcasts())
+                this._googleClient.requestAvailableYouTubeBroadcasts())
             .then(response => {
                 const broadcasts = this._parseBroadcasts(response.result.items);
 
@@ -323,7 +323,7 @@ class StartLiveStreamDialog extends Component<Props, State> {
      * @returns {Promise}
      */
     _onRequestGoogleSignIn() {
-        return this._googleApiClient.showAccountSelection()
+        return this._googleClient.showAccountSelection()
             .then(() => this._setStateIfMounted({ broadcasts: undefined }))
             .then(() => this._onGetYouTubeBroadcasts());
     }
@@ -394,7 +394,7 @@ class StartLiveStreamDialog extends Component<Props, State> {
      * @returns {Promise}
      */
     _onYouTubeBroadcastIDSelected(boundStreamID) {
-        return this._googleApiClient
+        return this._googleClient
             .requestLiveStreamsForYouTubeBroadcast(boundStreamID)
             .then(response => {
                 const broadcasts = response.result.items;
@@ -585,7 +585,7 @@ class StartLiveStreamDialog extends Component<Props, State> {
      */
     _shouldShowGoogleIntegration() {
         return Boolean(
-            this._googleApiClient && this.props._googleApiApplicationClientID);
+            this._googleClient && this.props._googleApiApplicationClientID);
     }
 }
 

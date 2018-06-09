@@ -1,27 +1,37 @@
+// @flow
+
+import BaseGoogleClient from './BaseGoogleClient';
+
 const GOOGLE_API_CLIENT_LIBRARY_URL = 'https://apis.google.com/js/api.js';
-const GOOGLE_API_SCOPES = [
-    'https://www.googleapis.com/auth/youtube.readonly'
-].join(' ');
 
 /**
- * A promise for dynamically loading the Google API Client Library.
+ * A class for loading and interacting with the Google API.
  *
- * @private
- * @type {Promise}
+ * @extends BaseGoogleClient
  */
-let googleClientLoadPromise;
+export default class WebGoogleClient extends BaseGoogleClient {
+    /**
+     * Initializes a new WebGoogleClient instance.
+     */
+    constructor() {
+        super();
 
-/**
- * A singleton for loading and interacting with the Google API.
- */
-const googleApi = {
+        /**
+         * A promise for dynamically loading the Google API Client Library.
+         *
+         * @private
+         * @type {Promise|null}
+         */
+        this.googleClientLoadPromise = null;
+    }
+
     /**
      * Obtains Google API Client Library, loading the library dynamically if
      * needed.
      *
      * @returns {Promise}
      */
-    get() {
+    get(): Promise<*> {
         const globalGoogleApi = this._getGoogleApiClient();
 
         if (!globalGoogleApi) {
@@ -29,14 +39,14 @@ const googleApi = {
         }
 
         return Promise.resolve(globalGoogleApi);
-    },
+    }
 
     /**
      * Gets the profile for the user signed in to the Google API Client Library.
      *
      * @returns {Promise}
      */
-    getCurrentUserProfile() {
+    getCurrentUserProfile(): Promise<*> {
         return this.get()
             .then(() => this.isSignedIn())
             .then(isSignedIn => {
@@ -49,7 +59,7 @@ const googleApi = {
                     .currentUser.get()
                     .getBasicProfile();
             });
-    },
+    }
 
     /**
      * Sets the Google Web Client ID used for authenticating with Google and
@@ -58,7 +68,7 @@ const googleApi = {
      * @param {string} clientId - The client ID to be used with the API library.
      * @returns {Promise}
      */
-    initializeClientId(clientId) {
+    initializeClientId(clientId: string): Promise<*> {
         return this.get()
             .then(api => new Promise((resolve, reject) => {
                 // setTimeout is used as a workaround for api.client.init not
@@ -68,13 +78,13 @@ const googleApi = {
                 setTimeout(() => {
                     api.client.init({
                         clientId,
-                        scope: GOOGLE_API_SCOPES
+                        scope: this._getApiScope()
                     })
                     .then(resolve)
                     .catch(reject);
                 }, 500);
             }));
-    },
+    }
 
     /**
      * Checks whether a user is currently authenticated with Google through an
@@ -82,33 +92,37 @@ const googleApi = {
      *
      * @returns {Promise}
      */
-    isSignedIn() {
+    isSignedIn(): Promise<*> {
         return this.get()
             .then(api => Boolean(api
                 && api.auth2
                 && api.auth2.getAuthInstance
                 && api.auth2.getAuthInstance().isSignedIn
                 && api.auth2.getAuthInstance().isSignedIn.get()));
-    },
+    }
 
     /**
      * Generates a script tag and downloads the Google API Client Library.
      *
      * @returns {Promise}
      */
-    load() {
-        if (googleClientLoadPromise) {
-            return googleClientLoadPromise;
+    load(): Promise<*> {
+        if (this.googleClientLoadPromise) {
+            return this.googleClientLoadPromise;
         }
 
-        googleClientLoadPromise = new Promise((resolve, reject) => {
+        if (this._getGoogleApiClient()) {
+            return Promise.resolve(this._getGoogleApiClient());
+        }
+
+        this.googleClientLoadPromise = new Promise((resolve, reject) => {
             const scriptTag = document.createElement('script');
 
             scriptTag.async = true;
             scriptTag.addEventListener('error', () => {
                 scriptTag.remove();
 
-                googleClientLoadPromise = null;
+                this.googleClientLoadPromise = null;
 
                 reject();
             });
@@ -117,7 +131,8 @@ const googleApi = {
 
             scriptTag.src = GOOGLE_API_CLIENT_LIBRARY_URL;
 
-            document.head.appendChild(scriptTag);
+            document.head
+                && document.head.appendChild(scriptTag);
         })
             .then(() => new Promise((resolve, reject) =>
                 this._getGoogleApiClient().load('client:auth2', {
@@ -126,8 +141,8 @@ const googleApi = {
                 })))
             .then(() => this._getGoogleApiClient());
 
-        return googleClientLoadPromise;
-    },
+        return this.googleClientLoadPromise;
+    }
 
     /**
      * Executes a request for a list of all YouTube broadcasts associated with
@@ -135,12 +150,12 @@ const googleApi = {
      *
      * @returns {Promise}
      */
-    requestAvailableYouTubeBroadcasts() {
+    requestAvailableYouTubeBroadcasts(): Promise<*> {
         const url = this._getURLForLiveBroadcasts();
 
         return this.get()
             .then(api => api.client.request(url));
-    },
+    }
 
     /**
      * Executes a request to get all live streams associated with a broadcast
@@ -150,12 +165,12 @@ const googleApi = {
      * broadcast in YouTube.
      * @returns {Promise}
      */
-    requestLiveStreamsForYouTubeBroadcast(boundStreamID) {
-        const url = this._getURLForLiveStreams(boundStreamID);
+    requestLiveStreamsForYouTubeBroadcast(boundStreamID: string): Promise<*> {
+        const url = this._getURLForLiveStreams({ id: boundStreamID });
 
         return this.get()
             .then(api => api.client.request(url));
-    },
+    }
 
     /**
      * Prompts the participant to sign in to the Google API Client Library, even
@@ -163,10 +178,10 @@ const googleApi = {
      *
      * @returns {Promise}
      */
-    showAccountSelection() {
+    showAccountSelection(): Promise<*> {
         return this.get()
             .then(api => api.auth2.getAuthInstance().signIn());
-    },
+    }
 
     /**
      * Prompts the participant to sign in to the Google API Client Library, if
@@ -174,7 +189,7 @@ const googleApi = {
      *
      * @returns {Promise}
      */
-    signInIfNotSignedIn() {
+    signInIfNotSignedIn(): Promise<*> {
         return this.get()
             .then(() => this.isSignedIn())
             .then(isSignedIn => {
@@ -182,7 +197,9 @@ const googleApi = {
                     return this.showAccountSelection();
                 }
             });
-    },
+    }
+
+    _getApiScope: () => string;
 
     /**
      * Returns the global Google API Client Library object. Direct use of this
@@ -193,38 +210,9 @@ const googleApi = {
      */
     _getGoogleApiClient() {
         return window.gapi;
-    },
-
-    /**
-     * Returns the URL to the Google API endpoint for retrieving the currently
-     * signed in user's YouTube broadcasts.
-     *
-     * @private
-     * @returns {string}
-     */
-    _getURLForLiveBroadcasts() {
-        return [
-            'https://content.googleapis.com/youtube/v3/liveBroadcasts',
-            '?broadcastType=all',
-            '&mine=true&part=id%2Csnippet%2CcontentDetails%2Cstatus'
-        ].join('');
-    },
-
-    /**
-     * Returns the URL to the Google API endpoint for retrieving the live
-     * streams associated with a YouTube broadcast's bound stream.
-     *
-     * @param {string} boundStreamID - The bound stream ID associated with a
-     * broadcast in YouTube.
-     * @returns {string}
-     */
-    _getURLForLiveStreams(boundStreamID) {
-        return [
-            'https://content.googleapis.com/youtube/v3/liveStreams',
-            '?part=id%2Csnippet%2Ccdn%2Cstatus',
-            `&id=${boundStreamID}`
-        ].join('');
     }
-};
 
-export default googleApi;
+    _getURLForLiveBroadcasts: (?Object) => string;
+
+    _getURLForLiveStreams: (Object) => string;
+}

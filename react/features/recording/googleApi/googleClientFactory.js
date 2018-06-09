@@ -1,9 +1,11 @@
 // @flow
 
-import googleElectronClient from './googleElectronClient';
-import googleWebClient from './googleWebClient';
+import ElectronGoogleClient from './ElectronGoogleClient';
+import WebGoogleClient from './WebGoogleClient';
 
 declare var JitsiMeetElectron: Object;
+
+let client;
 
 export default {
     /**
@@ -13,14 +15,22 @@ export default {
      * null if the Google API cannot be accessed.
      */
     getClient() {
+        if (client) {
+            return client;
+        }
+
         if (typeof JitsiMeetElectron === 'object') {
             if (JitsiMeetElectron.googleApi) {
-                return googleElectronClient;
+                client = new ElectronGoogleClient();
+
+                return client;
             }
 
             return null;
         }
 
-        return googleWebClient;
+        client = new WebGoogleClient();
+
+        return client;
     }
 };

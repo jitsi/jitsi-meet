@@ -1,1 +1,1 @@
-export { default as googleApiFactory } from './googleApiFactory';
+export { default as googleClientFactory } from './googleClientFactory';

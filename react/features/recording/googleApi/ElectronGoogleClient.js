@@ -1,5 +1,6 @@
 // @flow
 
+import BaseGoogleClient from './BaseGoogleClient';
 import GoogleProfile from './GoogleProfile';
 
 /**
@@ -12,18 +13,6 @@ import GoogleProfile from './GoogleProfile';
  */
 const sessionStorageKey = 'googleApiElectronToken';
 
-/**
- * The account permissions to request access to from Google.
- *
- * @private
- * @type {string}
- */
-const scopes = [
-    'https://www.googleapis.com/auth/youtube.readonly',
-    'profile',
-    'email'
-].join(' ');
-
 declare var JitsiMeetElectron: Object;
 
 /**
@@ -34,7 +23,7 @@ let clientId;
 /**
  * A singleton for loading and interacting with the Google API.
  */
-const googleApi = {
+export default class ElectronGoogleClient extends BaseGoogleClient {
     /**
      * Obtains the global variable used for interacting with the Google API.
      * This method exists to keep parity with the public interface of the web
@@ -44,14 +33,14 @@ const googleApi = {
      */
     get(): Promise<Object> {
         return Promise.resolve(this._getGoogleApiClient());
-    },
+    }
 
     /**
      * Gets the profile for the user associated with the {@link accessToken}.
      *
      * @returns {Promise}
      */
-    getCurrentUserProfile() {
+    getCurrentUserProfile(): Promise<*> {
         return this.isSignedIn()
             .then(isSignedIn => {
                 if (!isSignedIn) {
@@ -60,7 +49,7 @@ const googleApi = {
 
                 return this._getUserProfile();
             });
-    },
+    }
 
     /**
      * Sets the Google Web Client ID used for authenticating with Google and
@@ -73,7 +62,7 @@ const googleApi = {
         clientId = client;
 
         return Promise.resolve();
-    },
+    }
 
     /**
      * Checks whether the user is authenticated to use the Google Web Client.
@@ -95,7 +84,7 @@ const googleApi = {
 
                 return isValid;
             });
-    },
+    }
 
     /**
      * Executes a request for a list of all YouTube broadcasts associated with
@@ -104,9 +93,14 @@ const googleApi = {
      * @returns {Promise}
      */
     requestAvailableYouTubeBroadcasts() {
-        return fetch(this._getURLForLiveBroadcasts())
+        const requestUrl = this._getURLForLiveBroadcasts({
+            // eslint-disable-next-line camelcase
+            access_token: this._getAccessToken()
+        });
+
+        return fetch(requestUrl)
             .then(res => this._mimicGoogleWebClientResponse(res));
-    },
+    }
 
     /**
      * Executes a request to get all live streams associated with a broadcast
@@ -117,9 +111,15 @@ const googleApi = {
      * @returns {Promise}
      */
     requestLiveStreamsForYouTubeBroadcast(boundStreamID: string) {
-        return fetch(this._getURLForLiveStreams(boundStreamID))
+        const requestUrl = this._getURLForLiveStreams({
+            // eslint-disable-next-line camelcase
+            access_token: this._getAccessToken(),
+            id: boundStreamID
+        });
+
+        return fetch(requestUrl)
             .then(res => this._mimicGoogleWebClientResponse(res));
-    },
+    }
 
     /**
      * Prompts the participant to sign in Google, even if a valid access token
@@ -132,7 +132,7 @@ const googleApi = {
         const authUrl
             = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${
                 clientId}&redirect_uri=${redirectUri}&scope=${
-                scopes}&response_type=token`;
+                this._getApiScope()}&response_type=token`;
 
         return this._getGoogleApiClient()
             .requestToken({
@@ -151,7 +151,7 @@ const googleApi = {
 
                         return Promise.reject();
                     }));
-    },
+    }
 
     /**
      * Prompts the participant to sign in to Google in order to get an access
@@ -159,14 +159,14 @@ const googleApi = {
      *
      * @returns {Promise}
      */
-    signInIfNotSignedIn() {
+    signInIfNotSignedIn(): Promise<*> {
         return this.isSignedIn()
             .then(isSignedIn => {
                 if (!isSignedIn) {
                     return this.showAccountSelection();
                 }
             });
-    },
+    }
 
     /**
      * Helper method to access the last known valid access token.
@@ -176,18 +176,9 @@ const googleApi = {
      */
     _getAccessToken() {
         return window.sessionStorage.getItem(sessionStorageKey);
-    },
+    }
 
-    /**
-     * Helper method to generate the redirect URI Google should visit after
-     * successful authentication.
-     *
-     * @private
-     * @returns {string}
-     */
-    _getRedirectUri() {
-        return `${window.location.origin}/static/googleAuthRedirect.html`;
-    },
+    _getApiScope: () => string;
 
     /**
      * Returns the global object from the Electron environment which allows
@@ -198,36 +189,22 @@ const googleApi = {
      */
     _getGoogleApiClient(): Object {
         return JitsiMeetElectron.googleApi;
-    },
+    }
 
     /**
-     * Returns the URL to the Google API endpoint for retrieving the currently
-     * signed in user's YouTube broadcasts.
+     * Helper method to generate the redirect URI Google should visit after
+     * successful authentication.
      *
      * @private
      * @returns {string}
      */
-    _getURLForLiveBroadcasts() {
-        return 'https://content.googleapis.com/youtube/v3/liveBroadcasts'
-            + '?broadcastType=all'
-            + '&mine=true&part=id%2Csnippet%2CcontentDetails%2Cstatus'
-            + `&access_token=${this._getAccessToken()}`;
-    },
+    _getRedirectUri() {
+        return `${window.location.origin}/static/googleAuthRedirect.html`;
+    }
 
-    /**
-     * Returns the URL to the Google API endpoint for retrieving the live
-     * streams associated with a YouTube broadcast's bound stream.
-     *
-     * @param {string} boundStreamID - The bound stream ID associated with a
-     * broadcast in YouTube.
-     * @returns {string}
-     */
-    _getURLForLiveStreams(boundStreamID: string) {
-        return 'https://content.googleapis.com/youtube/v3/liveStreams'
-            + '?part=id%2Csnippet%2Ccdn%2Cstatus'
-            + `&id=${boundStreamID}`
-            + `&access_token=${this._getAccessToken()}`;
-    },
+    _getURLForLiveBroadcasts: (Object) => string;
+
+    _getURLForLiveStreams: (Object) => string;
 
     /**
      * Fetches the local participant's Google profile information and returns
@@ -247,7 +224,7 @@ const googleApi = {
             + `&access_token=${accessToken}`)
             .then(res => res.json())
             .then(res => new GoogleProfile(res));
-    },
+    }
 
     /**
      * Callback to handle some requests to the Google API and returns a response
@@ -266,7 +243,7 @@ const googleApi = {
                 ? Promise.resolve(googleApiResponse)
                 : Promise.reject(googleApiResponse);
         });
-    },
+    }
 
     /**
      * Takes in a redirect URL from Google authentication and finds the access
@@ -297,7 +274,7 @@ const googleApi = {
                 && accessTokenParam.substring(accessTokenStartIndex + 1);
 
         return accessTokenValue;
-    },
+    }
 
     /**
      * Setter for the access token to use for Google API requests.
@@ -308,7 +285,7 @@ const googleApi = {
      */
     _setAccessToken(newToken: string = '') {
         window.sessionStorage.setItem(sessionStorageKey, newToken);
-    },
+    }
 
     /**
      * Performs a request with Google to ensure the passed in token is valid.
@@ -327,6 +304,4 @@ const googleApi = {
             .then(res => res.json())
             .then(res => !res.error && res.aud === clientId);
     }
-};
-
-export default googleApi;
+}
