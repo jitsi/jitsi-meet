@@ -69,7 +69,7 @@ const googleApi = {
      * @param {string} client - The client ID to be used with the API library.
      * @returns {Promise}
      */
-    initializeClient(client: string): Promise<*> {
+    initializeClientId(client: string): Promise<*> {
         clientId = client;
 
         return Promise.resolve();

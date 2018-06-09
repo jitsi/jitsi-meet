@@ -233,7 +233,7 @@ class StartLiveStreamDialog extends Component<Props, State> {
         const { _googleApiApplicationClientID } = this.props;
 
         return this._googleApiClient
-            .initializeClient(_googleApiApplicationClientID)
+            .initializeClientId(_googleApiApplicationClientID)
             .then(() => this._googleApiClient.isSignedIn())
             .then(isSignedIn => {
                 if (isSignedIn) {

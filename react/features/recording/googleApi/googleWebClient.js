@@ -58,7 +58,7 @@ const googleApi = {
      * @param {string} clientId - The client ID to be used with the API library.
      * @returns {Promise}
      */
-    initializeClient(clientId) {
+    initializeClientId(clientId) {
         return this.get()
             .then(api => new Promise((resolve, reject) => {
                 // setTimeout is used as a workaround for api.client.init not
