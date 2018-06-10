@@ -123,8 +123,8 @@ export default class AbstractGoogleClient {
      * @returns {string}
      */
     _addQueryParamsToUrl(baseUrl: string, queryParams: Object) {
-        return Object.entries(queryParams).reduce(
-            (acc, param) => `${acc}&${param[0]}=${param[1]}`,
+        return Object.keys(queryParams).reduce(
+            (acc, key) => `${acc}&${key}=${queryParams[key]}`,
             baseUrl);
     }
 
