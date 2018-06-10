@@ -1,4 +1,16 @@
 /**
+ * The type of (redux) action which signals that server authentication has
+ * becoming available or unavailable or logged in user has changed.
+ *
+ * {
+ *     type: AUTH_STATUS_CHANGED,
+ *     authEnabled: boolean,
+ *     authLogin: string
+ * }
+ */
+export const AUTH_STATUS_CHANGED = Symbol('AUTH_STATUS_CHANGED');
+
+/**
  * The type of (redux) action which signals that a specific conference failed.
  *
  * {

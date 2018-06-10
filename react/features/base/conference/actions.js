@@ -22,6 +22,7 @@ import { getLocalTracks, trackAdded, trackRemoved } from '../tracks';
 import { getJitsiMeetGlobalNS } from '../util';
 
 import {
+    AUTH_STATUS_CHANGED,
     CONFERENCE_FAILED,
     CONFERENCE_JOINED,
     CONFERENCE_LEFT,
@@ -176,6 +177,26 @@ function _addConferenceListeners(conference, dispatch) {
             id,
             email: data.value
         })));
+}
+
+/**
+ * Updates the current known state of server-side authentication.
+ *
+ * @param {boolean} authEnabled - Whether or not server authentication is
+ * enabled.
+ * @param {string} authLogin - The current name of the logged in user, if any.
+ * @returns {{
+ *     type: AUTH_STATUS_CHANGED,
+ *     authEnabled: boolean,
+ *     authLogin: string
+ * }}
+ */
+export function authStatusChanged(authEnabled: boolean, authLogin: string) {
+    return {
+        type: AUTH_STATUS_CHANGED,
+        authEnabled,
+        authLogin
+    };
 }
 
 /**

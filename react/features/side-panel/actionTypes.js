@@ -27,23 +27,3 @@ export const SET_VISIBLE_PANEL = Symbol('SET_VISIBLE_PANEL');
  * }
  */
 export const TOGGLE_CHAT = Symbol('TOGGLE_CHAT');
-
-/**
- * The type of the action which signals to toggle the display of profile editing
- * in the side panel.
- *
- * {
- *     type: TOGGLE_PROFILE
- * }
- */
-export const TOGGLE_PROFILE = Symbol('TOGGLE_PROFILE');
-
-/**
- * The type of the action which signals to toggle the display of settings in the
- * side panel.
- *
- * {
- *     type: TOGGLE_SETTINGS
- * }
- */
-export const TOGGLE_SETTINGS = Symbol('TOGGLE_SETTINGS');

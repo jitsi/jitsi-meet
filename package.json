@@ -17,6 +17,7 @@
   "dependencies": {
     "@atlaskit/avatar": "8.0.5",
     "@atlaskit/button": "5.4.2",
+    "@atlaskit/checkbox": "2.0.2",
     "@atlaskit/dropdown-menu": "3.10.2",
     "@atlaskit/droplist": "4.11.1",
     "@atlaskit/field-text": "4.0.1",
