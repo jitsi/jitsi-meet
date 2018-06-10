@@ -83,7 +83,7 @@ type Props = {
 export class LargeVideoBackground extends Component<Props> {
     _canvasEl: Object;
 
-    _updateCanvasInterval: number;
+    _updateCanvasInterval: *;
 
     /**
      * Initializes new {@code LargeVideoBackground} instance.

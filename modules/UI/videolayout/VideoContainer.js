@@ -688,8 +688,10 @@ export class VideoContainer extends LargeContainer {
      */
     _updateBackground() {
         // Do not the background display on browsers that might experience
-        // performance issues from the presence of the background.
-        if (browser.isFirefox()
+        // performance issues from the presence of the background or if
+        // explicitly disabled.
+        if (interfaceConfig.DISABLE_VIDEO_BACKGROUND
+                || browser.isFirefox()
                 || browser.isSafariWithWebrtc()
                 || browser.isTemasysPluginUsed()) {
             return;

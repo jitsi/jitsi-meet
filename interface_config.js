@@ -5,6 +5,12 @@ var interfaceConfig = {
     // methods allowing to use variables both in css and js.
     DEFAULT_BACKGROUND: '#474747',
 
+    /**
+     * Whether or not the blurred video background for large video should be
+     * displayed on browsers that can support it.
+     */
+    DISABLE_VIDEO_BACKGROUND: false,
+
     INITIAL_TOOLBAR_TIMEOUT: 20000,
     TOOLBAR_TIMEOUT: 4000,
     TOOLBAR_ALWAYS_VISIBLE: false,
