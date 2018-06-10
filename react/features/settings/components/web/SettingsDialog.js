@@ -1,29 +1,29 @@
 // @flow
 
-import Tabs from '@atlaskit/tabs';
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 
-import { StatelessDialog } from '../../../base/dialog';
-import { LANGUAGES, translate } from '../../../base/i18n';
-import { DeviceSelection } from '../../../device-selection';
-import type { DeviceSelectionProps } from '../../../device-selection';
-
-import { SETTINGS_TABS } from '../../constants';
+import { DialogWithTabs, hideDialog } from '../../../base/dialog';
+import {
+    DeviceSelection,
+    getDeviceSelectionDialogProps,
+    submitDeviceSelectionTab
+} from '../../../device-selection';
 
 import MoreTab from './MoreTab';
-import type { Props as MoreTabProps } from './MoreTab';
 import ProfileTab from './ProfileTab';
-import type { Props as ProfileTabProps } from './ProfileTab';
+import { getMoreTabProps, getProfileTabProps } from '../../functions';
+import { submitMoreTab, submitProfileTab } from '../../actions';
+import { SETTINGS_TABS } from '../../constants';
 
-const logger = require('jitsi-meet-logger').getLogger(__filename);
+declare var APP: Object;
+declare var interfaceConfig: Object;
 
 /**
- * The type of the React {@code Component} props of {@link SettingsDialog}.
+ * The type of the React {@code Component} props of
+ * {@link ConnectedSettingsDialog}.
  */
-export type Props = {
-    ...$Exact<DeviceSelectionProps>,
-    ...$Exact<MoreTabProps>,
-    ...$Exact<ProfileTabProps>,
+type Props = {
 
     /**
      * Which settings tab should be initially displayed. If not defined then
@@ -32,133 +32,35 @@ export type Props = {
     defaultTab: string,
 
     /**
-     * Callback invoked to close the dialog without saving changes.
+     * Information about the tabs to be rendered.
      */
-    onCancel: Function,
+    _tabs: Array<Object>,
 
     /**
-     * Callback invoked to save settings changes.
+     * Invoked to save changed settings.
      */
-    onSubmit: Function,
-
-    /**
-     * Whether or not to display device selection.
-     */
-    showDeviceSettings: boolean,
-
-    /**
-     * Whether or not to display language selection.
-     */
-    showLanguageSettings: boolean,
-
-    /**
-     * Whether or not to display moderator options.
-     */
-    showModeratorSettings: boolean,
-
-    /**
-     * Whether or not to display profile editing options.
-     */
-    showProfileSettings: boolean,
-
-    /**
-     * Invoked to obtain translated strings.
-     */
-    t: Function
-};
-
-/**
- * The type of the React {@code Component} state of {@link SettingsDialog}.
- */
-type State = {
-
-    /**
-     * The entered value of the local participant's display name.
-     */
-    displayName: string,
-
-    /**
-     * The entered valued of the local participant's email.
-     */
-    email: string,
-
-    /**
-     * Whether the follow me feature is enabled or disabled.
-     */
-    followMe: boolean,
-
-    /**
-     * The language selected for display.
-     */
-    language: string,
-
-    /**
-     * The value of the selected audio input device.
-     */
-    selectedAudioInputId: string,
-
-    /**
-     * The value of the selected audio output device.
-     */
-    selectedAudioOutputId: string,
-
-    /**
-     * The value of the selected video input device.
-     */
-    selectedVideoInputId: string,
-
-    /**
-     * Whether the start audio muted feature is enabled or disabled.
-     */
-    startAudioMuted: boolean,
-
-    /**
-     * Whether the start video muted feature is enabled or disabled.
-     */
-    startVideoMuted: boolean
+    dispatch: Function,
 };
 
 /**
  * A React {@code Component} for displaying a dialog to modify local settings
- * and conference-wide (moderator) settings.
+ * and conference-wide (moderator) settings. This version is connected to
+ * redux to get the current settings.
  *
  * @extends Component
  */
-class SettingsDialog extends Component<Props, State> {
+class SettingsDialog extends Component<Props> {
     /**
-     * Initializes a new {@code SettingsDialog} instance.
+     * Initializes a new {@code ConnectedSettingsDialog} instance.
      *
-     * @param {Object} props - The read-only React {@code Component} props with
-     * which the new instance is to be initialized.
+     * @param {Props} props - The React {@code Component} props to initialize
+     * the new {@code ConnectedSettingsDialog} instance with.
      */
     constructor(props: Props) {
         super(props);
 
-        this.state = {
-            displayName: this.props.displayName,
-            email: this.props.email,
-            followMe: this.props.followMe,
-            language: this.props.language,
-            selectedAudioInputId: this.props.currentAudioInputId,
-            selectedAudioOutputId: this.props.currentAudioOutputId,
-            selectedVideoInputId: this.props.currentVideoInputId,
-            startAudioMuted: this.props.startAudioMuted,
-            startVideoMuted: this.props.startVideoMuted
-        };
-
         // Bind event handlers so they are only bound once for every instance.
-        this._onAudioInputChange = this._onAudioInputChange.bind(this);
-        this._onAudioOutputChange = this._onAudioOutputChange.bind(this);
-        this._onDisplayNameChange = this._onDisplayNameChange.bind(this);
-        this._onEmailChange = this._onEmailChange.bind(this);
-        this._onFollowMeChange = this._onFollowMeChange.bind(this);
-        this._onLanguageSelected = this._onLanguageSelected.bind(this);
-        this._onStartAudioMutedChange
-            = this._onStartAudioMutedChange.bind(this);
-        this._onStartVideoMutedChange
-            = this._onStartVideoMutedChange.bind(this);
-        this._onSubmit = this._onSubmit.bind(this);
-        this._onVideoInputChange = this._onVideoInputChange.bind(this);
+        this._closeDialog = this._closeDialog.bind(this);
     }
 
     /**
@@ -168,303 +70,98 @@ class SettingsDialog extends Component<Props, State> {
      * @returns {ReactElement}
      */
     render() {
-        const tabs = this._getTabs();
-        let content;
-
-        if (tabs.length > 1) {
-            content = <Tabs tabs = { tabs } />;
-        } else if (tabs.length === 1) {
-            content = tabs[0].content;
-        } else {
-            content = null;
-
-            logger.warn('No settings tabs configured to display.');
-        }
+        const { _tabs, defaultTab, dispatch } = this.props;
+        const onSubmit = this._closeDialog;
+        const defaultTabIdx
+            = _tabs.findIndex(({ name }) => name === defaultTab);
+        const tabs = _tabs.map(tab => {
+            return {
+                ...tab,
+                submit: (...args) => dispatch(tab.submit(...args))
+            };
+        });
 
         return (
-            <StatelessDialog
-                disableBlanketClickDismiss
-                    = { this.props.disableBlanketClickDismiss }
-                onCancel = { this.props.onCancel }
-                onSubmit = { this._onSubmit }
-                titleKey = 'settings.title'>
-                <div className = 'settings-dialog'>
-                    { content }
-                </div>
-            </StatelessDialog>
+            <DialogWithTabs
+                closeDialog = { this._closeDialog }
+                defaultTab = {
+                    defaultTabIdx === -1 ? undefined : defaultTabIdx
+                }
+                onSubmit = { onSubmit }
+                tabs = { tabs } />
         );
     }
 
-    /**
-     * Creates the tab configuration objects expected by Atlaskit {@code Tab}.
-     *
-     * @returns {Array} An array of tab configuration objects.
-     */
-    _getTabs() {
-        const {
-            defaultTab,
-            showDeviceSettings,
-            showLanguageSettings,
-            showModeratorSettings,
-            showProfileSettings,
-            t
-        } = this.props;
-        const tabs = [];
-        let defaultTabChosen = false;
-
-        if (showDeviceSettings) {
-            const defaultSelected = defaultTab === SETTINGS_TABS.DEVICES;
-
-            defaultTabChosen = defaultTabChosen || defaultSelected;
-
-            tabs.push({
-                content: this._renderDevicesTab(),
-                defaultSelected,
-                label: t('settings.devices')
-            });
-        }
-
-        if (showProfileSettings) {
-            const defaultSelected = defaultTab === SETTINGS_TABS.PROFILE;
-
-            defaultTabChosen = defaultTabChosen || defaultSelected;
-
-            tabs.push({
-                content: this._renderProfileTab(),
-                defaultSelected,
-                label: t('profile.title')
-            });
-        }
-
-        if (showModeratorSettings || showLanguageSettings) {
-            const defaultSelected = defaultTab === SETTINGS_TABS.MORE;
-
-            defaultTabChosen = defaultTabChosen || defaultSelected;
-
-            tabs.push({
-                content: this._renderMoreTab(),
-                defaultSelected,
-                label: t('settings.more')
-            });
-        }
-
-        if (tabs.length && !defaultTabChosen) {
-            tabs[0].defaultSelected = true;
-        }
-
-        return tabs;
-    }
-
-    _onAudioInputChange: (string) => void;
+    _closeDialog: () => void;
 
     /**
-     * Callback invoked when the preferred audio input device has been changed.
-     *
-     * @param {string} selectedAudioInputId - The device ID of the new preferred
-     * audio input device.
-     * @private
-     * @returns {void}
-     */
-    _onAudioInputChange(selectedAudioInputId) {
-        this.setState({ selectedAudioInputId });
-    }
-
-    _onAudioOutputChange: (string) => void;
-
-    /**
-     * Callback invoked when the preferred audio output device has been changed.
-     *
-     * @param {string} selectedAudioOutputId - The device ID of the new
-     * preferred audio output device.
-     * @private
-     * @returns {void}
-     */
-    _onAudioOutputChange(selectedAudioOutputId) {
-        this.setState({ selectedAudioOutputId });
-    }
-
-    _onDisplayNameChange: (Object) => void;
-
-    /**
-     * Callback invoked when the desired local display name has changed.
-     *
-     * @param {Object} event - The DOM event on changing the setting.
-     * @private
-     * @returns {void}
-     */
-    _onDisplayNameChange({ target: { value } }) {
-        this.setState({ displayName: value });
-    }
-
-    _onEmailChange: (Object) => void;
-
-    /**
-     * Callback invoked when the desired local email has changed.
-     *
-     * @param {Object} event - The DOM event on changing the setting.
-     * @private
-     * @returns {void}
-     */
-    _onEmailChange({ target: { value } }) {
-        this.setState({ email: value });
-    }
-
-    _onFollowMeChange: (Object) => void;
-
-    /**
-     * Callback invoked after changing the setting to have all participants
-     * automatically mimic conference behavior of the local participant.
-     *
-     * @param {Object} event - The DOM event on changing the setting.
-     * @private
-     * @returns {void}
-     */
-    _onFollowMeChange({ target: { checked } }) {
-        this.setState({ followMe: checked });
-    }
-
-    _onLanguageSelected: (string) => void;
-
-    /**
-     * Callback invoked when a new local display language has been selected.
-     *
-     * @param {string} language - The code of the new language to use.
-     * @private
-     * @returns {void}
-     */
-    _onLanguageSelected(language) {
-        this.setState({ language });
-    }
-
-    _onStartAudioMutedChange: (Object) => void;
-
-    /**
-     * Callback invoked after changing the setting to have all participants
-     * join the conference as audio muted.
-     *
-     * @param {Object} event - The DOM event on changing the setting.
-     * @private
-     * @returns {void}
-     */
-    _onStartAudioMutedChange({ target: { checked } }) {
-        this.setState({ startAudioMuted: checked });
-    }
-
-    _onStartVideoMutedChange: (Object) => void;
-
-    /**
-     * Callback invoked after changing the setting to have all participants
-     * join the conference as video muted.
-     *
-     * @param {Object} event - The DOM event on changing the setting.
-     * @private
-     * @returns {void}
-     */
-    _onStartVideoMutedChange({ target: { checked } }) {
-        this.setState({ startVideoMuted: checked });
-    }
-
-    _onSubmit: () => void;
-
-    /**
-     * Callback invoked to save changes to settings.
+     * Callback invoked to close the dialog without saving changes.
      *
      * @private
      * @returns {void}
      */
-    _onSubmit() {
-        this.props.onSubmit({ ...this.state });
-    }
-
-    _onVideoInputChange: (string) => void;
-
-    /**
-     * Callback invoked when the preferred video input device has been changed.
-     *
-     * @param {string} selectedVideoInputId - The device ID of the new preferred
-     * video input device.
-     * @private
-     * @returns {void}
-     */
-    _onVideoInputChange(selectedVideoInputId) {
-        this.setState({ selectedVideoInputId });
-    }
-
-    /**
-     * Renders a React Element for device selection.
-     *
-     * @private
-     * @returns {ReactElement}
-     */
-    _renderDevicesTab() {
-        return (
-            <div className = 'settings-pane devices-pane'>
-                <DeviceSelection
-                    availableDevices = { this.props.availableDevices }
-                    disableAudioInputChange
-                        = { this.props.disableAudioInputChange }
-                    disableDeviceChange = { this.props.disableDeviceChange }
-                    hasAudioPermission = { this.props.hasAudioPermission }
-                    hasVideoPermission = { this.props.hasVideoPermission }
-                    hideAudioInputPreview = { this.props.hideAudioInputPreview }
-                    hideAudioOutputSelect = { this.props.hideAudioOutputSelect }
-                    onAudioInputChange = { this._onAudioInputChange }
-                    onAudioOutputChange = { this._onAudioOutputChange }
-                    onVideoInputChange = { this._onVideoInputChange }
-                    selectedAudioInputId = { this.state.selectedAudioInputId }
-                    selectedAudioOutputId = { this.state.selectedAudioOutputId }
-                    selectedVideoInputId
-                        = { this.state.selectedVideoInputId } />
-            </div>
-        );
-    }
-
-    /**
-     * Renders a React Element for showing language and moderator settings.
-     *
-     * @private
-     * @returns {ReactElement}
-     */
-    _renderMoreTab() {
-        return (
-            <div className = 'settings-pane more-pane'>
-                <MoreTab
-                    currentLanguage = { this.state.language }
-                    followMeEnabled = { this.state.followMe }
-                    languages = { LANGUAGES }
-                    onFollowMeChange = { this._onFollowMeChange }
-                    onLanguageChange = { this._onLanguageSelected }
-                    onStartAudioMutedChange = { this._onStartAudioMutedChange }
-                    onStartVideoMutedChange = { this._onStartVideoMutedChange }
-                    showLanguageSettings = { this.props.showLanguageSettings }
-                    showModeratorSettings = { this.props.showModeratorSettings }
-                    startAudioMutedEnabled = { this.state.startAudioMuted }
-                    startVideoMutedEnabled = { this.state.startVideoMuted } />
-            </div>
-        );
-    }
-
-    /**
-     * Renders a React Element for showing profile settings.
-     *
-     * @private
-     * @returns {ReactElement}
-     */
-    _renderProfileTab() {
-        return (
-            <div className = 'settings-pane profile-pane'>
-                <ProfileTab
-                    authEnabled = { this.props.authEnabled }
-                    authLogin = { this.props.authLogin }
-                    displayName = { this.state.displayName }
-                    email = { this.state.email }
-                    isGuest = { this.props.isGuest }
-                    onAuthToggle = { this.props.onAuthToggle }
-                    onDisplayNameChange = { this._onDisplayNameChange }
-                    onEmailChange = { this._onEmailChange } />
-            </div>
-        );
+    _closeDialog() {
+        this.props.dispatch(hideDialog());
     }
 }
 
-export default translate(SettingsDialog);
+/**
+ * Maps (parts of) the Redux state to the associated props for the
+ * {@code ConnectedSettingsDialog} component.
+ *
+ * @param {Object} state - The Redux state.
+ * @private
+ * @returns {{
+ *     tabs: Array<Object>
+ * }}
+ */
+function _mapStateToProps(state) {
+    const configuredTabs = interfaceConfig.SETTINGS_SECTIONS || [];
+    const jwt = state['features/base/jwt'];
+
+    // The settings sections to display.
+    const showDeviceSettings = configuredTabs.includes('devices');
+    const moreTabProps = getMoreTabProps(state);
+    const { showModeratorSettings, showLanguageSettings } = moreTabProps;
+    const showProfileSettings
+        = configuredTabs.includes('profile') && jwt.isGuest;
+
+    const tabs = [];
+
+    if (showDeviceSettings) {
+        tabs.push({
+            name: SETTINGS_TABS.DEVICES,
+            component: DeviceSelection,
+            label: 'settings.devices',
+            props: getDeviceSelectionDialogProps(state),
+            styles: 'settings-pane devices-pane',
+            submit: submitDeviceSelectionTab
+        });
+    }
+
+    if (showProfileSettings) {
+        tabs.push({
+            name: SETTINGS_TABS.PROFILE,
+            component: ProfileTab,
+            label: 'profile.title',
+            props: getProfileTabProps(state),
+            styles: 'settings-pane profile-pane',
+            submit: submitProfileTab
+        });
+    }
+
+    if (showModeratorSettings || showLanguageSettings) {
+        tabs.push({
+            name: SETTINGS_TABS.MORE,
+            component: MoreTab,
+            label: 'settings.more',
+            props: moreTabProps,
+            styles: 'settings-pane more-pane',
+            submit: submitMoreTab
+        });
+    }
+
+    return { _tabs: tabs };
+}
+
+export default connect(_mapStateToProps)(SettingsDialog);

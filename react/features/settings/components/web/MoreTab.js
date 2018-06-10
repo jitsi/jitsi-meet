@@ -5,14 +5,17 @@ import DropdownMenu, {
     DropdownItem,
     DropdownItemGroup
 } from '@atlaskit/dropdown-menu';
-import React, { Component } from 'react';
+import React from 'react';
 
+import { AbstractDialogTab } from '../../../base/dialog';
+import type { Props as AbstractDialogTabProps } from '../../../base/dialog';
 import { translate } from '../../../base/i18n';
 
 /**
  * The type of the React {@code Component} props of {@link MoreTab}.
  */
 export type Props = {
+    ...$Exact<AbstractDialogTabProps>,
 
     /**
      * The currently selected language to display in the language select
@@ -31,28 +34,6 @@ export type Props = {
     languages: Array<string>,
 
     /**
-     * Callback to invoke when a new language is selected.
-     */
-    onLanguageChange: Function,
-
-    /**
-     * Callback to invoke when the Follow Me setting has changed.
-     */
-    onFollowMeChange: Function,
-
-    /**
-     * Callback to invoke when changing the option to start all participants as
-     * audio muted.
-     */
-    onStartAudioMutedChange: Function,
-
-    /**
-     * Callback to invoke when changing the option to start all participants as
-     * video muted.
-     */
-    onStartVideoMutedChange: Function,
-
-    /**
      * Whether or not to display the language select dropdown.
      */
     showLanguageSettings: boolean,
@@ -66,13 +47,13 @@ export type Props = {
      * Whether or not the user has selected the Start Audio Muted feature to be
      * enabled.
      */
-    startAudioMutedEnabled: boolean,
+    startAudioMuted: boolean,
 
     /**
      * Whether or not the user has selected the Start Video Muted feature to be
      * enabled.
      */
-    startVideoMutedEnabled: boolean,
+    startVideoMuted: boolean,
 
     /**
      * Invoked to obtain translated strings.
@@ -96,7 +77,7 @@ type State = {
  *
  * @extends Component
  */
-class MoreTab extends Component<Props, State> {
+class MoreTab extends AbstractDialogTab<Props, State> {
     /**
      * Initializes a new {@code MoreTab} instance.
      *
@@ -159,7 +140,6 @@ class MoreTab extends Component<Props, State> {
         const {
             currentLanguage,
             languages,
-            onLanguageChange,
             t
         } = this.props;
 
@@ -168,7 +148,8 @@ class MoreTab extends Component<Props, State> {
             <DropdownItem
                 key = { language }
                 // eslint-disable-next-line react/jsx-no-bind
-                onClick = { () => onLanguageChange(language) }>
+                onClick = {
+                    () => super._onChange({ currentLanguage: language }) }>
                 { t(`languages:${language}`) }
             </DropdownItem>
         );
@@ -209,11 +190,8 @@ class MoreTab extends Component<Props, State> {
     _renderModeratorSettings() {
         const {
             followMeEnabled,
-            onFollowMeChange,
-            onStartAudioMutedChange,
-            onStartVideoMutedChange,
-            startAudioMutedEnabled,
-            startVideoMutedEnabled,
+            startAudioMuted,
+            startVideoMuted,
             t
         } = this.props;
 
@@ -226,20 +204,32 @@ class MoreTab extends Component<Props, State> {
                 </div>
                 <CheckboxGroup>
                     <CheckboxStateless
-                        isChecked = { startAudioMutedEnabled }
+                        isChecked = { startAudioMuted }
                         label = { t('settings.startAudioMuted') }
                         name = 'start-audio-muted'
-                        onChange = { onStartAudioMutedChange } />
+                        // eslint-disable-next-line react/jsx-no-bind
+                        onChange = {
+                            ({ target: { checked } }) =>
+                                super._onChange({ startAudioMuted: checked })
+                        } />
                     <CheckboxStateless
-                        isChecked = { startVideoMutedEnabled }
+                        isChecked = { startVideoMuted }
                         label = { t('settings.startVideoMuted') }
                         name = 'start-video-muted'
-                        onChange = { onStartVideoMutedChange } />
+                        // eslint-disable-next-line react/jsx-no-bind
+                        onChange = {
+                            ({ target: { checked } }) =>
+                                super._onChange({ startVideoMuted: checked })
+                        } />
                     <CheckboxStateless
                         isChecked = { followMeEnabled }
                         label = { t('settings.followMe') }
                         name = 'follow-me'
-                        onChange = { onFollowMeChange } />
+                        // eslint-disable-next-line react/jsx-no-bind
+                        onChange = {
+                            ({ target: { checked } }) =>
+                                super._onChange({ followMeEnabled: checked })
+                        } />
                 </CheckboxGroup>
             </div>
         );

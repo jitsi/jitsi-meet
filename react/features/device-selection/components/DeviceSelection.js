@@ -1,7 +1,9 @@
 // @flow
 
-import React, { Component } from 'react';
+import React from 'react';
 
+import { AbstractDialogTab } from '../../base/dialog';
+import type { Props as AbstractDialogTabProps } from '../../base/dialog';
 import { translate } from '../../base/i18n';
 import { createLocalTrack } from '../../base/lib-jitsi-meet';
 
@@ -14,6 +16,7 @@ import VideoInputPreview from './VideoInputPreview';
  * The type of the React {@code Component} props of {@link DeviceSelection}.
  */
 export type Props = {
+    ...$Exact<AbstractDialogTabProps>,
 
     /**
      * All known audio and video devices split by type. This prop comes from
@@ -63,21 +66,6 @@ export type Props = {
     hideAudioOutputSelect: boolean,
 
     /**
-     * Callback invoked when the selected audio input device changes.
-     */
-    onAudioInputChange: Function,
-
-    /**
-     * Callback invoked when the selected audio output device changes.
-     */
-    onAudioOutputChange: Function,
-
-    /**
-     * Callback invoked when the selected video input device changes.
-     */
-    onVideoInputChange: Function,
-
-    /**
      * The id of the audio input device to preview.
      */
     selectedAudioInputId: string,
@@ -124,7 +112,7 @@ type State = {
  *
  * @extends Component
  */
-class DeviceSelection extends Component<Props, State> {
+class DeviceSelection extends AbstractDialogTab<Props, State> {
     /**
      * Initializes a new DeviceSelection instance.
      *
@@ -326,7 +314,8 @@ class DeviceSelection extends Component<Props, State> {
                 isDisabled: this.props.disableDeviceChange,
                 key: 'videoInput',
                 label: 'settings.selectCamera',
-                onSelect: this.props.onVideoInputChange,
+                onSelect: selectedVideoInputId =>
+                    super._onChange({ selectedVideoInputId }),
                 selectedDeviceId: this.props.selectedVideoInputId
             },
             {
@@ -337,7 +326,8 @@ class DeviceSelection extends Component<Props, State> {
                     || this.props.disableDeviceChange,
                 key: 'audioInput',
                 label: 'settings.selectMic',
-                onSelect: this.props.onAudioInputChange,
+                onSelect: selectedAudioInputId =>
+                    super._onChange({ selectedAudioInputId }),
                 selectedDeviceId: this.props.selectedAudioInputId
             }
         ];
@@ -351,7 +341,8 @@ class DeviceSelection extends Component<Props, State> {
                 isDisabled: this.props.disableDeviceChange,
                 key: 'audioOutput',
                 label: 'settings.selectAudioOutput',
-                onSelect: this.props.onAudioOutputChange,
+                onSelect: selectedAudioOutputId =>
+                    super._onChange({ selectedAudioOutputId }),
                 selectedDeviceId: this.props.selectedAudioOutputId
             });
         }

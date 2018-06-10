@@ -14,6 +14,7 @@ import { i18next } from '../base/i18n';
 import JitsiMeetJS from '../base/lib-jitsi-meet';
 
 import { SET_DEVICE_SELECTION_POPUP_DATA } from './actionTypes';
+import { getDeviceSelectionDialogProps } from './functions';
 
 /**
  * Opens a popup window with the device selection dialog in it.
@@ -165,5 +166,38 @@ function _setDeviceSelectionPopupData(popupDialogData) {
     return {
         type: SET_DEVICE_SELECTION_POPUP_DATA,
         popupDialogData
+    };
+}
+
+/**
+ * Submits the settings related to device selection.
+ *
+ * @param {Object} newState - The new settings.
+ * @returns {Function}
+ */
+export function submitDeviceSelectionTab(newState) {
+    return (dispatch, getState) => {
+        const currentState = getDeviceSelectionDialogProps(getState());
+
+        if (newState.selectedVideoInputId
+            && newState.selectedVideoInputId
+                !== currentState.selectedVideoInputId) {
+            dispatch(
+                setVideoInputDevice(newState.selectedVideoInputId));
+        }
+
+        if (newState.selectedAudioInputId
+                && newState.selectedAudioInputId
+                  !== currentState.selectedAudioInputId) {
+            dispatch(
+                setAudioInputDevice(newState.selectedAudioInputId));
+        }
+
+        if (newState.selectedAudioOutputId
+                && newState.selectedAudioOutputId
+                    !== currentState.selectedAudioOutputId) {
+            dispatch(
+                setAudioOutputDevice(newState.selectedAudioOutputId));
+        }
     };
 }
