@@ -2,25 +2,8 @@
 
 import {
     SET_SIDEBAR_VISIBLE,
-    SET_WELCOME_PAGE_LIST_DEFAULT_PAGE
+    SET_WELCOME_PAGE_LISTS_DEFAULT_PAGE
 } from './actionTypes';
-
-/**
- * Action to update the default page index of the {@code WelcomePageLists}
- * component.
- *
- * @param {number} pageIndex - The index of the selected page.
- * @returns {{
- *     type: SET_WELCOME_PAGE_LIST_DEFAULT_PAGE,
- *     pageIndex: number
- * }}
- */
-export function setWelcomePageListDefaultPage(pageIndex: number) {
-    return {
-        type: SET_WELCOME_PAGE_LIST_DEFAULT_PAGE,
-        pageIndex
-    };
-}
 
 /**
  * Sets the visibility of {@link WelcomePageSideBar}.
@@ -36,5 +19,21 @@ export function setSideBarVisible(visible: boolean) {
     return {
         type: SET_SIDEBAR_VISIBLE,
         visible
+    };
+}
+
+/**
+ * Sets the default page index of {@link WelcomePageLists}.
+ *
+ * @param {number} pageIndex - The index of the default page.
+ * @returns {{
+ *     type: SET_WELCOME_PAGE_LISTS_DEFAULT_PAGE,
+ *     pageIndex: number
+ * }}
+ */
+export function setWelcomePageListsDefaultPage(pageIndex: number) {
+    return {
+        type: SET_WELCOME_PAGE_LISTS_DEFAULT_PAGE,
+        pageIndex
     };
 }

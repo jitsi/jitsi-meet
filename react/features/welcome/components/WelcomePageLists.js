@@ -9,8 +9,11 @@ import { PagedList } from '../../base/react';
 import { MeetingList } from '../../calendar-sync';
 import { RecentList } from '../../recent-list';
 
-import { setWelcomePageListDefaultPage } from '../actions';
+import { setWelcomePageListsDefaultPage } from '../actions';
 
+/**
+ * The type of the React {@code Component} props of {@link WelcomePageLists}.
+ */
 type Props = {
 
     /**
@@ -50,17 +53,19 @@ const IOS_RECENT_LIST_ICON = require('../../../../images/history.png');
 class WelcomePageLists extends Component<Props> {
     /**
      * The pages to be rendered.
-     * Note: The component field may be undefined if a feature (such as
-     * Calendar) is disabled, and that means that the page must not be rendered.
+     *
+     * Note: An element's  {@code component} may be {@code undefined} if a
+     * feature (such as Calendar) is disabled, and that means that the page must
+     * not be rendered.
      */
     pages: Array<{
-        component: Object,
+        component: ?Object,
         icon: string | number,
         title: string
-    }>
+    }>;
 
     /**
-     * Component contructor.
+     * Initializes a new {@code WelcomePageLists} instance.
      *
      * @inheritdoc
      */
@@ -68,28 +73,32 @@ class WelcomePageLists extends Component<Props> {
         super(props);
 
         const { t } = props;
-        const isAndroid = Platform.OS === 'android';
+        const android = Platform.OS === 'android';
 
-        this.pages = [ {
-            component: RecentList,
-            icon: isAndroid ? 'restore' : IOS_RECENT_LIST_ICON,
-            title: t('welcomepage.recentList')
-        }, {
-            component: MeetingList,
-            icon: isAndroid ? 'event_note' : IOS_CALENDAR_ICON,
-            title: t('welcomepage.calendar')
-        } ];
+        this.pages = [
+            {
+                component: RecentList,
+                icon: android ? 'restore' : IOS_RECENT_LIST_ICON,
+                title: t('welcomepage.recentList')
+            },
+            {
+                component: MeetingList,
+                icon: android ? 'event_note' : IOS_CALENDAR_ICON,
+                title: t('welcomepage.calendar')
+            }
+        ];
 
+        // Bind event handlers so they are only bound once per instance.
         this._onSelectPage = this._onSelectPage.bind(this);
     }
 
     /**
-     * Implements React Component's render.
+     * Implements React's {@link Component#render}.
      *
      * @inheritdoc
      */
     render() {
-        const { disabled, _defaultPage } = this.props;
+        const { _defaultPage } = this.props;
 
         if (typeof _defaultPage === 'undefined') {
             return null;
@@ -98,13 +107,13 @@ class WelcomePageLists extends Component<Props> {
         return (
             <PagedList
                 defaultPage = { _defaultPage }
-                disabled = { disabled }
+                disabled = { this.props.disabled }
                 onSelectPage = { this._onSelectPage }
                 pages = { this.pages } />
         );
     }
 
-    _onSelectPage: number => void
+    _onSelectPage: number => void;
 
     /**
      * Callback for the {@code PagedList} page select action.
@@ -114,9 +123,7 @@ class WelcomePageLists extends Component<Props> {
      * @returns {void}
      */
     _onSelectPage(pageIndex) {
-        const { dispatch } = this.props;
-
-        dispatch(setWelcomePageListDefaultPage(pageIndex));
+        this.props.dispatch(setWelcomePageListsDefaultPage(pageIndex));
     }
 }
 
@@ -127,18 +134,20 @@ class WelcomePageLists extends Component<Props> {
  * @param {Object} state - The redux state.
  * @protected
  * @returns {{
- *     _hasRecentListEntries: boolean
+ *     _defaultPage: number
  * }}
  */
 function _mapStateToProps(state: Object) {
-    const { defaultPage } = state['features/welcome'];
-    const recentList = state['features/recent-list'];
-    const _hasRecentListEntries = Boolean(recentList && recentList.length);
+    let { defaultPage } = state['features/welcome'];
+
+    if (typeof defaultPage === 'undefined') {
+        const recentList = state['features/recent-list'];
+
+        defaultPage = recentList && recentList.length ? 0 : 1;
+    }
 
     return {
-        _defaultPage: defaultPage === 'undefined'
-            ? _hasRecentListEntries ? 0 : 1
-            : defaultPage
+        _defaultPage: defaultPage
     };
 }
 

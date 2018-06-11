@@ -43,16 +43,10 @@ CALENDAR_ENABLED
             break;
 
         case SET_CALENDAR_AUTHORIZATION:
-            return {
-                ...state,
-                authorization: action.authorization
-            };
+            return set(state, 'authorization', action.authorization);
 
         case SET_CALENDAR_EVENTS:
-            return {
-                ...state,
-                events: action.events
-            };
+            return set(state, 'events', action.events);
         }
 
         return state;
