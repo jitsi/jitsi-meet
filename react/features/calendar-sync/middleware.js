@@ -254,10 +254,11 @@ function _parseCalendarEntry(event, knownDomains) {
 }
 
 /**
- * Updates the calendar entries in redux when new list is received. This
- * function also dedupes the list of entries based on exact match for title, URL
- * and time of the day and then sorts by time and limits the list
- * to MAX_LIST_LENGTH.
+ * Updates the calendar entries in redux when new list is received. The feature
+ * calendar-sync doesn't display all calendar events, it displays unique
+ * title, URL, and start time tuples i.e. it doesn't display subsequent
+ * occurrences of recurring events, and the repetitions of events coming from
+ * multiple calendars.
  *
  * XXX The function's {@code this} is the redux store.
  *
@@ -266,42 +267,58 @@ function _parseCalendarEntry(event, knownDomains) {
  * @returns {void}
  */
 function _updateCalendarEntries(events) {
-    if (events && events.length) {
-        // eslint-disable-next-line no-invalid-this
-        const { dispatch, getState } = this;
-        const knownDomains = getState()['features/base/known-domains'];
-        const now = Date.now();
-        const entryMap = new Map();
+    if (!events || !events.length) {
+        return;
+    }
 
-        for (const event of events) {
-            const calendarEntry = _parseCalendarEntry(event, knownDomains);
+    // eslint-disable-next-line no-invalid-this
+    const { dispatch, getState } = this;
+    const knownDomains = getState()['features/base/known-domains'];
+    const now = Date.now();
+    const entryMap = new Map();
 
-            if (calendarEntry && calendarEntry.endDate > now) {
-                // This is the data structure we'll try to match all entries to.
-                // The smaller the better, hence the single letter field names.
-                const eventMatchHash = md5.hex(JSON.stringify({
-                    d: new Date(calendarEntry.startDate).toTimeString(),
-                    t: calendarEntry.title,
-                    u: calendarEntry.url
-                }));
-                const existingEntry = entryMap.get(eventMatchHash);
+    for (const event of events) {
+        const entry = _parseCalendarEntry(event, knownDomains);
 
-                // We need to dedupe the list based on title, URL and time of
-                // the day, and only show the first occurence. So if there was
-                // no matcing entry or there was, but its a later event, we
-                // overwrite/save it in the map.
-                if (!existingEntry
-                    || existingEntry.startDate > event.startDate) {
-                    entryMap.set(eventMatchHash, calendarEntry);
-                }
+        if (entry && entry.endDate > now) {
+            // As was stated above, we don't display subsequent occurrences of
+            // recurring events, and the repetitions of events coming from
+            // multiple calendars.
+            const key = md5.hex(JSON.stringify([
+
+                // Obviously, we want to display different conference/meetings
+                // URLs. URLs are the very reason why we implemented the feature
+                // calendar-sync in the first place.
+                entry.url,
+
+                // We probably want to display one and the same URL to people if
+                // they have it under different titles in their Calendar.
+                // Because maybe they remember the title of the meeting, not the
+                // URL so they expect to see the title without realizing that
+                // they have the same URL already under a different title.
+                entry.title,
+
+                // XXX Eventually, given that the URL and the title are the
+                // same, what sets one event apart from another is the start
+                // time of the day (note the use of toTimeString() bellow)! The
+                // day itself is not important because we don't want multiple
+                // occurrences of a recurring event or repetitions of an even
+                // from multiple calendars.
+                new Date(entry.startDate).toTimeString()
+            ]));
+            const existingEntry = entryMap.get(key);
+
+            // We want only the earliest occurrence (which hasn't ended in the
+            // past, that is) of a recurring event.
+            if (!existingEntry || existingEntry.startDate > entry.startDate) {
+                entryMap.set(key, entry);
             }
         }
-
-        dispatch(
-            setCalendarEvents(
-                Array.from(entryMap.values())
-                    .sort((a, b) => a.startDate - b.startDate)
-                    .slice(0, MAX_LIST_LENGTH)
-            ));
     }
+
+    dispatch(
+        setCalendarEvents(
+            Array.from(entryMap.values())
+                .sort((a, b) => a.startDate - b.startDate)
+                .slice(0, MAX_LIST_LENGTH)));
 }
