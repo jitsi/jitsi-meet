@@ -432,7 +432,7 @@
         "live": "LIVE",
         "off": "Recording stopped",
         "on": "Recording",
-        "pending": "Recording waiting for a member to join...",
+        "pending": "Preparing to record the meeting...",
         "rec": "REC",
         "serviceName": "Recording service",
         "startRecordingBody": "Are you sure you would like to start recording?",
