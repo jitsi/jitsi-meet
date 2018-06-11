@@ -2,6 +2,8 @@
 
 import AbstractGoogleClient from './AbstractGoogleClient';
 
+declare var JitsiMeetElectron: Object;
+
 /**
  * The key to use for storing the last known access token in session storage.
  * Session storage is used to at least mitigate having to sign in to Google
@@ -10,14 +12,7 @@ import AbstractGoogleClient from './AbstractGoogleClient';
  * @private
  * @type {string}
  */
-const sessionStorageKey = 'googleApiElectronToken';
-
-declare var JitsiMeetElectron: Object;
-
-/**
- * The client ID to be used with the API library.
- */
-let clientId;
+const SESSION_STORAGE_KEY = 'googleApiElectronToken';
 
 /**
  * A singleton for loading and interacting with the Google API.
@@ -25,15 +20,29 @@ let clientId;
  * @extends AbstractGoogleClient
  */
 export default class ElectronGoogleClient extends AbstractGoogleClient {
+    _clientId: string;
+
+    /**
+     * Initializes a new ElectronGoogleClient instance.
+     */
+    constructor() {
+        super();
+
+        /**
+         * The Google application client ID to be used with the API library.
+         */
+        this._clientId = '';
+    }
+
     /**
      * Sets the Google Web Client ID used for authenticating with Google and
      * making Google API requests.
      *
-     * @param {string} client - The client ID to be used with the API library.
+     * @param {string} clientId - The client ID to be used with the API library.
      * @returns {Promise}
      */
-    initializeClientId(client: string): Promise<*> {
-        clientId = client;
+    initializeClientId(clientId: string): Promise<*> {
+        this._clientId = clientId;
 
         return Promise.resolve();
     }
@@ -105,7 +114,7 @@ export default class ElectronGoogleClient extends AbstractGoogleClient {
         const redirectUri = this._getRedirectUri();
         const authUrl
             = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${
-                clientId}&redirect_uri=${redirectUri}&scope=${
+                this._clientId}&redirect_uri=${redirectUri}&scope=${
                 this._getApiScope()}&response_type=token`;
 
         return this._getGoogleApiClient()
@@ -134,7 +143,7 @@ export default class ElectronGoogleClient extends AbstractGoogleClient {
      * @returns {string}
      */
     _getAccessToken() {
-        return window.sessionStorage.getItem(sessionStorageKey);
+        return window.sessionStorage.getItem(SESSION_STORAGE_KEY);
     }
 
     _getApiScope: () => string;
@@ -246,7 +255,7 @@ export default class ElectronGoogleClient extends AbstractGoogleClient {
      * @returns {void}
      */
     _setAccessToken(newToken: string = '') {
-        window.sessionStorage.setItem(sessionStorageKey, newToken);
+        window.sessionStorage.setItem(SESSION_STORAGE_KEY, newToken);
     }
 
     /**
@@ -264,6 +273,6 @@ export default class ElectronGoogleClient extends AbstractGoogleClient {
         return fetch('https://www.googleapis.com/oauth2/v3/tokeninfo'
             + `?access_token=${token}`)
             .then(res => res.json())
-            .then(res => !res.error && res.aud === clientId);
+            .then(res => !res.error && res.aud === this._clientId);
     }
 }
