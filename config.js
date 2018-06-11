@@ -114,6 +114,11 @@ var config = {
     // Enable / disable simulcast support.
     // disableSimulcast: false,
 
+    // Enable / disable layer suspension.  If enabled, endpoints whose HD
+    // layers are not in use will be suspended (no longer sent) until they
+    // are requested again.
+    // enableLayerSuspension: false,
+
     // Suspend sending video if bandwidth estimation is too low. This may cause
     // problems with audio playback. Disabled until these are fixed.
     disableSuspendVideo: true,
