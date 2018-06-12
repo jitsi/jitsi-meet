@@ -10,7 +10,7 @@ PODS:
     - React/Core (= 0.55.4)
   - react-native-background-timer (2.0.0):
     - React
-  - react-native-calendar-events (1.5.0):
+  - react-native-calendar-events (1.6.0):
     - React
   - react-native-fetch-blob (0.10.6):
     - React/Core
