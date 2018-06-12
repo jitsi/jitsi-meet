@@ -247,7 +247,7 @@ var config = {
     // maintenance at 01:00 AM GMT,
     // noticeMessage: '',
 
-    // Enables speech to text transcription subtitles panel.
+    // Disables the speech to text transcription subtitles panel.
     disableTranscriptionSubtitles: false,
 
     // Stats

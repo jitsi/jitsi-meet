@@ -86,13 +86,6 @@ function _addConferenceListeners(conference, dispatch) {
         JitsiConferenceEvents.LOCK_STATE_CHANGED,
         (...args) => dispatch(lockStateChanged(conference, ...args)));
 
-    // Dispatches into features/transcription follow:
-    // Updates the redux store for mobile clients for Transcription Subtitles,
-    // though does not show up subtitles for mobile devices yet.
-    // conference.on(
-    //     JitsiConferenceEvents.ENDPOINT_MESSAGE_RECEIVED,
-    //     (...args) => dispatch(endpointMessageReceived(conference, ...args)));
-
     // Dispatches into features/base/media follow:
 
     conference.on(

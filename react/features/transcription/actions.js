@@ -30,22 +30,17 @@ export function addTranscriptMessage(transcriptMessageID: string,
 /**
  * Signals that a participant sent an endpoint message on the data channel.
  *
- * @param {JitsiConference} conference - The JitsiConference which had its lock
- * state changed.
  * @param {Object} participant - The participant details sending the message.
  * @param {Object} payload - The payload carried by the endpoint message.
  * @returns {{
  *      type: ENDPOINT_MESSAGE_RECEIVED,
- *      conference: JitsiConference,
  *      participant: Object,
  *      payload: Object
  * }}
  */
-export function endpointMessageReceived(conference: Object,
-        participant: Object, payload: Object) {
+export function endpointMessageReceived(participant: Object, payload: Object) {
     return {
         type: ENDPOINT_MESSAGE_RECEIVED,
-        conference,
         participant,
         payload
     };

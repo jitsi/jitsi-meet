@@ -1902,9 +1902,7 @@ export default {
 
         room.on(
             JitsiConferenceEvents.ENDPOINT_MESSAGE_RECEIVED,
-            (...args) => {
-                APP.store.dispatch(endpointMessageReceived(room, ...args));
-            });
+            (...args) => APP.store.dispatch(endpointMessageReceived(...args)));
 
         room.on(
             JitsiConferenceEvents.LOCK_STATE_CHANGED,
