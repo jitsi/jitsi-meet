@@ -199,7 +199,8 @@ export function conferenceFailed(conference: Object, error: string) {
         // Make the error resemble an Error instance (to the extent that
         // jitsi-meet needs it).
         error: {
-            name: error
+            name: error,
+            recoverable: undefined
         }
     };
 }

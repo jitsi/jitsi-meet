@@ -209,7 +209,17 @@ function _connectionFailed({ dispatch, getState }, next, action) {
                     // connectionFailed is always an object with .name property.
                     // This fact needs to be checked prior to enabling this
                     // logic on web.
-                    dispatch(conferenceFailed(conference, error.name));
+                    const conferenceAction
+                        = conferenceFailed(conference, error.name);
+
+                    // Copy the recoverable flag if set on the CONNECTION_FAILED
+                    // action to not emit recoverable action caused by
+                    // a non-recoverable one.
+                    if (typeof error.recoverable !== 'undefined') {
+                        conferenceAction.error.recoverable = error.recoverable;
+                    }
+
+                    dispatch(conferenceAction);
                 }
 
                 return true;
