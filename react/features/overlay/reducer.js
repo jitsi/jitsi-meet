@@ -3,6 +3,8 @@
 import { assign, ReducerRegistry, set } from '../base/redux';
 
 import {
+    CANCEL_FATAL_ERROR_OCCURRED,
+    FATAL_ERROR_OCCURRED,
     MEDIA_PERMISSION_PROMPT_VISIBILITY_CHANGED,
     SUSPEND_DETECTED
 } from './actionTypes';
@@ -14,6 +16,12 @@ import {
  */
 ReducerRegistry.register('features/overlay', (state = {}, action) => {
     switch (action.type) {
+    case CANCEL_FATAL_ERROR_OCCURRED:
+        return _cancelFatalErrorOccurred(state);
+
+    case FATAL_ERROR_OCCURRED:
+        return _fatalErrorOccurred(state, action);
+
     case MEDIA_PERMISSION_PROMPT_VISIBILITY_CHANGED:
         return _mediaPermissionPromptVisibilityChanged(state, action);
 
@@ -53,4 +61,34 @@ function _mediaPermissionPromptVisibilityChanged(
  */
 function _suspendDetected(state) {
     return set(state, 'suspendDetected', true);
+}
+
+/**
+ * FIXME.
+ *
+ * @param {Object} state - FIXME.
+ * @param {boolean} fatalErrorOccurred - FIXME.
+ * @param {Object} fatalErrorCause - FIXME.
+ * @returns {Object}
+ * @private
+ */
+function _fatalErrorOccurred(state, { fatalErrorOccurred, fatalErrorCause }) {
+    return assign(state, {
+        fatalErrorOccurred,
+        fatalErrorCause: fatalErrorOccurred ? fatalErrorCause : undefined
+    });
+}
+
+/**
+ * FIXME.
+ *
+ * @param {Object} state - FIXME.
+ * @returns {Object}
+ * @private
+ */
+function _cancelFatalErrorOccurred(state) {
+    return assign(state, {
+        fatalErrorOccurred: undefined,
+        fatalErrorCause: undefined
+    });
 }

@@ -72,13 +72,14 @@ MiddlewareRegistry.register(store => next => action => {
     case LOAD_CONFIG_ERROR: {
         const { error, locationURL } = action;
 
-        _sendEvent(
-            store,
-            _getSymbolDescription(type),
-            /* data */ {
-                error: _toErrorString(error),
-                url: toURLString(locationURL)
-            });
+        !action.error.recoverable
+            && _sendEvent(
+                store,
+                _getSymbolDescription(type),
+                /* data */ {
+                    error: _toErrorString(error),
+                    url: toURLString(locationURL)
+                });
         break;
     }
 
