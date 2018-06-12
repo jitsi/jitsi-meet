@@ -72,13 +72,14 @@ MiddlewareRegistry.register(store => next => action => {
     case LOAD_CONFIG_ERROR: {
         const { error, locationURL } = action;
 
-        _sendEvent(
-            store,
-            _getSymbolDescription(type),
-            /* data */ {
-                error: _toErrorString(error),
-                url: toURLString(locationURL)
-            });
+        !action.error.recoverable
+            && _sendEvent(
+                store,
+                _getSymbolDescription(type),
+                /* data */ {
+                    error: _toErrorString(error),
+                    url: toURLString(locationURL)
+                });
         break;
     }
 
@@ -189,9 +190,9 @@ function _sendConferenceEvent(
 
 /**
  * Sends {@link CONFERENCE_FAILED} event when the {@link CONNECTION_FAILED}
- * occurs. Otherwise the external API will not emit such event, because at this
- * point conference has not been created yet and the base/conference feature
- * will not emit it.
+ * occurs. It should be done only if the connection fails before the conference
+ * instance is created. Otherwise the eventual failure event is supposed to be
+ * emitted by the base/conference feature.
  *
  * @param {Store} store - The redux store.
  * @param {Action} action - The redux action.
@@ -199,8 +200,16 @@ function _sendConferenceEvent(
  */
 function _sendConferenceFailedOnConnectionError(store, action) {
     const { locationURL } = store.getState()['features/base/connection'];
+    const { connection } = action;
 
-    locationURL && _sendEvent(
+    locationURL
+        && forEachConference(
+            store,
+
+            // If there's any conference in the  base/conference state then the
+            // base/conference feature is supposed to emit a failure.
+            conference => conference.getConnection() !== connection)
+        && _sendEvent(
         store,
         _getSymbolDescription(CONFERENCE_FAILED),
         /* data */ {

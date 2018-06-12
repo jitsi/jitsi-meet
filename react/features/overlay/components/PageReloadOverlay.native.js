@@ -6,7 +6,7 @@ import { appNavigate } from '../../app';
 import { translate } from '../../base/i18n';
 import { LoadingIndicator } from '../../base/react';
 
-import { _reloadNow } from '../actions';
+import { _reloadNow, setFatalErrorOccurred } from '../actions';
 
 import AbstractPageReloadOverlay, { abstractMapStateToProps }
     from './AbstractPageReloadOverlay';
@@ -42,6 +42,7 @@ class PageReloadOverlay extends AbstractPageReloadOverlay {
      */
     _onCancel() {
         clearInterval(this._interval);
+        this.props.dispatch(setFatalErrorOccurred(false));
         this.props.dispatch(appNavigate(undefined));
     }
 

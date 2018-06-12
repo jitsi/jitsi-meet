@@ -1,6 +1,22 @@
 /* @flow */
 
-import { toState } from '../redux';
+import { toFeatureState, toState } from '../redux';
+
+/**
+ * The current (similar to getCurrentConference in
+ * base/conference/functions.js) connection which is connecting or
+ * connected.
+ *
+ * @param {Function|Object} stateful - The redux state or redux's
+ * {@code getState} function or the 'features/base/connection' state.
+ * @returns {JitsiConnection}
+ */
+export function getCurrentConnection(stateful: Function | Object): ?Object {
+    const { connection, connecting }
+        = toFeatureState(stateful, 'features/base/connection');
+
+    return connection || connecting;
+}
 
 /**
  * Retrieves a simplified version of the conference/location URL stripped of URL
