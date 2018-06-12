@@ -99,6 +99,7 @@ const WHITELISTED_KEYS = [
     'disableSuspendVideo',
     'displayJids',
     'enableDisplayNameInStats',
+    'enableLayerSuspension',
     'enableLipSync',
     'enableLocalVideoFlip',
     'enableRemb',
