@@ -27,6 +27,15 @@ android {
         }
     }
 
+    signingConfigs {
+        release {
+            keyAlias 'androiddebugkey'
+            keyPassword 'android'
+            storeFile file("${System.properties['user.home']}/.android/debug.keystore")
+            storePassword 'android'
+        }
+    }
+
     buildTypes {
         debug {
             minifyEnabled true
@@ -35,6 +44,7 @@ android {
         release {
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules-release.pro'
+            signingConfig signingConfigs.release
         }
     }
 
