@@ -46,7 +46,7 @@
     "jquery-i18next": "1.2.0",
     "js-md5": "0.6.1",
     "jwt-decode": "2.2.0",
-    "lib-jitsi-meet": "github:jitsi/lib-jitsi-meet#d0cb2b2a8d2beadfe00f1e46a18ed094ba2c910e",
+    "lib-jitsi-meet": "github:jitsi/lib-jitsi-meet#e7b8191003488650ed0aff45e95cbc9331cb2399",
     "lodash": "4.17.4",
     "moment": "2.19.4",
     "postis": "2.2.0",
