@@ -544,14 +544,20 @@ class StartLiveStreamDialog extends Component<Props, State> {
      * @returns {string} The error message to display.
      */
     _getGoogleErrorMessageToDisplay() {
+        let text;
+
         switch (this.state.errorType) {
         case 'liveStreamingNotEnabled':
-            return this.props.t(
+            text = this.props.t(
                 'liveStreaming.errorLiveStreamNotEnabled',
                 { email: this.state.googleProfileEmail });
+            break;
         default:
-            return this.props.t('liveStreaming.errorAPI');
+            text = this.props.t('liveStreaming.errorAPI');
+            break;
         }
+
+        return <div className = 'google-error'>{ text }</div>;
     }
 
     /**
