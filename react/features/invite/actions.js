@@ -11,7 +11,6 @@ import {
 import {
     getDialInConferenceID,
     getDialInNumbers,
-    getDigitsOnly,
     invitePeopleAndChatRooms
 } from './functions';
 
@@ -65,7 +64,7 @@ export function invite(invitees: Array<Object>) {
             // For each number, dial out. On success, remove the number from
             // {@link invitesLeftToSend}.
             const phoneInvitePromises = phoneNumbers.map(item => {
-                const numberToInvite = getDigitsOnly(item.number);
+                const numberToInvite = item.number;
 
                 return conference.dial(numberToInvite)
                     .then(() => {

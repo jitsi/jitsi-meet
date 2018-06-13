@@ -20,17 +20,6 @@ export function checkDialNumber(
         dialNumber: string,
         dialOutAuthUrl: string
 ): Promise<Object> {
-
-    if (!dialOutAuthUrl) {
-        // no auth url, let's say it is valid
-        const response = {
-            allow: true,
-            phone: `+${dialNumber}`
-        };
-
-        return Promise.resolve(response);
-    }
-
     const fullUrl = `${dialOutAuthUrl}?phone=${dialNumber}`;
 
     return new Promise((resolve, reject) => {
@@ -159,10 +148,18 @@ export function getInviteResultsForQuery(
     }
 
 
-    const hasCountryCode = text.startsWith('+');
+    let hasCountryCode = text.startsWith('+');
     let phoneNumberPromise;
 
-    if (dialOutEnabled && isMaybeAPhoneNumber(text)) {
+    // Phone numbers are handled a specially to enable both cases of restricting
+    // numbers to telephone number-y numbers and accepting any arbitrary string,
+    // which may be valid for SIP (jigasi) calls. If the dialOutAuthUrl is
+    // defined, then it is assumed the call is to a telephone number and
+    // some validation of the number is completed, with the + sign used as a way
+    // for the UI to detect and enforce the usage of a country code. If the
+    // dialOutAuthUrl is not defined, accept anything because this is assumed
+    // to be the SIP (jigasi) case.
+    if (dialOutEnabled && dialOutAuthUrl && isMaybeAPhoneNumber(text)) {
         let numberToVerify = text;
 
         // When the number to verify does not start with a +, we assume no
@@ -178,6 +175,16 @@ export function getInviteResultsForQuery(
         numberToVerify = getDigitsOnly(numberToVerify);
 
         phoneNumberPromise = checkDialNumber(numberToVerify, dialOutAuthUrl);
+    } else if (dialOutEnabled && !dialOutAuthUrl) {
+        // fake having a country code to hide the country code reminder
+        hasCountryCode = true;
+
+        // With no auth url, let's say the text is a valid number
+        phoneNumberPromise = Promise.resolve({
+            allow: true,
+            country: '',
+            phone: text
+        });
     } else {
         phoneNumberPromise = Promise.resolve({});
     }
