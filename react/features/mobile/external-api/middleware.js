@@ -20,6 +20,18 @@ import { MiddlewareRegistry } from '../../base/redux';
 import { toURLString } from '../../base/util';
 import { ENTER_PICTURE_IN_PICTURE } from '../picture-in-picture';
 
+import { _getSymbolDescription } from './functions';
+import {
+    CONFIG_ERROR,
+    FAILED,
+    JOINED,
+    LEFT,
+    WILL_JOIN,
+    WILL_LEAVE
+} from './constants';
+import { setAPISession } from './actions';
+import { SET_API_SESSION } from './actionTypes';
+
 /**
  * Middleware that captures Redux actions and uses the ExternalAPI module to
  * turn them into native events so the application knows about them.
@@ -32,6 +44,19 @@ MiddlewareRegistry.register(store => next => action => {
     const { type } = action;
 
     switch (type) {
+    case SET_API_SESSION: {
+        const { url, state, data } = action;
+
+        _sendEvent(
+            store,
+            state,
+            /* data */ {
+                url,
+                ...data
+            });
+
+        break;
+    }
     case CONFERENCE_FAILED: {
         const { error, ...data } = action;
 
@@ -45,20 +70,56 @@ MiddlewareRegistry.register(store => next => action => {
         // fatality/finality semantics attributed to
         // conferenceFailed:/onConferenceFailed).
         if (!error.recoverable) {
-            _sendConferenceEvent(store, /* action */ {
-                error: _toErrorString(error),
-                ...data
-            });
+            const session = _getSessionForConferenceAction(store, action);
+            const state = session && session.state;
+
+            if (session
+                && (state === WILL_JOIN
+                    || state === JOINED || state === WILL_LEAVE)) {
+                store.dispatch(
+                    setAPISession(
+                        session.url,
+                        FAILED, {
+                            error: _toErrorString(error),
+                            ...data
+                        }));
+            }
         }
         break;
     }
 
-    case CONFERENCE_JOINED:
-    case CONFERENCE_LEFT:
-    case CONFERENCE_WILL_JOIN:
-    case CONFERENCE_WILL_LEAVE:
-        _sendConferenceEvent(store, action);
+    case CONFERENCE_JOINED: {
+        const session = _getSessionForConferenceAction(store, action);
+
+        if (session && session.state === WILL_JOIN) {
+            store.dispatch(setAPISession(session.url, JOINED));
+        }
         break;
+    }
+    case CONFERENCE_LEFT: {
+        const session = _getSessionForConferenceAction(store, action);
+        const state = session && session.state;
+
+        // FIXME LEFT arrives for currentConference - see swallowConferenceLeft
+        if (session
+            && (state === WILL_JOIN
+                    || state === JOINED || state === WILL_LEAVE)) {
+            store.dispatch(setAPISession(session.url, LEFT));
+        }
+        break;
+    }
+
+    // NOTE WILL_JOIN is fired on SET_ROOM
+    // case CONFERENCE_WILL_JOIN:
+    case CONFERENCE_WILL_LEAVE: {
+        const session = _getSessionForConferenceAction(store, action);
+        const state = session && session.state;
+
+        if (session && (state === WILL_JOIN || state === JOINED)) {
+            store.dispatch(setAPISession(session.url, WILL_LEAVE));
+        }
+        break;
+    }
 
     case CONNECTION_FAILED:
         !action.error.recoverable
@@ -72,14 +133,23 @@ MiddlewareRegistry.register(store => next => action => {
     case LOAD_CONFIG_ERROR: {
         const { error, locationURL } = action;
 
-        !action.error.recoverable
-            && _sendEvent(
-                store,
-                _getSymbolDescription(type),
-                /* data */ {
-                    error: _toErrorString(error),
-                    url: toURLString(locationURL)
-                });
+        if (!action.error.recoverable) {
+
+            const url = toURLString(locationURL);
+            const extState = store.getState()['features/external-api'];
+            const session = extState.get(url);
+
+            // FIXME session is first created on SET_ROOM, so the only legit
+            // time for this event to fire is when there's no session yet.
+            if (!session) {
+                store.dispatch(
+                    setAPISession(
+                        url,
+                        CONFIG_ERROR, {
+                            error: _toErrorString(error)
+                        }));
+            }
+        }
         break;
     }
 
@@ -90,6 +160,28 @@ MiddlewareRegistry.register(store => next => action => {
 
     return result;
 });
+
+function _getSessionForConferenceAction(
+        store: Object,
+        action: {
+            conference: Object,
+            type: Symbol,
+            url: ?string
+        }) {
+    const { conference } = action;
+
+    // For these (redux) actions, conference identifies a JitsiConference
+    // instance. The external API cannot transport such an object so we have to
+    // transport an "equivalent".
+    if (conference) {
+        const url = toURLString(conference[JITSI_CONFERENCE_URL_KEY]);
+        const extState = store.getState()['features/external-api'];
+
+        return extState.get(url);
+    }
+
+    return null;
+}
 
 /**
  * Returns a {@code String} representation of a specific error {@code Object}.
@@ -112,29 +204,6 @@ function _toErrorString(
 }
 
 /**
- * Gets the description of a specific {@code Symbol}.
- *
- * @param {Symbol} symbol - The {@code Symbol} to retrieve the description of.
- * @private
- * @returns {string} The description of {@code symbol}.
- */
-function _getSymbolDescription(symbol: Symbol) {
-    let description = symbol.toString();
-
-    if (description.startsWith('Symbol(') && description.endsWith(')')) {
-        description = description.slice(7, -1);
-    }
-
-    // The polyfill es6-symbol that we use does not appear to comply with the
-    // Symbol standard and, merely, adds @@ at the beginning of the description.
-    if (description.startsWith('@@')) {
-        description = description.slice(2);
-    }
-
-    return description;
-}
-
-/**
  * If {@link SET_ROOM} action happens for a valid conference room this method
  * will emit an early {@link CONFERENCE_WILL_JOIN} event to let the external API
  * know that a conference is being joined. Before that happens a connection must
@@ -152,12 +221,20 @@ function _maybeTriggerEarlyConferenceWillJoin(store, action) {
     const { locationURL } = store.getState()['features/base/connection'];
     const { room } = action;
 
-    isRoomValid(room) && locationURL && _sendEvent(
-        store,
-        _getSymbolDescription(CONFERENCE_WILL_JOIN),
-        /* data */ {
-            url: toURLString(locationURL)
-        });
+    if (isRoomValid(room) && locationURL) {
+        const extState = store.getState()['features/external-api'];
+        const url = toURLString(locationURL);
+        const session = extState.get(url);
+        const state = session && session.state;
+
+        if (session && state === WILL_LEAVE) {
+            // This looks like re-join - do we want to terminate the old one ?
+            store.dispatch(setAPISession(url, LEFT));
+            store.dispatch(setAPISession(url, WILL_JOIN));
+        } else if (!session) {
+            store.dispatch(setAPISession(url, WILL_JOIN));
+        }
+    }
 }
 
 /**
@@ -175,6 +252,7 @@ function _sendConferenceEvent(
             type: Symbol,
             url: ?string
         }) {
+    // FIXME include ...data in new events
     const { conference, type, ...data } = action;
 
     // For these (redux) actions, conference identifies a JitsiConference
@@ -202,20 +280,29 @@ function _sendConferenceFailedOnConnectionError(store, action) {
     const { locationURL } = store.getState()['features/base/connection'];
     const { connection } = action;
 
-    locationURL
+    if (locationURL
         && forEachConference(
             store,
 
             // If there's any conference in the  base/conference state then the
             // base/conference feature is supposed to emit a failure.
-            conference => conference.getConnection() !== connection)
-        && _sendEvent(
-        store,
-        _getSymbolDescription(CONFERENCE_FAILED),
-        /* data */ {
-            url: toURLString(locationURL),
-            error: action.error.name
-        });
+            conference => conference.getConnection() !== connection)) {
+        const url = toURLString(locationURL);
+        const extState = store.getState()['features/external-api'];
+        const session = extState.get(url);
+        const state = session && session.state;
+
+        if (session
+            && (state === WILL_JOIN
+                || state === JOINED || state === WILL_LEAVE)) {
+
+            store.dispatch(
+                setAPISession(url, FAILED, {
+                    error: action.error.name
+                }));
+        }
+    }
+
 }
 
 /**
