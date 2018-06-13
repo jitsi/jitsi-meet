@@ -33,7 +33,7 @@ You can get our mobile versions from here:
 
 ## Building the sources
 
-Node.js >= 8 is required.
+Node.js >= 8 and npm >= 6 are required.
 
 On Debian/Ubuntu systems, the required packages can be installed with:
 ```

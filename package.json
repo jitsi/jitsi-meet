@@ -106,7 +106,8 @@
     "webpack-dev-server": "2.9.5"
   },
   "engines": {
-    "node": ">=6.0.0"
+    "node": ">=8.0.0",
+    "npm": ">=6.0.0"
   },
   "license": "Apache-2.0",
   "scripts": {
