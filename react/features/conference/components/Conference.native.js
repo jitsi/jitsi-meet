@@ -20,7 +20,6 @@ import { LargeVideo } from '../../large-video';
 import { NotificationsContainer } from '../../notifications';
 import { setToolboxVisible, Toolbox } from '../../toolbox';
 
-import ConferenceIndicators from './ConferenceIndicators';
 import styles from './styles';
 
 /**
@@ -254,13 +253,6 @@ class Conference extends Component<Props> {
                       * participants.
                       */}
                     <Filmstrip />
-
-                    {/*
-                      * Examples of conference indicators are VideoQualityLabel
-                      * and RecordingLabel.
-                      */
-                        this.props._reducedUI || <ConferenceIndicators />
-                    }
                 </View>
                 <TestConnectionInfo />
 
