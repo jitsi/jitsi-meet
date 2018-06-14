@@ -1,10 +1,26 @@
+// @flow
+
 import {
+    CLEAR_NOTIFICATIONS,
     HIDE_NOTIFICATION,
     SET_NOTIFICATIONS_ENABLED,
     SHOW_NOTIFICATION
 } from './actionTypes';
 
 import { NOTIFICATION_TYPE } from './constants';
+
+/**
+ * Clears (removes) all the notifications.
+ *
+ * @returns {{
+ *     type: CLEAR_NOTIFICATIONS
+ * }}
+ */
+export function clearNotifications() {
+    return {
+        type: CLEAR_NOTIFICATIONS
+    };
+}
 
 /**
  * Removes the notification with the passed in id.
@@ -16,7 +32,7 @@ import { NOTIFICATION_TYPE } from './constants';
  *     uid: number
  * }}
  */
-export function hideNotification(uid) {
+export function hideNotification(uid: number) {
     return {
         type: HIDE_NOTIFICATION,
         uid
@@ -32,7 +48,7 @@ export function hideNotification(uid) {
  *     enabled: boolean
  * }}
  */
-export function setNotificationsEnabled(enabled) {
+export function setNotificationsEnabled(enabled: boolean) {
     return {
         type: SET_NOTIFICATIONS_ENABLED,
         enabled
@@ -45,7 +61,7 @@ export function setNotificationsEnabled(enabled) {
  * @param {Object} props - The props needed to show the notification component.
  * @returns {Object}
  */
-export function showErrorNotification(props) {
+export function showErrorNotification(props: Object) {
     return showNotification({
         ...props,
         appearance: NOTIFICATION_TYPE.ERROR
@@ -65,7 +81,7 @@ export function showErrorNotification(props) {
  *     uid: number
  * }}
  */
-export function showNotification(props = {}, timeout) {
+export function showNotification(props: Object = {}, timeout: ?number) {
     return {
         type: SHOW_NOTIFICATION,
         props,
@@ -80,7 +96,7 @@ export function showNotification(props = {}, timeout) {
  * @param {Object} props - The props needed to show the notification component.
  * @returns {Object}
  */
-export function showWarningNotification(props) {
+export function showWarningNotification(props: Object) {
     return showNotification({
         ...props,
         appearance: NOTIFICATION_TYPE.WARNING
