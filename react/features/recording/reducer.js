@@ -1,5 +1,9 @@
 import { ReducerRegistry } from '../base/redux';
-import { RECORDING_SESSION_UPDATED } from './actionTypes';
+import {
+    CLEAR_RECORDING_SESSIONS,
+    RECORDING_SESSION_UPDATED,
+    SET_PENDING_RECORDING_NOTIFICATION_UID
+} from './actionTypes';
 
 const DEFAULT_STATE = {
     sessionDatas: []
@@ -11,11 +15,24 @@ const DEFAULT_STATE = {
 ReducerRegistry.register('features/recording',
     (state = DEFAULT_STATE, action) => {
         switch (action.type) {
+
+        case CLEAR_RECORDING_SESSIONS:
+            return {
+                ...state,
+                sessionDatas: []
+            };
+
         case RECORDING_SESSION_UPDATED:
             return {
                 ...state,
                 sessionDatas:
                     _updateSessionDatas(state.sessionDatas, action.sessionData)
+            };
+
+        case SET_PENDING_RECORDING_NOTIFICATION_UID:
+            return {
+                ...state,
+                pendingNotificationUid: action.uid
             };
 
         default:
