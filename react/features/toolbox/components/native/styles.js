@@ -3,6 +3,8 @@ import { StyleSheet } from 'react-native';
 
 import { BoxModel, ColorPalette, createStyleSheet } from '../../../base/styles';
 
+import { HANGUP_BUTTON_SIZE } from '../../constants';
+
 // Toolbox, toolbar:
 
 /**
@@ -44,8 +46,8 @@ const styles = createStyleSheet({
         ...toolbarButton,
         backgroundColor: ColorPalette.red,
         borderRadius: 30,
-        height: 60,
-        width: 60
+        height: HANGUP_BUTTON_SIZE,
+        width: HANGUP_BUTTON_SIZE
     },
 
     /**

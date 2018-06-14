@@ -5,12 +5,15 @@ import EditorInfoIcon from '@atlaskit/icon/glyph/editor/info';
 import ErrorIcon from '@atlaskit/icon/glyph/error';
 import WarningIcon from '@atlaskit/icon/glyph/warning';
 import { colors } from '@atlaskit/theme';
-import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import React from 'react';
 
 import { translate } from '../../base/i18n';
 
 import { NOTIFICATION_TYPE } from '../constants';
+
+import AbstractNotification, {
+    type Props
+} from './AbstractNotification';
 
 declare var interfaceConfig: Object;
 
@@ -32,110 +35,7 @@ const ICON_COLOR = {
  *
  * @extends Component
  */
-class Notification extends Component<*> {
-    /**
-     * Default values for {@code Notification} component's properties.
-     *
-     * @static
-     */
-    static defaultProps = {
-        appearance: NOTIFICATION_TYPE.NORMAL
-    };
-
-    /**
-     * {@code Notification} component's property types.
-     *
-     * @static
-     */
-    static propTypes = {
-        /**
-         * Display appearance for the component, passed directly to
-         * {@code Flag}.
-         */
-        appearance: PropTypes.string,
-
-        /**
-         * The text to display in the body of the notification. If not passed
-         * in, the passed in descriptionKey will be used.
-         */
-        defaultTitleKey: PropTypes.string,
-
-        /**
-         * A description string that can be used in addition to the prop
-         * descriptionKey.
-         */
-        description: PropTypes.string,
-
-        /**
-         * The translation arguments that may be necessary for the description.
-         */
-        descriptionArguments: PropTypes.object,
-
-        /**
-         * The translation key to use as the body of the notification.
-         */
-        descriptionKey: PropTypes.string,
-
-        /**
-         * Whether the support link should be hidden in the case of an error
-         * message.
-         */
-        hideErrorSupportLink: PropTypes.bool,
-
-        /**
-         * Whether or not the dismiss button should be displayed. This is passed
-         * in by {@code FlagGroup}.
-         */
-        isDismissAllowed: PropTypes.bool,
-
-        /**
-         * Callback invoked when the user clicks to dismiss the notification.
-         * this is passed in by {@code FlagGroup}.
-         */
-        onDismissed: PropTypes.func,
-
-        /**
-         * Invoked to obtain translated strings.
-         */
-        t: PropTypes.func,
-
-        /**
-         * The text to display at the top of the notification. If not passed in,
-         * the passed in titleKey will be used.
-         */
-        title: PropTypes.string,
-
-        /**
-         * The translation arguments that may be necessary for the title.
-         */
-        titleArguments: PropTypes.object,
-
-        /**
-         * The translation key to display as the title of the notification if
-         * no title is provided.
-         */
-        titleKey: PropTypes.string,
-
-        /**
-         * The unique identifier for the notification. Passed back by the
-         * {@code Flag} component in the onDismissed callback.
-         */
-        uid: PropTypes.number
-    };
-
-    /**
-     * Initializes a new {@code Notification} instance.
-     *
-     * @param {Object} props - The read-only properties with which the new
-     * instance is to be initialized.
-     */
-    constructor(props) {
-        super(props);
-
-        // Bind event handler so it is only bound once for every instance.
-        this._onDismissed = this._onDismissed.bind(this);
-    }
-
+class Notification extends AbstractNotification<Props> {
     /**
      * Implements React's {@link Component#render()}.
      *
@@ -168,6 +68,8 @@ class Notification extends Component<*> {
         );
     }
 
+    _getDescription: () => Array<string>
+
     _onDismissed: () => void;
 
     /**
@@ -178,30 +80,13 @@ class Notification extends Component<*> {
      * @returns {ReactElement}
      */
     _renderDescription() {
-        const {
-            description,
-            descriptionArguments,
-            descriptionKey,
-            t
-        } = this.props;
-
         return (
             <div>
-                { descriptionKey
-                    ? t(descriptionKey, descriptionArguments) : null }
-                { description || null }
+                {
+                    this._getDescription()
+                }
             </div>
         );
-    }
-
-    /**
-     * Calls back into {@code FlagGroup} to dismiss the notification.
-     *
-     * @private
-     * @returns {void}
-     */
-    _onDismissed() {
-        this.props.onDismissed(this.props.uid);
     }
 
     /**

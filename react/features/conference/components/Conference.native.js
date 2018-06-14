@@ -17,6 +17,7 @@ import { createDesiredLocalTracks } from '../../base/tracks';
 import { ConferenceNotification } from '../../calendar-sync';
 import { Filmstrip } from '../../filmstrip';
 import { LargeVideo } from '../../large-video';
+import { NotificationsContainer } from '../../notifications';
 import { setToolboxVisible, Toolbox } from '../../toolbox';
 
 import ConferenceIndicators from './ConferenceIndicators';
@@ -266,6 +267,8 @@ class Conference extends Component<Props> {
                 {
                     this._renderConferenceNotification()
                 }
+
+                <NotificationsContainer />
 
                 {/*
                   * The dialogs are in the topmost stacking layers.

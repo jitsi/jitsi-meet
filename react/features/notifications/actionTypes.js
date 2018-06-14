@@ -1,4 +1,14 @@
 /**
+ * The type of (redux) action which signals that all the stored notifications
+ * need to be cleared.
+ *
+ * {
+ *     type: CLEAR_NOTIFICATIONS
+ * }
+ */
+export const CLEAR_NOTIFICATIONS = Symbol('CLEAR_NOTIFICATIONS');
+
+/**
  * The type of (redux) action which signals that a specific notification should
  * not be displayed anymore.
  *

@@ -10,6 +10,8 @@ import {
     makeAspectRatioAware
 } from '../../../base/responsive-ui';
 
+import { isFilmstripVisible } from '../../functions';
+
 import LocalThumbnail from './LocalThumbnail';
 import styles from './styles';
 import Thumbnail from './Thumbnail';
@@ -188,7 +190,7 @@ class Filmstrip extends Component<Props> {
  */
 function _mapStateToProps(state) {
     const participants = state['features/base/participants'];
-    const { enabled, visible } = state['features/filmstrip'];
+    const { enabled } = state['features/filmstrip'];
 
     return {
         /**
@@ -215,7 +217,7 @@ function _mapStateToProps(state) {
          * @private
          * @type {boolean}
          */
-        _visible: visible && participants.length > 1
+        _visible: isFilmstripVisible(state)
     };
 }
 
