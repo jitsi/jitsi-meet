@@ -1906,31 +1906,6 @@ export default {
                 }
             });
 
-        /* eslint-enable max-params */
-        room.on(
-            JitsiConferenceEvents.RECORDER_STATE_CHANGED,
-            recorderSession => {
-                if (!recorderSession) {
-                    logger.error(
-                        'Received invalid recorder status update',
-                        recorderSession);
-
-                    return;
-                }
-
-                // These errors fire when the local participant has requested a
-                // recording but the request itself failed, hence the missing
-                // session ID because the recorder never started.
-                if (recorderSession.getError()) {
-                    this._showRecordingErrorNotification(recorderSession);
-
-                    return;
-                }
-
-                logger.error(
-                    'Received a recorder status update with no ID or error');
-            });
-
         room.on(JitsiConferenceEvents.KICKED, () => {
             APP.UI.hideStats();
             APP.UI.notifyKicked();
@@ -2727,58 +2702,6 @@ export default {
     submitFeedback(score = -1, message = '') {
         if (score === -1 || (score >= 1 && score <= 5)) {
             APP.store.dispatch(submitFeedback(score, message, room));
-        }
-    },
-
-    /**
-     * Shows a notification about an error in the recording session. A
-     * default notification will display if no error is specified in the passed
-     * in recording session.
-     *
-     * @param {Object} recorderSession - The recorder session model from the
-     * lib.
-     * @private
-     * @returns {void}
-     */
-    _showRecordingErrorNotification(recorderSession) {
-        const isStreamMode
-            = recorderSession.getMode()
-                === JitsiMeetJS.constants.recording.mode.STREAM;
-
-        switch (recorderSession.getError()) {
-        case JitsiMeetJS.constants.recording.error.SERVICE_UNAVAILABLE:
-            APP.UI.messageHandler.showError({
-                descriptionKey: 'recording.unavailable',
-                descriptionArguments: {
-                    serviceName: isStreamMode
-                        ? 'Live Streaming service'
-                        : 'Recording service'
-                },
-                titleKey: isStreamMode
-                    ? 'liveStreaming.unavailableTitle'
-                    : 'recording.unavailableTitle'
-            });
-            break;
-        case JitsiMeetJS.constants.recording.error.RESOURCE_CONSTRAINT:
-            APP.UI.messageHandler.showError({
-                descriptionKey: isStreamMode
-                    ? 'liveStreaming.busy'
-                    : 'recording.busy',
-                titleKey: isStreamMode
-                    ? 'liveStreaming.busyTitle'
-                    : 'recording.busyTitle'
-            });
-            break;
-        default:
-            APP.UI.messageHandler.showError({
-                descriptionKey: isStreamMode
-                    ? 'liveStreaming.error'
-                    : 'recording.error',
-                titleKey: isStreamMode
-                    ? 'liveStreaming.failedToStart'
-                    : 'recording.failedToStart'
-            });
-            break;
         }
     }
 };
