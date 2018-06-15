@@ -3,16 +3,16 @@ local jid = require "util.jid"
 
 -- Options and configuration
 local poltergeist_component = module:get_option_string(
-   "poltergeist_component",
-   module.host
+    "poltergeist_component",
+    module.host
 );
 local muc_domain_base = module:get_option_string("muc_mapper_domain_base");
 if not muc_domain_base then
-   module:log(
-	  "warn",
-	  "No 'muc_domain_base' option set, unable to send call events."
-   );
-   return
+    module:log(
+        "warn",
+        "No 'muc_domain_base' option set, unable to send call events."
+    );
+    return
 end
 
 -- Status strings that trigger call events.
@@ -31,17 +31,17 @@ local connected_status = "connected"
 --     https://meet.jit.si/MoreProductiveMeeting
 -- The urls are derived from portions of the room jid.
 local function url_from_room_jid(room_jid)
-   local node, _, _ = jid.split(room_jid)
-   if not node then return nil end
+    local node, _, _ = jid.split(room_jid)
+    if not node then return nil end
 
-   local target_subdomain, target_node = node:match("^%[([^%]]+)%](.+)$")
+    local target_subdomain, target_node = node:match("^%[([^%]]+)%](.+)$")
 
-   if not(target_node or target_subdomain) then
-	  return "https://"..muc_domain_base.."/"..node
-   else
-	  return
-		 "https://"..muc_domain_base.."/"..target_subdomain.."/"..target_node
-   end
+    if not(target_node or target_subdomain) then
+        return "https://"..muc_domain_base.."/"..node
+    else
+        return
+        "https://"..muc_domain_base.."/"..target_subdomain.."/"..target_node
+    end
 end
 
 -- Listening for all muc presences stanza events. If a presence stanza is from
@@ -55,48 +55,60 @@ end
 --    "busy"      | CANCEL
 --    "rejected"  | CANCEL
 --    "connected" | CANCEL
-module:hook("muc-broadcast-presence", function (event)
-    -- Detect if the presence is for a poltergeist or not.
-    if not
-	   (jid.bare(event.occupant.jid) == poltergeist_component)
-	   or
-	   event.stanza == nil
-	then
-	   return
-    end
+module:hook(
+    "muc-broadcast-presence",
+    function (event)
+        -- Detect if the presence is for a poltergeist or not.
+        if not (jid.bare(event.occupant.jid) == poltergeist_component) then
+            return
+        end
 
-	local call_id = event.stanza:get_child_text("call_id")
-	if not call_id then
-	   module:log("info", "A call id was not provided in the status.")
-	   return
-	end
+        -- A presence stanza is needed in order to trigger any calls.
+        if not event.stanza then
+            return
+        end
 
-    local invite = function()
-	    local url = assert(url_from_room_jid(event.stanza.attr.from))
-		ext_events.invite(event.stanza, url, call_id)
-	end
+        local call_id = event.stanza:get_child_text("call_id")
+        if not call_id then
+            module:log("info", "A call id was not provided in the status.")
+            return
+        end
 
-    local cancel = function()
-	   local url = assert(url_from_room_jid(event.stanza.attr.from))
-	   local status = event.stanza:get_child_text("status")
-	   ext_events.cancel(event.stanza, url, string.lower(status), call_id)
-	end
+        local invite = function()
+            local url = assert(url_from_room_jid(event.stanza.attr.from))
+            ext_events.invite(event.stanza, url, call_id)
+        end
 
-    local should_cancel = event.stanza:get_child_text("call_cancel")
-    if should_cancel == "true" then
-        cancel()
-        return
-    end
+        local cancel = function()
+            local url = assert(url_from_room_jid(event.stanza.attr.from))
+            local status = event.stanza:get_child_text("status")
+            ext_events.cancel(event.stanza, url, string.lower(status), call_id)
+        end
 
-	local switch = function(status)
-	   case = {
-		  [calling_status]   = function() invite() end,
-		  [busy_status]      = function() cancel() end,
-		  [rejected_status]  = function() cancel() end,
-		  [connected_status] = function() cancel() end
-	   }
-	   if case[status] then case[status]() end
-	end
+        -- If for any reason call_cancel is set to true then a cancel
+        -- is sent regardless of the rest of the presence info.
+        local should_cancel = event.stanza:get_child_text("call_cancel")
+        if should_cancel == "true" then
+            cancel()
+            return
+        end
 
-	switch(event.stanza:get_child_text("status"))
-end, -101);
+        -- All other call flow actions will require a status.
+        if event.stanza:get_child_text("status") == nil then
+            return
+        end
+
+        local switch = function(status)
+            case = {
+                [calling_status]   = function() invite() end,
+                [busy_status]      = function() cancel() end,
+                [rejected_status]  = function() cancel() end,
+                [connected_status] = function() cancel() end
+            }
+            if case[status] then case[status]() end
+        end
+
+        switch(event.stanza:get_child_text("status"))
+    end,
+    -101
+);

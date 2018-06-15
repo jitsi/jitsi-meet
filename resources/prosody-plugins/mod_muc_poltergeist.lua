@@ -14,9 +14,9 @@ local expired_status  = "expired";
 -- Options
 local poltergeist_component
     = module:get_option_string("poltergeist_component", module.host);
--- defaults to 3 min
+-- defaults to 30 seconds
 local poltergeist_timeout
-    = module:get_option_string("poltergeist_leave_timeout", 180);
+    = module:get_option_string("poltergeist_leave_timeout", 30);
 -- this basically strips the domain from the conference.domain address
 local parentHostName = string.gmatch(tostring(module.host), "%w+.(%w.+)")();
 if parentHostName == nil then
@@ -108,27 +108,6 @@ function remove_username(room, nick)
     end
 end
 
--- Provides a new presence stanza for a poltergeist.
--- @param room the room instance
--- @param nick the user nick
-function generate_poltergeist_presence(room, nick, status)
-    local presence_stanza = st.presence({
-        to = room.jid.."/"..nick,
-        from = poltergeist_component.."/"..nick,
-    }):tag("x", { xmlns = MUC_NS }):up();
-
-    presence_stanza:tag("call_cancel"):text(nil):up();
-    presence_stanza:tag("call_id"):text(nil):up();
-
-    if status then
-       presence_stanza:tag("status"):text(status):up();
-    else
-       presence_stanza:tag("status"):text(nil):up();
-    end
-
-    return presence_stanza;
-end
-
 --- Verifies room name, domain name with the values in the token
 -- @param token the token we received
 -- @param room_name the room name
@@ -213,89 +192,31 @@ prosody.events.add_handler("pre-jitsi-authentication", function(session)
     return nil;
 end);
 
--- Creates poltergeist occupant
--- @param room the room instance where we create the occupant
--- @param nick the nick to use for the new occupant
--- @param name the display name fot the occupant (optional)
--- @param avatar the avatar to use for the new occupant (optional)
--- @param status the initial status to use for the new occupant (optional)
--- @param context the information that we will store for this poltergeist
-function create_poltergeist_occupant(room, nick, name, avatar, status, context)
-    log("debug", "create_poltergeist_occupant %s", nick);
-    -- Join poltergeist occupant to room, with the invited JID as their nick
-    local join_presence = generate_poltergeist_presence(room, nick, status)
-
-    if (name) then
-        join_presence:tag(
-            "nick",
-            { xmlns = "http://jabber.org/protocol/nick" }):text(name):up();
-    end
-    if (avatar) then
-        join_presence:tag("avatar-url"):text(avatar):up();
-    end
-
-    -- If the room has a password set, let the poltergeist enter using it
-    local room_password = room:get_password();
-    if room_password then
-        local join = join_presence:get_child("x", MUC_NS);
-        join:tag("password", { xmlns = MUC_NS }):text(room_password);
-    end
-
-    -- Update the nil call id to the initial call id for call flows.
-	local call_id = get_username(room, context.user.id);
-    join_presence:maptags(function (tag)
-        if tag.name == "call_id" then
-           return st.stanza("call_id"):text(call_id);
-        end
-        return tag;
-    end);
-
-    update_presence_identity(
-        join_presence,
-        context.user,
-        context.group,
-        context.creator_user,
-        context.creator_group
-    );
-
-    room:handle_first_presence(
-        prosody.hosts[poltergeist_component], join_presence);
-
-    -- the timeout before removing so participants can see the status update
-    local removeTimeout = 5;
-    local timeout = poltergeist_timeout - removeTimeout;
-
-    timer.add_task(timeout,
-        function ()
-            update_poltergeist_occupant_status(
-                room, nick, expired_status);
-            -- and remove it after some time so participant can see
-            -- the update
-            timer.add_task(removeTimeout,
-                function ()
-                    if (have_poltergeist_occupant(room, nick)) then
-                        remove_poltergeist_occupant(room, nick, false);
-                    end
-                end);
-        end);
-end
-
 -- Removes poltergeist occupant
 -- @param room the room instance where to remove the occupant
 -- @param nick the nick of the occupant to remove
 -- @param ignore to mark the poltergeist unavailble presence to be ignored
 function remove_poltergeist_occupant(room, nick, ignore)
-    log("debug", "remove_poltergeist_occupant %s", nick);
-    local leave_presence = st.presence({
-        to = room.jid.."/"..nick,
-        from = poltergeist_component.."/"..nick,
-        type = "unavailable" });
-    if (ignore) then
-        poltergeists_pr_ignore[room.jid.."/"..nick] = true;
-    end
-    room:handle_normal_presence(
-        prosody.hosts[poltergeist_component], leave_presence);
-    remove_username(room, nick);
+   log("debug", "remove_poltergeist_occupant %s", nick);
+
+   local current_presence = get_presence(room, nick);
+   if (not current_presence) then
+      module:log("info", "attempted to remove a poltergeist with no presence")
+      return;
+   end
+
+   local leave_presence = st.clone(current_presence)
+   leave_presence.attr.to = room.jid.."/"..nick;
+   leave_presence.attr.from = poltergeist_component.."/"..nick;
+   leave_presence.attr.type = "unavailable";
+
+   if (ignore) then
+      poltergeists_pr_ignore[room.jid.."/"..nick] = true;
+   end
+
+   room:handle_normal_presence(
+      prosody.hosts[poltergeist_component], leave_presence);
+   remove_username(room, nick);
 end
 
 -- Updates poltergeist occupant status
@@ -307,15 +228,17 @@ function update_poltergeist_occupant_status(room, nick, status, call_details)
     local update_presence = get_presence(room, nick);
 
     if (not update_presence) then
-        -- no presence found for occupant, create one
-        update_presence = generate_poltergeist_presence(room, nick)
-    else
-        -- update occupant presence with appropriate to and from
-        -- so we can send it again
-        update_presence = st.clone(update_presence);
-        update_presence.attr.to = room.jid.."/"..nick;
-        update_presence.attr.from = poltergeist_component.."/"..nick;
+       -- TODO: determine if we should provide an error and how that would be
+       -- handled for bosh and http api.
+       module:log("info", "update issued for a non-existing poltergeist")
+       return;
     end
+
+    -- update occupant presence with appropriate to and from
+    -- so we can send it again
+    update_presence = st.clone(update_presence);
+    update_presence.attr.to = room.jid.."/"..nick;
+    update_presence.attr.from = poltergeist_component.."/"..nick;
 
     update_presence = update_presence_tags(update_presence, status, call_details)
 
@@ -442,33 +365,122 @@ function handle_create_poltergeist (event)
         return 403;
     end
 
+    -- If the provided room conference doesn't exist then we
+    -- can't add a poltergeist to it.
     local room = get_room(room_name, group);
     if (not room) then
         log("error", "no room found %s", room_name);
         return 404;
     end
 
+    -- If the poltergiest is already in the conference then it will
+    -- be in our username store and another can't be added.
     local username = get_username(room, user_id);
     if (username ~= nil
         and have_poltergeist_occupant(room, string.sub(username, 0, 8))) then
         log("warn", "poltergeist for username:%s already in the room:%s",
             username, room_name);
         return 202;
-    else
-        username = generate_uuid();
-        store_username(room, user_id, username);
-        local context = {
-            user = {
-                id = user_id;
-            };
-            group = group;
-            creator_user = session.jitsi_meet_context_user;
-            creator_group = session.jitsi_meet_context_group;
-        };
-        create_poltergeist_occupant(
-            room, string.sub(username, 0, 8), name, avatar, status, context);
-        return 200;
     end
+    username = generate_uuid();
+    local context = {
+       user = {
+	  id = user_id;
+       };
+       group = group;
+       creator_user = session.jitsi_meet_context_user;
+       creator_group = session.jitsi_meet_context_group;
+    };
+
+    local nick = string.sub(username, 0, 8)
+    local presence_stanza = original_presence(
+       poltergeist_component,
+       room,
+       nick,
+       name,
+       avatar,
+       username,
+       context,
+       status
+    )
+    store_username(room, user_id, username);
+
+    room:handle_first_presence(
+       prosody.hosts[poltergeist_component],
+       presence_stanza
+    );
+
+    -- the timeout before removing so participants can see the status update
+    local removeTimeout = 5;
+    local timeout = poltergeist_timeout - removeTimeout;
+
+    timer.add_task(timeout,
+        function ()
+            update_poltergeist_occupant_status(
+                room, nick, expired_status);
+            -- and remove it after some time so participant can see
+            -- the update
+            timer.add_task(removeTimeout,
+                function ()
+                    if (have_poltergeist_occupant(room, nick)) then
+                        remove_poltergeist_occupant(room, nick, false);
+                    end
+                end);
+        end);
+
+    return 200;
+end
+
+-- Generate the original presence for a poltergeist when it is added to a room.
+-- @param component is the configured component name for poltergeist.
+-- @param room is the room the poltergeist is being added to.
+-- @param nick is the nick the poltergeist will use for xmpp.
+-- @param avatar is the url of the display avatar for the poltergeist.
+-- @param username is the poltergeist unique username.
+-- @param context is the context information from the valid auth token.
+-- @param status is the status string for the presence.
+-- @return a presence stanza
+function original_presence(
+	component, room, nick, name, avatar, username, context, status)
+    local p = st.presence({
+	    to = room.jid.."/"..nick,
+	    from = component.."/"..nick,
+   }):tag("x", { xmlns = MUC_NS }):up();
+
+    p:tag("call_cancel"):text(nil):up();
+    p:tag("call_id"):text(username):up();
+
+   if status then
+       p:tag("status"):text(status):up();
+   else
+       p:tag("status"):text(nil):up();
+   end
+
+   if (name) then
+       p:tag(
+	   "nick",
+	   { xmlns = "http://jabber.org/protocol/nick" }):text(name):up();
+   end
+
+   if (avatar) then
+       p:tag("avatar-url"):text(avatar):up();
+   end
+
+   -- If the room has a password set, let the poltergeist enter using it
+   local room_password = room:get_password();
+   if room_password then
+       local join = p:get_child("x", MUC_NS);
+       join:tag("password", { xmlns = MUC_NS }):text(room_password);
+   end
+
+   update_presence_identity(
+       p,
+       context.user,
+       context.group,
+       context.creator_user,
+       context.creator_group
+   );
+   return p
 end
 
 --- Handles request for updating poltergeists status
@@ -484,12 +496,12 @@ function handle_update_poltergeist (event)
     local room_name = params["room"];
     local group = params["group"];
     local status = params["status"];
-	local call_id = params["callid"];
+    local call_id = params["callid"];
 
-	local call_cancel = false
-	if params["callcancel"] == "true" then
-	   call_cancel = true;
-	end
+    local call_cancel = false
+    if params["callcancel"] == "true" then
+       call_cancel = true;
+    end
 
     if not verify_token(params["token"], room_name, group, {}) then
         return 403;
@@ -512,12 +524,12 @@ function handle_update_poltergeist (event)
 	};
 
     local nick = string.sub(username, 0, 8);
-    if (have_poltergeist_occupant(room, nick)) then
-        update_poltergeist_occupant_status(room, nick, status, call_details);
-        return 200;
-    else
-        return 404;
+    if (not have_poltergeist_occupant(room, nick)) then
+       return 404;
     end
+
+    update_poltergeist_occupant_status(room, nick, status, call_details);
+    return 200;
 end
 
 --- Handles remove poltergeists
@@ -549,12 +561,12 @@ function handle_remove_poltergeist (event)
     end
 
     local nick = string.sub(username, 0, 8);
-    if (have_poltergeist_occupant(room, nick)) then
-        remove_poltergeist_occupant(room, nick, false);
-        return 200;
-    else
-        return 404;
+    if (not have_poltergeist_occupant(room, nick)) then
+       return 404;
     end
+
+    remove_poltergeist_occupant(room, nick, false);
+    return 200;
 end
 
 log("info", "Loading poltergeist service");
