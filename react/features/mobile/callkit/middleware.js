@@ -19,13 +19,16 @@ import {
 import { getInviteURL } from '../../base/connection';
 import {
     MEDIA_TYPE,
-    SET_AUDIO_MUTED,
-    SET_VIDEO_MUTED,
     isVideoMutedByAudioOnly,
     setAudioMuted
 } from '../../base/media';
 import { MiddlewareRegistry } from '../../base/redux';
-import { TRACK_CREATE_ERROR, isLocalTrackMuted } from '../../base/tracks';
+import {
+    TRACK_ADDED,
+    TRACK_REMOVED,
+    TRACK_UPDATED,
+    isLocalTrackMuted
+} from '../../base/tracks';
 
 import { _SET_CALLKIT_SUBSCRIPTIONS } from './actionTypes';
 import CallKit from './CallKit';
@@ -63,14 +66,10 @@ CallKit && MiddlewareRegistry.register(store => next => action => {
     case CONFERENCE_WILL_JOIN:
         return _conferenceWillJoin(store, next, action);
 
-    case SET_AUDIO_MUTED:
-        return _setAudioMuted(store, next, action);
-
-    case SET_VIDEO_MUTED:
-        return _setVideoMuted(store, next, action);
-
-    case TRACK_CREATE_ERROR:
-        return _trackCreateError(store, next, action);
+    case TRACK_ADDED:
+    case TRACK_REMOVED:
+    case TRACK_UPDATED:
+        return _syncTrackState(store, next, action);
     }
 
     return next(action);
@@ -293,38 +292,13 @@ function _onPerformSetMutedCallAction({ callUUID, muted: newValue }) {
         const tracks = getState()['features/base/tracks'];
         const oldValue = isLocalTrackMuted(tracks, MEDIA_TYPE.AUDIO);
 
-        if (oldValue !== newValue) {
-            const value = Boolean(newValue);
+        newValue = Boolean(newValue); // eslint-disable-line no-param-reassign
 
-            sendAnalytics(createTrackMutedEvent('audio', 'callkit', value));
-            dispatch(setAudioMuted(value, /* ensureTrack */ true));
+        if (oldValue !== newValue) {
+            sendAnalytics(createTrackMutedEvent('audio', 'callkit', newValue));
+            dispatch(setAudioMuted(newValue, /* ensureTrack */ true));
         }
     }
-}
-
-/**
- * Notifies the feature callkit that the action {@link SET_AUDIO_MUTED} is being
- * dispatched within a specific redux {@code store}.
- *
- * @param {Store} store - The redux store in which the specified {@code action}
- * is being dispatched.
- * @param {Dispatch} next - The redux {@code dispatch} function to dispatch the
- * specified {@code action} in the specified {@code store}.
- * @param {Action} action - The redux action {@code SET_AUDIO_MUTED} which is
- * being dispatched in the specified {@code store}.
- * @private
- * @returns {*} The value returned by {@code next(action)}.
- */
-function _setAudioMuted({ getState }, next, action) {
-    const result = next(action);
-
-    const conference = getCurrentConference(getState);
-
-    if (conference && conference.callUUID) {
-        CallKit.setMuted(conference.callUUID, action.muted);
-    }
-
-    return result;
 }
 
 /**
@@ -354,57 +328,31 @@ function _setCallKitSubscriptions({ getState }, next, action) {
 }
 
 /**
- * Notifies the feature callkit that the action {@link SET_VIDEO_MUTED} is being
- * dispatched within a specific redux {@code store}.
+ * Synchronize the muted state of tracks with CallKit.
  *
  * @param {Store} store - The redux store in which the specified {@code action}
  * is being dispatched.
  * @param {Dispatch} next - The redux {@code dispatch} function to dispatch the
  * specified {@code action} in the specified {@code store}.
- * @param {Action} action - The redux action {@code SET_VIDEO_MUTED} which is
- * being dispatched in the specified {@code store}.
+ * @param {Action} action - The redux action which is being dispatched in the
+ * specified {@code store}.
  * @private
  * @returns {*} The value returned by {@code next(action)}.
  */
-function _setVideoMuted({ getState }, next, action) {
+function _syncTrackState({ getState }, next, action) {
     const result = next(action);
-
-    const conference = getCurrentConference(getState);
-
-    if (conference && conference.callUUID) {
-        CallKit.updateCall(
-            conference.callUUID,
-            { hasVideo: !isVideoMutedByAudioOnly(getState) });
-    }
-
-    return result;
-}
-
-/**
- * Handles a track creation failure. This is relevant to us in the following
- * (corner) case: if the user never gave their permission to use the microphone
- * and try to unmute from the CallKit interface, this will fail, and we need to
- * sync back the CallKit button state.
- *
- * @param {Store} store - The redux store in which the specified {@code action}
- * is being dispatched.
- * @param {Dispatch} next - The redux {@code dispatch} function to dispatch the
- * specified {@code action} in the specified {@code store}.
- * @param {Action} action - The redux action {@code TRACK_CREARE_ERROR} which is
- * being dispatched in the specified {@code store}.
- * @private
- * @returns {*} The value returned by {@code next(action)}.
- */
-function _trackCreateError({ getState }, next, action) {
-    const result = next(action);
+    const { track } = action;
     const state = getState();
     const conference = getCurrentConference(state);
 
-    if (conference && conference.callUUID) {
+    if (track.local && conference && conference.callUUID) {
         const tracks = state['features/base/tracks'];
         const muted = isLocalTrackMuted(tracks, MEDIA_TYPE.AUDIO);
 
         CallKit.setMuted(conference.callUUID, muted);
+        CallKit.updateCall(
+            conference.callUUID,
+            { hasVideo: !isVideoMutedByAudioOnly(state) });
     }
 
     return result;
