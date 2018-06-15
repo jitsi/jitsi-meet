@@ -104,7 +104,6 @@ const WHITELISTED_KEYS = [
     'enableStatsID',
     'enableTalkWhileMuted',
     'enableTcc',
-    'enableUserRolesBasedOnToken',
     'etherpad_base',
     'failICE',
     'fileRecordingsEnabled',

@@ -1136,8 +1136,10 @@ function _mapStateToProps(state) {
     let { desktopSharingEnabled } = state['features/base/conference'];
     const {
         callStatsID,
+        iAmRecorder
+    } = state['features/base/config'];
+    let {
         fileRecordingsEnabled,
-        iAmRecorder,
         liveStreamingEnabled
     } = state['features/base/config'];
     const sharedVideoStatus = state['features/shared-video'].status;
@@ -1153,14 +1155,15 @@ function _mapStateToProps(state) {
     const localVideo = getLocalVideoTrack(state['features/base/tracks']);
     const addPeopleEnabled = isAddPeopleEnabled(state);
     const dialOutEnabled = isDialOutEnabled(state);
-    let recordingEnabled
-        = isLocalParticipantModerator(state) && fileRecordingsEnabled;
-    let streamingEnabled
-        = isLocalParticipantModerator(state) && liveStreamingEnabled;
 
     let desktopSharingDisabledTooltipKey;
     let fileRecordingsDisabledTooltipKey;
     let liveStreamingDisabledTooltipKey;
+
+    fileRecordingsEnabled
+        = isLocalParticipantModerator(state) && fileRecordingsEnabled;
+    liveStreamingEnabled
+        = isLocalParticipantModerator(state) && liveStreamingEnabled;
 
     if (state['features/base/config'].enableFeaturesBasedOnToken) {
         // we enable desktop sharing if any participant already have this
@@ -1183,11 +1186,12 @@ function _mapStateToProps(state) {
         const { features = {} } = localParticipant;
         const { isGuest } = state['features/base/jwt'];
 
-        recordingEnabled
-            = recordingEnabled && String(features.recording) === 'true';
+        fileRecordingsEnabled
+            = fileRecordingsEnabled && String(features.recording) === 'true';
 
         // if the feature is disabled on purpose, do no show it, no tooltip
-        if (!recordingEnabled && String(features.recording) !== 'disabled') {
+        if (!fileRecordingsEnabled
+            && String(features.recording) !== 'disabled') {
             // button and tooltip
             if (isGuest) {
                 fileRecordingsDisabledTooltipKey
@@ -1198,11 +1202,11 @@ function _mapStateToProps(state) {
             }
         }
 
-        streamingEnabled
-            = streamingEnabled && String(features.livestreaming) === 'true';
+        liveStreamingEnabled
+            = liveStreamingEnabled && String(features.livestreaming) === 'true';
 
         // if the feature is disabled on purpose, do no show it, no tooltip
-        if (!streamingEnabled
+        if (!liveStreamingEnabled
             && String(features.livestreaming) !== 'disabled') {
             // button and tooltip
             if (isGuest) {
@@ -1228,12 +1232,12 @@ function _mapStateToProps(state) {
             iAmRecorder || (!addPeopleEnabled && !dialOutEnabled),
         _isGuest: state['features/base/jwt'].isGuest,
         _fileRecordingsDisabledTooltipKey: fileRecordingsDisabledTooltipKey,
-        _fileRecordingsEnabled: recordingEnabled,
+        _fileRecordingsEnabled: fileRecordingsEnabled,
         _fileRecordingSession:
             getActiveSession(state, JitsiRecordingConstants.mode.FILE),
         _fullScreen: fullScreen,
         _liveStreamingDisabledTooltipKey: liveStreamingDisabledTooltipKey,
-        _liveStreamingEnabled: streamingEnabled,
+        _liveStreamingEnabled: liveStreamingEnabled,
         _liveStreamingSession:
              getActiveSession(state, JitsiRecordingConstants.mode.STREAM),
         _localParticipantID: localParticipant.id,

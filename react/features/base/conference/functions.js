@@ -192,8 +192,13 @@ export function sendLocalParticipant(
             sendCommand: Function,
             setDisplayName: Function,
             setLocalParticipantProperty: Function }) {
-    const { avatarID, avatarURL, email, name, features }
-        = getLocalParticipant(stateful);
+    const {
+        avatarID,
+        avatarURL,
+        email,
+        features,
+        name
+    } = getLocalParticipant(stateful);
 
     avatarID && conference.sendCommand(AVATAR_ID_COMMAND, {
         value: avatarID
