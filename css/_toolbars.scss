@@ -95,7 +95,13 @@
     }
 
     i.disabled {
-        cursor: initial
+        cursor: initial;
+        color: #3b475c;
+    }
+
+    .disabled i {
+        cursor: initial;
+        color: #3b475c;
     }
 
     i.disabled:hover {
@@ -134,6 +140,10 @@
             }
             &.unclickable:hover {
                 background: inherit;
+            }
+            &.disabled {
+                cursor: initial;
+                color: #3b475c;
             }
         }
 

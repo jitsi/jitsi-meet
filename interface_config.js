@@ -5,12 +5,6 @@ var interfaceConfig = {
     // methods allowing to use variables both in css and js.
     DEFAULT_BACKGROUND: '#474747',
 
-    /**
-     * In case the desktop sharing is disabled through the config the button
-     * will not be hidden, but displayed as disabled with this text us as
-     * a tooltip.
-     */
-    DESKTOP_SHARING_BUTTON_DISABLED_TOOLTIP: null,
     INITIAL_TOOLBAR_TIMEOUT: 20000,
     TOOLBAR_TIMEOUT: 4000,
     TOOLBAR_ALWAYS_VISIBLE: false,

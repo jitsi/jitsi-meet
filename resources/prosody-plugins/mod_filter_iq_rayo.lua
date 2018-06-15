@@ -2,6 +2,7 @@ local st = require "util.stanza";
 
 local token_util = module:require "token/util".new(module);
 local room_jid_match_rewrite = module:require "util".room_jid_match_rewrite;
+local is_feature_allowed = module:require "util".is_feature_allowed;
 
 -- no token configuration but required
 if token_util == nil then
@@ -10,6 +11,8 @@ if token_util == nil then
 end
 
 -- filters rayo iq in case of requested from not jwt authenticated sessions
+-- or if the session has features in user context and it doesn't mention
+-- feature "outbound-call" to be enabled
 module:hook("pre-iq/full", function(event)
     local stanza = event.stanza;
     if stanza.name == "iq" then
@@ -31,8 +34,11 @@ module:hook("pre-iq/full", function(event)
 
             if token == nil
                 or roomName == nil
-                or not token_util:verify_room(
-                            session, room_jid_match_rewrite(roomName)) then
+                or not token_util:verify_room(session, room_jid_match_rewrite(roomName))
+                or not is_feature_allowed(session,
+                            (dial.attr.to == 'jitsi_meet_transcribe' and 'transcription'
+                                or 'outbound-call'))
+            then
                 module:log("info",
                     "Filtering stanza dial, stanza:%s", tostring(stanza));
                 session.send(st.error_reply(stanza, "auth", "forbidden"));

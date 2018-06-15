@@ -23,6 +23,21 @@
                 margin: auto;
             }
         }
+
+        .footer-text-wrap {
+            display: flex;
+        }
+
+        .footer-telephone-icon {
+            display: flex;
+            transform: scaleX(-1);
+            padding-left: 10px;
+
+            i {
+                line-height: 20px;
+                margin: auto;
+            }
+        }
     }
 }
 
