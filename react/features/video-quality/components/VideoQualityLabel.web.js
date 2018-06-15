@@ -157,11 +157,14 @@ function _mapResolutionToTranslationsKeys(resolution) {
  */
 function _mapStateToProps(state) {
     const { audioOnly } = state['features/base/conference'];
-    const { resolution, participantId } = state['features/large-video'];
+    const {
+        displayedParticipantId,
+        resolution
+    } = state['features/large-video'];
     const videoTrackOnLargeVideo = getTrackByMediaTypeAndParticipant(
         state['features/base/tracks'],
         MEDIA_TYPE.VIDEO,
-        participantId
+        displayedParticipantId
     );
 
     const translationKeys

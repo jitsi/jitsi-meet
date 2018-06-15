@@ -6,6 +6,7 @@ import { getTrackByMediaTypeAndParticipant } from '../base/tracks';
 
 import {
     SELECT_LARGE_VIDEO_PARTICIPANT,
+    SET_PARTICIPANT_ON_LARGE_VIDEO,
     UPDATE_KNOWN_LARGE_VIDEO_RESOLUTION
 } from './actionTypes';
 
@@ -63,6 +64,26 @@ export function selectParticipantInLargeVideo() {
 
             dispatch(selectParticipant());
         }
+    };
+}
+
+/**
+ * Action to update the redux store with the participant that is displayed on
+ * large video. Note: this action is only used by web to reconcile large-video
+ * not being fully integrated into redux and to account for timing delays
+ * introduced the web logic's promise chaining for video switching.
+ *
+ * @param {string} participantId - The participant currently displayed on large
+ * video.
+ * @returns {{
+ *     type: SET_PARTICIPANT_ON_LARGE_VIDEO,
+ *     participantId: string
+ * }}
+ */
+export function setParticipantDisplayedOnLargeVideo(participantId: string) {
+    return {
+        type: SET_PARTICIPANT_ON_LARGE_VIDEO,
+        participantId
     };
 }
 

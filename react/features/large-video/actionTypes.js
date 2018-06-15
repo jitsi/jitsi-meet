@@ -10,6 +10,18 @@ export const SELECT_LARGE_VIDEO_PARTICIPANT
     = Symbol('SELECT_LARGE_VIDEO_PARTICIPANT');
 
 /**
+ * Action to update the redux store with the participant that is displayed on
+ * large video.
+ *
+ * @returns {{
+ *     type: SET_PARTICIPANT_ON_LARGE_VIDEO,
+ *     participantId: string
+ * }}
+ */
+export const SET_PARTICIPANT_ON_LARGE_VIDEO
+    = Symbol('SET_PARTICIPANT_ON_LARGE_VIDEO');
+
+/**
  * Action to update the redux store with the current resolution of large video.
  *
  * @returns {{
