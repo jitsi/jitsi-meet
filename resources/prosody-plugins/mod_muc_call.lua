@@ -39,8 +39,7 @@ local function url_from_room_jid(room_jid)
     if not(target_node or target_subdomain) then
         return "https://"..muc_domain_base.."/"..node
     else
-        return
-        "https://"..muc_domain_base.."/"..target_subdomain.."/"..target_node
+        return "https://"..muc_domain_base.."/"..target_subdomain.."/"..target_node
     end
 end
 
