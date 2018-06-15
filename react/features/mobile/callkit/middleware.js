@@ -21,7 +21,6 @@ import {
     MEDIA_TYPE,
     SET_AUDIO_MUTED,
     SET_VIDEO_MUTED,
-    VIDEO_MUTISM_AUTHORITY,
     isVideoMutedByAudioOnly,
     setAudioMuted
 } from '../../base/media';
@@ -297,8 +296,7 @@ function _onPerformSetMutedCallAction({ callUUID, muted: newValue }) {
             const value = Boolean(newValue);
 
             sendAnalytics(createTrackMutedEvent('audio', 'callkit', value));
-            dispatch(setAudioMuted(
-                value, VIDEO_MUTISM_AUTHORITY.USER, /* ensureTrack */ true));
+            dispatch(setAudioMuted(value, /* ensureTrack */ true));
         }
     }
 }
