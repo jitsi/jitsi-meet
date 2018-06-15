@@ -290,7 +290,8 @@ function _onPerformSetMutedCallAction({ callUUID, muted: newValue }) {
         // Break the loop. Audio can be muted from both CallKit and Jitsi Meet.
         // We must keep them in sync, but at some point the loop needs to be
         // broken. We are doing it here, on the CallKit handler.
-        const { muted: oldValue } = getState()['features/base/media'].audio;
+        const tracks = getState()['features/base/tracks'];
+        const oldValue = isLocalTrackMuted(tracks, MEDIA_TYPE.AUDIO);
 
         if (oldValue !== newValue) {
             const value = Boolean(newValue);
