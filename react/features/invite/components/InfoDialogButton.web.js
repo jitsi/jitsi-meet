@@ -86,8 +86,7 @@ class InfoDialogButton extends Component<Props, State> {
     /**
      * Initializes new {@code InfoDialogButton} instance.
      *
-     * @param {Object} props - The read-only properties with which the new
-     * instance is to be initialized.
+     * @inheritdoc
      */
     constructor(props) {
         super(props);
@@ -121,11 +120,11 @@ class InfoDialogButton extends Component<Props, State> {
         // Ensure the dialog is closed when the toolbox becomes hidden.
         if (this.state.showDialog && !nextProps._toolboxVisible) {
             this._onDialogClose();
+
+            return;
         }
 
-        if (!this.props._isConferenceJoined && nextProps._isConferenceJoined) {
-            this._maybeAutoShowDialog(nextProps);
-        }
+        this._maybeAutoShowDialog(nextProps);
     }
 
     /**
@@ -169,7 +168,9 @@ class InfoDialogButton extends Component<Props, State> {
      * @returns {void}
      */
     _maybeAutoShowDialog(nextProps) {
-        if (nextProps._participantCount < 2
+        if (!this.props._isConferenceJoined
+            && nextProps._isConferenceJoined
+            && nextProps._participantCount < 2
             && nextProps._toolboxVisible
             && !nextProps._disableAutoShow) {
             this.setState({ showDialog: true });
