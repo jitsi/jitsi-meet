@@ -12,6 +12,44 @@ import { _shouldShowDeepLinkingDesktopPage }
     from './shouldShowDeepLinkingDesktopPage';
 
 /**
+ * Indicates whether the window load event was already received.
+ *
+ * @type {boolean}
+ */
+let windowIsLoaded = false;
+
+/**
+ * Handler for the window load event.
+ *
+ * @returns {void}
+ */
+function onWindowLoad() {
+    windowIsLoaded = true;
+    window.removeEventListener('load', onWindowLoad);
+}
+
+window.addEventListener('load', onWindowLoad);
+
+/**
+ * Executes the passed function after the window load event was received.
+ *
+ * @param {Function} fn - The function that will be executed.
+ * @returns {void}
+ */
+function executeAfterWindowLoad(fn) {
+    if (windowIsLoaded) {
+        fn();
+    } else {
+        const loadHandler = () => {
+            fn();
+            window.removeEventListener('load', loadHandler);
+        };
+
+        window.addEventListener('load', loadHandler);
+    }
+}
+
+/**
  * Generates a deep linking URL based on the current window URL.
  *
  * @returns {string} - The generated URL.
@@ -76,5 +114,12 @@ export function getDeepLinkingPage(state) {
  * @returns {void}
  */
 export function openDesktopApp() {
-    window.location.href = generateDeepLinkingURL();
+    executeAfterWindowLoad(() => {
+        // If the code for opening the deep link is executed before the window
+        // load event, something with the internal chrome state goes wrong. The
+        // result is that no window load event is received which is the cause
+        // for some permission prompts to not be displayed. In our case the GUM
+        // prompt wasn't displayed which causes the GUM call to never finish.
+        window.location.href = generateDeepLinkingURL();
+    });
 }
