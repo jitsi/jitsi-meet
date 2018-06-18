@@ -40,6 +40,7 @@ const events = {
     'audio-availability-changed': 'audioAvailabilityChanged',
     'audio-mute-status-changed': 'audioMuteStatusChanged',
     'display-name-change': 'displayNameChange',
+    'email-change': 'emailChange',
     'feedback-submitted': 'feedbackSubmitted',
     'incoming-message': 'incomingMessage',
     'outgoing-message': 'outgoingMessage',
@@ -398,6 +399,14 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
                 }
                 break;
             }
+            case 'email-change': {
+                const user = this._participants[userID];
+
+                if (user) {
+                    user.email = data.email;
+                }
+                break;
+            }
             case 'avatar-changed': {
                 const user = this._participants[userID];
 
@@ -631,6 +640,18 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
         const { displayName } = this._participants[participantId] || {};
 
         return displayName;
+    }
+
+    /**
+     * Returns the email of a participant.
+     *
+     * @param {string} participantId - The id of the participant.
+     * @returns {string} The email.
+     */
+    getEmail(participantId) {
+        const { email } = this._participants[participantId] || {};
+
+        return email;
     }
 
     /**
