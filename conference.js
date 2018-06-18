@@ -1955,7 +1955,8 @@ export default {
             }
         );
 
-        APP.UI.addListener(UIEvents.EMAIL_CHANGED, this.changeLocalEmail);
+        APP.UI.addListener(UIEvents.EMAIL_CHANGED,
+            this.changeLocalEmail.bind(this));
         room.addCommandListener(this.commands.defaults.EMAIL, (data, from) => {
             APP.store.dispatch(participantUpdated({
                 conference: room,
@@ -2537,7 +2538,9 @@ export default {
         APP.store.dispatch(updateSettings({
             email: formattedEmail
         }));
-
+        APP.API.notifyEmailChanged(localId, {
+            email: formattedEmail
+        });
         sendData(commands.EMAIL, formattedEmail);
     },
 

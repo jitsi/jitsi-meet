@@ -364,6 +364,24 @@ class API {
     }
 
     /**
+     * Notify external application (if API is enabled) that user changed their
+     * email.
+     *
+     * @param {string} id - User id.
+     * @param {string} email - The new email of the participant.
+     * @returns {void}
+     */
+    notifyEmailChanged(
+            id: string,
+            { email }: Object) {
+        this._sendEvent({
+            name: 'email-change',
+            email,
+            id
+        });
+    }
+
+    /**
      * Notify external application (if API is enabled) that the conference has
      * been joined.
      *
