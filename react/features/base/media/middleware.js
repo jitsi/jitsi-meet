@@ -162,7 +162,7 @@ function _setRoom({ dispatch, getState }, next, action) {
     sendAnalytics(createStartAudioOnlyEvent(audioOnly));
     logger.log(`Start audio only set to ${audioOnly.toString()}`);
 
-    dispatch(setAudioOnly(audioOnly));
+    dispatch(setAudioOnly(audioOnly, false));
 
     return next(action);
 }

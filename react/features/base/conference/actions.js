@@ -451,15 +451,21 @@ export function p2pStatusChanged(p2p: boolean) {
  *
  * @param {boolean} audioOnly - True if the conference should be audio only;
  * false, otherwise.
+ * @param {boolean} ensureVideoTrack - Define if conference should ensure
+ * to create a video track.
  * @returns {{
  *     type: SET_AUDIO_ONLY,
- *     audioOnly: boolean
+ *     audioOnly: boolean,
+ *     ensureVideoTrack: boolean
  * }}
  */
-export function setAudioOnly(audioOnly: boolean) {
+export function setAudioOnly(
+        audioOnly: boolean,
+        ensureVideoTrack: boolean = false) {
     return {
         type: SET_AUDIO_ONLY,
-        audioOnly
+        audioOnly,
+        ensureVideoTrack
     };
 }
 
@@ -665,6 +671,6 @@ export function toggleAudioOnly() {
     return (dispatch: Dispatch<*>, getState: Function) => {
         const { audioOnly } = getState()['features/base/conference'];
 
-        return dispatch(setAudioOnly(!audioOnly));
+        return dispatch(setAudioOnly(!audioOnly, true));
     };
 }

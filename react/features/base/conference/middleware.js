@@ -273,7 +273,7 @@ function _setAudioOnly({ dispatch, getState }, next, action) {
         setVideoMuted(
             newValue,
             VIDEO_MUTISM_AUTHORITY.AUDIO_ONLY,
-            /* ensureTrack */ true));
+            action.ensureVideoTrack));
 
     if (typeof APP !== 'undefined') {
         // TODO This should be a temporary solution that lasts only until video
