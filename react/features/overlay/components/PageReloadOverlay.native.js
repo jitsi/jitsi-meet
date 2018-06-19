@@ -65,7 +65,7 @@ class PageReloadOverlay extends AbstractPageReloadOverlay {
      * @returns {ReactElement}
      */
     render() {
-        const { t } = this.props;
+        const { reloadImmediately, t } = this.props;
         const { message, timeLeft, title } = this.state;
 
         return (
@@ -80,20 +80,34 @@ class PageReloadOverlay extends AbstractPageReloadOverlay {
                     <Text style = { styles.message }>
                         { t(message, { seconds: timeLeft }) }
                     </Text>
-                    <View style = { styles.buttonBox }>
-                        <Text
-                            onPress = { this._onReloadNow }
-                            style = { styles.button } >
-                            { t('dialog.rejoinNow') }
-                        </Text>
-                        <Text
-                            onPress = { this._onCancel }
-                            style = { styles.button } >
-                            { t('dialog.Cancel') }
-                        </Text>
-                    </View>
+                    { reloadImmediately ? null : this._renderButtons() }
                 </View>
             </OverlayFrame>
+        );
+    }
+
+    /**
+     * Renders buttons used for interacting with the {@code PageReloadOverlay}.
+     *
+     * @private
+     * @returns {ReactElement}
+     */
+    _renderButtons() {
+        const { t } = this.props;
+
+        return (
+            <View style = { styles.buttonBox }>
+                <Text
+                    onPress = { this._onReloadNow }
+                    style = { styles.button } >
+                    { t('dialog.rejoinNow') }
+                </Text>
+                <Text
+                    onPress = { this._onCancel }
+                    style = { styles.button } >
+                    { t('dialog.Cancel') }
+                </Text>
+            </View>
         );
     }
 }

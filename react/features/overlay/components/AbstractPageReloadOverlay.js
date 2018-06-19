@@ -1,6 +1,5 @@
 // @flow
 
-import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 
 import {
@@ -21,53 +20,106 @@ declare var APP: Object;
 const logger = require('jitsi-meet-logger').getLogger(__filename);
 
 /**
+ * The maximum time, inclusive, for a page reload to happen without a countdown
+ * when an "item-not-found" error is encountered after a strophe connection has
+ * been established. It is assumed that an "item-not-found" error early on in
+ * the connection lifetime is an indication of a split-brain scenario, so the
+ * user should not have wait to be placed onto the new bridge.
+ *
+ */
+const RELOAD_IMMEDIATELY_THRESHOLD = 1500;
+
+/**
+ * The type of the React {@code Component} props of
+ * {@link AbstractPageReloadOverlay}.
+ */
+type Props = {
+
+   /**
+     * The details is an object containing more information about the connection
+     * failed (shard changes, was the computer suspended, etc.)
+     *
+     * @public
+     * @type {object}
+     */
+    details: Object,
+
+    dispatch: Function,
+
+    /**
+     * The indicator which determines whether the reload was caused by network
+     * failure.
+     *
+     * @public
+     * @type {boolean}
+     */
+    isNetworkFailure: boolean,
+
+    /**
+     * The reason for the error that will cause the reload. NOTE: Used by
+     * {@code PageReloadOverlay} only.
+     *
+     * @public
+     * @type {string}
+     */
+    reason: string,
+
+    /**
+     * Whether or not reload should happen without a countdown.
+     *
+     * @type {boolean}
+     */
+    reloadImmediately: boolean,
+
+    /**
+     * The function to translate human-readable text.
+     *
+     * @public
+     * @type {Function}
+     */
+    t: Function
+};
+
+/**
+ * The type of the React {@code Component} state of
+ * {@link AbstractPageReloadOverlay}.
+ */
+type State = {
+
+    /**
+     * The translation key for the title of the overlay.
+     *
+     * @type {string}
+     */
+    message: string,
+
+    /**
+     * Current value(time) of the timer.
+     *
+     * @type {number}
+     */
+    timeLeft: number,
+
+    /**
+     * How long the overlay dialog will be displayed before the conference will
+     * be reloaded.
+     *
+     * @type {number}
+     */
+    timeoutSeconds: number,
+
+    /**
+     * The translation key for the title of the overlay.
+     *
+     * @type {string}
+     */
+    title: string
+};
+
+/**
  * Implements an abstract React {@link Component} for the page reload overlays.
  */
-export default class AbstractPageReloadOverlay extends Component<*, *> {
-    /**
-     * {@code AbstractPageReloadOverlay} component's property types.
-     *
-     * @static
-     */
-    static propTypes = {
-        /**
-         * The details is an object containing more information about the
-         * connection failed (shard changes, was the computer suspended, etc.)
-         *
-         * @public
-         * @type {object}
-         */
-        details: PropTypes.object,
-
-        dispatch: PropTypes.func,
-
-        /**
-         * The indicator which determines whether the reload was caused by
-         * network failure.
-         *
-         * @public
-         * @type {boolean}
-         */
-        isNetworkFailure: PropTypes.bool,
-
-        /**
-         * The reason for the error that will cause the reload.
-         * NOTE: Used by PageReloadOverlay only.
-         *
-         * @public
-         * @type {string}
-         */
-        reason: PropTypes.string,
-
-        /**
-         * The function to translate human-readable text.
-         *
-         * @public
-         * @type {Function}
-         */
-        t: PropTypes.func
-    };
-
+export default class AbstractPageReloadOverlay extends Component<Props, State> {
     /**
      * Determines whether this overlay needs to be rendered (according to a
      * specific redux state). Called by {@link OverlayContainer}.
@@ -90,38 +142,6 @@ export default class AbstractPageReloadOverlay extends Component<*, *> {
 
     _interval: ?IntervalID;
 
-    state: {
-
-        /**
-         * The translation key for the title of the overlay.
-         *
-         * @type {string}
-         */
-        message: string,
-
-        /**
-         * Current value(time) of the timer.
-         *
-         * @type {number}
-         */
-        timeLeft: number,
-
-        /**
-         * How long the overlay dialog will be displayed before the
-         * conference will be reloaded.
-         *
-         * @type {number}
-         */
-        timeoutSeconds: number,
-
-        /**
-         * The translation key for the title of the overlay.
-         *
-         * @type {string}
-         */
-        title: string
-    };
-
     /**
      * Initializes a new AbstractPageReloadOverlay instance.
      *
@@ -129,8 +149,10 @@ export default class AbstractPageReloadOverlay extends Component<*, *> {
      * instance is to be initialized.
      * @public
      */
-    constructor(props: Object) {
+    constructor(props: Props) {
         super(props);
+
+        const { isNetworkFailure, reloadImmediately } = this.props;
 
         /**
          * How long the overlay dialog will be displayed, before the conference
@@ -138,11 +160,14 @@ export default class AbstractPageReloadOverlay extends Component<*, *> {
          *
          * @type {number}
          */
-        const timeoutSeconds = 10 + randomInt(0, 20);
+        const timeoutSeconds = reloadImmediately ? 0 : 10 + randomInt(0, 20);
 
         let message, title;
 
-        if (this.props.isNetworkFailure) {
+        if (reloadImmediately) {
+            title = 'dialog.conferenceReloadTitle';
+            message = 'dialog.conferenceReloadImmediatelyMsg';
+        } else if (isNetworkFailure) {
             title = 'dialog.conferenceDisconnectTitle';
             message = 'dialog.conferenceDisconnectMsg';
         } else {
@@ -228,13 +253,13 @@ export default class AbstractPageReloadOverlay extends Component<*, *> {
      * @returns {ReactElement|null}
      */
     _renderButton() {
-        if (this.props.isNetworkFailure) {
-            return (
-                <ReloadButton textKey = 'dialog.rejoinNow' />
-            );
+        if (this.props.reloadImmediately || !this.props.isNetworkFailure) {
+            return null;
         }
 
-        return null;
+        return (
+            <ReloadButton textKey = 'dialog.rejoinNow' />
+        );
     }
 
     /**
@@ -244,6 +269,10 @@ export default class AbstractPageReloadOverlay extends Component<*, *> {
      * @returns {ReactElement}
      */
     _renderProgressBar() {
+        if (this.props.reloadImmediately) {
+            return null;
+        }
+
         const { timeLeft, timeoutSeconds } = this.state;
         const timeRemaining = timeoutSeconds - timeLeft;
         const percentageComplete
@@ -269,17 +298,25 @@ export default class AbstractPageReloadOverlay extends Component<*, *> {
  * @returns {{
  *     details: Object,
  *     isNetworkFailure: boolean,
- *     reason: string
+ *     reason: string,
+ *     reloadImmediately: boolean
  * }}
  */
 export function abstractMapStateToProps(state: Object) {
     const { error: conferenceError } = state['features/base/conference'];
     const { error: configError } = state['features/base/config'];
-    const { error: connectionError } = state['features/base/connection'];
+    const {
+        error: connectionError,
+        timeEstablished
+    } = state['features/base/connection'];
 
     return {
         details: connectionError ? connectionError.details : undefined,
         isNetworkFailure: Boolean(configError || connectionError),
-        reason: (configError || connectionError || conferenceError).message
+        reason: (configError || connectionError || conferenceError).message,
+        reloadImmediately: Boolean(connectionError)
+            && connectionError.message === 'item-not-found'
+            && (!timeEstablished
+                || Date.now() - timeEstablished <= RELOAD_IMMEDIATELY_THRESHOLD)
     };
 }

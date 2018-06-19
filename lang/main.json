@@ -259,6 +259,7 @@
         "detectext": "Error when trying to detect desktopsharing extension.",
         "failedpermissions": "Failed to obtain permissions to use the local microphone and/or camera.",
         "conferenceReloadTitle": "Unfortunately, something went wrong.",
+        "conferenceReloadImmediatelyMsg": "We're reloading the application now to address the issue.",
         "conferenceReloadMsg": "We're trying to fix this. Reconnecting in __seconds__ sec...",
         "conferenceDisconnectTitle": "You have been disconnected.",
         "conferenceDisconnectMsg": "You may want to check your network connection. Reconnecting in __seconds__ sec...",
