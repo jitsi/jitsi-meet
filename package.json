@@ -48,6 +48,7 @@
     "jsc-android": "224109.1.0",
     "jwt-decode": "2.2.0",
     "lib-jitsi-meet": "github:jitsi/lib-jitsi-meet#e097a1189ed99838605d90b959e129155bc0e50a",
+    "libflac": "git+https://github.com/ztl8702/libflac.git#31368097eaf9dcb5ef59365ef60b259cb7b97f07",
     "lodash": "4.17.4",
     "moment": "2.19.4",
     "moment-duration-format": "2.2.2",

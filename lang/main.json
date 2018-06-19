@@ -666,5 +666,28 @@
         "decline": "Dismiss",
         "productLabel": "from Jitsi Meet",
         "videoCallTitle": "Incoming video call"
+    },
+    "localRecording": {
+        "localRecording": "Local Recording",
+        "dialogTitle": "Local Recording Controls",
+        "start": "Start",
+        "stop": "Stop",
+        "moderator": "Moderator",
+        "localUser": "Local user",
+        "duration": "Duration",
+        "encoding": "Encoding",
+        "participantStats": "Participant Stats",
+        "clientState": {
+            "on": "On",
+            "off": "Off",
+            "unknown": "Unknown"
+        },
+        "messages": {
+            "engaged": "Local recording engaged.",
+            "finished": "Recording session __token__ finished. Please send the recorded file to the moderator.",
+            "notModerator": "You are not the moderator. You cannot start or stop local recording."
+        },
+        "yes": "Yes",
+        "no": "No"
     }
 }

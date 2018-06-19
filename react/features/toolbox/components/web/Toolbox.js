@@ -29,6 +29,10 @@ import {
 } from '../../../invite';
 import { openKeyboardShortcutsDialog } from '../../../keyboard-shortcuts';
 import {
+    toggleLocalRecordingInfoDialog,
+    LocalRecordingButton
+} from '../../../local-recording';
+import {
     LiveStreamButton,
     RecordButton
 } from '../../../recording';
@@ -148,6 +152,8 @@ type Props = {
      */
     _sharingVideo: boolean,
 
+    _localRecState: Object,
+
     /**
      * Whether or not transcribing is enabled.
      */
@@ -157,6 +163,8 @@ type Props = {
      * Flag showing whether toolbar is visible.
      */
     _visible: boolean,
+
+    _localRecState: any,
 
     /**
      * Set with the buttons which this Toolbox should display.
@@ -227,6 +235,8 @@ class Toolbox extends Component<Props> {
             = this._onToolbarToggleScreenshare.bind(this);
         this._onToolbarToggleSharedVideo
             = this._onToolbarToggleSharedVideo.bind(this);
+        this._onToolbarToggleLocalRecordingInfoDialog
+            = this._onToolbarToggleLocalRecordingInfoDialog.bind(this);
     }
 
     /**
@@ -369,6 +379,11 @@ class Toolbox extends Component<Props> {
                         visible = { this._shouldShowButton('camera') } />
                 </div>
                 <div className = 'button-group-right'>
+                    <LocalRecordingButton
+                        isDialogShown = { this.props._localRecState.showDialog }
+                        onClick = {
+                            this._onToolbarToggleLocalRecordingInfoDialog
+                        } />
                     { this._shouldShowButton('invite')
                         && !_hideInviteButton
                         && <ToolbarButton
@@ -839,6 +854,18 @@ class Toolbox extends Component<Props> {
         this._doToggleSharedVideo();
     }
 
+    _onToolbarToggleLocalRecordingInfoDialog: () => void;
+
+    /**
+     * Switches local recording on or off.
+     *
+     * @private
+     * @returns {void}
+     */
+    _onToolbarToggleLocalRecordingInfoDialog() {
+        this.props.dispatch(toggleLocalRecordingInfoDialog());
+    }
+
     /**
      * Renders a button for toggleing screen sharing.
      *
@@ -1021,6 +1048,7 @@ function _mapStateToProps(state) {
     const localVideo = getLocalVideoTrack(state['features/base/tracks']);
     const addPeopleEnabled = isAddPeopleEnabled(state);
     const dialOutEnabled = isDialOutEnabled(state);
+    const localRecordingStates = state['features/local-recording'];
 
     let desktopSharingDisabledTooltipKey;
 
@@ -1059,6 +1087,7 @@ function _mapStateToProps(state) {
         _fullScreen: fullScreen,
         _localParticipantID: localParticipant.id,
         _overflowMenuVisible: overflowMenuVisible,
+        _localRecState: localRecordingStates,
         _raisedHand: localParticipant.raisedHand,
         _screensharing: localVideo && localVideo.videoType === 'desktop',
         _transcribingEnabled: transcribingEnabled,
