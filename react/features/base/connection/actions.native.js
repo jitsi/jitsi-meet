@@ -126,7 +126,7 @@ export function connect(id: ?string, password: ?string) {
             connection.removeEventListener(
                 JitsiConnectionEvents.CONNECTION_ESTABLISHED,
                 _onConnectionEstablished);
-            dispatch(connectionEstablished(connection));
+            dispatch(connectionEstablished(connection, Date.now()));
         }
 
         /**
@@ -197,16 +197,20 @@ function _connectionDisconnected(connection: Object, message: string) {
  *
  * @param {JitsiConnection} connection - The {@code JitsiConnection} which was
  * established.
+ * @param {number} timeEstablished - The time when connection was established.
  * @public
  * @returns {{
  *     type: CONNECTION_ESTABLISHED,
- *     connection: JitsiConnection
+ *     connection: JitsiConnection,
+ *     timeEstablished: number
  * }}
  */
-export function connectionEstablished(connection: Object) {
+export function connectionEstablished(
+        connection: Object, timeEstablished: number) {
     return {
         type: CONNECTION_ESTABLISHED,
-        connection
+        connection,
+        timeEstablished
     };
 }
 
