@@ -10,7 +10,8 @@ export type AudioElement = {
     currentTime?: number,
     pause: () => void,
     play: () => void,
-    setSinkId?: string => void
+    setSinkId?: string => void,
+    stop: () => void
 };
 
 /**
@@ -61,8 +62,6 @@ export default class AbstractAudio extends Component<Props> {
         this.setAudioElementImpl = this.setAudioElementImpl.bind(this);
     }
 
-    pause: () => void;
-
     /**
      * Attempts to pause the playback of the media.
      *
@@ -73,10 +72,8 @@ export default class AbstractAudio extends Component<Props> {
         this._audioElementImpl && this._audioElementImpl.pause();
     }
 
-    play: () => void;
-
     /**
-     * Attempts to being the playback of the media.
+     * Attempts to begin the playback of the media.
      *
      * @public
      * @returns {void}
@@ -106,8 +103,6 @@ export default class AbstractAudio extends Component<Props> {
         typeof setRef === 'function' && setRef(element ? this : null);
     }
 
-    setSinkId: string => void;
-
     /**
      * Sets the sink ID (output device ID) on the underlying audio element.
      * NOTE: Currently, implemented only on Web.
@@ -119,5 +114,15 @@ export default class AbstractAudio extends Component<Props> {
         this._audioElementImpl
             && typeof this._audioElementImpl.setSinkId === 'function'
             && this._audioElementImpl.setSinkId(sinkId);
+    }
+
+    /**
+     * Attempts to stop the playback of the media.
+     *
+     * @public
+     * @returns {void}
+     */
+    stop(): void {
+        this._audioElementImpl && this._audioElementImpl.stop();
     }
 }
