@@ -49,7 +49,7 @@ export type ConnectionFailedError = {
     /**
      * The details about the connection failed event.
      */
-    details?: string,
+    details?: Object,
 
     /**
      * Error message.
@@ -126,7 +126,7 @@ export function connect(id: ?string, password: ?string) {
             connection.removeEventListener(
                 JitsiConnectionEvents.CONNECTION_ESTABLISHED,
                 _onConnectionEstablished);
-            dispatch(connectionEstablished(connection));
+            dispatch(connectionEstablished(connection, Date.now()));
         }
 
         /**
@@ -138,16 +138,21 @@ export function connect(id: ?string, password: ?string) {
          * used to authenticate and the authentication failed.
          * @param {string} [credentials.jid] - The XMPP user's ID.
          * @param {string} [credentials.password] - The XMPP user's password.
+         * @param {Object} details - Additional information about the error.
          * @private
          * @returns {void}
          */
-        function _onConnectionFailed(
-                err: string, msg: string, credentials: Object) {
+        function _onConnectionFailed( // eslint-disable-line max-params
+                err: string,
+                msg: string,
+                credentials: Object,
+                details: Object) {
             unsubscribe();
             dispatch(
                 connectionFailed(
                     connection, {
                         credentials,
+                        details,
                         name: err,
                         message: msg
                     }
@@ -197,16 +202,21 @@ function _connectionDisconnected(connection: Object, message: string) {
  *
  * @param {JitsiConnection} connection - The {@code JitsiConnection} which was
  * established.
+ * @param {number} timeEstablished - The time at which the
+ * {@code JitsiConnection} which was established.
  * @public
  * @returns {{
  *     type: CONNECTION_ESTABLISHED,
- *     connection: JitsiConnection
+ *     connection: JitsiConnection,
+ *     timeEstablished: number
  * }}
  */
-export function connectionEstablished(connection: Object) {
+export function connectionEstablished(
+        connection: Object, timeEstablished: number) {
     return {
         type: CONNECTION_ESTABLISHED,
-        connection
+        connection,
+        timeEstablished
     };
 }
 

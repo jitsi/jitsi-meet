@@ -7,13 +7,13 @@ import {
     createPageReloadScheduledEvent,
     sendAnalytics
 } from '../../analytics';
+import { reloadNow } from '../../app';
 import {
     isFatalJitsiConferenceError,
     isFatalJitsiConnectionError
 } from '../../base/lib-jitsi-meet';
 import { randomInt } from '../../base/util';
 
-import { _reloadNow } from '../actions';
 import ReloadButton from './ReloadButton';
 
 declare var APP: Object;
@@ -215,7 +215,7 @@ export default class AbstractPageReloadOverlay extends Component<*, *> {
                             this._interval = undefined;
                         }
 
-                        this.props.dispatch(_reloadNow());
+                        this.props.dispatch(reloadNow());
                     } else {
                         this.setState(prevState => {
                             return {

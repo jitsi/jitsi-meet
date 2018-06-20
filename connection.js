@@ -132,7 +132,7 @@ function connect(id, password, roomName) {
          *
          */
         function handleConnectionEstablished() {
-            APP.store.dispatch(connectionEstablished(connection));
+            APP.store.dispatch(connectionEstablished(connection, Date.now()));
             unsubscribe();
             resolve(connection);
         }
