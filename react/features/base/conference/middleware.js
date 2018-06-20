@@ -108,6 +108,13 @@ MiddlewareRegistry.register(store => next => action => {
 function _conferenceFailed(store, next, action) {
     const result = next(action);
 
+    // FIXME: Workaround for the web version. Currently, the creation of the
+    // conference is handled by /conference.js and appropriate failure handlers
+    // are set there.
+    if (typeof APP !== 'undefined') {
+        return result;
+    }
+
     // XXX After next(action), it is clear whether the error is recoverable.
     const { conference, error } = action;
 
