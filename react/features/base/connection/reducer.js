@@ -57,7 +57,9 @@ ReducerRegistry.register(
 function _connectionDisconnected(
         state: Object,
         { connection }: { connection: Object }) {
-    if (state.connection !== connection) {
+    const connection_ = _getCurrentConnection(state);
+
+    if (connection_ !== connection) {
         return state;
     }
 
@@ -104,11 +106,7 @@ function _connectionFailed(
             connection: Object,
             error: ConnectionFailedError
         }) {
-
-    // The current (similar to getCurrentConference in
-    // base/conference/functions.js) connection which is connecting or
-    // connected:
-    const connection_ = state.connection || state.connecting;
+    const connection_ = _getCurrentConnection(state);
 
     if (connection_ && connection_ !== connection) {
         return state;
@@ -139,6 +137,11 @@ function _connectionWillConnect(
         { connection }: { connection: Object }) {
     return assign(state, {
         connecting: connection,
+
+        // We don't care if the previous connection has been closed already,
+        // because it's an async process and there's no guarantee if it'll be
+        // done before the new one is established.
+        connection: undefined,
         error: undefined,
         passwordRequired: undefined
     });
@@ -186,6 +189,19 @@ function _constructOptions(locationURL: URL) {
             muc: `conference.${domain}`
         }
     };
+}
+
+/**
+ * The current (similar to getCurrentConference in base/conference/functions.js)
+ * connection which is {@code connection} or {@code connecting}.
+ *
+ * @param {Object} baseConnectionState - The current state of the
+ * {@code 'base/connection'} feature.
+ * @returns {JitsiConnection} - The current {@code JitsiConnection} if any.
+ * @private
+ */
+function _getCurrentConnection(baseConnectionState: Object): ?Object {
+    return baseConnectionState.connection || baseConnectionState.connecting;
 }
 
 /**
