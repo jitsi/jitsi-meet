@@ -146,7 +146,7 @@ module.exports = [
             ],
 
             'device_selection_popup_bundle':
-                './react/features/device-selection/popup.js',
+                './react/features/settings/popup.js',
 
             'alwaysontop':
                 './react/features/always-on-top/index.js',

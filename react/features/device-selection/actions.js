@@ -1,5 +1,3 @@
-/* globals APP, interfaceConfig */
-
 import { API_ID } from '../../../modules/API/constants';
 import {
     PostMessageTransportBackend,
@@ -12,66 +10,18 @@ import {
     setAudioOutputDevice,
     setVideoInputDevice
 } from '../base/devices';
-import { openDialog } from '../base/dialog';
 import { i18next } from '../base/i18n';
 import JitsiMeetJS from '../base/lib-jitsi-meet';
 
 import { SET_DEVICE_SELECTION_POPUP_DATA } from './actionTypes';
-import { DeviceSelectionDialog } from './components';
-
-/**
- * Open DeviceSelectionDialog with a configuration based on the environment's
- * supported abilities.
- *
- * @returns {Function}
- */
-export function openDeviceSelectionDialog() {
-    return dispatch => {
-        if (interfaceConfig.filmStripOnly) {
-            dispatch(_openDeviceSelectionDialogInPopup());
-        } else {
-            dispatch(_openDeviceSelectionDialogHere());
-        }
-    };
-}
-
-/**
- * Opens the DeviceSelectionDialog in the same window.
- *
- * @returns {Function}
- */
-function _openDeviceSelectionDialogHere() {
-    return dispatch =>
-        JitsiMeetJS.mediaDevices.isDeviceListAvailable()
-            .then(isDeviceListAvailable => {
-                const settings = APP.store.getState()['features/base/settings'];
-
-                dispatch(openDialog(DeviceSelectionDialog, {
-                    currentAudioInputId: settings.micDeviceId,
-                    currentAudioOutputId: getAudioOutputDeviceId(),
-                    currentVideoInputId: settings.cameraDeviceId,
-                    disableAudioInputChange:
-                        !JitsiMeetJS.isMultipleAudioInputSupported(),
-                    disableDeviceChange: !isDeviceListAvailable
-                        || !JitsiMeetJS.mediaDevices.isDeviceChangeAvailable(),
-                    hasAudioPermission: JitsiMeetJS.mediaDevices
-                        .isDevicePermissionGranted.bind(null, 'audio'),
-                    hasVideoPermission: JitsiMeetJS.mediaDevices
-                        .isDevicePermissionGranted.bind(null, 'video'),
-                    hideAudioInputPreview:
-                        !JitsiMeetJS.isCollectingLocalStats(),
-                    hideAudioOutputSelect: !JitsiMeetJS.mediaDevices
-                        .isDeviceChangeAvailable('output')
-                }));
-            });
-}
+import { getDeviceSelectionDialogProps } from './functions';
 
 /**
  * Opens a popup window with the device selection dialog in it.
  *
  * @returns {Function}
  */
-function _openDeviceSelectionDialogInPopup() {
+export function openDeviceSelectionPopup() {
     return (dispatch, getState) => {
         const { popupDialogData } = getState()['features/device-selection'];
 
@@ -216,5 +166,38 @@ function _setDeviceSelectionPopupData(popupDialogData) {
     return {
         type: SET_DEVICE_SELECTION_POPUP_DATA,
         popupDialogData
+    };
+}
+
+/**
+ * Submits the settings related to device selection.
+ *
+ * @param {Object} newState - The new settings.
+ * @returns {Function}
+ */
+export function submitDeviceSelectionTab(newState) {
+    return (dispatch, getState) => {
+        const currentState = getDeviceSelectionDialogProps(getState());
+
+        if (newState.selectedVideoInputId
+            && newState.selectedVideoInputId
+                !== currentState.selectedVideoInputId) {
+            dispatch(
+                setVideoInputDevice(newState.selectedVideoInputId));
+        }
+
+        if (newState.selectedAudioInputId
+                && newState.selectedAudioInputId
+                  !== currentState.selectedAudioInputId) {
+            dispatch(
+                setAudioInputDevice(newState.selectedAudioInputId));
+        }
+
+        if (newState.selectedAudioOutputId
+                && newState.selectedAudioOutputId
+                    !== currentState.selectedAudioOutputId) {
+            dispatch(
+                setAudioOutputDevice(newState.selectedAudioOutputId));
+        }
     };
 }
