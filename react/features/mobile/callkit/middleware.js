@@ -14,6 +14,7 @@ import {
     CONFERENCE_LEFT,
     CONFERENCE_WILL_JOIN,
     CONFERENCE_JOINED,
+    SET_AUDIO_ONLY,
     getCurrentConference
 } from '../../base/conference';
 import { getInviteURL } from '../../base/connection';
@@ -65,6 +66,9 @@ CallKit && MiddlewareRegistry.register(store => next => action => {
 
     case CONFERENCE_WILL_JOIN:
         return _conferenceWillJoin(store, next, action);
+
+    case SET_AUDIO_ONLY:
+        return _setAudioOnly(store, next, action);
 
     case TRACK_ADDED:
     case TRACK_REMOVED:
@@ -247,7 +251,8 @@ function _conferenceWillJoin({ getState }, next, action) {
                     state['features/base/tracks'],
                     MEDIA_TYPE.AUDIO);
 
-            CallKit.updateCall(conference.callUUID, { displayName });
+            // eslint-disable-next-line object-property-newline
+            CallKit.updateCall(conference.callUUID, { displayName, hasVideo });
             CallKit.setMuted(conference.callUUID, muted);
         });
 
@@ -299,6 +304,40 @@ function _onPerformSetMutedCallAction({ callUUID, muted: newValue }) {
             dispatch(setAudioMuted(newValue, /* ensureTrack */ true));
         }
     }
+}
+
+/**
+ * Update CallKit with the audio only state of the conference. When a conference
+ * is in audio only mode we will tell CallKit the call has no video. This
+ * affects how the call is saved in the recent calls list.
+ *
+ * XXX: Note that here we are taking the `audioOnly` value straight from the
+ * action, instead of examining the state. This is intentional, as setting the
+ * audio only involves multiple actions which will be reflected in the state
+ * later, but we are just interested in knowing if the mode is going to be
+ * set or not.
+ *
+ * @param {Store} store - The redux store in which the specified {@code action}
+ * is being dispatched.
+ * @param {Dispatch} next - The redux {@code dispatch} function to dispatch the
+ * specified {@code action} in the specified {@code store}.
+ * @param {Action} action - The redux action which is being dispatched in the
+ * specified {@code store}.
+ * @private
+ * @returns {*} The value returned by {@code next(action)}.
+ */
+function _setAudioOnly({ getState }, next, action) {
+    const result = next(action);
+    const state = getState();
+    const conference = getCurrentConference(state);
+
+    if (conference && conference.callUUID) {
+        CallKit.updateCall(
+            conference.callUUID,
+            { hasVideo: !action.audioOnly });
+    }
+
+    return result;
 }
 
 /**
