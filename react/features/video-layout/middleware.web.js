@@ -12,6 +12,7 @@ import {
     getParticipantById
 } from '../base/participants';
 import { MiddlewareRegistry } from '../base/redux';
+import { TRACK_ADDED } from '../base/tracks';
 
 declare var APP: Object;
 
@@ -62,6 +63,13 @@ MiddlewareRegistry.register(store => next => action => {
             UIEvents.PINNED_ENDPOINT,
             action.participant.id,
             Boolean(action.participant.id));
+        break;
+
+    case TRACK_ADDED:
+        if (!action.track.local) {
+            VideoLayout.onRemoteStreamAdded(action.track.jitsiTrack);
+        }
+
         break;
     }
 

@@ -415,13 +415,6 @@ UI.addLocalStream = track => {
     }
 };
 
-
-/**
- * Show remote stream on UI.
- * @param {JitsiTrack} track stream to show
- */
-UI.addRemoteStream = track => VideoLayout.onRemoteStreamAdded(track);
-
 /**
  * Removed remote stream from UI.
  * @param {JitsiTrack} track stream to remove
