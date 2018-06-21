@@ -22,6 +22,7 @@ import Foundation
 internal final class JMCallKitEmitter: NSObject, CXProviderDelegate {
 
     private var listeners = Set<JMCallKitEventListenerWrapper>()
+    private var pendingMuteActions = Set<UUID>()
 
     internal override init() {}
 
@@ -29,13 +30,10 @@ internal final class JMCallKitEmitter: NSObject, CXProviderDelegate {
 
     func addListener(_ listener: JMCallKitListener) {
         let wrapper = JMCallKitEventListenerWrapper(listener: listener)
-        objc_sync_enter(listeners)
         listeners.insert(wrapper)
-        objc_sync_exit(listeners)
     }
 
     func removeListener(_ listener: JMCallKitListener) {
-        objc_sync_enter(listeners)
         // XXX Constructing a new JMCallKitEventListenerWrapper instance in
         // order to remove the specified listener from listeners is (1) a bit
         // funny (though may make a statement about performance) and (2) not
@@ -58,76 +56,76 @@ internal final class JMCallKitEmitter: NSObject, CXProviderDelegate {
                 listeners.remove($0)
             }
         }
-        objc_sync_exit(listeners)
+    }
+
+    // MARK: - Add mute action
+
+    func addMuteAction(_ actionUUID: UUID) {
+        pendingMuteActions.insert(actionUUID)
     }
 
     // MARK: - CXProviderDelegate
 
     func providerDidReset(_ provider: CXProvider) {
-        objc_sync_enter(listeners)
         listeners.forEach { $0.listener?.providerDidReset?() }
-        objc_sync_exit(listeners)
+        pendingMuteActions.removeAll()
     }
 
     func provider(_ provider: CXProvider, perform action: CXAnswerCallAction) {
-        objc_sync_enter(listeners)
         listeners.forEach {
             $0.listener?.performAnswerCall?(UUID: action.callUUID)
         }
-        objc_sync_exit(listeners)
 
         action.fulfill()
     }
 
     func provider(_ provider: CXProvider, perform action: CXEndCallAction) {
-        objc_sync_enter(listeners)
         listeners.forEach {
             $0.listener?.performEndCall?(UUID: action.callUUID)
         }
-        objc_sync_exit(listeners)
 
         action.fulfill()
     }
 
     func provider(_ provider: CXProvider, perform action: CXSetMutedCallAction) {
-        objc_sync_enter(listeners)
-        listeners.forEach {
-            $0.listener?.performSetMutedCall?(UUID: action.callUUID,
-                                              isMuted: action.isMuted)
+        let uuid = pendingMuteActions.remove(action.uuid)
+
+        // XXX avoid mute actions ping-pong: if the mute action was caused by
+        // the JS side (we requested a transaction) don't call the delegate
+        // method. If it was called by the provder itself (when the user presses
+        // the mute button in the CallKit view) then call the delegate method.
+        if (uuid == nil) {
+            listeners.forEach {
+                $0.listener?.performSetMutedCall?(UUID: action.callUUID,
+                                                isMuted: action.isMuted)
+            }
         }
-        objc_sync_exit(listeners)
 
         action.fulfill()
     }
 
     func provider(_ provider: CXProvider, perform action: CXStartCallAction) {
-        objc_sync_enter(listeners)
         listeners.forEach {
             $0.listener?.performStartCall?(UUID: action.callUUID,
                                            isVideo: action.isVideo)
         }
-        objc_sync_exit(listeners)
 
         action.fulfill()
     }
 
     func provider(_ provider: CXProvider,
                   didActivate audioSession: AVAudioSession) {
-        objc_sync_enter(listeners)
         listeners.forEach {
             $0.listener?.providerDidActivateAudioSession?(session: audioSession)
         }
-        objc_sync_exit(listeners)
     }
 
     func provider(_ provider: CXProvider,
                   didDeactivate audioSession: AVAudioSession) {
-        objc_sync_enter(listeners)
         listeners.forEach {
             $0.listener?.providerDidDeactivateAudioSession?(
                 session: audioSession)
         }
-        objc_sync_exit(listeners)
     }
 }
 
