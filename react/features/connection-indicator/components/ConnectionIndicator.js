@@ -16,7 +16,7 @@ import statsEmitter from '../statsEmitter';
  *
  * @type {number}
  */
-const INDICATOR_DISPLAY_THRESHOLD = 70;
+const INDICATOR_DISPLAY_THRESHOLD = 30;
 
 /**
  * An array of display configurations for the connection indicator and its bars.
@@ -38,7 +38,7 @@ const QUALITY_TO_WIDTH = [
     // 2 bars
     {
         colorClass: 'status-med',
-        percent: 40,
+        percent: 10,
         tip: 'connectionindicator.quality.nonoptimal',
         width: '66%'
     },
