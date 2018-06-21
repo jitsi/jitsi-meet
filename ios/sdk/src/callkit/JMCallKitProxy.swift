@@ -18,6 +18,8 @@ import CallKit
 import Foundation
 
 /// JitsiMeet CallKit proxy
+// NOTE: The methods this class exposes are meant to be called in the UI thread.
+// All delegate methods called by JMCallKitEmitter will be called in the UI thread.
 @available(iOS 10.0, *)
 @objc public final class JMCallKitProxy: NSObject {
 
@@ -150,6 +152,14 @@ import Foundation
             _ transaction: CXTransaction,
             completion: @escaping (Error?) -> Swift.Void) {
         guard enabled else { return }
+
+        // XXX keep track of muted actions to avoid "ping-pong"ing. See
+        // JMCallKitEmitter for details on the CXSetMutedCallAction handling.
+        for action in transaction.actions {
+            if (action as? CXSetMutedCallAction) != nil {
+                emitter.addMuteAction(action.uuid)
+            }
+        }
 
         callController.request(transaction, completion: completion)
     }

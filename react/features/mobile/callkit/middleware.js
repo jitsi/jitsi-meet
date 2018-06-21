@@ -286,23 +286,14 @@ function _onPerformEndCallAction({ callUUID }) {
  * {@code performSetMutedCallAction}.
  * @returns {void}
  */
-function _onPerformSetMutedCallAction({ callUUID, muted: newValue }) {
+function _onPerformSetMutedCallAction({ callUUID, muted }) {
     const { dispatch, getState } = this; // eslint-disable-line no-invalid-this
     const conference = getCurrentConference(getState);
 
     if (conference && conference.callUUID === callUUID) {
-        // Break the loop. Audio can be muted from both CallKit and Jitsi Meet.
-        // We must keep them in sync, but at some point the loop needs to be
-        // broken. We are doing it here, on the CallKit handler.
-        const tracks = getState()['features/base/tracks'];
-        const oldValue = isLocalTrackMuted(tracks, MEDIA_TYPE.AUDIO);
-
-        newValue = Boolean(newValue); // eslint-disable-line no-param-reassign
-
-        if (oldValue !== newValue) {
-            sendAnalytics(createTrackMutedEvent('audio', 'callkit', newValue));
-            dispatch(setAudioMuted(newValue, /* ensureTrack */ true));
-        }
+        muted = Boolean(muted); // eslint-disable-line no-param-reassign
+        sendAnalytics(createTrackMutedEvent('audio', 'callkit', muted));
+        dispatch(setAudioMuted(muted, /* ensureTrack */ true));
     }
 }
 
