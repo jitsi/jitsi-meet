@@ -380,11 +380,11 @@ function _setCallKitSubscriptions({ getState }, next, action) {
  */
 function _syncTrackState({ getState }, next, action) {
     const result = next(action);
-    const { track } = action;
+    const { jitsiTrack } = action.track;
     const state = getState();
     const conference = getCurrentConference(state);
 
-    if (track.local && conference && conference.callUUID) {
+    if (jitsiTrack.isLocal() && conference && conference.callUUID) {
         const tracks = state['features/base/tracks'];
         const muted = isLocalTrackMuted(tracks, MEDIA_TYPE.AUDIO);
 
