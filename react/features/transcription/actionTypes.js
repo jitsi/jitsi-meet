@@ -16,9 +16,8 @@ export const ADD_TRANSCRIPT_MESSAGE = Symbol('ADD_TRANSCRIPT_MESSAGE');
  *
  * {
  *     type: ENDPOINT_MESSAGE_RECEIVED,
- *     conference: JitsiConference,
  *     participant: Object,
- *     payload: Object
+ *     json: Object
  * }
  */
 export const ENDPOINT_MESSAGE_RECEIVED = Symbol('ENDPOINT_MESSAGE_RECEIVED');
@@ -37,7 +36,6 @@ export const REMOVE_TRANSCRIPT_MESSAGE = Symbol('REMOVE_TRANSCRIPT_MESSAGE');
 /**
  * The type of (redux) action which indicates that a transcript with an
  * existing message_id to be updated is received.
- * is received.
  *
  * {
  *      type: UPDATE_TRANSCRIPT_MESSAGE,
