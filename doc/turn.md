@@ -1,6 +1,6 @@
 One-to-one calls should avoid going throught the JVB for optimal performance and for optimal resource usage. This is why we've added the peer-to-peer mode where the two participants connect directly to each other. Unfortunately, a direct connection is not always possible between the participants. In those cases you can use a TURN server to relay the traffic (n.b. the JVB does much more than just relay the traffic, so this is not the same as using the JVB to "relay" the traffic).
 
-This document describes how to enable TURN server support in one-to-one calls in Jitsi Meet. Even tho it gives some hints how to configure [prosody](prosody.im) and [coTURN](https://github.com/coturn/coturn), it assumes a properly configured TURN server and a proprely configured XMPP server.
+This document describes how to enable TURN server support in one-to-one calls in Jitsi Meet, even though it gives some hints how to configure [prosody](prosody.im) and [coTURN](https://github.com/coturn/coturn), it assumes a properly configured TURN server and a proprely configured XMPP server.
 
 One way to configure TURN support in meet with a static configuration. You can simply fill out the `p2p.stunServers` option with appropriate values, e.g.:
 
