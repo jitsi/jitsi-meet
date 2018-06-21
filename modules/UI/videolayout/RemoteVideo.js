@@ -489,14 +489,20 @@ RemoteVideo.prototype.addRemoteStreamElement = function(stream) {
     }
 
     const isVideo = stream.isVideoTrack();
+    const originalStream = stream.getOriginalStream();
+    const isMuted = stream.isMuted() || !originalStream;
 
     isVideo ? this.videoStream = stream : this.audioStream = stream;
 
     if (isVideo) {
         this.setVideoType(stream.videoType);
+        this.setVideoMutedView(isMuted);
+    } else {
+        this.showAudioIndicator(isMuted);
+        this.updateRemoteVideoMenu(isMuted);
     }
 
-    if (!stream.getOriginalStream()) {
+    if (!originalStream) {
         return;
     }
 
