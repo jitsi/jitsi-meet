@@ -385,13 +385,22 @@ function _syncTrackState({ getState }, next, action) {
     const conference = getCurrentConference(state);
 
     if (jitsiTrack.isLocal() && conference && conference.callUUID) {
-        const tracks = state['features/base/tracks'];
-        const muted = isLocalTrackMuted(tracks, MEDIA_TYPE.AUDIO);
+        switch (jitsiTrack.getType()) {
+        case 'audio': {
+            const tracks = state['features/base/tracks'];
+            const muted = isLocalTrackMuted(tracks, MEDIA_TYPE.AUDIO);
 
-        CallKit.setMuted(conference.callUUID, muted);
-        CallKit.updateCall(
-            conference.callUUID,
-            { hasVideo: !isVideoMutedByAudioOnly(state) });
+            CallKit.setMuted(conference.callUUID, muted);
+            break;
+        }
+        case 'video': {
+            CallKit.updateCall(
+                conference.callUUID,
+                { hasVideo: !isVideoMutedByAudioOnly(state) });
+            break;
+        }
+
+        }
     }
 
     return result;
