@@ -41,7 +41,7 @@ type Props = {
     /**
      * The URL for a currently active live broadcast
      */
-    _liveStreamViewURL: string,
+    _liveStreamViewURL: ?string,
 
     /**
      * The number of real participants in the call. If in a lonely call, the
@@ -57,7 +57,7 @@ type Props = {
     /**
      * Invoked to toggle display of the info dialog.
      */
-    dispatch: Function,
+    dispatch: Dispatch<*>,
 
     /**
      * Invoked to obtain translated strings.
