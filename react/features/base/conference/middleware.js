@@ -287,7 +287,7 @@ function _pinParticipant({ getState }, next, action) {
     let pin;
 
     if (participantById) {
-        pin = !participantById.local && !participantById.isBot;
+        pin = !participantById.local && !participantById.isFakeParticipant;
     } else {
         const localParticipant = getLocalParticipant(participants);
 

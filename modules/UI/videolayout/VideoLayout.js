@@ -447,7 +447,7 @@ const VideoLayout = {
     addRemoteParticipantContainer(participant) {
         if (!participant || participant.local) {
             return;
-        } else if (participant.isBot) {
+        } else if (participant.isFakeParticipant) {
             const sharedVideoThumb = new SharedVideoThumb(
                 participant,
                 SHARED_VIDEO_CONTAINER_TYPE,
