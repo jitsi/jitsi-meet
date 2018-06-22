@@ -3,6 +3,7 @@
 import VideoLayout from '../../../modules/UI/videolayout/VideoLayout.js';
 import UIEvents from '../../../service/UI/UIEvents';
 
+import { CONFERENCE_JOINED } from '../base/conference';
 import {
     DOMINANT_SPEAKER_CHANGED,
     PARTICIPANT_JOINED,
@@ -12,6 +13,7 @@ import {
     getParticipantById
 } from '../base/participants';
 import { MiddlewareRegistry } from '../base/redux';
+import { TRACK_ADDED } from '../base/tracks';
 
 declare var APP: Object;
 
@@ -30,6 +32,10 @@ MiddlewareRegistry.register(store => next => action => {
     const result = next(action);
 
     switch (action.type) {
+    case CONFERENCE_JOINED:
+        VideoLayout.mucJoined();
+        break;
+
     case PARTICIPANT_JOINED:
         if (!action.participant.local) {
             VideoLayout.addRemoteParticipantContainer(
@@ -62,6 +68,13 @@ MiddlewareRegistry.register(store => next => action => {
             UIEvents.PINNED_ENDPOINT,
             action.participant.id,
             Boolean(action.participant.id));
+        break;
+
+    case TRACK_ADDED:
+        if (!action.track.local) {
+            VideoLayout.onRemoteStreamAdded(action.track.jitsiTrack);
+        }
+
         break;
     }
 

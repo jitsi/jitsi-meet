@@ -267,16 +267,6 @@ UI.initConference = function() {
     followMeHandler = new FollowMe(APP.conference, UI);
 };
 
-UI.mucJoined = function() {
-    VideoLayout.mucJoined();
-
-    // Update local video now that a conference is joined a user ID should be
-    // set.
-    UI.changeDisplayName(
-        'localVideoContainer',
-        APP.conference.getLocalDisplayName());
-};
-
 /** *
  * Handler for toggling filmstrip
  */
@@ -414,13 +404,6 @@ UI.addLocalStream = track => {
         break;
     }
 };
-
-
-/**
- * Show remote stream on UI.
- * @param {JitsiTrack} track stream to show
- */
-UI.addRemoteStream = track => VideoLayout.onRemoteStreamAdded(track);
 
 /**
  * Removed remote stream from UI.
