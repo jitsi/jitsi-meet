@@ -19,17 +19,6 @@
     vertical-align: middle;
 }
 
-.use-new-toolbox {
-    .cxGWJB{
-        bottom: calc(#{$newToolbarSizeWithPadding});
-    }
-    .gXSEsl:nth-child(n+2) {
-        transform: translateX(0) translateY(100%) translateY(16px);
-        -ms-transform: translateX(0) translateY(100%) translateY(16px);
-        -webkit-transform: translateX(0) translateY(100%) translateY(16px);
-    }
-}
-
 /**
  * TODO: when the old filmstrip has been removed, remove the "new-" prefix.
  */

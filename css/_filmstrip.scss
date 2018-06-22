@@ -5,27 +5,18 @@
     justify-content: flex-start;
 }
 
-.use-new-toolbox {
-    .filmstrip.reduce-height {
-        bottom: $newToolbarSizeWithPadding;
-    }
-
-    .filmstrip {
-        transition: bottom .3s;
-    }
-
-    .filmstrip__videos.hidden {
-        bottom: calc(-196px - #{$newToolbarSizeWithPadding});
-    }
-}
-
 .filmstrip {
     position: absolute;
     bottom: 0;
     right: 0;
     padding: 10px 5px;
     @extend %align-right;
+    transition: bottom .3s;
     z-index: $filmstripVideosZ;
+
+    &.reduce-height {
+        bottom: $newToolbarSizeWithPadding;
+    }
 
     &__toolbar {
         @include flex();
@@ -83,7 +74,7 @@
         }
 
         &.hidden {
-            bottom: -196px;
+            bottom: calc(-196px - #{$newToolbarSizeWithPadding});
         }
 
         .remote-videos-container {

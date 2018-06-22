@@ -108,7 +108,9 @@ class Filmstrip extends Component<*> {
         // will get updated without replacing the DOM. If the known DOM gets
         // modified, then the views will get blown away.
         const reduceHeight
-            = _toolboxVisible && interfaceConfig.TOOLBAR_BUTTONS.length;
+            = !_filmstripOnly
+            && _toolboxVisible
+            && interfaceConfig.TOOLBAR_BUTTONS.length;
         const classNames
             = `filmstrip ${
                 _remoteVideosVisible ? '' : 'hide-videos'} ${

@@ -6,7 +6,7 @@
 #chatconversation {
     visibility: hidden;
     position: relative;
-    top: 5px;
+    top: 15px;
     padding: 5px;
     text-align: left;
     line-height: 20px;
@@ -60,37 +60,7 @@
 }
 
 .localuser {
-    color: #087dba;
-}
-.use-new-toolbox {
-    .chatmessage {
-        color: white;
-    }
-
-    .localuser {
-        color: #4C9AFF;
-    }
-
-    .remoteuser {
-        color: #B8C7E0;
-    }
-
-    #usermsg {
-        color: white;
-    }
-
-    .chatmessage,
-    #smileysarea,
-    #smileysContainer,
-    #usermsg {
-        background-color: $newToolbarBackgroundColor;
-    }
-
-    .smileyContainer:hover {
-        background-color: $newToolbarButtonToggleColor;
-        border-radius: 5px;
-        cursor: pointer;
-    }
+    color: #4C9AFF
 }
 
 .errorMessage {
@@ -98,10 +68,11 @@
 }
 
 .remoteuser {
-    color: white;
+    color: #B8C7E0;
 }
 
 #usermsg {
+    background-color: $newToolbarBackgroundColor;
     visibility:hidden;
     position: absolute;
     bottom: 0px;
@@ -112,8 +83,7 @@
     max-height:150px;
     min-height:35px;
     border: 0px none;
-    background: #3a3a3a;
-    color: #a7a7a7;
+    color: white;
     box-shadow: none;
     border-radius:0;
     font-size: 10pt;
@@ -183,7 +153,7 @@
 }
 
 .chatmessage {
-    background: #3a3a3a;
+    background-color: $newToolbarBackgroundColor;;
     width: 93%;
     margin-left: 9px;
     margin-right: auto;
@@ -191,7 +161,7 @@
     border-top-left-radius: 0px;
     margin-top: 3px;
     left: 5px;
-    color: #a7a7a7;
+    color: white;
     overflow: hidden;
     padding-bottom: 3px;
 }
@@ -227,7 +197,7 @@
     max-height:150px;
     min-height:35px;
     border: 0px none;
-    background: #3a3a3a;
+    background-color: $newToolbarBackgroundColor;
     overflow: hidden;
     visibility: hidden;
 }
@@ -239,7 +209,7 @@
 #smileysContainer {
     display: none;
     position: absolute;
-    background: #3a3a3a;
+    background-color: $newToolbarBackgroundColor;
     border-bottom: 1px solid;
     border-top: 1px solid;
     width: 100%;
@@ -257,7 +227,9 @@
 }
 
 .smileyContainer:hover {
-    background: #3e3e3e;
+    background-color: $newToolbarButtonToggleColor;
+    border-radius: 5px;
+    cursor: pointer;
 }
 
 #usermsg::-webkit-input-placeholder {
