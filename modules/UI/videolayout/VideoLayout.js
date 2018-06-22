@@ -350,10 +350,8 @@ const VideoLayout = {
         }
 
         if (stream.isVideoTrack()) {
-            this._updateLargeVideoIfDisplayed(id);
+            this._updateLargeVideoIfDisplayed(id, true);
         }
-
-        this.updateMutedForNoTracks(id, stream.getType());
     },
 
     /**

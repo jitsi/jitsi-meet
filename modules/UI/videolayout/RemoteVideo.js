@@ -340,6 +340,17 @@ RemoteVideo.prototype.removeRemoteStreamElement = function(stream) {
     logger.info(`${isVideo ? 'Video' : 'Audio'
     } removed ${this.id}`, select);
 
+    // Ensure mute state gets updated to reflect the lack of any audio or video
+    // tracks.
+    if (!this.user.getTracksByMediaType(stream.getType()).length) {
+        if (isVideo) {
+            this.setVideoMutedView(true);
+        } else {
+            this.showAudioIndicator(true);
+            this.updateRemoteVideoMenu(true);
+        }
+    }
+
     this.updateView();
 };
 
