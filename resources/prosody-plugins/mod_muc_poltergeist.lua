@@ -447,6 +447,7 @@ function original_presence(
 	    from = component.."/"..nick,
    }):tag("x", { xmlns = MUC_NS }):up();
 
+    p:tag("bot", { type = "poltergeist" }):up();
     p:tag("call_cancel"):text(nil):up();
     p:tag("call_id"):text(username):up();
 
