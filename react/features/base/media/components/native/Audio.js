@@ -12,11 +12,10 @@ const logger = require('jitsi-meet-logger').getLogger(__filename);
  * {@link RTCView}.
  */
 export default class Audio extends AbstractAudio {
-
     /**
      * Reference to 'react-native-sound} {@link Sound} instance.
      */
-    _sound: Sound
+    _sound: ?Sound;
 
     /**
      * A callback passed to the 'react-native-sound''s {@link Sound} instance,
@@ -56,9 +55,22 @@ export default class Audio extends AbstractAudio {
      */
     componentWillUnmount() {
         if (this._sound) {
-            this.setAudioElementImpl(null);
             this._sound.release();
             this._sound = null;
+            this.setAudioElementImpl(null);
+        }
+    }
+
+    /**
+     * Attempts to begin the playback of the media.
+     *
+     * @inheritdoc
+     * @override
+     */
+    play() {
+        if (this._sound) {
+            this._sound.setNumberOfLoops(this.props.loop ? -1 : 0);
+            super.play();
         }
     }
 
@@ -81,10 +93,8 @@ export default class Audio extends AbstractAudio {
      * @returns {void}
      */
     stop() {
-        // Currently not implemented for mobile. If needed, a possible
-        // implementation is:
-        // if (this._sound) {
-        //     this._sound.stop();
-        // }
+        if (this._sound) {
+            this._sound.stop();
+        }
     }
 }

@@ -15,6 +15,7 @@ import {
     participantConnectionStatusChanged,
     participantJoined,
     participantLeft,
+    participantPresenceChanged,
     participantRoleChanged,
     participantUpdated
 } from '../participants';
@@ -146,6 +147,7 @@ function _addConferenceListeners(conference, dispatch) {
             conference,
             id,
             name: user.getDisplayName(),
+            presence: user.getStatus(),
             role: user.getRole()
         })));
     conference.on(
@@ -155,6 +157,9 @@ function _addConferenceListeners(conference, dispatch) {
     conference.on(
         JitsiConferenceEvents.USER_ROLE_CHANGED,
         (...args) => dispatch(participantRoleChanged(...args)));
+    conference.on(
+        JitsiConferenceEvents.USER_STATUS_CHANGED,
+        (...args) => dispatch(participantPresenceChanged(...args)));
 
     conference.addCommandListener(
         AVATAR_ID_COMMAND,
