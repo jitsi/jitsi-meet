@@ -584,25 +584,6 @@ const VideoLayout = {
     },
 
     /**
-     * Shows/hides the indication about local connection being interrupted.
-     *
-     * @param {boolean} isInterrupted <tt>true</tt> if local connection is
-     * currently in the interrupted state or <tt>false</tt> if the connection
-     * is fine.
-     */
-    showLocalConnectionInterrupted(isInterrupted) {
-        // Currently local video thumbnail displays only "active" or
-        // "interrupted" despite the fact that ConnectionIndicator supports more
-        // states.
-        const status
-            = isInterrupted
-                ? JitsiParticipantConnectionStatus.INTERRUPTED
-                : JitsiParticipantConnectionStatus.ACTIVE;
-
-        localVideoThumbnail.updateConnectionStatus(status);
-    },
-
-    /**
      * Resizes thumbnails.
      */
     resizeThumbnails(
@@ -715,22 +696,31 @@ const VideoLayout = {
     },
 
     /**
-     * Shows/hides warning about remote user's connectivity issues.
+     * Shows/hides warning about a user's connectivity issues.
      *
-     * @param {string} id the ID of the remote participant(MUC nickname)
+     * @param {string} id - The ID of the remote participant(MUC nickname).
+     * @param {status} status - The new connection status.
+     * @returns {void}
      */
-    // eslint-disable-next-line no-unused-vars
-    onParticipantConnectionStatusChanged(id) {
-        // Show/hide warning on the large video
-        if (this.isCurrentlyOnLarge(id)) {
-            if (largeVideo) {
-                // We have to trigger full large video update to transition from
-                // avatar to video on connectivity restored.
-                this.updateLargeVideo(id, true /* force update */);
+    onParticipantConnectionStatusChanged(id, status) {
+        if (APP.conference.isLocalId(id)) {
+            // Maintain old logic of passing in either interrupted or active
+            // to updateConnectionStatus.
+            localVideoThumbnail.updateConnectionStatus(status);
+
+            if (status === JitsiParticipantConnectionStatus.INTERRUPTED) {
+                largeVideo && largeVideo.onVideoInterrupted();
+            } else {
+                largeVideo && largeVideo.onVideoRestored();
             }
+
+            return;
         }
 
-        // Show/hide warning on the thumbnail
+        // We have to trigger full large video update to transition from
+        // avatar to video on connectivity restored.
+        this._updateLargeVideoIfDisplayed(id, true);
+
         const remoteVideo = remoteVideos[id];
 
         if (remoteVideo) {
@@ -902,24 +892,6 @@ const VideoLayout = {
         }
         if (this.isCurrentlyOnLarge(id)) {
             largeVideo.updateAvatar(avatarUrl);
-        }
-    },
-
-    /**
-     * Indicates that the video has been interrupted.
-     */
-    onVideoInterrupted() {
-        if (largeVideo) {
-            largeVideo.onVideoInterrupted();
-        }
-    },
-
-    /**
-     * Indicates that the video has been restored.
-     */
-    onVideoRestored() {
-        if (largeVideo) {
-            largeVideo.onVideoRestored();
         }
     },
 
@@ -1176,11 +1148,13 @@ const VideoLayout = {
      *
      * @param {string} participantId - The participant ID that should trigger an
      * update of large video if displayed.
+     * @param {boolean} force - Whether or not the large video update should
+     * happen no matter what.
      * @returns {void}
      */
-    _updateLargeVideoIfDisplayed(participantId) {
+    _updateLargeVideoIfDisplayed(participantId, force = false) {
         if (this.isCurrentlyOnLarge(participantId)) {
-            this.updateLargeVideo(participantId);
+            this.updateLargeVideo(participantId, force);
         }
     }
 };

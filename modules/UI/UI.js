@@ -200,17 +200,6 @@ UI.changeDisplayName = function(id, displayName) {
 };
 
 /**
- * Shows/hides the indication about local connection being interrupted.
- *
- * @param {boolean} isInterrupted <tt>true</tt> if local connection is
- * currently in the interrupted state or <tt>false</tt> if the connection
- * is fine.
- */
-UI.showLocalConnectionInterrupted = function(isInterrupted) {
-    VideoLayout.showLocalConnectionInterrupted(isInterrupted);
-};
-
-/**
  * Sets the "raised hand" status for a participant.
  *
  * @param {string} id - The id of the participant whose raised hand UI should
@@ -772,18 +761,6 @@ UI.setAudioLevel = (id, lvl) => VideoLayout.setAudioLevel(id, lvl);
  */
 UI.hideStats = function() {
     VideoLayout.hideStats();
-};
-
-/**
- * Mark video as interrupted or not.
- * @param {boolean} interrupted if video is interrupted
- */
-UI.markVideoInterrupted = function(interrupted) {
-    if (interrupted) {
-        VideoLayout.onVideoInterrupted();
-    } else {
-        VideoLayout.onVideoRestored();
-    }
 };
 
 /**
