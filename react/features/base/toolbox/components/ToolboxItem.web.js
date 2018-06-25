@@ -61,7 +61,7 @@ export default class ToolboxItem extends AbstractToolboxItem<Props> {
         if (useTooltip) {
             return (
                 <Tooltip
-                    description = { tooltip }
+                    content = { tooltip }
                     position = { tooltipPosition }>
                     { iconWrapper }
                 </Tooltip>
