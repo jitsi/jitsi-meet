@@ -119,6 +119,30 @@
             transform: rotate(-90deg);
         }
 
+        #remoteVideos {
+            @include minHWAutoFix();
+
+            flex-direction: column;
+            flex-grow: 1;
+        }
+    }
+
+    /**
+     * Overrides for small videos in vertical filmstrip mode.
+     */
+    .filmstrip__videos .videocontainer {
+        /**
+         * Move status icons to the bottom right of the thumbnail.
+         */
+        .videocontainer__toolbar {
+            text-align: right;
+
+            .right {
+                float: none;
+                margin: auto;
+            }
+        }
+
         /**
          * Move the remote video menu trigger to the bottom left of the
          * video thumbnail.
@@ -133,27 +157,6 @@
 
         .remote-video-menu-trigger {
             margin-bottom: 7px;
-        }
-
-        #remoteVideos {
-            @include minHWAutoFix();
-
-            flex-direction: column;
-            flex-grow: 1;
-        }
-
-        .videocontainer {
-            /**
-             * Move status icons to the bottom right of the thumbnail.
-             */
-            &__toolbar {
-                text-align: right;
-
-                .right {
-                    float: none;
-                    margin: auto;
-                }
-            }
         }
     }
 
