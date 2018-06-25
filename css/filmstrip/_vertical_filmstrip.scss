@@ -1,0 +1,146 @@
+.vertical-filmstrip .filmstrip {
+    /*
+     * Firefox sets flex items to min-height: auto and min-width: auto,
+     * preventing flex children from shrinking like they do on other browsers.
+     * Setting min-height and min-width 0 is a workaround for the issue so
+     * Firefox behaves like other browsers.
+     * https://bugzilla.mozilla.org/show_bug.cgi?id=1043520
+     */
+    @mixin minHWAutoFix() {
+        min-height: 0;
+        min-width: 0;
+    }
+
+    align-items: flex-end;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column-reverse;
+    height: 100%;
+    /**
+     * fixed positioning is necessary for remote menus and tooltips to pop
+     * out of the scrolling filmstrip. AtlasKit dialogs and tooltips use
+     * a library called popper which will position its elements fixed if
+     * any parent is also fixed.
+     */
+    position: fixed;
+    top: 0;
+    transition: height .3s ease-in;
+    z-index: $filmstripVideosZ;
+
+    &.reduce-height {
+        height: calc(100% - #{$newToolbarSizeWithPadding});
+    }
+
+    /**
+     * Hide videos by making them slight to the right.
+     */
+    .filmstrip__videos {
+        right: 0;
+
+        &.hidden {
+            bottom: auto;
+            right: -196px;
+        }
+
+        /**
+         * An id selector is used to match id specificity with existing
+         * filmstrip styles.
+         */
+        &#remoteVideos {
+            /**
+             * Remove horizontal filmstrip padding used to prevent videos
+             * from overlapping getting near the left-side of the screen.
+             * An id selector is used to match id specificity with filmstrip
+             * styles.
+             */
+            padding-left: 0;
+            transition: right 2s;
+        }
+    }
+
+    /**
+     * Re-styles the local Video to better fit vertical filmstrip layout.
+     */
+    #filmstripLocalVideo {
+        align-self: initial;
+        bottom: 5px;
+        display: flex;
+        flex-direction: column-reverse;
+        height: auto;
+        justify-content: flex-start;
+    }
+
+    /**
+     * Remove unnecssary padding that is normally used to prevent horizontal
+     * filmstrip from overlapping the left edge of the screen.
+     */
+    #filmstripLocalVideo,
+    #filmstripRemoteVideos {
+        padding: 0;
+    }
+
+    #filmstripRemoteVideos {
+        @include minHWAutoFix();
+
+        display: flex;
+        flex: 1;
+        flex-direction: column;
+        height: auto;
+        justify-content: flex-end;
+
+        #filmstripRemoteVideosContainer {
+            flex-direction: column-reverse;
+            /**
+             * Add padding as a hack for Firefox not to show scrollbars when
+             * unnecessary.
+             */
+            padding: 1px 0;
+            overflow-x: hidden;
+        }
+    }
+
+    #remoteVideos {
+        @include minHWAutoFix();
+
+        flex-direction: column;
+        flex-grow: 1;
+    }
+}
+
+/**
+ * Override other styles to support vertical filmstrip mode.
+ */
+.vertical-filmstrip.filmstrip-only {
+    .filmstrip {
+        flex-direction: row-reverse;
+    }
+    .filmstrip__videos-filmstripOnly {
+        height: 100%;
+    }
+}
+
+/**
+ * Workarounds for Edge and Firefox not handling scrolling properly with
+ * flex-direction: column-reverse. The remove videos in filmstrip should
+ * start scrolling from the bottom of the filmstrip, but in those browsers the
+ * scrolling won't happen. Per W3C spec, scrolling should happen from the
+ * bottom. As such, use css hacks to get around the css issue, with the intent
+ * being to remove the hacks as the spec is supported.
+ */
+@mixin undoColumnReverseVideos() {
+    .vertical-filmstrip {
+        #remoteVideos #filmstripRemoteVideos #filmstripRemoteVideosContainer {
+            flex-direction: column;
+        }
+    }
+}
+
+/** Firefox detection hack **/
+@-moz-document url-prefix() {
+    @include undoColumnReverseVideos();
+}
+
+/** Edge detection hack **/
+@supports (-ms-ime-align:auto) {
+    @include undoColumnReverseVideos();
+}
