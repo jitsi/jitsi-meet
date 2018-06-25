@@ -14,11 +14,6 @@
         min-width: 0;
     }
 
-    #etherpad,
-    #sharedvideo {
-        text-align: left;
-    }
-
     .filmstrip {
         align-items: flex-end;
         box-sizing: border-box;
@@ -135,6 +130,15 @@
             height: 100%;
         }
     }
+}
+
+/**
+ * Overrides for video containers that should not be centered aligned to avoid=
+ * clashing with the filmstrip.
+ */
+.vertical-filmstrip #etherpad,
+.vertical-filmstrip #sharedvideo {
+    text-align: left;
 }
 
 /**
