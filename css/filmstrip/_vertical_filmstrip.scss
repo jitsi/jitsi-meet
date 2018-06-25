@@ -1,4 +1,11 @@
 .vertical-filmstrip .filmstrip {
+    &.hide-videos {
+        .remote-videos-container {
+            opacity: 0;
+            pointer-events: none;
+        }
+    }
+
     /*
      * Firefox sets flex items to min-height: auto and min-width: auto,
      * preventing flex children from shrinking like they do on other browsers.
@@ -11,11 +18,14 @@
         min-width: 0;
     }
 
+    @extend %align-right;
     align-items: flex-end;
+    bottom: 0;
     box-sizing: border-box;
     display: flex;
     flex-direction: column-reverse;
     height: 100%;
+    padding: 10px 5px;
     /**
      * fixed positioning is necessary for remote menus and tooltips to pop
      * out of the scrolling filmstrip. AtlasKit dialogs and tooltips use
@@ -25,6 +35,7 @@
     position: fixed;
     top: 0;
     transition: height .3s ease-in;
+    right: 0;
     z-index: $filmstripVideosZ;
 
     &.reduce-height {
@@ -35,7 +46,13 @@
      * Hide videos by making them slight to the right.
      */
     .filmstrip__videos {
+        @extend %align-right;
+        bottom: 0;
+        overflow: visible !important;
+        padding: 0;
+        position:relative;
         right: 0;
+        width: auto;
 
         &.hidden {
             bottom: auto;
@@ -47,12 +64,7 @@
          * filmstrip styles.
          */
         &#remoteVideos {
-            /**
-             * Remove horizontal filmstrip padding used to prevent videos
-             * from overlapping getting near the left-side of the screen.
-             * An id selector is used to match id specificity with filmstrip
-             * styles.
-             */
+            border: $thumbnailsBorder solid transparent;
             padding-left: 0;
             transition: right 2s;
         }
@@ -105,6 +117,11 @@
         flex-direction: column;
         flex-grow: 1;
     }
+
+    .remote-videos-container {
+        display: flex;
+        transition: opacity 1s;
+    }
 }
 
 /**
@@ -115,7 +132,15 @@
         flex-direction: row-reverse;
     }
     .filmstrip__videos-filmstripOnly {
+        margin-top: auto;
+        margin-bottom: auto;
         height: 100%;
+    }
+
+    .filmstrip__videos {
+        &#filmstripLocalVideo {
+            bottom: 0px;
+        }
     }
 }
 
