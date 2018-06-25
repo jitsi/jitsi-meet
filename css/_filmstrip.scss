@@ -111,24 +111,6 @@
                 display: none;
             }
 
-            .presence-label {
-                color: $participantNameColor;
-                font-size: 12px;
-                font-weight: 100;
-                left: 0;
-                margin: 0 auto;
-                overflow: hidden;
-                pointer-events: none;
-                position: absolute;
-                right: 0;
-                text-align: center;
-                text-overflow: ellipsis;
-                top: calc(50% + 30px);
-                white-space: nowrap;
-                width: 100%;
-                z-index: $zindex3;
-            }
-
             /**
              * Hovered video thumbnail.
              */
