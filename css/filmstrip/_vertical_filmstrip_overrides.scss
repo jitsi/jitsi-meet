@@ -247,12 +247,6 @@
     @include undoColumnReverseVideos();
 }
 
-/** IE11 detection hack **/
-@media screen and (-ms-high-contrast: active),
-screen and (-ms-high-contrast: none) {
-    @include undoColumnReverseVideos();
-}
-
 /** Edge detection hack **/
 @supports (-ms-ime-align:auto) {
     @include undoColumnReverseVideos();
