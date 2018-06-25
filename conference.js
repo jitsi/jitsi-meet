@@ -1785,13 +1785,6 @@ export default {
             id => APP.store.dispatch(dominantSpeakerChanged(id, room)));
 
         if (!interfaceConfig.filmStripOnly) {
-            room.on(JitsiConferenceEvents.CONNECTION_INTERRUPTED, () => {
-                APP.UI.markVideoInterrupted(true);
-            });
-            room.on(JitsiConferenceEvents.CONNECTION_RESTORED, () => {
-                APP.UI.markVideoInterrupted(false);
-            });
-
             if (isButtonEnabled('chat')) {
                 room.on(
                     JitsiConferenceEvents.MESSAGE_RECEIVED,
@@ -1841,15 +1834,11 @@ export default {
         room.on(JitsiConferenceEvents.CONNECTION_INTERRUPTED, () => {
             APP.store.dispatch(localParticipantConnectionStatusChanged(
                 JitsiParticipantConnectionStatus.INTERRUPTED));
-
-            APP.UI.showLocalConnectionInterrupted(true);
         });
 
         room.on(JitsiConferenceEvents.CONNECTION_RESTORED, () => {
             APP.store.dispatch(localParticipantConnectionStatusChanged(
                 JitsiParticipantConnectionStatus.ACTIVE));
-
-            APP.UI.showLocalConnectionInterrupted(false);
         });
 
         room.on(
@@ -2317,7 +2306,6 @@ export default {
                     APP.store.getState(), this._room.myUserId())
             }
         );
-        APP.UI.markVideoInterrupted(false);
     },
 
     /**

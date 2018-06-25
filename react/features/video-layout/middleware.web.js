@@ -53,7 +53,8 @@ MiddlewareRegistry.register(store => next => action => {
         // explicit in order to minimize changes to other code.
         if (typeof action.participant.connectionStatus !== 'undefined') {
             VideoLayout.onParticipantConnectionStatusChanged(
-                action.participant.id);
+                action.participant.id,
+                action.participant.connectionStatus);
         }
         break;
     }
