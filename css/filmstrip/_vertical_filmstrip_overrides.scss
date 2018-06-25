@@ -127,39 +127,6 @@
         }
     }
 
-    /**
-     * Overrides for small videos in vertical filmstrip mode.
-     */
-    .filmstrip__videos .videocontainer {
-        /**
-         * Move status icons to the bottom right of the thumbnail.
-         */
-        .videocontainer__toolbar {
-            text-align: right;
-
-            .right {
-                float: none;
-                margin: auto;
-            }
-        }
-
-        /**
-         * Move the remote video menu trigger to the bottom left of the
-         * video thumbnail.
-         */
-        .remotevideomenu,
-        .remote-video-menu-trigger {
-            bottom: 0;
-            left: 0;
-            top: auto;
-            right: auto;
-        }
-
-        .remote-video-menu-trigger {
-            margin-bottom: 7px;
-        }
-    }
-
     &.filmstrip-only {
         .filmstrip {
             flex-direction: row-reverse;
@@ -168,31 +135,35 @@
             height: 100%;
         }
     }
+}
 
+/**
+ * Overrides for small videos in vertical filmstrip mode.
+ */
+.vertical-filmstrip .filmstrip__videos .videocontainer {
     /**
-     * These styles are for the video labels that display on the top right. The
-     * styles adjust the labels' positioning as the filmstrip itself or
-     * filmstrip's remote videos appear and disappear.
-     *
-     * The class with-filmstrip is for when the filmstrip is visible.
-     * The class without-filmstrip is for when the filmstrip has been toggled to
-     * be hidden.
-     * The class opening is for when the filmstrip is transitioning from hidden
-     * to visible.
+     * Move status icons to the bottom right of the thumbnail.
      */
-    .large-video-labels {
-        &.with-filmstrip {
-            right: 150px;
+    .videocontainer__toolbar {
+        /**
+         * FIXME: disable pointer to allow any elements moved below to still
+         * be clickable. The real fix would to make sure those moved elements
+         * are actually part of the toolbar instead of positioning being faked.
+         */
+        pointer-events: none;
+        text-align: right;
+
+        > div {
+            pointer-events: none;
         }
 
-        &.with-filmstrip.opening {
-            transition: 0.9s;
-            transition-timing-function: ease-in-out;
+        .right {
+            float: none;
+            margin: auto;
         }
 
-        &.without-filmstrip {
-            transition: 1.2s ease-in-out;
-            transition-delay: 0.1s;
+        .toolbar-icon {
+            pointer-events: all;
         }
     }
 
@@ -212,20 +183,46 @@
     }
 
     /**
-     * FIXME: disable pointer to allow any elements moved below to still be
-     * clickable. The real fix would to make sure those moved elements are
-     * actually part of the toolbar instead of positioning being faked.
+     * Move the remote video menu trigger to the bottom left of the video
+     * thumbnail.
      */
-    .videocontainer__toolbar {
-        pointer-events: none;
+    .remotevideomenu,
+    .remote-video-menu-trigger {
+        bottom: 0;
+        left: 0;
+        top: auto;
+        right: auto;
+    }
 
-        > div {
-            pointer-events: none;
-        }
+    .remote-video-menu-trigger {
+        margin-bottom: 7px;
+    }
+}
 
-        .toolbar-icon {
-            pointer-events: all;
-        }
+/**
+ * Overrides for quality labels in filmstrip only mode. The styles adjust the
+ * labels' positioning as the filmstrip itself or filmstrip's remote videos
+ * appear and disappear.
+ *
+ * The class with-filmstrip is for when the filmstrip is visible.
+ * The class without-filmstrip is for when the filmstrip has been toggled to
+ * be hidden.
+ * The class opening is for when the filmstrip is transitioning from hidden
+ * to visible.
+ */
+.vertical-filmstrip .large-video-labels {
+    &.with-filmstrip {
+        right: 150px;
+    }
+
+    &.with-filmstrip.opening {
+        transition: 0.9s;
+        transition-timing-function: ease-in-out;
+    }
+
+    &.without-filmstrip {
+        transition: 1.2s ease-in-out;
+        transition-delay: 0.1s;
     }
 }
 
