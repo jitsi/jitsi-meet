@@ -428,7 +428,12 @@ export default class LargeVideoManager {
             ReactDOM.render(
                 <Provider store = { APP.store }>
                     <I18nextProvider i18n = { i18next }>
-                        <PresenceLabel participantID = { id } />
+                        <PresenceLabel
+                            noContentStyles = { {
+                                className: 'presence-label no-presence'
+                            } }
+                            participantID = { id }
+                            styles = { { className: 'presence-label' } } />
                     </I18nextProvider>
                 </Provider>,
                 presenceLabelContainer.get(0));

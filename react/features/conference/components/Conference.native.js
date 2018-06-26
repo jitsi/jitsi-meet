@@ -9,7 +9,7 @@ import { connect as reactReduxConnect } from 'react-redux';
 import { appNavigate } from '../../app';
 import { connect, disconnect } from '../../base/connection';
 import { DialogContainer } from '../../base/dialog';
-import { CalleeInfoContainer } from '../../base/jwt';
+import { CalleeInfoContainer } from '../../invite';
 import { getParticipantCount } from '../../base/participants';
 import { Container, LoadingIndicator, TintedView } from '../../base/react';
 import { TestConnectionInfo } from '../../base/testing';

@@ -238,7 +238,7 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
                 }
             })
         });
-        this._invitees = invitees;
+        this.invite(invitees);
         this._isLargeVideoVisible = true;
         this._numberOfParticipants = 0;
         this._participants = {};
@@ -369,9 +369,6 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
 
             switch (name) {
             case 'video-conference-joined':
-                if (this._invitees) {
-                    this.invite(this._invitees);
-                }
                 this._myUserID = userID;
                 this._participants[userID] = {
                     avatarURL: data.avatarURL

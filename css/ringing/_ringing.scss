@@ -6,12 +6,10 @@
     height: 100%;
     position: fixed;
     z-index: $ringingZ;
-    background: linear-gradient(transparent, #000);
-    opacity: 0.8;
+    @include transparentBg(#283447, 0.95);
 
     &.solidBG {
         background: $defaultBackground;
-        opacity: 1;
     }
 
     &__content {
@@ -22,20 +20,26 @@
         top: 50%;
         margin-left: -200px;
         margin-top: -125px;
-        font-weight: 400;
-        font-size: 14px;
         text-align: center;
+        font-weight: normal;
+        color: #FFFFFF;
     }
 
     &__avatar {
-        width: 100px;
-        height: 100px;
+        width: 128px;
+        height: 128px;
         border-radius: 50%;
+        border: 2px solid #1B2638;
     }
 
-    &__caller-info {
-        .mention {
-            color: #333;
-        }
+    &__status{
+        margin-top: 15px;
+        font-size: 14px;
+        line-height: 20px;
+    }
+
+    &__name {
+        font-size: 24px;
+        line-height: 32px;
     }
 }

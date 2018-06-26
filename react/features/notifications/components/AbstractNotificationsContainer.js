@@ -139,8 +139,10 @@ export default class AbstractNotificationsContainer<P: Props>
 export function _abstractMapStateToProps(state: Object) {
     const isAnyOverlayVisible = Boolean(getOverlayToRender(state));
     const { enabled, notifications } = state['features/notifications'];
+    const { calleeInfoVisible } = state['features/invite'];
 
     return {
-        _notifications: enabled && !isAnyOverlayVisible ? notifications : []
+        _notifications: enabled && !isAnyOverlayVisible && !calleeInfoVisible
+            ? notifications : []
     };
 }

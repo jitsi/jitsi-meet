@@ -2,24 +2,15 @@
 
 import jwtDecode from 'jwt-decode';
 
-import {
-    CONFERENCE_FAILED,
-    CONFERENCE_LEFT,
-    CONFERENCE_WILL_LEAVE,
-    SET_ROOM
-} from '../conference';
 import { SET_CONFIG } from '../config';
 import { SET_LOCATION_URL } from '../connection';
-import { LIB_INIT_ERROR } from '../lib-jitsi-meet';
 import {
     getLocalParticipant,
-    getParticipantCount,
-    PARTICIPANT_JOINED,
     participantUpdated
 } from '../participants';
 import { MiddlewareRegistry } from '../redux';
 
-import { setCalleeInfoVisible, setJWT } from './actions';
+import { setJWT } from './actions';
 import { SET_JWT } from './actionTypes';
 import { parseJWTFromURLParams } from './functions';
 
@@ -34,14 +25,6 @@ declare var APP: Object;
  */
 MiddlewareRegistry.register(store => next => action => {
     switch (action.type) {
-    case CONFERENCE_FAILED:
-    case CONFERENCE_LEFT:
-    case CONFERENCE_WILL_LEAVE:
-    case LIB_INIT_ERROR:
-    case PARTICIPANT_JOINED:
-    case SET_ROOM:
-        return _maybeSetCalleeInfoVisible(store, next, action);
-
     case SET_CONFIG:
     case SET_LOCATION_URL:
         // XXX The JSON Web Token (JWT) is not the only piece of state that we
@@ -57,73 +40,6 @@ MiddlewareRegistry.register(store => next => action => {
 
     return next(action);
 });
-
-/**
- * Notifies the feature jwt that a specific {@code action} is being dispatched
- * within a specific redux {@code store} which may have an effect on the
- * visiblity of (the) {@code CalleeInfo}.
- *
- * @param {Store} store - The redux store in which the specified {@code action}
- * is being dispatched.
- * @param {Dispatch} next - The redux dispatch function to dispatch the
- * specified {@code action} to the specified {@code store}.
- * @param {Action} action - The redux action which is being dispatched in the
- * specified {@code store}.
- * @private
- * @returns {Object} The new state that is the result of the reduction of the
- * specified {@code action}.
- */
-function _maybeSetCalleeInfoVisible({ dispatch, getState }, next, action) {
-    const result = next(action);
-
-    const state = getState();
-    const stateFeaturesBaseJWT = state['features/base/jwt'];
-    let calleeInfoVisible;
-
-    if (stateFeaturesBaseJWT.callee) {
-        const { conference, leaving, room } = state['features/base/conference'];
-
-        // XXX The CalleeInfo is to be displayed/visible as soon as possible
-        // including even before the conference is joined.
-        if (room && (!conference || conference !== leaving)) {
-            switch (action.type) {
-            case CONFERENCE_FAILED:
-            case CONFERENCE_LEFT:
-            case CONFERENCE_WILL_LEAVE:
-            case LIB_INIT_ERROR:
-                // Because the CalleeInfo is to be displayed/visible as soon as
-                // possible even before the connection is established and/or the
-                // conference is joined, it is very complicated to figure out
-                // based on the current state alone. In order to reduce the
-                // risks of displaying the CallOverly at inappropirate times, do
-                // not even attempt to figure out based on the current state.
-                // The (redux) actions listed above are also the equivalents of
-                // the execution ponints at which APP.UI.hideRingOverlay() used
-                // to be invoked.
-                break;
-
-            default: {
-                // The CalleeInfo is to no longer be displayed/visible as soon
-                // as another participant joins.
-                calleeInfoVisible
-                    = getParticipantCount(state) === 1
-                        && Boolean(getLocalParticipant(state));
-
-                // However, the CallDialog is not to be displayed/visible again
-                // after all remote participants leave.
-                if (calleeInfoVisible
-                        && stateFeaturesBaseJWT.calleeInfoVisible === false) {
-                    calleeInfoVisible = false;
-                }
-                break;
-            }
-            }
-        }
-    }
-    dispatch(setCalleeInfoVisible(calleeInfoVisible));
-
-    return result;
-}
 
 /**
  * Overwrites the properties {@code avatarURL}, {@code email}, and {@code name}
@@ -248,7 +164,7 @@ function _setJWT(store, next, action) {
         }
     }
 
-    return _maybeSetCalleeInfoVisible(store, next, action);
+    return next(action);
 }
 
 /**

@@ -57,7 +57,7 @@ function _mapStateToProps(state: Object): Object {
          * @private
          * @type {boolean}
          */
-        _calleeInfoVisible: state['features/base/jwt'].calleeInfoVisible
+        _calleeInfoVisible: state['features/invite'].calleeInfoVisible
     };
 }
 
