@@ -4,6 +4,7 @@ import { assign, ReducerRegistry, set } from '../base/redux';
 
 import {
     MEDIA_PERMISSION_PROMPT_VISIBILITY_CHANGED,
+    SET_FATAL_ERROR,
     SUSPEND_DETECTED
 } from './actionTypes';
 
@@ -12,10 +13,13 @@ import {
  *
  * FIXME: these pieces of state should probably be in a different place.
  */
-ReducerRegistry.register('features/overlay', (state = {}, action) => {
+ReducerRegistry.register('features/overlay', (state = { }, action) => {
     switch (action.type) {
     case MEDIA_PERMISSION_PROMPT_VISIBILITY_CHANGED:
         return _mediaPermissionPromptVisibilityChanged(state, action);
+
+    case SET_FATAL_ERROR:
+        return _setFatalError(state, action);
 
     case SUSPEND_DETECTED:
         return _suspendDetected(state);
@@ -53,4 +57,18 @@ function _mediaPermissionPromptVisibilityChanged(
  */
 function _suspendDetected(state) {
     return set(state, 'suspendDetected', true);
+}
+
+/**
+ * Reduces a specific redux action {@code SET_FATAL_ERROR} of the feature
+ * overlay.
+ *
+ * @param {Object} state - The redux state of the feature overlay.
+ * @param {Error} fatalError - If the value is set it indicates that a fatal
+ * error has occurred and that the reload screen is to be displayed.
+ * @returns {Object}
+ * @private
+ */
+function _setFatalError(state, { fatalError }) {
+    return set(state, 'fatalError', fatalError);
 }
