@@ -92,33 +92,37 @@ DEPENDENCIES:
   - RNVectorIcons (from `../node_modules/react-native-vector-icons`)
   - yoga (from `../node_modules/react-native/ReactCommon/yoga`)
 
+SPEC REPOS:
+  https://github.com/cocoapods/specs.git:
+    - boost-for-react-native
+
 EXTERNAL SOURCES:
   DoubleConversion:
-    :podspec: ../node_modules/react-native/third-party-podspecs/DoubleConversion.podspec
+    :podspec: "../node_modules/react-native/third-party-podspecs/DoubleConversion.podspec"
   Folly:
-    :podspec: ../node_modules/react-native/third-party-podspecs/Folly.podspec
+    :podspec: "../node_modules/react-native/third-party-podspecs/Folly.podspec"
   glog:
-    :podspec: ../node_modules/react-native/third-party-podspecs/glog.podspec
+    :podspec: "../node_modules/react-native/third-party-podspecs/glog.podspec"
   React:
-    :path: ../node_modules/react-native
+    :path: "../node_modules/react-native"
   react-native-background-timer:
-    :path: ../node_modules/react-native-background-timer
+    :path: "../node_modules/react-native-background-timer"
   react-native-calendar-events:
-    :path: ../node_modules/react-native-calendar-events
+    :path: "../node_modules/react-native-calendar-events"
   react-native-fetch-blob:
-    :path: ../node_modules/react-native-fetch-blob
+    :path: "../node_modules/react-native-fetch-blob"
   react-native-keep-awake:
-    :path: ../node_modules/react-native-keep-awake
+    :path: "../node_modules/react-native-keep-awake"
   react-native-locale-detector:
-    :path: ../node_modules/react-native-locale-detector
+    :path: "../node_modules/react-native-locale-detector"
   react-native-webrtc:
-    :path: ../node_modules/react-native-webrtc
+    :path: "../node_modules/react-native-webrtc"
   RNSound:
-    :path: ../node_modules/react-native-sound
+    :path: "../node_modules/react-native-sound"
   RNVectorIcons:
-    :path: ../node_modules/react-native-vector-icons
+    :path: "../node_modules/react-native-vector-icons"
   yoga:
-    :path: ../node_modules/react-native/ReactCommon/yoga
+    :path: "../node_modules/react-native/ReactCommon/yoga"
 
 SPEC CHECKSUMS:
   boost-for-react-native: 39c7adb57c4e60d6c5479dd8623128eb5b3f0f2c
@@ -138,4 +142,4 @@ SPEC CHECKSUMS:
 
 PODFILE CHECKSUM: fb12a5ae406b901e95aeb1ab5ebbb02773c46ede
 
-COCOAPODS: 1.4.0
+COCOAPODS: 1.5.3
