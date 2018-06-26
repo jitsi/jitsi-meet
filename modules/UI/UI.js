@@ -492,7 +492,10 @@ UI.updateUserRole = user => {
  * @param {string} status - The new status.
  */
 UI.updateUserStatus = (user, status) => {
-    if (!status) {
+    const reduxState = APP.store.getState() || {};
+    const { calleeInfoVisible } = reduxState['features/invite'] || {};
+
+    if (!status || calleeInfoVisible) {
         return;
     }
 

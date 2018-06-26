@@ -1662,6 +1662,7 @@ export default {
             const displayName = user.getDisplayName();
 
             APP.store.dispatch(participantJoined({
+                botType: user.getBotType(),
                 conference: room,
                 id,
                 name: displayName,
@@ -1860,6 +1861,17 @@ export default {
                                 || interfaceConfig.DEFAULT_REMOTE_DISPLAY_NAME)
                 });
                 APP.UI.changeDisplayName(id, formattedDisplayName);
+            }
+        );
+        room.on(
+            JitsiConferenceEvents.BOT_TYPE_CHANGED,
+            (id, botType) => {
+
+                APP.store.dispatch(participantUpdated({
+                    conference: room,
+                    id,
+                    botType
+                }));
             }
         );
 

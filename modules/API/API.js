@@ -113,8 +113,10 @@ function initCommands() {
 
         switch (name) {
         case 'invite':
+            // The store should be already available because API.init is called
+            // on appWillMount action.
             APP.store.dispatch(
-                invite(request.invitees))
+                invite(request.invitees, true))
                 .then(failedInvitees => {
                     let error;
                     let result;

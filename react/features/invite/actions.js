@@ -2,9 +2,13 @@
 
 import { getInviteURL } from '../base/connection';
 import { inviteVideoRooms } from '../videosipgw';
+import { getParticipants } from '../base/participants';
 
 import {
+    ADD_PENDING_INVITE_REQUEST,
     BEGIN_ADD_PEOPLE,
+    REMOVE_PENDING_INVITE_REQUESTS,
+    SET_CALLEE_INFO_VISIBLE,
     UPDATE_DIAL_IN_NUMBERS_FAILED,
     UPDATE_DIAL_IN_NUMBERS_SUCCESS
 } from './actionTypes';
@@ -31,23 +35,51 @@ export function beginAddPeople() {
     };
 }
 
+
 /**
  * Invites (i.e. sends invites to) an array of invitees (which may be a
  * combination of users, rooms, phone numbers, and video rooms).
  *
  * @param  {Array<Object>} invitees - The recepients to send invites to.
+ * @param  {Array<Object>} showCalleeInfo - Indicates whether the
+ * {@code CalleeInfo} should be displayed or not.
  * @returns {Promise<Array<Object>>} A {@code Promise} resolving with an array
  * of invitees who were not invited (i.e. invites were not sent to them).
  */
-export function invite(invitees: Array<Object>) {
+export function invite(
+        invitees: Array<Object>,
+        showCalleeInfo: boolean = false) {
     return (
             dispatch: Dispatch<*>,
             getState: Function): Promise<Array<Object>> => {
+        const state = getState();
+        const participants = getParticipants(state);
+        const { calleeInfoVisible } = state['features/invite'];
+
+        if (showCalleeInfo
+                && !calleeInfoVisible
+                && invitees.length === 1
+                && invitees[0].type === 'user'
+                && participants.length === 1) {
+            dispatch(setCalleeInfoVisible(true, invitees[0]));
+        }
+
+        const { conference } = state['features/base/conference'];
+
+        if (typeof conference === 'undefined') {
+            // Invite will fail before CONFERENCE_JOIN. The request will be
+            // cached in order to be executed on CONFERENCE_JOIN.
+            return new Promise(resolve => {
+                dispatch(addPendingInviteRequest({
+                    invitees,
+                    callback: failedInvitees => resolve(failedInvitees)
+                }));
+            });
+        }
+
         let allInvitePromises = [];
         let invitesLeftToSend = [ ...invitees ];
 
-        const state = getState();
-        const { conference } = state['features/base/conference'];
         const {
             callFlowsEnabled,
             inviteServiceUrl,
@@ -57,27 +89,25 @@ export function invite(invitees: Array<Object>) {
         const { jwt } = state['features/base/jwt'];
 
         // First create all promises for dialing out.
-        if (conference) {
-            const phoneNumbers
-                = invitesLeftToSend.filter(({ type }) => type === 'phone');
+        const phoneNumbers
+            = invitesLeftToSend.filter(({ type }) => type === 'phone');
 
-            // For each number, dial out. On success, remove the number from
-            // {@link invitesLeftToSend}.
-            const phoneInvitePromises = phoneNumbers.map(item => {
-                const numberToInvite = item.number;
+        // For each number, dial out. On success, remove the number from
+        // {@link invitesLeftToSend}.
+        const phoneInvitePromises = phoneNumbers.map(item => {
+            const numberToInvite = item.number;
 
-                return conference.dial(numberToInvite)
-                    .then(() => {
-                        invitesLeftToSend
-                            = invitesLeftToSend.filter(
-                                invitee => invitee !== item);
-                    })
-                    .catch(error =>
-                        logger.error('Error inviting phone number:', error));
-            });
+            return conference.dial(numberToInvite)
+                .then(() => {
+                    invitesLeftToSend
+                        = invitesLeftToSend.filter(
+                            invitee => invitee !== item);
+                })
+                .catch(error =>
+                    logger.error('Error inviting phone number:', error));
+        });
 
-            allInvitePromises = allInvitePromises.concat(phoneInvitePromises);
-        }
+        allInvitePromises = allInvitePromises.concat(phoneInvitePromises);
 
         const usersAndRooms
             = invitesLeftToSend.filter(
@@ -98,7 +128,10 @@ export function invite(invitees: Array<Object>) {
                         = invitesLeftToSend.filter(
                             ({ type }) => type !== 'user' && type !== 'room');
                 })
-                .catch(error => logger.error('Error inviting people:', error));
+                .catch(error => {
+                    dispatch(setCalleeInfoVisible(false));
+                    logger.error('Error inviting people:', error);
+                });
 
             allInvitePromises.push(peopleInvitePromise);
         }
@@ -161,5 +194,58 @@ export function updateDialInNumbers() {
                     error
                 });
             });
+    };
+}
+
+/**
+ * Sets the visibility of {@code CalleeInfo}.
+ *
+ * @param {boolean|undefined} [calleeInfoVisible] - If {@code CalleeInfo} is
+ * to be displayed/visible, then {@code true}; otherwise, {@code false} or
+ * {@code undefined}.
+ * @param {Object|undefined} [initialCalleeInfo] - Callee information.
+ * @returns {{
+ *     type: SET_CALLEE_INFO_VISIBLE,
+ *     calleeInfoVisible: (boolean|undefined),
+ *     initialCalleeInfo
+ * }}
+ */
+export function setCalleeInfoVisible(
+        calleeInfoVisible: boolean,
+        initialCalleeInfo: ?Object) {
+    return {
+        type: SET_CALLEE_INFO_VISIBLE,
+        calleeInfoVisible,
+        initialCalleeInfo
+    };
+}
+
+/**
+ * Adds pending invite request.
+ *
+ * @param {Object} request - The request.
+ * @returns {{
+ *     type: ADD_PENDING_INVITE_REQUEST,
+ *     request: Object
+ * }}
+ */
+export function addPendingInviteRequest(
+        request: { invitees: Array<Object>, callback: Function }) {
+    return {
+        type: ADD_PENDING_INVITE_REQUEST,
+        request
+    };
+}
+
+/**
+ * Removes all pending invite requests.
+ *
+ * @returns {{
+ *     type: REMOVE_PENDING_INVITE_REQUEST
+ * }}
+ */
+export function removePendingInviteRequests() {
+    return {
+        type: REMOVE_PENDING_INVITE_REQUESTS
     };
 }
