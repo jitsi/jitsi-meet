@@ -3,6 +3,7 @@ import { toURLString } from '../base/util';
 
 import {
     MEDIA_PERMISSION_PROMPT_VISIBILITY_CHANGED,
+    SET_FATAL_ERROR,
     SUSPEND_DETECTED
 } from './actionTypes';
 
@@ -37,6 +38,8 @@ export function mediaPermissionPromptVisibilityChanged(isVisible, browser) {
  */
 export function _reloadNow() {
     return (dispatch, getState) => {
+        dispatch(setFatalError(undefined));
+
         const { locationURL } = getState()['features/base/connection'];
 
         logger.info(`Reloading the conference using URL: ${locationURL}`);
@@ -60,5 +63,24 @@ export function _reloadNow() {
 export function suspendDetected() {
     return {
         type: SUSPEND_DETECTED
+    };
+}
+
+/**
+ * The action indicates that an unrecoverable error has occurred and the reload
+ * screen will be displayed or hidden.
+ *
+ * @param {Object} fatalError - A critical error which was not claimed by any
+ * feature for error recovery (the recoverable flag was not set). If
+ * {@code undefined} then any fatal error currently stored will be discarded.
+ * @returns {{
+ *     type: SET_FATAL_ERROR,
+ *     fatalError: ?Error
+ * }}
+ */
+export function setFatalError(fatalError) {
+    return {
+        type: SET_FATAL_ERROR,
+        fatalError
     };
 }
