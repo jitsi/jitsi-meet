@@ -51,7 +51,7 @@ function _endpointMessageReceived({ dispatch, getState }, next, action) {
     try {
 
         // Let's first check if the given object has the correct
-        // topic in the json, which identifies it as a json message sent
+        // type in the json, which identifies it as a json message sent
         // from Jigasi with speech-to-to-text results
         if (json.type === 'transcription-result') {
             // Extract the useful data from the json.
