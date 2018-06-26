@@ -11,7 +11,7 @@ import {
  * Signals that a transcript with a new message_id is received.
  *
  * @param {string} transcriptMessageID - The new message_id.
- * @param {string} participantName - The payload carried in the message.
+ * @param {string} participantName - The participant name of the sender.
  * @returns {{
  *      type: ADD_TRANSCRIPT_MESSAGE,
  *      transcriptMessageID: string,
@@ -31,18 +31,18 @@ export function addTranscriptMessage(transcriptMessageID: string,
  * Signals that a participant sent an endpoint message on the data channel.
  *
  * @param {Object} participant - The participant details sending the message.
- * @param {Object} payload - The payload carried by the endpoint message.
+ * @param {Object} json - The json carried by the endpoint message.
  * @returns {{
  *      type: ENDPOINT_MESSAGE_RECEIVED,
  *      participant: Object,
- *      payload: Object
+ *      json: Object
  * }}
  */
-export function endpointMessageReceived(participant: Object, payload: Object) {
+export function endpointMessageReceived(participant: Object, json: Object) {
     return {
         type: ENDPOINT_MESSAGE_RECEIVED,
         participant,
-        payload
+        json
     };
 }
 

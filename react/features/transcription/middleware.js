@@ -46,24 +46,20 @@ MiddlewareRegistry.register(store => next => action => {
  * @returns {Object} The value returned by {@code next(action)}.
  */
 function _endpointMessageReceived({ dispatch, getState }, next, action) {
-    const payload = action.payload;
+    const json = action.json;
 
     try {
 
         // Let's first check if the given object has the correct
-        // topic in the payload, which identifies it as a json message send
+        // type in the json, which identifies it as a json message sent
         // from Jigasi with speech-to-to-text results
-        // if (m['jitsi-meet-muc-msg-topic'] === TRANSCRIPTION_RESULT_TOPIC
-        //         && (payload = m.payload))
-        // TODO: To be replaced by if(payload['topic']==='transcription-result')
-        // after jigasi changes.
-        if (payload.transcript) {
-            // Extract the useful data from the payload of the JSON message
-            const isInterim = payload.is_interim;
-            const participantName = payload.participant.name;
-            const stability = payload.stability;
-            const text = payload.transcript[0].text;
-            const transcriptMessageID = payload.message_id;
+        if (json.type === 'transcription-result') {
+            // Extract the useful data from the json.
+            const isInterim = json.is_interim;
+            const participantName = json.participant.name;
+            const stability = json.stability;
+            const text = json.transcript[0].text;
+            const transcriptMessageID = json.message_id;
 
             // If this is the first result with the unique message ID,
             // we add it to the state along with the name of the participant

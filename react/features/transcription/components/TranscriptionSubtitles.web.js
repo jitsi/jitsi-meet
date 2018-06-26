@@ -23,15 +23,14 @@ class TranscriptionSubtitles extends Component<Props> {
 
     /**
      * Updates the transcription subtitles only if the Map of transcriptMessages
-     * change otherwise prevents the unnecessary re-render..
+     * change otherwise prevents the unnecessary re-render.
      *
      * @inheritdoc
-     * @param { Object } nextProps - The props passed to the component before
+     * @param {Object} nextProps - The props passed to the component before
      * rendering the component.
      * @returns {boolean} - True if props of the component changes, else false.
      */
     shouldComponentUpdate(nextProps) {
-
         return this.props.transcriptMessages !== nextProps.transcriptMessages;
     }
 
@@ -61,8 +60,10 @@ class TranscriptionSubtitles extends Component<Props> {
 
                     text += stable + unstable;
                 }
+                paragraphs.push(
+                    <p key = { transcriptMessageID }> { text } </p>
+                );
             }
-            paragraphs.push(<p key = { transcriptMessageID }> { text } </p>);
         }
 
         return (
