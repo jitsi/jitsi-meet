@@ -1,4 +1,4 @@
-/* global $, APP, JitsiMeetJS, interfaceConfig */
+/* global $, APP, interfaceConfig */
 
 /* eslint-disable no-unused-vars */
 import React from 'react';
@@ -33,8 +33,6 @@ const logger = require('jitsi-meet-logger').getLogger(__filename);
 
 import UIUtil from '../util/UIUtil';
 import UIEvents from '../../../service/UI/UIEvents';
-
-const RTCUIHelper = JitsiMeetJS.util.RTCUIHelper;
 
 /**
  * Display mode constant used when video is being displayed on the small video.
@@ -240,8 +238,7 @@ SmallVideo.createStreamElement = function(stream) {
         element.setAttribute('muted', 'true');
     }
 
-    RTCUIHelper.setAutoPlay(element, true);
-
+    element.autoplay = true;
     element.id = SmallVideo.getStreamElementID(stream);
 
     return element;
@@ -438,7 +435,7 @@ SmallVideo.prototype.removeModeratorIndicator = function() {
  * array (after checking its length of course!).
  */
 SmallVideo.prototype.selectVideoElement = function() {
-    return $(RTCUIHelper.findVideoElement(this.container));
+    return $($(this.container).find('video')[0]);
 };
 
 /**

@@ -3,7 +3,6 @@
 import React, { Component } from 'react';
 
 import { createDeepLinkingPageEvent, sendAnalytics } from '../../analytics';
-import { HideNotificationBarStyle } from '../../base/react';
 
 declare var interfaceConfig: Object;
 
@@ -41,8 +40,6 @@ export default class NoMobileApp extends Component<*> {
                     Please use { interfaceConfig.NATIVE_APP_NAME } on desktop to
                     join calls.
                 </p>
-
-                <HideNotificationBarStyle />
             </div>
         );
     }

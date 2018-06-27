@@ -186,7 +186,6 @@ function getDesktopVideoPosition(videoWidth, videoHeight, videoSpaceWidth) {
  * Container for user video.
  */
 export class VideoContainer extends LargeContainer {
-    // FIXME: With Temasys we have to re-select everytime
     /**
      *
      */
@@ -277,10 +276,6 @@ export class VideoContainer extends LargeContainer {
             this.wasVideoRendered = true;
         }.bind(this);
 
-        // This does not work with Temasys plugin - has to be a property to be
-        // copied between new <object> elements
-        // this.$video.on('play', onPlay);
-
         this.$video[0].onplaying = onPlayingCallback;
 
         /**
@@ -290,7 +285,6 @@ export class VideoContainer extends LargeContainer {
          */
         this._resizeListeners = new Set();
 
-        // As of May 16, 2017, temasys does not support resize events.
         this.$video[0].onresize = this._onResize.bind(this);
     }
 
@@ -605,6 +599,8 @@ export class VideoContainer extends LargeContainer {
      * <video> elements with plugin <object> tag. In Safari jQuery is
      * unable to store values on this plugin object which breaks all
      * animation effects performed on it directly.
+     *
+     * TODO: refactor this since Temasys is no longer supported.
      */
     show() {
         // its already visible
@@ -692,8 +688,7 @@ export class VideoContainer extends LargeContainer {
         // explicitly disabled.
         if (interfaceConfig.DISABLE_VIDEO_BACKGROUND
                 || browser.isFirefox()
-                || browser.isSafariWithWebrtc()
-                || browser.isTemasysPluginUsed()) {
+                || browser.isSafariWithWebrtc()) {
             return;
         }
 

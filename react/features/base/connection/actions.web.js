@@ -2,11 +2,7 @@
 
 import type { Dispatch } from 'redux';
 
-import {
-    libInitError,
-    WEBRTC_NOT_READY,
-    WEBRTC_NOT_SUPPORTED
-} from '../lib-jitsi-meet';
+import { libInitError, WEBRTC_NOT_SUPPORTED } from '../lib-jitsi-meet';
 
 declare var APP: Object;
 declare var config: Object;
@@ -45,7 +41,6 @@ export function connect() {
             // features/base/lib-jitsi-meet but we are not there yet on the
             // Web at the time of this writing.
             switch (error.name) {
-            case WEBRTC_NOT_READY:
             case WEBRTC_NOT_SUPPORTED:
                 dispatch(libInitError(error));
             }

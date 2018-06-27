@@ -7,7 +7,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 
 import { translate } from '../../base/i18n';
-import { HideNotificationBarStyle, Watermarks } from '../../base/react';
+import { Watermarks } from '../../base/react';
 
 import { AbstractWelcomePage, _mapStateToProps } from './AbstractWelcomePage';
 
@@ -151,7 +151,6 @@ class WelcomePage extends AbstractWelcomePage {
                             ref = { this._setAdditionalContentRef } />
                         : null }
                 </div>
-                <HideNotificationBarStyle />
             </AtlasKitThemeProvider>
         );
     }

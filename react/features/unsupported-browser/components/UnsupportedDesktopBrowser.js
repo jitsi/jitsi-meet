@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 
 import { translate } from '../../base/i18n';
-import { HideNotificationBarStyle, Platform } from '../../base/react';
+import { Platform } from '../../base/react';
 
 import { CHROME, FIREFOX, IE, SAFARI } from './browserLinks';
 
@@ -60,8 +60,6 @@ class UnsupportedDesktopBrowser extends Component<*> {
                         this._renderOSSpecificBrowserDownloadLink()
                     }
                 </p>
-
-                <HideNotificationBarStyle />
             </div>
         );
     }
