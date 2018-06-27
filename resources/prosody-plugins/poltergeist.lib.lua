@@ -253,7 +253,7 @@ local function remove(room, nick, ignore)
     leave_presence.attr.type = "unavailable"
 
     if (ignore) then
-        set_ignored(room, nick)
+        set_ignored(room.jid.."/"..nick)
     end
 
     remove_username(room, nick)
