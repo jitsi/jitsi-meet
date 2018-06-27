@@ -60,8 +60,7 @@ export type Props = {
     /**
      * Whether or not the audio output source selector should display. If
      * true, the audio output selector and test audio link will not be
-     * rendered. This is specifically used for hiding audio output on
-     * temasys browsers which do not support such change.
+     * rendered.
      */
     hideAudioOutputSelect: boolean,
 

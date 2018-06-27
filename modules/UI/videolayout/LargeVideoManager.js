@@ -1,4 +1,4 @@
-/* global $, APP, JitsiMeetJS */
+/* global $, APP */
 /* eslint-disable no-unused-vars */
 import React from 'react';
 import ReactDOM from 'react-dom';
@@ -28,14 +28,6 @@ import { VideoContainer, VIDEO_CONTAINER_TYPE } from './VideoContainer';
 import AudioLevels from '../audio_levels/AudioLevels';
 
 const DESKTOP_CONTAINER_TYPE = 'desktop';
-
-/**
- * The time interval in milliseconds to check the video resolution of the video
- * being displayed.
- *
- * @type {number}
- */
-const VIDEO_RESOLUTION_POLL_INTERVAL = 2000;
 
 /**
  * Manager for all Large containers.
@@ -103,30 +95,15 @@ export default class LargeVideoManager {
             = this._onVideoResolutionUpdate.bind(this);
 
         this.videoContainer.addResizeListener(this._onVideoResolutionUpdate);
-
-        if (!JitsiMeetJS.util.RTCUIHelper.isResizeEventSupported()) {
-            /**
-             * An interval for polling if the displayed video resolution is or
-             * is not high-definition. For browsers that do not support video
-             * resize events, polling is the fallback.
-             *
-             * @private
-             * @type {timeoutId}
-             */
-            this._updateVideoResolutionInterval = window.setInterval(
-                this._onVideoResolutionUpdate,
-                VIDEO_RESOLUTION_POLL_INTERVAL);
-        }
     }
 
     /**
-     * Stops any polling intervals on the instance and removes any
-     * listeners registered on child components, including React Components.
+     * Removes any listeners registered on child components, including
+     * React Components.
      *
      * @returns {void}
      */
     destroy() {
-        window.clearInterval(this._updateVideoResolutionInterval);
         this.videoContainer.removeResizeListener(
             this._onVideoResolutionUpdate);
 

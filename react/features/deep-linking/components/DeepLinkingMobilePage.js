@@ -6,7 +6,7 @@ import { connect } from 'react-redux';
 
 import { createDeepLinkingPageEvent, sendAnalytics } from '../../analytics';
 import { translate, translateToHTML } from '../../base/i18n';
-import { HideNotificationBarStyle, Platform } from '../../base/react';
+import { Platform } from '../../base/react';
 import { DialInSummary } from '../../invite';
 
 import { _TNS } from '../constants';
@@ -154,7 +154,6 @@ class DeepLinkingMobilePage extends Component<*, *> {
                         clickableNumbers = { true }
                         room = { _room } />
                 </div>
-                <HideNotificationBarStyle />
             </div>
         );
     }

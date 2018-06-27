@@ -158,14 +158,9 @@ RemoteVideo.prototype._generatePopupContent = function() {
         }
     }
 
-    let initialVolumeValue, onVolumeChange;
-
-    // Feature check for volume setting as temasys objects cannot adjust volume.
-    if (this._canSetAudioVolume()) {
-        initialVolumeValue = this._getAudioElement().volume;
-        onVolumeChange = this._setAudioVolume;
-    }
-
+    const initialVolumeValue
+        = this._audioStreamElement && this._audioStreamElement.volume;
+    const onVolumeChange = this._setAudioVolume;
     const { isModerator } = APP.conference;
     const participantID = this.id;
 
@@ -268,34 +263,13 @@ RemoteVideo.prototype._stopRemoteControl = function() {
 };
 
 /**
- * Get the remote participant's audio element.
- *
- * @returns {Element} audio element
- */
-RemoteVideo.prototype._getAudioElement = function() {
-    return this._audioStreamElement;
-};
-
-/**
- * Check if the remote participant's audio can have its volume adjusted.
- *
- * @returns {boolean} true if the volume can be adjusted.
- */
-RemoteVideo.prototype._canSetAudioVolume = function() {
-    const audioElement = this._getAudioElement();
-
-
-    return audioElement && audioElement.volume !== undefined;
-};
-
-/**
  * Change the remote participant's volume level.
  *
  * @param {int} newVal - The value to set the slider to.
  */
 RemoteVideo.prototype._setAudioVolume = function(newVal) {
-    if (this._canSetAudioVolume()) {
-        this._getAudioElement().volume = newVal;
+    if (this._audioStreamElement) {
+        this._audioStreamElement.volume = newVal;
     }
 };
 
@@ -526,23 +500,18 @@ RemoteVideo.prototype.addRemoteStreamElement = function(stream) {
         return;
     }
 
-    let streamElement = SmallVideo.createStreamElement(stream);
+    const streamElement = SmallVideo.createStreamElement(stream);
 
     // Put new stream element always in front
     UIUtils.prependChild(this.container, streamElement);
 
-    // If we hide element when Temasys plugin is used then
-    // we'll never receive 'onplay' event and other logic won't work as expected
-    // NOTE: hiding will not have effect when Temasys plugin is in use, as
-    // calling attach will show it back
     $(streamElement).hide();
 
     // If the container is currently visible
     // we attach the stream to the element.
     if (!isVideo || (this.container.offsetParent !== null && isVideo)) {
         this.waitForPlayback(streamElement, stream);
-
-        streamElement = stream.attach(streamElement);
+        stream.attach(streamElement);
     }
 
     if (!isVideo) {

@@ -8,7 +8,7 @@ import { MiddlewareRegistry } from '../redux';
 import JitsiMeetJS from './_';
 import { disposeLib, initLib, setWebRTCReady } from './actions';
 import { LIB_DID_INIT, LIB_INIT_ERROR, LIB_WILL_INIT } from './actionTypes';
-import { WEBRTC_NOT_READY, WEBRTC_NOT_SUPPORTED } from './constants';
+import { WEBRTC_NOT_SUPPORTED } from './constants';
 
 declare var APP: Object;
 
@@ -74,20 +74,8 @@ function _libInitError(store, next, action) {
 
     const { error } = action;
 
-    if (error) {
-        let webRTCReady;
-
-        switch (error.name) {
-        case WEBRTC_NOT_READY:
-            webRTCReady = error.webRTCReadyPromise;
-            break;
-
-        case WEBRTC_NOT_SUPPORTED:
-            webRTCReady = false;
-            break;
-        }
-        typeof webRTCReady === 'undefined'
-            || store.dispatch(setWebRTCReady(webRTCReady));
+    if (error && error.name === WEBRTC_NOT_SUPPORTED) {
+        store.dispatch(setWebRTCReady(false));
     }
 
     return nextState;

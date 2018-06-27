@@ -152,10 +152,7 @@
                 }
             }
 
-            /* With the TemasysWebRTC plugin <object/> element is used
-            instead of <video/> */
-            & > video,
-            & > object {
+            & > video {
                 cursor: hand;
                 border-radius: $borderRadius;
                 object-fit: cover;

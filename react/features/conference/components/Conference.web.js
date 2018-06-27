@@ -8,7 +8,6 @@ import { connect, disconnect } from '../../base/connection';
 import { DialogContainer } from '../../base/dialog';
 import { translate } from '../../base/i18n';
 import { CalleeInfoContainer } from '../../base/jwt';
-import { HideNotificationBarStyle } from '../../base/react';
 import { Filmstrip } from '../../filmstrip';
 import { LargeVideo } from '../../large-video';
 import { NotificationsContainer } from '../../notifications';
@@ -162,15 +161,6 @@ class Conference extends Component<Props> {
                 <NotificationsContainer />
 
                 <CalleeInfoContainer />
-
-                {/*
-                  * Temasys automatically injects a notification bar, if
-                  * necessary, displayed at the top of the page notifying that
-                  * WebRTC is not installed or supported. We do not need/want
-                  * the notification bar in question because we have whole pages
-                  * dedicated to the respective scenarios.
-                  */}
-                <HideNotificationBarStyle />
             </div>
         );
     }
