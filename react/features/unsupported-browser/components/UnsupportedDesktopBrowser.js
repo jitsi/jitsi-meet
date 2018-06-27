@@ -6,7 +6,7 @@ import React, { Component } from 'react';
 import { translate } from '../../base/i18n';
 import { Platform } from '../../base/react';
 
-import { CHROME, FIREFOX, IE, SAFARI } from './browserLinks';
+import { CHROME, EDGE, FIREFOX, SAFARI } from './browserLinks';
 
 /**
  * The namespace of the CSS styles of UnsupportedDesktopBrowser.
@@ -81,8 +81,8 @@ class UnsupportedDesktopBrowser extends Component<*> {
             break;
 
         case 'windows':
-            link = IE;
-            text = 'Internet Explorer';
+            link = EDGE;
+            text = 'Edge';
             break;
         }
         if (typeof link !== 'undefined') {
