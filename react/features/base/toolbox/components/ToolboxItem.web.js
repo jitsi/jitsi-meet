@@ -21,22 +21,39 @@ export default class ToolboxItem extends AbstractToolboxItem<Props> {
      */
     _renderItem() {
         const {
+            disabled,
             onClick,
-            showLabel
+            showLabel,
+            tooltipPosition
         } = this.props;
+        const className = showLabel ? 'overflow-menu-item' : 'toolbox-button';
         const props = {
             'aria-label': this.accessibilityLabel,
-            className: showLabel ? 'overflow-menu-item' : 'toolbox-button',
-            onClick
+            className: className + (disabled ? ' disabled' : ''),
+            onClick: disabled ? undefined : onClick
         };
         const elementType = showLabel ? 'li' : 'div';
+        const useTooltip = this.tooltip && this.tooltip.length > 0;
         // eslint-disable-next-line no-extra-parens
-        const children = (
+        let children = (
             <Fragment>
                 { this._renderIcon() }
-                { showLabel && this.label }
+                { showLabel && <span>
+                    { this.label }
+                </span> }
             </Fragment>
         );
+
+        if (useTooltip) {
+            // eslint-disable-next-line no-extra-parens
+            children = (
+                <Tooltip
+                    content = { this.tooltip }
+                    position = { tooltipPosition }>
+                    { children }
+                </Tooltip>
+            );
+        }
 
         return React.createElement(elementType, props, children);
     }
@@ -48,25 +65,13 @@ export default class ToolboxItem extends AbstractToolboxItem<Props> {
      * @returns {ReactElement}
      */
     _renderIcon() {
-        const { iconName, tooltipPosition, showLabel } = this.props;
+        const { iconName, showLabel } = this.props;
         const icon = <i className = { iconName } />;
         const elementType = showLabel ? 'span' : 'div';
         const className
             = showLabel ? 'overflow-menu-item-icon' : 'toolbox-icon';
         const iconWrapper
             = React.createElement(elementType, { className }, icon);
-        const tooltip = this.tooltip;
-        const useTooltip = !showLabel && tooltip && tooltip.length > 0;
-
-        if (useTooltip) {
-            return (
-                <Tooltip
-                    content = { tooltip }
-                    position = { tooltipPosition }>
-                    { iconWrapper }
-                </Tooltip>
-            );
-        }
 
         return iconWrapper;
     }

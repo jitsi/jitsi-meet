@@ -75,7 +75,7 @@ export type Props = {
     /**
      * The text to display in the tooltip. Used only on web.
      */
-    tooltip: string,
+    tooltip: ?string,
 
     /**
      * From which direction the tooltip should appear, relative to the

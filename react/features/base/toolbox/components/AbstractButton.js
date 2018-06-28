@@ -114,7 +114,7 @@ export default class AbstractButton<P: Props, S: *> extends Component<P, S> {
      *
      * @abstract
      */
-    tooltip: string;
+    tooltip: ?string;
 
     /**
      * Initializes a new {@code AbstractButton} instance.

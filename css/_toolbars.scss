@@ -120,6 +120,12 @@
             height: 22px;
             padding: 5px 12px;
 
+            div {
+                display: flex;
+                flex-direction: row;
+                align-items: center;
+            }
+
             &:hover {
                 background: #313D52;
             }
