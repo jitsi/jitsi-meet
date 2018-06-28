@@ -13,7 +13,7 @@ There are also some complete [example config files](https://github.com/jitsi/jit
 
 ## Network description
 
-This how the network look like:
+This is how the network looks:
 ```
                    +                           +
                    |                           |
