@@ -70,9 +70,7 @@ export default class ToolboxItem extends AbstractToolboxItem<Props> {
         const elementType = showLabel ? 'span' : 'div';
         const className
             = showLabel ? 'overflow-menu-item-icon' : 'toolbox-icon';
-        const iconWrapper
-            = React.createElement(elementType, { className }, icon);
 
-        return iconWrapper;
+        return React.createElement(elementType, { className }, icon);
     }
 }

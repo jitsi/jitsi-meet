@@ -30,10 +30,9 @@ import {
 } from '../../../invite';
 import { openKeyboardShortcutsDialog } from '../../../keyboard-shortcuts';
 import {
+    RecordButton,
     StartLiveStreamDialog,
-    StartRecordingDialog,
     StopLiveStreamDialog,
-    StopRecordingDialog,
     getActiveSession
 } from '../../../recording';
 import {
@@ -107,22 +106,6 @@ type Props = {
      * Whether or not call feedback can be sent.
      */
     _feedbackConfigured: boolean,
-
-    /**
-     * The tooltip key to use when file recording is disabled. Or undefined
-     * if non to be shown and the button to be hidden.
-     */
-    _fileRecordingsDisabledTooltipKey: boolean,
-
-    /**
-     * Whether or not the file recording feature is enabled for use.
-     */
-    _fileRecordingsEnabled: boolean,
-
-    /**
-     * The current file recording session, if any.
-     */
-    _fileRecordingSession: Object,
 
     /**
      * Whether or not the app is currently in full screen.
@@ -253,8 +236,6 @@ class Toolbox extends Component<Props> {
             = this._onToolbarToggleProfile.bind(this);
         this._onToolbarToggleRaiseHand
             = this._onToolbarToggleRaiseHand.bind(this);
-        this._onToolbarToggleRecording
-            = this._onToolbarToggleRecording.bind(this);
         this._onToolbarToggleScreenshare
             = this._onToolbarToggleScreenshare.bind(this);
         this._onToolbarToggleSharedVideo
@@ -541,21 +522,6 @@ class Toolbox extends Component<Props> {
             local: true,
             raisedHand: !_raisedHand
         }));
-    }
-
-    /**
-     * Dispatches an action to toggle recording.
-     *
-     * @private
-     * @returns {void}
-     */
-    _doToggleRecording() {
-        const { _fileRecordingSession } = this.props;
-        const dialog = _fileRecordingSession
-            ? StopRecordingDialog : StartRecordingDialog;
-
-        this.props.dispatch(
-            openDialog(dialog, { session: _fileRecordingSession }));
     }
 
     /**
@@ -875,25 +841,6 @@ class Toolbox extends Component<Props> {
         this._doToggleRaiseHand();
     }
 
-    _onToolbarToggleRecording: () => void;
-
-    /**
-     * Dispatches an action to toggle recording.
-     *
-     * @private
-     * @returns {void}
-     */
-    _onToolbarToggleRecording() {
-        sendAnalytics(createToolbarEvent(
-            'recording.button',
-            {
-                'is_recording': Boolean(this.props._fileRecordingSession),
-                type: JitsiRecordingConstants.mode.FILE
-            }));
-
-        this._doToggleRecording();
-    }
-
     _onToolbarToggleScreenshare: () => void;
 
     /**
@@ -1020,8 +967,6 @@ class Toolbox extends Component<Props> {
             _editingDocument,
             _etherpadInitialized,
             _feedbackConfigured,
-            _fileRecordingsDisabledTooltipKey,
-            _fileRecordingsEnabled,
             _fullScreen,
             _isGuest,
             _liveStreamingDisabledTooltipKey,
@@ -1055,9 +1000,9 @@ class Toolbox extends Component<Props> {
             (_liveStreamingEnabled || _liveStreamingDisabledTooltipKey)
                 && this._shouldShowButton('livestreaming')
                 && this._renderLiveStreamingButton(),
-            (_fileRecordingsEnabled || _fileRecordingsDisabledTooltipKey)
-                && this._shouldShowButton('recording')
-                && this._renderRecordingButton(),
+            <RecordButton
+                key = 'record'
+                showLabel = { true } />,
             this._shouldShowButton('sharedvideo')
                 && <OverflowMenuItem
                     accessibilityLabel =
@@ -1111,37 +1056,6 @@ class Toolbox extends Component<Props> {
         ];
     }
 
-    /**
-     * Renders an {@code OverflowMenuItem} to start or stop recording of the
-     * current conference.
-     *
-     * @private
-     * @returns {ReactElement}
-     */
-    _renderRecordingButton() {
-        const {
-            _fileRecordingSession,
-            _fileRecordingsDisabledTooltipKey,
-            _fileRecordingsEnabled,
-            t } = this.props;
-
-        const translationKey = _fileRecordingSession
-            ? 'dialog.stopRecording'
-            : 'dialog.startRecording';
-
-        return (
-            <OverflowMenuItem
-                accessibilityLabel =
-                    { t('toolbar.accessibilityLabel.recording') }
-                disabled = { !_fileRecordingsEnabled }
-                icon = 'icon-camera-take-picture'
-                key = 'recording'
-                onClick = { this._onToolbarToggleRecording }
-                text = { t(translationKey) }
-                tooltip = { t(_fileRecordingsDisabledTooltipKey) } />
-        );
-    }
-
     _shouldShowButton: (string) => boolean;
 
     /**
@@ -1172,10 +1086,7 @@ function _mapStateToProps(state) {
         callStatsID,
         iAmRecorder
     } = state['features/base/config'];
-    let {
-        fileRecordingsEnabled,
-        liveStreamingEnabled
-    } = state['features/base/config'];
+    let { liveStreamingEnabled } = state['features/base/config'];
     const sharedVideoStatus = state['features/shared-video'].status;
     const { current } = state['features/side-panel'];
     const {
@@ -1191,11 +1102,8 @@ function _mapStateToProps(state) {
     const dialOutEnabled = isDialOutEnabled(state);
 
     let desktopSharingDisabledTooltipKey;
-    let fileRecordingsDisabledTooltipKey;
     let liveStreamingDisabledTooltipKey;
 
-    fileRecordingsEnabled
-        = isLocalParticipantModerator(state) && fileRecordingsEnabled;
     liveStreamingEnabled
         = isLocalParticipantModerator(state) && liveStreamingEnabled;
 
@@ -1219,22 +1127,6 @@ function _mapStateToProps(state) {
         // feature enabled
         const { features = {} } = localParticipant;
         const { isGuest } = state['features/base/jwt'];
-
-        fileRecordingsEnabled
-            = fileRecordingsEnabled && String(features.recording) === 'true';
-
-        // if the feature is disabled on purpose, do no show it, no tooltip
-        if (!fileRecordingsEnabled
-            && String(features.recording) !== 'disabled') {
-            // button and tooltip
-            if (isGuest) {
-                fileRecordingsDisabledTooltipKey
-                    = 'dialog.recordingDisabledForGuestTooltip';
-            } else {
-                fileRecordingsDisabledTooltipKey
-                    = 'dialog.recordingDisabledTooltip';
-            }
-        }
 
         liveStreamingEnabled
             = liveStreamingEnabled && String(features.livestreaming) === 'true';
@@ -1265,10 +1157,6 @@ function _mapStateToProps(state) {
         _hideInviteButton:
             iAmRecorder || (!addPeopleEnabled && !dialOutEnabled),
         _isGuest: state['features/base/jwt'].isGuest,
-        _fileRecordingsDisabledTooltipKey: fileRecordingsDisabledTooltipKey,
-        _fileRecordingsEnabled: fileRecordingsEnabled,
-        _fileRecordingSession:
-            getActiveSession(state, JitsiRecordingConstants.mode.FILE),
         _fullScreen: fullScreen,
         _liveStreamingDisabledTooltipKey: liveStreamingDisabledTooltipKey,
         _liveStreamingEnabled: liveStreamingEnabled,
