@@ -58,7 +58,7 @@
     "react-native": "0.55.4",
     "react-native-background-timer": "2.0.0",
     "react-native-calendar-events": "github:jitsi/react-native-calendar-events#cad37355f36d17587d84af72b0095e8cc5fd3df9",
-    "react-native-callstats": "3.50.4",
+    "react-native-callstats": "3.52.0",
     "react-native-fetch-blob": "github:joltup/react-native-fetch-blob#1f9a1761aea4e37bd672bd0d233f3adf0e113a11",
     "react-native-img-cache": "1.5.2",
     "react-native-immersive": "1.1.0",
