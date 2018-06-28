@@ -8,22 +8,29 @@ import {
     SET_CALENDAR_AUTHORIZATION,
     SET_CALENDAR_EVENTS
 } from './actionTypes';
-import { CALENDAR_ENABLED } from './constants';
+import { CALENDAR_ENABLED, DEFAULT_STATE } from './constants';
 
-const DEFAULT_STATE = {
-    /**
-     * Note: If features/calendar-sync ever gets persisted, do not persist the
-     * authorization value as it's needed to remain a runtime value to see if we
-     * need to re-request the calendar permission from the user.
-     */
-    authorization: undefined,
-    events: []
-};
-
+/**
+ * Constant for the Redux subtree of the calendar feature.
+ *
+ * NOTE: Please do not access this subtree directly outside of this feature.
+ * This feature can be disabled (see {@code constants.js} for details), and in
+ * that case, accessing this subtree directly will return undefined and will
+ * need a bunch of repetitive type checks in other features. Use the
+ * {@code getCalendarState} function instead, or make sure you take care of
+ * those checks, or consider using the {@code CALENDAR_ENABLED} const to gate
+ * features if needed.
+ */
 const STORE_NAME = 'features/calendar-sync';
 
-// XXX For legacy purposes, read any {@code knownDomains} persisted by the
-// feature calendar-sync.
+/**
+ * NOTE 1: For legacy purposes, read any {@code knownDomains} persisted by the
+ * feature calendar-sync.
+ *
+ * NOTE 2: Never persist the authorization value as it's needed to remain a
+ * runtime value to see if we need to re-request the calendar permission from
+ * the user.
+ */
 CALENDAR_ENABLED
     && PersistenceRegistry.register(STORE_NAME, {
         knownDomains: true
