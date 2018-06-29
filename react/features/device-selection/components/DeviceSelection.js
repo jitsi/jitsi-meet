@@ -336,7 +336,7 @@ class DeviceSelection extends AbstractDialogTab<Props, State> {
                 devices: availableDevices.audioOutput,
                 hasPermission: this.props.hasAudioPermission()
                     || this.props.hasVideoPermission(),
-                icon: 'icon-volume',
+                icon: 'icon-speaker',
                 isDisabled: this.props.disableDeviceChange,
                 key: 'audioOutput',
                 label: 'settings.selectAudioOutput',
