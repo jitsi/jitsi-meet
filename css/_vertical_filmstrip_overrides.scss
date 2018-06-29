@@ -19,20 +19,6 @@
         text-align: left;
     }
 
-    &.use-new-toolbox {
-        /**
-         * Adjust the height of the filmstrip as the toolbar is displayed.
-         */
-        .filmstrip {
-            top: 0;
-            transition: height .3s ease-in;
-
-            &.reduce-height {
-                height: calc(100% - #{$newToolbarSizeWithPadding});
-            }
-        }
-    }
-
     .filmstrip {
         align-items: flex-end;
         box-sizing: border-box;
@@ -46,7 +32,16 @@
          * any parent is also fixed.
          */
         position: fixed;
+        top: 0;
+        transition: height .3s ease-in;
         z-index: $filmstripVideosZ;
+
+        /**
+         * Adjust the height of the filmstrip as the toolbar is displayed.
+         */
+        &.reduce-height {
+            height: calc(100% - #{$newToolbarSizeWithPadding});
+        }
 
         /**
          * Hide videos by making them slight to the right.

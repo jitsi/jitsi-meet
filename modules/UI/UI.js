@@ -319,12 +319,6 @@ UI.start = function() {
 
         // Initialize side panels
         SidePanels.init(eventEmitter);
-
-        // TODO: remove this class once the old toolbar has been removed. This
-        // class is set so that any CSS changes needed to adjust elements
-        // outside of the new toolbar can be scoped to just the app with the new
-        // toolbar enabled.
-        $('body').addClass('use-new-toolbox');
     }
 
     interfaceConfig.VERTICAL_FILMSTRIP
