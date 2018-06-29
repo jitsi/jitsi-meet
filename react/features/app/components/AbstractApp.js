@@ -1,5 +1,6 @@
 /* global APP */
 
+import _ from 'lodash';
 import PropTypes from 'prop-types';
 import React, { Component, Fragment } from 'react';
 import { I18nextProvider } from 'react-i18next';
@@ -9,7 +10,6 @@ import Thunk from 'redux-thunk';
 
 import { i18next } from '../../base/i18n';
 import { localParticipantLeft } from '../../base/participants';
-import { RouteRegistry } from '../../base/react';
 import {
     MiddlewareRegistry,
     ReducerRegistry,
@@ -19,7 +19,6 @@ import { SoundCollection } from '../../base/sounds';
 import { PersistenceRegistry } from '../../base/storage';
 import { toURLString } from '../../base/util';
 import { OverlayContainer } from '../../overlay';
-import { BlankPage } from '../../welcome';
 
 import { appNavigate, appWillMount, appWillUnmount } from '../actions';
 
@@ -84,7 +83,7 @@ export class AbstractApp extends Component {
              *
              * @type {Route}
              */
-            route: undefined,
+            route: {},
 
             /**
              * The state of the »possible« async initialization of
@@ -114,7 +113,6 @@ export class AbstractApp extends Component {
                 .catch(() => { /* AbstractApp should always initialize! */ })
                 .then(() =>
                     this.setState({
-                        route: undefined,
                         store: this._maybeCreateStore(props)
                     }));
     }
@@ -242,7 +240,7 @@ export class AbstractApp extends Component {
      */
     render() {
         const { appAsyncInitialized, route } = this.state;
-        const component = (route && route.component) || BlankPage;
+        const { component } = route;
 
         if (appAsyncInitialized && component) {
             return (
@@ -421,33 +419,16 @@ export class AbstractApp extends Component {
      * @returns {Promise}
      */
     _navigate(route) {
-        if (RouteRegistry.areRoutesEqual(this.state.route, route)) {
+        if (_.isEqual(route, this.state.route)) {
             return Promise.resolve();
         }
 
-        let nextState = {
-            route
-        };
+        if (route.href) {
+            // This navigation requires loading a new URL in the browser.
+            window.location.href = route.href;
 
-        // The Web App was using react-router so it utilized react-router's
-        // onEnter. During the removal of react-router, modifications were
-        // minimized by preserving the onEnter interface:
-        // (1) Router would provide its nextState to the Route's onEnter. As the
-        // role of Router is now this AbstractApp and we use redux, provide the
-        // redux store instead.
-        // (2) A replace function would be provided to the Route in case it
-        // chose to redirect to another path.
-        route && this._onRouteEnter(route, this._getStore(), pathname => {
-            if (pathname) {
-                this._openURL(pathname);
-
-                // Do not proceed with the route because it chose to redirect to
-                // another path.
-                nextState = undefined;
-            } else {
-                nextState.route = undefined;
-            }
-        });
+            return Promise.resolve();
+        }
 
         // XXX React's setState is asynchronous which means that the value of
         // this.state.route above may not even be correct. If the check is
@@ -455,26 +436,8 @@ export class AbstractApp extends Component {
         // expected route. In order to mitigate the problem, _navigate was
         // changed to return a Promise.
         return new Promise(resolve => {
-            if (nextState) {
-                this.setState(nextState, resolve);
-            } else {
-                resolve();
-            }
+            this.setState({ route }, resolve);
         });
-    }
-
-    /**
-     * Notifies this {@code App} that a specific Route is about to be rendered.
-     *
-     * @param {Route} route - The Route that is about to be rendered.
-     * @private
-     * @returns {void}
-     */
-    _onRouteEnter(route, ...args) {
-        // Notify the route that it is about to be entered.
-        const { onEnter } = route;
-
-        typeof onEnter === 'function' && onEnter(...args);
     }
 
     /**

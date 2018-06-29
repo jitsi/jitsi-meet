@@ -77,32 +77,25 @@ function _appNavigateToMandatoryLocation(
      * @returns {void}
      */
     function loadConfigSettled(error, config) {
-        let promise;
-
         // Due to the asynchronous nature of the loading, the specified config
         // may or may not be required by the time the notification arrives.
         // If we receive the config for a location we are no longer interested
         // in, "ignore" it - deliver it to the external API, for example, but do
         // not proceed with the appNavigate procedure/process.
         if (getState()['features/base/config'].locationURL === locationURL) {
-            promise = dispatch(setLocationURL(locationURL));
+            dispatch(setLocationURL(locationURL));
+            dispatch(setConfig(config));
         } else {
             // eslint-disable-next-line no-param-reassign
             error || (error = new Error('Config no longer needed!'));
-            promise = Promise.resolve();
+
+            // XXX The failure could be, for example, because of a
+            // certificate-related error. In which case the connection will
+            // fail later in Strophe anyway.
+            dispatch(loadConfigError(error, locationURL));
+
+            throw error;
         }
-
-        return promise.then(() => {
-            if (error) {
-                // XXX The failure could be, for example, because of a
-                // certificate-related error. In which case the connection will
-                // fail later in Strophe anyway.
-                dispatch(loadConfigError(error, locationURL));
-                throw error;
-            }
-
-            return dispatch(setConfig(config));
-        });
     }
 }
 

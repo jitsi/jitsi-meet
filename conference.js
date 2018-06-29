@@ -2320,45 +2320,39 @@ export default {
      * @private
      */
     _initDeviceList() {
-        JitsiMeetJS.mediaDevices.isDeviceListAvailable()
-            .then(isDeviceListAvailable => {
-                if (isDeviceListAvailable
-                        && JitsiMeetJS.mediaDevices.isDeviceChangeAvailable()) {
-                    JitsiMeetJS.mediaDevices.enumerateDevices(devices => {
-                        // Ugly way to synchronize real device IDs with local
-                        // storage and settings menu. This is a workaround until
-                        // getConstraints() method will be implemented
-                        // in browsers.
-                        const { dispatch } = APP.store;
+        if (JitsiMeetJS.mediaDevices.isDeviceListAvailable()
+                && JitsiMeetJS.mediaDevices.isDeviceChangeAvailable()) {
+            JitsiMeetJS.mediaDevices.enumerateDevices(devices => {
+                // Ugly way to synchronize real device IDs with local
+                // storage and settings menu. This is a workaround until
+                // getConstraints() method will be implemented
+                // in browsers.
+                const { dispatch } = APP.store;
 
-                        if (this.localAudio) {
-                            dispatch(updateSettings({
-                                micDeviceId: this.localAudio.getDeviceId()
-                            }));
-                        }
-
-                        if (this.localVideo) {
-                            dispatch(updateSettings({
-                                cameraDeviceId: this.localVideo.getDeviceId()
-                            }));
-                        }
-
-                        mediaDeviceHelper.setCurrentMediaDevices(devices);
-                        APP.UI.onAvailableDevicesChanged(devices);
-                        APP.store.dispatch(updateDeviceList(devices));
-                    });
-
-                    this.deviceChangeListener = devices =>
-                        window.setTimeout(
-                            () => this._onDeviceListChanged(devices), 0);
-                    JitsiMeetJS.mediaDevices.addEventListener(
-                        JitsiMediaDevicesEvents.DEVICE_LIST_CHANGED,
-                        this.deviceChangeListener);
+                if (this.localAudio) {
+                    dispatch(updateSettings({
+                        micDeviceId: this.localAudio.getDeviceId()
+                    }));
                 }
-            })
-            .catch(error => {
-                logger.warn(`Error getting device list: ${error}`);
+
+                if (this.localVideo) {
+                    dispatch(updateSettings({
+                        cameraDeviceId: this.localVideo.getDeviceId()
+                    }));
+                }
+
+                mediaDeviceHelper.setCurrentMediaDevices(devices);
+                APP.UI.onAvailableDevicesChanged(devices);
+                APP.store.dispatch(updateDeviceList(devices));
             });
+
+            this.deviceChangeListener = devices =>
+                window.setTimeout(
+                    () => this._onDeviceListChanged(devices), 0);
+            JitsiMeetJS.mediaDevices.addEventListener(
+                JitsiMediaDevicesEvents.DEVICE_LIST_CHANGED,
+                this.deviceChangeListener);
+        }
     },
 
     /**

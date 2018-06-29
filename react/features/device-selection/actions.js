@@ -94,10 +94,7 @@ function _processRequest(dispatch, getState, request, responseCallback) { // esl
 
         switch (request.name) {
         case 'isDeviceListAvailable':
-            JitsiMeetJS.mediaDevices.isDeviceListAvailable()
-                .then(isDeviceListAvailable =>
-                    responseCallback(isDeviceListAvailable))
-                .catch(e => responseCallback(null, e));
+            responseCallback(JitsiMeetJS.mediaDevices.isDeviceListAvailable());
             break;
         case 'isDeviceChangeAvailable':
             responseCallback(

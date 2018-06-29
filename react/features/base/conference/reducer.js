@@ -1,6 +1,6 @@
 // @flow
 
-import { CONNECTION_WILL_CONNECT } from '../connection';
+import { CONNECTION_WILL_CONNECT, SET_LOCATION_URL } from '../connection';
 import { JitsiConferenceErrors } from '../lib-jitsi-meet';
 import { assign, ReducerRegistry, set } from '../redux';
 import { LOCKED_LOCALLY, LOCKED_REMOTELY } from '../../room-lock';
@@ -65,6 +65,9 @@ ReducerRegistry.register('features/base/conference', (state = {}, action) => {
 
     case SET_FOLLOW_ME:
         return set(state, 'followMeEnabled', action.enabled);
+
+    case SET_LOCATION_URL:
+        return set(state, 'room', undefined);
 
     case SET_PASSWORD:
         return _setPassword(state, action);
