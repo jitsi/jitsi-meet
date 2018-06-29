@@ -178,6 +178,7 @@ function handle_create_poltergeist (event)
     local name = params["name"];
     local avatar = params["avatar"];
     local status = params["status"];
+    local conversation = params["conversation"];
     local session = {};
 
     if not verify_token(params["token"], room_name, group, session) then
@@ -213,7 +214,13 @@ function handle_create_poltergeist (event)
        creator_user = session.jitsi_meet_context_user;
        creator_group = session.jitsi_meet_context_group;
     };
-    poltergeist.add_to_muc(room, user_id, name, avatar, context, status)
+
+    local resources = {};
+    if conversation ~= nil then
+        resources["conversation"] = conversation
+    end
+
+    poltergeist.add_to_muc(room, user_id, name, avatar, context, status, resources)
     return 200;
 end
 

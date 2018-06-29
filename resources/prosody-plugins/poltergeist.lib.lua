@@ -49,7 +49,6 @@ function occupies(room, nick)
     return not not room:get_occupant_jid(component.."/"..nick);
 end
 
-
 --------------------------------------------------------------------------------
 -- Username storage for poltergeist.
 --
@@ -66,8 +65,9 @@ end
 --   }
 -- }
 --------------------------------------------------------------------------------
--- username is the table where all poltergeist are stored
-local usernames = {}
+-- state is the table where poltergeist usernames and call resources are stored
+-- for a given xmpp muc.
+local state = module:shared("state")
 
 -- Adds a poltergeist to the store.
 -- @param room is the room the poltergeist is being added to
@@ -76,12 +76,12 @@ local usernames = {}
 local function store_username(room, user_id, username)
     local room_name = jid.node(room.jid)
 
-    if not usernames[room_name] then
-        usernames[room_name] = {}
+    if not state[room_name] then
+        state[room_name] = {}
     end
 
-    usernames[room_name][user_id] = username
-    usernames[room_name][create_nick(username)] = user_id
+    state[room_name][user_id] = username
+    state[room_name][create_nick(username)] = user_id
 end
 
 -- Retrieves a poltergeist username from the store if one exists.
@@ -90,43 +90,62 @@ end
 local function get_username(room, user_id)
     local room_name = jid.node(room.jid)
 
-    if not usernames[room_name] then
+    if not state[room_name] then
         return nil
     end
 
-    return usernames[room_name][user_id]
+    return state[room_name][user_id]
 end
 
 local function get_username_from_nick(room_name, nick)
-    if not usernames[room_name] then
+    if not state[room_name] then
         return nil
     end
 
-    local user_id = usernames[room_name][nick]
-    return usernames[room_name][user_id]
+    local user_id = state[room_name][nick]
+    return state[room_name][user_id]
 end
 
 -- Removes the username from the store.
 -- @param room is the room the poltergeist is being removed from
 -- @param nick is the nick of the muc occupant
 local function remove_username(room, nick)
-    local room_name = jid.node(room.jid);
-    if not usernames[room_name] then
+    local room_name = jid.node(room.jid)
+    if not state[room_name] then
         return
     end
 
-    local user_id = usernames[room_name][nick]
-    usernames[room_name][user_id] = nil
-    usernames[room_name][nick] = nil
+    local user_id = state[room_name][nick]
+    state[room_name][user_id] = nil
+    state[room_name][nick] = nil
 end
 
 -- Removes all poltergeists in the store for the provided room.
 -- @param room is the room all poltergiest will be removed from
 local function remove_room(room)
     local room_name = jid.node(room.jid)
-    if usernames[room_name] then
-        usernames[room_name] = nil
+    if state[room_name] then
+        state[room_name] = nil
     end
+end
+
+-- Adds a resource that is associated with a a call in a room. There
+-- is only one resource for each type.
+-- @param room is the room the call and poltergeist is in.
+-- @param call_id is the unique id for the call.
+-- @param resource_type is type of resource being added.
+-- @param resource_id is the id of the resource being added.
+local function add_call_resource(room, call_id, resource_type, resource_id)
+    local room_name = jid.node(room.jid)
+    if not state[room_name] then
+        state[room_name] = {}
+    end
+
+    if not state[room_name][call_id] then
+        state[room_name][call_id] = {}
+    end
+
+    state[room_name][call_id][resource_type] = resource_id
 end
 
 --------------------------------------------------------------------------------
@@ -271,7 +290,8 @@ end
 -- @param avatar is the avatar link used for the poltergeist display
 -- @param context is the session context of the user making the request
 -- @param status is the presence status string to use
-local function add_to_muc(room, user_id, display_name, avatar, context, status)
+-- @param resources is a table of resource types and resource ids to correlate.
+local function add_to_muc(room, user_id, display_name, avatar, context, status, resources)
     local username = uuid.generate()
     local presence_stanza = original_presence(
         room,
@@ -281,12 +301,17 @@ local function add_to_muc(room, user_id, display_name, avatar, context, status)
         context,
         status
     )
-    store_username(room, user_id, username)
+
     module:log("info", "adding poltergeist: %s/%s", room, create_nick(username))
+    store_username(room, user_id, username)
+    for k, v in pairs(resources) do
+        add_call_resource(room, username, k, v)
+    end
     room:handle_first_presence(
         prosody.hosts[component],
         presence_stanza
     )
+
     local remove_delay = 5
     local expiration = expiration_timeout - remove_delay;
     local nick = create_nick(username)
