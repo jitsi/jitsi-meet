@@ -78,7 +78,7 @@
     "toolbar": {
         "accessibilityLabel": {
             "audioOnly": "Toggle audio only",
-            "audioRoute": "Select the audio route",
+            "audioRoute": "Select the sound device",
             "callQuality": "Manage call quality",
             "chat": "Toggle chat window",
             "document": "Toggle shared document",
@@ -107,7 +107,7 @@
         "audioonly": "Enable / Disable audio only mode (saves bandwidth)",
         "audioOnlyOn": "Enable audio only mode (saves bandwidth)",
         "audioOnlyOff": "Disable audio only mode",
-        "audioRoute": "Select the audio route",
+        "audioRoute": "Select the sound device",
         "callQuality": "Manage call quality",
         "enterFullScreen": "View full screen",
         "exitFullScreen": "Exit full screen",
