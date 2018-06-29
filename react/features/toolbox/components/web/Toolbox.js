@@ -56,6 +56,10 @@ import OverflowMenuItem from './OverflowMenuItem';
 import OverflowMenuProfileItem from './OverflowMenuProfileItem';
 import ToolbarButton from './ToolbarButton';
 import VideoMuteButton from '../VideoMuteButton';
+import {
+    StartTranscribingDialog,
+    StopTranscribingDialog
+} from '../../../transcribing';
 
 /**
  * The type of the React {@code Component} props of {@link Toolbox}.
@@ -145,6 +149,16 @@ type Props = {
     _sharingVideo: boolean,
 
     /**
+     * Whether or not audio is currently being transcribed.
+     */
+    _transcribingAudio: boolean,
+
+    /**
+     * Whether or not transcribing is enabled.
+     */
+    _transcribingEnabled: boolean,
+
+    /**
      * Flag showing whether toolbar is visible.
      */
     _visible: boolean,
@@ -214,6 +228,8 @@ class Toolbox extends Component<Props> {
             = this._onToolbarToggleProfile.bind(this);
         this._onToolbarToggleRaiseHand
             = this._onToolbarToggleRaiseHand.bind(this);
+        this._onToolbarToggleTranscribing
+            = this._onToolbarToggleTranscribing.bind(this);
         this._onToolbarToggleScreenshare
             = this._onToolbarToggleScreenshare.bind(this);
         this._onToolbarToggleSharedVideo
@@ -484,6 +500,23 @@ class Toolbox extends Component<Props> {
             local: true,
             raisedHand: !_raisedHand
         }));
+    }
+
+    /**
+     * Dispatches an action to toggle transcribing.
+     *
+     * @private
+     * @returns {void}
+     */
+    _doToggleTranscribing() {
+        const { _transcribingAudio } = this.props;
+
+        const dialog = _transcribingAudio
+            ? StopTranscribingDialog
+            : StartTranscribingDialog;
+
+        this.props.dispatch(
+            openDialog(dialog, {}));
     }
 
     /**
@@ -784,6 +817,18 @@ class Toolbox extends Component<Props> {
         this._doToggleRaiseHand();
     }
 
+    _onToolbarToggleTranscribing: () => void;
+
+    /**
+     * Dispatched an action to toggle transcribing.
+     *
+     * @private
+     * @returns {void}
+     */
+    _onToolbarToggleTranscribing() {
+        this._doToggleTranscribing();
+    }
+
     _onToolbarToggleScreenshare: () => void;
 
     /**
@@ -875,6 +920,7 @@ class Toolbox extends Component<Props> {
             _feedbackConfigured,
             _fullScreen,
             _isGuest,
+            _transcribingEnabled,
             _sharingVideo,
             t
         } = this.props;
@@ -907,6 +953,8 @@ class Toolbox extends Component<Props> {
             <RecordButton
                 key = 'record'
                 showLabel = { true } />,
+            _transcribingEnabled && this._shouldShowButton('transcribing')
+            && this._renderTranscribingButton(),
             this._shouldShowButton('sharedvideo')
                 && <OverflowMenuItem
                     accessibilityLabel =
@@ -960,6 +1008,32 @@ class Toolbox extends Component<Props> {
         ];
     }
 
+    /**
+     * Renders an {@code OverflowMenuItem} to start or stop transcribing of the
+     * current conference.
+     *
+     * @private
+     * @returns {ReactElement|null}
+     */
+    _renderTranscribingButton() {
+        const { t, _transcribingAudio } = this.props;
+
+        const translationKey = _transcribingAudio
+            ? 'dialog.stopTranscribing'
+            : 'dialog.startTranscribing';
+
+        return (
+            <OverflowMenuItem
+                accessibilityLabel
+                    = { t('toolbar.accessibilityLabel.transcribing') }
+                icon = 'icon-edit'
+                key = 'transcribing'
+                onClick = { this._onToolbarToggleTranscribing }
+                text = { t(translationKey) } />
+        );
+    }
+
+
     _shouldShowButton: (string) => boolean;
 
     /**
@@ -990,6 +1064,9 @@ function _mapStateToProps(state) {
         callStatsID,
         iAmRecorder
     } = state['features/base/config'];
+    let {
+        transcribingEnabled
+    } = state['features/base/config'];
     const sharedVideoStatus = state['features/shared-video'].status;
     const { current } = state['features/side-panel'];
     const {
@@ -1003,8 +1080,12 @@ function _mapStateToProps(state) {
     const localVideo = getLocalVideoTrack(state['features/base/tracks']);
     const addPeopleEnabled = isAddPeopleEnabled(state);
     const dialOutEnabled = isDialOutEnabled(state);
+    const { isTranscribing } = state['features/transcribing'];
 
     let desktopSharingDisabledTooltipKey;
+
+    transcribingEnabled
+        = isLocalParticipantModerator(state) && transcribingEnabled;
 
     if (state['features/base/config'].enableFeaturesBasedOnToken) {
         // we enable desktop sharing if any participant already have this
@@ -1040,6 +1121,8 @@ function _mapStateToProps(state) {
         _overflowMenuVisible: overflowMenuVisible,
         _raisedHand: localParticipant.raisedHand,
         _screensharing: localVideo && localVideo.videoType === 'desktop',
+        _transcribingAudio: isTranscribing,
+        _transcribingEnabled: transcribingEnabled,
         _sharingVideo: sharedVideoStatus === 'playing'
             || sharedVideoStatus === 'start'
             || sharedVideoStatus === 'pause',

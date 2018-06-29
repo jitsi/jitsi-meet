@@ -86,6 +86,9 @@ class Labels extends AbstractLabels<Props, State> {
                         JitsiRecordingConstants.mode.STREAM)
                 }
                 {
+                    this._renderTranscribingLabel()
+                }
+                {
                     this._renderVideoQualityLabel()
                 }
             </div>
@@ -95,6 +98,8 @@ class Labels extends AbstractLabels<Props, State> {
     _renderRecordingLabel: string => React$Element<*>
 
     _renderVideoQualityLabel: () => React$Element<*>
+
+    _renderTranscribingLabel: () => React$Element<*>
 }
 
 export default connect(_mapStateToProps)(Labels);

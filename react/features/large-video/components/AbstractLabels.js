@@ -5,6 +5,7 @@ import React, { Component } from 'react';
 import { isFilmstripVisible } from '../../filmstrip';
 import { RecordingLabel } from '../../recording';
 import { VideoQualityLabel } from '../../video-quality';
+import { TranscribingLabel } from '../../transcribing/';
 
 /**
  * The type of the React {@code Component} props of {@link AbstractLabels}.
@@ -48,6 +49,18 @@ export default class AbstractLabels<P: Props, S> extends Component<P, S> {
     _renderVideoQualityLabel() {
         return (
             <VideoQualityLabel />
+        );
+    }
+
+    /**
+     * Renders the {@code TranscribingLabel}.
+     *
+     * @returns {React$Element}
+     * @protected
+     */
+    _renderTranscribingLabel() {
+        return (
+            <TranscribingLabel />
         );
     }
 }

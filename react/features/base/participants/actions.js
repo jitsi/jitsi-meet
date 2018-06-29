@@ -14,7 +14,9 @@ import {
     PARTICIPANT_JOINED,
     PARTICIPANT_LEFT,
     PARTICIPANT_UPDATED,
-    PIN_PARTICIPANT
+    PIN_PARTICIPANT,
+    HIDDEN_PARTICIPANT_JOINED,
+    HIDDEN_PARTICIPANT_LEFT
 } from './actionTypes';
 import { MAX_DISPLAY_NAME_LENGTH } from './constants';
 import { getLocalParticipant } from './functions';
@@ -273,6 +275,42 @@ export function participantJoined(participant) {
                 participant
             });
         }
+    };
+}
+
+/**
+ * Action to signal that a hidden participant has joined the conference.
+ *
+ * @param {string} id - The id of the participant.
+ * @param {string} displayName - The display name, or undefined when
+ * unknown.
+ * @returns {{
+ *     type: HIDDEN_PARTICIPANT_JOINED,
+ *     displayName: string,
+ *     id: string
+ * }}
+ */
+export function hiddenParticipantJoined(id, displayName) {
+    return {
+        type: HIDDEN_PARTICIPANT_JOINED,
+        id,
+        displayName
+    };
+}
+
+/**
+ * Action to signal that a hidden participant has left the conference.
+ *
+ * @param {string} id - The id of the participant.
+ * @returns {{
+ *     type: HIDDEN_PARTICIPANT_LEFT,
+ *     id: string
+ * }}
+ */
+export function hiddenParticipantLeft(id) {
+    return {
+        type: HIDDEN_PARTICIPANT_LEFT,
+        id
     };
 }
 
