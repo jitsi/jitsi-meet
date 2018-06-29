@@ -260,12 +260,12 @@ function _connectionFailed({ dispatch, getState }, next, action) {
  */
 function _isMaybeSplitBrainError(getState, action) {
     const { error } = action;
-    const isItemNotFoundError = error
+    const isShardChangedError = error
         && error.message === 'item-not-found'
         && error.details
         && error.details.shard_changed;
 
-    if (isItemNotFoundError) {
+    if (isShardChangedError) {
         const state = getState();
         const { timeEstablished } = state['features/base/connection'];
         const { _immediateReloadThreshold } = state['features/base/config'];
