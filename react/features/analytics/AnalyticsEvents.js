@@ -98,6 +98,22 @@ export function createAudioOnlyChangedEvent(enabled) {
 }
 
 /**
+ * Creates an event for about the JitsiConnection.
+ *
+ * @param {string} action - The action that the event represents.
+ * @param {boolean} attributes - Additional attributes to attach to the event.
+ * @returns {Object} The event in a format suitable for sending via
+ * sendAnalytics.
+ */
+export function createConnectionEvent(action, attributes = {}) {
+    return {
+        action,
+        actionSubject: 'connection',
+        attributes
+    };
+}
+
+/**
  * Creates an event for an action on the deep linking page.
  *
  * @param {string} action - The action that the event represents.

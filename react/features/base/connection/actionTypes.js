@@ -15,7 +15,8 @@ export const CONNECTION_DISCONNECTED = Symbol('CONNECTION_DISCONNECTED');
  *
  * {
  *     type: CONNECTION_ESTABLISHED,
- *     connection: JitsiConnection
+ *     connection: JitsiConnection,
+ *     timeEstablished: number,
  * }
  */
 export const CONNECTION_ESTABLISHED = Symbol('CONNECTION_ESTABLISHED');

@@ -12,9 +12,12 @@ import {
 } from '../base/config';
 import { setLocationURL } from '../base/connection';
 import { loadConfig } from '../base/lib-jitsi-meet';
-import { parseURIString } from '../base/util';
+import { parseURIString, toURLString } from '../base/util';
+import { setFatalError } from '../overlay';
 
 import { APP_WILL_MOUNT, APP_WILL_UNMOUNT } from './actionTypes';
+
+const logger = require('jitsi-meet-logger').getLogger(__filename);
 
 declare var APP: Object;
 
@@ -263,6 +266,28 @@ export function redirectWithStoredParams(pathname: string) {
 
         newLocationURL.pathname = pathname;
         window.location.assign(newLocationURL.toString());
+    };
+}
+
+/**
+ * Reloads the page.
+ *
+ * @protected
+ * @returns {Function}
+ */
+export function reloadNow() {
+    return (dispatch: Dispatch<Function>, getState: Function) => {
+        dispatch(setFatalError(undefined));
+
+        const { locationURL } = getState()['features/base/connection'];
+
+        logger.info(`Reloading the conference using URL: ${locationURL}`);
+
+        if (navigator.product === 'ReactNative') {
+            dispatch(appNavigate(toURLString(locationURL)));
+        } else {
+            dispatch(reloadWithStoredParams());
+        }
     };
 }
 

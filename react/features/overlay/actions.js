@@ -1,13 +1,8 @@
-import { appNavigate, reloadWithStoredParams } from '../app';
-import { toURLString } from '../base/util';
-
 import {
     MEDIA_PERMISSION_PROMPT_VISIBILITY_CHANGED,
     SET_FATAL_ERROR,
     SUSPEND_DETECTED
 } from './actionTypes';
-
-const logger = require('jitsi-meet-logger').getLogger(__filename);
 
 /**
  * Signals that the prompt for media permission is visible or not.
@@ -27,28 +22,6 @@ export function mediaPermissionPromptVisibilityChanged(isVisible, browser) {
         type: MEDIA_PERMISSION_PROMPT_VISIBILITY_CHANGED,
         browser,
         isVisible
-    };
-}
-
-/**
- * Reloads the page.
- *
- * @protected
- * @returns {Function}
- */
-export function _reloadNow() {
-    return (dispatch, getState) => {
-        dispatch(setFatalError(undefined));
-
-        const { locationURL } = getState()['features/base/connection'];
-
-        logger.info(`Reloading the conference using URL: ${locationURL}`);
-
-        if (navigator.product === 'ReactNative') {
-            dispatch(appNavigate(toURLString(locationURL)));
-        } else {
-            dispatch(reloadWithStoredParams());
-        }
     };
 }
 

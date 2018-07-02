@@ -4,9 +4,8 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
+import { reloadNow } from '../../app';
 import { translate } from '../../base/i18n';
-
-import { _reloadNow } from '../actions';
 
 /**
  * Implements a React Component for button for the overlays that will reload
@@ -82,7 +81,7 @@ function _mapDispatchToProps(dispatch: Function): Object {
          * @returns {Object} Dispatched action.
          */
         _reloadNow() {
-            dispatch(_reloadNow());
+            dispatch(reloadNow());
         }
     };
 }

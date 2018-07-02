@@ -1,9 +1,11 @@
 // @flow
 
+import { reloadNow } from '../../app';
 import {
     ACTION_PINNED,
     ACTION_UNPINNED,
     createAudioOnlyChangedEvent,
+    createConnectionEvent,
     createPinnedEvent,
     sendAnalytics
 } from '../../analytics';
@@ -194,6 +196,14 @@ function _connectionEstablished({ dispatch }, next, action) {
  * @returns {Object} The value returned by {@code next(action)}.
  */
 function _connectionFailed({ dispatch, getState }, next, action) {
+    // In the case of a split-brain error, reload early and prevent further
+    // handling of the action.
+    if (_isMaybeSplitBrainError(getState, action)) {
+        dispatch(reloadNow());
+
+        return;
+    }
+
     const result = next(action);
 
     // FIXME: Workaround for the web version. Currently, the creation of the
@@ -233,6 +243,52 @@ function _connectionFailed({ dispatch, getState }, next, action) {
     }
 
     return result;
+}
+
+/**
+ * Returns whether or not a CONNECTION_FAILED action is for a possible split
+ * brain error. A split brain error occurs when at least two users join a
+ * conference on different bridges. It is assumed the split brain scenario
+ * occurs very early on in the call.
+ *
+ * @param {Function} getState - The redux function for fetching the current
+ * state.
+ * @param {Action} action - The redux action {@code CONNECTION_FAILED} which is
+ * being dispatched in the specified {@code store}.
+ * @private
+ * @returns {boolean}
+ */
+function _isMaybeSplitBrainError(getState, action) {
+    const { error } = action;
+    const isShardChangedError = error
+        && error.message === 'item-not-found'
+        && error.details
+        && error.details.shard_changed;
+
+    if (isShardChangedError) {
+        const state = getState();
+        const { timeEstablished } = state['features/base/connection'];
+        const { _immediateReloadThreshold } = state['features/base/config'];
+
+        const timeSinceConnectionEstablished
+            = timeEstablished && Date.now() - timeEstablished;
+        const reloadThreshold = typeof _immediateReloadThreshold === 'number'
+            ? _immediateReloadThreshold : 1500;
+
+        const isWithinSplitBrainThreshold = !timeEstablished
+            || timeSinceConnectionEstablished <= reloadThreshold;
+
+        sendAnalytics(createConnectionEvent('failed', {
+            ...error,
+            connectionEstablished: timeEstablished,
+            splitBrain: isWithinSplitBrainThreshold,
+            timeSinceConnectionEstablished
+        }));
+
+        return isWithinSplitBrainThreshold;
+    }
+
+    return false;
 }
 
 /**
