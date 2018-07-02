@@ -78,10 +78,11 @@ const AudioLevels = {
      */
     _updateLargeVideoShadow(level) {
         const scale = 2;
+        const intShadowSpread = 10;
 
         // Internal circle audio level.
         const int = {
-            level: level > 0.15 ? 20 : 0,
+            level: level > 0.15 ? intShadowSpread : 0,
             color: interfaceConfig.AUDIO_LEVEL_PRIMARY_COLOR
         };
 

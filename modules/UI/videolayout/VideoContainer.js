@@ -450,11 +450,6 @@ export class VideoContainer extends LargeContainer {
             = this.getVideoPosition(width, height,
             containerWidth, containerHeight);
 
-        // update avatar position
-        const top = (containerHeight / 2) - (this.avatarHeight / 4 * 3);
-
-        this.$avatar.css('top', top);
-
         this.positionRemoteStatusMessages();
 
         this.$wrapper.animate({
