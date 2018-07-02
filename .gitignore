@@ -76,3 +76,6 @@ buck-out/
 .jshintignore
 .jshintrc
 
+# Ignore asset files that are generated upon build
+android/sdk/src/main/assets
+android/sdk/src/main/res/drawable*
