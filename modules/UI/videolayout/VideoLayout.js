@@ -4,11 +4,11 @@ const logger = require('jitsi-meet-logger').getLogger(__filename);
 import {
     JitsiParticipantConnectionStatus
 } from '../../../react/features/base/lib-jitsi-meet';
+import { VIDEO_TYPE } from '../../../react/features/base/media';
 import {
     getPinnedParticipant,
     pinParticipant
 } from '../../../react/features/base/participants';
-
 import { SHARED_VIDEO_CONTAINER_TYPE } from '../shared_video/SharedVideo';
 import SharedVideoThumb from '../shared_video/SharedVideoThumb';
 
@@ -977,7 +977,7 @@ const VideoLayout = {
             largeVideo.updateLargeVideo(
                 id,
                 smallVideo.videoStream,
-                videoType
+                videoType || VIDEO_TYPE.CAMERA
             ).then(() => {
                 // update current small video and the old one
                 smallVideo.updateView();
