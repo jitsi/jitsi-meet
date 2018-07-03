@@ -24,38 +24,12 @@ type Props = {
 };
 
 /**
- * The type of the React {@code Component} state of {@link TranscribingLabel}.
- */
-type State = {
-
-    /**
-     * Whether or not the {@link TranscribingLabel} should be invisible.
-     */
-    hidden: boolean
-};
-
-
-/**
  * React Component for displaying a label when a transcriber is in the
  * conference.
  *
  * @extends Component
  */
-class TranscribingLabel extends Component<Props, State> {
-
-    /**
-     * Initializes a new {@code TranscribingLabel} instance.
-     *
-     * @param {Props} props - The read-only properties with which the new
-     * instance is to be initialized.
-     */
-    constructor(props: Props) {
-        super(props);
-
-        this.state = {
-            hidden: true
-        };
-    }
+class TranscribingLabel extends Component<Props> {
 
     /**
      * Implements React's {@link Component#render()}.
@@ -64,7 +38,7 @@ class TranscribingLabel extends Component<Props, State> {
      * @returns {ReactElement}
      */
     render() {
-        if (this.state.hidden) {
+        if (!this.props._transcribing) {
             return null;
         }
 
@@ -78,22 +52,6 @@ class TranscribingLabel extends Component<Props, State> {
             </Tooltip>
         );
     }
-
-    /**
-     * Notifies this mounted React {@code Component} that it will receive new
-     * props.
-     *
-     * @inheritdoc
-     * @param {Object} nextProps - The read-only React {@code Component} props
-     * that this instance will receive.
-     * @returns {void}
-     */
-    componentWillReceiveProps(nextProps) {
-        this.setState({
-            hidden: !nextProps._transcribing
-        });
-    }
-
 
 }
 

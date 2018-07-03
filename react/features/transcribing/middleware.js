@@ -52,9 +52,6 @@ MiddlewareRegistry.register(store => next => action => {
 
             conference.room.dial(TRANSCRIBER_DIAL_COMMAND).catch(
                 () => {
-                    // do nothing on success
-                },
-                () => {
                     store.dispatch(dialError());
                     store.dispatch(hidePendingTranscribingNotification());
                     store.dispatch(showTranscribingError());
@@ -64,7 +61,9 @@ MiddlewareRegistry.register(store => next => action => {
         break;
     case STOP_TRANSCRIBING:
         if (isTranscribing) {
-            APP.conference._room.kickParticipant(transcriberJID);
+            const participant = conference.getParticipantById(transcriberJID);
+
+            conference.room.kick(participant.getJid());
         }
         break;
     case _TRANSCRIBER_LEFT:
