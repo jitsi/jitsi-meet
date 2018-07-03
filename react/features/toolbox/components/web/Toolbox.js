@@ -511,6 +511,12 @@ class Toolbox extends Component<Props> {
     _doToggleTranscribing() {
         const { _transcribingAudio } = this.props;
 
+        sendAnalytics(createToolbarEvent(
+            'transcribing.button',
+            {
+                'is_transcribing': Boolean(_transcribingAudio)
+            }));
+
         const dialog = _transcribingAudio
             ? StopTranscribingDialog
             : StartTranscribingDialog;

@@ -43,14 +43,16 @@ MiddlewareRegistry.register(store => next => action => {
         potentialTranscriberJIDs
     } = store.getState()['features/transcribing'];
 
+    const { conference } = store.getState()['features/base/conference'];
+
     switch (action.type) {
     case DIAL_TRANSCRIBER:
         if (!(isDialing || isTranscribing)) {
             store.dispatch(showPendingTranscribingNotification());
 
-            APP.conference._room.dial(TRANSCRIBER_DIAL_COMMAND).then(
+            conference.room.dial(TRANSCRIBER_DIAL_COMMAND).catch(
                 () => {
-                    // do nothing
+                    // do nothing on success
                 },
                 () => {
                     store.dispatch(dialError());
