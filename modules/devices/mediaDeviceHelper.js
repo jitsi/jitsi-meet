@@ -1,6 +1,8 @@
 /* global APP, JitsiMeetJS */
 
 import { getAudioOutputDeviceId } from '../../react/features/base/devices';
+import { getPreferredCameraDeviceId, getPreferredMicDeviceId }
+    from '../../react/features/base/settings';
 
 /**
  * Determines if currently selected audio output device should be changed after
@@ -38,8 +40,8 @@ function getNewAudioOutputDevice(newDevices) {
 function getNewAudioInputDevice(newDevices, localAudio) {
     const availableAudioInputDevices = newDevices.filter(
         d => d.kind === 'audioinput');
-    const settings = APP.store.getState()['features/base/settings'];
-    const selectedAudioInputDeviceId = settings.micDeviceId;
+    const selectedAudioInputDeviceId
+        = getPreferredMicDeviceId(APP.store.getState());
     const selectedAudioInputDevice = availableAudioInputDevices.find(
         d => d.deviceId === selectedAudioInputDeviceId);
 
@@ -75,8 +77,8 @@ function getNewAudioInputDevice(newDevices, localAudio) {
 function getNewVideoInputDevice(newDevices, localVideo) {
     const availableVideoInputDevices = newDevices.filter(
         d => d.kind === 'videoinput');
-    const settings = APP.store.getState()['features/base/settings'];
-    const selectedVideoInputDeviceId = settings.cameraDeviceId;
+    const selectedVideoInputDeviceId
+        = getPreferredCameraDeviceId(APP.store.getState());
     const selectedVideoInputDevice = availableVideoInputDevices.find(
         d => d.deviceId === selectedVideoInputDeviceId);
 

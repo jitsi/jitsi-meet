@@ -681,13 +681,21 @@ export default {
         this.roomName = options.roomName;
 
         return (
-            this.createInitialLocalTracksAndConnect(
+
+            // Initialize the device list first. This way, when creating tracks
+            // based on preferred devices, loose label matching can be done in
+            // cases where the exact ID match is no longer available, such as
+            // when the camera device has switched USB ports.
+            this._initDeviceList()
+            .catch(error => logger.warn(
+                'initial device list initialization failed', error))
+            .then(() => this.createInitialLocalTracksAndConnect(
                 options.roomName, {
                     startAudioOnly: config.startAudioOnly,
                     startScreenSharing: config.startScreenSharing,
                     startWithAudioMuted: config.startWithAudioMuted,
                     startWithVideoMuted: config.startWithVideoMuted
-                })
+                }))
             .then(([ tracks, con ]) => {
                 tracks.forEach(track => {
                     if ((track.isAudioTrack() && this.isLocalAudioMuted())
@@ -732,7 +740,14 @@ export default {
                     this.setVideoMuteStatus(true);
                 }
 
-                this._initDeviceList();
+                // Initialize device list a second time to ensure device labels
+                // get populated in case of an initial gUM acceptance; otherwise
+                // they may remain as empty strings.
+                this._initDeviceList()
+                    .then(() => {
+                        this._syncDeviceIdsToSettings();
+                        this._setDeviceListChangeHandler();
+                    });
 
                 if (config.iAmRecorder) {
                     this.recorder = new Recorder();
@@ -2090,12 +2105,18 @@ export default {
                         return Promise.resolve();
                     }
 
-                    return this.useVideoStream(stream);
+                    return this.useVideoStream(stream)
+                        .then(() => stream);
                 })
-                .then(() => {
+                .then(stream => {
                     logger.log('switched local video device');
+
+                    const videoTrack = stream && stream.getTrack();
+
                     APP.store.dispatch(updateSettings({
-                        cameraDeviceId
+                        cameraDeviceId,
+                        cameraDeviceLabel:
+                            (videoTrack && videoTrack.label) || ''
                     }));
                 })
                 .catch(err => {
@@ -2128,8 +2149,12 @@ export default {
                 .then(stream => {
                     this.useAudioStream(stream);
                     logger.log('switched local audio device');
+
+                    const audioTrack = stream && stream.getTrack();
+
                     APP.store.dispatch(updateSettings({
-                        micDeviceId
+                        micDeviceId,
+                        micDeviceLabel: (audioTrack && audioTrack.label) || ''
                     }));
                 })
                 .catch(err => {
@@ -2321,7 +2346,8 @@ export default {
     },
 
     /**
-     * Inits list of current devices and event listener for device change.
+     * Updates the list of current devices.
+     *
      * @private
      */
     _initDeviceList() {
@@ -2329,32 +2355,63 @@ export default {
 
         if (mediaDevices.isDeviceListAvailable()
                 && mediaDevices.isDeviceChangeAvailable()) {
-            mediaDevices.enumerateDevices(devices => {
-                // Ugly way to synchronize real device IDs with local storage
-                // and settings menu. This is a workaround until
-                // getConstraints() method will be implemented in browsers.
-                const { dispatch } = APP.store;
+            const enumerateDevicesPromise = new Promise(resolve =>
+                JitsiMeetJS.mediaDevices.enumerateDevices(resolve));
 
-                if (this.localAudio) {
-                    dispatch(updateSettings({
-                        micDeviceId: this.localAudio.getDeviceId()
-                    }));
-                }
-                if (this.localVideo) {
-                    dispatch(updateSettings({
-                        cameraDeviceId: this.localVideo.getDeviceId()
-                    }));
-                }
+            return enumerateDevicesPromise
+                .then(devices => {
+                    APP.store.dispatch(updateDeviceList(devices));
+                    APP.UI.onAvailableDevicesChanged(devices);
+                })
+                .catch(error => {
+                    logger.warn(`Error getting device list: ${error}`);
 
-                APP.store.dispatch(updateDeviceList(devices));
-                APP.UI.onAvailableDevicesChanged(devices);
-            });
+                    return Promise.reject(error);
+                });
+        }
 
-            this.deviceChangeListener = devices =>
-                window.setTimeout(() => this._onDeviceListChanged(devices), 0);
-            mediaDevices.addEventListener(
-                JitsiMediaDevicesEvents.DEVICE_LIST_CHANGED,
-                this.deviceChangeListener);
+        return Promise.reject('device list or device change not available');
+    },
+
+    /**
+     * Registers a callback to fire on {@link DEVICE_LIST_CHANGED}.
+     *
+     * @private
+     * @returns {void}
+     */
+    _setDeviceListChangeHandler() {
+        this.deviceChangeListener = devices =>
+            window.setTimeout(
+                () => this._onDeviceListChanged(devices), 0);
+
+        JitsiMeetJS.mediaDevices.addEventListener(
+            JitsiMediaDevicesEvents.DEVICE_LIST_CHANGED,
+            this.deviceChangeListener);
+    },
+
+    /**
+     * Ugly way to synchronize real device IDs with local storage and settings
+     * menu. This is a workaround until getConstraints() method is available on
+     * supported browsers.
+     *
+     * @private
+     * @returns {void}
+     */
+    _syncDeviceIdsToSettings() {
+        const { dispatch } = APP.store;
+
+        if (this.localAudio) {
+            dispatch(updateSettings({
+                micDeviceId: this.localAudio.getDeviceId(),
+                micDeviceLabel: this.localAudio.getTrack().label
+            }));
+        }
+
+        if (this.localVideo) {
+            dispatch(updateSettings({
+                cameraDeviceId: this.localVideo.getDeviceId(),
+                cameraDeviceLabel: this.localVideo.getTrack().label
+            }));
         }
     },
 

@@ -1,5 +1,7 @@
 // @flow
 import { getAudioOutputDeviceId } from '../base/devices';
+import { getPreferredCameraDeviceId, getPreferredMicDeviceId }
+    from '../base/settings';
 import JitsiMeetJS from '../base/lib-jitsi-meet';
 import { toState } from '../base/redux';
 
@@ -12,7 +14,6 @@ import { toState } from '../base/redux';
  */
 export function getDeviceSelectionDialogProps(stateful: Object | Function) {
     const state = toState(stateful);
-    const settings = state['features/base/settings'];
 
     return {
         availableDevices: state['features/base/devices'],
@@ -28,8 +29,8 @@ export function getDeviceSelectionDialogProps(stateful: Object | Function) {
             !JitsiMeetJS.isCollectingLocalStats(),
         hideAudioOutputSelect: !JitsiMeetJS.mediaDevices
                             .isDeviceChangeAvailable('output'),
-        selectedAudioInputId: settings.micDeviceId,
+        selectedAudioInputId: getPreferredMicDeviceId(state),
         selectedAudioOutputId: getAudioOutputDeviceId(),
-        selectedVideoInputId: settings.cameraDeviceId
+        selectedVideoInputId: getPreferredCameraDeviceId(state)
     };
 }

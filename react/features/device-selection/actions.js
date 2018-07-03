@@ -10,6 +10,10 @@ import {
     setAudioOutputDevice,
     setVideoInputDevice
 } from '../base/devices';
+import {
+    getPreferredCameraDeviceId,
+    getPreferredMicDeviceId
+} from '../base/settings';
 import { i18next } from '../base/i18n';
 import JitsiMeetJS from '../base/lib-jitsi-meet';
 
@@ -90,7 +94,6 @@ export function openDeviceSelectionPopup() {
 function _processRequest(dispatch, getState, request, responseCallback) { // eslint-disable-line max-len, max-params
     if (request.type === 'devices') {
         const state = getState();
-        const settings = state['features/base/settings'];
 
         switch (request.name) {
         case 'isDeviceListAvailable':
@@ -106,9 +109,9 @@ function _processRequest(dispatch, getState, request, responseCallback) { // esl
             break;
         case 'getCurrentDevices':
             responseCallback({
-                audioInput: settings.micDeviceId,
+                audioInput: getPreferredMicDeviceId(state),
                 audioOutput: getAudioOutputDeviceId(),
-                videoInput: settings.cameraDeviceId
+                videoInput: getPreferredCameraDeviceId(state)
             });
             break;
         case 'getAvailableDevices':
