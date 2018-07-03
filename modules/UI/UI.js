@@ -476,20 +476,13 @@ UI.updateUserRole = user => {
 
     const displayName = user.getDisplayName();
 
-    if (displayName) {
-        messageHandler.participantNotification(
-            displayName,
-            'notify.somebody',
-            'connected',
-            'notify.grantedTo',
-            { to: UIUtil.escapeHtml(displayName) });
-    } else {
-        messageHandler.participantNotification(
-            '',
-            'notify.somebody',
-            'connected',
-            'notify.grantedToUnknown');
-    }
+    messageHandler.participantNotification(
+        displayName,
+        'notify.somebody',
+        'connected',
+        'notify.grantedTo',
+        { to: displayName
+            ? UIUtil.escapeHtml(displayName) : '$t(notify.somebody)' });
 };
 
 /**
