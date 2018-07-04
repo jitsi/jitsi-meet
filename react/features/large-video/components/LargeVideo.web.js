@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 
 import { Watermarks } from '../../base/react';
-import { TranscriptionSubtitles } from '../../transcription/';
+import { TranscriptionSubtitles } from '../../subtitles/';
 
 import Labels from './Labels';
 

@@ -87,7 +87,7 @@ class TranscriptionSubtitles extends Component<Props> {
  */
 function _mapStateToProps(state) {
     return {
-        transcriptMessages: state['features/transcription'].transcriptMessages
+        transcriptMessages: state['features/subtitles'].transcriptMessages
     };
 }
 export default connect(_mapStateToProps)(TranscriptionSubtitles);

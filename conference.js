@@ -109,7 +109,7 @@ import {
 } from './react/features/overlay';
 import { setSharedVideoStatus } from './react/features/shared-video';
 import { isButtonEnabled } from './react/features/toolbox';
-import { endpointMessageReceived } from './react/features/transcription';
+import { endpointMessageReceived } from './react/features/subtitles';
 
 const logger = require('jitsi-meet-logger').getLogger(__filename);
 

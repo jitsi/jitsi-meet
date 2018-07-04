@@ -17,7 +17,7 @@ const defaultState = {
  * Listen for actions for the transcription feature to be used by the actions
  * to update the rendered transcription subtitles.
  */
-ReducerRegistry.register('features/transcription', (
+ReducerRegistry.register('features/subtitles', (
         state = defaultState, action) => {
     switch (action.type) {
     case ADD_TRANSCRIPT_MESSAGE:

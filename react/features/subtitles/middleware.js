@@ -64,13 +64,13 @@ function _endpointMessageReceived({ dispatch, getState }, next, action) {
             // If this is the first result with the unique message ID,
             // we add it to the state along with the name of the participant
             // who said given text
-            if (!getState()['features/transcription']
+            if (!getState()['features/subtitles']
                 .transcriptMessages.has(transcriptMessageID)) {
                 dispatch(addTranscriptMessage(transcriptMessageID,
                     participantName));
             }
             const { transcriptMessages }
-                = getState()['features/transcription'];
+                = getState()['features/subtitles'];
             const newTranscriptMessage
                 = transcriptMessages.get(transcriptMessageID);
 
