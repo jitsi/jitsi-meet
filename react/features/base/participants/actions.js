@@ -7,6 +7,8 @@ import { showNotification } from '../../notifications';
 
 import {
     DOMINANT_SPEAKER_CHANGED,
+    HIDDEN_PARTICIPANT_JOINED,
+    HIDDEN_PARTICIPANT_LEFT,
     KICK_PARTICIPANT,
     MUTE_REMOTE_PARTICIPANT,
     PARTICIPANT_DISPLAY_NAME_CHANGED,
@@ -14,9 +16,7 @@ import {
     PARTICIPANT_JOINED,
     PARTICIPANT_LEFT,
     PARTICIPANT_UPDATED,
-    PIN_PARTICIPANT,
-    HIDDEN_PARTICIPANT_JOINED,
-    HIDDEN_PARTICIPANT_LEFT
+    PIN_PARTICIPANT
 } from './actionTypes';
 import { MAX_DISPLAY_NAME_LENGTH } from './constants';
 import { getLocalParticipant } from './functions';

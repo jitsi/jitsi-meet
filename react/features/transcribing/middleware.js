@@ -8,14 +8,14 @@ import {
     STOP_TRANSCRIBING
 } from './actionTypes';
 import {
-    potentialTranscriberJoined,
-    transcriberJoined,
-    transcriberLeft,
     dialError,
-    showPendingTranscribingNotification,
     hidePendingTranscribingNotification,
+    potentialTranscriberJoined,
+    showPendingTranscribingNotification,
     showStoppedTranscribingNotification,
-    showTranscribingError
+    showTranscribingError,
+    transcriberJoined,
+    transcriberLeft
 } from './actions';
 import {
     HIDDEN_PARTICIPANT_JOINED,
