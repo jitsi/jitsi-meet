@@ -2362,7 +2362,7 @@ export default {
      * @returns {Promise}
      */
     _onDeviceListChanged(devices) {
-        let currentDevices = mediaDeviceHelper.getCurrentMediaDevices();
+        const currentDevices = mediaDeviceHelper.getCurrentMediaDevices();
 
         // Event handler can be fired before direct
         // enumerateDevices() call, so handle this situation here.
@@ -2370,7 +2370,6 @@ export default {
             && !currentDevices.videoinput
             && !currentDevices.audiooutput) {
             mediaDeviceHelper.setCurrentMediaDevices(devices);
-            currentDevices = mediaDeviceHelper.getCurrentMediaDevices();
         }
 
         const newDevices
