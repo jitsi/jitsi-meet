@@ -2420,6 +2420,7 @@ export default {
         return Promise.all(promises)
             .then(() => {
                 mediaDeviceHelper.setCurrentMediaDevices(devices);
+                APP.store.dispatch(updateDeviceList(devices));
                 APP.UI.onAvailableDevicesChanged(devices);
             });
     },
