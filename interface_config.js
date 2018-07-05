@@ -138,6 +138,13 @@ var interfaceConfig = {
     CONNECTION_INDICATOR_AUTO_HIDE_TIMEOUT: 5000,
 
     /**
+     * If true, hides the connection indicators completely.
+     *
+     * @type {boolean}
+     */
+    CONNECTION_INDICATOR_DISABLED: false,
+
+    /**
      * The name of the application connected to the "Add people" search service.
      */
     // ADD_PEOPLE_APP_NAME: "",
