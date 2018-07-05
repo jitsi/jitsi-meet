@@ -5,10 +5,10 @@ import { connect } from 'react-redux';
 import { translate } from '../../../base/i18n';
 import { getLocalParticipant } from '../../../base/participants';
 
-import AbstractRecordButton, {
+import AbstractLiveStreamButton, {
     _mapStateToProps as _abstractMapStateToProps,
     type Props as AbstractProps
-} from './AbstractRecordButton';
+} from './AbstractLiveStreamButton';
 
 declare var interfaceConfig: Object;
 
@@ -26,15 +26,15 @@ type Props = AbstractProps & {
     /**
      * Tooltip for the button when it's disabled in a certain way.
      */
-    _fileRecordingsDisabledTooltipKey: ?string
+    _liveStreamDisabledTooltipKey: ?string
 }
 
 /**
- * An implementation of a button for starting and stopping recording.
+ * An implementation of a button for starting and stopping live streaming.
  */
-class RecordButton extends AbstractRecordButton<Props> {
-    iconName = 'icon-camera-take-picture';
-    toggledIconName = 'icon-camera-take-picture';
+class LiveStreamButton extends AbstractLiveStreamButton<Props> {
+    iconName = 'icon-public';
+    toggledIconName = 'icon-public';
 
     /**
      * Constructor of the component.
@@ -44,7 +44,7 @@ class RecordButton extends AbstractRecordButton<Props> {
     constructor(props: Props) {
         super(props);
 
-        this.tooltip = props._fileRecordingsDisabledTooltipKey;
+        this.tooltip = props._liveStreamDisabledTooltipKey;
     }
 
     /**
@@ -53,7 +53,7 @@ class RecordButton extends AbstractRecordButton<Props> {
      * @inheritdoc
      */
     componentWillReceiveProps(newProps: Props) {
-        this.tooltip = newProps._fileRecordingsDisabledTooltipKey;
+        this.tooltip = newProps._liveStreamDisabledTooltipKey;
     }
 
     /**
@@ -71,52 +71,52 @@ class RecordButton extends AbstractRecordButton<Props> {
 
 /**
  * Maps (parts of) the redux state to the associated props for the
- * {@code RecordButton} component.
+ * {@code LiveStreamButton} component.
  *
  * @param {Object} state - The Redux state.
  * @param {Props} ownProps - The own props of the Component.
  * @private
  * @returns {{
- *     _fileRecordingsDisabledTooltipKey: ?string,
- *     _isRecordingRunning: boolean,
+ *     _conference: Object,
+ *     _isLiveStreamRunning: boolean,
  *     _disabled: boolean,
  *     visible: boolean
  * }}
  */
-export function _mapStateToProps(state: Object, ownProps: Props): Object {
+function _mapStateToProps(state: Object, ownProps: Props) {
     const abstractProps = _abstractMapStateToProps(state, ownProps);
     const localParticipant = getLocalParticipant(state);
     const { features = {} } = localParticipant;
     let { visible } = ownProps;
 
     let _disabled = false;
-    let _fileRecordingsDisabledTooltipKey;
+    let _liveStreamDisabledTooltipKey;
 
     if (!abstractProps.visible
-            && String(features.recording) !== 'disabled') {
+            && String(features.livestreaming) !== 'disabled') {
         _disabled = true;
 
         // button and tooltip
         if (state['features/base/jwt'].isGuest) {
-            _fileRecordingsDisabledTooltipKey
-                = 'dialog.recordingDisabledForGuestTooltip';
+            _liveStreamDisabledTooltipKey
+                = 'dialog.liveStreamingDisabledForGuestTooltip';
         } else {
-            _fileRecordingsDisabledTooltipKey
-                = 'dialog.recordingDisabledTooltip';
+            _liveStreamDisabledTooltipKey
+                = 'dialog.liveStreamingDisabledTooltip';
         }
     }
 
     if (typeof visible === 'undefined') {
-        visible = interfaceConfig.TOOLBAR_BUTTONS.includes('recording')
-            && (abstractProps.visible || _fileRecordingsDisabledTooltipKey);
+        visible = interfaceConfig.TOOLBAR_BUTTONS.includes('livestreaming')
+            && (abstractProps.visible || _liveStreamDisabledTooltipKey);
     }
 
     return {
         ...abstractProps,
-        visible,
         _disabled,
-        _fileRecordingsDisabledTooltipKey
+        _liveStreamDisabledTooltipKey,
+        visible
     };
 }
 
-export default translate(connect(_mapStateToProps)(RecordButton));
+export default translate(connect(_mapStateToProps)(LiveStreamButton));

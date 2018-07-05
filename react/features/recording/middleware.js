@@ -104,24 +104,31 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
     case RECORDING_SESSION_UPDATED: {
         const updatedSessionData
             = getSessionById(getState(), action.sessionData.id);
+        const { PENDING, OFF, ON } = JitsiRecordingConstants.status;
 
-        if (updatedSessionData.mode === JitsiRecordingConstants.mode.FILE) {
-            const { PENDING, OFF, ON } = JitsiRecordingConstants.status;
+        if (updatedSessionData.status === PENDING
+            && (!oldSessionData || oldSessionData.status !== PENDING)) {
+            dispatch(
+                showPendingRecordingNotification(updatedSessionData.mode));
+        } else if (updatedSessionData.status !== PENDING) {
+            dispatch(
+                hidePendingRecordingNotification(updatedSessionData.mode));
 
-            if (updatedSessionData.status === PENDING
-                && (!oldSessionData || oldSessionData.status !== PENDING)) {
-                dispatch(showPendingRecordingNotification());
-            } else if (updatedSessionData.status !== PENDING) {
-                dispatch(hidePendingRecordingNotification());
+            if (updatedSessionData.status === ON
+                && (!oldSessionData || oldSessionData.status !== ON)
+                && updatedSessionData.mode
+                    === JitsiRecordingConstants.mode.FILE) {
+                dispatch(playSound(RECORDING_ON_SOUND_ID));
+            } else if (updatedSessionData.status === OFF
+                && (!oldSessionData || oldSessionData.status !== OFF)) {
+                dispatch(
+                    showStoppedRecordingNotification(
+                        updatedSessionData.mode));
 
-                if (updatedSessionData.status === ON
-                    && (!oldSessionData || oldSessionData.status !== ON)) {
-                    dispatch(playSound(RECORDING_ON_SOUND_ID));
-                } else if (updatedSessionData.status === OFF
-                    && (!oldSessionData || oldSessionData.status !== OFF)) {
+                if (updatedSessionData.mode
+                        === JitsiRecordingConstants.mode.FILE) {
                     dispatch(stopSound(RECORDING_ON_SOUND_ID));
                     dispatch(playSound(RECORDING_OFF_SOUND_ID));
-                    dispatch(showStoppedRecordingNotification());
                 }
             }
         }

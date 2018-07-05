@@ -1,19 +1,18 @@
 // @flow
 
 import Spinner from '@atlaskit/spinner';
-import React, { Component } from 'react';
+import React from 'react';
 import { connect } from 'react-redux';
 
-import {
-    createRecordingDialogEvent,
-    sendAnalytics
-} from '../../../analytics';
-import { Dialog } from '../../../base/dialog';
 import { translate } from '../../../base/i18n';
-import { JitsiRecordingConstants } from '../../../base/lib-jitsi-meet';
 
 import googleApi from '../../googleApi';
 
+import AbstractStartLiveStreamDialog, {
+    _mapStateToProps,
+    GOOGLE_API_STATES,
+    type Props
+} from './AbstractStartLiveStreamDialog';
 import BroadcastsDropdown from './BroadcastsDropdown';
 import GoogleSignInButton from './GoogleSignInButton';
 import StreamKeyForm from './StreamKeyForm';
@@ -21,108 +20,13 @@ import StreamKeyForm from './StreamKeyForm';
 declare var interfaceConfig: Object;
 
 /**
- * An enumeration of the different states the Google API can be in while
- * interacting with {@code StartLiveStreamDialog}.
-  *
- * @private
- * @type {Object}
- */
-const GOOGLE_API_STATES = {
-    /**
-     * The state in which the Google API still needs to be loaded.
-     */
-    NEEDS_LOADING: 0,
-
-    /**
-     * The state in which the Google API is loaded and ready for use.
-     */
-    LOADED: 1,
-
-    /**
-     * The state in which a user has been logged in through the Google API.
-     */
-    SIGNED_IN: 2,
-
-    /**
-     * The state in which the Google API encountered an error either loading
-     * or with an API request.
-     */
-    ERROR: 3
-};
-
-/**
- * The type of the React {@code Component} props of
- * {@link StartLiveStreamDialog}.
- */
-type Props = {
-
-    /**
-     * The {@code JitsiConference} for the current conference.
-     */
-    _conference: Object,
-
-    /**
-     * The ID for the Google web client application used for making stream key
-     * related requests.
-     */
-    _googleApiApplicationClientID: string,
-
-    /**
-     * Invoked to obtain translated strings.
-     */
-    t: Function
-};
-
-/**
- * The type of the React {@code Component} state of
- * {@link StartLiveStreamDialog}.
- */
-type State = {
-
-    /**
-     * Details about the broadcasts available for use for the logged in Google
-     * user's YouTube account.
-     */
-    broadcasts: ?Array<Object>,
-
-    /**
-     * The error type, as provided by Google, for the most recent error
-     * encountered by the Google API.
-     */
-    errorType: ?string,
-
-    /**
-     * The current state of interactions with the Google API. Determines what
-     * Google related UI should display.
-     */
-    googleAPIState: number,
-
-    /**
-     * The email of the user currently logged in to the Google web client
-     * application.
-     */
-    googleProfileEmail: string,
-
-    /**
-     * The boundStreamID of the broadcast currently selected in the broadcast
-     * dropdown.
-     */
-    selectedBoundStreamID: ?string,
-
-    /**
-     * The selected or entered stream key to use for YouTube live streaming.
-     */
-    streamKey: string
-};
-
-/**
  * A React Component for requesting a YouTube stream key to use for live
  * streaming of the current conference.
  *
  * @extends Component
  */
-class StartLiveStreamDialog extends Component<Props, State> {
-    _isMounted: boolean;
+class StartLiveStreamDialog
+    extends AbstractStartLiveStreamDialog {
 
     /**
      * Initializes a new {@code StartLiveStreamDialog} instance.
@@ -133,91 +37,17 @@ class StartLiveStreamDialog extends Component<Props, State> {
     constructor(props: Props) {
         super(props);
 
-        this.state = {
-            broadcasts: undefined,
-            errorType: undefined,
-            googleAPIState: GOOGLE_API_STATES.NEEDS_LOADING,
-            googleProfileEmail: '',
-            selectedBoundStreamID: undefined,
-            streamKey: ''
-        };
-
-        /**
-         * Instance variable used to flag whether the component is or is not
-         * mounted. Used as a hack to avoid setting state on an unmounted
-         * component.
-         *
-         * @private
-         * @type {boolean}
-         */
-        this._isMounted = false;
-
         // Bind event handlers so they are only bound once per instance.
-        this._onCancel = this._onCancel.bind(this);
         this._onGetYouTubeBroadcasts = this._onGetYouTubeBroadcasts.bind(this);
         this._onInitializeGoogleApi = this._onInitializeGoogleApi.bind(this);
         this._onRequestGoogleSignIn = this._onRequestGoogleSignIn.bind(this);
-        this._onStreamKeyChange = this._onStreamKeyChange.bind(this);
-        this._onSubmit = this._onSubmit.bind(this);
         this._onYouTubeBroadcastIDSelected
             = this._onYouTubeBroadcastIDSelected.bind(this);
+
+        this._renderDialogContent = this._renderDialogContent.bind(this);
     }
 
-    /**
-     * Implements {@link Component#componentDidMount()}. Invoked immediately
-     * after this component is mounted.
-     *
-     * @inheritdoc
-     * @returns {void}
-     */
-    componentDidMount() {
-        this._isMounted = true;
-
-        if (this.props._googleApiApplicationClientID) {
-            this._onInitializeGoogleApi();
-        }
-    }
-
-    /**
-     * Implements React's {@link Component#componentWillUnmount()}. Invoked
-     * immediately before this component is unmounted and destroyed.
-     *
-     * @inheritdoc
-     */
-    componentWillUnmount() {
-        this._isMounted = false;
-    }
-
-    /**
-     * Implements React's {@link Component#render()}.
-     *
-     * @inheritdoc
-     * @returns {ReactElement}
-     */
-    render() {
-        const { _googleApiApplicationClientID } = this.props;
-
-        return (
-            <Dialog
-                cancelTitleKey = 'dialog.Cancel'
-                okTitleKey = 'dialog.startLiveStreaming'
-                onCancel = { this._onCancel }
-                onSubmit = { this._onSubmit }
-                titleKey = 'liveStreaming.start'
-                width = { 'small' }>
-                <div className = 'live-stream-dialog'>
-                    { _googleApiApplicationClientID
-                        ? this._renderYouTubePanel() : null }
-                    <StreamKeyForm
-                        helpURL = { interfaceConfig.LIVE_STREAMING_HELP_LINK }
-                        onChange = { this._onStreamKeyChange }
-                        value = { this.state.streamKey } />
-                </div>
-            </Dialog>
-        );
-    }
-
-    _onInitializeGoogleApi: () => Object;
+    _onInitializeGoogleApi: () => Promise<*>;
 
     /**
      * Loads the Google web client application used for fetching stream keys.
@@ -247,22 +77,7 @@ class StartLiveStreamDialog extends Component<Props, State> {
             });
     }
 
-    _onCancel: () => boolean;
-
-    /**
-     * Invokes the passed in {@link onCancel} callback and closes
-     * {@code StartLiveStreamDialog}.
-     *
-     * @private
-     * @returns {boolean} True is returned to close the modal.
-     */
-    _onCancel() {
-        sendAnalytics(createRecordingDialogEvent('start', 'cancel.button'));
-
-        return true;
-    }
-
-    _onGetYouTubeBroadcasts: () => Object;
+    _onGetYouTubeBroadcasts: () => Promise<*>;
 
     /**
      * Asks the user to sign in, if not already signed in, and then requests a
@@ -322,59 +137,7 @@ class StartLiveStreamDialog extends Component<Props, State> {
             .then(() => this._onGetYouTubeBroadcasts());
     }
 
-    _onStreamKeyChange: () => void;
-
-    /**
-     * Callback invoked to update the {@code StartLiveStreamDialog} component's
-     * display of the entered YouTube stream key.
-     *
-     * @param {Object} event - DOM Event for value change.
-     * @private
-     * @returns {void}
-     */
-    _onStreamKeyChange(event) {
-        this._setStateIfMounted({
-            streamKey: event.target.value,
-            selectedBoundStreamID: undefined
-        });
-    }
-
-    _onSubmit: () => boolean;
-
-    /**
-     * Invokes the passed in {@link onSubmit} callback with the entered stream
-     * key, and then closes {@code StartLiveStreamDialog}.
-     *
-     * @private
-     * @returns {boolean} False if no stream key is entered to preventing
-     * closing, true to close the modal.
-     */
-    _onSubmit() {
-        const { broadcasts, streamKey, selectedBoundStreamID } = this.state;
-
-        if (!streamKey) {
-            return false;
-        }
-
-        let selectedBroadcastID = null;
-
-        if (selectedBoundStreamID) {
-            const selectedBroadcast = broadcasts && broadcasts.find(
-                broadcast => broadcast.boundStreamID === selectedBoundStreamID);
-
-            selectedBroadcastID = selectedBroadcast && selectedBroadcast.id;
-        }
-
-        sendAnalytics(createRecordingDialogEvent('start', 'confirm.button'));
-
-        this.props._conference.startRecording({
-            broadcastId: selectedBroadcastID,
-            mode: JitsiRecordingConstants.mode.STREAM,
-            streamId: streamKey
-        });
-
-        return true;
-    }
+    _onStreamKeyChange: string => void;
 
     _onYouTubeBroadcastIDSelected: (string) => Object;
 
@@ -450,6 +213,27 @@ class StartLiveStreamDialog extends Component<Props, State> {
         const firstError = errors && errors[0];
 
         return (firstError && firstError.reason) || null;
+    }
+
+    _renderDialogContent: () => React$Component<*>
+
+    /**
+     * Renders the platform specific dialog content.
+     *
+     * @returns {React$Component}
+     */
+    _renderDialogContent() {
+        const { _googleApiApplicationClientID } = this.props;
+
+        return (
+            <div className = 'live-stream-dialog'>
+                { _googleApiApplicationClientID
+                    ? this._renderYouTubePanel() : null }
+                <StreamKeyForm
+                    onChange = { this._onStreamKeyChange }
+                    value = { this.state.streamKey || this.props._streamKey } />
+            </div>
+        );
     }
 
     /**
@@ -537,6 +321,8 @@ class StartLiveStreamDialog extends Component<Props, State> {
         );
     }
 
+    _setStateIfMounted: Object => void
+
     /**
      * Returns the error message to display for the current error state.
      *
@@ -559,40 +345,6 @@ class StartLiveStreamDialog extends Component<Props, State> {
 
         return <div className = 'google-error'>{ text }</div>;
     }
-
-    /**
-     * Updates the internal state if the component is still mounted. This is a
-     * workaround for all the state setting that occurs after ajax.
-     *
-     * @param {Object} newState - The new state to merge into the existing
-     * state.
-     * @private
-     * @returns {void}
-     */
-    _setStateIfMounted(newState) {
-        if (this._isMounted) {
-            this.setState(newState);
-        }
-    }
-}
-
-/**
- * Maps (parts of) the redux state to the React {@code Component} props of
- * {@code StartLiveStreamDialog}.
- *
- * @param {Object} state - The redux state.
- * @private
- * @returns {{
- *     _conference: Object,
- *     _googleApiApplicationClientID: string
- * }}
- */
-function _mapStateToProps(state) {
-    return {
-        _conference: state['features/base/conference'].conference,
-        _googleApiApplicationClientID:
-            state['features/base/config'].googleApiApplicationClientID
-    };
 }
 
 export default translate(connect(_mapStateToProps)(StartLiveStreamDialog));

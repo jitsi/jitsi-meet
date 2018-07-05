@@ -1,5 +1,7 @@
 // @flow
 
+import JitsiMeetJS from '../base/lib-jitsi-meet';
+
 import {
     hideNotification,
     showErrorNotification,
@@ -9,7 +11,8 @@ import {
 import {
     CLEAR_RECORDING_SESSIONS,
     RECORDING_SESSION_UPDATED,
-    SET_PENDING_RECORDING_NOTIFICATION_UID
+    SET_PENDING_RECORDING_NOTIFICATION_UID,
+    SET_STREAM_KEY
 } from './actionTypes';
 
 /**
@@ -29,35 +32,37 @@ export function clearRecordingSessions() {
  * Signals that the pending recording notification should be removed from the
  * screen.
  *
+ * @param {string} streamType - The type of the stream (e.g. file or stream).
  * @returns {Function}
  */
-export function hidePendingRecordingNotification() {
+export function hidePendingRecordingNotification(streamType: string) {
     return (dispatch: Function, getState: Function) => {
-        const { pendingNotificationUid } = getState()['features/recording'];
+        const { pendingNotificationUids } = getState()['features/recording'];
+        const pendingNotificationUid = pendingNotificationUids[streamType];
 
         if (pendingNotificationUid) {
             dispatch(hideNotification(pendingNotificationUid));
-            dispatch(setPendingRecordingNotificationUid());
+            dispatch(
+                _setPendingRecordingNotificationUid(
+                    undefined, streamType));
         }
     };
 }
 
 /**
- * Sets UID of the the pending recording notification to use it when hinding
- * the notification is necessary, or unsets it when
- * undefined (or no param) is passed.
+ * Sets the stream key last used by the user for later reuse.
  *
- * @param {?number} uid - The UID of the notification.
+ * @param {string} streamKey - The stream key to set.
  * redux.
  * @returns {{
- *     type: SET_PENDING_RECORDING_NOTIFICATION_UID,
- *     uid: number
+ *     type: SET_STREAM_KEY,
+ *     streamKey: string
  * }}
  */
-export function setPendingRecordingNotificationUid(uid: ?number) {
+export function setLiveStreamKey(streamKey: string) {
     return {
-        type: SET_PENDING_RECORDING_NOTIFICATION_UID,
-        uid
+        type: SET_STREAM_KEY,
+        streamKey
     };
 }
 
@@ -65,20 +70,29 @@ export function setPendingRecordingNotificationUid(uid: ?number) {
  * Signals that the pending recording notification should be shown on the
  * screen.
  *
+ * @param {string} streamType - The type of the stream (e.g. file or stream).
  * @returns {Function}
  */
-export function showPendingRecordingNotification() {
+export function showPendingRecordingNotification(streamType: string) {
     return (dispatch: Function) => {
-        const showNotificationAction = showNotification({
+        const isLiveStreaming
+            = streamType === JitsiMeetJS.constants.recording.mode.STREAM;
+        const dialogProps = isLiveStreaming ? {
+            descriptionKey: 'liveStreaming.pending',
+            titleKey: 'dialog.liveStreaming'
+        } : {
             descriptionKey: 'recording.pending',
-            isDismissAllowed: false,
             titleKey: 'dialog.recording'
+        };
+        const showNotificationAction = showNotification({
+            isDismissAllowed: false,
+            ...dialogProps
         });
 
         dispatch(showNotificationAction);
 
-        dispatch(setPendingRecordingNotificationUid(
-            showNotificationAction.uid));
+        dispatch(_setPendingRecordingNotificationUid(
+            showNotificationAction.uid, streamType));
     };
 }
 
@@ -96,13 +110,21 @@ export function showRecordingError(props: Object) {
  * Signals that the stopped recording notification should be shown on the
  * screen for a given period.
  *
+ * @param {string} streamType - The type of the stream (e.g. file or stream).
  * @returns {showNotification}
  */
-export function showStoppedRecordingNotification() {
-    return showNotification({
+export function showStoppedRecordingNotification(streamType: string) {
+    const isLiveStreaming
+        = streamType === JitsiMeetJS.constants.recording.mode.STREAM;
+    const dialogProps = isLiveStreaming ? {
+        descriptionKey: 'liveStreaming.off',
+        titleKey: 'dialog.liveStreaming'
+    } : {
         descriptionKey: 'recording.off',
         titleKey: 'dialog.recording'
-    }, 2500);
+    };
+
+    return showNotification(dialogProps, 2500);
 }
 
 /**
@@ -125,5 +147,27 @@ export function updateRecordingSessionData(session: Object) {
             mode: session.getMode(),
             status: session.getStatus()
         }
+    };
+}
+
+/**
+ * Sets UID of the the pending streaming notification to use it when hinding
+ * the notification is necessary, or unsets it when undefined (or no param) is
+ * passed.
+ *
+ * @param {?number} uid - The UID of the notification.
+ * redux.
+ * @param {string} streamType - The type of the stream (e.g. file or stream).
+ * @returns {{
+ *     type: SET_PENDING_RECORDING_NOTIFICATION_UID,
+ *     streamType: string,
+ *     uid: number
+ * }}
+ */
+function _setPendingRecordingNotificationUid(uid: ?number, streamType: string) {
+    return {
+        type: SET_PENDING_RECORDING_NOTIFICATION_UID,
+        streamType,
+        uid
     };
 }
