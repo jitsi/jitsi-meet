@@ -133,6 +133,11 @@ type Props = {
     _localParticipantID: String,
 
     /**
+     * The subsection of Redux state for local recording
+     */
+    _localRecState: Object,
+
+    /**
      * Whether or not the overflow menu is visible.
      */
     _overflowMenuVisible: boolean,
@@ -152,8 +157,6 @@ type Props = {
      */
     _sharingVideo: boolean,
 
-    _localRecState: Object,
-
     /**
      * Whether or not transcribing is enabled.
      */
@@ -164,7 +167,6 @@ type Props = {
      */
     _visible: boolean,
 
-    _localRecState: any,
 
     /**
      * Set with the buttons which this Toolbox should display.
@@ -1045,10 +1047,10 @@ function _mapStateToProps(state) {
         visible
     } = state['features/toolbox'];
     const localParticipant = getLocalParticipant(state);
+    const localRecordingStates = state['features/local-recording'];
     const localVideo = getLocalVideoTrack(state['features/base/tracks']);
     const addPeopleEnabled = isAddPeopleEnabled(state);
     const dialOutEnabled = isDialOutEnabled(state);
-    const localRecordingStates = state['features/local-recording'];
 
     let desktopSharingDisabledTooltipKey;
 
@@ -1086,8 +1088,8 @@ function _mapStateToProps(state) {
         _isGuest: state['features/base/jwt'].isGuest,
         _fullScreen: fullScreen,
         _localParticipantID: localParticipant.id,
-        _overflowMenuVisible: overflowMenuVisible,
         _localRecState: localRecordingStates,
+        _overflowMenuVisible: overflowMenuVisible,
         _raisedHand: localParticipant.raisedHand,
         _screensharing: localVideo && localVideo.videoType === 'desktop',
         _transcribingEnabled: transcribingEnabled,
