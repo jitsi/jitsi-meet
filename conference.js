@@ -2362,15 +2362,8 @@ export default {
      * @returns {Promise}
      */
     _onDeviceListChanged(devices) {
-        const currentDevices = mediaDeviceHelper.getCurrentMediaDevices();
-
-        // Event handler can be fired before direct
-        // enumerateDevices() call, so handle this situation here.
-        if (!currentDevices.audioinput
-            && !currentDevices.videoinput
-            && !currentDevices.audiooutput) {
-            mediaDeviceHelper.setCurrentMediaDevices(devices);
-        }
+        mediaDeviceHelper.setCurrentMediaDevices(devices);
+        APP.store.dispatch(updateDeviceList(devices));
 
         const newDevices
             = mediaDeviceHelper.getNewMediaDevicesAfterDeviceListChanged(
@@ -2419,8 +2412,6 @@ export default {
 
         return Promise.all(promises)
             .then(() => {
-                mediaDeviceHelper.setCurrentMediaDevices(devices);
-                APP.store.dispatch(updateDeviceList(devices));
                 APP.UI.onAvailableDevicesChanged(devices);
             });
     },
