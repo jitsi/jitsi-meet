@@ -2341,8 +2341,8 @@ export default {
                     }));
                 }
 
-                APP.UI.onAvailableDevicesChanged(devices);
                 APP.store.dispatch(updateDeviceList(devices));
+                APP.UI.onAvailableDevicesChanged(devices);
             });
 
             this.deviceChangeListener = devices =>
