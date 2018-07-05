@@ -29,9 +29,20 @@ export const RECORDING_SESSION_UPDATED = Symbol('RECORDING_SESSION_UPDATED');
  *
  * {
  *     type: SET_PENDING_RECORDING_NOTIFICATION_UID,
+ *     streamType: string,
  *     uid: ?number
  * }
  * @public
  */
 export const SET_PENDING_RECORDING_NOTIFICATION_UID
     = Symbol('SET_PENDING_RECORDING_NOTIFICATION_UID');
+
+/**
+ * Sets the stream key last used by the user for later reuse.
+ *
+ * {
+ *     type: SET_STREAM_KEY,
+ *     streamKey: string
+ * }
+ */
+export const SET_STREAM_KEY = Symbol('SET_STREAM_KEY');

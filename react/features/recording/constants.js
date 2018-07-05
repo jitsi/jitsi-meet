@@ -1,6 +1,15 @@
 // @flow
 
 /**
+ * The Google API scopes to request access to for streaming.
+ *
+ * @type {Array<string>}
+ */
+export const GOOGLE_API_SCOPES = [
+    'https://www.googleapis.com/auth/youtube.readonly'
+];
+
+/**
  * The identifier of the sound to be played when a recording or live streaming
  * session is stopped.
  *

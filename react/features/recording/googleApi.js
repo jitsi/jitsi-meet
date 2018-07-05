@@ -1,7 +1,6 @@
+import { GOOGLE_API_SCOPES } from './constants';
+
 const GOOGLE_API_CLIENT_LIBRARY_URL = 'https://apis.google.com/js/api.js';
-const GOOGLE_API_SCOPES = [
-    'https://www.googleapis.com/auth/youtube.readonly'
-].join(' ');
 
 /**
  * A promise for dynamically loading the Google API Client Library.
@@ -68,7 +67,7 @@ const googleApi = {
                 setTimeout(() => {
                     api.client.init({
                         clientId,
-                        scope: GOOGLE_API_SCOPES
+                        scope: GOOGLE_API_SCOPES.join(' ')
                     })
                     .then(resolve)
                     .catch(reject);
