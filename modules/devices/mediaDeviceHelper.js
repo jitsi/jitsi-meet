@@ -2,10 +2,6 @@
 
 import { getAudioOutputDeviceId } from '../../react/features/base/devices';
 
-let currentAudioInputDevices,
-    currentAudioOutputDevices,
-    currentVideoInputDevices;
-
 /**
  * Determines if currently selected audio output device should be changed after
  * list of available devices has been changed.
@@ -105,47 +101,6 @@ function getNewVideoInputDevice(newDevices, localVideo) {
 }
 
 export default {
-    /**
-     * Returns list of devices of single kind.
-     * @param {MediaDeviceInfo[]} devices
-     * @param {'audioinput'|'audiooutput'|'videoinput'} kind
-     * @returns {MediaDeviceInfo[]}
-     */
-    getDevicesFromListByKind(devices, kind) {
-        return devices.filter(d => d.kind === kind);
-    },
-
-    /**
-     * Stores lists of current 'audioinput', 'videoinput' and 'audiooutput'
-     * devices.
-     * @param {MediaDeviceInfo[]} devices
-     */
-    setCurrentMediaDevices(devices) {
-        currentAudioInputDevices
-            = this.getDevicesFromListByKind(devices, 'audioinput');
-        currentVideoInputDevices
-            = this.getDevicesFromListByKind(devices, 'videoinput');
-        currentAudioOutputDevices
-            = this.getDevicesFromListByKind(devices, 'audiooutput');
-    },
-
-    /**
-     * Returns lists of current 'audioinput', 'videoinput' and 'audiooutput'
-     * devices.
-     * @returns {{
-     *  audioinput: (MediaDeviceInfo[]|undefined),
-     *  videoinput: (MediaDeviceInfo[]|undefined),
-     *  audiooutput: (MediaDeviceInfo[]|undefined),
-     *  }}
-     */
-    getCurrentMediaDevices() {
-        return {
-            audioinput: currentAudioInputDevices,
-            videoinput: currentVideoInputDevices,
-            audiooutput: currentAudioOutputDevices
-        };
-    },
-
     /**
      * Determines if currently selected media devices should be changed after
      * list of available devices has been changed.

@@ -2341,7 +2341,6 @@ export default {
                     }));
                 }
 
-                mediaDeviceHelper.setCurrentMediaDevices(devices);
                 APP.UI.onAvailableDevicesChanged(devices);
                 APP.store.dispatch(updateDeviceList(devices));
             });
@@ -2362,7 +2361,6 @@ export default {
      * @returns {Promise}
      */
     _onDeviceListChanged(devices) {
-        mediaDeviceHelper.setCurrentMediaDevices(devices);
         APP.store.dispatch(updateDeviceList(devices));
 
         const newDevices
