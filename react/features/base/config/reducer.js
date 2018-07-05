@@ -37,6 +37,9 @@ const INITIAL_RN_STATE = {
     // fastest to merely disable them.
     disableAudioLevels: true,
 
+    // FIXME flow complains about missing 'locationURL' missing in _setConfig
+    locationURL: undefined,
+
     p2p: {
         disableH264: false,
         preferH264: true
@@ -126,8 +129,10 @@ function _setConfig(state, { config }) {
 
     const newState = _.merge(
         {},
-        config,
-        { error: undefined },
+        config, {
+            error: undefined,
+            locationURL: state.locationURL
+        },
 
         // The config of _getInitialState() is meant to override the config
         // downloaded from the Jitsi Meet deployment because the former contains
