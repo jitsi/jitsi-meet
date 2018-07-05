@@ -1,4 +1,10 @@
 import {
+    SESSION_FAILED,
+    getCurrentSession,
+    setSession
+} from '../base/session';
+
+import {
     MEDIA_PERMISSION_PROMPT_VISIBILITY_CHANGED,
     SET_FATAL_ERROR,
     SUSPEND_DETECTED
@@ -55,5 +61,39 @@ export function setFatalError(fatalError) {
     return {
         type: SET_FATAL_ERROR,
         fatalError
+    };
+}
+
+/**
+ * FIXME naming is not quite accurate - came from the previous method which was
+ * reemitting the action. I feel that this part needs more discussion. Changing
+ * it back to emitting the original action which caused the fatal error will
+ * also require changes to how it's being detected (currently through the state
+ * listener, but we'd have to go back to the middleware way).
+ *
+ * @returns {Function}
+ */
+export function reemitFatalError() {
+    return (dispatch, getState) => {
+        const state = getState();
+        const { fatalError } = state['features/overlay'];
+
+        if (fatalError) {
+            const session = getCurrentSession(state);
+
+            if (session) {
+                dispatch(
+                    setSession({
+                        url: session.url,
+                        state: SESSION_FAILED,
+                        error: fatalError
+                    }));
+            } else {
+                console.info('No current session!');
+            }
+            dispatch(setFatalError(undefined));
+        } else {
+            console.info('NO FATAL ERROR');
+        }
     };
 }
