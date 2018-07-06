@@ -459,7 +459,9 @@
         "pending" : "Preparing to transcribe the meeting...",
         "off" : "Transcribing stopped",
         "error": "Transcribing failed. Please try again.",
-        "failedToStart": "Transcribing failed to start"
+        "failedToStart": "Transcribing failed to start",
+        "tr": "TR",
+        "labelToolTip": "The meeting is being transcribed"
     },
     "liveStreaming":
     {

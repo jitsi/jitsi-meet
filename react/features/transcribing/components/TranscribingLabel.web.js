@@ -44,11 +44,11 @@ class TranscribingLabel extends Component<Props> {
 
         return (
             <Tooltip
-                content = 'This label indicates that there is a transcriber'
+                content = { this.props.t('transcribing.labelToolTip') }
                 position = { 'left' }>
                 <CircularLabel
                     className = 'recording-label'
-                    label = 'TR' />
+                    label = { this.props.t('transcribing.tr') } />
             </Tooltip>
         );
     }
