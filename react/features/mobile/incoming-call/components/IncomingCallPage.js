@@ -3,6 +3,7 @@
 import React, { Component } from 'react';
 import { Text, View } from 'react-native';
 import { connect } from 'react-redux';
+import type { Dispatch } from 'redux';
 
 import { translate } from '../../../base/i18n';
 import { ToolbarButton } from '../../../toolbox';
@@ -118,7 +119,7 @@ class IncomingCallPage extends Component<Props> {
  *     _onDeclined: Function
  * }}
  */
-function _mapDispatchToProps(dispatch) {
+function _mapDispatchToProps(dispatch: Dispatch<*>) {
     return {
         /**
          * Dispatches an action to answer an incoming call.
