@@ -245,7 +245,8 @@ MiddlewareRegistry.register(store => next => action => {
                 setSession({
                     url,
                     state: SESSION_WILL_START,
-                    locationURL
+                    locationURL,
+                    room
                 }));
         } else if (room && session) {
             // Update to the new locationURL instance
