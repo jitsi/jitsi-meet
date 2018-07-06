@@ -105,19 +105,14 @@ function handle_get_room_size(event)
             "there are %s occupants in room", tostring(participant_count));
 	else
 		log("debug", "no such room exists");
+		return 404;
 	end
 
 	if participant_count > 1 then
 		participant_count = participant_count - 1;
 	end
 
-	local GET_response = {
-		headers = {
-			content_type = "application/json";
-		};
-		body = [[{"participants":]]..participant_count..[[}]];
-	};
-	return GET_response;
+	return [[{"participants":]]..participant_count..[[}]];
 end
 
 --- Handles request for retrieving the room participants details
@@ -171,19 +166,14 @@ function handle_get_room (event)
             "there are %s occupants in room", tostring(participant_count));
 	else
 		log("debug", "no such room exists");
+		return 404;
 	end
 
 	if participant_count > 1 then
 		participant_count = participant_count - 1;
 	end
 
-	local GET_response = {
-		headers = {
-			content_type = "application/json";
-		};
-		body = json.encode(occupants_json);
-	};
-	return GET_response;
+	return json.encode(occupants_json);
 end;
 
 function module.load()

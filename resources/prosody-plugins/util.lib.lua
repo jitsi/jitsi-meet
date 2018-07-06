@@ -66,9 +66,16 @@ function wrap_async_run(event,handler)
     -- the handler is done.
     local response = event.response;
     local async_func = runner(function (event)
-          response.status_code = handler(event);
-          -- Send the response to the waiting http client.
-          response:send();
+        local result = handler(event);
+        -- if it is a number, it is a status code, else it is the body
+        -- result we will return
+        if (tonumber(result) ~= nil) then
+            response.status_code = result;
+        else
+            response.body = result;
+        end;
+        -- Send the response to the waiting http client.
+        response:send();
     end)
     async_func:run(event)
     -- return true to keep the client http connection open.
