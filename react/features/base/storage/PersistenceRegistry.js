@@ -27,7 +27,7 @@ declare type PersistencyConfigMap = { [name: string]: ElementConfig };
  */
 class PersistenceRegistry {
     _checksum: string;
-
+    _defaultStates: { [name: string ]: ?Object} = {};
     _elements: PersistencyConfigMap = {};
 
     /**
@@ -51,7 +51,8 @@ class PersistenceRegistry {
             const persistedSubtree
                 = this._getPersistedSubtree(
                     subtreeName,
-                    this._elements[subtreeName]);
+                    this._elements[subtreeName],
+                    this._defaultStates[subtreeName]);
 
             if (persistedSubtree !== undefined) {
                 filteredPersistedState[subtreeName] = persistedSubtree;
@@ -128,10 +129,17 @@ class PersistenceRegistry {
      * @param {string} name - The name of the subtree the config belongs to.
      * @param {ElementConfig} config - The config {@code Object}, or
      * {@code boolean} if the entire subtree needs to be persisted.
+     * @param {Object} defaultState - The default state of the component. If
+     * it's provided, the rehydrated state will be merged with it before it gets
+     * pushed into Redux.
      * @returns {void}
      */
-    register(name: string, config?: ElementConfig = true) {
+    register(
+            name: string,
+            config?: ElementConfig = true,
+            defaultState?: Object) {
         this._elements[name] = config;
+        this._defaultStates[name] = defaultState;
     }
 
     /**
@@ -209,10 +217,11 @@ class PersistenceRegistry {
      * @param {string} subtreeName - The name of the subtree.
      * @param {Object} subtreeConfig - The config of the subtree from
      * {@link #_elements}.
+     * @param {Object} subtreeDefaults - The defaults of the persisted subtree.
      * @private
      * @returns {Object}
      */
-    _getPersistedSubtree(subtreeName, subtreeConfig) {
+    _getPersistedSubtree(subtreeName, subtreeConfig, subtreeDefaults) {
         let persistedSubtree = window.localStorage.getItem(subtreeName);
 
         if (persistedSubtree) {
@@ -223,7 +232,8 @@ class PersistenceRegistry {
                     = this._getFilteredSubtree(persistedSubtree, subtreeConfig);
 
                 if (filteredSubtree !== undefined) {
-                    return filteredSubtree;
+                    return this._mergeDefaults(
+                        filteredSubtree, subtreeDefaults);
                 }
             } catch (error) {
                 logger.error(
@@ -235,6 +245,32 @@ class PersistenceRegistry {
         }
 
         return undefined;
+    }
+
+    /**
+     * Merges the persisted subtree with its defaults before rehydrating the
+     * values.
+     *
+     * @private
+     * @param {Object} subtree - The Redux subtree.
+     * @param {?Object} defaults - The defaults, if any.
+     * @returns {Object}
+     */
+    _mergeDefaults(subtree: Object, defaults: ?Object) {
+        if (!defaults) {
+            return subtree;
+        }
+
+        // If the subtree is an array, we don't need to merge it with the
+        // defaults, because if it has a value, it will overwrite it, and if
+        // it's undefined, it won't be even returned, and Redux will natively
+        // use the default values instead.
+        if (!Array.isArray(subtree)) {
+            return {
+                ...defaults,
+                ...subtree
+            };
+        }
     }
 }
 
