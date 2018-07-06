@@ -1,4 +1,6 @@
 
+export const SESSION_CONFIGURED = Symbol('SESSION_CONFIGURED');
+
 export const SESSION_ENDED = Symbol('SESSION_ENDED');
 
 export const SESSION_FAILED = Symbol('SESSION_FAILED');

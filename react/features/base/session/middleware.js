@@ -21,14 +21,15 @@ import {
 import { parseURIString, toURLString } from '../../base/util';
 
 import {
-    SESSION_FAILED,
-    SESSION_WILL_END,
+    SESSION_CONFIGURED,
     SESSION_ENDED,
-    SESSION_WILL_START,
-    SESSION_STARTED
+    SESSION_FAILED,
+    SESSION_STARTED,
+    SESSION_WILL_END,
+    SESSION_WILL_START
 } from './constants';
 import { setSession } from './actions';
-import { CONFIG_WILL_LOAD, LOAD_CONFIG_ERROR } from '../config';
+import { CONFIG_WILL_LOAD, LOAD_CONFIG_ERROR, SET_CONFIG } from '../config';
 import { getCurrentSession, getSession } from './functions';
 
 /**
@@ -74,12 +75,13 @@ MiddlewareRegistry.register(store => next => action => {
         }
         break;
     }
+
     case CONFERENCE_JOINED: {
         const { conference } = action;
         const session = findSessionForConference(store, conference);
         const state = session && session.state;
 
-        if (state === SESSION_WILL_START) {
+        if (state === SESSION_CONFIGURED) {
             store.dispatch(
                 setSession({
 
@@ -95,6 +97,7 @@ MiddlewareRegistry.register(store => next => action => {
         }
         break;
     }
+
     case CONFERENCE_LEFT:
     case CONFERENCE_FAILED: {
         const { conference, error } = action;
@@ -206,6 +209,24 @@ MiddlewareRegistry.register(store => next => action => {
         }
         break;
     }
+
+    case SET_CONFIG: {
+        // XXX SET_CONFIG IS ALWAYS RELEVANT
+        const { locationURL } = store.getState()['features/base/config'];
+        const url = toURLString(locationURL);
+        const session = getSession(store, url);
+        const state = session && session.state;
+
+        if (state === SESSION_WILL_START) {
+            store.dispatch(
+                setSession({
+                    url,
+                    state: SESSION_CONFIGURED
+                }));
+        }
+        break;
+    }
+
     case CONFIG_WILL_LOAD: {
         const { locationURL } = action;
         const url = toURLString(locationURL);
@@ -238,6 +259,7 @@ MiddlewareRegistry.register(store => next => action => {
         }
         break;
     }
+
     case LOAD_CONFIG_ERROR: {
         const { error, locationURL } = action;
         const url = toURLString(locationURL);
