@@ -114,7 +114,8 @@ function SmallVideo(VideoLayout) {
      * @private
      * @type {boolean}
      */
-    this._showConnectionIndicator = true;
+    this._showConnectionIndicator
+        = !interfaceConfig.CONNECTION_INDICATOR_DISABLED;
 
     /**
      * Whether or not the dominant speaker indicator should be displayed.
