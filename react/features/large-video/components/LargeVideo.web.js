@@ -8,7 +8,6 @@ import { TranscriptionSubtitles } from '../../subtitles/';
 
 import Labels from './Labels';
 
-declare var APP: Object;
 declare var interfaceConfig: Object;
 
 /**
@@ -72,8 +71,7 @@ export default class LargeVideo extends Component<*> {
                             muted = { true } />
                     </div>
                 </div>
-                { APP.store.getState()['features/base/config']
-                    .disableTranscriptionSubtitles
+                { interfaceConfig.DISABLE_TRANSCRIPTION_SUBTITLES
                     ? null : <TranscriptionSubtitles /> }
                 <span id = 'localConnectionMessage' />
                 { this.props.hideVideoQualityLabel

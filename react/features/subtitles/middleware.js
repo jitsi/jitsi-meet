@@ -69,10 +69,9 @@ function _endpointMessageReceived({ dispatch, getState }, next, action) {
                 dispatch(addTranscriptMessage(transcriptMessageID,
                     participantName));
             }
-            const { transcriptMessages }
-                = getState()['features/subtitles'];
+            const { transcriptMessages } = getState()['features/subtitles'];
             const newTranscriptMessage
-                = transcriptMessages.get(transcriptMessageID);
+                = {...transcriptMessages.get(transcriptMessageID)};
 
             // If this is final result, update the state as a final result
             // and start a count down to remove the subtitle from the state
@@ -97,8 +96,8 @@ function _endpointMessageReceived({ dispatch, getState }, next, action) {
                     newTranscriptMessage));
             } else {
                 // Otherwise, this result has an unstable result, which we
-                // add to the state. The unstable result will be localed at
-                // the end of the String, after the stable part.
+                // add to the state. The unstable result will be appended
+                // after the stable part.
 
                 newTranscriptMessage.unstable = text;
                 dispatch(updateTranscriptMessage(transcriptMessageID,
