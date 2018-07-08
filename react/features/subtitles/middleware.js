@@ -71,7 +71,7 @@ function _endpointMessageReceived({ dispatch, getState }, next, action) {
             }
             const { transcriptMessages } = getState()['features/subtitles'];
             const newTranscriptMessage
-                = {...transcriptMessages.get(transcriptMessageID)};
+                = { ...transcriptMessages.get(transcriptMessageID) };
 
             // If this is final result, update the state as a final result
             // and start a count down to remove the subtitle from the state
