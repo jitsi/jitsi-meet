@@ -6,6 +6,7 @@ import { Linking } from 'react-native';
 
 import '../../analytics';
 import '../../authentication';
+import '../../base/jwt';
 import { Platform } from '../../base/react';
 import {
     AspectRatioDetector,
