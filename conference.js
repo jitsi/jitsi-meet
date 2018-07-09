@@ -2479,9 +2479,11 @@ export default {
         APP.UI.removeLocalMedia();
 
         // Remove unnecessary event listeners from firing callbacks.
-        JitsiMeetJS.mediaDevices.removeEventListener(
-            JitsiMediaDevicesEvents.DEVICE_LIST_CHANGED,
-            this.deviceChangeListener);
+        if (this.deviceChangeListener) {
+            JitsiMeetJS.mediaDevices.removeEventListener(
+                JitsiMediaDevicesEvents.DEVICE_LIST_CHANGED,
+                this.deviceChangeListener);
+        }
 
         let requestFeedbackPromise;
 
