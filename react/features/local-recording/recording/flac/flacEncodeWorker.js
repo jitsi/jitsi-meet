@@ -403,14 +403,3 @@ self.onmessage = function(e) {
         break;
     }
 };
-
-/**
- * if(wavBuffers.length > 0){
-        //if there is buffered audio: encode buffered first (and clear buffer)
-        var len = wavBuffers.length;
-        var buffered = wavBuffers.splice(0, len);
-        for(var i=0; i < len; ++i){
-            doEncodeFlac(buffered[i]);
-        }
-    }
- */
