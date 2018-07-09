@@ -37,15 +37,15 @@ class PresenceLabel extends Component {
         _presence: PropTypes.string,
 
         /**
+         * Class name for the presence label.
+         */
+        className: PropTypes.string,
+
+        /**
          * Default presence status that will be displayed if user's presence
          * status is not available.
          */
         defaultPresence: PropTypes.string,
-
-        /**
-         * Styles for the case where there isn't any content to be shown.
-         */
-        noContentStyles: PropTypes.object,
 
         /**
          * The ID of the participant whose presence status shoul display.
@@ -55,7 +55,7 @@ class PresenceLabel extends Component {
         /**
          * Styles for the presence label.
          */
-        styles: PropTypes.object,
+        style: PropTypes.object,
 
         /**
          * Invoked to obtain translated strings.
@@ -70,14 +70,20 @@ class PresenceLabel extends Component {
      * @returns {ReactElement}
      */
     render() {
-        const { _presence, styles, noContentStyles } = this.props;
-        const combinedStyles = _presence ? styles : noContentStyles;
+        const text = this._getPresenceText();
+
+        if (text === null) {
+            return null;
+        }
+
+        const { style, className } = this.props;
 
         return (
-            <Text { ...combinedStyles }>
-                { this._getPresenceText() }
-            </Text>
-        );
+            <Text
+                className = { className }
+                { ...style }>
+                { text }
+            </Text>);
     }
 
     /**
