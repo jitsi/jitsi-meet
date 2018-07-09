@@ -381,11 +381,14 @@ class Toolbox extends Component<Props> {
                         visible = { this._shouldShowButton('camera') } />
                 </div>
                 <div className = 'button-group-right'>
-                    <LocalRecordingButton
-                        isDialogShown = { this.props._localRecState.showDialog }
-                        onClick = {
-                            this._onToolbarToggleLocalRecordingInfoDialog
-                        } />
+                    { this._shouldShowButton('localrecording')
+                        && <LocalRecordingButton
+                            isDialogShown =
+                                { this.props._localRecState.showDialog }
+                            onClick = {
+                                this._onToolbarToggleLocalRecordingInfoDialog
+                            } />
+                    }
                     { this._shouldShowButton('invite')
                         && !_hideInviteButton
                         && <ToolbarButton
