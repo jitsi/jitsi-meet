@@ -73,6 +73,8 @@ class LocalRecordingButton extends Component<Props> {
                     onClose = { this._onCloseDialog }
                     position = { 'top right' }>
                     <ToolbarButton
+                        accessibilityLabel
+                            = { t('toolbar.accessibilityLabel.localRecording') }
                         iconName = { iconClasses }
                         onClick = { this._onClick }
                         tooltip = { t('localRecording.dialogTitle') } />

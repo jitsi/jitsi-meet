@@ -87,6 +87,7 @@
             "fullScreen": "Toggle full screen",
             "hangup": "Leave the call",
             "invite": "Invite people",
+            "localRecording": "Toggle local recording controls",
             "lockRoom": "Toggle room lock",
             "moreActions": "Toggle more actions menu",
             "moreActionsMenu": "More actions menu",
