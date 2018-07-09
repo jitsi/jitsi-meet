@@ -64,7 +64,7 @@ class CalleeInfo extends Component<Props> {
                     <Container { ...this._style('ringing__status') }>
                         <PresenceLabel
                             defaultPresence = { status }
-                            styles = { this._style('ringing__text') } />
+                            { ...this._style('ringing__text') } />
                     </Container>
                     <Container { ...this._style('ringing__name') }>
                         <Text

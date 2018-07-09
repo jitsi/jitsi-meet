@@ -574,11 +574,8 @@ RemoteVideo.prototype.addPresenceLabel = function() {
             <Provider store = { APP.store }>
                 <I18nextProvider i18n = { i18next }>
                     <PresenceLabel
-                        noContentStyles = { {
-                            className: 'presence-label no-presence'
-                        } }
                         participantID = { this.id }
-                        styles = { { className: 'presence-label' } } />
+                        className = 'presence-label' />
                 </I18nextProvider>
             </Provider>,
             presenceLabelContainer);
