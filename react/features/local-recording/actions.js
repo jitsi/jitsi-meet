@@ -7,24 +7,35 @@ import {
     LOCAL_RECORDING_STATS_UPDATE
 } from './actionTypes';
 
+// The following two actions signal state changes in local recording engagement.
+// In other words, the events of the local WebWorker / MediaRecorder starting to
+// record and finishing recording.
+// Note that this is not the event fired when the users tries to start the
+// recording in the UI.
+
 /**
- * Signals state change in local recording engagement.
- * In other words, the events of the local WebWorker / MediaRecorder
- * starting to record and finishing recording.
+ * Signals that local recording has started.
  *
- * Note that this is not the event fired when the users tries to start
- * the recording in the UI.
- *
- * @param {bool} isEngaged - Whether local recording is engaged or not.
  * @returns {{
  *     type: LOCAL_RECORDING_ENGAGED
- * }|{
+ * }}
+ */
+export function localRecordingEngaged() {
+    return {
+        type: LOCAL_RECORDING_ENGAGED
+    };
+}
+
+/**
+ * Signals that local recording has finished.
+ *
+ * @returns {{
  *     type: LOCAL_RECORDING_UNENGAGED
  * }}
  */
-export function signalLocalRecordingEngagement(isEngaged: boolean) {
+export function localRecordingUnengaged() {
     return {
-        type: isEngaged ? LOCAL_RECORDING_ENGAGED : LOCAL_RECORDING_UNENGAGED
+        type: LOCAL_RECORDING_UNENGAGED
     };
 }
 
