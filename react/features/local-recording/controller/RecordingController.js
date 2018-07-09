@@ -258,7 +258,7 @@ class RecordingController {
         this._format = newFormat;
         logger.log(`Recording format switched to ${newFormat}`);
 
-        // will be used next time
+        // the new format will be used in the next recording session
     }
 
     /**

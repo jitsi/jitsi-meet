@@ -14,7 +14,6 @@ MiddlewareRegistry.register(({ getState, dispatch }) => next => action => {
 
     switch (action.type) {
     case CONFERENCE_JOINED: {
-        // the Conference object is ready
         const { conference } = getState()['features/base/conference'];
 
         recordingController.registerEvents(conference);
@@ -47,6 +46,9 @@ MiddlewareRegistry.register(({ getState, dispatch }) => next => action => {
         recordingController.onWarning = null;
         break;
     }
+
+    // @todo: detect change in features/base/settings micDeviceID
+    // @todo: SET_AUDIO_MUTED, when audio is muted
 
     return result;
 });

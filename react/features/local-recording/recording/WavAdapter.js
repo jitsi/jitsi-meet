@@ -40,40 +40,28 @@ export class WavAdapter extends RecordingAdapter {
         }
 
         const p = new Promise((resolve, reject) => {
-            navigator.getUserMedia(
+            this._getAudioStream(0)
+            .then(stream => {
+                this._audioContext = new AudioContext();
+                this._audioSource
+                    = this._audioContext.createMediaStreamSource(stream);
+                this._audioProcessingNode
+                    = this._audioContext.createScriptProcessor(4096, 1, 1);
+                this._audioProcessingNode.onaudioprocess = e => {
+                    const channelLeft = e.inputBuffer.getChannelData(0);
 
-                // constraints - only audio needed for this app
-                {
-                    audioBitsPerSecond: WAV_SAMPLE_RATE * WAV_BITS_PER_SAMPLE,
-                    audio: true,
-                    mimeType: 'application/ogg' // useless?
-                },
-
-                // Success callback
-                stream => {
-                    this._audioContext = new AudioContext();
-                    this._audioSource
-                     = this._audioContext.createMediaStreamSource(stream);
-                    this._audioProcessingNode
-                      = this._audioContext.createScriptProcessor(4096, 1, 1);
-                    this._audioProcessingNode.onaudioprocess = e => {
-                        const channelLeft = e.inputBuffer.getChannelData(0);
-
-                        // https://developer.mozilla.org/en-US/docs/
-                        // Web/API/AudioBuffer/getChannelData
-                        // the returned value is an Float32Array
-                        this._saveWavPCM(channelLeft);
-                    };
-                    this._isInitialized = true;
-                    resolve();
-                },
-
-                // Error callback
-                err => {
-                    logger.error(`Error calling getUserMedia(): ${err}`);
-                    reject();
-                }
-            );
+                    // https://developer.mozilla.org/en-US/docs/
+                    // Web/API/AudioBuffer/getChannelData
+                    // the returned value is an Float32Array
+                    this._saveWavPCM(channelLeft);
+                };
+                this._isInitialized = true;
+                resolve();
+            })
+            .catch(err => {
+                logger.error(`Error calling getUserMedia(): ${err}`);
+                reject();
+            });
         });
 
         return p;

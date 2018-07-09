@@ -9,11 +9,7 @@ import {
 } from './actionTypes';
 import { recordingController } from './controller';
 
-const logger = require('jitsi-meet-logger').getLogger(__filename);
-
 ReducerRegistry.register('features/local-recording', (state = {}, action) => {
-    logger.debug(`Redux state (features/local-recording):\n ${
-        JSON.stringify(state)}`);
     switch (action.type) {
     case LOCAL_RECORDING_ENGAGED: {
         return {

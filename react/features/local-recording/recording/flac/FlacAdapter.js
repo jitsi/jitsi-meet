@@ -12,7 +12,7 @@ import {
 const logger = require('jitsi-meet-logger').getLogger(__filename);
 
 /**
- * Recording adapter that uses libflac in the background
+ * Recording adapter that uses libflac.js in the background.
  */
 export class FlacAdapter extends RecordingAdapter {
 
@@ -43,7 +43,7 @@ export class FlacAdapter extends RecordingAdapter {
                 // try load the minified version first
                 this._encoder = new Worker('/libs/flacEncodeWorker.min.js');
             } catch (exception1) {
-                // if failed, try un minified version
+                // if failed, try unminified version
                 try {
                     this._encoder = new Worker('/libs/flacEncodeWorker.js');
                 } catch (exception2) {
@@ -83,41 +83,29 @@ export class FlacAdapter extends RecordingAdapter {
         });
 
         const callbackInitAudioContext = (resolve, reject) => {
-            navigator.getUserMedia(
+            this._getAudioStream(0)
+            .then(stream => {
+                this._audioContext = new AudioContext();
+                this._audioSource
+                    = this._audioContext.createMediaStreamSource(stream);
+                this._audioProcessingNode
+                    = this._audioContext.createScriptProcessor(4096, 1, 1);
+                this._audioProcessingNode.onaudioprocess = e => {
+                    // delegate to the WebWorker to do the encoding
+                    const channelLeft = e.inputBuffer.getChannelData(0);
 
-                // constraints - only audio needed for this app
-                {
-                    audioBitsPerSecond: 44100, // 44 kbps
-                    audio: true,
-                    mimeType: 'application/ogg' // useless?
-                },
-
-                // Success callback
-                stream => {
-                    this._audioContext = new AudioContext();
-                    this._audioSource
-                     = this._audioContext.createMediaStreamSource(stream);
-                    this._audioProcessingNode
-                      = this._audioContext.createScriptProcessor(4096, 1, 1);
-                    this._audioProcessingNode.onaudioprocess = e => {
-                        // delegate to the WebWorker to do the encoding
-                        const channelLeft = e.inputBuffer.getChannelData(0);
-
-                        this._encoder.postMessage({
-                            command: MAIN_THREAD_NEW_DATA_ARRIVED,
-                            buf: channelLeft
-                        });
-                    };
-                    logger.debug('AudioContext is set up.');
-                    resolve();
-                },
-
-                // Error callback
-                err => {
-                    logger.error(`Error calling getUserMedia(): ${err}`);
-                    reject();
-                }
-            );
+                    this._encoder.postMessage({
+                        command: MAIN_THREAD_NEW_DATA_ARRIVED,
+                        buf: channelLeft
+                    });
+                };
+                logger.debug('AudioContext is set up.');
+                resolve();
+            })
+            .catch(err => {
+                logger.error(`Error calling getUserMedia(): ${err}`);
+                reject();
+            });
         };
 
         // FIXME: because Promise constructor immediately executes the executor

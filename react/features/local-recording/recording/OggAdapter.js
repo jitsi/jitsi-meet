@@ -9,6 +9,9 @@ const logger = require('jitsi-meet-logger').getLogger(__filename);
  */
 export class OggAdapter extends RecordingAdapter {
 
+    /**
+     * Instance of MediaRecorder.
+     */
     _mediaRecorder = null;
 
     /**
@@ -21,29 +24,17 @@ export class OggAdapter extends RecordingAdapter {
 
         if (this._mediaRecorder === null) {
             p = new Promise((resolve, error) => {
-                navigator.getUserMedia(
-
-                    // constraints, only audio needed
-                    {
-                        audioBitsPerSecond: 44100, // 44 kbps
-                        audio: true,
-                        mimeType: 'application/ogg'
-                    },
-
-                    // success callback
-                    stream => {
-                        this._mediaRecorder = new MediaRecorder(stream);
-                        this._mediaRecorder.ondataavailable
-                            = e => this._saveMediaData(e.data);
-                        resolve();
-                    },
-
-                    // Error callback
-                    err => {
-                        logger.error(`Error calling getUserMedia(): ${err}`);
-                        error();
-                    }
-                );
+                this._getAudioStream(0)
+                .then(stream => {
+                    this._mediaRecorder = new MediaRecorder(stream);
+                    this._mediaRecorder.ondataavailable
+                        = e => this._saveMediaData(e.data);
+                    resolve();
+                })
+                .catch(err => {
+                    logger.error(`Error calling getUserMedia(): ${err}`);
+                    error();
+                });
             });
         } else {
             p = new Promise(resolve => {
