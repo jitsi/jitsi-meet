@@ -84,19 +84,6 @@ type Props = {
     participantId: string,
 
     /**
-     * True if the avatar of the depicted participant is to be shown should the
-     * avatar be available and the video of the participant is not to be shown;
-     * otherwise, false. If undefined, defaults to true.
-     */
-    showAvatar: boolean,
-
-    /**
-     * True if the video of the depicted participant is to be shown should the
-     * video be available. If undefined, defaults to true.
-     */
-    showVideo: boolean,
-
-    /**
      * The style, if any, to apply to {@link ParticipantView} in addition to its
      * default style.
      */
@@ -106,6 +93,12 @@ type Props = {
      * The function to translate human-readable text.
      */
     t: Function,
+
+    /**
+     * If true, a tinting will be applied to the view, regardless of video or
+     * avatar is rendered.
+     */
+    tintEnabled: boolean,
 
     /**
      * The test hint id which can be used to locate the {@code ParticipantView}
@@ -211,28 +204,19 @@ class ParticipantView extends Component<Props> {
         // doesn't retain the last frame forever, so we would end up with a
         // black screen.
         const waitForVideoStarted = false;
-        let renderVideo
+        const renderVideo
             = !this.props._audioOnly
                 && (connectionStatus
                     === JitsiParticipantConnectionStatus.ACTIVE)
                 && shouldRenderVideoTrack(videoTrack, waitForVideoStarted);
 
         // Is the avatar to be rendered?
-        let renderAvatar = Boolean(!renderVideo && avatar);
-
-        // The consumer of this ParticipantView is allowed to forbid showing the
-        // video if the private logic of this ParticipantView determines that
-        // the video could be rendered.
-        renderVideo = renderVideo && _toBoolean(this.props.showVideo, true);
-
-        // The consumer of this ParticipantView is allowed to forbid showing the
-        // avatar if the private logic of this ParticipantView determines that
-        // the avatar could be rendered.
-        renderAvatar = renderAvatar && _toBoolean(this.props.showAvatar, true);
+        const renderAvatar = Boolean(!renderVideo && avatar);
 
         // If the connection has problems, we will "tint" the video / avatar.
         const useTint
-            = connectionStatus !== JitsiParticipantConnectionStatus.ACTIVE;
+            = connectionStatus !== JitsiParticipantConnectionStatus.ACTIVE
+                || this.props.tintEnabled;
 
         const testHintId
             = this.props.testHintId
@@ -276,21 +260,6 @@ class ParticipantView extends Component<Props> {
             </Container>
         );
     }
-}
-
-/**
- * Converts the specified value to a boolean value. If the specified value is
- * undefined, returns the boolean value of undefinedValue.
- *
- * @param {any} value - The value to convert to a boolean value should it not be
- * undefined.
- * @param {any} undefinedValue - The value to convert to a boolean value should
- * the specified value be undefined.
- * @private
- * @returns {boolean}
- */
-function _toBoolean(value, undefinedValue) {
-    return Boolean(typeof value === 'undefined' ? undefinedValue : value);
 }
 
 /**
