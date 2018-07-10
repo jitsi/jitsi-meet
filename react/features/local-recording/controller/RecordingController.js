@@ -41,9 +41,19 @@ const ControllerState = Object.freeze({
     IDLE: Symbol('IDLE'),
 
     /**
+     * Starting.
+     */
+    STARTING: Symbol('STARTING'),
+
+    /**
      * Engaged (recording).
      */
-    RECORDING: Symbol('RECORDING')
+    RECORDING: Symbol('RECORDING'),
+
+    /**
+     * Stopping.
+     */
+    STOPPING: Symbol('STOPPING')
 });
 
 /**
@@ -314,6 +324,23 @@ class RecordingController {
         return result;
     }
 
+    _changeState: (Symbol) => void;
+
+    /**
+     * Changes the current state of {@code RecordingController}.
+     *
+     * @private
+     * @param {Symbol} newState - The new state.
+     * @returns {void}
+     */
+    _changeState(newState: Symbol) {
+        if (this._state !== newState) {
+            logger.log(`state change: ${this._state.toString()} -> `
+                + `${newState.toString()}`);
+            this._state = newState;
+        }
+    }
+
     _updateStats: () => void;
 
     /**
@@ -342,13 +369,19 @@ class RecordingController {
         const { sessionToken, format } = value.attributes;
 
         if (this._state === ControllerState.IDLE) {
+            this._changeState(ControllerState.STARTING);
             this._format = format;
             this._currentSessionToken = sessionToken;
+            logger.log(this._currentSessionToken);
             this._adapters[sessionToken]
                  = this._createRecordingAdapter();
             this._doStartRecording();
-        } else if (this._currentSessionToken !== sessionToken) {
-            // we need to restart the recording
+        } else if (this._state === ControllerState.RECORDING
+            && this._currentSessionToken !== sessionToken) {
+            // There is local recording going on, but not for the same session.
+            // This means the current state might be out-of-sync with the
+            // moderator's, so we need to restart the recording.
+            this._changeState(ControllerState.STOPPING);
             this._doStopRecording().then(() => {
                 this._format = format;
                 this._currentSessionToken = sessionToken;
@@ -371,6 +404,7 @@ class RecordingController {
     _onStopCommand(value) {
         if (this._state === ControllerState.RECORDING
             && this._currentSessionToken === value.attributes.sessionToken) {
+            this._changeState(ControllerState.STOPPING);
             this._doStopRecording();
         }
     }
@@ -394,12 +428,12 @@ class RecordingController {
      * @returns {void}
      */
     _doStartRecording() {
-        if (this._state === ControllerState.IDLE) {
-            this._state = ControllerState.RECORDING;
+        if (this._state === ControllerState.STARTING) {
             const delegate = this._adapters[this._currentSessionToken];
 
             delegate.start()
             .then(() => {
+                this._changeState(ControllerState.RECORDING);
                 logger.log('Local recording engaged.');
                 const message = i18next.t('localRecording.messages.engaged');
 
@@ -427,13 +461,13 @@ class RecordingController {
      * @returns {Promise<void>}
      */
     _doStopRecording() {
-        if (this._state === ControllerState.RECORDING) {
+        if (this._state === ControllerState.STOPPING) {
             const token = this._currentSessionToken;
 
             return this._adapters[this._currentSessionToken]
                 .stop()
                 .then(() => {
-                    this._state = ControllerState.IDLE;
+                    this._changeState(ControllerState.IDLE);
                     logger.log('Local recording unengaged.');
                     this.downloadRecordedData(token);
 
