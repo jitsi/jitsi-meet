@@ -79,8 +79,8 @@ class Thumbnail extends Component {
         const audioMuted = !audioTrack || audioTrack.muted;
         const renderAudio = !audioMuted && !audioTrack.local;
         const participantId = participant.id;
-        const participantNotInLargeVideo
-            = participantId !== largeVideo.participantId;
+        const participantInLargeVideo
+            = participantId === largeVideo.participantId;
         const videoMuted = !videoTrack || videoTrack.muted;
 
         return (
@@ -96,8 +96,7 @@ class Thumbnail extends Component {
                 <ParticipantView
                     avatarSize = { AVATAR_SIZE }
                     participantId = { participantId }
-                    showAvatar = { participantNotInLargeVideo }
-                    showVideo = { participantNotInLargeVideo }
+                    tintEnabled = { participantInLargeVideo }
                     zOrder = { 1 } />
 
                 { participant.role === PARTICIPANT_ROLE.MODERATOR
