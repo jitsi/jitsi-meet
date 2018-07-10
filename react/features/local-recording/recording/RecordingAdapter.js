@@ -6,15 +6,6 @@ import JitsiMeetJS from '../../base/lib-jitsi-meet';
 export class RecordingAdapter {
 
     /**
-     * Initialize the recording backend.
-     *
-     * @returns {Promise}
-     */
-    ensureInitialized() {
-        throw new Error('Not implemented');
-    }
-
-    /**
      * Starts recording.
      *
      * @returns {Promise}

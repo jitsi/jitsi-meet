@@ -398,8 +398,7 @@ class RecordingController {
             this._state = ControllerState.RECORDING;
             const delegate = this._adapters[this._currentSessionToken];
 
-            delegate.ensureInitialized()
-            .then(() => delegate.start())
+            delegate.start()
             .then(() => {
                 logger.log('Local recording engaged.');
                 const message = i18next.t('localRecording.messages.engaged');

@@ -21,35 +21,86 @@ export class FlacAdapter extends RecordingAdapter {
     _audioProcessingNode = null;
     _audioSource = null;
 
+    /**
+     * Resolve function of the promise returned by {@code stop()}.
+     * This is called after the WebWorker sends back {@code WORKER_BLOB_READY}.
+     */
     _stopPromiseResolver = null;
 
     /**
-     * Implements {@link RecordingAdapter#ensureInitialized}.
+     * Initialization promise.
+     */
+    _initPromise = null;
+
+    /**
+     * Implements {@link RecordingAdapter#start()}.
      *
      * @inheritdoc
      */
-    ensureInitialized() {
+    start() {
+        if (!this._initPromise) {
+            this._initPromise = this._initialize();
+        }
+
+        return this._initPromise.then(() => {
+            this._audioSource.connect(this._audioProcessingNode);
+            this._audioProcessingNode.connect(this._audioContext.destination);
+        });
+    }
+
+    /**
+     * Implements {@link RecordingAdapter#stop()}.
+     *
+     * @inheritdoc
+     */
+    stop() {
+        if (!this._encoder) {
+            logger.error('Attempting to stop but has nothing to stop.');
+
+            return Promise.reject();
+        }
+
+        return new Promise(resolve => {
+            this._initPromise = null;
+            this._audioProcessingNode.onaudioprocess = undefined;
+            this._audioProcessingNode.disconnect();
+            this._audioSource.disconnect();
+            this._stopPromiseResolver = resolve;
+            this._encoder.postMessage({
+                command: MAIN_THREAD_FINISH
+            });
+        });
+    }
+
+    /**
+     * Implements {@link RecordingAdapter#download()}.
+     *
+     * @inheritdoc
+     */
+    download() {
+        if (this._data !== null) {
+            const audioURL = window.URL.createObjectURL(this._data);
+
+            downloadBlob(audioURL, `recording${timestampString()}.flac`);
+        }
+    }
+
+    /**
+     * Initialize the adapter.
+     *
+     * @private
+     * @returns {Promise}
+     */
+    _initialize() {
         if (this._encoder !== null) {
             return Promise.resolve();
         }
 
         const promiseInitWorker = new Promise((resolve, reject) => {
-            // FIXME: workaround for different file names in development/
-            // production environments.
-            // We cannot import flacEncodeWorker as a webpack module,
-            // because it is in a different bundle and should be lazy-loaded
-            // only when flac recording is in use.
             try {
-                // try load the minified version first
-                this._encoder = new Worker('/libs/flacEncodeWorker.min.js');
-            } catch (exception1) {
-                // if failed, try unminified version
-                try {
-                    this._encoder = new Worker('/libs/flacEncodeWorker.js');
-                } catch (exception2) {
-                    logger.error('Failed to load flacEncodeWorker.');
-                    reject();
-                }
+                this._loadWebWorker();
+            } catch (e) {
+                reject();
             }
 
             // set up listen for messages from the WebWorker
@@ -60,6 +111,8 @@ export class FlacAdapter extends RecordingAdapter {
                     if (this._stopPromiseResolver !== null) {
                         this._stopPromiseResolver();
                         this._stopPromiseResolver = null;
+                        this._encoder.terminate();
+                        this._encoder = null;
                     }
                 } else if (e.data.command === DEBUG) {
                     logger.log(e.data);
@@ -116,43 +169,27 @@ export class FlacAdapter extends RecordingAdapter {
     }
 
     /**
-     * Implements {@link RecordingAdapter#start()}.
+     * Loads the WebWorker.
      *
-     * @inheritdoc
+     * @private
+     * @returns {void}
      */
-    start() {
-        this._audioSource.connect(this._audioProcessingNode);
-        this._audioProcessingNode.connect(this._audioContext.destination);
-    }
-
-    /**
-     * Implements {@link RecordingAdapter#stop()}.
-     *
-     * @inheritdoc
-     */
-    stop() {
-        return new Promise(resolve => {
-            this._audioProcessingNode.onaudioprocess = undefined;
-            this._audioProcessingNode.disconnect();
-            this._audioSource.disconnect();
-            this._stopPromiseResolver = resolve;
-            this._encoder.postMessage({
-                command: MAIN_THREAD_FINISH
-            });
-        });
-    }
-
-    /**
-     * Implements {@link RecordingAdapter#download()}.
-     *
-     * @inheritdoc
-     */
-    download() {
-        if (this._data !== null) {
-            const audioURL = window.URL.createObjectURL(this._data);
-
-            downloadBlob(audioURL, `recording${timestampString()}.flac`);
+    _loadWebWorker() {
+        // FIXME: workaround for different file names in development/
+        // production environments.
+        // We cannot import flacEncodeWorker as a webpack module,
+        // because it is in a different bundle and should be lazy-loaded
+        // only when flac recording is in use.
+        try {
+            // try load the minified version first
+            this._encoder = new Worker('/libs/flacEncodeWorker.min.js');
+        } catch (exception1) {
+            // if failed, try unminified version
+            try {
+                this._encoder = new Worker('/libs/flacEncodeWorker.js');
+            } catch (exception2) {
+                throw new Error('Failed to load flacEncodeWorker.');
+            }
         }
-
     }
 }

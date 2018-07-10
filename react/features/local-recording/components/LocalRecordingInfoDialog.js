@@ -95,11 +95,11 @@ class LocalRecordingInfoDialog extends Component<Props, State> {
     }
 
     /**
-     * Implements React's {@link Component#componentWillMount()}.
+     * Implements React's {@link Component#componentDidMount()}.
      *
      * @returns {void}
      */
-    componentWillMount() {
+    componentDidMount() {
         this._timer = setInterval(
             () => {
                 this.setState((_prevState, props) => {

@@ -4,8 +4,8 @@ import { downloadBlob, timestampString } from './Utils';
 const logger = require('jitsi-meet-logger').getLogger(__filename);
 
 /**
- * RecordingAdapter implementation that uses MediaRecorder
- * (default browser encoding with Opus codec)
+ * Recording adapter that uses {@code MediaRecorder} (default browser encoding
+ * with Opus codec).
  */
 export class OggAdapter extends RecordingAdapter {
 
@@ -15,35 +15,9 @@ export class OggAdapter extends RecordingAdapter {
     _mediaRecorder = null;
 
     /**
-     * Implements {@link RecordingAdapter#ensureInitialized()}.
-     *
-     * @inheritdoc
+     * Initialization promise.
      */
-    ensureInitialized() {
-        let p = null;
-
-        if (this._mediaRecorder === null) {
-            p = new Promise((resolve, error) => {
-                this._getAudioStream(0)
-                .then(stream => {
-                    this._mediaRecorder = new MediaRecorder(stream);
-                    this._mediaRecorder.ondataavailable
-                        = e => this._saveMediaData(e.data);
-                    resolve();
-                })
-                .catch(err => {
-                    logger.error(`Error calling getUserMedia(): ${err}`);
-                    error();
-                });
-            });
-        } else {
-            p = new Promise(resolve => {
-                resolve();
-            });
-        }
-
-        return p;
-    }
+    _initPromise = null;
 
     /**
      * Implements {@link RecordingAdapter#start()}.
@@ -51,10 +25,16 @@ export class OggAdapter extends RecordingAdapter {
      * @inheritdoc
      */
     start() {
-        return new Promise(resolve => {
-            this._mediaRecorder.start();
-            resolve();
-        });
+        if (!this._initPromise) {
+            this._initPromise = this._initialize();
+        }
+
+        return this._initPromise.then(() =>
+            new Promise(resolve => {
+                this._mediaRecorder.start();
+                resolve();
+            })
+        );
     }
 
     /**
@@ -82,14 +62,39 @@ export class OggAdapter extends RecordingAdapter {
 
             downloadBlob(audioURL, `recording${timestampString()}.ogg`);
         }
-
     }
 
     /**
-     * Callback for encoded data.
+     * Initialize the adapter.
      *
      * @private
-     * @param {*} data - Encoded data.
+     * @returns {Promise}
+     */
+    _initialize() {
+        if (this._mediaRecorder) {
+            return Promise.resolve();
+        }
+
+        return new Promise((resolve, error) => {
+            this._getAudioStream(0)
+            .then(stream => {
+                this._mediaRecorder = new MediaRecorder(stream);
+                this._mediaRecorder.ondataavailable
+                    = e => this._saveMediaData(e.data);
+                resolve();
+            })
+            .catch(err => {
+                logger.error(`Error calling getUserMedia(): ${err}`);
+                error();
+            });
+        });
+    }
+
+    /**
+     * Callback for storing the encoded data.
+     *
+     * @private
+     * @param {Blob} data - Encoded data.
      * @returns {void}
      */
     _saveMediaData(data) {

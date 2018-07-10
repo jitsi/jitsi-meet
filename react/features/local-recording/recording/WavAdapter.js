@@ -11,17 +11,43 @@ const WAV_SAMPLE_RATE = 44100;
  */
 export class WavAdapter extends RecordingAdapter {
 
+    /**
+     * {@code AudioContext} instance.
+     */
     _audioContext = null;
+
+    /**
+     * {@code ScriptProcessorNode} instance, which receives the raw PCM bits.
+     */
     _audioProcessingNode = null;
+
+    /**
+     * {@code MediaStreamAudioSourceNode} instance, which represents the mic.
+     */
     _audioSource = null;
 
+    /**
+     * Length of the WAVE file, in units of {@code sizeof(Float32)}.
+     */
     _wavLength = 0;
+
+    /**
+     * The {@code ArrayBuffer}s that stores the PCM bits.
+     */
     _wavBuffers = [];
+
+    /**
+     * Whether or not the {@code WavAdapter} is in a ready state.
+     */
     _isInitialized = false;
 
     /**
+     * Initialization promise.
+     */
+    _initPromise = null;
+
+    /**
      * Constructor.
-     *
      */
     constructor() {
         super();
@@ -30,49 +56,15 @@ export class WavAdapter extends RecordingAdapter {
     }
 
     /**
-     * Implements {@link RecordingAdapter#ensureInitialized()}.
-     *
-     * @inheritdoc
-     */
-    ensureInitialized() {
-        if (this._isInitialized) {
-            return Promise.resolve();
-        }
-
-        const p = new Promise((resolve, reject) => {
-            this._getAudioStream(0)
-            .then(stream => {
-                this._audioContext = new AudioContext();
-                this._audioSource
-                    = this._audioContext.createMediaStreamSource(stream);
-                this._audioProcessingNode
-                    = this._audioContext.createScriptProcessor(4096, 1, 1);
-                this._audioProcessingNode.onaudioprocess = e => {
-                    const channelLeft = e.inputBuffer.getChannelData(0);
-
-                    // https://developer.mozilla.org/en-US/docs/
-                    // Web/API/AudioBuffer/getChannelData
-                    // the returned value is an Float32Array
-                    this._saveWavPCM(channelLeft);
-                };
-                this._isInitialized = true;
-                resolve();
-            })
-            .catch(err => {
-                logger.error(`Error calling getUserMedia(): ${err}`);
-                reject();
-            });
-        });
-
-        return p;
-    }
-
-    /**
      * Implements {@link RecordingAdapter#start()}.
      *
      * @inheritdoc
      */
     start() {
+        if (!this._initPromise) {
+            this._initPromise = this._initialize();
+        }
+
         return new Promise(
             (resolve, /* eslint-disable */_reject/* eslint-enable */) => {
                 this._wavBuffers = [];
@@ -95,6 +87,10 @@ export class WavAdapter extends RecordingAdapter {
         this._audioProcessingNode.disconnect();
         this._audioSource.disconnect();
         this._data = this._exportMonoWAV(this._wavBuffers, this._wavLength);
+        this._audioContext = null;
+        this._audioProcessingNode = null;
+        this._audioSource = null;
+        this._isInitialized = false;
 
         return Promise.resolve();
     }
@@ -110,7 +106,6 @@ export class WavAdapter extends RecordingAdapter {
 
             downloadBlob(audioURL, `recording${timestampString()}.wav`);
         }
-
     }
 
     /**
@@ -167,6 +162,44 @@ export class WavAdapter extends RecordingAdapter {
         return new Uint8Array(buffer);
     }
 
+    /**
+     * Initialize the adapter.
+     *
+     * @private
+     * @returns {Promise}
+     */
+    _initialize() {
+        if (this._isInitialized) {
+            return Promise.resolve();
+        }
+
+        const p = new Promise((resolve, reject) => {
+            this._getAudioStream(0)
+            .then(stream => {
+                this._audioContext = new AudioContext();
+                this._audioSource
+                    = this._audioContext.createMediaStreamSource(stream);
+                this._audioProcessingNode
+                    = this._audioContext.createScriptProcessor(4096, 1, 1);
+                this._audioProcessingNode.onaudioprocess = e => {
+                    const channelLeft = e.inputBuffer.getChannelData(0);
+
+                    // https://developer.mozilla.org/en-US/docs/
+                    // Web/API/AudioBuffer/getChannelData
+                    // the returned value is an Float32Array
+                    this._saveWavPCM(channelLeft);
+                };
+                this._isInitialized = true;
+                resolve();
+            })
+            .catch(err => {
+                logger.error(`Error calling getUserMedia(): ${err}`);
+                reject();
+            });
+        });
+
+        return p;
+    }
 
     /**
      * Callback function that saves the PCM bits.

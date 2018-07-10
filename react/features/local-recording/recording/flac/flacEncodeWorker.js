@@ -19,10 +19,10 @@ importScripts('/libs/libflac3-1.3.2.min.js');
 // So we disable the ESLint rule `new-cap` in this file.
 /* eslint-disable new-cap */
 
-// Flow will complain about the number keys in `FLAC_ERRORS,
+// Flow will complain about the number keys in `FLAC_ERRORS`,
 // ESLint will complain about the `declare` statement.
 // As the current workaround, add an exception for eslint.
-/* eslint-disable flowtype/no-types-missing-file-annotation*/
+/* eslint-disable flowtype/no-types-missing-file-annotation */
 declare var Flac: Object;
 
 const FLAC_ERRORS = {
@@ -151,7 +151,7 @@ class Encoder {
     _state = EncoderState.UNINTIALIZED;
 
     /**
-     * The ready-for-grab downloadable blob.
+     * The ready-for-grab downloadable Blob.
      */
     _data = null;
 
