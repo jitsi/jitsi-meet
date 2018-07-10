@@ -22,6 +22,20 @@ const COMMAND_START = 'localRecStart';
 const COMMAND_STOP = 'localRecStop';
 
 /**
+ * One-time command used to trigger the moderator to resend the commands.
+ * This is a workaround for newly-joined clients to receive remote presence.
+ */
+const COMMAND_PING = 'localRecPing';
+
+/**
+ * One-time command sent upon receiving a {@code COMMAND_PING}.
+ * Only the moderator sends this command.
+ * This command does not carry any information itself, but rather forces the
+ * XMPP server to resend the remote presence.
+ */
+const COMMAND_PONG = 'localRecPong';
+
+/**
  * Participant property key for local recording stats.
  */
 const PROPERTY_STATS = 'localRecStats';
@@ -167,6 +181,7 @@ class RecordingController {
         this._updateStats = this._updateStats.bind(this);
         this._onStartCommand = this._onStartCommand.bind(this);
         this._onStopCommand = this._onStopCommand.bind(this);
+        this._onPingCommand = this._onPingCommand.bind(this);
         this._doStartRecording = this._doStartRecording.bind(this);
         this._doStopRecording = this._doStopRecording.bind(this);
         this.registerEvents = this.registerEvents.bind(this);
@@ -189,7 +204,12 @@ class RecordingController {
                     .addCommandListener(COMMAND_STOP, this._onStopCommand);
                 this._conference
                     .addCommandListener(COMMAND_START, this._onStartCommand);
+                this._conference
+                    .addCommandListener(COMMAND_PING, this._onPingCommand);
                 this._registered = true;
+            }
+            if (!this._conference.isModerator()) {
+                this._conference.sendCommandOnce(COMMAND_PING, {});
             }
         }
     }
@@ -225,7 +245,7 @@ class RecordingController {
      */
     stopRecording() {
         if (this._conference) {
-            if (this._conference.isModerator) {
+            if (this._conference.isModerator()) {
                 this._conference.removeCommand(COMMAND_START);
                 this._conference.sendCommand(COMMAND_STOP, {
                     attributes: {
@@ -406,6 +426,21 @@ class RecordingController {
             && this._currentSessionToken === value.attributes.sessionToken) {
             this._changeState(ControllerState.STOPPING);
             this._doStopRecording();
+        }
+    }
+
+    _onPingCommand: () => void;
+
+    /**
+     * Callback function for XMPP event.
+     *
+     * @private
+     * @returns {void}
+     */
+    _onPingCommand() {
+        if (this._conference.isModerator()) {
+            logger.log('Received ping, sending pong.');
+            this._conference.sendCommandOnce(COMMAND_PONG, {});
         }
     }
 
