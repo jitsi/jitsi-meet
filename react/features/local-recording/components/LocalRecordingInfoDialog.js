@@ -90,7 +90,7 @@ class LocalRecordingInfoDialog extends Component<Props, State> {
     constructor() {
         super();
         this.state = {
-            durationString: 'N/A'
+            durationString: ''
         };
     }
 
@@ -211,7 +211,9 @@ class LocalRecordingInfoDialog extends Component<Props, State> {
                         </span>
                         <span className = 'spacer'>&nbsp;</span>
                         <span className = 'info-value'>
-                            { durationString }
+                            { durationString === ''
+                                ? t('localRecording.durationNA')
+                                : durationString }
                         </span>
                     </div>
                     }
@@ -267,6 +269,10 @@ class LocalRecordingInfoDialog extends Component<Props, State> {
      * @returns {string}
      */
     _getDuration(now, prev) {
+        if (prev === null || prev === undefined) {
+            return '';
+        }
+
         // Still a hack, as moment.js does not support formatting of duration
         // (i.e. TimeDelta). Only works if total duration < 24 hours.
         // But who is going to have a 24-hour long conference?

@@ -674,8 +674,9 @@
         "start": "Start",
         "stop": "Stop",
         "moderator": "Moderator",
-        "localUser": "Local user",
+        "me": "Me",
         "duration": "Duration",
+        "durationNA": "N/A",
         "encoding": "Encoding",
         "participantStats": "Participant Stats",
         "clientState": {
@@ -686,6 +687,7 @@
         "messages": {
             "engaged": "Local recording engaged.",
             "finished": "Recording session __token__ finished. Please send the recorded file to the moderator.",
+            "finishedModerator": "Recording session __token__ finished. The recording of the local track has been saved. Please ask the other participants to submit their recordings.",
             "notModerator": "You are not the moderator. You cannot start or stop local recording."
         },
         "yes": "Yes",

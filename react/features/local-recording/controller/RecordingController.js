@@ -336,7 +336,7 @@ class RecordingController {
 
         result[localId] = {
             id: localId,
-            displayName: i18next.t('localRecording.localUser'),
+            displayName: i18next.t('localRecording.me'),
             recordingStats: this.getLocalStats(),
             isSelf: true
         };
@@ -507,7 +507,9 @@ class RecordingController {
                     this.downloadRecordedData(token);
 
                     const message
-                        = i18next.t('localRecording.messages.finished',
+                        = i18next.t(this._conference.isModerator()
+                            ? 'localRecording.messages.finishedModerator'
+                            : 'localRecording.messages.finished',
                             {
                                 token
                             });
