@@ -9,7 +9,6 @@ import { compose, createStore } from 'redux';
 import Thunk from 'redux-thunk';
 
 import { i18next } from '../../base/i18n';
-import { localParticipantLeft } from '../../base/participants';
 import {
     MiddlewareRegistry,
     ReducerRegistry,
@@ -118,8 +117,7 @@ export class AbstractApp extends Component {
     }
 
     /**
-     * Init lib-jitsi-meet and create local participant when component is going
-     * to be mounted.
+     * Initializes the app.
      *
      * @inheritdoc
      */
@@ -185,15 +183,12 @@ export class AbstractApp extends Component {
     }
 
     /**
-     * Dispose lib-jitsi-meet and remove local participant when component is
-     * going to be unmounted.
+     * De-initializes the app.
      *
      * @inheritdoc
      */
     componentWillUnmount() {
         const { dispatch } = this._getStore();
-
-        dispatch(localParticipantLeft());
 
         dispatch(appWillUnmount(this));
     }

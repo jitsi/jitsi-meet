@@ -14,6 +14,7 @@ import { playSound, registerSound, unregisterSound } from '../sounds';
 import {
     localParticipantIdChanged,
     localParticipantJoined,
+    localParticipantLeft,
     participantLeft,
     participantUpdated
 } from './actions';
@@ -57,7 +58,8 @@ MiddlewareRegistry.register(store => next => action => {
 
     case APP_WILL_UNMOUNT:
         _unregisterSounds(store);
-        break;
+
+        return _localParticipantLeft(store, next, action);
 
     case CONFERENCE_WILL_JOIN:
         store.dispatch(localParticipantIdChanged(action.conference.myUserId()));
@@ -198,6 +200,25 @@ function _localParticipantJoined({ getState, dispatch }, next, action) {
         email: settings.email,
         name: settings.displayName
     }));
+
+    return result;
+}
+
+/**
+ * Signals that the local participant has left.
+ *
+ * @param {Store} store - The redux store.
+ * @param {Dispatch} next - The redux {@code dispatch} function to dispatch the
+ * specified {@code action} into the specified {@code store}.
+ * @param {Action} action - The redux action which is being dispatched in the
+ * specified {@code store}.
+ * @private
+ * @returns {Object} The value returned by {@code next(action)}.
+ */
+function _localParticipantLeft({ dispatch }, next, action) {
+    const result = next(action);
+
+    dispatch(localParticipantLeft());
 
     return result;
 }
