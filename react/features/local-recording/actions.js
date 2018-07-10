@@ -14,15 +14,18 @@ import {
 // recording in the UI.
 
 /**
- * Signals that local recording has started.
+ * Signals that local recording has been engaged.
  *
+ * @param {Date} startTime - Time when the recording is engaged.
  * @returns {{
- *     type: LOCAL_RECORDING_ENGAGED
+ *     type: LOCAL_RECORDING_ENGAGED,
+ *     recordingEngagedAt: Date
  * }}
  */
-export function localRecordingEngaged() {
+export function localRecordingEngaged(startTime: Date) {
     return {
-        type: LOCAL_RECORDING_ENGAGED
+        type: LOCAL_RECORDING_ENGAGED,
+        recordingEngagedAt: startTime
     };
 }
 

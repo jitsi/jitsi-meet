@@ -24,7 +24,9 @@ MiddlewareRegistry.register(({ getState, dispatch }) => next => action => {
         // react to state changes in recordingController.
         recordingController.onStateChanged = function(isEngaged) {
             if (isEngaged) {
-                dispatch(localRecordingEngaged());
+                const nowTime = new Date();
+
+                dispatch(localRecordingEngaged(nowTime));
             } else {
                 dispatch(localRecordingUnengaged());
             }

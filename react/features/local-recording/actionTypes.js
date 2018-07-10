@@ -3,7 +3,8 @@
  * (as in: {@code RecordingAdapter} is actively collecting audio data).
  *
  * {
- *     type: LOCAL_RECORDING_ENGAGED
+ *     type: LOCAL_RECORDING_ENGAGED,
+ *     recordingEngagedAt: Date
  * }
  */
 export const LOCAL_RECORDING_ENGAGED = Symbol('LOCAL_RECORDING_ENGAGED');
@@ -29,11 +30,12 @@ export const LOCAL_RECORDING_TOGGLE_DIALOG
     = Symbol('LOCAL_RECORDING_TOGGLE_DIALOG');
 
 /**
- * Action to update {@code LocalRecordingInfoDialog} with stats
- * from all clients.
+ * Action to update {@code LocalRecordingInfoDialog} with stats from all
+ * clients.
  *
  * {
- *     type: LOCAL_RECORDING_STATS_UPDATE
+ *     type: LOCAL_RECORDING_STATS_UPDATE,
+ *     stats: Object
  * }
  */
 export const LOCAL_RECORDING_STATS_UPDATE

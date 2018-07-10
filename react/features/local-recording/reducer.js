@@ -15,7 +15,7 @@ ReducerRegistry.register('features/local-recording', (state = {}, action) => {
         return {
             ...state,
             isEngaged: true,
-            recordingStartedAt: new Date(Date.now()),
+            recordingEngagedAt: action.recordingEngagedAt,
             encodingFormat: recordingController._format
         };
     }
@@ -23,7 +23,7 @@ ReducerRegistry.register('features/local-recording', (state = {}, action) => {
         return {
             ...state,
             isEngaged: false,
-            recordingStartedAt: null
+            recordingEngagedAt: null
         };
     case LOCAL_RECORDING_TOGGLE_DIALOG:
         return {

@@ -44,7 +44,7 @@ type Props = {
      * The start time of the current local recording session.
      * Used to calculate the duration of recording.
      */
-    recordingStartedAt: Date,
+    recordingEngagedAt: Date,
 
     /**
      * Stats of all the participant.
@@ -103,11 +103,11 @@ class LocalRecordingInfoDialog extends Component<Props, State> {
         this._timer = setInterval(
             () => {
                 this.setState((_prevState, props) => {
-                    const nowTime = new Date(Date.now());
+                    const nowTime = new Date();
 
                     return {
                         durationString: this._getDuration(nowTime,
-                            props.recordingStartedAt)
+                            props.recordingEngagedAt)
                     };
                 });
                 try {
@@ -312,7 +312,7 @@ class LocalRecordingInfoDialog extends Component<Props, State> {
  *     encodingFormat: string,
  *     isModerator: boolean,
  *     isOn: boolean,
- *     recordingStartedAt: Date,
+ *     recordingEngagedAt: Date,
  *     stats: Object
  * }}
  */
@@ -320,7 +320,7 @@ function _mapStateToProps(state) {
     const {
         encodingFormat,
         isEngaged: isOn,
-        recordingStartedAt,
+        recordingEngagedAt,
         stats
     } = state['features/local-recording'];
     const isModerator
@@ -330,7 +330,7 @@ function _mapStateToProps(state) {
         encodingFormat,
         isModerator,
         isOn,
-        recordingStartedAt,
+        recordingEngagedAt,
         stats
     };
 }
