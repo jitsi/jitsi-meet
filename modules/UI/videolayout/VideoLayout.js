@@ -954,7 +954,7 @@ const VideoLayout = {
             }
         }
 
-        if (!isOnLarge || forceUpdate) {
+        if ((!isOnLarge || forceUpdate) && smallVideo) {
             const videoType = this.getRemoteVideoType(id);
 
             // FIXME video type is not the same thing as container type
