@@ -48,11 +48,6 @@ export class AbstractApp extends Component {
          */
         defaultURL: PropTypes.string,
 
-        /**
-         * (Optional) redux store for this app.
-         */
-        store: PropTypes.object,
-
         // XXX Refer to the implementation of loadURLObject: in
         // ios/sdk/src/JitsiMeetView.m for further information.
         timestamp: PropTypes.any,
@@ -78,8 +73,8 @@ export class AbstractApp extends Component {
         this.state = {
 
             /**
-             * The state of the »possible« async initialization of
-             * the {@code AbstractApp}.
+             * The state of the »possible« async initialization of the
+             * {@code AbstractApp}.
              */
             appAsyncInitialized: false,
 
@@ -112,7 +107,7 @@ export class AbstractApp extends Component {
                 .catch(() => { /* AbstractApp should always initialize! */ })
                 .then(() =>
                     this.setState({
-                        store: this._maybeCreateStore(props)
+                        store: this._createStore()
                     }));
     }
 
@@ -123,19 +118,19 @@ export class AbstractApp extends Component {
      */
     componentWillMount() {
         this._init.then(() => {
-            const { dispatch } = this._getStore();
+            const { dispatch } = this.state.store;
 
             dispatch(appWillMount(this));
 
             // We set the initialized state here and not in the constructor to
-            // make sure that {@code componentWillMount} gets invoked before
-            // the app tries to render the actual app content.
+            // make sure that {@code componentWillMount} gets invoked before the
+            // app tries to render the actual app content.
             this.setState({
                 appAsyncInitialized: true
             });
 
-            // If a URL was explicitly specified to this React Component,
-            // then open it; otherwise, use a default.
+            // If a URL was explicitly specified to this React Component, then
+            // open it; otherwise, use a default.
             this._openURL(toURLString(this.props.url) || this._getDefaultURL());
         });
     }
@@ -153,21 +148,6 @@ export class AbstractApp extends Component {
         const { props } = this;
 
         this._init.then(() => {
-            // The consumer of this AbstractApp did not provide a redux store.
-            if (typeof nextProps.store === 'undefined'
-
-                    // The consumer of this AbstractApp did provide a redux
-                    // store before. Which means that the consumer changed
-                    // their mind. In such a case this instance should create
-                    // its own internal redux store. If the consumer did not
-                    // provide a redux store before, then this instance is
-                    // using its own internal redux store already.
-                    && typeof props.store !== 'undefined') {
-                this.setState({
-                    store: this._maybeCreateStore(nextProps)
-                });
-            }
-
             // Deal with URL changes.
             let { url } = nextProps;
 
@@ -188,9 +168,7 @@ export class AbstractApp extends Component {
      * @inheritdoc
      */
     componentWillUnmount() {
-        const { dispatch } = this._getStore();
-
-        dispatch(appWillUnmount(this));
+        this.state.store.dispatch(appWillUnmount(this));
     }
 
     /**
@@ -234,12 +212,13 @@ export class AbstractApp extends Component {
      * @returns {ReactElement}
      */
     render() {
-        const { appAsyncInitialized, route: { component } } = this.state;
+        const { appAsyncInitialized, route, store } = this.state;
+        const { component } = route;
 
         if (appAsyncInitialized && component) {
             return (
                 <I18nextProvider i18n = { i18next }>
-                    <Provider store = { this._getStore() }>
+                    <Provider store = { store }>
                         <Fragment>
                             { this._createElement(component) }
                             <SoundCollection />
@@ -269,15 +248,10 @@ export class AbstractApp extends Component {
         /* eslint-disable no-unused-vars */
 
         const {
-            // Don't propagate the dispatch and store props because they usually
-            // come from react-redux and programmers don't really expect them to
-            // be inherited but rather explicitly connected.
-            dispatch, // eslint-disable-line react/prop-types
-            store,
-
             // The following props were introduced to be consumed entirely by
             // AbstractApp:
             defaultURL,
+            timestamp,
             url,
 
             // The remaining props, if any, are considered suitable for
@@ -298,8 +272,8 @@ export class AbstractApp extends Component {
      * {@code AbstractApp}.
      *
      * @private
-     * @returns {Store} - A new redux store instance suitable for use by
-     * this {@code AbstractApp}.
+     * @returns {Store} - A new redux store instance suitable for use by this
+     * {@code AbstractApp}.
      */
     _createStore() {
         // Create combined reducer from all reducers in ReducerRegistry.
@@ -320,11 +294,24 @@ export class AbstractApp extends Component {
             middleware = compose(middleware, devToolsExtension());
         }
 
-        return (
-            createStore(
+        const store
+            = createStore(
                 reducer,
                 PersistenceRegistry.getPersistedState(),
-                middleware));
+                middleware);
+
+        // StateListenerRegistry
+        StateListenerRegistry.subscribe(store);
+
+        // This is temporary workaround to be able to dispatch actions from
+        // non-reactified parts of the code (conference.js for example).
+        // Don't use in the react code!!!
+        // FIXME: remove when the reactification is finished!
+        if (typeof APP !== 'undefined') {
+            APP.store = store;
+        }
+
+        return store;
     }
 
     /**
@@ -350,60 +337,9 @@ export class AbstractApp extends Component {
 
         return (
             this.props.defaultURL
-                || this._getStore().getState()['features/base/settings']
+                || this.state.store.getState()['features/base/settings']
                     .serverURL
                 || DEFAULT_URL);
-    }
-
-    /**
-     * Gets the redux store used by this {@code AbstractApp}.
-     *
-     * @protected
-     * @returns {Store} - The redux store used by this {@code AbstractApp}.
-     */
-    _getStore() {
-        let store = this.state.store;
-
-        if (typeof store === 'undefined') {
-            store = this.props.store;
-        }
-
-        return store;
-    }
-
-    /**
-     * Creates a redux store to be used by this {@code AbstractApp} if such as a
-     * store is not defined by the consumer of this {@code AbstractApp} through
-     * its read-only React {@code Component} props.
-     *
-     * @param {Object} props - The read-only React {@code Component} props that
-     * will eventually be received by this {@code AbstractApp}.
-     * @private
-     * @returns {Store} - The redux store to be used by this
-     * {@code AbstractApp}.
-     */
-    _maybeCreateStore({ store }) {
-        // The application Jitsi Meet is architected with redux. However, I do
-        // not want consumers of the App React Component to be forced into
-        // dealing with redux. If the consumer did not provide an external redux
-        // store, utilize an internal redux store.
-        if (typeof store === 'undefined') {
-            // eslint-disable-next-line no-param-reassign
-            store = this._createStore();
-
-            // This is temporary workaround to be able to dispatch actions from
-            // non-reactified parts of the code (conference.js for example).
-            // Don't use in the react code!!!
-            // FIXME: remove when the reactification is finished!
-            if (typeof APP !== 'undefined') {
-                APP.store = store;
-            }
-        }
-
-        // StateListenerRegistry
-        store && StateListenerRegistry.subscribe(store);
-
-        return store;
     }
 
     /**
@@ -441,6 +377,6 @@ export class AbstractApp extends Component {
      * @returns {void}
      */
     _openURL(url) {
-        this._getStore().dispatch(appNavigate(toURLString(url)));
+        this.state.store.dispatch(appNavigate(toURLString(url)));
     }
 }
