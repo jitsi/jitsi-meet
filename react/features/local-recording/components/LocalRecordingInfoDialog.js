@@ -38,7 +38,7 @@ type Props = {
     /**
      * Whether local recording is engaged.
      */
-    isOn: boolean,
+    isEngaged: boolean,
 
     /**
      * The start time of the current local recording session.
@@ -85,10 +85,13 @@ class LocalRecordingInfoDialog extends Component<Props, State> {
     _timer: ?IntervalID;
 
     /**
-     * Constructor.
+     * Initializes a new {@code LocalRecordingInfoDialog} instance.
+     *
+     * @param {Props} props - The React {@code Component} props to initialize
+     * the new {@code LocalRecordingInfoDialog} instance with.
      */
-    constructor() {
-        super();
+    constructor(props: Props) {
+        super(props);
         this.state = {
             durationString: ''
         };
@@ -134,44 +137,6 @@ class LocalRecordingInfoDialog extends Component<Props, State> {
         }
     }
 
-
-    /**
-     * Returns React elements for displaying the local recording stats of
-     * each participant.
-     *
-     * @returns {ReactElement}
-     */
-    renderStats() {
-        const { stats, t } = this.props;
-
-        if (stats === undefined) {
-            return <ul />;
-        }
-        const ids = Object.keys(stats);
-
-        return (
-            <ul>
-                {ids.map((id, i) =>
-
-                    // FIXME: a workaround, as arrow functions without `return`
-                    // keyword need to be wrapped in parenthesis.
-                    /* eslint-disable no-extra-parens */
-                    (<li key = { i }>
-                        <span>{stats[id].displayName || id}: </span>
-                        <span>{stats[id].recordingStats
-                            ? `${stats[id].recordingStats.isRecording
-                                ? t('localRecording.clientState.on')
-                                : t('localRecording.clientState.off')} `
-                            + `(${stats[id]
-                                .recordingStats.currentSessionToken})`
-                            : t('localRecording.clientState.unknown')}</span>
-                    </li>)
-                    /* eslint-enable no-extra-parens */
-                )}
-            </ul>
-        );
-    }
-
     /**
      * Implements React's {@link Component#render()}.
      *
@@ -179,8 +144,7 @@ class LocalRecordingInfoDialog extends Component<Props, State> {
      * @returns {ReactElement}
      */
     render() {
-        const { isModerator, encodingFormat, isOn, t } = this.props;
-        const { durationString } = this.state;
+        const { isModerator, t } = this.props;
 
         return (
             <div
@@ -205,57 +169,135 @@ class LocalRecordingInfoDialog extends Component<Props, State> {
                                 : t('localRecording.no') }
                         </span>
                     </div>
-                    { isOn && <div>
-                        <span className = 'info-label'>
-                            {`${t('localRecording.duration')}:`}
-                        </span>
-                        <span className = 'spacer'>&nbsp;</span>
-                        <span className = 'info-value'>
-                            { durationString === ''
-                                ? t('localRecording.durationNA')
-                                : durationString }
-                        </span>
-                    </div>
-                    }
-                    {isOn
-                    && <div>
-                        <span className = 'info-label'>
-                            {`${t('localRecording.encoding')}:`}
-                        </span>
-                        <span className = 'spacer'>&nbsp;</span>
-                        <span className = 'info-value'>
-                            { encodingFormat }
-                        </span>
-                    </div>
-                    }
-                    {
-                        isModerator
-                        && <div>
-                            <div>
-                                <span className = 'info-label'>
-                                    {`${t('localRecording.participantStats')}:`}
-                                </span>
-                            </div>
-                            { this.renderStats() }
-                        </div>
-                    }
-                    {
-                        isModerator
-                            && <div className = 'info-dialog-action-links'>
-                                <div className = 'info-dialog-action-link'>
-                                    {isOn ? <a
-                                        onClick = { this._onStop }>
-                                        { t('localRecording.stop') }
-                                    </a>
-                                        : <a
-                                            onClick = { this._onStart }>
-                                            { t('localRecording.start') }
-                                        </a>
+                    { this._renderDurationAndFormat() }
+                    { this._renderModeratorControls() }
+                </div>
+            </div>
+        );
+    }
 
-                                    }
-                                </div>
-                            </div>
-                    }
+    /**
+     * Renders the recording duration and encoding format. Only shown if local
+     * recording is engaged.
+     *
+     * @private
+     * @returns {ReactElement|null}
+     */
+    _renderDurationAndFormat() {
+        const { encodingFormat, isEngaged, t } = this.props;
+        const { durationString } = this.state;
+
+        if (!isEngaged) {
+            return null;
+        }
+
+        return (
+            <div>
+                <div>
+                    <span className = 'info-label'>
+                        {`${t('localRecording.duration')}:`}
+                    </span>
+                    <span className = 'spacer'>&nbsp;</span>
+                    <span className = 'info-value'>
+                        { durationString === ''
+                            ? t('localRecording.durationNA')
+                            : durationString }
+                    </span>
+                </div>
+                <div>
+                    <span className = 'info-label'>
+                        {`${t('localRecording.encoding')}:`}
+                    </span>
+                    <span className = 'spacer'>&nbsp;</span>
+                    <span className = 'info-value'>
+                        { encodingFormat }
+                    </span>
+                </div>
+            </div>
+        );
+    }
+
+    /**
+     * Returns React elements for displaying the local recording stats of
+     * each participant.
+     *
+     * @private
+     * @returns {ReactElement}
+     */
+    _renderStats() {
+        const { stats } = this.props;
+
+        if (stats === undefined) {
+            return <ul />;
+        }
+        const ids = Object.keys(stats);
+
+        return (
+            <ul>
+                { ids.map((id, i) => this._renderStatsLine(i, id)) }
+            </ul>
+        );
+    }
+
+    /**
+     * Renders the stats for one participant.
+     *
+     * @private
+     * @param {*} lineKey - The key required by React for elements in lists.
+     * @param {*} id - The ID of the participant.
+     * @returns {ReactElement}
+     */
+    _renderStatsLine(lineKey, id) {
+        const { stats, t } = this.props;
+
+        return (
+            <li key = { lineKey }>
+                <span>{stats[id].displayName || id}: </span>
+                <span>{stats[id].recordingStats
+                    ? `${stats[id].recordingStats.isRecording
+                        ? t('localRecording.clientState.on')
+                        : t('localRecording.clientState.off')} `
+                    + `(${stats[id]
+                        .recordingStats.currentSessionToken})`
+                    : t('localRecording.clientState.unknown')}</span>
+            </li>
+        );
+    }
+
+    /**
+     * Renders the moderator-only controls, i.e. stats of all users and the
+     * action links.
+     *
+     * @private
+     * @returns {ReactElement|null}
+     */
+    _renderModeratorControls() {
+        const { isModerator, isEngaged, t } = this.props;
+
+        if (!isModerator) {
+            return null;
+        }
+
+        return (
+            <div>
+                <div>
+                    <span className = 'info-label'>
+                        {`${t('localRecording.participantStats')}:`}
+                    </span>
+                </div>
+                { this._renderStats() }
+                <div className = 'info-dialog-action-links'>
+                    <div className = 'info-dialog-action-link'>
+                        { isEngaged ? <a
+                            onClick = { this._onStop }>
+                            { t('localRecording.stop') }
+                        </a>
+                            : <a
+                                onClick = { this._onStart }>
+                                { t('localRecording.start') }
+                            </a>
+                        }
+                    </div>
                 </div>
             </div>
         );
@@ -311,7 +353,7 @@ class LocalRecordingInfoDialog extends Component<Props, State> {
  * @returns {{
  *     encodingFormat: string,
  *     isModerator: boolean,
- *     isOn: boolean,
+ *     isEngaged: boolean,
  *     recordingEngagedAt: Date,
  *     stats: Object
  * }}
@@ -319,7 +361,7 @@ class LocalRecordingInfoDialog extends Component<Props, State> {
 function _mapStateToProps(state) {
     const {
         encodingFormat,
-        isEngaged: isOn,
+        isEngaged,
         recordingEngagedAt,
         stats
     } = state['features/local-recording'];
@@ -329,7 +371,7 @@ function _mapStateToProps(state) {
     return {
         encodingFormat,
         isModerator,
-        isOn,
+        isEngaged,
         recordingEngagedAt,
         stats
     };
