@@ -90,11 +90,6 @@ const config = {
             loader: 'expose-loader?$!expose-loader?jQuery',
             test: /\/node_modules\/jquery\/.*\.js$/
         }, {
-            // Set scope to window for URL polyfill.
-
-            loader: 'imports-loader?this=>window',
-            test: /\/node_modules\/url-polyfill\/.*\.js$/
-        }, {
             // Allow CSS to be imported into JavaScript.
 
             test: /\.css$/,
@@ -137,13 +132,7 @@ const config = {
 module.exports = [
     Object.assign({}, config, {
         entry: {
-            'app.bundle': [
-
-                // babel-polyfill and fetch polyfill are required for IE11.
-                'babel-polyfill',
-                'whatwg-fetch',
-                './app.js'
-            ],
+            'app.bundle': './app.js',
 
             'device_selection_popup_bundle':
                 './react/features/settings/popup.js',
@@ -152,10 +141,6 @@ module.exports = [
                 './react/features/always-on-top/index.js',
 
             'dial_in_info_bundle': [
-
-                // babel-polyfill and fetch polyfill are required for IE11.
-                'babel-polyfill',
-                'whatwg-fetch',
 
                 // atlaskit does not support React 16 prop-types
                 './react/features/base/react/prop-types-polyfill.js',
@@ -172,12 +157,7 @@ module.exports = [
     // JitsiMeetExternalAPI).
     Object.assign({}, config, {
         entry: {
-            'external_api': [
-
-                // XXX Required by at least IE11 at the time of this writing.
-                'babel-polyfill',
-                './modules/API/external/index.js'
-            ]
+            'external_api': './modules/API/external/index.js'
         },
         output: Object.assign({}, config.output, {
             library: 'JitsiMeetExternalAPI',
