@@ -75,7 +75,8 @@ CALENDAR_ENABLED
         case REFRESH_CALENDAR: {
             const result = next(action);
 
-            _fetchCalendarEntries(store, true, action.forcePermission);
+            _fetchCalendarEntries(
+                store, action.isInteractive, action.forcePermission);
 
             return result;
         }
