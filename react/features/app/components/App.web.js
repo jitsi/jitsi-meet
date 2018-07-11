@@ -1,3 +1,5 @@
+// @flow
+
 import { AtlasKitThemeProvider } from '@atlaskit/theme';
 import React from 'react';
 
@@ -15,22 +17,15 @@ import { AbstractApp } from './AbstractApp';
  */
 export class App extends AbstractApp {
     /**
-     * App component's property types.
-     *
-     * @static
-     */
-    static propTypes = AbstractApp.propTypes;
-
-    /**
      * Overrides the parent method to inject {@link AtlasKitThemeProvider} as
      * the top most component.
      *
      * @override
      */
-    _createElement(component, props) {
+    _createMainElement(component, props) {
         return (
             <AtlasKitThemeProvider mode = 'dark'>
-                { super._createElement(component, props) }
+                { super._createMainElement(component, props) }
             </AtlasKitThemeProvider>
         );
     }

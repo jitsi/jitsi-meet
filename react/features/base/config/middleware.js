@@ -1,6 +1,6 @@
 // @flow
 
-import { APP_WILL_MOUNT } from '../../app';
+import { APP_WILL_MOUNT } from '../app';
 import { addKnownDomains } from '../known-domains';
 import { MiddlewareRegistry } from '../redux';
 import { parseURIString } from '../util';

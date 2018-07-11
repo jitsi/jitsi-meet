@@ -2,7 +2,7 @@
 
 import { NativeModules } from 'react-native';
 
-import { getAppProp } from '../../app';
+import { getAppProp } from '../../base/app';
 import { Platform } from '../../base/react';
 
 import { ENTER_PICTURE_IN_PICTURE } from './actionTypes';

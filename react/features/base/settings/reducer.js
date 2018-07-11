@@ -1,8 +1,7 @@
 // @flow
 import _ from 'lodash';
 
-import { APP_WILL_MOUNT } from '../../app';
-
+import { APP_WILL_MOUNT } from '../app';
 import JitsiMeetJS, { browser } from '../lib-jitsi-meet';
 import { ReducerRegistry } from '../redux';
 import { PersistenceRegistry } from '../storage';

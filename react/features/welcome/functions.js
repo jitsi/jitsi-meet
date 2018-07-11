@@ -1,6 +1,6 @@
 // @flow
 
-import { getAppProp } from '../app';
+import { getAppProp } from '../base/app';
 import { toState } from '../base/redux';
 
 declare var APP: Object;

@@ -1,7 +1,8 @@
 // @flow
 
-import { APP_WILL_MOUNT, getDefaultURL } from '../../app';
+import { getDefaultURL } from '../../app';
 
+import { APP_WILL_MOUNT } from '../app';
 import { SET_ROOM } from '../conference';
 import { MiddlewareRegistry } from '../redux';
 import { parseURIString } from '../util';

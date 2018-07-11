@@ -1,6 +1,6 @@
 /* @flow */
 
-import { APP_WILL_MOUNT } from '../../app';
+import { APP_WILL_MOUNT } from '../../base/app';
 import {
     getAvatarURL,
     getLocalParticipant,

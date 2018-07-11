@@ -2,7 +2,7 @@
 
 import { NativeModules } from 'react-native';
 
-import { getAppProp } from '../../app';
+import { getAppProp } from '../../base/app';
 import {
     CONFERENCE_FAILED,
     CONFERENCE_JOINED,

@@ -3,7 +3,7 @@
 import { AppState } from 'react-native';
 import type { Dispatch } from 'redux';
 
-import { APP_WILL_MOUNT, APP_WILL_UNMOUNT } from '../../app';
+import { APP_WILL_MOUNT, APP_WILL_UNMOUNT } from '../../base/app';
 import { MiddlewareRegistry } from '../../base/redux';
 
 import {

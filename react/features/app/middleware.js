@@ -72,7 +72,7 @@ function _connectionEstablished(store, next, action) {
  */
 function _navigate({ getState }) {
     const state = getState();
-    const { app } = state['features/app'];
+    const { app } = state['features/base/app'];
 
     _getRouteToRender(state).then(route => app._navigate(route));
 }

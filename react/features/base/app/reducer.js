@@ -1,10 +1,10 @@
 // @flow
 
-import { ReducerRegistry } from '../base/redux';
+import { ReducerRegistry } from '../redux';
 
 import { APP_WILL_MOUNT, APP_WILL_UNMOUNT } from './actionTypes';
 
-ReducerRegistry.register('features/app', (state = {}, action) => {
+ReducerRegistry.register('features/base/app', (state = {}, action) => {
     switch (action.type) {
     case APP_WILL_MOUNT: {
         const { app } = action;
@@ -14,10 +14,10 @@ ReducerRegistry.register('features/app', (state = {}, action) => {
                 ...state,
 
                 /**
-                 * The one and only (i.e. singleton) {@link App} instance which
-                 * is currently mounted.
+                 * The one and only (i.e. singleton) {@link BaseApp} instance
+                 * which is currently mounted.
                  *
-                 * @type {App}
+                 * @type {BaseApp}
                  */
                 app
             };

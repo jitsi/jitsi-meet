@@ -1,5 +1,6 @@
 /* @flow */
 
+import { APP_WILL_MOUNT, APP_WILL_UNMOUNT } from '../base/app';
 import { CONFERENCE_WILL_JOIN, getCurrentConference } from '../base/conference';
 import JitsiMeetJS, {
     JitsiConferenceEvents,
@@ -12,8 +13,6 @@ import {
     stopSound,
     unregisterSound
 } from '../base/sounds';
-
-import { APP_WILL_MOUNT, APP_WILL_UNMOUNT } from '../app';
 
 import {
     clearRecordingSessions,

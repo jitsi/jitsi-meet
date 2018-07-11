@@ -1,6 +1,6 @@
 // @flow
 
-import { APP_WILL_MOUNT } from '../app';
+import { APP_WILL_MOUNT } from '../base/app';
 import { CONFERENCE_WILL_LEAVE, SET_ROOM } from '../base/conference';
 import { addKnownDomains } from '../base/known-domains';
 import { MiddlewareRegistry } from '../base/redux';

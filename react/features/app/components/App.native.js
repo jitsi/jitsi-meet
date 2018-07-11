@@ -1,6 +1,5 @@
-/* global __DEV__ */
+// @flow
 
-import PropTypes from 'prop-types';
 import React from 'react';
 import { Linking } from 'react-native';
 
@@ -23,6 +22,39 @@ import '../../mobile/proximity';
 import '../../mobile/wake-lock';
 
 import { AbstractApp } from './AbstractApp';
+import type { Props as AbstractAppProps } from './AbstractApp';
+
+declare var __DEV__;
+
+/**
+ * App component's property types.
+ */
+type Props = AbstractAppProps & {
+
+    /**
+     * Whether the add people feature is enabled or not.
+     */
+    addPeopleEnabled: boolean,
+
+    /**
+     * Whether the dial-out feature is enabled or not.
+     */
+    dialOutEnabled: boolean,
+
+    /**
+     * Whether Picture-in-Picture is enabled. If {@code true}, a toolbar
+     * button is rendered in the {@link Conference} view to afford entering
+     * Picture-in-Picture.
+     */
+    pictureInPictureEnabled: boolean,
+
+    /**
+     * Whether the Welcome page is enabled. If {@code true}, the Welcome
+     * page is rendered when the {@link App} is not at a location (URL)
+     * identifying a Jitsi Meet conference/room.
+     */
+    welcomePageEnabled: boolean
+};
 
 /**
  * Root application component.
@@ -31,39 +63,12 @@ import { AbstractApp } from './AbstractApp';
  */
 export class App extends AbstractApp {
     /**
-     * App component's property types.
-     *
-     * @static
-     */
-    static propTypes = {
-        ...AbstractApp.propTypes,
-
-        addPeopleEnabled: PropTypes.bool,
-
-        dialOutEnabled: PropTypes.bool,
-
-        /**
-         * Whether Picture-in-Picture is enabled. If {@code true}, a toolbar
-         * button is rendered in the {@link Conference} view to afford entering
-         * Picture-in-Picture.
-         */
-        pictureInPictureEnabled: PropTypes.bool,
-
-        /**
-         * Whether the Welcome page is enabled. If {@code true}, the Welcome
-         * page is rendered when the {@link App} is not at a location (URL)
-         * identifying a Jitsi Meet conference/room.
-         */
-        welcomePageEnabled: PropTypes.bool
-    };
-
-    /**
      * Initializes a new App instance.
      *
      * @param {Object} props - The read-only React Component props with which
      * the new instance is to be initialized.
      */
-    constructor(props) {
+    constructor(props: Props) {
         super(props);
 
         // Bind event handlers so they are only bound once for every instance.
@@ -110,11 +115,11 @@ export class App extends AbstractApp {
      *
      * @override
      */
-    _createElement(component, props) {
+    _createMainElement(component, props) {
         return (
             <AspectRatioDetector>
                 <ReducedUIDetector>
-                    { super._createElement(component, props) }
+                    { super._createMainElement(component, props) }
                 </ReducedUIDetector>
             </AspectRatioDetector>
         );
@@ -158,6 +163,8 @@ export class App extends AbstractApp {
         }
     }
 
+    _onLinkingURL: (*) => void;
+
     /**
      * Notified by React's Linking API that a specific URL registered to be
      * handled by this App was activated.
@@ -169,7 +176,7 @@ export class App extends AbstractApp {
      * @returns {void}
      */
     _onLinkingURL({ url }) {
-        this._openURL(url);
+        super._openURL(url);
     }
 }
 

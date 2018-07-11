@@ -3,7 +3,7 @@
 import { StatusBar } from 'react-native';
 import { Immersive } from 'react-native-immersive';
 
-import { APP_WILL_MOUNT, APP_WILL_UNMOUNT } from '../../app';
+import { APP_WILL_MOUNT, APP_WILL_UNMOUNT } from '../../base/app';
 import { getCurrentConference } from '../../base/conference';
 import { Platform } from '../../base/react';
 import { MiddlewareRegistry, StateListenerRegistry } from '../../base/redux';

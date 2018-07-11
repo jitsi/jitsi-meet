@@ -2,7 +2,7 @@
 
 import { connect } from 'react-redux';
 
-import { getAppProp } from '../../../app';
+import { getAppProp } from '../../../base/app';
 import { translate } from '../../../base/i18n';
 import { AbstractButton } from '../../../base/toolbox';
 import type { AbstractButtonProps } from '../../../base/toolbox';
