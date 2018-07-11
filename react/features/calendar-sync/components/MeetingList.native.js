@@ -65,11 +65,13 @@ class MeetingList extends Component<Props> {
      * change).
      *
      * @param {Function} dispatch - The Redux dispatch function.
+     * @param {boolean} isInteractive - If true this refresh was caused by
+     * direct user interaction, false otherwise.
      * @public
      * @returns {void}
      */
-    static refresh(dispatch) {
-        dispatch(refreshCalendar());
+    static refresh(dispatch, isInteractive) {
+        dispatch(refreshCalendar(false, isInteractive));
     }
 
     /**
