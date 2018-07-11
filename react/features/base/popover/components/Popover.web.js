@@ -78,6 +78,11 @@ class Popover extends Component {
         id: PropTypes.string,
 
         /**
+         * Optional callback to invoke when the popover is clicked..
+         */
+        onContentClick: PropTypes.func,
+
+        /**
          * Callback to invoke when the popover has opened.
          */
         onPopoverOpen: PropTypes.func,
@@ -108,6 +113,7 @@ class Popover extends Component {
         };
 
         // Bind event handlers so they are only bound once for every instance.
+        this._onClick = this._onClick.bind(this);
         this._onHideDialog = this._onHideDialog.bind(this);
         this._onShowDialog = this._onShowDialog.bind(this);
     }
@@ -128,11 +134,24 @@ class Popover extends Component {
                 <InlineDialog
                     content = { this._renderContent() }
                     isOpen = { this.state.showDialog }
+                    onContentClick = { this._onClick }
                     position = { this.props.position }>
                     { this.props.children }
                 </InlineDialog>
             </div>
         );
+    }
+
+    /**
+     * Callback invoked when the {@code InlineDialog} is clicked.
+     *
+     * @param {Object} event - The click event.
+     * @returns {void}
+     */
+    _onClick(event) {
+        if (this.props.onContentClick) {
+            this.props.onContentClick(event);
+        }
     }
 
     /**

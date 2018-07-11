@@ -8,6 +8,8 @@ import { dockToolbox } from '../../../toolbox';
 
 import { setFilmstripHovered } from '../../actions';
 import { shouldRemoteVideosBeVisible } from '../../functions';
+
+import LocalThumbnail from './LocalThumbnail';
 import Toolbar from './Toolbar';
 
 declare var interfaceConfig: Object;
@@ -32,6 +34,11 @@ type Props = {
      * handling is currently being handled detected outside of react.
      */
     _hovered: boolean,
+
+    /**
+     * Whether or not {@code LocalThumbnail} should be visible.
+     */
+    _localVideoVisible: boolean,
 
     /**
      * The redux {@code dispatch} function.
@@ -87,6 +94,8 @@ class Filmstrip extends Component <Props> {
      * @returns {ReactElement}
      */
     render() {
+        const { _filmstripOnly, _localVideoVisible } = this.props;
+
         // Note: Appending of {@code RemoteVideo} views is handled through
         // VideoLayout. The views do not get blown away on render() because
         // ReactDOMComponent is only aware of the given JSX and not new appended
@@ -96,7 +105,7 @@ class Filmstrip extends Component <Props> {
 
         return (
             <div className = { `filmstrip ${this.props._className}` }>
-                { this.props._filmstripOnly && <Toolbar /> }
+                { _filmstripOnly && <Toolbar /> }
                 <div
                     className = 'filmstrip__videos'
                     id = 'remoteVideos'>
@@ -105,7 +114,9 @@ class Filmstrip extends Component <Props> {
                         id = 'filmstripLocalVideo'
                         onMouseOut = { this._onMouseOut }
                         onMouseOver = { this._onMouseOver }>
-                        <div id = 'filmstripLocalVideoThumbnail' />
+                        <div id = 'filmstripLocalVideoThumbnail'>
+                            { _localVideoVisible && <LocalThumbnail /> }
+                        </div>
                     </div>
                     <div
                         className = 'filmstrip__videos'
@@ -177,6 +188,7 @@ class Filmstrip extends Component <Props> {
  * }}
  */
 function _mapStateToProps(state) {
+    const { iAmRecorder, iAmSipGateway } = state['features/base/config'];
     const { hovered } = state['features/filmstrip'];
     const isFilmstripOnly = Boolean(interfaceConfig.filmStripOnly);
     const reduceHeight = !isFilmstripOnly
@@ -190,6 +202,7 @@ function _mapStateToProps(state) {
     return {
         _className: className,
         _filmstripOnly: isFilmstripOnly,
+        _localVideoVisible: iAmRecorder ? !iAmSipGateway : true,
         _hovered: hovered
     };
 }

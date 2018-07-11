@@ -1,84 +1,105 @@
-import PropTypes from 'prop-types';
+// @flow
+
 import React, { Component } from 'react';
 
-/**
- * The number of dots to display in AudioLevelIndicator.
- *
- * IMPORTANT: AudioLevelIndicator assumes that this is an odd number.
- */
-const AUDIO_LEVEL_DOTS = 5;
+import audioLevelEmitter from '../audioLevelEmitter';
+import StatelessAudioLevelIndicator from './StatelessAudioLevelIndicator';
+
+type Props = {
+    audioLevelOverride: number,
+
+    userID: string
+};
+
+type State = {
+    audioLevel: number
+};
 
 /**
- * The index of the dot that is at the direct middle of all other dots.
- */
-const CENTER_DOT_INDEX = Math.floor(AUDIO_LEVEL_DOTS / 2);
-
-/**
- * Creates a ReactElement responsible for drawing audio levels.
+ * Creates a ReactElement responsible for subscribing to audio level updates and
+ * drawing audio levels.
  *
  * @extends {Component}
  */
-class AudioLevelIndicator extends Component {
+export default class AudioLevelIndicator extends Component<Props, State> {
     /**
-     * {@code AudioLevelIndicator}'s property types.
+     * Initializes a new {@code AudioLevelIndicator} instance.
      *
-     * @static
+     * @param {Object} props - The read-only properties with which the new
+     * instance is to be initialized.
      */
-    static propTypes = {
-        /**
-         * The current audio level to display. The value should be a number
-         * between 0 and 1.
-         *
-         * @type {number}
-         */
-        audioLevel: PropTypes.number
-    };
+    constructor(props: Props) {
+        super(props);
+
+        this.state = {
+            audioLevel: 0
+        };
+
+        // Bind event handler so it is only bound once for every instance.
+        this._onStatsUpdated = this._onStatsUpdated.bind(this);
+    }
 
     /**
-     * Implements React's {@link Component#render()}.
+     * Starts listening for audio level updates.
      *
      * @inheritdoc
-     * @returns {ReactElement}
+     * returns {void}
+     */
+    componentDidMount() {
+        audioLevelEmitter.subscribe(
+            this.props.userID, this._onStatsUpdated);
+    }
+
+    /**
+     * Updates which user's audio levels are being listened to.
+     *
+     * @inheritdoc
+     * returns {void}
+     */
+    componentDidUpdate(prevProps: Props) {
+        if (prevProps.userID !== this.props.userID) {
+            audioLevelEmitter.unsubscribe(
+                prevProps.userID, this._onStatsUpdated);
+            audioLevelEmitter.subscribe(
+                this.props.userID, this._onStatsUpdated);
+        }
+    }
+
+    /**
+     * Cleans up any queued processes, which includes listening for new stats
+     * and clearing any timeout to hide the indicator.
+     *
+     * @private
+     * @returns {void}
+     */
+    componentWillUnmount() {
+        audioLevelEmitter.unsubscribe(
+            this.props.userID, this._onStatsUpdated);
+    }
+
+    /**
+     * Renders the {@code StatelessAudioLevelIndicator} with the known audio
+     * level.
+     *
+     * @inheritdoc
      */
     render() {
-        // First make sure we are sensitive enough.
-        const audioLevel = Math.min(this.props.audioLevel * 1.2, 1);
-
-        // Let's now stretch the audio level over the number of dots we have.
-        const stretchedAudioLevel = AUDIO_LEVEL_DOTS * audioLevel;
-
-        const audioLevelDots = [];
-
-        for (let i = 0; i < AUDIO_LEVEL_DOTS; i++) {
-            const distanceFromCenter = CENTER_DOT_INDEX - i;
-            const audioLevelFromCenter
-                = stretchedAudioLevel - Math.abs(distanceFromCenter);
-            const cappedOpacity = Math.min(
-                1, Math.max(0, audioLevelFromCenter));
-            let className;
-
-            if (distanceFromCenter === 0) {
-                className = 'audiodot-middle';
-            } else if (distanceFromCenter < 0) {
-                className = 'audiodot-top';
-            } else {
-                className = 'audiodot-bottom';
-            }
-
-            audioLevelDots.push(
-                <span
-                    className = { className }
-                    key = { i }
-                    style = {{ opacity: cappedOpacity }} />
-            );
-        }
-
         return (
-            <span className = 'audioindicator in-react'>
-                { audioLevelDots }
-            </span>
+            <StatelessAudioLevelIndicator
+                audioLevel = { this.props.audioLevelOverride
+                    || this.state.audioLevel } />
         );
     }
-}
 
-export default AudioLevelIndicator;
+    _onStatsUpdated: (number) => void;
+
+    /**
+     * Callback invoked to update the known audio level.
+     *
+     * @param {number} audioLevel - The participant's current audio level.
+     * @returns {void}
+     */
+    _onStatsUpdated(audioLevel: number = 0) {
+        this.setState({ audioLevel });
+    }
+}

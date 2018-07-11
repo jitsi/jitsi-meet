@@ -23,6 +23,7 @@ import {
     createTrackMutedEvent,
     sendAnalytics
 } from './react/features/analytics';
+import { audioLevelEmitter } from './react/features/audio-level-indicator';
 import {
     redirectWithStoredParams,
     reloadWithStoredParams
@@ -1758,6 +1759,8 @@ export default {
                     logger.log(`AudioLevel:${id}/${newLvl}`);
                 }
             }
+
+            audioLevelEmitter.onUpdate(id, newLvl);
 
             APP.UI.setAudioLevel(id, newLvl);
         });
