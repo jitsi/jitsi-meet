@@ -20,15 +20,7 @@ import { toURLString } from '../../base/util';
 import { OverlayContainer } from '../../overlay';
 
 import { appNavigate, appWillMount, appWillUnmount } from '../actions';
-
-/**
- * The default URL to open if no other was specified to {@code AbstractApp} via
- * props.
- *
- * FIXME: This is not at the best place here. This should be either in the
- * base/settings feature or a default in base/config.
- */
-const DEFAULT_URL = 'https://meet.jit.si';
+import { getDefaultURL } from '../functions';
 
 /**
  * Base (abstract) class for main App component.
@@ -322,24 +314,7 @@ export class AbstractApp extends Component {
      * mounts.
      */
     _getDefaultURL() {
-        // If the execution environment provides a Location abstraction, then
-        // this App at already at that location but it must be made aware of the
-        // fact.
-        const windowLocation = this.getWindowLocation();
-
-        if (windowLocation) {
-            const href = windowLocation.toString();
-
-            if (href) {
-                return href;
-            }
-        }
-
-        return (
-            this.props.defaultURL
-                || this.state.store.getState()['features/base/settings']
-                    .serverURL
-                || DEFAULT_URL);
+        return getDefaultURL(this.state.store);
     }
 
     /**

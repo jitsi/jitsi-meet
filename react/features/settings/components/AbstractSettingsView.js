@@ -2,6 +2,7 @@
 
 import { Component } from 'react';
 
+import { getDefaultURL } from '../../app';
 import { updateSettings } from '../../base/settings';
 
 /**
@@ -173,7 +174,7 @@ export class AbstractSettingsView extends Component<Props> {
  */
 export function _mapStateToProps(state: Object) {
     return {
-        _serverURL: state['features/app'].app._getDefaultURL(),
+        _serverURL: getDefaultURL(state),
         _settings: state['features/base/settings'],
         _visible: state['features/settings'].visible
     };

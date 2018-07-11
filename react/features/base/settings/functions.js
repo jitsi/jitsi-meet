@@ -3,6 +3,7 @@
 import { parseURLParams } from '../config';
 import { toState } from '../redux';
 
+import { DEFAULT_SERVER_URL } from './constants';
 
 /**
  * Returns the effective value of a configuration/preference/setting by applying
@@ -82,4 +83,17 @@ export function getPropertyValue(
     }
 
     return undefined;
+}
+
+/**
+ * Gets the currently configured server URL.
+ *
+ * @param {Object|Function} stateful - The redux state object or
+ * {@code getState} function.
+ * @returns {string} - The currently configured server URL.
+ */
+export function getServerURL(stateful: Object | Function) {
+    const state = toState(stateful);
+
+    return state['features/base/settings'].serverURL || DEFAULT_SERVER_URL;
 }
