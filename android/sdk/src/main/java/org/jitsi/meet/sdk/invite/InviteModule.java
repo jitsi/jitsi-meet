@@ -24,6 +24,7 @@ import com.facebook.react.bridge.ReactMethod;
 import com.facebook.react.bridge.ReadableArray;
 import com.facebook.react.bridge.UiThreadUtil;
 
+import org.jitsi.meet.sdk.BaseReactView;
 import org.jitsi.meet.sdk.JitsiMeetView;
 
 /**
@@ -67,7 +68,7 @@ public class InviteModule extends ReactContextBaseJavaModule {
     private InviteController findInviteControllerByExternalAPIScope(
             String externalAPIScope) {
         JitsiMeetView view
-            = JitsiMeetView.findViewByExternalAPIScope(externalAPIScope);
+            = (JitsiMeetView)BaseReactView.findViewByExternalAPIScope(externalAPIScope);
 
         return view == null ? null : view.getInviteController();
     }

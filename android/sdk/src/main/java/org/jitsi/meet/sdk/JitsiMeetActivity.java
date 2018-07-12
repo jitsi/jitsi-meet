@@ -177,7 +177,7 @@ public class JitsiMeetActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        if (!JitsiMeetView.onBackPressed()) {
+        if (!ReactActivityLifecycleAdapter.onBackPressed()) {
             // JitsiMeetView didn't handle the invocation of the back button.
             // Generally, an Activity extender would very likely want to invoke
             // Activity#onBackPressed(). For the sake of consistency with
@@ -220,7 +220,7 @@ public class JitsiMeetActivity extends AppCompatActivity {
             view = null;
         }
 
-        JitsiMeetView.onHostDestroy(this);
+        ReactActivityLifecycleAdapter.onHostDestroy(this);
     }
 
     // ReactAndroid/src/main/java/com/facebook/react/ReactActivity.java
@@ -242,7 +242,20 @@ public class JitsiMeetActivity extends AppCompatActivity {
 
     @Override
     public void onNewIntent(Intent intent) {
-        JitsiMeetView.onNewIntent(intent);
+        // XXX At least twice we received bug reports about malfunctioning
+        // loadURL in the Jitsi Meet SDK while the Jitsi Meet app seemed to
+        // functioning as expected in our testing. But that was to be expected
+        // because the app does not exercise loadURL. In order to increase the
+        // test coverage of loadURL, channel deep linking through loadURL.
+        Uri uri;
+
+        if (Intent.ACTION_VIEW.equals(intent.getAction())
+                && (uri = intent.getData()) != null
+                && JitsiMeetView.loadURLStringInViews(uri.toString())) {
+            return;
+        }
+
+        ReactActivityLifecycleAdapter.onNewIntent(intent);
     }
 
     @Override
@@ -250,21 +263,21 @@ public class JitsiMeetActivity extends AppCompatActivity {
         super.onResume();
 
         defaultBackButtonImpl = new DefaultHardwareBackBtnHandlerImpl(this);
-        JitsiMeetView.onHostResume(this, defaultBackButtonImpl);
+        ReactActivityLifecycleAdapter.onHostResume(this, defaultBackButtonImpl);
     }
 
     @Override
     public void onStop() {
         super.onStop();
 
-        JitsiMeetView.onHostPause(this);
+        ReactActivityLifecycleAdapter.onHostPause(this);
         defaultBackButtonImpl = null;
     }
 
     @Override
     protected void onUserLeaveHint() {
         if (view != null) {
-            view.onUserLeaveHint();
+            view.enterPictureInPicture();
         }
     }
 
