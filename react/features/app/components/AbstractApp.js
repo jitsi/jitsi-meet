@@ -23,8 +23,8 @@ import { OverlayContainer } from '../../overlay';
 import { appNavigate, appWillMount, appWillUnmount } from '../actions';
 
 /**
- * The default URL to open if no other was specified to {@code AbstractApp}
- * via props.
+ * The default URL to open if no other was specified to {@code AbstractApp} via
+ * props.
  *
  * FIXME: This is not at the best place here. This should be either in the
  * base/settings feature or a default in base/config.
@@ -79,17 +79,17 @@ export class AbstractApp extends Component {
         this.state = {
 
             /**
+             * The state of the »possible« async initialization of
+             * the {@code AbstractApp}.
+             */
+            appAsyncInitialized: false,
+
+            /**
              * The Route rendered by this {@code AbstractApp}.
              *
              * @type {Route}
              */
             route: {},
-
-            /**
-             * The state of the »possible« async initialization of
-             * the {@code AbstractApp}.
-             */
-            appAsyncInitialized: false,
 
             /**
              * The redux store used by this {@code AbstractApp}.
@@ -239,8 +239,7 @@ export class AbstractApp extends Component {
      * @returns {ReactElement}
      */
     render() {
-        const { appAsyncInitialized, route } = this.state;
-        const { component } = route;
+        const { appAsyncInitialized, route: { component } } = this.state;
 
         if (appAsyncInitialized && component) {
             return (
@@ -357,7 +356,7 @@ export class AbstractApp extends Component {
         return (
             this.props.defaultURL
                 || this._getStore().getState()['features/base/settings']
-                .serverURL
+                    .serverURL
                 || DEFAULT_URL);
     }
 
@@ -435,9 +434,7 @@ export class AbstractApp extends Component {
         // performed before setState completes, the app may not navigate to the
         // expected route. In order to mitigate the problem, _navigate was
         // changed to return a Promise.
-        return new Promise(resolve => {
-            this.setState({ route }, resolve);
-        });
+        return new Promise(resolve => this.setState({ route }, resolve));
     }
 
     /**

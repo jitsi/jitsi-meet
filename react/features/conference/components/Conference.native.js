@@ -184,8 +184,6 @@ class Conference extends Component<Props> {
     componentWillReceiveProps(nextProps: Props) {
         const {
             _locationURL: oldLocationURL,
-            _onConnect,
-            _onDisconnect,
             _participantCount: oldParticipantCount,
             _room: oldRoom,
             _setToolboxVisible
@@ -197,10 +195,10 @@ class Conference extends Component<Props> {
         } = nextProps;
 
         // If the location URL changes we need to reconnect.
-        oldLocationURL !== newLocationURL && _onDisconnect();
+        oldLocationURL !== newLocationURL && this.props._onDisconnect();
 
         // Start the connection process when there is a (valid) room.
-        oldRoom !== newRoom && newRoom && _onConnect();
+        oldRoom !== newRoom && newRoom && this.props._onConnect();
 
         if (oldParticipantCount === 1) {
             newParticipantCount > 1 && _setToolboxVisible(false);
@@ -342,9 +340,7 @@ class Conference extends Component<Props> {
      * @returns {React$Node}
      */
     _renderConferenceNotification() {
-        return ConferenceNotification
-            ? <ConferenceNotification />
-            : undefined;
+        return ConferenceNotification ? <ConferenceNotification /> : undefined;
     }
 }
 
@@ -356,6 +352,7 @@ class Conference extends Component<Props> {
  * @returns {{
  *     _onConnect: Function,
  *     _onDisconnect: Function,
+ *     _onHardwareBackPress: Function,
  *     _setToolboxVisible: Function
  * }}
  */

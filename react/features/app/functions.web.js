@@ -1,7 +1,6 @@
 // @flow
 
 export * from './functions.any';
-export * from './router';
 
 declare var interfaceConfig: Object;
 

@@ -7,7 +7,7 @@ import {
 } from '../base/connection';
 import { MiddlewareRegistry } from '../base/redux';
 
-import { getRouteToRender } from './router';
+import { _getRouteToRender } from './getRouteToRender';
 
 MiddlewareRegistry.register(store => next => action => {
     switch (action.type) {
@@ -74,7 +74,7 @@ function _navigate({ getState }) {
     const state = getState();
     const { app } = state['features/app'];
 
-    getRouteToRender(state).then(route => app._navigate(route));
+    _getRouteToRender(state).then(route => app._navigate(route));
 }
 
 /**

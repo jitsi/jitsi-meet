@@ -1,4 +1,5 @@
 // @flow
+
 import type { Component } from 'react';
 
 import { isRoomValid } from '../base/conference';
@@ -35,11 +36,11 @@ export type Route = {
  * Determines which route is to be rendered in order to depict a specific Redux
  * store.
  *
- * @param {(Object|Function)} stateful - Redux state or Regux getState()
- * method.
+ * @param {(Function|Object)} stateful - THe redux store, state, or
+ * {@code getState} function.
  * @returns {Promise<Route>}
  */
-export function getRouteToRender(stateful: Object | Function): Promise<Route> {
+export function _getRouteToRender(stateful: Function | Object): Promise<Route> {
     const state = toState(stateful);
     const { room } = state['features/base/conference'];
     const isMobileApp = navigator.product === 'ReactNative';
@@ -51,11 +52,11 @@ export function getRouteToRender(stateful: Object | Function): Promise<Route> {
     };
 
     return new Promise(resolve => {
-        // First check if the current endpoint supports WebRTC. We are
+        // First, check if the current endpoint supports WebRTC. We are
         // intentionally not performing the check for mobile browsers because:
-        //   - the welcome page is mobile ready
-        //   - if the URL points to a conference, getDeepLinkingPage will take
-        //     care of it
+        // - the WelcomePage is mobile ready;
+        // - if the URL points to a conference, getDeepLinkingPage will take
+        //   care of it.
         if (!isMobileBrowser && !JitsiMeetJS.isWebRtcSupported()) {
             route.component = UnsupportedDesktopBrowser;
             resolve(route);
@@ -70,8 +71,8 @@ export function getRouteToRender(stateful: Object | Function): Promise<Route> {
             } else {
                 // Update the location if it doesn't match. This happens when a
                 // room is joined from the welcome page. The reason for doing
-                // this instead of using the history API is that we want to
-                // load the config.js which takes the room into account.
+                // this instead of using the history API is that we want to load
+                // the config.js which takes the room into account.
                 const { locationURL } = state['features/base/connection'];
 
                 // eslint-disable-next-line no-negated-condition
@@ -91,8 +92,8 @@ export function getRouteToRender(stateful: Object | Function): Promise<Route> {
         }
 
         if (!isWelcomePageUserEnabled(state)) {
-            // Web: if the welcome page is disabled, go directly to a
-            // random room.
+            // Web: if the welcome page is disabled, go directly to a random
+            // room.
 
             let href = window.location.href;
 

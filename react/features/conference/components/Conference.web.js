@@ -29,24 +29,6 @@ declare var interfaceConfig: Object;
 const logger = require('jitsi-meet-logger').getLogger(__filename);
 
 /**
- * Promise wrapper on obtain config method. When HttpConfigFetch will be moved
- * to React app it's better to use load config instead.
- *
- * @param {string} location - URL of the domain from which the config is to be
- * obtained.
- * @param {string} room - Room name.
- * @private
- * @returns {Promise}
- */
-function _obtainConfig(location: string, room: string) {
-    return new Promise((resolve, reject) =>
-        obtainConfig(location, room, (success, error) => {
-            success ? resolve() : reject(error);
-        })
-    );
-}
-
-/**
  * DOM events for when full screen mode has changed. Different browsers need
  * different vendor prefixes.
  *
@@ -119,7 +101,7 @@ class Conference extends Component<Props> {
         const { configLocation } = config;
 
         if (configLocation) {
-            _obtainConfig(configLocation, this.props._room)
+            obtainConfig(configLocation, this.props._room)
                 .then(() => {
                     const now = window.performance.now();
 
@@ -133,8 +115,8 @@ class Conference extends Component<Props> {
 
                     // Show obtain config error.
                     APP.UI.messageHandler.showError({
-                        titleKey: 'connection.CONNFAIL',
-                        descriptionKey: 'dialog.connectError'
+                        descriptionKey: 'dialog.connectError',
+                        titleKey: 'connection.CONNFAIL'
                     });
                 });
         } else {
@@ -253,7 +235,8 @@ class Conference extends Component<Props> {
  * @param {Object} state - The Redux state.
  * @private
  * @returns {{
- *     _iAmRecorder: boolean
+ *     _iAmRecorder: boolean,
+ *     _room: ?string
  * }}
  */
 function _mapStateToProps(state) {

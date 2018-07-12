@@ -150,6 +150,24 @@ export { default as getRoomName } from './getRoomName';
 export { parseURLParams };
 
 /**
+ * Promise wrapper on obtain config method. When HttpConfigFetch will be moved
+ * to React app it's better to use load config instead.
+ *
+ * @param {string} location - URL of the domain from which the config is to be
+ * obtained.
+ * @param {string} room - Room name.
+ * @private
+ * @returns {Promise<void>}
+ */
+export function obtainConfig(location: string, room: string): Promise<void> {
+    return new Promise((resolve, reject) =>
+        _obtainConfig(location, room, (success, error) => {
+            success ? resolve() : reject(error);
+        })
+    );
+}
+
+/**
  * Sends HTTP POST request to specified {@code endpoint}. In request the name
  * of the room is included in JSON format:
  * {
@@ -163,10 +181,7 @@ export { parseURLParams };
  * @param {Function} complete - The callback to invoke upon success or failure.
  * @returns {void}
  */
-export function obtainConfig(
-        endpoint: string,
-        roomName: string,
-        complete: Function) {
+function _obtainConfig(endpoint: string, roomName: string, complete: Function) {
     logger.info(`Send config request to ${endpoint} for room: ${roomName}`);
     $.ajax(
         endpoint,

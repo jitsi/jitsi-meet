@@ -10,11 +10,11 @@ import { NetworkActivityIndicator } from '../../mobile/network-activity';
 import LocalVideoTrackUnderlay from './LocalVideoTrackUnderlay';
 
 /**
- * {@code BlankPage} React {@code Component}'s prop types.
+ * The type of React {@code Component} props of {@link BlankPage}.
  */
 type Props = {
     dispatch: Dispatch<*>
-}
+};
 
 /**
  * The React {@code Component} displayed by {@code AbstractApp} when it has no

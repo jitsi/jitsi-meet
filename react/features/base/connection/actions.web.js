@@ -20,10 +20,8 @@ export {
  */
 export function connect() {
     return (dispatch: Dispatch<*>, getState: Function) => {
-        const state = getState();
-
         // XXX Lib-jitsi-meet does not accept uppercase letters.
-        const room = state['features/base/conference'].room.toLowerCase();
+        const room = getState()['features/base/conference'].room.toLowerCase();
 
         // XXX For web based version we use conference initialization logic
         // from the old app (at the moment of writing).
