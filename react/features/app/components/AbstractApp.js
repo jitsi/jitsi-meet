@@ -10,7 +10,7 @@ import { appNavigate } from '../actions';
 import { getDefaultURL } from '../functions';
 
 /**
- * {@code AbstractApp} component's property types.
+ * The type of React {@code Component} props of {@link AbstractApp}.
  */
 export type Props = {
 
@@ -49,8 +49,8 @@ export class AbstractApp extends BaseApp<Props, *> {
         super.componentWillMount();
 
         this._init.then(() => {
-            // If a URL was explicitly specified to this React Component,
-            // then open it; otherwise, use a default.
+            // If a URL was explicitly specified to this React Component, then
+            // open it; otherwise, use a default.
             this._openURL(toURLString(this.props.url) || this._getDefaultURL());
         });
     }
@@ -102,9 +102,9 @@ export class AbstractApp extends BaseApp<Props, *> {
      * Creates an extra {@link ReactElement}s to be added (unconditionaly)
      * alongside the main element.
      *
-     * @returns {ReactElement}
      * @abstract
      * @protected
+     * @returns {ReactElement}
      */
     _createExtraElement() {
         return (

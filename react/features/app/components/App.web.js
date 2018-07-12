@@ -11,11 +11,21 @@ import '../../video-layout';
 import { AbstractApp } from './AbstractApp';
 
 /**
- * Root application component.
+ * Root app {@code Component} on Web/React.
  *
  * @extends AbstractApp
  */
 export class App extends AbstractApp {
+    /**
+     * Gets a Location object from the window with information about the current
+     * location of the document.
+     *
+     * @inheritdoc
+     */
+    getWindowLocation() {
+        return window.location;
+    }
+
     /**
      * Overrides the parent method to inject {@link AtlasKitThemeProvider} as
      * the top most component.
@@ -28,15 +38,5 @@ export class App extends AbstractApp {
                 { super._createMainElement(component, props) }
             </AtlasKitThemeProvider>
         );
-    }
-
-    /**
-     * Gets a Location object from the window with information about the current
-     * location of the document.
-     *
-     * @inheritdoc
-     */
-    getWindowLocation() {
-        return window.location;
     }
 }

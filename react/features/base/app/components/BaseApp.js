@@ -20,21 +20,18 @@ import { appWillMount, appWillUnmount } from '../actions';
 
 declare var APP: Object;
 
+/**
+ * The type of the React {@code Component} state of {@link BaseApp}.
+ */
 type State = {
 
     /**
-     * The state of the »possible« async initialization of
-     * the {@code BaseApp}.
-     */
-    initialized: boolean,
-
-    /**
-     * The Route rendered by this {@code BaseApp}.
+     * The {@code Route} rendered by the {@code BaseApp}.
      */
     route: Object,
 
     /**
-     * The redux store used by this {@code BaseApp}.
+     * The redux store used by the {@code BaseApp}.
      */
     store: Object
 };
@@ -57,7 +54,6 @@ export default class BaseApp extends Component<*, State> {
         super(props);
 
         this.state = {
-            initialized: false,
             route: {},
 
             // $FlowFixMe
@@ -65,9 +61,8 @@ export default class BaseApp extends Component<*, State> {
         };
 
         /**
-         * Make the mobile {@code BaseApp} wait until the
-         * {@code AsyncStorage} implementation of {@code Storage} initializes
-         * fully.
+         * Make the mobile {@code BaseApp} wait until the {@code AsyncStorage}
+         * implementation of {@code Storage} initializes fully.
          *
          * @private
          * @see {@link #_initStorage}
@@ -83,32 +78,21 @@ export default class BaseApp extends Component<*, State> {
     }
 
     /**
-     * Initialize the application.
+     * Initializes the app.
      *
      * @inheritdoc
      */
     componentWillMount() {
-        this._init.then(() => {
-            const { dispatch } = this.state.store;
-
-            dispatch(appWillMount(this));
-
-            // We set the initialized state here and not in the constructor to
-            // make sure that {@code componentWillMount} gets invoked before
-            // the app tries to render the actual app content.
-            this.setState({ initialized: true });
-        });
+        this._init.then(() => this.state.store.dispatch(appWillMount(this)));
     }
 
     /**
-     * De-initialize the application.
+     * De-initializes the app.
      *
      * @inheritdoc
      */
     componentWillUnmount() {
-        const { dispatch } = this.state.store;
-
-        dispatch(appWillUnmount(this));
+        this.state.store.dispatch(appWillUnmount(this));
     }
 
     /**
@@ -133,10 +117,9 @@ export default class BaseApp extends Component<*, State> {
      * @returns {ReactElement}
      */
     render() {
-        const { initialized, route, store } = this.state;
-        const { component } = route;
+        const { route: { component }, store } = this.state;
 
-        if (initialized && component) {
+        if (store && component) {
             return (
                 <I18nextProvider i18n = { i18next }>
                     <Provider store = { store }>

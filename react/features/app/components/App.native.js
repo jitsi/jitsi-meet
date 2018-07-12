@@ -27,46 +27,46 @@ import type { Props as AbstractAppProps } from './AbstractApp';
 declare var __DEV__;
 
 /**
- * App component's property types.
+ * The type of React {@code Component} props of {@link App}.
  */
 type Props = AbstractAppProps & {
 
     /**
-     * Whether the add people feature is enabled or not.
+     * Whether the add people feature is enabled.
      */
     addPeopleEnabled: boolean,
 
     /**
-     * Whether the dial-out feature is enabled or not.
+     * Whether the dial-out feature is enabled.
      */
     dialOutEnabled: boolean,
 
     /**
-     * Whether Picture-in-Picture is enabled. If {@code true}, a toolbar
-     * button is rendered in the {@link Conference} view to afford entering
+     * Whether Picture-in-Picture is enabled. If {@code true}, a toolbar button
+     * is rendered in the {@link Conference} view to afford entering
      * Picture-in-Picture.
      */
     pictureInPictureEnabled: boolean,
 
     /**
-     * Whether the Welcome page is enabled. If {@code true}, the Welcome
-     * page is rendered when the {@link App} is not at a location (URL)
-     * identifying a Jitsi Meet conference/room.
+     * Whether the Welcome page is enabled. If {@code true}, the Welcome page is
+     * rendered when the {@link App} is not at a location (URL) identifying
+     * a Jitsi Meet conference/room.
      */
     welcomePageEnabled: boolean
 };
 
 /**
- * Root application component.
+ * Root app {@code Component} on mobile/React Native.
  *
  * @extends AbstractApp
  */
 export class App extends AbstractApp {
     /**
-     * Initializes a new App instance.
+     * Initializes a new {@code App} instance.
      *
-     * @param {Object} props - The read-only React Component props with which
-     * the new instance is to be initialized.
+     * @param {Props} props - The read-only React {@code Component} props with
+     * which the new instance is to be initialized.
      */
     constructor(props: Props) {
         super(props);
@@ -76,8 +76,8 @@ export class App extends AbstractApp {
 
         // In the Release configuration, React Native will (intentionally) throw
         // an unhandled JavascriptException for an unhandled JavaScript error.
-        // This will effectively kill the application. In accord with the Web,
-        // do not kill the application.
+        // This will effectively kill the app. In accord with the Web, do not
+        // kill the app.
         this._maybeDisableExceptionsManager();
     }
 
@@ -130,10 +130,9 @@ export class App extends AbstractApp {
      * {@link ExceptionsManager#handleException} on platforms and in
      * configurations on/in which the use of the method in questions has been
      * determined to be undesirable. For example, React Native will
-     * (intentionally) throw an unhandled JavascriptException for an
+     * (intentionally) throw an unhandled {@code JavascriptException} for an
      * unhandled JavaScript error in the Release configuration. This will
-     * effectively kill the application. In accord with the Web, do not kill the
-     * application.
+     * effectively kill the app. In accord with the Web, do not kill the app.
      *
      * @private
      * @returns {void}
@@ -148,9 +147,9 @@ export class App extends AbstractApp {
             // A solution based on RTCSetFatalHandler was implemented on iOS and
             // it is preferred because it is at a later step of the
             // error/exception handling and it is specific to fatal
-            // errors/exceptions which were observed to kill the application.
-            // The solution implemented bellow was tested on Android only so it
-            // is considered safest to use it there only.
+            // errors/exceptions which were observed to kill the app. The
+            // solution implemented bellow was tested on Android only so it is
+            // considered safest to use it there only.
             return;
         }
 
@@ -167,10 +166,10 @@ export class App extends AbstractApp {
 
     /**
      * Notified by React's Linking API that a specific URL registered to be
-     * handled by this App was activated.
+     * handled by this app was activated.
      *
      * @param {Object} event - The details of the notification/event.
-     * @param {string} event.url - The URL registered to be handled by this App
+     * @param {string} event.url - The URL registered to be handled by this app
      * which was activated.
      * @private
      * @returns {void}
@@ -183,11 +182,11 @@ export class App extends AbstractApp {
 /**
  * Handles a (possibly unhandled) JavaScript error by preventing React Native
  * from converting a fatal error into an unhandled native exception which will
- * kill the application.
+ * kill the app.
  *
  * @param {Error} error - The (possibly unhandled) JavaScript error to handle.
- * @param {boolean} fatal - True if the specified error is fatal; otherwise,
- * false.
+ * @param {boolean} fatal - If the specified error is fatal, {@code true};
+ * otherwise, {@code false}.
  * @private
  * @returns {void}
  */
@@ -195,12 +194,12 @@ function _handleException(error, fatal) {
     if (fatal) {
         // In the Release configuration, React Native will (intentionally) throw
         // an unhandled JavascriptException for an unhandled JavaScript error.
-        // This will effectively kill the application. In accord with the Web,
-        // do not kill the application.
+        // This will effectively kill the app. In accord with the Web, do not
+        // kill the app.
         console.error(error);
     } else {
         // Forward to the next globalHandler of ErrorUtils.
-        const next = _handleException.next;
+        const { next } = _handleException;
 
         typeof next === 'function' && next(error, fatal);
     }
