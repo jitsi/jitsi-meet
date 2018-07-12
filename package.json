@@ -65,6 +65,7 @@
     "react-native-keep-awake": "2.0.6",
     "react-native-linear-gradient": "2.4.0",
     "react-native-locale-detector": "github:jitsi/react-native-locale-detector#845281e9fd4af756f6d0f64afe5cce08c63e5ee9",
+    "react-native-permissions": "1.1.1",
     "react-native-prompt": "1.0.0",
     "react-native-sound": "0.10.9",
     "react-native-vector-icons": "4.4.2",
