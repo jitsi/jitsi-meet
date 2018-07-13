@@ -88,6 +88,7 @@ public class IncomingCallView extends FrameLayout {
         props.putString("url", "");
         props.putString("callerName", callInfo.getCallerName());
         props.putString("callerAvatarUrl", callInfo.getCallerAvatarUrl());
+        props.putString("hasVideo", String.valueOf(callInfo.hasVideo()));
         if (reactRootView == null) {
             reactRootView = new ReactRootView(getContext());
             reactRootView.startReactApplication(

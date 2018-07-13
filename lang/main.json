@@ -645,8 +645,10 @@
         "expired": "Expired"
     },
     "incomingCall": {
-        "title": "Incoming call",
         "answer": "Answer",
-        "decline": "Decline"
+        "audioCallTitle": "Incoming call",
+        "decline": "Decline",
+        "productLabel": "from Jitsi Meet",
+        "videoCallTitle": "Incoming video call"
     }
 }

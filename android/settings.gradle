@@ -9,6 +9,8 @@ include ':react-native-immersive'
 project(':react-native-immersive').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-immersive/android')
 include ':react-native-keep-awake'
 project(':react-native-keep-awake').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-keep-awake/android')
+include ':react-native-linear-gradient'
+project(':react-native-linear-gradient').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-linear-gradient/android')
 include ':react-native-locale-detector'
 project(':react-native-locale-detector').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-locale-detector/android')
 include ':react-native-sound'

@@ -1,81 +1,149 @@
 import {
-    BoxModel,
     ColorPalette,
     createStyleSheet
 } from '../../../base/styles';
 
-export const CALLER_AVATAR_SIZE = 135;
+export const AVATAR_BORDER_GRADIENT = [ '#4C9AFF', '#0052CC' ];
 
-const _text = {
+export const BACKGROUND_OVERLAY_GRADIENT = [ '#0052CC', '#4C9AFF' ];
+
+const BUTTON_SIZE = 56;
+
+export const CALLER_AVATAR_SIZE = 128;
+
+const CALLER_AVATAR_BORDER_WIDTH = 3;
+
+const CALLER_AVATAR_CIRCLE_SIZE
+    = CALLER_AVATAR_SIZE + (2 * CALLER_AVATAR_BORDER_WIDTH);
+
+const PAGE_PADDING = 48;
+
+const LINE_SPACING = 8;
+
+const _icon = {
+    alignSelf: 'center',
     color: ColorPalette.white,
-    margin: BoxModel.margin,
-    fontSize: 16
-};
-
-const _button = {
-    alignSelf: 'center'
+    fontSize: 32
 };
 
 const _responseButton = {
-    ..._button,
-    justifyContent: 'center',
-    borderRadius: 30,
+    alignSelf: 'center',
+    borderRadius: BUTTON_SIZE / 2,
     borderWidth: 0,
-    height: 60,
-    width: 60
+    flex: 0,
+    flexDirection: 'row',
+    height: BUTTON_SIZE,
+    justifyContent: 'center',
+    width: BUTTON_SIZE
+};
+
+const _text = {
+    color: ColorPalette.white,
+    fontSize: 16
 };
 
 export default createStyleSheet({
-
-    pageContainer: {
-        padding: 50,
-        flex: 1,
-        alignItems: 'center',
-        backgroundColor: ColorPalette.blue
+    answerButtonStyles: {
+        iconStyle: {
+            ..._icon,
+            transform: [
+                { rotateZ: '130deg' }
+            ]
+        },
+        style: {
+            ..._responseButton,
+            backgroundColor: ColorPalette.green
+        },
+        underlayColor: ColorPalette.buttonUnderlay
     },
 
-    title: {
-        ..._text
+    avatar: {
+        position: 'absolute',
+        marginLeft: CALLER_AVATAR_BORDER_WIDTH,
+        marginTop: CALLER_AVATAR_BORDER_WIDTH
+    },
+
+    avatarBorder: {
+        borderRadius: CALLER_AVATAR_CIRCLE_SIZE / 2,
+        height: CALLER_AVATAR_CIRCLE_SIZE,
+        position: 'absolute',
+        width: CALLER_AVATAR_CIRCLE_SIZE
+    },
+
+    avatarContainer: {
+        height: CALLER_AVATAR_CIRCLE_SIZE,
+        marginTop: LINE_SPACING * 4,
+        width: CALLER_AVATAR_CIRCLE_SIZE
+    },
+
+    backgroundAvatar: {
+        bottom: 0,
+        left: 0,
+        position: 'absolute',
+        right: 0,
+        top: 0
+    },
+
+    backgroundAvatarImage: {
+        flex: 1
+    },
+
+    backgroundOverlayGradient: {
+        bottom: 0,
+        left: 0,
+        opacity: 0.9,
+        position: 'absolute',
+        right: 0,
+        top: 0
+    },
+
+    buttonsContainer: {
+        alignItems: 'flex-end',
+        flex: 1,
+        flexDirection: 'row'
+    },
+
+    buttonText: {
+        ..._text,
+        alignSelf: 'center',
+        marginTop: 1.5 * LINE_SPACING
+    },
+
+    buttonWrapper: {
+        flex: 1
     },
 
     callerName: {
         ..._text,
-        fontSize: 36
+        fontSize: 36,
+        marginBottom: LINE_SPACING,
+        marginLeft: PAGE_PADDING,
+        marginRight: PAGE_PADDING,
+        marginTop: LINE_SPACING,
+        textAlign: 'center'
     },
 
-    avatar: {
-        marginVertical: 50
+    declineButtonStyles: {
+        iconStyle: _icon,
+        style: {
+            ..._responseButton,
+            backgroundColor: ColorPalette.red
+        },
+        underlayColor: ColorPalette.buttonUnderlay
     },
 
-    buttonContainer: {
+    pageContainer: {
+        alignItems: 'center',
         flex: 1,
-        alignSelf: 'stretch',
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        alignItems: 'flex-end'
+        paddingBottom: PAGE_PADDING,
+        paddingTop: PAGE_PADDING
     },
 
-    buttonText: {
-        ..._button,
+    productLabel: {
         ..._text
     },
 
-    buttonIcon: {
-        ..._button,
-        color: ColorPalette.white,
-        fontSize: 24
-    },
-
-    declineButton: {
-        ..._responseButton,
-        backgroundColor: '#FC4D36'
-    },
-
-    answerButton: {
-        ..._responseButton,
-        backgroundColor: '#36A874',
-        transform: [
-            { rotateZ: '130deg' }
-        ]
+    title: {
+        ..._text
     }
 });

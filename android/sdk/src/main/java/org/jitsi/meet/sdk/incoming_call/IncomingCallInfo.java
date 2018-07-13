@@ -23,11 +23,15 @@ public class IncomingCallInfo {
 
     private final String callerName;
 
+    private final boolean hasVideo;
+
     public IncomingCallInfo(
             @NonNull String callerName,
-            @NonNull String callerAvatarUrl) {
+            @NonNull String callerAvatarUrl,
+                    boolean hasVideo) {
         this.callerName = callerName;
         this.callerAvatarUrl = callerAvatarUrl;
+        this.hasVideo = hasVideo;
     }
 
     public String getCallerAvatarUrl() {
@@ -36,5 +40,9 @@ public class IncomingCallInfo {
 
     public String getCallerName() {
         return callerName;
+    }
+
+    public boolean hasVideo() {
+        return hasVideo;
     }
 }

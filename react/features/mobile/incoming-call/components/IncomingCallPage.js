@@ -1,25 +1,31 @@
 // @flow
 
 import React, { Component } from 'react';
-import { Text, View } from 'react-native';
+import { Image, Text, View } from 'react-native';
+import LinearGradient from 'react-native-linear-gradient';
 import { connect } from 'react-redux';
 import type { Dispatch } from 'redux';
 
 import { translate } from '../../../base/i18n';
-import { ToolbarButton } from '../../../toolbox';
-import { ColorPalette } from '../../../base/styles';
 import { Avatar } from '../../../base/participants';
 
 import {
     incomingCallAnswered,
     incomingCallDeclined
 } from '../actions';
+import styles, {
+    AVATAR_BORDER_GRADIENT,
+    BACKGROUND_OVERLAY_GRADIENT,
+    CALLER_AVATAR_SIZE
+} from './styles';
+import AnswerButton from './AnswerButton';
+import DeclineButton from './DeclineButton';
 
-import styles, { CALLER_AVATAR_SIZE } from './styles';
 
 type Props = {
     _callerName: string,
     _callerAvatarUrl: string,
+    _hasVideo: boolean,
     _onAnswered: Function,
     _onDeclined: Function,
     t: Function
@@ -37,15 +43,32 @@ class IncomingCallPage extends Component<Props> {
      * @returns {ReactElement}
      */
     render() {
-        const { t, _callerName } = this.props;
+        const { t, _callerName, _hasVideo } = this.props;
+        const callTitle
+            = _hasVideo
+                ? t('incomingCall.videoCallTitle')
+                : t('incomingCall.audioCallTitle');
 
         return (
             <View style = { styles.pageContainer }>
+                <View style = { styles.backgroundAvatar }>
+                    <Image
+                        source = {{ uri: this.props._callerAvatarUrl }}
+                        style = { styles.backgroundAvatarImage } />
+                </View>
+                <LinearGradient
+                    colors = { BACKGROUND_OVERLAY_GRADIENT }
+                    style = { styles.backgroundOverlayGradient } />
                 <Text style = { styles.title }>
-                    { t('incomingCall.title') }
+                    { callTitle }
                 </Text>
-                <Text style = { styles.callerName }>
+                <Text
+                    numberOfLines = { 6 }
+                    style = { styles.callerName } >
                     { _callerName }
+                </Text>
+                <Text style = { styles.productLabel }>
+                    { t('incomingCall.productLabel') }
                 </Text>
                 { this._renderCallerAvatar() }
                 { this._renderButtons() }
@@ -61,10 +84,15 @@ class IncomingCallPage extends Component<Props> {
      */
     _renderCallerAvatar() {
         return (
-            <View style = { styles.avatar }>
-                <Avatar
-                    size = { CALLER_AVATAR_SIZE }
-                    uri = { this.props._callerAvatarUrl } />
+            <View style = { styles.avatarContainer }>
+                <LinearGradient
+                    colors = { AVATAR_BORDER_GRADIENT }
+                    style = { styles.avatarBorder } />
+                <View style = { styles.avatar }>
+                    <Avatar
+                        size = { CALLER_AVATAR_SIZE }
+                        uri = { this.props._callerAvatarUrl } />
+                </View>
             </View>
         );
     }
@@ -79,27 +107,19 @@ class IncomingCallPage extends Component<Props> {
         const { t, _onAnswered, _onDeclined } = this.props;
 
         return (
-            <View style = { styles.buttonContainer }>
-                <View>
-                    <ToolbarButton
-                        accessibilityLabel = 'Decline'
-                        iconName = 'hangup'
-                        iconStyle = { styles.buttonIcon }
+            <View style = { styles.buttonsContainer }>
+                <View style = { styles.buttonWrapper } >
+                    <DeclineButton
                         onClick = { _onDeclined }
-                        style = { styles.declineButton }
-                        underlayColor = { ColorPalette.buttonUnderlay } />
+                        styles = { styles.declineButtonStyles } />
                     <Text style = { styles.buttonText }>
                         { t('incomingCall.decline') }
                     </Text>
                 </View>
-                <View>
-                    <ToolbarButton
-                        accessibilityLabel = 'Answer'
-                        iconName = 'hangup'
-                        iconStyle = { styles.buttonIcon }
+                <View style = { styles.buttonWrapper }>
+                    <AnswerButton
                         onClick = { _onAnswered }
-                        style = { styles.answerButton }
-                        underlayColor = { ColorPalette.buttonUnderlay } />
+                        styles = { styles.answerButtonStyles } />
                     <Text style = { styles.buttonText }>
                         { t('incomingCall.answer') }
                     </Text>
@@ -173,7 +193,12 @@ function _mapStateToProps(state) {
          * @private
          * @type {string}
          */
-        _callerAvatarUrl: caller.avatarUrl
+        _callerAvatarUrl: caller.avatarUrl,
+
+        /**
+         * Indicates if it's an audio or a video call.
+         */
+        _hasVideo: caller.hasVideo
 
     }) || {};
 }

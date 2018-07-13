@@ -1,3 +1,5 @@
+import PropTypes from 'prop-types';
+
 import { App } from '../../../app';
 import { RouteRegistry } from '../../../base/react';
 import { incomingCallReceived } from '../actions';
@@ -11,6 +13,16 @@ import IncomingCallPage from './IncomingCallPage';
  */
 export default class IncomingCallApp extends App {
 
+    static propTypes = {
+        ...App.propTypes,
+
+        /**
+         * Indicates whether the UI should tell if it's a video call or
+         * a regular audio call.
+         */
+        hasVideo: PropTypes.bool
+    };
+
     /**
      * Creates incoming call when component is going to be mounted.
      *
@@ -23,7 +35,8 @@ export default class IncomingCallApp extends App {
 
             dispatch(incomingCallReceived({
                 name: this.props.callerName,
-                avatarUrl: this.props.callerAvatarUrl
+                avatarUrl: this.props.callerAvatarUrl,
+                hasVideo: this.props.hasVideo === 'true'
             }));
         });
     }
