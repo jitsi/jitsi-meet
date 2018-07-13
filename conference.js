@@ -2341,9 +2341,8 @@ export default {
                     }));
                 }
 
-                mediaDeviceHelper.setCurrentMediaDevices(devices);
-                APP.UI.onAvailableDevicesChanged(devices);
                 APP.store.dispatch(updateDeviceList(devices));
+                APP.UI.onAvailableDevicesChanged(devices);
             });
 
             this.deviceChangeListener = devices =>
@@ -2362,16 +2361,7 @@ export default {
      * @returns {Promise}
      */
     _onDeviceListChanged(devices) {
-        let currentDevices = mediaDeviceHelper.getCurrentMediaDevices();
-
-        // Event handler can be fired before direct
-        // enumerateDevices() call, so handle this situation here.
-        if (!currentDevices.audioinput
-            && !currentDevices.videoinput
-            && !currentDevices.audiooutput) {
-            mediaDeviceHelper.setCurrentMediaDevices(devices);
-            currentDevices = mediaDeviceHelper.getCurrentMediaDevices();
-        }
+        APP.store.dispatch(updateDeviceList(devices));
 
         const newDevices
             = mediaDeviceHelper.getNewMediaDevicesAfterDeviceListChanged(
@@ -2420,7 +2410,6 @@ export default {
 
         return Promise.all(promises)
             .then(() => {
-                mediaDeviceHelper.setCurrentMediaDevices(devices);
                 APP.UI.onAvailableDevicesChanged(devices);
             });
     },
@@ -2430,7 +2419,7 @@ export default {
      */
     updateAudioIconEnabled() {
         const audioMediaDevices
-            = mediaDeviceHelper.getCurrentMediaDevices().audioinput;
+            = APP.store.getState()['features/base/devices'].audioInput;
         const audioDeviceCount
             = audioMediaDevices ? audioMediaDevices.length : 0;
 
@@ -2453,7 +2442,7 @@ export default {
      */
     updateVideoIconEnabled() {
         const videoMediaDevices
-            = mediaDeviceHelper.getCurrentMediaDevices().videoinput;
+            = APP.store.getState()['features/base/devices'].videoInput;
         const videoDeviceCount
             = videoMediaDevices ? videoMediaDevices.length : 0;
 
