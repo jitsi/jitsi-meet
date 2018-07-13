@@ -127,7 +127,12 @@ function _beginAddPeople(store, next, action) {
  * @param {Object} event - The details of the event.
  * @returns {void}
  */
-function _onInvite({ addPeopleControllerScope, externalAPIScope, invitees }) {
+function _onInvite({
+    addPeopleControllerScope,
+    externalAPIScope,
+    invitees,
+    showCalleeInfo
+}) {
     const { dispatch, getState } = this; // eslint-disable-line no-invalid-this
 
     // If there are multiple JitsiMeetView instances alive, they will all get
@@ -137,7 +142,7 @@ function _onInvite({ addPeopleControllerScope, externalAPIScope, invitees }) {
         return;
     }
 
-    dispatch(invite(invitees))
+    dispatch(invite(invitees, showCalleeInfo))
         .then(failedInvitees =>
             Invite.inviteSettled(
                 externalAPIScope,

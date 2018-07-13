@@ -58,19 +58,24 @@ class CalleeInfo extends Component<Props> {
                 id = 'ringOverlay'>
                 <Container
                     { ...this._style('ringing__content') }>
-                    <Avatar
-                        { ...this._style('ringing__avatar') }
-                        uri = { avatar } />
-                    <Container { ...this._style('ringing__status') }>
-                        <PresenceLabel
-                            defaultPresence = { status }
-                            { ...this._style('ringing__text') } />
+                    <Container
+                        { ...this._style('ringing__avatar-container') }>
+                        <Avatar
+                            { ...this._style('ringing__avatar') }
+                            uri = { avatar } />
                     </Container>
-                    <Container { ...this._style('ringing__name') }>
-                        <Text
-                            { ...this._style('ringing__text') }>
-                            { name }
-                        </Text>
+                    <Container { ...this._style('ringing__texts-container') }>
+                        <Container { ...this._style('ringing__status') }>
+                            <PresenceLabel
+                                defaultPresence = { status }
+                                { ...this._style('ringing__status__text') } />
+                        </Container>
+                        <Container>
+                            <Text
+                                { ...this._style('ringing__name') }>
+                                { name }
+                            </Text>
+                        </Container>
                     </Container>
                 </Container>
             </Container>

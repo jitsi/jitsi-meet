@@ -81,7 +81,7 @@ class PresenceLabel extends Component {
         return (
             <Text
                 className = { className }
-                { ...style }>
+                style = { style }>
                 { text }
             </Text>);
     }

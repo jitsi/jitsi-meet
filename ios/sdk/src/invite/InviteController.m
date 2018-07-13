@@ -140,14 +140,16 @@
   forControllerScope:(NSString * _Nonnull)controllerScope {
     [self.inviteModule invite:invitees
              externalAPIScope:self.externalAPIScope
-     addPeopleControllerScope:controllerScope];
+     addPeopleControllerScope:controllerScope,
+     showCalleeInfo:NO];
 }
 
 - (void)  invite:(NSArray *)invitees
   withCompletion:(void (^)(NSArray<NSDictionary *> *failedInvitees))completion {
     // TODO Execute the specified completion block when the invite settles.
     [self        invite:invitees
-     forControllerScope:[[NSUUID UUID] UUIDString]];
+     forControllerScope:[[NSUUID UUID] UUIDString]
+     showCalleeInfo:YES];
 }
 
 - (void)performQuery:(NSString * _Nonnull)query

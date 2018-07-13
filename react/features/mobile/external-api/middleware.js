@@ -2,7 +2,7 @@
 
 import { NativeModules } from 'react-native';
 
-import { getAppProp } from '../../app';
+import { getAppProp, APP_WILL_MOUNT } from '../../app';
 import {
     CONFERENCE_FAILED,
     CONFERENCE_JOINED,
@@ -65,6 +65,7 @@ MiddlewareRegistry.register(store => next => action => {
             && _sendConferenceFailedOnConnectionError(store, action);
         break;
 
+    case APP_WILL_MOUNT:
     case ENTER_PICTURE_IN_PICTURE:
         _sendEvent(store, _getSymbolDescription(type), /* data */ {});
         break;

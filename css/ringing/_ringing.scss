@@ -34,8 +34,10 @@
 
     &__status{
         margin-top: 15px;
-        font-size: 14px;
-        line-height: 20px;
+        &__text{
+            font-size: 14px;
+            line-height: 20px;
+        }
     }
 
     &__name {

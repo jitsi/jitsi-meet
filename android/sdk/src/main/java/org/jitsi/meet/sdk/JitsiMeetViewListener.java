@@ -23,6 +23,14 @@ import java.util.Map;
  */
 public interface JitsiMeetViewListener {
     /**
+     * Called when the <tt>App</tt> component is mounted.
+     *
+     * @param data This parameter is not used. It's here beacuse the parameter
+     * is always passed for every JitsiMeetViewListener method.
+     */
+    void onAppWillMount(Map<String, Object> data);
+
+    /**
      * Called when joining a conference fails or an ongoing conference is
      * interrupted due to a failure.
      *

@@ -116,7 +116,8 @@ public class InviteController {
             invite(
                 addPeopleController.getUuid(),
                 addPeopleController.getReactApplicationContext(),
-                invitees);
+                invitees,
+                false);
     }
 
     public Future<List<Map<String, Object>>> invite(
@@ -125,7 +126,8 @@ public class InviteController {
             = invite(
                 UUID.randomUUID().toString(),
                 /* reactContext */ null,
-                Arguments.makeNativeArray(invitees));
+                Arguments.makeNativeArray(invitees),
+                true);
         FutureTask futureTask
             = new FutureTask(new Callable() {
                 @Override
@@ -155,12 +157,14 @@ public class InviteController {
     private boolean invite(
             String addPeopleControllerScope,
             ReactContext reactContext,
-            WritableArray invitees) {
+            WritableArray invitees,
+            boolean showCalleeInfo) {
         WritableNativeMap data = new WritableNativeMap();
 
         data.putString("addPeopleControllerScope", addPeopleControllerScope);
         data.putString("externalAPIScope", externalAPIScope);
         data.putArray("invitees", invitees);
+        data.putBoolean("showCalleeInfo", showCalleeInfo);
 
         return
             ReactContextUtils.emitEvent(

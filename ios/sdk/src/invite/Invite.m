@@ -108,11 +108,13 @@ RCT_EXPORT_METHOD(receivedResults:(NSString *)externalAPIScope
 
 - (void)            invite:(NSArray<NSDictionary *> * _Nonnull)invitees
           externalAPIScope:(NSString * _Nonnull)externalAPIScope
-  addPeopleControllerScope:(NSString * _Nonnull) addPeopleControllerScope {
+  addPeopleControllerScope:(NSString * _Nonnull) addPeopleControllerScope
+   showCalleeInfo:(BOOL)showCalleeInfo {
     [self sendEventWithName:InviteEmitterEvent
                        body:@{ @"addPeopleControllerScope": addPeopleControllerScope,
                                @"externalAPIScope": externalAPIScope,
-                               @"invitees": invitees }];
+                               @"invitees": invitees,
+                               @"showCalleeInfo": @(showCalleeInfo) }];
 }
 
 - (void)      performQuery:(NSString * _Nonnull)query

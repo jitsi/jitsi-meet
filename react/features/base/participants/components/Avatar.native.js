@@ -38,7 +38,9 @@ type Props = {
     /**
      * The URI of the {@link Avatar}.
      */
-    uri: string
+    uri: string,
+
+    style: Object
 };
 
 /**
@@ -251,7 +253,8 @@ export default class Avatar extends Component<Props, State> {
                     ? size * 2
                     : borderRadius,
             height: size,
-            width: size
+            width: size,
+            ...this.props.style
         };
 
         // If we're rendering the _DEFAULT_SOURCE, then we want to do some

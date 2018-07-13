@@ -12,38 +12,62 @@ export default createStyleSheet({
     ringing: {
         ...StyleSheet.absoluteFillObject,
         alignItems: 'center',
-        backgroundColor: ColorPalette.black,
         flex: 0,
-        flexDirection: 'column',
-        justifyContent: 'center',
-        opacity: 0.8
+        flexDirection: 'column'
+    },
+
+    solidBG: {
+        backgroundColor: '#0052CC'
     },
 
     'ringing__avatar': {
-        borderRadius: 50,
-        flex: 0,
-        height: 100,
-        width: 100
+        borderRadius: 128,
+        width: 128,
+        height: 128
     },
 
-    'ringing__caller-info': {
-        alignItems: 'center',
-        flex: 0,
-        flexDirection: 'row',
-        justifyContent: 'center'
+    'ringing__avatar-container': {
+        marginTop: 58,
+        borderRadius: 128,
+        borderColor: '#4C9AFF',
+        backgroundColor: '#0052CC',
+        borderWidth: 3,
+        width: 134,
+        height: 134,
+        flex: 0
     },
 
     'ringing__content': {
+        marginTop: 0,
         alignItems: 'center',
         flex: 0,
-        flexDirection: 'column',
-        justifyContent: 'center'
+        flexDirection: 'column-reverse'
+    },
+
+    'ringing__texts-container': {
+        marginTop: 40,
+        alignItems: 'center',
+        justifyContent: 'center',
+        flex: 0
     },
 
     /**
      * The style of {@code Text} within {@code CalleeInfo}.
      */
-    'ringing__text': {
-        color: ColorPalette.white
+    'ringing__name': {
+        marginTop: 8,
+        color: ColorPalette.white,
+        fontSize: 36,
+        lineHeight: 40
+    },
+
+    /**
+     * The style of {@code Text} within {@code CalleeInfo}.
+     */
+    'ringing__status__text': {
+        marginTop: 8,
+        color: ColorPalette.white,
+        fontSize: 14,
+        lineHeight: 24
     }
 });
