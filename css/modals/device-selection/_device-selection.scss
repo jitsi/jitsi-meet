@@ -103,9 +103,13 @@
         font-size: 14px;
 
         a {
-            color: 4C9AFF;
+            color: #2684FF;
             cursor: pointer;
             text-decoration: none;
+        }
+
+        a:hover {
+            color: #B3D4FF;
         }
     }
 
