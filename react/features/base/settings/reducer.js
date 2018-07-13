@@ -128,7 +128,14 @@ function _initSettings(featureState) {
         const audioOutputDeviceId
             = window.localStorage.getItem('audioOutputDeviceId') || 'default';
 
-        if (audioOutputDeviceId
+        settings = assignIfDefined({
+            audioOutputDeviceId,
+            cameraDeviceId,
+            localFlipX,
+            micDeviceId
+        }, settings);
+
+        if (settings.audioOutputDeviceId
             !== JitsiMeetJS.mediaDevices.getAudioOutputDevice()) {
             JitsiMeetJS.mediaDevices.setAudioOutputDevice(
                 audioOutputDeviceId
@@ -138,13 +145,6 @@ function _initSettings(featureState) {
                     + 'instead.', ex);
             });
         }
-
-        settings = assignIfDefined({
-            audioOutputDeviceId,
-            cameraDeviceId,
-            localFlipX,
-            micDeviceId
-        }, settings);
     }
 
     // Things we stored in profile earlier
