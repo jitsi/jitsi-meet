@@ -647,7 +647,7 @@
     "incomingCall": {
         "answer": "Answer",
         "audioCallTitle": "Incoming call",
-        "decline": "Decline",
+        "decline": "Dismiss",
         "productLabel": "from Jitsi Meet",
         "videoCallTitle": "Incoming video call"
     }
