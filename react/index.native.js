@@ -18,6 +18,7 @@ import { AppRegistry, Linking, NativeModules } from 'react-native';
 
 import { App } from './features/app';
 import { equals } from './features/base/redux';
+import { IncomingCallApp } from './features/mobile/incoming-call';
 
 /**
  * React Native doesn't support specifying props to the main/root component (in
@@ -159,3 +160,6 @@ class Root extends Component {
 
 // Register the main/root Component.
 AppRegistry.registerComponent('App', () => Root);
+
+// Register the incoming call Component.
+AppRegistry.registerComponent('IncomingCallApp', () => IncomingCallApp);
