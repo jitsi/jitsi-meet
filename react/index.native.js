@@ -1,3 +1,5 @@
+// @flow
+
 // FIXME The bundler-related (and the browser-related) polyfills were born at
 // the very early days of prototyping the execution of lib-jitsi-meet on
 // react-native. Today, the feature base/lib-jitsi-meet should not be
@@ -12,12 +14,28 @@ import './features/base/lib-jitsi-meet/native/polyfills-bundler';
 // PropTypes from 'prop-types' instead of 'react'.
 import './features/base/react/prop-types-polyfill';
 
-import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { AppRegistry, Linking, NativeModules } from 'react-native';
 
 import { App } from './features/app';
 import { equals } from './features/base/redux';
+import { IncomingCallApp } from './features/mobile/incoming-call';
+
+type Props = {
+
+    /**
+     * The URL, if any, with which the app was launched.
+     */
+    url: Object | string
+};
+
+type State = {
+
+    /**
+     * The URL, if any, with which the app was launched.
+     */
+    url: ?Object | string
+};
 
 /**
  * React Native doesn't support specifying props to the main/root component (in
@@ -26,51 +44,17 @@ import { equals } from './features/base/redux';
  *
  * @extends Component
  */
-class Root extends Component {
-    /**
-     * {@code Root} component's property types.
-     *
-     * @static
-     */
-    static propTypes = {
-        /**
-         * The URL, if any, with which the app was launched.
-         */
-        url: PropTypes.oneOfType([
-            PropTypes.object,
-            PropTypes.string
-        ]),
-
-        /**
-         * Whether the Welcome page is enabled. If {@code true}, the Welcome
-         * page is rendered when the {@link App} is not at a location (URL)
-         * identifying a Jitsi Meet conference/room.
-         */
-        welcomePageEnabled: PropTypes.bool
-    };
-
+class Root extends Component<Props, State> {
     /**
      * Initializes a new {@code Root} instance.
      *
-     * @param {Object} props - The read-only properties with which the new
+     * @param {Props} props - The read-only properties with which the new
      * instance is to be initialized.
      */
     constructor(props) {
         super(props);
 
-        /**
-         * The initial state of this Component.
-         *
-         * @type {{
-         *     url: object|string
-         * }}
-         */
         this.state = {
-            /**
-             * The URL, if any, with which the app was launched.
-             *
-             * @type {object|string}
-             */
             url: this.props.url
         };
 
@@ -159,3 +143,6 @@ class Root extends Component {
 
 // Register the main/root Component.
 AppRegistry.registerComponent('App', () => Root);
+
+// Register the incoming call Component.
+AppRegistry.registerComponent('IncomingCallApp', () => IncomingCallApp);

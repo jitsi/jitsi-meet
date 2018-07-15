@@ -643,5 +643,12 @@
         "rejected": "Rejected",
         "ignored": "Ignored",
         "expired": "Expired"
+    },
+    "incomingCall": {
+        "answer": "Answer",
+        "audioCallTitle": "Incoming call",
+        "decline": "Dismiss",
+        "productLabel": "from Jitsi Meet",
+        "videoCallTitle": "Incoming video call"
     }
 }
