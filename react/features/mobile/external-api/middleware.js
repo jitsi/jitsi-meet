@@ -1,8 +1,5 @@
 // @flow
 
-import { NativeModules } from 'react-native';
-
-import { getAppProp } from '../../base/app';
 import {
     CONFERENCE_FAILED,
     CONFERENCE_JOINED,
@@ -19,6 +16,8 @@ import { CONNECTION_FAILED } from '../../base/connection';
 import { MiddlewareRegistry } from '../../base/redux';
 import { getSymbolDescription, toURLString } from '../../base/util';
 import { ENTER_PICTURE_IN_PICTURE } from '../picture-in-picture';
+
+import { sendEvent } from './functions';
 
 /**
  * Middleware that captures Redux actions and uses the ExternalAPI module to
@@ -66,13 +65,13 @@ MiddlewareRegistry.register(store => next => action => {
         break;
 
     case ENTER_PICTURE_IN_PICTURE:
-        _sendEvent(store, getSymbolDescription(type), /* data */ {});
+        sendEvent(store, getSymbolDescription(type), /* data */ {});
         break;
 
     case LOAD_CONFIG_ERROR: {
         const { error, locationURL } = action;
 
-        _sendEvent(
+        sendEvent(
             store,
             getSymbolDescription(type),
             /* data */ {
@@ -128,7 +127,7 @@ function _maybeTriggerEarlyConferenceWillJoin(store, action) {
     const { locationURL } = store.getState()['features/base/connection'];
     const { room } = action;
 
-    isRoomValid(room) && locationURL && _sendEvent(
+    isRoomValid(room) && locationURL && sendEvent(
         store,
         getSymbolDescription(CONFERENCE_WILL_JOIN),
         /* data */ {
@@ -161,7 +160,7 @@ function _sendConferenceEvent(
     }
 
     _swallowEvent(store, action, data)
-        || _sendEvent(store, getSymbolDescription(type), data);
+        || sendEvent(store, getSymbolDescription(type), data);
 }
 
 /**
@@ -185,35 +184,13 @@ function _sendConferenceFailedOnConnectionError(store, action) {
             // If there's any conference in the  base/conference state then the
             // base/conference feature is supposed to emit a failure.
             conference => conference.getConnection() !== connection)
-        && _sendEvent(
+        && sendEvent(
         store,
         getSymbolDescription(CONFERENCE_FAILED),
         /* data */ {
             url: toURLString(locationURL),
             error: action.error.name
         });
-}
-
-/**
- * Sends a specific event to the native counterpart of the External API. Native
- * apps may listen to such events via the mechanisms provided by the (native)
- * mobile Jitsi Meet SDK.
- *
- * @param {Object} store - The redux store.
- * @param {string} name - The name of the event to send.
- * @param {Object} data - The details/specifics of the event to send determined
- * by/associated with the specified {@code name}.
- * @private
- * @returns {void}
- */
-function _sendEvent(store: Object, name: string, data: Object) {
-    // The JavaScript App needs to provide uniquely identifying information to
-    // the native ExternalAPI module so that the latter may match the former to
-    // the native JitsiMeetView which hosts it.
-    const externalAPIScope = getAppProp(store, 'externalAPIScope');
-
-    externalAPIScope
-        && NativeModules.ExternalAPI.sendEvent(name, data, externalAPIScope);
 }
 
 /**
