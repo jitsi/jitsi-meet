@@ -22,6 +22,7 @@ export default class ToolboxItem extends AbstractToolboxItem<Props> {
     _renderItem() {
         const {
             disabled,
+            elementAfter,
             onClick,
             showLabel,
             tooltipPosition
@@ -41,6 +42,7 @@ export default class ToolboxItem extends AbstractToolboxItem<Props> {
                 { showLabel && <span>
                     { this.label }
                 </span> }
+                { elementAfter }
             </Fragment>
         );
 
