@@ -157,20 +157,20 @@ class RecordingController {
      * UI it wants to display a notice. Keeps {@code RecordingController}
      * decoupled from UI.
      */
-    onNotify: ?(string) => void;
+    _onNotify: ?(messageKey: string, messageParams?: Object) => void;
 
     /**
      * FIXME: callback function for the {@code RecordingController} to notify
      * UI it wants to display a warning. Keeps {@code RecordingController}
      * decoupled from UI.
      */
-    onWarning: ?(string) => void;
+    _onWarning: ?(messageKey: string, messageParams?: Object) => void;
 
     /**
      * FIXME: callback function for the {@code RecordingController} to notify
      * UI that the local recording state has changed.
      */
-    onStateChanged: ?(boolean) => void;
+    _onStateChanged: ?(boolean) => void;
 
     /**
      * Constructor.
@@ -215,6 +215,36 @@ class RecordingController {
     }
 
     /**
+     * Sets the event handler for {@code onStateChanged}.
+     *
+     * @param {Function} delegate - The event handler.
+     * @returns {void}
+     */
+    set onStateChanged(delegate: Function) {
+        this._onStateChanged = delegate;
+    }
+
+    /**
+     * Sets the event handler for {@code onNotify}.
+     *
+     * @param {Function} delegate - The event handler.
+     * @returns {void}
+     */
+    set onNotify(delegate: Function) {
+        this._onNotify = delegate;
+    }
+
+    /**
+     * Sets the event handler for {@code onWarning}.
+     *
+     * @param {Function} delegate - The event handler.
+     * @returns {void}
+     */
+    set onWarning(delegate: Function) {
+        this._onWarning = delegate;
+    }
+
+    /**
      * Signals the participants to start local recording.
      *
      * @returns {void}
@@ -229,12 +259,8 @@ class RecordingController {
                     format: this._format
                 }
             });
-        } else {
-            const message = i18next.t('localRecording.messages.notModerator');
-
-            if (this.onWarning) {
-                this.onWarning(message);
-            }
+        } else if (this._onWarning) {
+            this._onWarning('localRecording.messages.notModerator');
         }
     }
 
@@ -252,13 +278,8 @@ class RecordingController {
                         sessionToken: this._currentSessionToken
                     }
                 });
-            } else {
-                const message
-                    = i18next.t('localRecording.messages.notModerator');
-
-                if (this.onWarning) {
-                    this.onWarning(message);
-                }
+            } else if (this._onWarning) {
+                this._onWarning('localRecording.messages.notModerator');
             }
         }
     }
@@ -469,13 +490,12 @@ class RecordingController {
             .then(() => {
                 this._changeState(ControllerState.RECORDING);
                 logger.log('Local recording engaged.');
-                const message = i18next.t('localRecording.messages.engaged');
 
-                if (this.onNotify) {
-                    this.onNotify(message);
+                if (this._onNotify) {
+                    this._onNotify('localRecording.messages.engaged');
                 }
-                if (this.onStateChanged) {
-                    this.onStateChanged(true);
+                if (this._onStateChanged) {
+                    this._onStateChanged(true);
                 }
                 this._updateStats();
             })
@@ -505,19 +525,19 @@ class RecordingController {
                     logger.log('Local recording unengaged.');
                     this.downloadRecordedData(token);
 
-                    const message
-                        = i18next.t(this._conference.isModerator()
+                    const messageKey
+                        = this._conference.isModerator()
                             ? 'localRecording.messages.finishedModerator'
-                            : 'localRecording.messages.finished',
-                            {
-                                token
-                            });
+                            : 'localRecording.messages.finished';
+                    const messageParams = {
+                        token
+                    };
 
-                    if (this.onNotify) {
-                        this.onNotify(message);
+                    if (this._onNotify) {
+                        this._onNotify(messageKey, messageParams);
                     }
-                    if (this.onStateChanged) {
-                        this.onStateChanged(false);
+                    if (this._onStateChanged) {
+                        this._onStateChanged(false);
                     }
                     this._updateStats();
                 })

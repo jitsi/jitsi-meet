@@ -1,6 +1,6 @@
 /* @flow */
 
-import { APP_WILL_MOUNT, APP_WILL_UNMOUNT } from '../app';
+import { APP_WILL_MOUNT, APP_WILL_UNMOUNT } from '../base/app';
 import { CONFERENCE_JOINED } from '../base/conference';
 import { i18next } from '../base/i18n';
 import { MiddlewareRegistry } from '../base/redux';
@@ -32,17 +32,17 @@ MiddlewareRegistry.register(({ getState, dispatch }) => next => action => {
             }
         };
 
-        recordingController.onWarning = function(message) {
+        recordingController.onWarning = function(messageKey, messageParams) {
             dispatch(showNotification({
                 title: i18next.t('localRecording.localRecording'),
-                description: message
+                description: i18next.t(messageKey, messageParams)
             }, 10000));
         };
 
-        recordingController.onNotify = function(message) {
+        recordingController.onNotify = function(messageKey, messageParams) {
             dispatch(showNotification({
                 title: i18next.t('localRecording.localRecording'),
-                description: message
+                description: i18next.t(messageKey, messageParams)
             }, 10000));
         };
         break;
