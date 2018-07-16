@@ -82,6 +82,40 @@ function wrap_async_run(event,handler)
     return true;
 end
 
+function async_handler_wrapper(event, handler)
+    -- Grab a local response so that we can send the http response when
+    -- the handler is done.
+    local response = event.response;
+    local async_func = runner(
+        function (event)
+            local result = handler(event)
+
+            -- If there is a status code in the result from the
+            -- wrapped handler then add it to the response.
+            if tonumber(result.status_code) ~= nil then
+                response.status_code = result.status_code
+            end
+
+            -- If there are headers in the result from the
+            -- wrapped handler then add them to the response.
+            if result.headers ~= nil then
+                response.headers = result.headers
+            end
+
+            -- Send the response to the waiting http client with
+            -- or without the body from the wrapped handler.
+            if result.body ~= nil then
+                response:send(result.body)
+            else
+                response:send();
+            end
+        end
+    )
+    async_func:run(event)
+    -- return true to keep the client http connection open.
+    return true;
+end
+
 --- Updates presence stanza, by adding identity node
 -- @param stanza the presence stanza
 -- @param user the user to which presence we are updating identity
@@ -158,6 +192,7 @@ return {
     is_feature_allowed = is_feature_allowed;
     get_room_from_jid = get_room_from_jid;
     wrap_async_run = wrap_async_run;
+    async_handler_wrapper = async_handler_wrapper;
     room_jid_match_rewrite = room_jid_match_rewrite;
     update_presence_identity = update_presence_identity;
 };
