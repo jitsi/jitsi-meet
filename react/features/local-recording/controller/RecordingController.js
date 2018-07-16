@@ -325,8 +325,7 @@ class RecordingController {
                 };
             });
 
-        // transform into a dictionary,
-        // for consistent ordering
+        // transform into a dictionary for consistent ordering
         const result = {};
 
         for (let i = 0; i < members.length; ++i) {
