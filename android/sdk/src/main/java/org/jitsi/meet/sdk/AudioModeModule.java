@@ -57,7 +57,10 @@ import java.util.Set;
  * Before a call has started and after it has ended the
  * {@code AudioModeModule.DEFAULT} mode should be used.
  */
-class AudioModeModule extends ReactContextBaseJavaModule implements AudioManager.OnAudioFocusChangeListener {
+class AudioModeModule
+    extends ReactContextBaseJavaModule
+    implements AudioManager.OnAudioFocusChangeListener {
+
     /**
      * Constants representing the audio mode.
      * - DEFAULT: Used before and after every call. It represents the default

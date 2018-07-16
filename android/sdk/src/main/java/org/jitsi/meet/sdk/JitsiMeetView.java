@@ -30,13 +30,15 @@ import java.lang.reflect.Method;
 import java.net.URL;
 import java.util.Map;
 
-public class JitsiMeetView extends BaseReactView {
+public class JitsiMeetView
+    extends BaseReactView<JitsiMeetViewListener> {
+
     /**
      * The {@code Method}s of {@code JitsiMeetViewListener} by event name i.e.
      * redux action types.
      */
     private static final Map<String, Method> LISTENER_METHODS
-        = ListenerUtils.slurpListenerMethods(JitsiMeetViewListener.class);
+        = ListenerUtils.mapListenerMethods(JitsiMeetViewListener.class);
 
     /**
      * The {@link Log} tag which identifies the source of the log messages of
@@ -83,12 +85,6 @@ public class JitsiMeetView extends BaseReactView {
     private final InviteController inviteController;
 
     /**
-     * {@link JitsiMeetViewListener} instance for reporting events occurring in
-     * Jitsi Meet.
-     */
-    private JitsiMeetViewListener listener;
-
-    /**
      * Whether Picture-in-Picture is enabled. If {@code null}, defaults to
      * {@code true} iff the Android platform supports Picture-in-Picture
      * natively.
@@ -125,7 +121,7 @@ public class JitsiMeetView extends BaseReactView {
      * page.
      */
     public void enterPictureInPicture() {
-        if (getPictureInPictureEnabled() && getURL() != null) {
+        if (isPictureInPictureEnabled() && getURL() != null) {
             PictureInPictureModule pipModule
                 = ReactInstanceManagerHolder.getNativeModule(
                 PictureInPictureModule.class);
@@ -167,31 +163,6 @@ public class JitsiMeetView extends BaseReactView {
     }
 
     /**
-     * Gets the {@link JitsiMeetViewListener} set on this {@code JitsiMeetView}.
-     *
-     * @return The {@code JitsiMeetViewListener} set on this
-     * {@code JitsiMeetView}.
-     */
-    public JitsiMeetViewListener getListener() {
-        return listener;
-    }
-
-    /**
-     * Gets whether Picture-in-Picture is enabled. Picture-in-Picture is
-     * natively supported on Android API >= 26 (Oreo), so it should not be
-     * enabled on older platform versions.
-     *
-     * @return If Picture-in-Picture is enabled, {@code true}; {@code false},
-     * otherwise.
-     */
-    public boolean getPictureInPictureEnabled() {
-        return
-            PictureInPictureModule.isPictureInPictureSupported()
-                && (pictureInPictureEnabled == null
-                    || pictureInPictureEnabled);
-    }
-
-    /**
      * Gets the URL of the current conference.
      *
      * XXX The method is meant for internal purposes only at the time of this
@@ -205,6 +176,21 @@ public class JitsiMeetView extends BaseReactView {
     }
 
     /**
+     * Gets whether Picture-in-Picture is enabled. Picture-in-Picture is
+     * natively supported on Android API >= 26 (Oreo), so it should not be
+     * enabled on older platform versions.
+     *
+     * @return If Picture-in-Picture is enabled, {@code true}; {@code false},
+     * otherwise.
+     */
+    public boolean isPictureInPictureEnabled() {
+        return
+            PictureInPictureModule.isPictureInPictureSupported()
+                && (pictureInPictureEnabled == null
+                    || pictureInPictureEnabled);
+    }
+
+    /**
      * Gets whether the Welcome page is enabled. If {@code true}, the Welcome
      * page is rendered when this {@code JitsiMeetView} is not at a URL
      * identifying a Jitsi Meet conference/room.
@@ -212,7 +198,7 @@ public class JitsiMeetView extends BaseReactView {
      * @return {@code true} if the Welcome page is enabled; otherwise,
      * {@code false}.
      */
-    public boolean getWelcomePageEnabled() {
+    public boolean isWelcomePageEnabled() {
         return welcomePageEnabled;
     }
 
@@ -261,7 +247,7 @@ public class JitsiMeetView extends BaseReactView {
         // pictureInPictureEnabled
         props.putBoolean(
             "pictureInPictureEnabled",
-            getPictureInPictureEnabled());
+            isPictureInPictureEnabled());
 
         // url
         if (urlObject != null) {
@@ -334,8 +320,9 @@ public class JitsiMeetView extends BaseReactView {
     /**
      * Handler for {@link ExternalAPIModule} events.
      *
-     * @param name - Name of the event.
-     * @param data - Event data.
+     * @param name The name of the event.
+     * @param data The details/specifics of the event to send determined
+     * by/associated with the specified {@code name}.
      */
     @Override
     public void onExternalAPIEvent(String name, ReadableMap data) {
@@ -346,11 +333,7 @@ public class JitsiMeetView extends BaseReactView {
         // UI thread.
         maybeSetViewURL(name, data);
 
-        JitsiMeetViewListener listener = getListener();
-        if (listener != null) {
-            ListenerUtils.runListenerMethod(
-                listener, LISTENER_METHODS, name, data);
-        }
+        onExternalAPIEvent(LISTENER_METHODS, name, data);
     }
 
     /**
@@ -364,17 +347,6 @@ public class JitsiMeetView extends BaseReactView {
      */
     public void setDefaultURL(URL defaultURL) {
         this.defaultURL = defaultURL;
-    }
-
-    /**
-     * Sets a specific {@link JitsiMeetViewListener} on this
-     * {@code JitsiMeetView}.
-     *
-     * @param listener The {@code JitsiMeetViewListener} to set on this
-     * {@code JitsiMeetView}.
-     */
-    public void setListener(JitsiMeetViewListener listener) {
-        this.listener = listener;
     }
 
     /**

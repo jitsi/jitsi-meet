@@ -41,7 +41,9 @@ import java.net.URL;
  * hooked to the React Native subsystem via proxy calls through the
  * {@code JitsiMeetView} static methods.
  */
-public class JitsiMeetActivity extends AppCompatActivity {
+public class JitsiMeetActivity
+    extends AppCompatActivity {
+
     /**
      * The request code identifying requests for the permission to draw on top
      * of other apps. The value must be 16-bit and is arbitrarily chosen here.
@@ -96,25 +98,6 @@ public class JitsiMeetActivity extends AppCompatActivity {
     }
 
     /**
-     *
-     * @see JitsiMeetView#getPictureInPictureEnabled()
-     */
-    public boolean getPictureInPictureEnabled() {
-        return
-            view == null
-                ? pictureInPictureEnabled
-                : view.getPictureInPictureEnabled();
-    }
-
-    /**
-     *
-     * @see JitsiMeetView#getWelcomePageEnabled()
-     */
-    public boolean getWelcomePageEnabled() {
-        return view == null ? welcomePageEnabled : view.getWelcomePageEnabled();
-    }
-
-    /**
      * Initializes the {@link #view} of this {@code JitsiMeetActivity} with a
      * new {@link JitsiMeetView} instance.
      */
@@ -153,6 +136,25 @@ public class JitsiMeetActivity extends AppCompatActivity {
     }
 
     /**
+     *
+     * @see JitsiMeetView#isPictureInPictureEnabled()
+     */
+    public boolean isPictureInPictureEnabled() {
+        return
+            view == null
+                ? pictureInPictureEnabled
+                : view.isPictureInPictureEnabled();
+    }
+
+    /**
+     *
+     * @see JitsiMeetView#isWelcomePageEnabled()
+     */
+    public boolean isWelcomePageEnabled() {
+        return view == null ? welcomePageEnabled : view.isWelcomePageEnabled();
+    }
+
+    /**
      * Loads the given URL and displays the conference. If the specified URL is
      * null, the welcome page is displayed instead.
      *
@@ -177,7 +179,7 @@ public class JitsiMeetActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        if (!ReactActivityLifecycleAdapter.onBackPressed()) {
+        if (!ReactActivityLifecycleCallbacks.onBackPressed()) {
             // JitsiMeetView didn't handle the invocation of the back button.
             // Generally, an Activity extender would very likely want to invoke
             // Activity#onBackPressed(). For the sake of consistency with
@@ -220,7 +222,7 @@ public class JitsiMeetActivity extends AppCompatActivity {
             view = null;
         }
 
-        ReactActivityLifecycleAdapter.onHostDestroy(this);
+        ReactActivityLifecycleCallbacks.onHostDestroy(this);
     }
 
     // ReactAndroid/src/main/java/com/facebook/react/ReactActivity.java
@@ -255,7 +257,7 @@ public class JitsiMeetActivity extends AppCompatActivity {
             return;
         }
 
-        ReactActivityLifecycleAdapter.onNewIntent(intent);
+        ReactActivityLifecycleCallbacks.onNewIntent(intent);
     }
 
     @Override
@@ -263,14 +265,14 @@ public class JitsiMeetActivity extends AppCompatActivity {
         super.onResume();
 
         defaultBackButtonImpl = new DefaultHardwareBackBtnHandlerImpl(this);
-        ReactActivityLifecycleAdapter.onHostResume(this, defaultBackButtonImpl);
+        ReactActivityLifecycleCallbacks.onHostResume(this, defaultBackButtonImpl);
     }
 
     @Override
     public void onStop() {
         super.onStop();
 
-        ReactActivityLifecycleAdapter.onHostPause(this);
+        ReactActivityLifecycleCallbacks.onHostPause(this);
         defaultBackButtonImpl = null;
     }
 

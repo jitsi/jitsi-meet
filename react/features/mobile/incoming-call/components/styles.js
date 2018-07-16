@@ -1,7 +1,4 @@
-import {
-    ColorPalette,
-    createStyleSheet
-} from '../../../base/styles';
+import { ColorPalette, createStyleSheet } from '../../../base/styles';
 
 export const AVATAR_BORDER_GRADIENT = [ '#4C9AFF', '#0052CC' ];
 
@@ -9,16 +6,16 @@ export const BACKGROUND_OVERLAY_GRADIENT = [ '#0052CC', '#4C9AFF' ];
 
 const BUTTON_SIZE = 56;
 
-export const CALLER_AVATAR_SIZE = 128;
-
 const CALLER_AVATAR_BORDER_WIDTH = 3;
+
+export const CALLER_AVATAR_SIZE = 128;
 
 const CALLER_AVATAR_CIRCLE_SIZE
     = CALLER_AVATAR_SIZE + (2 * CALLER_AVATAR_BORDER_WIDTH);
 
-const PAGE_PADDING = 48;
-
 const LINE_SPACING = 8;
+
+const PAGE_PADDING = 48;
 
 const _icon = {
     alignSelf: 'center',
@@ -58,9 +55,9 @@ export default createStyleSheet({
     },
 
     avatar: {
-        position: 'absolute',
         marginLeft: CALLER_AVATAR_BORDER_WIDTH,
-        marginTop: CALLER_AVATAR_BORDER_WIDTH
+        marginTop: CALLER_AVATAR_BORDER_WIDTH,
+        position: 'absolute'
     },
 
     avatarBorder: {

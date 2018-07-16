@@ -205,13 +205,13 @@ which displays a single `JitsiMeetView`.
 
 See JitsiMeetView.getDefaultURL.
 
-#### getPictureInPictureEnabled()
+#### isPictureInPictureEnabled()
 
-See JitsiMeetView.getPictureInPictureEnabled.
+See JitsiMeetView.isPictureInPictureEnabled.
 
-#### getWelcomePageEnabled()
+#### isWelcomePageEnabled()
 
-See JitsiMeetView.getWelcomePageEnabled.
+See JitsiMeetView.isWelcomePageEnabled.
 
 #### loadURL(URL)
 
@@ -250,13 +250,13 @@ if set to `null`, the default built in JavaScript is used: https://meet.jit.si.
 
 Returns the `JitsiMeetViewListener` instance attached to the view.
 
-#### getPictureInPictureEnabled()
+#### isPictureInPictureEnabled()
 
 Returns `true` if Picture-in-Picture is enabled; `false`, otherwise. If not
 explicitly set (by a preceding `setPictureInPictureEnabled` call), defaults to
 `true` if the platform supports Picture-in-Picture natively; `false`, otherwise.
 
-#### getWelcomePageEnabled()
+#### isWelcomePageEnabled()
 
 Returns true if the Welcome page is enabled; otherwise, false. If false, a black
 empty view will be rendered when not in a conference. Defaults to false.
@@ -316,7 +316,7 @@ effect.
 
 #### setWelcomePageEnabled(boolean)
 
-Sets whether the Welcome page is enabled. See `getWelcomePageEnabled` for more
+Sets whether the Welcome page is enabled. See `isWelcomePageEnabled` for more
 information.
 
 NOTE: Must be called (if at all) before `loadURL`/`loadURLString` for it to take

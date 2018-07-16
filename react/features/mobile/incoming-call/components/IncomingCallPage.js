@@ -24,7 +24,7 @@ type Props = {
     /**
      * Caller's avatar URL.
      */
-    _callerAvatarUrl: string,
+    _callerAvatarURL: string,
 
     /**
      * Caller's name.
@@ -63,7 +63,7 @@ class IncomingCallPage extends Component<Props> {
             <View style = { styles.pageContainer }>
                 <View style = { styles.backgroundAvatar }>
                     <Image
-                        source = {{ uri: this.props._callerAvatarUrl }}
+                        source = {{ uri: this.props._callerAvatarURL }}
                         style = { styles.backgroundAvatarImage } />
                 </View>
                 <LinearGradient
@@ -82,27 +82,6 @@ class IncomingCallPage extends Component<Props> {
                 </Text>
                 { this._renderCallerAvatar() }
                 { this._renderButtons() }
-            </View>
-        );
-    }
-
-    /**
-     * Renders caller avatar.
-     *
-     * @private
-     * @returns {React$Node}
-     */
-    _renderCallerAvatar() {
-        return (
-            <View style = { styles.avatarContainer }>
-                <LinearGradient
-                    colors = { AVATAR_BORDER_GRADIENT }
-                    style = { styles.avatarBorder } />
-                <View style = { styles.avatar }>
-                    <Avatar
-                        size = { CALLER_AVATAR_SIZE }
-                        uri = { this.props._callerAvatarUrl } />
-                </View>
             </View>
         );
     }
@@ -135,6 +114,27 @@ class IncomingCallPage extends Component<Props> {
             </View>
         );
     }
+
+    /**
+     * Renders caller avatar.
+     *
+     * @private
+     * @returns {React$Node}
+     */
+    _renderCallerAvatar() {
+        return (
+            <View style = { styles.avatarContainer }>
+                <LinearGradient
+                    colors = { AVATAR_BORDER_GRADIENT }
+                    style = { styles.avatarBorder } />
+                <View style = { styles.avatar }>
+                    <Avatar
+                        size = { CALLER_AVATAR_SIZE }
+                        uri = { this.props._callerAvatarURL } />
+                </View>
+            </View>
+        );
+    }
 }
 
 /**
@@ -144,8 +144,8 @@ class IncomingCallPage extends Component<Props> {
  * @param {Object} ownProps - The component's own props.
  * @private
  * @returns {{
+ *     _callerAvatarURL: string,
  *     _callerName: string,
- *     _callerAvatarUrl: string,
  *     _hasVideo: boolean
  * }}
  */
@@ -159,7 +159,7 @@ function _mapStateToProps(state) {
          * @private
          * @type {string}
          */
-        _callerAvatarUrl: caller.avatarUrl,
+        _callerAvatarURL: caller.avatarUrl,
 
         /**
          * The caller's name.

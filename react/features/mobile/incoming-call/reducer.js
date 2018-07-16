@@ -1,6 +1,6 @@
-/* @flow */
+// @flow
 
-import { assign, ReducerRegistry } from '../../base/redux';
+import { ReducerRegistry, set } from '../../base/redux';
 
 import {
     INCOMING_CALL_ANSWERED,
@@ -13,13 +13,10 @@ ReducerRegistry.register(
         switch (action.type) {
         case INCOMING_CALL_ANSWERED:
         case INCOMING_CALL_DECLINED:
-            return assign(state, {
-                caller: undefined
-            });
+            return set(state, 'caller', undefined);
+
         case INCOMING_CALL_RECEIVED:
-            return assign(state, {
-                caller: action.caller
-            });
+            return set(state, 'caller', action.caller);
         }
 
         return state;

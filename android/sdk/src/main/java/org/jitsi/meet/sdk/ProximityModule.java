@@ -31,7 +31,9 @@ import com.facebook.react.bridge.UiThreadUtil;
  * object it will dim the screen and disable touch controls. The functionality
  * is used with the conference audio-only mode.
  */
-class ProximityModule extends ReactContextBaseJavaModule {
+class ProximityModule
+    extends ReactContextBaseJavaModule {
+
     /**
      * The name of {@code ProximityModule} to be used in the React Native
      * bridge.

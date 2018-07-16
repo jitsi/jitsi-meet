@@ -28,7 +28,7 @@ import com.facebook.react.common.LifecycleState;
 import java.util.Arrays;
 import java.util.List;
 
-public class ReactInstanceManagerHolder {
+class ReactInstanceManagerHolder {
     /**
      * React Native bridge. The instance manager allows embedding applications
      * to create multiple root views off the same JavaScript bundle.

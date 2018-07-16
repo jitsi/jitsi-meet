@@ -21,6 +21,9 @@ import { App } from './features/app';
 import { equals } from './features/base/redux';
 import { IncomingCallApp } from './features/mobile/incoming-call';
 
+/**
+ * The type of the React {@code Component} props of {@link Root}.
+ */
 type Props = {
 
     /**
@@ -29,6 +32,9 @@ type Props = {
     url: Object | string
 };
 
+/**
+ * The type of the React {@code Component} state of {@link Root}.
+ */
 type State = {
 
     /**
@@ -141,8 +147,8 @@ class Root extends Component<Props, State> {
     }
 }
 
-// Register the main/root Component.
+// Register the main/root Component of JitsiMeetView.
 AppRegistry.registerComponent('App', () => Root);
 
-// Register the incoming call Component.
+// Register the main/root Component of IncomingCallView.
 AppRegistry.registerComponent('IncomingCallApp', () => IncomingCallApp);

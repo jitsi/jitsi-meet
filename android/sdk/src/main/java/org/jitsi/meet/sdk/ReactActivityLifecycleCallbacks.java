@@ -1,3 +1,19 @@
+/*
+ * Copyright @ 2018-present Atlassian Pty Ltd
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package org.jitsi.meet.sdk;
 
 import android.app.Activity;
@@ -7,18 +23,19 @@ import com.facebook.react.ReactInstanceManager;
 import com.facebook.react.modules.core.DefaultHardwareBackBtnHandler;
 
 /**
- * Helper class to encapsulate the work which needs to be done on Activity
- * lifecycle methods in order for the React side to be aware of it.
+ * Helper class to encapsulate the work which needs to be done on
+ * {@link Activity} lifecycle methods in order for the React side to be aware of
+ * it.
  */
-class ReactActivityLifecycleAdapter {
+public class ReactActivityLifecycleCallbacks {
     /**
-     * Activity lifecycle method which should be called from
-     * {@code Activity.onBackPressed} so we can do the required internal
+     * {@link Activity} lifecycle method which should be called from
+     * {@link Activity#onBackPressed} so we can do the required internal
      * processing.
      *
      * @return {@code true} if the back-press was processed; {@code false},
-     * otherwise. If {@code false}, the application should call the parent's
-     * implementation.
+     * otherwise. If {@code false}, the application should call the
+     * {@code super}'s implementation.
      */
     public static boolean onBackPressed() {
         ReactInstanceManager reactInstanceManager
@@ -33,8 +50,8 @@ class ReactActivityLifecycleAdapter {
     }
 
     /**
-     * Activity lifecycle method which should be called from
-     * {@code Activity.onDestroy} so we can do the required internal
+     * {@link Activity} lifecycle method which should be called from
+     * {@code Activity#onDestroy} so we can do the required internal
      * processing.
      *
      * @param activity {@code Activity} being destroyed.
@@ -49,8 +66,8 @@ class ReactActivityLifecycleAdapter {
     }
 
     /**
-     * Activity lifecycle method which should be called from
-     * {@code Activity.onPause} so we can do the required internal processing.
+     * {@link Activity} lifecycle method which should be called from
+     * {@code Activity#onPause} so we can do the required internal processing.
      *
      * @param activity {@code Activity} being paused.
      */
@@ -64,8 +81,8 @@ class ReactActivityLifecycleAdapter {
     }
 
     /**
-     * Activity lifecycle method which should be called from
-     * {@code Activity.onResume} so we can do the required internal processing.
+     * {@link Activity} lifecycle method which should be called from
+     * {@code Activity#onResume} so we can do the required internal processing.
      *
      * @param activity {@code Activity} being resumed.
      */
@@ -74,16 +91,16 @@ class ReactActivityLifecycleAdapter {
     }
 
     /**
-     * Activity lifecycle method which should be called from
-     * {@code Activity.onResume} so we can do the required internal processing.
+     * {@link Activity} lifecycle method which should be called from
+     * {@code Activity#onResume} so we can do the required internal processing.
      *
      * @param activity {@code Activity} being resumed.
-     * @param defaultBackButtonImpl a {@code DefaultHardwareBackBtnHandler} to
-     * handle invoking the back button if no {@code JitsiMeetView} handles it.
+     * @param defaultBackButtonImpl a {@link DefaultHardwareBackBtnHandler} to
+     * handle invoking the back button if no {@link BaseReactView} handles it.
      */
     public static void onHostResume(
-        Activity activity,
-        DefaultHardwareBackBtnHandler defaultBackButtonImpl) {
+            Activity activity,
+            DefaultHardwareBackBtnHandler defaultBackButtonImpl) {
         ReactInstanceManager reactInstanceManager
             = ReactInstanceManagerHolder.getReactInstanceManager();
 
@@ -93,8 +110,8 @@ class ReactActivityLifecycleAdapter {
     }
 
     /**
-     * Activity lifecycle method which should be called from
-     * {@code Activity.onNewIntent} so we can do the required internal
+     * {@link Activity} lifecycle method which should be called from
+     * {@code Activity#onNewIntent} so we can do the required internal
      * processing. Note that this is only needed if the activity's "launchMode"
      * was set to "singleTask". This is required for deep linking to work once
      * the application is already running.
@@ -109,5 +126,4 @@ class ReactActivityLifecycleAdapter {
             reactInstanceManager.onNewIntent(intent);
         }
     }
-
 }

@@ -33,7 +33,8 @@ import java.util.Map;
 import java.util.UUID;
 
 /**
- * Controller object used by native code to query and submit user selections for the user invitation flow.
+ * Controller object used by native code to query and submit user selections for
+ * the user invitation flow.
  */
 public class AddPeopleController {
 
@@ -44,17 +45,18 @@ public class AddPeopleController {
     private AddPeopleControllerListener listener;
 
     /**
-     * Local cache of search query results.  Used to re-hydrate the list
-     * of selected items based on their ids passed to inviteById
-     * in order to pass the full item maps back to the JitsiMeetView during submission.
+     * Local cache of search query results. Used to re-hydrate the list of
+     * selected items based on their ids passed to inviteById in order to pass
+     * the full item maps back to the JitsiMeetView during submission.
      */
     private final Map<String, ReadableMap> items = new HashMap<>();
 
     private final WeakReference<InviteController> owner;
 
     private final WeakReference<ReactApplicationContext> reactContext;
+
     /**
-     * Randomly generated UUID, used for identification in the InviteModule
+     * Randomly generated UUID, used for identification in the InviteModule.
      */
     private final String uuid = UUID.randomUUID().toString();
 
@@ -158,10 +160,10 @@ public class AddPeopleController {
     }
 
     /**
-     * Caches results received by the search into a local map for use
-     * later when the items are submitted.  Submission requires the full
-     * map of information, but only the IDs are returned back to the delegate.
-     * Using this map means we don't have to send the whole map back to the delegate.
+     * Caches results received by the search into a local map for use later when
+     * the items are submitted.  Submission requires the full map of
+     * information, but only the IDs are returned back to the delegate. Using
+     * this map means we don't have to send the whole map back to the delegate.
      *
      * @param results
      * @param query
@@ -179,10 +181,15 @@ public class AddPeopleController {
 
                 if(map.hasKey("id")) {
                     items.put(map.getString("id"), map);
-                } else if(map.hasKey("type") && map.getString("type").equals("phone") && map.hasKey("number")) {
+                } else if(map.hasKey("type")
+                        && map.getString("type").equals("phone")
+                        && map.hasKey("number")) {
                     items.put(map.getString("number"), map);
                 } else {
-                    Log.w("AddPeopleController", "Received result without id and that was not a phone number, so not adding it to suggestions: " + map);
+                    Log.w(
+                        "AddPeopleController",
+                        "Received result without id and that was not a phone number, so not adding it to suggestions: "
+                            + map);
                 }
 
                 jvmResults.add(map.toHashMap());

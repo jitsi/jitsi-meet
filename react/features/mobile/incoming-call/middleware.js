@@ -5,14 +5,11 @@ import { getSymbolDescription } from '../../base/util';
 
 import { sendEvent } from '../external-api';
 
-import {
-    INCOMING_CALL_ANSWERED,
-    INCOMING_CALL_DECLINED
-} from './actionTypes';
+import { INCOMING_CALL_ANSWERED, INCOMING_CALL_DECLINED } from './actionTypes';
 
 /**
- * Middleware that captures Redux actions and uses the IncomingCallExternalAPI
- * module to turn them into native events so the application knows about them.
+ * Middleware that captures redux actions and uses the ExternalAPI module to
+ * turn them into native events so the app knows about them.
  *
  * @param {Store} store - The redux store.
  * @returns {Function}

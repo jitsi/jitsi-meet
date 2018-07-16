@@ -22,7 +22,7 @@ public class IncomingCallInfo {
     /**
      * URL for the caller avatar.
      */
-    private final String callerAvatarUrl;
+    private final String callerAvatarURL;
 
     /**
      * Caller's name.
@@ -36,23 +36,25 @@ public class IncomingCallInfo {
 
     public IncomingCallInfo(
             @NonNull String callerName,
-            @NonNull String callerAvatarUrl,
+            @NonNull String callerAvatarURL,
             boolean hasVideo) {
         this.callerName = callerName;
-        this.callerAvatarUrl = callerAvatarUrl;
+        this.callerAvatarURL = callerAvatarURL;
         this.hasVideo = hasVideo;
     }
 
     /**
      * Gets the caller's avatar URL.
+     * 
      * @return - The URL as a string.
      */
-    public String getCallerAvatarUrl() {
-        return callerAvatarUrl;
+    public String getCallerAvatarURL() {
+        return callerAvatarURL;
     }
 
     /**
      * Gets the caller's name.
+     *
      * @return - The caller's name.
      */
     public String getCallerName() {
@@ -61,7 +63,8 @@ public class IncomingCallInfo {
 
     /**
      * Gets whether the call is a video call or not.
-     * @return - True if this call has video, false otherwise.
+     *
+     * @return - {@code true} if this call has video; {@code false}, otherwise.
      */
     public boolean hasVideo() {
         return hasVideo;

@@ -22,7 +22,9 @@ import java.util.Map;
  * Implements {@link JitsiMeetViewListener} so apps don't have to add stubs for
  * all methods in the interface if they are only interested in some.
  */
-public abstract class JitsiMeetViewAdapter implements JitsiMeetViewListener {
+public abstract class JitsiMeetViewAdapter
+    implements JitsiMeetViewListener {
+
     @Override
     public void onConferenceFailed(Map<String, Object> data) {
     }

@@ -20,11 +20,11 @@ import java.util.Map;
 
 /**
  * Interface for listening to events coming from Jitsi Meet, related to
- * {@link IncomingCallView};
+ * {@link IncomingCallView}.
  */
 public interface IncomingCallViewListener {
     /**
-     * Called when the user presses the "answer" button on the
+     * Called when the user presses the "Answer" button on the
      * {@link IncomingCallView}.
      *
      * @param data - Unused at the moment.
@@ -32,7 +32,7 @@ public interface IncomingCallViewListener {
     void onIncomingCallAnswered(Map<String, Object> data);
 
     /**
-     * Called when the user presses the "decline" button on the
+     * Called when the user presses the "Decline" button on the
      * {@link IncomingCallView}.
      *
      * @param data - Unused at the moment.

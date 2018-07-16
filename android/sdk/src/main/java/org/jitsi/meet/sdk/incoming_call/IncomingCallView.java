@@ -28,20 +28,15 @@ import org.jitsi.meet.sdk.ListenerUtils;
 import java.lang.reflect.Method;
 import java.util.Map;
 
+public class IncomingCallView
+    extends BaseReactView<IncomingCallViewListener> {
 
-public class IncomingCallView extends BaseReactView {
     /**
      * The {@code Method}s of {@code JitsiMeetViewListener} by event name i.e.
      * redux action types.
      */
     private static final Map<String, Method> LISTENER_METHODS
-        = ListenerUtils.slurpListenerMethods(IncomingCallViewListener.class);
-
-    /**
-     * {@link IncomingCallViewListener} instance for reporting events occurring
-     * in Jitsi Meet.
-     */
-    private IncomingCallViewListener listener;
+        = ListenerUtils.mapListenerMethods(IncomingCallViewListener.class);
 
     public IncomingCallView(@NonNull Context context) {
         super(context);
@@ -50,27 +45,13 @@ public class IncomingCallView extends BaseReactView {
     /**
      * Handler for {@link ExternalAPIModule} events.
      *
-     * @param name - Name of the event.
-     * @param data - Event data.
+     * @param name The name of the event.
+     * @param data The details/specifics of the event to send determined
+     * by/associated with the specified {@code name}.
      */
     @Override
     public void onExternalAPIEvent(String name, ReadableMap data) {
-        IncomingCallViewListener listener = getListener();
-        if (listener != null) {
-            ListenerUtils.runListenerMethod(
-                listener, LISTENER_METHODS, name, data);
-        }
-    }
-
-    /**
-     * Gets the {@link IncomingCallViewListener} set on this
-     * {@code IncomingCallView}.
-     *
-     * @return The {@code IncomingCallViewListener} set on this
-     * {@code IncomingCallView}.
-     */
-    public IncomingCallViewListener getListener() {
-        return listener;
+        onExternalAPIEvent(LISTENER_METHODS, name, data);
     }
 
     /**
@@ -78,27 +59,15 @@ public class IncomingCallView extends BaseReactView {
      * represents.
      *
      * @param callInfo - {@link IncomingCallInfo} object representing the caller
-     *                 information.
+     * information.
      */
     public void setIncomingCallInfo(IncomingCallInfo callInfo) {
         Bundle props = new Bundle();
 
-        props.putString("callerAvatarUrl", callInfo.getCallerAvatarUrl());
+        props.putString("callerAvatarURL", callInfo.getCallerAvatarURL());
         props.putString("callerName", callInfo.getCallerName());
         props.putBoolean("hasVideo", callInfo.hasVideo());
 
         createReactRootView("IncomingCallApp", props);
     }
-
-    /**
-     * Sets a specific {@link IncomingCallViewListener} on this
-     * {@code IncomingCallView}.
-     *
-     * @param listener The {@code IncomingCallViewListener} to set on this
-     * {@code IncomingCallView}.
-     */
-    public void setListener(IncomingCallViewListener listener) {
-        this.listener = listener;
-    }
-
 }

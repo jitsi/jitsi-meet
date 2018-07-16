@@ -40,10 +40,12 @@ import java.util.Enumeration;
 /**
  * Module exposing WiFi statistics.
  *
- * Gathers rssi, signal in percentage, timestamp and the addresses
- * of the wifi device.
+ * Gathers rssi, signal in percentage, timestamp and the addresses of the wifi
+ * device.
  */
-class WiFiStatsModule extends ReactContextBaseJavaModule {
+class WiFiStatsModule
+    extends ReactContextBaseJavaModule {
+
     /**
      * The name of {@code WiFiStatsModule} to be used in the React Native
      * bridge.
@@ -56,9 +58,8 @@ class WiFiStatsModule extends ReactContextBaseJavaModule {
     static final String TAG = MODULE_NAME;
 
     /**
-     * The scale used for the signal value.
-     * A level of the signal, given in the range
-     * of 0 to SIGNAL_LEVEL_SCALE-1 (both inclusive).
+     * The scale used for the signal value. A level of the signal, given in the
+     * range of 0 to SIGNAL_LEVEL_SCALE-1 (both inclusive).
      */
     public final static int SIGNAL_LEVEL_SCALE = 101;
 
@@ -66,7 +67,7 @@ class WiFiStatsModule extends ReactContextBaseJavaModule {
      * {@link Handler} for running all operations on the main thread.
      */
     private final Handler mainThreadHandler
-            = new Handler(Looper.getMainLooper());
+        = new Handler(Looper.getMainLooper());
 
     /**
      * Initializes a new module instance. There shall be a single instance of
@@ -119,7 +120,6 @@ class WiFiStatsModule extends ReactContextBaseJavaModule {
             @Override
             public void run() {
                 try {
-
                     Context context
                         = getReactApplicationContext().getApplicationContext();
                     WifiManager wifiManager

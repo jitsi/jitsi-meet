@@ -2,12 +2,15 @@
 
 import { connect } from 'react-redux';
 
-import { AbstractButton } from '../../../base/toolbox';
 import { translate } from '../../../base/i18n';
+import { AbstractButton } from '../../../base/toolbox';
 import type { AbstractButtonProps } from '../../../base/toolbox';
 
 import { incomingCallAnswered } from '../actions';
 
+/**
+ * The type of the React {@code Component} props of {@link AnswerButton}.
+ */
 type Props = AbstractButtonProps & {
 
     /**
@@ -17,7 +20,7 @@ type Props = AbstractButtonProps & {
 };
 
 /**
- * An implementation of a button which accepts an incoming call.
+ * An implementation of a button which accepts/answers an incoming call.
  */
 class AnswerButton extends AbstractButton<Props, *> {
     accessibilityLabel = 'incomingCall.answer';
@@ -33,7 +36,6 @@ class AnswerButton extends AbstractButton<Props, *> {
     _handleClick() {
         this.props.dispatch(incomingCallAnswered());
     }
-
 }
 
 export default translate(connect()(AnswerButton));

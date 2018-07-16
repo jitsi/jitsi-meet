@@ -26,12 +26,14 @@ import com.facebook.react.bridge.ReadableMap;
 /**
  * Module implementing an API for sending events from JavaScript to native code.
  */
-class ExternalAPIModule extends ReactContextBaseJavaModule {
+class ExternalAPIModule
+    extends ReactContextBaseJavaModule {
+
     private static final String TAG = ExternalAPIModule.class.getSimpleName();
 
     /**
      * Initializes a new module instance. There shall be a single instance of
-     * this module throughout the lifetime of the application.
+     * this module throughout the lifetime of the app.
      *
      * @param reactContext the {@link ReactApplicationContext} where this module
      * is created.
@@ -60,23 +62,18 @@ class ExternalAPIModule extends ReactContextBaseJavaModule {
      * @param scope
      */
     @ReactMethod
-    public void sendEvent(final String name,
-                          final ReadableMap data,
-                          final String scope) {
+    public void sendEvent(String name, ReadableMap data, String scope) {
         // The JavaScript App needs to provide uniquely identifying information
         // to the native ExternalAPI module so that the latter may match the
         // former to the native BaseReactView which hosts it.
         BaseReactView view = BaseReactView.findViewByExternalAPIScope(scope);
 
-        if (view == null) {
-            return;
-        }
-
-        try {
-            view.onExternalAPIEvent(name, data);
-        } catch(Exception e) {
-            Log.e(TAG, "onExternalAPIEvent: error sending event", e);
+        if (view != null) {
+            try {
+                view.onExternalAPIEvent(name, data);
+            } catch(Exception e) {
+                Log.e(TAG, "onExternalAPIEvent: error sending event", e);
+            }
         }
     }
-
 }
