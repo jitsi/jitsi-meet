@@ -141,6 +141,17 @@ export default class AbstractButton<P: Props, S: *> extends Component<P, S> {
     }
 
     /**
+     * Helper function to be implemented by subclasses, which may return a new
+     * React Element to be appended at the end of the button.
+     *
+     * @protected
+     * @returns {ReactElement|null}
+     */
+    _getElementAfter() {
+        return null;
+    }
+
+    /**
      * Gets the current icon name, taking the toggled state into account. If no
      * toggled icon is provided, the regular icon will also be used in the
      * toggled state.
@@ -243,6 +254,7 @@ export default class AbstractButton<P: Props, S: *> extends Component<P, S> {
         const props = {
             ...this.props,
             accessibilityLabel: this.accessibilityLabel,
+            elementAfter: this._getElementAfter(),
             iconName: this._getIconName(),
             label: this._getLabel(),
             styles: this._getStyles(),
