@@ -180,7 +180,7 @@ const overflowMenuStyles = createStyleSheet({
      * {@code OverflowMenu}.
      */
     label: {
-        flex: 1,
+        flexShrink: 1,
         fontSize: 16,
         marginLeft: 32,
         opacity: 0.90
