@@ -268,6 +268,11 @@ class Toolbox extends Component<Props> {
                 character: 'S',
                 exec: this._onShortcutToggleFullScreen,
                 helpDescription: 'keyboardShortcuts.fullScreen'
+            },
+            this._shouldShowButton('localrecording') && {
+                character: 'L',
+                exec: this._onToolbarToggleLocalRecordingInfoDialog,
+                helpDescription: 'keyboardShortcuts.localRecording'
             }
         ];
 
