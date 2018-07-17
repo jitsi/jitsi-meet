@@ -126,11 +126,13 @@
 
 .dial-in-page {
     align-items: center;
+    box-sizing: border-box;
     display: flex;
     flex-direction: column;
     font-size: 24px;
     height: 100%;
-    justify-content: center;
+    overflow: auto;
+    padding: 25px;
     width: 100%;
 
     .dial-in-numbers-list {
