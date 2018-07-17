@@ -81,6 +81,14 @@ var interfaceConfig = {
     DISABLE_DOMINANT_SPEAKER_INDICATOR: false,
 
     /**
+     * Whether the speech to text transcription subtitles panel is disabled.
+     * If {@code undefined}, defaults to {@code false}.
+     *
+     * @type {boolean}
+     */
+    DISABLE_TRANSCRIPTION_SUBTITLES: false,
+
+    /**
      * Whether the ringing sound in the call/ring overlay is disabled. If
      * {@code undefined}, defaults to {@code false}.
      *

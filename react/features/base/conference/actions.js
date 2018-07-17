@@ -54,7 +54,6 @@ import {
     getCurrentConference,
     sendLocalParticipant
 } from './functions';
-
 import type { Dispatch } from 'redux';
 
 const logger = require('jitsi-meet-logger').getLogger(__filename);
