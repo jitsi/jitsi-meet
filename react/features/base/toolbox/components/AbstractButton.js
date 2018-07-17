@@ -141,8 +141,8 @@ export default class AbstractButton<P: Props, S: *> extends Component<P, S> {
     }
 
     /**
-     * Helper function to be implemented by subclasses, which may return a new
-     * React Element to be appended at the end of the button.
+     * Helper function to be implemented by subclasses, which may return a
+     * new React Element to be appended at the end of the button.
      *
      * @protected
      * @returns {ReactElement|null}
