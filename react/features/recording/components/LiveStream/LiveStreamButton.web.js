@@ -58,8 +58,8 @@ class LiveStreamButton extends AbstractLiveStreamButton<Props> {
     }
 
     /**
-     * Helper function to be implemented by subclasses, which returns a React
-     * Element to display (a beta tag) at the end of the button.
+     * Helper function to be implemented by subclasses, which returns
+     * a React Element to display (a beta tag) at the end of the button.
      *
      * @override
      * @protected
