@@ -1,12 +1,9 @@
 /* @flow */
 
-import InlineDialog from '@atlaskit/inline-dialog';
 import React, { Component } from 'react';
 
 import { translate } from '../../base/i18n';
 import { ToolbarButton } from '../../toolbox';
-
-import LocalRecordingInfoDialog from './LocalRecordingInfoDialog';
 
 /**
  * The type of the React {@code Component} state of
@@ -64,22 +61,12 @@ class LocalRecordingButton extends Component<Props> {
                 ? 'icon-rec toggled' : 'icon-rec'}`;
 
         return (
-            <div className = 'toolbox-button-wth-dialog'>
-                <InlineDialog
-                    content = {
-                        <LocalRecordingInfoDialog />
-                    }
-                    isOpen = { isDialogShown }
-                    onClose = { this._onCloseDialog }
-                    position = { 'top right' }>
-                    <ToolbarButton
-                        accessibilityLabel
-                            = { t('toolbar.accessibilityLabel.localRecording') }
-                        iconName = { iconClasses }
-                        onClick = { this._onClick }
-                        tooltip = { t('localRecording.dialogTitle') } />
-                </InlineDialog>
-            </div>
+            <ToolbarButton
+                accessibilityLabel
+                    = { t('toolbar.accessibilityLabel.localRecording') }
+                iconName = { iconClasses }
+                onClick = { this._onClick }
+                tooltip = { t('localRecording.dialogTitle') } />
         );
     }
 

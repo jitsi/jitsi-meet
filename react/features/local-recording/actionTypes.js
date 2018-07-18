@@ -20,16 +20,6 @@ export const LOCAL_RECORDING_ENGAGED = Symbol('LOCAL_RECORDING_ENGAGED');
 export const LOCAL_RECORDING_UNENGAGED = Symbol('LOCAL_RECORDING_UNENGAGED');
 
 /**
- * Action to show/hide {@code LocalRecordingInfoDialog}.
- *
- * {
- *     type: LOCAL_RECORDING_TOGGLE_DIALOG
- * }
- */
-export const LOCAL_RECORDING_TOGGLE_DIALOG
-    = Symbol('LOCAL_RECORDING_TOGGLE_DIALOG');
-
-/**
  * Action to update {@code LocalRecordingInfoDialog} with stats from all
  * clients.
  *

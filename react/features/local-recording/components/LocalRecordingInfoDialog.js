@@ -4,6 +4,7 @@ import moment from 'moment';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
+import { Dialog } from '../../base/dialog';
 import { translate } from '../../base/i18n';
 import {
     PARTICIPANT_ROLE,
@@ -279,27 +280,32 @@ class LocalRecordingInfoDialog extends Component<Props, State> {
         }
 
         return (
-            <div>
-                <div>
-                    <span className = 'info-label'>
-                        {`${t('localRecording.participantStats')}:`}
-                    </span>
-                </div>
-                { this._renderStats() }
-                <div className = 'info-dialog-action-links'>
-                    <div className = 'info-dialog-action-link'>
-                        { isEngaged ? <a
-                            onClick = { this._onStop }>
-                            { t('localRecording.stop') }
-                        </a>
-                            : <a
-                                onClick = { this._onStart }>
-                                { t('localRecording.start') }
+            <Dialog
+                cancelTitleKey = { 'dialog.close' }
+                submitDisabled = { true }
+                titleKey = 'localRecording.dialogTitle'>
+                <div className = 'local-recording'>
+                    <div>
+                        <span className = 'info-label'>
+                            {`${t('localRecording.participantStats')}:`}
+                        </span>
+                    </div>
+                    { this._renderStats() }
+                    <div className = 'info-dialog-action-links'>
+                        <div className = 'info-dialog-action-link'>
+                            { isEngaged ? <a
+                                onClick = { this._onStop }>
+                                { t('localRecording.stop') }
                             </a>
-                        }
+                                : <a
+                                    onClick = { this._onStart }>
+                                    { t('localRecording.start') }
+                                </a>
+                            }
+                        </div>
                     </div>
                 </div>
-            </div>
+            </Dialog>
         );
     }
 

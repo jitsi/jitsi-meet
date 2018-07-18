@@ -3,7 +3,6 @@
 import {
     LOCAL_RECORDING_ENGAGED,
     LOCAL_RECORDING_UNENGAGED,
-    LOCAL_RECORDING_TOGGLE_DIALOG,
     LOCAL_RECORDING_STATS_UPDATE
 } from './actionTypes';
 
@@ -39,19 +38,6 @@ export function localRecordingEngaged(startTime: Date) {
 export function localRecordingUnengaged() {
     return {
         type: LOCAL_RECORDING_UNENGAGED
-    };
-}
-
-/**
- * Toggles the open/close state of {@code LocalRecordingInfoDialog}.
- *
- * @returns {{
- *     type: LOCAL_RECORDING_TOGGLE_DIALOG
- * }}
- */
-export function toggleLocalRecordingInfoDialog() {
-    return {
-        type: LOCAL_RECORDING_TOGGLE_DIALOG
     };
 }
 

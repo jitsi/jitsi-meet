@@ -4,7 +4,6 @@ import { ReducerRegistry } from '../base/redux';
 import {
     LOCAL_RECORDING_ENGAGED,
     LOCAL_RECORDING_STATS_UPDATE,
-    LOCAL_RECORDING_TOGGLE_DIALOG,
     LOCAL_RECORDING_UNENGAGED
 } from './actionTypes';
 import { recordingController } from './controller';
@@ -24,12 +23,6 @@ ReducerRegistry.register('features/local-recording', (state = {}, action) => {
             ...state,
             isEngaged: false,
             recordingEngagedAt: null
-        };
-    case LOCAL_RECORDING_TOGGLE_DIALOG:
-        return {
-            ...state,
-            showDialog: state.showDialog === undefined
-                || state.showDialog === false
         };
     case LOCAL_RECORDING_STATS_UPDATE:
         return {

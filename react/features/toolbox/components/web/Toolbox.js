@@ -29,8 +29,8 @@ import {
 } from '../../../invite';
 import { openKeyboardShortcutsDialog } from '../../../keyboard-shortcuts';
 import {
-    toggleLocalRecordingInfoDialog,
-    LocalRecordingButton
+    LocalRecordingButton,
+    LocalRecordingInfoDialog
 } from '../../../local-recording';
 import {
     LiveStreamButton,
@@ -873,7 +873,7 @@ class Toolbox extends Component<Props> {
      * @returns {void}
      */
     _onToolbarToggleLocalRecordingInfoDialog() {
-        this.props.dispatch(toggleLocalRecordingInfoDialog());
+        this.props.dispatch(openDialog(LocalRecordingInfoDialog));
     }
 
     /**
