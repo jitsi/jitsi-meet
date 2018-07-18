@@ -47,6 +47,7 @@
     "jquery-contextmenu": "2.4.5",
     "jquery-i18next": "1.2.0",
     "js-md5": "0.6.1",
+    "jsc-android": "224109.1.0",
     "jwt-decode": "2.2.0",
     "lib-jitsi-meet": "github:jitsi/lib-jitsi-meet#2be752fc88ff71e454c6b9178b21a33b59c53f41",
     "lodash": "4.17.4",
