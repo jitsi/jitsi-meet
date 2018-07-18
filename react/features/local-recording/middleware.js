@@ -1,5 +1,6 @@
 /* @flow */
 
+import { createShortcutEvent, sendAnalytics } from '../analytics';
 import { APP_WILL_MOUNT, APP_WILL_UNMOUNT } from '../base/app';
 import { CONFERENCE_JOINED } from '../base/conference';
 import { toggleDialog } from '../base/dialog';
@@ -36,27 +37,24 @@ MiddlewareRegistry.register(({ getState, dispatch }) => next => action => {
             }
         };
 
-        recordingController.onWarning = function(messageKey, messageParams) {
+        recordingController.onWarning = (messageKey, messageParams) => {
             dispatch(showNotification({
                 title: i18next.t('localRecording.localRecording'),
                 description: i18next.t(messageKey, messageParams)
             }, 10000));
         };
 
-        recordingController.onNotify = function(messageKey, messageParams) {
+        recordingController.onNotify = (messageKey, messageParams) => {
             dispatch(showNotification({
                 title: i18next.t('localRecording.localRecording'),
                 description: i18next.t(messageKey, messageParams)
             }, 10000));
         };
 
-        // register shortcut
-        APP.keyboardshortcut.registerShortcut(
-            'L',
-            null,
-            () => dispatch(toggleDialog(LocalRecordingInfoDialog)),
-            'keyboardShortcuts.localRecording'
-        );
+        APP.keyboardshortcut.registerShortcut('L', null, () => {
+            sendAnalytics(createShortcutEvent('local.recording'));
+            dispatch(toggleDialog(LocalRecordingInfoDialog));
+        }, 'keyboardShortcuts.localRecording');
         break;
     case APP_WILL_UNMOUNT:
         recordingController.onStateChanged = null;
