@@ -27,7 +27,7 @@ MiddlewareRegistry.register(({ getState, dispatch }) => next => action => {
     case APP_WILL_MOUNT:
         // realize the delegates on recordingController, allowing the UI to
         // react to state changes in recordingController.
-        recordingController.onStateChanged = function(isEngaged) {
+        recordingController.onStateChanged = isEngaged => {
             if (isEngaged) {
                 const nowTime = new Date();
 

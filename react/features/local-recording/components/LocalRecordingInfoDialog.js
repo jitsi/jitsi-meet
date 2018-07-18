@@ -148,32 +148,28 @@ class LocalRecordingInfoDialog extends Component<Props, State> {
         const { isModerator, t } = this.props;
 
         return (
-            <div
-                className = 'info-dialog' >
-                <div className = 'info-dialog-column'>
-                    <h4 className = 'info-dialog-icon'>
-                        <i className = 'icon-info' />
-                    </h4>
-                </div>
-                <div className = 'info-dialog-column'>
-                    <div className = 'info-dialog-title'>
-                        { t('localRecording.localRecording') }
+            <Dialog
+                cancelTitleKey = { 'dialog.close' }
+                submitDisabled = { true }
+                titleKey = 'localRecording.dialogTitle'>
+                <div className = 'info-dialog'>
+                    <div className = 'info-dialog-column'>
+                        <div>
+                            <span className = 'info-label'>
+                                {`${t('localRecording.moderator')}:`}
+                            </span>
+                            <span className = 'spacer'>&nbsp;</span>
+                            <span className = 'info-value'>
+                                { isModerator
+                                    ? t('localRecording.yes')
+                                    : t('localRecording.no') }
+                            </span>
+                        </div>
+                        { this._renderDurationAndFormat() }
+                        { this._renderModeratorControls() }
                     </div>
-                    <div>
-                        <span className = 'info-label'>
-                            {`${t('localRecording.moderator')}:`}
-                        </span>
-                        <span className = 'spacer'>&nbsp;</span>
-                        <span className = 'info-value'>
-                            { isModerator
-                                ? t('localRecording.yes')
-                                : t('localRecording.no') }
-                        </span>
-                    </div>
-                    { this._renderDurationAndFormat() }
-                    { this._renderModeratorControls() }
                 </div>
-            </div>
+            </Dialog>
         );
     }
 
@@ -280,32 +276,27 @@ class LocalRecordingInfoDialog extends Component<Props, State> {
         }
 
         return (
-            <Dialog
-                cancelTitleKey = { 'dialog.close' }
-                submitDisabled = { true }
-                titleKey = 'localRecording.dialogTitle'>
-                <div className = 'local-recording'>
-                    <div>
-                        <span className = 'info-label'>
-                            {`${t('localRecording.participantStats')}:`}
-                        </span>
-                    </div>
-                    { this._renderStats() }
-                    <div className = 'info-dialog-action-links'>
-                        <div className = 'info-dialog-action-link'>
-                            { isEngaged ? <a
-                                onClick = { this._onStop }>
-                                { t('localRecording.stop') }
+            <div>
+                <div>
+                    <span className = 'info-label'>
+                        {`${t('localRecording.participantStats')}:`}
+                    </span>
+                </div>
+                { this._renderStats() }
+                <div className = 'info-dialog-action-links'>
+                    <div className = 'info-dialog-action-link'>
+                        { isEngaged ? <a
+                            onClick = { this._onStop }>
+                            { t('localRecording.stop') }
+                        </a>
+                            : <a
+                                onClick = { this._onStart }>
+                                { t('localRecording.start') }
                             </a>
-                                : <a
-                                    onClick = { this._onStart }>
-                                    { t('localRecording.start') }
-                                </a>
-                            }
-                        </div>
+                        }
                     </div>
                 </div>
-            </Dialog>
+            </div>
         );
     }
 
