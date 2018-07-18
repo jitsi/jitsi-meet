@@ -2,12 +2,16 @@
 
 import { APP_WILL_MOUNT, APP_WILL_UNMOUNT } from '../base/app';
 import { CONFERENCE_JOINED } from '../base/conference';
+import { toggleDialog } from '../base/dialog';
 import { i18next } from '../base/i18n';
 import { MiddlewareRegistry } from '../base/redux';
 import { showNotification } from '../notifications';
 
 import { localRecordingEngaged, localRecordingUnengaged } from './actions';
+import { LocalRecordingInfoDialog } from './components';
 import { recordingController } from './controller';
+
+declare var APP: Object;
 
 MiddlewareRegistry.register(({ getState, dispatch }) => next => action => {
     const result = next(action);
@@ -45,6 +49,14 @@ MiddlewareRegistry.register(({ getState, dispatch }) => next => action => {
                 description: i18next.t(messageKey, messageParams)
             }, 10000));
         };
+
+        // register shortcut
+        APP.keyboardshortcut.registerShortcut(
+            'L',
+            null,
+            () => dispatch(toggleDialog(LocalRecordingInfoDialog)),
+            'keyboardShortcuts.localRecording'
+        );
         break;
     case APP_WILL_UNMOUNT:
         recordingController.onStateChanged = null;

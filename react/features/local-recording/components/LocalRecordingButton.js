@@ -81,20 +81,6 @@ class LocalRecordingButton extends Component<Props> {
     _onClick() {
         this.props.onClick();
     }
-
-    _onCloseDialog: () => void;
-
-    /**
-     * Callback invoked when {@code InlineDialog} signals that it should be
-     * close.
-     *
-     * @returns {void}
-     */
-    _onCloseDialog() {
-        // Do nothing for now, because we want the dialog to stay open
-        // after certain time, otherwise the moderator might need to repeatly
-        // open the dialog to see the stats.
-    }
 }
 
 export default translate(LocalRecordingButton);

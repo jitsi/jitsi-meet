@@ -237,8 +237,8 @@ class Toolbox extends Component<Props> {
             = this._onToolbarToggleScreenshare.bind(this);
         this._onToolbarToggleSharedVideo
             = this._onToolbarToggleSharedVideo.bind(this);
-        this._onToolbarToggleLocalRecordingInfoDialog
-            = this._onToolbarToggleLocalRecordingInfoDialog.bind(this);
+        this._onToolbarOpenLocalRecordingInfoDialog
+            = this._onToolbarOpenLocalRecordingInfoDialog.bind(this);
     }
 
     /**
@@ -268,11 +268,6 @@ class Toolbox extends Component<Props> {
                 character: 'S',
                 exec: this._onShortcutToggleFullScreen,
                 helpDescription: 'keyboardShortcuts.fullScreen'
-            },
-            this._shouldShowButton('localrecording') && {
-                character: 'L',
-                exec: this._onToolbarToggleLocalRecordingInfoDialog,
-                helpDescription: 'keyboardShortcuts.localRecording'
             }
         ];
 
@@ -388,10 +383,8 @@ class Toolbox extends Component<Props> {
                 <div className = 'button-group-right'>
                     { this._shouldShowButton('localrecording')
                         && <LocalRecordingButton
-                            isDialogShown =
-                                { this.props._localRecState.showDialog }
                             onClick = {
-                                this._onToolbarToggleLocalRecordingInfoDialog
+                                this._onToolbarOpenLocalRecordingInfoDialog
                             } />
                     }
                     { this._shouldShowButton('invite')
@@ -864,15 +857,17 @@ class Toolbox extends Component<Props> {
         this._doToggleSharedVideo();
     }
 
-    _onToolbarToggleLocalRecordingInfoDialog: () => void;
+    _onToolbarOpenLocalRecordingInfoDialog: () => void;
 
     /**
-     * Switches local recording on or off.
+     * Opens the {@code LocalRecordingInfoDialog}.
      *
      * @private
      * @returns {void}
      */
-    _onToolbarToggleLocalRecordingInfoDialog() {
+    _onToolbarOpenLocalRecordingInfoDialog() {
+        sendAnalytics(createToolbarEvent('local.recording'));
+
         this.props.dispatch(openDialog(LocalRecordingInfoDialog));
     }
 
