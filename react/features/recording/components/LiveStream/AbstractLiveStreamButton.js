@@ -3,10 +3,7 @@
 import React from 'react';
 import { openDialog } from '../../../base/dialog';
 import { JitsiRecordingConstants } from '../../../base/lib-jitsi-meet';
-import {
-    isLocalParticipantModerator,
-    getLocalParticipant
-} from '../../../base/participants';
+import { getLocalParticipant } from '../../../base/participants';
 import { Container, Text } from '../../../base/react';
 import {
     AbstractButton,
@@ -116,15 +113,13 @@ export function _mapStateToProps(state: Object, ownProps: Props) {
         // If the containing component provides the visible prop, that is one
         // above all, but if not, the button should be autonomus and decide on
         // its own to be visible or not.
-        const isModerator = isLocalParticipantModerator(state);
         const {
             enableFeaturesBasedOnToken,
             liveStreamingEnabled
         } = state['features/base/config'];
         const { features = {} } = getLocalParticipant(state);
 
-        visible = isModerator
-            && liveStreamingEnabled
+        visible = liveStreamingEnabled
             && (!enableFeaturesBasedOnToken
                 || String(features.livestreaming) === 'true');
     }
