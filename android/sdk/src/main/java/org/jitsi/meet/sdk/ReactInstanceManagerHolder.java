@@ -28,7 +28,7 @@ import com.facebook.react.common.LifecycleState;
 import java.util.Arrays;
 import java.util.List;
 
-public class ReactInstanceManagerHolder {
+class ReactInstanceManagerHolder {
     /**
      * React Native bridge. The instance manager allows embedding applications
      * to create multiple root views off the same JavaScript bundle.
@@ -119,6 +119,7 @@ public class ReactInstanceManagerHolder {
                 .setApplication(application)
                 .setBundleAssetName("index.android.bundle")
                 .setJSMainModulePath("index.android")
+                .addPackage(new com.BV.LinearGradient.LinearGradientPackage())
                 .addPackage(new com.calendarevents.CalendarEventsPackage())
                 .addPackage(new com.corbt.keepawake.KCKeepAwakePackage())
                 .addPackage(new com.facebook.react.shell.MainReactPackage())

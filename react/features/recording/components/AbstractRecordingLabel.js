@@ -34,8 +34,45 @@ export type Props = {
 /**
  * Abstract class for the {@code RecordingLabel} component.
  */
-export default class AbstractRecordingLabel<P: Props, S: *>
-    extends Component<P, S> {
+export default class AbstractRecordingLabel<P: Props>
+    extends Component<P> {
+
+    /**
+     * Implements React {@code Component}'s render.
+     *
+     * @inheritdoc
+     */
+    render() {
+        return this.props._visible ? this._renderLabel() : null;
+    }
+
+    _getLabelKey: () => ?string
+
+    /**
+     * Returns the label key that this indicator should render.
+     *
+     * @protected
+     * @returns {?string}
+     */
+    _getLabelKey() {
+        switch (this.props.mode) {
+        case JitsiRecordingConstants.mode.STREAM:
+            return 'recording.live';
+        case JitsiRecordingConstants.mode.FILE:
+            return 'recording.rec';
+        default:
+            // Invalid mode is passed to the component.
+            return undefined;
+        }
+    }
+
+    /**
+     * Renders the platform specific label component.
+     *
+     * @protected
+     * @returns {React$Element}
+     */
+    _renderLabel: () => React$Element<*>
 
 }
 
@@ -50,7 +87,7 @@ export default class AbstractRecordingLabel<P: Props, S: *>
  *     _visible: boolean
  * }}
  */
-export function _abstractMapStateToProps(state: Object, ownProps: Props) {
+export function _mapStateToProps(state: Object, ownProps: Props) {
     const { mode } = ownProps;
     const _recordingSessions = state['features/recording'].sessionDatas;
     const _visible

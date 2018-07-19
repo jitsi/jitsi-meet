@@ -305,7 +305,7 @@ export default class SharedVideoManager {
                 // JitsiMeetLogStorage.
                 conference: APP.conference._room,
                 id: self.url,
-                isBot: true,
+                isFakeParticipant: true,
                 name: 'YouTube'
             }));
 

@@ -57,11 +57,10 @@ class Video extends Component {
 
         /**
          * The internal reference to the DOM/HTML element intended for
-         * displaying a video. This element may be an HTML video element or a
-         * temasys video object.
+         * displaying a video.
          *
          * @private
-         * @type {HTMLVideoElement|Object}
+         * @type {HTMLVideoElement}
          */
         this._videoElement = null;
 
@@ -79,8 +78,6 @@ class Video extends Component {
      * @returns {void}
      */
     componentDidMount() {
-        // Add these attributes directly onto the video element so temasys can
-        // use them when converting the video to an object.
         this._videoElement.volume = 0;
         this._videoElement.onplaying = this._onVideoPlaying;
 
@@ -101,9 +98,7 @@ class Video extends Component {
     /**
      * Updates the video display only if a new track is added. This component's
      * updating is blackboxed from React to prevent re-rendering of video
-     * element, as the lib uses track.attach(videoElement) instead. Also,
-     * re-rendering cannot be used with temasys, which replaces video elements
-     * with an object.
+     * element, as the lib uses track.attach(videoElement) instead.
      *
      * @inheritdoc
      * @returns {boolean} - False is always returned to blackbox this component.
@@ -130,17 +125,12 @@ class Video extends Component {
      * @returns {ReactElement}
      */
     render() {
-        // The wrapping div is necessary because temasys will replace the video
-        // with an object but react will keep expecting the video element. The
-        // div gives a constant element for react to keep track of.
         return (
-            <div>
-                <video
-                    autoPlay = { true }
-                    className = { this.props.className }
-                    id = { this.props.id }
-                    ref = { this._setVideoElement } />
-            </div>
+            <video
+                autoPlay = { true }
+                className = { this.props.className }
+                id = { this.props.id }
+                ref = { this._setVideoElement } />
         );
     }
 
@@ -158,19 +148,13 @@ class Video extends Component {
             return;
         }
 
-        const updatedVideoElement
-            = videoTrack.jitsiTrack.attach(this._videoElement);
-
-        // Sets the instance variable for the video element again as the element
-        // maybe have been replaced with a new object by temasys.
-        this._setVideoElement(updatedVideoElement);
+        videoTrack.jitsiTrack.attach(this._videoElement);
     }
 
     /**
      * Removes the association to the component's video element from the passed
      * in redux representation of jitsi video track to stop the track from
-     * rendering. With temasys, the video element must still be visible for
-     * detaching to complete.
+     * rendering.
      *
      * @param {Object} videoTrack -  The redux representation of the
      * {@code JitsiLocalTrack}.
@@ -178,15 +162,7 @@ class Video extends Component {
      * @returns {void}
      */
     _detachTrack(videoTrack) {
-        // Detach the video element from the track only if it has already
-        // been attached. This accounts for a special case with temasys
-        // where if detach is being called before attach, the video
-        // element is converted to Object without updating this
-        // component's reference to the video element.
-        if (this._videoElement
-            && videoTrack
-            && videoTrack.jitsiTrack
-            && videoTrack.jitsiTrack.containers.includes(this._videoElement)) {
+        if (this._videoElement && videoTrack && videoTrack.jitsiTrack) {
             videoTrack.jitsiTrack.detach(this._videoElement);
         }
     }

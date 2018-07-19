@@ -20,6 +20,29 @@ export function getJitsiMeetGlobalNS() {
 }
 
 /**
+ * Gets the description of a specific {@code Symbol}.
+ *
+ * @param {Symbol} symbol - The {@code Symbol} to retrieve the description of.
+ * @private
+ * @returns {string} The description of {@code symbol}.
+ */
+export function getSymbolDescription(symbol: ?Symbol) {
+    let description = symbol ? symbol.toString() : 'undefined';
+
+    if (description.startsWith('Symbol(') && description.endsWith(')')) {
+        description = description.slice(7, -1);
+    }
+
+    // The polyfill es6-symbol that we use does not appear to comply with the
+    // Symbol standard and, merely, adds @@ at the beginning of the description.
+    if (description.startsWith('@@')) {
+        description = description.slice(2);
+    }
+
+    return description;
+}
+
+/**
  * A helper function that behaves similar to Object.assign, but only reassigns a
  * property in target if it's defined in source.
  *

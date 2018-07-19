@@ -15,6 +15,7 @@ import {
     participantConnectionStatusChanged,
     participantJoined,
     participantLeft,
+    participantPresenceChanged,
     participantRoleChanged,
     participantUpdated
 } from '../participants';
@@ -22,6 +23,7 @@ import { getLocalTracks, trackAdded, trackRemoved } from '../tracks';
 import { getJitsiMeetGlobalNS } from '../util';
 
 import {
+    AUTH_STATUS_CHANGED,
     CONFERENCE_FAILED,
     CONFERENCE_JOINED,
     CONFERENCE_LEFT,
@@ -52,7 +54,6 @@ import {
     getCurrentConference,
     sendLocalParticipant
 } from './functions';
-
 import type { Dispatch } from 'redux';
 
 const logger = require('jitsi-meet-logger').getLogger(__filename);
@@ -142,9 +143,11 @@ function _addConferenceListeners(conference, dispatch) {
     conference.on(
         JitsiConferenceEvents.USER_JOINED,
         (id, user) => !user.isHidden() && dispatch(participantJoined({
+            botType: user.getBotType(),
             conference,
             id,
             name: user.getDisplayName(),
+            presence: user.getStatus(),
             role: user.getRole()
         })));
     conference.on(
@@ -154,6 +157,17 @@ function _addConferenceListeners(conference, dispatch) {
     conference.on(
         JitsiConferenceEvents.USER_ROLE_CHANGED,
         (...args) => dispatch(participantRoleChanged(...args)));
+    conference.on(
+        JitsiConferenceEvents.USER_STATUS_CHANGED,
+        (...args) => dispatch(participantPresenceChanged(...args)));
+
+    conference.on(
+        JitsiConferenceEvents.BOT_TYPE_CHANGED,
+        (id, botType) => dispatch(participantUpdated({
+            conference,
+            id,
+            botType
+        })));
 
     conference.addCommandListener(
         AVATAR_ID_COMMAND,
@@ -179,6 +193,26 @@ function _addConferenceListeners(conference, dispatch) {
 }
 
 /**
+ * Updates the current known state of server-side authentication.
+ *
+ * @param {boolean} authEnabled - Whether or not server authentication is
+ * enabled.
+ * @param {string} authLogin - The current name of the logged in user, if any.
+ * @returns {{
+ *     type: AUTH_STATUS_CHANGED,
+ *     authEnabled: boolean,
+ *     authLogin: string
+ * }}
+ */
+export function authStatusChanged(authEnabled: boolean, authLogin: string) {
+    return {
+        type: AUTH_STATUS_CHANGED,
+        authEnabled,
+        authLogin
+    };
+}
+
+/**
  * Signals that a specific conference has failed.
  *
  * @param {JitsiConference} conference - The JitsiConference that has failed.
@@ -199,7 +233,8 @@ export function conferenceFailed(conference: Object, error: string) {
         // Make the error resemble an Error instance (to the extent that
         // jitsi-meet needs it).
         error: {
-            name: error
+            name: error,
+            recoverable: undefined
         }
     };
 }
@@ -451,15 +486,21 @@ export function p2pStatusChanged(p2p: boolean) {
  *
  * @param {boolean} audioOnly - True if the conference should be audio only;
  * false, otherwise.
+ * @param {boolean} ensureVideoTrack - Define if conference should ensure
+ * to create a video track.
  * @returns {{
  *     type: SET_AUDIO_ONLY,
- *     audioOnly: boolean
+ *     audioOnly: boolean,
+ *     ensureVideoTrack: boolean
  * }}
  */
-export function setAudioOnly(audioOnly: boolean) {
+export function setAudioOnly(
+        audioOnly: boolean,
+        ensureVideoTrack: boolean = false) {
     return {
         type: SET_AUDIO_ONLY,
-        audioOnly
+        audioOnly,
+        ensureVideoTrack
     };
 }
 
@@ -665,6 +706,6 @@ export function toggleAudioOnly() {
     return (dispatch: Dispatch<*>, getState: Function) => {
         const { audioOnly } = getState()['features/base/conference'];
 
-        return dispatch(setAudioOnly(!audioOnly));
+        return dispatch(setAudioOnly(!audioOnly, true));
     };
 }

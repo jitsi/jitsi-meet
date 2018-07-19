@@ -9,7 +9,7 @@ import { connect as reactReduxConnect } from 'react-redux';
 import { appNavigate } from '../../app';
 import { connect, disconnect } from '../../base/connection';
 import { DialogContainer } from '../../base/dialog';
-import { CalleeInfoContainer } from '../../base/jwt';
+import { CalleeInfoContainer } from '../../invite';
 import { getParticipantCount } from '../../base/participants';
 import { Container, LoadingIndicator, TintedView } from '../../base/react';
 import { TestConnectionInfo } from '../../base/testing';
@@ -17,9 +17,9 @@ import { createDesiredLocalTracks } from '../../base/tracks';
 import { ConferenceNotification } from '../../calendar-sync';
 import { Filmstrip } from '../../filmstrip';
 import { LargeVideo } from '../../large-video';
+import { NotificationsContainer } from '../../notifications';
 import { setToolboxVisible, Toolbox } from '../../toolbox';
 
-import ConferenceIndicators from './ConferenceIndicators';
 import styles from './styles';
 
 /**
@@ -36,6 +36,13 @@ type Props = {
      * @private
      */
     _connecting: boolean,
+
+    /**
+     * Current conference's full URL.
+     *
+     * @private
+     */
+    _locationURL: URL,
 
     /**
      * The handler which dispatches the (redux) action connect.
@@ -76,6 +83,13 @@ type Props = {
      * @private
      */
     _reducedUI: boolean,
+
+    /**
+     * The current conference room name.
+     *
+     * @private
+     */
+    _room: string,
 
     /**
      * The handler which dispatches the (redux) action setToolboxVisible to
@@ -163,15 +177,28 @@ class Conference extends Component<Props> {
      * participant count.
      *
      * @inheritdoc
-     * @param {Object} nextProps - The read-only React {@code Component} props
+     * @param {Props} nextProps - The read-only React {@code Component} props
      * that this instance will receive.
      * @returns {void}
      */
-    componentWillReceiveProps({ _participantCount: newParticipantCount }) {
+    componentWillReceiveProps(nextProps: Props) {
         const {
+            _locationURL: oldLocationURL,
             _participantCount: oldParticipantCount,
+            _room: oldRoom,
             _setToolboxVisible
         } = this.props;
+        const {
+            _locationURL: newLocationURL,
+            _participantCount: newParticipantCount,
+            _room: newRoom
+        } = nextProps;
+
+        // If the location URL changes we need to reconnect.
+        oldLocationURL !== newLocationURL && this.props._onDisconnect();
+
+        // Start the connection process when there is a (valid) room.
+        oldRoom !== newRoom && newRoom && this.props._onConnect();
 
         if (oldParticipantCount === 1) {
             newParticipantCount > 1 && _setToolboxVisible(false);
@@ -253,18 +280,14 @@ class Conference extends Component<Props> {
                       * participants.
                       */}
                     <Filmstrip />
-
-                    {/*
-                      * A container that automatically renders indicators such
-                      * as VideoQualityLabel or RecordingLabel if need be.
-                      */}
-                    <ConferenceIndicators />
                 </View>
                 <TestConnectionInfo />
 
                 {
                     this._renderConferenceNotification()
                 }
+
+                <NotificationsContainer />
 
                 {/*
                   * The dialogs are in the topmost stacking layers.
@@ -317,9 +340,7 @@ class Conference extends Component<Props> {
      * @returns {React$Node}
      */
     _renderConferenceNotification() {
-        return ConferenceNotification
-            ? <ConferenceNotification />
-            : undefined;
+        return ConferenceNotification ? <ConferenceNotification /> : undefined;
     }
 }
 
@@ -331,6 +352,7 @@ class Conference extends Component<Props> {
  * @returns {{
  *     _onConnect: Function,
  *     _onDisconnect: Function,
+ *     _onHardwareBackPress: Function,
  *     _setToolboxVisible: Function
  * }}
  */
@@ -393,15 +415,23 @@ function _mapDispatchToProps(dispatch) {
  * @private
  * @returns {{
  *     _connecting: boolean,
+ *     _locationURL: URL,
  *     _participantCount: number,
  *     _reducedUI: boolean,
+ *     _room: string,
  *     _toolboxVisible: boolean,
  *     _toolboxAlwaysVisible: boolean
  * }}
  */
 function _mapStateToProps(state) {
-    const { connecting, connection } = state['features/base/connection'];
-    const { conference, joining, leaving } = state['features/base/conference'];
+    const { connecting, connection, locationURL }
+        = state['features/base/connection'];
+    const {
+        conference,
+        joining,
+        leaving,
+        room
+    } = state['features/base/conference'];
     const { reducedUI } = state['features/base/responsive-ui'];
     const { alwaysVisible, visible } = state['features/toolbox'];
 
@@ -430,6 +460,14 @@ function _mapStateToProps(state) {
         _connecting: Boolean(connecting_),
 
         /**
+         * Current conference's full URL.
+         *
+         * @private
+         * @type {URL}
+         */
+        _locationURL: locationURL,
+
+        /**
          * The number of participants in the conference.
          *
          * @private
@@ -445,6 +483,14 @@ function _mapStateToProps(state) {
          * @type {boolean}
          */
         _reducedUI: reducedUI,
+
+        /**
+         * The current conference room name.
+         *
+         * @private
+         * @type {string}
+         */
+        _room: room,
 
         /**
          * The indicator which determines whether the Toolbox is visible.

@@ -2,7 +2,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
-import { appNavigate } from '../../app';
+import { appNavigate, getDefaultURL } from '../../app';
 import {
     getLocalizedDateFormatter,
     getLocalizedDurationFormatter,
@@ -226,7 +226,7 @@ class RecentList extends Component<Props> {
  */
 export function _mapStateToProps(state: Object) {
     return {
-        _defaultServerURL: state['features/app'].app._getDefaultURL(),
+        _defaultServerURL: getDefaultURL(state),
         _recentList: state['features/recent-list']
     };
 }

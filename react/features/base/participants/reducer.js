@@ -180,10 +180,11 @@ function _participant(state: Object = {}, action) {
 function _participantJoined({ participant }) {
     const {
         avatarURL,
+        botType,
         connectionStatus,
         dominantSpeaker,
         email,
-        isBot,
+        isFakeParticipant,
         local,
         name,
         pinned,
@@ -212,12 +213,13 @@ function _participantJoined({ participant }) {
     return {
         avatarID,
         avatarURL,
+        botType,
         conference,
         connectionStatus,
         dominantSpeaker: dominantSpeaker || false,
         email,
         id,
-        isBot,
+        isFakeParticipant,
         local: local || false,
         name,
         pinned: pinned || false,

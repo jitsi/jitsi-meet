@@ -122,5 +122,6 @@ export const STATUS_TO_I18N_KEY = {
     [CONNECTING]: 'presenceStatus.connecting',
     [CONNECTING2]: 'presenceStatus.connecting2',
     [CONNECTED_PHONE_NUMBER]: 'presenceStatus.connected',
+    [CONNECTED_USER]: 'presenceStatus.connected',
     [DISCONNECTED]: 'presenceStatus.disconnected'
 };

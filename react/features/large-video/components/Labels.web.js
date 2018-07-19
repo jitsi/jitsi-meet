@@ -1,28 +1,14 @@
 // @flow
 
-import React, { Component } from 'react';
+import React from 'react';
 import { connect } from 'react-redux';
 
-import { RecordingLabel } from '../../recording';
-import { VideoQualityLabel } from '../../video-quality';
+import { JitsiRecordingConstants } from '../../base/lib-jitsi-meet';
 
-/**
- * The type of the React {@code Component} props of {@link Labels}.
- */
-type Props = {
-
-    /**
-    * Whether or not the filmstrip is displayed with remote videos. Used to
-    * determine display classes to set.
-    */
-    _filmstripVisible: boolean,
-
-
-    /**
-     * The redux state for all known recording sessions.
-     */
-    _recordingSessions: Array<Object>
-};
+import AbstractLabels, {
+    _abstractMapStateToProps as _mapStateToProps,
+    type Props
+} from './AbstractLabels';
 
 /**
  * The type of the React {@code Component} state of {@link Labels}.
@@ -45,7 +31,7 @@ type State = {
  *
  * @extends Component
  */
-class Labels extends Component<Props, State> {
+class Labels extends AbstractLabels<Props, State> {
     /**
      * Initializes a new {@code Labels} instance.
      *
@@ -58,9 +44,6 @@ class Labels extends Component<Props, State> {
         this.state = {
             filmstripBecomingVisible: false
         };
-
-        // Bind event handler so it is only bound once for every instance.
-        this._renderRecordingLabel = this._renderRecordingLabel.bind(this);
     }
 
     /**
@@ -86,7 +69,7 @@ class Labels extends Component<Props, State> {
      * @returns {ReactElement}
      */
     render() {
-        const { _filmstripVisible, _recordingSessions } = this.props;
+        const { _filmstripVisible } = this.props;
         const { filmstripBecomingVisible } = this.state;
         const className = `large-video-labels ${
             filmstripBecomingVisible ? 'opening' : ''} ${
@@ -94,46 +77,24 @@ class Labels extends Component<Props, State> {
 
         return (
             <div className = { className } >
-                { _recordingSessions.map(this._renderRecordingLabel) }
-                <VideoQualityLabel />
+                {
+                    this._renderRecordingLabel(
+                        JitsiRecordingConstants.mode.FILE)
+                }
+                {
+                    this._renderRecordingLabel(
+                        JitsiRecordingConstants.mode.STREAM)
+                }
+                {
+                    this._renderVideoQualityLabel()
+                }
             </div>
         );
     }
 
-    _renderRecordingLabel: (Object) => React$Node;
+    _renderRecordingLabel: string => React$Element<*>
 
-    /**
-     * Renders a recording label.
-     *
-     * @param {Object} recordingSession - The recording session to render.
-     * @private
-     * @returns {ReactElement}
-     */
-    _renderRecordingLabel(recordingSession) {
-        return (
-            <RecordingLabel
-                key = { recordingSession.id }
-                session = { recordingSession } />
-        );
-    }
-}
-
-/**
- * Maps (parts of) the Redux state to the associated props for the
- * {@code Labels} component.
- *
- * @param {Object} state - The Redux state.
- * @private
- * @returns {{
- *     _filmstripVisible: boolean,
- *     _recordingSessions: Array<Object>
- * }}
- */
-function _mapStateToProps(state) {
-    return {
-        _filmstripVisible: state['features/filmstrip'].visible,
-        _recordingSessions: state['features/recording'].sessionDatas
-    };
+    _renderVideoQualityLabel: () => React$Element<*>
 }
 
 export default connect(_mapStateToProps)(Labels);

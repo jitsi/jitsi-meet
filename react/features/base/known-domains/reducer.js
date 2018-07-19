@@ -1,6 +1,6 @@
 // @flow
 
-import { APP_WILL_MOUNT } from '../../app';
+import { APP_WILL_MOUNT } from '../app';
 import { ReducerRegistry } from '../redux';
 import { PersistenceRegistry } from '../storage';
 

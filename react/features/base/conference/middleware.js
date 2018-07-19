@@ -1,13 +1,15 @@
 // @flow
 
+import { reloadNow } from '../../app';
 import {
     ACTION_PINNED,
     ACTION_UNPINNED,
     createAudioOnlyChangedEvent,
+    createConnectionEvent,
     createPinnedEvent,
     sendAnalytics
 } from '../../analytics';
-import { CONNECTION_ESTABLISHED } from '../connection';
+import { CONNECTION_ESTABLISHED, CONNECTION_FAILED } from '../connection';
 import { setVideoMuted, VIDEO_MUTISM_AUTHORITY } from '../media';
 import {
     getLocalParticipant,
@@ -20,6 +22,7 @@ import UIEvents from '../../../../service/UI/UIEvents';
 import { TRACK_ADDED, TRACK_REMOVED } from '../tracks';
 
 import {
+    conferenceFailed,
     conferenceLeft,
     createConference,
     setLastN,
@@ -62,6 +65,9 @@ MiddlewareRegistry.register(store => next => action => {
     case CONNECTION_ESTABLISHED:
         return _connectionEstablished(store, next, action);
 
+    case CONNECTION_FAILED:
+        return _connectionFailed(store, next, action);
+
     case DATA_CHANNEL_OPENED:
         return _syncReceiveVideoQuality(store, next, action);
 
@@ -103,6 +109,13 @@ MiddlewareRegistry.register(store => next => action => {
  */
 function _conferenceFailed(store, next, action) {
     const result = next(action);
+
+    // FIXME: Workaround for the web version. Currently, the creation of the
+    // conference is handled by /conference.js and appropriate failure handlers
+    // are set there.
+    if (typeof APP !== 'undefined') {
+        return result;
+    }
 
     // XXX After next(action), it is clear whether the error is recoverable.
     const { conference, error } = action;
@@ -169,6 +182,116 @@ function _connectionEstablished({ dispatch }, next, action) {
 }
 
 /**
+ * Notifies the feature base/conference that the action
+ * {@code CONNECTION_FAILED} is being dispatched within a specific redux
+ * store.
+ *
+ * @param {Store} store - The redux store in which the specified {@code action}
+ * is being dispatched.
+ * @param {Dispatch} next - The redux {@code dispatch} function to dispatch the
+ * specified {@code action} to the specified {@code store}.
+ * @param {Action} action - The redux action {@code CONNECTION_FAILED} which is
+ * being dispatched in the specified {@code store}.
+ * @private
+ * @returns {Object} The value returned by {@code next(action)}.
+ */
+function _connectionFailed({ dispatch, getState }, next, action) {
+    // In the case of a split-brain error, reload early and prevent further
+    // handling of the action.
+    if (_isMaybeSplitBrainError(getState, action)) {
+        dispatch(reloadNow());
+
+        return;
+    }
+
+    const result = next(action);
+
+    // FIXME: Workaround for the web version. Currently, the creation of the
+    // conference is handled by /conference.js and appropriate failure handlers
+    // are set there.
+    if (typeof APP === 'undefined') {
+        const { connection } = action;
+        const { error } = action;
+
+        forEachConference(getState, conference => {
+            // It feels that it would make things easier if JitsiConference
+            // in lib-jitsi-meet would monitor it's connection and emit
+            // CONFERENCE_FAILED when it's dropped. It has more knowledge on
+            // whether it can recover or not. But because the reload screen
+            // and the retry logic is implemented in the app maybe it can be
+            // left this way for now.
+            if (conference.getConnection() === connection) {
+                // XXX Note that on mobile the error type passed to
+                // connectionFailed is always an object with .name property.
+                // This fact needs to be checked prior to enabling this logic on
+                // web.
+                const conferenceAction
+                    = conferenceFailed(conference, error.name);
+
+                // Copy the recoverable flag if set on the CONNECTION_FAILED
+                // action to not emit recoverable action caused by
+                // a non-recoverable one.
+                if (typeof error.recoverable !== 'undefined') {
+                    conferenceAction.error.recoverable = error.recoverable;
+                }
+
+                dispatch(conferenceAction);
+            }
+
+            return true;
+        });
+    }
+
+    return result;
+}
+
+/**
+ * Returns whether or not a CONNECTION_FAILED action is for a possible split
+ * brain error. A split brain error occurs when at least two users join a
+ * conference on different bridges. It is assumed the split brain scenario
+ * occurs very early on in the call.
+ *
+ * @param {Function} getState - The redux function for fetching the current
+ * state.
+ * @param {Action} action - The redux action {@code CONNECTION_FAILED} which is
+ * being dispatched in the specified {@code store}.
+ * @private
+ * @returns {boolean}
+ */
+function _isMaybeSplitBrainError(getState, action) {
+    const { error } = action;
+    const isShardChangedError = error
+        && error.message === 'item-not-found'
+        && error.details
+        && error.details.shard_changed;
+
+    if (isShardChangedError) {
+        const state = getState();
+        const { timeEstablished } = state['features/base/connection'];
+        const { _immediateReloadThreshold } = state['features/base/config'];
+
+        const timeSinceConnectionEstablished
+            = timeEstablished && Date.now() - timeEstablished;
+        const reloadThreshold = typeof _immediateReloadThreshold === 'number'
+            ? _immediateReloadThreshold : 1500;
+
+        const isWithinSplitBrainThreshold = !timeEstablished
+            || timeSinceConnectionEstablished <= reloadThreshold;
+
+        sendAnalytics(createConnectionEvent('failed', {
+            ...error,
+            connectionEstablished: timeEstablished,
+            splitBrain: isWithinSplitBrainThreshold,
+            timeSinceConnectionEstablished
+        }));
+
+        return isWithinSplitBrainThreshold;
+    }
+
+    return false;
+}
+
+/**
  * Notifies the feature base/conference that the action {@code PIN_PARTICIPANT}
  * is being dispatched within a specific redux store. Pins the specified remote
  * participant in the associated conference, ignores the local participant.
@@ -220,7 +343,7 @@ function _pinParticipant({ getState }, next, action) {
     let pin;
 
     if (participantById) {
-        pin = !participantById.local && !participantById.isBot;
+        pin = !participantById.local && !participantById.isFakeParticipant;
     } else {
         const localParticipant = getLocalParticipant(participants);
 
@@ -273,7 +396,7 @@ function _setAudioOnly({ dispatch, getState }, next, action) {
         setVideoMuted(
             newValue,
             VIDEO_MUTISM_AUTHORITY.AUDIO_ONLY,
-            /* ensureTrack */ true));
+            action.ensureVideoTrack));
 
     if (typeof APP !== 'undefined') {
         // TODO This should be a temporary solution that lasts only until video

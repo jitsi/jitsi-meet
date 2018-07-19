@@ -23,6 +23,7 @@
 ; seen to cause errors and we have chosen not to fix.
 .*/node_modules/@atlaskit/.*/*.js.flow
 .*/node_modules/react-native-keep-awake/.*
+.*/node_modules/react-native-permissions/.*
 .*/node_modules/styled-components/.*
 
 .*/\.git/.*

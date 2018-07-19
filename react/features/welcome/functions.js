@@ -1,6 +1,6 @@
 // @flow
 
-import { getAppProp } from '../app';
+import { getAppProp } from '../base/app';
 import { toState } from '../base/redux';
 
 declare var APP: Object;
@@ -19,8 +19,6 @@ export * from './roomnameGenerator';
  * {@code true}; otherwise, {@code false}.
  */
 export function isWelcomePageAppEnabled(stateful: Function | Object) {
-    let b;
-
     if (navigator.product === 'ReactNative') {
         // We introduced the welcomePageEnabled prop on App in Jitsi Meet SDK
         // for Android and iOS. There isn't a strong reason not to introduce it
@@ -29,12 +27,10 @@ export function isWelcomePageAppEnabled(stateful: Function | Object) {
         // - Enabling/disabling the Welcome page on Web historically
         // automatically redirects to a random room and that does not make sense
         // on mobile (right now).
-        b = Boolean(getAppProp(stateful, 'welcomePageEnabled'));
-    } else {
-        b = true;
+        return Boolean(getAppProp(stateful, 'welcomePageEnabled'));
     }
 
-    return b;
+    return true;
 }
 
 /**

@@ -2,7 +2,7 @@
 
 import Logger from 'jitsi-meet-logger';
 
-import { APP_WILL_MOUNT } from '../../app';
+import { APP_WILL_MOUNT } from '../app';
 import JitsiMeetJS, { LIB_WILL_INIT } from '../lib-jitsi-meet';
 import { MiddlewareRegistry } from '../redux';
 

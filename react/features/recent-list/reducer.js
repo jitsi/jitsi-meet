@@ -1,6 +1,6 @@
 // @flow
 
-import { APP_WILL_MOUNT } from '../app';
+import { APP_WILL_MOUNT } from '../base/app';
 import { getURLWithoutParamsNormalized } from '../base/connection';
 import { ReducerRegistry } from '../base/redux';
 import { PersistenceRegistry } from '../base/storage';

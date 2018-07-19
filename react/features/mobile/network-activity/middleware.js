@@ -2,7 +2,7 @@
 
 import XHRInterceptor from 'react-native/Libraries/Network/XHRInterceptor';
 
-import { APP_WILL_MOUNT, APP_WILL_UNMOUNT } from '../../app';
+import { APP_WILL_MOUNT, APP_WILL_UNMOUNT } from '../../base/app';
 import { MiddlewareRegistry } from '../../base/redux';
 
 import {

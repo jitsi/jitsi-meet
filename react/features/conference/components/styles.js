@@ -19,25 +19,6 @@ export default createStyleSheet({
     }),
 
     /**
-     * View that contains the indicators.
-     */
-    indicatorContainer: {
-        flex: 1,
-        flexDirection: 'row',
-        margin: BoxModel.margin,
-        position: 'absolute',
-        right: 0,
-        top: 0
-    },
-
-    /**
-     * Indicator container for wide aspect ratio.
-     */
-    indicatorContainerWide: {
-        right: 80
-    },
-
-    /**
      * The style of the {@link View} which expands over the whole
      * {@link Conference} area and splits it between the {@link Filmstrip} and
      * the {@link Toolbox}.

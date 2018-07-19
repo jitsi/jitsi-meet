@@ -44,6 +44,20 @@ const WHITELISTED_KEYS = [
     'callDisplayName',
 
     /**
+     * The handle
+     * ({@link https://developer.apple.com/documentation/callkit/cxhandle}) of
+     * the CallKit call representing the conference/meeting associated with this
+     * config.js. The property is meant for use cases in which the room URL is
+     * not desirable as the handle for CallKit purposes. As the value is
+     * associated with a conference/meeting, the value makes sense not as a
+     * deployment-wide configuration, only as a runtime configuration
+     * override/overwrite provided by, for example, Jitsi Meet SDK for iOS.
+     *
+     * @type string
+     */
+    'callHandle',
+
+    /**
      * The UUID of the CallKit call representing the conference/meeting
      * associated with this config.js. The property is meant for use cases in
      * which Jitsi Meet is to work with a CallKit call created outside of Jitsi
@@ -75,8 +89,6 @@ const WHITELISTED_KEYS = [
     'disableAGC',
     'disableAP',
     'disableAudioLevels',
-    'disableDesktopSharing',
-    'disableDesktopSharing',
     'disableH264',
     'disableHPF',
     'disableNS',
@@ -85,13 +97,13 @@ const WHITELISTED_KEYS = [
     'disableSuspendVideo',
     'displayJids',
     'enableDisplayNameInStats',
+    'enableLayerSuspension',
     'enableLipSync',
     'enableLocalVideoFlip',
     'enableRemb',
     'enableStatsID',
     'enableTalkWhileMuted',
     'enableTcc',
-    'enableUserRolesBasedOnToken',
     'etherpad_base',
     'failICE',
     'fileRecordingsEnabled',
@@ -138,6 +150,24 @@ export { default as getRoomName } from './getRoomName';
 export { parseURLParams };
 
 /**
+ * Promise wrapper on obtain config method. When HttpConfigFetch will be moved
+ * to React app it's better to use load config instead.
+ *
+ * @param {string} location - URL of the domain from which the config is to be
+ * obtained.
+ * @param {string} room - Room name.
+ * @private
+ * @returns {Promise<void>}
+ */
+export function obtainConfig(location: string, room: string): Promise<void> {
+    return new Promise((resolve, reject) =>
+        _obtainConfig(location, room, (success, error) => {
+            success ? resolve() : reject(error);
+        })
+    );
+}
+
+/**
  * Sends HTTP POST request to specified {@code endpoint}. In request the name
  * of the room is included in JSON format:
  * {
@@ -151,10 +181,7 @@ export { parseURLParams };
  * @param {Function} complete - The callback to invoke upon success or failure.
  * @returns {void}
  */
-export function obtainConfig(
-        endpoint: string,
-        roomName: string,
-        complete: Function) {
+function _obtainConfig(endpoint: string, roomName: string, complete: Function) {
     logger.info(`Send config request to ${endpoint} for room: ${roomName}`);
     $.ajax(
         endpoint,

@@ -1,10 +1,8 @@
 // @flow
 
 import { setLastN } from '../base/conference';
-import { SET_CALLEE_INFO_VISIBLE } from '../base/jwt';
 import { pinParticipant } from '../base/participants';
 import { MiddlewareRegistry } from '../base/redux';
-import Filmstrip from '../../../modules/UI/videolayout/Filmstrip';
 
 import { SET_FILMSTRIP_ENABLED } from './actionTypes';
 
@@ -12,51 +10,12 @@ declare var APP: Object;
 
 MiddlewareRegistry.register(store => next => action => {
     switch (action.type) {
-    case SET_CALLEE_INFO_VISIBLE:
-        return _setCalleeInfoVisible(store, next, action);
-
     case SET_FILMSTRIP_ENABLED:
         return _setFilmstripEnabled(store, next, action);
     }
 
     return next(action);
 });
-
-/**
- * Notifies the feature filmstrip that the action
- * {@link SET_CALLEE_INFO_VISIBLE} is being dispatched within a specific redux
- * store.
- *
- * @param {Store} store - The redux store in which the specified action is being
- * dispatched.
- * @param {Dispatch} next - The redux dispatch function to dispatch the
- * specified action to the specified store.
- * @param {Action} action - The redux action {@code SET_CALLEE_INFO_VISIBLE}
- * which is being dispatched in the specified store.
- * @private
- * @returns {Object} The value returned by {@code next(action)}.
- */
-function _setCalleeInfoVisible({ getState }, next, action) {
-    if (typeof APP !== 'undefined') {
-        const oldValue
-            = Boolean(getState()['features/base/jwt'].calleeInfoVisible);
-        const result = next(action);
-        const newValue
-            = Boolean(getState()['features/base/jwt'].calleeInfoVisible);
-
-        oldValue === newValue
-
-            // FIXME The following accesses the private state filmstrip of
-            // Filmstrip. It is written with the understanding that Filmstrip
-            // will be rewritten in React and, consequently, will not need the
-            // middleware implemented here, Filmstrip.init, and UI.start.
-            || (Filmstrip.filmstrip && Filmstrip.toggleFilmstrip(!newValue));
-
-        return result;
-    }
-
-    return next(action);
-}
 
 /**
  * Notifies the feature filmstrip that the action {@link SET_FILMSTRIP_ENABLED}

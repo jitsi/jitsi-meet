@@ -194,6 +194,15 @@ changes. The listener will receive an object with the following structure:
 }
 ```
 
+* **emailChange** - event notifications about email
+changes. The listener will receive an object with the following structure:
+```javascript
+{
+"id": id, // the id of the participant that changed his email
+"email": email // the new email
+}
+```
+
 * **participantJoined** - event notifications about new participants who join the room. The listener will receive an object with the following structure:
 ```javascript
 {
@@ -288,6 +297,11 @@ var avatarURL = api.getAvatarURL(participantId);
 You can get the display name of a participant in the conference with the following API function:
 ```javascript
 var displayName = api.getDisplayName(participantId);
+```
+
+You can get the email of a participant in the conference with the following API function:
+```javascript
+var email = api.getEmail(participantId);
 ```
 
 You can get the iframe HTML element where Jitsi Meet is loaded with the following API function:

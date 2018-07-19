@@ -1,8 +1,7 @@
 // @flow
 import _ from 'lodash';
 
-import { APP_WILL_MOUNT } from '../../app';
-
+import { APP_WILL_MOUNT } from '../app';
 import JitsiMeetJS, { browser } from '../lib-jitsi-meet';
 import { ReducerRegistry } from '../redux';
 import { PersistenceRegistry } from '../storage';
@@ -129,7 +128,14 @@ function _initSettings(featureState) {
         const audioOutputDeviceId
             = window.localStorage.getItem('audioOutputDeviceId') || 'default';
 
-        if (audioOutputDeviceId
+        settings = assignIfDefined({
+            audioOutputDeviceId,
+            cameraDeviceId,
+            localFlipX,
+            micDeviceId
+        }, settings);
+
+        if (settings.audioOutputDeviceId
             !== JitsiMeetJS.mediaDevices.getAudioOutputDevice()) {
             JitsiMeetJS.mediaDevices.setAudioOutputDevice(
                 audioOutputDeviceId
@@ -139,13 +145,6 @@ function _initSettings(featureState) {
                     + 'instead.', ex);
             });
         }
-
-        settings = assignIfDefined({
-            audioOutputDeviceId,
-            cameraDeviceId,
-            localFlipX,
-            micDeviceId
-        }, settings);
     }
 
     // Things we stored in profile earlier

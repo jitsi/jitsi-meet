@@ -2,12 +2,6 @@
 
 import type { Dispatch } from 'redux';
 
-import {
-    libInitError,
-    WEBRTC_NOT_READY,
-    WEBRTC_NOT_SUPPORTED
-} from '../lib-jitsi-meet';
-
 declare var APP: Object;
 declare var config: Object;
 
@@ -26,29 +20,16 @@ export {
  */
 export function connect() {
     return (dispatch: Dispatch<*>, getState: Function) => {
-        const state = getState();
-
         // XXX Lib-jitsi-meet does not accept uppercase letters.
-        const room = state['features/base/conference'].room.toLowerCase();
-        const { initPromise } = state['features/base/lib-jitsi-meet'];
+        const room = getState()['features/base/conference'].room.toLowerCase();
 
         // XXX For web based version we use conference initialization logic
         // from the old app (at the moment of writing).
-        return initPromise.then(() => APP.conference.init({
+        return APP.conference.init({
             roomName: room
-        })).catch(error => {
+        }).catch(error => {
             APP.API.notifyConferenceLeft(APP.conference.roomName);
             logger.error(error);
-
-            // TODO The following are in fact Errors raised by
-            // JitsiMeetJS.init() which should be taken care of in
-            // features/base/lib-jitsi-meet but we are not there yet on the
-            // Web at the time of this writing.
-            switch (error.name) {
-            case WEBRTC_NOT_READY:
-            case WEBRTC_NOT_SUPPORTED:
-                dispatch(libInitError(error));
-            }
         });
     };
 }

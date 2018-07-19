@@ -28,6 +28,7 @@ dependencies {
     compile project(':react-native-fetch-blob')
     compile project(':react-native-immersive')
     compile project(':react-native-keep-awake')
+    compile project(':react-native-linear-gradient')
     compile project(':react-native-locale-detector')
     compile project(':react-native-sound')
     compile project(':react-native-vector-icons')

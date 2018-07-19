@@ -25,7 +25,9 @@ import com.facebook.react.uimanager.ViewManager;
 import java.util.Collections;
 import java.util.List;
 
-public class ReactPackageAdapter implements ReactPackage {
+class ReactPackageAdapter
+    implements ReactPackage {
+
     @Override
     public List<NativeModule> createNativeModules(
             ReactApplicationContext reactContext) {

@@ -1,0 +1,77 @@
+%align-right {
+    @include flex();
+    flex-direction: row-reverse;
+    flex-wrap: nowrap;
+    justify-content: flex-start;
+}
+
+.horizontal-filmstrip .filmstrip {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    padding: 10px 5px;
+    @extend %align-right;
+    transition: bottom .3s;
+    z-index: $filmstripVideosZ;
+
+    &.reduce-height {
+        bottom: $newToolbarSizeWithPadding;
+    }
+
+    &__videos {
+        @extend %align-right;
+        position:relative;
+        padding: 0;
+        /* The filmstrip should not be covered by the left toolbar. */
+        bottom: 0;
+        width:auto;
+        overflow: visible !important;
+
+        &#remoteVideos {
+            border: $thumbnailsBorder solid transparent;
+            padding-left: $defaultToolbarSize + 5;
+            transition: bottom 2s;
+        }
+
+        /**
+         * The local video identifier.
+         */
+        &#filmstripLocalVideo {
+            align-self: flex-end;
+            display: block;
+        }
+
+        &.hidden {
+            bottom: calc(-196px - #{$newToolbarSizeWithPadding});
+        }
+
+        .remote-videos-container {
+            display: flex;
+        }
+    }
+
+    /**
+     * Style the filmstrip videos in filmstrip-only mode.
+     */
+    &__videos-filmstripOnly {
+        margin-top: auto;
+        margin-bottom: auto;
+
+        .filmstrip__videos {
+            &#filmstripLocalVideo {
+                bottom: 0px;
+            }
+        }
+    }
+
+    .remote-videos-container {
+        transition: opacity 1s;
+    }
+
+    &.hide-videos {
+        .remote-videos-container {
+            opacity: 0;
+            pointer-events: none;
+        }
+    }
+}

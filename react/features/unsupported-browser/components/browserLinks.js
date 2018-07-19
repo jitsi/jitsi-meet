@@ -15,19 +15,19 @@ export const CHROME = 'http://google.com/chrome';
 export const CHROMIUM = 'http://www.chromium.org/';
 
 /**
+ * The URL at which Microsoft Edge is available for download.
+ *
+ * @type {string}
+ */
+export const EDGE
+    = 'https://www.microsoft.com/en-us/windows/microsoft-edge';
+
+/**
  * The URL at which Mozilla Firefox is available for download.
  *
  * @type {string}
  */
 export const FIREFOX = 'http://www.getfirefox.com/';
-
-/**
- * The URL at which Microsoft Internet Explorer is available for download.
- *
- * @type {string}
- */
-export const IE
-    = 'https://www.microsoft.com/en-us/download/internet-explorer.aspx';
 
 /**
  * The URL at which Safari is available for download.

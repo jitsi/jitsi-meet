@@ -6,6 +6,8 @@ import {
     Transport
 } from '../../transport';
 
+import electronPopupsConfig from './electronPopupsConfig.json';
+
 const logger = require('jitsi-meet-logger').getLogger(__filename);
 
 const ALWAYS_ON_TOP_FILENAMES = [
@@ -38,6 +40,7 @@ const events = {
     'audio-availability-changed': 'audioAvailabilityChanged',
     'audio-mute-status-changed': 'audioMuteStatusChanged',
     'display-name-change': 'displayNameChange',
+    'email-change': 'emailChange',
     'feedback-submitted': 'feedbackSubmitted',
     'incoming-message': 'incomingMessage',
     'outgoing-message': 'outgoingMessage',
@@ -235,7 +238,7 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
                 }
             })
         });
-        this._invitees = invitees;
+        this.invite(invitees);
         this._isLargeVideoVisible = true;
         this._numberOfParticipants = 0;
         this._participants = {};
@@ -366,9 +369,6 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
 
             switch (name) {
             case 'video-conference-joined':
-                if (this._invitees) {
-                    this.invite(this._invitees);
-                }
                 this._myUserID = userID;
                 this._participants[userID] = {
                     avatarURL: data.avatarURL
@@ -393,6 +393,14 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
                 if (user) {
                     user.displayName = data.displayname;
                     user.formattedDisplayName = data.formattedDisplayName;
+                }
+                break;
+            }
+            case 'email-change': {
+                const user = this._participants[userID];
+
+                if (user) {
+                    user.email = data.email;
                 }
                 break;
             }
@@ -632,6 +640,18 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
     }
 
     /**
+     * Returns the email of a participant.
+     *
+     * @param {string} participantId - The id of the participant.
+     * @returns {string} The email.
+     */
+    getEmail(participantId) {
+        const { email } = this._participants[participantId] || {};
+
+        return email;
+    }
+
+    /**
      * Returns the formatted display name of a participant.
      *
      * @param {string} participantId - The id of the participant.
@@ -711,5 +731,17 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
      */
     removeEventListeners(eventList) {
         eventList.forEach(event => this.removeEventListener(event));
+    }
+
+    /**
+     * Returns the configuration for electron for the windows that are open
+     * from Jitsi Meet.
+     *
+     * @returns {Promise<Object>}
+     *
+     * NOTE: For internal use only.
+     */
+    _getElectronPopupsConfig() {
+        return Promise.resolve(electronPopupsConfig);
     }
 }

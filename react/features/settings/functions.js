@@ -1,6 +1,8 @@
 // @flow
-
+import { toState } from '../base/redux';
 import { parseStandardURIString } from '../base/util';
+import { i18next, DEFAULT_LANGUAGE, LANGUAGES } from '../base/i18n';
+import { getLocalParticipant, PARTICIPANT_ROLE } from '../base/participants';
 
 declare var interfaceConfig: Object;
 
@@ -59,4 +61,58 @@ export function normalizeUserInputURL(url: string) {
 export function shouldShowOnlyDeviceSelection() {
     return interfaceConfig.SETTINGS_SECTIONS.length === 1
         && isSettingEnabled('devices');
+}
+
+/**
+ * Returns the properties for the "More" tab from settings dialog from Redux
+ * state.
+ *
+ * @param {(Function|Object)} stateful -The (whole) redux state, or redux's
+ * {@code getState} function to be used to retrieve the state.
+ * @returns {Object} - The properties for the "More" tab from settings dialog.
+ */
+export function getMoreTabProps(stateful: Object | Function) {
+    const state = toState(stateful);
+    const language = i18next.language || DEFAULT_LANGUAGE;
+    const conference = state['features/base/conference'];
+    const configuredTabs = interfaceConfig.SETTINGS_SECTIONS || [];
+    const localParticipant = getLocalParticipant(state);
+
+
+    // The settings sections to display.
+    const showModeratorSettings
+        = configuredTabs.includes('moderator')
+            && localParticipant.role === PARTICIPANT_ROLE.MODERATOR;
+
+    return {
+        currentLanguage: language,
+        followMeEnabled: Boolean(conference.followMeEnabled),
+        languages: LANGUAGES,
+        showLanguageSettings: configuredTabs.includes('language'),
+        showModeratorSettings,
+        startAudioMuted: Boolean(conference.startAudioMutedPolicy),
+        startVideoMuted: Boolean(conference.startVideoMutedPolicy)
+    };
+}
+
+/**
+ * Returns the properties for the "Profile" tab from settings dialog from Redux
+ * state.
+ *
+ * @param {(Function|Object)} stateful -The (whole) redux state, or redux's
+ * {@code getState} function to be used to retrieve the state.
+ * @returns {Object} - The properties for the "Profile" tab from settings
+ * dialog.
+ */
+export function getProfileTabProps(stateful: Object | Function) {
+    const state = toState(stateful);
+    const conference = state['features/base/conference'];
+    const localParticipant = getLocalParticipant(state);
+
+    return {
+        authEnabled: conference.authEnabled,
+        authLogin: conference.authLogin,
+        displayName: localParticipant.name,
+        email: localParticipant.email
+    };
 }

@@ -26,6 +26,10 @@
 
 RCT_EXPORT_MODULE();
 
++ (BOOL)requiresMainQueueSetup {
+    return NO;
+}
+
 - (NSDictionary *)constantsToExport {
     NSDictionary<NSString *, id> *infoDictionary
         = [[NSBundle mainBundle] infoDictionary];

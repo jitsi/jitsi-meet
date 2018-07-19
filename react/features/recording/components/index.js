@@ -1,3 +1,11 @@
-export { StartLiveStreamDialog, StopLiveStreamDialog } from './LiveStream';
-export { StartRecordingDialog, StopRecordingDialog } from './Recording';
+export {
+    LiveStreamButton,
+    StartLiveStreamDialog,
+    StopLiveStreamDialog
+} from './LiveStream';
+export {
+    RecordButton,
+    StartRecordingDialog,
+    StopRecordingDialog
+} from './Recording';
 export { default as RecordingLabel } from './RecordingLabel';

@@ -1,7 +1,6 @@
 /* @flow */
 
 import _ from 'lodash';
-import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
@@ -14,12 +13,39 @@ import Toolbar from './Toolbar';
 declare var interfaceConfig: Object;
 
 /**
+ * The type of the React {@code Component} props of {@link Filmstrip}.
+ */
+type Props = {
+
+    /**
+     * Additional CSS class names top add to the root.
+     */
+    _className: string,
+
+    /**
+     * Whether the UI/UX is filmstrip-only.
+     */
+    _filmstripOnly: boolean,
+
+    /**
+     * Whether or not remote videos are currently being hovered over. Hover
+     * handling is currently being handled detected outside of react.
+     */
+    _hovered: boolean,
+
+    /**
+     * The redux {@code dispatch} function.
+     */
+    dispatch: Dispatch<*>
+};
+
+/**
  * Implements a React {@link Component} which represents the filmstrip on
  * Web/React.
  *
  * @extends Component
  */
-class Filmstrip extends Component<*> {
+class Filmstrip extends Component <Props> {
     _isHovered: boolean;
 
     _notifyOfHoveredStateUpdate: Function;
@@ -29,46 +55,12 @@ class Filmstrip extends Component<*> {
     _onMouseOver: Function;
 
     /**
-     * {@code Filmstrip} component's property types.
-     *
-     * @static
-     */
-    static propTypes = {
-        /**
-         * Whether the UI/UX is filmstrip-only.
-         */
-        _filmstripOnly: PropTypes.bool,
-
-        /**
-         * Whether or not remote videos are currently being hovered over.
-         */
-        _hovered: PropTypes.bool,
-
-        /**
-         * Whether or not the remote videos should be visible. Will toggle
-         * a class for hiding the videos.
-         */
-        _remoteVideosVisible: PropTypes.bool,
-
-        /**
-         * Whether or not the toolbox is visible. The height of the vertical
-         * filmstrip needs to adjust to accommodate the horizontal toolbox.
-         */
-        _toolboxVisible: PropTypes.bool,
-
-        /**
-         * The redux {@code dispatch} function.
-         */
-        dispatch: PropTypes.func
-    };
-
-    /**
      * Initializes a new {@code Filmstrip} instance.
      *
      * @param {Object} props - The read-only properties with which the new
      * instance is to be initialized.
      */
-    constructor(props) {
+    constructor(props: Props) {
         super(props);
 
         // Debounce the method for dispatching the new filmstrip handled state
@@ -95,28 +87,16 @@ class Filmstrip extends Component<*> {
      * @returns {ReactElement}
      */
     render() {
-        const {
-            _filmstripOnly,
-            _remoteVideosVisible,
-            _toolboxVisible
-        } = this.props;
-
         // Note: Appending of {@code RemoteVideo} views is handled through
         // VideoLayout. The views do not get blown away on render() because
         // ReactDOMComponent is only aware of the given JSX and not new appended
         // DOM. As such, when updateDOMProperties gets called, only attributes
         // will get updated without replacing the DOM. If the known DOM gets
         // modified, then the views will get blown away.
-        const reduceHeight
-            = _toolboxVisible && interfaceConfig.TOOLBAR_BUTTONS.length;
-        const classNames
-            = `filmstrip ${
-                _remoteVideosVisible ? '' : 'hide-videos'} ${
-                reduceHeight ? 'reduce-height' : ''}`;
 
         return (
-            <div className = { classNames }>
-                { _filmstripOnly && <Toolbar /> }
+            <div className = { `filmstrip ${this.props._className}` }>
+                { this.props._filmstripOnly && <Toolbar /> }
                 <div
                     className = 'filmstrip__videos'
                     id = 'remoteVideos'>
@@ -191,20 +171,26 @@ class Filmstrip extends Component<*> {
  * @param {Object} state - The Redux state.
  * @private
  * @returns {{
- *     _filmstripOnly: boolean,
+ *     _className: string,
  *     _hovered: boolean,
- *     _remoteVideosVisible: boolean,
- *     _toolboxVisible: boolean
+ *     _filmstripOnly: boolean
  * }}
  */
 function _mapStateToProps(state) {
     const { hovered } = state['features/filmstrip'];
+    const isFilmstripOnly = Boolean(interfaceConfig.filmStripOnly);
+    const reduceHeight = !isFilmstripOnly
+        && state['features/toolbox'].visible
+        && interfaceConfig.TOOLBAR_BUTTONS.length;
+    const remoteVideosVisible = shouldRemoteVideosBeVisible(state);
+
+    const className = `${remoteVideosVisible ? '' : 'hide-videos'} ${
+        reduceHeight ? 'reduce-height' : ''}`;
 
     return {
-        _filmstripOnly: Boolean(interfaceConfig.filmStripOnly),
-        _hovered: hovered,
-        _remoteVideosVisible: shouldRemoteVideosBeVisible(state),
-        _toolboxVisible: state['features/toolbox'].visible
+        _className: className,
+        _filmstripOnly: isFilmstripOnly,
+        _hovered: hovered
     };
 }
 

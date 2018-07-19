@@ -87,18 +87,6 @@ class PagedList extends AbstractPagedList {
     }
 
     /**
-     * Platform specific actions to run on page select.
-     *
-     * @private
-     * @param {number} pageIndex - The selected page index.
-     * @returns {void}
-     */
-    _platformSpecificPageSelect(pageIndex) {
-        this._viewPager.setPage(pageIndex);
-        this._selectPage(pageIndex);
-    }
-
-    /**
      * Renders a single page of the page list.
      *
      * @private

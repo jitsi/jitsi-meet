@@ -25,6 +25,12 @@ class MultiSelectAutocomplete extends Component {
         defaultValue: PropTypes.array,
 
         /**
+         * Optional footer to show as a last element in the results.
+         * Should be of type {content: <some content>}
+         */
+        footer: PropTypes.object,
+
+        /**
          * Indicates if the component is disabled.
          */
         isDisabled: PropTypes.bool,
@@ -151,6 +157,7 @@ class MultiSelectAutocomplete extends Component {
             <div>
                 <MultiSelectStateless
                     filterValue = { this.state.filterValue }
+                    footer = { this.props.footer }
                     icon = { null }
                     isDisabled = { isDisabled }
                     isLoading = { this.state.loading }

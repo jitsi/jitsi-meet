@@ -3,8 +3,8 @@
 import i18next from 'i18next';
 import { NativeEventEmitter, NativeModules } from 'react-native';
 
+import { APP_WILL_MOUNT, APP_WILL_UNMOUNT, getAppProp } from '../base/app';
 import { MiddlewareRegistry } from '../base/redux';
-import { APP_WILL_MOUNT, APP_WILL_UNMOUNT, getAppProp } from '../app';
 
 import { invite } from './actions';
 import {

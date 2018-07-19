@@ -1,9 +1,7 @@
 import {
     CLOSE_PANEL,
     SET_VISIBLE_PANEL,
-    TOGGLE_CHAT,
-    TOGGLE_PROFILE,
-    TOGGLE_SETTINGS
+    TOGGLE_CHAT
 } from './actionTypes';
 
 /**
@@ -47,31 +45,5 @@ export function setVisiblePanel(name = null) {
 export function toggleChat() {
     return {
         type: TOGGLE_CHAT
-    };
-}
-
-/**
- * Toggles display of the profile side panel.
- *
- * @returns {{
- *     type: TOGGLE_PROFILE
- * }}
- */
-export function toggleProfile() {
-    return {
-        type: TOGGLE_PROFILE
-    };
-}
-
-/**
- * Toggles display of the settings side panel.
- *
- * @returns {{
- *     type: TOGGLE_SETTINGS
- * }}
- */
-export function toggleSettings() {
-    return {
-        type: TOGGLE_SETTINGS
     };
 }

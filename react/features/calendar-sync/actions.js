@@ -1,25 +1,30 @@
 // @flow
 
 import {
+    REFRESH_CALENDAR,
     SET_CALENDAR_AUTHORIZATION,
-    SET_CALENDAR_EVENTS,
-    REFRESH_CALENDAR
+    SET_CALENDAR_EVENTS
 } from './actionTypes';
 
 /**
  * Sends an action to refresh the entry list (fetches new data).
  *
- * @param {boolean|undefined} forcePermission - Whether to force to re-ask for
+ * @param {boolean} forcePermission - Whether to force to re-ask for
  * the permission or not.
+ * @param {boolean} isInteractive - If true this refresh was caused by
+ * direct user interaction, false otherwise.
  * @returns {{
  *     type: REFRESH_CALENDAR,
- *     forcePermission: boolean
+ *     forcePermission: boolean,
+ *     isInteractive: boolean
  * }}
  */
-export function refreshCalendar(forcePermission: boolean = false) {
+export function refreshCalendar(
+        forcePermission: boolean = false, isInteractive: boolean = true) {
     return {
         type: REFRESH_CALENDAR,
-        forcePermission
+        forcePermission,
+        isInteractive
     };
 }
 

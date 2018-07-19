@@ -12,9 +12,12 @@ import {
 } from '../base/config';
 import { setLocationURL } from '../base/connection';
 import { loadConfig } from '../base/lib-jitsi-meet';
-import { parseURIString } from '../base/util';
+import { parseURIString, toURLString } from '../base/util';
+import { setFatalError } from '../overlay';
 
-import { APP_WILL_MOUNT, APP_WILL_UNMOUNT } from './actionTypes';
+import { getDefaultURL } from './functions';
+
+const logger = require('jitsi-meet-logger').getLogger(__filename);
 
 declare var APP: Object;
 
@@ -74,32 +77,25 @@ function _appNavigateToMandatoryLocation(
      * @returns {void}
      */
     function loadConfigSettled(error, config) {
-        let promise;
-
         // Due to the asynchronous nature of the loading, the specified config
-        // may or may not be required by the time the notification arrives.
-        // If we receive the config for a location we are no longer interested
-        // in, "ignore" it - deliver it to the external API, for example, but do
-        // not proceed with the appNavigate procedure/process.
+        // may or may not be required by the time the notification arrives. If
+        // we receive the config for a location we are no longer interested in,
+        // "ignore" it - deliver it to the external API, for example, but do not
+        // proceed with the appNavigate procedure/process.
         if (getState()['features/base/config'].locationURL === locationURL) {
-            promise = dispatch(setLocationURL(locationURL));
+            dispatch(setLocationURL(locationURL));
+            dispatch(setConfig(config));
         } else {
             // eslint-disable-next-line no-param-reassign
             error || (error = new Error('Config no longer needed!'));
-            promise = Promise.resolve();
+
+            // XXX The failure could be, for example, because of a
+            // certificate-related error. In which case the connection will fail
+            // later in Strophe anyway.
+            dispatch(loadConfigError(error, locationURL));
+
+            throw error;
         }
-
-        return promise.then(() => {
-            if (error) {
-                // XXX The failure could be, for example, because of a
-                // certificate-related error. In which case the connection will
-                // fail later in Strophe anyway.
-                dispatch(loadConfigError(error, locationURL));
-                throw error;
-            }
-
-            return dispatch(setConfig(config));
-        });
     }
 }
 
@@ -120,8 +116,7 @@ function _appNavigateToOptionalLocation(
     // If the specified location (URI) does not identify a host, use the app's
     // default.
     if (!location || !location.host) {
-        const defaultLocation
-            = parseURIString(getState()['features/app'].app._getDefaultURL());
+        const defaultLocation = parseURIString(getDefaultURL(getState));
 
         if (location) {
             location.host = defaultLocation.host;
@@ -140,49 +135,6 @@ function _appNavigateToOptionalLocation(
     location.protocol || (location.protocol = 'https:');
 
     return _appNavigateToMandatoryLocation(dispatch, getState, location);
-}
-
-/**
- * Signals that a specific App will mount (in the terms of React).
- *
- * @param {App} app - The App which will mount.
- * @returns {{
- *     type: APP_WILL_MOUNT,
- *     app: App
- * }}
- */
-export function appWillMount(app: Object) {
-    return (dispatch: Dispatch<*>) => {
-        dispatch({
-            type: APP_WILL_MOUNT,
-            app
-        });
-
-        // TODO There was a redux action creator appInit which I did not like
-        // because we already had the redux action creator appWillMount and,
-        // respectively, the redux action APP_WILL_MOUNT. So I set out to remove
-        // appInit and managed to move everything it was doing but the
-        // following. Which is not extremely bad because we haven't moved the
-        // API module into its own feature yet so we're bound to work on that in
-        // the future.
-        typeof APP === 'object' && APP.API.init();
-    };
-}
-
-/**
- * Signals that a specific App will unmount (in the terms of React).
- *
- * @param {App} app - The App which will unmount.
- * @returns {{
- *     type: APP_WILL_UNMOUNT,
- *     app: App
- * }}
- */
-export function appWillUnmount(app: Object) {
-    return {
-        type: APP_WILL_UNMOUNT,
-        app
-    };
 }
 
 /**
@@ -263,6 +215,28 @@ export function redirectWithStoredParams(pathname: string) {
 
         newLocationURL.pathname = pathname;
         window.location.assign(newLocationURL.toString());
+    };
+}
+
+/**
+ * Reloads the page.
+ *
+ * @protected
+ * @returns {Function}
+ */
+export function reloadNow() {
+    return (dispatch: Dispatch<Function>, getState: Function) => {
+        dispatch(setFatalError(undefined));
+
+        const { locationURL } = getState()['features/base/connection'];
+
+        logger.info(`Reloading the conference using URL: ${locationURL}`);
+
+        if (navigator.product === 'ReactNative') {
+            dispatch(appNavigate(toURLString(locationURL)));
+        } else {
+            dispatch(reloadWithStoredParams());
+        }
     };
 }
 

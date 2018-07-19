@@ -202,9 +202,9 @@ public class InviteController {
     }
 
     /**
-     * Starts a query for users to invite to the conference.  Results will be
-     * returned through the {@link AddPeopleControllerListener#onReceivedResults(AddPeopleController, List, String)}
-     * method.
+     * Starts a query for users to invite to the conference. Results will be
+     * returned through
+     * {@link AddPeopleControllerListener#onReceivedResults(AddPeopleController, List, String)}.
      *
      * @param query {@code String} to use for the query
      */

@@ -21,3 +21,15 @@ export const MEDIA_PERMISSION_PROMPT_VISIBILITY_CHANGED
  * @public
  */
 export const SUSPEND_DETECTED = Symbol('SUSPEND_DETECTED');
+
+/**
+ * Adjust the state of the fatal error which shows/hides the reload screen. See
+ * action methods's description for more info about each of the fields.
+ *
+ * {
+ *     type: SET_FATAL_ERROR,
+ *     fatalError: ?Object
+ * }
+ * @public
+ */
+export const SET_FATAL_ERROR = Symbol('SET_FATAL_ERROR');

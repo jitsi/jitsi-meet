@@ -188,8 +188,17 @@ function _reportError(msg, err) {
  */
 export function sendLocalParticipant(
         stateful: Function | Object,
-        conference: { sendCommand: Function, setDisplayName: Function }) {
-    const { avatarID, avatarURL, email, name } = getLocalParticipant(stateful);
+        conference: {
+            sendCommand: Function,
+            setDisplayName: Function,
+            setLocalParticipantProperty: Function }) {
+    const {
+        avatarID,
+        avatarURL,
+        email,
+        features,
+        name
+    } = getLocalParticipant(stateful);
 
     avatarID && conference.sendCommand(AVATAR_ID_COMMAND, {
         value: avatarID
@@ -200,5 +209,10 @@ export function sendLocalParticipant(
     email && conference.sendCommand(EMAIL_COMMAND, {
         value: email
     });
+
+    if (features && features['screen-sharing'] === 'true') {
+        conference.setLocalParticipantProperty('features_screen-sharing', true);
+    }
+
     conference.setDisplayName(name);
 }

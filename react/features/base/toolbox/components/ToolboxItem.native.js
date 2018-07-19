@@ -51,6 +51,7 @@ export default class ToolboxItem extends AbstractToolboxItem<Props> {
     _renderItem() {
         const {
             disabled,
+            elementAfter,
             onClick,
             showLabel,
             styles
@@ -72,6 +73,7 @@ export default class ToolboxItem extends AbstractToolboxItem<Props> {
                     <Text style = { styles && styles.labelStyle }>
                         { this.label }
                     </Text>
+                    { elementAfter }
                 </View>
             );
 

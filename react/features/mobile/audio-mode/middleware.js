@@ -2,7 +2,7 @@
 
 import { NativeModules } from 'react-native';
 
-import { APP_WILL_MOUNT } from '../../app';
+import { APP_WILL_MOUNT } from '../../base/app';
 import {
     CONFERENCE_FAILED,
     CONFERENCE_LEFT,

@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 
 import { translate } from '../../base/i18n';
 import { getParticipantById } from '../../base/participants';
+import { Text } from '../../base/react';
 
 import { STATUS_TO_I18N_KEY } from '../constants';
 
@@ -36,9 +37,25 @@ class PresenceLabel extends Component {
         _presence: PropTypes.string,
 
         /**
+         * Class name for the presence label.
+         */
+        className: PropTypes.string,
+
+        /**
+         * Default presence status that will be displayed if user's presence
+         * status is not available.
+         */
+        defaultPresence: PropTypes.string,
+
+        /**
          * The ID of the participant whose presence status shoul display.
          */
         participantID: PropTypes.string,
+
+        /**
+         * Styles for the presence label.
+         */
+        style: PropTypes.object,
 
         /**
          * Invoked to obtain translated strings.
@@ -53,15 +70,20 @@ class PresenceLabel extends Component {
      * @returns {ReactElement}
      */
     render() {
-        const { _presence } = this.props;
+        const text = this._getPresenceText();
+
+        if (text === null) {
+            return null;
+        }
+
+        const { style, className } = this.props;
 
         return (
-            <div
-                className
-                    = { `presence-label ${_presence ? '' : 'no-presence'}` }>
-                { this._getPresenceText() }
-            </div>
-        );
+            <Text
+                className = { className }
+                { ...style }>
+                { text }
+            </Text>);
     }
 
     /**
@@ -102,7 +124,8 @@ function _mapStateToProps(state, ownProps) {
     const participant = getParticipantById(state, ownProps.participantID);
 
     return {
-        _presence: participant && participant.presence
+        _presence:
+            (participant && participant.presence) || ownProps.defaultPresence
     };
 }
 

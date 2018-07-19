@@ -30,6 +30,10 @@
         width: 100%;
     }
 
+    .google-error {
+        color: $errorColor;
+    }
+
     /**
      * The Google sign in button must follow Google's design guidelines.
      * See: https://developers.google.com/identity/branding-guidelines

@@ -6,21 +6,12 @@ import { connect } from 'react-redux';
 import { translate } from '../../base/i18n';
 import { CircularLabel } from '../../base/label';
 import { JitsiRecordingConstants } from '../../base/lib-jitsi-meet';
-import { combineStyles } from '../../base/styles';
 
 import AbstractRecordingLabel, {
-    type Props as AbstractProps,
-    _abstractMapStateToProps
+    type Props,
+    _mapStateToProps
 } from './AbstractRecordingLabel';
 import styles from './styles';
-
-type Props = AbstractProps & {
-
-    /**
-     * Style of the component passed as props.
-     */
-    style: ?Object
-};
 
 /**
  * Implements a React {@link Component} which displays the current state of
@@ -28,30 +19,21 @@ type Props = AbstractProps & {
  *
  * @extends {Component}
  */
-class RecordingLabel extends AbstractRecordingLabel<Props, *> {
+class RecordingLabel extends AbstractRecordingLabel<Props> {
 
     /**
-     * Implements React {@code Component}'s render.
+     * Renders the platform specific label component.
      *
      * @inheritdoc
      */
-    render() {
-        const { _visible, mode, style, t } = this.props;
-
-        if (!_visible) {
-            return null;
-        }
-
-        let labelKey;
+    _renderLabel() {
         let indicatorStyle;
 
-        switch (mode) {
+        switch (this.props.mode) {
         case JitsiRecordingConstants.mode.STREAM:
-            labelKey = 'recording.live';
             indicatorStyle = styles.indicatorLive;
             break;
         case JitsiRecordingConstants.mode.FILE:
-            labelKey = 'recording.rec';
             indicatorStyle = styles.indicatorRecording;
             break;
         default:
@@ -61,31 +43,12 @@ class RecordingLabel extends AbstractRecordingLabel<Props, *> {
 
         return (
             <CircularLabel
-                label = { t(labelKey) }
-                style = {
-                    combineStyles(indicatorStyle, style)
-                } />
+                label = { this.props.t(this._getLabelKey()) }
+                style = { indicatorStyle } />
         );
     }
-}
 
-/**
- * Maps (parts of) the Redux state to the associated
- * {@code RecordingLabel}'s props.
- *
- * NOTE: This component has no props other than the abstract ones but keeping
- * the coding style the same for consistency reasons.
- *
- * @param {Object} state - The Redux state.
- * @param {Object} ownProps - The component's own props.
- * @private
- * @returns {{
- * }}
- */
-function _mapStateToProps(state: Object, ownProps: Object) {
-    return {
-        ..._abstractMapStateToProps(state, ownProps)
-    };
+    _getLabelKey: () => ?string
 }
 
 export default translate(connect(_mapStateToProps)(RecordingLabel));

@@ -1,21 +1,66 @@
 import { ReducerRegistry } from '../base/redux';
-import { RECORDING_SESSION_UPDATED } from './actionTypes';
+import { PersistenceRegistry } from '../base/storage';
+import {
+    CLEAR_RECORDING_SESSIONS,
+    RECORDING_SESSION_UPDATED,
+    SET_PENDING_RECORDING_NOTIFICATION_UID,
+    SET_STREAM_KEY
+} from './actionTypes';
 
 const DEFAULT_STATE = {
+    pendingNotificationUids: {},
     sessionDatas: []
 };
 
 /**
+ * The name of the Redux store this feature stores its state in.
+ */
+const STORE_NAME = 'features/recording';
+
+/**
+ * Sets up the persistence of the feature {@code recording}.
+ */
+PersistenceRegistry.register(STORE_NAME, {
+    streamKey: true
+}, DEFAULT_STATE);
+
+/**
  * Reduces the Redux actions of the feature features/recording.
  */
-ReducerRegistry.register('features/recording',
+ReducerRegistry.register(STORE_NAME,
     (state = DEFAULT_STATE, action) => {
         switch (action.type) {
+
+        case CLEAR_RECORDING_SESSIONS:
+            return {
+                ...state,
+                sessionDatas: []
+            };
+
         case RECORDING_SESSION_UPDATED:
             return {
                 ...state,
                 sessionDatas:
                     _updateSessionDatas(state.sessionDatas, action.sessionData)
+            };
+
+        case SET_PENDING_RECORDING_NOTIFICATION_UID: {
+            const pendingNotificationUids = {
+                ...state.pendingNotificationUids
+            };
+
+            pendingNotificationUids[action.streamType] = action.uid;
+
+            return {
+                ...state,
+                pendingNotificationUids
+            };
+        }
+
+        case SET_STREAM_KEY:
+            return {
+                ...state,
+                streamKey: action.streamKey
             };
 
         default:

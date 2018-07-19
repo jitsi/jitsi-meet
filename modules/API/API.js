@@ -113,8 +113,10 @@ function initCommands() {
 
         switch (name) {
         case 'invite':
+            // The store should be already available because API.init is called
+            // on appWillMount action.
             APP.store.dispatch(
-                invite(request.invitees))
+                invite(request.invitees, true))
                 .then(failedInvitees => {
                     let error;
                     let result;
@@ -359,6 +361,24 @@ class API {
             name: 'display-name-change',
             displayname: displayName,
             formattedDisplayName,
+            id
+        });
+    }
+
+    /**
+     * Notify external application (if API is enabled) that user changed their
+     * email.
+     *
+     * @param {string} id - User id.
+     * @param {string} email - The new email of the participant.
+     * @returns {void}
+     */
+    notifyEmailChanged(
+            id: string,
+            { email }: Object) {
+        this._sendEvent({
+            name: 'email-change',
+            email,
             id
         });
     }

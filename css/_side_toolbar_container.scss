@@ -1,41 +1,14 @@
 /**
  * Toolbar side panel main container element.
  */
-.use-new-toolbox #sideToolbarContainer {
+#sideToolbarContainer {
     background-color: $newToolbarBackgroundColor;
-
     /**
      * Make the sidebar flush with the top of the toolbar. Take the size of
      * the toolbar and subtract from 100%.
      */
     height: calc(100% - #{$newToolbarSizeWithPadding});
     left: 0;
-
-    .side-toolbar-close {
-        background: gray;
-        border: 3px solid rgba(255, 255, 255, 0.1);
-        border-radius: 100%;
-        color: white;
-        cursor:pointer;
-        height: 10px;
-        line-height: 10px;
-        padding: 4px;
-        position: absolute;
-        right: 5px;
-        text-align: center;
-        top: 5px;
-        width: 10px;
-        z-index: 1;
-    }
-
-    #chatconversation {
-        top: 15px;
-    }
-}
-#sideToolbarContainer {
-    background-color: $sideToolbarContainerBg;
-    height: 100%;
-    left: $defaultToolbarSize;
     max-width: $sidebarWidth;
     overflow: hidden;
     position: absolute;
@@ -92,7 +65,7 @@
         /**
          * Titles and subtitles of inner containers.
          */
-        div.title, div.subTitle {
+        div.title {
             margin: 24px 0 11px;
         }
 
@@ -113,52 +86,20 @@
         }
     }
 
-    .settings-menu {
-        display: flex;
-        flex-direction: column;
-        padding-left: 10%;
-        padding-right: 10%;
-
-        .moderator-checkbox {
-            display: inline-block;
-            margin: 0 5px 0;
-            width: auto;
-        }
-
-        .moderator-option {
-            margin-top: 15px;
-        }
-
-        .subTitle {
-            color: $defaultSideBarFontColor;
-            font-size: 11px;
-            font-weight: 500;
-        }
-    }
-}
-
-/**
- * Profile
- */
-.auth_container {
-    ul {
-        padding: 0;
-
-        li {
-            list-style-type: none;
-
-            a.authButton {
-                width: 160px;
-                margin: 10px 20px;
-                padding: 3px 29px;
-                box-sizing: border-box;
-                background-color: #06a5df;
-                border-radius: 4px;
-                cursor: pointer;
-                color: $defaultColor;
-                text-decoration: none;
-                text-align: center;
-            }
-        }
+    .side-toolbar-close {
+        background: gray;
+        border: 3px solid rgba(255, 255, 255, 0.1);
+        border-radius: 100%;
+        color: white;
+        cursor:pointer;
+        height: 10px;
+        line-height: 10px;
+        padding: 4px;
+        position: absolute;
+        right: 5px;
+        text-align: center;
+        top: 5px;
+        width: 10px;
+        z-index: 1;
     }
 }

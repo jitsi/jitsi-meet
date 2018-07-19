@@ -1,0 +1,12 @@
+/**
+ * Move Atlaskit Flag up a little bit so it does not cover the toolbar with the
+ * first notification.
+ */
+.cxGWJB{
+    bottom: calc(#{$newToolbarSizeWithPadding}) !important;
+}
+.gXSEsl:nth-child(n+2) {
+    transform: translateX(0) translateY(100%) translateY(16px) !important;
+    -ms-transform: translateX(0) translateY(100%) translateY(16px) !important;
+    -webkit-transform: translateX(0) translateY(100%) translateY(16px) !important;
+}

@@ -258,11 +258,8 @@ LocalVideo.prototype._onContainerClick = function(event) {
         = $source.parents('.displayNameContainer').length > 0;
     const clickedOnPopover = $source.parents('.popover').length > 0
             || classList.contains('popover');
-
     const ignoreClick = clickedOnDisplayName || clickedOnPopover;
 
-    // FIXME: with Temasys plugin event arg is not an event, but the clicked
-    // object itself, so we have to skip this call
     if (event.stopPropagation && !ignoreClick) {
         event.stopPropagation();
     }

@@ -6,6 +6,7 @@ import { connect } from 'react-redux';
 import { BottomSheet, hideDialog } from '../../../base/dialog';
 import { AudioRouteButton } from '../../../mobile/audio-mode';
 import { PictureInPictureButton } from '../../../mobile/picture-in-picture';
+import { LiveStreamButton, RecordButton } from '../../../recording';
 import { RoomLockButton } from '../../../room-lock';
 
 import AudioOnlyButton from './AudioOnlyButton';
@@ -68,6 +69,8 @@ class OverflowMenu extends Component<Props> {
                 <ToggleCameraButton { ...buttonProps } />
                 <AudioOnlyButton { ...buttonProps } />
                 <RoomLockButton { ...buttonProps } />
+                <RecordButton { ...buttonProps } />
+                <LiveStreamButton { ...buttonProps } />
                 <PictureInPictureButton { ...buttonProps } />
             </BottomSheet>
         );

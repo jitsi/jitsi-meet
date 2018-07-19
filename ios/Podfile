@@ -35,6 +35,8 @@ target 'JitsiMeet' do
   pod 'react-native-locale-detector',
     :path => '../node_modules/react-native-locale-detector'
   pod 'react-native-webrtc', :path => '../node_modules/react-native-webrtc'
+  pod 'ReactNativePermissions',
+    :path => '../node_modules/react-native-permissions'
   pod 'RNSound', :path => '../node_modules/react-native-sound'
   pod 'RNVectorIcons', :path => '../node_modules/react-native-vector-icons'
   pod 'react-native-calendar-events',

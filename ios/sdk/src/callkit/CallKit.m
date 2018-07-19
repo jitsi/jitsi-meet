@@ -72,6 +72,11 @@ RCT_EXTERN void RCTRegisterModule(Class);
     [JMCallKitProxy removeListener:self];
 }
 
+- (dispatch_queue_t)methodQueue {
+    // Make sure all our methods run in the main thread.
+    return dispatch_get_main_queue();
+}
+
 // End call
 RCT_EXPORT_METHOD(endCall:(NSString *)callUUID
                   resolve:(RCTPromiseResolveBlock)resolve

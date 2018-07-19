@@ -27,6 +27,9 @@
 .icon-arrow_back:before {
   content: "\e5c4";
 }
+.icon-close:before {
+  content: "\e5cd";
+}
 .icon-event_note:before {
     content: "\e616";
 }
@@ -203,4 +206,7 @@
 }
 .icon-live:before {
   content: "\e92c";
+}
+.icon-speaker:before {
+    content: "\e92d";
 }

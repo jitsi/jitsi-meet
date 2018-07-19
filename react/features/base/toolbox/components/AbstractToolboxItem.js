@@ -42,6 +42,11 @@ export type Props = {
     disabled: boolean,
 
     /**
+     * A React Element to display at the end of {@code ToolboxItem}.
+     */
+    elementAfter?: React$Node,
+
+    /**
      * The name of the icon of this {@code ToolboxItem}.
      */
     iconName: string,
@@ -75,7 +80,7 @@ export type Props = {
     /**
      * The text to display in the tooltip. Used only on web.
      */
-    tooltip: string,
+    tooltip: ?string,
 
     /**
      * From which direction the tooltip should appear, relative to the

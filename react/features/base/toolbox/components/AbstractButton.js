@@ -114,7 +114,7 @@ export default class AbstractButton<P: Props, S: *> extends Component<P, S> {
      *
      * @abstract
      */
-    tooltip: string;
+    tooltip: ?string;
 
     /**
      * Initializes a new {@code AbstractButton} instance.
@@ -138,6 +138,17 @@ export default class AbstractButton<P: Props, S: *> extends Component<P, S> {
      */
     _handleClick() {
         // To be implemented by subclass.
+    }
+
+    /**
+     * Helper function to be implemented by subclasses, which may return a
+     * new React Element to be appended at the end of the button.
+     *
+     * @protected
+     * @returns {ReactElement|null}
+     */
+    _getElementAfter() {
+        return null;
     }
 
     /**
@@ -243,6 +254,7 @@ export default class AbstractButton<P: Props, S: *> extends Component<P, S> {
         const props = {
             ...this.props,
             accessibilityLabel: this.accessibilityLabel,
+            elementAfter: this._getElementAfter(),
             iconName: this._getIconName(),
             label: this._getLabel(),
             styles: this._getStyles(),

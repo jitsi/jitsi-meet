@@ -2,12 +2,7 @@
 
 import { MiddlewareRegistry } from '../base/redux';
 
-import {
-    CLOSE_PANEL,
-    TOGGLE_CHAT,
-    TOGGLE_PROFILE,
-    TOGGLE_SETTINGS
-} from './actionTypes';
+import { CLOSE_PANEL, TOGGLE_CHAT } from './actionTypes';
 
 declare var APP: Object;
 
@@ -30,14 +25,6 @@ MiddlewareRegistry.register(store => next => action => {
 
     case TOGGLE_CHAT:
         APP.UI.toggleChat();
-        break;
-
-    case TOGGLE_PROFILE:
-        APP.UI.toggleSidePanel('profile_container');
-        break;
-
-    case TOGGLE_SETTINGS:
-        APP.UI.toggleSidePanel('settings_container');
         break;
     }
 

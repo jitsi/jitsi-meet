@@ -35,13 +35,13 @@
         "raiseHand": "Raise or lower your hand",
         "pushToTalk": "Push to talk",
         "toggleScreensharing": "Switch between camera and screen sharing",
-        "toggleFilmstrip": "Show or hide the videos",
-        "toggleShortcuts": "Show or hide this help menu",
+        "toggleFilmstrip": "Show or hide video thumbnails",
+        "toggleShortcuts": "Show or hide keyboard shortcuts",
         "focusLocal": "Focus on your video",
-        "focusRemote": "Focus on another caller's video",
+        "focusRemote": "Focus on another person's video",
         "toggleChat": "Open or close the chat",
         "mute": "Mute or unmute your microphone",
-        "fullScreen": "Enter or exit full screen",
+        "fullScreen": "View or exit full screen",
         "videoMute": "Start or stop your camera",
         "showSpeakerStats": "Show speaker stats"
     },
@@ -78,7 +78,7 @@
     "toolbar": {
         "accessibilityLabel": {
             "audioOnly": "Toggle audio only",
-            "audioRoute": "Select the audio route",
+            "audioRoute": "Select the sound device",
             "callQuality": "Manage call quality",
             "chat": "Toggle chat window",
             "document": "Toggle shared document",
@@ -107,7 +107,7 @@
         "audioonly": "Enable / Disable audio only mode (saves bandwidth)",
         "audioOnlyOn": "Enable audio only mode (saves bandwidth)",
         "audioOnlyOff": "Disable audio only mode",
-        "audioRoute": "Select the audio route",
+        "audioRoute": "Select the sound device",
         "callQuality": "Manage call quality",
         "enterFullScreen": "View full screen",
         "exitFullScreen": "Exit full screen",
@@ -163,11 +163,15 @@
         "selectMic": "Microphone",
         "selectAudioOutput": "Audio output",
         "followMe": "Everyone follows me",
+        "language": "Language",
+        "loggedIn": "Logged in as __name__",
         "noDevice": "None",
         "cameraAndMic": "Camera and microphone",
-        "moderator": "MODERATOR",
+        "moderator": "Moderator",
+        "more": "More",
         "password": "SET PASSWORD",
-        "audioVideo": "AUDIO AND VIDEO"
+        "audioVideo": "AUDIO AND VIDEO",
+        "devices": "Devices"
     },
     "profile": {
         "title": "Profile",
@@ -230,7 +234,6 @@
         "focus": "Conference focus",
         "focusFail": "__component__ not available - retry in __ms__ sec",
         "grantedTo": "Moderator rights granted to __to__!",
-        "grantedToUnknown": "Moderator rights granted to $t(notify.somebody)!",
         "muted": "You have started the conversation muted.",
         "mutedTitle": "You're muted!",
         "raisedHand": "Would like to speak.",
@@ -361,6 +364,10 @@
         "muteParticipantTitle": "Mute this member?",
         "muteParticipantBody": "You won't be able to unmute them, but they can unmute themselves at any time.",
         "muteParticipantButton": "Mute",
+        "liveStreamingDisabledTooltip": "Start live stream disabled.",
+        "liveStreamingDisabledForGuestTooltip": "Guests can't start live streaming.",
+        "recordingDisabledTooltip": "Start recording disabled.",
+        "recordingDisabledForGuestTooltip": "Guests can't start recordings.",
         "remoteControlTitle": "Remote desktop control",
         "remoteControlRequestMessage": "Will you allow __user__ to remotely control your desktop?",
         "remoteControlShareScreenWarning": "Note that if you press \"Allow\" you will share your screen!",
@@ -371,6 +378,8 @@
         "remoteControlStopMessage": "The remote control session ended!",
         "close": "Close",
         "shareYourScreen": "Share your screen",
+        "shareYourScreenDisabled": "Screen sharing disabled.",
+        "shareYourScreenDisabledForGuest": "Guests can't screen share.",
         "yourEntireScreen": "Your entire screen",
         "applicationWindow": "Application window"
     },
@@ -432,7 +441,7 @@
         "live": "LIVE",
         "off": "Recording stopped",
         "on": "Recording",
-        "pending": "Recording waiting for a member to join...",
+        "pending": "Preparing to record the meeting...",
         "rec": "REC",
         "serviceName": "Recording service",
         "startRecordingBody": "Are you sure you would like to start recording?",
@@ -458,7 +467,7 @@
         "serviceName": "Live Streaming service",
         "signIn": "Sign in with Google",
         "signInCTA": "Sign in or enter your live stream key from YouTube.",
-        "start": "Start a livestream",
+        "start": "Start a live stream",
         "streamIdHelp": "What's this?",
         "unavailableTitle": "Live Streaming unavailable"
     },
@@ -521,6 +530,7 @@
         "countryNotSupported": "We do not support this destination yet.",
         "countryReminder": "Calling outside the US? Please make sure you start with the country code!",
         "disabled": "You can't invite people.",
+        "footerText": "Dialing out is disabled.",
         "invite": "Invite",
         "loading": "Searching for people and phone numbers",
         "loadingNumber": "Validating phone number",
@@ -601,7 +611,7 @@
         "now": "Now",
         "ongoingMeeting": "ongoing meeting",
         "permissionButton": "Open settings",
-        "permissionMessage": "Calendar permission is required to list your meetings in the app."
+        "permissionMessage": "The Calendar permission is required to see your meetings in the app."
     },
     "recentList": {
         "today": "Today",
@@ -622,16 +632,23 @@
     },
     "presenceStatus": {
         "invited": "Invited",
-        "ringing": "Ringing",
-        "calling": "Calling",
-        "initializingCall": "Initializing Call",
+        "ringing": "Ringing...",
+        "calling": "Calling...",
+        "initializingCall": "Initializing Call...",
         "connected": "Connected",
-        "connecting": "Connecting",
-        "connecting2": "Connecting*",
+        "connecting": "Connecting...",
+        "connecting2": "Connecting*...",
         "disconnected": "Disconnected",
         "busy": "Busy",
         "rejected": "Rejected",
         "ignored": "Ignored",
         "expired": "Expired"
+    },
+    "incomingCall": {
+        "answer": "Answer",
+        "audioCallTitle": "Incoming call",
+        "decline": "Dismiss",
+        "productLabel": "from Jitsi Meet",
+        "videoCallTitle": "Incoming video call"
     }
 }
