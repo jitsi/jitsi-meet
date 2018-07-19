@@ -345,7 +345,7 @@ var config = {
         // shard: "shard1",
         // region: "europe",
         // userRegion: "asia"
-    }
+    },
 
     // Options related to end-to-end (participant to participant) ping.
     // e2eping: {
@@ -408,6 +408,11 @@ var config = {
      nick
      startBitrate
      */
+
+    localRecording: {
+        enabled: true,
+        format: 'flac'
+    }
 };
 
 /* eslint-enable no-unused-vars, no-var */

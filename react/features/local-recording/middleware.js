@@ -13,8 +13,13 @@ import { LocalRecordingInfoDialog } from './components';
 import { recordingController } from './controller';
 
 declare var APP: Object;
+declare var config: Object;
 
-MiddlewareRegistry.register(({ getState, dispatch }) => next => action => {
+const isFeatureEnabled = config.localRecording
+    && config.localRecording.enabled === true;
+
+isFeatureEnabled
+&& MiddlewareRegistry.register(({ getState, dispatch }) => next => action => {
     const result = next(action);
 
     switch (action.type) {
