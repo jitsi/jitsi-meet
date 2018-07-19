@@ -1,3 +1,5 @@
+// @flow
+
 import { MiddlewareRegistry } from '../base/redux';
 
 import { ENDPOINT_MESSAGE_RECEIVED } from './actionTypes';
@@ -8,6 +10,8 @@ import {
 } from './actions';
 
 const logger = require('jitsi-meet-logger').getLogger(__filename);
+
+declare var APP: Object;
 
 /**
 * Time after which the rendered subtitles will be removed.
@@ -47,23 +51,46 @@ MiddlewareRegistry.register(store => next => action => {
  */
 function _endpointMessageReceived({ dispatch, getState }, next, action) {
     const json = action.json;
+    const translationLanguage
+        = APP.conference._room.getLocalParticipantProperty(
+            'translation_language');
 
     try {
+        const transcriptMessageID = json.message_id;
+        const participantName = json.participant.name;
+        const isInterim = json.is_interim;
+        const stability = json.stability;
 
-        // Let's first check if the given object has the correct
-        // type in the json, which identifies it as a json message sent
-        // from Jigasi with speech-to-to-text results
-        if (json.type === 'transcription-result') {
-            // Extract the useful data from the json.
-            const isInterim = json.is_interim;
-            const participantName = json.participant.name;
-            const stability = json.stability;
+        if (json.type === 'translation-result'
+            && json.language === translationLanguage) {
+            // Displays final results in the target language if translation is
+            // enabled.
+
+            dispatch(addTranscriptMessage(transcriptMessageID,
+                participantName));
+
+            const { transcriptMessages } = getState()['features/subtitles'];
+            const newTranscriptMessage
+                = { ...transcriptMessages.get(transcriptMessageID) };
+
+            newTranscriptMessage.final = json.text;
+            dispatch(updateTranscriptMessage(transcriptMessageID,
+                newTranscriptMessage));
+
+            setTimeout(() => {
+                dispatch(removeTranscriptMessage(transcriptMessageID));
+            }, REMOVE_AFTER_MS);
+
+        } else if (json.type === 'transcription-result'
+            && !translationLanguage) {
+            // Displays interim and final results without any translation if
+            // translations are disabled.
+
             const text = json.transcript[0].text;
-            const transcriptMessageID = json.message_id;
 
             // If this is the first result with the unique message ID,
             // we add it to the state along with the name of the participant
-            // who said given text
+            // who said the given text.
             if (!getState()['features/subtitles']
                 .transcriptMessages.has(transcriptMessageID)) {
                 dispatch(addTranscriptMessage(transcriptMessageID,
