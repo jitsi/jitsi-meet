@@ -6,6 +6,7 @@ import {
 } from '../analytics';
 import { _handleParticipantError } from '../base/conference';
 import { MEDIA_TYPE } from '../base/media';
+import { reportError } from '../base/util';
 
 import {
     SELECT_LARGE_VIDEO_PARTICIPANT,
@@ -35,14 +36,7 @@ export function selectParticipant() {
 
                 sendAnalytics(createSelectParticipantFailedEvent(err));
 
-                if (typeof APP === 'object' && window.onerror) {
-                    window.onerror(
-                        `Failed to select participant ${id}`,
-                        null, // source
-                        null, // lineno
-                        null, // colno
-                        err);
-                }
+                reportError(err, `Failed to select participant ${id}`);
             }
         }
     };
