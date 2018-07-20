@@ -19,47 +19,18 @@ export function getPreferredCameraDeviceId(stateful: Object | Function) {
         cameraDeviceId,
         cameraDeviceLabel
     } = state['features/base/settings'];
-
-    // If there is no label at all, there is no need to fall back to checking
-    // the label for a fuzzy match. And then if there is no cameraDeviceId,
-    // there is no searching to perform.
-    if (!cameraDeviceLabel || !cameraDeviceId) {
-        return cameraDeviceId;
-    }
-
     const { videoInput } = state['features/base/devices'];
-    const foundMatchingBasedonDeviceId = videoInput.find(
-        candidate => candidate.deviceId === cameraDeviceId);
 
-    // Prioritize matching the deviceId of the camera.
-    if (foundMatchingBasedonDeviceId) {
-        return cameraDeviceId;
-    }
+    return _getPreferredDeviceId({
+        availableDevices: videoInput,
 
-    // Fall back to doing a partial match of the label if a matching deviceId
-    // has not been found. Operating systems may append " #{number}" somewhere
-    // in the label so find and strip that bit.
-    const lastSpacePoundNumRegex = /\s#\d*(?!.*\s#\d*)/;
-    const replacement = '';
-    const preferredDeviceLabel
-        = cameraDeviceLabel.replace(lastSpacePoundNumRegex, replacement);
-    const foundMatchBasedOnLabel = videoInput.find(candidate => {
-        const { label } = candidate;
-
-        if (!label) {
-            return false;
-        } else if (cameraDeviceLabel === label) {
-            return true;
-        }
-
-        const candidateLabel
-            = label.replace(lastSpacePoundNumRegex, replacement);
-
-        return preferredDeviceLabel === candidateLabel;
+        // Operating systems may append " #{number}" somewhere in the label so
+        // find and strip that bit.
+        matchRegex: /\s#\d*(?!.*\s#\d*)/,
+        preferredDeviceId: cameraDeviceId,
+        preferredDeviceLabel: cameraDeviceLabel,
+        replacement: ''
     });
-
-    return foundMatchBasedOnLabel
-        ? foundMatchBasedOnLabel.deviceId : cameraDeviceId;
 }
 
 /**
@@ -76,46 +47,18 @@ export function getPreferredMicDeviceId(stateful: Object | Function) {
         micDeviceId,
         micDeviceLabel
     } = state['features/base/settings'];
-
-    // If there is no label at all, there is no need to fall back to checking
-    // the label for a fuzzy match.
-    if (!micDeviceLabel || !micDeviceId) {
-        return micDeviceId;
-    }
-
     const { audioInput } = state['features/base/devices'];
-    const foundMatchingBasedonDeviceId = audioInput.find(
-        candidate => candidate.deviceId === micDeviceId);
 
-    // Prioritize matching the deviceId of the microphone.
-    if (foundMatchingBasedonDeviceId) {
-        return micDeviceId;
-    }
+    return _getPreferredDeviceId({
+        availableDevices: audioInput,
 
-    // Fall back to doing a partial match of the label if a matching deviceId
-    // has not been found. Operating systems may append " ({number}-" somewhere
-    // in the label so find and strip that bit.
-    const lastSpaceParenNumDashRegex = /\s\(\d*-\s(?!.*\s\(\d*-\s)/;
-    const replacement = ' (';
-    const preferredDeviceLabel
-        = micDeviceLabel.replace(lastSpaceParenNumDashRegex, replacement);
-    const foundMatchBasedOnLabel = audioInput.find(candidate => {
-        const { label } = candidate;
-
-        if (!label) {
-            return false;
-        } else if (micDeviceLabel === label) {
-            return true;
-        }
-
-        const candidateLabel
-            = label.replace(lastSpaceParenNumDashRegex, replacement);
-
-        return preferredDeviceLabel === candidateLabel;
+        // Operating systems may append " ({number}-" somewhere in the label so
+        // find and strip that bit.
+        matchRegex: /\s\(\d*-\s(?!.*\s\(\d*-\s)/,
+        preferredDeviceId: micDeviceId,
+        preferredDeviceLabel: micDeviceLabel,
+        replacement: ' ('
     });
-
-    return foundMatchBasedOnLabel
-        ? foundMatchBasedOnLabel.deviceId : micDeviceId;
 }
 
 /**
@@ -209,4 +152,70 @@ export function getServerURL(stateful: Object | Function) {
     const state = toState(stateful);
 
     return state['features/base/settings'].serverURL || DEFAULT_SERVER_URL;
+}
+
+/**
+ * A helper function to abstract the logic for choosing which device ID to
+ * use. Falls back to fuzzy matching on label if a device ID match is not found.
+ *
+ * @param {Object} options - The arguments used to match find the preferred
+ * device ID from available devices.
+ * @param {Array<string>} options.availableDevices - The array of currently
+ * available devices to match against.
+ * @param {Object} options.matchRegex - The regex to use to find strings
+ * appended to the label by the operating system. The matches will be replaced
+ * with options.replacement, with the intent of matching the same device that
+ * might have a modified label.
+ * @param {string} options.preferredDeviceId - The device ID the participant
+ * prefers to use.
+ * @param {string} options.preferredDeviceLabel - The label associated with the
+ * device ID the participant prefers to use.
+ * @param {string} options.replacement - The string to use with
+ * options.matchRegex to remove identifies added to the label by the operating
+ * system.
+ * @private
+ * @returns {string} The preferred device ID to use for media.
+ */
+function _getPreferredDeviceId(options) {
+    const {
+        availableDevices,
+        matchRegex,
+        preferredDeviceId,
+        preferredDeviceLabel,
+        replacement
+    } = options;
+
+    // If there is no label at all, there is no need to fall back to checking
+    // the label for a fuzzy match.
+    if (!preferredDeviceLabel || !preferredDeviceId) {
+        return preferredDeviceId;
+    }
+
+    const foundMatchingBasedonDeviceId = availableDevices.find(
+        candidate => candidate.deviceId === preferredDeviceId);
+
+    // Prioritize matching the deviceId of the microphone.
+    if (foundMatchingBasedonDeviceId) {
+        return preferredDeviceId;
+    }
+
+    const strippedDeviceLabel
+        = preferredDeviceLabel.replace(matchRegex, replacement);
+    const foundMatchBasedOnLabel = availableDevices.find(candidate => {
+        const { label } = candidate;
+
+        if (!label) {
+            return false;
+        } else if (strippedDeviceLabel === label) {
+            return true;
+        }
+
+        const strippedCandidateLabel
+            = label.replace(matchRegex, replacement);
+
+        return strippedDeviceLabel === strippedCandidateLabel;
+    });
+
+    return foundMatchBasedOnLabel
+        ? foundMatchBasedOnLabel.deviceId : preferredDeviceId;
 }
