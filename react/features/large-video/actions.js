@@ -36,7 +36,12 @@ export function selectParticipant() {
                 sendAnalytics(createSelectParticipantFailedEvent(err));
 
                 if (typeof APP === 'object' && window.onerror) {
-                    window.onerror('', null, null, null, err);
+                    window.onerror(
+                        `Failed to select participant ${id}`,
+                        null, // source
+                        null, // lineno
+                        null, // colno
+                        err);
                 }
             }
         }

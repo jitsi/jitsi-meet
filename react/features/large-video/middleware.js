@@ -48,8 +48,9 @@ MiddlewareRegistry.register(store => next => action => {
         break;
 
     case CONFERENCE_JOINED:
-        // Ensure that any tracks updated before the conference has been marked
-        // as joined get selected to receive high quality video.
+        // Ensure a participant is selected on conference join. This addresses
+        // the case where video tracks were received before CONFERENCE_JOINED
+        // fired; without the conference selection may not happen.
         store.dispatch(selectParticipant());
         break;
 
