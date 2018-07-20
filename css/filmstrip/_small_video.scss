@@ -48,4 +48,9 @@
         object-fit: cover;
         overflow: hidden;
     }
+
+    .presence-label {
+        position: absolute;
+        z-index: $zindex3;
+    }
 }
