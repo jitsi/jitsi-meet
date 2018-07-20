@@ -1,5 +1,6 @@
 // @flow
 
+import { CONFERENCE_JOINED } from '../base/conference';
 import {
     DOMINANT_SPEAKER_CHANGED,
     PARTICIPANT_JOINED,
@@ -44,6 +45,13 @@ MiddlewareRegistry.register(store => next => action => {
     case TRACK_ADDED:
     case TRACK_REMOVED:
         store.dispatch(selectParticipantInLargeVideo());
+        break;
+
+    case CONFERENCE_JOINED:
+        // Ensure a participant is selected on conference join. This addresses
+        // the case where video tracks were received before CONFERENCE_JOINED
+        // fired; without the conference selection may not happen.
+        store.dispatch(selectParticipant());
         break;
 
     case TRACK_UPDATED:

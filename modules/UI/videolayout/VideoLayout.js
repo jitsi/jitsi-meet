@@ -960,7 +960,7 @@ const VideoLayout = {
             // FIXME video type is not the same thing as container type
 
             if (id !== currentId && videoType === VIDEO_CONTAINER_TYPE) {
-                eventEmitter.emit(UIEvents.SELECTED_ENDPOINT, id);
+                APP.API.notifyOnStageParticipantChanged(id);
             }
 
             let oldSmallVideo;

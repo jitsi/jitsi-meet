@@ -7,8 +7,6 @@ import Recorder from './modules/recorder/Recorder';
 
 import mediaDeviceHelper from './modules/devices/mediaDeviceHelper';
 
-import { reportError } from './modules/util/helpers';
-
 import * as RemoteControlEvents
     from './service/remotecontrol/RemoteControlEvents';
 import UIEvents from './service/UI/UIEvents';
@@ -18,7 +16,6 @@ import * as JitsiMeetConferenceEvents from './ConferenceEvents';
 import {
     createDeviceChangedEvent,
     createScreenSharingEvent,
-    createSelectParticipantFailedEvent,
     createStreamSwitchDelayEvent,
     createTrackMutedEvent,
     sendAnalytics
@@ -1813,24 +1810,6 @@ export default {
                     room.sendTextMessage(message);
                 });
             }
-
-            APP.UI.addListener(UIEvents.SELECTED_ENDPOINT, id => {
-                APP.API.notifyOnStageParticipantChanged(id);
-                try {
-                    // do not try to select participant if there is none (we
-                    // are alone in the room), otherwise an error will be
-                    // thrown cause reporting mechanism is not available
-                    // (datachannels currently)
-                    if (room.getParticipants().length === 0) {
-                        return;
-                    }
-
-                    room.selectParticipant(id);
-                } catch (e) {
-                    sendAnalytics(createSelectParticipantFailedEvent(e));
-                    reportError(e);
-                }
-            });
         }
 
         room.on(JitsiConferenceEvents.CONNECTION_INTERRUPTED, () => {

@@ -1,13 +1,18 @@
 // @flow
 
+import {
+    createSelectParticipantFailedEvent,
+    sendAnalytics
+} from '../analytics';
 import { _handleParticipantError } from '../base/conference';
-import { MEDIA_TYPE, VIDEO_TYPE } from '../base/media';
-import { getTrackByMediaTypeAndParticipant } from '../base/tracks';
+import { MEDIA_TYPE } from '../base/media';
 
 import {
     SELECT_LARGE_VIDEO_PARTICIPANT,
     UPDATE_KNOWN_LARGE_VIDEO_RESOLUTION
 } from './actionTypes';
+
+declare var APP: Object;
 
 /**
  * Signals conference to select a participant.
@@ -21,22 +26,23 @@ export function selectParticipant() {
 
         if (conference) {
             const largeVideo = state['features/large-video'];
-            const tracks = state['features/base/tracks'];
-
             const id = largeVideo.participantId;
-            const videoTrack
-                = getTrackByMediaTypeAndParticipant(
-                    tracks,
-                    MEDIA_TYPE.VIDEO,
-                    id);
 
             try {
-                conference.selectParticipant(
-                    videoTrack && videoTrack.videoType === VIDEO_TYPE.CAMERA
-                        ? id
-                        : null);
+                conference.selectParticipant(id);
             } catch (err) {
                 _handleParticipantError(err);
+
+                sendAnalytics(createSelectParticipantFailedEvent(err));
+
+                if (typeof APP === 'object' && window.onerror) {
+                    window.onerror(
+                        `Failed to select participant ${id}`,
+                        null, // source
+                        null, // lineno
+                        null, // colno
+                        err);
+                }
             }
         }
     };
