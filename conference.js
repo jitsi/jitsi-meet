@@ -1668,7 +1668,7 @@ export default {
                 role: user.getRole()
             }));
 
-            logger.log('USER %s connnected', id, user);
+            logger.log(`USER ${id} connnected:`, user);
             APP.API.notifyUserJoined(id, {
                 displayName,
                 formattedDisplayName: appendSuffix(
@@ -1685,7 +1685,7 @@ export default {
                 return;
             }
             APP.store.dispatch(participantLeft(id, room));
-            logger.log('USER %s LEFT', id, user);
+            logger.log(`USER ${id} LEFT:`, user);
             APP.API.notifyUserLeft(id);
             APP.UI.messageHandler.participantNotification(
                 user.getDisplayName(),
