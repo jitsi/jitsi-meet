@@ -181,11 +181,12 @@ export const SET_PASSWORD_FAILED = Symbol('SET_PASSWORD_FAILED');
  * received from remote participants.
  *
  * {
- *     type: SET_RECEIVE_VIDEO_QUALITY,
- *     receiveVideoQuality: number
+ *     type: SET_PREFERRED_RECEIVER_VIDEO_QUALITY,
+ *     preferredReceiverVideoQuality: number
  * }
  */
-export const SET_RECEIVE_VIDEO_QUALITY = Symbol('SET_RECEIVE_VIDEO_QUALITY');
+export const SET_PREFERRED_RECEIVER_VIDEO_QUALITY
+    = Symbol('SET_PREFERRED_RECEIVER_VIDEO_QUALITY');
 
 /**
  * The type of (redux) action which sets the name of the room of the
