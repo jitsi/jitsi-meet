@@ -10,7 +10,7 @@ import {
 import {
     VIDEO_QUALITY_LEVELS,
     setAudioOnly,
-    setReceiveVideoQuality
+    setPreferredReceiverVideoQuality
 } from '../../base/conference';
 import { translate } from '../../base/i18n';
 import JitsiMeetJS from '../../base/lib-jitsi-meet';
@@ -66,7 +66,7 @@ class VideoQualitySlider extends Component {
          * The currently configured maximum quality resolution to be received
          * from remote participants.
          */
-        _receiveVideoQuality: PropTypes.number,
+        _receiverVideoQuality: PropTypes.number,
 
         /**
          * Whether or not displaying video is supported in the current
@@ -284,7 +284,7 @@ class VideoQualitySlider extends Component {
     _enableHighDefinition() {
         sendAnalytics(createEvent('high'));
         logger.log('Video quality: high enabled');
-        this.props.dispatch(setReceiveVideoQuality(HIGH));
+        this.props.dispatch(setPreferredReceiverVideoQuality(HIGH));
     }
 
     /**
@@ -297,7 +297,7 @@ class VideoQualitySlider extends Component {
     _enableLowDefinition() {
         sendAnalytics(createEvent('low'));
         logger.log('Video quality: low enabled');
-        this.props.dispatch(setReceiveVideoQuality(LOW));
+        this.props.dispatch(setPreferredReceiverVideoQuality(LOW));
     }
 
     /**
@@ -310,7 +310,7 @@ class VideoQualitySlider extends Component {
     _enableStandardDefinition() {
         sendAnalytics(createEvent('standard'));
         logger.log('Video quality: standard enabled');
-        this.props.dispatch(setReceiveVideoQuality(STANDARD));
+        this.props.dispatch(setPreferredReceiverVideoQuality(STANDARD));
     }
 
     /**
@@ -321,7 +321,7 @@ class VideoQualitySlider extends Component {
      * @returns {void}
      */
     _mapCurrentQualityToSliderValue() {
-        const { _audioOnly, _receiveVideoQuality } = this.props;
+        const { _audioOnly, _receiverVideoQuality } = this.props;
         const { _sliderOptions } = this;
 
         if (_audioOnly) {
@@ -332,7 +332,7 @@ class VideoQualitySlider extends Component {
         }
 
         const matchingOption = _sliderOptions.find(
-            ({ videoQuality }) => videoQuality === _receiveVideoQuality);
+            ({ videoQuality }) => videoQuality === _receiverVideoQuality);
 
         return _sliderOptions.indexOf(matchingOption);
     }
@@ -345,7 +345,7 @@ class VideoQualitySlider extends Component {
      * @returns {void}
      */
     _onSliderChange(event) {
-        const { _audioOnly, _receiveVideoQuality } = this.props;
+        const { _audioOnly, _receiverVideoQuality } = this.props;
         const {
             audioOnly,
             onSelect,
@@ -355,7 +355,7 @@ class VideoQualitySlider extends Component {
         // Take no action if the newly chosen option does not change audio only
         // or video quality state.
         if ((_audioOnly && audioOnly)
-            || (!_audioOnly && videoQuality === _receiveVideoQuality)) {
+            || (!_audioOnly && videoQuality === _receiverVideoQuality)) {
             return;
         }
 
@@ -372,20 +372,20 @@ class VideoQualitySlider extends Component {
  * @returns {{
  *     _audioOnly: boolean,
  *     _p2p: boolean,
- *     _receiveVideoQuality: boolean
+ *     _receiverVideoQuality: boolean
  * }}
  */
 function _mapStateToProps(state) {
     const {
         audioOnly,
         p2p,
-        receiveVideoQuality
+        preferredReceiverVideoQuality
     } = state['features/base/conference'];
 
     return {
         _audioOnly: audioOnly,
         _p2p: p2p,
-        _receiveVideoQuality: receiveVideoQuality,
+        _receiverVideoQuality: preferredReceiverVideoQuality,
         _videoSupported: JitsiMeetJS.mediaDevices.supportsVideo()
     };
 }

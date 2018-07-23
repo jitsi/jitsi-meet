@@ -34,7 +34,7 @@ import {
     DATA_CHANNEL_OPENED,
     SET_AUDIO_ONLY,
     SET_LASTN,
-    SET_RECEIVE_VIDEO_QUALITY,
+    SET_PREFERRED_RECEIVER_VIDEO_QUALITY,
     SET_ROOM
 } from './actionTypes';
 import {
@@ -80,8 +80,8 @@ MiddlewareRegistry.register(store => next => action => {
     case SET_LASTN:
         return _setLastN(store, next, action);
 
-    case SET_RECEIVE_VIDEO_QUALITY:
-        return _setReceiveVideoQuality(store, next, action);
+    case SET_PREFERRED_RECEIVER_VIDEO_QUALITY:
+        return _setPreferredReceiverVideoQuality(store, next, action);
 
     case SET_ROOM:
         return _setRoom(store, next, action);
@@ -441,16 +441,22 @@ function _setLastN({ getState }, next, action) {
  * is being dispatched.
  * @param {Dispatch} next - The redux {@code dispatch} function to dispatch the
  * specified {@code action} to the specified {@code store}.
- * @param {Action} action - The redux action {@code SET_RECEIVE_VIDEO_QUALITY}
- * which is being dispatched in the specified {@code store}.
+ * @param {Action} action - The redux action
+ * {@code SET_PREFERRED_RECEIVER_VIDEO_QUALITY} which is being dispatched in the
+ * specified {@code store}.
  * @private
  * @returns {Object} The value returned by {@code next(action)}.
  */
-function _setReceiveVideoQuality({ dispatch, getState }, next, action) {
-    const { audioOnly, conference } = getState()['features/base/conference'];
+function _setPreferredReceiverVideoQuality(
+        { dispatch, getState },
+        next,
+        action) {
+    const { audioOnly, conference }
+        = getState()['features/base/conference'];
 
     if (conference) {
-        conference.setReceiverVideoConstraint(action.receiveVideoQuality);
+        conference.setReceiverVideoConstraint(
+            action.preferredReceiverVideoQuality);
         audioOnly && dispatch(toggleAudioOnly());
     }
 
@@ -546,7 +552,8 @@ function _syncConferenceLocalTracksWithState({ getState }, action) {
 function _syncReceiveVideoQuality({ getState }, next, action) {
     const state = getState()['features/base/conference'];
 
-    state.conference.setReceiverVideoConstraint(state.receiveVideoQuality);
+    state.conference.setReceiverVideoConstraint(
+        state.preferredReceiverVideoQuality);
 
     return next(action);
 }

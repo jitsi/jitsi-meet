@@ -39,7 +39,7 @@ import {
     SET_LASTN,
     SET_PASSWORD,
     SET_PASSWORD_FAILED,
-    SET_RECEIVE_VIDEO_QUALITY,
+    SET_PREFERRED_RECEIVER_VIDEO_QUALITY,
     SET_ROOM,
     SET_START_MUTED_POLICY
 } from './actionTypes';
@@ -643,16 +643,18 @@ export function setPassword(
 /**
  * Sets the max frame height to receive from remote participant videos.
  *
- * @param {number} receiveVideoQuality - The max video resolution to receive.
+ * @param {number} preferredReceiverVideoQuality - The max video resolution to
+ * receive.
  * @returns {{
- *     type: SET_RECEIVE_VIDEO_QUALITY,
- *     receiveVideoQuality: number
+ *     type: SET_PREFERRED_RECEIVER_VIDEO_QUALITY,
+ *     preferredReceiverVideoQuality: number
  * }}
  */
-export function setReceiveVideoQuality(receiveVideoQuality: number) {
+export function setPreferredReceiverVideoQuality(
+        preferredReceiverVideoQuality: number) {
     return {
-        type: SET_RECEIVE_VIDEO_QUALITY,
-        receiveVideoQuality
+        type: SET_PREFERRED_RECEIVER_VIDEO_QUALITY,
+        preferredReceiverVideoQuality
     };
 }
 

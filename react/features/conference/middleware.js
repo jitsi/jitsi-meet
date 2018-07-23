@@ -6,7 +6,7 @@ import {
     KICKED_OUT,
     VIDEO_QUALITY_LEVELS,
     conferenceFailed,
-    setReceiveVideoQuality
+    setPreferredReceiverVideoQuality
 } from '../base/conference';
 import { JitsiConferenceEvents } from '../base/lib-jitsi-meet';
 import { SET_REDUCED_UI } from '../base/responsive-ui';
@@ -32,7 +32,7 @@ MiddlewareRegistry.register(store => next => action => {
         // audio-only mode if engaged, that's why we check for it here.
         audioOnly
             || dispatch(
-                setReceiveVideoQuality(
+                setPreferredReceiverVideoQuality(
                     reducedUI
                         ? VIDEO_QUALITY_LEVELS.LOW
                         : VIDEO_QUALITY_LEVELS.HIGH));

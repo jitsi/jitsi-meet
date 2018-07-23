@@ -18,7 +18,7 @@ import {
     SET_DESKTOP_SHARING_ENABLED,
     SET_FOLLOW_ME,
     SET_PASSWORD,
-    SET_RECEIVE_VIDEO_QUALITY,
+    SET_PREFERRED_RECEIVER_VIDEO_QUALITY,
     SET_ROOM,
     SET_SIP_GATEWAY_ENABLED,
     SET_START_MUTED_POLICY
@@ -72,8 +72,8 @@ ReducerRegistry.register('features/base/conference', (state = {}, action) => {
     case SET_PASSWORD:
         return _setPassword(state, action);
 
-    case SET_RECEIVE_VIDEO_QUALITY:
-        return _setReceiveVideoQuality(state, action);
+    case SET_PREFERRED_RECEIVER_VIDEO_QUALITY:
+        return _setPreferredReceiverVideoQuality(state, action);
 
     case SET_ROOM:
         return _setRoom(state, action);
@@ -211,7 +211,7 @@ function _conferenceJoined(state, { conference }) {
          *
          * @type number
          */
-        receiveVideoQuality: VIDEO_QUALITY_LEVELS.HIGH
+        preferredReceiverVideoQuality: VIDEO_QUALITY_LEVELS.HIGH
     });
 }
 
@@ -403,18 +403,21 @@ function _setPassword(state, { conference, method, password }) {
 }
 
 /**
- * Reduces a specific Redux action SET_RECEIVE_VIDEO_QUALITY of the feature
- * base/conference.
+ * Reduces a specific Redux action {@code SET_PREFERRED_RECEIVER_VIDEO_QUALITY}
+ * of the feature base/conference.
  *
  * @param {Object} state - The Redux state of the feature base/conference.
- * @param {Action} action - The Redux action SET_RECEIVE_VIDEO_QUALITY to
- * reduce.
+ * @param {Action} action - The Redux action of type
+ * {@code SET_PREFERRED_RECEIVER_VIDEO_QUALITY} to reduce.
  * @private
  * @returns {Object} The new state of the feature base/conference after the
  * reduction of the specified action.
  */
-function _setReceiveVideoQuality(state, action) {
-    return set(state, 'receiveVideoQuality', action.receiveVideoQuality);
+function _setPreferredReceiverVideoQuality(state, action) {
+    return set(
+        state,
+        'preferredReceiverVideoQuality',
+        action.preferredReceiverVideoQuality);
 }
 
 /**
