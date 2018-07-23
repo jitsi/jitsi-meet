@@ -1,6 +1,5 @@
 // @flow
 
-import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 
 import { Popover } from '../../base/popover';
@@ -17,57 +16,69 @@ declare var $: Object;
 declare var interfaceConfig: Object;
 
 /**
+ * The type of the React {@code Component} props of
+ * {@link RemoteVideoMenuTriggerButton}.
+ */
+type Props = {
+
+    /**
+     * A value between 0 and 1 indicating the volume of the participant's
+     * audio element.
+     */
+    initialVolumeValue: number,
+
+    /**
+     * Whether or not the participant is currently muted.
+     */
+    isAudioMuted: boolean,
+
+    /**
+     * Whether or not the participant is a conference moderator.
+     */
+    isModerator: boolean,
+
+    /**
+     * Callback to invoke when the popover has been displayed.
+     */
+    onMenuDisplay: Function,
+
+    /**
+     * Callback to invoke choosing to start a remote control session with
+     * the participant.
+     */
+    onRemoteControlToggle: Function,
+
+    /**
+     * Callback to invoke when changing the level of the participant's
+     * audio element.
+     */
+    onVolumeChange: Function,
+
+    /**
+     * The position relative to the trigger the remote menu should display
+     * from. Valid values are those supported by AtlasKit
+     * {@code InlineDialog}.
+     */
+    menuPosition: string,
+
+    /**
+     * The ID for the participant on which the remote video menu will act.
+     */
+    participantID: string,
+
+    /**
+     * The current state of the participant's remote control session.
+     */
+    remoteControlState: number
+};
+
+/**
  * React {@code Component} for displaying an icon associated with opening the
  * the {@code RemoteVideoMenu}.
  *
  * @extends {Component}
  */
-class RemoteVideoMenuTriggerButton extends Component<*> {
-    static propTypes = {
-        /**
-         * A value between 0 and 1 indicating the volume of the participant's
-         * audio element.
-         */
-        initialVolumeValue: PropTypes.number,
-
-        /**
-         * Whether or not the participant is currently muted.
-         */
-        isAudioMuted: PropTypes.bool,
-
-        /**
-         * Whether or not the participant is a conference moderator.
-         */
-        isModerator: PropTypes.bool,
-
-        /**
-         * Callback to invoke when the popover has been displayed.
-         */
-        onMenuDisplay: PropTypes.func,
-
-        /**
-         * Callback to invoke choosing to start a remote control session with
-         * the participant.
-         */
-        onRemoteControlToggle: PropTypes.func,
-
-        /**
-         * Callback to invoke when changing the level of the participant's
-         * audio element.
-         */
-        onVolumeChange: PropTypes.func,
-
-        /**
-         * The ID for the participant on which the remote video menu will act.
-         */
-        participantID: PropTypes.string,
-
-        /**
-         * The current state of the participant's remote control session.
-         */
-        remoteControlState: PropTypes.number
-    };
-
+class RemoteVideoMenuTriggerButton extends Component<Props> {
     /**
      * The internal reference to topmost DOM/HTML element backing the React
      * {@code Component}. Accessed directly for associating an element as
@@ -108,8 +119,7 @@ class RemoteVideoMenuTriggerButton extends Component<*> {
             <Popover
                 content = { content }
                 onPopoverOpen = { this._onShowRemoteMenu }
-                position = { interfaceConfig.VERTICAL_FILMSTRIP
-                    ? 'left bottom' : 'top center' }>
+                position = { this.props.menuPosition }>
                 <span
                     className = 'popover-trigger remote-video-menu-trigger'>
                     <i
