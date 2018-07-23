@@ -320,11 +320,6 @@ UI.start = function() {
         SidePanels.init(eventEmitter);
     }
 
-    const filmstripTypeClassname = interfaceConfig.VERTICAL_FILMSTRIP
-        ? 'vertical-filmstrip' : 'horizontal-filmstrip';
-
-    $('body').addClass(filmstripTypeClassname);
-
     document.title = interfaceConfig.APP_NAME;
 };
 
