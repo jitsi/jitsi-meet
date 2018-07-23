@@ -704,7 +704,7 @@ export default {
                         track.mute();
                     }
                 });
-                logger.log('initialized with %s local tracks', tracks.length);
+                logger.log(`initialized with ${tracks.length} local tracks`);
                 this._localTracksInitialized = true;
                 con.addEventListener(
                     JitsiConnectionEvents.CONNECTION_FAILED,
