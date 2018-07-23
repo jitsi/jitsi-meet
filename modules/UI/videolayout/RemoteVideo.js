@@ -163,6 +163,8 @@ RemoteVideo.prototype._generatePopupContent = function() {
     const onVolumeChange = this._setAudioVolume;
     const { isModerator } = APP.conference;
     const participantID = this.id;
+    const menuPosition = interfaceConfig.VERTICAL_FILMSTRIP
+        ? 'left bottom' : 'top center';
 
     ReactDOM.render(
         <Provider store = { APP.store }>
@@ -172,6 +174,7 @@ RemoteVideo.prototype._generatePopupContent = function() {
                         initialVolumeValue = { initialVolumeValue }
                         isAudioMuted = { this.isAudioMuted }
                         isModerator = { isModerator }
+                        menuPosition = { menuPosition }
                         onMenuDisplay
                             = {this._onRemoteVideoMenuDisplay.bind(this)}
                         onRemoteControlToggle = { onRemoteControlToggle }
