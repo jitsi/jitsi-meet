@@ -14,7 +14,8 @@ import { translate } from '../../../base/i18n';
 import {
     getLocalParticipant,
     getParticipants,
-    participantUpdated
+    participantUpdated,
+    isLocalParticipantModerator
 } from '../../../base/participants';
 import { getLocalVideoTrack, toggleScreensharing } from '../../../base/tracks';
 import { ChatCounter } from '../../../chat';
