@@ -4,7 +4,6 @@ import { MiddlewareRegistry } from '../base/redux';
 
 import { ENDPOINT_MESSAGE_RECEIVED } from './actionTypes';
 import {
-    addTranscriptMessage,
     removeTranscriptMessage,
     updateTranscriptMessage
 } from './actions';
@@ -12,6 +11,24 @@ import {
 const logger = require('jitsi-meet-logger').getLogger(__filename);
 
 declare var APP: Object;
+
+/**
+ * The type of json-message which indicates that json carries a
+ * transcription result.
+ */
+const JSON_TYPE_TRANSCRIPTION_RESULT = 'transcription-result';
+
+/**
+ * The type of json-message which indicates that json carries a
+ * translation result.
+ */
+const JSON_TYPE_TRANSLATION_RESULT = 'translation-result';
+
+/**
+ * The local participant property which is used to store the language
+ * preference for translation for a participant.
+ */
+const P_NAME_TRANSLATION_LANGUAGE = 'translation_language';
 
 /**
 * Time after which the rendered subtitles will be removed.
@@ -52,8 +69,8 @@ MiddlewareRegistry.register(store => next => action => {
 function _endpointMessageReceived({ dispatch, getState }, next, action) {
     const json = action.json;
     const translationLanguage
-        = APP.conference._room.getLocalParticipantProperty(
-            'translation_language');
+        = getState()['features/base/conference'].conference
+            .getLocalParticipantProperty(P_NAME_TRANSLATION_LANGUAGE);
 
     try {
         const transcriptMessageID = json.message_id;
@@ -61,19 +78,16 @@ function _endpointMessageReceived({ dispatch, getState }, next, action) {
         const isInterim = json.is_interim;
         const stability = json.stability;
 
-        if (json.type === 'translation-result'
+        if (json.type === JSON_TYPE_TRANSLATION_RESULT
             && json.language === translationLanguage) {
             // Displays final results in the target language if translation is
             // enabled.
 
-            dispatch(addTranscriptMessage(transcriptMessageID,
-                participantName));
+            const newTranscriptMessage = {
+                participantName,
+                final: json.text
+            };
 
-            const { transcriptMessages } = getState()['features/subtitles'];
-            const newTranscriptMessage
-                = { ...transcriptMessages.get(transcriptMessageID) };
-
-            newTranscriptMessage.final = json.text;
             dispatch(updateTranscriptMessage(transcriptMessageID,
                 newTranscriptMessage));
 
@@ -81,24 +95,19 @@ function _endpointMessageReceived({ dispatch, getState }, next, action) {
                 dispatch(removeTranscriptMessage(transcriptMessageID));
             }, REMOVE_AFTER_MS);
 
-        } else if (json.type === 'transcription-result'
+        } else if (json.type === JSON_TYPE_TRANSCRIPTION_RESULT
             && !translationLanguage) {
             // Displays interim and final results without any translation if
             // translations are disabled.
 
             const text = json.transcript[0].text;
 
-            // If this is the first result with the unique message ID,
-            // we add it to the state along with the name of the participant
-            // who said the given text.
-            if (!getState()['features/subtitles']
-                .transcriptMessages.has(transcriptMessageID)) {
-                dispatch(addTranscriptMessage(transcriptMessageID,
-                    participantName));
-            }
-            const { transcriptMessages } = getState()['features/subtitles'];
+            // We update the previous transcript message with the same
+            // message ID or adds a new transcript message if it does not
+            // exist in the map.
             const newTranscriptMessage
-                = { ...transcriptMessages.get(transcriptMessageID) };
+                = { ...getState()['features/subtitles'].transcriptMessages
+                    .get(transcriptMessageID) || { participantName } };
 
             // If this is final result, update the state as a final result
             // and start a count down to remove the subtitle from the state

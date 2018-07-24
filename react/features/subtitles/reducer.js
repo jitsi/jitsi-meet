@@ -1,7 +1,6 @@
 import { ReducerRegistry } from '../base/redux';
 
 import {
-    ADD_TRANSCRIPT_MESSAGE,
     REMOVE_TRANSCRIPT_MESSAGE,
     UPDATE_TRANSCRIPT_MESSAGE
 } from './actionTypes';
@@ -20,9 +19,6 @@ const defaultState = {
 ReducerRegistry.register('features/subtitles', (
         state = defaultState, action) => {
     switch (action.type) {
-    case ADD_TRANSCRIPT_MESSAGE:
-        return _addTranscriptMessage(state, action);
-
     case REMOVE_TRANSCRIPT_MESSAGE:
         return _removeTranscriptMessage(state, action);
 
@@ -32,28 +28,6 @@ ReducerRegistry.register('features/subtitles', (
 
     return state;
 });
-
-/**
- * Reduces a specific Redux action ADD_TRANSCRIPT_MESSAGE of the feature
- * transcription.
- *
- * @param {Object} state - The Redux state of the feature transcription.
- * @param {Action} action -The Redux action ADD_TRANSCRIPT_MESSAGE to reduce.
- * @returns {Object} The new state of the feature transcription after the
- * reduction of the specified action.
- */
-function _addTranscriptMessage(state,
-        { transcriptMessageID, participantName }) {
-    const newTranscriptMessages = new Map(state.transcriptMessages);
-
-    // Adds a new key,value pair to the Map once a new message arrives.
-    newTranscriptMessages.set(transcriptMessageID, { participantName });
-
-    return {
-        ...state,
-        transcriptMessages: newTranscriptMessages
-    };
-}
 
 /**
  * Reduces a specific Redux action REMOVE_TRANSCRIPT_MESSAGE of the feature
