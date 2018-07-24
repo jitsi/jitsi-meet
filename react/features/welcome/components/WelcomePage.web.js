@@ -35,7 +35,7 @@ class WelcomePage extends AbstractWelcomePage {
 
         /**
          * The HTML Element used as the container for additional content. Used
-         * for directly appending the additional content template to the dom
+         * for directly appending the additional content template to the dom.
          *
          * @private
          * @type {HTMLTemplateElement|null}
@@ -107,10 +107,12 @@ class WelcomePage extends AbstractWelcomePage {
                 <div
                     className = { `welcome ${showAdditionalContent
                         ? 'with-content' : 'without-content'}` }
-                    id = 'new_welcome_page'>
+                    id = 'welcome_page'>
+                    <div className = 'welcome-watermark'>
+                        <Watermarks />
+                    </div>
                     <div className = 'header'>
                         <div className = 'header-image' />
-                        <Watermarks />
                         <div className = 'header-text'>
                             <h1 className = 'header-text-title'>
                                 { t('welcomepage.title') }
@@ -120,7 +122,7 @@ class WelcomePage extends AbstractWelcomePage {
                                     { app: APP_NAME }) }
                             </p>
                         </div>
-                        <div id = 'new_enter_room'>
+                        <div id = 'enter_room'>
                             <form
                                 className = 'enter-room-input'
                                 onSubmit = { this._onFormSubmit }>
@@ -156,7 +158,7 @@ class WelcomePage extends AbstractWelcomePage {
     }
 
     /**
-     * Prevents submission of the form and delagates join logic.
+     * Prevents submission of the form and delegates join logic.
      *
      * @param {Event} event - The HTML Event which details the form submission.
      * @private
@@ -196,7 +198,7 @@ class WelcomePage extends AbstractWelcomePage {
     }
 
     /**
-     * Returns whether or not additional content should be displayed belowed
+     * Returns whether or not additional content should be displayed below
      * the welcome page's header for entering a room name.
      *
      * @private
