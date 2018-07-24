@@ -107,7 +107,7 @@ class WelcomePage extends AbstractWelcomePage {
                 <div
                     className = { `welcome ${showAdditionalContent
                         ? 'with-content' : 'without-content'}` }
-                    id = 'new_welcome_page'>
+                    id = 'welcome_page'>
                     <div className = 'welcome-watermark'>
                         <Watermarks />
                     </div>
@@ -122,7 +122,7 @@ class WelcomePage extends AbstractWelcomePage {
                                     { app: APP_NAME }) }
                             </p>
                         </div>
-                        <div id = 'new_enter_room'>
+                        <div id = 'enter_room'>
                             <form
                                 className = 'enter-room-input'
                                 onSubmit = { this._onFormSubmit }>
