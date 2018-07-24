@@ -284,7 +284,7 @@ class VideoQualitySlider extends Component {
     _enableHighDefinition() {
         sendAnalytics(createEvent('high'));
         logger.log('Video quality: high enabled');
-        this.props.dispatch(setPreferredReceiverVideoQuality(HIGH));
+        this._setPreferredVideoQuality(HIGH);
     }
 
     /**
@@ -297,7 +297,7 @@ class VideoQualitySlider extends Component {
     _enableLowDefinition() {
         sendAnalytics(createEvent('low'));
         logger.log('Video quality: low enabled');
-        this.props.dispatch(setPreferredReceiverVideoQuality(LOW));
+        this._setPreferredVideoQuality(LOW);
     }
 
     /**
@@ -310,7 +310,7 @@ class VideoQualitySlider extends Component {
     _enableStandardDefinition() {
         sendAnalytics(createEvent('standard'));
         logger.log('Video quality: standard enabled');
-        this.props.dispatch(setPreferredReceiverVideoQuality(STANDARD));
+        this._setPreferredVideoQuality(STANDARD);
     }
 
     /**
@@ -360,6 +360,23 @@ class VideoQualitySlider extends Component {
         }
 
         onSelect();
+    }
+
+    /**
+     * Helper for changing the preferred maximum video quality to receive and
+     * disable audio only.
+     *
+     * @param {number} qualityLevel - The new maximum video quality. Should be
+     * a value enumerated in {@code VIDEO_QUALITY_LEVELS}.
+     * @private
+     * @returns {void}
+     */
+    _setPreferredVideoQuality(qualityLevel) {
+        this.props.dispatch(setPreferredReceiverVideoQuality(qualityLevel));
+
+        if (this.props._audioOnly) {
+            this.props.dispatch(setAudioOnly(false));
+        }
     }
 }
 
