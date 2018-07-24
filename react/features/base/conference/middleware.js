@@ -34,6 +34,7 @@ import {
     DATA_CHANNEL_OPENED,
     SET_AUDIO_ONLY,
     SET_LASTN,
+    SET_MAX_RECEIVER_VIDEO_QUALITY,
     SET_PREFERRED_RECEIVER_VIDEO_QUALITY,
     SET_ROOM
 } from './actionTypes';
@@ -79,6 +80,9 @@ MiddlewareRegistry.register(store => next => action => {
 
     case SET_LASTN:
         return _setLastN(store, next, action);
+
+    case SET_MAX_RECEIVER_VIDEO_QUALITY:
+        return _setMaximumReceiverVideoQuality(store, next, action);
 
     case SET_PREFERRED_RECEIVER_VIDEO_QUALITY:
         return _setPreferredReceiverVideoQuality(store, next, action);
@@ -434,7 +438,38 @@ function _setLastN({ getState }, next, action) {
 }
 
 /**
- * Sets the maximum receive video quality and will turn off audio only mode if
+ * Sets an internal maximum for the video frame height to receive from remote
+ * videos. This maximum acts as a cap so user preferences cannot exceed a
+ * specified frame height.
+ *
+ * @private
+ * @param {Store} store - The redux store in which the specified {@code action}
+ * is being dispatched.
+ * @param {Dispatch} next - The redux {@code dispatch} function to dispatch the
+ * specified {@code action} to the specified {@code store}.
+ * @param {Action} action - The redux action
+ * {@code SET_MAXIMUM_RECEIVER_VIDEO_QUALITY} which is being dispatched in the
+ * specified {@code store}.
+ * @private
+ * @returns {Object} The value returned by {@code next(action)}.
+ */
+function _setMaximumReceiverVideoQuality({ getState }, next, action) {
+    const { conference, preferredReceiverVideoQuality }
+        = getState()['features/base/conference'];
+
+    if (conference) {
+        if (typeof preferredReceiverVideoQuality === 'undefined'
+            || preferredReceiverVideoQuality > action.maxReceiverVideoQuality) {
+            conference.setReceiverVideoConstraint(
+                action.maxReceiverVideoQuality);
+        }
+    }
+
+    return next(action);
+}
+
+/**
+ * Sets the preferred receive video quality and will turn off audio only mode if
  * enabled.
  *
  * @param {Store} store - The redux store in which the specified {@code action}
@@ -451,12 +486,19 @@ function _setPreferredReceiverVideoQuality(
         { dispatch, getState },
         next,
         action) {
-    const { audioOnly, conference }
-        = getState()['features/base/conference'];
+    const {
+        audioOnly,
+        conference,
+        maxReceiverVideoQuality
+    } = getState()['features/base/conference'];
 
     if (conference) {
-        conference.setReceiverVideoConstraint(
-            action.preferredReceiverVideoQuality);
+        const { preferredReceiverVideoQuality } = action;
+        const targetQuality = typeof maxReceiverVideoQuality === 'undefined'
+            ? preferredReceiverVideoQuality
+            : Math.min(maxReceiverVideoQuality, preferredReceiverVideoQuality);
+
+        conference.setReceiverVideoConstraint(targetQuality);
         audioOnly && dispatch(toggleAudioOnly());
     }
 

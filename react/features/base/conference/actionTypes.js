@@ -153,6 +153,19 @@ export const SET_FOLLOW_ME = Symbol('SET_FOLLOW_ME');
 export const SET_LASTN = Symbol('SET_LASTN');
 
 /**
+ * The type of (redux) action which sets the maximum video height that should be
+ * received from remote participants, even if the user prefers a larger video
+ * height.
+ *
+ * {
+ *     type: SET_MAX_RECEIVER_VIDEO_QUALITY,
+ *     maxReceiverVideoQuality: number
+ * }
+ */
+export const SET_MAX_RECEIVER_VIDEO_QUALITY
+    = Symbol('SET_MAX_RECEIVER_VIDEO_QUALITY');
+
+/**
  * The type of (redux) action which sets the password to join or lock a specific
  * {@code JitsiConference}.
  *
@@ -177,8 +190,8 @@ export const SET_PASSWORD = Symbol('SET_PASSWORD');
 export const SET_PASSWORD_FAILED = Symbol('SET_PASSWORD_FAILED');
 
 /**
- * The type of (redux) action which sets the maximum video size should be
- * received from remote participants.
+ * The type of (redux) action which sets the preferred maximum video height that
+ * should be received from remote participants.
  *
  * {
  *     type: SET_PREFERRED_RECEIVER_VIDEO_QUALITY,
