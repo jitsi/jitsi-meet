@@ -27,77 +27,88 @@ import {
 import { VIDEO_QUALITY_LEVELS } from './constants';
 import { isRoomValid } from './functions';
 
+const DEFAULT_STATE = {
+    joining: undefined,
+    maxReceiverVideoQuality: VIDEO_QUALITY_LEVELS.HIGH,
+    preferredReceiverVideoQuality: VIDEO_QUALITY_LEVELS.HIGH
+};
+
 /**
  * Listen for actions that contain the conference object, so that it can be
  * stored for use by other action creators.
  */
-ReducerRegistry.register('features/base/conference', (state = {}, action) => {
-    switch (action.type) {
-    case AUTH_STATUS_CHANGED:
-        return _authStatusChanged(state, action);
+ReducerRegistry.register(
+    'features/base/conference',
+    (state = DEFAULT_STATE, action) => {
+        switch (action.type) {
+        case AUTH_STATUS_CHANGED:
+            return _authStatusChanged(state, action);
 
-    case CONFERENCE_FAILED:
-        return _conferenceFailed(state, action);
+        case CONFERENCE_FAILED:
+            return _conferenceFailed(state, action);
 
-    case CONFERENCE_JOINED:
-        return _conferenceJoined(state, action);
+        case CONFERENCE_JOINED:
+            return _conferenceJoined(state, action);
 
-    case CONFERENCE_LEFT:
-    case CONFERENCE_WILL_LEAVE:
-        return _conferenceLeftOrWillLeave(state, action);
+        case CONFERENCE_LEFT:
+        case CONFERENCE_WILL_LEAVE:
+            return _conferenceLeftOrWillLeave(state, action);
 
-    case CONFERENCE_WILL_JOIN:
-        return _conferenceWillJoin(state, action);
+        case CONFERENCE_WILL_JOIN:
+            return _conferenceWillJoin(state, action);
 
-    case CONNECTION_WILL_CONNECT:
-        return set(state, 'authRequired', undefined);
+        case CONNECTION_WILL_CONNECT:
+            return set(state, 'authRequired', undefined);
 
-    case LOCK_STATE_CHANGED:
-        return _lockStateChanged(state, action);
+        case LOCK_STATE_CHANGED:
+            return _lockStateChanged(state, action);
 
-    case P2P_STATUS_CHANGED:
-        return _p2pStatusChanged(state, action);
+        case P2P_STATUS_CHANGED:
+            return _p2pStatusChanged(state, action);
 
-    case SET_AUDIO_ONLY:
-        return _setAudioOnly(state, action);
+        case SET_AUDIO_ONLY:
+            return _setAudioOnly(state, action);
 
-    case SET_DESKTOP_SHARING_ENABLED:
-        return _setDesktopSharingEnabled(state, action);
+        case SET_DESKTOP_SHARING_ENABLED:
+            return _setDesktopSharingEnabled(state, action);
 
-    case SET_FOLLOW_ME:
-        return set(state, 'followMeEnabled', action.enabled);
+        case SET_FOLLOW_ME:
+            return set(state, 'followMeEnabled', action.enabled);
 
-    case SET_LOCATION_URL:
-        return set(state, 'room', undefined);
+        case SET_LOCATION_URL:
+            return set(state, 'room', undefined);
 
-    case SET_MAX_RECEIVER_VIDEO_QUALITY:
-        return set(
-            state,
-            'maxReceiverVideoQuality',
-            action.maxReceiverVideoQuality);
+        case SET_MAX_RECEIVER_VIDEO_QUALITY:
+            return set(
+                state,
+                'maxReceiverVideoQuality',
+                action.maxReceiverVideoQuality);
 
-    case SET_PASSWORD:
-        return _setPassword(state, action);
+        case SET_PASSWORD:
+            return _setPassword(state, action);
 
-    case SET_PREFERRED_RECEIVER_VIDEO_QUALITY:
-        return _setPreferredReceiverVideoQuality(state, action);
+        case SET_PREFERRED_RECEIVER_VIDEO_QUALITY:
+            return set(
+                state,
+                'preferredReceiverVideoQuality',
+                action.preferredReceiverVideoQuality);
 
-    case SET_ROOM:
-        return _setRoom(state, action);
+        case SET_ROOM:
+            return _setRoom(state, action);
 
-    case SET_SIP_GATEWAY_ENABLED:
-        return _setSIPGatewayEnabled(state, action);
+        case SET_SIP_GATEWAY_ENABLED:
+            return _setSIPGatewayEnabled(state, action);
 
-    case SET_START_MUTED_POLICY:
-        return {
-            ...state,
-            startAudioMutedPolicy: action.startAudioMutedPolicy,
-            startVideoMutedPolicy: action.startVideoMutedPolicy
-        };
-    }
+        case SET_START_MUTED_POLICY:
+            return {
+                ...state,
+                startAudioMutedPolicy: action.startAudioMutedPolicy,
+                startVideoMutedPolicy: action.startVideoMutedPolicy
+            };
+        }
 
-    return state;
-});
+        return state;
+    });
 
 /**
  * Reduces a specific Redux action AUTH_STATUS_CHANGED of the feature
@@ -210,15 +221,7 @@ function _conferenceJoined(state, { conference }) {
          * @type {boolean}
          */
         locked,
-        passwordRequired: undefined,
-
-        /**
-         * The current resolution restraint on receiving remote video. By
-         * default the conference will send the highest level possible.
-         *
-         * @type number
-         */
-        preferredReceiverVideoQuality: VIDEO_QUALITY_LEVELS.HIGH
+        passwordRequired: undefined
     });
 }
 
@@ -407,24 +410,6 @@ function _setPassword(state, { conference, method, password }) {
     }
 
     return state;
-}
-
-/**
- * Reduces a specific Redux action {@code SET_PREFERRED_RECEIVER_VIDEO_QUALITY}
- * of the feature base/conference.
- *
- * @param {Object} state - The Redux state of the feature base/conference.
- * @param {Action} action - The Redux action of type
- * {@code SET_PREFERRED_RECEIVER_VIDEO_QUALITY} to reduce.
- * @private
- * @returns {Object} The new state of the feature base/conference after the
- * reduction of the specified action.
- */
-function _setPreferredReceiverVideoQuality(state, action) {
-    return set(
-        state,
-        'preferredReceiverVideoQuality',
-        action.preferredReceiverVideoQuality);
 }
 
 /**

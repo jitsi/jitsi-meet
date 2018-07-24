@@ -22,20 +22,16 @@ MiddlewareRegistry.register(store => next => action => {
     case SET_REDUCED_UI: {
         const { dispatch, getState } = store;
         const state = getState();
-        const { audioOnly } = state['features/base/conference'];
         const { reducedUI } = state['features/base/responsive-ui'];
 
         dispatch(setToolboxEnabled(!reducedUI));
         dispatch(setFilmstripEnabled(!reducedUI));
 
-        // XXX: Currently setting the received video quality will disable
-        // audio-only mode if engaged, that's why we check for it here.
-        audioOnly
-            || dispatch(
-                setPreferredReceiverVideoQuality(
-                    reducedUI
-                        ? VIDEO_QUALITY_LEVELS.LOW
-                        : VIDEO_QUALITY_LEVELS.HIGH));
+        dispatch(
+            setPreferredReceiverVideoQuality(
+                reducedUI
+                    ? VIDEO_QUALITY_LEVELS.LOW
+                    : VIDEO_QUALITY_LEVELS.HIGH));
 
         break;
     }
