@@ -17,6 +17,7 @@ import {
     SET_AUDIO_ONLY,
     SET_DESKTOP_SHARING_ENABLED,
     SET_FOLLOW_ME,
+    SET_MAX_RECEIVER_VIDEO_QUALITY,
     SET_PASSWORD,
     SET_PREFERRED_RECEIVER_VIDEO_QUALITY,
     SET_ROOM,
@@ -68,6 +69,12 @@ ReducerRegistry.register('features/base/conference', (state = {}, action) => {
 
     case SET_LOCATION_URL:
         return set(state, 'room', undefined);
+
+    case SET_MAX_RECEIVER_VIDEO_QUALITY:
+        return set(
+            state,
+            'maxReceiverVideoQuality',
+            action.maxReceiverVideoQuality);
 
     case SET_PASSWORD:
         return _setPassword(state, action);
