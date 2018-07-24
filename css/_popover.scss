@@ -10,10 +10,17 @@
     right: 0;
     width: 100%;
 }
+.popover-mousemove-padding-left {
+    height: 100%;
+    position: absolute;
+    left: -20px;
+    top: 0;
+    width: 40px;
+}
 .popover-mousemove-padding-right {
     height: 100%;
     position: absolute;
-    right: -20;
+    right: -20px;
     top: 0;
     width: 40px;
 }
