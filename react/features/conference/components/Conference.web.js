@@ -13,6 +13,7 @@ import { CalleeInfoContainer } from '../../invite';
 import { LargeVideo } from '../../large-video';
 import { NotificationsContainer } from '../../notifications';
 import { SidePanel } from '../../side-panel';
+import { default as Notice } from './Notice';
 import {
     Toolbox,
     fullScreenChanged,
@@ -163,6 +164,7 @@ class Conference extends Component<Props> {
             <div
                 id = 'videoconference_page'
                 onMouseMove = { this._onShowToolbar }>
+                <Notice />
                 <div id = 'videospace'>
                     <LargeVideo
                         hideVideoQualityLabel = { hideVideoQualityLabel } />
