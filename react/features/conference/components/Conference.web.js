@@ -43,6 +43,18 @@ const FULL_SCREEN_EVENTS = [
 ];
 
 /**
+ * The CSS class to apply to the root element of the conference so CSS can
+ * modify the app layout.
+ *
+ * @private
+ * @type {Object}
+ */
+const LAYOUT_CLASSES = {
+    HORIZONTAL_FILMSTRIP: 'horizontal-filmstrip',
+    VERTICAL_FILMSTRIP: 'vertical-filmstrip'
+};
+
+/**
  * The type of the React {@code Component} props of {@link Conference}.
  */
 type Props = {
@@ -51,6 +63,12 @@ type Props = {
      * Whether the local participant is recording the conference.
      */
     _iAmRecorder: boolean,
+
+    /**
+     * The CSS class to apply to the root of {@link Conference} to modify the
+     * application layout.
+     */
+    _layoutModeClassName: string,
 
     /**
      * Conference room name.
@@ -162,6 +180,7 @@ class Conference extends Component<Props> {
 
         return (
             <div
+                className = { this.props._layoutModeClassName }
                 id = 'videoconference_page'
                 onMouseMove = { this._onShowToolbar }>
                 <Notice />
@@ -252,6 +271,10 @@ function _mapStateToProps(state) {
          * @private
          */
         _iAmRecorder: iAmRecorder,
+
+        _layoutModeClassName: interfaceConfig.VERTICAL_FILMSTRIP
+            ? LAYOUT_CLASSES.VERTICAL_FILMSTRIP
+            : LAYOUT_CLASSES.HORIZONTAL_FILMSTRIP,
 
         /**
          * Conference room name.
