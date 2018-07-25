@@ -34,6 +34,7 @@
     "@atlaskit/tabs": "4.0.1",
     "@atlaskit/theme": "2.4.0",
     "@atlaskit/tooltip": "9.1.1",
+    "@webcomponents/url": "0.7.1",
     "autosize": "1.18.13",
     "es6-iterator": "2.0.3",
     "es6-symbol": "3.1.1",
@@ -74,7 +75,6 @@
     "redux": "4.0.0",
     "redux-thunk": "2.2.0",
     "styled-components": "1.4.6",
-    "url-polyfill": "github:github/url-polyfill#39734186de44612bc5a16eb25f5407adcc5b2e7c",
     "uuid": "3.1.0",
     "xmldom": "0.1.27"
   },
