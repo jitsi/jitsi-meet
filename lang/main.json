@@ -81,6 +81,7 @@
             "audioRoute": "Select the sound device",
             "callQuality": "Manage call quality",
             "chat": "Toggle chat window",
+            "cc": "Toggle subtitles",
             "document": "Toggle shared document",
             "feedback": "Leave feedback",
             "fullScreen": "Toggle full screen",
@@ -461,7 +462,8 @@
         "error": "Transcribing failed. Please try again.",
         "failedToStart": "Transcribing failed to start",
         "tr": "TR",
-        "labelToolTip": "The meeting is being transcribed"
+        "labelToolTip": "The meeting is being transcribed",
+        "ccButtonTooltip": "Start / Stop showing subtitles"
     },
     "liveStreaming":
     {

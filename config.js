@@ -175,6 +175,10 @@ var config = {
     // Whether to enable live streaming or not.
     // liveStreamingEnabled: false,
 
+    // Transcription (in interface_config,
+    // subtitles and buttons can be configured)
+    transcribingEnabled: false,
+
     // Misc
 
     // Default value for the channel "last N" attribute. -1 for unlimited.

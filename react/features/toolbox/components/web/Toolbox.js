@@ -58,6 +58,7 @@ import OverflowMenuProfileItem from './OverflowMenuProfileItem';
 import ToolbarButton from './ToolbarButton';
 import VideoMuteButton from '../VideoMuteButton';
 import {
+    ClosedCaptionButton,
     StartTranscribingDialog,
     StopTranscribingDialog
 } from '../../../transcribing';
@@ -319,6 +320,7 @@ class Toolbox extends Component<Props> {
             _chatOpen,
             _hideInviteButton,
             _overflowMenuVisible,
+            _transcribingEnabled,
             _raisedHand,
             _visible,
             _visibleButtons,
@@ -361,6 +363,11 @@ class Toolbox extends Component<Props> {
                                 tooltip = { t('toolbar.chat') } />
                             <ChatCounter />
                         </div> }
+                    {
+                        _transcribingEnabled
+                        && this._shouldShowButton('closedcaptions')
+                        && <ClosedCaptionButton />
+                    }
                 </div>
                 <div className = 'button-group-center'>
                     <AudioMuteButton
