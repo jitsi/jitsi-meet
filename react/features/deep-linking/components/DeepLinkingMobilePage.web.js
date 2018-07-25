@@ -141,14 +141,6 @@ class DeepLinkingMobilePage extends Component<*, *> {
                             { t(`${_TNS}.downloadApp`) }
                         </button>
                     </a>
-                    <a
-                        className = { `${_SNS}__href` }
-                        href = { this.state.joinURL }
-                        onClick = { this._onOpenApp }>
-                        {/* <button className = { `${_SNS}__button` }> */}
-                        { t(`${_TNS}.openApp`) }
-                        {/* </button> */}
-                    </a>
                     <DialInSummary
                         className = 'deep-linking-dial-in'
                         clickableNumbers = { true }

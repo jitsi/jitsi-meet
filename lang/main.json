@@ -627,7 +627,7 @@
         "tryAgainButton": "Try again in desktop",
         "launchWebButton": "Launch in web",
         "appNotInstalled": "You need the __app__ mobile app to join this meeting on your phone.",
-        "downloadApp": "Download the app",
+        "downloadApp": "Download/Open the app",
         "openApp": "Continue to the app"
     },
     "presenceStatus": {
