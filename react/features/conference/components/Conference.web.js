@@ -49,7 +49,7 @@ const FULL_SCREEN_EVENTS = [
  * @type {Object}
  */
 const LAYOUT_CLASSES = {
-    HORIZONTAL_FILSTRIP: 'horizontal-filmstrip',
+    HORIZONTAL_FILMSTRIP: 'horizontal-filmstrip',
     VERTICAL_FILMSTRIP: 'vertical-filmstrip'
 };
 
@@ -272,7 +272,7 @@ function _mapStateToProps(state) {
 
         _layoutModeClassName: interfaceConfig.VERTICAL_FILMSTRIP
             ? LAYOUT_CLASSES.VERTICAL_FILMSTRIP
-            : LAYOUT_CLASSES.HORIZONTAL_FILSTRIP,
+            : LAYOUT_CLASSES.HORIZONTAL_FILMSTRIP,
 
         /**
          * Conference room name.
