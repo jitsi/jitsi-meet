@@ -20,6 +20,7 @@ export class FlacAdapter extends RecordingAdapter {
     _audioContext = null;
     _audioProcessingNode = null;
     _audioSource = null;
+    _stream = null;
 
     /**
      * Resolve function of the promise returned by {@code stop()}.
@@ -86,6 +87,34 @@ export class FlacAdapter extends RecordingAdapter {
     }
 
     /**
+     * Implements {@link RecordingAdapter#setMuted()}.
+     *
+     * @inheritdoc
+     */
+    setMuted(muted) {
+        const shouldEnable = !muted;
+
+        if (!this._stream) {
+            return Promise.resolve();
+        }
+
+        const track = this._stream.getAudioTracks()[0];
+
+        if (!track) {
+            logger.error('Cannot mute/unmute. Track not found!');
+
+            return Promise.resolve();
+        }
+
+        if (track.enabled !== shouldEnable) {
+            track.enabled = shouldEnable;
+            logger.log(muted ? 'Mute' : 'Unmute');
+        }
+
+        return Promise.resolve();
+    }
+
+    /**
      * Initialize the adapter.
      *
      * @private
@@ -138,6 +167,7 @@ export class FlacAdapter extends RecordingAdapter {
         const callbackInitAudioContext = (resolve, reject) => {
             this._getAudioStream(0)
             .then(stream => {
+                this._stream = stream;
                 this._audioContext = new AudioContext();
                 this._audioSource
                     = this._audioContext.createMediaStreamSource(stream);
@@ -161,7 +191,7 @@ export class FlacAdapter extends RecordingAdapter {
             });
         };
 
-        // FIXME: because Promise constructor immediately executes the executor
+        // Because Promise constructor immediately executes the executor
         // function. This is undesirable, we want callbackInitAudioContext to be
         // executed only **after** promiseInitWorker is resolved.
         return promiseInitWorker

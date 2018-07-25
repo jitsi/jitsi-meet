@@ -5,6 +5,7 @@ import { APP_WILL_MOUNT, APP_WILL_UNMOUNT } from '../base/app';
 import { CONFERENCE_JOINED } from '../base/conference';
 import { toggleDialog } from '../base/dialog';
 import { i18next } from '../base/i18n';
+import { SET_AUDIO_MUTED } from '../base/media';
 import { MiddlewareRegistry } from '../base/redux';
 import { showNotification } from '../notifications';
 
@@ -25,11 +26,17 @@ isFeatureEnabled
     switch (action.type) {
     case CONFERENCE_JOINED: {
         const { conference } = getState()['features/base/conference'];
+        const { localRecording } = getState()['features/base/config'];
+
+        if (localRecording && localRecording.format) {
+            recordingController.switchFormat(localRecording.format);
+        }
 
         recordingController.registerEvents(conference);
         break;
     }
     case APP_WILL_MOUNT:
+
         // realize the delegates on recordingController, allowing the UI to
         // react to state changes in recordingController.
         recordingController.onStateChanged = isEngaged => {
@@ -65,6 +72,9 @@ isFeatureEnabled
         recordingController.onStateChanged = null;
         recordingController.onNotify = null;
         recordingController.onWarning = null;
+        break;
+    case SET_AUDIO_MUTED:
+        recordingController.setMuted(action.muted);
         break;
     }
 

@@ -65,6 +65,34 @@ export class OggAdapter extends RecordingAdapter {
     }
 
     /**
+     * Implements {@link RecordingAdapter#setMuted()}.
+     *
+     * @inheritdoc
+     */
+    setMuted(muted) {
+        const shouldEnable = !muted;
+
+        if (!this._stream) {
+            return Promise.resolve();
+        }
+
+        const track = this._stream.getAudioTracks()[0];
+
+        if (!track) {
+            logger.error('Cannot mute/unmute. Track not found!');
+
+            return Promise.resolve();
+        }
+
+        if (track.enabled !== shouldEnable) {
+            track.enabled = shouldEnable;
+            logger.log(muted ? 'Mute' : 'Unmute');
+        }
+
+        return Promise.resolve();
+    }
+
+    /**
      * Initialize the adapter.
      *
      * @private
@@ -78,6 +106,7 @@ export class OggAdapter extends RecordingAdapter {
         return new Promise((resolve, error) => {
             this._getAudioStream(0)
             .then(stream => {
+                this._stream = stream;
                 this._mediaRecorder = new MediaRecorder(stream);
                 this._mediaRecorder.ondataavailable
                     = e => this._saveMediaData(e.data);

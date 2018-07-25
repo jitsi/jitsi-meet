@@ -41,6 +41,11 @@ const COMMAND_PONG = 'localRecPong';
 const PROPERTY_STATS = 'localRecStats';
 
 /**
+ * Supported recording formats.
+ */
+const RECORDING_FORMATS = new Set([ 'flac', 'wav', 'ogg' ]);
+
+/**
  * Default recording format.
  */
 const DEFAULT_RECORDING_FORMAT = 'flac';
@@ -134,6 +139,13 @@ class RecordingController {
      * @private
      */
     _state = ControllerState.IDLE;
+
+    /**
+     * Whether or not the audio is muted in the UI. This is stored as internal
+     * state of {@code RecordingController} because we might have recording
+     * sessions that start muted.
+     */
+    _isMuted = false;
 
     /**
      * Current recording format. This will be in effect from the next
@@ -300,12 +312,32 @@ class RecordingController {
     }
 
     /**
+     * Mute or unmute audio. When muted, the ongoing local recording should
+     * produce silence.
+     *
+     * @param {boolean} muted - If the audio should be muted.
+     * @returns {void}
+     */
+    setMuted(muted: boolean) {
+        this._isMuted = Boolean(muted);
+
+        if (this._state === ControllerState.RECORDING) {
+            this._adapters[this._currentSessionToken].setMuted(muted);
+        }
+    }
+
+    /**
      * Switches the recording format.
      *
      * @param {string} newFormat - The new format.
      * @returns {void}
      */
     switchFormat(newFormat: string) {
+        if (!RECORDING_FORMATS.has(newFormat)) {
+            logger.log(`Unknown format ${newFormat}. Ignoring...`);
+
+            return;
+        }
         this._format = newFormat;
         logger.log(`Recording format switched to ${newFormat}`);
 
@@ -465,13 +497,13 @@ class RecordingController {
     }
 
     /**
-     * Generates a token that can be used to distinguish each
-     * recording session.
+     * Generates a token that can be used to distinguish each local recording
+     * session.
      *
      * @returns {number}
      */
     _getRandomToken() {
-        return Math.floor(Math.random() * 10000) + 1;
+        return Math.floor(Math.random() * 100000000) + 1;
     }
 
     _doStartRecording: () => void;
@@ -497,6 +529,8 @@ class RecordingController {
                 if (this._onStateChanged) {
                     this._onStateChanged(true);
                 }
+
+                delegate.setMuted(this._isMuted);
                 this._updateStats();
             })
             .catch(err => {

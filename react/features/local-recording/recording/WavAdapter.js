@@ -12,6 +12,11 @@ const WAV_SAMPLE_RATE = 44100;
 export class WavAdapter extends RecordingAdapter {
 
     /**
+     * The current {@code MediaStream} instance.
+     */
+    _stream = null;
+
+    /**
      * {@code AudioContext} instance.
      */
     _audioContext = null;
@@ -65,17 +70,15 @@ export class WavAdapter extends RecordingAdapter {
             this._initPromise = this._initialize();
         }
 
-        return new Promise(
-            (resolve, /* eslint-disable */_reject/* eslint-enable */) => {
-                this._wavBuffers = [];
-                this._wavLength = 0;
-                this._wavBuffers.push(this._createWavHeader());
+        return this._initPromise.then(() => {
+            this._wavBuffers = [];
+            this._wavLength = 0;
+            this._wavBuffers.push(this._createWavHeader());
 
-                this._audioSource.connect(this._audioProcessingNode);
-                this._audioProcessingNode
-                    .connect(this._audioContext.destination);
-                resolve();
-            });
+            this._audioSource.connect(this._audioProcessingNode);
+            this._audioProcessingNode
+                .connect(this._audioContext.destination);
+        });
     }
 
     /**
@@ -106,6 +109,34 @@ export class WavAdapter extends RecordingAdapter {
 
             downloadBlob(audioURL, `recording${timestampString()}.wav`);
         }
+    }
+
+    /**
+     * Implements {@link RecordingAdapter#setMuted()}.
+     *
+     * @inheritdoc
+     */
+    setMuted(muted) {
+        const shouldEnable = !muted;
+
+        if (!this._stream) {
+            return Promise.resolve();
+        }
+
+        const track = this._stream.getAudioTracks()[0];
+
+        if (!track) {
+            logger.error('Cannot mute/unmute. Track not found!');
+
+            return Promise.resolve();
+        }
+
+        if (track.enabled !== shouldEnable) {
+            track.enabled = shouldEnable;
+            logger.log(muted ? 'Mute' : 'Unmute');
+        }
+
+        return Promise.resolve();
     }
 
     /**
@@ -176,6 +207,7 @@ export class WavAdapter extends RecordingAdapter {
         const p = new Promise((resolve, reject) => {
             this._getAudioStream(0)
             .then(stream => {
+                this._stream = stream;
                 this._audioContext = new AudioContext();
                 this._audioSource
                     = this._audioContext.createMediaStreamSource(stream);
@@ -209,12 +241,10 @@ export class WavAdapter extends RecordingAdapter {
      * @returns {void}
      */
     _saveWavPCM(data) {
-        // need to copy the Float32Array,
-        // unlike passing to WebWorker,
-        // this data is passed by reference,
-        // so we need to copy it, otherwise the
-        // audio file will be just repeating the last
-        // segment.
+        // Need to copy the Float32Array:
+        // unlike passing to WebWorker, this data is passed by reference,
+        // so we need to copy it, otherwise the resulting audio file will be
+        // just repeating the last segment.
         this._wavBuffers.push(new Float32Array(data));
         this._wavLength += data.length;
     }

@@ -17,8 +17,7 @@ export function downloadBlob(blob, fileName = 'recording.ogg') {
 }
 
 /**
- * Obtains a timestamp of now.
- * Used in filenames.
+ * Obtains a timestamp of now. Used in filenames.
  *
  * @returns {string}
  */

@@ -33,8 +33,19 @@ export class RecordingAdapter {
     }
 
     /**
-     * Helper method for getting an audio MediaStream. Use this instead of
-     * calling browser APIs directly.
+     * Mutes or unmutes the current recording.
+     *
+     * @param {boolean} muted - Whether to mute or to unmute.
+     * @returns {Promise}
+     */
+    setMuted(/* eslint-disable no-unused-vars */
+            muted/* eslint-enable no-unused-vars */) {
+        throw new Error('Not implemented');
+    }
+
+    /**
+     * Helper method for getting an audio {@code MediaStream}. Use this instead
+     * of calling browser APIs directly.
      *
      * @protected
      * @param {number} micDeviceId - The ID of the current audio device.
@@ -52,7 +63,7 @@ export class RecordingAdapter {
             const mediaStream = result[0].stream;
 
             if (mediaStream === undefined) {
-                throw new Error('Failed to get MediaStream.');
+                throw new Error('Failed to create local track.');
             }
 
             return mediaStream;
