@@ -854,6 +854,9 @@ const VideoLayout = {
     resizeVideoArea(
             forceUpdate = false,
             animate = false) {
+        // Resize the thumbnails first.
+        this.resizeThumbnails(forceUpdate);
+
         if (largeVideo) {
             largeVideo.updateContainerSize();
             largeVideo.resize(animate);
@@ -866,9 +869,6 @@ const VideoLayout = {
         if (availableWidth < 0 || availableHeight < 0) {
             return;
         }
-
-        // Resize the thumbnails first.
-        this.resizeThumbnails(forceUpdate);
     },
 
     getSmallVideo(id) {
