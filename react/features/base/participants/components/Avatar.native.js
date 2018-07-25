@@ -302,6 +302,10 @@ export default class Avatar extends Component<Props, State> {
                 {
                     ...props,
 
+                    // The Image adds a fade effect without asking, so lets
+                    // explicitly disable it. More info here:
+                    // https://github.com/facebook/react-native/issues/10194
+                    fadeDuration: 0,
                     resizeMode: 'contain',
                     source,
                     style: imageStyle
