@@ -102,6 +102,7 @@
             "shortcuts": "Toggle shortcuts",
             "speakerStats": "Toggle speaker statistics",
             "toggleCamera": "Toggle camera",
+            "tileView": "Toggle tile view",
             "videomute": "Toggle mute video"
         },
         "addPeople": "Add people to your call",
@@ -144,6 +145,7 @@
         "raiseHand": "Raise / Lower your hand",
         "shortcuts": "View shortcuts",
         "speakerStats": "Speaker stats",
+        "tileViewToggle": "Toggle tile view",
         "invite": "Invite people"
     },
     "chat":{

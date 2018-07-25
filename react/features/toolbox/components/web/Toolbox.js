@@ -40,6 +40,7 @@ import {
 import { toggleSharedVideo } from '../../../shared-video';
 import { toggleChat } from '../../../side-panel';
 import { SpeakerStats } from '../../../speaker-stats';
+import { TileViewButton } from '../../../video-layout';
 import {
     OverflowMenuVideoQualityItem,
     VideoQualityDialog
@@ -369,6 +370,8 @@ class Toolbox extends Component<Props> {
                         visible = { this._shouldShowButton('camera') } />
                 </div>
                 <div className = 'button-group-right'>
+                    { this._shouldShowButton('tileview')
+                        && <TileViewButton /> }
                     { this._shouldShowButton('invite')
                         && !_hideInviteButton
                         && <ToolbarButton

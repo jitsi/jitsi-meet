@@ -1,6 +1,14 @@
 /* global $, APP, interfaceConfig */
 
 import { setFilmstripVisible } from '../../../react/features/filmstrip';
+import {
+    LAYOUTS,
+    TILE_VIEW_CONFIGURATION,
+    calculateColumnCount,
+    calculateVisibleRowCount,
+    getCurrentLayout,
+    shouldDisplayTileView
+} from '../../../react/features/video-layout';
 
 import UIEvents from '../../../service/UI/UIEvents';
 import UIUtil from '../util/UIUtil';
@@ -247,11 +255,11 @@ const Filmstrip = {
      * @returns {{availableWidth: number, availableHeight: number}}
      */
     calculateAvailableSize() {
-        let availableHeight = interfaceConfig.FILM_STRIP_MAX_HEIGHT;
-        const thumbs = this.getThumbs(true);
-        const numvids = thumbs.remoteThumbs.length;
-
-        const localVideoContainer = $('#localVideoContainer');
+        const state = APP.store.getState();
+        const currentLayout = getCurrentLayout(state);
+        const isHorizontalFilmstripView
+            = currentLayout === LAYOUTS.HORIZONTAL_FILMSTRIP_VIEW;
+        const isTileView = currentLayout === LAYOUTS.TILE_VIEW;
 
         /**
          * If the videoAreaAvailableWidth is set we use this one to calculate
@@ -268,10 +276,24 @@ const Filmstrip = {
             - UIUtil.parseCssInt(this.filmstrip.css('borderRightWidth'), 10)
             - 5;
 
+        let availableHeight = interfaceConfig.FILM_STRIP_MAX_HEIGHT;
         let availableWidth = videoAreaAvailableWidth;
 
+        if (isTileView) {
+            const containerWidth = this.filmstrip[0].clientWidth;
+            const columnCount = calculateColumnCount(
+                state, TILE_VIEW_CONFIGURATION.MAX_COLUMNS);
+
+            availableWidth = (containerWidth / columnCount)
+                - TILE_VIEW_CONFIGURATION.SIDE_MARGINS;
+        }
+
+        const thumbs = this.getThumbs(true);
+
         // If local thumb is not hidden
-        if (thumbs.localThumb) {
+        if (thumbs.localThumb && !isTileView) {
+            const localVideoContainer = $('#localVideoContainer');
+
             availableWidth = Math.floor(
                 videoAreaAvailableWidth - (
                     UIUtil.parseCssInt(
@@ -289,10 +311,12 @@ const Filmstrip = {
             );
         }
 
-        // If the number of videos is 0 or undefined or we're in vertical
+        // If the number of videos is 0 or undefined or we're not in horizontal
         // filmstrip mode we don't need to calculate further any adjustments
         // to width based on the number of videos present.
-        if (numvids && !interfaceConfig.VERTICAL_FILMSTRIP) {
+        const numvids = thumbs.remoteThumbs.length;
+
+        if (numvids && isHorizontalFilmstripView) {
             const remoteVideoContainer = thumbs.remoteThumbs.eq(0);
 
             availableWidth = Math.floor(
@@ -312,18 +336,30 @@ const Filmstrip = {
             );
         }
 
-        const maxHeight
+        if (isTileView) {
+            const visibleRows = calculateVisibleRowCount(
+                state, TILE_VIEW_CONFIGURATION.MAX_COLUMNS);
+            const containerHeight
+                = this.filmstrip[0].clientHeight
+                    - TILE_VIEW_CONFIGURATION.END_MARGINS;
 
-            // If the MAX_HEIGHT property hasn't been specified
-            // we have the static value.
-            = Math.min(interfaceConfig.FILM_STRIP_MAX_HEIGHT || 120,
-            availableHeight);
+            availableHeight = containerHeight / visibleRows;
+        } else {
+            const maxHeight
 
-        availableHeight
-            = Math.min(maxHeight, window.innerHeight - 18);
+                // If the MAX_HEIGHT property hasn't been specified
+                // we have the static value.
+                = Math.min(interfaceConfig.FILM_STRIP_MAX_HEIGHT || 120,
+                availableHeight);
 
-        return { availableWidth,
-            availableHeight };
+            availableHeight
+                = Math.min(maxHeight, window.innerHeight - 18);
+        }
+
+        return {
+            availableHeight,
+            availableWidth
+        };
     },
 
     /**
@@ -362,6 +398,19 @@ const Filmstrip = {
      * @returns {{localVideo, remoteVideo}}
      */
     calculateThumbnailSizeFromAvailable(availableWidth, availableHeight) {
+        if (shouldDisplayTileView(APP.store.getState())) {
+            return {
+                localVideo: {
+                    thumbWidth: availableWidth,
+                    thumbHeight: availableHeight
+                },
+                remoteVideo: {
+                    thumbWidth: availableWidth,
+                    thumbHeight: availableHeight
+                }
+            };
+        }
+
         /**
          * Let:
          * lW - width of the local thumbnail
@@ -466,13 +515,15 @@ const Filmstrip = {
             });
         }
 
+        const currentLayout = getCurrentLayout(APP.store.getState());
+
         // Let CSS take care of height in vertical filmstrip mode.
-        if (interfaceConfig.VERTICAL_FILMSTRIP) {
+        if (currentLayout === LAYOUTS.VERTICAL_FILMSTRIP_VIEW) {
             $('#filmstripLocalVideo').css({
                 // adds 4 px because of small video 2px border
                 width: `${local.thumbWidth + 4}px`
             });
-        } else {
+        } else if (currentLayout === LAYOUTS.HORIZONTAL_FILMSTRIP_VIEW) {
             this.filmstrip.css({
                 // adds 4 px because of small video 2px border
                 height: `${remote.thumbHeight + 4}px`
