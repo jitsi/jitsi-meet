@@ -642,10 +642,14 @@ RemoteVideo.createContainer = function(spanId) {
         <div class ='presence-label-container'></div>
         <span class = 'remotevideomenu'></span>`;
 
-    const remotes = document.getElementById('filmstripRemoteVideosContainer');
+    const remoteVideosContainer
+        = document.getElementById('filmstripRemoteVideosContainer');
+    const localVideoContainer
+        = document.getElementById('localVideoTileViewContainer');
 
+    remoteVideosContainer.insertBefore(container, localVideoContainer);
 
-    return remotes.appendChild(container);
+    return container;
 };
 
 export default RemoteVideo;

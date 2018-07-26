@@ -50,10 +50,14 @@ SharedVideoThumb.prototype.createContainer = function(spanId) {
     displayNameContainer.className = 'displayNameContainer';
     container.appendChild(displayNameContainer);
 
-    const remotes = document.getElementById('filmstripRemoteVideosContainer');
+    const remoteVideosContainer
+        = document.getElementById('filmstripRemoteVideosContainer');
+    const localVideoContainer
+        = document.getElementById('localVideoTileViewContainer');
 
+    remoteVideosContainer.insertBefore(container, localVideoContainer);
 
-    return remotes.appendChild(container);
+    return container;
 };
 
 /**
