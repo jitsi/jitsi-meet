@@ -644,10 +644,10 @@ RemoteVideo.createContainer = function(spanId) {
 
     const remoteVideosContainer
         = document.getElementById('filmstripRemoteVideosContainer');
-    const remoteVideosEnd
-        = document.getElementById('filmstripRemoteVideosContainerEnd');
+    const localVideoContainer
+        = document.getElementById('localVideoTileViewContainer');
 
-    remoteVideosContainer.insertBefore(container, remoteVideosEnd);
+    remoteVideosContainer.insertBefore(container, localVideoContainer);
 
     return container;
 };

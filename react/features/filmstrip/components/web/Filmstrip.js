@@ -120,7 +120,7 @@ class Filmstrip extends Component <Props> {
                             id = 'filmstripRemoteVideosContainer'
                             onMouseOut = { this._onMouseOut }
                             onMouseOver = { this._onMouseOver }>
-                            <div id = 'filmstripRemoteVideosEnd' />
+                            <div id = 'localVideoTileViewContainer' />
                         </div>
                     </div>
                 </div>
