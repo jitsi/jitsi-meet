@@ -4,15 +4,19 @@ body.welcome-page {
 }
 
 .welcome {
+    background-color: $welcomePageHeaderBackground;
+    display: flex;
+    flex-direction: column;
     font-family: $welcomePageFontFamily;
-    height: 100%;
+    justify-content: space-between;
+    min-height: 100vh;
     position: relative;
 
     .header {
         align-items: center;
-        background: $welcomePageHeaderBackground;
         display: flex;
         flex-direction: column;
+        min-height: fit-content;
         overflow: hidden;
         position: relative;
         text-align: center;
@@ -20,49 +24,42 @@ body.welcome-page {
         .header-text {
             display: flex;
             flex-direction: column;
-            justify-content: space-around;
-            margin-top: 120px;
-            margin-bottom: 20px;
+            margin-top: $watermarkHeight + 80;
+            margin-bottom: 36px;
             max-width: calc(100% - 40px);
-            min-height: 286px;
-            width: 645px;
+            width: 650px;
+            z-index: $zindex2;
         }
 
         .header-text-title {
             color: $welcomePageTitleColor;
-            font-size: 48px;
-            letter-spacing: -1px;
-            line-height: 58px;
-            margin-bottom: 20px;
+            font-size: 2.5rem;
+            font-weight: 500;
+            letter-spacing: 0;
+            line-height: 1.18;
+            margin-bottom: 16px;
         }
 
         .header-text-description {
             color: $welcomePageDescriptionColor;
-            font-size: 20px;
-            line-height: 28px;
-            opacity: 0.8;
+            font-size: 1rem;
+            font-weight: 400;
+            line-height: 24px;
         }
 
-        .header-image {
-            background-image: url(../images/welcome_page/curves.png);
-            background-size: contain;
-            height: 209px;
-            position: absolute;
-            width: 1070px;
-        }
-
-        #new_enter_room {
+        #enter_room {
             align-items: center;
             display: flex;
-            margin-bottom: 20px;
             max-width: calc(100% - 40px);
+            margin-bottom: 20px;
             position: relative;
-            z-index: 2;
+            width: 650px;
+            z-index: $zindex2;
 
             .enter-room-input {
                 display: inline-block;
-                margin-right: 15px;
-                width: 350px;
+                margin-right: 8px;
+                width: 100%;
             }
         }
     }
@@ -70,24 +67,10 @@ body.welcome-page {
     .welcome-page-button {
         font-size: 16px;
     }
-}
 
-.welcome.with-content {
-    .header {
-        min-height: 552px;
-    }
-    .header-image {
-        left: -61px;
-        top: 401px;
-    }
-}
-
-.welcome.without-content {
-    .header {
+    .welcome-watermark {
+        position: absolute;
+        width: 100%;
         height: 100%;
-    }
-    .header-image {
-        bottom: -20px;
-        left: 0;
     }
 }

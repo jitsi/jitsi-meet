@@ -127,7 +127,7 @@
 /**
  * Override other styles to support vertical filmstrip mode.
  */
-.vertical-filmstrip.filmstrip-only {
+.filmstrip-only .vertical-filmstrip {
     .filmstrip {
         flex-direction: row-reverse;
     }
