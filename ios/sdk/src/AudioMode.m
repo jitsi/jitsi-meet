@@ -20,6 +20,9 @@
 #import <React/RCTLog.h>
 
 @interface AudioMode : NSObject<RCTBridgeModule>
+
+@property(nonatomic, strong) dispatch_queue_t workerQueue;
+
 @end
 
 @implementation AudioMode {
@@ -52,15 +55,18 @@ typedef enum {
     if (self) {
         _category = nil;
         _mode = nil;
+
+        dispatch_queue_attr_t attributes =
+        dispatch_queue_attr_make_with_qos_class(DISPATCH_QUEUE_SERIAL,
+                                                QOS_CLASS_USER_INITIATED, -1);
+        _workerQueue = dispatch_queue_create("WebRTCModule.queue", attributes);
     }
     return self;
 }
 
 - (dispatch_queue_t)methodQueue {
-    // Make sure all our methods run in the main thread.  The route change
-    // notification runs there so this will make sure it will only be fired
-    // after our changes have been applied (when we cause them, that is).
-    return dispatch_get_main_queue();
+    // Use a dedicated queue for audio mode operations.
+    return _workerQueue;
 }
 
 - (void)routeChanged:(NSNotification*)notification {
@@ -70,12 +76,15 @@ typedef enum {
             integerValue];
 
     switch (reason) {
-    case AVAudioSessionRouteChangeReasonCategoryChange:
+    case AVAudioSessionRouteChangeReasonCategoryChange: {
         // The category has changed. Check if it's the one we want and adjust as
-        // needed.
-        [self setCategory:_category mode:_mode error:nil];
+        // needed. This notification is posted on a secondary thread, so make
+        // sure we switch to our worker thread.
+        dispatch_async(_workerQueue, ^{
+            [self setCategory:_category mode:_mode error:nil];
+        });
         break;
-
+    }
     default:
         // Do nothing.
         break;
