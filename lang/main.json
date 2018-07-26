@@ -81,6 +81,7 @@
             "audioRoute": "Select the sound device",
             "callQuality": "Manage call quality",
             "chat": "Toggle chat window",
+            "cc": "Toggle subtitles",
             "document": "Toggle shared document",
             "feedback": "Leave feedback",
             "fullScreen": "Toggle full screen",
@@ -381,7 +382,8 @@
         "shareYourScreenDisabled": "Screen sharing disabled.",
         "shareYourScreenDisabledForGuest": "Guests can't screen share.",
         "yourEntireScreen": "Your entire screen",
-        "applicationWindow": "Application window"
+        "applicationWindow": "Application window",
+        "transcribing": "Transcribing"
     },
     "email":
     {
@@ -447,6 +449,16 @@
         "startRecordingBody": "Are you sure you would like to start recording?",
         "unavailable": "Oops! The __serviceName__ is currently unavailable. We're working on resolving the issue. Please try again later.",
         "unavailableTitle": "Recording unavailable"
+    },
+    "transcribing":
+    {
+        "pending" : "Preparing to transcribe the meeting...",
+        "off" : "Transcribing stopped",
+        "error": "Transcribing failed. Please try again.",
+        "failedToStart": "Transcribing failed to start",
+        "tr": "TR",
+        "labelToolTip": "The meeting is being transcribed",
+        "ccButtonTooltip": "Start / Stop showing subtitles"
     },
     "liveStreaming":
     {

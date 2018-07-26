@@ -24,6 +24,7 @@
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
 }
+
 .icon-arrow_back:before {
   content: "\e5c4";
 }
@@ -215,4 +216,7 @@
 }
 .icon-tiles-one:before {
   content: "\e92f";
+}
+.icon-closed_caption:before {
+    content: "\e930";
 }

@@ -14,7 +14,8 @@ import { translate } from '../../../base/i18n';
 import {
     getLocalParticipant,
     getParticipants,
-    participantUpdated
+    participantUpdated,
+    isLocalParticipantModerator
 } from '../../../base/participants';
 import { getLocalVideoTrack, toggleScreensharing } from '../../../base/tracks';
 import { ChatCounter } from '../../../chat';
@@ -56,6 +57,9 @@ import OverflowMenuItem from './OverflowMenuItem';
 import OverflowMenuProfileItem from './OverflowMenuProfileItem';
 import ToolbarButton from './ToolbarButton';
 import VideoMuteButton from '../VideoMuteButton';
+import {
+    ClosedCaptionButton
+} from '../../../transcribing';
 
 /**
  * The type of the React {@code Component} props of {@link Toolbox}.
@@ -143,6 +147,11 @@ type Props = {
      * Whether or not the local participant is sharing a YouTube video.
      */
     _sharingVideo: boolean,
+
+    /**
+     * Whether or not transcribing is enabled.
+     */
+    _transcribingEnabled: boolean,
 
     /**
      * Flag showing whether toolbar is visible.
@@ -302,6 +311,7 @@ class Toolbox extends Component<Props> {
             _chatOpen,
             _hideInviteButton,
             _overflowMenuVisible,
+            _transcribingEnabled,
             _raisedHand,
             _visible,
             _visibleButtons,
@@ -344,6 +354,11 @@ class Toolbox extends Component<Props> {
                                 tooltip = { t('toolbar.chat') } />
                             <ChatCounter />
                         </div> }
+                    {
+                        _transcribingEnabled
+                        && this._shouldShowButton('closedcaptions')
+                        && <ClosedCaptionButton />
+                    }
                 </div>
                 <div className = 'button-group-center'>
                     <AudioMuteButton
@@ -990,6 +1005,9 @@ function _mapStateToProps(state) {
         callStatsID,
         iAmRecorder
     } = state['features/base/config'];
+    let {
+        transcribingEnabled
+    } = state['features/base/config'];
     const sharedVideoStatus = state['features/shared-video'].status;
     const { current } = state['features/side-panel'];
     const {
@@ -1005,6 +1023,9 @@ function _mapStateToProps(state) {
     const dialOutEnabled = isDialOutEnabled(state);
 
     let desktopSharingDisabledTooltipKey;
+
+    transcribingEnabled
+        = isLocalParticipantModerator(state) && transcribingEnabled;
 
     if (state['features/base/config'].enableFeaturesBasedOnToken) {
         // we enable desktop sharing if any participant already have this
@@ -1040,6 +1061,7 @@ function _mapStateToProps(state) {
         _overflowMenuVisible: overflowMenuVisible,
         _raisedHand: localParticipant.raisedHand,
         _screensharing: localVideo && localVideo.videoType === 'desktop',
+        _transcribingEnabled: transcribingEnabled,
         _sharingVideo: sharedVideoStatus === 'playing'
             || sharedVideoStatus === 'start'
             || sharedVideoStatus === 'pause',

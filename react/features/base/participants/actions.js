@@ -7,6 +7,8 @@ import { showNotification } from '../../notifications';
 
 import {
     DOMINANT_SPEAKER_CHANGED,
+    HIDDEN_PARTICIPANT_JOINED,
+    HIDDEN_PARTICIPANT_LEFT,
     KICK_PARTICIPANT,
     MUTE_REMOTE_PARTICIPANT,
     PARTICIPANT_DISPLAY_NAME_CHANGED,
@@ -273,6 +275,42 @@ export function participantJoined(participant) {
                 participant
             });
         }
+    };
+}
+
+/**
+ * Action to signal that a hidden participant has joined the conference.
+ *
+ * @param {string} id - The id of the participant.
+ * @param {string} displayName - The display name, or undefined when
+ * unknown.
+ * @returns {{
+ *     type: HIDDEN_PARTICIPANT_JOINED,
+ *     displayName: string,
+ *     id: string
+ * }}
+ */
+export function hiddenParticipantJoined(id, displayName) {
+    return {
+        type: HIDDEN_PARTICIPANT_JOINED,
+        id,
+        displayName
+    };
+}
+
+/**
+ * Action to signal that a hidden participant has left the conference.
+ *
+ * @param {string} id - The id of the participant.
+ * @returns {{
+ *     type: HIDDEN_PARTICIPANT_LEFT,
+ *     id: string
+ * }}
+ */
+export function hiddenParticipantLeft(id) {
+    return {
+        type: HIDDEN_PARTICIPANT_LEFT,
+        id
     };
 }
 
