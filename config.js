@@ -177,7 +177,7 @@ var config = {
 
     // Transcription (in interface_config,
     // subtitles and buttons can be configured)
-    transcribingEnabled: false,
+    // transcribingEnabled: false,
 
     // Misc
 
