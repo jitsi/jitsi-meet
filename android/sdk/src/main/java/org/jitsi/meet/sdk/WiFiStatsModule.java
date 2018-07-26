@@ -19,8 +19,6 @@ package org.jitsi.meet.sdk;
 import android.content.Context;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
-import android.os.Handler;
-import android.os.Looper;
 import android.util.Log;
 
 import com.facebook.react.bridge.Promise;
@@ -36,6 +34,8 @@ import java.net.NetworkInterface;
 import java.net.SocketException;
 import java.net.UnknownHostException;
 import java.util.Enumeration;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 /**
  * Module exposing WiFi statistics.
@@ -64,10 +64,10 @@ class WiFiStatsModule
     public final static int SIGNAL_LEVEL_SCALE = 101;
 
     /**
-     * {@link Handler} for running all operations on the main thread.
+     * {@link ExecutorService} for running all operations on a dedicated thread.
      */
-    private final Handler mainThreadHandler
-        = new Handler(Looper.getMainLooper());
+    private static final ExecutorService executor
+        = Executors.newSingleThreadExecutor();
 
     /**
      * Initializes a new module instance. There shall be a single instance of
@@ -203,6 +203,6 @@ class WiFiStatsModule
                 }
             }
         };
-        mainThreadHandler.post(r);
+        executor.execute(r);
     }
 }
