@@ -382,7 +382,8 @@
         "shareYourScreenDisabled": "Screen sharing disabled.",
         "shareYourScreenDisabledForGuest": "Guests can't screen share.",
         "yourEntireScreen": "Your entire screen",
-        "applicationWindow": "Application window"
+        "applicationWindow": "Application window",
+        "transcribing": "Transcribing"
     },
     "email":
     {

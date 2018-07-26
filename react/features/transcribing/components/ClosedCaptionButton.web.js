@@ -65,7 +65,7 @@ class ClosedCaptionButton extends Component<Props> {
      */
     render() {
         const { _dialing, _transcribing, t } = this.props;
-        const iconClass = `icon-cc ${_dialing || _transcribing
+        const iconClass = `icon-closed_caption ${_dialing || _transcribing
             ? 'toggled' : ''}`;
 
         return (
