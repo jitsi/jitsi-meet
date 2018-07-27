@@ -2,7 +2,7 @@ BUILD_DIR = build
 CLEANCSS = ./node_modules/.bin/cleancss
 DEPLOY_DIR = libs
 LIBJITSIMEET_DIR = node_modules/lib-jitsi-meet/
-LIBFLAC_DIR = node_modules/libflac/dist/
+LIBFLAC_DIR = node_modules/libflac/dist/min/
 NODE_SASS = ./node_modules/.bin/node-sass
 NPM = npm
 OUTPUT_DIR = .
@@ -55,8 +55,8 @@ deploy-lib-jitsi-meet:
 
 deploy-libflac:
 	cp \
-		$(LIBFLAC_DIR)/libflac3-1.3.2.min.js \
-		$(LIBFLAC_DIR)/libflac3-1.3.2.min.js.mem \
+		$(LIBFLAC_DIR)/libflac4-1.3.2.min.js \
+		$(LIBFLAC_DIR)/libflac4-1.3.2.min.js.mem \
 		$(DEPLOY_DIR)
 
 deploy-css:
