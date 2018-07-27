@@ -296,7 +296,7 @@ LocalVideo.prototype._updateVideoElement = function() {
     ReactDOM.render(
         <Provider store = { APP.store }>
             <VideoTrack
-                id = { this.localVideoId }
+                id = 'localVideo_container'
                 videoTrack = {{ jitsiTrack: this.videoStream }} />
         </Provider>,
         localVideoContainer
