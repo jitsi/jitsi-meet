@@ -82,20 +82,19 @@
     }
 
     /**
-     * Firefox flex acts a little differently. To make sure the bottom row
-     * of thumbnails is not overlapped by the horizontal toolbar, margin is
-     * added to the local thumbnail to keep it from the bottom of the screen.
-     * It is assumed the local thumbnail will always be on the bottom row.
+     * Firefox flex acts a little differently. To make sure the bottom row of
+     * thumbnails is not overlapped by the horizontal toolbar, margin is added
+     * to the local thumbnail to keep it from the bottom of the screen. It is
+     * assumed the local thumbnail will always be on the bottom row.
      */
     #localVideoContainer {
         margin-bottom: 100px !important;
     }
 
     /**
-     * The following styles resize thumbnails to fit a tile/grid layout.
-     * !important is used a lot because javascript resizing logic fires
-     * for vertical and horizontal filmstrip to set inline thumbnail size
-     * styling.
+     * The following styles resize thumbnails to fit a tile layout. !important
+     * is used a lot because javascript resizing logic fires for vertical and
+     * horizontal filmstrip to set inline thumbnail size styling.
      */
     $videoThumbnailSelectors: "
          #filmstripRemoteVideos .videocontainer:not(#localVideoContainer),
@@ -138,6 +137,7 @@
             min-height: 100% !important;
         }
     }
+
     .row-2 {
         #{$videoThumbnailSelectors} {
             height: 50% !important;
@@ -148,7 +148,7 @@
     .row-3 {
         #{$videoThumbnailSelectors} {
             height: 33% !important;
-            min-height: 50% !important;
+            min-height: 33% !important;
         }
     }
 
@@ -168,9 +168,9 @@
 
     /**
      * The actual thumbnail for local video is already in a wrapper that has
-     * its height and width set as needed for the tile layout. Local video
+     * its height and width set with CSS for the tile layout. Local video
      * should try to fill the container's space. !important needs to be used
-     * to sidestep inlines styling set by javascript for vertical and horizontal
+     * to sidestep inline styling set by javascript for vertical and horizontal
      * filmstrip.
      */
     #filmstripRemoteVideosContainer .videocontainer#localVideoContainer {
