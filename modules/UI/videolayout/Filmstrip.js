@@ -3,9 +3,6 @@
 import { setFilmstripVisible } from '../../../react/features/filmstrip';
 import {
     LAYOUTS,
-    TILE_VIEW_CONFIGURATION,
-    calculateColumnCount,
-    calculateVisibleRowCount,
     getCurrentLayout,
     shouldDisplayTileView
 } from '../../../react/features/video-layout';
@@ -279,13 +276,11 @@ const Filmstrip = {
         let availableHeight = interfaceConfig.FILM_STRIP_MAX_HEIGHT;
         let availableWidth = videoAreaAvailableWidth;
 
+        // Tile view thumbnail sizing is handled through CSS. An empty value
+        // is used as a no-op and to side step very large min height/width
+        // values.
         if (isTileView) {
-            const containerWidth = this.filmstrip[0].clientWidth;
-            const columnCount = calculateColumnCount(
-                state, TILE_VIEW_CONFIGURATION.MAX_COLUMNS);
-
-            availableWidth = (containerWidth / columnCount)
-                - TILE_VIEW_CONFIGURATION.SIDE_MARGINS;
+            availableWidth = 0;
         }
 
         const thumbs = this.getThumbs(true);
@@ -336,14 +331,11 @@ const Filmstrip = {
             );
         }
 
+        // Tile view thumbnail sizing is handled through CSS. An empty value
+        // is used as a no-op and to side step very large min height/width
+        // values.
         if (isTileView) {
-            const visibleRows = calculateVisibleRowCount(
-                state, TILE_VIEW_CONFIGURATION.MAX_COLUMNS);
-            const containerHeight
-                = this.filmstrip[0].clientHeight
-                    - TILE_VIEW_CONFIGURATION.END_MARGINS;
-
-            availableHeight = containerHeight / visibleRows;
+            availableHeight = 0;
         } else {
             const maxHeight
 

@@ -8,6 +8,13 @@ import { dockToolbox } from '../../../toolbox';
 
 import { setFilmstripHovered } from '../../actions';
 import { shouldRemoteVideosBeVisible } from '../../functions';
+
+import {
+    TILE_VIEW_CONFIGURATION,
+    calculateColumnCount,
+    calculateVisibleRowCount,
+    shouldDisplayTileView
+} from '../../../video-layout';
 import Toolbar from './Toolbar';
 
 declare var interfaceConfig: Object;
@@ -186,8 +193,17 @@ function _mapStateToProps(state) {
         && interfaceConfig.TOOLBAR_BUTTONS.length;
     const remoteVideosVisible = shouldRemoteVideosBeVisible(state);
 
-    const className = `${remoteVideosVisible ? '' : 'hide-videos'} ${
-        reduceHeight ? 'reduce-height' : ''}`;
+    let className = `${remoteVideosVisible ? '' : 'hide-videos'} ${
+        reduceHeight ? 'reduce-height' : ''}`.trim();
+
+    if (shouldDisplayTileView(state)) {
+        const columns = calculateColumnCount(
+            state, TILE_VIEW_CONFIGURATION.MAX_COLUMNS);
+        const rows = calculateVisibleRowCount(
+            state, TILE_VIEW_CONFIGURATION.MAX_COLUMNS);
+
+        className = `${className} col-${columns} row-${rows}`;
+    }
 
     return {
         _className: className,
