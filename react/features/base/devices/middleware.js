@@ -6,7 +6,6 @@ import { MiddlewareRegistry } from '../redux';
 
 import {
     SET_AUDIO_INPUT_DEVICE,
-    SET_AUDIO_OUTPUT_DEVICE,
     SET_VIDEO_INPUT_DEVICE
 } from './actionTypes';
 
@@ -21,9 +20,6 @@ MiddlewareRegistry.register(store => next => action => {
     switch (action.type) {
     case SET_AUDIO_INPUT_DEVICE:
         APP.UI.emitEvent(UIEvents.AUDIO_DEVICE_CHANGED, action.deviceId);
-        break;
-    case SET_AUDIO_OUTPUT_DEVICE:
-        APP.UI.emitEvent(UIEvents.AUDIO_OUTPUT_DEVICE_CHANGED, action.deviceId);
         break;
     case SET_VIDEO_INPUT_DEVICE:
         APP.UI.emitEvent(UIEvents.VIDEO_DEVICE_CHANGED, action.deviceId);

@@ -6,9 +6,11 @@ import { AtlasKitThemeProvider } from '@atlaskit/theme';
 import React from 'react';
 import { connect } from 'react-redux';
 
+import { DialogContainer } from '../../base/dialog';
 import { translate } from '../../base/i18n';
 import { Watermarks } from '../../base/react';
 import { RecentList } from '../../recent-list';
+import { openSettingsDialog } from '../../settings';
 
 import { AbstractWelcomePage, _mapStateToProps } from './AbstractWelcomePage';
 
@@ -18,6 +20,15 @@ import { AbstractWelcomePage, _mapStateToProps } from './AbstractWelcomePage';
  * @extends AbstractWelcomePage
  */
 class WelcomePage extends AbstractWelcomePage {
+    /**
+     * Default values for {@code WelcomePage} component's properties.
+     *
+     * @static
+     */
+    static defaultProps = {
+        _room: ''
+    };
+
     /**
      * Initializes a new WelcomePage instance.
      *
@@ -55,6 +66,7 @@ class WelcomePage extends AbstractWelcomePage {
 
         // Bind event handlers so they are only bound once per instance.
         this._onFormSubmit = this._onFormSubmit.bind(this);
+        this._onOpenSettings = this._onOpenSettings.bind(this);
         this._onRoomChange = this._onRoomChange.bind(this);
         this._setAdditionalContentRef
             = this._setAdditionalContentRef.bind(this);
@@ -155,6 +167,9 @@ class WelcomePage extends AbstractWelcomePage {
                             ref = { this._setAdditionalContentRef } />
                         : null }
                 </div>
+                <AtlasKitThemeProvider mode = 'dark'>
+                    <DialogContainer />
+                </AtlasKitThemeProvider>
             </AtlasKitThemeProvider>
         );
     }
@@ -170,6 +185,16 @@ class WelcomePage extends AbstractWelcomePage {
         event.preventDefault();
 
         this._onJoin();
+    }
+
+    /**
+     * Opens {@code SettingsDialog}.
+     *
+     * @private
+     * @returns {void}
+     */
+    _onOpenSettings() {
+        this.props.dispatch(openSettingsDialog());
     }
 
     /**

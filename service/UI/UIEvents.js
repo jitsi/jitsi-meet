@@ -63,7 +63,6 @@ export default {
     LOGOUT: 'UI.logout',
     VIDEO_DEVICE_CHANGED: 'UI.video_device_changed',
     AUDIO_DEVICE_CHANGED: 'UI.audio_device_changed',
-    AUDIO_OUTPUT_DEVICE_CHANGED: 'UI.audio_output_device_changed',
 
     /**
      * Notifies interested listeners that the follow-me feature is enabled or
