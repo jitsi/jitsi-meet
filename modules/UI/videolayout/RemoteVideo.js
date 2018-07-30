@@ -22,7 +22,8 @@ import {
 } from '../../../react/features/remote-video-menu';
 import {
     LAYOUTS,
-    getCurrentLayout
+    getCurrentLayout,
+    shouldDisplayTileView
 } from '../../../react/features/video-layout';
 /* eslint-enable no-unused-vars */
 
@@ -626,7 +627,8 @@ RemoteVideo.prototype._onContainerClick = function(event) {
     const { classList } = event.target;
 
     const ignoreClick = $source.parents('.popover').length > 0
-            || classList.contains('popover');
+            || classList.contains('popover')
+            || shouldDisplayTileView(APP.store.getState());
 
     if (!ignoreClick) {
         this._togglePin();

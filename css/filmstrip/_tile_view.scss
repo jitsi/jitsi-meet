@@ -18,6 +18,14 @@
         width: 100vw;
     }
 
+    .filmstrip__videos .videocontainer {
+        &:not(.active-speaker),
+        &:hover:not(.active-speaker) {
+            border: none;
+            box-shadow: none;
+        }
+    }
+
     #remoteVideos {
         /**
          * Height is modified with an inline style in horizontal filmstrip mode
