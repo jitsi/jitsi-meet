@@ -602,8 +602,10 @@ const VideoLayout = {
         Filmstrip.resizeThumbnails(localVideo, remoteVideo, forceUpdate);
 
         if (shouldDisplayTileView(APP.store.getState())) {
-            const height = (localVideo && localVideo.thumbHeight)
-                || (remoteVideo && remoteVideo.thumbHeight);
+            const height
+                = (localVideoThumbnail
+                    && localVideoThumbnail.$container.height())
+                || 0;
             const qualityLevel = getNearestReceiverVideoQualityLevel(height);
 
             APP.store.dispatch(setMaxReceiverVideoQuality(qualityLevel));
