@@ -10,6 +10,8 @@ declare var APP: Object;
 const JitsiConferenceErrors = JitsiMeetJS.errors.conference;
 const JitsiConnectionErrors = JitsiMeetJS.errors.connection;
 
+const logger = require('jitsi-meet-logger').getLogger(__filename);
+
 /**
  * Creates a {@link JitsiLocalTrack} model from the given device id.
  *
@@ -133,7 +135,7 @@ export function loadConfig(
                     return config;
                 })
                 .catch(err => {
-                    console.error(`Failed to load config from ${url}`, err);
+                    logger.error(`Failed to load config from ${url}`, err);
 
                     throw err;
                 });

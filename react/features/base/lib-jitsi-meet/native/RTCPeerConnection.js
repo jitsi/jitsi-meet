@@ -3,6 +3,8 @@
 import { NativeModules } from 'react-native';
 import { RTCPeerConnection, RTCSessionDescription } from 'react-native-webrtc';
 
+const logger = require('jitsi-meet-logger').getLogger(__filename);
+
 /* eslint-disable no-unused-vars */
 
 // Address families.
@@ -140,7 +142,7 @@ _RTCPeerConnection.prototype.setRemoteDescription = function(
  * @returns {void}
  */
 function _LOGE(...args) {
-    console && console.error && console.error(...args);
+    logger.error(...args);
 }
 
 /**

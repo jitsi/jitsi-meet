@@ -11,6 +11,8 @@ import {
     JITSI_CONFERENCE_URL_KEY
 } from './constants';
 
+const logger = require('jitsi-meet-logger').getLogger(__filename);
+
 /**
  * Attach a set of local tracks to a conference.
  *
@@ -172,7 +174,7 @@ export function _removeLocalTracksFromConference(
 function _reportError(msg, err) {
     // TODO This is a good point to call some global error handler when we have
     // one.
-    console.error(msg, err);
+    logger.error(msg, err);
 }
 
 /**

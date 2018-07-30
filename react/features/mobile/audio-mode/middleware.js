@@ -1,4 +1,4 @@
-/* @flow */
+// @flow
 
 import { NativeModules } from 'react-native';
 
@@ -11,7 +11,8 @@ import {
 } from '../../base/conference';
 import { MiddlewareRegistry } from '../../base/redux';
 
-const AudioMode = NativeModules.AudioMode;
+const { AudioMode } = NativeModules;
+const logger = require('jitsi-meet-logger').getLogger(__filename);
 
 /**
  * Middleware that captures conference actions and sets the correct audio mode
@@ -59,7 +60,7 @@ MiddlewareRegistry.register(({ getState }) => next => action => {
         if (typeof mode !== 'undefined') {
             AudioMode.setMode(mode)
                 .catch(err =>
-                    console.error(
+                    logger.error(
                         `Failed to set audio mode ${String(mode)}: ${err}`));
         }
     }

@@ -1,5 +1,7 @@
 // @flow
 
+const logger = require('jitsi-meet-logger').getLogger(__filename);
+
 /**
  * The app linking scheme.
  * TODO: This should be read from the manifest files later.
@@ -174,7 +176,7 @@ function _objectToURLParamsArray(obj = {}) {
             params.push(
                 `${key}=${encodeURIComponent(JSON.stringify(obj[key]))}`);
         } catch (e) {
-            console.warn(`Error encoding ${key}: ${e}`);
+            logger.warn(`Error encoding ${key}: ${e}`);
         }
     }
 

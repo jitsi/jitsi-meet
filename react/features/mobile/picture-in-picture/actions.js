@@ -7,6 +7,8 @@ import { Platform } from '../../base/react';
 
 import { ENTER_PICTURE_IN_PICTURE } from './actionTypes';
 
+const logger = require('jitsi-meet-logger').getLogger(__filename);
+
 /**
  * Enters (or rather initiates entering) picture-in-picture.
  * Helper function to enter PiP mode. This is triggered by user request
@@ -34,7 +36,7 @@ export function enterPictureInPicture() {
 
             p.then(
                 () => dispatch({ type: ENTER_PICTURE_IN_PICTURE }),
-                e => console.warn(`Error entering PiP mode: ${e}`));
+                e => logger.warn(`Error entering PiP mode: ${e}`));
         }
     };
 }

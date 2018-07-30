@@ -8,6 +8,8 @@ import { MiddlewareRegistry } from '../base/redux';
 import { endShareRoom } from './actions';
 import { BEGIN_SHARE_ROOM } from './actionTypes';
 
+const logger = require('jitsi-meet-logger').getLogger(__filename);
+
 /**
  * Middleware that captures room URL sharing actions and starts the sharing
  * process.
@@ -56,7 +58,7 @@ function _shareRoom(roomURL: string, dispatch: Function) {
                 onFulfilled(value.action === Share.sharedAction);
             },
             /* onRejected */ reason => {
-                console.error(
+                logger.error(
                     `Failed to share conference/room URL ${roomURL}:`,
                     reason);
                 onFulfilled(false);

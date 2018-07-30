@@ -21,6 +21,8 @@ import { App } from './features/app';
 import { equals } from './features/base/redux';
 import { IncomingCallApp } from './features/mobile/incoming-call';
 
+const logger = require('jitsi-meet-logger').getLogger(__filename);
+
 /**
  * The type of the React {@code Component} props of {@link Root}.
  */
@@ -74,7 +76,7 @@ class Root extends Component<Props, State> {
                     }
                 })
                 .catch(err => {
-                    console.error('Failed to get initial URL', err);
+                    logger.error('Failed to get initial URL', err);
 
                     if (typeof this.state.url === 'undefined') {
                         // Start with an empty URL if getting the initial URL

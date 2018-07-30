@@ -493,7 +493,7 @@ function _setLastN({ getState }, next, action) {
         try {
             conference.setLastN(action.lastN);
         } catch (err) {
-            console.error(`Failed to set lastN: ${err}`);
+            logger.error(`Failed to set lastN: ${err}`);
         }
     }
 
