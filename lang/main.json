@@ -672,14 +672,16 @@
     "localRecording": {
         "localRecording": "Local Recording",
         "dialogTitle": "Local Recording Controls",
-        "start": "Start",
-        "stop": "Stop",
+        "start": "Start Recording",
+        "stop": "Stop Recording",
         "moderator": "Moderator",
         "me": "Me",
         "duration": "Duration",
         "durationNA": "N/A",
         "encoding": "Encoding",
         "participantStats": "Participant Stats",
+        "participant": "Participant",
+        "sessionToken": "Session Token",
         "clientState": {
             "on": "On",
             "off": "Off",
