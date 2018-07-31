@@ -1,10 +1,9 @@
 // @flow
 
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 import { Image, View } from 'react-native';
+import FastImage from 'react-native-fast-image';
 
-import { CachedImage, ImageCache } from '../../../mobile/image-cache';
-import { Platform } from '../../react';
 import { ColorPalette } from '../../styles';
 
 import styles from './styles';
@@ -46,7 +45,8 @@ type Props = {
  */
 type State = {
     backgroundColor: string,
-    source: number | { uri: string }
+    source: ?{ uri: string },
+    useDefaultAvatar: boolean
 };
 
 /**
@@ -67,6 +67,9 @@ export default class Avatar extends Component<Props, State> {
      */
     constructor(props: Props) {
         super(props);
+
+        // Bind event handlers so they are only bound once per instance.
+        this._onAvatarLoaded = this._onAvatarLoaded.bind(this);
 
         // Fork (in Facebook/React speak) the prop uri because Image will
         // receive it through a source object. Additionally, other props may be
@@ -94,18 +97,8 @@ export default class Avatar extends Component<Props, State> {
         if (prevURI !== nextURI || assignState) {
             const nextState = {
                 backgroundColor: this._getBackgroundColor(nextProps),
-
-                /**
-                 * The source of the {@link Image} which is the actual
-                 * representation of this {@link Avatar}. The state
-                 * {@code source} was explicitly introduced in order to reduce
-                 * unnecessary renders.
-                 *
-                 * @type {{
-                 *     uri: string
-                 * }}
-                 */
-                source: _DEFAULT_SOURCE
+                source: undefined,
+                useDefaultAvatar: true
             };
 
             if (assignState) {
@@ -130,7 +123,14 @@ export default class Avatar extends Component<Props, State> {
             // an image retrieval action.
             if (nextURI && !nextURI.startsWith('#')) {
                 const nextSource = { uri: nextURI };
-                const observer = () => {
+
+                if (assignState) {
+                    // eslint-disable-next-line react/no-direct-mutation-state
+                    this.state = {
+                        ...this.state,
+                        source: nextSource
+                    };
+                } else {
                     this._unmounted || this.setState((prevState, props) => {
                         if (props.uri === nextURI
                                 && (!prevState.source
@@ -140,22 +140,6 @@ export default class Avatar extends Component<Props, State> {
 
                         return {};
                     });
-                };
-
-                // Wait for the source/URI to load.
-                if (ImageCache) {
-                    ImageCache.get().on(
-                        nextSource,
-                        observer,
-                        /* immutable */ true);
-                } else if (assignState) {
-                    // eslint-disable-next-line react/no-direct-mutation-state
-                    this.state = {
-                        ...this.state,
-                        source: nextSource
-                    };
-                } else {
-                    observer();
                 }
             }
         }
@@ -204,106 +188,114 @@ export default class Avatar extends Component<Props, State> {
     }
 
     /**
+     * Helper which computes the style for the {@code Image} / {@code FastImage}
+     * component.
+     *
+     * @private
+     * @returns {Object}
+     */
+    _getImageStyle() {
+        const { size } = this.props;
+
+        return {
+            ...styles.avatar,
+            borderRadius: size / 2,
+            height: size,
+            width: size
+        };
+    }
+
+    _onAvatarLoaded: () => void;
+
+    /**
+     * Handler called when the remote image was loaded. When this happens we
+     * show that instead of the default locally generated one.
+     *
+     * @private
+     * @returns {void}
+     */
+    _onAvatarLoaded() {
+        this._unmounted || this.setState({ useDefaultAvatar: false });
+    }
+
+    /**
+     * Renders a default, locally generated avatar image.
+     *
+     * @private
+     * @returns {ReactElement}
+     */
+    _renderDefaultAvatar() {
+        // When using a local image, react-native-fastimage falls back to a
+        // regular Image, so we need to wrap it in a view to make it round.
+        // https://github.com/facebook/react-native/issues/3198
+
+        const { backgroundColor, useDefaultAvatar } = this.state;
+        const imageStyle = this._getImageStyle();
+        const viewStyle = {
+            ...imageStyle,
+
+            backgroundColor,
+            display: useDefaultAvatar ? 'flex' : 'none',
+
+            // FIXME @lyubomir: Without the opacity bellow I feel like the
+            // avatar colors are too strong. Besides, we use opacity for the
+            // ToolbarButtons. That's where I copied the value from and we
+            // may want to think about "standardizing" the opacity in the
+            // app in a way similar to ColorPalette.
+            opacity: 0.1,
+            overflow: 'hidden'
+        };
+
+        return (
+            <View style = { viewStyle }>
+                <Image
+
+                    // The Image adds a fade effect without asking, so lets
+                    // explicitly disable it. More info here:
+                    // https://github.com/facebook/react-native/issues/10194
+                    fadeDuration = { 0 }
+                    resizeMode = 'contain'
+                    source = { _DEFAULT_SOURCE }
+                    style = { imageStyle } />
+            </View>
+        );
+    }
+
+    /**
+     * Renders an avatar using a remote image.
+     *
+     * @private
+     * @returns {ReactElement}
+     */
+    _renderAvatar() {
+        const { source, useDefaultAvatar } = this.state;
+        const style = {
+            ...this._getImageStyle(),
+            display: useDefaultAvatar ? 'none' : 'flex'
+        };
+
+        return (
+            <FastImage
+                onLoad = { this._onAvatarLoaded }
+                resizeMode = 'contain'
+                source = { source }
+                style = { style } />
+        );
+    }
+
+    /**
      * Implements React's {@link Component#render()}.
      *
      * @inheritdoc
      */
     render() {
-        // Propagate all props of this Avatar but the ones consumed by this
-        // Avatar to the Image it renders.
-        const {
-            /* eslint-disable no-unused-vars */
+        const { source, useDefaultAvatar } = this.state;
 
-            // The following are forked in state:
-            uri: forked0,
-
-            /* eslint-enable no-unused-vars */
-
-            size,
-            ...props
-        } = this.props;
-        const {
-            backgroundColor,
-            source
-        } = this.state;
-
-        // Compute the base style
-        const borderRadius = size / 2;
-        const style = {
-            ...styles.avatar,
-
-            // XXX Workaround for Android: for radii < 80 the border radius
-            // doesn't work properly, but applying a radius twice as big seems
-            // to do the trick.
-            borderRadius:
-                Platform.OS === 'android' && borderRadius < 80
-                    ? size * 2
-                    : borderRadius,
-            height: size,
-            width: size
-        };
-
-        // If we're rendering the _DEFAULT_SOURCE, then we want to do some
-        // additional fu like having automagical colors generated per
-        // participant, transparency to make the intermediate state while
-        // downloading the remote image a little less "in your face", etc.
-        let styleWithBackgroundColor;
-
-        if (source === _DEFAULT_SOURCE && backgroundColor) {
-            styleWithBackgroundColor = {
-                ...style,
-
-                backgroundColor,
-
-                // FIXME @lyubomir: Without the opacity bellow I feel like the
-                // avatar colors are too strong. Besides, we use opacity for the
-                // ToolbarButtons. That's where I copied the value from and we
-                // may want to think about "standardizing" the opacity in the
-                // app in a way similar to ColorPalette.
-                opacity: 0.1,
-                overflow: 'hidden'
-            };
-        }
-
-        // If we're styling with backgroundColor, we need to wrap the Image in a
-        // View because of a bug in React Native for Android:
-        // https://github.com/facebook/react-native/issues/3198
-        let imageStyle;
-        let viewStyle;
-
-        if (styleWithBackgroundColor) {
-            if (Platform.OS === 'android') {
-                imageStyle = style;
-                viewStyle = styleWithBackgroundColor;
-            } else {
-                imageStyle = styleWithBackgroundColor;
-            }
-        } else {
-            imageStyle = style;
-        }
-
-        let element
-            = React.createElement(
-
-                // XXX CachedImage removed support for images which clearly do
-                // not need caching.
-                typeof source === 'number' ? Image : CachedImage,
-                {
-                    ...props,
-
-                    // The Image adds a fade effect without asking, so lets
-                    // explicitly disable it. More info here:
-                    // https://github.com/facebook/react-native/issues/10194
-                    fadeDuration: 0,
-                    resizeMode: 'contain',
-                    source,
-                    style: imageStyle
-                });
-
-        if (viewStyle) {
-            element = React.createElement(View, { style: viewStyle }, element);
-        }
-
-        return element;
+        return (
+            <Fragment>
+                { source && this._renderAvatar() }
+                { useDefaultAvatar && this._renderDefaultAvatar() }
+            </Fragment>
+        );
     }
 }

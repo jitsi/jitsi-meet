@@ -122,12 +122,12 @@ class ReactInstanceManagerHolder {
                 .addPackage(new com.BV.LinearGradient.LinearGradientPackage())
                 .addPackage(new com.calendarevents.CalendarEventsPackage())
                 .addPackage(new com.corbt.keepawake.KCKeepAwakePackage())
+                .addPackage(new com.dylanvann.fastimage.FastImageViewPackage())
                 .addPackage(new com.facebook.react.shell.MainReactPackage())
                 .addPackage(new com.i18n.reactnativei18n.ReactNativeI18n())
                 .addPackage(new com.oblador.vectoricons.VectorIconsPackage())
                 .addPackage(new com.ocetnik.timer.BackgroundTimerPackage())
                 .addPackage(new com.oney.WebRTCModule.WebRTCModulePackage())
-                .addPackage(new com.RNFetchBlob.RNFetchBlobPackage())
                 .addPackage(new com.rnimmersive.RNImmersivePackage())
                 .addPackage(new com.zmxv.RNSound.RNSoundPackage())
                 .addPackage(new ReactPackageAdapter() {

@@ -25,7 +25,7 @@ dependencies {
     compile 'com.facebook.react:react-native:+'
 
     compile project(':react-native-background-timer')
-    compile project(':react-native-fetch-blob')
+    compile project(':react-native-fast-image')
     compile project(':react-native-immersive')
     compile project(':react-native-keep-awake')
     compile project(':react-native-linear-gradient')

@@ -1,6 +1,7 @@
 PODS:
   - boost-for-react-native (1.63.0)
   - DoubleConversion (1.1.5)
+  - FLAnimatedImage (1.0.12)
   - Folly (2016.09.26.00):
     - boost-for-react-native
     - DoubleConversion
@@ -12,8 +13,11 @@ PODS:
     - React
   - react-native-calendar-events (1.6.0):
     - React
-  - react-native-fetch-blob (0.10.6):
-    - React/Core
+  - react-native-fast-image (4.0.14):
+    - FLAnimatedImage
+    - React
+    - SDWebImage/Core
+    - SDWebImage/GIF
   - react-native-keep-awake (2.0.6):
     - React
   - react-native-locale-detector (1.0.0):
@@ -68,6 +72,10 @@ PODS:
     - React/Core
   - RNVectorIcons (4.4.2):
     - React
+  - SDWebImage/Core (4.4.1)
+  - SDWebImage/GIF (4.4.1):
+    - FLAnimatedImage (~> 1.0)
+    - SDWebImage/Core
   - yoga (0.55.4.React)
 
 DEPENDENCIES:
@@ -76,7 +84,7 @@ DEPENDENCIES:
   - glog (from `../node_modules/react-native/third-party-podspecs/glog.podspec`)
   - react-native-background-timer (from `../node_modules/react-native-background-timer`)
   - react-native-calendar-events (from `../node_modules/react-native-calendar-events`)
-  - react-native-fetch-blob (from `../node_modules/react-native-fetch-blob`)
+  - react-native-fast-image (from `../node_modules/react-native-fast-image`)
   - react-native-keep-awake (from `../node_modules/react-native-keep-awake`)
   - react-native-locale-detector (from `../node_modules/react-native-locale-detector`)
   - react-native-webrtc (from `../node_modules/react-native-webrtc`)
@@ -98,6 +106,8 @@ DEPENDENCIES:
 SPEC REPOS:
   https://github.com/cocoapods/specs.git:
     - boost-for-react-native
+    - FLAnimatedImage
+    - SDWebImage
 
 EXTERNAL SOURCES:
   DoubleConversion:
@@ -112,8 +122,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-background-timer"
   react-native-calendar-events:
     :path: "../node_modules/react-native-calendar-events"
-  react-native-fetch-blob:
-    :path: "../node_modules/react-native-fetch-blob"
+  react-native-fast-image:
+    :path: "../node_modules/react-native-fast-image"
   react-native-keep-awake:
     :path: "../node_modules/react-native-keep-awake"
   react-native-locale-detector:
@@ -132,20 +142,22 @@ EXTERNAL SOURCES:
 SPEC CHECKSUMS:
   boost-for-react-native: 39c7adb57c4e60d6c5479dd8623128eb5b3f0f2c
   DoubleConversion: e22e0762848812a87afd67ffda3998d9ef29170c
+  FLAnimatedImage: 4a0b56255d9b05f18b6dd7ee06871be5d3b89e31
   Folly: 211775e49d8da0ca658aebc8eab89d642935755c
   glog: 1de0bb937dccdc981596d3b5825ebfb765017ded
   React: aa2040dbb6f317b95314968021bd2888816e03d5
   react-native-background-timer: 63dcbf37dbcf294b5c6c071afcdc661fa06a7594
   react-native-calendar-events: fe6fbc8ed337a7423c98f2c9012b25f20444de09
-  react-native-fetch-blob: 63394b1d7b0781547b3e4463b3195790177b1222
+  react-native-fast-image: cba3d9bf9c2cf8ddb643d887a686c53a5dd90a2c
   react-native-keep-awake: 0de4bd66de0c23178107dce0c2fcc3354b2a8e94
   react-native-locale-detector: d1b2c6fe5abb56e3a1efb6c2d6f308c05c4251f1
   react-native-webrtc: 31b6d3f1e3e2ce373aa43fd682b04367250f807d
   ReactNativePermissions: 9f2d9c45c98800795e6c2ed330e25d11a66a8169
   RNSound: b360b3862d3118ed1c74bb9825696b5957686ac4
   RNVectorIcons: c0dbfbf6068fefa240c37b0f71bd03b45dddac44
+  SDWebImage: 47e9b5b925cbce75946c23f0c42dd19464189af4
   yoga: a23273df0088bf7f2bb7e5d7b00044ea57a2a54a
 
-PODFILE CHECKSUM: e24d0131e937934fbe4d1f0b7ad5947ee0192f58
+PODFILE CHECKSUM: 1d5c8382f73d9540fac68d93b32e1d3b58d069ee
 
 COCOAPODS: 1.5.3

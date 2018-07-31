@@ -28,8 +28,8 @@ target 'JitsiMeet' do
 
   pod 'react-native-background-timer',
     :path => '../node_modules/react-native-background-timer'
-  pod 'react-native-fetch-blob',
-    :path => '../node_modules/react-native-fetch-blob'
+  pod 'react-native-fast-image',
+    :path => '../node_modules/react-native-fast-image'
   pod 'react-native-keep-awake',
     :path => '../node_modules/react-native-keep-awake'
   pod 'react-native-locale-detector',
