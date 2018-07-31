@@ -7,6 +7,7 @@ import { toggleDialog } from '../base/dialog';
 import { i18next } from '../base/i18n';
 import { SET_AUDIO_MUTED } from '../base/media';
 import { MiddlewareRegistry } from '../base/redux';
+import { SETTINGS_UPDATED } from '../base/settings/actionTypes';
 import { showNotification } from '../notifications';
 
 import { localRecordingEngaged, localRecordingUnengaged } from './actions';
@@ -76,10 +77,15 @@ isFeatureEnabled
     case SET_AUDIO_MUTED:
         recordingController.setMuted(action.muted);
         break;
-    }
+    case SETTINGS_UPDATED: {
+        const { micDeviceId } = getState()['features/base/settings'];
 
-    // @todo: detect change in features/base/settings micDeviceID
-    // @todo: SET_AUDIO_MUTED, when audio is muted
+        if (micDeviceId) {
+            recordingController.setMicDevice(micDeviceId);
+        }
+        break;
+    }
+    }
 
     return result;
 });

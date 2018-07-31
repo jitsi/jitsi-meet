@@ -72,7 +72,12 @@ const ControllerState = Object.freeze({
     /**
      * Stopping.
      */
-    STOPPING: Symbol('STOPPING')
+    STOPPING: Symbol('STOPPING'),
+
+    /**
+     * Failed, due to error during starting / stopping process.
+     */
+    FAILED: Symbol('FAILED')
 });
 
 /**
@@ -148,6 +153,13 @@ class RecordingController {
     _isMuted = false;
 
     /**
+     * The ID of the active microphone.
+     *
+     * @private
+     */
+    _micDeviceId = 'default';
+
+    /**
      * Current recording format. This will be in effect from the next
      * recording session, i.e., if this value is changed during an on-going
      * recording session, that on-going session will not use the new format.
@@ -190,14 +202,15 @@ class RecordingController {
      * @returns {void}
      */
     constructor() {
-        this._updateStats = this._updateStats.bind(this);
+        this.registerEvents = this.registerEvents.bind(this);
+        this.getParticipantsStats = this.getParticipantsStats.bind(this);
         this._onStartCommand = this._onStartCommand.bind(this);
         this._onStopCommand = this._onStopCommand.bind(this);
         this._onPingCommand = this._onPingCommand.bind(this);
         this._doStartRecording = this._doStartRecording.bind(this);
         this._doStopRecording = this._doStopRecording.bind(this);
-        this.registerEvents = this.registerEvents.bind(this);
-        this.getParticipantsStats = this.getParticipantsStats.bind(this);
+        this._updateStats = this._updateStats.bind(this);
+        this._switchToNewSession = this._switchToNewSession.bind(this);
     }
 
     registerEvents: () => void;
@@ -312,6 +325,34 @@ class RecordingController {
     }
 
     /**
+     * Changes the current microphone.
+     *
+     * @param {string} micDeviceId - The new microphone device ID.
+     * @returns {void}
+     */
+    setMicDevice(micDeviceId: string) {
+        if (micDeviceId !== this._micDeviceId) {
+            this._micDeviceId = String(micDeviceId);
+
+            if (this._state === ControllerState.RECORDING) {
+                // sessionManager.endSegment(this._currentSessionToken);
+                logger.log('Before switching microphone...');
+                this._adapters[this._currentSessionToken]
+                    .setMicDevice(this._micDeviceId)
+                    .then(() => {
+                        logger.log('Finished switching microphone.');
+
+                        // sessionManager.beginSegment(this._currentSesoken);
+                    })
+                    .catch(() => {
+                        logger.error('Failed to switch microphone');
+                    });
+            }
+            logger.log(`Switch microphone to ${this._micDeviceId}`);
+        }
+    }
+
+    /**
      * Mute or unmute audio. When muted, the ongoing local recording should
      * produce silence.
      *
@@ -322,7 +363,7 @@ class RecordingController {
         this._isMuted = Boolean(muted);
 
         if (this._state === ControllerState.RECORDING) {
-            this._adapters[this._currentSessionToken].setMuted(muted);
+            this._adapters[this._currentSessionToken].setMuted(this._isMuted);
         }
     }
 
@@ -442,11 +483,7 @@ class RecordingController {
 
         if (this._state === ControllerState.IDLE) {
             this._changeState(ControllerState.STARTING);
-            this._format = format;
-            this._currentSessionToken = sessionToken;
-            logger.log(this._currentSessionToken);
-            this._adapters[sessionToken]
-                 = this._createRecordingAdapter();
+            this._switchToNewSession(sessionToken, format);
             this._doStartRecording();
         } else if (this._state === ControllerState.RECORDING
             && this._currentSessionToken !== sessionToken) {
@@ -455,10 +492,8 @@ class RecordingController {
             // moderator's, so we need to restart the recording.
             this._changeState(ControllerState.STOPPING);
             this._doStopRecording().then(() => {
-                this._format = format;
-                this._currentSessionToken = sessionToken;
-                this._adapters[sessionToken]
-                    = this._createRecordingAdapter();
+                this._changeState(ControllerState.STARTING);
+                this._switchToNewSession(sessionToken, format);
                 this._doStartRecording();
             });
         }
@@ -518,7 +553,7 @@ class RecordingController {
         if (this._state === ControllerState.STARTING) {
             const delegate = this._adapters[this._currentSessionToken];
 
-            delegate.start()
+            delegate.start(this._micDeviceId)
             .then(() => {
                 this._changeState(ControllerState.RECORDING);
                 logger.log('Local recording engaged.');
@@ -585,6 +620,25 @@ class RecordingController {
         // FIXME: better ways to satisfy flow and ESLint at the same time?
         /* eslint-enable */
 
+    }
+
+    _switchToNewSession: (string, string) => void;
+
+    /**
+     * Switches to a new local recording session.
+     *
+     * @param {string} sessionToken - The session Token.
+     * @param {string} format - The recording format for the session.
+     * @returns {void}
+     */
+    _switchToNewSession(sessionToken, format) {
+        this._format = format;
+        this._currentSessionToken = sessionToken;
+        logger.log(`New session: ${this._currentSessionToken}, `
+            + `format: ${this._format}`);
+        this._adapters[sessionToken]
+             = this._createRecordingAdapter();
+        sessionManager.createSession(sessionToken, this._format);
     }
 
     /**

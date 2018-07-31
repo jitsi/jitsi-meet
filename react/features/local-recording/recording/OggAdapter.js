@@ -24,9 +24,9 @@ export class OggAdapter extends RecordingAdapter {
      *
      * @inheritdoc
      */
-    start() {
+    start(micDeviceId) {
         if (!this._initPromise) {
-            this._initPromise = this._initialize();
+            this._initPromise = this._initialize(micDeviceId);
         }
 
         return this._initPromise.then(() =>
@@ -96,15 +96,16 @@ export class OggAdapter extends RecordingAdapter {
      * Initialize the adapter.
      *
      * @private
+     * @param {string} micDeviceId - The current microphone device ID.
      * @returns {Promise}
      */
-    _initialize() {
+    _initialize(micDeviceId) {
         if (this._mediaRecorder) {
             return Promise.resolve();
         }
 
         return new Promise((resolve, error) => {
-            this._getAudioStream(0)
+            this._getAudioStream(micDeviceId)
             .then(stream => {
                 this._stream = stream;
                 this._mediaRecorder = new MediaRecorder(stream);

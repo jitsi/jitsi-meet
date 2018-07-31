@@ -81,7 +81,7 @@ const EncoderState = Object.freeze({
 });
 
 /**
- * Default compression level.
+ * Default FLAC compression level.
  */
 const FLAC_COMPRESSION_LEVEL = 5;
 

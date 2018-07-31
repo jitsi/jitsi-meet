@@ -65,9 +65,9 @@ export class WavAdapter extends RecordingAdapter {
      *
      * @inheritdoc
      */
-    start() {
+    start(micDeviceId) {
         if (!this._initPromise) {
-            this._initPromise = this._initialize();
+            this._initPromise = this._initialize(micDeviceId);
         }
 
         return this._initPromise.then(() => {
@@ -197,15 +197,16 @@ export class WavAdapter extends RecordingAdapter {
      * Initialize the adapter.
      *
      * @private
+     * @param {string} micDeviceId - The current microphone device ID.
      * @returns {Promise}
      */
-    _initialize() {
+    _initialize(micDeviceId) {
         if (this._isInitialized) {
             return Promise.resolve();
         }
 
         const p = new Promise((resolve, reject) => {
-            this._getAudioStream(0)
+            this._getAudioStream(micDeviceId)
             .then(stream => {
                 this._stream = stream;
                 this._audioContext = new AudioContext();
@@ -216,9 +217,9 @@ export class WavAdapter extends RecordingAdapter {
                 this._audioProcessingNode.onaudioprocess = e => {
                     const channelLeft = e.inputBuffer.getChannelData(0);
 
-                    // https://developer.mozilla.org/en-US/docs/
-                    // Web/API/AudioBuffer/getChannelData
-                    // the returned value is an Float32Array
+                    // See: https://developer.mozilla.org/en-US/docs/Web/API/
+                    //      AudioBuffer/getChannelData
+                    // The returned value is an Float32Array.
                     this._saveWavPCM(channelLeft);
                 };
                 this._isInitialized = true;

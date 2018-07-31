@@ -8,9 +8,11 @@ export class RecordingAdapter {
     /**
      * Starts recording.
      *
+     * @param {string} micDeviceId - The microphone to record on.
      * @returns {Promise}
      */
-    start() {
+    start(/* eslint-disable no-unused-vars */
+            micDeviceId/* eslint-enable no-unused-vars */) {
         throw new Error('Not implemented');
     }
 
@@ -40,6 +42,17 @@ export class RecordingAdapter {
      */
     setMuted(/* eslint-disable no-unused-vars */
             muted/* eslint-enable no-unused-vars */) {
+        throw new Error('Not implemented');
+    }
+
+    /**
+     * Changes the current microphone.
+     *
+     * @param {string} micDeviceId - The new microphone device ID.
+     * @returns {Promise}
+     */
+    setMicDevice(/* eslint-disable no-unused-vars */
+            micDeviceId/* eslint-enable no-unused-vars */) {
         throw new Error('Not implemented');
     }
 

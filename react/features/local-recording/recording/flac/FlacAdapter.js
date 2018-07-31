@@ -38,9 +38,9 @@ export class FlacAdapter extends RecordingAdapter {
      *
      * @inheritdoc
      */
-    start() {
+    start(micDeviceId) {
         if (!this._initPromise) {
-            this._initPromise = this._initialize();
+            this._initPromise = this._initialize(micDeviceId);
         }
 
         return this._initPromise.then(() => {
@@ -115,12 +115,50 @@ export class FlacAdapter extends RecordingAdapter {
     }
 
     /**
+     * Implements {@link RecordingAdapter#setMicDevice()}.
+     *
+     * @inheritdoc
+     */
+    setMicDevice(micDeviceId) {
+        return this._replaceMic(micDeviceId);
+    }
+
+    /**
+     * Replaces the current microphone MediaStream.
+     *
+     * @param {*} micDeviceId - New microphone ID.
+     * @returns {Promise}
+     */
+    _replaceMic(micDeviceId) {
+        if (this._audioContext && this._audioProcessingNode) {
+            return new Promise((resolve, reject) => {
+                this._getAudioStream(micDeviceId).then(newStream => {
+                    const newSource = this._audioContext
+                        .createMediaStreamSource(newStream);
+
+                    this._audioSource.disconnect();
+                    newSource.connect(this._audioProcessingNode);
+                    this._stream = newStream;
+                    this._audioSource = newSource;
+                    resolve();
+                })
+                .catch(() => {
+                    reject();
+                });
+            });
+        }
+
+        return Promise.resolve();
+    }
+
+    /**
      * Initialize the adapter.
      *
      * @private
+     * @param {string} micDeviceId - The current microphone device ID.
      * @returns {Promise}
      */
-    _initialize() {
+    _initialize(micDeviceId) {
         if (this._encoder !== null) {
             return Promise.resolve();
         }
@@ -146,7 +184,7 @@ export class FlacAdapter extends RecordingAdapter {
                 } else if (e.data.command === DEBUG) {
                     logger.log(e.data);
                 } else if (e.data.command === WORKER_LIBFLAC_READY) {
-                    logger.debug('libflac is ready.');
+                    logger.log('libflac is ready.');
                     resolve();
                 } else {
                     logger.error(
@@ -165,7 +203,7 @@ export class FlacAdapter extends RecordingAdapter {
         });
 
         const callbackInitAudioContext = (resolve, reject) => {
-            this._getAudioStream(0)
+            this._getAudioStream(micDeviceId)
             .then(stream => {
                 this._stream = stream;
                 this._audioContext = new AudioContext();
@@ -205,7 +243,7 @@ export class FlacAdapter extends RecordingAdapter {
      * @returns {void}
      */
     _loadWebWorker() {
-        // FIXME: workaround for different file names in development/
+        // FIXME: Workaround for different file names in development/
         // production environments.
         // We cannot import flacEncodeWorker as a webpack module,
         // because it is in a different bundle and should be lazy-loaded
