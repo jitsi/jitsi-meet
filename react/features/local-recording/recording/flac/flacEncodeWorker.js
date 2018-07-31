@@ -215,7 +215,7 @@ class Encoder {
     /**
      * Receive and encode new data.
      *
-     * @param {*} audioData - Raw audio data.
+     * @param {Float32Array} audioData - Raw audio data.
      * @returns {void}
      */
     encode(audioData) {
@@ -228,9 +228,16 @@ class Encoder {
         }
         const bufferLength = audioData.length;
 
-        // convert to Uint32,
-        // appearantly libflac requires 32-bit signed integer input
-        // FIXME: why unsigned 32bit array?
+        // Convert sample to signed 32-bit integers.
+        // According to libflac documentation:
+        // each sample in the buffers should be a signed integer,
+        // right-justified to the resolution set by
+        // FLAC__stream_encoder_set_bits_per_sample().
+
+        // Here we are using 16 bits per sample, the samples should all be in
+        // the range [-32768,32767]. This is achieved by multipling Float32
+        // numbers with 0x7FFF.
+
         const bufferI32 = new Int32Array(bufferLength);
         const view = new DataView(bufferI32.buffer);
         const volume = 1;
@@ -238,7 +245,7 @@ class Encoder {
 
         for (let i = 0; i < bufferLength; i++) {
             view.setInt32(index, audioData[i] * (0x7FFF * volume), true);
-            index += 4; // 4 bytes (32bit)
+            index += 4; // 4 bytes (32-bit)
         }
 
         // pass it to libflac
@@ -249,7 +256,7 @@ class Encoder {
         );
 
         if (status !== 1) {
-            // get error
+            // gets error number
 
             const errorNo
                 = Flac.FLAC__stream_encoder_get_state(this._encoderId);
@@ -276,17 +283,6 @@ class Encoder {
 
             this._data = this._exportFlacBlob();
         }
-    }
-
-    /**
-     * Gets the stats.
-     *
-     * @returns {Object}
-     */
-    getStats() {
-        return {
-            'samplesEncoded': this._bufferSize
-        };
     }
 
     /**

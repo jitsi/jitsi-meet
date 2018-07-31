@@ -192,7 +192,7 @@ export class FlacAdapter extends RecordingAdapter {
             // set up listen for messages from the WebWorker
             this._encoder.onmessage = e => {
                 if (e.data.command === WORKER_BLOB_READY) {
-                    // receiving blob
+                    // Received a Blob representing an encoded FLAC file.
                     this._data = e.data.buf;
                     if (this._stopPromiseResolver !== null) {
                         this._stopPromiseResolver();
@@ -233,7 +233,9 @@ export class FlacAdapter extends RecordingAdapter {
                 this._audioProcessingNode
                     = this._audioContext.createScriptProcessor(4096, 1, 1);
                 this._audioProcessingNode.onaudioprocess = e => {
-                    // delegate to the WebWorker to do the encoding
+                    // Delegates to the WebWorker to do the encoding.
+                    // The return of getChannelData() is a Float32Array,
+                    // each element representing one sample.
                     const channelLeft = e.inputBuffer.getChannelData(0);
 
                     this._encoder.postMessage({
