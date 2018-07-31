@@ -72,6 +72,12 @@ type Props = {
     avatarSize: number,
 
     /**
+     * If true, we need to render the avatar instead of the video,
+     * overriding other considerations.
+     */
+    hideVideo: boolean,
+
+    /**
      * Callback to invoke when the {@code ParticipantView} is clicked/pressed.
      */
     onPress: Function,
@@ -190,25 +196,18 @@ class ParticipantView extends Component<Props> {
     render() {
         const {
             onPress,
+            _audioOnly,
             _avatar: avatar,
             _connectionStatus: connectionStatus,
-            _videoTrack: videoTrack
+            _videoTrack: videoTrack,
+            hideVideo
         } = this.props;
 
-        // Is the video to be rendered?
-        // FIXME It's currently impossible to have true as the value of
-        // waitForVideoStarted because videoTrack's state videoStarted will be
-        // updated only after videoTrack is rendered.
-        // XXX Note that, unlike on web, we don't render video when the
-        // connection status is interrupted, this is because the renderer
-        // doesn't retain the last frame forever, so we would end up with a
-        // black screen.
-        const waitForVideoStarted = false;
         const renderVideo
-            = !this.props._audioOnly
+            = !hideVideo && !_audioOnly
                 && (connectionStatus
                     === JitsiParticipantConnectionStatus.ACTIVE)
-                && shouldRenderVideoTrack(videoTrack, waitForVideoStarted);
+                && shouldRenderVideoTrack(videoTrack, false);
 
         // Is the avatar to be rendered?
         const renderAvatar = Boolean(!renderVideo && avatar);
@@ -241,7 +240,6 @@ class ParticipantView extends Component<Props> {
                     && <VideoTrack
                         onPress = { onPress }
                         videoTrack = { videoTrack }
-                        waitForVideoStarted = { waitForVideoStarted }
                         zOrder = { this.props.zOrder }
                         zoomEnabled = { this.props.zoomEnabled } /> }
 

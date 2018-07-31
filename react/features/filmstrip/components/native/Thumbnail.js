@@ -1,4 +1,5 @@
-import PropTypes from 'prop-types';
+// @flow
+
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
@@ -19,24 +20,28 @@ import styles from './styles';
 import VideoMutedIndicator from './VideoMutedIndicator';
 
 /**
+ * Thumbnail component's property types.
+ */
+type Props = {
+    _audioTrack: Object,
+    _largeVideo: Object,
+    _videoTrack: Object,
+    dispatch: Function,
+
+    /**
+     * If true, we need to render the avatar instead of the video,
+     * overriding other considerations.
+     */
+    hideVideo: boolean,
+    participant: Object
+};
+
+/**
  * React component for video thumbnail.
  *
  * @extends Component
  */
-class Thumbnail extends Component {
-    /**
-     * Thumbnail component's property types.
-     *
-     * @static
-     */
-    static propTypes = {
-        _audioTrack: PropTypes.object,
-        _largeVideo: PropTypes.object,
-        _videoTrack: PropTypes.object,
-        dispatch: PropTypes.func,
-        participant: PropTypes.object
-    };
-
+class Thumbnail extends Component<Props> {
     /**
      * Initializes new Video Thumbnail component.
      *
@@ -56,10 +61,13 @@ class Thumbnail extends Component {
      * @returns {ReactElement}
      */
     render() {
-        const audioTrack = this.props._audioTrack;
-        const largeVideo = this.props._largeVideo;
-        const participant = this.props.participant;
-        const videoTrack = this.props._videoTrack;
+        const {
+            _audioTrack,
+            hideVideo,
+            _largeVideo,
+            _videoTrack,
+            participant
+        } = this.props;
 
         let style = styles.thumbnail;
 
@@ -76,12 +84,12 @@ class Thumbnail extends Component {
         //    silence (& not even comfort noise).
         // 2. The audio is local. If we were to render local audio, the local
         //    participants would be hearing themselves.
-        const audioMuted = !audioTrack || audioTrack.muted;
-        const renderAudio = !audioMuted && !audioTrack.local;
+        const audioMuted = !_audioTrack || _audioTrack.muted;
+        const renderAudio = !audioMuted && !_audioTrack.local;
         const participantId = participant.id;
         const participantInLargeVideo
-            = participantId === largeVideo.participantId;
-        const videoMuted = !videoTrack || videoTrack.muted;
+            = participantId === _largeVideo.participantId;
+        const videoMuted = !_videoTrack || _videoTrack.muted;
 
         return (
             <Container
@@ -91,10 +99,13 @@ class Thumbnail extends Component {
                 { renderAudio
                     && <Audio
                         stream
-                            = { audioTrack.jitsiTrack.getOriginalStream() } /> }
+                            = {
+                                _audioTrack.jitsiTrack.getOriginalStream()
+                            } /> }
 
                 <ParticipantView
                     avatarSize = { AVATAR_SIZE }
+                    hideVideo = { hideVideo }
                     participantId = { participantId }
                     tintEnabled = { participantInLargeVideo }
                     zOrder = { 1 } />
@@ -116,6 +127,8 @@ class Thumbnail extends Component {
             </Container>
         );
     }
+
+    _onClick: () => void
 
     /**
      * Handles click/tap event on the thumbnail.
