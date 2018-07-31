@@ -10,9 +10,9 @@ import { setFilmstripHovered } from '../../actions';
 import { shouldRemoteVideosBeVisible } from '../../functions';
 
 import {
-    TILE_VIEW_CONFIGURATION,
     calculateColumnCount,
     calculateVisibleRowCount,
+    getMaxColumnCount,
     shouldDisplayTileView
 } from '../../../video-layout';
 import Toolbar from './Toolbar';
@@ -197,10 +197,9 @@ function _mapStateToProps(state) {
         reduceHeight ? 'reduce-height' : ''}`.trim();
 
     if (shouldDisplayTileView(state)) {
-        const columns = calculateColumnCount(
-            state, TILE_VIEW_CONFIGURATION.MAX_COLUMNS);
-        const rows = calculateVisibleRowCount(
-            state, TILE_VIEW_CONFIGURATION.MAX_COLUMNS);
+        const maxColumns = getMaxColumnCount();
+        const columns = calculateColumnCount(state, maxColumns);
+        const rows = calculateVisibleRowCount(state, maxColumns);
 
         className = `${className} col-${columns} row-${rows}`;
     }

@@ -167,6 +167,12 @@ var interfaceConfig = {
     VIDEO_QUALITY_LABEL_DISABLED: false
 
     /**
+     * How many columns the tile view can expand to. The respected range is
+     * between 1 and 5.
+     */
+    // TILE_VIEW_MAX_COLUMNS: 5,
+
+    /**
      * Specify custom URL for downloading android mobile app.
      */
     // MOBILE_DOWNLOAD_LINK_ANDROID: 'https://play.google.com/store/apps/details?id=org.jitsi.meet',

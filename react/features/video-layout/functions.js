@@ -44,7 +44,6 @@ export function calculateVisibleRowCount(state: Object, maxColumns: number) {
         maxColumns,
         totalRowCount
     );
-
 }
 
 /**
@@ -62,6 +61,18 @@ export function getCurrentLayout(state: Object) {
     }
 
     return LAYOUTS.HORIZONTAL_FILMSTRIP_VIEW;
+}
+
+/**
+ * Returns how many columns should be displayed in tile view. The number
+ * returned will be between 1 and 5, inclusive.
+ *
+ * @returns {number}
+ */
+export function getMaxColumnCount() {
+    const configuredMax = interfaceConfig.TILE_VIEW_MAX_COLUMNS || 1;
+
+    return Math.max(Math.min(configuredMax, 1), 5);
 }
 
 /**
