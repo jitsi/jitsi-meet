@@ -1,11 +1,13 @@
 /* @flow */
 
 import { i18next } from '../../base/i18n';
+
 import {
     FlacAdapter,
     OggAdapter,
     WavAdapter
 } from '../recording';
+import { sessionManager } from '../session';
 
 const logger = require('jitsi-meet-logger').getLogger(__filename);
 
@@ -556,6 +558,7 @@ class RecordingController {
             delegate.start(this._micDeviceId)
             .then(() => {
                 this._changeState(ControllerState.RECORDING);
+                sessionManager.beginSegment(this._currentSessionToken);
                 logger.log('Local recording engaged.');
 
                 if (this._onNotify) {
@@ -591,6 +594,7 @@ class RecordingController {
                 .stop()
                 .then(() => {
                     this._changeState(ControllerState.IDLE);
+                    sessionManager.endSegment(this._currentSessionToken);
                     logger.log('Local recording unengaged.');
                     this.downloadRecordedData(token);
 
