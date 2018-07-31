@@ -186,30 +186,19 @@ export default class Avatar extends Component<Props, State> {
      */
     _getBackgroundColor({ uri }) {
         if (!uri) {
-            // @lyubomir: I'm leaving @saghul's implementation which picks up a
-            // random color bellow so that we have it in the source code in
-            // case we decide to use it in the future. However, I think at the
-            // time of this writing that the randomness reduces the
-            // predictability which React is supposed to bring to our app.
             return ColorPalette.white;
         }
 
         let hash = 0;
 
-        if (typeof uri === 'string') {
-            /* eslint-disable no-bitwise */
+        /* eslint-disable no-bitwise */
 
-            for (let i = 0; i < uri.length; i++) {
-                hash = uri.charCodeAt(i) + ((hash << 5) - hash);
-                hash |= 0; // Convert to 32-bit integer
-            }
-
-            /* eslint-enable no-bitwise */
-        } else {
-            // @saghul: If we have no URI yet, we have no data to hash from. So
-            // use a random value.
-            hash = Math.floor(Math.random() * 360);
+        for (let i = 0; i < uri.length; i++) {
+            hash = uri.charCodeAt(i) + ((hash << 5) - hash);
+            hash |= 0; // Convert to 32-bit integer
         }
+
+        /* eslint-enable no-bitwise */
 
         return `hsl(${hash % 360}, 100%, 75%)`;
     }
