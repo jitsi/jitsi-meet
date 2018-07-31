@@ -692,6 +692,8 @@
             "notModerator": "You are not the moderator. You cannot start or stop local recording."
         },
         "yes": "Yes",
-        "no": "No"
+        "no": "No",
+        "label": "LOR",
+        "labelToolTip": "Local recording is engaged"
     }
 }

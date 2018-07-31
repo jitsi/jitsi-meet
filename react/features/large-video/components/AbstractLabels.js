@@ -3,6 +3,7 @@
 import React, { Component } from 'react';
 
 import { isFilmstripVisible } from '../../filmstrip';
+import { LocalRecordingLabel } from '../../local-recording';
 import { RecordingLabel } from '../../recording';
 import { VideoQualityLabel } from '../../video-quality';
 import { TranscribingLabel } from '../../transcribing/';
@@ -61,6 +62,18 @@ export default class AbstractLabels<P: Props, S> extends Component<P, S> {
     _renderTranscribingLabel() {
         return (
             <TranscribingLabel />
+        );
+    }
+
+    /**
+     * Renders the {@code LocalRecordingLabel}.
+     *
+     * @returns {React$Element}
+     * @protected
+     */
+    _renderLocalRecordingLabel() {
+        return (
+            <LocalRecordingLabel />
         );
     }
 }
