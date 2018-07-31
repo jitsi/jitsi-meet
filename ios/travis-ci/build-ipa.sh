@@ -130,6 +130,7 @@ cp "${CERT_DIR}/dev-profile.mobileprovision"  ~/Library/MobileDevice/Provisionin
 npm install
 
 cd ios
+pod update
 pod install
 cd ..
 
