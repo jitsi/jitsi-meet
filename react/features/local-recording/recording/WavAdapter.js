@@ -140,6 +140,43 @@ export class WavAdapter extends RecordingAdapter {
     }
 
     /**
+     * Implements {@link RecordingAdapter#setMicDevice()}.
+     *
+     * @inheritdoc
+     */
+    setMicDevice(micDeviceId) {
+        return this._replaceMic(micDeviceId);
+    }
+
+    /**
+     * Replaces the current microphone MediaStream.
+     *
+     * @param {*} micDeviceId - New microphone ID.
+     * @returns {Promise}
+     */
+    _replaceMic(micDeviceId) {
+        if (this._audioContext && this._audioProcessingNode) {
+            return new Promise((resolve, reject) => {
+                this._getAudioStream(micDeviceId).then(newStream => {
+                    const newSource = this._audioContext
+                        .createMediaStreamSource(newStream);
+
+                    this._audioSource.disconnect();
+                    newSource.connect(this._audioProcessingNode);
+                    this._stream = newStream;
+                    this._audioSource = newSource;
+                    resolve();
+                })
+                .catch(() => {
+                    reject();
+                });
+            });
+        }
+
+        return Promise.resolve();
+    }
+
+    /**
      * Creates a WAVE file header.
      *
      * @private
@@ -209,7 +246,9 @@ export class WavAdapter extends RecordingAdapter {
             this._getAudioStream(micDeviceId)
             .then(stream => {
                 this._stream = stream;
-                this._audioContext = new AudioContext();
+                this._audioContext = new AudioContext({
+                    sampleRate: WAV_SAMPLE_RATE
+                });
                 this._audioSource
                     = this._audioContext.createMediaStreamSource(stream);
                 this._audioProcessingNode
@@ -255,7 +294,7 @@ export class WavAdapter extends RecordingAdapter {
      *
      * @private
      * @param {*} buffers - The stored buffers.
-     * @param {*} length - Total length (in bytes).
+     * @param {*} length - Total length (number of samples).
      * @returns {Blob}
      */
     _exportMonoWAV(buffers, length) {
@@ -265,7 +304,7 @@ export class WavAdapter extends RecordingAdapter {
         //  ...
         //  buffers[n] = Float32Array object (audio data)
 
-        const dataLength = length * 2; // why multiply by 2 here?
+        const dataLength = length * 2; // each sample = 16 bit = 2 bytes
         const buffer = new ArrayBuffer(44 + dataLength);
         const view = new DataView(buffer);
 

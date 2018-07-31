@@ -16,10 +16,29 @@ const logger = require('jitsi-meet-logger').getLogger(__filename);
  */
 export class FlacAdapter extends RecordingAdapter {
 
+    /**
+     * Instance of flacEncodeWorker.
+     */
     _encoder = null;
+
+    /**
+     * The {@code AudioContext} instance.
+     */
     _audioContext = null;
+
+    /**
+     * The {@code ScriptProcessorNode} instance.
+     */
     _audioProcessingNode = null;
+
+    /**
+     * The {@code MediaStreamAudioSourceNode} instance.
+     */
     _audioSource = null;
+
+    /**
+     * The {@code MediaStream} instance, representing the current audio device.
+     */
     _stream = null;
 
     /**
@@ -206,7 +225,9 @@ export class FlacAdapter extends RecordingAdapter {
             this._getAudioStream(micDeviceId)
             .then(stream => {
                 this._stream = stream;
-                this._audioContext = new AudioContext();
+                this._audioContext = new AudioContext({
+                    sampleRate: 44100
+                });
                 this._audioSource
                     = this._audioContext.createMediaStreamSource(stream);
                 this._audioProcessingNode
