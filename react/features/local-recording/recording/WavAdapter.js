@@ -32,7 +32,7 @@ export class WavAdapter extends RecordingAdapter {
     _audioSource = null;
 
     /**
-     * Length of the WAVE file, in units of {@code sizeof(Float32)}.
+     * Length of the WAVE file, in number of samples.
      */
     _wavLength = 0;
 
@@ -57,7 +57,7 @@ export class WavAdapter extends RecordingAdapter {
     constructor() {
         super();
 
-        this._saveWavPCM = this._saveWavPCM.bind(this);
+        this._onReceivePCM = this._onReceivePCM.bind(this);
     }
 
     /**
@@ -73,7 +73,6 @@ export class WavAdapter extends RecordingAdapter {
         return this._initPromise.then(() => {
             this._wavBuffers = [];
             this._wavLength = 0;
-            this._wavBuffers.push(this._createWavHeader());
 
             this._audioSource.connect(this._audioProcessingNode);
             this._audioProcessingNode
@@ -180,9 +179,10 @@ export class WavAdapter extends RecordingAdapter {
      * Creates a WAVE file header.
      *
      * @private
+     * @param {number} dataLength - Length of the payload (PCM data), in bytes.
      * @returns {Uint8Array}
      */
-    _createWavHeader() {
+    _createWavHeader(dataLength) {
         // adapted from
         // https://github.com/mmig/speech-to-flac/blob/master/encoder.js
 
@@ -221,11 +221,11 @@ export class WavAdapter extends RecordingAdapter {
         // data sub-chunk
         writeUTFBytes(view, 36, 'data');
 
-        // DUMMY file length (set real value on export)
-        view.setUint32(4, 10, true);
+        // file length
+        view.setUint32(4, 32 + dataLength, true);
 
-        // DUMMY data chunk length (set real value on export)
-        view.setUint32(40, 10, true);
+        // data chunk length
+        view.setUint32(40, dataLength, true);
 
         return new Uint8Array(buffer);
     }
@@ -259,7 +259,7 @@ export class WavAdapter extends RecordingAdapter {
                     // See: https://developer.mozilla.org/en-US/docs/Web/API/
                     //      AudioBuffer/getChannelData
                     // The returned value is an Float32Array.
-                    this._saveWavPCM(channelLeft);
+                    this._onReceivePCM(channelLeft);
                 };
                 this._isInitialized = true;
                 resolve();
@@ -280,7 +280,7 @@ export class WavAdapter extends RecordingAdapter {
      * @param {Float32Array} data - The audio PCM data.
      * @returns {void}
      */
-    _saveWavPCM(data) {
+    _onReceivePCM(data) {
         // Need to copy the Float32Array:
         // unlike passing to WebWorker, this data is passed by reference,
         // so we need to copy it, otherwise the resulting audio file will be
@@ -293,34 +293,22 @@ export class WavAdapter extends RecordingAdapter {
      * Combines buffers and export to a wav file.
      *
      * @private
-     * @param {*} buffers - The stored buffers.
-     * @param {*} length - Total length (number of samples).
+     * @param {Float32Array[]} buffers - The stored buffers.
+     * @param {number} length - Total length (number of samples).
      * @returns {Blob}
      */
     _exportMonoWAV(buffers, length) {
-        // buffers: array with
-        //  buffers[0] = header information (with missing length information)
-        //  buffers[1] = Float32Array object (audio data)
-        //  ...
-        //  buffers[n] = Float32Array object (audio data)
-
         const dataLength = length * 2; // each sample = 16 bit = 2 bytes
         const buffer = new ArrayBuffer(44 + dataLength);
         const view = new DataView(buffer);
 
         // copy WAV header data into the array buffer
-        const header = buffers[0];
+        const header = this._createWavHeader(dataLength);
         const len = header.length;
 
         for (let i = 0; i < len; ++i) {
             view.setUint8(i, header[i]);
         }
-
-        // add file length in header
-        view.setUint32(4, 32 + dataLength, true);
-
-        // add data chunk length in header
-        view.setUint32(40, dataLength, true);
 
         // write audio data
         floatTo16BitPCM(view, 44, buffers);
@@ -358,17 +346,16 @@ function writeUTFBytes(view, offset, string) {
  */
 function floatTo16BitPCM(output, offset, inputBuffers) {
 
-    let i, input, isize, s;
-    const jsize = inputBuffers.length;
+    let i, j;
+    let input, s, sampleCount;
+    const bufferCount = inputBuffers.length;
     let o = offset;
 
-    // first entry is header information (already used in exportMonoWAV),
-    // rest is Float32Array-entries -> ignore header entry
-    for (let j = 1; j < jsize; ++j) {
-        input = inputBuffers[j];
-        isize = input.length;
-        for (i = 0; i < isize; ++i, o += 2) {
-            s = Math.max(-1, Math.min(1, input[i]));
+    for (i = 0; i < bufferCount; ++i) {
+        input = inputBuffers[i];
+        sampleCount = input.length;
+        for (j = 0; j < sampleCount; ++j, o += 2) {
+            s = Math.max(-1, Math.min(1, input[j]));
             output.setInt16(o, s < 0 ? s * 0x8000 : s * 0x7FFF, true);
         }
     }
