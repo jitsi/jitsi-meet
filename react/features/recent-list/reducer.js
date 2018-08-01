@@ -1,5 +1,4 @@
 // @flow
-
 import { APP_WILL_MOUNT } from '../base/app';
 import { getURLWithoutParamsNormalized } from '../base/connection';
 import { ReducerRegistry } from '../base/redux';
@@ -9,6 +8,7 @@ import {
     _STORE_CURRENT_CONFERENCE,
     _UPDATE_CONFERENCE_DURATION
 } from './actionTypes';
+import { RECENT_LIST_ENABLED } from './featureFlag';
 
 const logger = require('jitsi-meet-logger').getLogger(__filename);
 
@@ -50,17 +50,19 @@ PersistenceRegistry.register(STORE_NAME);
 ReducerRegistry.register(
     STORE_NAME,
     (state = _getLegacyRecentRoomList(), action) => {
-        switch (action.type) {
-        case APP_WILL_MOUNT:
-            return _appWillMount(state);
+        if (RECENT_LIST_ENABLED) {
+            switch (action.type) {
+            case APP_WILL_MOUNT:
+                return _appWillMount(state);
+            case _STORE_CURRENT_CONFERENCE:
+                return _storeCurrentConference(state, action);
 
-        case _STORE_CURRENT_CONFERENCE:
-            return _storeCurrentConference(state, action);
-
-        case _UPDATE_CONFERENCE_DURATION:
-            return _updateConferenceDuration(state, action);
-
-        default:
+            case _UPDATE_CONFERENCE_DURATION:
+                return _updateConferenceDuration(state, action);
+            default:
+                return state;
+            }
+        } else {
             return state;
         }
     });
