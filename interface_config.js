@@ -48,8 +48,7 @@ var interfaceConfig = {
         'microphone', 'camera', 'closedcaptions', 'desktop', 'fullscreen',
         'fodeviceselection', 'hangup', 'profile', 'info', 'chat', 'recording',
         'livestreaming', 'etherpad', 'sharedvideo', 'settings', 'raisehand',
-        'videoquality', 'filmstrip', 'invite', 'feedback', 'stats', 'shortcuts',
-        'localrecording'
+        'videoquality', 'filmstrip', 'invite', 'feedback', 'stats', 'shortcuts'
     ],
 
     SETTINGS_SECTIONS: [ 'devices', 'language', 'moderator', 'profile' ],
