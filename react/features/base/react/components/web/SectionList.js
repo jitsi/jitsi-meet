@@ -2,7 +2,7 @@
 
 import React, { Component } from 'react';
 
-import { Container } from './index';
+import Container from './Container';
 import type { Section } from '../../Types';
 
 type Props = {

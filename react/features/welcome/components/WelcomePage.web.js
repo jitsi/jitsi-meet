@@ -100,7 +100,7 @@ class WelcomePage extends AbstractWelcomePage {
      */
     render() {
         const { t } = this.props;
-        const { APP_NAME, RECENT_LIST_ENABLED } = interfaceConfig;
+        const { APP_NAME } = interfaceConfig;
         const showAdditionalContent = this._shouldShowAdditionalContent();
 
         return (
@@ -147,7 +147,7 @@ class WelcomePage extends AbstractWelcomePage {
                                 { t('welcomepage.go') }
                             </Button>
                         </div>
-                        { RECENT_LIST_ENABLED ? <RecentList /> : null }
+                        <RecentList />
                     </div>
                     { showAdditionalContent
                         ? <div

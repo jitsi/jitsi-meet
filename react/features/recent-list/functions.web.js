@@ -1,6 +1,9 @@
-import { NavigateSectionList } from '../base/react/index';
+/* global interfaceConfig */
 
-import { toDisplayableItem } from './functions.all';
+import { NavigateSectionList } from '../base/react';
+
+import { toDisplayableItem } from './functions.any';
+
 
 /**
  * Transforms the history list to a displayable list
@@ -14,10 +17,11 @@ import { toDisplayableItem } from './functions.all';
  */
 export function toDisplayableList(recentList, t, defaultServerURL) {
     const { createSection } = NavigateSectionList;
-    const section = createSection(t('recentList.joinPastMeeting'), 'all');
+    const section
+        = createSection(t('recentList.joinPastMeeting'), 'joinPastMeeting');
 
-    // we only want the last three conferences we were in for web
-    for (const item of recentList.slice(1).slice(-3)) {
+    // We only want the last three conferences we were in for web.
+    for (const item of recentList.slice(-3)) {
         const displayableItem = toDisplayableItem(item, defaultServerURL, t);
 
         section.data.push(displayableItem);
@@ -32,3 +36,12 @@ export function toDisplayableList(recentList, t, defaultServerURL) {
     return displayableList;
 }
 
+/**
+ * Returns <tt>true</tt> if recent list is enabled and <tt>false</tt> otherwise.
+ *
+ * @returns {boolean} <tt>true</tt> if recent list is enabled and <tt>false</tt>
+ * otherwise.
+ */
+export function isRecentListEnabled() {
+    return interfaceConfig.RECENT_LIST_ENABLED;
+}

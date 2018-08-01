@@ -1,6 +1,6 @@
-import { NavigateSectionList } from '../base/react/index';
+import { NavigateSectionList } from '../base/react';
 
-import { toDisplayableItem } from './functions.all';
+import { toDisplayableItem } from './functions.any';
 
 /**
  * Transforms the history list to a displayable list
@@ -60,3 +60,12 @@ export function toDisplayableList(recentList, t, defaultServerURL) {
     return displayableList;
 }
 
+/**
+ * Returns <tt>true</tt> if recent list is enabled and <tt>false</tt> otherwise.
+ *
+ * @returns {boolean} <tt>true</tt> if recent list is enabled and <tt>false</tt>
+ * otherwise.
+ */
+export function isRecentListEnabled() {
+    return true;
+}

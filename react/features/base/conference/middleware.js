@@ -24,12 +24,14 @@ import { TRACK_ADDED, TRACK_REMOVED } from '../tracks';
 import {
     conferenceFailed,
     conferenceLeft,
+    conferenceWillLeave,
     createConference,
     setLastN
 } from './actions';
 import {
     CONFERENCE_FAILED,
     CONFERENCE_JOINED,
+    CONFERENCE_WILL_LEAVE,
     DATA_CHANNEL_OPENED,
     SET_AUDIO_ONLY,
     SET_LASTN,
@@ -45,6 +47,11 @@ import {
 const logger = require('jitsi-meet-logger').getLogger(__filename);
 
 declare var APP: Object;
+
+/**
+ * Handler for before unload event.
+ */
+let beforeUnloadHandler;
 
 /**
  * Implements the middleware of the feature base/conference.
@@ -65,6 +72,10 @@ MiddlewareRegistry.register(store => next => action => {
 
     case CONNECTION_FAILED:
         return _connectionFailed(store, next, action);
+
+    case CONFERENCE_WILL_LEAVE:
+        _conferenceWillLeave();
+        break;
 
     case DATA_CHANNEL_OPENED:
         return _syncReceiveVideoQuality(store, next, action);
@@ -135,6 +146,11 @@ function _conferenceFailed(store, next, action) {
     // conference is handled by /conference.js and appropriate failure handlers
     // are set there.
     if (typeof APP !== 'undefined') {
+        if (typeof beforeUnloadHandler !== 'undefined') {
+            window.removeEventListener('beforeunload', beforeUnloadHandler);
+            beforeUnloadHandler = undefined;
+        }
+
         return result;
     }
 
@@ -174,6 +190,16 @@ function _conferenceJoined({ dispatch, getState }, next, action) {
     // conference is added to the redux store ("on conference joined" action)
     // and the LastN value needs to be synchronized here.
     audioOnly && conference.getLastN() !== 0 && dispatch(setLastN(0));
+
+    // FIXME: Very dirty solution. This will work on web only.
+    // When the user closes the window or quits the browser, lib-jitsi-meet
+    // handles the process of leaving the conference. This is temporary solution
+    // that should cover the described use case as part of the effort to
+    // implement the conferenceWillLeave action for web.
+    beforeUnloadHandler = () => {
+        dispatch(conferenceWillLeave(conference));
+    };
+    window.addEventListener('beforeunload', beforeUnloadHandler);
 
     return result;
 }
@@ -227,6 +253,11 @@ function _connectionFailed({ dispatch, getState }, next, action) {
 
     const result = next(action);
 
+    if (typeof beforeUnloadHandler !== 'undefined') {
+        window.removeEventListener('beforeunload', beforeUnloadHandler);
+        beforeUnloadHandler = undefined;
+    }
+
     // FIXME: Workaround for the web version. Currently, the creation of the
     // conference is handled by /conference.js and appropriate failure handlers
     // are set there.
@@ -264,6 +295,21 @@ function _connectionFailed({ dispatch, getState }, next, action) {
     }
 
     return result;
+}
+
+/**
+ * Notifies the feature base/conference that the action
+ * {@code CONFERENCE_WILL_LEAVE} is being dispatched within a specific redux
+ * store.
+ *
+ * @private
+ * @returns {void}
+ */
+function _conferenceWillLeave() {
+    if (typeof beforeUnloadHandler !== 'undefined') {
+        window.removeEventListener('beforeunload', beforeUnloadHandler);
+        beforeUnloadHandler = undefined;
+    }
 }
 
 /**

@@ -8,7 +8,7 @@ import {
     _STORE_CURRENT_CONFERENCE,
     _UPDATE_CONFERENCE_DURATION
 } from './actionTypes';
-import { RECENT_LIST_ENABLED } from './featureFlag';
+import { isRecentListEnabled } from './functions';
 
 const logger = require('jitsi-meet-logger').getLogger(__filename);
 
@@ -50,7 +50,7 @@ PersistenceRegistry.register(STORE_NAME);
 ReducerRegistry.register(
     STORE_NAME,
     (state = _getLegacyRecentRoomList(), action) => {
-        if (RECENT_LIST_ENABLED) {
+        if (isRecentListEnabled()) {
             switch (action.type) {
             case APP_WILL_MOUNT:
                 return _appWillMount(state);
@@ -62,9 +62,9 @@ ReducerRegistry.register(
             default:
                 return state;
             }
-        } else {
-            return state;
         }
+
+        return state;
     });
 
 /**

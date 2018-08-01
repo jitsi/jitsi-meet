@@ -2,8 +2,8 @@
 
 import React, { Component } from 'react';
 
-import { translate } from '../../i18n';
-
+// TODO: Maybe try to make all NavigateSectionList components to work for both
+// mobile and web, and move them to NavigateSectionList component.
 import {
     NavigateSectionListEmptyComponent,
     NavigateSectionListItem,
@@ -18,11 +18,6 @@ type Props = {
      * Indicates if the list is disabled or not.
      */
     disabled: boolean,
-
-    /**
-     * The translate function.
-     */
-    t: Function,
 
     /**
      * Function to be invoked when an item is pressed. The item's URL is passed.
@@ -59,7 +54,7 @@ class NavigateSectionList extends Component<Props> {
      * @private
      * @returns {Object}
      */
-    static createSection(title, key) {
+    static createSection(title: string, key: string) {
         return {
             data: [],
             key,
@@ -166,7 +161,7 @@ class NavigateSectionList extends Component<Props> {
      * @private
      * @returns {Component}
      */
-    _renderItem(listItem, key = '') {
+    _renderItem(listItem, key: string = '') {
         const { item } = listItem;
         const { url } = item;
 
@@ -197,12 +192,11 @@ class NavigateSectionList extends Component<Props> {
      * @returns {React$Node}
      */
     _renderListEmptyComponent() {
-        const { t, onRefresh } = this.props;
+        const { onRefresh } = this.props;
 
         if (typeof onRefresh === 'function') {
             return (
-                <NavigateSectionListEmptyComponent
-                    t = { t } />
+                <NavigateSectionListEmptyComponent />
             );
         }
 
@@ -226,4 +220,4 @@ class NavigateSectionList extends Component<Props> {
     }
 }
 
-export default translate(NavigateSectionList);
+export default NavigateSectionList;
