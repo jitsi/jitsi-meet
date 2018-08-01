@@ -20,6 +20,15 @@ const throttledPersistState
         state => PersistenceRegistry.persistState(state),
         PERSIST_STATE_DELAY);
 
+// Web only code.
+// We need the <tt>if</tt> beacuse it appears that on mobile the polyfill is not
+// executed yet.
+if (typeof window.addEventListener === 'function') {
+    window.addEventListener('unload', () => {
+        throttledPersistState.flush();
+    });
+}
+
 /**
  * A master MiddleWare to selectively persist state. Please use the
  * {@link persisterconfig.json} to set which subtrees of the redux state should
@@ -36,9 +45,4 @@ MiddlewareRegistry.register(store => next => action => {
     oldState === newState || throttledPersistState(newState);
 
     return result;
-});
-
-window.addEventListener('beforeunload', () => {
-    // Stop the LogCollector
-    throttledPersistState.flush();
 });

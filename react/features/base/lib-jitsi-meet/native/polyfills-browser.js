@@ -114,6 +114,15 @@ function _visitNode(node, callback) {
         global.addEventListener = () => {};
     }
 
+    // removeEventListener
+    //
+    // Required by:
+    // - features/base/conference/middleware
+    if (typeof global.removeEventListener === 'undefined') {
+        // eslint-disable-next-line no-empty-function
+        global.removeEventListener = () => {};
+    }
+
     // Array.prototype[@@iterator]
     //
     // Required by:

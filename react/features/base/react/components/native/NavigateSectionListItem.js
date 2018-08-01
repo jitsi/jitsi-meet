@@ -1,12 +1,9 @@
 // @flow
 
 import React, { Component } from 'react';
-import { TouchableHighlight } from 'react-native';
 
-import {
-    Text,
-    Container
-} from './index';
+import Container from './Container';
+import Text from './Text';
 import styles, { UNDERLAY_COLOR } from './styles';
 import type { Item } from '../../Types';
 
@@ -110,36 +107,35 @@ export default class NavigateSectionListItem extends Component<Props> {
      */
     render() {
         const { colorBase, lines, title } = this.props.item;
+        const avatarStyles = {
+            ...styles.avatar,
+            ...this._getAvatarColor(colorBase)
+        };
 
         return (
-            <TouchableHighlight
-                onPress = { this.props.onPress }
+            <Container
+                onClick = { this.props.onPress }
+                style = { styles.listItem }
                 underlayColor = { UNDERLAY_COLOR }>
-                <Container style = { styles.listItem }>
-                    <Container style = { styles.avatarContainer }>
-                        <Container
-                            style = { [
-                                styles.avatar,
-                                this._getAvatarColor(colorBase)
-                            ] }>
-                            <Text style = { styles.avatarContent }>
-                                {title.substr(0, 1).toUpperCase()}
-                            </Text>
-                        </Container>
-                    </Container>
-                    <Container style = { styles.listItemDetails }>
-                        <Text
-                            numberOfLines = { 1 }
-                            style = { [
-                                styles.listItemText,
-                                styles.listItemTitle
-                            ] }>
-                            {title}
+                <Container style = { styles.avatarContainer }>
+                    <Container style = { avatarStyles }>
+                        <Text style = { styles.avatarContent }>
+                            {title.substr(0, 1).toUpperCase()}
                         </Text>
-                        {this._renderItemLines(lines)}
                     </Container>
                 </Container>
-            </TouchableHighlight>
+                <Container style = { styles.listItemDetails }>
+                    <Text
+                        numberOfLines = { 1 }
+                        style = {{
+                            ...styles.listItemText,
+                            ...styles.listItemTitle
+                        }}>
+                        {title}
+                    </Text>
+                    {this._renderItemLines(lines)}
+                </Container>
+            </Container>
         );
     }
 }

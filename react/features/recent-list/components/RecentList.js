@@ -4,10 +4,10 @@ import { connect } from 'react-redux';
 
 import { appNavigate, getDefaultURL } from '../../app';
 import { translate } from '../../base/i18n';
-import type { Section } from '../../base/react/Types';
 import { NavigateSectionList } from '../../base/react';
+import type { Section } from '../../base/react';
 
-import { toDisplayableList } from '../functions';
+import { isRecentListEnabled, toDisplayableList } from '../functions';
 
 /**
  * The type of the React {@code Component} props of {@link RecentList}
@@ -62,6 +62,9 @@ class RecentList extends Component<Props> {
      * @inheritdoc
      */
     render() {
+        if (!isRecentListEnabled()) {
+            return null;
+        }
         const { disabled, t, _defaultServerURL, _recentList } = this.props;
         const recentList = toDisplayableList(_recentList, t, _defaultServerURL);
 

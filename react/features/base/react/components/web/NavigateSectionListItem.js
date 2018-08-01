@@ -2,7 +2,8 @@
 
 import React, { Component } from 'react';
 
-import { Text, Container } from './index';
+import Container from './Container';
+import Text from './Text';
 import type { Item } from '../../Types';
 
 type Props = {

@@ -1,12 +1,10 @@
 // @flow
-/**
- * item data for NavigateSectionList
- */
-import type {
-    ComponentType,
-    Element
-} from 'react';
 
+import type { ComponentType, Element } from 'react';
+
+/**
+ * Item data for <tt>NavigateSectionList</tt>.
+ */
 export type Item = {
 
     /**

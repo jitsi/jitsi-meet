@@ -1,13 +1,10 @@
 // @flow
 
 import React, { Component } from 'react';
-import {
-    Text,
-    View
-} from 'react-native';
+import { Text, View } from 'react-native';
 
-import { Icon } from '../../../font-icons/index';
-import { translate } from '../../../i18n/index';
+import { Icon } from '../../../font-icons';
+import { translate } from '../../../i18n';
 
 import styles from './styles';
 

@@ -1,19 +1,18 @@
 // @flow
 
 import { APP_WILL_MOUNT } from '../base/app';
-import { CONFERENCE_WILL_LEAVE, SET_ROOM } from '../base/conference';
-import { JITSI_CONFERENCE_URL_KEY } from '../base/conference/constants';
+import {
+    CONFERENCE_WILL_LEAVE,
+    SET_ROOM,
+    JITSI_CONFERENCE_URL_KEY
+} from '../base/conference';
 import { addKnownDomains } from '../base/known-domains';
 import { MiddlewareRegistry } from '../base/redux';
 import { parseURIString } from '../base/util';
-import { RECENT_LIST_ENABLED } from './featureFlag';
 
 import { _storeCurrentConference, _updateConferenceDuration } from './actions';
+import { isRecentListEnabled } from './functions';
 
-/**
- * used in order to get the device because there is a different way to get the
- * location URL on web and on native
- */
 declare var APP: Object;
 
 /**
@@ -24,7 +23,7 @@ declare var APP: Object;
  * @returns {Function}
  */
 MiddlewareRegistry.register(store => next => action => {
-    if (RECENT_LIST_ENABLED) {
+    if (isRecentListEnabled()) {
         switch (action.type) {
         case APP_WILL_MOUNT:
             return _appWillMount(store, next, action);
@@ -89,7 +88,8 @@ function _appWillMount({ dispatch, getState }, next, action) {
 function _conferenceWillLeave({ dispatch, getState }, next, action) {
     let locationURL;
 
-    /** FIXME
+    /**
+     * FIXME:
      * It is better to use action.conference[JITSI_CONFERENCE_URL_KEY]
      * in order to make sure we get the url the conference is leaving
      * from (i.e. the room we are leaving from) because if the order of events

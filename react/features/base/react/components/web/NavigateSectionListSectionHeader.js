@@ -2,7 +2,7 @@
 
 import React, { Component } from 'react';
 
-import { Text } from './index';
+import Text from './Text';
 import type { Section } from '../../Types';
 
 type Props = {

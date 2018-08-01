@@ -1,6 +1,8 @@
-import { getLocalizedDateFormatter, getLocalizedDurationFormatter }
-    from '../base/i18n/index';
-import { parseURIString } from '../base/util/index';
+import {
+    getLocalizedDateFormatter,
+    getLocalizedDurationFormatter
+} from '../base/i18n';
+import { parseURIString } from '../base/util';
 
 /**
  * Creates a displayable list item of a recent list entry.
@@ -12,7 +14,6 @@ import { parseURIString } from '../base/util/index';
  * @returns {Object}
  */
 export function toDisplayableItem(item, defaultServerURL, t) {
-    // const { _defaultServerURL } = this.props;
     const location = parseURIString(item.conference);
     const baseURL = `${location.protocol}//${location.host}`;
     const serverName = baseURL === defaultServerURL ? null : location.host;
@@ -54,26 +55,20 @@ export function _toDurationString(duration) {
  * @returns {string}
  */
 export function _toDateString(itemDate, t) {
-    const date = new Date(itemDate);
-    const dateString = date.toDateString();
     const m = getLocalizedDateFormatter(itemDate);
-    const yesterday = new Date();
+    const date = new Date(itemDate);
+    const dateInMs = date.getTime();
+    const now = new Date();
+    const todayInMs = (new Date()).setHours(0, 0, 0, 0);
+    const yesterdayInMs = todayInMs - 86400000; // 1 day = 86400000ms
 
-    yesterday.setDate(yesterday.getDate() - 1);
-    const yesterdayString = yesterday.toDateString();
-    const today = new Date();
-    const todayString = today.toDateString();
-    const currentYear = today.getFullYear();
-    const year = date.getFullYear();
-
-    if (dateString === todayString) {
-        // The date is today, we use fromNow format.
+    if (dateInMs >= todayInMs) {
         return m.fromNow();
-    } else if (dateString === yesterdayString) {
+    } else if (dateInMs >= yesterdayInMs) {
         return t('dateUtils.yesterday');
-    } else if (year !== currentYear) {
-        // we only want to include the year in the date if its not the current
-        // year
+    } else if (date.getFullYear() !== now.getFullYear()) {
+        // We only want to include the year in the date if its not the current
+        // year.
         return m.format('ddd, MMMM DD h:mm A, gggg');
     }
 
