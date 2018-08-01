@@ -145,25 +145,20 @@ export class FlacAdapter extends RecordingAdapter {
     /**
      * Replaces the current microphone MediaStream.
      *
-     * @param {*} micDeviceId - New microphone ID.
+     * @param {string} micDeviceId - New microphone ID.
      * @returns {Promise}
      */
     _replaceMic(micDeviceId) {
         if (this._audioContext && this._audioProcessingNode) {
-            return new Promise((resolve, reject) => {
-                this._getAudioStream(micDeviceId).then(newStream => {
-                    const newSource = this._audioContext
-                        .createMediaStreamSource(newStream);
+            return this._getAudioStream(micDeviceId).then(newStream => {
+                const newSource = this._audioContext
+                    .createMediaStreamSource(newStream);
 
-                    this._audioSource.disconnect();
-                    newSource.connect(this._audioProcessingNode);
-                    this._stream = newStream;
-                    this._audioSource = newSource;
-                    resolve();
-                })
-                .catch(() => {
-                    reject();
-                });
+                this._audioSource.disconnect();
+                newSource.connect(this._audioProcessingNode);
+                this._stream = newStream;
+                this._audioSource = newSource;
+
             });
         }
 
@@ -221,7 +216,7 @@ export class FlacAdapter extends RecordingAdapter {
             });
         });
 
-        const callbackInitAudioContext = (resolve, reject) => {
+        const callbackInitAudioContext = () =>
             this._getAudioStream(micDeviceId)
             .then(stream => {
                 this._stream = stream;
@@ -244,19 +239,18 @@ export class FlacAdapter extends RecordingAdapter {
                     });
                 };
                 logger.debug('AudioContext is set up.');
-                resolve();
             })
             .catch(err => {
                 logger.error(`Error calling getUserMedia(): ${err}`);
-                reject();
+
+                return Promise.reject(err);
             });
-        };
 
         // Because Promise constructor immediately executes the executor
         // function. This is undesirable, we want callbackInitAudioContext to be
         // executed only **after** promiseInitWorker is resolved.
         return promiseInitWorker
-            .then(() => new Promise(callbackInitAudioContext));
+            .then(callbackInitAudioContext);
     }
 
     /**
