@@ -11,6 +11,8 @@ import {
 } from '../../base/conference';
 import { MiddlewareRegistry } from '../../base/redux';
 
+const AudioMode = NativeModules.AudioMode;
+
 /**
  * Middleware that captures conference actions and sets the correct audio mode
  * based on the type of conference. Audio-only conferences don't use the speaker
@@ -20,7 +22,7 @@ import { MiddlewareRegistry } from '../../base/redux';
  * @returns {Function}
  */
 MiddlewareRegistry.register(({ getState }) => next => action => {
-    const AudioMode = NativeModules.AudioMode;
+    const result = next(action);
 
     if (AudioMode) {
         let mode;
@@ -43,13 +45,13 @@ MiddlewareRegistry.register(({ getState }) => next => action => {
          */
         case CONFERENCE_JOINED:
         case SET_AUDIO_ONLY: {
-            if (getState()['features/base/conference'].conference
-                    || action.conference) {
-                mode
-                    = action.audioOnly
-                        ? AudioMode.AUDIO_CALL
-                        : AudioMode.VIDEO_CALL;
-            }
+            const { audioOnly, conference }
+                = getState()['features/base/conference'];
+
+            conference
+                && (mode = audioOnly
+                    ? AudioMode.AUDIO_CALL
+                    : AudioMode.VIDEO_CALL);
             break;
         }
         }
@@ -62,5 +64,5 @@ MiddlewareRegistry.register(({ getState }) => next => action => {
         }
     }
 
-    return next(action);
+    return result;
 });
