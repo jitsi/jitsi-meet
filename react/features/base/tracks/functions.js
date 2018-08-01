@@ -2,6 +2,8 @@
 
 import JitsiMeetJS, { JitsiTrackErrors, JitsiTrackEvents }
     from '../lib-jitsi-meet';
+import { getPreferredCameraDeviceId, getPreferredMicDeviceId }
+    from '../settings';
 import { MEDIA_TYPE } from '../media';
 
 const logger = require('jitsi-meet-logger').getLogger(__filename);
@@ -37,13 +39,11 @@ export function createLocalTracksF(
         // reliance on the global variable APP will go away.
         store || (store = APP.store); // eslint-disable-line no-param-reassign
 
-        const settings = store.getState()['features/base/settings'];
-
         if (typeof cameraDeviceId === 'undefined' || cameraDeviceId === null) {
-            cameraDeviceId = settings.cameraDeviceId;
+            cameraDeviceId = getPreferredCameraDeviceId(store.getState());
         }
         if (typeof micDeviceId === 'undefined' || micDeviceId === null) {
-            micDeviceId = settings.micDeviceId;
+            micDeviceId = getPreferredMicDeviceId(store.getState());
         }
     }
 
