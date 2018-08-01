@@ -64,10 +64,11 @@ isFeatureEnabled
             }, 10000));
         };
 
-        APP.keyboardshortcut.registerShortcut('L', null, () => {
-            sendAnalytics(createShortcutEvent('local.recording'));
-            dispatch(toggleDialog(LocalRecordingInfoDialog));
-        }, 'keyboardShortcuts.localRecording');
+        typeof APP === 'object' && typeof APP.keyboardshortcut === 'object'
+            && APP.keyboardshortcut.registerShortcut('L', null, () => {
+                sendAnalytics(createShortcutEvent('local.recording'));
+                dispatch(toggleDialog(LocalRecordingInfoDialog));
+            }, 'keyboardShortcuts.localRecording');
         break;
     case APP_WILL_UNMOUNT:
         recordingController.onStateChanged = null;
