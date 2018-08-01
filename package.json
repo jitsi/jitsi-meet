@@ -51,6 +51,7 @@
     "lib-jitsi-meet": "github:jitsi/lib-jitsi-meet#2be752fc88ff71e454c6b9178b21a33b59c53f41",
     "lodash": "4.17.4",
     "moment": "2.19.4",
+    "moment-duration-format": "2.2.2",
     "postis": "2.2.0",
     "prop-types": "15.6.0",
     "react": "16.3.1",

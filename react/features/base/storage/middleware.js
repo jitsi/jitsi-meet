@@ -37,3 +37,8 @@ MiddlewareRegistry.register(store => next => action => {
 
     return result;
 });
+
+window.addEventListener('beforeunload', () => {
+    // Stop the LogCollector
+    throttledPersistState.flush();
+});

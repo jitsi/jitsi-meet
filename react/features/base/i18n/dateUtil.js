@@ -4,6 +4,9 @@ import moment from 'moment';
 
 import i18next from './i18next';
 
+// allows for moment durations to be formatted
+import 'moment-duration-format';
+
 // MomentJS uses static language bundle loading, so in order to support dynamic
 // language selection in the app we need to load all bundles that we support in
 // the app.
@@ -55,8 +58,19 @@ export function getLocalizedDurationFormatter(duration: number) {
     // states v2.19 so maybe locale on moment's duration was introduced in
     // between?
     //
+
+    // If the conference is under an hour long we want to display it without
+    // showing the hour and we want to include the hour if the conference is
+    // more than an hour long
+
     // $FlowFixMe
-    return moment.duration(duration).locale(_getSupportedLocale());
+    if (moment.duration(duration).format('h') !== '0') {
+        // $FlowFixMe
+        return moment.duration(duration).format('h:mm:ss');
+    }
+
+    // $FlowFixMe
+    return moment.duration(duration).format('mm:ss', { trim: false });
 }
 
 /**
