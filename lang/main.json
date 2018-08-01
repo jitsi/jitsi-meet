@@ -626,9 +626,7 @@
         "permissionMessage": "The Calendar permission is required to see your meetings in the app."
     },
     "recentList": {
-        "today": "Today",
-        "yesterday": "Yesterday",
-        "earlier": "Earlier"
+        "joinPastMeeting": "Join A Past Meeting"
     },
     "sectionList": {
         "pullToRefresh": "Pull to refresh"
@@ -655,6 +653,11 @@
         "rejected": "Rejected",
         "ignored": "Ignored",
         "expired": "Expired"
+    },
+    "dateUtils": {
+        "today": "Today",
+        "yesterday": "Yesterday",
+        "earlier": "Earlier"
     },
     "incomingCall": {
         "answer": "Answer",

@@ -8,6 +8,7 @@ import { connect } from 'react-redux';
 
 import { translate } from '../../base/i18n';
 import { Watermarks } from '../../base/react';
+import { RecentList } from '../../recent-list';
 
 import { AbstractWelcomePage, _mapStateToProps } from './AbstractWelcomePage';
 
@@ -99,7 +100,7 @@ class WelcomePage extends AbstractWelcomePage {
      */
     render() {
         const { t } = this.props;
-        const { APP_NAME } = interfaceConfig;
+        const { APP_NAME, RECENT_LIST_ENABLED } = interfaceConfig;
         const showAdditionalContent = this._shouldShowAdditionalContent();
 
         return (
@@ -146,6 +147,7 @@ class WelcomePage extends AbstractWelcomePage {
                                 { t('welcomepage.go') }
                             </Button>
                         </div>
+                        { RECENT_LIST_ENABLED ? <RecentList /> : null }
                     </div>
                     { showAdditionalContent
                         ? <div

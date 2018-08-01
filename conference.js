@@ -35,8 +35,10 @@ import {
     conferenceJoined,
     conferenceLeft,
     conferenceWillJoin,
+    conferenceWillLeave,
     dataChannelOpened,
     EMAIL_COMMAND,
+    getCurrentConference,
     lockStateChanged,
     onStartMutedPolicyChanged,
     p2pStatusChanged,
@@ -305,6 +307,10 @@ class ConferenceConnector {
     _onConferenceFailed(err, ...params) {
         APP.store.dispatch(conferenceFailed(room, err, ...params));
         logger.error('CONFERENCE FAILED:', err, ...params);
+        const state = APP.store.getState();
+
+        // The conference we have already joined or are joining.
+        const conference = getCurrentConference(state);
 
         switch (err) {
         case JitsiConferenceErrors.CONNECTION_ERROR: {
@@ -375,6 +381,7 @@ class ConferenceConnector {
             // FIXME the conference should be stopped by the library and not by
             // the app. Both the errors above are unrecoverable from the library
             // perspective.
+            APP.store.dispatch(conferenceWillLeave(conference));
             room.leave().then(() => connection.disconnect());
             break;
 
@@ -468,6 +475,12 @@ function _connectionFailedHandler(error) {
             JitsiConnectionEvents.CONNECTION_FAILED,
             _connectionFailedHandler);
         if (room) {
+            const state = APP.store.getState();
+
+            // The conference we have already joined or are joining.
+            const conference = getCurrentConference(state);
+
+            APP.store.dispatch(conferenceWillLeave(conference));
             room.leave();
         }
     }
@@ -2465,6 +2478,12 @@ export default {
      * requested
      */
     hangup(requestFeedback = false) {
+        const state = APP.store.getState();
+
+        // The conference we have already joined or are joining.
+        const conference = getCurrentConference(state);
+
+        APP.store.dispatch(conferenceWillLeave(conference));
         eventEmitter.emit(JitsiMeetConferenceEvents.BEFORE_HANGUP);
         APP.UI.removeLocalMedia();
 

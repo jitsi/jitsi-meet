@@ -2,11 +2,19 @@
 
 import { APP_WILL_MOUNT } from '../base/app';
 import { CONFERENCE_WILL_LEAVE, SET_ROOM } from '../base/conference';
+import { JITSI_CONFERENCE_URL_KEY } from '../base/conference/constants';
 import { addKnownDomains } from '../base/known-domains';
 import { MiddlewareRegistry } from '../base/redux';
 import { parseURIString } from '../base/util';
+import { RECENT_LIST_ENABLED } from './featureFlag';
 
 import { _storeCurrentConference, _updateConferenceDuration } from './actions';
+
+/**
+ * used in order to get the device because there is a different way to get the
+ * location URL on web and on native
+ */
+declare var APP: Object;
 
 /**
  * Middleware that captures joined rooms so they can be saved into
@@ -16,15 +24,17 @@ import { _storeCurrentConference, _updateConferenceDuration } from './actions';
  * @returns {Function}
  */
 MiddlewareRegistry.register(store => next => action => {
-    switch (action.type) {
-    case APP_WILL_MOUNT:
-        return _appWillMount(store, next, action);
+    if (RECENT_LIST_ENABLED) {
+        switch (action.type) {
+        case APP_WILL_MOUNT:
+            return _appWillMount(store, next, action);
 
-    case CONFERENCE_WILL_LEAVE:
-        return _conferenceWillLeave(store, next, action);
+        case CONFERENCE_WILL_LEAVE:
+            return _conferenceWillLeave(store, next, action);
 
-    case SET_ROOM:
-        return _setRoom(store, next, action);
+        case SET_ROOM:
+            return _setRoom(store, next, action);
+        }
     }
 
     return next(action);
@@ -77,9 +87,26 @@ function _appWillMount({ dispatch, getState }, next, action) {
  * @returns {*} The result returned by {@code next(action)}.
  */
 function _conferenceWillLeave({ dispatch, getState }, next, action) {
+    let locationURL;
+
+    /** FIXME
+     * It is better to use action.conference[JITSI_CONFERENCE_URL_KEY]
+     * in order to make sure we get the url the conference is leaving
+     * from (i.e. the room we are leaving from) because if the order of events
+     * is different, we cannot be guranteed that the location URL in base
+     * connection is the url we are leaving from... not the one we are going to
+     * (the latter happens on mobile -- if we use the web implementation);
+     * however, the conference object on web does not have
+     * JITSI_CONFERENCE_URL_KEY so we cannot call it and must use the other way
+     */
+    if (typeof APP === 'undefined') {
+        locationURL = action.conference[JITSI_CONFERENCE_URL_KEY];
+    } else {
+        locationURL = getState()['features/base/connection'].locationURL;
+    }
     dispatch(
         _updateConferenceDuration(
-            getState()['features/base/connection'].locationURL));
+            locationURL));
 
     return next(action);
 }

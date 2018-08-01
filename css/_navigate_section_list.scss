@@ -1,0 +1,43 @@
+%navigate-section-list-text {
+    width: 100%;
+    font-size: 14px;
+    line-height: 20px;
+    color: $welcomePageTitleColor;
+    text-align: left;
+    font-family: 'open_sanslight', Helvetica, sans-serif;
+}
+%navigate-section-list-tile-text {
+    @extend %navigate-section-list-text;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    float: left;
+}
+.navigate-section-list-tile {
+    height: 90px;
+    width: 260px;
+    border-radius: 4px;
+    background-color: #1754A9;
+    margin-right: 8px;
+    padding: 16px;
+    display: inline-block;
+    box-sizing: border-box;
+    cursor: pointer;
+}
+.navigate-section-tile-body {
+    @extend %navigate-section-list-tile-text;
+    font-weight: normal;
+}
+.navigate-section-tile-title {
+    @extend %navigate-section-list-tile-text;
+    font-weight: bold;
+}
+.navigate-section-section-header {
+    @extend %navigate-section-list-text;
+    font-weight: bold;
+    margin-bottom: 16px;
+}
+.navigate-section-list {
+    position: relative;
+    margin-top: 36px;
+    margin-bottom: 36px;
+}
