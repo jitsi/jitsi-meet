@@ -13,7 +13,10 @@
     }
 
     #filmstripRemoteVideos {
+        align-items: center;
         box-sizing: border-box;
+        display: flex;
+        flex-direction: column;
         height: 100vh;
         width: 100vw;
     }
@@ -70,7 +73,8 @@
      * and allowing the thumbnails to wrap.
      */
     #filmstripRemoteVideosContainer {
-        align-content: baseline;
+        align-content: center;
+        align-items: center;
         box-sizing: border-box;
         display: flex;
         flex-wrap: wrap;
@@ -81,12 +85,16 @@
         .videocontainer {
             box-sizing: border-box;
             display: block;
-            margin: 0;
+            margin: 5px;
         }
 
         video {
             object-fit: contain;
         }
+    }
+
+    .has-overflow#filmstripRemoteVideosContainer {
+        align-content: baseline;
     }
 
     /**
@@ -95,94 +103,7 @@
      * to the local thumbnail to keep it from the bottom of the screen. It is
      * assumed the local thumbnail will always be on the bottom row.
      */
-    #localVideoContainer {
+    .has-overflow #localVideoContainer {
         margin-bottom: 100px !important;
-    }
-
-    /**
-     * The following styles resize thumbnails to fit a tile layout. !important
-     * is used a lot because javascript resizing logic fires for vertical and
-     * horizontal filmstrip to set inline thumbnail size styling.
-     */
-    $videoThumbnailSelectors: "
-         #filmstripRemoteVideos .videocontainer:not(#localVideoContainer),
-         #localVideoTileViewContainer
-    ";
-
-    .col-1 {
-        #{$videoThumbnailSelectors} {
-            width: 100% !important;
-        }
-    }
-
-    .col-2 {
-        #{$videoThumbnailSelectors} {
-            width: 50% !important;
-        }
-    }
-
-    .col-3 {
-        #{$videoThumbnailSelectors} {
-            width: 33% !important;
-        }
-    }
-
-    .col-4 {
-        #{$videoThumbnailSelectors}{
-            width: 25% !important;
-        }
-    }
-
-    .col-5 {
-        #{$videoThumbnailSelectors} {
-            width: 20% !important;
-        }
-    }
-
-    .row-1 {
-        #{$videoThumbnailSelectors} {
-            height: 100% !important;
-            min-height: 100% !important;
-        }
-    }
-
-    .row-2 {
-        #{$videoThumbnailSelectors} {
-            height: 50% !important;
-            min-height: 50% !important;
-        }
-    }
-
-    .row-3 {
-        #{$videoThumbnailSelectors} {
-            height: 33% !important;
-            min-height: 33% !important;
-        }
-    }
-
-    .row-4 {
-        #{$videoThumbnailSelectors} {
-            height: 25% !important;
-            min-height: 25% !important;
-        }
-    }
-
-    .row-5 {
-        #{$videoThumbnailSelectors} {
-            height: 20% !important;
-            min-height: 20% !important;
-        }
-    }
-
-    /**
-     * The actual thumbnail for local video is already in a wrapper that has
-     * its height and width set with CSS for the tile layout. Local video
-     * should try to fill the container's space. !important needs to be used
-     * to sidestep inline styling set by javascript for vertical and horizontal
-     * filmstrip.
-     */
-    #filmstripRemoteVideosContainer .videocontainer#localVideoContainer {
-        height: 100% !important;
-        width: 100% !important;
     }
 }

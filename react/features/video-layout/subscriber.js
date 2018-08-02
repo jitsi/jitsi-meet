@@ -14,10 +14,10 @@ import { shouldDisplayTileView } from './functions';
  */
 StateListenerRegistry.register(
     /* selector */ state => shouldDisplayTileView(state),
-    /* listener */ (tileViewEnabled, { dispatch }) => {
+    /* listener */ (displayTileView, { dispatch }) => {
         dispatch(selectParticipant());
 
-        if (!tileViewEnabled) {
+        if (!displayTileView) {
             dispatch(setMaxReceiverVideoQuality(VIDEO_QUALITY_LEVELS.HIGH));
         }
     }

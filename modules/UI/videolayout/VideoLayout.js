@@ -603,8 +603,8 @@ const VideoLayout = {
 
         if (shouldDisplayTileView(APP.store.getState())) {
             const height
-                = (localVideoThumbnail
-                    && localVideoThumbnail.$container.height())
+                = (localVideo && localVideo.thumbHeight)
+                || (remoteVideo && remoteVideo.thumbnHeight)
                 || 0;
             const qualityLevel = getNearestReceiverVideoQualityLevel(height);
 
@@ -614,9 +614,6 @@ const VideoLayout = {
         if (onComplete && typeof onComplete === 'function') {
             onComplete();
         }
-
-        return { localVideo,
-            remoteVideo };
     },
 
     /**

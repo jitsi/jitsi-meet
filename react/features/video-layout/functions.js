@@ -1,7 +1,5 @@
 // @flow
 
-import { getParticipantCount } from '../base/participants';
-
 import { LAYOUTS } from './constants';
 
 declare var interfaceConfig: Object;
@@ -27,23 +25,16 @@ export function calculateColumnCount(state: Object, maxColumns: number) {
 }
 
 /**
- * Returns how many tile columns should be visible on the screen. It is assumed
- * non-visible rows will be viewed by scrolling.
+ * Returns how many total rows will be in the tile view grid.
  *
  * @param {Object} state - The redux state.
- * @param {number} maxColumns - The maximum number of columns that can be
- * displayed.
+ * @param {number} columns - The number of columns that will be displayed.
  * @returns {number}
  */
-export function calculateVisibleRowCount(state: Object, maxColumns: number) {
-    const columns = calculateColumnCount(state, maxColumns);
+export function calculateRowCount(state: Object, columns: number) {
     const potentialThumbnails = state['features/base/participants'].length;
-    const totalRowCount = Math.ceil(potentialThumbnails / columns);
 
-    return Math.min(
-        maxColumns,
-        totalRowCount
-    );
+    return Math.ceil(potentialThumbnails / columns);
 }
 
 /**
@@ -70,7 +61,7 @@ export function getCurrentLayout(state: Object) {
  * @returns {number}
  */
 export function getMaxColumnCount() {
-    const configuredMax = interfaceConfig.TILE_VIEW_MAX_COLUMNS || 1;
+    const configuredMax = interfaceConfig.TILE_VIEW_MAX_COLUMNS || 5;
 
     return Math.max(Math.min(configuredMax, 1), 5);
 }
@@ -83,10 +74,10 @@ export function getMaxColumnCount() {
  * @param {Object} state - The redux state.
  * @returns {boolean} True if tile view should be displayed.
  */
-export function shouldDisplayTileView(state: Object) {
+export function shouldDisplayTileView(state: Object = {}) {
     return Boolean(
-        state['features/video-layout'].tileViewEnabled
-            && getParticipantCount(state) > 2
+        state['features/video-layout']
+            && state['features/video-layout'].tileViewEnabled
             && !state['features/etherpad'].editing
     );
 }

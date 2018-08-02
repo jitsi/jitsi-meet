@@ -3,7 +3,10 @@
 import { setFilmstripVisible } from '../../../react/features/filmstrip';
 import {
     LAYOUTS,
+    calculateColumnCount,
+    calculateRowCount,
     getCurrentLayout,
+    getMaxColumnCount,
     shouldDisplayTileView
 } from '../../../react/features/video-layout';
 
@@ -238,6 +241,10 @@ const Filmstrip = {
      * @returns {*|{localVideo, remoteVideo}}
      */
     calculateThumbnailSize() {
+        if (shouldDisplayTileView(APP.store.getState())) {
+            return this._calculateThumbnailSizeForTileView();
+        }
+
         const availableSizes = this.calculateAvailableSize();
         const width = availableSizes.availableWidth;
         const height = availableSizes.availableHeight;
@@ -256,7 +263,6 @@ const Filmstrip = {
         const currentLayout = getCurrentLayout(state);
         const isHorizontalFilmstripView
             = currentLayout === LAYOUTS.HORIZONTAL_FILMSTRIP_VIEW;
-        const isTileView = currentLayout === LAYOUTS.TILE_VIEW;
 
         /**
          * If the videoAreaAvailableWidth is set we use this one to calculate
@@ -276,17 +282,10 @@ const Filmstrip = {
         let availableHeight = interfaceConfig.FILM_STRIP_MAX_HEIGHT;
         let availableWidth = videoAreaAvailableWidth;
 
-        // Tile view thumbnail sizing is handled through CSS. An empty value
-        // is used as a no-op and to side step very large min height/width
-        // values.
-        if (isTileView) {
-            availableWidth = 0;
-        }
-
         const thumbs = this.getThumbs(true);
 
         // If local thumb is not hidden
-        if (thumbs.localThumb && !isTileView) {
+        if (thumbs.localThumb) {
             const localVideoContainer = $('#localVideoContainer');
 
             availableWidth = Math.floor(
@@ -331,22 +330,15 @@ const Filmstrip = {
             );
         }
 
-        // Tile view thumbnail sizing is handled through CSS. An empty value
-        // is used as a no-op and to side step very large min height/width
-        // values.
-        if (isTileView) {
-            availableHeight = 0;
-        } else {
-            const maxHeight
+        const maxHeight
 
-                // If the MAX_HEIGHT property hasn't been specified
-                // we have the static value.
-                = Math.min(interfaceConfig.FILM_STRIP_MAX_HEIGHT || 120,
-                availableHeight);
+            // If the MAX_HEIGHT property hasn't been specified
+            // we have the static value.
+            = Math.min(interfaceConfig.FILM_STRIP_MAX_HEIGHT || 120,
+            availableHeight);
 
-            availableHeight
-                = Math.min(maxHeight, window.innerHeight - 18);
-        }
+        availableHeight
+            = Math.min(maxHeight, window.innerHeight - 18);
 
         return {
             availableHeight,
@@ -390,19 +382,6 @@ const Filmstrip = {
      * @returns {{localVideo, remoteVideo}}
      */
     calculateThumbnailSizeFromAvailable(availableWidth, availableHeight) {
-        if (shouldDisplayTileView(APP.store.getState())) {
-            return {
-                localVideo: {
-                    thumbWidth: availableWidth,
-                    thumbHeight: availableHeight
-                },
-                remoteVideo: {
-                    thumbWidth: availableWidth,
-                    thumbHeight: availableHeight
-                }
-            };
-        }
-
         /**
          * Let:
          * lW - width of the local thumbnail
@@ -476,6 +455,49 @@ const Filmstrip = {
     },
 
     /**
+     * Calculates the size for thumbnails when in tile view layout.
+     *
+     * @returns {{localVideo, remoteVideo}}
+     */
+    _calculateThumbnailSizeForTileView() {
+        const tileAspectRatio = 16 / 9;
+
+        // The distance from the top and bottom of the screen, as set by CSS, to
+        // avoid overlapping UI elements.
+        const topBottomPadding = 200;
+
+        // Minimum space to keep between the sides of the tiles and the sides
+        // of the window.
+        const sideMargins = 30 * 2;
+
+        const state = APP.store.getState();
+
+        const maxColumns = getMaxColumnCount();
+        const columnsToDisplay = calculateColumnCount(state, maxColumns);
+
+        const viewWidth = document.body.clientWidth - sideMargins;
+        const viewHeight = document.body.clientHeight - topBottomPadding;
+
+        // Find the smallest constraint given the view size to keep the
+        // thumbnails contained within the view. FIXME: finalize sizing logic
+        // as for now it has been written by a math-illiterate.
+        const constraint = Math.min(viewHeight * tileAspectRatio, viewWidth);
+        const widthOfEach = constraint / columnsToDisplay;
+        const heightOfEach = widthOfEach / tileAspectRatio;
+
+        return {
+            localVideo: {
+                thumbWidth: widthOfEach,
+                thumbHeight: heightOfEach
+            },
+            remoteVideo: {
+                thumbWidth: widthOfEach,
+                thumbHeight: heightOfEach
+            }
+        };
+    },
+
+    /**
      * Resizes thumbnails
      * @param local
      * @param remote
@@ -484,6 +506,26 @@ const Filmstrip = {
      */
     // eslint-disable-next-line max-params
     resizeThumbnails(local, remote, forceUpdate = false) {
+        const state = APP.store.getState();
+
+        if (shouldDisplayTileView(state)) {
+            // The size of the side margins for each tile as set in CSS.
+            const sideMargins = 10 * 2;
+            const columns = calculateColumnCount(state, getMaxColumnCount());
+            const totalRowCount = calculateRowCount(state, columns);
+            const hasOverflow = totalRowCount > columns;
+
+            // Width is set so that the flex layout can automatically wrap
+            // tiles onto new rows.
+            this.filmstripRemoteVideos.css({
+                width: (local.thumbWidth * columns) + (columns * sideMargins)
+            });
+
+            this.filmstripRemoteVideos.toggleClass('has-overflow', hasOverflow);
+        } else {
+            this.filmstripRemoteVideos.css('width', '');
+        }
+
         const thumbs = this.getThumbs(!forceUpdate);
 
         if (thumbs.localThumb) {
