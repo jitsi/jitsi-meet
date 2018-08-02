@@ -6,18 +6,23 @@ import { connect } from 'react-redux';
 
 import { translate } from '../../../base/i18n';
 
-import googleApi from '../../googleApi';
+import {
+    updateProfile,
+    GOOGLE_API_STATES,
+    loadGoogleAPI,
+    requestAvailableYouTubeBroadcasts,
+    requestLiveStreamsForYouTubeBroadcast,
+    showAccountSelection,
+    signIn
+} from '../../../google-api';
 
 import AbstractStartLiveStreamDialog, {
     _mapStateToProps,
-    GOOGLE_API_STATES,
     type Props
 } from './AbstractStartLiveStreamDialog';
 import BroadcastsDropdown from './BroadcastsDropdown';
 import GoogleSignInButton from './GoogleSignInButton';
 import StreamKeyForm from './StreamKeyForm';
-
-declare var interfaceConfig: Object;
 
 /**
  * A React Component for requesting a YouTube stream key to use for live
@@ -40,6 +45,7 @@ class StartLiveStreamDialog
         // Bind event handlers so they are only bound once per instance.
         this._onGetYouTubeBroadcasts = this._onGetYouTubeBroadcasts.bind(this);
         this._onInitializeGoogleApi = this._onInitializeGoogleApi.bind(this);
+        this._onGoogleSignIn = this._onGoogleSignIn.bind(this);
         this._onRequestGoogleSignIn = this._onRequestGoogleSignIn.bind(this);
         this._onYouTubeBroadcastIDSelected
             = this._onYouTubeBroadcastIDSelected.bind(this);
@@ -58,23 +64,23 @@ class StartLiveStreamDialog
      * @returns {Promise}
      */
     _onInitializeGoogleApi() {
-        return googleApi.get()
-            .then(() => googleApi.initializeClient(
-                this.props._googleApiApplicationClientID))
-            .then(() => this._setStateIfMounted({
-                googleAPIState: GOOGLE_API_STATES.LOADED
-            }))
-            .then(() => googleApi.isSignedIn())
-            .then(isSignedIn => {
-                if (isSignedIn) {
-                    return this._onGetYouTubeBroadcasts();
-                }
-            })
-            .catch(() => {
-                this._setStateIfMounted({
-                    googleAPIState: GOOGLE_API_STATES.ERROR
-                });
-            });
+        this.props.dispatch(
+            loadGoogleAPI(this.props._googleApiApplicationClientID))
+        .catch(response => this._parseErrorFromResponse(response));
+    }
+
+    /**
+     * Automatically selects the input field's value after starting to edit the
+     * display name.
+     *
+     * @inheritdoc
+     * @returns {void}
+     */
+    componentDidUpdate(previousProps) {
+        if (previousProps._googleAPIState === GOOGLE_API_STATES.LOADED
+            && this.props._googleAPIState === GOOGLE_API_STATES.SIGNED_IN) {
+            this._onGetYouTubeBroadcasts();
+        }
     }
 
     _onGetYouTubeBroadcasts: () => Promise<*>;
@@ -84,42 +90,39 @@ class StartLiveStreamDialog
      * list of the user's YouTube broadcasts.
      *
      * @private
-     * @returns {Promise}
+     * @returns {void}
      */
     _onGetYouTubeBroadcasts() {
-        return googleApi.get()
-            .then(() => googleApi.signInIfNotSignedIn())
-            .then(() => googleApi.getCurrentUserProfile())
-            .then(profile => {
-                this._setStateIfMounted({
-                    googleProfileEmail: profile.getEmail(),
-                    googleAPIState: GOOGLE_API_STATES.SIGNED_IN
-                });
-            })
-            .then(() => googleApi.requestAvailableYouTubeBroadcasts())
-            .then(response => {
-                const broadcasts = this._parseBroadcasts(response.result.items);
+        this.props.dispatch(updateProfile())
+            .catch(response => this._parseErrorFromResponse(response));
 
+        this.props.dispatch(requestAvailableYouTubeBroadcasts())
+            .then(broadcasts => {
                 this._setStateIfMounted({
                     broadcasts
                 });
 
-                if (broadcasts.length === 1 && !this.state.streamKey) {
+                if (broadcasts.length === 1) {
                     const broadcast = broadcasts[0];
 
                     this._onYouTubeBroadcastIDSelected(broadcast.boundStreamID);
                 }
             })
-            .catch(response => {
-                // Only show an error if an external request was made with the
-                // Google api. Do not error if the login in canceled.
-                if (response && response.result) {
-                    this._setStateIfMounted({
-                        errorType: this._parseErrorFromResponse(response),
-                        googleAPIState: GOOGLE_API_STATES.ERROR
-                    });
-                }
-            });
+            .catch(response => this._parseErrorFromResponse(response));
+    }
+
+    _onGoogleSignIn: () => Object;
+
+    /**
+     * Forces the Google web client application to prompt for a sign in, such as
+     * when changing account, and will then fetch available YouTube broadcasts.
+     *
+     * @private
+     * @returns {Promise}
+     */
+    _onGoogleSignIn() {
+        this.props.dispatch(signIn())
+            .catch(response => this._parseErrorFromResponse(response));
     }
 
     _onRequestGoogleSignIn: () => Object;
@@ -132,8 +135,14 @@ class StartLiveStreamDialog
      * @returns {Promise}
      */
     _onRequestGoogleSignIn() {
-        return googleApi.showAccountSelection()
-            .then(() => this._setStateIfMounted({ broadcasts: undefined }))
+        // when there is an error we show the google sign-in button.
+        // once we click it we want to clear the error from the state
+        this.props.dispatch(showAccountSelection())
+            .then(() =>
+                this._setStateIfMounted({
+                    broadcasts: undefined,
+                    errorType: undefined
+                }))
             .then(() => this._onGetYouTubeBroadcasts());
     }
 
@@ -151,55 +160,20 @@ class StartLiveStreamDialog
      * @returns {Promise}
      */
     _onYouTubeBroadcastIDSelected(boundStreamID) {
-        return googleApi.requestLiveStreamsForYouTubeBroadcast(boundStreamID)
-            .then(response => {
-                const broadcasts = response.result.items;
-                const streamName = broadcasts
-                    && broadcasts[0]
-                    && broadcasts[0].cdn.ingestionInfo.streamName;
-                const streamKey = streamName || '';
-
+        this.props.dispatch(
+            requestLiveStreamsForYouTubeBroadcast(boundStreamID))
+            .then(({ streamKey, selectedBoundStreamID }) =>
                 this._setStateIfMounted({
                     streamKey,
-                    selectedBoundStreamID: boundStreamID
-                });
-            });
-    }
+                    selectedBoundStreamID
+                }));
 
-    _parseBroadcasts: (Array<Object>) => Array<Object>;
-
-    /**
-     * Takes in a list of broadcasts from the YouTube API, removes dupes,
-     * removes broadcasts that cannot get a stream key, and parses the
-     * broadcasts into flat objects.
-     *
-     * @param {Array} broadcasts - Broadcast descriptions as obtained from
-     * calling the YouTube API.
-     * @private
-     * @returns {Array} An array of objects describing each unique broadcast.
-     */
-    _parseBroadcasts(broadcasts) {
-        const parsedBroadcasts = {};
-
-        for (let i = 0; i < broadcasts.length; i++) {
-            const broadcast = broadcasts[i];
-            const boundStreamID = broadcast.contentDetails.boundStreamId;
-
-            if (boundStreamID && !parsedBroadcasts[boundStreamID]) {
-                parsedBroadcasts[boundStreamID] = {
-                    boundStreamID,
-                    id: broadcast.id,
-                    status: broadcast.status.lifeCycleStatus,
-                    title: broadcast.snippet.title
-                };
-            }
-        }
-
-        return Object.values(parsedBroadcasts);
     }
 
     /**
-     * Searches in a Google API error response for the error type.
+     * Only show an error if an external request was made with the Google api.
+     * Do not error if the login in canceled.
+     * And searches in a Google API error response for the error type.
      *
      * @param {Object} response - The Google API response that may contain an
      * error.
@@ -207,12 +181,19 @@ class StartLiveStreamDialog
      * @returns {string|null}
      */
     _parseErrorFromResponse(response) {
+
+        if (!response || !response.result) {
+            return;
+        }
+
         const result = response.result;
         const error = result.error;
         const errors = error && error.errors;
         const firstError = errors && errors[0];
 
-        return (firstError && firstError.reason) || null;
+        this._setStateIfMounted({
+            errorType: (firstError && firstError.reason) || null
+        });
     }
 
     _renderDialogContent: () => React$Component<*>
@@ -243,20 +224,22 @@ class StartLiveStreamDialog
      * @returns {ReactElement}
      */
     _renderYouTubePanel() {
-        const { t } = this.props;
+        const {
+            t,
+            _googleProfileEmail
+        } = this.props;
         const {
             broadcasts,
-            googleProfileEmail,
             selectedBoundStreamID
         } = this.state;
 
         let googleContent, helpText;
 
-        switch (this.state.googleAPIState) {
+        switch (this.props._googleAPIState) {
         case GOOGLE_API_STATES.LOADED:
             googleContent = ( // eslint-disable-line no-extra-parens
                 <GoogleSignInButton
-                    onClick = { this._onGetYouTubeBroadcasts }
+                    onClick = { this._onGoogleSignIn }
                     text = { t('liveStreaming.signIn') } />
             );
             helpText = t('liveStreaming.signInCTA');
@@ -279,22 +262,12 @@ class StartLiveStreamDialog
             helpText = ( // eslint-disable-line no-extra-parens
                 <div>
                     { `${t('liveStreaming.chooseCTA',
-                        { email: googleProfileEmail })} ` }
+                        { email: _googleProfileEmail })} ` }
                     <a onClick = { this._onRequestGoogleSignIn }>
                         { t('liveStreaming.changeSignIn') }
                     </a>
                 </div>
             );
-
-            break;
-
-        case GOOGLE_API_STATES.ERROR:
-            googleContent = ( // eslint-disable-line no-extra-parens
-                <GoogleSignInButton
-                    onClick = { this._onRequestGoogleSignIn }
-                    text = { t('liveStreaming.signIn') } />
-            );
-            helpText = this._getGoogleErrorMessageToDisplay();
 
             break;
 
@@ -307,6 +280,15 @@ class StartLiveStreamDialog
             );
 
             break;
+        }
+
+        if (this.state.errorType !== undefined) {
+            googleContent = ( // eslint-disable-line no-extra-parens
+                <GoogleSignInButton
+                    onClick = { this._onRequestGoogleSignIn }
+                    text = { t('liveStreaming.signIn') } />
+            );
+            helpText = this._getGoogleErrorMessageToDisplay();
         }
 
         return (
@@ -336,7 +318,7 @@ class StartLiveStreamDialog
         case 'liveStreamingNotEnabled':
             text = this.props.t(
                 'liveStreaming.errorLiveStreamNotEnabled',
-                { email: this.state.googleProfileEmail });
+                { email: this.props._googleProfileEmail });
             break;
         default:
             text = this.props.t('liveStreaming.errorAPI');
