@@ -27,6 +27,12 @@ export type Props = {
     _googleApiApplicationClientID: string,
 
     /**
+     * The current state of interactions with the Google API. Determines what
+     * Google related UI should display.
+     */
+    _googleAPIState: number,
+
+    /**
      * The live stream key that was used before.
      */
     _streamKey: string,
@@ -61,12 +67,6 @@ export type State = {
     errorType: ?string,
 
     /**
-     * The current state of interactions with the Google API. Determines what
-     * Google related UI should display.
-     */
-    googleAPIState: number,
-
-    /**
      * The email of the user currently logged in to the Google web client
      * application.
      */
@@ -82,36 +82,6 @@ export type State = {
      * The selected or entered stream key to use for YouTube live streaming.
      */
     streamKey: string
-};
-
-/**
- * An enumeration of the different states the Google API can be in while
- * interacting with {@code StartLiveStreamDialog}.
-  *
- * @private
- * @type {Object}
- */
-export const GOOGLE_API_STATES = {
-    /**
-     * The state in which the Google API still needs to be loaded.
-     */
-    NEEDS_LOADING: 0,
-
-    /**
-     * The state in which the Google API is loaded and ready for use.
-     */
-    LOADED: 1,
-
-    /**
-     * The state in which a user has been logged in through the Google API.
-     */
-    SIGNED_IN: 2,
-
-    /**
-     * The state in which the Google API encountered an error either loading
-     * or with an API request.
-     */
-    ERROR: 3
 };
 
 /**
@@ -136,7 +106,6 @@ export default class AbstractStartLiveStreamDialog
         this.state = {
             broadcasts: undefined,
             errorType: undefined,
-            googleAPIState: GOOGLE_API_STATES.NEEDS_LOADING,
             googleProfileEmail: '',
             selectedBoundStreamID: undefined,
             streamKey: ''
@@ -331,6 +300,7 @@ export function _mapStateToProps(state: Object) {
         _conference: state['features/base/conference'].conference,
         _googleApiApplicationClientID:
             state['features/base/config'].googleApiApplicationClientID,
+        _googleAPIState: state['features/google-api'].googleAPIState,
         _streamKey: state['features/recording'].streamKey
     };
 }
