@@ -2,10 +2,17 @@
 
 import { APP_WILL_MOUNT } from '../base/app';
 import { ADD_KNOWN_DOMAINS, addKnownDomains } from '../base/known-domains';
-import { equals, MiddlewareRegistry } from '../base/redux';
+import {
+    equals,
+    MiddlewareRegistry,
+    StateListenerRegistry
+} from '../base/redux';
 import { APP_STATE_CHANGED } from '../mobile/background/actionTypes';
 
-import { setCalendarAuthorization } from './actions';
+import {
+    setCalendarAPIState,
+    setCalendarAuthorization
+} from './actions';
 import { REFRESH_CALENDAR } from './actionTypes';
 import { CALENDAR_ENABLED } from './constants';
 import { _fetchCalendarEntries } from './functions';
@@ -65,6 +72,12 @@ CALENDAR_ENABLED
         }
 
         return next(action);
+    });
+
+StateListenerRegistry.register(
+    /* selector */ state => state['features/google-api'].googleAPIState,
+    /* listener */ (googleAPIState, { dispatch }) => {
+        dispatch(setCalendarAPIState(googleAPIState));
     });
 
 /**

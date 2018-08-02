@@ -3,7 +3,9 @@
 import {
     REFRESH_CALENDAR,
     SET_CALENDAR_AUTHORIZATION,
-    SET_CALENDAR_EVENTS
+    SET_CALENDAR_API_STATE,
+    SET_CALENDAR_EVENTS,
+    SET_CALENDAR_TYPE
 } from './actionTypes';
 
 /**
@@ -59,5 +61,37 @@ export function setCalendarEvents(events: Array<Object>) {
     return {
         type: SET_CALENDAR_EVENTS,
         events
+    };
+}
+
+/**
+ * Sets the calendar type to be used by web.
+ *
+ * @param {string|undefined} calendarType - The calendar type.
+ * @returns {{
+ *     type: SET_CALENDAR_TYPE,
+ *     calendarType: ?string
+ * }}
+ */
+export function setCalendarType(calendarType: ?string) {
+    return {
+        type: SET_CALENDAR_TYPE,
+        calendarType
+    };
+}
+
+/**
+ * Sends an action to update the current calendar api state in redux.
+ *
+ * @param {number} newState - The new state.
+ * @returns {{
+ *     type: SET_CALENDAR_API_STATE,
+ *     apiState: number
+ * }}
+ */
+export function setCalendarAPIState(newState: ?number) {
+    return {
+        type: SET_CALENDAR_API_STATE,
+        apiState: newState
     };
 }

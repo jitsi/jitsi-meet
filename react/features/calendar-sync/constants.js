@@ -26,12 +26,23 @@ export const FETCH_START_DAYS = -1;
 export const MAX_LIST_LENGTH = 10;
 
 /**
+ * The set of calendar types.
+ *
+ * @enum {string}
+ */
+export const CALENDAR_TYPE = {
+    GOOGLE: 'google',
+    MICROSOFT: 'microsoft'
+};
+
+/**
  * The default state of the calendar.
  *
  * NOTE: This is defined here, to be reusable by functions.js as well (see file
  * for details).
  */
 export const DEFAULT_STATE = {
+    apiState: 0,
     authorization: undefined,
     events: []
 };

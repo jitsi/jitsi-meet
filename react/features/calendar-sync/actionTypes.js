@@ -32,3 +32,23 @@ export const SET_CALENDAR_AUTHORIZATION = Symbol('SET_CALENDAR_AUTHORIZATION');
  * }
  */
 export const SET_CALENDAR_EVENTS = Symbol('SET_CALENDAR_EVENTS');
+
+/**
+ * Action to update calendar type to be used for web.
+ *
+ * {
+ *     type: SET_CALENDAR_TYPE,
+ *     calendarType: ?string
+ * }
+ */
+export const SET_CALENDAR_TYPE = Symbol('SET_CALENDAR_TYPE');
+
+/**
+ * The type of Redux action which changes Calendar API state.
+ *
+ * {
+ *     type: SET_CALENDAR_API_STATE
+ * }
+ * @public
+ */
+export const SET_CALENDAR_API_STATE = Symbol('SET_CALENDAR_API_STATE');

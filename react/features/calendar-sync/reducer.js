@@ -5,8 +5,10 @@ import { ReducerRegistry, set } from '../base/redux';
 import { PersistenceRegistry } from '../base/storage';
 
 import {
+    SET_CALENDAR_API_STATE,
     SET_CALENDAR_AUTHORIZATION,
-    SET_CALENDAR_EVENTS
+    SET_CALENDAR_EVENTS,
+    SET_CALENDAR_TYPE
 } from './actionTypes';
 import { CALENDAR_ENABLED, DEFAULT_STATE } from './constants';
 
@@ -33,7 +35,8 @@ const STORE_NAME = 'features/calendar-sync';
  */
 CALENDAR_ENABLED
     && PersistenceRegistry.register(STORE_NAME, {
-        knownDomains: true
+        knownDomains: true,
+        calendarType: true
     });
 
 CALENDAR_ENABLED
@@ -49,11 +52,17 @@ CALENDAR_ENABLED
             }
             break;
 
+        case SET_CALENDAR_API_STATE:
+            return set(state, 'apiState', action.apiState);
+
         case SET_CALENDAR_AUTHORIZATION:
             return set(state, 'authorization', action.authorization);
 
         case SET_CALENDAR_EVENTS:
             return set(state, 'events', action.events);
+
+        case SET_CALENDAR_TYPE:
+            return set(state, 'calendarType', action.calendarType);
         }
 
         return state;
