@@ -17,7 +17,7 @@ import { recordingController } from './controller';
 declare var APP: Object;
 declare var config: Object;
 
-const isFeatureEnabled = config.localRecording
+const isFeatureEnabled = typeof config === 'object' && config.localRecording
     && config.localRecording.enabled === true;
 
 isFeatureEnabled
