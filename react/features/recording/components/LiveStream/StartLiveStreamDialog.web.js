@@ -7,7 +7,7 @@ import { connect } from 'react-redux';
 import { translate } from '../../../base/i18n';
 
 import {
-    getProfile,
+    updateProfile,
     GOOGLE_API_STATES,
     loadGoogleAPI,
     requestAvailableYouTubeBroadcasts,
@@ -93,11 +93,7 @@ class StartLiveStreamDialog
      * @returns {void}
      */
     _onGetYouTubeBroadcasts() {
-        this.props.dispatch(getProfile())
-            .then(profile =>
-                this._setStateIfMounted({
-                    googleProfileEmail: profile
-                }))
+        this.props.dispatch(updateProfile())
             .catch(response => this._parseErrorFromResponse(response));
 
         this.props.dispatch(requestAvailableYouTubeBroadcasts())
@@ -228,10 +224,12 @@ class StartLiveStreamDialog
      * @returns {ReactElement}
      */
     _renderYouTubePanel() {
-        const { t } = this.props;
+        const {
+            t,
+            _googleProfileEmail
+        } = this.props;
         const {
             broadcasts,
-            googleProfileEmail,
             selectedBoundStreamID
         } = this.state;
 
@@ -264,7 +262,7 @@ class StartLiveStreamDialog
             helpText = ( // eslint-disable-line no-extra-parens
                 <div>
                     { `${t('liveStreaming.chooseCTA',
-                        { email: googleProfileEmail })} ` }
+                        { email: _googleProfileEmail })} ` }
                     <a onClick = { this._onRequestGoogleSignIn }>
                         { t('liveStreaming.changeSignIn') }
                     </a>
@@ -320,7 +318,7 @@ class StartLiveStreamDialog
         case 'liveStreamingNotEnabled':
             text = this.props.t(
                 'liveStreaming.errorLiveStreamNotEnabled',
-                { email: this.state.googleProfileEmail });
+                { email: this.props._googleProfileEmail });
             break;
         default:
             text = this.props.t('liveStreaming.errorAPI');

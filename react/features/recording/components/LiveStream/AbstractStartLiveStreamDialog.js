@@ -33,6 +33,12 @@ export type Props = {
     _googleAPIState: number,
 
     /**
+     * The email of the user currently logged in to the Google web client
+     * application.
+     */
+    _googleProfileEmail: string,
+
+    /**
      * The live stream key that was used before.
      */
     _streamKey: string,
@@ -65,12 +71,6 @@ export type State = {
      * encountered by the Google API.
      */
     errorType: ?string,
-
-    /**
-     * The email of the user currently logged in to the Google web client
-     * application.
-     */
-    googleProfileEmail: string,
 
     /**
      * The boundStreamID of the broadcast currently selected in the broadcast
@@ -106,7 +106,6 @@ export default class AbstractStartLiveStreamDialog
         this.state = {
             broadcasts: undefined,
             errorType: undefined,
-            googleProfileEmail: '',
             selectedBoundStreamID: undefined,
             streamKey: ''
         };
@@ -301,6 +300,7 @@ export function _mapStateToProps(state: Object) {
         _googleApiApplicationClientID:
             state['features/base/config'].googleApiApplicationClientID,
         _googleAPIState: state['features/google-api'].googleAPIState,
+        _googleProfileEmail: state['features/google-api'].profileEmail,
         _streamKey: state['features/recording'].streamKey
     };
 }

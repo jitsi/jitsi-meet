@@ -2,7 +2,10 @@
 
 import { ReducerRegistry } from '../base/redux';
 
-import { SET_GOOGLE_API_STATE } from './actionTypes';
+import {
+    SET_GOOGLE_API_PROFILE,
+    SET_GOOGLE_API_STATE
+} from './actionTypes';
 import { GOOGLE_API_STATES } from './constants';
 
 /**
@@ -11,7 +14,8 @@ import { GOOGLE_API_STATES } from './constants';
  * @type {{googleAPIState: number}}
  */
 const DEFAULT_STATE = {
-    googleAPIState: GOOGLE_API_STATES.NEEDS_LOADING
+    googleAPIState: GOOGLE_API_STATES.NEEDS_LOADING,
+    profileEmail: ''
 };
 
 /**
@@ -24,6 +28,11 @@ ReducerRegistry.register('features/google-api',
             return {
                 ...state,
                 googleAPIState: action.googleAPIState
+            };
+        case SET_GOOGLE_API_PROFILE:
+            return {
+                ...state,
+                profileEmail: action.profileEmail
             };
         }
 

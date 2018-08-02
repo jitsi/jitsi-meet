@@ -1,6 +1,9 @@
 /* @flow */
 
-import { SET_GOOGLE_API_STATE } from './actionTypes';
+import {
+    SET_GOOGLE_API_PROFILE,
+    SET_GOOGLE_API_STATE
+} from './actionTypes';
 import { GOOGLE_API_STATES } from './constants';
 import googleApi from './googleApi';
 
@@ -42,11 +45,11 @@ export function signIn() {
 }
 
 /**
- * Returns the profile that is currently used.
+ * Updates the profile data that is currently used.
  *
  * @returns {function(Dispatch<*>): Promise<string | never>}
  */
-export function getProfile() {
+export function updateProfile() {
     return (dispatch: Dispatch<*>) => googleApi.get()
         .then(() => googleApi.signInIfNotSignedIn())
         .then(() => dispatch({
@@ -54,7 +57,10 @@ export function getProfile() {
             googleAPIState: GOOGLE_API_STATES.SIGNED_IN
         }))
         .then(() => googleApi.getCurrentUserProfile())
-        .then(profile => profile.getEmail());
+        .then(profile => dispatch({
+            type: SET_GOOGLE_API_PROFILE,
+            profileEmail: profile.getEmail()
+        }));
 }
 
 /**
