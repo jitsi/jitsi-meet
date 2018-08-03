@@ -112,11 +112,21 @@ function initCommands() {
         const { name } = request;
 
         switch (name) {
-        case 'invite':
+        case 'invite': // eslint-disable-line no-case-declarations
+            const { invitees } = request;
+
+            if (!Array.isArray(invitees) || invitees.length === 0) {
+                callback({
+                    error: new Error('Unexpected format of invitees')
+                });
+
+                break;
+            }
+
             // The store should be already available because API.init is called
             // on appWillMount action.
             APP.store.dispatch(
-                invite(request.invitees, true))
+                invite(invitees, true))
                 .then(failedInvitees => {
                     let error;
                     let result;
