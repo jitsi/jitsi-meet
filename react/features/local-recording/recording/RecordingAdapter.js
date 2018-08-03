@@ -26,11 +26,11 @@ export class RecordingAdapter {
     }
 
     /**
-     * Initiates download of the recorded and encoded audio file.
+     * Export the recorded and encoded audio file.
      *
-     * @returns {void}
+     * @returns {Promise<Object>}
      */
-    download() {
+    exportRecordedData() {
         throw new Error('Not implemented');
     }
 

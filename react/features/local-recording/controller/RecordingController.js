@@ -5,7 +5,8 @@ import { i18next } from '../../base/i18n';
 import {
     FlacAdapter,
     OggAdapter,
-    WavAdapter
+    WavAdapter,
+    downloadBlob
 } from '../recording';
 import { sessionManager } from '../session';
 
@@ -320,7 +321,19 @@ class RecordingController {
      */
     downloadRecordedData(sessionToken: number) {
         if (this._adapters[sessionToken]) {
-            this._adapters[sessionToken].download();
+            this._adapters[sessionToken].exportRecordedData()
+                .then(args => {
+                    const { data, format } = args;
+
+                    const filename = `session_${sessionToken}`
+                        + `_${this._conference.myUserId()}.${format}`;
+
+                    downloadBlob(data, filename);
+                })
+                .catch(error => {
+                    logger.error('Failed to download audio for'
+                        + ` session ${sessionToken}. Error: ${error}`);
+                });
         } else {
             logger.error(`Invalid session token for download ${sessionToken}`);
         }

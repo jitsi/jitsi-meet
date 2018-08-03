@@ -1,5 +1,4 @@
 import { RecordingAdapter } from '../RecordingAdapter';
-import { downloadBlob, timestampString } from '../Utils';
 import {
     DEBUG,
     MAIN_THREAD_FINISH,
@@ -93,16 +92,19 @@ export class FlacAdapter extends RecordingAdapter {
     }
 
     /**
-     * Implements {@link RecordingAdapter#download()}.
+     * Implements {@link RecordingAdapter#exportRecordedData()}.
      *
      * @inheritdoc
      */
-    download() {
+    exportRecordedData() {
         if (this._data !== null) {
-            const audioURL = window.URL.createObjectURL(this._data);
-
-            downloadBlob(audioURL, `recording${timestampString()}.flac`);
+            return Promise.resolve({
+                data: this._data,
+                format: 'flac'
+            });
         }
+
+        return Promise.reject('No audio data recorded.');
     }
 
     /**

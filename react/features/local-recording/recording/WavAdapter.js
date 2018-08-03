@@ -1,5 +1,4 @@
 import { RecordingAdapter } from './RecordingAdapter';
-import { downloadBlob, timestampString } from './Utils';
 
 const logger = require('jitsi-meet-logger').getLogger(__filename);
 
@@ -98,16 +97,19 @@ export class WavAdapter extends RecordingAdapter {
     }
 
     /**
-     * Implements {@link RecordingAdapter#download()}.
+     * Implements {@link RecordingAdapter#exportRecordedData()}.
      *
      * @inheritdoc
      */
-    download() {
+    exportRecordedData() {
         if (this._data !== null) {
-            const audioURL = window.URL.createObjectURL(this._data);
-
-            downloadBlob(audioURL, `recording${timestampString()}.wav`);
+            return Promise.resolve({
+                data: this._data,
+                format: 'wav'
+            });
         }
+
+        return Promise.reject('No audio data recorded.');
     }
 
     /**

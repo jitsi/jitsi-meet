@@ -1,5 +1,4 @@
 import { RecordingAdapter } from './RecordingAdapter';
-import { downloadBlob, timestampString } from './Utils';
 
 const logger = require('jitsi-meet-logger').getLogger(__filename);
 
@@ -11,13 +10,21 @@ export class OggAdapter extends RecordingAdapter {
 
     /**
      * Instance of MediaRecorder.
+     * @private
      */
     _mediaRecorder = null;
 
     /**
      * Initialization promise.
+     * @private
      */
     _initPromise = null;
+
+    /**
+     * The recorded audio file.
+     * @private
+     */
+    _recordedData = null;
 
     /**
      * Implements {@link RecordingAdapter#start()}.
@@ -52,16 +59,19 @@ export class OggAdapter extends RecordingAdapter {
     }
 
     /**
-     * Implements {@link RecordingAdapter#download()}.
+     * Implements {@link RecordingAdapter#exportRecordedData()}.
      *
      * @inheritdoc
      */
-    download() {
+    exportRecordedData() {
         if (this._recordedData !== null) {
-            const audioURL = window.URL.createObjectURL(this._recordedData);
-
-            downloadBlob(audioURL, `recording${timestampString()}.ogg`);
+            return Promise.resolve({
+                data: this._recordedData,
+                format: 'ogg'
+            });
         }
+
+        return Promise.reject('No audio data recorded.');
     }
 
     /**
