@@ -7,6 +7,29 @@ import {
 } from './actionTypes';
 
 /**
+ * Queries for connected A/V input and output devices and updates the redux
+ * state of known devices.
+ *
+ * @returns {Function}
+ */
+export function getAvailableDevices() {
+    return dispatch => new Promise(resolve => {
+        const { mediaDevices } = JitsiMeetJS;
+
+        if (mediaDevices.isDeviceListAvailable()
+                && mediaDevices.isDeviceChangeAvailable()) {
+            mediaDevices.enumerateDevices(devices => {
+                dispatch(updateDeviceList(devices));
+
+                resolve(devices);
+            });
+        } else {
+            resolve([]);
+        }
+    });
+}
+
+/**
  * Signals to update the currently used audio input device.
  *
  * @param {string} deviceId - The id of the new audio input device.
@@ -36,29 +59,6 @@ export function setVideoInputDevice(deviceId) {
         type: SET_VIDEO_INPUT_DEVICE,
         deviceId
     };
-}
-
-/**
- * Queries for connected A/V input and output devices and updates the redux
- * state of known devices.
- *
- * @returns {Function}
- */
-export function updateAvailableDevices() {
-    return dispatch => new Promise(resolve => {
-        const { mediaDevices } = JitsiMeetJS;
-
-        if (mediaDevices.isDeviceListAvailable()
-                && mediaDevices.isDeviceChangeAvailable()) {
-            mediaDevices.enumerateDevices(devices => {
-                dispatch(updateDeviceList(devices));
-
-                resolve(devices);
-            });
-        } else {
-            resolve([]);
-        }
-    });
 }
 
 /**

@@ -45,8 +45,8 @@ import {
     setDesktopSharingEnabled
 } from './react/features/base/conference';
 import {
+    getAvailableDevices,
     setAudioOutputDeviceId,
-    updateAvailableDevices,
     updateDeviceList
 } from './react/features/base/devices';
 import {
@@ -2316,7 +2316,7 @@ export default {
 
             const { dispatch } = APP.store;
 
-            return dispatch(updateAvailableDevices())
+            return dispatch(getAvailableDevices())
                 .then(devices => {
                     // Ugly way to synchronize real device IDs with local
                     // storage and settings menu. This is a workaround until
