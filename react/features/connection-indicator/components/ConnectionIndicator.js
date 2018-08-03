@@ -133,6 +133,16 @@ class ConnectionIndicator extends Component {
             autoHideTimeout: null,
 
             /**
+             * The end-to-end round trip time.
+             */
+            e2eRtt: -1,
+
+            /**
+             * The region.
+             */
+            region: 'unknown',
+
+            /**
              * Whether or not a CSS class should be applied to the root for
              * hiding the connection indicator. By default the indicator should
              * start out hidden because the current connection status is not
@@ -161,6 +171,7 @@ class ConnectionIndicator extends Component {
 
         // Bind event handlers so they are only bound once for every instance.
         this._onStatsUpdated = this._onStatsUpdated.bind(this);
+        this._onE2eRttUpdated = this._onE2eRttUpdated.bind(this);
         this._onToggleShowMore = this._onToggleShowMore.bind(this);
     }
 
@@ -172,7 +183,7 @@ class ConnectionIndicator extends Component {
      */
     componentDidMount() {
         statsEmitter.subscribeToClientStats(
-            this.props.userID, this._onStatsUpdated);
+            this.props.userID, this._onStatsUpdated, this._onE2eRttUpdated);
     }
 
     /**
@@ -342,6 +353,21 @@ class ConnectionIndicator extends Component {
     }
 
     /**
+     * The callback invoked when the end-to-end RTT changes.
+     *
+     * @param {number} e2eRtt - The new RTT.
+     * @param {string} region - The region.
+     * @returns {void}
+     * @private
+     */
+    _onE2eRttUpdated(e2eRtt, region) {
+        this.setState({
+            e2eRtt,
+            region
+        });
+    }
+
+    /**
      * Callback to invoke when the show more link in the popover content is
      * clicked. Sets the state which will determine if the popover should show
      * additional statistics about the connection.
@@ -415,16 +441,19 @@ class ConnectionIndicator extends Component {
             resolution,
             transport
         } = this.state.stats;
+        const { e2eRtt, region } = this.state;
 
         return (
             <ConnectionStatsTable
                 bandwidth = { bandwidth }
                 bitrate = { bitrate }
                 connectionSummary = { this._getConnectionStatusTip() }
+                e2eRtt = { e2eRtt }
                 framerate = { framerate }
                 isLocalVideo = { this.props.isLocalVideo }
                 onShowMore = { this._onToggleShowMore }
                 packetLoss = { packetLoss }
+                region = { region }
                 resolution = { resolution }
                 shouldShowMore = { this.state.showMoreStats }
                 transport = { transport } />

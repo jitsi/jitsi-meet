@@ -14,6 +14,7 @@ export const JitsiConnectionErrors = JitsiMeetJS.errors.connection;
 export const JitsiConnectionEvents = JitsiMeetJS.events.connection;
 export const JitsiConnectionQualityEvents
     = JitsiMeetJS.events.connectionQuality;
+export const JitsiE2ePingEvents = JitsiMeetJS.events.e2eping;
 export const JitsiMediaDevicesEvents = JitsiMeetJS.events.mediaDevices;
 export const JitsiParticipantConnectionStatus
     = JitsiMeetJS.constants.participantConnectionStatus;

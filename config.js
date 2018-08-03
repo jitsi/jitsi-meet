@@ -347,6 +347,18 @@ var config = {
         // userRegion: "asia"
     }
 
+    // Options related to end-to-end (participant to participant) ping.
+    // e2eping: {
+    //   // The interval in milliseconds at which pings will be sent.
+    //   // Defaults to 10000, set to <= 0 to disable.
+    //   pingInterval: 10000,
+    //
+    //   // The interval in milliseconds at which analytics events
+    //   // with the measured RTT will be sent. Defaults to 60000, set
+    //   // to <= 0 to disable.
+    //   analyticsInterval: 60000,
+    //   }
+
     // List of undocumented settings used in jitsi-meet
     /**
      _immediateReloadThreshold

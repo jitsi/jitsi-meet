@@ -2,7 +2,10 @@
 
 import _ from 'lodash';
 
-import { JitsiConnectionQualityEvents } from '../base/lib-jitsi-meet';
+import {
+    JitsiConnectionQualityEvents,
+    JitsiE2ePingEvents
+} from '../base/lib-jitsi-meet';
 
 declare var APP: Object;
 
@@ -14,6 +17,11 @@ declare var APP: Object;
  * }
  */
 const subscribers = {};
+
+/**
+ * Contains all the callbacks to be notified when the end-to-end RTT is updated.
+ */
+const e2eRttSubscribers = {};
 
 /**
  * A singleton that acts as a pub/sub service for connection stat updates.
@@ -33,6 +41,11 @@ const statsEmitter = {
 
         conference.on(JitsiConnectionQualityEvents.REMOTE_STATS_UPDATED,
             (id, stats) => this._emitStatsUpdate(id, stats));
+
+        conference.on(
+            JitsiE2ePingEvents.E2E_RTT_CHANGED,
+            (participant, e2eRtt) => this._emitE2eRttUpdate(
+                participant, e2eRtt));
     },
 
     /**
@@ -40,11 +53,14 @@ const statsEmitter = {
      * user id.
      *
      * @param {string} id - The user id whose stats updates are of interest.
-     * @param {Function} callback - The function to invoke when stats for the
-     * user have been updated.
+     * @param {Function} statsCallback - The function to invoke when stats for
+     * the user have been updated.
+     * @param {Function} e2eRttCallback - The function to invoke when the
+     * end-to-end RTT is updated.
      * @returns {void}
      */
-    subscribeToClientStats(id: ?string, callback: Function) {
+    subscribeToClientStats(
+            id: ?string, statsCallback: Function, e2eRttCallback: Function) {
         if (!id) {
             return;
         }
@@ -52,8 +68,12 @@ const statsEmitter = {
         if (!subscribers[id]) {
             subscribers[id] = [];
         }
+        subscribers[id].push(statsCallback);
 
-        subscribers[id].push(callback);
+        if (!e2eRttSubscribers[id]) {
+            e2eRttSubscribers[id] = [];
+        }
+        e2eRttSubscribers[id].push(e2eRttCallback);
     },
 
     /**
@@ -94,6 +114,24 @@ const statsEmitter = {
 
         callbacks.forEach(callback => {
             callback(stats);
+        });
+    },
+
+    /**
+     * Emits an update to the listeners for end-to-end RTT updates.
+     *
+     * @param {JitsiParticipant} participant - The participant.
+     * @param {number} e2eRtt - The RTT.
+     * @returns {void}
+     * @private
+     */
+    _emitE2eRttUpdate(participant: Object, e2eRtt: number = -1) {
+        const id = participant.getId();
+        const region = participant.getProperty('region');
+        const callbacks = e2eRttSubscribers[id] || [];
+
+        callbacks.forEach(callback => {
+            callback(e2eRtt, region);
         });
     },
 
