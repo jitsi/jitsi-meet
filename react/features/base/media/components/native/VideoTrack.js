@@ -19,7 +19,7 @@ class VideoTrack extends AbstractVideoTrack {
     static propTypes = AbstractVideoTrack.propTypes
 
     /**
-     * Renders video element with animation.
+     * Renders the video element for the associated video track.
      *
      * @override
      * @returns {ReactElement}

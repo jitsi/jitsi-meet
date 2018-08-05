@@ -17,7 +17,7 @@ export default StyleSheet.create({
      * that can be visible on special occasions, such as during device rotate
      * animation, or PiP mode.
      */
-    videoTransformedViewContaier: {
+    videoTransformedViewContainer: {
         overflow: 'hidden'
     },
 
