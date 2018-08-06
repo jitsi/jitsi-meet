@@ -222,7 +222,7 @@ class ConnectionStatsTable extends Component {
      * Creates a table row as a ReactElement for displaying end-to-end RTT and
      * the region.
      *
-     * @returns {*}
+     * @returns {ReactElement}
      * @private
      */
     _renderE2eRtt() {

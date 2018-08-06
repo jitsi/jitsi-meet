@@ -19,11 +19,6 @@ declare var APP: Object;
 const subscribers = {};
 
 /**
- * Contains all the callbacks to be notified when the end-to-end RTT is updated.
- */
-const e2eRttSubscribers = {};
-
-/**
  * A singleton that acts as a pub/sub service for connection stat updates.
  */
 const statsEmitter = {
@@ -53,14 +48,11 @@ const statsEmitter = {
      * user id.
      *
      * @param {string} id - The user id whose stats updates are of interest.
-     * @param {Function} statsCallback - The function to invoke when stats for
-     * the user have been updated.
-     * @param {Function} e2eRttCallback - The function to invoke when the
-     * end-to-end RTT is updated.
+     * @param {Function} callback - The function to invoke when stats for the
+     * user have been updated.
      * @returns {void}
      */
-    subscribeToClientStats(
-            id: ?string, statsCallback: Function, e2eRttCallback: Function) {
+    subscribeToClientStats(id: ?string, callback: Function) {
         if (!id) {
             return;
         }
@@ -68,12 +60,8 @@ const statsEmitter = {
         if (!subscribers[id]) {
             subscribers[id] = [];
         }
-        subscribers[id].push(statsCallback);
 
-        if (!e2eRttSubscribers[id]) {
-            e2eRttSubscribers[id] = [];
-        }
-        e2eRttSubscribers[id].push(e2eRttCallback);
+        subscribers[id].push(callback);
     },
 
     /**
@@ -128,10 +116,10 @@ const statsEmitter = {
     _emitE2eRttUpdate(participant: Object, e2eRtt: number = -1) {
         const id = participant.getId();
         const region = participant.getProperty('region');
-        const callbacks = e2eRttSubscribers[id] || [];
+        const callbacks = subscribers[id] || [];
 
         callbacks.forEach(callback => {
-            callback(e2eRtt, region);
+            callback(null /* stats */, e2eRtt, region);
         });
     },
 

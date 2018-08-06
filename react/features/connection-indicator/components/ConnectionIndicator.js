@@ -171,7 +171,6 @@ class ConnectionIndicator extends Component {
 
         // Bind event handlers so they are only bound once for every instance.
         this._onStatsUpdated = this._onStatsUpdated.bind(this);
-        this._onE2eRttUpdated = this._onE2eRttUpdated.bind(this);
         this._onToggleShowMore = this._onToggleShowMore.bind(this);
     }
 
@@ -183,7 +182,7 @@ class ConnectionIndicator extends Component {
      */
     componentDidMount() {
         statsEmitter.subscribeToClientStats(
-            this.props.userID, this._onStatsUpdated, this._onE2eRttUpdated);
+            this.props.userID, this._onStatsUpdated);
     }
 
     /**
@@ -331,40 +330,42 @@ class ConnectionIndicator extends Component {
      * statistics.
      *
      * @param {Object} stats - Connection stats from the library.
+     * @param {number} e2eRtt - The end-to-end round trip time in milliseconds.
+     * @param {string} region - The remote participant's region.
      * @private
      * @returns {void}
      */
-    _onStatsUpdated(stats = {}) {
-        const { connectionQuality } = stats;
-        const newPercentageState = typeof connectionQuality === 'undefined'
-            ? {} : { percent: connectionQuality };
-        const newStats = Object.assign(
-            {},
-            this.state.stats,
-            stats,
-            newPercentageState);
-
-        this.setState({
-            stats: newStats
-        });
-
+    _onStatsUpdated(stats = {}, e2eRtt, region) {
         // Rely on React to batch setState actions.
-        this._updateIndicatorAutoHide(newStats.percent);
-    }
+        if (stats) {
+            const { connectionQuality } = stats;
+            const newPercentageState = typeof connectionQuality === 'undefined'
+                ? {} : { percent: connectionQuality };
+            const newStats = Object.assign(
+                {},
+                this.state.stats,
+                stats,
+                newPercentageState);
 
-    /**
-     * The callback invoked when the end-to-end RTT changes.
-     *
-     * @param {number} e2eRtt - The new RTT.
-     * @param {string} region - The region.
-     * @returns {void}
-     * @private
-     */
-    _onE2eRttUpdated(e2eRtt, region) {
-        this.setState({
-            e2eRtt,
-            region
-        });
+            this.setState({
+                stats: newStats
+            });
+
+            this._updateIndicatorAutoHide(newStats.percent);
+        }
+
+        if (e2eRtt) {
+            this.setState({
+                e2eRtt
+            });
+        }
+
+        if (region) {
+            this.setState({
+                region
+            });
+        }
+
     }
 
     /**
