@@ -1,31 +1,10 @@
 // @flow
 
 import {
-    ADD_TRANSCRIPT_MESSAGE,
     ENDPOINT_MESSAGE_RECEIVED,
     REMOVE_TRANSCRIPT_MESSAGE,
     UPDATE_TRANSCRIPT_MESSAGE
 } from './actionTypes';
-
-/**
- * Signals that a transcript with a new message_id is received.
- *
- * @param {string} transcriptMessageID - The new message_id.
- * @param {string} participantName - The participant name of the sender.
- * @returns {{
- *      type: ADD_TRANSCRIPT_MESSAGE,
- *      transcriptMessageID: string,
- *      participantName: string
- * }}
- */
-export function addTranscriptMessage(transcriptMessageID: string,
-        participantName: string) {
-    return {
-        type: ADD_TRANSCRIPT_MESSAGE,
-        transcriptMessageID,
-        participantName
-    };
-}
 
 /**
  * Signals that a participant sent an endpoint message on the data channel.
@@ -63,7 +42,7 @@ export function removeTranscriptMessage(transcriptMessageID: string) {
 }
 
 /**
- * Signals that a transcript with an existing message_id to be updated
+ * Signals that a transcript with the given message_id to be added or updated
  * is received.
  *
  * @param {string} transcriptMessageID -The transcript message_id to be updated.
