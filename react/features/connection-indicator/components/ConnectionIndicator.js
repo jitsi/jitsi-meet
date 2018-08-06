@@ -160,6 +160,7 @@ class ConnectionIndicator extends Component {
         };
 
         // Bind event handlers so they are only bound once for every instance.
+        this._onStatsClick = this._onStatsClick.bind(this);
         this._onStatsUpdated = this._onStatsUpdated.bind(this);
         this._onToggleShowMore = this._onToggleShowMore.bind(this);
     }
@@ -223,6 +224,7 @@ class ConnectionIndicator extends Component {
                 className = { rootClassNames }
                 content = { this._renderStatisticsTable() }
                 disablePopover = { !this.props.enableStatsDisplay }
+                onContentClick = { this._onStatsClick }
                 position = { this.props.statsPopoverPosition }>
                 <div className = 'popover-trigger'>
                     <div
@@ -312,6 +314,17 @@ class ConnectionIndicator extends Component {
             || connectionStatus === JitsiParticipantConnectionStatus.INTERRUPTED
             || connectionStatus === JitsiParticipantConnectionStatus.INACTIVE
             ? 'show-connection-indicator' : 'hide-connection-indicator';
+    }
+
+    /**
+     * Callback invoked to swallow the click on {@code ConnectionStatsTable}.
+     *
+     * @param {Object} event - The click event from the DOM.
+     * @private
+     * @returns {void}
+     */
+    _onStatsClick(event) {
+        event.stopPropagation();
     }
 
     /**

@@ -11,6 +11,7 @@ import {
 } from '../../../react/features/base/participants';
 import { SHARED_VIDEO_CONTAINER_TYPE } from '../shared_video/SharedVideo';
 import SharedVideoThumb from '../shared_video/SharedVideoThumb';
+import { getLocalVideoTrack } from '../../../react/features/base/tracks';
 
 import Filmstrip from './Filmstrip';
 import UIEvents from '../../../service/UI/UIEvents';
@@ -20,10 +21,7 @@ import RemoteVideo from './RemoteVideo';
 import LargeVideoManager from './LargeVideoManager';
 import { VIDEO_CONTAINER_TYPE } from './VideoContainer';
 
-import LocalVideo from './LocalVideo';
-
 const remoteVideos = {};
-let localVideoThumbnail = null;
 
 let eventEmitter = null;
 
@@ -63,7 +61,6 @@ function getAllParticipants() {
  */
 function getAllThumbnails() {
     return [
-        localVideoThumbnail,
         ...Object.values(remoteVideos)
     ];
 }
@@ -94,10 +91,6 @@ function getCurrentRemoteDominantSpeakerID() {
  * DOM element
  */
 function getPeerContainerResourceId(containerElement) {
-    if (localVideoThumbnail.container === containerElement) {
-        return localVideoThumbnail.id;
-    }
-
     const i = containerElement.id.indexOf('participant_');
 
     if (i >= 0) {
@@ -108,15 +101,6 @@ function getPeerContainerResourceId(containerElement) {
 const VideoLayout = {
     init(emitter) {
         eventEmitter = emitter;
-
-        localVideoThumbnail = new LocalVideo(
-            VideoLayout,
-            emitter,
-            this._updateLargeVideoIfDisplayed.bind(this));
-
-        // sets default video type of local video
-        // FIXME container type is totally different thing from the video type
-        localVideoThumbnail.setVideoType(VIDEO_CONTAINER_TYPE);
 
         // if we do not resize the thumbs here, if there is no video device
         // the local video thumb maybe one pixel
@@ -179,10 +163,6 @@ const VideoLayout = {
         const localId = APP.conference.getMyUserId();
 
         this.onVideoTypeChanged(localId, stream.videoType);
-
-        localVideoThumbnail.changeVideo(stream);
-
-        this._updateLargeVideoIfDisplayed(localId);
     },
 
     /**
@@ -195,11 +175,6 @@ const VideoLayout = {
         if (largeVideo && !largeVideo.id) {
             this.updateLargeVideo(APP.conference.getMyUserId(), true);
         }
-
-        // FIXME: replace this call with a generic update call once SmallVideo
-        // only contains a ReactElement. Then remove this call once the
-        // Filmstrip is fully in React.
-        localVideoThumbnail.updateIndicators();
     },
 
     /**
@@ -209,8 +184,6 @@ const VideoLayout = {
      */
     setDeviceAvailabilityIcons(id, devices) {
         if (APP.conference.isLocalId(id)) {
-            localVideoThumbnail.setDeviceAvailabilityIcons(devices);
-
             return;
         }
 
@@ -230,25 +203,11 @@ const VideoLayout = {
      * @param enable {true} to enable device availability icons
      */
     enableDeviceAvailabilityIcons(id, enable) {
-        let video;
-
-        if (APP.conference.isLocalId(id)) {
-            video = localVideoThumbnail;
-        } else {
-            video = remoteVideos[id];
-        }
+        const video = remoteVideos[id];
 
         if (video) {
             video.enableDeviceAvailabilityIcons(enable);
         }
-    },
-
-    /**
-     * Shows/hides local video.
-     * @param {boolean} true to make the local video visible, false - otherwise
-     */
-    setLocalVideoVisible(visible) {
-        localVideoThumbnail.setVisible(visible);
     },
 
     /**
@@ -551,14 +510,6 @@ const VideoLayout = {
      * On local or remote participants.
      */
     showModeratorIndicator() {
-        const isModerator = APP.conference.isModerator;
-
-        if (isModerator) {
-            localVideoThumbnail.addModeratorIndicator();
-        } else {
-            localVideoThumbnail.removeModeratorIndicator();
-        }
-
         APP.conference.listMembers().forEach(member => {
             const id = member.getId();
             const remoteVideo = remoteVideos[id];
@@ -573,14 +524,6 @@ const VideoLayout = {
 
             remoteVideo.updateRemoteVideoMenu();
         });
-    },
-
-    /*
-     * Shows or hides the audio muted indicator over the local thumbnail video.
-     * @param {boolean} isMuted
-     */
-    showLocalAudioIndicator(isMuted) {
-        localVideoThumbnail.showAudioIndicator(isMuted);
     },
 
     /**
@@ -606,32 +549,24 @@ const VideoLayout = {
      * On audio muted event.
      */
     onAudioMute(id, isMuted) {
-        if (APP.conference.isLocalId(id)) {
-            localVideoThumbnail.showAudioIndicator(isMuted);
-        } else {
-            const remoteVideo = remoteVideos[id];
+        const remoteVideo = remoteVideos[id];
 
-            if (!remoteVideo) {
-                return;
-            }
-
-            remoteVideo.showAudioIndicator(isMuted);
-            remoteVideo.updateRemoteVideoMenu(isMuted);
+        if (!remoteVideo) {
+            return;
         }
+
+        remoteVideo.showAudioIndicator(isMuted);
+        remoteVideo.updateRemoteVideoMenu(isMuted);
     },
 
     /**
      * On video muted event.
      */
     onVideoMute(id, value) {
-        if (APP.conference.isLocalId(id)) {
-            localVideoThumbnail.setVideoMutedView(value);
-        } else {
-            const remoteVideo = remoteVideos[id];
+        const remoteVideo = remoteVideos[id];
 
-            if (remoteVideo) {
-                remoteVideo.setVideoMutedView(value);
-            }
+        if (remoteVideo) {
+            remoteVideo.setVideoMutedView(value);
         }
 
         if (this.isCurrentlyOnLarge(id)) {
@@ -644,15 +579,10 @@ const VideoLayout = {
      * Display name changed.
      */
     onDisplayNameChanged(id, displayName, status) {
-        if (id === 'localVideoContainer'
-            || APP.conference.isLocalId(id)) {
-            localVideoThumbnail.setDisplayName(displayName);
-        } else {
-            const remoteVideo = remoteVideos[id];
+        const remoteVideo = remoteVideos[id];
 
-            if (remoteVideo) {
-                remoteVideo.setDisplayName(displayName, status);
-            }
+        if (remoteVideo) {
+            remoteVideo.setDisplayName(displayName, status);
         }
     },
 
@@ -660,9 +590,7 @@ const VideoLayout = {
      * Sets the "raised hand" status for a participant identified by 'id'.
      */
     setRaisedHandStatus(id, raisedHandStatus) {
-        const video
-            = APP.conference.isLocalId(id)
-                ? localVideoThumbnail : remoteVideos[id];
+        const video = remoteVideos[id];
 
         if (video) {
             video.showRaisedHandIndicator(raisedHandStatus);
@@ -704,10 +632,6 @@ const VideoLayout = {
      */
     onParticipantConnectionStatusChanged(id, status) {
         if (APP.conference.isLocalId(id)) {
-            // Maintain old logic of passing in either interrupted or active
-            // to updateConnectionStatus.
-            localVideoThumbnail.updateConnectionStatus(status);
-
             if (status === JitsiParticipantConnectionStatus.INTERRUPTED) {
                 largeVideo && largeVideo.onVideoInterrupted();
             } else {
@@ -791,7 +715,6 @@ const VideoLayout = {
                 remoteVideo.removeConnectionIndicator();
             }
         }
-        localVideoThumbnail.removeConnectionIndicator();
     },
 
     removeParticipantContainer(id) {
@@ -825,19 +748,12 @@ const VideoLayout = {
 
         let smallVideo;
 
-        if (APP.conference.isLocalId(id)) {
-            if (!localVideoThumbnail) {
-                logger.warn('Local video not ready yet');
-
-                return;
-            }
-            smallVideo = localVideoThumbnail;
-        } else if (remoteVideos[id]) {
+        if (remoteVideos[id]) {
             smallVideo = remoteVideos[id];
-        } else {
+            smallVideo && smallVideo.setVideoType(newVideoType);
+        } else if (!APP.conference.isLocalId(id)) {
             return;
         }
-        smallVideo.setVideoType(newVideoType);
 
         if (this.isCurrentlyOnLarge(id)) {
             this.updateLargeVideo(id, true);
@@ -872,10 +788,6 @@ const VideoLayout = {
     },
 
     getSmallVideo(id) {
-        if (APP.conference.isLocalId(id)) {
-            return localVideoThumbnail;
-        }
-
         return remoteVideos[id];
 
     },
@@ -937,15 +849,29 @@ const VideoLayout = {
         const currentContainerType = largeVideo.getCurrentContainerType();
         const currentId = largeVideo.id;
         const isOnLarge = this.isCurrentlyOnLarge(id);
-        const smallVideo = this.getSmallVideo(id);
+        let smallVideo;
+
+        if (APP.conference.isLocalId(id)) {
+            // As a bridge between reactification, create a dummy object to
+            // mimic the API of SmallVideo.
+            smallVideo = {
+                getVideoStream() {
+                    const tracks = APP.store.getState()['features/base/tracks'];
+                    const localVideo = getLocalVideoTrack(tracks);
+
+                    return (localVideo && localVideo.jitsiTrack) || null;
+                }
+            };
+        } else {
+            smallVideo = this.getSmallVideo(id);
+        }
 
         if (isOnLarge && !forceUpdate
                 && LargeVideoManager.isVideoContainer(currentContainerType)
                 && smallVideo) {
             const currentStreamId = currentContainer.getStreamID();
-            const newStreamId
-                = smallVideo.videoStream
-                    ? smallVideo.videoStream.getId() : null;
+            const newStream = smallVideo.getVideoStream();
+            const newStreamId = (newStream && newStream.getId()) || null;
 
             // FIXME it might be possible to get rid of 'forceUpdate' argument
             if (currentStreamId !== newStreamId) {
@@ -969,18 +895,20 @@ const VideoLayout = {
                 oldSmallVideo = this.getSmallVideo(currentId);
             }
 
-            smallVideo.waitForResolutionChange();
-            if (oldSmallVideo) {
+            smallVideo.waitForResolutionChange
+                && smallVideo.waitForResolutionChange();
+
+            if (oldSmallVideo && oldSmallVideo.waitForResolutionChange) {
                 oldSmallVideo.waitForResolutionChange();
             }
 
             largeVideo.updateLargeVideo(
                 id,
-                smallVideo.videoStream,
+                smallVideo.getVideoStream(),
                 videoType || VIDEO_TYPE.CAMERA
             ).then(() => {
                 // update current small video and the old one
-                smallVideo.updateView();
+                smallVideo.updateView && smallVideo.updateView();
                 oldSmallVideo && oldSmallVideo.updateView();
             }, () => {
                 // use clicked other video during update, nothing to do.
@@ -989,7 +917,7 @@ const VideoLayout = {
         } else if (currentId) {
             const currentSmallVideo = this.getSmallVideo(currentId);
 
-            currentSmallVideo.updateView();
+            currentSmallVideo && currentSmallVideo.updateView();
         }
     },
 

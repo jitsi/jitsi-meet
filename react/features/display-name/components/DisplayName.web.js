@@ -95,6 +95,7 @@ class DisplayName extends Component {
 
         // Bind event handlers so they are only bound once for every instance.
         this._onChange = this._onChange.bind(this);
+        this._onInputClick = this._onInputClick.bind(this);
         this._onKeyDown = this._onKeyDown.bind(this);
         this._onStartEditing = this._onStartEditing.bind(this);
         this._onSubmit = this._onSubmit.bind(this);
@@ -137,6 +138,7 @@ class DisplayName extends Component {
                     id = 'editDisplayName'
                     onBlur = { this._onSubmit }
                     onChange = { this._onChange }
+                    onClick = { this._onInputClick }
                     onKeyDown = { this._onKeyDown }
                     placeholder = { t('defaultNickname') }
                     ref = { this._setNameInputRef }
@@ -187,15 +189,17 @@ class DisplayName extends Component {
      * Updates the component to display an editable input field and sets the
      * initial value to the current display name.
      *
+     * @param {Event} event - The DOM click event.
      * @private
      * @returns {void}
      */
-    _onStartEditing() {
+    _onStartEditing(event) {
         if (this.props.allowEditing) {
             this.setState({
                 isEditing: true,
                 editDisplayNameValue: this.props.displayName || ''
             });
+            event.stopPropagation();
         }
     }
 
@@ -234,6 +238,17 @@ class DisplayName extends Component {
      */
     _setNameInputRef(element) {
         this._nameInput = element;
+    }
+
+    /**
+     * Callback invoked on clicking the display name edit.
+     *
+     * @param {Object} event - The DOM click event.
+     * @private
+     * @returns {void}
+     */
+    _onInputClick(event) {
+        event.stopPropagation();
     }
 }
 

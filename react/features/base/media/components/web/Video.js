@@ -41,6 +41,11 @@ class Video extends Component {
         onVideoPlaying: PropTypes.func,
 
         /**
+         * Optional callback to invoke when the video resolution resizes.
+         */
+        onVideoResolutionChange: PropTypes.func,
+
+        /**
          * The JitsiLocalTrack to display.
          */
         videoTrack: PropTypes.object
@@ -67,6 +72,7 @@ class Video extends Component {
 
         // Bind event handlers so they are only bound once for every instance.
         this._onVideoPlaying = this._onVideoPlaying.bind(this);
+        this._onVideoResize = this._onVideoResize.bind(this);
         this._setVideoElement = this._setVideoElement.bind(this);
     }
 
@@ -80,7 +86,7 @@ class Video extends Component {
     componentDidMount() {
         this._videoElement.volume = 0;
         this._videoElement.onplaying = this._onVideoPlaying;
-
+        this._videoElement.onresize = this._onVideoResize;
         this._attachTrack(this.props.videoTrack);
     }
 
@@ -174,9 +180,32 @@ class Video extends Component {
      * @returns {void}
      */
     _onVideoPlaying() {
+        this._videoHeight = this._videoElement.videoHeight;
+        this._videoWidth = this._videoElement.videoWidth;
+
         if (this.props.onVideoPlaying) {
             this.props.onVideoPlaying();
         }
+    }
+
+    /**
+     * Invokes the onresize callback if defined.
+     *
+     * @private
+     * @returns {void}
+     */
+    _onVideoResize() {
+        if (this.props.onVideoResolutionChange) {
+            this.props.onVideoResolutionChange({
+                oldHeight: this._videoHeight,
+                oldWidth: this._videoWidth,
+                height: this._videoElement.videoHeight,
+                width: this._videoElement.videoWidth
+            });
+        }
+
+        this._videoHeight = this._videoElement.videoHeight;
+        this._videoWidth = this._videoElement.videoWidth;
     }
 
     /**

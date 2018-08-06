@@ -8,7 +8,7 @@ import { AtlasKitThemeProvider } from '@atlaskit/theme';
 import { Provider } from 'react-redux';
 
 import { i18next } from '../../../react/features/base/i18n';
-import { AudioLevelIndicator }
+import { StatelessAudioLevelIndicator }
     from '../../../react/features/audio-level-indicator';
 import {
     Avatar as AvatarDisplay,
@@ -401,7 +401,7 @@ SmallVideo.prototype.updateAudioLevelIndicator = function(lvl = 0) {
 
     if (audioLevelContainer) {
         ReactDOM.render(
-            <AudioLevelIndicator
+            <StatelessAudioLevelIndicator
                 audioLevel = { lvl }/>,
             audioLevelContainer);
     }
@@ -862,6 +862,15 @@ SmallVideo.prototype._unmountIndicators = function() {
 SmallVideo.prototype._onPopoverHover = function(popoverIsHovered) {
     this._popoverIsHovered = popoverIsHovered;
     this.updateView();
+};
+
+/**
+ * Returns the JitsiMeet track associated with tis {@code SmallVideo}.
+ *
+ * @returns {Object}
+ */
+SmallVideo.prototype.getVideoStream = function() {
+    return this.videoStream;
 };
 
 export default SmallVideo;

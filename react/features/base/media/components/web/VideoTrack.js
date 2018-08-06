@@ -43,7 +43,12 @@ class VideoTrack extends AbstractVideoTrack {
          * The value of the id attribute of the video. Used by the torture tests
          * to locate video elements.
          */
-        id: PropTypes.string
+        id: PropTypes.string,
+
+        /**
+         * Optional callback to invoke when the video resolution resizes.
+         */
+        onVideoResolutionChange: PropTypes.func
     };
 
     /**
@@ -59,6 +64,7 @@ class VideoTrack extends AbstractVideoTrack {
                 className = { this.props.className }
                 id = { this.props.id }
                 onVideoPlaying = { this._onVideoPlaying }
+                onVideoResolutionChange = { this.props.onVideoResolutionChange }
                 videoTrack = { this.props.videoTrack } />
         );
     }

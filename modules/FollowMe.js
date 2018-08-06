@@ -18,6 +18,7 @@
 const logger = require('jitsi-meet-logger').getLogger(__filename);
 
 import {
+    getLocalParticipant,
     getPinnedParticipant,
     pinParticipant
 } from '../react/features/base/participants';
@@ -443,11 +444,11 @@ class FollowMe {
      */
     _pinVideoThumbnailById(clickId, pin) {
         const self = this;
-        const smallVideo = VideoLayout.getSmallVideo(clickId);
 
         // If the SmallVideo for the given clickId exists we proceed with the
         // pin/unpin.
-        if (smallVideo) {
+        if (VideoLayout.getSmallVideo(clickId)
+            || getLocalParticipant(APP.store.getState()).id === clickId) {
             this.nextOnStageTimer = 0;
             clearTimeout(this.nextOnStageTimout);
 
