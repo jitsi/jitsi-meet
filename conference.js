@@ -45,6 +45,7 @@ import {
     setDesktopSharingEnabled
 } from './react/features/base/conference';
 import {
+    getAvailableDevices,
     setAudioOutputDeviceId,
     updateDeviceList
 } from './react/features/base/devices';
@@ -2129,20 +2130,6 @@ export default {
             }
         );
 
-        APP.UI.addListener(
-            UIEvents.AUDIO_OUTPUT_DEVICE_CHANGED,
-            audioOutputDeviceId => {
-                sendAnalytics(createDeviceChangedEvent('audio', 'output'));
-                setAudioOutputDeviceId(audioOutputDeviceId, APP.store.dispatch)
-                    .then(() => logger.log('changed audio output device'))
-                    .catch(err => {
-                        logger.warn('Failed to change audio output device. '
-                            + 'Default or previously set audio output device '
-                            + 'will be used instead.', err);
-                    });
-            }
-        );
-
         APP.UI.addListener(UIEvents.TOGGLE_AUDIO_ONLY, audioOnly => {
 
             // FIXME On web video track is stored both in redux and in
@@ -2314,39 +2301,43 @@ export default {
     /**
      * Inits list of current devices and event listener for device change.
      * @private
+     * @returns {Promise}
      */
     _initDeviceList() {
         const { mediaDevices } = JitsiMeetJS;
 
         if (mediaDevices.isDeviceListAvailable()
                 && mediaDevices.isDeviceChangeAvailable()) {
-            mediaDevices.enumerateDevices(devices => {
-                // Ugly way to synchronize real device IDs with local storage
-                // and settings menu. This is a workaround until
-                // getConstraints() method will be implemented in browsers.
-                const { dispatch } = APP.store;
-
-                if (this.localAudio) {
-                    dispatch(updateSettings({
-                        micDeviceId: this.localAudio.getDeviceId()
-                    }));
-                }
-                if (this.localVideo) {
-                    dispatch(updateSettings({
-                        cameraDeviceId: this.localVideo.getDeviceId()
-                    }));
-                }
-
-                APP.store.dispatch(updateDeviceList(devices));
-                APP.UI.onAvailableDevicesChanged(devices);
-            });
-
             this.deviceChangeListener = devices =>
                 window.setTimeout(() => this._onDeviceListChanged(devices), 0);
             mediaDevices.addEventListener(
                 JitsiMediaDevicesEvents.DEVICE_LIST_CHANGED,
                 this.deviceChangeListener);
+
+            const { dispatch } = APP.store;
+
+            return dispatch(getAvailableDevices())
+                .then(devices => {
+                    // Ugly way to synchronize real device IDs with local
+                    // storage and settings menu. This is a workaround until
+                    // getConstraints() method will be implemented in browsers.
+                    if (this.localAudio) {
+                        dispatch(updateSettings({
+                            micDeviceId: this.localAudio.getDeviceId()
+                        }));
+                    }
+
+                    if (this.localVideo) {
+                        dispatch(updateSettings({
+                            cameraDeviceId: this.localVideo.getDeviceId()
+                        }));
+                    }
+
+                    APP.UI.onAvailableDevicesChanged(devices);
+                });
         }
+
+        return Promise.resolve();
     },
 
     /**

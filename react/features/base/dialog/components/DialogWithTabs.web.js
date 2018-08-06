@@ -104,6 +104,28 @@ class DialogWithTabs extends Component<Props, State> {
     }
 
     /**
+     * Gets the props to pass into the tab component.
+     *
+     * @param {number} tabId - The index of the tab configuration within
+     * {@link this.state.tabStates}.
+     * @returns {Object}
+     */
+    _getTabProps(tabId) {
+        const { tabs } = this.props;
+        const { tabStates } = this.state;
+        const tabConfiguration = tabs[tabId];
+        const currentTabState = tabStates[tabId];
+
+        if (tabConfiguration.propsUpdateFunction) {
+            return tabConfiguration.propsUpdateFunction(
+                currentTabState,
+                tabConfiguration.props);
+        }
+
+        return { ...currentTabState };
+    }
+
+    /**
      * Renders the tabs from the tab information passed on props.
      *
      * @returns {void}
@@ -155,10 +177,11 @@ class DialogWithTabs extends Component<Props, State> {
             <div className = { styles }>
                 <TabComponent
                     closeDialog = { closeDialog }
+                    mountCallback = { this.props.tabs[tabId].onMount }
                     onTabStateChange
                         = { this._onTabStateChange }
                     tabId = { tabId }
-                    { ...this.state.tabStates[tabId] } />
+                    { ...this._getTabProps(tabId) } />
             </div>);
     }
 

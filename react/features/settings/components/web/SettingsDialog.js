@@ -3,6 +3,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
+import { getAvailableDevices } from '../../../base/devices';
 import { DialogWithTabs, hideDialog } from '../../../base/dialog';
 import {
     DeviceSelection,
@@ -77,6 +78,9 @@ class SettingsDialog extends Component<Props> {
         const tabs = _tabs.map(tab => {
             return {
                 ...tab,
+                onMount: tab.onMount
+                    ? (...args) => dispatch(tab.onMount(...args))
+                    : undefined,
                 submit: (...args) => dispatch(tab.submit(...args))
             };
         });
@@ -133,7 +137,22 @@ function _mapStateToProps(state) {
             name: SETTINGS_TABS.DEVICES,
             component: DeviceSelection,
             label: 'settings.devices',
+            onMount: getAvailableDevices,
             props: getDeviceSelectionDialogProps(state),
+            propsUpdateFunction: (tabState, newProps) => {
+                // Ensure the device selection tab gets updated when new devices
+                // are found by taking the new props and only preserving the
+                // current user selected devices. If this were not done, the
+                // tab would keep using a copy of the initial props it received,
+                // leaving the device list to become stale.
+
+                return {
+                    ...newProps,
+                    selectedAudioInputId: tabState.selectedAudioInputId,
+                    selectedAudioOutputId: tabState.selectedAudioOutputId,
+                    selectedVideoInputId: tabState.selectedVideoInputId
+                };
+            },
             styles: 'settings-pane devices-pane',
             submit: submitDeviceSelectionTab
         });

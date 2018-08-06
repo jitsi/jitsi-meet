@@ -12,6 +12,8 @@ import AudioOutputPreview from './AudioOutputPreview';
 import DeviceSelector from './DeviceSelector';
 import VideoInputPreview from './VideoInputPreview';
 
+const logger = require('jitsi-meet-logger').getLogger(__filename);
+
 /**
  * The type of the React {@code Component} props of {@link DeviceSelection}.
  */
@@ -63,6 +65,12 @@ export type Props = {
      * rendered.
      */
     hideAudioOutputSelect: boolean,
+
+    /**
+     * An optional callback to invoke after the component has completed its
+     * mount logic.
+     */
+    mountCallback?: Function,
 
     /**
      * The id of the audio input device to preview.
@@ -134,8 +142,12 @@ class DeviceSelection extends AbstractDialogTab<Props, State> {
      * @inheritdoc
      */
     componentDidMount() {
-        this._createAudioInputTrack(this.props.selectedAudioInputId);
-        this._createVideoInputTrack(this.props.selectedVideoInputId);
+        Promise.all([
+            this._createAudioInputTrack(this.props.selectedAudioInputId),
+            this._createVideoInputTrack(this.props.selectedVideoInputId)
+        ])
+        .catch(err => logger.warn('Failed to initialize preview tracks', err))
+        .then(() => this.props.mountCallback && this.props.mountCallback());
     }
 
     /**
@@ -212,7 +224,7 @@ class DeviceSelection extends AbstractDialogTab<Props, State> {
      * @returns {void}
      */
     _createAudioInputTrack(deviceId) {
-        this._disposeAudioInputPreview()
+        return this._disposeAudioInputPreview()
             .then(() => createLocalTrack('audio', deviceId))
             .then(jitsiLocalTrack => {
                 this.setState({
@@ -234,7 +246,7 @@ class DeviceSelection extends AbstractDialogTab<Props, State> {
      * @returns {void}
      */
     _createVideoInputTrack(deviceId) {
-        this._disposeVideoInputPreview()
+        return this._disposeVideoInputPreview()
             .then(() => createLocalTrack('video', deviceId))
             .then(jitsiLocalTrack => {
                 if (!jitsiLocalTrack) {
