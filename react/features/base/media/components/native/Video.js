@@ -93,7 +93,7 @@ export default class Video extends Component<*> {
                     ? 'contain'
                     : (style && style.objectFit) || 'cover';
             const rtcView
-                = ( // eslint-disable-line no-extra-parens
+                = (
                     <RTCView
                         mirror = { this.props.mirror }
                         objectFit = { objectFit }

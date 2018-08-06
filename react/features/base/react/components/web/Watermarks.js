@@ -105,7 +105,7 @@ class Watermarks extends Component<*, *> {
         let reactElement = null;
 
         if (this.state.showBrandWatermark) {
-            reactElement = ( // eslint-disable-line no-extra-parens
+            reactElement = (
                 <div
                     className = 'watermark rightwatermark'
                     style = { _RIGHT_WATERMARK_STYLE } />
@@ -114,7 +114,7 @@ class Watermarks extends Component<*, *> {
             const { brandWatermarkLink } = this.state;
 
             if (brandWatermarkLink) {
-                reactElement = ( // eslint-disable-line no-extra-parens
+                reactElement = (
                     <a
                         href = { brandWatermarkLink }
                         target = '_new'>
@@ -144,7 +144,7 @@ class Watermarks extends Component<*, *> {
             const { jitsiWatermarkLink } = this.state;
 
             if (jitsiWatermarkLink) {
-                reactElement = ( // eslint-disable-line no-extra-parens
+                reactElement = (
                     <a
                         href = { jitsiWatermarkLink }
                         target = '_new'>

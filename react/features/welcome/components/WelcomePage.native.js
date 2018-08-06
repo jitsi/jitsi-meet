@@ -230,7 +230,6 @@ class WelcomePage extends AbstractWelcomePage {
         const { t } = this.props;
         let children;
 
-        /* eslint-disable no-extra-parens */
 
         if (this.state.joining) {
             // TouchableHighlight is picky about what its children can be, so
@@ -251,7 +250,6 @@ class WelcomePage extends AbstractWelcomePage {
             );
         }
 
-        /* eslint-enable no-extra-parens */
 
         const buttonDisabled = this._isJoinDisabled();
 

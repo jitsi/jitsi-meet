@@ -280,7 +280,6 @@ class ConnectionStatsTable extends Component {
         if (packetLoss) {
             const { download, upload } = packetLoss;
 
-            // eslint-disable-next-line no-extra-parens
             packetLossTableData = (
                 <td>
                     <span className = 'connection-info__download'>
@@ -392,7 +391,6 @@ class ConnectionStatsTable extends Component {
         const { t, transport } = this.props;
 
         if (!transport || transport.length === 0) {
-            // eslint-disable-next-line no-extra-parens
             const NA = (
                 <tr key = 'address'>
                     <td>

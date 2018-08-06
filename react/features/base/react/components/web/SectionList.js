@@ -60,7 +60,6 @@ export default class SectionList extends Component<Props> {
          */
         if (sections) {
             return (
-            /* eslint-disable no-extra-parens */
                 <Container
                     className = 'navigate-section-list'>
                     {
@@ -83,7 +82,6 @@ export default class SectionList extends Component<Props> {
                         )
                     }
                 </Container>
-            /* eslint-enable no-extra-parens */
             );
         }
 

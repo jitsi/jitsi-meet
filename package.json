@@ -88,7 +88,7 @@
     "clean-css": "3.4.25",
     "css-loader": "0.28.7",
     "eslint": "4.12.1",
-    "eslint-config-jitsi": "github:jitsi/eslint-config-jitsi#v0.1.0",
+    "eslint-config-jitsi": "github:jitsi/eslint-config-jitsi#7474f6668515eb5852f1273dc5a50b940a550d3f",
     "eslint-plugin-flowtype": "2.39.1",
     "eslint-plugin-import": "2.8.0",
     "eslint-plugin-jsdoc": "3.2.0",

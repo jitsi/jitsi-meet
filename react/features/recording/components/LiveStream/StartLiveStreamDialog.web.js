@@ -237,7 +237,7 @@ class StartLiveStreamDialog
 
         switch (this.props._googleAPIState) {
         case GOOGLE_API_STATES.LOADED:
-            googleContent = ( // eslint-disable-line no-extra-parens
+            googleContent = (
                 <GoogleSignInButton
                     onClick = { this._onGoogleSignIn }
                     text = { t('liveStreaming.signIn') } />
@@ -247,7 +247,7 @@ class StartLiveStreamDialog
             break;
 
         case GOOGLE_API_STATES.SIGNED_IN:
-            googleContent = ( // eslint-disable-line no-extra-parens
+            googleContent = (
                 <BroadcastsDropdown
                     broadcasts = { broadcasts }
                     onBroadcastSelected = { this._onYouTubeBroadcastIDSelected }
@@ -259,7 +259,7 @@ class StartLiveStreamDialog
              * that also accepts the anchor. This can be done using the Trans
              * component of react-i18next but I couldn't get it working...
              */
-            helpText = ( // eslint-disable-line no-extra-parens
+            helpText = (
                 <div>
                     { `${t('liveStreaming.chooseCTA',
                         { email: _googleProfileEmail })} ` }
@@ -273,7 +273,7 @@ class StartLiveStreamDialog
 
         case GOOGLE_API_STATES.NEEDS_LOADING:
         default:
-            googleContent = ( // eslint-disable-line no-extra-parens
+            googleContent = (
                 <Spinner
                     isCompleting = { false }
                     size = 'medium' />
@@ -283,7 +283,7 @@ class StartLiveStreamDialog
         }
 
         if (this.state.errorType !== undefined) {
-            googleContent = ( // eslint-disable-line no-extra-parens
+            googleContent = (
                 <GoogleSignInButton
                     onClick = { this._onRequestGoogleSignIn }
                     text = { t('liveStreaming.signIn') } />

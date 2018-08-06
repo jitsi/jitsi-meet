@@ -101,7 +101,7 @@ class OverflowMenuItem extends Component<Props> {
      * @returns {ReactElement}
      */
     _renderText() {
-        const textElement = ( // eslint-disable-line no-extra-parens
+        const textElement = (
             <span className = 'overflow-menu-item-text'>
                 { this.props.text }
             </span>
