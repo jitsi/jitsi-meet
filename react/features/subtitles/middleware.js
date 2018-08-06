@@ -10,8 +10,6 @@ import {
 
 const logger = require('jitsi-meet-logger').getLogger(__filename);
 
-declare var APP: Object;
-
 /**
  * The type of json-message which indicates that json carries a
  * transcription result.
@@ -85,15 +83,14 @@ function _endpointMessageReceived({ dispatch, getState }, next, action) {
 
             const newTranscriptMessage = {
                 participantName,
-                final: json.text
+                final: json.text,
+                clearTimeOut: undefined
             };
 
+            setClearerOnTranscriptMessage(dispatch,
+                transcriptMessageID, newTranscriptMessage);
             dispatch(updateTranscriptMessage(transcriptMessageID,
                 newTranscriptMessage));
-
-            setTimeout(() => {
-                dispatch(removeTranscriptMessage(transcriptMessageID));
-            }, REMOVE_AFTER_MS);
 
         } else if (json.type === JSON_TYPE_TRANSCRIPTION_RESULT
             && !translationLanguage) {
@@ -109,6 +106,9 @@ function _endpointMessageReceived({ dispatch, getState }, next, action) {
                 = { ...getState()['features/subtitles'].transcriptMessages
                     .get(transcriptMessageID) || { participantName } };
 
+            setClearerOnTranscriptMessage(dispatch,
+                transcriptMessageID, newTranscriptMessage);
+
             // If this is final result, update the state as a final result
             // and start a count down to remove the subtitle from the state
             if (!isInterim) {
@@ -116,10 +116,6 @@ function _endpointMessageReceived({ dispatch, getState }, next, action) {
                 newTranscriptMessage.final = text;
                 dispatch(updateTranscriptMessage(transcriptMessageID,
                     newTranscriptMessage));
-
-                setTimeout(() => {
-                    dispatch(removeTranscriptMessage(transcriptMessageID));
-                }, REMOVE_AFTER_MS);
             } else if (stability > 0.85) {
 
                 // If the message has a high stability, we can update the
@@ -145,4 +141,27 @@ function _endpointMessageReceived({ dispatch, getState }, next, action) {
     }
 
     return next(action);
+}
+
+/**
+ * Set a timeout on a TranscriptMessage object so it clears itself when it's not
+ * updated.
+ *
+ * @param {Function} dispatch - Dispatch remove action to store.
+ * @param {string} transcriptMessageID - The id of the message to remove.
+ * @param {Object} transcriptMessage - The message to remove.
+ *
+ * @returns {void}
+ */
+function setClearerOnTranscriptMessage(
+        dispatch,
+        transcriptMessageID,
+        transcriptMessage) {
+    if (transcriptMessage.clearTimeOut) {
+        clearTimeout(transcriptMessage.clearTimeOut);
+    }
+
+    transcriptMessage.clearTimeOut = setTimeout(() => {
+        dispatch(removeTranscriptMessage(transcriptMessageID));
+    }, REMOVE_AFTER_MS);
 }
