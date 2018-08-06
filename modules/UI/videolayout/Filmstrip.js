@@ -3,10 +3,9 @@
 import { setFilmstripVisible } from '../../../react/features/filmstrip';
 import {
     LAYOUTS,
-    calculateColumnCount,
-    calculateRowCount,
     getCurrentLayout,
     getMaxColumnCount,
+    getTileViewGridDimensions,
     shouldDisplayTileView
 } from '../../../react/features/video-layout';
 
@@ -472,18 +471,20 @@ const Filmstrip = {
 
         const state = APP.store.getState();
 
-        const maxColumns = getMaxColumnCount();
-        const columnsToDisplay = calculateColumnCount(state, maxColumns);
-
         const viewWidth = document.body.clientWidth - sideMargins;
         const viewHeight = document.body.clientHeight - topBottomPadding;
 
-        // Find the smallest constraint given the view size to keep the
-        // thumbnails contained within the view. FIXME: finalize sizing logic
-        // as for now it has been written by a math-illiterate.
-        const constraint = Math.min(viewHeight * tileAspectRatio, viewWidth);
-        const widthOfEach = constraint / columnsToDisplay;
-        const heightOfEach = widthOfEach / tileAspectRatio;
+        const {
+            columns,
+            visibleRows
+        } = getTileViewGridDimensions(state, getMaxColumnCount());
+        const initialWidth = viewWidth / columns;
+        const aspectRatioHeight = initialWidth / tileAspectRatio;
+
+        const heightOfEach = Math.min(
+            aspectRatioHeight,
+            viewHeight / visibleRows);
+        const widthOfEach = tileAspectRatio * heightOfEach;
 
         return {
             localVideo: {
@@ -511,9 +512,11 @@ const Filmstrip = {
         if (shouldDisplayTileView(state)) {
             // The size of the side margins for each tile as set in CSS.
             const sideMargins = 10 * 2;
-            const columns = calculateColumnCount(state, getMaxColumnCount());
-            const totalRowCount = calculateRowCount(state, columns);
-            const hasOverflow = totalRowCount > columns;
+            const {
+                columns,
+                rows
+            } = getTileViewGridDimensions(state, getMaxColumnCount());
+            const hasOverflow = rows > columns;
 
             // Width is set so that the flex layout can automatically wrap
             // tiles onto new rows.

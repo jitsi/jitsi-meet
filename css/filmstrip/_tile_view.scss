@@ -97,6 +97,10 @@
         align-content: baseline;
     }
 
+    .has-overflow .videocontainer {
+        align-self: baseline;
+    }
+
     /**
      * Firefox flex acts a little differently. To make sure the bottom row of
      * thumbnails is not overlapped by the horizontal toolbar, margin is added
