@@ -324,6 +324,7 @@ class ConnectionIndicator extends Component {
      * @returns {void}
      */
     _onStatsUpdated(stats = {}) {
+        // Rely on React to batch setState actions.
         const { connectionQuality } = stats;
         const newPercentageState = typeof connectionQuality === 'undefined'
             ? {} : { percent: connectionQuality };
@@ -337,7 +338,6 @@ class ConnectionIndicator extends Component {
             stats: newStats
         });
 
-        // Rely on React to batch setState actions.
         this._updateIndicatorAutoHide(newStats.percent);
     }
 
@@ -410,8 +410,10 @@ class ConnectionIndicator extends Component {
         const {
             bandwidth,
             bitrate,
+            e2eRtt,
             framerate,
             packetLoss,
+            region,
             resolution,
             transport
         } = this.state.stats;
@@ -421,10 +423,12 @@ class ConnectionIndicator extends Component {
                 bandwidth = { bandwidth }
                 bitrate = { bitrate }
                 connectionSummary = { this._getConnectionStatusTip() }
+                e2eRtt = { e2eRtt }
                 framerate = { framerate }
                 isLocalVideo = { this.props.isLocalVideo }
                 onShowMore = { this._onToggleShowMore }
                 packetLoss = { packetLoss }
+                region = { region }
                 resolution = { resolution }
                 shouldShowMore = { this.state.showMoreStats }
                 transport = { transport } />

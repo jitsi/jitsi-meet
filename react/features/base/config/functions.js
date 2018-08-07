@@ -96,6 +96,7 @@ const WHITELISTED_KEYS = [
     'disableRtx',
     'disableSuspendVideo',
     'displayJids',
+    'e2eping',
     'enableDisplayNameInStats',
     'enableLayerSuspension',
     'enableLipSync',

@@ -47,7 +47,7 @@
     "js-md5": "0.6.1",
     "jsc-android": "224109.1.0",
     "jwt-decode": "2.2.0",
-    "lib-jitsi-meet": "github:jitsi/lib-jitsi-meet#2be752fc88ff71e454c6b9178b21a33b59c53f41",
+    "lib-jitsi-meet": "github:jitsi/lib-jitsi-meet#e097a1189ed99838605d90b959e129155bc0e50a",
     "lodash": "4.17.4",
     "moment": "2.19.4",
     "moment-duration-format": "2.2.2",

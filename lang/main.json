@@ -198,6 +198,7 @@
         "packetloss": "Packet loss:",
         "resolution": "Resolution:",
         "framerate": "Frame rate:",
+        "e2e_rtt": "E2E RTT:",
         "less": "Show less",
         "more": "Show more",
         "address": "Address:",
