@@ -248,6 +248,12 @@ const googleApi = {
                     .client.calendar.calendarList.list();
             })
             .then(calendarList => {
+
+                // no result, maybe not signed in
+                if (!calendarList) {
+                    return Promise.resolve();
+                }
+
                 const calendarIds
                     = calendarList.result.items.map(en => en.id);
                 const promises = calendarIds.map(id => {

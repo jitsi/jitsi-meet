@@ -154,12 +154,8 @@ export function showAccountSelection() {
  */
 export function getCalendarEntries(
         fetchStartDays: ?number, fetchEndDays: ?number) {
-    return (dispatch: Dispatch<*>) => googleApi.get()
-        .then(() => googleApi.signInIfNotSignedIn())
-        .then(() => dispatch({
-            type: SET_GOOGLE_API_STATE,
-            googleAPIState: GOOGLE_API_STATES.SIGNED_IN
-        }))
+    return () =>
+        googleApi.get()
         .then(() =>
             googleApi._getCalendarEntries(fetchStartDays, fetchEndDays));
 }
