@@ -1,34 +1,13 @@
-import { RecordingAdapter } from './RecordingAdapter';
+import { AbstractAudioContextAdapter } from './AbstractAudioContextAdapter';
 
 const logger = require('jitsi-meet-logger').getLogger(__filename);
 
 const WAV_BITS_PER_SAMPLE = 16;
-const WAV_SAMPLE_RATE = 44100;
 
 /**
  * Recording adapter for raw WAVE format.
  */
-export class WavAdapter extends RecordingAdapter {
-
-    /**
-     * The current {@code MediaStream} instance.
-     */
-    _stream = null;
-
-    /**
-     * {@code AudioContext} instance.
-     */
-    _audioContext = null;
-
-    /**
-     * {@code ScriptProcessorNode} instance, which receives the raw PCM bits.
-     */
-    _audioProcessingNode = null;
-
-    /**
-     * {@code MediaStreamAudioSourceNode} instance, which represents the mic.
-     */
-    _audioSource = null;
+export class WavAdapter extends AbstractAudioContextAdapter {
 
     /**
      * Length of the WAVE file, in number of samples.
@@ -55,8 +34,7 @@ export class WavAdapter extends RecordingAdapter {
      */
     constructor() {
         super();
-
-        this._onReceivePCM = this._onReceivePCM.bind(this);
+        this._onAudioProcess = this._onAudioProcess.bind(this);
     }
 
     /**
@@ -73,9 +51,7 @@ export class WavAdapter extends RecordingAdapter {
             this._wavBuffers = [];
             this._wavLength = 0;
 
-            this._audioSource.connect(this._audioProcessingNode);
-            this._audioProcessingNode
-                .connect(this._audioContext.destination);
+            this._connectAudioGraph();
         });
     }
 
@@ -85,10 +61,8 @@ export class WavAdapter extends RecordingAdapter {
      * @inheritdoc
      */
     stop() {
-        this._audioProcessingNode.disconnect();
-        this._audioSource.disconnect();
+        this._disconnectAudioGraph();
         this._data = this._exportMonoWAV(this._wavBuffers, this._wavLength);
-        this._audioContext = null;
         this._audioProcessingNode = null;
         this._audioSource = null;
         this._isInitialized = false;
@@ -150,34 +124,6 @@ export class WavAdapter extends RecordingAdapter {
     }
 
     /**
-     * Replaces the current microphone MediaStream.
-     *
-     * @param {*} micDeviceId - New microphone ID.
-     * @returns {Promise}
-     */
-    _replaceMic(micDeviceId) {
-        if (this._audioContext && this._audioProcessingNode) {
-            return new Promise((resolve, reject) => {
-                this._getAudioStream(micDeviceId).then(newStream => {
-                    const newSource = this._audioContext
-                        .createMediaStreamSource(newStream);
-
-                    this._audioSource.disconnect();
-                    newSource.connect(this._audioProcessingNode);
-                    this._stream = newStream;
-                    this._audioSource = newSource;
-                    resolve();
-                })
-                .catch(() => {
-                    reject();
-                });
-            });
-        }
-
-        return Promise.resolve();
-    }
-
-    /**
      * Creates a WAVE file header.
      *
      * @private
@@ -209,11 +155,11 @@ export class WavAdapter extends RecordingAdapter {
         view.setUint16(22, 1, true);
 
         // SampleRate
-        view.setUint32(24, WAV_SAMPLE_RATE, true);
+        view.setUint32(24, this._sampleRate, true);
 
         // ByteRate
         view.setUint32(28,
-            Number(WAV_SAMPLE_RATE) * 1 * WAV_BITS_PER_SAMPLE / 8, true);
+            Number(this._sampleRate) * 1 * WAV_BITS_PER_SAMPLE / 8, true);
 
         // BlockAlign
         view.setUint16(32, 1 * Number(WAV_BITS_PER_SAMPLE) / 8, true);
@@ -244,51 +190,31 @@ export class WavAdapter extends RecordingAdapter {
             return Promise.resolve();
         }
 
-        const p = new Promise((resolve, reject) => {
-            this._getAudioStream(micDeviceId)
-            .then(stream => {
-                this._stream = stream;
-                this._audioContext = new AudioContext({
-                    sampleRate: WAV_SAMPLE_RATE
-                });
-                this._audioSource
-                    = this._audioContext.createMediaStreamSource(stream);
-                this._audioProcessingNode
-                    = this._audioContext.createScriptProcessor(4096, 1, 1);
-                this._audioProcessingNode.onaudioprocess = e => {
-                    const channelLeft = e.inputBuffer.getChannelData(0);
-
-                    // See: https://developer.mozilla.org/en-US/docs/Web/API/
-                    //      AudioBuffer/getChannelData
-                    // The returned value is an Float32Array.
-                    this._onReceivePCM(channelLeft);
-                };
+        return this._initializeAudioContext(micDeviceId, this._onAudioProcess)
+            .then(() => {
                 this._isInitialized = true;
-                resolve();
-            })
-            .catch(err => {
-                logger.error(`Error calling getUserMedia(): ${err}`);
-                reject();
             });
-        });
-
-        return p;
     }
 
     /**
-     * Callback function that saves the PCM bits.
+     * Callback function for handling AudioProcessingEvents.
      *
      * @private
-     * @param {Float32Array} data - The audio PCM data.
+     * @param {AudioProcessingEvent} e - The event containing the raw PCM.
      * @returns {void}
      */
-    _onReceivePCM(data) {
+    _onAudioProcess(e) {
+        // See: https://developer.mozilla.org/en-US/docs/Web/API/
+        //      AudioBuffer/getChannelData
+        // The returned value is an Float32Array.
+        const channelLeft = e.inputBuffer.getChannelData(0);
+
         // Need to copy the Float32Array:
         // unlike passing to WebWorker, this data is passed by reference,
         // so we need to copy it, otherwise the resulting audio file will be
         // just repeating the last segment.
-        this._wavBuffers.push(new Float32Array(data));
-        this._wavLength += data.length;
+        this._wavBuffers.push(new Float32Array(channelLeft));
+        this._wavLength += channelLeft.length;
     }
 
     /**
