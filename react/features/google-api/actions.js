@@ -14,9 +14,16 @@ import googleApi from './googleApi';
  * @returns {Function}
  */
 export function loadGoogleAPI(clientId: string) {
-    return (dispatch: Dispatch<*>) =>
+    return (dispatch: Dispatch<*>, getState: Function) =>
         googleApi.get()
-        .then(() => googleApi.initializeClient(clientId))
+        .then(() => {
+            if (getState()['features/google-api'].googleAPIState
+                    === GOOGLE_API_STATES.NEEDS_LOADING) {
+                return googleApi.initializeClient(clientId);
+            }
+
+            return Promise.resolve();
+        })
         .then(() => dispatch({
             type: SET_GOOGLE_API_STATE,
             googleAPIState: GOOGLE_API_STATES.LOADED }))
