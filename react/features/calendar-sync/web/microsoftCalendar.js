@@ -242,7 +242,17 @@ export class MicrosoftCalendarApi {
             };
             this._currentRequest = {};
 
-            this._dispatch(setCalendarAPIState(CALENDAR_API_STATES.SIGNED_IN));
+            this._dispatch(
+                setCalendarAPIAuthState({
+                    authState: undefined,
+                    accessToken: validatedPayload.accessToken,
+                    idToken: validatedPayload.idToken,
+                    tokenExpires: validatedPayload.tokenExpires
+                }));
+            this._dispatch(
+                setCalendarProfileEmail(validatedPayload.userSigninName));
+            this._dispatch(
+                setCalendarAPIState(CALENDAR_API_STATES.SIGNED_IN));
         } else {
             logger.warn('token is not valid');
 
@@ -302,15 +312,10 @@ export class MicrosoftCalendarApi {
             return null;
         }
 
-        this._dispatch(setCalendarAPIAuthState({
-            authState: undefined,
-            accessToken: tokenInfo.access_token,
-            tokenExpires: expires.getTime(),
-            idToken
-        }));
-        this._dispatch(setCalendarProfileEmail(payload.preferred_username));
-
         return {
+            accessToken: tokenInfo.access_token,
+            idToken,
+            tokenExpires: expires.getTime(),
             userDisplayName: payload.name,
             userSigninName: payload.preferred_username,
             userDomainType:
