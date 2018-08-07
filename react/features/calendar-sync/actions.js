@@ -100,13 +100,13 @@ export function setCalendarAPIState(newState: ?number) {
 }
 
 /**
- * Prompts the participant to sign in..
+ * Prompts the participant to sign in.
  *
  * @returns {function(Dispatch<*>, Function): Promise<string | never>}
  */
 export function signIn() {
     return (dispatch: Dispatch<*>, getState: Function): Promise<*> => {
-        const calendarType = getState()['features/calendar-sync'].calendarType;
+        const { calendarType } = getState()['features/calendar-sync'];
         const api = _getCalendarIntegration(
             calendarType, {
                 dispatch,
@@ -114,7 +114,7 @@ export function signIn() {
             });
 
         if (!api) {
-            return Promise.resolve();
+            return Promise.reject('No calendar type selected!');
         }
 
         return dispatch(api.signIn());

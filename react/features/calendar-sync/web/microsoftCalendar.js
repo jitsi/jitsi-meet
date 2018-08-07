@@ -109,7 +109,7 @@ export class MicrosoftCalendarApi {
 
             // not authorized, skip
             if (!getState()['features/calendar-sync'].msAuthState) {
-                return Promise.resolve();
+                return Promise.reject('Not authorized, please sign in!');
             }
 
             return new Promise((resolve, reject) => {
