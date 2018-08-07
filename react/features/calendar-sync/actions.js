@@ -2,11 +2,14 @@
 
 import {
     REFRESH_CALENDAR,
+    SET_CALENDAR_AUTH_STATE,
     SET_CALENDAR_AUTHORIZATION,
     SET_CALENDAR_API_STATE,
     SET_CALENDAR_EVENTS,
+    SET_CALENDAR_PROFILE_EMAIL,
     SET_CALENDAR_TYPE
 } from './actionTypes';
+import { _getCalendarIntegration } from './functions';
 
 /**
  * Sends an action to refresh the entry list (fetches new data).
@@ -93,5 +96,59 @@ export function setCalendarAPIState(newState: ?number) {
     return {
         type: SET_CALENDAR_API_STATE,
         apiState: newState
+    };
+}
+
+/**
+ * Prompts the participant to sign in..
+ *
+ * @returns {function(Dispatch<*>, Function): Promise<string | never>}
+ */
+export function signIn() {
+    return (dispatch: Dispatch<*>, getState: Function): Promise<*> => {
+        const calendarType = getState()['features/calendar-sync'].calendarType;
+        const api = _getCalendarIntegration(
+            calendarType, {
+                dispatch,
+                getState
+            });
+
+        if (!api) {
+            return Promise.resolve();
+        }
+
+        return dispatch(api.signIn());
+    };
+}
+
+/**
+ * Sends an action to update the current calendar api auth state in redux.
+ *
+ * @param {number} newState - The new state.
+ * @returns {{
+ *     type: SET_CALENDAR_AUTH_STATE,
+ *     msAuthState: Object
+ * }}
+ */
+export function setCalendarAPIAuthState(newState: ?Object) {
+    return {
+        type: SET_CALENDAR_AUTH_STATE,
+        msAuthState: newState
+    };
+}
+
+/**
+ * Sends an action to update the current calendar profile email state in redux.
+ *
+ * @param {number} newEmail - The new email.
+ * @returns {{
+ *     type: SET_CALENDAR_AUTH_STATE,
+ *     email: Object
+ * }}
+ */
+export function setCalendarProfileEmail(newEmail: string) {
+    return {
+        type: SET_CALENDAR_PROFILE_EMAIL,
+        email: newEmail
     };
 }

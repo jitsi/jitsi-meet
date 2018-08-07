@@ -16,6 +16,11 @@ const logger = require('jitsi-meet-logger').getLogger(__filename);
 declare var config: Object;
 
 /**
+ * The calendar integration single instance.
+ */
+let calendarIntegrationInstance;
+
+/**
  * Determines whether the calendar feature is enabled by the web.
  *
  * @returns {boolean} If the app has enabled the calendar feature, {@code true};
@@ -44,7 +49,7 @@ export function _fetchCalendarEntries(
     /* eslint-enable no-unused-vars */
     const { dispatch, getState } = store;
     const calendarType = getState()['features/calendar-sync'].calendarType;
-    const api = _getCalendarIntegration(calendarType);
+    const api = _getCalendarIntegration(calendarType, store);
 
     if (!api) {
         logger.debug('No calendar type available');
@@ -52,7 +57,7 @@ export function _fetchCalendarEntries(
         return;
     }
 
-    api.init(dispatch, getState)
+    api.init()
         .then(() => dispatch(
             api.getCalendarEntries(FETCH_START_DAYS, FETCH_END_DAYS)))
         .then(_updateCalendarEntries.bind(store))
@@ -65,14 +70,25 @@ export function _fetchCalendarEntries(
  *
  * @param {string} calendarType - The calendar type api
  * as defined in CALENDAR_TYPE.
+ * @param {Object} store - The redux store.
  * @returns {Object}
  * @private
  */
-export function _getCalendarIntegration(calendarType) {
-    switch (calendarType) {
-    case CALENDAR_TYPE.GOOGLE:
-        return new GoogleCalendarApi(config.googleApiApplicationClientID);
-    case CALENDAR_TYPE.MICROSOFT:
-        return new MicrosoftCalendarApi(config.microsoftApiApplicationClientID);
+export function _getCalendarIntegration(calendarType, store) {
+    if (!calendarIntegrationInstance) {
+        switch (calendarType) {
+        case CALENDAR_TYPE.GOOGLE:
+            calendarIntegrationInstance
+                = new GoogleCalendarApi(
+                    config.googleApiApplicationClientID, store);
+            break;
+        case CALENDAR_TYPE.MICROSOFT:
+            calendarIntegrationInstance
+                = new MicrosoftCalendarApi(
+                    config.microsoftApiApplicationClientID, store);
+            break;
+        }
     }
+
+    return calendarIntegrationInstance;
 }

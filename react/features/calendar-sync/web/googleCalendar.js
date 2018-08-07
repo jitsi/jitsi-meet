@@ -1,6 +1,6 @@
 /* @flow */
 
-import { getCalendarEntries, loadGoogleAPI } from '../../google-api';
+import { getCalendarEntries, loadGoogleAPI, signIn } from '../../google-api';
 
 /**
  * Loads and interacts with the Google Calendar API.
@@ -9,29 +9,39 @@ export class GoogleCalendarApi {
     _appClientID: ?string;
 
     /**
+     * The redux {@code dispatch} function.
+     */
+    _dispatch: Dispatch<*>;
+
+    /**
+     * The redux function that gets/retrieves the redux state.
+     */
+    _getState: Function;
+
+    /**
      * Initializes a new Google Calendar API instance.
      *
      * @param {string} appClientID - The ID for the Google client application
      * used to init the API.
+     * @param {Object} store - The redux store.
      */
-    constructor(appClientID: ?string) {
+    constructor(appClientID: ?string, store: Object) {
         this._appClientID = appClientID;
+        this._dispatch = store.dispatch;
+        this._getState = store.getState;
     }
 
     /**
      * Initializes the google api if needed.
      *
-     * @param {Dispatch} dispatch - The redux {@code dispatch} function.
-     * @param {Function} getState - The redux function that gets/retrieves the
-     * redux state.
      * @returns {function(Dispatch<*>): Promise<void>}
      */
-    init(dispatch: Function, getState: Function): Promise<void> {
-        if (getState()['features/calendar-sync'].apiState !== 0) {
+    init(): Promise<void> {
+        if (this._getState()['features/calendar-sync'].apiState !== 0) {
             return Promise.resolve();
         }
 
-        return dispatch(loadGoogleAPI(this._appClientID));
+        return this._dispatch(loadGoogleAPI(this._appClientID));
     }
 
     /**
@@ -44,5 +54,14 @@ export class GoogleCalendarApi {
      */
     getCalendarEntries(fetchStartDays: ?number, fetchEndDays: ?number) {
         return getCalendarEntries(fetchStartDays, fetchEndDays);
+    }
+
+    /**
+     * Prompts the participant to sign in to the Google API Client Library.
+     *
+     * @returns {function(Dispatch<*>): Promise<string|never>}
+     */
+    signIn() {
+        return signIn();
     }
 }

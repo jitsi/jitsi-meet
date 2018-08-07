@@ -6,8 +6,10 @@ import { PersistenceRegistry } from '../base/storage';
 
 import {
     SET_CALENDAR_API_STATE,
+    SET_CALENDAR_AUTH_STATE,
     SET_CALENDAR_AUTHORIZATION,
     SET_CALENDAR_EVENTS,
+    SET_CALENDAR_PROFILE_EMAIL,
     SET_CALENDAR_TYPE
 } from './actionTypes';
 import { CALENDAR_ENABLED, DEFAULT_STATE } from './constants';
@@ -36,7 +38,8 @@ const STORE_NAME = 'features/calendar-sync';
 CALENDAR_ENABLED
     && PersistenceRegistry.register(STORE_NAME, {
         knownDomains: true,
-        calendarType: true
+        calendarType: true,
+        msAuthState: true
     });
 
 CALENDAR_ENABLED
@@ -55,6 +58,18 @@ CALENDAR_ENABLED
         case SET_CALENDAR_API_STATE:
             return set(state, 'apiState', action.apiState);
 
+        case SET_CALENDAR_AUTH_STATE: {
+            if (!action.msAuthState) {
+                // received request to delete the state
+                return set(state, 'msAuthState', undefined);
+            }
+
+            return set(state, 'msAuthState', {
+                ...state.msAuthState,
+                ...action.msAuthState
+            });
+        }
+
         case SET_CALENDAR_AUTHORIZATION:
             return set(state, 'authorization', action.authorization);
 
@@ -63,6 +78,9 @@ CALENDAR_ENABLED
 
         case SET_CALENDAR_TYPE:
             return set(state, 'calendarType', action.calendarType);
+
+        case SET_CALENDAR_PROFILE_EMAIL:
+            return set(state, 'profileEmail', action.email);
         }
 
         return state;

@@ -11,7 +11,8 @@ import { APP_STATE_CHANGED } from '../mobile/background/actionTypes';
 
 import {
     setCalendarAPIState,
-    setCalendarAuthorization
+    setCalendarAuthorization,
+    setCalendarProfileEmail
 } from './actions';
 import { REFRESH_CALENDAR } from './actionTypes';
 import { CALENDAR_ENABLED } from './constants';
@@ -78,6 +79,11 @@ StateListenerRegistry.register(
     /* selector */ state => state['features/google-api'].googleAPIState,
     /* listener */ (googleAPIState, { dispatch }) => {
         dispatch(setCalendarAPIState(googleAPIState));
+    });
+StateListenerRegistry.register(
+    /* selector */ state => state['features/google-api'].profileEmail,
+    /* listener */ (profileEmail, { dispatch }) => {
+        dispatch(setCalendarProfileEmail(profileEmail));
     });
 
 /**

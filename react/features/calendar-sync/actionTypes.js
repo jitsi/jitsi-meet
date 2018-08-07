@@ -52,3 +52,23 @@ export const SET_CALENDAR_TYPE = Symbol('SET_CALENDAR_TYPE');
  * @public
  */
 export const SET_CALENDAR_API_STATE = Symbol('SET_CALENDAR_API_STATE');
+
+/**
+ * The type of Redux action which changes Calendar API auth state.
+ *
+ * {
+ *     type: SET_CALENDAR_AUTH_STATE
+ * }
+ * @public
+ */
+export const SET_CALENDAR_AUTH_STATE = Symbol('SET_CALENDAR_AUTH_STATE');
+
+/**
+ * The type of Redux action which changes Calendar Profile email state.
+ *
+ * {
+ *     type: SET_CALENDAR_PROFILE_EMAIL
+ * }
+ * @public
+ */
+export const SET_CALENDAR_PROFILE_EMAIL = Symbol('SET_CALENDAR_PROFILE_EMAIL');

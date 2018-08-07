@@ -1,7 +1,7 @@
 // @flow
 
 /**
- * The Google API scopes to request access to for streaming.
+ * The Google API scopes to request access for streaming and calendar.
  *
  * @type {Array<string>}
  */

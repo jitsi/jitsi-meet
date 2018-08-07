@@ -1,0 +1,11 @@
+<html>
+<body>
+<script>
+window.opener
+    && window.opener.postMessage({
+            type: 'ms-login',
+            hash: window.location.hash
+        }, window.location.origin);
+</script>
+</body>
+</html>
