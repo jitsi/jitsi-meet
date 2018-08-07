@@ -65,6 +65,12 @@ MiddlewareRegistry.register(store => next => action => {
  * @returns {Object} The value returned by {@code next(action)}.
  */
 function _endpointMessageReceived({ dispatch, getState }, next, action) {
+    if (!(action.json
+        && (action.json.type === JSON_TYPE_TRANSCRIPTION_RESULT
+            || action.json.type === JSON_TYPE_TRANSLATION_RESULT))) {
+        return next(action);
+    }
+
     const json = action.json;
     const translationLanguage
         = getState()['features/base/conference'].conference
