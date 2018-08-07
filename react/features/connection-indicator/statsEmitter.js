@@ -39,8 +39,14 @@ const statsEmitter = {
 
         conference.on(
             JitsiE2ePingEvents.E2E_RTT_CHANGED,
-            (participant, e2eRtt) => this._emitE2eRttUpdate(
-                participant, e2eRtt));
+            (participant, e2eRtt) => {
+                const stats = {
+                    e2eRtt,
+                    region: participant.getProperty('region')
+                };
+
+                this._emitStatsUpdate(participant.getId(), stats);
+            });
     },
 
     /**
@@ -102,24 +108,6 @@ const statsEmitter = {
 
         callbacks.forEach(callback => {
             callback(stats);
-        });
-    },
-
-    /**
-     * Emits an update to the listeners for end-to-end RTT updates.
-     *
-     * @param {JitsiParticipant} participant - The participant.
-     * @param {number} e2eRtt - The RTT.
-     * @returns {void}
-     * @private
-     */
-    _emitE2eRttUpdate(participant: Object, e2eRtt: number = -1) {
-        const id = participant.getId();
-        const region = participant.getProperty('region');
-        const callbacks = subscribers[id] || [];
-
-        callbacks.forEach(callback => {
-            callback(null /* stats */, e2eRtt, region);
         });
     },
 

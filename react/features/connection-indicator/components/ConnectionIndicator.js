@@ -133,16 +133,6 @@ class ConnectionIndicator extends Component {
             autoHideTimeout: null,
 
             /**
-             * The end-to-end round trip time.
-             */
-            e2eRtt: -1,
-
-            /**
-             * The region.
-             */
-            region: 'unknown',
-
-            /**
              * Whether or not a CSS class should be applied to the root for
              * hiding the connection indicator. By default the indicator should
              * start out hidden because the current connection status is not
@@ -330,42 +320,25 @@ class ConnectionIndicator extends Component {
      * statistics.
      *
      * @param {Object} stats - Connection stats from the library.
-     * @param {number} e2eRtt - The end-to-end round trip time in milliseconds.
-     * @param {string} region - The remote participant's region.
      * @private
      * @returns {void}
      */
-    _onStatsUpdated(stats = {}, e2eRtt, region) {
+    _onStatsUpdated(stats = {}) {
         // Rely on React to batch setState actions.
-        if (stats) {
-            const { connectionQuality } = stats;
-            const newPercentageState = typeof connectionQuality === 'undefined'
-                ? {} : { percent: connectionQuality };
-            const newStats = Object.assign(
-                {},
-                this.state.stats,
-                stats,
-                newPercentageState);
+        const { connectionQuality } = stats;
+        const newPercentageState = typeof connectionQuality === 'undefined'
+            ? {} : { percent: connectionQuality };
+        const newStats = Object.assign(
+            {},
+            this.state.stats,
+            stats,
+            newPercentageState);
 
-            this.setState({
-                stats: newStats
-            });
+        this.setState({
+            stats: newStats
+        });
 
-            this._updateIndicatorAutoHide(newStats.percent);
-        }
-
-        if (e2eRtt) {
-            this.setState({
-                e2eRtt
-            });
-        }
-
-        if (region) {
-            this.setState({
-                region
-            });
-        }
-
+        this._updateIndicatorAutoHide(newStats.percent);
     }
 
     /**
@@ -437,12 +410,13 @@ class ConnectionIndicator extends Component {
         const {
             bandwidth,
             bitrate,
+            e2eRtt,
             framerate,
             packetLoss,
+            region,
             resolution,
             transport
         } = this.state.stats;
-        const { e2eRtt, region } = this.state;
 
         return (
             <ConnectionStatsTable

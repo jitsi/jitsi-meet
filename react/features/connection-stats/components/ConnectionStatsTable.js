@@ -227,7 +227,7 @@ class ConnectionStatsTable extends Component {
      */
     _renderE2eRtt() {
         const { e2eRtt, region, t } = this.props;
-        const str = `${e2eRtt.toFixed(0)}ms (${region})`;
+        const str = `${e2eRtt.toFixed(0)}ms (${region ? region : 'unknown'})`;
 
         return (
             <tr>
