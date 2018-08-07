@@ -51,6 +51,8 @@ export class FlacAdapter extends RecordingAdapter {
      */
     _initPromise = null;
 
+    _sampleRate = 44100;
+
     /**
      * Implements {@link RecordingAdapter#start()}.
      *
@@ -179,6 +181,17 @@ export class FlacAdapter extends RecordingAdapter {
             return Promise.resolve();
         }
 
+        // sampleRate is browser and OS dependent.
+        // Setting sampleRate explicitly is in the specs but not implemented
+        // by browsers.
+        // See: https://developer.mozilla.org/en-US/docs/Web/API/AudioContext/
+        //    AudioContext#Browser_compatibility
+        // And https://bugs.chromium.org/p/chromium/issues/detail?id=432248
+
+        this._audioContext = new AudioContext();
+        this._sampleRate = this._audioContext.sampleRate;
+        logger.log(`Current sampleRate ${this._sampleRate}.`);
+
         const promiseInitWorker = new Promise((resolve, reject) => {
             try {
                 this._loadWebWorker();
@@ -212,7 +225,7 @@ export class FlacAdapter extends RecordingAdapter {
             this._encoder.postMessage({
                 command: MAIN_THREAD_INIT,
                 config: {
-                    sampleRate: 44100,
+                    sampleRate: this._sampleRate,
                     bps: 16
                 }
             });
@@ -222,9 +235,6 @@ export class FlacAdapter extends RecordingAdapter {
             this._getAudioStream(micDeviceId)
             .then(stream => {
                 this._stream = stream;
-                this._audioContext = new AudioContext({
-                    sampleRate: 44100
-                });
                 this._audioSource
                     = this._audioContext.createMediaStreamSource(stream);
                 this._audioProcessingNode
