@@ -8,17 +8,12 @@ import {
     FETCH_START_DAYS
 } from './constants';
 import { _updateCalendarEntries } from './functions';
-import { GoogleCalendarApi } from './web/googleCalendar';
-import { MicrosoftCalendarApi } from './web/microsoftCalendar';
+import { googleCalendarApi } from './web/googleCalendar';
+import { microsoftCalendarApi } from './web/microsoftCalendar';
 
 const logger = require('jitsi-meet-logger').getLogger(__filename);
 
 declare var config: Object;
-
-/**
- * The calendar integration single instance.
- */
-let calendarIntegrationInstance;
 
 /**
  * Determines whether the calendar feature is enabled by the web.
@@ -27,7 +22,10 @@ let calendarIntegrationInstance;
  * otherwise, {@code false}.
  */
 export function _isCalendarEnabled() {
-    return config.enableCalendarIntegration === true;
+    return Boolean(
+        config.enableCalendarIntegration
+            && (config.googleApiApplicationClientID
+                || config.microsoftApiApplicationClientID));
 }
 
 /* eslint-disable no-unused-vars */
@@ -48,19 +46,23 @@ export function _fetchCalendarEntries(
         forcePermission) {
     /* eslint-enable no-unused-vars */
     const { dispatch, getState } = store;
-    const calendarType = getState()['features/calendar-sync'].calendarType;
-    const api = _getCalendarIntegration(calendarType, store);
 
-    if (!api) {
+    const { integrationType } = getState()['features/calendar-sync'];
+    const integration = _getCalendarIntegration(integrationType);
+
+    if (!integration) {
         logger.debug('No calendar type available');
 
         return;
     }
 
-    api.init()
-        .then(() => dispatch(
-            api.getCalendarEntries(FETCH_START_DAYS, FETCH_END_DAYS)))
-        .then(_updateCalendarEntries.bind(store))
+    dispatch(integration.load())
+        .then(() => dispatch(integration.getCalendarEntries(
+            FETCH_START_DAYS, FETCH_END_DAYS)))
+        .then(events => _updateCalendarEntries.call({
+            dispatch,
+            getState
+        }, events))
         .catch(error =>
             logger.error('Error fetching calendar.', error));
 }
@@ -70,72 +72,14 @@ export function _fetchCalendarEntries(
  *
  * @param {string} calendarType - The calendar type api
  * as defined in CALENDAR_TYPE.
- * @param {Object} store - The redux store.
- * @returns {Object}
  * @private
+ * @returns {Object|undefined}
  */
-export function _getCalendarIntegration(calendarType, store) {
-    if (!calendarIntegrationInstance) {
-        switch (calendarType) {
-        case CALENDAR_TYPE.GOOGLE:
-            calendarIntegrationInstance
-                = new GoogleCalendarApi(
-                    config.googleApiApplicationClientID, store);
-            break;
-        case CALENDAR_TYPE.MICROSOFT:
-            calendarIntegrationInstance
-                = new MicrosoftCalendarApi(
-                    config.microsoftApiApplicationClientID, store);
-            break;
-        }
+export function _getCalendarIntegration(calendarType: string) {
+    switch (calendarType) {
+    case CALENDAR_TYPE.GOOGLE:
+        return googleCalendarApi;
+    case CALENDAR_TYPE.MICROSOFT:
+        return microsoftCalendarApi;
     }
-
-    return calendarIntegrationInstance;
-}
-
-/**
- * Updates the profile data. Requires the api to be signed in.
- *
- * @param {Object} store - The redux store.
- * @returns {void}
- * @private
- */
-export function _updateProfile(store) {
-    const { dispatch, getState } = store;
-    const calendarType = getState()['features/calendar-sync'].calendarType;
-    const api = _getCalendarIntegration(calendarType, store);
-
-    if (!api) {
-        logger.debug('No calendar type available');
-
-        return;
-    }
-
-    dispatch(api.updateProfile());
-}
-
-/**
- * Logs out the user.
- *
- * @param {Object} store - The redux store.
- * @returns {Function}
- * @private
- */
-export function _signOut(store) {
-    const { dispatch, getState } = store;
-    const { calendarType } = getState()['features/calendar-sync'];
-    const api = _getCalendarIntegration(
-        calendarType, {
-            dispatch,
-            getState
-        });
-
-    if (!api) {
-        return Promise.reject('No calendar type selected!');
-    }
-
-    return dispatch(api.signOut())
-        .then(() => {
-            calendarIntegrationInstance = undefined;
-        });
 }

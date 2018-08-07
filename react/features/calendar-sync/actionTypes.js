@@ -1,6 +1,15 @@
 // @flow
 
 /**
+ * Resets the state of calendar integration.
+ *
+ * {
+ *     type: CLEAR_CALENDAR_INTEGRATION
+ * }
+ */
+export const CLEAR_CALENDAR_INTEGRATION = Symbol('CLEAR_CALENDAR_INTEGRATION');
+
+/**
  * Action to refresh (re-fetch) the entry list.
  *
  * {
@@ -37,21 +46,22 @@ export const SET_CALENDAR_EVENTS = Symbol('SET_CALENDAR_EVENTS');
  * Action to update calendar type to be used for web.
  *
  * {
+ *     type: SET_CALENDAR_INTEGRATION,
+ *     integration: string,
+ *     integrationType: string
+ * }
+ */
+export const SET_CALENDAR_INTEGRATION = Symbol('SET_CALENDAR_INTEGRATION');
+
+/**
+ * Action to update calendar type to be used for web.
+ *
+ * {
  *     type: SET_CALENDAR_TYPE,
  *     calendarType: ?string
  * }
  */
 export const SET_CALENDAR_TYPE = Symbol('SET_CALENDAR_TYPE');
-
-/**
- * The type of Redux action which changes Calendar API state.
- *
- * {
- *     type: SET_CALENDAR_API_STATE
- * }
- * @public
- */
-export const SET_CALENDAR_API_STATE = Symbol('SET_CALENDAR_API_STATE');
 
 /**
  * The type of Redux action which changes Calendar API auth state.

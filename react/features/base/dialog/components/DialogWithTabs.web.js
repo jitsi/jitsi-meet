@@ -212,7 +212,7 @@ class DialogWithTabs extends Component<Props, State> {
         const { onSubmit, tabs } = this.props;
 
         tabs.forEach(({ submit }, idx) => {
-            submit(this.state.tabStates[idx]);
+            submit && submit(this.state.tabStates[idx]);
         });
 
         onSubmit();

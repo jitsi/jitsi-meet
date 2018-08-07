@@ -7,13 +7,14 @@ import { connect } from 'react-redux';
 import { translate } from '../../../base/i18n';
 
 import {
-    updateProfile,
     GOOGLE_API_STATES,
+    GoogleSignInButton,
     loadGoogleAPI,
     requestAvailableYouTubeBroadcasts,
     requestLiveStreamsForYouTubeBroadcast,
     showAccountSelection,
-    signIn
+    signIn,
+    updateProfile
 } from '../../../google-api';
 
 import AbstractStartLiveStreamDialog, {
@@ -21,7 +22,6 @@ import AbstractStartLiveStreamDialog, {
     type Props
 } from './AbstractStartLiveStreamDialog';
 import BroadcastsDropdown from './BroadcastsDropdown';
-import GoogleSignInButton from './GoogleSignInButton';
 import StreamKeyForm from './StreamKeyForm';
 
 /**

@@ -2,54 +2,23 @@
 
 import {
     getCalendarEntries,
+    googleApi,
     loadGoogleAPI,
     signIn,
     signOut,
     updateProfile
 } from '../../google-api';
+import { CALENDAR_TYPE } from '../constants';
+
+declare var config: Object;
 
 /**
- * Loads and interacts with the Google Calendar API.
+ * A stateless object that implements the expected interface for interacting
+ * Google authentication in order to get calendar data.
+ *
+ * @type {Object}
  */
-export class GoogleCalendarApi {
-    _appClientID: ?string;
-
-    /**
-     * The redux {@code dispatch} function.
-     */
-    _dispatch: Dispatch<*>;
-
-    /**
-     * The redux function that gets/retrieves the redux state.
-     */
-    _getState: Function;
-
-    /**
-     * Initializes a new Google Calendar API instance.
-     *
-     * @param {string} appClientID - The ID for the Google client application
-     * used to init the API.
-     * @param {Object} store - The redux store.
-     */
-    constructor(appClientID: ?string, store: Object) {
-        this._appClientID = appClientID;
-        this._dispatch = store.dispatch;
-        this._getState = store.getState;
-    }
-
-    /**
-     * Initializes the google api if needed.
-     *
-     * @returns {function(Dispatch<*>): Promise<void>}
-     */
-    init(): Promise<void> {
-        if (this._getState()['features/calendar-sync'].apiState !== 0) {
-            return Promise.resolve();
-        }
-
-        return this._dispatch(loadGoogleAPI(this._appClientID));
-    }
-
+export const googleCalendarApi = {
     /**
      * Retrieves the current calendar events.
      *
@@ -58,34 +27,54 @@ export class GoogleCalendarApi {
      * @param {number} fetchEndDays - The number of days to fetch.
      * @returns {function(Dispatch<*>): Promise<CalendarEntries>}
      */
-    getCalendarEntries(fetchStartDays: ?number, fetchEndDays: ?number) {
-        return getCalendarEntries(fetchStartDays, fetchEndDays);
-    }
+    getCalendarEntries,
+
+    /**
+     * Returns the type of calendar integration this object implements.
+     *
+     * @returns {string}
+     */
+    getType() {
+        return CALENDAR_TYPE.GOOGLE;
+    },
+
+    /**
+     * Initializes the google api if needed.
+     *
+     * @returns {function(Dispatch<*>): Promise<void>}
+     */
+    load() {
+        return (dispatch: Dispatch<*>) => dispatch(
+            loadGoogleAPI(config.googleApiApplicationClientID));
+    },
 
     /**
      * Prompts the participant to sign in to the Google API Client Library.
      *
      * @returns {function(Dispatch<*>): Promise<string|never>}
      */
-    signIn() {
-        return signIn();
-    }
+    signIn,
 
     /**
      * Sign out from the Google API Client Library.
      *
      * @returns {function(Dispatch<*>): Promise<string|never>}
      */
-    signOut() {
-        return signOut();
-    }
+    signOut,
 
     /**
      * Updates the profile data using google-api feature.
      *
      * @returns {function(Dispatch<*>): Promise<string|never>}
      */
-    updateProfile() {
-        return updateProfile();
+    updateProfile,
+
+    /**
+     * Returns whether or not the user is currently signed in.
+     *
+     * @returns {function(): Promise<boolean>}
+     */
+    _isSignedIn() {
+        return () => googleApi.isSignedIn();
     }
-}
+};

@@ -2,27 +2,15 @@
 
 import { APP_WILL_MOUNT } from '../base/app';
 import { ADD_KNOWN_DOMAINS, addKnownDomains } from '../base/known-domains';
-import {
-    equals,
-    MiddlewareRegistry,
-    StateListenerRegistry
-} from '../base/redux';
+import { equals, MiddlewareRegistry } from '../base/redux';
 import { APP_STATE_CHANGED } from '../mobile/background/actionTypes';
 
+import { setCalendarAuthorization } from './actions';
+import { REFRESH_CALENDAR } from './actionTypes';
 import {
-    setCalendarAPIState,
-    setCalendarAuthorization,
-    setCalendarEvents,
-    setCalendarProfileEmail,
-    setCalendarType
-} from './actions';
-import { REFRESH_CALENDAR, SET_CALENDAR_API_STATE } from './actionTypes';
-import {
-    CALENDAR_API_STATES,
-    CALENDAR_ENABLED,
-    CALENDAR_TYPE
+    CALENDAR_ENABLED
 } from './constants';
-import { _fetchCalendarEntries, _updateProfile } from './functions';
+import { _fetchCalendarEntries } from './functions';
 
 CALENDAR_ENABLED
     && MiddlewareRegistry.register(store => next => action => {
@@ -76,47 +64,9 @@ CALENDAR_ENABLED
 
             return result;
         }
-
-        case SET_CALENDAR_API_STATE: {
-            const { dispatch, getState } = store;
-            const oldValue = getState()['features/calendar-sync'].apiState;
-            const result = next(action);
-            const newValue = action.apiState;
-
-            // if we are signing in, update profile
-            if (oldValue === CALENDAR_API_STATES.LOADED
-                && newValue === CALENDAR_API_STATES.SIGNED_IN) {
-                _updateProfile(store);
-            } else if (oldValue === CALENDAR_API_STATES.SIGNED_IN
-                && newValue === CALENDAR_API_STATES.LOADED) {
-                // if we are signing out, clear the store
-                dispatch(setCalendarType(undefined));
-                dispatch(setCalendarProfileEmail(undefined));
-                dispatch(setCalendarEvents([]));
-            }
-
-            return result;
-        }
         }
 
         return next(action);
-    });
-
-StateListenerRegistry.register(
-    /* selector */ state => state['features/google-api'].googleAPIState,
-    /* listener */ (googleAPIState, { dispatch, getState }) => {
-
-        // only propagate state if we are using google calendar
-        if (getState()['features/calendar-sync'].calendarType
-                === CALENDAR_TYPE.GOOGLE) {
-            dispatch(setCalendarAPIState(googleAPIState));
-        }
-
-    });
-StateListenerRegistry.register(
-    /* selector */ state => state['features/google-api'].profileEmail,
-    /* listener */ (profileEmail, { dispatch }) => {
-        dispatch(setCalendarProfileEmail(profileEmail));
     });
 
 /**

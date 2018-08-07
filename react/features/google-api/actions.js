@@ -15,7 +15,7 @@ import googleApi from './googleApi';
  */
 export function loadGoogleAPI(clientId: string) {
     return (dispatch: Dispatch<*>, getState: Function) =>
-        googleApi.get()
+        googleApi.load()
         .then(() => {
             if (getState()['features/google-api'].googleAPIState
                     === GOOGLE_API_STATES.NEEDS_LOADING) {
@@ -85,10 +85,14 @@ export function updateProfile() {
             googleAPIState: GOOGLE_API_STATES.SIGNED_IN
         }))
         .then(() => googleApi.getCurrentUserProfile())
-        .then(profile => dispatch({
-            type: SET_GOOGLE_API_PROFILE,
-            profileEmail: profile.getEmail()
-        }));
+        .then(profile => {
+            dispatch({
+                type: SET_GOOGLE_API_PROFILE,
+                profileEmail: profile.getEmail()
+            });
+
+            return profile.getEmail();
+        });
 }
 
 /**

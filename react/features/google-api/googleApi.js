@@ -192,13 +192,11 @@ const googleApi = {
      */
     signOut() {
         return this.get()
-            .then(() => this.isSignedIn())
-            .then(isSignedIn => {
-                if (isSignedIn) {
-                    return this.get()
-                        .then(api => api.auth2.getAuthInstance().signOut());
-                }
-            });
+            .then(api =>
+                api.auth2
+                && api.auth2.getAuthInstance
+                && api.auth2.getAuthInstance()
+                && api.auth2.getAuthInstance().signOut());
     },
 
     /**

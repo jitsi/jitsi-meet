@@ -5,10 +5,11 @@ import { ReducerRegistry, set } from '../base/redux';
 import { PersistenceRegistry } from '../base/storage';
 
 import {
-    SET_CALENDAR_API_STATE,
+    CLEAR_CALENDAR_INTEGRATION,
     SET_CALENDAR_AUTH_STATE,
     SET_CALENDAR_AUTHORIZATION,
     SET_CALENDAR_EVENTS,
+    SET_CALENDAR_INTEGRATION,
     SET_CALENDAR_PROFILE_EMAIL,
     SET_CALENDAR_TYPE
 } from './actionTypes';
@@ -39,6 +40,7 @@ CALENDAR_ENABLED
     && PersistenceRegistry.register(STORE_NAME, {
         knownDomains: true,
         calendarType: true,
+        integrationType: true,
         msAuthState: true
     });
 
@@ -55,8 +57,14 @@ CALENDAR_ENABLED
             }
             break;
 
-        case SET_CALENDAR_API_STATE:
-            return set(state, 'apiState', action.apiState);
+        case CLEAR_CALENDAR_INTEGRATION:
+            return {
+                ...state,
+                events: [],
+                integration: undefined,
+                integrationType: undefined,
+                msAuthState: undefined
+            };
 
         case SET_CALENDAR_AUTH_STATE: {
             if (!action.msAuthState) {
@@ -81,6 +89,13 @@ CALENDAR_ENABLED
 
         case SET_CALENDAR_PROFILE_EMAIL:
             return set(state, 'profileEmail', action.email);
+
+        case SET_CALENDAR_INTEGRATION:
+            return {
+                ...state,
+                integration: action.integration,
+                integrationType: action.integrationType
+            };
         }
 
         return state;
