@@ -108,40 +108,39 @@ export class MicrosoftCalendarApi {
         return (dispatch: Dispatch<*>, getState: Function): Promise<*> => {
 
             // not authorized, skip
-            if (!getState()['features/calendar-sync'].msAuthState) {
+            if (!getState()['features/calendar-sync'].msAuthState
+                || !this._isSignedIn()) {
                 return Promise.reject('Not authorized, please sign in!');
             }
 
-            return new Promise((resolve, reject) => {
-                const client = Client.init({
-                    authProvider: done => done(
-                        null,
-                        getState()['features/calendar-sync']
-                            .msAuthState.accessToken)
-                });
-
-                const query = client.api('/me/calendars');
-
-                query.get((error, response) => {
-                    if (error) {
-                        reject(error);
-                    } else {
-                        const calendarIds
-                            = response.value.map(en => en.id);
-                        const promises
-                            = calendarIds.map(id =>
-                                this._getCalendarEntries(
-                                    client, id, fetchStartDays, fetchEndDays));
-
-                        return Promise.all(promises)
-                            .then(result => [].concat(...result))
-                            .then(entries =>
-                                entries.map(
-                                    e => this._convertCalendarEntry(e)))
-                            .then(result => resolve(result));
-                    }
-                });
+            const client = Client.init({
+                authProvider: done => done(
+                    null,
+                    getState()['features/calendar-sync']
+                        .msAuthState.accessToken)
             });
+
+            return client
+                .api('/me/calendars')
+                .get()
+                .then(response => {
+                    const calendarIds
+                        = response.value.map(en => en.id);
+                    const promises
+                        = calendarIds.map(id =>
+                            this._getCalendarEntries(
+                                client, id, fetchStartDays, fetchEndDays));
+
+                    return Promise.all(promises);
+                })
+
+                // get .value of every element from the array of results,
+                // which is an array of events and flatten it to one array
+                // of events
+                .then(result =>
+                    [].concat(...result.map(en => en.value)))
+                .then(entries => entries.map(
+                    e => this._convertCalendarEntry(e)));
         };
     }
 
@@ -203,20 +202,13 @@ export class MicrosoftCalendarApi {
         const filter = `Start/DateTime ge '${
             startDate.toISOString()}' and End/DateTime lt '${
             endDate.toISOString()}'`;
-        const query
-            = client.api(`/me/calendars/${calendarId}/events`)
-                .filter(filter)
-                .select('id,subject,start,end,location,body')
-                .orderby('createdDateTime DESC');
 
-        return new Promise((resolve, reject) =>
-            query.get((error, response) => {
-                if (error) {
-                    reject(error);
-                } else {
-                    resolve(response.value);
-                }
-            }));
+        return client
+            .api(`/me/calendars/${calendarId}/events`)
+            .filter(filter)
+            .select('id,subject,start,end,location,body')
+            .orderby('createdDateTime DESC')
+            .get();
     }
 
     /**
