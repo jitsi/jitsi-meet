@@ -251,8 +251,8 @@ export class WavAdapter extends AbstractAudioContextAdapter {
  * using big endianness. Required by WAVE headers.
  *
  * @param {ArrayBuffer} view - The view to memory.
- * @param {*} offset - Offset.
- * @param {*} string - The string to be written.
+ * @param {number} offset - Offset.
+ * @param {string} string - The string to be written.
  * @returns {void}
  */
 function writeUTFBytes(view, offset, string) {
@@ -267,9 +267,9 @@ function writeUTFBytes(view, offset, string) {
 /**
  * Helper function for converting Float32Array to Int16Array.
  *
- * @param {*} output - The output buffer.
- * @param {*} offset - The offset in output buffer to write from.
- * @param {*} inputBuffers - The input buffers.
+ * @param {DataView} output - View to the output buffer.
+ * @param {number} offset - The offset in output buffer to write from.
+ * @param {Float32Array[]} inputBuffers - The input buffers.
  * @returns {void}
  */
 function floatTo16BitPCM(output, offset, inputBuffers) {

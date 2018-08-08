@@ -20,9 +20,28 @@ function highPrecisionTime(): number {
 
 // Have to use string literal here, instead of Symbols,
 // because these values need to be JSON-serializible.
+
+/**
+ * Types of SessionEvents.
+ */
 const SessionEventType = Object.freeze({
+    /**
+     * Start of local recording session. This is recorded when the
+     * {@code RecordingController} receives the signal to start local recording,
+     * before the actual adapter is engaged.
+     */
     SESSION_STARTED: 'SESSION_STARTED',
+
+    /**
+     * Start of a continuous segment. This is recorded when the adapter is
+     * engaged. Can happen multiple times in a local recording session,
+     * due to browser reloads or switching of recording device.
+     */
     SEGMENT_STARTED: 'SEGMENT_STARTED',
+
+    /**
+     * End of a continuous segment. This is recorded when the adapter unengages.
+     */
     SEGMENT_ENDED: 'SEGMENT_ENDED'
 });
 
@@ -169,8 +188,8 @@ class SessionManager {
     /**
      * Creates a session if not exists.
      *
-     * @param {string} sessionToken - .
-     * @param {string} format - .
+     * @param {string} sessionToken - The local recording session token.
+     * @param {string} format - The local recording format.
      * @returns {void}
      */
     createSession(sessionToken: string, format: string) {
@@ -218,7 +237,7 @@ class SessionManager {
     /**
      * Removes session metadata.
      *
-     * @param {*} sessionToken - The session token.
+     * @param {string} sessionToken - The session token.
      * @returns {void}
      */
     removeSession(sessionToken: string) {
@@ -319,7 +338,7 @@ class SessionManager {
      * {@code SessionEvent}s.
      *
      * @private
-     * @param {*} events - The array of {@code SessionEvent}s.
+     * @param {SessionEvent[]} events - The array of {@code SessionEvent}s.
      * @returns {SegmentInfo[]}
      */
     _constructSegments(events: SessionEvent[]): SegmentInfo[] {
@@ -416,5 +435,5 @@ class SessionManager {
  */
 export const sessionManager = new SessionManager();
 
-// For debug only. Remove later.
+// For debug only. To remove later.
 window.sessionManager = sessionManager;

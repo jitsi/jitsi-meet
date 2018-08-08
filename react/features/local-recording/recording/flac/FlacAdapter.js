@@ -17,17 +17,20 @@ const logger = require('jitsi-meet-logger').getLogger(__filename);
 export class FlacAdapter extends AbstractAudioContextAdapter {
 
     /**
-     * Instance of flacEncodeWorker.
+     * Instance of WebWorker (flacEncodeWorker).
      */
     _encoder = null;
 
     /**
-     * Resolve function of the promise returned by {@code stop()}.
+     * Resolve function of the Promise returned by {@code stop()}.
      * This is called after the WebWorker sends back {@code WORKER_BLOB_READY}.
      */
     _stopPromiseResolver = null;
 
-    _initPromiseResolver = null;
+    /**
+     * Resolve function of the Promise that initializes the flacEncodeWorker.
+     */
+    _initWorkerPromiseResolver = null;
 
     /**
      * Initialization promise.
@@ -152,8 +155,10 @@ export class FlacAdapter extends AbstractAudioContextAdapter {
                 reject();
             }
 
-            // save the Promise's resolver to resolve it later.
-            this._initPromiseResolver = resolve;
+            // Save the Promise's resolver to resolve it later.
+            // This Promise is only resolved in _onWorkerMessage when we
+            // receive WORKER_LIBFLAC_READY from the WebWorker.
+            this._initWorkerPromiseResolver = resolve;
 
             // set up listener for messages from the WebWorker
             this._encoder.onmessage = this._onWorkerMessage;
@@ -220,7 +225,7 @@ export class FlacAdapter extends AbstractAudioContextAdapter {
             break;
         case WORKER_LIBFLAC_READY:
             logger.log('libflac is ready.');
-            this._initPromiseResolver();
+            this._initWorkerPromiseResolver();
             break;
         default:
             logger.error(

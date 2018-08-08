@@ -90,8 +90,8 @@ const FLAC_COMPRESSION_LEVEL = 5;
 /**
  * Concat multiple Uint8Arrays into one.
  *
- * @param {Array} arrays - Array of Uint8 arrays.
- * @param {*} totalLength - Total length of all Uint8Arrays.
+ * @param {Uint8Array[]} arrays - Array of Uint8 arrays.
+ * @param {number} totalLength - Total length of all Uint8Arrays.
  * @returns {Uint8Array}
  */
 function mergeUint8Arrays(arrays, totalLength) {
@@ -320,8 +320,8 @@ class Encoder {
      * This is invoked by libflac.
      *
      * @private
-     * @param {*} buffer - The encoded Flac data.
-     * @param {*} bytes - Number of bytes in the data.
+     * @param {Uint8Array} buffer - The encoded Flac data.
+     * @param {number} bytes - Number of bytes in the data.
      * @returns {void}
      */
     _onEncodedData(buffer, bytes) {
