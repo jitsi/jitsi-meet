@@ -44,6 +44,7 @@ import {
 import { toggleSharedVideo } from '../../../shared-video';
 import { toggleChat } from '../../../side-panel';
 import { SpeakerStats } from '../../../speaker-stats';
+import { TileViewButton } from '../../../video-layout';
 import {
     OverflowMenuVideoQualityItem,
     VideoQualityDialog
@@ -387,6 +388,8 @@ class Toolbox extends Component<Props> {
                                 this._onToolbarOpenLocalRecordingInfoDialog
                             } />
                     }
+                    { this._shouldShowButton('tileview')
+                        && <TileViewButton /> }
                     { this._shouldShowButton('invite')
                         && !_hideInviteButton
                         && <ToolbarButton
@@ -1013,7 +1016,7 @@ class Toolbox extends Component<Props> {
      * Returns if a button name has been explicitly configured to be displayed.
      *
      * @param {string} buttonName - The name of the button, as expected in
-     * {@link intefaceConfig}.
+     * {@link interfaceConfig}.
      * @private
      * @returns {boolean} True if the button should be displayed.
      */

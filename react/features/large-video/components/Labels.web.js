@@ -92,7 +92,8 @@ class Labels extends AbstractLabels<Props, State> {
                     this._renderTranscribingLabel()
                 }
                 {
-                    this._renderVideoQualityLabel()
+                    this.props._showVideoQualityLabel
+                        && this._renderVideoQualityLabel()
                 }
             </div>
         );

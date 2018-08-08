@@ -48,7 +48,8 @@ var interfaceConfig = {
         'microphone', 'camera', 'closedcaptions', 'desktop', 'fullscreen',
         'fodeviceselection', 'hangup', 'profile', 'info', 'chat', 'recording',
         'livestreaming', 'etherpad', 'sharedvideo', 'settings', 'raisehand',
-        'videoquality', 'filmstrip', 'invite', 'feedback', 'stats', 'shortcuts'
+        'videoquality', 'filmstrip', 'invite', 'feedback', 'stats', 'shortcuts',
+        'tileview'
     ],
 
     SETTINGS_SECTIONS: [ 'devices', 'language', 'moderator', 'profile' ],
@@ -171,6 +172,12 @@ var interfaceConfig = {
      * @type {boolean}
      */
     RECENT_LIST_ENABLED: true
+
+    /**
+     * How many columns the tile view can expand to. The respected range is
+     * between 1 and 5.
+     */
+    // TILE_VIEW_MAX_COLUMNS: 5,
 
     /**
      * Specify custom URL for downloading android mobile app.

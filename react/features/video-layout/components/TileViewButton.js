@@ -1,0 +1,90 @@
+// @flow
+
+import { connect } from 'react-redux';
+
+import {
+    createToolbarEvent,
+    sendAnalytics
+} from '../../analytics';
+import { translate } from '../../base/i18n';
+import {
+    AbstractButton,
+    type AbstractButtonProps
+} from '../../base/toolbox';
+
+import { setTileView } from '../actions';
+
+/**
+ * The type of the React {@code Component} props of {@link TileViewButton}.
+ */
+type Props = AbstractButtonProps & {
+
+    /**
+     * Whether or not tile view layout has been enabled as the user preference.
+     */
+    _tileViewEnabled: boolean,
+
+    /**
+     * Used to dispatch actions from the buttons.
+     */
+    dispatch: Dispatch<*>
+};
+
+/**
+ * Component that renders a toolbar button for toggling the tile layout view.
+ *
+ * @extends AbstractButton
+ */
+class TileViewButton<P: Props> extends AbstractButton<P, *> {
+    accessibilityLabel = 'toolbar.accessibilityLabel.tileView';
+    iconName = 'icon-tiles-many';
+    toggledIconName = 'icon-tiles-many toggled';
+    tooltip = 'toolbar.tileViewToggle';
+
+    /**
+     * Handles clicking / pressing the button.
+     *
+     * @override
+     * @protected
+     * @returns {void}
+     */
+    _handleClick() {
+        const { _tileViewEnabled, dispatch } = this.props;
+
+        sendAnalytics(createToolbarEvent(
+            'tileview.button',
+            {
+                'is_enabled': _tileViewEnabled
+            }));
+
+        dispatch(setTileView(!_tileViewEnabled));
+    }
+
+    /**
+     * Indicates whether this button is in toggled state or not.
+     *
+     * @override
+     * @protected
+     * @returns {boolean}
+     */
+    _isToggled() {
+        return this.props._tileViewEnabled;
+    }
+}
+
+/**
+ * Maps (parts of) the redux state to the associated props for the
+ * {@code TileViewButton} component.
+ *
+ * @param {Object} state - The Redux state.
+ * @returns {{
+ *     _tileViewEnabled: boolean
+ * }}
+ */
+function _mapStateToProps(state) {
+    return {
+        _tileViewEnabled: state['features/video-layout'].tileViewEnabled
+    };
+}
+
+export default translate(connect(_mapStateToProps)(TileViewButton));

@@ -20,6 +20,11 @@ import {
     REMOTE_CONTROL_MENU_STATES,
     RemoteVideoMenuTriggerButton
 } from '../../../react/features/remote-video-menu';
+import {
+    LAYOUTS,
+    getCurrentLayout,
+    shouldDisplayTileView
+} from '../../../react/features/video-layout';
 /* eslint-enable no-unused-vars */
 
 const logger = require('jitsi-meet-logger').getLogger(__filename);
@@ -163,8 +168,17 @@ RemoteVideo.prototype._generatePopupContent = function() {
     const onVolumeChange = this._setAudioVolume;
     const { isModerator } = APP.conference;
     const participantID = this.id;
-    const menuPosition = interfaceConfig.VERTICAL_FILMSTRIP
-        ? 'left bottom' : 'top center';
+
+    const currentLayout = getCurrentLayout(APP.store.getState());
+    let remoteMenuPosition;
+
+    if (currentLayout === LAYOUTS.TILE_VIEW) {
+        remoteMenuPosition = 'left top';
+    } else if (currentLayout === LAYOUTS.VERTICAL_FILMSTRIP_VIEW) {
+        remoteMenuPosition = 'left bottom';
+    } else {
+        remoteMenuPosition = 'top center';
+    }
 
     ReactDOM.render(
         <Provider store = { APP.store }>
@@ -174,7 +188,7 @@ RemoteVideo.prototype._generatePopupContent = function() {
                         initialVolumeValue = { initialVolumeValue }
                         isAudioMuted = { this.isAudioMuted }
                         isModerator = { isModerator }
-                        menuPosition = { menuPosition }
+                        menuPosition = { remoteMenuPosition }
                         onMenuDisplay
                             = {this._onRemoteVideoMenuDisplay.bind(this)}
                         onRemoteControlToggle = { onRemoteControlToggle }
@@ -613,7 +627,8 @@ RemoteVideo.prototype._onContainerClick = function(event) {
     const { classList } = event.target;
 
     const ignoreClick = $source.parents('.popover').length > 0
-            || classList.contains('popover');
+            || classList.contains('popover')
+            || shouldDisplayTileView(APP.store.getState());
 
     if (!ignoreClick) {
         this._togglePin();

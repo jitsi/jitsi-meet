@@ -1,6 +1,13 @@
 /* global $, APP, interfaceConfig */
 
 import { setFilmstripVisible } from '../../../react/features/filmstrip';
+import {
+    LAYOUTS,
+    getCurrentLayout,
+    getMaxColumnCount,
+    getTileViewGridDimensions,
+    shouldDisplayTileView
+} from '../../../react/features/video-layout';
 
 import UIEvents from '../../../service/UI/UIEvents';
 import UIUtil from '../util/UIUtil';
@@ -233,6 +240,10 @@ const Filmstrip = {
      * @returns {*|{localVideo, remoteVideo}}
      */
     calculateThumbnailSize() {
+        if (shouldDisplayTileView(APP.store.getState())) {
+            return this._calculateThumbnailSizeForTileView();
+        }
+
         const availableSizes = this.calculateAvailableSize();
         const width = availableSizes.availableWidth;
         const height = availableSizes.availableHeight;
@@ -247,11 +258,10 @@ const Filmstrip = {
      * @returns {{availableWidth: number, availableHeight: number}}
      */
     calculateAvailableSize() {
-        let availableHeight = interfaceConfig.FILM_STRIP_MAX_HEIGHT;
-        const thumbs = this.getThumbs(true);
-        const numvids = thumbs.remoteThumbs.length;
-
-        const localVideoContainer = $('#localVideoContainer');
+        const state = APP.store.getState();
+        const currentLayout = getCurrentLayout(state);
+        const isHorizontalFilmstripView
+            = currentLayout === LAYOUTS.HORIZONTAL_FILMSTRIP_VIEW;
 
         /**
          * If the videoAreaAvailableWidth is set we use this one to calculate
@@ -268,10 +278,15 @@ const Filmstrip = {
             - UIUtil.parseCssInt(this.filmstrip.css('borderRightWidth'), 10)
             - 5;
 
+        let availableHeight = interfaceConfig.FILM_STRIP_MAX_HEIGHT;
         let availableWidth = videoAreaAvailableWidth;
+
+        const thumbs = this.getThumbs(true);
 
         // If local thumb is not hidden
         if (thumbs.localThumb) {
+            const localVideoContainer = $('#localVideoContainer');
+
             availableWidth = Math.floor(
                 videoAreaAvailableWidth - (
                     UIUtil.parseCssInt(
@@ -289,10 +304,12 @@ const Filmstrip = {
             );
         }
 
-        // If the number of videos is 0 or undefined or we're in vertical
+        // If the number of videos is 0 or undefined or we're not in horizontal
         // filmstrip mode we don't need to calculate further any adjustments
         // to width based on the number of videos present.
-        if (numvids && !interfaceConfig.VERTICAL_FILMSTRIP) {
+        const numvids = thumbs.remoteThumbs.length;
+
+        if (numvids && isHorizontalFilmstripView) {
             const remoteVideoContainer = thumbs.remoteThumbs.eq(0);
 
             availableWidth = Math.floor(
@@ -322,8 +339,10 @@ const Filmstrip = {
         availableHeight
             = Math.min(maxHeight, window.innerHeight - 18);
 
-        return { availableWidth,
-            availableHeight };
+        return {
+            availableHeight,
+            availableWidth
+        };
     },
 
     /**
@@ -435,6 +454,51 @@ const Filmstrip = {
     },
 
     /**
+     * Calculates the size for thumbnails when in tile view layout.
+     *
+     * @returns {{localVideo, remoteVideo}}
+     */
+    _calculateThumbnailSizeForTileView() {
+        const tileAspectRatio = 16 / 9;
+
+        // The distance from the top and bottom of the screen, as set by CSS, to
+        // avoid overlapping UI elements.
+        const topBottomPadding = 200;
+
+        // Minimum space to keep between the sides of the tiles and the sides
+        // of the window.
+        const sideMargins = 30 * 2;
+
+        const state = APP.store.getState();
+
+        const viewWidth = document.body.clientWidth - sideMargins;
+        const viewHeight = document.body.clientHeight - topBottomPadding;
+
+        const {
+            columns,
+            visibleRows
+        } = getTileViewGridDimensions(state, getMaxColumnCount());
+        const initialWidth = viewWidth / columns;
+        const aspectRatioHeight = initialWidth / tileAspectRatio;
+
+        const heightOfEach = Math.min(
+            aspectRatioHeight,
+            viewHeight / visibleRows);
+        const widthOfEach = tileAspectRatio * heightOfEach;
+
+        return {
+            localVideo: {
+                thumbWidth: widthOfEach,
+                thumbHeight: heightOfEach
+            },
+            remoteVideo: {
+                thumbWidth: widthOfEach,
+                thumbHeight: heightOfEach
+            }
+        };
+    },
+
+    /**
      * Resizes thumbnails
      * @param local
      * @param remote
@@ -443,6 +507,28 @@ const Filmstrip = {
      */
     // eslint-disable-next-line max-params
     resizeThumbnails(local, remote, forceUpdate = false) {
+        const state = APP.store.getState();
+
+        if (shouldDisplayTileView(state)) {
+            // The size of the side margins for each tile as set in CSS.
+            const sideMargins = 10 * 2;
+            const {
+                columns,
+                rows
+            } = getTileViewGridDimensions(state, getMaxColumnCount());
+            const hasOverflow = rows > columns;
+
+            // Width is set so that the flex layout can automatically wrap
+            // tiles onto new rows.
+            this.filmstripRemoteVideos.css({
+                width: (local.thumbWidth * columns) + (columns * sideMargins)
+            });
+
+            this.filmstripRemoteVideos.toggleClass('has-overflow', hasOverflow);
+        } else {
+            this.filmstripRemoteVideos.css('width', '');
+        }
+
         const thumbs = this.getThumbs(!forceUpdate);
 
         if (thumbs.localThumb) {
@@ -466,13 +552,15 @@ const Filmstrip = {
             });
         }
 
+        const currentLayout = getCurrentLayout(APP.store.getState());
+
         // Let CSS take care of height in vertical filmstrip mode.
-        if (interfaceConfig.VERTICAL_FILMSTRIP) {
+        if (currentLayout === LAYOUTS.VERTICAL_FILMSTRIP_VIEW) {
             $('#filmstripLocalVideo').css({
                 // adds 4 px because of small video 2px border
                 width: `${local.thumbWidth + 4}px`
             });
-        } else {
+        } else if (currentLayout === LAYOUTS.HORIZONTAL_FILMSTRIP_VIEW) {
             this.filmstrip.css({
                 // adds 4 px because of small video 2px border
                 height: `${remote.thumbHeight + 4}px`
