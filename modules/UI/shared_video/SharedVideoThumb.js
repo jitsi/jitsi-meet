@@ -1,4 +1,6 @@
-/* global $ */
+/* global $, APP */
+import { shouldDisplayTileView } from '../../../react/features/video-layout';
+
 import SmallVideo from '../videolayout/SmallVideo';
 
 const logger = require('jitsi-meet-logger').getLogger(__filename);
@@ -64,7 +66,9 @@ SharedVideoThumb.prototype.createContainer = function(spanId) {
  * The thumb click handler.
  */
 SharedVideoThumb.prototype.videoClick = function() {
-    this._togglePin();
+    if (!shouldDisplayTileView(APP.store.getState())) {
+        this._togglePin();
+    }
 };
 
 /**

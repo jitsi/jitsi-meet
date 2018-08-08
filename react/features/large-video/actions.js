@@ -6,7 +6,9 @@ import {
 } from '../analytics';
 import { _handleParticipantError } from '../base/conference';
 import { MEDIA_TYPE } from '../base/media';
+import { getParticipants } from '../base/participants';
 import { reportError } from '../base/util';
+import { shouldDisplayTileView } from '../video-layout';
 
 import {
     SELECT_LARGE_VIDEO_PARTICIPANT,
@@ -26,17 +28,19 @@ export function selectParticipant() {
         const { conference } = state['features/base/conference'];
 
         if (conference) {
-            const largeVideo = state['features/large-video'];
-            const id = largeVideo.participantId;
+            const ids = shouldDisplayTileView(state)
+                ? getParticipants(state).map(participant => participant.id)
+                : [ state['features/large-video'].participantId ];
 
             try {
-                conference.selectParticipant(id);
+                conference.selectParticipants(ids);
             } catch (err) {
                 _handleParticipantError(err);
 
                 sendAnalytics(createSelectParticipantFailedEvent(err));
 
-                reportError(err, `Failed to select participant ${id}`);
+                reportError(
+                    err, `Failed to select participants ${ids.toString()}`);
             }
         }
     };

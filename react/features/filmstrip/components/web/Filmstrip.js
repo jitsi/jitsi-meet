@@ -8,6 +8,7 @@ import { dockToolbox } from '../../../toolbox';
 
 import { setFilmstripHovered } from '../../actions';
 import { shouldRemoteVideosBeVisible } from '../../functions';
+
 import Toolbar from './Toolbar';
 
 declare var interfaceConfig: Object;
@@ -185,9 +186,8 @@ function _mapStateToProps(state) {
         && state['features/toolbox'].visible
         && interfaceConfig.TOOLBAR_BUTTONS.length;
     const remoteVideosVisible = shouldRemoteVideosBeVisible(state);
-
     const className = `${remoteVideosVisible ? '' : 'hide-videos'} ${
-        reduceHeight ? 'reduce-height' : ''}`;
+        reduceHeight ? 'reduce-height' : ''}`.trim();
 
     return {
         _className: className,

@@ -14,14 +14,9 @@
      * Focused video thumbnail.
      */
     &.videoContainerFocused {
-        transition-duration: 0.5s;
-        -webkit-transition-duration: 0.5s;
-        -webkit-animation-name: greyPulse;
-        -webkit-animation-duration: 2s;
-        -webkit-animation-iteration-count: 1;
-        border: $thumbnailVideoBorder solid $videoThumbnailSelected !important;
+        border: $thumbnailVideoBorder solid $videoThumbnailSelected;
         box-shadow: inset 0 0 3px $videoThumbnailSelected,
-        0 0 3px $videoThumbnailSelected !important;
+        0 0 3px $videoThumbnailSelected;
     }
 
     .remotevideomenu > .icon-menu {
@@ -31,7 +26,7 @@
     /**
      * Hovered video thumbnail.
      */
-    &:hover {
+    &:hover:not(.videoContainerFocused):not(.active-speaker) {
         cursor: hand;
         border: $thumbnailVideoBorder solid $videoThumbnailHovered;
         box-shadow: inset 0 0 3px $videoThumbnailHovered,

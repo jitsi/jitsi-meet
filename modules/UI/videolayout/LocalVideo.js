@@ -11,6 +11,7 @@ import {
     getAvatarURLByParticipantId
 } from '../../../react/features/base/participants';
 import { updateSettings } from '../../../react/features/base/settings';
+import { shouldDisplayTileView } from '../../../react/features/video-layout';
 /* eslint-enable no-unused-vars */
 
 const logger = require('jitsi-meet-logger').getLogger(__filename);
@@ -26,7 +27,7 @@ function LocalVideo(VideoLayout, emitter, streamEndedCallback) {
     this.streamEndedCallback = streamEndedCallback;
     this.container = this.createContainer();
     this.$container = $(this.container);
-    $('#filmstripLocalVideoThumbnail').append(this.container);
+    this.updateDOMLocation();
 
     this.localVideoId = null;
     this.bindHoverHandler();
@@ -109,16 +110,7 @@ LocalVideo.prototype.changeVideo = function(stream) {
 
     this.localVideoId = `localVideo_${stream.getId()}`;
 
-    const localVideoContainer = document.getElementById('localVideoWrapper');
-
-    ReactDOM.render(
-        <Provider store = { APP.store }>
-            <VideoTrack
-                id = { this.localVideoId }
-                videoTrack = {{ jitsiTrack: stream }} />
-        </Provider>,
-        localVideoContainer
-    );
+    this._updateVideoElement();
 
     // eslint-disable-next-line eqeqeq
     const isVideo = stream.videoType != 'desktop';
@@ -128,12 +120,14 @@ LocalVideo.prototype.changeVideo = function(stream) {
     this.setFlipX(isVideo ? settings.localFlipX : false);
 
     const endedHandler = () => {
+        const localVideoContainer
+            = document.getElementById('localVideoWrapper');
 
         // Only remove if there is no video and not a transition state.
         // Previous non-react logic created a new video element with each track
         // removal whereas react reuses the video component so it could be the
         // stream ended but a new one is being used.
-        if (this.videoStream.isEnded()) {
+        if (localVideoContainer && this.videoStream.isEnded()) {
             ReactDOM.unmountComponentAtNode(localVideoContainer);
         }
 
@@ -236,6 +230,29 @@ LocalVideo.prototype._enableDisableContextMenu = function(enable) {
 };
 
 /**
+ * Places the {@code LocalVideo} in the DOM based on the current video layout.
+ *
+ * @returns {void}
+ */
+LocalVideo.prototype.updateDOMLocation = function() {
+    if (!this.container) {
+        return;
+    }
+
+    if (this.container.parentElement) {
+        this.container.parentElement.removeChild(this.container);
+    }
+
+    const appendTarget = shouldDisplayTileView(APP.store.getState())
+        ? document.getElementById('localVideoTileViewContainer')
+        : document.getElementById('filmstripLocalVideoThumbnail');
+
+    appendTarget && appendTarget.appendChild(this.container);
+
+    this._updateVideoElement();
+};
+
+/**
  * Callback invoked when the thumbnail is clicked. Will directly call
  * VideoLayout to handle thumbnail click if certain elements have not been
  * clicked.
@@ -258,7 +275,9 @@ LocalVideo.prototype._onContainerClick = function(event) {
         = $source.parents('.displayNameContainer').length > 0;
     const clickedOnPopover = $source.parents('.popover').length > 0
             || classList.contains('popover');
-    const ignoreClick = clickedOnDisplayName || clickedOnPopover;
+    const ignoreClick = clickedOnDisplayName
+        || clickedOnPopover
+        || shouldDisplayTileView(APP.store.getState());
 
     if (event.stopPropagation && !ignoreClick) {
         event.stopPropagation();
@@ -267,6 +286,30 @@ LocalVideo.prototype._onContainerClick = function(event) {
     if (!ignoreClick) {
         this._togglePin();
     }
+};
+
+/**
+ * Renders the React Element for displaying video in {@code LocalVideo}.
+ *
+ */
+LocalVideo.prototype._updateVideoElement = function() {
+    const localVideoContainer = document.getElementById('localVideoWrapper');
+
+    ReactDOM.render(
+        <Provider store = { APP.store }>
+            <VideoTrack
+                id = 'localVideo_container'
+                videoTrack = {{ jitsiTrack: this.videoStream }} />
+        </Provider>,
+        localVideoContainer
+    );
+
+    // Ensure the video gets play() called on it. This may be necessary in the
+    // case where the local video container was moved and re-attached, in which
+    // case video does not autoplay.
+    const video = this.container.querySelector('video');
+
+    video && video.play();
 };
 
 export default LocalVideo;
