@@ -113,3 +113,29 @@ export function _updateProfile(store) {
 
     dispatch(api.updateProfile());
 }
+
+/**
+ * Logs out the user.
+ *
+ * @param {Object} store - The redux store.
+ * @returns {Function}
+ * @private
+ */
+export function _signOut(store) {
+    const { dispatch, getState } = store;
+    const { calendarType } = getState()['features/calendar-sync'];
+    const api = _getCalendarIntegration(
+        calendarType, {
+            dispatch,
+            getState
+        });
+
+    if (!api) {
+        return Promise.reject('No calendar type selected!');
+    }
+
+    return dispatch(api.signOut())
+        .then(() => {
+            calendarIntegrationInstance = undefined;
+        });
+}

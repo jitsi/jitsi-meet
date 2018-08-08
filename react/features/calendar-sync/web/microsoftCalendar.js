@@ -359,11 +359,13 @@ export class MicrosoftCalendarApi {
      *
      * @returns {function(Dispatch<*>): Promise<string|never>}
      */
-    signOut() {
+    signOut(): Function {
         return () => {
             this._dispatch(setCalendarAPIAuthState(undefined));
             this._dispatch(
                 setCalendarAPIState(CALENDAR_API_STATES.LOADED));
+
+            return Promise.resolve();
         };
     }
 

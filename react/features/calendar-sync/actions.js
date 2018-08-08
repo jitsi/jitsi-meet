@@ -9,7 +9,7 @@ import {
     SET_CALENDAR_PROFILE_EMAIL,
     SET_CALENDAR_TYPE
 } from './actionTypes';
-import { _getCalendarIntegration } from './functions';
+import { _getCalendarIntegration, _signOut } from './functions';
 
 /**
  * Sends an action to refresh the entry list (fetches new data).
@@ -127,20 +127,11 @@ export function signIn() {
  * @returns {Function}
  */
 export function signOut() {
-    return (dispatch: Dispatch<*>, getState: Function): Promise<*> => {
-        const { calendarType } = getState()['features/calendar-sync'];
-        const api = _getCalendarIntegration(
-            calendarType, {
-                dispatch,
-                getState
-            });
-
-        if (!api) {
-            return Promise.reject('No calendar type selected!');
-        }
-
-        return dispatch(api.signOut());
-    };
+    return (dispatch: Dispatch<*>, getState: Function): Promise<*> =>
+        _signOut({
+            dispatch,
+            getState
+        });
 }
 
 /**
