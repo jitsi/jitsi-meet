@@ -15,7 +15,11 @@ import {
     setCalendarProfileEmail
 } from './actions';
 import { REFRESH_CALENDAR, SET_CALENDAR_API_STATE } from './actionTypes';
-import { CALENDAR_API_STATES, CALENDAR_ENABLED } from './constants';
+import {
+    CALENDAR_API_STATES,
+    CALENDAR_ENABLED,
+    CALENDAR_TYPE
+} from './constants';
 import { _fetchCalendarEntries, _updateProfile } from './functions';
 
 CALENDAR_ENABLED
@@ -91,8 +95,14 @@ CALENDAR_ENABLED
 
 StateListenerRegistry.register(
     /* selector */ state => state['features/google-api'].googleAPIState,
-    /* listener */ (googleAPIState, { dispatch }) => {
-        dispatch(setCalendarAPIState(googleAPIState));
+    /* listener */ (googleAPIState, { dispatch, getState }) => {
+
+        // only propagate state if we are using google calendar
+        if (getState()['features/calendar-sync'].calendarType
+                === CALENDAR_TYPE.GOOGLE) {
+            dispatch(setCalendarAPIState(googleAPIState));
+        }
+
     });
 StateListenerRegistry.register(
     /* selector */ state => state['features/google-api'].profileEmail,
