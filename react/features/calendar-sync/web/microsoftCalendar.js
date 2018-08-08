@@ -80,8 +80,7 @@ export class MicrosoftCalendarApi {
         this._getState = store.getState;
         this._currentRequest = {};
 
-        // checks post messages for events from the popup
-        window.addEventListener('message', this._onPostMessage.bind(this));
+        this._onPostMessage = this._onPostMessage.bind(this);
     }
 
     /**
@@ -425,6 +424,10 @@ export class MicrosoftCalendarApi {
      * @private
      */
     _requestToken(authState: string = '', authNonce: string = '') {
+
+        // checks post messages for events from the popup
+        window.addEventListener('message', this._onPostMessage);
+
         const h = 600;
         const w = 480;
 
@@ -459,6 +462,8 @@ export class MicrosoftCalendarApi {
         return `${AUTH_ENDPOINT}${authParams}`;
     }
 
+    _onPostMessage: () => void;
+
     /**
      * Post message received in window. We listen for messages with type
      * 'ms-login', which will deliver the login information.
@@ -480,6 +485,9 @@ export class MicrosoftCalendarApi {
         if (this._popupAuthWindow) {
             this._popupAuthWindow.close();
             this._popupAuthWindow = null;
+
+            // clears the event listener
+            window.removeEventListener('message', this._onPostMessage);
         }
     }
 
