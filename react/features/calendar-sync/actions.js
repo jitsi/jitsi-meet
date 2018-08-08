@@ -122,7 +122,30 @@ export function signIn() {
 }
 
 /**
+ * Logs out the user.
+ *
+ * @returns {Function}
+ */
+export function signOut() {
+    return (dispatch: Dispatch<*>, getState: Function): Promise<*> => {
+        const { calendarType } = getState()['features/calendar-sync'];
+        const api = _getCalendarIntegration(
+            calendarType, {
+                dispatch,
+                getState
+            });
+
+        if (!api) {
+            return Promise.reject('No calendar type selected!');
+        }
+
+        return dispatch(api.signOut());
+    };
+}
+
+/**
  * Sends an action to update the current calendar api auth state in redux.
+ * This is used only for microsoft implementation to store it auth state.
  *
  * @param {number} newState - The new state.
  * @returns {{
@@ -146,7 +169,7 @@ export function setCalendarAPIAuthState(newState: ?Object) {
  *     email: Object
  * }}
  */
-export function setCalendarProfileEmail(newEmail: string) {
+export function setCalendarProfileEmail(newEmail: ?string) {
     return {
         type: SET_CALENDAR_PROFILE_EMAIL,
         email: newEmail

@@ -186,6 +186,22 @@ const googleApi = {
     },
 
     /**
+     * Sign out from the Google API Client Library.
+     *
+     * @returns {Promise}
+     */
+    signOut() {
+        return this.get()
+            .then(() => this.isSignedIn())
+            .then(isSignedIn => {
+                if (isSignedIn) {
+                    return this.get()
+                        .then(api => api.auth2.getAuthInstance().signOut());
+                }
+            });
+    },
+
+    /**
      * Returns the global Google API Client Library object. Direct use of this
      * method is discouraged; instead use the {@link get} method.
      *

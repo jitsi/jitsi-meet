@@ -12,7 +12,9 @@ import { APP_STATE_CHANGED } from '../mobile/background/actionTypes';
 import {
     setCalendarAPIState,
     setCalendarAuthorization,
-    setCalendarProfileEmail
+    setCalendarEvents,
+    setCalendarProfileEmail,
+    setCalendarType
 } from './actions';
 import { REFRESH_CALENDAR, SET_CALENDAR_API_STATE } from './actionTypes';
 import {
@@ -76,14 +78,21 @@ CALENDAR_ENABLED
         }
 
         case SET_CALENDAR_API_STATE: {
-            const { getState } = store;
+            const { dispatch, getState } = store;
             const oldValue = getState()['features/calendar-sync'].apiState;
             const result = next(action);
             const newValue = action.apiState;
 
+            // if we are signing in, update profile
             if (oldValue === CALENDAR_API_STATES.LOADED
                 && newValue === CALENDAR_API_STATES.SIGNED_IN) {
                 _updateProfile(store);
+            } else if (oldValue === CALENDAR_API_STATES.SIGNED_IN
+                && newValue === CALENDAR_API_STATES.LOADED) {
+                // if we are signing out, clear the store
+                dispatch(setCalendarType(undefined));
+                dispatch(setCalendarProfileEmail(undefined));
+                dispatch(setCalendarEvents([]));
             }
 
             return result;

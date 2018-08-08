@@ -4,6 +4,7 @@ import {
     getCalendarEntries,
     loadGoogleAPI,
     signIn,
+    signOut,
     updateProfile
 } from '../../google-api';
 
@@ -68,6 +69,15 @@ export class GoogleCalendarApi {
      */
     signIn() {
         return signIn();
+    }
+
+    /**
+     * Sign out from the Google API Client Library.
+     *
+     * @returns {function(Dispatch<*>): Promise<string|never>}
+     */
+    signOut() {
+        return signOut();
     }
 
     /**

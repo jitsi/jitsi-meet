@@ -52,6 +52,27 @@ export function signIn() {
 }
 
 /**
+ * Logs out the user.
+ *
+ * @returns {function(Dispatch<*>): Promise<string | never>}
+ */
+export function signOut() {
+    return (dispatch: Dispatch<*>) =>
+        googleApi.get()
+            .then(() => googleApi.signOut())
+            .then(() => {
+                dispatch({
+                    type: SET_GOOGLE_API_STATE,
+                    googleAPIState: GOOGLE_API_STATES.LOADED
+                });
+                dispatch({
+                    type: SET_GOOGLE_API_PROFILE,
+                    profileEmail: ''
+                });
+            });
+}
+
+/**
  * Updates the profile data that is currently used.
  *
  * @returns {function(Dispatch<*>): Promise<string | never>}

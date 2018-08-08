@@ -356,6 +356,19 @@ export class MicrosoftCalendarApi {
     }
 
     /**
+     * Sign out from the Microsoft API Client Library.
+     *
+     * @returns {function(Dispatch<*>): Promise<string|never>}
+     */
+    signOut() {
+        return () => {
+            this._dispatch(setCalendarAPIAuthState(undefined));
+            this._dispatch(
+                setCalendarAPIState(CALENDAR_API_STATES.LOADED));
+        };
+    }
+
+    /**
      * Checks whether we have a saved token which had not expired.
      *
      * @returns {*|boolean} - Returns true if we have a token we can use.
