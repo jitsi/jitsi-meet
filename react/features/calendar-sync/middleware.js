@@ -14,9 +14,9 @@ import {
     setCalendarAuthorization,
     setCalendarProfileEmail
 } from './actions';
-import { REFRESH_CALENDAR } from './actionTypes';
-import { CALENDAR_ENABLED } from './constants';
-import { _fetchCalendarEntries } from './functions';
+import { REFRESH_CALENDAR, SET_CALENDAR_API_STATE } from './actionTypes';
+import { CALENDAR_API_STATES, CALENDAR_ENABLED } from './constants';
+import { _fetchCalendarEntries, _updateProfile } from './functions';
 
 CALENDAR_ENABLED
     && MiddlewareRegistry.register(store => next => action => {
@@ -67,6 +67,20 @@ CALENDAR_ENABLED
 
             _fetchCalendarEntries(
                 store, action.isInteractive, action.forcePermission);
+
+            return result;
+        }
+
+        case SET_CALENDAR_API_STATE: {
+            const { getState } = store;
+            const oldValue = getState()['features/calendar-sync'].apiState;
+            const result = next(action);
+            const newValue = action.apiState;
+
+            if (oldValue === CALENDAR_API_STATES.LOADED
+                && newValue === CALENDAR_API_STATES.SIGNED_IN) {
+                _updateProfile(store);
+            }
 
             return result;
         }

@@ -1,6 +1,11 @@
 /* @flow */
 
-import { getCalendarEntries, loadGoogleAPI, signIn } from '../../google-api';
+import {
+    getCalendarEntries,
+    loadGoogleAPI,
+    signIn,
+    updateProfile
+} from '../../google-api';
 
 /**
  * Loads and interacts with the Google Calendar API.
@@ -63,5 +68,14 @@ export class GoogleCalendarApi {
      */
     signIn() {
         return signIn();
+    }
+
+    /**
+     * Updates the profile data using google-api feature.
+     *
+     * @returns {function(Dispatch<*>): Promise<string|never>}
+     */
+    updateProfile() {
+        return updateProfile();
     }
 }

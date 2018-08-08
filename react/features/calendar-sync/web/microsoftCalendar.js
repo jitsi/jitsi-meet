@@ -92,6 +92,10 @@ export class MicrosoftCalendarApi {
     init(): Promise<void> {
         this._dispatch(setCalendarAPIState(CALENDAR_API_STATES.LOADED));
 
+        if (this._isSignedIn()) {
+            this._updateAPIToSignedIn();
+        }
+
         return Promise.resolve();
     }
 
@@ -188,7 +192,7 @@ export class MicrosoftCalendarApi {
         /* eslint-enable max-params */
 
         if (this._isSignedIn()) {
-            this._dispatch(setCalendarAPIState(CALENDAR_API_STATES.SIGNED_IN));
+            this._updateAPIToSignedIn();
         } else {
             return Promise.reject('not signed in');
         }
@@ -247,12 +251,12 @@ export class MicrosoftCalendarApi {
                     authState: undefined,
                     accessToken: validatedPayload.accessToken,
                     idToken: validatedPayload.idToken,
-                    tokenExpires: validatedPayload.tokenExpires
+                    tokenExpires: validatedPayload.tokenExpires,
+                    userSigninName: validatedPayload.userSigninName
                 }));
             this._dispatch(
                 setCalendarProfileEmail(validatedPayload.userSigninName));
-            this._dispatch(
-                setCalendarAPIState(CALENDAR_API_STATES.SIGNED_IN));
+            this._updateAPIToSignedIn();
         } else {
             logger.warn('token is not valid');
 
@@ -485,5 +489,30 @@ export class MicrosoftCalendarApi {
         params.set('tokenExpires', expireDate.getTime().toString());
 
         return params;
+    }
+
+    /**
+     * Does nothing as we update the profile, every time we set the api state
+     * to signed-in.
+     *
+     * @returns {function(): Promise<void>}
+     */
+    updateProfile(): Function {
+        return () => Promise.resolve();
+    }
+
+    /**
+     * Updates api state to signed in and updates the profile email.
+     *
+     * @returns {void}
+     * @private
+     */
+    _updateAPIToSignedIn() {
+        this._dispatch(setCalendarAPIState(CALENDAR_API_STATES.SIGNED_IN));
+
+        const state
+            = this._getState()['features/calendar-sync'].msAuthState || {};
+
+        this._dispatch(setCalendarProfileEmail(state.userSigninName));
     }
 }

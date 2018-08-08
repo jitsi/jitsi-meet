@@ -92,3 +92,24 @@ export function _getCalendarIntegration(calendarType, store) {
 
     return calendarIntegrationInstance;
 }
+
+/**
+ * Updates the profile data. Requires the api to be signed in.
+ *
+ * @param {Object} store - The redux store.
+ * @returns {void}
+ * @private
+ */
+export function _updateProfile(store) {
+    const { dispatch, getState } = store;
+    const calendarType = getState()['features/calendar-sync'].calendarType;
+    const api = _getCalendarIntegration(calendarType, store);
+
+    if (!api) {
+        logger.debug('No calendar type available');
+
+        return;
+    }
+
+    dispatch(api.updateProfile());
+}
