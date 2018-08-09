@@ -29,6 +29,10 @@ import {
 } from '../../../invite';
 import { openKeyboardShortcutsDialog } from '../../../keyboard-shortcuts';
 import {
+    LocalRecordingButton,
+    LocalRecordingInfoDialog
+} from '../../../local-recording';
+import {
     LiveStreamButton,
     RecordButton
 } from '../../../recording';
@@ -130,6 +134,11 @@ type Props = {
     _localParticipantID: String,
 
     /**
+     * The subsection of Redux state for local recording
+     */
+    _localRecState: Object,
+
+    /**
      * Whether or not the overflow menu is visible.
      */
     _overflowMenuVisible: boolean,
@@ -158,6 +167,7 @@ type Props = {
      * Flag showing whether toolbar is visible.
      */
     _visible: boolean,
+
 
     /**
      * Set with the buttons which this Toolbox should display.
@@ -228,6 +238,8 @@ class Toolbox extends Component<Props> {
             = this._onToolbarToggleScreenshare.bind(this);
         this._onToolbarToggleSharedVideo
             = this._onToolbarToggleSharedVideo.bind(this);
+        this._onToolbarOpenLocalRecordingInfoDialog
+            = this._onToolbarOpenLocalRecordingInfoDialog.bind(this);
     }
 
     /**
@@ -370,6 +382,12 @@ class Toolbox extends Component<Props> {
                         visible = { this._shouldShowButton('camera') } />
                 </div>
                 <div className = 'button-group-right'>
+                    { this._shouldShowButton('localrecording')
+                        && <LocalRecordingButton
+                            onClick = {
+                                this._onToolbarOpenLocalRecordingInfoDialog
+                            } />
+                    }
                     { this._shouldShowButton('tileview')
                         && <TileViewButton /> }
                     { this._shouldShowButton('invite')
@@ -842,6 +860,20 @@ class Toolbox extends Component<Props> {
         this._doToggleSharedVideo();
     }
 
+    _onToolbarOpenLocalRecordingInfoDialog: () => void;
+
+    /**
+     * Opens the {@code LocalRecordingInfoDialog}.
+     *
+     * @private
+     * @returns {void}
+     */
+    _onToolbarOpenLocalRecordingInfoDialog() {
+        sendAnalytics(createToolbarEvent('local.recording'));
+
+        this.props.dispatch(openDialog(LocalRecordingInfoDialog));
+    }
+
     /**
      * Renders a button for toggleing screen sharing.
      *
@@ -984,7 +1016,7 @@ class Toolbox extends Component<Props> {
      * Returns if a button name has been explicitly configured to be displayed.
      *
      * @param {string} buttonName - The name of the button, as expected in
-     * {@link intefaceConfig}.
+     * {@link interfaceConfig}.
      * @private
      * @returns {boolean} True if the button should be displayed.
      */
@@ -1021,6 +1053,7 @@ function _mapStateToProps(state) {
         visible
     } = state['features/toolbox'];
     const localParticipant = getLocalParticipant(state);
+    const localRecordingStates = state['features/local-recording'];
     const localVideo = getLocalVideoTrack(state['features/base/tracks']);
     const addPeopleEnabled = isAddPeopleEnabled(state);
     const dialOutEnabled = isDialOutEnabled(state);
@@ -1061,6 +1094,7 @@ function _mapStateToProps(state) {
         _isGuest: state['features/base/jwt'].isGuest,
         _fullScreen: fullScreen,
         _localParticipantID: localParticipant.id,
+        _localRecState: localRecordingStates,
         _overflowMenuVisible: overflowMenuVisible,
         _raisedHand: localParticipant.raisedHand,
         _screensharing: localVideo && localVideo.videoType === 'desktop',

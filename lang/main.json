@@ -43,7 +43,8 @@
         "mute": "Mute or unmute your microphone",
         "fullScreen": "View or exit full screen",
         "videoMute": "Start or stop your camera",
-        "showSpeakerStats": "Show speaker stats"
+        "showSpeakerStats": "Show speaker stats",
+        "localRecording": "Show or hide local recording controls"
     },
     "welcomepage":{
         "accessibilityLabel": {
@@ -87,6 +88,7 @@
             "fullScreen": "Toggle full screen",
             "hangup": "Leave the call",
             "invite": "Invite people",
+            "localRecording": "Toggle local recording controls",
             "lockRoom": "Toggle room lock",
             "moreActions": "Toggle more actions menu",
             "moreActionsMenu": "More actions menu",
@@ -668,5 +670,34 @@
         "decline": "Dismiss",
         "productLabel": "from Jitsi Meet",
         "videoCallTitle": "Incoming video call"
+    },
+    "localRecording": {
+        "localRecording": "Local Recording",
+        "dialogTitle": "Local Recording Controls",
+        "start": "Start Recording",
+        "stop": "Stop Recording",
+        "moderator": "Moderator",
+        "me": "Me",
+        "duration": "Duration",
+        "durationNA": "N/A",
+        "encoding": "Encoding",
+        "participantStats": "Participant Stats",
+        "participant": "Participant",
+        "sessionToken": "Session Token",
+        "clientState": {
+            "on": "On",
+            "off": "Off",
+            "unknown": "Unknown"
+        },
+        "messages": {
+            "engaged": "Local recording engaged.",
+            "finished": "Recording session __token__ finished. Please send the recorded file to the moderator.",
+            "finishedModerator": "Recording session __token__ finished. The recording of the local track has been saved. Please ask the other participants to submit their recordings.",
+            "notModerator": "You are not the moderator. You cannot start or stop local recording."
+        },
+        "yes": "Yes",
+        "no": "No",
+        "label": "LOR",
+        "labelToolTip": "Local recording is engaged"
     }
 }

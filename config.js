@@ -347,6 +347,24 @@ var config = {
         // userRegion: "asia"
     }
 
+    // Local Recording
+    //
+
+    // localRecording: {
+    // Enables local recording.
+    // Additionally, 'localrecording' (all lowercase) needs to be added to
+    // TOOLBAR_BUTTONS in interface_config.js for the Local Recording
+    // button to show up on the toolbar.
+    //
+    //     enabled: true,
+    //
+
+    // The recording format, can be one of 'ogg', 'flac' or 'wav'.
+    //     format: 'flac'
+    //
+
+    // }
+
     // Options related to end-to-end (participant to participant) ping.
     // e2eping: {
     //   // The interval in milliseconds at which pings will be sent.
@@ -408,6 +426,7 @@ var config = {
      nick
      startBitrate
      */
+
 };
 
 /* eslint-enable no-unused-vars, no-var */
