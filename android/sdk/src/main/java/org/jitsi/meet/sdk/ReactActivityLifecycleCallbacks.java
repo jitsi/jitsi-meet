@@ -33,6 +33,30 @@ import com.facebook.react.modules.core.PermissionListener;
  * it.
  */
 public class ReactActivityLifecycleCallbacks {
+
+    /**
+     * {@link Activity} lifecycle method which should be called from
+     * {@code Activity#onActivityResult} so we are notified about results of external intents
+     * started/finished.
+     *
+     * @param activity {@code Activity} activity from where the result comes from.
+     * @param requestCode {@code int} code of the request.
+     * @param resultCode {@code int} code of the result.
+     * @param data {@code Intent} the intent of the activity.
+     */
+    public static void onActivityResult(
+            Activity activity,
+            int requestCode,
+            int resultCode,
+            Intent data) {
+        ReactInstanceManager reactInstanceManager
+                = ReactInstanceManagerHolder.getReactInstanceManager();
+
+        if (reactInstanceManager != null) {
+            reactInstanceManager.onActivityResult(activity, requestCode, resultCode, data);
+        }
+    }
+
     /**
      * Needed for making sure this class working with the "PermissionsAndroid"
      * React Native module.

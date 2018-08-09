@@ -175,7 +175,12 @@ public class JitsiMeetActivity
             if (Settings.canDrawOverlays(this)) {
                 initializeContentView();
             }
+
+            return;
         }
+
+        ReactActivityLifecycleCallbacks.onActivityResult(
+                this, requestCode, resultCode, data);
     }
 
     @Override
