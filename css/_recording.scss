@@ -2,6 +2,38 @@
     vertical-align: top;
 }
 
+.recording-dialog {
+    .authorization-panel {
+        align-items: center;
+        border-bottom: 2px solid rgba(0, 0, 0, 0.3);
+        display: flex;
+        flex-direction: column;
+        margin-bottom: 10px;
+        padding-bottom: 10px;
+
+        .dropbox-sign-in {
+            background-color: #4285f4;
+            border-radius: 2px;
+            cursor: pointer;
+            display: inline-flex;
+            padding: 1px;
+            margin: 10px 0px;
+
+            .dropbox-logo {
+                background-color: white;
+                border-radius: 2px;
+                display: inline-block;
+                padding: 8px;
+                height: 18px;
+            }
+        }
+
+        .logged-in-pannel {
+            padding: 10px;
+        }
+    }
+}
+
 .live-stream-dialog {
     /**
      * Set font-size to be consistent with Atlaskit FieldText.

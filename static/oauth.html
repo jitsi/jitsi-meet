@@ -1,0 +1,35 @@
+<html itemscope itemtype="http://schema.org/Product" prefix="og: http://ogp.me/ns#" xmlns="http://www.w3.org/1999/html">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="content-type" content="text/html;charset=utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!--#include virtual="/base.html" -->
+    <!--#include virtual="/title.html" -->
+    <script>
+        function getParentWindowCallback() {
+            var windowName = window.name;
+            var parentWindow = window.opener;
+            if (parentWindow
+                && parentWindow.JitsiMeetJS
+                && parentWindow.JitsiMeetJS.app) {
+                var globalNS = parentWindow.JitsiMeetJS.app;
+                if( globalNS.oauthCallbacks
+                    && typeof globalNS.oauthCallbacks[windowName]
+                        === 'function') {
+                    return globalNS.oauthCallbacks[windowName];
+                }
+            }
+
+            return undefined;
+        }
+
+        var callback = getParentWindowCallback();
+        if (typeof callback === 'function') {
+            callback();
+        } else {
+            alert('Something went wrong!');
+        }
+    </script>
+</head>
+<body />
+</html>
