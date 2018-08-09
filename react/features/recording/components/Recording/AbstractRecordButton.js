@@ -119,6 +119,7 @@ export function _mapStateToProps(state: Object, ownProps: Props): Object {
         // its own to be visible or not.
         const isModerator = isLocalParticipantModerator(state);
         const {
+            dropbox = {},
             enableFeaturesBasedOnToken,
             fileRecordingsEnabled
         } = state['features/base/config'];
@@ -127,7 +128,8 @@ export function _mapStateToProps(state: Object, ownProps: Props): Object {
         visible = isModerator
             && fileRecordingsEnabled
             && (!enableFeaturesBasedOnToken
-                || String(features.recording) === 'true');
+                || String(features.recording) === 'true')
+            && typeof dropbox.clientId === 'string';
     }
 
     return {

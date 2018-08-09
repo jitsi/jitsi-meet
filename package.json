@@ -37,6 +37,7 @@
     "@microsoft/microsoft-graph-client": "1.1.0",
     "@webcomponents/url": "0.7.1",
     "autosize": "1.18.13",
+    "dropbox": "4.0.9",
     "i18next": "8.4.3",
     "i18next-browser-languagedetector": "2.0.0",
     "i18next-xhr-backend": "1.4.2",

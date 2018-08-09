@@ -456,7 +456,12 @@
         "on": "Recording",
         "pending": "Preparing to record the meeting...",
         "rec": "REC",
+        "authDropboxText": "To start the recording you need to first authorize our Dropbox recording app. After the recording is finished the file will be uploaded to your Dropbox account.",
+        "authDropboxCompletedText": "Our Dropbox app has been authorized successfully. You should see the recorded file in your Dropbox account shortly after the recording has finished.",
         "serviceName": "Recording service",
+        "signOut": "Sign Out",
+        "loggedIn": "Logged in as __userName__",
+        "availableSpace": "Available space: __spaceLeft__ MB (approximately __duration__ minutes of recording)",
         "startRecordingBody": "Are you sure you would like to start recording?",
         "unavailable": "Oops! The __serviceName__ is currently unavailable. We're working on resolving the issue. Please try again later.",
         "unavailableTitle": "Recording unavailable"

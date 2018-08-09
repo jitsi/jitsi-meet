@@ -1,30 +1,32 @@
 // @flow
 
-import React from 'react';
+import React, { Component } from 'react';
 import { Text, View } from 'react-native';
-import { connect } from 'react-redux';
 
 import { translate } from '../../../base/i18n';
 
 import styles from '../styles';
 
-import AbstractStartRecordingDialog, {
-    type Props,
-    _mapStateToProps
-} from './AbstractStartRecordingDialog';
+type Props = {
+
+    /**
+     * Invoked to obtain translated strings.
+     */
+    t: Function
+};
 
 /**
  * React Component for getting confirmation to start a file recording session.
  *
  * @extends Component
  */
-class StartRecordingDialog extends AbstractStartRecordingDialog<Props> {
+class StartRecordingDialogContent extends Component<Props> {
     /**
      * Renders the platform specific dialog content.
      *
-     * @inheritdoc
+     * @returns {void}
      */
-    _renderDialogContent() {
+    render() {
         const { t } = this.props;
 
         return (
@@ -37,4 +39,4 @@ class StartRecordingDialog extends AbstractStartRecordingDialog<Props> {
     }
 }
 
-export default translate(connect(_mapStateToProps)(StartRecordingDialog));
+export default translate(StartRecordingDialogContent);
