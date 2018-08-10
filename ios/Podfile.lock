@@ -11,7 +11,7 @@ PODS:
     - React/Core (= 0.55.4)
   - react-native-background-timer (2.0.0):
     - React
-  - react-native-calendar-events (1.6.0):
+  - react-native-calendar-events (1.6.1):
     - React
   - react-native-fast-image (4.0.14):
     - FLAnimatedImage
