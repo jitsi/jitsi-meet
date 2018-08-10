@@ -4,6 +4,8 @@ import { Dropbox } from 'dropbox';
 
 import { JitsiRecordingConstants } from '../base/lib-jitsi-meet';
 
+const logger = require('jitsi-meet-logger').getLogger(__filename);
+
 /**
  * Searches in the passed in redux state for an active recording session of the
  * passed in mode.
@@ -61,5 +63,9 @@ export function getDropboxData(
             spaceLeft: Math.floor((allocated - used) / 1048576)// 1MiB=1048576B
         };
 
-    }, () => undefined);
+    }, error => {
+        logger.error(error);
+
+        return undefined;
+    });
 }

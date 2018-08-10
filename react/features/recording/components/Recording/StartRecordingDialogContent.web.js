@@ -4,6 +4,10 @@ import Spinner from '@atlaskit/spinner';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
+import {
+    createRecordingDialogEvent,
+    sendAnalytics
+} from '../../../analytics';
 import { translate } from '../../../base/i18n';
 import { authorizeDropbox, updateDropboxToken } from '../../../base/oauth';
 
@@ -161,6 +165,9 @@ class StartRecordingDialogContent extends Component<Props> {
      * @returns {void}
      */
     _onSignInClick() {
+        sendAnalytics(
+            createRecordingDialogEvent('start', 'signIn.button')
+        );
         this.props.dispatch(authorizeDropbox());
     }
 
@@ -172,6 +179,9 @@ class StartRecordingDialogContent extends Component<Props> {
      * @returns {void}
      */
     _onSignOutClick() {
+        sendAnalytics(
+            createRecordingDialogEvent('start', 'signOut.button')
+        );
         this.props.dispatch(updateDropboxToken());
     }
 }
