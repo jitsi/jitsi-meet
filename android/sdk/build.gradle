@@ -26,6 +26,9 @@ dependencies {
 
     compile project(':react-native-background-timer')
     compile project(':react-native-fast-image')
+    compile(project(":react-native-google-signin")) {
+        exclude group: 'com.google.android.gms'
+    }
     compile project(':react-native-immersive')
     compile project(':react-native-keep-awake')
     compile project(':react-native-linear-gradient')

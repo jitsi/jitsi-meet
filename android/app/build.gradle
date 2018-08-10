@@ -41,9 +41,15 @@ android {
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
+    compile 'com.android.support:appcompat-v7:22.2.0'
+    compile 'com.google.android.gms:play-services-auth:15.0.0'
 
     implementation project(':sdk')
 
     debugImplementation 'com.squareup.leakcanary:leakcanary-android:1.6.1'
     releaseImplementation 'com.squareup.leakcanary:leakcanary-android-no-op:1.6.1'
+}
+
+if (project.file('google-services.json').exists()) {
+   apply plugin: 'com.google.gms.google-services'
 }

@@ -91,8 +91,8 @@ export type State = {
  * but the abstraction of its properties are already present in this abstract
  * class.
  */
-export default class AbstractStartLiveStreamDialog
-    extends Component<Props, State> {
+export default class AbstractStartLiveStreamDialog<P: Props>
+    extends Component<P, State> {
     _isMounted: boolean;
 
     /**
@@ -100,7 +100,7 @@ export default class AbstractStartLiveStreamDialog
      *
      * @inheritdoc
      */
-    constructor(props: Props) {
+    constructor(props: P) {
         super(props);
 
         this.state = {
@@ -134,10 +134,6 @@ export default class AbstractStartLiveStreamDialog
      */
     componentDidMount() {
         this._isMounted = true;
-
-        if (this.props._googleApiApplicationClientID) {
-            this._onInitializeGoogleApi();
-        }
     }
 
     /**
@@ -196,13 +192,6 @@ export default class AbstractStartLiveStreamDialog
      * @returns {Promise}
      */
     _onGetYouTubeBroadcasts: () => Promise<*>;
-
-    /**
-     * Loads the Google client application used for fetching stream keys.
-     * If the user is already logged in, then a request for available YouTube
-     * broadcasts is also made.
-     */
-    _onInitializeGoogleApi: () => Object;
 
     _onStreamKeyChange: string => void;
 
@@ -291,6 +280,8 @@ export default class AbstractStartLiveStreamDialog
  * @returns {{
  *     _conference: Object,
  *     _googleApiApplicationClientID: string,
+ *     _googleAPIState: number,
+ *     _googleProfileEmail: string,
  *     _streamKey: string
  * }}
  */

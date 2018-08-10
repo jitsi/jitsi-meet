@@ -23,6 +23,8 @@ export const ColorPalette = {
     buttonUnderlay: '#495258',
     darkGrey: '#555555',
     green: '#40b183',
+    lightGrey: '#AAAAAA',
+    lighterGrey: '#EEEEEE',
     red: '#D00000',
     white: 'white',
 

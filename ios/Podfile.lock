@@ -7,6 +7,26 @@ PODS:
     - DoubleConversion
     - glog
   - glog (0.3.4)
+  - GoogleSignIn (4.2.0):
+    - "GoogleToolboxForMac/NSDictionary+URLArguments (~> 2.1)"
+    - "GoogleToolboxForMac/NSString+URLArguments (~> 2.1)"
+    - GTMOAuth2 (~> 1.0)
+    - GTMSessionFetcher/Core (~> 1.1)
+  - GoogleToolboxForMac/DebugUtils (2.1.4):
+    - GoogleToolboxForMac/Defines (= 2.1.4)
+  - GoogleToolboxForMac/Defines (2.1.4)
+  - "GoogleToolboxForMac/NSDictionary+URLArguments (2.1.4)":
+    - GoogleToolboxForMac/DebugUtils (= 2.1.4)
+    - GoogleToolboxForMac/Defines (= 2.1.4)
+    - "GoogleToolboxForMac/NSString+URLArguments (= 2.1.4)"
+  - "GoogleToolboxForMac/NSString+URLArguments (2.1.4)"
+  - GTMOAuth2 (1.1.6):
+    - GTMSessionFetcher (~> 1.1)
+  - GTMSessionFetcher (1.2.0):
+    - GTMSessionFetcher/Full (= 1.2.0)
+  - GTMSessionFetcher/Core (1.2.0)
+  - GTMSessionFetcher/Full (1.2.0):
+    - GTMSessionFetcher/Core (= 1.2.0)
   - React (0.55.4):
     - React/Core (= 0.55.4)
   - react-native-background-timer (2.0.0):
@@ -63,6 +83,9 @@ PODS:
     - React/Core
     - React/fishhook
     - React/RCTBlob
+  - RNGoogleSignin (1.0.0-rc3):
+    - GoogleSignIn
+    - React
   - RNSound (0.10.9):
     - React/Core
     - RNSound/Core (= 0.10.9)
@@ -96,6 +119,7 @@ DEPENDENCIES:
   - React/RCTNetwork (from `../node_modules/react-native`)
   - React/RCTText (from `../node_modules/react-native`)
   - React/RCTWebSocket (from `../node_modules/react-native`)
+  - RNGoogleSignin (from `../node_modules/react-native-google-signin`)
   - RNSound (from `../node_modules/react-native-sound`)
   - RNVectorIcons (from `../node_modules/react-native-vector-icons`)
   - yoga (from `../node_modules/react-native/ReactCommon/yoga`)
@@ -104,6 +128,10 @@ SPEC REPOS:
   https://github.com/cocoapods/specs.git:
     - boost-for-react-native
     - FLAnimatedImage
+    - GoogleSignIn
+    - GoogleToolboxForMac
+    - GTMOAuth2
+    - GTMSessionFetcher
     - SDWebImage
 
 EXTERNAL SOURCES:
@@ -127,6 +155,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-locale-detector"
   react-native-webrtc:
     :path: "../node_modules/react-native-webrtc"
+  RNGoogleSignin:
+    :path: "../node_modules/react-native-google-signin"
   RNSound:
     :path: "../node_modules/react-native-sound"
   RNVectorIcons:
@@ -140,6 +170,10 @@ SPEC CHECKSUMS:
   FLAnimatedImage: 4a0b56255d9b05f18b6dd7ee06871be5d3b89e31
   Folly: 211775e49d8da0ca658aebc8eab89d642935755c
   glog: 1de0bb937dccdc981596d3b5825ebfb765017ded
+  GoogleSignIn: 591e46382014e591269f862ba6e7bc0fbd793532
+  GoogleToolboxForMac: 91c824d21e85b31c2aae9bb011c5027c9b4e738f
+  GTMOAuth2: c77fe325e4acd453837e72d91e3b5f13116857b2
+  GTMSessionFetcher: 0c4baf0a73acd0041bf9f71ea018deedab5ea84e
   React: aa2040dbb6f317b95314968021bd2888816e03d5
   react-native-background-timer: 63dcbf37dbcf294b5c6c071afcdc661fa06a7594
   react-native-calendar-events: fe6fbc8ed337a7423c98f2c9012b25f20444de09
@@ -147,11 +181,12 @@ SPEC CHECKSUMS:
   react-native-keep-awake: 0de4bd66de0c23178107dce0c2fcc3354b2a8e94
   react-native-locale-detector: d1b2c6fe5abb56e3a1efb6c2d6f308c05c4251f1
   react-native-webrtc: 31b6d3f1e3e2ce373aa43fd682b04367250f807d
+  RNGoogleSignin: 44debd8c359a662c0e2d585952e88b985bf78008
   RNSound: b360b3862d3118ed1c74bb9825696b5957686ac4
   RNVectorIcons: c0dbfbf6068fefa240c37b0f71bd03b45dddac44
   SDWebImage: 624d6e296c69b244bcede364c72ae0430ac14681
   yoga: a23273df0088bf7f2bb7e5d7b00044ea57a2a54a
 
-PODFILE CHECKSUM: 69d3df0b8baa54d636bd653b412ed45db771a3b6
+PODFILE CHECKSUM: da74c08f6eb674668c49d8d799f8d9e2476a9fc5
 
 COCOAPODS: 1.5.3

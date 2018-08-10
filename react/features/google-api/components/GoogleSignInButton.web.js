@@ -1,25 +1,18 @@
 // @flow
 
-import React, { Component } from 'react';
+import React from 'react';
 
-/**
- * The type of the React {@code Component} props of {@link GoogleSignInButton}.
- */
-type Props = {
+import { translate } from '../../base/i18n';
 
-    // The callback to invoke when {@code GoogleSignInButton} is clicked.
-    onClick: Function,
-
-    // The text to display within {@code GoogleSignInButton}.
-    text: string
-};
+import AbstractGoogleSignInButton from './AbstractGoogleSignInButton';
 
 /**
  * A React Component showing a button to sign in with Google.
  *
  * @extends Component
  */
-export default class GoogleSignInButton extends Component<Props> {
+class GoogleSignInButton extends AbstractGoogleSignInButton {
+
     /**
      * Implements React's {@link Component#render()}.
      *
@@ -27,6 +20,8 @@ export default class GoogleSignInButton extends Component<Props> {
      * @returns {ReactElement}
      */
     render() {
+        const { t } = this.props;
+
         return (
             <div
                 className = 'google-sign-in'
@@ -35,9 +30,15 @@ export default class GoogleSignInButton extends Component<Props> {
                     className = 'google-logo'
                     src = 'images/googleLogo.svg' />
                 <div className = 'google-cta'>
-                    { this.props.text }
+                    {
+                        t(this.props.signedIn
+                            ? 'liveStreaming.signOut'
+                            : 'liveStreaming.signIn')
+                    }
                 </div>
             </div>
         );
     }
 }
+
+export default translate(GoogleSignInButton);

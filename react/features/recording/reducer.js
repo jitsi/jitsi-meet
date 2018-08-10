@@ -1,5 +1,4 @@
 import { ReducerRegistry } from '../base/redux';
-import { PersistenceRegistry } from '../base/storage';
 import {
     CLEAR_RECORDING_SESSIONS,
     RECORDING_SESSION_UPDATED,
@@ -16,13 +15,6 @@ const DEFAULT_STATE = {
  * The name of the Redux store this feature stores its state in.
  */
 const STORE_NAME = 'features/recording';
-
-/**
- * Sets up the persistence of the feature {@code recording}.
- */
-PersistenceRegistry.register(STORE_NAME, {
-    streamKey: true
-}, DEFAULT_STATE);
 
 /**
  * Reduces the Redux actions of the feature features/recording.

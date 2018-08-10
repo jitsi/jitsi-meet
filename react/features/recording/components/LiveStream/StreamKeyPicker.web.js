@@ -13,7 +13,7 @@ import { translate } from '../../../base/i18n';
  *
  * @extends Component
  */
-class BroadcastsDropdown extends PureComponent {
+class StreamKeyPicker extends PureComponent {
     /**
      * Default values for {@code StreamKeyForm} component's properties.
      *
@@ -24,7 +24,7 @@ class BroadcastsDropdown extends PureComponent {
     };
 
     /**
-     * {@code BroadcastsDropdown} component's property types.
+     * {@code StreamKeyPicker} component's property types.
      */
     static propTypes = {
         /**
@@ -64,10 +64,10 @@ class BroadcastsDropdown extends PureComponent {
     };
 
     /**
-     * Initializes a new {@code BroadcastsDropdown} instance.
+     * Initializes a new {@code StreamKeyPicker} instance.
      *
      * @param {Props} props - The React {@code Component} props to initialize
-     * the new {@code BroadcastsDropdown} instance with.
+     * the new {@code StreamKeyPicker} instance with.
      */
     constructor(props) {
         super(props);
@@ -166,4 +166,4 @@ class BroadcastsDropdown extends PureComponent {
     }
 }
 
-export default translate(BroadcastsDropdown);
+export default translate(StreamKeyPicker);

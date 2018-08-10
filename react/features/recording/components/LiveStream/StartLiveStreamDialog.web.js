@@ -21,7 +21,7 @@ import AbstractStartLiveStreamDialog, {
     _mapStateToProps,
     type Props
 } from './AbstractStartLiveStreamDialog';
-import BroadcastsDropdown from './BroadcastsDropdown';
+import StreamKeyPicker from './StreamKeyPicker';
 import StreamKeyForm from './StreamKeyForm';
 
 /**
@@ -31,7 +31,7 @@ import StreamKeyForm from './StreamKeyForm';
  * @extends Component
  */
 class StartLiveStreamDialog
-    extends AbstractStartLiveStreamDialog {
+    extends AbstractStartLiveStreamDialog<Props> {
 
     /**
      * Initializes a new {@code StartLiveStreamDialog} instance.
@@ -51,6 +51,21 @@ class StartLiveStreamDialog
             = this._onYouTubeBroadcastIDSelected.bind(this);
 
         this._renderDialogContent = this._renderDialogContent.bind(this);
+    }
+
+    /**
+     * Implements {@link Component#componentDidMount()}. Invoked immediately
+     * after this component is mounted.
+     *
+     * @inheritdoc
+     * @returns {void}
+     */
+    componentDidMount() {
+        super.componentDidMount();
+
+        if (this.props._googleApiApplicationClientID) {
+            this._onInitializeGoogleApi();
+        }
     }
 
     _onInitializeGoogleApi: () => Promise<*>;
@@ -237,18 +252,15 @@ class StartLiveStreamDialog
 
         switch (this.props._googleAPIState) {
         case GOOGLE_API_STATES.LOADED:
-            googleContent = (
-                <GoogleSignInButton
-                    onClick = { this._onGoogleSignIn }
-                    text = { t('liveStreaming.signIn') } />
-            );
+            googleContent
+                = <GoogleSignInButton onClick = { this._onGoogleSignIn } />;
             helpText = t('liveStreaming.signInCTA');
 
             break;
 
         case GOOGLE_API_STATES.SIGNED_IN:
             googleContent = (
-                <BroadcastsDropdown
+                <StreamKeyPicker
                     broadcasts = { broadcasts }
                     onBroadcastSelected = { this._onYouTubeBroadcastIDSelected }
                     selectedBoundStreamID = { selectedBoundStreamID } />
@@ -285,8 +297,7 @@ class StartLiveStreamDialog
         if (this.state.errorType !== undefined) {
             googleContent = (
                 <GoogleSignInButton
-                    onClick = { this._onRequestGoogleSignIn }
-                    text = { t('liveStreaming.signIn') } />
+                    onClick = { this._onRequestGoogleSignIn } />
             );
             helpText = this._getGoogleErrorMessageToDisplay();
         }
