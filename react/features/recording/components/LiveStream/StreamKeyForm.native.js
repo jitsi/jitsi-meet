@@ -39,7 +39,7 @@ class StreamKeyForm extends AbstractStreamKeyForm {
         const { t } = this.props;
 
         return (
-            <View style = { styles.streamKeyFormWrapper }>
+            <View style = { styles.formWrapper }>
                 <Text style = { styles.streamKeyInputLabel }>
                     {
                         t('dialog.streamKey')

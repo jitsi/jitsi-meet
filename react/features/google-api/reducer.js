@@ -27,7 +27,8 @@ ReducerRegistry.register('features/google-api',
         case SET_GOOGLE_API_STATE:
             return {
                 ...state,
-                googleAPIState: action.googleAPIState
+                googleAPIState: action.googleAPIState,
+                googleResponse: action.googleResponse
             };
         case SET_GOOGLE_API_PROFILE:
             return {

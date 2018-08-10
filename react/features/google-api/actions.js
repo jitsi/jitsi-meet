@@ -40,15 +40,11 @@ export function loadGoogleAPI(clientId: string) {
 
             return Promise.resolve();
         })
-        .then(() => dispatch({
-            type: SET_GOOGLE_API_STATE,
-            googleAPIState: GOOGLE_API_STATES.LOADED }))
+        .then(() => dispatch(setGoogleAPIState(GOOGLE_API_STATES.LOADED)))
         .then(() => googleApi.isSignedIn())
         .then(isSignedIn => {
             if (isSignedIn) {
-                dispatch({
-                    type: SET_GOOGLE_API_STATE,
-                    googleAPIState: GOOGLE_API_STATES.SIGNED_IN });
+                dispatch(setGoogleAPIState(GOOGLE_API_STATES.SIGNED_IN));
             }
         });
 }
@@ -113,6 +109,25 @@ export function requestLiveStreamsForYouTubeBroadcast(boundStreamID: string) {
                     selectedBoundStreamID: boundStreamID
                 };
             });
+}
+
+/**
+ * Sets the current Google API state.
+ *
+ * @param {number} googleAPIState - The state to be set.
+ * @param {Object} googleResponse - The last response from Google.
+ * @returns {{
+ *     type: SET_GOOGLE_API_STATE,
+ *     googleAPIState: number
+ * }}
+ */
+export function setGoogleAPIState(
+        googleAPIState: number, googleResponse: ?Object) {
+    return {
+        type: SET_GOOGLE_API_STATE,
+        googleAPIState,
+        googleResponse
+    };
 }
 
 /**

@@ -1,4 +1,10 @@
-import { GOOGLE_API_SCOPES, DISCOVERY_DOCS } from './constants';
+import {
+    API_URL_BROADCAST_STREAMS,
+    API_URL_LIVE_BROADCASTS,
+    DISCOVERY_DOCS,
+    GOOGLE_SCOPE_CALENDAR,
+    GOOGLE_SCOPE_YOUTUBE
+} from './constants';
 
 const GOOGLE_API_CLIENT_LIBRARY_URL = 'https://apis.google.com/js/api.js';
 
@@ -68,7 +74,10 @@ const googleApi = {
                     api.client.init({
                         clientId,
                         discoveryDocs: DISCOVERY_DOCS,
-                        scope: GOOGLE_API_SCOPES.join(' ')
+                        scope: [
+                            GOOGLE_SCOPE_CALENDAR,
+                            GOOGLE_SCOPE_YOUTUBE
+                        ].join(' ')
                     })
                     .then(resolve)
                     .catch(reject);
@@ -137,10 +146,8 @@ const googleApi = {
      * @returns {Promise}
      */
     requestAvailableYouTubeBroadcasts() {
-        const url = this._getURLForLiveBroadcasts();
-
         return this.get()
-            .then(api => api.client.request(url));
+            .then(api => api.client.request(API_URL_LIVE_BROADCASTS));
     },
 
     /**
@@ -152,10 +159,9 @@ const googleApi = {
      * @returns {Promise}
      */
     requestLiveStreamsForYouTubeBroadcast(boundStreamID) {
-        const url = this._getURLForLiveStreams(boundStreamID);
-
         return this.get()
-            .then(api => api.client.request(url));
+            .then(api => api.client.request(
+                `${API_URL_BROADCAST_STREAMS}${boundStreamID}`));
     },
 
     /**
@@ -353,37 +359,6 @@ const googleApi = {
      */
     _getGoogleApiClient() {
         return window.gapi;
-    },
-
-    /**
-     * Returns the URL to the Google API endpoint for retrieving the currently
-     * signed in user's YouTube broadcasts.
-     *
-     * @private
-     * @returns {string}
-     */
-    _getURLForLiveBroadcasts() {
-        return [
-            'https://content.googleapis.com/youtube/v3/liveBroadcasts',
-            '?broadcastType=all',
-            '&mine=true&part=id%2Csnippet%2CcontentDetails%2Cstatus'
-        ].join('');
-    },
-
-    /**
-     * Returns the URL to the Google API endpoint for retrieving the live
-     * streams associated with a YouTube broadcast's bound stream.
-     *
-     * @param {string} boundStreamID - The bound stream ID associated with a
-     * broadcast in YouTube.
-     * @returns {string}
-     */
-    _getURLForLiveStreams(boundStreamID) {
-        return [
-            'https://content.googleapis.com/youtube/v3/liveStreams',
-            '?part=id%2Csnippet%2Ccdn%2Cstatus',
-            `&id=${boundStreamID}`
-        ].join('');
     }
 };
 
