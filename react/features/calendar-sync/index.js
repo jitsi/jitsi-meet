@@ -1,7 +1,7 @@
 export * from './actions';
 export * from './components';
 export * from './constants';
-export * from './functions';
+export { isCalendarEnabled } from './functions';
 
 import './middleware';
 import './reducer';
