@@ -57,6 +57,14 @@ export function _fetchCalendarEntries(
     }
 
     dispatch(integration.load())
+        .then(() => dispatch(integration._isSignedIn()))
+        .then(signedIn => {
+            if (signedIn) {
+                return Promise.resolve();
+            }
+
+            return Promise.reject('Not authorized, please sign in!');
+        })
         .then(() => dispatch(integration.getCalendarEntries(
             FETCH_START_DAYS, FETCH_END_DAYS)))
         .then(events => _updateCalendarEntries.call({
