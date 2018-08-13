@@ -10,7 +10,7 @@ import { Icon } from '../../base/font-icons';
 import { getLocalizedDateFormatter, translate } from '../../base/i18n';
 import { ASPECT_RATIO_NARROW } from '../../base/responsive-ui';
 
-import { CALENDAR_ENABLED } from '../constants';
+import { isCalendarEnabled } from '../functions';
 import styles from './styles';
 
 const ALERT_MILLISECONDS = 5 * 60 * 1000;
@@ -293,6 +293,6 @@ function _mapStateToProps(state: Object) {
     };
 }
 
-export default CALENDAR_ENABLED
+export default isCalendarEnabled()
     ? translate(connect(_mapStateToProps)(ConferenceNotification))
     : undefined;

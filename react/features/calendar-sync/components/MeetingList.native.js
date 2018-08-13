@@ -10,7 +10,7 @@ import { NavigateSectionList } from '../../base/react';
 import { openSettings } from '../../mobile/permissions';
 
 import { refreshCalendar } from '../actions';
-import { CALENDAR_ENABLED } from '../constants';
+import { isCalendarEnabled } from '../functions';
 import styles from './styles';
 
 /**
@@ -275,6 +275,6 @@ function _mapStateToProps(state: Object) {
     };
 }
 
-export default CALENDAR_ENABLED
+export default isCalendarEnabled()
     ? translate(connect(_mapStateToProps)(MeetingList))
     : undefined;

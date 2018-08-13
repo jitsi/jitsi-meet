@@ -13,7 +13,8 @@ import {
     SET_CALENDAR_PROFILE_EMAIL,
     SET_CALENDAR_TYPE
 } from './actionTypes';
-import { CALENDAR_ENABLED, DEFAULT_STATE } from './constants';
+import { DEFAULT_STATE } from './constants';
+import { isCalendarEnabled } from './functions';
 
 /**
  * Constant for the Redux subtree of the calendar feature.
@@ -23,7 +24,7 @@ import { CALENDAR_ENABLED, DEFAULT_STATE } from './constants';
  * that case, accessing this subtree directly will return undefined and will
  * need a bunch of repetitive type checks in other features. Use the
  * {@code getCalendarState} function instead, or make sure you take care of
- * those checks, or consider using the {@code CALENDAR_ENABLED} const to gate
+ * those checks, or consider using the {@code _isCalendarEnabled} value to gate
  * features if needed.
  */
 const STORE_NAME = 'features/calendar-sync';
@@ -36,7 +37,7 @@ const STORE_NAME = 'features/calendar-sync';
  * runtime value to see if we need to re-request the calendar permission from
  * the user.
  */
-CALENDAR_ENABLED
+isCalendarEnabled()
     && PersistenceRegistry.register(STORE_NAME, {
         knownDomains: true,
         calendarType: true,
@@ -44,7 +45,7 @@ CALENDAR_ENABLED
         msAuthState: true
     });
 
-CALENDAR_ENABLED
+isCalendarEnabled()
     && ReducerRegistry.register(STORE_NAME, (state = DEFAULT_STATE, action) => {
         switch (action.type) {
         case APP_WILL_MOUNT:

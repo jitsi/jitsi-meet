@@ -21,7 +21,7 @@ declare var config: Object;
  * @returns {boolean} If the app has enabled the calendar feature, {@code true};
  * otherwise, {@code false}.
  */
-export function _isCalendarEnabled() {
+export function isCalendarEnabled() {
     return Boolean(
         config.enableCalendarIntegration
             && (config.googleApiApplicationClientID

@@ -7,12 +7,9 @@ import { APP_STATE_CHANGED } from '../mobile/background/actionTypes';
 
 import { setCalendarAuthorization } from './actions';
 import { REFRESH_CALENDAR } from './actionTypes';
-import {
-    CALENDAR_ENABLED
-} from './constants';
-import { _fetchCalendarEntries } from './functions';
+import { _fetchCalendarEntries, isCalendarEnabled } from './functions';
 
-CALENDAR_ENABLED
+isCalendarEnabled()
     && MiddlewareRegistry.register(store => next => action => {
         switch (action.type) {
         case ADD_KNOWN_DOMAINS: {

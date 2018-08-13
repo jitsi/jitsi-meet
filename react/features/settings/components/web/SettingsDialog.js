@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 
 import { getAvailableDevices } from '../../../base/devices';
 import { DialogWithTabs, hideDialog } from '../../../base/dialog';
-import { CALENDAR_ENABLED } from '../../../calendar-sync';
+import { isCalendarEnabled } from '../../../calendar-sync';
 import {
     DeviceSelection,
     getDeviceSelectionDialogProps,
@@ -135,7 +135,7 @@ function _mapStateToProps(state) {
     const showProfileSettings
         = configuredTabs.includes('profile') && jwt.isGuest;
     const showCalendarSettings
-        = configuredTabs.includes('calendar') && CALENDAR_ENABLED;
+        = configuredTabs.includes('calendar') && isCalendarEnabled();
     const tabs = [];
 
     if (showDeviceSettings) {

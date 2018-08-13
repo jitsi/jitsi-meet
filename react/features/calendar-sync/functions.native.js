@@ -18,7 +18,7 @@ const logger = require('jitsi-meet-logger').getLogger(__filename);
  * @returns {boolean} If the app has enabled the calendar feature, {@code true};
  * otherwise, {@code false}.
  */
-export function _isCalendarEnabled() {
+export function isCalendarEnabled() {
     const { calendarEnabled } = NativeModules.AppInfo;
 
     return typeof calendarEnabled === 'undefined' ? true : calendarEnabled;

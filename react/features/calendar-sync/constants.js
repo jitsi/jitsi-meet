@@ -1,15 +1,5 @@
 // @flow
 
-import { _isCalendarEnabled } from './functions';
-
-/**
- * The indicator which determines whether the calendar feature is enabled by the
- * app.
- *
- * @type {boolean}
- */
-export const CALENDAR_ENABLED = _isCalendarEnabled();
-
 /**
  * The number of days to fetch.
  */
