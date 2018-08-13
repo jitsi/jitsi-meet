@@ -143,6 +143,13 @@ function _visitNode(node, callback) {
             document.addEventListener = () => {};
         }
 
+        // document.body
+        // Required by:
+        // - react-devtools
+        if (typeof document.body === 'undefined') {
+            document.body = {};
+        }
+
         // document.cookie
         //
         // Required by:
