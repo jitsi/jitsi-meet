@@ -51,7 +51,7 @@ var interfaceConfig = {
         'videoquality', 'filmstrip', 'invite', 'feedback', 'stats', 'shortcuts'
     ],
 
-    SETTINGS_SECTIONS: [ 'devices', 'language', 'moderator', 'profile', 'calendar' ],
+    SETTINGS_SECTIONS: [ 'devices', 'language', 'moderator', 'profile' ],
 
     // Determines how the video would fit the screen. 'both' would fit the whole
     // screen, 'height' would fit the original video height to the height of the

@@ -36,36 +36,12 @@ export const CALENDAR_TYPE = {
 };
 
 /**
- * An enumeration of the different states the Calendar API can be in.
- *
- * @private
- * @type {Object}
- */
-export const CALENDAR_API_STATES = {
-    /**
-     * The state in which the Calendar API still needs to be loaded.
-     */
-    NEEDS_LOADING: 0,
-
-    /**
-     * The state in which the Calendar API is loaded and ready for use.
-     */
-    LOADED: 1,
-
-    /**
-     * The state in which a user has been logged in through the Calendar API.
-     */
-    SIGNED_IN: 2
-};
-
-/**
  * The default state of the calendar.
  *
  * NOTE: This is defined here, to be reusable by functions.js as well (see file
  * for details).
  */
 export const DEFAULT_STATE = {
-    apiState: CALENDAR_API_STATES.NEEDS_LOADING,
     authorization: undefined,
     events: [],
     msAuthState: undefined

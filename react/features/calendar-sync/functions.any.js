@@ -4,24 +4,9 @@ import md5 from 'js-md5';
 
 import { setCalendarEvents } from './actions';
 import { APP_LINK_SCHEME, parseURIString } from '../base/util';
-import { CALENDAR_ENABLED, DEFAULT_STATE, MAX_LIST_LENGTH } from './constants';
-import { toState } from '../base/redux';
+import { MAX_LIST_LENGTH } from './constants';
 
 const logger = require('jitsi-meet-logger').getLogger(__filename);
-
-/**
- * Returns the calendar state, considering the enabled/disabled state of the
- * feature. Since that is the normal Redux behaviour, this function will always
- * return an object (the default state if the feature is disabled).
- *
- * @param {Object | Function} stateful - An object or a function that can be
- * resolved to a Redux state by {@code toState}.
- * @returns {Object}
- */
-export function getCalendarState(stateful: Object | Function) {
-    return CALENDAR_ENABLED
-        ? toState(stateful)['features/calendar-sync'] : DEFAULT_STATE;
-}
 
 /**
  * Updates the calendar entries in redux when new list is received. The feature
