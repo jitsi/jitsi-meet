@@ -39,7 +39,7 @@ const MS_API_CONFIGURATION = {
      *
      * @type {string}
      */
-    MS_CONSUMER_TENANT: '9188040d-6c67-4c5b-b112-36a304b66da',
+    MS_CONSUMER_TENANT: '9188040d-6c67-4c5b-b112-36a304b66dad',
 
     /**
      * The redirect URL to be used by the Microsoft API on successful
@@ -202,7 +202,7 @@ export const microsoftCalendarApi = {
                     authState: undefined,
                     accessToken: tokenParts.accessToken,
                     idToken: tokenParts.idToken,
-                    tokenExpires: tokenParts.tokenExpires,
+                    tokenExpires: params.tokenExpires,
                     userDomainType: tokenParts.userDomainType,
                     userSigninName: tokenParts.userSigninName
                 }));
@@ -259,21 +259,15 @@ export const microsoftCalendarApi = {
                 = getState()['features/calendar-sync'].msAuthState || {};
             const tokenExpires = parseInt(state.tokenExpires, 10);
             const isExpired = now > tokenExpires && !isNaN(tokenExpires);
-            const validToken = state.accessToken && !isExpired;
 
-            if (!validToken) {
-                return Promise.resolve(false);
+            if (state.accessToken && isExpired) {
+                // token expired, let's refresh it
+                return dispatch(this._refreshAuthToken())
+                    .then(() => true)
+                    .catch(() => false);
             }
 
-            const client = Client.init({
-                authProvider: done => done(null, state.accessToken)
-            });
-
-            return client
-                .api('/me')
-                .get()
-                .then(() => true)
-                .catch(() => false);
+            return Promise.resolve(state.accessToken && !isExpired);
         };
     },
 
@@ -324,7 +318,7 @@ export const microsoftCalendarApi = {
                 dispatch(setCalendarAPIAuthState({
                     accessToken: params.access_token,
                     idToken: params.id_token,
-                    tokenExpires: parseInt(params.tokenExpires, 10)
+                    tokenExpires: params.tokenExpires
                 }));
             });
         };
@@ -496,7 +490,6 @@ function getValidatedTokenParts(tokenInfo, guids, appId) {
     return {
         accessToken: tokenInfo.access_token,
         idToken,
-        tokenExpires: expires.getTime(),
         userDisplayName: payload.name,
         userDomainType:
             payload.tid === MS_API_CONFIGURATION.MS_CONSUMER_TENANT
