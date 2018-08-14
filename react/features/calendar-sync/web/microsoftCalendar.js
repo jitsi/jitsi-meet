@@ -5,11 +5,7 @@ import rs from 'jsrsasign';
 
 import { createDeferred } from '../../../../modules/util/helpers';
 
-import { CALENDAR_TYPE } from '../constants';
-import {
-    setCalendarAPIAuthState,
-    setCalendarProfileEmail
-} from '../actions';
+import { setCalendarAPIAuthState, setCalendarProfileEmail } from '../actions';
 
 /**
  * Constants used for interacting with the Microsoft API.
@@ -36,9 +32,10 @@ const MS_API_CONFIGURATION = {
 
     /**
      * See https://docs.microsoft.com/en-us/azure/active-directory/develop/
-     * v2-oauth2-implicit-grant-flow#send-the-sign-in-request.
+     * v2-oauth2-implicit-grant-flow#send-the-sign-in-request. This value is
+     * needed for passing in the proper domain_hint value when trying to refresh
+     * a token silently.
      *
-     * FIXME BEFORE MERGE: Why is this needed?
      *
      * @type {string}
      */
@@ -62,6 +59,13 @@ const MS_API_CONFIGURATION = {
  */
 let popupAuthWindow = null;
 
+/**
+ * A stateless collection of action creators that implements the expected
+ * interface for interacting with the Microsoft API in order to get calendar
+ * data.
+ *
+ * @type {Object}
+ */
 export const microsoftCalendarApi = {
     /**
      * Retrieves the current calendar events.
@@ -105,15 +109,6 @@ export const microsoftCalendarApi = {
     },
 
     /**
-     * Returns the type of calendar integration this object implements.
-     *
-     * @returns {string}
-     */
-    getType(): string {
-        return CALENDAR_TYPE.MICROSOFT;
-    },
-
-    /**
      * Sets the application ID to use for interacting with the Microsoft API.
      *
      * @returns {function(Dispatch<*>): Promise<void>}
@@ -136,7 +131,6 @@ export const microsoftCalendarApi = {
                 return Promise.reject('Sign in already in progress.');
             }
 
-            // FIXME BEFORE MERGE: handle case of user closing the modal.
             const signInDeferred = createDeferred();
 
             const guids = {
@@ -231,6 +225,8 @@ export const microsoftCalendarApi = {
         // Using the Outlook API Get Started guide, there is no revoking to be
         // done with the Microsoft API. Instead any stored state on the app-side
         // should be cleared and the token should be allowed to expire.
+        // See: https://docs.microsoft.com/en-us/outlook/rest/
+        //     javascript-tutorial#adding-calendar-and-contacts-apis
         return () => Promise.resolve();
     },
 
@@ -248,6 +244,36 @@ export const microsoftCalendarApi = {
             dispatch(setCalendarProfileEmail(email));
 
             return Promise.resolve(email);
+        };
+    },
+
+    /**
+     * Returns whether or not the user is currently signed in.
+     *
+     * @returns {function(Dispatch<*>): Promise<boolean>}
+     */
+    _isSignedIn(): Function {
+        return (dispatch, getState) => {
+            const now = new Date().getTime();
+            const state
+                = getState()['features/calendar-sync'].msAuthState || {};
+            const tokenExpires = parseInt(state.tokenExpires, 10);
+            const isExpired = now > tokenExpires && !isNaN(tokenExpires);
+            const validToken = state.accessToken && !isExpired;
+
+            if (!validToken) {
+                return Promise.resolve(false);
+            }
+
+            const client = Client.init({
+                authProvider: done => done(null, state.accessToken)
+            });
+
+            return client
+                .api('/me')
+                .get()
+                .then(() => true)
+                .catch(() => false);
         };
     },
 
@@ -282,10 +308,13 @@ export const microsoftCalendarApi = {
                 };
             });
 
+            // The check for body existence is done for flow, which also runs
+            // against native where document.body may not be defined.
             if (!document.body) {
                 return Promise.reject(
                     'Cannot refresh auth token in this environment');
             }
+
 
             document.body.appendChild(iframe);
 
@@ -299,36 +328,6 @@ export const microsoftCalendarApi = {
                 }));
             });
         };
-    },
-
-    /**
-     * Returns whether or not the user is currently signed in.
-     *
-     * @returns {function(Dispatch<*>): Promise<boolean>}
-     */
-    _isSignedIn(): Function {
-        return (dispatch, getState) => {
-            const now = new Date().getTime();
-            const state
-                = getState()['features/calendar-sync'].msAuthState || {};
-            const tokenExpires = parseInt(state.tokenExpires, 10);
-            const isExpired = now > tokenExpires && !isNaN(tokenExpires);
-            const validToken = state.accessToken && !isExpired;
-
-            if (!validToken) {
-                return Promise.resolve(false);
-            }
-
-            const client = Client.init({
-                authProvider: done => done(null, state.accessToken)
-            });
-
-            return client
-                .api('/me')
-                .get()
-                .then(() => true)
-                .catch(() => false);
-        };
     }
 };
 
@@ -337,12 +336,12 @@ export const microsoftCalendarApi = {
  *
  * @param {Object} entry - The Microsoft calendar entry.
  * @returns {{
- *     id: string,
- *     startDate: string,
+ *     description: string,
  *     endDate: string,
- *     title: string,
+ *     id: string,
  *     location: string,
- *     description: string
+ *     startDate: string,
+ *     title: string
  * }}
  * @private
  */
@@ -433,7 +432,7 @@ function getParamsFromHash(hash) {
 
     params.set('tokenExpires', expireDate.getTime().toString());
 
-    // FIXME: what does this do?
+    // Convert the URLSearchParams map into an object.
     return Array.from(params.entries())
         .reduce((main, [ key, value ]) => {
             return {
@@ -499,14 +498,13 @@ function getValidatedTokenParts(tokenInfo, guids, appId) {
         idToken,
         tokenExpires: expires.getTime(),
         userDisplayName: payload.name,
-        userSigninName: payload.preferred_username,
         userDomainType:
             payload.tid === MS_API_CONFIGURATION.MS_CONSUMER_TENANT
-                ? 'consumers' : 'organizations'
+                ? 'consumers' : 'organizations',
+        userSigninName: payload.preferred_username
     };
 }
 
-/* eslint-disable max-params */
 /**
  * Retrieves calendar entries from a specific calendar.
  *
@@ -518,13 +516,11 @@ function getValidatedTokenParts(tokenInfo, guids, appId) {
  * @returns {Promise<any> | Promise}
  * @private
  */
-function requestCalendarEvents(
+function requestCalendarEvents( // eslint-disable-line max-params
         client,
         calendarId,
         fetchStartDays,
         fetchEndDays): Promise<*> {
-    /* eslint-enable max-params */
-
     const startDate = new Date();
     const endDate = new Date();
 
@@ -544,14 +540,13 @@ function requestCalendarEvents(
 }
 
 /**
- * Something.
+ * Converts the passed in number to a string and ensure it is at least 4
+ * characters in length, prepending 0's as needed.
  *
- * FIXME BEFORE MERGE: Understand what exactly these Microsoft-provided
- * functions do.
  *
- * @param {number} num - The number.
+ * @param {number} num - The number to pad and convert to a string.
  * @private
- * @returns {string} - The string.
+ * @returns {string} - The number converted to a string.
  */
 function s4(num) {
     let ret = num.toString(16);

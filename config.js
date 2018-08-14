@@ -372,6 +372,7 @@ var config = {
      googleApiApplicationClientID
      iAmRecorder
      iAmSipGateway
+     microsoftApiApplicationClientID
      peopleSearchQueryTypes
      peopleSearchUrl
      requireDisplayName

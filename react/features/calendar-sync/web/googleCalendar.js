@@ -8,13 +8,12 @@ import {
     signOut,
     updateProfile
 } from '../../google-api';
-import { CALENDAR_TYPE } from '../constants';
 
 declare var config: Object;
 
 /**
- * A stateless object that implements the expected interface for interacting
- * Google authentication in order to get calendar data.
+ * A stateless collection of action creators that implements the expected
+ * interface for interacting with the Google API in order to get calendar data.
  *
  * @type {Object}
  */
@@ -28,15 +27,6 @@ export const googleCalendarApi = {
      * @returns {function(Dispatch<*>): Promise<CalendarEntries>}
      */
     getCalendarEntries,
-
-    /**
-     * Returns the type of calendar integration this object implements.
-     *
-     * @returns {string}
-     */
-    getType() {
-        return CALENDAR_TYPE.GOOGLE;
-    },
 
     /**
      * Initializes the google api if needed.

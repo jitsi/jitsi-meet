@@ -1,4 +1,5 @@
 // @flow
+
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
@@ -14,10 +15,7 @@ import {
 import CalendarTab from './CalendarTab';
 import MoreTab from './MoreTab';
 import ProfileTab from './ProfileTab';
-import {
-    getMoreTabProps,
-    getProfileTabProps
-} from '../../functions';
+import { getMoreTabProps, getProfileTabProps } from '../../functions';
 import { submitMoreTab, submitProfileTab } from '../../actions';
 import { SETTINGS_TABS } from '../../constants';
 

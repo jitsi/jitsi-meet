@@ -200,45 +200,27 @@ const googleApi = {
     },
 
     /**
-     * Returns the global Google API Client Library object. Direct use of this
-     * method is discouraged; instead use the {@link get} method.
+     * Parses the google calendar entries to a known format.
      *
+     * @param {Object} entry - The google calendar entry.
+     * @returns {{
+     *  id: string,
+     *  startDate: string,
+     *  endDate: string,
+     *  title: string,
+     *  location: string,
+     *  description: string}}
      * @private
-     * @returns {Object|undefined}
      */
-    _getGoogleApiClient() {
-        return window.gapi;
-    },
-
-    /**
-     * Returns the URL to the Google API endpoint for retrieving the currently
-     * signed in user's YouTube broadcasts.
-     *
-     * @private
-     * @returns {string}
-     */
-    _getURLForLiveBroadcasts() {
-        return [
-            'https://content.googleapis.com/youtube/v3/liveBroadcasts',
-            '?broadcastType=all',
-            '&mine=true&part=id%2Csnippet%2CcontentDetails%2Cstatus'
-        ].join('');
-    },
-
-    /**
-     * Returns the URL to the Google API endpoint for retrieving the live
-     * streams associated with a YouTube broadcast's bound stream.
-     *
-     * @param {string} boundStreamID - The bound stream ID associated with a
-     * broadcast in YouTube.
-     * @returns {string}
-     */
-    _getURLForLiveStreams(boundStreamID) {
-        return [
-            'https://content.googleapis.com/youtube/v3/liveStreams',
-            '?part=id%2Csnippet%2Ccdn%2Cstatus',
-            `&id=${boundStreamID}`
-        ].join('');
+    _convertCalendarEntry(entry) {
+        return {
+            id: entry.id,
+            startDate: entry.start.dateTime,
+            endDate: entry.end.dateTime,
+            title: entry.summary,
+            location: entry.location,
+            description: entry.description
+        };
     },
 
     /**
@@ -297,27 +279,45 @@ const googleApi = {
     },
 
     /**
-     * Parses the google calendar entries to a known format.
+     * Returns the global Google API Client Library object. Direct use of this
+     * method is discouraged; instead use the {@link get} method.
      *
-     * @param {Object} entry - The google calendar entry.
-     * @returns {{
-     *  id: string,
-     *  startDate: string,
-     *  endDate: string,
-     *  title: string,
-     *  location: string,
-     *  description: string}}
      * @private
+     * @returns {Object|undefined}
      */
-    _convertCalendarEntry(entry) {
-        return {
-            id: entry.id,
-            startDate: entry.start.dateTime,
-            endDate: entry.end.dateTime,
-            title: entry.summary,
-            location: entry.location,
-            description: entry.description
-        };
+    _getGoogleApiClient() {
+        return window.gapi;
+    },
+
+    /**
+     * Returns the URL to the Google API endpoint for retrieving the currently
+     * signed in user's YouTube broadcasts.
+     *
+     * @private
+     * @returns {string}
+     */
+    _getURLForLiveBroadcasts() {
+        return [
+            'https://content.googleapis.com/youtube/v3/liveBroadcasts',
+            '?broadcastType=all',
+            '&mine=true&part=id%2Csnippet%2CcontentDetails%2Cstatus'
+        ].join('');
+    },
+
+    /**
+     * Returns the URL to the Google API endpoint for retrieving the live
+     * streams associated with a YouTube broadcast's bound stream.
+     *
+     * @param {string} boundStreamID - The bound stream ID associated with a
+     * broadcast in YouTube.
+     * @returns {string}
+     */
+    _getURLForLiveStreams(boundStreamID) {
+        return [
+            'https://content.googleapis.com/youtube/v3/liveStreams',
+            '?part=id%2Csnippet%2Ccdn%2Cstatus',
+            `&id=${boundStreamID}`
+        ].join('');
     }
 };
 

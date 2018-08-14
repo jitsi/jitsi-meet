@@ -26,7 +26,6 @@ isCalendarEnabled()
             return result;
         }
 
-        // mobile action type
         case APP_STATE_CHANGED: {
             const result = next(action);
 

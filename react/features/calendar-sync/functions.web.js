@@ -76,10 +76,10 @@ export function _fetchCalendarEntries(
 }
 
 /**
- * Returns the calendar api implementation by type.
+ * Returns the calendar API implementation by specified type.
  *
- * @param {string} calendarType - The calendar type api
- * as defined in CALENDAR_TYPE.
+ * @param {string} calendarType - The calendar type API as defined in
+ * the constant {@link CALENDAR_TYPE}.
  * @private
  * @returns {Object|undefined}
  */

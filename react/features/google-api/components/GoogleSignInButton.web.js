@@ -2,6 +2,9 @@
 
 import React, { Component } from 'react';
 
+/**
+ * The type of the React {@code Component} props of {@link GoogleSignInButton}.
+ */
 type Props = {
 
     // The callback to invoke when {@code GoogleSignInButton} is clicked.

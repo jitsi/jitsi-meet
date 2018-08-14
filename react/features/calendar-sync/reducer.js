@@ -10,22 +10,31 @@ import {
     SET_CALENDAR_AUTHORIZATION,
     SET_CALENDAR_EVENTS,
     SET_CALENDAR_INTEGRATION,
-    SET_CALENDAR_PROFILE_EMAIL,
-    SET_CALENDAR_TYPE
+    SET_CALENDAR_PROFILE_EMAIL
 } from './actionTypes';
-import { DEFAULT_STATE } from './constants';
 import { isCalendarEnabled } from './functions';
+
+/**
+ * The default state of the calendar feature.
+ *
+ * @type {Object}
+ */
+const DEFAULT_STATE = {
+    authorization: undefined,
+    events: [],
+    integration: undefined,
+    integrationType: undefined,
+    msAuthState: undefined
+};
 
 /**
  * Constant for the Redux subtree of the calendar feature.
  *
- * NOTE: Please do not access this subtree directly outside of this feature.
- * This feature can be disabled (see {@code constants.js} for details), and in
- * that case, accessing this subtree directly will return undefined and will
- * need a bunch of repetitive type checks in other features. Use the
- * {@code getCalendarState} function instead, or make sure you take care of
- * those checks, or consider using the {@code _isCalendarEnabled} value to gate
- * features if needed.
+ * NOTE: This feature can be disabled and in that case, accessing this subtree
+ * directly will return undefined and will need a bunch of repetitive type
+ * checks in other features. Make sure you take care of those checks, or
+ * consider using the {@code isCalendarEnabled} value to gate features if
+ * needed.
  */
 const STORE_NAME = 'features/calendar-sync';
 
@@ -39,9 +48,8 @@ const STORE_NAME = 'features/calendar-sync';
  */
 isCalendarEnabled()
     && PersistenceRegistry.register(STORE_NAME, {
-        knownDomains: true,
-        calendarType: true,
         integrationType: true,
+        knownDomains: true,
         msAuthState: true
     });
 
@@ -59,13 +67,7 @@ isCalendarEnabled()
             break;
 
         case CLEAR_CALENDAR_INTEGRATION:
-            return {
-                ...state,
-                events: [],
-                integration: undefined,
-                integrationType: undefined,
-                msAuthState: undefined
-            };
+            return DEFAULT_STATE;
 
         case SET_CALENDAR_AUTH_STATE: {
             if (!action.msAuthState) {
@@ -85,18 +87,15 @@ isCalendarEnabled()
         case SET_CALENDAR_EVENTS:
             return set(state, 'events', action.events);
 
-        case SET_CALENDAR_TYPE:
-            return set(state, 'calendarType', action.calendarType);
-
-        case SET_CALENDAR_PROFILE_EMAIL:
-            return set(state, 'profileEmail', action.email);
-
         case SET_CALENDAR_INTEGRATION:
             return {
                 ...state,
                 integration: action.integration,
                 integrationType: action.integrationType
             };
+
+        case SET_CALENDAR_PROFILE_EMAIL:
+            return set(state, 'profileEmail', action.email);
         }
 
         return state;

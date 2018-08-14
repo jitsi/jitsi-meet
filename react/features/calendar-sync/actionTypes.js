@@ -1,7 +1,8 @@
 // @flow
 
 /**
- * Resets the state of calendar integration.
+ * Resets the state of calendar integration so stored events and selected
+ * calendar type are cleared.
  *
  * {
  *     type: CLEAR_CALENDAR_INTEGRATION
@@ -52,16 +53,6 @@ export const SET_CALENDAR_EVENTS = Symbol('SET_CALENDAR_EVENTS');
  * }
  */
 export const SET_CALENDAR_INTEGRATION = Symbol('SET_CALENDAR_INTEGRATION');
-
-/**
- * Action to update calendar type to be used for web.
- *
- * {
- *     type: SET_CALENDAR_TYPE,
- *     calendarType: ?string
- * }
- */
-export const SET_CALENDAR_TYPE = Symbol('SET_CALENDAR_TYPE');
 
 /**
  * The type of Redux action which changes Calendar API auth state.

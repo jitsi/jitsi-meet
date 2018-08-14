@@ -8,6 +8,21 @@ import { GOOGLE_API_STATES } from './constants';
 import googleApi from './googleApi';
 
 /**
+ * Retrieves the current calendar events.
+ *
+ * @param {number} fetchStartDays - The number of days to go back when fetching.
+ * @param {number} fetchEndDays - The number of days to fetch.
+ * @returns {function(Dispatch<*>): Promise<CalendarEntries>}
+ */
+export function getCalendarEntries(
+        fetchStartDays: ?number, fetchEndDays: ?number) {
+    return () =>
+        googleApi.get()
+        .then(() =>
+            googleApi._getCalendarEntries(fetchStartDays, fetchEndDays));
+}
+
+/**
  * Loads Google API.
  *
  * @param {string} clientId - The client ID to be used with the API library.
@@ -15,7 +30,7 @@ import googleApi from './googleApi';
  */
 export function loadGoogleAPI(clientId: string) {
     return (dispatch: Dispatch<*>, getState: Function) =>
-        googleApi.load()
+        googleApi.get()
         .then(() => {
             if (getState()['features/google-api'].googleAPIState
                     === GOOGLE_API_STATES.NEEDS_LOADING) {
@@ -34,64 +49,6 @@ export function loadGoogleAPI(clientId: string) {
                     type: SET_GOOGLE_API_STATE,
                     googleAPIState: GOOGLE_API_STATES.SIGNED_IN });
             }
-        });
-}
-
-/**
- * Prompts the participant to sign in to the Google API Client Library.
- *
- * @returns {function(Dispatch<*>): Promise<string | never>}
- */
-export function signIn() {
-    return (dispatch: Dispatch<*>) => googleApi.get()
-            .then(() => googleApi.signInIfNotSignedIn())
-            .then(() => dispatch({
-                type: SET_GOOGLE_API_STATE,
-                googleAPIState: GOOGLE_API_STATES.SIGNED_IN
-            }));
-}
-
-/**
- * Logs out the user.
- *
- * @returns {function(Dispatch<*>): Promise<string | never>}
- */
-export function signOut() {
-    return (dispatch: Dispatch<*>) =>
-        googleApi.get()
-            .then(() => googleApi.signOut())
-            .then(() => {
-                dispatch({
-                    type: SET_GOOGLE_API_STATE,
-                    googleAPIState: GOOGLE_API_STATES.LOADED
-                });
-                dispatch({
-                    type: SET_GOOGLE_API_PROFILE,
-                    profileEmail: ''
-                });
-            });
-}
-
-/**
- * Updates the profile data that is currently used.
- *
- * @returns {function(Dispatch<*>): Promise<string | never>}
- */
-export function updateProfile() {
-    return (dispatch: Dispatch<*>) => googleApi.get()
-        .then(() => googleApi.signInIfNotSignedIn())
-        .then(() => dispatch({
-            type: SET_GOOGLE_API_STATE,
-            googleAPIState: GOOGLE_API_STATES.SIGNED_IN
-        }))
-        .then(() => googleApi.getCurrentUserProfile())
-        .then(profile => {
-            dispatch({
-                type: SET_GOOGLE_API_PROFILE,
-                profileEmail: profile.getEmail()
-            });
-
-            return profile.getEmail();
         });
 }
 
@@ -171,16 +128,59 @@ export function showAccountSelection() {
 }
 
 /**
- * Retrieves the current calendar events.
+ * Prompts the participant to sign in to the Google API Client Library.
  *
- * @param {number} fetchStartDays - The number of days to go back when fetching.
- * @param {number} fetchEndDays - The number of days to fetch.
- * @returns {function(Dispatch<*>): Promise<CalendarEntries>}
+ * @returns {function(Dispatch<*>): Promise<string | never>}
  */
-export function getCalendarEntries(
-        fetchStartDays: ?number, fetchEndDays: ?number) {
-    return () =>
+export function signIn() {
+    return (dispatch: Dispatch<*>) => googleApi.get()
+            .then(() => googleApi.signInIfNotSignedIn())
+            .then(() => dispatch({
+                type: SET_GOOGLE_API_STATE,
+                googleAPIState: GOOGLE_API_STATES.SIGNED_IN
+            }));
+}
+
+/**
+ * Logs out the user.
+ *
+ * @returns {function(Dispatch<*>): Promise<string | never>}
+ */
+export function signOut() {
+    return (dispatch: Dispatch<*>) =>
         googleApi.get()
-        .then(() =>
-            googleApi._getCalendarEntries(fetchStartDays, fetchEndDays));
+            .then(() => googleApi.signOut())
+            .then(() => {
+                dispatch({
+                    type: SET_GOOGLE_API_STATE,
+                    googleAPIState: GOOGLE_API_STATES.LOADED
+                });
+                dispatch({
+                    type: SET_GOOGLE_API_PROFILE,
+                    profileEmail: ''
+                });
+            });
+}
+
+/**
+ * Updates the profile data that is currently used.
+ *
+ * @returns {function(Dispatch<*>): Promise<string | never>}
+ */
+export function updateProfile() {
+    return (dispatch: Dispatch<*>) => googleApi.get()
+        .then(() => googleApi.signInIfNotSignedIn())
+        .then(() => dispatch({
+            type: SET_GOOGLE_API_STATE,
+            googleAPIState: GOOGLE_API_STATES.SIGNED_IN
+        }))
+        .then(() => googleApi.getCurrentUserProfile())
+        .then(profile => {
+            dispatch({
+                type: SET_GOOGLE_API_PROFILE,
+                profileEmail: profile.getEmail()
+            });
+
+            return profile.getEmail();
+        });
 }

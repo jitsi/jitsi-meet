@@ -1,5 +1,7 @@
 // @flow
 
+import { loadGoogleAPI } from '../google-api';
+
 import {
     CLEAR_CALENDAR_INTEGRATION,
     REFRESH_CALENDAR,
@@ -9,13 +11,12 @@ import {
     SET_CALENDAR_INTEGRATION,
     SET_CALENDAR_PROFILE_EMAIL
 } from './actionTypes';
-import { _getCalendarIntegration } from './functions';
-import { loadGoogleAPI } from '../google-api';
+import { _getCalendarIntegration, isCalendarEnabled } from './functions';
 
 const logger = require('jitsi-meet-logger').getLogger(__filename);
 
 /**
- * Sets the initial state of calendar integration by loading third party apis
+ * Sets the initial state of calendar integration by loading third party APIs
  * and filling out any data that needs to be fetched.
  *
  * @returns {Function}
@@ -23,7 +24,6 @@ const logger = require('jitsi-meet-logger').getLogger(__filename);
 export function bootstrapCalendarIntegration(): Function {
     return (dispatch, getState) => {
         const {
-            enableCalendarIntegration,
             googleApiApplicationClientID
         } = getState()['features/base/config'];
         const {
@@ -31,7 +31,7 @@ export function bootstrapCalendarIntegration(): Function {
             integrationType
         } = getState()['features/calendar-sync'];
 
-        if (!enableCalendarIntegration) {
+        if (!isCalendarEnabled()) {
             return Promise.reject();
         }
 
@@ -70,7 +70,8 @@ export function bootstrapCalendarIntegration(): Function {
 }
 
 /**
- * Resets the state of calendar integration.
+ * Resets the state of calendar integration so stored events and selected
+ * calendar type are cleared.
  *
  * @returns {{
  *     type: CLEAR_CALENDAR_INTEGRATION
@@ -101,6 +102,23 @@ export function refreshCalendar(
         type: REFRESH_CALENDAR,
         forcePermission,
         isInteractive
+    };
+}
+
+/**
+ * Sends an action to update the current calendar api auth state in redux.
+ * This is used only for microsoft implementation to store it auth state.
+ *
+ * @param {number} newState - The new state.
+ * @returns {{
+ *     type: SET_CALENDAR_AUTH_STATE,
+ *     msAuthState: Object
+ * }}
+ */
+export function setCalendarAPIAuthState(newState: ?Object) {
+    return {
+        type: SET_CALENDAR_AUTH_STATE,
+        msAuthState: newState
     };
 }
 
@@ -139,28 +157,11 @@ export function setCalendarEvents(events: Array<Object>) {
 }
 
 /**
- * Sends an action to update the current calendar api auth state in redux.
- * This is used only for microsoft implementation to store it auth state.
- *
- * @param {number} newState - The new state.
- * @returns {{
- *     type: SET_CALENDAR_AUTH_STATE,
- *     msAuthState: Object
- * }}
- */
-export function setCalendarAPIAuthState(newState: ?Object) {
-    return {
-        type: SET_CALENDAR_AUTH_STATE,
-        msAuthState: newState
-    };
-}
-
-/**
  * Sends an action to update the current calendar profile email state in redux.
  *
  * @param {number} newEmail - The new email.
  * @returns {{
- *     type: SET_CALENDAR_AUTH_STATE,
+ *     type: SET_CALENDAR_PROFILE_EMAIL,
  *     email: Object
  * }}
  */
@@ -184,7 +185,7 @@ export function setIntegration(calendarType: string): Function {
         return dispatch({
             type: SET_CALENDAR_INTEGRATION,
             integration,
-            integrationType: integration && integration.getType()
+            integrationType: calendarType
         });
     };
 }
@@ -206,8 +207,8 @@ export function signIn(calendarType: string): Function {
 
         return dispatch(integration.load())
             .then(() => dispatch(integration.signIn()))
-            .then(() => dispatch(updateProfile(calendarType)))
             .then(() => dispatch(setIntegration(calendarType)))
+            .then(() => dispatch(updateProfile(calendarType)))
             .catch(error => {
                 logger.error(
                     'Error occurred while signing into calendar integration',
@@ -232,7 +233,15 @@ export function signOut(): Function {
         const signOutPromise = integration
             ? dispatch(integration.signOut()) : Promise.resolve();
 
-        return signOutPromise.then(() => dispatch(clearCalendarIntegration()));
+        return signOutPromise
+            .then(() => dispatch(clearCalendarIntegration()))
+            .catch(error => {
+                logger.error(
+                    'Error occurred while signing out of calendar integration',
+                    error);
+
+                return Promise.reject(error);
+            });
     };
 }
 
@@ -252,7 +261,6 @@ export function updateProfile(calendarType: string): Function {
             return Promise.reject('No integration found');
         }
 
-        // FIXME BEFORE MERGE: Where is the actual setting happening?
         return dispatch(integration.updateProfile())
             .then(email => {
                 dispatch(setCalendarProfileEmail(email));

@@ -10,10 +10,13 @@ import {
     CALENDAR_TYPE,
     MicrosoftSignInButton,
     bootstrapCalendarIntegration,
+    isCalendarEnabled,
     signIn,
     signOut
 } from '../../../calendar-sync';
 import { GoogleSignInButton } from '../../../google-api';
+
+const logger = require('jitsi-meet-logger').getLogger(__filename);
 
 declare var interfaceConfig: Object;
 
@@ -23,24 +26,24 @@ declare var interfaceConfig: Object;
 type Props = {
 
     /**
-     * The name given this Jitsi Application.
+     * The name given to this Jitsi Application.
      */
     _appName: string,
 
     /**
-     * Whether or not to displaying signing in to Google.
+     * Whether or not to display a button to sign in to Google.
      */
     _enableGoogleIntegration: boolean,
 
     /**
-     * Whether or not to displaying signing in to Microsoft.
+     * Whether or not to display a button to sign in to Microsoft.
      */
     _enableMicrosoftIntegration: boolean,
 
     /**
      * The current calendar integration in use, if any.
      */
-    _isConnectedToCalendar: ?Object,
+    _isConnectedToCalendar: boolean,
 
     /**
      * The email address associated with the calendar integration in use.
@@ -58,6 +61,9 @@ type Props = {
     t: Function
 };
 
+/**
+ * The type of the React {@code Component} state of {@link CalendarTab}.
+ */
 type State = {
 
     /**
@@ -98,7 +104,7 @@ class CalendarTab extends Component<Props, State> {
      */
     componentDidMount() {
         this.props.dispatch(bootstrapCalendarIntegration())
-            .catch(() => console.warn('this error right here...'))
+            .catch(err => logger.error('CalendarTab bootstrap failed', err))
             .then(() => this.setState({ loading: false }));
     }
 
@@ -261,6 +267,7 @@ class CalendarTab extends Component<Props, State> {
  * @param {Object} state - The Redux state.
  * @private
  * @returns {{
+ *     _appName: string,
  *     _enableGoogleIntegration: boolean,
  *     _enableMicrosoftIntegration: boolean,
  *     _isConnectedToCalendar: boolean,
@@ -273,11 +280,14 @@ function _mapStateToProps(state) {
         googleApiApplicationClientID,
         microsoftApiApplicationClientID
     } = state['features/base/config'];
+    const calendarEnabled = isCalendarEnabled();
 
     return {
         _appName: interfaceConfig.APP_NAME,
-        _enableGoogleIntegration: Boolean(googleApiApplicationClientID),
-        _enableMicrosoftIntegration: Boolean(microsoftApiApplicationClientID),
+        _enableGoogleIntegration: Boolean(
+            calendarEnabled && googleApiApplicationClientID),
+        _enableMicrosoftIntegration: Boolean(
+            calendarEnabled && microsoftApiApplicationClientID),
         _isConnectedToCalendar: Boolean(calendarState.integration),
         _profileEmail: calendarState.profileEmail
     };

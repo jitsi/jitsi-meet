@@ -2,6 +2,10 @@
 
 import React, { Component } from 'react';
 
+/**
+ * The type of the React {@code Component} props of
+ * {@link MicrosoftSignInButton}.
+ */
 type Props = {
 
     // The callback to invoke when {@code MicrosoftSignInButton} is clicked.
