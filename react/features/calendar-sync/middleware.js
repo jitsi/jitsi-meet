@@ -1,6 +1,6 @@
 // @flow
 
-import { APP_WILL_MOUNT } from '../base/app';
+import { SET_CONFIG } from '../base/config';
 import { ADD_KNOWN_DOMAINS, addKnownDomains } from '../base/known-domains';
 import { equals, MiddlewareRegistry } from '../base/redux';
 import { APP_STATE_CHANGED } from '../mobile/background/actionTypes';
@@ -34,7 +34,9 @@ isCalendarEnabled()
             return result;
         }
 
-        case APP_WILL_MOUNT: {
+        case SET_CONFIG: {
+            const result = next(action);
+
             // For legacy purposes, we've allowed the deserialization of
             // knownDomains and now we're to translate it to base/known-domains.
             const state = store.getState()['features/calendar-sync'];
@@ -49,7 +51,7 @@ isCalendarEnabled()
 
             _fetchCalendarEntries(store, false, false);
 
-            return next(action);
+            return result;
         }
 
         case REFRESH_CALENDAR: {
