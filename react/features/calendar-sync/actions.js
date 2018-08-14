@@ -27,7 +27,7 @@ export function bootstrapCalendarIntegration(): Function {
             googleApiApplicationClientID
         } = getState()['features/base/config'];
         const {
-            integration,
+            integrationReady,
             integrationType
         } = getState()['features/calendar-sync'];
 
@@ -43,7 +43,7 @@ export function bootstrapCalendarIntegration(): Function {
                 }
             })
             .then(() => {
-                if (!integrationType || integration) {
+                if (!integrationType || integrationReady) {
                     return;
                 }
 
@@ -59,7 +59,7 @@ export function bootstrapCalendarIntegration(): Function {
                 return dispatch(integrationToLoad._isSignedIn())
                     .then(signedIn => {
                         if (signedIn) {
-                            dispatch(setIntegration(integrationType));
+                            dispatch(setIntegrationReady(integrationType));
                             dispatch(updateProfile(integrationType));
                         } else {
                             dispatch(clearCalendarIntegration());
@@ -173,20 +173,21 @@ export function setCalendarProfileEmail(newEmail: ?string) {
 }
 
 /**
- * Sets the calendar integration type to be used by web.
+ * Sets the calendar integration type to be used by web and signals that the
+ * integration is ready to be used.
  *
- * @param {string|undefined} calendarType - The calendar type.
- * @returns {Function}
+ * @param {string|undefined} integrationType - The calendar type.
+ * @returns {{
+ *      type: SET_CALENDAR_INTEGRATION,
+ *      integrationReady: boolean,
+ *      integrationType: string
+ * }}
  */
-export function setIntegration(calendarType: string): Function {
-    return (dispatch: Dispatch<*>) => {
-        const integration = _getCalendarIntegration(calendarType);
-
-        return dispatch({
-            type: SET_CALENDAR_INTEGRATION,
-            integration,
-            integrationType: calendarType
-        });
+export function setIntegrationReady(integrationType: string) {
+    return {
+        type: SET_CALENDAR_INTEGRATION,
+        integrationReady: true,
+        integrationType
     };
 }
 
@@ -207,7 +208,7 @@ export function signIn(calendarType: string): Function {
 
         return dispatch(integration.load())
             .then(() => dispatch(integration.signIn()))
-            .then(() => dispatch(setIntegration(calendarType)))
+            .then(() => dispatch(setIntegrationReady(calendarType)))
             .then(() => dispatch(updateProfile(calendarType)))
             .catch(error => {
                 logger.error(
@@ -261,7 +262,7 @@ export function updateProfile(calendarType: string): Function {
             return Promise.reject('No integration found');
         }
 
-        return dispatch(integration.updateProfile())
+        return dispatch(integration.getCurrentEmail())
             .then(email => {
                 dispatch(setCalendarProfileEmail(email));
             });

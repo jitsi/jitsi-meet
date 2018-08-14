@@ -5,7 +5,10 @@ import rs from 'jsrsasign';
 
 import { createDeferred } from '../../../../modules/util/helpers';
 
-import { setCalendarAPIAuthState, setCalendarProfileEmail } from '../actions';
+import parseURLParams from '../../base/config/parseURLParams';
+import { parseStandardURIString } from '../../base/util';
+
+import { setCalendarAPIAuthState } from '../actions';
 
 /**
  * Constants used for interacting with the Microsoft API.
@@ -109,6 +112,21 @@ export const microsoftCalendarApi = {
     },
 
     /**
+     * Returns the email address for the currently logged in user.
+     *
+     * @returns {function(Dispatch<*>): Promise<void>}
+     */
+    getCurrentEmail(): Function {
+        return (dispatch: Dispatch<*>, getState: Function) => {
+            const { msAuthState = {} }
+                = getState()['features/calendar-sync'] || {};
+            const email = msAuthState.userSigninName || '';
+
+            return Promise.resolve(email);
+        };
+    },
+
+    /**
      * Sets the application ID to use for interacting with the Microsoft API.
      *
      * @returns {function(Dispatch<*>): Promise<void>}
@@ -188,7 +206,7 @@ export const microsoftCalendarApi = {
                 popupAuthWindow && popupAuthWindow.close();
                 popupAuthWindow = null;
 
-                const params = getParamsFromHash(data.hash);
+                const params = getParamsFromHash(data.url);
                 const tokenParts = getValidatedTokenParts(
                     params, guids, microsoftApiApplicationClientID);
 
@@ -228,23 +246,6 @@ export const microsoftCalendarApi = {
         // See: https://docs.microsoft.com/en-us/outlook/rest/
         //     javascript-tutorial#adding-calendar-and-contacts-apis
         return () => Promise.resolve();
-    },
-
-    /**
-     * Updates the profile data using calendar-sync feature.
-     *
-     * @returns {function(Dispatch<*>): Promise<void>}
-     */
-    updateProfile(): Function {
-        return (dispatch: Dispatch<*>, getState: Function) => {
-            const { msAuthState = {} }
-                = getState()['features/calendar-sync'] || {};
-            const email = msAuthState.userSigninName || '';
-
-            dispatch(setCalendarProfileEmail(email));
-
-            return Promise.resolve(email);
-        };
     },
 
     /**
@@ -409,31 +410,25 @@ function getAuthUrl(appId, authState, authNonce) {
 }
 
 /**
- * Converts a hash parameter string into an object.
+ * Converts a url from an auth redirect into an object of parameters passed
+ * into the url.
  *
- * @param {string} hash - The string to parse.
+ * @param {string} url - The string to parse.
  * @private
  * @returns {Object}
  */
-function getParamsFromHash(hash) {
-    const params = new URLSearchParams(hash.slice(1, hash.length));
+function getParamsFromHash(url) {
+    const params = parseURLParams(parseStandardURIString(url), true, 'hash');
 
     // Get the number of seconds the token is valid for, subtract 5 minutes
     // to account for differences in clock settings and convert to ms.
-    const expiresIn = (parseInt(params.get('expires_in'), 10) - 300) * 1000;
+    const expiresIn = (parseInt(params.expires_in, 10) - 300) * 1000;
     const now = new Date();
     const expireDate = new Date(now.getTime() + expiresIn);
 
-    params.set('tokenExpires', expireDate.getTime().toString());
+    params.tokenExpires = expireDate.getTime().toString();
 
-    // Convert the URLSearchParams map into an object.
-    return Array.from(params.entries())
-        .reduce((main, [ key, value ]) => {
-            return {
-                ...main,
-                [key]: value
-            };
-        }, {});
+    return params;
 }
 
 /**

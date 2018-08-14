@@ -271,8 +271,8 @@ const googleApi = {
                 });
 
                 return Promise.all(promises)
-                    .then(result =>
-                        [].concat(...result.map(rItem => rItem.result.items)))
+                    .then(results =>
+                        [].concat(...results.map(rItem => rItem.result.items)))
                     .then(entries =>
                         entries.map(e => this._convertCalendarEntry(e)));
             });

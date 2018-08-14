@@ -22,7 +22,7 @@ import { isCalendarEnabled } from './functions';
 const DEFAULT_STATE = {
     authorization: undefined,
     events: [],
-    integration: undefined,
+    integrationReady: false,
     integrationType: undefined,
     msAuthState: undefined
 };
@@ -90,7 +90,7 @@ isCalendarEnabled()
         case SET_CALENDAR_INTEGRATION:
             return {
                 ...state,
-                integration: action.integration,
+                integrationReady: action.integrationReady,
                 integrationType: action.integrationType
             };
 

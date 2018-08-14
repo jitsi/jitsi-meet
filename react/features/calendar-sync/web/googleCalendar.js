@@ -29,6 +29,15 @@ export const googleCalendarApi = {
     getCalendarEntries,
 
     /**
+     * Returns the email address for the currently logged in user.
+     *
+     * @returns {function(Dispatch<*>): Promise<string|never>}
+     */
+    getCurrentEmail() {
+        return updateProfile();
+    },
+
+    /**
      * Initializes the google api if needed.
      *
      * @returns {function(Dispatch<*>): Promise<void>}
@@ -51,13 +60,6 @@ export const googleCalendarApi = {
      * @returns {function(Dispatch<*>): Promise<string|never>}
      */
     signOut,
-
-    /**
-     * Updates the profile data using google-api feature.
-     *
-     * @returns {function(Dispatch<*>): Promise<string|never>}
-     */
-    updateProfile,
 
     /**
      * Returns whether or not the user is currently signed in.

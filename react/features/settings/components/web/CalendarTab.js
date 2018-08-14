@@ -288,7 +288,7 @@ function _mapStateToProps(state) {
             calendarEnabled && googleApiApplicationClientID),
         _enableMicrosoftIntegration: Boolean(
             calendarEnabled && microsoftApiApplicationClientID),
-        _isConnectedToCalendar: Boolean(calendarState.integration),
+        _isConnectedToCalendar: calendarState.integrationReady,
         _profileEmail: calendarState.profileEmail
     };
 }

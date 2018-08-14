@@ -48,7 +48,7 @@ export const SET_CALENDAR_EVENTS = Symbol('SET_CALENDAR_EVENTS');
  *
  * {
  *     type: SET_CALENDAR_INTEGRATION,
- *     integration: string,
+ *     integrationReady: boolean,
  *     integrationType: string
  * }
  */
