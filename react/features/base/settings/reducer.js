@@ -138,7 +138,7 @@ function _initSettings(featureState) {
         if (settings.audioOutputDeviceId
             !== JitsiMeetJS.mediaDevices.getAudioOutputDevice()) {
             JitsiMeetJS.mediaDevices.setAudioOutputDevice(
-                audioOutputDeviceId
+                settings.audioOutputDeviceId
             ).catch(ex => {
                 logger.warn('Failed to set audio output device from local '
                     + 'storage. Default audio output device will be used'
