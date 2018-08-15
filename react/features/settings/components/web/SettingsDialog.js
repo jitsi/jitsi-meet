@@ -5,12 +5,14 @@ import { connect } from 'react-redux';
 
 import { getAvailableDevices } from '../../../base/devices';
 import { DialogWithTabs, hideDialog } from '../../../base/dialog';
+import { isCalendarEnabled } from '../../../calendar-sync';
 import {
     DeviceSelection,
     getDeviceSelectionDialogProps,
     submitDeviceSelectionTab
 } from '../../../device-selection';
 
+import CalendarTab from './CalendarTab';
 import MoreTab from './MoreTab';
 import ProfileTab from './ProfileTab';
 import { getMoreTabProps, getProfileTabProps } from '../../functions';
@@ -40,7 +42,7 @@ type Props = {
     /**
      * Invoked to save changed settings.
      */
-    dispatch: Function,
+    dispatch: Function
 };
 
 /**
@@ -81,7 +83,8 @@ class SettingsDialog extends Component<Props> {
                 onMount: tab.onMount
                     ? (...args) => dispatch(tab.onMount(...args))
                     : undefined,
-                submit: (...args) => dispatch(tab.submit(...args))
+                submit: (...args) => tab.submit
+                    && dispatch(tab.submit(...args))
             };
         });
 
@@ -129,7 +132,8 @@ function _mapStateToProps(state) {
     const { showModeratorSettings, showLanguageSettings } = moreTabProps;
     const showProfileSettings
         = configuredTabs.includes('profile') && jwt.isGuest;
-
+    const showCalendarSettings
+        = configuredTabs.includes('calendar') && isCalendarEnabled();
     const tabs = [];
 
     if (showDeviceSettings) {
@@ -166,6 +170,15 @@ function _mapStateToProps(state) {
             props: getProfileTabProps(state),
             styles: 'settings-pane profile-pane',
             submit: submitProfileTab
+        });
+    }
+
+    if (showCalendarSettings) {
+        tabs.push({
+            name: SETTINGS_TABS.CALENDAR,
+            component: CalendarTab,
+            label: 'settings.calendar.title',
+            styles: 'settings-pane calendar-pane'
         });
     }
 

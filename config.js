@@ -256,6 +256,10 @@ var config = {
     // maintenance at 01:00 AM GMT,
     // noticeMessage: '',
 
+    // Enables calendar integration, depends on googleApiApplicationClientID
+    // and microsoftApiApplicationClientID
+    // enableCalendarIntegration: false,
+
     // Stats
     //
 
@@ -398,6 +402,7 @@ var config = {
      googleApiApplicationClientID
      iAmRecorder
      iAmSipGateway
+     microsoftApiApplicationClientID
      peopleSearchQueryTypes
      peopleSearchUrl
      requireDisplayName

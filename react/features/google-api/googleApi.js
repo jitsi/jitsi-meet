@@ -1,4 +1,4 @@
-import { GOOGLE_API_SCOPES } from './constants';
+import { GOOGLE_API_SCOPES, DISCOVERY_DOCS } from './constants';
 
 const GOOGLE_API_CLIENT_LIBRARY_URL = 'https://apis.google.com/js/api.js';
 
@@ -67,6 +67,7 @@ const googleApi = {
                 setTimeout(() => {
                     api.client.init({
                         clientId,
+                        discoveryDocs: DISCOVERY_DOCS,
                         scope: GOOGLE_API_SCOPES.join(' ')
                     })
                     .then(resolve)
@@ -86,6 +87,7 @@ const googleApi = {
             .then(api => Boolean(api
                 && api.auth2
                 && api.auth2.getAuthInstance
+                && api.auth2.getAuthInstance()
                 && api.auth2.getAuthInstance().isSignedIn
                 && api.auth2.getAuthInstance().isSignedIn.get()));
     },
@@ -180,6 +182,99 @@ const googleApi = {
                 if (!isSignedIn) {
                     return this.showAccountSelection();
                 }
+            });
+    },
+
+    /**
+     * Sign out from the Google API Client Library.
+     *
+     * @returns {Promise}
+     */
+    signOut() {
+        return this.get()
+            .then(api =>
+                api.auth2
+                && api.auth2.getAuthInstance
+                && api.auth2.getAuthInstance()
+                && api.auth2.getAuthInstance().signOut());
+    },
+
+    /**
+     * Parses the google calendar entries to a known format.
+     *
+     * @param {Object} entry - The google calendar entry.
+     * @returns {{
+     *  id: string,
+     *  startDate: string,
+     *  endDate: string,
+     *  title: string,
+     *  location: string,
+     *  description: string}}
+     * @private
+     */
+    _convertCalendarEntry(entry) {
+        return {
+            id: entry.id,
+            startDate: entry.start.dateTime,
+            endDate: entry.end.dateTime,
+            title: entry.summary,
+            location: entry.location,
+            description: entry.description
+        };
+    },
+
+    /**
+     * Retrieves calendar entries from all available calendars.
+     *
+     * @param {number} fetchStartDays - The number of days to go back
+     * when fetching.
+     * @param {number} fetchEndDays - The number of days to fetch.
+     * @returns {Promise<CalendarEntry>}
+     * @private
+     */
+    _getCalendarEntries(fetchStartDays, fetchEndDays) {
+        return this.get()
+            .then(() => this.isSignedIn())
+            .then(isSignedIn => {
+                if (!isSignedIn) {
+                    return null;
+                }
+
+                return this._getGoogleApiClient()
+                    .client.calendar.calendarList.list();
+            })
+            .then(calendarList => {
+
+                // no result, maybe not signed in
+                if (!calendarList) {
+                    return Promise.resolve();
+                }
+
+                const calendarIds
+                    = calendarList.result.items.map(en => en.id);
+                const promises = calendarIds.map(id => {
+                    const startDate = new Date();
+                    const endDate = new Date();
+
+                    startDate.setDate(startDate.getDate() + fetchStartDays);
+                    endDate.setDate(endDate.getDate() + fetchEndDays);
+
+                    return this._getGoogleApiClient()
+                        .client.calendar.events.list({
+                            'calendarId': id,
+                            'timeMin': startDate.toISOString(),
+                            'timeMax': endDate.toISOString(),
+                            'showDeleted': false,
+                            'singleEvents': true,
+                            'orderBy': 'startTime'
+                        });
+                });
+
+                return Promise.all(promises)
+                    .then(results =>
+                        [].concat(...results.map(rItem => rItem.result.items)))
+                    .then(entries =>
+                        entries.map(e => this._convertCalendarEntry(e)));
             });
     },
 
