@@ -46,7 +46,9 @@ class TranscriptionSubtitles extends Component<Props> {
                     text += stable + unstable;
                 }
                 paragraphs.push(
-                    <p key = { transcriptMessageID }> { text } </p>
+                    <p key = { transcriptMessageID }>
+                        <span>{ text }</span>
+                    </p>
                 );
             }
         }
