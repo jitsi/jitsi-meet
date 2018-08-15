@@ -68,7 +68,8 @@ export const SET_CALENDAR_AUTH_STATE = Symbol('SET_CALENDAR_AUTH_STATE');
  * The type of Redux action which changes Calendar Profile email state.
  *
  * {
- *     type: SET_CALENDAR_PROFILE_EMAIL
+ *     type: SET_CALENDAR_PROFILE_EMAIL,
+ *     email: string
  * }
  * @public
  */

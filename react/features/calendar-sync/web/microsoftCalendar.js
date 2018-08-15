@@ -76,7 +76,7 @@ export const microsoftCalendarApi = {
      * @param {number} fetchStartDays - The number of days to go back
      * when fetching.
      * @param {number} fetchEndDays - The number of days to fetch.
-     * @returns {function(Dispatch<*>): Promise<CalendarEntries>}
+     * @returns {function(Dispatch<*>, Function): Promise<CalendarEntries>}
      */
     getCalendarEntries(fetchStartDays: ?number, fetchEndDays: ?number) {
         return (dispatch: Dispatch<*>, getState: Function): Promise<*> => {
@@ -114,7 +114,7 @@ export const microsoftCalendarApi = {
     /**
      * Returns the email address for the currently logged in user.
      *
-     * @returns {function(Dispatch<*>): Promise<void>}
+     * @returns {function(Dispatch<*, Function>): Promise<string>}
      */
     getCurrentEmail(): Function {
         return (dispatch: Dispatch<*>, getState: Function) => {
@@ -129,7 +129,7 @@ export const microsoftCalendarApi = {
     /**
      * Sets the application ID to use for interacting with the Microsoft API.
      *
-     * @returns {function(Dispatch<*>): Promise<void>}
+     * @returns {function(): Promise<void>}
      */
     load(): Function {
         return () => Promise.resolve();
@@ -138,7 +138,7 @@ export const microsoftCalendarApi = {
     /**
      * Prompts the participant to sign in to the Microsoft API Client Library.
      *
-     * @returns {function(Dispatch<*>): Promise<void>}
+     * @returns {function(Dispatch<*>, Function): Promise<void>}
      */
     signIn(): Function {
         return (dispatch: Dispatch<*>, getState: Function) => {
@@ -237,7 +237,7 @@ export const microsoftCalendarApi = {
     /**
      * Sign out from the Microsoft API Client Library.
      *
-     * @returns {function(Dispatch<*>): Promise<void>}
+     * @returns {function(): Promise<void>}
      */
     signOut(): Function {
         // Using the Outlook API Get Started guide, there is no revoking to be
@@ -251,10 +251,10 @@ export const microsoftCalendarApi = {
     /**
      * Returns whether or not the user is currently signed in.
      *
-     * @returns {function(Dispatch<*>): Promise<boolean>}
+     * @returns {function(Dispatch<*>, Function): Promise<boolean>}
      */
     _isSignedIn(): Function {
-        return (dispatch, getState) => {
+        return (dispatch: Dispatch<*>, getState: Function) => {
             const now = new Date().getTime();
             const state
                 = getState()['features/calendar-sync'].msAuthState || {};
@@ -276,7 +276,7 @@ export const microsoftCalendarApi = {
      * Renews an existing auth token so it can continue to be used.
      *
      * @private
-     * @returns {function(Dispatch<*>): Promise<void>}
+     * @returns {function(Dispatch<*>, Function): Promise<void>}
      */
     _refreshAuthToken(): Function {
         return (dispatch: Dispatch<*>, getState: Function) => {
@@ -310,7 +310,6 @@ export const microsoftCalendarApi = {
                     'Cannot refresh auth token in this environment');
             }
 
-
             document.body.appendChild(iframe);
 
             return signInPromise.then(hash => {
@@ -330,6 +329,7 @@ export const microsoftCalendarApi = {
  * Parses the Microsoft calendar entries to a known format.
  *
  * @param {Object} entry - The Microsoft calendar entry.
+ * @private
  * @returns {{
  *     description: string,
  *     endDate: string,
@@ -338,7 +338,6 @@ export const microsoftCalendarApi = {
  *     startDate: string,
  *     title: string
  * }}
- * @private
  */
 function formatCalendarEntry(entry) {
     return {
@@ -354,8 +353,8 @@ function formatCalendarEntry(entry) {
 /**
  * Generate a guid to be used for verifying token validity.
  *
- * @returns {string} The generated string.
  * @private
+ * @returns {string} The generated string.
  */
 function generateGuid() {
     const buf = new Uint16Array(8);
@@ -374,8 +373,8 @@ function generateGuid() {
  * provided by Microsoft.
  * @param {string} userSigninName - The email of the user signed into the
  * integration with Microsoft.
- * @returns {string} - The auth URL.
  * @private
+ * @returns {string} - The auth URL.
  */
 function getAuthRefreshUrl(appId, userDomainType, userSigninName) {
     return [
@@ -392,8 +391,8 @@ function getAuthRefreshUrl(appId, userDomainType, userSigninName) {
  * @param {string} appId - The Microsoft application id to log into.
  * @param {string} authState - The authState guid to use.
  * @param {string} authNonce - The authNonce guid to use.
- * @returns {string} - The auth URL.
  * @private
+ * @returns {string} - The auth URL.
  */
 function getAuthUrl(appId, authState, authNonce) {
     const authParams = [
@@ -530,7 +529,6 @@ function requestCalendarEvents( // eslint-disable-line max-params
 /**
  * Converts the passed in number to a string and ensure it is at least 4
  * characters in length, prepending 0's as needed.
- *
  *
  * @param {number} num - The number to pad and convert to a string.
  * @private

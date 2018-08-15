@@ -162,7 +162,7 @@ export function setCalendarEvents(events: Array<Object>) {
  * @param {number} newEmail - The new email.
  * @returns {{
  *     type: SET_CALENDAR_PROFILE_EMAIL,
- *     email: Object
+ *     email: string
  * }}
  */
 export function setCalendarProfileEmail(newEmail: ?string) {

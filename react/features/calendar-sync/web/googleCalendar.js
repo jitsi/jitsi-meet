@@ -9,8 +9,6 @@ import {
     updateProfile
 } from '../../google-api';
 
-declare var config: Object;
-
 /**
  * A stateless collection of action creators that implements the expected
  * interface for interacting with the Google API in order to get calendar data.
@@ -24,7 +22,7 @@ export const googleCalendarApi = {
      * @param {number} fetchStartDays - The number of days to go back
      * when fetching.
      * @param {number} fetchEndDays - The number of days to fetch.
-     * @returns {function(Dispatch<*>): Promise<CalendarEntries>}
+     * @returns {function(): Promise<CalendarEntries>}
      */
     getCalendarEntries,
 
@@ -40,11 +38,15 @@ export const googleCalendarApi = {
     /**
      * Initializes the google api if needed.
      *
-     * @returns {function(Dispatch<*>): Promise<void>}
+     * @returns {function(Dispatch<*>, Function): Promise<void>}
      */
     load() {
-        return (dispatch: Dispatch<*>) => dispatch(
-            loadGoogleAPI(config.googleApiApplicationClientID));
+        return (dispatch: Dispatch<*>, getState: Function) => {
+            const { googleApiApplicationClientID }
+                = getState()['features/base/config'];
+
+            return dispatch(loadGoogleAPI(googleApiApplicationClientID));
+        };
     },
 
     /**
