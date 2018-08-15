@@ -74,5 +74,7 @@ export function shouldDisplayTileView(state: Object = {}) {
         state['features/video-layout']
             && state['features/video-layout'].tileViewEnabled
             && !state['features/etherpad'].editing
+            && (typeof interfaceConfig === 'undefined'
+                || !interfaceConfig.filmStripOnly)
     );
 }
