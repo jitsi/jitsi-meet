@@ -6,30 +6,22 @@
     <!--#include virtual="/base.html" -->
     <!--#include virtual="/title.html" -->
     <script>
-        function getParentWindowCallback() {
+        (function() {
             var windowName = window.name;
             var parentWindow = window.opener;
             if (parentWindow
                 && parentWindow.JitsiMeetJS
                 && parentWindow.JitsiMeetJS.app) {
                 var globalNS = parentWindow.JitsiMeetJS.app;
-                if( globalNS.oauthCallbacks
+                if (globalNS.oauthCallbacks
                     && typeof globalNS.oauthCallbacks[windowName]
                         === 'function') {
-                    return globalNS.oauthCallbacks[windowName];
+                    globalNS.oauthCallbacks[windowName]();
                 }
             }
-
-            return undefined;
-        }
-
-        var callback = getParentWindowCallback();
-        if (typeof callback === 'function') {
-            callback();
-        } else {
-            alert('Something went wrong!');
-        }
+        })();
     </script>
 </head>
-<body />
+<body>
+</body>
 </html>

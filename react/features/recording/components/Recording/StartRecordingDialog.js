@@ -11,7 +11,7 @@ import { Dialog } from '../../../base/dialog';
 import { JitsiRecordingConstants } from '../../../base/lib-jitsi-meet';
 
 import StartRecordingDialogContent from './StartRecordingDialogContent';
-import { getDropboxData } from '../../functions';
+import { getDropboxData } from '../../../dropbox';
 
 type Props = {
 
@@ -41,7 +41,6 @@ type Props = {
     t: Function
 }
 
-
 type State = {
 
     /**
@@ -55,14 +54,14 @@ type State = {
     isValidating: boolean,
 
     /**
-     * The display name of the user's Dropbox account.
-     */
-    userName: ?string,
-
-    /**
      * Number of MiB of available space in user's Dropbox account.
      */
-    spaceLeft: ?number
+    spaceLeft: ?number,
+
+    /**
+     * The display name of the user's Dropbox account.
+     */
+    userName: ?string
 };
 
 /**
@@ -217,14 +216,16 @@ class StartRecordingDialog extends Component<Props, State> {
  * @param {Object} state - The Redux state.
  * @private
  * @returns {{
- *     _conference: JitsiConference
+ *     _clientId: string,
+ *     _conference: JitsiConference,
+ *     _token: string
  * }}
  */
 function mapStateToProps(state: Object) {
     return {
+        _clientId: state['features/base/config'].dropbox.clientId,
         _conference: state['features/base/conference'].conference,
-        _token: state['features/base/oauth'].dropbox.token,
-        _clientId: state['features/base/config'].dropbox.clientId
+        _token: state['features/dropbox'].token
     };
 }
 

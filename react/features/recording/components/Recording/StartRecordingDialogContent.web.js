@@ -9,7 +9,7 @@ import {
     sendAnalytics
 } from '../../../analytics';
 import { translate } from '../../../base/i18n';
-import { authorizeDropbox, updateDropboxToken } from '../../../base/oauth';
+import { authorizeDropbox, updateDropboxToken } from '../../../dropbox';
 
 type Props = {
 
@@ -111,17 +111,21 @@ class StartRecordingDialogContent extends Component<Props> {
      * @returns {React$Component}
      */
     _renderSignIn() {
+        const { t } = this.props;
+
         return (
             <div>
-                <div>{ this.props.t('recording.authDropboxText') }</div>
+                <div>{ t('recording.authDropboxText') }</div>
                 <div
                     className = 'dropbox-sign-in'
                     onClick = { this._onSignInClick }>
                     <img
                         className = 'dropbox-logo'
                         src = 'images/dropboxLogo.svg' />
+                    <span>{ t('recording.signIn') }</span>
                 </div>
-            </div>);
+            </div>
+        );
     }
 
     /**
@@ -135,7 +139,7 @@ class StartRecordingDialogContent extends Component<Props> {
         return (
             <div>
                 <div>{ t('recording.authDropboxCompletedText') }</div>
-                <div className = 'logged-in-pannel'>
+                <div className = 'logged-in-panel'>
                     <div>
                         { t('recording.loggedIn', { userName }) }&nbsp;(&nbsp;
                         <a onClick = { this._onSignOutClick }>
@@ -154,7 +158,8 @@ class StartRecordingDialogContent extends Component<Props> {
                         }
                     </div>
                 </div>
-            </div>);
+            </div>
+        );
     }
 
     _onSignInClick: () => {};
