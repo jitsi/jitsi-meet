@@ -22,7 +22,7 @@ PODS:
     - React
   - react-native-locale-detector (1.0.0):
     - React
-  - react-native-webrtc (1.58.2):
+  - react-native-webrtc (1.63.0):
     - React
   - React/Core (0.55.4):
     - yoga (= 0.55.4.React)
