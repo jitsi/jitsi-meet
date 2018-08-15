@@ -4,7 +4,6 @@
 
 .recording-dialog {
     .authorization-panel {
-        align-items: center;
         border-bottom: 2px solid rgba(0, 0, 0, 0.3);
         display: flex;
         flex-direction: column;
@@ -12,18 +11,23 @@
         padding-bottom: 10px;
 
         .dropbox-sign-in {
-            background-color: #4285f4;
+            align-items: center;
+            border: 1px solid #4285f4;
+            background-color: white;
             border-radius: 2px;
             cursor: pointer;
             display: inline-flex;
-            padding: 1px;
+            padding: 10px;
+            font-size: 18px;
+            font-weight: 600;
             margin: 10px 0px;
+            color: #4285f4;
 
             .dropbox-logo {
                 background-color: white;
                 border-radius: 2px;
                 display: inline-block;
-                padding: 8px;
+                padding-right: 5px;
                 height: 18px;
             }
         }
