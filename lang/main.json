@@ -156,9 +156,9 @@
     "settings": {
         "calendar": {
             "about": "The __appName__ calendar integration is used to securely access your calendar so it can read upcoming events.",
+            "disconnect": "Disconnect",
             "microsoftSignIn": "Sign in with Microsoft",
-            "signedIn": "Currently accessing calendar data for __email__. Click the Sign Out button below to disconnect access to the calendar.",
-            "signOut": "Sign Out",
+            "signedIn": "Currently accessing calendar events for __email__. Click the Disconnect button below to stop accessing calendar events.",
             "title": "Calendar"
         },
         "title": "Settings",

@@ -220,32 +220,6 @@ export function signIn(calendarType: string): Function {
     };
 }
 
-
-/**
- * Signals signing out of the current calendar integration and resetting the
- * calendar state.
- *
- * @returns {Function}
- */
-export function signOut(): Function {
-    return (dispatch: Dispatch<*>, getState: Function) => {
-        const { integration } = getState()['features/calendar-sync'];
-
-        const signOutPromise = integration
-            ? dispatch(integration.signOut()) : Promise.resolve();
-
-        return signOutPromise
-            .then(() => dispatch(clearCalendarIntegration()))
-            .catch(error => {
-                logger.error(
-                    'Error occurred while signing out of calendar integration',
-                    error);
-
-                return Promise.reject(error);
-            });
-    };
-}
-
 /**
  * Signals to get current profile data linked to the current calendar
  * integration that is in use.

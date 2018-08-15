@@ -5,7 +5,6 @@ import {
     googleApi,
     loadGoogleAPI,
     signIn,
-    signOut,
     updateProfile
 } from '../../google-api';
 
@@ -55,13 +54,6 @@ export const googleCalendarApi = {
      * @returns {function(Dispatch<*>): Promise<string|never>}
      */
     signIn,
-
-    /**
-     * Sign out from the Google API Client Library.
-     *
-     * @returns {function(Dispatch<*>): Promise<string|never>}
-     */
-    signOut,
 
     /**
      * Returns whether or not the user is currently signed in.

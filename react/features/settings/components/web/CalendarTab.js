@@ -9,10 +9,10 @@ import { translate } from '../../../base/i18n';
 import {
     CALENDAR_TYPE,
     MicrosoftSignInButton,
+    clearCalendarIntegration,
     bootstrapCalendarIntegration,
     isCalendarEnabled,
-    signIn,
-    signOut
+    signIn
 } from '../../../calendar-sync';
 import { GoogleSignInButton } from '../../../google-api';
 
@@ -91,9 +91,9 @@ class CalendarTab extends Component<Props, State> {
         };
 
         // Bind event handlers so they are only bound once for every instance.
+        this._onClickDisconnect = this._onClickDisconnect.bind(this);
         this._onClickGoogle = this._onClickGoogle.bind(this);
         this._onClickMicrosoft = this._onClickMicrosoft.bind(this);
-        this._onClickSignOut = this._onClickSignOut.bind(this);
     }
 
     /**
@@ -144,6 +144,24 @@ class CalendarTab extends Component<Props, State> {
         this.props.dispatch(signIn(type));
     }
 
+    _onClickDisconnect: (Object) => void;
+
+    /**
+     * Dispatches an action to sign out of the currently connected third party
+     * used for calendar integration.
+     *
+     * @private
+     * @returns {void}
+     */
+    _onClickDisconnect() {
+        // We clear the integration state instead of actually signing out. This
+        // is for two primary reasons. Microsoft does not support a sign out and
+        // instead relies on clearing of local auth data. Google signout can
+        // also sign the user out of YouTube. So for now we've decided not to
+        // do an actual sign out.
+        this.props.dispatch(clearCalendarIntegration());
+    }
+
     _onClickGoogle: () => void;
 
     /**
@@ -166,19 +184,6 @@ class CalendarTab extends Component<Props, State> {
      */
     _onClickMicrosoft() {
         this._attemptSignIn(CALENDAR_TYPE.MICROSOFT);
-    }
-
-    _onClickSignOut: (Object) => void;
-
-    /**
-     * Dispatches an action to sign out of the currently connected third party
-     * used for calendar integration.
-     *
-     * @private
-     * @returns {void}
-     */
-    _onClickSignOut() {
-        this.props.dispatch(signOut());
     }
 
     /**
@@ -251,9 +256,9 @@ class CalendarTab extends Component<Props, State> {
                 <Button
                     appearance = 'primary'
                     id = 'calendar_logout'
-                    onClick = { this._onClickSignOut }
+                    onClick = { this._onClickDisconnect }
                     type = 'button'>
-                    Sign Out
+                    { t('settings.calendar.disconnect') }
                 </Button>
             </div>
         );

@@ -235,20 +235,6 @@ export const microsoftCalendarApi = {
     },
 
     /**
-     * Sign out from the Microsoft API Client Library.
-     *
-     * @returns {function(): Promise<void>}
-     */
-    signOut(): Function {
-        // Using the Outlook API Get Started guide, there is no revoking to be
-        // done with the Microsoft API. Instead any stored state on the app-side
-        // should be cleared and the token should be allowed to expire.
-        // See: https://docs.microsoft.com/en-us/outlook/rest/
-        //     javascript-tutorial#adding-calendar-and-contacts-apis
-        return () => Promise.resolve();
-    },
-
-    /**
      * Returns whether or not the user is currently signed in.
      *
      * @returns {function(Dispatch<*>, Function): Promise<boolean>}
