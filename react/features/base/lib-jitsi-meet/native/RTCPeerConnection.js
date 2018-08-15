@@ -73,14 +73,6 @@ export default function _RTCPeerConnection(...args: any[]) {
 _RTCPeerConnection.prototype = Object.create(RTCPeerConnection.prototype);
 _RTCPeerConnection.prototype.constructor = _RTCPeerConnection;
 
-_RTCPeerConnection.prototype.addIceCandidate
-    = _makePromiseAware(RTCPeerConnection.prototype.addIceCandidate, 1, 0);
-
-_RTCPeerConnection.prototype.createAnswer
-    = _makePromiseAware(RTCPeerConnection.prototype.createAnswer, 0, 1);
-_RTCPeerConnection.prototype.createOffer
-    = _makePromiseAware(RTCPeerConnection.prototype.createOffer, 0, 1);
-
 _RTCPeerConnection.prototype._invokeOnaddstream = function(...args) {
     const onaddstream = this._onaddstream;
 
@@ -103,9 +95,6 @@ _RTCPeerConnection.prototype._invokeQueuedOnaddstream = function(q) {
 _RTCPeerConnection.prototype._queueOnaddstream = function(...args) {
     this._onaddstreamQueue.push(Array.from(args));
 };
-
-_RTCPeerConnection.prototype.setLocalDescription
-  = _makePromiseAware(RTCPeerConnection.prototype.setLocalDescription, 1, 0);
 
 _RTCPeerConnection.prototype.setRemoteDescription = function(
         sessionDescription,
@@ -143,49 +132,6 @@ _RTCPeerConnection.prototype.setRemoteDescription = function(
  */
 function _LOGE(...args) {
     logger.error(...args);
-}
-
-/**
- * Makes a {@code Promise}-returning function out of a specific void function
- * with {@code successCallback} and {@code failureCallback}.
- *
- * @param {Function} f - The (void) function with {@code successCallback} and
- * {@code failureCallback}.
- * @param {number} beforeCallbacks - The number of arguments before
- * {@code successCallback} and {@code failureCallback}.
- * @param {number} afterCallbacks - The number of arguments after
- * {@code successCallback} and {@code failureCallback}.
- * @returns {Promise}
- */
-function _makePromiseAware(
-        f: Function,
-        beforeCallbacks: number,
-        afterCallbacks: number) {
-    return function(...args) {
-        return new Promise((resolve, reject) => {
-            if (args.length <= beforeCallbacks + afterCallbacks) {
-                args.splice(beforeCallbacks, 0, resolve, reject);
-            }
-
-            let fPromise;
-
-            try {
-                // eslint-disable-next-line no-invalid-this
-                fPromise = f.apply(this, args);
-            } catch (e) {
-                reject(e);
-            }
-
-            // If the super implementation returns a Promise from the deprecated
-            // invocation by any chance, try to make sense of it.
-            if (fPromise) {
-                const { then } = fPromise;
-
-                typeof then === 'function'
-                    && then.call(fPromise, resolve, reject);
-            }
-        });
-    };
 }
 
 /**
