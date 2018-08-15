@@ -126,7 +126,6 @@ function _visitNode(node, callback) {
     //
     // Required by:
     // - jQuery
-    // - lib-jitsi-meet/modules/RTC/adapter.screenshare.js
     // - Strophe
     if (typeof global.document === 'undefined') {
         const document
@@ -149,14 +148,6 @@ function _visitNode(node, callback) {
         // - herment
         if (typeof document.cookie === 'undefined') {
             document.cookie = '';
-        }
-
-        // document.implementation
-        //
-        // Required by:
-        // - jQuery
-        if (typeof document.implementation === 'undefined') {
-            document.implementation = {};
         }
 
         // document.implementation.createHTMLDocument
@@ -362,26 +353,9 @@ function _visitNode(node, callback) {
     const { navigator } = global;
 
     if (navigator) {
-        // platform
-        //
-        // Required by:
-        // - lib-jitsi-meet/modules/RTC/adapter.screenshare.js
-        if (typeof navigator.platform === 'undefined') {
-            navigator.platform = '';
-        }
-
-        // plugins
-        //
-        // Required by:
-        // - lib-jitsi-meet/modules/RTC/adapter.screenshare.js
-        if (typeof navigator.plugins === 'undefined') {
-            navigator.plugins = [];
-        }
-
         // userAgent
         //
         // Required by:
-        // - lib-jitsi-meet/modules/RTC/adapter.screenshare.js
         // - lib-jitsi-meet/modules/browser/BrowserDetection.js
         let userAgent = navigator.userAgent || '';
 
