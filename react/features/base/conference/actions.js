@@ -13,8 +13,6 @@ import {
     MAX_DISPLAY_NAME_LENGTH,
     dominantSpeakerChanged,
     participantConnectionStatusChanged,
-    participantJoined,
-    participantLeft,
     participantPresenceChanged,
     participantRoleChanged,
     participantUpdated
@@ -52,6 +50,8 @@ import {
 } from './constants';
 import {
     _addLocalTracksToConference,
+    commonUserJoinedHandling,
+    commonUserLeftHandling,
     getCurrentConference,
     sendLocalParticipant
 } from './functions';
@@ -143,18 +143,10 @@ function _addConferenceListeners(conference, dispatch) {
 
     conference.on(
         JitsiConferenceEvents.USER_JOINED,
-        (id, user) => !user.isHidden() && dispatch(participantJoined({
-            botType: user.getBotType(),
-            conference,
-            id,
-            name: user.getDisplayName(),
-            presence: user.getStatus(),
-            role: user.getRole()
-        })));
+        (id, user) => commonUserJoinedHandling({ dispatch }, conference, user));
     conference.on(
         JitsiConferenceEvents.USER_LEFT,
-        (id, user) => !user.isHidden()
-            && dispatch(participantLeft(id, conference)));
+        (id, user) => commonUserLeftHandling({ dispatch }, conference, user));
     conference.on(
         JitsiConferenceEvents.USER_ROLE_CHANGED,
         (...args) => dispatch(participantRoleChanged(...args)));
