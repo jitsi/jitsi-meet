@@ -1,4 +1,5 @@
-import PropTypes from 'prop-types';
+// @flow
+
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
@@ -19,30 +20,30 @@ import styles from './styles';
 import VideoMutedIndicator from './VideoMutedIndicator';
 
 /**
+ * Thumbnail component's property types.
+ */
+type Props = {
+    _audioTrack: Object,
+    _largeVideo: Object,
+    _videoTrack: Object,
+    disablePin?: boolean,
+    dispatch: Function,
+    participant: Object,
+    styleOverrides?: Object
+};
+
+/**
  * React component for video thumbnail.
  *
  * @extends Component
  */
-class Thumbnail extends Component {
-    /**
-     * Thumbnail component's property types.
-     *
-     * @static
-     */
-    static propTypes = {
-        _audioTrack: PropTypes.object,
-        _largeVideo: PropTypes.object,
-        _videoTrack: PropTypes.object,
-        dispatch: PropTypes.func,
-        participant: PropTypes.object
-    };
-
+class Thumbnail extends Component<Props> {
     /**
      * Initializes new Video Thumbnail component.
      *
      * @param {Object} props - Component props.
      */
-    constructor(props) {
+    constructor(props: Props) {
         super(props);
 
         // Bind event handlers so they are only bound once for every instance.
@@ -57,16 +58,24 @@ class Thumbnail extends Component {
      */
     render() {
         const audioTrack = this.props._audioTrack;
+        const disablePin = this.props.disablePin;
         const largeVideo = this.props._largeVideo;
         const participant = this.props.participant;
         const videoTrack = this.props._videoTrack;
 
         let style = styles.thumbnail;
 
-        if (participant.pinned) {
+        if (participant.pinned && !disablePin) {
             style = {
                 ...style,
                 ...styles.thumbnailPinned
+            };
+        }
+
+        if (this.props.styleOverrides) {
+            style = {
+                ...style,
+                ...this.props.styleOverrides
             };
         }
 
@@ -85,7 +94,7 @@ class Thumbnail extends Component {
 
         return (
             <Container
-                onClick = { this._onClick }
+                onClick = { disablePin ? undefined : this._onClick }
                 style = { style }>
 
                 { renderAudio
@@ -96,7 +105,7 @@ class Thumbnail extends Component {
                 <ParticipantView
                     avatarSize = { AVATAR_SIZE }
                     participantId = { participantId }
-                    tintEnabled = { participantInLargeVideo }
+                    tintEnabled = { participantInLargeVideo && !disablePin }
                     zOrder = { 1 } />
 
                 { participant.role === PARTICIPANT_ROLE.MODERATOR
@@ -116,6 +125,8 @@ class Thumbnail extends Component {
             </Container>
         );
     }
+
+    _onClick: () => void;
 
     /**
      * Handles click/tap event on the thumbnail.
