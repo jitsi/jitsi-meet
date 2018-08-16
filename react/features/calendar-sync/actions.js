@@ -211,6 +211,7 @@ export function signIn(calendarType: string): Function {
             .then(() => dispatch(integration.signIn()))
             .then(() => dispatch(setIntegrationReady(calendarType)))
             .then(() => dispatch(updateProfile(calendarType)))
+            .then(() => dispatch(refreshCalendar()))
             .catch(error => {
                 logger.error(
                     'Error occurred while signing into calendar integration',

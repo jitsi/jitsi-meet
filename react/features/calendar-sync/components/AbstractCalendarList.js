@@ -1,27 +1,21 @@
 // @flow
 
 import React, { Component } from 'react';
-import { Text, TouchableOpacity, View } from 'react-native';
 import { connect } from 'react-redux';
 
 import { appNavigate } from '../../app';
 import { getLocalizedDateFormatter, translate } from '../../base/i18n';
 import { NavigateSectionList } from '../../base/react';
-import { openSettings } from '../../mobile/permissions';
 
 import { refreshCalendar } from '../actions';
+
 import { isCalendarEnabled } from '../functions';
-import styles from './styles';
 
 /**
- * The tyoe of the React {@code Component} props of {@link MeetingList}.
+ * The type of the React {@code Component} props of
+ * {@link AbstractCalendarList}.
  */
 type Props = {
-
-    /**
-     * The current state of the calendar access permission.
-     */
-    _authorization: ?string,
 
     /**
      * The calendar event list.
@@ -39,15 +33,20 @@ type Props = {
     dispatch: Function,
 
     /**
+     *
+     */
+    renderListEmptyComponent: Function,
+
+    /**
      * The translate function.
      */
     t: Function
 };
 
 /**
- * Component to display a list of events from the (mobile) user's calendar.
+ * Component to display a list of events from a connected calendar.
  */
-class MeetingList extends Component<Props> {
+class AbstractCalendarList extends Component<Props> {
     /**
      * Default values for the component's props.
      */
@@ -75,7 +74,7 @@ class MeetingList extends Component<Props> {
     }
 
     /**
-     * Initializes a new {@code MeetingList} instance.
+     * Initializes a new {@code CalendarList} instance.
      *
      * @inheritdoc
      */
@@ -83,8 +82,6 @@ class MeetingList extends Component<Props> {
         super(props);
 
         // Bind event handlers so they are only bound once per instance.
-        this._getRenderListEmptyComponent
-            = this._getRenderListEmptyComponent.bind(this);
         this._onPress = this._onPress.bind(this);
         this._onRefresh = this._onRefresh.bind(this);
         this._toDateString = this._toDateString.bind(this);
@@ -98,7 +95,7 @@ class MeetingList extends Component<Props> {
      * @inheritdoc
      */
     render() {
-        const { disabled } = this.props;
+        const { disabled, renderListEmptyComponent } = this.props;
 
         return (
             <NavigateSectionList
@@ -106,43 +103,8 @@ class MeetingList extends Component<Props> {
                 onPress = { this._onPress }
                 onRefresh = { this._onRefresh }
                 renderListEmptyComponent
-                    = { this._getRenderListEmptyComponent() }
+                    = { renderListEmptyComponent }
                 sections = { this._toDisplayableList() } />
-        );
-    }
-
-    _getRenderListEmptyComponent: () => Object;
-
-    /**
-     * Returns a list empty component if a custom one has to be rendered instead
-     * of the default one in the {@link NavigateSectionList}.
-     *
-     * @private
-     * @returns {?React$Component}
-     */
-    _getRenderListEmptyComponent() {
-        const { _authorization, t } = this.props;
-
-        // If we don't provide a list specific renderListEmptyComponent, then
-        // the default empty component of the NavigateSectionList will be
-        // rendered, which (atm) is a simple "Pull to refresh" message.
-        if (_authorization !== 'denied') {
-            return undefined;
-        }
-
-        return (
-            <View style = { styles.noPermissionMessageView }>
-                <Text style = { styles.noPermissionMessageText }>
-                    { t('calendarSync.permissionMessage') }
-                </Text>
-                <TouchableOpacity
-                    onPress = { openSettings }
-                    style = { styles.noPermissionMessageButton } >
-                    <Text style = { styles.noPermissionMessageButtonText }>
-                        { t('calendarSync.permissionButton') }
-                    </Text>
-                </TouchableOpacity>
-            </View>
         );
     }
 
@@ -235,7 +197,7 @@ class MeetingList extends Component<Props> {
                 nowSection.data.push(displayableEvent);
             } else if (event.startDate > now) {
                 if (nextSection.data.length
-                        && nextSection.data[0].startDate !== event.startDate) {
+                    && nextSection.data[0].startDate !== event.startDate) {
                     laterSection.data.push(displayableEvent);
                 } else {
                     nextSection.data.push(displayableEvent);
@@ -262,19 +224,17 @@ class MeetingList extends Component<Props> {
  *
  * @param {Object} state - The redux state.
  * @returns {{
- *     _authorization: ?string,
  *     _eventList: Array<Object>
  * }}
  */
 function _mapStateToProps(state: Object) {
-    const { authorization, events } = state['features/calendar-sync'];
+    const { events } = state['features/calendar-sync'];
 
     return {
-        _authorization: authorization,
         _eventList: events
     };
 }
 
 export default isCalendarEnabled()
-    ? translate(connect(_mapStateToProps)(MeetingList))
+    ? translate(connect(_mapStateToProps)(AbstractCalendarList))
     : undefined;

@@ -2,6 +2,7 @@
 
 import Button from '@atlaskit/button';
 import { FieldTextStateless } from '@atlaskit/field-text';
+import Tabs from '@atlaskit/tabs';
 import { AtlasKitThemeProvider } from '@atlaskit/theme';
 import React from 'react';
 import { connect } from 'react-redux';
@@ -9,6 +10,7 @@ import { connect } from 'react-redux';
 import { DialogContainer } from '../../base/dialog';
 import { translate } from '../../base/i18n';
 import { Watermarks } from '../../base/react';
+import { CalendarList } from '../../calendar-sync';
 import { RecentList } from '../../recent-list';
 import { openSettingsDialog } from '../../settings';
 
@@ -159,7 +161,7 @@ class WelcomePage extends AbstractWelcomePage {
                                 { t('welcomepage.go') }
                             </Button>
                         </div>
-                        <RecentList />
+                        { this._renderTabs() }
                     </div>
                     { showAdditionalContent
                         ? <div
@@ -209,6 +211,32 @@ class WelcomePage extends AbstractWelcomePage {
      */
     _onRoomChange(event) {
         super._onRoomChange(event.target.value);
+    }
+
+    /**
+     * Renders the tabs from the tab information passed on props.
+     *
+     * @returns {void}
+     */
+    _renderTabs() {
+        const { t } = this.props;
+
+        const tabs = [
+            {
+                label: t('welcomepage.calendar'),
+                content: CalendarList ? <CalendarList /> : null,
+                defaultSelected: true
+            },
+            {
+                label: t('welcomepage.recentList'),
+                content: <RecentList />
+            }
+        ];
+
+        return (
+            <div className = 'tab-container' >
+                <Tabs tabs = { tabs } />
+            </div>);
     }
 
     /**

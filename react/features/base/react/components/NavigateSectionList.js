@@ -93,7 +93,7 @@ class NavigateSectionList extends Component<Props> {
 
         return (
             <SectionList
-                ListEmptyComponent = { renderListEmptyComponent }
+                ListEmptyComponent = { renderListEmptyComponent() }
                 keyExtractor = { this._getItemKey }
                 onItemClick = { this.props.onPress }
                 onRefresh = { this._onRefresh }

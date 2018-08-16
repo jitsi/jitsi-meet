@@ -8,6 +8,12 @@ import type { Section } from '../../Types';
 type Props = {
 
     /**
+     * Rendered when the list is empty. Can be a React Component Class, a render
+     * function, or a rendered element.
+     */
+    ListEmptyComponent: Object,
+
+    /**
      * Used to extract a unique key for a given item at the specified index.
      * Key is used for caching and as the react key to track item re-ordering.
      */
@@ -49,6 +55,7 @@ export default class SectionList extends Component<Props> {
      */
     render() {
         const {
+            ListEmptyComponent,
             renderSectionHeader,
             renderItem,
             sections,
@@ -63,23 +70,25 @@ export default class SectionList extends Component<Props> {
                 <Container
                     className = 'navigate-section-list'>
                     {
-                        sections.map((section, sectionIndex) => (
-                            <Container
-                                key = { sectionIndex }>
-                                { renderSectionHeader(section) }
-                                { section.data
-                                    .map((item, listIndex) => {
-                                        const listItem = {
-                                            item
-                                        };
+                        sections.length === 0
+                            ? ListEmptyComponent
+                            : sections.map((section, sectionIndex) => (
+                                <Container
+                                    key = { sectionIndex }>
+                                    { renderSectionHeader(section) }
+                                    { section.data
+                                        .map((item, listIndex) => {
+                                            const listItem = {
+                                                item
+                                            };
 
-                                        return renderItem(listItem,
-                                            keyExtractor(section,
-                                                listIndex));
-                                    }) }
-                            </Container>
-                        )
-                        )
+                                            return renderItem(listItem,
+                                                keyExtractor(section,
+                                                    listIndex));
+                                        }) }
+                                </Container>
+                            )
+                            )
                     }
                 </Container>
             );

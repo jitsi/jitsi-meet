@@ -45,6 +45,7 @@ body.welcome-page {
             font-size: 1rem;
             font-weight: 400;
             line-height: 24px;
+            margin-bottom: 20px;
         }
 
         #enter_room {
@@ -61,6 +62,12 @@ body.welcome-page {
                 margin-right: 8px;
                 width: 100%;
             }
+        }
+
+        .tab-container {
+            font-size: 16px;
+            text-align: left;
+            width: 650px;
         }
     }
 

@@ -4,7 +4,7 @@ const NOTIFICATION_SIZE = 55;
 
 /**
  * The styles of the React {@code Component}s of the feature meeting-list i.e.
- * {@code MeetingList}.
+ * {@code CalendarList}.
  */
 export default createStyleSheet({
 
