@@ -58,6 +58,9 @@ class Labels extends AbstractLabels<Props, *> {
                     this._renderRecordingLabel(
                         JitsiRecordingConstants.mode.STREAM)
                 }
+                {
+                    this._renderTranscribingLabel()
+                }
                 {/*
                   * Emil, Lyubomir, Nichole, and Zoli said that the Labels
                   * should not be rendered in Picture-in-Picture. Saul argued
@@ -72,6 +75,8 @@ class Labels extends AbstractLabels<Props, *> {
     }
 
     _renderRecordingLabel: string => React$Element<*>;
+
+    _renderTranscribingLabel: () => React$Element<*>
 
     _renderVideoQualityLabel: () => React$Element<*>;
 }
