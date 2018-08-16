@@ -31,14 +31,16 @@ import EventEmitter from 'events';
 import {
     AVATAR_ID_COMMAND,
     AVATAR_URL_COMMAND,
+    EMAIL_COMMAND,
     authStatusChanged,
+    commonUserJoinedHandling,
+    commonUserLeftHandling,
     conferenceFailed,
     conferenceJoined,
     conferenceLeft,
     conferenceWillJoin,
     conferenceWillLeave,
     dataChannelOpened,
-    EMAIL_COMMAND,
     lockStateChanged,
     onStartMutedPolicyChanged,
     p2pStatusChanged,
@@ -75,14 +77,10 @@ import {
     getAvatarURLByParticipantId,
     getLocalParticipant,
     getParticipantById,
-    hiddenParticipantJoined,
-    hiddenParticipantLeft,
     localParticipantConnectionStatusChanged,
     localParticipantRoleChanged,
     MAX_DISPLAY_NAME_LENGTH,
     participantConnectionStatusChanged,
-    participantJoined,
-    participantLeft,
     participantPresenceChanged,
     participantRoleChanged,
     participantUpdated
@@ -1694,22 +1692,14 @@ export default {
         room.on(JitsiConferenceEvents.PARTCIPANT_FEATURES_CHANGED,
             user => APP.UI.onUserFeaturesChanged(user));
         room.on(JitsiConferenceEvents.USER_JOINED, (id, user) => {
-            const displayName = user.getDisplayName();
+            // The logic shared between RN and web.
+            commonUserJoinedHandling(APP.store, room, user);
 
             if (user.isHidden()) {
-                APP.store.dispatch(hiddenParticipantJoined(id, displayName));
-
                 return;
             }
 
-            APP.store.dispatch(participantJoined({
-                botType: user.getBotType(),
-                conference: room,
-                id,
-                name: displayName,
-                presence: user.getStatus(),
-                role: user.getRole()
-            }));
+            const displayName = user.getDisplayName();
 
             logger.log(`USER ${id} connnected:`, user);
             APP.API.notifyUserJoined(id, {
@@ -1724,13 +1714,13 @@ export default {
         });
 
         room.on(JitsiConferenceEvents.USER_LEFT, (id, user) => {
-            if (user.isHidden()) {
-                APP.store.dispatch(hiddenParticipantLeft(id));
+            // The logic shared between RN and web.
+            commonUserLeftHandling(APP.store, room, user);
 
+            if (user.isHidden()) {
                 return;
             }
 
-            APP.store.dispatch(participantLeft(id, room));
             logger.log(`USER ${id} LEFT:`, user);
             APP.API.notifyUserLeft(id);
             APP.UI.messageHandler.participantNotification(

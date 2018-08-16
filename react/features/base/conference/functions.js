@@ -1,7 +1,13 @@
 // @flow
 
 import { JitsiTrackErrors } from '../lib-jitsi-meet';
-import { getLocalParticipant } from '../participants';
+import {
+    getLocalParticipant,
+    hiddenParticipantJoined,
+    hiddenParticipantLeft,
+    participantJoined,
+    participantLeft
+} from '../participants';
 import { toState } from '../redux';
 
 import {
@@ -42,6 +48,62 @@ export function _addLocalTracksToConference(
     }
 
     return Promise.all(promises);
+}
+
+/**
+ * Logic shared between web and RN which processes the {@code USER_JOINED}
+ * conference event and dispatches either {@link participantJoined} or
+ * {@link hiddenParticipantJoined}.
+ *
+ * @param {Object} store - The redux store.
+ * @param {JitsiMeetConference} conference - The conference for which the
+ * {@code USER_JOINED} event is being processed.
+ * @param {JitsiParticipant} user - The user who has just joined.
+ * @returns {void}
+ */
+export function commonUserJoinedHandling(
+        { dispatch }: Object,
+        conference: Object,
+        user: Object) {
+    const id = user.getId();
+    const displayName = user.getDisplayName();
+
+    if (user.isHidden()) {
+        dispatch(hiddenParticipantJoined(id, displayName));
+    } else {
+        dispatch(participantJoined({
+            botType: user.getBotType(),
+            conference,
+            id,
+            name: displayName,
+            presence: user.getStatus(),
+            role: user.getRole()
+        }));
+    }
+}
+
+/**
+ * Logic shared between web and RN which processes the {@code USER_LEFT}
+ * conference event and dispatches either {@link participantLeft} or
+ * {@link hiddenParticipantLeft}.
+ *
+ * @param {Object} store - The redux store.
+ * @param {JitsiMeetConference} conference - The conference for which the
+ * {@code USER_LEFT} event is being processed.
+ * @param {JitsiParticipant} user - The user who has just left.
+ * @returns {void}
+ */
+export function commonUserLeftHandling(
+        { dispatch }: Object,
+        conference: Object,
+        user: Object) {
+    const id = user.getId();
+
+    if (user.isHidden()) {
+        dispatch(hiddenParticipantLeft(id));
+    } else {
+        dispatch(participantLeft(id, conference));
+    }
 }
 
 /**
