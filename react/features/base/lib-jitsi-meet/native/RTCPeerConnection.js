@@ -96,29 +96,14 @@ _RTCPeerConnection.prototype._queueOnaddstream = function(...args) {
     this._onaddstreamQueue.push(Array.from(args));
 };
 
-_RTCPeerConnection.prototype.setRemoteDescription = function(
-        sessionDescription,
-        successCallback,
-        errorCallback) {
-    // If the deprecated callback-based version is used, translate it to the
-    // Promise-based version.
-    if (typeof successCallback !== 'undefined'
-            || typeof errorCallback !== 'undefined') {
-        // XXX Returning a Promise is not necessary. But I don't see why it'd
-        // hurt (much).
-        return (
-            _RTCPeerConnection.prototype.setRemoteDescription.call(
-                    this,
-                    sessionDescription)
-                .then(successCallback, errorCallback));
-    }
+_RTCPeerConnection.prototype.setRemoteDescription = function(description) {
 
     return (
-        _synthesizeIPv6Addresses(sessionDescription)
+        _synthesizeIPv6Addresses(description)
             .catch(reason => {
                 reason && _LOGE(reason);
 
-                return sessionDescription;
+                return description;
             })
             .then(value => _setRemoteDescription.bind(this)(value)));
 
@@ -139,13 +124,13 @@ function _LOGE(...args) {
  * implementation which uses the deprecated, callback-based version to the
  * {@code Promise}-based version.
  *
- * @param {RTCSessionDescription} sessionDescription - The RTCSessionDescription
+ * @param {RTCSessionDescription} description - The RTCSessionDescription
  * which specifies the configuration of the remote end of the connection.
  * @private
  * @private
  * @returns {Promise}
  */
-function _setRemoteDescription(sessionDescription) {
+function _setRemoteDescription(description) {
     return new Promise((resolve, reject) => {
 
         /* eslint-disable no-invalid-this */
@@ -154,10 +139,8 @@ function _setRemoteDescription(sessionDescription) {
         // setRemoteDescription calls. I shouldn't be but... anyway.
         this._onaddstreamQueue = [];
 
-        RTCPeerConnection.prototype.setRemoteDescription.call(
-            this,
-            sessionDescription,
-            (...args) => {
+        RTCPeerConnection.prototype.setRemoteDescription.call(this, description)
+            .then((...args) => {
                 let q;
 
                 try {
@@ -168,8 +151,7 @@ function _setRemoteDescription(sessionDescription) {
                 }
 
                 this._invokeQueuedOnaddstream(q);
-            },
-            (...args) => {
+            }, (...args) => {
                 this._onaddstreamQueue = undefined;
 
                 reject(...args);
