@@ -7,9 +7,7 @@
      * see.
      */
     .active-speaker {
-        border: $thumbnailVideoBorder solid $videoThumbnailSelected;
-        box-shadow: inset 0 0 3px $videoThumbnailSelected,
-        0 0 3px $videoThumbnailSelected;
+        box-shadow: 0 0 5px 3px $videoThumbnailSelected
     }
 
     #filmstripRemoteVideos {
@@ -84,6 +82,7 @@
         padding: 100px 0;
 
         .videocontainer {
+            border: 0;
             box-sizing: border-box;
             display: block;
             margin: 5px;
