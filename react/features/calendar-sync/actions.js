@@ -273,11 +273,18 @@ export function updateCalendarEvent(id: string, calendarId: string): Function {
         return dispatch(integration.updateCalendarEvent(
                 id, calendarId, roomURL))
             .then(() => {
-                const { events } = getState()['features/calendar-sync'];
+                // make a copy of the array
+                const events
+                    = getState()['features/calendar-sync'].events.slice(0);
+
                 const eventIx = events.findIndex(
                     e => e.id === id && e.calendarId === calendarId);
 
-                events[eventIx].url = roomURL;
+                // clone the event we will modify
+                const newEvent = Object.assign({}, events[eventIx]);
+
+                newEvent.url = roomURL;
+                events[eventIx] = newEvent;
 
                 return dispatch(setCalendarEvents(events));
             });
