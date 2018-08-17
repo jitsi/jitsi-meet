@@ -19,7 +19,9 @@ export function beginShareRoom(roomURL: ?string): Function {
         }
         roomURL && dispatch({
             type: BEGIN_SHARE_ROOM,
-            roomURL
+            roomURL,
+            includeDialInfo: getState()['features/base/config']
+                .dialInNumbersUrl !== undefined
         });
     };
 }

@@ -90,12 +90,14 @@ function _parseCalendarEntry(event, knownDomains) {
     if (event) {
         const url = _getURLFromEvent(event, knownDomains);
 
-        if (url) {
+        // we only filter events without url on mobile, this is temporary
+        // till we implement event edit on mobile
+        if (url || navigator.product !== 'ReactNative') {
             const startDate = Date.parse(event.startDate);
             const endDate = Date.parse(event.endDate);
 
             if (isNaN(startDate) || isNaN(endDate)) {
-                logger.warn(
+                logger.debug(
                     'Skipping invalid calendar event',
                     event.title,
                     event.startDate,
@@ -103,6 +105,7 @@ function _parseCalendarEntry(event, knownDomains) {
                 );
             } else {
                 return {
+                    calendarId: event.calendarId,
                     endDate,
                     id: event.id,
                     startDate,

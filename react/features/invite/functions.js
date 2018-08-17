@@ -1,8 +1,9 @@
 // @flow
 
 import { getAppProp } from '../base/app';
+import { i18next } from '../base/i18n';
 import { isLocalParticipantModerator } from '../base/participants';
-import { doGetJSON } from '../base/util';
+import { doGetJSON, parseURIString } from '../base/util';
 
 declare var $: Function;
 declare var interfaceConfig: Object;
@@ -396,4 +397,40 @@ export function searchDirectory( // eslint-disable-line max-params
 
                 return Promise.reject(error);
             });
+}
+
+/**
+ * Returns descriptive text that can be used to invite participants to a meeting
+ * (share via mobile or use it for calendar event description).
+ *
+ * @param {string} inviteUrl - The conference/location URL.
+ * @param {boolean} includeDialInfo - Whether to include or not the dialing
+ * information link.
+ * @param {boolean} useHtml - Whether to return html text.
+ * @returns {string}
+ */
+export function getShareInfoText(
+        inviteUrl: string, includeDialInfo: boolean, useHtml: ?boolean) {
+    let roomUrl = inviteUrl;
+
+    if (useHtml) {
+        roomUrl = `<a href="${roomUrl}">${roomUrl}</a>`;
+    }
+
+    let infoText = i18next.t('share.mainText', { roomUrl });
+
+    if (includeDialInfo) {
+        const { room } = parseURIString(inviteUrl);
+        const href = inviteUrl.substring(0, inviteUrl.indexOf(room));
+        let dialInfoPageUrl = `${href}static/dialInInfo.html?room=${room}`;
+
+        if (useHtml) {
+            dialInfoPageUrl
+                = `<a href="${dialInfoPageUrl}">${dialInfoPageUrl}</a>`;
+        }
+
+        infoText += i18next.t('share.dialInfoText', { dialInfoPageUrl });
+    }
+
+    return infoText;
 }

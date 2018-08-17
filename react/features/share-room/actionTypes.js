@@ -4,7 +4,8 @@
  *
  * {
  *     type: BEGIN_SHARE_ROOM,
- *     roomURL: string
+ *     roomURL: string,
+ *     includeDialInfo: boolean
  * }
  */
 export const BEGIN_SHARE_ROOM = Symbol('BEGIN_SHARE_ROOM');
