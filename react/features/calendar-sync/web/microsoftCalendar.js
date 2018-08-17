@@ -7,6 +7,7 @@ import { createDeferred } from '../../../../modules/util/helpers';
 
 import parseURLParams from '../../base/config/parseURLParams';
 import { parseStandardURIString } from '../../base/util';
+import { getShareInfoText } from '../../invite';
 
 import { setCalendarAPIAuthState } from '../actions';
 
@@ -31,7 +32,7 @@ const MS_API_CONFIGURATION = {
      *
      * @type {string}
      */
-    MS_API_SCOPES: 'openid profile Calendars.Read',
+    MS_API_SCOPES: 'openid profile Calendars.ReadWrite',
 
     /**
      * See https://docs.microsoft.com/en-us/azure/active-directory/develop/
@@ -106,7 +107,7 @@ export const microsoftCalendarApi = {
                 // get .value of every element from the array of results,
                 // which is an array of events and flatten it to one array
                 // of events
-                .then(result => [].concat(...result.map(en => en.value)))
+                .then(result => [].concat(...result))
                 .then(entries => entries.map(e => formatCalendarEntry(e)));
         };
     },
@@ -308,6 +309,59 @@ export const microsoftCalendarApi = {
                 }));
             });
         };
+    },
+
+    /**
+     * Updates calendar event by generating new invite URL and editing the event
+     * adding some descriptive text and location.
+     *
+     * @param {string} id - The event id.
+     * @param {string} calendarId - The id of the calendar to use.
+     * @param {string} location - The location to save to the event.
+     * @returns {function(Dispatch<*>): Promise<string|never>}
+     */
+    updateCalendarEvent(id: string, calendarId: string, location: string) {
+        return (dispatch: Dispatch<*>, getState: Function): Promise<*> => {
+            const state = getState()['features/calendar-sync'] || {};
+            const token = state.msAuthState && state.msAuthState.accessToken;
+
+            if (!token) {
+                return Promise.reject('Not authorized, please sign in!');
+            }
+
+            const { dialInNumbersUrl } = getState()['features/base/config'];
+            const text = getShareInfoText(
+                location, dialInNumbersUrl !== undefined, true/* use html */);
+
+
+            const client = Client.init({
+                authProvider: done => done(null, token)
+            });
+
+            return client
+                .api(`/me/events/${id}`)
+                .get()
+                .then(description => {
+                    const body = description.body;
+
+                    if (description.bodyPreview) {
+                        body.content = `${description.bodyPreview}<br><br>`;
+                    }
+
+                    // replace all new lines from the text with html <br>
+                    // to make it pretty
+                    body.content += text.split('\n').join('<br>');
+
+                    return client
+                        .api(`/me/calendar/events/${id}`)
+                        .patch({
+                            body,
+                            location: {
+                                'displayName': location
+                            }
+                        });
+                });
+        };
     }
 };
 
@@ -317,6 +371,7 @@ export const microsoftCalendarApi = {
  * @param {Object} entry - The Microsoft calendar entry.
  * @private
  * @returns {{
+ *     calendarId: string,
  *     description: string,
  *     endDate: string,
  *     id: string,
@@ -327,6 +382,7 @@ export const microsoftCalendarApi = {
  */
 function formatCalendarEntry(entry) {
     return {
+        calendarId: entry.calendarId,
         description: entry.body.content,
         endDate: entry.end.dateTime,
         id: entry.id,
@@ -509,7 +565,13 @@ function requestCalendarEvents( // eslint-disable-line max-params
         .filter(filter)
         .select('id,subject,start,end,location,body')
         .orderby('createdDateTime DESC')
-        .get();
+        .get()
+        .then(result => result.value.map(item => {
+            return {
+                ...item,
+                calendarId
+            };
+        }));
 }
 
 /**

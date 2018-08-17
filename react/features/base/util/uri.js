@@ -300,7 +300,15 @@ export function parseStandardURIString(str: string) {
  * references a Jitsi Meet resource (location).
  * @public
  * @returns {{
- *     room: (string|undefined)
+ *     contextRoot: string,
+ *     hash: string,
+ *     host: string,
+ *     hostname: string,
+ *     pathname: string,
+ *     port: string,
+ *     protocol: string,
+ *     room: (string|undefined),
+ *     search: string
  * }}
  */
 export function parseURIString(uri: ?string) {

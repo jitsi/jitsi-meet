@@ -204,22 +204,24 @@ const googleApi = {
      *
      * @param {Object} entry - The google calendar entry.
      * @returns {{
-     *  id: string,
-     *  startDate: string,
+     *  calendarId: string,
+     *  description: string,
      *  endDate: string,
-     *  title: string,
+     *  id: string,
      *  location: string,
-     *  description: string}}
+     *  startDate: string,
+     *  title: string}}
      * @private
      */
     _convertCalendarEntry(entry) {
         return {
-            id: entry.id,
-            startDate: entry.start.dateTime,
+            calendarId: entry.calendarId,
+            description: entry.description,
             endDate: entry.end.dateTime,
-            title: entry.summary,
+            id: entry.id,
             location: entry.location,
-            description: entry.description
+            startDate: entry.start.dateTime,
+            title: entry.summary
         };
     },
 
@@ -240,6 +242,8 @@ const googleApi = {
                     return null;
                 }
 
+                // user can edit the events, so we want only those that
+                // can be edited
                 return this._getGoogleApiClient()
                     .client.calendar.calendarList.list();
             })
@@ -251,14 +255,20 @@ const googleApi = {
                 }
 
                 const calendarIds
-                    = calendarList.result.items.map(en => en.id);
-                const promises = calendarIds.map(id => {
+                    = calendarList.result.items.map(en => {
+                        return {
+                            id: en.id,
+                            accessRole: en.accessRole
+                        };
+                    });
+                const promises = calendarIds.map(({ id, accessRole }) => {
                     const startDate = new Date();
                     const endDate = new Date();
 
                     startDate.setDate(startDate.getDate() + fetchStartDays);
                     endDate.setDate(endDate.getDate() + fetchEndDays);
 
+                    // retrieve the events and adds to the result the calendarId
                     return this._getGoogleApiClient()
                         .client.calendar.events.list({
                             'calendarId': id,
@@ -267,16 +277,72 @@ const googleApi = {
                             'showDeleted': false,
                             'singleEvents': true,
                             'orderBy': 'startTime'
-                        });
+                        })
+                        .then(result => result.result.items
+                            .map(item => {
+                                const resultItem = { ...item };
+
+                                // add the calendarId only for the events
+                                // we can edit
+                                if (accessRole === 'writer'
+                                    || accessRole === 'owner') {
+                                    resultItem.calendarId = id;
+                                }
+
+                                return resultItem;
+                            }));
                 });
 
                 return Promise.all(promises)
-                    .then(results =>
-                        [].concat(...results.map(rItem => rItem.result.items)))
+                    .then(results => [].concat(...results))
                     .then(entries =>
                         entries.map(e => this._convertCalendarEntry(e)));
             });
     },
+
+    /* eslint-disable max-params */
+    /**
+     * Updates the calendar event and adds a location and text.
+     *
+     * @param {string} id - The event id to update.
+     * @param {string} calendarId - The calendar id to use.
+     * @param {string} location - The location to add to the event.
+     * @param {string} text - The description text to set/append.
+     * @returns {Promise<T | never>}
+     * @private
+     */
+    _updateCalendarEntry(id, calendarId, location, text) {
+        return this.get()
+            .then(() => this.isSignedIn())
+            .then(isSignedIn => {
+                if (!isSignedIn) {
+                    return null;
+                }
+
+                return this._getGoogleApiClient()
+                    .client.calendar.events.get({
+                        'calendarId': calendarId,
+                        'eventId': id
+                    }).then(event => {
+                        let newDescription = text;
+
+                        if (event.result.description) {
+                            newDescription = `${event.result.description}\n\n${
+                                text}`;
+                        }
+
+                        return this._getGoogleApiClient()
+                            .client.calendar.events.patch({
+                                'calendarId': calendarId,
+                                'eventId': id,
+                                'description': newDescription,
+                                'location': location
+                            });
+                    });
+
+            });
+    },
+    /* eslint-enable max-params */
 
     /**
      * Returns the global Google API Client Library object. Direct use of this

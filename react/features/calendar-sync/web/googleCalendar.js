@@ -5,6 +5,7 @@ import {
     googleApi,
     loadGoogleAPI,
     signIn,
+    updateCalendarEvent,
     updateProfile
 } from '../../google-api';
 
@@ -62,5 +63,16 @@ export const googleCalendarApi = {
      */
     _isSignedIn() {
         return () => googleApi.isSignedIn();
-    }
+    },
+
+    /**
+     * Updates calendar event by generating new invite URL and editing the event
+     * adding some descriptive text and location.
+     *
+     * @param {string} id - The event id.
+     * @param {string} calendarId - The id of the calendar to use.
+     * @param {string} location - The location to save to the event.
+     * @returns {function(Dispatch<*>): Promise<string|never>}
+     */
+    updateCalendarEvent
 };

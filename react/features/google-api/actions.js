@@ -1,4 +1,5 @@
 /* @flow */
+import { getShareInfoText } from '../invite';
 
 import {
     SET_GOOGLE_API_PROFILE,
@@ -183,4 +184,25 @@ export function updateProfile() {
 
             return profile.getEmail();
         });
+}
+
+/**
+ * Updates the calendar event and adds a location and text.
+ *
+ * @param {string} id - The event id to update.
+ * @param {string} calendarId - The calendar id to use.
+ * @param {string} location - The location to add to the event.
+ * @returns {function(Dispatch<*>): Promise<string | never>}
+ */
+export function updateCalendarEvent(
+        id: string, calendarId: string, location: string) {
+    return (dispatch: Dispatch<*>, getState: Function) => {
+
+        const { dialInNumbersUrl } = getState()['features/base/config'];
+        const text = getShareInfoText(location, dialInNumbersUrl !== undefined);
+
+        return googleApi.get()
+            .then(() =>
+                googleApi._updateCalendarEntry(id, calendarId, location, text));
+    };
 }

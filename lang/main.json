@@ -424,6 +424,11 @@
         ],
         "and": "and"
     },
+    "share":
+    {
+        "mainText": "Click the following link to join the meeting:\n__roomUrl__",
+        "dialInfoText": "\n\n=====\n\nJust want to dial in on your phone?\n\nClick this link to see the dial in phone numbers for this meetings\n__dialInfoPageUrl__"
+    },
     "connection":
     {
         "ERROR": "Error",
