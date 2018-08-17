@@ -62,9 +62,10 @@
         box-sizing: border-box;
 
         /**
-         * Allow scrolling of the thumbnails.
+         * Allow vertical scrolling of the thumbnails.
          */
-        overflow: auto;
+        overflow-x: hidden;
+        overflow-y: auto;
     }
 
     /**
