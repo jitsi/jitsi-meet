@@ -341,17 +341,10 @@ export const microsoftCalendarApi = {
             return client
                 .api(`/me/events/${id}`)
                 .get()
-                .then(response => {
-                    return {
-                        body: response.body,
-                        bodyPreview: response.bodyPreview
-                    };
-                })
                 .then(description => {
                     const body = description.body;
 
-                    if (description.bodyPreview
-                        && description.bodyPreview.length > 0) {
+                    if (description.bodyPreview) {
                         body.content = `${description.bodyPreview}<br><br>`;
                     }
 
@@ -359,7 +352,7 @@ export const microsoftCalendarApi = {
                     // to make it pretty
                     body.content += text.split('\n').join('<br>');
 
-                    client
+                    return client
                         .api(`/me/calendar/events/${id}`)
                         .patch({
                             body,

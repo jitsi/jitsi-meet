@@ -245,9 +245,7 @@ const googleApi = {
                 // user can edit the events, so we want only those that
                 // can be edited
                 return this._getGoogleApiClient()
-                    .client.calendar.calendarList.list({
-                        'minAccessRole': 'writer'
-                    });
+                    .client.calendar.calendarList.list();
             })
             .then(calendarList => {
 
@@ -257,8 +255,13 @@ const googleApi = {
                 }
 
                 const calendarIds
-                    = calendarList.result.items.map(en => en.id);
-                const promises = calendarIds.map(id => {
+                    = calendarList.result.items.map(en => {
+                        return {
+                            id: en.id,
+                            accessRole: en.accessRole
+                        };
+                    });
+                const promises = calendarIds.map(({ id, accessRole }) => {
                     const startDate = new Date();
                     const endDate = new Date();
 
@@ -277,10 +280,16 @@ const googleApi = {
                         })
                         .then(result => result.result.items
                             .map(item => {
-                                return {
-                                    ...item,
-                                    calendarId: id
-                                };
+                                const resultItem = { ...item };
+
+                                // add the calendarId only for the events
+                                // we can edit
+                                if (accessRole === 'writer'
+                                    || accessRole === 'owner') {
+                                    resultItem.calendarId = id;
+                                }
+
+                                return resultItem;
                             }));
                 });
 

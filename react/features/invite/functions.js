@@ -421,8 +421,7 @@ export function getShareInfoText(
 
     if (includeDialInfo) {
         const { room } = parseURIString(inviteUrl);
-        const href = inviteUrl.substring(0, inviteUrl.indexOf(room));
-        let dialInfoPageUrl = `${href}static/dialInInfo.html?room=${room}`;
+        let dialInfoPageUrl = getDialInfoPageURL(room);
 
         if (useHtml) {
             dialInfoPageUrl
@@ -433,4 +432,28 @@ export function getShareInfoText(
     }
 
     return infoText;
+}
+
+/**
+ * Generates the URL for the static dial in info page.
+ *
+ * @param {string} conferenceName - The conference name.
+ * @private
+ * @returns {string}
+ */
+export function getDialInfoPageURL(conferenceName: string) {
+    const origin = window.location.origin;
+    const pathParts = window.location.pathname.split('/');
+
+    pathParts.length = pathParts.length - 1;
+
+    const newPath = pathParts.reduce((accumulator, currentValue) => {
+        if (currentValue) {
+            return `${accumulator}/${currentValue}`;
+        }
+
+        return accumulator;
+    }, '');
+
+    return `${origin}${newPath}/static/dialInInfo.html?room=${conferenceName}`;
 }

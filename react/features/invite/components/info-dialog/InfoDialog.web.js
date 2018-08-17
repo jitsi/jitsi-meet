@@ -7,6 +7,7 @@ import { getInviteURL } from '../../../base/connection';
 import { translate } from '../../../base/i18n';
 import { isLocalParticipantModerator } from '../../../base/participants';
 
+import { getDialInfoPageURL } from '../../functions';
 import DialInNumber from './DialInNumber';
 import PasswordForm from './PasswordForm';
 
@@ -266,23 +267,8 @@ class InfoDialog extends Component {
      * @returns {string}
      */
     _getDialInfoPageURL() {
-        const origin = window.location.origin;
-        const encodedConferenceName
-            = encodeURIComponent(this.props._conferenceName);
-        const pathParts = window.location.pathname.split('/');
-
-        pathParts.length = pathParts.length - 1;
-
-        const newPath = pathParts.reduce((accumulator, currentValue) => {
-            if (currentValue) {
-                return `${accumulator}/${currentValue}`;
-            }
-
-            return accumulator;
-        }, '');
-
-        return `${origin}${newPath}/static/dialInInfo.html?room=${
-            encodedConferenceName}`;
+        return getDialInfoPageURL(
+            encodeURIComponent(this.props._conferenceName));
     }
 
     /**

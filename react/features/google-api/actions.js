@@ -201,7 +201,7 @@ export function updateCalendarEvent(
         const { dialInNumbersUrl } = getState()['features/base/config'];
         const text = getShareInfoText(location, dialInNumbersUrl !== undefined);
 
-        googleApi.get()
+        return googleApi.get()
             .then(() =>
                 googleApi._updateCalendarEntry(id, calendarId, location, text));
     };

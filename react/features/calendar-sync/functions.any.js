@@ -96,12 +96,22 @@ function _parseCalendarEntry(event, knownDomains) {
             const startDate = Date.parse(event.startDate);
             const endDate = Date.parse(event.endDate);
 
-            if (isNaN(startDate) || isNaN(endDate)) {
+            // we want to hide all events that
+            // - has no start or end date
+            // - for web, if there is no url and we cannot edit the event (has
+            // no calendarId)
+            if (isNaN(startDate)
+                || isNaN(endDate)
+                || (navigator.product !== 'ReactNative'
+                        && !url
+                        && !event.calendarId)) {
                 logger.debug(
                     'Skipping invalid calendar event',
                     event.title,
                     event.startDate,
-                    event.endDate
+                    event.endDate,
+                    url,
+                    event.calendarId
                 );
             } else {
                 return {

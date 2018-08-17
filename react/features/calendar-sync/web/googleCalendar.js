@@ -74,7 +74,5 @@ export const googleCalendarApi = {
      * @param {string} location - The location to save to the event.
      * @returns {function(Dispatch<*>): Promise<string|never>}
      */
-    updateCalendarEvent(id: string, calendarId: string, location: string) {
-        return updateCalendarEvent(id, calendarId, location);
-    }
+    updateCalendarEvent
 };

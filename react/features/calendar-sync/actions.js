@@ -278,7 +278,8 @@ export function updateCalendarEvent(id: string, calendarId: string): Function {
                     e => e.id === id && e.calendarId === calendarId);
 
                 events[eventIx].url = roomURL;
-                dispatch(setCalendarEvents(events));
+
+                return dispatch(setCalendarEvents(events));
             });
     };
 }
