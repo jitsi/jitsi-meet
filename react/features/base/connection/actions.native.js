@@ -9,7 +9,7 @@ import {
     getCurrentConference
 } from '../conference';
 import JitsiMeetJS, { JitsiConnectionEvents } from '../lib-jitsi-meet';
-import { parseStandardURIString } from '../util';
+import { parseURIString } from '../util';
 
 import {
     CONNECTION_DISCONNECTED,
@@ -276,18 +276,32 @@ function _connectionWillConnect(connection) {
  * {@code JitsiConnection}.
  */
 function _constructOptions(state) {
-    const defaultOptions = state['features/base/connection'].options;
-    const options = _.merge(
-        {},
-        defaultOptions,
+    // Deep clone the options to make sure we don't modify the object in the
+    // redux store.
+    const options = _.cloneDeep(state['features/base/config']);
 
-        // Lib-jitsi-meet wants the config passed in multiple places and here is
-        // the latest one I have discovered.
-        state['features/base/config'],
-    );
+    // Normalize the BOSH URL.
     let { bosh } = options;
 
     if (bosh) {
+        if (bosh.startsWith('//')) {
+            // By default our config.js doesn't include the protocol.
+            const { locationURL } = state['features/base/connection'];
+
+            bosh = `${locationURL.protocol}${bosh}`;
+        } else if (bosh.startsWith('/')) {
+            // Handle relative URLs, which won't work on mobile.
+            const { locationURL } = state['features/base/connection'];
+            const {
+                protocol,
+                hostname,
+                contextRoot
+            } = parseURIString(locationURL.href);
+
+            // eslint-disable-next-line max-len
+            bosh = `${protocol}//${hostname}${contextRoot || '/'}${bosh.substr(1)}`;
+        }
+
         // Append room to the URL's search.
         const { room } = state['features/base/conference'];
 
@@ -295,16 +309,6 @@ function _constructOptions(state) {
         // lower case at the time of this writing but, unfortunately, they do
         // not ignore case themselves.
         room && (bosh += `?room=${room.toLowerCase()}`);
-
-        // XXX By default, config.js does not add a protocol to the BOSH URL.
-        // Which trips React Native. Make sure there is a protocol in order to
-        // satisfy React Native.
-        if (bosh !== defaultOptions.bosh
-                && !parseStandardURIString(bosh).protocol) {
-            const { protocol } = parseStandardURIString(defaultOptions.bosh);
-
-            protocol && (bosh = protocol + bosh);
-        }
 
         options.bosh = bosh;
     }
