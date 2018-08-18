@@ -32,7 +32,9 @@ class LocalThumbnail extends Component<Props> {
 
         return (
             <View style = { styles.localThumbnail }>
-                <Thumbnail participant = { _localParticipant } />
+                <Thumbnail
+                    hideVideo = { false }
+                    participant = { _localParticipant } />
             </View>
         );
     }

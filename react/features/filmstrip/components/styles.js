@@ -87,13 +87,6 @@ export default {
     },
 
     /**
-     * The style of the scrollview containing the remote thumbnails.
-     */
-    scrollView: {
-        flexGrow: 0
-    },
-
-    /**
      * The style of a participant's Thumbnail which renders either the video or
      * the avatar of the associated participant.
      */

@@ -5,7 +5,8 @@ import { ReducerRegistry } from '../base/redux';
 import {
     SET_FILMSTRIP_ENABLED,
     SET_FILMSTRIP_HOVERED,
-    SET_FILMSTRIP_VISIBLE
+    SET_FILMSTRIP_VISIBLE,
+    SET_FILMSTRIP_VISIBLE_PARTICIPANT_IDS
 } from './actionTypes';
 
 const DEFAULT_STATE = {
@@ -23,7 +24,14 @@ const DEFAULT_STATE = {
      * @public
      * @type {boolean}
      */
-    visible: true
+    visible: true,
+
+    /**
+     * IDs of those participants that are currently visible in the filmstrip.
+     * @public
+     * @type {Array}
+     */
+    visibleParticipantIds: []
 };
 
 ReducerRegistry.register(
@@ -54,6 +62,14 @@ ReducerRegistry.register(
             return {
                 ...state,
                 visible: action.visible
+            };
+
+        case SET_FILMSTRIP_VISIBLE_PARTICIPANT_IDS:
+            return {
+                ...state,
+                visibleParticipantIds: [
+                    ...action.visibleParticipantIds
+                ]
             };
         }
 

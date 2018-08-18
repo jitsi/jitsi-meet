@@ -3,7 +3,8 @@
 import {
     SET_FILMSTRIP_ENABLED,
     SET_FILMSTRIP_HOVERED,
-    SET_FILMSTRIP_VISIBLE
+    SET_FILMSTRIP_VISIBLE,
+    SET_FILMSTRIP_VISIBLE_PARTICIPANT_IDS
 } from './actionTypes';
 
 /**
@@ -51,5 +52,22 @@ export function setFilmstripVisible(visible: boolean) {
     return {
         type: SET_FILMSTRIP_VISIBLE,
         visible
+    };
+}
+
+/**
+ * Sets the currently visible participant IDs.
+ *
+ * @param {Array} visibleParticipantIds - IDs of the visible participants.
+ * @returns {{
+ *     type: SET_FILMSTRIP_VISIBLE_PARTICIPANT_IDS,
+ *     visibleParticipantIds: Array
+ * }}
+ */
+export function setFilmstripVisibleParticipantIds(
+        visibleParticipantIds: Array<string>) {
+    return {
+        type: SET_FILMSTRIP_VISIBLE_PARTICIPANT_IDS,
+        visibleParticipantIds
     };
 }

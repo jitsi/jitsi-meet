@@ -31,6 +31,13 @@ export default createStyleSheet(platformIndependentStyles, {
     },
 
     /**
+     * The style of the container containing the remote thumbnails.
+     */
+    filmstripWrapper: {
+        flexGrow: 0
+    },
+
+    /**
      * Moderator indicator style.
      */
     moderatorIndicator: indicator,

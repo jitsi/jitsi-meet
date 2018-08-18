@@ -1,3 +1,5 @@
+// @flow
+
 /**
  * The type of (redux) action which sets whether the filmstrip is enabled.
  *
@@ -28,3 +30,14 @@ export const SET_FILMSTRIP_HOVERED = Symbol('SET_FILMSTRIP_HOVERED');
  * }
  */
 export const SET_FILMSTRIP_VISIBLE = Symbol('SET_FILMSTRIP_VISIBLE');
+
+/**
+ * The type of (redux) action which sets the currently visible participant ids.
+ *
+ * {
+ *     type: SET_FILMSTRIP_VISIBLE_PARTICIPANT_IDS,
+ *     visibleParticipantIds: Array
+ * }
+ */
+export const SET_FILMSTRIP_VISIBLE_PARTICIPANT_IDS
+    = Symbol('SET_FILMSTRIP_VISIBLE_PARTICIPANT_IDS');

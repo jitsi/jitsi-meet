@@ -1,15 +1,17 @@
 // @flow
 
 import React, { Component } from 'react';
-import { ScrollView } from 'react-native';
+import { FlatList } from 'react-native';
 import { connect } from 'react-redux';
 
+import { getLocalParticipant } from '../../../base/participants';
 import { Container, Platform } from '../../../base/react';
 import {
     isNarrowAspectRatio,
     makeAspectRatioAware
 } from '../../../base/responsive-ui';
 
+import { setFilmstripVisibleParticipantIds } from '../../actions';
 import { isFilmstripVisible } from '../../functions';
 
 import LocalThumbnail from './LocalThumbnail';
@@ -22,6 +24,11 @@ import Thumbnail from './Thumbnail';
 type Props = {
 
     /**
+     * The Redux dispatch function.
+     */
+    dispatch: Function,
+
+    /**
      * The indicator which determines whether the filmstrip is enabled.
      *
      * @private
@@ -29,7 +36,20 @@ type Props = {
     _enabled: boolean,
 
     /**
-     * The participants in the conference.
+     * An array of participant IDs that are currently visible in the
+     * Filmstrip.
+     */
+    _visibleParticipantIds: Array<string>,
+
+    /**
+     * The local participant in the conference.
+     *
+     * @private
+     */
+    _localParticipant: Object,
+
+    /**
+     * The remote participants in the conference.
      *
      * @private
      */
@@ -57,12 +77,45 @@ class Filmstrip extends Component<Props> {
     _separateLocalThumbnail: boolean;
 
     /**
+     * The config to tell the {@code FlatList} component when to show/hide
+     * clipped or not visible children.
+     */
+    _viewabilityConfig: Object;
+
+    /**
      * Constructor of the component.
      *
      * @inheritdoc
      */
     constructor(props) {
         super(props);
+
+        // eslint-disable-next-line max-len
+        // See https://github.com/facebook/react-native/blob/master/Libraries/Lists/ViewabilityHelper.js
+        // for more details.
+        this._viewabilityConfig = {
+            /**
+             * Tells the Filmstrip how much of the area of the Thumbnail should
+             * be visible in order to set its state visible.
+             */
+            itemVisiblePercentThreshold: 20,
+
+            /**
+             * The minimum time a thumbnail has to be visible or invisible in
+             * order to update its visibility status. A smaller number will
+             * provide better responsivity, but will also cause much more status
+             * updates that can cause performance issues.
+             */
+            minimumViewTime: 500,
+
+            /**
+             * If it's true, the visibility state will only be updated if it is
+             * caused by a direct user action. We don't want this however,
+             * because a Thumbnail can become visible or invisible due to
+             * participants joining or leaving the conference.
+             */
+            waitForInteraction: false
+        };
 
         // XXX Our current design is to have the local participant separate from
         // the remote participants. Unfortunately, Android's Video
@@ -82,6 +135,9 @@ class Filmstrip extends Component<Props> {
         // do not have much of a choice but to continue rendering LocalThumbnail
         // as any other remote Thumbnail on Android.
         this._separateLocalThumbnail = Platform.OS !== 'android';
+
+        this._onViewableItemsChanged = this._onViewableItemsChanged.bind(this);
+        this._renderItem = this._renderItem.bind(this);
     }
 
     /**
@@ -110,33 +166,16 @@ class Filmstrip extends Component<Props> {
                         && !isNarrowAspectRatio_
                         && <LocalThumbnail />
                 }
-                <ScrollView
+                <FlatList
+                    data = { this._getFilmstripData() }
                     horizontal = { isNarrowAspectRatio_ }
+                    onViewableItemsChanged = { this._onViewableItemsChanged }
+                    removeClippedSubviews = { true }
+                    renderItem = { this._renderItem }
                     showsHorizontalScrollIndicator = { false }
                     showsVerticalScrollIndicator = { false }
-                    style = { styles.scrollView } >
-                    {
-                        !this._separateLocalThumbnail
-                            && !isNarrowAspectRatio_
-                            && <LocalThumbnail />
-                    }
-                    {
-
-                        this._sort(
-                                this.props._participants,
-                                isNarrowAspectRatio_)
-                            .map(p => (
-                                <Thumbnail
-                                    key = { p.id }
-                                    participant = { p } />))
-
-                    }
-                    {
-                        !this._separateLocalThumbnail
-                            && isNarrowAspectRatio_
-                            && <LocalThumbnail />
-                    }
-                </ScrollView>
+                    style = { styles.filmstripWrapper }
+                    viewabilityConfig = { this._viewabilityConfig } />
                 {
                     this._separateLocalThumbnail
                         && isNarrowAspectRatio_
@@ -147,32 +186,91 @@ class Filmstrip extends Component<Props> {
     }
 
     /**
-     * Sorts a specific array of {@code Participant}s in display order.
+     * Returns the participant list in a format suitable for the
+     * {@code FlatList} component to display.
      *
-     * @param {Participant[]} participants - The array of {@code Participant}s
-     * to sort in display order.
-     * @param {boolean} isNarrowAspectRatio_ - Indicates if the aspect ratio is
-     * wide or narrow.
      * @private
-     * @returns {Participant[]} A new array containing the elements of the
-     * specified {@code participants} array sorted in display order.
+     * @returns {Array<{participant: Object, key: string}>}
      */
-    _sort(participants, isNarrowAspectRatio_) {
-        // XXX Array.prototype.sort() is not appropriate because (1) it operates
-        // in place and (2) it is not necessarily stable.
+    _getFilmstripData() {
+        const { _participants } = this.props;
+        const data = [];
 
-        const sortedParticipants = [
-            ...participants
-        ];
+        // If _separateLocalThumbnail is false (e.g. on Android for now, see
+        // comment in constructor for more details) we render the local
+        // participant together with the remote participants, so we need to put
+        // it as the first element of the data array.
+        if (!this._separateLocalThumbnail) {
+            const { _localParticipant } = this.props;
 
-        if (isNarrowAspectRatio_) {
-            // When the narrow aspect ratio is used, we want to have the remote
-            // participants from right to left with the newest added/joined to
-            // the leftmost side. The local participant is the leftmost item.
-            sortedParticipants.reverse();
+            data.push({
+                participant: _localParticipant,
+                key: _localParticipant.id
+            });
         }
 
-        return sortedParticipants;
+        if (_participants.length) {
+            for (const p of _participants) {
+                data.push({
+                    key: p.id,
+                    participant: p
+                });
+            }
+
+            if (isNarrowAspectRatio(this)) {
+                data.reverse();
+            }
+        }
+
+        return data;
+    }
+
+    _onViewableItemsChanged: Object => void;
+
+    /**
+     * Called when the viewability of thumbnails changes, as defined by the
+     * viewabilityConfig prop.
+     *
+     * @private
+     * @param {Object} changeEvent - Info about the item thats visibility has
+     * changed.
+     * @returns {void}
+     */
+    _onViewableItemsChanged(changeEvent) {
+        if (changeEvent
+                && changeEvent.viewableItems
+                && changeEvent.viewableItems.length) {
+            const visibleParticipants = [];
+
+            for (const viewableItem of changeEvent.viewableItems) {
+                visibleParticipants.push(viewableItem.item.participant.id);
+            }
+
+            this.props.dispatch(
+                setFilmstripVisibleParticipantIds(visibleParticipants));
+        }
+    }
+
+    _renderItem: Object => React$Element<*>
+
+    /**
+     * Renders a single {@code Participant} {@code Thumbnail} in the filmstrip.
+     *
+     * @private
+     * @param {Participant} participant - The participant to render a thumbnail
+     * for.
+     * @returns {React$Element<*>}
+     */
+    _renderItem({ item }) {
+        const hideVideo
+            = !this.props._visibleParticipantIds.includes(item.participant.id);
+
+        return (
+            <Thumbnail
+                hideVideo = { hideVideo }
+                key = { item.key }
+                participant = { item.participant } />
+        );
     }
 }
 
@@ -188,7 +286,7 @@ class Filmstrip extends Component<Props> {
  */
 function _mapStateToProps(state) {
     const participants = state['features/base/participants'];
-    const { enabled } = state['features/filmstrip'];
+    const { enabled, visibleParticipantIds } = state['features/filmstrip'];
 
     return {
         /**
@@ -198,6 +296,14 @@ function _mapStateToProps(state) {
          * @type {boolean}
          */
         _enabled: enabled,
+
+        /**
+         * The local participant in the conference.
+         *
+         * @private
+         * @type {Participant}
+         */
+        _localParticipant: getLocalParticipant(state),
 
         /**
          * The remote participants in the conference.
@@ -215,7 +321,13 @@ function _mapStateToProps(state) {
          * @private
          * @type {boolean}
          */
-        _visible: isFilmstripVisible(state)
+        _visible: isFilmstripVisible(state),
+
+        /**
+         * An array of participant IDs that are currently visible in the
+         * Filmstrip.
+         */
+        _visibleParticipantIds: visibleParticipantIds
     };
 }
 

@@ -1,12 +1,26 @@
 // @flow
 
-import { setLastN } from '../base/conference';
+import { getCurrentConference, setLastN } from '../base/conference';
 import { pinParticipant } from '../base/participants';
-import { MiddlewareRegistry } from '../base/redux';
+import { MiddlewareRegistry, StateListenerRegistry } from '../base/redux';
 
+import { setFilmstripVisibleParticipantIds } from './actions';
 import { SET_FILMSTRIP_ENABLED } from './actionTypes';
 
 declare var APP: Object;
+
+/**
+ * StateListenerRegistry provides a reliable way to detect the leaving of a
+ * conference, where we need to clean up the visible participants.
+ */
+StateListenerRegistry.register(
+    /* selector */ state => getCurrentConference(state),
+    /* listener */ (conference, { dispatch }) => {
+        if (!conference) {
+            dispatch(setFilmstripVisibleParticipantIds([]));
+        }
+    }
+);
 
 MiddlewareRegistry.register(store => next => action => {
     switch (action.type) {
