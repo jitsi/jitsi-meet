@@ -87,6 +87,7 @@ class AbstractCalendarList extends Component<Props> {
         this._toDateString = this._toDateString.bind(this);
         this._toDisplayableItem = this._toDisplayableItem.bind(this);
         this._toDisplayableList = this._toDisplayableList.bind(this);
+        this._toTimeString = this._toTimeString.bind(this);
     }
 
     /**
@@ -136,7 +137,7 @@ class AbstractCalendarList extends Component<Props> {
     _toDateString: Object => string;
 
     /**
-     * Generates a date (interval) string for a given event.
+     * Generates a date string for a given event.
      *
      * @param {Object} event - The event.
      * @private
@@ -144,11 +145,9 @@ class AbstractCalendarList extends Component<Props> {
      */
     _toDateString(event) {
         const startDateTime
-            = getLocalizedDateFormatter(event.startDate).format('lll');
-        const endTime
-            = getLocalizedDateFormatter(event.endDate).format('LT');
+            = getLocalizedDateFormatter(event.startDate).format('MMM Do, YYYY');
 
-        return `${startDateTime} - ${endTime}`;
+        return `${startDateTime}`;
     }
 
     _toDisplayableItem: Object => Object;
@@ -165,7 +164,7 @@ class AbstractCalendarList extends Component<Props> {
             key: `${event.id}-${event.startDate}`,
             lines: [
                 event.url,
-                this._toDateString(event)
+                this._toTimeString(event)
             ],
             title: event.title,
             url: event.url
@@ -183,39 +182,56 @@ class AbstractCalendarList extends Component<Props> {
     _toDisplayableList() {
         const { _eventList, t } = this.props;
 
-        const now = Date.now();
+        const now = new Date();
 
         const { createSection } = NavigateSectionList;
-        const nowSection = createSection(t('calendarSync.now'), 'now');
-        const nextSection = createSection(t('calendarSync.next'), 'next');
-        const laterSection = createSection(t('calendarSync.later'), 'later');
+        const TODAY_SECTION = 'today';
+        const todaySection
+            = createSection(t('calendarSync.today'), TODAY_SECTION);
+        const sectionMap = new Map();
+
+        sectionMap.set(TODAY_SECTION, todaySection);
 
         for (const event of _eventList) {
             const displayableEvent = this._toDisplayableItem(event);
+            const startDate = new Date(event.startDate).getDate();
 
-            if (event.startDate < now && event.endDate > now) {
-                nowSection.data.push(displayableEvent);
-            } else if (event.startDate > now) {
-                if (nextSection.data.length
-                    && nextSection.data[0].startDate !== event.startDate) {
-                    laterSection.data.push(displayableEvent);
-                } else {
-                    nextSection.data.push(displayableEvent);
+            if (startDate === now.getDate()) {
+                todaySection.data.push(displayableEvent);
+            } else if (sectionMap.has(startDate)) {
+                const section = sectionMap.get(startDate);
+
+                if (section) {
+                    section.data.push(displayableEvent);
                 }
+            } else {
+                const newSection
+                    = createSection(this._toDateString(event), startDate);
+
+                sectionMap.set(startDate, newSection);
+                newSection.data.push(displayableEvent);
             }
         }
 
-        const sectionList = [];
+        return Array.from(sectionMap.values());
+    }
 
-        for (const section of [
-            nowSection,
-            nextSection,
-            laterSection
-        ]) {
-            section.data.length && sectionList.push(section);
-        }
+    _toTimeString: Object => string;
 
-        return sectionList;
+    /**
+     * Generates a time (interval) string for a given event.
+     *
+     * @param {Object} event - The event.
+     * @private
+     * @returns {string}
+     */
+    _toTimeString(event) {
+        const startDateTime
+            = getLocalizedDateFormatter(event.startDate).format('lll');
+        const endTime
+            = getLocalizedDateFormatter(event.endDate).format('LT');
+
+        return `${startDateTime} - ${endTime}`;
     }
 }
 

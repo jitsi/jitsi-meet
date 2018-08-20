@@ -641,10 +641,8 @@
         "startWithVideoMuted": "Start with video muted"
     },
     "calendarSync": {
-        "later": "Later",
-        "next": "Upcoming",
+        "today": "Today",
         "nextMeeting": "next meeting",
-        "now": "Now",
         "ongoingMeeting": "ongoing meeting",
         "permissionButton": "Open settings",
         "permissionMessage": "The Calendar permission is required to see your meetings in the app."
