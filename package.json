@@ -62,7 +62,7 @@
     "react-i18next": "4.8.0",
     "react-native": "0.55.4",
     "react-native-background-timer": "2.0.0",
-    "react-native-calendar-events": "github:jitsi/react-native-calendar-events#03babdb99e7fea3539796804cecdef8a907f2a3f",
+    "react-native-calendar-events": "github:jitsi/react-native-calendar-events#374e907f47b49e4eda300d064e783a64191f3a7a",
     "react-native-callstats": "3.52.0",
     "react-native-fast-image": "4.0.14",
     "react-native-immersive": "1.1.0",
