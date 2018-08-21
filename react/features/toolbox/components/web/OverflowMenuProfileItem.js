@@ -67,7 +67,7 @@ class OverflowMenuProfileItem extends Component {
         let displayName;
 
         if (_localParticipant && _localParticipant.name) {
-            displayName = _localParticipant.name.split(' ')[0];
+            displayName = _localParticipant.name;
         } else {
             displayName = interfaceConfig.DEFAULT_LOCAL_DISPLAY_NAME;
         }
