@@ -641,6 +641,7 @@
         "startWithVideoMuted": "Start with video muted"
     },
     "calendarSync": {
+        "addMeetingURL": "Add a meeting link",
         "today": "Today",
         "nextMeeting": "next meeting",
         "ongoingMeeting": "ongoing meeting",

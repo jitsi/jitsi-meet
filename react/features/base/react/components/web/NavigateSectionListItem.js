@@ -49,7 +49,7 @@ export default class NavigateSectionListItem<P: Props>
      * @returns {ReactElement}
      */
     render() {
-        const { lines, title } = this.props.item;
+        const { elementAfter, lines, title } = this.props.item;
         const { onPress } = this.props;
 
         /**
@@ -73,19 +73,21 @@ export default class NavigateSectionListItem<P: Props>
             <Container
                 className = 'navigate-section-list-tile'
                 onClick = { onPress }>
-                <Text
-                    className = 'navigate-section-tile-title'>
-                    { title }
-                </Text>
-                <Text
-                    className = 'navigate-section-tile-body'>
-                    { date }
-                </Text>
-                <Text
-                    className = 'navigate-section-tile-body'>
-                    { duration }
-                </Text>
-
+                <Container className = 'navigate-section-list-tile-info'>
+                    <Text
+                        className = 'navigate-section-tile-title'>
+                        { title }
+                    </Text>
+                    <Text
+                        className = 'navigate-section-tile-body'>
+                        { date }
+                    </Text>
+                    <Text
+                        className = 'navigate-section-tile-body'>
+                        { duration }
+                    </Text>
+                </Container>
+                { elementAfter || null }
             </Container>
         );
     }

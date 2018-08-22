@@ -12,6 +12,8 @@ export type Item = {
      */
     colorBase: string,
 
+    elementAfter?: ?ComponentType<any>,
+
     /**
      * Item title
      */

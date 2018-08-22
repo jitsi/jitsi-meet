@@ -20,13 +20,16 @@
     margin-right: 8px;
     margin-bottom: 8px;
     padding: 16px;
-    display: inline-block;
+    display: inline-flex;
     box-sizing: border-box;
     cursor: pointer;
 }
 .navigate-section-tile-body {
     @extend %navigate-section-list-tile-text;
     font-weight: normal;
+}
+.navigate-section-list-tile-info {
+    flex: 1;
 }
 .navigate-section-tile-title {
     @extend %navigate-section-list-tile-text;

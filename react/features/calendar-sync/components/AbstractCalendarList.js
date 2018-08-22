@@ -11,6 +11,8 @@ import { refreshCalendar } from '../actions';
 
 import { isCalendarEnabled } from '../functions';
 
+import AddMeetingUrlButton from './AddMeetingUrlButton';
+
 /**
  * The type of the React {@code Component} props of
  * {@link AbstractCalendarList}.
@@ -160,7 +162,8 @@ class AbstractCalendarList extends Component<Props> {
      * @returns {Object}
      */
     _toDisplayableItem(event) {
-        return {
+        const displayableItem = {
+            elementAfter: undefined,
             key: `${event.id}-${event.startDate}`,
             lines: [
                 event.url,
@@ -169,6 +172,16 @@ class AbstractCalendarList extends Component<Props> {
             title: event.title,
             url: event.url
         };
+
+        if (!event.url) {
+            displayableItem.elementAfter = (
+                <AddMeetingUrlButton
+                    calendarId = { event.calendarId }
+                    eventId = { event.id } />
+            );
+        }
+
+        return displayableItem;
     }
 
     _toDisplayableList: () => Array<Object>;
