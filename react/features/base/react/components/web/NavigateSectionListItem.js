@@ -6,17 +6,32 @@ import Container from './Container';
 import Text from './Text';
 import type { Item } from '../../Types';
 
-type Props = {
+export type Props = {
 
     /**
      * Function to be invoked when an item is pressed. The item's URL is passed.
      */
-    onPress: Function,
+    onPress: ?Function,
 
     /**
      * A item containing data to be rendered
      */
-    item: Item
+    item: Item,
+
+    /**
+     * The icon to use for the action button.
+     */
+    actionIconName: string,
+
+    /**
+     * The function to call when the action button is clicked.
+     */
+    actionOnClick: ?Function,
+
+    /**
+     * The tooltip to attach to the action button of this list item.
+     */
+    actionTooltip: string
 }
 
 /**
@@ -25,7 +40,9 @@ type Props = {
  *
  * @extends Component
  */
-export default class NavigateSectionListItem extends Component<Props> {
+export default class NavigateSectionListItem<P: Props>
+    extends Component<P> {
+
     /**
      * Renders the content of this component.
      *
@@ -68,6 +85,7 @@ export default class NavigateSectionListItem extends Component<Props> {
                     className = 'navigate-section-tile-body'>
                     { duration }
                 </Text>
+
             </Container>
         );
     }
