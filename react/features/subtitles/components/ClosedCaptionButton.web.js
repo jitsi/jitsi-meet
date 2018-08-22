@@ -6,7 +6,7 @@ import { translate } from '../../base/i18n/index';
 
 import { ToolbarButton } from '../../toolbox/';
 
-import { dialTranscriber, stopTranscribing } from '../actions';
+import { toggleRequestingSubtitles } from '../actions';
 import { createToolbarEvent, sendAnalytics } from '../../analytics';
 
 
@@ -26,14 +26,9 @@ type Props = {
     dispatch: Function,
 
     /**
-     * Boolean value indicating current transcribing status
+     * Whether the local participant is currently requesting subtitles.
      */
-    _transcribing: boolean,
-
-    /**
-     * Boolean value indicating current dialing status
-     */
-    _dialing: boolean
+    _requestingSubtitles: Boolean
 };
 
 /**
@@ -64,8 +59,8 @@ class ClosedCaptionButton extends Component<Props> {
      * @returns {ReactElement}
      */
     render() {
-        const { _dialing, _transcribing, t } = this.props;
-        const iconClass = `icon-closed_caption ${_dialing || _transcribing
+        const { _requestingSubtitles, t } = this.props;
+        const iconClass = `icon-closed_caption ${_requestingSubtitles
             ? 'toggled' : ''}`;
 
         return (
@@ -88,24 +83,14 @@ class ClosedCaptionButton extends Component<Props> {
      * @returns {void}
      */
     _onToggleButton() {
-        const { _transcribing, _dialing, dispatch } = this.props;
+        const { _requestingSubtitles, dispatch } = this.props;
 
-        sendAnalytics(createToolbarEvent(
-            'transcribing.ccButton',
+        sendAnalytics(createToolbarEvent('transcribing.ccButton',
             {
-                'is_transcribing': Boolean(_transcribing),
-                'is_dialing': Boolean(_dialing)
+                'requesting_subtitles': Boolean(_requestingSubtitles)
             }));
 
-        if (_dialing) {
-            return;
-        }
-
-        if (_transcribing) {
-            dispatch(stopTranscribing());
-        } else {
-            dispatch(dialTranscriber());
-        }
+        dispatch(toggleRequestingSubtitles());
     }
 
 }
@@ -120,11 +105,10 @@ class ClosedCaptionButton extends Component<Props> {
  * }}
  */
 function _mapStateToProps(state) {
-    const { isTranscribing, isDialing } = state['features/transcribing'];
+    const { _requestingSubtitles } = state['features/subtitles'];
 
     return {
-        _transcribing: isTranscribing,
-        _dialing: isDialing
+        _requestingSubtitles
     };
 }
 

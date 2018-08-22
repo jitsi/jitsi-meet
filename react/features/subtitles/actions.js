@@ -3,6 +3,7 @@
 import {
     ENDPOINT_MESSAGE_RECEIVED,
     REMOVE_TRANSCRIPT_MESSAGE,
+    TOGGLE_REQUESTING_SUBTITLES,
     UPDATE_TRANSCRIPT_MESSAGE
 } from './actionTypes';
 
@@ -59,5 +60,18 @@ export function updateTranscriptMessage(transcriptMessageID: string,
         type: UPDATE_TRANSCRIPT_MESSAGE,
         transcriptMessageID,
         newTranscriptMessage
+    };
+}
+
+/**
+ * Signals that the local user has toggled the ClosedCaption button.
+ *
+ * @returns {{
+ *      type: TOGGLE_REQUESTING_SUBTITLES
+ * }}
+ */
+export function toggleRequestingSubtitles() {
+    return {
+        type: TOGGLE_REQUESTING_SUBTITLES
     };
 }
