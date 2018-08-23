@@ -8,6 +8,7 @@ import {
     isNarrowAspectRatio,
     makeAspectRatioAware
 } from '../../base/responsive-ui';
+import { BoxModel } from '../../base/styles';
 import { FILMSTRIP_SIZE, isFilmstripVisible } from '../../filmstrip';
 import { HANGUP_BUTTON_SIZE } from '../../toolbox';
 
@@ -34,7 +35,7 @@ type Props = AbstractProps & {
 /**
  * The margin of the container to be kept from other components.
  */
-const CONTAINER_MARGIN = 10;
+const CONTAINER_MARGIN = BoxModel.margin;
 
 /**
  * Implements a React {@link Component} which displays notifications and handles
@@ -61,28 +62,24 @@ class NotificationsContainer extends AbstractNotificationsContainer<Props> {
         return (
             <View
                 pointerEvents = 'box-none'
-                style = { styles.notificationOverlay }>
-                <View
-                    pointerEvents = 'box-none'
-                    style = { [
-                        styles.notificationContainer,
-                        this._getContainerStyle()
-                    ] }>
-                    {
-                        _notifications.map(notification => {
-                            const { props, uid } = notification;
+                style = { [
+                    styles.notificationContainer,
+                    this._getContainerStyle()
+                ] }>
+                {
+                    _notifications.map(notification => {
+                        const { props, uid } = notification;
 
-                            return (
-                                <Notification
-                                    { ...props }
-                                    key = { uid }
-                                    onDismissed = { this._onDismissed }
-                                    uid = { uid } />
+                        return (
+                            <Notification
+                                { ...props }
+                                key = { uid }
+                                onDismissed = { this._onDismissed }
+                                uid = { uid } />
 
-                            );
-                        })
-                    }
-                </View>
+                        );
+                    })
+                }
             </View>
         );
     }
