@@ -73,9 +73,12 @@ export default class NavigateSectionListItem<P: Props>
             duration = lines[1];
         }
 
+        const rootClassName = `navigate-section-list-tile ${
+            onPress ? 'with-click-handler' : 'without-click-handler'}`;
+
         return (
             <Container
-                className = 'navigate-section-list-tile'
+                className = { rootClassName }
                 onClick = { onPress }>
                 <Container className = 'navigate-section-list-tile-info'>
                     <Text

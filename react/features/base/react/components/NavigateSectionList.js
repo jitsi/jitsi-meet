@@ -128,11 +128,13 @@ class NavigateSectionList extends Component<Props> {
      * @returns {Function}
      */
     _onPress(url) {
-        return () => {
-            const { disabled, onPress } = this.props;
+        const { disabled, onPress } = this.props;
 
-            !disabled && url && typeof onPress === 'function' && onPress(url);
-        };
+        if (!disabled && url && typeof onPress === 'function') {
+            return () => onPress(url);
+        }
+
+        return null;
     }
 
     _onRefresh: () => void;

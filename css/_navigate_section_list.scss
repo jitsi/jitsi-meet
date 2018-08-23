@@ -16,13 +16,20 @@
     background-color: #1754A9;
     border-radius: 4px;
     box-sizing: border-box;
-    cursor: pointer;
     display: inline-flex;
     height: 100px;
     margin-bottom: 8px;
     margin-right: 8px;
     padding: 16px;
     width: 100%;
+
+    &.with-click-handler {
+        cursor: pointer;
+    }
+
+    &.with-click-handler:hover {
+        background-color: #1a5dbb;
+    }
 }
 .navigate-section-tile-body {
     @extend %navigate-section-list-tile-text;
