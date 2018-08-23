@@ -1,14 +1,24 @@
-/* @flow */
+// @flow
 
-import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 
 import { Watermarks } from '../../base/react';
-import { TranscriptionSubtitles } from '../../subtitles/';
+import { Captions } from '../../subtitles/';
 
 import Labels from './Labels';
 
 declare var interfaceConfig: Object;
+
+/**
+ * The type of the React {@code Component} props of {@link LargeVideo}.
+ */
+type Props = {
+
+    /**
+     * True if the {@code VideoQualityLabel} should not be displayed.
+     */
+    hideVideoQualityLabel: boolean
+};
 
 /**
  * Implements a React {@link Component} which represents the large video (a.k.a.
@@ -16,19 +26,12 @@ declare var interfaceConfig: Object;
  *
  * @extends Component
  */
-export default class LargeVideo extends Component<*> {
-    static propTypes = {
-        /**
-         * True if the {@code VideoQualityLabel} should not be displayed.
-         */
-        hideVideoQualityLabel: PropTypes.bool
-    };
-
+export default class LargeVideo extends Component<Props> {
     /**
      * Implements React's {@link Component#render()}.
      *
      * @inheritdoc
-     * @returns {ReactElement}
+     * @returns {React$Element}
      */
     render() {
         return (
@@ -52,18 +55,15 @@ export default class LargeVideo extends Component<*> {
                 <span id = 'remoteConnectionMessage' />
                 <div id = 'largeVideoElementsContainer'>
                     <div id = 'largeVideoBackgroundContainer' />
-                    {
 
-                        /**
-                         * FIXME: the architecture of elements related to the
-                         * large video and  the naming. The background is not
-                         * part of largeVideoWrapper because we are controlling
-                         * the size of the video through largeVideoWrapper.
-                         * That's why we need another container for the the
-                         * background and the largeVideoWrapper in order to
-                         * hide/show them.
-                         */
-                    }
+                    {/*
+                      * FIXME: the architecture of elements related to the large
+                      * video and the naming. The background is not part of
+                      * largeVideoWrapper because we are controlling the size of
+                      * the video through largeVideoWrapper. That's why we need
+                      * another container for the background and the
+                      * largeVideoWrapper in order to hide/show them.
+                      */}
                     <div id = 'largeVideoWrapper'>
                         <video
                             autoPlay = { true }
@@ -72,10 +72,10 @@ export default class LargeVideo extends Component<*> {
                     </div>
                 </div>
                 { interfaceConfig.DISABLE_TRANSCRIPTION_SUBTITLES
-                    ? null : <TranscriptionSubtitles /> }
+                    || <Captions /> }
                 <span id = 'localConnectionMessage' />
                 { this.props.hideVideoQualityLabel
-                    ? null : <Labels /> }
+                    || <Labels /> }
             </div>
         );
     }
