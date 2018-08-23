@@ -22,6 +22,7 @@ import { FILMSTRIP_SIZE, Filmstrip, isFilmstripVisible } from '../../filmstrip';
 import { LargeVideo } from '../../large-video';
 import { CalleeInfoContainer } from '../../invite';
 import { NotificationsContainer } from '../../notifications';
+import { Captions } from '../../subtitles';
 import { setToolboxVisible, Toolbox } from '../../toolbox';
 
 import styles from './styles';
@@ -283,18 +284,20 @@ class Conference extends Component<Props> {
                 <View
                     pointerEvents = 'box-none'
                     style = { styles.toolboxAndFilmstripContainer }>
-                    {
-
-                        /**
-                         * Notifications are rendered on the very top of other
-                         * components like subtitles, toolbox and filmstrip.
-                         */
+                    {/*
+                      * Notifications are rendered on the very top of other
+                      * components like subtitles, toolbox and filmstrip.
+                      */
                         this._renderNotificationsContainer()
                     }
+
+                    <Captions onPress = { this._onClick } />
+
                     {/*
                       * The Toolbox is in a stacking layer bellow the Filmstrip.
                       */}
                     <Toolbox />
+
                     {/*
                       * The Filmstrip is in a stacking layer above the
                       * LargeVideo. The LargeVideo and the Filmstrip form what
@@ -369,28 +372,26 @@ class Conference extends Component<Props> {
     }
 
     /**
-     * Renders a container for notifications to be displayed by
-     * the base/notifications feature.
+     * Renders a container for notifications to be displayed by the
+     * base/notifications feature.
      *
-     * @returns {React$Element}
      * @private
+     * @returns {React$Element}
      */
     _renderNotificationsContainer() {
-        const notificationsStyle = { };
+        const notificationsStyle = {};
 
-        /**
-         * In the landscape mode (wide) there's problem with notifications being
-         * shadowed by the filmstrip rendered on the right. This makes the "x"
-         * button not clickable. In order to avoid that a margin of
-         * the filmstrip's size is added to the right.
-         *
-         * Pawel: after many attempts I failed to make notifications adjust to
-         * their contents width because of column and rows being used in
-         * the flex layout. The only option that seemed to limit
-         * the notification's size was explicit 'width' value which is not
-         * better than the margin added here.
-         */
-        if (!isNarrowAspectRatio(this) && this.props._filmstripVisible) {
+        // In the landscape mode (wide) there's problem with notifications being
+        // shadowed by the filmstrip rendered on the right. This makes the "x"
+        // button not clickable. In order to avoid that a margin of the
+        // filmstrip's size is added to the right.
+        //
+        // Pawel: after many attempts I failed to make notifications adjust to
+        // their contents width because of column and rows being used in the
+        // flex layout. The only option that seemed to limit the notification's
+        // size was explicit 'width' value which is not better than the margin
+        // added here.
+        if (this.props._filmstripVisible && !isNarrowAspectRatio(this)) {
             notificationsStyle.marginRight = FILMSTRIP_SIZE;
         }
 

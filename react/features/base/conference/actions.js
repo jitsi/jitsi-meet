@@ -17,6 +17,7 @@ import {
     participantRoleChanged,
     participantUpdated
 } from '../participants';
+import { endpointMessageReceived } from '../../subtitles';
 import { getLocalTracks, trackAdded, trackRemoved } from '../tracks';
 import { getJitsiMeetGlobalNS } from '../util';
 
@@ -136,6 +137,10 @@ function _addConferenceListeners(conference, dispatch) {
     conference.on(
         JitsiConferenceEvents.DOMINANT_SPEAKER_CHANGED,
         id => dispatch(dominantSpeakerChanged(id, conference)));
+
+    conference.on(
+        JitsiConferenceEvents.ENDPOINT_MESSAGE_RECEIVED,
+        (...args) => dispatch(endpointMessageReceived(...args)));
 
     conference.on(
         JitsiConferenceEvents.PARTICIPANT_CONN_STATUS_CHANGED,
