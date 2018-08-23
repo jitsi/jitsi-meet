@@ -48,12 +48,9 @@ export default createStyleSheet({
      * Outermost container of a list of notifications.
      */
     notificationContainer: {
-        alignItems: 'flex-start',
-        bottom: 0,
-        left: 0,
-        padding: 2 * BoxModel.padding,
-        position: 'absolute',
-        right: 0
+        ...StyleSheet.absoluteFillObject,
+        justifyContent: 'flex-end',
+        padding: 2 * BoxModel.padding
     },
 
     /**
@@ -62,13 +59,6 @@ export default createStyleSheet({
     notificationContent: {
         flexDirection: 'column',
         paddingVertical: 0.5 * BoxModel.padding
-    },
-
-    /**
-     * A full screen overlay to help to position the container.
-     */
-    notificationOverlay: {
-        ...StyleSheet.absoluteFillObject
     },
 
     /**
