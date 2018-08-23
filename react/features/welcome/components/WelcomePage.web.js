@@ -221,17 +221,21 @@ class WelcomePage extends AbstractWelcomePage {
     _renderTabs() {
         const { t } = this.props;
 
-        const tabs = [
-            {
+        const tabs = [];
+
+        if (CalendarList) {
+            tabs.push({
                 label: t('welcomepage.calendar'),
-                content: CalendarList ? <CalendarList /> : null,
+                content: <CalendarList />,
                 defaultSelected: true
-            },
-            {
-                label: t('welcomepage.recentList'),
-                content: <RecentList />
-            }
-        ];
+            });
+        }
+
+        tabs.push({
+            label: t('welcomepage.recentList'),
+            content: <RecentList />,
+            defaultSelected: !CalendarList
+        });
 
         return (
             <div className = 'tab-container' >
