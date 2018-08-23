@@ -1,8 +1,8 @@
 // @flow
 
+import Button from '@atlaskit/button';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import Button from '@atlaskit/button';
 
 import { translate } from '../../base/i18n';
 import { openSettingsDialog, SETTINGS_TABS } from '../../settings';
@@ -11,15 +11,12 @@ import { isCalendarEnabled } from '../functions';
 
 import AbstractCalendarList from './AbstractCalendarList';
 
+declare var interfaceConfig: Object;
+
 /**
- * The tyoe of the React {@code Component} props of {@link CalendarList}.
+ * The type of the React {@code Component} props of {@link CalendarList}.
  */
 type Props = {
-
-    /**
-     * The current state of the calendar access permission.
-     */
-    _authorization: ?string,
 
     /**
      * Indicates if the list is disabled or not.
@@ -88,7 +85,9 @@ class CalendarList extends Component<Props> {
         return (
             <div>
                 <p className = 'header-text-description'>
-                    { t('welcomepage.connectCalendarText') }
+                    { t('welcomepage.connectCalendarText', {
+                        app: interfaceConfig.APP_NAME
+                    }) }
                 </p>
                 <Button
                     appearance = 'primary'

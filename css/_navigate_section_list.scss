@@ -13,16 +13,16 @@
     float: left;
 }
 .navigate-section-list-tile {
-    height: 100px;
-    width: 100%;
-    border-radius: 4px;
     background-color: #1754A9;
-    margin-right: 8px;
-    margin-bottom: 8px;
-    padding: 16px;
-    display: inline-flex;
+    border-radius: 4px;
     box-sizing: border-box;
     cursor: pointer;
+    display: inline-flex;
+    height: 100px;
+    margin-bottom: 8px;
+    margin-right: 8px;
+    padding: 16px;
+    width: 100%;
 }
 .navigate-section-tile-body {
     @extend %navigate-section-list-tile-text;

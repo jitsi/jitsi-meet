@@ -63,7 +63,7 @@ export default class SectionList extends Component<Props> {
         } = this.props;
 
         /**
-         * If there are no recent items we dont want to display anything
+         * If there are no recent items we don't want to display anything
          */
         if (sections) {
             return (

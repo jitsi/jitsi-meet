@@ -12,9 +12,25 @@ import { updateCalendarEvent } from '../actions';
  * The type of the React {@code Component} props of {@link AddMeetingUrlButton}.
  */
 type Props = {
+
+    /**
+     * The calendar ID associated with the calendar event.
+     */
     calendarId: string,
-    dispatch: Function,
+
+    /**
+     * Invoked to add a meeting URL to a calendar event.
+     */
+    dispatch: Dispatch<*>,
+
+    /**
+     * The ID of the calendar event that will have a meeting URL added on click.
+     */
     eventId: string,
+
+    /**
+     * Invoked to obtain translated strings.
+     */
     t: Function
 };
 

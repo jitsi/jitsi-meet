@@ -6,17 +6,11 @@ import Container from './Container';
 import Text from './Text';
 import type { Item } from '../../Types';
 
-export type Props = {
-
-    /**
-     * Function to be invoked when an item is pressed. The item's URL is passed.
-     */
-    onPress: ?Function,
-
-    /**
-     * A item containing data to be rendered
-     */
-    item: Item,
+/**
+ * The type of the React {@code Component} props of
+ * {@link NavigateSectionListItem}.
+ */
+type Props = {
 
     /**
      * The icon to use for the action button.
@@ -31,8 +25,18 @@ export type Props = {
     /**
      * The tooltip to attach to the action button of this list item.
      */
-    actionTooltip: string
-}
+    actionTooltip: string,
+
+    /**
+     * Function to be invoked when an item is pressed. The item's URL is passed.
+     */
+    onPress: ?Function,
+
+    /**
+     * A item containing data to be rendered
+     */
+    item: Item
+};
 
 /**
  * Implements a React/Web {@link Component} for displaying an item in a

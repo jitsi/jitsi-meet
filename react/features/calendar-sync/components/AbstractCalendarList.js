@@ -8,7 +8,6 @@ import { getLocalizedDateFormatter, translate } from '../../base/i18n';
 import { NavigateSectionList } from '../../base/react';
 
 import { refreshCalendar } from '../actions';
-
 import { isCalendarEnabled } from '../functions';
 
 import AddMeetingUrlButton from './AddMeetingUrlButton';
@@ -162,8 +161,12 @@ class AbstractCalendarList extends Component<Props> {
      * @returns {Object}
      */
     _toDisplayableItem(event) {
-        const displayableItem = {
-            elementAfter: undefined,
+        return {
+            elementAfter: event.url ? undefined : (
+                <AddMeetingUrlButton
+                    calendarId = { event.calendarId }
+                    eventId = { event.id } />
+            ),
             key: `${event.id}-${event.startDate}`,
             lines: [
                 event.url,
@@ -172,16 +175,6 @@ class AbstractCalendarList extends Component<Props> {
             title: event.title,
             url: event.url
         };
-
-        if (!event.url) {
-            displayableItem.elementAfter = (
-                <AddMeetingUrlButton
-                    calendarId = { event.calendarId }
-                    eventId = { event.id } />
-            );
-        }
-
-        return displayableItem;
     }
 
     _toDisplayableList: () => Array<Object>;
@@ -257,10 +250,8 @@ class AbstractCalendarList extends Component<Props> {
  * }}
  */
 function _mapStateToProps(state: Object) {
-    const { events } = state['features/calendar-sync'];
-
     return {
-        _eventList: events
+        _eventList: state['features/calendar-sync'].events
     };
 }
 
