@@ -12,7 +12,6 @@ import { translate } from '../../base/i18n';
 import { Watermarks } from '../../base/react';
 import { CalendarList } from '../../calendar-sync';
 import { RecentList } from '../../recent-list';
-import { openSettingsDialog } from '../../settings';
 
 import { AbstractWelcomePage, _mapStateToProps } from './AbstractWelcomePage';
 
@@ -68,7 +67,6 @@ class WelcomePage extends AbstractWelcomePage {
 
         // Bind event handlers so they are only bound once per instance.
         this._onFormSubmit = this._onFormSubmit.bind(this);
-        this._onOpenSettings = this._onOpenSettings.bind(this);
         this._onRoomChange = this._onRoomChange.bind(this);
         this._setAdditionalContentRef
             = this._setAdditionalContentRef.bind(this);
@@ -187,16 +185,6 @@ class WelcomePage extends AbstractWelcomePage {
         event.preventDefault();
 
         this._onJoin();
-    }
-
-    /**
-     * Opens {@code SettingsDialog}.
-     *
-     * @private
-     * @returns {void}
-     */
-    _onOpenSettings() {
-        this.props.dispatch(openSettingsDialog());
     }
 
     /**
