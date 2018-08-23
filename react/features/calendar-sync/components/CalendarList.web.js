@@ -65,7 +65,7 @@ class CalendarList extends Component<Props> {
                 ? <AbstractCalendarList
                     disabled = { disabled }
                     renderListEmptyComponent
-                        = { this._getRenderListEmptyComponent } />
+                        = { this._getRenderListEmptyComponent() } />
                 : null
         );
     }

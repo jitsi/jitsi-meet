@@ -192,17 +192,21 @@ class AbstractCalendarList extends Component<Props> {
 
         const { createSection } = NavigateSectionList;
         const TODAY_SECTION = 'today';
-        const todaySection
-            = createSection(t('calendarSync.today'), TODAY_SECTION);
         const sectionMap = new Map();
-
-        sectionMap.set(TODAY_SECTION, todaySection);
 
         for (const event of _eventList) {
             const displayableEvent = this._toDisplayableItem(event);
             const startDate = new Date(event.startDate).getDate();
 
             if (startDate === now.getDate()) {
+                let todaySection = sectionMap.get(TODAY_SECTION);
+
+                if (!todaySection) {
+                    todaySection
+                        = createSection(t('calendarSync.today'), TODAY_SECTION);
+                    sectionMap.set(TODAY_SECTION, todaySection);
+                }
+
                 todaySection.data.push(displayableEvent);
             } else if (sectionMap.has(startDate)) {
                 const section = sectionMap.get(startDate);
