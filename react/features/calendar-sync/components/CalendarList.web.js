@@ -1,6 +1,7 @@
 // @flow
 
 import Button from '@atlaskit/button';
+import Spinner from '@atlaskit/spinner';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
@@ -17,6 +18,16 @@ declare var interfaceConfig: Object;
  * The type of the React {@code Component} props of {@link CalendarList}.
  */
 type Props = {
+
+    /**
+     * Whether or not a calendar may be connected for fetching calendar events.
+     */
+    _hasIntegrationSelected: boolean,
+
+    /**
+     * Whether or not events have been fetched from a calendar.
+     */
+    _hasLoadedEvents: boolean,
 
     /**
      * Indicates if the list is disabled or not.
@@ -80,25 +91,36 @@ class CalendarList extends Component<Props> {
      * @returns {?React$Component}
      */
     _getRenderListEmptyComponent() {
-        const { t } = this.props;
+        const { _hasIntegrationSelected, _hasLoadedEvents, t } = this.props;
 
-        return (
-            <div>
-                <p className = 'header-text-description'>
-                    { t('welcomepage.connectCalendarText', {
-                        app: interfaceConfig.APP_NAME
-                    }) }
-                </p>
-                <Button
-                    appearance = 'primary'
-                    className = 'calendar-button'
-                    id = 'connect_calendar_button'
-                    onClick = { this._onOpenSettings }
-                    type = 'button'>
-                    { t('welcomepage.connectCalendarButton') }
-                </Button>
-            </div>
-        );
+        if (!_hasIntegrationSelected) {
+            return (
+                <div>
+                    <p className = 'header-text-description'>
+                        { t('welcomepage.connectCalendarText', {
+                            app: interfaceConfig.APP_NAME
+                        }) }
+                    </p>
+                    <Button
+                        appearance = 'primary'
+                        className = 'calendar-button'
+                        id = 'connect_calendar_button'
+                        onClick = { this._onOpenSettings }
+                        type = 'button'>
+                        { t('welcomepage.connectCalendarButton') }
+                    </Button>
+                </div>
+            );
+        } else if (_hasIntegrationSelected && !_hasLoadedEvents) {
+            return (
+                <Spinner
+                    invertColor = { true }
+                    isCompleting = { false }
+                    size = 'medium' />
+            );
+        }
+
+        return null;
     }
 
     _onOpenSettings: () => void;
@@ -114,6 +136,25 @@ class CalendarList extends Component<Props> {
     }
 }
 
+/**
+ * Maps (parts of) the Redux state to the associated props for the
+ * {@code CalendarList} component.
+ *
+ * @param {Object} state - The Redux state.
+ * @private
+ * @returns {{
+ *     _hasIntegrationSelected: boolean,
+ *     _hasLoadedEvents: boolean
+ * }}
+ */
+function _mapStateToProps(state) {
+    return {
+        _hasIntegrationSelected:
+            Boolean(state['features/calendar-sync'].integrationType),
+        _hasLoadedEvents: Boolean(state['features/calendar-sync'].events)
+    };
+}
+
 export default isCalendarEnabled()
-    ? translate(connect()(CalendarList))
+    ? translate(connect(_mapStateToProps)(CalendarList))
     : undefined;
