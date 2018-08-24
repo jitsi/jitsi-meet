@@ -644,9 +644,11 @@
         "addMeetingURL": "Add a meeting link",
         "today": "Today",
         "nextMeeting": "next meeting",
+        "noEvents": "There are no upcoming events scheduled.",
         "ongoingMeeting": "ongoing meeting",
         "permissionButton": "Open settings",
-        "permissionMessage": "The Calendar permission is required to see your meetings in the app."
+        "permissionMessage": "The Calendar permission is required to see your meetings in the app.",
+        "refresh": "Refresh calendar"
     },
     "recentList": {
         "joinPastMeeting": "Join A Past Meeting"

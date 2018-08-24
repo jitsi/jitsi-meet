@@ -120,7 +120,7 @@ class CalendarList extends Component<Props> {
             );
         }
 
-        return null;
+        return undefined;
     }
 
     _onOpenSettings: () => void;

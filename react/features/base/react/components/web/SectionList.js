@@ -8,8 +8,7 @@ import type { Section } from '../../Types';
 type Props = {
 
     /**
-     * Rendered when the list is empty. Can be a React Component Class, a render
-     * function, or a rendered element.
+     * Rendered when the list is empty. Should be a rendered element.
      */
     ListEmptyComponent: Object,
 

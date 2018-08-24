@@ -87,7 +87,7 @@ class NavigateSectionList extends Component<Props> {
      */
     render() {
         const {
-            renderListEmptyComponent = this._renderListEmptyComponent,
+            renderListEmptyComponent = this._renderListEmptyComponent(),
             sections
         } = this.props;
 
@@ -196,9 +196,11 @@ class NavigateSectionList extends Component<Props> {
     _renderListEmptyComponent() {
         const { onRefresh } = this.props;
 
+        // TODO before merge into master finalize how the refresh button
+        // should work.
         if (typeof onRefresh === 'function') {
             return (
-                <NavigateSectionListEmptyComponent />
+                <NavigateSectionListEmptyComponent onRefresh = { onRefresh } />
             );
         }
 
