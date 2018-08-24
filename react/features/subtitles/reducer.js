@@ -1,7 +1,7 @@
 import { ReducerRegistry } from '../base/redux';
 
 import {
-    REMOVE_TRANSCRIPT_MESSAGE,
+    REMOVE_TRANSCRIPT_MESSAGE, TOGGLE_REQUESTING_SUBTITLES,
     UPDATE_TRANSCRIPT_MESSAGE
 } from './actionTypes';
 
@@ -9,7 +9,8 @@ import {
  * Default State for 'features/transcription' feature
  */
 const defaultState = {
-    transcriptMessages: new Map()
+    _transcriptMessages: new Map(),
+    _requestingSubtitles: false
 };
 
 /**
@@ -21,9 +22,14 @@ ReducerRegistry.register('features/subtitles', (
     switch (action.type) {
     case REMOVE_TRANSCRIPT_MESSAGE:
         return _removeTranscriptMessage(state, action);
-
     case UPDATE_TRANSCRIPT_MESSAGE:
         return _updateTranscriptMessage(state, action);
+
+    case TOGGLE_REQUESTING_SUBTITLES:
+        return {
+            ...state,
+            _requestingSubtitles: !state._requestingSubtitles
+        };
     }
 
     return state;
@@ -46,7 +52,7 @@ function _removeTranscriptMessage(state, { transcriptMessageID }) {
 
     return {
         ...state,
-        transcriptMessages: newTranscriptMessages
+        _transcriptMessages: newTranscriptMessages
     };
 }
 
@@ -68,6 +74,6 @@ function _updateTranscriptMessage(state,
 
     return {
         ...state,
-        transcriptMessages: newTranscriptMessages
+        _transcriptMessages: newTranscriptMessages
     };
 }

@@ -2,7 +2,10 @@
 
 import { MiddlewareRegistry } from '../base/redux';
 
-import { ENDPOINT_MESSAGE_RECEIVED } from './actionTypes';
+import {
+    ENDPOINT_MESSAGE_RECEIVED,
+    TOGGLE_REQUESTING_SUBTITLES
+} from './actionTypes';
 import {
     removeTranscriptMessage,
     updateTranscriptMessage
@@ -29,6 +32,12 @@ const JSON_TYPE_TRANSLATION_RESULT = 'translation-result';
 const P_NAME_TRANSLATION_LANGUAGE = 'translation_language';
 
 /**
+ * The local participant property which is used to set whether the local
+ * participant wants to have a transcriber in the room.
+ */
+const P_NAME_REQUESTING_TRANSCRIPTION = 'requestingTranscription';
+
+/**
 * Time after which the rendered subtitles will be removed.
 */
 const REMOVE_AFTER_MS = 3000;
@@ -41,14 +50,32 @@ const REMOVE_AFTER_MS = 3000;
  * @returns {Function}
  */
 MiddlewareRegistry.register(store => next => action => {
-
     switch (action.type) {
     case ENDPOINT_MESSAGE_RECEIVED:
         return _endpointMessageReceived(store, next, action);
+    case TOGGLE_REQUESTING_SUBTITLES:
+        _requestingSubtitlesToggled(store);
+        break;
     }
 
     return next(action);
 });
+
+/**
+ * Toggle the local property 'requestingTranscription'. This will cause Jicofo
+ * and Jigasi to decide whether the transcriber needs to be in the room.
+ *
+ * @param {Store} store - The redux store.
+ * @private
+ * @returns {void}
+ */
+function _requestingSubtitlesToggled({ getState }) {
+    const { _requestingSubtitles } = getState()['features/subtitles'];
+    const { conference } = getState()['features/base/conference'];
+
+    conference.setLocalParticipantProperty(P_NAME_REQUESTING_TRANSCRIPTION,
+        !_requestingSubtitles);
+}
 
 /**
  * Notifies the feature transcription that the action
@@ -109,7 +136,7 @@ function _endpointMessageReceived({ dispatch, getState }, next, action) {
             // message ID or adds a new transcript message if it does not
             // exist in the map.
             const newTranscriptMessage
-                = { ...getState()['features/subtitles'].transcriptMessages
+                = { ...getState()['features/subtitles']._transcriptMessages
                     .get(transcriptMessageID) || { participantName } };
 
             setClearerOnTranscriptMessage(dispatch,
@@ -120,6 +147,7 @@ function _endpointMessageReceived({ dispatch, getState }, next, action) {
             if (!isInterim) {
 
                 newTranscriptMessage.final = text;
+
                 dispatch(updateTranscriptMessage(transcriptMessageID,
                     newTranscriptMessage));
             } else if (stability > 0.85) {
@@ -130,6 +158,7 @@ function _endpointMessageReceived({ dispatch, getState }, next, action) {
 
                 newTranscriptMessage.stable = text;
                 newTranscriptMessage.unstable = undefined;
+
                 dispatch(updateTranscriptMessage(transcriptMessageID,
                     newTranscriptMessage));
             } else {

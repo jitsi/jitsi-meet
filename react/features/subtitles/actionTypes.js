@@ -33,3 +33,15 @@ export const REMOVE_TRANSCRIPT_MESSAGE = Symbol('REMOVE_TRANSCRIPT_MESSAGE');
  * }
  */
 export const UPDATE_TRANSCRIPT_MESSAGE = Symbol('UPDATE_TRANSCRIPT_MESSAGE');
+
+/**
+ * The type of (redux) action which indicates that the user pressed the
+ * ClosedCaption button, to either enable or disable subtitles based on the
+ * current state.
+ *
+ * {
+ *      type: TOGGLE_REQUESTING_SUBTITLES
+ * }
+ */
+export const TOGGLE_REQUESTING_SUBTITLES
+    = Symbol('TOGGLE_REQUESTING_SUBTITLES');

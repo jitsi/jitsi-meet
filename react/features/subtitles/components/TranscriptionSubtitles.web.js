@@ -12,7 +12,12 @@ type Props = {
     /**
      * Map of transcriptMessageID's with corresponding transcriptMessage.
      */
-    _transcriptMessages: Map<string, Object>
+    _transcriptMessages: Map<string, Object>,
+
+    /**
+     * Whether local participant is requesting to see subtitles
+     */
+    _requestingSubtitles: Boolean
 };
 
 /**
@@ -28,6 +33,11 @@ class TranscriptionSubtitles extends Component<Props> {
      * @returns {ReactElement}
      */
     render() {
+        if (!this.props._requestingSubtitles
+             || !this.props._transcriptMessages) {
+            return null;
+        }
+
         const paragraphs = [];
 
         for (const [ transcriptMessageID, transcriptMessage ]
@@ -73,8 +83,14 @@ class TranscriptionSubtitles extends Component<Props> {
  * }}
  */
 function _mapStateToProps(state) {
+    const {
+        _transcriptMessages,
+        _requestingSubtitles
+    } = state['features/subtitles'];
+
     return {
-        _transcriptMessages: state['features/subtitles'].transcriptMessages
+        _transcriptMessages,
+        _requestingSubtitles
     };
 }
 export default connect(_mapStateToProps)(TranscriptionSubtitles);
