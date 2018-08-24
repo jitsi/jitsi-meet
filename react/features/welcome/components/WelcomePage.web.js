@@ -12,6 +12,7 @@ import { translate } from '../../base/i18n';
 import { Watermarks } from '../../base/react';
 import { CalendarList } from '../../calendar-sync';
 import { RecentList } from '../../recent-list';
+import { SettingsButton } from '../../settings';
 
 import { AbstractWelcomePage, _mapStateToProps } from './AbstractWelcomePage';
 
@@ -227,6 +228,9 @@ class WelcomePage extends AbstractWelcomePage {
 
         return (
             <div className = 'tab-container' >
+                <div className = 'welcome-page-settings'>
+                    <SettingsButton />
+                </div>
                 <Tabs tabs = { tabs } />
             </div>);
     }

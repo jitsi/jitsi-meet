@@ -66,6 +66,7 @@ body.welcome-page {
 
         .tab-container {
             font-size: 16px;
+            position: relative;
             text-align: left;
             width: 650px;
         }
@@ -73,6 +74,17 @@ body.welcome-page {
 
     .welcome-page-button {
         font-size: 16px;
+    }
+
+    .welcome-page-settings {
+        color: $welcomePageDescriptionColor;
+        position: absolute;
+        right: 10px;
+        z-index: $zindex2;
+
+        * {
+            cursor: pointer;
+        }
     }
 
     .welcome-watermark {
