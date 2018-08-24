@@ -483,7 +483,9 @@
         "failedToStart": "Transcribing failed to start",
         "tr": "TR",
         "labelToolTip": "The meeting is being transcribed",
-        "ccButtonTooltip": "Start / Stop showing subtitles"
+        "ccButtonTooltip": "Start / Stop showing subtitles",
+        "start": "Start showing subtitles",
+        "stop": "Stop showing subtitles"
     },
     "liveStreaming":
     {
