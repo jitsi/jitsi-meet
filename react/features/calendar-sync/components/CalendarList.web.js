@@ -8,6 +8,7 @@ import { connect } from 'react-redux';
 import { translate } from '../../base/i18n';
 import { openSettingsDialog, SETTINGS_TABS } from '../../settings';
 
+import { refreshCalendar } from '../actions';
 import { isCalendarEnabled } from '../functions';
 
 import AbstractCalendarList from './AbstractCalendarList';
@@ -61,6 +62,7 @@ class CalendarList extends Component<Props> {
         this._getRenderListEmptyComponent
             = this._getRenderListEmptyComponent.bind(this);
         this._onOpenSettings = this._onOpenSettings.bind(this);
+        this._onRefreshEvents = this._onRefreshEvents.bind(this);
     }
 
     /**
@@ -88,26 +90,22 @@ class CalendarList extends Component<Props> {
      * of the default one in the {@link NavigateSectionList}.
      *
      * @private
-     * @returns {?React$Component}
+     * @returns {React$Component}
      */
     _getRenderListEmptyComponent() {
         const { _hasIntegrationSelected, _hasLoadedEvents, t } = this.props;
 
-        if (!_hasIntegrationSelected) {
+        if (_hasIntegrationSelected && _hasLoadedEvents) {
             return (
                 <div className = 'navigate-section-list-empty'>
-                    <p className = 'header-text-description'>
-                        { t('welcomepage.connectCalendarText', {
-                            app: interfaceConfig.APP_NAME
-                        }) }
-                    </p>
+                    <div>{ t('calendarSync.noEvents') }</div>
                     <Button
                         appearance = 'primary'
                         className = 'calendar-button'
                         id = 'connect_calendar_button'
-                        onClick = { this._onOpenSettings }
+                        onClick = { this._onRefreshEvents }
                         type = 'button'>
-                        { t('welcomepage.connectCalendarButton') }
+                        { t('calendarSync.refresh') }
                     </Button>
                 </div>
             );
@@ -122,7 +120,23 @@ class CalendarList extends Component<Props> {
             );
         }
 
-        return undefined;
+        return (
+            <div className = 'navigate-section-list-empty'>
+                <p className = 'header-text-description'>
+                    { t('welcomepage.connectCalendarText', {
+                        app: interfaceConfig.APP_NAME
+                    }) }
+                </p>
+                <Button
+                    appearance = 'primary'
+                    className = 'calendar-button'
+                    id = 'connect_calendar_button'
+                    onClick = { this._onOpenSettings }
+                    type = 'button'>
+                    { t('welcomepage.connectCalendarButton') }
+                </Button>
+            </div>
+        );
     }
 
     _onOpenSettings: () => void;
@@ -135,6 +149,19 @@ class CalendarList extends Component<Props> {
      */
     _onOpenSettings() {
         this.props.dispatch(openSettingsDialog(SETTINGS_TABS.CALENDAR));
+    }
+
+    _onRefreshEvents: () => void;
+
+
+    /**
+     * Gets an updated list of calendar events.
+     *
+     * @private
+     * @returns {void}
+     */
+    _onRefreshEvents() {
+        this.props.dispatch(refreshCalendar(true));
     }
 }
 
