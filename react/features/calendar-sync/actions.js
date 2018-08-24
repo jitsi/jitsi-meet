@@ -9,7 +9,8 @@ import {
     SET_CALENDAR_AUTHORIZATION,
     SET_CALENDAR_EVENTS,
     SET_CALENDAR_INTEGRATION,
-    SET_CALENDAR_PROFILE_EMAIL
+    SET_CALENDAR_PROFILE_EMAIL,
+    SET_LOADING_CALENDAR_EVENTS
 } from './actionTypes';
 import { _getCalendarIntegration, isCalendarEnabled } from './functions';
 import { generateRoomWithoutSeparator } from '../welcome';
@@ -170,6 +171,23 @@ export function setCalendarProfileEmail(newEmail: ?string) {
     return {
         type: SET_CALENDAR_PROFILE_EMAIL,
         email: newEmail
+    };
+}
+
+/**
+ * Sends an to denote a request in is flight to get calendar events.
+ *
+ * @param {boolean} isLoadingEvents - Whether or not calendar events are being
+ * fetched.
+ * @returns {{
+ *     type: SET_LOADING_CALENDAR_EVENTS,
+ *     isLoadingEvents: boolean
+ * }}
+ */
+export function setLoadingCalendarEvents(isLoadingEvents: boolean) {
+    return {
+        type: SET_LOADING_CALENDAR_EVENTS,
+        isLoadingEvents
     };
 }
 

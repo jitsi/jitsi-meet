@@ -150,10 +150,15 @@ class CalendarList extends Component<Props> {
  * }}
  */
 function _mapStateToProps(state) {
+    const {
+        events,
+        integrationType,
+        isLoadingEvents
+    } = state['features/calendar-sync'];
+
     return {
-        _hasIntegrationSelected:
-            Boolean(state['features/calendar-sync'].integrationType),
-        _hasLoadedEvents: Boolean(state['features/calendar-sync'].events)
+        _hasIntegrationSelected: Boolean(integrationType),
+        _hasLoadedEvents: Boolean(events) || !isLoadingEvents
     };
 }
 

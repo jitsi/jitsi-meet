@@ -10,7 +10,8 @@ import {
     SET_CALENDAR_AUTHORIZATION,
     SET_CALENDAR_EVENTS,
     SET_CALENDAR_INTEGRATION,
-    SET_CALENDAR_PROFILE_EMAIL
+    SET_CALENDAR_PROFILE_EMAIL,
+    SET_LOADING_CALENDAR_EVENTS
 } from './actionTypes';
 import { isCalendarEnabled } from './functions';
 
@@ -96,6 +97,9 @@ isCalendarEnabled()
 
         case SET_CALENDAR_PROFILE_EMAIL:
             return set(state, 'profileEmail', action.email);
+
+        case SET_LOADING_CALENDAR_EVENTS:
+            return set(state, 'isLoadingEvents', action.isLoadingEvents);
         }
 
         return state;

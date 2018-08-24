@@ -1,5 +1,6 @@
 // @flow
 
+import { setLoadingCalendarEvents } from './actions';
 export * from './functions.any';
 
 import {
@@ -56,6 +57,8 @@ export function _fetchCalendarEntries(
         return;
     }
 
+    dispatch(setLoadingCalendarEvents(true));
+
     dispatch(integration.load())
         .then(() => dispatch(integration._isSignedIn()))
         .then(signedIn => {
@@ -72,7 +75,8 @@ export function _fetchCalendarEntries(
             getState
         }, events))
         .catch(error =>
-            logger.error('Error fetching calendar.', error));
+            logger.error('Error fetching calendar.', error))
+        .then(() => dispatch(setLoadingCalendarEvents(false)));
 }
 
 /**
