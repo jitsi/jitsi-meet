@@ -36,7 +36,7 @@ class NavigateSectionListEmptyComponent extends Component<Props> {
         const { t } = this.props;
 
         return (
-            <div>
+            <div className = 'navigate-section-list-empty'>
                 <div>{ t('calendarSync.noEvents') }</div>
                 <Button
                     appearance = 'primary'

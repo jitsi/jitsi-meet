@@ -95,7 +95,7 @@ class CalendarList extends Component<Props> {
 
         if (!_hasIntegrationSelected) {
             return (
-                <div>
+                <div className = 'navigate-section-list-empty'>
                     <p className = 'header-text-description'>
                         { t('welcomepage.connectCalendarText', {
                             app: interfaceConfig.APP_NAME
@@ -113,10 +113,12 @@ class CalendarList extends Component<Props> {
             );
         } else if (_hasIntegrationSelected && !_hasLoadedEvents) {
             return (
-                <Spinner
-                    invertColor = { true }
-                    isCompleting = { false }
-                    size = 'medium' />
+                <div className = 'navigate-section-list-empty'>
+                    <Spinner
+                        invertColor = { true }
+                        isCompleting = { false }
+                        size = 'medium' />
+                </div>
             );
         }
 
