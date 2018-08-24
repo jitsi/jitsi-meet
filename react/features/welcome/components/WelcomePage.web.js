@@ -9,7 +9,7 @@ import { connect } from 'react-redux';
 
 import { DialogContainer } from '../../base/dialog';
 import { translate } from '../../base/i18n';
-import { Watermarks } from '../../base/react';
+import { Platform, Watermarks } from '../../base/react';
 import { CalendarList } from '../../calendar-sync';
 import { RecentList } from '../../recent-list';
 import { SettingsButton } from '../../settings';
@@ -203,11 +203,19 @@ class WelcomePage extends AbstractWelcomePage {
     }
 
     /**
-     * Renders the tabs from the tab information passed on props.
+     * Renders tabs to show previous meetings and upcoming calendar events. The
+     * tabs are purposefully hidden on mobile browsers.
      *
-     * @returns {void}
+     * @returns {ReactElement|null}
      */
     _renderTabs() {
+        const isMobileBrowser
+            = Platform.OS === 'android' || Platform.OS === 'ios';
+
+        if (isMobileBrowser) {
+            return null;
+        }
+
         const { t } = this.props;
 
         const tabs = [];
