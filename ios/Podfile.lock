@@ -152,7 +152,7 @@ SPEC CHECKSUMS:
   react-native-keep-awake: 0de4bd66de0c23178107dce0c2fcc3354b2a8e94
   react-native-locale-detector: d1b2c6fe5abb56e3a1efb6c2d6f308c05c4251f1
   react-native-webrtc: 31b6d3f1e3e2ce373aa43fd682b04367250f807d
-  ReactNativePermissions: 9f2d9c45c98800795e6c2ed330e25d11a66a8169
+  ReactNativePermissions: 9ef3f0c74a373fdbfae21c067098a8348d9aa15f
   RNSound: b360b3862d3118ed1c74bb9825696b5957686ac4
   RNVectorIcons: c0dbfbf6068fefa240c37b0f71bd03b45dddac44
   SDWebImage: 624d6e296c69b244bcede364c72ae0430ac14681
