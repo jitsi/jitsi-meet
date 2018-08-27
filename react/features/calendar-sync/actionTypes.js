@@ -74,3 +74,16 @@ export const SET_CALENDAR_AUTH_STATE = Symbol('SET_CALENDAR_AUTH_STATE');
  * @public
  */
 export const SET_CALENDAR_PROFILE_EMAIL = Symbol('SET_CALENDAR_PROFILE_EMAIL');
+
+/**
+ * The type of Redux action which denotes whether a request is in flight to get
+ * updated calendar events.
+ *
+ * {
+ *     type: SET_LOADING_CALENDAR_EVENTS,
+ *     isLoadingEvents: string
+ * }
+ * @public
+ */
+export const SET_LOADING_CALENDAR_EVENTS
+    = Symbol('SET_LOADING_CALENDAR_EVENTS');

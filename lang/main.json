@@ -57,6 +57,8 @@
             "video": "Video"
         },
         "calendar": "Calendar",
+        "connectCalendarText": "Connect your calendar to view all your meetings in __app__. Plus, add __app__ meetings to your calendar and start them with one click.",
+        "connectCalendarButton": "Connect your calendar",
         "go": "GO",
         "join": "JOIN",
         "privacy": "Privacy",
@@ -639,13 +641,14 @@
         "startWithVideoMuted": "Start with video muted"
     },
     "calendarSync": {
-        "later": "Later",
-        "next": "Upcoming",
+        "addMeetingURL": "Add a meeting link",
+        "today": "Today",
         "nextMeeting": "next meeting",
-        "now": "Now",
+        "noEvents": "There are no upcoming events scheduled.",
         "ongoingMeeting": "ongoing meeting",
         "permissionButton": "Open settings",
-        "permissionMessage": "The Calendar permission is required to see your meetings in the app."
+        "permissionMessage": "The Calendar permission is required to see your meetings in the app.",
+        "refresh": "Refresh calendar"
     },
     "recentList": {
         "joinPastMeeting": "Join A Past Meeting"

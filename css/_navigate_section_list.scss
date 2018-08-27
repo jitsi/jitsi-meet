@@ -13,19 +13,30 @@
     float: left;
 }
 .navigate-section-list-tile {
-    height: 90px;
-    width: 260px;
-    border-radius: 4px;
     background-color: #1754A9;
+    border-radius: 4px;
+    box-sizing: border-box;
+    display: inline-flex;
+    height: 100px;
+    margin-bottom: 8px;
     margin-right: 8px;
     padding: 16px;
-    display: inline-block;
-    box-sizing: border-box;
-    cursor: pointer;
+    width: 100%;
+
+    &.with-click-handler {
+        cursor: pointer;
+    }
+
+    &.with-click-handler:hover {
+        background-color: #1a5dbb;
+    }
 }
 .navigate-section-tile-body {
     @extend %navigate-section-list-tile-text;
     font-weight: normal;
+}
+.navigate-section-list-tile-info {
+    flex: 1;
 }
 .navigate-section-tile-title {
     @extend %navigate-section-list-tile-text;
@@ -40,4 +51,8 @@
     position: relative;
     margin-top: 36px;
     margin-bottom: 36px;
+    width: 100%;
+}
+.navigate-section-list-empty {
+    text-align: center;
 }

@@ -13,6 +13,11 @@ export type Item = {
     colorBase: string,
 
     /**
+     * An optional react element to append to the end of the Item.
+     */
+    elementAfter?: ?ComponentType<any>,
+
+    /**
      * Item title
      */
     title: string,
