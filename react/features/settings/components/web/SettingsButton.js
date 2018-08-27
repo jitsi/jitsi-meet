@@ -50,15 +50,16 @@ class SettingsButton extends AbstractButton<Props, *> {
      * @returns {void}
      */
     _handleClick() {
-        const { _filmstripOnly, defaultTab, dispatch } = this.props;
+        const {
+            _filmstripOnly,
+            defaultTab = SETTINGS_TABS.DEVICES,
+            dispatch } = this.props;
 
         sendAnalytics(createToolbarEvent('settings'));
         if (_filmstripOnly) {
             dispatch(openDeviceSelectionPopup());
-        } else if (defaultTab) {
-            dispatch(openSettingsDialog(defaultTab));
         } else {
-            dispatch(openSettingsDialog(SETTINGS_TABS.DEVICES));
+            dispatch(openSettingsDialog(defaultTab));
         }
     }
 }

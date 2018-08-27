@@ -12,27 +12,29 @@
 }
 
 /**
- * AtlasKit Tab color for semi-dark background.
- * This is used on the welcome page.
+ * Welcome page tab color adjustments.
  */
+.welcome {
+    /**
+     * The text color of the selected tab and hovered tabs.
+     */
+    li.bcVmZW,
+    li.bcVmZW:hover,
+    li.kheoEp:hover {
+        color: #172B4D;
+    }
 
-li.bcVmZW,
-li.bcVmZW:hover,
-li.kheoEp:hover {
-    color: #172B4D;
-}
+    /**
+     * The color of the inactive tab text.
+     */
+    li.kheoEp {
+        color: #FFFFFF;
+    }
 
-/**
- * The color of the inactive tab. Only applied on the welcome page.
- */
-li.kheoEp {
-    color: #FFFFFF;
-}
-
-/**
- * The color of the underline of a selected tab. Only applied on the welcome
- page.
- */
-li>span.kByArU {
-    background-color: #172B4D;
+    /**
+     * The color of the underline of a selected tab.
+     */
+    li>span.kByArU {
+        background-color: #172B4D;
+    }
 }

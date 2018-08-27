@@ -65,7 +65,7 @@ class AddMeetingUrlButton extends Component<Props> {
                     appearance = 'primary'
                     onClick = { this._onClick }
                     type = 'button'>
-                    <span><i className = { 'icon-add' } /></span>
+                    <i className = { 'icon-add' } />
                 </Button>
             </Tooltip>
         );
