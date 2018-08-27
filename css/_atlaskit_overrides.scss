@@ -10,3 +10,29 @@
     -ms-transform: translateX(0) translateY(100%) translateY(16px) !important;
     -webkit-transform: translateX(0) translateY(100%) translateY(16px) !important;
 }
+
+/**
+ * AtlasKit Tab color for semi-dark background.
+ * This is used on the welcome page.
+ */
+
+li.bcVmZW,
+li.bcVmZW:hover,
+li.kheoEp:hover {
+    color: #172B4D;
+}
+
+/**
+ * The color of the inactive tab. Only applied on the welcome page.
+ */
+li.kheoEp {
+    color: #FFFFFF;
+}
+
+/**
+ * The color of the underline of a selected tab. Only applied on the welcome
+ page.
+ */
+li>span.kByArU {
+    background-color: #172B4D;
+}

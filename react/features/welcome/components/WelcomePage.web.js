@@ -12,7 +12,7 @@ import { translate } from '../../base/i18n';
 import { Platform, Watermarks } from '../../base/react';
 import { CalendarList } from '../../calendar-sync';
 import { RecentList } from '../../recent-list';
-import { SettingsButton } from '../../settings';
+import { SettingsButton, SETTINGS_TABS } from '../../settings';
 
 import { AbstractWelcomePage, _mapStateToProps } from './AbstractWelcomePage';
 
@@ -237,7 +237,7 @@ class WelcomePage extends AbstractWelcomePage {
         return (
             <div className = 'tab-container' >
                 <div className = 'welcome-page-settings'>
-                    <SettingsButton />
+                    <SettingsButton defaultTab = { SETTINGS_TABS.CALENDAR } />
                 </div>
                 <Tabs tabs = { tabs } />
             </div>);

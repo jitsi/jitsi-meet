@@ -13,21 +13,6 @@ import type { Item } from '../../Types';
 type Props = {
 
     /**
-     * The icon to use for the action button.
-     */
-    actionIconName: string,
-
-    /**
-     * The function to call when the action button is clicked.
-     */
-    actionOnClick: ?Function,
-
-    /**
-     * The tooltip to attach to the action button of this list item.
-     */
-    actionTooltip: string,
-
-    /**
      * Function to be invoked when an item is pressed. The item's URL is passed.
      */
     onPress: ?Function,

@@ -10,7 +10,7 @@ import { translate } from '../../base/i18n';
 import { isCalendarEnabled } from '../functions';
 import styles from './styles';
 
-import AbstractCalendarList from './AbstractCalendarList';
+import BaseCalendarList from './BaseCalendarList';
 
 /**
  * The tyoe of the React {@code Component} props of {@link CalendarList}.
@@ -59,8 +59,8 @@ class CalendarList extends Component<Props> {
         const { disabled } = this.props;
 
         return (
-            AbstractCalendarList
-                ? <AbstractCalendarList
+            BaseCalendarList
+                ? <BaseCalendarList
                     disabled = { disabled }
                     renderListEmptyComponent
                         = { this._getRenderListEmptyComponent() } />
