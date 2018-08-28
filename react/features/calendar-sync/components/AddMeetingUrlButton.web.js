@@ -3,6 +3,7 @@
 import Button from '@atlaskit/button';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import Tooltip from '@atlaskit/tooltip';
 
 import { translate } from '../../base/i18n';
 
@@ -59,12 +60,14 @@ class AddMeetingUrlButton extends Component<Props> {
      */
     render() {
         return (
-            <Button
-                appearance = 'primary'
-                onClick = { this._onClick }
-                type = 'button'>
-                { this.props.t('calendarSync.addMeetingURL') }
-            </Button>
+            <Tooltip content = { this.props.t('calendarSync.addMeetingURL') }>
+                <Button
+                    appearance = 'primary'
+                    onClick = { this._onClick }
+                    type = 'button'>
+                    <i className = { 'icon-add' } />
+                </Button>
+            </Tooltip>
         );
     }
 

@@ -30,6 +30,10 @@
     &.with-click-handler:hover {
         background-color: #1a5dbb;
     }
+
+    i {
+        cursor: inherit;
+    }
 }
 .navigate-section-tile-body {
     @extend %navigate-section-list-tile-text;

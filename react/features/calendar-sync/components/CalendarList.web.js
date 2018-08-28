@@ -11,7 +11,7 @@ import { openSettingsDialog, SETTINGS_TABS } from '../../settings';
 import { refreshCalendar } from '../actions';
 import { isCalendarEnabled } from '../functions';
 
-import AbstractCalendarList from './AbstractCalendarList';
+import BaseCalendarList from './BaseCalendarList';
 
 declare var interfaceConfig: Object;
 
@@ -74,8 +74,8 @@ class CalendarList extends Component<Props> {
         const { disabled } = this.props;
 
         return (
-            AbstractCalendarList
-                ? <AbstractCalendarList
+            BaseCalendarList
+                ? <BaseCalendarList
                     disabled = { disabled }
                     renderListEmptyComponent
                         = { this._getRenderListEmptyComponent() } />

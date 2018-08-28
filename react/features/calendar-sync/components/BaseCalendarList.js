@@ -8,13 +8,14 @@ import { getLocalizedDateFormatter, translate } from '../../base/i18n';
 import { NavigateSectionList } from '../../base/react';
 
 import { refreshCalendar } from '../actions';
+
 import { isCalendarEnabled } from '../functions';
 
 import AddMeetingUrlButton from './AddMeetingUrlButton';
 
 /**
  * The type of the React {@code Component} props of
- * {@link AbstractCalendarList}.
+ * {@link BaseCalendarList}.
  */
 type Props = {
 
@@ -47,7 +48,7 @@ type Props = {
 /**
  * Component to display a list of events from a connected calendar.
  */
-class AbstractCalendarList extends Component<Props> {
+class BaseCalendarList extends Component<Props> {
     /**
      * Default values for the component's props.
      */
@@ -75,7 +76,7 @@ class AbstractCalendarList extends Component<Props> {
     }
 
     /**
-     * Initializes a new {@code CalendarList} instance.
+     * Initializes a new {@code BaseCalendarList} instance.
      *
      * @inheritdoc
      */
@@ -260,5 +261,5 @@ function _mapStateToProps(state: Object) {
 }
 
 export default isCalendarEnabled()
-    ? translate(connect(_mapStateToProps)(AbstractCalendarList))
+    ? translate(connect(_mapStateToProps)(BaseCalendarList))
     : undefined;
