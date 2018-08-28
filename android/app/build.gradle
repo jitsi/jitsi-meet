@@ -43,4 +43,7 @@ dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
 
     implementation project(':sdk')
+
+    debugImplementation 'com.squareup.leakcanary:leakcanary-android:1.6.1'
+    releaseImplementation 'com.squareup.leakcanary:leakcanary-android-no-op:1.6.1'
 }
