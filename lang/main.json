@@ -62,8 +62,8 @@
         "go": "GO",
         "join": "JOIN",
         "privacy": "Privacy",
-        "recentList": "History",
-        "recentListEmpty": "You history is currently empty. Go ahead, chat with your team and you will find all your recent meetings here.",
+        "recentList": "Recent",
+        "recentListEmpty": "Your recent list is currently empty. Go ahead, chat with your team and you will find all your recent meetings here.",
         "roomname": "Enter room name",
         "roomnameHint": "Enter the name or URL of the room you want to join. You may make a name up, just let the people you are meeting know it so that they enter the same name.",
         "sendFeedback": "Send feedback",
@@ -654,7 +654,7 @@
         "today": "Today"
     },
     "recentList": {
-        "joinPastMeeting": "Join a Past Meeting"
+        "joinPastMeeting": "Join a past meeting"
     },
     "sectionList": {
         "pullToRefresh": "Pull to refresh"
