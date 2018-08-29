@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 
 import { appNavigate, getDefaultURL } from '../../app';
 import { translate } from '../../base/i18n';
-import { NavigateSectionList } from '../../base/react';
+import { Container, NavigateSectionList, Text } from '../../base/react';
 import type { Section } from '../../base/react';
 
 import { isRecentListEnabled, toDisplayableList } from '../functions';
@@ -91,11 +91,11 @@ class RecentList extends Component<Props> {
         const { t } = this.props;
 
         return (
-            <div className = 'navigate-section-list-empty'>
-                <p className = 'header-text-description'>
+            <Container className = 'navigate-section-list-empty'>
+                <Text className = 'header-text-description'>
                     { t('welcomepage.recentListEmpty') }
-                </p>
-            </div>
+                </Text>
+            </Container>
         );
     }
 
