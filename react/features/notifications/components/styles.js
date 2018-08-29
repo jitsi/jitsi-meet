@@ -1,7 +1,5 @@
 // @flow
 
-import { StyleSheet } from 'react-native';
-
 import { BoxModel, createStyleSheet, ColorPalette } from '../../base/styles';
 
 /**
@@ -48,9 +46,10 @@ export default createStyleSheet({
      * Outermost container of a list of notifications.
      */
     notificationContainer: {
-        ...StyleSheet.absoluteFillObject,
+        flexGrow: 0,
         justifyContent: 'flex-end',
-        padding: 2 * BoxModel.padding
+        padding: 2 * BoxModel.padding,
+        paddingBottom: BoxModel.padding
     },
 
     /**
