@@ -16,10 +16,6 @@
 
 /* Mixins END */
 
-/* Animations BEGIN */
-
-@import "animations";
-
 /* Animations END */
 
 /* Fonts BEGIN */
@@ -56,7 +52,6 @@
 @import 'welcome_page';
 @import 'welcome_page_content';
 @import 'toolbars';
-@import 'side_toolbar_container';
 @import 'jquery.contextMenu';
 @import 'keyboard-shortcuts';
 @import 'redirect_page';

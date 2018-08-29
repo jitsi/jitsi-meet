@@ -17,7 +17,7 @@ import {
     participantUpdated
 } from '../../../base/participants';
 import { getLocalVideoTrack, toggleScreensharing } from '../../../base/tracks';
-import { ChatCounter } from '../../../chat';
+import { ChatCounter, toggleChat } from '../../../chat';
 import { toggleDocument } from '../../../etherpad';
 import { openFeedbackDialog } from '../../../feedback';
 import {
@@ -41,7 +41,6 @@ import {
     openSettingsDialog
 } from '../../../settings';
 import { toggleSharedVideo } from '../../../shared-video';
-import { toggleChat } from '../../../side-panel';
 import { SpeakerStats } from '../../../speaker-stats';
 import { TileViewButton } from '../../../video-layout';
 import {
@@ -1032,7 +1031,6 @@ function _mapStateToProps(state) {
         iAmRecorder
     } = state['features/base/config'];
     const sharedVideoStatus = state['features/shared-video'].status;
-    const { current } = state['features/side-panel'];
     const {
         alwaysVisible,
         fullScreen,
@@ -1066,7 +1064,7 @@ function _mapStateToProps(state) {
     }
 
     return {
-        _chatOpen: current === 'chat_container',
+        _chatOpen: state['features/chat'].isOpen,
         _conference: conference,
         _desktopSharingEnabled: desktopSharingEnabled,
         _desktopSharingDisabledTooltipKey: desktopSharingDisabledTooltipKey,

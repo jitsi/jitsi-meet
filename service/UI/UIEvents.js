@@ -3,11 +3,6 @@ export default {
     PINNED_ENDPOINT: 'UI.pinned_endpoint',
 
     /**
-     * Notifies that local user created text message.
-     */
-    MESSAGE_CREATED: 'UI.message_created',
-
-    /**
      * Notifies that local user changed email.
      */
     EMAIL_CHANGED: 'UI.email_changed',
@@ -34,7 +29,6 @@ export default {
      * Notifies that the audio only mode was toggled.
      */
     TOGGLE_AUDIO_ONLY: 'UI.toggle_audioonly',
-    TOGGLE_CHAT: 'UI.toggle_chat',
 
     /**
      * Notifies that a command to toggle the filmstrip has been issued. The

@@ -2,24 +2,24 @@
 
 import { ReducerRegistry } from '../base/redux';
 
-import {
-    ADD_MESSAGE,
-    SET_LAST_READ_MESSAGE
-} from './actionTypes';
+import { ADD_MESSAGE, TOGGLE_CHAT } from './actionTypes';
 
 const DEFAULT_STATE = {
-    open: false,
-    messages: [],
-    lastReadMessage: null
+    isOpen: false,
+    lastReadMessage: undefined,
+    messages: []
 };
 
 ReducerRegistry.register('features/chat', (state = DEFAULT_STATE, action) => {
     switch (action.type) {
     case ADD_MESSAGE: {
         const newMessage = {
+            displayName: action.displayName,
+            error: action.error,
+            id: action.id,
+            messageType: action.messageType,
             message: action.message,
-            timestamp: action.timestamp,
-            userName: action.userName
+            timestamp: action.timestamp
         };
 
         return {
@@ -33,10 +33,11 @@ ReducerRegistry.register('features/chat', (state = DEFAULT_STATE, action) => {
         };
     }
 
-    case SET_LAST_READ_MESSAGE:
+    case TOGGLE_CHAT:
         return {
             ...state,
-            lastReadMessage: action.message
+            isOpen: !state.isOpen,
+            lastReadMessage: state.messages[state.messages.length - 1]
         };
     }
 

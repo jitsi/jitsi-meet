@@ -304,27 +304,6 @@
 }
 
 /**
- * START of slide in animation for extended toolbar panel.
- */
-@include keyframes(slideInExt) {
-    from { width: 0px; }
-    to   { width: $sidebarWidth; } // TO FIX: Make this value a percentage.
-}
-
-.slideInExt {
-    @include animation("slideInExt .5s forwards");
-}
-
-@include keyframes(slideOutExt) {
-  from { width: $sidebarWidth; } // TO FIX: Make this value a percentage.
-  to   { width: 0px; }
-}
-
-.slideOutExt {
-  @include animation("slideOutExt .5s forwards");
-}
-
-/**
  * START of fade in animation for main toolbar
  */
 .fadeIn {
