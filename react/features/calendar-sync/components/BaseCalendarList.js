@@ -12,6 +12,7 @@ import { refreshCalendar } from '../actions';
 import { isCalendarEnabled } from '../functions';
 
 import AddMeetingUrlButton from './AddMeetingUrlButton';
+import JoinButton from './JoinButton';
 
 /**
  * The type of the React {@code Component} props of
@@ -163,11 +164,11 @@ class BaseCalendarList extends Component<Props> {
      */
     _toDisplayableItem(event) {
         return {
-            elementAfter: event.url ? undefined : (
-                <AddMeetingUrlButton
+            elementAfter: event.url
+                ? <JoinButton onPress = { this._onPress } />
+                : (<AddMeetingUrlButton
                     calendarId = { event.calendarId }
-                    eventId = { event.id } />
-            ),
+                    eventId = { event.id } />),
             key: `${event.id}-${event.startDate}`,
             lines: [
                 event.url,

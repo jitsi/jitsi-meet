@@ -34,6 +34,20 @@
     i {
         cursor: inherit;
     }
+
+    .element-after {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .join-button {
+        display: none;
+    }
+
+    &:hover .join-button {
+        display: block
+    }
 }
 .navigate-section-tile-body {
     @extend %navigate-section-list-tile-text;

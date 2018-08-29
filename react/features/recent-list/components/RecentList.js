@@ -72,7 +72,30 @@ class RecentList extends Component<Props> {
             <NavigateSectionList
                 disabled = { disabled }
                 onPress = { this._onPress }
+                renderListEmptyComponent
+                    = { this._getRenderListEmptyComponent() }
                 sections = { recentList } />
+        );
+    }
+
+    _getRenderListEmptyComponent: () => Object;
+
+    /**
+     * Returns a list empty component if a custom one has to be rendered instead
+     * of the default one in the {@link NavigateSectionList}.
+     *
+     * @private
+     * @returns {React$Component}
+     */
+    _getRenderListEmptyComponent() {
+        const { t } = this.props;
+
+        return (
+            <div className = 'navigate-section-list-empty'>
+                <p className = 'header-text-description'>
+                    { t('welcomepage.recentListEmpty') }
+                </p>
+            </div>
         );
     }
 
@@ -90,7 +113,6 @@ class RecentList extends Component<Props> {
 
         dispatch(appNavigate(url));
     }
-
 }
 
 /**
