@@ -88,13 +88,11 @@ class Notification extends AbstractNotification<Props> {
                 </View>
                 {
                     isDismissAllowed
-                    && <View style = { styles.actionColumn }>
-                        <TouchableOpacity onPress = { this._onDismissed }>
-                            <Icon
-                                name = { 'close' }
-                                style = { styles.dismissIcon } />
-                        </TouchableOpacity>
-                    </View>
+                    && <TouchableOpacity onPress = { this._onDismissed }>
+                        <Icon
+                            name = { 'close' }
+                            style = { styles.dismissIcon } />
+                    </TouchableOpacity>
                 }
             </View>
         );
