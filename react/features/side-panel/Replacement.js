@@ -1,16 +1,23 @@
 import { regexes } from './smileys';
 
 /**
- * Processes links and smileys in "body"
+ * Function to process message.
+ *
+ * @param  {string} body - The message body.
+ * @returns {string} Message body processed.
  */
 export function processReplacements(body) {
     // make links clickable + add smileys
     return smilify(linkify(body));
 }
 
+
 /**
- * Finds and replaces all links in the links in "body"
- * with their <a href=""></a>
+ * Finds and replaces all links in the links
+ * in "body" with their <a href=""></a>.
+ *
+ * @param  {string} inputText - The message body.
+ * @returns {string} Replaced text.
  */
 export function linkify(inputText) {
     let replacedText;
@@ -38,7 +45,10 @@ export function linkify(inputText) {
 }
 
 /**
- * Replaces common smiley strings with images
+ * Replaces common smiley strings with images.
+ *
+ * @param  {string} body - The message body.
+ * @returns {string} Body returned with smiley replaced.
  */
 function smilify(body) {
     if (!body) {

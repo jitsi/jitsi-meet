@@ -4,9 +4,6 @@ const logger = require('jitsi-meet-logger').getLogger(__filename);
 
 const UI = {};
 
-import Chat from './side_pannels/chat/Chat';
-import SidePanels from './side_pannels/SidePanels';
-import SideContainerToggler from './side_pannels/SideContainerToggler';
 import messageHandler from './util/MessageHandler';
 import UIUtil from './util/UIUtil';
 import UIEvents from '../../service/UI/UIEvents';
@@ -88,9 +85,6 @@ const UIListeners = new Map([
     ], [
         UIEvents.SHARED_VIDEO_CLICKED,
         () => sharedVideoManager && sharedVideoManager.toggleSharedVideo()
-    ], [
-        UIEvents.TOGGLE_CHAT,
-        () => UI.toggleChat()
     ], [
         UIEvents.TOGGLE_FILMSTRIP,
         () => UI.handleToggleFilmstrip()
@@ -175,27 +169,12 @@ UI.notifyConferenceDestroyed = function(reason) {
 };
 
 /**
- * Show chat error.
- * @param err the Error
- * @param msg
- */
-UI.showChatError = function(err, msg) {
-    if (!interfaceConfig.filmStripOnly) {
-        Chat.chatAddError(err, msg);
-    }
-};
-
-/**
  * Change nickname for the user.
  * @param {string} id user id
  * @param {string} displayName new nickname
  */
 UI.changeDisplayName = function(id, displayName) {
     VideoLayout.onDisplayNameChanged(id, displayName);
-
-    if (APP.conference.isLocalId(id) || id === 'localVideoContainer') {
-        Chat.setChatConversationMode(Boolean(displayName));
-    }
 };
 
 /**
@@ -280,7 +259,6 @@ UI.start = function() {
     // Set the defaults for prompt dialogs.
     $.prompt.setDefaults({ persistent: false });
 
-    SideContainerToggler.init(eventEmitter);
     Filmstrip.init(eventEmitter);
 
     VideoLayout.init(eventEmitter);
@@ -306,18 +284,16 @@ UI.start = function() {
             VideoLayout.enableDeviceAvailabilityIcons(
                 APP.conference.getMyUserId(), false);
 
-            // in case of iAmSipGateway keep local video visible
-            if (!config.iAmSipGateway) {
-                VideoLayout.setLocalVideoVisible(false);
-            }
-
             APP.store.dispatch(setToolboxEnabled(false));
             APP.store.dispatch(setNotificationsEnabled(false));
             UI.messageHandler.enablePopups(false);
         }
 
-        // Initialize side panels
-        SidePanels.init(eventEmitter);
+        // in case of iAmSipGateway keep local video visible
+        if (!config.iAmSipGateway) {
+            VideoLayout.setLocalVideoVisible(false);
+        }
+
     }
 
     document.title = interfaceConfig.APP_NAME;
@@ -343,7 +319,7 @@ UI.bindEvents = () => {
      *
      */
     function onResize() {
-        SideContainerToggler.resize();
+        // todo: Chat: sideContainer Toggling
         VideoLayout.resizeVideoArea();
     }
 
@@ -504,11 +480,6 @@ UI.updateUserStatus = (user, status) => {
 };
 
 /**
- * Toggles smileys in the chat.
- */
-UI.toggleSmileys = () => Chat.toggleSmileys();
-
-/**
  * Toggles filmstrip.
  */
 UI.toggleFilmstrip = function() {
@@ -522,24 +493,6 @@ UI.toggleFilmstrip = function() {
  * @returns {true} if the filmstrip is currently visible, and false otherwise.
  */
 UI.isFilmstripVisible = () => Filmstrip.isFilmstripVisible();
-
-/**
- * @returns {true} if the chat panel is currently visible, and false otherwise.
- */
-UI.isChatVisible = () => Chat.isVisible();
-
-/**
- * Toggles chat panel.
- */
-UI.toggleChat = () => UI.toggleSidePanel('chat_container');
-
-/**
- * Toggles the given side panel.
- *
- * @param {String} sidePanelId the identifier of the side panel to toggle
- */
-UI.toggleSidePanel = sidePanelId => SideContainerToggler.toggle(sidePanelId);
-
 
 /**
  * Handle new user display name.
@@ -749,17 +702,6 @@ UI.hideStats = function() {
     VideoLayout.hideStats();
 };
 
-/**
- * Add chat message.
- * @param {string} from user id
- * @param {string} displayName user nickname
- * @param {string} message message text
- * @param {number} stamp timestamp when message was created
- */
-// eslint-disable-next-line max-params
-UI.addMessage = function(from, displayName, message, stamp) {
-    Chat.updateChatConversation(from, displayName, message, stamp);
-};
 
 UI.notifyTokenAuthFailed = function() {
     messageHandler.showError({

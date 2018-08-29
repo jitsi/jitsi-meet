@@ -27,3 +27,14 @@ export const SET_VISIBLE_PANEL = Symbol('SET_VISIBLE_PANEL');
  * }
  */
 export const TOGGLE_CHAT = Symbol('TOGGLE_CHAT');
+
+
+/**
+ * The type of the action which signals to toggle the display of smiley in the
+ * side panel.
+ *
+ * {
+ *     type: TOGGLE_SMILEY
+ * }
+ */
+export const TOGGLE_SMILEY = Symbol('TOGGLE_SMILEY');

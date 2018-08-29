@@ -18,3 +18,5 @@ export function getUnreadCount(state: Object) {
 
     return messagesCount - (lastReadIndex + 1);
 }
+
+

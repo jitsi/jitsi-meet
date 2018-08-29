@@ -1819,35 +1819,6 @@ export default {
             JitsiConferenceEvents.DOMINANT_SPEAKER_CHANGED,
             id => APP.store.dispatch(dominantSpeakerChanged(id, room)));
 
-        if (!interfaceConfig.filmStripOnly) {
-            if (isButtonEnabled('chat')) {
-                room.on(
-                    JitsiConferenceEvents.MESSAGE_RECEIVED,
-                    (id, body, ts) => {
-                        let nick = getDisplayName(id);
-
-                        if (!nick) {
-                            nick = `${
-                                interfaceConfig.DEFAULT_REMOTE_DISPLAY_NAME} (${
-                                id})`;
-                        }
-
-                        APP.API.notifyReceivedChatMessage({
-                            id,
-                            nick,
-                            body,
-                            ts
-                        });
-                        APP.UI.addMessage(id, nick, body, ts);
-                    }
-                );
-                APP.UI.addListener(UIEvents.MESSAGE_CREATED, message => {
-                    APP.API.notifySendingChatMessage(message);
-                    room.sendTextMessage(message);
-                });
-            }
-        }
-
         room.on(JitsiConferenceEvents.CONNECTION_INTERRUPTED, () => {
             APP.store.dispatch(localParticipantConnectionStatusChanged(
                 JitsiParticipantConnectionStatus.INTERRUPTED));
