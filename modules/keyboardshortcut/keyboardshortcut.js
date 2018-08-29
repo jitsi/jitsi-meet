@@ -55,10 +55,6 @@ const KeyboardShortcut = {
                     APP.UI.clickOnVideo(num);
                 }
 
-            // esc while the smileys are visible hides them
-            } else if (key === 'ESCAPE'
-                && $('#smileysContainer').is(':visible')) {
-                APP.UI.toggleSmileys();
             }
         };
 

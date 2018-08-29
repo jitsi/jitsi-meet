@@ -97,6 +97,7 @@ import {
     getLocationContextRoot,
     getJitsiMeetGlobalNS
 } from './react/features/base/util';
+import { addMessage } from './react/features/chat';
 import { showDesktopPicker } from './react/features/desktop-picker';
 import { appendSuffix } from './react/features/display-name';
 import {
@@ -424,10 +425,16 @@ class ConferenceConnector {
         switch (err) {
         case JitsiConferenceErrors.CHAT_ERROR:
             logger.error('Chat error.', err);
-            if (isButtonEnabled('chat')) {
+            if (isButtonEnabled('chat') && !interfaceConfig.filmStripOnly) {
                 const [ code, msg ] = params;
 
-                APP.UI.showChatError(code, msg);
+                APP.store.dispatch(addMessage({
+                    hasRead: true,
+                    error: code,
+                    message: msg,
+                    timestamp: Date.now(),
+                    type: 'error'
+                }));
             }
             break;
         default:
@@ -1818,35 +1825,6 @@ export default {
         room.on(
             JitsiConferenceEvents.DOMINANT_SPEAKER_CHANGED,
             id => APP.store.dispatch(dominantSpeakerChanged(id, room)));
-
-        if (!interfaceConfig.filmStripOnly) {
-            if (isButtonEnabled('chat')) {
-                room.on(
-                    JitsiConferenceEvents.MESSAGE_RECEIVED,
-                    (id, body, ts) => {
-                        let nick = getDisplayName(id);
-
-                        if (!nick) {
-                            nick = `${
-                                interfaceConfig.DEFAULT_REMOTE_DISPLAY_NAME} (${
-                                id})`;
-                        }
-
-                        APP.API.notifyReceivedChatMessage({
-                            id,
-                            nick,
-                            body,
-                            ts
-                        });
-                        APP.UI.addMessage(id, nick, body, ts);
-                    }
-                );
-                APP.UI.addListener(UIEvents.MESSAGE_CREATED, message => {
-                    APP.API.notifySendingChatMessage(message);
-                    room.sendTextMessage(message);
-                });
-            }
-        }
 
         room.on(JitsiConferenceEvents.CONNECTION_INTERRUPTED, () => {
             APP.store.dispatch(localParticipantConnectionStatusChanged(

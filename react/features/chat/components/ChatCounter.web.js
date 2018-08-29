@@ -1,13 +1,20 @@
-import PropTypes from 'prop-types';
+// @flow
+
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
 import { getUnreadCount } from '../functions';
 
 /**
- * FIXME: Move this UI logic to a generic component that can be used for
- * {@code ParticipantCounter} as well.
+ * The type of the React {@code Component} props of {@link ChatCounter}.
  */
+type Props = {
+
+    /**
+     * The value of to display as a count.
+     */
+    _count: number
+};
 
 /**
  * Implements a React {@link Component} which displays a count of the number of
@@ -15,13 +22,7 @@ import { getUnreadCount } from '../functions';
  *
  * @extends Component
  */
-class ChatCounter extends Component {
-    static propTypes = {
-        /**
-         * The number of unread chat messages in the conference.
-         */
-        _count: PropTypes.number
-    };
+class ChatCounter extends Component<Props> {
 
     /**
      * Implements React's {@link Component#render()}.

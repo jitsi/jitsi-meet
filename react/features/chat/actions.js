@@ -1,63 +1,61 @@
-import { ADD_MESSAGE, SET_LAST_READ_MESSAGE } from './actionTypes';
+import { ADD_MESSAGE, SEND_MESSAGE, TOGGLE_CHAT } from './actionTypes';
 
 /* eslint-disable max-params */
 
 /**
  * Adds a chat message to the collection of messages.
  *
- * @param {string} userName - The username to display of the participant that
- * authored the message.
- * @param {string} message - The received message to display.
- * @param {string} timestamp - A timestamp to display for when the message was
- * received.
- * @param {boolean} hasRead - Whether or not to immediately mark the message as
- * read.
+ * @param {Object} messageDetails - The chat message to save.
+ * @param {string} messageDetails.displayName - The displayName of the
+ * participant that authored the message.
+ * @param {boolean} messageDetails.hasRead - Whether or not to immediately mark
+ * the message as read.
+ * @param {string} messageDetails.message - The received message to display.
+ * @param {string} messageDetails.messageType - The kind of message, such as
+ * "error" or "local" or "remote".
+ * @param {string} messageDetails.timestamp - A timestamp to display for when
+ * the message was received.
  * @returns {{
  *     type: ADD_MESSAGE,
+ *     displayName: string,
  *     hasRead: boolean,
  *     message: string,
+ *     messageType: string,
  *     timestamp: string,
- *     userName: string
  * }}
  */
-export function addMessage(userName, message, timestamp, hasRead) {
+export function addMessage(messageDetails) {
     return {
         type: ADD_MESSAGE,
-        hasRead,
-        message,
-        timestamp,
-        userName
-    };
-}
-
-/* eslint-enable max-params */
-
-/**
- * Sets the last read message cursor to the latest message.
- *
- * @returns {Function}
- */
-export function markAllRead() {
-    return (dispatch, getState) => {
-        const { messages } = getState()['features/chat'];
-
-        dispatch(setLastReadMessage(messages[messages.length - 1]));
+        ...messageDetails
     };
 }
 
 /**
- * Updates the last read message cursor to be set at the passed in message. The
- * assumption is that messages will be ordered chronologically.
+ * Sends a chat message to everyone in the conference.
  *
- * @param {Object} message - The message from the redux state.
+ * @param {string} message - The chat message to send out.
  * @returns {{
- *     type: SET_LAST_READ_MESSAGE,
- *     message: Object
+ *     type: SEND_MESSAGE,
+ *     message: string
  * }}
  */
-export function setLastReadMessage(message) {
+export function sendMessage(message) {
     return {
-        type: SET_LAST_READ_MESSAGE,
+        type: SEND_MESSAGE,
         message
+    };
+}
+
+/**
+ * Toggles display of the chat side panel.
+ *
+ * @returns {{
+ *     type: TOGGLE_CHAT
+ * }}
+ */
+export function toggleChat() {
+    return {
+        type: TOGGLE_CHAT
     };
 }

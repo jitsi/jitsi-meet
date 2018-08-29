@@ -158,6 +158,7 @@
             "title": "Enter a nickname in the box below",
             "popover": "Choose a nickname"
         },
+        "error": "Error: your message \"__originalText__\" was not sent. Reason: __error__",
         "messagebox": "Enter text..."
     },
     "settings": {

@@ -3,21 +3,32 @@
  *
  * {
  *     type: ADD_MESSAGE,
+ *     displayName: string
  *     hasRead: boolean,
+ *     id: string,
+ *     messageType: string,
  *     message: string,
  *     timestamp: string,
- *     userName: string
  * }
  */
 export const ADD_MESSAGE = Symbol('ADD_MESSAGE');
 
 /**
- * The type of the action which updates which is the most recent message that
- * has been seen by the local participant.
+ * The type of the action which signals a send a chat message to everyone in the
+ * conference.
  *
  * {
- *     type: SET_LAST_READ_MESSAGE,
- *     message: Object
+ *     type: SEND_MESSAGE,
+ *     message: string
  * }
  */
-export const SET_LAST_READ_MESSAGE = Symbol('SET_LAST_READ_MESSAGE');
+export const SEND_MESSAGE = Symbol('SEND_MESSAGE');
+
+/**
+ * The type of the action which signals to toggle the display of the chat panel.
+ *
+ * {
+ *     type: TOGGLE_CHAT
+ * }
+ */
+export const TOGGLE_CHAT = Symbol('TOGGLE_CHAT');
