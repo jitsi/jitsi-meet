@@ -63,21 +63,6 @@ class Thumbnail extends Component<Props> {
         const participant = this.props.participant;
         const videoTrack = this.props._videoTrack;
 
-        let style = styles.thumbnail;
-
-        if (participant.pinned && !disablePin) {
-            style = {
-                ...style,
-                ...styles.thumbnailPinned
-            };
-        }
-
-        if (this.props.styleOverrides) {
-            style = {
-                ...style,
-                ...this.props.styleOverrides
-            };
-        }
 
         // We don't render audio in any of the following:
         // 1. The audio (source) is muted. There's no practical reason (that we
@@ -95,7 +80,12 @@ class Thumbnail extends Component<Props> {
         return (
             <Container
                 onClick = { disablePin ? undefined : this._onClick }
-                style = { style }>
+                style = { [
+                    styles.thumbnail,
+                    participant.pinned && !disablePin
+                        ? styles.thumbnailPinned : null,
+                    this.props.styleOverrides || null
+                ] }>
 
                 { renderAudio
                     && <Audio

@@ -31,7 +31,10 @@ export default class AbstractContainer extends Component<*> {
          * The style (as in stylesheet) to be applied to this
          * {@code AbstractContainer}.
          */
-        style: PropTypes.object,
+        style: PropTypes.oneOfType([
+            PropTypes.array,
+            PropTypes.object
+        ]),
 
         /**
          * If this instance is to provide visual feedback when touched, then
