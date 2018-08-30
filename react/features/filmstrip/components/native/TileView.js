@@ -2,7 +2,6 @@
 
 import React, { Component } from 'react';
 import {
-    Dimensions,
     ScrollView,
     TouchableWithoutFeedback,
     View
@@ -13,13 +12,16 @@ import {
     getNearestReceiverVideoQualityLevel,
     setMaxReceiverVideoQuality
 } from '../../../base/conference';
-import { ASPECT_RATIO_NARROW } from '../../../base/responsive-ui';
+import {
+    ASPECT_RATIO_NARROW,
+    DimensionsDetector
+} from '../../../base/responsive-ui';
 
 import Thumbnail from './Thumbnail';
 import styles from './styles';
 
 /**
- * TileView component's property types.
+ * The type of the React {@link Component} props of {@link TileView}.
  */
 type Props = {
 
@@ -44,6 +46,22 @@ type Props = {
     onClick: Function
 };
 
+/**
+ * The type of the React {@link Component} state of {@link TileView}.
+ */
+type State = {
+
+    /**
+     * The available width for {@link TileView} to occupy.
+     */
+    height: number,
+
+    /**
+     * The available height for {@link TileView} to occupy.
+     */
+    width: number
+};
+
 const TILE_ASPECT_RATIO = 1;
 
 /**
@@ -52,7 +70,25 @@ const TILE_ASPECT_RATIO = 1;
  *
  * @extends Component
  */
-class TileView extends Component<Props> {
+class TileView extends Component<Props, State> {
+    state = {
+        height: 0,
+        width: 0
+    };
+
+    /**
+     * Initializes a new {@code TileView} instance.
+     *
+     * @param {Object} props - The read-only properties with which the new
+     * instance is to be initialized.
+     */
+    constructor(props: Props) {
+        super(props);
+
+        // Bind event handler so it is only bound once per instance.
+        this._onDimensionsChanged = this._onDimensionsChanged.bind(this);
+    }
+
     /**
      * Updates the receiver video quality.
      *
@@ -79,28 +115,31 @@ class TileView extends Component<Props> {
      */
     render() {
         const { onClick } = this.props;
-        const { height, width } = this._getScreenDimensions();
+        const { height, width } = this.state;
         const rowElements = this._groupIntoRows(
             this._renderThumbnails(), this._getColumnCount());
 
         return (
-            <ScrollView
-                style = {{
-                    ...styles.tileView,
-                    height,
-                    width
-                }}>
-                <TouchableWithoutFeedback onPress = { onClick }>
-                    <View
-                        style = {{
-                            ...styles.tileViewRows,
-                            minHeight: height,
-                            minWidth: width
-                        }}>
-                        { rowElements }
-                    </View>
-                </TouchableWithoutFeedback>
-            </ScrollView>
+            <DimensionsDetector
+                onDimensionsChanged = { this._onDimensionsChanged }>
+                <ScrollView
+                    style = {{
+                        ...styles.tileView,
+                        height,
+                        width
+                    }}>
+                    <TouchableWithoutFeedback onPress = { onClick }>
+                        <View
+                            style = {{
+                                ...styles.tileViewRows,
+                                minHeight: height,
+                                minWidth: width
+                            }}>
+                            { rowElements }
+                        </View>
+                    </TouchableWithoutFeedback>
+                </ScrollView>
+            </DimensionsDetector>
         );
     }
 
@@ -126,16 +165,6 @@ class TileView extends Component<Props> {
         }
 
         return Math.min(3, participantCount);
-    }
-
-    /**
-     * Returns the current height and width of the screen.
-     *
-     * @private
-     * @returns {Object}
-     */
-    _getScreenDimensions() {
-        return Dimensions.get('window');
     }
 
     /**
@@ -171,7 +200,7 @@ class TileView extends Component<Props> {
      */
     _getTileDimensions() {
         const { _participants } = this.props;
-        const { height, width } = this._getScreenDimensions();
+        const { height, width } = this.state;
         const columns = this._getColumnCount();
         const participantCount = _participants.length;
         const heightToUse = height - 20;
@@ -222,6 +251,23 @@ class TileView extends Component<Props> {
         }
 
         return rowElements;
+    }
+
+    _onDimensionsChanged: (width: number, height: number) => void;
+
+    /**
+     * Updates the known available state for {@link TileView} to occupy.
+     *
+     * @param {number} width - The component's current width.
+     * @param {number} height - The component's current height.
+     * @private
+     * @returns {void}
+     */
+    _onDimensionsChanged(width: number, height: number) {
+        this.setState({
+            height,
+            width
+        });
     }
 
     /**
