@@ -2308,8 +2308,13 @@ export default {
 
         if (mediaDevices.isDeviceListAvailable()
                 && mediaDevices.isDeviceChangeAvailable()) {
-            this.deviceChangeListener = devices =>
-                window.setTimeout(() => this._onDeviceListChanged(devices), 0);
+            this.deviceChangeListener = devices => {
+                this._deviceListChangeQueue.push(devices);
+
+                if (this._deviceListChangeQueue.length === 1) {
+                    this._onDeviceListChanged();
+                }
+            };
             mediaDevices.addEventListener(
                 JitsiMediaDevicesEvents.DEVICE_LIST_CHANGED,
                 this.deviceChangeListener);
@@ -2341,13 +2346,27 @@ export default {
     },
 
     /**
+     * A backlog of updates device lists to processes. A queue is needed so
+     * that the callback is not invoked until its current execution is finished.
+     *
+     * @private
+     * @type {Array}
+     */
+    _deviceListChangeQueue: [],
+
+    /**
      * Event listener for JitsiMediaDevicesEvents.DEVICE_LIST_CHANGED to
      * handle change of available media devices.
      * @private
-     * @param {MediaDeviceInfo[]} devices
      * @returns {Promise}
      */
-    _onDeviceListChanged(devices) {
+    _onDeviceListChanged() {
+        const devices = this._deviceListChangeQueue[0];
+
+        if (!devices) {
+            return;
+        }
+
         APP.store.dispatch(updateDeviceList(devices));
 
         const newDevices
@@ -2402,6 +2421,12 @@ export default {
         return Promise.all(promises)
             .then(() => {
                 APP.UI.onAvailableDevicesChanged(devices);
+            })
+            .catch(err => logger.error(
+                'Error occurred while processesing device change event', err))
+            .then(() => {
+                this._deviceListChangeQueue.shift();
+                this._onDeviceListChanged();
             });
     },
 
