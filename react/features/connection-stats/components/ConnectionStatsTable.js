@@ -39,7 +39,12 @@ class ConnectionStatsTable extends Component {
         connectionSummary: PropTypes.string,
 
         /**
-         * Statistics related to framerates for each ssrc.
+         * The end-to-end round-trip-time.
+         */
+        e2eRtt: PropTypes.number,
+
+        /**
+         * Statistics related to frame rates for each ssrc.
          * {{
          *     [ ssrc ]: Number
          * }}
@@ -47,7 +52,7 @@ class ConnectionStatsTable extends Component {
         framerate: PropTypes.object,
 
         /**
-         * Whether or not the statitics are for local video.
+         * Whether or not the statistics are for local video.
          */
         isLocalVideo: PropTypes.bool,
 
@@ -64,6 +69,11 @@ class ConnectionStatsTable extends Component {
          * }}
          */
         packetLoss: PropTypes.object,
+
+        /**
+         * The region.
+         */
+        region: PropTypes.string,
 
         /**
          * Statistics related to display resolutions for each ssrc.
@@ -209,6 +219,31 @@ class ConnectionStatsTable extends Component {
     }
 
     /**
+     * Creates a table row as a ReactElement for displaying end-to-end RTT and
+     * the region.
+     *
+     * @returns {ReactElement}
+     * @private
+     */
+    _renderE2eRtt() {
+        const { e2eRtt, region, t } = this.props;
+        let str = e2eRtt ? `${e2eRtt.toFixed(0)}ms` : 'N/A';
+
+        if (region) {
+            str += ` (${region})`;
+        }
+
+        return (
+            <tr>
+                <td>
+                    <span>{ t('connectionindicator.e2e_rtt') }</span>
+                </td>
+                <td>{ str }</td>
+            </tr>
+        );
+    }
+
+    /**
      * Creates a table row as a ReactElement for displaying frame rate related
      * statistics.
      *
@@ -245,7 +280,6 @@ class ConnectionStatsTable extends Component {
         if (packetLoss) {
             const { download, upload } = packetLoss;
 
-            // eslint-disable-next-line no-extra-parens
             packetLossTableData = (
                 <td>
                     <span className = 'connection-info__download'>
@@ -330,12 +364,15 @@ class ConnectionStatsTable extends Component {
      * @returns {ReactElement}
      */
     _renderStatistics() {
+        const isRemoteVideo = !this.props.isLocalVideo;
+
         return (
             <table className = 'connection-info__container'>
                 <tbody>
                     { this._renderConnectionSummary() }
                     { this._renderBitrate() }
                     { this._renderPacketLoss() }
+                    { isRemoteVideo ? this._renderE2eRtt() : null }
                     { this._renderResolution() }
                     { this._renderFrameRate() }
                 </tbody>
@@ -354,7 +391,6 @@ class ConnectionStatsTable extends Component {
         const { t, transport } = this.props;
 
         if (!transport || transport.length === 0) {
-            // eslint-disable-next-line no-extra-parens
             const NA = (
                 <tr key = 'address'>
                     <td>

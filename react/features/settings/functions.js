@@ -74,24 +74,30 @@ export function shouldShowOnlyDeviceSelection() {
 export function getMoreTabProps(stateful: Object | Function) {
     const state = toState(stateful);
     const language = i18next.language || DEFAULT_LANGUAGE;
-    const conference = state['features/base/conference'];
+    const {
+        conference,
+        followMeEnabled,
+        startAudioMutedPolicy,
+        startVideoMutedPolicy
+    } = state['features/base/conference'];
     const configuredTabs = interfaceConfig.SETTINGS_SECTIONS || [];
     const localParticipant = getLocalParticipant(state);
 
 
     // The settings sections to display.
-    const showModeratorSettings
-        = configuredTabs.includes('moderator')
-            && localParticipant.role === PARTICIPANT_ROLE.MODERATOR;
+    const showModeratorSettings = Boolean(
+        conference
+            && configuredTabs.includes('moderator')
+            && localParticipant.role === PARTICIPANT_ROLE.MODERATOR);
 
     return {
         currentLanguage: language,
-        followMeEnabled: Boolean(conference.followMeEnabled),
+        followMeEnabled: Boolean(conference && followMeEnabled),
         languages: LANGUAGES,
         showLanguageSettings: configuredTabs.includes('language'),
         showModeratorSettings,
-        startAudioMuted: Boolean(conference.startAudioMutedPolicy),
-        startVideoMuted: Boolean(conference.startVideoMutedPolicy)
+        startAudioMuted: Boolean(conference && startAudioMutedPolicy),
+        startVideoMuted: Boolean(conference && startVideoMutedPolicy)
     };
 }
 
@@ -106,12 +112,16 @@ export function getMoreTabProps(stateful: Object | Function) {
  */
 export function getProfileTabProps(stateful: Object | Function) {
     const state = toState(stateful);
-    const conference = state['features/base/conference'];
+    const {
+        authEnabled,
+        authLogin,
+        conference
+    } = state['features/base/conference'];
     const localParticipant = getLocalParticipant(state);
 
     return {
-        authEnabled: conference.authEnabled,
-        authLogin: conference.authLogin,
+        authEnabled: Boolean(conference && authEnabled),
+        authLogin: Boolean(conference && authLogin),
         displayName: localParticipant.name,
         email: localParticipant.email
     };

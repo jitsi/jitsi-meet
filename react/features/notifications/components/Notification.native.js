@@ -76,7 +76,6 @@ class Notification extends AbstractNotification<Props> {
                         pointerEvents = 'box-none'
                         style = { styles.notificationContent }>
                         {
-                            // eslint-disable-next-line no-extra-parens
                             this._getDescription().map((line, index) => (
                                 <Text
                                     key = { index }

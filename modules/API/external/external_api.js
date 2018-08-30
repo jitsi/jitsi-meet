@@ -238,7 +238,9 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
                 }
             })
         });
-        this.invite(invitees);
+        if (Array.isArray(invitees) && invitees.length > 0) {
+            this.invite(invitees);
+        }
         this._isLargeVideoVisible = true;
         this._numberOfParticipants = 0;
         this._participants = {};
@@ -597,6 +599,10 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
      * @returns {Promise} - Resolves on success and rejects on failure.
      */
     invite(invitees) {
+        if (!Array.isArray(invitees) || invitees.length === 0) {
+            return Promise.reject(new TypeError('Invalid Argument'));
+        }
+
         return this._transport.sendRequest({
             name: 'invite',
             invitees

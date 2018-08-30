@@ -2,12 +2,17 @@
 
 import Button from '@atlaskit/button';
 import { FieldTextStateless } from '@atlaskit/field-text';
+import Tabs from '@atlaskit/tabs';
 import { AtlasKitThemeProvider } from '@atlaskit/theme';
 import React from 'react';
 import { connect } from 'react-redux';
 
+import { DialogContainer } from '../../base/dialog';
 import { translate } from '../../base/i18n';
-import { Watermarks } from '../../base/react';
+import { Platform, Watermarks } from '../../base/react';
+import { CalendarList } from '../../calendar-sync';
+import { RecentList } from '../../recent-list';
+import { SettingsButton, SETTINGS_TABS } from '../../settings';
 
 import { AbstractWelcomePage, _mapStateToProps } from './AbstractWelcomePage';
 
@@ -17,6 +22,15 @@ import { AbstractWelcomePage, _mapStateToProps } from './AbstractWelcomePage';
  * @extends AbstractWelcomePage
  */
 class WelcomePage extends AbstractWelcomePage {
+    /**
+     * Default values for {@code WelcomePage} component's properties.
+     *
+     * @static
+     */
+    static defaultProps = {
+        _room: ''
+    };
+
     /**
      * Initializes a new WelcomePage instance.
      *
@@ -35,7 +49,7 @@ class WelcomePage extends AbstractWelcomePage {
 
         /**
          * The HTML Element used as the container for additional content. Used
-         * for directly appending the additional content template to the dom
+         * for directly appending the additional content template to the dom.
          *
          * @private
          * @type {HTMLTemplateElement|null}
@@ -107,10 +121,12 @@ class WelcomePage extends AbstractWelcomePage {
                 <div
                     className = { `welcome ${showAdditionalContent
                         ? 'with-content' : 'without-content'}` }
-                    id = 'new_welcome_page'>
+                    id = 'welcome_page'>
+                    <div className = 'welcome-watermark'>
+                        <Watermarks />
+                    </div>
                     <div className = 'header'>
                         <div className = 'header-image' />
-                        <Watermarks />
                         <div className = 'header-text'>
                             <h1 className = 'header-text-title'>
                                 { t('welcomepage.title') }
@@ -120,7 +136,7 @@ class WelcomePage extends AbstractWelcomePage {
                                     { app: APP_NAME }) }
                             </p>
                         </div>
-                        <div id = 'new_enter_room'>
+                        <div id = 'enter_room'>
                             <form
                                 className = 'enter-room-input'
                                 onSubmit = { this._onFormSubmit }>
@@ -144,6 +160,7 @@ class WelcomePage extends AbstractWelcomePage {
                                 { t('welcomepage.go') }
                             </Button>
                         </div>
+                        { this._renderTabs() }
                     </div>
                     { showAdditionalContent
                         ? <div
@@ -151,12 +168,15 @@ class WelcomePage extends AbstractWelcomePage {
                             ref = { this._setAdditionalContentRef } />
                         : null }
                 </div>
+                <AtlasKitThemeProvider mode = 'dark'>
+                    <DialogContainer />
+                </AtlasKitThemeProvider>
             </AtlasKitThemeProvider>
         );
     }
 
     /**
-     * Prevents submission of the form and delagates join logic.
+     * Prevents submission of the form and delegates join logic.
      *
      * @param {Event} event - The HTML Event which details the form submission.
      * @private
@@ -183,6 +203,47 @@ class WelcomePage extends AbstractWelcomePage {
     }
 
     /**
+     * Renders tabs to show previous meetings and upcoming calendar events. The
+     * tabs are purposefully hidden on mobile browsers.
+     *
+     * @returns {ReactElement|null}
+     */
+    _renderTabs() {
+        const isMobileBrowser
+            = Platform.OS === 'android' || Platform.OS === 'ios';
+
+        if (isMobileBrowser) {
+            return null;
+        }
+
+        const { t } = this.props;
+
+        const tabs = [];
+
+        if (CalendarList) {
+            tabs.push({
+                label: t('welcomepage.calendar'),
+                content: <CalendarList />,
+                defaultSelected: true
+            });
+        }
+
+        tabs.push({
+            label: t('welcomepage.recentList'),
+            content: <RecentList />,
+            defaultSelected: !CalendarList
+        });
+
+        return (
+            <div className = 'tab-container' >
+                <div className = 'welcome-page-settings'>
+                    <SettingsButton defaultTab = { SETTINGS_TABS.CALENDAR } />
+                </div>
+                <Tabs tabs = { tabs } />
+            </div>);
+    }
+
+    /**
      * Sets the internal reference to the HTMLDivElement used to hold the
      * welcome page content.
      *
@@ -196,7 +257,7 @@ class WelcomePage extends AbstractWelcomePage {
     }
 
     /**
-     * Returns whether or not additional content should be displayed belowed
+     * Returns whether or not additional content should be displayed below
      * the welcome page's header for entering a room name.
      *
      * @private

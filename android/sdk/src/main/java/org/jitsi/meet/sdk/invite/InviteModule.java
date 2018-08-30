@@ -24,12 +24,15 @@ import com.facebook.react.bridge.ReactMethod;
 import com.facebook.react.bridge.ReadableArray;
 import com.facebook.react.bridge.UiThreadUtil;
 
+import org.jitsi.meet.sdk.BaseReactView;
 import org.jitsi.meet.sdk.JitsiMeetView;
 
 /**
  * Implements the react-native module of the feature invite.
  */
-public class InviteModule extends ReactContextBaseJavaModule {
+public class InviteModule
+    extends ReactContextBaseJavaModule {
+
     public InviteModule(ReactApplicationContext reactContext) {
         super(reactContext);
     }
@@ -67,7 +70,8 @@ public class InviteModule extends ReactContextBaseJavaModule {
     private InviteController findInviteControllerByExternalAPIScope(
             String externalAPIScope) {
         JitsiMeetView view
-            = JitsiMeetView.findViewByExternalAPIScope(externalAPIScope);
+            = (JitsiMeetView)
+                BaseReactView.findViewByExternalAPIScope(externalAPIScope);
 
         return view == null ? null : view.getInviteController();
     }
@@ -81,7 +85,8 @@ public class InviteModule extends ReactContextBaseJavaModule {
      * Callback for invitation failures
      *
      * @param failedInvitees the items for which the invitation failed
-     * @param addPeopleControllerScope a string that represents a connection to a specific AddPeopleController
+     * @param addPeopleControllerScope a string that represents a connection to
+     * a specific AddPeopleController
      */
     @ReactMethod
     public void inviteSettled(
@@ -123,7 +128,8 @@ public class InviteModule extends ReactContextBaseJavaModule {
      *
      * @param results the results in a ReadableArray of ReadableMap objects
      * @param query the query associated with the search
-     * @param addPeopleControllerScope a string that represents a connection to a specific AddPeopleController
+     * @param addPeopleControllerScope a string that represents a connection to
+     * a specific AddPeopleController
      */
     @ReactMethod
     public void receivedResults(

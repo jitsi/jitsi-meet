@@ -1,5 +1,7 @@
 // @flow
 
+const logger = require('jitsi-meet-logger').getLogger(__filename);
+
 /**
  * Returns the namespace for all global variables, functions, etc that we need.
  *
@@ -17,6 +19,29 @@ export function getJitsiMeetGlobalNS() {
     }
 
     return window.JitsiMeetJS.app;
+}
+
+/**
+ * Gets the description of a specific {@code Symbol}.
+ *
+ * @param {Symbol} symbol - The {@code Symbol} to retrieve the description of.
+ * @private
+ * @returns {string} The description of {@code symbol}.
+ */
+export function getSymbolDescription(symbol: ?Symbol) {
+    let description = symbol ? symbol.toString() : 'undefined';
+
+    if (description.startsWith('Symbol(') && description.endsWith(')')) {
+        description = description.slice(7, -1);
+    }
+
+    // The polyfill es6-symbol that we use does not appear to comply with the
+    // Symbol standard and, merely, adds @@ at the beginning of the description.
+    if (description.startsWith('@@')) {
+        description = description.slice(2);
+    }
+
+    return description;
 }
 
 /**
@@ -41,4 +66,16 @@ export function assignIfDefined(target: Object, source: Object) {
     }
 
     return to;
+}
+
+/**
+ * Prints the error and reports it to the global error handler.
+ *
+ * @param {Error} e - The error object.
+ * @param {string} msg - A custom message to print in addition to the error.
+ * @returns {void}
+ */
+export function reportError(e: Object, msg: string = '') {
+    logger.error(msg, e);
+    window.onerror && window.onerror(msg, null, null, null, e);
 }

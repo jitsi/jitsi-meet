@@ -37,9 +37,10 @@ import {
     SET_DESKTOP_SHARING_ENABLED,
     SET_FOLLOW_ME,
     SET_LASTN,
+    SET_MAX_RECEIVER_VIDEO_QUALITY,
     SET_PASSWORD,
     SET_PASSWORD_FAILED,
-    SET_RECEIVE_VIDEO_QUALITY,
+    SET_PREFERRED_RECEIVER_VIDEO_QUALITY,
     SET_ROOM,
     SET_START_MUTED_POLICY
 } from './actionTypes';
@@ -54,7 +55,6 @@ import {
     getCurrentConference,
     sendLocalParticipant
 } from './functions';
-
 import type { Dispatch } from 'redux';
 
 const logger = require('jitsi-meet-logger').getLogger(__filename);
@@ -571,6 +571,23 @@ export function setLastN(lastN: ?number) {
 }
 
 /**
+ * Sets the max frame height that should be received from remote videos.
+ *
+ * @param {number} maxReceiverVideoQuality - The max video frame height to
+ * receive.
+ * @returns {{
+ *     type: SET_MAX_RECEIVER_VIDEO_QUALITY,
+ *     maxReceiverVideoQuality: number
+ * }}
+ */
+export function setMaxReceiverVideoQuality(maxReceiverVideoQuality: number) {
+    return {
+        type: SET_MAX_RECEIVER_VIDEO_QUALITY,
+        maxReceiverVideoQuality
+    };
+}
+
+/**
  * Sets the password to join or lock a specific JitsiConference.
  *
  * @param {JitsiConference} conference - The JitsiConference which requires a
@@ -642,18 +659,21 @@ export function setPassword(
 }
 
 /**
- * Sets the max frame height to receive from remote participant videos.
+ * Sets the max frame height the user prefers to receive from remote participant
+ * videos.
  *
- * @param {number} receiveVideoQuality - The max video resolution to receive.
+ * @param {number} preferredReceiverVideoQuality - The max video resolution to
+ * receive.
  * @returns {{
- *     type: SET_RECEIVE_VIDEO_QUALITY,
- *     receiveVideoQuality: number
+ *     type: SET_PREFERRED_RECEIVER_VIDEO_QUALITY,
+ *     preferredReceiverVideoQuality: number
  * }}
  */
-export function setReceiveVideoQuality(receiveVideoQuality: number) {
+export function setPreferredReceiverVideoQuality(
+        preferredReceiverVideoQuality: number) {
     return {
-        type: SET_RECEIVE_VIDEO_QUALITY,
-        receiveVideoQuality
+        type: SET_PREFERRED_RECEIVER_VIDEO_QUALITY,
+        preferredReceiverVideoQuality
     };
 }
 

@@ -121,17 +121,15 @@ class Filmstrip extends Component<Props> {
                             && <LocalThumbnail />
                     }
                     {
-                        /* eslint-disable react/jsx-wrap-multilines */
 
                         this._sort(
                                 this.props._participants,
                                 isNarrowAspectRatio_)
-                            .map(p =>
+                            .map(p => (
                                 <Thumbnail
                                     key = { p.id }
-                                    participant = { p } />)
+                                    participant = { p } />))
 
-                        /* eslint-enable react/jsx-wrap-multilines */
                     }
                     {
                         !this._separateLocalThumbnail

@@ -6,7 +6,7 @@ import { connect } from 'react-redux';
 
 import { translate } from '../../base/i18n';
 import { PagedList } from '../../base/react';
-import { MeetingList } from '../../calendar-sync';
+import { CalendarList } from '../../calendar-sync';
 import { RecentList } from '../../recent-list';
 
 import { setWelcomePageListsDefaultPage } from '../actions';
@@ -82,7 +82,7 @@ class WelcomePageLists extends Component<Props> {
                 title: t('welcomepage.recentList')
             },
             {
-                component: MeetingList,
+                component: CalendarList,
                 icon: android ? 'event_note' : IOS_CALENDAR_ICON,
                 title: t('welcomepage.calendar')
             }

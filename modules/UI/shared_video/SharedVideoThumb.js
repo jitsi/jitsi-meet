@@ -1,4 +1,6 @@
-/* global $ */
+/* global $, APP */
+import { shouldDisplayTileView } from '../../../react/features/video-layout';
+
 import SmallVideo from '../videolayout/SmallVideo';
 
 const logger = require('jitsi-meet-logger').getLogger(__filename);
@@ -50,17 +52,23 @@ SharedVideoThumb.prototype.createContainer = function(spanId) {
     displayNameContainer.className = 'displayNameContainer';
     container.appendChild(displayNameContainer);
 
-    const remotes = document.getElementById('filmstripRemoteVideosContainer');
+    const remoteVideosContainer
+        = document.getElementById('filmstripRemoteVideosContainer');
+    const localVideoContainer
+        = document.getElementById('localVideoTileViewContainer');
 
+    remoteVideosContainer.insertBefore(container, localVideoContainer);
 
-    return remotes.appendChild(container);
+    return container;
 };
 
 /**
  * The thumb click handler.
  */
 SharedVideoThumb.prototype.videoClick = function() {
-    this._togglePin();
+    if (!shouldDisplayTileView(APP.store.getState())) {
+        this._togglePin();
+    }
 };
 
 /**

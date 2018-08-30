@@ -2,7 +2,10 @@
 
 import _ from 'lodash';
 
-import { JitsiConnectionQualityEvents } from '../base/lib-jitsi-meet';
+import {
+    JitsiConnectionQualityEvents,
+    JitsiE2ePingEvents
+} from '../base/lib-jitsi-meet';
 
 declare var APP: Object;
 
@@ -33,6 +36,17 @@ const statsEmitter = {
 
         conference.on(JitsiConnectionQualityEvents.REMOTE_STATS_UPDATED,
             (id, stats) => this._emitStatsUpdate(id, stats));
+
+        conference.on(
+            JitsiE2ePingEvents.E2E_RTT_CHANGED,
+            (participant, e2eRtt) => {
+                const stats = {
+                    e2eRtt,
+                    region: participant.getProperty('region')
+                };
+
+                this._emitStatsUpdate(participant.getId(), stats);
+            });
     },
 
     /**

@@ -4,6 +4,7 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 
 import { Watermarks } from '../../base/react';
+import { TranscriptionSubtitles } from '../../subtitles/';
 
 import Labels from './Labels';
 
@@ -49,7 +50,7 @@ export default class LargeVideo extends Component<*> {
                 </div>
                 <div id = 'remotePresenceMessage' />
                 <span id = 'remoteConnectionMessage' />
-                <div>
+                <div id = 'largeVideoElementsContainer'>
                     <div id = 'largeVideoBackgroundContainer' />
                     {
 
@@ -70,6 +71,8 @@ export default class LargeVideo extends Component<*> {
                             muted = { true } />
                     </div>
                 </div>
+                { interfaceConfig.DISABLE_TRANSCRIPTION_SUBTITLES
+                    ? null : <TranscriptionSubtitles /> }
                 <span id = 'localConnectionMessage' />
                 { this.props.hideVideoQualityLabel
                     ? null : <Labels /> }

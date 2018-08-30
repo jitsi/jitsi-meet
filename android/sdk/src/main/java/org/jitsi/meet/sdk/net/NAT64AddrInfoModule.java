@@ -32,7 +32,9 @@ import java.net.UnknownHostException;
  * [1]: https://tools.ietf.org/html/rfc6146
  * [2]: https://tools.ietf.org/html/rfc6052
  */
-public class NAT64AddrInfoModule extends ReactContextBaseJavaModule {
+public class NAT64AddrInfoModule
+    extends ReactContextBaseJavaModule {
+
     /**
      * The host for which the module wil try to resolve both IPv4 and IPv6
      * addresses in order to figure out the NAT64 prefix.

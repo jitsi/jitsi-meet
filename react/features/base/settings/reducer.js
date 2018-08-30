@@ -128,23 +128,23 @@ function _initSettings(featureState) {
         const audioOutputDeviceId
             = window.localStorage.getItem('audioOutputDeviceId') || 'default';
 
-        if (audioOutputDeviceId
-            !== JitsiMeetJS.mediaDevices.getAudioOutputDevice()) {
-            JitsiMeetJS.mediaDevices.setAudioOutputDevice(
-                audioOutputDeviceId
-            ).catch(ex => {
-                logger.warn('Failed to set audio output device from local '
-                    + 'storage. Default audio output device will be used'
-                    + 'instead.', ex);
-            });
-        }
-
         settings = assignIfDefined({
             audioOutputDeviceId,
             cameraDeviceId,
             localFlipX,
             micDeviceId
         }, settings);
+
+        if (settings.audioOutputDeviceId
+            !== JitsiMeetJS.mediaDevices.getAudioOutputDevice()) {
+            JitsiMeetJS.mediaDevices.setAudioOutputDevice(
+                settings.audioOutputDeviceId
+            ).catch(ex => {
+                logger.warn('Failed to set audio output device from local '
+                    + 'storage. Default audio output device will be used'
+                    + 'instead.', ex);
+            });
+        }
     }
 
     // Things we stored in profile earlier

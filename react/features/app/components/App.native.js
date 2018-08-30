@@ -11,6 +11,7 @@ import {
     AspectRatioDetector,
     ReducedUIDetector
 } from '../../base/responsive-ui';
+import '../../google-api';
 import '../../mobile/audio-mode';
 import '../../mobile/background';
 import '../../mobile/callkit';
@@ -25,6 +26,8 @@ import { AbstractApp } from './AbstractApp';
 import type { Props as AbstractAppProps } from './AbstractApp';
 
 declare var __DEV__;
+
+const logger = require('jitsi-meet-logger').getLogger(__filename);
 
 /**
  * The type of React {@code Component} props of {@link App}.
@@ -196,7 +199,7 @@ function _handleException(error, fatal) {
         // an unhandled JavascriptException for an unhandled JavaScript error.
         // This will effectively kill the app. In accord with the Web, do not
         // kill the app.
-        console.error(error);
+        logger.error(error);
     } else {
         // Forward to the next globalHandler of ErrorUtils.
         const { next } = _handleException;

@@ -24,8 +24,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.media.AudioManager;
-import android.os.Handler;
-import android.os.Looper;
 import android.util.Log;
 
 /**
@@ -54,12 +52,6 @@ class BluetoothHeadsetMonitor {
      * available.
      */
     private boolean headsetAvailable = false;
-
-    /**
-     * {@link Handler} for running all operations on the main thread.
-     */
-    private final Handler mainThreadHandler
-        = new Handler(Looper.getMainLooper());
 
     /**
      * Helper for running Bluetooth operations on the main thread.
@@ -200,6 +192,6 @@ class BluetoothHeadsetMonitor {
      * {@link AudioModeModule#onAudioDeviceChange()} callback.
      */
     private void updateDevices() {
-        mainThreadHandler.post(updateDevicesRunnable);
+        audioModeModule.runInAudioThread(updateDevicesRunnable);
     }
 }

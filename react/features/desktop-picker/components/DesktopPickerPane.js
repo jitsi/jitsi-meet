@@ -61,18 +61,16 @@ class DesktopPickerPane extends Component {
         const classNames
             = `desktop-picker-pane default-scrollbar source-type-${type}`;
         const previews
-            = sources ? sources.map(
-                source =>
-
-                    // eslint-disable-next-line react/jsx-wrap-multilines
+            = sources
+                ? sources.map(source => (
                     <DesktopSourcePreview
                         key = { source.id }
                         onClick = { onClick }
                         onDoubleClick = { onDoubleClick }
                         selected = { source.id === selectedSourceId }
                         source = { source }
-                        type = { type } />)
-                : ( // eslint-disable-line no-extra-parens
+                        type = { type } />))
+                : (
                     <div className = 'desktop-picker-pane-spinner'>
                         <Spinner
                             isCompleting = { false }

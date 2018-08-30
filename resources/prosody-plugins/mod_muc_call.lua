@@ -20,8 +20,7 @@ local calling_status   = "calling"
 local busy_status      = "busy"
 local rejected_status  = "rejected"
 local connected_status = "connected"
-
-
+local expired_status   = "expired"
 
 -- url_from_room_jid will determine the url for a conference
 -- provided a room jid. It is required that muc domain mapping
@@ -92,6 +91,11 @@ module:hook(
             return
         end
 
+        local missed = function()
+            cancel()
+            ext_events.missed(event.stanza, call_id)
+        end
+
         -- All other call flow actions will require a status.
         if event.stanza:get_child_text("status") == nil then
             return
@@ -101,7 +105,8 @@ module:hook(
             case = {
                 [calling_status]   = function() invite() end,
                 [busy_status]      = function() cancel() end,
-                [rejected_status]  = function() cancel() end,
+                [rejected_status]  = function() missed() end,
+                [expired_status]   = function() missed() end,
                 [connected_status] = function() cancel() end
             }
             if case[status] then case[status]() end

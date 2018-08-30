@@ -45,13 +45,14 @@ var interfaceConfig = {
      * jwt.
      */
     TOOLBAR_BUTTONS: [
-        'microphone', 'camera', 'desktop', 'fullscreen', 'fodeviceselection', 'hangup',
-        'profile', 'info', 'chat', 'recording', 'livestreaming', 'etherpad',
-        'sharedvideo', 'settings', 'raisehand', 'videoquality', 'filmstrip',
-        'invite', 'feedback', 'stats', 'shortcuts'
+        'microphone', 'camera', 'closedcaptions', 'desktop', 'fullscreen',
+        'fodeviceselection', 'hangup', 'profile', 'info', 'chat', 'recording',
+        'livestreaming', 'etherpad', 'sharedvideo', 'settings', 'raisehand',
+        'videoquality', 'filmstrip', 'invite', 'feedback', 'stats', 'shortcuts',
+        'tileview'
     ],
 
-    SETTINGS_SECTIONS: [ 'devices', 'language', 'moderator', 'profile' ],
+    SETTINGS_SECTIONS: [ 'devices', 'language', 'moderator', 'profile', 'calendar' ],
 
     // Determines how the video would fit the screen. 'both' would fit the whole
     // screen, 'height' would fit the original video height to the height of the
@@ -79,6 +80,14 @@ var interfaceConfig = {
     ENABLE_FEEDBACK_ANIMATION: false,
     DISABLE_FOCUS_INDICATOR: false,
     DISABLE_DOMINANT_SPEAKER_INDICATOR: false,
+
+    /**
+     * Whether the speech to text transcription subtitles panel is disabled.
+     * If {@code undefined}, defaults to {@code false}.
+     *
+     * @type {boolean}
+     */
+    DISABLE_TRANSCRIPTION_SUBTITLES: false,
 
     /**
      * Whether the ringing sound in the call/ring overlay is disabled. If
@@ -155,7 +164,20 @@ var interfaceConfig = {
      *
      * @type {boolean}
      */
-    VIDEO_QUALITY_LABEL_DISABLED: false
+    VIDEO_QUALITY_LABEL_DISABLED: false,
+
+    /**
+     * If true, will display recent list
+     *
+     * @type {boolean}
+     */
+    RECENT_LIST_ENABLED: true
+
+    /**
+     * How many columns the tile view can expand to. The respected range is
+     * between 1 and 5.
+     */
+    // TILE_VIEW_MAX_COLUMNS: 5,
 
     /**
      * Specify custom URL for downloading android mobile app.

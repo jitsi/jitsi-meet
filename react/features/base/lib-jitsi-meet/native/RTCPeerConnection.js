@@ -3,6 +3,8 @@
 import { NativeModules } from 'react-native';
 import { RTCPeerConnection, RTCSessionDescription } from 'react-native-webrtc';
 
+const logger = require('jitsi-meet-logger').getLogger(__filename);
+
 /* eslint-disable no-unused-vars */
 
 // Address families.
@@ -71,14 +73,6 @@ export default function _RTCPeerConnection(...args: any[]) {
 _RTCPeerConnection.prototype = Object.create(RTCPeerConnection.prototype);
 _RTCPeerConnection.prototype.constructor = _RTCPeerConnection;
 
-_RTCPeerConnection.prototype.addIceCandidate
-    = _makePromiseAware(RTCPeerConnection.prototype.addIceCandidate, 1, 0);
-
-_RTCPeerConnection.prototype.createAnswer
-    = _makePromiseAware(RTCPeerConnection.prototype.createAnswer, 0, 1);
-_RTCPeerConnection.prototype.createOffer
-    = _makePromiseAware(RTCPeerConnection.prototype.createOffer, 0, 1);
-
 _RTCPeerConnection.prototype._invokeOnaddstream = function(...args) {
     const onaddstream = this._onaddstream;
 
@@ -102,32 +96,14 @@ _RTCPeerConnection.prototype._queueOnaddstream = function(...args) {
     this._onaddstreamQueue.push(Array.from(args));
 };
 
-_RTCPeerConnection.prototype.setLocalDescription
-  = _makePromiseAware(RTCPeerConnection.prototype.setLocalDescription, 1, 0);
-
-_RTCPeerConnection.prototype.setRemoteDescription = function(
-        sessionDescription,
-        successCallback,
-        errorCallback) {
-    // If the deprecated callback-based version is used, translate it to the
-    // Promise-based version.
-    if (typeof successCallback !== 'undefined'
-            || typeof errorCallback !== 'undefined') {
-        // XXX Returning a Promise is not necessary. But I don't see why it'd
-        // hurt (much).
-        return (
-            _RTCPeerConnection.prototype.setRemoteDescription.call(
-                    this,
-                    sessionDescription)
-                .then(successCallback, errorCallback));
-    }
+_RTCPeerConnection.prototype.setRemoteDescription = function(description) {
 
     return (
-        _synthesizeIPv6Addresses(sessionDescription)
+        _synthesizeIPv6Addresses(description)
             .catch(reason => {
                 reason && _LOGE(reason);
 
-                return sessionDescription;
+                return description;
             })
             .then(value => _setRemoteDescription.bind(this)(value)));
 
@@ -140,50 +116,7 @@ _RTCPeerConnection.prototype.setRemoteDescription = function(
  * @returns {void}
  */
 function _LOGE(...args) {
-    console && console.error && console.error(...args);
-}
-
-/**
- * Makes a {@code Promise}-returning function out of a specific void function
- * with {@code successCallback} and {@code failureCallback}.
- *
- * @param {Function} f - The (void) function with {@code successCallback} and
- * {@code failureCallback}.
- * @param {number} beforeCallbacks - The number of arguments before
- * {@code successCallback} and {@code failureCallback}.
- * @param {number} afterCallbacks - The number of arguments after
- * {@code successCallback} and {@code failureCallback}.
- * @returns {Promise}
- */
-function _makePromiseAware(
-        f: Function,
-        beforeCallbacks: number,
-        afterCallbacks: number) {
-    return function(...args) {
-        return new Promise((resolve, reject) => {
-            if (args.length <= beforeCallbacks + afterCallbacks) {
-                args.splice(beforeCallbacks, 0, resolve, reject);
-            }
-
-            let fPromise;
-
-            try {
-                // eslint-disable-next-line no-invalid-this
-                fPromise = f.apply(this, args);
-            } catch (e) {
-                reject(e);
-            }
-
-            // If the super implementation returns a Promise from the deprecated
-            // invocation by any chance, try to make sense of it.
-            if (fPromise) {
-                const { then } = fPromise;
-
-                typeof then === 'function'
-                    && then.call(fPromise, resolve, reject);
-            }
-        });
-    };
+    logger.error(...args);
 }
 
 /**
@@ -191,13 +124,13 @@ function _makePromiseAware(
  * implementation which uses the deprecated, callback-based version to the
  * {@code Promise}-based version.
  *
- * @param {RTCSessionDescription} sessionDescription - The RTCSessionDescription
+ * @param {RTCSessionDescription} description - The RTCSessionDescription
  * which specifies the configuration of the remote end of the connection.
  * @private
  * @private
  * @returns {Promise}
  */
-function _setRemoteDescription(sessionDescription) {
+function _setRemoteDescription(description) {
     return new Promise((resolve, reject) => {
 
         /* eslint-disable no-invalid-this */
@@ -206,10 +139,8 @@ function _setRemoteDescription(sessionDescription) {
         // setRemoteDescription calls. I shouldn't be but... anyway.
         this._onaddstreamQueue = [];
 
-        RTCPeerConnection.prototype.setRemoteDescription.call(
-            this,
-            sessionDescription,
-            (...args) => {
+        RTCPeerConnection.prototype.setRemoteDescription.call(this, description)
+            .then((...args) => {
                 let q;
 
                 try {
@@ -220,8 +151,7 @@ function _setRemoteDescription(sessionDescription) {
                 }
 
                 this._invokeQueuedOnaddstream(q);
-            },
-            (...args) => {
+            }, (...args) => {
                 this._onaddstreamQueue = undefined;
 
                 reject(...args);

@@ -86,19 +86,20 @@ class BroadcastsDropdown extends PureComponent {
     render() {
         const { broadcasts, selectedBoundStreamID, t } = this.props;
 
-        const dropdownItems = broadcasts.map(broadcast =>
-            // eslint-disable-next-line react/jsx-wrap-multilines
-            <DropdownItem
-                key = { broadcast.boundStreamID }
-                // eslint-disable-next-line react/jsx-no-bind
-                onClick = { () => this._onSelect(broadcast.boundStreamID) }>
-                { broadcast.title }
-            </DropdownItem>
-        );
-        const selected = this.props.broadcasts.find(
-            broadcast => broadcast.boundStreamID === selectedBoundStreamID);
-        const triggerText = (selected && selected.title)
-            || t('liveStreaming.choose');
+        const dropdownItems
+            = broadcasts.map(broadcast => (
+                <DropdownItem
+                    key = { broadcast.boundStreamID }
+
+                    // eslint-disable-next-line react/jsx-no-bind
+                    onClick = { () => this._onSelect(broadcast.boundStreamID) }>
+                    { broadcast.title }
+                </DropdownItem>));
+        const selected
+            = this.props.broadcasts.find(
+                broadcast => broadcast.boundStreamID === selectedBoundStreamID);
+        const triggerText
+            = (selected && selected.title) || t('liveStreaming.choose');
 
         return (
             <div className = 'broadcast-dropdown'>

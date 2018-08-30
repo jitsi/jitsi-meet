@@ -229,7 +229,7 @@ class VideoTransform extends Component<Props, State> {
                 onLayout = { this._onLayout }
                 pointerEvents = 'box-only'
                 style = { [
-                    styles.videoTransformedViewContaier,
+                    styles.videoTransformedViewContainer,
                     style
                 ] }
                 { ...this.gestureHandlers.panHandlers }>

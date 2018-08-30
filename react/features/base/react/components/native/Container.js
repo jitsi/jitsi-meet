@@ -34,6 +34,7 @@ export default class Container extends AbstractContainer {
             accessible,
             onClick,
             touchFeedback = onClick,
+            underlayColor,
             visible = true,
             ...props
         } = this.props;
@@ -62,7 +63,8 @@ export default class Container extends AbstractContainer {
                     {
                         accessibilityLabel,
                         accessible,
-                        onPress: onClick
+                        onPress: onClick,
+                        underlayColor
                     },
                     element);
         }

@@ -7,8 +7,6 @@ import Recorder from './modules/recorder/Recorder';
 
 import mediaDeviceHelper from './modules/devices/mediaDeviceHelper';
 
-import { reportError } from './modules/util/helpers';
-
 import * as RemoteControlEvents
     from './service/remotecontrol/RemoteControlEvents';
 import UIEvents from './service/UI/UIEvents';
@@ -18,7 +16,6 @@ import * as JitsiMeetConferenceEvents from './ConferenceEvents';
 import {
     createDeviceChangedEvent,
     createScreenSharingEvent,
-    createSelectParticipantFailedEvent,
     createStreamSwitchDelayEvent,
     createTrackMutedEvent,
     sendAnalytics
@@ -38,6 +35,7 @@ import {
     conferenceJoined,
     conferenceLeft,
     conferenceWillJoin,
+    conferenceWillLeave,
     dataChannelOpened,
     EMAIL_COMMAND,
     lockStateChanged,
@@ -47,6 +45,7 @@ import {
     setDesktopSharingEnabled
 } from './react/features/base/conference';
 import {
+    getAvailableDevices,
     setAudioOutputDeviceId,
     updateDeviceList
 } from './react/features/base/devices';
@@ -75,6 +74,8 @@ import {
     getAvatarURLByParticipantId,
     getLocalParticipant,
     getParticipantById,
+    hiddenParticipantJoined,
+    hiddenParticipantLeft,
     localParticipantConnectionStatusChanged,
     localParticipantRoleChanged,
     MAX_DISPLAY_NAME_LENGTH,
@@ -109,6 +110,7 @@ import {
 } from './react/features/overlay';
 import { setSharedVideoStatus } from './react/features/shared-video';
 import { isButtonEnabled } from './react/features/toolbox';
+import { endpointMessageReceived } from './react/features/subtitles';
 
 const logger = require('jitsi-meet-logger').getLogger(__filename);
 
@@ -372,6 +374,8 @@ class ConferenceConnector {
 
         case JitsiConferenceErrors.FOCUS_LEFT:
         case JitsiConferenceErrors.VIDEOBRIDGE_NOT_AVAILABLE:
+            APP.store.dispatch(conferenceWillLeave(room));
+
             // FIXME the conference should be stopped by the library and not by
             // the app. Both the errors above are unrecoverable from the library
             // perspective.
@@ -468,6 +472,7 @@ function _connectionFailedHandler(error) {
             JitsiConnectionEvents.CONNECTION_FAILED,
             _connectionFailedHandler);
         if (room) {
+            APP.store.dispatch(conferenceWillLeave(room));
             room.leave();
         }
     }
@@ -699,7 +704,7 @@ export default {
                         track.mute();
                     }
                 });
-                logger.log('initialized with %s local tracks', tracks.length);
+                logger.log(`initialized with ${tracks.length} local tracks`);
                 this._localTracksInitialized = true;
                 con.addEventListener(
                     JitsiConnectionEvents.CONNECTION_FAILED,
@@ -1656,10 +1661,13 @@ export default {
         room.on(JitsiConferenceEvents.PARTCIPANT_FEATURES_CHANGED,
             user => APP.UI.onUserFeaturesChanged(user));
         room.on(JitsiConferenceEvents.USER_JOINED, (id, user) => {
+            const displayName = user.getDisplayName();
+
             if (user.isHidden()) {
+                APP.store.dispatch(hiddenParticipantJoined(id, displayName));
+
                 return;
             }
-            const displayName = user.getDisplayName();
 
             APP.store.dispatch(participantJoined({
                 botType: user.getBotType(),
@@ -1670,7 +1678,7 @@ export default {
                 role: user.getRole()
             }));
 
-            logger.log('USER %s connnected', id, user);
+            logger.log(`USER ${id} connnected:`, user);
             APP.API.notifyUserJoined(id, {
                 displayName,
                 formattedDisplayName: appendSuffix(
@@ -1684,10 +1692,13 @@ export default {
 
         room.on(JitsiConferenceEvents.USER_LEFT, (id, user) => {
             if (user.isHidden()) {
+                APP.store.dispatch(hiddenParticipantLeft(id));
+
                 return;
             }
+
             APP.store.dispatch(participantLeft(id, room));
-            logger.log('USER %s LEFT', id, user);
+            logger.log(`USER ${id} LEFT:`, user);
             APP.API.notifyUserLeft(id);
             APP.UI.messageHandler.participantNotification(
                 user.getDisplayName(),
@@ -1812,24 +1823,6 @@ export default {
                     room.sendTextMessage(message);
                 });
             }
-
-            APP.UI.addListener(UIEvents.SELECTED_ENDPOINT, id => {
-                APP.API.notifyOnStageParticipantChanged(id);
-                try {
-                    // do not try to select participant if there is none (we
-                    // are alone in the room), otherwise an error will be
-                    // thrown cause reporting mechanism is not available
-                    // (datachannels currently)
-                    if (room.getParticipants().length === 0) {
-                        return;
-                    }
-
-                    room.selectParticipant(id);
-                } catch (e) {
-                    sendAnalytics(createSelectParticipantFailedEvent(e));
-                    reportError(e);
-                }
-            });
         }
 
         room.on(JitsiConferenceEvents.CONNECTION_INTERRUPTED, () => {
@@ -1874,6 +1867,10 @@ export default {
                 }));
             }
         );
+
+        room.on(
+            JitsiConferenceEvents.ENDPOINT_MESSAGE_RECEIVED,
+            (...args) => APP.store.dispatch(endpointMessageReceived(...args)));
 
         room.on(
             JitsiConferenceEvents.LOCK_STATE_CHANGED,
@@ -2133,20 +2130,6 @@ export default {
             }
         );
 
-        APP.UI.addListener(
-            UIEvents.AUDIO_OUTPUT_DEVICE_CHANGED,
-            audioOutputDeviceId => {
-                sendAnalytics(createDeviceChangedEvent('audio', 'output'));
-                setAudioOutputDeviceId(audioOutputDeviceId)
-                    .then(() => logger.log('changed audio output device'))
-                    .catch(err => {
-                        logger.warn('Failed to change audio output device. '
-                            + 'Default or previously set audio output device '
-                            + 'will be used instead.', err);
-                    });
-            }
-        );
-
         APP.UI.addListener(UIEvents.TOGGLE_AUDIO_ONLY, audioOnly => {
 
             // FIXME On web video track is stored both in redux and in
@@ -2318,39 +2301,43 @@ export default {
     /**
      * Inits list of current devices and event listener for device change.
      * @private
+     * @returns {Promise}
      */
     _initDeviceList() {
         const { mediaDevices } = JitsiMeetJS;
 
         if (mediaDevices.isDeviceListAvailable()
                 && mediaDevices.isDeviceChangeAvailable()) {
-            mediaDevices.enumerateDevices(devices => {
-                // Ugly way to synchronize real device IDs with local storage
-                // and settings menu. This is a workaround until
-                // getConstraints() method will be implemented in browsers.
-                const { dispatch } = APP.store;
-
-                if (this.localAudio) {
-                    dispatch(updateSettings({
-                        micDeviceId: this.localAudio.getDeviceId()
-                    }));
-                }
-                if (this.localVideo) {
-                    dispatch(updateSettings({
-                        cameraDeviceId: this.localVideo.getDeviceId()
-                    }));
-                }
-
-                APP.store.dispatch(updateDeviceList(devices));
-                APP.UI.onAvailableDevicesChanged(devices);
-            });
-
             this.deviceChangeListener = devices =>
                 window.setTimeout(() => this._onDeviceListChanged(devices), 0);
             mediaDevices.addEventListener(
                 JitsiMediaDevicesEvents.DEVICE_LIST_CHANGED,
                 this.deviceChangeListener);
+
+            const { dispatch } = APP.store;
+
+            return dispatch(getAvailableDevices())
+                .then(devices => {
+                    // Ugly way to synchronize real device IDs with local
+                    // storage and settings menu. This is a workaround until
+                    // getConstraints() method will be implemented in browsers.
+                    if (this.localAudio) {
+                        dispatch(updateSettings({
+                            micDeviceId: this.localAudio.getDeviceId()
+                        }));
+                    }
+
+                    if (this.localVideo) {
+                        dispatch(updateSettings({
+                            cameraDeviceId: this.localVideo.getDeviceId()
+                        }));
+                    }
+
+                    APP.UI.onAvailableDevicesChanged(devices);
+                });
         }
+
+        return Promise.resolve();
     },
 
     /**
@@ -2374,9 +2361,13 @@ export default {
         const videoWasMuted = this.isLocalVideoMuted();
 
         if (typeof newDevices.audiooutput !== 'undefined') {
-            // Just ignore any errors in catch block.
-            promises.push(setAudioOutputDeviceId(newDevices.audiooutput)
-                .catch());
+            const { dispatch } = APP.store;
+            const setAudioOutputPromise
+                = setAudioOutputDeviceId(newDevices.audiooutput, dispatch)
+                    .catch(); // Just ignore any errors in catch block.
+
+
+            promises.push(setAudioOutputPromise);
         }
 
         promises.push(
@@ -2497,11 +2488,22 @@ export default {
         // before all operations are done.
         Promise.all([
             requestFeedbackPromise,
-            room.leave().then(disconnect, disconnect)
+            this.leaveRoomAndDisconnect()
         ]).then(values => {
             APP.API.notifyReadyToClose();
             maybeRedirectToWelcomePage(values[0]);
         });
+    },
+
+    /**
+     * Leaves the room and calls JitsiConnection.disconnect.
+     *
+     * @returns {Promise}
+     */
+    leaveRoomAndDisconnect() {
+        APP.store.dispatch(conferenceWillLeave(room));
+
+        return room.leave().then(disconnect, disconnect);
     },
 
     /**

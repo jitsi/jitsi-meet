@@ -51,6 +51,7 @@ export default class ToolboxItem extends AbstractToolboxItem<Props> {
     _renderItem() {
         const {
             disabled,
+            elementAfter,
             onClick,
             showLabel,
             styles
@@ -66,12 +67,13 @@ export default class ToolboxItem extends AbstractToolboxItem<Props> {
             // XXX TouchableHighlight requires 1 child. If there's a need to
             // show both the icon and the label, then these two need to be
             // wrapped in a View.
-            children = ( // eslint-disable-line no-extra-parens
+            children = (
                 <View style = { style }>
                     { children }
                     <Text style = { styles && styles.labelStyle }>
                         { this.label }
                     </Text>
+                    { elementAfter }
                 </View>
             );
 

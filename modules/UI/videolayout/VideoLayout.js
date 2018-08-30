@@ -2,6 +2,10 @@
 const logger = require('jitsi-meet-logger').getLogger(__filename);
 
 import {
+    getNearestReceiverVideoQualityLevel,
+    setMaxReceiverVideoQuality
+} from '../../../react/features/base/conference';
+import {
     JitsiParticipantConnectionStatus
 } from '../../../react/features/base/lib-jitsi-meet';
 import { VIDEO_TYPE } from '../../../react/features/base/media';
@@ -9,6 +13,9 @@ import {
     getPinnedParticipant,
     pinParticipant
 } from '../../../react/features/base/participants';
+import {
+    shouldDisplayTileView
+} from '../../../react/features/video-layout';
 import { SHARED_VIDEO_CONTAINER_TYPE } from '../shared_video/SharedVideo';
 import SharedVideoThumb from '../shared_video/SharedVideoThumb';
 
@@ -594,12 +601,19 @@ const VideoLayout = {
 
         Filmstrip.resizeThumbnails(localVideo, remoteVideo, forceUpdate);
 
+        if (shouldDisplayTileView(APP.store.getState())) {
+            const height
+                = (localVideo && localVideo.thumbHeight)
+                || (remoteVideo && remoteVideo.thumbnHeight)
+                || 0;
+            const qualityLevel = getNearestReceiverVideoQualityLevel(height);
+
+            APP.store.dispatch(setMaxReceiverVideoQuality(qualityLevel));
+        }
+
         if (onComplete && typeof onComplete === 'function') {
             onComplete();
         }
-
-        return { localVideo,
-            remoteVideo };
     },
 
     /**
@@ -854,6 +868,9 @@ const VideoLayout = {
     resizeVideoArea(
             forceUpdate = false,
             animate = false) {
+        // Resize the thumbnails first.
+        this.resizeThumbnails(forceUpdate);
+
         if (largeVideo) {
             largeVideo.updateContainerSize();
             largeVideo.resize(animate);
@@ -866,9 +883,6 @@ const VideoLayout = {
         if (availableWidth < 0 || availableHeight < 0) {
             return;
         }
-
-        // Resize the thumbnails first.
-        this.resizeThumbnails(forceUpdate);
     },
 
     getSmallVideo(id) {
@@ -960,7 +974,7 @@ const VideoLayout = {
             // FIXME video type is not the same thing as container type
 
             if (id !== currentId && videoType === VIDEO_CONTAINER_TYPE) {
-                eventEmitter.emit(UIEvents.SELECTED_ENDPOINT, id);
+                APP.API.notifyOnStageParticipantChanged(id);
             }
 
             let oldSmallVideo;
@@ -1139,6 +1153,22 @@ const VideoLayout = {
     setLocalRemoteControlActiveChanged() {
         Object.values(remoteVideos).forEach(
             remoteVideo => remoteVideo.updateRemoteVideoMenu()
+        );
+    },
+
+    /**
+     * Helper method to invoke when the video layout has changed and elements
+     * have to be re-arranged and resized.
+     *
+     * @returns {void}
+     */
+    refreshLayout() {
+        localVideoThumbnail && localVideoThumbnail.updateDOMLocation();
+        VideoLayout.resizeVideoArea();
+
+        localVideoThumbnail && localVideoThumbnail.rerender();
+        Object.values(remoteVideos).forEach(
+            remoteVideo => remoteVideo.rerender()
         );
     },
 

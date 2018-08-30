@@ -16,7 +16,9 @@ import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContextBaseJavaModule;
 import com.facebook.react.bridge.ReactMethod;
 
-class AndroidSettingsModule extends ReactContextBaseJavaModule {
+class AndroidSettingsModule
+    extends ReactContextBaseJavaModule {
+
     public AndroidSettingsModule(ReactApplicationContext reactContext) {
         super(reactContext);
     }

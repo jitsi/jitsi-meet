@@ -477,7 +477,7 @@ class AddPeopleDialog extends Component<*, *> {
         const supportString = t('inlineDialogFailure.supportMsg');
         const supportLink = interfaceConfig.SUPPORT_URL;
         const supportLinkContent
-            = ( // eslint-disable-line no-extra-parens
+            = (
                 <span>
                     <span>
                         { supportString.padEnd(supportString.length + 1) }

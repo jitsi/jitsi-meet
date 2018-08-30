@@ -113,7 +113,7 @@ class Dialog extends AbstractDialog<Props, State> {
             [_TAG_KEY]: _SUBMIT_TEXT_TAG_VALUE
         };
 
-        let el: ?React$Element<*> = ( // eslint-disable-line no-extra-parens
+        let el: ?React$Element<*> = (
             <Prompt
                 cancelButtonTextStyle = { cancelButtonTextStyle }
                 cancelText = { t(cancelTitleKey) }

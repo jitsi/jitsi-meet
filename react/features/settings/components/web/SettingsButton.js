@@ -24,6 +24,11 @@ type Props = AbstractButtonProps & {
     _filmstripOnly: boolean,
 
     /**
+     * The default tab at which the settings dialog will be opened.
+     */
+    defaultTab: string,
+
+    /**
      * The redux {@code dispatch} function.
      */
     dispatch: Function
@@ -45,13 +50,16 @@ class SettingsButton extends AbstractButton<Props, *> {
      * @returns {void}
      */
     _handleClick() {
-        const { _filmstripOnly, dispatch } = this.props;
+        const {
+            _filmstripOnly,
+            defaultTab = SETTINGS_TABS.DEVICES,
+            dispatch } = this.props;
 
         sendAnalytics(createToolbarEvent('settings'));
         if (_filmstripOnly) {
             dispatch(openDeviceSelectionPopup());
         } else {
-            dispatch(openSettingsDialog(SETTINGS_TABS.DEVICES));
+            dispatch(openSettingsDialog(defaultTab));
         }
     }
 }

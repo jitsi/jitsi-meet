@@ -2,6 +2,7 @@
 
 import React, { Component } from 'react';
 import { Text, View } from 'react-native';
+import FastImage from 'react-native-fast-image';
 import { connect } from 'react-redux';
 
 import { translate } from '../../i18n';
@@ -11,7 +12,6 @@ import {
     shouldRenderVideoTrack,
     VideoTrack
 } from '../../media';
-import { prefetch } from '../../../mobile/image-cache';
 import { Container, TintedView } from '../../react';
 import { TestHint } from '../../testing/components';
 import { getTrackByMediaTypeAndParticipant } from '../../tracks';
@@ -303,7 +303,8 @@ function _mapStateToProps(state, ownProps) {
 
         // ParticipantView knows before Avatar that an avatar URL will be used
         // so it's advisable to prefetch here.
-        avatar && prefetch({ uri: avatar });
+        avatar && !avatar.startsWith('#')
+            && FastImage.preload([ { uri: avatar } ]);
     }
 
     return {

@@ -41,7 +41,7 @@ class InlineDialogFailure extends Component<*> {
         const supportString = t('inlineDialogFailure.supportMsg');
         const supportLinkElem
             = supportLink
-                ? ( // eslint-disable-line no-extra-parens
+                ? (
                     <div className = 'inline-dialog-error-text'>
                         <span>{ supportString.padEnd(supportString.length + 1) }
                         </span>

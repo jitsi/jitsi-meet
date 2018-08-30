@@ -33,7 +33,7 @@ type Props = {
      * The currently configured maximum quality resolution to be received from
      * remote participants.
      */
-    _receiveVideoQuality: number,
+    _receiverVideoQuality: number,
 
     /**
      * Callback to invoke when {@link OverflowMenuVideoQualityItem} is clicked.
@@ -61,10 +61,10 @@ class OverflowMenuVideoQualityItem extends Component<Props> {
      * @returns {ReactElement}
      */
     render() {
-        const { _audioOnly, _receiveVideoQuality } = this.props;
-        const icon = _audioOnly || !_receiveVideoQuality
+        const { _audioOnly, _receiverVideoQuality } = this.props;
+        const icon = _audioOnly || !_receiverVideoQuality
             ? 'icon-AUD'
-            : VIDEO_QUALITY_TO_ICON[_receiveVideoQuality];
+            : VIDEO_QUALITY_TO_ICON[_receiverVideoQuality];
 
         return (
             <li
@@ -91,14 +91,14 @@ class OverflowMenuVideoQualityItem extends Component<Props> {
  * @private
  * @returns {{
  *     _audioOnly: boolean,
- *     _receiveVideoQuality: number
+ *     _receiverVideoQuality: number
  * }}
  */
 function _mapStateToProps(state) {
     return {
         _audioOnly: state['features/base/conference'].audioOnly,
-        _receiveVideoQuality:
-            state['features/base/conference'].receiveVideoQuality
+        _receiverVideoQuality:
+            state['features/base/conference'].preferredReceiverVideoQuality
     };
 }
 

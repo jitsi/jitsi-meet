@@ -17,24 +17,24 @@ import {
     getPinnedParticipant,
     PIN_PARTICIPANT
 } from '../participants';
-import { MiddlewareRegistry } from '../redux';
+import { MiddlewareRegistry, StateListenerRegistry } from '../redux';
 import UIEvents from '../../../../service/UI/UIEvents';
 import { TRACK_ADDED, TRACK_REMOVED } from '../tracks';
 
 import {
     conferenceFailed,
     conferenceLeft,
+    conferenceWillLeave,
     createConference,
-    setLastN,
-    toggleAudioOnly
+    setLastN
 } from './actions';
 import {
     CONFERENCE_FAILED,
     CONFERENCE_JOINED,
+    CONFERENCE_WILL_LEAVE,
     DATA_CHANNEL_OPENED,
     SET_AUDIO_ONLY,
     SET_LASTN,
-    SET_RECEIVE_VIDEO_QUALITY,
     SET_ROOM
 } from './actionTypes';
 import {
@@ -47,6 +47,11 @@ import {
 const logger = require('jitsi-meet-logger').getLogger(__filename);
 
 declare var APP: Object;
+
+/**
+ * Handler for before unload event.
+ */
+let beforeUnloadHandler;
 
 /**
  * Implements the middleware of the feature base/conference.
@@ -68,6 +73,10 @@ MiddlewareRegistry.register(store => next => action => {
     case CONNECTION_FAILED:
         return _connectionFailed(store, next, action);
 
+    case CONFERENCE_WILL_LEAVE:
+        _conferenceWillLeave();
+        break;
+
     case DATA_CHANNEL_OPENED:
         return _syncReceiveVideoQuality(store, next, action);
 
@@ -80,9 +89,6 @@ MiddlewareRegistry.register(store => next => action => {
     case SET_LASTN:
         return _setLastN(store, next, action);
 
-    case SET_RECEIVE_VIDEO_QUALITY:
-        return _setReceiveVideoQuality(store, next, action);
-
     case SET_ROOM:
         return _setRoom(store, next, action);
 
@@ -93,6 +99,32 @@ MiddlewareRegistry.register(store => next => action => {
 
     return next(action);
 });
+
+/**
+ * Registers a change handler for state['features/base/conference'] to update
+ * the preferred video quality levels based on user preferred and internal
+ * settings.
+ */
+StateListenerRegistry.register(
+    /* selector */ state => state['features/base/conference'],
+    /* listener */ (currentState, store, previousState = {}) => {
+        const {
+            conference,
+            maxReceiverVideoQuality,
+            preferredReceiverVideoQuality
+        } = currentState;
+        const changedPreferredVideoQuality = preferredReceiverVideoQuality
+            !== previousState.preferredReceiverVideoQuality;
+        const changedMaxVideoQuality = maxReceiverVideoQuality
+            !== previousState.maxReceiverVideoQuality;
+
+        if (changedPreferredVideoQuality || changedMaxVideoQuality) {
+            _setReceiverVideoConstraint(
+                conference,
+                preferredReceiverVideoQuality,
+                maxReceiverVideoQuality);
+        }
+    });
 
 /**
  * Makes sure to leave a failed conference in order to release any allocated
@@ -114,6 +146,11 @@ function _conferenceFailed(store, next, action) {
     // conference is handled by /conference.js and appropriate failure handlers
     // are set there.
     if (typeof APP !== 'undefined') {
+        if (typeof beforeUnloadHandler !== 'undefined') {
+            window.removeEventListener('beforeunload', beforeUnloadHandler);
+            beforeUnloadHandler = undefined;
+        }
+
         return result;
     }
 
@@ -153,6 +190,16 @@ function _conferenceJoined({ dispatch, getState }, next, action) {
     // conference is added to the redux store ("on conference joined" action)
     // and the LastN value needs to be synchronized here.
     audioOnly && conference.getLastN() !== 0 && dispatch(setLastN(0));
+
+    // FIXME: Very dirty solution. This will work on web only.
+    // When the user closes the window or quits the browser, lib-jitsi-meet
+    // handles the process of leaving the conference. This is temporary solution
+    // that should cover the described use case as part of the effort to
+    // implement the conferenceWillLeave action for web.
+    beforeUnloadHandler = () => {
+        dispatch(conferenceWillLeave(conference));
+    };
+    window.addEventListener('beforeunload', beforeUnloadHandler);
 
     return result;
 }
@@ -206,6 +253,11 @@ function _connectionFailed({ dispatch, getState }, next, action) {
 
     const result = next(action);
 
+    if (typeof beforeUnloadHandler !== 'undefined') {
+        window.removeEventListener('beforeunload', beforeUnloadHandler);
+        beforeUnloadHandler = undefined;
+    }
+
     // FIXME: Workaround for the web version. Currently, the creation of the
     // conference is handled by /conference.js and appropriate failure handlers
     // are set there.
@@ -243,6 +295,21 @@ function _connectionFailed({ dispatch, getState }, next, action) {
     }
 
     return result;
+}
+
+/**
+ * Notifies the feature base/conference that the action
+ * {@code CONFERENCE_WILL_LEAVE} is being dispatched within a specific redux
+ * store.
+ *
+ * @private
+ * @returns {void}
+ */
+function _conferenceWillLeave() {
+    if (typeof beforeUnloadHandler !== 'undefined') {
+        window.removeEventListener('beforeunload', beforeUnloadHandler);
+        beforeUnloadHandler = undefined;
+    }
 }
 
 /**
@@ -426,7 +493,7 @@ function _setLastN({ getState }, next, action) {
         try {
             conference.setLastN(action.lastN);
         } catch (err) {
-            console.error(`Failed to set lastN: ${err}`);
+            logger.error(`Failed to set lastN: ${err}`);
         }
     }
 
@@ -434,27 +501,20 @@ function _setLastN({ getState }, next, action) {
 }
 
 /**
- * Sets the maximum receive video quality and will turn off audio only mode if
- * enabled.
+ * Helper function for updating the preferred receiver video constraint, based
+ * on the user preference and the internal maximum.
  *
- * @param {Store} store - The redux store in which the specified {@code action}
- * is being dispatched.
- * @param {Dispatch} next - The redux {@code dispatch} function to dispatch the
- * specified {@code action} to the specified {@code store}.
- * @param {Action} action - The redux action {@code SET_RECEIVE_VIDEO_QUALITY}
- * which is being dispatched in the specified {@code store}.
- * @private
- * @returns {Object} The value returned by {@code next(action)}.
+ * @param {JitsiConference} conference - The JitsiConference instance for the
+ * current call.
+ * @param {number} preferred - The user preferred max frame height.
+ * @param {number} max - The maximum frame height the application should
+ * receive.
+ * @returns {void}
  */
-function _setReceiveVideoQuality({ dispatch, getState }, next, action) {
-    const { audioOnly, conference } = getState()['features/base/conference'];
-
+function _setReceiverVideoConstraint(conference, preferred, max) {
     if (conference) {
-        conference.setReceiverVideoConstraint(action.receiveVideoQuality);
-        audioOnly && dispatch(toggleAudioOnly());
+        conference.setReceiverVideoConstraint(Math.min(preferred, max));
     }
-
-    return next(action);
 }
 
 /**
@@ -544,9 +604,16 @@ function _syncConferenceLocalTracksWithState({ getState }, action) {
  * @returns {Object} The value returned by {@code next(action)}.
  */
 function _syncReceiveVideoQuality({ getState }, next, action) {
-    const state = getState()['features/base/conference'];
+    const {
+        conference,
+        maxReceiverVideoQuality,
+        preferredReceiverVideoQuality
+    } = getState()['features/base/conference'];
 
-    state.conference.setReceiverVideoConstraint(state.receiveVideoQuality);
+    _setReceiverVideoConstraint(
+        conference,
+        preferredReceiverVideoQuality,
+        maxReceiverVideoQuality);
 
     return next(action);
 }

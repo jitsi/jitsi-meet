@@ -1,3 +1,5 @@
+// @flow
+
 import { JitsiRecordingConstants } from '../base/lib-jitsi-meet';
 
 /**
@@ -8,7 +10,7 @@ import { JitsiRecordingConstants } from '../base/lib-jitsi-meet';
  * @param {string} mode - Find an active recording session of the given mode.
  * @returns {Object|undefined}
  */
-export function getActiveSession(state, mode) {
+export function getActiveSession(state: Object, mode: string) {
     const { sessionDatas } = state['features/recording'];
     const { status: statusConstants } = JitsiRecordingConstants;
 
@@ -25,7 +27,7 @@ export function getActiveSession(state, mode) {
  * @param {string} id - The ID of the recording session to find.
  * @returns {Object|undefined}
  */
-export function getSessionById(state, id) {
+export function getSessionById(state: Object, id: string) {
     return state['features/recording'].sessionDatas.find(
         sessionData => sessionData.id === id);
 }

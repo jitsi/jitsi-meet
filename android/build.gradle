@@ -18,6 +18,7 @@ allprojects {
     repositories {
         google()
         jcenter()
+        maven { url "$rootDir/../node_modules/jsc-android/dist" }
         // React Native (JS, Obj-C sources, Android binaries) is installed from
         // npm.
         maven { url "$rootDir/../node_modules/react-native/android" }
@@ -33,6 +34,12 @@ allprojects {
                     def file = new File("$rootDir/../node_modules/react-native/package.json")
                     def version = new groovy.json.JsonSlurper().parseText(file.text).version
                     details.useVersion version
+                }
+                if (details.requested.group == 'org.webkit'
+                        && details.requested.name == 'android-jsc') {
+                    def file = new File("$rootDir/../node_modules/jsc-android/package.json")
+                    def version = new groovy.json.JsonSlurper().parseText(file.text).version
+                    details.useVersion "r${version.tokenize('.')[0]}"
                 }
             }
         }
@@ -146,7 +153,7 @@ allprojects {
 ext {
     buildToolsVersion = "26.0.2"
     compileSdkVersion = 26
-    minSdkVersion    = 16
+    minSdkVersion    = 21
     targetSdkVersion = 26
 
     // The Maven artifact groupdId of the third-party react-native modules which

@@ -1,6 +1,5 @@
 import {
     SET_AUDIO_INPUT_DEVICE,
-    SET_AUDIO_OUTPUT_DEVICE,
     SET_VIDEO_INPUT_DEVICE,
     UPDATE_DEVICE_LIST
 } from './actionTypes';
@@ -40,7 +39,6 @@ ReducerRegistry.register(
         // now.
         case SET_AUDIO_INPUT_DEVICE:
         case SET_VIDEO_INPUT_DEVICE:
-        case SET_AUDIO_OUTPUT_DEVICE:
         default:
             return state;
         }
