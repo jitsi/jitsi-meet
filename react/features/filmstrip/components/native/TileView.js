@@ -125,7 +125,7 @@ class TileView extends Component<Props> {
             return 2;
         }
 
-        return participantCount >= 3 ? 3 : participantCount;
+        return Math.min(3, participantCount);
     }
 
     /**
