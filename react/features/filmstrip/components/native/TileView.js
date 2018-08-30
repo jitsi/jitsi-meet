@@ -289,6 +289,7 @@ class TileView extends Component<Props, State> {
             .map(participant => (
                 <Thumbnail
                     disablePin = { true }
+                    disableTint = { true }
                     key = { participant.id }
                     participant = { participant }
                     styleOverrides = { styleOverrides } />));

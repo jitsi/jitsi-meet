@@ -27,6 +27,7 @@ type Props = {
     _largeVideo: Object,
     _videoTrack: Object,
     disablePin?: boolean,
+    disableTint?: boolean,
     dispatch: Function,
     participant: Object,
     styleOverrides?: Object
@@ -57,12 +58,14 @@ class Thumbnail extends Component<Props> {
      * @returns {ReactElement}
      */
     render() {
-        const audioTrack = this.props._audioTrack;
-        const disablePin = this.props.disablePin;
-        const largeVideo = this.props._largeVideo;
-        const participant = this.props.participant;
-        const videoTrack = this.props._videoTrack;
-
+        const {
+            _audioTrack: audioTrack,
+            _largeVideo: largeVideo,
+            _videoTrack: videoTrack,
+            disablePin,
+            disableTint,
+            participant
+        } = this.props;
 
         // We don't render audio in any of the following:
         // 1. The audio (source) is muted. There's no practical reason (that we
@@ -95,7 +98,7 @@ class Thumbnail extends Component<Props> {
                 <ParticipantView
                     avatarSize = { AVATAR_SIZE }
                     participantId = { participantId }
-                    tintEnabled = { participantInLargeVideo && !disablePin }
+                    tintEnabled = { participantInLargeVideo && !disableTint }
                     zOrder = { 1 } />
 
                 { participant.role === PARTICIPANT_ROLE.MODERATOR
