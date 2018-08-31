@@ -4,6 +4,10 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
 import { appNavigate } from '../../app';
+import {
+    createCalendarClickedEvent,
+    sendAnalytics
+} from '../../analytics';
 import { getLocalizedDateFormatter, translate } from '../../base/i18n';
 import { NavigateSectionList } from '../../base/react';
 
@@ -85,12 +89,24 @@ class BaseCalendarList extends Component<Props> {
         super(props);
 
         // Bind event handlers so they are only bound once per instance.
+        this._onJoinPress = this._onJoinPress.bind(this);
         this._onPress = this._onPress.bind(this);
         this._onRefresh = this._onRefresh.bind(this);
         this._toDateString = this._toDateString.bind(this);
         this._toDisplayableItem = this._toDisplayableItem.bind(this);
         this._toDisplayableList = this._toDisplayableList.bind(this);
         this._toTimeString = this._toTimeString.bind(this);
+    }
+
+    /**
+     * Implements React's {@link Component#componentDidMount()}. Invoked
+     * immediately after this component is mounted.
+     *
+     * @inheritdoc
+     * @returns {void}
+     */
+    componentDidMount() {
+        sendAnalytics(createCalendarClickedEvent('calendar.tab'));
     }
 
     /**
@@ -112,16 +128,36 @@ class BaseCalendarList extends Component<Props> {
         );
     }
 
-    _onPress: string => Function;
+    _onJoinPress: (Object, string) => Function;
+
+    /**
+     * Handles the list's navigate action.
+     *
+     * @private
+     * @param {Object} event - The click event.
+     * @param {string} url - The url string to navigate to.
+     * @returns {void}
+     */
+    _onJoinPress(event, url) {
+        event.stopPropagation();
+
+        this._onPress(url, 'calendar.meeting.join');
+    }
+
+    _onPress: (string, string) => Function;
 
     /**
      * Handles the list's navigate action.
      *
      * @private
      * @param {string} url - The url string to navigate to.
+     * @param {string} analyticsEventName - Тhe name of the analytics event.
+     * associated with this action.
      * @returns {void}
      */
-    _onPress(url) {
+    _onPress(url, analyticsEventName = 'calendar.meeting.tile') {
+        sendAnalytics(createCalendarClickedEvent(analyticsEventName));
+
         this.props.dispatch(appNavigate(url));
     }
 
@@ -165,7 +201,7 @@ class BaseCalendarList extends Component<Props> {
     _toDisplayableItem(event) {
         return {
             elementAfter: event.url
-                ? <JoinButton onPress = { this._onPress } />
+                ? <JoinButton onPress = { this._onJoinPress } />
                 : (<AddMeetingUrlButton
                     calendarId = { event.calendarId }
                     eventId = { event.id } />),

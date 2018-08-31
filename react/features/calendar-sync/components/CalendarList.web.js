@@ -7,6 +7,10 @@ import { connect } from 'react-redux';
 
 import { translate } from '../../base/i18n';
 import { openSettingsDialog, SETTINGS_TABS } from '../../settings';
+import {
+    createCalendarClickedEvent,
+    sendAnalytics
+} from '../../analytics';
 
 import { refreshCalendar } from '../actions';
 import { isCalendarEnabled } from '../functions';
@@ -148,6 +152,8 @@ class CalendarList extends Component<Props> {
      * @returns {void}
      */
     _onOpenSettings() {
+        sendAnalytics(createCalendarClickedEvent('calendar.connect'));
+
         this.props.dispatch(openSettingsDialog(SETTINGS_TABS.CALENDAR));
     }
 

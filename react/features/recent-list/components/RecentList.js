@@ -2,6 +2,10 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
+import {
+    createRecentClickedEvent,
+    sendAnalytics
+} from '../../analytics';
 import { appNavigate, getDefaultURL } from '../../app';
 import { translate } from '../../base/i18n';
 import { Container, NavigateSectionList, Text } from '../../base/react';
@@ -56,6 +60,17 @@ class RecentList extends Component<Props> {
         super(props);
 
         this._onPress = this._onPress.bind(this);
+    }
+
+    /**
+     * Implements React's {@link Component#componentDidMount()}. Invoked
+     * immediately after this component is mounted.
+     *
+     * @inheritdoc
+     * @returns {void}
+     */
+    componentDidMount() {
+        sendAnalytics(createRecentClickedEvent('recent.tab'));
     }
 
     /**
@@ -116,6 +131,8 @@ class RecentList extends Component<Props> {
      */
     _onPress(url) {
         const { dispatch } = this.props;
+
+        sendAnalytics(createRecentClickedEvent('recent.meeting.tile'));
 
         dispatch(appNavigate(url));
     }
