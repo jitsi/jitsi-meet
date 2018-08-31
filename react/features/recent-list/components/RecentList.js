@@ -9,6 +9,8 @@ import type { Section } from '../../base/react';
 
 import { isRecentListEnabled, toDisplayableList } from '../functions';
 
+import styles from './styles';
+
 /**
  * The type of the React {@code Component} props of {@link RecentList}
  */
@@ -91,8 +93,12 @@ class RecentList extends Component<Props> {
         const { t } = this.props;
 
         return (
-            <Container className = 'navigate-section-list-empty'>
-                <Text className = 'header-text-description'>
+            <Container
+                className = 'navigate-section-list-empty'
+                style = { styles.emptyListContainer }>
+                <Text
+                    className = 'header-text-description'
+                    style = { styles.emptyListText }>
                     { t('welcomepage.recentListEmpty') }
                 </Text>
             </Container>
