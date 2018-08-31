@@ -13,8 +13,9 @@ import {
     setMaxReceiverVideoQuality
 } from '../../../base/conference';
 import {
-    ASPECT_RATIO_NARROW,
-    DimensionsDetector
+    DimensionsDetector,
+    isNarrowAspectRatio,
+    makeAspectRatioAware
 } from '../../../base/responsive-ui';
 
 import Thumbnail from './Thumbnail';
@@ -24,11 +25,6 @@ import styles from './styles';
  * The type of the React {@link Component} props of {@link TileView}.
  */
 type Props = {
-
-    /**
-     * Whether or not the screen is currently in portrait orientation.
-     */
-    _isNarrowAspectRatio: boolean,
 
     /**
      * The participants in the conference.
@@ -155,7 +151,7 @@ class TileView extends Component<Props, State> {
         // For narrow view, tiles should stack on top of each other for a lonely
         // call and a 1:1 call. Otherwise tiles should be grouped into rows of
         // two.
-        if (this.props._isNarrowAspectRatio) {
+        if (isNarrowAspectRatio(this)) {
             return participantCount >= 3 ? 2 : 1;
         }
 
@@ -316,17 +312,13 @@ class TileView extends Component<Props, State> {
  * @param {Object} state - The redux state.
  * @private
  * @returns {{
- *     _isNarrowAspectRatio: string,
  *     _participants: Participant[]
  * }}
  */
 function _mapStateToProps(state) {
-    const { aspectRatio } = state['features/base/responsive-ui'];
-
     return {
-        _isNarrowAspectRatio: aspectRatio === ASPECT_RATIO_NARROW,
         _participants: state['features/base/participants']
     };
 }
 
-export default connect(_mapStateToProps)(TileView);
+export default connect(_mapStateToProps)(makeAspectRatioAware(TileView));
