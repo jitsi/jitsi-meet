@@ -73,7 +73,7 @@
     "react-native-prompt": "1.0.0",
     "react-native-sound": "0.10.9",
     "react-native-vector-icons": "4.4.2",
-    "react-native-webrtc": "github:jitsi/react-native-webrtc#048b852d340877370d849e44b8ca4d59ff4b1429",
+    "react-native-webrtc": "github:jitsi/react-native-webrtc#111da886907024801bb3c90116708c6aad6dbba4",
     "react-redux": "5.0.7",
     "redux": "4.0.0",
     "redux-thunk": "2.2.0",
