@@ -1,4 +1,5 @@
 // @flow
+
 import React from 'react';
 import { View } from 'react-native';
 import { connect } from 'react-redux';
@@ -23,7 +24,7 @@ class Labels extends AbstractLabels<Props, *> {
      * @inheritdoc
      */
     render() {
-        const _wide = !isNarrowAspectRatio(this);
+        const wide = !isNarrowAspectRatio(this);
         const { _filmstripVisible } = this.props;
 
         return (
@@ -31,7 +32,7 @@ class Labels extends AbstractLabels<Props, *> {
                 pointerEvents = 'box-none'
                 style = { [
                     styles.indicatorContainer,
-                    _wide && _filmstripVisible && styles.indicatorContainerWide
+                    wide && _filmstripVisible && styles.indicatorContainerWide
                 ] }>
                 {
                     this._renderRecordingLabel(
@@ -48,10 +49,9 @@ class Labels extends AbstractLabels<Props, *> {
         );
     }
 
-    _renderRecordingLabel: string => React$Element<*>
+    _renderRecordingLabel: string => React$Element<*>;
 
-    _renderVideoQualityLabel: () => React$Element<*>
-
+    _renderVideoQualityLabel: () => React$Element<*>;
 }
 
 /**
@@ -76,6 +76,4 @@ function _mapStateToProps(state) {
     };
 }
 
-export default connect(_mapStateToProps)(
-    makeAspectRatioAware(Labels)
-);
+export default connect(_mapStateToProps)(makeAspectRatioAware(Labels));
