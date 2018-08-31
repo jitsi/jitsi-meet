@@ -11,6 +11,7 @@ import * as RemoteControlEvents
     from './service/remotecontrol/RemoteControlEvents';
 import UIEvents from './service/UI/UIEvents';
 import UIUtil from './modules/UI/util/UIUtil';
+import { createTaskQueue } from './modules/util/helpers';
 import * as JitsiMeetConferenceEvents from './ConferenceEvents';
 
 import {
@@ -273,6 +274,27 @@ function redirectToStaticPage(pathname) {
 
     windowLocation.pathname = newPathname;
 }
+
+/**
+ * A queue for the async replaceLocalTrack action so that multiple audio
+ * replacements cannot happen simultaneously. This solves the issue where
+ * replaceLocalTrack is called multiple times with an oldTrack of null, causing
+ * multiple local tracks of the same type to be used.
+ *
+ * @private
+ * @type {Object}
+ */
+const _replaceLocalAudioTrackQueue = createTaskQueue();
+
+/**
+ * A task queue for replacement local video tracks. This separate queue exists
+ * so video replacement is not blocked by audio replacement tasks in the queue
+ * {@link _replaceLocalAudioTrackQueue}.
+ *
+ * @private
+ * @type {Object}
+ */
+const _replaceLocalVideoTrackQueue = createTaskQueue();
 
 /**
  *
@@ -856,9 +878,6 @@ export default {
             return;
         }
 
-        // FIXME it is possible to queue this task twice, but it's not causing
-        // any issues. Specifically this can happen when the previous
-        // get user media call is blocked on "ask user for permissions" dialog.
         if (!this.localVideo && !mute) {
             const maybeShowErrorDialog = error => {
                 showUI && APP.UI.showCameraErrorNotification(error);
@@ -1261,16 +1280,23 @@ export default {
      * @returns {Promise}
      */
     useVideoStream(newStream) {
-        return APP.store.dispatch(
-            replaceLocalTrack(this.localVideo, newStream, room))
-            .then(() => {
-                this.localVideo = newStream;
-                this._setSharingScreen(newStream);
-                if (newStream) {
-                    APP.UI.addLocalStream(newStream);
-                }
-                this.setVideoMuteStatus(this.isLocalVideoMuted());
+        return new Promise((resolve, reject) => {
+            _replaceLocalVideoTrackQueue.enqueue(onFinish => {
+                APP.store.dispatch(
+                replaceLocalTrack(this.localVideo, newStream, room))
+                    .then(() => {
+                        this.localVideo = newStream;
+                        this._setSharingScreen(newStream);
+                        if (newStream) {
+                            APP.UI.addLocalStream(newStream);
+                        }
+                        this.setVideoMuteStatus(this.isLocalVideoMuted());
+                    })
+                    .then(resolve)
+                    .catch(reject)
+                    .then(onFinish);
             });
+        });
     },
 
     /**
@@ -1300,15 +1326,22 @@ export default {
      * @returns {Promise}
      */
     useAudioStream(newStream) {
-        return APP.store.dispatch(
-            replaceLocalTrack(this.localAudio, newStream, room))
-            .then(() => {
-                this.localAudio = newStream;
-                if (newStream) {
-                    APP.UI.addLocalStream(newStream);
-                }
-                this.setAudioMuteStatus(this.isLocalAudioMuted());
+        return new Promise((resolve, reject) => {
+            _replaceLocalAudioTrackQueue.enqueue(onFinish => {
+                APP.store.dispatch(
+                replaceLocalTrack(this.localAudio, newStream, room))
+                    .then(() => {
+                        this.localAudio = newStream;
+                        if (newStream) {
+                            APP.UI.addLocalStream(newStream);
+                        }
+                        this.setAudioMuteStatus(this.isLocalAudioMuted());
+                    })
+                    .then(resolve)
+                    .catch(reject)
+                    .then(onFinish);
             });
+        });
     },
 
     /**
