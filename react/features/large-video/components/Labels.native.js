@@ -9,10 +9,26 @@ import {
     isNarrowAspectRatio,
     makeAspectRatioAware
 } from '../../base/responsive-ui';
-import { isFilmstripVisible } from '../../filmstrip';
 
-import AbstractLabels, { type Props } from './AbstractLabels';
+import AbstractLabels, {
+    _abstractMapStateToProps,
+    type Props as AbstractLabelsProps
+} from './AbstractLabels';
 import styles from './styles';
+
+/**
+ * The type of the React {@code Component} props of {@link Labels}.
+ */
+type Props = AbstractLabelsProps & {
+
+    /**
+     * The indicator which determines whether the UI is reduced (to accommodate
+     * smaller display areas).
+     *
+     * @private
+     */
+    _reducedUI: boolean
+};
 
 /**
  * A container that renders the conference indicators, if any.
@@ -25,7 +41,7 @@ class Labels extends AbstractLabels<Props, *> {
      */
     render() {
         const wide = !isNarrowAspectRatio(this);
-        const { _filmstripVisible } = this.props;
+        const { _filmstripVisible, _reducedUI } = this.props;
 
         return (
             <View
@@ -42,8 +58,14 @@ class Labels extends AbstractLabels<Props, *> {
                     this._renderRecordingLabel(
                         JitsiRecordingConstants.mode.STREAM)
                 }
-                {
-                    this._renderVideoQualityLabel()
+                {/*
+                  * Emil, Lyubomir, Nichole, and Zoli said that the Labels
+                  * should not be rendered in Picture-in-Picture. Saul argued
+                  * that the recording Labels should be rendered. As a temporary
+                  * compromise, don't render the VideoQualityLabel at least
+                  * because it's not that important.
+                  */
+                    _reducedUI || this._renderVideoQualityLabel()
                 }
             </View>
         );
@@ -61,18 +83,14 @@ class Labels extends AbstractLabels<Props, *> {
  * @param {Object} state - The redux state.
  * @private
  * @returns {{
- *     _filmstripVisible: boolean
+ *     _filmstripVisible: boolean,
+ *     _reducedUI: boolean
  * }}
  */
 function _mapStateToProps(state) {
     return {
-        /**
-         * The indicator which determines whether the filmstrip is visible.
-         *
-         * @private
-         * @type {boolean}
-         */
-        _filmstripVisible: isFilmstripVisible(state)
+        ..._abstractMapStateToProps(state),
+        _reducedUI: state['features/base/responsive-ui'].reducedUI
     };
 }
 
