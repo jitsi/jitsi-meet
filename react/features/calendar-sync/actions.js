@@ -232,7 +232,7 @@ export function signIn(calendarType: string): Function {
             .then(() => dispatch(setIntegrationReady(calendarType)))
             .then(() => dispatch(updateProfile(calendarType)))
             .then(() => dispatch(refreshCalendar()))
-            .then(() => dispatch(sendAnalytics(createCalendarConnectedEvent())))
+            .then(() => sendAnalytics(createCalendarConnectedEvent()))
             .catch(error => {
                 logger.error(
                     'Error occurred while signing into calendar integration',

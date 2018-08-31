@@ -133,6 +133,24 @@ export function createCalendarClickedEvent(eventName, attributes = {}) {
 }
 
 /**
+ * Creates an event which indicates that the calendar container is shown and
+ * selected.
+ *
+ * @param {Object} attributes - Attributes to attach to the event.
+ * @returns {Object} The event in a format suitable for sending via
+ * sendAnalytics.
+ */
+export function createCalendarSelectedEvent(attributes = {}) {
+    return {
+        action: 'selected',
+        actionSubject: 'calendar.selected',
+        attributes,
+        source: 'calendar',
+        type: TYPE_UI
+    };
+}
+
+/**
  * Creates an event indicating that a calendar has been connected.
  *
  * @param {boolean} attributes - Additional attributes to attach to the event.
@@ -160,6 +178,24 @@ export function createRecentClickedEvent(eventName, attributes = {}) {
     return {
         action: 'clicked',
         actionSubject: eventName,
+        attributes,
+        source: 'recent.list',
+        type: TYPE_UI
+    };
+}
+
+/**
+ * Creates an event which indicates that the recent list container is shown and
+ * selected.
+ *
+ * @param {Object} attributes - Attributes to attach to the event.
+ * @returns {Object} The event in a format suitable for sending via
+ * sendAnalytics.
+ */
+export function createRecentSelectedEvent(attributes = {}) {
+    return {
+        action: 'selected',
+        actionSubject: 'recent.list.selected',
         attributes,
         source: 'recent.list',
         type: TYPE_UI

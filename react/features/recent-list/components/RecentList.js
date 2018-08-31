@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 
 import {
     createRecentClickedEvent,
+    createRecentSelectedEvent,
     sendAnalytics
 } from '../../analytics';
 import { appNavigate, getDefaultURL } from '../../app';
@@ -70,7 +71,7 @@ class RecentList extends Component<Props> {
      * @returns {void}
      */
     componentDidMount() {
-        sendAnalytics(createRecentClickedEvent('recent.tab'));
+        sendAnalytics(createRecentSelectedEvent());
     }
 
     /**

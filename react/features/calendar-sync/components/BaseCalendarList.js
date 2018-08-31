@@ -6,6 +6,7 @@ import { connect } from 'react-redux';
 import { appNavigate } from '../../app';
 import {
     createCalendarClickedEvent,
+    createCalendarSelectedEvent,
     sendAnalytics
 } from '../../analytics';
 import { getLocalizedDateFormatter, translate } from '../../base/i18n';
@@ -106,7 +107,7 @@ class BaseCalendarList extends Component<Props> {
      * @returns {void}
      */
     componentDidMount() {
-        sendAnalytics(createCalendarClickedEvent('calendar.tab'));
+        sendAnalytics(createCalendarSelectedEvent());
     }
 
     /**
