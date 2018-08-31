@@ -339,14 +339,16 @@ class Conference extends Component<Props> {
     /**
      * Renders the conference notification badge if the feature is enabled.
      *
-     * Note: If the calendar feature is disabled on a platform, then we don't
-     * have its components exported so an undefined check is necessary.
-     *
      * @private
      * @returns {React$Node}
      */
     _renderConferenceNotification() {
-        return ConferenceNotification ? <ConferenceNotification /> : undefined;
+        // XXX If the calendar feature is disabled on a platform, then we don't
+        // have its components exported so an undefined check is necessary.
+        return (
+            !this.props._reducedUI && ConferenceNotification
+                ? <ConferenceNotification />
+                : undefined);
     }
 }
 
