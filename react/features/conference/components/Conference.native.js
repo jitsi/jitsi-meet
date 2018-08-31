@@ -9,7 +9,6 @@ import { connect as reactReduxConnect } from 'react-redux';
 import { appNavigate } from '../../app';
 import { connect, disconnect } from '../../base/connection';
 import { DialogContainer } from '../../base/dialog';
-import { CalleeInfoContainer } from '../../invite';
 import { getParticipantCount } from '../../base/participants';
 import { Container, LoadingIndicator, TintedView } from '../../base/react';
 import { TestConnectionInfo } from '../../base/testing';
@@ -17,6 +16,7 @@ import { createDesiredLocalTracks } from '../../base/tracks';
 import { ConferenceNotification } from '../../calendar-sync';
 import { Filmstrip } from '../../filmstrip';
 import { LargeVideo } from '../../large-video';
+import { CalleeInfoContainer } from '../../invite';
 import { NotificationsContainer } from '../../notifications';
 import { setToolboxVisible, Toolbox } from '../../toolbox';
 
@@ -30,8 +30,8 @@ type Props = {
     /**
      * The indicator which determines that we are still connecting to the
      * conference which includes establishing the XMPP connection and then
-     * joining the room. If truthy, then an activity/loading indicator will
-     * be rendered.
+     * joining the room. If truthy, then an activity/loading indicator will be
+     * rendered.
      *
      * @private
      */
@@ -48,6 +48,7 @@ type Props = {
      * The handler which dispatches the (redux) action connect.
      *
      * @private
+     * @returns {void}
      */
     _onConnect: Function,
 
@@ -55,6 +56,7 @@ type Props = {
      * The handler which dispatches the (redux) action disconnect.
      *
      * @private
+     * @returns {void}
      */
     _onDisconnect: Function,
 
@@ -63,9 +65,9 @@ type Props = {
      * associated {@code Conference}.
      *
      * @private
-     * @returns {boolean} As the associated conference is unconditionally
-     * left and exiting the app while it renders a {@code Conference} is
-     * undesired, {@code true} is always returned.
+     * @returns {boolean} As the associated conference is unconditionally left
+     * and exiting the app while it renders a {@code Conference} is undesired,
+     * {@code true} is always returned.
      */
     _onHardwareBackPress: Function,
 
@@ -92,10 +94,13 @@ type Props = {
     _room: string,
 
     /**
-     * The handler which dispatches the (redux) action setToolboxVisible to
-     * show/hide the Toolbox.
+     * The handler which dispatches the (redux) action {@link setToolboxVisible}
+     * to show/hide the {@link Toolbox}.
      *
+     * @param {boolean} visible - {@code true} to show the {@code Toolbox} or
+     * {@code false} to hide it.
      * @private
+     * @returns {void}
      */
     _setToolboxVisible: Function,
 
@@ -281,6 +286,7 @@ class Conference extends Component<Props> {
                       */}
                     <Filmstrip />
                 </View>
+
                 <TestConnectionInfo />
 
                 {
@@ -362,8 +368,8 @@ function _mapDispatchToProps(dispatch) {
          * Dispatches actions to create the desired local tracks and for
          * connecting to the conference.
          *
-         * @returns {void}
          * @private
+         * @returns {void}
          */
         _onConnect() {
             dispatch(createDesiredLocalTracks());
@@ -373,8 +379,8 @@ function _mapDispatchToProps(dispatch) {
         /**
          * Dispatches an action disconnecting from the conference.
          *
-         * @returns {void}
          * @private
+         * @returns {void}
          */
         _onDisconnect() {
             dispatch(disconnect());
@@ -395,12 +401,12 @@ function _mapDispatchToProps(dispatch) {
         },
 
         /**
-         * Dispatches an action changing the visibility of the Toolbox.
+         * Dispatches an action changing the visibility of the {@link Toolbox}.
          *
-         * @param {boolean} visible - True to show the Toolbox or false to hide
-         * it.
-         * @returns {void}
+         * @param {boolean} visible - {@code true} to show the {@code Toolbox}
+         * or {@code false} to hide it.
          * @private
+         * @returns {void}
          */
         _setToolboxVisible(visible) {
             dispatch(setToolboxVisible(visible));

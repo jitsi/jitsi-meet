@@ -23,7 +23,7 @@ type State = {
      * @type {boolean}
      */
     filmstripBecomingVisible: boolean
-}
+};
 
 /**
  * A container to hold video status labels, including recording status and
@@ -99,13 +99,13 @@ class Labels extends AbstractLabels<Props, State> {
         );
     }
 
-    _renderRecordingLabel: string => React$Element<*>
+    _renderLocalRecordingLabel: () => React$Element<*>;
 
-    _renderVideoQualityLabel: () => React$Element<*>
+    _renderRecordingLabel: string => React$Element<*>;
 
-    _renderTranscribingLabel: () => React$Element<*>
+    _renderTranscribingLabel: () => React$Element<*>;
 
-    _renderLocalRecordingLabel: () => React$Element<*>
+    _renderVideoQualityLabel: () => React$Element<*>;
 }
 
 export default connect(_mapStateToProps)(Labels);
