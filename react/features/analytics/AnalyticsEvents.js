@@ -114,6 +114,95 @@ export function createConnectionEvent(action, attributes = {}) {
 }
 
 /**
+ * Creates an event which indicates an action occurred in the calendar
+ * integration UI.
+ *
+ * @param {string} eventName - The name of the calendar UI event.
+ * @param {Object} attributes - Attributes to attach to the event.
+ * @returns {Object} The event in a format suitable for sending via
+ * sendAnalytics.
+ */
+export function createCalendarClickedEvent(eventName, attributes = {}) {
+    return {
+        action: 'clicked',
+        actionSubject: eventName,
+        attributes,
+        source: 'calendar',
+        type: TYPE_UI
+    };
+}
+
+/**
+ * Creates an event which indicates that the calendar container is shown and
+ * selected.
+ *
+ * @param {Object} attributes - Attributes to attach to the event.
+ * @returns {Object} The event in a format suitable for sending via
+ * sendAnalytics.
+ */
+export function createCalendarSelectedEvent(attributes = {}) {
+    return {
+        action: 'selected',
+        actionSubject: 'calendar.selected',
+        attributes,
+        source: 'calendar',
+        type: TYPE_UI
+    };
+}
+
+/**
+ * Creates an event indicating that a calendar has been connected.
+ *
+ * @param {boolean} attributes - Additional attributes to attach to the event.
+ * @returns {Object} The event in a format suitable for sending via
+ * sendAnalytics.
+ */
+export function createCalendarConnectedEvent(attributes = {}) {
+    return {
+        action: 'calendar.connected',
+        actionSubject: 'calendar.connected',
+        attributes
+    };
+}
+
+/**
+ * Creates an event which indicates an action occurred in the recent list
+ * integration UI.
+ *
+ * @param {string} eventName - The name of the recent list UI event.
+ * @param {Object} attributes - Attributes to attach to the event.
+ * @returns {Object} The event in a format suitable for sending via
+ * sendAnalytics.
+ */
+export function createRecentClickedEvent(eventName, attributes = {}) {
+    return {
+        action: 'clicked',
+        actionSubject: eventName,
+        attributes,
+        source: 'recent.list',
+        type: TYPE_UI
+    };
+}
+
+/**
+ * Creates an event which indicates that the recent list container is shown and
+ * selected.
+ *
+ * @param {Object} attributes - Attributes to attach to the event.
+ * @returns {Object} The event in a format suitable for sending via
+ * sendAnalytics.
+ */
+export function createRecentSelectedEvent(attributes = {}) {
+    return {
+        action: 'selected',
+        actionSubject: 'recent.list.selected',
+        attributes,
+        source: 'recent.list',
+        type: TYPE_UI
+    };
+}
+
+/**
  * Creates an event for an action on the deep linking page.
  *
  * @param {string} action - The action that the event represents.

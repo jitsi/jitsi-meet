@@ -62,7 +62,8 @@
         "go": "GO",
         "join": "JOIN",
         "privacy": "Privacy",
-        "recentList": "History",
+        "recentList": "Recent",
+        "recentListEmpty": "Your recent list is currently empty. Chat with your team and you will find all your recent meetings here.",
         "roomname": "Enter room name",
         "roomnameHint": "Enter the name or URL of the room you want to join. You may make a name up, just let the people you are meeting know it so that they enter the same name.",
         "sendFeedback": "Send feedback",
@@ -642,16 +643,18 @@
     },
     "calendarSync": {
         "addMeetingURL": "Add a meeting link",
-        "today": "Today",
+        "join": "Join",
+        "joinTooltip": "Join the meeting",
         "nextMeeting": "next meeting",
         "noEvents": "There are no upcoming events scheduled.",
         "ongoingMeeting": "ongoing meeting",
         "permissionButton": "Open settings",
         "permissionMessage": "The Calendar permission is required to see your meetings in the app.",
-        "refresh": "Refresh calendar"
+        "refresh": "Refresh calendar",
+        "today": "Today"
     },
     "recentList": {
-        "joinPastMeeting": "Join A Past Meeting"
+        "joinPastMeeting": "Join a past meeting"
     },
     "sectionList": {
         "pullToRefresh": "Pull to refresh"

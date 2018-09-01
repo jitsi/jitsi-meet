@@ -5,6 +5,10 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import Tooltip from '@atlaskit/tooltip';
 
+import {
+    createCalendarClickedEvent,
+    sendAnalytics
+} from '../../analytics';
 import { translate } from '../../base/i18n';
 
 import { updateCalendarEvent } from '../actions';
@@ -80,6 +84,8 @@ class AddMeetingUrlButton extends Component<Props> {
      */
     _onClick() {
         const { calendarId, dispatch, eventId } = this.props;
+
+        sendAnalytics(createCalendarClickedEvent('calendar.add.url'));
 
         dispatch(updateCalendarEvent(eventId, calendarId));
     }

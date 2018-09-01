@@ -79,7 +79,9 @@ export default class NavigateSectionListItem<P: Props>
                         { duration }
                     </Text>
                 </Container>
-                { elementAfter || null }
+                <Container className = { 'element-after' }>
+                    { elementAfter || null }
+                </Container>
             </Container>
         );
     }

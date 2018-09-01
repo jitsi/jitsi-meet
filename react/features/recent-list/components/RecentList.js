@@ -2,12 +2,19 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
+import {
+    createRecentClickedEvent,
+    createRecentSelectedEvent,
+    sendAnalytics
+} from '../../analytics';
 import { appNavigate, getDefaultURL } from '../../app';
 import { translate } from '../../base/i18n';
-import { NavigateSectionList } from '../../base/react';
+import { Container, NavigateSectionList, Text } from '../../base/react';
 import type { Section } from '../../base/react';
 
 import { isRecentListEnabled, toDisplayableList } from '../functions';
+
+import styles from './styles';
 
 /**
  * The type of the React {@code Component} props of {@link RecentList}
@@ -57,6 +64,17 @@ class RecentList extends Component<Props> {
     }
 
     /**
+     * Implements React's {@link Component#componentDidMount()}. Invoked
+     * immediately after this component is mounted.
+     *
+     * @inheritdoc
+     * @returns {void}
+     */
+    componentDidMount() {
+        sendAnalytics(createRecentSelectedEvent());
+    }
+
+    /**
      * Implements the React Components's render method.
      *
      * @inheritdoc
@@ -72,7 +90,34 @@ class RecentList extends Component<Props> {
             <NavigateSectionList
                 disabled = { disabled }
                 onPress = { this._onPress }
+                renderListEmptyComponent
+                    = { this._getRenderListEmptyComponent() }
                 sections = { recentList } />
+        );
+    }
+
+    _getRenderListEmptyComponent: () => Object;
+
+    /**
+     * Returns a list empty component if a custom one has to be rendered instead
+     * of the default one in the {@link NavigateSectionList}.
+     *
+     * @private
+     * @returns {React$Component}
+     */
+    _getRenderListEmptyComponent() {
+        const { t } = this.props;
+
+        return (
+            <Container
+                className = 'navigate-section-list-empty'
+                style = { styles.emptyListContainer }>
+                <Text
+                    className = 'header-text-description'
+                    style = { styles.emptyListText }>
+                    { t('welcomepage.recentListEmpty') }
+                </Text>
+            </Container>
         );
     }
 
@@ -88,9 +133,10 @@ class RecentList extends Component<Props> {
     _onPress(url) {
         const { dispatch } = this.props;
 
+        sendAnalytics(createRecentClickedEvent('recent.meeting.tile'));
+
         dispatch(appNavigate(url));
     }
-
 }
 
 /**

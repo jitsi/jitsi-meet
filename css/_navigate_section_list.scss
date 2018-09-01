@@ -34,10 +34,25 @@
     i {
         cursor: inherit;
     }
+
+    .element-after {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .join-button {
+        display: none;
+    }
+
+    &:hover .join-button {
+        display: block
+    }
 }
 .navigate-section-tile-body {
     @extend %navigate-section-list-tile-text;
     font-weight: normal;
+    line-height: 24px;
 }
 .navigate-section-list-tile-info {
     flex: 1;
@@ -45,6 +60,7 @@
 .navigate-section-tile-title {
     @extend %navigate-section-list-tile-text;
     font-weight: bold;
+    line-height: 24px;
 }
 .navigate-section-section-header {
     @extend %navigate-section-list-text;

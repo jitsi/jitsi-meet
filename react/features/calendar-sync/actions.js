@@ -2,6 +2,8 @@
 
 import { loadGoogleAPI } from '../google-api';
 
+import { createCalendarConnectedEvent, sendAnalytics } from '../analytics';
+
 import {
     CLEAR_CALENDAR_INTEGRATION,
     REFRESH_CALENDAR,
@@ -230,6 +232,7 @@ export function signIn(calendarType: string): Function {
             .then(() => dispatch(setIntegrationReady(calendarType)))
             .then(() => dispatch(updateProfile(calendarType)))
             .then(() => dispatch(refreshCalendar()))
+            .then(() => sendAnalytics(createCalendarConnectedEvent()))
             .catch(error => {
                 logger.error(
                     'Error occurred while signing into calendar integration',
