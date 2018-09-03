@@ -8,7 +8,6 @@ import VideoLayout from '../../../../modules/UI/videolayout/VideoLayout';
 
 import { obtainConfig } from '../../base/config';
 import { connect, disconnect } from '../../base/connection';
-import { DialogContainer } from '../../base/dialog';
 import { translate } from '../../base/i18n';
 import { Filmstrip } from '../../filmstrip';
 import { CalleeInfoContainer } from '../../invite';
@@ -226,7 +225,6 @@ class Conference extends Component<Props> {
                 { filmstripOnly || <Toolbox /> }
                 { filmstripOnly || <SidePanel /> }
 
-                <DialogContainer />
                 <NotificationsContainer />
 
                 <CalleeInfoContainer />

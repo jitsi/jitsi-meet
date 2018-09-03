@@ -5,6 +5,7 @@ import { Linking } from 'react-native';
 
 import '../../analytics';
 import '../../authentication';
+import { DialogContainer } from '../../base/dialog';
 import '../../base/jwt';
 import { Platform } from '../../base/react';
 import {
@@ -179,6 +180,17 @@ export class App extends AbstractApp {
      */
     _onLinkingURL({ url }) {
         super._openURL(url);
+    }
+
+    /**
+     * Renders the platform specific dialog container.
+     *
+     * @returns {React$Element}
+     */
+    _renderDialogContainer() {
+        return (
+            <DialogContainer />
+        );
     }
 }
 
