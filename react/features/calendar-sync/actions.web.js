@@ -2,20 +2,20 @@
 
 import { loadGoogleAPI } from '../google-api';
 
+import { refreshCalendar, setCalendarEvents } from './actions';
 import { createCalendarConnectedEvent, sendAnalytics } from '../analytics';
 
 import {
     CLEAR_CALENDAR_INTEGRATION,
-    REFRESH_CALENDAR,
     SET_CALENDAR_AUTH_STATE,
-    SET_CALENDAR_AUTHORIZATION,
-    SET_CALENDAR_EVENTS,
     SET_CALENDAR_INTEGRATION,
     SET_CALENDAR_PROFILE_EMAIL,
     SET_LOADING_CALENDAR_EVENTS
 } from './actionTypes';
 import { _getCalendarIntegration, isCalendarEnabled } from './functions';
 import { generateRoomWithoutSeparator } from '../welcome';
+
+export * from './actions.any';
 
 const logger = require('jitsi-meet-logger').getLogger(__filename);
 
@@ -88,25 +88,18 @@ export function clearCalendarIntegration() {
 }
 
 /**
- * Sends an action to refresh the entry list (fetches new data).
+ * Asks confirmation from the user to add a Jitsi link to the calendar event.
  *
- * @param {boolean} forcePermission - Whether to force to re-ask for
- * the permission or not.
- * @param {boolean} isInteractive - If true this refresh was caused by
- * direct user interaction, false otherwise.
- * @returns {{
- *     type: REFRESH_CALENDAR,
- *     forcePermission: boolean,
- *     isInteractive: boolean
- * }}
+ * NOTE: Currently there is no confirmation prompted on web, so this is just
+ * a relaying method to avoid flow problems.
+ *
+ * @param {string} eventId - The event id.
+ * @param {string} calendarId - The calendar id.
+ * @returns {Function}
  */
-export function refreshCalendar(
-        forcePermission: boolean = false, isInteractive: boolean = true) {
-    return {
-        type: REFRESH_CALENDAR,
-        forcePermission,
-        isInteractive
-    };
+export function openUpdateCalendarEventDialog(
+        eventId: string, calendarId: string) {
+    return updateCalendarEvent(eventId, calendarId);
 }
 
 /**
@@ -123,40 +116,6 @@ export function setCalendarAPIAuthState(newState: ?Object) {
     return {
         type: SET_CALENDAR_AUTH_STATE,
         msAuthState: newState
-    };
-}
-
-/**
- * Sends an action to signal that a calendar access has been requested. For more
- * info, see {@link SET_CALENDAR_AUTHORIZATION}.
- *
- * @param {string | undefined} authorization - The result of the last calendar
- * authorization request.
- * @returns {{
- *     type: SET_CALENDAR_AUTHORIZATION,
- *     authorization: ?string
- * }}
- */
-export function setCalendarAuthorization(authorization: ?string) {
-    return {
-        type: SET_CALENDAR_AUTHORIZATION,
-        authorization
-    };
-}
-
-/**
- * Sends an action to update the current calendar list in redux.
- *
- * @param {Array<Object>} events - The new list.
- * @returns {{
- *     type: SET_CALENDAR_EVENTS,
- *     events: Array<Object>
- * }}
- */
-export function setCalendarEvents(events: Array<Object>) {
-    return {
-        type: SET_CALENDAR_EVENTS,
-        events
     };
 }
 
@@ -244,29 +203,6 @@ export function signIn(calendarType: string): Function {
 }
 
 /**
- * Signals to get current profile data linked to the current calendar
- * integration that is in use.
- *
- * @param {string} calendarType - The calendar integration to which the profile
- * should be updated.
- * @returns {Function}
- */
-export function updateProfile(calendarType: string): Function {
-    return (dispatch: Dispatch<*>) => {
-        const integration = _getCalendarIntegration(calendarType);
-
-        if (!integration) {
-            return Promise.reject('No integration found');
-        }
-
-        return dispatch(integration.getCurrentEmail())
-            .then(email => {
-                dispatch(setCalendarProfileEmail(email));
-            });
-    };
-}
-
-/**
  * Updates calendar event by generating new invite URL and editing the event
  * adding some descriptive text and location.
  *
@@ -309,6 +245,29 @@ export function updateCalendarEvent(id: string, calendarId: string): Function {
                 events[eventIx] = newEvent;
 
                 return dispatch(setCalendarEvents(events));
+            });
+    };
+}
+
+/**
+ * Signals to get current profile data linked to the current calendar
+ * integration that is in use.
+ *
+ * @param {string} calendarType - The calendar integration to which the profile
+ * should be updated.
+ * @returns {Function}
+ */
+export function updateProfile(calendarType: string): Function {
+    return (dispatch: Dispatch<*>) => {
+        const integration = _getCalendarIntegration(calendarType);
+
+        if (!integration) {
+            return Promise.reject('No integration found');
+        }
+
+        return dispatch(integration.getCurrentEmail())
+            .then(email => {
+                dispatch(setCalendarProfileEmail(email));
             });
     };
 }

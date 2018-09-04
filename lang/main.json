@@ -648,6 +648,8 @@
     },
     "calendarSync": {
         "addMeetingURL": "Add a meeting link",
+        "confirmAddLink": "Do you want to add a Jitsi link to this event?",
+        "confirmAddLinkTitle": "Calendar",
         "join": "Join",
         "joinTooltip": "Join the meeting",
         "nextMeeting": "next meeting",

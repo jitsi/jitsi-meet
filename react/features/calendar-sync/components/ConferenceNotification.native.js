@@ -237,9 +237,10 @@ class ConferenceNotification extends Component<Props, State> {
 
             for (const event of _eventList) {
                 const eventUrl
-                    = getURLWithoutParamsNormalized(new URL(event.url));
+                    = event.url
+                        && getURLWithoutParamsNormalized(new URL(event.url));
 
-                if (eventUrl !== _currentConferenceURL) {
+                if (eventUrl && eventUrl !== _currentConferenceURL) {
                     if ((!eventToShow
                                 && event.startDate > now
                                 && event.startDate < now + ALERT_MILLISECONDS)
