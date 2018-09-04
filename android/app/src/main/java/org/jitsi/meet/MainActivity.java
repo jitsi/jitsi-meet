@@ -27,11 +27,9 @@ import org.jitsi.meet.sdk.invite.AddPeopleControllerListener;
 import org.jitsi.meet.sdk.invite.InviteController;
 import org.jitsi.meet.sdk.invite.InviteControllerListener;
 
-import com.calendarevents.CalendarEventsPackage;
 import com.facebook.react.bridge.UiThreadUtil;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -228,21 +226,5 @@ public class MainActivity extends JitsiMeetActivity {
             // be delivered.
             addPeopleController.endAddPeople();
         }
-    }
-
-    @Override
-    public void onRequestPermissionsResult(
-            int requestCode,
-            String[] permissions,
-            int[] grantResults) {
-        CalendarEventsPackage.onRequestPermissionsResult(
-            requestCode,
-            permissions,
-            grantResults);
-
-        super.onRequestPermissionsResult(
-            requestCode,
-            permissions,
-            grantResults);
     }
 }

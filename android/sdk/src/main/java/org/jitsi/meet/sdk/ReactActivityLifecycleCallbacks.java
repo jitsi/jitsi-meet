@@ -148,6 +148,10 @@ public class ReactActivityLifecycleCallbacks {
         final int requestCode,
         final String[] permissions,
         final int[] grantResults) {
+        CalendarEventsPackage.onRequestPermissionsResult(
+            requestCode,
+            permissions,
+            grantResults);
         permissionsCallback = new Callback() {
             @Override
             public void invoke(Object... args) {
