@@ -2375,11 +2375,24 @@ export default {
                     createLocalTracksF,
                     newDevices.videoinput,
                     newDevices.audioinput)
-                .then(tracks =>
-                    Promise.all(this._setLocalAudioVideoStreams(tracks)))
+                .then(tracks => {
+                    // If audio or video muted before, or we unplugged current
+                    // device and selected new one, then mute new track.
+                    const muteSyncPromises = tracks.map(track => {
+                        if ((track.isVideoTrack() && videoWasMuted)
+                            || (track.isAudioTrack() && audioWasMuted)) {
+                            return track.mute();
+                        }
+
+                        return Promise.resolve();
+                    });
+
+                    return Promise.all(muteSyncPromises)
+                        .then(() => Promise.all(
+                            this._setLocalAudioVideoStreams(tracks)));
+                })
                 .then(() => {
-                    // If audio was muted before, or we unplugged current device
-                    // and selected new one, then mute new audio track.
+                    // Log and sync known mute state.
                     if (audioWasMuted) {
                         sendAnalytics(createTrackMutedEvent(
                             'audio',
@@ -2388,8 +2401,6 @@ export default {
                         muteLocalAudio(true);
                     }
 
-                    // If video was muted before, or we unplugged current device
-                    // and selected new one, then mute new video track.
                     if (!this.isSharingScreen && videoWasMuted) {
                         sendAnalytics(createTrackMutedEvent(
                             'video',
