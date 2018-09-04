@@ -135,7 +135,8 @@ server {
     location / {
         ssi on;
     }
-    # BOSH
+    # BOSH, Bidirectional-streams Over Synchronous HTTP
+    # https://en.wikipedia.org/wiki/BOSH_(protocol)
     location /http-bind {
         proxy_pass      http://localhost:5280/http-bind;
         proxy_set_header X-Forwarded-For $remote_addr;
