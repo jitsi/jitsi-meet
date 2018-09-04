@@ -23,6 +23,7 @@ import VideoMutedIndicator from './VideoMutedIndicator';
  * Thumbnail component's property types.
  */
 type Props = {
+
     /**
      * The Redux representation of the participant's audio track.
      */
@@ -45,7 +46,7 @@ type Props = {
     disablePin?: boolean,
 
     /**
-     * If true, there will be no color overlay (a tint) on the thumbnail
+     * If true, there will be no color overlay (tint) on the thumbnail
      * indicating the participant associated with the thumbnail is displayed on
      * large video. By default there will be a tint.
      */

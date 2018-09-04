@@ -86,8 +86,7 @@ class TileView extends Component<Props, State> {
     }
 
     /**
-     * Implements React's {@link Component#componentWillMount()}. Invoked
-     * immediately before mounting occurs.
+     * Implements React's {@link Component#componentDidMount}.
      *
      * @inheritdoc
      */
@@ -96,8 +95,7 @@ class TileView extends Component<Props, State> {
     }
 
     /**
-     * Implements React's {@link Component#componentWillUnmount()}. Invoked
-     * immediately before this component is unmounted and destroyed.
+     * Implements React's {@link Component#componentDidUpdate}.
      *
      * @inheritdoc
      */
