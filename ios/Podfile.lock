@@ -63,8 +63,6 @@ PODS:
     - React/Core
     - React/fishhook
     - React/RCTBlob
-  - ReactNativePermissions (1.1.1):
-    - React
   - RNSound (0.10.9):
     - React/Core
     - RNSound/Core (= 0.10.9)
@@ -98,7 +96,6 @@ DEPENDENCIES:
   - React/RCTNetwork (from `../node_modules/react-native`)
   - React/RCTText (from `../node_modules/react-native`)
   - React/RCTWebSocket (from `../node_modules/react-native`)
-  - ReactNativePermissions (from `../node_modules/react-native-permissions`)
   - RNSound (from `../node_modules/react-native-sound`)
   - RNVectorIcons (from `../node_modules/react-native-vector-icons`)
   - yoga (from `../node_modules/react-native/ReactCommon/yoga`)
@@ -130,8 +127,6 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-locale-detector"
   react-native-webrtc:
     :path: "../node_modules/react-native-webrtc"
-  ReactNativePermissions:
-    :path: "../node_modules/react-native-permissions"
   RNSound:
     :path: "../node_modules/react-native-sound"
   RNVectorIcons:
@@ -152,12 +147,11 @@ SPEC CHECKSUMS:
   react-native-keep-awake: 0de4bd66de0c23178107dce0c2fcc3354b2a8e94
   react-native-locale-detector: d1b2c6fe5abb56e3a1efb6c2d6f308c05c4251f1
   react-native-webrtc: 31b6d3f1e3e2ce373aa43fd682b04367250f807d
-  ReactNativePermissions: 9ef3f0c74a373fdbfae21c067098a8348d9aa15f
   RNSound: b360b3862d3118ed1c74bb9825696b5957686ac4
   RNVectorIcons: c0dbfbf6068fefa240c37b0f71bd03b45dddac44
   SDWebImage: 624d6e296c69b244bcede364c72ae0430ac14681
   yoga: a23273df0088bf7f2bb7e5d7b00044ea57a2a54a
 
-PODFILE CHECKSUM: 1d5c8382f73d9540fac68d93b32e1d3b58d069ee
+PODFILE CHECKSUM: 69d3df0b8baa54d636bd653b412ed45db771a3b6
 
 COCOAPODS: 1.5.3
