@@ -16,11 +16,16 @@
 
 package org.jitsi.meet.sdk;
 
+import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Intent;
+import android.os.Build;
 
+import com.calendarevents.CalendarEventsPackage;
 import com.facebook.react.ReactInstanceManager;
+import com.facebook.react.bridge.Callback;
 import com.facebook.react.modules.core.DefaultHardwareBackBtnHandler;
+import com.facebook.react.modules.core.PermissionListener;
 
 /**
  * Helper class to encapsulate the work which needs to be done on
@@ -28,6 +33,13 @@ import com.facebook.react.modules.core.DefaultHardwareBackBtnHandler;
  * it.
  */
 public class ReactActivityLifecycleCallbacks {
+    /**
+     * Needed for making sure this class working with the "PermissionsAndroid"
+     * React Native module.
+     */
+    private static PermissionListener permissionListener;
+    private static Callback permissionsCallback;
+
     /**
      * {@link Activity} lifecycle method which should be called from
      * {@link Activity#onBackPressed} so we can do the required internal
@@ -107,6 +119,11 @@ public class ReactActivityLifecycleCallbacks {
         if (reactInstanceManager != null) {
             reactInstanceManager.onHostResume(activity, defaultBackButtonImpl);
         }
+
+        if (permissionsCallback != null) {
+            permissionsCallback.invoke();
+            permissionsCallback = null;
+        }
     }
 
     /**
@@ -125,5 +142,26 @@ public class ReactActivityLifecycleCallbacks {
         if (reactInstanceManager != null) {
             reactInstanceManager.onNewIntent(intent);
         }
+    }
+
+    public static void onRequestPermissionsResult(
+        final int requestCode,
+        final String[] permissions,
+        final int[] grantResults) {
+        permissionsCallback = new Callback() {
+            @Override
+            public void invoke(Object... args) {
+                if (permissionListener != null
+                        && permissionListener.onRequestPermissionsResult(requestCode, permissions, grantResults)) {
+                    permissionListener = null;
+                }
+            }
+        };
+    }
+
+    @TargetApi(Build.VERSION_CODES.M)
+    public static void requestPermissions(Activity activity, String[] permissions, int requestCode, PermissionListener listener) {
+        permissionListener = listener;
+        activity.requestPermissions(permissions, requestCode);
     }
 }

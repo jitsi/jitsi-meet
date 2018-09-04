@@ -27,6 +27,7 @@ import android.view.KeyEvent;
 
 import com.facebook.react.ReactInstanceManager;
 import com.facebook.react.modules.core.DefaultHardwareBackBtnHandler;
+import com.facebook.react.modules.core.PermissionListener;
 
 import java.net.URL;
 
@@ -42,7 +43,7 @@ import java.net.URL;
  * {@code JitsiMeetView} static methods.
  */
 public class JitsiMeetActivity
-    extends AppCompatActivity {
+    extends AppCompatActivity implements JitsiMeetActivityInterface {
 
     /**
      * The request code identifying requests for the permission to draw on top
@@ -260,6 +261,15 @@ public class JitsiMeetActivity
         ReactActivityLifecycleCallbacks.onNewIntent(intent);
     }
 
+    // https://developer.android.com/reference/android/support/v4/app/ActivityCompat.OnRequestPermissionsResultCallback
+    @Override
+    public void onRequestPermissionsResult(
+            final int requestCode,
+            final String[] permissions,
+            final int[] grantResults) {
+        ReactActivityLifecycleCallbacks.onRequestPermissionsResult(requestCode, permissions, grantResults);
+    }
+
     @Override
     protected void onResume() {
         super.onResume();
@@ -281,6 +291,14 @@ public class JitsiMeetActivity
         if (view != null) {
             view.enterPictureInPicture();
         }
+    }
+
+    /**
+     * Implementation of the {@code PermissionAwareActivity} interface.
+     */
+    @Override
+    public void requestPermissions(String[] permissions, int requestCode, PermissionListener listener) {
+        ReactActivityLifecycleCallbacks.requestPermissions(this, permissions, requestCode, listener);
     }
 
     /**
