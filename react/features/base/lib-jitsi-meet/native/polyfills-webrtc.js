@@ -3,7 +3,8 @@ import {
     MediaStreamTrack,
     RTCSessionDescription,
     RTCIceCandidate,
-    mediaDevices
+    mediaDevices,
+    permissions
 } from 'react-native-webrtc';
 
 import RTCPeerConnection from './RTCPeerConnection';
@@ -33,6 +34,9 @@ import RTCPeerConnection from './RTCPeerConnection';
     if (navigator) {
         if (typeof navigator.mediaDevices === 'undefined') {
             navigator.mediaDevices = mediaDevices;
+        }
+        if (typeof navigator.permissions === 'undefined') {
+            navigator.permissions = permissions;
         }
     }
 
