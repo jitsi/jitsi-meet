@@ -23,13 +23,47 @@ import VideoMutedIndicator from './VideoMutedIndicator';
  * Thumbnail component's property types.
  */
 type Props = {
+    /**
+     * The Redux representation of the participant's audio track.
+     */
     _audioTrack: Object,
+
+    /**
+     * The Redux representation of the state "features/large-video".
+     */
     _largeVideo: Object,
+
+    /**
+     * The Redux representation of the participant's video track.
+     */
     _videoTrack: Object,
+
+    /**
+     * If true, tapping on the thumbnail will not pin the participant to large
+     * video. By default tapping does pin the participant.
+     */
     disablePin?: boolean,
+
+    /**
+     * If true, there will be no color overlay (a tint) on the thumbnail
+     * indicating the participant associated with the thumbnail is displayed on
+     * large video. By default there will be a tint.
+     */
     disableTint?: boolean,
-    dispatch: Function,
+
+    /**
+     * Invoked to trigger state changes in Redux.
+     */
+    dispatch: Dispatch<*>,
+
+    /**
+     * The Redux representation of the participant to display.
+     */
     participant: Object,
+
+    /**
+     * Optional styling to add or override on the Thumbnail component root.
+     */
     styleOverrides?: Object
 };
 

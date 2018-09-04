@@ -29,7 +29,7 @@ type Props = {
     /**
      * The participants in the conference.
      */
-    _participants: Array<any>,
+    _participants: Array<Object>,
 
     /**
      * Invoked to update the receiver video quality.
@@ -61,8 +61,8 @@ type State = {
 const TILE_ASPECT_RATIO = 1;
 
 /**
- * Implements a React {@link Component} which represents the filmstrip on
- * mobile/React Native.
+ * Implements a React {@link Component} which displays thumbnails in a two
+ * dimensional grid.
  *
  * @extends Component
  */
@@ -86,7 +86,8 @@ class TileView extends Component<Props, State> {
     }
 
     /**
-     * Updates the receiver video quality.
+     * Implements React's {@link Component#componentWillMount()}. Invoked
+     * immediately before mounting occurs.
      *
      * @inheritdoc
      */
@@ -95,7 +96,8 @@ class TileView extends Component<Props, State> {
     }
 
     /**
-     * Updates the receiver video quality.
+     * Implements React's {@link Component#componentWillUnmount()}. Invoked
+     * immediately before this component is unmounted and destroyed.
      *
      * @inheritdoc
      */
