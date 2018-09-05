@@ -81,6 +81,7 @@ class DesktopPicker extends Component<*, *> {
 
     state = {
         selectedSource: {},
+        selectedTab: 0,
         sources: {},
         types: []
     };
@@ -283,15 +284,19 @@ class DesktopPicker extends Component<*, *> {
      * Stores the selected tab and updates the selected source via
      * {@code _getSelectedSource}.
      *
-     * @param {int} idx - The index of the selected tab.
+     * @param {Object} tab - The configuration passed into atlaskit tabs to
+     * describe how to display the selected tab.
+     * @param {number} tabIndex - The index of the tab within the array of
+     * displayed tabs.
      * @returns {void}
      */
-    _onTabSelected(idx) {
+    _onTabSelected(tab, tabIndex) { // eslint-disable-line no-unused-vars
         const { types, sources } = this.state;
 
-        this._selectedTabType = types[idx];
+        this._selectedTabType = types[tabIndex];
         this.setState({
-            selectedSource: this._getSelectedSource(sources)
+            selectedSource: this._getSelectedSource(sources),
+            selectedTab: tabIndex
         });
     }
 
@@ -315,7 +320,6 @@ class DesktopPicker extends Component<*, *> {
                             selectedSourceId = { selectedSource.id }
                             sources = { sources[type] }
                             type = { type } />,
-                        defaultSelected: type === DEFAULT_TAB_TYPE,
                         label: t(TAB_LABELS[type])
                     };
                 });
@@ -323,6 +327,7 @@ class DesktopPicker extends Component<*, *> {
         return (
             <Tabs
                 onSelect = { this._onTabSelected }
+                selected = { this.state.selectedTab }
                 tabs = { tabs } />);
     }
 

@@ -30,7 +30,7 @@
     "@atlaskit/modal-dialog": "6.0.12",
     "@atlaskit/multi-select": "11.0.6",
     "@atlaskit/spinner": "9.0.8",
-    "@atlaskit/tabs": "4.0.1",
+    "@atlaskit/tabs": "8.0.8",
     "@atlaskit/theme": "6.0.2",
     "@atlaskit/tooltip": "12.0.14",
     "@microsoft/microsoft-graph-client": "1.1.0",

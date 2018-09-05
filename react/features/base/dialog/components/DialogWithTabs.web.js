@@ -54,6 +54,11 @@ export type Props = {
 type State = {
 
     /**
+     * The index of the tab that should be displayed.
+     */
+    selectedTab: number,
+
+    /**
      * An array of the states of the tabs.
      */
     tabStates: Array<Object>
@@ -74,9 +79,11 @@ class DialogWithTabs extends Component<Props, State> {
     constructor(props: Props) {
         super(props);
         this.state = {
+            selectedTab: this.props.defaultTab || 0,
             tabStates: this.props.tabs.map(tab => tab.props)
         };
         this._onSubmit = this._onSubmit.bind(this);
+        this._onTabSelected = this._onTabSelected.bind(this);
         this._onTabStateChange = this._onTabStateChange.bind(this);
     }
 
@@ -125,13 +132,29 @@ class DialogWithTabs extends Component<Props, State> {
         return { ...currentTabState };
     }
 
+    _onTabSelected: (Object, number) => void;
+
+    /**
+     * Callback invoked when the desired tab to display should be changed.
+     *
+     * @param {Object} tab - The configuration passed into atlaskit tabs to
+     * describe how to display the selected tab.
+     * @param {number} tabIndex - The index of the tab within the array of
+     * displayed tabs.
+     * @private
+     * @returns {void}
+     */
+    _onTabSelected(tab, tabIndex) { // eslint-disable-line no-unused-vars
+        this.setState({ selectedTab: tabIndex });
+    }
+
     /**
      * Renders the tabs from the tab information passed on props.
      *
      * @returns {void}
      */
     _renderTabs() {
-        const { defaultTab = 0, t, tabs } = this.props;
+        const { t, tabs } = this.props;
 
         if (tabs.length === 1) {
             return this._renderTab({
@@ -143,6 +166,8 @@ class DialogWithTabs extends Component<Props, State> {
         if (tabs.length > 1) {
             return (
                 <Tabs
+                    onSelect = { this._onTabSelected }
+                    selected = { this.state.selectedTab }
                     tabs = {
                         tabs.map(({ component, label, styles }, idx) => {
                             return {
@@ -151,7 +176,6 @@ class DialogWithTabs extends Component<Props, State> {
                                     styles,
                                     tabId: idx
                                 }),
-                                defaultSelected: defaultTab === idx,
                                 label: t(label)
                             };
                         })

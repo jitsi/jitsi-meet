@@ -44,7 +44,8 @@ class WelcomePage extends AbstractWelcomePage {
             ...this.state,
 
             generateRoomnames:
-                interfaceConfig.GENERATE_ROOMNAMES_ON_WELCOME_PAGE
+                interfaceConfig.GENERATE_ROOMNAMES_ON_WELCOME_PAGE,
+            selectedTab: 0
         };
 
         /**
@@ -71,6 +72,7 @@ class WelcomePage extends AbstractWelcomePage {
         this._onRoomChange = this._onRoomChange.bind(this);
         this._setAdditionalContentRef
             = this._setAdditionalContentRef.bind(this);
+        this._onTabSelected = this._onTabSelected.bind(this);
     }
 
     /**
@@ -203,6 +205,20 @@ class WelcomePage extends AbstractWelcomePage {
     }
 
     /**
+     * Callback invoked when the desired tab to display should be changed.
+     *
+     * @param {Object} tab - The configuration passed into atlaskit tabs to
+     * describe how to display the selected tab.
+     * @param {number} tabIndex - The index of the tab within the array of
+     * displayed tabs.
+     * @private
+     * @returns {void}
+     */
+    _onTabSelected(tab, tabIndex) { // eslint-disable-line no-unused-vars
+        this.setState({ selectedTab: tabIndex });
+    }
+
+    /**
      * Renders tabs to show previous meetings and upcoming calendar events. The
      * tabs are purposefully hidden on mobile browsers.
      *
@@ -223,8 +239,7 @@ class WelcomePage extends AbstractWelcomePage {
         if (CalendarList) {
             tabs.push({
                 label: t('welcomepage.calendar'),
-                content: <CalendarList />,
-                defaultSelected: true
+                content: <CalendarList />
             });
         }
 
@@ -239,7 +254,10 @@ class WelcomePage extends AbstractWelcomePage {
                 <div className = 'welcome-page-settings'>
                     <SettingsButton defaultTab = { SETTINGS_TABS.CALENDAR } />
                 </div>
-                <Tabs tabs = { tabs } />
+                <Tabs
+                    onSelect = { this._onTabSelected }
+                    selected = { this.state.selectedTab }
+                    tabs = { tabs } />
             </div>);
     }
 
