@@ -341,12 +341,9 @@ const VideoLayout = {
 
         remoteVideo.addRemoteStreamElement(stream);
 
-        // Make sure track's muted state is reflected
-        if (stream.getType() === 'audio') {
-            this.onAudioMute(stream.getParticipantId(), stream.isMuted());
-        } else {
-            this.onVideoMute(stream.getParticipantId(), stream.isMuted());
-        }
+        // Ensure large video gets updated if the user has now started sending
+        // video and was not previously.
+        this._updateLargeVideoIfDisplayed(id, true);
     },
 
     onRemoteStreamRemoved(stream) {
@@ -360,10 +357,8 @@ const VideoLayout = {
         }
 
         if (stream.isVideoTrack()) {
-            this._updateLargeVideoIfDisplayed(id);
+            this._updateLargeVideoIfDisplayed(id, true);
         }
-
-        this.updateMutedForNoTracks(id, stream.getType());
     },
 
     /**
@@ -635,7 +630,12 @@ const VideoLayout = {
     },
 
     /**
-     * On video muted event.
+     * On video muted event. Updates the participant's thumbnail and large video
+     * to reflect the new mute state.
+     *
+     * @param {string} id - The participant with the video mute change.
+     * @param {value} boolean - Whether or not the participant is video muted.
+     * @returns {void}
      */
     onVideoMute(id, value) {
         if (APP.conference.isLocalId(id)) {
@@ -648,10 +648,7 @@ const VideoLayout = {
             }
         }
 
-        if (this.isCurrentlyOnLarge(id)) {
-            // large video will show avatar instead of muted stream
-            this.updateLargeVideo(id, true);
-        }
+        this._updateLargeVideoIfDisplayed(id, true);
     },
 
     /**
