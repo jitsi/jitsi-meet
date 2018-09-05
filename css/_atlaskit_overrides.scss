@@ -38,3 +38,20 @@
         background-color: #172B4D;
     }
 }
+
+.modal-dialog-form {
+    /**
+     * Update the dropdown trigger wrapper to make sure it looks click-able.
+     */
+    .gwEjuO {
+        cursor: pointer;
+    }
+
+    /**
+     * Override Atlaskit dropdown styling when in a modal because the dropdown
+     * backgrounds clash with the modal backgrounds.
+     */
+    .gBLqhw[data-role=droplistContent] {
+        border: 1px solid #455166;
+    }
+}

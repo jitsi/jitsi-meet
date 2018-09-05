@@ -154,14 +154,6 @@
     &-error {
         margin-bottom: 8px;
     }
-
-    /**
-     * Override Atlaskit dropdown styling when in a modal because the dropdown
-     * backgrounds clash with the modal backgrounds.
-     */
-    .htclLc[data-role=droplistContent] {
-        border: 1px solid #455166;
-    }
 }
 .modal-dialog-footer {
     font-size: $modalButtonFontSize;
