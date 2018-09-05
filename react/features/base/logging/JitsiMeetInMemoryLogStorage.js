@@ -1,12 +1,11 @@
 /**
  * Implements in memory logs storage, used for testing/debugging.
  *
- * FIXME: move to base/logging
  */
 export default class JitsiMeetInMemoryLogStorage {
 
     /**
-     * Creates new <tt>JitsiMeetInMemoryLogStorage</tt>
+     * Creates new <tt>JitsiMeetInMemoryLogStorage</tt>.
      */
     constructor() {
         /**
@@ -17,6 +16,8 @@ export default class JitsiMeetInMemoryLogStorage {
     }
 
     /**
+     * Checks if this storage instance is ready.
+     *
      * @returns {boolean} <tt>true</tt> when this storage is ready or
      * <tt>false</tt> otherwise.
      */
@@ -27,8 +28,10 @@ export default class JitsiMeetInMemoryLogStorage {
     /**
      * Called by the <tt>LogCollector</tt> to store a series of log lines into
      * batch.
-     * @param {string|object[]} logEntries an array containing strings
+     *
+     * @param {string|Object[]} logEntries - An array containing strings
      * representing log lines or aggregated lines objects.
+     * @returns {void}
      */
     storeLogs(logEntries) {
         for (let i = 0, len = logEntries.length; i < len; i++) {
@@ -44,7 +47,9 @@ export default class JitsiMeetInMemoryLogStorage {
     }
 
     /**
-     * @returns {array} the collected log entries.
+     * Returns the logs stored in the memory.
+     *
+     * @returns {Array<string>} The collected log entries.
      */
     getLogs() {
         return this.logs;

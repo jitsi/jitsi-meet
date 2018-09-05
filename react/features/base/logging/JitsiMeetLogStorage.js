@@ -1,16 +1,16 @@
-import { getCurrentConference } from '../../react/features/base/conference';
+
+import { getCurrentConference } from '../conference';
 
 /**
- * Implements logs storage through the CallStats.
- *
- * FIXME: move to base/logging
+ * Implements log storage interface from the jitsi-meet-logger lib. Captured
+ * logs are sent to CallStats.
  */
 export default class JitsiMeetLogStorage {
 
     /**
      * Creates new <tt>JitsiMeetLogStorage</tt>.
      *
-     * @param {Function} getState - the Redux store's {@code getState} method.
+     * @param {Function} getState - The Redux store's {@code getState} method.
      */
     constructor(getState) {
         /**
@@ -33,7 +33,7 @@ export default class JitsiMeetLogStorage {
      * A conference is considered joined when the 'conference' field is defined
      * in the base/conference state.
      *
-     * @return {boolean} <tt>true</tt> when this storage is ready or
+     * @returns {boolean} <tt>true</tt> when this storage is ready or
      * <tt>false</tt> otherwise.
      */
     isReady() {
@@ -45,8 +45,10 @@ export default class JitsiMeetLogStorage {
     /**
      * Called by the <tt>LogCollector</tt> to store a series of log lines into
      * batch.
-     * @param {string|object[]}logEntries an array containing strings
+     *
+     * @param {Array<string|Object>} logEntries - An array containing strings
      * representing log lines or aggregated lines objects.
+     * @returns {void}
      */
     storeLogs(logEntries) {
         const conference = getCurrentConference(this.getState());
