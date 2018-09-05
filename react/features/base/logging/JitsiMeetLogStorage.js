@@ -81,10 +81,10 @@ export default class JitsiMeetLogStorage {
         try {
             conference.sendApplicationLog(logMessage);
         } catch (error) {
-            // FIXME whole objects logged
             // NOTE console is intentional here
             console.error(
-                'Failed to store the logs: ', logMessage, error);
+                `Failed to store the logs, msg length: ${logMessage.length}`
+                    + `error: ${JSON.stringify(error)}`);
         }
     }
 }
