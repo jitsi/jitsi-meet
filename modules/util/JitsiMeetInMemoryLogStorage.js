@@ -1,5 +1,7 @@
 /**
  * Implements in memory logs storage, used for testing/debugging.
+ *
+ * FIXME: move to base/logging
  */
 export default class JitsiMeetInMemoryLogStorage {
 
