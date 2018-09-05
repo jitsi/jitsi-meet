@@ -10,14 +10,12 @@ import JitsiMeetJS, {
 } from '../lib-jitsi-meet';
 import { MiddlewareRegistry } from '../redux';
 
-import JitsiMeetInMemoryLogStorage
-    from '../../../../modules/util/JitsiMeetInMemoryLogStorage';
-import JitsiMeetLogStorage from '../../../../modules/util/JitsiMeetLogStorage';
-
 import { isTestModeEnabled } from '../testing';
 
 import { setLogCollector } from './actions';
 import { SET_LOGGING_CONFIG } from './actionTypes';
+import JitsiMeetLogStorage from './JitsiMeetLogStorage';
+import JitsiMeetInMemoryLogStorage from './JitsiMeetInMemoryLogStorage';
 
 declare var APP: Object;
 
