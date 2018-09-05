@@ -1,3 +1,5 @@
+import { TaskQueue } from './TaskQueue';
+
 /**
  * Create deferred object.
  *
@@ -12,4 +14,13 @@ export function createDeferred() {
     });
 
     return deferred;
+}
+
+/**
+ * Returns an instance of {@link TaskQueue}.
+ *
+ * @returns {Object}
+ */
+export function createTaskQueue() {
+    return new TaskQueue();
 }
