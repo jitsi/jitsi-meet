@@ -173,13 +173,13 @@ class TileView extends Component<Props, State> {
         const participants = [];
         let localParticipant;
 
-        this.props._participants.forEach(participant => {
+        for (const participant of this.props._participants) {
             if (participant.local) {
                 localParticipant = participant;
             } else {
                 participants.push(participant);
             }
-        });
+        }
 
         if (localParticipant) {
             participants.push(localParticipant);
