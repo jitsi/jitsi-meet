@@ -283,7 +283,7 @@ class Conference extends Component<Props> {
                   */
                     _shouldDisplayTileView
                         ? <TileView onClick = { this._onClick } />
-                        : <LargeVideo onPress = { this._onClick } />
+                        : <LargeVideo onClick = { this._onClick } />
                 }
 
                 {/*

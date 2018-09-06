@@ -17,7 +17,7 @@ type Props = {
     /**
      * Callback to invoke when the {@code LargeVideo} is clicked/pressed.
      */
-    onPress: Function,
+    onClick: Function,
 
     /**
      * The ID of the participant (to be) depicted by LargeVideo.
@@ -114,8 +114,8 @@ class LargeVideo extends Component<Props, State> {
             useConnectivityInfoLabel
         } = this.state;
         const {
-            onPress,
-            _participantId
+            _participantId,
+            onClick
         } = this.props;
 
         return (
@@ -123,7 +123,7 @@ class LargeVideo extends Component<Props, State> {
                 onDimensionsChanged = { this._onDimensionsChanged }>
                 <ParticipantView
                     avatarSize = { avatarSize }
-                    onPress = { onPress }
+                    onPress = { onClick }
                     participantId = { _participantId }
                     style = { styles.largeVideo }
                     testHintId = 'org.jitsi.meet.LargeVideo'
