@@ -58,6 +58,21 @@ type State = {
     width: number
 };
 
+/**
+ * The margin for each side of the tile view. Taken away from the available
+ * height and width for the tile container to display in.
+ *
+ * @private
+ * @type {number}
+ */
+const MARGIN = 10;
+
+/**
+ * The aspect ratio the tiles should display in.
+ *
+ * @private
+ * @type {number}
+ */
 const TILE_ASPECT_RATIO = 1;
 
 /**
@@ -197,8 +212,8 @@ class TileView extends Component<Props, State> {
         const { height, width } = this.state;
         const columns = this._getColumnCount();
         const participantCount = _participants.length;
-        const heightToUse = height - 20;
-        const widthToUse = width - 20;
+        const heightToUse = height - (MARGIN * 2);
+        const widthToUse = width - (MARGIN * 2);
         let tileWidth;
 
         // If there is going to be at least two rows, ensure that at least two
