@@ -158,15 +158,9 @@ type Props = {
     _sharingVideo: boolean,
 
     /**
-     * Whether or not transcribing is enabled.
-     */
-    _transcribingEnabled: boolean,
-
-    /**
      * Flag showing whether toolbar is visible.
      */
     _visible: boolean,
-
 
     /**
      * Set with the buttons which this Toolbox should display.
@@ -323,7 +317,6 @@ class Toolbox extends Component<Props> {
             _chatOpen,
             _hideInviteButton,
             _overflowMenuVisible,
-            _transcribingEnabled,
             _raisedHand,
             _visible,
             _visibleButtons,
@@ -367,9 +360,8 @@ class Toolbox extends Component<Props> {
                             <ChatCounter />
                         </div> }
                     {
-                        _transcribingEnabled
-                        && this._shouldShowButton('closedcaptions')
-                        && <ClosedCaptionButton />
+                        this._shouldShowButton('closedcaptions')
+                            && <ClosedCaptionButton />
                     }
                 </div>
                 <div className = 'button-group-center'>
@@ -1039,9 +1031,6 @@ function _mapStateToProps(state) {
         callStatsID,
         iAmRecorder
     } = state['features/base/config'];
-    const {
-        transcribingEnabled
-    } = state['features/base/config'];
     const sharedVideoStatus = state['features/shared-video'].status;
     const { current } = state['features/side-panel'];
     const {
@@ -1094,7 +1083,6 @@ function _mapStateToProps(state) {
         _overflowMenuVisible: overflowMenuVisible,
         _raisedHand: localParticipant.raisedHand,
         _screensharing: localVideo && localVideo.videoType === 'desktop',
-        _transcribingEnabled: transcribingEnabled,
         _sharingVideo: sharedVideoStatus === 'playing'
             || sharedVideoStatus === 'start'
             || sharedVideoStatus === 'pause',
