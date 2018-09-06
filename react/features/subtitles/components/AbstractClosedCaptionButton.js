@@ -74,15 +74,24 @@ export class AbstractClosedCaptionButton
  * {@code AbstractClosedCaptionButton} component.
  *
  * @param {Object} state - The redux state.
+ * @param {Object} ownProps - The properties explicitly passed to the component
+ * instance.
  * @private
  * @returns {{
- *     __requestingSubtitles: boolean
+ *     _requestingSubtitles: boolean,
+ *     visible: boolean
  * }}
  */
-export function _abstractMapStateToProps(state: Object) {
+export function _abstractMapStateToProps(state: Object, ownProps: Object) {
     const { _requestingSubtitles } = state['features/subtitles'];
+    const { transcribingEnabled } = state['features/base/config'];
+
+    // Default 'visible' to 'transcribingEnabled' if not explicitly specified
+    // in the component's properties.
+    const { visible = transcribingEnabled } = ownProps;
 
     return {
-        _requestingSubtitles
+        _requestingSubtitles,
+        visible
     };
 }
