@@ -202,7 +202,9 @@ class BaseCalendarList extends Component<Props> {
     _toDisplayableItem(event) {
         return {
             elementAfter: event.url
-                ? <JoinButton onPress = { this._onJoinPress } />
+                ? <JoinButton
+                    onPress = { this._onJoinPress }
+                    url = { event.url } />
                 : (<AddMeetingUrlButton
                     calendarId = { event.calendarId }
                     eventId = { event.id } />),

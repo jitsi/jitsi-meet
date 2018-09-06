@@ -17,6 +17,11 @@ type Props = {
     onPress: Function,
 
     /**
+     * The meeting URL associated with the {@link JoinButton} instance.
+     */
+    url: string,
+
+    /**
      * Invoked to obtain translated strings.
      */
     t: Function
@@ -30,12 +35,25 @@ type Props = {
 class JoinButton extends Component<Props> {
 
     /**
+     * Initializes a new {@code JoinButton} instance.
+     *
+     * @param {*} props - The read-only properties with which the new instance
+     * is to be initialized.
+     */
+    constructor(props) {
+        super(props);
+
+        // Bind event handler so it is only bound once for every instance.
+        this._onClick = this._onClick.bind(this);
+    }
+
+    /**
      * Implements React's {@link Component#render}.
      *
      * @inheritdoc
      */
     render() {
-        const { onPress, t } = this.props;
+        const { t } = this.props;
 
         return (
             <Tooltip
@@ -43,12 +61,25 @@ class JoinButton extends Component<Props> {
                 <Button
                     appearance = 'primary'
                     className = 'join-button'
-                    onClick = { onPress }
+                    onClick = { this._onClick }
                     type = 'button'>
                     { t('calendarSync.join') }
                 </Button>
             </Tooltip>
         );
+    }
+
+    _onClick: (Object) => void;
+
+    /**
+     * Callback invoked when the component is clicked.
+     *
+     * @param {Object} event - The DOM click event.
+     * @private
+     * @returns {void}
+     */
+    _onClick(event) {
+        this.props.onPress(event, this.props.url);
     }
 }
 
