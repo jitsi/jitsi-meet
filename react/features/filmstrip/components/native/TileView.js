@@ -181,9 +181,7 @@ class TileView extends Component<Props, State> {
             }
         }
 
-        if (localParticipant) {
-            participants.push(localParticipant);
-        }
+        localParticipant && participants.push(localParticipant);
 
         return participants;
     }
