@@ -74,8 +74,8 @@ class OverflowMenu extends Component<Props> {
                 <ClosedCaptionButton { ...buttonProps } />
                 <RecordButton { ...buttonProps } />
                 <LiveStreamButton { ...buttonProps } />
-                <PictureInPictureButton { ...buttonProps } />
                 <TileViewButton { ...buttonProps } />
+                <PictureInPictureButton { ...buttonProps } />
             </BottomSheet>
         );
     }
