@@ -16,10 +16,6 @@
 #   public *;
 #}
 
-# Disabling obfuscation is useful if you collect stack traces from production crashes
-# (unless you are using a system that supports de-obfuscate the stack traces).
-# -dontobfuscate
-
 # React Native
 
 # Keep our interfaces so they can be used by other ProGuard rules.
@@ -48,15 +44,6 @@
 -keepclassmembers class *  { @com.facebook.react.uimanager.annotations.ReactProp <methods>; }
 -keepclassmembers class *  { @com.facebook.react.uimanager.annotations.ReactPropGroup <methods>; }
 
--keep class com.facebook.react.bridge.ModuleRegistryHolder { *; }
--keep class com.facebook.react.bridge.CatalystInstanceImpl { *; }
--keep class com.facebook.react.bridge.JavaScriptExecutor { *; }
--keep class com.facebook.react.bridge.queue.NativeRunnable { *; }
--keep class com.facebook.react.bridge.ExecutorToken { *; }
--keep class com.facebook.react.bridge.ReadableType { *; }
--keep class com.facebook.react.devsupport.** { *; }
--dontwarn com.facebook.react.devsupport.**
-
 -dontwarn com.facebook.react.**
 
 # TextLayoutBuilder uses a non-public Android constructor within StaticLayout.
@@ -70,7 +57,6 @@
 -keep class okhttp3.** { *; }
 -keep interface okhttp3.** { *; }
 -dontwarn okhttp3.**
--dontwarn com.squareup.okhttp.**
 
 # okio
 
@@ -81,16 +67,23 @@
 
 # FastImage
 
--keep public class com.dylanvann.fastimage.* {*;}
 -keep public class com.dylanvann.fastimage.** {*;}
 
+# We added the following when we switched minifyEnabled on. Probably because we
+# ran the app and hit problems...
+
+-keep class com.facebook.react.bridge.CatalystInstanceImpl { *; }
+-keep class com.facebook.react.bridge.ExecutorToken { *; }
+-keep class com.facebook.react.bridge.JavaScriptExecutor { *; }
+-keep class com.facebook.react.bridge.ModuleRegistryHolder { *; }
+-keep class com.facebook.react.bridge.ReadableType { *; }
+-keep class com.facebook.react.bridge.queue.NativeRunnable { *; }
+-keep class com.facebook.react.devsupport.** { *; }
 -keep class org.webrtc.** { *; }
 
-
+-dontwarn com.facebook.react.devsupport.**
 -dontwarn com.google.appengine.**
+-dontwarn com.squareup.okhttp.**
 -dontwarn javax.servlet.**
 
-# Crashlytics
--keepattributes *Annotation*
--keepattributes SourceFile,LineNumberTable
--keep public class * extends java.lang.Exception
+# ^^^ We added the above when we switched minifyEnabled on.
