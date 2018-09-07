@@ -7,7 +7,7 @@ import { getInviteURL } from '../../../base/connection';
 import { translate } from '../../../base/i18n';
 import { isLocalParticipantModerator } from '../../../base/participants';
 
-import { getDialInfoPageURL } from '../../functions';
+import { _getDefaultPhoneNumber, getDialInfoPageURL } from '../../functions';
 import DialInNumber from './DialInNumber';
 import PasswordForm from './PasswordForm';
 
@@ -48,6 +48,11 @@ class InfoDialog extends Component {
          * The current url of the conference to be copied onto the clipboard.
          */
         _inviteURL: PropTypes.string,
+
+        /**
+         * The current location url of the conference.
+         */
+        _locationURL: PropTypes.object,
 
         /**
          * The value for how the conference is locked (or undefined if not
@@ -118,7 +123,7 @@ class InfoDialog extends Component {
 
         if (numbers) {
             this.state.phoneNumber
-                = this._getDefaultPhoneNumber(numbers, defaultCountry);
+                = _getDefaultPhoneNumber(numbers, defaultCountry);
         }
 
         /**
@@ -157,8 +162,7 @@ class InfoDialog extends Component {
             const { defaultCountry, numbers } = nextProps.dialIn;
 
             this.setState({
-                phoneNumber:
-                    this._getDefaultPhoneNumber(numbers, defaultCountry)
+                phoneNumber: _getDefaultPhoneNumber(numbers, defaultCountry)
             });
         }
     }
@@ -232,35 +236,6 @@ class InfoDialog extends Component {
     }
 
     /**
-     * Sets the internal state of which dial-in number to display.
-     *
-     * @param {Array<string>|Object} dialInNumbers - The array or object of
-     * numbers to choose a number from.
-     * @param {string} defaultCountry - The country code for the country
-     * whose phone number should display.
-     * @private
-     * @returns {string|null}
-     */
-    _getDefaultPhoneNumber(dialInNumbers, defaultCountry = 'US') {
-        if (Array.isArray(dialInNumbers)) {
-            // Dumbly return the first number if an array.
-            return dialInNumbers[0];
-        } else if (Object.keys(dialInNumbers).length > 0) {
-            const defaultNumbers = dialInNumbers[defaultCountry];
-
-            if (defaultNumbers) {
-                return defaultNumbers[0];
-            }
-
-            const firstRegion = Object.keys(dialInNumbers)[0];
-
-            return firstRegion && firstRegion[0];
-        }
-
-        return null;
-    }
-
-    /**
      * Generates the URL for the static dial in info page.
      *
      * @private
@@ -268,7 +243,8 @@ class InfoDialog extends Component {
      */
     _getDialInfoPageURL() {
         return getDialInfoPageURL(
-            encodeURIComponent(this.props._conferenceName));
+            encodeURIComponent(this.props._conferenceName),
+            this.props._locationURL);
     }
 
     /**
@@ -525,6 +501,7 @@ class InfoDialog extends Component {
  *     _conference: Object,
  *     _conferenceName: string,
  *     _inviteURL: string,
+ *     _locationURL: string,
  *     _locked: string,
  *     _password: string
  * }}
@@ -542,6 +519,7 @@ function _mapStateToProps(state) {
         _conference: conference,
         _conferenceName: room,
         _inviteURL: getInviteURL(state),
+        _locationURL: state['features/base/connection'].locationURL,
         _locked: locked,
         _password: password
     };

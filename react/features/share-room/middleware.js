@@ -21,7 +21,7 @@ const logger = require('jitsi-meet-logger').getLogger(__filename);
 MiddlewareRegistry.register(store => next => action => {
     switch (action.type) {
     case BEGIN_SHARE_ROOM:
-        _shareRoom(action.roomURL, action.includeDialInfo, store.dispatch);
+        _shareRoom(action.roomURL, store);
         break;
     }
 
@@ -32,36 +32,35 @@ MiddlewareRegistry.register(store => next => action => {
  * Open the native sheet for sharing a specific conference/room URL.
  *
  * @param {string} roomURL - The URL of the conference/room to be shared.
- * @param {boolean} includeDialInfo - Whether to include or not the dialing
- * information link.
- * @param {Dispatch} dispatch - The Redux dispatch function.
+ * @param {Store} store - Redux store.
  * @private
  * @returns {void}
  */
-function _shareRoom(
-        roomURL: string, includeDialInfo: boolean, dispatch: Function) {
-    const message = getShareInfoText(roomURL, includeDialInfo);
-    const title = `${getName()} Conference`;
-    const onFulfilled
-        = (shared: boolean) => dispatch(endShareRoom(roomURL, shared));
+function _shareRoom(roomURL: string, { dispatch, getState }) {
+    getShareInfoText(getState(), roomURL)
+        .then(message => {
+            const title = `${getName()} Conference`;
+            const onFulfilled
+                = (shared: boolean) => dispatch(endShareRoom(roomURL, shared));
 
-    Share.share(
-        /* content */ {
-            message,
-            title
-        },
-        /* options */ {
-            dialogTitle: title, // Android
-            subject: title // iOS
-        })
-        .then(
-            /* onFulfilled */ value => {
-                onFulfilled(value.action === Share.sharedAction);
-            },
-            /* onRejected */ reason => {
-                logger.error(
-                    `Failed to share conference/room URL ${roomURL}:`,
-                    reason);
-                onFulfilled(false);
-            });
+            Share.share(
+                /* content */ {
+                    message,
+                    title
+                },
+                /* options */ {
+                    dialogTitle: title, // Android
+                    subject: title // iOS
+                })
+                .then(
+                    /* onFulfilled */ value => {
+                        onFulfilled(value.action === Share.sharedAction);
+                    },
+                    /* onRejected */ reason => {
+                        logger.error(
+                            `Failed to share conference/room URL ${roomURL}:`,
+                            reason);
+                        onFulfilled(false);
+                    });
+        });
 }
