@@ -403,15 +403,16 @@ export function searchDirectory( // eslint-disable-line max-params
  * Returns descriptive text that can be used to invite participants to a meeting
  * (share via mobile or use it for calendar event description).
  *
+ * @param {Object} state - The current state.
  * @param {string} inviteUrl - The conference/location URL.
- * @param {boolean} includeDialInfo - Whether to include or not the dialing
- * information link.
  * @param {boolean} useHtml - Whether to return html text.
- * @returns {string}
+ * @returns {Promise<string>} A {@code Promise} resolving with a
+ * descriptive text that can be used to invite participants to a meeting.
  */
 export function getShareInfoText(
-        inviteUrl: string, includeDialInfo: boolean, useHtml: ?boolean) {
+        state: Object, inviteUrl: string, useHtml: ?boolean): Promise<string> {
     let roomUrl = inviteUrl;
+    const includeDialInfo = state['features/base/config'] !== undefined;
 
     if (useHtml) {
         roomUrl = `<a href="${roomUrl}">${roomUrl}</a>`;
@@ -421,29 +422,90 @@ export function getShareInfoText(
 
     if (includeDialInfo) {
         const { room } = parseURIString(inviteUrl);
-        let dialInfoPageUrl = getDialInfoPageURL(room);
+        let numbersPromise;
 
-        if (useHtml) {
-            dialInfoPageUrl
-                = `<a href="${dialInfoPageUrl}">${dialInfoPageUrl}</a>`;
+        if (state['features/invite'].numbers
+            && state['features/invite'].conferenceID) {
+            numbersPromise = Promise.resolve(state['features/invite']);
+        } else {
+            // we are requesting numbers and conferenceId directly
+            // not using updateDialInNumbers, because custom room
+            // is specified and we do not want to store the data
+            // in the state
+            const { dialInConfCodeUrl, dialInNumbersUrl, hosts }
+                = state['features/base/config'];
+            const mucURL = hosts && hosts.muc;
+
+            if (!dialInConfCodeUrl || !dialInNumbersUrl || !mucURL) {
+                // URLs for fetching dial in numbers not defined
+                return Promise.reject();
+            }
+
+            numbersPromise = Promise.all([
+                getDialInNumbers(dialInNumbersUrl),
+                getDialInConferenceID(dialInConfCodeUrl, room, mucURL)
+            ]).then(([ { defaultCountry, numbers }, {
+                conference, id, message } ]) => {
+
+                if (!conference || !id) {
+                    return Promise.reject(message);
+                }
+
+                return {
+                    defaultCountry,
+                    numbers,
+                    conferenceID: id
+                };
+            });
         }
 
-        infoText += i18next.t('share.dialInfoText', { dialInfoPageUrl });
+        return numbersPromise.then(
+            ({ conferenceID, defaultCountry, numbers }) => {
+                const phoneNumber
+                    = _getDefaultPhoneNumber(numbers, defaultCountry) || '';
+
+                return `${
+                    i18next.t('info.dialInNumber')} ${
+                    phoneNumber} ${
+                    i18next.t('info.dialInConferenceID')} ${
+                    conferenceID}#\n\n`;
+            })
+            .catch(error =>
+                logger.error('Error fetching numbers or conferenceID', error))
+            .then(defaultDialInNumber => {
+                let dialInfoPageUrl = getDialInfoPageURL(
+                    room,
+                    state['features/base/connection'].locationURL);
+
+                if (useHtml) {
+                    dialInfoPageUrl
+                        = `<a href="${dialInfoPageUrl}">${dialInfoPageUrl}</a>`;
+                }
+
+                infoText += i18next.t('share.dialInfoText', {
+                    defaultDialInNumber,
+                    dialInfoPageUrl });
+
+                return infoText;
+            });
     }
 
-    return infoText;
+    return Promise.resolve(infoText);
 }
 
 /**
  * Generates the URL for the static dial in info page.
  *
  * @param {string} conferenceName - The conference name.
- * @private
+ * @param {Object} locationURL - The current location URL, the object coming
+ * from state ['features/base/connection'].locationURL.
  * @returns {string}
  */
-export function getDialInfoPageURL(conferenceName: string) {
-    const origin = window.location.origin;
-    const pathParts = window.location.pathname.split('/');
+export function getDialInfoPageURL(
+        conferenceName: string,
+        locationURL: Object) {
+    const origin = locationURL.origin;
+    const pathParts = locationURL.pathname.split('/');
 
     pathParts.length = pathParts.length - 1;
 
@@ -456,4 +518,35 @@ export function getDialInfoPageURL(conferenceName: string) {
     }, '');
 
     return `${origin}${newPath}/static/dialInInfo.html?room=${conferenceName}`;
+}
+
+/**
+ * Sets the internal state of which dial-in number to display.
+ *
+ * @param {Array<string>|Object} dialInNumbers - The array or object of
+ * numbers to choose a number from.
+ * @param {string} defaultCountry - The country code for the country
+ * whose phone number should display.
+ * @private
+ * @returns {string|null}
+ */
+export function _getDefaultPhoneNumber(
+        dialInNumbers: Object,
+        defaultCountry: string = 'US') {
+    if (Array.isArray(dialInNumbers)) {
+        // Dumbly return the first number if an array.
+        return dialInNumbers[0];
+    } else if (Object.keys(dialInNumbers).length > 0) {
+        const defaultNumbers = dialInNumbers[defaultCountry];
+
+        if (defaultNumbers) {
+            return defaultNumbers[0];
+        }
+
+        const firstRegion = Object.keys(dialInNumbers)[0];
+
+        return firstRegion && firstRegion[0];
+    }
+
+    return null;
 }

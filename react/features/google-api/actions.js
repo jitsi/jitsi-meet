@@ -211,13 +211,8 @@ export function updateProfile() {
  */
 export function updateCalendarEvent(
         id: string, calendarId: string, location: string) {
-    return (dispatch: Dispatch<*>, getState: Function) => {
-
-        const { dialInNumbersUrl } = getState()['features/base/config'];
-        const text = getShareInfoText(location, dialInNumbersUrl !== undefined);
-
-        return googleApi.get()
-            .then(() =>
+    return (dispatch: Dispatch<*>, getState: Function) =>
+        getShareInfoText(getState(), location)
+            .then(text =>
                 googleApi._updateCalendarEntry(id, calendarId, location, text));
-    };
 }
