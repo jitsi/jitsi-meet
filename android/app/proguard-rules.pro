@@ -90,4 +90,7 @@
 -dontwarn com.google.appengine.**
 -dontwarn javax.servlet.**
 
-
+# Crashlytics
+-keepattributes *Annotation*
+-keepattributes SourceFile,LineNumberTable
+-keep public class * extends java.lang.Exception
