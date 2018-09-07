@@ -30,6 +30,7 @@ import {
 import {
     LAYOUTS,
     getCurrentLayout,
+    setTileView,
     shouldDisplayTileView
 } from '../../../react/features/video-layout';
 /* eslint-enable no-unused-vars */
@@ -864,6 +865,18 @@ SmallVideo.prototype.updateIndicators = function() {
             </I18nextProvider>,
         indicatorToolbar
     );
+};
+
+/**
+ * Callback to invoke when the thumbnail is clicked while in tile view. Will
+ * exit tile view and ensure the participant is pinned.
+ *
+ * @private
+ * @returns {void}
+ */
+SmallVideo.prototype._onClickInTileView = function() {
+    APP.store.dispatch(pinParticipant(this.id));
+    APP.store.dispatch(setTileView(false));
 };
 
 /**

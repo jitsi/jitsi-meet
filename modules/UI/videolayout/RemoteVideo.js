@@ -627,11 +627,14 @@ RemoteVideo.prototype._onContainerClick = function(event) {
     const { classList } = event.target;
 
     const ignoreClick = $source.parents('.popover').length > 0
-            || classList.contains('popover')
-            || shouldDisplayTileView(APP.store.getState());
+            || classList.contains('popover');
 
     if (!ignoreClick) {
-        this._togglePin();
+        if (shouldDisplayTileView(APP.store.getState())) {
+            this._onClickInTileView();
+        } else {
+            this._togglePin();
+        }
     }
 
     // On IE we need to populate this handler on video <object> and it does not

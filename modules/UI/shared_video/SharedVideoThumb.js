@@ -66,7 +66,9 @@ SharedVideoThumb.prototype.createContainer = function(spanId) {
  * The thumb click handler.
  */
 SharedVideoThumb.prototype.videoClick = function() {
-    if (!shouldDisplayTileView(APP.store.getState())) {
+    if (shouldDisplayTileView(APP.store.getState())) {
+        this._onClickInTileView();
+    } else {
         this._togglePin();
     }
 };
