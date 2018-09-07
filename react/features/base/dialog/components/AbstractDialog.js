@@ -86,10 +86,9 @@ export default class AbstractDialog<P : Props, S : State>
      * @returns {void}
      */
     _onCancel() {
-        const { cancelDisabled, onCancel } = this.props;
+        const { cancelDisabled = false, onCancel } = this.props;
 
-        if ((typeof cancelDisabled === 'undefined' || !cancelDisabled)
-                && (!onCancel || onCancel())) {
+        if (!cancelDisabled && (!onCancel || onCancel())) {
             this._hide();
         }
     }
@@ -109,9 +108,9 @@ export default class AbstractDialog<P : Props, S : State>
      * @returns {void}
      */
     _onSubmit(value: ?string) {
-        const { okDisabled, onSubmit } = this.props;
+        const { okDisabled = false, onSubmit } = this.props;
 
-        if (typeof okDisabled === 'undefined' || !okDisabled) {
+        if (!okDisabled) {
             this.setState({ submitting: true });
 
             // Invoke the React Compnent prop onSubmit if any.

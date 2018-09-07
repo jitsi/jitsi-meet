@@ -19,9 +19,9 @@ const logger = require('jitsi-meet-logger').getLogger(__filename);
  * otherwise, {@code false}.
  */
 export function isCalendarEnabled() {
-    const { calendarEnabled } = NativeModules.AppInfo;
+    const { calendarEnabled = true } = NativeModules.AppInfo;
 
-    return typeof calendarEnabled === 'undefined' ? true : calendarEnabled;
+    return calendarEnabled;
 }
 
 /**

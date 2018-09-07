@@ -85,9 +85,6 @@ export class AbstractClosedCaptionButton
 export function _abstractMapStateToProps(state: Object, ownProps: Object) {
     const { _requestingSubtitles } = state['features/subtitles'];
     const { transcribingEnabled } = state['features/base/config'];
-
-    // Default 'visible' to 'transcribingEnabled' if not explicitly specified
-    // in the component's properties.
     const { visible = transcribingEnabled } = ownProps;
 
     return {
