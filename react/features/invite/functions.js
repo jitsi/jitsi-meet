@@ -463,11 +463,16 @@ export function getShareInfoText(
             ({ conferenceID, defaultCountry, numbers }) => {
                 const phoneNumber
                     = _getDefaultPhoneNumber(numbers, defaultCountry) || '';
-                const defaultDialInNumber = `${
+
+                return `${
                     i18next.t('info.dialInNumber')} ${
                     phoneNumber} ${
                     i18next.t('info.dialInConferenceID')} ${
                     conferenceID}#\n\n`;
+            })
+            .catch(error =>
+                logger.error('Error fetching numbers or conferenceID', error))
+            .then(defaultDialInNumber => {
                 let dialInfoPageUrl = getDialInfoPageURL(
                     room,
                     state['features/base/connection'].locationURL);
