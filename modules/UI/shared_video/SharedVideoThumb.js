@@ -1,5 +1,4 @@
-/* global $, APP */
-import { shouldDisplayTileView } from '../../../react/features/video-layout';
+/* global $ */
 
 import SmallVideo from '../videolayout/SmallVideo';
 
@@ -66,11 +65,7 @@ SharedVideoThumb.prototype.createContainer = function(spanId) {
  * The thumb click handler.
  */
 SharedVideoThumb.prototype.videoClick = function() {
-    if (shouldDisplayTileView(APP.store.getState())) {
-        this._onClickInTileView();
-    } else {
-        this._togglePin();
-    }
+    this._togglePin();
 };
 
 /**

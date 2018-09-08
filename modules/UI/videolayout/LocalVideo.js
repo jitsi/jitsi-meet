@@ -282,11 +282,7 @@ LocalVideo.prototype._onContainerClick = function(event) {
     }
 
     if (!ignoreClick) {
-        if (shouldDisplayTileView(APP.store.getState())) {
-            this._onClickInTileView();
-        } else {
-            this._togglePin();
-        }
+        this._togglePin();
     }
 };
 

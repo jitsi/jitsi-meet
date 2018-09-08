@@ -868,18 +868,6 @@ SmallVideo.prototype.updateIndicators = function() {
 };
 
 /**
- * Callback to invoke when the thumbnail is clicked while in tile view. Will
- * exit tile view and ensure the participant is pinned.
- *
- * @private
- * @returns {void}
- */
-SmallVideo.prototype._onClickInTileView = function() {
-    APP.store.dispatch(pinParticipant(this.id));
-    APP.store.dispatch(setTileView(false));
-};
-
-/**
  * Pins the participant displayed by this thumbnail or unpins if already pinned.
  *
  * @private
