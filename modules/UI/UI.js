@@ -24,6 +24,7 @@ import {
 import { destroyLocalTracks } from '../../react/features/base/tracks';
 import { openDisplayNamePrompt } from '../../react/features/display-name';
 import { setEtherpadHasInitialzied } from '../../react/features/etherpad';
+import { setFilmstripVisible } from '../../react/features/filmstrip';
 import {
     setNotificationsEnabled,
     showWarningNotification
@@ -93,7 +94,7 @@ const UIListeners = new Map([
         () => UI.toggleChat()
     ], [
         UIEvents.TOGGLE_FILMSTRIP,
-        () => UI.handleToggleFilmstrip()
+        () => UI.toggleFilmstrip()
     ], [
         UIEvents.FOLLOW_ME_ENABLED,
         enabled => followMeHandler && followMeHandler.enableFollowMe(enabled)
@@ -255,11 +256,6 @@ UI.initConference = function() {
     followMeHandler = new FollowMe(APP.conference, UI);
 };
 
-/** *
- * Handler for toggling filmstrip
- */
-UI.handleToggleFilmstrip = () => UI.toggleFilmstrip();
-
 /**
  * Returns the shared document manager object.
  * @return {EtherpadManager} the shared document manager object
@@ -298,7 +294,6 @@ UI.start = function() {
 
     if (interfaceConfig.filmStripOnly) {
         $('body').addClass('filmstrip-only');
-        Filmstrip.setFilmstripOnly();
         APP.store.dispatch(setNotificationsEnabled(false));
     } else {
         // Initialize recording mode UI.
@@ -512,9 +507,9 @@ UI.toggleSmileys = () => Chat.toggleSmileys();
  * Toggles filmstrip.
  */
 UI.toggleFilmstrip = function() {
-    // eslint-disable-next-line prefer-rest-params
-    Filmstrip.toggleFilmstrip(...arguments);
-    VideoLayout.resizeVideoArea(true, false);
+    const { visible } = APP.store.getState()['features/filmstrip'];
+
+    APP.store.dispatch(setFilmstripVisible(!visible));
 };
 
 /**
