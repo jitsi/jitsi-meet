@@ -157,7 +157,7 @@ UI.notifyKicked = function() {
     messageHandler.showError({
         hideErrorSupportLink: true,
         descriptionKey: 'dialog.kickMessage',
-        titleKey: 'dialog.sessTerminated'
+        titleKey: 'dialog.kickTitle'
     });
 };
 

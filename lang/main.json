@@ -262,6 +262,7 @@
         "allow": "Allow",
         "confirm": "Confirm",
         "kickMessage": "Ouch! You have been kicked out of the meet!",
+        "kickTitle": "Kicked from meeting",
         "popupErrorTitle": "Pop-up blocked",
         "popupError": "Your browser is blocking pop-up windows from this site. Please enable pop-ups in your browser's security settings and try again.",
         "passwordErrorTitle": "Password Error",
