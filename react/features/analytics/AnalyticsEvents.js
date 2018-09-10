@@ -351,6 +351,27 @@ export function createRecordingDialogEvent(dialogName, buttonName) {
 }
 
 /**
+ * Creates an event which indicates that an action related to recording has
+ * occured.
+ *
+ * @param {string} action - The action (e.g. 'start' or 'stop').
+ * @param {string} type - The recording type (e.g. 'file' or 'live').
+ * @param {number} value - The duration of the recording in seconds (for stop
+ * action).
+ * @returns {Object} The event in a format suitable for sending via
+ * sendAnalytics.
+ */
+export function createRecordingEvent(action, type, value) {
+    return {
+        action,
+        actionSubject: `recording.${type}`,
+        attributes: {
+            value
+        }
+    };
+}
+
+/**
  * Creates an event which specifies that the "confirm" button on the remote
  * mute dialog has been clicked.
  *

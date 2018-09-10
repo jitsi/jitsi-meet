@@ -1,7 +1,6 @@
 // @flow
 
-import JitsiMeetJS from '../base/lib-jitsi-meet';
-
+import JitsiMeetJS, { JitsiRecordingConstants } from '../base/lib-jitsi-meet';
 import {
     hideNotification,
     showErrorNotification,
@@ -138,6 +137,12 @@ export function showStoppedRecordingNotification(streamType: string) {
  * }}
  */
 export function updateRecordingSessionData(session: Object) {
+    const status = session.getStatus();
+    const timestamp
+        = status === JitsiRecordingConstants.status.ON
+            ? Date.now() / 1000
+            : undefined;
+
     return {
         type: RECORDING_SESSION_UPDATED,
         sessionData: {
@@ -145,7 +150,8 @@ export function updateRecordingSessionData(session: Object) {
             id: session.getID(),
             liveStreamViewURL: session.getLiveStreamViewURL(),
             mode: session.getMode(),
-            status: session.getStatus()
+            status,
+            timestamp
         }
     };
 }
