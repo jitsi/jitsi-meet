@@ -1,6 +1,5 @@
 /* global $, APP, interfaceConfig */
 
-import { setFilmstripVisible } from '../../../react/features/filmstrip';
 import {
     LAYOUTS,
     getCurrentLayout,
@@ -9,188 +8,16 @@ import {
     shouldDisplayTileView
 } from '../../../react/features/video-layout';
 
-import UIEvents from '../../../service/UI/UIEvents';
 import UIUtil from '../util/UIUtil';
-
-import {
-    createShortcutEvent,
-    createToolbarEvent,
-    sendAnalytics
-} from '../../../react/features/analytics';
 
 const Filmstrip = {
     /**
-     *
-     * @param eventEmitter the {EventEmitter} through which {Filmstrip} is to
-     * emit/fire {UIEvents} (such as {UIEvents.TOGGLED_FILMSTRIP}).
+     * Caches jquery lookups of the filmstrip for future use.
      */
-    init(eventEmitter) {
-        this.iconMenuDownClassName = 'icon-menu-down';
-        this.iconMenuUpClassName = 'icon-menu-up';
+    init() {
         this.filmstripContainerClassName = 'filmstrip';
         this.filmstrip = $('#remoteVideos');
         this.filmstripRemoteVideos = $('#filmstripRemoteVideosContainer');
-        this.eventEmitter = eventEmitter;
-
-        // Show the toggle button and add event listeners only when out of
-        // filmstrip only mode.
-        if (!interfaceConfig.filmStripOnly) {
-            this._initFilmstripToolbar();
-            this.registerListeners();
-        }
-    },
-
-    /**
-     * Initializes the filmstrip toolbar.
-     */
-    _initFilmstripToolbar() {
-        const toolbarContainerHTML = this._generateToolbarHTML();
-        const className = this.filmstripContainerClassName;
-        const container = document.querySelector(`.${className}`);
-
-        UIUtil.prependChild(container, toolbarContainerHTML);
-
-        const iconSelector = '#toggleFilmstripButton i';
-
-        this.toggleFilmstripIcon = document.querySelector(iconSelector);
-    },
-
-    /**
-     * Generates HTML layout for filmstrip toggle button and wrapping container.
-     * @returns {HTMLElement}
-     * @private
-     */
-    _generateToolbarHTML() {
-        const container = document.createElement('div');
-        const isVisible = this.isFilmstripVisible();
-
-        container.className = 'filmstrip__toolbar';
-        container.innerHTML = `
-            <button id="toggleFilmstripButton">
-                <i class="icon-menu-${isVisible ? 'down' : 'up'}">
-                </i>
-            </button>
-        `;
-
-        return container;
-    },
-
-    /**
-     * Attach 'click' listener to "hide filmstrip" button
-     */
-    registerListeners() {
-        // Important:
-        // Firing the event instead of executing toggleFilmstrip method because
-        // it's important to hide the filmstrip by UI.toggleFilmstrip in order
-        // to correctly resize the video area.
-        $('#toggleFilmstripButton').on(
-            'click',
-            () => {
-                // The 'enable' parameter is set to true if the action results
-                // in the filmstrip being hidden.
-                sendAnalytics(createToolbarEvent(
-                    'toggle.filmstrip.button',
-                    {
-                        enable: this.isFilmstripVisible()
-                    }));
-                this.eventEmitter.emit(UIEvents.TOGGLE_FILMSTRIP);
-            });
-
-        this._registerToggleFilmstripShortcut();
-    },
-
-    /**
-     * Registering toggle filmstrip shortcut
-     * @private
-     */
-    _registerToggleFilmstripShortcut() {
-        const shortcut = 'F';
-        const shortcutAttr = 'filmstripPopover';
-        const description = 'keyboardShortcuts.toggleFilmstrip';
-
-        // Important:
-        // Firing the event instead of executing toggleFilmstrip method because
-        // it's important to hide the filmstrip by UI.toggleFilmstrip in order
-        // to correctly resize the video area.
-        const handler = () => {
-            sendAnalytics(createShortcutEvent(
-                'toggle.filmstrip',
-                {
-                    enable: this.isFilmstripVisible()
-                }));
-            this.eventEmitter.emit(UIEvents.TOGGLE_FILMSTRIP);
-        };
-
-        APP.keyboardshortcut.registerShortcut(
-            shortcut,
-            shortcutAttr,
-            handler,
-            description
-        );
-    },
-
-    /**
-     * Changes classes of icon for showing down state
-     */
-    showMenuDownIcon() {
-        const icon = this.toggleFilmstripIcon;
-
-        if (icon) {
-            icon.classList.add(this.iconMenuDownClassName);
-            icon.classList.remove(this.iconMenuUpClassName);
-        }
-    },
-
-    /**
-     * Changes classes of icon for showing up state
-     */
-    showMenuUpIcon() {
-        const icon = this.toggleFilmstripIcon;
-
-        if (icon) {
-            icon.classList.add(this.iconMenuUpClassName);
-            icon.classList.remove(this.iconMenuDownClassName);
-        }
-    },
-
-    /**
-     * Toggles the visibility of the filmstrip, or sets it to a specific value
-     * if the 'visible' parameter is specified.
-     *
-     * @param visible optional {Boolean} which specifies the desired visibility
-     * of the filmstrip. If not specified, the visibility will be flipped
-     * (i.e. toggled); otherwise, the visibility will be set to the specified
-     * value.
-     *
-     * Note:
-     * This method shouldn't be executed directly to hide the filmstrip.
-     * It's important to hide the filmstrip with UI.toggleFilmstrip in order
-     * to correctly resize the video area.
-     */
-    toggleFilmstrip(visible) {
-        const wasFilmstripVisible = this.isFilmstripVisible();
-
-        // If 'visible' is defined and matches the current state, we have
-        // nothing to do. Otherwise (regardless of whether 'visible' is defined)
-        // we need to toggle the state.
-        if (visible === wasFilmstripVisible) {
-            return;
-        }
-
-        this.filmstrip.toggleClass('hidden');
-
-        if (wasFilmstripVisible) {
-            this.showMenuUpIcon();
-        } else {
-            this.showMenuDownIcon();
-        }
-
-        if (this.eventEmitter) {
-            this.eventEmitter.emit(
-                UIEvents.TOGGLED_FILMSTRIP,
-                !wasFilmstripVisible);
-        }
-        APP.store.dispatch(setFilmstripVisible(!wasFilmstripVisible));
     },
 
     /**
@@ -198,14 +25,7 @@ const Filmstrip = {
      * @returns {boolean}
      */
     isFilmstripVisible() {
-        return !this.filmstrip.hasClass('hidden');
-    },
-
-    /**
-     * Adjusts styles for filmstrip-only mode.
-     */
-    setFilmstripOnly() {
-        this.filmstrip.addClass('filmstrip__videos-filmstripOnly');
+        return APP.store.getState()['features/filmstrip'].visible;
     },
 
     /**
