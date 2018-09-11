@@ -45,7 +45,7 @@ ReducerRegistry.register('features/subtitles', (
  * reduction of the specified action.
  */
 function _removeTranscriptMessage(state, { transcriptMessageID }) {
-    const newTranscriptMessages = new Map(state.transcriptMessages);
+    const newTranscriptMessages = new Map(state._transcriptMessages);
 
     // Deletes the key from Map once a final message arrives.
     newTranscriptMessages.delete(transcriptMessageID);
@@ -67,7 +67,7 @@ function _removeTranscriptMessage(state, { transcriptMessageID }) {
  */
 function _updateTranscriptMessage(state,
         { transcriptMessageID, newTranscriptMessage }) {
-    const newTranscriptMessages = new Map(state.transcriptMessages);
+    const newTranscriptMessages = new Map(state._transcriptMessages);
 
     // Updates the new message for the given key in the Map.
     newTranscriptMessages.set(transcriptMessageID, newTranscriptMessage);
