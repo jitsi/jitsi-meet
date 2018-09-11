@@ -2,6 +2,8 @@
 
 import { JitsiRecordingConstants } from '../base/lib-jitsi-meet';
 
+import { RECORDING_STATUS_PRIORITIES } from './constants';
+
 /**
  * Searches in the passed in redux state for an active recording session of the
  * passed in mode.
@@ -42,4 +44,31 @@ export function getRecordingDurationEstimation(size: ?number) {
 export function getSessionById(state: Object, id: string) {
     return state['features/recording'].sessionDatas.find(
         sessionData => sessionData.id === id);
+}
+
+/**
+ * Returns the recording session status that is to be shown in a label. E.g. if
+ * there is a session with the status OFF and one with PENDING, then the PENDING
+ * one will be shown, because that is likely more important for the user to see.
+ *
+ * @param {Object} state - The redux state to search in.
+ * @param {string} mode - The recording mode to get status for.
+ * @returns {string|undefined}
+ */
+export function getSessionStatusToShow(state: Object, mode: string): ?string {
+    const recordingSessions = state['features/recording'].sessionDatas;
+    let status;
+
+    if (Array.isArray(recordingSessions)) {
+        for (const session of recordingSessions) {
+            if (session.mode === mode
+                    && (!status
+                        || (RECORDING_STATUS_PRIORITIES.indexOf(session.status)
+                            > RECORDING_STATUS_PRIORITIES.indexOf(status)))) {
+                status = session.status;
+            }
+        }
+    }
+
+    return status;
 }

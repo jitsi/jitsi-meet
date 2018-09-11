@@ -9,13 +9,26 @@ import { FILMSTRIP_SIZE } from '../../filmstrip';
 export const AVATAR_SIZE = 200;
 
 export default createStyleSheet({
+
     /**
      * View that contains the indicators.
      */
     indicatorContainer: {
         flex: 1,
         flexDirection: 'row',
-        margin: BoxModel.margin,
+        justifyContent: 'flex-end',
+        margin: BoxModel.margin
+    },
+
+    /**
+     * Indicator container for wide aspect ratio.
+     */
+    indicatorContainerWide: {
+        marginRight: FILMSTRIP_SIZE + BoxModel.margin
+    },
+
+    labelWrapper: {
+        flexDirection: 'column',
         position: 'absolute',
         right: 0,
 
@@ -23,13 +36,6 @@ export default createStyleSheet({
         // On iPhone X there is the notch. In the two cases BoxModel.margin is
         // not enough.
         top: BoxModel.margin * 3
-    },
-
-    /**
-     * Indicator container for wide aspect ratio.
-     */
-    indicatorContainerWide: {
-        right: FILMSTRIP_SIZE
     },
 
     /**
