@@ -35,31 +35,39 @@
         "raiseHand": "Erga ou baixe sua mão",
         "pushToTalk": "Pressione para falar",
         "toggleScreensharing": "Trocar entre câmera e compartilhamento de tela",
-        "toggleFilmstrip": "Mostrar ou ocultar a barra lateral",
-        "toggleShortcuts": "Mostrar ou ocultar este menu de ajuda",
+        "toggleFilmstrip": "Mostrar ou ocultar miniaturas de vídeo",
+        "toggleShortcuts": "Mostrar ou ocultar atalhos de teclado",
         "focusLocal": "Focar no seu vídeo",
         "focusRemote": "Focar no vídeo de outro participante",
         "toggleChat": "Abrir ou fechar o painel de bate-papo",
         "mute": "Deixar mudo ou não o microfone",
         "fullScreen": "Entrar ou sair da tela cheia",
         "videoMute": "Iniciar ou parar sua câmera",
-        "showSpeakerStats": "Exibir estatísticas do alto falante"
+        "showSpeakerStats": "Exibir estatísticas do alto falante",
+        "localRecording": "Mostrar ou ocultar controles de gravação local"
     },
     "welcomepage": {
+        "accessibilityLabel": {
+            "join": "Toque para entrar",
+            "roomname": "Digite o nome da sala"
+        },
         "appDescription": "Vá em frente, converse por vídeo com toda a equipe. De fato, convide todos que você conhece. __app__ é uma solução de videoconferência totalmente criptografada e 100% de código aberto que você pode usar todos os dias, a cada dia, gratuitamente  — sem necessidade de conta.",
         "audioVideoSwitch": {
             "audio": "Voz",
             "video": "Vídeo"
         },
         "calendar": "Calendário",
+        "connectCalendarText": "Conecte seu calendário para ver todas as suas reuniões no __app__. Além disso, adicione reuniões no __app__ ao seu calendário e inicie-as com um clique.",
+        "connectCalendarButton": "Conectar seu calendário",
         "go": "IR",
         "join": "Entrar",
         "privacy": "Política de Privacidade",
+        "recentList": "Hitstórico",
         "roomname": "Digite o nome da sala",
         "roomnameHint": "Digite o nome ou a URL da sala que você deseja entrar. Você pode digitar um nome, e apenas deixe para as pessoas que você quer se reunir digitem o mesmo nome.",
         "sendFeedback": "Enviar comentários",
         "terms": "Termos",
-        "title": "Vídeo conferência mais segura, mais flexível e completamente livre "
+        "title": "Vídeo conferência mais segura, mais flexível e completamente livre."
     },
     "startupoverlay": {
         "policyText": " ",
@@ -71,8 +79,41 @@
         "rejoinKeyTitle": "Reconectar"
     },
     "toolbar": {
+        "accessibilityLabel": {
+            "audioOnly": "Alternar para apenas áudio",
+            "audioRoute": "",
+            "callQuality": "Gerenciar qualidade da chamada",
+            "chat": "Alternar para janela de chat",
+            "cc": "Alternar legendas",
+            "document": "Alternar para documento compartilhado",
+            "feedback": "Deixar feedback",
+            "fullScreen": "Alternar para tela cheia",
+            "hangup": "Sair da chamada",
+            "invite": "Convidar pessoas",
+            "localRecording": "Alternar controles de gravação local",
+            "lockRoom": "Alternar trava da sala",
+            "moreActions": "Alternar mais menu de ações",
+            "moreActionsMenu": "Menu de mais ações",
+            "mute": "Alternar mudo do áudio",
+            "pip": "Alternar modo Picture-in-Picture",
+            "profile": "Editar seu perfil",
+            "raiseHand": "Alternar levantar a mão",
+            "recording": "Alternar gravação",
+            "Settings": "Alternar configurações",
+            "sharedvideo": "Alternar compartilhamento de vídeo do Youtube",
+            "shareRoom": "Convidar alguém",
+            "shareYourScreen": "Alternar compartilhamento de tela",
+            "shortcuts": "Alternar atalhos",
+            "speakerStats": "Alternar estatísticas do apresentador",
+            "toggleCamera": "",
+            "tileView": "",
+            "videomute": "Alternar mudo do vídeo"
+        },
         "addPeople": "Adicionar pessoas à sua chamada",
         "audioonly": "Ativar / desativar modo somente áudio (economiza banda)",
+        "audioOnlyOn": "Ativar modo somente áudio (economiza banda)",
+        "audioOnlyOff": "Desativar modo somente áudio",
+        "audioRoute": "Selecionar o dispositivo de som",
         "callQuality": "Gerenciar qualidade da chamada",
         "enterFullScreen": "Ver em tela cheia",
         "exitFullScreen": "Sair da tela cheia",
@@ -86,8 +127,8 @@
         "etherpad": "Abrir ou fechar o documento compartilhado",
         "documentOpen": "Abrir documento compartilhado",
         "documentClose": "Fechar documento compartilhado",
+        "shareRoom": "Compartilhar sala",
         "sharedvideo": "Compartilhar um vídeo do YouTube",
-        "sharescreen": "Compartilhamento de tela",
         "stopSharedVideo": "Parar vídeo do YouTube",
         "fullscreen": "Entrar ou sair da tela cheia",
         "sip": "Chamar número SIP",
@@ -96,16 +137,20 @@
         "login": "Iniciar sessão",
         "logout": "Encerrar sessão",
         "sharedVideoMutedPopup": "Seu vídeo compartilhado foi silenciado para que você possa conversar com os outros membros.",
+        "toggleCamera": "Alternar câmera",
         "micMutedPopup": "Seu microfone foi silenciado para que você aproveite plenamente seu vídeo compartilhado.",
         "talkWhileMutedPopup": "Tentando falar? Você está em mudo.",
         "unableToUnmutePopup": "Você não pode sair do mudo enquanto seu vídeo compartilhado está ativo.",
         "cameraDisabled": "A câmera não está disponível",
         "micDisabled": "O microfone não está disponível",
         "filmstrip": "Mostrar / ocultar vídeos",
+        "pip": "Entrar em modo Quadro-a-Quadro",
         "profile": "Editar seu perfil",
-        "raiseHand": "Erguer o baixar sua mão",
+        "raiseHand": "Erguer / Baixar sua mão",
         "shortcuts": "Ver atalhos",
-        "speakerStats": "Estatísticas do Apresentador"
+        "speakerStats": "Estatísticas do Apresentador",
+        "tileViewToggle": "Alternar visualização em blocos",
+        "invite": "Convidar pessoas"
     },
     "chat": {
         "nickname": {
@@ -115,6 +160,13 @@
         "messagebox": "Digite um texto..."
     },
     "settings": {
+        "calendar": {
+            "about": "A integração do calendário __appName__ é usada para acessar com segurança o seu calendário para que ele possa ler os próximos eventos.",
+            "disconnect": "Desconectar",
+            "microsoftSignIn": "Entrar com Microsoft",
+            "signedIn": "Atualmente acessando eventos do calendário para __email__. Clique no botão Desconectar abaixo para parar de acessar os eventos da agenda.",
+            "title": "Calendário"
+        },
         "title": "Configurações",
         "update": "Atualizar",
         "name": "Nome",
@@ -124,11 +176,15 @@
         "selectMic": "Microfone",
         "selectAudioOutput": "Saída de áudio",
         "followMe": "Todos me seguem",
+        "language": "Idioma",
+        "loggedIn": "Conectado como __name__",
         "noDevice": "Nenhum",
         "cameraAndMic": "Câmera e microfone",
-        "moderator": "MODERADOR",
+        "moderator": "Moderador",
+        "more": "Mais",
         "password": "DEFINIR SENHA",
-        "audioVideo": "ÁUDIO E VÍDEO"
+        "audioVideo": "ÁUDIO E VÍDEO",
+        "devices": "Dispositivos"
     },
     "profile": {
         "title": "Perfil",
@@ -187,7 +243,6 @@
         "focus": "Foco da conferência",
         "focusFail": "__component__ não disponĩvel - tente em __ms__ seg.",
         "grantedTo": "Direitos de moderador concedido para __to__!",
-        "grantedToUnknown": "Direitos de moderador concedido para $t(notify.somebody)!",
         "muted": "Você iniciou uma conversa em mudo.",
         "mutedTitle": "Você está mudo!",
         "raisedHand": "Gostaria de falar.",
@@ -195,7 +250,11 @@
         "suboptimalExperienceDescription": "Eer ... temos medo de que sua experiência com o __appName__ não seja tão boa aqui. Estamos procurando maneiras de melhorar isso, mas até lá tente usar um dos <a href='static/recommendedBrowsers.html' target='_blank'> navegadores totalmente compatíveis</a>."
     },
     "dialog": {
+        "accessibilityLabel": {
+            "liveStreaming": "Transmissão ao vivo"
+        },
         "allow": "Permitir",
+        "confirm": "Confirmar",
         "kickMessage": "Ouch! Você foi expulso da reunião!",
         "popupErrorTitle": "Popup bloqueado",
         "popupError": "Seu navegador está bloqueando janelas popup deste site. Habilite os popups nas configurações de segurança no seu navegador e tente novamente.",
@@ -219,6 +278,7 @@
         "rejoinNow": "Reconectar agora",
         "maxUsersLimitReachedTitle": "Limite máximo de membros alcançado",
         "maxUsersLimitReached": "O limite para o máximo do número de membros  foi alcançado. A conferência está cheia. Contate o dono da reunião ou tente de novo depois!",
+        "lockRoom": "Travar sala",
         "lockTitle": "Bloqueio falhou",
         "lockMessage": "Falha ao travar a conferência.",
         "warning": "Atenção",
@@ -266,6 +326,7 @@
         "reservationError": "Erro de sistema de reserva",
         "reservationErrorMsg": "Código do erro: __code__, mensagem: __msg__",
         "password": "Insira a senha",
+        "unlockRoom": "Destravar sala",
         "userPassword": "senha do usuário",
         "token": "token",
         "tokenAuthFailedTitle": "Falha de autenticação",
@@ -278,11 +339,11 @@
         "sorryFeedback": "Sentimos muito pelos transtornos. Poderia nos das mais detalhes?",
         "liveStreaming": "Transmissão ao Vivo",
         "streamKey": "Chave para transmissão ao vivo",
-        "startLiveStreaming": "Ir ao vivo agora",
+        "startLiveStreaming": "Iniciar transmissão ao vivo",
         "startRecording": "Parar gravação",
         "stopStreamingWarning": "Tem certeza que deseja parar a transmissão ao vivo?",
         "stopRecordingWarning": "Tem certeza que deseja parar a gravação?",
-        "stopLiveStreaming": "Parar a transmissão ao vivo",
+        "stopLiveStreaming": "Parar transmissão ao vivo",
         "stopRecording": "Parar a gravação",
         "doNotShowMessageAgain": "Não mostre esta mensagem novamente",
         "permissionDenied": "Permissão Negada",
@@ -312,6 +373,10 @@
         "muteParticipantTitle": "Silenciar esse membro?",
         "muteParticipantBody": "Você não está habilitado para tirar o mudo deles, mas eles podem tirar o mudo deles mesmos a qualquer tempo.",
         "muteParticipantButton": "Mudo",
+        "liveStreamingDisabledTooltip": "Iniciar transmissão ao vivo desativada.",
+        "liveStreamingDisabledForGuestTooltip": "Visitantes não podem iniciar transmissão ao vivo.",
+        "recordingDisabledTooltip": "Iniciar gravação desativada.",
+        "recordingDisabledForGuestTooltip": "Visitantes não podem iniciar gravações.",
         "remoteControlTitle": "Conexão de área de trabalho remota",
         "remoteControlRequestMessage": "Deseja permitir que __user__ controle remotamente sua área de trabalho?",
         "remoteControlShareScreenWarning": "Note que se você pressionar \"Permitir\" você vai compartilhar sua tela!",
@@ -322,8 +387,11 @@
         "remoteControlStopMessage": "A sessão de controle remoto terminou!",
         "close": "Fechar",
         "shareYourScreen": "Compartilhar sua tela",
+        "shareYourScreenDisabled": "Compartilhamento de tela desativada.",
+        "shareYourScreenDisabledForGuest": "Visitantes não podem compartilhar tela.",
         "yourEntireScreen": "Toda sua tela",
-        "applicationWindow": "Janela de aplicativo"
+        "applicationWindow": "Janela de aplicativo",
+        "transcribing": "Transcrevendo"
     },
     "email": {
         "sharedKey": [
@@ -353,6 +421,22 @@
         ],
         "and": "e"
     },
+    "share": {
+        "mainText": [
+            "Clique no seguinte link para entrar na reunião:",
+            "__roomUrl__"
+        ],
+        "dialInfoText": [
+            "",
+            "",
+            "=====",
+            "",
+            "Quer apenas ligar no seu telefone?",
+            "",
+            "Clique neste link para ver a discagem nos números de telefone para esta reunião",
+            "__dialInfoPageUrl__"
+        ]
+    },
     "connection": {
         "ERROR": "Erro",
         "CONNECTING": "Conectando",
@@ -366,17 +450,36 @@
         "ATTACHED": "Anexado"
     },
     "recording": {
+        "beta": "BETA",
         "busy": "Estamos trabalhando para liberar recursos de gravação. Tente novamente em alguns minutos.",
         "busyTitle": "Todas as gravações estão atualmente ocupadas",
         "buttonTooltip": "Iniciar / parar gravação",
         "error": "A gravação falhou. Tente novamente.",
         "failedToStart": "Falha ao iniciar a gravação",
+        "live": "AOVIVO",
         "off": "Gravação parada",
         "on": "Gravando",
-        "pending": "Aguardando um participante para iniciar a gravação...",
+        "pending": "Preparando para gravar a reunião...",
+        "rec": "GRAVAR",
+        "authDropboxText": "Enviar sua gravação para o Dropbox.",
+        "authDropboxCompletedText": "Seu arquivo de gravação aparecerá no seu Dropbox logo após terminar a gravação.",
         "serviceName": "Serviço de gravação",
+        "signOut": "Sair",
+        "signIn": "entrar",
+        "loggedIn": "Conectado como __userName__",
+        "availableSpace": "Espaço disponível: __spaceLeft__ MB (aproximadamente __duration__ minutos de gravação)",
+        "startRecordingBody": "Tem certeza que deseja iniciar a gravação?",
         "unavailable": "Oops! O __serviceName__ está indisponível. Estamos trabalhando para resolver o problema. Por favor, tente mais tarde.",
         "unavailableTitle": "Gravação indisponível"
+    },
+    "transcribing": {
+        "pending": "Preparando a transcrição da reunião...",
+        "off": "Transcrição parada",
+        "error": "Transcrição falhou. Tente novamente.",
+        "failedToStart": "Transcrição falhou ao iniciar",
+        "tr": "TR",
+        "labelToolTip": "A reunião esta sendo transcrita",
+        "ccButtonTooltip": "Iniciar / Parar de mostrar as legendas"
     },
     "liveStreaming": {
         "busy": "Estamos trabalhando para liberar os recursos de transmissão. Tente novamente em alguns minutos.",
@@ -388,6 +491,7 @@
         "enterStreamKey": "Insira sua chave de transmissão ao vivo do YouTube aqui.",
         "error": "Falha na transmissão ao vivo. Tente de novo.",
         "errorAPI": "Ocorreu um erro ao acessar suas transmissões do YouTube. Por favor tente logar novamente.",
+        "errorLiveStreamNotEnabled": "Transmissão ao vivo não está ativada em __email__. Ative a transmissão ao vivo ou registre numa conta com transmissão ao vivo ativada.",
         "failedToStart": "Falha ao iniciar a transmissão ao vivo",
         "off": "Transmissão ao vivo encerrada",
         "on": "Transmissão ao Vivo",
@@ -424,9 +528,10 @@
         "noPermission": "Permissão não concedida",
         "previewUnavailable": "Visualização indisponível",
         "selectADevice": "Selecione um dispositivo",
-        "testAudio": "Testar o som"
+        "testAudio": "Tocar um som de teste"
     },
     "videoStatus": {
+        "audioOnly": "AUD",
         "callQuality": "Qualidade da Chamada",
         "hd": "HD",
         "hdTooltip": "Ver vídeo em alta definição",
@@ -455,6 +560,7 @@
         "countryNotSupported": "Ainda não suportamos este destino.",
         "countryReminder": "Ligando fora dos EUA? Por favor, certifique-se de começar com o código do país!",
         "disabled": "Você não pode convidar pessoas.",
+        "footerText": "Discagem está desativada.",
         "invite": "Convidar",
         "loading": "Procurando por pessoas e números de telefone",
         "loadingNumber": "Validando o número de telefone",
@@ -491,6 +597,7 @@
         "veryGood": "Muito boa"
     },
     "info": {
+        "accessibilityLabel": "Mostrar info",
         "addPassword": "Adicionar uma senha",
         "cancelPassword": "Cancelar senha",
         "conferenceURL": "Link:",
@@ -512,7 +619,7 @@
         "numbers": "Números de discagem",
         "password": "Senha:",
         "title": "Compartilhar",
-        "tooltip": "Obtenha informações de acesso sobre a reunião"
+        "tooltip": "Compartilhar link e discagem para esta reunião"
     },
     "settingsView": {
         "alertOk": "OK",
@@ -528,17 +635,17 @@
         "startWithVideoMuted": "Iniciar sem vídeo"
     },
     "calendarSync": {
-        "later": "Depois",
-        "next": "Recebendo",
+        "addMeetingURL": "Adicionar um link da reunião",
+        "today": "Hoje",
         "nextMeeting": "próxima reunião",
-        "now": "Agora",
+        "noEvents": "Não há eventos próximos agendados.",
+        "ongoingMeeting": "reunião em progresso",
         "permissionButton": "Abrir configurações",
-        "permissionMessage": "Permissão do calendário é requerida para listar suas reuniões na aplicação."
+        "permissionMessage": "Permissão do calendário é requerida para ver suas reuniões na aplicação.",
+        "refresh": "Atualizar calendário"
     },
     "recentList": {
-        "today": "Hoje",
-        "yesterday": "Ontem",
-        "earlier": "Mais cedo"
+        "joinPastMeeting": "Entrar em uma reunião passada"
     },
     "sectionList": {
         "pullToRefresh": "Puxe para atualizar"
@@ -551,5 +658,60 @@
         "appNotInstalled": "Você precisa do aplicativo móvel __app__ para participar da reunião no seu telefone.",
         "downloadApp": "Baixe o Aplicativo",
         "openApp": "Continue na aplicação"
+    },
+    "presenceStatus": {
+        "invited": "Convidar",
+        "ringing": "Toque...",
+        "calling": "Chamando...",
+        "initializingCall": "Iniciando Chamada...",
+        "connected": "Conectado",
+        "connecting": "Conectando...",
+        "connecting2": "Conectando*...",
+        "disconnected": "Desconectado",
+        "busy": "Ocupado",
+        "rejected": "Rejeitado",
+        "ignored": "Ignorado",
+        "expired": "Expirado"
+    },
+    "dateUtils": {
+        "today": "Hoje",
+        "yesterday": "Ontem",
+        "earlier": "Mais cedo"
+    },
+    "incomingCall": {
+        "answer": "Responder",
+        "audioCallTitle": "Chamada chegando",
+        "decline": "Dispensar",
+        "productLabel": "do Jitsi Meet",
+        "videoCallTitle": "Chamada de vídeo chegando"
+    },
+    "localRecording": {
+        "localRecording": "Gravação local",
+        "dialogTitle": "Controles da Gravação Local",
+        "start": "Iniciar gravação",
+        "stop": "Parar a Gravação",
+        "moderator": "Moderador",
+        "me": "Eu",
+        "duration": "Duração",
+        "durationNA": "N/A",
+        "encoding": "Codificando",
+        "participantStats": "Estatísticas dos Participantes",
+        "participant": "Participante",
+        "sessionToken": "Token de Sessão",
+        "clientState": {
+            "on": "On",
+            "off": "Off",
+            "unknown": "Desconhecido"
+        },
+        "messages": {
+            "engaged": "Gravação local iniciada.",
+            "finished": "Sessão de gravação __token__ terminada. Por favor, envie o arquivo gravado para o moderador.",
+            "finishedModerator": "Sessão de gravação __token__ terminada. A gravação da faixa local foi salva. Por favor, peça aos outros participantes para enviar suas gravações.",
+            "notModerator": "Você não é o moderador. Você não pode iniciar ou parar a gravação local."
+        },
+        "yes": "Sim",
+        "no": "Não",
+        "label": "LOR",
+        "labelToolTip": "Gravação local está envolvida"
     }
 }
