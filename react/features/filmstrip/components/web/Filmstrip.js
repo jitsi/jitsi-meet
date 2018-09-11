@@ -305,9 +305,9 @@ function _mapStateToProps(state) {
     const remoteVideosVisible = shouldRemoteVideosBeVisible(state);
     const className = `${remoteVideosVisible ? '' : 'hide-videos'} ${
         reduceHeight ? 'reduce-height' : ''}`.trim();
-    const videosClassName = `filmstrip__videos ${
-        isFilmstripOnly ? 'filmstrip__videos-filmstripOnly' : ''} ${
-        visible ? '' : 'hidden'}`;
+    const videosClassName = `filmstrip__videos${
+        isFilmstripOnly ? ' filmstrip__videos-filmstripOnly' : ''}${
+        visible ? '' : ' hidden'}`;
 
     return {
         _className: className,
