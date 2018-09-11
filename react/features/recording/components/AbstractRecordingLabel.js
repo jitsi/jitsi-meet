@@ -4,6 +4,8 @@ import { Component } from 'react';
 
 import { JitsiRecordingConstants } from '../../base/lib-jitsi-meet';
 
+import { getSessionStatusToShow } from '../functions';
+
 /**
  * NOTE: Web currently renders multiple indicators if multiple recording
  * sessions are running. This is however may not be a good UX as it's not
@@ -12,13 +14,12 @@ import { JitsiRecordingConstants } from '../../base/lib-jitsi-meet';
  * running. These boolean are shared across the two components to make it
  * easier to align web's behaviour to mobile's later if necessary.
  */
-export type Props = {
+type Props = {
 
     /**
-     * True if there is an active recording with the provided mode therefore the
-     * component must be rendered.
+     * The status of the highermost priority session.
      */
-    _visible: boolean,
+    _status: ?string,
 
     /**
      * The recording mode this indicator should display.
@@ -34,8 +35,8 @@ export type Props = {
 /**
  * Abstract class for the {@code RecordingLabel} component.
  */
-export default class AbstractRecordingLabel<P: Props>
-    extends Component<P> {
+export default class AbstractRecordingLabel
+    extends Component<Props> {
 
     /**
      * Implements React {@code Component}'s render.
@@ -43,7 +44,7 @@ export default class AbstractRecordingLabel<P: Props>
      * @inheritdoc
      */
     render() {
-        return this.props._visible ? this._renderLabel() : null;
+        return this.props._status ? this._renderLabel() : null;
     }
 
     _getLabelKey: () => ?string
@@ -84,20 +85,13 @@ export default class AbstractRecordingLabel<P: Props>
  * @param {Props} ownProps - The component's own props.
  * @private
  * @returns {{
- *     _visible: boolean
+ *     _status: ?string
  * }}
  */
 export function _mapStateToProps(state: Object, ownProps: Props) {
     const { mode } = ownProps;
-    const _recordingSessions = state['features/recording'].sessionDatas;
-    const _visible
-        = Array.isArray(_recordingSessions)
-        && _recordingSessions.some(
-            session => session.status === JitsiRecordingConstants.status.ON
-            && session.mode === mode
-        );
 
     return {
-        _visible
+        _status: getSessionStatusToShow(state, mode)
     };
 }

@@ -25,7 +25,7 @@ type Props = AbstractProps & {
  *
  * @extends Component
  */
-export default class CircularLabel extends AbstractCircularLabel<Props> {
+export default class CircularLabel extends AbstractCircularLabel<Props, {}> {
     /**
      * Default values for {@code CircularLabel} component's properties.
      *

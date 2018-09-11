@@ -8,7 +8,6 @@ import { CircularLabel } from '../../base/label';
 import { JitsiRecordingConstants } from '../../base/lib-jitsi-meet';
 
 import AbstractRecordingLabel, {
-    type Props,
     _mapStateToProps
 } from './AbstractRecordingLabel';
 import styles from './styles';
@@ -19,7 +18,7 @@ import styles from './styles';
  *
  * @extends {Component}
  */
-class RecordingLabel extends AbstractRecordingLabel<Props> {
+class RecordingLabel extends AbstractRecordingLabel {
 
     /**
      * Renders the platform specific label component.
@@ -41,9 +40,21 @@ class RecordingLabel extends AbstractRecordingLabel<Props> {
             return null;
         }
 
+        let status = 'on';
+
+        switch (this.props._status) {
+        case JitsiRecordingConstants.status.PENDING:
+            status = 'in_progress';
+            break;
+        case JitsiRecordingConstants.status.OFF:
+            status = 'off';
+            break;
+        }
+
         return (
             <CircularLabel
                 label = { this.props.t(this._getLabelKey()) }
+                status = { status }
                 style = { indicatorStyle } />
         );
     }
