@@ -86,11 +86,14 @@ function _mapStateToProps(state: Object, ownProps: Props) {
     const abstractProps = _abstractMapStateToProps(state, ownProps);
     let { visible } = ownProps;
 
-    const _disabled = abstractProps.disabledByFeatures;
+    const _disabledByFeatures = abstractProps.disabledByFeatures;
+    let _disabled = false;
     let _liveStreamDisabledTooltipKey;
 
     if (!abstractProps.visible
-        && _disabled !== undefined && !_disabled) {
+            && _disabledByFeatures !== undefined && !_disabledByFeatures) {
+        _disabled = true;
+
         // button and tooltip
         if (state['features/base/jwt'].isGuest) {
             _liveStreamDisabledTooltipKey
@@ -103,7 +106,8 @@ function _mapStateToProps(state: Object, ownProps: Props) {
 
     if (typeof visible === 'undefined') {
         visible = interfaceConfig.TOOLBAR_BUTTONS.includes('livestreaming')
-            && (abstractProps.visible || _liveStreamDisabledTooltipKey);
+            && (abstractProps.visible
+                    || Boolean(_liveStreamDisabledTooltipKey));
     }
 
     return {
