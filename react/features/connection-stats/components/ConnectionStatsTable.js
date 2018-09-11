@@ -87,6 +87,11 @@ class ConnectionStatsTable extends Component {
         resolution: PropTypes.object,
 
         /**
+         * The region of the media server.
+         */
+        serverRegion: PropTypes.string,
+
+        /**
          * Whether or not additional stats about bandwidth and transport should
          * be displayed. Will not display even if true for remote participants.
          */
@@ -124,7 +129,7 @@ class ConnectionStatsTable extends Component {
 
     /**
      * Creates a table as ReactElement that will display additional statistics
-     * related to bandwidth and transport.
+     * related to bandwidth and transport for the local user.
      *
      * @private
      * @returns {ReactElement}
@@ -135,6 +140,7 @@ class ConnectionStatsTable extends Component {
                 <tbody>
                     { this._renderBandwidth() }
                     { this._renderTransport() }
+                    { this._renderRegion() }
                 </tbody>
             </table>
         );
@@ -226,17 +232,43 @@ class ConnectionStatsTable extends Component {
      * @private
      */
     _renderE2eRtt() {
-        const { e2eRtt, region, t } = this.props;
-        let str = e2eRtt ? `${e2eRtt.toFixed(0)}ms` : 'N/A';
-
-        if (region) {
-            str += ` (${region})`;
-        }
+        const { e2eRtt, t } = this.props;
+        const str = e2eRtt ? `${e2eRtt.toFixed(0)}ms` : 'N/A';
 
         return (
             <tr>
                 <td>
                     <span>{ t('connectionindicator.e2e_rtt') }</span>
+                </td>
+                <td>{ str }</td>
+            </tr>
+        );
+    }
+
+    /**
+     * Creates a table row as a ReactElement for displaying the "connected to"
+     * information.
+     *
+     * @returns {ReactElement}
+     * @private
+     */
+    _renderRegion() {
+        const { region, serverRegion, t } = this.props;
+        let str = serverRegion;
+
+        if (!serverRegion) {
+            return;
+        }
+
+
+        if (region && serverRegion && region !== serverRegion) {
+            str += ` from ${region}`;
+        }
+
+        return (
+            <tr>
+                <td>
+                    <span>{ t('connectionindicator.connected_to') }</span>
                 </td>
                 <td>{ str }</td>
             </tr>
@@ -373,6 +405,7 @@ class ConnectionStatsTable extends Component {
                     { this._renderBitrate() }
                     { this._renderPacketLoss() }
                     { isRemoteVideo ? this._renderE2eRtt() : null }
+                    { isRemoteVideo ? this._renderRegion() : null }
                     { this._renderResolution() }
                     { this._renderFrameRate() }
                 </tbody>

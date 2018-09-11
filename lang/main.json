@@ -207,6 +207,7 @@
     "connectionindicator":
     {
         "header": "Connection data",
+        "connected_to": "Connected to:",
         "bitrate": "Bitrate:",
         "packetloss": "Packet loss:",
         "resolution": "Resolution:",

@@ -415,6 +415,7 @@ class ConnectionIndicator extends Component {
             packetLoss,
             region,
             resolution,
+            serverRegion,
             transport
         } = this.state.stats;
 
@@ -430,6 +431,7 @@ class ConnectionIndicator extends Component {
                 packetLoss = { packetLoss }
                 region = { region }
                 resolution = { resolution }
+                serverRegion = { serverRegion }
                 shouldShowMore = { this.state.showMoreStats }
                 transport = { transport } />
         );
