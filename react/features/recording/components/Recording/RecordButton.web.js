@@ -86,10 +86,11 @@ export function _mapStateToProps(state: Object, ownProps: Props): Object {
     const abstractProps = _abstractMapStateToProps(state, ownProps);
     let { visible } = ownProps;
 
-    const _disabled = abstractProps.disabled;
+    const _disabled = abstractProps.disabledByFeatures;
     let _fileRecordingsDisabledTooltipKey;
 
-    if (!abstractProps.visible && _disabled) {
+    if (!abstractProps.visible
+            && _disabled !== undefined && !_disabled) {
         // button and tooltip
         if (state['features/base/jwt'].isGuest) {
             _fileRecordingsDisabledTooltipKey
