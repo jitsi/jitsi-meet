@@ -3,7 +3,6 @@
 import { connect } from 'react-redux';
 
 import { translate } from '../../../base/i18n';
-import { getLocalParticipant } from '../../../base/participants';
 
 import AbstractLiveStreamButton, {
     _mapStateToProps as _abstractMapStateToProps,
@@ -85,17 +84,12 @@ class LiveStreamButton extends AbstractLiveStreamButton<Props> {
  */
 function _mapStateToProps(state: Object, ownProps: Props) {
     const abstractProps = _abstractMapStateToProps(state, ownProps);
-    const localParticipant = getLocalParticipant(state);
-    const { features = {} } = localParticipant;
     let { visible } = ownProps;
 
-    let _disabled = false;
+    const _disabled = abstractProps.disabled;
     let _liveStreamDisabledTooltipKey;
 
-    if (!abstractProps.visible
-            && String(features.livestreaming) !== 'disabled') {
-        _disabled = true;
-
+    if (!abstractProps.visible && _disabled) {
         // button and tooltip
         if (state['features/base/jwt'].isGuest) {
             _liveStreamDisabledTooltipKey

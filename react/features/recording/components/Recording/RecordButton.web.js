@@ -3,7 +3,6 @@
 import { connect } from 'react-redux';
 
 import { translate } from '../../../base/i18n';
-import { getLocalParticipant } from '../../../base/participants';
 
 import AbstractRecordButton, {
     _mapStateToProps as _abstractMapStateToProps,
@@ -85,17 +84,12 @@ class RecordButton extends AbstractRecordButton<Props> {
  */
 export function _mapStateToProps(state: Object, ownProps: Props): Object {
     const abstractProps = _abstractMapStateToProps(state, ownProps);
-    const localParticipant = getLocalParticipant(state);
-    const { features = {} } = localParticipant;
     let { visible } = ownProps;
 
-    let _disabled = false;
+    const _disabled = abstractProps.disabled;
     let _fileRecordingsDisabledTooltipKey;
 
-    if (!abstractProps.visible
-            && String(features.recording) !== 'disabled') {
-        _disabled = true;
-
+    if (!abstractProps.visible && _disabled) {
         // button and tooltip
         if (state['features/base/jwt'].isGuest) {
             _fileRecordingsDisabledTooltipKey

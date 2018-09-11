@@ -109,6 +109,9 @@ export default class AbstractLiveStreamButton<P: Props>
 export function _mapStateToProps(state: Object, ownProps: Props) {
     let { visible } = ownProps;
 
+    // a button can be disabled only if enableFeaturesBasedOnToken is enabled
+    let disabled = false;
+
     if (typeof visible === 'undefined') {
         // If the containing component provides the visible prop, that is one
         // above all, but if not, the button should be autonomus and decide on
@@ -119,14 +122,18 @@ export function _mapStateToProps(state: Object, ownProps: Props) {
         } = state['features/base/config'];
         const { features = {} } = getLocalParticipant(state);
 
-        visible = liveStreamingEnabled
-            && (!enableFeaturesBasedOnToken
-                || String(features.livestreaming) === 'true');
+        visible = liveStreamingEnabled;
+
+        if (enableFeaturesBasedOnToken) {
+            visible = visible && String(features.livestreaming) === 'true';
+            disabled = String(features.livestreaming) === 'disabled';
+        }
     }
 
     return {
         _isLiveStreamRunning: Boolean(
             getActiveSession(state, JitsiRecordingConstants.mode.STREAM)),
+        disabled,
         visible
     };
 }
