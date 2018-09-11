@@ -627,8 +627,7 @@ RemoteVideo.prototype._onContainerClick = function(event) {
     const { classList } = event.target;
 
     const ignoreClick = $source.parents('.popover').length > 0
-            || classList.contains('popover')
-            || shouldDisplayTileView(APP.store.getState());
+            || classList.contains('popover');
 
     if (!ignoreClick) {
         this._togglePin();

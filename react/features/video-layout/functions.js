@@ -1,6 +1,7 @@
 // @flow
 
 import { LAYOUTS } from './constants';
+import { getPinnedParticipant } from '../base/participants';
 
 declare var interfaceConfig: Object;
 
@@ -80,5 +81,6 @@ export function shouldDisplayTileView(state: Object = {}) {
             // should never be enabled for filmstrip only mode.
             && (typeof interfaceConfig === 'undefined'
                 || !interfaceConfig.filmStripOnly)
+            && !getPinnedParticipant(state)
     );
 }

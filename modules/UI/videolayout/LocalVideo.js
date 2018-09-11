@@ -275,9 +275,7 @@ LocalVideo.prototype._onContainerClick = function(event) {
         = $source.parents('.displayNameContainer').length > 0;
     const clickedOnPopover = $source.parents('.popover').length > 0
             || classList.contains('popover');
-    const ignoreClick = clickedOnDisplayName
-        || clickedOnPopover
-        || shouldDisplayTileView(APP.store.getState());
+    const ignoreClick = clickedOnDisplayName || clickedOnPopover;
 
     if (event.stopPropagation && !ignoreClick) {
         event.stopPropagation();

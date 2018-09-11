@@ -30,6 +30,7 @@ import {
 import {
     LAYOUTS,
     getCurrentLayout,
+    setTileView,
     shouldDisplayTileView
 } from '../../../react/features/video-layout';
 /* eslint-enable no-unused-vars */
