@@ -1,6 +1,6 @@
 import { StyleSheet } from 'react-native';
 
-import { ColorPalette, createStyleSheet } from '../../styles';
+import { BoxModel, ColorPalette, createStyleSheet } from '../../styles';
 
 /**
  * The React {@code Component} styles of {@code Dialog}.
@@ -11,6 +11,14 @@ export const dialog = createStyleSheet({
      */
     buttonText: {
         color: ColorPalette.blue
+    },
+
+    /**
+     * Unified container for a consistent Dialog style.
+     */
+    dialogContainer: {
+        paddingHorizontal: BoxModel.padding,
+        paddingVertical: 1.5 * BoxModel.padding
     },
 
     /**

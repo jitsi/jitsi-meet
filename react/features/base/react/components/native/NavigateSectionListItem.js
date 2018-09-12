@@ -17,7 +17,12 @@ type Props = {
     /**
      * Function to be invoked when an Item is pressed. The Item's URL is passed.
      */
-    onPress: Function
+    onPress: ?Function,
+
+    /**
+     * Function to be invoked when secondary action was performed on an Item.
+     */
+    secondaryAction: ?Function
 }
 
 /**
@@ -101,6 +106,24 @@ export default class NavigateSectionListItem extends Component<Props> {
     }
 
     /**
+     * Renders the secondary action label.
+     *
+     * @private
+     * @returns {React$Node}
+     */
+    _renderSecondaryAction() {
+        const { secondaryAction } = this.props;
+
+        return (
+            <Container
+                onClick = { secondaryAction }
+                style = { styles.secondaryActionContainer }>
+                <Text style = { styles.secondaryActionLabel }>+</Text>
+            </Container>
+        );
+    }
+
+    /**
      * Renders the content of this component.
      *
      * @returns {ReactElement}
@@ -135,6 +158,7 @@ export default class NavigateSectionListItem extends Component<Props> {
                     </Text>
                     {this._renderItemLines(lines)}
                 </Container>
+                { this.props.secondaryAction && this._renderSecondaryAction() }
             </Container>
         );
     }

@@ -30,6 +30,12 @@ type Props = {
     onRefresh: Function,
 
     /**
+     * Function to be invoked when a secondary action is performed on an item.
+     * The item's ID is passed.
+     */
+    onSecondaryAction: Function,
+
+    /**
      * Function to override the rendered default empty list component.
      */
     renderListEmptyComponent: Function,
@@ -153,6 +159,23 @@ class NavigateSectionList extends Component<Props> {
         }
     }
 
+    _onSecondaryAction: Object => Function;
+
+    /**
+     * Returns a function that is used in the secondaryAction callback of the
+     * items.
+     *
+     * @param {string} id - The id of the item that secondary action was
+     * performed on.
+     * @private
+     * @returns {Function}
+     */
+    _onSecondaryAction(id) {
+        return () => {
+            this.props.onSecondaryAction(id);
+        };
+    }
+
     _renderItem: Object => Object;
 
     /**
@@ -165,7 +188,7 @@ class NavigateSectionList extends Component<Props> {
      */
     _renderItem(listItem, key: string = '') {
         const { item } = listItem;
-        const { url } = item;
+        const { id, url } = item;
 
         // XXX The value of title cannot be undefined; otherwise, react-native
         // will throw a TypeError: Cannot read property of undefined. While it's
@@ -180,7 +203,9 @@ class NavigateSectionList extends Component<Props> {
             <NavigateSectionListItem
                 item = { item }
                 key = { key }
-                onPress = { this._onPress(url) } />
+                onPress = { url ? this._onPress(url) : undefined }
+                secondaryAction = {
+                    url ? undefined : this._onSecondaryAction(id) } />
         );
     }
 

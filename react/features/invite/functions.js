@@ -438,7 +438,7 @@ export function getShareInfoText(
 
             if (!dialInConfCodeUrl || !dialInNumbersUrl || !mucURL) {
                 // URLs for fetching dial in numbers not defined
-                return Promise.reject();
+                return Promise.resolve(infoText);
             }
 
             numbersPromise = Promise.all([

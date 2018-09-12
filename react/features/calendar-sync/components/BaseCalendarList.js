@@ -12,7 +12,7 @@ import {
 import { getLocalizedDateFormatter, translate } from '../../base/i18n';
 import { NavigateSectionList } from '../../base/react';
 
-import { refreshCalendar } from '../actions';
+import { refreshCalendar, openUpdateCalendarEventDialog } from '../actions';
 
 import { isCalendarEnabled } from '../functions';
 
@@ -93,6 +93,7 @@ class BaseCalendarList extends Component<Props> {
         this._onJoinPress = this._onJoinPress.bind(this);
         this._onPress = this._onPress.bind(this);
         this._onRefresh = this._onRefresh.bind(this);
+        this._onSecondaryAction = this._onSecondaryAction.bind(this);
         this._toDateString = this._toDateString.bind(this);
         this._toDisplayableItem = this._toDisplayableItem.bind(this);
         this._toDisplayableList = this._toDisplayableList.bind(this);
@@ -123,6 +124,7 @@ class BaseCalendarList extends Component<Props> {
                 disabled = { disabled }
                 onPress = { this._onPress }
                 onRefresh = { this._onRefresh }
+                onSecondaryAction = { this._onSecondaryAction }
                 renderListEmptyComponent
                     = { renderListEmptyComponent }
                 sections = { this._toDisplayableList() } />
@@ -174,6 +176,20 @@ class BaseCalendarList extends Component<Props> {
         this.props.dispatch(refreshCalendar(true));
     }
 
+    _onSecondaryAction: string => void;
+
+    /**
+     * Handles the list's secondary action.
+     *
+     * @private
+     * @param {string} id - The ID of the item on which the secondary action was
+     * performed.
+     * @returns {void}
+     */
+    _onSecondaryAction(id) {
+        this.props.dispatch(openUpdateCalendarEventDialog(id, ''));
+    }
+
     _toDateString: Object => string;
 
     /**
@@ -208,6 +224,7 @@ class BaseCalendarList extends Component<Props> {
                 : (<AddMeetingUrlButton
                     calendarId = { event.calendarId }
                     eventId = { event.id } />),
+            id: event.id,
             key: `${event.id}-${event.startDate}`,
             lines: [
                 event.url,

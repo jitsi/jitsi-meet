@@ -7,7 +7,6 @@ import { AtlasKitThemeProvider } from '@atlaskit/theme';
 import React from 'react';
 import { connect } from 'react-redux';
 
-import { DialogContainer } from '../../base/dialog';
 import { translate } from '../../base/i18n';
 import { Platform, Watermarks } from '../../base/react';
 import { CalendarList } from '../../calendar-sync';
@@ -168,9 +167,6 @@ class WelcomePage extends AbstractWelcomePage {
                             ref = { this._setAdditionalContentRef } />
                         : null }
                 </div>
-                <AtlasKitThemeProvider mode = 'dark'>
-                    <DialogContainer />
-                </AtlasKitThemeProvider>
             </AtlasKitThemeProvider>
         );
     }

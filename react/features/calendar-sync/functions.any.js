@@ -89,40 +89,35 @@ export function _updateCalendarEntries(events: Array<Object>) {
 function _parseCalendarEntry(event, knownDomains) {
     if (event) {
         const url = _getURLFromEvent(event, knownDomains);
+        const startDate = Date.parse(event.startDate);
+        const endDate = Date.parse(event.endDate);
 
-        // we only filter events without url on mobile, this is temporary
-        // till we implement event edit on mobile
-        if (url || navigator.product !== 'ReactNative') {
-            const startDate = Date.parse(event.startDate);
-            const endDate = Date.parse(event.endDate);
-
-            // we want to hide all events that
-            // - has no start or end date
-            // - for web, if there is no url and we cannot edit the event (has
-            // no calendarId)
-            if (isNaN(startDate)
-                || isNaN(endDate)
-                || (navigator.product !== 'ReactNative'
-                        && !url
-                        && !event.calendarId)) {
-                logger.debug(
-                    'Skipping invalid calendar event',
-                    event.title,
-                    event.startDate,
-                    event.endDate,
-                    url,
-                    event.calendarId
-                );
-            } else {
-                return {
-                    calendarId: event.calendarId,
-                    endDate,
-                    id: event.id,
-                    startDate,
-                    title: event.title,
-                    url
-                };
-            }
+        // we want to hide all events that
+        // - has no start or end date
+        // - for web, if there is no url and we cannot edit the event (has
+        // no calendarId)
+        if (isNaN(startDate)
+            || isNaN(endDate)
+            || (navigator.product !== 'ReactNative'
+                    && !url
+                    && !event.calendarId)) {
+            logger.debug(
+                'Skipping invalid calendar event',
+                event.title,
+                event.startDate,
+                event.endDate,
+                url,
+                event.calendarId
+            );
+        } else {
+            return {
+                calendarId: event.calendarId,
+                endDate,
+                id: event.id,
+                startDate,
+                title: event.title,
+                url
+            };
         }
     }
 

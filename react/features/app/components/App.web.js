@@ -3,6 +3,7 @@
 import { AtlasKitThemeProvider } from '@atlaskit/theme';
 import React from 'react';
 
+import { DialogContainer } from '../../base/dialog';
 import '../../base/responsive-ui';
 import '../../chat';
 import '../../room-lock';
@@ -36,6 +37,19 @@ export class App extends AbstractApp {
         return (
             <AtlasKitThemeProvider mode = 'dark'>
                 { super._createMainElement(component, props) }
+            </AtlasKitThemeProvider>
+        );
+    }
+
+    /**
+     * Renders the platform specific dialog container.
+     *
+     * @returns {React$Element}
+     */
+    _renderDialogContainer() {
+        return (
+            <AtlasKitThemeProvider mode = 'dark'>
+                <DialogContainer />
             </AtlasKitThemeProvider>
         );
     }
