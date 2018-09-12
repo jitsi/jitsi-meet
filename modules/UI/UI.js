@@ -278,22 +278,22 @@ UI.start = function() {
         $('body').addClass('filmstrip-only');
         Filmstrip.setFilmstripOnly();
         APP.store.dispatch(setNotificationsEnabled(false));
-    } else {
-        // Initialize recording mode UI.
-        if (config.iAmRecorder) {
-            VideoLayout.enableDeviceAvailabilityIcons(
-                APP.conference.getMyUserId(), false);
+    }
 
-            APP.store.dispatch(setToolboxEnabled(false));
-            APP.store.dispatch(setNotificationsEnabled(false));
-            UI.messageHandler.enablePopups(false);
-        }
+    // fixme: What are the conditions to handle when iamrecorder is not true.
 
-        // in case of iAmSipGateway keep local video visible
+    // Initialize recording mode UI.
+    if (!interfaceConfig.filmStripOnly && config.iAmRecorder) {
+        VideoLayout.enableDeviceAvailabilityIcons(
+        APP.conference.getMyUserId(), false);
+
         if (!config.iAmSipGateway) {
             VideoLayout.setLocalVideoVisible(false);
         }
 
+        APP.store.dispatch(setToolboxEnabled(false));
+        APP.store.dispatch(setNotificationsEnabled(false));
+        UI.messageHandler.enablePopups(false);
     }
 
     document.title = interfaceConfig.APP_NAME;

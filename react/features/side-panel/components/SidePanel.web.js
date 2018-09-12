@@ -129,7 +129,7 @@ class SidePanel extends Component<Props, State> {
                     id = { `smiley${i}` }>
                     <img
                         className = { 'smiley' }
-                        data-name = { `smiley${i}` }
+                        id = { `smiley${i}` }
                         onClick = { this._onAddSmiley }
                         src = { `images/smileys/smiley${i}.svg` } />
                 </div>
@@ -151,8 +151,8 @@ class SidePanel extends Component<Props, State> {
         let smileyType;
         const target = event.target;
 
-        if (target instanceof HTMLInputElement) {
-            smileyType = target.getAttribute('data-name');
+        if (typeof target.id === 'string') {
+            smileyType = target.id;
         }
         const smileyText = smileys[smileyType];
         const smileyMessage = smileyInTextForm => {
@@ -161,12 +161,16 @@ class SidePanel extends Component<Props, State> {
                 return smileyInTextForm;
             }
 
-            return `${this.state.message} ${smileyInTextForm}`;
+            return `${this.state.message} ${smileyInTextForm} `;
         };
 
         this.setState({
             message: smileyMessage(smileyText)
         });
+
+
+        this._onToggleSmiley();
+
     }
 
     _onHandleChange: (Event) => void;
@@ -264,7 +268,6 @@ class SidePanel extends Component<Props, State> {
 
             const processedMessage = processReplacements(message);
 
-            console.warn(processedMessage);
             this.props._conference.sendTextMessage(processedMessage);
 
             APP.API.notifySendingChatMessage(processedMessage);
@@ -318,7 +321,6 @@ class SidePanel extends Component<Props, State> {
                     <form
                         onSubmit = { this._onSubmitMessage }>
                         <textarea
-                            autoFocus = { true }
                             data-i18n = '[placeholder]chat.messagebox'
                             id = 'usermsg'
                             onChange = { this._onHandleChange }

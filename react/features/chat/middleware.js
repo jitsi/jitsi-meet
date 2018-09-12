@@ -8,7 +8,7 @@ import { playSound, registerSound, unregisterSound } from '../base/sounds';
 import { INCOMING_MSG_SOUND_ID } from './constants';
 import { INCOMING_MSG_SOUND_FILE } from './sounds';
 import { addMessage } from '../chat/actions';
-import { dockToolbox } from '../toolbox/actions.web';
+import { showToolbox } from '../toolbox/actions.web';
 import { isButtonEnabled } from '../toolbox/functions.web';
 import { getSidePanelStatus } from '../side-panel/functions';
 
@@ -22,10 +22,6 @@ declare var interfaceConfig : Object;
  * @returns {Function}
  */
 MiddlewareRegistry.register(store => next => action => {
-    if (action.type === CONFERENCE_JOINED) {
-        console.log(action.type);
-    }
-
     switch (action.type) {
     case APP_WILL_MOUNT:
         // Register the chat message sound on Web only because there's no chat
@@ -78,9 +74,8 @@ function _addChatMsgListener(conference, { dispatch }) {
                 getSidePanelStatus(state)
                 || dispatch(playSound(INCOMING_MSG_SOUND_ID));
 
-                // fixme: docking does not clear; this does not seem to work.
                 getSidePanelStatus(state)
-                || dispatch(dockToolbox(true));
+                || dispatch(showToolbox(4000));
 
                 let timeStampReceived = timestamp;
 
@@ -93,7 +88,6 @@ function _addChatMsgListener(conference, { dispatch }) {
                     = APP.conference.getParticipantDisplayName(id)
                     || `${interfaceConfig.DEFAULT_REMOTE_DISPLAY_NAME} (${id})`;
 
-                console.warn(username);
                 const markAsRead = APP.conference.isLocalId(id);
 
                 APP.API.notifyReceivedChatMessage({
@@ -103,7 +97,8 @@ function _addChatMsgListener(conference, { dispatch }) {
                     timeStampReceived
                 });
 
-                dispatch(addMessage(username, message, timestamp, markAsRead));
+                dispatch(addMessage(username, message,
+                    timeStampReceived, markAsRead));
             }
         );
     }
