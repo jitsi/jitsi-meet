@@ -23,11 +23,6 @@ export type Props = {
     /**
      * Whether the video quality label should be displayed.
      */
-    _showTranscribingLabel: boolean,
-
-    /**
-     * Whether the video quality label should be displayed.
-     */
     _showVideoQualityLabel: boolean
 };
 
@@ -71,13 +66,9 @@ export default class AbstractLabels<P: Props, S> extends Component<P, S> {
      * @returns {React$Element}
      */
     _renderTranscribingLabel() {
-        if (this.props._showTranscribingLabel) {
-            return (
-                <TranscribingLabel />
-            );
-        }
-
-        return null;
+        return (
+            <TranscribingLabel />
+        );
     }
 
     /**
@@ -101,14 +92,12 @@ export default class AbstractLabels<P: Props, S> extends Component<P, S> {
  * @private
  * @returns {{
  *     _filmstripVisible: boolean,
- *     _showTranscribingLabel: boolean,
  *     _showVideoQualityLabel: boolean
  * }}
  */
 export function _abstractMapStateToProps(state: Object) {
     return {
         _filmstripVisible: isFilmstripVisible(state),
-        _showTranscribingLabel: state['features/transcribing'].isTranscribing,
         _showVideoQualityLabel: !shouldDisplayTileView(state)
     };
 }
