@@ -54,7 +54,7 @@ export const getLocalDisplayName = (state: Object) => {
 
 };
 
-export const getSidePanelStatus = (state: Object) => {
+export const isSidePanelOpen = (state: Object) => {
     const {
         panelStatus
     } = state['features/side-panel'];

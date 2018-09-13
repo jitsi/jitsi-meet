@@ -8,9 +8,9 @@ import { playSound, registerSound, unregisterSound } from '../base/sounds';
 import { INCOMING_MSG_SOUND_ID } from './constants';
 import { INCOMING_MSG_SOUND_FILE } from './sounds';
 import { addMessage } from '../chat/actions';
+import { isSidePanelOpen } from '../side-panel/functions';
 import { showToolbox } from '../toolbox/actions.web';
 import { isButtonEnabled } from '../toolbox/functions.web';
-import { getSidePanelStatus } from '../side-panel/functions';
 
 declare var APP: Object;
 declare var interfaceConfig : Object;
@@ -57,30 +57,32 @@ MiddlewareRegistry.register(store => next => action => {
  *
  * @param {JitsiConference} conference - The conference instance on which the
  * new event listener will be registered.
- * @param {Dispatch} next - The redux dispatch function to dispatch the
- * specified action to the specified store.
+ * @param {Object} store - The redux store object.
  * @private
  * @returns {void}
  */
-function _addChatMsgListener(conference, { dispatch }) {
+function _addChatMsgListener(conference, { dispatch, getState }) {
     if (!interfaceConfig.filmStripOnly && isButtonEnabled('chat')) {
         // Message Received Events
         conference.on(
             JitsiConferenceEvents.MESSAGE_RECEIVED,
-            (id, message, timestamp: String) => {
+            (id, message, timestamp) => {
 
-                const state = APP.store.getState();
+                const state = getState();
 
-                getSidePanelStatus(state)
-                || dispatch(playSound(INCOMING_MSG_SOUND_ID));
+                if (!isSidePanelOpen(state)) {
+                    dispatch(playSound(INCOMING_MSG_SOUND_ID));
+                }
 
-                getSidePanelStatus(state)
-                || dispatch(showToolbox(4000));
+                if (!isSidePanelOpen(state)) {
+                    dispatch(showToolbox(4000));
+                }
 
-                let timeStampReceived = timestamp;
+                let timeStampReceived;
 
-                // create timestamp if not defined
-                if (timestamp === undefined) {
+                if (timestamp) {
+                    timeStampReceived = timestamp;
+                } else {
                     timeStampReceived = getCurrentTime();
                 }
 

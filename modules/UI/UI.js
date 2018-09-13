@@ -21,6 +21,7 @@ import {
 import { destroyLocalTracks } from '../../react/features/base/tracks';
 import { openDisplayNamePrompt } from '../../react/features/display-name';
 import { setEtherpadHasInitialzied } from '../../react/features/etherpad';
+import { toggleChat } from '../../react/features/side-panel/actions';
 import {
     setNotificationsEnabled,
     showWarningNotification
@@ -493,6 +494,22 @@ UI.toggleFilmstrip = function() {
  * @returns {true} if the filmstrip is currently visible, and false otherwise.
  */
 UI.isFilmstripVisible = () => Filmstrip.isFilmstripVisible();
+
+/**
+ * Toggles chat panel. Although React is currently renders chat, leave this
+ * here for API to call toggle of the sidePanel.
+ */
+UI.toggleChat = () => UI.toggleSidePanel();
+
+/**
+ * Toggles the given side panel.
+ *
+ * @return void
+ */
+UI.toggleSidePanel = () => {
+    APP.store.dispatch(toggleChat());
+};
+
 
 /**
  * Handle new user display name.
