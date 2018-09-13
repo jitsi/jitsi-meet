@@ -293,18 +293,7 @@ class SidePanel extends Component<Props, State> {
         const sideToolBarClass = this.props._panelStatus
             ? 'slideInExt' : 'slideOutExt';
         const chatContainerClass
-            = `sideToolbarContainer__inner is-conversation-mode 
-            ${this.props._panelStatus ? 'show' : 'hide'}`;
-
-        const textAreaStyle = {
-            wordWrap: 'break-word',
-            overflow: 'hidden',
-            height: '70px'
-        };
-
-        const smileStyle = {
-            height: '70px'
-        };
+            = 'sideToolbarContainer__inner is-conversation-mode';
 
         const displaySmileStyle = this.props._smileyPanelStatus
             ? { display: 'block' } : { display: 'none' };
@@ -318,7 +307,22 @@ class SidePanel extends Component<Props, State> {
                         .map(message => this._renderMessage(message)) }
                 </div>
                 <div id = 'chat-input' >
+                    <div className = 'smiley-input'>
+                        <div id = 'smileysarea'>
+                            <div id = 'smileys'>
+                                <img
+                                    onClick = { this._onToggleSmiley }
+                                    src = '../../../../images/smile.svg' />
+                            </div>
+                        </div>
+                        <div
+                            id = { 'smileysContainer' }
+                            style = { displaySmileStyle } >
+                            { this._renderSmiley() }
+                        </div>
+                    </div>
                     <form
+                        className = 'usrmsg-form'
                         onSubmit = { this._onSubmitMessage }>
                         <textarea
                             data-i18n = '[placeholder]chat.messagebox'
@@ -326,24 +330,8 @@ class SidePanel extends Component<Props, State> {
                             onChange = { this._onHandleChange }
                             onKeyDown = { this._onEnterPress }
                             placeholder = { 'Enter Text...' }
-                            style = { textAreaStyle }
                             value = { this.state.message } />
                     </form>
-                </div>
-
-                <div
-                    id = 'smileysarea'
-                    style = { smileStyle } >
-                    <div id = 'smileys'>
-                        <img
-                            onClick = { this._onToggleSmiley }
-                            src = '../../../../images/smile.svg' />
-                    </div>
-                </div>
-                <div
-                    id = { 'smileysContainer' }
-                    style = { displaySmileStyle } >
-                    { this._renderSmiley() }
                 </div>
             </div>
         );
@@ -364,9 +352,7 @@ class SidePanel extends Component<Props, State> {
                 <div
                     className = 'side-toolbar-close'
                     onClick = { this._onCloseClick }>X</div>
-                <div id = 'NickNameForm'>
-                    { SidePanelView }
-                </div>
+                { SidePanelView }
             </div>
         );
     }
