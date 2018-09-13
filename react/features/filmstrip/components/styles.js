@@ -145,5 +145,18 @@ export default {
             width: 5
         },
         shadowRadius: 5
+    },
+
+    tileView: {
+        alignSelf: 'center'
+    },
+
+    tileViewRows: {
+        justifyContent: 'center'
+    },
+
+    tileViewRow: {
+        flexDirection: 'row',
+        justifyContent: 'center'
     }
 };

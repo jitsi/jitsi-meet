@@ -9,6 +9,7 @@ import { PictureInPictureButton } from '../../../mobile/picture-in-picture';
 import { LiveStreamButton, RecordButton } from '../../../recording';
 import { RoomLockButton } from '../../../room-lock';
 import { ClosedCaptionButton } from '../../../subtitles';
+import { TileViewButton } from '../../../video-layout';
 
 import AudioOnlyButton from './AudioOnlyButton';
 import { overflowMenuItemStyles } from './styles';
@@ -73,6 +74,7 @@ class OverflowMenu extends Component<Props> {
                 <ClosedCaptionButton { ...buttonProps } />
                 <RecordButton { ...buttonProps } />
                 <LiveStreamButton { ...buttonProps } />
+                <TileViewButton { ...buttonProps } />
                 <PictureInPictureButton { ...buttonProps } />
             </BottomSheet>
         );

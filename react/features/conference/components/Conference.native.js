@@ -17,12 +17,18 @@ import {
 import { TestConnectionInfo } from '../../base/testing';
 import { createDesiredLocalTracks } from '../../base/tracks';
 import { ConferenceNotification } from '../../calendar-sync';
-import { FILMSTRIP_SIZE, Filmstrip, isFilmstripVisible } from '../../filmstrip';
+import {
+    FILMSTRIP_SIZE,
+    Filmstrip,
+    isFilmstripVisible,
+    TileView
+} from '../../filmstrip';
 import { LargeVideo } from '../../large-video';
 import { CalleeInfoContainer } from '../../invite';
 import { NotificationsContainer } from '../../notifications';
 import { Captions } from '../../subtitles';
 import { setToolboxVisible, Toolbox } from '../../toolbox';
+import { shouldDisplayTileView } from '../../video-layout';
 
 import styles from './styles';
 
@@ -114,6 +120,13 @@ type Props = {
      * @returns {void}
      */
     _setToolboxVisible: Function,
+
+    /**
+     * Whether or not the layout should change to support tile view mode.
+     *
+     * @private
+     */
+    _shouldDisplayTileView: boolean,
 
     /**
      * The indicator which determines whether the Toolbox is visible.
@@ -252,6 +265,12 @@ class Conference extends Component<Props> {
      * @returns {ReactElement}
      */
     render() {
+        const {
+            _connecting,
+            _reducedUI,
+            _shouldDisplayTileView
+        } = this.props;
+
         return (
             <Container style = { styles.conference }>
                 <StatusBar
@@ -261,20 +280,23 @@ class Conference extends Component<Props> {
 
                 {/*
                   * The LargeVideo is the lowermost stacking layer.
-                  */}
-                <LargeVideo onPress = { this._onClick } />
+                  */
+                    _shouldDisplayTileView
+                        ? <TileView onClick = { this._onClick } />
+                        : <LargeVideo onClick = { this._onClick } />
+                }
 
                 {/*
                   * If there is a ringing call, show the callee's info.
                   */
-                    this.props._reducedUI || <CalleeInfoContainer />
+                    _reducedUI || <CalleeInfoContainer />
                 }
 
                 {/*
                   * The activity/loading indicator goes above everything, except
                   * the toolbox/toolbars and the dialogs.
                   */
-                    this.props._connecting
+                    _connecting
                         && <TintedView>
                             <LoadingIndicator />
                         </TintedView>
@@ -304,8 +326,9 @@ class Conference extends Component<Props> {
                       * name and grouping stem from the fact that these two
                       * React Components depict the videos of the conference's
                       * participants.
-                      */}
-                    <Filmstrip />
+                      */
+                        _shouldDisplayTileView ? undefined : <Filmstrip />
+                    }
                 </View>
 
                 <TestConnectionInfo />
@@ -547,6 +570,14 @@ function _mapStateToProps(state) {
          * @type {string}
          */
         _room: room,
+
+        /**
+         * Whether or not the layout should change to support tile view mode.
+         *
+         * @private
+         * @type {boolean}
+         */
+        _shouldDisplayTileView: shouldDisplayTileView(state),
 
         /**
          * The indicator which determines whether the Toolbox is visible.
