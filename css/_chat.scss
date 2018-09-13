@@ -4,15 +4,14 @@
 }
 
 #chatconversation {
-    visibility: hidden;
-    position: relative;
-    top: 15px;
+    box-sizing: border-box;
+    flex: 1;
+    margin-top: 15px;
     padding: 5px;
     text-align: left;
     line-height: 20px;
     font-size: 10pt;
     width: 100%;
-    height: 90%;
     overflow: auto;
     word-wrap: break-word;
 
@@ -55,8 +54,9 @@
     }
 }
 
-#chat_container.is-conversation-mode #chatconversation {
-    visibility: visible;
+#chat-input {
+    background-color: $newToolbarBackgroundColor;
+    display: flex;
 }
 
 .localuser {
@@ -71,14 +71,13 @@
     color: #B8C7E0;
 }
 
+.usrmsg-form {
+    flex: 1;
+    margin-left: 5px;
+}
+
 #usermsg {
     background-color: $newToolbarBackgroundColor;
-    visibility:hidden;
-    position: absolute;
-    bottom: 0px;
-    right: 0px;
-    width: 83%;
-    height: 30px;
     padding: 5px 5px 5px 0px;
     max-height:150px;
     min-height:35px;
@@ -88,17 +87,15 @@
     border-radius:0;
     font-size: 10pt;
     line-height: 30px;
-    overflow: hidden;
+    overflow-y: auto;
     resize: none;
+    word-break: break-word;
+    width: 100%;
 }
 
 #usermsg:hover {
     border: 0px none;
     box-shadow: none;
-}
-
-#chat_container.is-conversation-mode #usermsg {
-    visibility: visible;
 }
 
 #nickname {
@@ -110,10 +107,6 @@
     left: 5px;
     right: 5px;
     width: 95%;
-}
-
-#chat_container.is-conversation-mode #nickname {
-    visibility: hidden;
 }
 
 #nickinput {
@@ -149,11 +142,11 @@
 .chatArrow {
     position: absolute;
     height: 15px;
-    left: 5px;
+    left: -10px;
 }
 
 .chatmessage {
-    background-color: $newToolbarBackgroundColor;;
+    background-color: $newToolbarBackgroundColor;
     width: 93%;
     margin-left: 9px;
     margin-right: auto;
@@ -162,8 +155,8 @@
     margin-top: 3px;
     left: 5px;
     color: white;
-    overflow: hidden;
     padding-bottom: 3px;
+    position: relative;
 }
 
 .smiley {
@@ -171,11 +164,9 @@
 }
 
 #smileys {
-    position: absolute;
-    bottom: 7px;
-    right: 5px;
     background: white;
-    border-radius: 50px;
+    border-radius: 50%;
+    display: inline-block;
     height: 26px;
     margin: auto;
     cursor: pointer;
@@ -187,23 +178,16 @@
 }
 
 #smileysarea {
-    position: absolute;
-    bottom: 0px;
-    left: 0px;
+    display: flex;
     width: 17%;
     min-width: 31px;
-    height: 40px;
+    height: 70px;
     padding: 0px;
-    max-height:150px;
-    min-height:35px;
+    max-height: 150px;
+    min-height: 35px;
     border: 0px none;
     background-color: $newToolbarBackgroundColor;
     overflow: hidden;
-    visibility: hidden;
-}
-
-#chat_container.is-conversation-mode #smileysarea {
-    visibility: visible;
 }
 
 #smileysContainer {

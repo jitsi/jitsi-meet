@@ -1,13 +1,19 @@
-import PropTypes from 'prop-types';
+// @flow
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-
 import { getUnreadCount } from '../functions';
+import { markAllRead } from './../actions';
 
-/**
- * FIXME: Move this UI logic to a generic component that can be used for
- * {@code ParticipantCounter} as well.
- */
+
+type Props = {
+
+    _panelStatus: Boolean,
+
+    dispatch: Function,
+
+    _count: number,
+
+}
 
 /**
  * Implements a React {@link Component} which displays a count of the number of
@@ -15,13 +21,7 @@ import { getUnreadCount } from '../functions';
  *
  * @extends Component
  */
-class ChatCounter extends Component {
-    static propTypes = {
-        /**
-         * The number of unread chat messages in the conference.
-         */
-        _count: PropTypes.number
-    };
+class ChatCounter extends Component<Props> {
 
     /**
      * Implements React's {@link Component#render()}.
@@ -30,6 +30,10 @@ class ChatCounter extends Component {
      * @returns {ReactElement}
      */
     render() {
+        if (this.props._panelStatus && this.props._count > 0) {
+            this.props.dispatch(markAllRead());
+        }
+
         return (
             <span className = 'badge-round'>
                 <span>
@@ -51,8 +55,14 @@ class ChatCounter extends Component {
  * }}
  */
 function _mapStateToProps(state) {
+
+    const {
+        panelStatus
+    } = state['features/side-panel'];
+
     return {
-        _count: getUnreadCount(state)
+        _count: getUnreadCount(state),
+        _panelStatus: panelStatus
     };
 }
 

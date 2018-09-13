@@ -1,7 +1,5 @@
 /* @flow */
 
-import SideContainerToggler
-    from '../../../modules/UI/side_pannels/SideContainerToggler';
 
 import {
     clearToolboxTimeout,
@@ -81,6 +79,9 @@ export function hideToolbox(force: boolean = false): Function {
             timeoutMS
         } = state['features/toolbox'];
 
+
+        const { panelStatus } = state['features/side-panel'];
+
         if (alwaysVisible) {
             return;
         }
@@ -90,7 +91,7 @@ export function hideToolbox(force: boolean = false): Function {
         if (!force
                 && (hovered
                     || state['features/invite'].calleeInfoVisible
-                    || SideContainerToggler.isVisible())) {
+                    || panelStatus)) {
             dispatch(
                 setToolboxTimeout(
                     () => dispatch(hideToolbox()),
