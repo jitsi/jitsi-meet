@@ -37,7 +37,7 @@ class ConnectionStatsTable extends Component {
          * The number of bridges (aka media servers) currently used in the
          * conference.
          */
-        bridgeCount: PropTypes.string,
+        bridgeCount: PropTypes.number,
 
         /**
          * A message describing the connection quality.
@@ -77,7 +77,7 @@ class ConnectionStatsTable extends Component {
         packetLoss: PropTypes.object,
 
         /**
-         * The region.
+         * The region that we think the client is in.
          */
         region: PropTypes.string,
 
@@ -93,7 +93,7 @@ class ConnectionStatsTable extends Component {
         resolution: PropTypes.object,
 
         /**
-         * The region of the media server.
+         * The region of the media server that we are connected to.
          */
         serverRegion: PropTypes.string,
 
@@ -274,7 +274,7 @@ class ConnectionStatsTable extends Component {
         return (
             <tr>
                 <td>
-                    <span>{ t('connectionindicator.connected_to') }</span>
+                    <span>{ t('connectionindicator.connectedTo') }</span>
                 </td>
                 <td>{ str }</td>
             </tr>
@@ -291,14 +291,15 @@ class ConnectionStatsTable extends Component {
     _renderBridgeCount() {
         const { bridgeCount, t } = this.props;
 
-        if (typeof bridgeCount === 'undefined') {
+        // 0 is valid, but undefined/null/NaN aren't.
+        if (!bridgeCount && bridgeCount !== 0) {
             return;
         }
 
         return (
             <tr>
                 <td>
-                    <span>{ t('connectionindicator.bridge_count') }</span>
+                    <span>{ t('connectionindicator.bridgeCount') }</span>
                 </td>
                 <td>{ bridgeCount }</td>
             </tr>
