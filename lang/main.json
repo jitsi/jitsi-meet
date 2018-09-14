@@ -209,6 +209,7 @@
         "header": "Connection data",
         "connected_to": "Connected to:",
         "bitrate": "Bitrate:",
+        "bridge_count": "Server count: ",
         "packetloss": "Packet loss:",
         "resolution": "Resolution:",
         "framerate": "Frame rate:",

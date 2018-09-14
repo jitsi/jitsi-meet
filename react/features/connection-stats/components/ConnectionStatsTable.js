@@ -34,6 +34,12 @@ class ConnectionStatsTable extends Component {
         bitrate: PropTypes.object,
 
         /**
+         * The number of bridges (aka media servers) currently used in the
+         * conference.
+         */
+        bridgeCount: PropTypes.string,
+
+        /**
          * A message describing the connection quality.
          */
         connectionSummary: PropTypes.string,
@@ -276,6 +282,30 @@ class ConnectionStatsTable extends Component {
     }
 
     /**
+     * Creates a table row as a ReactElement for displaying the "bridge count"
+     * information.
+     *
+     * @returns {*}
+     * @private
+     */
+    _renderBridgeCount() {
+        const { bridgeCount, t } = this.props;
+
+        if (typeof bridgeCount === 'undefined') {
+            return;
+        }
+
+        return (
+            <tr>
+                <td>
+                    <span>{ t('connectionindicator.bridge_count') }</span>
+                </td>
+                <td>{ bridgeCount }</td>
+            </tr>
+        );
+    }
+
+    /**
      * Creates a table row as a ReactElement for displaying frame rate related
      * statistics.
      *
@@ -408,6 +438,7 @@ class ConnectionStatsTable extends Component {
                     { isRemoteVideo ? this._renderRegion() : null }
                     { this._renderResolution() }
                     { this._renderFrameRate() }
+                    { isRemoteVideo ? null : this._renderBridgeCount() }
                 </tbody>
             </table>
         );
