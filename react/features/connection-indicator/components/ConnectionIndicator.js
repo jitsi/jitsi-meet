@@ -410,11 +410,13 @@ class ConnectionIndicator extends Component {
         const {
             bandwidth,
             bitrate,
+            bridgeCount,
             e2eRtt,
             framerate,
             packetLoss,
             region,
             resolution,
+            serverRegion,
             transport
         } = this.state.stats;
 
@@ -422,6 +424,7 @@ class ConnectionIndicator extends Component {
             <ConnectionStatsTable
                 bandwidth = { bandwidth }
                 bitrate = { bitrate }
+                bridgeCount = { bridgeCount }
                 connectionSummary = { this._getConnectionStatusTip() }
                 e2eRtt = { e2eRtt }
                 framerate = { framerate }
@@ -430,6 +433,7 @@ class ConnectionIndicator extends Component {
                 packetLoss = { packetLoss }
                 region = { region }
                 resolution = { resolution }
+                serverRegion = { serverRegion }
                 shouldShowMore = { this.state.showMoreStats }
                 transport = { transport } />
         );

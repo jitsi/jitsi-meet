@@ -34,6 +34,12 @@ class ConnectionStatsTable extends Component {
         bitrate: PropTypes.object,
 
         /**
+         * The number of bridges (aka media servers) currently used in the
+         * conference.
+         */
+        bridgeCount: PropTypes.number,
+
+        /**
          * A message describing the connection quality.
          */
         connectionSummary: PropTypes.string,
@@ -71,7 +77,7 @@ class ConnectionStatsTable extends Component {
         packetLoss: PropTypes.object,
 
         /**
-         * The region.
+         * The region that we think the client is in.
          */
         region: PropTypes.string,
 
@@ -85,6 +91,11 @@ class ConnectionStatsTable extends Component {
          * }}
          */
         resolution: PropTypes.object,
+
+        /**
+         * The region of the media server that we are connected to.
+         */
+        serverRegion: PropTypes.string,
 
         /**
          * Whether or not additional stats about bandwidth and transport should
@@ -124,7 +135,7 @@ class ConnectionStatsTable extends Component {
 
     /**
      * Creates a table as ReactElement that will display additional statistics
-     * related to bandwidth and transport.
+     * related to bandwidth and transport for the local user.
      *
      * @private
      * @returns {ReactElement}
@@ -135,6 +146,7 @@ class ConnectionStatsTable extends Component {
                 <tbody>
                     { this._renderBandwidth() }
                     { this._renderTransport() }
+                    { this._renderRegion() }
                 </tbody>
             </table>
         );
@@ -226,12 +238,8 @@ class ConnectionStatsTable extends Component {
      * @private
      */
     _renderE2eRtt() {
-        const { e2eRtt, region, t } = this.props;
-        let str = e2eRtt ? `${e2eRtt.toFixed(0)}ms` : 'N/A';
-
-        if (region) {
-            str += ` (${region})`;
-        }
+        const { e2eRtt, t } = this.props;
+        const str = e2eRtt ? `${e2eRtt.toFixed(0)}ms` : 'N/A';
 
         return (
             <tr>
@@ -239,6 +247,61 @@ class ConnectionStatsTable extends Component {
                     <span>{ t('connectionindicator.e2e_rtt') }</span>
                 </td>
                 <td>{ str }</td>
+            </tr>
+        );
+    }
+
+    /**
+     * Creates a table row as a ReactElement for displaying the "connected to"
+     * information.
+     *
+     * @returns {ReactElement}
+     * @private
+     */
+    _renderRegion() {
+        const { region, serverRegion, t } = this.props;
+        let str = serverRegion;
+
+        if (!serverRegion) {
+            return;
+        }
+
+
+        if (region && serverRegion && region !== serverRegion) {
+            str += ` from ${region}`;
+        }
+
+        return (
+            <tr>
+                <td>
+                    <span>{ t('connectionindicator.connectedTo') }</span>
+                </td>
+                <td>{ str }</td>
+            </tr>
+        );
+    }
+
+    /**
+     * Creates a table row as a ReactElement for displaying the "bridge count"
+     * information.
+     *
+     * @returns {*}
+     * @private
+     */
+    _renderBridgeCount() {
+        const { bridgeCount, t } = this.props;
+
+        // 0 is valid, but undefined/null/NaN aren't.
+        if (!bridgeCount && bridgeCount !== 0) {
+            return;
+        }
+
+        return (
+            <tr>
+                <td>
+                    <span>{ t('connectionindicator.bridgeCount') }</span>
+                </td>
+                <td>{ bridgeCount }</td>
             </tr>
         );
     }
@@ -373,8 +436,10 @@ class ConnectionStatsTable extends Component {
                     { this._renderBitrate() }
                     { this._renderPacketLoss() }
                     { isRemoteVideo ? this._renderE2eRtt() : null }
+                    { isRemoteVideo ? this._renderRegion() : null }
                     { this._renderResolution() }
                     { this._renderFrameRate() }
+                    { isRemoteVideo ? null : this._renderBridgeCount() }
                 </tbody>
             </table>
         );

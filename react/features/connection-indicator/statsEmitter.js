@@ -116,25 +116,25 @@ const statsEmitter = {
      * also update listeners of remote user stats of changes related to their
      * stats.
      *
-     * @param {string} currentUserId - The user id for the local user.
+     * @param {string} localUserId - The user id for the local user.
      * @param {Object} stats - Connection stats for the local user as provided
      * by the library.
      * @returns {void}
      */
-    _onStatsUpdated(currentUserId: string, stats: Object) {
+    _onStatsUpdated(localUserId: string, stats: Object) {
         const allUserFramerates = stats.framerate || {};
         const allUserResolutions = stats.resolution || {};
 
-        // FIXME resolution and framerate are hashes keyed off of user ids with
+        // FIXME resolution and framerate are maps keyed off of user ids with
         // stat values. Receivers of stats expect resolution and framerate to
-        // be primatives, not hashes, so overwrites the 'lib-jitsi-meet' stats
-        // objects.
+        // be primitives, not maps, so here we override the 'lib-jitsi-meet'
+        // stats objects.
         const modifiedLocalStats = Object.assign({}, stats, {
-            framerate: allUserFramerates[currentUserId],
-            resolution: allUserResolutions[currentUserId]
+            framerate: allUserFramerates[localUserId],
+            resolution: allUserResolutions[localUserId]
         });
 
-        this._emitStatsUpdate(currentUserId, modifiedLocalStats);
+        this._emitStatsUpdate(localUserId, modifiedLocalStats);
 
         // Get all the unique user ids from the framerate and resolution stats
         // and update remote user stats as needed.
@@ -142,7 +142,7 @@ const statsEmitter = {
         const resolutionUserIds = Object.keys(allUserResolutions);
 
         _.union(framerateUserIds, resolutionUserIds)
-            .filter(id => id !== currentUserId)
+            .filter(id => id !== localUserId)
             .forEach(id => {
                 const remoteUserStats = {};
 

@@ -207,7 +207,9 @@
     "connectionindicator":
     {
         "header": "Connection data",
+        "connectedTo": "Connected to:",
         "bitrate": "Bitrate:",
+        "bridgeCount": "Server count: ",
         "packetloss": "Packet loss:",
         "resolution": "Resolution:",
         "framerate": "Frame rate:",

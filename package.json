@@ -49,7 +49,7 @@
     "jsc-android": "224109.1.0",
     "jsrsasign": "8.0.12",
     "jwt-decode": "2.2.0",
-    "lib-jitsi-meet": "github:jitsi/lib-jitsi-meet#3f46c64f4f373d3b573fcc55b59568dbe9b9d51f",
+    "lib-jitsi-meet": "github:jitsi/lib-jitsi-meet#1ac6df97e3aa5ff880129a95754d491d89ea8c25",
     "libflacjs": "github:mmig/libflac.js#93d37e7f811f01cf7d8b6a603e38bd3c3810907d",
     "lodash": "4.17.4",
     "moment": "2.19.4",
