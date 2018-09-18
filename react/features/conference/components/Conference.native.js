@@ -11,21 +11,18 @@ import { connect, disconnect } from '../../base/connection';
 import { getParticipantCount } from '../../base/participants';
 import { Container, LoadingIndicator, TintedView } from '../../base/react';
 import {
-    isNarrowAspectRatio,
     makeAspectRatioAware
 } from '../../base/responsive-ui';
 import { TestConnectionInfo } from '../../base/testing';
 import { createDesiredLocalTracks } from '../../base/tracks';
 import { ConferenceNotification } from '../../calendar-sync';
 import {
-    FILMSTRIP_SIZE,
     Filmstrip,
     isFilmstripVisible,
     TileView
 } from '../../filmstrip';
 import { LargeVideo } from '../../large-video';
 import { CalleeInfoContainer } from '../../invite';
-import { NotificationsContainer } from '../../notifications';
 import { Captions } from '../../subtitles';
 import { setToolboxVisible, Toolbox } from '../../toolbox';
 import { shouldDisplayTileView } from '../../video-layout';
@@ -305,12 +302,6 @@ class Conference extends Component<Props> {
                 <View
                     pointerEvents = 'box-none'
                     style = { styles.toolboxAndFilmstripContainer }>
-                    {/*
-                      * Notifications are rendered on the very top of other
-                      * components like subtitles, toolbox and filmstrip.
-                      */
-                        this._renderNotificationsContainer()
-                    }
 
                     <Captions onPress = { this._onClick } />
 
@@ -336,6 +327,7 @@ class Conference extends Component<Props> {
                 {
                     this._renderConferenceNotification()
                 }
+
             </Container>
         );
     }
@@ -385,33 +377,6 @@ class Conference extends Component<Props> {
             !this.props._reducedUI && ConferenceNotification
                 ? <ConferenceNotification />
                 : undefined);
-    }
-
-    /**
-     * Renders a container for notifications to be displayed by the
-     * base/notifications feature.
-     *
-     * @private
-     * @returns {React$Element}
-     */
-    _renderNotificationsContainer() {
-        const notificationsStyle = {};
-
-        // In the landscape mode (wide) there's problem with notifications being
-        // shadowed by the filmstrip rendered on the right. This makes the "x"
-        // button not clickable. In order to avoid that a margin of the
-        // filmstrip's size is added to the right.
-        //
-        // Pawel: after many attempts I failed to make notifications adjust to
-        // their contents width because of column and rows being used in the
-        // flex layout. The only option that seemed to limit the notification's
-        // size was explicit 'width' value which is not better than the margin
-        // added here.
-        if (this.props._filmstripVisible && !isNarrowAspectRatio(this)) {
-            notificationsStyle.marginRight = FILMSTRIP_SIZE;
-        }
-
-        return <NotificationsContainer style = { notificationsStyle } />;
     }
 }
 
