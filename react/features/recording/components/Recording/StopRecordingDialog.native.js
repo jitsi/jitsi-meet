@@ -1,12 +1,10 @@
 // @flow
 
 import React from 'react';
-import { Text, View } from 'react-native';
 import { connect } from 'react-redux';
 
+import { DialogContent } from '../../../base/dialog';
 import { translate } from '../../../base/i18n';
-
-import styles from '../styles';
 
 import AbstractStopRecordingDialog, {
     type Props,
@@ -30,11 +28,9 @@ class StopRecordingDialog extends AbstractStopRecordingDialog<Props> {
         const { t } = this.props;
 
         return (
-            <View style = { styles.messageContainer }>
-                <Text>
-                    { t('dialog.stopRecordingWarning') }
-                </Text>
-            </View>
+            <DialogContent>
+                { t('dialog.stopRecordingWarning') }
+            </DialogContent>
         );
     }
 }

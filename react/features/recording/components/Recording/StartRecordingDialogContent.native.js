@@ -1,11 +1,9 @@
 // @flow
 
 import React, { Component } from 'react';
-import { Text, View } from 'react-native';
 
+import { DialogContent } from '../../../base/dialog';
 import { translate } from '../../../base/i18n';
-
-import styles from '../styles';
 
 type Props = {
 
@@ -30,11 +28,9 @@ class StartRecordingDialogContent extends Component<Props> {
         const { t } = this.props;
 
         return (
-            <View style = { styles.messageContainer }>
-                <Text>
-                    { t('recording.startRecordingBody') }
-                </Text>
-            </View>
+            <DialogContent>
+                { t('recording.startRecordingBody') }
+            </DialogContent>
         );
     }
 }
