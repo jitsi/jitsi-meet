@@ -231,26 +231,6 @@ const VideoLayout = {
     },
 
     /**
-     * Enables/disables device availability icons for the given participant id.
-     * The default value is {true}.
-     * @param id the identifier of the participant
-     * @param enable {true} to enable device availability icons
-     */
-    enableDeviceAvailabilityIcons(id, enable) {
-        let video;
-
-        if (APP.conference.isLocalId(id)) {
-            video = localVideoThumbnail;
-        } else {
-            video = remoteVideos[id];
-        }
-
-        if (video) {
-            video.enableDeviceAvailabilityIcons(enable);
-        }
-    },
-
-    /**
      * Shows/hides local video.
      * @param {boolean} true to make the local video visible, false - otherwise
      */

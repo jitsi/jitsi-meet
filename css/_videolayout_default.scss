@@ -557,30 +557,6 @@
     object-fit: cover;
 }
 
-.noMic {
-    position: absolute;
-    border-radius: 8px;
-    z-index: $zindex1;
-    width: 100%;
-    height: 100%;
-    background-image: url("../images/noMic.png");
-    background-color: #000;
-    background-repeat: no-repeat;
-    background-position: center;
-}
-
-.noVideo {
-    position: absolute;
-    border-radius: 8px;
-    z-index: $zindex1;
-    width: 100%;
-    height: 100%;
-    background-image: url("../images/noVideo.png");
-    background-color: #000;
-    background-repeat: no-repeat;
-    background-position: center;
-}
-
 .videoMessageFilter {
     -webkit-filter: grayscale(.5) opacity(0.8);
     filter: grayscale(.5) opacity(0.8);
