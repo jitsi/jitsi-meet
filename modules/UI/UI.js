@@ -298,9 +298,6 @@ UI.start = function() {
     } else {
         // Initialize recording mode UI.
         if (config.iAmRecorder) {
-            VideoLayout.enableDeviceAvailabilityIcons(
-                APP.conference.getMyUserId(), false);
-
             // in case of iAmSipGateway keep local video visible
             if (!config.iAmSipGateway) {
                 VideoLayout.setLocalVideoVisible(false);

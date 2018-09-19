@@ -2034,13 +2034,6 @@ export default {
         });
 
         room.on(
-            JitsiConferenceEvents.AVAILABLE_DEVICES_CHANGED,
-            (id, devices) => {
-                APP.UI.updateDevicesAvailability(id, devices);
-            }
-        );
-
-        room.on(
             JitsiConferenceEvents.DATA_CHANNEL_OPENED, () => {
                 APP.store.dispatch(dataChannelOpened());
             }
