@@ -20,10 +20,6 @@ export function getDeviceSelectionDialogProps(stateful: Object | Function) {
             !JitsiMeetJS.isMultipleAudioInputSupported(),
         disableDeviceChange:
             !JitsiMeetJS.mediaDevices.isDeviceChangeAvailable(),
-        hasAudioPermission: JitsiMeetJS.mediaDevices
-            .isDevicePermissionGranted.bind(null, 'audio'),
-        hasVideoPermission: JitsiMeetJS.mediaDevices
-            .isDevicePermissionGranted.bind(null, 'video'),
         hideAudioInputPreview:
             !JitsiMeetJS.isCollectingLocalStats(),
         hideAudioOutputSelect: !JitsiMeetJS.mediaDevices
