@@ -5,7 +5,7 @@ import React from 'react';
 import { AbstractDialogTab } from '../../base/dialog';
 import type { Props as AbstractDialogTabProps } from '../../base/dialog';
 import { translate } from '../../base/i18n';
-import { createLocalTrack } from '../../base/lib-jitsi-meet';
+import JitsiMeetJS, { createLocalTrack } from '../../base/lib-jitsi-meet';
 
 import AudioInputPreview from './AudioInputPreview';
 import AudioOutputPreview from './AudioOutputPreview';
@@ -39,18 +39,6 @@ export type Props = {
      * will display as disabled.
      */
     disableDeviceChange: boolean,
-
-    /**
-     * Function that checks whether or not a new audio input source can be
-     * selected.
-     */
-    hasAudioPermission: Function,
-
-    /**
-     * Function that checks whether or not a new video input sources can be
-     * selected.
-     */
-    hasVideoPermission: Function,
 
     /**
      * If true, the audio meter will not display. Necessary for browsers or
@@ -99,6 +87,16 @@ export type Props = {
 type State = {
 
     /**
+     * Whether or not the audio permission was granted.
+     */
+    hasAudioPermission: boolean,
+
+    /**
+     * Whether or not the audio permission was granted.
+     */
+    hasVideoPermission: boolean,
+
+    /**
      * The JitsiTrack to use for previewing audio input.
      */
     previewAudioTrack: ?Object,
@@ -130,6 +128,8 @@ class DeviceSelection extends AbstractDialogTab<Props, State> {
         super(props);
 
         this.state = {
+            hasAudioPermission: false,
+            hasVideoPermission: false,
             previewAudioTrack: null,
             previewVideoTrack: null,
             previewVideoTrackError: null
@@ -148,6 +148,32 @@ class DeviceSelection extends AbstractDialogTab<Props, State> {
         ])
         .catch(err => logger.warn('Failed to initialize preview tracks', err))
         .then(() => this.props.mountCallback && this.props.mountCallback());
+    }
+
+    /**
+     * Checks if audio / video permissions were granted.
+     *
+     * @param {Object} prevProps - Previous props this component received.
+     * @param {Object} prevState - Previous state this component had.
+     * @returns {void}
+     */
+    componentDidUpdate(prevProps, prevState) {
+        const { previewAudioTrack, previewVideoTrack } = prevState;
+
+        if ((!previewAudioTrack && this.state.previewAudioTrack)
+                || (!previewVideoTrack && this.state.previewVideoTrack)) {
+            Promise.all([
+                JitsiMeetJS.mediaDevices.isDevicePermissionGranted('audio'),
+                JitsiMeetJS.mediaDevices.isDevicePermissionGranted('video')
+            ]).then(r => {
+                const [ hasAudioPermission, hasVideoPermission ] = r;
+
+                this.setState({
+                    hasAudioPermission,
+                    hasVideoPermission
+                });
+            });
+        }
     }
 
     /**
@@ -316,11 +342,12 @@ class DeviceSelection extends AbstractDialogTab<Props, State> {
      */
     _renderSelectors() {
         const { availableDevices } = this.props;
+        const { hasAudioPermission, hasVideoPermission } = this.state;
 
         const configurations = [
             {
                 devices: availableDevices.videoInput,
-                hasPermission: this.props.hasVideoPermission(),
+                hasPermission: hasVideoPermission,
                 icon: 'icon-camera',
                 isDisabled: this.props.disableDeviceChange,
                 key: 'videoInput',
@@ -331,7 +358,7 @@ class DeviceSelection extends AbstractDialogTab<Props, State> {
             },
             {
                 devices: availableDevices.audioInput,
-                hasPermission: this.props.hasAudioPermission(),
+                hasPermission: hasAudioPermission,
                 icon: 'icon-microphone',
                 isDisabled: this.props.disableAudioInputChange
                     || this.props.disableDeviceChange,
@@ -346,8 +373,7 @@ class DeviceSelection extends AbstractDialogTab<Props, State> {
         if (!this.props.hideAudioOutputSelect) {
             configurations.push({
                 devices: availableDevices.audioOutput,
-                hasPermission: this.props.hasAudioPermission()
-                    || this.props.hasVideoPermission(),
+                hasPermission: hasAudioPermission || hasVideoPermission,
                 icon: 'icon-speaker',
                 isDisabled: this.props.disableDeviceChange,
                 key: 'audioOutput',
