@@ -4,6 +4,8 @@ This document describes the required steps for a quick Jitsi Meet installation o
 
 Debian Wheezy and other older systems may require additional things to be done. Specifically for Wheezy, [libc needs to be updated](http://lists.jitsi.org/pipermail/users/2015-September/010064.html).
 
+Also note that a recent default Ubuntu installation has only the `main` repository enabled, and Jitsi Meet needs packages from `universe`. Check your `/etc/apt/sources.list` file, and if `universe` is not present refer to [Ubuntu's documentation](https://help.ubuntu.com/community/Repositories/Ubuntu) on how to enable it. (Usually it amounts to copying the `main` lines and changing to `universe`.)
+
 N.B.: 
 
 a.) All commands are supposed to be run by root. If you are logged in as a regular user with sudo rights, please prepend ___sudo___ to each of the commands.
