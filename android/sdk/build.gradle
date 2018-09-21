@@ -19,135 +19,144 @@ android {
 }
 
 dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
 
-    compile 'com.android.support:appcompat-v7:27.0.2'
-    compile 'com.dropbox.core:dropbox-core-sdk:3.0.8'
-    compile 'com.facebook.react:react-native:+'
+    implementation "com.android.support:support-v4:${rootProject.ext.supportLibVersion}"
+    implementation "com.android.support:appcompat-v7:${rootProject.ext.supportLibVersion}"
 
-    compile project(':react-native-background-timer')
-    compile project(':react-native-fast-image')
-    compile(project(":react-native-google-signin")) {
+    implementation 'com.dropbox.core:dropbox-core-sdk:3.0.8'
+    api 'com.facebook.react:react-native:+'
+
+    implementation project(':react-native-background-timer')
+    implementation project(':react-native-calendar-events')
+    implementation(project(':react-native-fast-image')) {
+        exclude group: 'com.android.support'
+    }
+    implementation(project(":react-native-google-signin")) {
         exclude group: 'com.google.android.gms'
+        exclude group: 'com.android.support'
     }
-    compile project(':react-native-immersive')
-    compile project(':react-native-keep-awake')
-    compile project(':react-native-linear-gradient')
-    compile project(':react-native-locale-detector')
-    compile project(':react-native-sound')
-    compile project(':react-native-vector-icons')
-    compile project(':react-native-webrtc')
-    compile project(':react-native-calendar-events')
+    implementation project(':react-native-immersive')
+    implementation project(':react-native-keep-awake')
+    implementation project(':react-native-linear-gradient')
+    implementation project(':react-native-locale-detector')
+    implementation project(':react-native-sound')
+    implementation project(':react-native-vector-icons')
+    implementation project(':react-native-webrtc')
 
-    testCompile 'junit:junit:4.12'
+    testImplementation 'junit:junit:4.12'
 }
 
-// Build process helpers
-//
 
-void runBefore(String dependentTaskName, Task task) {
-    Task dependentTask = tasks.findByPath(dependentTaskName);
-    if (dependentTask != null) {
-        dependentTask.dependsOn task
+// Here we bundle all assets, resources and React files. We cannot use the
+// react.gradle file provided by react-native because it's designed to be used
+// in an application (it taps into applicationVariants, but the SDK is a library
+// so we need libraryVariants instead).
+android.libraryVariants.all { def variant ->
+    // Create variant and target names
+    def targetName = variant.name.capitalize()
+    def targetPath = variant.dirName
+
+    // React js bundle directories
+    def jsBundleDir = file("$buildDir/generated/assets/react/${targetPath}")
+    def resourcesDir = file("$buildDir/generated/res/react/${targetPath}")
+
+    def jsBundleFile = file("$jsBundleDir/index.android.bundle")
+
+    def currentBundleTask = tasks.create(
+            name: "bundle${targetName}JsAndAssets",
+            type: Exec) {
+        group = "react"
+        description = "bundle JS and assets for ${targetName}."
+
+        // Create dirs if they are not there (e.g. the "clean" task just ran)
+        doFirst {
+            jsBundleDir.deleteDir()
+            jsBundleDir.mkdirs()
+            resourcesDir.deleteDir()
+            resourcesDir.mkdirs()
+        }
+
+        // Set up inputs and outputs so gradle can cache the result
+        def reactRoot = file("${projectDir}/../../")
+        inputs.files fileTree(dir: reactRoot, excludes: ["android/**", "ios/**"])
+        outputs.dir jsBundleDir
+        outputs.dir resourcesDir
+
+        // Set up the call to the react-native cli
+        workingDir reactRoot
+
+        // Set up dev mode
+        def devEnabled = !targetName.toLowerCase().contains("release")
+
+        // Run the bundler
+        commandLine(
+                "node",
+                "node_modules/react-native/local-cli/cli.js",
+                "bundle",
+                "--platform", "android",
+                "--dev", "${devEnabled}",
+                "--reset-cache",
+                "--entry-file", "index.android.js",
+                "--bundle-output", jsBundleFile,
+                "--assets-dest", resourcesDir)
+
+        // Disable bundling on dev builds
+        enabled !devEnabled
     }
-}
 
-gradle.projectsEvaluated {
-    android.buildTypes.all { buildType ->
-        def buildNameCapitalized = "${buildType.name.capitalize()}"
-        def bundlePath = "${buildDir}/intermediates/bundles/${buildType.name}"
+    currentBundleTask.ext.generatedResFolders = files(resourcesDir).builtBy(currentBundleTask)
+    currentBundleTask.ext.generatedAssetsFolders = files(jsBundleDir).builtBy(currentBundleTask)
 
-        // Bundle fonts in react-native-vector-icons.
+    variant.registerGeneratedResFolders(currentBundleTask.generatedResFolders)
+    variant.mergeResources.dependsOn(currentBundleTask)
+
+    def assetsDir = variant.mergeAssets.outputDir
+
+    variant.mergeAssets.doLast {
+        // Bundle fonts in react-native-vector-icons
         //
-
-        def currentFontTask = tasks.create(
-                name: "copy${buildNameCapitalized}Fonts",
-                type: Copy) {
+        copy {
             from("${projectDir}/../../fonts/jitsi.ttf")
             from("${projectDir}/../../node_modules/react-native-vector-icons/Fonts/")
-            into("${bundlePath}/assets/fonts")
+            into("${assetsDir}/fonts")
         }
 
-        currentFontTask.dependsOn("merge${buildNameCapitalized}Resources")
-        currentFontTask.dependsOn("merge${buildNameCapitalized}Assets")
-
-        runBefore("processArmeabi-v7a${buildNameCapitalized}Resources", currentFontTask)
-        runBefore("processX86${buildNameCapitalized}Resources", currentFontTask)
-        runBefore("processUniversal${buildNameCapitalized}Resources", currentFontTask)
-        runBefore("process${buildNameCapitalized}Resources", currentFontTask)
-
-        def currentSoundsTask = tasks.create(
-                name: "copy${buildNameCapitalized}Sounds",
-                type: Copy) {
-             from("${projectDir}/../../sounds/joined.wav")
-             from("${projectDir}/../../sounds/left.wav")
-             from("${projectDir}/../../sounds/outgoingRinging.wav")
-             from("${projectDir}/../../sounds/outgoingStart.wav")
-             from("${projectDir}/../../sounds/recordingOn.mp3")
-             from("${projectDir}/../../sounds/recordingOff.mp3")
-             from("${projectDir}/../../sounds/rejected.wav")
-             into("${bundlePath}/assets/sounds")
-        }
-
-        currentSoundsTask.dependsOn("merge${buildNameCapitalized}Resources")
-        currentSoundsTask.dependsOn("merge${buildNameCapitalized}Assets")
-
-        runBefore("processArmeabi-v7a${buildNameCapitalized}Resources", currentSoundsTask)
-        runBefore("processX86${buildNameCapitalized}Resources", currentSoundsTask)
-        runBefore("processUniversal${buildNameCapitalized}Resources", currentSoundsTask)
-        runBefore("process${buildNameCapitalized}Resources", currentSoundsTask)
-
-        // Bundle JavaScript and React resources.
-        // (adapted from react-native/react.gradle)
+        // Bundle sounds
         //
-
-        // React JS bundle directories
-        def jsBundleDir = file("${bundlePath}/assets")
-        def resourcesDir = file("${bundlePath}/res/merged")
-        def jsBundleFile = file("${jsBundleDir}/index.android.bundle")
-
-        // Bundle task name for variant.
-        def bundleJsAndAssetsTaskName = "bundle${buildNameCapitalized}JsAndAssets"
-
-        def currentBundleTask = tasks.create(
-                name: bundleJsAndAssetsTaskName,
-                type: Exec) {
-            // Set up inputs and outputs so gradle can cache the result.
-            def reactRoot = file("${projectDir}/../../")
-            inputs.files fileTree(dir: reactRoot, excludes: ['android/**', 'ios/**'])
-            outputs.dir jsBundleDir
-            outputs.dir resourcesDir
-
-            // Set up the call to the react-native cli.
-            workingDir reactRoot
-
-            // Create JS bundle
-            def devEnabled = !buildNameCapitalized.toLowerCase().contains('release')
-            commandLine(
-                'node',
-                'node_modules/react-native/local-cli/cli.js',
-                'bundle',
-                '--assets-dest', resourcesDir,
-                '--bundle-output', jsBundleFile,
-                '--dev', "${devEnabled}",
-                '--entry-file', 'index.android.js',
-                '--platform', 'android',
-                '--reset-cache')
-
-            // Disable bundling on dev builds
-            enabled !devEnabled
+        copy {
+            from("${projectDir}/../../sounds/joined.wav")
+            from("${projectDir}/../../sounds/left.wav")
+            from("${projectDir}/../../sounds/outgoingRinging.wav")
+            from("${projectDir}/../../sounds/outgoingStart.wav")
+            from("${projectDir}/../../sounds/recordingOn.mp3")
+            from("${projectDir}/../../sounds/recordingOff.mp3")
+            from("${projectDir}/../../sounds/rejected.wav")
+            into("${assetsDir}/sounds")
         }
 
-        // Hook bundle${productFlavor}${buildType}JsAndAssets into the android build process
-        currentBundleTask.dependsOn("merge${buildNameCapitalized}Resources")
-        currentBundleTask.dependsOn("merge${buildNameCapitalized}Assets")
+        // Copy React assets
+        //
+        if (currentBundleTask.enabled) {
+            copy {
+                from(jsBundleDir)
+                into(assetsDir)
+            }
+        }
+    }
 
-        runBefore("processArmeabi-v7a${buildNameCapitalized}Resources", currentBundleTask)
-        runBefore("processX86${buildNameCapitalized}Resources", currentBundleTask)
-        runBefore("processUniversal${buildNameCapitalized}Resources", currentBundleTask)
-        runBefore("process${buildNameCapitalized}Resources", currentBundleTask)
+    variant.mergeResources.doLast {
+        // Copy React resources
+        //
+        if (currentBundleTask.enabled) {
+            copy {
+                from(resourcesDir)
+                into(variant.mergeResources.outputDir)
+            }
+        }
     }
 }
+
 
 publishing {
     publications {
