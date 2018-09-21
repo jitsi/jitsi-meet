@@ -1,12 +1,12 @@
 PODS:
   - boost-for-react-native (1.63.0)
-  - DoubleConversion (1.1.5)
+  - DoubleConversion (1.1.6)
   - FLAnimatedImage (1.0.12)
-  - Folly (2016.09.26.00):
+  - Folly (2016.10.31.00):
     - boost-for-react-native
     - DoubleConversion
     - glog
-  - glog (0.3.4)
+  - glog (0.3.5)
   - GoogleSignIn (4.2.0):
     - "GoogleToolboxForMac/NSDictionary+URLArguments (~> 2.1)"
     - "GoogleToolboxForMac/NSString+URLArguments (~> 2.1)"
@@ -28,8 +28,8 @@ PODS:
   - GTMSessionFetcher/Full (1.2.0):
     - GTMSessionFetcher/Core (= 1.2.0)
   - ObjectiveDropboxOfficial (3.9.1)
-  - React (0.55.4):
-    - React/Core (= 0.55.4)
+  - React (0.57.1):
+    - React/Core (= 0.57.1)
   - react-native-background-timer (2.0.0):
     - React
   - react-native-calendar-events (1.6.2):
@@ -45,42 +45,42 @@ PODS:
     - React
   - react-native-webrtc (1.63.0):
     - React
-  - React/Core (0.55.4):
-    - yoga (= 0.55.4.React)
-  - React/CxxBridge (0.55.4):
-    - Folly (= 2016.09.26.00)
+  - React/Core (0.57.1):
+    - yoga (= 0.57.1.React)
+  - React/CxxBridge (0.57.1):
+    - Folly (= 2016.10.31.00)
     - React/Core
     - React/cxxreact
-  - React/cxxreact (0.55.4):
+  - React/cxxreact (0.57.1):
     - boost-for-react-native (= 1.63.0)
-    - Folly (= 2016.09.26.00)
+    - Folly (= 2016.10.31.00)
     - React/jschelpers
     - React/jsinspector
-  - React/DevSupport (0.55.4):
+  - React/DevSupport (0.57.1):
     - React/Core
     - React/RCTWebSocket
-  - React/fishhook (0.55.4)
-  - React/jschelpers (0.55.4):
-    - Folly (= 2016.09.26.00)
+  - React/fishhook (0.57.1)
+  - React/jschelpers (0.57.1):
+    - Folly (= 2016.10.31.00)
     - React/PrivateDatabase
-  - React/jsinspector (0.55.4)
-  - React/PrivateDatabase (0.55.4)
-  - React/RCTActionSheet (0.55.4):
+  - React/jsinspector (0.57.1)
+  - React/PrivateDatabase (0.57.1)
+  - React/RCTActionSheet (0.57.1):
     - React/Core
-  - React/RCTAnimation (0.55.4):
+  - React/RCTAnimation (0.57.1):
     - React/Core
-  - React/RCTBlob (0.55.4):
+  - React/RCTBlob (0.57.1):
     - React/Core
-  - React/RCTImage (0.55.4):
+  - React/RCTImage (0.57.1):
     - React/Core
     - React/RCTNetwork
-  - React/RCTLinkingIOS (0.55.4):
+  - React/RCTLinkingIOS (0.57.1):
     - React/Core
-  - React/RCTNetwork (0.55.4):
+  - React/RCTNetwork (0.57.1):
     - React/Core
-  - React/RCTText (0.55.4):
+  - React/RCTText (0.57.1):
     - React/Core
-  - React/RCTWebSocket (0.55.4):
+  - React/RCTWebSocket (0.57.1):
     - React/Core
     - React/fishhook
     - React/RCTBlob
@@ -98,7 +98,7 @@ PODS:
   - SDWebImage/GIF (4.4.2):
     - FLAnimatedImage (~> 1.0)
     - SDWebImage/Core
-  - yoga (0.55.4.React)
+  - yoga (0.57.1.React)
 
 DEPENDENCIES:
   - DoubleConversion (from `../node_modules/react-native/third-party-podspecs/DoubleConversion.podspec`)
@@ -169,16 +169,16 @@ EXTERNAL SOURCES:
 
 SPEC CHECKSUMS:
   boost-for-react-native: 39c7adb57c4e60d6c5479dd8623128eb5b3f0f2c
-  DoubleConversion: e22e0762848812a87afd67ffda3998d9ef29170c
+  DoubleConversion: bb338842f62ab1d708ceb63ec3d999f0f3d98ecd
   FLAnimatedImage: 4a0b56255d9b05f18b6dd7ee06871be5d3b89e31
-  Folly: 211775e49d8da0ca658aebc8eab89d642935755c
-  glog: 1de0bb937dccdc981596d3b5825ebfb765017ded
+  Folly: c89ac2d5c6ab169cd7397ef27485c44f35f742c7
+  glog: e8acf0ebbf99759d3ff18c86c292a5898282dcde
   GoogleSignIn: 591e46382014e591269f862ba6e7bc0fbd793532
   GoogleToolboxForMac: 91c824d21e85b31c2aae9bb011c5027c9b4e738f
   GTMOAuth2: c77fe325e4acd453837e72d91e3b5f13116857b2
   GTMSessionFetcher: 0c4baf0a73acd0041bf9f71ea018deedab5ea84e
   ObjectiveDropboxOfficial: 274ce69d66286c94416daf1da5237c55e105e8c0
-  React: aa2040dbb6f317b95314968021bd2888816e03d5
+  React: 1fe0eb13d90b625d94c3b117c274dcfd2e760e11
   react-native-background-timer: 63dcbf37dbcf294b5c6c071afcdc661fa06a7594
   react-native-calendar-events: fe6fbc8ed337a7423c98f2c9012b25f20444de09
   react-native-fast-image: cba3d9bf9c2cf8ddb643d887a686c53a5dd90a2c
@@ -189,7 +189,7 @@ SPEC CHECKSUMS:
   RNSound: b360b3862d3118ed1c74bb9825696b5957686ac4
   RNVectorIcons: c0dbfbf6068fefa240c37b0f71bd03b45dddac44
   SDWebImage: 624d6e296c69b244bcede364c72ae0430ac14681
-  yoga: a23273df0088bf7f2bb7e5d7b00044ea57a2a54a
+  yoga: b1ce48b6cf950b98deae82838f5173ea7cf89e85
 
 PODFILE CHECKSUM: cf8276ba4b0933b24c6082a25a5f4eabe0ba4ea6
 
