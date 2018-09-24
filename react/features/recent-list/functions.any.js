@@ -20,6 +20,11 @@ export function toDisplayableItem(item, defaultServerURL, t) {
 
     return {
         colorBase: serverName,
+        enableSecondaryAction: true,
+        id: {
+            date: item.date,
+            url: item.conference
+        },
         key: `key-${item.conference}-${item.date}`,
         lines: [
             _toDateString(item.date, t),

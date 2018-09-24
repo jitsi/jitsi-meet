@@ -1,6 +1,25 @@
 // @flow
 
 /**
+ * Action type to clear the entire recent list.
+ *
+ * {
+ *     type: CLEAR_RECENT_LIST
+ * }
+ */
+export const CLEAR_RECENT_LIST = Symbol('CLEAR_RECENT_LIST');
+
+/**
+ * Action type to signal the deletion of a list entry.
+ *
+ * {
+ *     type: DELETE_RECENT_LIST_ENTRY,
+ *     itemId: Object
+ * }
+ */
+export const DELETE_RECENT_LIST_ENTRY = Symbol('DELETE_RECENT_LIST_ENTRY');
+
+/**
  * Action type to signal a new addition to the list.
  *
  * {

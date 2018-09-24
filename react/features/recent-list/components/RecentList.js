@@ -1,5 +1,6 @@
 // @flow
 import React, { Component } from 'react';
+import { TouchableOpacity } from 'react-native';
 import { connect } from 'react-redux';
 
 import {
@@ -9,11 +10,14 @@ import {
 } from '../../analytics';
 import { appNavigate, getDefaultURL } from '../../app';
 import { translate } from '../../base/i18n';
+import { openDialog } from '../../base/dialog';
 import { Container, NavigateSectionList, Text } from '../../base/react';
 import type { Section } from '../../base/react';
 
 import { isRecentListEnabled, toDisplayableList } from '../functions';
 
+import ClearRecentListDialog from './ClearRecentListDialog';
+import ListEntryMenuDialog from './ListEntryMenuDialog';
 import styles from './styles';
 
 /**
@@ -60,7 +64,11 @@ class RecentList extends Component<Props> {
     constructor(props: Props) {
         super(props);
 
+        this._onClearList = this._onClearList.bind(this);
+        this._onDeleteItem = this._onDeleteItem.bind(this);
         this._onPress = this._onPress.bind(this);
+        this._renderListFooterComponent
+            = this._renderListFooterComponent.bind(this);
     }
 
     /**
@@ -88,10 +96,13 @@ class RecentList extends Component<Props> {
 
         return (
             <NavigateSectionList
+                ListFooterComponent = { this._renderListFooterComponent }
                 disabled = { disabled }
                 onPress = { this._onPress }
+                onSecondaryAction = { this._onDeleteItem }
                 renderListEmptyComponent
                     = { this._getRenderListEmptyComponent() }
+                secondaryActionType = { 'long' }
                 sections = { recentList } />
         );
     }
@@ -121,6 +132,32 @@ class RecentList extends Component<Props> {
         );
     }
 
+    _onClearList: () => void
+
+    /**
+     * Pops up a confirmation to clear the recent list.
+     *
+     * @returns {void}
+     */
+    _onClearList() {
+        this.props.dispatch(openDialog(ClearRecentListDialog));
+    }
+
+    _onDeleteItem: string => void
+
+    /**
+     * Callback for the secondary action of the {@code NavigateSectionList},
+     * that deletes an entry from the list.
+     *
+     * @param {string} id - The id of the entry to be deleted.
+     * @returns {void}
+     */
+    _onDeleteItem(id) {
+        this.props.dispatch(openDialog(ListEntryMenuDialog, {
+            itemId: id
+        }));
+    }
+
     _onPress: string => Function;
 
     /**
@@ -136,6 +173,32 @@ class RecentList extends Component<Props> {
         sendAnalytics(createRecentClickedEvent('recent.meeting.tile'));
 
         dispatch(appNavigate(url));
+    }
+
+    _renderListFooterComponent: () => Object;
+
+    /**
+     * Returns the clear button in the lost footer..
+     *
+     * @private
+     * @returns {React$Component}
+     */
+    _renderListFooterComponent() {
+        const { _recentList } = this.props;
+
+        if (!_recentList || !_recentList.length) {
+            return null;
+        }
+
+        return (
+            <TouchableOpacity
+                onPress = { this._onClearList }
+                style = { styles.clearButton }>
+                <Text style = { styles.clearButtonText }>
+                    { this.props.t('recentList.clear') }
+                </Text>
+            </TouchableOpacity>
+        );
     }
 }
 
