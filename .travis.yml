@@ -1,6 +1,4 @@
 osx_image: xcode9.4
 language: objective-c
 script:
-- "./ios/travis-ci/build-ipa.sh > build_output.txt"
-after_failure:
-- "tail -n 500 build_output.txt"
+- "./ios/travis-ci/build-ipa.sh"

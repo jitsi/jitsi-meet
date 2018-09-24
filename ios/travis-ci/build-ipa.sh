@@ -136,13 +136,13 @@ cd ..
 
 mkdir -p /tmp/jitsi-meet/
 
-xcodebuild archive -workspace ios/jitsi-meet.xcworkspace -scheme jitsi-meet -configuration Release -archivePath /tmp/jitsi-meet/jitsi-meet.xcarchive
+xcodebuild archive -quiet -workspace ios/jitsi-meet.xcworkspace -scheme jitsi-meet -configuration Release -archivePath /tmp/jitsi-meet/jitsi-meet.xcarchive
 
 sed -e "s/YOUR_TEAM_ID/${IOS_TEAM_ID}/g" ios/travis-ci/build-ipa.plist.template > ios/travis-ci/build-ipa.plist
 
 IPA_EXPORT_DIR=/tmp/jitsi-meet/jitsi-meet-ipa
 
-xcodebuild -exportArchive -archivePath /tmp/jitsi-meet/jitsi-meet.xcarchive -exportPath $IPA_EXPORT_DIR  -exportOptionsPlist ios/travis-ci/build-ipa.plist
+xcodebuild -quiet -exportArchive -archivePath /tmp/jitsi-meet/jitsi-meet.xcarchive -exportPath $IPA_EXPORT_DIR  -exportOptionsPlist ios/travis-ci/build-ipa.plist
 
 echo "Will try deploy the .ipa to: ${IPA_DEPLOY_LOCATION}"
 
