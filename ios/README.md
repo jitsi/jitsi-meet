@@ -212,3 +212,37 @@ resize `JitsiMeetView`.
 If `pictureInPictureEnabled` is set to `YES` or `delegate` implements
 `enterPictureInPicture:`, the in-call toolbar will render a button to afford the
 user to request entering Picture-in-Picture.
+
+## Dropbox integration
+
+To setup the dropbox integration you need to do the following steps:
+
+1. Add the following lines in your Info.plist file and replace `<APP_KEY>` with your dropbox app key:
+```
+<key>CFBundleURLTypes</key>
+<array>
+    <dict>
+        <key>CFBundleURLSchemes</key>
+        <array>
+            <string>db-<APP_KEY></string>
+        </array>
+        <key>CFBundleURLName</key>
+        <string></string>
+    </dict>
+</array>
+<key>LSApplicationQueriesSchemes</key>
+<array>
+    <string>dbapi-8-emm</string>
+    <string>dbapi-2</string>
+</array>
+```
+
+2. Add the following method to `AppDelegate`:
+```objc
+- (BOOL)application:(UIApplication *)app openURL:(NSURL *)url
+            options:(NSDictionary<UIApplicationOpenURLOptionsKey,id> *)options {
+  return [JitsiMeetView application:app
+                            openURL:url
+                            options:options];
+}
+```

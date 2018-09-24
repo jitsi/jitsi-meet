@@ -39,6 +39,10 @@
   continueUserActivity:(NSUserActivity * _Nonnull)userActivity
     restorationHandler:(void (^ _Nullable)(NSArray * _Nullable))restorationHandler;
 
++ (BOOL)application:(UIApplication *)app
+            openURL:(NSURL *)url
+            options:(NSDictionary<UIApplicationOpenURLOptionsKey,id> *)options;
+
 + (BOOL)application:(UIApplication * _Nonnull)application
             openURL:(NSURL * _Nonnull)URL
   sourceApplication:(NSString * _Nullable)sourceApplication
