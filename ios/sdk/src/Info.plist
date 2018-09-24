@@ -18,12 +18,17 @@
 	<string>1.9.0</string>
 	<key>CFBundleVersion</key>
 	<string>$(CURRENT_PROJECT_VERSION)</string>
+	<key>JitsiMeetFonts</key>
+	<array>
+		<string>FontAwesome.ttf</string>
+		<string>jitsi.ttf</string>
+	</array>
+	<key>LSApplicationQueriesSchemes</key>
+	<array>
+		<string>dbapi-2</string>
+		<string>dbapi-8-emm</string>
+	</array>
 	<key>NSPrincipalClass</key>
 	<string></string>
-  <key>JitsiMeetFonts</key>
-  <array>
-    <string>FontAwesome.ttf</string>
-    <string>jitsi.ttf</string>
-  </array>
 </dict>
 </plist>

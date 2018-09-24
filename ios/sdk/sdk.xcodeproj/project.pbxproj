@@ -34,6 +34,7 @@
 		75635B0A20751D6D00F29C9F /* joined.wav in Resources */ = {isa = PBXBuildFile; fileRef = 75635B0820751D6D00F29C9F /* joined.wav */; };
 		75635B0B20751D6D00F29C9F /* left.wav in Resources */ = {isa = PBXBuildFile; fileRef = 75635B0920751D6D00F29C9F /* left.wav */; };
 		A4414AE020B37F1A003546E6 /* rejected.wav in Resources */ = {isa = PBXBuildFile; fileRef = A4414ADF20B37F1A003546E6 /* rejected.wav */; };
+		A4A934E9212F3ADB001E9388 /* Dropbox.m in Sources */ = {isa = PBXBuildFile; fileRef = A4A934E8212F3ADB001E9388 /* Dropbox.m */; };
 		B386B85720981A75000DEF7A /* InviteController.m in Sources */ = {isa = PBXBuildFile; fileRef = B386B85020981A74000DEF7A /* InviteController.m */; };
 		B386B85820981A75000DEF7A /* AddPeopleController.m in Sources */ = {isa = PBXBuildFile; fileRef = B386B85120981A74000DEF7A /* AddPeopleController.m */; };
 		B386B85920981A75000DEF7A /* AddPeopleControllerDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = B386B85220981A74000DEF7A /* AddPeopleControllerDelegate.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -87,6 +88,8 @@
 		98E09B5C73D9036B4ED252FC /* Pods-JitsiMeet.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-JitsiMeet.debug.xcconfig"; path = "../Pods/Target Support Files/Pods-JitsiMeet/Pods-JitsiMeet.debug.xcconfig"; sourceTree = "<group>"; };
 		9C77CA3CC919B081F1A52982 /* Pods-JitsiMeet.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-JitsiMeet.release.xcconfig"; path = "../Pods/Target Support Files/Pods-JitsiMeet/Pods-JitsiMeet.release.xcconfig"; sourceTree = "<group>"; };
 		A4414ADF20B37F1A003546E6 /* rejected.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; name = rejected.wav; path = ../../sounds/rejected.wav; sourceTree = "<group>"; };
+		A4A934E8212F3ADB001E9388 /* Dropbox.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Dropbox.m; sourceTree = "<group>"; };
+		A4A934EB21349A06001E9388 /* Dropbox.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Dropbox.h; sourceTree = "<group>"; };
 		B386B85020981A74000DEF7A /* InviteController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = InviteController.m; sourceTree = "<group>"; };
 		B386B85120981A74000DEF7A /* AddPeopleController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AddPeopleController.m; sourceTree = "<group>"; };
 		B386B85220981A74000DEF7A /* AddPeopleControllerDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AddPeopleControllerDelegate.h; sourceTree = "<group>"; };
@@ -122,9 +125,6 @@
 		0BCA49681EC4BBE500B793EE /* Resources */ = {
 			isa = PBXGroup;
 			children = (
-				6C31EDC720C06D490089C899 /* recordingOn.mp3 */,
-				6C31EDC920C06D530089C899 /* recordingOff.mp3 */,
-				A4414ADF20B37F1A003546E6 /* rejected.wav */,
 				0BC4B8681F8C01E100CE8B21 /* CallKitIcon.png */,
 				C6245F5B2053091D0040BE68 /* image-resize@2x.png */,
 				C6245F5C2053091D0040BE68 /* image-resize@3x.png */,
@@ -133,6 +133,9 @@
 				75635B0920751D6D00F29C9F /* left.wav */,
 				0B49424420AD8DBD00BD2DE0 /* outgoingRinging.wav */,
 				0B49424320AD8DBD00BD2DE0 /* outgoingStart.wav */,
+				6C31EDC920C06D530089C899 /* recordingOff.mp3 */,
+				6C31EDC720C06D490089C899 /* recordingOn.mp3 */,
+				A4414ADF20B37F1A003546E6 /* rejected.wav */,
 			);
 			name = Resources;
 			sourceTree = "<group>";
@@ -162,6 +165,7 @@
 				0BB9AD7C1F60356D001C08DB /* AppInfo.m */,
 				0BCA495C1EC4B6C600B793EE /* AudioMode.m */,
 				C69EFA02209A0EFD0027712B /* callkit */,
+				A4A934E7212F3AB8001E9388 /* dropbox */,
 				0BA13D301EE83FF8007BEF7F /* ExternalAPI.m */,
 				0BD906E91EC0C00300C8C18E /* Info.plist */,
 				B386B84F20981A11000DEF7A /* invite */,
@@ -191,6 +195,15 @@
 				0BCA49631EC4B76D00B793EE /* WebRTC.framework */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		A4A934E7212F3AB8001E9388 /* dropbox */ = {
+			isa = PBXGroup;
+			children = (
+				A4A934EB21349A06001E9388 /* Dropbox.h */,
+				A4A934E8212F3ADB001E9388 /* Dropbox.m */,
+			);
+			path = dropbox;
 			sourceTree = "<group>";
 		};
 		B386B84F20981A11000DEF7A /* invite */ = {
@@ -433,6 +446,7 @@
 				0BCA49611EC4B6C600B793EE /* Proximity.m in Sources */,
 				C69EFA0C209A0F660027712B /* JMCallKitEmitter.swift in Sources */,
 				C6A34261204EF76800E062DD /* DragGestureController.swift in Sources */,
+				A4A934E9212F3ADB001E9388 /* Dropbox.m in Sources */,
 				C69EFA0D209A0F660027712B /* JMCallKitProxy.swift in Sources */,
 				C69EFA0E209A0F660027712B /* JMCallKitListener.swift in Sources */,
 				0B412F191EDEC65D00B1A0A6 /* JitsiMeetView.m in Sources */,

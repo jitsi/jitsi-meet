@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">Jitsi Meet SDK</string>
+    <string name="dropbox_app_key"></string>
 </resources>

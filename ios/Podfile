@@ -26,6 +26,8 @@ target 'JitsiMeet' do
   pod 'Folly',
     :podspec => '../node_modules/react-native/third-party-podspecs/Folly.podspec'
 
+  pod 'ObjectiveDropboxOfficial'
+
   pod 'react-native-background-timer',
     :path => '../node_modules/react-native-background-timer'
   pod 'react-native-fast-image',
