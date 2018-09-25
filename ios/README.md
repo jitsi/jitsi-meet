@@ -125,7 +125,23 @@ continueUserActivity:(NSUserActivity *)userActivity
                continueUserActivity:userActivity
                  restorationHandler:restorationHandler];
 }
+```
 
+And also one of the following:
+
+```objc
+// See https://developer.apple.com/documentation/uikit/uiapplicationdelegate/1623073-application?language=objc
+- (BOOL)application:(UIApplication *)app
+            openURL:(NSURL *)url
+            options:(NSDictionary<UIApplicationOpenURLOptionsKey,id> *)options {
+  return [JitsiMeetView application:app
+                            openURL:url
+                            options: options];
+}
+```
+or
+```objc
+// See https://developer.apple.com/documentation/uikit/uiapplicationdelegate/1623112-application?language=objc
 - (BOOL)application:(UIApplication *)application
             openURL:(NSURL *)url
   sourceApplication:(NSString *)sourceApplication
@@ -215,31 +231,33 @@ user to request entering Picture-in-Picture.
 
 ## Dropbox integration
 
-To setup the dropbox integration you need to do the following steps:
+To setup the Dropbox integration, follow these steps:
 
-1. Add the following lines in your Info.plist file and replace `<APP_KEY>` with your dropbox app key:
+1. Add the following to the app's Info.plist and change `<APP_KEY>` to your
+Dropbox app key:
 ```
 <key>CFBundleURLTypes</key>
 <array>
-    <dict>
-        <key>CFBundleURLSchemes</key>
-        <array>
-            <string>db-<APP_KEY></string>
-        </array>
-        <key>CFBundleURLName</key>
-        <string></string>
-    </dict>
+  <dict>
+    <key>CFBundleURLName</key>
+    <string></string>
+    <key>CFBundleURLSchemes</key>
+    <array>
+      <string>db-<APP_KEY></string>
+    </array>
+  </dict>
 </array>
 <key>LSApplicationQueriesSchemes</key>
 <array>
-    <string>dbapi-8-emm</string>
-    <string>dbapi-2</string>
+  <string>dbapi-2</string>
+  <string>dbapi-8-emm</string>
 </array>
 ```
 
-2. Add the following method to `AppDelegate`:
+2. Add the following to the app's `AppDelegate`:
 ```objc
-- (BOOL)application:(UIApplication *)app openURL:(NSURL *)url
+- (BOOL)application:(UIApplication *)app
+            openURL:(NSURL *)url
             options:(NSDictionary<UIApplicationOpenURLOptionsKey,id> *)options {
   return [JitsiMeetView application:app
                             openURL:url

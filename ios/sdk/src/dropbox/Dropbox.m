@@ -16,6 +16,7 @@
 
 #import <React/RCTBridgeModule.h>
 #import <ObjectiveDropboxOfficial/ObjectiveDropboxOfficial.h>
+
 #import "Dropbox.h"
 
 RCTPromiseResolveBlock currentResolve = nil;
@@ -24,19 +25,19 @@ RCTPromiseRejectBlock currentReject = nil;
 @implementation Dropbox
 
 + (NSString *)getAppKey{
-    NSArray *urlTypes = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleURLTypes"];
-    for(NSDictionary<NSString *, NSArray *> *urlType in urlTypes) {
+    NSArray *urlTypes
+        = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleURLTypes"];
+
+    for (NSDictionary<NSString *, NSArray *> *urlType in urlTypes) {
         NSArray *urlSchemes = urlType[@"CFBundleURLSchemes"];
-        if(urlSchemes != nil) {
-            for(NSString *urlScheme in urlSchemes) {
-                if(urlScheme != nil) {
-                    if ([urlScheme hasPrefix:@"db-"]) {
-                        return [urlScheme substringFromIndex:3];
-                    }
+
+        if (urlSchemes) {
+            for (NSString *urlScheme in urlSchemes) {
+                if (urlScheme && [urlScheme hasPrefix:@"db-"]) {
+                    return [urlScheme substringFromIndex:3];
                 }
             }
         }
-        
     }
    
     return nil;
@@ -52,7 +53,7 @@ RCT_EXPORT_MODULE();
     };
 };
 
-RCT_EXPORT_METHOD(authorize: (RCTPromiseResolveBlock)resolve
+RCT_EXPORT_METHOD(authorize:(RCTPromiseResolveBlock)resolve
                   reject:(__unused RCTPromiseRejectBlock)reject) {
     currentResolve = resolve;
     currentReject = reject;
@@ -75,7 +76,7 @@ RCT_EXPORT_METHOD(getDisplayName: (NSString *)token
             resolve(result.name.displayName);
         } else {
             NSString *msg = @"Failed!";
-            if (networkError != nil) {
+            if (networkError) {
                 msg = [NSString stringWithFormat:@"Failed! Error: %@", networkError];
             }
             reject(@"getDisplayName", @"Failed", nil);
@@ -93,7 +94,7 @@ RCT_EXPORT_METHOD(getSpaceUsage: (NSString *)token
             DBUSERSSpaceAllocation *allocation = result.allocation;
             NSNumber *allocated = 0;
             NSNumber *used = 0;
-            if([allocation isIndividual]) {
+            if ([allocation isIndividual]) {
                 allocated = allocation.individual.allocated;
                 used = result.used;
             } else if ([allocation isTeam]) {
@@ -108,7 +109,7 @@ RCT_EXPORT_METHOD(getSpaceUsage: (NSString *)token
             resolve(dictionary);
         } else {
             NSString *msg = @"Failed!";
-            if (networkError != nil) {
+            if (networkError) {
                 msg = [NSString stringWithFormat:@"Failed! Error: %@", networkError];
             }
             reject(@"getSpaceUsage", msg, nil);
@@ -117,15 +118,18 @@ RCT_EXPORT_METHOD(getSpaceUsage: (NSString *)token
 
 }
 
-+ (BOOL)application:(UIApplication *)app openURL:(NSURL *)url
++ (BOOL)application:(UIApplication *)app
+            openURL:(NSURL *)url
             options:(NSDictionary<UIApplicationOpenURLOptionsKey,id> *)options {
+    if (currentReject == nil || currentResolve == nil) {
+        return NO;
+    }
     DBOAuthResult *authResult = [DBClientsManager handleRedirectURL:url];
-    if (authResult != nil) {
+    if (authResult) {
         if ([authResult isSuccess]) {
             currentResolve(authResult.accessToken.accessToken);
             currentResolve = nil;
             currentReject = nil;
-            return YES;
         } else {
             NSString *msg;
             if ([authResult isError]) {
@@ -137,13 +141,15 @@ RCT_EXPORT_METHOD(getSpaceUsage: (NSString *)token
             currentResolve = nil;
             currentReject = nil;
         }
+        return YES;
     }
     return NO;
 }
 
-+ (UIViewController*)topMostController
++ (UIViewController *)topMostController
 {
-    UIViewController *topController = [UIApplication sharedApplication].keyWindow.rootViewController;
+    UIViewController *topController
+        = [UIApplication sharedApplication].keyWindow.rootViewController;
     
     while (topController.presentedViewController) {
         topController = topController.presentedViewController;
@@ -154,10 +160,10 @@ RCT_EXPORT_METHOD(getSpaceUsage: (NSString *)token
 
 + (void)setAppKey {
     NSString *appKey = [self getAppKey];
-    if (appKey != nil) {
+
+    if (appKey) {
         [DBClientsManager setupWithAppKey:appKey];
     }
 }
-
 
 @end

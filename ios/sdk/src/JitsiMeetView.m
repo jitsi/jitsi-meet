@@ -195,6 +195,14 @@ static NSMapTable<NSString *, JitsiMeetView *> *views;
                        restorationHandler:restorationHandler];
 }
 
++ (BOOL)application:(UIApplication *)app
+            openURL:(NSURL *)url
+            options:(NSDictionary<UIApplicationOpenURLOptionsKey,id> *)options {
+    return
+        [Dropbox application:app openURL:url options:options]
+            || [RCTLinkingManager application:app openURL:url options:options];
+}
+
 + (BOOL)application:(UIApplication *)application
             openURL:(NSURL *)url
   sourceApplication:(NSString *)sourceApplication
@@ -212,13 +220,6 @@ static NSMapTable<NSString *, JitsiMeetView *> *views;
                                   openURL:url
                         sourceApplication:sourceApplication
                                annotation:annotation];
-}
-
-+ (BOOL)application:(UIApplication *)app openURL:(NSURL *)url
-            options:(NSDictionary<UIApplicationOpenURLOptionsKey,id> *)options {
-    return [Dropbox application:app
-                              openURL:url
-                              options: options];
 }
 
 #pragma mark Initializers
