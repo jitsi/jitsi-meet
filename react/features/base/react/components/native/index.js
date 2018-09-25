@@ -10,7 +10,8 @@ export { default as NavigateSectionListSectionHeader }
     from './NavigateSectionListSectionHeader';
 export { default as PagedList } from './PagedList';
 export { default as Pressable } from './Pressable';
-export { default as SideBar } from './SideBar';
-export { default as Text } from './Text';
 export { default as SectionList } from './SectionList';
+export { default as SideBar } from './SideBar';
+export { default as Switch } from './Switch';
+export { default as Text } from './Text';
 export { default as TintedView } from './TintedView';
