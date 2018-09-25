@@ -26,6 +26,7 @@ export const ColorPalette = {
     lightGrey: '#AAAAAA',
     lighterGrey: '#EEEEEE',
     red: '#D00000',
+    transparent: 'rgba(0, 0, 0, 0)',
     white: 'white',
 
     /**

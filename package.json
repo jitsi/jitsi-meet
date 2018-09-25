@@ -73,6 +73,7 @@
     "react-native-locale-detector": "github:jitsi/react-native-locale-detector#845281e9fd4af756f6d0f64afe5cce08c63e5ee9",
     "react-native-prompt": "1.0.0",
     "react-native-sound": "0.10.9",
+    "react-native-swipeout": "2.3.6",
     "react-native-vector-icons": "4.4.2",
     "react-native-webrtc": "github:jitsi/react-native-webrtc#be3de15bb988cfabbb62cd4b3b06f4c920ee5ba0",
     "react-redux": "5.0.7",

@@ -13,7 +13,6 @@ import { getLocalizedDateFormatter, translate } from '../../base/i18n';
 import { NavigateSectionList } from '../../base/react';
 
 import { refreshCalendar, openUpdateCalendarEventDialog } from '../actions';
-
 import { isCalendarEnabled } from '../functions';
 
 import AddMeetingUrlButton from './AddMeetingUrlButton';
@@ -21,7 +20,7 @@ import JoinButton from './JoinButton';
 
 /**
  * The type of the React {@code Component} props of
- * {@link BaseCalendarList}.
+ * {@link CalendarListContent}.
  */
 type Props = {
 
@@ -54,7 +53,7 @@ type Props = {
 /**
  * Component to display a list of events from a connected calendar.
  */
-class BaseCalendarList extends Component<Props> {
+class CalendarListContent extends Component<Props> {
     /**
      * Default values for the component's props.
      */
@@ -63,26 +62,7 @@ class BaseCalendarList extends Component<Props> {
     };
 
     /**
-     * Public API method for {@code Component}s rendered in
-     * {@link AbstractPagedList}. When invoked, refreshes the calendar entries
-     * in the app.
-     *
-     * Note: It is a static method as the {@code Component} may not be
-     * initialized yet when the UI invokes refresh (e.g. {@link TabBarIOS} tab
-     * change).
-     *
-     * @param {Function} dispatch - The Redux dispatch function.
-     * @param {boolean} isInteractive - If true this refresh was caused by
-     * direct user interaction, false otherwise.
-     * @public
-     * @returns {void}
-     */
-    static refresh(dispatch, isInteractive) {
-        dispatch(refreshCalendar(false, isInteractive));
-    }
-
-    /**
-     * Initializes a new {@code BaseCalendarList} instance.
+     * Initializes a new {@code CalendarListContent} instance.
      *
      * @inheritdoc
      */
@@ -318,5 +298,5 @@ function _mapStateToProps(state: Object) {
 }
 
 export default isCalendarEnabled()
-    ? translate(connect(_mapStateToProps)(BaseCalendarList))
+    ? translate(connect(_mapStateToProps)(CalendarListContent))
     : undefined;

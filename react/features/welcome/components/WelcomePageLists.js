@@ -1,7 +1,6 @@
 // @flow
 
 import React, { Component } from 'react';
-import { Platform } from 'react-native';
 import { connect } from 'react-redux';
 
 import { translate } from '../../base/i18n';
@@ -38,16 +37,6 @@ type Props = {
 };
 
 /**
- * Icon to be used for the calendar page on iOS.
- */
-const IOS_CALENDAR_ICON = require('../../../../images/calendar.png');
-
-/**
- * Icon to be used for the recent list page on iOS.
- */
-const IOS_RECENT_LIST_ICON = require('../../../../images/history.png');
-
-/**
  * Implements the lists displayed on the mobile welcome screen.
  */
 class WelcomePageLists extends Component<Props> {
@@ -73,17 +62,16 @@ class WelcomePageLists extends Component<Props> {
         super(props);
 
         const { t } = props;
-        const android = Platform.OS === 'android';
 
         this.pages = [
             {
                 component: RecentList,
-                icon: android ? 'restore' : IOS_RECENT_LIST_ICON,
+                icon: 'restore',
                 title: t('welcomepage.recentList')
             },
             {
                 component: CalendarList,
-                icon: android ? 'event_note' : IOS_CALENDAR_ICON,
+                icon: 'event_note',
                 title: t('welcomepage.calendar')
             }
         ];

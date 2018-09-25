@@ -1,6 +1,16 @@
 // @flow
 
 /**
+ * Action type to signal the deletion of a list entry.
+ *
+ * {
+ *     type: DELETE_RECENT_LIST_ENTRY,
+ *     entryId: Object
+ * }
+ */
+export const DELETE_RECENT_LIST_ENTRY = Symbol('DELETE_RECENT_LIST_ENTRY');
+
+/**
  * Action type to signal a new addition to the list.
  *
  * {
