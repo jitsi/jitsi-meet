@@ -14,6 +14,6 @@ export default class Text extends Component {
      * @returns {ReactElement}
      */
     render() {
-        return React.createElement('p', this.props);
+        return React.createElement('span', this.props);
     }
 }
