@@ -8,5 +8,6 @@ export { default as NavigateSectionListItem } from
 export { default as NavigateSectionListSectionHeader }
     from './NavigateSectionListSectionHeader';
 export { default as SectionList } from './SectionList';
+export { default as Switch } from './Switch';
 export { default as Text } from './Text';
 export { default as Watermarks } from './Watermarks';
