@@ -1,4 +1,4 @@
 export * from './actions';
-export * from './functions';
+export * from './functions.any';
 
 import './reducer';
