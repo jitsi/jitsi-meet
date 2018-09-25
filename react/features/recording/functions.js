@@ -20,6 +20,18 @@ export function getActiveSession(state: Object, mode: string) {
 }
 
 /**
+ * Returns an estimated recording duration based on the size of the video file
+ * in MB. The estimate is calculated under the assumption that 1 min of recorded
+ * video needs 10MB of storage on avarage.
+ *
+ * @param {number} size - The size in MB of the recorded video.
+ * @returns {number} - The estimated duration in minutes.
+ */
+export function getRecordingDurationEstimation(size: ?number) {
+    return Math.floor((size || 0) / 10);
+}
+
+/**
  * Searches in the passed in redux state for a recording session that matches
  * the passed in recording session ID.
  *

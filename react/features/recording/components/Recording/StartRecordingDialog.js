@@ -222,8 +222,10 @@ class StartRecordingDialog extends Component<Props, State> {
  * }}
  */
 function mapStateToProps(state: Object) {
+    const { dropbox = {} } = state['features/base/config'];
+
     return {
-        _clientId: state['features/base/config'].dropbox.clientId,
+        _clientId: dropbox.clientId,
         _conference: state['features/base/conference'].conference,
         _token: state['features/dropbox'].token
     };
