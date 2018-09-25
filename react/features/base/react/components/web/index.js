@@ -1,4 +1,5 @@
 export { default as Container } from './Container';
+export { default as LoadingIndicator } from './LoadingIndicator';
 export { default as MultiSelectAutocomplete } from './MultiSelectAutocomplete';
 export { default as NavigateSectionListEmptyComponent } from
     './NavigateSectionListEmptyComponent';
