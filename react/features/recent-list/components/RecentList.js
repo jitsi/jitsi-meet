@@ -1,5 +1,5 @@
 // @flow
-import React, { Component } from 'react';
+import React from 'react';
 import { connect } from 'react-redux';
 
 import {
@@ -9,9 +9,15 @@ import {
 } from '../../analytics';
 import { appNavigate, getDefaultURL } from '../../app';
 import { translate } from '../../base/i18n';
-import { Container, NavigateSectionList, Text } from '../../base/react';
+import {
+    AbstractPage,
+    Container,
+    NavigateSectionList,
+    Text
+} from '../../base/react';
 import type { Section } from '../../base/react';
 
+import { deleteRecentListEntry } from '../actions';
 import { isRecentListEnabled, toDisplayableList } from '../functions';
 
 import styles from './styles';
@@ -51,7 +57,7 @@ type Props = {
  * The cross platform container rendering the list of the recently joined rooms.
  *
  */
-class RecentList extends Component<Props> {
+class RecentList extends AbstractPage<Props> {
     /**
      * Initializes a new {@code RecentList} instance.
      *
@@ -60,6 +66,7 @@ class RecentList extends Component<Props> {
     constructor(props: Props) {
         super(props);
 
+        this._onDelete = this._onDelete.bind(this);
         this._onPress = this._onPress.bind(this);
     }
 
@@ -85,6 +92,11 @@ class RecentList extends Component<Props> {
         }
         const { disabled, t, _defaultServerURL, _recentList } = this.props;
         const recentList = toDisplayableList(_recentList, t, _defaultServerURL);
+        const slideActions = [ {
+            backgroundColor: 'red',
+            onPress: this._onDelete,
+            text: t('welcomepage.recentListDelete')
+        } ];
 
         return (
             <NavigateSectionList
@@ -92,7 +104,8 @@ class RecentList extends Component<Props> {
                 onPress = { this._onPress }
                 renderListEmptyComponent
                     = { this._getRenderListEmptyComponent() }
-                sections = { recentList } />
+                sections = { recentList }
+                slideActions = { slideActions } />
         );
     }
 
@@ -119,6 +132,19 @@ class RecentList extends Component<Props> {
                 </Text>
             </Container>
         );
+    }
+
+    _onDelete: Object => void
+
+    /**
+     * Callback for the delete action of the list.
+     *
+     * @param {Object} itemId - The ID of the entry thats deletion is
+     * requested.
+     * @returns {void}
+     */
+    _onDelete(itemId) {
+        this.props.dispatch(deleteRecentListEntry(itemId));
     }
 
     _onPress: string => Function;

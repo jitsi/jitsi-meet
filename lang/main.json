@@ -63,6 +63,7 @@
         "join": "JOIN",
         "privacy": "Privacy",
         "recentList": "Recent",
+        "recentListDelete": "Delete",
         "recentListEmpty": "Your recent list is currently empty. Chat with your team and you will find all your recent meetings here.",
         "roomname": "Enter room name",
         "roomnameHint": "Enter the name or URL of the room you want to join. You may make a name up, just let the people you are meeting know it so that they enter the same name.",

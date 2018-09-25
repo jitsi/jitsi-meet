@@ -18,6 +18,11 @@ export type Item = {
     elementAfter?: ?ComponentType<any>,
 
     /**
+     * Unique ID of the item.
+     */
+    id: Object | string,
+
+    /**
      * Item title
      */
     title: string,

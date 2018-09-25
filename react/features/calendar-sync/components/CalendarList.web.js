@@ -2,10 +2,11 @@
 
 import Button from '@atlaskit/button';
 import Spinner from '@atlaskit/spinner';
-import React, { Component } from 'react';
+import React from 'react';
 import { connect } from 'react-redux';
 
 import { translate } from '../../base/i18n';
+import { AbstractPage } from '../../base/react';
 import { openSettingsDialog, SETTINGS_TABS } from '../../settings';
 import {
     createCalendarClickedEvent,
@@ -15,7 +16,7 @@ import {
 import { refreshCalendar } from '../actions';
 import { isCalendarEnabled } from '../functions';
 
-import BaseCalendarList from './BaseCalendarList';
+import CalendarListContent from './CalendarListContent';
 
 declare var interfaceConfig: Object;
 
@@ -53,7 +54,7 @@ type Props = {
 /**
  * Component to display a list of events from the user's calendar.
  */
-class CalendarList extends Component<Props> {
+class CalendarList extends AbstractPage<Props> {
     /**
      * Initializes a new {@code CalendarList} instance.
      *
@@ -78,8 +79,8 @@ class CalendarList extends Component<Props> {
         const { disabled } = this.props;
 
         return (
-            BaseCalendarList
-                ? <BaseCalendarList
+            CalendarListContent
+                ? <CalendarListContent
                     disabled = { disabled }
                     renderListEmptyComponent
                         = { this._getRenderListEmptyComponent() } />

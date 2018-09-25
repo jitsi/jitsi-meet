@@ -43,7 +43,13 @@ type Props = {
     /**
      * An array of sections
      */
-    sections: Array<Section>
+    sections: Array<Section>,
+
+    /**
+     * Optional array of on-slide actions this list should support. For details
+     * see https://github.com/dancormier/react-native-swipeout.
+     */
+    slideActions?: Array<Object>
 };
 
 /**
@@ -205,7 +211,8 @@ class NavigateSectionList extends Component<Props> {
                 key = { key }
                 onPress = { url ? this._onPress(url) : undefined }
                 secondaryAction = {
-                    url ? undefined : this._onSecondaryAction(id) } />
+                    url ? undefined : this._onSecondaryAction(id) }
+                slideActions = { this.props.slideActions } />
         );
     }
 

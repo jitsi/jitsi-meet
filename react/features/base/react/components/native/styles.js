@@ -74,6 +74,13 @@ const HEADER_STYLES = {
 const PAGED_LIST_STYLES = {
 
     /**
+     * Outermost container of a page in {@code PagedList}.
+     */
+    pageContainer: {
+        flex: 1
+    },
+
+    /**
      * Style of the page indicator (Android).
      */
     pageIndicator: {
@@ -214,7 +221,7 @@ const SECTION_LIST_STYLES = {
         alignItems: 'center',
         flex: 1,
         flexDirection: 'row',
-        paddingVertical: 5
+        padding: 5
     },
 
     listItemDetails: {
@@ -239,7 +246,8 @@ const SECTION_LIST_STYLES = {
         backgroundColor: 'rgba(255, 255, 255, 0.2)',
         flex: 1,
         flexDirection: 'row',
-        padding: 5
+        paddingVertical: 5,
+        paddingHorizontal: 10
     },
 
     listSectionText: {

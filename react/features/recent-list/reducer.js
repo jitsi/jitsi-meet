@@ -6,7 +6,8 @@ import { PersistenceRegistry } from '../base/storage';
 
 import {
     _STORE_CURRENT_CONFERENCE,
-    _UPDATE_CONFERENCE_DURATION
+    _UPDATE_CONFERENCE_DURATION,
+    DELETE_RECENT_LIST_ENTRY
 } from './actionTypes';
 import { isRecentListEnabled } from './functions';
 
@@ -54,6 +55,8 @@ ReducerRegistry.register(
             switch (action.type) {
             case APP_WILL_MOUNT:
                 return _appWillMount(state);
+            case DELETE_RECENT_LIST_ENTRY:
+                return _deleteRecentListEntry(state, action.entryId);
             case _STORE_CURRENT_CONFERENCE:
                 return _storeCurrentConference(state, action);
 
@@ -66,6 +69,19 @@ ReducerRegistry.register(
 
         return state;
     });
+
+/**
+ * Deletes a recent list entry based on the url and date of the item.
+ *
+ * @param {Array<Object>} state - The Redux state.
+ * @param {Object} entryId - The ID object of the entry.
+ * @returns {Array<Object>}
+ */
+function _deleteRecentListEntry(
+        state: Array<Object>, entryId: Object): Array<Object> {
+    return state.filter(entry =>
+        entry.conference !== entryId.url || entry.date !== entryId.date);
+}
 
 /**
  * Reduces the redux action {@link APP_WILL_MOUNT}.
