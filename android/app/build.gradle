@@ -1,11 +1,5 @@
 apply plugin: 'com.android.application'
 
-def parser = new XmlSlurper(false, false, true)
-parser.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false)
-def plist = parser.parse('../ios/app/src/Info.plist')
-def dbScheme = plist.dict.array.dict.array.string.find{string-> string.text().startsWith('db-')}
-def dropboxAppKey = dbScheme?.text() - 'db-'
-
 android {
     compileSdkVersion rootProject.ext.compileSdkVersion
 
@@ -34,12 +28,10 @@ android {
 
     buildTypes {
         debug {
-            resValue("string", "dropbox_app_key", "${dropboxAppKey}")
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules-debug.pro'
         }
         release {
-            resValue("string", "dropbox_app_key", "${dropboxAppKey}")
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules-release.pro'
         }
@@ -48,36 +40,6 @@ android {
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
-    }
-
-    if (dropboxAppKey) {
-        def dropboxActivity = """<activity
-            android:name="com.dropbox.core.android.AuthActivity"
-            android:configChanges="orientation|keyboard"
-            android:launchMode="singleTask">
-          <intent-filter>
-            <data android:scheme="db-${dropboxAppKey}" />
-            <action android:name="android.intent.action.VIEW" />
-            <category android:name="android.intent.category.BROWSABLE" />
-            <category android:name="android.intent.category.DEFAULT" />
-          </intent-filter>
-        </activity>""";
-
-
-        applicationVariants.all { variant ->
-            variant.outputs.each { output ->
-                output.processManifest.doLast {
-                    File manifestOutFile = new File(output.processManifest.manifestOutputDirectory, "AndroidManifest.xml")
-                    if (!manifestOutFile.isFile()) {
-                        manifestOutFile = new File(new File(output.processManifest.manifestOutputDirectory, output.dirName),"AndroidManifest.xml")
-                    }
-                    if (manifestOutFile.exists()) {
-                        def newFileContents = manifestOutFile.getText('UTF-8').replace("</application>", "${dropboxActivity}</application>")
-                        manifestOutFile.write(newFileContents, 'UTF-8')
-                    }
-                }
-            }
-        }
     }
 }
 
@@ -90,6 +52,58 @@ dependencies {
 
     debugImplementation 'com.squareup.leakcanary:leakcanary-android:1.6.1'
     releaseImplementation 'com.squareup.leakcanary:leakcanary-android-no-op:1.6.1'
+}
+
+gradle.projectsEvaluated {
+    // Dropbox integration
+    //
+
+    def plistParser = new XmlSlurper(
+            /* validating */ false,
+            /* namespaceAware */ false,
+            /* allowDocTypeDeclaration */ true)
+    plistParser.setFeature(
+            'http://apache.org/xml/features/nonvalidating/load-external-dtd',
+            false)
+    def plist = plistParser.parse('../ios/app/src/Info.plist')
+    def dropboxScheme = plist.dict.array.dict.array.string.find { string ->
+        string.text().startsWith('db-')
+    }
+    def dropboxAppKey = dropboxScheme?.text() - 'db-'
+
+    if (dropboxAppKey) {
+        android.defaultConfig.resValue('string', 'dropbox_app_key', "${dropboxAppKey}")
+
+        def dropboxActivity = """
+          <activity
+              android:configChanges="keyboard|orientation"
+              android:launchMode="singleTask"
+              android:name="com.dropbox.core.android.AuthActivity">
+            <intent-filter>
+              <action android:name="android.intent.action.VIEW" />
+              <category android:name="android.intent.category.BROWSABLE" />
+              <category android:name="android.intent.category.DEFAULT" />
+              <data android:scheme="db-${dropboxAppKey}" />
+            </intent-filter>
+          </activity>""";
+
+        android.applicationVariants.all { variant ->
+            variant.outputs.each { output ->
+                output.processManifest.doLast {
+                    def f = new File(manifestOutputDirectory, 'AndroidManifest.xml')
+                    if (!f.isFile()) {
+                        f = new File(new File(manifestOutputDirectory, output.dirName), 'AndroidManifest.xml')
+                    }
+                    if (f.exists()) {
+                        def charset = 'UTF-8'
+                        def s = f.getText(charset)
+                        s = s.replace('</application>', "${dropboxActivity}</application>")
+                        f.write(s, charset)
+                    }
+                }
+            }
+        }
+    }
 }
 
 if (project.file('google-services.json').exists()) {
