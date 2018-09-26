@@ -1,12 +1,10 @@
 package org.jitsi.meet.sdk.dropbox;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.text.TextUtils;
-import android.util.Log;
 
 import com.dropbox.core.DbxException;
 import com.dropbox.core.DbxRequestConfig;
@@ -22,7 +20,6 @@ import com.facebook.react.bridge.ReactContextBaseJavaModule;
 import com.dropbox.core.android.Auth;
 import com.facebook.react.bridge.ReactMethod;
 import com.facebook.react.bridge.WritableMap;
-import org.jitsi.meet.sdk.R;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -30,26 +27,28 @@ import java.util.Map;
 /**
  * Implements the react-native module for the dropbox integration.
  */
-public class Dropbox extends ReactContextBaseJavaModule implements LifecycleEventListener {
+public class Dropbox
+        extends ReactContextBaseJavaModule
+        implements LifecycleEventListener {
+    private String appKey;
 
-    private Promise promise = null;
     private String clientId;
-    private String appID;
-    private boolean isEnabled = false;
+
+    private final boolean isEnabled;
+
+    private Promise promise;
 
     public Dropbox(ReactApplicationContext reactContext) {
         super(reactContext);
-        reactContext.addLifecycleEventListener(this);
-        clientId = generateClientId();
-        appID = reactContext.getString(R.string.dropbox_app_key);
-        if (!TextUtils.isEmpty(appID)) {
-            isEnabled = true;
-        }
-    }
 
-    @Override
-    public String getName() {
-        return "Dropbox";
+        appKey
+            = reactContext.getString(
+                org.jitsi.meet.sdk.R.string.dropbox_app_key);
+        isEnabled = !TextUtils.isEmpty(appKey);
+
+        clientId = generateClientId();
+
+        reactContext.addLifecycleEventListener(this);
     }
 
     /**
@@ -59,70 +58,12 @@ public class Dropbox extends ReactContextBaseJavaModule implements LifecycleEven
      */
     @ReactMethod
     public void authorize(final Promise promise) {
-        if (!isEnabled) {
-            promise.reject(new Exception("Dropbox integration isn't configured."));
-            return;
-        }
-        Auth.startOAuth2Authentication(this.getCurrentActivity(), appID);
-        this.promise = promise;
-    }
-
-    @Override
-    public Map<String, Object> getConstants() {
-        final Map<String, Object> constants = new HashMap<>();
-        constants.put("ENABLED", isEnabled);
-        return constants;
-    }
-
-
-    /**
-     * Resolves the current user dropbox display name.
-     *
-     * @param token A dropbox access token.
-     * @param promise The promise used to return the result of the auth flow.
-     */
-    @ReactMethod
-    public void getDisplayName(final String token, final Promise promise) {
-        DbxRequestConfig config
-            = DbxRequestConfig.newBuilder(clientId).build();
-        DbxClientV2 client = new DbxClientV2(config, token);
-        // Get current account info
-        try {
-            FullAccount account = client.users().getCurrentAccount();
-            promise.resolve(account.getName().getDisplayName());
-        } catch (DbxException e) {
-            promise.reject(e);
-        }
-    }
-
-    /**
-     * Resolves the current user space usage.
-     *
-     * @param token A dropbox access token.
-     * @param promise The promise used to return the result of the auth flow.
-     */
-    @ReactMethod
-    public void getSpaceUsage(final String token, final Promise promise) {
-        DbxRequestConfig config
-            = DbxRequestConfig.newBuilder(clientId).build();
-        DbxClientV2 client = new DbxClientV2(config, token);
-        try {
-            SpaceUsage spaceUsage = client.users().getSpaceUsage();
-            WritableMap map = Arguments.createMap();
-            map.putString("used", String.valueOf(spaceUsage.getUsed()));
-            SpaceAllocation allocation = spaceUsage.getAllocation();
-            long allocated = 0;
-            if(allocation.isIndividual()) {
-                allocated += allocation.getIndividualValue().getAllocated();
-            }
-
-            if(allocation.isTeam()) {
-                allocated += allocation.getTeamValue().getAllocated();
-            }
-            map.putString("allocated", String.valueOf(allocated));
-            promise.resolve(map);
-        } catch (DbxException e) {
-            promise.reject(e);
+        if (isEnabled) {
+            Auth.startOAuth2Authentication(this.getCurrentActivity(), appKey);
+            this.promise = promise;
+        } else {
+            promise.reject(
+                new Exception("Dropbox integration isn't configured."));
         }
     }
 
@@ -141,8 +82,7 @@ public class Dropbox extends ReactContextBaseJavaModule implements LifecycleEven
         try {
             String packageName = context.getPackageName();
 
-            applicationInfo
-                    = packageManager.getApplicationInfo(packageName, 0);
+            applicationInfo = packageManager.getApplicationInfo(packageName, 0);
             packageInfo = packageManager.getPackageInfo(packageName, 0);
         } catch (PackageManager.NameNotFoundException e) {
         }
@@ -150,32 +90,95 @@ public class Dropbox extends ReactContextBaseJavaModule implements LifecycleEven
         String applicationLabel
             = applicationInfo == null
                 ? "JitsiMeet"
-                    : packageManager.getApplicationLabel(applicationInfo)
-                        .toString().replaceAll("\\s", "");
+                : packageManager.getApplicationLabel(applicationInfo).toString()
+                    .replaceAll("\\s", "");
         String version = packageInfo == null ? "dev" : packageInfo.versionName;
 
-       return applicationLabel + "/" + version;
+        return applicationLabel + "/" + version;
     }
 
     @Override
-    public void onHostResume() {
-        final String token = Auth.getOAuth2Token();
-        if (token == null)
-            return;
+    public Map<String, Object> getConstants() {
+        Map<String, Object> constants = new HashMap<>();
 
-        if (this.promise != null) {
-            this.promise.resolve(token);
-            this.promise = null;
+        constants.put("ENABLED", isEnabled);
+
+        return constants;
+    }
+
+    /**
+     * Resolves the current user dropbox display name.
+     *
+     * @param token A dropbox access token.
+     * @param promise The promise used to return the result of the auth flow.
+     */
+    @ReactMethod
+    public void getDisplayName(final String token, final Promise promise) {
+        DbxRequestConfig config = DbxRequestConfig.newBuilder(clientId).build();
+        DbxClientV2 client = new DbxClientV2(config, token);
+
+        // Get current account info
+        try {
+            FullAccount account = client.users().getCurrentAccount();
+
+            promise.resolve(account.getName().getDisplayName());
+        } catch (DbxException e) {
+            promise.reject(e);
         }
     }
 
     @Override
-    public void onHostPause() {
+    public String getName() {
+        return "Dropbox";
+    }
 
+    /**
+     * Resolves the current user space usage.
+     *
+     * @param token A dropbox access token.
+     * @param promise The promise used to return the result of the auth flow.
+     */
+    @ReactMethod
+    public void getSpaceUsage(final String token, final Promise promise) {
+        DbxRequestConfig config = DbxRequestConfig.newBuilder(clientId).build();
+        DbxClientV2 client = new DbxClientV2(config, token);
+
+        try {
+            SpaceUsage spaceUsage = client.users().getSpaceUsage();
+            WritableMap map = Arguments.createMap();
+
+            map.putString("used", String.valueOf(spaceUsage.getUsed()));
+
+            SpaceAllocation allocation = spaceUsage.getAllocation();
+            long allocated = 0;
+
+            if (allocation.isIndividual()) {
+                allocated += allocation.getIndividualValue().getAllocated();
+            }
+            if (allocation.isTeam()) {
+                allocated += allocation.getTeamValue().getAllocated();
+            }
+            map.putString("allocated", String.valueOf(allocated));
+
+            promise.resolve(map);
+        } catch (DbxException e) {
+            promise.reject(e);
+        }
     }
 
     @Override
-    public void onHostDestroy() {
+    public void onHostDestroy() {}
 
+    @Override
+    public void onHostPause() {}
+
+    @Override
+    public void onHostResume() {
+        String token = Auth.getOAuth2Token();
+
+        if (token != null && this.promise != null) {
+            this.promise.resolve(token);
+            this.promise = null;
+        }
     }
 }

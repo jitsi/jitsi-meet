@@ -5,6 +5,18 @@ import { NativeModules } from 'react-native';
 const { Dropbox } = NativeModules;
 
 /**
+ * Action to authorize the Jitsi Recording app in dropbox.
+ *
+ * @param {string} appKey - The Jitsi Recorder dropbox app key.
+ * @param {string} redirectURI - The return URL.
+ * @returns {Promise<string>} - The promise will be resolved with the dropbox
+ * access token or rejected with an error.
+ */
+export function _authorizeDropbox(): Promise<string> {
+    return Dropbox.authorize();
+}
+
+/**
  * Returns the display name for the current dropbox account.
  *
  * @param {string} token - The dropbox access token.
@@ -26,19 +38,6 @@ export function getDisplayName(token: string) {
  */
 export function getSpaceUsage(token: string) {
     return Dropbox.getSpaceUsage(token);
-}
-
-
-/**
- * Action to authorize the Jitsi Recording app in dropbox.
- *
- * @param {string} clientId - The Jitsi Recorder dropbox app ID.
- * @param {string} redirectURI - The return URL.
- * @returns {Promise<string>} - The promise will be resolved with the dropbox
- * access token or rejected with an error.
- */
-export function _authorizeDropbox(): Promise<string> {
-    return Dropbox.authorize();
 }
 
 /**

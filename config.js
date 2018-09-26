@@ -173,7 +173,7 @@ var config = {
     // fileRecordingsEnabled: false,
     // Enable the dropbox integration.
     // dropbox: {
-    //     clientId: '<APP_ID>' // Specify your app ID here.
+    //     appKey: '<APP_KEY>' // Specify your app key here.
     // },
 
     // Whether to enable live streaming or not.

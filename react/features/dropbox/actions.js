@@ -18,7 +18,7 @@ export function authorizeDropbox() {
         const redirectURI = `${locationURL.origin
             + getLocationContextRoot(locationURL)}static/oauth.html`;
 
-        _authorizeDropbox(dropbox.clientId, redirectURI)
+        _authorizeDropbox(dropbox.appKey, redirectURI)
             .then(
                 token => dispatch(updateDropboxToken(token)));
     };

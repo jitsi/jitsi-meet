@@ -25,15 +25,15 @@ type DropboxUserData = {
  * Fetches information about the user's dropbox account.
  *
  * @param {string} token - The dropbox access token.
- * @param {string} clientId - The Jitsi Recorder dropbox app ID.
+ * @param {string} appKey - The Jitsi Recorder dropbox app key.
  * @returns {Promise<DropboxUserData|undefined>}
  */
 export function getDropboxData(
         token: string,
-        clientId: string
+        appKey: string
 ): Promise<?DropboxUserData> {
     return Promise.all(
-        [ getDisplayName(token, clientId), getSpaceUsage(token, clientId) ]
+        [ getDisplayName(token, appKey), getSpaceUsage(token, appKey) ]
     ).then(([ userName, space ]) => {
         const { allocated, used } = space;
 
