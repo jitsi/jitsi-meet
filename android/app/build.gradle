@@ -1,6 +1,10 @@
 apply plugin: 'com.android.application'
 
-def dropboxAppKey = ""
+def parser = new XmlSlurper(false, false, true)
+parser.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false)
+def plist = parser.parse('../ios/app/src/Info.plist')
+def dbScheme = plist.dict.array.dict.array.string.find{string-> string.text().startsWith('db-')}
+def dropboxAppKey = dbScheme?.text() - 'db-'
 
 android {
     compileSdkVersion rootProject.ext.compileSdkVersion
