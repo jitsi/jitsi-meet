@@ -336,8 +336,6 @@ class Conference extends Component<Props> {
                 {
                     this._renderConferenceNotification()
                 }
-
-                <NotificationsContainer />
             </Container>
         );
     }
