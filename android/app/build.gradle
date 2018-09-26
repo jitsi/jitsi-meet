@@ -1,6 +1,6 @@
 apply plugin: 'com.android.application'
 
-def dropboxAppID = ""
+def dropboxAppKey = ""
 
 android {
     compileSdkVersion rootProject.ext.compileSdkVersion
@@ -30,12 +30,12 @@ android {
 
     buildTypes {
         debug {
-            resValue("string", "dropbox_app_key", "${dropboxAppID}")
+            resValue("string", "dropbox_app_key", "${dropboxAppKey}")
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules-debug.pro'
         }
         release {
-            resValue("string", "dropbox_app_key", "${dropboxAppID}")
+            resValue("string", "dropbox_app_key", "${dropboxAppKey}")
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules-release.pro'
         }
@@ -46,13 +46,13 @@ android {
         targetCompatibility JavaVersion.VERSION_1_8
     }
 
-    if (dropboxAppID) {
+    if (dropboxAppKey) {
         def dropboxActivity = """<activity
             android:name="com.dropbox.core.android.AuthActivity"
             android:configChanges="orientation|keyboard"
             android:launchMode="singleTask">
           <intent-filter>
-            <data android:scheme="db-${dropboxAppID}" />
+            <data android:scheme="db-${dropboxAppKey}" />
             <action android:name="android.intent.action.VIEW" />
             <category android:name="android.intent.category.BROWSABLE" />
             <category android:name="android.intent.category.DEFAULT" />

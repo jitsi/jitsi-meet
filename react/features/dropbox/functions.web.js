@@ -2,54 +2,11 @@
 
 import { Dropbox } from 'dropbox';
 
+import { parseURLParams } from '../base/config';
 import {
     getJitsiMeetGlobalNS,
     parseStandardURIString
 } from '../base/util';
-import { parseURLParams } from '../base/config';
-
-/**
- * Returns the display name for the current dropbox account.
- *
- * @param {string} token - The dropbox access token.
- * @param {string} clientId - The Jitsi Recorder dropbox app ID.
- * @returns {Promise<string>}
- */
-export function getDisplayName(token: string, clientId: string) {
-    const dropboxAPI = new Dropbox({
-        accessToken: token,
-        clientId
-    });
-
-    return (
-        dropboxAPI.usersGetCurrentAccount()
-            .then(account => account.name.display_name));
-}
-
-/**
- * Returns information about the space usage for the current dropbox account.
- *
- * @param {string} token - The dropbox access token.
- * @param {string} clientId - The Jitsi Recorder dropbox app ID.
- * @returns {Promise<Object>}
- */
-export function getSpaceUsage(token: string, clientId: string) {
-    const dropboxAPI = new Dropbox({
-        accessToken: token,
-        clientId
-    });
-
-    return dropboxAPI.usersGetSpaceUsage().then(space => {
-        const { allocation, used } = space;
-        const { allocated } = allocation;
-
-        return {
-            used,
-            allocated
-        };
-    });
-}
-
 
 /**
  * Executes the oauth flow.
@@ -79,15 +36,15 @@ function authorize(authUrl: string): Promise<string> {
 /**
  * Action to authorize the Jitsi Recording app in dropbox.
  *
- * @param {string} clientId - The Jitsi Recorder dropbox app ID.
+ * @param {string} appKey - The Jitsi Recorder dropbox app key.
  * @param {string} redirectURI - The return URL.
  * @returns {Promise<string>}
  */
 export function _authorizeDropbox(
-        clientId: string,
+        appKey: string,
         redirectURI: string
 ): Promise<string> {
-    const dropboxAPI = new Dropbox({ clientId });
+    const dropboxAPI = new Dropbox({ clientId: appKey });
     const url = dropboxAPI.getAuthenticationUrl(redirectURI);
 
     return authorize(url).then(returnUrl => {
@@ -95,6 +52,48 @@ export function _authorizeDropbox(
             = parseURLParams(parseStandardURIString(returnUrl), true) || {};
 
         return params.access_token;
+    });
+}
+
+/**
+ * Returns the display name for the current dropbox account.
+ *
+ * @param {string} token - The dropbox access token.
+ * @param {string} appKey - The Jitsi Recorder dropbox app key.
+ * @returns {Promise<string>}
+ */
+export function getDisplayName(token: string, appKey: string) {
+    const dropboxAPI = new Dropbox({
+        accessToken: token,
+        clientId: appKey
+    });
+
+    return (
+        dropboxAPI.usersGetCurrentAccount()
+            .then(account => account.name.display_name));
+}
+
+/**
+ * Returns information about the space usage for the current dropbox account.
+ *
+ * @param {string} token - The dropbox access token.
+ * @param {string} appKey - The Jitsi Recorder dropbox app key.
+ * @returns {Promise<Object>}
+ */
+export function getSpaceUsage(token: string, appKey: string) {
+    const dropboxAPI = new Dropbox({
+        accessToken: token,
+        clientId: appKey
+    });
+
+    return dropboxAPI.usersGetSpaceUsage().then(space => {
+        const { allocation, used } = space;
+        const { allocated } = allocation;
+
+        return {
+            allocated,
+            used
+        };
     });
 }
 
@@ -108,5 +107,5 @@ export function _authorizeDropbox(
 export function isEnabled(state: Object) {
     const { dropbox = {} } = state['features/base/config'];
 
-    return typeof dropbox.clientId === 'string';
+    return typeof dropbox.appKey === 'string';
 }

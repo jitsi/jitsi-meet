@@ -21,9 +21,9 @@ type Props = {
     _conference: Object,
 
     /**
-     * The client id for the dropbox authentication.
+     * The app key for the dropbox authentication.
      */
-    _clientId: string,
+    _appKey: string,
 
     /**
      * The dropbox access token.
@@ -117,7 +117,7 @@ class StartRecordingDialog extends Component<Props, State> {
      * @returns {void}
      */
     _onTokenUpdated() {
-        const { _clientId, _token } = this.props;
+        const { _appKey, _token } = this.props;
 
         if (typeof _token === 'undefined') {
             this.setState({
@@ -129,7 +129,7 @@ class StartRecordingDialog extends Component<Props, State> {
                 isTokenValid: false,
                 isValidating: true
             });
-            getDropboxData(_token, _clientId).then(data => {
+            getDropboxData(_token, _appKey).then(data => {
                 if (typeof data === 'undefined') {
                     this.setState({
                         isTokenValid: false,
@@ -216,7 +216,7 @@ class StartRecordingDialog extends Component<Props, State> {
  * @param {Object} state - The Redux state.
  * @private
  * @returns {{
- *     _clientId: string,
+ *     _appKey: string,
  *     _conference: JitsiConference,
  *     _token: string
  * }}
@@ -225,7 +225,7 @@ function mapStateToProps(state: Object) {
     const { dropbox = {} } = state['features/base/config'];
 
     return {
-        _clientId: dropbox.clientId,
+        _appKey: dropbox.appKey,
         _conference: state['features/base/conference'].conference,
         _token: state['features/dropbox'].token
     };
