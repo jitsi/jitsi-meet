@@ -44,6 +44,11 @@ type Props = {
      */
     bodyKey: string,
 
+    /**
+     * True of the ok button should be hidden. E.g. for menu type dialogs.
+     */
+    okHidden: boolean,
+
     textInputProps: Object
 };
 
@@ -97,6 +102,7 @@ class Dialog extends AbstractDialog<Props, State> {
             cancelDisabled,
             cancelTitleKey = 'dialog.Cancel',
             okDisabled,
+            okHidden,
             okTitleKey = 'dialog.Ok',
             t /* XXX The following silences flow errors: */ = _.identity,
             titleKey,
@@ -106,7 +112,8 @@ class Dialog extends AbstractDialog<Props, State> {
         const cancelButtonTextStyle
             = cancelDisabled ? styles.disabledButtonText : styles.buttonText;
         let submitButtonTextStyle
-            = okDisabled ? styles.disabledButtonText : styles.buttonText;
+            = okHidden ? styles.hiddenButtonText
+                : okDisabled ? styles.disabledButtonText : styles.buttonText;
 
         submitButtonTextStyle = {
             ...submitButtonTextStyle,

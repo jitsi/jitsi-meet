@@ -20,6 +20,12 @@ type Props = {
     disabled: boolean,
 
     /**
+     * Rendered at the end of the list. Can be a React Component Class, a render
+     * function, or a rendered element.
+     */
+    ListFooterComponent: Object | Function,
+
+    /**
      * Function to be invoked when an item is pressed. The item's URL is passed.
      */
     onPress: Function,
@@ -39,6 +45,12 @@ type Props = {
      * Function to override the rendered default empty list component.
      */
     renderListEmptyComponent: Function,
+
+    /**
+     * The type of the secondary action. E.g. long: long press on the line,
+     * button: renders a button on the right.
+     */
+    secondaryActionType: 'long' | 'button',
 
     /**
      * An array of sections
@@ -100,6 +112,7 @@ class NavigateSectionList extends Component<Props> {
         return (
             <SectionList
                 ListEmptyComponent = { renderListEmptyComponent }
+                ListFooterComponent = { this.props.ListFooterComponent }
                 keyExtractor = { this._getItemKey }
                 onItemClick = { this.props.onPress }
                 onRefresh = { this._onRefresh }
@@ -188,7 +201,7 @@ class NavigateSectionList extends Component<Props> {
      */
     _renderItem(listItem, key: string = '') {
         const { item } = listItem;
-        const { id, url } = item;
+        const { id, enableSecondaryAction, url } = item;
 
         // XXX The value of title cannot be undefined; otherwise, react-native
         // will throw a TypeError: Cannot read property of undefined. While it's
@@ -205,7 +218,10 @@ class NavigateSectionList extends Component<Props> {
                 key = { key }
                 onPress = { url ? this._onPress(url) : undefined }
                 secondaryAction = {
-                    url ? undefined : this._onSecondaryAction(id) } />
+                    enableSecondaryAction
+                        ? this._onSecondaryAction(id)
+                        : undefined }
+                secondaryActionType = { this.props.secondaryActionType } />
         );
     }
 

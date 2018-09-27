@@ -8,7 +8,16 @@ import {
 } from 'react-native';
 
 import AbstractContainer from '../AbstractContainer';
-import type { Props } from '../AbstractContainer';
+import type { Props as AbstractProps } from '../AbstractContainer';
+
+type Props = AbstractProps & {
+
+    /**
+     * Passthrough callback for the native long press event. For details, see
+     * {@code AbstractProps#onClick}.
+     */
+    onLongClick?: ?Function
+};
 
 /**
  * Represents a container of React Native/mobile {@link Component} children.
@@ -27,6 +36,7 @@ export default class Container<P: Props> extends AbstractContainer<P> {
             accessibilityLabel,
             accessible,
             onClick,
+            onLongClick,
             touchFeedback = onClick,
             underlayColor,
             visible = true,
@@ -38,7 +48,7 @@ export default class Container<P: Props> extends AbstractContainer<P> {
             return null;
         }
 
-        const onClickOrTouchFeedback = onClick || touchFeedback;
+        const onClickOrTouchFeedback = onClick || onLongClick || touchFeedback;
         let element
             = super._render(
                 View,
@@ -58,6 +68,7 @@ export default class Container<P: Props> extends AbstractContainer<P> {
                         accessibilityLabel,
                         accessible,
                         onPress: onClick,
+                        onLongPress: onLongClick,
                         underlayColor
                     },
                     element);

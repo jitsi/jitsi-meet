@@ -18,7 +18,13 @@ type Props = {
      * Rendered when the list is empty. Can be a React Component Class, a render
      * function, or a rendered element.
      */
-    ListEmptyComponent: Object,
+    ListEmptyComponent: Object | Function,
+
+    /**
+     * Rendered at the end of the list. Can be a React Component Class, a render
+     * function, or a rendered element.
+     */
+    ListFooterComponent: Object | Function,
 
     /**
     *
@@ -78,6 +84,7 @@ export default class SectionList extends Component<Props> {
                 style = { styles.container } >
                 <ReactNativeSectionList
                     ListEmptyComponent = { this.props.ListEmptyComponent }
+                    ListFooterComponent = { this.props.ListFooterComponent }
                     keyExtractor = { this.props.keyExtractor }
                     onRefresh = { this.props.onRefresh }
                     refreshing = { this.props.refreshing }

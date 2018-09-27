@@ -27,6 +27,13 @@ export const dialog = createStyleSheet({
      */
     disabledButtonText: {
         color: ColorPalette.darkGrey
+    },
+
+    /**
+     * Style to hide a button.
+     */
+    hiddenButtonText: {
+        opacity: 0
     }
 });
 

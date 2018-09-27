@@ -22,7 +22,13 @@ type Props = {
     /**
      * Function to be invoked when secondary action was performed on an Item.
      */
-    secondaryAction: ?Function
+    secondaryAction: ?Function,
+
+    /**
+     * The type of the secondary action. E.g. long: long press on the line,
+     * button: renders a button on the right.
+     */
+    secondaryActionType: 'long' | 'button',
 }
 
 /**
@@ -129,7 +135,12 @@ export default class NavigateSectionListItem extends Component<Props> {
      * @returns {ReactElement}
      */
     render() {
-        const { colorBase, lines, title } = this.props.item;
+        const { item, secondaryAction, secondaryActionType } = this.props;
+        const {
+            colorBase,
+            lines,
+            title
+        } = item;
         const avatarStyles = {
             ...styles.avatar,
             ...this._getAvatarColor(colorBase)
@@ -138,6 +149,9 @@ export default class NavigateSectionListItem extends Component<Props> {
         return (
             <Container
                 onClick = { this.props.onPress }
+                onLongClick = { secondaryActionType === 'long'
+                    ? secondaryAction
+                    : undefined }
                 style = { styles.listItem }
                 underlayColor = { UNDERLAY_COLOR }>
                 <Container style = { styles.avatarContainer }>
@@ -158,7 +172,9 @@ export default class NavigateSectionListItem extends Component<Props> {
                     </Text>
                     {this._renderItemLines(lines)}
                 </Container>
-                { this.props.secondaryAction && this._renderSecondaryAction() }
+                { secondaryAction
+                    && secondaryActionType === 'button'
+                    && this._renderSecondaryAction() }
             </Container>
         );
     }

@@ -127,6 +127,7 @@ class BaseCalendarList extends Component<Props> {
                 onSecondaryAction = { this._onSecondaryAction }
                 renderListEmptyComponent
                     = { renderListEmptyComponent }
+                secondaryActionType = { 'button' }
                 sections = { this._toDisplayableList() } />
         );
     }
@@ -224,6 +225,7 @@ class BaseCalendarList extends Component<Props> {
                 : (<AddMeetingUrlButton
                     calendarId = { event.calendarId }
                     eventId = { event.id } />),
+            enableSecondaryAction: !event.url,
             id: event.id,
             key: `${event.id}-${event.startDate}`,
             lines: [

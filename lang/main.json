@@ -731,5 +731,12 @@
         "no": "No",
         "label": "LOR",
         "labelToolTip": "Local recording is engaged"
+    },
+    "recentList": {
+        "clear": "Clear",
+        "confirmClear": "Are you sure you want to clear the list of recent conferences?",
+        "deleteItem": "Delete",
+        "joinMeeting": "Join meeting",
+        "menuTitle": "Pick an action"
     }
 }
