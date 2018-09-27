@@ -154,6 +154,8 @@ or
 }
 ```
 
+NOTE: The latter is deprecated.
+
 ### JitsiMeetViewDelegate
 
 This delegate is optional, and can be set on the `JitsiMeetView` instance using

@@ -198,15 +198,10 @@ static NSMapTable<NSString *, JitsiMeetView *> *views;
 + (BOOL)application:(UIApplication *)app
             openURL:(NSURL *)url
             options:(NSDictionary<UIApplicationOpenURLOptionsKey,id> *)options {
-    return
-        [Dropbox application:app openURL:url options:options]
-            || [RCTLinkingManager application:app openURL:url options:options];
-}
+    if ([Dropbox application:app openURL:url options:options]) {
+        return YES;
+    }
 
-+ (BOOL)application:(UIApplication *)application
-            openURL:(NSURL *)url
-  sourceApplication:(NSString *)sourceApplication
-         annotation:(id)annotation {
     // XXX At least twice we received bug reports about malfunctioning loadURL
     // in the Jitsi Meet SDK while the Jitsi Meet app seemed to functioning as
     // expected in our testing. But that was to be expected because the app does
@@ -216,10 +211,14 @@ static NSMapTable<NSString *, JitsiMeetView *> *views;
         return YES;
     }
 
-    return [RCTLinkingManager application:application
-                                  openURL:url
-                        sourceApplication:sourceApplication
-                               annotation:annotation];
+    return [RCTLinkingManager application:app openURL:url options:options];
+}
+
++ (BOOL)application:(UIApplication *)application
+            openURL:(NSURL *)url
+  sourceApplication:(NSString *)sourceApplication
+         annotation:(id)annotation {
+    return [self application:application openURL:url options:@{}];
 }
 
 #pragma mark Initializers
