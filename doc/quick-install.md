@@ -65,6 +65,15 @@ org.ice4j.ice.harvest.NAT_HARVESTER_PUBLIC_ADDRESS=<Public.IP.Address>
 See [the documenation of ice4j](https://github.com/jitsi/ice4j/blob/master/doc/configuration.md)
 for details.
 
+Default deployments on systems using systemd will have low default values for maximum processes and open files. If the used bridge will expect higher number of participants the default values need to be adjusted (the default values are good for less than 100 participants).
+To update the values edit `/etc/systemd/system.conf` and make sure you have the following values:
+```
+DefaultLimitNOFILE=65000
+DefaultLimitNPROC=65000
+DefaultTasksMax=65000
+```
+To load the values and check them look [here](#systemd-details) for details.
+
 By default, anyone who has access to your jitsi instance will be able to start a conferencee: if your server is open to the world, anyone can have a chat with anyone else. If you want to limit the ability to start a conference to registered users, set up a "secure domain". Follow the instructions at https://github.com/jitsi/jicofo#secure-domain.
 
 ### Open a conference
@@ -111,3 +120,12 @@ Sometimes the following packages will fail to uninstall properly:
 When this happens, just run the uninstall command a second time and it should be ok.
 
 The reason for failure is that sometimes, the uninstall script is faster than the process that stops the daemons. The second run of the uninstall command fixes this, as by then the jigasi or jvb daemons are already stopped.
+
+#### Systemd details
+To reload the systemd changes on a running system execute `systemctl daemon-reload` and `service jitsi-videobridge restart`.
+To check the tasks part execute `service jitsi-videobridge status` and you should see `Tasks: XX (limit: 65000)`.
+To check the files and process part execute ```cat /proc/`cat /var/run/jitsi-videobridge.pid`/limits``` and you should see:
+```
+Max processes             65000                65000                processes
+Max open files            65000                65000                files
+```
