@@ -132,7 +132,7 @@ class DisplayName extends Component {
         if (allowEditing && this.state.isEditing) {
             return (
                 <input
-                    autoFocus = { true }
+                    autoFocus
                     className = 'editdisplayname'
                     id = 'editDisplayName'
                     onBlur = { this._onSubmit }
@@ -151,7 +151,7 @@ class DisplayName extends Component {
                 className = 'displayname'
                 id = { elementID }
                 onClick = { this._onStartEditing }>
-                { `${appendSuffix(displayName, displayNameSuffix)}` }
+                { appendSuffix(displayName, displayNameSuffix) }
             </span>
         );
     }
