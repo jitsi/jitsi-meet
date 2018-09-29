@@ -132,7 +132,7 @@ class DisplayName extends Component {
         if (allowEditing && this.state.isEditing) {
             return (
                 <input
-                    autoFocus
+                    autoFocus = { true }
                     className = 'editdisplayname'
                     id = 'editDisplayName'
                     onBlur = { this._onSubmit }
