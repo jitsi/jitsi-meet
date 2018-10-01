@@ -7,6 +7,25 @@ import { APP_LINK_SCHEME, parseURIString } from '../base/util';
 import { MAX_LIST_LENGTH } from './constants';
 
 const logger = require('jitsi-meet-logger').getLogger(__filename);
+const ALLDAY_EVENT_LENGTH = 23 * 60 * 60 * 1000;
+
+/**
+ * Returns true of the calendar entry is to be displayed in the app, false
+ * otherwise.
+ *
+ * @param {Object} entry - The calendar entry.
+ * @returns {boolean}
+ */
+function _isDisplayableCalendarEntry(entry) {
+    // Entries are displayable if:
+    //   - Ends in the future (future or ongoing events)
+    //   - Is not an all day event and there is only one attendee (these events
+    //     are usually placeholder events that don't need to be shown.)
+    return entry.endDate > Date.now()
+        && !((entry.allDay
+                || entry.endDate - entry.startDate > ALLDAY_EVENT_LENGTH)
+                    && (!entry.attendees || entry.attendees.length < 2));
+}
 
 /**
  * Updates the calendar entries in redux when new list is received. The feature
@@ -29,13 +48,12 @@ export function _updateCalendarEntries(events: Array<Object>) {
     // eslint-disable-next-line no-invalid-this
     const { dispatch, getState } = this;
     const knownDomains = getState()['features/base/known-domains'];
-    const now = Date.now();
     const entryMap = new Map();
 
     for (const event of events) {
         const entry = _parseCalendarEntry(event, knownDomains);
 
-        if (entry && entry.endDate > now) {
+        if (entry && _isDisplayableCalendarEntry(entry)) {
             // As was stated above, we don't display subsequent occurrences of
             // recurring events, and the repetitions of events coming from
             // multiple calendars.
@@ -111,6 +129,8 @@ function _parseCalendarEntry(event, knownDomains) {
             );
         } else {
             return {
+                allDay: event.allDay,
+                attendees: event.attendees,
                 calendarId: event.calendarId,
                 endDate,
                 id: event.id,
