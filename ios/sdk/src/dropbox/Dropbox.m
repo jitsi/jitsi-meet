@@ -45,6 +45,10 @@ RCTPromiseRejectBlock currentReject = nil;
 
 RCT_EXPORT_MODULE();
 
++ (BOOL)requiresMainQueueSetup {
+    return NO;
+}
+
 - (NSDictionary *)constantsToExport {
     BOOL enabled = [Dropbox getAppKey] != nil;
     
