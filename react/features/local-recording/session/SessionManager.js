@@ -219,7 +219,7 @@ class SessionManager {
 
         for (let i = 0; i < sessionTokens.length; ++i) {
             const thisSession = this._sessionsMetadata[sessionTokens[i]];
-            const newSessionInfo : SessionInfo = {
+            const newSessionInfo: SessionInfo = {
                 start: thisSession.events[0].timestamp,
                 format: thisSession.format,
                 sessionToken: sessionTokens[i],
@@ -348,8 +348,7 @@ class SessionManager {
 
         const output = [];
         let sessionStartTime = null;
-        let currentSegment : SegmentInfo = {
-        };
+        let currentSegment: SegmentInfo = {};
 
         /**
          * Helper function for adding a new {@code SegmentInfo} object to the
