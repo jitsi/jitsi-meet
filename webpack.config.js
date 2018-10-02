@@ -67,18 +67,25 @@ const config = {
             options: {
                 // XXX The require.resolve bellow solves failures to locate the
                 // presets when lib-jitsi-meet, for example, is npm linked in
-                // jitsi-meet. The require.resolve, of course, mandates the use
-                // of the prefix babel-preset- in the preset names.
+                // jitsi-meet.
+                plugins: [
+                    require.resolve('@babel/plugin-transform-flow-strip-types'),
+                    require.resolve('@babel/plugin-proposal-class-properties'),
+                    require.resolve(
+                        '@babel/plugin-proposal-export-default-from'),
+                    require.resolve(
+                        '@babel/plugin-proposal-export-namespace-from')
+                ],
                 presets: [
                     [
-                        require.resolve('babel-preset-env'),
+                        require.resolve('@babel/preset-env'),
 
                         // Tell babel to avoid compiling imports into CommonJS
                         // so that webpack may do tree shaking.
                         { modules: false }
                     ],
-                    require.resolve('babel-preset-react'),
-                    require.resolve('babel-preset-stage-1')
+                    require.resolve('@babel/preset-flow'),
+                    require.resolve('@babel/preset-react')
                 ]
             },
             test: /\.jsx?$/
