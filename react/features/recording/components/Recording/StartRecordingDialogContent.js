@@ -27,6 +27,11 @@ type Props = {
     dispatch: Function,
 
     /**
+     * If true the content related to the integrations will be shown.
+     */
+    integrationsEnabled: boolean,
+
+    /**
      * <tt>true</tt> if we have valid oauth token.
      */
     isTokenValid: boolean,
@@ -79,6 +84,33 @@ class StartRecordingDialogContent extends Component<Props> {
      * @returns {React$Component}
      */
     render() {
+        if (this.props.integrationsEnabled) {
+            return this._renderIntegrationsContent();
+        }
+
+        return this._renderNoIntegrationsContent();
+    }
+
+    /**
+     * Renders the content in case no integrations were enabled.
+     *
+     * @returns {React$Component}
+     */
+    _renderNoIntegrationsContent() {
+        return (
+            <Container>
+                { this.props.t('recording.startRecordingBody') }
+            </Container>
+        );
+    }
+
+    /**
+     * Renders the content in case integrations were enabled.
+     *
+     * @protected
+     * @returns {React$Component}
+     */
+    _renderIntegrationsContent() {
         const { isTokenValid, isValidating, t } = this.props;
 
         let content = null;

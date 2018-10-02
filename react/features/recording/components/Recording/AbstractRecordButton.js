@@ -11,7 +11,6 @@ import {
     getLocalParticipant,
     isLocalParticipantModerator
 } from '../../../base/participants';
-import { isEnabled as isDropboxEnabled } from '../../../dropbox';
 import {
     AbstractButton,
     type AbstractButtonProps
@@ -130,8 +129,7 @@ export function _mapStateToProps(state: Object, ownProps: Props): Object {
         const { features = {} } = getLocalParticipant(state);
 
         visible = isModerator
-            && fileRecordingsEnabled
-            && isDropboxEnabled(state);
+            && fileRecordingsEnabled;
 
         if (enableFeaturesBasedOnToken) {
             visible = visible && String(features.recording) === 'true';

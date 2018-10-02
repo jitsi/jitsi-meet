@@ -9,9 +9,12 @@ import {
 } from '../../../analytics';
 import { Dialog } from '../../../base/dialog';
 import { JitsiRecordingConstants } from '../../../base/lib-jitsi-meet';
+import {
+    getDropboxData,
+    isEnabled as isDropboxEnabled
+} from '../../../dropbox';
 
 import StartRecordingDialogContent from './StartRecordingDialogContent';
-import { getDropboxData } from '../../../dropbox';
 
 type Props = {
 
@@ -24,6 +27,11 @@ type Props = {
      * The app key for the dropbox authentication.
      */
     _appKey: string,
+
+    /**
+     * If true the dropbox integration is enabled, otherwise - disabled.
+     */
+    _isDropboxEnabled: boolean,
 
     /**
      * The dropbox access token.
@@ -117,7 +125,11 @@ class StartRecordingDialog extends Component<Props, State> {
      * @returns {void}
      */
     _onTokenUpdated() {
-        const { _appKey, _token } = this.props;
+        const { _appKey, _isDropboxEnabled, _token } = this.props;
+
+        if (!_isDropboxEnabled) {
+            return;
+        }
 
         if (typeof _token === 'undefined') {
             this.setState({
@@ -154,15 +166,17 @@ class StartRecordingDialog extends Component<Props, State> {
      */
     render() {
         const { isTokenValid, isValidating, spaceLeft, userName } = this.state;
+        const { _isDropboxEnabled } = this.props;
 
         return (
             <Dialog
-                okDisabled = { !isTokenValid }
+                okDisabled = { !isTokenValid && _isDropboxEnabled }
                 okTitleKey = 'dialog.confirm'
                 onSubmit = { this._onSubmit }
                 titleKey = 'dialog.recording'
                 width = 'small'>
                 <StartRecordingDialogContent
+                    integrationsEnabled = { _isDropboxEnabled }
                     isTokenValid = { isTokenValid }
                     isValidating = { isValidating }
                     spaceLeft = { spaceLeft }
@@ -183,18 +197,23 @@ class StartRecordingDialog extends Component<Props, State> {
         sendAnalytics(
             createRecordingDialogEvent('start', 'confirm.button')
         );
-        const { _conference, _token } = this.props;
+        const { _conference, _isDropboxEnabled, _token } = this.props;
+        let appData;
 
-        _conference.startRecording({
-            mode: JitsiRecordingConstants.mode.FILE,
-            appData: JSON.stringify({
+        if (_isDropboxEnabled) {
+            appData = JSON.stringify({
                 'file_recording_metadata': {
                     'upload_credentials': {
                         'service_name': 'dropbox',
                         'token': _token
                     }
                 }
-            })
+            });
+        }
+
+        _conference.startRecording({
+            mode: JitsiRecordingConstants.mode.FILE,
+            appData
         });
 
         return true;
@@ -227,6 +246,7 @@ function mapStateToProps(state: Object) {
     return {
         _appKey: dropbox.appKey,
         _conference: state['features/base/conference'].conference,
+        _isDropboxEnabled: isDropboxEnabled(state),
         _token: state['features/dropbox'].token
     };
 }
