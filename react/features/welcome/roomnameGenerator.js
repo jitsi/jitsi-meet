@@ -172,32 +172,32 @@ const PATTERNS = [
     '_ADJECTIVE__PLURALNOUN__VERB__ADVERB_'
 
     // BeautifulFungiOrSpaghetti
-//    '_ADJECTIVE__PLURALNOUN__CONJUNCTION__PLURALNOUN_',
+    //    '_ADJECTIVE__PLURALNOUN__CONJUNCTION__PLURALNOUN_',
 
     // AmazinglyScaryToy
-//    '_ADVERB__ADJECTIVE__NOUN_',
+    //    '_ADVERB__ADJECTIVE__NOUN_',
 
     // NeitherTrashNorRifle
-//    'Neither_NOUN_Nor_NOUN_',
-//    'Either_NOUN_Or_NOUN_',
+    //    'Neither_NOUN_Nor_NOUN_',
+    //    'Either_NOUN_Or_NOUN_',
 
     // EitherCopulateOrInvestigate
-//    'Either_VERB_Or_VERB_',
-//    'Neither_VERB_Nor_VERB_',
+    //    'Either_VERB_Or_VERB_',
+    //    'Neither_VERB_Nor_VERB_',
 
-//    'The_ADJECTIVE__ADJECTIVE__NOUN_',
-//    'The_ADVERB__ADJECTIVE__NOUN_',
-//    'The_ADVERB__ADJECTIVE__NOUN_s',
-//    'The_ADVERB__ADJECTIVE__PLURALNOUN__VERB_',
+    //    'The_ADJECTIVE__ADJECTIVE__NOUN_',
+    //    'The_ADVERB__ADJECTIVE__NOUN_',
+    //    'The_ADVERB__ADJECTIVE__NOUN_s',
+    //    'The_ADVERB__ADJECTIVE__PLURALNOUN__VERB_',
 
     // WolvesComputeBadly
-//    '_PLURALNOUN__VERB__ADVERB_',
+    //    '_PLURALNOUN__VERB__ADVERB_',
 
     // UniteFacilitateAndMerge
-//    '_VERB__VERB_And_VERB_',
+    //    '_VERB__VERB_And_VERB_',
 
     // NastyWitchesAtThePub
-//    '_ADJECTIVE__PLURALNOUN_AtThe_PLACE_',
+    //    '_ADJECTIVE__PLURALNOUN_AtThe_PLACE_',
 ];
 
 /**

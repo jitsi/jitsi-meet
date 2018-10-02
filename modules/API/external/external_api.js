@@ -114,10 +114,10 @@ function parseArguments(args) {
 
     switch (typeof firstArg) {
     case 'string': // old arguments format
-    case undefined: // eslint-disable-line no-case-declarations
-    // not sure which format but we are trying to parse the old
-    // format because if the new format is used everything will be undefined
-    // anyway.
+    case undefined: {
+        // Not sure which format but we are trying to parse the old
+        // format because if the new format is used everything will be undefined
+        // anyway.
         const [
             roomName,
             width,
@@ -141,6 +141,7 @@ function parseArguments(args) {
             jwt,
             onload
         };
+    }
     case 'object': // new arguments format
         return args[0];
     default:

@@ -112,7 +112,7 @@ function initCommands() {
         const { name } = request;
 
         switch (name) {
-        case 'invite': // eslint-disable-line no-case-declarations
+        case 'invite': {
             const { invitees } = request;
 
             if (!Array.isArray(invitees) || invitees.length === 0) {
@@ -143,6 +143,7 @@ function initCommands() {
                     });
                 });
             break;
+        }
         case 'is-audio-muted':
             callback(APP.conference.isLocalAudioMuted());
             break;
