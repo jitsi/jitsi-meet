@@ -18,7 +18,7 @@ declare var interfaceConfig: Object;
  * @public
  * @type {Array<string>}
  */
-export const LANGUAGES = Object.keys(LANGUAGES_RESOURCES);
+export const LANGUAGES: Array<string> = Object.keys(LANGUAGES_RESOURCES);
 
 /**
  * The default language.

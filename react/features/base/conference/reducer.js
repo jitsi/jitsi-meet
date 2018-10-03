@@ -28,8 +28,13 @@ import { VIDEO_QUALITY_LEVELS } from './constants';
 import { isRoomValid } from './functions';
 
 const DEFAULT_STATE = {
+    conference: undefined,
     joining: undefined,
+    leaving: undefined,
+    locked: undefined,
     maxReceiverVideoQuality: VIDEO_QUALITY_LEVELS.HIGH,
+    password: undefined,
+    passwordRequired: undefined,
     preferredReceiverVideoQuality: VIDEO_QUALITY_LEVELS.HIGH
 };
 
