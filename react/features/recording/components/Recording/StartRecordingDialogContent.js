@@ -7,6 +7,7 @@ import {
     createRecordingDialogEvent,
     sendAnalytics
 } from '../../../analytics';
+import { DialogContent } from '../../../base/dialog';
 import { translate } from '../../../base/i18n';
 import {
     Container,
@@ -98,9 +99,9 @@ class StartRecordingDialogContent extends Component<Props> {
      */
     _renderNoIntegrationsContent() {
         return (
-            <Container>
+            <DialogContent>
                 { this.props.t('recording.startRecordingBody') }
-            </Container>
+            </DialogContent>
         );
     }
 

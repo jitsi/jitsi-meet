@@ -1,7 +1,8 @@
 // @flow
 
 import React, { Component } from 'react';
-import { Text, View } from 'react-native';
+
+import { Container, Text } from '../../react';
 
 import { dialog as styles } from './styles';
 
@@ -31,9 +32,9 @@ export default class DialogContent extends Component<Props> {
             : children;
 
         return (
-            <View style = { styles.dialogContainer }>
+            <Container style = { styles.dialogContainer }>
                 { childrenComponent }
-            </View>
+            </Container>
         );
     }
 }
