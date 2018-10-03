@@ -52,7 +52,7 @@ class StreamKeyForm extends AbstractStreamKeyForm {
                     shouldFitContainer = { true }
                     type = 'text'
                     value = { this.state.value } />
-                { this.props.helpURL
+                { this.helpURL
                     ? <div className = 'form-footer'>
                         <a
                             className = 'helper-link'

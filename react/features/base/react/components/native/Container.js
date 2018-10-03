@@ -58,7 +58,7 @@ export default class Container<P: Props> extends AbstractContainer<P> {
                         accessibilityLabel,
                         accessible,
                         onPress: onClick,
-                        underlayColor
+                        ...touchFeedback && { underlayColor }
                     },
                     element);
         }

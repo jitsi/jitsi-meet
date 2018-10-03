@@ -69,10 +69,10 @@ class VideoSwitch extends Component<Props> {
                     </View>
                 </TouchableWithoutFeedback>
                 <Switch
-                    onTintColor = { SWITCH_UNDER_COLOR }
                     onValueChange = { this._onStartAudioOnlyChange }
                     style = { styles.audioVideoSwitch }
-                    thumbTintColor = { SWITCH_THUMB_COLOR }
+                    thumbColor = { SWITCH_THUMB_COLOR }
+                    trackColor = {{ true: SWITCH_UNDER_COLOR }}
                     value = { _settings.startAudioOnly } />
                 <TouchableWithoutFeedback
                     onPress = { this._onStartAudioOnlyTrue }>

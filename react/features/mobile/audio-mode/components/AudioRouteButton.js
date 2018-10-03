@@ -22,7 +22,7 @@ import AudioRoutePickerDialog from './AudioRoutePickerDialog';
  */
 const MPVolumeView
     = NativeModules.MPVolumeViewManager
-        && requireNativeComponent('MPVolumeView', null);
+        && requireNativeComponent('MPVolumeView');
 
 /**
  * The style required to hide the {@code MPVolumeView}, since it's displayed

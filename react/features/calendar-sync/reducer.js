@@ -62,6 +62,7 @@ isCalendarEnabled()
             // knownDomains. At this point, it should have already been
             // translated into the new state format (namely, base/known-domains)
             // and the app no longer needs it.
+            // $FlowFixMe
             if (typeof state.knownDomains !== 'undefined') {
                 return set(state, 'knownDomains', undefined);
             }

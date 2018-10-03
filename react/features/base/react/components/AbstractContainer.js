@@ -95,6 +95,7 @@ export default class AbstractContainer<P: Props> extends Component<P> {
             ...filteredProps
         } = props || this.props;
 
+        // $FlowFixMe
         return React.createElement(type, filteredProps, children);
     }
 }
