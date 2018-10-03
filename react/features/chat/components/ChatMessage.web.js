@@ -67,7 +67,7 @@ class ChatMessage extends PureComponent<Props> {
             <div className = { `chatmessage ${messageTypeClassname}` }>
                 <img
                     className = 'chatArrow'
-                    src = '../../../../images/chatArrow.svg' />
+                    src = 'images/chatArrow.svg' />
                 <div className = 'display-name'>
                     { message.displayName }
                 </div>
