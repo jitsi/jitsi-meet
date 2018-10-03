@@ -101,7 +101,7 @@ class ChatInput extends Component<Props, State> {
                         <div id = 'smileys'>
                             <img
                                 onClick = { this._onToggleSmileysPanel }
-                                src = '../../../../images/smile.svg' />
+                                src = 'images/smile.svg' />
                         </div>
                     </div>
                     <div className = { smileysPanelClassName }>
