@@ -15,8 +15,6 @@ const minimize
     = process.argv.indexOf('-p') !== -1
         || process.argv.indexOf('--optimize-minimize') !== -1;
 
-// eslint-disable-next-line camelcase
-const node_modules = `${__dirname}/node_modules/`;
 const plugins = [
     new webpack.LoaderOptionsPlugin({
         debug: !minimize,
@@ -62,7 +60,9 @@ const config = {
             // Transpile ES2015 (aka ES6) to ES5. Accept the JSX syntax by React
             // as well.
 
-            exclude: node_modules, // eslint-disable-line camelcase
+            exclude: [
+                new RegExp(`${__dirname}/node_modules/(?!js-utils)`)
+            ],
             loader: 'babel-loader',
             options: {
                 // XXX The require.resolve bellow solves failures to locate the

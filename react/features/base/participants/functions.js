@@ -1,5 +1,5 @@
 // @flow
-import md5 from 'js-md5';
+import { getAvatarURL as _getAvatarURL } from 'js-utils/avatar';
 
 import { toState } from '../redux';
 
@@ -42,40 +42,18 @@ export function getAvatarURL({ avatarID, avatarURL, email, id }: {
         return avatarURL;
     }
 
-    let key = email || avatarID;
-    let urlPrefix;
-    let urlSuffix;
+    // The deployment is allowed to choose the avatar service which is to
+    // generate the random avatars.
+    const avatarService
+        = typeof interfaceConfig === 'object'
+                && interfaceConfig.RANDOM_AVATAR_URL_PREFIX
+            ? {
+                urlPrefix: interfaceConfig.RANDOM_AVATAR_URL_PREFIX,
+                urlSuffix: interfaceConfig.RANDOM_AVATAR_URL_SUFFIX }
+            : undefined;
 
-    // If the ID looks like an e-mail address, we'll use Gravatar because it
-    // supports e-mail addresses.
-    if (key && key.indexOf('@') > 0) {
-        urlPrefix = 'https://www.gravatar.com/avatar/';
-        urlSuffix = '?d=wavatar&size=200';
-    } else {
-        // Otherwise, we do not have much a choice but a random avatar (fetched
-        // from a configured avatar service).
-        if (!key) {
-            key = id;
-            if (!key) {
-                return undefined;
-            }
-        }
-
-        // The deployment is allowed to choose the avatar service which is to
-        // generate the random avatars.
-        urlPrefix
-            = typeof interfaceConfig === 'object'
-                && interfaceConfig.RANDOM_AVATAR_URL_PREFIX;
-        if (urlPrefix) {
-            urlSuffix = interfaceConfig.RANDOM_AVATAR_URL_SUFFIX;
-        } else {
-            // Otherwise, use a default (meeples, of course).
-            urlPrefix = 'https://abotars.jitsi.net/meeple/';
-            urlSuffix = '';
-        }
-    }
-
-    return urlPrefix + md5.hex(key.trim().toLowerCase()) + urlSuffix;
+    // eslint-disable-next-line object-property-newline
+    return _getAvatarURL({ avatarID, email, id }, avatarService);
 }
 
 /**
