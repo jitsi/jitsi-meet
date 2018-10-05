@@ -12,43 +12,6 @@
 
     .aui {
 
-        &-icon {
-            color: $auiDialogColor;
-            text-indent: -999em;
-
-            &-small {
-                width: 14px;
-                height: 14px;
-
-                &:before {
-                    color: inherit;
-                    font-family: "FontAwesome";
-                    font-size: 16px;
-                    -webkit-font-smoothing: antialiased;
-                    font-style: normal;
-                    font-weight: normal;
-                    left: 0;
-                    line-height: 1;
-                    margin-top: -8px;
-                    position: absolute;
-                    text-indent: 0;
-                    speak: none;
-                    top: 50%;
-                }
-            }
-        }
-
-        &-iconfont-close-dialog {
-            cursor: pointer;
-            right: 20px;
-            position: absolute;
-            top: -49px;
-
-            &:before {
-                content: "\f00d";
-            }
-        }
-
         &-dialog2 {
             &-header, &-footer {
                 background-color: $auiDialogBg;
@@ -123,6 +86,10 @@
                     border-top-left-radius: 5px;
                 }
             }
+        }
+
+        &-hide {
+            display: none;
         }
     }
 
