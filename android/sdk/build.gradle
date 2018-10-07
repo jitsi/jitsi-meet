@@ -103,7 +103,7 @@ gradle.projectsEvaluated {
 
         // React JS bundle directories
         def jsBundleDir = file("${bundlePath}/assets")
-        def resourcesDir = file("${bundlePath}/res/merged")
+        def resourcesDir = file("${bundlePath}/res")
         def jsBundleFile = file("${jsBundleDir}/index.android.bundle")
 
         // Bundle task name for variant.
