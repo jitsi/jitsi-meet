@@ -171,7 +171,7 @@ var interfaceConfig = {
      *
      * @type {boolean}
      */
-    RECENT_LIST_ENABLED: true
+    RECENT_LIST_ENABLED: true,
 
     /**
      * How many columns the tile view can expand to. The respected range is
@@ -193,6 +193,12 @@ var interfaceConfig = {
      * Specify mobile app scheme for opening the app from the mobile browser.
      */
     // APP_SCHEME: 'org.jitsi.meet'
+
+    /**
+     * Whether or not the jitsi meet app could be opened in a mobile browser.
+     * Defaults to false.
+     */
+    OPEN_IN_MOBILE_BROWSER: false
 };
 
 /* eslint-enable no-unused-vars, no-var, max-len */
