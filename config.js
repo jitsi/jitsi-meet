@@ -241,10 +241,6 @@ var config = {
     // Disable hiding of remote thumbnails when in a 1-on-1 conference call.
     // disable1On1Mode: false,
 
-    // The minimum value a video's height (or width, whichever is smaller) needs
-    // to be in order to be considered high-definition.
-    minHDHeight: 540,
-
     // Default language for the user interface.
     // defaultLanguage: 'en',
 
