@@ -21,12 +21,6 @@ export type Props = {
     _conference: Object,
 
     /**
-     * The ID for the Google client application used for making stream key
-     * related requests.
-     */
-    _googleApiApplicationClientID: string,
-
-    /**
      * The current state of interactions with the Google API. Determines what
      * Google related UI should display.
      */
@@ -279,7 +273,6 @@ export default class AbstractStartLiveStreamDialog<P: Props>
  * @param {Object} state - The Redux state.
  * @returns {{
  *     _conference: Object,
- *     _googleApiApplicationClientID: string,
  *     _googleAPIState: number,
  *     _googleProfileEmail: string,
  *     _streamKey: string
@@ -288,8 +281,6 @@ export default class AbstractStartLiveStreamDialog<P: Props>
 export function _mapStateToProps(state: Object) {
     return {
         _conference: state['features/base/conference'].conference,
-        _googleApiApplicationClientID:
-            state['features/base/config'].googleApiApplicationClientID,
         _googleAPIState: state['features/google-api'].googleAPIState,
         _googleProfileEmail: state['features/google-api'].profileEmail,
         _streamKey: state['features/recording'].streamKey

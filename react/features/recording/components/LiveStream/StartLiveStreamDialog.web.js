@@ -18,11 +18,20 @@ import {
 } from '../../../google-api';
 
 import AbstractStartLiveStreamDialog, {
-    _mapStateToProps,
-    type Props
+    _mapStateToProps as _abstractMapStateToProps,
+    type Props as AbstractProps
 } from './AbstractStartLiveStreamDialog';
 import StreamKeyPicker from './StreamKeyPicker';
 import StreamKeyForm from './StreamKeyForm';
+
+type Props = AbstractProps & {
+
+    /**
+     * The ID for the Google client application used for making stream key
+     * related requests.
+     */
+    _googleApiApplicationClientID: string
+}
 
 /**
  * A React Component for requesting a YouTube stream key to use for live
@@ -338,6 +347,22 @@ class StartLiveStreamDialog
 
         return <div className = 'google-error'>{ text }</div>;
     }
+}
+
+/**
+ * Maps part of the Redux state to the component's props.
+ *
+ * @param {Object} state - The Redux state.
+ * @returns {{
+ *     _googleApiApplicationClientID: string
+ * }}
+*/
+function _mapStateToProps(state: Object) {
+    return {
+        ..._abstractMapStateToProps(state),
+        _googleApiApplicationClientID:
+        state['features/base/config'].googleApiApplicationClientID
+    };
 }
 
 export default translate(connect(_mapStateToProps)(StartLiveStreamDialog));
