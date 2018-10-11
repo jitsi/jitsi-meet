@@ -10,23 +10,12 @@ import { googleApi } from '../../../google-api';
 
 import { setLiveStreamKey } from '../../actions';
 
-import AbstractStartLiveStreamDialog, {
-    _mapStateToProps as _abstractMapStateToProps,
-    type Props as AbstractProps
-} from './AbstractStartLiveStreamDialog';
+import AbstractStartLiveStreamDialog,
+{ _mapStateToProps, type Props } from './AbstractStartLiveStreamDialog';
 import GoogleSigninForm from './GoogleSigninForm';
 import StreamKeyForm from './StreamKeyForm';
 import StreamKeyPicker from './StreamKeyPicker';
 import styles from './styles';
-
-type Props = AbstractProps & {
-
-    /**
-     * The ID for the Google client application used for making stream key
-     * related requests on iOS.
-     */
-    _googleApiIOSClientID: string
-};
 
 /**
  * A React Component for requesting a YouTube stream key to use for live
@@ -124,8 +113,6 @@ class StartLiveStreamDialog extends AbstractStartLiveStreamDialog<Props> {
         return (
             <View style = { styles.startDialogWrapper }>
                 <GoogleSigninForm
-                    clientId = { this.props._googleApiApplicationClientID }
-                    iOSClientId = { this.props._googleApiIOSClientID }
                     onUserChanged = { this._onUserChanged } />
                 <StreamKeyPicker
                     broadcasts = { this.state.broadcasts }
@@ -137,22 +124,6 @@ class StartLiveStreamDialog extends AbstractStartLiveStreamDialog<Props> {
         );
     }
 
-}
-
-/**
- * Maps part of the Redux state to the component's props.
- *
- * @param {Object} state - The Redux state.
- * @returns {{
- *     _googleApiApplicationClientID: string
- * }}
- */
-function _mapStateToProps(state: Object) {
-    return {
-        ..._abstractMapStateToProps(state),
-        _googleApiIOSClientID:
-            state['features/base/config'].googleApiIOSClientID
-    };
 }
 
 export default translate(connect(_mapStateToProps)(StartLiveStreamDialog));
