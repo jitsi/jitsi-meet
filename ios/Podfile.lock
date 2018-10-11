@@ -27,7 +27,7 @@ PODS:
   - GTMSessionFetcher/Core (1.2.0)
   - GTMSessionFetcher/Full (1.2.0):
     - GTMSessionFetcher/Core (= 1.2.0)
-  - ObjectiveDropboxOfficial (3.9.1)
+  - ObjectiveDropboxOfficial (3.9.2)
   - React (0.57.1):
     - React/Core (= 0.57.1)
   - react-native-background-timer (2.0.0):
@@ -92,7 +92,7 @@ PODS:
     - RNSound/Core (= 0.10.9)
   - RNSound/Core (0.10.9):
     - React/Core
-  - RNVectorIcons (4.4.2):
+  - RNVectorIcons (5.0.0):
     - React
   - SDWebImage/Core (4.4.2)
   - SDWebImage/GIF (4.4.2):
@@ -177,7 +177,7 @@ SPEC CHECKSUMS:
   GoogleToolboxForMac: 91c824d21e85b31c2aae9bb011c5027c9b4e738f
   GTMOAuth2: c77fe325e4acd453837e72d91e3b5f13116857b2
   GTMSessionFetcher: 0c4baf0a73acd0041bf9f71ea018deedab5ea84e
-  ObjectiveDropboxOfficial: 274ce69d66286c94416daf1da5237c55e105e8c0
+  ObjectiveDropboxOfficial: aa792e0556ceb7b72955fa29a2709072f6e35fd9
   React: 1fe0eb13d90b625d94c3b117c274dcfd2e760e11
   react-native-background-timer: 63dcbf37dbcf294b5c6c071afcdc661fa06a7594
   react-native-calendar-events: fe6fbc8ed337a7423c98f2c9012b25f20444de09
