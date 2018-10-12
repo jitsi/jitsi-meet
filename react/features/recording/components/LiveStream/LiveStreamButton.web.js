@@ -1,8 +1,10 @@
 // @flow
 
+import React from 'react';
 import { connect } from 'react-redux';
 
 import { translate } from '../../../base/i18n';
+import { Container, Text } from '../../../base/react';
 
 import AbstractLiveStreamButton, {
     _mapStateToProps as _abstractMapStateToProps,
@@ -53,6 +55,25 @@ class LiveStreamButton extends AbstractLiveStreamButton<Props> {
      */
     componentWillReceiveProps(newProps: Props) {
         this.tooltip = newProps._liveStreamDisabledTooltipKey;
+    }
+
+    /**
+     * Helper function to be implemented by subclasses, which returns
+     * a React Element to display (a beta tag) at the end of the button.
+     *
+     * @override
+     * @protected
+     * @returns {ReactElement}
+     */
+    _getElementAfter() {
+        return (
+            <Container
+                className = { 'beta-tag' }>
+                <Text>
+                    { this.props.t('recording.beta') }
+                </Text>
+            </Container>
+        );
     }
 
     /**

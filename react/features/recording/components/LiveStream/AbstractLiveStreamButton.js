@@ -1,10 +1,8 @@
 // @flow
 
-import React from 'react';
 import { openDialog } from '../../../base/dialog';
 import { JitsiRecordingConstants } from '../../../base/lib-jitsi-meet';
 import { getLocalParticipant } from '../../../base/participants';
-import { Container, Text } from '../../../base/react';
 import {
     AbstractButton,
     type AbstractButtonProps
@@ -14,7 +12,6 @@ import { getActiveSession } from '../../functions';
 
 import StartLiveStreamDialog from './StartLiveStreamDialog';
 import StopLiveStreamDialog from './StopLiveStreamDialog';
-import styles from './styles';
 
 /**
  * The type of the React {@code Component} props of
@@ -46,26 +43,6 @@ export default class AbstractLiveStreamButton<P: Props>
     accessibilityLabel = 'dialog.accessibilityLabel.liveStreaming';
     label = 'dialog.startLiveStreaming';
     toggledLabel = 'dialog.stopLiveStreaming';
-
-    /**
-     * Helper function to be implemented by subclasses, which returns
-     * a React Element to display (a beta tag) at the end of the button.
-     *
-     * @override
-     * @protected
-     * @returns {ReactElement}
-     */
-    _getElementAfter() {
-        return (
-            <Container
-                className = { 'beta-tag' }
-                style = { styles && { ...styles.betaTag } }>
-                <Text style = { styles && { ...styles.betaTagText } }>
-                    { this.props.t('recording.beta') }
-                </Text>
-            </Container>
-        );
-    }
 
     /**
      * Handles clicking / pressing the button.
