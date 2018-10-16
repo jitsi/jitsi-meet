@@ -14,7 +14,6 @@
 		0B49424520AD8DBD00BD2DE0 /* outgoingStart.wav in Resources */ = {isa = PBXBuildFile; fileRef = 0B49424320AD8DBD00BD2DE0 /* outgoingStart.wav */; };
 		0B49424620AD8DBD00BD2DE0 /* outgoingRinging.wav in Resources */ = {isa = PBXBuildFile; fileRef = 0B49424420AD8DBD00BD2DE0 /* outgoingRinging.wav */; };
 		0B7C2CFD200F51D60060D076 /* LaunchOptions.m in Sources */ = {isa = PBXBuildFile; fileRef = 0B7C2CFC200F51D60060D076 /* LaunchOptions.m */; };
-		0B93EF7B1EC608550030D24D /* CoreText.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0B93EF7A1EC608550030D24D /* CoreText.framework */; };
 		0B93EF7E1EC9DDCD0030D24D /* RCTBridgeWrapper.h in Headers */ = {isa = PBXBuildFile; fileRef = 0B93EF7C1EC9DDCD0030D24D /* RCTBridgeWrapper.h */; };
 		0B93EF7F1EC9DDCD0030D24D /* RCTBridgeWrapper.m in Sources */ = {isa = PBXBuildFile; fileRef = 0B93EF7D1EC9DDCD0030D24D /* RCTBridgeWrapper.m */; };
 		0BA13D311EE83FF8007BEF7F /* ExternalAPI.m in Sources */ = {isa = PBXBuildFile; fileRef = 0BA13D301EE83FF8007BEF7F /* ExternalAPI.m */; };
@@ -114,7 +113,6 @@
 			files = (
 				0BB9AD791F5EC6D7001C08DB /* Intents.framework in Frameworks */,
 				0BB9AD771F5EC6CE001C08DB /* CallKit.framework in Frameworks */,
-				0B93EF7B1EC608550030D24D /* CoreText.framework in Frameworks */,
 				0F65EECE1D95DA94561BB47E /* libPods-JitsiMeet.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

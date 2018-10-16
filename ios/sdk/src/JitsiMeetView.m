@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-#import <CoreText/CoreText.h>
 #import <Intents/Intents.h>
 
 #include <mach/mach_time.h>
@@ -52,35 +51,6 @@ RCTFatalHandler _RCTFatal = ^(NSError *error) {
         }
     }
 };
-
-/**
- * Helper function to dynamically load custom fonts. The `UIAppFonts` key in the
- * plist file doesn't work for frameworks, so fonts have to be manually loaded.
- */
-void loadCustomFonts(Class clazz) {
-    NSBundle *bundle = [NSBundle bundleForClass:clazz];
-    NSArray *fonts = [bundle objectForInfoDictionaryKey:@"JitsiMeetFonts"];
-
-    for (NSString *item in fonts) {
-        NSString *fontName = [item stringByDeletingPathExtension];
-        NSString *fontExt = [item pathExtension];
-        NSString *fontPath = [bundle pathForResource:fontName ofType:fontExt];
-        NSData *inData = [NSData dataWithContentsOfFile:fontPath];
-        CFErrorRef error;
-        CGDataProviderRef provider
-            = CGDataProviderCreateWithCFData((__bridge CFDataRef)inData);
-        CGFontRef font = CGFontCreateWithDataProvider(provider);
-
-        if (!CTFontManagerRegisterGraphicsFont(font, &error)) {
-            CFStringRef errorDescription = CFErrorCopyDescription(error);
-
-            NSLog(@"Failed to load font: %@", errorDescription);
-            CFRelease(errorDescription);
-        }
-        CFRelease(font);
-        CFRelease(provider);
-    }
-}
 
 /**
  * Helper function to register a fatal error handler for React. Our handler
@@ -409,9 +379,6 @@ static NSMapTable<NSString *, JitsiMeetView *> *views;
         bridgeWrapper
             = [[RCTBridgeWrapper alloc] initWithLaunchOptions:_launchOptions];
         views = [NSMapTable strongToWeakObjectsMapTable];
-
-        // Dynamically load custom bundled fonts.
-        loadCustomFonts(self.class);
 
         // Register a fatal error handler for React.
         registerFatalErrorHandler();
