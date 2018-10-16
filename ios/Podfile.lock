@@ -92,7 +92,7 @@ PODS:
     - RNSound/Core (= 0.10.9)
   - RNSound/Core (0.10.9):
     - React/Core
-  - RNVectorIcons (5.0.0):
+  - RNVectorIcons (6.0.2):
     - React
   - SDWebImage/Core (4.4.2)
   - SDWebImage/GIF (4.4.2):
@@ -187,7 +187,7 @@ SPEC CHECKSUMS:
   react-native-webrtc: 31b6d3f1e3e2ce373aa43fd682b04367250f807d
   RNGoogleSignin: 44debd8c359a662c0e2d585952e88b985bf78008
   RNSound: b360b3862d3118ed1c74bb9825696b5957686ac4
-  RNVectorIcons: c0dbfbf6068fefa240c37b0f71bd03b45dddac44
+  RNVectorIcons: 8c52e1e8da1153613fdef44748e865c25556cb9c
   SDWebImage: 624d6e296c69b244bcede364c72ae0430ac14681
   yoga: b1ce48b6cf950b98deae82838f5173ea7cf89e85
 
