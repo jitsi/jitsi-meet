@@ -6,6 +6,7 @@ module.exports = {
         '.eslintrc-react-native.js'
     ],
     'rules': {
+        'jsdoc/require-description-complete-sentence': 0,
         'react/no-deprecated': 0
     }
 };
