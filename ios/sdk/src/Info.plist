@@ -20,7 +20,6 @@
 	<string>$(CURRENT_PROJECT_VERSION)</string>
 	<key>JitsiMeetFonts</key>
 	<array>
-		<string>FontAwesome.ttf</string>
 		<string>jitsi.ttf</string>
 	</array>
 	<key>LSApplicationQueriesSchemes</key>

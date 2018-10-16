@@ -114,11 +114,10 @@ android.libraryVariants.all { def variant ->
     def assetsDir = variant.mergeAssets.outputDir
 
     variant.mergeAssets.doLast {
-        // Bundle fonts in react-native-vector-icons
+        // Bundle fonts
         //
         copy {
             from("${projectDir}/../../fonts/jitsi.ttf")
-            from("${projectDir}/../../node_modules/react-native-vector-icons/Fonts/")
             into("${assetsDir}/fonts")
         }
 

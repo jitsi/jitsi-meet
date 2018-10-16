@@ -285,6 +285,7 @@
 				0BD906E31EC0C00300C8C18E /* Resources */,
 				0BCA49651EC4B77500B793EE /* Package React bundle */,
 				C7BC10B338C94EEB98048E64 /* [CP] Copy Pods Resources */,
+				0B64F7BE2175DFEA005009CD /* Remove unneeded fonts */,
 			);
 			buildRules = (
 			);
@@ -350,6 +351,24 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
+		0B64F7BE2175DFEA005009CD /* Remove unneeded fonts */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "Remove unneeded fonts";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# We need to manually do this because react-native-vecotr-icons lists fonts as resources in the Pod spec file\n# so they are automatically added.\n\nshopt -s extglob\n\nrm -f ${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/!(jitsi).ttf\n";
+		};
 		0BCA49651EC4B77500B793EE /* Package React bundle */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
