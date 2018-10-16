@@ -138,7 +138,7 @@ class DeepLinkingMobilePage extends Component<*, *> {
                         href = { this._generateDownloadURL() }
                         onClick = { this._onDownloadApp } 
                         target = "_blank">
-                        <button cgassName = { downloadButtonClassName }>
+                        <button className = { downloadButtonClassName }>
                             { t(`${_TNS}.downloadApp`) }
                         </button>
                     </a>
