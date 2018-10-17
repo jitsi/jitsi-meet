@@ -1,5 +1,22 @@
 import { regexes } from './smileys';
 
+/* eslint-disable no-useless-escape, max-len */
+const replacePatterns = {
+
+    // URLs starting with http://, https://, or ftp://
+    '<a href="$1" target="_blank" rel="noopener noreferrer">$1</a>':
+        /(\b(https?|ftp):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/gim,
+
+    // URLs starting with "www." (without // before it, or it'd re-link the ones done above).
+    '$1<a href="https://$2" target="_blank" rel="noopener noreferrer">$2</a>':
+        /(^|[^\/])(www\.[\S]+(\b|$))/gim,
+
+    // Change email addresses to mailto: links.
+    '<a href="mailto:$1">$1</a>':
+        /(([a-zA-Z0-9\-\_\.])+@[a-zA-Z\_]+?(\.[a-zA-Z]{2,6})+)/gim
+};
+/* eslint-enable no-useless-escape, max-len */
+
 /**
  * Processes links and smileys in "body".
  *
@@ -8,39 +25,38 @@ import { regexes } from './smileys';
  */
 export function processReplacements(body) {
     // make links clickable + add smileys
-    return smilify(linkify(body));
-}
 
+    // non of the patterns we search contains a space, that's why we tokenize it
+    // and after processing each token we join it again with the results
+    // making sure we do only one replacement for a token
+    const tokens = body.split(' ');
+    const resultText = [];
 
-/**
- * Finds and replaces all links in the links in "body" with an href tag.
- *
- * @param  {string} inputText - The message body.
- * @returns {string} The text replaced with HTML tags for links.
- */
-function linkify(inputText) {
-    let replacedText;
+    for (const token of tokens) {
+        let replacedText;
+        const tokenLength = token.length;
 
-    /* eslint-disable no-useless-escape, max-len */
+        for (const newString in replacePatterns) { // eslint-disable-line guard-for-in, max-len
+            const replacePattern = replacePatterns[newString];
 
-    // URLs starting with http://, https://, or ftp://
-    const replacePattern1 = /(\b(https?|ftp):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/gim;
+            replacedText = token.replace(replacePattern, newString);
 
-    replacedText = inputText.replace(replacePattern1, '<a href="$1" target="_blank" rel="noopener noreferrer">$1</a>');
+            // replacement was done, stop doing any other replacements
+            if (replacedText.length > tokenLength) {
+                break;
+            }
+            replacedText = null;
+        }
 
-    // URLs starting with "www." (without // before it, or it'd re-link the ones done above).
-    const replacePattern2 = /(^|[^\/])(www\.[\S]+(\b|$))/gim;
+        // no replacement was done, then just check for smiley
+        if (!replacedText) {
+            replacedText = smilify(token);
+        }
 
-    replacedText = replacedText.replace(replacePattern2, '$1<a href="https://$2" target="_blank" rel="noopener noreferrer">$2</a>');
+        resultText.push(replacedText);
+    }
 
-    // Change email addresses to mailto: links.
-    const replacePattern3 = /(([a-zA-Z0-9\-\_\.])+@[a-zA-Z\_]+?(\.[a-zA-Z]{2,6})+)/gim;
-
-    replacedText = replacedText.replace(replacePattern3, '<a href="mailto:$1">$1</a>');
-
-    /* eslint-enable no-useless-escape */
-
-    return replacedText;
+    return resultText.join(' ');
 }
 
 /**
