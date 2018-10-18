@@ -6,15 +6,15 @@ import { Modal, StyleSheet, TextInput } from 'react-native';
 import Prompt from 'react-native-prompt';
 import { connect } from 'react-redux';
 
-import { translate } from '../../i18n';
-import { LoadingIndicator } from '../../react';
-import { set } from '../../redux';
+import { translate } from '../../../i18n';
+import { LoadingIndicator } from '../../../react';
+import { set } from '../../../redux';
 
-import AbstractDialog from './AbstractDialog';
+import AbstractDialog from '../AbstractDialog';
 import type {
     Props as AbstractDialogProps,
     State as AbstractDialogState
-} from './AbstractDialog';
+} from '../AbstractDialog';
 import { dialog as styles } from './styles';
 
 /**
@@ -43,6 +43,11 @@ type Props = {
      * I18n key to put as body title.
      */
     bodyKey: string,
+
+    /**
+     * Function to be used to retreive translated i18n labels.
+     */
+    t: Function,
 
     textInputProps: Object
 };

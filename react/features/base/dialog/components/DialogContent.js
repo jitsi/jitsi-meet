@@ -4,7 +4,7 @@ import React, { Component } from 'react';
 
 import { Container, Text } from '../../react';
 
-import { dialog as styles } from './styles';
+import styles from './styles';
 
 type Props = {
 
