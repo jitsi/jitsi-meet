@@ -7,9 +7,9 @@ import _ from 'lodash';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 
-import { translate } from '../../i18n';
+import { translate } from '../../../i18n';
 
-import type { DialogProps } from '../constants';
+import type { DialogProps } from '../../constants';
 
 /**
  * The ID to be used for the cancel button if enabled.
@@ -55,6 +55,11 @@ type Props = {
      * Disables rendering of the submit button.
      */
     submitDisabled: boolean,
+
+    /**
+     * Function to be used to retreive translated i18n labels.
+     */
+    t: Function,
 
     /**
      * Width of the dialog, can be:

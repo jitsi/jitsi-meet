@@ -3,8 +3,8 @@
 import Tabs from '@atlaskit/tabs';
 import React, { Component } from 'react';
 
-import { StatelessDialog } from '../../../base/dialog';
-import { translate } from '../../../base/i18n';
+import { StatelessDialog } from '../../../dialog';
+import { translate } from '../../../i18n';
 
 const logger = require('jitsi-meet-logger').getLogger(__filename);
 

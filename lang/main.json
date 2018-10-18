@@ -266,6 +266,8 @@
         },
         "allow": "Allow",
         "confirm": "Confirm",
+        "confirmNo": "No",
+        "confirmYes": "Yes",
         "kickMessage": "Ouch! You have been kicked out of the meet!",
         "kickTitle": "Kicked from meeting",
         "popupErrorTitle": "Pop-up blocked",
