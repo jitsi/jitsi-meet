@@ -5,7 +5,12 @@ import { Text, TextInput, View } from 'react-native';
 import { connect as reduxConnect } from 'react-redux';
 
 import { connect, toJid } from '../../base/connection';
-import { Dialog } from '../../base/dialog';
+import {
+    CustomSubmitDialog,
+    FIELD_UNDERLINE,
+    PLACEHOLDER_COLOR,
+    inputDialog as inputDialogStyle
+} from '../../base/dialog';
 import { translate } from '../../base/i18n';
 import { JitsiConnectionErrors } from '../../base/lib-jitsi-meet';
 
@@ -162,37 +167,46 @@ class LoginDialog extends Component<Props, State> {
             }
         }
 
+        const showMessage = messageKey || connecting;
+        const message = messageKey
+            ? t(messageKey, messageOptions)
+            : connecting
+                ? t('connection.CONNECTING')
+                : '';
+
         return (
-            <Dialog
+            <CustomSubmitDialog
                 okDisabled = { connecting }
                 onCancel = { this._onCancel }
-                onSubmit = { this._onLogin }
-                titleKey = 'dialog.passwordRequired'>
+                onSubmit = { this._onLogin }>
                 <View style = { styles.loginDialog }>
                     <TextInput
                         autoCapitalize = { 'none' }
                         autoCorrect = { false }
                         onChangeText = { this._onUsernameChange }
                         placeholder = { 'user@domain.com' }
-                        style = { styles.dialogTextInput }
+                        placeholderTextColor = { PLACEHOLDER_COLOR }
+                        style = { inputDialogStyle.field }
+                        underlineColorAndroid = { FIELD_UNDERLINE }
                         value = { this.state.username } />
                     <TextInput
                         onChangeText = { this._onPasswordChange }
                         placeholder = { t('dialog.userPassword') }
+                        placeholderTextColor = { PLACEHOLDER_COLOR }
                         secureTextEntry = { true }
-                        style = { styles.dialogTextInput }
+                        style = { [
+                            inputDialogStyle.field,
+                            inputDialogStyle.bottomField
+                        ] }
+                        underlineColorAndroid = { FIELD_UNDERLINE }
                         value = { this.state.password } />
-                    <Text style = { styles.dialogText }>
-                        {
-                            messageKey
-                                ? t(messageKey, messageOptions)
-                                : connecting
-                                    ? t('connection.CONNECTING')
-                                    : ''
-                        }
-                    </Text>
+                    { showMessage && (
+                        <Text style = { styles.dialogText }>
+                            { message }
+                        </Text>
+                    ) }
                 </View>
-            </Dialog>
+            </CustomSubmitDialog>
         );
     }
 
