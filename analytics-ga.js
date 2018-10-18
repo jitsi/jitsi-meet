@@ -126,9 +126,10 @@
             return;
         }
 
-        // The e2e rtt are not useful in GA, and there are too many of them.
-        // We just filter them out for now.
-        if (event.action === 'e2e_rtt') {
+        // The e2e rtt, rtp stats and rtt by region stats are not useful in GA,
+        // and there are too many of them. We just filter them out for now.
+        if (event.action === 'e2e_rtt' || event.action === 'rtp.stats'
+            || event.action === 'rtt.by.region') {
             return;
         }
 
