@@ -88,6 +88,8 @@ void registerFatalErrorHandler() {
 
 @dynamic pictureInPictureEnabled;
 
+static NSString *_conferenceActivityType;
+
 static RCTBridgeWrapper *bridgeWrapper;
 
 /**
@@ -277,6 +279,16 @@ static NSMapTable<NSString *, JitsiMeetView *> *views;
     [self loadURLObject:urlString ? @{ @"url": urlString } : nil];
 }
 
+#pragma conferenceActivityType getter / setter
+
++ (NSString *)conferenceActivityType {
+    return _conferenceActivityType;
+}
+
++ (void) setConferenceActivityType:(NSString *)conferenceActivityType {
+    _conferenceActivityType = conferenceActivityType;
+}
+
 #pragma pictureInPictureEnabled getter / setter
 
 - (void) setPictureInPictureEnabled:(BOOL)pictureInPictureEnabled {
@@ -357,6 +369,13 @@ static NSMapTable<NSString *, JitsiMeetView *> *views;
                 @"config": @{@"startAudioOnly":@(startAudioOnly)},
                 @"url": url
                 };
+        }
+    } else if (_conferenceActivityType && [activityType isEqualToString:_conferenceActivityType]) {
+        // App was started by continuing a registered NSUserActivity (SiriKit, Handoff, ...)
+        NSString *url;
+
+        if ((url = userActivity.userInfo[@"url"])) {
+            return @{ @"url" : url };
         }
     }
 

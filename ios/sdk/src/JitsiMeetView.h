@@ -22,6 +22,8 @@
 
 @interface JitsiMeetView : UIView
 
+@property (class, copy, nonatomic, nullable) NSString *conferenceActivityType;
+
 @property (copy, nonatomic, nullable) NSURL *defaultURL;
 
 @property (nonatomic, nullable, weak) id<JitsiMeetViewDelegate> delegate;
