@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-#import <Intents/Intents.h>
+#import "JitsiMeetView+Private.h"
 
 #import <React/RCTBridge.h>
 #import <React/RCTBridgeModule.h>
@@ -36,6 +36,7 @@ RCT_EXPORT_MODULE();
 RCT_EXPORT_METHOD(getInitialURL:(RCTPromiseResolveBlock)resolve
                   reject:(__unused RCTPromiseRejectBlock)reject) {
     id initialURL = nil;
+
     if (self.bridge.launchOptions[UIApplicationLaunchOptionsURLKey]) {
         NSURL *url = self.bridge.launchOptions[UIApplicationLaunchOptionsURLKey];
         initialURL = url.absoluteString;
@@ -45,34 +46,7 @@ RCT_EXPORT_METHOD(getInitialURL:(RCTPromiseResolveBlock)resolve
         NSUserActivity *userActivity
             = [userActivityDictionary objectForKey:@"UIApplicationLaunchOptionsUserActivityKey"];
         if (userActivity != nil) {
-            NSString *activityType = userActivity.activityType;
-
-            if ([activityType isEqualToString:NSUserActivityTypeBrowsingWeb]) {
-                // App was started by opening a URL in the browser
-                initialURL = userActivity.webpageURL.absoluteString;
-            } else if ([activityType isEqualToString:@"INStartAudioCallIntent"]
-                       || [activityType isEqualToString:@"INStartVideoCallIntent"]) {
-                // App was started by a CallKit Intent
-                INIntent *intent = userActivity.interaction.intent;
-                NSArray<INPerson *> *contacts;
-                NSString *url;
-                BOOL startAudioOnly = NO;
-
-                if ([intent isKindOfClass:[INStartAudioCallIntent class]]) {
-                    contacts = ((INStartAudioCallIntent *) intent).contacts;
-                    startAudioOnly = YES;
-                } else if ([intent isKindOfClass:[INStartVideoCallIntent class]]) {
-                    contacts = ((INStartVideoCallIntent *) intent).contacts;
-                }
-
-                if (contacts && (url = contacts.firstObject.personHandle.value)) {
-                    initialURL
-                        = @{
-                            @"config": @{@"startAudioOnly":@(startAudioOnly)},
-                            @"url": url
-                            };
-                }
-            }
+            initialURL = [JitsiMeetView conferenceURLFromUserActivity:userActivity];
         }
     }
 
@@ -80,4 +54,3 @@ RCT_EXPORT_METHOD(getInitialURL:(RCTPromiseResolveBlock)resolve
 }
 
 @end
-
