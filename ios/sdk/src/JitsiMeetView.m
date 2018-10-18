@@ -120,44 +120,16 @@ static NSMapTable<NSString *, JitsiMeetView *> *views;
   continueUserActivity:(NSUserActivity *)userActivity
     restorationHandler:(void (^)(NSArray *restorableObjects))restorationHandler
 {
-    NSString *activityType = userActivity.activityType;
-
     // XXX At least twice we received bug reports about malfunctioning loadURL
     // in the Jitsi Meet SDK while the Jitsi Meet app seemed to functioning as
     // expected in our testing. But that was to be expected because the app does
     // not exercise loadURL. In order to increase the test coverage of loadURL,
     // channel Universal linking through loadURL.
-    if ([activityType isEqualToString:NSUserActivityTypeBrowsingWeb]
-            && [self loadURLInViews:userActivity.webpageURL]) {
+
+    id url = [self conferenceURLFromUserActivity:userActivity];
+
+    if (url && [self loadURLObjectInViews:url]) {
         return YES;
-    }
-
-    // Check for a CallKit intent.
-    if ([activityType isEqualToString:@"INStartAudioCallIntent"]
-            || [activityType isEqualToString:@"INStartVideoCallIntent"]) {
-        INIntent *intent = userActivity.interaction.intent;
-        NSArray<INPerson *> *contacts;
-        NSString *url;
-        BOOL startAudioOnly = NO;
-
-        if ([intent isKindOfClass:[INStartAudioCallIntent class]]) {
-            contacts = ((INStartAudioCallIntent *) intent).contacts;
-            startAudioOnly = YES;
-        } else if ([intent isKindOfClass:[INStartVideoCallIntent class]]) {
-            contacts = ((INStartVideoCallIntent *) intent).contacts;
-        }
-
-        if (contacts && (url = contacts.firstObject.personHandle.value)) {
-            // Load the URL contained in the handle.
-            [self loadURLObjectInViews:@{
-                @"config": @{
-                    @"startAudioOnly": @(startAudioOnly)
-                },
-                @"url": url
-            }];
-
-            return YES;
-        }
     }
 
     return [RCTLinkingManager application:application
@@ -357,6 +329,38 @@ static NSMapTable<NSString *, JitsiMeetView *> *views;
     }
 
     return handled;
+}
+
++ (NSDictionary *)conferenceURLFromUserActivity:(NSUserActivity *)userActivity {
+    NSString *activityType = userActivity.activityType;
+
+    if ([activityType isEqualToString:NSUserActivityTypeBrowsingWeb]) {
+        // App was started by opening a URL in the browser
+        return @{ @"url" : userActivity.webpageURL.absoluteString };
+    } else if ([activityType isEqualToString:@"INStartAudioCallIntent"]
+               || [activityType isEqualToString:@"INStartVideoCallIntent"]) {
+        // App was started by a CallKit Intent
+        INIntent *intent = userActivity.interaction.intent;
+        NSArray<INPerson *> *contacts;
+        NSString *url;
+        BOOL startAudioOnly = NO;
+
+        if ([intent isKindOfClass:[INStartAudioCallIntent class]]) {
+            contacts = ((INStartAudioCallIntent *) intent).contacts;
+            startAudioOnly = YES;
+        } else if ([intent isKindOfClass:[INStartVideoCallIntent class]]) {
+            contacts = ((INStartVideoCallIntent *) intent).contacts;
+        }
+
+        if (contacts && (url = contacts.firstObject.personHandle.value)) {
+            return @{
+                @"config": @{@"startAudioOnly":@(startAudioOnly)},
+                @"url": url
+                };
+        }
+    }
+
+    return nil;
 }
 
 + (instancetype)viewForExternalAPIScope:(NSString *)externalAPIScope {
