@@ -4,18 +4,9 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
 import { setPassword } from '../../base/conference';
-import { Dialog } from '../../base/dialog';
+import { InputDialog } from '../../base/dialog';
 
 import { _cancelPasswordRequiredPrompt } from '../actions';
-
-/**
- * The style of the {@link TextInput} rendered by
- * {@code PasswordRequiredPrompt}. As it requests the entry of a password, the
- * entry should better be secure.
- */
-const _TEXT_INPUT_PROPS = {
-    secureTextEntry: true
-};
 
 /**
  * {@code PasswordRequiredPrompt}'s React {@code Component} prop types.
@@ -62,12 +53,13 @@ class PasswordRequiredPrompt extends Component<Props> {
      */
     render() {
         return (
-            <Dialog
-                bodyKey = 'dialog.passwordLabel'
+            <InputDialog
+                contentKey = 'dialog.passwordLabel'
                 onCancel = { this._onCancel }
                 onSubmit = { this._onSubmit }
-                textInputProps = { _TEXT_INPUT_PROPS }
-                titleKey = 'dialog.passwordRequired' />
+                textInputProps = {{
+                    secureTextEntry: true
+                }} />
         );
     }
 
