@@ -3,7 +3,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 
-import { DialogContent } from '../../../../base/dialog';
+import { ConfirmDialog } from '../../../../base/dialog';
 import { translate } from '../../../../base/i18n';
 
 import AbstractStopRecordingDialog, {
@@ -20,19 +20,19 @@ import AbstractStopRecordingDialog, {
 class StopRecordingDialog extends AbstractStopRecordingDialog<Props> {
 
     /**
-     * Renders the platform specific dialog content.
+     * Implements {@code Component#render}.
      *
      * @inheritdoc
      */
-    _renderDialogContent() {
-        const { t } = this.props;
-
+    render() {
         return (
-            <DialogContent>
-                { t('dialog.stopRecordingWarning') }
-            </DialogContent>
+            <ConfirmDialog
+                contentKey = 'dialog.stopRecordingWarning'
+                onSubmit = { this._onSubmit } />
         );
     }
+
+    _onSubmit: () => boolean
 }
 
 export default translate(connect(_mapStateToProps)(StopRecordingDialog));

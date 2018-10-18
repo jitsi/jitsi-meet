@@ -4,6 +4,7 @@ import Spinner from '@atlaskit/spinner';
 import React from 'react';
 import { connect } from 'react-redux';
 
+import { Dialog } from '../../../../base/dialog';
 import { translate } from '../../../../base/i18n';
 
 import {
@@ -59,8 +60,6 @@ class StartLiveStreamDialog
         this._onRequestGoogleSignIn = this._onRequestGoogleSignIn.bind(this);
         this._onYouTubeBroadcastIDSelected
             = this._onYouTubeBroadcastIDSelected.bind(this);
-
-        this._renderDialogContent = this._renderDialogContent.bind(this);
     }
 
     /**
@@ -77,6 +76,39 @@ class StartLiveStreamDialog
             this._onInitializeGoogleApi();
         }
     }
+
+    /**
+     * Implements {@code Component}'s render.
+     *
+     * @inheritdoc
+     */
+    render() {
+        const { _googleApiApplicationClientID } = this.props;
+
+        return (
+            <Dialog
+                cancelTitleKey = 'dialog.Cancel'
+                okTitleKey = 'dialog.startLiveStreaming'
+                onCancel = { this._onCancel }
+                onSubmit = { this._onSubmit }
+                titleKey = 'liveStreaming.start'
+                width = { 'small' }>
+                <div className = 'live-stream-dialog'>
+                    { _googleApiApplicationClientID
+                        ? this._renderYouTubePanel() : null }
+                    <StreamKeyForm
+                        onChange = { this._onStreamKeyChange }
+                        value = {
+                            this.state.streamKey || this.props._streamKey
+                        } />
+                </div>
+            </Dialog>
+        );
+    }
+
+    _onCancel: () => boolean;
+
+    _onSubmit: () => boolean;
 
     _onInitializeGoogleApi: () => Promise<*>;
 
@@ -219,27 +251,6 @@ class StartLiveStreamDialog
         this._setStateIfMounted({
             errorType: (firstError && firstError.reason) || null
         });
-    }
-
-    _renderDialogContent: () => React$Component<*>
-
-    /**
-     * Renders the platform specific dialog content.
-     *
-     * @returns {React$Component}
-     */
-    _renderDialogContent() {
-        const { _googleApiApplicationClientID } = this.props;
-
-        return (
-            <div className = 'live-stream-dialog'>
-                { _googleApiApplicationClientID
-                    ? this._renderYouTubePanel() : null }
-                <StreamKeyForm
-                    onChange = { this._onStreamKeyChange }
-                    value = { this.state.streamKey || this.props._streamKey } />
-            </div>
-        );
     }
 
     /**

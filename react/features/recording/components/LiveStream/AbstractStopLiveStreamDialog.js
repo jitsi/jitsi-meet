@@ -1,8 +1,7 @@
 // @flow
 
-import React, { Component } from 'react';
+import { Component } from 'react';
 
-import { Dialog } from '../../../base/dialog';
 import {
     createRecordingDialogEvent,
     sendAnalytics
@@ -53,24 +52,6 @@ export default class AbstractStopLiveStreamDialog extends Component<Props> {
         this._onSubmit = this._onSubmit.bind(this);
     }
 
-    /**
-     * Implements React's {@link Component#render()}.
-     *
-     * @inheritdoc
-     * @returns {ReactElement}
-     */
-    render() {
-        return (
-            <Dialog
-                okTitleKey = 'dialog.stopLiveStreaming'
-                onSubmit = { this._onSubmit }
-                titleKey = 'dialog.liveStreaming'
-                width = 'small'>
-                { this._renderDialogContent() }
-            </Dialog>
-        );
-    }
-
     _onSubmit: () => boolean;
 
     /**
@@ -90,14 +71,6 @@ export default class AbstractStopLiveStreamDialog extends Component<Props> {
 
         return true;
     }
-
-    /**
-     * Function to be implemented by the platform specific implementations.
-     *
-     * @private
-     * @returns {React$Component<*>}
-     */
-    _renderDialogContent: () => React$Component<*>
 }
 
 /**

@@ -3,7 +3,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 
-import { DialogContent } from '../../../../base/dialog';
+import { ConfirmDialog } from '../../../../base/dialog';
 import { translate } from '../../../../base/i18n';
 
 import AbstractStopLiveStreamDialog, {
@@ -19,19 +19,20 @@ import AbstractStopLiveStreamDialog, {
 class StopLiveStreamDialog extends AbstractStopLiveStreamDialog {
 
     /**
-     * Renders the platform specific {@code Dialog} content.
+     * Implements React's {@link Component#render()}.
      *
      * @inheritdoc
+     * @returns {ReactElement}
      */
-    _renderDialogContent() {
+    render() {
         return (
-            <DialogContent>
-                {
-                    this.props.t('dialog.stopStreamingWarning')
-                }
-            </DialogContent>
+            <ConfirmDialog
+                contentKey = 'dialog.stopStreamingWarning'
+                onSubmit = { this._onSubmit } />
         );
     }
+
+    _onSubmit: () => boolean
 }
 
 export default translate(connect(_mapStateToProps)(StopLiveStreamDialog));

@@ -1,7 +1,9 @@
 // @flow
 
+import React from 'react';
 import { connect } from 'react-redux';
 
+import { Dialog } from '../../../../base/dialog';
 import { translate } from '../../../../base/i18n';
 
 import AbstractStopLiveStreamDialog, {
@@ -17,13 +19,24 @@ import AbstractStopLiveStreamDialog, {
 class StopLiveStreamDialog extends AbstractStopLiveStreamDialog {
 
     /**
-     * Renders the platform specific {@code Dialog} content.
+     * Implements React's {@link Component#render()}.
      *
      * @inheritdoc
+     * @returns {ReactElement}
      */
-    _renderDialogContent() {
-        return this.props.t('dialog.stopStreamingWarning');
+    render() {
+        return (
+            <Dialog
+                okTitleKey = 'dialog.stopLiveStreaming'
+                onSubmit = { this._onSubmit }
+                titleKey = 'dialog.liveStreaming'
+                width = 'small'>
+                { this.props.t('dialog.stopStreamingWarning') }
+            </Dialog>
+        );
     }
+
+    _onSubmit: () => boolean;
 }
 
 export default translate(connect(_mapStateToProps)(StopLiveStreamDialog));

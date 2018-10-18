@@ -1,8 +1,10 @@
 // @flow
 
+import React from 'react';
 import { connect } from 'react-redux';
 
 import { translate } from '../../../../base/i18n';
+import { Dialog } from '../../../../base/dialog';
 
 import AbstractStopRecordingDialog, {
     type Props,
@@ -16,20 +18,27 @@ import AbstractStopRecordingDialog, {
  * @extends Component
  */
 class StopRecordingDialog extends AbstractStopRecordingDialog<Props> {
-
     /**
-     * Renders the platform specific dialog content.
+     * Implements React's {@link Component#render()}.
      *
-     * @protected
-     * @returns {React$Component}
+     * @inheritdoc
+     * @returns {ReactElement}
      */
-    _renderDialogContent() {
+    render() {
         const { t } = this.props;
 
         return (
-            t('dialog.stopRecordingWarning')
+            <Dialog
+                okTitleKey = 'dialog.confirm'
+                onSubmit = { this._onSubmit }
+                titleKey = 'dialog.recording'
+                width = 'small'>
+                { t('dialog.stopRecordingWarning') }
+            </Dialog>
         );
     }
+
+    _onSubmit: () => boolean
 }
 
 export default translate(connect(_mapStateToProps)(StopRecordingDialog));

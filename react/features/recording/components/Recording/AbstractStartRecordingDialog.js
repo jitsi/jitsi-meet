@@ -1,20 +1,16 @@
 // @flow
 
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
+import { Component } from 'react';
 
 import {
     createRecordingDialogEvent,
     sendAnalytics
 } from '../../../analytics';
-import { Dialog } from '../../../base/dialog';
 import { JitsiRecordingConstants } from '../../../base/lib-jitsi-meet';
 import {
     getDropboxData,
     isEnabled as isDropboxEnabled
 } from '../../../dropbox';
-
-import StartRecordingDialogContent from './StartRecordingDialogContent';
 
 type Props = {
 
@@ -75,7 +71,7 @@ type State = {
 /**
  * Component for the recording start dialog.
  */
-class StartRecordingDialog extends Component<Props, State> {
+class AbstractStartRecordingDialog extends Component<Props, State> {
     /**
      * Initializes a new {@code StartRecordingDialog} instance.
      *
@@ -93,6 +89,8 @@ class StartRecordingDialog extends Component<Props, State> {
             userName: undefined,
             spaceLeft: undefined
         };
+
+        this._onSubmit = this._onSubmit.bind(this);
     }
 
     /**
@@ -113,7 +111,7 @@ class StartRecordingDialog extends Component<Props, State> {
      * @inheritdoc
      * @returns {void}
      */
-    componentDidUpdate(prevProps) {
+    componentDidUpdate(prevProps: Props) {
         if (this.props._token !== prevProps._token) {
             this._onTokenUpdated();
         }
@@ -156,33 +154,6 @@ class StartRecordingDialog extends Component<Props, State> {
                 }
             });
         }
-    }
-
-    /**
-     * Implements React's {@link Component#render()}.
-     *
-     * @inheritdoc
-     * @returns {ReactElement}
-     */
-    render() {
-        const { isTokenValid, isValidating, spaceLeft, userName } = this.state;
-        const { _isDropboxEnabled } = this.props;
-
-        return (
-            <Dialog
-                okDisabled = { !isTokenValid && _isDropboxEnabled }
-                okTitleKey = 'dialog.confirm'
-                onSubmit = { this._onSubmit }
-                titleKey = 'dialog.recording'
-                width = 'small'>
-                <StartRecordingDialogContent
-                    integrationsEnabled = { _isDropboxEnabled }
-                    isTokenValid = { isTokenValid }
-                    isValidating = { isValidating }
-                    spaceLeft = { spaceLeft }
-                    userName = { userName } />
-            </Dialog>
-        );
     }
 
     _onSubmit: () => boolean;
@@ -240,7 +211,7 @@ class StartRecordingDialog extends Component<Props, State> {
  *     _token: string
  * }}
  */
-function mapStateToProps(state: Object) {
+export function mapStateToProps(state: Object) {
     const { dropbox = {} } = state['features/base/config'];
 
     return {
@@ -251,4 +222,4 @@ function mapStateToProps(state: Object) {
     };
 }
 
-export default connect(mapStateToProps)(StartRecordingDialog);
+export default AbstractStartRecordingDialog;

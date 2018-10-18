@@ -12,6 +12,11 @@ import {
 export const ACTIVE_OPACITY = 0.3;
 
 /**
+ * Color for the key input field placeholder.
+ */
+export const PLACEHOLDER_COLOR = ColorPalette.lightGrey;
+
+/**
  * Underlay of the TouchableHighlight.
  */
 export const TOUCHABLE_UNDERLAY = ColorPalette.lightGrey;
@@ -69,14 +74,19 @@ export default createStyleSheet({
      */
     streamKeyInput: {
         alignSelf: 'stretch',
-        height: 50
+        borderColor: ColorPalette.lightGrey,
+        borderBottomWidth: 1,
+        color: ColorPalette.white,
+        height: 40,
+        marginBottom: 5
     },
 
     /**
      * Label for the previous field.
      */
     streamKeyInputLabel: {
-        alignSelf: 'flex-start'
+        alignSelf: 'flex-start',
+        color: ColorPalette.white
     },
 
     /**
@@ -108,7 +118,7 @@ export default createStyleSheet({
      * Additional style for the selected item.
      */
     streamKeyPickerItemHighlight: {
-        backgroundColor: ColorPalette.lighterGrey
+        backgroundColor: ColorPalette.darkGrey
     },
 
     /**
@@ -119,6 +129,10 @@ export default createStyleSheet({
         borderRadius: 3,
         borderWidth: 1,
         flexDirection: 'column'
+    },
+
+    text: {
+        color: ColorPalette.white
     }
 
 });
