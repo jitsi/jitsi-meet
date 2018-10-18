@@ -14,7 +14,15 @@
  * limitations under the License.
  */
 
+#import <Availability.h>
+#import <CoreSpotlight/CoreSpotlight.h>
+#import <MobileCoreServices/MobileCoreServices.h>
+
+#import "Types.h"
 #import "ViewController.h"
+
+// Needed for NSUserActivity suggestedInvocationPhrase
+@import Intents;
 
 /**
  * The query to perform through JMAddPeopleController when the InviteButton is
@@ -33,10 +41,9 @@ static NSString * const ADD_PEOPLE_CONTROLLER_QUERY = nil;
     [super viewDidLoad];
 
     JitsiMeetView *view = (JitsiMeetView *) self.view;
+    view.delegate = self;
 
 #ifdef DEBUG
-
-    view.delegate = self;
 
     // inviteController
     JMInviteController *inviteController = view.inviteController;
@@ -56,12 +63,13 @@ static NSString * const ADD_PEOPLE_CONTROLLER_QUERY = nil;
     [view loadURL:nil];
 }
 
-#if DEBUG
+
 
 // JitsiMeetViewDelegate
 
 - (void)_onJitsiMeetViewDelegateEvent:(NSString *)name
                              withData:(NSDictionary *)data {
+#if DEBUG
     NSLog(
         @"[%s:%d] JitsiMeetViewDelegate %@ %@",
         __FILE__, __LINE__, name, data);
@@ -70,6 +78,7 @@ static NSString * const ADD_PEOPLE_CONTROLLER_QUERY = nil;
         [NSThread isMainThread],
         @"JitsiMeetViewDelegate %@ method invoked on a non-main thread",
         name);
+#endif
 }
 
 - (void)conferenceFailed:(NSDictionary *)data {
@@ -78,6 +87,36 @@ static NSString * const ADD_PEOPLE_CONTROLLER_QUERY = nil;
 
 - (void)conferenceJoined:(NSDictionary *)data {
     [self _onJitsiMeetViewDelegateEvent:@"CONFERENCE_JOINED" withData:data];
+
+    // Register a NSUserActivity for this conference so it can be invoked as a
+    // Siri shortcut. This is only supported in iOS >= 12.
+#ifdef __IPHONE_12_0
+    if (@available(iOS 12.0, *)) {
+      NSUserActivity *userActivity
+        = [[NSUserActivity alloc] initWithActivityType:JitsiMeetConferenceActivityType];
+
+      NSString *urlStr = data[@"url"];
+      NSURL *url = [NSURL URLWithString:urlStr];
+      NSString *conference = [url.pathComponents lastObject];
+
+      userActivity.title = [NSString stringWithFormat:@"Join %@", conference];
+      userActivity.suggestedInvocationPhrase = @"Join my Jitsi meeting";
+      userActivity.userInfo = @{@"url": urlStr};
+      [userActivity setEligibleForSearch:YES];
+      [userActivity setEligibleForPrediction:YES];
+      [userActivity setPersistentIdentifier:urlStr];
+
+      // Subtitle
+      CSSearchableItemAttributeSet *attributes
+        = [[CSSearchableItemAttributeSet alloc] initWithItemContentType:(NSString *)kUTTypeItem];
+      attributes.contentDescription = urlStr;
+      userActivity.contentAttributeSet = attributes;
+
+      self.userActivity = userActivity;
+      [userActivity becomeCurrent];
+    }
+#endif
+
 }
 
 - (void)conferenceLeft:(NSDictionary *)data {
@@ -95,6 +134,8 @@ static NSString * const ADD_PEOPLE_CONTROLLER_QUERY = nil;
 - (void)loadConfigError:(NSDictionary *)data {
     [self _onJitsiMeetViewDelegateEvent:@"LOAD_CONFIG_ERROR" withData:data];
 }
+
+#if DEBUG
 
 // JMInviteControllerDelegate
 

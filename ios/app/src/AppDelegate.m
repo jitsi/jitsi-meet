@@ -17,6 +17,7 @@
 
 #import "AppDelegate.h"
 #import "FIRUtilities.h"
+#import "Types.h"
 
 #import <JitsiMeet/JitsiMeet.h>
 
@@ -36,6 +37,10 @@
         [FIRApp configure];
         [Fabric with:@[[Crashlytics class]]];
     }
+
+    // Set the conference activity type defined in this application.
+    // This cannot be defined by the SDK.
+    JitsiMeetView.conferenceActivityType = JitsiMeetConferenceActivityType;
 
     return [JitsiMeetView application:application
         didFinishLaunchingWithOptions:launchOptions];
