@@ -1,12 +1,11 @@
 // @flow
 
-import React, { Component } from 'react';
+import { Component } from 'react';
 
 import {
     createRecordingDialogEvent,
     sendAnalytics
 } from '../../../analytics';
-import { Dialog } from '../../../base/dialog';
 import { JitsiRecordingConstants } from '../../../base/lib-jitsi-meet';
 
 import { getActiveSession } from '../../functions';
@@ -53,24 +52,6 @@ export default class AbstractStopRecordingDialog<P: Props>
         this._onSubmit = this._onSubmit.bind(this);
     }
 
-    /**
-     * Implements React's {@link Component#render()}.
-     *
-     * @inheritdoc
-     * @returns {ReactElement}
-     */
-    render() {
-        return (
-            <Dialog
-                okTitleKey = 'dialog.confirm'
-                onSubmit = { this._onSubmit }
-                titleKey = 'dialog.recording'
-                width = 'small'>
-                { this._renderDialogContent() }
-            </Dialog>
-        );
-    }
-
     _onSubmit: () => boolean;
 
     /**
@@ -90,14 +71,6 @@ export default class AbstractStopRecordingDialog<P: Props>
 
         return true;
     }
-
-    /**
-     * Renders the platform specific dialog content.
-     *
-     * @protected
-     * @returns {React$Component}
-     */
-    _renderDialogContent: () => React$Component<*>
 }
 
 /**

@@ -126,14 +126,16 @@ class GoogleSigninForm extends Component<Props> {
             return null;
         }
 
+        const userInfo = signedInUser
+            ? `${t('liveStreaming.signedInAs')} ${signedInUser}`
+            : t('liveStreaming.signInCTA');
+
         return (
             <View style = { styles.formWrapper }>
                 <View style = { styles.helpText }>
-                    { signedInUser ? <Text>
-                        { `${t('liveStreaming.signedInAs')} ${signedInUser}` }
-                    </Text> : <Text>
-                        { t('liveStreaming.signInCTA') }
-                    </Text> }
+                    <Text style = { styles.text }>
+                        { userInfo }
+                    </Text>
                 </View>
                 <GoogleSignInButton
                     onClick = { this._onGoogleButtonPress }

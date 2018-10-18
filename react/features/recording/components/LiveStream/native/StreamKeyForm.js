@@ -9,7 +9,7 @@ import AbstractStreamKeyForm, {
     type Props
 } from '../AbstractStreamKeyForm';
 
-import styles from './styles';
+import styles, { PLACEHOLDER_COLOR } from './styles';
 
 /**
  * A React Component for entering a key for starting a YouTube live stream.
@@ -49,12 +49,13 @@ class StreamKeyForm extends AbstractStreamKeyForm {
                 <TextInput
                     onChangeText = { this._onInputChange }
                     placeholder = { t('liveStreaming.enterStreamKey') }
+                    placeholderTextColor = { PLACEHOLDER_COLOR }
                     style = { styles.streamKeyInput }
                     value = { this.props.value } />
                 <TouchableOpacity
                     onPress = { this._onOpenHelp }
                     style = { styles.streamKeyHelp } >
-                    <Text>
+                    <Text style = { styles.text }>
                         {
                             t('liveStreaming.streamIdHelp')
                         }

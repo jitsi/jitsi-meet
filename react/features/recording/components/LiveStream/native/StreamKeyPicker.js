@@ -74,7 +74,7 @@ class StreamKeyPicker extends Component<Props, State> {
         return (
             <View style = { styles.formWrapper }>
                 <View style = { styles.streamKeyPickerCta }>
-                    <Text>
+                    <Text style = { styles.text }>
                         { this.props.t('liveStreaming.choose') }
                     </Text>
                 </View>
@@ -90,7 +90,7 @@ class StreamKeyPicker extends Component<Props, State> {
                                     ? styles.streamKeyPickerItemHighlight : null
                             ] }
                             underlayColor = { TOUCHABLE_UNDERLAY }>
-                            <Text style = { styles.streamKeyPickerItemText }>
+                            <Text style = { styles.text }>
                                 { broadcast.title }
                             </Text>
                         </TouchableHighlight>))

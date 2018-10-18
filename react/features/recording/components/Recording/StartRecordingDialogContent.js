@@ -85,7 +85,7 @@ class StartRecordingDialogContent extends Component<Props> {
      * @returns {React$Component}
      */
     render() {
-        if (this.props.integrationsEnabled) {
+        if (this.props.integrationsEnabled === true) { // explicit true needed
             return this._renderIntegrationsContent();
         }
 
@@ -99,7 +99,7 @@ class StartRecordingDialogContent extends Component<Props> {
      */
     _renderNoIntegrationsContent() {
         return (
-            <DialogContent>
+            <DialogContent style = { styles.noIntegrationContent }>
                 { this.props.t('recording.startRecordingBody') }
             </DialogContent>
         );
@@ -195,12 +195,12 @@ class StartRecordingDialogContent extends Component<Props> {
                     className = 'logged-in-panel'
                     style = { styles.loggedIn }>
                     <Container>
-                        <Text>
+                        <Text style = { styles.text }>
                             { t('recording.loggedIn', { userName }) }
                         </Text>
                     </Container>
                     <Container>
-                        <Text>
+                        <Text style = { styles.text }>
                             {
                                 t('recording.availableSpace', {
                                     spaceLeft,
@@ -211,7 +211,9 @@ class StartRecordingDialogContent extends Component<Props> {
                     </Container>
                 </Container>
                 <Container style = { styles.startRecordingText }>
-                    <Text>{ t('recording.startRecordingBody') }</Text>
+                    <Text style = { styles.text }>
+                        { t('recording.startRecordingBody') }
+                    </Text>
                 </Container>
             </Container>
         );

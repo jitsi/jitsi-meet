@@ -38,6 +38,7 @@ export default createStyleSheet({
         borderColor: ColorPalette.lightGrey,
         borderRadius: 3,
         borderWidth: 1,
+        color: ColorPalette.white,
         height: BUTTON_HEIGHT,
         justifyContent: 'center'
     },

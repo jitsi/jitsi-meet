@@ -1,6 +1,6 @@
 // @flow
 
-import { BoxModel, createStyleSheet } from '../../../base/styles';
+import { BoxModel, createStyleSheet, ColorPalette } from '../../../base/styles';
 
 // XXX The "standard" {@code BoxModel.padding} has been deemed insufficient in
 // the special case(s) of the recording feature bellow.
@@ -28,16 +28,26 @@ export default createStyleSheet({
         paddingBottom: _PADDING
     },
 
+    noIntegrationContent: {
+        color: ColorPalette.white
+    },
+
     startRecordingText: {
         paddingBottom: _PADDING
     },
 
     switch: {
+        color: ColorPalette.white,
         paddingRight: BoxModel.padding
     },
 
     title: {
+        color: ColorPalette.white,
         fontSize: 16,
         fontWeight: 'bold'
+    },
+
+    text: {
+        color: ColorPalette.white
     }
 });
