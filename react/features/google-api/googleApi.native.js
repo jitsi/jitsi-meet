@@ -149,11 +149,12 @@ class GoogleApi {
                         let title;
 
                         // Finding title from the broadcast with the same
-                        // channelId. If not found (unknown scenario), we use
-                        // the key as title again.
+                        // boundStreamId. If not found (unknown scenario), we
+                        // use the key as title again.
                         for (const broadcast of broadcasts) {
-                            if (broadcast.snippet.channelId
-                                    === stream.snippet.channelId) {
+                            if (broadcast.contentDetails
+                                    && broadcast.contentDetails.boundStreamId
+                                        === stream.id) {
                                 title = broadcast.snippet.title;
                             }
                         }
