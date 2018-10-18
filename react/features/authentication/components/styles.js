@@ -1,4 +1,4 @@
-import { BoxModel, createStyleSheet } from '../../base/styles';
+import { BoxModel, ColorPalette, createStyleSheet } from '../../base/styles';
 
 /**
  * The style common to {@code LoginDialog} and {@code WaitForOwnerDialog}.
@@ -13,38 +13,22 @@ const dialog = {
  * {@code WaitForOwnerDialog}.
  */
 const text = {
+    color: ColorPalette.white
 };
 
 /**
  * The styles of the authentication feature.
  */
 export default createStyleSheet({
-    /**
-     * The style of bold {@code Text} rendered by the {@code Dialog}s of the
-     * feature authentication.
-     */
-    boldDialogText: {
-        ...text,
-        fontWeight: 'bold'
-    },
 
     /**
      * The style of {@code Text} rendered by the {@code Dialog}s of the
      * feature authentication.
      */
     dialogText: {
-        ...text
-    },
-
-    /**
-     * The style of {@code TextInput} rendered by the {@code Dialog}s of the
-     * feature authentication.
-     */
-    dialogTextInput: {
-        // XXX Matches react-native-prompt's dialogInput because base/dialog's
-        // Dialog is implemented using react-native-prompt.
-        fontSize: 18,
-        height: 50
+        ...text,
+        margin: BoxModel.margin,
+        marginTop: BoxModel.margin * 2
     },
 
     /**
