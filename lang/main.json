@@ -59,6 +59,7 @@
         "calendar": "Calendar",
         "connectCalendarText": "Connect your calendar to view all your meetings in __app__. Plus, add __app__ meetings to your calendar and start them with one click.",
         "connectCalendarButton": "Connect your calendar",
+        "enterRoomTitle": "Start a new meeting",
         "go": "GO",
         "join": "JOIN",
         "privacy": "Privacy",

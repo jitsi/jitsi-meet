@@ -1,6 +1,5 @@
 // @flow
 
-import Button from '@atlaskit/button';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import Tooltip from '@atlaskit/tooltip';
@@ -65,12 +64,11 @@ class AddMeetingUrlButton extends Component<Props> {
     render() {
         return (
             <Tooltip content = { this.props.t('calendarSync.addMeetingURL') }>
-                <Button
-                    appearance = 'primary'
-                    onClick = { this._onClick }
-                    type = 'button'>
+                <div
+                    className = 'button add-button'
+                    onClick = { this._onClick }>
                     <i className = { 'icon-add' } />
-                </Button>
+                </div>
             </Tooltip>
         );
     }
@@ -92,4 +90,3 @@ class AddMeetingUrlButton extends Component<Props> {
 }
 
 export default translate(connect()(AddMeetingUrlButton));
-

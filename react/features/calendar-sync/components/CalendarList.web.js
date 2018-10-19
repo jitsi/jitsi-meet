@@ -1,6 +1,5 @@
 // @flow
 
-import Button from '@atlaskit/button';
 import Spinner from '@atlaskit/spinner';
 import React from 'react';
 import { connect } from 'react-redux';
@@ -82,7 +81,7 @@ class CalendarList extends AbstractPage<Props> {
             CalendarListContent
                 ? <CalendarListContent
                     disabled = { disabled }
-                    renderListEmptyComponent
+                    listEmptyComponent
                         = { this._getRenderListEmptyComponent() } />
                 : null
         );
@@ -102,21 +101,18 @@ class CalendarList extends AbstractPage<Props> {
 
         if (_hasIntegrationSelected && _hasLoadedEvents) {
             return (
-                <div className = 'navigate-section-list-empty'>
+                <div className = 'meetings-list-empty'>
                     <div>{ t('calendarSync.noEvents') }</div>
-                    <Button
-                        appearance = 'primary'
-                        className = 'calendar-button'
-                        id = 'connect_calendar_button'
-                        onClick = { this._onRefreshEvents }
-                        type = 'button'>
+                    <div
+                        className = 'button'
+                        onClick = { this._onRefreshEvents }>
                         { t('calendarSync.refresh') }
-                    </Button>
+                    </div>
                 </div>
             );
         } else if (_hasIntegrationSelected && !_hasLoadedEvents) {
             return (
-                <div className = 'navigate-section-list-empty'>
+                <div className = 'meetings-list-empty'>
                     <Spinner
                         invertColor = { true }
                         isCompleting = { false }
@@ -126,20 +122,17 @@ class CalendarList extends AbstractPage<Props> {
         }
 
         return (
-            <div className = 'navigate-section-list-empty'>
-                <p className = 'header-text-description'>
+            <div className = 'meetings-list-empty'>
+                <p className = 'description'>
                     { t('welcomepage.connectCalendarText', {
                         app: interfaceConfig.APP_NAME
                     }) }
                 </p>
-                <Button
-                    appearance = 'primary'
-                    className = 'calendar-button'
-                    id = 'connect_calendar_button'
-                    onClick = { this._onOpenSettings }
-                    type = 'button'>
+                <div
+                    className = 'button'
+                    onClick = { this._onOpenSettings }>
                     { t('welcomepage.connectCalendarButton') }
-                </Button>
+                </div>
             </div>
         );
     }
