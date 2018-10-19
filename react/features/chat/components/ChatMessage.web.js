@@ -67,7 +67,7 @@ class ChatMessage extends PureComponent<Props> {
 
         items.forEach(i => {
             if (typeof i === 'string') {
-                processedMessage.push(<Linkify>{ i }</Linkify>);
+                processedMessage.push(<Linkify key = { i }>{ i }</Linkify>);
             } else {
                 processedMessage.push(i);
             }
