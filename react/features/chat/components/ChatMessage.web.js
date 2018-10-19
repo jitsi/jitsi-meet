@@ -1,10 +1,11 @@
 // @flow
 
 import React, { PureComponent } from 'react';
+import { toArray } from 'react-emoji-render';
+import Linkify from 'react-linkify';
+
 
 import { translate } from '../../base/i18n';
-
-import { processReplacements } from '../replacement';
 
 /**
  * The type of the React {@code Component} props of {@link Chat}.
@@ -61,7 +62,16 @@ class ChatMessage extends PureComponent<Props> {
         const escMessage = messagetoDisplay.replace(/</g, '&lt;')
             .replace(/>/g, '&gt;')
             .replace(/\n/g, '<br/>');
-        const messageWithHTML = processReplacements(escMessage);
+        const processedMessage = [];
+        const items = toArray(escMessage, { className: 'smiley' });
+
+        items.forEach(i => {
+            if (typeof i === 'string') {
+                processedMessage.push(<Linkify>{ i }</Linkify>);
+            } else {
+                processedMessage.push(i);
+            }
+        });
 
         return (
             <div className = { `chatmessage ${messageTypeClassname}` }>
@@ -74,10 +84,9 @@ class ChatMessage extends PureComponent<Props> {
                 <div className = { 'timestamp' }>
                     { ChatMessage.formatTimestamp(message.timestamp) }
                 </div>
-                <div
-                    className = 'usermessage'
-                    // eslint-disable-next-line react/no-danger
-                    dangerouslySetInnerHTML = {{ __html: messageWithHTML }} />
+                <div className = 'usermessage'>
+                    { processedMessage }
+                </div>
             </div>
         );
     }

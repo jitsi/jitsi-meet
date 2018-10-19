@@ -214,12 +214,11 @@
 }
 
 .smiley {
-    height: 26px;
+    font-size: 14pt;
 }
 
 #smileys {
-    background: white;
-    border-radius: 50%;
+    font-size: 20pt;
     display: inline-block;
     height: 26px;
     margin: auto;
@@ -270,6 +269,7 @@
 
 #smileysContainer .smiley {
     padding: 7px;
+    font-size: 20pt;
 }
 
 .smileyContainer {
