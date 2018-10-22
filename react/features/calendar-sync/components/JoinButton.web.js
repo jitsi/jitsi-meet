@@ -1,6 +1,5 @@
 // @flow
 
-import Button from '@atlaskit/button';
 import React, { Component } from 'react';
 import Tooltip from '@atlaskit/tooltip';
 
@@ -58,13 +57,11 @@ class JoinButton extends Component<Props> {
         return (
             <Tooltip
                 content = { t('calendarSync.joinTooltip') }>
-                <Button
-                    appearance = 'primary'
-                    className = 'join-button'
-                    onClick = { this._onClick }
-                    type = 'button'>
+                <div
+                    className = 'button join-button'
+                    onClick = { this._onClick }>
                     { t('calendarSync.join') }
-                </Button>
+                </div>
             </Tooltip>
         );
     }
@@ -84,4 +81,3 @@ class JoinButton extends Component<Props> {
 }
 
 export default translate(JoinButton);
-

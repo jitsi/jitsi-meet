@@ -79,7 +79,7 @@ class CalendarList extends AbstractPage<Props> {
             CalendarListContent
                 ? <CalendarListContent
                     disabled = { disabled }
-                    renderListEmptyComponent
+                    listEmptyComponent
                         = { this._getRenderListEmptyComponent() } />
                 : null
         );

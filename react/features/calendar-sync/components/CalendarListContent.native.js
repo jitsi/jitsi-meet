@@ -15,8 +15,6 @@ import { NavigateSectionList } from '../../base/react';
 import { refreshCalendar, openUpdateCalendarEventDialog } from '../actions';
 import { isCalendarEnabled } from '../functions';
 
-import AddMeetingUrlButton from './AddMeetingUrlButton';
-import JoinButton from './JoinButton';
 
 /**
  * The type of the React {@code Component} props of
@@ -42,7 +40,7 @@ type Props = {
     /**
      *
      */
-    renderListEmptyComponent: Function,
+    listEmptyComponent: React$Node,
 
     /**
      * The translate function.
@@ -70,7 +68,6 @@ class CalendarListContent extends Component<Props> {
         super(props);
 
         // Bind event handlers so they are only bound once per instance.
-        this._onJoinPress = this._onJoinPress.bind(this);
         this._onPress = this._onPress.bind(this);
         this._onRefresh = this._onRefresh.bind(this);
         this._onSecondaryAction = this._onSecondaryAction.bind(this);
@@ -97,7 +94,7 @@ class CalendarListContent extends Component<Props> {
      * @inheritdoc
      */
     render() {
-        const { disabled, renderListEmptyComponent } = this.props;
+        const { disabled, listEmptyComponent } = this.props;
 
         return (
             <NavigateSectionList
@@ -106,25 +103,9 @@ class CalendarListContent extends Component<Props> {
                 onRefresh = { this._onRefresh }
                 onSecondaryAction = { this._onSecondaryAction }
                 renderListEmptyComponent
-                    = { renderListEmptyComponent }
+                    = { listEmptyComponent }
                 sections = { this._toDisplayableList() } />
         );
-    }
-
-    _onJoinPress: (Object, string) => Function;
-
-    /**
-     * Handles the list's navigate action.
-     *
-     * @private
-     * @param {Object} event - The click event.
-     * @param {string} url - The url string to navigate to.
-     * @returns {void}
-     */
-    _onJoinPress(event, url) {
-        event.stopPropagation();
-
-        this._onPress(url, 'calendar.meeting.join');
     }
 
     _onPress: (string, string) => Function;
@@ -197,13 +178,6 @@ class CalendarListContent extends Component<Props> {
      */
     _toDisplayableItem(event) {
         return {
-            elementAfter: event.url
-                ? <JoinButton
-                    onPress = { this._onJoinPress }
-                    url = { event.url } />
-                : (<AddMeetingUrlButton
-                    calendarId = { event.calendarId }
-                    eventId = { event.id } />),
             id: event.id,
             key: `${event.id}-${event.startDate}`,
             lines: [

@@ -1,39 +1,27 @@
 /* global interfaceConfig */
 
-import { NavigateSectionList } from '../base/react';
-
-import { toDisplayableItem } from './functions.any';
+import { parseURIString } from '../base/util';
 
 
 /**
- * Transforms the history list to a displayable list
- * with sections.
+ * Transforms the history list to a displayable list.
  *
  * @private
  * @param {Array<Object>} recentList - The recent list form the redux store.
- * @param {Function} t - The translate function.
- * @param {string} defaultServerURL - The default server URL.
  * @returns {Array<Object>}
  */
-export function toDisplayableList(recentList, t, defaultServerURL) {
-    const { createSection } = NavigateSectionList;
-    const section
-        = createSection(t('recentList.joinPastMeeting'), 'joinPastMeeting');
-
-    // We only want the last three conferences we were in for web.
-    for (const item of recentList.slice(-3)) {
-        const displayableItem = toDisplayableItem(item, defaultServerURL, t);
-
-        section.data.push(displayableItem);
-    }
-    const displayableList = [];
-
-    if (section.data.length) {
-        section.data.reverse();
-        displayableList.push(section);
-    }
-
-    return displayableList;
+export function toDisplayableList(recentList) {
+    return (
+        recentList.slice(-3).reverse()
+            .map(item => {
+                return {
+                    date: item.date,
+                    duration: item.duration,
+                    time: [ item.date ],
+                    title: parseURIString(item.conference).room,
+                    url: item.conference
+                };
+            }));
 }
 
 /**

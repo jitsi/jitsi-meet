@@ -4,7 +4,7 @@ body.welcome-page {
 }
 
 .welcome {
-    background-color: $welcomePageHeaderBackground;
+    background-image: $welcomePageHeaderBackground;
     display: flex;
     flex-direction: column;
     font-family: $welcomePageFontFamily;
@@ -24,8 +24,8 @@ body.welcome-page {
         .header-text {
             display: flex;
             flex-direction: column;
-            margin-top: $watermarkHeight + 80;
-            margin-bottom: 36px;
+            margin-top: $watermarkHeight + 35;
+            margin-bottom: 35px;
             max-width: calc(100% - 40px);
             width: 650px;
             z-index: $zindex2;
@@ -35,7 +35,6 @@ body.welcome-page {
             color: $welcomePageTitleColor;
             font-size: 2.5rem;
             font-weight: 500;
-            letter-spacing: 0;
             line-height: 1.18;
             margin-bottom: 16px;
         }
@@ -49,41 +48,118 @@ body.welcome-page {
         }
 
         #enter_room {
-            align-items: center;
             display: flex;
+            align-items: center;
             max-width: calc(100% - 40px);
-            margin-bottom: 20px;
-            position: relative;
-            width: 650px;
+            width: 680px;
             z-index: $zindex2;
+            background-color: #fff;
+            padding: 25px 30px;
 
-            .enter-room-input {
-                display: inline-block;
-                margin-right: 8px;
+            .enter-room-input-container {
                 width: 100%;
+                padding-right: 8px;
+                padding-bottom: 5px;
+                text-align: left;
+                color: #253858;
+                height: fit-content;
+                border-width: 0px 0px 2px 0px;
+                border-style: solid;
+                border-image: linear-gradient(to right, #dee1e6, #fff) 1;
+
+                .enter-room-title {
+                    font-size: 18px;
+                    font-weight: bold;
+                    padding-bottom: 5px;
+                }
+
+                .enter-room-input {
+                    border: none;
+                    display: inline-block;
+                    width: 100%;
+                    font-size: 14px;
+                }
+
+                ::placeholder {
+                    color: #253858;
+                }
             }
+
         }
 
         .tab-container {
             font-size: 16px;
             position: relative;
             text-align: left;
-            width: 650px;
+            min-height: 354px;
+            width: 710px;
+            background: #75A7E7;
+            display: flex;
+            flex-direction: column;
+
+            .tab-content{
+                margin: 5px 0px;
+                overflow: hidden;
+                flex-grow: 1;
+                position: relative;
+
+                > * {
+                    position: absolute;
+                }
+            }
+
+            .tab-buttons {
+                font-size: 18px;
+                color: #FFFFFF;
+                display: flex;
+                flex-grow: 0;
+                flex-direction: row;
+                min-height: 54px;
+                width: 100%;
+
+                .tab {
+                    text-align: center;
+                    background: rgba(9,30,66,0.37);
+                    height: 55px;
+                    line-height: 54px;
+                    flex-grow: 1;
+                    cursor: pointer;
+
+                    &.selected, &:hover {
+                        background: rgba(9,30,66,0.71);
+                    }
+
+                    &:last-child {
+                        margin-left: 1px;
+                    }
+                }
+            }
         }
     }
 
     .welcome-page-button {
-        font-size: 16px;
+        width: 51px;
+        height: 35px;
+        font-size: 14px;
+        background: #0074E0;
+        border-radius: 4px;
+        color: #FFFFFF;
+        text-align: center;
+        vertical-align: middle;
+        line-height: 35px;
+        cursor: pointer;
     }
 
     .welcome-page-settings {
         color: $welcomePageDescriptionColor;
         position: absolute;
-        right: 10px;
+        top: 32px;
+        right: 32px;
         z-index: $zindex2;
 
         * {
             cursor: pointer;
+            font-size: 32px;
         }
     }
 

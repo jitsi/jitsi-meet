@@ -2,25 +2,14 @@
 import React from 'react';
 import { connect } from 'react-redux';
 
-import {
-    createRecentClickedEvent,
-    createRecentSelectedEvent,
-    sendAnalytics
-} from '../../analytics';
-import { appNavigate, getDefaultURL } from '../../app';
+import { getDefaultURL } from '../../app';
 import { translate } from '../../base/i18n';
-import {
-    AbstractPage,
-    Container,
-    NavigateSectionList,
-    Text
-} from '../../base/react';
+import { NavigateSectionList } from '../../base/react';
 import type { Section } from '../../base/react';
 
 import { deleteRecentListEntry } from '../actions';
 import { isRecentListEnabled, toDisplayableList } from '../functions';
-
-import styles from './styles';
+import AbstractRecentList from './AbstractRecentList';
 
 /**
  * The type of the React {@code Component} props of {@link RecentList}
@@ -54,10 +43,13 @@ type Props = {
 };
 
 /**
- * The cross platform container rendering the list of the recently joined rooms.
+ * A class that renders the list of the recently joined rooms.
  *
  */
-class RecentList extends AbstractPage<Props> {
+class RecentList extends AbstractRecentList<Props> {
+    _getRenderListEmptyComponent: () => React$Node;
+    _onPress: string => {};
+
     /**
      * Initializes a new {@code RecentList} instance.
      *
@@ -67,18 +59,6 @@ class RecentList extends AbstractPage<Props> {
         super(props);
 
         this._onDelete = this._onDelete.bind(this);
-        this._onPress = this._onPress.bind(this);
-    }
-
-    /**
-     * Implements React's {@link Component#componentDidMount()}. Invoked
-     * immediately after this component is mounted.
-     *
-     * @inheritdoc
-     * @returns {void}
-     */
-    componentDidMount() {
-        sendAnalytics(createRecentSelectedEvent());
     }
 
     /**
@@ -90,7 +70,12 @@ class RecentList extends AbstractPage<Props> {
         if (!isRecentListEnabled()) {
             return null;
         }
-        const { disabled, t, _defaultServerURL, _recentList } = this.props;
+        const {
+            disabled,
+            t,
+            _defaultServerURL,
+            _recentList
+        } = this.props;
         const recentList = toDisplayableList(_recentList, t, _defaultServerURL);
         const slideActions = [ {
             backgroundColor: 'red',
@@ -109,31 +94,6 @@ class RecentList extends AbstractPage<Props> {
         );
     }
 
-    _getRenderListEmptyComponent: () => Object;
-
-    /**
-     * Returns a list empty component if a custom one has to be rendered instead
-     * of the default one in the {@link NavigateSectionList}.
-     *
-     * @private
-     * @returns {React$Component}
-     */
-    _getRenderListEmptyComponent() {
-        const { t } = this.props;
-
-        return (
-            <Container
-                className = 'navigate-section-list-empty'
-                style = { styles.emptyListContainer }>
-                <Text
-                    className = 'header-text-description'
-                    style = { styles.emptyListText }>
-                    { t('welcomepage.recentListEmpty') }
-                </Text>
-            </Container>
-        );
-    }
-
     _onDelete: Object => void
 
     /**
@@ -145,23 +105,6 @@ class RecentList extends AbstractPage<Props> {
      */
     _onDelete(itemId) {
         this.props.dispatch(deleteRecentListEntry(itemId));
-    }
-
-    _onPress: string => Function;
-
-    /**
-     * Handles the list's navigate action.
-     *
-     * @private
-     * @param {string} url - The url string to navigate to.
-     * @returns {void}
-     */
-    _onPress(url) {
-        const { dispatch } = this.props;
-
-        sendAnalytics(createRecentClickedEvent('recent.meeting.tile'));
-
-        dispatch(appNavigate(url));
     }
 }
 
