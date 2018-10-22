@@ -1,7 +1,6 @@
 .meetings-list {
     font-size: 14px;
     color: #253858;
-    letter-spacing: -0.13px;
     line-height: 20px;
     text-align: left;
     text-overflow: ellipsis;
@@ -21,8 +20,8 @@
         flex-direction: column;
 
         .description {
-            font-size: 20px;
-            margin-bottom: 20px;
+            font-size: 16px;
+            padding: 20px;
         }
     }
 
@@ -42,7 +41,7 @@
         box-sizing: border-box;
         display: inline-flex;
         margin-top: 5px;
-        min-height: 93px;
+        min-height: 92px;
         width: 100%;
         word-break: break-word;
         display: flex;
@@ -59,10 +58,11 @@
             width: 140px;
             flex-grow: 0;
             padding-left: 30px;
-            padding-top: 30px;
+            padding-top: 25px;
 
             .date {
                 font-weight: bold;
+                padding-bottom: 5px;
             }
         }
 
@@ -71,12 +71,12 @@
             flex-direction: column;
             flex-grow: 1;
             padding-left: 30px;
-            padding-top: 30px;
+            padding-top: 25px;
 
             .title {
-                font-size: 18px;
-                letter-spacing: -0.17px;
+                font-size: 16px;
                 font-weight: bold;
+                padding-bottom: 5px;
             }
         }
 
@@ -93,7 +93,7 @@
         }
 
         &.with-click-handler:hover {
-            background-color: #76A7E6;
+            background-color: #75A7E7;
         }
 
         .add-button {

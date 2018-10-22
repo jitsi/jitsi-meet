@@ -24,8 +24,8 @@ body.welcome-page {
         .header-text {
             display: flex;
             flex-direction: column;
-            margin-top: $watermarkHeight + 80;
-            margin-bottom: 36px;
+            margin-top: $watermarkHeight + 35;
+            margin-bottom: 35px;
             max-width: calc(100% - 40px);
             width: 650px;
             z-index: $zindex2;
@@ -33,27 +33,28 @@ body.welcome-page {
 
         .header-text-title {
             color: $welcomePageTitleColor;
-            font-size: 36px;
-            letter-spacing: -0.14px;
+            font-size: 2.5rem;
+            font-weight: 500;
+            line-height: 1.18;
             margin-bottom: 16px;
         }
 
         .header-text-description {
             color: $welcomePageDescriptionColor;
-            font-size: 20px;
-            letter-spacing: -0.14px;
+            font-size: 1rem;
+            font-weight: 400;
+            line-height: 24px;
             margin-bottom: 20px;
         }
 
         #enter_room {
             display: flex;
+            align-items: center;
             max-width: calc(100% - 40px);
-            position: relative;
-            width: 706px;
-            height: 70px;
+            width: 680px;
             z-index: $zindex2;
             background-color: #fff;
-            padding: 37px 35px 0px 35px;
+            padding: 25px 30px;
 
             .enter-room-input-container {
                 width: 100%;
@@ -68,8 +69,8 @@ body.welcome-page {
 
                 .enter-room-title {
                     font-size: 18px;
-                    letter-spacing: -0.17px;
                     font-weight: bold;
+                    padding-bottom: 5px;
                 }
 
                 .enter-room-input {
@@ -77,7 +78,6 @@ body.welcome-page {
                     display: inline-block;
                     width: 100%;
                     font-size: 14px;
-                    letter-spacing: -0.13px;
                 }
 
                 ::placeholder {
@@ -91,9 +91,9 @@ body.welcome-page {
             font-size: 16px;
             position: relative;
             text-align: left;
-            height: 354px;
-            width: 760px;
-            background: rgba(229,232,236,0.50);
+            min-height: 354px;
+            width: 710px;
+            background: #75A7E7;
             display: flex;
             flex-direction: column;
 
@@ -111,7 +111,6 @@ body.welcome-page {
             .tab-buttons {
                 font-size: 18px;
                 color: #FFFFFF;
-                letter-spacing: -0.13px;
                 display: flex;
                 flex-grow: 0;
                 flex-direction: row;
@@ -145,7 +144,6 @@ body.welcome-page {
         background: #0074E0;
         border-radius: 4px;
         color: #FFFFFF;
-        letter-spacing: -0.13px;
         text-align: center;
         vertical-align: middle;
         line-height: 35px;
@@ -158,10 +156,10 @@ body.welcome-page {
         top: 32px;
         right: 32px;
         z-index: $zindex2;
-        font-size: 32px;
 
         * {
             cursor: pointer;
+            font-size: 32px;
         }
     }
 
