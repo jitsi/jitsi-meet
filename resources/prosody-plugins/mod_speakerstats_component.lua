@@ -1,6 +1,9 @@
 local get_room_from_jid = module:require "util".get_room_from_jid;
 local jid_resource = require "util.jid".resource;
 local ext_events = module:require "ext_events"
+local st = require "util.stanza";
+local socket = require "socket";
+local json = require "util.json";
 
 local muc_component_host = module:get_option_string("muc_component");
 if muc_component_host == nil then
@@ -82,10 +85,10 @@ function SpeakerStats:setIsDominantSpeaker(isNowDominantSpeaker)
         "set isDominant %s for %s", tostring(isNowDominantSpeaker), self.nick);
 
     if not self._isDominantSpeaker and isNowDominantSpeaker then
-        self._dominantSpeakerStart = os.time();
+        self._dominantSpeakerStart = socket.gettime()*1000;
     elseif self._isDominantSpeaker and not isNowDominantSpeaker then
-        local now = os.time();
-        local timeElapsed = now - (self._dominantSpeakerStart or 0);
+        local now = socket.gettime()*1000;
+        local timeElapsed = math.floor(now - (self._dominantSpeakerStart or 0));
 
         self.totalDominantSpeakerTime
             = self.totalDominantSpeakerTime + timeElapsed;
@@ -109,6 +112,48 @@ function occupant_joined(event)
     local nick = jid_resource(occupant.nick);
 
     if room.speakerStats then
+        -- lets send the current speaker stats to that user, so he can update
+        -- its local stats
+        if next(room.speakerStats) ~= nil then
+            local users_json = {};
+            for jid, values in pairs(room.speakerStats) do
+                -- skip reporting those without a nick('dominantSpeakerId')
+                -- and skip focus if sneaked into the table
+                if values.nick ~= nil and values.nick ~= 'focus' then
+                    local resultSpeakerStats = {};
+                    local totalDominantSpeakerTime
+                        = values.totalDominantSpeakerTime;
+
+                    -- before sending we need to calculate current dominant speaker
+                    -- state
+                    if values._dominantSpeakerStart ~= nil then
+                        local timeElapsed = math.floor(
+                            socket.gettime()*1000
+                                - (values._dominantSpeakerStart or 0));
+                        totalDominantSpeakerTime = totalDominantSpeakerTime
+                            + timeElapsed;
+                    end
+
+                    resultSpeakerStats.displayName = values.displayName;
+                    resultSpeakerStats.totalDominantSpeakerTime
+                        = totalDominantSpeakerTime;
+                    users_json[values.nick] = resultSpeakerStats;
+                end
+            end
+
+            local body_json = {};
+            body_json.type = 'speakerstats';
+            body_json.users = users_json;
+
+            local stanza = st.message({
+                from = module.host;
+                to = occupant.jid; })
+            :tag("json-message", {xmlns='http://jitsi.org/jitmeet'})
+            :text(json.encode(body_json)):up();
+
+            room:route_stanza(stanza);
+        end
+
         room.speakerStats[occupant.jid] = new_SpeakerStats(nick);
     end
 end
