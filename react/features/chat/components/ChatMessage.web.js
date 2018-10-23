@@ -67,7 +67,13 @@ class ChatMessage extends PureComponent<Props> {
 
         items.forEach(i => {
             if (typeof i === 'string') {
-                processedMessage.push(<Linkify key = { i }>{ i }</Linkify>);
+                processedMessage.push(
+                    <Linkify
+                        key = { i }
+                        properties = {{
+                            rel: 'noopener noreferrer',
+                            target: '_blank'
+                        }}>{ i }</Linkify>);
             } else {
                 processedMessage.push(i);
             }
