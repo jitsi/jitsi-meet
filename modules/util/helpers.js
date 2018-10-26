@@ -1,4 +1,4 @@
-const logger = require('jitsi-meet-logger').getLogger(__filename);
+import { TaskQueue } from './TaskQueue';
 
 /**
  * Create deferred object.
@@ -17,12 +17,10 @@ export function createDeferred() {
 }
 
 /**
- * Prints the error and reports it to the global error handler.
+ * Returns an instance of {@link TaskQueue}.
  *
- * @param e {Error} the error
- * @param msg {string} [optional] the message printed in addition to the error
+ * @returns {Object}
  */
-export function reportError(e, msg = '') {
-    logger.error(msg, e);
-    window.onerror && window.onerror(msg, null, null, null, e);
+export function createTaskQueue() {
+    return new TaskQueue();
 }

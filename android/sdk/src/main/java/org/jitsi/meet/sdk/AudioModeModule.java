@@ -25,8 +25,6 @@ import android.content.pm.PackageManager;
 import android.media.AudioDeviceInfo;
 import android.media.AudioManager;
 import android.os.Build;
-import android.os.Handler;
-import android.os.Looper;
 import android.util.Log;
 
 import com.facebook.react.bridge.Arguments;
@@ -41,6 +39,8 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 /**
  * Module implementing a simple API to select the appropriate audio device for a
@@ -118,10 +118,11 @@ class AudioModeModule
     private BluetoothHeadsetMonitor bluetoothHeadsetMonitor;
 
     /**
-     * {@link Handler} for running all operations on the main thread.
+     * {@link ExecutorService} for running all audio operations on a dedicated
+     * thread.
      */
-    private final Handler mainThreadHandler
-        = new Handler(Looper.getMainLooper());
+    private static final ExecutorService executor
+        = Executors.newSingleThreadExecutor();
 
     /**
      * {@link Runnable} for running audio device detection the main thread.
@@ -228,7 +229,7 @@ class AudioModeModule
 
         // Do an initial detection on Android >= M.
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            mainThreadHandler.post(onAudioDeviceChangeRunner);
+            runInAudioThread(onAudioDeviceChangeRunner);
         } else {
             // On Android < M, detect if we have an earpiece.
             PackageManager pm = reactContext.getPackageManager();
@@ -268,7 +269,7 @@ class AudioModeModule
      */
     @ReactMethod
     public void getAudioDevices(final Promise promise) {
-        mainThreadHandler.post(new Runnable() {
+        runInAudioThread(new Runnable() {
             @Override
             public void run() {
                 WritableMap map = Arguments.createMap();
@@ -305,7 +306,7 @@ class AudioModeModule
      * Only used on Android >= M.
      */
     void onAudioDeviceChange() {
-        mainThreadHandler.post(onAudioDeviceChangeRunner);
+        runInAudioThread(onAudioDeviceChangeRunner);
     }
 
     /**
@@ -333,7 +334,7 @@ class AudioModeModule
      * Only used on Android < M.
      */
     void onHeadsetDeviceChange() {
-        mainThreadHandler.post(new Runnable() {
+        runInAudioThread(new Runnable() {
             @Override
             public void run() {
                 // XXX: isWiredHeadsetOn is not deprecated when used just for
@@ -384,13 +385,21 @@ class AudioModeModule
     }
 
     /**
+     * Helper function to run operations on a dedicated thread.
+     * @param runnable
+     */
+    public void runInAudioThread(Runnable runnable) {
+        executor.execute(runnable);
+    }
+
+    /**
      * Sets the user selected audio device as the active audio device.
      *
      * @param device the desired device which will become active.
      */
     @ReactMethod
     public void setAudioDevice(final String device) {
-        mainThreadHandler.post(new Runnable() {
+        runInAudioThread(new Runnable() {
             @Override
             public void run() {
                 if (!availableDevices.contains(device)) {
@@ -461,7 +470,7 @@ class AudioModeModule
                 }
             }
         };
-        mainThreadHandler.post(r);
+        runInAudioThread(r);
     }
 
     /**

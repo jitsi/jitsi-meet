@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-#import <CoreText/CoreText.h>
 #import <Intents/Intents.h>
 
 #include <mach/mach_time.h>
@@ -23,6 +22,7 @@
 #import <React/RCTLinkingManager.h>
 #import <React/RCTRootView.h>
 
+#import "Dropbox.h"
 #import "Invite+Private.h"
 #import "InviteController+Private.h"
 #import "JitsiMeetView+Private.h"
@@ -51,35 +51,6 @@ RCTFatalHandler _RCTFatal = ^(NSError *error) {
         }
     }
 };
-
-/**
- * Helper function to dynamically load custom fonts. The `UIAppFonts` key in the
- * plist file doesn't work for frameworks, so fonts have to be manually loaded.
- */
-void loadCustomFonts(Class clazz) {
-    NSBundle *bundle = [NSBundle bundleForClass:clazz];
-    NSArray *fonts = [bundle objectForInfoDictionaryKey:@"JitsiMeetFonts"];
-
-    for (NSString *item in fonts) {
-        NSString *fontName = [item stringByDeletingPathExtension];
-        NSString *fontExt = [item pathExtension];
-        NSString *fontPath = [bundle pathForResource:fontName ofType:fontExt];
-        NSData *inData = [NSData dataWithContentsOfFile:fontPath];
-        CFErrorRef error;
-        CGDataProviderRef provider
-            = CGDataProviderCreateWithCFData((__bridge CFDataRef)inData);
-        CGFontRef font = CGFontCreateWithDataProvider(provider);
-
-        if (!CTFontManagerRegisterGraphicsFont(font, &error)) {
-            CFStringRef errorDescription = CFErrorCopyDescription(error);
-
-            NSLog(@"Failed to load font: %@", errorDescription);
-            CFRelease(errorDescription);
-        }
-        CFRelease(font);
-        CFRelease(provider);
-    }
-}
 
 /**
  * Helper function to register a fatal error handler for React. Our handler
@@ -137,6 +108,8 @@ static NSMapTable<NSString *, JitsiMeetView *> *views;
     // Store launch options, will be used when we create the bridge.
     _launchOptions = [launchOptions copy];
 
+    [Dropbox setAppKey];
+
     return YES;
 }
 
@@ -192,10 +165,13 @@ static NSMapTable<NSString *, JitsiMeetView *> *views;
                        restorationHandler:restorationHandler];
 }
 
-+ (BOOL)application:(UIApplication *)application
++ (BOOL)application:(UIApplication *)app
             openURL:(NSURL *)url
-  sourceApplication:(NSString *)sourceApplication
-         annotation:(id)annotation {
+            options:(NSDictionary<UIApplicationOpenURLOptionsKey,id> *)options {
+    if ([Dropbox application:app openURL:url options:options]) {
+        return YES;
+    }
+
     // XXX At least twice we received bug reports about malfunctioning loadURL
     // in the Jitsi Meet SDK while the Jitsi Meet app seemed to functioning as
     // expected in our testing. But that was to be expected because the app does
@@ -205,10 +181,14 @@ static NSMapTable<NSString *, JitsiMeetView *> *views;
         return YES;
     }
 
-    return [RCTLinkingManager application:application
-                                  openURL:url
-                        sourceApplication:sourceApplication
-                               annotation:annotation];
+    return [RCTLinkingManager application:app openURL:url options:options];
+}
+
++ (BOOL)application:(UIApplication *)application
+            openURL:(NSURL *)url
+  sourceApplication:(NSString *)sourceApplication
+         annotation:(id)annotation {
+    return [self application:application openURL:url options:@{}];
 }
 
 #pragma mark Initializers
@@ -399,9 +379,6 @@ static NSMapTable<NSString *, JitsiMeetView *> *views;
         bridgeWrapper
             = [[RCTBridgeWrapper alloc] initWithLaunchOptions:_launchOptions];
         views = [NSMapTable strongToWeakObjectsMapTable];
-
-        // Dynamically load custom bundled fonts.
-        loadCustomFonts(self.class);
 
         // Register a fatal error handler for React.
         registerFatalErrorHandler();

@@ -5,20 +5,23 @@ import { View } from 'react-native';
 import { connect } from 'react-redux';
 
 import { translate } from '../../../base/i18n';
+import { googleApi } from '../../../google-api';
+
 
 import { setLiveStreamKey } from '../../actions';
 
-import AbstractStartLiveStreamDialog, {
-    _mapStateToProps,
-    type Props
-} from './AbstractStartLiveStreamDialog';
+import AbstractStartLiveStreamDialog,
+{ _mapStateToProps, type Props } from './AbstractStartLiveStreamDialog';
+import GoogleSigninForm from './GoogleSigninForm';
 import StreamKeyForm from './StreamKeyForm';
+import StreamKeyPicker from './StreamKeyPicker';
+import styles from './styles';
 
 /**
  * A React Component for requesting a YouTube stream key to use for live
  * streaming of the current conference.
  */
-class StartLiveStreamDialog extends AbstractStartLiveStreamDialog {
+class StartLiveStreamDialog extends AbstractStartLiveStreamDialog<Props> {
     /**
      * Constructor of the component.
      *
@@ -28,25 +31,11 @@ class StartLiveStreamDialog extends AbstractStartLiveStreamDialog {
         super(props);
 
         // Bind event handlers so they are only bound once per instance.
-        this._onInitializeGoogleApi = this._onInitializeGoogleApi.bind(this);
         this._onStreamKeyChangeNative
             = this._onStreamKeyChangeNative.bind(this);
+        this._onStreamKeyPick = this._onStreamKeyPick.bind(this);
+        this._onUserChanged = this._onUserChanged.bind(this);
         this._renderDialogContent = this._renderDialogContent.bind(this);
-    }
-
-    _onInitializeGoogleApi: () => Promise<*>
-
-    /**
-     * Loads the Google client application used for fetching stream keys.
-     * If the user is already logged in, then a request for available YouTube
-     * broadcasts is also made.
-     *
-     * @private
-     * @returns {Promise}
-     */
-    _onInitializeGoogleApi() {
-        // This is a placeholder method for the Google feature.
-        return Promise.resolve();
     }
 
     _onStreamKeyChange: string => void
@@ -70,6 +59,49 @@ class StartLiveStreamDialog extends AbstractStartLiveStreamDialog {
         this._onStreamKeyChange(streamKey);
     }
 
+    _onStreamKeyPick: string => void
+
+    /**
+     * Callback to be invoked when the user selects a stream from the picker.
+     *
+     * @private
+     * @param {string} streamKey - The key of the selected stream.
+     * @returns {void}
+     */
+    _onStreamKeyPick(streamKey) {
+        this.setState({
+            streamKey
+        });
+    }
+
+    _onUserChanged: Object => void
+
+    /**
+     * A callback to be invoked when an authenticated user changes, so
+     * then we can get (or clear) the YouTube stream key.
+     *
+     * TODO: handle errors by showing some indication to the user.
+     *
+     * @private
+     * @param {Object} response - The retreived signin response.
+     * @returns {void}
+     */
+    _onUserChanged(response) {
+        if (response && response.accessToken) {
+            googleApi.getYouTubeLiveStreams(response.accessToken)
+            .then(broadcasts => {
+                this.setState({
+                    broadcasts
+                });
+            });
+        } else {
+            this.setState({
+                broadcasts: undefined,
+                streamKey: undefined
+            });
+        }
+    }
+
     _renderDialogContent: () => React$Component<*>
 
     /**
@@ -79,10 +111,15 @@ class StartLiveStreamDialog extends AbstractStartLiveStreamDialog {
      */
     _renderDialogContent() {
         return (
-            <View>
+            <View style = { styles.startDialogWrapper }>
+                <GoogleSigninForm
+                    onUserChanged = { this._onUserChanged } />
+                <StreamKeyPicker
+                    broadcasts = { this.state.broadcasts }
+                    onChange = { this._onStreamKeyPick } />
                 <StreamKeyForm
                     onChange = { this._onStreamKeyChangeNative }
-                    value = { this.props._streamKey } />
+                    value = { this.state.streamKey || this.props._streamKey } />
             </View>
         );
     }

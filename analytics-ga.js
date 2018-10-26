@@ -126,6 +126,15 @@
             return;
         }
 
+        const ignoredEvents
+            = [ 'e2e_rtt', 'rtp.stats', 'rtt.by.region', 'available.device',
+                'stream.switch.delay', 'ice.state.changed', 'ice.duration' ];
+
+        // Temporary removing some of the events that are too noisy.
+        if (ignoredEvents.indexOf(event.action) !== -1) {
+            return;
+        }
+
         const gaEvent = {
             'eventCategory': 'jitsi-meet',
             'eventAction': this._extractAction(event),

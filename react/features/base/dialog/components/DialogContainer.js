@@ -22,7 +22,12 @@ export class DialogContainer extends Component {
         /**
          * The props to pass to the component that will be rendered.
          */
-        _componentProps: PropTypes.object
+        _componentProps: PropTypes.object,
+
+        /**
+         * True if the UI is in a compact state where we don't show dialogs.
+         */
+        _reducedUI: PropTypes.bool
     };
 
     /**
@@ -32,10 +37,13 @@ export class DialogContainer extends Component {
      * @returns {ReactElement}
      */
     render() {
-        const { _component: component } = this.props;
+        const {
+            _component: component,
+            _reducedUI: reducedUI
+        } = this.props;
 
         return (
-            component
+            component && !reducedUI
                 ? React.createElement(component, this.props._componentProps)
                 : null);
     }
@@ -49,15 +57,18 @@ export class DialogContainer extends Component {
  * @private
  * @returns {{
  *     _component: React.Component,
- *     _componentProps: Object
+ *     _componentProps: Object,
+ *     _reducedUI: boolean
  * }}
  */
 function _mapStateToProps(state) {
     const stateFeaturesBaseDialog = state['features/base/dialog'];
+    const { reducedUI } = state['features/base/responsive-ui'];
 
     return {
         _component: stateFeaturesBaseDialog.component,
-        _componentProps: stateFeaturesBaseDialog.componentProps
+        _componentProps: stateFeaturesBaseDialog.componentProps,
+        _reducedUI: reducedUI
     };
 }
 

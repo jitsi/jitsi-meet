@@ -24,6 +24,7 @@
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
 }
+
 .icon-arrow_back:before {
   content: "\e5c4";
 }
@@ -209,4 +210,13 @@
 }
 .icon-speaker:before {
     content: "\e92d";
+}
+.icon-tiles-many:before {
+  content: "\e92e";
+}
+.icon-tiles-one:before {
+  content: "\e92f";
+}
+.icon-closed_caption:before {
+    content: "\e930";
 }

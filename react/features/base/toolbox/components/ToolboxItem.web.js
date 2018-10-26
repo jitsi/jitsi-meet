@@ -35,7 +35,6 @@ export default class ToolboxItem extends AbstractToolboxItem<Props> {
         };
         const elementType = showLabel ? 'li' : 'div';
         const useTooltip = this.tooltip && this.tooltip.length > 0;
-        // eslint-disable-next-line no-extra-parens
         let children = (
             <Fragment>
                 { this._renderIcon() }
@@ -47,7 +46,6 @@ export default class ToolboxItem extends AbstractToolboxItem<Props> {
         );
 
         if (useTooltip) {
-            // eslint-disable-next-line no-extra-parens
             children = (
                 <Tooltip
                     content = { this.tooltip }

@@ -1,13 +1,6 @@
 // @flow
 
-/**
- * The Google API scopes to request access to for streaming.
- *
- * @type {Array<string>}
- */
-export const GOOGLE_API_SCOPES = [
-    'https://www.googleapis.com/auth/youtube.readonly'
-];
+import { JitsiRecordingConstants } from '../base/lib-jitsi-meet';
 
 /**
  * The identifier of the sound to be played when a recording or live streaming
@@ -35,3 +28,15 @@ export const RECORDING_TYPES = {
     JIBRI: 'jibri',
     JIRECON: 'jirecon'
 };
+
+/**
+ * An array defining the priorities of the recording (or live streaming)
+ * statuses, where the index of the array is the priority itself.
+ *
+ * @type {Array<string>}
+ */
+export const RECORDING_STATUS_PRIORITIES = [
+    JitsiRecordingConstants.status.OFF,
+    JitsiRecordingConstants.status.PENDING,
+    JitsiRecordingConstants.status.ON
+];

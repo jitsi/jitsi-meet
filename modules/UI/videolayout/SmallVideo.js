@@ -27,6 +27,12 @@ import {
     RaisedHandIndicator,
     VideoMutedIndicator
 } from '../../../react/features/filmstrip';
+import {
+    LAYOUTS,
+    getCurrentLayout,
+    setTileView,
+    shouldDisplayTileView
+} from '../../../react/features/video-layout';
 /* eslint-enable no-unused-vars */
 
 const logger = require('jitsi-meet-logger').getLogger(__filename);
@@ -157,53 +163,6 @@ SmallVideo.prototype.isVisible = function() {
 };
 
 /**
- * Enables / disables the device availability icons for this small video.
- * @param {enable} set to {true} to enable and {false} to disable
- */
-SmallVideo.prototype.enableDeviceAvailabilityIcons = function(enable) {
-    if (typeof enable === 'undefined') {
-        return;
-    }
-
-    this.deviceAvailabilityIconsEnabled = enable;
-};
-
-/**
- * Sets the device "non" availability icons.
- * @param devices the devices, which will be checked for availability
- */
-SmallVideo.prototype.setDeviceAvailabilityIcons = function(devices) {
-    if (!this.deviceAvailabilityIconsEnabled) {
-        return;
-    }
-
-    if (!this.container) {
-        return;
-    }
-
-    const noMic = this.$container.find('.noMic');
-    const noVideo = this.$container.find('.noVideo');
-
-    noMic.remove();
-    noVideo.remove();
-    if (!devices.audio) {
-        this.container.appendChild(
-            document.createElement('div')).setAttribute('class', 'noMic');
-    }
-
-    if (!devices.video) {
-        this.container.appendChild(
-            document.createElement('div')).setAttribute('class', 'noVideo');
-    }
-
-    if (!devices.audio && !devices.video) {
-        noMic.css('background-position', '75%');
-        noVideo.css('background-position', '25%');
-        noVideo.css('background-color', 'transparent');
-    }
-};
-
-/**
  * Sets the type of the video displayed by this instance.
  * Note that this is a string without clearly defined or checked values, and
  * it is NOT one of the strings defined in service/RTC/VideoType in
@@ -328,7 +287,21 @@ SmallVideo.prototype.setVideoMutedView = function(isMuted) {
 SmallVideo.prototype.updateStatusBar = function() {
     const statusBarContainer
         = this.container.querySelector('.videocontainer__toolbar');
-    const tooltipPosition = interfaceConfig.VERTICAL_FILMSTRIP ? 'left' : 'top';
+
+    if (!statusBarContainer) {
+        return;
+    }
+
+    const currentLayout = getCurrentLayout(APP.store.getState());
+    let tooltipPosition;
+
+    if (currentLayout === LAYOUTS.TILE_VIEW) {
+        tooltipPosition = 'right';
+    } else if (currentLayout === LAYOUTS.VERTICAL_FILMSTRIP_VIEW) {
+        tooltipPosition = 'left';
+    } else {
+        tooltipPosition = 'top';
+    }
 
     ReactDOM.render(
         <I18nextProvider i18n = { i18next }>
@@ -547,7 +520,8 @@ SmallVideo.prototype.isVideoPlayable = function() {
  */
 SmallVideo.prototype.selectDisplayMode = function() {
     // Display name is always and only displayed when user is on the stage
-    if (this.isCurrentlyOnLargeVideo()) {
+    if (this.isCurrentlyOnLargeVideo()
+        && !shouldDisplayTileView(APP.store.getState())) {
         return this.isVideoPlayable() && !APP.conference.isAudioOnly()
             ? DISPLAY_BLACKNESS_WITH_NAME : DISPLAY_AVATAR_WITH_NAME;
     } else if (this.isVideoPlayable()
@@ -685,7 +659,10 @@ SmallVideo.prototype.showDominantSpeakerIndicator = function(show) {
 
     this._showDominantSpeaker = show;
 
+    this.$container.toggleClass('active-speaker', this._showDominantSpeaker);
+
     this.updateIndicators();
+    this.updateView();
 };
 
 /**
@@ -766,6 +743,18 @@ SmallVideo.prototype.initBrowserSpecificProperties = function() {
 };
 
 /**
+ * Helper function for re-rendering multiple react components of the small
+ * video.
+ *
+ * @returns {void}
+ */
+SmallVideo.prototype.rerender = function() {
+    this.updateIndicators();
+    this.updateStatusBar();
+    this.updateView();
+};
+
+/**
  * Updates the React element responsible for showing connection status, dominant
  * speaker, and raised hand icons. Uses instance variables to get the necessary
  * state to display. Will create the React element if not already created.
@@ -784,7 +773,19 @@ SmallVideo.prototype.updateIndicators = function() {
     const iconSize = UIUtil.getIndicatorFontSize();
     const showConnectionIndicator = this.videoIsHovered
         || !interfaceConfig.CONNECTION_INDICATOR_AUTO_HIDE_ENABLED;
-    const tooltipPosition = interfaceConfig.VERTICAL_FILMSTRIP ? 'left' : 'top';
+    const currentLayout = getCurrentLayout(APP.store.getState());
+    let statsPopoverPosition, tooltipPosition;
+
+    if (currentLayout === LAYOUTS.TILE_VIEW) {
+        statsPopoverPosition = 'right top';
+        tooltipPosition = 'right';
+    } else if (currentLayout === LAYOUTS.VERTICAL_FILMSTRIP_VIEW) {
+        statsPopoverPosition = this.statsPopoverLocation;
+        tooltipPosition = 'left';
+    } else {
+        statsPopoverPosition = this.statsPopoverLocation;
+        tooltipPosition = 'top';
+    }
 
     ReactDOM.render(
             <I18nextProvider i18n = { i18next }>
@@ -799,7 +800,7 @@ SmallVideo.prototype.updateIndicators = function() {
                                 enableStatsDisplay
                                     = { !interfaceConfig.filmStripOnly }
                                 statsPopoverPosition
-                                    = { this.statsPopoverLocation }
+                                    = { statsPopoverPosition }
                                 userID = { this.id } />
                             : null }
                         { this._showRaisedHand

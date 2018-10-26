@@ -5,10 +5,6 @@ import { View } from 'react-native';
 import { connect } from 'react-redux';
 
 import { Container } from '../../../base/react';
-import {
-    isNarrowAspectRatio,
-    makeAspectRatioAware
-} from '../../../base/responsive-ui';
 import { InviteButton } from '../../../invite';
 
 import AudioMuteButton from '../AudioMuteButton';
@@ -92,15 +88,10 @@ class Toolbox extends Component<Props, State> {
      * @returns {ReactElement}
      */
     render() {
-        const toolboxStyle
-            = isNarrowAspectRatio(this)
-                ? styles.toolboxNarrow
-                : styles.toolboxWide;
-
         return (
             <Container
                 onLayout = { this._onLayout }
-                style = { toolboxStyle }
+                style = { styles.toolbox }
                 visible = { this.props._visible }>
                 { this._renderToolbar() }
             </Container>
@@ -244,4 +235,4 @@ function _mapStateToProps(state: Object): Object {
     };
 }
 
-export default connect(_mapStateToProps)(makeAspectRatioAware(Toolbox));
+export default connect(_mapStateToProps)(Toolbox);

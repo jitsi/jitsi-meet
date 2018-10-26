@@ -1,6 +1,5 @@
-import Iterator from 'es6-iterator';
 import BackgroundTimer from 'react-native-background-timer';
-import 'url-polyfill'; // Polyfill for URL constructor
+import '@webcomponents/url'; // Polyfill for URL constructor
 
 import { Platform } from '../../react';
 
@@ -114,23 +113,19 @@ function _visitNode(node, callback) {
         global.addEventListener = () => {};
     }
 
-    // Array.prototype[@@iterator]
+    // removeEventListener
     //
     // Required by:
-    // - for...of statement use(s) in lib-jitsi-meet
-    const arrayPrototype = Array.prototype;
-
-    if (typeof arrayPrototype['@@iterator'] === 'undefined') {
-        arrayPrototype['@@iterator'] = function() {
-            return new Iterator(this);
-        };
+    // - features/base/conference/middleware
+    if (typeof global.removeEventListener === 'undefined') {
+        // eslint-disable-next-line no-empty-function
+        global.removeEventListener = () => {};
     }
 
     // document
     //
     // Required by:
     // - jQuery
-    // - lib-jitsi-meet/modules/RTC/adapter.screenshare.js
     // - Strophe
     if (typeof global.document === 'undefined') {
         const document
@@ -153,14 +148,6 @@ function _visitNode(node, callback) {
         // - herment
         if (typeof document.cookie === 'undefined') {
             document.cookie = '';
-        }
-
-        // document.implementation
-        //
-        // Required by:
-        // - jQuery
-        if (typeof document.implementation === 'undefined') {
-            document.implementation = {};
         }
 
         // document.implementation.createHTMLDocument
@@ -366,26 +353,9 @@ function _visitNode(node, callback) {
     const { navigator } = global;
 
     if (navigator) {
-        // platform
-        //
-        // Required by:
-        // - lib-jitsi-meet/modules/RTC/adapter.screenshare.js
-        if (typeof navigator.platform === 'undefined') {
-            navigator.platform = '';
-        }
-
-        // plugins
-        //
-        // Required by:
-        // - lib-jitsi-meet/modules/RTC/adapter.screenshare.js
-        if (typeof navigator.plugins === 'undefined') {
-            navigator.plugins = [];
-        }
-
         // userAgent
         //
         // Required by:
-        // - lib-jitsi-meet/modules/RTC/adapter.screenshare.js
         // - lib-jitsi-meet/modules/browser/BrowserDetection.js
         let userAgent = navigator.userAgent || '';
 

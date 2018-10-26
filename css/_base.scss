@@ -108,14 +108,15 @@ form {
 }
 
 .leftwatermark {
-    left: $defaultToolbarSize;
-    margin-left: 10px;
+    left: 32px;
+    top: 32px;
     background-image: url($defaultWatermarkLink);
     background-position: center left;
 }
 
 .rightwatermark {
-    right: 15;
+    right: 32px;
+    top: 32px;
     background-position: center right;
 }
 

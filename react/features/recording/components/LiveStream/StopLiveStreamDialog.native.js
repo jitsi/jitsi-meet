@@ -1,12 +1,10 @@
 // @flow
 
 import React from 'react';
-import { Text, View } from 'react-native';
 import { connect } from 'react-redux';
 
+import { DialogContent } from '../../../base/dialog';
 import { translate } from '../../../base/i18n';
-
-import styles from '../styles';
 
 import AbstractStopLiveStreamDialog, {
     _mapStateToProps
@@ -27,13 +25,11 @@ class StopLiveStreamDialog extends AbstractStopLiveStreamDialog {
      */
     _renderDialogContent() {
         return (
-            <View style = { styles.messageContainer }>
-                <Text>
-                    {
-                        this.props.t('dialog.stopStreamingWarning')
-                    }
-                </Text>
-            </View>
+            <DialogContent>
+                {
+                    this.props.t('dialog.stopStreamingWarning')
+                }
+            </DialogContent>
         );
     }
 }

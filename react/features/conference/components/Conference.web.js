@@ -4,15 +4,23 @@ import _ from 'lodash';
 import React, { Component } from 'react';
 import { connect as reactReduxConnect } from 'react-redux';
 
+import VideoLayout from '../../../../modules/UI/videolayout/VideoLayout';
+
 import { obtainConfig } from '../../base/config';
 import { connect, disconnect } from '../../base/connection';
-import { DialogContainer } from '../../base/dialog';
 import { translate } from '../../base/i18n';
+import { Chat } from '../../chat';
 import { Filmstrip } from '../../filmstrip';
 import { CalleeInfoContainer } from '../../invite';
 import { LargeVideo } from '../../large-video';
 import { NotificationsContainer } from '../../notifications';
-import { SidePanel } from '../../side-panel';
+import {
+    LAYOUTS,
+    getCurrentLayout,
+    shouldDisplayTileView
+} from '../../video-layout';
+
+import { default as Notice } from './Notice';
 import {
     Toolbox,
     fullScreenChanged,
@@ -42,6 +50,19 @@ const FULL_SCREEN_EVENTS = [
 ];
 
 /**
+ * The CSS class to apply to the root element of the conference so CSS can
+ * modify the app layout.
+ *
+ * @private
+ * @type {Object}
+ */
+const LAYOUT_CLASSNAMES = {
+    [LAYOUTS.HORIZONTAL_FILMSTRIP_VIEW]: 'horizontal-filmstrip',
+    [LAYOUTS.TILE_VIEW]: 'tile-view',
+    [LAYOUTS.VERTICAL_FILMSTRIP_VIEW]: 'vertical-filmstrip'
+};
+
+/**
  * The type of the React {@code Component} props of {@link Conference}.
  */
 type Props = {
@@ -52,9 +73,20 @@ type Props = {
     _iAmRecorder: boolean,
 
     /**
+     * The CSS class to apply to the root of {@link Conference} to modify the
+     * application layout.
+     */
+    _layoutClassName: string,
+
+    /**
      * Conference room name.
      */
     _room: string,
+
+    /**
+     * Whether or not the current UI layout should be in tile view.
+     */
+    _shouldDisplayTileView: boolean,
 
     dispatch: Function,
     t: Function
@@ -125,6 +157,25 @@ class Conference extends Component<Props> {
     }
 
     /**
+     * Calls into legacy UI to update the application layout, if necessary.
+     *
+     * @inheritdoc
+     * returns {void}
+     */
+    componentDidUpdate(prevProps) {
+        if (this.props._shouldDisplayTileView
+            === prevProps._shouldDisplayTileView) {
+            return;
+        }
+
+        // TODO: For now VideoLayout is being called as LargeVideo and Filmstrip
+        // sizing logic is still handled outside of React. Once all components
+        // are in react they should calculate size on their own as much as
+        // possible and pass down sizings.
+        VideoLayout.refreshLayout();
+    }
+
+    /**
      * Disconnect from the conference when component will be
      * unmounted.
      *
@@ -161,8 +212,10 @@ class Conference extends Component<Props> {
 
         return (
             <div
+                className = { this.props._layoutClassName }
                 id = 'videoconference_page'
                 onMouseMove = { this._onShowToolbar }>
+                <Notice />
                 <div id = 'videospace'>
                     <LargeVideo
                         hideVideoQualityLabel = { hideVideoQualityLabel } />
@@ -170,9 +223,8 @@ class Conference extends Component<Props> {
                 </div>
 
                 { filmstripOnly || <Toolbox /> }
-                { filmstripOnly || <SidePanel /> }
+                { filmstripOnly || <Chat /> }
 
-                <DialogContainer />
                 <NotificationsContainer />
 
                 <CalleeInfoContainer />
@@ -236,25 +288,19 @@ class Conference extends Component<Props> {
  * @private
  * @returns {{
  *     _iAmRecorder: boolean,
- *     _room: ?string
+ *     _layoutClassName: string,
+ *     _room: ?string,
+ *     _shouldDisplayTileView: boolean
  * }}
  */
 function _mapStateToProps(state) {
-    const { room } = state['features/base/conference'];
-    const { iAmRecorder } = state['features/base/config'];
+    const currentLayout = getCurrentLayout(state);
 
     return {
-        /**
-         * Whether the local participant is recording the conference.
-         *
-         * @private
-         */
-        _iAmRecorder: iAmRecorder,
-
-        /**
-         * Conference room name.
-         */
-        _room: room
+        _iAmRecorder: state['features/base/config'].iAmRecorder,
+        _layoutClassName: LAYOUT_CLASSNAMES[currentLayout],
+        _room: state['features/base/conference'].room,
+        _shouldDisplayTileView: shouldDisplayTileView(state)
     };
 }
 

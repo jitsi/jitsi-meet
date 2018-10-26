@@ -13,12 +13,11 @@ import {
     MAX_DISPLAY_NAME_LENGTH,
     dominantSpeakerChanged,
     participantConnectionStatusChanged,
-    participantJoined,
-    participantLeft,
     participantPresenceChanged,
     participantRoleChanged,
     participantUpdated
 } from '../participants';
+import { endpointMessageReceived } from '../../subtitles';
 import { getLocalTracks, trackAdded, trackRemoved } from '../tracks';
 import { getJitsiMeetGlobalNS } from '../util';
 
@@ -37,9 +36,10 @@ import {
     SET_DESKTOP_SHARING_ENABLED,
     SET_FOLLOW_ME,
     SET_LASTN,
+    SET_MAX_RECEIVER_VIDEO_QUALITY,
     SET_PASSWORD,
     SET_PASSWORD_FAILED,
-    SET_RECEIVE_VIDEO_QUALITY,
+    SET_PREFERRED_RECEIVER_VIDEO_QUALITY,
     SET_ROOM,
     SET_START_MUTED_POLICY
 } from './actionTypes';
@@ -51,6 +51,8 @@ import {
 } from './constants';
 import {
     _addLocalTracksToConference,
+    commonUserJoinedHandling,
+    commonUserLeftHandling,
     getCurrentConference,
     sendLocalParticipant
 } from './functions';
@@ -137,23 +139,19 @@ function _addConferenceListeners(conference, dispatch) {
         id => dispatch(dominantSpeakerChanged(id, conference)));
 
     conference.on(
+        JitsiConferenceEvents.ENDPOINT_MESSAGE_RECEIVED,
+        (...args) => dispatch(endpointMessageReceived(...args)));
+
+    conference.on(
         JitsiConferenceEvents.PARTICIPANT_CONN_STATUS_CHANGED,
         (...args) => dispatch(participantConnectionStatusChanged(...args)));
 
     conference.on(
         JitsiConferenceEvents.USER_JOINED,
-        (id, user) => !user.isHidden() && dispatch(participantJoined({
-            botType: user.getBotType(),
-            conference,
-            id,
-            name: user.getDisplayName(),
-            presence: user.getStatus(),
-            role: user.getRole()
-        })));
+        (id, user) => commonUserJoinedHandling({ dispatch }, conference, user));
     conference.on(
         JitsiConferenceEvents.USER_LEFT,
-        (id, user) => !user.isHidden()
-            && dispatch(participantLeft(id, conference)));
+        (id, user) => commonUserLeftHandling({ dispatch }, conference, user));
     conference.on(
         JitsiConferenceEvents.USER_ROLE_CHANGED,
         (...args) => dispatch(participantRoleChanged(...args)));
@@ -570,6 +568,23 @@ export function setLastN(lastN: ?number) {
 }
 
 /**
+ * Sets the max frame height that should be received from remote videos.
+ *
+ * @param {number} maxReceiverVideoQuality - The max video frame height to
+ * receive.
+ * @returns {{
+ *     type: SET_MAX_RECEIVER_VIDEO_QUALITY,
+ *     maxReceiverVideoQuality: number
+ * }}
+ */
+export function setMaxReceiverVideoQuality(maxReceiverVideoQuality: number) {
+    return {
+        type: SET_MAX_RECEIVER_VIDEO_QUALITY,
+        maxReceiverVideoQuality
+    };
+}
+
+/**
  * Sets the password to join or lock a specific JitsiConference.
  *
  * @param {JitsiConference} conference - The JitsiConference which requires a
@@ -641,18 +656,21 @@ export function setPassword(
 }
 
 /**
- * Sets the max frame height to receive from remote participant videos.
+ * Sets the max frame height the user prefers to receive from remote participant
+ * videos.
  *
- * @param {number} receiveVideoQuality - The max video resolution to receive.
+ * @param {number} preferredReceiverVideoQuality - The max video resolution to
+ * receive.
  * @returns {{
- *     type: SET_RECEIVE_VIDEO_QUALITY,
- *     receiveVideoQuality: number
+ *     type: SET_PREFERRED_RECEIVER_VIDEO_QUALITY,
+ *     preferredReceiverVideoQuality: number
  * }}
  */
-export function setReceiveVideoQuality(receiveVideoQuality: number) {
+export function setPreferredReceiverVideoQuality(
+        preferredReceiverVideoQuality: number) {
     return {
-        type: SET_RECEIVE_VIDEO_QUALITY,
-        receiveVideoQuality
+        type: SET_PREFERRED_RECEIVER_VIDEO_QUALITY,
+        preferredReceiverVideoQuality
     };
 }
 

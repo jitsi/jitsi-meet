@@ -151,7 +151,7 @@ class DisplayName extends Component {
                 className = 'displayname'
                 id = { elementID }
                 onClick = { this._onStartEditing }>
-                { `${appendSuffix(displayName, displayNameSuffix)}` }
+                { appendSuffix(displayName, displayNameSuffix) }
             </span>
         );
     }

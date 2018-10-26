@@ -21,10 +21,16 @@ export type Props = {
     _conference: Object,
 
     /**
-     * The ID for the Google client application used for making stream key
-     * related requests.
+     * The current state of interactions with the Google API. Determines what
+     * Google related UI should display.
      */
-    _googleApiApplicationClientID: string,
+    _googleAPIState: number,
+
+    /**
+     * The email of the user currently logged in to the Google web client
+     * application.
+     */
+    _googleProfileEmail: string,
 
     /**
      * The live stream key that was used before.
@@ -61,18 +67,6 @@ export type State = {
     errorType: ?string,
 
     /**
-     * The current state of interactions with the Google API. Determines what
-     * Google related UI should display.
-     */
-    googleAPIState: number,
-
-    /**
-     * The email of the user currently logged in to the Google web client
-     * application.
-     */
-    googleProfileEmail: string,
-
-    /**
      * The boundStreamID of the broadcast currently selected in the broadcast
      * dropdown.
      */
@@ -85,44 +79,14 @@ export type State = {
 };
 
 /**
- * An enumeration of the different states the Google API can be in while
- * interacting with {@code StartLiveStreamDialog}.
-  *
- * @private
- * @type {Object}
- */
-export const GOOGLE_API_STATES = {
-    /**
-     * The state in which the Google API still needs to be loaded.
-     */
-    NEEDS_LOADING: 0,
-
-    /**
-     * The state in which the Google API is loaded and ready for use.
-     */
-    LOADED: 1,
-
-    /**
-     * The state in which a user has been logged in through the Google API.
-     */
-    SIGNED_IN: 2,
-
-    /**
-     * The state in which the Google API encountered an error either loading
-     * or with an API request.
-     */
-    ERROR: 3
-};
-
-/**
  * Implements an abstract class for the StartLiveStreamDialog on both platforms.
  *
  * NOTE: Google log-in is not supported for mobile yet for later implementation
  * but the abstraction of its properties are already present in this abstract
  * class.
  */
-export default class AbstractStartLiveStreamDialog
-    extends Component<Props, State> {
+export default class AbstractStartLiveStreamDialog<P: Props>
+    extends Component<P, State> {
     _isMounted: boolean;
 
     /**
@@ -130,14 +94,12 @@ export default class AbstractStartLiveStreamDialog
      *
      * @inheritdoc
      */
-    constructor(props: Props) {
+    constructor(props: P) {
         super(props);
 
         this.state = {
             broadcasts: undefined,
             errorType: undefined,
-            googleAPIState: GOOGLE_API_STATES.NEEDS_LOADING,
-            googleProfileEmail: '',
             selectedBoundStreamID: undefined,
             streamKey: ''
         };
@@ -166,10 +128,6 @@ export default class AbstractStartLiveStreamDialog
      */
     componentDidMount() {
         this._isMounted = true;
-
-        if (this.props._googleApiApplicationClientID) {
-            this._onInitializeGoogleApi();
-        }
     }
 
     /**
@@ -228,13 +186,6 @@ export default class AbstractStartLiveStreamDialog
      * @returns {Promise}
      */
     _onGetYouTubeBroadcasts: () => Promise<*>;
-
-    /**
-     * Loads the Google client application used for fetching stream keys.
-     * If the user is already logged in, then a request for available YouTube
-     * broadcasts is also made.
-     */
-    _onInitializeGoogleApi: () => Object;
 
     _onStreamKeyChange: string => void;
 
@@ -322,15 +273,16 @@ export default class AbstractStartLiveStreamDialog
  * @param {Object} state - The Redux state.
  * @returns {{
  *     _conference: Object,
- *     _googleApiApplicationClientID: string,
+ *     _googleAPIState: number,
+ *     _googleProfileEmail: string,
  *     _streamKey: string
  * }}
  */
 export function _mapStateToProps(state: Object) {
     return {
         _conference: state['features/base/conference'].conference,
-        _googleApiApplicationClientID:
-            state['features/base/config'].googleApiApplicationClientID,
+        _googleAPIState: state['features/google-api'].googleAPIState,
+        _googleProfileEmail: state['features/google-api'].profileEmail,
         _streamKey: state['features/recording'].streamKey
     };
 }

@@ -1,0 +1,117 @@
+.meetings-list {
+    font-size: 14px;
+    color: #253858;
+    line-height: 20px;
+    text-align: left;
+    text-overflow: ellipsis;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+
+    .meetings-list-empty {
+        text-align: center;
+        align-items: center;
+        justify-content: center;
+        display: flex;
+        flex-grow: 1;
+        flex-direction: column;
+
+        .description {
+            font-size: 16px;
+            padding: 20px;
+        }
+    }
+
+    .button {
+        background: #0074E0;
+        border-radius: 4px;
+        color: #FFFFFF;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 5px 10px;
+        cursor: pointer;
+    }
+
+    .item {
+        background: rgba(255,255,255,0.50);
+        box-sizing: border-box;
+        display: inline-flex;
+        margin-top: 5px;
+        min-height: 92px;
+        width: 100%;
+        word-break: break-word;
+        display: flex;
+        flex-direction: row;
+        text-align: left;
+
+        &:first-child {
+            margin-top: 0px;
+        }
+
+        .left-column {
+            display: flex;
+            flex-direction: column;
+            width: 140px;
+            flex-grow: 0;
+            padding-left: 30px;
+            padding-top: 25px;
+
+            .date {
+                font-weight: bold;
+                padding-bottom: 5px;
+            }
+        }
+
+        .right-column {
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+            padding-left: 30px;
+            padding-top: 25px;
+
+            .title {
+                font-size: 16px;
+                font-weight: bold;
+                padding-bottom: 5px;
+            }
+        }
+
+        .actions {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-grow: 0;
+            padding-right: 30px;
+        }
+
+        &.with-click-handler {
+            cursor: pointer;
+        }
+
+        &.with-click-handler:hover {
+            background-color: #75A7E7;
+        }
+
+        .add-button {
+            width: 30px;
+            height: 30px;
+            padding: 0px;
+        }
+
+        i {
+            cursor: inherit;
+        }
+
+        .join-button {
+            display: none;
+        }
+
+        &:hover .join-button {
+            display: block
+        }
+    }
+}

@@ -1,15 +1,24 @@
 // @flow
 
 import { JitsiTrackErrors } from '../lib-jitsi-meet';
-import { getLocalParticipant } from '../participants';
+import {
+    getLocalParticipant,
+    hiddenParticipantJoined,
+    hiddenParticipantLeft,
+    participantJoined,
+    participantLeft
+} from '../participants';
 import { toState } from '../redux';
 
 import {
     AVATAR_ID_COMMAND,
     AVATAR_URL_COMMAND,
     EMAIL_COMMAND,
-    JITSI_CONFERENCE_URL_KEY
+    JITSI_CONFERENCE_URL_KEY,
+    VIDEO_QUALITY_LEVELS
 } from './constants';
+
+const logger = require('jitsi-meet-logger').getLogger(__filename);
 
 /**
  * Attach a set of local tracks to a conference.
@@ -39,6 +48,62 @@ export function _addLocalTracksToConference(
     }
 
     return Promise.all(promises);
+}
+
+/**
+ * Logic shared between web and RN which processes the {@code USER_JOINED}
+ * conference event and dispatches either {@link participantJoined} or
+ * {@link hiddenParticipantJoined}.
+ *
+ * @param {Object} store - The redux store.
+ * @param {JitsiMeetConference} conference - The conference for which the
+ * {@code USER_JOINED} event is being processed.
+ * @param {JitsiParticipant} user - The user who has just joined.
+ * @returns {void}
+ */
+export function commonUserJoinedHandling(
+        { dispatch }: Object,
+        conference: Object,
+        user: Object) {
+    const id = user.getId();
+    const displayName = user.getDisplayName();
+
+    if (user.isHidden()) {
+        dispatch(hiddenParticipantJoined(id, displayName));
+    } else {
+        dispatch(participantJoined({
+            botType: user.getBotType(),
+            conference,
+            id,
+            name: displayName,
+            presence: user.getStatus(),
+            role: user.getRole()
+        }));
+    }
+}
+
+/**
+ * Logic shared between web and RN which processes the {@code USER_LEFT}
+ * conference event and dispatches either {@link participantLeft} or
+ * {@link hiddenParticipantLeft}.
+ *
+ * @param {Object} store - The redux store.
+ * @param {JitsiMeetConference} conference - The conference for which the
+ * {@code USER_LEFT} event is being processed.
+ * @param {JitsiParticipant} user - The user who has just left.
+ * @returns {void}
+ */
+export function commonUserLeftHandling(
+        { dispatch }: Object,
+        conference: Object,
+        user: Object) {
+    const id = user.getId();
+
+    if (user.isHidden()) {
+        dispatch(hiddenParticipantLeft(id));
+    } else {
+        dispatch(participantLeft(id, conference));
+    }
 }
 
 /**
@@ -98,6 +163,38 @@ export function getCurrentConference(stateful: Function | Object) {
         conference
             ? conference === leaving ? undefined : conference
             : joining);
+}
+
+/**
+ * Finds the nearest match for the passed in {@link availableHeight} to am
+ * enumerated value in {@code VIDEO_QUALITY_LEVELS}.
+ *
+ * @param {number} availableHeight - The height to which a matching video
+ * quality level should be found.
+ * @returns {number} The closest matching value from
+ * {@code VIDEO_QUALITY_LEVELS}.
+ */
+export function getNearestReceiverVideoQualityLevel(availableHeight: number) {
+    const qualityLevels = [
+        VIDEO_QUALITY_LEVELS.HIGH,
+        VIDEO_QUALITY_LEVELS.STANDARD,
+        VIDEO_QUALITY_LEVELS.LOW
+    ];
+
+    let selectedLevel = qualityLevels[0];
+
+    for (let i = 1; i < qualityLevels.length; i++) {
+        const previousValue = qualityLevels[i - 1];
+        const currentValue = qualityLevels[i];
+        const diffWithCurrent = Math.abs(availableHeight - currentValue);
+        const diffWithPrevious = Math.abs(availableHeight - previousValue);
+
+        if (diffWithCurrent < diffWithPrevious) {
+            selectedLevel = currentValue;
+        }
+    }
+
+    return selectedLevel;
 }
 
 /**
@@ -172,7 +269,7 @@ export function _removeLocalTracksFromConference(
 function _reportError(msg, err) {
     // TODO This is a good point to call some global error handler when we have
     // one.
-    console.error(msg, err);
+    logger.error(msg, err);
 }
 
 /**

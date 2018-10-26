@@ -1,9 +1,10 @@
 // @flow
 
+import React from 'react';
 import { connect } from 'react-redux';
 
 import { translate } from '../../../base/i18n';
-import { getLocalParticipant } from '../../../base/participants';
+import { Container, Text } from '../../../base/react';
 
 import AbstractLiveStreamButton, {
     _mapStateToProps as _abstractMapStateToProps,
@@ -57,6 +58,25 @@ class LiveStreamButton extends AbstractLiveStreamButton<Props> {
     }
 
     /**
+     * Helper function to be implemented by subclasses, which returns
+     * a React Element to display (a beta tag) at the end of the button.
+     *
+     * @override
+     * @protected
+     * @returns {ReactElement}
+     */
+    _getElementAfter() {
+        return (
+            <Container
+                className = { 'beta-tag' }>
+                <Text>
+                    { this.props.t('recording.beta') }
+                </Text>
+            </Container>
+        );
+    }
+
+    /**
      * Helper function to be implemented by subclasses, which must return a
      * boolean value indicating if this button is disabled or not.
      *
@@ -85,15 +105,14 @@ class LiveStreamButton extends AbstractLiveStreamButton<Props> {
  */
 function _mapStateToProps(state: Object, ownProps: Props) {
     const abstractProps = _abstractMapStateToProps(state, ownProps);
-    const localParticipant = getLocalParticipant(state);
-    const { features = {} } = localParticipant;
     let { visible } = ownProps;
 
+    const _disabledByFeatures = abstractProps.disabledByFeatures;
     let _disabled = false;
     let _liveStreamDisabledTooltipKey;
 
     if (!abstractProps.visible
-            && String(features.livestreaming) !== 'disabled') {
+            && _disabledByFeatures !== undefined && !_disabledByFeatures) {
         _disabled = true;
 
         // button and tooltip
@@ -108,7 +127,8 @@ function _mapStateToProps(state: Object, ownProps: Props) {
 
     if (typeof visible === 'undefined') {
         visible = interfaceConfig.TOOLBAR_BUTTONS.includes('livestreaming')
-            && (abstractProps.visible || _liveStreamDisabledTooltipKey);
+            && (abstractProps.visible
+                    || Boolean(_liveStreamDisabledTooltipKey));
     }
 
     return {

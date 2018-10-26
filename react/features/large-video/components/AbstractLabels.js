@@ -3,7 +3,10 @@
 import React, { Component } from 'react';
 
 import { isFilmstripVisible } from '../../filmstrip';
+import { LocalRecordingLabel } from '../../local-recording';
 import { RecordingLabel } from '../../recording';
+import { TranscribingLabel } from '../../transcribing';
+import { shouldDisplayTileView } from '../../video-layout';
 import { VideoQualityLabel } from '../../video-quality';
 
 /**
@@ -12,10 +15,15 @@ import { VideoQualityLabel } from '../../video-quality';
 export type Props = {
 
     /**
-    * Whether or not the filmstrip is displayed with remote videos. Used to
-    * determine display classes to set.
-    */
+     * Whether the filmstrip is displayed with remote videos. Used to determine
+     * display classes to set.
+     */
     _filmstripVisible: boolean,
+
+    /**
+     * Whether the video quality label should be displayed.
+     */
+    _showVideoQualityLabel: boolean
 };
 
 /**
@@ -26,16 +34,40 @@ export type Props = {
  */
 export default class AbstractLabels<P: Props, S> extends Component<P, S> {
     /**
-     * Renders the {@code RecordingLabel} that is platform independent.
+     * Renders the {@code LocalRecordingLabel}.
      *
      * @protected
+     * @returns {React$Element}
+     */
+    _renderLocalRecordingLabel() {
+        return (
+            <LocalRecordingLabel />
+        );
+    }
+
+    /**
+     * Renders the {@code RecordingLabel} that is platform independent.
+     *
      * @param {string} mode - The recording mode that this label is rendered
      * for.
+     * @protected
      * @returns {React$Element}
      */
     _renderRecordingLabel(mode: string) {
         return (
             <RecordingLabel mode = { mode } />
+        );
+    }
+
+    /**
+     * Renders the {@code TranscribingLabel}.
+     *
+     * @protected
+     * @returns {React$Element}
+     */
+    _renderTranscribingLabel() {
+        return (
+            <TranscribingLabel />
         );
     }
 
@@ -53,17 +85,19 @@ export default class AbstractLabels<P: Props, S> extends Component<P, S> {
 }
 
 /**
- * Maps (parts of) the Redux state to the associated props for the
- * {@code Labels} component.
+ * Maps (parts of) the redux state to the associated props of the {@link Labels}
+ * {@code Component}.
  *
- * @param {Object} state - The Redux state.
+ * @param {Object} state - The redux state.
  * @private
  * @returns {{
- *     _filmstripVisible: boolean
+ *     _filmstripVisible: boolean,
+ *     _showVideoQualityLabel: boolean
  * }}
  */
 export function _abstractMapStateToProps(state: Object) {
     return {
-        _filmstripVisible: isFilmstripVisible(state)
+        _filmstripVisible: isFilmstripVisible(state),
+        _showVideoQualityLabel: !shouldDisplayTileView(state)
     };
 }

@@ -16,10 +16,6 @@
 
 /* Mixins END */
 
-/* Animations BEGIN */
-
-@import "animations";
-
 /* Animations END */
 
 /* Fonts BEGIN */
@@ -45,6 +41,7 @@
 @import 'modals/settings/settings';
 @import 'modals/speaker_stats/speaker_stats';
 @import 'modals/video-quality/video-quality';
+@import 'modals/local-recording/local-recording';
 @import 'videolayout_default';
 @import 'notice';
 @import 'popup_menu';
@@ -55,7 +52,6 @@
 @import 'welcome_page';
 @import 'welcome_page_content';
 @import 'toolbars';
-@import 'side_toolbar_container';
 @import 'jquery.contextMenu';
 @import 'keyboard-shortcuts';
 @import 'redirect_page';
@@ -72,10 +68,17 @@
 @import 'filmstrip/filmstrip_toolbar';
 @import 'filmstrip/horizontal_filmstrip';
 @import 'filmstrip/small_video';
+@import 'filmstrip/tile_view';
+@import 'filmstrip/tile_view_overrides';
 @import 'filmstrip/vertical_filmstrip';
 @import 'filmstrip/vertical_filmstrip_overrides';
 @import 'unsupported-browser/main';
 @import 'modals/invite/add-people';
 @import 'deep-linking/main';
 @import 'transcription-subtitles';
+@import '_meetings_list.scss';
+@import 'navigate_section_list';
+@import 'third-party-branding/google';
+@import 'third-party-branding/microsoft';
+
 /* Modules END */

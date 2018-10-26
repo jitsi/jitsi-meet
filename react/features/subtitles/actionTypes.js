@@ -1,14 +1,3 @@
-/**
- * The type of (redux) action which indicates that a transcript with
- * a new message_id is received.
- *
- * {
- *      type: ADD_TRANSCRIPT_MESSAGE,
- *      transcriptMessageID: string,
- *      participantName: string
- * }
- */
-export const ADD_TRANSCRIPT_MESSAGE = Symbol('ADD_TRANSCRIPT_MESSAGE');
 
 /**
  * The type of (redux) action which indicates that an endpoint message
@@ -35,7 +24,7 @@ export const REMOVE_TRANSCRIPT_MESSAGE = Symbol('REMOVE_TRANSCRIPT_MESSAGE');
 
 /**
  * The type of (redux) action which indicates that a transcript with an
- * existing message_id to be updated is received.
+ * given message_id to be added or updated is received.
  *
  * {
  *      type: UPDATE_TRANSCRIPT_MESSAGE,
@@ -44,3 +33,15 @@ export const REMOVE_TRANSCRIPT_MESSAGE = Symbol('REMOVE_TRANSCRIPT_MESSAGE');
  * }
  */
 export const UPDATE_TRANSCRIPT_MESSAGE = Symbol('UPDATE_TRANSCRIPT_MESSAGE');
+
+/**
+ * The type of (redux) action which indicates that the user pressed the
+ * ClosedCaption button, to either enable or disable subtitles based on the
+ * current state.
+ *
+ * {
+ *      type: TOGGLE_REQUESTING_SUBTITLES
+ * }
+ */
+export const TOGGLE_REQUESTING_SUBTITLES
+    = Symbol('TOGGLE_REQUESTING_SUBTITLES');

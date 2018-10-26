@@ -233,7 +233,7 @@ export function setTrackMuted(track, muted) {
         // Track might be already disposed so ignore such an error.
         if (error.name !== JitsiTrackErrors.TRACK_IS_DISPOSED) {
             // FIXME Emit mute failed, so that the app can show error dialog.
-            console.error(`set track ${f} failed`, error);
+            logger.error(`set track ${f} failed`, error);
         }
     });
 }

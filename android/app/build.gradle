@@ -2,6 +2,7 @@ apply plugin: 'com.android.application'
 
 android {
     compileSdkVersion rootProject.ext.compileSdkVersion
+    buildToolsVersion rootProject.ext.buildToolsVersion
 
     defaultConfig {
         applicationId 'org.jitsi.meet'
@@ -27,9 +28,13 @@ android {
     }
 
     buildTypes {
+        debug {
+            minifyEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules-debug.pro'
+        }
         release {
-            minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            minifyEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules-release.pro'
         }
     }
 
@@ -40,7 +45,69 @@ android {
 }
 
 dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation "com.android.support:support-v4:${rootProject.ext.supportLibVersion}"
+    implementation "com.android.support:appcompat-v7:${rootProject.ext.supportLibVersion}"
+    implementation 'com.google.android.gms:play-services-auth:15.0.0'
 
     implementation project(':sdk')
+
+    debugImplementation 'com.squareup.leakcanary:leakcanary-android:1.6.1'
+    releaseImplementation 'com.squareup.leakcanary:leakcanary-android-no-op:1.6.1'
+}
+
+gradle.projectsEvaluated {
+    // Dropbox integration
+    //
+
+    def plistParser = new XmlSlurper(
+            /* validating */ false,
+            /* namespaceAware */ false,
+            /* allowDocTypeDeclaration */ true)
+    plistParser.setFeature(
+            'http://apache.org/xml/features/nonvalidating/load-external-dtd',
+            false)
+    def plist = plistParser.parse('../ios/app/src/Info.plist')
+    def dropboxScheme = plist.dict.array.dict.array.string.find { string ->
+        string.text().startsWith('db-')
+    }
+    def dropboxAppKey = dropboxScheme?.text() - 'db-'
+
+    if (dropboxAppKey) {
+        android.defaultConfig.resValue('string', 'dropbox_app_key', "${dropboxAppKey}")
+
+        def dropboxActivity = """
+          <activity
+              android:configChanges="keyboard|orientation"
+              android:launchMode="singleTask"
+              android:name="com.dropbox.core.android.AuthActivity">
+            <intent-filter>
+              <action android:name="android.intent.action.VIEW" />
+              <category android:name="android.intent.category.BROWSABLE" />
+              <category android:name="android.intent.category.DEFAULT" />
+              <data android:scheme="db-${dropboxAppKey}" />
+            </intent-filter>
+          </activity>""";
+
+        android.applicationVariants.all { variant ->
+            variant.outputs.each { output ->
+                output.processManifest.doLast {
+                    def f = new File(manifestOutputDirectory, 'AndroidManifest.xml')
+                    if (!f.isFile()) {
+                        f = new File(new File(manifestOutputDirectory, output.dirName), 'AndroidManifest.xml')
+                    }
+                    if (f.exists()) {
+                        def charset = 'UTF-8'
+                        def s = f.getText(charset)
+                        s = s.replace('</application>', "${dropboxActivity}</application>")
+                        f.write(s, charset)
+                    }
+                }
+            }
+        }
+    }
+}
+
+if (project.file('google-services.json').exists()) {
+   apply plugin: 'com.google.gms.google-services'
 }

@@ -171,9 +171,17 @@ var config = {
 
     // Whether to enable file recording or not.
     // fileRecordingsEnabled: false,
+    // Enable the dropbox integration.
+    // dropbox: {
+    //     appKey: '<APP_KEY>' // Specify your app key here.
+    // },
 
     // Whether to enable live streaming or not.
     // liveStreamingEnabled: false,
+
+    // Transcription (in interface_config,
+    // subtitles and buttons can be configured)
+    // transcribingEnabled: false,
 
     // Misc
 
@@ -233,10 +241,6 @@ var config = {
     // Disable hiding of remote thumbnails when in a 1-on-1 conference call.
     // disable1On1Mode: false,
 
-    // The minimum value a video's height (or width, whichever is smaller) needs
-    // to be in order to be considered high-definition.
-    minHDHeight: 540,
-
     // Default language for the user interface.
     // defaultLanguage: 'en',
 
@@ -251,6 +255,10 @@ var config = {
     // Message to show the users. Example: 'The service will be down for
     // maintenance at 01:00 AM GMT,
     // noticeMessage: '',
+
+    // Enables calendar integration, depends on googleApiApplicationClientID
+    // and microsoftApiApplicationClientID
+    // enableCalendarIntegration: false,
 
     // Stats
     //
@@ -343,6 +351,36 @@ var config = {
         // userRegion: "asia"
     }
 
+    // Local Recording
+    //
+
+    // localRecording: {
+    // Enables local recording.
+    // Additionally, 'localrecording' (all lowercase) needs to be added to
+    // TOOLBAR_BUTTONS in interface_config.js for the Local Recording
+    // button to show up on the toolbar.
+    //
+    //     enabled: true,
+    //
+
+    // The recording format, can be one of 'ogg', 'flac' or 'wav'.
+    //     format: 'flac'
+    //
+
+    // }
+
+    // Options related to end-to-end (participant to participant) ping.
+    // e2eping: {
+    //   // The interval in milliseconds at which pings will be sent.
+    //   // Defaults to 10000, set to <= 0 to disable.
+    //   pingInterval: 10000,
+    //
+    //   // The interval in milliseconds at which analytics events
+    //   // with the measured RTT will be sent. Defaults to 60000, set
+    //   // to <= 0 to disable.
+    //   analyticsInterval: 60000,
+    //   }
+
     // List of undocumented settings used in jitsi-meet
     /**
      _immediateReloadThreshold
@@ -362,8 +400,10 @@ var config = {
      externalConnectUrl
      firefox_fake_device
      googleApiApplicationClientID
+     googleApiIOSClientID
      iAmRecorder
      iAmSipGateway
+     microsoftApiApplicationClientID
      peopleSearchQueryTypes
      peopleSearchUrl
      requireDisplayName
@@ -392,6 +432,7 @@ var config = {
      nick
      startBitrate
      */
+
 };
 
 /* eslint-enable no-unused-vars, no-var */

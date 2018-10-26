@@ -244,7 +244,7 @@ class MultiSelectAutocomplete extends Component {
         if (!this.state.error) {
             return null;
         }
-        const content = ( // eslint-disable-line no-extra-parens
+        const content = (
             <div className = 'autocomplete-error'>
                 <InlineDialogFailure
                     onRetry = { this._onRetry } />

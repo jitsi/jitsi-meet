@@ -1,12 +1,6 @@
 export default {
     NICKNAME_CHANGED: 'UI.nickname_changed',
-    SELECTED_ENDPOINT: 'UI.selected_endpoint',
     PINNED_ENDPOINT: 'UI.pinned_endpoint',
-
-    /**
-     * Notifies that local user created text message.
-     */
-    MESSAGE_CREATED: 'UI.message_created',
 
     /**
      * Notifies that local user changed email.
@@ -35,7 +29,6 @@ export default {
      * Notifies that the audio only mode was toggled.
      */
     TOGGLE_AUDIO_ONLY: 'UI.toggle_audioonly',
-    TOGGLE_CHAT: 'UI.toggle_chat',
 
     /**
      * Notifies that a command to toggle the filmstrip has been issued. The
@@ -60,11 +53,11 @@ export default {
     TOGGLED_FILMSTRIP: 'UI.toggled_filmstrip',
     TOGGLE_SCREENSHARING: 'UI.toggle_screensharing',
     TOGGLED_SHARED_DOCUMENT: 'UI.toggled_shared_document',
+    TOGGLED_TILE_VIEW: 'UI.toggled_tile_view',
     HANGUP: 'UI.hangup',
     LOGOUT: 'UI.logout',
     VIDEO_DEVICE_CHANGED: 'UI.video_device_changed',
     AUDIO_DEVICE_CHANGED: 'UI.audio_device_changed',
-    AUDIO_OUTPUT_DEVICE_CHANGED: 'UI.audio_output_device_changed',
 
     /**
      * Notifies interested listeners that the follow-me feature is enabled or

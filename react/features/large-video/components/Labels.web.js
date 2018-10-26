@@ -23,7 +23,7 @@ type State = {
      * @type {boolean}
      */
     filmstripBecomingVisible: boolean
-}
+};
 
 /**
  * A container to hold video status labels, including recording status and
@@ -86,15 +86,26 @@ class Labels extends AbstractLabels<Props, State> {
                         JitsiRecordingConstants.mode.STREAM)
                 }
                 {
-                    this._renderVideoQualityLabel()
+                    this._renderLocalRecordingLabel()
+                }
+                {
+                    this._renderTranscribingLabel()
+                }
+                {
+                    this.props._showVideoQualityLabel
+                        && this._renderVideoQualityLabel()
                 }
             </div>
         );
     }
 
-    _renderRecordingLabel: string => React$Element<*>
+    _renderLocalRecordingLabel: () => React$Element<*>;
 
-    _renderVideoQualityLabel: () => React$Element<*>
+    _renderRecordingLabel: string => React$Element<*>;
+
+    _renderTranscribingLabel: () => React$Element<*>;
+
+    _renderVideoQualityLabel: () => React$Element<*>;
 }
 
 export default connect(_mapStateToProps)(Labels);

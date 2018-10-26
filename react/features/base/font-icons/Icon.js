@@ -1,3 +1,5 @@
+import { Platform } from 'react-native';
+
 // FIXME The import of react-native-vector-icons makes the file native-specific
 // but the file's name and/or location (within the directory structure) don't
 // reflect that, it suggests the file is platform-independent.
@@ -10,3 +12,8 @@ import icoMoonConfig from './jitsi.json';
  * Creates the Jitsi icon set from the ico moon project config file.
  */
 export const Icon = createIconSetFromIcoMoon(icoMoonConfig);
+
+// Dynamically load font on iOS
+if (Platform.OS === 'ios') {
+    Icon.loadFont('jitsi.ttf');
+}

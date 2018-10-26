@@ -64,10 +64,6 @@ export default class DeviceSelectionPopup {
             disableAudioInputChange: true,
             disableBlanketClickDismiss: true,
             disableDeviceChange: true,
-            hasAudioPermission: JitsiMeetJS.mediaDevices
-                .isDevicePermissionGranted.bind(null, 'audio'),
-            hasVideoPermission: JitsiMeetJS.mediaDevices
-                .isDevicePermissionGranted.bind(null, 'video'),
             hideAudioInputPreview: !JitsiMeetJS.isCollectingLocalStats(),
             hideAudioOutputSelect: true
 

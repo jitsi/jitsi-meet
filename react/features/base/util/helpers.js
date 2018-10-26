@@ -1,5 +1,7 @@
 // @flow
 
+const logger = require('jitsi-meet-logger').getLogger(__filename);
+
 /**
  * Returns the namespace for all global variables, functions, etc that we need.
  *
@@ -64,4 +66,16 @@ export function assignIfDefined(target: Object, source: Object) {
     }
 
     return to;
+}
+
+/**
+ * Prints the error and reports it to the global error handler.
+ *
+ * @param {Error} e - The error object.
+ * @param {string} msg - A custom message to print in addition to the error.
+ * @returns {void}
+ */
+export function reportError(e: Object, msg: string = '') {
+    logger.error(msg, e);
+    window.onerror && window.onerror(msg, null, null, null, e);
 }

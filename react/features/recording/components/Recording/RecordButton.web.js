@@ -3,7 +3,6 @@
 import { connect } from 'react-redux';
 
 import { translate } from '../../../base/i18n';
-import { getLocalParticipant } from '../../../base/participants';
 
 import AbstractRecordButton, {
     _mapStateToProps as _abstractMapStateToProps,
@@ -85,15 +84,14 @@ class RecordButton extends AbstractRecordButton<Props> {
  */
 export function _mapStateToProps(state: Object, ownProps: Props): Object {
     const abstractProps = _abstractMapStateToProps(state, ownProps);
-    const localParticipant = getLocalParticipant(state);
-    const { features = {} } = localParticipant;
     let { visible } = ownProps;
 
+    const _disabledByFeatures = abstractProps.disabledByFeatures;
     let _disabled = false;
     let _fileRecordingsDisabledTooltipKey;
 
     if (!abstractProps.visible
-            && String(features.recording) !== 'disabled') {
+            && _disabledByFeatures !== undefined && !_disabledByFeatures) {
         _disabled = true;
 
         // button and tooltip
@@ -108,7 +106,8 @@ export function _mapStateToProps(state: Object, ownProps: Props): Object {
 
     if (typeof visible === 'undefined') {
         visible = interfaceConfig.TOOLBAR_BUTTONS.includes('recording')
-            && (abstractProps.visible || _fileRecordingsDisabledTooltipKey);
+            && (abstractProps.visible
+                    || Boolean(_fileRecordingsDisabledTooltipKey));
     }
 
     return {

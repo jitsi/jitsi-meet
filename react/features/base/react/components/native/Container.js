@@ -8,20 +8,14 @@ import {
 } from 'react-native';
 
 import AbstractContainer from '../AbstractContainer';
+import type { Props } from '../AbstractContainer';
 
 /**
  * Represents a container of React Native/mobile {@link Component} children.
  *
  * @extends AbstractContainer
  */
-export default class Container extends AbstractContainer {
-    /**
-     * {@code Container} component's property types.
-     *
-     * @static
-     */
-    static propTypes = AbstractContainer.propTypes;
-
+export default class Container<P: Props> extends AbstractContainer<P> {
     /**
      * Implements React's {@link Component#render()}.
      *
@@ -34,6 +28,7 @@ export default class Container extends AbstractContainer {
             accessible,
             onClick,
             touchFeedback = onClick,
+            underlayColor,
             visible = true,
             ...props
         } = this.props;
@@ -62,7 +57,8 @@ export default class Container extends AbstractContainer {
                     {
                         accessibilityLabel,
                         accessible,
-                        onPress: onClick
+                        onPress: onClick,
+                        ...touchFeedback && { underlayColor }
                     },
                     element);
         }

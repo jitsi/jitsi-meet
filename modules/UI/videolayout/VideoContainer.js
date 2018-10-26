@@ -216,8 +216,6 @@ export class VideoContainer extends LargeContainer {
         this.emitter = emitter;
         this.resizeContainer = resizeContainer;
 
-        this.isVisible = false;
-
         /**
          * Whether the background should fit the height of the container
          * (portrait) or fit the width of the container (landscape).
@@ -603,17 +601,11 @@ export class VideoContainer extends LargeContainer {
      * TODO: refactor this since Temasys is no longer supported.
      */
     show() {
-        // its already visible
-        if (this.isVisible) {
-            return Promise.resolve();
-        }
-
         return new Promise(resolve => {
             this.$wrapperParent.css('visibility', 'visible').fadeTo(
                 FADE_DURATION_MS,
                 1,
                 () => {
-                    this.isVisible = true;
                     resolve();
                 }
             );
@@ -628,15 +620,9 @@ export class VideoContainer extends LargeContainer {
         // hide its avatar
         this.showAvatar(false);
 
-        // its already hidden
-        if (!this.isVisible) {
-            return Promise.resolve();
-        }
-
         return new Promise(resolve => {
             this.$wrapperParent.fadeTo(FADE_DURATION_MS, 0, () => {
                 this.$wrapperParent.css('visibility', 'hidden');
-                this.isVisible = false;
                 resolve();
             });
         });

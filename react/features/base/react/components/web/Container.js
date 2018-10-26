@@ -1,13 +1,14 @@
 /* @flow */
 
 import AbstractContainer from '../AbstractContainer';
+import type { Props } from '../AbstractContainer';
 
 /**
  * Represents a container of React/Web {@link Component} children with a style.
  *
  * @extends AbstractContainer
  */
-export default class Container extends AbstractContainer {
+export default class Container<P: Props> extends AbstractContainer<P> {
     /**
      * {@code Container} component's property types.
      *
@@ -22,11 +23,8 @@ export default class Container extends AbstractContainer {
      * @returns {ReactElement}
      */
     render() {
-        const { visible } = this.props;
+        const { visible = true } = this.props;
 
-        return (
-            typeof visible === 'undefined' || visible
-                ? super._render('div')
-                : null);
+        return visible ? super._render('div') : null;
     }
 }

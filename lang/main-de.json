@@ -1,6 +1,5 @@
 {
-    "contactlist": "__count__ Teilnehmer",
-    "contactlist_plural": "",
+    "contactlist_plural": "__count__ Teilnehmer",
     "passwordSetRemotely": "von einem anderen Teilnehmer gesetzt",
     "poweredby": "Betrieben von",
     "inviteUrlDefaultMsg": "Die Konferenz wird erstellt...",
@@ -23,6 +22,7 @@
         "react-nativeGrantPermissions": "Wählen Sie <b><i>Erlauben</i></b> wenn der Browser um Berechtigungen bittet.",
         "chromeGrantPermissions": "Wählen Sie <b><i>Erlauben</i></b> wenn der Browser um Berechtigungen bittet.",
         "androidGrantPermissions": "Wählen Sie <b><i>Erlauben</i></b> wenn der Browser um Berechtigungen bittet.",
+        "electronGrantPermissions": "Bitte Berechtigungen zur Verwendung der Kamera und des Mikrofons erteilen",
         "firefoxGrantPermissions": "Wählen Sie <b><i>Markiertes Gerät teilen</i></b> wenn der Browser um Berechtigungen bittet.",
         "operaGrantPermissions": "Wählen Sie <b><i>Erlauben</i></b> wenn der Browser um Berechtigungen bittet.",
         "iexplorerGrantPermissions": "Wählen Sie <b><i>OK</i></b> wenn der Browser um Berechtigungen bittet.",
@@ -46,46 +46,20 @@
         "showSpeakerStats": "Statistiken für Sprecher anzeigen"
     },
     "welcomepage": {
-        "disable": "Diesen Hinweis nicht mehr anzeigen",
-        "feature1": {
-            "content": "Kein Download nötig. __app__ läuft direkt im Browser. Einfach die Konferenzadresse teilen und los geht's.",
-            "title": "Einfach zu benutzen"
+        "appDescription": "Auf geht's! Beginne eine Videokonferenz mit dem ganzen Team. Oder eigentlich, lade alle ein die du kennst. __app__ ist eine vollständig verschlüsselte, aus 100% Open-Source-Software bestehende Videokonferenzlösung die du den ganzen Tag kostenlos verwenden kannst — ohne Registrierung.",
+        "audioVideoSwitch": {
+            "audio": "Sprache",
+            "video": "Video"
         },
-        "feature2": {
-            "content": "Videokonferenzen mit mehreren Teilnehmen mit weniger als 128Kpbs. Bildschirmfreigaben und Telefonkonferenzen kommen sogar mit noch weniger Bandbreite aus.",
-            "title": "Niedrige Bandbreite"
-        },
-        "feature3": {
-            "content": "__app__ steht unter der Apache Lizenz. Es steht ihnen frei __app__ gemäss dieser Lizenz herunterzuladen, zu verändern oder zu verbreiten.",
-            "title": "Open Source"
-        },
-        "feature4": {
-            "content": "Es gibt keine künstlichen Begrenzungen der Anzahl der Konferenz-Teilnehmer. Die Bandbreite und Rechenleistung des Server sind die einzigen Limitierungen.",
-            "title": "Unbegrenzte Anzahl Benutzer"
-        },
-        "feature5": {
-            "content": "Es ist ganz einfach den Bildschirm zu teilen. __app__ ist ideal für Online-Präsentationen, Vorlesungen und Fernwartungsanfragen.",
-            "title": "Bildschirmfreigabe"
-        },
-        "feature6": {
-            "content": "Privatsphäre gewünscht? __app__ Konferenzen können mit einem Passwort geschützt werden um ungebetene Gäste fernzuhalten und Unterbrechungen zu vermeiden.",
-            "title": "Sichere Konferenzen"
-        },
-        "feature7": {
-            "content": "__app__ verwendet Etherpad, ein Editor zur kollaborativen Bearbeitung von Texten.",
-            "title": "Freigegebene Notizen"
-        },
-        "feature8": {
-            "content": "Die Verwendung kann durch die Integration mit Piwik, Google Analytics und anderen Überwachungs- und Statistikprogrammen protokolliert werden.",
-            "title": "Benutzungsstatistiken"
-        },
+        "calendar": "Kalender",
         "go": "Los",
         "join": "Beitreten",
         "privacy": "Privatsphäre",
         "roomname": "Konferenzname eingeben",
-        "roomnamePlaceHolder": "Konferenzname",
+        "roomnameHint": "Name oder URL der Konferenz der Sie beitreten möchten. Sie können einen Namen erfinden, er muss nur den anderen Teilnehmern übermittelt werden damit sie der gleichen Konferenz beitreten.",
         "sendFeedback": "Senden Sie uns Ihr Feedback",
-        "terms": "Bedingungen"
+        "terms": "Bedingungen",
+        "title": "Sichere, flexible und vollständig freie Videokonferenzen"
     },
     "startupoverlay": {
         "policyText": "",
@@ -99,22 +73,28 @@
     "toolbar": {
         "addPeople": "Teilnehmer zur Konferenz hinzufügen",
         "audioonly": "Nur-Audio-Modus aktivieren/deaktivieren (spart Bandbreite)",
+        "callQuality": "Qualitätseinstellungen",
+        "enterFullScreen": "Vollbildmodus",
+        "exitFullScreen": "Vollbildmodus verlassen",
+        "feedback": "Feedback hinterlasen",
+        "moreActions": "Weitere Einstellungen",
         "mute": "Stummschaltung aktivieren / deaktivieren",
         "videomute": "Kamera starten / stoppen",
         "authenticate": "Anmelden",
         "lock": "Konferenz schützen / Schutz aufheben",
-        "invite": "Link teilen",
         "chat": "Chat öffnen / schliessen",
         "etherpad": "Geteiltes Dokument öffnen / schliessen",
+        "documentOpen": "Geteiltes Dokument öffnen",
+        "documentClose": "Geteiltes Dokument schliessen",
         "sharedvideo": "YouTube-Video teilen",
-        "sharescreen": "Bildschirmfreigabe starten / stoppen",
+        "sharescreen": "Bildschirmfreigabe",
+        "stopSharedVideo": "YouTube Video stoppen",
         "fullscreen": "Vollbildmodus aktivieren / deaktivieren",
         "sip": "SIP Nummer anrufen",
         "Settings": "Einstellungen",
         "hangup": "Verlassen",
         "login": "Anmelden",
         "logout": "Abmelden",
-        "dialpad": "Wähltastatur öffnen / schliessen",
         "sharedVideoMutedPopup": "Das freigegebene Video wurde stumm geschaltet um mit den anderen Teilnehmern zu sprechen.",
         "micMutedPopup": "Das Mikrofon wurde stumm geschaltet um das freigegebene Video geniessen zu können.",
         "talkWhileMutedPopup": "Versuchen sie zu sprechen? Ihr Mikrofon ist stummgeschaltet.",
@@ -123,17 +103,9 @@
         "micDisabled": "Kein Mikrofon verfügbar",
         "filmstrip": "Videos anzeigen / verbergen",
         "profile": "Profil bearbeiten",
-        "raiseHand": "Hand erheben"
-    },
-    "unsupportedBrowser": {
-        "appNotInstalled": "Mit __app__ auf dem Mobiltelefon teilnehmen.",
-        "downloadApp": "App herunterladen",
-        "openApp": "In __app__ fortfahren"
-    },
-    "bottomtoolbar": {
-        "chat": "Chat öffnen / schliessen",
-        "filmstrip": "Videos anzeigen / verbergen",
-        "contactlist": "Teilnehmerliste und neue Teilnehmer einladen"
+        "raiseHand": "Hand erheben",
+        "shortcuts": "Tastenkürzel anzeigen",
+        "speakerStats": "Sprecher-Statistiken"
     },
     "chat": {
         "nickname": {
@@ -218,10 +190,11 @@
         "grantedToUnknown": "Moderatorenrechte an $t(notify.somebody) vergeben.",
         "muted": "Der Konferenz wurde stumm beigetreten.",
         "mutedTitle": "Stummschaltung aktiv!",
-        "raisedHand": "Möchte sprechen."
+        "raisedHand": "Möchte sprechen.",
+        "suboptimalExperienceTitle": "Browserwarnung",
+        "suboptimalExperienceDescription": "Tut uns leid, aber die Konferenz wird mit __appName__ kein grossartiges Erlebnis. Wir versuchen immer die Situation zu verbessern, bis dahin empfehlen wir aber die Verwendung einer der <a href=\"static/recommendedBrowsers.html\" target=\"_blank\">vollständig unterstützen Browser</a>."
     },
     "dialog": {
-        "add": "Hinzufügen",
         "allow": "Erlauben",
         "kickMessage": "Oh! Sie wurden aus der Konferenz ausgeschlossen.",
         "popupErrorTitle": "Popup blockiert",
@@ -236,7 +209,6 @@
         "copy": "Kopieren",
         "contactSupport": "Support kontaktieren",
         "error": "Fehler",
-        "createPassword": "Passwort erstellen",
         "detectext": "Fehler bei der Erkennung der Bildschirmfreigabeerweiterung.",
         "failedpermissions": "Die Zugriffsberechtigungen auf das Mikrofon und/oder die Kamera konnten nicht eingeholt werden.",
         "conferenceReloadTitle": "Leider ist etwas schiefgegangen.",
@@ -287,10 +259,6 @@
         "Save": "Speichern",
         "recording": "Aufnahme",
         "recordingToken": "Aufnahme-Token eingeben",
-        "passwordCheck": "Sind Sie sicher, dass Sie das Passwort entfernen möchten?",
-        "passwordMsg": "Passwort setzen um die Konferenz zu schützen",
-        "shareLink": "Link zu dieser Konferenz teilen",
-        "yourPassword": "Neues Passwort eingeben",
         "Back": "Zurück",
         "serviceUnavailable": "Dienst nicht verfügbar",
         "gracefulShutdown": "Der Dienst steht momentan wegen Wartungsarbeiten nicht zur Verfügung. Bitte versuchen Sie es später noch einmal.",
@@ -304,15 +272,14 @@
         "tokenAuthFailed": "Sie sind nicht berechtigt dieser Konferenz beizutreten.",
         "displayNameRequired": "Anzeigename ist erforderlich",
         "enterDisplayName": "Geben Sie Ihren Anzeigenamen ein",
-        "extensionRequired": "Erweiterung erforderlich:",
-        "firefoxExtensionPrompt": "Um die Bildschirmfreigabe nutzen zu können, muss eine Firefox-Erweiterung installiert werden. Bitte versuchen Sie es erneut nachdem die <a href='__url__'>Erweiterung installiert</a> wurde.",
         "feedbackHelp": "Ihr Feedback hilft uns die Qualität der Konferenzen zu verbessern.",
         "feedbackQuestion": "Anmerkungen zur Konferenz.",
         "thankYou": "Danke für die Verwendung von __appName__!",
         "sorryFeedback": "Tut uns leid. Möchten Sie uns mehr mitteilen?",
         "liveStreaming": "Live-Streaming",
-        "streamKey": "Streamname/-schlüssel",
+        "streamKey": "Name/Schlüssel für den Stream",
         "startLiveStreaming": "Live-Streaming starten",
+        "startRecording": "Aufnahme starten",
         "stopStreamingWarning": "Sind Sie sicher dass Sie das Live-Streaming stoppen möchten?",
         "stopRecordingWarning": "Sind Sie sicher dass Sie die Aufnahme stoppen möchten?",
         "stopLiveStreaming": "Live-Streaming stoppen",
@@ -321,6 +288,8 @@
         "permissionDenied": "Zugriff verweigert",
         "screenSharingFailedToInstall": "Oh! Die Erweiterung für die Bildschirmfreigabe konnte nicht installiert werden.",
         "screenSharingFailedToInstallTitle": "Bildschirmfreigabe-Erweiterung konnte nicht installiert werden",
+        "screenSharingFirefoxPermissionDeniedError": "Die Bildschirmfreigabe ist leider fehlgeschlagen. Bitte stellen Sie sicher, dass die Berechtigung für die Bildschirmfreigabe im Browser erteilt wurde.",
+        "screenSharingFirefoxPermissionDeniedTitle": "Die Bildschirmfreigabe konnte nicht gestartet werden.",
         "screenSharingPermissionDeniedError": "Oh! Beim Anfordern der Bildschirmfreigabe-Berechtigungen hat etwas nicht funktioniert. Bitte aktualisieren und erneut versuchen.",
         "cameraUnsupportedResolutionError": "Die Kamera unterstützt die erforderliche Auflösung nicht.",
         "cameraUnknownError": "Die Kamera kann aus einem unbekannten Grund nicht verwendet werden.",
@@ -417,14 +386,21 @@
         "busy": "Es werden Resourcen zum Streamen bereitgestellt. Bitte in ein paar Minuten erneut versuchen.",
         "busyTitle": "Alle Streaming-Instanzen sind in Gebrauch",
         "buttonTooltip": "Live-Stream starten / stoppen",
+        "changeSignIn": "Konten wechseln.",
+        "choose": "Live stream auswählen",
+        "chooseCTA": "Streaming-Option auswählen. Sie sind aktuell als __email__ angemeldet.",
+        "enterStreamKey": "Name/Schlüssel für den YouTube Livestream hier eingeben.",
         "error": "Das Live-Streaming ist fehlgeschlagen. Bitte versuchen Sie es erneut.",
+        "errorAPI": "Beim abrufen der YouTube Livestreams ist ein Fehler aufgetreten. Bitte versuchen Sie sich erneut anzumelden.",
         "failedToStart": "Live-Streaming konnte nicht gestartet werden",
         "off": "Live-Streaming gestoppt",
         "on": "Live-Streaming",
         "pending": "Live-Stream wird gestartet...",
         "serviceName": "Live Streaming-Dienst",
-        "streamIdRequired": "Bitte Stream-ID eingeben um das Live-Streaming zu starten.",
-        "streamIdHelp": "Wo ist die Stream-ID zu finden?",
+        "signIn": "Mit Google anmelden",
+        "signInCTA": "Anmelden oder den Name/Schlüssel des YouTube Livestreams eingeben.",
+        "start": "Einen Livestream starten",
+        "streamIdHelp": "Was ist das?",
         "unavailableTitle": "Live-Streaming nicht verfügbar"
     },
     "videoSIPGW": {
@@ -454,26 +430,16 @@
         "selectADevice": "Ein Gerät wählen",
         "testAudio": "Audio testen"
     },
-    "invite": {
-        "addPassword": "Passwort hinzufügen",
-        "callNumber": "__number__ anrufen",
-        "enterID": "Um mit einem Telefon teilzunehmen, geben Sie die Konferenz ID (__conferenceID__) gefolgt von # ein",
-        "howToDialIn": "Wählen Sie eine der folgenden Nummern um via Telefon teilzunehmen und die Konferenz ID",
-        "hidePassword": "Passwort verstecken",
-        "inviteTo": "Teilnehmer zu __conferenceName__ einladen",
-        "invitedYouTo": "Sie wurden von __userName__ zur Konferenz __inviteURL__ eingeladen",
-        "invitePeople": "Einladen",
-        "locked": "Diese Konferenz ist gesperrt. Neue Teilnehmer müssen das Passwort eingeben um beizutreten.",
-        "showPassword": "Passwort anzeigen",
-        "unlocked": "Die Konferenz ist nicht geschützt. Jeder mit dem Link kann der Konferenz beitreten."
-    },
     "videoStatus": {
         "callQuality": "Konferenzqualität",
         "hd": "HD",
+        "hdTooltip": "Video wird in HD angezeigt",
         "highDefinition": "Hohe Auflösung",
-        "labelTooltipVideo": "Aktuelle Videoqualität",
         "labelTooltipAudioOnly": "Nur-Audio Modus aktiv",
+        "labelTooiltipNoVideo": "Kein Video",
+        "labelTooltipVideo": "Aktuelle Videoqualität",
         "ld": "LD",
+        "ldTooltip": "Video wird in niedriger Auflösung angezeigt",
         "lowDefinition": "Niedrige Auflösung",
         "onlyAudioAvailable": "Nur Ton",
         "onlyAudioSupported": "In diesem Browser wird nur Audio unterstützt.",
@@ -481,21 +447,30 @@
         "p2pVideoQualityDescription": "Im Ende-zu-Ende Modus kann die Konferenzqualität nur zwischen hoch und nur-Audio gewählt werden. Andere Einstellungen werden nicht beachtet.",
         "recHighDefinitionOnly": "Hohe Qualität wird bevorzugt.",
         "sd": "SD",
+        "sdTooltip": "Video wird in Standardauflösung angezeigt",
         "standardDefinition": "Standardauflösung",
         "qualityButtonTip": "Empfangene Videoqualität ändern"
     },
     "dialOut": {
-        "dial": "Wählen",
-        "dialOut": "Nummer anrufen",
-        "statusMessage": "ist jetzt __status__",
-        "enterPhone": "Telefonnummer eingeben",
-        "phoneNotAllowed": "Diese Telefonnummer wird leider noch nicht unterstützt!"
+        "statusMessage": "ist jetzt __status__"
     },
     "addPeople": {
-        "add": "Hinzufügen",
+        "add": "Einladen",
+        "countryNotSupported": "Wir unterstützen dieses Land noch nicht.",
+        "countryReminder": "Telefonnummer nicht in den USA? Bitte sicherstellen, dass die Telefonnummer mit dem Ländercode beginnt.",
+        "disabled": "",
+        "invite": "Einladen",
+        "loading": "Suche nach Teilnehmern und Telefonnummern",
+        "loadingNumber": "Telefonnummer wird überprüft",
+        "loadingPeople": "Suche nach einzuladenden Teilnehmern",
         "noResults": "Keine passenden Ergebnisse",
-        "searchPlaceholder": "Nach Teilnehmern und Konferenzen suchen",
-        "title": "Teilnehmer zur Konferenz hinzufügen",
+        "noValidNumbers": "Telefonnummer eingeben",
+        "notAvailable": "Sie können keine Teilnehmer einladen.",
+        "searchNumbers": "Telefonnummern hinzufügen",
+        "searchPeople": "Nach Teilnehmern suchen",
+        "searchPeopleAndNumbers": "Nach Teilnehmen suchen oder deren Telefonnummern hinzufügen",
+        "telephone": "Telefon: __number__",
+        "title": "Teilnehmer zu dieser Konferenz einladen",
         "failedToAdd": "Teilnehmer konnte nicht hinzugefügt werden"
     },
     "inlineDialogFailure": {
@@ -514,14 +489,71 @@
         "average": "Durschnittlich",
         "bad": "Schlecht",
         "good": "Gut",
-        "rateExperience": "Bitte bewerten Sie diese Konferenz.",
+        "detailsLabel": "Sagen Sie uns mehr dazu.",
+        "rateExperience": "Bitte bewerten Sie diese Konferenz",
         "veryBad": "Sehr schlecht",
         "veryGood": "Sehr gut"
     },
     "info": {
-        "copy": "Link kopieren",
-        "invite": "In __app__ einladen",
-        "title": "Konferenz-Zugriffsinformationen",
+        "addPassword": "Passwort hinzufügen",
+        "cancelPassword": "Password abbrechen",
+        "conferenceURL": "Link:",
+        "country": "Land",
+        "dialANumber": "Um dieser Konferenz beizutreten, rufen Sie eine dieser Telefonnummern an und geben die PIN __conferenceID__# ein.",
+        "dialInNumber": "Einwählen:",
+        "dialInConferenceID": "PIN:",
+        "dialInNotSupported": "Tut uns leid, einwählen ist momentan nicht unterstützt.",
+        "genericError": "Es ist leider etwas schiefgegangen.",
+        "inviteLiveStream": "Klicken Sie auf __url__ um den Livestream dieser Konferenz zu öffnen",
+        "invitePhone": "Um der Konferenz telefonisch beizutreten, rufen Sie __number__ and und geben die PIN __conferenceID__# ein",
+        "invitePhoneAlternatives": "Klicken sie auf __url__ um mehr Telefonnummern anzuzeigen",
+        "inviteURL": "Klicken Sie auf __url__ um der Konferenz beizutreten",
+        "liveStreamURL": "Livestream:",
+        "moreNumbers": "Weitere Telefonnummern",
+        "noNumbers": "Keine Telefonnummern verfügbar.",
+        "noPassword": "Kein",
+        "noRoom": "Keine Konferenz für die Einwähl-Informationen angegeben.",
+        "numbers": "Einwählnummern",
+        "password": "Passwort:",
+        "title": "Teilen",
         "tooltip": "Zugriffsinformationen über die Konferenz abrufen"
+    },
+    "settingsView": {
+        "alertOk": "OK",
+        "alertTitle": "Warnung",
+        "alertURLText": "Die angegebene Server URL ist ungültig",
+        "conferenceSection": "Konferenz",
+        "displayName": "Anzeigename",
+        "email": "E-Mail",
+        "header": "Einstellungen",
+        "profileSection": "Profil",
+        "serverURL": "Server URL",
+        "startWithAudioMuted": "Stumm beitreten",
+        "startWithVideoMuted": "Ohne Video beitreten"
+    },
+    "calendarSync": {
+        "later": "Später",
+        "next": "Folgend",
+        "nextMeeting": "Nächste Konferenz",
+        "now": "Jetzt",
+        "permissionButton": "Einstellungen öffnen",
+        "permissionMessage": "Die App benötigt Zugriff auf den Kalender um die Termine und Konferenzen anzuzeigen."
+    },
+    "recentList": {
+        "today": "Heute",
+        "yesterday": "Gestern",
+        "earlier": "Früher"
+    },
+    "sectionList": {
+        "pullToRefresh": "Ziehen um zu aktualisieren"
+    },
+    "deepLinking": {
+        "title": "Die Konferenz wird in __app__ geöffnet...",
+        "description": "Nichts passiert? Wir haben versucht die Konferenz in __app__ zu öffnen. Versuchen Sie es erneut oder treten Sie der Konferenz in __app__ im Web bei.",
+        "tryAgainButton": "Erneut mit der nativen Applikation versuchen",
+        "launchWebButton": "Im Web öffnen",
+        "appNotInstalled": "Sie benötigen die __app__ App um der Konferenz auf dem Smartphone beizutreten.",
+        "downloadApp": "App herunterladen",
+        "openApp": "In der App fortfahren"
     }
 }

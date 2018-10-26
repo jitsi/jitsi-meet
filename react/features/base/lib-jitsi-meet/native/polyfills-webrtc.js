@@ -3,14 +3,15 @@ import {
     MediaStreamTrack,
     RTCSessionDescription,
     RTCIceCandidate,
-    getUserMedia
+    mediaDevices,
+    permissions
 } from 'react-native-webrtc';
 
 import RTCPeerConnection from './RTCPeerConnection';
 
 (global => {
-    if (typeof global.webkitMediaStream === 'undefined') {
-        global.webkitMediaStream = MediaStream;
+    if (typeof global.MediaStream === 'undefined') {
+        global.MediaStream = MediaStream;
     }
     if (typeof global.MediaStreamTrack === 'undefined') {
         global.MediaStreamTrack = MediaStreamTrack;
@@ -21,7 +22,7 @@ import RTCPeerConnection from './RTCPeerConnection';
     if (typeof global.RTCPeerConnection === 'undefined') {
         global.RTCPeerConnection = RTCPeerConnection;
     }
-    if (typeof global.webkitRTCPeerConnection === 'undefined') {
+    if (typeof global.RTCPeerConnection === 'undefined') {
         global.webkitRTCPeerConnection = RTCPeerConnection;
     }
     if (typeof global.RTCSessionDescription === 'undefined') {
@@ -31,8 +32,11 @@ import RTCPeerConnection from './RTCPeerConnection';
     const navigator = global.navigator;
 
     if (navigator) {
-        if (typeof navigator.webkitGetUserMedia === 'undefined') {
-            navigator.webkitGetUserMedia = getUserMedia;
+        if (typeof navigator.mediaDevices === 'undefined') {
+            navigator.mediaDevices = mediaDevices;
+        }
+        if (typeof navigator.permissions === 'undefined') {
+            navigator.permissions = permissions;
         }
     }
 

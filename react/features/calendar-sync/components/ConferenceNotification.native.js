@@ -10,7 +10,7 @@ import { Icon } from '../../base/font-icons';
 import { getLocalizedDateFormatter, translate } from '../../base/i18n';
 import { ASPECT_RATIO_NARROW } from '../../base/responsive-ui';
 
-import { CALENDAR_ENABLED } from '../constants';
+import { isCalendarEnabled } from '../functions';
 import styles from './styles';
 
 const ALERT_MILLISECONDS = 5 * 60 * 1000;
@@ -237,9 +237,10 @@ class ConferenceNotification extends Component<Props, State> {
 
             for (const event of _eventList) {
                 const eventUrl
-                    = getURLWithoutParamsNormalized(new URL(event.url));
+                    = event.url
+                        && getURLWithoutParamsNormalized(new URL(event.url));
 
-                if (eventUrl !== _currentConferenceURL) {
+                if (eventUrl && eventUrl !== _currentConferenceURL) {
                     if ((!eventToShow
                                 && event.startDate > now
                                 && event.startDate < now + ALERT_MILLISECONDS)
@@ -293,6 +294,6 @@ function _mapStateToProps(state: Object) {
     };
 }
 
-export default CALENDAR_ENABLED
+export default isCalendarEnabled()
     ? translate(connect(_mapStateToProps)(ConferenceNotification))
     : undefined;

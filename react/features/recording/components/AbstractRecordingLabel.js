@@ -4,6 +4,8 @@ import { Component } from 'react';
 
 import { JitsiRecordingConstants } from '../../base/lib-jitsi-meet';
 
+import { getSessionStatusToShow } from '../functions';
+
 /**
  * NOTE: Web currently renders multiple indicators if multiple recording
  * sessions are running. This is however may not be a good UX as it's not
@@ -12,13 +14,12 @@ import { JitsiRecordingConstants } from '../../base/lib-jitsi-meet';
  * running. These boolean are shared across the two components to make it
  * easier to align web's behaviour to mobile's later if necessary.
  */
-export type Props = {
+type Props = {
 
     /**
-     * True if there is an active recording with the provided mode therefore the
-     * component must be rendered.
+     * The status of the highermost priority session.
      */
-    _visible: boolean,
+    _status: ?string,
 
     /**
      * The recording mode this indicator should display.
@@ -32,10 +33,50 @@ export type Props = {
 };
 
 /**
+ * State of the component.
+ */
+type State = {
+
+    /**
+     * True if the label status is stale, so it needs to be removed.
+     */
+    staleLabel: boolean
+};
+
+/**
+ * The timeout after a label is considered stale. See {@code _updateStaleStatus}
+ * for more details.
+ */
+const STALE_TIMEOUT = 10 * 1000;
+
+/**
  * Abstract class for the {@code RecordingLabel} component.
  */
-export default class AbstractRecordingLabel<P: Props>
-    extends Component<P> {
+export default class AbstractRecordingLabel
+    extends Component<Props, State> {
+    /**
+     * Initializes a new {@code AbstractRecordingLabel} component.
+     *
+     * @inheritdoc
+     */
+    constructor(props: Props) {
+        super(props);
+
+        this.state = {
+            staleLabel: false
+        };
+
+        this._updateStaleStatus({}, props);
+    }
+
+    /**
+     * Implements {@code Component#componentWillReceiveProps}.
+     *
+     * @inheritdoc
+     */
+    componentWillReceiveProps(newProps: Props) {
+        this._updateStaleStatus(this.props, newProps);
+    }
 
     /**
      * Implements React {@code Component}'s render.
@@ -43,7 +84,8 @@ export default class AbstractRecordingLabel<P: Props>
      * @inheritdoc
      */
     render() {
-        return this.props._visible ? this._renderLabel() : null;
+        return this.props._status && !this.state.staleLabel
+            ? this._renderLabel() : null;
     }
 
     _getLabelKey: () => ?string
@@ -74,6 +116,34 @@ export default class AbstractRecordingLabel<P: Props>
      */
     _renderLabel: () => React$Element<*>
 
+    /**
+     * Updates the stale status of the label on a prop change. A label is stale
+     * if it's in a {@code _status} that doesn't need to be rendered anymore.
+     *
+     * @param {Props} oldProps - The previous props of the component.
+     * @param {Props} newProps - The new props of the component.
+     * @returns {void}
+     */
+    _updateStaleStatus(oldProps, newProps) {
+        if (newProps._status === JitsiRecordingConstants.status.OFF) {
+            if (oldProps._status !== JitsiRecordingConstants.status.OFF) {
+                setTimeout(() => {
+                    // Only if it's still OFF.
+                    if (this.props._status
+                            === JitsiRecordingConstants.status.OFF) {
+                        this.setState({
+                            staleLabel: true
+                        });
+                    }
+                }, STALE_TIMEOUT);
+            }
+        } else if (this.state.staleLabel) {
+            this.setState({
+                staleLabel: false
+            });
+        }
+    }
+
 }
 
 /**
@@ -84,20 +154,13 @@ export default class AbstractRecordingLabel<P: Props>
  * @param {Props} ownProps - The component's own props.
  * @private
  * @returns {{
- *     _visible: boolean
+ *     _status: ?string
  * }}
  */
 export function _mapStateToProps(state: Object, ownProps: Props) {
     const { mode } = ownProps;
-    const _recordingSessions = state['features/recording'].sessionDatas;
-    const _visible
-        = Array.isArray(_recordingSessions)
-        && _recordingSessions.some(
-            session => session.status === JitsiRecordingConstants.status.ON
-            && session.mode === mode
-        );
 
     return {
-        _visible
+        _status: getSessionStatusToShow(state, mode)
     };
 }

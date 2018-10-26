@@ -4,10 +4,10 @@ import React from 'react';
 import { connect } from 'react-redux';
 
 import { CircularLabel } from '../../base/label';
+import { JitsiRecordingConstants } from '../../base/lib-jitsi-meet';
 import { translate } from '../../base/i18n';
 
 import AbstractRecordingLabel, {
-    type Props,
     _mapStateToProps
 } from './AbstractRecordingLabel';
 
@@ -17,13 +17,19 @@ import AbstractRecordingLabel, {
  *
  * @extends {Component}
  */
-class RecordingLabel extends AbstractRecordingLabel<Props> {
+class RecordingLabel extends AbstractRecordingLabel {
     /**
      * Renders the platform specific label component.
      *
      * @inheritdoc
      */
     _renderLabel() {
+        if (this.props._status !== JitsiRecordingConstants.status.ON) {
+            // Since there are no expanded labels on web, we only render this
+            // label when the recording status is ON.
+            return null;
+        }
+
         return (
             <div>
                 <CircularLabel

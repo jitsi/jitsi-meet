@@ -14,6 +14,9 @@ import {
 } from '../base/participants';
 import { MiddlewareRegistry } from '../base/redux';
 import { TRACK_ADDED } from '../base/tracks';
+import { SET_FILMSTRIP_VISIBLE } from '../filmstrip';
+
+import { SET_TILE_VIEW } from './actionTypes';
 
 declare var APP: Object;
 
@@ -69,6 +72,15 @@ MiddlewareRegistry.register(store => next => action => {
             UIEvents.PINNED_ENDPOINT,
             action.participant.id,
             Boolean(action.participant.id));
+        break;
+
+    case SET_FILMSTRIP_VISIBLE:
+        VideoLayout.resizeVideoArea(true, false);
+        APP.UI.emitEvent(UIEvents.TOGGLED_FILMSTRIP, action.visible);
+        break;
+
+    case SET_TILE_VIEW:
+        APP.UI.emitEvent(UIEvents.TOGGLED_TILE_VIEW, action.enabled);
         break;
 
     case TRACK_ADDED:

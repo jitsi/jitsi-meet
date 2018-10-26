@@ -11,6 +11,7 @@ import React, { Component } from 'react';
  */
 const DIALOG_TO_PADDING_POSITION = {
     'left': 'popover-mousemove-padding-right',
+    'right': 'popover-mousemove-padding-left',
     'top': 'popover-mousemove-padding-bottom'
 };
 

@@ -1,5 +1,4 @@
 // @flow
-
 import { APP_WILL_MOUNT } from '../base/app';
 import { getURLWithoutParamsNormalized } from '../base/connection';
 import { ReducerRegistry } from '../base/redux';
@@ -7,8 +6,10 @@ import { PersistenceRegistry } from '../base/storage';
 
 import {
     _STORE_CURRENT_CONFERENCE,
-    _UPDATE_CONFERENCE_DURATION
+    _UPDATE_CONFERENCE_DURATION,
+    DELETE_RECENT_LIST_ENTRY
 } from './actionTypes';
+import { isRecentListEnabled } from './functions';
 
 const logger = require('jitsi-meet-logger').getLogger(__filename);
 
@@ -50,20 +51,37 @@ PersistenceRegistry.register(STORE_NAME);
 ReducerRegistry.register(
     STORE_NAME,
     (state = _getLegacyRecentRoomList(), action) => {
-        switch (action.type) {
-        case APP_WILL_MOUNT:
-            return _appWillMount(state);
+        if (isRecentListEnabled()) {
+            switch (action.type) {
+            case APP_WILL_MOUNT:
+                return _appWillMount(state);
+            case DELETE_RECENT_LIST_ENTRY:
+                return _deleteRecentListEntry(state, action.entryId);
+            case _STORE_CURRENT_CONFERENCE:
+                return _storeCurrentConference(state, action);
 
-        case _STORE_CURRENT_CONFERENCE:
-            return _storeCurrentConference(state, action);
-
-        case _UPDATE_CONFERENCE_DURATION:
-            return _updateConferenceDuration(state, action);
-
-        default:
-            return state;
+            case _UPDATE_CONFERENCE_DURATION:
+                return _updateConferenceDuration(state, action);
+            default:
+                return state;
+            }
         }
+
+        return state;
     });
+
+/**
+ * Deletes a recent list entry based on the url and date of the item.
+ *
+ * @param {Array<Object>} state - The Redux state.
+ * @param {Object} entryId - The ID object of the entry.
+ * @returns {Array<Object>}
+ */
+function _deleteRecentListEntry(
+        state: Array<Object>, entryId: Object): Array<Object> {
+    return state.filter(entry =>
+        entry.conference !== entryId.url || entry.date !== entryId.date);
+}
 
 /**
  * Reduces the redux action {@link APP_WILL_MOUNT}.

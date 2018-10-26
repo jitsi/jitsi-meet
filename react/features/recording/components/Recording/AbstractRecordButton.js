@@ -113,6 +113,10 @@ export default class AbstractRecordButton<P: Props>
 export function _mapStateToProps(state: Object, ownProps: Props): Object {
     let { visible } = ownProps;
 
+    // a button can be disabled/enabled only if enableFeaturesBasedOnToken
+    // is on
+    let disabledByFeatures;
+
     if (typeof visible === 'undefined') {
         // If the containing component provides the visible prop, that is one
         // above all, but if not, the button should be autonomus and decide on
@@ -125,14 +129,18 @@ export function _mapStateToProps(state: Object, ownProps: Props): Object {
         const { features = {} } = getLocalParticipant(state);
 
         visible = isModerator
-            && fileRecordingsEnabled
-            && (!enableFeaturesBasedOnToken
-                || String(features.recording) === 'true');
+            && fileRecordingsEnabled;
+
+        if (enableFeaturesBasedOnToken) {
+            visible = visible && String(features.recording) === 'true';
+            disabledByFeatures = String(features.recording) === 'disabled';
+        }
     }
 
     return {
         _isRecordingRunning:
             Boolean(getActiveSession(state, JitsiRecordingConstants.mode.FILE)),
+        disabledByFeatures,
         visible
     };
 }

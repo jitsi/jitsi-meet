@@ -2,8 +2,7 @@
 
 import { SET_ROOM } from '../conference';
 import { JitsiConnectionErrors } from '../lib-jitsi-meet';
-import { assign, ReducerRegistry } from '../redux';
-import { parseURIString } from '../util';
+import { assign, set, ReducerRegistry } from '../redux';
 
 import {
     CONNECTION_DISCONNECTED,
@@ -154,50 +153,6 @@ function _connectionWillConnect(
 }
 
 /**
- * Constructs options to be passed to the constructor of {@code JitsiConnection}
- * based on a specific location URL.
- *
- * @param {string} locationURL - The location URL with which the returned
- * options are to be constructed.
- * @private
- * @returns {Object} The options to be passed to the constructor of
- * {@code JitsiConnection} based on the location URL.
- */
-function _constructOptions(locationURL: URL) {
-    const locationURI = parseURIString(locationURL.href);
-
-    // FIXME The HTTPS scheme for the BOSH URL works with meet.jit.si on both
-    // mobile & Web. It also works with beta.meet.jit.si on Web. Unfortunately,
-    // it doesn't work with beta.meet.jit.si on mobile. Temporarily, use the
-    // HTTP scheme for the BOSH URL with beta.meet.jit.si on mobile.
-    let { protocol } = locationURI;
-    const domain = locationURI.hostname;
-
-    if (!protocol && domain === 'beta.meet.jit.si') {
-        const windowLocation = window.location;
-
-        windowLocation && (protocol = windowLocation.protocol);
-        protocol || (protocol = 'http:');
-    }
-
-    // Default to the HTTPS scheme for the BOSH URL.
-    protocol || (protocol = 'https:');
-
-    return {
-        bosh:
-            `${String(protocol)}//${domain}${
-                locationURI.contextRoot || '/'}http-bind`,
-        hosts: {
-            domain,
-
-            // Required by:
-            // - lib-jitsi-meet/modules/xmpp/xmpp.js
-            muc: `conference.${domain}`
-        }
-    };
-}
-
-/**
  * The current (similar to getCurrentConference in base/conference/functions.js)
  * connection which is {@code connection} or {@code connecting}.
  *
@@ -223,10 +178,7 @@ function _getCurrentConnection(baseConnectionState: Object): ?Object {
 function _setLocationURL(
         state: Object,
         { locationURL }: { locationURL: ?URL }) {
-    return assign(state, {
-        locationURL,
-        options: locationURL ? _constructOptions(locationURL) : undefined
-    });
+    return set(state, 'locationURL', locationURL);
 }
 
 /**

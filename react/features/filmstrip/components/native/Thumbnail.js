@@ -1,4 +1,5 @@
-import PropTypes from 'prop-types';
+// @flow
+
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
@@ -19,30 +20,66 @@ import styles from './styles';
 import VideoMutedIndicator from './VideoMutedIndicator';
 
 /**
+ * Thumbnail component's property types.
+ */
+type Props = {
+
+    /**
+     * The Redux representation of the participant's audio track.
+     */
+    _audioTrack: Object,
+
+    /**
+     * The Redux representation of the state "features/large-video".
+     */
+    _largeVideo: Object,
+
+    /**
+     * The Redux representation of the participant's video track.
+     */
+    _videoTrack: Object,
+
+    /**
+     * If true, tapping on the thumbnail will not pin the participant to large
+     * video. By default tapping does pin the participant.
+     */
+    disablePin?: boolean,
+
+    /**
+     * If true, there will be no color overlay (tint) on the thumbnail
+     * indicating the participant associated with the thumbnail is displayed on
+     * large video. By default there will be a tint.
+     */
+    disableTint?: boolean,
+
+    /**
+     * Invoked to trigger state changes in Redux.
+     */
+    dispatch: Dispatch<*>,
+
+    /**
+     * The Redux representation of the participant to display.
+     */
+    participant: Object,
+
+    /**
+     * Optional styling to add or override on the Thumbnail component root.
+     */
+    styleOverrides?: Object
+};
+
+/**
  * React component for video thumbnail.
  *
  * @extends Component
  */
-class Thumbnail extends Component {
-    /**
-     * Thumbnail component's property types.
-     *
-     * @static
-     */
-    static propTypes = {
-        _audioTrack: PropTypes.object,
-        _largeVideo: PropTypes.object,
-        _videoTrack: PropTypes.object,
-        dispatch: PropTypes.func,
-        participant: PropTypes.object
-    };
-
+class Thumbnail extends Component<Props> {
     /**
      * Initializes new Video Thumbnail component.
      *
      * @param {Object} props - Component props.
      */
-    constructor(props) {
+    constructor(props: Props) {
         super(props);
 
         // Bind event handlers so they are only bound once for every instance.
@@ -56,19 +93,14 @@ class Thumbnail extends Component {
      * @returns {ReactElement}
      */
     render() {
-        const audioTrack = this.props._audioTrack;
-        const largeVideo = this.props._largeVideo;
-        const participant = this.props.participant;
-        const videoTrack = this.props._videoTrack;
-
-        let style = styles.thumbnail;
-
-        if (participant.pinned) {
-            style = {
-                ...style,
-                ...styles.thumbnailPinned
-            };
-        }
+        const {
+            _audioTrack: audioTrack,
+            _largeVideo: largeVideo,
+            _videoTrack: videoTrack,
+            disablePin,
+            disableTint,
+            participant
+        } = this.props;
 
         // We don't render audio in any of the following:
         // 1. The audio (source) is muted. There's no practical reason (that we
@@ -85,8 +117,13 @@ class Thumbnail extends Component {
 
         return (
             <Container
-                onClick = { this._onClick }
-                style = { style }>
+                onClick = { disablePin ? undefined : this._onClick }
+                style = { [
+                    styles.thumbnail,
+                    participant.pinned && !disablePin
+                        ? styles.thumbnailPinned : null,
+                    this.props.styleOverrides || null
+                ] }>
 
                 { renderAudio
                     && <Audio
@@ -96,7 +133,7 @@ class Thumbnail extends Component {
                 <ParticipantView
                     avatarSize = { AVATAR_SIZE }
                     participantId = { participantId }
-                    tintEnabled = { participantInLargeVideo }
+                    tintEnabled = { participantInLargeVideo && !disableTint }
                     zOrder = { 1 } />
 
                 { participant.role === PARTICIPANT_ROLE.MODERATOR
@@ -116,6 +153,8 @@ class Thumbnail extends Component {
             </Container>
         );
     }
+
+    _onClick: () => void;
 
     /**
      * Handles click/tap event on the thumbnail.

@@ -1,6 +1,4 @@
 // @flow
-import { StyleSheet } from 'react-native';
-
 import { BoxModel, ColorPalette, createStyleSheet } from '../../../base/styles';
 
 import { HANGUP_BUTTON_SIZE } from '../../constants';
@@ -64,15 +62,11 @@ const styles = createStyleSheet({
      */
     toolbar: {
         alignItems: 'center',
-        bottom: 0,
-        flex: 0,
         flexDirection: 'row',
+        flexGrow: 0,
         justifyContent: 'center',
-        left: 0,
         marginBottom: BoxModel.margin / 2,
-        paddingHorizontal: BoxModel.margin,
-        position: 'absolute',
-        right: 0
+        paddingHorizontal: BoxModel.margin
     },
 
     /**
@@ -87,21 +81,10 @@ const styles = createStyleSheet({
 
     /**
      * The style of the root/top-level {@link Container} of {@link Toolbox}.
-     * This is the narrow layout version which locates the toolbar on top of
-     * the filmstrip, at the bottom of the screen.
      */
-    toolboxNarrow: {
+    toolbox: {
         flexDirection: 'column',
-        flexGrow: 1
-    },
-
-    /**
-     * The style of the root/top-level {@link Container} of {@link Toolbox}.
-     * This is the wide layout version which locates the toolbar at the bottom
-     * of the screen.
-     */
-    toolboxWide: {
-        ...StyleSheet.absoluteFillObject
+        flexGrow: 0
     },
 
     /**

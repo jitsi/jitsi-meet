@@ -143,16 +143,16 @@ class MoreTab extends AbstractDialogTab<Props, State> {
             t
         } = this.props;
 
-        const languageItems = languages.map(language =>
-            // eslint-disable-next-line react/jsx-wrap-multilines
-            <DropdownItem
-                key = { language }
-                // eslint-disable-next-line react/jsx-no-bind
-                onClick = {
-                    () => super._onChange({ currentLanguage: language }) }>
-                { t(`languages:${language}`) }
-            </DropdownItem>
-        );
+        const languageItems
+            = languages.map(language => (
+                <DropdownItem
+                    key = { language }
+
+                    // eslint-disable-next-line react/jsx-no-bind
+                    onClick = {
+                        () => super._onChange({ currentLanguage: language }) }>
+                    { t(`languages:${language}`) }
+                </DropdownItem>));
 
         return (
             <div

@@ -126,11 +126,16 @@
 
 .dial-in-page {
     align-items: center;
+    box-sizing: border-box;
     display: flex;
     flex-direction: column;
     font-size: 24px;
-    height: 100%;
-    justify-content: center;
+    max-height: 100%;
+    overflow: auto;
+    padding: 25px;
+    position: absolute;
+    transform: translateY(-50%);
+    top: 50%;
     width: 100%;
 
     .dial-in-numbers-list {
@@ -140,6 +145,7 @@
 
     .dial-in-conference-id {
         text-align: center;
+        min-width: 200px;
         width: 30%;
     }
 }

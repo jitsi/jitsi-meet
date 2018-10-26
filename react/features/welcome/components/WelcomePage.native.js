@@ -8,7 +8,6 @@ import {
     TouchableOpacity,
     View
 } from 'react-native';
-import Permissions from 'react-native-permissions';
 import { connect } from 'react-redux';
 
 import { translate } from '../../base/i18n';
@@ -76,8 +75,8 @@ class WelcomePage extends AbstractWelcomePage {
             // Make sure we don't request the permission for the camera from
             // the start. We will, however, create a video track iff the user
             // already granted the permission.
-            Permissions.check('camera').then(response => {
-                response === 'authorized'
+            navigator.permissions.query({ name: 'camera' }).then(response => {
+                response === 'granted'
                     && dispatch(createDesiredLocalTracks(MEDIA_TYPE.VIDEO));
             });
         }
@@ -230,7 +229,6 @@ class WelcomePage extends AbstractWelcomePage {
         const { t } = this.props;
         let children;
 
-        /* eslint-disable no-extra-parens */
 
         if (this.state.joining) {
             // TouchableHighlight is picky about what its children can be, so
@@ -251,7 +249,6 @@ class WelcomePage extends AbstractWelcomePage {
             );
         }
 
-        /* eslint-enable no-extra-parens */
 
         const buttonDisabled = this._isJoinDisabled();
 

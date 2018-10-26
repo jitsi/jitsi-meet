@@ -146,7 +146,6 @@
             background: #B8C7E0;
             border-radius: 2px;
             color: $newToolbarBackgroundColor;
-            font-family: -apple-system, BlinkMacSystemFont, $baseFontFamily;
             font-size: 11px;
             font-weight: bold;
             margin-left: 8px;
@@ -302,27 +301,6 @@
         border-bottom-left-radius: 3px;
         border-bottom-right-radius: 3px;
     }
-}
-
-/**
- * START of slide in animation for extended toolbar panel.
- */
-@include keyframes(slideInExt) {
-    from { width: 0px; }
-    to   { width: $sidebarWidth; } // TO FIX: Make this value a percentage.
-}
-
-.slideInExt {
-    @include animation("slideInExt .5s forwards");
-}
-
-@include keyframes(slideOutExt) {
-  from { width: $sidebarWidth; } // TO FIX: Make this value a percentage.
-  to   { width: 0px; }
-}
-
-.slideOutExt {
-  @include animation("slideOutExt .5s forwards");
 }
 
 /**
