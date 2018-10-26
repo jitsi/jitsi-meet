@@ -35,5 +35,21 @@ export default createStyleSheet({
         // On iPhone X there is the notch. In the two cases BoxModel.margin is
         // not enough.
         top: BoxModel.margin * 3
+    },
+
+    chatIconBadgeContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'flex-start'
+    },
+
+    chatIconBadge: {
+        width: 20,
+        height: 20,
+        backgroundColor: '#FF0000'
+    },
+
+    badgeText: {
+        color: '#000000'
     }
 });

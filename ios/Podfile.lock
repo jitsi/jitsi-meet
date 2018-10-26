@@ -8,18 +8,18 @@ PODS:
     - glog
   - glog (0.3.5)
   - GoogleSignIn (4.3.0):
-    - "GoogleToolboxForMac/NSDictionary+URLArguments (~> 2.1)"
-    - "GoogleToolboxForMac/NSString+URLArguments (~> 2.1)"
+    - GoogleToolboxForMac/NSDictionary+URLArguments (~> 2.1)
+    - GoogleToolboxForMac/NSString+URLArguments (~> 2.1)
     - GTMOAuth2 (~> 1.0)
     - GTMSessionFetcher/Core (~> 1.1)
   - GoogleToolboxForMac/DebugUtils (2.1.4):
     - GoogleToolboxForMac/Defines (= 2.1.4)
   - GoogleToolboxForMac/Defines (2.1.4)
-  - "GoogleToolboxForMac/NSDictionary+URLArguments (2.1.4)":
+  - GoogleToolboxForMac/NSDictionary+URLArguments (2.1.4):
     - GoogleToolboxForMac/DebugUtils (= 2.1.4)
     - GoogleToolboxForMac/Defines (= 2.1.4)
-    - "GoogleToolboxForMac/NSString+URLArguments (= 2.1.4)"
-  - "GoogleToolboxForMac/NSString+URLArguments (2.1.4)"
+    - GoogleToolboxForMac/NSString+URLArguments (= 2.1.4)
+  - GoogleToolboxForMac/NSString+URLArguments (2.1.4)
   - GTMOAuth2 (1.1.6):
     - GTMSessionFetcher (~> 1.1)
   - GTMSessionFetcher (1.2.0):
@@ -126,46 +126,35 @@ DEPENDENCIES:
   - RNVectorIcons (from `../node_modules/react-native-vector-icons`)
   - yoga (from `../node_modules/react-native/ReactCommon/yoga`)
 
-SPEC REPOS:
-  https://github.com/cocoapods/specs.git:
-    - boost-for-react-native
-    - FLAnimatedImage
-    - GoogleSignIn
-    - GoogleToolboxForMac
-    - GTMOAuth2
-    - GTMSessionFetcher
-    - ObjectiveDropboxOfficial
-    - SDWebImage
-
 EXTERNAL SOURCES:
   DoubleConversion:
-    :podspec: "../node_modules/react-native/third-party-podspecs/DoubleConversion.podspec"
+    :podspec: ../node_modules/react-native/third-party-podspecs/DoubleConversion.podspec
   Folly:
-    :podspec: "../node_modules/react-native/third-party-podspecs/Folly.podspec"
+    :podspec: ../node_modules/react-native/third-party-podspecs/Folly.podspec
   glog:
-    :podspec: "../node_modules/react-native/third-party-podspecs/glog.podspec"
+    :podspec: ../node_modules/react-native/third-party-podspecs/glog.podspec
   React:
-    :path: "../node_modules/react-native"
+    :path: ../node_modules/react-native
   react-native-background-timer:
-    :path: "../node_modules/react-native-background-timer"
+    :path: ../node_modules/react-native-background-timer
   react-native-calendar-events:
-    :path: "../node_modules/react-native-calendar-events"
+    :path: ../node_modules/react-native-calendar-events
   react-native-fast-image:
-    :path: "../node_modules/react-native-fast-image"
+    :path: ../node_modules/react-native-fast-image
   react-native-keep-awake:
-    :path: "../node_modules/react-native-keep-awake"
+    :path: ../node_modules/react-native-keep-awake
   react-native-locale-detector:
-    :path: "../node_modules/react-native-locale-detector"
+    :path: ../node_modules/react-native-locale-detector
   react-native-webrtc:
-    :path: "../node_modules/react-native-webrtc"
+    :path: ../node_modules/react-native-webrtc
   RNGoogleSignin:
-    :path: "../node_modules/react-native-google-signin"
+    :path: ../node_modules/react-native-google-signin
   RNSound:
-    :path: "../node_modules/react-native-sound"
+    :path: ../node_modules/react-native-sound
   RNVectorIcons:
-    :path: "../node_modules/react-native-vector-icons"
+    :path: ../node_modules/react-native-vector-icons
   yoga:
-    :path: "../node_modules/react-native/ReactCommon/yoga"
+    :path: ../node_modules/react-native/ReactCommon/yoga
 
 SPEC CHECKSUMS:
   boost-for-react-native: 39c7adb57c4e60d6c5479dd8623128eb5b3f0f2c
@@ -193,4 +182,4 @@ SPEC CHECKSUMS:
 
 PODFILE CHECKSUM: cf8276ba4b0933b24c6082a25a5f4eabe0ba4ea6
 
-COCOAPODS: 1.5.3
+COCOAPODS: 1.4.0

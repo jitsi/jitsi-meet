@@ -3,7 +3,7 @@
 import React, { Component } from 'react';
 
 // eslint-disable-next-line react-native/split-platform-components
-import { BackAndroid, BackHandler, StatusBar, View } from 'react-native';
+import { BackAndroid, BackHandler, StatusBar, View, Text } from 'react-native';
 import { connect as reactReduxConnect } from 'react-redux';
 
 import { appNavigate } from '../../app';
@@ -28,6 +28,19 @@ import { setToolboxVisible, Toolbox } from '../../toolbox';
 import { shouldDisplayTileView } from '../../video-layout';
 
 import styles from './styles';
+
+import { ChatButton, toggleChat, Chat, clearChat } from '../../chat';
+import { getUnreadCount } from '../../chat/functions';
+import {
+    toolbarButtonStyles,
+    toolbarToggledButtonStyles
+} from '../../toolbox/components/native/styles';
+
+// Displays unread message count when the chat is closed
+import IconBadge from 'react-native-icon-badge';
+
+// The chat is displayed in the modal
+import Modal from 'react-native-modal';
 
 /**
  * The type of the React {@code Component} props of {@link Conference}.
@@ -137,7 +150,18 @@ type Props = {
      *
      * @private
      */
-    _toolboxAlwaysVisible: boolean
+    _toolboxAlwaysVisible: boolean,
+
+    // True when chat is open
+    _isChatOpen: boolean,
+
+    // Dispatches a toggle chat action when the screen is touched to the side
+    // of the chat, which results in closing the chat
+    _onToggleChat: Function,
+
+    // Unread message count is displayed when the chat is closed
+    _unreadMessageCount: number
+
 };
 
 /**
@@ -268,12 +292,22 @@ class Conference extends Component<Props> {
             _shouldDisplayTileView
         } = this.props;
 
+        const unreadMessageCount = this.props._unreadMessageCount;
+
         return (
             <Container style = { styles.conference }>
                 <StatusBar
                     barStyle = 'light-content'
                     hidden = { true }
                     translucent = { true } />
+
+                <Modal
+                    animationType = { 'slide' }
+                    onBackdropPress = { this.props._onToggleChat }
+                    transparent = { true }
+                    visible = { this.props._isChatOpen }>
+                    <Chat />
+                </Modal>
 
                 {/*
                   * The LargeVideo is the lowermost stacking layer.
@@ -320,6 +354,29 @@ class Conference extends Component<Props> {
                       */
                         _shouldDisplayTileView ? undefined : <Filmstrip />
                     }
+                    <View style = { styles.chatIconBadgeContainer }>
+                        <IconBadge
+                            BadgeElement = {
+                                <Text style = { styles.badgeText } >
+                                    { unreadMessageCount }
+                                </Text>
+                            }
+                            Hidden = { unreadMessageCount === 0 }
+                            IconBadgeStyle = {
+                                styles.chatIconBadge
+                            }
+                            MainElement = {
+                                <ChatButton
+                                    iconName = { this.props._isChatOpen
+                                        ? 'icon-chat toggled'
+                                        : 'icon-chat' }
+                                    showLabel = { false }
+                                    styles = { toolbarButtonStyles }
+                                    toggledStyles =
+                                        { toolbarToggledButtonStyles } />
+                            } />
+                    </View>
+
                 </View>
 
                 <TestConnectionInfo />
@@ -404,6 +461,7 @@ function _mapDispatchToProps(dispatch) {
         _onConnect() {
             dispatch(createDesiredLocalTracks());
             dispatch(connect());
+            dispatch(clearChat());
         },
 
         /**
@@ -440,6 +498,16 @@ function _mapDispatchToProps(dispatch) {
          */
         _setToolboxVisible(visible) {
             dispatch(setToolboxVisible(visible));
+        },
+
+        /**
+         * Dispatches an action changing the visibility of the {@link Chat}.
+         *
+         * @private
+         * @returns {void}
+         */
+        _onToggleChat() {
+            dispatch(toggleChat());
         }
     };
 }
@@ -471,6 +539,9 @@ function _mapStateToProps(state) {
     } = state['features/base/conference'];
     const { reducedUI } = state['features/base/responsive-ui'];
     const { alwaysVisible, visible } = state['features/toolbox'];
+    const { isOpen } = state['features/chat'];
+    const unreadMessageCount = getUnreadCount(state);
+
 
     // XXX There is a window of time between the successful establishment of the
     // XMPP connection and the subsequent commencement of joining the MUC during
@@ -556,7 +627,11 @@ function _mapStateToProps(state) {
          * @private
          * @type {boolean}
          */
-        _toolboxAlwaysVisible: alwaysVisible
+        _toolboxAlwaysVisible: alwaysVisible,
+
+        _isChatOpen: isOpen,
+
+        _unreadMessageCount: unreadMessageCount
     };
 }
 

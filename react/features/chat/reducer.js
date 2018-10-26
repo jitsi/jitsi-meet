@@ -2,7 +2,7 @@
 
 import { ReducerRegistry } from '../base/redux';
 
-import { ADD_MESSAGE, TOGGLE_CHAT } from './actionTypes';
+import { ADD_MESSAGE, TOGGLE_CHAT, CLEAR_CHAT } from './actionTypes';
 
 const DEFAULT_STATE = {
     isOpen: false,
@@ -32,6 +32,12 @@ ReducerRegistry.register('features/chat', (state = DEFAULT_STATE, action) => {
             ]
         };
     }
+
+    case CLEAR_CHAT:
+        return {
+            ...state,
+            messages: []
+        };
 
     case TOGGLE_CHAT:
         return {

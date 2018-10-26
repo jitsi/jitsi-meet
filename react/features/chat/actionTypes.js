@@ -14,6 +14,16 @@
 export const ADD_MESSAGE = Symbol('ADD_MESSAGE');
 
 /**
+ * The type of the action which signals to clear messages in chat on
+ * connecting to conference.
+ *
+ * {
+ *     type: CLEAR_CHAT
+ * }
+ */
+export const CLEAR_CHAT = Symbol('CLEAR_CHAT');
+
+/**
  * The type of the action which signals a send a chat message to everyone in the
  * conference.
  *

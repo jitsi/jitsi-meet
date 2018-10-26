@@ -42,22 +42,23 @@ MiddlewareRegistry.register(store => next => action => {
         break;
 
     case CONFERENCE_JOINED:
-        typeof APP === 'undefined'
-            || _addChatMsgListener(action.conference, store);
+        _addChatMsgListener(action.conference, store);
         break;
 
-    case SEND_MESSAGE:
-        if (typeof APP !== 'undefined') {
-            const { conference } = store.getState()['features/base/conference'];
+    case SEND_MESSAGE: {
 
-            if (conference) {
-                const escapedMessage = UIUtil.escapeHtml(action.message);
+        const { conference } = store.getState()['features/base/conference'];
 
+        if (conference) {
+            const escapedMessage = UIUtil.escapeHtml(action.message);
+
+            if (typeof APP !== 'undefined') {
                 APP.API.notifySendingChatMessage(escapedMessage);
-                conference.sendTextMessage(escapedMessage);
             }
+            conference.sendTextMessage(escapedMessage);
         }
         break;
+    }
     }
 
     return next(action);
@@ -75,7 +76,7 @@ MiddlewareRegistry.register(store => next => action => {
  */
 function _addChatMsgListener(conference, { dispatch, getState }) {
     if ((typeof interfaceConfig === 'object' && interfaceConfig.filmStripOnly)
-        || !isButtonEnabled('chat')) {
+        || (typeof APP !== 'undefined' && !isButtonEnabled('chat'))) {
         return;
     }
 
@@ -85,7 +86,7 @@ function _addChatMsgListener(conference, { dispatch, getState }) {
             const state = getState();
             const { isOpen: isChatOpen } = state['features/chat'];
 
-            if (!isChatOpen) {
+            if (typeof APP !== 'undefined' && !isChatOpen) {
                 dispatch(playSound(INCOMING_MSG_SOUND_ID));
                 dispatch(showToolbox(4000));
             }
@@ -94,15 +95,18 @@ function _addChatMsgListener(conference, { dispatch, getState }) {
             // backfilled for a participant that has left the conference.
             const participant = getParticipantById(state, id) || {};
             const displayName = participant.name
-                || `${interfaceConfig.DEFAULT_REMOTE_DISPLAY_NAME} (${id})`;
+                || (typeof interfaceConfig === 'object'
+                && `${interfaceConfig.DEFAULT_REMOTE_DISPLAY_NAME} (${id})`);
             const hasRead = participant.local || isChatOpen;
 
-            APP.API.notifyReceivedChatMessage({
-                body: message,
-                id,
-                nick: displayName,
-                ts: timestamp
-            });
+            if (typeof APP !== 'undefined') {
+                APP.API.notifyReceivedChatMessage({
+                    body: message,
+                    id,
+                    nick: displayName,
+                    ts: timestamp
+                });
+            }
 
             const timestampToDate = timestamp
                 ? new Date(timestamp) : new Date();

@@ -1,4 +1,9 @@
-import { ADD_MESSAGE, SEND_MESSAGE, TOGGLE_CHAT } from './actionTypes';
+import {
+    ADD_MESSAGE,
+    SEND_MESSAGE,
+    TOGGLE_CHAT,
+    CLEAR_CHAT
+} from './actionTypes';
 
 /* eslint-disable max-params */
 
@@ -28,6 +33,19 @@ export function addMessage(messageDetails) {
     return {
         type: ADD_MESSAGE,
         ...messageDetails
+    };
+}
+
+/**
+ * Toggles display of the chat side panel.
+ *
+ * @returns {{
+ *     type: CLEAR_CHAT
+ * }}
+ */
+export function clearChat() {
+    return {
+        type: CLEAR_CHAT
     };
 }
 
