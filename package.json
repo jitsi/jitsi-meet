@@ -60,7 +60,7 @@
     "prop-types": "15.6.0",
     "react": "16.5.0",
     "react-dom": "16.5.0",
-    "react-i18next": "4.8.0",
+    "react-i18next": "7.13.0",
     "react-native": "0.57.1",
     "react-native-background-timer": "2.0.0",
     "react-native-calendar-events": "github:wmcmahan/react-native-calendar-events#cb2731db6684a49b4343e09de7f9c2fcc68bcd9b",
