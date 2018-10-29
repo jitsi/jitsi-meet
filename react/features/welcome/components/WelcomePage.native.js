@@ -57,15 +57,15 @@ class WelcomePage extends AbstractWelcomePage {
     }
 
     /**
-     * Implements React's {@link Component#componentWillMount()}. Invoked
-     * immediately before mounting occurs. Creates a local video track if none
+     * Implements React's {@link Component#componentDidMount()}. Invoked
+     * immediately after mounting occurs. Creates a local video track if none
      * is available and the camera permission was already granted.
      *
      * @inheritdoc
      * @returns {void}
      */
-    componentWillMount() {
-        super.componentWillMount();
+    componentDidMount() {
+        super.componentDidMount();
 
         const { dispatch } = this.props;
 
