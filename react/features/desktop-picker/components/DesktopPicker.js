@@ -1,7 +1,7 @@
 // @flow
 
 import Tabs from '@atlaskit/tabs';
-import React, { Component } from 'react';
+import React, { PureComponent } from 'react';
 import { connect } from 'react-redux';
 
 import { Dialog, hideDialog } from '../../base/dialog';
@@ -94,12 +94,36 @@ type State = {
     types: Array<string>
 };
 
+
 /**
  * React component for DesktopPicker.
  *
  * @extends Component
  */
-class DesktopPicker extends Component<Props, State> {
+class DesktopPicker extends PureComponent<Props, State> {
+    /**
+     * Implements React's {@link Component#getDerivedStateFromProps()}.
+     *
+     * @inheritdoc
+     */
+    static getDerivedStateFromProps(props) {
+        return {
+            types: DesktopPicker._getValidTypes(props.desktopSharingSources)
+        };
+    }
+
+    /**
+     * Extracts only the valid types from the passed {@code types}.
+     *
+     * @param {Array<string>} types - The types to filter.
+     * @private
+     * @returns {Array<string>} The filtered types.
+     */
+    static _getValidTypes(types = []) {
+        return types.filter(
+            type => VALID_TYPES.includes(type));
+    }
+
     _poller = null;
 
     state = {
@@ -133,7 +157,7 @@ class DesktopPicker extends Component<Props, State> {
         this._updateSources = this._updateSources.bind(this);
 
         this.state.types
-            = this._getValidTypes(this.props.desktopSharingSources);
+            = DesktopPicker._getValidTypes(this.props.desktopSharingSources);
     }
 
     /**
@@ -144,31 +168,6 @@ class DesktopPicker extends Component<Props, State> {
      */
     componentDidMount() {
         this._startPolling();
-    }
-
-    /**
-     * Notifies this mounted React Component that it will receive new props.
-     * Sets a default selected source if one is not already set.
-     *
-     * @inheritdoc
-     * @param {Object} nextProps - The read-only React Component props that this
-     * instance will receive.
-     * @returns {void}
-     */
-    componentWillReceiveProps(nextProps: Props) {
-        const { desktopSharingSources } = nextProps;
-
-        /**
-         * Do only reference check in order to not calculate the types on every
-         * update. This is enough for our use case and we don't need value
-         * checking because if the value is the same we won't change the
-         * reference for the desktopSharingSources array.
-         */
-        if (desktopSharingSources !== this.props.desktopSharingSources) {
-            this.setState({
-                types: this._getValidTypes(desktopSharingSources)
-            });
-        }
     }
 
     /**
@@ -239,17 +238,6 @@ class DesktopPicker extends Component<Props, State> {
          * For all other scenarios don't change the selection.
          */
         return selectedSource;
-    }
-
-    /**
-     * Extracts only the valid types from the passed {@code types}.
-     *
-     * @param {Array<string>} types - The types to filter.
-     * @returns {Array<string>} The filtered types.
-     */
-    _getValidTypes(types = []) {
-        return types.filter(
-            type => VALID_TYPES.includes(type));
     }
 
     _onCloseModal: (?string, string) => void;
