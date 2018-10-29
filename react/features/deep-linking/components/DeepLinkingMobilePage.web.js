@@ -81,21 +81,13 @@ class DeepLinkingMobilePage extends Component<Props, State> {
     constructor(props: Props) {
         super(props);
 
+        this.state = {
+            joinURL: generateDeepLinkingURL()
+        };
+
         // Bind event handlers so they are only bound once per instance.
         this._onDownloadApp = this._onDownloadApp.bind(this);
         this._onOpenApp = this._onOpenApp.bind(this);
-    }
-
-    /**
-     * Initializes the text and URL of the `Start a conference` / `Join the
-     * conversation` button which takes the user to the mobile app.
-     *
-     * @inheritdoc
-     */
-    componentWillMount() {
-        this.setState({
-            joinURL: generateDeepLinkingURL()
-        });
     }
 
     /**
