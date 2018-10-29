@@ -280,15 +280,15 @@ class Toolbox extends Component<Props> {
      *
      * @inheritdoc
      */
-    componentWillReceiveProps(nextProps) {
+    componentDidUpdate(prevProps) {
         // Ensure the dialog is closed when the toolbox becomes hidden.
-        if (this.props._overflowMenuVisible && !nextProps._visible) {
+        if (prevProps._overflowMenuVisible && !this.props._visible) {
             this._onSetOverflowVisible(false);
         }
 
-        if (this.props._overflowMenuVisible
-            && !this.props._dialog
-            && nextProps._dialog) {
+        if (prevProps._overflowMenuVisible
+            && !prevProps._dialog
+            && this.props._dialog) {
             this._onSetOverflowVisible(false);
             this.props.dispatch(setToolbarHovered(false));
         }
