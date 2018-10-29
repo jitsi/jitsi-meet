@@ -71,6 +71,12 @@ type Props = {
 type State = {
 
     /**
+     * Cache the conference connection state to derive when transitioning from
+     * not joined to join, in order to auto-show the InfoDialog.
+     */
+    hasConnectedToConference: boolean,
+
+    /**
      * Whether or not {@code InfoDialog} should be visible.
      */
     showDialog: boolean
@@ -84,6 +90,23 @@ type State = {
  */
 class InfoDialogButton extends Component<Props, State> {
     /**
+     * Implements React's {@link Component#getDerivedStateFromProps()}.
+     *
+     * @inheritdoc
+     */
+    static getDerivedStateFromProps(props, state) {
+        return {
+            hasConnectedToConference: props._isConferenceJoined,
+            showDialog: (props._toolboxVisible && state.showDialog)
+                || (!state.hasConnectedToConference
+                    && props._isConferenceJoined
+                    && props._participantCount < 2
+                    && props._toolboxVisible
+                    && !props._disableAutoShow)
+        };
+    }
+
+    /**
      * Initializes new {@code InfoDialogButton} instance.
      *
      * @inheritdoc
@@ -92,6 +115,7 @@ class InfoDialogButton extends Component<Props, State> {
         super(props);
 
         this.state = {
+            hasConnectedToConference: props._isConferenceJoined,
             showDialog: false
         };
 
@@ -109,22 +133,6 @@ class InfoDialogButton extends Component<Props, State> {
         if (!this.props._dialIn.numbers) {
             this.props.dispatch(updateDialInNumbers());
         }
-    }
-
-    /**
-     * Update the visibility of the {@code InfoDialog}.
-     *
-     * @inheritdoc
-     */
-    componentWillReceiveProps(nextProps) {
-        // Ensure the dialog is closed when the toolbox becomes hidden.
-        if (this.state.showDialog && !nextProps._toolboxVisible) {
-            this._onDialogClose();
-
-            return;
-        }
-
-        this._maybeAutoShowDialog(nextProps);
     }
 
     /**
@@ -157,24 +165,6 @@ class InfoDialogButton extends Component<Props, State> {
                 </InlineDialog>
             </div>
         );
-    }
-
-    /**
-     * Invoked to trigger display of the {@code InfoDialog} if certain
-     * conditions are met.
-     *
-     * @param {Object} nextProps - The future properties of this component.
-     * @private
-     * @returns {void}
-     */
-    _maybeAutoShowDialog(nextProps) {
-        if (!this.props._isConferenceJoined
-            && nextProps._isConferenceJoined
-            && nextProps._participantCount < 2
-            && nextProps._toolboxVisible
-            && !nextProps._disableAutoShow) {
-            this.setState({ showDialog: true });
-        }
     }
 
     _onDialogClose: () => void;
