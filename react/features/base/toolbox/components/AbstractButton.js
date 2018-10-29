@@ -207,6 +207,16 @@ export default class AbstractButton<P: Props, S: *> extends Component<P, S> {
     }
 
     /**
+     * Get the tooltip to display when hovering over the button.
+     *
+     * @private
+     * @returns {string}
+     */
+    _getTooltip() {
+        return this.tooltip || '';
+    }
+
+    /**
      * Helper function to be implemented by subclasses, which must return a
      * boolean value indicating if this button is disabled or not.
      *
@@ -258,7 +268,7 @@ export default class AbstractButton<P: Props, S: *> extends Component<P, S> {
             iconName: this._getIconName(),
             label: this._getLabel(),
             styles: this._getStyles(),
-            tooltip: this.tooltip
+            tooltip: this._getTooltip()
         };
 
         return (

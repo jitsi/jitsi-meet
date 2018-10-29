@@ -36,23 +36,13 @@ class RecordButton extends AbstractRecordButton<Props> {
     toggledIconName = 'icon-camera-take-picture';
 
     /**
-     * Constructor of the component.
+     * Returns the tooltip that should be displayed when the button is disabled.
      *
-     * @inheritdoc
+     * @private
+     * @returns {string}
      */
-    constructor(props: Props) {
-        super(props);
-
-        this.tooltip = props._fileRecordingsDisabledTooltipKey;
-    }
-
-    /**
-     * Implements {@code Component}'s componentWillReceiveProps.
-     *
-     * @inheritdoc
-     */
-    componentWillReceiveProps(newProps: Props) {
-        this.tooltip = newProps._fileRecordingsDisabledTooltipKey;
+    _getTooltip() {
+        return this.tooltip || '';
     }
 
     /**
