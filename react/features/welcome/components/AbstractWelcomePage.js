@@ -38,6 +38,17 @@ export class AbstractWelcomePage extends Component<Props, *> {
     _mounted: ?boolean;
 
     /**
+     * Implements React's {@link Component#getDerivedStateFromProps()}.
+     *
+     * @inheritdoc
+     */
+    static getDerivedStateFromProps(props: Props, state: Object) {
+        return {
+            room: props._room || state.room
+        };
+    }
+
+    /**
      * Save room name into component's local state.
      *
      * @type {Object}
@@ -77,24 +88,13 @@ export class AbstractWelcomePage extends Component<Props, *> {
     }
 
     /**
-     * Implements React's {@link Component#componentWillMount()}. Invoked
-     * immediately before mounting occurs.
+     * Implements React's {@link Component#componentDidMount()}. Invoked
+     * immediately after mounting occurs.
      *
      * @inheritdoc
      */
-    componentWillMount() {
+    componentDidMount() {
         this._mounted = true;
-    }
-
-    /**
-     * Implements React's {@link Component#componentWillReceiveProps()}. Invoked
-     * before this mounted component receives new props.
-     *
-     * @inheritdoc
-     * @param {Props} nextProps - New props component will receive.
-     */
-    componentWillReceiveProps(nextProps: Props) {
-        this.setState({ room: nextProps._room });
     }
 
     /**
