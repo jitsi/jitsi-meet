@@ -1,9 +1,8 @@
-/* global interfaceConfig */
+/* @flow */
 
 import { FieldTextAreaStateless } from '@atlaskit/field-text-area';
 import StarIcon from '@atlaskit/icon/glyph/star';
 import StarFilledIcon from '@atlaskit/icon/glyph/star-filled';
-import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
@@ -15,6 +14,8 @@ import { Dialog } from '../../base/dialog';
 import { translate } from '../../base/i18n';
 
 import { cancelFeedback, submitFeedback } from '../actions';
+
+declare var interfaceConfig: Object;
 
 const scoreAnimationClass
     = interfaceConfig.ENABLE_FEEDBACK_ANIMATION ? 'shake-rotate' : '';
@@ -34,55 +35,83 @@ const SCORES = [
 ];
 
 /**
+ * The type of the React {@code Component} props of {@link FeedbackDialog}.
+ */
+type Props = {
+
+    /**
+     * The cached feedback message, if any, that was set when closing a previous
+     * instance of {@code FeedbackDialog}.
+     */
+    _message: string,
+
+    /**
+     * The cached feedback score, if any, that was set when closing a previous
+     * instance of {@code FeedbackDialog}.
+     */
+    _score: number,
+
+    /**
+     * The JitsiConference that is being rated. The conference is passed in
+     * because feedback can occur after a conference has been left, so
+     * references to it may no longer exist in redux.
+     */
+    conference: Object,
+
+    /**
+     * Invoked to signal feedback submission or canceling.
+     */
+    dispatch: Dispatch<*>,
+
+    /**
+     * Callback invoked when {@code FeedbackDialog} is unmounted.
+     */
+    onClose: Function,
+
+    /**
+     * Invoked to obtain translated strings.
+     */
+    t: Function
+};
+
+/**
+ * The type of the React {@code Component} state of {@link FeedbackDialog}.
+ */
+type State = {
+
+    /**
+     * The currently entered feedback message.
+     */
+    message: string,
+
+    /**
+     * The score selection index which is currently being hovered. The value -1
+     * is used as a sentinel value to match store behavior of using -1 for no
+     * score having been selected.
+     */
+    mousedOverScore: number,
+
+    /**
+     * The currently selected score selection index. The score will not be 0
+     * indexed so subtract one to map with SCORES.
+     */
+    score: number
+};
+
+/**
  * A React {@code Component} for displaying a dialog to rate the current
  * conference quality, write a message describing the experience, and submit
  * the feedback.
  *
  * @extends Component
  */
-class FeedbackDialog extends Component {
+class FeedbackDialog extends Component<Props, State> {
     /**
-     * {@code FeedbackDialog} component's property types.
-     *
-     * @static
+     * An array of objects with click handlers for each of the scores listed in
+     * the constant SCORES. This pattern is used for binding event handlers only
+     * once for each score selection icon.
      */
-    static propTypes = {
-        /**
-         * The cached feedback message, if any, that was set when closing a
-         * previous instance of {@code FeedbackDialog}.
-         */
-        _message: PropTypes.string,
-
-        /**
-         * The cached feedback score, if any, that was set when closing a
-         * previous instance of {@code FeedbackDialog}.
-         */
-        _score: PropTypes.number,
-
-        /**
-         * The JitsiConference that is being rated. The conference is passed in
-         * because feedback can occur after a conference has been left, so
-         * references to it may no longer exist in redux.
-         *
-         * @type {JitsiConference}
-         */
-        conference: PropTypes.object,
-
-        /**
-         * Invoked to signal feedback submission or canceling.
-         */
-        dispatch: PropTypes.func,
-
-        /**
-         * Callback invoked when {@code FeedbackDialog} is unmounted.
-         */
-        onClose: PropTypes.func,
-
-        /**
-         * Invoked to obtain translated strings.
-         */
-        t: PropTypes.func
-    };
+    _scoreClickConfigurations: Array<Object>;
 
     /**
      * Initializes a new {@code FeedbackDialog} instance.
@@ -90,7 +119,7 @@ class FeedbackDialog extends Component {
      * @param {Object} props - The read-only React {@code Component} props with
      * which the new instance is to be initialized.
      */
-    constructor(props) {
+    constructor(props: Props) {
         super(props);
 
         const { _message, _score } = this.props;
@@ -121,13 +150,6 @@ class FeedbackDialog extends Component {
             score: _score > -1 ? _score - 1 : _score
         };
 
-        /**
-         * An array of objects with click handlers for each of the scores listed
-         * in SCORES. This pattern is used for binding event handlers only once
-         * for each score selection icon.
-         *
-         * @type {Object[]}
-         */
         this._scoreClickConfigurations = SCORES.map((textKey, index) => {
             return {
                 _onClick: () => this._onScoreSelect(index),
@@ -234,6 +256,8 @@ class FeedbackDialog extends Component {
         );
     }
 
+    _onCancel: () => boolean;
+
     /**
      * Dispatches an action notifying feedback was not submitted. The submitted
      * score will have one added as the rest of the app does not expect 0
@@ -250,6 +274,8 @@ class FeedbackDialog extends Component {
 
         return true;
     }
+
+    _onMessageChange: (Object) => void;
 
     /**
      * Updates the known entered feedback message.
@@ -274,6 +300,8 @@ class FeedbackDialog extends Component {
         this.setState({ score });
     }
 
+    _onScoreContainerMouseLeave: () => void;
+
     /**
      * Sets the currently hovered score to null to indicate no hover is
      * occurring.
@@ -296,6 +324,8 @@ class FeedbackDialog extends Component {
     _onScoreMouseOver(mousedOverScore) {
         this.setState({ mousedOverScore });
     }
+
+    _onSubmit: () => void;
 
     /**
      * Dispatches the entered feedback for submission. The submitted score will

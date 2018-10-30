@@ -1,5 +1,6 @@
+/* @flow */
+
 import InlineMessage from '@atlaskit/inline-message';
-import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
@@ -40,50 +41,51 @@ const createEvent = function(quality) {
 };
 
 /**
+ * The type of the React {@code Component} props of {@link VideoQualitySlider}.
+ */
+type Props = {
+
+    /**
+     * Whether or not the conference is in audio only mode.
+     */
+    _audioOnly: Boolean,
+
+    /**
+     * Whether or not the conference is in peer to peer mode.
+     */
+    _p2p: Boolean,
+
+    /**
+     * The currently configured maximum quality resolution to be received
+     * from remote participants.
+     */
+    _receiverVideoQuality: Number,
+
+    /**
+     * Whether or not displaying video is supported in the current
+     * environment. If false, the slider will be disabled.
+     */
+    _videoSupported: Boolean,
+
+    /**
+     * Invoked to request toggling of audio only mode.
+     */
+    dispatch: Dispatch<*>,
+
+    /**
+     * Invoked to obtain translated strings.
+     */
+    t: Function
+};
+
+/**
  * Implements a React {@link Component} which displays a slider for selecting a
  * new receive video quality.
  *
  * @extends Component
  */
-class VideoQualitySlider extends Component {
-    /**
-     * {@code VideoQualitySlider}'s property types.
-     *
-     * @static
-     */
-    static propTypes = {
-        /**
-         * Whether or not the conference is in audio only mode.
-         */
-        _audioOnly: PropTypes.bool,
-
-        /**
-         * Whether or not the conference is in peer to peer mode.
-         */
-        _p2p: PropTypes.bool,
-
-        /**
-         * The currently configured maximum quality resolution to be received
-         * from remote participants.
-         */
-        _receiverVideoQuality: PropTypes.number,
-
-        /**
-         * Whether or not displaying video is supported in the current
-         * environment. If false, the slider will be disabled.
-         */
-        _videoSupported: PropTypes.bool,
-
-        /**
-         * Invoked to request toggling of audio only mode.
-         */
-        dispatch: PropTypes.func,
-
-        /**
-         * Invoked to obtain translated strings.
-         */
-        t: PropTypes.func
-    };
+class VideoQualitySlider extends Component<Props> {
+    _sliderOptions: Array<Object>;
 
     /**
      * Initializes a new {@code VideoQualitySlider} instance.
@@ -261,6 +263,8 @@ class VideoQualitySlider extends Component {
         });
     }
 
+    _enableAudioOnly: () => void;
+
     /**
      * Dispatches an action to enable audio only mode.
      *
@@ -272,6 +276,8 @@ class VideoQualitySlider extends Component {
         logger.log('Video quality: audio only enabled');
         this.props.dispatch(setAudioOnly(true));
     }
+
+    _enableHighDefinition: () => void;
 
     /**
      * Handles the action of the high definition video being selected.
@@ -287,6 +293,8 @@ class VideoQualitySlider extends Component {
         this._setPreferredVideoQuality(HIGH);
     }
 
+    _enableLowDefinition: () => void;
+
     /**
      * Dispatches an action to receive low quality video from remote
      * participants.
@@ -299,6 +307,8 @@ class VideoQualitySlider extends Component {
         logger.log('Video quality: low enabled');
         this._setPreferredVideoQuality(LOW);
     }
+
+    _enableStandardDefinition: () => void;
 
     /**
      * Dispatches an action to receive standard quality video from remote
@@ -336,6 +346,8 @@ class VideoQualitySlider extends Component {
 
         return _sliderOptions.indexOf(matchingOption);
     }
+
+    _onSliderChange: () => void;
 
     /**
      * Invokes a callback when the selected video quality changes.

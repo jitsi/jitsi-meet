@@ -1,6 +1,5 @@
-/* global config */
+/* @flow */
 
-import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 
 import { translate } from '../../../base/i18n';
@@ -8,53 +7,72 @@ import { translate } from '../../../base/i18n';
 import ConferenceID from './ConferenceID';
 import NumbersList from './NumbersList';
 
+declare var config: Object;
+
+/**
+ * The type of the React {@code Component} props of {@link DialInSummary}.
+ */
+type Props = {
+
+    /**
+     * Additional CSS classnames to append to the root of the component.
+     */
+    className: string,
+
+    /**
+     * Whether or not numbers should include links with the telephone protocol.
+     */
+    clickableNumbers: boolean,
+
+    /**
+     * The name of the conference to show a conferenceID for.
+     */
+    room: string,
+
+    /**
+     * Invoked to obtain translated strings.
+     */
+    t: Function
+};
+
+/**
+ * The type of the React {@code Component} state of {@link DialInSummary}.
+ */
+type State = {
+
+    /**
+     * The numeric ID of the conference, used as a pin when dialing in.
+     */
+    conferenceID: ?string,
+
+    /**
+     * An error message to display.
+     */
+    error: string,
+
+    /**
+     * Whether or not the app is fetching data.
+     */
+    loading: boolean,
+
+    /**
+     * The dial-in numbers. entered by the local participant.
+     */
+    numbers: ?Array<Object>,
+
+    /**
+     * Whether or not dial-in is allowed.
+     */
+    numbersEnabled: ?boolean
+}
+
 /**
  * Displays a page listing numbers for dialing into a conference and pin to
  * the a specific conference.
  *
  * @extends Component
  */
-class DialInSummary extends Component {
-    /**
-     * {@code DialInSummary} component's property types.
-     *
-     * @static
-     */
-    static propTypes = {
-        /**
-         * Additional CSS classnames to append to the root of the component.
-         */
-        className: PropTypes.string,
-
-        /**
-         * Whether or not numbers should include links with the telephone
-         * protocol.
-         */
-        clickableNumbers: PropTypes.bool,
-
-        /**
-         * The name of the conference to show a conferenceID for.
-         */
-        room: PropTypes.string,
-
-        /**
-         * Invoked to obtain translated strings.
-         */
-        t: PropTypes.func
-    };
-
-    /**
-     * {@code DialInSummary} component's local state.
-     *
-     * @type {Object}
-     * @property {number} conferenceID - The numeric ID of the conference, used
-     * as a pin when dialing in.
-     * @property {string} error - An error message to display.
-     * @property {boolean} loading - Whether or not the app is fetching data.
-     * @property {Array|Object} numbers - The dial-in numbers.
-     * entered by the local participant.
-     * @property {boolean} numbersEnabled - Whether or not dial-in is allowed.
-     */
+class DialInSummary extends Component<Props, State> {
     state = {
         conferenceID: null,
         error: '',
@@ -69,7 +87,7 @@ class DialInSummary extends Component {
      * @param {Object} props - The read-only properties with which the new
      * instance is to be initialized.
      */
-    constructor(props) {
+    constructor(props: Props) {
         super(props);
 
         // Bind event handlers so they are only bound once for every instance.
@@ -183,6 +201,8 @@ class DialInSummary extends Component {
             .catch(() => Promise.reject(this.props.t('info.genericError')));
     }
 
+    _onGetConferenceIDSuccess: (Object) => void;
+
     /**
      * Callback invoked when fetching the conference ID succeeds.
      *
@@ -199,6 +219,8 @@ class DialInSummary extends Component {
 
         this.setState({ conferenceID: id });
     }
+
+    _onGetNumbersSuccess: (Object) => void;
 
     /**
      * Callback invoked when fetching dial-in numbers succeeds. Sets the
@@ -217,6 +239,8 @@ class DialInSummary extends Component {
             numbers
         });
     }
+
+    _setErrorMessage: (string) => void;
 
     /**
      * Sets an error message to display on the page instead of content.

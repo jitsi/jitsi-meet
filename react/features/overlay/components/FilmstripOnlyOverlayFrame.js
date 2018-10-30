@@ -1,4 +1,5 @@
-import PropTypes from 'prop-types';
+/* @flow */
+
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
@@ -11,49 +12,39 @@ import {
 import OverlayFrame from './OverlayFrame';
 
 /**
+ * The type of the React {@code Component} props of
+ * {@link FilmstripOnlyOverlayFrame}.
+ */
+type Props = {
+
+    /**
+     * The source (e.g. URI, URL) of the avatar image of the local participant.
+     */
+    _avatar: string,
+
+    /**
+     * The children components to be displayed into the overlay frame for
+     * filmstrip only mode.
+     */
+    children: React$Node,
+
+    /**
+     * The css class name for the icon that will be displayed over the avatar.
+     */
+    icon: string,
+
+    /**
+     * Indicates the css style of the overlay. If true, then lighter; darker,
+     * otherwise.
+     */
+    isLightOverlay: boolean
+};
+
+/**
  * Implements a React Component for the frame of the overlays in filmstrip only
  * mode.
  */
-class FilmstripOnlyOverlayFrame extends Component {
-    /**
-     * FilmstripOnlyOverlayFrame component's property types.
-     *
-     * @static
-     */
-    static propTypes = {
-        /**
-         * The source (e.g. URI, URL) of the avatar image of the local
-         * participant.
-         *
-         * @private
-         */
-        _avatar: PropTypes.string,
-
-        /**
-         * The children components to be displayed into the overlay frame for
-         * filmstrip only mode.
-         *
-         * @type {ReactElement}
-         */
-        children: PropTypes.node.isRequired,
-
-        /**
-         * The css class name for the icon that will be displayed over the
-         * avatar.
-         *
-         * @type {string}
-         */
-        icon: PropTypes.string,
-
-        /**
-         * Indicates the css style of the overlay. If true, then lighter;
-         * darker, otherwise.
-         *
-         * @type {boolean}
-         */
-        isLightOverlay: PropTypes.bool
-    };
-
+class FilmstripOnlyOverlayFrame extends Component<Props> {
     /**
      * Renders content related to the icon.
      *

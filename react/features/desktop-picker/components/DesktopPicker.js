@@ -1,7 +1,6 @@
 // @flow
 
 import Tabs from '@atlaskit/tabs';
-import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
@@ -43,40 +42,64 @@ const TAB_LABELS = {
 const VALID_TYPES = Object.keys(TAB_LABELS);
 
 /**
+ * The type of the React {@code Component} props of {@link DesktopPicker}.
+ */
+type Props = {
+
+    /**
+     * An array with desktop sharing sources to be displayed.
+     */
+    desktopSharingSources: Array<string>,
+
+    /**
+     * Used to request DesktopCapturerSources.
+     */
+    dispatch: Dispatch<*>,
+
+    /**
+     * The callback to be invoked when the component is closed or when a
+     * DesktopCapturerSource has been chosen.
+     */
+    onSourceChoose: Function,
+
+    /**
+     * Used to obtain translations.
+     */
+    t: Function
+};
+
+/**
+ * The type of the React {@code Component} state of {@link DesktopPicker}.
+ */
+type State = {
+
+    /**
+     * The currently higlighted DesktopCapturerSource.
+     */
+    selectedSource: Object,
+
+    /**
+     * The desktop source type currently being displayed.
+     */
+    selectedTab: number,
+
+    /**
+     * An object containing all the DesktopCapturerSources.
+     */
+    sources: Object,
+
+    /**
+     * The desktop source types to fetch previews for.
+     */
+    types: Array<string>
+};
+
+/**
  * React component for DesktopPicker.
  *
  * @extends Component
  */
-class DesktopPicker extends Component<*, *> {
-    /**
-     * DesktopPicker component's property types.
-     *
-     * @static
-     */
-    static propTypes = {
-
-        /**
-         * An array with desktop sharing sources to be displayed.
-         */
-        desktopSharingSources: PropTypes.arrayOf(PropTypes.string),
-
-        /**
-         * Used to request DesktopCapturerSources.
-         */
-        dispatch: PropTypes.func,
-
-        /**
-         * The callback to be invoked when the component is closed or when
-         * a DesktopCapturerSource has been chosen.
-         */
-        onSourceChoose: PropTypes.func,
-
-        /**
-         * Used to obtain translations.
-         */
-        t: PropTypes.func
-    };
-
+class DesktopPicker extends Component<Props, State> {
     _poller = null;
 
     state = {
@@ -99,7 +122,7 @@ class DesktopPicker extends Component<*, *> {
      * @param {Object} props - The read-only properties with which the new
      * instance is to be initialized.
      */
-    constructor(props) {
+    constructor(props: Props) {
         super(props);
 
         // Bind event handlers so they are only bound once per instance.
@@ -132,7 +155,7 @@ class DesktopPicker extends Component<*, *> {
      * instance will receive.
      * @returns {void}
      */
-    componentWillReceiveProps(nextProps) {
+    componentWillReceiveProps(nextProps: Props) {
         const { desktopSharingSources } = nextProps;
 
         /**

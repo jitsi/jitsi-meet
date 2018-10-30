@@ -1,56 +1,60 @@
-import PropTypes from 'prop-types';
+/* @flow */
+
 import React, { Component } from 'react';
 
 import { translate } from '../../../base/i18n';
 import { LOCKED_LOCALLY } from '../../../room-lock';
 
 /**
+ * The type of the React {@code Component} props of {@link PasswordForm}.
+ */
+type Props = {
+
+    /**
+     * Whether or not to show the password editing field.
+     */
+    editEnabled: boolean,
+
+    /**
+     * The value for how the conference is locked (or undefined if not locked)
+     * as defined by room-lock constants.
+     */
+    locked: string,
+
+    /**
+     * Callback to invoke when the local participant is submitting a password
+     * set request.
+     */
+    onSubmit: Function,
+
+    /**
+     * The current known password for the JitsiConference.
+     */
+    password: string,
+
+    /**
+     * Invoked to obtain translated strings.
+     */
+    t: Function
+};
+
+/**
+ * The type of the React {@code Component} state of {@link PasswordForm}.
+ */
+type State = {
+
+    /**
+     * The value of the password being entered by the local participant.
+     */
+    enteredPassword: string
+};
+
+/**
  * React {@code Component} for displaying and editing the conference password.
  *
  * @extends Component
  */
-class PasswordForm extends Component {
-    /**
-     * {@code PasswordForm} component's property types.
-     *
-     * @static
-     */
-    static propTypes = {
-        /**
-         * Whether or not to show the password editing field.
-         */
-        editEnabled: PropTypes.bool,
-
-        /**
-         * The value for how the conference is locked (or undefined if not
-         * locked) as defined by room-lock constants.
-         */
-        locked: PropTypes.string,
-
-        /**
-         * Callback to invoke when the local participant is submitting a
-         * password set request.
-         */
-        onSubmit: PropTypes.func,
-
-        /**
-         * The current known password for the JitsiConference.
-         */
-        password: PropTypes.string,
-
-        /**
-         * Invoked to obtain translated strings.
-         */
-        t: PropTypes.func
-    };
-
-    /**
-     * {@code PasswordForm} component's local state.
-     *
-     * @type {Object}
-     * @property {string} enteredPassword - The value of the password being
-     * entered by the local participant.
-     */
+class PasswordForm extends Component<Props, State> {
     state = {
         enteredPassword: ''
     };
@@ -61,7 +65,7 @@ class PasswordForm extends Component {
      * @param {Props} props - The React {@code Component} props to initialize
      * the new {@code PasswordForm} instance with.
      */
-    constructor(props) {
+    constructor(props: Props) {
         super(props);
 
         // Bind event handlers so they are only bound once per instance.
@@ -77,7 +81,7 @@ class PasswordForm extends Component {
      * @inheritdoc
      * @param {Props} nextProps - New props component will receive.
      */
-    componentWillReceiveProps(nextProps) {
+    componentWillReceiveProps(nextProps: Props) {
         if (this.props.editEnabled && !nextProps.editEnabled) {
             this.setState({ enteredPassword: '' });
         }
@@ -148,6 +152,8 @@ class PasswordForm extends Component {
         );
     }
 
+    _onEnteredPasswordChange: (Object) => void;
+
     /**
      * Updates the internal state of entered password.
      *
@@ -158,6 +164,8 @@ class PasswordForm extends Component {
     _onEnteredPasswordChange(event) {
         this.setState({ enteredPassword: event.target.value });
     }
+
+    _onPasswordSubmit: (Object) => void;
 
     /**
      * Invokes the passed in onSubmit callback to notify the parent that a

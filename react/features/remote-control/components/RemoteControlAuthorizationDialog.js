@@ -1,6 +1,5 @@
 // @flow
 
-import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
@@ -11,49 +10,45 @@ import { getParticipantById } from '../../base/participants';
 declare var APP: Object;
 
 /**
+ * The type of the React {@code Component} props of
+ * {@link RemoteControlAuthorizationDialog}.
+ */
+type Props = {
+
+    /**
+     * The display name of the participant who is requesting authorization for
+     * remote desktop control session.
+     */
+    _displayName: string,
+
+    /**
+     * Used to show/hide the dialog on cancel.
+     */
+    dispatch: Function,
+
+    /**
+     * The ID of the participant who is requesting authorization for remote
+     * desktop control session.
+     */
+    participantId: string,
+
+    /**
+     * Invoked to obtain translated strings.
+     */
+    t: Function
+};
+
+/**
  * Implements a dialog for remote control authorization.
  */
-class RemoteControlAuthorizationDialog extends Component<*> {
-    /**
-     * RemoteControlAuthorizationDialog component's property types.
-     *
-     * @static
-     */
-    static propTypes = {
-        /**
-         * The display name of the participant who is requesting authorization
-         * for remote desktop control session.
-         *
-         * @private
-         */
-        _displayName: PropTypes.string,
-
-        /**
-         * Used to show/hide the dialog on cancel.
-         */
-        dispatch: PropTypes.func,
-
-        /**
-         * The ID of the participant who is requesting authorization for remote
-         * desktop control session.
-         *
-         * @public
-         */
-        participantId: PropTypes.string,
-
-        /**
-         * Invoked to obtain translated strings.
-         */
-        t: PropTypes.func
-    };
-
+class RemoteControlAuthorizationDialog extends Component<Props> {
     /**
      * Initializes a new RemoteControlAuthorizationDialog instance.
      *
      * @param {Object} props - The read-only properties with which the new
      * instance is to be initialized.
      */
-    constructor(props) {
+    constructor(props: Props) {
         super(props);
 
         this._onCancel = this._onCancel.bind(this);

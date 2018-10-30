@@ -1,6 +1,5 @@
 /* @flow */
 
-import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
@@ -18,31 +17,70 @@ const _RIGHT_WATERMARK_STYLE = {
 };
 
 /**
+ * The type of the React {@code Component} props of {@link Watermarks}.
+ */
+type Props = {
+
+    /**
+     * Whether or not the current user is logged in through a JWT.
+     */
+    _isGuest: boolean,
+
+    /**
+     * Invoked to obtain translated strings.
+     */
+    t: Function
+};
+
+/**
+ * The type of the React {@code Component} state of {@link Watermarks}.
+ */
+type State = {
+
+    /**
+     * The url to open when clicking the brand watermark.
+     */
+    brandWatermarkLink: string,
+
+    /**
+     * The url to open when clicking the Jitsi watermark.
+     */
+    jitsiWatermarkLink: string,
+
+    /**
+     * Whether or not the brand watermark should be displayed.
+     */
+    showBrandWatermark: boolean,
+
+    /**
+     * Whether or not the Jitsi watermark should be displayed.
+     */
+    showJitsiWatermark: boolean,
+
+    /**
+     * Whether or not the Jitsi watermark should be displayed for users not
+     * logged in through a JWT.
+     */
+    showJitsiWatermarkForGuests: boolean,
+
+    /**
+     * Whether or not the show the "powered by Jitsi.org" link.
+     */
+    showPoweredBy: boolean
+};
+
+/**
  * A Web Component which renders watermarks such as Jits, brand, powered by,
  * etc.
  */
-class Watermarks extends Component<*, *> {
-    static propTypes = {
-        _isGuest: PropTypes.bool,
-        t: PropTypes.func
-    };
-
-    state = {
-        brandWatermarkLink: String,
-        jitsiWatermarkLink: String,
-        showBrandWatermark: Boolean,
-        showJitsiWatermark: Boolean,
-        showJitsiWatermarkForGuests: Boolean,
-        showPoweredBy: Boolean
-    };
-
+class Watermarks extends Component<Props, State> {
     /**
      * Initializes a new Watermarks instance.
      *
      * @param {Object} props - The read-only properties with which the new
      * instance is to be initialized.
      */
-    constructor(props: Object) {
+    constructor(props: Props) {
         super(props);
 
         let showBrandWatermark;

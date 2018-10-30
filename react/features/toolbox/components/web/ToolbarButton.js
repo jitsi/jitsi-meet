@@ -1,15 +1,35 @@
+/* @flow */
+
 import Tooltip from '@atlaskit/tooltip';
-import PropTypes from 'prop-types';
 import React from 'react';
 
 import AbstractToolbarButton from '../AbstractToolbarButton';
+import type { Props as AbstractToolbarButtonProps }
+    from '../AbstractToolbarButton';
+
+/**
+ * The type of the React {@code Component} props of {@link ToolbarButton}.
+ */
+type Props = AbstractToolbarButtonProps & {
+
+    /**
+     * The text to display in the tooltip.
+     */
+    tooltip: string,
+
+    /**
+     * From which direction the tooltip should appear, relative to the
+     * button.
+     */
+    tooltipPosition: string
+};
 
 /**
  * Represents a button in the toolbar.
  *
  * @extends AbstractToolbarButton
  */
-class ToolbarButton extends AbstractToolbarButton {
+class ToolbarButton extends AbstractToolbarButton<Props> {
     /**
      * Default values for {@code ToolbarButton} component's properties.
      *
@@ -18,26 +38,6 @@ class ToolbarButton extends AbstractToolbarButton {
     static defaultProps = {
         tooltipPosition: 'top'
     };
-
-    /**
-     * {@code ToolbarButton} component's property types.
-     *
-     * @static
-     */
-    static propTypes = {
-        ...AbstractToolbarButton.propTypes,
-
-        /**
-         * The text to display in the tooltip.
-         */
-        tooltip: PropTypes.string,
-
-        /**
-         * From which direction the tooltip should appear, relative to the
-         * button.
-         */
-        tooltipPosition: PropTypes.string
-    }
 
     /**
      * Renders the button of this {@code ToolbarButton}.

@@ -1,4 +1,5 @@
-import PropTypes from 'prop-types';
+/* @flow */
+
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { FieldTextStateless as TextField } from '@atlaskit/field-text';
@@ -11,50 +12,55 @@ import {
 } from '../../base/participants';
 
 /**
+ * The type of the React {@code Component} props of {@link DisplayNamePrompt}.
+ */
+type Props = {
+
+    /**
+     * The current ID for the local participant. Used for setting the display
+     * name on the associated participant.
+     */
+    _localParticipantID: string,
+
+    /**
+     * Invoked to update the local participant's display name.
+     */
+    dispatch: Dispatch<*>,
+
+    /**
+     * Invoked to obtain translated strings.
+     */
+    t: Function
+};
+
+/**
+ * The type of the React {@code Component} props of {@link DisplayNamePrompt}.
+ */
+type State = {
+
+    /**
+     * The name to show in the display name text field.
+     */
+    displayName: string
+};
+
+/**
  * Implements a React {@code Component} for displaying a dialog with an field
  * for setting the local participant's display name.
  *
  * @extends Component
  */
-class DisplayNamePrompt extends Component {
-    /**
-     * {@code DisplayNamePrompt} component's property types.
-     *
-     * @static
-     */
-    static propTypes = {
-        /**
-         * The current ID for the local participant. Used for setting the
-         * display name on the associated participant.
-         */
-        _localParticipantID: PropTypes.string,
-
-        /**
-         * Invoked to update the local participant's display name.
-         */
-        dispatch: PropTypes.func,
-
-        /**
-         * Invoked to obtain translated strings.
-         */
-        t: PropTypes.func
-    };
-
+class DisplayNamePrompt extends Component<Props, State> {
     /**
      * Initializes a new {@code DisplayNamePrompt} instance.
      *
      * @param {Object} props - The read-only properties with which the new
      * instance is to be initialized.
      */
-    constructor(props) {
+    constructor(props: Props) {
         super(props);
 
         this.state = {
-            /**
-             * The name to show in the display name text field.
-             *
-             * @type {string}
-             */
             displayName: ''
         };
 
@@ -88,6 +94,8 @@ class DisplayNamePrompt extends Component {
             </Dialog>);
     }
 
+    _onDisplayNameChange: (Object) => void;
+
     /**
      * Updates the entered display name.
      *
@@ -102,12 +110,14 @@ class DisplayNamePrompt extends Component {
         });
     }
 
+    _onSubmit: () => boolean;
+
     /**
      * Dispatches an action to update the local participant's display name. A
      * name must be entered for the action to dispatch.
      *
      * @private
-     * @returns {void}
+     * @returns {boolean}
      */
     _onSubmit() {
         const { displayName } = this.state;

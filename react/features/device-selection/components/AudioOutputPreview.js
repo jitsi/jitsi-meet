@@ -1,4 +1,5 @@
-import PropTypes from 'prop-types';
+/* @flow */
+
 import React, { Component } from 'react';
 
 import { translate } from '../../base/i18n';
@@ -7,27 +8,28 @@ import { Audio } from '../../base/media';
 const TEST_SOUND_PATH = 'sounds/ring.wav';
 
 /**
+ * The type of the React {@code Component} props of {@link AudioOutputPreview}.
+ */
+type Props = {
+
+    /**
+     * The device id of the audio output device to use.
+     */
+    deviceId: string,
+
+    /**
+     * Invoked to obtain translated strings.
+     */
+    t: Function
+};
+
+/**
  * React component for playing a test sound through a specified audio device.
  *
  * @extends Component
  */
-class AudioOutputPreview extends Component {
-    /**
-     * AudioOutputPreview component's property types.
-     *
-     * @static
-     */
-    static propTypes = {
-        /**
-         * The device id of the audio output device to use.
-         */
-        deviceId: PropTypes.string,
-
-        /**
-         * Invoked to obtain translated strings.
-         */
-        t: PropTypes.func
-    };
+class AudioOutputPreview extends Component<Props> {
+    _audioElement: ?Object;
 
     /**
      * Initializes a new AudioOutputPreview instance.
@@ -35,7 +37,7 @@ class AudioOutputPreview extends Component {
      * @param {Object} props - The read-only React Component props with which
      * the new instance is to be initialized.
      */
-    constructor(props) {
+    constructor(props: Props) {
         super(props);
 
         this._audioElement = null;
@@ -85,6 +87,8 @@ class AudioOutputPreview extends Component {
         );
     }
 
+    _onClick: () => void;
+
     /**
      * Plays a test sound.
      *
@@ -96,6 +100,8 @@ class AudioOutputPreview extends Component {
         && this._audioElement.play();
     }
 
+    _setAudioElement: (Object) => void;
+
     /**
      * Sets the instance variable for the component's audio element so it can be
      * accessed directly.
@@ -104,7 +110,7 @@ class AudioOutputPreview extends Component {
      * @private
      * @returns {void}
      */
-    _setAudioElement(element) {
+    _setAudioElement(element: Object) {
         this._audioElement = element;
     }
 

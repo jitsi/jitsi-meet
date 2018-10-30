@@ -1,7 +1,31 @@
+/* @flow */
+
 import React, { Component } from 'react';
-import PropTypes from 'prop-types';
 
 import { translate } from '../../../base/i18n';
+
+/**
+ * The type of the React {@code Component} props of {@link DialInNumber}.
+ */
+type Props = {
+
+    /**
+     * The numberic identifier for the current conference, used after dialing a
+     * the number to join the conference.
+     */
+    conferenceID: number,
+
+    /**
+     * The phone number to dial to begin the process of dialing into a
+     * conference.
+     */
+    phoneNumber: string,
+
+    /**
+     * Invoked to obtain translated strings.
+     */
+    t: Function
+};
 
 /**
  * React {@code Component} responsible for displaying a telephone number and
@@ -9,31 +33,7 @@ import { translate } from '../../../base/i18n';
  *
  * @extends Component
  */
-class DialInNumber extends Component {
-    /**
-     * {@code DialInNumber} component's property types.
-     *
-     * @static
-     */
-    static propTypes = {
-        /**
-         * The numberic identifier for the current conference, used after
-         * dialing a the number to join the conference.
-         */
-        conferenceID: PropTypes.number,
-
-        /**
-         * The phone number to dial to begin the process of dialing into a
-         * conference.
-         */
-        phoneNumber: PropTypes.string,
-
-        /**
-         * Invoked to obtain translated strings.
-         */
-        t: PropTypes.func
-    };
-
+class DialInNumber extends Component<Props> {
     /**
      * Implements React's {@link Component#render()}.
      *

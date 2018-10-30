@@ -1,4 +1,5 @@
-import PropTypes from 'prop-types';
+/* @flow */
+
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
@@ -12,42 +13,42 @@ import {
 import { muteRemoteParticipant } from '../../base/participants';
 
 /**
+ * The type of the React {@code Component} props of
+ * {@link MuteRemoteParticipantDialog}.
+ */
+type Props = {
+
+    /**
+     * Invoked to send a request for muting the participant with the passed
+     * in participantID.
+     */
+    dispatch: Dispatch<*>,
+
+    /**
+     * The ID of the participant linked to the onClick callback.
+     */
+    participantID: string,
+
+    /**
+     * Invoked to obtain translated strings.
+     */
+    t: Function
+};
+
+/**
  * A React Component with the contents for a dialog that asks for confirmation
  * from the user before muting a remote participant.
  *
  * @extends Component
  */
-class MuteRemoteParticipantDialog extends Component {
-    /**
-     * {@code MuteRemoteParticipantDialog} component's property types.
-     *
-     * @static
-     */
-    static propTypes = {
-        /**
-         * Invoked to send a request for muting the participant with the passed
-         * in participantID.
-         */
-        dispatch: PropTypes.func,
-
-        /**
-         * The ID of the participant linked to the onClick callback.
-         */
-        participantID: PropTypes.string,
-
-        /**
-         * Invoked to obtain translated strings.
-         */
-        t: PropTypes.func
-    };
-
+class MuteRemoteParticipantDialog extends Component<Props> {
     /**
      * Initializes a new {@code MuteRemoteParticipantDialog} instance.
      *
      * @param {Object} props - The read-only properties with which the new
      * instance is to be initialized.
      */
-    constructor(props) {
+    constructor(props: Props) {
         super(props);
 
         // Bind event handlers so they are only bound once per instance.
@@ -73,6 +74,8 @@ class MuteRemoteParticipantDialog extends Component {
         );
     }
 
+    _onSubmit: () => void;
+
     /**
      * Handles the submit button action.
      *
@@ -88,6 +91,8 @@ class MuteRemoteParticipantDialog extends Component {
 
         return true;
     }
+
+    _renderContent: () => React$Element<*>;
 
     /**
      * Renders the content of the dialog.

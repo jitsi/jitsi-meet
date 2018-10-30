@@ -1,9 +1,56 @@
+/* @flow */
+
 import AKDropdownMenu from '@atlaskit/dropdown-menu';
 import ChevronDownIcon from '@atlaskit/icon/glyph/chevron-down';
-import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 
 import { translate } from '../../base/i18n';
+
+/**
+ * The type of the React {@code Component} props of {@link DeviceSelector}.
+ */
+type Props = {
+
+    /**
+     * MediaDeviceInfos used for display in the select element.
+     */
+    devices: Array<Object>,
+
+    /**
+     * If false, will return a selector with no selection options.
+     */
+    hasPermission: boolean,
+
+    /**
+     * CSS class for the icon to the left of the dropdown trigger.
+     */
+    icon: string,
+
+    /**
+     * If true, will render the selector disabled with a default selection.
+     */
+    isDisabled: boolean,
+
+    /**
+     * The translation key to display as a menu label.
+     */
+    label: string,
+
+    /**
+     * The callback to invoke when a selection is made.
+     */
+    onSelect: Function,
+
+    /**
+     * The default device to display as selected.
+     */
+    selectedDeviceId: string,
+
+    /**
+     * Invoked to obtain translated strings.
+     */
+    t: Function
+};
 
 /**
  * React component for selecting a device from a select element. Wraps
@@ -11,54 +58,7 @@ import { translate } from '../../base/i18n';
  *
  * @extends Component
  */
-class DeviceSelector extends Component {
-    /**
-     * DeviceSelector component's property types.
-     *
-     * @static
-     */
-    static propTypes = {
-        /**
-         * MediaDeviceInfos used for display in the select element.
-         */
-        devices: PropTypes.array,
-
-        /**
-         * If false, will return a selector with no selection options.
-         */
-        hasPermission: PropTypes.bool,
-
-        /**
-         * CSS class for the icon to the left of the dropdown trigger.
-         */
-        icon: PropTypes.string,
-
-        /**
-         * If true, will render the selector disabled with a default selection.
-         */
-        isDisabled: PropTypes.bool,
-
-        /**
-         * The translation key to display as a menu label.
-         */
-        label: PropTypes.string,
-
-        /**
-         * The callback to invoke when a selection is made.
-         */
-        onSelect: PropTypes.func,
-
-        /**
-         * The default device to display as selected.
-         */
-        selectedDeviceId: PropTypes.string,
-
-        /**
-         * Invoked to obtain translated strings.
-         */
-        t: PropTypes.func
-    };
-
+class DeviceSelector extends Component<Props> {
     /**
      * Initializes a new DeviceSelector instance.
      *
@@ -177,6 +177,8 @@ class DeviceSelector extends Component {
             </AKDropdownMenu>
         );
     }
+
+    _onSelect: (Object) => void;
 
     /**
      * Invokes the passed in callback to notify of selection changes.

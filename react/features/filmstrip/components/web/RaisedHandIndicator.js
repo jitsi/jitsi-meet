@@ -1,33 +1,31 @@
-import PropTypes from 'prop-types';
+/* @flow */
+
 import React, { Component } from 'react';
 
 import BaseIndicator from './BaseIndicator';
+
+/**
+ * The type of the React {@code Component} props of {@link RaisedHandIndicator}.
+ */
+type Props = {
+
+    /**
+     * The font-size for the icon.
+     */
+    iconSize: number,
+
+    /**
+     * From which side of the indicator the tooltip should appear from.
+     */
+    tooltipPosition: string
+};
 
 /**
  * Thumbnail badge showing that the participant would like to speak.
  *
  * @extends Component
  */
-class RaisedHandIndicator extends Component {
-    /**
-     * {@code RaisedHandIndicator} component's property types.
-     *
-     * @static
-     */
-    static propTypes = {
-        /**
-         * The font-size for the icon.
-         *
-         * @type {number}
-         */
-        iconSize: PropTypes.number,
-
-        /**
-         * From which side of the indicator the tooltip should appear from.
-         */
-        tooltipPosition: PropTypes.string
-    };
-
+class RaisedHandIndicator extends Component<Props> {
     /**
      * Implements React's {@link Component#render()}.
      *

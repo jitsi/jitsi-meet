@@ -1,4 +1,5 @@
-import PropTypes from 'prop-types';
+/* @flow */
+
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
@@ -9,12 +10,50 @@ import { Text } from '../../base/react';
 import { STATUS_TO_I18N_KEY } from '../constants';
 
 /**
+ * The type of the React {@code Component} props of {@link PresenceLabel}.
+ */
+type Props = {
+
+    /**
+     * The current present status associated with the passed in participantID
+     * prop.
+     */
+    _presence: string,
+
+    /**
+     * Class name for the presence label.
+     */
+    className: string,
+
+    /**
+     * Default presence status that will be displayed if user's presence status
+     * is not available.
+     */
+    defaultPresence: string,
+
+    /**
+     * The ID of the participant whose presence status should display.
+     */
+    participantID: string,
+
+    /**
+     * Styles for the presence label.
+     */
+    style: Object,
+
+    /**
+     * Invoked to obtain translated strings.
+     */
+    t: Function
+};
+
+/**
  * React {@code Component} for displaying the current presence status of a
  * participant.
  *
  * @extends Component
  */
-class PresenceLabel extends Component {
+class PresenceLabel extends Component<Props> {
     /**
      * The default values for {@code PresenceLabel} component's property types.
      *
@@ -22,45 +61,6 @@ class PresenceLabel extends Component {
      */
     static defaultProps = {
         _presence: ''
-    };
-
-    /**
-     * {@code PresenceLabel} component's property types.
-     *
-     * @static
-     */
-    static propTypes = {
-        /**
-         * The current present status associated with the passed in
-         * participantID prop.
-         */
-        _presence: PropTypes.string,
-
-        /**
-         * Class name for the presence label.
-         */
-        className: PropTypes.string,
-
-        /**
-         * Default presence status that will be displayed if user's presence
-         * status is not available.
-         */
-        defaultPresence: PropTypes.string,
-
-        /**
-         * The ID of the participant whose presence status shoul display.
-         */
-        participantID: PropTypes.string,
-
-        /**
-         * Styles for the presence label.
-         */
-        style: PropTypes.object,
-
-        /**
-         * Invoked to obtain translated strings.
-         */
-        t: PropTypes.func
     };
 
     /**

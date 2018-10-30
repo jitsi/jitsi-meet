@@ -1,5 +1,6 @@
+/* @flow */
+
 import InlineDialog from '@atlaskit/inline-dialog';
-import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 
 /**
@@ -29,12 +30,67 @@ function _mapPositionToPaddingClass(position = 'left') {
 }
 
 /**
+ * The type of the React {@code Component} props of {@link Popover}.
+ */
+type Props = {
+
+    /**
+     * A child React Element to use as the trigger for showing the dialog.
+     */
+    children: React$Node,
+
+    /**
+     * Additional CSS classnames to apply to the root of the {@code Popover}
+     * component.
+     */
+    className: string,
+
+    /**
+     * The ReactElement to display within the dialog.
+     */
+    content: Object,
+
+    /**
+     * Whether displaying of the popover should be prevented.
+     */
+    disablePopover: boolean,
+
+    /**
+     * An id attribute to apply to the root of the {@code Popover}
+     * component.
+     */
+    id: string,
+
+    /**
+     * Callback to invoke when the popover has opened.
+     */
+    onPopoverOpen: Function,
+
+    /**
+     * From which side of the dialog trigger the dialog should display. The
+     * value will be passed to {@code InlineDialog}.
+     */
+    position: string
+};
+
+/**
+ * The type of the React {@code Component} state of {@link Popover}.
+ */
+type State = {
+
+    /**
+     * Whether or not the {@code InlineDialog} should be displayed.
+     */
+    showDialog: boolean
+};
+
+/**
  * Implements a React {@code Component} for showing an {@code InlineDialog} on
  * mouseenter of the trigger and contents, and hiding the dialog on mouseleave.
  *
  * @extends Component
  */
-class Popover extends Component {
+class Popover extends Component<Props, State> {
     /**
      * Default values for {@code Popover} component's properties.
      *
@@ -46,65 +102,15 @@ class Popover extends Component {
     };
 
     /**
-     * {@code Popover} component's property types.
-     *
-     * @static
-     */
-    static propTypes = {
-        /**
-         * A child React Element to use as the trigger for showing the dialog.
-         */
-        children: PropTypes.object,
-
-        /**
-         * Additional CSS classnames to apply to the root of the {@code Popover}
-         * component.
-         */
-        className: PropTypes.string,
-
-        /**
-         * The ReactElement to display within the dialog.
-         */
-        content: PropTypes.object,
-
-        /**
-         * Whether displaying of the popover should be prevented.
-         */
-        disablePopover: PropTypes.bool,
-
-        /**
-         * An id attribute to apply to the root of the {@code Popover}
-         * component.
-         */
-        id: PropTypes.string,
-
-        /**
-         * Callback to invoke when the popover has opened.
-         */
-        onPopoverOpen: PropTypes.func,
-
-        /**
-         * From which side of the dialog trigger the dialog should display. The
-         * value will be passed to {@code InlineDialog}.
-         */
-        position: PropTypes.string
-    };
-
-    /**
      * Initializes a new {@code Popover} instance.
      *
      * @param {Object} props - The read-only properties with which the new
      * instance is to be initialized.
      */
-    constructor(props) {
+    constructor(props: Props) {
         super(props);
 
         this.state = {
-            /**
-             * Whether or not the {@code InlineDialog} should be displayed.
-             *
-             * @type {boolean}
-             */
             showDialog: false
         };
 
@@ -136,6 +142,8 @@ class Popover extends Component {
         );
     }
 
+    _onHideDialog: () => void;
+
     /**
      * Stops displaying the {@code InlineDialog}.
      *
@@ -145,6 +153,8 @@ class Popover extends Component {
     _onHideDialog() {
         this.setState({ showDialog: false });
     }
+
+    _onShowDialog: () => void;
 
     /**
      * Displays the {@code InlineDialog} and calls any registered onPopoverOpen
