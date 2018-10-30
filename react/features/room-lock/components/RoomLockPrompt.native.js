@@ -1,6 +1,5 @@
 // @flow
 
-import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
@@ -19,25 +18,26 @@ const _TEXT_INPUT_PROPS = {
 };
 
 /**
+ * The type of the React {@code Component} props of {@link RoomLockPrompt}.
+ */
+type Props = {
+
+    /**
+     * The JitsiConference which requires a password.
+     */
+    conference: Object,
+
+    /**
+     * Redux store dispatch function.
+     */
+    dispatch: Dispatch<*>,
+};
+
+/**
  * Implements a React Component which prompts the user for a password to lock  a
  * conference/room.
  */
-class RoomLockPrompt extends Component<*> {
-    /**
-     * RoomLockPrompt component's property types.
-     *
-     * @static
-     */
-    static propTypes = {
-        /**
-         * The JitsiConference which requires a password.
-         *
-         * @type {JitsiConference}
-         */
-        conference: PropTypes.object,
-        dispatch: PropTypes.func
-    };
-
+class RoomLockPrompt extends Component<Props> {
     /**
      * Initializes a new RoomLockPrompt instance.
      *

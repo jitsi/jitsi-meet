@@ -1,6 +1,5 @@
 // @flow
 
-import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
@@ -13,34 +12,43 @@ import SpeakerStatsLabels from './SpeakerStatsLabels';
 declare var interfaceConfig: Object;
 
 /**
+ * The type of the React {@code Component} props of {@link SpeakerStats}
+ */
+type Props = {
+
+    /**
+     * The display name for the local participant obtained from the redux store.
+     */
+    _localDisplayName: string,
+
+    /**
+     * The JitsiConference from which stats will be pulled.
+     */
+    conference: Object,
+
+    /**
+     * The function to translate human-readable text.
+     */
+    t: Function
+};
+
+/**
+ * The type of the React {@code Component} state of {@link SpeakerStats}
+ */
+type State = {
+
+    /**
+     * The stats summary provided by the JitsiConference.
+     */
+    stats: Object
+};
+
+/**
  * React component for displaying a list of speaker stats.
  *
  * @extends Component
  */
-class SpeakerStats extends Component<*, *> {
-    /**
-     * SpeakerStats component's property types.
-     *
-     * @static
-     */
-    static propTypes = {
-        /**
-         * The display name for the local participant obtained from the redux
-         * store.
-         */
-        _localDisplayName: PropTypes.string,
-
-        /**
-         * The JitsiConference from which stats will be pulled.
-         */
-        conference: PropTypes.object,
-
-        /**
-         * The function to translate human-readable text.
-         */
-        t: PropTypes.func
-    };
-
+class SpeakerStats extends Component<Props, State> {
     state = {
         stats: {}
     };

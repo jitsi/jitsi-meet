@@ -1,4 +1,5 @@
-import PropTypes from 'prop-types';
+/* @flow */
+
 import React, { Component } from 'react';
 
 import { Video } from '../../base/media';
@@ -6,30 +7,29 @@ import { Video } from '../../base/media';
 const VIDEO_ERROR_CLASS = 'video-preview-has-error';
 
 /**
+ * The type of the React {@code Component} props of {@link VideoInputPreview}.
+ */
+type Props = {
+
+    /**
+     * An error message to display instead of a preview. Displaying an error
+     * will take priority over displaying a video preview.
+     */
+    error: string,
+
+    /**
+     * The JitsiLocalTrack to display.
+     */
+    track: Object
+};
+
+/**
  * React component for displaying video. This component defers to lib-jitsi-meet
  * logic for rendering the video.
  *
  * @extends Component
  */
-class VideoInputPreview extends Component {
-    /**
-     * VideoInputPreview component's property types.
-     *
-     * @static
-     */
-    static propTypes = {
-        /**
-         * An error message to display instead of a preview. Displaying an error
-         * will take priority over displaying a video preview.
-         */
-        error: PropTypes.string,
-
-        /**
-         * The JitsiLocalTrack to display.
-         */
-        track: PropTypes.object
-    };
-
+class VideoInputPreview extends Component<Props> {
     /**
      * Implements React's {@link Component#render()}.
      *

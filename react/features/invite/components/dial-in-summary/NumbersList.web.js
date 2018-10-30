@@ -1,47 +1,39 @@
-import PropTypes from 'prop-types';
+/* @flow */
+
 import React, { Component } from 'react';
 
 import { translate } from '../../../base/i18n';
+
+type Props = {
+
+    /**
+     * Whether or not numbers should include links with the telephone protocol.
+     */
+    clickableNumbers: boolean,
+
+    /**
+     * The conference ID for dialing in.
+     */
+    conferenceID: number,
+
+    /**
+     * The phone numbers to display. Can be an array of numbers or an object
+     * with countries as keys and an array of numbers as values.
+     */
+    numbers: { [string]: Array<string> } | Array<string>,
+
+    /**
+     * Invoked to obtain translated strings.
+     */
+    t: Function
+}
 
 /**
  * Displays a table with phone numbers to dial in to a conference.
  *
  * @extends Component
  */
-class NumbersList extends Component {
-    /**
-     * {@code NumbersList} component's property types.
-     *
-     * @static
-     */
-    static propTypes = {
-        /**
-         * Whether or not numbers should include links with the telephone
-         * protocol.
-         */
-        clickableNumbers: PropTypes.bool,
-
-        /**
-         * The conference ID for dialing in.
-         */
-        conferenceID: PropTypes.number,
-
-        /**
-         * The phone numbers to display. Can be an array of numbers
-         * or an object with countries as keys and an array of numbers
-         * as values.
-         */
-        numbers: PropTypes.oneOfType([
-            PropTypes.array,
-            PropTypes.object
-        ]),
-
-        /**
-         * Invoked to obtain translated strings.
-         */
-        t: PropTypes.func
-    };
-
+class NumbersList extends Component<Props> {
     /**
      * Implements React's {@link Component#render()}.
      *
@@ -50,22 +42,21 @@ class NumbersList extends Component {
      */
     render() {
         const { numbers, t } = this.props;
-        const showWithoutCountries = Array.isArray(numbers);
 
         return (
             <table className = 'dial-in-numbers-list'>
                 <thead>
                     <tr>
-                        { showWithoutCountries
+                        { Array.isArray(numbers)
                             ? null
                             : <th>{ t('info.country') }</th> }
                         <th>{ t('info.numbers') }</th>
                     </tr>
                 </thead>
                 <tbody className = 'dial-in-numbers-body'>
-                    { showWithoutCountries
+                    { Array.isArray(numbers)
                         ? numbers.map(this._renderNumberRow)
-                        : this._renderWithCountries() }
+                        : this._renderWithCountries(numbers) }
                 </tbody>
             </table>);
     }
@@ -73,15 +64,25 @@ class NumbersList extends Component {
     /**
      * Renders rows of countries and associated phone numbers.
      *
+     * @param {Object} numbersMapping - Things yeah.
      * @private
      * @returns {ReactElement[]}
      */
-    _renderWithCountries() {
+    _renderWithCountries(numbersMapping: Object) {
         const rows = [];
 
-        for (const [ country, numbers ] of Object.entries(this.props.numbers)) {
-            const formattedNumbers = numbers.map(
-                number => this._renderNumberDiv(number));
+        for (const [ country, numbers ] of Object.entries(numbersMapping)) {
+            if (!Array.isArray(numbers)) {
+                return;
+            }
+
+            const formattedNumbers = numbers.map(number => {
+                if (typeof number === 'string') {
+                    return this._renderNumberDiv(number);
+                }
+
+                return null;
+            });
 
             rows.push(
                 <tr key = { country }>

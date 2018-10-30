@@ -1,4 +1,5 @@
-import PropTypes from 'prop-types';
+/* @flow */
+
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
@@ -13,52 +14,51 @@ import RemoteVideoMenuButton from './RemoteVideoMenuButton';
 import MuteRemoteParticipantDialog from './MuteRemoteParticipantDialog';
 
 /**
+ * The type of the React {@code Component} props of {@link MuteButton}.
+ */
+type Props = {
+
+    /**
+     * Invoked to send a request for muting the participant with the passed
+     * in participantID.
+     */
+    dispatch: Dispatch<*>,
+
+    /**
+     * Whether or not the participant is currently audio muted.
+     */
+    isAudioMuted: Function,
+
+    /**
+     * Callback to invoke when {@code MuteButton} is clicked.
+     */
+    onClick: Function,
+
+    /**
+     * The ID of the participant linked to the onClick callback.
+     */
+    participantID: string,
+
+    /**
+     * Invoked to obtain translated strings.
+     */
+    t: Function
+};
+
+/**
  * Implements a React {@link Component} which displays a button for audio muting
  * a participant in the conference.
  *
  * @extends Component
  */
-class MuteButton extends Component {
-    /**
-     * {@code MuteButton} component's property types.
-     *
-     * @static
-     */
-    static propTypes = {
-        /**
-         * Invoked to send a request for muting the participant with the passed
-         * in participantID.
-         */
-        dispatch: PropTypes.func,
-
-        /**
-         * Whether or not the participant is currently audio muted.
-         */
-        isAudioMuted: PropTypes.bool,
-
-        /**
-         * Callback to invoke when {@code MuteButton} is clicked.
-         */
-        onClick: PropTypes.func,
-
-        /**
-         * The ID of the participant linked to the onClick callback.
-         */
-        participantID: PropTypes.string,
-
-        /**
-         * Invoked to obtain translated strings.
-         */
-        t: PropTypes.func
-    };
-
+class MuteButton extends Component<Props> {
     /**
      * Initializes a new {@code MuteButton} instance.
      *
      * @param {Object} props - The read-only React Component props with which
      * the new instance is to be initialized.
      */
-    constructor(props) {
+    constructor(props: Props) {
         super(props);
 
         // Bind event handlers so they are only bound once for every instance.
@@ -90,6 +90,8 @@ class MuteButton extends Component {
                 onClick = { this._onClick } />
         );
     }
+
+    _onClick: () => void;
 
     /**
      * Dispatches a request to mute the participant with the passed in

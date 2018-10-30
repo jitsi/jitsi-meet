@@ -1,15 +1,59 @@
-import PropTypes from 'prop-types';
+/* @flow */
+
 import React, { Component } from 'react';
 import Tooltip from '@atlaskit/tooltip';
 
 import { translate } from '../../../base/i18n';
 
 /**
+ * The type of the React {@code Component} props of {@link BaseIndicator}.
+ */
+type Props = {
+
+    /**
+     * Additional CSS class names to set on the icon container.
+     */
+    className: string,
+
+    /**
+     * The CSS classnames to set on the icon element of the component.
+     */
+    iconClassName: string,
+
+    /**
+     * The font size for the icon.
+     */
+    iconSize: string,
+
+    /**
+     * The ID attribue to set on the root element of the component.
+     */
+    id: string,
+
+    /**
+     * Invoked to obtain translated strings.
+     */
+    t: Function,
+
+    /**
+     * The translation key to use for displaying a tooltip when hovering over
+     * the component.
+     */
+    tooltipKey: string,
+
+    /**
+     * From which side of the indicator the tooltip should appear from,
+     * defaulting to "top".
+     */
+    tooltipPosition: string
+};
+
+/**
  * React {@code Component} for showing an icon with a tooltip.
  *
  * @extends Component
  */
-class BaseIndicator extends Component {
+class BaseIndicator extends Component<Props> {
     /**
      * Default values for {@code BaseIndicator} component's properties.
      *
@@ -21,50 +65,6 @@ class BaseIndicator extends Component {
         iconSize: 'auto',
         id: '',
         tooltipPosition: 'top'
-    };
-
-    /**
-     * {@code BaseIndicator} component's property types.
-     *
-     * @static
-     */
-    static propTypes = {
-        /**
-         * Additional CSS class names to set on the icon container.
-         */
-        className: PropTypes.string,
-
-        /**
-         * The CSS classnames to set on the icon element of the component.
-         */
-        iconClassName: PropTypes.string,
-
-        /**
-         * The font size for the icon.
-         */
-        iconSize: PropTypes.string,
-
-        /**
-         * The ID attribue to set on the root element of the component.
-         */
-        id: PropTypes.string,
-
-        /**
-         * Invoked to obtain translated strings.
-         */
-        t: PropTypes.func,
-
-        /**
-         * The translation key to use for displaying a tooltip when hovering
-         * over the component.
-         */
-        tooltipKey: PropTypes.string,
-
-        /**
-         * From which side of the indicator the tooltip should appear from.
-         * Defaults to "top".
-         */
-        tooltipPosition: PropTypes.string
     };
 
     /**

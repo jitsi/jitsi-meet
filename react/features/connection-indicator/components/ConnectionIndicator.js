@@ -1,6 +1,5 @@
-/* global interfaceConfig */
+/* @flow */
 
-import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 
 import { translate } from '../../base/i18n';
@@ -9,6 +8,8 @@ import { Popover } from '../../base/popover';
 import { ConnectionStatsTable } from '../../connection-stats';
 
 import statsEmitter from '../statsEmitter';
+
+declare var interfaceConfig: Object;
 
 /**
  * The connection quality percentage that must be reached to be considered of
@@ -25,7 +26,7 @@ const INDICATOR_DISPLAY_THRESHOLD = 30;
  *
  * @type {Object[]}
  */
-const QUALITY_TO_WIDTH = [
+const QUALITY_TO_WIDTH: Array<Object> = [
 
     // Full (3 bars)
     {
@@ -55,107 +56,106 @@ const QUALITY_TO_WIDTH = [
 ];
 
 /**
+ * The type of the React {@code Component} props of {@link ConnectionIndicator}.
+ */
+type Props = {
+
+    /**
+     * Whether or not the component should ignore setting a visibility class for
+     * hiding the component when the connection quality is not strong.
+     */
+    alwaysVisible: boolean,
+
+    /**
+     * The current condition of the user's connection, matching one of the
+     * enumerated values in the library.
+     */
+    connectionStatus: string,
+
+    /**
+     * Whether or not clicking the indicator should display a popover for more
+     * details.
+     */
+    enableStatsDisplay: boolean,
+
+    /**
+     * The font-size for the icon.
+     */
+    iconSize: number,
+
+    /**
+     * Whether or not the displays stats are for local video.
+     */
+    isLocalVideo: boolean,
+
+    /**
+     * Relative to the icon from where the popover for more connection details
+     * should display.
+     */
+    statsPopoverPosition: string,
+
+    /**
+     * Invoked to obtain translated strings.
+     */
+    t: Function,
+
+    /**
+     * The user ID associated with the displayed connection indication and
+     * stats.
+     */
+    userID: string
+};
+
+/**
+ * The type of the React {@code Component} state of {@link ConnectionIndicator}.
+ */
+type State = {
+
+    /**
+     * The timeout for automatically hiding the indicator.
+     */
+    autoHideTimeout: TimeoutID | null,
+
+    /**
+     * Whether or not a CSS class should be applied to the root for hiding the
+     * connection indicator. By default the indicator should start out hidden
+     * because the current connection status is not known at mount.
+     */
+    showIndicator: boolean,
+
+    /**
+     * Whether or not the popover content should display additional statistics.
+     */
+    showMoreStats: boolean,
+
+    /**
+     * Cache of the stats received from subscribing to stats emitting. The keys
+     * should be the name of the stat. With each stat update, updates stats are
+     * mixed in with cached stats and a new stats object is set in state.
+     */
+    stats: Object
+};
+
+/**
  * Implements a React {@link Component} which displays the current connection
  * quality percentage and has a popover to show more detailed connection stats.
  *
  * @extends {Component}
  */
-class ConnectionIndicator extends Component {
-    /**
-     * {@code ConnectionIndicator} component's property types.
-     *
-     * @static
-     */
-    static propTypes = {
-        /**
-         * Whether or not the component should ignore setting a visibility class
-         * for hiding the component when the connection quality is not strong.
-         */
-        alwaysVisible: PropTypes.bool,
-
-        /**
-         * The current condition of the user's connection, matching one of the
-         * enumerated values in the library.
-         *
-         * @type {JitsiParticipantConnectionStatus}
-         */
-        connectionStatus: PropTypes.string,
-
-        /**
-         * Whether or not clicking the indicator should display a popover for
-         * more details.
-         */
-        enableStatsDisplay: PropTypes.bool,
-
-        /**
-         * The font-size for the icon.
-         */
-        iconSize: PropTypes.number,
-
-        /**
-         * Whether or not the displays stats are for local video.
-         */
-        isLocalVideo: PropTypes.bool,
-
-        /**
-         * Relative to the icon from where the popover for more connection
-         * details should display.
-         */
-        statsPopoverPosition: PropTypes.string,
-
-        /**
-         * Invoked to obtain translated strings.
-         */
-        t: PropTypes.func,
-
-        /**
-         * The user ID associated with the displayed connection indication and
-         * stats.
-         */
-        userID: PropTypes.string
-    };
-
+class ConnectionIndicator extends Component<Props, State> {
     /**
      * Initializes a new {@code ConnectionIndicator} instance.
      *
      * @param {Object} props - The read-only properties with which the new
      * instance is to be initialized.
      */
-    constructor(props) {
+    constructor(props: Props) {
         super(props);
 
         this.state = {
-            /**
-             * The timeout for automatically hiding the indicator.
-             *
-             * @type {timeoutID}
-             */
             autoHideTimeout: null,
-
-            /**
-             * Whether or not a CSS class should be applied to the root for
-             * hiding the connection indicator. By default the indicator should
-             * start out hidden because the current connection status is not
-             * known at mount.
-             *
-             * @type {boolean}
-             */
             showIndicator: false,
-
-            /**
-             * Whether or not the popover content should display additional
-             * statistics.
-             *
-             * @type {boolean}
-             */
             showMoreStats: false,
-
-            /**
-             * Cache of the stats received from subscribing to stats emitting.
-             * The keys should be the name of the stat. With each stat update,
-             * updates stats are mixed in with cached stats and a new stats
-             * object is set in state.
-             */
             stats: {}
         };
 
@@ -201,7 +201,9 @@ class ConnectionIndicator extends Component {
         statsEmitter.unsubscribeToClientStats(
             this.props.userID, this._onStatsUpdated);
 
-        clearTimeout(this.state.autoHideTimeout);
+        if (this.state.autoHideTimeout) {
+            clearTimeout(this.state.autoHideTimeout);
+        }
     }
 
     /**
@@ -257,7 +259,7 @@ class ConnectionIndicator extends Component {
             return 'status-high';
         }
 
-        return QUALITY_TO_WIDTH.find(x => percent >= x.percent).colorClass;
+        return this._getDisplayConfiguration(percent).colorClass;
     }
 
     /**
@@ -287,7 +289,7 @@ class ConnectionIndicator extends Component {
                 // established so far. Assume a strong connection to start.
                 tipKey = 'connectionindicator.quality.good';
             } else {
-                const config = QUALITY_TO_WIDTH.find(x => percent >= x.percent);
+                const config = this._getDisplayConfiguration(percent);
 
                 tipKey = config.tip;
             }
@@ -295,6 +297,21 @@ class ConnectionIndicator extends Component {
         }
 
         return this.props.t(tipKey);
+    }
+
+    /**
+     * Get the icon configuration from QUALITY_TO_WIDTH which has a percentage
+     * that matches or exceeds the passed in percentage. The implementation
+     * assumes QUALITY_TO_WIDTH is already sorted by highest to lowest
+     * percentage.
+     *
+     * @param {number} percent - The connection percentage, out of 100, to find
+     * the closest matching configuration for.
+     * @private
+     * @returns {Object}
+     */
+    _getDisplayConfiguration(percent: number): Object {
+        return QUALITY_TO_WIDTH.find(x => percent >= x.percent) || {};
     }
 
     /**
@@ -313,6 +330,8 @@ class ConnectionIndicator extends Component {
             || connectionStatus === JitsiParticipantConnectionStatus.INACTIVE
             ? 'show-connection-indicator' : 'hide-connection-indicator';
     }
+
+    _onStatsUpdated: (Object) => void;
 
     /**
      * Callback invoked when new connection stats associated with the passed in
@@ -340,6 +359,8 @@ class ConnectionIndicator extends Component {
 
         this._updateIndicatorAutoHide(newStats.percent);
     }
+
+    _onToggleShowMore: () => void;
 
     /**
      * Callback to invoke when the show more link in the popover content is
@@ -383,7 +404,7 @@ class ConnectionIndicator extends Component {
         } else {
             const { percent } = this.state.stats;
 
-            iconWidth = QUALITY_TO_WIDTH.find(x => percent >= x.percent).width;
+            iconWidth = this._getDisplayConfiguration(percent).width;
         }
 
         return [
@@ -449,7 +470,10 @@ class ConnectionIndicator extends Component {
      */
     _updateIndicatorAutoHide(percent) {
         if (percent < INDICATOR_DISPLAY_THRESHOLD) {
-            clearTimeout(this.state.autoHideTimeout);
+            if (this.state.autoHideTimeout) {
+                clearTimeout(this.state.autoHideTimeout);
+            }
+
             this.setState({
                 autoHideTimeout: null,
                 showIndicator: true

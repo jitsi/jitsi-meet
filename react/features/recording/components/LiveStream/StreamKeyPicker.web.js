@@ -1,19 +1,61 @@
+/* @flow */
+
 import {
     DropdownItem,
     DropdownItemGroup,
     DropdownMenuStateless
 } from '@atlaskit/dropdown-menu';
 import React, { PureComponent } from 'react';
-import PropTypes from 'prop-types';
 
 import { translate } from '../../../base/i18n';
+
+/**
+ * The type of the React {@code Component} props of {@link StreamKeyPicker}.
+ */
+type Props = {
+
+    /**
+     * Broadcasts available for selection. Each broadcast item should be an
+     * object with a title for display in the dropdown and a boundStreamID to
+     * return in the {@link onBroadcastSelected} callback.
+     */
+    broadcasts: Array<Object>,
+
+    /**
+     * Callback invoked when an item in the dropdown is selected. The selected
+     * broadcast's boundStreamID will be passed back.
+     */
+    onBroadcastSelected: Function,
+
+    /**
+     * The boundStreamID of the broadcast that should display as selected in the
+     * dropdown.
+     */
+    selectedBoundStreamID: string,
+
+    /**
+     * Invoked to obtain translated strings.
+     */
+    t: Function
+};
+
+/**
+ * The type of the React {@code Component} state of {@link StreamKeyPicker}.
+ */
+type State = {
+
+    /**
+     * Whether or not to display the dropdown menu to pick a YouTube broadcast.
+     */
+    isDropdownOpen: boolean
+};
 
 /**
  * A dropdown to select a YouTube broadcast.
  *
  * @extends Component
  */
-class StreamKeyPicker extends PureComponent {
+class StreamKeyPicker extends PureComponent<Props, State> {
     /**
      * Default values for {@code StreamKeyForm} component's properties.
      *
@@ -24,40 +66,7 @@ class StreamKeyPicker extends PureComponent {
     };
 
     /**
-     * {@code StreamKeyPicker} component's property types.
-     */
-    static propTypes = {
-        /**
-         * Broadcasts available for selection. Each broadcast item should be an
-         * object with a title for display in the dropdown and a boundStreamID
-         * to return in the {@link onBroadcastSelected} callback.
-         */
-        broadcasts: PropTypes.array,
-
-        /**
-         * Callback invoked when an item in the dropdown is selected. The
-         * selected broadcast's boundStreamID will be passed back.
-         */
-        onBroadcastSelected: PropTypes.func,
-
-        /**
-         * The boundStreamID of the broadcast that should display as selected in
-         * the dropdown.
-         */
-        selectedBoundStreamID: PropTypes.string,
-
-        /**
-         * Invoked to obtain translated strings.
-         */
-        t: PropTypes.func
-    };
-
-    /**
      * The initial state of a {@code StreamKeyForm} instance.
-     *
-     * @type {{
-     *     isDropdownOpen: boolean
-     * }}
      */
     state = {
         isDropdownOpen: false
@@ -69,7 +78,7 @@ class StreamKeyPicker extends PureComponent {
      * @param {Props} props - The React {@code Component} props to initialize
      * the new {@code StreamKeyPicker} instance with.
      */
-    constructor(props) {
+    constructor(props: Props) {
         super(props);
 
         // Bind event handlers so they are only bound once per instance.
@@ -139,6 +148,8 @@ class StreamKeyPicker extends PureComponent {
         });
     }
 
+    _onDropdownOpenChange: (Object) => void;
+
     /**
      * Sets the dropdown to be displayed or not based on the passed in event.
      *
@@ -153,6 +164,8 @@ class StreamKeyPicker extends PureComponent {
             isDropdownOpen: dropdownEvent.isOpen
         });
     }
+
+    _onSelect: (string) => void;
 
     /**
      * Callback invoked when an item has been clicked in the dropdown menu.

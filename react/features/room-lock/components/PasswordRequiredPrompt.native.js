@@ -1,6 +1,5 @@
 // @flow
 
-import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
@@ -8,6 +7,15 @@ import { setPassword } from '../../base/conference';
 import { Dialog } from '../../base/dialog';
 
 import { _cancelPasswordRequiredPrompt } from '../actions';
+
+/**
+ * The style of the {@link TextInput} rendered by
+ * {@code PasswordRequiredPrompt}. As it requests the entry of a password, the
+ * entry should better be secure.
+ */
+const _TEXT_INPUT_PROPS = {
+    secureTextEntry: true
+};
 
 /**
  * {@code PasswordRequiredPrompt}'s React {@code Component} prop types.
@@ -20,16 +28,11 @@ type Props = {
      * @type {JitsiConference}
      */
     conference: { join: Function },
-    dispatch: Dispatch<*>
-};
 
-/**
- * The style of the {@link TextInput} rendered by
- * {@code PasswordRequiredPrompt}. As it requests the entry of a password, the
- * entry should better be secure.
- */
-const _TEXT_INPUT_PROPS = {
-    secureTextEntry: true
+    /**
+     * The redux dispatch function.
+     */
+    dispatch: Dispatch<*>
 };
 
 /**
@@ -37,16 +40,6 @@ const _TEXT_INPUT_PROPS = {
  * is required to join a conference.
  */
 class PasswordRequiredPrompt extends Component<Props> {
-    /**
-     * {@code PasswordRequiredPrompt}'s React {@code Component} prop types.
-     *
-     * @static
-     */
-    static propTypes = {
-        conference: PropTypes.object,
-        dispatch: PropTypes.func
-    };
-
     /**
      * Initializes a new {@code PasswordRequiredPrompt} instance.
      *

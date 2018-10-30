@@ -1,6 +1,5 @@
-/* globals interfaceConfig */
+/* @flow */
 
-import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
@@ -10,43 +9,45 @@ import {
     getLocalParticipant
 } from '../../../base/participants';
 
+declare var interfaceConfig: Object;
+
+/**
+ * The type of the React {@code Component} props of
+ * {@link OverflowMenuProfileItem}.
+ */
+type Props = {
+
+    /**
+     * The redux representation of the local participant.
+     */
+    _localParticipant: Object,
+
+    /**
+     * Whether the button support clicking or not.
+     */
+    _unclickable: boolean,
+
+    /**
+     * The callback to invoke when {@code OverflowMenuProfileItem} is
+     * clicked.
+     */
+    onClick: Function
+};
+
 /**
  * A React {@code Component} for displaying a link with a profile avatar as an
  * icon.
  *
  * @extends Component
  */
-class OverflowMenuProfileItem extends Component {
-    /**
-     * {@code OverflowMenuProfileItem}'s property types.
-     *
-     * @static
-     */
-    static propTypes = {
-        /**
-         * The redux representation of the local participant.
-         */
-        _localParticipant: PropTypes.object,
-
-        /**
-         * Whether the button support clicking or not.
-         */
-        _unclickable: PropTypes.bool,
-
-        /**
-         * The callback to invoke when {@code OverflowMenuProfileItem} is
-         * clicked.
-         */
-        onClick: PropTypes.func
-    };
-
+class OverflowMenuProfileItem extends Component<Props> {
     /**
      * Initializes a new {@code OverflowMenuProfileItem} instance.
      *
      * @param {Object} props - The read-only properties with which the new
      * instance is to be initialized.
      */
-    constructor(props) {
+    constructor(props: Props) {
         super(props);
 
         // Bind event handler so it is only bound once for every instance.
@@ -86,6 +87,8 @@ class OverflowMenuProfileItem extends Component {
             </li>
         );
     }
+
+    _onClick: () => void;
 
     /**
      * Invokes an on click callback if clicking is allowed.

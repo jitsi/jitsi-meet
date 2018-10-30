@@ -2,7 +2,6 @@
 
 import Avatar from '@atlaskit/avatar';
 import InlineMessage from '@atlaskit/inline-message';
-import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
@@ -20,87 +19,95 @@ const logger = require('jitsi-meet-logger').getLogger(__filename);
 declare var interfaceConfig: Object;
 
 /**
+ * The type of the React {@code Component} props of {@link AddPeopleDialog}.
+ */
+type Props = {
+
+    /**
+     * The {@link JitsiMeetConference} which will be used to invite "room"
+     * participants through the SIP Jibri (Video SIP gateway).
+     */
+    _conference: Object,
+
+    /**
+     * The URL for validating if a phone number can be called.
+     */
+    _dialOutAuthUrl: string,
+
+    /**
+     * Whether to show a footer text after the search results as a last element.
+     */
+    _footerTextEnabled: boolean,
+
+    /**
+     * The JWT token.
+     */
+    _jwt: string,
+
+    /**
+     * The query types used when searching people.
+     */
+    _peopleSearchQueryTypes: Array<string>,
+
+    /**
+     * The URL pointing to the service allowing for people search.
+     */
+    _peopleSearchUrl: string,
+
+    /**
+     * Whether or not to show Add People functionality.
+     */
+    addPeopleEnabled: boolean,
+
+    /**
+     * Whether or not to show Dial Out functionality.
+     */
+    dialOutEnabled: boolean,
+
+    /**
+     * The redux {@code dispatch} function.
+     */
+    dispatch: Dispatch<*>,
+
+    /**
+     * Invoked to obtain translated strings.
+     */
+    t: Function,
+};
+
+/**
+ * The type of the React {@code Component} state of {@link AddPeopleDialog}.
+ */
+type State = {
+
+    /**
+     * Indicating that an error occurred when adding people to the call.
+     */
+    addToCallError: boolean,
+
+    /**
+     * Indicating that we're currently adding the new people to the
+     * call.
+     */
+    addToCallInProgress: boolean,
+
+    /**
+     * The list of invite items.
+     */
+    inviteItems: Array<Object>
+};
+
+/**
  * The dialog that allows to invite people to the call.
  */
-class AddPeopleDialog extends Component<*, *> {
-    /**
-     * {@code AddPeopleDialog}'s property types.
-     *
-     * @static
-     */
-    static propTypes = {
-        /**
-         * The {@link JitsiMeetConference} which will be used to invite "room"
-         * participants through the SIP Jibri (Video SIP gateway).
-         */
-        _conference: PropTypes.object,
-
-        /**
-         * The URL for validating if a phone number can be called.
-         */
-        _dialOutAuthUrl: PropTypes.string,
-
-        /**
-         * Whether to show a footer text after the search results
-         * as a last element.
-         */
-        _footerTextEnabled: PropTypes.bool,
-
-        /**
-         * The JWT token.
-         */
-        _jwt: PropTypes.string,
-
-        /**
-         * The query types used when searching people.
-         */
-        _peopleSearchQueryTypes: PropTypes.arrayOf(PropTypes.string),
-
-        /**
-         * The URL pointing to the service allowing for people search.
-         */
-        _peopleSearchUrl: PropTypes.string,
-
-        /**
-         * Whether or not to show Add People functionality.
-         */
-        addPeopleEnabled: PropTypes.bool,
-
-        /**
-         * Whether or not to show Dial Out functionality.
-         */
-        dialOutEnabled: PropTypes.bool,
-
-        /**
-         * The redux {@code dispatch} function.
-         */
-        dispatch: PropTypes.func,
-
-        /**
-         * Invoked to obtain translated strings.
-         */
-        t: PropTypes.func
-    };
-
+class AddPeopleDialog extends Component<Props, State> {
     _multiselect = null;
 
     _resourceClient: Object;
 
     state = {
-        /**
-         * Indicating that an error occurred when adding people to the call.
-         */
         addToCallError: false,
-
-        /**
-         * Indicating that we're currently adding the new people to the
-         * call.
-         */
         addToCallInProgress: false,
-
-        /**
-         * The list of invite items.
-         */
         inviteItems: []
     };
 
@@ -110,7 +117,7 @@ class AddPeopleDialog extends Component<*, *> {
      * @param {Object} props - The read-only properties with which the new
      * instance is to be initialized.
      */
-    constructor(props) {
+    constructor(props: Props) {
         super(props);
 
         // Bind event handlers so they are only bound once per instance.
@@ -142,10 +149,11 @@ class AddPeopleDialog extends Component<*, *> {
     /**
      * React Component method that executes once component is updated.
      *
+     * @param {Object} prevProps - The state object before the update.
      * @param {Object} prevState - The state object before the update.
      * @returns {void}
      */
-    componentDidUpdate(prevState) {
+    componentDidUpdate(prevProps, prevState) {
         /**
          * Clears selected items from the multi select component on successful
          * invite.

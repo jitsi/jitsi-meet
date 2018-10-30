@@ -1,7 +1,25 @@
-import PropTypes from 'prop-types';
+/* @flow */
+
 import React, { Component } from 'react';
 
 import BaseIndicator from './BaseIndicator';
+
+/**
+ * The type of the React {@code Component} props of
+ * {@link DominantSpeakerIndicator}.
+ */
+type Props = {
+
+    /**
+     * The font-size for the icon.
+     */
+    iconSize: number,
+
+    /**
+     * From which side of the indicator the tooltip should appear from.
+     */
+    tooltipPosition: string
+};
 
 /**
  * Thumbnail badge showing that the participant is the dominant speaker in
@@ -9,26 +27,7 @@ import BaseIndicator from './BaseIndicator';
  *
  * @extends Component
  */
-class DominantSpeakerIndicator extends Component {
-    /**
-     * {@code DominantSpeakerIndicator} component's property types.
-     *
-     * @static
-     */
-    static propTypes = {
-        /**
-         * The font-size for the icon.
-         *
-         * @type {number}
-         */
-        iconSize: PropTypes.number,
-
-        /**
-         * From which side of the indicator the tooltip should appear from.
-         */
-        tooltipPosition: PropTypes.string
-    };
-
+class DominantSpeakerIndicator extends Component<Props> {
     /**
      * Implements React's {@link Component#render()}.
      *

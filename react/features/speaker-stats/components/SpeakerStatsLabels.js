@@ -1,26 +1,26 @@
-import PropTypes from 'prop-types';
+/* @flow */
+
 import React, { Component } from 'react';
 
 import { translate } from '../../base/i18n';
+
+/**
+ * The type of the React {@code Component} props of {@link SpeakerStatsLabels}.
+ */
+type Props = {
+
+    /**
+     * The function to translate human-readable text.
+     */
+    t: Function
+};
 
 /**
  * React component for labeling speaker stats column items.
  *
  * @extends Component
  */
-class SpeakerStatsLabels extends Component {
-    /**
-     * SpeakerStatsLabels component's property types.
-     *
-     * @static
-     */
-    static propTypes = {
-        /**
-         * The function to translate human-readable text.
-         */
-        t: PropTypes.func
-    };
-
+class SpeakerStatsLabels extends Component<Props> {
     /**
      * Implements React's {@link Component#render()}.
      *

@@ -1,66 +1,65 @@
-import PropTypes from 'prop-types';
+/* @flow */
+
 import React, { Component } from 'react';
+
+/**
+ * The type of the React {@code Component} props of
+ * {@link AbstractToolbarButton}.
+ */
+export type Props = {
+
+    /**
+     * A succinct description of what the button does. Used by accessibility
+     * tools and torture tests.
+     */
+    accessibilityLabel: string,
+
+    /**
+     * The name of the Icon of this {@code AbstractToolbarButton}.
+     */
+    iconName: string,
+
+    /**
+     * The style of the Icon of this {@code AbstractToolbarButton}.
+     */
+    iconStyle?: Object,
+
+    /**
+     * On click handler.
+     */
+    onClick: Function,
+
+    /**
+     * {@code AbstractToolbarButton} styles.
+     */
+    style?: Array<string> | Object,
+
+    /**
+     * The color underlaying the button.
+     */
+    underlayColor?: any
+};
 
 /**
  * Abstract (base) class for a button in {@link Toolbar}.
  *
  * @abstract
  */
-export default class AbstractToolbarButton extends Component {
-    /**
-     * AbstractToolbarButton component's property types.
-     *
-     * @static
-     */
-    static propTypes = {
-        /**
-         * A succinct description of what the button does. Used by accessibility
-         * tools and torture tests.
-         */
-        accessibilityLabel: PropTypes.string,
-
-        /**
-         * The name of the Icon of this {@code AbstractToolbarButton}.
-         */
-        iconName: PropTypes.string,
-
-        /**
-         * The style of the Icon of this {@code AbstractToolbarButton}.
-         */
-        iconStyle: PropTypes.object,
-
-        /**
-         * On click handler.
-         */
-        onClick: PropTypes.func,
-
-        /**
-         * {@code AbstractToolbarButton} styles.
-         */
-        style:
-            PropTypes.oneOfType([
-                PropTypes.array,
-                PropTypes.object
-            ]),
-
-        /**
-         * The color underlaying the button.
-         */
-        underlayColor: PropTypes.any
-    };
-
+export default class AbstractToolbarButton<P: Props> extends Component<P> {
     /**
      * Initializes a new {@code AbstractToolbarButton} instance.
      *
      * @param {Object} props - The React {@code Component} props to initialize
      * the new {@code AbstractToolbarButton} instance with.
      */
-    constructor(props) {
+    constructor(props: P) {
         super(props);
 
         // Bind event handlers so they are only bound once per instance.
         this._onClick = this._onClick.bind(this);
     }
+
+    _onClick: (any) => any;
 
     /**
      * Handles clicking/pressing this {@code AbstractToolbarButton} by
@@ -86,15 +85,22 @@ export default class AbstractToolbarButton extends Component {
         return this._renderButton(this._renderIcon());
     }
 
+    _renderButton: (React$Element<*> | null) => React$Element<*>;
+
     /**
      * Renders the icon of this {@code AbstractToolbarButton}.
      *
      * @param {string|ReactClass} type - The React Component type of the icon to
      * be rendered.
      * @protected
-     * @returns {ReactElement} The icon of this {@code AbstractToolbarButton}.
+     * @returns {ReactElement|null} The icon of this
+     * {@code AbstractToolbarButton}.
      */
     _renderIcon(type) {
+        if (!type) {
+            return null;
+        }
+
         const props = {};
 
         'iconName' in this.props && (props.name = this.props.iconName);

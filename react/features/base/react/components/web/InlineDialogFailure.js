@@ -1,7 +1,6 @@
 /* @flow */
 
 import Button from '@atlaskit/button';
-import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 
 import { translate } from '../../../i18n';
@@ -9,26 +8,25 @@ import { translate } from '../../../i18n';
 declare var interfaceConfig: Object;
 
 /**
+ * The type of the React {@code Component} props of {@link InlineDialogFailure}.
+ */
+type Props = {
+
+    /**
+     * Allows to retry the call that previously didn't succeed.
+     */
+    onRetry: Function,
+
+    /**
+     * Invoked to obtain translated strings.
+     */
+    t: Function
+};
+
+/**
  * Inline dialog that represents a failure and allows a retry.
  */
-class InlineDialogFailure extends Component<*> {
-    /**
-     * {@code InlineDialogFailure}'s property types.
-     *
-     * @static
-     */
-    static propTypes = {
-        /**
-         * Allows to retry the call that previously didn't succeed.
-         */
-        onRetry: PropTypes.func,
-
-        /**
-         * Invoked to obtain translated strings.
-         */
-        t: PropTypes.func
-    };
-
+class InlineDialogFailure extends Component<Props> {
     /**
      * Renders the content of this component.
      *

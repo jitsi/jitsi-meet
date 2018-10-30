@@ -1,48 +1,47 @@
+/* @flow */
+
 import Spinner from '@atlaskit/spinner';
-import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 
 import DesktopSourcePreview from './DesktopSourcePreview';
+
+/**
+ * The type of the React {@code Component} props of {@link DesktopPickerPane}.
+ */
+type Props = {
+
+    /**
+     * The handler to be invoked when a DesktopSourcePreview is clicked.
+     */
+    onClick: Function,
+
+    /**
+     * The handler to be invoked when a DesktopSourcePreview is double clicked.
+     */
+    onDoubleClick: Function,
+
+    /**
+     * The id of the DesktopCapturerSource that is currently selected.
+     */
+    selectedSourceId: string,
+
+    /**
+     * An array of DesktopCapturerSources.
+     */
+    sources: Array<Object>,
+
+    /**
+     * The source type of the DesktopCapturerSources to display.
+     */
+    type: string
+};
 
 /**
  * React component for showing a grid of DesktopSourcePreviews.
  *
  * @extends Component
  */
-class DesktopPickerPane extends Component {
-    /**
-     * DesktopPickerPane component's property types.
-     *
-     * @static
-     */
-    static propTypes = {
-        /**
-         * The handler to be invoked when a DesktopSourcePreview is clicked.
-         */
-        onClick: PropTypes.func,
-
-        /**
-         * The handler to be invoked when a DesktopSourcePreview is double
-         * clicked.
-         */
-        onDoubleClick: PropTypes.func,
-
-        /**
-         * The id of the DesktopCapturerSource that is currently selected.
-         */
-        selectedSourceId: PropTypes.string,
-
-        /**
-         * An array of DesktopCapturerSources.
-         */
-        sources: PropTypes.array,
-
-        /**
-         * The source type of the DesktopCapturerSources to display.
-         */
-        type: PropTypes.string
-    };
-
+class DesktopPickerPane extends Component<Props> {
     /**
      * Implements React's {@link Component#render()}.
      *

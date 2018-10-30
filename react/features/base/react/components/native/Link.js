@@ -1,47 +1,47 @@
-import PropTypes from 'prop-types';
+/* @flow */
+
 import React, { Component } from 'react';
 import { Linking } from 'react-native';
 
 import Text from './Text';
 
 /**
+ * The type of the React {@code Component} props of {@link Link}.
+ */
+type Props = {
+
+    /**
+     * The children to be displayed within this Link.
+     */
+    children: React$Node,
+
+    /**
+     * Notifies that this Link failed to open the URL associated with it.
+     */
+    onLinkingOpenURLRejected: Function,
+
+    /**
+     * The CSS style to be applied to this Link for the purposes of display.
+     */
+    style: Object,
+
+    /**
+     * The URL to be opened when this Link is clicked/pressed.
+     */
+    url: string
+};
+
+/**
  * Implements a (hyper)link to a URL in the fashion of the HTML anchor element
  * and its href attribute.
  */
-export default class Link extends Component {
-    /**
-     * {@code Link} component's property types.
-     *
-     * @static
-     */
-    static propTypes = {
-        /**
-         * The children to be displayed within this Link.
-         */
-        children: PropTypes.node,
-
-        /**
-         * Notifies that this Link failed to open the URL associated with it.
-         */
-        onLinkingOpenURLRejected: PropTypes.func,
-
-        /**
-         * The CSS style to be applied to this Link for the purposes of display.
-         */
-        style: PropTypes.object,
-
-        /**
-         * The URL to be opened when this Link is clicked/pressed.
-         */
-        url: PropTypes.string
-    };
-
+export default class Link extends Component<Props> {
     /**
      * Initializes a new Link instance.
      *
      * @param {Object} props - Component properties.
      */
-    constructor(props) {
+    constructor(props: Props) {
         super(props);
 
         // Bind event handlers so they are only bound once for every instance.
@@ -76,6 +76,8 @@ export default class Link extends Component {
 
         onRejected && onRejected(reason);
     }
+
+    _onPress: () => void;
 
     /**
      * Handles press on this Link. Opens the URL associated with this Link.

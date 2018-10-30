@@ -532,7 +532,7 @@ export function getDialInfoPageURL(
  */
 export function _getDefaultPhoneNumber(
         dialInNumbers: Object,
-        defaultCountry: string = 'US') {
+        defaultCountry: string = 'US'): ?string {
     if (Array.isArray(dialInNumbers)) {
         // Dumbly return the first number if an array.
         return dialInNumbers[0];

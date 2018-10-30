@@ -1,35 +1,35 @@
-import PropTypes from 'prop-types';
+/* @flow */
+
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+
+/**
+ * The type of the React {@code Component} props of {@link DialogContainer}.
+ */
+type Props = {
+
+    /**
+     * The component to render.
+     */
+    _component: Function,
+
+    /**
+     * The props to pass to the component that will be rendered.
+     */
+    _componentProps: Object,
+
+    /**
+     * True if the UI is in a compact state where we don't show dialogs.
+     */
+    _reducedUI: boolean
+};
 
 /**
  * Implements a DialogContainer responsible for showing all dialogs. We will
  * need a separate container so we can handle multiple dialogs by showing them
  * simultaneously or queuing them.
  */
-export class DialogContainer extends Component {
-    /**
-     * DialogContainer component's property types.
-     *
-     * @static
-     */
-    static propTypes = {
-        /**
-         * The component to render.
-         */
-        _component: PropTypes.func,
-
-        /**
-         * The props to pass to the component that will be rendered.
-         */
-        _componentProps: PropTypes.object,
-
-        /**
-         * True if the UI is in a compact state where we don't show dialogs.
-         */
-        _reducedUI: PropTypes.bool
-    };
-
+export class DialogContainer extends Component<Props> {
     /**
      * Implements React's {@link Component#render()}.
      *

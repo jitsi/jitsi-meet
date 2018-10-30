@@ -1,4 +1,5 @@
-import PropTypes from 'prop-types';
+/* @flow */
+
 import React, { Component } from 'react';
 
 /**
@@ -14,26 +15,23 @@ const AUDIO_LEVEL_DOTS = 5;
 const CENTER_DOT_INDEX = Math.floor(AUDIO_LEVEL_DOTS / 2);
 
 /**
+ * The type of the React {@code Component} props of {@link AudioLevelIndicator}.
+ */
+type Props = {
+
+    /**
+     * The current audio level to display. The value should be a number between
+     * 0 and 1.
+     */
+    audioLevel: number
+};
+
+/**
  * Creates a ReactElement responsible for drawing audio levels.
  *
  * @extends {Component}
  */
-class AudioLevelIndicator extends Component {
-    /**
-     * {@code AudioLevelIndicator}'s property types.
-     *
-     * @static
-     */
-    static propTypes = {
-        /**
-         * The current audio level to display. The value should be a number
-         * between 0 and 1.
-         *
-         * @type {number}
-         */
-        audioLevel: PropTypes.number
-    };
-
+class AudioLevelIndicator extends Component<Props> {
     /**
      * Implements React's {@link Component#render()}.
      *

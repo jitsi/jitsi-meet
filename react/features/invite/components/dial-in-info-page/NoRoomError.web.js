@@ -1,7 +1,24 @@
-import PropTypes from 'prop-types';
+/* @flow */
+
 import React, { Component } from 'react';
 
 import { translate } from '../../../base/i18n';
+
+/**
+ * The type of the React {@code Component} props of {@link NoRoomError}.
+ */
+type Props = {
+
+    /**
+     * Additional CSS classnames to append to the root of the component.
+     */
+    className: string,
+
+    /**
+     * Invoked to obtain translated strings.
+     */
+    t: Function
+};
 
 /**
  * Displays an error message stating no room name was specified to fetch dial-in
@@ -9,24 +26,7 @@ import { translate } from '../../../base/i18n';
  *
  * @extends Component
  */
-class NoRoomError extends Component {
-    /**
-     * {@code NoRoomError} component's property types.
-     *
-     * @static
-     */
-    static propTypes = {
-        /**
-         * Additional CSS classnames to append to the root of the component.
-         */
-        className: PropTypes.string,
-
-        /**
-         * Invoked to obtain translated strings.
-         */
-        t: PropTypes.func
-    };
-
+class NoRoomError extends Component<Props> {
     /**
      * Implements React's {@link Component#render()}.
      *

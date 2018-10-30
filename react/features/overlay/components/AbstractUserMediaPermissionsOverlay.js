@@ -1,35 +1,31 @@
-import PropTypes from 'prop-types';
+/* @flow */
+
 import { Component } from 'react';
+
+/**
+ * The type of the React {@code Component} props of
+ * {@link AbstractUserMediaPermissionsOverlay}.
+ */
+type Props = {
+
+    /**
+     * The browser which is used currently. The text is different for every
+     * browser.
+     */
+    browser: string,
+
+    /**
+     * The function to translate human-readable text.
+     */
+    t: Function
+};
 
 /**
  * Implements a React {@link Component} for overlay with guidance how to proceed
  * with gUM prompt.
  */
-export default class AbstractUserMediaPermissionsOverlay extends Component {
-    /**
-     * {@code AbstractUserMediaPermissionsOverlay} component's property types.
-     *
-     * @static
-     */
-    static propTypes = {
-        /**
-         * The browser which is used currently. The text is different for every
-         * browser.
-         *
-         * @public
-         * @type {string}
-         */
-        browser: PropTypes.string,
-
-        /**
-         * The function to translate human-readable text.
-         *
-         * @public
-         * @type {Function}
-         */
-        t: PropTypes.func
-    };
-
+export default class AbstractUserMediaPermissionsOverlay
+    extends Component<Props> {
     /**
      * Determines whether this overlay needs to be rendered (according to a
      * specific redux state). Called by {@link OverlayContainer}.
@@ -38,7 +34,7 @@ export default class AbstractUserMediaPermissionsOverlay extends Component {
      * @returns {boolean} - If this overlay needs to be rendered, {@code true};
      * {@code false}, otherwise.
      */
-    static needsRender(state) {
+    static needsRender(state: Object) {
         return state['features/overlay'].isMediaPermissionPromptVisible;
     }
 }
@@ -52,7 +48,7 @@ export default class AbstractUserMediaPermissionsOverlay extends Component {
  *     browser: string
  * }}
  */
-export function abstractMapStateToProps(state) {
+export function abstractMapStateToProps(state: Object) {
     const { browser } = state['features/overlay'];
 
     return {

@@ -58,7 +58,6 @@ export type Props = {
     visible?: ?boolean
 };
 
-
 /**
  * Abstract (base) class for container of React {@link Component} children with
  * a style.

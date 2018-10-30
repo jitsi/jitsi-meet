@@ -1,4 +1,5 @@
-import PropTypes from 'prop-types';
+/* @flow */
+
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
@@ -8,53 +9,70 @@ import { translate } from '../../base/i18n';
 import { participantDisplayNameChanged } from '../../base/participants';
 
 /**
+ * The type of the React {@code Component} props of {@link DisplayName}.
+ */
+type Props = {
+
+    /**
+     * Whether or not the display name should be editable on click.
+     */
+    allowEditing: boolean,
+
+    /**
+     * Invoked to update the participant's display name.
+     */
+    dispatch: Dispatch<*>,
+
+    /**
+     * The participant's current display name.
+     */
+    displayName: string,
+
+    /**
+     * A string to append to the displayName, if provided.
+     */
+    displayNameSuffix: string,
+
+    /**
+     * The ID attribute to add to the component. Useful for global querying for
+     * the component by legacy components and torture tests.
+     */
+    elementID: string,
+
+    /**
+     * The ID of the participant whose name is being displayed.
+     */
+    participantID: string,
+
+    /**
+     * Invoked to obtain translated strings.
+     */
+    t: Function
+};
+
+/**
+ * The type of the React {@code Component} state of {@link DisplayName}.
+ */
+type State = {
+
+    /**
+     * The current value of the display name in the edit field.
+     */
+    editDisplayNameValue: string,
+
+    /**
+     * Whether or not the component should be displaying an editable input.
+     */
+    isEditing: boolean
+};
+
+/**
  * React {@code Component} for displaying and editing a participant's name.
  *
  * @extends Component
  */
-class DisplayName extends Component {
-    /**
-     * {@code DisplayName}'s property types.
-     *
-     * @static
-     */
-    static propTypes = {
-        /**
-         * Whether or not the display name should be editable on click.
-         */
-        allowEditing: PropTypes.bool,
-
-        /**
-         * Invoked to update the participant's display name.
-         */
-        dispatch: PropTypes.func,
-
-        /**
-         * The participant's current display name.
-         */
-        displayName: PropTypes.string,
-
-        /**
-         * A string to append to the displayName, if provided.
-         */
-        displayNameSuffix: PropTypes.string,
-
-        /**
-         * The ID attribute to add to the component. Useful for global querying
-         * for the component by legacy components and torture tests.
-         */
-        elementID: PropTypes.string,
-
-        /**
-         * The ID of the participant whose name is being displayed.
-         */
-        participantID: PropTypes.string,
-
-        /**
-         * Invoked to obtain translated strings.
-         */
-        t: PropTypes.func
-    };
+class DisplayName extends Component<Props, State> {
+    _nameInput: ?HTMLInputElement;
 
     /**
      * Initializes a new {@code DisplayName} instance.
@@ -62,23 +80,11 @@ class DisplayName extends Component {
      * @param {Object} props - The read-only properties with which the new
      * instance is to be initialized.
      */
-    constructor(props) {
+    constructor(props: Props) {
         super(props);
 
         this.state = {
-            /**
-             * The current value of the display name in the edit field.
-             *
-             * @type {string}
-             */
             editDisplayNameValue: '',
-
-            /**
-             * Whether or not the component should be displaying an editable
-             * input.
-             *
-             * @type {boolean}
-             */
             isEditing: false
         };
 
@@ -109,7 +115,9 @@ class DisplayName extends Component {
      * @returns {void}
      */
     componentDidUpdate(previousProps, previousState) {
-        if (!previousState.isEditing && this.state.isEditing) {
+        if (!previousState.isEditing
+            && this.state.isEditing
+            && this._nameInput) {
             this._nameInput.select();
         }
     }
@@ -156,6 +164,8 @@ class DisplayName extends Component {
         );
     }
 
+    _onChange: () => void;
+
     /**
      * Updates the internal state of the display name entered into the edit
      * field.
@@ -170,6 +180,8 @@ class DisplayName extends Component {
         });
     }
 
+    _onKeyDown: () => void;
+
     /**
      * Submits the editted display name update if the enter key is pressed.
      *
@@ -182,6 +194,8 @@ class DisplayName extends Component {
             this._onSubmit();
         }
     }
+
+    _onStartEditing: () => void;
 
     /**
      * Updates the component to display an editable input field and sets the
@@ -198,6 +212,8 @@ class DisplayName extends Component {
             });
         }
     }
+
+    _onSubmit: () => void;
 
     /**
      * Dispatches an action to update the display name if any change has
@@ -222,6 +238,8 @@ class DisplayName extends Component {
 
         this._nameInput = null;
     }
+
+    _setNameInputRef: (HTMLInputElement | null) => void;
 
     /**
      * Sets the internal reference to the HTML element backing the React

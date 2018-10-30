@@ -1,119 +1,120 @@
-import PropTypes from 'prop-types';
+/* @flow */
+
 import React, { Component } from 'react';
 
 import { translate } from '../../base/i18n';
+
+/**
+ * The type of the React {@code Component} props of
+ * {@link ConnectionStatsTable}.
+ */
+type Props = {
+
+    /**
+     * Statistics related to bandwidth.
+     * {{
+     *     download: Number,
+     *     upload: Number
+     * }}
+     */
+    bandwidth: Object,
+
+    /**
+     * Statistics related to bitrate.
+     * {{
+     *     download: Number,
+     *     upload: Number
+     * }}
+     */
+    bitrate: Object,
+
+    /**
+     * The number of bridges (aka media servers) currently used in the
+     * conference.
+     */
+    bridgeCount: number,
+
+    /**
+     * A message describing the connection quality.
+     */
+    connectionSummary: string,
+
+    /**
+     * The end-to-end round-trip-time.
+     */
+    e2eRtt: number,
+
+    /**
+     * Statistics related to frame rates for each ssrc.
+     * {{
+     *     [ ssrc ]: Number
+     * }}
+     */
+    framerate: Object,
+
+    /**
+     * Whether or not the statistics are for local video.
+     */
+    isLocalVideo: boolean,
+
+    /**
+     * Callback to invoke when the show additional stats link is clicked.
+     */
+    onShowMore: Function,
+
+    /**
+     * Statistics related to packet loss.
+     * {{
+     *     download: Number,
+     *     upload: Number
+     * }}
+     */
+    packetLoss: Object,
+
+    /**
+     * The region that we think the client is in.
+     */
+    region: string,
+
+    /**
+     * Statistics related to display resolutions for each ssrc.
+     * {{
+     *     [ ssrc ]: {
+     *         height: Number,
+     *         width: Number
+     *     }
+     * }}
+     */
+    resolution: Object,
+
+    /**
+     * The region of the media server that we are connected to.
+     */
+    serverRegion: string,
+
+    /**
+     * Whether or not additional stats about bandwidth and transport should be
+     * displayed. Will not display even if true for remote participants.
+     */
+    shouldShowMore: boolean,
+
+    /**
+     * Invoked to obtain translated strings.
+     */
+    t: Function,
+
+    /**
+     * Statistics related to transports.
+     */
+    transport: Array<Object>
+};
 
 /**
  * React {@code Component} for displaying connection statistics.
  *
  * @extends Component
  */
-class ConnectionStatsTable extends Component {
-    /**
-     * {@code ConnectionStatsTable} component's property types.
-     *
-     * @static
-     */
-    static propTypes = {
-        /**
-         * Statistics related to bandwidth.
-         * {{
-         *     download: Number,
-         *     upload: Number
-         * }}
-         */
-        bandwidth: PropTypes.object,
-
-        /**
-         * Statistics related to bitrate.
-         * {{
-         *     download: Number,
-         *     upload: Number
-         * }}
-         */
-        bitrate: PropTypes.object,
-
-        /**
-         * The number of bridges (aka media servers) currently used in the
-         * conference.
-         */
-        bridgeCount: PropTypes.number,
-
-        /**
-         * A message describing the connection quality.
-         */
-        connectionSummary: PropTypes.string,
-
-        /**
-         * The end-to-end round-trip-time.
-         */
-        e2eRtt: PropTypes.number,
-
-        /**
-         * Statistics related to frame rates for each ssrc.
-         * {{
-         *     [ ssrc ]: Number
-         * }}
-         */
-        framerate: PropTypes.object,
-
-        /**
-         * Whether or not the statistics are for local video.
-         */
-        isLocalVideo: PropTypes.bool,
-
-        /**
-         * Callback to invoke when the show additional stats link is clicked.
-         */
-        onShowMore: PropTypes.func,
-
-        /**
-         * Statistics related to packet loss.
-         * {{
-         *     download: Number,
-         *     upload: Number
-         * }}
-         */
-        packetLoss: PropTypes.object,
-
-        /**
-         * The region that we think the client is in.
-         */
-        region: PropTypes.string,
-
-        /**
-         * Statistics related to display resolutions for each ssrc.
-         * {{
-         *     [ ssrc ]: {
-         *         height: Number,
-         *         width: Number
-         *     }
-         * }}
-         */
-        resolution: PropTypes.object,
-
-        /**
-         * The region of the media server that we are connected to.
-         */
-        serverRegion: PropTypes.string,
-
-        /**
-         * Whether or not additional stats about bandwidth and transport should
-         * be displayed. Will not display even if true for remote participants.
-         */
-        shouldShowMore: PropTypes.bool,
-
-        /**
-         * Invoked to obtain translated strings.
-         */
-        t: PropTypes.func,
-
-        /**
-         * Statistics related to transports.
-         */
-        transport: PropTypes.array
-    };
-
+class ConnectionStatsTable extends Component<Props> {
     /**
      * Implements React's {@link Component#render()}.
      *
@@ -574,7 +575,7 @@ class ConnectionStatsTable extends Component {
      * @private
      * @returns {ReactElement}
      */
-    _renderTransportTableRow(config) {
+    _renderTransportTableRow(config: Object) {
         const { additionalData, data, key, label } = config;
 
         return (

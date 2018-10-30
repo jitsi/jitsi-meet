@@ -10,13 +10,6 @@ import type { Props } from '../AbstractContainer';
  */
 export default class Container<P: Props> extends AbstractContainer<P> {
     /**
-     * {@code Container} component's property types.
-     *
-     * @static
-     */
-    static propTypes = AbstractContainer.propTypes;
-
-    /**
      * Implements React's {@link Component#render()}.
      *
      * @inheritdoc
