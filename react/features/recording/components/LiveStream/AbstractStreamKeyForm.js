@@ -34,23 +34,12 @@ export type Props = {
 };
 
 /**
- * The state of the component.
- */
-type State = {
-
-    /**
-     * The value entered in the field.
-     */
-    value: string
-}
-
-/**
  * An abstract React Component for entering a key for starting a YouTube live
  * stream.
  *
  * @extends Component
  */
-export default class AbstractStreamKeyForm extends Component<Props, State> {
+export default class AbstractStreamKeyForm extends Component<Props> {
     helpURL: string;
 
     /**
@@ -61,27 +50,12 @@ export default class AbstractStreamKeyForm extends Component<Props, State> {
     constructor(props: Props) {
         super(props);
 
-        this.state = {
-            value: props.value
-        };
-
         this.helpURL = (typeof interfaceConfig !== 'undefined'
             && interfaceConfig.LIVE_STREAMING_HELP_LINK)
             || LIVE_STREAMING_HELP_LINK;
 
         // Bind event handlers so they are only bound once per instance.
         this._onInputChange = this._onInputChange.bind(this);
-    }
-
-    /**
-     * Implements {@code Component}'s componentWillReceiveProps.
-     *
-     * @inheritdoc
-     */
-    componentWillReceiveProps(newProps: Props) {
-        this.setState({
-            value: newProps.value
-        });
     }
 
     _onInputChange: Object => void
@@ -99,9 +73,6 @@ export default class AbstractStreamKeyForm extends Component<Props, State> {
     _onInputChange(change) {
         const value = typeof change === 'object' ? change.target.value : change;
 
-        this.setState({
-            value
-        });
         this.props.onChange(value);
     }
 }

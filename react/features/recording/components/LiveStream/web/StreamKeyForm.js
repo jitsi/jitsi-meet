@@ -51,7 +51,7 @@ class StreamKeyForm extends AbstractStreamKeyForm {
                     placeholder = { t('liveStreaming.enterStreamKey') }
                     shouldFitContainer = { true }
                     type = 'text'
-                    value = { this.state.value } />
+                    value = { this.props.value } />
                 { this.helpURL
                     ? <div className = 'form-footer'>
                         <a
