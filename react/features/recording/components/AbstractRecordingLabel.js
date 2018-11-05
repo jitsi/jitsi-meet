@@ -55,6 +55,18 @@ const STALE_TIMEOUT = 10 * 1000;
 export default class AbstractRecordingLabel
     extends Component<Props, State> {
     /**
+     * Implements {@code Component#getDerivedStateFromProps}.
+     *
+     * @inheritdoc
+     */
+    static getDerivedStateFromProps(props: Props, prevState: State) {
+        return {
+            staleLabel: props._status !== JitsiRecordingConstants.status.OFF
+                && prevState.staleLabel ? false : prevState.staleLabel
+        };
+    }
+
+    /**
      * Initializes a new {@code AbstractRecordingLabel} component.
      *
      * @inheritdoc
@@ -70,12 +82,12 @@ export default class AbstractRecordingLabel
     }
 
     /**
-     * Implements {@code Component#componentWillReceiveProps}.
+     * Implements {@code Component#componentDidUpdate}.
      *
      * @inheritdoc
      */
-    componentWillReceiveProps(newProps: Props) {
-        this._updateStaleStatus(this.props, newProps);
+    componentDidUpdate(prevProps: Props) {
+        this._updateStaleStatus(prevProps, this.props);
     }
 
     /**
@@ -137,13 +149,8 @@ export default class AbstractRecordingLabel
                     }
                 }, STALE_TIMEOUT);
             }
-        } else if (this.state.staleLabel) {
-            this.setState({
-                staleLabel: false
-            });
         }
     }
-
 }
 
 /**
