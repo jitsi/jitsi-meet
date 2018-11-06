@@ -34,6 +34,17 @@ export const REFRESH_CALENDAR = Symbol('REFRESH_CALENDAR');
 export const SET_CALENDAR_AUTHORIZATION = Symbol('SET_CALENDAR_AUTHORIZATION');
 
 /**
+ * Action to update the last error that occurred while trying to authenticate
+ * with or fetch data from the calendar integration.
+ *
+ * {
+ *     type: SET_CALENDAR_ERROR,
+ *     error: ?Object
+ * }
+ */
+export const SET_CALENDAR_ERROR = Symbol('SET_CALENDAR_ERROR');
+
+/**
  * Action to update the current calendar entry list in the store.
  *
  * {

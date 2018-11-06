@@ -11,6 +11,17 @@ export const CALENDAR_TYPE = {
 };
 
 /**
+ * An enumeration of known errors that can occur while interacting with the
+ * calendar integration.
+ *
+ * @enum {string}
+ */
+export const ERRORS = {
+    AUTH_FAILED: 'sign_in_failed',
+    GOOGLE_APP_MISCONFIGURED: 'idpiframe_initialization_failed'
+};
+
+/**
  * The number of days to fetch.
  */
 export const FETCH_END_DAYS = 10;

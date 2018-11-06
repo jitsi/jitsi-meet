@@ -1,10 +1,15 @@
 // @flow
 
-import { setLoadingCalendarEvents } from './actions';
+import {
+    clearCalendarIntegration,
+    setCalendarError,
+    setLoadingCalendarEvents
+} from './actions';
 export * from './functions.any';
 
 import {
     CALENDAR_TYPE,
+    ERRORS,
     FETCH_END_DAYS,
     FETCH_START_DAYS
 } from './constants';
@@ -66,7 +71,9 @@ export function _fetchCalendarEntries(
                 return Promise.resolve();
             }
 
-            return Promise.reject('Not authorized, please sign in!');
+            return Promise.reject({
+                error: ERRORS.AUTH_FAILED
+            });
         })
         .then(() => dispatch(integration.getCalendarEntries(
             FETCH_START_DAYS, FETCH_END_DAYS)))
@@ -74,8 +81,17 @@ export function _fetchCalendarEntries(
             dispatch,
             getState
         }, events))
-        .catch(error =>
-            logger.error('Error fetching calendar.', error))
+        .then(() => {
+            dispatch(setCalendarError());
+        }, error => {
+            logger.error('Error fetching calendar.', error);
+
+            if (error.error === ERRORS.AUTH_FAILED) {
+                dispatch(clearCalendarIntegration());
+            }
+
+            dispatch(setCalendarError(error));
+        })
         .then(() => dispatch(setLoadingCalendarEvents(false)));
 }
 

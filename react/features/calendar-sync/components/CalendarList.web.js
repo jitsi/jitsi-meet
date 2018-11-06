@@ -13,6 +13,7 @@ import {
 } from '../../analytics';
 
 import { refreshCalendar } from '../actions';
+import { ERRORS } from '../constants';
 import { isCalendarEnabled } from '../functions';
 
 import CalendarListContent from './CalendarListContent';
@@ -23,6 +24,12 @@ declare var interfaceConfig: Object;
  * The type of the React {@code Component} props of {@link CalendarList}.
  */
 type Props = {
+
+    /**
+     * The error object containing details about any error that has occurred
+     * while interacting with calendar integration.
+     */
+    _calendarError: ?Object,
 
     /**
      * Whether or not a calendar may be connected for fetching calendar events.
@@ -87,6 +94,54 @@ class CalendarList extends AbstractPage<Props> {
         );
     }
 
+    /**
+     * Returns a component for showing the error message related to calendar
+     * sync.
+     *
+     * @private
+     * @returns {React$Component}
+     */
+    _getErrorMessage() {
+        const { _calendarError = {}, t } = this.props;
+
+        let errorMessageKey = 'calendarSync.error.generic';
+        let showRefreshButton = true;
+        let showSettingsButton = true;
+
+        if (_calendarError.error === ERRORS.GOOGLE_APP_MISCONFIGURED) {
+            errorMessageKey = 'calendarSync.error.appConfiguration';
+            showRefreshButton = false;
+            showSettingsButton = false;
+        } else if (_calendarError.error === ERRORS.AUTH_FAILED) {
+            errorMessageKey = 'calendarSync.error.notSignedIn';
+            showRefreshButton = false;
+        }
+
+        return (
+            <div className = 'meetings-list-empty'>
+                <p className = 'description'>
+                    { t(errorMessageKey) }
+                </p>
+                <div className = 'calendar-action-buttons'>
+                    { showSettingsButton
+                        && <div
+                            className = 'button'
+                            onClick = { this._onOpenSettings }>
+                            { t('calendarSync.permissionButton') }
+                        </div>
+                    }
+                    { showRefreshButton
+                        && <div
+                            className = 'button'
+                            onClick = { this._onRefreshEvents }>
+                            { t('calendarSync.refresh') }
+                        </div>
+                    }
+                </div>
+            </div>
+        );
+    }
+
     _getRenderListEmptyComponent: () => Object;
 
     /**
@@ -97,12 +152,21 @@ class CalendarList extends AbstractPage<Props> {
      * @returns {React$Component}
      */
     _getRenderListEmptyComponent() {
-        const { _hasIntegrationSelected, _hasLoadedEvents, t } = this.props;
+        const {
+            _calendarError,
+            _hasIntegrationSelected,
+            _hasLoadedEvents,
+            t
+        } = this.props;
 
-        if (_hasIntegrationSelected && _hasLoadedEvents) {
+        if (_calendarError) {
+            return this._getErrorMessage();
+        } else if (_hasIntegrationSelected && _hasLoadedEvents) {
             return (
                 <div className = 'meetings-list-empty'>
-                    <div>{ t('calendarSync.noEvents') }</div>
+                    <p className = 'description'>
+                        { t('calendarSync.noEvents') }
+                    </p>
                     <div
                         className = 'button'
                         onClick = { this._onRefreshEvents }>
@@ -172,18 +236,21 @@ class CalendarList extends AbstractPage<Props> {
  * @param {Object} state - The Redux state.
  * @private
  * @returns {{
+ *     _calendarError: Object,
  *     _hasIntegrationSelected: boolean,
  *     _hasLoadedEvents: boolean
  * }}
  */
 function _mapStateToProps(state) {
     const {
+        error,
         events,
         integrationType,
         isLoadingEvents
     } = state['features/calendar-sync'];
 
     return {
+        _calendarError: error,
         _hasIntegrationSelected: Boolean(integrationType),
         _hasLoadedEvents: Boolean(events) || !isLoadingEvents
     };

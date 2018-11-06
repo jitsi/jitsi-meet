@@ -8,6 +8,7 @@ import {
     CLEAR_CALENDAR_INTEGRATION,
     SET_CALENDAR_AUTH_STATE,
     SET_CALENDAR_AUTHORIZATION,
+    SET_CALENDAR_ERROR,
     SET_CALENDAR_EVENTS,
     SET_CALENDAR_INTEGRATION,
     SET_CALENDAR_PROFILE_EMAIL,
@@ -85,6 +86,9 @@ isCalendarEnabled()
 
         case SET_CALENDAR_AUTHORIZATION:
             return set(state, 'authorization', action.authorization);
+
+        case SET_CALENDAR_ERROR:
+            return set(state, 'error', action.error);
 
         case SET_CALENDAR_EVENTS:
             return set(state, 'events', action.events);
