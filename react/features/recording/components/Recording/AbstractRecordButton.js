@@ -107,6 +107,7 @@ export default class AbstractRecordButton<P: Props>
  * @private
  * @returns {{
  *     _isRecordingRunning: boolean,
+ *     disabledByFeatures: boolean,
  *     visible: boolean
  * }}
  */
