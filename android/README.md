@@ -57,11 +57,11 @@ Third-party React Native _modules_, which Jitsi Meet SDK for Android depends on,
 
 To prepare, Configure the Maven repositories in which you are going to publish the SDK artifacts/binaries. In `android/sdk/build.gradle` as well as in `android/build.gradle` modify the lines that contain:
 
-   "file:${rootProject.projectDir}/../../../jitsi/jitsi-maven-repository/releases"
+    "file:${rootProject.projectDir}/../../../jitsi/jitsi-maven-repository/releases"
 
 Change this value (which represents the Maven repository location used internally by the Jitsi Developers) to the location of the repository that you'd like to use:
 
-   "file:/tmp/repo"
+    "file:/tmp/repo"
 
 Make sure to do this in both files! Each file should require one line to be changed.
 
@@ -81,28 +81,24 @@ Alternatively, you can assemble and publish _all_ subprojects, which include the
 
 You're now ready to use the artifacts. In _your_ project, add the Maven repository that you used above (`/tmp/repo`) into your top-level `build.gradle` file:
 
-    ```gradle
     allprojects {
         repositories {
             maven { url "file:/tmp/repo" }
             google()
             jcenter()
         }
-    }```
+    }
 
 You can use your local repository to replace the Jitsi repository (`maven { url "https://github.com/jitsi/jitsi-maven-repository/raw/master/releases" }`) when you published _all_ subprojects. If you didn't do that, you'll have to add both repositories. Make sure your local repository is listed first!
 
 Then, define the dependency `org.jitsi.react:jitsi-meet-sdk` into the `build.gradle` file of your module:
 
-    ```gradle
     implementation ('org.jitsi.react:jitsi-meet-sdk:+') { transitive = true }
-    ```
 
 Note that there should not be a need to explicitly add the other dependencies, as they will be pulled in as transitive dependencies of `jitsi-meet-sdk`.
 
 
 ## Using the API
-=======
 
 Jitsi Meet SDK is an Android library which embodies the whole Jitsi Meet
 experience and makes it reusable by third-party apps.
