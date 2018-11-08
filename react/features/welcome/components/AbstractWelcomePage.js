@@ -149,7 +149,7 @@ export class AbstractWelcomePage extends Component<Props, *> {
     }
 
     /**
-     * Determines whether the 'Join' button is (to be) disabled i.e. there's no
+     * Determines whether the 'Join' button is (to be) disabled i.e. There's no
      * valid room name typed into the respective text input field.
      *
      * @protected

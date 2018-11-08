@@ -113,7 +113,7 @@ function _set(
 
 /**
  * Returns redux state from the specified {@code stateful} which is presumed to
- * be related to the redux state (e.g. the redux store, the redux
+ * be related to the redux state (e.g. The redux store, the redux
  * {@code getState} function).
  *
  * @param {Function|Object} stateful - The entity such as the redux store or the

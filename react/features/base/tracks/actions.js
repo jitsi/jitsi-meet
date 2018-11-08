@@ -418,7 +418,7 @@ function _addTracks(tracks) {
  * @returns {Promise} - A {@code Promise} resolved once all
  * {@code gumProcess.cancel()} {@code Promise}s are settled because all we care
  * about here is to be sure that the {@code getUserMedia} callbacks have
- * completed (i.e. returned from the native side).
+ * completed (i.e. Returned from the native side).
  */
 function _cancelGUMProcesses(getState) {
     const logError

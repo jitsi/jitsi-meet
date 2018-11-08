@@ -146,11 +146,11 @@ export default class Avatar extends Component<Props, State> {
     }
 
     /**
-     * Notifies this {@code Component} that it will be unmounted and destroyed
-     * and, most importantly, that it should no longer call
-     * {@link #setState(Object)}. {@code Avatar} needs it because it downloads
-     * images via {@link ImageCache} which will asynchronously notify about
-     * success.
+     * Notifies this {@code Component} that it will be unmounted and destroyed,
+     * and most importantly, that it should no longer call
+     * {@link #setState(Object)}. The {@code Avatar} needs it because it
+     * downloads images via {@link ImageCache} which will asynchronously notify
+     * about success.
      *
      * @inheritdoc
      * @returns {void}

@@ -4,7 +4,7 @@ import { toState } from '../redux';
 
 /**
  * Retrieves a simplified version of the conference/location URL stripped of URL
- * params (i.e. query/search and hash) which should be used for sending invites.
+ * params (i.e. Query/search and hash) which should be used for sending invites.
  *
  * @param {Function|Object} stateOrGetState - The redux state or redux's
  * {@code getState} function.

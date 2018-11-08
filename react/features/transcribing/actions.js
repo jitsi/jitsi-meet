@@ -126,11 +126,10 @@ export function showPendingTranscribingNotification() {
 
 /**
  * Sets UID of the the pending transcribing notification to use it when hiding
- * the notification is necessary, or unsets it when
- * undefined (or no param) is passed.
+ * the notification is necessary, or unsets it when undefined (or no param) is
+ * passed.
  *
  * @param {?number} uid - The UID of the notification.
- * redux.
  * @returns {{
  *     type: SET_PENDING_TRANSCRIBING_NOTIFICATION_UID,
  *     uid: number
@@ -185,5 +184,3 @@ export function showTranscribingError() {
         titleKey: 'transcribing.failedToStart'
     });
 }
-
-

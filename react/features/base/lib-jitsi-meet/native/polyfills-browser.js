@@ -39,9 +39,10 @@ function _getCommonPrototype(a, b) {
 }
 
 /**
- * Implements an absolute minimum of the common logic of Document.querySelector
- * and Element.querySelector. Implements the most simple of selectors necessary
- * to satisfy the call sites at the time of this writing i.e. select by tagName.
+ * Implements an absolute minimum of the common logic of
+ * {@code Document.querySelector} and {@code Element.querySelector}. Implements
+ * the most simple of selectors necessary to satisfy the call sites at the time
+ * of this writing (i.e. Select by tagName).
  *
  * @param {Node} node - The Node which is the root of the tree to query.
  * @param {string} selectors - The group of CSS selectors to match on.

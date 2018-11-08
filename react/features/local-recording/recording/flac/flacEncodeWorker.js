@@ -161,7 +161,7 @@ class Encoder {
 
     /**
      * Constructor.
-     * Note: only create instance when Flac.isReady() returns true.
+     * Note: Only create instance when Flac.isReady() returns true.
      *
      * @param {number} sampleRate - Sample rate of the raw audio data.
      * @param {number} bitDepth - Bit depth (bit per sample).

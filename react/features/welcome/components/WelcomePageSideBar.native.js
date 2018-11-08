@@ -123,7 +123,7 @@ class WelcomePageSideBar extends Component<Props> {
     _onHideSideBar: () => void;
 
     /**
-     * Invoked when the sidebar has closed itself (e.g. overlay pressed).
+     * Invoked when the sidebar has closed itself (e.g. Overlay pressed).
      *
      * @private
      * @returns {void}

@@ -23,7 +23,7 @@ const logger = require('jitsi-meet-logger').getLogger(__filename);
  * password + guest access configuration. Refer to {@link LoginDialog} for more
  * info.
  *
- * @param {string} id - The XMPP user's ID (e.g. user@domain.com).
+ * @param {string} id - The XMPP user's ID (e.g. {@code user@domain.com}).
  * @param {string} password - The XMPP user's password.
  * @param {JitsiConference} conference - The conference for which the local
  * participant's role will be upgraded.

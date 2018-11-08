@@ -91,8 +91,8 @@ class NavigateSectionList extends Component<Props> {
     }
 
     /**
-     * Implements React's Component.render.
-     * Note: we don't use the refreshing value yet, because refreshing of these
+     * Implements React's {@code Component.render}.
+     * Note: We don't use the refreshing value yet, because refreshing of these
      * lists is super quick, no need to complicate the code - yet.
      *
      * @inheritdoc

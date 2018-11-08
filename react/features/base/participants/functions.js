@@ -127,8 +127,9 @@ export function getParticipantCount(stateful: Object | Function) {
 
 /**
  * Returns participant's display name.
- * FIXME: remove the hardcoded strings once interfaceConfig is stored in redux
- * and merge with a similarly named method in conference.js.
+ *
+ * FIXME: Remove the hardcoded strings once interfaceConfig is stored in redux
+ * and merge with a similarly named method in {@code conference.js}.
  *
  * @param {(Function|Object)} stateful - The (whole) redux state, or redux's
  * {@code getState} function to be used to retrieve the state.

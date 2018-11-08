@@ -433,9 +433,9 @@ function _mapDispatchToProps(dispatch) {
         /**
          * Dispatches an action changing the visibility of the {@link Toolbox}.
          *
-         * @param {boolean} visible - {@code true} to show the {@code Toolbox}
-         * or {@code false} to hide it.
          * @private
+         * @param {boolean} visible - Pass {@code true} to show the
+         * {@code Toolbox} or {@code false} to hide it.
          * @returns {void}
          */
         _setToolboxVisible(visible) {

@@ -221,7 +221,7 @@ class RecordingController {
     /**
      * Registers listeners for XMPP events.
      *
-     * @param {JitsiConference} conference - {@code JitsiConference} instance.
+     * @param {JitsiConference} conference - A {@code JitsiConference} instance.
      * @returns {void}
      */
     registerEvents(conference: Object) {
@@ -633,7 +633,7 @@ class RecordingController {
         }
 
         /* eslint-disable */
-        return (Promise.resolve(): Promise<void>); 
+        return (Promise.resolve(): Promise<void>);
         // FIXME: better ways to satisfy flow and ESLint at the same time?
         /* eslint-enable */
 
