@@ -47,7 +47,7 @@ class StartLiveStreamDialog extends AbstractStartLiveStreamDialog<Props> {
      *
      * FIXME: This is a temporary method to store the streaming key on mobile
      * for easier use, until the Google sign-in is implemented. We don't store
-     * the key on web for security reasons (e.g. we don't want to have the key
+     * the key on web for security reasons (e.g. We don't want to have the key
      * stored if the used signed out).
      *
      * @private
@@ -80,7 +80,7 @@ class StartLiveStreamDialog extends AbstractStartLiveStreamDialog<Props> {
      * A callback to be invoked when an authenticated user changes, so
      * then we can get (or clear) the YouTube stream key.
      *
-     * TODO: handle errors by showing some indication to the user.
+     * TODO: Handle errors by showing some indication to the user.
      *
      * @private
      * @param {Object} response - The retreived signin response.

@@ -194,7 +194,6 @@ export default class AbstractStartLiveStreamDialog<P: Props>
      * display of the entered YouTube stream key.
      *
      * @param {string} streamKey - The stream key entered in the field.
-     * changed text.
      * @private
      * @returns {void}
      */

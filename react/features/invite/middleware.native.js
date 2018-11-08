@@ -121,7 +121,7 @@ function _beginAddPeople(store, next, action) {
 }
 
 /**
- * Handles the {@code invite} event of the feature invite i.e. invites specific
+ * Handles the {@code invite} event of the feature invite and invites specific
  * invitees to the current, ongoing conference.
  *
  * @param {Object} event - The details of the event.
@@ -146,7 +146,7 @@ function _onInvite({ addPeopleControllerScope, externalAPIScope, invitees }) {
 }
 
 /**
- * Handles the {@code performQuery} event of the feature invite i.e. queries for
+ * Handles the {@code performQuery} event of the feature invite and queries for
  * invitees who may subsequently be invited to the current, ongoing conference.
  *
  * @param {Object} event - The details of the event.

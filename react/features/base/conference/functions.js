@@ -198,8 +198,8 @@ export function getNearestReceiverVideoQualityLevel(availableHeight: number) {
 }
 
 /**
- * Handle an error thrown by the backend (i.e. lib-jitsi-meet) while
- * manipulating a conference participant (e.g. pin or select participant).
+ * Handle an error thrown by the backend (i.e. {@code lib-jitsi-meet}) while
+ * manipulating a conference participant (e.g. Pin or select participant).
  *
  * @param {Error} err - The Error which was thrown by the backend while
  * manipulating a conference participant and which is to be handled.

@@ -47,7 +47,7 @@ export function getSessionById(state: Object, id: string) {
 }
 
 /**
- * Returns the recording session status that is to be shown in a label. E.g. if
+ * Returns the recording session status that is to be shown in a label. E.g. If
  * there is a session with the status OFF and one with PENDING, then the PENDING
  * one will be shown, because that is likely more important for the user to see.
  *

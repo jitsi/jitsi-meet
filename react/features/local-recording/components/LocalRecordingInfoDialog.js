@@ -288,7 +288,7 @@ class LocalRecordingInfoDialog extends Component<Props, State> {
     }
 
     /**
-     * Renders the moderator-only controls, i.e. stats of all users and the
+     * Renders the moderator-only controls: The stats of all users and the
      * action links.
      *
      * @private

@@ -121,7 +121,7 @@ class CalendarListContent extends Component<Props> {
      *
      * @private
      * @param {string} url - The url string to navigate to.
-     * @param {string} analyticsEventName - Тhe name of the analytics event.
+     * @param {string} analyticsEventName - Тhe name of the analytics event
      * associated with this action.
      * @returns {void}
      */

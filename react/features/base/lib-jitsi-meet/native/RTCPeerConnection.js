@@ -32,7 +32,7 @@ const SOCK_STREAM = 1; /* stream socket */
  * The RTCPeerConnection provided by react-native-webrtc fires onaddstream
  * before it remembers remotedescription (and thus makes it available to API
  * clients). Because that appears to be a problem for lib-jitsi-meet which has
- * been successfully running on Chrome, Firefox, etc. for a very long
+ * been successfully running on Chrome, Firefox and others for a very long
  * time, attempt to meet its expectations (by extending RTCPPeerConnection).
  *
  * @class

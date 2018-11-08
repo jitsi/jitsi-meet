@@ -128,10 +128,10 @@ export class AbstractApp extends BaseApp<Props, *> {
     }
 
     /**
-     * Navigates this {@code AbstractApp} to (i.e. opens) a specific URL.
+     * Navigates this {@code AbstractApp} to (i.e. Opens) a specific URL.
      *
      * @param {Object|string} url - The URL to navigate this {@code AbstractApp}
-     * to (i.e. the URL to open).
+     * to (i.e. The URL to open).
      * @protected
      * @returns {void}
      */

@@ -10,7 +10,7 @@ export * from './roomnameGenerator';
 
 /**
  * Determines whether the {@code WelcomePage} is enabled by the app itself
- * (e.g. programmatically via the Jitsi Meet SDK for Android and iOS). Not to be
+ * (e.g. Programmatically via the Jitsi Meet SDK for Android and iOS). Not to be
  * confused with {@link isWelcomePageUserEnabled}.
  *
  * @param {Function|Object} stateful - The redux state or {@link getState}

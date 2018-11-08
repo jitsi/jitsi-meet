@@ -71,7 +71,7 @@ export type ConnectionFailedError = {
 /**
  * Opens new connection.
  *
- * @param {string} [id] - The XMPP user's ID (e.g. user@server.com).
+ * @param {string} [id] - The XMPP user's ID (e.g. {@code user@server.com}).
  * @param {string} [password] - The XMPP user's password.
  * @returns {Function}
  */

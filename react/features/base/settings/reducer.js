@@ -57,7 +57,7 @@ ReducerRegistry.register(STORE_NAME, (state = DEFAULT_STATE, action) => {
  * Retrieves the legacy profile values regardless of it's being in pre or
  * post-flattening format.
  *
- * FIXME: Let's remove this after a predefined time (e.g. by July 2018) to avoid
+ * FIXME: Let's remove this after a predefined time (e.g. By July 2018) to avoid
  * garbage in the source.
  *
  * @private

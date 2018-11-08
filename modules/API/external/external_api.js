@@ -462,55 +462,57 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
      * the event and value - the listener.
      * Currently we support the following
      * events:
-     * incomingMessage - receives event notifications about incoming
+     * {@code incomingMessage} - receives event notifications about incoming
      * messages. The listener will receive object with the following structure:
      * {{
      *  'from': from,//JID of the user that sent the message
      *  'nick': nick,//the nickname of the user that sent the message
      *  'message': txt//the text of the message
      * }}
-     * outgoingMessage - receives event notifications about outgoing
+     * {@code outgoingMessage} - receives event notifications about outgoing
      * messages. The listener will receive object with the following structure:
      * {{
      *  'message': txt//the text of the message
      * }}
-     * displayNameChanged - receives event notifications about display name
-     * change. The listener will receive object with the following structure:
+     * {@code displayNameChanged} - receives event notifications about display
+     * name change. The listener will receive object with the following
+     * structure:
      * {{
      * jid: jid,//the JID of the participant that changed his display name
      * displayname: displayName //the new display name
      * }}
-     * participantJoined - receives event notifications about new participant.
+     * {@code participantJoined} - receives event notifications about new
+     * participant.
      * The listener will receive object with the following structure:
      * {{
      * jid: jid //the jid of the participant
      * }}
-     * participantLeft - receives event notifications about the participant that
-     * left the room.
+     * {@code participantLeft} - receives event notifications about the
+     * participant that left the room.
      * The listener will receive object with the following structure:
      * {{
      * jid: jid //the jid of the participant
      * }}
-     * video-conference-joined - receives event notifications about the local
-     * user has successfully joined the video conference.
+     * {@code video-conference-joined} - receives event notifications about the
+     * local user has successfully joined the video conference.
      * The listener will receive object with the following structure:
      * {{
      * roomName: room //the room name of the conference
      * }}
-     * video-conference-left - receives event notifications about the local user
-     * has left the video conference.
+     * {@code video-conference-left} - receives event notifications about the
+     * local user has left the video conference.
      * The listener will receive object with the following structure:
      * {{
      * roomName: room //the room name of the conference
      * }}
-     * screenSharingStatusChanged - receives event notifications about
+     * {@code screenSharingStatusChanged} - receives event notifications about
      * turning on/off the local user screen sharing.
      * The listener will receive object with the following structure:
      * {{
      * on: on //whether screen sharing is on
      * }}
-     * readyToClose - all hangup operations are completed and Jitsi Meet is
-     * ready to be disposed.
+     * {@code readyToClose} - all hangup operations are completed and Jitsi Meet
+     * is ready to be disposed.
      * @returns {void}
      *
      * @deprecated
@@ -537,11 +539,12 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
 
     /**
      * Executes command. The available commands are:
-     * displayName - sets the display name of the local participant to the value
-     * passed in the arguments array.
-     * toggleAudio - mutes / unmutes audio with no arguments.
-     * toggleVideo - mutes / unmutes video with no arguments.
-     * toggleFilmStrip - hides / shows the filmstrip with no arguments.
+     * {@code displayName} - Sets the display name of the local participant to
+     * the value passed in the arguments array.
+     * {@code toggleAudio} - Mutes / unmutes audio with no arguments.
+     * {@code toggleVideo} - Mutes / unmutes video with no arguments.
+     * {@code toggleFilmStrip} - Hides / shows the filmstrip with no arguments.
+     *
      * If the command doesn't require any arguments the parameter should be set
      * to empty array or it may be omitted.
      *
@@ -562,13 +565,13 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
 
     /**
      * Executes commands. The available commands are:
-     * displayName - sets the display name of the local participant to the value
-     * passed in the arguments array.
-     * toggleAudio - mutes / unmutes audio. no arguments
-     * toggleVideo - mutes / unmutes video. no arguments
-     * toggleFilmStrip - hides / shows the filmstrip. no arguments
-     * toggleChat - hides / shows chat. no arguments.
-     * toggleShareScreen - starts / stops screen sharing. no arguments.
+     * {@code displayName} - Sets the display name of the local participant to
+     * the value passed in the arguments array.
+     * {@code toggleAudio} - Mutes / unmutes audio. No arguments.
+     * {@code toggleVideo} - Mutes / unmutes video. No arguments.
+     * {@code toggleFilmStrip} - Hides / shows the filmstrip. No arguments.
+     * {@code toggleChat} - Hides / shows chat. No arguments.
+     * {@code toggleShareScreen} - Starts / stops screen sharing. No arguments.
      *
      * @param {Object} commandList - The object with commands to be executed.
      * The keys of the object are the commands that will be executed and the

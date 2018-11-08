@@ -30,7 +30,7 @@ function _isDisplayableCalendarEntry(entry) {
 /**
  * Updates the calendar entries in redux when new list is received. The feature
  * calendar-sync doesn't display all calendar events, it displays unique
- * title, URL, and start time tuples i.e. it doesn't display subsequent
+ * title, URL, and start time tuples, and it doesn't display subsequent
  * occurrences of recurring events, and the repetitions of events coming from
  * multiple calendars.
  *

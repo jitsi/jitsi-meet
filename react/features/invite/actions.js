@@ -37,14 +37,14 @@ export function beginAddPeople() {
 
 
 /**
- * Invites (i.e. sends invites to) an array of invitees (which may be a
- * combination of users, rooms, phone numbers, and video rooms).
+ * Invites (i.e. Sends invites to) an array of invitees (which may be a
+ * combination of users, rooms, phone numbers, and video rooms.
  *
  * @param  {Array<Object>} invitees - The recepients to send invites to.
  * @param  {Array<Object>} showCalleeInfo - Indicates whether the
  * {@code CalleeInfo} should be displayed or not.
  * @returns {Promise<Array<Object>>} A {@code Promise} resolving with an array
- * of invitees who were not invited (i.e. invites were not sent to them).
+ * of invitees who were not invited (i.e. Invites were not sent to them).
  */
 export function invite(
         invitees: Array<Object>,

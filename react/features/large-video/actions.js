@@ -48,7 +48,7 @@ export function selectParticipant() {
 
 /**
  * Action to select the participant to be displayed in LargeVideo based on a
- * variety of factors: if there is a dominant or pinned speaker, or if there are
+ * variety of factors: If there is a dominant or pinned speaker, or if there are
  * remote tracks, etc.
  *
  * @returns {Function}
@@ -105,7 +105,7 @@ function _electLastVisibleRemoteVideo(tracks) {
 }
 
 /**
- * Returns the identifier of the participant who is to be on the stage i.e.
+ * Returns the identifier of the participant who is to be on the stage and
  * should be displayed in {@code LargeVideo}.
  *
  * @param {Object} state - The Redux state from which the participant to be

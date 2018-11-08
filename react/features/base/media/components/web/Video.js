@@ -102,10 +102,10 @@ class Video extends Component<Props> {
     /**
      * Updates the video display only if a new track is added. This component's
      * updating is blackboxed from React to prevent re-rendering of video
-     * element, as the lib uses track.attach(videoElement) instead.
+     * element, as the lib uses {@code track.attach(videoElement)} instead.
      *
      * @inheritdoc
-     * @returns {boolean} - False is always returned to blackbox this component.
+     * @returns {boolean} - False is always returned to blackbox this component
      * from React.
      */
     shouldComponentUpdate(nextProps: Props) {

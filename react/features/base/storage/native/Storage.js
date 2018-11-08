@@ -73,7 +73,7 @@ export default class Storage {
      * Returns the value associated with a specific key in this {@code Storage}
      * in an async manner. The method is required for the cases where we need
      * the stored data but we're not sure yet whether this {@code Storage} is
-     * already initialized (e.g. on app start).
+     * already initialized (e.g. On app start).
      *
      * @param {string} key - The name of the key to retrieve the value of.
      * @returns {Promise}
