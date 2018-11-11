@@ -130,7 +130,7 @@ equivalent to these of a direct one-to-one WebRTC call. This is what's unique to
 Jitsi Meet in terms of security.
 
 The [meet.jit.si](https://meet.jit.si) service is maintained by the Jitsi team
-at [Atlassian](https://atlassian.com).
+at [8x8](https://8x8.com).
 
 ## Mobile app
 Jitsi Meet is also available as a React Native app for Android and iOS.
