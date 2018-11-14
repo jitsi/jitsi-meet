@@ -1,6 +1,5 @@
 {
-    "contactlist": "__count__ Membres",
-    "contactlist_plural": "",
+    "contactlist_plural": "__count__ Membres",
     "passwordSetRemotely": "défini par un autre membre",
     "poweredby": "Produit par",
     "inviteUrlDefaultMsg": "Votre conférence est en cours de création...",
@@ -23,6 +22,7 @@
         "react-nativeGrantPermissions": "Sélectionnez <b><i>Autoriser</i></b> lorsque votre navigateur demande des autorisations.",
         "chromeGrantPermissions": "Sélectionnez <b><i>Autoriser</i></b> lorsque votre navigateur demande des autorisations.",
         "androidGrantPermissions": "Sélectionnez <b><i>Autoriser</i></b> lorsque votre navigateur demande des autorisations.",
+        "electronGrantPermissions": "Merci d'autoriser le partage de votre camera et microphone",
         "firefoxGrantPermissions": "Sélectionnez <b><i>Partager le périphérique sélectionné</i></b> lorsque votre navigateur demande des autorisations.",
         "operaGrantPermissions": "Sélectionnez <b><i>Autoriser</i></b> lorsque votre navigateur demande des autorisations.",
         "iexplorerGrantPermissions": "Sélectionnez <b><i>OK</i></b> quand le navigateur demande les permissions.",
@@ -35,57 +35,42 @@
         "raiseHand": "Lever ou baisser la main",
         "pushToTalk": "Appuyer pour parler",
         "toggleScreensharing": "Basculer entre la caméra et le partage d'écran",
-        "toggleFilmstrip": "Afficher ou cacher la vidéo",
-        "toggleShortcuts": "Afficher ou masquer ce menu d'aide",
+        "toggleFilmstrip": "Afficher ou masquer les vignettes vidéos",
+        "toggleShortcuts": "Afficher ou masquer les raccourcis clavier",
         "focusLocal": "Épingler ma vidéo",
-        "focusRemote": "Épingler la vidéo des autres",
+        "focusRemote": "Épingler la vidéo de quelqu'un d'autre",
         "toggleChat": "Ouvrir ou fermer le panneau de conversation",
         "mute": "Activer ou désactiver le microphone",
-        "fullScreen": "Activer ou Désactiver le plein écran",
+        "fullScreen": "Activer / Désactiver le mode plein écran",
         "videoMute": "Démarrer ou arrêter votre caméra",
-        "showSpeakerStats": "Afficher les statistiques de l'interlocuteur"
+        "showSpeakerStats": "Afficher les statistiques de l'interlocuteur",
+        "localRecording": "Afficher ou masquer les commandes de l'enregistrement local"
     },
     "welcomepage": {
-        "disable": "Ne plus afficher cette page",
-        "feature1": {
-            "content": "Aucun téléchargement requis. __app__ s'utilise directement depuis votre navigateur. Partager simplement l'URL de votre conférence avec les autres pour commencer.",
-            "title": "Simple à utiliser"
+        "accessibilityLabel": {
+            "join": "Touchez pour rejoindre",
+            "roomname": "Saisissez un nom de salle"
         },
-        "feature2": {
-            "content": "Les vidéo conférences à plusieurs participants nécessitent moins de 128 kbps. Le partage d'écran et les conférences avec seulement de l'audio sont possibles avec beaucoup moins de débit.",
-            "title": "Bande passante faible"
+        "appDescription": "Allez-y, chat vidéo avec toute l'équipe. En fait, invitez tout le monde que vous connaissez. __app__ est une solution de visioconférence entièrement cryptée et 100% open source que vous pouvez utiliser toute la journée, tous les jours, gratuitement— aucun compte requis.",
+        "audioVideoSwitch": {
+            "audio": "Voix",
+            "video": "Vidéo"
         },
-        "feature3": {
-            "content": "__app__ est sous licence Apache. Vous êtes libre de télécharger, d'utiliser, de modifier et de partager __app__ selon cette licence libre.",
-            "title": "Open source"
-        },
-        "feature4": {
-            "content": "Il n'y a pas de limitation sur le nombre d'utilisateurs ou de conférences. Seules la puissance et la bande passante du serveur sont des facteurs limitants.",
-            "title": "Nombre d'utilisateurs illimité"
-        },
-        "feature5": {
-            "content": "C'est facile de partager votre écran avec d'autres personnes. __app__ est idéal pour les présentations en ligne, les cours, et les sessions de support technique.",
-            "title": "Partage d'écran"
-        },
-        "feature6": {
-            "content": "Besoin de confidentialité ? Les salles de conférence __app__ peuvent être sécurisées par un mot de passe pour exclure les invités non désirées, et prévenir des interruptions.",
-            "title": "Salles sécurisées"
-        },
-        "feature7": {
-            "content": "__app__ propose Etherpad, un éditeur de texte collaboratif en temps réel qui est parfait pour les procès-verbaux, l'édition d'articles et plus encore.",
-            "title": "Notes partagées"
-        },
-        "feature8": {
-            "content": "Apprenez plus au sujet de vos utilisateurs avec une intégration facile de Piwik, Google Analytics et d'autres systèmes de statistiques et supervision d'utilisation.",
-            "title": "Statistiques d'utilisation"
-        },
+        "calendar": "Calendrier",
+        "connectCalendarText": "Connectez votre calendrier pour voir toutes vos réunion dans __app__. Ajoutez les réunions __app__ dans votre calendrier pour les lancer en un seul clic.",
+        "connectCalendarButton": "Connecter votre calendrier",
+        "enterRoomTitle": "Démarrer une nouvelle réunion",
         "go": "Créer",
         "join": "REJOINDRE",
         "privacy": "Confidentialité",
+        "recentList": "Récent",
+        "recentListDelete": "Supprimer",
+        "recentListEmpty": "Votre liste récente est actuellement vide. Discuter avec votre équipe et vous trouverez toutes vos réunions récentes ici.",
         "roomname": "Saisissez un nom de salle",
-        "roomnamePlaceHolder": "nom de la conférence",
+        "roomnameHint": "Entrez le nom ou l'URL de la salle que vous souhaitez rejoindre. Vous pouvez faire un nom, laissez les gens que vous rencontrerez le savoir afin qu'ils entrent le même nom.",
         "sendFeedback": "Envoyer votre avis",
-        "terms": "Termes"
+        "terms": "Termes",
+        "title": "Vidéoconférence Sécurisée, entièrement en vedette et gratuite"
     },
     "startupoverlay": {
         "policyText": " ",
@@ -97,52 +82,95 @@
         "rejoinKeyTitle": "Rejoindre"
     },
     "toolbar": {
+        "accessibilityLabel": {
+            "audioOnly": "Activer/désactiver le mode voix uniquement",
+            "audioRoute": "",
+            "callQuality": "Accorder la qualité des appels",
+            "chat": "Afficher/masquer la discussion instantanée",
+            "cc": "Activer/désactiver les sous-titres",
+            "document": "Activer/désactiver le document partagé",
+            "feedback": "Laisser des commentaires",
+            "fullScreen": "Activer/désactiver le plein écran",
+            "hangup": "Quitter la conversation",
+            "invite": "Inviter des participants",
+            "localRecording": "Activer/désactiver les contrôles d'enregistrement local",
+            "lockRoom": "Activer/Désactiver le verrouillage de la session",
+            "moreActions": "Activer/désactiver le menu d'actions supplémentaires",
+            "moreActionsMenu": "Menu d'actions supplémentaires",
+            "mute": "Activer/désactiver l'audio",
+            "pip": "Activer/désactiver le mode Picture in Picture",
+            "profile": "Éditer votre profil",
+            "raiseHand": "Lever/baisser la main",
+            "recording": "Activer/désactiver l'enregistrement",
+            "Settings": "Afficher/masquer le menu des paramètres",
+            "sharedvideo": "Démarrer/arrêter le partage de vidéo Youtube",
+            "shareRoom": "Inviter quelqu'un",
+            "shareYourScreen": "Activer/désactiver le partage d’écran",
+            "shortcuts": "Afficher/masquer les raccourcis",
+            "speakerStats": "Afficher/cacher les statistiques de parole",
+            "toggleCamera": "Activer/désactiver la caméra",
+            "tileView": "Activer/désactiver la vue mosaïque",
+            "videomute": "Activer/désactiver la vidéo"
+        },
         "addPeople": "Ajouter des personnes à votre appel",
         "audioonly": "Activer / Désactiver le mode audio uniquement (économiser de la bande passante)",
+        "audioOnlyOn": "Activer/désactiver le mode audio uniquement (économiser de la bande passante)",
+        "audioOnlyOff": "Désactiver le mode audio uniquement",
+        "audioRoute": "Sélectionner le périphérique audio",
+        "callQuality": "Accorder la qualité des appels",
+        "enterFullScreen": "Afficher en plein écran",
+        "exitFullScreen": "Quitter le mode plein écran",
+        "feedback": "Laisser des commentaires",
+        "moreActions": "Plus d'actions",
         "mute": "Muet / Actif",
         "videomute": "Démarrer / Arrêter la caméra",
         "authenticate": "Authentifiez-vous",
         "lock": "Verrouiller / déverrouiller la conférence",
-        "invite": "Partager le lien",
         "chat": "Ouvrir / Fermer le chat",
         "etherpad": "Ouvrir / Fermer le document partagé",
+        "documentOpen": "Ouvrir le document partagé",
+        "documentClose": "Fermer le document partagé",
+        "shareRoom": "Partager le salon",
         "sharedvideo": "Partager une vidéo YouTube",
-        "sharescreen": "Démarrer / Arrêter le partage d'écran",
+        "stopSharedVideo": "Arrêter la vidéo YouTube",
         "fullscreen": "Activer / Désactiver le plein écran",
         "sip": "Appeler un numéro SIP",
         "Settings": "Paramètres",
         "hangup": "Quitter",
         "login": "Connexion",
         "logout": "Déconnexion",
-        "dialpad": "Ouvrir / Fermer le pavé numérique",
         "sharedVideoMutedPopup": "Votre vidéo a été coupée pour que vous puissiez parler aux autres participants.",
+        "toggleCamera": "Activer/désactiver la caméra",
         "micMutedPopup": "Votre microphone a été coupé afin que vous puissiez profiter de la vidéo partagée",
         "talkWhileMutedPopup": "Vous voulez parler? Vous êtes en muet.",
         "unableToUnmutePopup": "Vous ne pouvez pas réactiver votre microphone pendant que la vidéo partagée est activée.",
         "cameraDisabled": "La camera n'est pas disponible",
         "micDisabled": "Le microphone n'est pas disponible",
         "filmstrip": "Afficher / Masquer les vidéos",
+        "pip": "Entrer en mode Picture-in-Picture",
         "profile": "Éditer votre profil",
-        "raiseHand": "Lever / Baisser la main"
-    },
-    "unsupportedBrowser": {
-        "appNotInstalled": "Rejoignez cette réunion avec __app__ sur votre téléphone.",
-        "downloadApp": "Télécharger l'application",
-        "openApp": "Continuer sur __app__"
-    },
-    "bottomtoolbar": {
-        "chat": "Ouvrir / fermer le chat",
-        "filmstrip": "Afficher / cacher les vidéos",
-        "contactlist": "Voir et inviter des participants"
+        "raiseHand": "Lever / Baisser la main",
+        "shortcuts": "Afficher les raccourcis",
+        "speakerStats": "Statistiques de l'interlocuteur",
+        "tileViewToggle": "Activer/désactiver la vue mosaïque",
+        "invite": "Inviter des participants"
     },
     "chat": {
         "nickname": {
             "title": "Saisissez un pseudonyme dans le champ ci-dessous",
             "popover": "Choisissez un pseudonyme"
         },
+        "error": "Erreur : votre message \"__originalText__\" n'a pas été envoyé. Raison : __error__",
         "messagebox": "Saisissez votre texte..."
     },
     "settings": {
+        "calendar": {
+            "about": "L'intégration de __appName__ avec votre calendrier permet d’accéder de manière sécurisée aux événement à venir.",
+            "disconnect": "Se déconnecter",
+            "microsoftSignIn": "Se connecter avec Microsoft",
+            "signedIn": "Accès aux événements du calendrier __email__. Cliquez sur le bouton se déconnecter ci-dessous pour arrêter l'accès aux événements du calendrier.",
+            "title": "Calendrier"
+        },
         "title": "Paramètres",
         "update": "Mise à jour",
         "name": "Nom",
@@ -152,11 +180,15 @@
         "selectMic": "Microphone",
         "selectAudioOutput": "Sortie audio",
         "followMe": "Tout le monde me suit",
+        "language": "Langue",
+        "loggedIn": "Connecté en tant que __name__",
         "noDevice": "Aucun",
         "cameraAndMic": "Caméra et microphone",
-        "moderator": "MODÉRATEUR",
+        "moderator": "Moderateur",
+        "more": "Plus",
         "password": "DÉFINIR UN MOT DE PASSE",
-        "audioVideo": "AUDIO ET VIDÉO"
+        "audioVideo": "AUDIO ET VIDÉO",
+        "devices": "Périphériques"
     },
     "profile": {
         "title": "Profil",
@@ -176,7 +208,9 @@
     },
     "connectionindicator": {
         "header": "État de la connexion",
+        "connectedTo": "Connecté à :",
         "bitrate": "Débit :",
+        "bridgeCount": "Nombre de serveurs :",
         "packetloss": "Perte de paquets :",
         "resolution": "Résolution :",
         "framerate": "Images par seconde",
@@ -216,15 +250,20 @@
         "focus": "Focus de conférence",
         "focusFail": "__component__ n'est pas disponible - réessayez dans __ms__ sec",
         "grantedTo": "Droits modérateur accordés à __to__ !",
-        "grantedToUnknown": "Droits modérateur accordés à $t(notify.somebody)!",
         "muted": "Vous avez commencé la conversation en muet.",
         "mutedTitle": "Vous êtes en muet !",
-        "raisedHand": "Aimerait prendre la parole."
+        "raisedHand": "Aimerait prendre la parole.",
+        "suboptimalExperienceTitle": "Avertissement du navigateur",
+        "suboptimalExperienceDescription": "Eer ... nous craignons que votre expérience avec __appName__ ne sera pas aussi excellente que nous le pensions. Nous cherchons des moyens d'améliorer cela, mais jusque là, essayez d'utiliser l'un des <a href='static/recommendedBrowsers.html' target='_blank'>navigateurs entièrement pris en charge</a>."
     },
     "dialog": {
-        "add": "Ajouter",
+        "accessibilityLabel": {
+            "liveStreaming": "Diffusion en direct"
+        },
         "allow": "Autoriser",
+        "confirm": "Confirmer",
         "kickMessage": "Oups! Vous avez été renvoyé de la réunion !",
+        "kickTitle": "Viré de la conférence",
         "popupErrorTitle": "Pop-up bloquée",
         "popupError": "Votre navigateur bloque les fenêtres pop-up. Veuillez autoriser les fenêtres pop-up dans les paramètres de votre navigateur.",
         "passwordErrorTitle": "Problème avec le mot de passe",
@@ -237,7 +276,6 @@
         "copy": "Copier",
         "contactSupport": "Contacter le support",
         "error": "Erreur",
-        "createPassword": "Créer un mot de passe",
         "detectext": "Une erreur est survenue pendant la détection de l'extension de partage d'écran.",
         "failedpermissions": "Échec d'obtention des permissions pour utiliser le micro et/ou la caméra.",
         "conferenceReloadTitle": "Malheureusement, un problème est survenu",
@@ -248,6 +286,7 @@
         "rejoinNow": "Rejoindre maintenant",
         "maxUsersLimitReachedTitle": "Le nombre maximal de participants est atteint",
         "maxUsersLimitReached": "Le nombre maximal de participants est atteint. La conférence est complète. Merci de contacter le propriétaire du salon ou réessayer plus tard.",
+        "lockRoom": "Verrouiller la réunion",
         "lockTitle": "Échec du verrouillage",
         "lockMessage": "Impossible de verrouiller la conférence.",
         "warning": "Avertissement",
@@ -288,10 +327,6 @@
         "Save": "Sauvegarder",
         "recording": "Enregistrement",
         "recordingToken": "Saisissez un jeton d'enregistrement",
-        "passwordCheck": "Voulez-vous vraiment supprimer votre mot de passe ?",
-        "passwordMsg": "Saisissez un mot de passe pour verrouiller la conférence",
-        "shareLink": "Partager le lien de la conférence",
-        "yourPassword": "Saisissez un nouveau mot de passe",
         "Back": "Retour",
         "serviceUnavailable": "Service indisponible",
         "gracefulShutdown": "Le service est actuellement en maintenance. Réessayez plus tard.",
@@ -299,29 +334,31 @@
         "reservationError": "Erreur du système de réservation",
         "reservationErrorMsg": "Code d'erreur: __code__, message: __msg__",
         "password": "Saisir le mot de passe",
+        "unlockRoom": "Déverrouiller la réunion",
         "userPassword": "mot de passe utilisateur",
         "token": "jeton",
         "tokenAuthFailedTitle": "Échec de l'authentification",
         "tokenAuthFailed": "Désolé, vous n'êtes pas autorisé à rejoindre cette conversation.",
         "displayNameRequired": "Un nom d'utilisateur est requis",
         "enterDisplayName": "Veuillez saisir votre nom",
-        "extensionRequired": "Extension requise :",
-        "firefoxExtensionPrompt": "Vous devez installer une extension Firefox pour utiliser le partage d'écran. Merci d'essayer de nouveau après l'installation <a href='__url__'>depuis ce lien</a> !",
         "feedbackHelp": "Vos retours nous permettrons d'améliorer notre expérience vidéo.",
         "feedbackQuestion": "Informez-nous à propos de votre appel !",
         "thankYou": "Merci d'avoir utilisé __appName__ !",
         "sorryFeedback": "Nous sommes désolés d'apprendre cela. Voulez-vous nous en dire plus ?",
         "liveStreaming": "Direct",
-        "streamKey": "Stream name/key",
-        "startLiveStreaming": "Commencer le direct",
+        "streamKey": "Clé Live stream",
+        "startLiveStreaming": "Démarrer la diffusion en direct",
+        "startRecording": "Commencer l'enregistrement",
         "stopStreamingWarning": "Désirez-vous vraiment arrêter le direct?",
         "stopRecordingWarning": "Désirez-vous vraiment arrêter l'enregistrement?",
-        "stopLiveStreaming": "Arrêter le direct",
+        "stopLiveStreaming": "Arrêter la diffusion en direct",
         "stopRecording": "Arrêter l'enregistrement",
         "doNotShowMessageAgain": "Ne plus afficher ce message",
         "permissionDenied": "Permission refusée",
         "screenSharingFailedToInstall": "Oups! Votre extension de partage d'écran n'a pas pu être installée.",
         "screenSharingFailedToInstallTitle": "L'extension de partage d'écran n'a pas pu être installée",
+        "screenSharingFirefoxPermissionDeniedError": "Quelque chose s'est mal passé pendant que nous essayions de partager votre écran. S'il vous plaît assurez-vous que vous nous avez donné la permission de le faire.",
+        "screenSharingFirefoxPermissionDeniedTitle": "Oups! Nous ne pouvions pas démarrer le partage d'écran!",
         "screenSharingPermissionDeniedError": "Oups! Une erreur s'est produite avec vos autorisations d'extension de partage d'écran. Veuillez rafraîchir et réessayer.",
         "cameraUnsupportedResolutionError": "Votre appareil ne prend pas en charge la résolution vidéo requise.",
         "cameraUnknownError": "Vous ne pouvez pas utiliser la caméra pour une raison inconnue.",
@@ -344,6 +381,10 @@
         "muteParticipantTitle": "Couper le micro de ce participant?",
         "muteParticipantBody": "Vous ne pourrez plus réactiver leurs micros, mais ils peuvent l'activer par eux-même à tout moment.",
         "muteParticipantButton": "Couper le micro",
+        "liveStreamingDisabledTooltip": "La diffusion en direct est désactivé",
+        "liveStreamingDisabledForGuestTooltip": "Les invités ne peuvent démarrer la diffusion en direct.",
+        "recordingDisabledTooltip": "L'enregistrement est désactivé.",
+        "recordingDisabledForGuestTooltip": "Les invités ne peuvent enregistrer.",
         "remoteControlTitle": "Contrôle de bureau à distance",
         "remoteControlRequestMessage": "Voulez-vous autoriser __user__ à contrôler votre bureau?",
         "remoteControlShareScreenWarning": "Si vous appuyez sur \"Autoriser\" vous allez partager votre écran!",
@@ -354,8 +395,11 @@
         "remoteControlStopMessage": "La prise en main à distance est terminée!",
         "close": "Fermer",
         "shareYourScreen": "Partagez votre écran",
+        "shareYourScreenDisabled": "Le partage d’écran est désactivé.",
+        "shareYourScreenDisabledForGuest": "Les invités ne peuvent partager l'écran",
         "yourEntireScreen": "Votre écran entier",
-        "applicationWindow": "Fenêtre d'application"
+        "applicationWindow": "Fenêtre d'application",
+        "transcribing": "Transcription"
     },
     "email": {
         "sharedKey": [
@@ -385,6 +429,22 @@
         ],
         "and": "et"
     },
+    "share": {
+        "mainText": [
+            "Cliquez sur le lien suivant pour rejoindre une conférence :",
+            "__roomUrl__"
+        ],
+        "dialInfoText": [
+            "",
+            "",
+            "=====",
+            "",
+            "Voulez-vous appeler depuis votre téléphone?",
+            "",
+            "__defaultDialInNumber__Cliquez sur ce lien pour voir les numéros de téléphone pour cette conférence",
+            "__dialInfoPageUrl__"
+        ]
+    },
     "connection": {
         "ERROR": "Erreur",
         "CONNECTING": "Connexion en cours",
@@ -398,30 +458,67 @@
         "ATTACHED": "Attachée"
     },
     "recording": {
+        "beta": "BETA",
         "busy": "Nous sommes en train de libérer les ressources d'enregistrement. Réessayez dans quelques minutes.",
         "busyTitle": "Tous les enregistreurs sont actuellement occupés",
         "buttonTooltip": "Démarrer / Arrêter l'enregistrement",
         "error": "Échec de l'enregistrement. Veuillez réessayer.",
+        "expandedOff": "L'enregistrement a été arrêté",
+        "expandedOn": "Cette conférence est actuellement en cours d'enregistrement.",
+        "expandedPending": "Démarrage de l'enregistrement...",
         "failedToStart": "L'enregistrement n'as pas réussi à démarrer",
+        "live": "DIRECT",
         "off": "Enregistrement arrêté",
         "on": "Enregistrement",
-        "pending": "Enregistrement en attente de participant...",
+        "pending": "Préparation de l'enregistrement de la réunion...",
+        "rec": "REC",
+        "authDropboxText": "Téléchargement vers Dropbox",
         "serviceName": "Service d'enregistrement",
+        "signOut": "Se déconnecter",
+        "signIn": "s'identifier",
+        "loggedIn": "Connecté en tant que __userName__",
+        "availableSpace": "Espace disponible: __spaceLeft_ Mo (approximativement __duration__ minutes d'enregistrement)",
+        "startRecordingBody": "Voulez-vous vraiment démarrer l'enregistrement?",
         "unavailable": "Oups! Le __serviceName__ est actuellement indisponible. Nous travaillons sur la résolution du problème. Veuillez réessayer plus tard.",
         "unavailableTitle": "Enregistrement indisponible"
+    },
+    "transcribing": {
+        "pending": "Préparation de la transcription de la réunion...",
+        "off": "La transcription désactivée",
+        "error": "Échec de la transcription. Veuillez réessayer.",
+        "expandedLabel": "La transcription est actuellement activée",
+        "failedToStart": "Échec de démarrage de la transcription",
+        "tr": "TR",
+        "labelToolTip": "La transcription de la réunion est en cours",
+        "ccButtonTooltip": "Afficher/masquer les sous-titres",
+        "start": "Afficher/masquer les sous-titres",
+        "stop": "Désactiver le sous-titrage"
     },
     "liveStreaming": {
         "busy": "Nous travaillons sur la libération des ressources de Streaming. Veuillez réessayez dans quelques minutes.",
         "busyTitle": "Tous les streamers sont actuellement occupés",
         "buttonTooltip": "Démarrer / Arrêter le Stream",
+        "changeSignIn": "Changer de compte.",
+        "choose": "Choisir un flux live",
+        "chooseCTA": "Choisissez une option de diffusion. Vous êtes actuellement connecté comme __email__.",
+        "enterStreamKey": "Entrez votre clé de flux live Youtube ici",
         "error": "Le Streaming a échoué. Veuillez réessayer.",
+        "errorAPI": "Une erreur s'est produite lors de l'accès à vos diffusions YouTube. Veuillez réessayer de vous connecter.",
+        "errorLiveStreamNotEnabled": "La diffusion en direct n'est pas activée pour  __email__. Merci de l'activer ou de vous connecter avec un compte où elle est déjà activée.",
+        "expandedOff": "La diffusion en direct a été arrêtée",
+        "expandedOn": "La conférence est en cours de diffusion sur YouTube.",
+        "expandedPending": "La diffusion en direct a commencé...",
         "failedToStart": "Le Streaming n'as pas réussi à démarrer",
-        "off": "Le Streaming a été arrêter",
+        "off": "Le Streaming a été arrêté",
         "on": "Direct",
         "pending": "Commencer le direct...",
         "serviceName": "Service de diffusion en direct",
-        "streamIdRequired": "Merci de renseigner le stream id pour lancer le streaming.",
-        "streamIdHelp": "Où puis-je trouver ceci?",
+        "signedInAs": "Vous êtes connecté en tant que :",
+        "signIn": "Se connecter avec Google",
+        "signOut": "Se déconnecter",
+        "signInCTA": "Connectez vous ou entrez votre clé de flux live provenant de Youtube.",
+        "start": "Démarrer la diffusion en direct",
+        "streamIdHelp": "Qu'est-ce que c'est?",
         "unavailableTitle": "Le Streaming est indisponible"
     },
     "videoSIPGW": {
@@ -449,28 +546,20 @@
         "noPermission": "Permission non accordée",
         "previewUnavailable": "Aperçu non disponible",
         "selectADevice": "Sélectionner un périphérique",
-        "testAudio": "Son de test"
-    },
-    "invite": {
-        "addPassword": "Ajouter un mot de passe",
-        "callNumber": "Appeler le __number__",
-        "enterID": "Saisissez l'identifiant: __conferenceID__ suivi de # pour rejoindre avec un téléphone",
-        "howToDialIn": "Pour rejoindre avec un téléphone, utilisez un des des numéros suivants et l'identifiant de la conférence",
-        "hidePassword": "Cacher le mot de passe",
-        "inviteTo": "inviter des participants à __conferenceName__",
-        "invitedYouTo": "__userName__ vous a invité(e) à la conférence __inviteURL__",
-        "invitePeople": "Inviter",
-        "locked": "Cet appel est verrouillé. les nouveaux interlocuteurs devraient avoir le lien et saisir le mot de passe pour rejoindre.",
-        "showPassword": "Afficher le mot de passe",
-        "unlocked": "Cet appel est verrouillé. Tout nouveau participant avec un lien peut rejoindre l'appel."
+        "testAudio": "Lire un audio de test"
     },
     "videoStatus": {
+        "audioOnly": "VOIX",
+        "audioOnlyExpanded": "Vous êtes en mode audio uniquement. Ce mode économise de la bande passant mais vous ne pourrez pas voir la vidéo des autres participants.",
         "callQuality": "Qualité de l'appel",
         "hd": "HD",
+        "hdTooltip": "Regardez la vidéo en haute définition",
         "highDefinition": "Haute définition",
-        "labelTooltipVideo": "Qualité vidéo actuelle",
         "labelTooltipAudioOnly": "Mode audio uniquement activé",
+        "labelTooiltipNoVideo": "Aucune vidéo",
+        "labelTooltipVideo": "Qualité vidéo actuelle",
         "ld": "BD",
+        "ldTooltip": "Regardez la vidéo en basse définition",
         "lowDefinition": "Basse définition",
         "onlyAudioAvailable": "Seul l'audio est disponible",
         "onlyAudioSupported": "Nous ne supportons que l'audio sur ce navigateur.",
@@ -478,21 +567,31 @@
         "p2pVideoQualityDescription": "En mode peer to peer, la qualité d'appel reçue ne peut être basculée qu'entre haut et audio. Les autres paramètres ne seront pas respectés tant que l'on n'aura pas quitté peer to peer.",
         "recHighDefinitionOnly": "Va préférer la haute définition",
         "sd": "MD",
+        "sdTooltip": "Regardez la vidéo en définition standard",
         "standardDefinition": "Moyenne Définition",
         "qualityButtonTip": "Changer la qualité de vidéo reçue"
     },
     "dialOut": {
-        "dial": "Composer",
-        "dialOut": "Appeler #",
-        "statusMessage": "est maintenant __status__",
-        "enterPhone": "Saisissez un numéro de téléphone",
-        "phoneNotAllowed": "Désolé, nous ne supportons pas encore cette destination!"
+        "statusMessage": "est maintenant __status__"
     },
     "addPeople": {
-        "add": "Ajouter",
+        "add": "Inviter",
+        "countryNotSupported": "Nous ne supportons pas encore cette destination.",
+        "countryReminder": "Appel hors États-Unis? Veuillez commencer avec le code du pays!",
+        "disabled": "Vous ne pouvez pas inviter quelqu'un.",
+        "footerText": "Appels sortants désactivés",
+        "invite": "Inviter",
+        "loading": "Rechercher des personnes et des numéros de téléphone",
+        "loadingNumber": "Validation du numéro de téléphone",
+        "loadingPeople": "Recherche de personnes à inviter",
         "noResults": "Aucun résultat de recherche correspondant",
-        "searchPlaceholder": "Rechercher des personnes et des salons à ajouter",
-        "title": "Ajouter des personnes à votre appel",
+        "noValidNumbers": "Veuillez entrer un numéro de téléphone",
+        "notAvailable": "Vous ne pouvez pas inviter quelqu'un.",
+        "searchNumbers": "Ajouter des numéros de téléphone",
+        "searchPeople": "Rechercher une personne",
+        "searchPeopleAndNumbers": "Rechercher des personnes ou ajouter leurs numéros de téléphone",
+        "telephone": "Téléphone: __number__",
+        "title": "Inviter une personne à cette réunion",
         "failedToAdd": "Échec de l'ajout de membres"
     },
     "inlineDialogFailure": {
@@ -511,14 +610,131 @@
         "average": "Moyen",
         "bad": "Mauvais",
         "good": "Bien",
-        "rateExperience": "Veuillez évaluer votre réunion.",
+        "detailsLabel": "Dites nous en plus à ce sujet.",
+        "rateExperience": "Veuillez évaluer votre expérience.",
         "veryBad": "Très mauvais",
         "veryGood": "Très bon"
     },
     "info": {
-        "copy": "Copier le lien",
-        "invite": "Inviter à __app__",
-        "title": "Informations sur la conférence",
-        "tooltip": "Obtenir des informations d'accès"
+        "accessibilityLabel": "Afficher les informations",
+        "addPassword": "Ajouter un mot de passe",
+        "cancelPassword": "Annuler mot de passe",
+        "conferenceURL": "Lien:",
+        "country": "Pays",
+        "dialANumber": "Pour rejoindre votre réunion, composez l'un de ces numéros, puis entrez ce code PIN: __conferenceID __ #",
+        "dialInNumber": "Composer:",
+        "dialInConferenceID": "PIN:",
+        "dialInNotSupported": "Désolé, les appels entrants ne sont pas supportés.",
+        "genericError": "Oups, quelque chose a mal tourné.",
+        "inviteLiveStream": "Pour voir la diffusion en direct de cette réunion, cliquez sur ce lien : __url__",
+        "invitePhone": "Pour joindre par téléphone, composez __number__ et saisissez ce code PIN : __conferenceID__ #",
+        "invitePhoneAlternatives": "Pour voir plus de numéros de téléphone, suivez ce lien : __url__",
+        "inviteURL": "Pour rejoindre la vidéoconférence, cliquez sur ce lien : __url__",
+        "liveStreamURL": "Diffusion en direct :",
+        "moreNumbers": "Plus de numéros ",
+        "noNumbers": "Numéros à composer non trouvés",
+        "noPassword": "Aucun",
+        "noRoom": "Aucune réunion n'a été spécifiée pour l'appel entrant.",
+        "numbers": "Numéros d'appel",
+        "password": "Mot de passe:",
+        "title": "Partager",
+        "tooltip": "Partager le lien et les informations de connexion pour cette conférence"
+    },
+    "settingsView": {
+        "alertOk": "D'accord",
+        "alertTitle": "Avertissement",
+        "alertURLText": "L'URL du serveur est invalide",
+        "conferenceSection": "Conférence",
+        "displayName": "Pseudo",
+        "email": "Email",
+        "header": "Paramètres",
+        "profileSection": "Profil",
+        "serverURL": "URL du serveur",
+        "startWithAudioMuted": "Commencez avec la vidéo en sourdine",
+        "startWithVideoMuted": "Commencez avec la vidéo en sourdine"
+    },
+    "calendarSync": {
+        "addMeetingURL": "Ajouter un lien de conférence",
+        "confirmAddLink": "Voulez-vous ajouter un lien Jitsi à cet événement?",
+        "confirmAddLinkTitle": "Calendrier",
+        "join": "Joindre",
+        "joinTooltip": "Rejoindre la réunion",
+        "nextMeeting": "prochaine réunion",
+        "noEvents": "Il n'y a pas d’événement à venir.",
+        "ongoingMeeting": "La réunion en cours",
+        "permissionButton": "Afficher les réglages",
+        "permissionMessage": "La permission du calendrier est requise pour afficher vos réunions dans l'application.",
+        "refresh": "Rafraîchir le calendrier",
+        "today": "Aujourd'hui"
+    },
+    "recentList": {
+        "joinPastMeeting": "Rejoindre une réunion précédente"
+    },
+    "sectionList": {
+        "pullToRefresh": "Tirer pour recharger"
+    },
+    "deepLinking": {
+        "title": "Lancement de votre réunion dans __app __ en cours...",
+        "description": "Rien ne s'est passé? Nous avons essayé de lancer votre réunion dans l'application de bureau __app__. Essayez à nouveau ou lancez-la dans l'application web __app__.",
+        "tryAgainButton": "Réessayez sur le bureau",
+        "launchWebButton": "Lancer dans le navigateur",
+        "appNotInstalled": "Vous avez besoin de l'application mobile __app__ pour participer à cette réunion avec votre téléphone.",
+        "downloadApp": "Télécharger l'application",
+        "openApp": "Continuer vers l'application"
+    },
+    "presenceStatus": {
+        "invited": "Invité(e)",
+        "ringing": "Appel en cours...",
+        "calling": "Appel...",
+        "initializingCall": "Lancement de l'appel...",
+        "connected": "Connecté",
+        "connecting": "Connexion en cours...",
+        "connecting2": "Connexion en cours*...",
+        "disconnected": "Déconnecté",
+        "busy": "Occupé",
+        "rejected": "Rejeté",
+        "ignored": "Ignoré",
+        "expired": "Expiré"
+    },
+    "dateUtils": {
+        "today": "Aujourd'hui",
+        "yesterday": "Hier",
+        "earlier": "Plus tôt"
+    },
+    "incomingCall": {
+        "answer": "Répondre",
+        "audioCallTitle": "Appel entrant",
+        "decline": "Rejeter",
+        "productLabel": "de Jitsi Meet",
+        "videoCallTitle": "Appel vidéo entrant"
+    },
+    "localRecording": {
+        "localRecording": "Enregistrement local",
+        "dialogTitle": "Commandes de l'enregistrement local",
+        "start": "Démarrer l'enregistrement",
+        "stop": "Arrêter l'enregistrement",
+        "moderator": "Moderateur",
+        "me": "Moi",
+        "duration": "Durée",
+        "durationNA": "N/A",
+        "encoding": "Encodage",
+        "participantStats": "Statistiques du participant",
+        "participant": "Participant",
+        "sessionToken": "Token de la session",
+        "clientState": {
+            "on": "Actif",
+            "off": "Inactif",
+            "unknown": "Inconnu"
+        },
+        "messages": {
+            "engaged": "Enregistrement local engagé.",
+            "finished": "L'enregistrement de la session __token__ s'est terminé. Merci d'envoyer le fichier au modérateur.",
+            "finishedModerator": "L'enregistrement de la session __token__ s'est terminé. La piste a bien été sauvegardée. Merci de demander aux autres participants de soumettre leurs enregistrements.",
+            "notModerator": "Vous n'êtes pas le modérateur. Vous ne pouvez pas démarrer ou arrêter un enregistrement local."
+        },
+        "yes": "Oui",
+        "no": "Non",
+        "label": "ENR-LOC",
+        "labelToolTip": "L'enregistrement local est engagé"
     }
 }
