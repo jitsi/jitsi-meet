@@ -4,7 +4,7 @@ import React, { Component } from 'react';
 import { Platform, Text, View } from 'react-native';
 import { connect } from 'react-redux';
 
-import { translate } from '../../../base/i18n';
+import { translate } from '../../../../base/i18n';
 
 import {
     GOOGLE_API_STATES,
@@ -12,7 +12,7 @@ import {
     googleApi,
     GoogleSignInButton,
     setGoogleAPIState
-} from '../../../google-api';
+} from '../../../../google-api';
 
 import styles from './styles';
 

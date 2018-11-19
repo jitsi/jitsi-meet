@@ -2,14 +2,14 @@
 
 import { connect } from 'react-redux';
 
-import { translate } from '../../base/i18n';
-import { JitsiRecordingConstants } from '../../base/lib-jitsi-meet';
+import { translate } from '../../../base/i18n';
+import { JitsiRecordingConstants } from '../../../base/lib-jitsi-meet';
 import {
     ExpandedLabel,
     type Props as AbstractProps
-} from '../../base/label';
+} from '../../../base/label';
 
-import { getSessionStatusToShow } from '../functions';
+import { getSessionStatusToShow } from '../../functions';
 
 import { LIVE_LABEL_COLOR, REC_LABEL_COLOR } from './styles';
 

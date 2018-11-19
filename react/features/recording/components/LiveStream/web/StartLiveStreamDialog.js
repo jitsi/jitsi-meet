@@ -4,7 +4,7 @@ import Spinner from '@atlaskit/spinner';
 import React from 'react';
 import { connect } from 'react-redux';
 
-import { translate } from '../../../base/i18n';
+import { translate } from '../../../../base/i18n';
 
 import {
     GOOGLE_API_STATES,
@@ -15,12 +15,13 @@ import {
     showAccountSelection,
     signIn,
     updateProfile
-} from '../../../google-api';
+} from '../../../../google-api';
 
 import AbstractStartLiveStreamDialog, {
     _mapStateToProps as _abstractMapStateToProps,
     type Props as AbstractProps
-} from './AbstractStartLiveStreamDialog';
+} from '../AbstractStartLiveStreamDialog';
+
 import StreamKeyPicker from './StreamKeyPicker';
 import StreamKeyForm from './StreamKeyForm';
 

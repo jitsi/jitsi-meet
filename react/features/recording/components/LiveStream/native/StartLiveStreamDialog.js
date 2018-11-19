@@ -4,14 +4,15 @@ import React from 'react';
 import { View } from 'react-native';
 import { connect } from 'react-redux';
 
-import { translate } from '../../../base/i18n';
-import { googleApi } from '../../../google-api';
+import { translate } from '../../../../base/i18n';
+import { googleApi } from '../../../../google-api';
 
 
-import { setLiveStreamKey } from '../../actions';
+import { setLiveStreamKey } from '../../../actions';
 
 import AbstractStartLiveStreamDialog,
-{ _mapStateToProps, type Props } from './AbstractStartLiveStreamDialog';
+{ _mapStateToProps, type Props } from '../AbstractStartLiveStreamDialog';
+
 import GoogleSigninForm from './GoogleSigninForm';
 import StreamKeyForm from './StreamKeyForm';
 import StreamKeyPicker from './StreamKeyPicker';

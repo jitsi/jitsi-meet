@@ -3,13 +3,13 @@
 import React from 'react';
 import { connect } from 'react-redux';
 
-import { translate } from '../../../base/i18n';
-import { Container, Text } from '../../../base/react';
+import { translate } from '../../../../base/i18n';
+import { Container, Text } from '../../../../base/react';
 
 import AbstractLiveStreamButton, {
     _mapStateToProps as _abstractMapStateToProps,
     type Props as AbstractProps
-} from './AbstractLiveStreamButton';
+} from '../AbstractLiveStreamButton';
 
 declare var interfaceConfig: Object;
 

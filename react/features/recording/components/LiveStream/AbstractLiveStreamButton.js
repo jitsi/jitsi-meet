@@ -10,8 +10,10 @@ import {
 
 import { getActiveSession } from '../../functions';
 
-import StartLiveStreamDialog from './StartLiveStreamDialog';
-import StopLiveStreamDialog from './StopLiveStreamDialog';
+import {
+    StartLiveStreamDialog,
+    StopLiveStreamDialog
+} from './_';
 
 /**
  * The type of the React {@code Component} props of

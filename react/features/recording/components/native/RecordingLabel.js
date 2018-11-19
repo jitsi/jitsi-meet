@@ -3,13 +3,14 @@
 import React from 'react';
 import { connect } from 'react-redux';
 
-import { translate } from '../../base/i18n';
-import { CircularLabel } from '../../base/label';
-import { JitsiRecordingConstants } from '../../base/lib-jitsi-meet';
+import { translate } from '../../../base/i18n';
+import { CircularLabel } from '../../../base/label';
+import { JitsiRecordingConstants } from '../../../base/lib-jitsi-meet';
 
 import AbstractRecordingLabel, {
     _mapStateToProps
-} from './AbstractRecordingLabel';
+} from '../AbstractRecordingLabel';
+
 import styles from './styles';
 
 /**
