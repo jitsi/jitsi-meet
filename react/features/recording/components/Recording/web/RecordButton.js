@@ -2,12 +2,12 @@
 
 import { connect } from 'react-redux';
 
-import { translate } from '../../../base/i18n';
+import { translate } from '../../../../base/i18n';
 
 import AbstractRecordButton, {
     _mapStateToProps as _abstractMapStateToProps,
     type Props as AbstractProps
-} from './AbstractRecordButton';
+} from '../AbstractRecordButton';
 
 declare var interfaceConfig: Object;
 

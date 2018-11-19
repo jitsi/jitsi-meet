@@ -1,6 +1,10 @@
 // @flow
 
-import { BoxModel, ColorPalette, createStyleSheet } from '../../../base/styles';
+import {
+    BoxModel,
+    ColorPalette,
+    createStyleSheet
+} from '../../../../base/styles';
 
 /**
  * Opacity of the TouchableHighlight.

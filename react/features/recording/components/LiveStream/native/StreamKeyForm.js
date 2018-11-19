@@ -3,11 +3,12 @@
 import React from 'react';
 import { Linking, Text, TextInput, TouchableOpacity, View } from 'react-native';
 
-import { translate } from '../../../base/i18n';
+import { translate } from '../../../../base/i18n';
 
 import AbstractStreamKeyForm, {
     type Props
-} from './AbstractStreamKeyForm';
+} from '../AbstractStreamKeyForm';
+
 import styles from './styles';
 
 /**

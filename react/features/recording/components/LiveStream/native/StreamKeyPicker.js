@@ -3,7 +3,7 @@
 import React, { Component } from 'react';
 import { Text, TouchableHighlight, View } from 'react-native';
 
-import { translate } from '../../../base/i18n';
+import { translate } from '../../../../base/i18n';
 
 import styles, { ACTIVE_OPACITY, TOUCHABLE_UNDERLAY } from './styles';
 

@@ -3,11 +3,11 @@
 import { FieldTextStateless } from '@atlaskit/field-text';
 import React from 'react';
 
-import { translate } from '../../../base/i18n';
+import { translate } from '../../../../base/i18n';
 
 import AbstractStreamKeyForm, {
     type Props
-} from './AbstractStreamKeyForm';
+} from '../AbstractStreamKeyForm';
 
 /**
  * A React Component for entering a key for starting a YouTube live stream.
