@@ -119,6 +119,7 @@ const WHITELISTED_KEYS = [
     'iceTransportPolicy',
     'ignoreStartMuted',
     'liveStreamingEnabled',
+    'localRecording',
     'minParticipants',
     'nick',
     'openBridgeChannel',
