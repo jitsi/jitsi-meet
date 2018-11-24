@@ -262,13 +262,15 @@ export default class DeviceSelectionPopup {
                 <AtlasKitThemeProvider mode = 'dark'>
                     <DialogWithTabs
                         closeDialog = { this.close }
+                        cssClassName = 'settings-dialog'
                         onSubmit = { onSubmit }
                         tabs = { [ {
                             component: DeviceSelection,
                             label: 'settings.devices',
                             props: this._dialogProps,
                             submit: this._onSubmit
-                        } ] } />
+                        } ] }
+                        titleKey = 'settings.title' />
                 </AtlasKitThemeProvider>
             </I18nextProvider>,
             document.getElementById('react'));

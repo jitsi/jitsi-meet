@@ -19,6 +19,11 @@ export type Props = {
     closeDialog: Function,
 
     /**
+     * Css class name that will be added to the dialog.
+     */
+    cssClassName: string,
+
+    /**
      * Which settings tab should be initially displayed. If not defined then
      * the first tab will be displayed.
      */
@@ -44,7 +49,12 @@ export type Props = {
     /**
      * Information about the tabs that will be rendered.
      */
-    tabs: Array<Object>
+    tabs: Array<Object>,
+
+    /**
+     * Key to use for showing a title.
+     */
+    titleKey: string
 
 };
 
@@ -102,8 +112,8 @@ class DialogWithTabs extends Component<Props, State> {
                     = { this.props.disableBlanketClickDismiss }
                 onCancel = { onCancel }
                 onSubmit = { this._onSubmit }
-                titleKey = 'settings.title'>
-                <div className = 'settings-dialog'>
+                titleKey = { this.props.titleKey } >
+                <div className = { this.props.cssClassName } >
                     { this._renderTabs() }
                 </div>
             </StatelessDialog>

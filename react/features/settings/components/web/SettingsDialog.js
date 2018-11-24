@@ -91,11 +91,13 @@ class SettingsDialog extends Component<Props> {
         return (
             <DialogWithTabs
                 closeDialog = { this._closeDialog }
+                cssClassName = 'settings-dialog'
                 defaultTab = {
                     defaultTabIdx === -1 ? undefined : defaultTabIdx
                 }
                 onSubmit = { onSubmit }
-                tabs = { tabs } />
+                tabs = { tabs }
+                titleKey = 'settings.title' />
         );
     }
 
