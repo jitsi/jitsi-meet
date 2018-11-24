@@ -63,6 +63,7 @@ import VideoMuteButton from '../VideoMuteButton';
 import {
     ClosedCaptionButton
 } from '../../../subtitles';
+import PollButton from '../../../polls/components/PollButton';
 
 /**
  * The type of the React {@code Component} props of {@link Toolbox}.
@@ -946,6 +947,9 @@ class Toolbox extends Component<Props> {
                 showLabel = { true } />,
             <RecordButton
                 key = 'record'
+                showLabel = { true } />,
+            <PollButton
+                key = 'poll'
                 showLabel = { true } />,
             this._shouldShowButton('sharedvideo')
                 && <OverflowMenuItem

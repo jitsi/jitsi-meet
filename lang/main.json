@@ -403,7 +403,10 @@
         "shareYourScreenDisabledForGuest": "Guests can't screen share.",
         "yourEntireScreen": "Your entire screen",
         "applicationWindow": "Application window",
-        "transcribing": "Transcribing"
+        "transcribing": "Transcribing",
+        "polls": "Polls",
+        "startPoll": "Create",
+        "endPoll": "End"
     },
     "email":
     {
