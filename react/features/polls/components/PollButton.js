@@ -31,10 +31,7 @@ class PollButton<P: Props> extends AbstractButton<P, *> {
      * @inheritdoc
      */
     _handleClick() {
-        this.props.dispatch(openDialog(PollDialog, {
-            question: '',
-            items: []
-        }));
+        this.props.dispatch(openDialog(PollDialog));
     }
 
     /**

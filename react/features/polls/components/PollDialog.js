@@ -1,6 +1,7 @@
 // @flow
 
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import { Dialog } from '../../base/dialog';
 import {
     Container
@@ -8,15 +9,50 @@ import {
 import { FieldTextStateless } from '@atlaskit/field-text';
 import PollItem from './PollItem';
 import AddPollItem from './AddPollItem';
+import { getLocalParticipant } from '../../base/participants';
+
+import { getUniquePollItems } from '../functions';
+import { initiatePollSession } from '../actions';
 
 type Props = {
-    question: string,
-    items: Array<Object>
+
+    /**
+     * Redux dispatch method.
+     */
+    dispatch: Function,
+
+    /**
+     * Array of poll options.
+     */
+    items: Array<Object>,
+
+    /**
+     * True if poll session is running.
+     */
+    isPollRunning: boolean,
+
+    /**
+     * ID of the current particpant.
+     */
+    particpantID: number,
+
+    /**
+     * Poll quesiton.
+     */
+    question: string
 };
 
 type State = {
-    question: string,
-    items: Array<Object>
+
+    /**
+     * State of poll options.
+     */
+    items: Array<Object>,
+
+    /**
+     * State of poll question.
+     */
+    question: string
 };
 
 /**
@@ -82,11 +118,14 @@ class PollDialog extends Component<Props, State> {
      * @inheritdoc
      */
     render() {
+        const { isPollRunning } = this.props;
         const items = this.state.items.map(this._renderItem);
+        const okTitleKey = isPollRunning ? 'dialog.endPoll'
+            : 'dialog.startPoll';
 
         return (
             <Dialog
-                okTitleKey = 'dialog.startPoll'
+                okTitleKey = { okTitleKey }
                 onSubmit = { this._onSubmit }
                 titleKey = 'dialog.polls'
                 width = 'small' >
@@ -96,7 +135,8 @@ class PollDialog extends Component<Props, State> {
                         id = { 'poll-question' }
                         onChange = { this._onQuestionTextChange }
                         placeholder = { 'Ask a question...' }
-                        type = 'text' />
+                        type = 'text'
+                        value = { this.state.question } />
 
                     <div>
                         <ul
@@ -148,14 +188,33 @@ class PollDialog extends Component<Props, State> {
         );
     }
 
-    _onSubmit: () => void;
+    _onSubmit: (Object) => void;
 
     /**
      * Submit button handler.
      *
+     * @param {Object} event - Submit event.
      * @returns {boolean}
      */
-    _onSubmit() {
+    _onSubmit(event: Object) {
+        event.preventDefault();
+        if (!this.state.question.trim()) {
+            return false;
+        }
+
+        // remove duplicate objects.
+        const uniqueItems = getUniquePollItems(this.state.items);
+        const timestamp = (new Date()).getTime();
+
+        const poll = {
+            question: this.state.question,
+            items: uniqueItems,
+            ownerID: this.props.particpantID,
+            timestamp
+        };
+
+        this.props.dispatch(initiatePollSession(poll));
+
         return true;
     }
 
@@ -197,4 +256,31 @@ class PollDialog extends Component<Props, State> {
     }
 }
 
-export default PollDialog;
+/**
+ * Map Redux state to Component props.
+ *
+ * @param {Object} state - Redux store state.
+ * @returns {{}}
+ */
+function _mapStateToProps(state: Object) {
+    const { isPollRunning, polls } = state['features/polls'];
+    const particpantID = getLocalParticipant(state).id;
+    let question = '';
+    let items = [];
+
+    // Fill the component with the poll session information,
+    // if it is active. Otherwise use blank values.
+    if (isPollRunning && polls.length > 0) {
+        question = polls[polls.length - 1].question;
+        items = polls[polls.length - 1].items;
+    }
+
+    return {
+        items,
+        isPollRunning,
+        particpantID,
+        question
+    };
+}
+
+export default connect(_mapStateToProps)(PollDialog);

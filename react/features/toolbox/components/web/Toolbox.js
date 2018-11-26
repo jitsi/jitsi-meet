@@ -63,7 +63,7 @@ import VideoMuteButton from '../VideoMuteButton';
 import {
     ClosedCaptionButton
 } from '../../../subtitles';
-import PollButton from '../../../polls/components/PollButton';
+import { PollButton } from '../../../polls';
 
 /**
  * The type of the React {@code Component} props of {@link Toolbox}.
