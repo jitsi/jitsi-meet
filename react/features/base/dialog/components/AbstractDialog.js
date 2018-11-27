@@ -49,12 +49,12 @@ export default class AbstractDialog<P : Props, S : State>
     }
 
     /**
-     * Implements React's {@link Component#componentWillMount()}. Invoked
+     * Implements React's {@link Component#componentDidMount()}. Invoked
      * immediately before mounting occurs.
      *
      * @inheritdoc
      */
-    componentWillMount() {
+    componentDidMount() {
         this._mounted = true;
     }
 

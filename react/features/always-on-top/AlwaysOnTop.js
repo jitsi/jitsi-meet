@@ -206,6 +206,18 @@ export default class AlwaysOnTop extends Component<*, State> {
     }
 
     /**
+     * Sets a timeout to hide the toolbar when the toolbar is shown.
+     *
+     * @inheritdoc
+     * @returns {void}
+     */
+    componentDidUpdate(prevProps: *, prevState: State) {
+        if (!prevState.visible && this.state.visible) {
+            this._hideToolbarAfterTimeout();
+        }
+    }
+
+    /**
      * Removes all listeners.
      *
      * @inheritdoc
@@ -221,18 +233,6 @@ export default class AlwaysOnTop extends Component<*, State> {
             this._largeVideoChangedListener);
 
         window.removeEventListener('mousemove', this._mouseMove);
-    }
-
-    /**
-     * Sets a timeout to hide the toolbar when the toolbar is shown.
-     *
-     * @inheritdoc
-     * @returns {void}
-     */
-    componentWillUpdate(nextProps: *, nextState: State) {
-        if (!this.state.visible && nextState.visible) {
-            this._hideToolbarAfterTimeout();
-        }
     }
 
     /**

@@ -1,6 +1,6 @@
 // @flow
 
-import React, { Component, type Node } from 'react';
+import React, { PureComponent, type Node } from 'react';
 import { Animated, TouchableWithoutFeedback, View } from 'react-native';
 
 import styles, { SIDEBAR_WIDTH } from './styles';
@@ -46,7 +46,18 @@ type State = {
 /**
  * A generic animated side bar to be used for left-side, hamburger-style menus.
  */
-export default class SideBar extends Component<Props, State> {
+export default class SideBar extends PureComponent<Props, State> {
+    /**
+     * Implements React's {@link Component#getDerivedStateFromProps()}.
+     *
+     * @inheritdoc
+     */
+    static getDerivedStateFromProps(props: Props, prevState: State) {
+        return {
+            showOverlay: props.show || prevState.showOverlay
+        };
+    }
+
     /**
      * Initializes a new {@code SideBar} instance.
      *
@@ -74,12 +85,12 @@ export default class SideBar extends Component<Props, State> {
     }
 
     /**
-     * Implements React's {@link Component#componentWillReceiveProps()}.
+     * Implements React's {@link Component#componentDidUpdate()}.
      *
      * @inheritdoc
      */
-    componentWillReceiveProps({ show }: Props) {
-        (show === this.props.show) || this._setShow(show);
+    componentDidUpdate() {
+        this._setShow(this.props.show);
     }
 
     /**
@@ -148,8 +159,6 @@ export default class SideBar extends Component<Props, State> {
      * @returns {void}
      */
     _setShow(show) {
-        show && this.setState({ showOverlay: true });
-
         Animated
             .timing(
                 /* value */ this.state.sliderAnimation,

@@ -109,7 +109,7 @@ class AudioRoutePickerDialog extends Component<Props, State> {
     state = {
         /**
          * Available audio devices, it will be set in
-         * {@link #componentWillMount()}.
+         * {@link #componentDidMount()}.
          */
         devices: []
     };
@@ -132,7 +132,7 @@ class AudioRoutePickerDialog extends Component<Props, State> {
      *
      * @inheritdoc
      */
-    componentWillMount() {
+    componentDidMount() {
         AudioMode.getAudioDevices().then(({ devices, selected }) => {
             const audioDevices = [];
 

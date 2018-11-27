@@ -63,9 +63,9 @@ class AudioInputPreview extends Component<Props, State> {
      * @inheritdoc
      * @returns {void}
      */
-    componentWillReceiveProps(nextProps: Props) {
-        if (nextProps.track !== this.props.track) {
-            this._listenForAudioUpdates(nextProps.track);
+    componentDidUpdate(prevProps: Props) {
+        if (prevProps.track !== this.props.track) {
+            this._listenForAudioUpdates(this.props.track);
             this._updateAudioLevel(0);
         }
     }

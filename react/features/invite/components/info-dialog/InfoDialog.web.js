@@ -113,6 +113,28 @@ class InfoDialog extends Component<Props, State> {
     _copyElement: ?Object;
 
     /**
+     * Implements React's {@link Component#getDerivedStateFromProps()}.
+     *
+     * @inheritdoc
+     */
+    static getDerivedStateFromProps(props, state) {
+        let phoneNumber = state.phoneNumber;
+
+        if (!state.phoneNumber && props.dialIn.numbers) {
+            const { defaultCountry, numbers } = props.dialIn;
+
+            phoneNumber = _getDefaultPhoneNumber(numbers, defaultCountry);
+        }
+
+        return {
+            // Exit edit mode when a password is set locally or remotely.
+            passwordEditEnabled: state.passwordEditEnabled && props._password
+                ? false : state.passwordEditEnabled,
+            phoneNumber
+        };
+    }
+
+    /**
      * {@code InfoDialog} component's local state.
      *
      * @type {Object}
@@ -160,28 +182,6 @@ class InfoDialog extends Component<Props, State> {
         this._onTogglePasswordEditState
             = this._onTogglePasswordEditState.bind(this);
         this._setCopyElement = this._setCopyElement.bind(this);
-    }
-
-    /**
-     * Implements React's {@link Component#componentWillReceiveProps()}. Invoked
-     * before this mounted component receives new props.
-     *
-     * @inheritdoc
-     * @param {Props} nextProps - New props component will receive.
-     */
-    componentWillReceiveProps(nextProps) {
-        if (!this.props._password && nextProps._password) {
-            this.setState({ passwordEditEnabled: false });
-        }
-
-        if (!this.state.phoneNumber && nextProps.dialIn.numbers) {
-            const { defaultCountry, numbers } = nextProps.dialIn;
-
-            this.setState({
-                phoneNumber:
-                    _getDefaultPhoneNumber(numbers, defaultCountry)
-            });
-        }
     }
 
     /**

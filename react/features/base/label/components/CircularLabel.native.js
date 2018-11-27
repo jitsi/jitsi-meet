@@ -64,17 +64,24 @@ export default class CircularLabel extends AbstractCircularLabel<Props, State> {
         this.state = {
             pulseAnimation: new Animated.Value(0)
         };
-
-        this._maybeToggleAnimation({}, props);
     }
 
     /**
-     * Implements {@code Component#componentWillReceiveProps}.
+     * Implements {@code Component#componentDidMount}.
      *
      * @inheritdoc
      */
-    componentWillReceiveProps(newProps: Props) {
-        this._maybeToggleAnimation(this.props, newProps);
+    componentDidMount() {
+        this._maybeToggleAnimation({}, this.props);
+    }
+
+    /**
+     * Implements {@code Component#componentDidUpdate}.
+     *
+     * @inheritdoc
+     */
+    componentDidUpdate(prevProps: Props) {
+        this._maybeToggleAnimation(prevProps, this.props);
     }
 
     /**

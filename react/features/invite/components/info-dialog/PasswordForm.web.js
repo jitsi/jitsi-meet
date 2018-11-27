@@ -55,6 +55,17 @@ type State = {
  * @extends Component
  */
 class PasswordForm extends Component<Props, State> {
+    /**
+     * Implements React's {@link Component#getDerivedStateFromProps()}.
+     *
+     * @inheritdoc
+     */
+    static getDerivedStateFromProps(props, state) {
+        return {
+            enteredPassword: props.editEnabled ? state.enteredPassword : ''
+        };
+    }
+
     state = {
         enteredPassword: ''
     };
@@ -72,19 +83,6 @@ class PasswordForm extends Component<Props, State> {
         this._onEnteredPasswordChange
             = this._onEnteredPasswordChange.bind(this);
         this._onPasswordSubmit = this._onPasswordSubmit.bind(this);
-    }
-
-    /**
-     * Implements React's {@link Component#componentWillReceiveProps()}. Invoked
-     * before this mounted component receives new props.
-     *
-     * @inheritdoc
-     * @param {Props} nextProps - New props component will receive.
-     */
-    componentWillReceiveProps(nextProps: Props) {
-        if (this.props.editEnabled && !nextProps.editEnabled) {
-            this.setState({ enteredPassword: '' });
-        }
     }
 
     /**
@@ -181,6 +179,5 @@ class PasswordForm extends Component<Props, State> {
         this.props.onSubmit(this.state.enteredPassword);
     }
 }
-
 
 export default translate(PasswordForm);

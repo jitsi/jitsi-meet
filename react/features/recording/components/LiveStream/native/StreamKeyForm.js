@@ -50,7 +50,7 @@ class StreamKeyForm extends AbstractStreamKeyForm {
                     onChangeText = { this._onInputChange }
                     placeholder = { t('liveStreaming.enterStreamKey') }
                     style = { styles.streamKeyInput }
-                    value = { this.state.value } />
+                    value = { this.props.value } />
                 <TouchableOpacity
                     onPress = { this._onOpenHelp }
                     style = { styles.streamKeyHelp } >

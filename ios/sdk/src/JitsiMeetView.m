@@ -268,7 +268,7 @@ static NSMapTable<NSString *, JitsiMeetView *> *views;
     // conference again if the first invocation was followed by leaving the
     // conference. However, React and, respectively,
     // appProperties/initialProperties are declarative expressions i.e. one and
-    // the same URL will not trigger componentWillReceiveProps in the JavaScript
+    // the same URL will not trigger an automatic re-render in the JavaScript
     // source code. The workaround implemented bellow introduces imperativeness
     // in React Component props by defining a unique value per loadURLObject:
     // invocation.

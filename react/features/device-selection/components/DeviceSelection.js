@@ -151,7 +151,8 @@ class DeviceSelection extends AbstractDialogTab<Props, State> {
     }
 
     /**
-     * Checks if audio / video permissions were granted.
+     * Checks if audio / video permissions were granted. Updates audio input and
+     * video input previews.
      *
      * @param {Object} prevProps - Previous props this component received.
      * @param {Object} prevState - Previous state this component had.
@@ -174,25 +175,15 @@ class DeviceSelection extends AbstractDialogTab<Props, State> {
                 });
             });
         }
-    }
 
-    /**
-     * Updates audio input and video input previews.
-     *
-     * @inheritdoc
-     * @param {Object} nextProps - The read-only props which this Component will
-     * receive.
-     * @returns {void}
-     */
-    componentWillReceiveProps(nextProps: Object) {
-        const { selectedAudioInputId, selectedVideoInputId } = this.props;
-
-        if (selectedAudioInputId !== nextProps.selectedAudioInputId) {
-            this._createAudioInputTrack(nextProps.selectedAudioInputId);
+        if (prevProps.selectedAudioInputId
+            !== this.props.selectedAudioInputId) {
+            this._createAudioInputTrack(this.props.selectedAudioInputId);
         }
 
-        if (selectedVideoInputId !== nextProps.selectedVideoInputId) {
-            this._createVideoInputTrack(nextProps.selectedVideoInputId);
+        if (prevProps.selectedVideoInputId
+            !== this.props.selectedVideoInputId) {
+            this._createVideoInputTrack(this.props.selectedVideoInputId);
         }
     }
 

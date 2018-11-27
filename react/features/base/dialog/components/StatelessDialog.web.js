@@ -102,26 +102,8 @@ class StatelessDialog extends Component<Props> {
         this._onDialogDismissed = this._onDialogDismissed.bind(this);
         this._onKeyDown = this._onKeyDown.bind(this);
         this._onSubmit = this._onSubmit.bind(this);
+        this._renderFooter = this._renderFooter.bind(this);
         this._setDialogElement = this._setDialogElement.bind(this);
-
-        this._Footer = this._createFooterConstructor(props);
-    }
-
-    /**
-     * React Component method that executes before the component is updated.
-     *
-     * @inheritdoc
-     * @param {Object} nextProps - The next properties, before the update.
-     * @returns {void}
-     */
-    componentWillUpdate(nextProps) {
-        // If button states have changed, update the Footer constructor function
-        // so buttons of the proper state are rendered.
-        if (nextProps.okDisabled !== this.props.okDisabled
-                || nextProps.cancelDisabled !== this.props.cancelDisabled
-                || nextProps.submitDisabled !== this.props.submitDisabled) {
-            this._Footer = this._createFooterConstructor(nextProps);
-        }
     }
 
     /**
@@ -142,7 +124,7 @@ class StatelessDialog extends Component<Props> {
         return (
             <Modal
                 autoFocus = { true }
-                footer = { this._Footer }
+                footer = { this._renderFooter }
                 heading = { titleString || t(titleKey) }
                 i18n = { this.props.i18n }
                 onClose = { this._onDialogDismissed }
@@ -174,41 +156,38 @@ class StatelessDialog extends Component<Props> {
         );
     }
 
-    _onCancel: () => Function;
+    _renderFooter: () => React$Node;
 
     /**
-     * Returns a functional component to be used for the modal footer.
+     * Returns a ReactElement to display buttons for closing the modal.
      *
-     * @param {Object} options - The configuration for how the buttons in the
-     * footer should display. Essentially {@code StatelessDialog} props should
-     * be passed in.
+     * @param {Object} propsFromModalFooter - The props passed in from the
+     * {@link ModalFooter} component.
      * @private
      * @returns {ReactElement}
      */
-    _createFooterConstructor(options) {
+    _renderFooter(propsFromModalFooter) {
         // Filter out falsy (null) values because {@code ButtonGroup} will error
         // if passed in anything but buttons with valid type props.
         const buttons = [
-            this._renderOKButton(options),
-            this._renderCancelButton(options)
+            this._renderOKButton(),
+            this._renderCancelButton()
         ].filter(Boolean);
 
-        return function Footer(modalFooterProps) {
-            return (
-                <ModalFooter showKeyline = { modalFooterProps.showKeyline } >
-                    {
+        return (
+            <ModalFooter showKeyline = { propsFromModalFooter.showKeyline } >
+                {
 
-                        /**
-                         * Atlaskit has this empty span (JustifySim) so...
-                         */
-                    }
-                    <span />
-                    <ButtonGroup>
-                        { buttons }
-                    </ButtonGroup>
-                </ModalFooter>
-            );
-        };
+                    /**
+                     * Atlaskit has this empty span (JustifySim) so...
+                     */
+                }
+                <span />
+                <ButtonGroup>
+                    { buttons }
+                </ButtonGroup>
+            </ModalFooter>
+        );
     }
 
     _onCancel: () => void;
@@ -257,21 +236,14 @@ class StatelessDialog extends Component<Props> {
     /**
      * Renders Cancel button.
      *
-     * @param {Object} options - The configuration for the Cancel button.
-     * @param {boolean} options.cancelDisabled - True if the cancel button
-     * should not be rendered.
-     * @param {string} options.cancelTitleKey - The translation key to use as
-     * text on the button.
-     * @param {boolean} options.isModal - True if the cancel button should not
-     * be rendered.
      * @private
      * @returns {ReactElement|null} The Cancel button if enabled and dialog is
      * not modal.
      */
-    _renderCancelButton(options = {}) {
-        if (options.cancelDisabled
-                || options.isModal
-                || options.hideCancelButton) {
+    _renderCancelButton() {
+        if (this.props.cancelDisabled
+            || this.props.isModal
+            || this.props.hideCancelButton) {
             return null;
         }
 
@@ -286,7 +258,7 @@ class StatelessDialog extends Component<Props> {
                 key = 'cancel'
                 onClick = { this._onCancel }
                 type = 'button'>
-                { t(options.cancelTitleKey || 'dialog.Cancel') }
+                { t(this.props.cancelTitleKey || 'dialog.Cancel') }
             </Button>
         );
     }
@@ -294,18 +266,11 @@ class StatelessDialog extends Component<Props> {
     /**
      * Renders OK button.
      *
-     * @param {Object} options - The configuration for the OK button.
-     * @param {boolean} options.okDisabled - True if the button should display
-     * as disabled and clicking should have no effect.
-     * @param {string} options.okTitleKey - The translation key to use as text
-     * on the button.
-     * @param {boolean} options.submitDisabled - True if the button should not
-     * be rendered.
      * @private
      * @returns {ReactElement|null} The OK button if enabled.
      */
-    _renderOKButton(options = {}) {
-        if (options.submitDisabled) {
+    _renderOKButton() {
+        if (this.props.submitDisabled) {
             return null;
         }
 
@@ -318,11 +283,11 @@ class StatelessDialog extends Component<Props> {
                 appearance = 'primary'
                 form = 'modal-dialog-form'
                 id = { OK_BUTTON_ID }
-                isDisabled = { options.okDisabled }
+                isDisabled = { this.props.okDisabled }
                 key = 'submit'
                 onClick = { this._onSubmit }
                 type = 'button'>
-                { t(options.okTitleKey || 'dialog.Ok') }
+                { t(this.props.okTitleKey || 'dialog.Ok') }
             </Button>
         );
     }
