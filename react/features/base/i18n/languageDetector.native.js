@@ -15,7 +15,7 @@ export default {
     cacheUserLanguage: Function.prototype,
 
     detect() {
-        return locale;
+        return locale.indexOf('zh') === 0 ? 'zhCN' : locale;
     },
 
     init: Function.prototype,
