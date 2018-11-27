@@ -1,7 +1,7 @@
 // @flow
 
 import {
-    getParticipantCount,
+    getParticipantCountWithFake,
     getPinnedParticipant
 } from '../base/participants';
 import { toState } from '../base/redux';
@@ -36,7 +36,10 @@ export function shouldRemoteVideosBeVisible(state: Object) {
         return false;
     }
 
-    const participantCount = getParticipantCount(state);
+    // Include fake participants to derive how many thumbnails are dispalyed,
+    // as it is assumed all participants, including fake, will be displayed
+    // in the filmstrip.
+    const participantCount = getParticipantCountWithFake(state);
     let pinnedParticipant;
 
     return Boolean(
