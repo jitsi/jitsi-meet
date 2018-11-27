@@ -11,6 +11,7 @@ import {
     getAvatarURLByParticipantId
 } from '../../../react/features/base/participants';
 import { updateSettings } from '../../../react/features/base/settings';
+import { getLocalVideoTrack } from '../../../react/features/base/tracks';
 import { shouldDisplayTileView } from '../../../react/features/video-layout';
 /* eslint-enable no-unused-vars */
 
@@ -292,12 +293,14 @@ LocalVideo.prototype._onContainerClick = function(event) {
  */
 LocalVideo.prototype._updateVideoElement = function() {
     const localVideoContainer = document.getElementById('localVideoWrapper');
+    const videoTrack
+        = getLocalVideoTrack(APP.store.getState()['features/base/tracks']);
 
     ReactDOM.render(
         <Provider store = { APP.store }>
             <VideoTrack
                 id = 'localVideo_container'
-                videoTrack = {{ jitsiTrack: this.videoStream }} />
+                videoTrack = { videoTrack } />
         </Provider>,
         localVideoContainer
     );
