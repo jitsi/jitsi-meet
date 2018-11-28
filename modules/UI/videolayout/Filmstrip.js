@@ -301,10 +301,11 @@ const Filmstrip = {
         const initialWidth = viewWidth / columns;
         const aspectRatioHeight = initialWidth / tileAspectRatio;
 
-        const heightOfEach = Math.min(
+        const heightOfEach = Math.floor(Math.min(
             aspectRatioHeight,
-            viewHeight / visibleRows);
-        const widthOfEach = tileAspectRatio * heightOfEach;
+            viewHeight / visibleRows
+        ));
+        const widthOfEach = Math.floor(tileAspectRatio * heightOfEach);
 
         return {
             localVideo: {
