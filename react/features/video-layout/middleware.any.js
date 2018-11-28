@@ -4,6 +4,7 @@ import {
     pinParticipant
 } from '../base/participants';
 import { MiddlewareRegistry } from '../base/redux';
+import { SET_DOCUMENT_EDITING_STATUS, toggleDocument } from '../etherpad';
 
 import { SET_TILE_VIEW } from './actionTypes';
 import { setTileView } from './actions';
@@ -27,12 +28,28 @@ MiddlewareRegistry.register(store => next => action => {
         break;
     }
 
-    case SET_TILE_VIEW:
-        if (getPinnedParticipant(store.getState()) && action.enabled) {
-            store.dispatch(pinParticipant(null));
+    case SET_DOCUMENT_EDITING_STATUS:
+        if (action.editing) {
+            store.dispatch(setTileView(false));
         }
 
         break;
+
+    case SET_TILE_VIEW: {
+        const state = store.getState();
+
+        if (action.enabled) {
+            if (getPinnedParticipant(state)) {
+                store.dispatch(pinParticipant(null));
+            }
+
+            if (state['features/etherpad'].editing) {
+                store.dispatch(toggleDocument());
+            }
+        }
+
+        break;
+    }
     }
 
     return next(action);
