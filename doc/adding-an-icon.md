@@ -8,6 +8,5 @@
 7. Download the result in a zip file using the "download" button.
 8. Copy <code>selection.json</code> and <code>fonts/jitsi.*</code> from the zip file to <code>fonts/</code> in Jitsi Meet
 9. Copy the class for the new icon from <code>style.css</code> in the zip file to <code>css/_font.scss</code> in Jitsi Meet (do *not* copy the whole file)
-10. Copy the <code>selection.json</code> file to <code>react/features/base/font-icons</code> overwriting <code>jitsi.json</code>
 
 Sample commit: https://github.com/jitsi/jitsi-meet/commit/68bc819b89aec12364fcf07b81efa83a1900eed6
