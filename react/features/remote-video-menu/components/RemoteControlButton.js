@@ -84,16 +84,14 @@ class RemoteControlButton extends Component<Props> {
 
         switch (remoteControlState) {
         case REMOTE_CONTROL_MENU_STATES.NOT_STARTED:
-            className = 'requestRemoteControlLink';
-            icon = 'fa fa-play';
+            icon = 'icon-play';
             break;
         case REMOTE_CONTROL_MENU_STATES.REQUESTING:
-            className = 'requestRemoteControlLink disabled';
-            icon = 'remote-control-spinner fa fa-spinner fa-spin';
+            className = ' disabled';
+            icon = 'icon-play';
             break;
         case REMOTE_CONTROL_MENU_STATES.STARTED:
-            className = 'requestRemoteControlLink';
-            icon = 'fa fa-stop';
+            icon = 'icon-stop';
             break;
         case REMOTE_CONTROL_MENU_STATES.NOT_SUPPORTED:
 
