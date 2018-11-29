@@ -12,7 +12,7 @@ import Filmstrip from '../videolayout/Filmstrip';
  * Etherpad options.
  */
 const options = $.param({
-    showControns: true,
+    showControls: true,
     showChat: false,
     showLineNumbers: true,
     useMonospaceFont: false
