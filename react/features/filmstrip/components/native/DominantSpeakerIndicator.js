@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { View } from 'react-native';
-import Icon from 'react-native-vector-icons/FontAwesome';
+
+import { Icon } from '../../../base/font-icons';
 
 import styles from './styles';
 
@@ -18,7 +19,7 @@ export default class DominantSpeakerIndicator extends Component {
         return (
             <View style = { styles.dominantSpeakerIndicatorBackground }>
                 <Icon
-                    name = 'bullhorn'
+                    name = 'dominant-speaker'
                     style = { styles.dominantSpeakerIndicator } />
             </View>
         );
