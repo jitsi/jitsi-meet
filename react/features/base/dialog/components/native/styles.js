@@ -42,14 +42,14 @@ export const bottomSheetStyles = createStyleSheet({
      */
     overlay: {
         ...StyleSheet.absoluteFillObject,
-        backgroundColor: 'rgba(0, 0, 0, 0.8)'
+        backgroundColor: 'rgba(127, 127, 127, 0.6)'
     },
 
     /**
      * Bottom sheet's base style.
      */
     sheet: {
-        backgroundColor: ColorPalette.white,
+        backgroundColor: 'rgb(0, 3, 6)',
         flex: 1,
         paddingHorizontal: 16,
         paddingVertical: 8

@@ -155,6 +155,7 @@ const overflowMenuStyles = createStyleSheet({
      * the {@code OverflowMenu}.
      */
     icon: {
+        color: ColorPalette.white,
         fontSize: 24
     },
 
@@ -163,6 +164,7 @@ const overflowMenuStyles = createStyleSheet({
      * {@code OverflowMenu}.
      */
     label: {
+        color: ColorPalette.white,
         flexShrink: 1,
         fontSize: 16,
         marginLeft: 32,
