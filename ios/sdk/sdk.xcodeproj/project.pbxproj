@@ -49,6 +49,7 @@
 		C6A34261204EF76800E062DD /* DragGestureController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6A3425E204EF76800E062DD /* DragGestureController.swift */; };
 		C6CC49AF207412CF000DFA42 /* PiPViewCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6CC49AE207412CF000DFA42 /* PiPViewCoordinator.swift */; };
 		C6F99C15204DB63E0001F710 /* JitsiMeetView+Private.h in Headers */ = {isa = PBXBuildFile; fileRef = C6F99C13204DB63D0001F710 /* JitsiMeetView+Private.h */; };
+		DEFC743F21B178FA00E4DD96 /* LocaleDetector.m in Sources */ = {isa = PBXBuildFile; fileRef = DEFC743D21B178FA00E4DD96 /* LocaleDetector.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -104,6 +105,7 @@
 		C6A3425E204EF76800E062DD /* DragGestureController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DragGestureController.swift; sourceTree = "<group>"; };
 		C6CC49AE207412CF000DFA42 /* PiPViewCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PiPViewCoordinator.swift; sourceTree = "<group>"; };
 		C6F99C13204DB63D0001F710 /* JitsiMeetView+Private.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "JitsiMeetView+Private.h"; sourceTree = "<group>"; };
+		DEFC743D21B178FA00E4DD96 /* LocaleDetector.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = LocaleDetector.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -173,6 +175,7 @@
 				C6F99C13204DB63D0001F710 /* JitsiMeetView+Private.h */,
 				0B412F1B1EDEC80100B1A0A6 /* JitsiMeetViewDelegate.h */,
 				0B7C2CFC200F51D60060D076 /* LaunchOptions.m */,
+				DEFC743D21B178FA00E4DD96 /* LocaleDetector.m */,
 				0B44A0181F902126009D1D64 /* MPVolumeViewManager.m */,
 				C6A3426B204F127900E062DD /* picture-in-picture */,
 				0BCA495D1EC4B6C600B793EE /* POSIX.m */,
@@ -465,6 +468,7 @@
 				0B7C2CFD200F51D60060D076 /* LaunchOptions.m in Sources */,
 				C6CC49AF207412CF000DFA42 /* PiPViewCoordinator.swift in Sources */,
 				B386B85720981A75000DEF7A /* InviteController.m in Sources */,
+				DEFC743F21B178FA00E4DD96 /* LocaleDetector.m in Sources */,
 				B386B85820981A75000DEF7A /* AddPeopleController.m in Sources */,
 				0BCA495F1EC4B6C600B793EE /* AudioMode.m in Sources */,
 				0B44A0191F902126009D1D64 /* MPVolumeViewManager.m in Sources */,

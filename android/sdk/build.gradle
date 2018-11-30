@@ -40,7 +40,6 @@ dependencies {
     implementation project(':react-native-immersive')
     implementation project(':react-native-keep-awake')
     implementation project(':react-native-linear-gradient')
-    implementation project(':react-native-locale-detector')
     implementation project(':react-native-sound')
     implementation project(':react-native-vector-icons')
     implementation project(':react-native-webrtc')
