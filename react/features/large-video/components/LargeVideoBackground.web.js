@@ -117,17 +117,15 @@ export class LargeVideoBackground extends Component<Props> {
      * Starts or stops the interval to update the image displayed in the canvas.
      *
      * @inheritdoc
-     * @param {Object} nextProps - The read-only React {@code Component} props
-     * with which the new instance is to be initialized.
      */
-    componentWillReceiveProps(nextProps: Props) {
-        if (this.props.hidden && !nextProps.hidden) {
+    componentDidUpdate(prevProps: Props) {
+        if (prevProps.hidden && !this.props.hidden) {
             this._clearCanvas();
             this._setUpdateCanvasInterval();
         }
 
-        if ((!this.props.hidden && nextProps.hidden)
-            || !nextProps.videoElement) {
+        if ((!prevProps.hidden && this.props.hidden)
+            || !this.props.videoElement) {
             this._clearCanvas();
             this._clearUpdateCanvasInterval();
         }

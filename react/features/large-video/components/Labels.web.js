@@ -33,6 +33,19 @@ type State = {
  */
 class Labels extends AbstractLabels<Props, State> {
     /**
+     * Updates the state for whether or not the filmstrip is transitioning to
+     * a displayed state.
+     *
+     * @inheritdoc
+     */
+    static getDerivedStateFromProps(props, prevState) {
+        return {
+            filmstripBecomingVisible: !prevState.filmstripBecomingVisible
+                && props._filmstripVisible
+        };
+    }
+
+    /**
      * Initializes a new {@code Labels} instance.
      *
      * @param {Object} props - The read-only properties with which the new
@@ -44,22 +57,6 @@ class Labels extends AbstractLabels<Props, State> {
         this.state = {
             filmstripBecomingVisible: false
         };
-    }
-
-    /**
-     * Updates the state for whether or not the filmstrip is being toggled to
-     * display after having being hidden.
-     *
-     * @inheritdoc
-     * @param {Object} nextProps - The read-only props which this Component will
-     * receive.
-     * @returns {void}
-     */
-    componentWillReceiveProps(nextProps) {
-        this.setState({
-            filmstripBecomingVisible: nextProps._filmstripVisible
-                && !this.props._filmstripVisible
-        });
     }
 
     /**

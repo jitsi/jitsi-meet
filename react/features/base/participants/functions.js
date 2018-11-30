@@ -126,6 +126,20 @@ export function getParticipantCount(stateful: Object | Function) {
 }
 
 /**
+ * Returns a count of the known participants in the passed in redux state,
+ * including fake participants.
+ *
+ * @param {(Function|Object|Participant[])} stateful - The redux state
+ * features/base/participants, the (whole) redux state, or redux's
+ * {@code getState} function to be used to retrieve the state
+ * features/base/participants.
+ * @returns {number}
+ */
+export function getParticipantCountWithFake(stateful: Object | Function) {
+    return _getAllParticipants(stateful).length;
+}
+
+/**
  * Returns participant's display name.
  *
  * FIXME: Remove the hardcoded strings once interfaceConfig is stored in redux

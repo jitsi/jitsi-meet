@@ -38,26 +38,6 @@ class LiveStreamButton extends AbstractLiveStreamButton<Props> {
     toggledIconName = 'icon-public';
 
     /**
-     * Constructor of the component.
-     *
-     * @inheritdoc
-     */
-    constructor(props: Props) {
-        super(props);
-
-        this.tooltip = props._liveStreamDisabledTooltipKey;
-    }
-
-    /**
-     * Implements {@code Component}'s componentWillReceiveProps.
-     *
-     * @inheritdoc
-     */
-    componentWillReceiveProps(newProps: Props) {
-        this.tooltip = newProps._liveStreamDisabledTooltipKey;
-    }
-
-    /**
      * Helper function to be implemented by subclasses, which returns
      * a React Element to display (a beta tag) at the end of the button.
      *
@@ -74,6 +54,16 @@ class LiveStreamButton extends AbstractLiveStreamButton<Props> {
                 </Text>
             </Container>
         );
+    }
+
+    /**
+     * Returns the tooltip that should be displayed when the button is disabled.
+     *
+     * @private
+     * @returns {string}
+     */
+    _getTooltip() {
+        return this.props._liveStreamDisabledTooltipKey || '';
     }
 
     /**

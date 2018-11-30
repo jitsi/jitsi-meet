@@ -12,7 +12,7 @@ import SpeakerStatsLabels from './SpeakerStatsLabels';
 declare var interfaceConfig: Object;
 
 /**
- * The type of the React {@code Component} props of {@link SpeakerStats}
+ * The type of the React {@code Component} props of {@link SpeakerStats}.
  */
 type Props = {
 
@@ -33,7 +33,7 @@ type Props = {
 };
 
 /**
- * The type of the React {@code Component} state of {@link SpeakerStats}
+ * The type of the React {@code Component} state of {@link SpeakerStats}.
  */
 type State = {
 
@@ -49,10 +49,6 @@ type State = {
  * @extends Component
  */
 class SpeakerStats extends Component<Props, State> {
-    state = {
-        stats: {}
-    };
-
     _updateInterval: IntervalID;
 
     /**
@@ -64,19 +60,20 @@ class SpeakerStats extends Component<Props, State> {
     constructor(props) {
         super(props);
 
+        this.state = {
+            stats: this.props.conference.getSpeakerStats()
+        };
+
         // Bind event handlers so they are only bound once per instance.
         this._updateStats = this._updateStats.bind(this);
     }
 
     /**
-     * Immediately request for updated speaker stats and begin
-     * polling for speaker stats updates.
+     * Begin polling for speaker stats updates.
      *
      * @inheritdoc
-     * @returns {void}
      */
-    componentWillMount() {
-        this._updateStats();
+    componentDidMount() {
         this._updateInterval = setInterval(this._updateStats, 1000);
     }
 

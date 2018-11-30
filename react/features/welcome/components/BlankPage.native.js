@@ -29,7 +29,7 @@ class BlankPage extends Component<Props> {
      * @inheritdoc
      * @returns {void}
      */
-    componentWillMount() {
+    componentDidMount() {
         this.props.dispatch(destroyLocalTracks());
     }
 
