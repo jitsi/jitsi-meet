@@ -142,6 +142,9 @@ function SmallVideo(VideoLayout) {
     // Bind event handlers so they are only bound once for every instance.
     this._onPopoverHover = this._onPopoverHover.bind(this);
     this.updateView = this.updateView.bind(this);
+
+    this._onContainerClick = this._onContainerClick.bind(this);
+    this._onContainerDoubleClick = this._onContainerDoubleClick.bind(this);
 }
 
 /**
@@ -821,12 +824,71 @@ SmallVideo.prototype.updateIndicators = function() {
 };
 
 /**
- * Pins the participant displayed by this thumbnail or unpins if already pinned.
+ * Callback invoked when the thumbnail is double clicked. Will pin the
+ * participant if in tile view.
  *
+ * @param {MouseEvent} event - The click event to intercept.
  * @private
  * @returns {void}
  */
-SmallVideo.prototype._togglePin = function() {
+SmallVideo.prototype._onContainerDoubleClick = function(event) {
+    if (this._pinningRequiresDoubleClick() && this._shouldTriggerPin(event)) {
+        APP.store.dispatch(pinParticipant(this.id));
+    }
+};
+
+/**
+ * Callback invoked when the thumbnail is clicked and potentially trigger
+ * pinning of the participant.
+ *
+ * @param {MouseEvent} event - The click event to intercept.
+ * @private
+ * @returns {void}
+ */
+SmallVideo.prototype._onContainerClick = function(event) {
+    const triggerPin = this._shouldTriggerPin(event)
+        && !this._pinningRequiresDoubleClick();
+
+    if (event.stopPropagation && triggerPin) {
+        event.stopPropagation();
+        event.preventDefault();
+    }
+
+    if (triggerPin) {
+        this.togglePin();
+    }
+
+    return false;
+};
+
+/**
+ * Returns whether or not a click event is targeted at certain elements which
+ * should not trigger a pin.
+ *
+ * @param {MouseEvent} event - The click event to intercept.
+ * @private
+ * @returns {boolean}
+ */
+SmallVideo.prototype._shouldTriggerPin = function(event) {
+    // TODO Checking the classes is a workround to allow events to bubble into
+    // the DisplayName component if it was clicked. React's synthetic events
+    // will fire after jQuery handlers execute, so stop propogation at this
+    // point will prevent DisplayName from getting click events. This workaround
+    // should be removeable once LocalVideo is a React Component because then
+    // the components share the same eventing system.
+    const $source = $(event.target || event.srcElement);
+
+    return $source.parents('.displayNameContainer').length === 0
+        && $source.parents('.popover').length === 0
+        && !event.target.classList.contains('popover');
+};
+
+/**
+ * Pins the participant displayed by this thumbnail or unpins if already pinned.
+ *
+ * @returns {void}
+ */
+SmallVideo.prototype.togglePin = function() {
     const pinnedParticipant
         = getPinnedParticipant(APP.store.getState()) || {};
     const participantIdToPin
@@ -834,6 +896,17 @@ SmallVideo.prototype._togglePin = function() {
             ? null : this.id;
 
     APP.store.dispatch(pinParticipant(participantIdToPin));
+};
+
+/**
+ * Returns whether or not clicking to pin the participant needs to be a double
+ * click instead of a single click.
+ *
+ * @private
+ * @returns {boolean}
+ */
+SmallVideo.prototype._pinningRequiresDoubleClick = function() {
+    return shouldDisplayTileView(APP.store.getState());
 };
 
 /**

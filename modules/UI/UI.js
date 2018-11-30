@@ -595,17 +595,7 @@ UI.removeListener = function(type, listener) {
  */
 UI.emitEvent = (type, ...options) => eventEmitter.emit(type, ...options);
 
-UI.clickOnVideo = function(videoNumber) {
-    const videos = $('#remoteVideos .videocontainer:not(#mixedstream)');
-    const videosLength = videos.length;
-
-    if (videosLength <= videoNumber) {
-        return;
-    }
-    const videoIndex = videoNumber === 0 ? 0 : videosLength - videoNumber;
-
-    videos[videoIndex].click();
-};
+UI.clickOnVideo = videoNumber => VideoLayout.togglePin(videoNumber);
 
 // Used by torture.
 UI.showToolbar = timeout => APP.store.dispatch(showToolbox(timeout));
