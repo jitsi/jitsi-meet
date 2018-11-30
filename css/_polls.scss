@@ -16,6 +16,21 @@
     padding: 5px;
     min-height: 20px;
 }
+#poll-item-votes {
+    margin-left: 5x;
+    margin-right: 5px;
+    border-radius: 50%;
+    border: 2px solid #666;
+    text-align: center;
+}
 #poll-item-button {
     margin-left: 5px;
+}
+.new-poll-button {
+    width: 50px;
+    height: 50px;
+    text-align: center;
+}
+#poll-create-form {
+    width: 500px;
 }

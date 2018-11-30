@@ -3,14 +3,19 @@
 import { MiddlewareRegistry } from '../base/redux';
 import {
     POLL_SESSION_INITIATED,
-    POLL_SESSION_STARTED
+    POLL_SESSION_STARTED,
+    POLL_SESSION_VOTE,
+    POLL_SESSION_END
 } from './actionTypes';
 import {
     ENDPOINT_MESSAGE_RECEIVED
 } from '../subtitles/actionTypes';
 import {
     startPollSession,
-    showPollStartNotification
+    showPollStartNotification,
+    showPollEndNotification,
+    updateVotes,
+    pollSessionFinished
 } from './actions';
 import { getLogger } from 'jitsi-meet-logger';
 
@@ -23,19 +28,52 @@ MiddlewareRegistry.register(store => next => action => {
     case POLL_SESSION_INITIATED: {
         if (APP !== 'undefined') {
             // Inform other participants that I created a poll.
-            const { poll } = action;
-            const payload = {
+            const { payload } = action;
+            const message = {
                 type: POLL_SESSION_STARTED.toString(),
-                poll
+                payload
             };
 
             try {
-                APP.conference.sendEndpointMessage('', payload);
+                APP.conference.sendEndpointMessage('', message);
                 store.dispatch(showPollStartNotification());
             } catch (e) {
                 logger.error('Failed to send Poll session info via data channel'
                     , e);
             }
+        }
+        break;
+    }
+    case POLL_SESSION_VOTE: {
+        const { prevID, id, user } = action;
+        const message = {
+            type: POLL_SESSION_VOTE.toString(),
+            prevID,
+            id,
+            user
+        };
+
+        logger.log(`I voted for ${id}`);
+
+        try {
+            APP.conference.sendEndpointMessage('', message);
+        } catch (e) {
+            logger.error('Failed to send Poll session info via data channel'
+                , e);
+        }
+        break;
+    }
+    case POLL_SESSION_END: {
+        const message = {
+            type: POLL_SESSION_END.toString()
+        };
+
+        try {
+            APP.conference.sendEndpointMessage('', message);
+            store.dispatch(showPollEndNotification());
+        } catch (e) {
+            logger.error('Failed to send Poll session info via data channel'
+                , e);
         }
         break;
     }
@@ -45,10 +83,18 @@ MiddlewareRegistry.register(store => next => action => {
 
         if (json) {
             if (json.type === POLL_SESSION_STARTED.toString()) {
-                const { poll } = json;
+                const { payload } = json;
 
-                store.dispatch(startPollSession(poll));
+                store.dispatch(startPollSession(payload));
                 store.dispatch(showPollStartNotification());
+            } else if (json.type === POLL_SESSION_VOTE.toString()) {
+                const { prevID, id, user } = json;
+
+                logger.log(`User ${user} voted for ${id}`);
+                store.dispatch(updateVotes(prevID, id, user));
+            } else if (json.type === POLL_SESSION_END.toString()) {
+                store.dispatch(pollSessionFinished());
+                store.dispatch(showPollEndNotification());
             }
         }
     }

@@ -3,58 +3,128 @@
 import { ReducerRegistry } from '../base/redux';
 import {
     POLL_SESSION_INITIATED,
-    POLL_SESSION_STARTED
+    POLL_SESSION_STARTED,
+    POLL_SESSION_VOTE,
+    POLL_SESSION_VOTE_RECIEVED,
+    POLL_SESSION_END,
+    POLL_SESSION_FINISHED
 } from './actionTypes';
 
-/**
- * Poll Feature default state.
- * isPollRunning: boolean,
- * polls: Array<Object>
- */
 const DEFAULT_STATE = {
 
     /**
-     * Indicates if a poll session is currently running.
+     * All Polls choices stored by ID.
      */
-    isPollRunning: false,
+    choices: {},
 
     /**
-     * Record of poll sessions. Current poll session is last item
-     * in array.
+     * Current Poll ID: ?string
      */
-    polls: []
+    currentPoll: null,
+
+    /**
+     * Current User vote ID: ?string
+     */
+    currentVote: null,
+
+    /**
+     * All Polls Objects stored by ID.
+     */
+    polls: {},
+
+    /**
+     * All Polls questions stored by ID.
+     */
+    questions: {}
 };
 
 ReducerRegistry.register('features/polls', (state = DEFAULT_STATE, action) => {
     switch (action.type) {
-    case POLL_SESSION_INITIATED: {
-        // Action recieved by the participant who created the poll.
-        const { poll } = action;
+    case POLL_SESSION_INITIATED:
+    case POLL_SESSION_STARTED: {
+        const { payload } = action;
+        const { poll, question, choices } = payload;
 
         return {
             ...state,
-            isPollRunning: true,
-            polls: [
+            currentPoll: poll.id,
+            polls: {
                 ...state.polls,
-                poll
-            ]
+                [poll.id]: poll
+            },
+            questions: {
+                ...state.questions,
+                [question.id]: question
+            },
+            choices: {
+                ...state.choices,
+                ...choices
+            }
         };
     }
-    case POLL_SESSION_STARTED: {
-        // Action recieved by other participants in the conference,
-        // the poll session is sent in the action.
-        const { poll } = action;
+    case POLL_SESSION_VOTE: {
+        const { id } = action;
+        const newState = _updateUserVote(state, action);
 
         return {
+            ...newState,
+            currentVote: id
+        };
+    }
+    case POLL_SESSION_VOTE_RECIEVED: {
+        const newState = _updateUserVote(state, action);
+
+        return {
+            ...newState
+        };
+    }
+    case POLL_SESSION_END:
+    case POLL_SESSION_FINISHED: {
+        return {
             ...state,
-            isPollRunning: true,
-            polls: [
-                ...state.polls,
-                poll
-            ]
+            currentPoll: null,
+            currentVote: null
         };
     }
     }
 
     return state;
 });
+
+/**
+ * Update a user vote.
+ *
+ * @param {Object} state - Redux state.
+ * @param {Object} action - Redux Action.
+ * @returns {{}}
+ */
+function _updateUserVote(state: Object, action: Object) {
+    const { prevID, id, user } = action;
+    const choice = state.choices[id];
+    const prevChoice = prevID === null ? null : { ...state.choices[prevID] };
+    let updatedChoices = {
+        [choice.id]: {
+            ...choice,
+            votes: choice.votes.concat(user)
+        }
+    };
+
+    if (prevChoice) {
+        prevChoice.votes = prevChoice.votes.filter(x => x !== user);
+
+        updatedChoices = {
+            ...updatedChoices,
+            [prevChoice.id]: {
+                ...prevChoice
+            }
+        };
+    }
+
+    return {
+        ...state,
+        choices: {
+            ...state.choices,
+            ...updatedChoices
+        }
+    };
+}

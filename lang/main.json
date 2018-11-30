@@ -744,5 +744,10 @@
         "no": "No",
         "label": "LOR",
         "labelToolTip": "Local recording is engaged"
+    },
+    "polls": {
+        "results": "Poll Results",
+        "create": "Create Poll",
+        "vote": "Vote"
     }
 }
