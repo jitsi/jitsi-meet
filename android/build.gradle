@@ -74,8 +74,28 @@ allprojects {
             // complying with the full range of their npm peer dependency and,
             // consequently, we should qualify their version.
             def versionQualifier = '-jitsi-1'
-            if ('react-native-webrtc'.equals(project.name))
-                versionQualifier = '-jitsi-1'
+            if ('react-native-background-timer' == project.name)
+                versionQualifier = '-jitsi-3' // 2.0.0 + react-native 0.57
+            else if ('react-native-calendar-events' == project.name)
+                versionQualifier = '-jitsi-1' // 056807286da610d884fb6b4c8ca187a767b261f7 + react-native 0.57
+            else if ('react-native-fast-image' == project.name)
+                versionQualifier = '-jitsi-1' // 1f8c93a5584869848d75cc9b946beb9688efe285 + react-native 0.57
+            else if ('react-native-google-signin' == project.name)
+                versionQualifier = '-jitsi-1' // 1.0.0-rc6 + react-native 0.57
+            else if ('react-native-immersive' == project.name)
+                versionQualifier = '-jitsi-4' // 1.1.0 + react-native 0.57
+            else if ('react-native-keep-awake' == project.name)
+                versionQualifier = '-jitsi-3' // 2.0.6 + react-native 0.57
+            else if ('react-native-linear-gradient' == project.name)
+                versionQualifier = '-jitsi-1' // 2.4.0 + react-native 0.57
+            else if ('react-native-locale-detector' == project.name)
+                versionQualifier = '-jitsi-3' // 845281e9fd4af756f6d0f64afe5cce08c63e5ee9 + react-native 0.57
+            else if ('react-native-sound' == project.name)
+                versionQualifier = '-jitsi-2' // 0.10.9 + react-native 0.57
+            else if ('react-native-vector-icons' == project.name)
+                versionQualifier = '-jitsi-3' // 6.0.2 + react-native 0.57
+            else if ('react-native-webrtc' == project.name)
+                versionQualifier = '-jitsi-9' // 6322a9b5a38ce590cfaea4041072ea87c8dbf558 + react-native 0.57
 
             project.version = "${json.version}${versionQualifier}"
 
@@ -135,7 +155,7 @@ allprojects {
                             // (third-party) React Native modules we utilize can
                             // depend not on a specific react-native release but
                             // a wider range.
-                            if (artifactId.equals('react-native')) {
+                            if (artifactId == 'react-native') {
                                 def versionNumber = VersionNumber.parse(version)
                                 version = "${versionNumber.major}.${versionNumber.minor}"
                             }
