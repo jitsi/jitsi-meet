@@ -22,8 +22,7 @@ import {
 } from '../../../react/features/remote-video-menu';
 import {
     LAYOUTS,
-    getCurrentLayout,
-    shouldDisplayTileView
+    getCurrentLayout
 } from '../../../react/features/video-layout';
 /* eslint-enable no-unused-vars */
 
@@ -89,7 +88,8 @@ function RemoteVideo(user, VideoLayout, emitter) {
     this._setAudioVolume = this._setAudioVolume.bind(this);
     this._stopRemoteControl = this._stopRemoteControl.bind(this);
 
-    this.container.onclick = this._onContainerClick.bind(this);
+    this.container.onclick = this._onContainerClick;
+    this.container.ondblclick = this._onContainerDoubleClick;
 }
 
 RemoteVideo.prototype = Object.create(SmallVideo.prototype);
@@ -611,36 +611,6 @@ RemoteVideo.prototype.removePresenceLabel = function() {
     if (presenceLabelContainer) {
         ReactDOM.unmountComponentAtNode(presenceLabelContainer);
     }
-};
-
-/**
- * Callback invoked when the thumbnail is clicked. Will directly call
- * VideoLayout to handle thumbnail click if certain elements have not been
- * clicked.
- *
- * @param {MouseEvent} event - The click event to intercept.
- * @private
- * @returns {void}
- */
-RemoteVideo.prototype._onContainerClick = function(event) {
-    const $source = $(event.target || event.srcElement);
-    const { classList } = event.target;
-
-    const ignoreClick = $source.parents('.popover').length > 0
-            || classList.contains('popover');
-
-    if (!ignoreClick) {
-        this._togglePin();
-    }
-
-    // On IE we need to populate this handler on video <object> and it does not
-    // give event instance as an argument, so we check here for methods.
-    if (event.stopPropagation && event.preventDefault && !ignoreClick) {
-        event.stopPropagation();
-        event.preventDefault();
-    }
-
-    return false;
 };
 
 RemoteVideo.createContainer = function(spanId) {

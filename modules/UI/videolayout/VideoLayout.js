@@ -392,6 +392,19 @@ const VideoLayout = {
     },
 
     /**
+     * Triggers a thumbnail to pin or unpin itself.
+     *
+     * @param {number} videoNumber - The index of the video to toggle pin on.
+     * @private
+     */
+    togglePin(videoNumber) {
+        const videos = getAllThumbnails();
+        const videoView = videos[videoNumber];
+
+        videoView && videoView.togglePin();
+    },
+
+    /**
      * Callback invoked to update display when the pin participant has changed.
      *
      * @paramn {string|null} pinnedParticipantID - The participant ID of the
