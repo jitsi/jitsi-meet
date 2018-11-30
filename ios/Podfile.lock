@@ -41,8 +41,6 @@ PODS:
     - SDWebImage/GIF
   - react-native-keep-awake (2.0.6):
     - React
-  - react-native-locale-detector (1.0.0):
-    - React
   - react-native-webrtc (1.67.1):
     - React
   - React/Core (0.57.6):
@@ -109,7 +107,6 @@ DEPENDENCIES:
   - react-native-calendar-events (from `../node_modules/react-native-calendar-events`)
   - react-native-fast-image (from `../node_modules/react-native-fast-image`)
   - react-native-keep-awake (from `../node_modules/react-native-keep-awake`)
-  - react-native-locale-detector (from `../node_modules/react-native-locale-detector`)
   - react-native-webrtc (from `../node_modules/react-native-webrtc`)
   - React/Core (from `../node_modules/react-native`)
   - React/CxxBridge (from `../node_modules/react-native`)
@@ -154,8 +151,6 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-fast-image"
   react-native-keep-awake:
     :path: "../node_modules/react-native-keep-awake"
-  react-native-locale-detector:
-    :path: "../node_modules/react-native-locale-detector"
   react-native-webrtc:
     :path: "../node_modules/react-native-webrtc"
   RNGoogleSignin:
@@ -183,7 +178,6 @@ SPEC CHECKSUMS:
   react-native-calendar-events: fe6fbc8ed337a7423c98f2c9012b25f20444de09
   react-native-fast-image: cba3d9bf9c2cf8ddb643d887a686c53a5dd90a2c
   react-native-keep-awake: 0de4bd66de0c23178107dce0c2fcc3354b2a8e94
-  react-native-locale-detector: d1b2c6fe5abb56e3a1efb6c2d6f308c05c4251f1
   react-native-webrtc: 31b6d3f1e3e2ce373aa43fd682b04367250f807d
   RNGoogleSignin: 44debd8c359a662c0e2d585952e88b985bf78008
   RNSound: b360b3862d3118ed1c74bb9825696b5957686ac4
@@ -191,6 +185,6 @@ SPEC CHECKSUMS:
   SDWebImage: 624d6e296c69b244bcede364c72ae0430ac14681
   yoga: b1ce48b6cf950b98deae82838f5173ea7cf89e85
 
-PODFILE CHECKSUM: cf8276ba4b0933b24c6082a25a5f4eabe0ba4ea6
+PODFILE CHECKSUM: 9b67ed66d62ca004caa7952c3bbfe2693c115333
 
 COCOAPODS: 1.5.3

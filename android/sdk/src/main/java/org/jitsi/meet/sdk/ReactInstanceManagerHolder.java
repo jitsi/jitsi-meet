@@ -42,6 +42,7 @@ class ReactInstanceManagerHolder {
             new AppInfoModule(reactContext),
             new AudioModeModule(reactContext),
             new ExternalAPIModule(reactContext),
+            new LocaleDetector(reactContext),
             new PictureInPictureModule(reactContext),
             new ProximityModule(reactContext),
             new WiFiStatsModule(reactContext),
@@ -126,7 +127,6 @@ class ReactInstanceManagerHolder {
                 .addPackage(new com.corbt.keepawake.KCKeepAwakePackage())
                 .addPackage(new com.dylanvann.fastimage.FastImageViewPackage())
                 .addPackage(new com.facebook.react.shell.MainReactPackage())
-                .addPackage(new com.i18n.reactnativei18n.ReactNativeI18n())
                 .addPackage(new com.oblador.vectoricons.VectorIconsPackage())
                 .addPackage(new com.ocetnik.timer.BackgroundTimerPackage())
                 .addPackage(new com.oney.WebRTCModule.WebRTCModulePackage())

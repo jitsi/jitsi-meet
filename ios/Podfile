@@ -34,8 +34,6 @@ target 'JitsiMeet' do
     :path => '../node_modules/react-native-fast-image'
   pod 'react-native-keep-awake',
     :path => '../node_modules/react-native-keep-awake'
-  pod 'react-native-locale-detector',
-    :path => '../node_modules/react-native-locale-detector'
   pod 'react-native-webrtc', :path => '../node_modules/react-native-webrtc'
   pod 'RNGoogleSignin',
     :path => '../node_modules/react-native-google-signin'
