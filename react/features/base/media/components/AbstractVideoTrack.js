@@ -48,23 +48,12 @@ export type Props = {
 };
 
 /**
- * The type of the React {@code Component} state of {@link AbstractVideoTrack}.
- */
-type State = {
-
-    /**
-     * The Redux representation of the participant's video track.
-     */
-    videoTrack: Object | null
-};
-
-/**
  * Implements a React {@link Component} that renders video element for a
  * specific video track.
  *
  * @abstract
  */
-export default class AbstractVideoTrack<P: Props> extends Component<P, State> {
+export default class AbstractVideoTrack<P: Props> extends Component<P> {
     /**
      * Initializes a new AbstractVideoTrack instance.
      *
@@ -74,29 +63,8 @@ export default class AbstractVideoTrack<P: Props> extends Component<P, State> {
     constructor(props: P) {
         super(props);
 
-        this.state = {
-            videoTrack: _falsy2null(props.videoTrack)
-        };
-
         // Bind event handlers so they are only bound once for every instance.
         this._onVideoPlaying = this._onVideoPlaying.bind(this);
-    }
-
-    /**
-     * Implements React's {@link Component#componentWillReceiveProps()}.
-     *
-     * @inheritdoc
-     * @param {Object} nextProps - The read-only props which this Component will
-     * receive.
-     * @returns {void}
-     */
-    componentWillReceiveProps(nextProps: P) {
-        const oldValue = this.state.videoTrack;
-        const newValue = _falsy2null(nextProps.videoTrack);
-
-        if (oldValue !== newValue) {
-            this._setVideoTrack(newValue);
-        }
     }
 
     /**
@@ -106,7 +74,7 @@ export default class AbstractVideoTrack<P: Props> extends Component<P, State> {
      * @returns {ReactElement}
      */
     render() {
-        const { videoTrack } = this.state;
+        const videoTrack = _falsy2null(this.props.videoTrack);
         let render;
 
         if (this.props.waitForVideoStarted && videoTrack) {
@@ -167,18 +135,6 @@ export default class AbstractVideoTrack<P: Props> extends Component<P, State> {
         if (videoTrack && !videoTrack.videoStarted) {
             this.props.dispatch(trackVideoStarted(videoTrack.jitsiTrack));
         }
-    }
-
-    /**
-     * Sets a specific video track to be rendered by this instance.
-     *
-     * @param {Track} videoTrack - The video track to be rendered by this
-     * instance.
-     * @protected
-     * @returns {void}
-     */
-    _setVideoTrack(videoTrack) {
-        this.setState({ videoTrack });
     }
 }
 
