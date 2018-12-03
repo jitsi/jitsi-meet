@@ -88,8 +88,6 @@ allprojects {
                 versionQualifier = '-jitsi-3' // 2.0.6 + react-native 0.57
             else if ('react-native-linear-gradient' == project.name)
                 versionQualifier = '-jitsi-1' // 2.4.0 + react-native 0.57
-            else if ('react-native-locale-detector' == project.name)
-                versionQualifier = '-jitsi-3' // 845281e9fd4af756f6d0f64afe5cce08c63e5ee9 + react-native 0.57
             else if ('react-native-sound' == project.name)
                 versionQualifier = '-jitsi-2' // 0.10.9 + react-native 0.57
             else if ('react-native-vector-icons' == project.name)
