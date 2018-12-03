@@ -1,10 +1,11 @@
 // @flow
 
 import React, { PureComponent } from 'react';
+import { toArray } from 'react-emoji-render';
+import Linkify from 'react-linkify';
+
 
 import { translate } from '../../base/i18n';
-
-import { processReplacements } from '../replacement';
 
 /**
  * The type of the React {@code Component} props of {@link Chat}.
@@ -37,7 +38,7 @@ class ChatMessage extends PureComponent<Props> {
     render() {
         const { message } = this.props;
         let messageTypeClassname = '';
-        let messagetoDisplay = message.message;
+        let messageToDisplay = message.message;
 
         switch (message.messageType) {
         case 'local':
@@ -46,9 +47,9 @@ class ChatMessage extends PureComponent<Props> {
             break;
         case 'error':
             messageTypeClassname = 'error';
-            messagetoDisplay = this.props.t('chat.error', {
+            messageToDisplay = this.props.t('chat.error', {
                 error: message.error,
-                originalText: messagetoDisplay
+                originalText: messageToDisplay
             });
             break;
         default:
@@ -58,10 +59,27 @@ class ChatMessage extends PureComponent<Props> {
         // replace links and smileys
         // Strophe already escapes special symbols on sending,
         // so we escape here only tags to avoid double &amp;
-        const escMessage = messagetoDisplay.replace(/</g, '&lt;')
+        const escMessage = messageToDisplay.replace(/</g, '&lt;')
             .replace(/>/g, '&gt;')
             .replace(/\n/g, '<br/>');
-        const messageWithHTML = processReplacements(escMessage);
+        const processedMessage = [];
+
+        // content is an array of text and emoji components
+        const content = toArray(escMessage, { className: 'smiley' });
+
+        content.forEach(i => {
+            if (typeof i === 'string') {
+                processedMessage.push(
+                    <Linkify
+                        key = { i }
+                        properties = {{
+                            rel: 'noopener noreferrer',
+                            target: '_blank'
+                        }}>{ i }</Linkify>);
+            } else {
+                processedMessage.push(i);
+            }
+        });
 
         return (
             <div className = { `chatmessage ${messageTypeClassname}` }>
@@ -74,10 +92,9 @@ class ChatMessage extends PureComponent<Props> {
                 <div className = { 'timestamp' }>
                     { ChatMessage.formatTimestamp(message.timestamp) }
                 </div>
-                <div
-                    className = 'usermessage'
-                    // eslint-disable-next-line react/no-danger
-                    dangerouslySetInnerHTML = {{ __html: messageWithHTML }} />
+                <div className = 'usermessage'>
+                    { processedMessage }
+                </div>
             </div>
         );
     }
