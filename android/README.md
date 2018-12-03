@@ -45,7 +45,9 @@ In source code form, the Android SDK dependencies are locked/pinned by package.j
 
 This will pull in the dependencies in either binary format, or in source code format, somewhere under /node_modules/
 
-At the time of writing, the React Native dependency is the only one pulled in in binary format. To copy it to your local Maven repository, you can simply copy part of the directory structure that was pulled in by NPM:
+At the time of writing, there are two packages pulled in in binary format.
+
+To copy React Native to your local Maven repository, you can simply copy part of the directory structure that was pulled in by NPM:
 
     $ cp -r ../node_modules/react-native/android/com /tmp/repo/
 
@@ -53,11 +55,13 @@ In the same way, copy the JavaScriptCore dependency:
 
     $ cp -r ../node_modules/jsc-android/dist/org /tmp/repo/
 
+Alternatively, you can use the scripts located in the android/scripts directory to publish these dependencies to your Maven repo.
+
 Third-party React Native _modules_, which Jitsi Meet SDK for Android depends on, are download by NPM in source code form. These need to be assembled into Maven artifacts, and then published to your local Maven repository. The SDK project facilitates this. 
 
 To prepare, Configure the Maven repositories in which you are going to publish the SDK artifacts/binaries. In `android/sdk/build.gradle` as well as in `android/build.gradle` modify the lines that contain:
 
-    "file:${rootProject.projectDir}/../../../jitsi/jitsi-maven-repository/releases"
+    "file:${rootProject.projectDir}/../../jitsi-maven-repository/releases"
 
 Change this value (which represents the Maven repository location used internally by the Jitsi Developers) to the location of the repository that you'd like to use:
 
