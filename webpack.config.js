@@ -1,8 +1,6 @@
 /* global __dirname */
 
 const process = require('process');
-const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
-const webpack = require('webpack');
 
 /**
  * The URL of the Jitsi Meet deployment to be proxy to in the context of
@@ -14,31 +12,6 @@ const devServerProxyTarget
 const minimize
     = process.argv.indexOf('-p') !== -1
         || process.argv.indexOf('--optimize-minimize') !== -1;
-
-const plugins = [
-    new webpack.LoaderOptionsPlugin({
-        debug: !minimize,
-        minimize
-    })
-];
-
-if (minimize) {
-    // XXX Webpack's command line argument -p is not enough. Further
-    // optimizations are made possible by the use of DefinePlugin and NODE_ENV
-    // with value 'production'. For example, React takes advantage of these.
-    plugins.push(new webpack.DefinePlugin({
-        'process.env': {
-            NODE_ENV: JSON.stringify('production')
-        }
-    }));
-    plugins.push(new webpack.optimize.ModuleConcatenationPlugin());
-    plugins.push(new UglifyJsPlugin({
-        cache: true,
-        extractComments: true,
-        parallel: true,
-        sourceMap: true
-    }));
-}
 
 // The base Webpack configuration to bundle the JavaScript artifacts of
 // jitsi-meet such as app.bundle.js and external_api.js.
@@ -55,6 +28,7 @@ const config = {
         }
     },
     devtool: 'source-map',
+    mode: minimize ? 'development' : 'production',
     module: {
         rules: [ {
             // Transpile ES2015 (aka ES6) to ES5. Accept the JSX syntax by React
@@ -112,13 +86,16 @@ const config = {
         // value that is a mock (/index.js).
         __filename: true
     },
+    optimization: {
+        concatenateModules: minimize,
+        minimize
+    },
     output: {
         filename: `[name]${minimize ? '.min' : ''}.js`,
         path: `${__dirname}/build`,
         publicPath: '/libs/',
         sourceMapFilename: `[name].${minimize ? 'min' : 'js'}.map`
     },
-    plugins,
     resolve: {
         alias: {
             jquery: `jquery/dist/jquery${minimize ? '.min' : ''}.js`
