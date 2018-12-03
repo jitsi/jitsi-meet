@@ -38,7 +38,7 @@ class ChatMessage extends PureComponent<Props> {
     render() {
         const { message } = this.props;
         let messageTypeClassname = '';
-        let messagetoDisplay = message.message;
+        let messageToDisplay = message.message;
 
         switch (message.messageType) {
         case 'local':
@@ -47,9 +47,9 @@ class ChatMessage extends PureComponent<Props> {
             break;
         case 'error':
             messageTypeClassname = 'error';
-            messagetoDisplay = this.props.t('chat.error', {
+            messageToDisplay = this.props.t('chat.error', {
                 error: message.error,
-                originalText: messagetoDisplay
+                originalText: messageToDisplay
             });
             break;
         default:
@@ -59,13 +59,15 @@ class ChatMessage extends PureComponent<Props> {
         // replace links and smileys
         // Strophe already escapes special symbols on sending,
         // so we escape here only tags to avoid double &amp;
-        const escMessage = messagetoDisplay.replace(/</g, '&lt;')
+        const escMessage = messageToDisplay.replace(/</g, '&lt;')
             .replace(/>/g, '&gt;')
             .replace(/\n/g, '<br/>');
         const processedMessage = [];
-        const items = toArray(escMessage, { className: 'smiley' });
 
-        items.forEach(i => {
+        // content is an array of text and emoji components
+        const content = toArray(escMessage, { className: 'smiley' });
+
+        content.forEach(i => {
             if (typeof i === 'string') {
                 processedMessage.push(
                     <Linkify
