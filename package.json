@@ -50,7 +50,7 @@
     "jsc-android": "224109.1.0",
     "jsrsasign": "8.0.12",
     "jwt-decode": "2.2.0",
-    "lib-jitsi-meet": "github:jitsi/lib-jitsi-meet#03411c7488c32593b439fc80b239ab3b7abd5e11",
+    "lib-jitsi-meet": "github:jitsi/lib-jitsi-meet#81dac6051eb7e86e51a94eca96eae10add9dc7fb",
     "libflacjs": "github:mmig/libflac.js#93d37e7f811f01cf7d8b6a603e38bd3c3810907d",
     "lodash": "4.17.11",
     "moment": "2.19.4",
@@ -114,9 +114,9 @@
     "precommit-hook": "3.0.0",
     "string-replace-loader": "1.3.0",
     "style-loader": "0.19.0",
-    "uglifyjs-webpack-plugin": "1.2.2",
-    "webpack": "3.9.1",
-    "webpack-dev-server": "2.9.5"
+    "webpack": "4.26.1",
+    "webpack-cli": "3.1.2",
+    "webpack-dev-server": "3.1.10"
   },
   "engines": {
     "node": ">=8.0.0",
