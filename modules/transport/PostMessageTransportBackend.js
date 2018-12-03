@@ -22,7 +22,6 @@ const LEGACY_INCOMING_METHODS = [
     'email',
     'toggle-audio',
     'toggle-chat',
-    'toggle-contact-list',
     'toggle-film-strip',
     'toggle-share-screen',
     'toggle-video',

@@ -1,15 +1,18 @@
 // @flow
 
-import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 
+import {
+    createPageReloadScheduledEvent,
+    sendAnalytics
+} from '../../analytics';
+import { reloadNow } from '../../app';
 import {
     isFatalJitsiConferenceError,
     isFatalJitsiConnectionError
 } from '../../base/lib-jitsi-meet';
 import { randomInt } from '../../base/util';
 
-import { _reloadNow } from '../actions';
 import ReloadButton from './ReloadButton';
 
 declare var APP: Object;
@@ -17,43 +20,88 @@ declare var APP: Object;
 const logger = require('jitsi-meet-logger').getLogger(__filename);
 
 /**
+ * The type of the React {@code Component} props of
+ * {@link AbstractPageReloadOverlay}.
+ */
+type Props = {
+
+    /**
+     * The details is an object containing more information about the connection
+     * failed (shard changes, was the computer suspended, etc.)
+     */
+    details: Object,
+
+    dispatch: Dispatch<*>,
+
+    /**
+     * The indicator which determines whether the reload was caused by network
+     * failure.
+     */
+    isNetworkFailure: boolean,
+
+    /**
+     * The reason for the error that will cause the reload.
+     * NOTE: Used by PageReloadOverlay only.
+     */
+    reason: string,
+
+    /**
+     * The function to translate human-readable text.
+     */
+    t: Function
+};
+
+/**
+ * The type of the React {@code Component} state of
+ * {@link AbstractPageReloadOverlay}.
+ */
+type State = {
+
+    /**
+     * The translation key for the title of the overlay.
+     */
+    message: string,
+
+    /**
+     * Current value(time) of the timer.
+     */
+    timeLeft: number,
+
+    /**
+     * How long the overlay dialog will be displayed before the conference will
+     * be reloaded.
+     */
+    timeoutSeconds: number,
+
+    /**
+     * The translation key for the title of the overlay.
+     */
+    title: string
+};
+
+/**
  * Implements an abstract React {@link Component} for the page reload overlays.
  */
-export default class AbstractPageReloadOverlay extends Component<*, *> {
+export default class AbstractPageReloadOverlay
+    extends Component<Props, State> {
     /**
-     * {@code AbstractPageReloadOverlay} component's property types.
+     * Determines whether this overlay needs to be rendered (according to a
+     * specific redux state). Called by {@link OverlayContainer}.
      *
-     * @static
+     * @param {Object} state - The redux state.
+     * @returns {boolean} - If this overlay needs to be rendered, {@code true};
+     * {@code false}, otherwise.
      */
-    static propTypes = {
-        dispatch: PropTypes.func,
-
-        /**
-         * The indicator which determines whether the reload was caused by
-         * network failure.
-         *
-         * @public
-         * @type {boolean}
-         */
-        isNetworkFailure: PropTypes.bool,
-
-        /**
-         * The reason for the error that will cause the reload.
-         * NOTE: Used by PageReloadOverlay only.
-         *
-         * @public
-         * @type {string}
-         */
-        reason: PropTypes.string,
-
-        /**
-         * The function to translate human-readable text.
-         *
-         * @public
-         * @type {Function}
-         */
-        t: PropTypes.func
-    };
+    static needsRender(state: Object) {
+        // FIXME web does not rely on the 'recoverable' flag set on an error
+        // action, but on a predefined list of fatal errors. Because of that
+        // the value of 'fatalError' which relies on the flag should not be used
+        // on web yet (until conference/connection and their errors handling is
+        // not unified).
+        return typeof APP === 'undefined'
+            ? Boolean(state['features/overlay'].fatalError)
+            : this.needsRenderWeb(state);
+    }
 
     /**
      * Determines whether this overlay needs to be rendered (according to a
@@ -63,50 +111,19 @@ export default class AbstractPageReloadOverlay extends Component<*, *> {
      * @returns {boolean} - If this overlay needs to be rendered, {@code true};
      * {@code false}, otherwise.
      */
-    static needsRender(state) {
+    static needsRenderWeb(state: Object) {
         const conferenceError = state['features/base/conference'].error;
+        const configError = state['features/base/config'].error;
         const connectionError = state['features/base/connection'].error;
 
         return (
             (connectionError && isFatalJitsiConnectionError(connectionError))
                 || (conferenceError
                     && isFatalJitsiConferenceError(conferenceError))
-        );
+                || configError);
     }
 
-    _interval: ?number
-
-    state: {
-
-        /**
-         * The translation key for the title of the overlay.
-         *
-         * @type {string}
-         */
-        message: string,
-
-        /**
-         * Current value(time) of the timer.
-         *
-         * @type {number}
-         */
-        timeLeft: number,
-
-        /**
-         * How long the overlay dialog will be displayed before the
-         * conference will be reloaded.
-         *
-         * @type {number}
-         */
-        timeoutSeconds: number,
-
-        /**
-         * The translation key for the title of the overlay.
-         *
-         * @type {string}
-         */
-        title: string
-    }
+    _interval: ?IntervalID;
 
     /**
      * Initializes a new AbstractPageReloadOverlay instance.
@@ -155,10 +172,20 @@ export default class AbstractPageReloadOverlay extends Component<*, *> {
         // because the log queue is not flushed before "fabric terminated" is
         // sent to the backed.
         // FIXME: We should dispatch action for this.
-        APP.conference.logEvent(
-            'page.reload',
-            /* value */ undefined,
-            /* label */ this.props.reason);
+        if (typeof APP !== 'undefined') {
+            if (APP.conference && APP.conference._room) {
+                APP.conference._room.sendApplicationLog(JSON.stringify({
+                    name: 'page.reload',
+                    label: this.props.reason
+                }));
+            }
+        }
+
+        sendAnalytics(createPageReloadScheduledEvent(
+            this.props.reason,
+            this.state.timeoutSeconds,
+            this.props.details));
+
         logger.info(
             `The conference will be reloaded after ${
                 this.state.timeoutSeconds} seconds.`);
@@ -172,7 +199,7 @@ export default class AbstractPageReloadOverlay extends Component<*, *> {
                             this._interval = undefined;
                         }
 
-                        this.props.dispatch(_reloadNow());
+                        this.props.dispatch(reloadNow());
                     } else {
                         this.setState(prevState => {
                             return {
@@ -198,7 +225,7 @@ export default class AbstractPageReloadOverlay extends Component<*, *> {
     }
 
     /**
-     * Renders the button for relaod the page if necessary.
+     * Renders the button for reloading the page if necessary.
      *
      * @protected
      * @returns {ReactElement|null}
@@ -243,16 +270,20 @@ export default class AbstractPageReloadOverlay extends Component<*, *> {
  * @param {Object} state - The redux state.
  * @protected
  * @returns {{
+ *     details: Object,
  *     isNetworkFailure: boolean,
  *     reason: string
  * }}
  */
 export function abstractMapStateToProps(state: Object) {
-    const conferenceError = state['features/base/conference'].error;
-    const connectionError = state['features/base/connection'].error;
+    const { error: configError } = state['features/base/config'];
+    const { error: connectionError } = state['features/base/connection'];
+    const { fatalError } = state['features/overlay'];
 
     return {
-        isNetworkFailure: Boolean(connectionError),
-        reason: (connectionError || conferenceError).message
+        details: fatalError && fatalError.details,
+        isNetworkFailure:
+            fatalError === configError || fatalError === connectionError,
+        reason: fatalError && fatalError.message
     };
 }

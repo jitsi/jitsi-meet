@@ -1,73 +1,31 @@
-/* globals APP, interfaceConfig */
-
-import { openDialog } from '../base/dialog';
-import JitsiMeetJS from '../base/lib-jitsi-meet';
 import { API_ID } from '../../../modules/API/constants';
-import {
-    setAudioInputDevice,
-    setAudioOutputDevice,
-    setVideoInputDevice
-} from '../base/devices';
-import { i18next } from '../base/i18n';
 import {
     PostMessageTransportBackend,
     Transport
 } from '../../../modules/transport';
 
+import { createDeviceChangedEvent, sendAnalytics } from '../analytics';
+import {
+    getAudioOutputDeviceId,
+    setAudioInputDevice,
+    setAudioOutputDeviceId,
+    setVideoInputDevice
+} from '../base/devices';
+import { i18next } from '../base/i18n';
+import JitsiMeetJS from '../base/lib-jitsi-meet';
+import { updateSettings } from '../base/settings';
+
 import { SET_DEVICE_SELECTION_POPUP_DATA } from './actionTypes';
-import { DeviceSelectionDialog } from './components';
+import { getDeviceSelectionDialogProps } from './functions';
 
-/**
- * Open DeviceSelectionDialog with a configuration based on the environment's
- * supported abilities.
- *
- * @returns {Function}
- */
-export function openDeviceSelectionDialog() {
-    return dispatch => {
-        if (interfaceConfig.filmStripOnly) {
-            dispatch(_openDeviceSelectionDialogInPopup());
-        } else {
-            dispatch(_openDeviceSelectionDialogHere());
-        }
-    };
-}
-
-/**
- * Opens the DeviceSelectionDialog in the same window.
- *
- * @returns {Function}
- */
-function _openDeviceSelectionDialogHere() {
-    return dispatch =>
-        JitsiMeetJS.mediaDevices.isDeviceListAvailable()
-            .then(isDeviceListAvailable => {
-                dispatch(openDialog(DeviceSelectionDialog, {
-                    currentAudioInputId: APP.settings.getMicDeviceId(),
-                    currentAudioOutputId: APP.settings.getAudioOutputDeviceId(),
-                    currentVideoInputId: APP.settings.getCameraDeviceId(),
-                    disableAudioInputChange:
-                        !JitsiMeetJS.isMultipleAudioInputSupported(),
-                    disableDeviceChange: !isDeviceListAvailable
-                        || !JitsiMeetJS.mediaDevices.isDeviceChangeAvailable(),
-                    hasAudioPermission: JitsiMeetJS.mediaDevices
-                        .isDevicePermissionGranted.bind(null, 'audio'),
-                    hasVideoPermission: JitsiMeetJS.mediaDevices
-                        .isDevicePermissionGranted.bind(null, 'video'),
-                    hideAudioInputPreview:
-                        !JitsiMeetJS.isCollectingLocalStats(),
-                    hideAudioOutputSelect: !JitsiMeetJS.mediaDevices
-                        .isDeviceChangeAvailable('output')
-                }));
-            });
-}
+const logger = require('jitsi-meet-logger').getLogger(__filename);
 
 /**
  * Opens a popup window with the device selection dialog in it.
  *
  * @returns {Function}
  */
-function _openDeviceSelectionDialogInPopup() {
+export function openDeviceSelectionPopup() {
     return (dispatch, getState) => {
         const { popupDialogData } = getState()['features/device-selection'];
 
@@ -135,12 +93,12 @@ function _openDeviceSelectionDialogInPopup() {
  */
 function _processRequest(dispatch, getState, request, responseCallback) { // eslint-disable-line max-len, max-params
     if (request.type === 'devices') {
+        const state = getState();
+        const settings = state['features/base/settings'];
+
         switch (request.name) {
         case 'isDeviceListAvailable':
-            JitsiMeetJS.mediaDevices.isDeviceListAvailable()
-                .then(isDeviceListAvailable =>
-                    responseCallback(isDeviceListAvailable))
-                .catch(e => responseCallback(null, e));
+            responseCallback(JitsiMeetJS.mediaDevices.isDeviceListAvailable());
             break;
         case 'isDeviceChangeAvailable':
             responseCallback(
@@ -152,32 +110,31 @@ function _processRequest(dispatch, getState, request, responseCallback) { // esl
             break;
         case 'getCurrentDevices':
             responseCallback({
-                audioInput: APP.settings.getMicDeviceId(),
-                audioOutput: APP.settings.getAudioOutputDeviceId(),
-                videoInput: APP.settings.getCameraDeviceId()
+                audioInput: settings.micDeviceId,
+                audioOutput: getAudioOutputDeviceId(),
+                videoInput: settings.cameraDeviceId
             });
             break;
         case 'getAvailableDevices':
             responseCallback(getState()['features/base/devices']);
             break;
         case 'setDevice': {
-            let action;
             const { device } = request;
 
             switch (device.kind) {
             case 'audioinput':
-                action = setAudioInputDevice;
+                dispatch(setAudioInputDevice(device.id));
                 break;
             case 'audiooutput':
-                action = setAudioOutputDevice;
+                setAudioOutputDeviceId(device.id, dispatch);
                 break;
             case 'videoinput':
-                action = setVideoInputDevice;
+                dispatch(setVideoInputDevice(device.id));
                 break;
             default:
 
             }
-            dispatch(action(device.id));
+
             responseCallback(true);
             break;
         }
@@ -209,5 +166,57 @@ function _setDeviceSelectionPopupData(popupDialogData) {
     return {
         type: SET_DEVICE_SELECTION_POPUP_DATA,
         popupDialogData
+    };
+}
+
+/**
+ * Submits the settings related to device selection.
+ *
+ * @param {Object} newState - The new settings.
+ * @returns {Function}
+ */
+export function submitDeviceSelectionTab(newState) {
+    return (dispatch, getState) => {
+        const currentState = getDeviceSelectionDialogProps(getState());
+
+        if (newState.selectedVideoInputId
+            && newState.selectedVideoInputId
+                !== currentState.selectedVideoInputId) {
+            dispatch(updateSettings({
+                cameraDeviceId: newState.selectedVideoInputId
+            }));
+
+            dispatch(
+                setVideoInputDevice(newState.selectedVideoInputId));
+        }
+
+        if (newState.selectedAudioInputId
+                && newState.selectedAudioInputId
+                  !== currentState.selectedAudioInputId) {
+            dispatch(updateSettings({
+                micDeviceId: newState.selectedAudioInputId
+            }));
+
+            dispatch(
+                setAudioInputDevice(newState.selectedAudioInputId));
+        }
+
+        if (newState.selectedAudioOutputId
+                && newState.selectedAudioOutputId
+                    !== currentState.selectedAudioOutputId) {
+            sendAnalytics(createDeviceChangedEvent('audio', 'output'));
+
+            setAudioOutputDeviceId(
+                newState.selectedAudioOutputId,
+                dispatch)
+                .then(() => logger.log('changed audio output device'))
+                .catch(err => {
+                    logger.warn(
+                        'Failed to change audio output device.',
+                        'Default or previously set audio output device will',
+                        ' be used instead.',
+                        err);
+                });
+        }
     };
 }

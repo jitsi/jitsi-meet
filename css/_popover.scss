@@ -10,12 +10,22 @@
     right: 0;
     width: 100%;
 }
-.popover-mousemove-padding-right {
+
+%vertical-popover-padding {
     height: 100%;
     position: absolute;
-    right: -20;
     top: 0;
     width: 40px;
+}
+
+.popover-mousemove-padding-left {
+    @extend %vertical-popover-padding;
+    left: -20px;
+}
+
+.popover-mousemove-padding-right {
+    @extend %vertical-popover-padding;
+    right: -20px;
 }
 
 /**

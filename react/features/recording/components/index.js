@@ -1,1 +1,5 @@
-export { default as RecordingLabel } from './RecordingLabel';
+// @flow
+
+export * from './_';
+export * from './LiveStream';
+export * from './Recording';

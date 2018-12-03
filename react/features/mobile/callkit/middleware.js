@@ -1,31 +1,37 @@
 // @flow
 
-import { NativeModules } from 'react-native';
 import uuid from 'uuid';
 
-import { sendAnalyticsEvent } from '../../analytics';
-import { APP_WILL_MOUNT, APP_WILL_UNMOUNT, appNavigate } from '../../app';
+import { createTrackMutedEvent, sendAnalytics } from '../../analytics';
+import { appNavigate, getName } from '../../app';
+import { APP_WILL_MOUNT, APP_WILL_UNMOUNT } from '../../base/app';
 import {
     CONFERENCE_FAILED,
     CONFERENCE_LEFT,
     CONFERENCE_WILL_JOIN,
     CONFERENCE_JOINED,
+    SET_AUDIO_ONLY,
     getCurrentConference
 } from '../../base/conference';
 import { getInviteURL } from '../../base/connection';
 import {
+    MEDIA_TYPE,
     isVideoMutedByAudioOnly,
-    SET_AUDIO_MUTED,
-    SET_VIDEO_MUTED,
     setAudioMuted
 } from '../../base/media';
 import { MiddlewareRegistry } from '../../base/redux';
+import {
+    TRACK_ADDED,
+    TRACK_REMOVED,
+    TRACK_UPDATED,
+    isLocalTrackMuted
+} from '../../base/tracks';
 
 import { _SET_CALLKIT_SUBSCRIPTIONS } from './actionTypes';
 import CallKit from './CallKit';
 
 /**
- * Middleware that captures several system actions and hooks up CallKit.
+ * Middleware that captures system actions and hooks up CallKit.
  *
  * @param {Store} store - The redux store.
  * @returns {Function}
@@ -57,35 +63,37 @@ CallKit && MiddlewareRegistry.register(store => next => action => {
     case CONFERENCE_WILL_JOIN:
         return _conferenceWillJoin(store, next, action);
 
-    case SET_AUDIO_MUTED:
-        return _setAudioMuted(store, next, action);
+    case SET_AUDIO_ONLY:
+        return _setAudioOnly(store, next, action);
 
-    case SET_VIDEO_MUTED:
-        return _setVideoMuted(store, next, action);
+    case TRACK_ADDED:
+    case TRACK_REMOVED:
+    case TRACK_UPDATED:
+        return _syncTrackState(store, next, action);
     }
 
     return next(action);
 });
 
 /**
- * Notifies the feature jwt that the action {@link APP_WILL_MOUNT} is being
+ * Notifies the feature callkit that the action {@link APP_WILL_MOUNT} is being
  * dispatched within a specific redux {@code store}.
  *
  * @param {Store} store - The redux store in which the specified {@code action}
  * is being dispatched.
- * @param {Dispatch} next - The redux dispatch function to dispatch the
- * specified {@code action} to the specified {@code store}.
+ * @param {Dispatch} next - The redux {@code dispatch} function to dispatch the
+ * specified {@code action} in the specified {@code store}.
  * @param {Action} action - The redux action {@code APP_WILL_MOUNT} which is
  * being dispatched in the specified {@code store}.
  * @private
- * @returns {*}
+ * @returns {*} The value returned by {@code next(action)}.
  */
 function _appWillMount({ dispatch, getState }, next, action) {
     const result = next(action);
 
     CallKit.setProviderConfiguration({
         iconTemplateImageName: 'CallKitIcon',
-        localizedName: NativeModules.AppInfo.name
+        localizedName: getName()
     });
 
     const context = {
@@ -103,8 +111,8 @@ function _appWillMount({ dispatch, getState }, next, action) {
             context),
 
         // According to CallKit's documentation, when the system resets we
-        // should terminate all calls. Hence, providerDidReset is the same
-        // to us as performEndCallAction.
+        // should terminate all calls. Hence, providerDidReset is the same to us
+        // as performEndCallAction.
         CallKit.addListener(
             'providerDidReset',
             _onPerformEndCallAction,
@@ -120,17 +128,17 @@ function _appWillMount({ dispatch, getState }, next, action) {
 }
 
 /**
- * Notifies the feature jwt that the action {@link CONFERENCE_FAILED} is being
- * dispatched within a specific redux {@code store}.
+ * Notifies the feature callkit that the action {@link CONFERENCE_FAILED} is
+ * being dispatched within a specific redux {@code store}.
  *
  * @param {Store} store - The redux store in which the specified {@code action}
  * is being dispatched.
- * @param {Dispatch} next - The redux dispatch function to dispatch the
- * specified {@code action} to the specified {@code store}.
+ * @param {Dispatch} next - The redux {@code dispatch} function to dispatch the
+ * specified {@code action} in the specified {@code store}.
  * @param {Action} action - The redux action {@code CONFERENCE_FAILED} which is
  * being dispatched in the specified {@code store}.
  * @private
- * @returns {*}
+ * @returns {*} The value returned by {@code next(action)}.
  */
 function _conferenceFailed(store, next, action) {
     const result = next(action);
@@ -150,17 +158,17 @@ function _conferenceFailed(store, next, action) {
 }
 
 /**
- * Notifies the feature jwt that the action {@link CONFERENCE_JOINED} is being
- * dispatched within a specific redux {@code store}.
+ * Notifies the feature callkit that the action {@link CONFERENCE_JOINED} is
+ * being dispatched within a specific redux {@code store}.
  *
  * @param {Store} store - The redux store in which the specified {@code action}
  * is being dispatched.
- * @param {Dispatch} next - The redux dispatch function to dispatch the
- * specified {@code action} to the specified {@code store}.
+ * @param {Dispatch} next - The redux {@code dispatch} function to dispatch the
+ * specified {@code action} in the specified {@code store}.
  * @param {Action} action - The redux action {@code CONFERENCE_JOINED} which is
  * being dispatched in the specified {@code store}.
  * @private
- * @returns {*}
+ * @returns {*} The value returned by {@code next(action)}.
  */
 function _conferenceJoined(store, next, action) {
     const result = next(action);
@@ -175,17 +183,17 @@ function _conferenceJoined(store, next, action) {
 }
 
 /**
- * Notifies the feature jwt that the action {@link CONFERENCE_LEFT} is being
+ * Notifies the feature callkit that the action {@link CONFERENCE_LEFT} is being
  * dispatched within a specific redux {@code store}.
  *
  * @param {Store} store - The redux store in which the specified {@code action}
  * is being dispatched.
- * @param {Dispatch} next - The redux dispatch function to dispatch the
- * specified {@code action} to the specified {@code store}.
+ * @param {Dispatch} next - The redux {@code dispatch} function to dispatch the
+ * specified {@code action} in the specified {@code store}.
  * @param {Action} action - The redux action {@code CONFERENCE_LEFT} which is
  * being dispatched in the specified {@code store}.
  * @private
- * @returns {*}
+ * @returns {*} The value returned by {@code next(action)}.
  */
 function _conferenceLeft(store, next, action) {
     const result = next(action);
@@ -200,37 +208,48 @@ function _conferenceLeft(store, next, action) {
 }
 
 /**
- * Notifies the feature jwt that the action {@link CONFERENCE_WILL_JOIN} is
+ * Notifies the feature callkit that the action {@link CONFERENCE_WILL_JOIN} is
  * being dispatched within a specific redux {@code store}.
  *
  * @param {Store} store - The redux store in which the specified {@code action}
  * is being dispatched.
- * @param {Dispatch} next - The redux dispatch function to dispatch the
- * specified {@code action} to the specified {@code store}.
+ * @param {Dispatch} next - The redux {@code dispatch} function to dispatch the
+ * specified {@code action} in the specified {@code store}.
  * @param {Action} action - The redux action {@code CONFERENCE_WILL_JOIN} which
  * is being dispatched in the specified {@code store}.
  * @private
- * @returns {*}
+ * @returns {*} The value returned by {@code next(action)}.
  */
 function _conferenceWillJoin({ getState }, next, action) {
     const result = next(action);
 
     const { conference } = action;
     const state = getState();
+    const { callHandle, callUUID } = state['features/base/config'];
     const url = getInviteURL(state);
+    const handle = callHandle || url.toString();
     const hasVideo = !isVideoMutedByAudioOnly(state);
 
-    // When assigning the call UUID, do so in upper case, since iOS will
-    // return it upper cased.
-    conference.callUUID = uuid.v4().toUpperCase();
-    CallKit.startCall(conference.callUUID, url.toString(), hasVideo)
-        .then(() => {
-            const { room } = state['features/base/conference'];
-            const { callee } = state['features/base/jwt'];
+    // When assigning the call UUID, do so in upper case, since iOS will return
+    // it upper cased.
+    conference.callUUID = (callUUID || uuid.v4()).toUpperCase();
 
-            CallKit.updateCall(
-                conference.callUUID,
-                { displayName: (callee && callee.name) || room });
+    CallKit.startCall(conference.callUUID, handle, hasVideo)
+        .then(() => {
+            const { callee } = state['features/base/jwt'];
+            const displayName
+                 = state['features/base/config'].callDisplayName
+                     || (callee && callee.name)
+                     || state['features/base/conference'].room;
+
+            const muted
+                = isLocalTrackMuted(
+                    state['features/base/tracks'],
+                    MEDIA_TYPE.AUDIO);
+
+            // eslint-disable-next-line object-property-newline
+            CallKit.updateCall(conference.callUUID, { displayName, hasVideo });
+            CallKit.setMuted(conference.callUUID, muted);
         });
 
     return result;
@@ -263,62 +282,64 @@ function _onPerformEndCallAction({ callUUID }) {
  * {@code performSetMutedCallAction}.
  * @returns {void}
  */
-function _onPerformSetMutedCallAction({ callUUID, muted: newValue }) {
+function _onPerformSetMutedCallAction({ callUUID, muted }) {
     const { dispatch, getState } = this; // eslint-disable-line no-invalid-this
     const conference = getCurrentConference(getState);
 
     if (conference && conference.callUUID === callUUID) {
-        // Break the loop. Audio can be muted from both CallKit and Jitsi Meet.
-        // We must keep them in sync, but at some point the loop needs to be
-        // broken. We are doing it here, on the CallKit handler.
-        const { muted: oldValue } = getState()['features/base/media'].audio;
-
-        if (oldValue !== newValue) {
-            const value = Boolean(newValue);
-
-            sendAnalyticsEvent(`callkit.audio.${value ? 'muted' : 'unmuted'}`);
-            dispatch(setAudioMuted(value));
-        }
+        muted = Boolean(muted); // eslint-disable-line no-param-reassign
+        sendAnalytics(createTrackMutedEvent('audio', 'callkit', muted));
+        dispatch(setAudioMuted(muted, /* ensureTrack */ true));
     }
 }
 
 /**
- * Notifies the feature jwt that the action {@link SET_AUDIO_MUTED} is being
- * dispatched within a specific redux {@code store}.
+ * Update CallKit with the audio only state of the conference. When a conference
+ * is in audio only mode we will tell CallKit the call has no video. This
+ * affects how the call is saved in the recent calls list.
+ *
+ * XXX: Note that here we are taking the `audioOnly` value straight from the
+ * action, instead of examining the state. This is intentional, as setting the
+ * audio only involves multiple actions which will be reflected in the state
+ * later, but we are just interested in knowing if the mode is going to be
+ * set or not.
  *
  * @param {Store} store - The redux store in which the specified {@code action}
  * is being dispatched.
- * @param {Dispatch} next - The redux dispatch function to dispatch the
- * specified {@code action} to the specified {@code store}.
- * @param {Action} action - The redux action {@code SET_AUDIO_MUTED} which is
- * being dispatched in the specified {@code store}.
+ * @param {Dispatch} next - The redux {@code dispatch} function to dispatch the
+ * specified {@code action} in the specified {@code store}.
+ * @param {Action} action - The redux action which is being dispatched in the
+ * specified {@code store}.
  * @private
- * @returns {*}
+ * @returns {*} The value returned by {@code next(action)}.
  */
-function _setAudioMuted({ getState }, next, action) {
+function _setAudioOnly({ getState }, next, action) {
     const result = next(action);
-
-    const conference = getCurrentConference(getState);
+    const state = getState();
+    const conference = getCurrentConference(state);
 
     if (conference && conference.callUUID) {
-        CallKit.setMuted(conference.callUUID, action.muted);
+        CallKit.updateCall(
+            conference.callUUID,
+            { hasVideo: !action.audioOnly });
     }
 
     return result;
 }
 
 /**
- * Notifies the feature jwt that the action {@link _SET_CALLKIT_SUBSCRIPTIONS}
- * is being dispatched within a specific redux {@code store}.
+ * Notifies the feature callkit that the action
+ * {@link _SET_CALLKIT_SUBSCRIPTIONS} is being dispatched within a specific
+ * redux {@code store}.
  *
  * @param {Store} store - The redux store in which the specified {@code action}
  * is being dispatched.
- * @param {Dispatch} next - The redux dispatch function to dispatch the
- * specified {@code action} to the specified {@code store}.
+ * @param {Dispatch} next - The redux {@code dispatch} function to dispatch the
+ * specified {@code action} in the specified {@code store}.
  * @param {Action} action - The redux action {@code _SET_CALLKIT_SUBSCRIPTIONS}
  * which is being dispatched in the specified {@code store}.
  * @private
- * @returns {*}
+ * @returns {*} The value returned by {@code next(action)}.
  */
 function _setCallKitSubscriptions({ getState }, next, action) {
     const { subscriptions } = getState()['features/callkit'];
@@ -333,27 +354,40 @@ function _setCallKitSubscriptions({ getState }, next, action) {
 }
 
 /**
- * Notifies the feature jwt that the action {@link SET_VIDEO_MUTED} is being
- * dispatched within a specific redux {@code store}.
+ * Synchronize the muted state of tracks with CallKit.
  *
  * @param {Store} store - The redux store in which the specified {@code action}
  * is being dispatched.
- * @param {Dispatch} next - The redux dispatch function to dispatch the
- * specified {@code action} to the specified {@code store}.
- * @param {Action} action - The redux action {@code SET_VIDEO_MUTED} which is
- * being dispatched in the specified {@code store}.
+ * @param {Dispatch} next - The redux {@code dispatch} function to dispatch the
+ * specified {@code action} in the specified {@code store}.
+ * @param {Action} action - The redux action which is being dispatched in the
+ * specified {@code store}.
  * @private
- * @returns {*}
+ * @returns {*} The value returned by {@code next(action)}.
  */
-function _setVideoMuted({ getState }, next, action) {
+function _syncTrackState({ getState }, next, action) {
     const result = next(action);
+    const { jitsiTrack } = action.track;
+    const state = getState();
+    const conference = getCurrentConference(state);
 
-    const conference = getCurrentConference(getState);
+    if (jitsiTrack.isLocal() && conference && conference.callUUID) {
+        switch (jitsiTrack.getType()) {
+        case 'audio': {
+            const tracks = state['features/base/tracks'];
+            const muted = isLocalTrackMuted(tracks, MEDIA_TYPE.AUDIO);
 
-    if (conference && conference.callUUID) {
-        CallKit.updateCall(
-            conference.callUUID,
-            { hasVideo: !isVideoMutedByAudioOnly(getState) });
+            CallKit.setMuted(conference.callUUID, muted);
+            break;
+        }
+        case 'video': {
+            CallKit.updateCall(
+                conference.callUUID,
+                { hasVideo: !isVideoMutedByAudioOnly(state) });
+            break;
+        }
+
+        }
     }
 
     return result;

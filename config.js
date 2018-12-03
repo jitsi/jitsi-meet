@@ -18,9 +18,6 @@ var config = {
         // XMPP domain.
         domain: 'jitsi-meet.example.com',
 
-        // XMPP MUC domain. FIXME: use XEP-0030 to discover it.
-        muc: 'conference.jitsi-meet.example.com'
-
         // When using authentication, domain for guest users.
         // anonymousdomain: 'guest.example.com',
 
@@ -35,6 +32,9 @@ var config = {
 
         // Focus component domain. Defaults to focus.<domain>.
         // focus: 'focus.jitsi-meet.example.com',
+
+        // XMPP MUC domain. FIXME: use XEP-0030 to discover it.
+        muc: 'conference.jitsi-meet.example.com'
     },
 
     // BOSH URL. FIXME: use XEP-0156 to discover it.
@@ -57,6 +57,9 @@ var config = {
         // P2P test mode disables automatic switching to P2P when there are 2
         // participants in the conference.
         p2pTestMode: false
+
+        // Enables the test specific features consumed by jitsi-meet-torture
+        // testMode: false
     },
 
     // Disables ICE/UDP by filtering out local and remote UDP candidates in
@@ -94,15 +97,15 @@ var config = {
 
     // w3c spec-compliant video constraints to use for video capture. Currently
     // used by browsers that return true from lib-jitsi-meet's
-    // RTCBrowserType#usesNewGumFlow. The constraints are independency from
+    // util#browser#usesNewGumFlow. The constraints are independency from
     // this config's resolution value. Defaults to requesting an ideal aspect
-    // ratio of 16:9 with an ideal resolution of 1080p.
+    // ratio of 16:9 with an ideal resolution of 720.
     // constraints: {
     //     video: {
     //         aspectRatio: 16 / 9,
     //         height: {
-    //             ideal: 1080,
-    //             max: 1080,
+    //             ideal: 720,
+    //             max: 720,
     //             min: 240
     //         }
     //     }
@@ -110,6 +113,11 @@ var config = {
 
     // Enable / disable simulcast support.
     // disableSimulcast: false,
+
+    // Enable / disable layer suspension.  If enabled, endpoints whose HD
+    // layers are not in use will be suspended (no longer sent) until they
+    // are requested again.
+    // enableLayerSuspension: false,
 
     // Suspend sending video if bandwidth estimation is too low. This may cause
     // problems with audio playback. Disabled until these are fixed.
@@ -134,9 +142,6 @@ var config = {
 
     // Desktop sharing
 
-    // Enable / disable desktop sharing
-    // disableDesktopSharing: false,
-
     // The ID of the jidesha extension for Chrome.
     desktopSharingChromeExtId: null,
 
@@ -150,33 +155,33 @@ var config = {
     // Required version of Chrome extension
     desktopSharingChromeMinExtVersion: '0.1',
 
-    // The ID of the jidesha extension for Firefox. If null, we assume that no
-    // extension is required.
-    desktopSharingFirefoxExtId: null,
-
     // Whether desktop sharing should be disabled on Firefox.
     desktopSharingFirefoxDisabled: false,
 
-    // The maximum version of Firefox which requires a jidesha extension.
-    // Example: if set to 41, we will require the extension for Firefox versions
-    // up to and including 41. On Firefox 42 and higher, we will run without the
-    // extension.
-    // If set to -1, an extension will be required for all versions of Firefox.
-    desktopSharingFirefoxMaxVersionExtRequired: 51,
-
-    // The URL to the Firefox extension for desktop sharing.
-    desktopSharingFirefoxExtensionURL: null,
+    // Optional desktop sharing frame rate options. Default value: min:5, max:5.
+    // desktopSharingFrameRate: {
+    //     min: 5,
+    //     max: 5
+    // },
 
     // Try to start calls with screen-sharing instead of camera video.
     // startScreenSharing: false,
 
     // Recording
 
-    // Whether to enable recording or not.
-    // enableRecording: false,
+    // Whether to enable file recording or not.
+    // fileRecordingsEnabled: false,
+    // Enable the dropbox integration.
+    // dropbox: {
+    //     appKey: '<APP_KEY>' // Specify your app key here.
+    // },
 
-    // Type for recording: one of jibri or jirecon.
-    // recordingType: 'jibri',
+    // Whether to enable live streaming or not.
+    // liveStreamingEnabled: false,
+
+    // Transcription (in interface_config,
+    // subtitles and buttons can be configured)
+    // transcribingEnabled: false,
 
     // Misc
 
@@ -185,6 +190,23 @@ var config = {
 
     // Disables or enables RTX (RFC 4588) (defaults to false).
     // disableRtx: false,
+
+    // Disables or enables TCC (the default is in Jicofo and set to true)
+    // (draft-holmer-rmcat-transport-wide-cc-extensions-01). This setting
+    // affects congestion control, it practically enables send-side bandwidth
+    // estimations.
+    // enableTcc: true,
+
+    // Disables or enables REMB (the default is in Jicofo and set to false)
+    // (draft-alvestrand-rmcat-remb-03). This setting affects congestion
+    // control, it practically enables recv-side bandwidth estimations. When
+    // both TCC and REMB are enabled, TCC takes precedence. When both are
+    // disabled, then bandwidth estimations are disabled.
+    // enableRemb: false,
+
+    // Defines the minimum number of participants to start a call (the default
+    // is set in Jicofo and set to 2).
+    // minParticipants: 2,
 
     // Use XEP-0215 to fetch STUN and TURN servers.
     // useStunTurn: true,
@@ -219,14 +241,11 @@ var config = {
     // Disable hiding of remote thumbnails when in a 1-on-1 conference call.
     // disable1On1Mode: false,
 
+
     // If true open a externalAuth URL on popup else perform a redirection
     // of current page.
     // enablePopupExternalAuth:true,
 
-
-    // The minimum value a video's height (or width, whichever is smaller) needs
-    // to be in order to be considered high-definition.
-    minHDHeight: 540,
 
     // Default language for the user interface.
     // defaultLanguage: 'en',
@@ -236,16 +255,25 @@ var config = {
     // edit their profile.
     enableUserRolesBasedOnToken: false,
 
+    // Whether or not some features are checked based on token.
+    // enableFeaturesBasedOnToken: false,
+
     // Message to show the users. Example: 'The service will be down for
     // maintenance at 01:00 AM GMT,
     // noticeMessage: '',
 
+    // Enables calendar integration, depends on googleApiApplicationClientID
+    // and microsoftApiApplicationClientID
+    // enableCalendarIntegration: false,
 
     // Stats
     //
 
-    // Whether to enable stats collection or not.
-    // disableStats: false,
+    // Whether to enable stats collection or not in the TraceablePeerConnection.
+    // This can be useful for debugging purposes (post-processing/analysis of
+    // the webrtc stats) as it is done in the jitsi-meet-torture bandwidth
+    // estimation tests.
+    // gatherStats: false,
 
     // To enable sending statistics to callstats.io you must provide the
     // Application ID and Secret.
@@ -312,16 +340,105 @@ var config = {
         // backToP2PDelay: 5
     },
 
+    // A list of scripts to load as lib-jitsi-meet "analytics handlers".
+    // analyticsScriptUrls: [
+    //      "libs/analytics-ga.js", // google-analytics
+    //      "https://example.com/my-custom-analytics.js"
+    // ],
+
+    // The Google Analytics Tracking ID
+    // googleAnalyticsTrackingId = 'your-tracking-id-here-UA-123456-1',
 
     // Information about the jitsi-meet instance we are connecting to, including
     // the user region as seen by the server.
-    //
-
     deploymentInfo: {
         // shard: "shard1",
         // region: "europe",
         // userRegion: "asia"
     }
+
+    // Local Recording
+    //
+
+    // localRecording: {
+    // Enables local recording.
+    // Additionally, 'localrecording' (all lowercase) needs to be added to
+    // TOOLBAR_BUTTONS in interface_config.js for the Local Recording
+    // button to show up on the toolbar.
+    //
+    //     enabled: true,
+    //
+
+    // The recording format, can be one of 'ogg', 'flac' or 'wav'.
+    //     format: 'flac'
+    //
+
+    // }
+
+    // Options related to end-to-end (participant to participant) ping.
+    // e2eping: {
+    //   // The interval in milliseconds at which pings will be sent.
+    //   // Defaults to 10000, set to <= 0 to disable.
+    //   pingInterval: 10000,
+    //
+    //   // The interval in milliseconds at which analytics events
+    //   // with the measured RTT will be sent. Defaults to 60000, set
+    //   // to <= 0 to disable.
+    //   analyticsInterval: 60000,
+    //   }
+
+    // List of undocumented settings used in jitsi-meet
+    /**
+     _immediateReloadThreshold
+     autoRecord
+     autoRecordToken
+     debug
+     debugAudioLevels
+     deploymentInfo
+     dialInConfCodeUrl
+     dialInNumbersUrl
+     dialOutAuthUrl
+     dialOutCodesUrl
+     disableRemoteControl
+     displayJids
+     enableLocalVideoFlip
+     etherpad_base
+     externalConnectUrl
+     firefox_fake_device
+     googleApiApplicationClientID
+     googleApiIOSClientID
+     iAmRecorder
+     iAmSipGateway
+     microsoftApiApplicationClientID
+     peopleSearchQueryTypes
+     peopleSearchUrl
+     requireDisplayName
+     tokenAuthUrl
+     */
+
+    // List of undocumented settings used in lib-jitsi-meet
+    /**
+     _peerConnStatusOutOfLastNTimeout
+     _peerConnStatusRtcMuteTimeout
+     abTesting
+     avgRtpStatsN
+     callStatsConfIDNamespace
+     callStatsCustomScriptUrl
+     desktopSharingSources
+     disableAEC
+     disableAGC
+     disableAP
+     disableHPF
+     disableNS
+     enableLipSync
+     enableTalkWhileMuted
+     forceJVB121Ratio
+     hiddenDomain
+     ignoreStartMuted
+     nick
+     startBitrate
+     */
+
 };
 
 /* eslint-enable no-unused-vars, no-var */

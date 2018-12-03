@@ -37,20 +37,20 @@ export default class JitsiMeetLogStorage {
             return;
         }
 
-        let logJSON = `{"log${this.counter}":"\n`;
+        let logMessage = `{"log${this.counter}":"\n`;
 
         for (let i = 0, len = logEntries.length; i < len; i++) {
             const logEntry = logEntries[i];
 
             if (typeof logEntry === 'object') {
                 // Aggregated message
-                logJSON += `(${logEntry.count}) ${logEntry.text}\n`;
+                logMessage += `(${logEntry.count}) ${logEntry.text}\n`;
             } else {
                 // Regular message
-                logJSON += `${logEntry}\n`;
+                logMessage += `${logEntry}\n`;
             }
         }
-        logJSON += '"}';
+        logMessage += '"}';
 
         this.counter += 1;
 
@@ -58,11 +58,11 @@ export default class JitsiMeetLogStorage {
         // on the way that could be uninitialized if the storeLogs
         // attempt would be made very early (which is unlikely)
         try {
-            APP.conference.logJSON(logJSON);
+            APP.conference._room.sendApplicationLog(logMessage);
         } catch (error) {
             // NOTE console is intentional here
             console.error(
-                'Failed to store the logs: ', logJSON, error);
+                'Failed to store the logs: ', logMessage, error);
         }
     }
 }

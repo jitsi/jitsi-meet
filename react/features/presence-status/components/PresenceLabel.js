@@ -1,8 +1,51 @@
-import PropTypes from 'prop-types';
+/* @flow */
+
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
+import { translate } from '../../base/i18n';
 import { getParticipantById } from '../../base/participants';
+import { Text } from '../../base/react';
+
+import { STATUS_TO_I18N_KEY } from '../constants';
+
+/**
+ * The type of the React {@code Component} props of {@link PresenceLabel}.
+ */
+type Props = {
+
+    /**
+     * The current present status associated with the passed in participantID
+     * prop.
+     */
+    _presence: string,
+
+    /**
+     * Class name for the presence label.
+     */
+    className: string,
+
+    /**
+     * Default presence status that will be displayed if user's presence status
+     * is not available.
+     */
+    defaultPresence: string,
+
+    /**
+     * The ID of the participant whose presence status should display.
+     */
+    participantID: string,
+
+    /**
+     * Styles for the presence label.
+     */
+    style: Object,
+
+    /**
+     * Invoked to obtain translated strings.
+     */
+    t: Function
+};
 
 /**
  * React {@code Component} for displaying the current presence status of a
@@ -10,7 +53,7 @@ import { getParticipantById } from '../../base/participants';
  *
  * @extends Component
  */
-class PresenceLabel extends Component {
+class PresenceLabel extends Component<Props> {
     /**
      * The default values for {@code PresenceLabel} component's property types.
      *
@@ -21,39 +64,47 @@ class PresenceLabel extends Component {
     };
 
     /**
-     * {@code PresenceLabel} component's property types.
-     *
-     * @static
-     */
-    static propTypes = {
-        /**
-         * The current present status associated with the passed in
-         * participantID prop.
-         */
-        _presence: PropTypes.string,
-
-        /**
-         * The ID of the participant whose presence status shoul display.
-         */
-        participantID: PropTypes.string
-    };
-
-    /**
      * Implements React's {@link Component#render()}.
      *
      * @inheritdoc
      * @returns {ReactElement}
      */
     render() {
-        const { _presence } = this.props;
+        const text = this._getPresenceText();
+
+        if (text === null) {
+            return null;
+        }
+
+        const { style, className } = this.props;
 
         return (
-            <div
-                className
-                    = { `presence-label ${_presence ? '' : 'no-presence'}` }>
-                { _presence }
-            </div>
-        );
+            <Text
+                className = { className }
+                { ...style }>
+                { text }
+            </Text>);
+    }
+
+    /**
+     * Returns the text associated with the current presence status.
+     *
+     * @returns {string}
+     */
+    _getPresenceText() {
+        const { _presence, t } = this.props;
+
+        if (!_presence) {
+            return null;
+        }
+
+        const i18nKey = STATUS_TO_I18N_KEY[_presence];
+
+        if (!i18nKey) { // fallback to status value
+            return _presence;
+        }
+
+        return t(i18nKey);
     }
 }
 
@@ -70,13 +121,12 @@ class PresenceLabel extends Component {
  * }}
  */
 function _mapStateToProps(state, ownProps) {
-    const participant
-        = getParticipantById(
-            state['features/base/participants'], ownProps.participantID);
+    const participant = getParticipantById(state, ownProps.participantID);
 
     return {
-        _presence: participant && participant.presence
+        _presence:
+            (participant && participant.presence) || ownProps.defaultPresence
     };
 }
 
-export default connect(_mapStateToProps)(PresenceLabel);
+export default translate(connect(_mapStateToProps)(PresenceLabel));

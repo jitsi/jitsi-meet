@@ -36,14 +36,13 @@
                    restorationHandler:restorationHandler];
 }
 
-- (BOOL)application:(UIApplication *)application
+
+- (BOOL)application:(UIApplication *)app
             openURL:(NSURL *)url
-  sourceApplication:(NSString *)sourceApplication
-         annotation:(id)annotation {
-    return [JitsiMeetView application:application
+            options:(NSDictionary<UIApplicationOpenURLOptionsKey,id> *)options {
+    return [JitsiMeetView application:app
                               openURL:url
-                    sourceApplication:sourceApplication
-                           annotation:annotation];
+                              options:options];
 }
 
 @end

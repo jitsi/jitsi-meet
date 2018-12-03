@@ -1,5 +1,5 @@
+import { SET_ROOM } from '../base/conference';
 import { MiddlewareRegistry } from '../base/redux';
-import { LIB_DID_INIT } from '../base/lib-jitsi-meet';
 
 import { initAnalytics } from './functions';
 
@@ -12,9 +12,12 @@ import { initAnalytics } from './functions';
  */
 MiddlewareRegistry.register(store => next => action => {
     switch (action.type) {
-    case LIB_DID_INIT: {
+    case SET_ROOM: {
+        const result = next(action);
+
         initAnalytics(store);
-        break;
+
+        return result;
     }
     }
 

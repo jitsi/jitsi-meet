@@ -1,108 +1,136 @@
+// @flow
+
 import { MultiSelectStateless } from '@atlaskit/multi-select';
 import AKInlineDialog from '@atlaskit/inline-dialog';
-import Spinner from '@atlaskit/spinner';
 import _debounce from 'lodash/debounce';
-import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 
 import InlineDialogFailure from './InlineDialogFailure';
 
+const logger = require('jitsi-meet-logger').getLogger(__filename);
+
+/**
+ * The type of the React {@code Component} props of
+ * {@link MultiSelectAutocomplete}.
+ */
+type Props = {
+
+    /**
+     * The default value of the selected item.
+     */
+    defaultValue: Array<Object>,
+
+    /**
+     * Optional footer to show as a last element in the results.
+     * Should be of type {content: <some content>}
+     */
+    footer: Object,
+
+    /**
+     * Indicates if the component is disabled.
+     */
+    isDisabled: boolean,
+
+    /**
+     * Text to display while a query is executing.
+     */
+    loadingMessage: string,
+
+    /**
+     * The text to show when no matches are found.
+     */
+    noMatchesFound: string,
+
+    /**
+     * The function called immediately before a selection has been actually
+     * selected. Provides an opportunity to do any formatting.
+     */
+    onItemSelected: Function,
+
+    /**
+     * The function called when the selection changes.
+     */
+    onSelectionChange: Function,
+
+    /**
+     * The placeholder text of the input component.
+     */
+    placeholder: string,
+
+    /**
+     * The service providing the search.
+     */
+    resourceClient: { makeQuery: Function, parseResults: Function },
+
+    /**
+     * Indicates if the component should fit the container.
+     */
+    shouldFitContainer: boolean,
+
+    /**
+     * Indicates if we should focus.
+     */
+    shouldFocus: boolean
+};
+
+/**
+ * The type of the React {@code Component} state of
+ * {@link MultiSelectAutocomplete}.
+ */
+type State = {
+
+    /**
+     * Indicates if the dropdown is open.
+     */
+    isOpen: boolean,
+
+    /**
+     * The text that filters the query result of the search.
+     */
+    filterValue: string,
+
+    /**
+     * Indicates if the component is currently loading results.
+     */
+    loading: boolean,
+
+    /**
+     * Indicates if there was an error.
+     */
+    error: boolean,
+
+    /**
+     * The list of result items.
+     */
+    items: Array<Object>,
+
+    /**
+     * The list of selected items.
+     */
+    selectedItems: Array<Object>
+};
+
 /**
  * A MultiSelect that is also auto-completing.
  */
-class MultiSelectAutocomplete extends Component {
-
-    /**
-     * {@code MultiSelectAutocomplete} component's property types.
-     *
-     * @static
-     */
-    static propTypes = {
-        /**
-         * The default value of the selected item.
-         */
-        defaultValue: PropTypes.array,
-
-        /**
-         * Indicates if the component is disabled.
-         */
-        isDisabled: PropTypes.bool,
-
-        /**
-         * The text to show when no matches are found.
-         */
-        noMatchesFound: PropTypes.string,
-
-        /**
-         * The function called when the selection changes.
-         */
-        onSelectionChange: PropTypes.func,
-
-        /**
-         * The placeholder text of the input component.
-         */
-        placeholder: PropTypes.string,
-
-        /**
-         * The service providing the search.
-         */
-        resourceClient: PropTypes.shape({
-            makeQuery: PropTypes.func,
-            parseResults: PropTypes.func
-        }).isRequired,
-
-        /**
-         * Indicates if the component should fit the container.
-         */
-        shouldFitContainer: PropTypes.bool,
-
-        /**
-         * Indicates if we should focus.
-         */
-        shouldFocus: PropTypes.bool
-    };
-
+class MultiSelectAutocomplete extends Component<Props, State> {
     /**
      * Initializes a new {@code MultiSelectAutocomplete} instance.
      *
      * @param {Object} props - The read-only properties with which the new
      * instance is to be initialized.
      */
-    constructor(props) {
+    constructor(props: Props) {
         super(props);
 
         const defaultValue = this.props.defaultValue || [];
 
         this.state = {
-            /**
-             * Indicates if the dropdown is open.
-             */
             isOpen: false,
-
-            /**
-             * The text that filters the query result of the search.
-             */
             filterValue: '',
-
-            /**
-             * Indicates if the component is currently loading results.
-             */
             loading: false,
-
-
-            /**
-             * Indicates if there was an error.
-             */
             error: false,
-
-            /**
-             * The list of result items.
-             */
             items: [],
-
-            /**
-             * The list of selected items.
-             */
             selectedItems: [ ...defaultValue ]
         };
 
@@ -113,14 +141,14 @@ class MultiSelectAutocomplete extends Component {
     }
 
     /**
-     * Clears the selected items.
+     * Sets the items to display as selected.
      *
+     * @param {Array<Object>} selectedItems - The list of items to display as
+     * having been selected.
      * @returns {void}
      */
-    clear() {
-        this.setState({
-            selectedItems: []
-        });
+    setSelectedItems(selectedItems: Array<Object> = []) {
+        this.setState({ selectedItems });
     }
 
     /**
@@ -139,9 +167,13 @@ class MultiSelectAutocomplete extends Component {
             <div>
                 <MultiSelectStateless
                     filterValue = { this.state.filterValue }
+                    footer = { this.props.footer }
+                    icon = { null }
                     isDisabled = { isDisabled }
+                    isLoading = { this.state.loading }
                     isOpen = { this.state.isOpen }
                     items = { this.state.items }
+                    loadingMessage = { this.props.loadingMessage }
                     noMatchesFound = { noMatchesFound }
                     onFilterChange = { this._onFilterChange }
                     onRemoved = { this._onSelectionChange }
@@ -150,11 +182,12 @@ class MultiSelectAutocomplete extends Component {
                     selectedItems = { this.state.selectedItems }
                     shouldFitContainer = { shouldFitContainer }
                     shouldFocus = { shouldFocus } />
-                { this._renderLoadingIndicator() }
                 { this._renderError() }
             </div>
         );
     }
+
+    _onFilterChange: (string) => void;
 
     /**
      * Sets the state and sends a query on filter change.
@@ -169,12 +202,15 @@ class MultiSelectAutocomplete extends Component {
             error: this.state.error && Boolean(filterValue),
             filterValue,
             isOpen: Boolean(this.state.items.length) && Boolean(filterValue),
-            items: filterValue ? this.state.items : []
+            items: filterValue ? this.state.items : [],
+            loading: Boolean(filterValue)
         });
         if (filterValue) {
             this._sendQuery(filterValue);
         }
     }
+
+    _onRetry: () => void;
 
     /**
      * Retries the query on retry.
@@ -185,6 +221,8 @@ class MultiSelectAutocomplete extends Component {
     _onRetry() {
         this._sendQuery(this.state.filterValue);
     }
+
+    _onSelectionChange: (Object) => void;
 
     /**
      * Updates the selected items when a selection event occurs.
@@ -201,7 +239,7 @@ class MultiSelectAutocomplete extends Component {
         if (existing) {
             selectedItems = selectedItems.filter(k => k !== existing);
         } else {
-            selectedItems.push(item);
+            selectedItems.push(this.props.onItemSelected(item));
         }
         this.setState({
             isOpen: false,
@@ -222,7 +260,7 @@ class MultiSelectAutocomplete extends Component {
         if (!this.state.error) {
             return null;
         }
-        const content = ( // eslint-disable-line no-extra-parens
+        const content = (
             <div className = 'autocomplete-error'>
                 <InlineDialogFailure
                     onRetry = { this._onRetry } />
@@ -236,32 +274,7 @@ class MultiSelectAutocomplete extends Component {
         );
     }
 
-    /**
-     * Renders the loading indicator.
-     *
-     * @returns {ReactElement|null}
-     */
-    _renderLoadingIndicator() {
-        if (!(this.state.loading
-            && !this.state.items.length
-            && this.state.filterValue.length)) {
-            return null;
-        }
-
-        const content = ( // eslint-disable-line no-extra-parens
-            <div className = 'autocomplete-loading'>
-                <Spinner
-                    isCompleting = { false }
-                    size = 'medium' />
-            </div>
-        );
-
-        return (
-            <AKInlineDialog
-                content = { content }
-                isOpen = { true } />
-        );
-    }
+    _sendQuery: (string) => void;
 
     /**
      * Sends a query to the resourceClient.
@@ -275,7 +288,6 @@ class MultiSelectAutocomplete extends Component {
         }
 
         this.setState({
-            loading: true,
             error: false
         });
 
@@ -288,7 +300,6 @@ class MultiSelectAutocomplete extends Component {
             .then(results => {
                 if (this.state.filterValue !== filterValue) {
                     this.setState({
-                        loading: false,
                         error: false
                     });
 
@@ -307,7 +318,9 @@ class MultiSelectAutocomplete extends Component {
                     error: false
                 });
             })
-            .catch(() => {
+            .catch(error => {
+                logger.error('MultiSelectAutocomplete error in query', error);
+
                 this.setState({
                     error: true,
                     loading: false,

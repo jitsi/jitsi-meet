@@ -2,11 +2,15 @@
 
 import Logger from 'jitsi-meet-logger';
 
-import { APP_WILL_MOUNT } from '../../app';
+import { APP_WILL_MOUNT } from '../app';
 import JitsiMeetJS, { LIB_WILL_INIT } from '../lib-jitsi-meet';
 import { MiddlewareRegistry } from '../redux';
 
+import JitsiMeetInMemoryLogStorage
+    from '../../../../modules/util/JitsiMeetInMemoryLogStorage';
 import JitsiMeetLogStorage from '../../../../modules/util/JitsiMeetLogStorage';
+
+import { isTestModeEnabled } from '../testing';
 
 import { SET_LOGGING_CONFIG } from './actionTypes';
 
@@ -67,10 +71,11 @@ function _appWillMount({ getState }, next, action) {
  *
  * @param {Object} loggingConfig - The configuration with which logging is to be
  * initialized.
+ * @param {boolean} isTestingEnabled - Is debug logging enabled.
  * @private
  * @returns {void}
  */
-function _initLogging(loggingConfig) {
+function _initLogging(loggingConfig, isTestingEnabled) {
     // Create the LogCollector and register it as the global log transport. It
     // is done early to capture as much logs as possible. Captured logs will be
     // cached, before the JitsiMeetLogStorage gets ready (statistics module is
@@ -81,6 +86,16 @@ function _initLogging(loggingConfig) {
         APP.logCollector = new Logger.LogCollector(new JitsiMeetLogStorage());
         Logger.addGlobalTransport(APP.logCollector);
         JitsiMeetJS.addGlobalLogTransport(APP.logCollector);
+
+        if (isTestingEnabled) {
+            APP.debugLogs = new JitsiMeetInMemoryLogStorage();
+            const debugLogCollector = new Logger.LogCollector(
+                APP.debugLogs, { storeInterval: 1000 });
+
+            Logger.addGlobalTransport(debugLogCollector);
+            JitsiMeetJS.addGlobalLogTransport(debugLogCollector);
+            debugLogCollector.start();
+        }
     }
 }
 
@@ -99,7 +114,11 @@ function _initLogging(loggingConfig) {
  * specified {@code action}.
  */
 function _libWillInit({ getState }, next, action) {
-    _setLogLevels(JitsiMeetJS, getState()['features/base/logging'].config);
+    // Adding the if in order to preserve the logic for web after enabling
+    // LIB_WILL_INIT action for web in initLib action.
+    if (typeof APP === 'undefined') {
+        _setLogLevels(JitsiMeetJS, getState()['features/base/logging'].config);
+    }
 
     return next(action);
 }
@@ -121,6 +140,7 @@ function _libWillInit({ getState }, next, action) {
 function _setLoggingConfig({ getState }, next, action) {
     const result = next(action);
     const newValue = getState()['features/base/logging'].config;
+    const isTestingEnabled = isTestModeEnabled(getState());
 
     // TODO Generally, we'll want to _setLogLevels and _initLogging only if the
     // logging config values actually change.
@@ -131,7 +151,7 @@ function _setLoggingConfig({ getState }, next, action) {
     _setLogLevels(Logger, newValue);
     _setLogLevels(JitsiMeetJS, newValue);
 
-    _initLogging(newValue);
+    _initLogging(newValue, isTestingEnabled);
 
     return result;
 }

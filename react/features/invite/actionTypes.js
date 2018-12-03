@@ -1,13 +1,58 @@
 /**
- * The type of the action which signals a request to display the inline
- * conference info dialog.
+ * The type of redux action to set the {@code EventEmitter} subscriptions
+ * utilized by the feature invite.
  *
  * {
- *     type: SET_INFO_DIALOG_VISIBILITY,
- *     visible: boolean
+ *     type: _SET_EMITTER_SUBSCRIPTIONS,
+ *     emitterSubscriptions: Array|undefined
+ * }
+ *
+ * @protected
+ */
+export const _SET_EMITTER_SUBSCRIPTIONS = Symbol('_SET_EMITTER_SUBSCRIPTIONS');
+
+/**
+ * The type of redux action which will add pending invite request to the redux
+ * store.
+ *
+ * {
+ *     type: ADD_PENDING_INVITE_REQUEST,
+ *     request: Object
  * }
  */
-export const SET_INFO_DIALOG_VISIBILITY = Symbol('SET_INFO_DIALOG_VISIBILITY');
+export const ADD_PENDING_INVITE_REQUEST = Symbol('ADD_PENDING_INVITE_REQUEST');
+
+/**
+ * The type of the (redux) action which signals that a click/tap has been
+ * performed on {@link InviteButton} and that the execution flow for
+ * adding/inviting people to the current conference/meeting is to begin.
+ *
+ * {
+ *     type: BEGIN_ADD_PEOPLE
+ * }
+ */
+export const BEGIN_ADD_PEOPLE = Symbol('BEGIN_ADD_PEOPLE');
+
+/**
+ * The type of redux action which will remove pending invite requests from the
+ * redux store.
+ *
+ * {
+ *     type: REMOVE_PENDING_INVITE_REQUESTS
+ * }
+ */
+export const REMOVE_PENDING_INVITE_REQUESTS
+    = Symbol('REMOVE_PENDING_INVITE_REQUESTS');
+
+/**
+ * The type of redux action which sets the visibility of {@code CalleeInfo}.
+ *
+ * {
+ *     type: SET_CALLEE_INFO_VISIBLE,
+ *     calleeInfoVisible: boolean
+ * }
+ */
+export const SET_CALLEE_INFO_VISIBLE = Symbol('SET_CALLEE_INFO_VISIBLE');
 
 /**
  * The type of the action which signals an error occurred while requesting dial-

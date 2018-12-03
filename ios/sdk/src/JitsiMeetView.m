@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-#import <CoreText/CoreText.h>
 #import <Intents/Intents.h>
 
 #include <mach/mach_time.h>
@@ -23,6 +22,9 @@
 #import <React/RCTLinkingManager.h>
 #import <React/RCTRootView.h>
 
+#import "Dropbox.h"
+#import "Invite+Private.h"
+#import "InviteController+Private.h"
 #import "JitsiMeetView+Private.h"
 #import "RCTBridgeWrapper.h"
 
@@ -49,35 +51,6 @@ RCTFatalHandler _RCTFatal = ^(NSError *error) {
         }
     }
 };
-
-/**
- * Helper function to dynamically load custom fonts. The `UIAppFonts` key in the
- * plist file doesn't work for frameworks, so fonts have to be manually loaded.
- */
-void loadCustomFonts(Class clazz) {
-    NSBundle *bundle = [NSBundle bundleForClass:clazz];
-    NSArray *fonts = [bundle objectForInfoDictionaryKey:@"JitsiMeetFonts"];
-
-    for (NSString *item in fonts) {
-        NSString *fontName = [item stringByDeletingPathExtension];
-        NSString *fontExt = [item pathExtension];
-        NSString *fontPath = [bundle pathForResource:fontName ofType:fontExt];
-        NSData *inData = [NSData dataWithContentsOfFile:fontPath];
-        CFErrorRef error;
-        CGDataProviderRef provider
-            = CGDataProviderCreateWithCFData((__bridge CFDataRef)inData);
-        CGFontRef font = CGFontCreateWithDataProvider(provider);
-
-        if (!CTFontManagerRegisterGraphicsFont(font, &error)) {
-            CFStringRef errorDescription = CFErrorCopyDescription(error);
-
-            NSLog(@"Failed to load font: %@", errorDescription);
-            CFRelease(errorDescription);
-        }
-        CFRelease(font);
-        CFRelease(provider);
-    }
-}
 
 /**
  * Helper function to register a fatal error handler for React. Our handler
@@ -109,7 +82,11 @@ void registerFatalErrorHandler() {
 
 @end
 
-@implementation JitsiMeetView
+@implementation JitsiMeetView {
+    NSNumber *_pictureInPictureEnabled;
+}
+
+@dynamic pictureInPictureEnabled;
 
 static RCTBridgeWrapper *bridgeWrapper;
 
@@ -130,6 +107,8 @@ static NSMapTable<NSString *, JitsiMeetView *> *views;
   didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     // Store launch options, will be used when we create the bridge.
     _launchOptions = [launchOptions copy];
+
+    [Dropbox setAppKey];
 
     return YES;
 }
@@ -186,10 +165,13 @@ static NSMapTable<NSString *, JitsiMeetView *> *views;
                        restorationHandler:restorationHandler];
 }
 
-+ (BOOL)application:(UIApplication *)application
++ (BOOL)application:(UIApplication *)app
             openURL:(NSURL *)url
-  sourceApplication:(NSString *)sourceApplication
-         annotation:(id)annotation {
+            options:(NSDictionary<UIApplicationOpenURLOptionsKey,id> *)options {
+    if ([Dropbox application:app openURL:url options:options]) {
+        return YES;
+    }
+
     // XXX At least twice we received bug reports about malfunctioning loadURL
     // in the Jitsi Meet SDK while the Jitsi Meet app seemed to functioning as
     // expected in our testing. But that was to be expected because the app does
@@ -199,10 +181,14 @@ static NSMapTable<NSString *, JitsiMeetView *> *views;
         return YES;
     }
 
-    return [RCTLinkingManager application:application
-                                  openURL:url
-                        sourceApplication:sourceApplication
-                               annotation:annotation];
+    return [RCTLinkingManager application:app openURL:url options:options];
+}
+
++ (BOOL)application:(UIApplication *)application
+            openURL:(NSURL *)url
+  sourceApplication:(NSString *)sourceApplication
+         annotation:(id)annotation {
+    return [self application:application openURL:url options:@{}];
 }
 
 #pragma mark Initializers
@@ -265,7 +251,11 @@ static NSMapTable<NSString *, JitsiMeetView *> *views;
     }
 
     props[@"externalAPIScope"] = externalAPIScope;
+    props[@"pictureInPictureEnabled"] = @(self.pictureInPictureEnabled);
     props[@"welcomePageEnabled"] = @(self.welcomePageEnabled);
+
+    props[@"addPeopleEnabled"] = @(_inviteController.addPeopleEnabled);
+    props[@"dialOutEnabled"] = @(_inviteController.dialOutEnabled);
 
     // XXX If urlObject is nil, then it must appear as undefined in the
     // JavaScript source code so that we check the launchOptions there.
@@ -278,7 +268,7 @@ static NSMapTable<NSString *, JitsiMeetView *> *views;
     // conference again if the first invocation was followed by leaving the
     // conference. However, React and, respectively,
     // appProperties/initialProperties are declarative expressions i.e. one and
-    // the same URL will not trigger componentWillReceiveProps in the JavaScript
+    // the same URL will not trigger an automatic re-render in the JavaScript
     // source code. The workaround implemented bellow introduces imperativeness
     // in React Component props by defining a unique value per loadURLObject:
     // invocation.
@@ -313,6 +303,28 @@ static NSMapTable<NSString *, JitsiMeetView *> *views;
  */
 - (void)loadURLString:(NSString *)urlString {
     [self loadURLObject:urlString ? @{ @"url": urlString } : nil];
+}
+
+#pragma pictureInPictureEnabled getter / setter
+
+- (void) setPictureInPictureEnabled:(BOOL)pictureInPictureEnabled {
+    _pictureInPictureEnabled
+        = [NSNumber numberWithBool:pictureInPictureEnabled];
+}
+
+- (BOOL) pictureInPictureEnabled {
+    if (_pictureInPictureEnabled) {
+        return [_pictureInPictureEnabled boolValue];
+    }
+
+    // The SDK/JitsiMeetView client/consumer did not explicitly enable/disable
+    // Picture-in-Picture. However, we may automatically deduce their
+    // intentions: we need the support of the client in order to implement
+    // Picture-in-Picture on iOS (in contrast to Android) so if the client
+    // appears to have provided the support then we can assume that they did it
+    // with the intention to have Picture-in-Picture enabled.
+    return self.delegate
+        && [self.delegate respondsToSelector:@selector(enterPictureInPicture:)];
 }
 
 #pragma mark Private methods
@@ -368,18 +380,17 @@ static NSMapTable<NSString *, JitsiMeetView *> *views;
             = [[RCTBridgeWrapper alloc] initWithLaunchOptions:_launchOptions];
         views = [NSMapTable strongToWeakObjectsMapTable];
 
-        // Dynamically load custom bundled fonts.
-        loadCustomFonts(self.class);
-
         // Register a fatal error handler for React.
         registerFatalErrorHandler();
     });
 
     // Hook this JitsiMeetView into ExternalAPI.
-    if (!externalAPIScope) {
-        externalAPIScope = [NSUUID UUID].UUIDString;
-        [views setObject:self forKey:externalAPIScope];
-    }
+    externalAPIScope = [NSUUID UUID].UUIDString;
+    [views setObject:self forKey:externalAPIScope];
+
+    _inviteController
+        = [[JMInviteController alloc] initWithExternalAPIScope:externalAPIScope
+                                                 bridgeWrapper:bridgeWrapper];
 
     // Set a background color which is in accord with the JavaScript and Android
     // parts of the application and causes less perceived visual flicker than

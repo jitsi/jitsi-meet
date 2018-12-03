@@ -1,7 +1,11 @@
-import PropTypes from 'prop-types';
+/* @flow */
+
 import React, { Component } from 'react';
 
-import { sendAnalyticsEvent } from '../../analytics';
+import {
+    createRemoteVideoMenuButtonEvent,
+    sendAnalytics
+} from '../../analytics';
 import { translate } from '../../base/i18n';
 
 import RemoteVideoMenuButton from './RemoteVideoMenuButton';
@@ -16,48 +20,47 @@ export const REMOTE_CONTROL_MENU_STATES = {
 };
 
 /**
+ * The type of the React {@code Component} props of {@link RemoteControlButton}.
+ */
+type Props = {
+
+    /**
+     * The callback to invoke when the component is clicked.
+     */
+    onClick: Function,
+
+    /**
+     * The ID of the participant linked to the onClick callback.
+     */
+    participantID: string,
+
+    /**
+     * The current status of remote control. Should be a number listed in the
+     * enum REMOTE_CONTROL_MENU_STATES.
+     */
+    remoteControlState: number,
+
+    /**
+     * Invoked to obtain translated strings.
+     */
+    t: Function
+};
+
+/**
  * Implements a React {@link Component} which displays a button showing the
  * current state of remote control for a participant and can start or stop a
  * remote control session.
  *
  * @extends Component
  */
-class RemoteControlButton extends Component {
-    /**
-     * {@code RemoteControlButton} component's property types.
-     *
-     * @static
-     */
-    static propTypes = {
-        /**
-         * The callback to invoke when the component is clicked.
-         */
-        onClick: PropTypes.func,
-
-        /**
-         * The ID of the participant linked to the onClick callback.
-         */
-        participantID: PropTypes.string,
-
-        /**
-         * The current status of remote control. Should be a number listed in
-         * the enum REMOTE_CONTROL_MENU_STATES.
-         */
-        remoteControlState: PropTypes.number,
-
-        /**
-         * Invoked to obtain translated strings.
-         */
-        t: PropTypes.func
-    };
-
+class RemoteControlButton extends Component<Props> {
     /**
      * Initializes a new {@code RemoteControlButton} instance.
      *
      * @param {Object} props - The read-only React Component props with which
      * the new instance is to be initialized.
      */
-    constructor(props) {
+    constructor(props: Props) {
         super(props);
 
         // Bind event handlers so they are only bound once for every instance.
@@ -81,16 +84,14 @@ class RemoteControlButton extends Component {
 
         switch (remoteControlState) {
         case REMOTE_CONTROL_MENU_STATES.NOT_STARTED:
-            className = 'requestRemoteControlLink';
-            icon = 'fa fa-play';
+            icon = 'icon-play';
             break;
         case REMOTE_CONTROL_MENU_STATES.REQUESTING:
-            className = 'requestRemoteControlLink disabled';
-            icon = 'remote-control-spinner fa fa-spinner fa-spin';
+            className = ' disabled';
+            icon = 'icon-play';
             break;
         case REMOTE_CONTROL_MENU_STATES.STARTED:
-            className = 'requestRemoteControlLink';
-            icon = 'fa fa-stop';
+            icon = 'icon-stop';
             break;
         case REMOTE_CONTROL_MENU_STATES.NOT_SUPPORTED:
 
@@ -109,6 +110,8 @@ class RemoteControlButton extends Component {
         );
     }
 
+    _onClick: () => void;
+
     /**
      * Sends analytics event for pressing the button and executes the passed
      * onClick handler.
@@ -119,24 +122,19 @@ class RemoteControlButton extends Component {
     _onClick() {
         const { onClick, participantID, remoteControlState } = this.props;
 
-        let eventName;
+        // TODO: What do we do in case the state is e.g. "requesting"?
+        if (remoteControlState === REMOTE_CONTROL_MENU_STATES.STARTED
+            || remoteControlState === REMOTE_CONTROL_MENU_STATES.NOT_STARTED) {
 
-        if (remoteControlState === REMOTE_CONTROL_MENU_STATES.STARTED) {
-            eventName = 'stop';
-        }
+            const enable
+                = remoteControlState === REMOTE_CONTROL_MENU_STATES.NOT_STARTED;
 
-        if (remoteControlState === REMOTE_CONTROL_MENU_STATES.NOT_STARTED) {
-            eventName = 'start';
-        }
-
-        if (eventName) {
-            sendAnalyticsEvent(
-                `remotevideomenu.remotecontrol.${eventName}`,
+            sendAnalytics(createRemoteVideoMenuButtonEvent(
+                'remote.control.button',
                 {
-                    value: 1,
-                    label: participantID
-                }
-            );
+                    enable,
+                    'participant_id': participantID
+                }));
         }
 
         if (onClick) {

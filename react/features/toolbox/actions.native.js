@@ -1,12 +1,8 @@
 /* @flow */
 
-import type { Dispatch } from 'redux-thunk';
-
 import {
     CLEAR_TOOLBOX_TIMEOUT,
-    SET_SUBJECT,
-    SET_SUBJECT_SLIDE_IN,
-    SET_TOOLBAR_BUTTON,
+    SET_OVERFLOW_MENU_VISIBLE,
     SET_TOOLBAR_HOVERED,
     SET_TOOLBOX_ALWAYS_VISIBLE,
     SET_TOOLBOX_ENABLED,
@@ -15,28 +11,6 @@ import {
     SET_TOOLBOX_VISIBLE
 } from './actionTypes';
 
-/**
- * FIXME: We should make sure all common functions for native and web are
- * merged in a global functions file.
- */
-import { getButton } from './functions.native';
-
-/**
- * Event handler for local raise hand changed event.
- *
- * @param {boolean} handRaised - Flag showing whether hand is raised.
- * @returns {Function}
- */
-export function changeLocalRaiseHand(handRaised: boolean): Function {
-    return (dispatch: Dispatch<*>, getState: Function) => {
-        const buttonName = 'raisehand';
-        const button = getButton(buttonName, getState());
-
-        button.toggled = handRaised;
-
-        dispatch(setToolbarButton(buttonName, button));
-    };
-}
 
 /**
  * Signals that toolbox timeout should be cleared.
@@ -52,51 +26,18 @@ export function clearToolboxTimeout(): Object {
 }
 
 /**
- * Signals that value of conference subject should be changed.
+ * Shows/hides the overflow menu.
  *
- * @param {string} subject - Conference subject string.
- * @returns {Object}
- */
-export function setSubject(subject: string): Object {
-    return {
-        type: SET_SUBJECT,
-        subject
-    };
-}
-
-/**
- * Signals that toolbox subject slide in value should be changed.
- *
- * @param {boolean} subjectSlideIn - True if the subject is shown; otherwise,
- * false.
+ * @param {boolean} visible - True to show it or false to hide it.
  * @returns {{
- *     type: SET_SUBJECT_SLIDE_IN,
- *     subjectSlideIn: boolean
+ *     type: SET_OVERFLOW_MENU_VISIBLE,
+ *     visible: boolean
  * }}
  */
-export function setSubjectSlideIn(subjectSlideIn: boolean): Object {
+export function setOverflowMenuVisible(visible: boolean): Object {
     return {
-        type: SET_SUBJECT_SLIDE_IN,
-        subjectSlideIn
-    };
-}
-
-/**
- * Signals that value of the button specified by key should be changed.
- *
- * @param {string} buttonName - Button key.
- * @param {Object} button - Button object.
- * @returns {{
- *     type: SET_TOOLBAR_BUTTON,
- *     button: Object,
- *     buttonName: string
- * }}
- */
-export function setToolbarButton(buttonName: string, button: Object): Object {
-    return {
-        type: SET_TOOLBAR_BUTTON,
-        button,
-        buttonName
+        type: SET_OVERFLOW_MENU_VISIBLE,
+        visible
     };
 }
 
@@ -201,52 +142,5 @@ export function setToolboxVisible(visible: boolean): Object {
     return {
         type: SET_TOOLBOX_VISIBLE,
         visible
-    };
-}
-
-/**
- * Shows etherpad button if it's not shown.
- *
- * @returns {Function}
- */
-export function showEtherpadButton(): Function {
-    return (dispatch: Dispatch<*>) => {
-        dispatch(setToolbarButton('etherpad', {
-            hidden: false
-        }));
-    };
-}
-
-/**
- * Event handler for full screen toggled event.
- *
- * @param {boolean} isFullScreen - Flag showing whether app in full
- * screen mode.
- * @returns {Function}
- */
-export function toggleFullScreen(isFullScreen: boolean): Function {
-    return (dispatch: Dispatch<*>, getState: Function) => {
-        const buttonName = 'fullscreen';
-        const button = getButton(buttonName, getState());
-
-        button.toggled = isFullScreen;
-
-        dispatch(setToolbarButton(buttonName, button));
-    };
-}
-
-/**
- * Sets negation of button's toggle property.
- *
- * @param {string} buttonName - Button key.
- * @returns {Function}
- */
-export function toggleToolbarButton(buttonName: string): Function {
-    return (dispatch: Dispatch, getState: Function) => {
-        const button = getButton(buttonName, getState());
-
-        dispatch(setToolbarButton(buttonName, {
-            toggled: !button.toggled
-        }));
     };
 }

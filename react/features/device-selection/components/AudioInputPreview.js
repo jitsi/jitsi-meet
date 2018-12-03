@@ -1,31 +1,42 @@
-import PropTypes from 'prop-types';
-import React, { PureComponent } from 'react';
+/* @flow */
+
+import React, { Component } from 'react';
 
 import { JitsiTrackEvents } from '../../base/lib-jitsi-meet';
 
 /**
+ * The type of the React {@code Component} props of {@link AudioInputPreview}.
+ */
+type Props = {
+
+    /**
+     * The JitsiLocalTrack to show an audio level meter for.
+     */
+    track: Object
+};
+
+/**
+ * The type of the React {@code Component} props of {@link AudioInputPreview}.
+ */
+type State = {
+
+    /**
+     * The current audio input level being received, from 0 to 1.
+     */
+    audioLevel: number
+};
+
+/**
  * React component for displaying a audio level meter for a JitsiLocalTrack.
  */
-class AudioInputPreview extends PureComponent {
-    /**
-     * AudioInputPreview component's property types.
-     *
-     * @static
-     */
-    static propTypes = {
-        /*
-         * The JitsiLocalTrack to show an audio level meter for.
-         */
-        track: PropTypes.object
-    };
-
+class AudioInputPreview extends Component<Props, State> {
     /**
      * Initializes a new AudioInputPreview instance.
      *
      * @param {Object} props - The read-only React Component props with which
      * the new instance is to be initialized.
      */
-    constructor(props) {
+    constructor(props: Props) {
         super(props);
 
         this.state = {
@@ -52,9 +63,11 @@ class AudioInputPreview extends PureComponent {
      * @inheritdoc
      * @returns {void}
      */
-    componentWillReceiveProps(nextProps) {
-        this._listenForAudioUpdates(nextProps.track);
-        this._updateAudioLevel(0);
+    componentDidUpdate(prevProps: Props) {
+        if (prevProps.track !== this.props.track) {
+            this._listenForAudioUpdates(this.props.track);
+            this._updateAudioLevel(0);
+        }
     }
 
     /**
@@ -114,6 +127,8 @@ class AudioInputPreview extends PureComponent {
             JitsiTrackEvents.TRACK_AUDIO_LEVEL_CHANGED,
             this._updateAudioLevel);
     }
+
+    _updateAudioLevel: (number) => void;
 
     /**
      * Updates the internal state of the last know audio level. The level should

@@ -1,0 +1,75 @@
+.deep-linking-desktop {
+    background-color: #fff;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-flow: column;
+    .header {
+        width: 100%;
+        height: 55px;
+        background-color: #f1f2f5;
+        padding-top: 15px;
+        padding-left: 50px;
+        display: flex;
+        flex-flow: row;
+        flex: 0 0 55px;
+        .logo {
+            height: 40px;
+        }
+    }
+    .content {
+        padding-top: 40px;
+        padding-bottom: 40px;
+        left: 0px;
+        right: 0px;
+        display: flex;
+        width: 100%;
+        height: 100%;
+        flex-flow: row;
+        .leftColumn {
+            left: 0px;
+            width: 50%;
+            min-height: 156px;
+            display: flex;
+            flex-flow: column;
+            .leftColumnContent{
+                padding: 20px;
+                display: flex;
+                flex-flow: column;
+                height: 100%;
+                .image {
+                    background-image: url('../images/deep-linking-image.png');
+                    background-repeat: no-repeat;
+                    background-position: center;
+                    background-size: contain;
+                    height: 100%;
+                    width: 100%;
+                }
+            }
+
+        }
+        .rightColumn {
+            top: 0px;
+            width: 50%;
+            min-height: 156px;
+            display: flex;
+            flex-flow: row;
+            align-items: center;
+            .rightColumnContent {
+                display: flex;
+                flex-flow: column;
+                padding: 20px 20px 20px 60px;
+                .title {
+                    color: #1c2946;
+                }
+                .description {
+                    color: #606a80;
+                    margin-top: 8px;
+                }
+                .buttons {
+                    margin-top: 16px;
+                }
+            }
+        }
+    }
+}

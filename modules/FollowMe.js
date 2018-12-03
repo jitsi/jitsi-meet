@@ -1,3 +1,5 @@
+/* global APP */
+
 /*
  * Copyright @ 2015 Atlassian Pty Ltd
  *
@@ -15,6 +17,11 @@
  */
 const logger = require('jitsi-meet-logger').getLogger(__filename);
 
+import {
+    getPinnedParticipant,
+    pinParticipant
+} from '../react/features/base/participants';
+import { setTileView } from '../react/features/video-layout';
 import UIEvents from '../service/UI/UIEvents';
 import VideoLayout from './UI/videolayout/VideoLayout';
 
@@ -112,6 +119,31 @@ class State {
     }
 
     /**
+     * A getter for this object instance to know the state of tile view.
+     *
+     * @returns {boolean} True if tile view is enabled.
+     */
+    get tileViewEnabled() {
+        return this._tileViewEnabled;
+    }
+
+    /**
+     * A setter for {@link tileViewEnabled}. Fires a property change event for
+     * other participants to follow.
+     *
+     * @param {boolean} b - Whether or not tile view is enabled.
+     * @returns {void}
+     */
+    set tileViewEnabled(b) {
+        const oldValue = this._tileViewEnabled;
+
+        if (oldValue !== b) {
+            this._tileViewEnabled = b;
+            this._firePropertyChange('tileViewEnabled', oldValue, b);
+        }
+    }
+
+    /**
      * Invokes {_propertyChangeCallback} to notify it that {property} had its
      * value changed from {oldValue} to {newValue}.
      *
@@ -183,6 +215,10 @@ class FollowMe {
             this._sharedDocumentToggled
                 .bind(this, this._UI.getSharedDocumentManager().isVisible());
         }
+
+        this._tileViewToggled.bind(
+            this,
+            APP.store.getState()['features/video-layout'].tileViewEnabled);
     }
 
     /**
@@ -208,6 +244,10 @@ class FollowMe {
         this.sharedDocEventHandler = this._sharedDocumentToggled.bind(this);
         this._UI.addListener(UIEvents.TOGGLED_SHARED_DOCUMENT,
                             this.sharedDocEventHandler);
+
+        this.tileViewEventHandler = this._tileViewToggled.bind(this);
+        this._UI.addListener(UIEvents.TOGGLED_TILE_VIEW,
+              this.tileViewEventHandler);
     }
 
     /**
@@ -221,6 +261,8 @@ class FollowMe {
                                 this.sharedDocEventHandler);
         this._UI.removeListener(UIEvents.PINNED_ENDPOINT,
                                 this.pinnedEndpointEventHandler);
+        this._UI.removeListener(UIEvents.TOGGLED_TILE_VIEW,
+                                this.tileViewEventHandler);
     }
 
     /**
@@ -258,6 +300,18 @@ class FollowMe {
      */
     _sharedDocumentToggled(sharedDocumentVisible) {
         this._local.sharedDocumentVisible = sharedDocumentVisible;
+    }
+
+    /**
+     * Notifies this instance that the tile view mode has been enabled or
+     * disabled.
+     *
+     * @param {boolean} enabled - True if tile view has been enabled, false
+     * if has been disabled.
+     * @returns {void}
+     */
+    _tileViewToggled(enabled) {
+        this._local.tileViewEnabled = enabled;
     }
 
     /**
@@ -310,7 +364,8 @@ class FollowMe {
                     attributes: {
                         filmstripVisible: local.filmstripVisible,
                         nextOnStage: local.nextOnStage,
-                        sharedDocumentVisible: local.sharedDocumentVisible
+                        sharedDocumentVisible: local.sharedDocumentVisible,
+                        tileViewEnabled: local.tileViewEnabled
                     }
                 });
     }
@@ -349,6 +404,7 @@ class FollowMe {
         this._onFilmstripVisible(attributes.filmstripVisible);
         this._onNextOnStage(attributes.nextOnStage);
         this._onSharedDocumentVisible(attributes.sharedDocumentVisible);
+        this._onTileViewEnabled(attributes.tileViewEnabled);
     }
 
     /**
@@ -429,6 +485,21 @@ class FollowMe {
     }
 
     /**
+     * Process a tile view enabled / disabled event received from FOLLOW-ME.
+     *
+     * @param {boolean} enabled - Whether or not tile view should be shown.
+     * @private
+     * @returns {void}
+     */
+    _onTileViewEnabled(enabled) {
+        if (typeof enabled === 'undefined') {
+            return;
+        }
+
+        APP.store.dispatch(setTileView(enabled === 'true'));
+    }
+
+    /**
      * Pins / unpins the video thumbnail given by clickId.
      *
      * @param clickId the identifier of the video thumbnail to pin or unpin
@@ -444,11 +515,15 @@ class FollowMe {
         if (smallVideo) {
             this.nextOnStageTimer = 0;
             clearTimeout(this.nextOnStageTimout);
-            /* eslint-disable no-mixed-operators */
-            if (pin && !VideoLayout.isPinned(clickId)
-                || !pin && VideoLayout.isPinned(clickId)) {
-                /* eslint-disable no-mixed-operators */
-                VideoLayout.handleVideoThumbClicked(clickId);
+
+            if (pin) {
+                APP.store.dispatch(pinParticipant(clickId));
+            } else {
+                const { id } = getPinnedParticipant(APP.store.getState()) || {};
+
+                if (id === clickId) {
+                    APP.store.dispatch(pinParticipant(null));
+                }
             }
         } else {
             // If there's no SmallVideo object for the given id, lets wait and

@@ -27,6 +27,8 @@ Its constructor gets a number of options:
     * **interfaceConfigOverwrite**: (optional) JS object with overrides for options defined in [interface_config.js].
     * **noSSL**: (optional, defaults to true) Boolean indicating if the server should be contacted using HTTP or HTTPS.
     * **jwt**: (optional) [JWT](https://jwt.io/) token.
+    * **onload**: (optional) handler for the iframe onload event.
+    * **invitees**: (optional) Array of objects containing information about new participants that will be invited in the call.
 
 Example:
 
@@ -96,11 +98,6 @@ api.executeCommand('toggleFilmStrip')
 api.executeCommand('toggleChat')
 ```
 
-* **toggleContactList** - Hides / shows the contact list. No arguments are required.
-```javascript
-api.executeCommand('toggleContactList')
-```
-
 * **toggleShareScreen** - Starts / stops screen sharing. No arguments are required.
 ```javascript
 api.executeCommand('toggleShareScreen')
@@ -163,6 +160,13 @@ changes. The listener will receive an object with the following structure:
 }
 ```
 
+* **screenSharingStatusChanged** - receives event notifications about turning on/off the local user screen sharing. The listener will receive object with the following structure:
+```javascript
+{
+"on": on //whether screen sharing is on
+}
+```
+
 * **incomingMessage** - Event notifications about incoming
 messages. The listener will receive an object with the following structure:
 ```javascript
@@ -181,12 +185,21 @@ messages. The listener will receive an object with the following structure:
 }
 ```
 
-* **displayNameChanged** - event notifications about display name
+* **displayNameChange** - event notifications about display name
 changes. The listener will receive an object with the following structure:
 ```javascript
 {
 "id": id, // the id of the participant that changed his display name
 "displayname": displayName // the new display name
+}
+```
+
+* **emailChange** - event notifications about email
+changes. The listener will receive an object with the following structure:
+```javascript
+{
+"id": id, // the id of the participant that changed his email
+"email": email // the new email
 }
 ```
 
@@ -286,6 +299,11 @@ You can get the display name of a participant in the conference with the followi
 var displayName = api.getDisplayName(participantId);
 ```
 
+You can get the email of a participant in the conference with the following API function:
+```javascript
+var email = api.getEmail(participantId);
+```
+
 You can get the iframe HTML element where Jitsi Meet is loaded with the following API function:
 ```javascript
 var iframe = api.getIFrame();
@@ -293,31 +311,41 @@ var iframe = api.getIFrame();
 
 You can check whether the audio is muted with the following API function:
 ```javascript
-isAudioMuted().then(function(muted) {
+api.isAudioMuted().then(function(muted) {
     ...
 });
 ```
 
 You can check whether the video is muted with the following API function:
 ```javascript
-isVideoMuted().then(function(muted) {
+api.isVideoMuted().then(function(muted) {
     ...
 });
 ```
 
 You can check whether the audio is available with the following API function:
 ```javascript
-isAudioAvailable().then(function(available) {
+api.isAudioAvailable().then(function(available) {
     ...
 });
 ```
 
 You can check whether the video is available with the following API function:
 ```javascript
-isVideoAvailable().then(function(available) {
+api.isVideoAvailable().then(function(available) {
     ...
 });
 ```
+
+You can invite new participants to the call with the following API function:
+```javascript
+api.invite([{...}, {...}, {...}]).then(function() {
+    // success
+}).catch(function() {
+    // failure
+});
+```
+**NOTE: The format of the invitees in the array depends on the invite service used for the deployment.**
 
 You can remove the embedded Jitsi Meet Conference with the following API function:
 ```javascript

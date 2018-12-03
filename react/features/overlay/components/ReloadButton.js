@@ -1,47 +1,37 @@
 /* @flow */
 
-import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
+import { reloadNow } from '../../app';
 import { translate } from '../../base/i18n';
 
-import { _reloadNow } from '../actions';
+/**
+ * The type of the React {@code Component} props of {@link ReloadButton}.
+ */
+type Props = {
+
+    /**
+     * Reloads the page.
+     */
+    _reloadNow: Function,
+
+    /**
+     * The function to translate human-readable text.
+     */
+    t: Function,
+
+    /**
+     * The translation key for the text in the button.
+     */
+    textKey: string
+};
 
 /**
  * Implements a React Component for button for the overlays that will reload
  * the page.
  */
-class ReloadButton extends Component<*> {
-    /**
-     * PageReloadOverlay component's property types.
-     *
-     * @static
-     */
-    static propTypes = {
-        /**
-         * Reloads the page.
-         *
-         * @type {Function}
-         */
-        _reloadNow: PropTypes.func,
-
-        /**
-         * The function to translate human-readable text.
-         *
-         * @public
-         * @type {Function}
-         */
-        t: PropTypes.func,
-
-        /**
-         * The translation key for the text in the button.
-         *
-         * @type {string}
-         */
-        textKey: PropTypes.string.isRequired
-    };
-
+class ReloadButton extends Component<Props> {
     /**
      * Renders the button for relaod the page if necessary.
      *
@@ -82,7 +72,7 @@ function _mapDispatchToProps(dispatch: Function): Object {
          * @returns {Object} Dispatched action.
          */
         _reloadNow() {
-            dispatch(_reloadNow());
+            dispatch(reloadNow());
         }
     };
 }

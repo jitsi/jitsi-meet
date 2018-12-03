@@ -1,0 +1,20 @@
+.transcription-subtitles{
+    bottom: 10%;
+    font-size: 16px;
+    font-weight: 1000;
+    left: 50%;
+    max-width: 50vw;
+    opacity: 0.80;
+    pointer-events: none;
+    position: absolute;
+    text-shadow: 0px 0px 1px rgba(0,0,0,0.3),
+    0px 1px 1px rgba(0,0,0,0.3),
+    1px 0px 1px rgba(0,0,0,0.3),
+    0px 0px 1px rgba(0,0,0,0.3);
+    transform: translateX(-50%);
+    z-index: $filmstripVideosZ + 1;
+
+    span {
+        background: black;
+    }
+}

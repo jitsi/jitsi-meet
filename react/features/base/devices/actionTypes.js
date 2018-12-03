@@ -10,17 +10,6 @@
 export const SET_AUDIO_INPUT_DEVICE = Symbol('SET_AUDIO_INPUT_DEVICE');
 
 /**
- * The type of Redux action which signals that the currently used audio
- * output device should be changed.
- *
- * {
- *     type: SET_AUDIO_OUTPUT_DEVICE,
- *     deviceId: string,
- * }
- */
-export const SET_AUDIO_OUTPUT_DEVICE = Symbol('SET_AUDIO_OUTPUT_DEVICE');
-
-/**
  * The type of Redux action which signals that the currently used video
  * input device should be changed.
  *

@@ -43,7 +43,7 @@ export function cancelFeedback(score: number, message: string) {
 export function maybeOpenFeedbackDialog(conference: Object) {
     type R = {
         feedbackSubmitted: boolean,
-        thankYouDialogVisible: boolean
+        showThankYou: boolean
     };
 
     return (dispatch: Dispatch<*>, getState: Function): Promise<R> => {
@@ -61,7 +61,7 @@ export function maybeOpenFeedbackDialog(conference: Object) {
 
             return Promise.resolve({
                 feedbackSubmitted: true,
-                thankYouDialogVisible: true
+                showThankYou: true
             });
         } else if (conference.isCallstatsEnabled()) {
             return new Promise(resolve => {
@@ -70,18 +70,18 @@ export function maybeOpenFeedbackDialog(conference: Object) {
 
                     resolve({
                         feedbackSubmitted: submitted,
-                        thankYouDialogVisible: false
+                        showThankYou: false
                     });
                 }));
             });
         }
 
         // If the feedback functionality isn't enabled we show a "thank you"
-        // dialog. Signaling it (true), so the caller of requestFeedback can act
-        // on it.
+        // message. Signaling it (true), so the caller of requestFeedback can
+        // act on it.
         return Promise.resolve({
             feedbackSubmitted: false,
-            thankYouDialogVisible: true
+            showThankYou: true
         });
     };
 }

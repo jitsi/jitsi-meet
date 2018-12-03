@@ -1,8 +1,12 @@
 // @flow
 
 import * as JitsiMeetConferenceEvents from '../../ConferenceEvents';
+import {
+    createApiEvent,
+    sendAnalytics
+} from '../../react/features/analytics';
 import { parseJWTFromURLParams } from '../../react/features/base/jwt';
-import { sendAnalyticsEvent } from '../../react/features/analytics';
+import { invite } from '../../react/features/invite';
 import { getJitsiMeetTransport } from '../transport';
 
 import { API_ID } from './constants';
@@ -52,25 +56,48 @@ let videoAvailable = true;
  */
 function initCommands() {
     commands = {
-        'display-name':
-            APP.conference.changeLocalDisplayName.bind(APP.conference),
+        'display-name': displayName => {
+            sendAnalytics(createApiEvent('display.name.changed'));
+            APP.conference.changeLocalDisplayName(displayName);
+        },
+        'submit-feedback': feedback => {
+            sendAnalytics(createApiEvent('submit.feedback'));
+            APP.conference.submitFeedback(feedback.score, feedback.message);
+        },
         'toggle-audio': () => {
-            sendAnalyticsEvent('api.toggle.audio');
+            sendAnalytics(createApiEvent('toggle-audio'));
             logger.log('Audio toggle: API command received');
             APP.conference.toggleAudioMuted(false /* no UI */);
         },
         'toggle-video': () => {
-            sendAnalyticsEvent('api.toggle.video');
+            sendAnalytics(createApiEvent('toggle-video'));
             logger.log('Video toggle: API command received');
             APP.conference.toggleVideoMuted(false /* no UI */);
         },
-        'toggle-film-strip': APP.UI.toggleFilmstrip,
-        'toggle-chat': APP.UI.toggleChat,
-        'toggle-contact-list': APP.UI.toggleContactList,
-        'toggle-share-screen': toggleScreenSharing,
-        'video-hangup': () => APP.conference.hangup(),
-        'email': APP.conference.changeLocalEmail,
-        'avatar-url': APP.conference.changeLocalAvatarUrl
+        'toggle-film-strip': () => {
+            sendAnalytics(createApiEvent('film.strip.toggled'));
+            APP.UI.toggleFilmstrip();
+        },
+        'toggle-chat': () => {
+            sendAnalytics(createApiEvent('chat.toggled'));
+            APP.UI.toggleChat();
+        },
+        'toggle-share-screen': () => {
+            sendAnalytics(createApiEvent('screen.sharing.toggled'));
+            toggleScreenSharing();
+        },
+        'video-hangup': () => {
+            sendAnalytics(createApiEvent('video.hangup'));
+            APP.conference.hangup(true);
+        },
+        'email': email => {
+            sendAnalytics(createApiEvent('email.changed'));
+            APP.conference.changeLocalEmail(email);
+        },
+        'avatar-url': avatarUrl => {
+            sendAnalytics(createApiEvent('avatar.url.changed'));
+            APP.conference.changeLocalAvatarUrl(avatarUrl);
+        }
     };
     transport.on('event', ({ data, name }) => {
         if (name && commands[name]) {
@@ -81,8 +108,42 @@ function initCommands() {
 
         return false;
     });
-    transport.on('request', ({ name }, callback) => {
+    transport.on('request', (request, callback) => {
+        const { name } = request;
+
         switch (name) {
+        case 'invite': {
+            const { invitees } = request;
+
+            if (!Array.isArray(invitees) || invitees.length === 0) {
+                callback({
+                    error: new Error('Unexpected format of invitees')
+                });
+
+                break;
+            }
+
+            // The store should be already available because API.init is called
+            // on appWillMount action.
+            APP.store.dispatch(
+                invite(invitees, true))
+                .then(failedInvitees => {
+                    let error;
+                    let result;
+
+                    if (failedInvitees.length) {
+                        error = new Error('One or more invites failed!');
+                    } else {
+                        result = true;
+                    }
+
+                    callback({
+                        error,
+                        result
+                    });
+                });
+            break;
+        }
         case 'is-audio-muted':
             callback(APP.conference.isLocalAudioMuted());
             break;
@@ -316,6 +377,24 @@ class API {
     }
 
     /**
+     * Notify external application (if API is enabled) that user changed their
+     * email.
+     *
+     * @param {string} id - User id.
+     * @param {string} email - The new email of the participant.
+     * @returns {void}
+     */
+    notifyEmailChanged(
+            id: string,
+            { email }: Object) {
+        this._sendEvent({
+            name: 'email-change',
+            email,
+            id
+        });
+    }
+
+    /**
      * Notify external application (if API is enabled) that the conference has
      * been joined.
      *
@@ -430,6 +509,30 @@ class API {
         });
     }
 
+    /**
+     * Notify external application (if API is enabled) that conference feedback
+     * has been submitted. Intended to be used in conjunction with the
+     * submit-feedback command to get notified if feedback was submitted.
+     *
+     * @returns {void}
+     */
+    notifyFeedbackSubmitted() {
+        this._sendEvent({ name: 'feedback-submitted' });
+    }
+
+    /**
+     * Notify external application (if API is enabled) that the screen sharing
+     * has been turned on/off.
+     *
+     * @param {boolean} on - True if screen sharing is enabled.
+     * @returns {void}
+     */
+    notifyScreenSharingStatusChanged(on: boolean) {
+        this._sendEvent({
+            name: 'screen-sharing-status-changed',
+            on
+        });
+    }
 
     /**
      * Disposes the allocated resources.

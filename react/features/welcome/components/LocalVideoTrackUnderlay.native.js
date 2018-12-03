@@ -1,85 +1,43 @@
 /* @flow */
 
-import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { View } from 'react-native';
 import { connect } from 'react-redux';
 
 import { VideoTrack } from '../../base/media';
+import { TintedView } from '../../base/react';
 import { getLocalVideoTrack } from '../../base/tracks';
 
 import styles from './styles';
 
 /**
+ * The type of the React {@code Component} props of
+ * {@link LocalVideoTrackUnderlay}.
+ */
+type Props = {
+
+    /**
+     * The redux representation of the local participant's video track.
+     */
+    _localVideoTrack: Object,
+
+    /**
+     * React Elements to display within the component.
+     */
+    children: React$Node,
+
+    /**
+     * The style, if any, to apply to {@link LocalVideoTrackUnderlay} in
+     * addition to its default style.
+     */
+    style: Object
+};
+
+/**
  * Implements a React {@code Component} which underlays the local video track,
  * if any, underneath its children.
  */
-class LocalVideoTrackUnderlay extends Component<*, *> {
-    state: {
-
-        /**
-         * The style of {@code LocalVideoTrackUnderlay} which is a combination
-         * of its default style and the consumer-specified style.
-         */
-        style: Object
-    };
-
-    /**
-     * {@code LocalVideoTrackUnderlay}'s React {@code Component} prop types.
-     *
-     * @static
-     */
-    static propTypes = {
-        _localVideoTrack: PropTypes.object,
-        children: PropTypes.node,
-        style: PropTypes.object
-    };
-
-    /**
-     * Initializes a new {@code LocalVideoTrackUnderlay} instance.
-     *
-     * @param {Object} props - The read-only React {@code Component} props with
-     * which the new instance is to be initialized.
-     */
-    constructor(props) {
-        super(props);
-
-        this.componentWillReceiveProps(props);
-    }
-
-    /**
-     * Notifies this mounted React {@code Component} that it will receive new
-     * props. Forks (in Facebook/React speak) the prop {@code style} because its
-     * value is to be combined with the default style.
-     *
-     * @inheritdoc
-     * @param {Object} nextProps - The read-only React {@code Component} props
-     * that this instance will receive.
-     * @returns {void}
-     */
-    componentWillReceiveProps(nextProps) {
-        // style
-        const prevStyle = this.props && this.props.style;
-        const nextStyle = nextProps && nextProps.style;
-        const assignState = !this.state;
-
-        if (prevStyle !== nextStyle || assignState) {
-            const nextState = {
-                style: {
-                    ...styles.localVideoTrackUnderlay,
-                    ...nextStyle
-                }
-            };
-
-            if (assignState) {
-                // eslint-disable-next-line react/no-direct-mutation-state
-                this.state = nextState;
-            } else {
-                this.setState(nextState);
-            }
-        }
-    }
-
+class LocalVideoTrackUnderlay extends Component<Props> {
     /**
      * Implements React's {@link Component#render()}.
      *
@@ -89,11 +47,15 @@ class LocalVideoTrackUnderlay extends Component<*, *> {
      */
     render() {
         return (
-            <View style = { this.state.style }>
+            <View
+                style = { [
+                    styles.localVideoTrackUnderlay,
+                    this.props.style
+                ] }>
                 <VideoTrack videoTrack = { this.props._localVideoTrack } />
-                <View style = { styles.localVideoTrackOverlay }>
+                <TintedView>
                     { this.props.children }
-                </View>
+                </TintedView>
             </View>
         );
     }

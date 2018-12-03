@@ -8,6 +8,7 @@ import {
     SET_CAMERA_FACING_MODE,
     SET_VIDEO_AVAILABLE,
     SET_VIDEO_MUTED,
+    STORE_VIDEO_TRANSFORM,
     TOGGLE_CAMERA_FACING_MODE
 } from './actionTypes';
 import { CAMERA_FACING_MODE, VIDEO_MUTISM_AUTHORITY } from './constants';
@@ -18,9 +19,9 @@ import { CAMERA_FACING_MODE, VIDEO_MUTISM_AUTHORITY } from './constants';
  * @param {boolean} available - True if the local audio is to be marked as
  * available or false if the local audio is not available.
  * @returns {{
- *      type: SET_AUDIO_AVAILABLE,
- *      available: boolean
- *  }}
+ *     type: SET_AUDIO_AVAILABLE,
+ *     available: boolean
+ * }}
  */
 export function setAudioAvailable(available: boolean) {
     return {
@@ -109,6 +110,26 @@ export function setVideoMuted(
             ensureTrack,
             muted: newValue
         });
+    };
+}
+
+/**
+ * Creates an action to store the last video {@link Transform} applied to a
+ * stream.
+ *
+ * @param {string} streamId - The ID of the stream.
+ * @param {Object} transform - The {@code Transform} to store.
+ * @returns {{
+ *     type: STORE_VIDEO_TRANSFORM,
+ *     streamId: string,
+ *     transform: Object
+ * }}
+ */
+export function storeVideoTransform(streamId: string, transform: Object) {
+    return {
+        type: STORE_VIDEO_TRANSFORM,
+        streamId,
+        transform
     };
 }
 

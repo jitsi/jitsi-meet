@@ -1,15 +1,14 @@
-/* @flow */
+// @flow
+
+import { MiddlewareRegistry } from '../base/redux';
 
 import {
-    MEDIA_TYPE,
-    SET_AUDIO_AVAILABLE,
-    SET_VIDEO_AVAILABLE
-} from '../base/media';
-import { MiddlewareRegistry } from '../base/redux';
-import { isLocalTrackMuted, TRACK_UPDATED } from '../base/tracks';
+    CLEAR_TOOLBOX_TIMEOUT,
+    SET_TOOLBOX_TIMEOUT,
+    SET_FULL_SCREEN
+} from './actionTypes';
 
-import { setToolbarButton } from './actions';
-import { CLEAR_TOOLBOX_TIMEOUT, SET_TOOLBOX_TIMEOUT } from './actionTypes';
+declare var APP: Object;
 
 /**
  * Middleware which intercepts Toolbox actions to handle changes to the
@@ -27,86 +26,68 @@ MiddlewareRegistry.register(store => next => action => {
         break;
     }
 
-    case SET_AUDIO_AVAILABLE:
-        return _setMediaAvailableOrMuted(store, next, action);
+    case SET_FULL_SCREEN:
+        return _setFullScreen(next, action);
 
     case SET_TOOLBOX_TIMEOUT: {
         const { timeoutID } = store.getState()['features/toolbox'];
         const { handler, timeoutMS } = action;
 
         clearTimeout(timeoutID);
-        const newTimeoutId = setTimeout(handler, timeoutMS);
+        action.timeoutID = setTimeout(handler, timeoutMS);
 
-        action.timeoutID = newTimeoutId;
         break;
     }
-
-    case SET_VIDEO_AVAILABLE:
-        return _setMediaAvailableOrMuted(store, next, action);
-
-    case TRACK_UPDATED:
-        if (action.track.jitsiTrack.isLocal()) {
-            return _setMediaAvailableOrMuted(store, next, action);
-        }
-        break;
     }
 
     return next(action);
 });
 
 /**
- * Adjusts the state of toolbar's microphone or camera button.
+ * Makes an external request to enter or exit full screen mode.
  *
- * @param {Store} store - The redux store.
- * @param {Function} next - The redux function to continue dispatching the
- * specified {@code action} in the specified {@code store}.
- * @param {Object} action - {@code SET_AUDIO_AVAILABLE},
- * {@code SET_VIDEO_AVAILABLE}, or {@code TRACK_UPDATED}.
- * @returns {*}
+ * @param {Dispatch} next - The redux dispatch function to dispatch the
+ * specified action to the specified store.
+ * @param {Action} action - The redux action SET_FULL_SCREEN which is being
+ * dispatched in the specified store.
+ * @private
+ * @returns {Object} The value returned by {@code next(action)}.
  */
-function _setMediaAvailableOrMuted({ dispatch, getState }, next, action) {
-    const result = next(action);
+function _setFullScreen(next, action) {
+    if (typeof APP === 'object') {
+        const { fullScreen } = action;
 
-    let mediaType;
+        if (fullScreen) {
+            const documentElement = document.documentElement || {};
 
-    switch (action.type) {
-    case SET_AUDIO_AVAILABLE:
-        mediaType = MEDIA_TYPE.AUDIO;
-        break;
+            if (typeof documentElement.requestFullscreen === 'function') {
+                documentElement.requestFullscreen();
+            } else if (
+                typeof documentElement.mozRequestFullScreen === 'function') {
+                documentElement.mozRequestFullScreen();
+            } else if (
+                typeof documentElement.webkitRequestFullscreen === 'function') {
+                documentElement.webkitRequestFullscreen();
+            }
+        } else {
+            /* eslint-disable no-lonely-if */
 
-    case SET_VIDEO_AVAILABLE:
-        mediaType = MEDIA_TYPE.VIDEO;
-        break;
+            // $FlowFixMe
+            if (typeof document.exitFullscreen === 'function') {
+                document.exitFullscreen();
 
-    case TRACK_UPDATED:
-        mediaType
-            = action.track.jitsiTrack.isAudioTrack()
-                ? MEDIA_TYPE.AUDIO
-                : MEDIA_TYPE.VIDEO;
-        break;
+            // $FlowFixMe
+            } else if (typeof document.mozCancelFullScreen === 'function') {
+                document.mozCancelFullScreen();
 
-    default:
-        throw new Error(`Unsupported action ${action}`);
+            // $FlowFixMe
+            } else if (typeof document.webkitExitFullscreen === 'function') {
+                document.webkitExitFullscreen();
+            }
+
+            /* eslint-enable no-loney-if */
+        }
     }
 
-    const state = getState();
-    const { audio, video } = state['features/base/media'];
-    const { available } = mediaType === MEDIA_TYPE.AUDIO ? audio : video;
-    const i18nKey
-        = mediaType === MEDIA_TYPE.AUDIO
-            ? available ? 'mute' : 'micDisabled'
-            : available ? 'videomute' : 'cameraDisabled';
-    const tracks = state['features/base/tracks'];
-    const muted = isLocalTrackMuted(tracks, mediaType);
-
-    dispatch(
-        setToolbarButton(
-            mediaType === MEDIA_TYPE.AUDIO ? 'microphone' : 'camera',
-            {
-                enabled: available,
-                i18n: `[content]toolbar.${i18nKey}`,
-                toggled: available ? muted : true
-            }));
-
-    return result;
+    return next(action);
 }

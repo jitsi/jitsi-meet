@@ -1,3 +1,1 @@
-export {
-    default as AudioRoutePickerDialog
-} from './AudioRoutePickerDialog';
+export { default as AudioRouteButton } from './AudioRouteButton';

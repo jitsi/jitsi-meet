@@ -1,4 +1,4 @@
-/* @flow */
+// @flow
 
 import {
     CAMERA_FACING_MODE,
@@ -10,9 +10,14 @@ import {
     toggleCameraFacingMode
 } from '../media';
 import { MiddlewareRegistry } from '../redux';
+import UIEvents from '../../../../service/UI/UIEvents';
 
 import { createLocalTracksA } from './actions';
-import { TRACK_ADDED, TRACK_REMOVED, TRACK_UPDATED } from './actionTypes';
+import {
+    TOGGLE_SCREENSHARING,
+    TRACK_REMOVED,
+    TRACK_UPDATED
+} from './actionTypes';
 import { getLocalTrack, setTrackMuted } from './functions';
 
 declare var APP: Object;
@@ -81,11 +86,9 @@ MiddlewareRegistry.register(store => next => action => {
         break;
     }
 
-    case TRACK_ADDED:
-        // TODO Remove this middleware case once all UI interested in new tracks
-        // being added are converted to react and listening for store changes.
-        if (typeof APP !== 'undefined' && !action.track.local) {
-            APP.UI.addRemoteStream(action.track.jitsiTrack);
+    case TOGGLE_SCREENSHARING:
+        if (typeof APP === 'object') {
+            APP.UI.emitEvent(UIEvents.TOGGLE_SCREENSHARING);
         }
         break;
 
@@ -135,12 +138,24 @@ MiddlewareRegistry.register(store => next => action => {
  * with the specified {@code mediaType} is to be retrieved.
  * @param {MEDIA_TYPE} mediaType - The {@code MEDIA_TYPE} of the local track to
  * be retrieved from the specified {@code store}.
+ * @param {boolean} [includePending] - Indicates whether a local track is to be
+ * returned if it is still pending. A local track is pending if
+ * {@code getUserMedia} is still executing to create it and, consequently, its
+ * {@code jitsiTrack} property is {@code undefined}. By default a pending local
+ * track is not returned.
  * @private
  * @returns {Track} The local {@code Track} associated with the specified
  * {@code mediaType} in the specified {@code store}.
  */
-function _getLocalTrack({ getState }, mediaType: MEDIA_TYPE) {
-    return getLocalTrack(getState()['features/base/tracks'], mediaType);
+function _getLocalTrack(
+        { getState }: { getState: Function },
+        mediaType: MEDIA_TYPE,
+        includePending: boolean = false) {
+    return (
+        getLocalTrack(
+            getState()['features/base/tracks'],
+            mediaType,
+            includePending));
 }
 
 /**
@@ -155,10 +170,17 @@ function _getLocalTrack({ getState }, mediaType: MEDIA_TYPE) {
  * @returns {void}
  */
 function _setMuted(store, { ensureTrack, muted }, mediaType: MEDIA_TYPE) {
-    const localTrack = _getLocalTrack(store, mediaType);
+    const localTrack
+        = _getLocalTrack(store, mediaType, /* includePending */ true);
 
     if (localTrack) {
-        setTrackMuted(localTrack.jitsiTrack, muted);
+        // The `jitsiTrack` property will have a value only for a localTrack for
+        // which `getUserMedia` has already completed. If there's no
+        // `jitsiTrack`, then the `muted` state will be applied once the
+        // `jitsiTrack` is created.
+        const { jitsiTrack } = localTrack;
+
+        jitsiTrack && setTrackMuted(jitsiTrack, muted);
     } else if (!muted && ensureTrack && typeof APP === 'undefined') {
         // FIXME: This only runs on mobile now because web has its own way of
         // creating local tracks. Adjust the check once they are unified.

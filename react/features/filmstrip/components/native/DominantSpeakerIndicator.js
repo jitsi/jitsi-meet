@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { View } from 'react-native';
-import Icon from 'react-native-vector-icons/FontAwesome';
+
+import { Icon } from '../../../base/font-icons';
 
 import styles from './styles';
 
@@ -8,7 +9,7 @@ import styles from './styles';
  * Thumbnail badge showing that the participant is the dominant speaker in
  * the conference.
  */
-export class DominantSpeakerIndicator extends Component {
+export default class DominantSpeakerIndicator extends Component {
     /**
      * Implements React's {@link Component#render()}.
      *
@@ -18,7 +19,7 @@ export class DominantSpeakerIndicator extends Component {
         return (
             <View style = { styles.dominantSpeakerIndicatorBackground }>
                 <Icon
-                    name = 'bullhorn'
+                    name = 'dominant-speaker'
                     style = { styles.dominantSpeakerIndicator } />
             </View>
         );

@@ -41,9 +41,13 @@ function insertTextMsg(id, msg) {
  * Sets the hint and thanks messages. Will be executed on load event.
  */
 function onLoad() {
+    // Intentionally use string concatenation as this file does not go through
+    // babel but IE11 is still supported.
+    // eslint-disable-next-line prefer-template
+    const thankYouMessage = 'Thank you for using ' + interfaceConfig.APP_NAME;
+
     // Works only for close2.html because close.html doesn't have this element.
-    insertTextMsg('thanksMessage',
-        `Thank you for using ${interfaceConfig.APP_NAME}`);
+    insertTextMsg('thanksMessage', thankYouMessage);
 
     // If there is a setting show a special message only for the guests
     if (interfaceConfig.CLOSE_PAGE_GUEST_HINT) {

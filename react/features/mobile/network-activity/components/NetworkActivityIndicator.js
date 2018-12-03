@@ -1,31 +1,28 @@
 /* @flow */
 
-import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
 import { LoadingIndicator } from '../../../base/react';
 
 /**
+ * The type of the React {@code Component} props of
+ * {@link NetworkActivityIndicator}.
+ */
+type Props = {
+
+    /**
+     * Indicates whether there is network activity i.e. ongoing network
+     * requests.
+     */
+    _networkActivity: boolean
+};
+
+/**
  * The React {@code Component} which renders a progress indicator when there
  * are ongoing network requests.
  */
-class NetworkActivityIndicator extends Component<*> {
-    /**
-     * {@code NetworkActivityIndicator} React {@code Component}'s prop types.
-     *
-     * @static
-     */
-    static propTypes = {
-        /**
-         * Indicates whether there is network activity i.e. ongoing network
-         * requests.
-         *
-         * @private
-         */
-        _networkActivity: PropTypes.bool
-    };
-
+class NetworkActivityIndicator extends Component<Props> {
     /**
      * Implements React's {@link Component#render()}.
      *

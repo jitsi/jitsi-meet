@@ -1,9 +1,33 @@
+import JitsiMeetJS from '../lib-jitsi-meet';
+
 import {
     SET_AUDIO_INPUT_DEVICE,
-    SET_AUDIO_OUTPUT_DEVICE,
     SET_VIDEO_INPUT_DEVICE,
     UPDATE_DEVICE_LIST
 } from './actionTypes';
+
+/**
+ * Queries for connected A/V input and output devices and updates the redux
+ * state of known devices.
+ *
+ * @returns {Function}
+ */
+export function getAvailableDevices() {
+    return dispatch => new Promise(resolve => {
+        const { mediaDevices } = JitsiMeetJS;
+
+        if (mediaDevices.isDeviceListAvailable()
+                && mediaDevices.isDeviceChangeAvailable()) {
+            mediaDevices.enumerateDevices(devices => {
+                dispatch(updateDeviceList(devices));
+
+                resolve(devices);
+            });
+        } else {
+            resolve([]);
+        }
+    });
+}
 
 /**
  * Signals to update the currently used audio input device.
@@ -17,22 +41,6 @@ import {
 export function setAudioInputDevice(deviceId) {
     return {
         type: SET_AUDIO_INPUT_DEVICE,
-        deviceId
-    };
-}
-
-/**
- * Signals to update the currently used audio output device.
- *
- * @param {string} deviceId - The id of the new audio ouput device.
- * @returns {{
- *      type: SET_AUDIO_OUTPUT_DEVICE,
- *      deviceId: string
- * }}
- */
-export function setAudioOutputDevice(deviceId) {
-    return {
-        type: SET_AUDIO_OUTPUT_DEVICE,
         deviceId
     };
 }

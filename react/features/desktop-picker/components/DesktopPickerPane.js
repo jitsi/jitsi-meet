@@ -1,48 +1,47 @@
+/* @flow */
+
 import Spinner from '@atlaskit/spinner';
-import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 
 import DesktopSourcePreview from './DesktopSourcePreview';
+
+/**
+ * The type of the React {@code Component} props of {@link DesktopPickerPane}.
+ */
+type Props = {
+
+    /**
+     * The handler to be invoked when a DesktopSourcePreview is clicked.
+     */
+    onClick: Function,
+
+    /**
+     * The handler to be invoked when a DesktopSourcePreview is double clicked.
+     */
+    onDoubleClick: Function,
+
+    /**
+     * The id of the DesktopCapturerSource that is currently selected.
+     */
+    selectedSourceId: string,
+
+    /**
+     * An array of DesktopCapturerSources.
+     */
+    sources: Array<Object>,
+
+    /**
+     * The source type of the DesktopCapturerSources to display.
+     */
+    type: string
+};
 
 /**
  * React component for showing a grid of DesktopSourcePreviews.
  *
  * @extends Component
  */
-class DesktopPickerPane extends Component {
-    /**
-     * DesktopPickerPane component's property types.
-     *
-     * @static
-     */
-    static propTypes = {
-        /**
-         * The handler to be invoked when a DesktopSourcePreview is clicked.
-         */
-        onClick: PropTypes.func,
-
-        /**
-         * The handler to be invoked when a DesktopSourcePreview is double
-         * clicked.
-         */
-        onDoubleClick: PropTypes.func,
-
-        /**
-         * The id of the DesktopCapturerSource that is currently selected.
-         */
-        selectedSourceId: PropTypes.string,
-
-        /**
-         * An array of DesktopCapturerSources.
-         */
-        sources: PropTypes.array,
-
-        /**
-         * The source type of the DesktopCapturerSources to display.
-         */
-        type: PropTypes.string
-    };
-
+class DesktopPickerPane extends Component<Props> {
     /**
      * Implements React's {@link Component#render()}.
      *
@@ -61,18 +60,16 @@ class DesktopPickerPane extends Component {
         const classNames
             = `desktop-picker-pane default-scrollbar source-type-${type}`;
         const previews
-            = sources ? sources.map(
-                source =>
-
-                    // eslint-disable-next-line react/jsx-wrap-multilines
+            = sources
+                ? sources.map(source => (
                     <DesktopSourcePreview
                         key = { source.id }
                         onClick = { onClick }
                         onDoubleClick = { onDoubleClick }
                         selected = { source.id === selectedSourceId }
                         source = { source }
-                        type = { type } />)
-                : ( // eslint-disable-line no-extra-parens
+                        type = { type } />))
+                : (
                     <div className = 'desktop-picker-pane-spinner'>
                         <Spinner
                             isCompleting = { false }

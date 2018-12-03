@@ -6,13 +6,14 @@ var interfaceConfig = {
     DEFAULT_BACKGROUND: '#474747',
 
     /**
-     * In case the desktop sharing is disabled through the config the button
-     * will not be hidden, but displayed as disabled with this text us as
-     * a tooltip.
+     * Whether or not the blurred video background for large video should be
+     * displayed on browsers that can support it.
      */
-    DESKTOP_SHARING_BUTTON_DISABLED_TOOLTIP: null,
+    DISABLE_VIDEO_BACKGROUND: false,
+
     INITIAL_TOOLBAR_TIMEOUT: 20000,
     TOOLBAR_TIMEOUT: 4000,
+    TOOLBAR_ALWAYS_VISIBLE: false,
     DEFAULT_REMOTE_DISPLAY_NAME: 'Fellow Jitster',
     DEFAULT_LOCAL_DISPLAY_NAME: 'me',
     SHOW_JITSI_WATERMARK: true,
@@ -23,8 +24,11 @@ var interfaceConfig = {
     SHOW_BRAND_WATERMARK: false,
     BRAND_WATERMARK_LINK: '',
     SHOW_POWERED_BY: false,
+    SHOW_DEEP_LINKING_IMAGE: false,
     GENERATE_ROOMNAMES_ON_WELCOME_PAGE: true,
+    DISPLAY_WELCOME_PAGE_CONTENT: true,
     APP_NAME: 'Jitsi Meet',
+    NATIVE_APP_NAME: 'Jitsi Meet',
     LANG_DETECTION: false, // Allow i18n to detect the system language
     INVITATION_POWERED_BY: true,
 
@@ -34,31 +38,27 @@ var interfaceConfig = {
     AUTHENTICATION_ENABLE: true,
 
     /**
-     * the toolbar buttons line is intentionally left in one line, to be able
-     * to easily override values or remove them using regex
+     * The name of the toolbar buttons to display in the toolbar. If present,
+     * the button will display. Exceptions are "livestreaming" and "recording"
+     * which also require being a moderator and some values in config.js to be
+     * enabled. Also, the "profile" button will not display for user's with a
+     * jwt.
      */
     TOOLBAR_BUTTONS: [
+        'microphone', 'camera', 'closedcaptions', 'desktop', 'fullscreen',
+        'fodeviceselection', 'hangup', 'profile', 'info', 'chat', 'recording',
+        'livestreaming', 'etherpad', 'sharedvideo', 'settings', 'raisehand',
+        'videoquality', 'filmstrip', 'invite', 'feedback', 'stats', 'shortcuts',
+        'tileview'
+    ],
 
-        // main toolbar
-        'microphone', 'camera', 'desktop', 'invite', 'fullscreen', 'fodeviceselection', 'hangup',
-
-        // extended toolbar
-        'profile', 'contacts', 'info', 'chat', 'recording', 'etherpad', 'sharedvideo', 'settings', 'raisehand', 'videoquality', 'filmstrip' ],
-
-    /**
-     * Main Toolbar Buttons
-     * All of them should be in TOOLBAR_BUTTONS
-     */
-    MAIN_TOOLBAR_BUTTONS: [ 'microphone', 'camera', 'desktop', 'invite', 'fullscreen', 'fodeviceselection', 'hangup' ],
-    SETTINGS_SECTIONS: [ 'language', 'devices', 'moderator' ],
-    INVITE_OPTIONS: [ 'invite', 'dialout', 'addtocall' ],
+    SETTINGS_SECTIONS: [ 'devices', 'language', 'moderator', 'profile', 'calendar' ],
 
     // Determines how the video would fit the screen. 'both' would fit the whole
     // screen, 'height' would fit the original video height to the height of the
     // screen, 'width' would fit the original video width to the width of the
     // screen respecting ratio.
     VIDEO_LAYOUT_FIT: 'both',
-    SHOW_CONTACTLIST_AVATARS: true,
 
     /**
      * Whether to only show the filmstrip (and hide the toolbar).
@@ -80,6 +80,14 @@ var interfaceConfig = {
     ENABLE_FEEDBACK_ANIMATION: false,
     DISABLE_FOCUS_INDICATOR: false,
     DISABLE_DOMINANT_SPEAKER_INDICATOR: false,
+
+    /**
+     * Whether the speech to text transcription subtitles panel is disabled.
+     * If {@code undefined}, defaults to {@code false}.
+     *
+     * @type {boolean}
+     */
+    DISABLE_TRANSCRIPTION_SUBTITLES: false,
 
     /**
      * Whether the ringing sound in the call/ring overlay is disabled. If
@@ -139,6 +147,13 @@ var interfaceConfig = {
     CONNECTION_INDICATOR_AUTO_HIDE_TIMEOUT: 5000,
 
     /**
+     * If true, hides the connection indicators completely.
+     *
+     * @type {boolean}
+     */
+    CONNECTION_INDICATOR_DISABLED: false,
+
+    /**
      * The name of the application connected to the "Add people" search service.
      */
     // ADD_PEOPLE_APP_NAME: "",
@@ -149,7 +164,20 @@ var interfaceConfig = {
      *
      * @type {boolean}
      */
-    VIDEO_QUALITY_LABEL_DISABLED: false
+    VIDEO_QUALITY_LABEL_DISABLED: false,
+
+    /**
+     * If true, will display recent list
+     *
+     * @type {boolean}
+     */
+    RECENT_LIST_ENABLED: true
+
+    /**
+     * How many columns the tile view can expand to. The respected range is
+     * between 1 and 5.
+     */
+    // TILE_VIEW_MAX_COLUMNS: 5,
 
     /**
      * Specify custom URL for downloading android mobile app.
@@ -164,7 +192,7 @@ var interfaceConfig = {
     /**
      * Specify mobile app scheme for opening the app from the mobile browser.
      */
-    // MOBILE_APP_SCHEME: 'org.jitsi.meet'
+    // APP_SCHEME: 'org.jitsi.meet'
 };
 
 /* eslint-enable no-unused-vars, no-var, max-len */

@@ -1,4 +1,5 @@
 /* global $ */
+
 import SmallVideo from '../videolayout/SmallVideo';
 
 const logger = require('jitsi-meet-logger').getLogger(__filename);
@@ -6,10 +7,10 @@ const logger = require('jitsi-meet-logger').getLogger(__filename);
 /**
  *
  */
-export default function SharedVideoThumb(url, videoType, VideoLayout) {
-    this.id = url;
+export default function SharedVideoThumb(participant, videoType, VideoLayout) {
+    this.id = participant.id;
 
-    this.url = url;
+    this.url = participant.id;
     this.setVideoType(videoType);
     this.videoSpanId = 'sharedVideoContainer';
     this.container = this.createContainer(this.videoSpanId);
@@ -18,6 +19,7 @@ export default function SharedVideoThumb(url, videoType, VideoLayout) {
     this.bindHoverHandler();
     SmallVideo.call(this, VideoLayout);
     this.isVideoMuted = true;
+    this.setDisplayName(participant.name);
 }
 SharedVideoThumb.prototype = Object.create(SmallVideo.prototype);
 SharedVideoThumb.prototype.constructor = SharedVideoThumb;
@@ -49,17 +51,21 @@ SharedVideoThumb.prototype.createContainer = function(spanId) {
     displayNameContainer.className = 'displayNameContainer';
     container.appendChild(displayNameContainer);
 
-    const remotes = document.getElementById('filmstripRemoteVideosContainer');
+    const remoteVideosContainer
+        = document.getElementById('filmstripRemoteVideosContainer');
+    const localVideoContainer
+        = document.getElementById('localVideoTileViewContainer');
 
+    remoteVideosContainer.insertBefore(container, localVideoContainer);
 
-    return remotes.appendChild(container);
+    return container;
 };
 
 /**
  * The thumb click handler.
  */
 SharedVideoThumb.prototype.videoClick = function() {
-    this.VideoLayout.handleVideoThumbClicked(this.url);
+    this._togglePin();
 };
 
 /**
@@ -67,10 +73,6 @@ SharedVideoThumb.prototype.videoClick = function() {
  */
 SharedVideoThumb.prototype.remove = function() {
     logger.log('Remove shared video thumb', this.id);
-
-    // Make sure that the large video is updated if are removing its
-    // corresponding small video.
-    this.VideoLayout.updateAfterThumbRemoved(this.id);
 
     // Remove whole container
     if (this.container.parentNode) {

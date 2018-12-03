@@ -1,5 +1,26 @@
+// @flow
+
 import { NativeModules } from 'react-native';
 import { RTCPeerConnection, RTCSessionDescription } from 'react-native-webrtc';
+
+const logger = require('jitsi-meet-logger').getLogger(__filename);
+
+/* eslint-disable no-unused-vars */
+
+// Address families.
+const AF_INET6 = 30; /* IPv6 */
+
+// Protocols (RFC 1700)
+const IPPROTO_TCP = 6; /* tcp */
+const IPPROTO_UDP = 17; /* user datagram protocol */
+
+// Protocol families, same as address families for now.
+const PF_INET6 = AF_INET6;
+
+const SOCK_DGRAM = 2; /* datagram socket */
+const SOCK_STREAM = 1; /* stream socket */
+
+/* eslint-enable no-unused-vars */
 
 // XXX At the time of this writing extending RTCPeerConnection using ES6 'class'
 // and 'extends' causes a runtime error related to the attempt to define the
@@ -11,12 +32,12 @@ import { RTCPeerConnection, RTCSessionDescription } from 'react-native-webrtc';
  * The RTCPeerConnection provided by react-native-webrtc fires onaddstream
  * before it remembers remotedescription (and thus makes it available to API
  * clients). Because that appears to be a problem for lib-jitsi-meet which has
- * been successfully running on Chrome, Firefox, Temasys, etc. for a very long
- * time, attempt to meets its expectations (by extending RTCPPeerConnection).
+ * been successfully running on Chrome, Firefox and others for a very long
+ * time, attempt to meet its expectations (by extending RTCPPeerConnection).
  *
  * @class
  */
-export default function _RTCPeerConnection(...args) {
+export default function _RTCPeerConnection(...args: any[]) {
 
     /* eslint-disable indent, no-invalid-this */
 
@@ -33,6 +54,8 @@ export default function _RTCPeerConnection(...args) {
     // _RTCPeerConnection's prototype may (or may not, I don't know) work but I
     // don't want to try because the following approach appears to work and I
     // understand it.
+
+    // $FlowFixMe
     Object.defineProperty(this, 'onaddstream', {
         configurable: true,
         enumerable: true,
@@ -73,29 +96,14 @@ _RTCPeerConnection.prototype._queueOnaddstream = function(...args) {
     this._onaddstreamQueue.push(Array.from(args));
 };
 
-_RTCPeerConnection.prototype.setRemoteDescription = function(
-        sessionDescription,
-        successCallback,
-        errorCallback) {
-    // If the deprecated callback-based version is used, translate it to the
-    // Promise-based version.
-    if (typeof successCallback !== 'undefined'
-            || typeof errorCallback !== 'undefined') {
-        // XXX Returning a Promise is not necessary. But I don't see why it'd
-        // hurt (much).
-        return (
-            _RTCPeerConnection.prototype.setRemoteDescription.call(
-                    this,
-                    sessionDescription)
-                .then(successCallback, errorCallback));
-    }
+_RTCPeerConnection.prototype.setRemoteDescription = function(description) {
 
     return (
-        _synthesizeIPv6Addresses(sessionDescription)
+        _synthesizeIPv6Addresses(description)
             .catch(reason => {
                 reason && _LOGE(reason);
 
-                return sessionDescription;
+                return description;
             })
             .then(value => _setRemoteDescription.bind(this)(value)));
 
@@ -108,7 +116,7 @@ _RTCPeerConnection.prototype.setRemoteDescription = function(
  * @returns {void}
  */
 function _LOGE(...args) {
-    console && console.error && console.error(...args);
+    logger.error(...args);
 }
 
 /**
@@ -116,13 +124,13 @@ function _LOGE(...args) {
  * implementation which uses the deprecated, callback-based version to the
  * {@code Promise}-based version.
  *
- * @param {RTCSessionDescription} sessionDescription - The RTCSessionDescription
+ * @param {RTCSessionDescription} description - The RTCSessionDescription
  * which specifies the configuration of the remote end of the connection.
  * @private
  * @private
  * @returns {Promise}
  */
-function _setRemoteDescription(sessionDescription) {
+function _setRemoteDescription(description) {
     return new Promise((resolve, reject) => {
 
         /* eslint-disable no-invalid-this */
@@ -131,10 +139,8 @@ function _setRemoteDescription(sessionDescription) {
         // setRemoteDescription calls. I shouldn't be but... anyway.
         this._onaddstreamQueue = [];
 
-        RTCPeerConnection.prototype.setRemoteDescription.call(
-            this,
-            sessionDescription,
-            (...args) => {
+        RTCPeerConnection.prototype.setRemoteDescription.call(this, description)
+            .then((...args) => {
                 let q;
 
                 try {
@@ -145,8 +151,7 @@ function _setRemoteDescription(sessionDescription) {
                 }
 
                 this._invokeQueuedOnaddstream(q);
-            },
-            (...args) => {
+            }, (...args) => {
                 this._onaddstreamQueue = undefined;
 
                 reject(...args);
@@ -156,8 +161,54 @@ function _setRemoteDescription(sessionDescription) {
     });
 }
 
+// XXX The function _synthesizeIPv6FromIPv4Address is not placed relative to the
+// other functions in the file according to alphabetical sorting rule of the
+// coding style. But eslint wants constants to be defined before they are used.
+
 /**
- * Synthesize IPv6 addresses on iOS in order to support IPv6 NAT64 networks.
+ * Synthesizes an IPv6 address from a specific IPv4 address.
+ *
+ * @param {string} ipv4 - The IPv4 address from which an IPv6 address is to be
+ * synthesized.
+ * @returns {Promise<?string>} A {@code Promise} which gets resolved with the
+ * IPv6 address synthesized from the specified {@code ipv4} or a falsy value to
+ * be treated as inability to synthesize an IPv6 address from the specified
+ * {@code ipv4}.
+ */
+const _synthesizeIPv6FromIPv4Address: string => Promise<?string> = (function() {
+    // POSIX.getaddrinfo
+    const { POSIX } = NativeModules;
+
+    if (POSIX) {
+        const { getaddrinfo } = POSIX;
+
+        if (typeof getaddrinfo === 'function') {
+            return ipv4 =>
+                getaddrinfo(/* hostname */ ipv4, /* servname */ undefined)
+                    .then(([ { ai_addr: ipv6 } ]) => ipv6);
+        }
+    }
+
+    // NAT64AddrInfo.getIPv6Address
+    const { NAT64AddrInfo } = NativeModules;
+
+    if (NAT64AddrInfo) {
+        const { getIPv6Address } = NAT64AddrInfo;
+
+        if (typeof getIPv6Address === 'function') {
+            return getIPv6Address;
+        }
+    }
+
+    // There's no POSIX.getaddrinfo or NAT64AddrInfo.getIPv6Address.
+    return () =>
+        Promise.reject(
+            'The impossible just happened! No POSIX.getaddrinfo or'
+                + ' NAT64AddrInfo.getIPv6Address!');
+})();
+
+/**
+ * Synthesizes IPv6 addresses on iOS in order to support IPv6 NAT64 networks.
  *
  * @param {RTCSessionDescription} sdp - The RTCSessionDescription which
  * specifies the configuration of the remote end of the connection.
@@ -165,12 +216,6 @@ function _setRemoteDescription(sessionDescription) {
  * @returns {Promise}
  */
 function _synthesizeIPv6Addresses(sdp) {
-    // The synthesis of IPv6 addresses is implemented on iOS only at the time of
-    // this writing.
-    if (!NativeModules.POSIX) {
-        return Promise.resolve(sdp);
-    }
-
     return (
         new Promise(resolve => resolve(_synthesizeIPv6Addresses0(sdp)))
             .then(({ ips, lines }) =>
@@ -182,7 +227,7 @@ function _synthesizeIPv6Addresses(sdp) {
 /* eslint-disable max-depth */
 
 /**
- * Implements the initial phase of the synthesis of IPv6 addresses.
+ * Begins the asynchronous synthesis of IPv6 addresses.
  *
  * @param {RTCSessionDescription} sessionDescription - The RTCSessionDescription
  * for which IPv6 addresses will be synthesized.
@@ -197,7 +242,6 @@ function _synthesizeIPv6Addresses0(sessionDescription) {
     let start = 0;
     const lines = [];
     const ips = new Map();
-    const getaddrinfo = NativeModules.POSIX.getaddrinfo;
 
     do {
         const end = sdp.indexOf('\r\n', start);
@@ -236,9 +280,10 @@ function _synthesizeIPv6Addresses0(sessionDescription) {
                                 if (v && typeof v === 'string') {
                                     resolve(v);
                                 } else {
-                                    getaddrinfo(ip).then(
+                                    _synthesizeIPv6FromIPv4Address(ip).then(
                                         value => {
-                                            if (value.indexOf(':') === -1
+                                            if (!value
+                                                    || value.indexOf(':') === -1
                                                     || value === ips.get(ip)) {
                                                 ips.delete(ip);
                                             } else {
@@ -275,7 +320,7 @@ function _synthesizeIPv6Addresses0(sessionDescription) {
 /* eslint-enable max-depth */
 
 /**
- * Implements the initial phase of the synthesis of IPv6 addresses.
+ * Completes the asynchronous synthesis of IPv6 addresses.
  *
  * @param {RTCSessionDescription} sessionDescription - The RTCSessionDescription
  * for which IPv6 addresses are being synthesized.

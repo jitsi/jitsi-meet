@@ -1,9 +1,10 @@
 // @flow
 
 import Button, { ButtonGroup } from '@atlaskit/button';
-import ModalDialog from '@atlaskit/modal-dialog';
-import { AtlasKitThemeProvider } from '@atlaskit/theme';
+import { withContextFromProps } from '@atlaskit/layer-manager';
+import Modal, { ModalFooter } from '@atlaskit/modal-dialog';
 import _ from 'lodash';
+import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 
 import { translate } from '../../i18n';
@@ -30,11 +31,19 @@ const OK_BUTTON_ID = 'modal-dialog-ok-button';
 type Props = {
     ...DialogProps,
 
+    i18n: Object,
+
     /**
      * Disables dismissing the dialog when the blanket is clicked. Enabled
      * by default.
      */
     disableBlanketClickDismiss: boolean,
+
+    /**
+     * If true, the cancel button will not display but cancel actions, like
+     * clicking the blanket, will cancel.
+     */
+    hideCancelButton: boolean,
 
     /**
      * Whether the dialog is modal. This means clicking on the blanket will
@@ -58,9 +67,25 @@ type Props = {
 };
 
 /**
+ * ContexTypes is used as a workaround for Atlaskit's modal being displayed
+ * outside of the normal App hierarchy, thereby losing context. ContextType
+ * is responsible for taking its props and passing them into children.
+ *
+ * @type {ReactElement}
+ */
+const ContextProvider = withContextFromProps({
+    i18n: PropTypes.object
+});
+
+/**
  * Web dialog that uses atlaskit modal-dialog to display dialogs.
  */
 class StatelessDialog extends Component<Props> {
+    /**
+     * The functional component to be used for rendering the modal footer.
+     */
+    _Footer: ?Function
+
     _dialogElement: ?HTMLElement;
 
     /**
@@ -77,32 +102,8 @@ class StatelessDialog extends Component<Props> {
         this._onDialogDismissed = this._onDialogDismissed.bind(this);
         this._onKeyDown = this._onKeyDown.bind(this);
         this._onSubmit = this._onSubmit.bind(this);
+        this._renderFooter = this._renderFooter.bind(this);
         this._setDialogElement = this._setDialogElement.bind(this);
-    }
-
-    /**
-     * React Component method that executes once component is mounted.
-     *
-     * @inheritdoc
-     */
-    componentDidMount() {
-        this._updateButtonFocus();
-    }
-
-    /**
-     * React Component method that executes once component is updated.
-     *
-     * @param {Object} prevProps - The previous properties, before the update.
-     * @returns {void}
-     */
-    componentDidUpdate(prevProps) {
-        // if there is an update in any of the buttons enable/disable props
-        // update the focus if needed
-        if (prevProps.okDisabled !== this.props.okDisabled
-                || prevProps.cancelDisabled !== this.props.cancelDisabled
-                || prevProps.submitDisabled !== this.props.submitDisabled) {
-            this._updateButtonFocus();
-        }
     }
 
     /**
@@ -112,33 +113,80 @@ class StatelessDialog extends Component<Props> {
      * @returns {ReactElement}
      */
     render() {
-        return (
+        const {
+            children,
+            t /* The following fixes a flow error: */ = _.identity,
+            titleString,
+            titleKey,
+            width
+        } = this.props;
 
-            /**
-             * Enabled light theme for dialogs until all in-dialog components
-             * support dark theme.
-             */
-            <AtlasKitThemeProvider mode = 'light'>
-                <div
-                    onKeyDown = { this._onKeyDown }
-                    ref = { this._setDialogElement }>
-                    <ModalDialog
-                        footer = { this._renderFooter() }
-                        header = { this._renderHeader() }
-                        isOpen = { true }
-                        onDialogDismissed = { this._onDialogDismissed }
-                        width = { this.props.width || 'medium' }>
-                        <div>
-                            <form
-                                className = 'modal-dialog-form'
-                                id = 'modal-dialog-form'
-                                onSubmit = { this._onSubmit }>
-                                { this.props.children }
-                            </form>
-                        </div>
-                    </ModalDialog>
-                </div>
-            </AtlasKitThemeProvider>
+        return (
+            <Modal
+                autoFocus = { true }
+                footer = { this._renderFooter }
+                heading = { titleString || t(titleKey) }
+                i18n = { this.props.i18n }
+                onClose = { this._onDialogDismissed }
+                onDialogDismissed = { this._onDialogDismissed }
+                shouldCloseOnEscapePress = { true }
+                width = { width || 'medium' }>
+                {
+
+                    /**
+                     * Wrapping the contents of {@link Modal} with
+                     * {@link ContextProvider} is a workaround for the
+                     * i18n context becoming undefined as modal gets rendered
+                     * outside of the normal react app context.
+                     */
+                }
+                <ContextProvider i18n = { this.props.i18n }>
+                    <div
+                        onKeyDown = { this._onKeyDown }
+                        ref = { this._setDialogElement }>
+                        <form
+                            className = 'modal-dialog-form'
+                            id = 'modal-dialog-form'
+                            onSubmit = { this._onSubmit }>
+                            { children }
+                        </form>
+                    </div>
+                </ContextProvider>
+            </Modal>
+        );
+    }
+
+    _renderFooter: () => React$Node;
+
+    /**
+     * Returns a ReactElement to display buttons for closing the modal.
+     *
+     * @param {Object} propsFromModalFooter - The props passed in from the
+     * {@link ModalFooter} component.
+     * @private
+     * @returns {ReactElement}
+     */
+    _renderFooter(propsFromModalFooter) {
+        // Filter out falsy (null) values because {@code ButtonGroup} will error
+        // if passed in anything but buttons with valid type props.
+        const buttons = [
+            this._renderOKButton(),
+            this._renderCancelButton()
+        ].filter(Boolean);
+
+        return (
+            <ModalFooter showKeyline = { propsFromModalFooter.showKeyline } >
+                {
+
+                    /**
+                     * Atlaskit has this empty span (JustifySim) so...
+                     */
+                }
+                <span />
+                <ButtonGroup>
+                    { buttons }
+                </ButtonGroup>
+            </ModalFooter>
         );
     }
 
@@ -189,10 +237,13 @@ class StatelessDialog extends Component<Props> {
      * Renders Cancel button.
      *
      * @private
-     * @returns {*} The Cancel button if enabled and dialog is not modal.
+     * @returns {ReactElement|null} The Cancel button if enabled and dialog is
+     * not modal.
      */
     _renderCancelButton() {
-        if (this.props.cancelDisabled || this.props.isModal) {
+        if (this.props.cancelDisabled
+            || this.props.isModal
+            || this.props.hideCancelButton) {
             return null;
         }
 
@@ -213,53 +264,10 @@ class StatelessDialog extends Component<Props> {
     }
 
     /**
-     * Renders component in dialog footer.
-     *
-     * @private
-     * @returns {ReactElement}
-     */
-    _renderFooter() {
-        // Filter out falsy (null) values because {@code ButtonGroup} will error
-        // if passed in anything but buttons with valid type props.
-        const buttons = [
-            this._renderCancelButton(),
-            this._renderOKButton()
-        ].filter(Boolean);
-
-        return (
-            <footer className = 'modal-dialog-footer'>
-                <ButtonGroup>
-                    { buttons }
-                </ButtonGroup>
-            </footer>
-        );
-    }
-
-    /**
-     * Renders component in dialog header.
-     *
-     * @private
-     * @returns {ReactElement}
-     */
-    _renderHeader() {
-        const {
-            t /* The following fixes a flow error: */ = _.identity
-        } = this.props;
-
-        return (
-            <header>
-                <h3>
-                    { this.props.titleString || t(this.props.titleKey) }
-                </h3>
-            </header>
-        );
-    }
-
-    /**
      * Renders OK button.
      *
      * @private
-     * @returns {*} The OK button if enabled.
+     * @returns {ReactElement|null} The OK button if enabled.
      */
     _renderOKButton() {
         if (this.props.submitDisabled) {
@@ -324,40 +332,6 @@ class StatelessDialog extends Component<Props> {
                 this._onCancel();
             } else if (!this.props.okDisabled) {
                 this._onSubmit();
-            }
-        }
-    }
-
-    /**
-     * Updates focused button, if we have a reference to the dialog element.
-     * Focus on available button if there is no focus already.
-     *
-     * @private
-     * @returns {void}
-     */
-    _updateButtonFocus() {
-        const dialogElement = this._dialogElement;
-
-        if (dialogElement) {
-
-            // if we have a focused element inside the dialog, skip changing
-            // the focus
-            if (dialogElement.contains(document.activeElement)) {
-                return;
-            }
-
-            let buttonToFocus;
-
-            if (this.props.submitDisabled) {
-                buttonToFocus
-                    = dialogElement.querySelector(`[id=${CANCEL_BUTTON_ID}]`);
-            } else if (!this.props.okDisabled) {
-                buttonToFocus
-                    = dialogElement.querySelector(`[id=${OK_BUTTON_ID}]`);
-            }
-
-            if (buttonToFocus) {
-                buttonToFocus.focus();
             }
         }
     }

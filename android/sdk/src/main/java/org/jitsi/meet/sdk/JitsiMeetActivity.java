@@ -23,24 +23,27 @@ import android.os.Bundle;
 import android.provider.Settings;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+import android.view.KeyEvent;
+
+import com.facebook.react.ReactInstanceManager;
+import com.facebook.react.modules.core.DefaultHardwareBackBtnHandler;
+import com.facebook.react.modules.core.PermissionListener;
 
 import java.net.URL;
 
-import com.facebook.react.modules.core.DefaultHardwareBackBtnHandler;
-
 /**
  * Base Activity for applications integrating Jitsi Meet at a higher level. It
- * contains all the required wiring between the {@code JKConferenceView} and
+ * contains all the required wiring between the {@code JitsiMeetView} and
  * the Activity lifecycle methods already implemented.
  *
- * In this activity we use a single {@code JKConferenceView} instance. This
+ * In this activity we use a single {@code JitsiMeetView} instance. This
  * instance gives us access to a view which displays the welcome page and the
  * conference itself. All lifetime methods associated with this Activity are
  * hooked to the React Native subsystem via proxy calls through the
- * {@code JKConferenceView} static methods.
+ * {@code JitsiMeetView} static methods.
  */
 public class JitsiMeetActivity
-    extends AppCompatActivity {
+    extends AppCompatActivity implements JitsiMeetActivityInterface {
 
     /**
      * The request code identifying requests for the permission to draw on top
@@ -68,6 +71,12 @@ public class JitsiMeetActivity
     private JitsiMeetView view;
 
     /**
+     * Whether Picture-in-Picture is enabled. The value is used only while
+     * {@link #view} equals {@code null}.
+     */
+    private Boolean pictureInPictureEnabled;
+
+    /**
      * Whether the Welcome page is enabled. The value is used only while
      * {@link #view} equals {@code null}.
      */
@@ -90,14 +99,6 @@ public class JitsiMeetActivity
     }
 
     /**
-     *
-     * @see JitsiMeetView#getWelcomePageEnabled()
-     */
-    public boolean getWelcomePageEnabled() {
-        return view == null ? welcomePageEnabled : view.getWelcomePageEnabled();
-    }
-
-    /**
      * Initializes the {@link #view} of this {@code JitsiMeetActivity} with a
      * new {@link JitsiMeetView} instance.
      */
@@ -105,6 +106,11 @@ public class JitsiMeetActivity
         JitsiMeetView view = initializeView();
 
         if (view != null) {
+            // XXX Allow extenders who override initializeView() to configure
+            // the view before the first loadURL(). Probably works around a
+            // problem related to ReactRootView#setAppProperties().
+            view.loadURL(null);
+
             this.view = view;
             setContentView(this.view);
         }
@@ -121,11 +127,32 @@ public class JitsiMeetActivity
         // XXX Before calling JitsiMeetView#loadURL, make sure to call whatever
         // is documented to need such an order in order to take effect:
         view.setDefaultURL(defaultURL);
+        if (pictureInPictureEnabled != null) {
+            view.setPictureInPictureEnabled(
+                pictureInPictureEnabled.booleanValue());
+        }
         view.setWelcomePageEnabled(welcomePageEnabled);
 
-        view.loadURL(null);
-
         return view;
+    }
+
+    /**
+     *
+     * @see JitsiMeetView#isPictureInPictureEnabled()
+     */
+    public boolean isPictureInPictureEnabled() {
+        return
+            view == null
+                ? pictureInPictureEnabled
+                : view.isPictureInPictureEnabled();
+    }
+
+    /**
+     *
+     * @see JitsiMeetView#isWelcomePageEnabled()
+     */
+    public boolean isWelcomePageEnabled() {
+        return view == null ? welcomePageEnabled : view.isWelcomePageEnabled();
     }
 
     /**
@@ -148,12 +175,17 @@ public class JitsiMeetActivity
             if (Settings.canDrawOverlays(this)) {
                 initializeContentView();
             }
+
+            return;
         }
+
+        ReactActivityLifecycleCallbacks.onActivityResult(
+                this, requestCode, resultCode, data);
     }
 
     @Override
     public void onBackPressed() {
-        if (!JitsiMeetView.onBackPressed()) {
+        if (!ReactActivityLifecycleCallbacks.onBackPressed()) {
             // JitsiMeetView didn't handle the invocation of the back button.
             // Generally, an Activity extender would very likely want to invoke
             // Activity#onBackPressed(). For the sake of consistency with
@@ -196,20 +228,51 @@ public class JitsiMeetActivity
             view = null;
         }
 
-        JitsiMeetView.onHostDestroy(this);
+        ReactActivityLifecycleCallbacks.onHostDestroy(this);
+    }
+
+    // ReactAndroid/src/main/java/com/facebook/react/ReactActivity.java
+    @Override
+    public boolean onKeyUp(int keyCode, KeyEvent event) {
+        ReactInstanceManager reactInstanceManager;
+
+        if (!super.onKeyUp(keyCode, event)
+                && BuildConfig.DEBUG
+                && (reactInstanceManager
+                        = ReactInstanceManagerHolder.getReactInstanceManager())
+                    != null
+                && keyCode == KeyEvent.KEYCODE_MENU) {
+            reactInstanceManager.showDevOptionsDialog();
+            return true;
+        }
+        return false;
     }
 
     @Override
     public void onNewIntent(Intent intent) {
-        JitsiMeetView.onNewIntent(intent);
+        // XXX At least twice we received bug reports about malfunctioning
+        // loadURL in the Jitsi Meet SDK while the Jitsi Meet app seemed to
+        // functioning as expected in our testing. But that was to be expected
+        // because the app does not exercise loadURL. In order to increase the
+        // test coverage of loadURL, channel deep linking through loadURL.
+        Uri uri;
+
+        if (Intent.ACTION_VIEW.equals(intent.getAction())
+                && (uri = intent.getData()) != null
+                && JitsiMeetView.loadURLStringInViews(uri.toString())) {
+            return;
+        }
+
+        ReactActivityLifecycleCallbacks.onNewIntent(intent);
     }
 
+    // https://developer.android.com/reference/android/support/v4/app/ActivityCompat.OnRequestPermissionsResultCallback
     @Override
-    protected void onPause() {
-        super.onPause();
-
-        JitsiMeetView.onHostPause(this);
-        defaultBackButtonImpl = null;
+    public void onRequestPermissionsResult(
+            final int requestCode,
+            final String[] permissions,
+            final int[] grantResults) {
+        ReactActivityLifecycleCallbacks.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
 
     @Override
@@ -217,7 +280,30 @@ public class JitsiMeetActivity
         super.onResume();
 
         defaultBackButtonImpl = new DefaultHardwareBackBtnHandlerImpl(this);
-        JitsiMeetView.onHostResume(this, defaultBackButtonImpl);
+        ReactActivityLifecycleCallbacks.onHostResume(this, defaultBackButtonImpl);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+
+        ReactActivityLifecycleCallbacks.onHostPause(this);
+        defaultBackButtonImpl = null;
+    }
+
+    @Override
+    protected void onUserLeaveHint() {
+        if (view != null) {
+            view.enterPictureInPicture();
+        }
+    }
+
+    /**
+     * Implementation of the {@code PermissionAwareActivity} interface.
+     */
+    @Override
+    public void requestPermissions(String[] permissions, int requestCode, PermissionListener listener) {
+        ReactActivityLifecycleCallbacks.requestPermissions(this, permissions, requestCode, listener);
     }
 
     /**
@@ -229,6 +315,19 @@ public class JitsiMeetActivity
             this.defaultURL = defaultURL;
         } else {
             view.setDefaultURL(defaultURL);
+        }
+    }
+
+    /**
+     *
+     * @see JitsiMeetView#setPictureInPictureEnabled(boolean)
+     */
+    public void setPictureInPictureEnabled(boolean pictureInPictureEnabled) {
+        if (view == null) {
+            this.pictureInPictureEnabled
+                = Boolean.valueOf(pictureInPictureEnabled);
+        } else {
+            view.setPictureInPictureEnabled(pictureInPictureEnabled);
         }
     }
 

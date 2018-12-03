@@ -58,7 +58,7 @@ export function isVideoMutedByUser(stateful: Function | Object) {
  * otherwise, false.
  */
 export function shouldRenderVideoTrack(
-        videoTrack: { muted: boolean, videoStarted: boolean },
+        videoTrack: ?{ muted: boolean, videoStarted: boolean },
         waitForVideoStarted: boolean) {
     return (
         videoTrack

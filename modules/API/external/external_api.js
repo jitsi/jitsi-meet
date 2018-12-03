@@ -6,6 +6,8 @@ import {
     Transport
 } from '../../transport';
 
+import electronPopupsConfig from './electronPopupsConfig.json';
+
 const logger = require('jitsi-meet-logger').getLogger(__filename);
 
 const ALWAYS_ON_TOP_FILENAMES = [
@@ -21,9 +23,9 @@ const commands = {
     displayName: 'display-name',
     email: 'email',
     hangup: 'video-hangup',
+    submitFeedback: 'submit-feedback',
     toggleAudio: 'toggle-audio',
     toggleChat: 'toggle-chat',
-    toggleContactList: 'toggle-contact-list',
     toggleFilmStrip: 'toggle-film-strip',
     toggleShareScreen: 'toggle-share-screen',
     toggleVideo: 'toggle-video'
@@ -38,6 +40,8 @@ const events = {
     'audio-availability-changed': 'audioAvailabilityChanged',
     'audio-mute-status-changed': 'audioMuteStatusChanged',
     'display-name-change': 'displayNameChange',
+    'email-change': 'emailChange',
+    'feedback-submitted': 'feedbackSubmitted',
     'incoming-message': 'incomingMessage',
     'outgoing-message': 'outgoingMessage',
     'participant-joined': 'participantJoined',
@@ -46,7 +50,8 @@ const events = {
     'video-conference-joined': 'videoConferenceJoined',
     'video-conference-left': 'videoConferenceLeft',
     'video-availability-changed': 'videoAvailabilityChanged',
-    'video-mute-status-changed': 'videoMuteStatusChanged'
+    'video-mute-status-changed': 'videoMuteStatusChanged',
+    'screen-sharing-status-changed': 'screenSharingStatusChanged'
 };
 
 /**
@@ -109,10 +114,10 @@ function parseArguments(args) {
 
     switch (typeof firstArg) {
     case 'string': // old arguments format
-    case undefined: // eslint-disable-line no-case-declarations
-    // not sure which format but we are trying to parse the old
-    // format because if the new format is used everything will be undefined
-    // anyway.
+    case undefined: {
+        // Not sure which format but we are trying to parse the old
+        // format because if the new format is used everything will be undefined
+        // anyway.
         const [
             roomName,
             width,
@@ -121,7 +126,8 @@ function parseArguments(args) {
             configOverwrite,
             interfaceConfigOverwrite,
             noSSL,
-            jwt
+            jwt,
+            onload
         ] = args;
 
         return {
@@ -132,8 +138,10 @@ function parseArguments(args) {
             configOverwrite,
             interfaceConfigOverwrite,
             noSSL,
-            jwt
+            jwt,
+            onload
         };
+    }
     case 'object': // new arguments format
         return args[0];
     default:
@@ -194,6 +202,10 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
      * used.
      * @param {string} [options.jwt] - The JWT token if needed by jitsi-meet for
      * authentication.
+     * @param {string} [options.onload] - The onload function that will listen
+     * for iframe onload event.
+     * @param {Array<Object>} [options.invitees] - Array of objects containing
+     * information about new participants that will be invited in the call.
      */
     constructor(domain, ...args) {
         super();
@@ -205,7 +217,9 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
             configOverwrite = {},
             interfaceConfigOverwrite = {},
             noSSL = false,
-            jwt = undefined
+            jwt = undefined,
+            onload = undefined,
+            invitees
         } = parseArguments(args);
 
         this._parentNode = parentNode;
@@ -216,7 +230,7 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
             noSSL,
             roomName
         });
-        this._createIFrame(height, width);
+        this._createIFrame(height, width, onload);
         this._transport = new Transport({
             backend: new PostMessageTransportBackend({
                 postisOptions: {
@@ -225,6 +239,9 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
                 }
             })
         });
+        if (Array.isArray(invitees) && invitees.length > 0) {
+            this.invite(invitees);
+        }
         this._isLargeVideoVisible = true;
         this._numberOfParticipants = 0;
         this._participants = {};
@@ -241,11 +258,13 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
      * parseSizeParam for format details.
      * @param {number|string} width - The with of the iframe. Check
      * parseSizeParam for format details.
+     * @param {Function} onload - The function that will listen
+     * for onload event.
      * @returns {void}
      *
      * @private
      */
-    _createIFrame(height, width) {
+    _createIFrame(height, width, onload) {
         const frameName = `jitsiConferenceFrame${id}`;
 
         this._frame = document.createElement('iframe');
@@ -256,6 +275,13 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
         this._setSize(height, width);
         this._frame.setAttribute('allowFullScreen', 'true');
         this._frame.style.border = 0;
+
+        if (onload) {
+            // waits for iframe resources to load
+            // and fires event when it is done
+            this._frame.onload = onload;
+        }
+
         this._frame = this._parentNode.appendChild(this._frame);
     }
 
@@ -373,6 +399,14 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
                 }
                 break;
             }
+            case 'email-change': {
+                const user = this._participants[userID];
+
+                if (user) {
+                    user.email = data.email;
+                }
+                break;
+            }
             case 'avatar-changed': {
                 const user = this._participants[userID];
 
@@ -428,49 +462,57 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
      * the event and value - the listener.
      * Currently we support the following
      * events:
-     * incomingMessage - receives event notifications about incoming
+     * {@code incomingMessage} - receives event notifications about incoming
      * messages. The listener will receive object with the following structure:
      * {{
      *  'from': from,//JID of the user that sent the message
      *  'nick': nick,//the nickname of the user that sent the message
      *  'message': txt//the text of the message
      * }}
-     * outgoingMessage - receives event notifications about outgoing
+     * {@code outgoingMessage} - receives event notifications about outgoing
      * messages. The listener will receive object with the following structure:
      * {{
      *  'message': txt//the text of the message
      * }}
-     * displayNameChanged - receives event notifications about display name
-     * change. The listener will receive object with the following structure:
+     * {@code displayNameChanged} - receives event notifications about display
+     * name change. The listener will receive object with the following
+     * structure:
      * {{
      * jid: jid,//the JID of the participant that changed his display name
      * displayname: displayName //the new display name
      * }}
-     * participantJoined - receives event notifications about new participant.
+     * {@code participantJoined} - receives event notifications about new
+     * participant.
      * The listener will receive object with the following structure:
      * {{
      * jid: jid //the jid of the participant
      * }}
-     * participantLeft - receives event notifications about the participant that
-     * left the room.
+     * {@code participantLeft} - receives event notifications about the
+     * participant that left the room.
      * The listener will receive object with the following structure:
      * {{
      * jid: jid //the jid of the participant
      * }}
-     * video-conference-joined - receives event notifications about the local
-     * user has successfully joined the video conference.
+     * {@code video-conference-joined} - receives event notifications about the
+     * local user has successfully joined the video conference.
      * The listener will receive object with the following structure:
      * {{
      * roomName: room //the room name of the conference
      * }}
-     * video-conference-left - receives event notifications about the local user
-     * has left the video conference.
+     * {@code video-conference-left} - receives event notifications about the
+     * local user has left the video conference.
      * The listener will receive object with the following structure:
      * {{
      * roomName: room //the room name of the conference
      * }}
-     * readyToClose - all hangup operations are completed and Jitsi Meet is
-     * ready to be disposed.
+     * {@code screenSharingStatusChanged} - receives event notifications about
+     * turning on/off the local user screen sharing.
+     * The listener will receive object with the following structure:
+     * {{
+     * on: on //whether screen sharing is on
+     * }}
+     * {@code readyToClose} - all hangup operations are completed and Jitsi Meet
+     * is ready to be disposed.
      * @returns {void}
      *
      * @deprecated
@@ -497,11 +539,12 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
 
     /**
      * Executes command. The available commands are:
-     * displayName - sets the display name of the local participant to the value
-     * passed in the arguments array.
-     * toggleAudio - mutes / unmutes audio with no arguments.
-     * toggleVideo - mutes / unmutes video with no arguments.
-     * toggleFilmStrip - hides / shows the filmstrip with no arguments.
+     * {@code displayName} - Sets the display name of the local participant to
+     * the value passed in the arguments array.
+     * {@code toggleAudio} - Mutes / unmutes audio with no arguments.
+     * {@code toggleVideo} - Mutes / unmutes video with no arguments.
+     * {@code toggleFilmStrip} - Hides / shows the filmstrip with no arguments.
+     *
      * If the command doesn't require any arguments the parameter should be set
      * to empty array or it may be omitted.
      *
@@ -522,14 +565,13 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
 
     /**
      * Executes commands. The available commands are:
-     * displayName - sets the display name of the local participant to the value
-     * passed in the arguments array.
-     * toggleAudio - mutes / unmutes audio. no arguments
-     * toggleVideo - mutes / unmutes video. no arguments
-     * toggleFilmStrip - hides / shows the filmstrip. no arguments
-     * toggleChat - hides / shows chat. no arguments.
-     * toggleContactList - hides / shows contact list. no arguments.
-     * toggleShareScreen - starts / stops screen sharing. no arguments.
+     * {@code displayName} - Sets the display name of the local participant to
+     * the value passed in the arguments array.
+     * {@code toggleAudio} - Mutes / unmutes audio. No arguments.
+     * {@code toggleVideo} - Mutes / unmutes video. No arguments.
+     * {@code toggleFilmStrip} - Hides / shows the filmstrip. No arguments.
+     * {@code toggleChat} - Hides / shows chat. No arguments.
+     * {@code toggleShareScreen} - Starts / stops screen sharing. No arguments.
      *
      * @param {Object} commandList - The object with commands to be executed.
      * The keys of the object are the commands that will be executed and the
@@ -551,6 +593,23 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
     isAudioAvailable() {
         return this._transport.sendRequest({
             name: 'is-audio-available'
+        });
+    }
+
+    /**
+     * Invite people to the call.
+     *
+     * @param {Array<Object>} invitees - The invitees.
+     * @returns {Promise} - Resolves on success and rejects on failure.
+     */
+    invite(invitees) {
+        if (!Array.isArray(invitees) || invitees.length === 0) {
+            return Promise.reject(new TypeError('Invalid Argument'));
+        }
+
+        return this._transport.sendRequest({
+            name: 'invite',
+            invitees
         });
     }
 
@@ -588,6 +647,18 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
         const { displayName } = this._participants[participantId] || {};
 
         return displayName;
+    }
+
+    /**
+     * Returns the email of a participant.
+     *
+     * @param {string} participantId - The id of the participant.
+     * @returns {string} The email.
+     */
+    getEmail(participantId) {
+        const { email } = this._participants[participantId] || {};
+
+        return email;
     }
 
     /**
@@ -670,5 +741,17 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
      */
     removeEventListeners(eventList) {
         eventList.forEach(event => this.removeEventListener(event));
+    }
+
+    /**
+     * Returns the configuration for electron for the windows that are open
+     * from Jitsi Meet.
+     *
+     * @returns {Promise<Object>}
+     *
+     * NOTE: For internal use only.
+     */
+    _getElectronPopupsConfig() {
+        return Promise.resolve(electronPopupsConfig);
     }
 }

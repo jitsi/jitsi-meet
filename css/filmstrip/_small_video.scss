@@ -1,0 +1,51 @@
+.filmstrip__videos .videocontainer {
+    display: none;
+    position: relative;
+    background-size: contain;
+    border: $thumbnailVideoBorder solid transparent;
+    border-radius: $borderRadius;
+    margin: 0 $thumbnailVideoMargin;
+
+    &.videoContainerFocused, &:hover {
+        cursor: hand;
+    }
+
+    /**
+     * Focused video thumbnail.
+     */
+    &.videoContainerFocused {
+        border: $thumbnailVideoBorder solid $videoThumbnailSelected;
+        box-shadow: inset 0 0 3px $videoThumbnailSelected,
+        0 0 3px $videoThumbnailSelected;
+    }
+
+    .remotevideomenu > .icon-menu {
+        display: none;
+    }
+
+    /**
+     * Hovered video thumbnail.
+     */
+    &:hover:not(.videoContainerFocused):not(.active-speaker) {
+        cursor: hand;
+        border: $thumbnailVideoBorder solid $videoThumbnailHovered;
+        box-shadow: inset 0 0 3px $videoThumbnailHovered,
+        0 0 3px $videoThumbnailHovered;
+
+        .remotevideomenu > .icon-menu {
+            display: inline-block;
+        }
+    }
+
+    & > video {
+        cursor: hand;
+        border-radius: $borderRadius;
+        object-fit: cover;
+        overflow: hidden;
+    }
+
+    .presence-label {
+        position: absolute;
+        z-index: $zindex3;
+    }
+}

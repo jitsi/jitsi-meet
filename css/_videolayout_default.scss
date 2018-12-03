@@ -4,6 +4,8 @@
 
 #videospace {
     display: block;
+    height: 100%;
+    width: 100%;
     min-height: 100%;
     position: absolute;
     top: 0px;
@@ -12,14 +14,27 @@
     overflow: hidden;
 }
 
-.video_blurred_container {
+#largeVideoBackgroundContainer,
+.large-video-background {
     height: 100%;
-    filter: blur(40px);
     left: 0;
     overflow: hidden;
     position: absolute;
     top: 0;
     width: 100%;
+
+    &.fit-full-height #largeVideoBackground {
+        height: 100%;
+        width: auto;
+    }
+
+    .fit-full-width #largeVideoBackground {
+        height: auto;
+        width: 100%;
+    }
+}
+#largeVideoBackgroundContainer {
+    filter: blur(40px);
 }
 
 .videocontainer {
@@ -71,7 +86,7 @@
          * wrapper needed before we're able to move all top toolbar indicators
          * creation to react.
          */
-        .ckAJgx {
+        .sc-ifAKCX {
             background: none;
         }
     }
@@ -209,6 +224,11 @@
 #largeVideoContainer {
     overflow: hidden;
     text-align: center;
+}
+
+#largeVideoContainer {
+    height: 100%;
+    width: 100%;
 }
 
 #largeVideoWrapper {
@@ -537,30 +557,6 @@
     object-fit: cover;
 }
 
-.noMic {
-    position: absolute;
-    border-radius: 8px;
-    z-index: $zindex1;
-    width: 100%;
-    height: 100%;
-    background-image: url("../images/noMic.png");
-    background-color: #000;
-    background-repeat: no-repeat;
-    background-position: center;
-}
-
-.noVideo {
-    position: absolute;
-    border-radius: 8px;
-    z-index: $zindex1;
-    width: 100%;
-    height: 100%;
-    background-image: url("../images/noVideo.png");
-    background-color: #000;
-    background-repeat: no-repeat;
-    background-position: center;
-}
-
 .videoMessageFilter {
     -webkit-filter: grayscale(.5) opacity(0.8);
     filter: grayscale(.5) opacity(0.8);
@@ -607,7 +603,6 @@
     padding-left: 10px;
     padding-right: 10px;
 }
-#remotePresenceMessage .no-presence,
 #remoteConnectionMessage {
     display: none;
 }
@@ -628,4 +623,111 @@
                     0px 1px 1px rgba(0,0,0,0.3),
                     1px 0px 1px rgba(0,0,0,0.3),
                     0px 0px 1px rgba(0,0,0,0.3);
+}
+
+.display-avatar-with-name {
+    .avatar-container {
+        visibility: visible;
+    }
+
+    .displayNameContainer {
+        visibility: visible;
+    }
+
+    .videocontainer__hoverOverlay {
+        visibility: visible;
+    }
+
+    video {
+        visibility: hidden;
+    }
+}
+
+.display-name-on-black {
+    .avatar-container {
+        visibility: hidden;
+    }
+
+    .displayNameContainer {
+        visibility: visible;
+    }
+
+    .videocontainer__hoverOverlay {
+        visibility: hidden;
+    }
+
+    video {
+        opacity: 0.2;
+        visibility: visible;
+    }
+}
+
+.display-video {
+    .avatar-container {
+        visibility: hidden;
+    }
+
+    .displayNameContainer {
+        visibility: hidden;
+    }
+
+    .videocontainer__hoverOverlay {
+        visibility: hidden;
+    }
+
+    video {
+        visibility: visible;
+    }
+}
+
+.display-name-on-video {
+    .avatar-container {
+        visibility: hidden;
+    }
+
+    .displayNameContainer {
+        visibility: visible;
+    }
+
+    .videocontainer__hoverOverlay {
+        visibility: visible;
+    }
+
+    video {
+        visibility: visible;
+    }
+}
+
+.display-avatar-only {
+    .avatar-container {
+        visibility: visible;
+    }
+
+    .displayNameContainer {
+        visibility: hidden;
+    }
+
+    .videocontainer__hoverOverlay {
+        visibility: hidden;
+    }
+
+    video {
+        visibility: hidden;
+    }
+}
+
+.presence-label {
+    color: $participantNameColor;
+    font-size: 12px;
+    font-weight: 100;
+    left: 0;
+    margin: 0 auto;
+    overflow: hidden;
+    pointer-events: none;
+    right: 0;
+    text-align: center;
+    text-overflow: ellipsis;
+    top: calc(50% + 30px);
+    white-space: nowrap;
+    width: 100%;
 }

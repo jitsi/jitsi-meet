@@ -1,10 +1,12 @@
 // @flow
 
+import { CONFERENCE_JOINED } from '../base/conference';
 import {
     DOMINANT_SPEAKER_CHANGED,
     PARTICIPANT_JOINED,
     PARTICIPANT_LEFT,
-    PIN_PARTICIPANT
+    PIN_PARTICIPANT,
+    getLocalParticipant
 } from '../base/participants';
 import { MiddlewareRegistry } from '../base/redux';
 import {
@@ -27,13 +29,29 @@ MiddlewareRegistry.register(store => next => action => {
     const result = next(action);
 
     switch (action.type) {
-    case DOMINANT_SPEAKER_CHANGED:
+    case DOMINANT_SPEAKER_CHANGED: {
+        const localParticipant = getLocalParticipant(store.getState());
+
+        if (localParticipant && localParticipant.id !== action.participant.id) {
+            store.dispatch(selectParticipantInLargeVideo());
+        }
+
+        break;
+    }
+
     case PARTICIPANT_JOINED:
     case PARTICIPANT_LEFT:
     case PIN_PARTICIPANT:
     case TRACK_ADDED:
     case TRACK_REMOVED:
         store.dispatch(selectParticipantInLargeVideo());
+        break;
+
+    case CONFERENCE_JOINED:
+        // Ensure a participant is selected on conference join. This addresses
+        // the case where video tracks were received before CONFERENCE_JOINED
+        // fired; without the conference selection may not happen.
+        store.dispatch(selectParticipant());
         break;
 
     case TRACK_UPDATED:

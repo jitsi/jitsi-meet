@@ -235,6 +235,7 @@ end
 -- session.jitsi_meet_domain - the domain name value from the token
 -- session.jitsi_meet_context_user - the user details from the token
 -- session.jitsi_meet_context_group - the group value from the token
+-- session.jitsi_meet_context_features - the features value from the token
 -- @param session the current session
 -- @return false and error
 function Util:process_and_verify_token(session)
@@ -284,6 +285,11 @@ function Util:process_and_verify_token(session)
           if claims["context"]["group"] ~= nil then
             -- Binds any group details to the session
             session.jitsi_meet_context_group = claims["context"]["group"];
+          end
+
+          if claims["context"]["features"] ~= nil then
+            -- Binds any features details to the session
+            session.jitsi_meet_context_features = claims["context"]["features"];
           end
         end
         return true;

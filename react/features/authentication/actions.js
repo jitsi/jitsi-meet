@@ -2,7 +2,9 @@
 
 import { appNavigate } from '../app';
 import { checkIfCanJoin, conferenceLeft } from '../base/conference';
+import { connectionFailed } from '../base/connection';
 import { openDialog } from '../base/dialog';
+import { set } from '../base/redux';
 
 import {
     CANCEL_LOGIN,
@@ -21,7 +23,7 @@ const logger = require('jitsi-meet-logger').getLogger(__filename);
  * password + guest access configuration. Refer to {@link LoginDialog} for more
  * info.
  *
- * @param {string} id - The XMPP user's ID (e.g. user@domain.com).
+ * @param {string} id - The XMPP user's ID (e.g. {@code user@domain.com}).
  * @param {string} password - The XMPP user's password.
  * @param {JitsiConference} conference - The conference for which the local
  * participant's role will be upgraded.
@@ -71,11 +73,24 @@ export function authenticateAndUpgradeRole(
  * }}
  */
 export function cancelLogin() {
-    // FIXME Like cancelWaitForOwner, dispatch conferenceLeft to notify the
-    // external-api.
+    return (dispatch: Dispatch<*>, getState: Function) => {
+        dispatch({ type: CANCEL_LOGIN });
 
-    return {
-        type: CANCEL_LOGIN
+        // XXX The error associated with CONNECTION_FAILED was marked as
+        // recoverable by the authentication feature  and, consequently,
+        // recoverable-aware features such as mobile's external-api did not
+        // deliver the CONFERENCE_FAILED to the SDK clients/consumers (as
+        // a reaction to CONNECTION_FAILED). Since the
+        // app/user is going to navigate to WelcomePage, the SDK
+        // clients/consumers need an event.
+        const { error, passwordRequired }
+            = getState()['features/base/connection'];
+
+        passwordRequired
+            && dispatch(
+                connectionFailed(
+                    passwordRequired,
+                    set(error, 'recoverable', false)));
     };
 }
 

@@ -50,6 +50,18 @@ export const SET_VIDEO_AVAILABLE = Symbol('SET_VIDEO_AVAILABLE');
 export const SET_VIDEO_MUTED = Symbol('SET_VIDEO_MUTED');
 
 /**
+ * The type of (redux) action to store the last video {@link Transform} applied
+ * to a stream.
+ *
+ * {
+ *     type: STORE_VIDEO_TRANSFORM,
+ *     streamId: string,
+ *     transform: Transform
+ * }
+ */
+export const STORE_VIDEO_TRANSFORM = Symbol('STORE_VIDEO_TRANSFORM');
+
+/**
  * The type of (redux) action to toggle the local video camera facing mode. In
  * contrast to SET_CAMERA_FACING_MODE, allows the toggling to be optimally
  * and/or natively implemented without the overhead of separate reads and writes

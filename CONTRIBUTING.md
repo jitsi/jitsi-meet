@@ -21,7 +21,7 @@ license agreement as either a [corporation](https://jitsi.org/ccla) or an
 in the agreement, unfortunately, we cannot accept your contribution.
 
 ## Creating Pull Requests
-- Make sure your code passes the linter rules beforehand. The linter is exeuted
+- Make sure your code passes the linter rules beforehand. The linter is executed
   automatically when committing code.
 - Perform **one** logical change per pull request.
 - Maintain a clean list of commits, squash them if necessary.

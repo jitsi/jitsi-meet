@@ -1,12 +1,43 @@
-import PropTypes from 'prop-types';
+/* @flow */
+
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
-import { sendAnalyticsEvent } from '../../analytics';
+import {
+    createRemoteVideoMenuButtonEvent,
+    sendAnalytics
+} from '../../analytics';
 import { translate } from '../../base/i18n';
 import { kickParticipant } from '../../base/participants';
 
 import RemoteVideoMenuButton from './RemoteVideoMenuButton';
+
+/**
+ * The type of the React {@code Component} state of {@link KickButton}.
+ */
+type Props = {
+
+    /**
+     * Invoked to signal the participant with the passed in participantID
+     * should be removed from the conference.
+     */
+    dispatch: Dispatch<*>,
+
+    /**
+     * Callback to invoke when {@code KickButton} is clicked.
+     */
+    onClick: Function,
+
+    /**
+     * The ID of the participant linked to the onClick callback.
+     */
+    participantID: string,
+
+    /**
+     * Invoked to obtain translated strings.
+     */
+    t: Function,
+};
 
 /**
  * Implements a React {@link Component} which displays a button for kicking out
@@ -14,35 +45,7 @@ import RemoteVideoMenuButton from './RemoteVideoMenuButton';
  *
  * @extends Component
  */
-class KickButton extends Component {
-    /**
-     * {@code KickButton} component's property types.
-     *
-     * @static
-     */
-    static propTypes = {
-        /**
-         * Invoked to signal the participant with the passed in participantID
-         * should be removed from the conference.
-         */
-        dispatch: PropTypes.func,
-
-        /**
-         * Callback to invoke when {@code KickButton} is clicked.
-         */
-        onClick: PropTypes.func,
-
-        /**
-         * The ID of the participant linked to the onClick callback.
-         */
-        participantID: PropTypes.string,
-
-        /**
-         * Invoked to obtain translated strings.
-         */
-        t: PropTypes.func
-    };
-
+class KickButton extends Component<Props> {
     /**
      * Initializes a new {@code KickButton} instance.
      *
@@ -74,6 +77,8 @@ class KickButton extends Component {
         );
     }
 
+    _onClick: () => void;
+
     /**
      * Remove the participant with associated participantID from the conference.
      *
@@ -83,13 +88,12 @@ class KickButton extends Component {
     _onClick() {
         const { dispatch, onClick, participantID } = this.props;
 
-        sendAnalyticsEvent(
-            'remotevideomenu.kick',
+        sendAnalytics(createRemoteVideoMenuButtonEvent(
+            'kick.button',
             {
-                value: 1,
-                label: participantID
-            }
-        );
+                'participant_id': participantID
+            }));
+
         dispatch(kickParticipant(participantID));
 
         if (onClick) {

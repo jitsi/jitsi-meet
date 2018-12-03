@@ -1,11 +1,7 @@
+// @flow
+
 /**
- * Mapping of tooltip positions to equivalent {@code AKInlineDialog} positions.
- *
- * @private
+ * The size of the hangup button. As that is the largest button, it defines
+ * the size of the {@code ToolBox}, so other components may relate to that.
  */
-export const TOOLTIP_TO_POPUP_POSITION = {
-    bottom: 'bottom center',
-    left: 'left middle',
-    top: 'top center',
-    right: 'right middle'
-};
+export const HANGUP_BUTTON_SIZE = 60;

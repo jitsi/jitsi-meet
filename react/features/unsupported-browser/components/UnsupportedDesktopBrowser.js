@@ -1,13 +1,11 @@
 /* @flow */
 
-import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 
 import { translate } from '../../base/i18n';
 import { Platform } from '../../base/react';
 
-import { CHROME, FIREFOX, IE, SAFARI } from './browserLinks';
-import HideNotificationBarStyle from './HideNotificationBarStyle';
+import { CHROME, EDGE, FIREFOX, SAFARI } from './browserLinks';
 
 /**
  * The namespace of the CSS styles of UnsupportedDesktopBrowser.
@@ -18,26 +16,23 @@ import HideNotificationBarStyle from './HideNotificationBarStyle';
 const _SNS = 'unsupported-desktop-browser';
 
 /**
+ * The type of the React {@code Component} props of
+ * {@link UnsupportedDesktopBrowser}.
+ */
+type Props = {
+
+    /**
+     * The function to translate human-readable text.
+     */
+    t: Function
+};
+
+/**
  * React component representing unsupported browser page.
  *
  * @class UnsupportedDesktopBrowser
  */
-class UnsupportedDesktopBrowser extends Component<*> {
-    /**
-     * UnsupportedDesktopBrowser component's property types.
-     *
-     * @static
-     */
-    static propTypes = {
-        /**
-         * The function to translate human-readable text.
-         *
-         * @public
-         * @type {Function}
-         */
-        t: PropTypes.func
-    };
-
+class UnsupportedDesktopBrowser extends Component<Props> {
     /**
      * Renders the component.
      *
@@ -61,8 +56,6 @@ class UnsupportedDesktopBrowser extends Component<*> {
                         this._renderOSSpecificBrowserDownloadLink()
                     }
                 </p>
-
-                <HideNotificationBarStyle />
             </div>
         );
     }
@@ -84,8 +77,8 @@ class UnsupportedDesktopBrowser extends Component<*> {
             break;
 
         case 'windows':
-            link = IE;
-            text = 'Internet Explorer';
+            link = EDGE;
+            text = 'Edge';
             break;
         }
         if (typeof link !== 'undefined') {

@@ -1,10 +1,10 @@
-/* @flow */
+// @flow
 
 import _ from 'lodash';
 
 import { equals, ReducerRegistry, set } from '../redux';
 
-import { SET_CONFIG } from './actionTypes';
+import { CONFIG_WILL_LOAD, LOAD_CONFIG_ERROR, SET_CONFIG } from './actionTypes';
 
 /**
  * The initial state of the feature base/config when executing in a
@@ -47,12 +47,44 @@ ReducerRegistry.register(
     'features/base/config',
     (state = _getInitialState(), action) => {
         switch (action.type) {
+        case CONFIG_WILL_LOAD:
+            return {
+                error: undefined,
+
+                /**
+                 * The URL of the location associated with/configured by this
+                 * configuration.
+                 *
+                 * @type URL
+                 */
+                locationURL: action.locationURL
+            };
+
+        case LOAD_CONFIG_ERROR:
+            // XXX LOAD_CONFIG_ERROR is one of the settlement execution paths of
+            // the asynchronous "loadConfig procedure/process" started with
+            // CONFIG_WILL_LOAD. Due to the asynchronous nature of it, whoever
+            // is settling the process needs to provide proof that they have
+            // started it and that the iteration of the process being completed
+            // now is still of interest to the app.
+            if (state.locationURL === action.locationURL) {
+                return {
+                    /**
+                     * The {@link Error} which prevented the loading of the
+                     * configuration of the associated {@code locationURL}.
+                     *
+                     * @type Error
+                     */
+                    error: action.error
+                };
+            }
+            break;
+
         case SET_CONFIG:
             return _setConfig(state, action);
-
-        default:
-            return state;
         }
+
+        return state;
     });
 
 /**
@@ -81,20 +113,21 @@ function _getInitialState() {
  * @returns {Object} The new state of the feature base/lib-jitsi-meet after the
  * reduction of the specified action.
  */
-function _setConfig(state, action) {
-    let { config } = action;
-
+function _setConfig(state, { config }) {
     // The mobile app bundles jitsi-meet and lib-jitsi-meet at build time and
     // does not download them at runtime from the deployment on which it will
     // join a conference. The downloading is planned for implementation in the
     // future (later rather than sooner) but is not implemented yet at the time
     // of this writing and, consequently, we must provide legacy support in the
     // meantime.
+
+    // eslint-disable-next-line no-param-reassign
     config = _translateLegacyConfig(config);
 
     const newState = _.merge(
         {},
         config,
+        { error: undefined },
 
         // The config of _getInitialState() is meant to override the config
         // downloaded from the Jitsi Meet deployment because the former contains
@@ -142,7 +175,7 @@ function _translateLegacyConfig(oldValue: Object) {
 
     /* eslint-enable indent */
 
-        if (oldKey in newValue) {
+        if (oldKey in newValue && !(newKey in newValue.p2p)) {
             const v = newValue[oldKey];
 
             // Do not modify oldValue.

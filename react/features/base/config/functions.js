@@ -1,22 +1,144 @@
 /* @flow */
 
-import JSSHA from 'jssha';
 import _ from 'lodash';
 
+import { _CONFIG_STORE_PREFIX } from './constants';
 import parseURLParams from './parseURLParams';
 
 declare var $: Object;
 
 /**
- * The config keys to ignore because, for example, their values identify scripts
- * and it is not desireable to inject these through URL params.
+ * The config keys to whitelist, the keys that can be overridden.
+ * Currently we can only whitelist the first part of the properties, like
+ * 'p2p.useStunTurn' and 'p2p.enabled' we whitelist all p2p options.
+ * The whitelist is used only for config.js.
  *
  * @private
  * @type Array
  */
-const _KEYS_TO_IGNORE = [
-    'analyticsScriptUrls',
-    'callStatsCustomScriptUrl'
+const WHITELISTED_KEYS = [
+    '_peerConnStatusOutOfLastNTimeout',
+    '_peerConnStatusRtcMuteTimeout',
+    'abTesting',
+    'autoRecord',
+    'autoRecordToken',
+    'avgRtpStatsN',
+    'callFlowsEnabled',
+    'callStatsConfIDNamespace',
+    'callStatsID',
+    'callStatsSecret',
+
+    /**
+     * The display name of the CallKit call representing the conference/meeting
+     * associated with this config.js including while the call is ongoing in the
+     * UI presented by CallKit and in the system-wide call history. The property
+     * is meant for use cases in which the room name is not desirable as a
+     * display name for CallKit purposes and the desired display name is not
+     * provided in the form of a JWT callee. As the value is associated with a
+     * conference/meeting, the value makes sense not as a deployment-wide
+     * configuration, only as a runtime configuration override/overwrite
+     * provided by, for example, Jitsi Meet SDK for iOS.
+     *
+     * @type string
+     */
+    'callDisplayName',
+
+    /**
+     * The handle
+     * ({@link https://developer.apple.com/documentation/callkit/cxhandle}) of
+     * the CallKit call representing the conference/meeting associated with this
+     * config.js. The property is meant for use cases in which the room URL is
+     * not desirable as the handle for CallKit purposes. As the value is
+     * associated with a conference/meeting, the value makes sense not as a
+     * deployment-wide configuration, only as a runtime configuration
+     * override/overwrite provided by, for example, Jitsi Meet SDK for iOS.
+     *
+     * @type string
+     */
+    'callHandle',
+
+    /**
+     * The UUID of the CallKit call representing the conference/meeting
+     * associated with this config.js. The property is meant for use cases in
+     * which Jitsi Meet is to work with a CallKit call created outside of Jitsi
+     * Meet and to be adopted by Jitsi Meet such as, for example, an incoming
+     * and/or outgoing CallKit call created by Jitsi Meet SDK for iOS
+     * clients/consumers prior to giving control to Jitsi Meet. As the value is
+     * associated with a conference/meeting, the value makes sense not as a
+     * deployment-wide configuration, only as a runtime configuration
+     * override/overwrite provided by, for example, Jitsi Meet SDK for iOS.
+     *
+     * @type string
+     */
+    'callUUID',
+
+    'channelLastN',
+    'constraints',
+    'debug',
+    'debugAudioLevels',
+    'defaultLanguage',
+    'desktopSharingChromeDisabled',
+    'desktopSharingChromeExtId',
+    'desktopSharingChromeMinExtVersion',
+    'desktopSharingChromeSources',
+    'desktopSharingFrameRate',
+    'desktopSharingFirefoxDisabled',
+    'desktopSharingSources',
+    'disable1On1Mode',
+    'disableAEC',
+    'disableAGC',
+    'disableAP',
+    'disableAudioLevels',
+    'disableH264',
+    'disableHPF',
+    'disableNS',
+    'disableRemoteControl',
+    'disableRtx',
+    'disableSuspendVideo',
+    'displayJids',
+    'e2eping',
+    'enableDisplayNameInStats',
+    'enableLayerSuspension',
+    'enableLipSync',
+    'enableLocalVideoFlip',
+    'enableRemb',
+    'enableStatsID',
+    'enableTalkWhileMuted',
+    'enableTcc',
+    'etherpad_base',
+    'failICE',
+    'fileRecordingsEnabled',
+    'firefox_fake_device',
+    'forceJVB121Ratio',
+    'gatherStats',
+    'googleApiApplicationClientID',
+    'hiddenDomain',
+    'hosts',
+    'iAmRecorder',
+    'iAmSipGateway',
+    'iceTransportPolicy',
+    'ignoreStartMuted',
+    'liveStreamingEnabled',
+    'minParticipants',
+    'nick',
+    'openBridgeChannel',
+    'p2p',
+    'preferH264',
+    'requireDisplayName',
+    'resolution',
+    'startAudioMuted',
+    'startAudioOnly',
+    'startBitrate',
+    'startScreenSharing',
+    'startVideoMuted',
+    'startWithAudioMuted',
+    'startWithVideoMuted',
+    'testing',
+    'useIPv6',
+    'useNicks',
+    'useStunTurn',
+    'webrtcIceTcpDisable',
+    'webrtcIceUdpDisable'
 ];
 
 const logger = require('jitsi-meet-logger').getLogger(__filename);
@@ -28,59 +150,23 @@ const logger = require('jitsi-meet-logger').getLogger(__filename);
 export { default as getRoomName } from './getRoomName';
 export { parseURLParams };
 
-/* eslint-disable no-shadow */
-
 /**
- * Looks for a list of possible BOSH addresses in {@code config.boshList} and
- * sets the value of {@code config.bosh} based on that list and
- * {@code roomName}.
+ * Promise wrapper on obtain config method. When HttpConfigFetch will be moved
+ * to React app it's better to use load config instead.
  *
- * @param {Object} config - The configuration object.
- * @param {string} roomName - The name of the room/conference.
- * @returns {void}
+ * @param {string} location - URL of the domain from which the config is to be
+ * obtained.
+ * @param {string} room - Room name.
+ * @private
+ * @returns {Promise<void>}
  */
-export function chooseBOSHAddress(config: Object, roomName: string) {
-    if (!roomName) {
-        return;
-    }
-
-    const { boshList } = config;
-
-    if (!boshList || !Array.isArray(boshList) || !boshList.length) {
-        return;
-    }
-
-    // This implements the actual choice of an entry in the list based on
-    // roomName. Please consider the implications for existing deployments
-    // before introducing changes.
-    const hash = (new JSSHA(roomName, 'TEXT')).getHash('SHA-1', 'HEX');
-    const n = parseInt(hash.substr(-6), 16);
-    let idx = n % boshList.length;
-
-    config.bosh = boshList[idx];
-    logger.log(`Setting config.bosh to ${config.bosh} (idx=${idx})`);
-
-    const { boshAttemptFirstList } = config;
-
-    if (boshAttemptFirstList
-            && Array.isArray(boshAttemptFirstList)
-            && boshAttemptFirstList.length > 0) {
-        idx = n % boshAttemptFirstList.length;
-
-        const attemptFirstAddress = boshAttemptFirstList[idx];
-
-        if (attemptFirstAddress === config.bosh) {
-            logger.log('Not setting config.boshAttemptFirst, address matches.');
-        } else {
-            config.boshAttemptFirst = attemptFirstAddress;
-            logger.log(
-                `Setting config.boshAttemptFirst=${attemptFirstAddress} (idx=${
-                    idx})`);
-        }
-    }
+export function obtainConfig(location: string, room: string): Promise<void> {
+    return new Promise((resolve, reject) =>
+        _obtainConfig(location, room, (success, error) => {
+            success ? resolve() : reject(error);
+        })
+    );
 }
-
-/* eslint-enable no-shadow */
 
 /**
  * Sends HTTP POST request to specified {@code endpoint}. In request the name
@@ -96,10 +182,7 @@ export function chooseBOSHAddress(config: Object, roomName: string) {
  * @param {Function} complete - The callback to invoke upon success or failure.
  * @returns {void}
  */
-export function obtainConfig(
-        endpoint: string,
-        roomName: string,
-        complete: Function) {
+function _obtainConfig(endpoint: string, roomName: string, complete: Function) {
     logger.info(`Send config request to ${endpoint} for room: ${roomName}`);
     $.ajax(
         endpoint,
@@ -135,6 +218,7 @@ export function obtainConfig(
 /**
  * Overrides JSON properties in {@code config} and
  * {@code interfaceConfig} Objects with the values from {@code newConfig}.
+ * Overrides only the whitelisted keys.
  *
  * @param {Object} config - The config Object in which we'll be overriding
  * properties.
@@ -158,7 +242,7 @@ export function obtainConfig(
  * @returns {void}
  */
 export function overrideConfigJSON(
-        config: Object, interfaceConfig: Object, loggingConfig: Object,
+        config: ?Object, interfaceConfig: ?Object, loggingConfig: ?Object,
         json: Object) {
     for (const configName of Object.keys(json)) {
         let configObj;
@@ -171,7 +255,8 @@ export function overrideConfigJSON(
             configObj = loggingConfig;
         }
         if (configObj) {
-            const configJSON = json[configName];
+            const configJSON
+                = _getWhitelistedJSON(configName, json[configName]);
 
             if (!_.isEmpty(configJSON)) {
                 logger.info(
@@ -193,37 +278,100 @@ export function overrideConfigJSON(
 /* eslint-enable max-params, no-shadow */
 
 /**
- * Converts 'URL_PARAMS' to JSON object.
- * We have:
- * {
- *      "config.disableAudioLevels": false,
- *      "config.channelLastN": -1,
- *      "interfaceConfig.APP_NAME": "Jitsi Meet"
- * }.
- * We want to have:
- * {
- *      "config": {
- *          "disableAudioLevels": false,
- *          "channelLastN": -1
- *      },
- *      interfaceConfig: {
- *          "APP_NAME": "Jitsi Meet"
- *      }
- * }.
+ * Whitelist only config.js, skips this for others configs
+ * (interfaceConfig, loggingConfig).
+ * Only extracts overridden values for keys we allow to be overridden.
  *
+ * @param {string} configName - The config name, one of config,
+ * interfaceConfig, loggingConfig.
+ * @param {Object} configJSON - The object with keys and values to override.
+ * @private
+ * @returns {Object} - The result object only with the keys
+ * that are whitelisted.
+ */
+function _getWhitelistedJSON(configName, configJSON) {
+    if (configName !== 'config') {
+        return configJSON;
+    }
+
+    return _.pick(configJSON, WHITELISTED_KEYS);
+}
+
+/**
+ * Restores a Jitsi Meet config.js from {@code localStorage} if it was
+ * previously downloaded from a specific {@code baseURL} and stored with
+ * {@link storeConfig}.
+ *
+ * @param {string} baseURL - The base URL from which the config.js was
+ * previously downloaded and stored with {@code storeConfig}.
+ * @returns {?Object} The Jitsi Meet config.js which was previously downloaded
+ * from {@code baseURL} and stored with {@code storeConfig} if it was restored;
+ * otherwise, {@code undefined}.
+ */
+export function restoreConfig(baseURL: string): ?Object {
+    let storage;
+    const key = `${_CONFIG_STORE_PREFIX}/${baseURL}`;
+
+    try {
+        // XXX Even reading the property localStorage of window may throw an
+        // error (which is user agent-specific behavior).
+        storage = window.localStorage;
+
+        const config = storage.getItem(key);
+
+        if (config) {
+            return JSON.parse(config) || undefined;
+        }
+    } catch (e) {
+        // Somehow incorrect data ended up in the storage. Clean it up.
+        storage && storage.removeItem(key);
+    }
+
+    return undefined;
+}
+
+/* eslint-disable max-params */
+
+/**
+ * Inspects the hash part of the location URI and overrides values specified
+ * there in the corresponding config objects given as the arguments. The syntax
+ * is: {@code https://server.com/room#config.debug=true
+ * &interfaceConfig.showButton=false&loggingConfig.something=1}.
+ *
+ * In the hash part each parameter will be parsed to JSON and then the root
+ * object will be matched with the corresponding config object given as the
+ * argument to this function.
+ *
+ * @param {Object} config - This is the general config.
+ * @param {Object} interfaceConfig - This is the interface config.
+ * @param {Object} loggingConfig - The logging config.
+ * @param {URI} location - The new location to which the app is navigating to.
  * @returns {void}
  */
-export function setConfigFromURLParams() {
-    const params = parseURLParams(window.location);
-
-    const { config, interfaceConfig, loggingConfig } = window;
+export function setConfigFromURLParams(
+        config: ?Object,
+        interfaceConfig: ?Object,
+        loggingConfig: ?Object,
+        location: Object) {
+    const params = parseURLParams(location);
     const json = {};
 
-    // TODO We're still in the middle ground between old Web with config,
-    // interfaceConfig, and loggingConfig used via global variables and new Web
-    // and mobile reading the respective values from the redux store. On React
-    // Native there's no interfaceConfig at all yet and loggingConfig is not
-    // loaded but there's a default value in the redux store.
+    // At this point we have:
+    // params = {
+    //     "config.disableAudioLevels": false,
+    //     "config.channelLastN": -1,
+    //     "interfaceConfig.APP_NAME": "Jitsi Meet"
+    // }
+    // We want to have:
+    // json = {
+    //     config: {
+    //         "disableAudioLevels": false,
+    //         "channelLastN": -1
+    //     },
+    //     interfaceConfig: {
+    //         "APP_NAME": "Jitsi Meet"
+    //     }
+    // }
     config && (json.config = {});
     interfaceConfig && (json.interfaceConfig = {});
     loggingConfig && (json.loggingConfig = {});
@@ -232,12 +380,6 @@ export function setConfigFromURLParams() {
         let base = json;
         const names = param.split('.');
         const last = names.pop();
-
-        // Prevent passing some parameters which can inject scripts.
-        if (_KEYS_TO_IGNORE.indexOf(last) !== -1) {
-            // eslint-disable-next-line no-continue
-            continue;
-        }
 
         for (const name of names) {
             base = base[name] = base[name] || {};
@@ -248,3 +390,5 @@ export function setConfigFromURLParams() {
 
     overrideConfigJSON(config, interfaceConfig, loggingConfig, json);
 }
+
+/* eslint-enable max-params */

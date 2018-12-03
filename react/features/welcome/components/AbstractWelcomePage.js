@@ -1,8 +1,8 @@
 // @flow
 
-import PropTypes from 'prop-types';
 import { Component } from 'react';
 
+import { createWelcomePageEvent, sendAnalytics } from '../../analytics';
 import { appNavigate } from '../../app';
 import { isRoomValid } from '../../base/conference';
 
@@ -12,7 +12,20 @@ import { generateRoomWithoutSeparator } from '../functions';
  * {@code AbstractWelcomePage}'s React {@code Component} prop types.
  */
 type Props = {
+
+    /**
+     * Room name to join to.
+     */
     _room: string,
+
+    /**
+     * The current settings.
+     */
+    _settings: Object,
+
+    /**
+     * The Redux dispatch Function.
+     */
     dispatch: Dispatch<*>
 };
 
@@ -21,18 +34,19 @@ type Props = {
  *
  * @abstract
  */
-export class AbstractWelcomePage extends Component<*, *> {
-    /**
-     * {@code AbstractWelcomePage}'s React {@code Component} prop types.
-     *
-     * @static
-     */
-    static propTypes = {
-        _room: PropTypes.string,
-        dispatch: PropTypes.func
-    };
-
+export class AbstractWelcomePage extends Component<Props, *> {
     _mounted: ?boolean;
+
+    /**
+     * Implements React's {@link Component#getDerivedStateFromProps()}.
+     *
+     * @inheritdoc
+     */
+    static getDerivedStateFromProps(props: Props, state: Object) {
+        return {
+            room: props._room || state.room
+        };
+    }
 
     /**
      * Save room name into component's local state.
@@ -74,24 +88,13 @@ export class AbstractWelcomePage extends Component<*, *> {
     }
 
     /**
-     * Implements React's {@link Component#componentWillMount()}. Invoked
-     * immediately before mounting occurs.
+     * Implements React's {@link Component#componentDidMount()}. Invoked
+     * immediately after mounting occurs.
      *
      * @inheritdoc
      */
-    componentWillMount() {
+    componentDidMount() {
         this._mounted = true;
-    }
-
-    /**
-     * Implements React's {@link Component#componentWillReceiveProps()}. Invoked
-     * before this mounted component receives new props.
-     *
-     * @inheritdoc
-     * @param {Props} nextProps - New props component will receive.
-     */
-    componentWillReceiveProps(nextProps: Props) {
-        this.setState({ room: nextProps._room });
     }
 
     /**
@@ -146,7 +149,7 @@ export class AbstractWelcomePage extends Component<*, *> {
     }
 
     /**
-     * Determines whether the 'Join' button is (to be) disabled i.e. there's no
+     * Determines whether the 'Join' button is (to be) disabled i.e. There's no
      * valid room name typed into the respective text input field.
      *
      * @protected
@@ -168,6 +171,12 @@ export class AbstractWelcomePage extends Component<*, *> {
      */
     _onJoin() {
         const room = this.state.room || this.state.generatedRoomname;
+
+        sendAnalytics(
+            createWelcomePageEvent('clicked', 'joinButton', {
+                isGenerated: !this.state.room,
+                room
+            }));
 
         if (room) {
             this.setState({ joining: true });
@@ -228,11 +237,13 @@ export class AbstractWelcomePage extends Component<*, *> {
  * @param {Object} state - The redux state.
  * @protected
  * @returns {{
- *     _room: string
+ *     _room: string,
+ *     _settings: Object
  * }}
  */
 export function _mapStateToProps(state: Object) {
     return {
-        _room: state['features/base/conference'].room
+        _room: state['features/base/conference'].room,
+        _settings: state['features/base/settings']
     };
 }

@@ -3,9 +3,20 @@
  * none is applied. Other browsers already support selecting within inputs while
  * user-select is none. As such, disallow user-select except on inputs.
  */
-*:not(input) {
+* {
     -webkit-user-select: none;
     user-select: none;
+}
+
+input,
+textarea {
+    -webkit-user-select: text;
+    user-select: text;
+}
+
+html {
+    height: 100%;
+    width: 100%;
 }
 
 body {
@@ -22,6 +33,16 @@ body {
     }
 }
 
+/**
+ * AtlasKitThemeProvider sets a background color on an app-wrapping div, thereby
+ * preventing transparency in filmstrip-only mode. The selector chosen to
+ * override this behavior is specific to where the AtlasKitThemeProvider might
+ * be placed within the app hierarchy.
+ */
+.filmstrip-only #react > .ckAJgx {
+    background: transparent;
+}
+
 p {
     margin: 0;
 }
@@ -32,10 +53,6 @@ body, input, textarea, keygen, select, button {
 
 #nowebrtc {
     display:none;
-}
-
-.no-fa-video-camera, .fa-microphone-slash {
-    color: #636363;
 }
 
 button, input, select, textarea {
@@ -50,7 +67,6 @@ input[type="reset"], input[type="submit"] {
 }
 
 textarea {
-    overflow: hidden;
     word-wrap: break-word;
     resize: none;
     line-height: 1.5em;
@@ -88,14 +104,15 @@ form {
 }
 
 .leftwatermark {
-    left: $defaultToolbarSize;
-    margin-left: 10px;
+    left: 32px;
+    top: 32px;
     background-image: url($defaultWatermarkLink);
     background-position: center left;
 }
 
 .rightwatermark {
-    right: 15;
+    right: 32px;
+    top: 32px;
     background-position: center right;
 }
 

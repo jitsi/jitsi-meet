@@ -1,7 +1,8 @@
 /* @flow */
 
-import { assign, ReducerRegistry } from '../redux';
-import { parseURIString } from '../util';
+import { SET_ROOM } from '../conference';
+import { JitsiConnectionErrors } from '../lib-jitsi-meet';
+import { assign, set, ReducerRegistry } from '../redux';
 
 import {
     CONNECTION_DISCONNECTED,
@@ -10,6 +11,8 @@ import {
     CONNECTION_WILL_CONNECT,
     SET_LOCATION_URL
 } from './actionTypes';
+
+import type { ConnectionFailedError } from './actions.native';
 
 /**
  * Reduces the Redux actions of the feature base/connection.
@@ -32,6 +35,9 @@ ReducerRegistry.register(
 
         case SET_LOCATION_URL:
             return _setLocationURL(state, action);
+
+        case SET_ROOM:
+            return _setRoom(state);
         }
 
         return state;
@@ -50,13 +56,16 @@ ReducerRegistry.register(
 function _connectionDisconnected(
         state: Object,
         { connection }: { connection: Object }) {
-    if (state.connection !== connection) {
+    const connection_ = _getCurrentConnection(state);
+
+    if (connection_ !== connection) {
         return state;
     }
 
     return assign(state, {
         connecting: undefined,
-        connection: undefined
+        connection: undefined,
+        timeEstablished: undefined
     });
 }
 
@@ -72,11 +81,16 @@ function _connectionDisconnected(
  */
 function _connectionEstablished(
         state: Object,
-        { connection }: { connection: Object }) {
+        { connection, timeEstablished }: {
+            connection: Object,
+            timeEstablished: number
+        }) {
     return assign(state, {
         connecting: undefined,
         connection,
-        error: undefined
+        error: undefined,
+        passwordRequired: undefined,
+        timeEstablished
     });
 }
 
@@ -94,13 +108,9 @@ function _connectionFailed(
         state: Object,
         { connection, error }: {
             connection: Object,
-            error: Object | string
+            error: ConnectionFailedError
         }) {
-
-    // The current (similar to getCurrentConference in
-    // base/conference/functions.js) connection which is connecting or
-    // connected:
-    const connection_ = state.connection || state.connecting;
+    const connection_ = _getCurrentConnection(state);
 
     if (connection_ && connection_ !== connection) {
         return state;
@@ -109,7 +119,10 @@ function _connectionFailed(
     return assign(state, {
         connecting: undefined,
         connection: undefined,
-        error
+        error,
+        passwordRequired:
+            error.name === JitsiConnectionErrors.PASSWORD_REQUIRED
+                ? connection : undefined
     });
 }
 
@@ -128,52 +141,28 @@ function _connectionWillConnect(
         { connection }: { connection: Object }) {
     return assign(state, {
         connecting: connection,
-        error: undefined
+
+        // We don't care if the previous connection has been closed already,
+        // because it's an async process and there's no guarantee if it'll be
+        // done before the new one is established.
+        connection: undefined,
+        error: undefined,
+        passwordRequired: undefined,
+        timeEstablished: undefined
     });
 }
 
 /**
- * Constructs options to be passed to the constructor of {@code JitsiConnection}
- * based on a specific location URL.
+ * The current (similar to getCurrentConference in base/conference/functions.js)
+ * connection which is {@code connection} or {@code connecting}.
  *
- * @param {string} locationURL - The location URL with which the returned
- * options are to be constructed.
+ * @param {Object} baseConnectionState - The current state of the
+ * {@code 'base/connection'} feature.
+ * @returns {JitsiConnection} - The current {@code JitsiConnection} if any.
  * @private
- * @returns {Object} The options to be passed to the constructor of
- * {@code JitsiConnection} based on the location URL.
  */
-function _constructOptions(locationURL: URL) {
-    const locationURI = parseURIString(locationURL.href);
-
-    // FIXME The HTTPS scheme for the BOSH URL works with meet.jit.si on both
-    // mobile & Web. It also works with beta.meet.jit.si on Web. Unfortunately,
-    // it doesn't work with beta.meet.jit.si on mobile. Temporarily, use the
-    // HTTP scheme for the BOSH URL with beta.meet.jit.si on mobile.
-    let { protocol } = locationURI;
-    const domain = locationURI.hostname;
-
-    if (!protocol && domain === 'beta.meet.jit.si') {
-        const windowLocation = window.location;
-
-        windowLocation && (protocol = windowLocation.protocol);
-        protocol || (protocol = 'http:');
-    }
-
-    // Default to the HTTPS scheme for the BOSH URL.
-    protocol || (protocol = 'https:');
-
-    return {
-        bosh:
-            `${String(protocol)}//${domain}${
-                locationURI.contextRoot || '/'}http-bind`,
-        hosts: {
-            domain,
-
-            // Required by:
-            // - lib-jitsi-meet/modules/xmpp/xmpp.js
-            muc: `conference.${domain}`
-        }
-    };
+function _getCurrentConnection(baseConnectionState: Object): ?Object {
+    return baseConnectionState.connection || baseConnectionState.connecting;
 }
 
 /**
@@ -189,8 +178,21 @@ function _constructOptions(locationURL: URL) {
 function _setLocationURL(
         state: Object,
         { locationURL }: { locationURL: ?URL }) {
+    return set(state, 'locationURL', locationURL);
+}
+
+/**
+ * Reduces a specific redux action {@link SET_ROOM} of the feature
+ * base/connection.
+ *
+ * @param {Object} state - The redux state of the feature base/connection.
+ * @private
+ * @returns {Object} The new state of the feature base/connection after the
+ * reduction of the specified action.
+ */
+function _setRoom(state: Object) {
     return assign(state, {
-        locationURL,
-        options: locationURL ? _constructOptions(locationURL) : undefined
+        error: undefined,
+        passwordRequired: undefined
     });
 }

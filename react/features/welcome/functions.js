@@ -1,5 +1,6 @@
-/* @flow */
+// @flow
 
+import { getAppProp } from '../base/app';
 import { toState } from '../base/redux';
 
 declare var APP: Object;
@@ -9,17 +10,15 @@ export * from './roomnameGenerator';
 
 /**
  * Determines whether the {@code WelcomePage} is enabled by the app itself
- * (e.g. programmatically via the Jitsi Meet SDK for Android and iOS). Not to be
+ * (e.g. Programmatically via the Jitsi Meet SDK for Android and iOS). Not to be
  * confused with {@link isWelcomePageUserEnabled}.
  *
- * @param {Object|Function} stateOrGetState - The redux state or
- * {@link getState} function.
+ * @param {Function|Object} stateful - The redux state or {@link getState}
+ * function.
  * @returns {boolean} If the {@code WelcomePage} is enabled by the app, then
  * {@code true}; otherwise, {@code false}.
  */
-export function isWelcomePageAppEnabled(stateOrGetState: Object | Function) {
-    let b;
-
+export function isWelcomePageAppEnabled(stateful: Function | Object) {
     if (navigator.product === 'ReactNative') {
         // We introduced the welcomePageEnabled prop on App in Jitsi Meet SDK
         // for Android and iOS. There isn't a strong reason not to introduce it
@@ -28,14 +27,10 @@ export function isWelcomePageAppEnabled(stateOrGetState: Object | Function) {
         // - Enabling/disabling the Welcome page on Web historically
         // automatically redirects to a random room and that does not make sense
         // on mobile (right now).
-        const { app } = toState(stateOrGetState)['features/app'];
-
-        b = Boolean(app && app.props.welcomePageEnabled);
-    } else {
-        b = true;
+        return Boolean(getAppProp(stateful, 'welcomePageEnabled'));
     }
 
-    return b;
+    return true;
 }
 
 /**
@@ -43,15 +38,14 @@ export function isWelcomePageAppEnabled(stateOrGetState: Object | Function) {
  * herself or through her deployment config(uration). Not to be confused with
  * {@link isWelcomePageAppEnabled}.
  *
- * @param {Object|Function} stateOrGetState - The redux state or
- * {@link getState} function.
+ * @param {Function|Object} stateful - The redux state or {@link getState}
+ * function.
  * @returns {boolean} If the {@code WelcomePage} is enabled by the user, then
  * {@code true}; otherwise, {@code false}.
  */
-export function isWelcomePageUserEnabled(stateOrGetState: Object | Function) {
+export function isWelcomePageUserEnabled(stateful: Function | Object) {
     return (
         typeof APP === 'undefined'
             ? true
-            : toState(stateOrGetState)['features/base/config'].enableWelcomePage
-                && APP.settings.isWelcomePageEnabled());
+            : toState(stateful)['features/base/config'].enableWelcomePage);
 }

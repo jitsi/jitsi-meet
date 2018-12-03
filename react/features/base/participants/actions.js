@@ -2,10 +2,13 @@
 
 import throttle from 'lodash/throttle';
 
-import { Notification, showNotification } from '../../notifications';
+import { set } from '../redux';
+import { showNotification } from '../../notifications';
 
 import {
     DOMINANT_SPEAKER_CHANGED,
+    HIDDEN_PARTICIPANT_JOINED,
+    HIDDEN_PARTICIPANT_LEFT,
     KICK_PARTICIPANT,
     MUTE_REMOTE_PARTICIPANT,
     PARTICIPANT_DISPLAY_NAME_CHANGED,
@@ -22,17 +25,23 @@ import { getLocalParticipant } from './functions';
  * Create an action for when dominant speaker changes.
  *
  * @param {string} id - Participant's ID.
+ * @param {JitsiConference} conference - The {@code JitsiConference} associated
+ * with the participant identified by the specified {@code id}. Only the local
+ * participant is allowed to not specify an associated {@code JitsiConference}
+ * instance.
  * @returns {{
  *     type: DOMINANT_SPEAKER_CHANGED,
  *     participant: {
+ *         conference: JitsiConference,
  *         id: string
  *     }
  * }}
  */
-export function dominantSpeakerChanged(id) {
+export function dominantSpeakerChanged(id, conference) {
     return {
         type: DOMINANT_SPEAKER_CHANGED,
         participant: {
+            conference,
             id
         }
     };
@@ -90,6 +99,10 @@ export function localParticipantIdChanged(id) {
         if (participant) {
             return dispatch({
                 type: PARTICIPANT_ID_CHANGED,
+
+                // XXX A participant is identified by an id-conference pair.
+                // Only the local participant is with an undefined conference.
+                conference: undefined,
                 newValue: id,
                 oldValue: participant.id
             });
@@ -107,10 +120,7 @@ export function localParticipantIdChanged(id) {
  * }}
  */
 export function localParticipantJoined(participant = {}) {
-    return participantJoined({
-        ...participant,
-        local: true
-    });
+    return participantJoined(set(participant, 'local', true));
 }
 
 /**
@@ -123,7 +133,19 @@ export function localParticipantLeft() {
         const participant = getLocalParticipant(getState);
 
         if (participant) {
-            return dispatch(participantLeft(participant.id));
+            return (
+                dispatch(
+                    participantLeft(
+                        participant.id,
+
+                        // XXX Only the local participant is allowed to leave
+                        // without stating the JitsiConference instance because
+                        // the local participant is uniquely identified by the
+                        // very fact that there is only one local participant
+                        // (and the fact that the local participant "joins" at
+                        // the beginning of the app and "leaves" at the end of
+                        // the app).
+                        undefined)));
         }
     };
 }
@@ -214,14 +236,81 @@ export function participantDisplayNameChanged(id, displayName = '') {
  *
  * @param {Participant} participant - Information about participant.
  * @returns {{
- *      type: PARTICIPANT_JOINED,
- *      participant: Participant
+ *     type: PARTICIPANT_JOINED,
+ *     participant: Participant
  * }}
  */
 export function participantJoined(participant) {
+    // Only the local participant is not identified with an id-conference pair.
+    if (participant.local) {
+        return {
+            type: PARTICIPANT_JOINED,
+            participant
+        };
+    }
+
+    // In other words, a remote participant is identified with an id-conference
+    // pair.
+    const { conference } = participant;
+
+    if (!conference) {
+        throw Error(
+            'A remote participant must be associated with a JitsiConference!');
+    }
+
+    return (dispatch, getState) => {
+        // A remote participant is only expected to join in a joined or joining
+        // conference. The following check is really necessary because a
+        // JitsiConference may have moved into leaving but may still manage to
+        // sneak a PARTICIPANT_JOINED in if its leave is delayed for any purpose
+        // (which is not outragous given that leaving involves network
+        // requests.)
+        const stateFeaturesBaseConference
+            = getState()['features/base/conference'];
+
+        if (conference === stateFeaturesBaseConference.conference
+                || conference === stateFeaturesBaseConference.joining) {
+            return dispatch({
+                type: PARTICIPANT_JOINED,
+                participant
+            });
+        }
+    };
+}
+
+/**
+ * Action to signal that a hidden participant has joined the conference.
+ *
+ * @param {string} id - The id of the participant.
+ * @param {string} displayName - The display name, or undefined when
+ * unknown.
+ * @returns {{
+ *     type: HIDDEN_PARTICIPANT_JOINED,
+ *     displayName: string,
+ *     id: string
+ * }}
+ */
+export function hiddenParticipantJoined(id, displayName) {
     return {
-        type: PARTICIPANT_JOINED,
-        participant
+        type: HIDDEN_PARTICIPANT_JOINED,
+        id,
+        displayName
+    };
+}
+
+/**
+ * Action to signal that a hidden participant has left the conference.
+ *
+ * @param {string} id - The id of the participant.
+ * @returns {{
+ *     type: HIDDEN_PARTICIPANT_LEFT,
+ *     id: string
+ * }}
+ */
+export function hiddenParticipantLeft(id) {
+    return {
+        type: HIDDEN_PARTICIPANT_LEFT,
+        id
     };
 }
 
@@ -229,17 +318,23 @@ export function participantJoined(participant) {
  * Action to signal that a participant has left.
  *
  * @param {string} id - Participant's ID.
+ * @param {JitsiConference} conference - The {@code JitsiConference} associated
+ * with the participant identified by the specified {@code id}. Only the local
+ * participant is allowed to not specify an associated {@code JitsiConference}
+ * instance.
  * @returns {{
  *     type: PARTICIPANT_LEFT,
  *     participant: {
+ *         conference: JitsiConference,
  *         id: string
  *     }
  * }}
  */
-export function participantLeft(id) {
+export function participantLeft(id, conference) {
     return {
         type: PARTICIPANT_LEFT,
         participant: {
+            conference,
             id
         }
     };
@@ -374,10 +469,7 @@ const _throttledNotifyParticipantConnected = throttle(dispatch => {
 
     if (notificationProps) {
         dispatch(
-            showNotification(
-                Notification,
-                notificationProps,
-                2500));
+            showNotification(notificationProps, 2500));
     }
 
     joinedParticipantsNames = [];
@@ -396,7 +488,5 @@ export function showParticipantJoinedNotification(displayName) {
     joinedParticipantsNames.push(
         displayName || interfaceConfig.DEFAULT_REMOTE_DISPLAY_NAME);
 
-    return dispatch => {
-        _throttledNotifyParticipantConnected(dispatch);
-    };
+    return dispatch => _throttledNotifyParticipantConnected(dispatch);
 }

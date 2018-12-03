@@ -1,47 +1,65 @@
 // @flow
 
-import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import { Component } from 'react';
+
+/**
+ * Describes audio element interface used in the base/media feature for audio
+ * playback.
+ */
+export type AudioElement = {
+    currentTime?: number,
+    pause: () => void,
+    play: () => void,
+    setSinkId?: string => void,
+    stop: () => void
+};
+
+/**
+ * {@code AbstractAudio} component's property types.
+ */
+type Props = {
+
+    /**
+     * A callback which will be called with {@code AbstractAudio} instance once
+     * the audio element is loaded.
+     */
+    setRef?: ?AudioElement => void,
+
+    /**
+     * The URL of a media resource to use in the element.
+     *
+     * NOTE on react-native sound files are imported through 'require' and then
+     * passed as the 'src' parameter which means their type will be 'any'.
+     *
+     * @type {Object | string}
+     */
+    src: Object | string,
+    stream: Object,
+    loop?: ?boolean
+}
 
 /**
  * The React {@link Component} which is similar to Web's
  * {@code HTMLAudioElement}.
  */
-export default class AbstractAudio extends Component<*> {
+export default class AbstractAudio extends Component<Props> {
     /**
-     * The (reference to the) {@link ReactElement} which actually implements
-     * this {@code AbstractAudio}.
+     * The {@link AudioElement} instance which implements the audio playback
+     * functionality.
      */
-    _ref: ?Object;
-
-    _setRef: Function;
-
-    /**
-     * {@code AbstractAudio} component's property types.
-     *
-     * @static
-     */
-    static propTypes = {
-        /**
-         * The URL of a media resource to use in the element.
-         *
-         * @type {string}
-         */
-        src: PropTypes.string,
-        stream: PropTypes.object
-    };
+    _audioElementImpl: ?AudioElement;
 
     /**
      * Initializes a new {@code AbstractAudio} instance.
      *
-     * @param {Object} props - The read-only properties with which the new
+     * @param {Props} props - The read-only properties with which the new
      * instance is to be initialized.
      */
-    constructor(props: Object) {
+    constructor(props: Props) {
         super(props);
 
-        // Bind event handlers so they are only bound once for every instance.
-        this._setRef = this._setRef.bind(this);
+        // Bind event handlers so they are only bound once per instance.
+        this.setAudioElementImpl = this.setAudioElementImpl.bind(this);
     }
 
     /**
@@ -50,67 +68,61 @@ export default class AbstractAudio extends Component<*> {
      * @public
      * @returns {void}
      */
-    pause() {
-        this._ref && typeof this._ref.pause === 'function' && this._ref.pause();
+    pause(): void {
+        this._audioElementImpl && this._audioElementImpl.pause();
     }
 
     /**
-     * Attempts to being the playback of the media.
+     * Attempts to begin the playback of the media.
      *
      * @public
      * @returns {void}
      */
-    play() {
-        this._ref && typeof this._ref.play === 'function' && this._ref.play();
+    play(): void {
+        this._audioElementImpl && this._audioElementImpl.play();
     }
 
+    setAudioElementImpl: ?AudioElement => void;
+
     /**
-     * Renders this {@code AbstractAudio} as a React {@link Component} of a
-     * specific type.
+     * Set the (reference to the) {@link AudioElement} object which implements
+     * the audio playback functionality.
      *
-     * @param {string|ReactClass} type - The type of the React {@code Component}
-     * which is to be rendered.
-     * @param {Object|undefined} props - The read-only React {@code Component}
-     * properties, if any, to render. If {@code undefined}, the props of this
-     * instance will be rendered.
+     * @param {AudioElement} element - The {@link AudioElement} instance
+     * which implements the audio playback functionality.
      * @protected
-     * @returns {ReactElement}
-     */
-    _render(type, props) {
-        const {
-            children,
-
-            /* eslint-disable no-unused-vars */
-
-            // The following properties are consumed by React itself so they are
-            // to not be propagated.
-            ref,
-
-            /* eslint-enable no-unused-vars */
-
-            ...filteredProps
-        } = props || this.props;
-
-        return (
-            React.createElement(
-                type,
-                {
-                    ...filteredProps,
-                    ref: this._setRef
-                },
-                children));
-    }
-
-    /**
-     * Set the (reference to the) {@link ReactElement} which actually implements
-     * this {@code AbstractAudio}.
-     *
-     * @param {Object} ref - The (reference to the) {@code ReactElement} which
-     * actually implements this {@code AbstractAudio}.
-     * @private
      * @returns {void}
      */
-    _setRef(ref) {
-        this._ref = ref;
+    setAudioElementImpl(element: ?AudioElement): void {
+        this._audioElementImpl = element;
+
+        // setRef
+        const { setRef } = this.props;
+
+        // $FlowFixMe
+        typeof setRef === 'function' && setRef(element ? this : null);
+    }
+
+    /**
+     * Sets the sink ID (output device ID) on the underlying audio element.
+     * NOTE: Currently, implemented only on Web.
+     *
+     * @param {string} sinkId - The sink ID (output device ID).
+     * @returns {void}
+     */
+    setSinkId(sinkId: string): void {
+        this._audioElementImpl
+            && typeof this._audioElementImpl.setSinkId === 'function'
+            && this._audioElementImpl.setSinkId(sinkId);
+    }
+
+    /**
+     * Attempts to stop the playback of the media.
+     *
+     * @public
+     * @returns {void}
+     */
+    stop(): void {
+        this._audioElementImpl && this._audioElementImpl.stop();
     }
 }

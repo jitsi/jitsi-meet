@@ -16,24 +16,18 @@
 
 /* Mixins END */
 
-/* Animations BEGIN */
-
-@import "animations";
-
 /* Animations END */
 
 /* Fonts BEGIN */
 
 @import 'font';
-@import 'font-awesome';
-/* Fonts END */
 
-@import 'flag-icon';
+/* Fonts END */
 
 /* Modules BEGIN */
 
-@import 'dial-out';
 @import 'aui_reset';
+@import 'atlaskit_overrides';
 @import 'base';
 @import 'utils';
 @import 'overlay/overlay';
@@ -44,19 +38,20 @@
 @import 'modals/dialog';
 @import 'modals/feedback/feedback';
 @import 'modals/invite/info';
+@import 'modals/settings/settings';
 @import 'modals/speaker_stats/speaker_stats';
 @import 'modals/video-quality/video-quality';
+@import 'modals/local-recording/local-recording';
 @import 'videolayout_default';
 @import 'notice';
 @import 'popup_menu';
 @import 'recording';
 @import 'login_menu';
-@import 'contact_list';
 @import 'chat';
 @import 'ringing/ringing';
 @import 'welcome_page';
+@import 'welcome_page_content';
 @import 'toolbars';
-@import 'side_toolbar_container';
 @import 'jquery.contextMenu';
 @import 'keyboard-shortcuts';
 @import 'redirect_page';
@@ -65,15 +60,25 @@
 @import 'components/button-control';
 @import 'components/input-control';
 @import 'components/input-slider';
-@import "modals/invite/invite";
 @import "connection-info";
 @import 'aui-components/dropdown';
 @import '404';
 @import 'policy';
 @import 'popover';
-@import 'filmstrip';
+@import 'filmstrip/filmstrip_toolbar';
+@import 'filmstrip/horizontal_filmstrip';
+@import 'filmstrip/small_video';
+@import 'filmstrip/tile_view';
+@import 'filmstrip/tile_view_overrides';
+@import 'filmstrip/vertical_filmstrip';
+@import 'filmstrip/vertical_filmstrip_overrides';
 @import 'unsupported-browser/main';
 @import 'modals/invite/add-people';
-@import 'vertical_filmstrip_overrides';
+@import 'deep-linking/main';
+@import 'transcription-subtitles';
+@import '_meetings_list.scss';
+@import 'navigate_section_list';
+@import 'third-party-branding/google';
+@import 'third-party-branding/microsoft';
 
 /* Modules END */

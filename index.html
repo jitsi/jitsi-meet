@@ -119,7 +119,7 @@
 
                     // Call extra handler if defined.
                     if (typeof postLoadErrorHandler === "function") {
-                        postLoadErrorHandler();
+                        postLoadErrorHandler(fileRef);
                     }
                 };
                 window.removeEventListener(
@@ -138,6 +138,7 @@
     <script src="libs/app.bundle.min.js?v=139"></script>
     <!--#include virtual="title.html" -->
     <!--#include virtual="plugin.head.html" -->
+    <!--#include virtual="static/welcomePageAdditionalContent.html" -->
   </head>
   <body>
     <div id="react"></div>

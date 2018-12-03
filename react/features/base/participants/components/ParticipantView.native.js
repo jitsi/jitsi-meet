@@ -1,20 +1,131 @@
-import PropTypes from 'prop-types';
+// @flow
+
 import React, { Component } from 'react';
+import { Text, View } from 'react-native';
+import FastImage from 'react-native-fast-image';
 import { connect } from 'react-redux';
 
+import { translate } from '../../i18n';
 import { JitsiParticipantConnectionStatus } from '../../lib-jitsi-meet';
-import { prefetch } from '../../../mobile/image-cache';
 import {
     MEDIA_TYPE,
     shouldRenderVideoTrack,
     VideoTrack
 } from '../../media';
-import { Container } from '../../react';
+import { Container, TintedView } from '../../react';
+import { TestHint } from '../../testing/components';
 import { getTrackByMediaTypeAndParticipant } from '../../tracks';
 
 import Avatar from './Avatar';
-import { getAvatarURL, getParticipantById } from '../functions';
+import {
+    getAvatarURL,
+    getParticipantById,
+    getParticipantDisplayName
+} from '../functions';
 import styles from './styles';
+
+/**
+ * The type of the React {@link Component} props of {@link ParticipantView}.
+ */
+type Props = {
+
+    /**
+     * The indicator which determines whether conferencing is in audio-only
+     * mode.
+     *
+     * @private
+     */
+    _audioOnly: boolean,
+
+    /**
+     * The source (e.g. URI, URL) of the avatar image of the participant with
+     * {@link #participantId}.
+     *
+     * @private
+     */
+    _avatar: string,
+
+    /**
+     * The connection status of the participant. Her video will only be rendered
+     * if the connection status is 'active'; otherwise, the avatar will be
+     * rendered. If undefined, 'active' is presumed.
+     *
+     * @private
+     */
+    _connectionStatus: string,
+
+    /**
+     * The name of the participant which this component represents.
+     *
+     * @private
+     */
+    _participantName: string,
+
+    /**
+     * The video Track of the participant with {@link #participantId}.
+     */
+    _videoTrack: Object,
+
+    /**
+     * The avatar size.
+     */
+    avatarSize: number,
+
+    /**
+     * Callback to invoke when the {@code ParticipantView} is clicked/pressed.
+     */
+    onPress: Function,
+
+    /**
+     * The ID of the participant (to be) depicted by {@link ParticipantView}.
+     *
+     * @public
+     */
+    participantId: string,
+
+    /**
+     * The style, if any, to apply to {@link ParticipantView} in addition to its
+     * default style.
+     */
+    style: Object,
+
+    /**
+     * The function to translate human-readable text.
+     */
+    t: Function,
+
+    /**
+     * If true, a tinting will be applied to the view, regardless of video or
+     * avatar is rendered.
+     */
+    tintEnabled: boolean,
+
+    /**
+     * The test hint id which can be used to locate the {@code ParticipantView}
+     * on the jitsi-meet-torture side. If not provided, the
+     * {@code participantId} with the following format will be used:
+     * {@code `org.jitsi.meet.Participant#${participantId}`}
+     */
+    testHintId: ?string,
+
+    /**
+     * Indicates if the connectivity info label should be shown, if appropriate.
+     * It will be shown in case the connection is interrupted.
+     */
+    useConnectivityInfoLabel: boolean,
+
+    /**
+     * The z-order of the {@link Video} of {@link ParticipantView} in the
+     * stacking space of all {@code Video}s. For more details, refer to the
+     * {@code zOrder} property of the {@code Video} class for React Native.
+     */
+    zOrder: number,
+
+    /**
+     * Indicates whether zooming (pinch to zoom and/or drag) is enabled.
+     */
+    zoomEnabled: boolean
+};
 
 /**
  * Implements a React Component which depicts a specific participant's avatar
@@ -22,81 +133,53 @@ import styles from './styles';
  *
  * @extends Component
  */
-class ParticipantView extends Component {
+class ParticipantView extends Component<Props> {
+
     /**
-     * ParticipantView component's property types.
+     * Renders the connection status label, if appropriate.
      *
-     * @static
+     * @param {string} connectionStatus - The status of the participant's
+     * connection.
+     * @private
+     * @returns {ReactElement|null}
      */
-    static propTypes = {
-        /**
-         * The indicator which determines whether conferencing is in audio-only
-         * mode.
-         *
-         * @private
-         */
-        _audioOnly: PropTypes.bool,
+    _renderConnectionInfo(connectionStatus) {
+        let messageKey;
 
-        /**
-         * The source (e.g. URI, URL) of the avatar image of the participant
-         * with {@link #participantId}.
-         *
-         * @private
-         */
-        _avatar: PropTypes.string,
+        switch (connectionStatus) {
+        case JitsiParticipantConnectionStatus.INACTIVE:
+            messageKey = 'connection.LOW_BANDWIDTH';
+            break;
+        case JitsiParticipantConnectionStatus.INTERRUPTED:
+            messageKey = 'connection.USER_CONNECTION_INTERRUPTED';
+            break;
+        default:
+            return null;
+        }
 
-        /**
-         * The connection status of the participant. Her video will only be
-         * rendered if the connection status is 'active'; otherwise, the avatar
-         * will be rendered. If undefined, 'active' is presumed.
-         *
-         * @private
-         */
-        _connectionStatus: PropTypes.string,
+        const {
+            avatarSize,
+            _participantName: displayName,
+            t
+        } = this.props;
 
-        /**
-         * The video Track of the participant with {@link #participantId}.
-         */
-        _videoTrack: PropTypes.object,
+        // XXX Consider splitting this component into 2: one for the large view
+        // and one for the thumbnail. Some of these don't apply to both.
+        const containerStyle = {
+            ...styles.connectionInfoContainer,
+            width: avatarSize * 1.5
+        };
 
-        /**
-         * The style, if any, of the avatar in addition to the default style.
-         */
-        avatarStyle: PropTypes.object,
-
-        /**
-         * The ID of the participant (to be) depicted by ParticipantView.
-         *
-         * @public
-         */
-        participantId: PropTypes.string,
-
-        /**
-         * True if the avatar of the depicted participant is to be shown should
-         * the avatar be available and the video of the participant is not to be
-         * shown; otherwise, false. If undefined, defaults to true.
-         */
-        showAvatar: PropTypes.bool,
-
-        /**
-         * True if the video of the depicted participant is to be shown should
-         * the video be available. If undefined, defaults to true.
-         */
-        showVideo: PropTypes.bool,
-
-        /**
-         * The style, if any, to apply to ParticipantView in addition to its
-         * default style.
-         */
-        style: PropTypes.object,
-
-        /**
-         * The z-order of the Video of ParticipantView in the stacking space of
-         * all Videos. For more details, refer to the zOrder property of the
-         * Video class for React Native.
-         */
-        zOrder: PropTypes.number
-    };
+        return (
+            <View
+                pointerEvents = 'box-none'
+                style = { containerStyle }>
+                <Text style = { styles.connectionInfoText }>
+                    { t(messageKey, { displayName }) }
+                </Text>
+            </View>
+        );
+    }
 
     /**
      * Implements React's {@link Component#render()}.
@@ -106,6 +189,7 @@ class ParticipantView extends Component {
      */
     render() {
         const {
+            onPress,
             _avatar: avatar,
             _connectionStatus: connectionStatus,
             _videoTrack: videoTrack
@@ -115,6 +199,10 @@ class ParticipantView extends Component {
         // FIXME It's currently impossible to have true as the value of
         // waitForVideoStarted because videoTrack's state videoStarted will be
         // updated only after videoTrack is rendered.
+        // XXX Note that, unlike on web, we don't render video when the
+        // connection status is interrupted, this is because the renderer
+        // doesn't retain the last frame forever, so we would end up with a
+        // black screen.
         const waitForVideoStarted = false;
         const renderVideo
             = !this.props._audioOnly
@@ -125,81 +213,82 @@ class ParticipantView extends Component {
         // Is the avatar to be rendered?
         const renderAvatar = Boolean(!renderVideo && avatar);
 
+        // If the connection has problems, we will "tint" the video / avatar.
+        const useTint
+            = connectionStatus !== JitsiParticipantConnectionStatus.ACTIVE
+                || this.props.tintEnabled;
+
+        const testHintId
+            = this.props.testHintId
+                ? this.props.testHintId
+                : `org.jitsi.meet.Participant#${this.props.participantId}`;
+
         return (
             <Container
+                onClick = { renderVideo ? undefined : onPress }
                 style = {{
                     ...styles.participantView,
                     ...this.props.style
-                }}>
+                }}
+                touchFeedback = { false }>
+
+                <TestHint
+                    id = { testHintId }
+                    onPress = { onPress }
+                    value = '' />
 
                 { renderVideo
-
-                    // The consumer of this ParticipantView is allowed to forbid
-                    // showing the video if the private logic of this
-                    // ParticipantView determines that the video could be
-                    // rendered.
-                    && _toBoolean(this.props.showVideo, true)
                     && <VideoTrack
+                        onPress = { onPress }
                         videoTrack = { videoTrack }
                         waitForVideoStarted = { waitForVideoStarted }
-                        zOrder = { this.props.zOrder } /> }
+                        zOrder = { this.props.zOrder }
+                        zoomEnabled = { this.props.zoomEnabled } /> }
 
                 { renderAvatar
-
-                    // The consumer of this ParticipantView is allowed to forbid
-                    // showing the avatar if the private logic of this
-                    // ParticipantView determines that the avatar could be
-                    // rendered.
-                    && _toBoolean(this.props.showAvatar, true)
                     && <Avatar
-                        style = { this.props.avatarStyle }
+                        size = { this.props.avatarSize }
                         uri = { avatar } /> }
+
+                { useTint
+
+                    // If the connection has problems, tint the video / avatar.
+                    && <TintedView /> }
+
+                { this.props.useConnectivityInfoLabel
+                    && this._renderConnectionInfo(connectionStatus) }
             </Container>
         );
     }
 }
 
 /**
- * Converts the specified value to a boolean value. If the specified value is
- * undefined, returns the boolean value of undefinedValue.
+ * Maps (parts of) the redux state to the associated {@link ParticipantView}'s
+ * props.
  *
- * @param {any} value - The value to convert to a boolean value should it not be
- * undefined.
- * @param {any} undefinedValue - The value to convert to a boolean value should
- * the specified value be undefined.
- * @private
- * @returns {boolean}
- */
-function _toBoolean(value, undefinedValue) {
-    return Boolean(typeof value === 'undefined' ? undefinedValue : value);
-}
-
-/**
- * Maps (parts of) the Redux state to the associated ParticipantView's props.
- *
- * @param {Object} state - The Redux state.
- * @param {Object} ownProps - The React Component props passed to the associated
- * (instance of) ParticipantView.
+ * @param {Object} state - The redux state.
+ * @param {Object} ownProps - The React {@code Component} props passed to the
+ * associated (instance of) {@code ParticipantView}.
  * @private
  * @returns {{
  *     _audioOnly: boolean,
  *     _avatar: string,
  *     _connectionStatus: string,
+ *     _participantName: string,
  *     _videoTrack: Track
  * }}
  */
 function _mapStateToProps(state, ownProps) {
     const { participantId } = ownProps;
-    const participant
-        = getParticipantById(
-            state['features/base/participants'],
-            participantId);
+    const participant = getParticipantById(state, participantId);
     let avatar;
     let connectionStatus;
+    let participantName;
 
     if (participant) {
         avatar = getAvatarURL(participant);
         connectionStatus = participant.connectionStatus;
+        participantName = getParticipantDisplayName(state, participant.id);
 
         // Avatar (on React Native) now has the ability to generate an
         // automatically-colored default image when no URI/URL is specified or
@@ -214,7 +303,8 @@ function _mapStateToProps(state, ownProps) {
 
         // ParticipantView knows before Avatar that an avatar URL will be used
         // so it's advisable to prefetch here.
-        avatar && prefetch({ uri: avatar });
+        avatar && !avatar.startsWith('#')
+            && FastImage.preload([ { uri: avatar } ]);
     }
 
     return {
@@ -223,6 +313,7 @@ function _mapStateToProps(state, ownProps) {
         _connectionStatus:
             connectionStatus
                 || JitsiParticipantConnectionStatus.ACTIVE,
+        _participantName: participantName,
         _videoTrack:
             getTrackByMediaTypeAndParticipant(
                 state['features/base/tracks'],
@@ -231,4 +322,4 @@ function _mapStateToProps(state, ownProps) {
     };
 }
 
-export default connect(_mapStateToProps)(ParticipantView);
+export default translate(connect(_mapStateToProps)(ParticipantView));

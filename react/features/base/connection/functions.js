@@ -4,7 +4,7 @@ import { toState } from '../redux';
 
 /**
  * Retrieves a simplified version of the conference/location URL stripped of URL
- * params (i.e. query/search and hash) which should be used for sending invites.
+ * params (i.e. Query/search and hash) which should be used for sending invites.
  *
  * @param {Function|Object} stateOrGetState - The redux state or redux's
  * {@code getState} function.
@@ -50,6 +50,24 @@ export function getURLWithoutParams(url: URL): URL {
     }
 
     return url;
+}
+
+/**
+ * Gets a URL string without hash and query/search params from a specific
+ * {@code URL}.
+ *
+ * @param {URL} url - The {@code URL} which may have hash and query/search
+ * params.
+ * @returns {string}
+ */
+export function getURLWithoutParamsNormalized(url: URL): string {
+    const urlWithoutParams = getURLWithoutParams(url).href;
+
+    if (urlWithoutParams) {
+        return urlWithoutParams.toLowerCase();
+    }
+
+    return '';
 }
 
 /**

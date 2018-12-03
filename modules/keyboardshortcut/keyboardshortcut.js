@@ -1,7 +1,12 @@
 /* global APP, $, interfaceConfig */
 
 import { toggleDialog } from '../../react/features/base/dialog';
-import { sendAnalyticsEvent } from '../../react/features/analytics';
+import {
+    ACTION_SHORTCUT_PRESSED as PRESSED,
+    ACTION_SHORTCUT_RELEASED as RELEASED,
+    createShortcutEvent,
+    sendAnalytics
+} from '../../react/features/analytics';
 import { KeyboardShortcutsDialog }
     from '../../react/features/keyboard-shortcuts';
 import { SpeakerStats } from '../../react/features/speaker-stats';
@@ -10,9 +15,9 @@ const logger = require('jitsi-meet-logger').getLogger(__filename);
 
 /**
  * Map of shortcuts. When a shortcut is registered it enters the mapping.
- * @type {{}}
+ * @type {Map}
  */
-const _shortcuts = {};
+const _shortcuts = new Map();
 
 /**
  * Map of registered keyboard keys and translation keys describing the
@@ -44,16 +49,12 @@ const KeyboardShortcut = {
             if (!($(':focus').is('input[type=text]')
                 || $(':focus').is('input[type=password]')
                 || $(':focus').is('textarea'))) {
-                if (_shortcuts.hasOwnProperty(key)) {
-                    _shortcuts[key].function(e);
+                if (_shortcuts.has(key)) {
+                    _shortcuts.get(key).function(e);
                 } else if (!isNaN(num) && num >= 0 && num <= 9) {
                     APP.UI.clickOnVideo(num);
                 }
 
-            // esc while the smileys are visible hides them
-            } else if (key === 'ESCAPE'
-                && $('#smileysContainer').is(':visible')) {
-                APP.UI.toggleSmileys();
             }
         };
 
@@ -66,8 +67,10 @@ const KeyboardShortcut = {
                 || $(':focus').is('textarea'))) {
                 if (this._getKeyboardKey(e).toUpperCase() === ' ') {
                     if (APP.conference.isLocalAudioMuted()) {
-                        sendAnalyticsEvent('shortcut.talk.released');
-                        logger.log('Talk shortcut released');
+                        sendAnalytics(createShortcutEvent(
+                            'push.to.talk',
+                            PRESSED));
+                        logger.log('Talk shortcut pressed');
                         APP.conference.muteAudio(false);
                     }
                 }
@@ -84,10 +87,21 @@ const KeyboardShortcut = {
     },
 
     /**
+     * Opens the {@KeyboardShortcutsDialog} dialog.
+     *
+     * @returns {void}
+     */
+    openDialog() {
+        APP.store.dispatch(toggleDialog(KeyboardShortcutsDialog, {
+            shortcutDescriptions: _shortcutsHelp
+        }));
+    },
+
+    /**
      * Registers a new shortcut.
      *
      * @param shortcutChar the shortcut character triggering the action
-     * @param shortcutAttr the "shortcut" html element attribute mappring an
+     * @param shortcutAttr the "shortcut" html element attribute mapping an
      * element to this shortcut and used to show the shortcut character on the
      * element tooltip
      * @param exec the function to be executed when the shortcut is pressed
@@ -99,11 +113,11 @@ const KeyboardShortcut = {
             shortcutAttr,
             exec,
             helpDescription) {
-        _shortcuts[shortcutChar] = {
+        _shortcuts.set(shortcutChar, {
             character: shortcutChar,
-            shortcutAttr,
-            function: exec
-        };
+            function: exec,
+            shortcutAttr
+        });
 
         if (helpDescription) {
             this._addShortcutToHelp(shortcutChar, helpDescription);
@@ -117,7 +131,7 @@ const KeyboardShortcut = {
      * no longer be usable
      */
     unregisterShortcut(shortcutChar) {
-        _shortcuts.remove(shortcutChar);
+        _shortcuts.delete(shortcutChar);
         _shortcutsHelp.delete(shortcutChar);
     },
 
@@ -126,7 +140,12 @@ const KeyboardShortcut = {
      * @returns {string} e.key or something close if not supported
      */
     _getKeyboardKey(e) {
-        if (typeof e.key === 'string') {
+        // If e.key is a string, then it is assumed it already plainly states
+        // the key pressed. This may not be true in all cases, such as with Edge
+        // and "?", when the browser cannot properly map a key press event to a
+        // keyboard key. To be safe, when a key is "Unidentified" it must be
+        // further analyzed by jitsi to a key using e.which.
+        if (typeof e.key === 'string' && e.key !== 'Unidentified') {
             return e.key;
         }
         if (e.type === 'keypress'
@@ -169,24 +188,22 @@ const KeyboardShortcut = {
      */
     _initGlobalShortcuts() {
         this.registerShortcut('?', null, () => {
-            sendAnalyticsEvent('shortcut.shortcut.help');
-            APP.store.dispatch(toggleDialog(KeyboardShortcutsDialog, {
-                shortcutDescriptions: _shortcutsHelp
-            }));
+            sendAnalytics(createShortcutEvent('help'));
+            this.openDialog();
         }, 'keyboardShortcuts.toggleShortcuts');
 
         // register SPACE shortcut in two steps to insure visibility of help
         // message
         this.registerShortcut(' ', null, () => {
-            sendAnalyticsEvent('shortcut.talk.clicked');
-            logger.log('Talk shortcut pressed');
+            sendAnalytics(createShortcutEvent('push.to.talk', RELEASED));
+            logger.log('Talk shortcut released');
             APP.conference.muteAudio(true);
         });
         this._addShortcutToHelp('SPACE', 'keyboardShortcuts.pushToTalk');
 
         if (!interfaceConfig.filmStripOnly) {
             this.registerShortcut('T', null, () => {
-                sendAnalyticsEvent('shortcut.speakerStats.clicked');
+                sendAnalytics(createShortcutEvent('speaker.stats'));
                 APP.store.dispatch(toggleDialog(SpeakerStats, {
                     conference: APP.conference
                 }));

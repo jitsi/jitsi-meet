@@ -1,9 +1,16 @@
-import {
-    BoxModel,
-    ColorPalette,
-    createStyleSheet,
-    fixAndroidViewClipping
-} from '../../base/styles';
+// @flow
+
+import { BoxModel, ColorPalette, createStyleSheet } from '../../base/styles';
+
+export const PLACEHOLDER_TEXT_COLOR = 'rgba(255, 255, 255, 0.3)';
+
+export const SIDEBAR_AVATAR_SIZE = 100;
+
+const SIDEBAR_HEADER_HEIGHT = 150;
+
+export const SWITCH_THUMB_COLOR = ColorPalette.blueHighlight;
+
+export const SWITCH_UNDER_COLOR = 'rgba(0, 0, 0, 0.4)';
 
 /**
  * The default color of text on the WelcomePage.
@@ -15,24 +22,49 @@ const TEXT_COLOR = ColorPalette.white;
  * {@code WelcomePage} and {@code BlankPage}.
  */
 export default createStyleSheet({
+
     /**
-     * The style of the top-level container of {@code BlankPage}.
+     * The audio-video switch itself.
      */
-    blankPage: {
+    audioVideoSwitch: {
+        marginHorizontal: 5
+    },
+
+    /**
+     * View that contains the audio-video switch and the labels.
+     */
+    audioVideoSwitchContainer: {
+        alignItems: 'center',
+        flexDirection: 'row'
+    },
+
+    /**
+     * Style of the avatar in te side bar.
+     */
+    avatar: {
+        alignSelf: 'center',
+        flex: 0
     },
 
     /**
      * Join button style.
      */
     button: {
-        backgroundColor: ColorPalette.white,
-        borderColor: ColorPalette.white,
-        borderRadius: 8,
+        backgroundColor: ColorPalette.blue,
+        borderColor: ColorPalette.blue,
+        borderRadius: 4,
         borderWidth: 1,
-        height: 45,
+        height: 30,
         justifyContent: 'center',
-        marginBottom: BoxModel.margin,
-        marginTop: BoxModel.margin
+        paddingHorizontal: 20
+    },
+
+    /**
+     * Renders the button visually disabled.
+     */
+    buttonDisabled: {
+        backgroundColor: '#cccccc',
+        borderColor: '#999999'
     },
 
     /**
@@ -40,67 +72,162 @@ export default createStyleSheet({
      */
     buttonText: {
         alignSelf: 'center',
-        color: ColorPalette.blue,
-        fontSize: 18
+        color: ColorPalette.white,
+        fontSize: 14
     },
 
     /**
-     * The style of the legal-related content such as (hyper)links to Privacy
-     * Policy and Terms of Service displayed on the WelcomePage.
+     * The style of the display name label in the side bar.
      */
-    legaleseContainer: {
-        alignItems: 'center',
-        flex: 0,
+    displayName: {
+        color: ColorPalette.white,
+        fontSize: 16,
+        marginTop: BoxModel.margin,
+        textAlign: 'center'
+    },
+
+    /**
+     * The welcome screen header style.
+     */
+    header: {
+        justifyContent: 'space-between'
+    },
+
+    /**
+     * Container for the button on the hint box.
+     */
+    hintButtonContainer: {
         flexDirection: 'row',
         justifyContent: 'center'
     },
 
     /**
-     * The style of a piece of legal-related content such as a (hyper)link to
-     * Privacy Policy or Terms of Service displayed on the WelcomePage.
+     * Container for the hint box.
      */
-    legaleseItem: {
-        color: TEXT_COLOR,
-        fontSize: 12,
-        margin: BoxModel.margin
+    hintContainer: {
+        backgroundColor: ColorPalette.white,
+        borderColor: ColorPalette.white,
+        borderRadius: 4,
+        borderWidth: 1,
+        flexDirection: 'column',
+        marginVertical: 5,
+        overflow: 'hidden',
+        paddingHorizontal: BoxModel.padding,
+        paddingVertical: 2 * BoxModel.padding
     },
 
     /**
-     * The style of the {@code View} displayed over the local video by
-     * {@code LocalVideoTrackUnderlay}. The latter is thought of as the
-     * background (content). The former is thought of as the foreground
-     * (content).
+     * The text of the hint box.
      */
-    localVideoTrackOverlay: {
-        backgroundColor: 'transparent',
-        bottom: 0,
-        flex: 1,
+    hintText: {
+        textAlign: 'center'
+    },
+
+    /**
+     * Container for the text on the hint box.
+     */
+    hintTextContainer: {
+        marginBottom: 2 * BoxModel.margin
+    },
+
+    /**
+     * Container for the items in the side bar.
+     */
+    itemContainer: {
         flexDirection: 'column',
-        justifyContent: 'center',
-        left: 0,
-        position: 'absolute',
-        right: 0,
-        top: 0
+        paddingTop: 10
+    },
+
+    /**
+     * A view that contains the field and hint box.
+     */
+    joinControls: {
+        padding: BoxModel.padding
     },
 
     /**
      * The style of the top-level container/{@code View} of
      * {@code LocalVideoTrackUnderlay}.
      */
-    localVideoTrackUnderlay: fixAndroidViewClipping({
+    localVideoTrackUnderlay: {
         alignSelf: 'stretch',
         backgroundColor: 'transparent',
         flex: 1
-    }),
+    },
+
+    /**
+     * Top-level screen style.
+     */
+    page: {
+        flex: 1,
+        flexDirection: 'column'
+    },
 
     /**
      * Container for room name input box and 'join' button.
      */
     roomContainer: {
-        flex: 1,
+        alignSelf: 'stretch',
+        flexDirection: 'column'
+    },
+
+    /**
+     * The body of the side bar where the items are.
+     */
+    sideBarBody: {
+        backgroundColor: ColorPalette.white,
+        flex: 1
+    },
+
+    /**
+     * The style of the side bar header.
+     */
+    sideBarHeader: {
+        alignItems: 'center',
         flexDirection: 'column',
+        height: SIDEBAR_HEADER_HEIGHT,
         justifyContent: 'center',
-        margin: 3 * BoxModel.margin
+        padding: BoxModel.padding
+    },
+
+    /**
+     * Style of the menu items in the side bar.
+     */
+    sideBarItem: {
+        padding: 13
+    },
+
+    /**
+     * The View inside the side bar buttons (icon + text).
+     */
+    sideBarItemButtonContainer: {
+        alignItems: 'center',
+        flexDirection: 'row',
+        justifyContent: 'flex-start'
+    },
+
+    /**
+     * The icon in the side bar item touchables.
+     */
+    sideBarItemIcon: {
+        color: ColorPalette.blueHighlight,
+        fontSize: 20,
+        marginRight: 15
+    },
+
+    /**
+     * The label of the side bar item touchables.
+     */
+    sideBarItemText: {
+        color: ColorPalette.black,
+        fontWeight: 'bold'
+    },
+
+    /**
+     * The container of the label of the audio-video switch.
+     */
+    switchLabel: {
+        paddingHorizontal: 3
     },
 
     /**
@@ -109,7 +236,7 @@ export default createStyleSheet({
     textInput: {
         backgroundColor: 'transparent',
         borderColor: ColorPalette.white,
-        borderRadius: 8,
+        borderRadius: 4,
         borderWidth: 1,
         color: TEXT_COLOR,
         fontSize: 23,
@@ -132,6 +259,7 @@ export default createStyleSheet({
      * The style of the top-level container of {@code WelcomePage}.
      */
     welcomePage: {
-        backgroundColor: ColorPalette.blue
+        backgroundColor: ColorPalette.blue,
+        overflow: 'hidden'
     }
 });

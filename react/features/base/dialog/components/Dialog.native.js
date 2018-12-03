@@ -42,7 +42,7 @@ type Props = {
     /**
      * I18n key to put as body title.
      */
-    bodyKey: String,
+    bodyKey: string,
 
     textInputProps: Object
 };
@@ -113,7 +113,7 @@ class Dialog extends AbstractDialog<Props, State> {
             [_TAG_KEY]: _SUBMIT_TEXT_TAG_VALUE
         };
 
-        let el: ?React$Element<*> = ( // eslint-disable-line no-extra-parens
+        let el: ?React$Element<*> = (
             <Prompt
                 cancelButtonTextStyle = { cancelButtonTextStyle }
                 cancelText = { t(cancelTitleKey) }
@@ -153,7 +153,8 @@ class Dialog extends AbstractDialog<Props, State> {
                 //   because we've removed Prompt and we're preserving whatever
                 //   it's rendered only.
                 return this._cloneElement(el, /* props */ {
-                    onRequestClose: this._onCancel
+                    onRequestClose: this._onCancel,
+                    supportedOrientations: [ 'landscape', 'portrait' ]
                 });
             }
 
@@ -161,7 +162,7 @@ class Dialog extends AbstractDialog<Props, State> {
                 // * If this Dialog has children, they are to be rendered
                 //   instead of Prompt's TextInput.
                 if (children) {
-                    // $FlowFixMe
+                    // $FlowExpectedError
                     el = children; // eslint-disable-line no-param-reassign
                     children = undefined;
                 }
@@ -172,6 +173,7 @@ class Dialog extends AbstractDialog<Props, State> {
                 if (style
                         && (style = StyleSheet.flatten(style))
                         && _TAG_KEY in style) {
+                    // $FlowExpectedError
                     switch (style[_TAG_KEY]) {
                     case _SUBMIT_TEXT_TAG_VALUE:
                         if (this.state.submitting) {

@@ -1,0 +1,117 @@
+.deep-linking-mobile {
+    background-color: #fff;
+    height: 100vh;
+    overflow: auto;
+    position: relative;
+    width: 100vw;
+
+    .header {
+        width: 100%;
+        height: 70px;
+        background-color: #f1f2f5;
+        text-align: center;
+        .logo {
+            margin-top: 15px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 40px;
+        }
+    }
+
+    a {
+        text-decoration: none
+    }
+
+    &__body {
+        color: $unsupportedBrowserTextColor;
+        margin: auto;
+        max-width: 40em;
+        padding: 35px 0 40px 0;
+        text-align: center;
+        width: 75%;
+
+        a:active {
+            text-decoration: none;
+        }
+
+        .image {
+            max-width: 80%;
+        }
+    }
+
+    &__text {
+        font-weight: bolder;
+        padding: 10px 10px 0px 10px;
+    }
+
+    &__text,
+    .deep-linking-dial-in  {
+        font-size: 1.2em;
+        line-height: em(29px, 21px);
+        margin-bottom: 0.65em;
+
+        &_small {
+            font-size: 1.5em;
+            margin-bottom: 1em;
+            margin-top: em(21, 18);
+
+            strong {
+                font-size: em(21, 18);
+            }
+        }
+    }
+
+    &__href {
+        height: 2.2857142857142856em;
+        line-height: 2.2857142857142856em;
+        margin: 18px auto 20px;
+        max-width: 300px;
+        width: auto;
+        font-weight: bolder;
+    }
+
+    &__button {
+        border: 0;
+        height: 2.2857142857142856em;
+        line-height: 2.2857142857142856em;
+        margin: 18px auto 10px;
+        padding: 0px 10px 0px 10px;
+        max-width: 300px;
+        width: auto;
+        @include border-radius(3px);
+        background-color: $unsupportedBrowserButtonBgColor;
+        color: #505F79;
+        font-weight: bold;
+
+        &:active {
+            background-color: $unsupportedBrowserButtonBgColor;
+        }
+
+        &_primary {
+            background-color: $primaryUnsupportedBrowserButtonBgColor;
+            color: #FFFFFF;
+
+            &:active {
+                background-color: $primaryUnsupportedBrowserButtonBgColor;
+            }
+        }
+    }
+
+    .deep-linking-dial-in {
+        display: none;
+
+        &.has-numbers {
+            align-items: center;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .dial-in-numbers-list {
+            color: $unsupportedBrowserTextColor;
+        }
+
+        .dial-in-numbers-body {
+            vertical-align: top;
+        }
+    }
+}

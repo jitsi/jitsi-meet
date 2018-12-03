@@ -1,4 +1,5 @@
-import PropTypes from 'prop-types';
+/* @flow */
+
 import React, { Component } from 'react';
 
 /**
@@ -9,47 +10,52 @@ import React, { Component } from 'react';
 const VOLUME_SLIDER_SCALE = 100;
 
 /**
+ * The type of the React {@code Component} props of {@link VolumeSlider}.
+ */
+type Props = {
+
+    /**
+     * The value of the audio slider should display at when the component first
+     * mounts. Changes will be stored in state. The value should be a number
+     * between 0 and 1.
+     */
+    initialValue: number,
+
+    /**
+     * The callback to invoke when the audio slider value changes.
+     */
+    onChange: Function
+};
+
+/**
+ * The type of the React {@code Component} state of {@link VolumeSlider}.
+ */
+type State = {
+
+    /**
+     * The volume of the participant's audio element. The value will
+     * be represented by a slider.
+     */
+    volumeLevel: number
+};
+
+/**
  * Implements a React {@link Component} which displays an input slider for
  * adjusting the local volume of a remote participant.
  *
  * @extends Component
  */
-class VolumeSlider extends Component {
-    /**
-     * {@code VolumeSlider} component's property types.
-     *
-     * @static
-     */
-    static propTypes = {
-        /**
-         * The value of the audio slider should display at when the component
-         * first mounts. Changes will be stored in state. The value should be a
-         * number between 0 and 1.
-         */
-        initialValue: PropTypes.number,
-
-        /**
-         * The callback to invoke when the audio slider value changes.
-         */
-        onChange: PropTypes.func
-    };
-
+class VolumeSlider extends Component<Props, State> {
     /**
      * Initializes a new {@code VolumeSlider} instance.
      *
      * @param {Object} props - The read-only properties with which the new
      * instance is to be initialized.
      */
-    constructor(props) {
+    constructor(props: Props) {
         super(props);
 
         this.state = {
-            /**
-             * The volume of the participant's audio element. The value will
-             * be represented by a slider.
-             *
-             * @type {Number}
-             */
             volumeLevel: (props.initialValue || 0) * VOLUME_SLIDER_SCALE
         };
 
@@ -83,6 +89,8 @@ class VolumeSlider extends Component {
             </li>
         );
     }
+
+    _onVolumeChange: (Object) => void;
 
     /**
      * Sets the internal state of the volume level for the volume slider.

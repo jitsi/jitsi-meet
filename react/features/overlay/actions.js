@@ -1,11 +1,8 @@
-import { reload, replace } from '../../../modules/util/helpers';
-
 import {
     MEDIA_PERMISSION_PROMPT_VISIBILITY_CHANGED,
+    SET_FATAL_ERROR,
     SUSPEND_DETECTED
 } from './actionTypes';
-
-const logger = require('jitsi-meet-logger').getLogger(__filename);
 
 /**
  * Signals that the prompt for media permission is visible or not.
@@ -29,28 +26,6 @@ export function mediaPermissionPromptVisibilityChanged(isVisible, browser) {
 }
 
 /**
- * Reloads the page.
- *
- * @protected
- * @returns {Function}
- */
-export function _reloadNow() {
-    return (dispatch, getState) => {
-        const { locationURL } = getState()['features/base/connection'];
-
-        logger.info(`Reloading the conference using URL: ${locationURL}`);
-
-        // In an iframe reload with the reload() utility because the replace()
-        // utility does not work on an iframe.
-        if (window.self === window.top) {
-            replace(locationURL);
-        } else {
-            reload();
-        }
-    };
-}
-
-/**
  * Signals that suspend was detected.
  *
  * @public
@@ -61,5 +36,24 @@ export function _reloadNow() {
 export function suspendDetected() {
     return {
         type: SUSPEND_DETECTED
+    };
+}
+
+/**
+ * The action indicates that an unrecoverable error has occurred and the reload
+ * screen will be displayed or hidden.
+ *
+ * @param {Object} fatalError - A critical error which was not claimed by any
+ * feature for error recovery (the recoverable flag was not set). If
+ * {@code undefined} then any fatal error currently stored will be discarded.
+ * @returns {{
+ *     type: SET_FATAL_ERROR,
+ *     fatalError: ?Error
+ * }}
+ */
+export function setFatalError(fatalError) {
+    return {
+        type: SET_FATAL_ERROR,
+        fatalError
     };
 }

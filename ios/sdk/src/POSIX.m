@@ -18,6 +18,7 @@
 
 #include <arpa/inet.h>
 #include <netdb.h>
+#include <string.h>
 #include <sys/types.h>
 #include <sys/socket.h>
 
@@ -29,54 +30,81 @@
 RCT_EXPORT_MODULE();
 
 RCT_EXPORT_METHOD(getaddrinfo:(NSString *)hostname
+                     servname:(NSString *)servname
                       resolve:(RCTPromiseResolveBlock)resolve
                        reject:(RCTPromiseRejectBlock)reject) {
     int err;
+    const char *hostname_ = hostname ? hostname.UTF8String : NULL;
+    const char *servname_ = servname ? servname.UTF8String : NULL;
+    struct addrinfo hints;
     struct addrinfo *res;
     NSString *rejectCode;
 
-    if (0 == (err = getaddrinfo(hostname.UTF8String, NULL, NULL, &res))) {
-        int af = res->ai_family;
-        struct sockaddr *sa = res->ai_addr;
-        void *addr;
+    memset(&hints, 0, sizeof(hints));
+    hints.ai_family = PF_UNSPEC;
+    hints.ai_flags = AI_DEFAULT;
+    if (0 == (err = getaddrinfo(hostname_, servname_, &hints, &res))) {
+        char addr_[MAX(INET_ADDRSTRLEN, INET6_ADDRSTRLEN)];
+        NSMutableArray *res_ = [[NSMutableArray alloc] init];
 
-        switch (af) {
-        case AF_INET:
-            addr = &(((struct sockaddr_in *) sa)->sin_addr);
-            break;
-        case AF_INET6:
-            addr = &(((struct sockaddr_in6 *) sa)->sin6_addr);
-            break;
-        default:
-            addr = NULL;
-            break;
-        }
-        if (addr) {
-            char v[MAX(INET_ADDRSTRLEN, INET6_ADDRSTRLEN)];
+        for (struct addrinfo *ai = res; ai; ai = ai->ai_next) {
+            int af = ai->ai_family;
+            struct sockaddr *sa = ai->ai_addr;
+            void *addr;
 
-            if (inet_ntop(af, addr, v, sizeof(v))) {
-                resolve([NSString stringWithUTF8String:v]);
-            } else {
-                err = errno;
-                rejectCode = @"inet_ntop";
+            switch (af) {
+            case AF_INET:
+                addr = &(((struct sockaddr_in *) sa)->sin_addr);
+                break;
+            case AF_INET6:
+                addr = &(((struct sockaddr_in6 *) sa)->sin6_addr);
+                break;
+            default:
+                addr = NULL;
+                break;
             }
-        } else {
-            err = EAFNOSUPPORT;
-            rejectCode = @"EAFNOSUPPORT";
+            if (addr) {
+                if (inet_ntop(af, addr, addr_, sizeof(addr_))) {
+                    [res_ addObject:@{
+                        @"ai_addr": [NSString stringWithUTF8String:addr_],
+                        @"ai_family": [NSNumber numberWithInt:af],
+                        @"ai_protocol":
+                            [NSNumber numberWithInt:ai->ai_protocol],
+                        @"ai_socktype": [NSNumber numberWithInt:ai->ai_socktype]
+                    }];
+                } else {
+                    err = errno;
+                    rejectCode = @"inet_ntop";
+                }
+            } else {
+                err = EAFNOSUPPORT;
+                rejectCode = @"EAFNOSUPPORT";
+            }
         }
 
         freeaddrinfo(res);
+
+        // resolve
+        if (res_.count) {
+            resolve(res_);
+            return;
+        }
+
+        if (!err) {
+            err = ERANGE;
+            rejectCode = @"ERANGE";
+        }
     } else {
         rejectCode = @"getaddrinfo";
     }
-    if (0 != err) {
-        NSError *error
-            = [NSError errorWithDomain:NSPOSIXErrorDomain
-                                  code:err
-                              userInfo:nil];
 
-        reject(rejectCode, error.localizedDescription, error);
-    }
+    // reject
+    NSError *error
+        = [NSError errorWithDomain:NSPOSIXErrorDomain
+                              code:err
+                          userInfo:nil];
+
+    reject(rejectCode, error.localizedDescription, error);
 }
 
 @end

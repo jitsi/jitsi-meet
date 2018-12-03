@@ -18,6 +18,10 @@
 
 #import <JitsiMeet/JitsiMeet.h>
 
-@interface ViewController : UIViewController<JitsiMeetViewDelegate>
+@interface ViewController
+    : UIViewController<
+        JitsiMeetViewDelegate,
+        JMAddPeopleControllerDelegate,
+        JMInviteControllerDelegate>
 
 @end

@@ -1,4 +1,4 @@
-/* @flow */
+// @flow
 
 import i18next from 'i18next';
 import I18nextXHRBackend from 'i18next-xhr-backend';
@@ -18,7 +18,7 @@ declare var interfaceConfig: Object;
  * @public
  * @type {Array<string>}
  */
-export const LANGUAGES = Object.keys(LANGUAGES_RESOURCES);
+export const LANGUAGES: Array<string> = Object.keys(LANGUAGES_RESOURCES);
 
 /**
  * The default language.
@@ -58,7 +58,7 @@ const options = {
 };
 
 i18next
-    .use(I18nextXHRBackend)
+    .use(navigator.product === 'ReactNative' ? {} : I18nextXHRBackend)
     .use(languageDetector)
     .use({
         name: 'resolveAppName',
@@ -70,15 +70,21 @@ i18next
 // Add default language which is preloaded from the source code.
 i18next.addResourceBundle(
     DEFAULT_LANGUAGE,
-    'main',
-    MAIN_RESOURCES,
-    /* deep */ true,
-    /* overwrite */ true);
-i18next.addResourceBundle(
-    DEFAULT_LANGUAGE,
     'languages',
     LANGUAGES_RESOURCES,
     /* deep */ true,
     /* overwrite */ true);
+i18next.addResourceBundle(
+    DEFAULT_LANGUAGE,
+    'main',
+    MAIN_RESOURCES,
+    /* deep */ true,
+    /* overwrite */ true);
+
+// Add builtin languages.
+// XXX: Note we are using require here, because we want the side-effects of the
+// import, but imports can only be placed at the top, and it would be too early,
+// since i18next is not yet initialized at that point.
+require('./BuiltinLanguages');
 
 export default i18next;

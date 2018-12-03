@@ -8,47 +8,36 @@
 export const CLEAR_TOOLBOX_TIMEOUT = Symbol('CLEAR_TOOLBOX_TIMEOUT');
 
 /**
- * The type of the action which sets the default toolbar buttons of the Toolbox.
+ * The type of (redux) action which updates whether the conference is or is not
+ * currently in full screen view.
  *
  * {
- *     type: SET_DEFAULT_TOOLBOX_BUTTONS,
- *     primaryToolbarButtons: Map,
- *     secondaryToolbarButtons: Map
+ *     type: FULL_SCREEN_CHANGED,
+ *     fullScreen: boolean
  * }
  */
-export const SET_DEFAULT_TOOLBOX_BUTTONS
-    = Symbol('SET_DEFAULT_TOOLBOX_BUTTONS');
+export const FULL_SCREEN_CHANGED = Symbol('FULL_SCREEN_CHANGED');
 
 /**
- * The type of the action which sets the conference subject.
+ * The type of (redux) action which requests full screen mode be entered or
+ * exited.
  *
  * {
- *     type: SET_SUBJECT,
- *     subject: string
+ *     type: SET_FULL_SCREEN,
+ *     fullScreen: boolean
  * }
  */
-export const SET_SUBJECT = Symbol('SET_SUBJECT');
+export const SET_FULL_SCREEN = Symbol('SET_FULL_SCREEN');
 
 /**
- * The type of the action which sets the subject slide in.
+ * The type of the (redux) action which shows/hides the OverflowMenu.
  *
  * {
- *     type: SET_SUBJECT_SLIDE_IN,
- *     subjectSlideIn: boolean
+ *     type: SET_OVERFLOW_MENU_VISIBLE,
+ *     visible: boolean
  * }
  */
-export const SET_SUBJECT_SLIDE_IN = Symbol('SET_SUBJECT_SLIDE_IN');
-
-/**
- * The type of the action which sets the descriptor of a toolbar button.
- *
- * {
- *     type: SET_TOOLBAR_BUTTON,
- *     button: Object,
- *     key: string
- * }
- */
-export const SET_TOOLBAR_BUTTON = Symbol('SET_TOOLBAR_BUTTON');
+export const SET_OVERFLOW_MENU_VISIBLE = Symbol('SET_OVERFLOW_MENU_VISIBLE');
 
 /**
  * The type of the action which sets the indicator which determiens whether a

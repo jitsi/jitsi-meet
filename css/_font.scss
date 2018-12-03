@@ -25,6 +25,33 @@
     -moz-osx-font-smoothing: grayscale;
 }
 
+.icon-arrow_back:before {
+  content: "\e5c4";
+}
+.icon-close:before {
+  content: "\e5cd";
+}
+.icon-event_note:before {
+    content: "\e616";
+}
+.icon-menu:before {
+  content: "\e5d2";
+}
+.icon-navigate_before:before {
+  content: "\e408";
+}
+.icon-navigate_next:before {
+  content: "\e409";
+}
+.icon-public:before {
+    content: "\e80b";
+}
+.icon-restore:before {
+  content: "\e8b3";
+}
+.icon-timer:before {
+    content: "\e425";
+}
 .icon-thumb-menu:before {
     content: "\e5d4";
 }
@@ -156,4 +183,49 @@
 }
 .icon-gsm-bars:before {
     content: "\e926";
+}
+.icon-open_in_new:before {
+  content: "\e89e";
+}
+.icon-AUD:before {
+  content: "\e900";
+}
+.icon-HD:before {
+  content: "\e927";
+}
+.icon-LD:before {
+  content: "\e928";
+}
+.icon-SD:before {
+  content: "\e929";
+}
+.icon-camera-take-picture:before {
+  content: "\e92a";
+}
+.icon-rec:before {
+  content: "\e92b";
+}
+.icon-live:before {
+  content: "\e92c";
+}
+.icon-speaker:before {
+    content: "\e92d";
+}
+.icon-tiles-many:before {
+  content: "\e92e";
+}
+.icon-tiles-one:before {
+  content: "\e92f";
+}
+.icon-closed_caption:before {
+    content: "\e930";
+}
+.icon-play:before {
+    content: "\f04b";
+}
+.icon-stop:before {
+    content: "\f04d";
+}
+.icon-dominant-speaker:before {
+    content: "\f0a1";
 }

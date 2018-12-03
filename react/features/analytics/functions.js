@@ -9,12 +9,18 @@ import { getJitsiMeetGlobalNS, loadScript } from '../base/util';
 const logger = require('jitsi-meet-logger').getLogger(__filename);
 
 /**
- * Sends an analytics event.
+ * Sends an event through the lib-jitsi-meet AnalyticsAdapter interface.
  *
- * @inheritdoc
+ * @param {Object} event - The event to send. It should be formatted as
+ * described in AnalyticsAdapter.js in lib-jitsi-meet.
+ * @returns {void}
  */
-export function sendAnalyticsEvent(...args: Array<any>) {
-    analytics.sendEvent(...args);
+export function sendAnalytics(event: Object) {
+    try {
+        analytics.sendEvent(event);
+    } catch (e) {
+        logger.warn(`Error sending analytics event: ${e}`);
+    }
 }
 
 /**
@@ -37,24 +43,23 @@ export function initAnalytics({ getState }: { getState: Function }) {
 
     const state = getState();
     const config = state['features/base/config'];
-    const { analyticsScriptUrls } = config;
-    const machineId = JitsiMeetJS.getMachineId();
-    const { user } = state['features/base/jwt'];
+    const { analyticsScriptUrls, deploymentInfo, googleAnalyticsTrackingId }
+        = config;
+    const { group, server, user } = state['features/base/jwt'];
     const handlerConstructorOptions = {
-        product: 'lib-jitsi-meet',
-        version: JitsiMeetJS.version,
-        session: machineId,
-        user: user ? user.id : `uid-${machineId}`,
-        server: state['features/base/connection'].locationURL.host
+        envType: (deploymentInfo && deploymentInfo.envType) || 'dev',
+        googleAnalyticsTrackingId,
+        group,
+        product: deploymentInfo && deploymentInfo.product,
+        subproduct: deploymentInfo && deploymentInfo.environment,
+        user: user && user.id,
+        version: JitsiMeetJS.version
     };
 
     _loadHandlers(analyticsScriptUrls, handlerConstructorOptions)
         .then(handlers => {
-            const permanentProperties: Object = {
-                roomName: state['features/base/conference'].room,
-                userAgent: navigator.userAgent
-            };
-            const { group, server } = state['features/base/jwt'];
+            const roomName = state['features/base/conference'].room;
+            const permanentProperties = {};
 
             if (server) {
                 permanentProperties.server = server;
@@ -65,8 +70,6 @@ export function initAnalytics({ getState }: { getState: Function }) {
 
             // Optionally, include local deployment information based on the
             // contents of window.config.deploymentInfo.
-            const { deploymentInfo } = config;
-
             if (deploymentInfo) {
                 for (const key in deploymentInfo) {
                     if (deploymentInfo.hasOwnProperty(key)) {
@@ -76,6 +79,9 @@ export function initAnalytics({ getState }: { getState: Function }) {
             }
 
             analytics.addPermanentProperties(permanentProperties);
+            analytics.setConferenceName(roomName);
+
+            // Set the handlers last, since this triggers emptying of the cache
             analytics.setAnalyticsHandlers(handlers);
         },
         error => analytics.dispose() && logger.error(error));

@@ -35,18 +35,21 @@ export function createLocalTracksF(
     if (typeof APP !== 'undefined') {
         // TODO The app's settings should go in the redux store and then the
         // reliance on the global variable APP will go away.
+        store || (store = APP.store); // eslint-disable-line no-param-reassign
+
+        const settings = store.getState()['features/base/settings'];
+
         if (typeof cameraDeviceId === 'undefined' || cameraDeviceId === null) {
-            cameraDeviceId = APP.settings.getCameraDeviceId();
+            cameraDeviceId = settings.cameraDeviceId;
         }
         if (typeof micDeviceId === 'undefined' || micDeviceId === null) {
-            micDeviceId = APP.settings.getMicDeviceId();
+            micDeviceId = settings.micDeviceId;
         }
-
-        store || (store = APP.store); // eslint-disable-line no-param-reassign
     }
 
     const {
         constraints,
+        desktopSharingFrameRate,
         firefox_fake_device, // eslint-disable-line camelcase
         resolution
     } = store.getState()['features/base/config'];
@@ -58,6 +61,7 @@ export function createLocalTracksF(
                 constraints,
                 desktopSharingExtensionExternalInstallation:
                     options.desktopSharingExtensionExternalInstallation,
+                desktopSharingFrameRate,
                 desktopSharingSources: options.desktopSharingSources,
 
                 // Copy array to avoid mutations inside library.
@@ -104,21 +108,32 @@ export function getLocalAudioTrack(tracks) {
  *
  * @param {Track[]} tracks - List of all tracks.
  * @param {MEDIA_TYPE} mediaType - Media type.
+ * @param {boolean} [includePending] - Indicates whether a local track is to be
+ * returned if it is still pending. A local track is pending if
+ * {@code getUserMedia} is still executing to create it and, consequently, its
+ * {@code jitsiTrack} property is {@code undefined}. By default a pending local
+ * track is not returned.
  * @returns {(Track|undefined)}
  */
-export function getLocalTrack(tracks, mediaType) {
-    return getLocalTracks(tracks).find(t => t.mediaType === mediaType);
+export function getLocalTrack(tracks, mediaType, includePending = false) {
+    return (
+        getLocalTracks(tracks, includePending)
+            .find(t => t.mediaType === mediaType));
 }
 
 /**
- * Returns an array containing the local tracks with a (valid)
+ * Returns an array containing the local tracks with or without a (valid)
  * {@code JitsiTrack}.
  *
  * @param {Track[]} tracks - An array containing all local tracks.
+ * @param {boolean} [includePending] - Indicates whether a local track is to be
+ * returned if it is still pending. A local track is pending if
+ * {@code getUserMedia} is still executing to create it and, consequently, its
+ * {@code jitsiTrack} property is {@code undefined}. By default a pending local
+ * track is not returned.
  * @returns {Track[]}
  */
-export function getLocalTracks(tracks) {
-
+export function getLocalTracks(tracks, includePending = false) {
     // XXX A local track is considered ready only once it has its `jitsiTrack`
     // property set by the `TRACK_ADDED` action. Until then there is a stub
     // added just before the `getUserMedia` call with a cancellable
@@ -126,7 +141,7 @@ export function getLocalTracks(tracks) {
     // has not yet been added to the redux store. Once GUM is cancelled, it will
     // never make it to the store nor there will be any
     // `TRACK_ADDED`/`TRACK_REMOVED` actions dispatched for it.
-    return tracks.filter(t => t.local && t.jitsiTrack);
+    return tracks.filter(t => t.local && (t.jitsiTrack || includePending));
 }
 
 /**
@@ -218,7 +233,7 @@ export function setTrackMuted(track, muted) {
         // Track might be already disposed so ignore such an error.
         if (error.name !== JitsiTrackErrors.TRACK_IS_DISPOSED) {
             // FIXME Emit mute failed, so that the app can show error dialog.
-            console.error(`set track ${f} failed`, error);
+            logger.error(`set track ${f} failed`, error);
         }
     });
 }

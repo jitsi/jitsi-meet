@@ -15,8 +15,6 @@ const minimize
     = process.argv.indexOf('-p') !== -1
         || process.argv.indexOf('--optimize-minimize') !== -1;
 
-// eslint-disable-next-line camelcase
-const node_modules = `${__dirname}/node_modules/`;
 const plugins = [
     new webpack.LoaderOptionsPlugin({
         debug: !minimize,
@@ -62,23 +60,32 @@ const config = {
             // Transpile ES2015 (aka ES6) to ES5. Accept the JSX syntax by React
             // as well.
 
-            exclude: node_modules, // eslint-disable-line camelcase
+            exclude: [
+                new RegExp(`${__dirname}/node_modules/(?!js-utils)`)
+            ],
             loader: 'babel-loader',
             options: {
                 // XXX The require.resolve bellow solves failures to locate the
                 // presets when lib-jitsi-meet, for example, is npm linked in
-                // jitsi-meet. The require.resolve, of course, mandates the use
-                // of the prefix babel-preset- in the preset names.
+                // jitsi-meet.
+                plugins: [
+                    require.resolve('@babel/plugin-transform-flow-strip-types'),
+                    require.resolve('@babel/plugin-proposal-class-properties'),
+                    require.resolve(
+                        '@babel/plugin-proposal-export-default-from'),
+                    require.resolve(
+                        '@babel/plugin-proposal-export-namespace-from')
+                ],
                 presets: [
                     [
-                        require.resolve('babel-preset-env'),
+                        require.resolve('@babel/preset-env'),
 
                         // Tell babel to avoid compiling imports into CommonJS
                         // so that webpack may do tree shaking.
                         { modules: false }
                     ],
-                    require.resolve('babel-preset-react'),
-                    require.resolve('babel-preset-stage-1')
+                    require.resolve('@babel/preset-flow'),
+                    require.resolve('@babel/preset-react')
                 ]
             },
             test: /\.jsx?$/
@@ -89,11 +96,6 @@ const config = {
 
             loader: 'expose-loader?$!expose-loader?jQuery',
             test: /\/node_modules\/jquery\/.*\.js$/
-        }, {
-            // Set scope to window for URL polyfill.
-
-            loader: 'imports-loader?this=>window',
-            test: /\/node_modules\/url-polyfill\/.*\.js$/
         }, {
             // Allow CSS to be imported into JavaScript.
 
@@ -137,21 +139,28 @@ const config = {
 module.exports = [
     Object.assign({}, config, {
         entry: {
-            'app.bundle': [
-
-                // XXX Required by at least IE11 at the time of this writing.
-                'babel-polyfill',
-                './app.js'
-            ],
+            'app.bundle': './app.js',
 
             'device_selection_popup_bundle':
-                './react/features/device-selection/popup.js',
+                './react/features/settings/popup.js',
 
             'alwaysontop':
                 './react/features/always-on-top/index.js',
 
+            'dial_in_info_bundle': [
+
+                // atlaskit does not support React 16 prop-types
+                './react/features/base/react/prop-types-polyfill.js',
+
+                './react/features/invite/components/dial-in-info-page'
+            ],
+
             'do_external_connect':
-                './connection_optimization/do_external_connect.js'
+                './connection_optimization/do_external_connect.js',
+
+            'flacEncodeWorker':
+                './react/features/local-recording/'
+                    + 'recording/flac/flacEncodeWorker.js'
         }
     }),
 
@@ -159,12 +168,7 @@ module.exports = [
     // JitsiMeetExternalAPI).
     Object.assign({}, config, {
         entry: {
-            'external_api': [
-
-                // XXX Required by at least IE11 at the time of this writing.
-                'babel-polyfill',
-                './modules/API/external/index.js'
-            ]
+            'external_api': './modules/API/external/index.js'
         },
         output: Object.assign({}, config.output, {
             library: 'JitsiMeetExternalAPI',
@@ -183,7 +187,8 @@ module.exports = [
  * target, undefined; otherwise, the path to the local file to be served.
  */
 function devServerProxyBypass({ path }) {
-    if (path.startsWith('/css/') || path.startsWith('/doc/')) {
+    if (path.startsWith('/css/') || path.startsWith('/doc/')
+            || path.startsWith('/fonts/')) {
         return path;
     }
 

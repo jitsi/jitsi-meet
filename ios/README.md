@@ -53,14 +53,24 @@ partial URL (e.g. a room name only) is specified to
 `loadURLString:`/`loadURLObject:`. If not set or if set to `nil`, the default
 built in JavaScript is used: https://meet.jit.si.
 
-NOTE: Must be set before `loadURL:`/`loadURLString:` for it to take effect.
+NOTE: Must be set (if at all) before `loadURL:`/`loadURLString:` for it to take
+effect.
+
+#### pictureInPictureEnabled
+
+Property to get / set whether Picture-in-Picture is enabled. Defaults to `YES`
+if `delegate` implements `enterPictureInPicture:`; otherwise, `NO`.
+
+NOTE: Must be set (if at all) before `loadURL:`/`loadURLString:` for it to take
+effect.
 
 #### welcomePageEnabled
 
 Property to get/set whether the Welcome page is enabled. If `NO`, a black empty
 view will be rendered when not in a conference. Defaults to `NO`.
 
-NOTE: Must be set before `loadURL:`/`loadURLString:` for it to take effect.
+NOTE: Must be set (if at all) before `loadURL:`/`loadURLString:` for it to take
+effect.
 
 #### loadURL:NSURL
 
@@ -115,7 +125,23 @@ continueUserActivity:(NSUserActivity *)userActivity
                continueUserActivity:userActivity
                  restorationHandler:restorationHandler];
 }
+```
 
+And also one of the following:
+
+```objc
+// See https://developer.apple.com/documentation/uikit/uiapplicationdelegate/1623073-application?language=objc
+- (BOOL)application:(UIApplication *)app
+            openURL:(NSURL *)url
+            options:(NSDictionary<UIApplicationOpenURLOptionsKey,id> *)options {
+  return [JitsiMeetView application:app
+                            openURL:url
+                            options: options];
+}
+```
+or
+```objc
+// See https://developer.apple.com/documentation/uikit/uiapplicationdelegate/1623112-application?language=objc
 - (BOOL)application:(UIApplication *)application
             openURL:(NSURL *)url
   sourceApplication:(NSString *)sourceApplication
@@ -127,6 +153,8 @@ continueUserActivity:(NSUserActivity *)userActivity
                          annotation:annotation];
 }
 ```
+
+NOTE: The latter is deprecated.
 
 ### JitsiMeetViewDelegate
 
@@ -170,6 +198,16 @@ Called before a conference is left.
 
 The `data` dictionary contains a "url" key with the conference URL.
 
+#### enterPictureInPicture
+
+Called when entering Picture-in-Picture is requested by the user. The app should
+now activate its Picture-in-Picture implementation (and resize the associated
+`JitsiMeetView`. The latter will automatically detect its new size and adjust
+its user interface to a variant appropriate for the small size ordinarily
+associated with Picture-in-Picture.)
+
+The `data` dictionary is empty.
+
 #### loadConfigError
 
 Called when loading the main configuration file from the Jitsi Meet deployment
@@ -178,3 +216,53 @@ fails.
 The `data` dictionary contains an "error" key with the error and a "url" key
 with the conference URL which necessitated the loading of the configuration
 file.
+
+### Picture-in-Picture
+
+`JitsiMeetView` will automatically adjust its UI when presented in a
+Picture-in-Picture style scenario, in a rectangle too small to accommodate its
+"full" UI.
+
+Jitsi Meet SDK does not currently implement native Picture-in-Picture on iOS. If
+desired, apps need to implement non-native Picture-in-Picture themselves and
+resize `JitsiMeetView`.
+
+If `pictureInPictureEnabled` is set to `YES` or `delegate` implements
+`enterPictureInPicture:`, the in-call toolbar will render a button to afford the
+user to request entering Picture-in-Picture.
+
+## Dropbox integration
+
+To setup the Dropbox integration, follow these steps:
+
+1. Add the following to the app's Info.plist and change `<APP_KEY>` to your
+Dropbox app key:
+```
+<key>CFBundleURLTypes</key>
+<array>
+  <dict>
+    <key>CFBundleURLName</key>
+    <string></string>
+    <key>CFBundleURLSchemes</key>
+    <array>
+      <string>db-<APP_KEY></string>
+    </array>
+  </dict>
+</array>
+<key>LSApplicationQueriesSchemes</key>
+<array>
+  <string>dbapi-2</string>
+  <string>dbapi-8-emm</string>
+</array>
+```
+
+2. Add the following to the app's `AppDelegate`:
+```objc
+- (BOOL)application:(UIApplication *)app
+            openURL:(NSURL *)url
+            options:(NSDictionary<UIApplicationOpenURLOptionsKey,id> *)options {
+  return [JitsiMeetView application:app
+                            openURL:url
+                            options:options];
+}
+```

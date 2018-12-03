@@ -1,8 +1,6 @@
 /* global APP, JitsiMeetJS */
 
-let currentAudioInputDevices,
-    currentAudioOutputDevices,
-    currentVideoInputDevices;
+import { getAudioOutputDeviceId } from '../../react/features/base/devices';
 
 /**
  * Determines if currently selected audio output device should be changed after
@@ -16,7 +14,7 @@ function getNewAudioOutputDevice(newDevices) {
         return;
     }
 
-    const selectedAudioOutputDeviceId = APP.settings.getAudioOutputDeviceId();
+    const selectedAudioOutputDeviceId = getAudioOutputDeviceId();
     const availableAudioOutputDevices = newDevices.filter(
         d => d.kind === 'audiooutput');
 
@@ -40,7 +38,8 @@ function getNewAudioOutputDevice(newDevices) {
 function getNewAudioInputDevice(newDevices, localAudio) {
     const availableAudioInputDevices = newDevices.filter(
         d => d.kind === 'audioinput');
-    const selectedAudioInputDeviceId = APP.settings.getMicDeviceId();
+    const settings = APP.store.getState()['features/base/settings'];
+    const selectedAudioInputDeviceId = settings.micDeviceId;
     const selectedAudioInputDevice = availableAudioInputDevices.find(
         d => d.deviceId === selectedAudioInputDeviceId);
 
@@ -76,7 +75,8 @@ function getNewAudioInputDevice(newDevices, localAudio) {
 function getNewVideoInputDevice(newDevices, localVideo) {
     const availableVideoInputDevices = newDevices.filter(
         d => d.kind === 'videoinput');
-    const selectedVideoInputDeviceId = APP.settings.getCameraDeviceId();
+    const settings = APP.store.getState()['features/base/settings'];
+    const selectedVideoInputDeviceId = settings.cameraDeviceId;
     const selectedVideoInputDevice = availableVideoInputDevices.find(
         d => d.deviceId === selectedVideoInputDeviceId);
 
@@ -101,47 +101,6 @@ function getNewVideoInputDevice(newDevices, localVideo) {
 }
 
 export default {
-    /**
-     * Returns list of devices of single kind.
-     * @param {MediaDeviceInfo[]} devices
-     * @param {'audioinput'|'audiooutput'|'videoinput'} kind
-     * @returns {MediaDeviceInfo[]}
-     */
-    getDevicesFromListByKind(devices, kind) {
-        return devices.filter(d => d.kind === kind);
-    },
-
-    /**
-     * Stores lists of current 'audioinput', 'videoinput' and 'audiooutput'
-     * devices.
-     * @param {MediaDeviceInfo[]} devices
-     */
-    setCurrentMediaDevices(devices) {
-        currentAudioInputDevices
-            = this.getDevicesFromListByKind(devices, 'audioinput');
-        currentVideoInputDevices
-            = this.getDevicesFromListByKind(devices, 'videoinput');
-        currentAudioOutputDevices
-            = this.getDevicesFromListByKind(devices, 'audiooutput');
-    },
-
-    /**
-     * Returns lists of current 'audioinput', 'videoinput' and 'audiooutput'
-     * devices.
-     * @returns {{
-     *  audioinput: (MediaDeviceInfo[]|undefined),
-     *  videoinput: (MediaDeviceInfo[]|undefined),
-     *  audiooutput: (MediaDeviceInfo[]|undefined),
-     *  }}
-     */
-    getCurrentMediaDevices() {
-        return {
-            audioinput: currentAudioInputDevices,
-            videoinput: currentVideoInputDevices,
-            audiooutput: currentAudioOutputDevices
-        };
-    },
-
     /**
      * Determines if currently selected media devices should be changed after
      * list of available devices has been changed.

@@ -1,12 +1,6 @@
 export default {
     NICKNAME_CHANGED: 'UI.nickname_changed',
-    SELECTED_ENDPOINT: 'UI.selected_endpoint',
     PINNED_ENDPOINT: 'UI.pinned_endpoint',
-
-    /**
-     * Notifies that local user created text message.
-     */
-    MESSAGE_CREATED: 'UI.message_created',
 
     /**
      * Notifies that local user changed email.
@@ -18,7 +12,6 @@ export default {
      */
     AUDIO_MUTED: 'UI.audio_muted',
     VIDEO_MUTED: 'UI.video_muted',
-    VIDEO_UNMUTING_WHILE_AUDIO_ONLY: 'UI.video_unmuting_while_audio_only',
     ETHERPAD_CLICKED: 'UI.etherpad_clicked',
     SHARED_VIDEO_CLICKED: 'UI.start_shared_video',
 
@@ -36,14 +29,6 @@ export default {
      * Notifies that the audio only mode was toggled.
      */
     TOGGLE_AUDIO_ONLY: 'UI.toggle_audioonly',
-    TOGGLE_CHAT: 'UI.toggle_chat',
-    TOGGLE_SETTINGS: 'UI.toggle_settings',
-    TOGGLE_CONTACT_LIST: 'UI.toggle_contact_list',
-
-    /**
-     * Notifies that the profile toolbar button has been clicked.
-     */
-    TOGGLE_PROFILE: 'UI.toggle_profile',
 
     /**
      * Notifies that a command to toggle the filmstrip has been issued. The
@@ -66,17 +51,13 @@ export default {
      * @see {TOGGLE_FILMSTRIP}
      */
     TOGGLED_FILMSTRIP: 'UI.toggled_filmstrip',
-
     TOGGLE_SCREENSHARING: 'UI.toggle_screensharing',
     TOGGLED_SHARED_DOCUMENT: 'UI.toggled_shared_document',
-    CONTACT_CLICKED: 'UI.contact_clicked',
+    TOGGLED_TILE_VIEW: 'UI.toggled_tile_view',
     HANGUP: 'UI.hangup',
     LOGOUT: 'UI.logout',
-    RECORDING_TOGGLED: 'UI.recording_toggled',
-    SUBJECT_CHANGED: 'UI.subject_changed',
     VIDEO_DEVICE_CHANGED: 'UI.video_device_changed',
     AUDIO_DEVICE_CHANGED: 'UI.audio_device_changed',
-    AUDIO_OUTPUT_DEVICE_CHANGED: 'UI.audio_output_device_changed',
 
     /**
      * Notifies interested listeners that the follow-me feature is enabled or

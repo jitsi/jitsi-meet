@@ -11,12 +11,20 @@ import { i18next } from '../../../react/features/base/i18n';
 import {
     JitsiParticipantConnectionStatus
 } from '../../../react/features/base/lib-jitsi-meet';
-
+import {
+    getPinnedParticipant,
+    pinParticipant
+} from '../../../react/features/base/participants';
 import { PresenceLabel } from '../../../react/features/presence-status';
 import {
     REMOTE_CONTROL_MENU_STATES,
     RemoteVideoMenuTriggerButton
 } from '../../../react/features/remote-video-menu';
+import {
+    LAYOUTS,
+    getCurrentLayout,
+    shouldDisplayTileView
+} from '../../../react/features/video-layout';
 /* eslint-enable no-unused-vars */
 
 const logger = require('jitsi-meet-logger').getLogger(__filename);
@@ -95,7 +103,7 @@ RemoteVideo.prototype.addRemoteVideoContainer = function() {
 
     this.updateRemoteVideoMenu();
 
-    this.VideoLayout.resizeThumbnails(false, true);
+    this.VideoLayout.resizeThumbnails(true);
 
     this.addAudioLevelIndicator();
 
@@ -155,16 +163,22 @@ RemoteVideo.prototype._generatePopupContent = function() {
         }
     }
 
-    let initialVolumeValue, onVolumeChange;
-
-    // Feature check for volume setting as temasys objects cannot adjust volume.
-    if (this._canSetAudioVolume()) {
-        initialVolumeValue = this._getAudioElement().volume;
-        onVolumeChange = this._setAudioVolume;
-    }
-
+    const initialVolumeValue
+        = this._audioStreamElement && this._audioStreamElement.volume;
+    const onVolumeChange = this._setAudioVolume;
     const { isModerator } = APP.conference;
     const participantID = this.id;
+
+    const currentLayout = getCurrentLayout(APP.store.getState());
+    let remoteMenuPosition;
+
+    if (currentLayout === LAYOUTS.TILE_VIEW) {
+        remoteMenuPosition = 'left top';
+    } else if (currentLayout === LAYOUTS.VERTICAL_FILMSTRIP_VIEW) {
+        remoteMenuPosition = 'left bottom';
+    } else {
+        remoteMenuPosition = 'top center';
+    }
 
     ReactDOM.render(
         <Provider store = { APP.store }>
@@ -174,6 +188,7 @@ RemoteVideo.prototype._generatePopupContent = function() {
                         initialVolumeValue = { initialVolumeValue }
                         isAudioMuted = { this.isAudioMuted }
                         isModerator = { isModerator }
+                        menuPosition = { remoteMenuPosition }
                         onMenuDisplay
                             = {this._onRemoteVideoMenuDisplay.bind(this)}
                         onRemoteControlToggle = { onRemoteControlToggle }
@@ -234,10 +249,12 @@ RemoteVideo.prototype._requestRemoteControlPermissions = function() {
         if (result === true) {
             // the remote control permissions has been granted
             // pin the controlled participant
-            const pinnedId = this.VideoLayout.getPinnedId();
+            const pinnedParticipant
+                = getPinnedParticipant(APP.store.getState()) || {};
+            const pinnedId = pinnedParticipant.id;
 
             if (pinnedId !== this.id) {
-                this.VideoLayout.handleVideoThumbClicked(this.id);
+                APP.store.dispatch(pinParticipant(this.id));
             }
         }
     }, error => {
@@ -263,34 +280,13 @@ RemoteVideo.prototype._stopRemoteControl = function() {
 };
 
 /**
- * Get the remote participant's audio element.
- *
- * @returns {Element} audio element
- */
-RemoteVideo.prototype._getAudioElement = function() {
-    return this._audioStreamElement;
-};
-
-/**
- * Check if the remote participant's audio can have its volume adjusted.
- *
- * @returns {boolean} true if the volume can be adjusted.
- */
-RemoteVideo.prototype._canSetAudioVolume = function() {
-    const audioElement = this._getAudioElement();
-
-
-    return audioElement && audioElement.volume !== undefined;
-};
-
-/**
  * Change the remote participant's volume level.
  *
  * @param {int} newVal - The value to set the slider to.
  */
 RemoteVideo.prototype._setAudioVolume = function(newVal) {
-    if (this._canSetAudioVolume()) {
-        this._getAudioElement().volume = newVal;
+    if (this._audioStreamElement) {
+        this._audioStreamElement.volume = newVal;
     }
 };
 
@@ -361,14 +357,7 @@ RemoteVideo.prototype.removeRemoteStreamElement = function(stream) {
     logger.info(`${isVideo ? 'Video' : 'Audio'
     } removed ${this.id}`, select);
 
-    // when removing only the video element and we are on stage
-    // update the stage
-    if (isVideo && this.isCurrentlyOnLargeVideo()) {
-        this.VideoLayout.updateLargeVideo(this.id);
-    } else {
-        // Missing video stream will affect display mode
-        this.updateView();
-    }
+    this.updateView();
 };
 
 /**
@@ -471,10 +460,6 @@ RemoteVideo.prototype.remove = function() {
 
     this.removeRemoteVideoMenu();
 
-    // Make sure that the large video is updated if are removing its
-    // corresponding small video.
-    this.VideoLayout.updateAfterThumbRemoved(this.id);
-
     // Remove whole container
     if (this.container.parentNode) {
         this.container.parentNode.removeChild(this.container);
@@ -532,23 +517,18 @@ RemoteVideo.prototype.addRemoteStreamElement = function(stream) {
         return;
     }
 
-    let streamElement = SmallVideo.createStreamElement(stream);
+    const streamElement = SmallVideo.createStreamElement(stream);
 
     // Put new stream element always in front
     UIUtils.prependChild(this.container, streamElement);
 
-    // If we hide element when Temasys plugin is used then
-    // we'll never receive 'onplay' event and other logic won't work as expected
-    // NOTE: hiding will not have effect when Temasys plugin is in use, as
-    // calling attach will show it back
     $(streamElement).hide();
 
     // If the container is currently visible
     // we attach the stream to the element.
     if (!isVideo || (this.container.offsetParent !== null && isVideo)) {
         this.waitForPlayback(streamElement, stream);
-
-        streamElement = stream.attach(streamElement);
+        stream.attach(streamElement);
     }
 
     if (!isVideo) {
@@ -609,7 +589,11 @@ RemoteVideo.prototype.addPresenceLabel = function() {
     if (presenceLabelContainer) {
         ReactDOM.render(
             <Provider store = { APP.store }>
-                <PresenceLabel participantID = { this.id } />
+                <I18nextProvider i18n = { i18next }>
+                    <PresenceLabel
+                        participantID = { this.id }
+                        className = 'presence-label' />
+                </I18nextProvider>
             </Provider>,
             presenceLabelContainer);
     }
@@ -646,7 +630,7 @@ RemoteVideo.prototype._onContainerClick = function(event) {
             || classList.contains('popover');
 
     if (!ignoreClick) {
-        this.VideoLayout.handleVideoThumbClicked(this.id);
+        this._togglePin();
     }
 
     // On IE we need to populate this handler on video <object> and it does not
@@ -675,10 +659,14 @@ RemoteVideo.createContainer = function(spanId) {
         <div class ='presence-label-container'></div>
         <span class = 'remotevideomenu'></span>`;
 
-    const remotes = document.getElementById('filmstripRemoteVideosContainer');
+    const remoteVideosContainer
+        = document.getElementById('filmstripRemoteVideosContainer');
+    const localVideoContainer
+        = document.getElementById('localVideoTileViewContainer');
 
+    remoteVideosContainer.insertBefore(container, localVideoContainer);
 
-    return remotes.appendChild(container);
+    return container;
 };
 
 export default RemoteVideo;

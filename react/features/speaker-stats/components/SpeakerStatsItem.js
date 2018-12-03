@@ -1,41 +1,41 @@
-import PropTypes from 'prop-types';
+/* @flow */
+
 import React, { Component } from 'react';
 
 import TimeElapsed from './TimeElapsed';
+
+/**
+ * The type of the React {@code Component} props of {@link SpeakerStatsItem}.
+ */
+type Props = {
+
+    /**
+     * The name of the participant.
+     */
+    displayName: string,
+
+    /**
+     * The total milliseconds the participant has been dominant speaker.
+     */
+    dominantSpeakerTime: number,
+
+    /**
+     * True if the participant is no longer in the meeting.
+     */
+    hasLeft: boolean,
+
+    /**
+     * True if the participant is currently the dominant speaker.
+     */
+    isDominantSpeaker: boolean
+};
 
 /**
  * React component for display an individual user's speaker stats.
  *
  * @extends Component
  */
-class SpeakerStatsItem extends Component {
-    /**
-     * SpeakerStatsItem component's property types.
-     *
-     * @static
-     */
-    static propTypes = {
-        /**
-         * The name of the participant.
-         */
-        displayName: PropTypes.string,
-
-        /**
-         * The total milliseconds the participant has been dominant speaker.
-         */
-        dominantSpeakerTime: PropTypes.number,
-
-        /**
-         * True if the participant is no longer in the meeting.
-         */
-        hasLeft: PropTypes.bool,
-
-        /**
-         * True if the participant is currently the dominant speaker.
-         */
-        isDominantSpeaker: PropTypes.bool
-    };
-
+class SpeakerStatsItem extends Component<Props> {
     /**
      * Implements React's {@link Component#render()}.
      *

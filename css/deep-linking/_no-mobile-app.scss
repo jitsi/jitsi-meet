@@ -1,0 +1,21 @@
+.no-mobile-app {
+    margin: 30% auto 0;
+    max-width: 25em;
+    text-align: center;
+    width: auto;
+
+    &__title {
+        border-bottom: 1px solid $inlayBorderColor;
+        color: $unsupportedBrowserTitleColor;
+        font-weight: 400;
+        letter-spacing: 0.5px;
+        padding-bottom: em(17, 24);
+    }
+
+    &__description {
+        font-size: $unsupportedBrowserTextSmallFontSize;
+        font-weight: 300;
+        letter-spacing: 1px;
+        margin-top: 1em;
+    }
+}

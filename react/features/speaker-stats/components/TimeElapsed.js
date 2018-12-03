@@ -1,7 +1,24 @@
-import PropTypes from 'prop-types';
+/* @flow */
+
 import React, { Component } from 'react';
 
 import { translate } from '../../base/i18n';
+
+/**
+ * The type of the React {@code Component} props of {@link TimeElapsed}.
+ */
+type Props = {
+
+    /**
+     * The function to translate human-readable text.
+     */
+    t: Function,
+
+    /**
+     * The milliseconds to be converted into a human-readable format.
+     */
+    time: number
+};
 
 /**
  * React component for displaying total time elapsed. Converts a total count of
@@ -10,24 +27,7 @@ import { translate } from '../../base/i18n';
  *
  * @extends Component
  */
-class TimeElapsed extends Component {
-    /**
-     * TimeElapsed component's property types.
-     *
-     * @static
-     */
-    static propTypes = {
-        /**
-         * The function to translate human-readable text.
-         */
-        t: PropTypes.func,
-
-        /**
-         * The milliseconds to be converted into a human-readable format.
-         */
-        time: PropTypes.number
-    };
-
+class TimeElapsed extends Component<Props> {
     /**
      * Implements React's {@link Component#render()}.
      *

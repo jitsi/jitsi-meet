@@ -1,6 +1,6 @@
-/* @flow */
+// @flow
 
-import locale from 'react-native-locale-detector';
+import { NativeModules } from 'react-native';
 
 /**
  * The singleton language detector for React Native which uses the system-wide
@@ -15,7 +15,9 @@ export default {
     cacheUserLanguage: Function.prototype,
 
     detect() {
-        return locale;
+        const { LocaleDetector } = NativeModules;
+
+        return LocaleDetector.locale.replace(/_/, '-');
     },
 
     init: Function.prototype,

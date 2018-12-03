@@ -1,5 +1,5 @@
 // @flow
-import PropTypes from 'prop-types';
+
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { FieldTextStateless as TextField } from '@atlaskit/field-text';
@@ -9,26 +9,44 @@ import { Dialog } from '../../base/dialog';
 import { translate } from '../../base/i18n';
 
 /**
+ * The type of the React {@code Component} props of
+ * {@link PasswordRequiredPrompt}.
+ */
+type Props = {
+
+    /**
+     * The JitsiConference which requires a password.
+     */
+    conference: Object,
+
+    /**
+     * The redux store's {@code dispatch} function.
+     */
+    dispatch: Dispatch<*>,
+
+    /**
+     * The translate function.
+     */
+    t: Function
+};
+
+/**
+ * The type of the React {@code Component} state of
+ * {@link PasswordRequiredPrompt}.
+ */
+type State = {
+
+    /**
+     * The password entered by the local participant.
+     */
+    password: string
+}
+
+/**
  * Implements a React Component which prompts the user when a password is
  * required to join a conference.
  */
-class PasswordRequiredPrompt extends Component<*, *> {
-    /**
-     * PasswordRequiredPrompt component's property types.
-     *
-     * @static
-     */
-    static propTypes = {
-        /**
-         * The JitsiConference which requires a password.
-         *
-         * @type {JitsiConference}
-         */
-        conference: PropTypes.object,
-        dispatch: PropTypes.func,
-        t: PropTypes.func
-    };
-
+class PasswordRequiredPrompt extends Component<Props, State> {
     state = {
         password: ''
     };
@@ -39,7 +57,7 @@ class PasswordRequiredPrompt extends Component<*, *> {
      * @param {Object} props - The read-only properties with which the new
      * instance is to be initialized.
      */
-    constructor(props) {
+    constructor(props: Props) {
         super(props);
 
         // Bind event handlers so they are only bound once per instance.

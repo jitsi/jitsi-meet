@@ -1,9 +1,27 @@
+/* @flow */
+
 import Lozenge from '@atlaskit/lozenge';
-import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 
 import { Dialog } from '../../base/dialog';
 import { translate } from '../../base/i18n';
+
+/**
+ * The type of the React {@code Component} props of
+ * {@link KeyboardShortcutsDialog}.
+ */
+type Props = {
+
+    /**
+     * A Map with keyboard keys as keys and translation keys as values.
+     */
+    shortcutDescriptions: Object,
+
+    /**
+     * Invoked to obtain translated strings.
+     */
+    t: Function
+};
 
 /**
  * Implements a React {@link Component} which displays a dialog describing
@@ -11,24 +29,7 @@ import { translate } from '../../base/i18n';
  *
  * @extends Component
  */
-class KeyboardShortcutsDialog extends Component {
-    /**
-     * {@code KeyboardShortcutsDialog} component's property types.
-     *
-     * @static
-     */
-    static propTypes = {
-        /**
-         * A Map with keyboard keys as keys and translation keys as values.
-         */
-        shortcutDescriptions: PropTypes.object,
-
-        /**
-         * Invoked to obtain translated strings.
-         */
-        t: PropTypes.func
-    };
-
+class KeyboardShortcutsDialog extends Component<Props> {
     /**
      * Implements React's {@link Component#render()}.
      *

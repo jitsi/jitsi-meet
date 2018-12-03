@@ -1,9 +1,13 @@
 // @flow
-import md5 from 'js-md5';
+import { getAvatarURL as _getAvatarURL } from 'js-utils/avatar';
 
 import { toState } from '../redux';
 
-import { DEFAULT_AVATAR_RELATIVE_PATH } from './constants';
+import {
+    DEFAULT_AVATAR_RELATIVE_PATH,
+    LOCAL_PARTICIPANT_DEFAULT_ID,
+    PARTICIPANT_ROLE
+} from './constants';
 
 declare var config: Object;
 declare var interfaceConfig: Object;
@@ -38,40 +42,41 @@ export function getAvatarURL({ avatarID, avatarURL, email, id }: {
         return avatarURL;
     }
 
-    let key = email || avatarID;
-    let urlPrefix;
-    let urlSuffix;
+    // The deployment is allowed to choose the avatar service which is to
+    // generate the random avatars.
+    const avatarService
+        = typeof interfaceConfig === 'object'
+                && interfaceConfig.RANDOM_AVATAR_URL_PREFIX
+            ? {
+                urlPrefix: interfaceConfig.RANDOM_AVATAR_URL_PREFIX,
+                urlSuffix: interfaceConfig.RANDOM_AVATAR_URL_SUFFIX }
+            : undefined;
 
-    // If the ID looks like an e-mail address, we'll use Gravatar because it
-    // supports e-mail addresses.
-    if (key && key.indexOf('@') > 0) {
-        urlPrefix = 'https://www.gravatar.com/avatar/';
-        urlSuffix = '?d=wavatar&size=200';
-    } else {
-        // Otherwise, we do not have much a choice but a random avatar (fetched
-        // from a configured avatar service).
-        if (!key) {
-            key = id;
-            if (!key) {
-                return undefined;
-            }
-        }
+    // eslint-disable-next-line object-property-newline
+    return _getAvatarURL({ avatarID, email, id }, avatarService);
+}
 
-        // The deployment is allowed to choose the avatar service which is to
-        // generate the random avatars.
-        urlPrefix
-            = typeof interfaceConfig === 'object'
-                && interfaceConfig.RANDOM_AVATAR_URL_PREFIX;
-        if (urlPrefix) {
-            urlSuffix = interfaceConfig.RANDOM_AVATAR_URL_SUFFIX;
-        } else {
-            // Otherwise, use a default (meeples, of course).
-            urlPrefix = 'https://abotars.jitsi.net/meeple/';
-            urlSuffix = '';
-        }
-    }
+/**
+ * Returns the avatarURL for the participant associated with the passed in
+ * participant ID.
+ *
+ * @param {(Function|Object|Participant[])} stateful - The redux state
+ * features/base/participants, the (whole) redux state, or redux's
+ * {@code getState} function to be used to retrieve the state
+ * features/base/participants.
+ * @param {string} id - The ID of the participant to retrieve.
+ * @param {boolean} isLocal - An optional parameter indicating whether or not
+ * the partcipant id is for the local user. If true, a different logic flow is
+ * used find the local user, ignoring the id value as it can change through the
+ * beginning and end of a call.
+ * @returns {(string|undefined)}
+ */
+export function getAvatarURLByParticipantId(
+        stateful: Object | Function,
+        id: string = LOCAL_PARTICIPANT_DEFAULT_ID) {
+    const participant = getParticipantById(stateful, id);
 
-    return urlPrefix + md5.hex(key.trim().toLowerCase()) + urlSuffix;
+    return participant && getAvatarURL(participant);
 }
 
 /**
@@ -100,9 +105,7 @@ export function getLocalParticipant(stateful: Object | Function) {
  * @private
  * @returns {(Participant|undefined)}
  */
-export function getParticipantById(
-        stateful: Object | Function,
-        id: string) {
+export function getParticipantById(stateful: Object | Function, id: string) {
     const participants = _getAllParticipants(stateful);
 
     return participants.find(p => p.id === id);
@@ -122,6 +125,75 @@ export function getParticipantCount(stateful: Object | Function) {
     return getParticipants(stateful).length;
 }
 
+/**
+ * Returns a count of the known participants in the passed in redux state,
+ * including fake participants.
+ *
+ * @param {(Function|Object|Participant[])} stateful - The redux state
+ * features/base/participants, the (whole) redux state, or redux's
+ * {@code getState} function to be used to retrieve the state
+ * features/base/participants.
+ * @returns {number}
+ */
+export function getParticipantCountWithFake(stateful: Object | Function) {
+    return _getAllParticipants(stateful).length;
+}
+
+/**
+ * Returns participant's display name.
+ *
+ * FIXME: Remove the hardcoded strings once interfaceConfig is stored in redux
+ * and merge with a similarly named method in {@code conference.js}.
+ *
+ * @param {(Function|Object)} stateful - The (whole) redux state, or redux's
+ * {@code getState} function to be used to retrieve the state.
+ * @param {string} id - The ID of the participant's display name to retrieve.
+ * @private
+ * @returns {string}
+ */
+export function getParticipantDisplayName(
+        stateful: Object | Function,
+        id: string) {
+    const participant = getParticipantById(stateful, id);
+
+    if (participant) {
+        if (participant.name) {
+            return participant.name;
+        }
+
+        if (participant.local) {
+            return typeof interfaceConfig === 'object'
+                ? interfaceConfig.DEFAULT_LOCAL_DISPLAY_NAME
+                : 'me';
+        }
+    }
+
+    return typeof interfaceConfig === 'object'
+        ? interfaceConfig.DEFAULT_REMOTE_DISPLAY_NAME
+        : 'Fellow Jitster';
+}
+
+/**
+ * Returns the presence status of a participant associated with the passed id.
+ *
+ * @param {(Function|Object)} stateful - The (whole) redux state, or redux's
+ * {@code getState} function to be used to retrieve the state.
+ * @param {string} id - The id of the participant.
+ * @returns {string} - The presence status.
+ */
+export function getParticipantPresenceStatus(
+        stateful: Object | Function, id: string) {
+    if (!id) {
+        return undefined;
+    }
+    const participantById = getParticipantById(stateful, id);
+
+    if (!participantById) {
+        return undefined;
+    }
+
+    return participantById.presence;
+}
 
 /**
  * Selectors for getting all known participants with fake participants filtered
@@ -134,7 +206,7 @@ export function getParticipantCount(stateful: Object | Function) {
  * @returns {Participant[]}
  */
 export function getParticipants(stateful: Object | Function) {
-    return _getAllParticipants(stateful).filter(p => !p.isBot);
+    return _getAllParticipants(stateful).filter(p => !p.isFakeParticipant);
 }
 
 /**
@@ -165,4 +237,26 @@ function _getAllParticipants(stateful) {
         Array.isArray(stateful)
             ? stateful
             : toState(stateful)['features/base/participants'] || []);
+}
+
+/**
+ * Returns true if the current local participant is a moderator in the
+ * conference.
+ *
+ * @param {Object|Function} stateful - Object or function that can be resolved
+ * to the Redux state.
+ * @returns {boolean}
+ */
+export function isLocalParticipantModerator(stateful: Object | Function) {
+    const state = toState(stateful);
+    const localParticipant = getLocalParticipant(state);
+
+    if (!localParticipant) {
+        return false;
+    }
+
+    return (
+        localParticipant.role === PARTICIPANT_ROLE.MODERATOR
+            && (!state['features/base/config'].enableUserRolesBasedOnToken
+                || !state['features/base/jwt'].isGuest));
 }

@@ -1,6 +1,5 @@
 // @flow
 
-import { setConfigFromURLParams } from '../config';
 import { toState } from '../redux';
 import { loadScript } from '../util';
 
@@ -11,8 +10,10 @@ declare var APP: Object;
 const JitsiConferenceErrors = JitsiMeetJS.errors.conference;
 const JitsiConnectionErrors = JitsiMeetJS.errors.connection;
 
+const logger = require('jitsi-meet-logger').getLogger(__filename);
+
 /**
- * Creates a JitsiLocalTrack model from the given device id.
+ * Creates a {@link JitsiLocalTrack} model from the given device id.
  *
  * @param {string} type - The media type of track being created. Expected values
  * are "video" or "audio".
@@ -107,9 +108,9 @@ export function isFatalJitsiConnectionError(error: Object | string) {
  * Loads config.js from a specific remote server.
  *
  * @param {string} url - The URL to load.
- * @param {number} [timeout] - The timeout for the configuration to be loaded,
- * in milliseconds. If not specified, a default value deamed appropriate for the
- * purpsoe is used.
+ * @param {number} [timeout] - The timeout in milliseconds for the {@code url}
+ * to load. If not specified, a default value deemed appropriate for the purpose
+ * is used.
  * @returns {Promise<Object>}
  */
 export function loadConfig(
@@ -134,7 +135,7 @@ export function loadConfig(
                     return config;
                 })
                 .catch(err => {
-                    console.error(`Failed to load config from ${url}`, err);
+                    logger.error(`Failed to load config from ${url}`, err);
 
                     throw err;
                 });
@@ -144,15 +145,6 @@ export function loadConfig(
         // React Native app was even conceived.
         promise = Promise.resolve(window.config);
     }
-
-    // FIXME It's neither here nor there at the time of this writing where
-    // config, interfaceConfig, and loggingConfig should be overwritten by URL
-    // params.
-    promise = promise.then(value => {
-        setConfigFromURLParams();
-
-        return value;
-    });
 
     return promise;
 }

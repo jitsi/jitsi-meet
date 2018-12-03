@@ -1,6 +1,7 @@
 import { ReducerRegistry } from '../base/redux';
 
 import {
+    CLEAR_NOTIFICATIONS,
     HIDE_NOTIFICATION,
     SET_NOTIFICATIONS_ENABLED,
     SHOW_NOTIFICATION
@@ -28,6 +29,11 @@ const DEFAULT_STATE = {
 ReducerRegistry.register('features/notifications',
     (state = DEFAULT_STATE, action) => {
         switch (action.type) {
+        case CLEAR_NOTIFICATIONS:
+            return {
+                ...state,
+                notifications: []
+            };
         case HIDE_NOTIFICATION:
             return {
                 ...state,

@@ -1,43 +1,23 @@
 import { NativeModules } from 'react-native';
 
-import {
-    CONFERENCE_FAILED,
-    CONFERENCE_JOINED,
-    CONFERENCE_LEFT,
-    SET_AUDIO_ONLY
-} from '../../base/conference';
-import { MiddlewareRegistry } from '../../base/redux';
+import { getCurrentConference } from '../../base/conference';
+import { StateListenerRegistry } from '../../base/redux';
 
 /**
- * Middleware which enables / disables the proximity sensor in accord with
- * conference-related actions. If the proximity sensor is enabled, it will dim
+ * State listener which enables / disables the proximity sensor based on the
+ * current conference state. If the proximity sensor is enabled, it will dim
  * the screen and disable touch controls when an object is nearby. The
  * functionality is  enabled when a conference is in audio-only mode.
- *
- * @param {Store} store - The redux store.
- * @returns {Function}
  */
-MiddlewareRegistry.register(({ getState }) => next => action => {
-    const result = next(action);
+StateListenerRegistry.register(
+    /* selector */ state => {
+        const { audioOnly } = state['features/base/conference'];
+        const conference = getCurrentConference(state);
 
-    switch (action.type) {
-    case CONFERENCE_FAILED:
-    case CONFERENCE_LEFT:
-        _setProximityEnabled(false);
-        break;
-
-    case CONFERENCE_JOINED:
-    case SET_AUDIO_ONLY: {
-        const { audioOnly, conference }
-            = getState()['features/base/conference'];
-
-        conference && _setProximityEnabled(audioOnly);
-        break;
-    }
-    }
-
-    return result;
-});
+        return Boolean(conference && audioOnly);
+    },
+    /* listener */ proximityEnabled => _setProximityEnabled(proximityEnabled)
+);
 
 /**
  * Enables / disables the proximity sensor. If the proximity sensor is enabled,

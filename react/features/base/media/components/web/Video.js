@@ -1,12 +1,42 @@
-import PropTypes from 'prop-types';
+/* @flow */
+
 import React, { Component } from 'react';
+
+/**
+ * The type of the React {@code Component} props of {@link Video}.
+ */
+type Props = {
+
+    /**
+     * CSS classes to add to the video element.
+     */
+    className: string,
+
+    /**
+     * The value of the id attribute of the video. Used by the torture tests to
+     * locate video elements.
+     */
+    id: string,
+
+    /**
+     * Optional callback to invoke once the video starts playing.
+     */
+    onVideoPlaying: Function,
+
+    /**
+     * The JitsiLocalTrack to display.
+     */
+    videoTrack: ?Object
+};
 
 /**
  * Component that renders a video element for a passed in video track.
  *
  * @extends Component
  */
-class Video extends Component {
+class Video extends Component<Props> {
+    _videoElement: ?Object;
+
     /**
      * Default values for {@code Video} component's properties.
      *
@@ -19,49 +49,20 @@ class Video extends Component {
     };
 
     /**
-     * {@code Video} component's property types.
-     *
-     * @static
-     */
-    static propTypes = {
-        /**
-         * CSS classes to add to the video element.
-         */
-        className: PropTypes.string,
-
-        /**
-         * The value of the id attribute of the video. Used by the torture tests
-         * to locate video elements.
-         */
-        id: PropTypes.string,
-
-        /**
-         * Optional callback to invoke once the video starts playing.
-         */
-        onVideoPlaying: PropTypes.func,
-
-        /**
-         * The JitsiLocalTrack to display.
-         */
-        videoTrack: PropTypes.object
-    };
-
-    /**
      * Initializes a new {@code Video} instance.
      *
      * @param {Object} props - The read-only properties with which the new
      * instance is to be initialized.
      */
-    constructor(props) {
+    constructor(props: Props) {
         super(props);
 
         /**
          * The internal reference to the DOM/HTML element intended for
-         * displaying a video. This element may be an HTML video element or a
-         * temasys video object.
+         * displaying a video.
          *
          * @private
-         * @type {HTMLVideoElement|Object}
+         * @type {HTMLVideoElement}
          */
         this._videoElement = null;
 
@@ -79,10 +80,10 @@ class Video extends Component {
      * @returns {void}
      */
     componentDidMount() {
-        // Add these attributes directly onto the video element so temasys can
-        // use them when converting the video to an object.
-        this._videoElement.volume = 0;
-        this._videoElement.onplaying = this._onVideoPlaying;
+        if (this._videoElement) {
+            this._videoElement.volume = 0;
+            this._videoElement.onplaying = this._onVideoPlaying;
+        }
 
         this._attachTrack(this.props.videoTrack);
     }
@@ -101,15 +102,13 @@ class Video extends Component {
     /**
      * Updates the video display only if a new track is added. This component's
      * updating is blackboxed from React to prevent re-rendering of video
-     * element, as the lib uses track.attach(videoElement) instead. Also,
-     * re-rendering cannot be used with temasys, which replaces video elements
-     * with an object.
+     * element, as the lib uses {@code track.attach(videoElement)} instead.
      *
      * @inheritdoc
-     * @returns {boolean} - False is always returned to blackbox this component.
+     * @returns {boolean} - False is always returned to blackbox this component
      * from React.
      */
-    shouldComponentUpdate(nextProps) {
+    shouldComponentUpdate(nextProps: Props) {
         const currentJitsiTrack = this.props.videoTrack
             && this.props.videoTrack.jitsiTrack;
         const nextJitsiTrack = nextProps.videoTrack
@@ -130,17 +129,12 @@ class Video extends Component {
      * @returns {ReactElement}
      */
     render() {
-        // The wrapping div is necessary because temasys will replace the video
-        // with an object but react will keep expecting the video element. The
-        // div gives a constant element for react to keep track of.
         return (
-            <div>
-                <video
-                    autoPlay = { true }
-                    className = { this.props.className }
-                    id = { this.props.id }
-                    ref = { this._setVideoElement } />
-            </div>
+            <video
+                autoPlay = { true }
+                className = { this.props.className }
+                id = { this.props.id }
+                ref = { this._setVideoElement } />
         );
     }
 
@@ -158,19 +152,13 @@ class Video extends Component {
             return;
         }
 
-        const updatedVideoElement
-            = videoTrack.jitsiTrack.attach(this._videoElement);
-
-        // Sets the instance variable for the video element again as the element
-        // maybe have been replaced with a new object by temasys.
-        this._setVideoElement(updatedVideoElement);
+        videoTrack.jitsiTrack.attach(this._videoElement);
     }
 
     /**
      * Removes the association to the component's video element from the passed
      * in redux representation of jitsi video track to stop the track from
-     * rendering. With temasys, the video element must still be visible for
-     * detaching to complete.
+     * rendering.
      *
      * @param {Object} videoTrack -  The redux representation of the
      * {@code JitsiLocalTrack}.
@@ -178,18 +166,12 @@ class Video extends Component {
      * @returns {void}
      */
     _detachTrack(videoTrack) {
-        // Detach the video element from the track only if it has already
-        // been attached. This accounts for a special case with temasys
-        // where if detach is being called before attach, the video
-        // element is converted to Object without updating this
-        // component's reference to the video element.
-        if (this._videoElement
-            && videoTrack
-            && videoTrack.jitsiTrack
-            && videoTrack.jitsiTrack.containers.includes(this._videoElement)) {
+        if (this._videoElement && videoTrack && videoTrack.jitsiTrack) {
             videoTrack.jitsiTrack.detach(this._videoElement);
         }
     }
+
+    _onVideoPlaying: () => void;
 
     /**
      * Invokes the onvideoplaying callback if defined.
@@ -202,6 +184,8 @@ class Video extends Component {
             this.props.onVideoPlaying();
         }
     }
+
+    _setVideoElement: () => void;
 
     /**
      * Sets an instance variable for the component's video element so it can be

@@ -5,9 +5,11 @@ import { setLoggingConfig } from '../logging';
 import { PARTICIPANT_LEFT } from '../participants';
 import { MiddlewareRegistry } from '../redux';
 
-import { disposeLib, initLib, setWebRTCReady } from './actions';
-import { LIB_DID_INIT, LIB_INIT_ERROR } from './actionTypes';
-import { WEBRTC_NOT_READY, WEBRTC_NOT_SUPPORTED } from './constants';
+import JitsiMeetJS from './_';
+import { disposeLib, initLib } from './actions';
+import { LIB_WILL_INIT } from './actionTypes';
+
+declare var APP: Object;
 
 /**
  * Middleware that captures PARTICIPANT_LEFT action for a local participant
@@ -21,12 +23,13 @@ import { WEBRTC_NOT_READY, WEBRTC_NOT_SUPPORTED } from './constants';
  */
 MiddlewareRegistry.register(store => next => action => {
     switch (action.type) {
-    case LIB_DID_INIT:
-        store.dispatch(setWebRTCReady(true));
+    case LIB_WILL_INIT:
+        // Moved from conference.js init method. It appears the error handlers
+        // are not used for mobile.
+        if (typeof APP !== 'undefined') {
+            _setErrorHandlers();
+        }
         break;
-
-    case LIB_INIT_ERROR:
-        return _libInitError(store, next, action);
 
     case PARTICIPANT_LEFT:
         action.participant.local && store.dispatch(disposeLib());
@@ -38,44 +41,6 @@ MiddlewareRegistry.register(store => next => action => {
 
     return next(action);
 });
-
-/**
- * Notifies the feature base/lib-jitsi-meet that the action LIB_INIT_ERROR is
- * being dispatched within a specific Redux store.
- *
- * @param {Store} store - The Redux store in which the specified action is being
- * dispatched.
- * @param {Dispatch} next - The Redux dispatch function to dispatch the
- * specified action to the specified store.
- * @param {Action} action - The Redux action LIB_INIT_ERROR which is being
- * dispatched in the specified store.
- * @private
- * @returns {Object} The new state that is the result of the reduction of the
- * specified action.
- */
-function _libInitError(store, next, action) {
-    const nextState = next(action);
-
-    const { error } = action;
-
-    if (error) {
-        let webRTCReady;
-
-        switch (error.name) {
-        case WEBRTC_NOT_READY:
-            webRTCReady = error.webRTCReadyPromise;
-            break;
-
-        case WEBRTC_NOT_SUPPORTED:
-            webRTCReady = false;
-            break;
-        }
-        typeof webRTCReady === 'undefined'
-            || store.dispatch(setWebRTCReady(webRTCReady));
-    }
-
-    return nextState;
-}
 
 /**
  * Notifies the feature base/lib-jitsi-meet that the action SET_CONFIG is being
@@ -118,4 +83,37 @@ function _setConfig({ dispatch, getState }, next, action) {
     dispatch(initLib());
 
     return result;
+}
+
+/**
+ * Attaches our custom error handlers to the window object.
+ *
+ * @returns {void}
+ */
+function _setErrorHandlers() {
+    // attaches global error handler, if there is already one, respect it
+    if (JitsiMeetJS.getGlobalOnErrorHandler) {
+        const oldOnErrorHandler = window.onerror;
+
+        // eslint-disable-next-line max-params
+        window.onerror = (message, source, lineno, colno, error) => {
+            JitsiMeetJS.getGlobalOnErrorHandler(
+                message, source, lineno, colno, error);
+
+            if (oldOnErrorHandler) {
+                oldOnErrorHandler(message, source, lineno, colno, error);
+            }
+        };
+
+        const oldOnUnhandledRejection = window.onunhandledrejection;
+
+        window.onunhandledrejection = function(event) {
+            JitsiMeetJS.getGlobalOnErrorHandler(
+                null, null, null, null, event.reason);
+
+            if (oldOnUnhandledRejection) {
+                oldOnUnhandledRejection(event);
+            }
+        };
+    }
 }

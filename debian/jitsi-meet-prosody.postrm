@@ -35,6 +35,14 @@ case "$1" in
         if [ -n "$RET" ]; then
             rm -f /etc/prosody/conf.avail/$JVB_HOSTNAME.cfg.lua
             rm -f /etc/prosody/conf.d/$JVB_HOSTNAME.cfg.lua
+
+            # clean up generated certificates
+            rm -f /etc/prosody/certs/$JVB_HOSTNAME.crt
+            rm -f /etc/prosody/certs/$JVB_HOSTNAME.key
+            rm -f /etc/prosody/certs/auth.$JVB_HOSTNAME.crt
+            rm -f /etc/prosody/certs/auth.$JVB_HOSTNAME.key
+            rm -rf /var/lib/prosody/auth.$JVB_HOSTNAME.*
+            rm -rf /var/lib/prosody/$JVB_HOSTNAME.*
         fi
 
         # Clear the debconf variable
