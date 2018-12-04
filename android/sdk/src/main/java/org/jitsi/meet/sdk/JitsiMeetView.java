@@ -109,6 +109,12 @@ public class JitsiMeetView
         // The entry point into the invite feature of Jitsi Meet. The Java
         // counterpart of the JavaScript InviteButton.
         inviteController = new InviteController(externalAPIScope);
+
+        // Check if the parent Activity implements JitsiMeetActivityInterface,
+        // otherwise things may go wrong.
+        if (!(context instanceof JitsiMeetActivityInterface)) {
+            throw new RuntimeException("Enclosing Activity must implement JitsiMeetActivityInterface");
+        }
     }
 
     /**
