@@ -1,9 +1,11 @@
 # Jitsi Meet SDK for Android
 
 ## Build your own, or use a pre-build SDK artifacts/binaries
+
 Jitsi conveniently provides a pre-build SDK artifacts/binaries in its Maven repository. When you do not require any modification to the SDK itself, it's suggested to use the pre-build SDK. This avoids the complexity of building and installing your own SDK artifacts/binaries.
 
 ### Use pre-build SDK artifacts/binaries
+
 In your project, add the Maven repository
 `https://github.com/jitsi/jitsi-maven-repository/raw/master/releases` and the
 dependency `org.jitsi.react:jitsi-meet-sdk` into your `build.gradle` files.
@@ -130,7 +132,12 @@ public class MainActivity extends JitsiMeetActivity {
 ```
 
 Alternatively, you can use the `org.jitsi.meet.sdk.JitsiMeetView` class which
-extends `android.view.View`:
+extends `android.view.View`.
+
+Note that this should only be needed when `JitsiMeetActivity` cannot be used for
+some reason. Extending `JitsiMeetView` requires manual wiring of the view to
+the activity, using a lot of boilerplate code. Using the Activity instead of the
+View is strongly recommended.
 
 ```java
 package org.jitsi.example;
@@ -139,13 +146,25 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 
 import org.jitsi.meet.sdk.JitsiMeetView;
+import org.jitsi.meet.sdk.ReactActivityLifecycleCallbacks;
 
+// Example
+//
 public class MainActivity extends AppCompatActivity {
     private JitsiMeetView view;
 
     @Override
+    protected void onActivityResult(
+            int requestCode,
+            int resultCode,
+            Intent data) {
+        ReactActivityLifecycleCallbacks.onActivityResult(
+                this, requestCode, resultCode, data);
+    }
+
+    @Override
     public void onBackPressed() {
-        if (!JitsiMeetView.onBackPressed()) {
+        if (!ReactActivityLifecycleCallbacks.onBackPressed()) {
             // Invoke the default handler if it wasn't handled by React.
             super.onBackPressed();
         }
@@ -168,26 +187,34 @@ public class MainActivity extends AppCompatActivity {
         view.dispose();
         view = null;
 
-        JitsiMeetView.onHostDestroy(this);
+        ReactActivityLifecycleCallbacks.onHostDestroy(this);
     }
 
     @Override
     public void onNewIntent(Intent intent) {
-        JitsiMeetView.onNewIntent(intent);
+        ReactActivityLifecycleCallbacks.onNewIntent(intent);
+    }
+
+    @Override
+    public void onRequestPermissionsResult(
+            final int requestCode,
+            final String[] permissions,
+            final int[] grantResults) {
+        ReactActivityLifecycleCallbacks.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
 
-        JitsiMeetView.onHostResume(this);
+        ReactActivityLifecycleCallbacks.onHostResume(this);
     }
 
     @Override
     protected void onStop() {
         super.onStop();
 
-        JitsiMeetView.onHostPause(this);
+        ReactActivityLifecycleCallbacks.onHostPause(this);
     }
 }
 ```
@@ -318,6 +345,19 @@ information.
 NOTE: Must be called (if at all) before `loadURL`/`loadURLString` for it to take
 effect.
 
+### ReactActivityLifecycleCallbacks
+
+This class handles the interaction between `JitsiMeetView` and its enclosing
+`Activity`. Generally this shouldn't be consumed by users, because they'd be
+using `JitsiMeetActivity` instead, which is already completely integrated.
+
+All its methods are static.
+
+#### onActivityResult(...)
+
+Helper method to handle results of auxiliary activities launched by the SDK.
+Should be called from the activity method of the same name.
+
 #### onBackPressed()
 
 Helper method which should be called from the activity's `onBackPressed` method.
@@ -325,34 +365,29 @@ If this function returns `true`, it means the action was handled and thus no
 extra processing is required; otherwise the app should call the parent's
 `onBackPressed` method.
 
-This is a static method.
-
-#### onHostDestroy(activity)
+#### onHostDestroy(...)
 
 Helper method which should be called from the activity's `onDestroy` method.
 
-This is a static method.
-
-#### onHostPause(activity)
-
-Helper method which should be called from the activity's `onPause` method.
-
-This is a static method.
-
-#### onHostResume(activity)
+#### onHostResume(...)
 
 Helper method which should be called from the activity's `onResume` or `onStop`
 method.
 
-This is a static method.
+#### onHostStop(...)
 
-#### onNewIntent(intent)
+Helper method which should be called from the activity's `onSstop` method.
+
+#### onNewIntent(...)
 
 Helper method for integrating the *deep linking* functionality. If your app's
 activity is launched in "singleTask" mode this method should be called from the
 activity's `onNewIntent` method.
 
-This is a static method.
+#### onRequestPermissionsResult(...)
+
+Helper method to handle permission requests inside the SDK. It should be called
+from the activity method of the same name.
 
 #### onUserLeaveHint()
 
