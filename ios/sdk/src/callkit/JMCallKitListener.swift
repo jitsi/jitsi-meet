@@ -18,30 +18,21 @@ import AVKit
 import CallKit
 import Foundation
 
-@available(iOS 10.0, *)
 @objc public protocol JMCallKitListener: NSObjectProtocol {
 
-    @available(iOS 10.0, *)
     @objc optional func providerDidReset()
 
-    @available(iOS 10.0, *)
     @objc optional func performAnswerCall(UUID: UUID)
 
-    @available(iOS 10.0, *)
     @objc optional func performEndCall(UUID: UUID)
 
-    @available(iOS 10.0, *)
     @objc optional func performSetMutedCall(UUID: UUID, isMuted: Bool)
 
-    @available(iOS 10.0, *)
     @objc optional func performStartCall(UUID: UUID, isVideo: Bool)
 
-    @available(iOS 10.0, *)
     @objc optional func providerDidActivateAudioSession(session: AVAudioSession)
 
-    @available(iOS 10.0, *)
     @objc optional func providerDidDeactivateAudioSession(session: AVAudioSession)
 
-    @available(iOS 10.0, *)
     @objc optional func providerTimedOutPerformingAction(action: CXAction)
 }

@@ -20,7 +20,6 @@ import Foundation
 /// JitsiMeet CallKit proxy
 // NOTE: The methods this class exposes are meant to be called in the UI thread.
 // All delegate methods called by JMCallKitEmitter will be called in the UI thread.
-@available(iOS 10.0, *)
 @objc public final class JMCallKitProxy: NSObject {
 
     private override init() {}
