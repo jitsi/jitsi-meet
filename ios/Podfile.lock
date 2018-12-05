@@ -7,10 +7,9 @@ PODS:
     - DoubleConversion
     - glog
   - glog (0.3.5)
-  - GoogleSignIn (4.3.0):
+  - GoogleSignIn (4.4.0):
     - "GoogleToolboxForMac/NSDictionary+URLArguments (~> 2.1)"
     - "GoogleToolboxForMac/NSString+URLArguments (~> 2.1)"
-    - GTMOAuth2 (~> 1.0)
     - GTMSessionFetcher/Core (~> 1.1)
   - GoogleToolboxForMac/DebugUtils (2.1.4):
     - GoogleToolboxForMac/Defines (= 2.1.4)
@@ -20,13 +19,7 @@ PODS:
     - GoogleToolboxForMac/Defines (= 2.1.4)
     - "GoogleToolboxForMac/NSString+URLArguments (= 2.1.4)"
   - "GoogleToolboxForMac/NSString+URLArguments (2.1.4)"
-  - GTMOAuth2 (1.1.6):
-    - GTMSessionFetcher (~> 1.1)
-  - GTMSessionFetcher (1.2.1):
-    - GTMSessionFetcher/Full (= 1.2.1)
   - GTMSessionFetcher/Core (1.2.1)
-  - GTMSessionFetcher/Full (1.2.1):
-    - GTMSessionFetcher/Core (= 1.2.1)
   - ObjectiveDropboxOfficial (3.9.2)
   - React (0.57.6):
     - React/Core (= 0.57.6)
@@ -129,7 +122,6 @@ SPEC REPOS:
     - FLAnimatedImage
     - GoogleSignIn
     - GoogleToolboxForMac
-    - GTMOAuth2
     - GTMSessionFetcher
     - ObjectiveDropboxOfficial
     - SDWebImage
@@ -168,9 +160,8 @@ SPEC CHECKSUMS:
   FLAnimatedImage: 4a0b56255d9b05f18b6dd7ee06871be5d3b89e31
   Folly: c89ac2d5c6ab169cd7397ef27485c44f35f742c7
   glog: e8acf0ebbf99759d3ff18c86c292a5898282dcde
-  GoogleSignIn: 11183592dc63e105475c7305a325045ff95e02b7
+  GoogleSignIn: 7ff245e1a7b26d379099d3243a562f5747e23d39
   GoogleToolboxForMac: 91c824d21e85b31c2aae9bb011c5027c9b4e738f
-  GTMOAuth2: c77fe325e4acd453837e72d91e3b5f13116857b2
   GTMSessionFetcher: 32aeca0aa144acea523e1c8e053089dec2cb98ca
   ObjectiveDropboxOfficial: aa792e0556ceb7b72955fa29a2709072f6e35fd9
   React: 1fe0eb13d90b625d94c3b117c274dcfd2e760e11
@@ -185,6 +176,6 @@ SPEC CHECKSUMS:
   SDWebImage: 624d6e296c69b244bcede364c72ae0430ac14681
   yoga: b1ce48b6cf950b98deae82838f5173ea7cf89e85
 
-PODFILE CHECKSUM: 9b67ed66d62ca004caa7952c3bbfe2693c115333
+PODFILE CHECKSUM: 2fa79bc1fe2fe42efb63895fdb0cb84d5f578884
 
 COCOAPODS: 1.5.3
