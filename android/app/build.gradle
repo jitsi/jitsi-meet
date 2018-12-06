@@ -54,6 +54,14 @@ dependencies {
 
     debugImplementation 'com.squareup.leakcanary:leakcanary-android:1.6.1'
     releaseImplementation 'com.squareup.leakcanary:leakcanary-android-no-op:1.6.1'
+
+    // Glide
+    implementation("com.github.bumptech.glide:glide:${rootProject.ext.glideVersion}") {
+        exclude group: "com.android.support", module: "glide"
+    }
+    implementation("com.github.bumptech.glide:annotations:${rootProject.ext.glideVersion}") {
+        exclude group: "com.android.support", module: "annotations"
+    }
 }
 
 gradle.projectsEvaluated {

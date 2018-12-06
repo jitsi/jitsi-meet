@@ -182,6 +182,10 @@ ext {
     // third-party Maven repositories so we have to deploy to a Maven repository
     // of ours.
     moduleGroupId = 'com.facebook.react'
+
+    // Glide
+    excludeAppGlideModule = true
+    glideVersion = "4.7.1"  // keep in sync with react-native-fast-image
 }
 
 // If Android SDK is not installed, accept its license so that it
