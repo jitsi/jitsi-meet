@@ -1,7 +1,7 @@
 // @flow
 
-import React, { Component, Fragment } from 'react';
-import { Image, View } from 'react-native';
+import React, { Component, Fragment, PureComponent } from 'react';
+import { Dimensions, Image, Platform, View } from 'react-native';
 import FastImage from 'react-native-fast-image';
 
 import { ColorPalette } from '../../styles';
@@ -44,21 +44,33 @@ type Props = {
  * The type of the React {@link Component} state of {@link Avatar}.
  */
 type State = {
+
+    /**
+     * Background color for the locally generated avatar.
+     */
     backgroundColor: string,
-    source: ?{ uri: string },
-    useDefaultAvatar: boolean
+
+    /**
+     * Error indicator for non-local avatars.
+     */
+    error: boolean,
+
+    /**
+     * Indicates if the non-local avatar was loaded or not.
+     */
+    loaded: boolean,
+
+    /**
+     * Source for the non-local avatar.
+     */
+    source: { uri: ?string }
 };
 
 /**
- * Implements an avatar as a React Native/mobile {@link Component}.
+ * Implements a React Native/mobile {@link Component} wich renders the content
+ * of an Avatar.
  */
-export default class Avatar extends Component<Props, State> {
-    /**
-     * The indicator which determines whether this {@code Avatar} has been
-     * unmounted.
-     */
-    _unmounted: ?boolean;
-
+class AvatarContent extends Component<Props, State> {
     /**
      * Initializes a new Avatar instance.
      *
@@ -68,95 +80,46 @@ export default class Avatar extends Component<Props, State> {
     constructor(props: Props) {
         super(props);
 
+        // Set the image source. The logic for the character # below is as
+        // follows:
+        // - Technically, URI is supposed to start with a scheme and scheme
+        //   cannot contain the character #.
+        // - Technically, the character # in a URI signals the start of the
+        //   fragment/hash.
+        // - Technically, the fragment/hash does not imply a retrieval
+        //   action.
+        // - Practically, the fragment/hash does not always mandate a
+        //   retrieval action. For example, an HTML anchor with an href that
+        //   starts with the character # does not cause a Web browser to
+        //   initiate a retrieval action.
+        // So I'll use the character # at the start of URI to not initiate
+        // an image retrieval action.
+        const source = {};
+
+        if (props.uri && !props.uri.startsWith('#')) {
+            source.uri = props.uri;
+        }
+
+        this.state = {
+            backgroundColor: this._getBackgroundColor(props),
+            error: false,
+            loaded: false,
+            source
+        };
+
         // Bind event handlers so they are only bound once per instance.
         this._onAvatarLoaded = this._onAvatarLoaded.bind(this);
-
-        // Fork (in Facebook/React speak) the prop uri because Image will
-        // receive it through a source object. Additionally, other props may be
-        // forked as well.
-        this.componentWillReceiveProps(props);
+        this._onAvatarLoadError = this._onAvatarLoadError.bind(this);
     }
 
     /**
-     * Notifies this mounted React Component that it will receive new props.
-     * Forks (in Facebook/React speak) the prop {@code uri} because
-     * {@link Image} will receive it through a {@code source} object.
-     * Additionally, other props may be forked as well.
-     *
-     * @inheritdoc
-     * @param {Props} nextProps - The read-only React Component props that this
-     * instance will receive.
-     * @returns {void}
+     * Computes if the default avatar (ie, locally generated) should be used
+     * or not.
      */
-    componentWillReceiveProps(nextProps: Props) {
-        // uri
-        const prevURI = this.props && this.props.uri;
-        const nextURI = nextProps && nextProps.uri;
-        const assignState = !this.state;
+    get useDefaultAvatar() {
+        const { error, loaded, source } = this.state;
 
-        if (prevURI !== nextURI || assignState) {
-            const nextState = {
-                backgroundColor: this._getBackgroundColor(nextProps),
-                source: undefined,
-                useDefaultAvatar: true
-            };
-
-            if (assignState) {
-                // eslint-disable-next-line react/no-direct-mutation-state
-                this.state = nextState;
-            } else {
-                this.setState(nextState);
-            }
-
-            // XXX @lyubomir: My logic for the character # bellow is as follows:
-            // - Technically, URI is supposed to start with a scheme and scheme
-            //   cannot contain the character #.
-            // - Technically, the character # in URI signals the start of the
-            //   fragment/hash.
-            // - Technically, the fragment/hash does not imply a retrieval
-            //   action.
-            // - Practically, the fragment/hash does not always mandate a
-            //   retrieval action. For example, an HTML anchor with an href that
-            //   starts with the character # does not cause a Web browser to
-            //   initiate a retrieval action.
-            // So I'll use the character # at the start of URI to not initiate
-            // an image retrieval action.
-            if (nextURI && !nextURI.startsWith('#')) {
-                const nextSource = { uri: nextURI };
-
-                if (assignState) {
-                    // eslint-disable-next-line react/no-direct-mutation-state
-                    this.state = {
-                        ...this.state,
-                        source: nextSource
-                    };
-                } else {
-                    this._unmounted || this.setState((prevState, props) => {
-                        if (props.uri === nextURI
-                                && (!prevState.source
-                                    || prevState.source.uri !== nextURI)) {
-                            return { source: nextSource };
-                        }
-
-                        return {};
-                    });
-                }
-            }
-        }
-    }
-
-    /**
-     * Notifies this {@code Component} that it will be unmounted and destroyed,
-     * and most importantly, that it should no longer call
-     * {@link #setState(Object)}. The {@code Avatar} needs it because it
-     * downloads images via {@link ImageCache} which will asynchronously notify
-     * about success.
-     *
-     * @inheritdoc
-     * @returns {void}
-     */
-    componentWillUnmount() {
-        this._unmounted = true;
+        return !source.uri || error || !loaded;
     }
 
     /**
@@ -208,14 +171,26 @@ export default class Avatar extends Component<Props, State> {
     _onAvatarLoaded: () => void;
 
     /**
-     * Handler called when the remote image was loaded. When this happens we
-     * show that instead of the default locally generated one.
+     * Handler called when the remote image loading finishes. This doesn't
+     * necessarily mean the load was successful.
      *
      * @private
      * @returns {void}
      */
     _onAvatarLoaded() {
-        this._unmounted || this.setState({ useDefaultAvatar: false });
+        this.setState({ loaded: true });
+    }
+
+    _onAvatarLoadError: () => void;
+
+    /**
+     * Handler called when the remote image loading failed.
+     *
+     * @private
+     * @returns {void}
+     */
+    _onAvatarLoadError() {
+        this.setState({ error: true });
     }
 
     /**
@@ -229,15 +204,14 @@ export default class Avatar extends Component<Props, State> {
         // regular Image, so we need to wrap it in a view to make it round.
         // https://github.com/facebook/react-native/issues/3198
 
-        const { backgroundColor, useDefaultAvatar } = this.state;
+        const { backgroundColor } = this.state;
         const imageStyle = this._getImageStyle();
         const viewStyle = {
             ...imageStyle,
 
             backgroundColor,
-            display: useDefaultAvatar ? 'flex' : 'none',
 
-            // FIXME @lyubomir: Without the opacity bellow I feel like the
+            // FIXME @lyubomir: Without the opacity below I feel like the
             // avatar colors are too strong. Besides, we use opacity for the
             // ToolbarButtons. That's where I copied the value from and we
             // may want to think about "standardizing" the opacity in the
@@ -268,18 +242,32 @@ export default class Avatar extends Component<Props, State> {
      * @returns {ReactElement}
      */
     _renderAvatar() {
-        const { source, useDefaultAvatar } = this.state;
-        const style = {
-            ...this._getImageStyle(),
-            display: useDefaultAvatar ? 'none' : 'flex'
-        };
+        const { source } = this.state;
+        let extraStyle;
 
-        return (
+        if (this.useDefaultAvatar) {
+            // On Android, the image loading indicators don't work unless the
+            // Glide image is actually created, so we cannot use display: none.
+            // Instead, render it off-screen, which does the trick.
+            if (Platform.OS === 'android') {
+                const windowDimensions = Dimensions.get('window');
+
+                extraStyle = {
+                    bottom: -windowDimensions.height,
+                    right: -windowDimensions.width
+                };
+            } else {
+                extraStyle = { display: 'none' };
+            }
+        }
+
+        return (// $FlowFixMe
             <FastImage
-                onLoad = { this._onAvatarLoaded }
+                onError = { this._onAvatarLoadError }
+                onLoadEnd = { this._onAvatarLoaded }
                 resizeMode = 'contain'
                 source = { source }
-                style = { style } />
+                style = { [ this._getImageStyle(), extraStyle ] } />
         );
     }
 
@@ -289,13 +277,36 @@ export default class Avatar extends Component<Props, State> {
      * @inheritdoc
      */
     render() {
-        const { source, useDefaultAvatar } = this.state;
+        const { source } = this.state;
 
         return (
             <Fragment>
-                { source && this._renderAvatar() }
-                { useDefaultAvatar && this._renderDefaultAvatar() }
+                { source.uri && this._renderAvatar() }
+                { this.useDefaultAvatar && this._renderDefaultAvatar() }
             </Fragment>
+        );
+    }
+}
+
+/* eslint-disable react/no-multi-comp */
+
+/**
+ * Implements an avatar as a React Native/mobile {@link Component}.
+ *
+ * Note: we use `key` in order to trigger a new component creation in case
+ * the URI changes.
+ */
+export default class Avatar extends PureComponent<Props> {
+    /**
+     * Implements React's {@link Component#render()}.
+     *
+     * @inheritdoc
+     */
+    render() {
+        return (
+            <AvatarContent
+                key = { this.props.uri }
+                { ...this.props } />
         );
     }
 }
