@@ -27,7 +27,7 @@ PODS:
     - React
   - react-native-calendar-events (1.6.3):
     - React
-  - react-native-fast-image (4.0.14):
+  - react-native-fast-image (5.1.1):
     - FLAnimatedImage
     - React
     - SDWebImage/Core
@@ -85,8 +85,8 @@ PODS:
     - React/Core
   - RNVectorIcons (6.0.2):
     - React
-  - SDWebImage/Core (4.4.2)
-  - SDWebImage/GIF (4.4.2):
+  - SDWebImage/Core (4.4.3)
+  - SDWebImage/GIF (4.4.3):
     - FLAnimatedImage (~> 1.0)
     - SDWebImage/Core
   - yoga (0.57.6.React)
@@ -173,7 +173,7 @@ SPEC CHECKSUMS:
   RNGoogleSignin: 44debd8c359a662c0e2d585952e88b985bf78008
   RNSound: b360b3862d3118ed1c74bb9825696b5957686ac4
   RNVectorIcons: 8c52e1e8da1153613fdef44748e865c25556cb9c
-  SDWebImage: 624d6e296c69b244bcede364c72ae0430ac14681
+  SDWebImage: c5594f1a19c48d526d321e548902b56b479cd508
   yoga: b1ce48b6cf950b98deae82838f5173ea7cf89e85
 
 PODFILE CHECKSUM: 2fa79bc1fe2fe42efb63895fdb0cb84d5f578884
