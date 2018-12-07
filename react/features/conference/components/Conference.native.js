@@ -168,6 +168,8 @@ class Conference extends Component<Props> {
      * @returns {void}
      */
     componentDidMount() {
+        this.props._onConnect();
+
         // Set handling any hardware button presses for back navigation up.
         const backHandler = BackHandler || BackAndroid;
 
@@ -186,39 +188,23 @@ class Conference extends Component<Props> {
     }
 
     /**
-     * Implements {@link Component#componentWillMount()}. Invoked immediately
-     * before mounting occurs. Connects the conference described by the redux
-     * store/state.
+     * Implements React's {@link Component#componentDidUpdate()}.
      *
      * @inheritdoc
-     * @returns {void}
      */
-    componentWillMount() {
-        this.props._onConnect();
-    }
-
-    /**
-     * Notifies this mounted React {@code Component} that it will receive new
-     * props. Check if we need to show / hide the toolbox based on the
-     * participant count.
-     *
-     * @inheritdoc
-     * @param {Props} nextProps - The read-only React {@code Component} props
-     * that this instance will receive.
-     * @returns {void}
-     */
-    componentWillReceiveProps(nextProps: Props) {
+    componentDidUpdate(pevProps: Props) {
         const {
             _locationURL: oldLocationURL,
             _participantCount: oldParticipantCount,
-            _room: oldRoom,
-            _setToolboxVisible
-        } = this.props;
+            _room: oldRoom
+        } = pevProps;
         const {
             _locationURL: newLocationURL,
             _participantCount: newParticipantCount,
-            _room: newRoom
-        } = nextProps;
+            _room: newRoom,
+            _setToolboxVisible,
+            _toolboxVisible
+        } = this.props;
 
         // If the location URL changes we need to reconnect.
         oldLocationURL !== newLocationURL && this.props._onDisconnect();
@@ -226,10 +212,14 @@ class Conference extends Component<Props> {
         // Start the connection process when there is a (valid) room.
         oldRoom !== newRoom && newRoom && this.props._onConnect();
 
-        if (oldParticipantCount === 1) {
-            newParticipantCount > 1 && _setToolboxVisible(false);
-        } else if (oldParticipantCount > 1) {
-            newParticipantCount === 1 && _setToolboxVisible(true);
+        if (oldParticipantCount === 1
+                && newParticipantCount > 1
+                && _toolboxVisible) {
+            _setToolboxVisible(false);
+        } else if (oldParticipantCount > 1
+                && newParticipantCount === 1
+                && !_toolboxVisible) {
+            _setToolboxVisible(true);
         }
     }
 
