@@ -10,10 +10,6 @@
 // collect the polyfills' files.
 import './features/base/lib-jitsi-meet/native/polyfills-bundler';
 
-// FIXME: Remove once react-native-webrtc and react-native-prompt import
-// PropTypes from 'prop-types' instead of 'react'.
-import './features/base/react/prop-types-polyfill';
-
 import React, { Component } from 'react';
 import { AppRegistry, Linking, NativeModules } from 'react-native';
 
