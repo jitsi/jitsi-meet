@@ -662,6 +662,11 @@
         "addMeetingURL": "Add a meeting link",
         "confirmAddLink": "Do you want to add a Jitsi link to this event?",
         "confirmAddLinkTitle": "Calendar",
+        "error": {
+            "appConfiguration": "Calendar integration is not properly configured.",
+            "generic": "An error has occurred. Please check your calendar settings or try refreshing the calendar.",
+            "notSignedIn": "An error occurred while authenticating to see calendar events. Please check your calendar settings and try logging in again."
+        },
         "join": "Join",
         "joinTooltip": "Join the meeting",
         "nextMeeting": "next meeting",

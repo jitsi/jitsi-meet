@@ -29,11 +29,17 @@
         background: #0074E0;
         border-radius: 4px;
         color: #FFFFFF;
-        display: flex;
+        display: inline-block;
         justify-content: center;
         align-items: center;
         padding: 5px 10px;
         cursor: pointer;
+    }
+
+    .calendar-action-buttons {
+        .button {
+            margin: 0px 10px;
+        }
     }
 
     .item {
