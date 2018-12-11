@@ -3,7 +3,6 @@
 export { default as BottomSheet } from './BottomSheet';
 export { default as ConfirmDialog } from './ConfirmDialog';
 export { default as CustomDialog } from './CustomDialog';
-export { default as Dialog } from './Dialog';
 export { default as InputDialog } from './InputDialog';
 export { default as CustomSubmitDialog } from './CustomSubmitDialog';
 
