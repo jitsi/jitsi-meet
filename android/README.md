@@ -35,6 +35,9 @@ dependencies {
 
 ### Build and use your own SDK artifacts/binaries
 
+<details>
+<summary>Show building instructions</summary>
+
 Start by making sure that your development environment [is set up correctly](https://github.com/jitsi/jitsi-meet/blob/master/doc/mobile.md).
 
 A note on dependencies: Apart from the SDK, Jitsi also publishes a binary Maven artifact for some of the SDK dependencies (that are not otherwise publicly available) to the Jitsi Maven repository. When you're planning to use a SDK that is built from source, you'll likely use a version of the source code that is newer (or at least _different_) than the version of the source that was used to create the binary SDK artifact. As a consequence, the dependencies that your project will need, might also be different from those that are published in the Jitsi Maven repository. This might lead to build problems, caused by dependencies that are unavailable.
@@ -103,6 +106,7 @@ Then, define the dependency `org.jitsi.react:jitsi-meet-sdk` into the `build.gra
 
 Note that there should not be a need to explicitly add the other dependencies, as they will be pulled in as transitive dependencies of `jitsi-meet-sdk`.
 
+</details>
 
 ## Using the API
 
@@ -138,6 +142,9 @@ Note that this should only be needed when `JitsiMeetActivity` cannot be used for
 some reason. Extending `JitsiMeetView` requires manual wiring of the view to
 the activity, using a lot of boilerplate code. Using the Activity instead of the
 View is strongly recommended.
+
+<details>
+<summary>Show example</summary>
 
 ```java
 package org.jitsi.example;
@@ -219,38 +226,30 @@ public class MainActivity extends AppCompatActivity {
 }
 ```
 
+</details>
+
+Starting with SDK version 1.22, a Glide module must be provided by the host app.
+This makes it possible to use the Glide image processing library from both the
+SDK and the host app itself.
+
+You can use the code in `JitsiGlideModule.java` and adjust the package name.
+When building, add the following code in your `app/build.gradle` file, adjusting
+the Glide version to match the one in https://github.com/jitsi/jitsi-meet/blob/master/android/build.gradle
+
+```
+// Glide
+implementation("com.github.bumptech.glide:glide:${glideVersion}") {
+    exclude group: "com.android.support", module: "glide"
+}
+implementation("com.github.bumptech.glide:annotations:${glideVersion}") {
+    exclude group: "com.android.support", module: "annotations"
+}
+```
+
 ### JitsiMeetActivity
 
 This class encapsulates a high level API in the form of an Android `Activity`
 which displays a single `JitsiMeetView`.
-
-#### getDefaultURL()
-
-See JitsiMeetView.getDefaultURL.
-
-#### isPictureInPictureEnabled()
-
-See JitsiMeetView.isPictureInPictureEnabled.
-
-#### isWelcomePageEnabled()
-
-See JitsiMeetView.isWelcomePageEnabled.
-
-#### loadURL(URL)
-
-See JitsiMeetView.loadURL.
-
-#### setDefaultURL(URL)
-
-See JitsiMeetView.setDefaultURL.
-
-#### setPictureInPictureEnabled(boolean)
-
-See JitsiMeetView.setPictureInPictureEnabled.
-
-#### setWelcomePageEnabled(boolean)
-
-See JitsiMeetView.setWelcomePageEnabled.
 
 ### JitsiMeetView
 
@@ -401,11 +400,9 @@ This is a static method.
 `JitsiMeetViewListener` provides an interface apps can implement to listen to
 the state of the Jitsi Meet conference displayed in a `JitsiMeetView`.
 
-### JitsiMeetViewAdapter
-
-A default implementation of the `JitsiMeetViewListener` interface. Apps may
-extend the class instead of implementing the interface in order to minimize
-boilerplate.
+`JitsiMeetViewAdapter`, a default implementation of the
+`JitsiMeetViewListener` interface is also provided. Apps may extend the class
+instead of implementing the interface in order to minimize boilerplate.
 
 ##### onConferenceFailed
 
@@ -451,67 +448,7 @@ conference URL which necessitated the loading of the configuration file.
 
 When using the SDK on a project some proguard rules have to be added in order
 to avoid necessary code being stripped. Add the following to your project's
-rules file:
-
-```
-# React Native
-
-# Keep our interfaces so they can be used by other ProGuard rules.
-# See http://sourceforge.net/p/proguard/bugs/466/
--keep,allowobfuscation @interface com.facebook.proguard.annotations.DoNotStrip
--keep,allowobfuscation @interface com.facebook.proguard.annotations.KeepGettersAndSetters
--keep,allowobfuscation @interface com.facebook.common.internal.DoNotStrip
-
-# Do not strip any method/class that is annotated with @DoNotStrip
--keep @com.facebook.proguard.annotations.DoNotStrip class *
--keep @com.facebook.common.internal.DoNotStrip class *
--keepclassmembers class * {
-    @com.facebook.proguard.annotations.DoNotStrip *;
-    @com.facebook.common.internal.DoNotStrip *;
-}
-
--keepclassmembers @com.facebook.proguard.annotations.KeepGettersAndSetters class * {
-  void set*(***);
-  *** get*();
-}
-
--keep class * extends com.facebook.react.bridge.JavaScriptModule { *; }
--keep class * extends com.facebook.react.bridge.NativeModule { *; }
--keepclassmembers,includedescriptorclasses class * { native <methods>; }
--keepclassmembers class *  { @com.facebook.react.uimanager.UIProp <fields>; }
--keepclassmembers class *  { @com.facebook.react.uimanager.annotations.ReactProp <methods>; }
--keepclassmembers class *  { @com.facebook.react.uimanager.annotations.ReactPropGroup <methods>; }
-
--dontwarn com.facebook.react.**
-
-# TextLayoutBuilder uses a non-public Android constructor within StaticLayout.
-# See libs/proxy/src/main/java/com/facebook/fbui/textlayoutbuilder/proxy for details.
--dontwarn android.text.StaticLayout
-
-# okhttp
-
--keepattributes Signature
--keepattributes *Annotation*
--keep class okhttp3.** { *; }
--keep interface okhttp3.** { *; }
--dontwarn okhttp3.**
-
-# okio
-
--keep class sun.misc.Unsafe { *; }
--dontwarn java.nio.file.*
--dontwarn org.codehaus.mojo.animal_sniffer.IgnoreJRERequirement
--dontwarn okio.**
-
-# WebRTC
-
--keep class org.webrtc.** { *; }
--dontwarn org.chromium.build.BuildHooksAndroid
-
-# Jisti Meet SDK
-
--keep class org.jitsi.meet.sdk.** { *; }
-```
+rules file: https://github.com/jitsi/jitsi-meet/blob/master/android/app/proguard-rules.pro
 
 ## Picture-in-Picture
 
