@@ -97,6 +97,30 @@ export function _updateCalendarEntries(events: Array<Object>) {
 }
 
 /**
+ * Checks a string against a positive pattern and a negative pattern. Returns
+ * the string if it matches the positive pattern and doesn't provide any match
+ * against the negative pattern. Null otherwise.
+ *
+ * @param {string} str - The string to check.
+ * @param {string} positivePattern - The positive pattern.
+ * @param {string} negativePattern - The negative pattern.
+ * @returns {string}
+ */
+function _checkPattern(str, positivePattern, negativePattern) {
+    const positiveRegExp = new RegExp(positivePattern, 'gi');
+    let positiveMatch;
+
+    while ((positiveMatch = positiveRegExp.exec(str)) !== null) {
+        // $FlowFixMe
+        const url = positiveMatch[0];
+
+        if (!new RegExp(negativePattern, 'gi').exec(url)) {
+            return url;
+        }
+    }
+}
+
+/**
  * Updates the calendar entries in Redux when new list is received.
  *
  * @param {Object} event - An event returned from the native calendar.
@@ -155,11 +179,9 @@ function _parseCalendarEntry(event, knownDomains) {
 function _getURLFromEvent(event, knownDomains) {
     const linkTerminatorPattern = '[^\\s<>$]';
     const urlRegExp
-        = new RegExp(
-        `http(s)?://(${knownDomains.join('|')})/${linkTerminatorPattern}+`,
-        'gi');
-    const schemeRegExp
-        = new RegExp(`${APP_LINK_SCHEME}${linkTerminatorPattern}+`, 'gi');
+        = `http(s)?://(${knownDomains.join('|')})/${linkTerminatorPattern}+`;
+    const schemeRegExp = `${APP_LINK_SCHEME}${linkTerminatorPattern}+`;
+    const excludePattern = '/static/';
     const fieldsToSearch = [
         event.title,
         event.url,
@@ -170,10 +192,12 @@ function _getURLFromEvent(event, knownDomains) {
 
     for (const field of fieldsToSearch) {
         if (typeof field === 'string') {
-            const matches = urlRegExp.exec(field) || schemeRegExp.exec(field);
+            const match
+                = _checkPattern(field, urlRegExp, excludePattern)
+                || _checkPattern(field, schemeRegExp, excludePattern);
 
-            if (matches) {
-                const url = parseURIString(matches[0]);
+            if (match) {
+                const url = parseURIString(match);
 
                 if (url) {
                     return url.toString();
