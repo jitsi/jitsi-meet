@@ -194,7 +194,8 @@ export default class AbstractStartLiveStreamDialog<P: Props>
      */
     _onSubmit() {
         const { broadcasts, selectedBoundStreamID } = this.state;
-        const key = this.state.streamKey || this.props._streamKey;
+        const key
+            = (this.state.streamKey || this.props._streamKey || '').trim();
 
         if (!key) {
             return false;
