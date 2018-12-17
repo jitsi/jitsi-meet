@@ -65,6 +65,8 @@
     }
 
     .form-footer {
+        display: flex;
+        margin-top: 5px;
         text-align: right;
     }
 
@@ -95,9 +97,15 @@
 
     .stream-key-form {
         .helper-link {
-            display: inline-block;
             cursor: pointer;
-            margin-top: 5px;
+            display: inline-block;
+            flex-shrink: 0;
+            margin-left: auto;
+        }
+
+        .validation-error {
+            color:#FFD740;
+            font-size: 12px;
         }
     }
 }
