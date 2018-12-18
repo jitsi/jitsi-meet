@@ -17,11 +17,7 @@ import { ADD_KNOWN_DOMAINS } from './actionTypes';
  * out of the Andorid manifest.
  */
 export const DEFAULT_STATE = [
-    'beta.hipchat.me',
     'beta.meet.jit.si',
-    'chaos.hipchat.me',
-    'enso.me',
-    'hipchat.me',
     'meet.jit.si'
 ];
 
