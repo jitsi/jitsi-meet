@@ -53,11 +53,6 @@
 	<dict>
 		<key>NSExceptionDomains</key>
 		<dict>
-			<key>beta.meet.jit.si</key>
-			<dict>
-				<key>NSTemporaryExceptionAllowsInsecureHTTPLoads</key>
-				<true/>
-			</dict>
 			<key>localhost</key>
 			<dict>
 				<key>NSTemporaryExceptionAllowsInsecureHTTPLoads</key>
