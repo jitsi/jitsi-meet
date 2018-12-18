@@ -1,5 +1,6 @@
 /*
- * Copyright @ 2017-present Atlassian Pty Ltd
+ * Copyright @ 2018-present 8x8, Inc.
+ * Copyright @ 2017-2018 Atlassian Pty Ltd
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -59,7 +60,7 @@ typedef enum {
         dispatch_queue_attr_t attributes =
         dispatch_queue_attr_make_with_qos_class(DISPATCH_QUEUE_SERIAL,
                                                 QOS_CLASS_USER_INITIATED, -1);
-        _workerQueue = dispatch_queue_create("WebRTCModule.queue", attributes);
+        _workerQueue = dispatch_queue_create("AudioMode.queue", attributes);
     }
     return self;
 }
@@ -81,7 +82,7 @@ typedef enum {
         // needed. This notification is posted on a secondary thread, so make
         // sure we switch to our worker thread.
         dispatch_async(_workerQueue, ^{
-            [self setCategory:_category mode:_mode error:nil];
+            [self setCategory:self->_category mode:self->_mode error:nil];
         });
         break;
     }
