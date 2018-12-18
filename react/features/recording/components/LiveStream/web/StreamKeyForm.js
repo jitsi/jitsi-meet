@@ -55,7 +55,7 @@ class StreamKeyForm extends AbstractStreamKeyForm {
                 <div className = 'form-footer'>
                     {
                         this.state.showValidationError
-                            ? <span className = 'validation-error'>
+                            ? <span className = 'warning-text'>
                                 { t('liveStreaming.invalidStreamKey') }
                             </span>
                             : null
