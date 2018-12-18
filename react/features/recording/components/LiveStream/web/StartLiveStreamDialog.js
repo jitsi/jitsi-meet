@@ -280,12 +280,21 @@ class StartLiveStreamDialog
             break;
 
         case GOOGLE_API_STATES.SIGNED_IN:
-            googleContent = (
-                <StreamKeyPicker
-                    broadcasts = { broadcasts }
-                    onBroadcastSelected = { this._onYouTubeBroadcastIDSelected }
-                    selectedBoundStreamID = { selectedBoundStreamID } />
-            );
+            if (broadcasts) {
+                googleContent = (
+                    <StreamKeyPicker
+                        broadcasts = { broadcasts }
+                        onBroadcastSelected
+                            = { this._onYouTubeBroadcastIDSelected }
+                        selectedBoundStreamID = { selectedBoundStreamID } />
+                );
+            } else {
+                googleContent = (
+                    <Spinner
+                        isCompleting = { false }
+                        size = 'medium' />
+                );
+            }
 
             /**
              * FIXME: Ideally this help text would be one translation string

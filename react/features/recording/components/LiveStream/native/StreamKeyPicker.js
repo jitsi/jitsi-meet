@@ -1,9 +1,17 @@
 // @flow
 
 import React, { Component } from 'react';
-import { Text, TouchableHighlight, View } from 'react-native';
+import {
+    Linking,
+    Text,
+    TouchableHighlight,
+    TouchableOpacity,
+    View
+} from 'react-native';
 
 import { translate } from '../../../../base/i18n';
+
+import { YOUTUBE_LIVE_DASHBOARD_URL } from '../constants';
 
 import styles, { ACTIVE_OPACITY, TOUCHABLE_UNDERLAY } from './styles';
 
@@ -56,6 +64,7 @@ class StreamKeyPicker extends Component<Props, State> {
             streamKey: null
         };
 
+        this._onOpenYoutubeDashboard = this._onOpenYoutubeDashboard.bind(this);
         this._onStreamPick = this._onStreamPick.bind(this);
     }
 
@@ -67,8 +76,22 @@ class StreamKeyPicker extends Component<Props, State> {
     render() {
         const { broadcasts } = this.props;
 
-        if (!broadcasts || !broadcasts.length) {
+        if (!broadcasts) {
             return null;
+        }
+
+        if (!broadcasts.length) {
+            return (
+                <View style = { styles.formWrapper }>
+                    <TouchableOpacity
+                        onPress = { this._onOpenYoutubeDashboard }>
+                        <Text style = { styles.warningText }>
+                            { this.props.t(
+                                'liveStreaming.getStreamKeyManually') }
+                        </Text>
+                    </TouchableOpacity>
+                </View>
+            );
         }
 
         return (
@@ -98,6 +121,19 @@ class StreamKeyPicker extends Component<Props, State> {
                 </View>
             </View>
         );
+    }
+
+    _onOpenYoutubeDashboard: () => void;
+
+    /**
+     * Opens the link which should display the YouTube broadcast live stream
+     * key.
+     *
+     * @private
+     * @returns {void}
+     */
+    _onOpenYoutubeDashboard() {
+        Linking.openURL(YOUTUBE_LIVE_DASHBOARD_URL);
     }
 
     _onStreamPick: string => Function

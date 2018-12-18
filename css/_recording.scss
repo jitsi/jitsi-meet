@@ -95,17 +95,15 @@
         padding-bottom: 10px;
     }
 
-    .stream-key-form {
-        .helper-link {
-            cursor: pointer;
-            display: inline-block;
-            flex-shrink: 0;
-            margin-left: auto;
-        }
+    .helper-link {
+        cursor: pointer;
+        display: inline-block;
+        flex-shrink: 0;
+        margin-left: auto;
+    }
 
-        .validation-error {
-            color:#FFD740;
-            font-size: 12px;
-        }
+    .warning-text {
+        color:#FFD740;
+        font-size: 12px;
     }
 }
