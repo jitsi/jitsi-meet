@@ -7,10 +7,10 @@ import { connect } from 'react-redux';
 
 import { hideDialog, BottomSheet } from '../../../base/dialog';
 import { translate } from '../../../base/i18n';
-
 import { Icon } from '../../../base/font-icons';
+import { ColorPalette } from '../../../base/styles';
 
-import styles, { UNDERLAY_COLOR } from './styles';
+import styles from './styles';
 
 /**
  * Type definition for a single entry in the device list.
@@ -210,7 +210,7 @@ class AudioRoutePickerDialog extends Component<Props, State> {
             <TouchableHighlight
                 key = { device.type }
                 onPress = { this._onSelectDeviceFn(device) }
-                underlayColor = { UNDERLAY_COLOR } >
+                underlayColor = { ColorPalette.overflowMenuItemUnderlay } >
                 <View style = { styles.deviceRow } >
                     <Icon
                         name = { iconName }
