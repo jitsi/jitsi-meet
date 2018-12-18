@@ -53,11 +53,12 @@ class StreamKeyForm extends AbstractStreamKeyForm {
                     type = 'text'
                     value = { this.props.value } />
                 <div className = 'form-footer'>
-                    { this.state.showValidationError
-                        ? <span className = 'validation-error'>
-                            { t('liveStreaming.invalidStreamKey') }
-                        </span>
-                        : null
+                    {
+                        this.state.showValidationError
+                            ? <span className = 'validation-error'>
+                                { t('liveStreaming.invalidStreamKey') }
+                            </span>
+                            : null
                     }
                     { this.helpURL
                         ? <a
