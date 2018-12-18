@@ -176,5 +176,5 @@ export const overflowMenuItemStyles = {
     iconStyle: overflowMenuStyles.icon,
     labelStyle: overflowMenuStyles.label,
     style: overflowMenuStyles.container,
-    underlayColor: '#eee'
+    underlayColor: ColorPalette.overflowMenuItemUnderlay
 };
