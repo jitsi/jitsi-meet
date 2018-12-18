@@ -23,11 +23,7 @@
         <action android:name="android.intent.action.VIEW" />
         <category android:name="android.intent.category.BROWSABLE" />
         <category android:name="android.intent.category.DEFAULT" />
-        <data android:host="beta.hipchat.me" android:scheme="https" />
         <data android:host="beta.meet.jit.si" android:scheme="https" />
-        <data android:host="chaos.hipchat.me" android:scheme="https" />
-        <data android:host="enso.me" android:scheme="https" />
-        <data android:host="hipchat.me" android:scheme="https" />
         <data android:host="meet.jit.si" android:scheme="https" />
       </intent-filter>
       <intent-filter>
