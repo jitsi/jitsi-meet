@@ -86,7 +86,7 @@ allprojects {
             else if ('react-native-immersive' == project.name)
                 versionQualifier = '-jitsi-4' // 1.1.0 + react-native 0.57
             else if ('react-native-keep-awake' == project.name)
-                versionQualifier = '-jitsi-3' // 2.0.6 + react-native 0.57
+                versionQualifier = '-jitsi-4' // 4.0.0 + react-native 0.57
             else if ('react-native-linear-gradient' == project.name)
                 versionQualifier = '-jitsi-1' // 2.4.0 + react-native 0.57
             else if ('react-native-sound' == project.name)

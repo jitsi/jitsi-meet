@@ -32,7 +32,7 @@ PODS:
     - React
     - SDWebImage/Core
     - SDWebImage/GIF
-  - react-native-keep-awake (2.0.6):
+  - react-native-keep-awake (4.0.0):
     - React
   - react-native-webrtc (1.67.1):
     - React
