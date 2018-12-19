@@ -36,7 +36,7 @@ class StreamKeyForm extends AbstractStreamKeyForm {
      * @returns {ReactElement}
      */
     render() {
-        const { value, t } = this.props;
+        const { t, value } = this.props;
 
         return (
             <div className = 'stream-key-form'>
@@ -52,16 +52,23 @@ class StreamKeyForm extends AbstractStreamKeyForm {
                     shouldFitContainer = { true }
                     type = 'text'
                     value = { this.props.value } />
-                { this.helpURL
-                    ? <div className = 'form-footer'>
-                        <a
+                <div className = 'form-footer'>
+                    {
+                        this.state.showValidationError
+                            ? <span className = 'validation-error'>
+                                { t('liveStreaming.invalidStreamKey') }
+                            </span>
+                            : null
+                    }
+                    { this.helpURL
+                        ? <a
                             className = 'helper-link'
                             onClick = { this._onOpenHelp }>
                             { t('liveStreaming.streamIdHelp') }
                         </a>
-                    </div>
-                    : null
-                }
+                        : null
+                    }
+                </div>
             </div>
         );
     }

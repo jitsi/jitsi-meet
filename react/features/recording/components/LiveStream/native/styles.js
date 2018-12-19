@@ -49,6 +49,20 @@ export default createStyleSheet({
     },
 
     /**
+     * Wrapper for the last element in the form.
+     */
+    formFooter: {
+        flexDirection: 'row'
+    },
+
+    /**
+     * Wrapper for individual children in the last element of the form.
+     */
+    formFooterItem: {
+        flex: 1
+    },
+
+    /**
      * Explaining text on the top of the sign in form.
      */
     helpText: {
@@ -133,6 +147,12 @@ export default createStyleSheet({
 
     text: {
         color: ColorPalette.white
-    }
+    },
 
+    /**
+     * A different colored text to indicate information needing attention.
+     */
+    warningText: {
+        color: ColorPalette.Y200
+    }
 });
