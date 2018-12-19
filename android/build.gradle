@@ -19,7 +19,6 @@ buildscript {
 
 allprojects {
     repositories {
-        maven { url "https://maven.google.com" }
         google()
         jcenter()
         maven { url "$rootDir/../node_modules/jsc-android/dist" }
