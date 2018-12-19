@@ -2,7 +2,7 @@
 
 import React, { Component } from 'react';
 
-import { Popover } from '../../base/popover';
+import { Popover } from '../../../base/popover';
 
 import {
     MuteButton,

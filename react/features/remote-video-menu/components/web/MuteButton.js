@@ -6,9 +6,9 @@ import { connect } from 'react-redux';
 import {
     createRemoteVideoMenuButtonEvent,
     sendAnalytics
-} from '../../analytics';
-import { translate } from '../../base/i18n';
-import { openDialog } from '../../base/dialog';
+} from '../../../analytics';
+import { translate } from '../../../base/i18n';
+import { openDialog } from '../../../base/dialog';
 
 import RemoteVideoMenuButton from './RemoteVideoMenuButton';
 import MuteRemoteParticipantDialog from './MuteRemoteParticipantDialog';

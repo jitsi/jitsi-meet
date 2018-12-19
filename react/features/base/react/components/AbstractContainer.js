@@ -32,6 +32,12 @@ export type Props = {
     onClick?: ?Function,
 
     /**
+     * The event handler/listener to be invoked when this
+     * {@code AbstractContainer} is long pressed on React Native.
+     */
+    onLongPress?: ?Function,
+
+    /**
      * The style (as in stylesheet) to be applied to this
      * {@code AbstractContainer}.
      */

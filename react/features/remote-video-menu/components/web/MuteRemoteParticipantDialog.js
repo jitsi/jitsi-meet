@@ -3,14 +3,14 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
-import { Dialog } from '../../base/dialog';
-import { translate } from '../../base/i18n';
+import { Dialog } from '../../../base/dialog';
+import { translate } from '../../../base/i18n';
 
 import {
     createRemoteMuteConfirmedEvent,
     sendAnalytics
-} from '../../analytics';
-import { muteRemoteParticipant } from '../../base/participants';
+} from '../../../analytics';
+import { muteRemoteParticipant } from '../../../base/participants';
 
 /**
  * The type of the React {@code Component} props of
