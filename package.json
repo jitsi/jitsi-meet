@@ -63,7 +63,7 @@
     "react-i18next": "7.13.0",
     "react-linkify": "0.2.2",
     "react-native": "0.57.8",
-    "react-native-background-timer": "2.0.0",
+    "react-native-background-timer": "2.1.1",
     "react-native-calendar-events": "1.6.4",
     "react-native-callstats": "3.53.4",
     "react-native-fast-image": "5.1.1",
