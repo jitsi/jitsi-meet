@@ -9,7 +9,7 @@ buildscript {
         jcenter()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.1.4'
+        classpath 'com.android.tools.build:gradle:3.2.1'
         classpath 'com.google.gms:google-services:3.2.1'
 
         // NOTE: Do not place your application dependencies here; they belong
@@ -172,11 +172,11 @@ allprojects {
 }
 
 ext {
-    buildToolsVersion = "27.0.3"
-    compileSdkVersion = 27
+    buildToolsVersion = "28.0.3"
+    compileSdkVersion = 28
     minSdkVersion    = 21
-    targetSdkVersion = 26
-    supportLibVersion = "27.1.1"
+    targetSdkVersion = 28
+    supportLibVersion = "28.0.0"
 
     // The Maven artifact groupdId of the third-party react-native modules which
     // Jitsi Meet SDK for Android depends on and which are not available in
