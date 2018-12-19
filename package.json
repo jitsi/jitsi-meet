@@ -67,7 +67,7 @@
     "react-native-calendar-events": "github:wmcmahan/react-native-calendar-events#056807286da610d884fb6b4c8ca187a767b261f7",
     "react-native-callstats": "3.53.4",
     "react-native-fast-image": "5.1.1",
-    "react-native-google-signin": "1.0.0-rc6",
+    "react-native-google-signin": "1.0.2",
     "react-native-immersive": "1.1.0",
     "react-native-keep-awake": "2.0.6",
     "react-native-linear-gradient": "2.4.0",

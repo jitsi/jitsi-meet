@@ -75,7 +75,7 @@ PODS:
     - React/Core
     - React/fishhook
     - React/RCTBlob
-  - RNGoogleSignin (1.0.0-rc6):
+  - RNGoogleSignin (1.0.2):
     - GoogleSignIn
     - React
   - RNSound (0.10.9):
@@ -170,7 +170,7 @@ SPEC CHECKSUMS:
   react-native-fast-image: cba3d9bf9c2cf8ddb643d887a686c53a5dd90a2c
   react-native-keep-awake: 0de4bd66de0c23178107dce0c2fcc3354b2a8e94
   react-native-webrtc: 31b6d3f1e3e2ce373aa43fd682b04367250f807d
-  RNGoogleSignin: 44debd8c359a662c0e2d585952e88b985bf78008
+  RNGoogleSignin: 8b08beabff7f3b1373b2821b0944b38de36ba95e
   RNSound: b360b3862d3118ed1c74bb9825696b5957686ac4
   RNVectorIcons: 8c52e1e8da1153613fdef44748e865c25556cb9c
   SDWebImage: c5594f1a19c48d526d321e548902b56b479cd508
