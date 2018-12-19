@@ -84,7 +84,7 @@ allprojects {
             else if ('react-native-google-signin' == project.name)
                 versionQualifier = '-jitsi-2' // 1.0.2 + react-native 0.57
             else if ('react-native-immersive' == project.name)
-                versionQualifier = '-jitsi-4' // 1.1.0 + react-native 0.57
+                versionQualifier = '-jitsi-5' // 2.0.0 + react-native 0.57
             else if ('react-native-keep-awake' == project.name)
                 versionQualifier = '-jitsi-4' // 4.0.0 + react-native 0.57
             else if ('react-native-linear-gradient' == project.name)
