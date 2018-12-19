@@ -27,6 +27,7 @@ export default class Container<P: Props> extends AbstractContainer<P> {
             accessibilityLabel,
             accessible,
             onClick,
+            onLongPress,
             touchFeedback = onClick,
             underlayColor,
             visible = true,
@@ -38,7 +39,7 @@ export default class Container<P: Props> extends AbstractContainer<P> {
             return null;
         }
 
-        const onClickOrTouchFeedback = onClick || touchFeedback;
+        const onClickOrTouchFeedback = onClick || onLongPress || touchFeedback;
         let element
             = super._render(
                 View,
@@ -57,6 +58,7 @@ export default class Container<P: Props> extends AbstractContainer<P> {
                     {
                         accessibilityLabel,
                         accessible,
+                        onLongPress,
                         onPress: onClick,
                         ...touchFeedback && { underlayColor }
                     },

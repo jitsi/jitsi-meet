@@ -1,3 +1,5 @@
+// @flow
+
 export { default as KickButton } from './KickButton';
 export { default as MuteButton } from './MuteButton';
 export {

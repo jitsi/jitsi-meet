@@ -5,8 +5,8 @@ import React, { Component } from 'react';
 import {
     createRemoteVideoMenuButtonEvent,
     sendAnalytics
-} from '../../analytics';
-import { translate } from '../../base/i18n';
+} from '../../../analytics';
+import { translate } from '../../../base/i18n';
 
 import RemoteVideoMenuButton from './RemoteVideoMenuButton';
 

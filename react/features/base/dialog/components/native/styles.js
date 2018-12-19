@@ -13,6 +13,47 @@ export const FIELD_UNDERLINE = ColorPalette.transparent;
 export const PLACEHOLDER_COLOR = ColorPalette.lightGrey;
 
 /**
+ * Default styles for the items of a {@code BottomSheet}-based menu.
+ *
+ * These have been implemented as per the Material Design guidelines:
+ * {@link https://material.io/guidelines/components/bottom-sheets.html}.
+ */
+const bottomSheetItemStyles = createStyleSheet({
+    /**
+     * Container style for a generic item rendered in the menu.
+     */
+    style: {
+        alignItems: 'center',
+        flexDirection: 'row',
+        height: 48
+    },
+
+    /**
+     * Style for the {@code Icon} element in a generic item of the menu.
+     */
+    iconStyle: {
+        color: ColorPalette.white,
+        fontSize: 24
+    },
+
+    /**
+     * Style for the label in a generic item rendered in the menu.
+     */
+    labelStyle: {
+        color: ColorPalette.white,
+        flexShrink: 1,
+        fontSize: 16,
+        marginLeft: 32,
+        opacity: 0.90
+    }
+});
+
+export const bottomSheetItemStylesCombined = {
+    ...bottomSheetItemStyles,
+    underlayColor: ColorPalette.overflowMenuItemUnderlay
+};
+
+/**
  * The React {@code Component} styles of {@code BottomSheet}. These have
  * been implemented as per the Material Design guidelines:
  * {@link https://material.io/guidelines/components/bottom-sheets.html}.
