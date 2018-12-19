@@ -1,5 +1,6 @@
 /*
- * Copyright @ 2018-present Atlassian Pty Ltd
+ * Copyright @ 2018-present 8x8, Inc.
+ * Copyright @ 2018 Atlassian Pty Ltd
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,7 +22,6 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.util.Log;
 import android.widget.FrameLayout;
 
 import com.facebook.react.ReactRootView;
@@ -194,29 +194,10 @@ public abstract class BaseReactView<ListenerT>
         super.onWindowFocusChanged(hasFocus);
 
         // https://github.com/mockingbot/react-native-immersive#restore-immersive-state
-
-        // FIXME The singleton pattern employed by RNImmersiveModule is not
-        // advisable because a react-native mobule is consumable only after its
-        // BaseJavaModule#initialize() has completed and here we have no
-        // knowledge of whether the precondition is really met.
         RNImmersiveModule immersive = RNImmersiveModule.getInstance();
 
         if (hasFocus && immersive != null) {
-            try {
-                immersive.emitImmersiveStateChangeEvent();
-            } catch (RuntimeException re) {
-                // FIXME I don't know how to check myself whether
-                // BaseJavaModule#initialize() has been invoked and thus
-                // RNImmersiveModule is consumable. A safe workaround is to
-                // swallow the failure because the whole full-screen/immersive
-                // functionality is brittle anyway, akin to the icing on the
-                // cake, and has been working without onWindowFocusChanged for a
-                // very long time.
-                Log.e(
-                    "RNImmersiveModule",
-                    "emitImmersiveStateChangeEvent() failed!",
-                    re);
-            }
+            immersive.emitImmersiveStateChangeEvent();
         }
     }
 
