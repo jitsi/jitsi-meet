@@ -23,7 +23,7 @@ PODS:
   - ObjectiveDropboxOfficial (3.9.2)
   - React (0.57.8):
     - React/Core (= 0.57.8)
-  - react-native-background-timer (2.0.0):
+  - react-native-background-timer (2.1.1):
     - React
   - react-native-calendar-events (1.6.4):
     - React
@@ -165,7 +165,7 @@ SPEC CHECKSUMS:
   GTMSessionFetcher: 32aeca0aa144acea523e1c8e053089dec2cb98ca
   ObjectiveDropboxOfficial: aa792e0556ceb7b72955fa29a2709072f6e35fd9
   React: 1fe0eb13d90b625d94c3b117c274dcfd2e760e11
-  react-native-background-timer: 63dcbf37dbcf294b5c6c071afcdc661fa06a7594
+  react-native-background-timer: bb7a98c8e97fc7c290de2d423dd09ddb73dcbcbb
   react-native-calendar-events: fe6fbc8ed337a7423c98f2c9012b25f20444de09
   react-native-fast-image: cba3d9bf9c2cf8ddb643d887a686c53a5dd90a2c
   react-native-keep-awake: 0de4bd66de0c23178107dce0c2fcc3354b2a8e94
