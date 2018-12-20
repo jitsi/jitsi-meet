@@ -1,6 +1,6 @@
 // @flow
 
-import { CheckboxGroup, CheckboxStateless } from '@atlaskit/checkbox';
+import { Checkbox } from '@atlaskit/checkbox';
 import DropdownMenu, {
     DropdownItem,
     DropdownItemGroup
@@ -202,35 +202,33 @@ class MoreTab extends AbstractDialogTab<Props, State> {
                 <div className = 'mock-atlaskit-label'>
                     { t('settings.moderator') }
                 </div>
-                <CheckboxGroup>
-                    <CheckboxStateless
-                        isChecked = { startAudioMuted }
-                        label = { t('settings.startAudioMuted') }
-                        name = 'start-audio-muted'
-                        // eslint-disable-next-line react/jsx-no-bind
-                        onChange = {
-                            ({ target: { checked } }) =>
-                                super._onChange({ startAudioMuted: checked })
-                        } />
-                    <CheckboxStateless
-                        isChecked = { startVideoMuted }
-                        label = { t('settings.startVideoMuted') }
-                        name = 'start-video-muted'
-                        // eslint-disable-next-line react/jsx-no-bind
-                        onChange = {
-                            ({ target: { checked } }) =>
-                                super._onChange({ startVideoMuted: checked })
-                        } />
-                    <CheckboxStateless
-                        isChecked = { followMeEnabled }
-                        label = { t('settings.followMe') }
-                        name = 'follow-me'
-                        // eslint-disable-next-line react/jsx-no-bind
-                        onChange = {
-                            ({ target: { checked } }) =>
-                                super._onChange({ followMeEnabled: checked })
-                        } />
-                </CheckboxGroup>
+                <Checkbox
+                    isChecked = { startAudioMuted }
+                    label = { t('settings.startAudioMuted') }
+                    name = 'start-audio-muted'
+                    // eslint-disable-next-line react/jsx-no-bind
+                    onChange = {
+                        ({ target: { checked } }) =>
+                            super._onChange({ startAudioMuted: checked })
+                    } />
+                <Checkbox
+                    isChecked = { startVideoMuted }
+                    label = { t('settings.startVideoMuted') }
+                    name = 'start-video-muted'
+                    // eslint-disable-next-line react/jsx-no-bind
+                    onChange = {
+                        ({ target: { checked } }) =>
+                            super._onChange({ startVideoMuted: checked })
+                    } />
+                <Checkbox
+                    isChecked = { followMeEnabled }
+                    label = { t('settings.followMe') }
+                    name = 'follow-me'
+                    // eslint-disable-next-line react/jsx-no-bind
+                    onChange = {
+                        ({ target: { checked } }) =>
+                            super._onChange({ followMeEnabled: checked })
+                    } />
             </div>
         );
     }
