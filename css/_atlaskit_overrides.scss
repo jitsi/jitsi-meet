@@ -41,17 +41,18 @@
 
 .modal-dialog-form {
     /**
-     * Update the dropdown trigger wrapper to make sure it looks click-able.
+     * Update the @atlaskit/dropdown-menu trigger wrapper to make sure it looks
+     * click-able.
      */
-    .gwEjuO {
+    .cjJUnw {
         cursor: pointer;
     }
 
     /**
-     * Override Atlaskit dropdown styling when in a modal because the dropdown
-     * backgrounds clash with the modal backgrounds.
+     * Override @atlaskit/dropdown-menu styling when in a modal because the
+     * dropdown backgrounds clash with the modal backgrounds.
      */
-    .gBLqhw[data-role=droplistContent] {
+    .cksvax[data-role=droplistContent] {
         border: 1px solid #455166;
     }
 }
