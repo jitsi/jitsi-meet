@@ -142,7 +142,7 @@
 				ORGANIZATIONNAME = Facebook;
 				TargetAttributes = {
 					13B07F861A680F5B00A75B9A = {
-						DevelopmentTeam = BQNXB4G3KQ;
+						DevelopmentTeam = FC967L3QRG;
 						SystemCapabilities = {
 							com.apple.SafariKeychain = {
 								enabled = 1;
@@ -260,6 +260,7 @@
 				CODE_SIGN_ENTITLEMENTS = app.entitlements;
 				CURRENT_PROJECT_VERSION = 1;
 				DEAD_CODE_STRIPPING = NO;
+				DEVELOPMENT_TEAM = FC967L3QRG;
 				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -278,7 +279,7 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = org.jitsi.JitsiMeet.ios;
+				PRODUCT_BUNDLE_IDENTIFIER = org.jitsi.meet;
 				PRODUCT_NAME = "jitsi-meet";
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -291,6 +292,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIconRelease;
 				CODE_SIGN_ENTITLEMENTS = app.entitlements;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = FC967L3QRG;
 				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -309,7 +311,7 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = org.jitsi.JitsiMeet.ios;
+				PRODUCT_BUNDLE_IDENTIFIER = org.jitsi.meet;
 				PRODUCT_NAME = "jitsi-meet";
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
