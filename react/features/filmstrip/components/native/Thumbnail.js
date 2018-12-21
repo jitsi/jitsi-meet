@@ -137,7 +137,8 @@ class Thumbnail extends Component<Props> {
                     participant.pinned && !disablePin
                         ? styles.thumbnailPinned : null,
                     this.props.styleOverrides || null
-                ] }>
+                ] }
+                touchFeedback = { false }>
 
                 { renderAudio
                     && <Audio
