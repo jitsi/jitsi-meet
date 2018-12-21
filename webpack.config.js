@@ -28,7 +28,7 @@ const config = {
         }
     },
     devtool: 'source-map',
-    mode: minimize ? 'development' : 'production',
+    mode: minimize ? 'production' : 'development',
     module: {
         rules: [ {
             // Transpile ES2015 (aka ES6) to ES5. Accept the JSX syntax by React
