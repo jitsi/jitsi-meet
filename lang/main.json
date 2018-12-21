@@ -113,8 +113,8 @@
             "videomute": "Toggle mute video"
         },
         "addPeople": "Add people to your call",
-        "audioonly": "Enable / Disable audio only mode (saves bandwidth)",
-        "audioOnlyOn": "Enable audio only mode (saves bandwidth)",
+        "audioonly": "Enable / Disable audio only mode",
+        "audioOnlyOn": "Enable audio only mode",
         "audioOnlyOff": "Disable audio only mode",
         "audioRoute": "Select the sound device",
         "callQuality": "Manage call quality",
