@@ -131,7 +131,8 @@ class Thumbnail extends Component<Props> {
             <Container
                 onClick = { disablePin ? undefined : this._onClick }
                 onLongPress = {
-                    showRemoteVideoMenu && this._onShowRemoteVideoMenu }
+                    showRemoteVideoMenu
+                        ? this._onShowRemoteVideoMenu : undefined }
                 style = { [
                     styles.thumbnail,
                     participant.pinned && !disablePin
