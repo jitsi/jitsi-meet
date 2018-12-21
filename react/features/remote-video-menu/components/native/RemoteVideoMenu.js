@@ -8,13 +8,22 @@ import {
     BottomSheet,
     bottomSheetItemStylesCombined
 } from '../../../base/dialog';
-import { getParticipantDisplayName } from '../../../base/participants';
+import {
+    Avatar,
+    getAvatarURL,
+    getParticipantDisplayName
+} from '../../../base/participants';
 
 import { hideRemoteVideoMenu } from '../../actions';
 
 import KickButton from './KickButton';
 import MuteButton from './MuteButton';
 import styles from './styles';
+
+/**
+ * Size of the rendered avatar in the menu.
+ */
+const AVATAR_SIZE = 25;
 
 type Props = {
 
@@ -27,6 +36,11 @@ type Props = {
      * The participant for which this menu opened for.
      */
     participant: Object,
+
+    /**
+     * URL of the avatar of the participant.
+     */
+    _avatarURL: string,
 
     /**
      * Display name of the participant retreived from Redux.
@@ -65,6 +79,9 @@ class RemoteVideoMenu extends Component<Props> {
         return (
             <BottomSheet onCancel = { this._onCancel }>
                 <View style = { styles.participantNameContainer }>
+                    <Avatar
+                        size = { AVATAR_SIZE }
+                        uri = { this.props._avatarURL } />
                     <Text style = { styles.participantNameLabel }>
                         { this.props._participantDisplayName }
                     </Text>
@@ -95,14 +112,17 @@ class RemoteVideoMenu extends Component<Props> {
  * @param {Object} ownProps - Properties of component.
  * @private
  * @returns {{
+ *      _avatarURL: string,
  *      _participantDisplayName: string
  *  }}
  */
 function _mapStateToProps(state, ownProps) {
-    const { id } = ownProps.participant;
+    const { participant } = ownProps;
 
     return {
-        _participantDisplayName: getParticipantDisplayName(state, id)
+        _avatarURL: getAvatarURL(participant),
+        _participantDisplayName: getParticipantDisplayName(
+            state, participant.id)
     };
 }
 

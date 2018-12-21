@@ -15,6 +15,7 @@ export default createStyleSheet({
         color: ColorPalette.lightGrey,
         flexShrink: 1,
         fontSize: 16,
+        marginLeft: 16,
         opacity: 0.90
     }
 });
