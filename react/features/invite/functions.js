@@ -65,7 +65,7 @@ export function getDialInConferenceID(
  */
 export function getDialInNumbers(url: string, roomName: string, mucURL: string): Promise<*> {
     const dialInNumbersFullURL = `${url}?conference=${roomName}@${mucURL}`;
-    return doGetJSON(url);
+    return doGetJSON(dialInNumbersFullURL);
 }
 
 /**
