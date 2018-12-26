@@ -75,7 +75,7 @@ class OverflowMenu extends Component<Props> {
                 <ToggleCameraButton { ...buttonProps } />
                 <AudioOnlyButton { ...buttonProps } />
                 <RoomLockButton { ...buttonProps } />
-                <ClosedCaptionButton { ...buttonProps } />
+                {/* <ClosedCaptionButton { ...buttonProps } /> */}
                 {
 
                     // Apple rejected our app because they claim requiring a
@@ -84,7 +84,7 @@ class OverflowMenu extends Component<Props> {
                     Platform.OS !== 'ios'
                         && <RecordButton { ...buttonProps } />
                 }
-                <LiveStreamButton { ...buttonProps } />
+                {/* <LiveStreamButton { ...buttonProps } /> */}
                 <TileViewButton { ...buttonProps } />
                 <PictureInPictureButton { ...buttonProps } />
             </BottomSheet>

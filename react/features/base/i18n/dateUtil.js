@@ -10,26 +10,26 @@ import 'moment-duration-format';
 // MomentJS uses static language bundle loading, so in order to support dynamic
 // language selection in the app we need to load all bundles that we support in
 // the app.
-require('moment/locale/bg');
-require('moment/locale/de');
-require('moment/locale/eo');
-require('moment/locale/es');
-require('moment/locale/fr');
-require('moment/locale/hy-am');
-require('moment/locale/it');
-require('moment/locale/nb');
+// require('moment/locale/bg');
+// require('moment/locale/de');
+// require('moment/locale/eo');
+// require('moment/locale/es');
+// require('moment/locale/fr');
+// require('moment/locale/hy-am');
+// require('moment/locale/it');
+// require('moment/locale/nb');
 
 // OC is not available. Please submit OC translation to the MomentJS project.
 
-require('moment/locale/pl');
-require('moment/locale/pt');
-require('moment/locale/pt-br');
-require('moment/locale/ru');
-require('moment/locale/sk');
-require('moment/locale/sl');
-require('moment/locale/sv');
-require('moment/locale/tr');
-require('moment/locale/zh-cn');
+// require('moment/locale/pl');
+// require('moment/locale/pt');
+// require('moment/locale/pt-br');
+// require('moment/locale/ru');
+// require('moment/locale/sk');
+// require('moment/locale/sl');
+// require('moment/locale/sv');
+// require('moment/locale/tr');
+// require('moment/locale/zh-cn');
 
 /**
  * Returns a localized date formatter initialized with a specific {@code Date}
