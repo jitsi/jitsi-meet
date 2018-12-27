@@ -3,7 +3,6 @@
 import Button, { ButtonGroup } from '@atlaskit/button';
 import Modal, { ModalFooter } from '@atlaskit/modal-dialog';
 import _ from 'lodash';
-import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 
 import { translate } from '../../../i18n';

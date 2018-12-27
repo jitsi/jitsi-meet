@@ -55,7 +55,6 @@
     "moment": "2.19.4",
     "moment-duration-format": "2.2.2",
     "postis": "2.2.0",
-    "prop-types": "15.6.0",
     "react": "16.6.3",
     "react-dom": "16.6.3",
     "react-emoji-render": "0.4.6",
