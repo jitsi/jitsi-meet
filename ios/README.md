@@ -1,12 +1,24 @@
 # Jitsi Meet SDK for iOS
 
-## Build
+The Jitsi Meet iOS SDK provides the same user experience as the Jitsi Meet app,
+in a customizable way which you can embed in your apps.
+
+## Usage
+
+There are 2 ways to integrate the SDK into your project:
+
+- Using CocoaPods
+- Building it yourself
+
+### Using CocoaPods
+
+Follow the instructions [here](https://github.com/jitsi/jitsi-meet-ios-sdk-releases/blob/master/README.md).
+
+### Builduing it yourself
 
 1. Install all required [dependencies](https://github.com/jitsi/jitsi-meet/blob/master/doc/mobile.md).
 
 2. `xcodebuild -workspace ios/jitsi-meet.xcworkspace -scheme JitsiMeet -destination='generic/platform=iOS' -configuration Release archive`
-
-## Install
 
 After successfully building Jitsi Meet SDK for iOS, copy
 `ios/sdk/JitsiMeet.framework` (if the path points to a symbolic link, follow the
