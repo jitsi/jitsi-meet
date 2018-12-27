@@ -1,1 +1,3 @@
-export { default as DialInInfoApp } from './DialInInfoApp';
+// We need the import for its side effects alone.
+
+import './DialInInfoApp';
