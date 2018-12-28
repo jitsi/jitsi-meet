@@ -1,5 +1,6 @@
 /*
- * Copyright @ 2017-present Atlassian Pty Ltd
+ * Copyright @ 2018-present 8x8, Inc.
+ * Copyright @ 2017-2018 Atlassian Pty Ltd
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +17,7 @@
 
 package org.jitsi.meet;
 
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 
@@ -27,8 +29,13 @@ import org.jitsi.meet.sdk.invite.AddPeopleControllerListener;
 import org.jitsi.meet.sdk.invite.InviteController;
 import org.jitsi.meet.sdk.invite.InviteControllerListener;
 
+import com.crashlytics.android.Crashlytics;
 import com.facebook.react.bridge.UiThreadUtil;
+import com.google.firebase.dynamiclinks.FirebaseDynamicLinks;
+import io.fabric.sdk.android.Fabric;
 
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -182,6 +189,28 @@ public class MainActivity extends JitsiMeetActivity {
         setWelcomePageEnabled(true);
 
         super.onCreate(savedInstanceState);
+
+        // Setup Crashlytics and Firebase Dynamic Links
+        if (BuildConfig.GOOGLE_SERVICES_ENABLED) {
+            Fabric.with(this, new Crashlytics());
+
+            FirebaseDynamicLinks.getInstance().getDynamicLink(getIntent())
+                .addOnSuccessListener(this, pendingDynamicLinkData -> {
+                    Uri dynamicLink = null;
+
+                    if (pendingDynamicLinkData != null) {
+                        dynamicLink = pendingDynamicLinkData.getLink();
+                    }
+
+                    if (dynamicLink != null) {
+                        try {
+                            loadURL(new URL(dynamicLink.toString()));
+                        } catch (MalformedURLException e) {
+                            Log.d("ReactNative", "Malformed dynamic link", e);
+                        }
+                    }
+                });
+        }
     }
 
     private void onInviteControllerBeginAddPeople(
