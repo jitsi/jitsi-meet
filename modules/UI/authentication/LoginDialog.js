@@ -109,7 +109,6 @@ function LoginDialog(successCallback, cancelCallback) {
             }
         }
     };
-
     const connDialog = APP.UI.messageHandler.openDialogWithStates(
         states,
         {
