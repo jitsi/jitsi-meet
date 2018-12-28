@@ -1,65 +1,78 @@
-NPM = npm
-BROWSERIFY = ./node_modules/.bin/browserify
-UGLIFYJS = ./node_modules/.bin/uglifyjs
-EXORCIST = ./node_modules/.bin/exorcist
+BUILD_DIR = build
 CLEANCSS = ./node_modules/.bin/cleancss
-CSS_FILES = font.css toastr.css main.css overlay.css videolayout_default.css font-awesome.css jquery-impromptu.css modaldialog.css notice.css popup_menu.css recording.css login_menu.css popover.css jitsi_popover.css contact_list.css chat.css welcome_page.css settingsmenu.css feedback.css jquery.contextMenu.css keyboard-shortcuts.css
 DEPLOY_DIR = libs
-BROWSERIFY_FLAGS = -d
-OUTPUT_DIR = .
 LIBJITSIMEET_DIR = node_modules/lib-jitsi-meet/
-IFRAME_API_DIR = ./modules/API/external
+LIBFLAC_DIR = node_modules/libflacjs/dist/min/
+NODE_SASS = ./node_modules/.bin/node-sass
+NPM = npm
+OUTPUT_DIR = .
+STYLES_BUNDLE = css/all.bundle.css
+STYLES_DESTINATION = css/all.css
+STYLES_MAIN = css/main.scss
+WEBPACK = ./node_modules/.bin/webpack
+WEBPACK_DEV_SERVER = ./node_modules/.bin/webpack-dev-server
 
-all: update-deps compile compile-iframe-api uglify uglify-iframe-api deploy clean
-
-update-deps:
-	$(NPM) update
+all: compile deploy clean
 
 compile:
-	$(BROWSERIFY) $(BROWSERIFY_FLAGS) -e app.js -s APP | $(EXORCIST) $(OUTPUT_DIR)/app.bundle.js.map > $(OUTPUT_DIR)/app.bundle.js
-
-compile-iframe-api:
-	$(BROWSERIFY) $(BROWSERIFY_FLAGS) -e $(IFRAME_API_DIR)/external_api.js -s JitsiMeetExternalAPI | $(EXORCIST) $(OUTPUT_DIR)/external_api.js.map > $(OUTPUT_DIR)/external_api.js
+	$(WEBPACK) -p
 
 clean:
-	rm -f $(OUTPUT_DIR)/app.bundle.* $(OUTPUT_DIR)/external_api.*
+	rm -fr $(BUILD_DIR)
 
-deploy: deploy-init deploy-appbundle deploy-lib-jitsi-meet deploy-css deploy-local
+deploy: deploy-init deploy-appbundle deploy-lib-jitsi-meet deploy-libflac deploy-css deploy-local
 
 deploy-init:
+	rm -fr $(DEPLOY_DIR)
 	mkdir -p $(DEPLOY_DIR)
 
 deploy-appbundle:
-	cp $(OUTPUT_DIR)/app.bundle.min.js $(OUTPUT_DIR)/app.bundle.min.map \
-	$(OUTPUT_DIR)/app.bundle.js $(OUTPUT_DIR)/app.bundle.js.map \
-	$(OUTPUT_DIR)/external_api.js.map $(OUTPUT_DIR)/external_api.js \
-	$(OUTPUT_DIR)/external_api.min.map $(OUTPUT_DIR)/external_api.min.js \
-	$(DEPLOY_DIR)
+	cp \
+		$(BUILD_DIR)/app.bundle.min.js \
+		$(BUILD_DIR)/app.bundle.min.map \
+		$(BUILD_DIR)/do_external_connect.min.js \
+		$(BUILD_DIR)/do_external_connect.min.map \
+		$(BUILD_DIR)/external_api.min.js \
+		$(BUILD_DIR)/external_api.min.map \
+		$(BUILD_DIR)/flacEncodeWorker.min.js \
+		$(BUILD_DIR)/flacEncodeWorker.min.map \
+		$(BUILD_DIR)/device_selection_popup_bundle.min.js \
+		$(BUILD_DIR)/device_selection_popup_bundle.min.map \
+		$(BUILD_DIR)/dial_in_info_bundle.min.js \
+		$(BUILD_DIR)/dial_in_info_bundle.min.map \
+		$(BUILD_DIR)/alwaysontop.min.js \
+		$(BUILD_DIR)/alwaysontop.min.map \
+		$(OUTPUT_DIR)/analytics-ga.js \
+		$(DEPLOY_DIR)
 
 deploy-lib-jitsi-meet:
-	cp $(LIBJITSIMEET_DIR)/lib-jitsi-meet.min.js \
-	$(LIBJITSIMEET_DIR)/lib-jitsi-meet.min.map \
-	$(LIBJITSIMEET_DIR)/lib-jitsi-meet.js \
-	$(LIBJITSIMEET_DIR)/lib-jitsi-meet.js.map \
-	$(LIBJITSIMEET_DIR)/connection_optimization/external_connect.js \
-	$(DEPLOY_DIR)
+	cp \
+		$(LIBJITSIMEET_DIR)/lib-jitsi-meet.min.js \
+		$(LIBJITSIMEET_DIR)/lib-jitsi-meet.min.map \
+		$(LIBJITSIMEET_DIR)/connection_optimization/external_connect.js \
+		$(LIBJITSIMEET_DIR)/modules/browser/capabilities.json \
+		$(DEPLOY_DIR)
+
+deploy-libflac:
+	cp \
+		$(LIBFLAC_DIR)/libflac4-1.3.2.min.js \
+		$(LIBFLAC_DIR)/libflac4-1.3.2.min.js.mem \
+		$(DEPLOY_DIR)
+
 deploy-css:
-	(cd css; cat $(CSS_FILES)) | $(CLEANCSS) > css/all.css
+	$(NODE_SASS) $(STYLES_MAIN) $(STYLES_BUNDLE) && \
+	$(CLEANCSS) $(STYLES_BUNDLE) > $(STYLES_DESTINATION) ; \
+	rm $(STYLES_BUNDLE)
 
 deploy-local:
 	([ ! -x deploy-local.sh ] || ./deploy-local.sh)
 
-uglify:
-	$(UGLIFYJS) -p relative $(OUTPUT_DIR)/app.bundle.js -o $(OUTPUT_DIR)/app.bundle.min.js --source-map $(OUTPUT_DIR)/app.bundle.min.map --in-source-map $(OUTPUT_DIR)/app.bundle.js.map
-
-uglify-iframe-api:
-	$(UGLIFYJS) -p relative $(OUTPUT_DIR)/external_api.js -o $(OUTPUT_DIR)/external_api.min.js --source-map $(OUTPUT_DIR)/external_api.min.map --in-source-map $(OUTPUT_DIR)/external_api.js.map
-
+dev: deploy-init deploy-css deploy-lib-jitsi-meet deploy-libflac
+	$(WEBPACK_DEV_SERVER)
 
 source-package:
 	mkdir -p source_package/jitsi-meet/css && \
-	cp -r *.js *.html connection_optimization favicon.ico fonts images libs sounds LICENSE lang source_package/jitsi-meet && \
+	cp -r *.js *.html connection_optimization favicon.ico fonts images libs static sounds LICENSE lang source_package/jitsi-meet && \
 	cp css/all.css source_package/jitsi-meet/css && \
-	cp css/unsupported_browser.css source_package/jitsi-meet/css && \
 	(cd source_package ; tar cjf ../jitsi-meet.tar.bz2 jitsi-meet) && \
 	rm -rf source_package

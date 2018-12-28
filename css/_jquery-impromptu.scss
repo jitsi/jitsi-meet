@@ -1,0 +1,129 @@
+/*
+------------------------------
+	Impromptu
+------------------------------
+*/
+.jqifade{
+	position: absolute; 
+	background-color: #000;
+}
+div.jqi{ 
+	width: 400px;
+	position: absolute;
+    color: #3a3a3a;
+	background-color: #ffffff; 
+	font-size: 11px; 
+	text-align: left; 
+	border: solid 1px #eeeeee;
+	border-radius: 6px;
+	-moz-border-radius: 6px;
+	-webkit-border-radius: 6px;
+	padding: 7px;
+}
+div.jqi .jqicontainer{ 
+}
+div.jqi .jqiclose{ 
+	position: absolute;
+	top: 4px; right: -2px; 
+	width: 18px; 
+	cursor: default; 
+	color: #bbbbbb; 
+	font-weight: bold; 
+}
+div.jqi .jqistate{
+	background-color: #fff;
+}
+div.jqi .jqititle{
+	padding: 5px 10px;
+	font-size: 16px; 
+	line-height: 20px; 
+	border-bottom: solid 1px #eeeeee;
+}
+div.jqi .jqimessage{ 
+	padding: 10px; 
+	line-height: 20px; 
+	color: #444444; 
+}
+div.jqi .jqibuttons{ 
+	text-align: right; 
+	margin: 0 -7px -7px -7px;
+	border-top: solid 1px #e4e4e4; 
+	background-color: #f4f4f4;
+	border-radius: 0 0 6px 6px;
+	-moz-border-radius: 0 0 6px 6px;
+	-webkit-border-radius: 0 0 6px 6px;
+}
+div.jqi .jqibuttons button{ 
+	margin: 0;
+	padding: 5px 20px;
+	background-color: transparent !important;
+	font-weight: normal; 
+	border: none;
+	border-left: solid 1px #e4e4e4; 
+	color: #777; 
+	font-weight: bold; 
+	font-size: 12px; 
+}
+div.jqi .jqibuttons button.jqidefaultbutton{
+	color: #489afe;
+}
+
+div.jqi .jqibuttons button:disabled {
+    color: #b6b6b6 !important;
+}
+div.jqi .jqibuttons button:hover,
+div.jqi .jqibuttons button:focus{
+	color: #287ade;
+	outline: none;
+}
+.jqiwarning .jqi .jqibuttons{ 
+	background-color: #b95656;
+}
+
+/* sub states */
+div.jqi .jqiparentstate::after{ 
+	background-color: #777;
+	opacity: 0.6;
+	filter: alpha(opacity=60);
+	content: '';
+	position: absolute;
+	top:0;left:0;bottom:0;right:0;
+	border-radius: 6px;
+	-moz-border-radius: 6px;
+	-webkit-border-radius: 6px;
+}
+div.jqi .jqisubstate{
+	position: absolute;
+	top:0;
+	left: 20%;
+	width: 60%;
+	padding: 7px;
+	border: solid 1px #eeeeee;
+	border-top: none;
+	border-radius: 0 0 6px 6px;
+	-moz-border-radius: 0 0 6px 6px;
+	-webkit-border-radius: 0 0 6px 6px;
+}
+div.jqi .jqisubstate .jqibuttons button{
+	padding: 10px 18px;
+}
+
+/* arrows for tooltips/tours */
+.jqi .jqiarrow{ position: absolute; height: 0; width:0; line-height: 0; font-size: 0; border: solid 10px transparent;}
+
+.jqi .jqiarrowtl{ left: 10px; top: -20px; border-bottom-color: #ffffff; }
+.jqi .jqiarrowtc{ left: 50%; top: -20px; border-bottom-color: #ffffff; margin-left: -10px; }
+.jqi .jqiarrowtr{ right: 10px; top: -20px; border-bottom-color: #ffffff; }
+
+.jqi .jqiarrowbl{ left: 10px; bottom: -20px; border-top-color: #ffffff; }
+.jqi .jqiarrowbc{ left: 50%; bottom: -20px; border-top-color: #ffffff; margin-left: -10px; }
+.jqi .jqiarrowbr{ right: 10px; bottom: -20px; border-top-color: #ffffff; }
+
+.jqi .jqiarrowlt{ left: -20px; top: 10px; border-right-color: #ffffff; }
+.jqi .jqiarrowlm{ left: -20px; top: 50%; border-right-color: #ffffff; margin-top: -10px; }
+.jqi .jqiarrowlb{ left: -20px; bottom: 10px; border-right-color: #ffffff; }
+
+.jqi .jqiarrowrt{ right: -20px; top: 10px; border-left-color: #ffffff; }
+.jqi .jqiarrowrm{ right: -20px; top: 50%; border-left-color: #ffffff; margin-top: -10px; }
+.jqi .jqiarrowrb{ right: -20px; bottom: 10px; border-left-color: #ffffff; }
+

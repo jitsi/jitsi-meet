@@ -1,0 +1,38 @@
+Template: jitsi-meet/cert-choice
+Type: select
+__Choices: Generate a new self-signed certificate (You will later get a chance to obtain a Let's encrypt certificate), I want to use my own certificate
+_Description: SSL certificate for the Jitsi Meet instance
+ Jitsi Meet is best to be set up with an SSL certificate.
+ Having no certificate, a self-signed one will be generated.
+ By choosing self-signed you will later have a chance to install Let’s Encrypt certificates.
+ Having a certificate signed by a recognised CA, it can be uploaded on the server
+ and point its location. The default filenames will be /etc/ssl/--domain.name--.key
+ for the key and /etc/ssl/--domain.name--.crt for the certificate.
+
+Template: jitsi-meet/cert-path-key
+Type: string
+_Description: Full local server path to the SSL key file:
+ The full path to the SSL key file on the server.
+ If it has not been uploaded, now is a good time to do so.
+
+Template: jitsi-meet/cert-path-crt
+Type: string
+_Description: Full local server path to the SSL certificate file:
+ The full path to the SSL certificate file on the server.
+ If you haven't uploaded it, now is a good time to upload it in another console.
+
+Template: jitsi-meet/jvb-hostname
+Type: string
+_Description: The hostname of the current installation:
+ The value for the hostname that is set in Jitsi Videobridge installation.
+
+Template: jitsi-meet/jvb-serve
+Type: boolean
+Default: false
+_Description: for internal use
+ for internal use.
+
+Template: jitsi-videobridge/jvb-hostname
+Type: string
+_Description: Hostname:
+ The Jitsi Meet web config package needs the DNS hostname of your instance.

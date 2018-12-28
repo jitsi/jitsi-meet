@@ -1,0 +1,47 @@
+.overlay {
+    &__container,
+    &__container-light {
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        position: fixed;
+        z-index: $overlayZ;
+        background: $defaultBackground;
+        &.filmstrip-only {
+            @include transparentBg($filmstripOnlyOverlayBg, 0.8);
+        }
+    }
+
+    &__container-light {
+        @include transparentBg($defaultBackground, 0.7);
+        &.filmstrip-only {
+            @include transparentBg($filmstripOnlyOverlayBg, 0.2);
+        }
+    }
+
+    &__content {
+        position: absolute;
+        margin: 0 auto;
+        height: 100%;
+        width: 56%;
+        left: 50%;
+        @include transform(translateX(-50%));
+        &.filmstrip-only {
+            left: 0px;
+            width: 100%;
+            @include transform(none);
+        }
+
+        &_bottom {
+            position: absolute;
+            bottom: 0;
+        }
+    }
+
+    &__policy {
+        position: absolute;
+        bottom: 24px;
+        width: 100%;
+    }
+}

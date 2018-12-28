@@ -1,0 +1,99 @@
+/**
+* Initialize
+**/
+
+.popupmenu {
+    min-width: 75px;
+    text-align: left;
+    padding: 0;
+    white-space: nowrap;
+
+    &__item {
+        list-style-type: none;
+        height: 35px;
+
+        &:hover {
+            background-color: rgba(9, 30, 66, 0.04);
+        }
+    }
+
+    // Link Appearance
+    &__link,
+    &__contents {
+        display: block;
+        box-sizing: border-box;
+        text-decoration: none;
+        height: 100%;
+        font-size: 9pt;
+        width: 100%;
+        cursor: pointer;
+        padding: 0 5px;
+
+        &.disabled {
+            pointer-events: none;
+        }
+    }
+
+    &__text {
+        display: inline-block;
+        vertical-align: middle;
+    }
+
+    &__link {
+        i {
+            cursor: pointer;
+        }
+    }
+
+    &__contents {
+        display: flex;
+
+        /**
+         * Positioning styles on the slider and its container are used to make
+         * the container fit the popup width, by removing the slider from the
+         * page flow, and then making the slider fit the container.
+         */
+        .popupmenu__slider_container {
+            position: relative;
+            width: 100%;
+
+            .popupmenu__slider {
+                position: absolute;
+                top: 50%;
+                transform: translate(0, -50%);
+                width: 100%;
+            }
+        }
+    }
+
+    &__icon {
+        vertical-align: middle;
+        position: relative;
+        display: inline-block;
+        min-width: 20px;
+        height: 100%;
+
+        > * {
+            @include absoluteAligning();
+        }
+    }
+
+    .icon-kick,
+    .icon-play,
+    .icon-stop {
+        font-size: 8pt;
+    }
+}
+
+/**
+ * Override reset css styling modifying all lists and set negative margin to
+ * reduce the visibility of padding on AtlasKit
+ * InlineDialogs.
+ */
+ul.popupmenu {
+    margin: -15px;
+}
+
+span.remotevideomenu:hover ul.popupmenu, ul.popupmenu:hover {
+    display:block !important;
+}

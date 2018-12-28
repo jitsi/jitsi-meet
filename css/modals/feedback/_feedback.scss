@@ -1,0 +1,98 @@
+@-webkit-keyframes shake-rotate {
+    0% {
+        -webkit-transform:scale(1) rotate(0deg);
+        transform:scale(1) rotate(0deg)
+    }
+
+    50% {
+        -webkit-transform:scale(.8) rotate(-5deg);
+        transform:scale(.8) rotate(-5deg)
+    }
+
+    to {
+        -webkit-transform:scale(1) rotate(3deg);
+        transform:scale(1) rotate(3deg)
+    }
+}
+
+@keyframes shake-rotate {
+    0% {
+        -webkit-transform:scale(1) rotate(0deg);
+        transform:scale(1) rotate(0deg)
+    }
+
+    50% {
+        -webkit-transform:scale(.8) rotate(-5deg);
+        transform:scale(.8) rotate(-5deg)
+    }
+
+    to {
+        -webkit-transform:scale(1) rotate(3deg);
+        transform:scale(1) rotate(3deg)
+    }
+}
+
+.shake-rotate {
+    display: inline-block;
+
+    -webkit-animation-duration: .4s;
+    animation-duration: .4s;
+    -webkit-animation-iteration-count: infinite;
+    animation-iteration-count: infinite;
+    -webkit-animation-name: shake-rotate;
+    animation-name: shake-rotate;
+    -webkit-animation-timing-function: ease-in-out;
+    animation-timing-function: ease-in-out
+}
+
+.feedback-dialog {
+    .details {
+        textarea {
+            min-height: 100px;
+        }
+    }
+
+    .input-control {
+        background-color: $feedbackInputBg;
+        color: $feedbackInputTextColor;
+
+        &::-webkit-input-placeholder {
+            color: $feedbackInputPlaceholderColor;
+        }
+        &::-moz-placeholder {  /* Firefox 19+ */
+            color: $feedbackInputPlaceholderColor;
+        }
+        &:-ms-input-placeholder {
+            color: $feedbackInputPlaceholderColor;
+        }
+    }
+
+    .rating {
+        line-height: 1.2;
+        margin-top: 10px;
+        text-align: center;
+
+        .star-label {
+            font-size: 14px;
+            height: 16px;
+        }
+
+        .star-btn {
+            color: inherit;
+            cursor: pointer;
+            display: inline-block;
+            font-size: 34px;
+            outline: none;
+            position: relative;
+            text-decoration: none;
+            @include transition(all .2s ease);
+
+            &.active,
+            &:hover,
+            &.starHover {
+                color: #36B37E;
+            };
+
+        }
+    }
+}

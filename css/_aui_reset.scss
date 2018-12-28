@@ -1,0 +1,229 @@
+/* Fonts and line heights */
+/**
+ * RESET
+ */
+html,
+body,
+p,
+div,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+img,
+pre,
+form,
+fieldset {
+  margin: 0;
+  padding: 0;
+}
+ul,
+ol,
+dl {
+  margin: 0;
+}
+img,
+fieldset {
+  border: 0;
+}
+@-moz-document url-prefix() {
+  img {
+    font-size: 0;
+  }
+  img:-moz-broken {
+    font-size: inherit;
+  }
+}
+/* https://github.com/necolas/normalize.css */
+/* Customised to remove styles for unsupported browsers */
+details,
+main,
+summary {
+  display: block;
+}
+audio,
+canvas,
+progress,
+video {
+  display: inline-block;
+  vertical-align: baseline;
+}
+audio:not([controls]) {
+  display: none;
+  height: 0;
+}
+[hidden],
+template {
+  display: none;
+}
+input[type="button"],
+input[type="submit"],
+input[type="reset"] {
+  -webkit-appearance: button;
+}
+/**
+ * TYPOGRAPHY - 14px base font size, agnostic font stack
+ */
+body {
+  color: #333;
+  font-family: Arial, sans-serif;
+  font-size: 14px;
+  line-height: 1.42857142857143;
+}
+/* International Font Stacks*/
+[lang|=en] {
+  font-family: Arial, sans-serif;
+}
+[lang|=ja] {
+  font-family: "Hiragino Kaku Gothic Pro", "ヒラギノ角ゴ Pro W3", "メイリオ", Meiryo, "ＭＳ Ｐゴシック", Verdana, Arial, sans-serif;
+}
+/* Default margins */
+p,
+ul,
+ol,
+dl,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+blockquote,
+pre {
+  margin: 10px 0 0 0;
+}
+/* No top margin to interfere with box padding */
+p:first-child,
+ul:first-child,
+ol:first-child,
+dl:first-child,
+h1:first-child,
+h2:first-child,
+h3:first-child,
+h4:first-child,
+h5:first-child,
+h6:first-child,
+blockquote:first-child,
+pre:first-child {
+  margin-top: 0;
+}
+/* Headings: desired line height in px / font size = unitless line height */
+h1 {
+  color: #333;
+  font-size: 32px;
+  font-weight: normal;
+  line-height: 1.25;
+  text-transform: none;
+  margin: 30px 0 0 0;
+}
+h2 {
+  color: #333;
+  font-size: 24px;
+  font-weight: normal;
+  line-height: 1.25;
+  text-transform: none;
+  margin: 30px 0 0 0;
+}
+h3 {
+  color: #333;
+  font-size: 20px;
+  font-weight: normal;
+  line-height: 1.5;
+  text-transform: none;
+  margin: 30px 0 0 0;
+}
+h4 {
+  font-size: 16px;
+  font-weight: bold;
+  line-height: 1.25;
+  text-transform: none;
+  margin: 20px 0 0 0;
+}
+h5 {
+  color: #333;
+  font-size: 14px;
+  font-weight: bold;
+  line-height: 1.42857143;
+  text-transform: none;
+  margin: 20px 0 0 0;
+}
+h6 {
+  color: #707070;
+  font-size: 12px;
+  font-weight: bold;
+  line-height: 1.66666667;
+  text-transform: uppercase;
+  margin: 20px 0 0 0;
+}
+h1:first-child,
+h2:first-child,
+h3:first-child,
+h4:first-child,
+h5:first-child,
+h6:first-child {
+  margin-top: 0;
+}
+/* Nice styles for using subheadings */
+h1 + h2,
+h2 + h3,
+h3 + h4,
+h4 + h5,
+h5 + h6 {
+  margin-top: 10px;
+}
+
+
+/* Other typographical elements */
+small {
+  color: #707070;
+  font-size: 12px;
+  line-height: 1.33333333333333;
+}
+code,
+kbd {
+  font-family: monospace;
+}
+var,
+address,
+dfn,
+cite {
+  font-style: italic;
+}
+cite:before {
+  content: "\2014 \2009";
+}
+blockquote {
+  border-left: 1px solid #ccc;
+  color: #707070;
+  margin-left: 19px;
+  padding: 10px 20px;
+}
+blockquote > cite {
+  display: block;
+  margin-top: 10px;
+}
+q {
+  color: #707070;
+}
+q:before {
+  content: open-quote;
+}
+q:after {
+  content: close-quote;
+}
+abbr {
+  border-bottom: 1px #707070 dotted;
+  cursor: help;
+}
+
+a {
+  color: #3572b0;
+  text-decoration: none;
+}
+a:focus,
+a:hover,
+a:active {
+  text-decoration: underline;
+}

@@ -1,0 +1,45 @@
+.ringing {
+    display: block;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    position: fixed;
+    z-index: $ringingZ;
+    @include transparentBg(#283447, 0.95);
+
+    &.solidBG {
+        background: $defaultBackground;
+    }
+
+    &__content {
+        position: absolute;
+        width: 400px;
+        height: 250px;
+        left: 50%;
+        top: 50%;
+        margin-left: -200px;
+        margin-top: -125px;
+        text-align: center;
+        font-weight: normal;
+        color: #FFFFFF;
+    }
+
+    &__avatar {
+        width: 128px;
+        height: 128px;
+        border-radius: 50%;
+        border: 2px solid #1B2638;
+    }
+
+    &__status{
+        margin-top: 15px;
+        font-size: 14px;
+        line-height: 20px;
+    }
+
+    &__name {
+        font-size: 24px;
+        line-height: 32px;
+    }
+}

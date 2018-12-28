@@ -1,0 +1,181 @@
+PODS:
+  - boost-for-react-native (1.63.0)
+  - DoubleConversion (1.1.6)
+  - FLAnimatedImage (1.0.12)
+  - Folly (2016.10.31.00):
+    - boost-for-react-native
+    - DoubleConversion
+    - glog
+  - glog (0.3.5)
+  - GoogleSignIn (4.4.0):
+    - "GoogleToolboxForMac/NSDictionary+URLArguments (~> 2.1)"
+    - "GoogleToolboxForMac/NSString+URLArguments (~> 2.1)"
+    - GTMSessionFetcher/Core (~> 1.1)
+  - GoogleToolboxForMac/DebugUtils (2.2.0):
+    - GoogleToolboxForMac/Defines (= 2.2.0)
+  - GoogleToolboxForMac/Defines (2.2.0)
+  - "GoogleToolboxForMac/NSDictionary+URLArguments (2.2.0)":
+    - GoogleToolboxForMac/DebugUtils (= 2.2.0)
+    - GoogleToolboxForMac/Defines (= 2.2.0)
+    - "GoogleToolboxForMac/NSString+URLArguments (= 2.2.0)"
+  - "GoogleToolboxForMac/NSString+URLArguments (2.2.0)"
+  - GTMSessionFetcher/Core (1.2.1)
+  - ObjectiveDropboxOfficial (3.9.2)
+  - React (0.57.8):
+    - React/Core (= 0.57.8)
+  - react-native-background-timer (2.1.1):
+    - React
+  - react-native-calendar-events (1.6.4):
+    - React
+  - react-native-fast-image (5.1.1):
+    - FLAnimatedImage
+    - React
+    - SDWebImage/Core
+    - SDWebImage/GIF
+  - react-native-keep-awake (4.0.0):
+    - React
+  - react-native-webrtc (1.67.1):
+    - React
+  - React/Core (0.57.8):
+    - yoga (= 0.57.8.React)
+  - React/CxxBridge (0.57.8):
+    - Folly (= 2016.10.31.00)
+    - React/Core
+    - React/cxxreact
+  - React/cxxreact (0.57.8):
+    - boost-for-react-native (= 1.63.0)
+    - Folly (= 2016.10.31.00)
+    - React/jschelpers
+    - React/jsinspector
+  - React/DevSupport (0.57.8):
+    - React/Core
+    - React/RCTWebSocket
+  - React/fishhook (0.57.8)
+  - React/jschelpers (0.57.8):
+    - Folly (= 2016.10.31.00)
+    - React/PrivateDatabase
+  - React/jsinspector (0.57.8)
+  - React/PrivateDatabase (0.57.8)
+  - React/RCTActionSheet (0.57.8):
+    - React/Core
+  - React/RCTAnimation (0.57.8):
+    - React/Core
+  - React/RCTBlob (0.57.8):
+    - React/Core
+  - React/RCTImage (0.57.8):
+    - React/Core
+    - React/RCTNetwork
+  - React/RCTLinkingIOS (0.57.8):
+    - React/Core
+  - React/RCTNetwork (0.57.8):
+    - React/Core
+  - React/RCTText (0.57.8):
+    - React/Core
+  - React/RCTWebSocket (0.57.8):
+    - React/Core
+    - React/fishhook
+    - React/RCTBlob
+  - RNGoogleSignin (1.0.2):
+    - GoogleSignIn
+    - React
+  - RNSound (0.10.9):
+    - React/Core
+    - RNSound/Core (= 0.10.9)
+  - RNSound/Core (0.10.9):
+    - React/Core
+  - RNVectorIcons (6.0.2):
+    - React
+  - SDWebImage/Core (4.4.3)
+  - SDWebImage/GIF (4.4.3):
+    - FLAnimatedImage (~> 1.0)
+    - SDWebImage/Core
+  - yoga (0.57.8.React)
+
+DEPENDENCIES:
+  - DoubleConversion (from `../node_modules/react-native/third-party-podspecs/DoubleConversion.podspec`)
+  - Folly (from `../node_modules/react-native/third-party-podspecs/Folly.podspec`)
+  - glog (from `../node_modules/react-native/third-party-podspecs/glog.podspec`)
+  - ObjectiveDropboxOfficial
+  - react-native-background-timer (from `../node_modules/react-native-background-timer`)
+  - react-native-calendar-events (from `../node_modules/react-native-calendar-events`)
+  - react-native-fast-image (from `../node_modules/react-native-fast-image`)
+  - react-native-keep-awake (from `../node_modules/react-native-keep-awake`)
+  - react-native-webrtc (from `../node_modules/react-native-webrtc`)
+  - React/Core (from `../node_modules/react-native`)
+  - React/CxxBridge (from `../node_modules/react-native`)
+  - React/DevSupport (from `../node_modules/react-native`)
+  - React/RCTActionSheet (from `../node_modules/react-native`)
+  - React/RCTAnimation (from `../node_modules/react-native`)
+  - React/RCTImage (from `../node_modules/react-native`)
+  - React/RCTLinkingIOS (from `../node_modules/react-native`)
+  - React/RCTNetwork (from `../node_modules/react-native`)
+  - React/RCTText (from `../node_modules/react-native`)
+  - React/RCTWebSocket (from `../node_modules/react-native`)
+  - RNGoogleSignin (from `../node_modules/react-native-google-signin`)
+  - RNSound (from `../node_modules/react-native-sound`)
+  - RNVectorIcons (from `../node_modules/react-native-vector-icons`)
+  - yoga (from `../node_modules/react-native/ReactCommon/yoga`)
+
+SPEC REPOS:
+  https://github.com/cocoapods/specs.git:
+    - boost-for-react-native
+    - FLAnimatedImage
+    - GoogleSignIn
+    - GoogleToolboxForMac
+    - GTMSessionFetcher
+    - ObjectiveDropboxOfficial
+    - SDWebImage
+
+EXTERNAL SOURCES:
+  DoubleConversion:
+    :podspec: "../node_modules/react-native/third-party-podspecs/DoubleConversion.podspec"
+  Folly:
+    :podspec: "../node_modules/react-native/third-party-podspecs/Folly.podspec"
+  glog:
+    :podspec: "../node_modules/react-native/third-party-podspecs/glog.podspec"
+  React:
+    :path: "../node_modules/react-native"
+  react-native-background-timer:
+    :path: "../node_modules/react-native-background-timer"
+  react-native-calendar-events:
+    :path: "../node_modules/react-native-calendar-events"
+  react-native-fast-image:
+    :path: "../node_modules/react-native-fast-image"
+  react-native-keep-awake:
+    :path: "../node_modules/react-native-keep-awake"
+  react-native-webrtc:
+    :path: "../node_modules/react-native-webrtc"
+  RNGoogleSignin:
+    :path: "../node_modules/react-native-google-signin"
+  RNSound:
+    :path: "../node_modules/react-native-sound"
+  RNVectorIcons:
+    :path: "../node_modules/react-native-vector-icons"
+  yoga:
+    :path: "../node_modules/react-native/ReactCommon/yoga"
+
+SPEC CHECKSUMS:
+  boost-for-react-native: 39c7adb57c4e60d6c5479dd8623128eb5b3f0f2c
+  DoubleConversion: bb338842f62ab1d708ceb63ec3d999f0f3d98ecd
+  FLAnimatedImage: 4a0b56255d9b05f18b6dd7ee06871be5d3b89e31
+  Folly: c89ac2d5c6ab169cd7397ef27485c44f35f742c7
+  glog: e8acf0ebbf99759d3ff18c86c292a5898282dcde
+  GoogleSignIn: 7ff245e1a7b26d379099d3243a562f5747e23d39
+  GoogleToolboxForMac: ff31605b7d66400dcec09bed5861689aebadda4d
+  GTMSessionFetcher: 32aeca0aa144acea523e1c8e053089dec2cb98ca
+  ObjectiveDropboxOfficial: aa792e0556ceb7b72955fa29a2709072f6e35fd9
+  React: 1fe0eb13d90b625d94c3b117c274dcfd2e760e11
+  react-native-background-timer: bb7a98c8e97fc7c290de2d423dd09ddb73dcbcbb
+  react-native-calendar-events: fe6fbc8ed337a7423c98f2c9012b25f20444de09
+  react-native-fast-image: cba3d9bf9c2cf8ddb643d887a686c53a5dd90a2c
+  react-native-keep-awake: 0de4bd66de0c23178107dce0c2fcc3354b2a8e94
+  react-native-webrtc: 31b6d3f1e3e2ce373aa43fd682b04367250f807d
+  RNGoogleSignin: 8b08beabff7f3b1373b2821b0944b38de36ba95e
+  RNSound: b360b3862d3118ed1c74bb9825696b5957686ac4
+  RNVectorIcons: 8c52e1e8da1153613fdef44748e865c25556cb9c
+  SDWebImage: c5594f1a19c48d526d321e548902b56b479cd508
+  yoga: b1ce48b6cf950b98deae82838f5173ea7cf89e85
+
+PODFILE CHECKSUM: 2fa79bc1fe2fe42efb63895fdb0cb84d5f578884
+
+COCOAPODS: 1.5.3

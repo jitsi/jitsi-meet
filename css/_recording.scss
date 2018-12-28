@@ -1,0 +1,109 @@
+.recordingSpinner {
+    vertical-align: top;
+}
+
+.recording-dialog {
+    flex: 0;
+    flex-direction: column;
+
+    .recording-header {
+        display: flex;
+        flex: 0;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+
+        .recording-title {
+            font-size: 16px;
+            font-weight: bold;
+        }
+    }
+
+    .authorization-panel {
+        display: flex;
+        flex-direction: column;
+        margin-bottom: 10px;
+        padding-bottom: 10px;
+
+        .dropbox-sign-in {
+            align-items: center;
+            border: 1px solid #4285f4;
+            background-color: white;
+            border-radius: 2px;
+            cursor: pointer;
+            display: inline-flex;
+            padding: 10px;
+            font-size: 18px;
+            font-weight: 600;
+            margin: 10px 0px;
+            color: #4285f4;
+
+            .dropbox-logo {
+                background-color: white;
+                border-radius: 2px;
+                display: inline-block;
+                padding-right: 5px;
+                height: 18px;
+            }
+        }
+
+        .logged-in-panel {
+            padding: 10px;
+        }
+    }
+}
+
+.live-stream-dialog {
+    /**
+     * Set font-size to be consistent with Atlaskit FieldText.
+     */
+    font-size: 14px;
+
+    .broadcast-dropdown,
+    .broadcast-dropdown-trigger {
+        text-align: left;
+    }
+
+    .form-footer {
+        display: flex;
+        margin-top: 5px;
+        text-align: right;
+    }
+
+    .live-stream-cta {
+        a {
+            cursor: pointer;
+        }
+    }
+
+    .google-api {
+        margin-top: 10px;
+        min-height: 36px;
+        text-align: center;
+        width: 100%;
+    }
+
+    .google-error {
+        color: $errorColor;
+    }
+
+    .google-panel {
+        align-items: center;
+        border-bottom: 2px solid rgba(0, 0, 0, 0.3);
+        display: flex;
+        flex-direction: column;
+        padding-bottom: 10px;
+    }
+
+    .helper-link {
+        cursor: pointer;
+        display: inline-block;
+        flex-shrink: 0;
+        margin-left: auto;
+    }
+
+    .warning-text {
+        color:#FFD740;
+        font-size: 12px;
+    }
+}

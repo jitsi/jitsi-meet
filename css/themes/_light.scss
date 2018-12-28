@@ -1,0 +1,112 @@
+/**
+ * Base
+ */
+$baseLight: #FFFFFF;
+
+/**
+* Controls
+*/
+$controlBackground: $baseLight;
+$controlColor: #333333;
+$sliderTrackBackground: #474747;
+$sliderThumbBackground: #3572b0;
+
+/**
+* Buttons
+*/
+$buttonBackground: #44A5FF;
+$buttonHoverBackground: #2c4062;
+$buttonBorder: transparent;
+$buttonHoverBorder: transparent;
+$buttonColor: #eceef1;
+
+$buttonLightBackground: #f5f5f5;
+$buttonLightHoverBackground: #e9e9e9;
+$buttonLightBorder: #ccc;
+$buttonLightHoverBorder: #999;
+
+$buttonLinkBackground: transparent;
+$buttonLinkColor: #0090e8;
+
+$primaryButtonBackground: #3572b0;
+$primaryButtonHoverBackground: #2a67a5;
+$primaryButtonColor: $baseLight;
+$primaryButtonFontWeight: 400;
+
+$buttonShadowColor: #192d4f;
+
+$overlayButtonBg: #0074E0;
+
+/**
+* Color variables
+**/
+$defaultBackground: #474747;
+$filmstripOnlyOverlayBg: #000;
+$reloadProgressBarBg: #0074E0;
+
+/**
+ * Dialog colors
+ **/
+$auiDialogColor: #eceef1;
+$auiDialogBg: #253858;
+$auiDialogContentBg: #344563;
+$auiBorderColor: #253858;
+$dialogTitleFontWeight: 400;
+$dialogErrorText: #344563;
+
+/**
+* Inlay colors
+**/
+$inlayColorBg: lighten($defaultBackground, 20%);
+$inlayBorderColor: lighten($baseLight, 10%);
+$inlayIconBg: #000;
+$inlayIconColor: #fff;
+$inlayFilmstripOnlyColor: #474747;
+$inlayFilmstripOnlyBg: #fff;
+
+// Main controls
+$placeHolderColor: #a7a7a7;
+$readOnlyInputColor: #a7a7a7;
+$defaultDarkSelectionColor: #ccc;
+$buttonFontWeight: 400;
+$labelFontWeight: 400;
+$hintFontSize: em(13, 14);
+$linkFontColor: #3572b0;
+$linkHoverFontColor: darken(#3572b0, 10%);
+$dropdownColor: #333;
+$errorColor: #c61600;
+
+// Feedback colors
+$feedbackCancelFontColor: #333;
+
+// Popover colors
+$popoverBg: #000;
+$popoverFontColor: #ffffff;
+$popupMenuSelectedItemBackground: rgba(256, 256, 256, .2);
+
+// Toolbar
+$secondaryToolbarBg: rgba(0, 0, 0, 0.5);
+// TOFIX: Once moved to react rename to match the side panel class name.
+$sideToolbarContainerBg: rgba(0, 0, 0, 0.75);
+$toolbarBackground: rgba(0, 0, 0, 0.5);
+$toolbarBadgeBackground: #165ECC;
+$toolbarBadgeColor: #FFFFFF;
+$toolbarButtonColor: #FFFFFF;
+$toolbarSelectBackground: rgba(0, 0, 0, .6);
+$toolbarTitleColor: #FFFFFF;
+$toolbarToggleBackground: #12499C;
+
+
+/**
+ * Forms
+ */
+//dropdown
+$selectFontColor: $controlColor;
+$selectBg: $controlBackground;
+$selectActiveBg: darken($controlBackground, 5%);
+$selectActiveItemBg: darken($controlBackground, 20%);
+
+/**
+ * TODO: Replace by themed component.
+ */
+$videoQualityActive: #4C9AFF;

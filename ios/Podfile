@@ -1,0 +1,52 @@
+platform :ios, '10.0'
+
+workspace 'jitsi-meet'
+
+target 'JitsiMeet' do
+  project 'sdk/sdk.xcodeproj'
+
+  pod 'React', :path => '../node_modules/react-native', :subspecs => [
+    'Core',
+    'CxxBridge',
+    'DevSupport',
+    'RCTActionSheet',
+    'RCTAnimation',
+    'RCTImage',
+    'RCTLinkingIOS',
+    'RCTNetwork',
+    'RCTText',
+    'RCTWebSocket',
+  ]
+  pod 'yoga', :path => '../node_modules/react-native/ReactCommon/yoga'
+
+  pod 'DoubleConversion',
+    :podspec => '../node_modules/react-native/third-party-podspecs/DoubleConversion.podspec'
+  pod 'glog',
+    :podspec => '../node_modules/react-native/third-party-podspecs/glog.podspec'
+  pod 'Folly',
+    :podspec => '../node_modules/react-native/third-party-podspecs/Folly.podspec'
+
+  pod 'ObjectiveDropboxOfficial'
+
+  pod 'react-native-background-timer',
+    :path => '../node_modules/react-native-background-timer'
+  pod 'react-native-fast-image',
+    :path => '../node_modules/react-native-fast-image'
+  pod 'react-native-keep-awake',
+    :path => '../node_modules/react-native-keep-awake'
+  pod 'react-native-webrtc', :path => '../node_modules/react-native-webrtc'
+  pod 'RNGoogleSignin',
+    :path => '../node_modules/react-native-google-signin'
+  pod 'RNSound', :path => '../node_modules/react-native-sound'
+  pod 'RNVectorIcons', :path => '../node_modules/react-native-vector-icons'
+  pod 'react-native-calendar-events',
+    :path => '../node_modules/react-native-calendar-events'
+end
+
+post_install do |installer|
+  installer.pods_project.targets.each do |target|
+    target.build_configurations.each do |config|
+      config.build_settings['ENABLE_BITCODE'] = 'NO'
+    end
+  end
+end

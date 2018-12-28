@@ -1,0 +1,110 @@
+.inlay {
+    margin-top: 14%;
+    @include border-radius(4px);
+    padding: 40px 38px 44px;
+    color: #fff;
+    background: $inlayColorBg;
+    text-align: center;
+
+    &__title {
+        margin: 17px 0;
+        padding-bottom: 17px;
+        color: $popoverFontColor;
+        font-size: 21px;
+        letter-spacing: 0.3px;
+        border-bottom: 1px solid $inlayBorderColor;
+    }
+
+    &__text {
+        color: $popoverFontColor;
+        display: block;
+        margin-top: 22px;
+        font-size: 16px;
+    }
+
+    &__icon {
+        margin: 0 10px;
+        font-size: 50px;
+    }
+
+    &-filmstrip-only {
+        background-color: $inlayFilmstripOnlyBg;
+        color: $inlayFilmstripOnlyColor;
+        margin-left: 20px;
+        margin-right: 20px;
+        margin-top: 20px;
+        bottom: 30px;
+        position: absolute;
+        display: flex;
+        max-height: 120px;
+        height: 80%;
+        right: 0px;
+        border-radius: 4px;
+        overflow: hidden;
+        &__content {
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            position: relative;
+            > .button-control {
+                align-self: center;
+            }
+            > #reloadProgressBar {
+                position: absolute;
+                left: 0px;
+                bottom: 0px;
+                margin-bottom: 0px;
+                width: 100%;
+                border-radius: 0px;
+            }
+        }
+        &__title {
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        &__container {
+            align-self: center;
+        }
+
+        &__text {
+            margin-top: 10px;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        &__icon {
+            font-size: 50px;
+            align-self: center;
+            color: $inlayIconColor;
+            opacity: 0.6;
+        }
+        &__icon-container {
+            text-align: center;
+            display: flex;
+            justify-content: center;
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0px;
+        }
+
+        &__avatar-container {
+            height: 100%;
+            position: relative;
+            > img {
+                height: 100%;
+            }
+        }
+
+        &__icon-background {
+            background: $inlayIconBg;
+            opacity: 0.6;
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0px;
+        }
+    }
+
+}

@@ -1,0 +1,65 @@
+.desktop-picker-pane {
+    height: 320px;
+    overflow-x: hidden;
+    overflow-y: auto;
+    width: 100%;
+
+    &.source-type-screen {
+        .desktop-picker-source {
+            margin-left: auto;
+            margin-right: auto;
+            width: 50%;
+        }
+
+        .desktop-source-preview-thumbnail {
+            width: 100%;
+        }
+
+        .desktop-source-preview-label {
+            display: none;
+        }
+    }
+
+    &.source-type-window {
+        .desktop-picker-source {
+            display: inline-block;
+            width: 30%;
+        }
+    }
+
+    &-spinner {
+        justify-content: center;
+        display: flex;
+        height: 100%;
+        align-items: center;
+    }
+}
+
+.desktop-picker-source {
+    margin-top: 10px;
+    text-align: center;
+
+    &.is-selected {
+        .desktop-source-preview-image-container {
+            background: rgba(255,255,255,0.3);
+            border-radius: $borderRadius;
+        }
+    }
+}
+
+.desktop-source-preview-label {
+    margin-top: 3px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.desktop-source-preview-thumbnail {
+    box-shadow: 5px 5px 5px grey;
+    height: auto;
+    max-width: 100%;
+}
+
+.desktop-source-preview-image-container {
+    padding: 10px;
+}

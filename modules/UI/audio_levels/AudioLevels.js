@@ -1,260 +1,106 @@
-/* global APP, interfaceConfig, $ */
-/* jshint -W101 */
+/* global interfaceConfig */
 
-import CanvasUtil from './CanvasUtils';
-import FilmStrip from '../videolayout/FilmStrip';
-
-const LOCAL_LEVEL = 'local';
-
-let ASDrawContext = null;
-let audioLevelCanvasCache = {};
-let dominantSpeakerAudioElement = null;
-
-function initDominantSpeakerAudioLevels(dominantSpeakerAvatarSize) {
-    let ASRadius = dominantSpeakerAvatarSize / 2;
-    let ASCenter = (dominantSpeakerAvatarSize + ASRadius) / 2;
-
-    // Draw a circle.
-    ASDrawContext.beginPath();
-    ASDrawContext.arc(ASCenter, ASCenter, ASRadius, 0, 2 * Math.PI);
-    ASDrawContext.closePath();
-
-    // Add a shadow around the circle
-    ASDrawContext.shadowColor = interfaceConfig.SHADOW_COLOR;
-    ASDrawContext.shadowOffsetX = 0;
-    ASDrawContext.shadowOffsetY = 0;
-}
+import UIUtil from '../util/UIUtil';
 
 /**
- * Resizes the given audio level canvas to match the given thumbnail size.
- */
-function resizeAudioLevelCanvas(audioLevelCanvas, thumbnailWidth, thumbnailHeight) {
-    audioLevelCanvas.width = thumbnailWidth + interfaceConfig.CANVAS_EXTRA;
-    audioLevelCanvas.height = thumbnailHeight + interfaceConfig.CANVAS_EXTRA;
-}
-
-/**
- * Draws the audio level canvas into the cached canvas object.
- *
- * @param id of the user for whom we draw the audio level
- * @param audioLevel the newAudio level to render
- */
-function drawAudioLevelCanvas(id, audioLevel) {
-    if (!audioLevelCanvasCache[id]) {
-
-        let videoSpanId = getVideoSpanId(id);
-
-        let audioLevelCanvasOrig = $(`#${videoSpanId}>canvas`).get(0);
-
-        /*
-         * FIXME Testing has shown that audioLevelCanvasOrig may not exist.
-         * In such a case, the method CanvasUtil.cloneCanvas may throw an
-         * error. Since audio levels are frequently updated, the errors have
-         * been observed to pile into the console, strain the CPU.
-         */
-        if (audioLevelCanvasOrig) {
-            audioLevelCanvasCache[id]
-                = CanvasUtil.cloneCanvas(audioLevelCanvasOrig);
-        }
-    }
-
-    let canvas = audioLevelCanvasCache[id];
-
-    if (!canvas) {
-        return;
-    }
-
-    let drawContext = canvas.getContext('2d');
-
-    drawContext.clearRect(0, 0, canvas.width, canvas.height);
-
-    let shadowLevel = getShadowLevel(audioLevel);
-
-    if (shadowLevel > 0) {
-        // drawContext, x, y, w, h, r, shadowColor, shadowLevel
-        CanvasUtil.drawRoundRectGlow(
-            drawContext,
-            interfaceConfig.CANVAS_EXTRA / 2, interfaceConfig.CANVAS_EXTRA / 2,
-            canvas.width - interfaceConfig.CANVAS_EXTRA,
-            canvas.height - interfaceConfig.CANVAS_EXTRA,
-            interfaceConfig.CANVAS_RADIUS,
-            interfaceConfig.SHADOW_COLOR,
-            shadowLevel);
-    }
-}
-
-/**
- * Returns the shadow/glow level for the given audio level.
- *
- * @param audioLevel the audio level from which we determine the shadow
- * level
- */
-function getShadowLevel (audioLevel) {
-    let shadowLevel = 0;
-
-    if (audioLevel <= 0.3) {
-        shadowLevel = Math.round(
-            interfaceConfig.CANVAS_EXTRA/2*(audioLevel/0.3));
-    } else if (audioLevel <= 0.6) {
-        shadowLevel = Math.round(
-            interfaceConfig.CANVAS_EXTRA/2*((audioLevel - 0.3) / 0.3));
-    } else {
-        shadowLevel = Math.round(
-            interfaceConfig.CANVAS_EXTRA/2*((audioLevel - 0.6) / 0.4));
-    }
-
-    return shadowLevel;
-}
-
-/**
- * Returns the video span id corresponding to the given user id
- */
-function getVideoSpanId(id) {
-    let videoSpanId = null;
-
-    if (id === LOCAL_LEVEL || APP.conference.isLocalId(id)) {
-        videoSpanId = 'localVideoContainer';
-    } else {
-        videoSpanId = `participant_${id}`;
-    }
-
-    return videoSpanId;
-}
-
-/**
- * The audio Levels plugin.
+ * Responsible for drawing audio levels.
  */
 const AudioLevels = {
-
-    init () {
-        dominantSpeakerAudioElement =  $('#dominantSpeakerAudioLevel')[0];
-        ASDrawContext = dominantSpeakerAudioElement.getContext('2d');
-
-        let parentContainer = $("#dominantSpeaker");
-        let dominantSpeakerWidth = parentContainer.width();
-        let dominantSpeakerHeight = parentContainer.height();
-
-        dominantSpeakerAudioElement.width = dominantSpeakerWidth;
-        dominantSpeakerAudioElement.height = dominantSpeakerHeight;
-
-        let dominantSpeakerAvatar = $("#dominantSpeakerAvatar");
-        initDominantSpeakerAudioLevels(dominantSpeakerAvatar.width());
-    },
-
     /**
-     * Updates the audio level canvas for the given id. If the canvas
-     * didn't exist we create it.
-     */
-    updateAudioLevelCanvas (id, thumbWidth, thumbHeight) {
-        let videoSpanId = 'localVideoContainer';
-        if (id) {
-            videoSpanId = `participant_${id}`;
-        }
-
-        let videoSpan = document.getElementById(videoSpanId);
-
-        if (!videoSpan) {
-            if (id) {
-                console.error("No video element for id", id);
-            } else {
-                console.error("No video element for local video.");
-            }
-            return;
-        }
-
-        let audioLevelCanvas = $(`#${videoSpanId}>canvas`);
-
-        if (!audioLevelCanvas || audioLevelCanvas.length === 0) {
-
-            audioLevelCanvas = document.createElement('canvas');
-            audioLevelCanvas.className = "audiolevel";
-            audioLevelCanvas.style.bottom
-                = `-${interfaceConfig.CANVAS_EXTRA/2}px`;
-            audioLevelCanvas.style.left
-                = `-${interfaceConfig.CANVAS_EXTRA/2}px`;
-            resizeAudioLevelCanvas(audioLevelCanvas, thumbWidth, thumbHeight);
-
-            videoSpan.appendChild(audioLevelCanvas);
-        } else {
-            audioLevelCanvas = audioLevelCanvas.get(0);
-
-            resizeAudioLevelCanvas(audioLevelCanvas, thumbWidth, thumbHeight);
-        }
-    },
-
-    /**
-     * Updates the audio level UI for the given id.
+     * Fills the dot(s) with the specified "index", with as much opacity as
+     * indicated by "opacity".
      *
-     * @param id id of the user for whom we draw the audio level
-     * @param audioLevel the newAudio level to render
+     * @param {string} elementID the parent audio indicator span element
+     * @param {number} index the index of the dots to fill, where 0 indicates
+     * the middle dot and the following increments point toward the
+     * corresponding pair of dots.
+     * @param {number} opacity the opacity to set for the specified dot.
      */
-    updateAudioLevel (id, audioLevel, largeVideoId) {
-        drawAudioLevelCanvas(id, audioLevel);
+    _setDotLevel(elementID, index, opacity) {
+        let audioSpan
+            = document.getElementById(elementID)
+                .getElementsByClassName('audioindicator');
 
-        let videoSpanId = getVideoSpanId(id);
-
-        let audioLevelCanvas = $(`#${videoSpanId}>canvas`).get(0);
-
-        if (!audioLevelCanvas) {
+        // Make sure the audio span is still around.
+        if (audioSpan && audioSpan.length > 0) {
+            audioSpan = audioSpan[0];
+        } else {
             return;
         }
 
-        let drawContext = audioLevelCanvas.getContext('2d');
+        const audioTopDots
+            = audioSpan.getElementsByClassName('audiodot-top');
+        const audioDotMiddle
+            = audioSpan.getElementsByClassName('audiodot-middle');
+        const audioBottomDots
+            = audioSpan.getElementsByClassName('audiodot-bottom');
 
-        let canvasCache = audioLevelCanvasCache[id];
+        // First take care of the middle dot case.
+        if (index === 0) {
+            audioDotMiddle[0].style.opacity = opacity;
 
-        drawContext.clearRect(
-            0, 0, audioLevelCanvas.width, audioLevelCanvas.height
-        );
-        drawContext.drawImage(canvasCache, 0, 0);
-
-        if (id === LOCAL_LEVEL) {
-            id = APP.conference.getMyUserId();
-            if (!id) {
-                return;
-            }
+            return;
         }
 
-        if(id === largeVideoId) {
-            window.requestAnimationFrame(function () {
-                AudioLevels.updateDominantSpeakerAudioLevel(audioLevel);
-            });
-        }
+        // Index > 0 : we are setting non-middle dots.
+        index--;// eslint-disable-line no-param-reassign
+        audioBottomDots[index].style.opacity = opacity;
+        audioTopDots[this.sideDotsCount - index - 1].style.opacity = opacity;
     },
 
-    updateDominantSpeakerAudioLevel (audioLevel) {
-        if($("#dominantSpeaker").css("visibility") == "hidden"
-            || ASDrawContext === null) {
+    /**
+     * Updates the audio level of the large video.
+     *
+     * @param audioLevel the new audio level to set.
+     */
+    updateLargeVideoAudioLevel(elementId, audioLevel) {
+        const element = document.getElementById(elementId);
+
+        if (!UIUtil.isVisible(element)) {
             return;
         }
 
-        ASDrawContext.clearRect(0, 0,
-            dominantSpeakerAudioElement.width,
-            dominantSpeakerAudioElement.height);
+        let level = parseFloat(audioLevel);
 
-        if (!audioLevel) {
-            return;
+        level = isNaN(level) ? 0 : level;
+
+        let shadowElement = element.getElementsByClassName('dynamic-shadow');
+
+        if (shadowElement && shadowElement.length > 0) {
+            shadowElement = shadowElement[0];
         }
 
-        ASDrawContext.shadowBlur = getShadowLevel(audioLevel);
-
-        // Fill the shape.
-        ASDrawContext.fill();
+        shadowElement.style.boxShadow = this._updateLargeVideoShadow(level);
     },
 
-    updateCanvasSize (thumbWidth, thumbHeight) {
-        let canvasWidth = thumbWidth + interfaceConfig.CANVAS_EXTRA;
-        let canvasHeight = thumbHeight + interfaceConfig.CANVAS_EXTRA;
+    /**
+     * Updates the large video shadow effect.
+     */
+    _updateLargeVideoShadow(level) {
+        const scale = 2;
 
-        FilmStrip.getThumbs().children('canvas').each(function () {
-            $(this).attr('width', canvasWidth);
-            $(this).attr('height', canvasHeight);
-        });
+        // Internal circle audio level.
+        const int = {
+            level: level > 0.15 ? 20 : 0,
+            color: interfaceConfig.AUDIO_LEVEL_PRIMARY_COLOR
+        };
 
-        Object.keys(audioLevelCanvasCache).forEach(function (id) {
-            audioLevelCanvasCache[id].width = canvasWidth;
-            audioLevelCanvasCache[id].height = canvasHeight;
-        });
+        // External circle audio level.
+        const ext = {
+            level: ((int.level * scale * level) + int.level).toFixed(0),
+            color: interfaceConfig.AUDIO_LEVEL_SECONDARY_COLOR
+        };
+
+        // Internal blur.
+        int.blur = int.level ? 2 : 0;
+
+        // External blur.
+        ext.blur = ext.level ? 6 : 0;
+
+        return [
+            `0 0 ${int.blur}px ${int.level}px ${int.color}`,
+            `0 0 ${ext.blur}px ${ext.level}px ${ext.color}`
+        ].join(', ');
     }
 };
 

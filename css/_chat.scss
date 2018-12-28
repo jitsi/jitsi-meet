@@ -1,0 +1,293 @@
+#sideToolbarContainer {
+    background-color: $newToolbarBackgroundColor;
+    display: flex;
+    /**
+     * Make the sidebar flush with the top of the toolbar. Take the size of
+     * the toolbar and subtract from 100%.
+     */
+    height: calc(100% - #{$newToolbarSizeWithPadding});
+    left: -$sidebarWidth;
+    overflow: hidden;
+    position: absolute;
+    top: 0;
+    transition: left 0.5s;
+    width: $sidebarWidth;
+    z-index: $sideToolbarContainerZ;
+
+    /**
+     * The sidebar (chat) is off-screen when hidden. Move it flush to the left
+     * side of the window when it should be visible.
+     */
+    &.slideInExt {
+        left: 0;
+    }
+
+    .sideToolbarContainer__inner {
+        box-sizing: border-box;
+        color: #FFF;
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+        width: $sidebarWidth;
+    }
+}
+
+#chat_container * {
+    -webkit-user-select: text;
+    user-select: text;
+}
+
+#chatconversation {
+    box-sizing: border-box;
+    flex: 1;
+    font-size: 10pt;
+    line-height: 20px;
+    margin-top: 15px;
+    overflow: auto;
+    padding: 5px;
+    text-align: left;
+    width: $sidebarWidth;
+    word-wrap: break-word;
+
+    a {
+        display: block;
+    }
+
+    a:link {
+        color: rgb(184, 184, 184);
+    }
+
+    a:visited {
+        color: white;
+    }
+
+    a:hover {
+        color: rgb(213, 213, 213);
+    }
+
+    a:active {
+        color: black;
+    }
+
+    &::-webkit-scrollbar {
+        background: #06a5df;
+        width: 7px;
+    }
+
+    &::-webkit-scrollbar-button {
+        display: none;
+    }
+
+    &::-webkit-scrollbar-track {
+        background: black;
+    }
+
+    &::-webkit-scrollbar-track-piece {
+        background: black;
+    }
+
+    &::-webkit-scrollbar-thumb {
+        background: #06a5df;
+        border-radius: 4px;
+    }
+}
+
+.chat-close {
+    background: gray;
+    border: 3px solid rgba(255, 255, 255, 0.1);
+    border-radius: 100%;
+    color: white;
+    cursor:pointer;
+    height: 10px;
+    line-height: 10px;
+    padding: 4px;
+    position: absolute;
+    right: 5px;
+    text-align: center;
+    top: 5px;
+    width: 10px;
+    z-index: 1;
+}
+
+#chat-input {
+    background-color: $newToolbarBackgroundColor;
+    display: flex;
+}
+
+.remoteuser {
+    color: #B8C7E0;
+}
+
+.usrmsg-form {
+    flex: 1;
+    margin-left: 5px;
+}
+
+#usermsg {
+    background-color: $newToolbarBackgroundColor;
+    border: 0px none;
+    border-radius:0;
+    box-shadow: none;
+    color: white;
+    font-size: 10pt;
+    line-height: 30px;
+    padding: 5px 5px 5px 0px;
+    max-height:150px;
+    min-height:35px;
+    overflow-y: auto;
+    resize: none;
+    width: 100%;
+    word-break: break-word;
+}
+
+#usermsg:hover {
+    border: 0px none;
+    box-shadow: none;
+}
+
+#nickname {
+    position: absolute;
+    text-align: center;
+    color: #9d9d9d;
+    font-size: 18px;
+    top: 100px;
+    left: 5px;
+    right: 5px;
+    width: 95%;
+}
+
+#chat_container .display-name {
+    float: left;
+    padding-left: 5px;
+    font-weight: bold;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    width: 95%;
+    overflow: hidden;
+}
+
+#chat_container .timestamp {
+    float: right;
+    padding-right: 5px;
+    font-size: 11px;
+}
+
+.usermessage {
+    padding-top: 20px;
+    padding-left: 5px;
+}
+
+.chatArrow {
+    height: 15px;
+    left: -10px;
+    position: absolute;
+}
+
+.chatmessage {
+    background-color: $newToolbarBackgroundColor;
+    width: 93%;
+    margin-left: 9px;
+    margin-right: auto;
+    border-radius: 5px;
+    border-top-left-radius: 0px;
+    margin-top: 3px;
+    color: white;
+    padding-bottom: 3px;
+    position: relative;
+
+    &.localuser .display-name {
+        color: #4C9AFF
+    }
+
+    &.error {
+        .chatArrow,
+        .timestamp,
+        .display-name {
+            display: none;
+        }
+
+        .usermessage {
+            color: red;
+            padding: 0;
+        }
+    }
+}
+
+.smiley {
+    font-size: 14pt;
+}
+
+#smileys {
+    font-size: 20pt;
+    display: inline-block;
+    height: 26px;
+    margin: auto;
+    cursor: pointer;
+}
+
+#smileys img {
+    width: 22px;
+    padding: 2px;
+}
+
+#smileysarea {
+    background-color: $newToolbarBackgroundColor;
+    border: 0px none;
+    display: flex;
+    height: 70px;
+    max-height: 150px;
+    min-height: 35px;
+    min-width: 31px;
+    padding: 0px;
+    overflow: hidden;
+    width: 17%;
+}
+
+.smiley-input {
+    position: relative;
+}
+
+.smileys-panel {
+    bottom: 100%;
+    box-sizing: border-box;
+    height: 0;
+    overflow: hidden;
+    position: absolute;
+    transition: height 0.3s;
+    width: $sidebarWidth;
+
+    &.show-smileys {
+        height: 146px;
+    }
+
+    #smileysContainer {
+        background-color: $newToolbarBackgroundColor;
+        border-bottom: 1px solid;
+        border-top: 1px solid;
+    }
+}
+
+#smileysContainer .smiley {
+    font-size: 20pt;
+}
+
+.smileyContainer {
+    width: 40px;
+    height: 36px;
+    display: inline-block;
+    text-align: center;
+}
+
+.smileyContainer:hover {
+    background-color: $newToolbarButtonToggleColor;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+#usermsg::-webkit-input-placeholder {
+    line-height: 30px;
+}
+
+#usermsg::-webkit-scrollbar-track-piece {
+    background: #3a3a3a;
+}

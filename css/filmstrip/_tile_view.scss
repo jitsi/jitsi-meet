@@ -1,0 +1,113 @@
+/**
+ * CSS styles that are specific to the filmstrip that shows the thumbnail tiles.
+ */
+.tile-view {
+    /**
+     * Add a border around the active speaker to make the thumbnail easier to
+     * see.
+     */
+    .active-speaker {
+        box-shadow: 0 0 5px 3px $videoThumbnailSelected
+    }
+
+    #filmstripRemoteVideos {
+        align-items: center;
+        box-sizing: border-box;
+        display: flex;
+        flex-direction: column;
+        height: 100vh;
+        width: 100vw;
+    }
+
+    .filmstrip__videos .videocontainer {
+        &:not(.active-speaker),
+        &:hover:not(.active-speaker) {
+            border: none;
+            box-shadow: none;
+        }
+    }
+
+    #remoteVideos {
+        /**
+         * Height is modified with an inline style in horizontal filmstrip mode
+         * so !important is used to override that.
+         */
+        height: 100% !important;
+        width: 100%;
+    }
+
+    .filmstrip {
+        align-items: center;
+        display: flex;
+        height: 100%;
+        justify-content: center;
+        left: 0;
+        position: fixed;
+        top: 0;
+        width: 100%;
+        z-index: $filmstripVideosZ
+    }
+
+    /**
+     * Regardless of the user setting, do not let the filmstrip be in a hidden
+     * state.
+     */
+    .filmstrip__videos.hidden {
+        display: block;
+    }
+
+    #filmstripRemoteVideos {
+        box-sizing: border-box;
+
+        /**
+         * Allow vertical scrolling of the thumbnails.
+         */
+        overflow-x: hidden;
+        overflow-y: auto;
+    }
+
+    /**
+     * The size of the thumbnails should be set with javascript, based on
+     * desired column count and window width. The rows are created using flex
+     * and allowing the thumbnails to wrap.
+     */
+    #filmstripRemoteVideosContainer {
+        align-content: center;
+        align-items: center;
+        box-sizing: border-box;
+        display: flex;
+        flex-wrap: wrap;
+        height: 100vh;
+        justify-content: center;
+        padding: 100px 0;
+
+        .videocontainer {
+            border: 0;
+            box-sizing: border-box;
+            display: block;
+            margin: 5px;
+        }
+
+        video {
+            object-fit: contain;
+        }
+    }
+
+    .has-overflow#filmstripRemoteVideosContainer {
+        align-content: baseline;
+    }
+
+    .has-overflow .videocontainer {
+        align-self: baseline;
+    }
+
+    /**
+     * Firefox flex acts a little differently. To make sure the bottom row of
+     * thumbnails is not overlapped by the horizontal toolbar, margin is added
+     * to the local thumbnail to keep it from the bottom of the screen. It is
+     * assumed the local thumbnail will always be on the bottom row.
+     */
+    .has-overflow #localVideoContainer {
+        margin-bottom: 100px !important;
+    }
+}

@@ -1,0 +1,54 @@
+%connection-info {
+    font-size: 12px;
+    font-weight: 400;
+
+    td {
+        padding: 2px 0;
+    }
+}
+
+.connection-info
+{
+    @extend %connection-info;
+
+    /**
+     * Apply negative margin to reduce the appearance of padding in AtlasKit
+     * InlineDialog.
+     */
+    margin: -15px;
+
+    > table {
+        white-space: nowrap;
+        @extend %connection-info;
+    }
+
+    td:nth-child(n-1) {
+        padding-left: 5px;
+    }
+
+    &__icon {
+        margin-right: 2px;
+    }
+
+    &__download
+    {
+        @extend .connection-info__icon;
+    }
+
+    &__status
+    {
+        font-weight: bold;
+    }
+
+    &__upload
+    {
+        @extend .connection-info__icon;
+    }
+
+    .showmore {
+        display: block;
+        margin: 10px auto;
+        text-align: center;
+        width: 90px;
+    }
+}

@@ -1,0 +1,177 @@
+/**
+ * Safari will limit input in input elements to one character when user-select
+ * none is applied. Other browsers already support selecting within inputs while
+ * user-select is none. As such, disallow user-select except on inputs.
+ */
+* {
+    -webkit-user-select: none;
+    user-select: none;
+}
+
+input,
+textarea {
+    -webkit-user-select: text;
+    user-select: text;
+}
+
+html {
+    height: 100%;
+    width: 100%;
+}
+
+body {
+    margin: 0px;
+    width: 100%;
+    height: 100%;
+    font-size: 12px;
+    font-weight: 400;
+    overflow: hidden;
+    color: $defaultColor;
+    background: $defaultBackground;
+    &.filmstrip-only {
+        background: transparent;
+    }
+}
+
+/**
+ * AtlasKitThemeProvider sets a background color on an app-wrapping div, thereby
+ * preventing transparency in filmstrip-only mode. The selector chosen to
+ * override this behavior is specific to where the AtlasKitThemeProvider might
+ * be placed within the app hierarchy.
+ */
+.filmstrip-only #react > .ckAJgx {
+    background: transparent;
+}
+
+p {
+    margin: 0;
+}
+
+body, input, textarea, keygen, select, button {
+    font-family: $baseFontFamily !important;
+}
+
+#nowebrtc {
+    display:none;
+}
+
+button, input, select, textarea {
+    margin: 0;
+    vertical-align: baseline;
+    font-size: 1em;
+}
+
+button, select, input[type="button"],
+input[type="reset"], input[type="submit"] {
+    cursor: pointer;
+}
+
+textarea {
+    word-wrap: break-word;
+    resize: none;
+    line-height: 1.5em;
+}
+
+input[type='text'], input[type='password'], textarea {
+    outline: none; /* removes the default outline */
+    resize: none; /* prevents the user-resizing, adjust to taste */
+}
+
+button {
+    color: #FFF;
+    background-color: $buttonBackground;
+    border-radius: $borderRadius;
+
+    &.no-icon {
+        padding: 0 1em;
+    }
+}
+
+button,
+form {
+    display: block;
+}
+
+.watermark {
+    display: block;
+    position: absolute;
+    top: 15;
+    width: $watermarkWidth;
+    height: $watermarkHeight;
+    background-size: contain;
+    background-repeat: no-repeat;
+    z-index: $zindex2;
+}
+
+.leftwatermark {
+    left: 32px;
+    top: 32px;
+    background-image: url($defaultWatermarkLink);
+    background-position: center left;
+}
+
+.rightwatermark {
+    right: 32px;
+    top: 32px;
+    background-position: center right;
+}
+
+.poweredby {
+    position: absolute;
+    left: 25;
+    bottom: 7;
+    font-size: 11pt;
+    color: rgba(255,255,255,.50);
+    text-decoration: none;
+    z-index: $poweredByZ;
+}
+
+.connected {
+    color: #21B9FC;
+    font-size: 12px;
+}
+
+.lastN, .disconnected {
+    color: #a3a3a3;
+    font-size: 12px;
+}
+
+/**
+* Dialogs fade
+*/
+.aui-blanket {
+    background: #000;
+    transition: opacity 0.2s, visibility 0.2s;
+    transition-delay: 0.1s;
+    visibility: visible;
+}
+
+#inviteLinkRef {
+    -webkit-user-select: text;
+    user-select: text;
+}
+
+/**
+ * Re-style default OS scrollbar.
+ */
+::-webkit-scrollbar {
+    background: transparent;
+    width: 7px;
+}
+
+::-webkit-scrollbar-button {
+    display: none;
+}
+
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+::-webkit-scrollbar-track-piece {
+    background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+    background: rgba(0, 0, 0, .5);
+    border-radius: 4px;
+}

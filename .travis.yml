@@ -1,0 +1,4 @@
+osx_image: xcode10
+language: objective-c
+script:
+- "./ios/travis-ci/build-ipa.sh"

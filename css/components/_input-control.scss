@@ -1,0 +1,29 @@
+.input-control {
+    @include transition(all .2s ease-in);
+    display: inline-block;
+    width: 100%;
+    padding: 5px 7px;
+    border-radius: $borderRadius;
+    line-height: 32px;
+    height: 32px;
+    text-align: left;
+    margin-bottom: 8px;
+
+    &:last-child {
+        margin-bottom: inherit;
+    }
+
+    &::selection {
+        background-color: $defaultDarkSelectionColor;
+    }
+
+
+    &.error {
+        color: $errorColor;
+        border-color: $errorColor;
+    }
+}
+
+@include placeholder {
+    color: $placeHolderColor;
+}

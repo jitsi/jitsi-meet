@@ -1,17 +1,30 @@
 {
-    "contactlist": "STIKI",
+    "contactlist": "",
+    "addParticipants": "",
+    "roomLocked": "",
+    "roomUnlocked": "",
+    "passwordSetRemotely": "",
     "connectionsettings": "Nastavitve povezave",
     "poweredby": "poganja",
-    "downloadlogs": "Shrani zapis",
-    "feedback": "",
-    "roomUrlDefaultMsg": "Ustvarjanje vaše konference ...",
-    "participant": "Udeleženec",
+    "feedback": {
+        "average": "",
+        "bad": "",
+        "good": "",
+        "rateExperience": "",
+        "veryBad": "",
+        "veryGood": ""
+    },
+    "inviteUrlDefaultMsg": "Ustvarjanje vaše konference ...",
     "me": "jaz",
     "speaker": "Govornik",
     "raisedHand": "",
     "defaultNickname": "",
     "defaultLink": "npr. __url__",
-    "calling": "",
+    "callingName": "",
+    "audioOnly": {
+        "audioOnly": "",
+        "featureToggleDisabled": ""
+    },
     "userMedia": {
         "react-nativeGrantPermissions": "",
         "chromeGrantPermissions": "",
@@ -20,7 +33,8 @@
         "operaGrantPermissions": "",
         "iexplorerGrantPermissions": "",
         "safariGrantPermissions": "",
-        "nwjsGrantPermissions": ""
+        "nwjsGrantPermissions": "",
+        "edgeGrantPermissions": ""
     },
     "keyboardShortcuts": {
         "keyboardShortcuts": "",
@@ -33,72 +47,101 @@
         "focusRemote": "",
         "toggleChat": "",
         "mute": "",
-        "videoMute": ""
+        "fullScreen": "",
+        "videoMute": "",
+        "showSpeakerStats": ""
     },
     "welcomepage": {
-        "go": "POJDI",
-        "roomname": "Vpišite ime sobe",
         "disable": "",
         "feature1": {
-            "title": "Enostavna uporaba",
-            "content": "Nič ni treba namestiti. __app__ deluje direktno v vašem brskalniku. Enostavno sporočite ostalim udeležencem URL svoje konference in začnite."
+            "content": "Nič ni treba namestiti. __app__ deluje direktno v vašem brskalniku. Enostavno sporočite ostalim udeležencem URL svoje konference in začnite.",
+            "title": "Enostavna uporaba"
         },
         "feature2": {
-            "title": "Ozka pasovna širina",
-            "content": "Video konferenca z več udeleženci s samo 128Kbps. Deljenje zaslona in samo avdio konference so možne že z veliko nižjo pasovno širino."
+            "content": "Video konferenca z več udeleženci s samo 128Kbps. Deljenje zaslona in samo avdio konference so možne že z veliko nižjo pasovno širino.",
+            "title": "Ozka pasovna širina"
         },
         "feature3": {
-            "title": "Odprta koda",
-            "content": ""
+            "content": "",
+            "title": "Odprta koda"
         },
         "feature4": {
-            "title": "Neomejeno število uporabnikov",
-            "content": "Nobene umetne omejitve števila uporabnikov ali udeležencev konference. Zmogljivost strežnika in pasovna širina sta edini omejitvi."
+            "content": "Nobene umetne omejitve števila uporabnikov ali udeležencev konference. Zmogljivost strežnika in pasovna širina sta edini omejitvi.",
+            "title": "Neomejeno število uporabnikov"
         },
         "feature5": {
-            "title": "Skupna raba zaslona",
-            "content": "Skupna raba zaslona z drugimi je zelo enostavna. __app__ je idealna rešitev za spletne predstavitve, predavanja in tehnično podporo."
+            "content": "Skupna raba zaslona z drugimi je zelo enostavna. __app__ je idealna rešitev za spletne predstavitve, predavanja in tehnično podporo.",
+            "title": "Skupna raba zaslona"
         },
         "feature6": {
-            "title": "Varne sobe",
-            "content": "Rabite zasebnost? Konferenčne sobe __app__ so lahko zaklenjene z geslom, da preprečite dostop neželenim gostom ter prekinitve."
+            "content": "Rabite zasebnost? Konferenčne sobe __app__ so lahko zaklenjene z geslom, da preprečite dostop neželenim gostom ter prekinitve.",
+            "title": "Varne sobe"
         },
         "feature7": {
-            "title": "Skupna raba zapiskov",
-            "content": "__app__ vsebuje Etherpad, realnočasovni  skupinski urejevalnik besedil, ki je idealen za pisanje zapisnikov sestankov, člankov in še mnogo drugega."
+            "content": "__app__ vsebuje Etherpad, realnočasovni  skupinski urejevalnik besedil, ki je idealen za pisanje zapisnikov sestankov, člankov in še mnogo drugega.",
+            "title": "Skupna raba zapiskov"
         },
         "feature8": {
-            "title": "Statistika uporabe",
-            "content": "Spoznajte svoje uporabnike z enostavno integracijo v Piwik, Google Analytics ter druge sisteme za nadzor uporabe in statistiko."
-        }
+            "content": "Spoznajte svoje uporabnike z enostavno integracijo v Piwik, Google Analytics ter druge sisteme za nadzor uporabe in statistiko.",
+            "title": "Statistika uporabe"
+        },
+        "go": "POJDI",
+        "join": "",
+        "privacy": "",
+        "roomname": "Vpišite ime sobe",
+        "roomnamePlaceHolder": "",
+        "sendFeedback": "",
+        "terms": ""
+    },
+    "startupoverlay": {
+        "policyText": "",
+        "title": ""
+    },
+    "suspendedoverlay": {
+        "title": "",
+        "text": "",
+        "rejoinKeyTitle": ""
     },
     "toolbar": {
+        "addPeople": "",
+        "audioonly": "",
         "mute": "Utišaj / Povrni glasnost",
-        "videomute": "Zaženi / Ustavi kamero",
+        "videomute": "",
         "authenticate": "Overi",
-        "lock": "Zakleni / Odkleni sobo",
-        "invite": "Povabite ostale",
-        "chat": "Odpri / zapri klepetalnico",
-        "etherpad": "Dokument v skupni rabi",
+        "lock": "",
+        "invite": "",
+        "chat": "",
+        "etherpad": "",
         "sharedvideo": "",
-        "sharescreen": "Zaslon v souporabi",
-        "fullscreen": "Vklopi / Izklopi celozaslonski način",
+        "sharescreen": "",
+        "fullscreen": "",
         "sip": "Pokliči številko SIP",
         "Settings": "Nastavitve",
-        "hangup": "Odloži",
+        "hangup": "",
         "login": "Prijava",
         "logout": "Odjava",
-        "dialpad": "Pokaži številčnico",
+        "dialpad": "",
         "sharedVideoMutedPopup": "",
         "micMutedPopup": "",
+        "talkWhileMutedPopup": "",
         "unableToUnmutePopup": "",
         "cameraDisabled": "",
-        "micDisabled": ""
+        "micDisabled": "",
+        "filmstrip": "",
+        "profile": "",
+        "raiseHand": ""
+    },
+    "unsupportedBrowser": {
+        "appInstalled": "",
+        "appNotInstalled": "",
+        "downloadApp": "",
+        "joinConversation": "",
+        "startConference": ""
     },
     "bottomtoolbar": {
         "chat": "Odpri / zapri klepetalnico",
-        "filmstrip": "Pokaži / Skrij filmski trak",
-        "contactlist": "Odpri / Zapri stike"
+        "filmstrip": "",
+        "contactlist": ""
     },
     "chat": {
         "nickname": {
@@ -108,7 +151,7 @@
         "messagebox": "Vnesite besedilo ..."
     },
     "settings": {
-        "title": "NASTAVITVE",
+        "title": "Nastavitve",
         "update": "Posodobi",
         "name": "Ime",
         "startAudioMuted": "",
@@ -118,23 +161,34 @@
         "selectAudioOutput": "",
         "followMe": "",
         "noDevice": "",
-        "noPermission": "",
-        "avatarUrl": ""
+        "cameraAndMic": "",
+        "moderator": "",
+        "password": "",
+        "audioVideo": ""
+    },
+    "profile": {
+        "title": "",
+        "setDisplayNameLabel": "",
+        "setEmailLabel": "",
+        "setEmailInput": ""
     },
     "videothumbnail": {
         "editnickname": "Kliknite, da spremenite<br/>svoje ime",
         "moderator": "Lastnik<br/>konference",
-        "videomute": "Udeleženec je<br/>izključil kamero.",
+        "videomute": "",
         "mute": "Udeleženec je utišan",
         "kick": "Izženi",
         "muted": "Utišan",
         "domute": "Utišaj",
-        "flip": ""
+        "flip": "",
+        "remoteControl": ""
     },
     "connectionindicator": {
+        "header": "",
         "bitrate": "Bitna hitrost:",
         "packetloss": "Izgubljeni paketi:",
         "resolution": "Ločljivost:",
+        "framerate": "",
         "less": "Pokaži manj",
         "more": "Pokaži več",
         "address": "Naslov:",
@@ -156,7 +210,8 @@
         "remoteaddress_plural_3": "Oddaljeni naslovi:",
         "transport": "Prenos:",
         "bandwidth": "Ocenjena pasovna širina:",
-        "na": "Ko se konferenca začne se vrnite sem za informacije o povezavi"
+        "na": "Ko se konferenca začne se vrnite sem za informacije o povezavi",
+        "turn": ""
     },
     "notify": {
         "disconnected": "odklopjeno",
@@ -167,40 +222,53 @@
         "focus": "Fokus na konferenco",
         "focusFail": "__component__ ni na razpolago - ponovni poskus čez __ms__ sec",
         "grantedTo": "Moderatorske pravice dodeljene uporabniku __to__!",
-        "grantedToUnknown": "Moderatorske pravice dodeljene uporabniku $t(somebody)!",
+        "grantedToUnknown": "",
         "muted": "Pogovor ste začeli utišano.",
         "mutedTitle": "Utišani ste!",
         "raisedHand": ""
     },
     "dialog": {
+        "add": "",
+        "allow": "",
         "kickMessage": "Ojej! Izgnali so vas iz srečanja!",
         "popupError": "",
+        "passwordErrorTitle": "",
         "passwordError": "",
         "passwordError2": "",
         "connectError": "Ups! Nekaj je narobe in se ni bilo mogoče povezati s konferenco.",
         "connectErrorWithMsg": "Ups! Nekaj je narobe in se ni bilo mogoče povezati s konferenco: __msg__",
+        "incorrectPassword": "",
         "connecting": "Povezovanje",
+        "copy": "",
         "error": "Napaka",
+        "createPassword": "",
         "detectext": "Napaka pri zaznavanju razširitve za skupno uporabo namizja.",
         "failtoinstall": "Razširitve za skupno uporabo namizja ni bilo mogoče namestiti",
         "failedpermissions": "Ni bilo mogoče pridobiti dovoljenja za uporabo lokalnega mikrofona ali kamere.",
-        "bridgeUnavailable": "Jitsi Videobridge trenutno ni na razpolago. Prosim poskusite kasneje!",
-        "jicofoUnavailable": "",
+        "conferenceReloadTitle": "",
+        "conferenceReloadMsg": "",
+        "conferenceDisconnectTitle": "",
+        "conferenceDisconnectMsg": "",
+        "rejoinNow": "",
         "maxUsersLimitReached": "",
         "lockTitle": "Zaklepanje ni uspelo",
         "lockMessage": "",
         "warning": "Opozorilo",
         "passwordNotSupported": "Trenutno ni mogoče zakleniti sobe z geslom.",
-        "sorry": "Oprostite",
-        "internalError": "Notranja napaka [setRemoteDescription]",
+        "internalErrorTitle": "",
+        "internalError": "",
         "unableToSwitch": "Ni mogoče preklopiti video pretoka.",
         "SLDFailure": "Ups! Nekaj je narobe in zvoka se ne da utišati! (Napaka SLD)",
         "SRDFailure": "Ups! Nekaj je narobe in slike ni mogoče ustaviti! (Napaka SRD)",
         "oops": "Ups!",
+        "currentPassword": "",
+        "passwordLabel": "",
         "defaultError": "Prišlo je do neke napake",
         "passwordRequired": "Potrebno je geslo",
         "Ok": "V redu",
+        "done": "",
         "Remove": "Odstrani",
+        "removePassword": "",
         "shareVideoTitle": "",
         "shareVideoLinkError": "",
         "removeSharedVideoTitle": "",
@@ -210,6 +278,7 @@
         "WaitForHostMsg": "Ta konferenca <b>__room__ </b> se še ni začela. V primeru, da ste vi gostitelj se prosim overite. Drugače počakajte prosim na prihod gostitelja.",
         "IamHost": "Jaz sem gostitelj",
         "Cancel": "Prekliči",
+        "Submit": "",
         "retry": "Poskusi ponovno",
         "logoutTitle": "Odjava",
         "logoutQuestion": "Ali se res želite odjaviti in prekiniti konferenco?",
@@ -220,29 +289,29 @@
         "Save": "Shrani",
         "recording": "",
         "recordingToken": "Vnesite žeton za registracijo",
-        "Dial": "Pokliči",
-        "sipMsg": "Vnesite številko SIP",
         "passwordCheck": "Ali res želite odstraniti geslo?",
         "passwordMsg": "Nastavite geslo za zaklepanje sobe",
-        "Invite": "Povabi",
-        "shareLink": "To povezavo pošljite vsem, ki jih želite povabiti",
+        "shareLink": "",
         "settings1": "Nastavite svojo konferenco",
         "settings2": "Utišaj udeležence ob pristopu",
         "settings3": "Zahtevaj vzdevke<br/><br/>Nastavi geslo za zaklep sobe:",
-        "yourPassword": "vaše geslo",
+        "yourPassword": "",
         "Back": "Nazaj",
         "serviceUnavailable": "Storitev ni na voljo",
         "gracefulShutdown": "Storitev trenutno ni na voljo zaradi vzdrževanja. Poskusite ponovno kasneje.",
         "Yes": "Da",
         "reservationError": "Napaka v sistemu rezervacije",
         "reservationErrorMsg": "Koda napake: __code__, sporočilo: __msg__",
-        "password": "geslo",
+        "password": "",
         "userPassword": "uporabniško geslo",
         "token": "žeton",
+        "tokenAuthFailedTitle": "",
         "tokenAuthFailed": "",
         "displayNameRequired": "",
+        "enterDisplayName": "",
         "extensionRequired": "",
         "firefoxExtensionPrompt": "",
+        "feedbackHelp": "",
         "feedbackQuestion": "",
         "thankYou": "",
         "sorryFeedback": "",
@@ -254,6 +323,7 @@
         "stopLiveStreaming": "",
         "stopRecording": "",
         "doNotShowWarningAgain": "",
+        "doNotShowMessageAgain": "",
         "permissionDenied": "",
         "screenSharingPermissionDeniedError": "",
         "micErrorPresent": "",
@@ -266,7 +336,29 @@
         "micUnknownError": "",
         "micPermissionDeniedError": "",
         "micNotFoundError": "",
-        "micConstraintFailedError": ""
+        "micConstraintFailedError": "",
+        "micNotSendingData": "",
+        "cameraNotSendingData": "",
+        "goToStore": "",
+        "externalInstallationTitle": "",
+        "externalInstallationMsg": "",
+        "inlineInstallationMsg": "",
+        "inlineInstallExtension": "",
+        "muteParticipantTitle": "",
+        "muteParticipantBody": "",
+        "muteParticipantButton": "Utišaj",
+        "remoteControlTitle": "",
+        "remoteControlRequestMessage": "",
+        "remoteControlShareScreenWarning": "",
+        "remoteControlDeniedMessage": "",
+        "remoteControlAllowedMessage": "",
+        "remoteControlErrorMessage": "",
+        "startRemoteControlErrorMessage": "",
+        "remoteControlStopMessage": "",
+        "close": "",
+        "shareYourScreen": "",
+        "yourEntireScreen": "",
+        "applicationWindow": ""
     },
     "email": {
         "sharedKey": "",
@@ -319,7 +411,73 @@
         "failedToStart": "",
         "buttonTooltip": "",
         "streamIdRequired": "",
+        "streamIdHelp": "",
         "error": "",
         "busy": ""
+    },
+    "speakerStats": {
+        "hours": "",
+        "minutes": "",
+        "name": "Ime",
+        "seconds": "",
+        "speakerStats": "",
+        "speakerTime": ""
+    },
+    "deviceSelection": {
+        "deviceSettings": "",
+        "noPermission": "",
+        "previewUnavailable": "",
+        "selectADevice": "",
+        "testAudio": ""
+    },
+    "invite": {
+        "addPassword": "",
+        "callNumber": "",
+        "enterID": "",
+        "howToDialIn": "",
+        "hidePassword": "",
+        "inviteTo": "",
+        "invitedYouTo": "",
+        "locked": "",
+        "showPassword": "",
+        "unlocked": ""
+    },
+    "videoStatus": {
+        "callQuality": "",
+        "changeVideoTip": "",
+        "hd": "",
+        "highDefinition": "",
+        "ld": "",
+        "lowDefinition": "",
+        "p2pEnabled": "",
+        "p2pVideoQualityDescription": "",
+        "recHighDefinitionOnly": "",
+        "sd": "",
+        "standardDefinition": "",
+        "qualityButtonTip": ""
+    },
+    "dialOut": {
+        "dial": "Pokliči",
+        "dialOut": "",
+        "statusMessage": "",
+        "enterPhone": "",
+        "phoneNotAllowed": ""
+    },
+    "addPeople": {
+        "add": "",
+        "noResults": "",
+        "searchPlaceholder": "",
+        "title": "",
+        "failedToAdd": ""
+    },
+    "inlineDialogFailure": {
+        "msg": "",
+        "retry": "",
+        "support": "",
+        "supportMsg": ""
+    },
+    "deviceError": {
+        "cameraPermission": "",
+        "microphonePermission": ""
     }
 }

@@ -1,0 +1,61 @@
+.settings-pane {
+    display: flex;
+    width: 100%;
+
+    &.profile-pane {
+        flex-direction: column;
+    }
+
+    .auth-name {
+        margin-bottom: 4px;
+    }
+
+    .calendar-tab,
+    .device-selection {
+        margin-top: 20px;
+    }
+
+    .mock-atlaskit-label {
+        color: #56637A;
+        font-size: 12px;
+        font-weight: 600;
+        line-height: 1.33;
+        padding: 20px 0px 4px 0px;
+    }
+
+    .calendar-tab,
+    .more-tab,
+    .profile-edit {
+        display: flex;
+        width: 100%;
+    }
+
+    .profile-edit-field,
+    .settings-sub-pane {
+        flex: 1;
+    }
+
+    .profile-edit-field {
+        margin-right: 20px;
+    }
+
+    .language-settings {
+        max-width: 50%;
+    }
+
+    .calendar-tab {
+        align-items: center;
+        flex-direction: column;
+        font-size: 14px;
+        min-height: 100px;
+        text-align: center;
+    }
+
+    .calendar-tab-sign-in {
+        margin-top: 20px;
+    }
+
+    .sign-out-cta {
+        margin-bottom: 20px;
+    }
+}

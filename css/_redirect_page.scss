@@ -1,0 +1,34 @@
+.redirectPageMessage {
+    width: 30%;
+    margin: 20% auto;
+    text-align: center;
+    font-size: 24px;
+
+    .thanks-msg {
+        border-bottom: 1px solid $selectBg;
+        padding-left: 30px;
+        padding-right: 30px;
+        p {
+            margin: 30px auto;
+            font-size: 24px;
+            line-height: 24px;
+        }
+    }
+    .hint-msg{
+        p {
+            margin: 26px auto;
+            font-weight: 600;
+            font-size: 16px;
+            line-height: 18px;
+            .hint-msg__holder{
+                font-weight: 200;
+            }
+        }
+        .happy-software{
+            width: 120px;
+            height: 86px;
+            margin: 0 auto;
+            background: $happySoftwareBackground;
+        }
+    }
+}

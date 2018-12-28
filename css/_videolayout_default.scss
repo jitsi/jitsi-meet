@@ -1,0 +1,733 @@
+#videoconference_page {
+    min-height: 100%;
+}
+
+#videospace {
+    display: block;
+    height: 100%;
+    width: 100%;
+    min-height: 100%;
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    right: 0px;
+    overflow: hidden;
+}
+
+#largeVideoBackgroundContainer,
+.large-video-background {
+    height: 100%;
+    left: 0;
+    overflow: hidden;
+    position: absolute;
+    top: 0;
+    width: 100%;
+
+    &.fit-full-height #largeVideoBackground {
+        height: 100%;
+        width: auto;
+    }
+
+    .fit-full-width #largeVideoBackground {
+        height: auto;
+        width: 100%;
+    }
+}
+#largeVideoBackgroundContainer {
+    filter: blur(40px);
+}
+
+.videocontainer {
+    position: relative;
+    text-align: center;
+
+    &__background {
+        @include topLeft();
+        background-color: black;
+        border-radius: $borderRadius;
+        width: 100%;
+        height: 100%;
+    }
+
+    /**
+     * The toolbar of the video thumbnail.
+     */
+    &__toolbar,
+    &__toptoolbar {
+        position: absolute;
+        left: 0;
+        pointer-events: none;
+        z-index: $zindex10;
+        width: 100%;
+        box-sizing: border-box; // Includes the padding in the 100% width.
+
+        /**
+         * FIXME (lenny): Disabling pointer-events is a pretty big sin that
+         * sidesteps the problems. There are z-index wars occurring within
+         * videocontainer and AtlasKit Tooltips rely on their parent z-indexe
+         * being higher than whatever they need to appear over. So set a higher
+         * z-index for the tooltip containers but make any empty space not block
+         * mouse overs for various mouseover triggers.
+         */
+        pointer-events: none;
+
+        * {
+            pointer-events: auto;
+        }
+
+        .indicator-container {
+            display: inline-block;
+            float: left;
+            pointer-events: all;
+        }
+
+        /**
+         * Need to overwrite the background for the top toolbar dark theme div
+         * wrapper needed before we're able to move all top toolbar indicators
+         * creation to react.
+         */
+        .sc-ifAKCX {
+            background: none;
+        }
+    }
+
+    &__toolbar {
+        bottom: 0;
+        height: $thumbnailToolbarHeight;
+        padding: 0 5px 0 5px;
+    }
+
+    &__toptoolbar {
+        $toolbarIconMargin: 5px;
+        top: 0;
+        padding-bottom: 0;
+        /**
+         * Override text-align center as icons need to be left justified.
+         */
+        text-align: left;
+
+        /**
+         * Intentionally use margin on the icon itself as AtlasKit InlineDialog
+         * positioning depends on the trigger (indicator icon).
+         */
+        .indicator {
+            margin-left: 5px;
+            margin-top: $toolbarIconMargin;
+        }
+
+        .indicator-container:nth-child(1) .indicator {
+            margin-left: $toolbarIconMargin;
+        }
+
+        .indicator-container {
+            display: inline-block;
+            vertical-align: top;
+
+            .popover-trigger {
+                display: inline-block;
+            }
+        }
+
+        .connection-indicator,
+        .indicator {
+            position: relative;
+            font-size: 8px;
+            text-align: center;
+            line-height: $thumbnailIndicatorSize;
+            padding: 0;
+            @include circle($thumbnailIndicatorSize);
+            box-sizing: border-box;
+            z-index: $zindex3;
+            background: $dominantSpeakerBg;
+            color: $thumbnailPictogramColor;
+            border: $thumbnailIndicatorBorder solid $thumbnailPictogramColor;
+
+            .indicatoricon {
+                @include absoluteAligning();
+            }
+
+            .connection {
+                position: relative;
+                display: inline-block;
+                margin: 0 auto;
+                left: 0;
+                @include transform(translate(0, -50%));
+
+                &_empty,
+                &_lost
+                {
+                    color: #8B8B8B;/*#FFFFFF*/
+                    overflow: hidden;
+                }
+
+                &_full
+                {
+                    @include topLeft();
+                    color: #FFFFFF;/*#15A1ED*/
+                    overflow: hidden;
+                }
+
+                &_ninja
+                {
+                    font-size: 1.5em;
+                }
+            }
+
+            .icon-gsm-bars {
+                cursor: pointer;
+                font-size: 1em;
+            }
+        }
+
+        .hide-connection-indicator {
+            display: none;
+        }
+    }
+
+    &__hoverOverlay {
+        background: rgba(0,0,0,.6);
+        border-radius: $borderRadius;
+        position: relative;
+        width: 100%;
+        height: 100%;
+        visibility: hidden;
+        z-index: $zindex2;
+    }
+
+    &.audio-only {
+        .videoThumbnailProblemFilter {
+            filter: none;
+        }
+    }
+}
+
+#localVideoWrapper {
+    display:inline-block;
+}
+
+.flipVideoX {
+    transform: scale(-1, 1);
+    -moz-transform: scale(-1, 1);
+    -webkit-transform: scale(-1, 1);
+    -o-transform: scale(-1, 1);
+}
+
+#localVideoWrapper video,
+#localVideoWrapper object {
+    border-radius: $borderRadius !important;
+    cursor: hand;
+    object-fit: cover;
+}
+
+#largeVideo,
+#largeVideoWrapper,
+#largeVideoContainer {
+    overflow: hidden;
+    text-align: center;
+}
+
+#largeVideoContainer {
+    height: 100%;
+    width: 100%;
+}
+
+#largeVideoWrapper {
+    box-shadow: 0 0 20px -2px #444;
+}
+
+#largeVideo,
+#largeVideoWrapper
+{
+    object-fit: cover;
+}
+
+#sharedVideo,
+#etherpad,
+#localVideoWrapper video,
+#localVideoWrapper object,
+#localVideoWrapper,
+#largeVideoWrapper,
+#largeVideoWrapper>video,
+#largeVideoWrapper>object,
+.videocontainer>video,
+.videocontainer>object {
+    position: absolute;
+    left: 0;
+    top: 0;
+    z-index: $zindex1;
+    width: 100%;
+    height: 100%;
+}
+
+#etherpad {
+    text-align: center;
+}
+
+#etherpad {
+    z-index: $zindex0;
+}
+
+/**
+ * Positions video thumbnail display name and editor.
+ */
+#alwaysOnTop .displayname,
+.videocontainer .displayname,
+.videocontainer .editdisplayname {
+    display: inline-block;
+    position: absolute;
+    left: 10%;
+    width: 80%;
+    top: 50%;
+    @include transform(translateY(-40%));
+    color: $participantNameColor;
+    text-align: center;
+    text-overflow: ellipsis;
+    font-size: 12px;
+    font-weight: 100;
+    overflow: hidden;
+    white-space: nowrap;
+    line-height: $thumbnailToolbarHeight;
+    z-index: $zindex2;
+}
+
+#alwaysOnTop .displayname {
+    font-size: 15px;
+    position: inherit;
+    width: 100%;
+    left: 0px;
+    top: 0px;
+    margin-top: 10px;
+}
+
+/**
+ * Positions video thumbnail display name editor.
+ */
+.videocontainer .editdisplayname {
+    outline: none;
+    border: none;
+    background: none;
+    box-shadow: none;
+    padding: 0;
+}
+
+#localVideoContainer .displayname:hover {
+    cursor: text;
+}
+
+.videocontainer .displayname {
+    pointer-events: none;
+    padding: 0 3px 0 3px;
+}
+
+.videocontainer .editdisplayname {
+    height: auto;
+}
+
+#localDisplayName {
+    pointer-events: auto !important;
+}
+
+.videocontainer>a.displayname {
+    display: inline-block;
+    position: absolute;
+    color: #FFFFFF;
+    bottom: 0;
+    right: 0;
+    padding: 3px 5px;
+    font-size: 9pt;
+    cursor: pointer;
+    z-index: $zindex2;
+}
+
+/**
+ * Video thumbnail toolbar icon.
+ */
+.videocontainer .toolbar-icon {
+    font-size: 8pt;
+    text-align: center;
+    text-shadow: 0px 1px 0px rgba(255,255,255,.3), 0px -1px 0px rgba(0,0,0,.7);
+    color: #FFFFFF;
+    width: 12px;
+    line-height: $thumbnailToolbarHeight;
+    height: $thumbnailToolbarHeight;
+    padding: 0;
+    border: 0;
+    margin: 0px 5px 0px 0px;
+}
+
+/**
+ * Toolbar icon internal i elements (font icons).
+ */
+.toolbar-icon>i {
+    line-height: $thumbnailToolbarHeight;
+}
+
+/**
+ * Toolbar icons positioned on the right.
+ */
+.moderator-icon {
+    display: inline-block;
+
+    &.right {
+        float: right;
+        margin: 0px 0px 0px 5px;
+    }
+
+    .toolbar-icon {
+        margin: 0;
+    }
+}
+
+.raisehandindicator {
+  background: $raiseHandBg;
+}
+
+.connection-indicator {
+    background: $connectionIndicatorBg;
+
+    &.status-high {
+        background: green;
+    }
+
+    &.status-med {
+        background: #FFD740;
+    }
+
+    &.status-lost {
+        background: gray;
+    }
+
+    &.status-low {
+        background: #BF2117;
+    }
+
+    &.status-other {
+        background: $connectionIndicatorBg;
+    }
+}
+
+.remote-video-menu-trigger,
+.remotevideomenu
+{
+    display: inline-block;
+    position: absolute;
+    top: 0px;
+    right: 0;
+    z-index: $zindex2;
+    width: 18px;
+    height: 13px;
+    color: #FFF;
+    font-size: 10pt;
+
+    >i{
+        cursor: hand;
+    }
+}
+.remote-video-menu-trigger {
+    margin-top: 7px;
+}
+
+/**
+ * Audio indicator on video thumbnails.
+ */
+.videocontainer>span.audioindicator,
+.videocontainer>.audioindicator-container {
+    position: absolute;
+    display: inline-block;
+    left: 6px;
+    top: 50%;
+    margin-top: -17px;
+    width: 6px;
+    height: 35px;
+    z-index: $zindex2;
+    border: none;
+
+    .audiodot-top,
+    .audiodot-bottom,
+    .audiodot-middle {
+        opacity: 0;
+        display: inline-block;
+        @include circle(5px);
+        background: $audioLevelShadow;
+        margin: 1px 0 1px 0;
+        transition: opacity .25s ease-in-out;
+        -moz-transition: opacity .25s ease-in-out;
+    }
+
+    span.audiodot-top::after,
+    span.audiodot-bottom::after,
+    span.audiodot-middle::after {
+        content: "";
+        display: inline-block;
+        width: 5px;
+        height: 5px;
+        border-radius: 50%;
+        -webkit-filter: blur(0.5px);
+        filter: blur(0.5px);
+        background: $audioLevelBg;
+    }
+}
+
+#reloadPresentation {
+    display: none;
+    position: absolute;
+    color: #FFFFFF;
+    top: 0;
+    right:0;
+    padding: 10px 10px;
+    font-size: 11pt;
+    cursor: pointer;
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 5px;
+    background-clip: padding-box;
+    -webkit-border-radius: 5px;
+    -webkit-background-clip: padding-box;
+    z-index: $reloadZ; /*The reload button should appear on top of the header!*/
+}
+
+.audiolevel {
+    display: inline-block;
+    position: absolute;
+    z-index: $zindex0;
+    border-radius:1px;
+    pointer-events: none;
+}
+
+#dominantSpeaker {
+    visibility: hidden;
+    width: 300px;
+    height: 300px;
+    margin: auto;
+    position: relative;
+}
+
+#mixedstream {
+    display:none !important;
+}
+
+#dominantSpeakerAvatar,
+.dynamic-shadow {
+    width: 200px;
+    height: 200px;
+}
+
+#dominantSpeakerAvatar {
+    top: 50px;
+    margin: auto;
+    position: relative;
+    border-radius: 100px;
+    visibility: inherit;
+    background-color: #000000;
+}
+
+.dynamic-shadow {
+    border-radius: 50%;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    margin: -100px 0 0 -100px;
+    transition: box-shadow 0.3s ease;
+}
+
+.userAvatar {
+    @include maxSize(60px);
+    @include absoluteAligning();
+    border-radius: 50%;
+    height: 50%;
+    width: auto;
+}
+
+#videoNotAvailableScreen {
+    text-align: center;
+    #avatarContainer {
+        height: 50vh;
+        display:inline-block;
+        margin-top: 25vh;
+
+        #avatar {
+            border-radius: 50%;
+            height: 100%;
+        }
+    }
+}
+
+.sharedVideoAvatar {
+    height: 100%;
+    width: 100%;
+    object-fit: cover;
+}
+
+.videoMessageFilter {
+    -webkit-filter: grayscale(.5) opacity(0.8);
+    filter: grayscale(.5) opacity(0.8);
+}
+
+.remoteVideoProblemFilter {
+    -webkit-filter: grayscale(100%);
+    filter: grayscale(100%);
+}
+
+.videoProblemFilter {
+    -webkit-filter: blur(10px) grayscale(.5) opacity(0.8);
+    filter: blur(10px) grayscale(.5) opacity(0.8);
+}
+
+.videoThumbnailProblemFilter {
+    -webkit-filter: grayscale(100%);
+    filter: grayscale(100%);
+}
+
+#remotePresenceMessage,
+#remoteConnectionMessage {
+    position: absolute;
+    width: auto;
+    z-index: $zindex2;
+    font-weight: 600;
+    font-size: 14px;
+    text-align: center;
+    color: #FFF;
+    left: 50%;
+    transform: translate(-50%, 0);
+}
+#remotePresenceMessage .presence-label,
+#remoteConnectionMessage {
+    opacity: .80;
+    text-shadow:    0px 0px 1px rgba(0,0,0,0.3),
+                    0px 1px 1px rgba(0,0,0,0.3),
+                    1px 0px 1px rgba(0,0,0,0.3),
+                    0px 0px 1px rgba(0,0,0,0.3);
+
+    background: rgba(0,0,0,.5);
+    border-radius: 5px;
+    padding: 5px;
+    padding-left: 10px;
+    padding-right: 10px;
+}
+#remoteConnectionMessage {
+    display: none;
+}
+
+#localConnectionMessage {
+    display: none;
+    position: absolute;
+    left: 0;
+    width: 100%;
+    top:50%;
+    z-index: $zindex2;
+    font-weight: 600;
+    font-size: 14px;
+    text-align: center;
+    color: #FFF;
+    opacity: .80;
+    text-shadow:    0px 0px 1px rgba(0,0,0,0.3),
+                    0px 1px 1px rgba(0,0,0,0.3),
+                    1px 0px 1px rgba(0,0,0,0.3),
+                    0px 0px 1px rgba(0,0,0,0.3);
+}
+
+.display-avatar-with-name {
+    .avatar-container {
+        visibility: visible;
+    }
+
+    .displayNameContainer {
+        visibility: visible;
+    }
+
+    .videocontainer__hoverOverlay {
+        visibility: visible;
+    }
+
+    video {
+        visibility: hidden;
+    }
+}
+
+.display-name-on-black {
+    .avatar-container {
+        visibility: hidden;
+    }
+
+    .displayNameContainer {
+        visibility: visible;
+    }
+
+    .videocontainer__hoverOverlay {
+        visibility: hidden;
+    }
+
+    video {
+        opacity: 0.2;
+        visibility: visible;
+    }
+}
+
+.display-video {
+    .avatar-container {
+        visibility: hidden;
+    }
+
+    .displayNameContainer {
+        visibility: hidden;
+    }
+
+    .videocontainer__hoverOverlay {
+        visibility: hidden;
+    }
+
+    video {
+        visibility: visible;
+    }
+}
+
+.display-name-on-video {
+    .avatar-container {
+        visibility: hidden;
+    }
+
+    .displayNameContainer {
+        visibility: visible;
+    }
+
+    .videocontainer__hoverOverlay {
+        visibility: visible;
+    }
+
+    video {
+        visibility: visible;
+    }
+}
+
+.display-avatar-only {
+    .avatar-container {
+        visibility: visible;
+    }
+
+    .displayNameContainer {
+        visibility: hidden;
+    }
+
+    .videocontainer__hoverOverlay {
+        visibility: hidden;
+    }
+
+    video {
+        visibility: hidden;
+    }
+}
+
+.presence-label {
+    color: $participantNameColor;
+    font-size: 12px;
+    font-weight: 100;
+    left: 0;
+    margin: 0 auto;
+    overflow: hidden;
+    pointer-events: none;
+    right: 0;
+    text-align: center;
+    text-overflow: ellipsis;
+    top: calc(50% + 30px);
+    white-space: nowrap;
+    width: 100%;
+}

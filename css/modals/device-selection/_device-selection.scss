@@ -1,0 +1,131 @@
+.device-selection {
+    .device-selectors {
+        font-size: 14px;
+
+        > div {
+            display: block;
+            margin-bottom: 4px;
+        }
+
+        .device-selector-icon {
+            align-self: center;
+            color: inherit;
+            font-size: 20px;
+            margin-left: 3px;
+        }
+
+        .device-selector-label {
+            margin-bottom: 1px;
+        }
+
+        /* device-selector-trigger stylings attempt to mimic AtlasKit button */
+        .device-selector-trigger {
+            background-color: #0E1624;
+            border: 1px solid #455166;
+            border-radius: 5px;
+            display: flex;
+            height: 2.3em;
+            justify-content: space-between;
+            line-height: 2.3em;
+            overflow: hidden;
+            padding: 0 8px;
+        }
+        .device-selector-trigger-disabled {
+            .device-selector-trigger {
+                color: #a5adba;
+                cursor: default;
+            }
+        }
+
+        .device-selector-trigger-text {
+            overflow: hidden;
+            margin-left: 8px;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            width: 100%;
+        }
+    }
+
+    .device-selection-column {
+        box-sizing: border-box;
+        display: inline-block;
+        vertical-align: top;
+
+        &.column-selectors {
+            margin-left: 15px;
+            width: 45%;
+        }
+
+        &.column-video {
+            width: 50%;
+        }
+    }
+
+    .device-selection-video-container {
+        border-radius: 3px;
+        margin-bottom: 5px;
+
+        .video-input-preview {
+            margin-top: 2px;
+            position: relative;
+
+            > video {
+                border-radius: 3px;
+            }
+
+            .video-input-preview-error {
+                color: $participantNameColor;
+                display: none;
+                left: 0;
+                position: absolute;
+                right: 0;
+                text-align: center;
+                top: 50%;
+            }
+
+            &.video-preview-has-error {
+                background: black;
+
+                .video-input-preview-error {
+                    display: block;
+                }
+            }
+
+            .video-input-preview-display {
+                height: auto;
+                overflow: hidden;
+                width: 100%;
+            }
+        }
+    }
+
+    .audio-output-preview {
+        font-size: 14px;
+
+        a {
+            color: #2684FF;
+            cursor: pointer;
+            text-decoration: none;
+        }
+
+        a:hover {
+            color: #B3D4FF;
+        }
+    }
+
+    .audio-input-preview {
+        background: #1B2638;
+        border-radius: 5px;
+        height: 8px;
+
+        .audio-input-preview-level {
+            background: #4C9AFF;
+            border-radius: 5px;
+            height: 100%;
+            -webkit-transition: width .1s ease-in-out;
+            -moz-transition: width .1s ease-in-out;
+            -o-transition: width .1s ease-in-out;
+            transition: width .1s ease-in-out;
+        }
+    }
+}

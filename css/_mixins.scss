@@ -1,0 +1,195 @@
+/**
+ * Animation mixin.
+ */
+@mixin animation($animate...) {
+    $max: length($animate);
+    $animations: '';
+
+    @for $i from 1 through $max {
+        $animations: #{$animations + nth($animate, $i)};
+
+        @if $i < $max {
+            $animations: #{$animations + ", "};
+        }
+    }
+    -webkit-animation: $animations;
+    -moz-animation:    $animations;
+    -o-animation:      $animations;
+    animation:         $animations;
+}
+
+@mixin flex() {
+    display: -webkit-box;
+    display: -moz-box;
+    display: -ms-flexbox;
+    display: -webkit-flex;
+    display: flex;
+}
+
+/**
+ * Keyframes mixin.
+ */
+@mixin keyframes($animationName) {
+    @-webkit-keyframes #{$animationName} {
+        @content;
+    }
+    @-moz-keyframes #{$animationName} {
+        @content;
+    }
+    @-o-keyframes #{$animationName} {
+        @content;
+    }
+    @keyframes #{$animationName} {
+        @content;
+    }
+}
+
+@mixin circle($diameter) {
+    width: $diameter;
+    height: $diameter;
+    border-radius: 50%;
+}
+
+/**
+* Absolute position the element at the top left corner
+**/
+@mixin topLeft() {
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+@mixin absoluteAligning() {
+    top: 50%;
+    left: 50%;
+    position: absolute;
+    @include transform(translate(-50%, -50%));
+}
+
+/**
+* Defines the maximum width and height
+**/
+@mixin maxSize($value) {
+    max-width: $value;
+    max-height: $value;
+}
+
+@mixin transform($func) {
+    -moz-transform: $func;
+    -ms-transform: $func;
+    -webkit-transform: $func;
+    -o-transform: $func;
+    transform: $func;
+}
+
+@mixin transition($transition...) {
+    -moz-transition:    $transition;
+    -o-transition:      $transition;
+    -webkit-transition: $transition;
+    transition:         $transition;
+}
+
+/**
+ * Mixin styling a placeholder.
+ **/
+@mixin placeholder() {
+    $selectors: (
+        "::-webkit-input-placeholder",
+        "::-moz-placeholder",
+        ":-moz-placeholder",
+        ":-ms-input-placeholder"
+    );
+
+    @each $selector in $selectors {
+        #{$selector} {
+            @content;
+        }
+    }
+}
+
+/**
+ * Mixin styling a slider track for different browsers.
+ **/
+@mixin slider() {
+    $selectors: (
+        "input[type=range]::-webkit-slider-runnable-track",
+        "input[type=range]::-moz-range-track",
+        "input[type=range]::-ms-track"
+    );
+
+    @each $selector in $selectors {
+        #{$selector} {
+            @content;
+        }
+  }
+}
+
+/**
+ * Mixin styling a slider thumb for different browsers.
+ **/
+@mixin slider-thumb() {
+    $selectors: (
+        "input[type=range]::-webkit-slider-thumb",
+        "input[type=range]::-moz-range-thumb",
+        "input[type=range]::-ms-thumb"
+    );
+
+    @each $selector in $selectors {
+        #{$selector} {
+            @content;
+        }
+    }
+}
+
+@mixin box-shadow($h, $y, $blur, $color, $inset: false) {
+    @if $inset {
+        -webkit-box-shadow: inset $h $y $blur $color;
+        -moz-box-shadow: inset $h $y $blur $color;
+        box-shadow: inset $h $y $blur $color;
+    } @else {
+        -webkit-box-shadow: $h $y $blur $color;
+        -moz-box-shadow: $h $y $blur $color;
+        box-shadow: $h $y $blur $color;
+    }
+}
+
+@mixin no-box-shadow {
+    -webkit-box-shadow: none;
+    -moz-box-shadow: none;
+    box-shadow: none;
+}
+
+@mixin box-sizing($box-model) {
+    -webkit-box-sizing: $box-model; // Safari <= 5
+    -moz-box-sizing: $box-model; // Firefox <= 19
+    box-sizing: $box-model;
+}
+
+@mixin border-radius($radius) {
+    -webkit-border-radius: $radius;
+    border-radius: $radius;
+    /* stops bg color from leaking outside the border: */
+    background-clip: padding-box;
+}
+
+@mixin opacity($opacity) {
+    opacity: $opacity;
+    $opacity-ie: $opacity * 100;
+    -ms-filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=$opacity-ie);
+    filter: alpha(opacity=$opacity-ie); //IE8
+}
+
+@mixin text-truncate {
+    display: block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/**
+ * Creates a semi-transparent background with the given color and alpha
+ * (opacity) value.
+ */
+@mixin transparentBg($color, $alpha) {
+    background-color: rgba(red($color), green($color), blue($color), $alpha);
+}

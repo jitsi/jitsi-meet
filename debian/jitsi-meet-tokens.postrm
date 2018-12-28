@@ -52,6 +52,8 @@ case "$1" in
     ;;
 
     purge)
+        # Clear the debconf variable
+        db_purge
     ;;
 
     upgrade|failed-upgrade|abort-install|abort-upgrade|disappear)

@@ -21,16 +21,11 @@ set -e
 case "$1" in
     configure)
 
-        if [ -f "/etc/jitsi/videobridge/config" ] ; then
-            . /etc/jitsi/videobridge/config
-        fi
-
-        if [ -f "/etc/jitsi/jicofo/config" ] ; then
-            . /etc/jitsi/jicofo/config
-        fi
-
         # loading debconf
         . /usr/share/debconf/confmodule
+
+        db_get jitsi-meet-prosody/jvb-hostname
+        JVB_HOSTNAME="$RET"
 
         db_get jitsi-meet-tokens/appid
         if [ "$RET" = "false" ] ; then
@@ -45,19 +40,17 @@ case "$1" in
         fi
         APP_SECRET=$RET
 
-        # We can adjust Prosody config only if there is Jvb or Jicofo domain configured
         PROSODY_HOST_CONFIG="/etc/prosody/conf.avail/$JVB_HOSTNAME.cfg.lua"
-        if [ ! -f "$PROSODY_HOST_CONFIG" ] ; then
-            PROSODY_HOST_CONFIG="/etc/prosody/conf.avail/$JICOFO_HOSTNAME.cfg.lua"
-        fi
 
         # Store config filename for purge
-        db_set jitsi-meet-prosody/prosody_config $PROSODY_HOST_CONFIG
+        db_set jitsi-meet-prosody/prosody_config "$PROSODY_HOST_CONFIG"
 
         db_stop
 
         if [ -f "$PROSODY_HOST_CONFIG" ] ; then
-            if grep -q "plugin_paths" "$PROSODY_HOST_CONFIG"; then
+            # search for --plugin_paths, if this is not enabled this is the
+            # first time we install tokens package and needs a config change
+            if grep -q "\-\-plugin_paths" "$PROSODY_HOST_CONFIG"; then
                 # enable tokens in prosody host config
                 sed -i 's/--plugin_paths/plugin_paths/g' $PROSODY_HOST_CONFIG
                 sed -i 's/authentication = "anonymous"/authentication = "token"/g' $PROSODY_HOST_CONFIG
@@ -71,6 +64,11 @@ case "$1" in
                    echo "Failed to install luajwtjitsi - try installing it manually"
                 fi
 
+                # Install basexx
+                if ! luarocks install basexx; then
+                   echo "Failed to install basexx - try installing it manually"
+                fi
+
                 if [ -x "/etc/init.d/prosody" ]; then
                     invoke-rc.d prosody restart
                 fi
@@ -79,8 +77,6 @@ case "$1" in
                 echo "Use the following command, after this package has been installed and"
                 echo "after every prosody-trunk upgrade:"
                 echo "sudo patch -N /usr/lib/prosody/modules/mod_bosh.lua /usr/share/jitsi-meet/prosody-plugins/mod_bosh.lua.patch"
-            else
-                echo "Failed apply auto-config to $PROSODY_HOST_CONFIG which most likely comes from not supported version of jitsi-meet"
             fi
         else
             echo "Prosody config not found at $PROSODY_HOST_CONFIG - unable to auto-configure token authentication"

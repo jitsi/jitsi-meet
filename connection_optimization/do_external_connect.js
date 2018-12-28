@@ -1,75 +1,85 @@
-/* global config, getRoomName, getConfigParamsFromUrl */
-/* global createConnectionExternally */
+/* global config, createConnectionExternally */
+
+import getRoomName from '../react/features/base/config/getRoomName';
+import parseURLParams from '../react/features/base/config/parseURLParams';
+
 /**
- * Implements extrnal connect using createConnectionExtenally function defined
- * in external_connect.js for Jitsi Meet. Parses the room name and token from
- * the url and executes createConnectionExtenally.
+ * Implements external connect using createConnectionExternally function defined
+ * in external_connect.js for Jitsi Meet. Parses the room name and JSON Web
+ * Token (JWT) from the URL and executes createConnectionExternally.
  *
- * NOTE: If you are using lib-jitsi-meet without Jitsi Meet you should use this
- * file as reference only because the implementation is Jitsi Meet specific.
+ * NOTE: If you are using lib-jitsi-meet without Jitsi Meet, you should use this
+ * file as reference only because the implementation is Jitsi Meet-specific.
  *
  * NOTE: For optimal results this file should be included right after
- * exrnal_connect.js.
+ * external_connect.js.
  */
+
+if (typeof createConnectionExternally === 'function') {
+    // URL params have higher priority than config params.
+    let url
+        = parseURLParams(window.location, true, 'hash')[
+                'config.externalConnectUrl']
+            || config.externalConnectUrl;
+    const isRecorder
+        = parseURLParams(window.location, true, 'hash')['config.iAmRecorder'];
+
+    let roomName;
+
+    if (url && (roomName = getRoomName()) && !isRecorder) {
+        url += `?room=${roomName}`;
+
+        const token = parseURLParams(window.location, true, 'search').jwt;
+
+        if (token) {
+            url += `&token=${token}`;
+        }
+
+        createConnectionExternally(
+            url,
+            connectionInfo => {
+                // Sets that global variable to be used later by connect method
+                // in connection.js.
+                window.XMPPAttachInfo = {
+                    status: 'success',
+                    data: connectionInfo
+                };
+                checkForConnectHandlerAndConnect();
+            },
+            errorCallback);
+    } else {
+        errorCallback();
+    }
+} else {
+    errorCallback();
+}
 
 /**
- * Executes createConnectionExternally function.
+ * Check if connect from connection.js was executed and executes the handler
+ * that is going to finish the connect work.
+ *
+ * @returns {void}
  */
-(function () {
-    var hashParams = getConfigParamsFromUrl("hash", true);
-    var searchParams = getConfigParamsFromUrl("search", true);
+function checkForConnectHandlerAndConnect() {
+    window.APP
+        && window.APP.connect.status === 'ready'
+        && window.APP.connect.handler();
+}
 
-    //Url params have higher proirity than config params
-    var url = config.externalConnectUrl;
-    if(hashParams.hasOwnProperty('config.externalConnectUrl'))
-        url = hashParams["config.externalConnectUrl"];
+/**
+ * Implements a callback to be invoked if anything goes wrong.
+ *
+ * @param {Error} error - The specifics of what went wrong.
+ * @returns {void}
+ */
+function errorCallback(error) {
+    // The value of error is undefined if external connect is disabled.
+    error && console.warn(error);
 
-    /**
-     * Check if connect from connection.js was executed and executes the handler
-     * that is going to finish the connect work.
-     */
-    function checkForConnectHandlerAndConnect() {
-
-        if(window.APP && window.APP.connect.status === "ready") {
-            window.APP.connect.handler();
-        }
-    }
-
-    function error_callback(error){
-        if(error) //error=undefined if external connect is disabled.
-            console.warn(error);
-        // Sets that global variable to be used later by connect method in
-        // connection.js
-        window.XMPPAttachInfo = {
-            status: "error"
-        };
-        checkForConnectHandlerAndConnect();
-    }
-
-    if(!url || !window.createConnectionExternally) {
-        error_callback();
-        return;
-    }
-    var room_name = getRoomName();
-    if(!room_name) {
-        error_callback();
-        return;
-    }
-
-    url += "?room=" + room_name;
-
-    var token = hashParams["config.token"] || config.token ||
-        searchParams.jwt;
-    if(token)
-        url += "&token=" + token;
-
-    createConnectionExternally(url, function(connectionInfo) {
-        // Sets that global variable to be used later by connect method in
-        // connection.js
-        window.XMPPAttachInfo = {
-            status: "success",
-            data: connectionInfo
-        };
-        checkForConnectHandlerAndConnect();
-    }, error_callback);
-})();
+    // Sets that global variable to be used later by connect method in
+    // connection.js.
+    window.XMPPAttachInfo = {
+        status: 'error'
+    };
+    checkForConnectHandlerAndConnect();
+}

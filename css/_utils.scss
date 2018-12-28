@@ -1,0 +1,50 @@
+.flip-x {
+    transform: scaleX(-1);
+}
+
+.hidden {
+  display: none;
+}
+
+/**
+ * Hides an element.
+ */
+.hide {
+    display: none !important;
+}
+
+.invisible {
+    visibility: hidden;
+}
+
+/**
+ * Shows an element.
+ */
+.show {
+    display: block !important;
+}
+
+/**
+ * Shows an inline element.
+ */
+.show-inline {
+    display: inline-block !important;
+}
+
+/**
+* Shows as a list item
+**/
+.show-list-item {
+    display: list-item !important;
+}
+
+/**
+ * Shows a flex element.
+ */
+.show-flex {
+    display: -webkit-box !important;
+    display: -moz-box !important;
+    display: -ms-flexbox !important;
+    display: -webkit-flex !important;
+    display: flex !important;
+}

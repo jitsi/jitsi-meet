@@ -3,19 +3,19 @@
  * Base class for all Large containers which we can show.
  */
 export default class LargeContainer {
-
+    /* eslint-disable no-unused-vars, no-empty-function */
     /**
      * Show this container.
      * @returns Promise
      */
-    show () {
+    show() {
     }
 
     /**
      * Hide this container.
      * @returns Promise
      */
-    hide () {
+    hide() {
     }
 
     /**
@@ -24,34 +24,35 @@ export default class LargeContainer {
      * @param {number} containerHeight available height
      * @param {boolean} animate if container should animate it's resize process
      */
-    resize (containerWidth, containerHeight, animate) {
+    resize(containerWidth, containerHeight, animate) {
     }
 
     /**
      * Handler for "hover in" events.
      */
-    onHoverIn (e) {
+    onHoverIn(e) {
     }
 
     /**
      * Handler for "hover out" events.
      */
-    onHoverOut (e) {
+    onHoverOut(e) {
     }
 
     /**
      * Update video stream.
+     * @param {string} userID
      * @param {JitsiTrack?} stream new stream
      * @param {string} videoType video type
      */
-    setStream (stream, videoType) {
+    setStream(userID, stream, videoType) {
     }
 
     /**
      * Show or hide user avatar.
      * @param {boolean} show
      */
-    showAvatar (show) {
+    showAvatar(show) {
     }
 
     /**
@@ -59,6 +60,8 @@ export default class LargeContainer {
      * when the container is on stage.
      * @return {boolean}
      */
-    stayOnStage () {
+    stayOnStage() {
     }
+
+    /* eslint-enable no-unused-vars, no-empty-function */
 }
