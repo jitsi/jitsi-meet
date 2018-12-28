@@ -93,5 +93,9 @@
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
+	<key>FirebaseScreenReportingEnabled</key>
+	<false/>
+	<key>firebase_crashlytics_collection_enabled</key>
+	<string>false</string>
 </dict>
 </plist>
