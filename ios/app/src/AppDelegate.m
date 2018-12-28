@@ -30,12 +30,11 @@
 
 -    (BOOL)application:(UIApplication *)application
   continueUserActivity:(NSUserActivity *)userActivity
-    restorationHandler:(void (^)(NSArray *restorableObjects))restorationHandler {
+    restorationHandler:(void (^)(NSArray<id<UIUserActivityRestoring>> *restorableObjects))restorationHandler {
     return [JitsiMeetView application:application
                  continueUserActivity:userActivity
                    restorationHandler:restorationHandler];
 }
-
 
 - (BOOL)application:(UIApplication *)app
             openURL:(NSURL *)url
