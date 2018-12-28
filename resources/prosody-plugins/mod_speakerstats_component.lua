@@ -50,11 +50,11 @@ function on_message(event)
         local oldDominantSpeakerId = roomSpeakerStats['dominantSpeakerId'];
 
         if oldDominantSpeakerId then
-            roomSpeakerStats[oldDominantSpeakerId]:setIsDominantSpeaker(false);
+            roomSpeakerStats[oldDominantSpeakerId]:setDominantSpeaker(false);
         end
 
         if newDominantSpeaker then
-            newDominantSpeaker:setIsDominantSpeaker(true);
+            newDominantSpeaker:setDominantSpeaker(true);
         end
 
         room.speakerStats['dominantSpeakerId'] = occupant.jid;
@@ -70,8 +70,7 @@ SpeakerStats.__index = SpeakerStats;
 function new_SpeakerStats(nick)
     return setmetatable({
         totalDominantSpeakerTime = 0;
-        _dominantSpeakerStart = nil;
-        _isDominantSpeaker = false;
+        _dominantSpeakerStart = 0;
         nick = nick;
         displayName = nil;
     }, SpeakerStats);
@@ -80,22 +79,25 @@ end
 -- Changes the dominantSpeaker data for current occupant
 -- saves start time if it is new dominat speaker
 -- or calculates and accumulates time of speaking
-function SpeakerStats:setIsDominantSpeaker(isNowDominantSpeaker)
+function SpeakerStats:setDominantSpeaker(isNowDominantSpeaker)
     log("debug",
         "set isDominant %s for %s", tostring(isNowDominantSpeaker), self.nick);
 
-    if not self._isDominantSpeaker and isNowDominantSpeaker then
+    if not self:isDominantSpeaker() and isNowDominantSpeaker then
         self._dominantSpeakerStart = socket.gettime()*1000;
-    elseif self._isDominantSpeaker and not isNowDominantSpeaker then
+    elseif self:isDominantSpeaker() and not isNowDominantSpeaker then
         local now = socket.gettime()*1000;
-        local timeElapsed = math.floor(now - (self._dominantSpeakerStart or 0));
+        local timeElapsed = math.floor(now - self._dominantSpeakerStart);
 
         self.totalDominantSpeakerTime
             = self.totalDominantSpeakerTime + timeElapsed;
-        self._dominantSpeakerStart = nil;
+        self._dominantSpeakerStart = 0;
     end
+end
 
-    self._isDominantSpeaker = isNowDominantSpeaker;
+-- Returns true if the tracked user is currently a dominant speaker.
+function SpeakerStats:isDominantSpeaker()
+    return self._dominantSpeakerStart > 0;
 end
 --- End SpeakerStats
 
@@ -126,10 +128,9 @@ function occupant_joined(event)
 
                     -- before sending we need to calculate current dominant speaker
                     -- state
-                    if values._dominantSpeakerStart ~= nil then
+                    if values:isDominantSpeaker() ~= nil then
                         local timeElapsed = math.floor(
-                            socket.gettime()*1000
-                                - (values._dominantSpeakerStart or 0));
+                            socket.gettime()*1000 - values._dominantSpeakerStart);
                         totalDominantSpeakerTime = totalDominantSpeakerTime
                             + timeElapsed;
                     end
@@ -166,7 +167,7 @@ function occupant_leaving(event)
 
     local speakerStatsForOccupant = room.speakerStats[occupant.jid];
     if speakerStatsForOccupant then
-        speakerStatsForOccupant:setIsDominantSpeaker(false);
+        speakerStatsForOccupant:setDominantSpeaker(false);
 
         -- set display name
         local displayName = occupant:get_presence():get_child_text(
