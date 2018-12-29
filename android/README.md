@@ -33,7 +33,7 @@ dependencies {
 }
 ```
 
-Also, enable 32bit mode for react-native
+Also, enable 32bit mode for react-native, since react-native only supports 32bit apps. (If you have a 64bit device, it will not run unless this setting it set)
 
 ```gradle
 android {
