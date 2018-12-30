@@ -11,34 +11,6 @@
     -webkit-transform: translateX(0) translateY(100%) translateY(16px) !important;
 }
 
-/**
- * Welcome page tab color adjustments.
- */
-.welcome {
-    /**
-     * The text color of the selected tab and hovered tabs.
-     */
-    .bVobOt,
-    .bVobOt:hover,
-    .ebveIl:hover {
-        color: #172B4D;
-    }
-
-    /**
-     * The color of the inactive tab text.
-     */
-    .ebveIl {
-        color: #FFFFFF;
-    }
-
-    /**
-     * The color of the underline of a selected tab.
-     */
-    .kByArU {
-        background-color: #172B4D;
-    }
-}
-
 .modal-dialog-form {
     /**
      * Update the @atlaskit/dropdown-menu trigger wrapper to make sure it looks
