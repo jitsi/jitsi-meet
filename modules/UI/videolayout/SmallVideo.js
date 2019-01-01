@@ -746,6 +746,37 @@ SmallVideo.prototype.initBrowserSpecificProperties = function() {
 };
 
 /**
+ * Cleans up components on {@code SmallVideo} and removes itself from the DOM.
+ *
+ * @returns {void}
+ */
+SmallVideo.prototype.remove = function() {
+    logger.log('Remove thumbnail', this.id);
+
+    this.removeAudioLevelIndicator();
+
+    const toolbarContainer
+        = this.container.querySelector('.videocontainer__toolbar');
+
+    if (toolbarContainer) {
+        ReactDOM.unmountComponentAtNode(toolbarContainer);
+    }
+
+    this.removeConnectionIndicator();
+
+    this.removeDisplayName();
+
+    this.removeAvatar();
+
+    this._unmountIndicators();
+
+    // Remove whole container
+    if (this.container.parentNode) {
+        this.container.parentNode.removeChild(this.container);
+    }
+};
+
+/**
  * Helper function for re-rendering multiple react components of the small
  * video.
  *
@@ -937,5 +968,6 @@ SmallVideo.prototype._onPopoverHover = function(popoverIsHovered) {
     this._popoverIsHovered = popoverIsHovered;
     this.updateView();
 };
+
 
 export default SmallVideo;

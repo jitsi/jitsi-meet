@@ -437,33 +437,10 @@ RemoteVideo.prototype.updateConnectionStatusIndicator = function() {
  * Removes RemoteVideo from the page.
  */
 RemoteVideo.prototype.remove = function() {
-    logger.log('Remove thumbnail', this.id);
-
-    this.removeAudioLevelIndicator();
-
-    const toolbarContainer
-        = this.container.querySelector('.videocontainer__toolbar');
-
-    if (toolbarContainer) {
-        ReactDOM.unmountComponentAtNode(toolbarContainer);
-    }
-
-    this.removeConnectionIndicator();
-
-    this.removeDisplayName();
-
-    this.removeAvatar();
+    SmallVideo.prototype.remove.call(this);
 
     this.removePresenceLabel();
-
-    this._unmountIndicators();
-
     this.removeRemoteVideoMenu();
-
-    // Remove whole container
-    if (this.container.parentNode) {
-        this.container.parentNode.removeChild(this.container);
-    }
 };
 
 RemoteVideo.prototype.waitForPlayback = function(streamElement, stream) {

@@ -18,7 +18,6 @@ import {
     getLocalParticipant,
     showParticipantJoinedNotification
 } from '../../react/features/base/participants';
-import { destroyLocalTracks } from '../../react/features/base/tracks';
 import { toggleChat } from '../../react/features/chat';
 import { openDisplayNamePrompt } from '../../react/features/display-name';
 import { setEtherpadHasInitialzied } from '../../react/features/etherpad';
@@ -295,12 +294,6 @@ UI.registerListeners
     = () => UIListeners.forEach((value, key) => UI.addListener(key, value));
 
 /**
- * Unregister some UI event listeners.
- */
-UI.unregisterListeners
-    = () => UIListeners.forEach((value, key) => UI.removeListener(key, value));
-
-/**
  * Setup some DOM event listeners.
  */
 UI.bindEvents = () => {
@@ -575,6 +568,15 @@ UI.updateAllVideos = () => VideoLayout.updateAllVideos();
  */
 UI.addListener = function(type, listener) {
     eventEmitter.on(type, listener);
+};
+
+/**
+ * Removes the all listeners for all events.
+ *
+ * @returns {void}
+ */
+UI.removeAllListeners = function() {
+    eventEmitter.removeAllListeners();
 };
 
 /**
@@ -966,18 +968,6 @@ UI.setRemoteControlActiveStatus = function(participantID, isActive) {
  */
 UI.setLocalRemoteControlActiveChanged = function() {
     VideoLayout.setLocalRemoteControlActiveChanged();
-};
-
-/**
- * Remove media tracks and UI elements so the user no longer sees media in the
- * UI. The intent is to provide a feeling that the meeting has ended.
- *
- * @returns {void}
- */
-UI.removeLocalMedia = function() {
-    APP.store.dispatch(destroyLocalTracks());
-    VideoLayout.resetLargeVideo();
-    $('#videospace').hide();
 };
 
 // TODO: Export every function separately. For now there is no point of doing

@@ -88,6 +88,7 @@ import {
 import { updateSettings } from './react/features/base/settings';
 import {
     createLocalTracksF,
+    destroyLocalTracks,
     isLocalTrackMuted,
     replaceLocalTrack,
     trackAdded,
@@ -2466,7 +2467,11 @@ export default {
      */
     hangup(requestFeedback = false) {
         eventEmitter.emit(JitsiMeetConferenceEvents.BEFORE_HANGUP);
-        APP.UI.removeLocalMedia();
+
+        APP.store.dispatch(destroyLocalTracks());
+        this._localTracksInitialized = false;
+        this.localVideo = null;
+        this.localAudio = null;
 
         // Remove unnecessary event listeners from firing callbacks.
         if (this.deviceChangeListener) {
@@ -2474,6 +2479,9 @@ export default {
                 JitsiMediaDevicesEvents.DEVICE_LIST_CHANGED,
                 this.deviceChangeListener);
         }
+
+        APP.UI.removeAllListeners();
+        APP.remoteControl.removeAllListeners();
 
         let requestFeedbackPromise;
 
@@ -2508,7 +2516,12 @@ export default {
     leaveRoomAndDisconnect() {
         APP.store.dispatch(conferenceWillLeave(room));
 
-        return room.leave().then(disconnect, disconnect);
+        return room.leave()
+            .then(disconnect, disconnect)
+            .then(() => {
+                this._room = undefined;
+                room = undefined;
+            });
     },
 
     /**
