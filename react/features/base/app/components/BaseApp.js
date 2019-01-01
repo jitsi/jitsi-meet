@@ -59,7 +59,14 @@ export default class BaseApp extends Component<*, State> {
             // $FlowFixMe
             store: undefined
         };
+    }
 
+    /**
+     * Initializes the app.
+     *
+     * @inheritdoc
+     */
+    componentDidMount() {
         /**
          * Make the mobile {@code BaseApp} wait until the {@code AsyncStorage}
          * implementation of {@code Storage} initializes fully.
@@ -68,22 +75,15 @@ export default class BaseApp extends Component<*, State> {
          * @see {@link #_initStorage}
          * @type {Promise}
          */
-        this._init
-            = this._initStorage()
-                .catch(() => { /* AbstractApp should always initialize! */ })
-                .then(() =>
-                    this.setState({
-                        store: this._createStore()
-                    }));
-    }
-
-    /**
-     * Initializes the app.
-     *
-     * @inheritdoc
-     */
-    componentWillMount() {
-        this._init.then(() => this.state.store.dispatch(appWillMount(this)));
+        this._init = this._initStorage()
+            .catch(() => { /* BaseApp should always initialize! */ })
+            .then(() => new Promise(resolve => {
+                this.setState({
+                    store: this._createStore()
+                }, resolve);
+            }))
+            .then(() => this.state.store.dispatch(appWillMount(this)))
+            .catch(() => { /* BaseApp should always initialize! */ });
     }
 
     /**

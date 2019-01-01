@@ -45,8 +45,8 @@ export class AbstractApp extends BaseApp<Props, *> {
      *
      * @inheritdoc
      */
-    componentWillMount() {
-        super.componentWillMount();
+    componentDidMount() {
+        super.componentDidMount();
 
         this._init.then(() => {
             // If a URL was explicitly specified to this React Component, then

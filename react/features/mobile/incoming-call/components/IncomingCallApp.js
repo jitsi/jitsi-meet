@@ -43,8 +43,8 @@ export default class IncomingCallApp extends BaseApp<Props> {
      *
      * @returns {void}
      */
-    componentWillMount() {
-        super.componentWillMount();
+    componentDidMount() {
+        super.componentDidMount();
 
         this._init.then(() => {
             const { dispatch } = this.state.store;
