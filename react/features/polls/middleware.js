@@ -2,103 +2,95 @@
 
 import { MiddlewareRegistry } from '../base/redux';
 import {
-    POLL_SESSION_INITIATED,
-    POLL_SESSION_STARTED,
-    POLL_SESSION_VOTE,
-    POLL_SESSION_END
+    END_POLL,
+    START_POLL,
+    VOTE_POLL
 } from './actionTypes';
 import {
-    ENDPOINT_MESSAGE_RECEIVED
-} from '../subtitles/actionTypes';
-import {
-    startPollSession,
+    addPoll,
     showPollStartNotification,
     showPollEndNotification,
-    updateVotes,
-    pollSessionFinished
+    updateVote,
+    finishPoll
 } from './actions';
-import { getLogger } from 'jitsi-meet-logger';
+import { isButtonEnabled } from '../toolbox';
+import { CONFERENCE_JOINED } from '../base/conference';
+import { JitsiConferenceEvents } from '../base/lib-jitsi-meet';
+import { ENDPOINT_MESSAGE_RECEIVED } from '../subtitles';
 
 declare var APP: Object;
-
-const logger = getLogger(__filename);
+declare var interfaceConfig : Object;
 
 MiddlewareRegistry.register(store => next => action => {
     switch (action.type) {
-    case POLL_SESSION_INITIATED: {
+    case CONFERENCE_JOINED:
+        typeof APP === 'undefined'
+            || _addPollMsgListener(action.conference, store);
+        break;
+    case START_POLL: {
         if (APP !== 'undefined') {
-            // Inform other participants that I created a poll.
-            const { payload } = action;
-            const message = {
-                type: POLL_SESSION_STARTED.toString(),
-                payload
-            };
+            const { poll, choices, question } = action;
 
-            try {
-                APP.conference.sendEndpointMessage('', message);
-                store.dispatch(showPollStartNotification());
-            } catch (e) {
-                logger.error('Failed to send Poll session info via data channel'
-                    , e);
-            }
+            APP.conference.startPoll(poll, choices, question);
         }
         break;
     }
-    case POLL_SESSION_VOTE: {
-        const { prevID, id, user } = action;
-        const message = {
-            type: POLL_SESSION_VOTE.toString(),
-            prevID,
-            id,
-            user
-        };
+    case VOTE_POLL: {
+        const { choiceID } = action;
 
-        logger.log(`I voted for ${id}`);
-
-        try {
-            APP.conference.sendEndpointMessage('', message);
-        } catch (e) {
-            logger.error('Failed to send Poll session info via data channel'
-                , e);
-        }
+        APP.conference.voteInPoll(choiceID);
         break;
     }
-    case POLL_SESSION_END: {
-        const message = {
-            type: POLL_SESSION_END.toString()
-        };
-
-        try {
-            APP.conference.sendEndpointMessage('', message);
-            store.dispatch(showPollEndNotification());
-        } catch (e) {
-            logger.error('Failed to send Poll session info via data channel'
-                , e);
-        }
+    case END_POLL: {
+        APP.conference.endPoll();
         break;
     }
     case ENDPOINT_MESSAGE_RECEIVED: {
-        // Recieve all poll session communication here.
-        const { json } = action;
-
-        if (json) {
-            if (json.type === POLL_SESSION_STARTED.toString()) {
-                const { payload } = json;
-
-                store.dispatch(startPollSession(payload));
-                store.dispatch(showPollStartNotification());
-            } else if (json.type === POLL_SESSION_VOTE.toString()) {
-                const { prevID, id, user } = json;
-
-                logger.log(`User ${user} voted for ${id}`);
-                store.dispatch(updateVotes(prevID, id, user));
-            } else if (json.type === POLL_SESSION_END.toString()) {
-                store.dispatch(pollSessionFinished());
-                store.dispatch(showPollEndNotification());
-            }
-        }
+        console.log(action);
     }
     }
 
     return next(action);
 });
+
+/**
+ * Registers listener for poll events.
+ *
+ * @param {JitsiConference} conference - The conference instance on which the
+ * new event listener will be registered.
+ * @param {Object} store - The redux store object.
+ * @private
+ * @returns {void}
+ */
+function _addPollMsgListener(conference, store) {
+    if ((typeof interfaceConfig === 'object' && interfaceConfig.filmStripOnly)
+        || !isButtonEnabled('polls')) {
+        return;
+    }
+
+    conference.on(
+        JitsiConferenceEvents.POLL_FINISHED, () => {
+            store.dispatch(finishPoll());
+            store.dispatch(showPollEndNotification());
+        }
+    );
+
+    conference.on(
+        JitsiConferenceEvents.POLL_STARTED,
+        (choices, poll, question) => {
+            store.dispatch(addPoll({
+                choices,
+                poll,
+                question
+            }));
+            store.dispatch(showPollStartNotification());
+        }
+    );
+
+    conference.on(
+        JitsiConferenceEvents.POLL_VOTE_UPDATED,
+        choice => {
+            store.dispatch(updateVote({ choice }));
+        }
+    );
+}

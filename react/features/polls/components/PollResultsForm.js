@@ -1,13 +1,21 @@
 // @flow
 
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import {
     Container
 } from '../../base/react';
 import { FieldTextStateless } from '@atlaskit/field-text';
 import PollChoice from './PollChoice';
+import { getPastPolls } from '../functions';
+import { getLocalParticipant } from '../../base/participants';
 
 type Props = {
+
+    /**
+     * Object containing all choices by ID.
+     */
+    choices: Object,
 
     /**
      * Object containing all polls by ID.
@@ -15,9 +23,9 @@ type Props = {
     polls: Object,
 
     /**
-     * Object containing all choices by ID.
+     * ID of current user.
      */
-    choices: Object,
+    userID: string,
 
     /**
      * Object containing all questions by ID.
@@ -102,9 +110,10 @@ class PollResultsForm extends Component<Props, *> {
      * @returns {Component}
      */
     _renderPollChoice(item: string, id: number) {
-        const { choices } = this.props;
+        const { choices, userID } = this.props;
         const choice = choices[item];
         const numberOfVotes = choice.votes.length;
+        const selected = choice.votes.findIndex(x => x === userID) > -1;
 
         return (
             <PollChoice
@@ -112,7 +121,7 @@ class PollResultsForm extends Component<Props, *> {
                 editable = { false }
                 id = { item }
                 key = { id.toString() }
-                selected = { false }
+                selected = { selected }
                 text = { choice.text }
                 votes = { numberOfVotes } />
         );
@@ -120,4 +129,27 @@ class PollResultsForm extends Component<Props, *> {
 
 }
 
-export default PollResultsForm;
+/**
+ * Map Redux state to Component props.
+ *
+ * @param {Object} state - Redux state.
+ * @returns {{}}
+ */
+function _mapStateToProps(state: Ojbect) {
+    const {
+        choices,
+        currentPoll,
+        polls,
+        questions
+    } = state['features/polls'];
+    const userID = getLocalParticipant(state).id;
+
+    return {
+        choices,
+        polls: getPastPolls(polls, currentPoll),
+        userID,
+        questions
+    };
+}
+
+export default connect(_mapStateToProps)(PollResultsForm);

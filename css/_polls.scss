@@ -25,11 +25,27 @@
 }
 #poll-item-button {
     margin-left: 5px;
+    border: none;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    border-radius: 50%;
+    transform: rotate(90deg);
+}
+#new-poll-choice-button {
+    width: 10px;
+    height: 10px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    border-radius: 50%;
 }
 .new-poll-button {
-    width: 50px;
-    height: 50px;
+    width: 30px;
+    height: 20px;
     text-align: center;
+    text-decoration: none;
+    display: inline-block;
 }
 #poll-create-form {
     width: 500px;

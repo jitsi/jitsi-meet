@@ -2591,6 +2591,31 @@ export default {
     },
 
     /**
+     * Save the poll infromation in backend.
+     * @param {Object} event - Event.
+     */
+    startPoll(poll, choices, question) {
+        room.startPoll(poll, choices, question);
+    },
+
+    voteInPoll(choiceID) {
+        room.voteInPoll(choiceID);
+    },
+
+    endPoll() {
+        room.endPoll();
+    },
+
+    /**
+     * Send generic message through muc.
+     * @param {string | Object} msg - Message to send.
+     * @param {string} to - JID of receipent or '' to broadcast.
+     */
+    sendMessage(msg, to = '') {
+        room.sendMessage(msg, to);
+    },
+
+    /**
      * Adds new listener.
      * @param {String} eventName the name of the event
      * @param {Function} listener the listener.

@@ -1,11 +1,11 @@
 // @flow
 
 import {
-    POLL_SESSION_INITIATED,
+    END_POLL,
+    START_POLL,
+    VOTE_POLL,
     POLL_SESSION_STARTED,
     POLL_SESSION_VOTE,
-    POLL_SESSION_VOTE_RECIEVED,
-    POLL_SESSION_END,
     POLL_SESSION_FINISHED
 } from './actionTypes';
 import { showNotification } from '../notifications/actions';
@@ -20,10 +20,10 @@ import { showNotification } from '../notifications/actions';
  *      items: Array<Object>
  * }}
  */
-export function initiatePollSession(payload: Object) {
+export function startPoll(payload: Object) {
     return {
-        type: POLL_SESSION_INITIATED,
-        payload
+        type: START_POLL,
+        ...payload
     };
 }
 
@@ -34,10 +34,10 @@ export function initiatePollSession(payload: Object) {
  * @returns {{
  * }}
  */
-export function startPollSession(payload: Object) {
+export function addPoll(payload: Object) {
     return {
         type: POLL_SESSION_STARTED,
-        payload
+        ...payload
     };
 }
 
@@ -80,39 +80,30 @@ export function showPollEndNotification() {
 /**
  * Vote for an option.
  *
-* @param {string} prevID - Previously voted option or null if first vote.
- * @param {string} id - Option voted for identified by text.
- * @param {string} user - User ID who voted.
+ * @param {string} choiceID - Option voted for identified by text.
  * @returns {{
  *      type: POLL_SESSION_VOTE,
  *      item: string,
  *      user: string
  * }}
  */
-export function vote(prevID: ?string, id: string, user: string) {
+export function vote(choiceID: string) {
     return {
-        type: POLL_SESSION_VOTE,
-        prevID,
-        id,
-        user
+        type: VOTE_POLL,
+        choiceID
     };
 }
 
 /**
  * Update state about other participant vote.
  *
- * @param {string} prevID - Previously voted option or null if first vote.
- * @param {string} id - Option voted for identified by text.
- * @param {string} user - User ID who voted.
+ * @param {Object} choice - Option voted for.
  * @returns {{}}
  */
-export function updateVotes(prevID: string | null,
-        id: string, user: string) {
+export function updateVote(choice: Object) {
     return {
-        type: POLL_SESSION_VOTE_RECIEVED,
-        prevID,
-        id,
-        user
+        type: POLL_SESSION_VOTE,
+        choice
     };
 }
 
@@ -122,9 +113,9 @@ export function updateVotes(prevID: string | null,
  *
  * @returns {{}}
  */
-export function endPollSession() {
+export function endPoll() {
     return {
-        type: POLL_SESSION_END
+        type: END_POLL
     };
 }
 
@@ -133,7 +124,7 @@ export function endPollSession() {
  *
  * @returns {{}}
  */
-export function pollSessionFinished() {
+export function finishPoll() {
     return {
         type: POLL_SESSION_FINISHED
     };

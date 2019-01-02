@@ -9,12 +9,13 @@ import { FieldTextStateless } from '@atlaskit/field-text';
 import AddPollItem from './AddPollItem';
 import v1 from 'uuid/v1';
 import {
-    initiatePollSession
+    startPoll
 } from '../actions';
 import { getUniquePollChoices } from '../functions';
 
 import { getLocalParticipant } from '../../base/participants';
 import PollChoice from './PollChoice';
+import { translate } from '../../base/i18n';
 
 type Props = {
 
@@ -42,10 +43,14 @@ type State = {
     poll: Object,
 
     /**
+     * Invoked to obtain translated strings.
+     */
+    t: Function,
+
+    /**
      * Poll question.
      */
     question: Object
-
 };
 
 /**
@@ -117,7 +122,9 @@ class PollCreateForm extends Component<Props, State> {
      * @returns {void}
      */
     _removeChoice(id: string) {
-        const filteredChoices = this.state.choices.filter(x => x.id !== id);
+        const filteredChoices = Object.assign({}, this.state.choices);
+
+        delete filteredChoices[id];
 
         this.setState({
             choices: filteredChoices
@@ -217,6 +224,8 @@ class PollCreateForm extends Component<Props, State> {
      * @returns {boolean}
      */
     _onCreatePollClicked(event: Object) {
+        event.preventDefault();
+
         const { question, choices, poll } = this.state;
         const { dispatch } = this.props;
         const uniqueChoices = getUniquePollChoices(choices);
@@ -238,9 +247,7 @@ class PollCreateForm extends Component<Props, State> {
         console.log(payload);
 
         event.preventDefault();
-        dispatch(initiatePollSession(payload));
-
-        return true;
+        dispatch(startPoll(payload));
     }
 
     _onQuestionTextChange: (Object) => void;
@@ -278,4 +285,4 @@ function _mapStateToProps(state: Object) {
     };
 }
 
-export default connect(_mapStateToProps)(PollCreateForm);
+export default translate(connect(_mapStateToProps)(PollCreateForm));

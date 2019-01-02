@@ -7,7 +7,7 @@ import {
 } from '../../base/react';
 import { FieldTextStateless } from '@atlaskit/field-text';
 import { getLocalParticipant } from '../../base/participants';
-import { vote, endPollSession } from '../actions';
+import { vote, endPoll } from '../actions';
 import PollChoice from './PollChoice';
 
 type Props = {
@@ -20,7 +20,7 @@ type Props = {
     /**
      * User current vote.
      */
-    currentVote: ? string,
+    currentVote: ?string,
 
     /**
      * Redux.
@@ -71,9 +71,10 @@ class VoteForm extends Component<Props, *> {
      * @inheritdoc
      */
     render() {
-        const { poll, questions } = this.props;
+        const { poll, questions, userID } = this.props;
         const question = questions[poll.question];
         const renderedChoices = poll.choices.map(this._renderPollChoice);
+        const endVoteDisabled = poll.owner !== userID;
 
         return (
             <Container>
@@ -92,6 +93,7 @@ class VoteForm extends Component<Props, *> {
                 </div>
 
                 <button
+                    disabled = { endVoteDisabled }
                     id = { 'end-poll-button' }
                     onClick = { this._onEndVoteClicked } />
             </Container>
@@ -108,9 +110,10 @@ class VoteForm extends Component<Props, *> {
      * @returns {Component}
      */
     _renderPollChoice(item: string, id: number) {
-        const { choices } = this.props;
+        const { choices, currentVote } = this.props;
         const choice = choices[item];
         const numberOfVotes = choice.votes.length;
+        const selected = currentVote === item;
 
         return (
             <PollChoice
@@ -118,7 +121,7 @@ class VoteForm extends Component<Props, *> {
                 editable = { false }
                 id = { item }
                 key = { id.toString() }
-                selected = { false }
+                selected = { selected }
                 text = { choice.text }
                 voteHandler = { this._voteButtonClicked }
                 votes = { numberOfVotes } />
@@ -137,7 +140,7 @@ class VoteForm extends Component<Props, *> {
         const { currentVote, dispatch } = this.props;
 
         if (currentVote !== id) {
-            dispatch(vote(currentVote, id, this.props.userID));
+            dispatch(vote(id));
         }
     }
 
@@ -149,7 +152,7 @@ class VoteForm extends Component<Props, *> {
      * @returns {boolean}
      */
     _onEndVoteClicked() {
-        this.props.dispatch(endPollSession());
+        this.props.dispatch(endPoll());
 
         return true;
     }

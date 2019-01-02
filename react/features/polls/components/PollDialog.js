@@ -5,20 +5,10 @@ import { connect } from 'react-redux';
 import { DialogWithTabs, hideDialog } from '../../base/dialog';
 import PollCreateForm from './PollCreateForm';
 import VoteForm from './VoteForm';
-import { getPastPolls } from '../functions';
 import PollResultsForm from './PollResultsForm';
+import { translate } from '../../base/i18n';
 
 type Props = {
-
-    /**
-     * Current Poll ID.
-     */
-    currentPoll: ?string,
-
-    /**
-     * Poll choices.
-     */
-    choices: Object,
 
     /**
      * Redux dispatch method.
@@ -26,14 +16,14 @@ type Props = {
     dispatch: Function,
 
     /**
-     * Polls Objects by ID.
+     * True if there is an active poll session now.
      */
-    polls: Object,
+    isPollRunning: boolean,
 
     /**
-     * Poll questions.
+     * Invoked to obtain translated strings.
      */
-    questions: string
+    t: Function
 };
 
 /**
@@ -71,20 +61,15 @@ class PollDialog extends Component<Props, *> {
      * @inheritdoc
      */
     render() {
-        const {
-            currentPoll,
-            choices,
-            polls,
-            questions
-        } = this.props;
-        const tabs = currentPoll === null ? [ {
-            component: PollCreateForm,
-            label: 'polls.create',
+        const { isPollRunning } = this.props;
+        const tabs = isPollRunning ? [ {
+            component: VoteForm,
+            label: 'polls.vote',
             props: {},
             submit: null
         } ] : [ {
-            component: VoteForm,
-            label: 'polls.vote',
+            component: PollCreateForm,
+            label: 'polls.create',
             props: {},
             submit: null
         } ];
@@ -92,21 +77,17 @@ class PollDialog extends Component<Props, *> {
         tabs.push({
             component: PollResultsForm,
             label: 'polls.results',
-            props: {
-                choices,
-                polls: getPastPolls(polls, currentPoll),
-                questions
-            },
+            props: {},
             submit: this._onSubmit
         });
 
         return (
             <DialogWithTabs
                 closeDialog = { this._closeDialog }
-                cssClassName = 'polls-dialog'
+                cssClassName = { 'polls-dialog' }
                 onSubmit = { this._onSubmit }
                 tabs = { tabs }
-                titleKey = 'dialog.polls' />
+                titleKey = { 'dialog.polls' } />
         );
     }
 
@@ -129,19 +110,11 @@ class PollDialog extends Component<Props, *> {
  * @returns {{}}
  */
 function _mapStateToProps(state: Object) {
-    const {
-        currentPoll,
-        choices,
-        polls,
-        questions
-    } = state['features/polls'];
+    const { currentPoll } = state['features/polls'];
 
     return {
-        currentPoll,
-        choices,
-        polls,
-        questions
+        isPollRunning: currentPoll !== null
     };
 }
 
-export default connect(_mapStateToProps)(PollDialog);
+export default translate(connect(_mapStateToProps)(PollDialog));

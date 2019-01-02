@@ -11,9 +11,13 @@ export function getUniquePollChoices(choices: Object): Object {
     const seen = new Set<string>();
 
     for (const key in choices) {
-        if (!seen.has(choices[key].text)) {
-            newObj[key] = choices[key];
-            seen.add(choices[key].text);
+        if (Object.prototype.hasOwnProperty.call(choices, key)) {
+            const text = choices[key].text.trim();
+
+            if (!seen.has(text) && text !== '') {
+                newObj[key] = choices[key];
+                seen.add(text);
+            }
         }
     }
 

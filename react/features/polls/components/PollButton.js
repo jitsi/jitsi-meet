@@ -21,9 +21,8 @@ export type Props = AbstractButtonProps & {
  * Button that opens poll dialogs.
  */
 class PollButton<P: Props> extends AbstractButton<P, *> {
-    iconName = 'icon-camera-take-picture';
     label = 'dialog.polls';
-    showLabel = true;
+    toggledLabel = 'dialog.polls';
 
     /**
      * Action handler when button is clicked.

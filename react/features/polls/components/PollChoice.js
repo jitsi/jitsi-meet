@@ -55,7 +55,7 @@ type Props = {
 /**
  * Poll option view component.
  */
-class PollChoice extends Component<Props, *> {
+class PollChoice extends Component<Props, State> {
 
     /**
      * Constructor.
@@ -83,6 +83,7 @@ class PollChoice extends Component<Props, *> {
                     id = { 'poll-item-button' } >
                     <button
                         onClick = { this._onClickHandler }
+                        text = { '+' }
                         type = { 'button' } />
                 </div>
             ) : (

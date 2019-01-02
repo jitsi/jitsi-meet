@@ -32,7 +32,8 @@ class AddPollItem extends Component<Props, *> {
             <div>
                 <button
                     id = { 'new-poll-choice-button' }
-                    onClick = { this._onClick } />
+                    onClick = { this._onClick }
+                    text = { '+' } />
             </div>
         );
     }

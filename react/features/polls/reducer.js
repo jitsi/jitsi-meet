@@ -2,11 +2,8 @@
 
 import { ReducerRegistry } from '../base/redux';
 import {
-    POLL_SESSION_INITIATED,
     POLL_SESSION_STARTED,
     POLL_SESSION_VOTE,
-    POLL_SESSION_VOTE_RECIEVED,
-    POLL_SESSION_END,
     POLL_SESSION_FINISHED
 } from './actionTypes';
 
@@ -40,10 +37,8 @@ const DEFAULT_STATE = {
 
 ReducerRegistry.register('features/polls', (state = DEFAULT_STATE, action) => {
     switch (action.type) {
-    case POLL_SESSION_INITIATED:
     case POLL_SESSION_STARTED: {
-        const { payload } = action;
-        const { poll, question, choices } = payload;
+        const { poll, question, choices } = action;
 
         return {
             ...state,
@@ -63,22 +58,18 @@ ReducerRegistry.register('features/polls', (state = DEFAULT_STATE, action) => {
         };
     }
     case POLL_SESSION_VOTE: {
-        const { id } = action;
-        const newState = _updateUserVote(state, action);
+        const { choice } = action;
 
         return {
-            ...newState,
-            currentVote: id
+            ...state,
+            choices: {
+                ...state.choices,
+                [choice.id]: {
+                    choice
+                }
+            }
         };
     }
-    case POLL_SESSION_VOTE_RECIEVED: {
-        const newState = _updateUserVote(state, action);
-
-        return {
-            ...newState
-        };
-    }
-    case POLL_SESSION_END:
     case POLL_SESSION_FINISHED: {
         return {
             ...state,
@@ -90,41 +81,3 @@ ReducerRegistry.register('features/polls', (state = DEFAULT_STATE, action) => {
 
     return state;
 });
-
-/**
- * Update a user vote.
- *
- * @param {Object} state - Redux state.
- * @param {Object} action - Redux Action.
- * @returns {{}}
- */
-function _updateUserVote(state: Object, action: Object) {
-    const { prevID, id, user } = action;
-    const choice = state.choices[id];
-    const prevChoice = prevID === null ? null : { ...state.choices[prevID] };
-    let updatedChoices = {
-        [choice.id]: {
-            ...choice,
-            votes: choice.votes.concat(user)
-        }
-    };
-
-    if (prevChoice) {
-        prevChoice.votes = prevChoice.votes.filter(x => x !== user);
-
-        updatedChoices = {
-            ...updatedChoices,
-            [prevChoice.id]: {
-                ...prevChoice
-            }
-        };
-    }
-
-    return {
-        ...state,
-        choices: {
-            ...state.choices,
-            ...updatedChoices
-        }
-    };
-}

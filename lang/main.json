@@ -748,6 +748,7 @@
     "polls": {
         "results": "Poll Results",
         "create": "Create Poll",
-        "vote": "Vote"
+        "vote": "Vote",
+        "placeholder": "Ask a question..."
     }
 }
