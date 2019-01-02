@@ -80,15 +80,6 @@
             float: left;
             pointer-events: all;
         }
-
-        /**
-         * Need to overwrite the background for the top toolbar dark theme div
-         * wrapper needed before we're able to move all top toolbar indicators
-         * creation to react.
-         */
-        .sc-ifAKCX {
-            background: none;
-        }
     }
 
     &__toolbar {
