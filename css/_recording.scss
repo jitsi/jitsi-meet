@@ -65,6 +65,8 @@
     }
 
     .form-footer {
+        display: flex;
+        margin-top: 5px;
         text-align: right;
     }
 
@@ -93,11 +95,15 @@
         padding-bottom: 10px;
     }
 
-    .stream-key-form {
-        .helper-link {
-            display: inline-block;
-            cursor: pointer;
-            margin-top: 5px;
-        }
+    .helper-link {
+        cursor: pointer;
+        display: inline-block;
+        flex-shrink: 0;
+        margin-left: auto;
+    }
+
+    .warning-text {
+        color:#FFD740;
+        font-size: 12px;
     }
 }

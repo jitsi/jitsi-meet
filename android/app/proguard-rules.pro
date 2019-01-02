@@ -45,10 +45,7 @@
 -keepclassmembers class *  { @com.facebook.react.uimanager.annotations.ReactPropGroup <methods>; }
 
 -dontwarn com.facebook.react.**
-
-# TextLayoutBuilder uses a non-public Android constructor within StaticLayout.
-# See libs/proxy/src/main/java/com/facebook/fbui/textlayoutbuilder/proxy for details.
--dontwarn android.text.StaticLayout
+-keep,includedescriptorclasses class com.facebook.react.bridge.** { *; }
 
 # okhttp
 
@@ -65,9 +62,16 @@
 -dontwarn org.codehaus.mojo.animal_sniffer.IgnoreJRERequirement
 -dontwarn okio.**
 
-# FastImage
+# FastImage + Glide
 
+-keep public class com.dylanvann.fastimage.* {*;}
 -keep public class com.dylanvann.fastimage.** {*;}
+-keep public class * implements com.bumptech.glide.module.GlideModule
+-keep public class * extends com.bumptech.glide.module.AppGlideModule
+-keep public enum com.bumptech.glide.load.ImageHeaderParser$** {
+  **[] $VALUES;
+  public *;
+}
 
 # We added the following when we switched minifyEnabled on. Probably because we
 # ran the app and hit problems...

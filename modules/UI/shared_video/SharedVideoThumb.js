@@ -15,11 +15,14 @@ export default function SharedVideoThumb(participant, videoType, VideoLayout) {
     this.videoSpanId = 'sharedVideoContainer';
     this.container = this.createContainer(this.videoSpanId);
     this.$container = $(this.container);
-    this.container.onclick = this.videoClick.bind(this);
+
     this.bindHoverHandler();
     SmallVideo.call(this, VideoLayout);
     this.isVideoMuted = true;
     this.setDisplayName(participant.name);
+
+    this.container.onclick = this._onContainerClick;
+    this.container.ondblclick = this._onContainerDoubleClick;
 }
 SharedVideoThumb.prototype = Object.create(SmallVideo.prototype);
 SharedVideoThumb.prototype.constructor = SharedVideoThumb;
@@ -59,13 +62,6 @@ SharedVideoThumb.prototype.createContainer = function(spanId) {
     remoteVideosContainer.insertBefore(container, localVideoContainer);
 
     return container;
-};
-
-/**
- * The thumb click handler.
- */
-SharedVideoThumb.prototype.videoClick = function() {
-    this._togglePin();
 };
 
 /**

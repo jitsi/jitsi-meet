@@ -12,10 +12,7 @@ import {
 } from '../../../modules/transport';
 import { parseURLParams } from '../base/config';
 import { DeviceSelection } from '../device-selection';
-
-// Using the full path to the file to prevent adding unnecessary code into the
-// dialog popup bundle.
-import DialogWithTabs from '../base/dialog/components/DialogWithTabs';
+import { DialogWithTabs } from '../base/dialog';
 
 const logger = Logger.getLogger(__filename);
 

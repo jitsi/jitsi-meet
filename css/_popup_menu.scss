@@ -78,7 +78,9 @@
         }
     }
 
-    .icon-kick {
+    .icon-kick,
+    .icon-play,
+    .icon-stop {
         font-size: 8pt;
     }
 }
@@ -94,9 +96,4 @@ ul.popupmenu {
 
 span.remotevideomenu:hover ul.popupmenu, ul.popupmenu:hover {
     display:block !important;
-}
-
-.remote-control-spinner {
-    top: 6px;
-    left: 2px;
 }

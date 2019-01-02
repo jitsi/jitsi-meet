@@ -1,3 +1,5 @@
+import groovy.json.JsonSlurper
+
 // Top-level build file where you can add configuration options common to all
 // sub-projects/modules.
 
@@ -7,7 +9,7 @@ buildscript {
         jcenter()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.1.4'
+        classpath 'com.android.tools.build:gradle:3.2.1'
         classpath 'com.google.gms:google-services:3.2.1'
 
         // NOTE: Do not place your application dependencies here; they belong
@@ -17,7 +19,6 @@ buildscript {
 
 allprojects {
     repositories {
-        maven { url "https://maven.google.com" }
         google()
         jcenter()
         maven { url "$rootDir/../node_modules/jsc-android/dist" }
@@ -34,13 +35,13 @@ allprojects {
                 if (details.requested.group == 'com.facebook.react'
                         && details.requested.name == 'react-native') {
                     def file = new File("$rootDir/../node_modules/react-native/package.json")
-                    def version = new groovy.json.JsonSlurper().parseText(file.text).version
+                    def version = new JsonSlurper().parseText(file.text).version
                     details.useVersion version
                 }
                 if (details.requested.group == 'org.webkit'
                         && details.requested.name == 'android-jsc') {
                     def file = new File("$rootDir/../node_modules/jsc-android/package.json")
-                    def version = new groovy.json.JsonSlurper().parseText(file.text).version
+                    def version = new JsonSlurper().parseText(file.text).version
                     details.useVersion "r${version.tokenize('.')[0]}"
                 }
             }
@@ -57,7 +58,7 @@ allprojects {
         publishing {
             publications {}
             repositories {
-                maven { url "file:${rootProject.projectDir}/../../../jitsi/jitsi-maven-repository/releases" }
+                maven { url "file:${rootProject.projectDir}/../../jitsi-maven-repository/releases" }
             }
         }
     }
@@ -65,7 +66,7 @@ allprojects {
     afterEvaluate { project ->
         if (project.name.startsWith('react-native-')) {
             def npmManifest = project.file('../package.json')
-            def json = new groovy.json.JsonSlurper().parseText(npmManifest.text)
+            def json = new JsonSlurper().parseText(npmManifest.text)
 
             // React Native modules have an npm peer dependency on react-native,
             // they do not have an npm dependency on it. Further below though we
@@ -74,8 +75,26 @@ allprojects {
             // complying with the full range of their npm peer dependency and,
             // consequently, we should qualify their version.
             def versionQualifier = '-jitsi-1'
-            if ('react-native-webrtc'.equals(project.name))
-                versionQualifier = '-jitsi-1'
+            if ('react-native-background-timer' == project.name)
+                versionQualifier = '-jitsi-3' // 2.0.0 + react-native 0.57
+            else if ('react-native-calendar-events' == project.name)
+                versionQualifier = '-jitsi-2' // 1.6.4 + react-native 0.57
+            else if ('react-native-fast-image' == project.name)
+                versionQualifier = '-jitsi-2' // 5.1.1 + react-native 0.57
+            else if ('react-native-google-signin' == project.name)
+                versionQualifier = '-jitsi-2' // 1.0.2 + react-native 0.57
+            else if ('react-native-immersive' == project.name)
+                versionQualifier = '-jitsi-5' // 2.0.0 + react-native 0.57
+            else if ('react-native-keep-awake' == project.name)
+                versionQualifier = '-jitsi-4' // 4.0.0 + react-native 0.57
+            else if ('react-native-linear-gradient' == project.name)
+                versionQualifier = '-jitsi-1' // 2.4.0 + react-native 0.57
+            else if ('react-native-sound' == project.name)
+                versionQualifier = '-jitsi-2' // 0.10.9 + react-native 0.57
+            else if ('react-native-vector-icons' == project.name)
+                versionQualifier = '-jitsi-3' // 6.0.2 + react-native 0.57
+            else if ('react-native-webrtc' == project.name)
+                versionQualifier = '-jitsi-9' // 6322a9b5a38ce590cfaea4041072ea87c8dbf558 + react-native 0.57
 
             project.version = "${json.version}${versionQualifier}"
 
@@ -135,7 +154,7 @@ allprojects {
                             // (third-party) React Native modules we utilize can
                             // depend not on a specific react-native release but
                             // a wider range.
-                            if (artifactId.equals('react-native')) {
+                            if (artifactId == 'react-native') {
                                 def versionNumber = VersionNumber.parse(version)
                                 version = "${versionNumber.major}.${versionNumber.minor}"
                             }
@@ -153,17 +172,65 @@ allprojects {
 }
 
 ext {
-    buildToolsVersion = "27.0.3"
-    compileSdkVersion = 27
+    buildToolsVersion = "28.0.3"
+    compileSdkVersion = 28
     minSdkVersion    = 21
-    targetSdkVersion = 26
-    supportLibVersion = "27.1.1"
+    targetSdkVersion = 28
+    supportLibVersion = "28.0.0"
 
     // The Maven artifact groupdId of the third-party react-native modules which
     // Jitsi Meet SDK for Android depends on and which are not available in
     // third-party Maven repositories so we have to deploy to a Maven repository
     // of ours.
     moduleGroupId = 'com.facebook.react'
+
+    // Glide
+    excludeAppGlideModule = true
+    glideVersion = "4.7.1"  // keep in sync with react-native-fast-image
+}
+
+// If Android SDK is not installed, accept its license so that it
+// is automatically downloaded.
+afterEvaluate { project ->
+    // Either the environment variable ANDROID_HOME or the property sdk.dir in
+    // local.properties identifies where Android SDK is installed.
+    def androidHome = System.env.ANDROID_HOME
+    if (!androidHome) {
+        // ANDROID_HOME is not set. Is sdk.dir set?
+        def file = file("${project.rootDir}/local.properties")
+        def props = new Properties()
+        if (file.canRead()) {
+            file.withInputStream {
+                props.load(it)
+                androidHome = props.'sdk.dir'
+            }
+        }
+        if (!androidHome && (!file.exists() || file.canWrite())) {
+            // Neither ANDROID_HOME nor sdk.dir is set. Set sdk.dir (because
+            // environment variables cannot be set).
+            props.'sdk.dir' = "${project.buildDir}/android-sdk".toString()
+            file.withOutputStream {
+                props.store(it, null)
+                androidHome = props.'sdk.dir'
+            }
+        }
+    }
+    // If the license is not accepted, accept it so that automatic downloading
+    // kicks in.
+    // The license hash can be taken from the accepted licenses, by doing this
+    // on your local machine the file is
+    // ${androidHome}/licenses/android-sdk-license
+    if (androidHome) {
+        def dir = file("${androidHome}/licenses")
+        dir.mkdirs()
+        def file = file("${dir.path}/android-sdk-license")
+        if (!file.exists()) {
+            file.withWriter {
+                def hash = 'd56f5187479451eabf01fb78af6dfcb131a6481e'
+                it.write(hash, 0, hash.length())
+            }
+        }
+    }
 }
 
 // Force the version of the Android build tools we have chosen on all
@@ -179,9 +246,4 @@ subprojects { subproject ->
             }
         }
     }
-}
-
-task wrapper(type: Wrapper) {
-    gradleVersion = '4.4'
-    distributionUrl = distributionUrl.replace("bin", "all")
 }

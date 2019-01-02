@@ -227,8 +227,33 @@ const googleApi = {
             id: entry.id,
             location: entry.location,
             startDate: entry.start.dateTime,
-            title: entry.summary
+            title: entry.summary,
+            url: this._getConferenceDataVideoUri(entry.conferenceData)
         };
+    },
+
+    /**
+     * Checks conference data for jitsi conference solution and returns
+     * its video url.
+     *
+     * @param {Object} conferenceData - The conference data of the event.
+     * @returns {string|undefined} Returns the found video uri or undefined.
+     */
+    _getConferenceDataVideoUri(conferenceData = {}) {
+        try {
+            // check conference data coming from calendar addons
+            if (conferenceData.parameters.addOnParameters.parameters
+                    .conferenceSolutionType === 'jitsi') {
+                const videoEntry = conferenceData.entryPoints.find(
+                    e => e.entryPointType === 'video');
+
+                if (videoEntry) {
+                    return videoEntry.uri;
+                }
+            }
+        } catch (error) {
+            // we don't care about undefined fields
+        }
     },
 
     /**

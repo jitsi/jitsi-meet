@@ -113,7 +113,8 @@ function LoginDialog(successCallback, cancelCallback) {
         states,
         {
             closeText: '',
-            persistent: true
+            persistent: true,
+            zIndex: 1020
         },
         null
     );

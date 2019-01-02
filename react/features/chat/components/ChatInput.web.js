@@ -2,6 +2,7 @@
 
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import Emoji from 'react-emoji-render';
 
 import { sendMessage } from '../actions';
 
@@ -99,9 +100,9 @@ class ChatInput extends Component<Props, State> {
                 <div className = 'smiley-input'>
                     <div id = 'smileysarea'>
                         <div id = 'smileys'>
-                            <img
+                            <Emoji
                                 onClick = { this._onToggleSmileysPanel }
-                                src = 'images/smile.svg' />
+                                text = ':)' />
                         </div>
                     </div>
                     <div className = { smileysPanelClassName }>

@@ -3,7 +3,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
-import { Dialog } from '../../base/dialog';
+import { InputDialog } from '../../base/dialog';
 
 import { endRoomLockRequest } from '../actions';
 
@@ -60,12 +60,11 @@ class RoomLockPrompt extends Component<Props> {
      */
     render() {
         return (
-            <Dialog
-                bodyKey = 'dialog.passwordLabel'
+            <InputDialog
+                contentKey = 'dialog.passwordLabel'
                 onCancel = { this._onCancel }
                 onSubmit = { this._onSubmit }
-                textInputProps = { _TEXT_INPUT_PROPS }
-                titleKey = 'dialog.lockRoom' />
+                textInputProps = { _TEXT_INPUT_PROPS } />
         );
     }
 

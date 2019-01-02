@@ -9,7 +9,7 @@ import AbstractStreamKeyForm, {
     type Props
 } from '../AbstractStreamKeyForm';
 
-import styles from './styles';
+import styles, { PLACEHOLDER_COLOR } from './styles';
 
 /**
  * A React Component for entering a key for starting a YouTube live stream.
@@ -49,17 +49,31 @@ class StreamKeyForm extends AbstractStreamKeyForm {
                 <TextInput
                     onChangeText = { this._onInputChange }
                     placeholder = { t('liveStreaming.enterStreamKey') }
+                    placeholderTextColor = { PLACEHOLDER_COLOR }
                     style = { styles.streamKeyInput }
                     value = { this.props.value } />
-                <TouchableOpacity
-                    onPress = { this._onOpenHelp }
-                    style = { styles.streamKeyHelp } >
-                    <Text>
-                        {
-                            t('liveStreaming.streamIdHelp')
-                        }
-                    </Text>
-                </TouchableOpacity>
+                <View style = { styles.formFooter }>
+                    {
+                        this.state.showValidationError
+                            ? <View style = { styles.formFooterItem }>
+                                <Text style = { styles.warningText }>
+                                    { t('liveStreaming.invalidStreamKey') }
+                                </Text>
+                            </View>
+                            : null
+                    }
+                    <View style = { styles.formFooterItem }>
+                        <TouchableOpacity
+                            onPress = { this._onOpenHelp }
+                            style = { styles.streamKeyHelp } >
+                            <Text style = { styles.text }>
+                                {
+                                    t('liveStreaming.streamIdHelp')
+                                }
+                            </Text>
+                        </TouchableOpacity>
+                    </View>
+                </View>
             </View>
         );
     }

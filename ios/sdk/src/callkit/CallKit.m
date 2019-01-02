@@ -44,20 +44,7 @@ static NSString * const RNCallKitProviderDidReset
 
 @implementation RNCallKit
 
-RCT_EXTERN void RCTRegisterModule(Class);
-
-+ (void)load {
-    // Make the react-native module RNCallKit available (to JS) only if CallKit
-    // is available on the executing operating sytem. For example, CallKit is
-    // not available on iOS 9.
-    if ([CXCallController class]) {
-        RCTRegisterModule(self);
-    }
-}
-
-+ (NSString *)moduleName {
-    return @"RNCallKit";
-}
+RCT_EXPORT_MODULE();
 
 - (NSArray<NSString *> *)supportedEvents {
     return @[

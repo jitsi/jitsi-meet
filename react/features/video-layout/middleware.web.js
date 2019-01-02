@@ -17,6 +17,7 @@ import { TRACK_ADDED } from '../base/tracks';
 import { SET_FILMSTRIP_VISIBLE } from '../filmstrip';
 
 import { SET_TILE_VIEW } from './actionTypes';
+import './middleware.any';
 
 declare var APP: Object;
 

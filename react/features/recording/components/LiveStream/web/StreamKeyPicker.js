@@ -9,6 +9,8 @@ import React, { PureComponent } from 'react';
 
 import { translate } from '../../../../base/i18n';
 
+import { YOUTUBE_LIVE_DASHBOARD_URL } from '../constants';
+
 /**
  * The type of the React {@code Component} props of {@link StreamKeyPicker}.
  */
@@ -94,6 +96,18 @@ class StreamKeyPicker extends PureComponent<Props, State> {
      */
     render() {
         const { broadcasts, selectedBoundStreamID, t } = this.props;
+
+        if (!broadcasts.length) {
+            return (
+                <a
+                    className = 'warning-text'
+                    href = { YOUTUBE_LIVE_DASHBOARD_URL }
+                    rel = 'noopener noreferrer'
+                    target = '_blank'>
+                    { t('liveStreaming.getStreamKeyManually') }
+                </a>
+            );
+        }
 
         const dropdownItems
             = broadcasts.map(broadcast => (

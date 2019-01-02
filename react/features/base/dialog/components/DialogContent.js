@@ -3,15 +3,18 @@
 import React, { Component } from 'react';
 
 import { Container, Text } from '../../react';
+import { type StyleType } from '../../styles';
 
-import { dialog as styles } from './styles';
+import styles from './styles';
 
 type Props = {
 
     /**
      * Children of the component.
      */
-    children: string | React$Node
+    children: string | React$Node,
+
+    style: ?StyleType
 };
 
 /**
@@ -25,10 +28,10 @@ export default class DialogContent extends Component<Props> {
      * @inheritdoc
      */
     render() {
-        const { children } = this.props;
+        const { children, style } = this.props;
 
         const childrenComponent = typeof children === 'string'
-            ? <Text>{ children }</Text>
+            ? <Text style = { style }>{ children }</Text>
             : children;
 
         return (

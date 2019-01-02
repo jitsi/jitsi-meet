@@ -5,8 +5,7 @@ import { Platform } from 'react-native';
 // reflect that, it suggests the file is platform-independent.
 import { createIconSetFromIcoMoon } from 'react-native-vector-icons';
 
-// FIXME Share this with fonts/selection.json
-import icoMoonConfig from './jitsi.json';
+import icoMoonConfig from '../../../../fonts/selection.json';
 
 /**
  * Creates the Jitsi icon set from the ico moon project config file.

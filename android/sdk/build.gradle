@@ -40,7 +40,6 @@ dependencies {
     implementation project(':react-native-immersive')
     implementation project(':react-native-keep-awake')
     implementation project(':react-native-linear-gradient')
-    implementation project(':react-native-locale-detector')
     implementation project(':react-native-sound')
     implementation project(':react-native-vector-icons')
     implementation project(':react-native-webrtc')
@@ -163,7 +162,7 @@ publishing {
         aarArchive(MavenPublication) {
             groupId 'org.jitsi.react'
             artifactId 'jitsi-meet-sdk'
-            version '1.9.0'
+            version project.sdkVersion
 
             artifact("${project.buildDir}/outputs/aar/${project.name}-release.aar") {
                 extension "aar"
@@ -197,6 +196,6 @@ publishing {
 
     }
     repositories {
-        maven { url "file:${rootProject.projectDir}/../../../jitsi/jitsi-maven-repository/releases" }
+        maven { url "file:${rootProject.projectDir}/../../jitsi-maven-repository/releases" }
     }
 }

@@ -58,49 +58,6 @@ function _fixRoom(room: ?string) {
 }
 
 /**
- * Fixes the hier-part of a specific URI (string) so that the URI is well-known.
- * For example, certain Jitsi Meet deployments are not conventional but it is
- * possible to translate their URLs into conventional.
- *
- * @param {string} uri - The URI (string) to fix the hier-part of.
- * @private
- * @returns {string}
- */
-function _fixURIStringHierPart(uri) {
-    // Rewrite the specified URL in order to handle special cases such as
-    // hipchat.com and enso.me which do not follow the common pattern of most
-    // Jitsi Meet deployments.
-
-    // hipchat.com
-    let regex
-        = new RegExp(
-            `^${URI_PROTOCOL_PATTERN}//hipchat\\.com/video/call/`,
-            'gi');
-    let match: Array<string> | null = regex.exec(uri);
-
-    if (!match) {
-        // enso.me
-        regex
-            = new RegExp(
-                `^${URI_PROTOCOL_PATTERN}//enso\\.me/(?:call|meeting)/`,
-                'gi');
-        match = regex.exec(uri);
-    }
-    if (match) {
-        /* eslint-disable no-param-reassign, prefer-template */
-
-        uri
-            = match[1] /* protocol */
-                + '//enso.hipchat.me/'
-                + uri.substring(regex.lastIndex); /* room (name) */
-
-        /* eslint-enable no-param-reassign, prefer-template */
-    }
-
-    return uri;
-}
-
-/**
  * Fixes the scheme part of a specific URI (string) so that it contains a
  * well-known scheme such as HTTP(S). For example, the mobile app implements an
  * app-specific URI scheme in addition to Universal Links. The app-specific
@@ -316,9 +273,7 @@ export function parseURIString(uri: ?string) {
         return undefined;
     }
 
-    const obj
-        = parseStandardURIString(
-            _fixURIStringHierPart(_fixURIStringScheme(uri)));
+    const obj = parseStandardURIString(_fixURIStringScheme(uri));
 
     // Add the properties that are specific to a Jitsi Meet resource (location)
     // such as contextRoot, room:

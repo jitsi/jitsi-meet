@@ -5,10 +5,6 @@
 	<key>com.apple.developer.associated-domains</key>
 	<array>
 		<string>applinks:beta.meet.jit.si</string>
-		<string>applinks:beta.hipchat.me</string>
-		<string>applinks:chaos.hipchat.me</string>
-		<string>applinks:enso.me</string>
-		<string>applinks:hipchat.me</string>
 		<string>applinks:meet.jit.si</string>
 	</array>
 </dict>

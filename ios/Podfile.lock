@@ -7,84 +7,75 @@ PODS:
     - DoubleConversion
     - glog
   - glog (0.3.5)
-  - GoogleSignIn (4.3.0):
+  - GoogleSignIn (4.4.0):
     - "GoogleToolboxForMac/NSDictionary+URLArguments (~> 2.1)"
     - "GoogleToolboxForMac/NSString+URLArguments (~> 2.1)"
-    - GTMOAuth2 (~> 1.0)
     - GTMSessionFetcher/Core (~> 1.1)
-  - GoogleToolboxForMac/DebugUtils (2.1.4):
-    - GoogleToolboxForMac/Defines (= 2.1.4)
-  - GoogleToolboxForMac/Defines (2.1.4)
-  - "GoogleToolboxForMac/NSDictionary+URLArguments (2.1.4)":
-    - GoogleToolboxForMac/DebugUtils (= 2.1.4)
-    - GoogleToolboxForMac/Defines (= 2.1.4)
-    - "GoogleToolboxForMac/NSString+URLArguments (= 2.1.4)"
-  - "GoogleToolboxForMac/NSString+URLArguments (2.1.4)"
-  - GTMOAuth2 (1.1.6):
-    - GTMSessionFetcher (~> 1.1)
-  - GTMSessionFetcher (1.2.1):
-    - GTMSessionFetcher/Full (= 1.2.1)
+  - GoogleToolboxForMac/DebugUtils (2.2.0):
+    - GoogleToolboxForMac/Defines (= 2.2.0)
+  - GoogleToolboxForMac/Defines (2.2.0)
+  - "GoogleToolboxForMac/NSDictionary+URLArguments (2.2.0)":
+    - GoogleToolboxForMac/DebugUtils (= 2.2.0)
+    - GoogleToolboxForMac/Defines (= 2.2.0)
+    - "GoogleToolboxForMac/NSString+URLArguments (= 2.2.0)"
+  - "GoogleToolboxForMac/NSString+URLArguments (2.2.0)"
   - GTMSessionFetcher/Core (1.2.1)
-  - GTMSessionFetcher/Full (1.2.1):
-    - GTMSessionFetcher/Core (= 1.2.1)
   - ObjectiveDropboxOfficial (3.9.2)
-  - React (0.57.6):
-    - React/Core (= 0.57.6)
-  - react-native-background-timer (2.0.0):
+  - React (0.57.8):
+    - React/Core (= 0.57.8)
+  - react-native-background-timer (2.1.1):
     - React
-  - react-native-calendar-events (1.6.3):
+  - react-native-calendar-events (1.6.4):
     - React
-  - react-native-fast-image (4.0.14):
+  - react-native-fast-image (5.1.1):
     - FLAnimatedImage
     - React
     - SDWebImage/Core
     - SDWebImage/GIF
-  - react-native-keep-awake (2.0.6):
-    - React
-  - react-native-locale-detector (1.0.0):
+  - react-native-keep-awake (4.0.0):
     - React
   - react-native-webrtc (1.67.1):
     - React
-  - React/Core (0.57.6):
-    - yoga (= 0.57.6.React)
-  - React/CxxBridge (0.57.6):
+  - React/Core (0.57.8):
+    - yoga (= 0.57.8.React)
+  - React/CxxBridge (0.57.8):
     - Folly (= 2016.10.31.00)
     - React/Core
     - React/cxxreact
-  - React/cxxreact (0.57.6):
+  - React/cxxreact (0.57.8):
     - boost-for-react-native (= 1.63.0)
     - Folly (= 2016.10.31.00)
     - React/jschelpers
     - React/jsinspector
-  - React/DevSupport (0.57.6):
+  - React/DevSupport (0.57.8):
     - React/Core
     - React/RCTWebSocket
-  - React/fishhook (0.57.6)
-  - React/jschelpers (0.57.6):
+  - React/fishhook (0.57.8)
+  - React/jschelpers (0.57.8):
     - Folly (= 2016.10.31.00)
     - React/PrivateDatabase
-  - React/jsinspector (0.57.6)
-  - React/PrivateDatabase (0.57.6)
-  - React/RCTActionSheet (0.57.6):
+  - React/jsinspector (0.57.8)
+  - React/PrivateDatabase (0.57.8)
+  - React/RCTActionSheet (0.57.8):
     - React/Core
-  - React/RCTAnimation (0.57.6):
+  - React/RCTAnimation (0.57.8):
     - React/Core
-  - React/RCTBlob (0.57.6):
+  - React/RCTBlob (0.57.8):
     - React/Core
-  - React/RCTImage (0.57.6):
+  - React/RCTImage (0.57.8):
     - React/Core
     - React/RCTNetwork
-  - React/RCTLinkingIOS (0.57.6):
+  - React/RCTLinkingIOS (0.57.8):
     - React/Core
-  - React/RCTNetwork (0.57.6):
+  - React/RCTNetwork (0.57.8):
     - React/Core
-  - React/RCTText (0.57.6):
+  - React/RCTText (0.57.8):
     - React/Core
-  - React/RCTWebSocket (0.57.6):
+  - React/RCTWebSocket (0.57.8):
     - React/Core
     - React/fishhook
     - React/RCTBlob
-  - RNGoogleSignin (1.0.0-rc6):
+  - RNGoogleSignin (1.0.2):
     - GoogleSignIn
     - React
   - RNSound (0.10.9):
@@ -94,11 +85,11 @@ PODS:
     - React/Core
   - RNVectorIcons (6.0.2):
     - React
-  - SDWebImage/Core (4.4.2)
-  - SDWebImage/GIF (4.4.2):
+  - SDWebImage/Core (4.4.3)
+  - SDWebImage/GIF (4.4.3):
     - FLAnimatedImage (~> 1.0)
     - SDWebImage/Core
-  - yoga (0.57.6.React)
+  - yoga (0.57.8.React)
 
 DEPENDENCIES:
   - DoubleConversion (from `../node_modules/react-native/third-party-podspecs/DoubleConversion.podspec`)
@@ -109,7 +100,6 @@ DEPENDENCIES:
   - react-native-calendar-events (from `../node_modules/react-native-calendar-events`)
   - react-native-fast-image (from `../node_modules/react-native-fast-image`)
   - react-native-keep-awake (from `../node_modules/react-native-keep-awake`)
-  - react-native-locale-detector (from `../node_modules/react-native-locale-detector`)
   - react-native-webrtc (from `../node_modules/react-native-webrtc`)
   - React/Core (from `../node_modules/react-native`)
   - React/CxxBridge (from `../node_modules/react-native`)
@@ -132,7 +122,6 @@ SPEC REPOS:
     - FLAnimatedImage
     - GoogleSignIn
     - GoogleToolboxForMac
-    - GTMOAuth2
     - GTMSessionFetcher
     - ObjectiveDropboxOfficial
     - SDWebImage
@@ -154,8 +143,6 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-fast-image"
   react-native-keep-awake:
     :path: "../node_modules/react-native-keep-awake"
-  react-native-locale-detector:
-    :path: "../node_modules/react-native-locale-detector"
   react-native-webrtc:
     :path: "../node_modules/react-native-webrtc"
   RNGoogleSignin:
@@ -173,24 +160,22 @@ SPEC CHECKSUMS:
   FLAnimatedImage: 4a0b56255d9b05f18b6dd7ee06871be5d3b89e31
   Folly: c89ac2d5c6ab169cd7397ef27485c44f35f742c7
   glog: e8acf0ebbf99759d3ff18c86c292a5898282dcde
-  GoogleSignIn: 11183592dc63e105475c7305a325045ff95e02b7
-  GoogleToolboxForMac: 91c824d21e85b31c2aae9bb011c5027c9b4e738f
-  GTMOAuth2: c77fe325e4acd453837e72d91e3b5f13116857b2
+  GoogleSignIn: 7ff245e1a7b26d379099d3243a562f5747e23d39
+  GoogleToolboxForMac: ff31605b7d66400dcec09bed5861689aebadda4d
   GTMSessionFetcher: 32aeca0aa144acea523e1c8e053089dec2cb98ca
   ObjectiveDropboxOfficial: aa792e0556ceb7b72955fa29a2709072f6e35fd9
   React: 1fe0eb13d90b625d94c3b117c274dcfd2e760e11
-  react-native-background-timer: 63dcbf37dbcf294b5c6c071afcdc661fa06a7594
+  react-native-background-timer: bb7a98c8e97fc7c290de2d423dd09ddb73dcbcbb
   react-native-calendar-events: fe6fbc8ed337a7423c98f2c9012b25f20444de09
   react-native-fast-image: cba3d9bf9c2cf8ddb643d887a686c53a5dd90a2c
   react-native-keep-awake: 0de4bd66de0c23178107dce0c2fcc3354b2a8e94
-  react-native-locale-detector: d1b2c6fe5abb56e3a1efb6c2d6f308c05c4251f1
   react-native-webrtc: 31b6d3f1e3e2ce373aa43fd682b04367250f807d
-  RNGoogleSignin: 44debd8c359a662c0e2d585952e88b985bf78008
+  RNGoogleSignin: 8b08beabff7f3b1373b2821b0944b38de36ba95e
   RNSound: b360b3862d3118ed1c74bb9825696b5957686ac4
   RNVectorIcons: 8c52e1e8da1153613fdef44748e865c25556cb9c
-  SDWebImage: 624d6e296c69b244bcede364c72ae0430ac14681
+  SDWebImage: c5594f1a19c48d526d321e548902b56b479cd508
   yoga: b1ce48b6cf950b98deae82838f5173ea7cf89e85
 
-PODFILE CHECKSUM: cf8276ba4b0933b24c6082a25a5f4eabe0ba4ea6
+PODFILE CHECKSUM: 2fa79bc1fe2fe42efb63895fdb0cb84d5f578884
 
 COCOAPODS: 1.5.3

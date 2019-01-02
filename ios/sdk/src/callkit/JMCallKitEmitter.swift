@@ -18,7 +18,6 @@ import AVKit
 import CallKit
 import Foundation
 
-@available(iOS 10.0, *)
 internal final class JMCallKitEmitter: NSObject, CXProviderDelegate {
 
     private var listeners = Set<JMCallKitEventListenerWrapper>()
@@ -129,7 +128,6 @@ internal final class JMCallKitEmitter: NSObject, CXProviderDelegate {
     }
 }
 
-@available(iOS 10.0, *)
 fileprivate struct JMCallKitEventListenerWrapper: Hashable {
 
     public var hashValue: Int

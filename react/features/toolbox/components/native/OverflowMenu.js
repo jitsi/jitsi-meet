@@ -1,9 +1,14 @@
 // @flow
 
 import React, { Component } from 'react';
+import { Platform } from 'react-native';
 import { connect } from 'react-redux';
 
-import { BottomSheet, hideDialog } from '../../../base/dialog';
+import {
+    BottomSheet,
+    bottomSheetItemStylesCombined,
+    hideDialog
+} from '../../../base/dialog';
 import { AudioRouteButton } from '../../../mobile/audio-mode';
 import { PictureInPictureButton } from '../../../mobile/picture-in-picture';
 import { LiveStreamButton, RecordButton } from '../../../recording';
@@ -12,7 +17,6 @@ import { ClosedCaptionButton } from '../../../subtitles';
 import { TileViewButton } from '../../../video-layout';
 
 import AudioOnlyButton from './AudioOnlyButton';
-import { overflowMenuItemStyles } from './styles';
 import ToggleCameraButton from './ToggleCameraButton';
 
 /**
@@ -62,7 +66,7 @@ class OverflowMenu extends Component<Props> {
         const buttonProps = {
             afterClick: this._onCancel,
             showLabel: true,
-            styles: overflowMenuItemStyles
+            styles: bottomSheetItemStylesCombined
         };
 
         return (
@@ -72,7 +76,14 @@ class OverflowMenu extends Component<Props> {
                 <AudioOnlyButton { ...buttonProps } />
                 <RoomLockButton { ...buttonProps } />
                 <ClosedCaptionButton { ...buttonProps } />
-                <RecordButton { ...buttonProps } />
+                {
+
+                    // Apple rejected our app because they claim requiring a
+                    // Dropbox account for recording is not acceptable.
+                    // Ddisable it until we can find a way around it.
+                    Platform.OS !== 'ios'
+                        && <RecordButton { ...buttonProps } />
+                }
                 <LiveStreamButton { ...buttonProps } />
                 <TileViewButton { ...buttonProps } />
                 <PictureInPictureButton { ...buttonProps } />

@@ -1,9 +1,11 @@
 # Jitsi Meet SDK for Android
 
 ## Build your own, or use a pre-build SDK artifacts/binaries
+
 Jitsi conveniently provides a pre-build SDK artifacts/binaries in its Maven repository. When you do not require any modification to the SDK itself, it's suggested to use the pre-build SDK. This avoids the complexity of building and installing your own SDK artifacts/binaries.
 
 ### Use pre-build SDK artifacts/binaries
+
 In your project, add the Maven repository
 `https://github.com/jitsi/jitsi-maven-repository/raw/master/releases` and the
 dependency `org.jitsi.react:jitsi-meet-sdk` into your `build.gradle` files.
@@ -33,6 +35,9 @@ dependencies {
 
 ### Build and use your own SDK artifacts/binaries
 
+<details>
+<summary>Show building instructions</summary>
+
 Start by making sure that your development environment [is set up correctly](https://github.com/jitsi/jitsi-meet/blob/master/doc/mobile.md).
 
 A note on dependencies: Apart from the SDK, Jitsi also publishes a binary Maven artifact for some of the SDK dependencies (that are not otherwise publicly available) to the Jitsi Maven repository. When you're planning to use a SDK that is built from source, you'll likely use a version of the source code that is newer (or at least _different_) than the version of the source that was used to create the binary SDK artifact. As a consequence, the dependencies that your project will need, might also be different from those that are published in the Jitsi Maven repository. This might lead to build problems, caused by dependencies that are unavailable.
@@ -45,7 +50,9 @@ In source code form, the Android SDK dependencies are locked/pinned by package.j
 
 This will pull in the dependencies in either binary format, or in source code format, somewhere under /node_modules/
 
-At the time of writing, the React Native dependency is the only one pulled in in binary format. To copy it to your local Maven repository, you can simply copy part of the directory structure that was pulled in by NPM:
+At the time of writing, there are two packages pulled in in binary format.
+
+To copy React Native to your local Maven repository, you can simply copy part of the directory structure that was pulled in by NPM:
 
     $ cp -r ../node_modules/react-native/android/com /tmp/repo/
 
@@ -53,11 +60,13 @@ In the same way, copy the JavaScriptCore dependency:
 
     $ cp -r ../node_modules/jsc-android/dist/org /tmp/repo/
 
+Alternatively, you can use the scripts located in the android/scripts directory to publish these dependencies to your Maven repo.
+
 Third-party React Native _modules_, which Jitsi Meet SDK for Android depends on, are download by NPM in source code form. These need to be assembled into Maven artifacts, and then published to your local Maven repository. The SDK project facilitates this. 
 
 To prepare, Configure the Maven repositories in which you are going to publish the SDK artifacts/binaries. In `android/sdk/build.gradle` as well as in `android/build.gradle` modify the lines that contain:
 
-    "file:${rootProject.projectDir}/../../../jitsi/jitsi-maven-repository/releases"
+    "file:${rootProject.projectDir}/../../jitsi-maven-repository/releases"
 
 Change this value (which represents the Maven repository location used internally by the Jitsi Developers) to the location of the repository that you'd like to use:
 
@@ -97,6 +106,7 @@ Then, define the dependency `org.jitsi.react:jitsi-meet-sdk` into the `build.gra
 
 Note that there should not be a need to explicitly add the other dependencies, as they will be pulled in as transitive dependencies of `jitsi-meet-sdk`.
 
+</details>
 
 ## Using the API
 
@@ -126,7 +136,15 @@ public class MainActivity extends JitsiMeetActivity {
 ```
 
 Alternatively, you can use the `org.jitsi.meet.sdk.JitsiMeetView` class which
-extends `android.view.View`:
+extends `android.view.View`.
+
+Note that this should only be needed when `JitsiMeetActivity` cannot be used for
+some reason. Extending `JitsiMeetView` requires manual wiring of the view to
+the activity, using a lot of boilerplate code. Using the Activity instead of the
+View is strongly recommended.
+
+<details>
+<summary>Show example</summary>
 
 ```java
 package org.jitsi.example;
@@ -135,13 +153,25 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 
 import org.jitsi.meet.sdk.JitsiMeetView;
+import org.jitsi.meet.sdk.ReactActivityLifecycleCallbacks;
 
+// Example
+//
 public class MainActivity extends AppCompatActivity {
     private JitsiMeetView view;
 
     @Override
+    protected void onActivityResult(
+            int requestCode,
+            int resultCode,
+            Intent data) {
+        ReactActivityLifecycleCallbacks.onActivityResult(
+                this, requestCode, resultCode, data);
+    }
+
+    @Override
     public void onBackPressed() {
-        if (!JitsiMeetView.onBackPressed()) {
+        if (!ReactActivityLifecycleCallbacks.onBackPressed()) {
             // Invoke the default handler if it wasn't handled by React.
             super.onBackPressed();
         }
@@ -164,27 +194,55 @@ public class MainActivity extends AppCompatActivity {
         view.dispose();
         view = null;
 
-        JitsiMeetView.onHostDestroy(this);
+        ReactActivityLifecycleCallbacks.onHostDestroy(this);
     }
 
     @Override
     public void onNewIntent(Intent intent) {
-        JitsiMeetView.onNewIntent(intent);
+        ReactActivityLifecycleCallbacks.onNewIntent(intent);
+    }
+
+    @Override
+    public void onRequestPermissionsResult(
+            final int requestCode,
+            final String[] permissions,
+            final int[] grantResults) {
+        ReactActivityLifecycleCallbacks.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
 
-        JitsiMeetView.onHostResume(this);
+        ReactActivityLifecycleCallbacks.onHostResume(this);
     }
 
     @Override
     protected void onStop() {
         super.onStop();
 
-        JitsiMeetView.onHostPause(this);
+        ReactActivityLifecycleCallbacks.onHostPause(this);
     }
+}
+```
+
+</details>
+
+Starting with SDK version 1.22, a Glide module must be provided by the host app.
+This makes it possible to use the Glide image processing library from both the
+SDK and the host app itself.
+
+You can use the code in `JitsiGlideModule.java` and adjust the package name.
+When building, add the following code in your `app/build.gradle` file, adjusting
+the Glide version to match the one in https://github.com/jitsi/jitsi-meet/blob/master/android/build.gradle
+
+```
+// Glide
+implementation("com.github.bumptech.glide:glide:${glideVersion}") {
+    exclude group: "com.android.support", module: "glide"
+}
+implementation("com.github.bumptech.glide:annotations:${glideVersion}") {
+    exclude group: "com.android.support", module: "annotations"
 }
 ```
 
@@ -192,34 +250,6 @@ public class MainActivity extends AppCompatActivity {
 
 This class encapsulates a high level API in the form of an Android `Activity`
 which displays a single `JitsiMeetView`.
-
-#### getDefaultURL()
-
-See JitsiMeetView.getDefaultURL.
-
-#### isPictureInPictureEnabled()
-
-See JitsiMeetView.isPictureInPictureEnabled.
-
-#### isWelcomePageEnabled()
-
-See JitsiMeetView.isWelcomePageEnabled.
-
-#### loadURL(URL)
-
-See JitsiMeetView.loadURL.
-
-#### setDefaultURL(URL)
-
-See JitsiMeetView.setDefaultURL.
-
-#### setPictureInPictureEnabled(boolean)
-
-See JitsiMeetView.setPictureInPictureEnabled.
-
-#### setWelcomePageEnabled(boolean)
-
-See JitsiMeetView.setWelcomePageEnabled.
 
 ### JitsiMeetView
 
@@ -314,6 +344,19 @@ information.
 NOTE: Must be called (if at all) before `loadURL`/`loadURLString` for it to take
 effect.
 
+### ReactActivityLifecycleCallbacks
+
+This class handles the interaction between `JitsiMeetView` and its enclosing
+`Activity`. Generally this shouldn't be consumed by users, because they'd be
+using `JitsiMeetActivity` instead, which is already completely integrated.
+
+All its methods are static.
+
+#### onActivityResult(...)
+
+Helper method to handle results of auxiliary activities launched by the SDK.
+Should be called from the activity method of the same name.
+
 #### onBackPressed()
 
 Helper method which should be called from the activity's `onBackPressed` method.
@@ -321,34 +364,29 @@ If this function returns `true`, it means the action was handled and thus no
 extra processing is required; otherwise the app should call the parent's
 `onBackPressed` method.
 
-This is a static method.
-
-#### onHostDestroy(activity)
+#### onHostDestroy(...)
 
 Helper method which should be called from the activity's `onDestroy` method.
 
-This is a static method.
-
-#### onHostPause(activity)
-
-Helper method which should be called from the activity's `onPause` method.
-
-This is a static method.
-
-#### onHostResume(activity)
+#### onHostResume(...)
 
 Helper method which should be called from the activity's `onResume` or `onStop`
 method.
 
-This is a static method.
+#### onHostStop(...)
 
-#### onNewIntent(intent)
+Helper method which should be called from the activity's `onSstop` method.
+
+#### onNewIntent(...)
 
 Helper method for integrating the *deep linking* functionality. If your app's
 activity is launched in "singleTask" mode this method should be called from the
 activity's `onNewIntent` method.
 
-This is a static method.
+#### onRequestPermissionsResult(...)
+
+Helper method to handle permission requests inside the SDK. It should be called
+from the activity method of the same name.
 
 #### onUserLeaveHint()
 
@@ -362,11 +400,9 @@ This is a static method.
 `JitsiMeetViewListener` provides an interface apps can implement to listen to
 the state of the Jitsi Meet conference displayed in a `JitsiMeetView`.
 
-### JitsiMeetViewAdapter
-
-A default implementation of the `JitsiMeetViewListener` interface. Apps may
-extend the class instead of implementing the interface in order to minimize
-boilerplate.
+`JitsiMeetViewAdapter`, a default implementation of the
+`JitsiMeetViewListener` interface is also provided. Apps may extend the class
+instead of implementing the interface in order to minimize boilerplate.
 
 ##### onConferenceFailed
 
@@ -412,67 +448,7 @@ conference URL which necessitated the loading of the configuration file.
 
 When using the SDK on a project some proguard rules have to be added in order
 to avoid necessary code being stripped. Add the following to your project's
-rules file:
-
-```
-# React Native
-
-# Keep our interfaces so they can be used by other ProGuard rules.
-# See http://sourceforge.net/p/proguard/bugs/466/
--keep,allowobfuscation @interface com.facebook.proguard.annotations.DoNotStrip
--keep,allowobfuscation @interface com.facebook.proguard.annotations.KeepGettersAndSetters
--keep,allowobfuscation @interface com.facebook.common.internal.DoNotStrip
-
-# Do not strip any method/class that is annotated with @DoNotStrip
--keep @com.facebook.proguard.annotations.DoNotStrip class *
--keep @com.facebook.common.internal.DoNotStrip class *
--keepclassmembers class * {
-    @com.facebook.proguard.annotations.DoNotStrip *;
-    @com.facebook.common.internal.DoNotStrip *;
-}
-
--keepclassmembers @com.facebook.proguard.annotations.KeepGettersAndSetters class * {
-  void set*(***);
-  *** get*();
-}
-
--keep class * extends com.facebook.react.bridge.JavaScriptModule { *; }
--keep class * extends com.facebook.react.bridge.NativeModule { *; }
--keepclassmembers,includedescriptorclasses class * { native <methods>; }
--keepclassmembers class *  { @com.facebook.react.uimanager.UIProp <fields>; }
--keepclassmembers class *  { @com.facebook.react.uimanager.annotations.ReactProp <methods>; }
--keepclassmembers class *  { @com.facebook.react.uimanager.annotations.ReactPropGroup <methods>; }
-
--dontwarn com.facebook.react.**
-
-# TextLayoutBuilder uses a non-public Android constructor within StaticLayout.
-# See libs/proxy/src/main/java/com/facebook/fbui/textlayoutbuilder/proxy for details.
--dontwarn android.text.StaticLayout
-
-# okhttp
-
--keepattributes Signature
--keepattributes *Annotation*
--keep class okhttp3.** { *; }
--keep interface okhttp3.** { *; }
--dontwarn okhttp3.**
-
-# okio
-
--keep class sun.misc.Unsafe { *; }
--dontwarn java.nio.file.*
--dontwarn org.codehaus.mojo.animal_sniffer.IgnoreJRERequirement
--dontwarn okio.**
-
-# WebRTC
-
--keep class org.webrtc.** { *; }
--dontwarn org.chromium.build.BuildHooksAndroid
-
-# Jisti Meet SDK
-
--keep class org.jitsi.meet.sdk.** { *; }
-```
+rules file: https://github.com/jitsi/jitsi-meet/blob/master/android/app/proguard-rules.pro
 
 ## Picture-in-Picture
 

@@ -8,6 +8,7 @@ import { createCalendarConnectedEvent, sendAnalytics } from '../analytics';
 import {
     CLEAR_CALENDAR_INTEGRATION,
     SET_CALENDAR_AUTH_STATE,
+    SET_CALENDAR_ERROR,
     SET_CALENDAR_INTEGRATION,
     SET_CALENDAR_PROFILE_EMAIL,
     SET_LOADING_CALENDAR_EVENTS
@@ -116,6 +117,22 @@ export function setCalendarAPIAuthState(newState: ?Object) {
     return {
         type: SET_CALENDAR_AUTH_STATE,
         msAuthState: newState
+    };
+}
+
+/**
+ * Sends an action to update the calendar error state in redux.
+ *
+ * @param {Object} error - An object with error details.
+ * @returns {{
+ *     type: SET_CALENDAR_ERROR,
+ *     error: Object
+ * }}
+ */
+export function setCalendarError(error: ?Object) {
+    return {
+        type: SET_CALENDAR_ERROR,
+        error
     };
 }
 

@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
-import Icon from 'react-native-vector-icons/FontAwesome';
+
+import { Icon } from '../../../base/font-icons';
 
 import styles from './styles';
 

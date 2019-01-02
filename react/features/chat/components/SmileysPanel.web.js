@@ -1,7 +1,7 @@
 // @flow
 
 import React, { PureComponent } from 'react';
-
+import Emoji from 'react-emoji-render';
 import { smileys } from '../smileys';
 
 /**
@@ -37,11 +37,10 @@ class SmileysPanel extends PureComponent<Props> {
                     className = 'smileyContainer'
                     id = { smileyKey }
                     key = { smileyKey }>
-                    <img
-                        className = 'smiley'
-                        id = { smileyKey }
+                    <Emoji
                         onClick = { onSelectFunction }
-                        src = { `images/smileys/${smileyKey}.svg` } />
+                        onlyEmojiClassName = 'smiley'
+                        text = { smileys[smileyKey] } />
                 </div>
             );
         });

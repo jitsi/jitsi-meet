@@ -37,7 +37,7 @@ class DominantSpeakerIndicator extends Component<Props> {
         return (
             <BaseIndicator
                 className = 'indicator show-inline'
-                iconClassName = 'indicatoricon fa fa-bullhorn'
+                iconClassName = 'indicatoricon icon-dominant-speaker'
                 iconSize = { `${this.props.iconSize}px` }
                 id = 'dominantspeakerindicator'
                 tooltipKey = 'speaker'

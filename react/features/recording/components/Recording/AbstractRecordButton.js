@@ -18,8 +18,7 @@ import {
 
 import { getActiveSession } from '../../functions';
 
-import StartRecordingDialog from './StartRecordingDialog';
-import { StopRecordingDialog } from './_';
+import { StartRecordingDialog, StopRecordingDialog } from './_';
 
 /**
  * The type of the React {@code Component} props of

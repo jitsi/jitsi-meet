@@ -64,7 +64,8 @@ class NumbersList extends Component<Props> {
     /**
      * Renders rows of countries and associated phone numbers.
      *
-     * @param {Object} numbersMapping - Things yeah.
+     * @param {Object} numbersMapping - An object with country names as keys
+     * and values as arrays of phone numbers.
      * @private
      * @returns {ReactElement[]}
      */
