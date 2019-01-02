@@ -28,3 +28,11 @@
         border: 1px solid #455166;
     }
 }
+
+/**
+ * Override @atlaskit/theme styling for the top toolbar so it displays over
+ * the video thumbnail while obscuring as little as possible.
+ */
+.videocontainer .tOoji {
+    background: none;
+}
