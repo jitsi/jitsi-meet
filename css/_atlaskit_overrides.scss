@@ -1,14 +1,18 @@
 /**
- * Move Atlaskit Flag up a little bit so it does not cover the toolbar with the
- * first notification.
+ * Move the @atlaskit/flag container up a little bit so it does not cover the
+ * toolbar with the first notification.
  */
-.cxGWJB{
+.cjMOOK{
     bottom: calc(#{$newToolbarSizeWithPadding}) !important;
 }
-.gXSEsl:nth-child(n+2) {
-    transform: translateX(0) translateY(100%) translateY(16px) !important;
-    -ms-transform: translateX(0) translateY(100%) translateY(16px) !important;
-    -webkit-transform: translateX(0) translateY(100%) translateY(16px) !important;
+
+/**
+ * Disable the slide-in animation for @atlaskit/flag due to the animation
+ * repeating for each queued flag once it becomes the top flag.
+ */
+ .mIBKA:first-child {
+    animation: cbfRuT 0s !important;
+    -webkit-animation: cbfRuT 0s !important;
 }
 
 .modal-dialog-form {
