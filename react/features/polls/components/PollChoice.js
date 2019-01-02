@@ -55,7 +55,7 @@ type Props = {
 /**
  * Poll option view component.
  */
-class PollChoice extends Component<Props, State> {
+class PollChoice extends Component<Props, *> {
 
     /**
      * Constructor.

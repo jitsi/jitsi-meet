@@ -135,7 +135,7 @@ class PollResultsForm extends Component<Props, *> {
  * @param {Object} state - Redux state.
  * @returns {{}}
  */
-function _mapStateToProps(state: Ojbect) {
+function _mapStateToProps(state: Object) {
     const {
         choices,
         currentPoll,

@@ -25,9 +25,14 @@ type Props = {
     dispatch: Function,
 
     /**
+     * Invoked to obtain translated strings.
+     */
+    t: Function,
+
+    /**
      * Current User ID.
      */
-    userID: string,
+    userID: string
 };
 
 type State = {
@@ -41,11 +46,6 @@ type State = {
      * New Poll Object
      */
     poll: Object,
-
-    /**
-     * Invoked to obtain translated strings.
-     */
-    t: Function,
 
     /**
      * Poll question.
