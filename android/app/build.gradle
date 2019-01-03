@@ -62,6 +62,7 @@ dependencies {
     implementation("com.github.bumptech.glide:annotations:${rootProject.ext.glideVersion}") {
         exclude group: "com.android.support", module: "annotations"
     }
+    annotationProcessor "com.github.bumptech.glide:compiler:${rootProject.ext.glideVersion}"
 }
 
 gradle.projectsEvaluated {
