@@ -7,6 +7,9 @@ export default class AbstractHandler {
      */
     constructor() {
         this._enabled = false;
+        this._ignoredEvents
+            = [ 'e2e_rtt', 'rtp.stats', 'rtt.by.region', 'available.device',
+                'stream.switch.delay', 'ice.state.changed', 'ice.duration' ];
     }
 
     /**
@@ -57,11 +60,7 @@ export default class AbstractHandler {
             return true;
         }
 
-        const ignoredEvents
-            = [ 'e2e_rtt', 'rtp.stats', 'rtt.by.region', 'available.device',
-                'stream.switch.delay', 'ice.state.changed', 'ice.duration' ];
-
         // Temporary removing some of the events that are too noisy.
-        return ignoredEvents.indexOf(event.action) !== -1;
+        return this._ignoredEvents.indexOf(event.action) !== -1;
     }
 }

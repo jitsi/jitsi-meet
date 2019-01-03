@@ -44,11 +44,14 @@ export function initAnalytics({ getState }: { getState: Function }) {
     const state = getState();
     const config = state['features/base/config'];
     const {
-        amplitudeAPPKey,
-        analyticsScriptUrls,
-        deploymentInfo,
-        googleAnalyticsTrackingId
+        analytics: analyticsConfig = {},
+        deploymentInfo
     } = config;
+    const {
+        amplitudeAPPKey,
+        scriptURLs,
+        googleAnalyticsTrackingId
+    } = analyticsConfig;
     const { group, server, user } = state['features/base/jwt'];
     const handlerConstructorOptions = {
         amplitudeAPPKey,
@@ -61,7 +64,7 @@ export function initAnalytics({ getState }: { getState: Function }) {
         version: JitsiMeetJS.version
     };
 
-    _loadHandlers(analyticsScriptUrls, handlerConstructorOptions)
+    _loadHandlers(scriptURLs, handlerConstructorOptions)
         .then(handlers => {
             const roomName = state['features/base/conference'].room;
             const permanentProperties = {};

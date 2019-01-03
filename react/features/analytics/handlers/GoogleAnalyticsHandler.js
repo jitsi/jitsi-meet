@@ -97,10 +97,10 @@ class GoogleAnalyticsHandler extends AbstractHandler {
     /**
      * Sets the permanent properties for the current session.
      *
-     * @param {Object} props - The permanent portperties.
+     * @param {Object} userProps - The permanent portperties.
      * @returns {void}
      */
-    setUserProperties(props = {}) {
+    setUserProperties(userProps = {}) {
         if (!this._enabled) {
             return;
         }
@@ -111,9 +111,9 @@ class GoogleAnalyticsHandler extends AbstractHandler {
         const filter = [ 'user_agent', 'callstats_name' ];
 
         this._userPropertiesString
-            = Object.keys(props)
+            = Object.keys(userProps)
                 .filter(key => filter.indexOf(key) === -1)
-                .map(key => `permanent_${key}=${props[key]}`)
+                .map(key => `permanent_${key}=${userProps[key]}`)
                 .join('&');
     }
 
