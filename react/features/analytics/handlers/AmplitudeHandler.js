@@ -37,12 +37,12 @@ class AmplitudeHandler extends AbstractHandler {
     /**
      * Sets the Amplitude user properties.
      *
-     * @param {Object} props - The user portperties.
+     * @param {Object} userProps - The user portperties.
      * @returns {void}
      */
-    setUserProperties(props) {
+    setUserProperties(userProps) {
         if (this._enabled) {
-            amplitude.getInstance().setUserProperties(props);
+            amplitude.getInstance().setUserProperties(userProps);
         }
     }
 
