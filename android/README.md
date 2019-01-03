@@ -33,6 +33,19 @@ dependencies {
 }
 ```
 
+Also, enable 32bit mode for react-native, since react-native only supports 32bit apps. (If you have a 64bit device, it will not run unless this setting it set)
+
+```gradle
+android {
+    ... 
+    defaultConfig {
+        ndk {
+            abiFilters "armeabi-v7a", "x86"
+        }
+    }
+    ...
+```
+
 ### Build and use your own SDK artifacts/binaries
 
 <details>
