@@ -35,6 +35,7 @@
     "@atlaskit/tooltip": "12.1.13",
     "@microsoft/microsoft-graph-client": "1.1.0",
     "@webcomponents/url": "0.7.1",
+    "amplitude-js": "4.5.2",
     "dropbox": "4.0.9",
     "i18next": "8.4.3",
     "i18next-browser-languagedetector": "2.0.0",

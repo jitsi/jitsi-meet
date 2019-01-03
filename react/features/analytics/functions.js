@@ -43,10 +43,15 @@ export function initAnalytics({ getState }: { getState: Function }) {
 
     const state = getState();
     const config = state['features/base/config'];
-    const { analyticsScriptUrls, deploymentInfo, googleAnalyticsTrackingId }
-        = config;
+    const {
+        amplitudeAPPKey,
+        analyticsScriptUrls,
+        deploymentInfo,
+        googleAnalyticsTrackingId
+    } = config;
     const { group, server, user } = state['features/base/jwt'];
     const handlerConstructorOptions = {
+        amplitudeAPPKey,
         envType: (deploymentInfo && deploymentInfo.envType) || 'dev',
         googleAnalyticsTrackingId,
         group,
