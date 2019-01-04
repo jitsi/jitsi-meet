@@ -65,18 +65,6 @@ SharedVideoThumb.prototype.createContainer = function(spanId) {
 };
 
 /**
- * Removes RemoteVideo from the page.
- */
-SharedVideoThumb.prototype.remove = function() {
-    logger.log('Remove shared video thumb', this.id);
-
-    // Remove whole container
-    if (this.container.parentNode) {
-        this.container.parentNode.removeChild(this.container);
-    }
-};
-
-/**
  * Sets the display name for the thumb.
  */
 SharedVideoThumb.prototype.setDisplayName = function(displayName) {

@@ -3,7 +3,7 @@
 import UIUtil from '../../../modules/UI/util/UIUtil';
 
 import { APP_WILL_MOUNT, APP_WILL_UNMOUNT } from '../base/app';
-import { CONFERENCE_JOINED } from '../base/conference';
+import { CONFERENCE_JOINED, CONFERENCE_WILL_LEAVE } from '../base/conference';
 import { JitsiConferenceEvents } from '../base/lib-jitsi-meet';
 import { getParticipantById } from '../base/participants';
 import { MiddlewareRegistry } from '../base/redux';
@@ -11,7 +11,7 @@ import { playSound, registerSound, unregisterSound } from '../base/sounds';
 import { isButtonEnabled, showToolbox } from '../toolbox';
 
 import { SEND_MESSAGE } from './actionTypes';
-import { addMessage } from './actions';
+import { addMessage, clearMessages } from './actions';
 import { INCOMING_MSG_SOUND_ID } from './constants';
 import { INCOMING_MSG_SOUND_FILE } from './sounds';
 
@@ -44,6 +44,10 @@ MiddlewareRegistry.register(store => next => action => {
     case CONFERENCE_JOINED:
         typeof APP === 'undefined'
             || _addChatMsgListener(action.conference, store);
+        break;
+
+    case CONFERENCE_WILL_LEAVE:
+        store.dispatch(clearMessages());
         break;
 
     case SEND_MESSAGE:
