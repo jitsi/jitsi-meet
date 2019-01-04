@@ -1,10 +1,8 @@
 // @flow
 
 import Button, { ButtonGroup } from '@atlaskit/button';
-import { withContextFromProps } from '@atlaskit/layer-manager';
 import Modal, { ModalFooter } from '@atlaskit/modal-dialog';
 import _ from 'lodash';
-import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 
 import { translate } from '../../../i18n';
@@ -72,17 +70,6 @@ type Props = {
 };
 
 /**
- * ContexTypes is used as a workaround for Atlaskit's modal being displayed
- * outside of the normal App hierarchy, thereby losing context. ContextType
- * is responsible for taking its props and passing them into children.
- *
- * @type {ReactElement}
- */
-const ContextProvider = withContextFromProps({
-    i18n: PropTypes.object
-});
-
-/**
  * Web dialog that uses atlaskit modal-dialog to display dialogs.
  */
 class StatelessDialog extends Component<Props> {
@@ -136,27 +123,16 @@ class StatelessDialog extends Component<Props> {
                 onDialogDismissed = { this._onDialogDismissed }
                 shouldCloseOnEscapePress = { true }
                 width = { width || 'medium' }>
-                {
-
-                    /**
-                     * Wrapping the contents of {@link Modal} with
-                     * {@link ContextProvider} is a workaround for the
-                     * i18n context becoming undefined as modal gets rendered
-                     * outside of the normal react app context.
-                     */
-                }
-                <ContextProvider i18n = { this.props.i18n }>
-                    <div
-                        onKeyDown = { this._onKeyDown }
-                        ref = { this._setDialogElement }>
-                        <form
-                            className = 'modal-dialog-form'
-                            id = 'modal-dialog-form'
-                            onSubmit = { this._onSubmit }>
-                            { children }
-                        </form>
-                    </div>
-                </ContextProvider>
+                <div
+                    onKeyDown = { this._onKeyDown }
+                    ref = { this._setDialogElement }>
+                    <form
+                        className = 'modal-dialog-form'
+                        id = 'modal-dialog-form'
+                        onSubmit = { this._onSubmit }>
+                        { children }
+                    </form>
+                </div>
             </Modal>
         );
     }
