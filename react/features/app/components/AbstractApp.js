@@ -56,28 +56,25 @@ export class AbstractApp extends BaseApp<Props, *> {
     }
 
     /**
-     * Notifies this mounted React {@code Component} that it will receive new
-     * props. Makes sure that this {@code AbstractApp} has a redux store to use.
+     * Implements React Component's componentDidUpdate.
      *
      * @inheritdoc
-     * @param {Object} nextProps - The read-only React {@code Component} props
-     * that this instance will receive.
-     * @returns {void}
      */
-    componentWillReceiveProps(nextProps: Props) {
-        const { props } = this;
+    componentDidUpdate(prevProps: Props) {
+        const previousUrl = toURLString(prevProps.url);
+        const currentUrl = toURLString(this.props.url);
+        const previousTimestamp = prevProps.timestamp;
+        const currentTimestamp = this.props.timestamp;
 
         this._init.then(() => {
             // Deal with URL changes.
-            let { url } = nextProps;
 
-            url = toURLString(url);
-            if (toURLString(props.url) !== url
+            if (previousUrl !== currentUrl
 
                     // XXX Refer to the implementation of loadURLObject: in
                     // ios/sdk/src/JitsiMeetView.m for further information.
-                    || props.timestamp !== nextProps.timestamp) {
-                this._openURL(url || this._getDefaultURL());
+                    || previousTimestamp !== currentTimestamp) {
+                this._openURL(currentUrl || this._getDefaultURL());
             }
         });
     }
