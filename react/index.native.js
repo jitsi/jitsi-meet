@@ -103,15 +103,25 @@ class Root extends Component<Props, State> {
     }
 
     /**
-     * Implements React's {@link Component#componentWillReceiveProps()}.
+     * Implements React's {@link Component#componentDidUpdate()}.
      *
      * New props can be set from the native side by setting the appProperties
      * property (on iOS) or calling setAppProperties (on Android).
      *
      * @inheritdoc
      */
-    componentWillReceiveProps({ url }) {
-        equals(this.props.url, url) || this.setState({ url: url || null });
+    componentDidUpdate(prevProps, prevState) {
+        // Ignore the special state update triggered on {@code Root}
+        // instantiation where an undefined url prop is set to a default.
+        if (typeof prevState.url === 'undefined'
+                && typeof this.state.url !== 'undefined') {
+            return;
+        }
+
+        if (!equals(prevProps.url, this.props.url)) {
+            // eslint-disable-next-line  react/no-did-update-set-state
+            this.setState({ url: this.props.url || null });
+        }
     }
 
     /**
