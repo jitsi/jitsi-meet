@@ -8,7 +8,16 @@ import {
 } from 'react-native';
 
 import AbstractContainer from '../AbstractContainer';
-import type { Props } from '../AbstractContainer';
+import type { Props as AbstractProps } from '../AbstractContainer';
+
+type Props = AbstractProps & {
+
+    /**
+     * The event handler/listener to be invoked when this
+     * {@code AbstractContainer} is long pressed on React Native.
+     */
+    onLongPress?: ?Function,
+};
 
 /**
  * Represents a container of React Native/mobile {@link Component} children.
@@ -28,7 +37,7 @@ export default class Container<P: Props> extends AbstractContainer<P> {
             accessible,
             onClick,
             onLongPress,
-            touchFeedback = onClick,
+            touchFeedback = Boolean(onClick || onLongPress),
             underlayColor,
             visible = true,
             ...props
@@ -50,19 +59,24 @@ export default class Container<P: Props> extends AbstractContainer<P> {
 
         // onClick & touchFeedback
         if (element && onClickOrTouchFeedback) {
+            const touchableProps = {
+                accessibilityLabel,
+                accessible,
+                onLongPress,
+                onPress: onClick
+            };
+
             element
-                = React.createElement(
-                    touchFeedback
-                        ? TouchableHighlight
-                        : TouchableWithoutFeedback,
-                    {
-                        accessibilityLabel,
-                        accessible,
-                        onLongPress,
-                        onPress: onClick,
-                        ...touchFeedback && { underlayColor }
-                    },
-                    element);
+                = touchFeedback
+                    ? React.createElement(
+                        TouchableHighlight,
+                        {
+                            ...touchableProps,
+                            underlayColor
+                        },
+                        element)
+                    : React.createElement(
+                        TouchableWithoutFeedback, touchableProps, element);
         }
 
         return element;

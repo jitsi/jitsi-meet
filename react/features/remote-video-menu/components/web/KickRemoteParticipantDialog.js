@@ -3,7 +3,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 
-import { ConfirmDialog } from '../../../base/dialog';
+import { Dialog } from '../../../base/dialog';
 import { translate } from '../../../base/i18n';
 
 import AbstractKickRemoteParticipantDialog
@@ -21,9 +21,15 @@ class KickRemoteParticipantDialog extends AbstractKickRemoteParticipantDialog {
      */
     render() {
         return (
-            <ConfirmDialog
-                contentKey = 'dialog.kickParticipantDialog'
-                onSubmit = { this._onSubmit } />
+            <Dialog
+                okTitleKey = 'dialog.kickParticipantButton'
+                onSubmit = { this._onSubmit }
+                titleKey = 'dialog.kickParticipantTitle'
+                width = 'small'>
+                <div>
+                    { this.props.t('dialog.kickParticipantDialog') }
+                </div>
+            </Dialog>
         );
     }
 

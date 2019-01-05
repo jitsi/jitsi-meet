@@ -210,6 +210,22 @@ export function isLocalTrackMuted(tracks, mediaType) {
 }
 
 /**
+ * Returns true if the remote track of the given media type and the given
+ * participant is muted, false otherwise.
+ *
+ * @param {Track[]} tracks - List of all tracks.
+ * @param {MEDIA_TYPE} mediaType - The media type of tracks to be checked.
+ * @param {*} participantId - Participant ID.
+ * @returns {boolean}
+ */
+export function isRemoteTrackMuted(tracks, mediaType, participantId) {
+    const track = getTrackByMediaTypeAndParticipant(
+        tracks, mediaType, participantId);
+
+    return !track || track.muted;
+}
+
+/**
  * Mutes or unmutes a specific {@code JitsiLocalTrack}. If the muted state of
  * the specified {@code track} is already in accord with the specified
  * {@code muted} value, then does nothing.

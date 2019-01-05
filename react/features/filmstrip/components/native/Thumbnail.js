@@ -44,6 +44,16 @@ type Props = {
     _largeVideo: Object,
 
     /**
+     * Handles click/tap event on the thumbnail.
+     */
+    _onClick: ?Function,
+
+    /**
+     * Handles long press on the thumbnail.
+     */
+    _onShowRemoteVideoMenu: ?Function,
+
+    /**
      * The Redux representation of the participant's video track.
      */
     _videoTrack: Object,
@@ -84,19 +94,6 @@ type Props = {
  */
 class Thumbnail extends Component<Props> {
     /**
-     * Initializes new Video Thumbnail component.
-     *
-     * @param {Object} props - Component props.
-     */
-    constructor(props: Props) {
-        super(props);
-
-        // Bind event handlers so they are only bound once for every instance.
-        this._onClick = this._onClick.bind(this);
-        this._onShowRemoteVideoMenu = this._onShowRemoteVideoMenu.bind(this);
-    }
-
-    /**
      * Implements React's {@link Component#render()}.
      *
      * @inheritdoc
@@ -107,6 +104,8 @@ class Thumbnail extends Component<Props> {
             _audioTrack: audioTrack,
             _isModerator,
             _largeVideo: largeVideo,
+            _onClick,
+            _onShowRemoteVideoMenu,
             _videoTrack: videoTrack,
             disablePin,
             disableTint,
@@ -129,10 +128,10 @@ class Thumbnail extends Component<Props> {
 
         return (
             <Container
-                onClick = { disablePin ? undefined : this._onClick }
+                onClick = { disablePin ? undefined : _onClick }
                 onLongPress = {
                     showRemoteVideoMenu
-                        ? this._onShowRemoteVideoMenu : undefined }
+                        ? _onShowRemoteVideoMenu : undefined }
                 style = { [
                     styles.thumbnail,
                     participant.pinned && !disablePin
@@ -169,43 +168,53 @@ class Thumbnail extends Component<Props> {
             </Container>
         );
     }
+}
 
-    _onClick: () => void;
+/**
+ * Maps part of redux actions to component's props.
+ *
+ * @param {Function} dispatch - Redux's {@code dispatch} function.
+ * @param {Props} ownProps - The own props of the component.
+ * @returns {{
+ *     _onClick: Function,
+ *     _onShowRemoteVideoMenu: Function
+ * }}
+ */
+function _mapDispatchToProps(dispatch: Function, ownProps): Object {
+    return {
+        /**
+         * Handles click/tap event on the thumbnail.
+         *
+         * @protected
+         * @returns {void}
+         */
+        _onClick() {
+            const { participant } = ownProps;
 
-    /**
-     * Handles click/tap event on the thumbnail.
-     *
-     * @returns {void}
-     */
-    _onClick() {
-        const { dispatch, participant } = this.props;
+            dispatch(
+                pinParticipant(participant.pinned ? null : participant.id));
+        },
 
-        // TODO The following currently ignores interfaceConfig.filmStripOnly.
-        dispatch(pinParticipant(participant.pinned ? null : participant.id));
-    }
+        /**
+         * Handles long press on the thumbnail.
+         *
+         * @returns {void}
+         */
+        _onShowRemoteVideoMenu() {
+            const { participant } = ownProps;
 
-    _onShowRemoteVideoMenu: () => void;
-
-    /**
-     * Handles long press on the thumbnail.
-     *
-     * @returns {void}
-     */
-    _onShowRemoteVideoMenu() {
-        const { dispatch, participant } = this.props;
-
-        dispatch(openDialog(RemoteVideoMenu, {
-            participant
-        }));
-    }
+            dispatch(openDialog(RemoteVideoMenu, {
+                participant
+            }));
+        }
+    };
 }
 
 /**
  * Function that maps parts of Redux state tree into component props.
  *
  * @param {Object} state - Redux state.
- * @param {Object} ownProps - Properties of component.
- * @private
+ * @param {Props} ownProps - Properties of component.
  * @returns {{
  *      _audioTrack: Track,
  *      _isModerator: boolean,
@@ -233,4 +242,4 @@ function _mapStateToProps(state, ownProps) {
     };
 }
 
-export default connect(_mapStateToProps)(Thumbnail);
+export default connect(_mapStateToProps, _mapDispatchToProps)(Thumbnail);
