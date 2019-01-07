@@ -91,8 +91,11 @@ export function initAnalytics({ getState }: { getState: Function }) {
 
             // Set the handlers last, since this triggers emptying of the cache
             analytics.setAnalyticsHandlers(handlers);
-        },
-        error => analytics.dispose() && logger.error(error));
+        })
+        .catch(error => {
+            analytics.dispose();
+            logger.error(error);
+        });
 }
 
 /**
