@@ -159,7 +159,7 @@ unzip jitsi-videobridge-linux-{arch-buildnum}.zip
 
 Install JRE if missing:
 ```
-apt-get install default-jre
+apt-get install openjdk-8-jre
 ```
 
 _NOTE: When installing on older Debian releases keep in mind that you need JRE >= 1.7._
@@ -182,7 +182,7 @@ Or autostart it by adding the line in `/etc/rc.local`:
 
 Install JDK and Maven if missing:
 ```
-apt-get install default-jdk maven
+apt-get install openjdk-8-jdk maven
 ```
 
 _NOTE: When installing on older Debian releases keep in mind that you need JDK >= 1.7._
