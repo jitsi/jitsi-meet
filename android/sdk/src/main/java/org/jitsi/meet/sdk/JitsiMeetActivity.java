@@ -1,5 +1,6 @@
 /*
- * Copyright @ 2017-present Atlassian Pty Ltd
+ * Copyright @ 2019-present 8x8, Inc.
+ * Copyright @ 2017-2018 Atlassian Pty Ltd
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,7 +27,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.KeyEvent;
 
 import com.facebook.react.ReactInstanceManager;
-import com.facebook.react.modules.core.DefaultHardwareBackBtnHandler;
 import com.facebook.react.modules.core.PermissionListener;
 
 import java.net.URL;
@@ -51,12 +51,6 @@ public class JitsiMeetActivity
      */
     private static final int OVERLAY_PERMISSION_REQUEST_CODE
         = (int) (Math.random() * Short.MAX_VALUE);
-
-    /**
-     * The default behavior of this {@code JitsiMeetActivity} upon invoking the
-     * back button if {@link #view} does not handle the invocation.
-     */
-    private DefaultHardwareBackBtnHandler defaultBackButtonImpl;
 
     /**
      * The default base {@code URL} used to join a conference when a partial URL
@@ -185,19 +179,7 @@ public class JitsiMeetActivity
 
     @Override
     public void onBackPressed() {
-        if (!ReactActivityLifecycleCallbacks.onBackPressed()) {
-            // JitsiMeetView didn't handle the invocation of the back button.
-            // Generally, an Activity extender would very likely want to invoke
-            // Activity#onBackPressed(). For the sake of consistency with
-            // JitsiMeetView and within the Jitsi Meet SDK for Android though,
-            // JitsiMeetActivity does what JitsiMeetView would've done if it
-            // were able to handle the invocation.
-            if (defaultBackButtonImpl == null) {
-                super.onBackPressed();
-            } else {
-                defaultBackButtonImpl.invokeDefaultOnBackPressed();
-            }
-        }
+        ReactActivityLifecycleCallbacks.onBackPressed();
     }
 
     @Override
@@ -279,8 +261,7 @@ public class JitsiMeetActivity
     protected void onResume() {
         super.onResume();
 
-        defaultBackButtonImpl = new DefaultHardwareBackBtnHandlerImpl(this);
-        ReactActivityLifecycleCallbacks.onHostResume(this, defaultBackButtonImpl);
+        ReactActivityLifecycleCallbacks.onHostResume(this);
     }
 
     @Override
@@ -288,7 +269,6 @@ public class JitsiMeetActivity
         super.onStop();
 
         ReactActivityLifecycleCallbacks.onHostPause(this);
-        defaultBackButtonImpl = null;
     }
 
     @Override

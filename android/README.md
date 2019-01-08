@@ -37,7 +37,7 @@ Also, enable 32bit mode for react-native, since react-native only supports 32bit
 
 ```gradle
 android {
-    ... 
+    ...
     defaultConfig {
         ndk {
             abiFilters "armeabi-v7a", "x86"
@@ -75,7 +75,7 @@ In the same way, copy the JavaScriptCore dependency:
 
 Alternatively, you can use the scripts located in the android/scripts directory to publish these dependencies to your Maven repo.
 
-Third-party React Native _modules_, which Jitsi Meet SDK for Android depends on, are download by NPM in source code form. These need to be assembled into Maven artifacts, and then published to your local Maven repository. The SDK project facilitates this. 
+Third-party React Native _modules_, which Jitsi Meet SDK for Android depends on, are download by NPM in source code form. These need to be assembled into Maven artifacts, and then published to your local Maven repository. The SDK project facilitates this.
 
 To prepare, Configure the Maven repositories in which you are going to publish the SDK artifacts/binaries. In `android/sdk/build.gradle` as well as in `android/build.gradle` modify the lines that contain:
 
@@ -89,7 +89,7 @@ Make sure to do this in both files! Each file should require one line to be chan
 
 To create the release assembly for any _specific_ third-party React Native module that you need, you can execture the following commands, replace the module name in the examples below.
 
-    $ ./gradlew :react-native-webrtc:assembleRelease 
+    $ ./gradlew :react-native-webrtc:assembleRelease
     $ ./gradlew :react-native-webrtc:publish
 
 You build and publish the SDK itself in the same way:
@@ -184,10 +184,7 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        if (!ReactActivityLifecycleCallbacks.onBackPressed()) {
-            // Invoke the default handler if it wasn't handled by React.
-            super.onBackPressed();
-        }
+        ReactActivityLifecycleCallbacks.onBackPressed();
     }
 
     @Override
