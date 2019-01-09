@@ -3,6 +3,7 @@
 import { connect } from 'react-redux';
 import type { Dispatch } from 'redux';
 
+import { translate } from '../../base/i18n';
 import { AbstractButton } from '../../base/toolbox';
 import type { AbstractButtonProps } from '../../base/toolbox';
 import { beginShareRoom } from '../../share-room';
@@ -161,4 +162,5 @@ function _mapStateToProps(state) {
     };
 }
 
-export default connect(_mapStateToProps, _mapDispatchToProps)(InviteButton);
+export default translate(
+    connect(_mapStateToProps, _mapDispatchToProps)(InviteButton));
