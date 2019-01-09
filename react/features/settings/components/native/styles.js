@@ -64,6 +64,11 @@ export default createStyleSheet({
         padding: 5
     },
 
+    settingsForm: {
+        backgroundColor: ColorPalette.white,
+        flex: 1
+    },
+
     /**
      * Global {@code Text} color for the components.
      */
