@@ -3,7 +3,6 @@
 import React from 'react';
 import {
     Alert,
-    Modal,
     SafeAreaView,
     ScrollView,
     Switch,
@@ -13,7 +12,7 @@ import {
 import { connect } from 'react-redux';
 
 import { translate } from '../../../base/i18n';
-import { BackButton, Header } from '../../../base/react';
+import { BackButton, Header, Modal } from '../../../base/react';
 
 import {
     AbstractSettingsView,
@@ -58,13 +57,8 @@ class SettingsView extends AbstractSettingsView {
     render() {
         return (
             <Modal
-                animationType = 'slide'
                 onRequestClose = { this._onRequestClose }
-                presentationStyle = 'fullScreen'
-                supportedOrientations = { [
-                    'landscape',
-                    'portrait'
-                ] }
+                presentationStyle = 'overFullScreen'
                 visible = { this.props._visible }>
                 <View style = { Header.pageStyle }>
                     { this._renderHeader() }

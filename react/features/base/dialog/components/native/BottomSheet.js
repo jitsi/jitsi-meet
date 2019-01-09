@@ -1,7 +1,9 @@
 // @flow
 
 import React, { Component, type Node } from 'react';
-import { Modal, TouchableWithoutFeedback, View } from 'react-native';
+import { TouchableWithoutFeedback, View } from 'react-native';
+
+import { Modal } from '../../../react';
 
 import { bottomSheetStyles as styles } from './styles';
 
@@ -50,14 +52,8 @@ export default class BottomSheet extends Component<Props> {
                 key = 'overlay'
                 style = { styles.overlay } />,
             <Modal
-                animationType = { 'slide' }
                 key = 'modal'
                 onRequestClose = { this._onCancel }
-                supportedOrientations = { [
-                    'landscape',
-                    'portrait'
-                ] }
-                transparent = { true }
                 visible = { true }>
                 <View style = { styles.container }>
                     <TouchableWithoutFeedback
