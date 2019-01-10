@@ -45,6 +45,7 @@ class KickButton extends AbstractKickButton {
         return (
             <RemoteVideoMenuButton
                 buttonText = { t('videothumbnail.kick') }
+                displayClass = 'kicklink'
                 iconClass = 'icon-kick'
                 id = { `ejectlink_${participantID}` }
                 // eslint-disable-next-line react/jsx-handler-names
