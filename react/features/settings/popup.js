@@ -1,6 +1,6 @@
 /* global JitsiMeetJS */
 
-import DeviceSelectionPopup from './DeviceSelectionPopup';
+import DeviceSelectionPopup from './components/web/DeviceSelectionPopup';
 
 let deviceSelectionPopup;
 
