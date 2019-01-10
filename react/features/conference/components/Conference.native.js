@@ -2,8 +2,7 @@
 
 import React, { Component } from 'react';
 
-// eslint-disable-next-line react-native/split-platform-components
-import { BackAndroid, BackHandler, StatusBar, View } from 'react-native';
+import { BackHandler, StatusBar, View } from 'react-native';
 import { connect as reactReduxConnect } from 'react-redux';
 
 import { appNavigate } from '../../app';
@@ -144,8 +143,6 @@ type Props = {
  * The conference page of the mobile (i.e. React Native) application.
  */
 class Conference extends Component<Props> {
-    _backHandler: ?BackHandler;
-
     /**
      * Initializes a new Conference instance.
      *
@@ -157,7 +154,6 @@ class Conference extends Component<Props> {
 
         // Bind event handlers so they are only bound once per instance.
         this._onClick = this._onClick.bind(this);
-        this._onHardwareBackPress = this._onHardwareBackPress.bind(this);
     }
 
     /**
@@ -170,15 +166,9 @@ class Conference extends Component<Props> {
     componentDidMount() {
         this.props._onConnect();
 
-        // Set handling any hardware button presses for back navigation up.
-        const backHandler = BackHandler || BackAndroid;
-
-        if (backHandler) {
-            this._backHandler = backHandler;
-            backHandler.addEventListener(
-                'hardwareBackPress',
-                this._onHardwareBackPress);
-        }
+        BackHandler.addEventListener(
+            'hardwareBackPress',
+            this.props._onHardwareBackPress);
 
         // Show the toolbox if we are the only participant; otherwise, the whole
         // UI looks too unpopulated the LargeVideo visible.
@@ -233,14 +223,9 @@ class Conference extends Component<Props> {
      */
     componentWillUnmount() {
         // Tear handling any hardware button presses for back navigation down.
-        const backHandler = this._backHandler;
-
-        if (backHandler) {
-            this._backHandler = undefined;
-            backHandler.removeEventListener(
-                'hardwareBackPress',
-                this._onHardwareBackPress);
-        }
+        BackHandler.removeEventListener(
+            'hardwareBackPress',
+            this.props._onHardwareBackPress);
 
         this.props._onDisconnect();
     }
@@ -339,19 +324,6 @@ class Conference extends Component<Props> {
         const toolboxVisible = !this.props._toolboxVisible;
 
         this.props._setToolboxVisible(toolboxVisible);
-    }
-
-    _onHardwareBackPress: () => boolean;
-
-    /**
-     * Handles a hardware button press for back navigation.
-     *
-     * @returns {boolean} If the hardware button press for back navigation was
-     * handled by this {@code Conference}, then {@code true}; otherwise,
-     * {@code false}.
-     */
-    _onHardwareBackPress() {
-        return this._backHandler && this.props._onHardwareBackPress();
     }
 
     /**

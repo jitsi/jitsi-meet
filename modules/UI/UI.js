@@ -18,7 +18,6 @@ import {
     getLocalParticipant,
     showParticipantJoinedNotification
 } from '../../react/features/base/participants';
-import { destroyLocalTracks } from '../../react/features/base/tracks';
 import { toggleChat } from '../../react/features/chat';
 import { openDisplayNamePrompt } from '../../react/features/display-name';
 import { setEtherpadHasInitialzied } from '../../react/features/etherpad';
@@ -293,12 +292,6 @@ UI.start = function() {
  */
 UI.registerListeners
     = () => UIListeners.forEach((value, key) => UI.addListener(key, value));
-
-/**
- * Unregister some UI event listeners.
- */
-UI.unregisterListeners
-    = () => UIListeners.forEach((value, key) => UI.removeListener(key, value));
 
 /**
  * Setup some DOM event listeners.
@@ -578,6 +571,15 @@ UI.addListener = function(type, listener) {
 };
 
 /**
+ * Removes the all listeners for all events.
+ *
+ * @returns {void}
+ */
+UI.removeAllListeners = function() {
+    eventEmitter.removeAllListeners();
+};
+
+/**
  * Removes the given listener for the given type of event.
  *
  * @param type the type of the event we're listening for
@@ -595,17 +597,7 @@ UI.removeListener = function(type, listener) {
  */
 UI.emitEvent = (type, ...options) => eventEmitter.emit(type, ...options);
 
-UI.clickOnVideo = function(videoNumber) {
-    const videos = $('#remoteVideos .videocontainer:not(#mixedstream)');
-    const videosLength = videos.length;
-
-    if (videosLength <= videoNumber) {
-        return;
-    }
-    const videoIndex = videoNumber === 0 ? 0 : videosLength - videoNumber;
-
-    videos[videoIndex].click();
-};
+UI.clickOnVideo = videoNumber => VideoLayout.togglePin(videoNumber);
 
 // Used by torture.
 UI.showToolbar = timeout => APP.store.dispatch(showToolbox(timeout));
@@ -976,18 +968,6 @@ UI.setRemoteControlActiveStatus = function(participantID, isActive) {
  */
 UI.setLocalRemoteControlActiveChanged = function() {
     VideoLayout.setLocalRemoteControlActiveChanged();
-};
-
-/**
- * Remove media tracks and UI elements so the user no longer sees media in the
- * UI. The intent is to provide a feeling that the meeting has ended.
- *
- * @returns {void}
- */
-UI.removeLocalMedia = function() {
-    APP.store.dispatch(destroyLocalTracks());
-    VideoLayout.resetLargeVideo();
-    $('#videospace').hide();
 };
 
 // TODO: Export every function separately. For now there is no point of doing

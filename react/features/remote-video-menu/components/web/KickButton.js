@@ -1,62 +1,36 @@
 /* @flow */
 
-import React, { Component } from 'react';
+import React from 'react';
 import { connect } from 'react-redux';
 
-import {
-    createRemoteVideoMenuButtonEvent,
-    sendAnalytics
-} from '../../../analytics';
 import { translate } from '../../../base/i18n';
-import { kickParticipant } from '../../../base/participants';
+
+import AbstractKickButton, {
+    type Props
+} from '../AbstractKickButton';
 
 import RemoteVideoMenuButton from './RemoteVideoMenuButton';
-
-/**
- * The type of the React {@code Component} state of {@link KickButton}.
- */
-type Props = {
-
-    /**
-     * Invoked to signal the participant with the passed in participantID
-     * should be removed from the conference.
-     */
-    dispatch: Dispatch<*>,
-
-    /**
-     * Callback to invoke when {@code KickButton} is clicked.
-     */
-    onClick: Function,
-
-    /**
-     * The ID of the participant linked to the onClick callback.
-     */
-    participantID: string,
-
-    /**
-     * Invoked to obtain translated strings.
-     */
-    t: Function,
-};
 
 /**
  * Implements a React {@link Component} which displays a button for kicking out
  * a participant from the conference.
  *
- * @extends Component
+ * NOTE: At the time of writing this is a button that doesn't use the
+ * {@code AbstractButton} base component, but is inherited from the same
+ * super class ({@code AbstractKickButton} that extends {@code AbstractButton})
+ * for the sake of code sharing between web and mobile. Once web uses the
+ * {@code AbstractButton} base component, this can be fully removed.
  */
-class KickButton extends Component<Props> {
+class KickButton extends AbstractKickButton {
     /**
-     * Initializes a new {@code KickButton} instance.
+     * Instantiates a new {@code Component}.
      *
-     * @param {Object} props - The read-only React Component props with which
-     * the new instance is to be initialized.
+     * @inheritdoc
      */
-    constructor(props) {
+    constructor(props: Props) {
         super(props);
 
-        // Bind event handlers so they are only bound once for every instance.
-        this._onClick = this._onClick.bind(this);
+        this._handleClick = this._handleClick.bind(this);
     }
 
     /**
@@ -73,33 +47,12 @@ class KickButton extends Component<Props> {
                 buttonText = { t('videothumbnail.kick') }
                 iconClass = 'icon-kick'
                 id = { `ejectlink_${participantID}` }
-                onClick = { this._onClick } />
+                // eslint-disable-next-line react/jsx-handler-names
+                onClick = { this._handleClick } />
         );
     }
 
-    _onClick: () => void;
-
-    /**
-     * Remove the participant with associated participantID from the conference.
-     *
-     * @private
-     * @returns {void}
-     */
-    _onClick() {
-        const { dispatch, onClick, participantID } = this.props;
-
-        sendAnalytics(createRemoteVideoMenuButtonEvent(
-            'kick.button',
-            {
-                'participant_id': participantID
-            }));
-
-        dispatch(kickParticipant(participantID));
-
-        if (onClick) {
-            onClick();
-        }
-    }
+    _handleClick: () => void
 }
 
 export default translate(connect()(KickButton));

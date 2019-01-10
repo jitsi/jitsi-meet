@@ -182,7 +182,6 @@ class Conference extends Component<Props> {
      * @inheritdoc
      */
     componentWillUnmount() {
-        APP.UI.unregisterListeners();
         APP.UI.unbindEvents();
 
         FULL_SCREEN_EVENTS.forEach(name =>

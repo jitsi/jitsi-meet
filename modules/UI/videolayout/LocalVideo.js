@@ -61,7 +61,8 @@ function LocalVideo(VideoLayout, emitter, streamEndedCallback) {
     this.addAudioLevelIndicator();
     this.updateIndicators();
 
-    this.container.onclick = this._onContainerClick.bind(this);
+    this.container.onclick = this._onContainerClick;
+    this.container.ondblclick = this._onContainerDoubleClick;
 }
 
 LocalVideo.prototype = Object.create(SmallVideo.prototype);
@@ -251,40 +252,6 @@ LocalVideo.prototype.updateDOMLocation = function() {
     appendTarget && appendTarget.appendChild(this.container);
 
     this._updateVideoElement();
-};
-
-/**
- * Callback invoked when the thumbnail is clicked. Will directly call
- * VideoLayout to handle thumbnail click if certain elements have not been
- * clicked.
- *
- * @param {MouseEvent} event - The click event to intercept.
- * @private
- * @returns {void}
- */
-LocalVideo.prototype._onContainerClick = function(event) {
-    // TODO Checking the classes is a workround to allow events to bubble into
-    // the DisplayName component if it was clicked. React's synthetic events
-    // will fire after jQuery handlers execute, so stop propogation at this
-    // point will prevent DisplayName from getting click events. This workaround
-    // should be removeable once LocalVideo is a React Component because then
-    // the components share the same eventing system.
-    const $source = $(event.target || event.srcElement);
-    const { classList } = event.target;
-
-    const clickedOnDisplayName
-        = $source.parents('.displayNameContainer').length > 0;
-    const clickedOnPopover = $source.parents('.popover').length > 0
-            || classList.contains('popover');
-    const ignoreClick = clickedOnDisplayName || clickedOnPopover;
-
-    if (event.stopPropagation && !ignoreClick) {
-        event.stopPropagation();
-    }
-
-    if (!ignoreClick) {
-        this._togglePin();
-    }
 };
 
 /**

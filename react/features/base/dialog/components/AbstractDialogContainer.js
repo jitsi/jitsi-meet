@@ -1,7 +1,6 @@
 /* @flow */
 
 import React, { Component } from 'react';
-import { connect } from 'react-redux';
 
 /**
  * The type of the React {@code Component} props of {@link DialogContainer}.
@@ -25,18 +24,16 @@ type Props = {
 };
 
 /**
- * Implements a DialogContainer responsible for showing all dialogs. We will
- * need a separate container so we can handle multiple dialogs by showing them
- * simultaneously or queuing them.
+ * Implements a DialogContainer responsible for showing all dialogs.
  */
-export class DialogContainer extends Component<Props> {
+export default class AbstractDialogContainer extends Component<Props> {
     /**
-     * Implements React's {@link Component#render()}.
+     * Returns the dialog to be displayed.
      *
-     * @inheritdoc
-     * @returns {ReactElement}
+     * @private
+     * @returns {ReactElement|null}
      */
-    render() {
+    _renderDialogContent() {
         const {
             _component: component,
             _reducedUI: reducedUI
@@ -50,8 +47,8 @@ export class DialogContainer extends Component<Props> {
 }
 
 /**
- * Maps (parts of) the redux state to the associated {@code DialogContainer}'s
- * props.
+ * Maps (parts of) the redux state to the associated
+ * {@code AbstractDialogContainer}'s props.
  *
  * @param {Object} state - The redux state.
  * @private
@@ -61,7 +58,7 @@ export class DialogContainer extends Component<Props> {
  *     _reducedUI: boolean
  * }}
  */
-function _mapStateToProps(state) {
+export function abstractMapStateToProps(state: Object) {
     const stateFeaturesBaseDialog = state['features/base/dialog'];
     const { reducedUI } = state['features/base/responsive-ui'];
 
@@ -71,5 +68,3 @@ function _mapStateToProps(state) {
         _reducedUI: reducedUI
     };
 }
-
-export default connect(_mapStateToProps)(DialogContainer);

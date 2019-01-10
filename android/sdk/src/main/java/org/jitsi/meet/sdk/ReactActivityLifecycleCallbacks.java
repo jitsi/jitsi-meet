@@ -1,5 +1,6 @@
 /*
- * Copyright @ 2018-present Atlassian Pty Ltd
+ * Copyright @ 2019-present 8x8, Inc.
+ * Copyright @ 2018 Atlassian Pty Ltd
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,7 +25,6 @@ import android.os.Build;
 import com.calendarevents.CalendarEventsPackage;
 import com.facebook.react.ReactInstanceManager;
 import com.facebook.react.bridge.Callback;
-import com.facebook.react.modules.core.DefaultHardwareBackBtnHandler;
 import com.facebook.react.modules.core.PermissionListener;
 
 /**
@@ -73,15 +73,12 @@ public class ReactActivityLifecycleCallbacks {
      * otherwise. If {@code false}, the application should call the
      * {@code super}'s implementation.
      */
-    public static boolean onBackPressed() {
+    public static void onBackPressed() {
         ReactInstanceManager reactInstanceManager
             = ReactInstanceManagerHolder.getReactInstanceManager();
 
-        if (reactInstanceManager == null) {
-            return false;
-        } else {
+        if (reactInstanceManager != null) {
             reactInstanceManager.onBackPressed();
-            return true;
         }
     }
 
@@ -123,25 +120,11 @@ public class ReactActivityLifecycleCallbacks {
      * @param activity {@code Activity} being resumed.
      */
     public static void onHostResume(Activity activity) {
-        onHostResume(activity, new DefaultHardwareBackBtnHandlerImpl(activity));
-    }
-
-    /**
-     * {@link Activity} lifecycle method which should be called from
-     * {@code Activity#onResume} so we can do the required internal processing.
-     *
-     * @param activity {@code Activity} being resumed.
-     * @param defaultBackButtonImpl a {@link DefaultHardwareBackBtnHandler} to
-     * handle invoking the back button if no {@link BaseReactView} handles it.
-     */
-    public static void onHostResume(
-            Activity activity,
-            DefaultHardwareBackBtnHandler defaultBackButtonImpl) {
         ReactInstanceManager reactInstanceManager
             = ReactInstanceManagerHolder.getReactInstanceManager();
 
         if (reactInstanceManager != null) {
-            reactInstanceManager.onHostResume(activity, defaultBackButtonImpl);
+            reactInstanceManager.onHostResume(activity, new DefaultHardwareBackBtnHandlerImpl(activity));
         }
 
         if (permissionsCallback != null) {

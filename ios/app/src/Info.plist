@@ -93,5 +93,13 @@
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
+	<key>FirebaseScreenReportingEnabled</key>
+	<false/>
+	<key>firebase_crashlytics_collection_enabled</key>
+	<string>false</string>
+	<key>NSUserActivityTypes</key>
+	<array>
+		<string>org.jitsi.JitsiMeet.ios.conference</string>
+	</array>
 </dict>
 </plist>

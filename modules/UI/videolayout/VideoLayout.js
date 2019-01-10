@@ -133,18 +133,6 @@ const VideoLayout = {
     },
 
     /**
-     * Cleans up any existing largeVideo instance.
-     *
-     * @returns {void}
-     */
-    resetLargeVideo() {
-        if (largeVideo) {
-            largeVideo.destroy();
-        }
-        largeVideo = null;
-    },
-
-    /**
      * Registering listeners for UI events in Video layout component.
      *
      * @returns {void}
@@ -154,8 +142,18 @@ const VideoLayout = {
             onLocalFlipXChanged);
     },
 
+    /**
+     * Cleans up state of this singleton {@code VideoLayout}.
+     *
+     * @returns {void}
+     */
+    reset() {
+        this._resetLargeVideo();
+        this._resetFilmstrip();
+    },
+
     initLargeVideo() {
-        this.resetLargeVideo();
+        this._resetLargeVideo();
 
         largeVideo = new LargeVideoManager(eventEmitter);
         if (localFlipX) {
@@ -389,6 +387,19 @@ const VideoLayout = {
         const { id } = getPinnedParticipant(APP.store.getState()) || {};
 
         return id || null;
+    },
+
+    /**
+     * Triggers a thumbnail to pin or unpin itself.
+     *
+     * @param {number} videoNumber - The index of the video to toggle pin on.
+     * @private
+     */
+    togglePin(videoNumber) {
+        const videos = getAllThumbnails();
+        const videoView = videos[videoNumber];
+
+        videoView && videoView.togglePin();
     },
 
     /**
@@ -1150,6 +1161,40 @@ const VideoLayout = {
         Object.values(remoteVideos).forEach(
             remoteVideo => remoteVideo.rerender()
         );
+    },
+
+    /**
+     * Cleans up any existing largeVideo instance.
+     *
+     * @private
+     * @returns {void}
+     */
+    _resetLargeVideo() {
+        if (largeVideo) {
+            largeVideo.destroy();
+        }
+
+        largeVideo = null;
+    },
+
+    /**
+     * Cleans up filmstrip state. While a separate {@code Filmstrip} exists, its
+     * implementation is mainly for querying and manipulating the DOM while
+     * state mostly remains in {@code VideoLayout}.
+     *
+     * @private
+     * @returns {void}
+     */
+    _resetFilmstrip() {
+        Object.keys(remoteVideos).forEach(remoteVideoId => {
+            this.removeParticipantContainer(remoteVideoId);
+            delete remoteVideos[remoteVideoId];
+        });
+
+        if (localVideoThumbnail) {
+            localVideoThumbnail.remove();
+            localVideoThumbnail = null;
+        }
     },
 
     /**

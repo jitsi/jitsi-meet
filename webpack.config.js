@@ -125,10 +125,6 @@ module.exports = [
                 './react/features/always-on-top/index.js',
 
             'dial_in_info_bundle': [
-
-                // atlaskit does not support React 16 prop-types
-                './react/features/base/react/prop-types-polyfill.js',
-
                 './react/features/invite/components/dial-in-info-page'
             ],
 
@@ -137,7 +133,11 @@ module.exports = [
 
             'flacEncodeWorker':
                 './react/features/local-recording/'
-                    + 'recording/flac/flacEncodeWorker.js'
+                    + 'recording/flac/flacEncodeWorker.js',
+            'analytics-ga':
+                './react/features/analytics/handlers/GoogleAnalyticsHandler.js',
+            'analytics-amplitude':
+                './react/features/analytics/handlers/AmplitudeHandler.js'
         }
     }),
 

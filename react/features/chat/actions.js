@@ -1,6 +1,9 @@
-import { ADD_MESSAGE, SEND_MESSAGE, TOGGLE_CHAT } from './actionTypes';
-
-/* eslint-disable max-params */
+import {
+    ADD_MESSAGE,
+    CLEAR_MESSAGES,
+    SEND_MESSAGE,
+    TOGGLE_CHAT
+} from './actionTypes';
 
 /**
  * Adds a chat message to the collection of messages.
@@ -28,6 +31,19 @@ export function addMessage(messageDetails) {
     return {
         type: ADD_MESSAGE,
         ...messageDetails
+    };
+}
+
+/**
+ * Removes all stored chat messages.
+ *
+ * @returns {{
+ *     type: CLEAR_MESSAGES
+ * }}
+ */
+export function clearMessages() {
+    return {
+        type: CLEAR_MESSAGES
     };
 }
 
