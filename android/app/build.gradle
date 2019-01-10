@@ -5,7 +5,7 @@ android {
     buildToolsVersion rootProject.ext.buildToolsVersion
 
     defaultConfig {
-        applicationId 'top.vmeeting.android'
+        applicationId 'org.jitsi.meet'
         versionCode Integer.parseInt(project.buildNumber)
         versionName project.appVersion
 

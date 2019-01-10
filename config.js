@@ -16,7 +16,7 @@ var config = {
 
     hosts: {
         // XMPP domain.
-        domain: 'i.vmeeting.top',
+        domain: 'jitsi-meet.example.com',
 
         // When using authentication, domain for guest users.
         // anonymousdomain: 'guest.example.com',
@@ -34,17 +34,14 @@ var config = {
         // focus: 'focus.jitsi-meet.example.com',
 
         // XMPP MUC domain. FIXME: use XEP-0030 to discover it.
-        muc: 'conference.i.vmeeting.top',
-	bridge: 'jitsi-videobridge.i.vmeeting.top',
-        focus: 'focus.i.vmeeting.top'
+        muc: 'conference.jitsi-meet.example.com'
     },
-    useNicks: false,
 
     // BOSH URL. FIXME: use XEP-0156 to discover it.
-    bosh: '//i.vmeeting.top/http-bind',
+    bosh: '//jitsi-meet.example.com/http-bind',
 
     // The name of client node advertised in XEP-0115 'c' stanza
-    clientNode: 'http://i.vmeeting.top/',
+    clientNode: 'http://jitsi.org/jitsimeet',
 
     // The real JID of focus participant - can be overridden here
     // focusUserJid: 'focus@auth.jitsi-meet.example.com',
@@ -146,7 +143,7 @@ var config = {
     // Desktop sharing
 
     // The ID of the jidesha extension for Chrome.
-    //desktopSharingChromeExtId: 'kglhbbefdnlheedjiejgomgmfplipfeb',
+    desktopSharingChromeExtId: null,
 
     // Whether desktop sharing should be disabled on Chrome.
     desktopSharingChromeDisabled: true,
@@ -245,7 +242,7 @@ var config = {
     // disable1On1Mode: false,
 
     // Default language for the user interface.
-     defaultLanguage: 'zhCN',
+    // defaultLanguage: 'en',
 
     // If true all users without a token will be considered guests and all users
     // with token will be considered non-guests. Only guests will be allowed to
@@ -307,16 +304,13 @@ var config = {
         enabled: true,
 
         // Use XEP-0215 to fetch STUN and TURN servers.
-        useStunTurn: true,
+        // useStunTurn: true,
 
         // The STUN servers that will be used in the peer to peer connections
         stunServers: [
-            { urls: 'turn:47.100.170.169:34708', credential: 'QMturnuser', password: 'QMturnpass' },
-            { urls: 'turn:39.105.139.90:34708', credential: 'QMturnuser', password: 'QMturnpass' },
-            { urls: 'turn:211.149.170.209:34708', credential: 'QMturnuser', password: 'QMturnpass' },
-            { urls: 'stun:211.149.170.209:34708' },
-            { urls: 'stun:39.105.139.90:34708' },
-            { urls: 'stun:47.100.170.169:34708' }
+            { urls: 'stun:stun.l.google.com:19302' },
+            { urls: 'stun:stun1.l.google.com:19302' },
+            { urls: 'stun:stun2.l.google.com:19302' }
         ],
 
         // Sets the ICE transport policy for the p2p connection. At the time
@@ -355,25 +349,25 @@ var config = {
         // shard: "shard1",
         // region: "europe",
         // userRegion: "asia"
-    },
+    }
 
     // Local Recording
     //
 
-    localRecording: {
+    // localRecording: {
     // Enables local recording.
     // Additionally, 'localrecording' (all lowercase) needs to be added to
     // TOOLBAR_BUTTONS in interface_config.js for the Local Recording
     // button to show up on the toolbar.
     //
-         enabled: true,
+    //     enabled: true,
     //
 
     // The recording format, can be one of 'ogg', 'flac' or 'wav'.
-         format: 'flac'
+    //     format: 'flac'
     //
 
-    }
+    // }
 
     // Options related to end-to-end (participant to participant) ping.
     // e2eping: {

@@ -29,8 +29,8 @@ public class MainApplication extends Application {
     public void onCreate() {
         super.onCreate();
 
-//        if (!LeakCanary.isInAnalyzerProcess(this)) {
-//            LeakCanary.install(this);
-//        }
+        if (!LeakCanary.isInAnalyzerProcess(this)) {
+            LeakCanary.install(this);
+        }
     }
 }
