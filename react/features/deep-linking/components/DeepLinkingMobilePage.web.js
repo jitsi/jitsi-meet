@@ -138,7 +138,8 @@ class DeepLinkingMobilePage extends Component<Props, State> {
                     </p>
                     <a
                         href = { this._generateDownloadURL() }
-                        onClick = { this._onDownloadApp } >
+                        onClick = { this._onDownloadApp } 
+                        target = "_blank">
                         <button className = { downloadButtonClassName }>
                             { t(`${_TNS}.downloadApp`) }
                         </button>
@@ -146,7 +147,8 @@ class DeepLinkingMobilePage extends Component<Props, State> {
                     <a
                         className = { `${_SNS}__href` }
                         href = { this.state.joinURL }
-                        onClick = { this._onOpenApp }>
+                        onClick = { this._onOpenApp }
+                        target = "_blank">
                         {/* <button className = { `${_SNS}__button` }> */}
                         { t(`${_TNS}.openApp`) }
                         {/* </button> */}
