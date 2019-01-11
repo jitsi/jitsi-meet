@@ -73,7 +73,7 @@ class BaseDialog<P: Props, S: State> extends AbstractDialog<P, S> {
 
     _onCancel: () => void;
 
-    _onSubmit: () => boolean;
+    _onSubmit: ?string => boolean;
 
     /**
      * Renders the content of the dialog.

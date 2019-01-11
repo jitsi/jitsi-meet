@@ -85,7 +85,7 @@ class InputDialog extends BaseDialog<Props, State> {
                 <View style = { brandedDialog.buttonWrapper }>
                     <TouchableOpacity
                         disabled = { okDisabled }
-                        onPress = { this._onSubmit }
+                        onPress = { this._onSubmitValue }
                         style = { [
                             brandedDialog.button,
                             brandedDialog.buttonFarLeft,
@@ -116,7 +116,7 @@ class InputDialog extends BaseDialog<Props, State> {
         });
     }
 
-    _onSubmit: ?string => boolean;
+    _onSubmit: (?string) => boolean;
 
     _onSubmitValue: () => boolean;
 
