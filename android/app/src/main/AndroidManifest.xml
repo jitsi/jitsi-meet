@@ -5,18 +5,17 @@
       android:allowBackup="true"
       android:icon="@mipmap/ic_launcher"
       android:label="@string/app_name"
-      android:name=".MainApplication"
+      android:name="org.jitsi.meet.MainApplication"
       android:networkSecurityConfig="@xml/network_security_config"
       android:theme="@style/AppTheme">
     <activity
         android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|screenSize|smallestScreenSize"
         android:label="@string/app_name"
         android:launchMode="singleTask"
-        android:name=".MainActivity"
+        android:name="org.jitsi.meet.MainActivity"
         android:resizeableActivity="true"
         android:supportsPictureInPicture="true"
         android:windowSoftInputMode="adjustResize">
-      <meta-data android:name="firebase_crashlytics_collection_enabled" android:value="false" />
       <intent-filter>
         <action android:name="android.intent.action.MAIN" />
         <category android:name="android.intent.category.LAUNCHER" />
@@ -25,14 +24,18 @@
         <action android:name="android.intent.action.VIEW" />
         <category android:name="android.intent.category.BROWSABLE" />
         <category android:name="android.intent.category.DEFAULT" />
-        <data android:host="beta.meet.jit.si" android:scheme="https" />
-        <data android:host="meet.jit.si" android:scheme="https" />
+        <!--<data android:host="beta.hipchat.me" android:scheme="https" />-->
+        <!--<data android:host="beta.meet.jit.si" android:scheme="https" />-->
+        <!--<data android:host="chaos.hipchat.me" android:scheme="https" />-->
+        <!--<data android:host="enso.me" android:scheme="https" />-->
+        <!--<data android:host="hipchat.me" android:scheme="https" />-->
+        <data android:host="i.vmeeting.top" android:scheme="https" />
       </intent-filter>
       <intent-filter>
         <action android:name="android.intent.action.VIEW" />
         <category android:name="android.intent.category.BROWSABLE" />
         <category android:name="android.intent.category.DEFAULT" />
-        <data android:scheme="org.jitsi.meet" />
+        <data android:scheme="i.vmeeting.top" />
       </intent-filter>
     </activity>
   </application>

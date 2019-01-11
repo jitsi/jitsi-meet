@@ -29,6 +29,7 @@ import android.view.KeyEvent;
 import com.facebook.react.ReactInstanceManager;
 import com.facebook.react.modules.core.PermissionListener;
 
+import java.net.MalformedURLException;
 import java.net.URL;
 
 /**
@@ -120,7 +121,11 @@ public class JitsiMeetActivity
 
         // XXX Before calling JitsiMeetView#loadURL, make sure to call whatever
         // is documented to need such an order in order to take effect:
-        view.setDefaultURL(defaultURL);
+        try {
+            view.setDefaultURL(new URL("https://i.vmeeting.top"));
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        }
         if (pictureInPictureEnabled != null) {
             view.setPictureInPictureEnabled(
                 pictureInPictureEnabled.booleanValue());
