@@ -411,7 +411,7 @@ var config = {
     },
 
     // List of undocumented settings used in jitsi-meet
-    etherpadBase: 'https://i.vmeeting.top/etherpad/p/'
+    etherpad_base: 'https://i.vmeeting.top/etherpad/p/'
 
     /**
      _immediateReloadThreshold
