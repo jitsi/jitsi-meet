@@ -390,10 +390,18 @@ function _pinParticipant({ getState }, next, action) {
         const local
             = (participantById && participantById.local)
                 || (!id && pinnedParticipant && pinnedParticipant.local);
+        let participantIdForEvent;
+
+        if (local) {
+            participantIdForEvent = local;
+        } else {
+            participantIdForEvent = actionName === ACTION_PINNED
+                ? id : pinnedParticipant && pinnedParticipant.id;
+        }
 
         sendAnalytics(createPinnedEvent(
             actionName,
-            local ? 'local' : id,
+            participantIdForEvent,
             {
                 local,
                 'participant_count': conference.getParticipantCount()
