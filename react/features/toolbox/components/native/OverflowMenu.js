@@ -11,9 +11,12 @@ import {
 } from '../../../base/dialog';
 import { AudioRouteButton } from '../../../mobile/audio-mode';
 import { PictureInPictureButton } from '../../../mobile/picture-in-picture';
-import { LiveStreamButton, RecordButton } from '../../../recording';
+
+// import { LiveStreamButton, RecordButton } from '../../../recording';
+import { RecordButton } from '../../../recording';
 import { RoomLockButton } from '../../../room-lock';
-import { ClosedCaptionButton } from '../../../subtitles';
+
+// import { ClosedCaptionButton } from '../../../subtitles';
 import { TileViewButton } from '../../../video-layout';
 
 import AudioOnlyButton from './AudioOnlyButton';
@@ -75,7 +78,7 @@ class OverflowMenu extends Component<Props> {
                 <ToggleCameraButton { ...buttonProps } />
                 <AudioOnlyButton { ...buttonProps } />
                 <RoomLockButton { ...buttonProps } />
-                <ClosedCaptionButton { ...buttonProps } />
+                {/* <ClosedCaptionButton { ...buttonProps } /> */}
                 {
 
                     // Apple rejected our app because they claim requiring a
@@ -84,7 +87,7 @@ class OverflowMenu extends Component<Props> {
                     Platform.OS !== 'ios'
                         && <RecordButton { ...buttonProps } />
                 }
-                <LiveStreamButton { ...buttonProps } />
+                {/* <LiveStreamButton { ...buttonProps } /> */}
                 <TileViewButton { ...buttonProps } />
                 <PictureInPictureButton { ...buttonProps } />
             </BottomSheet>

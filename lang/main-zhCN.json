@@ -48,8 +48,32 @@
         "videoMute": "开启或关闭视频",
         "showSpeakerStats": "查看扬声器状态"
     },
+    
+    "transcribing":
+    {
+        "pending" : "Preparing to transcribe the meeting...",
+        "off" : "Transcribing stopped",
+        "error": "Transcribing failed. Please try again.",
+        "expandedLabel": "Transcribing is currently on",
+        "failedToStart": "Transcribing failed to start",
+        "tr": "TR",
+        "labelToolTip": "The meeting is being transcribed",
+        "ccButtonTooltip": "显示/隐藏子标题",
+        "start": "Start showing subtitles",
+        "stop": "Stop showing subtitles"
+    },
     "welcomepage": {
         "disable": "不再显示该页",
+        "recentList": "最近的会议列表",
+        "recentListDelete": "删除",
+        "recentListEmpty": "您最近的列表目前是空的。与你的团队聊天，你会发现你最近所有的会议在这里.",
+        "roomname": "输入会议室的名称",
+        "roomnameHint": "输入您想加入的会议室的名称或URL。你可以叫一个名字，让你认识的人知道，这样他们就可以加入会议.",
+        "sendFeedback": "反馈",
+        
+        "appDescription": "果视视频会议是全球最好的视频会议系统，轻松拥有视频会议能力，让身在各地的团队高效的远程协同工作.",
+        "title": "全球最安全、高效的视频会议系统",
+        "enterRoomTitle": "开始会议",
         "feature1": {
             "content": "无需下载. __app__ 直接通过浏览器使用。 分享您的会议链接给其他人即可参与会议。",
             "title": "简单易用"
@@ -82,13 +106,16 @@
             "content": "通过简单地整合Piwik, Google Analytics或者其他使用监控和统计系统来了解您的使用者。",
             "title": "使用统计"
         },
+        "audioVideoSwitch": {
+            "audio": "语音",
+            "video": "视频"
+        },
         "go": "开始",
         "join": "加入",
         "privacy": "隐私",
-        "roomname": "请输入房间名",
         "roomnamePlaceHolder": "房间名",
-        "sendFeedback": "发送反馈",
-        "terms": "条款"
+        "terms": "条款",
+        "calendar": "日历"
     },
     "startupoverlay": {
         "policyText": "~",
@@ -103,6 +130,9 @@
     "toolbar": {
         "addPeople": "",
         "audioonly": "启用/禁用仅音频模式（节省带宽）",
+        "audioOnlyOn": "视频模式",
+        "audioOnlyOff": "仅音频模式",
+        "audioRoute": "选择声音设备",
         "mute": "静音 / 解除静音",
         "videomute": "开启 / 关闭 摄像头",
         "authenticate": "认证",
@@ -122,11 +152,17 @@
         "sharedVideoMutedPopup": "",
         "micMutedPopup": "",
         "talkWhileMutedPopup": "您在尝试发言吗? 当前您已被静音。",
+        "toggleCamera": "切换摄像头",
         "unableToUnmutePopup": "正在共享视频的时候您不能解除静音。",
         "cameraDisabled": "摄像头不可用",
         "micDisabled": "麦克风不可用",
         "filmstrip": "显示 / 隐藏 视频",
         "profile": "编辑您的简介",
+        "speakerStats": "发言统计",
+        "tileViewToggle": "视图切换",
+        "moreActions": "更多设置",
+        "callQuality": "视频质量",
+        "pip": "进入小窗口模式",
         "raiseHand": "请求 / 取消 发言"
     },
     "unsupportedBrowser": {
@@ -148,6 +184,12 @@
         },
         "messagebox": "请输入文本..."
     },
+    "audioDevices": {
+        "bluetooth": "蓝牙耳机",
+        "headphones": "头戴耳机",
+        "phone": "听筒",
+        "speaker": "扬声器"
+    },
     "settings": {
         "title": "设置",
         "update": "更新",
@@ -162,7 +204,9 @@
         "cameraAndMic": "摄像头和麦克风",
         "moderator": "主持人",
         "password": "设定密码",
-        "audioVideo": "音频和视频"
+        "audioVideo": "音频和视频",
+        "more": "更多",
+        "devices": "设备"
     },
     "profile": {
         "title": "简介",
@@ -171,7 +215,7 @@
         "setEmailInput": "输入您的邮箱"
     },
     "videothumbnail": {
-        "moderator": "",
+        "moderator": "主持人",
         "videomute": "",
         "mute": "",
         "kick": "踢出",
@@ -192,6 +236,7 @@
         "remoteport_plural": "远程端口：",
         "remoteport": "远程端口：",
         "localport_plural": "本地端口：",
+        "bridgeCount": "服务器数量: ",
         "localport": "本地端口：",
         "localaddress_plural": "本地地址：",
         "localaddress": "本地地址：",
@@ -199,6 +244,7 @@
         "remoteaddress": "远程地址：",
         "transport": "传输：",
         "bandwidth": "估计带宽：",
+        "e2e_rtt": "端到端时延:",
         "na": "会议开始可回到此处查看连接信息",
         "turn": "",
         "quality": {
@@ -227,6 +273,7 @@
     },
     "dialog": {
         "add": "添加",
+        "confirm": "确认",
         "allow": "允许",
         "kickMessage": "您已被踢出会议！",
         "popupErrorTitle": "",
@@ -362,6 +409,8 @@
         "close": "关闭",
         "shareYourScreen": "共享你的屏幕",
         "yourEntireScreen": "你的整个屏幕",
+        "lockRoom": "设置会议密码",
+        "startRecording": "开始录像",
         "applicationWindow": "应用窗口"
     },
     "email": {
@@ -414,6 +463,7 @@
         "on": "录制中",
         "pending": "录制中，等待一位与会者加入",
         "unavailable": "",
+        "startRecordingBody": "确定要录像吗？",
         "unavailableTitle": ""
     },
     "\u0005recording": {},
@@ -460,19 +510,27 @@
         "unlocked": "本次呼叫已被锁定，用这个链接可以加入。"
     },
     "videoStatus": {
-        "callQuality": "",
+        "audioOnly": "AUD",
+        "audioOnlyExpanded": "你处于语音模式，该模式有利于节省带宽，但你无法看到对方图像.",
+        "callQuality": "视频质量",
         "hd": "高清",
-        "highDefinition": "",
-        "labelTooltipVideo": "",
-        "labelTooltipAudioOnly": "",
-        "ld": "",
-        "lowDefinition": "",
-        "p2pEnabled": "",
-        "p2pVideoQualityDescription": "",
-        "recHighDefinitionOnly": "",
+        "hdTooltip": "高清视频",
+        "highDefinition": "高清",
+        "labelTooltipAudioOnly":  "开启语音模式",
+        "labelTooiltipNoVideo": "视频关闭",
+        "labelTooltipVideo": "当前视频质量",
+        "ld": "流畅",
+        "ldTooltip": "流畅视频",
+        "lowDefinition": "流畅",
+        "onlyAudioAvailable": "仅支持语音模式",
+        "onlyAudioSupported": "受环境所限，当前仅支持语音模式.",
+        "p2pEnabled": "P2P 模式开启",
+        "p2pVideoQualityDescription": "在P2P模式中，仅支持语音模式和高清模式切换，不支持其他模式.",
+        "recHighDefinitionOnly": "准备高清模式.",
         "sd": "标清",
-        "standardDefinition": "",
-        "qualityButtonTip": ""
+        "sdTooltip": "标清视频",
+        "standardDefinition": "标清",
+        "qualityButtonTip": "修改视频质量"
     },
     "dialOut": {
         "dial": "拨号",
@@ -495,15 +553,55 @@
         "supportMsg": ""
     },
     "deviceError": {
-        "cameraError": "",
-        "microphoneError": "",
-        "cameraPermission": "",
-        "microphonePermission": ""
+        "cameraError": "摄像头错误",
+        "microphoneError": "麦克风错误",
+        "cameraPermission": "摄像头权限问题",
+        "microphonePermission": "麦克风权限问题"
     },
     "info": {
-        "copy": "",
-        "invite": "",
-        "title": "",
-        "tooltip": ""
+        "accessibilityLabel": "Show info",
+        "addPassword": "设置密码",
+        "cancelPassword": "取消密码",
+        "conferenceURL": "会议室链接:",
+        "country": "Country",
+        "dialANumber": "To join your meeting, dial one of these numbers and then enter this PIN: __conferenceID__#",
+        "dialInNumber": "Dial-in:",
+        "dialInConferenceID": "PIN:",
+        "dialInNotSupported": "Sorry, dialing in is currently not suppported.",
+        "genericError": "Whoops, something went wrong.",
+        "inviteLiveStream": "To view the live stream of this meeting, click this link: __url__",
+        "invitePhone": "To join by phone, dial __number__ and enter this PIN: __conferenceID__#",
+        "invitePhoneAlternatives": "To view more phone numbers, click this link: __url__",
+        "inviteURL": "__url__",
+        "liveStreamURL": "Live stream:",
+        "moreNumbers": "More numbers",
+        "noNumbers": "No dial-in numbers.",
+        "noPassword": "None",
+        "noRoom": "No room was specified to dial-in into.",
+        "numbers": "Dial-in Numbers",
+        "password": "密码:",
+        "title": "会议室信息",
+        "tooltip": "会议室信息"
+    },
+    "sectionList": {
+        "pullToRefresh": "下拉刷新"
+    },
+    "settingsView": {
+        "alertOk": "确认",
+        "alertTitle": "警告",
+        "alertURLText": "所输入的服务器URL无效",
+        "conferenceSection": "会议",
+        "displayName": "显示名称",
+        "email": "邮箱",
+        "header": "设置",
+        "profileSection": "简介",
+        "serverURL": "服务器 URL",
+        "startWithAudioMuted": "进入静音",
+        "startWithVideoMuted": "进入关闭摄像头"
+    },
+    "dateUtils": {
+        "today": "今天",
+        "yesterday": "昨天",
+        "earlier": "更早"
     }
 }

@@ -23,17 +23,17 @@ import styles, { SIDEBAR_AVATAR_SIZE } from './styles';
 /**
  * The URL at which the privacy policy is available to the user.
  */
-const PRIVACY_URL = 'https://jitsi.org/meet/privacy';
+// const PRIVACY_URL = 'https://jitsi.org/meet/privacy';
 
 /**
  * The URL at which the user may send feedback.
  */
-const SEND_FEEDBACK_URL = 'mailto:support@jitsi.org';
+// const SEND_FEEDBACK_URL = 'mailto:support@jitsi.org';
 
 /**
  * The URL at which the terms (of service/use) are available to the user.
  */
-const TERMS_URL = 'https://jitsi.org/meet/terms';
+// const TERMS_URL = '';
 
 type Props = {
 
@@ -102,7 +102,7 @@ class WelcomePageSideBar extends Component<Props> {
                             icon = 'settings'
                             label = 'settings.title'
                             onPress = { this._onOpenSettings } />
-                        <SideBarItem
+                        {/* <SideBarItem
                             icon = 'info'
                             label = 'welcomepage.terms'
                             url = { TERMS_URL } />
@@ -113,7 +113,7 @@ class WelcomePageSideBar extends Component<Props> {
                         <SideBarItem
                             icon = 'info'
                             label = 'welcomepage.sendFeedback'
-                            url = { SEND_FEEDBACK_URL } />
+                            url = { SEND_FEEDBACK_URL } /> */}
                     </ScrollView>
                 </SafeAreaView>
             </SideBar>
