@@ -53,8 +53,9 @@
         "messagebox": "Enter text...",
         "nickname": {
             "popover": "Choose a nickname",
-            "title": "Enter a nickname in the box below"
-        }
+            "title": "Enter a nickname to use chat"
+        },
+        "title": "Chat"
     },
     "connection": {
         "ATTACHED": "Attached",
@@ -642,7 +643,7 @@
         "Settings": "Settings",
         "sharedvideo": "Share a YouTube video",
         "sharedVideoMutedPopup": "Your shared video has been muted so that you can talk to the other members.",
-        "shareRoom": "Share room",
+        "shareRoom": "Invite someone",
         "shortcuts": "View shortcuts",
         "sip": "Call SIP number",
         "speakerStats": "Speaker stats",

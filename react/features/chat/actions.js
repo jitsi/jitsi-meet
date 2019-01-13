@@ -1,3 +1,5 @@
+// @flow
+
 import {
     ADD_MESSAGE,
     CLEAR_MESSAGES,
@@ -27,7 +29,7 @@ import {
  *     timestamp: string,
  * }}
  */
-export function addMessage(messageDetails) {
+export function addMessage(messageDetails: Object) {
     return {
         type: ADD_MESSAGE,
         ...messageDetails
@@ -35,7 +37,7 @@ export function addMessage(messageDetails) {
 }
 
 /**
- * Removes all stored chat messages.
+ * Clears the chat messages in Redux.
  *
  * @returns {{
  *     type: CLEAR_MESSAGES
@@ -56,7 +58,7 @@ export function clearMessages() {
  *     message: string
  * }}
  */
-export function sendMessage(message) {
+export function sendMessage(message: string) {
     return {
         type: SEND_MESSAGE,
         message

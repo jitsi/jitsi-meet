@@ -3,7 +3,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
-import { getUnreadCount } from '../functions';
+import { getUnreadCount } from '../../functions';
 
 /**
  * The type of the React {@code Component} props of {@link ChatCounter}.

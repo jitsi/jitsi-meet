@@ -4,8 +4,8 @@ import { FieldTextStateless } from '@atlaskit/field-text';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
-import { translate } from '../../base/i18n';
-import { updateSettings } from '../../base/settings';
+import { translate } from '../../../base/i18n';
+import { updateSettings } from '../../../base/settings';
 
 /**
  * The type of the React {@code Component} props of {@DisplayNameForm}.
