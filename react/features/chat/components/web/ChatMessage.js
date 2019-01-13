@@ -1,34 +1,20 @@
 // @flow
 
-import React, { PureComponent } from 'react';
+import React from 'react';
 import { toArray } from 'react-emoji-render';
 import Linkify from 'react-linkify';
 
 
-import { translate } from '../../base/i18n';
+import { translate } from '../../../base/i18n';
+
+import AbstractChatMessage, {
+    type Props
+} from '../AbstractChatMessage';
 
 /**
- * The type of the React {@code Component} props of {@link Chat}.
+ * Renders a single chat message.
  */
-type Props = {
-
-    /**
-     * The redux representation of a chat message.
-     */
-    message: Object,
-
-    /**
-     * Invoked to receive translated strings.
-     */
-    t: Function
-};
-
-/**
- * Displays as passed in chat message.
- *
- * @extends Component
- */
-class ChatMessage extends PureComponent<Props> {
+class ChatMessage extends AbstractChatMessage<Props> {
     /**
      * Implements React's {@link Component#render()}.
      *

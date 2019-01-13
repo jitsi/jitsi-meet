@@ -130,3 +130,13 @@ export const toolbarToggledButtonStyles = {
     iconStyle: styles.whiteToolbarButtonIcon,
     style: styles.whiteToolbarButton
 };
+
+/**
+ * Overrides to the standard styles that we apply to the chat button, as that
+ * behaves slightly differently to other buttons.
+ */
+export const chatButtonOverride = createStyleSheet({
+    toggled: {
+        backgroundColor: ColorPalette.blue
+    }
+});
