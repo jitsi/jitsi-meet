@@ -1,37 +1,15 @@
 /* @flow */
 
-import React, { Component } from 'react';
+import React from 'react';
 import { connect } from 'react-redux';
 import { FieldTextStateless as TextField } from '@atlaskit/field-text';
 
 import { Dialog } from '../../base/dialog';
 import { translate } from '../../base/i18n';
-import {
-    getLocalParticipant,
-    participantDisplayNameChanged
-} from '../../base/participants';
 
-/**
- * The type of the React {@code Component} props of {@link DisplayNamePrompt}.
- */
-type Props = {
-
-    /**
-     * The current ID for the local participant. Used for setting the display
-     * name on the associated participant.
-     */
-    _localParticipantID: string,
-
-    /**
-     * Invoked to update the local participant's display name.
-     */
-    dispatch: Dispatch<*>,
-
-    /**
-     * Invoked to obtain translated strings.
-     */
-    t: Function
-};
+import AbstractDisplayNamePrompt, {
+    type Props
+} from './AbstractDisplayNamePrompt';
 
 /**
  * The type of the React {@code Component} props of {@link DisplayNamePrompt}.
@@ -50,7 +28,7 @@ type State = {
  *
  * @extends Component
  */
-class DisplayNamePrompt extends Component<Props, State> {
+class DisplayNamePrompt extends AbstractDisplayNamePrompt<State> {
     /**
      * Initializes a new {@code DisplayNamePrompt} instance.
      *
@@ -110,6 +88,8 @@ class DisplayNamePrompt extends Component<Props, State> {
         });
     }
 
+    _onSetDisplayName: string => boolean;
+
     _onSubmit: () => boolean;
 
     /**
@@ -120,42 +100,8 @@ class DisplayNamePrompt extends Component<Props, State> {
      * @returns {boolean}
      */
     _onSubmit() {
-        const { displayName } = this.state;
-
-        if (!displayName.trim()) {
-            return false;
-        }
-
-        const { dispatch, _localParticipantID } = this.props;
-
-        dispatch(
-            participantDisplayNameChanged(_localParticipantID, displayName));
-
-        return true;
+        return this._onSetDisplayName(this.state.displayName);
     }
 }
 
-/**
- * Maps (parts of) the Redux state to the associated {@code DisplayNamePrompt}'s
- * props.
- *
- * @param {Object} state - The Redux state.
- * @private
- * @returns {{
- *     _localParticipantID: string
- * }}
- */
-function _mapStateToProps(state) {
-    const { id } = getLocalParticipant(state);
-
-    return {
-        /**
-         * The current ID for the local participant.
-         *
-         * @type {string}
-         */
-        _localParticipantID: id
-    };
-}
-
-export default translate(connect(_mapStateToProps)(DisplayNamePrompt));
+export default translate(connect()(DisplayNamePrompt));
