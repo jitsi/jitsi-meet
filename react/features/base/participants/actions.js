@@ -11,7 +11,6 @@ import {
     HIDDEN_PARTICIPANT_LEFT,
     KICK_PARTICIPANT,
     MUTE_REMOTE_PARTICIPANT,
-    PARTICIPANT_DISPLAY_NAME_CHANGED,
     PARTICIPANT_ID_CHANGED,
     PARTICIPANT_JOINED,
     PARTICIPANT_LEFT,
@@ -209,29 +208,6 @@ export function participantConnectionStatusChanged(id, connectionStatus) {
 }
 
 /**
- * Action to signal that a participant's display name has changed.
- *
- * @param {string} id - The id of the participant being changed.
- * @param {string} displayName - The new display name.
- * @returns {{
- *     type: PARTICIPANT_DISPLAY_NAME_CHANGED,
- *     id: string,
- *     name: string
- * }}
- */
-export function participantDisplayNameChanged(id, displayName = '') {
-    // FIXME Do not use this action over participantUpdated. This action exists
-    // as a a bridge for local name updates. Once other components responsible
-    // for updating the local user's display name are in react/redux, this
-    // action should be replaceable with the participantUpdated action.
-    return {
-        type: PARTICIPANT_DISPLAY_NAME_CHANGED,
-        id,
-        name: displayName.substr(0, MAX_DISPLAY_NAME_LENGTH)
-    };
-}
-
-/**
  * Action to signal that a participant has joined.
  *
  * @param {Participant} participant - Information about participant.
@@ -393,6 +369,10 @@ export function participantRoleChanged(id, role) {
  * }}
  */
 export function participantUpdated(participant = {}) {
+    if (participant.name) {
+        participant.name = participant.name.substr(0, MAX_DISPLAY_NAME_LENGTH);
+    }
+
     return {
         type: PARTICIPANT_UPDATED,
         participant

@@ -5,20 +5,12 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
 import { translate } from '../../base/i18n';
-import {
-    getLocalParticipant,
-    participantDisplayNameChanged
-} from '../../base/participants';
+import { updateSettings } from '../../base/settings';
 
 /**
  * The type of the React {@code Component} props of {@DisplayNameForm}.
  */
 type Props = {
-
-    /**
-     * The ID of the local participant.
-     */
-    _localParticipantId: string,
 
     /**
      * Invoked to set the local participant display name.
@@ -117,26 +109,11 @@ class DisplayNameForm extends Component<Props, State> {
     _onSubmit(event: Object) {
         event.preventDefault();
 
-        this.props.dispatch(participantDisplayNameChanged(
-            this.props._localParticipantId,
-            this.state.displayName));
+        // Store display name in settings
+        this.props.dispatch(updateSettings({
+            displayName: this.state.displayName
+        }));
     }
 }
 
-/**
- * Maps (parts of) the Redux state to the associated props for the
- * {@code DisplayNameForm} component.
- *
- * @param {Object} state - The Redux state.
- * @private
- * @returns {{
- *     _localParticipantId: string
- * }}
- */
-function _mapStateToProps(state) {
-    return {
-        _localParticipantId: getLocalParticipant(state).id
-    };
-}
-
-export default translate(connect(_mapStateToProps)(DisplayNameForm));
+export default translate(connect()(DisplayNameForm));

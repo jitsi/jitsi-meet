@@ -7,5 +7,5 @@
  */
 export function appendSuffix(displayName, suffix) {
     return `${displayName || suffix || ''}${
-        displayName && suffix ? ` (${suffix})` : ''}`;
+        displayName && suffix && displayName !== suffix ? ` (${suffix})` : ''}`;
 }
