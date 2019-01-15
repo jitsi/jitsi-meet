@@ -6,6 +6,7 @@ import { toState } from '../redux';
 import {
     DEFAULT_AVATAR_RELATIVE_PATH,
     LOCAL_PARTICIPANT_DEFAULT_ID,
+    MAX_DISPLAY_NAME_LENGTH,
     PARTICIPANT_ROLE
 } from './constants';
 
@@ -92,6 +93,21 @@ export function getLocalParticipant(stateful: Object | Function) {
     const participants = _getAllParticipants(stateful);
 
     return participants.find(p => p.local);
+}
+
+/**
+ * Normalizes a display name so then no invalid values (padding, length...etc)
+ * can be set.
+ *
+ * @param {string} name - The display name to set.
+ * @returns {string}
+ */
+export function getNormalizedDisplayName(name: string) {
+    if (!name || !name.trim()) {
+        return undefined;
+    }
+
+    return name.trim().substring(0, MAX_DISPLAY_NAME_LENGTH);
 }
 
 /**
