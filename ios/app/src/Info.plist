@@ -39,7 +39,7 @@
 			<string>com.googleusercontent.apps</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
-				<string>com.googleusercontent.apps.YOUR_ID_HERE</string>
+				<string>com.googleusercontent.apps.your-id-here</string>
 			</array>
 		</dict>
 	</array>
