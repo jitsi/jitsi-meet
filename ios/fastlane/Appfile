@@ -1,0 +1,4 @@
+app_identifier("com.atlassian.JitsiMeet.ios") # The bundle identifier of your app
+itc_team_id("304592") # App Store Connect Team ID
+team_id("FC967L3QRG") # Developer Portal Team ID
+
