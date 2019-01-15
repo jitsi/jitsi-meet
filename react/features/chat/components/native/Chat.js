@@ -51,7 +51,10 @@ class Chat extends AbstractChat<Props> {
      * @inheritdoc
      */
     render() {
-        const messages = this.props._messages.map(this._transformMessage);
+        // Gifted chat requires a special object format and a reversed list
+        // of messages.
+        const messages
+            = this.props._messages.map(this._transformMessage).reverse();
         const modalStyle = [
             styles.modalBackdrop
         ];
@@ -156,11 +159,6 @@ function _mapStateToProps(state) {
 
     return {
         ...abstractReduxProps,
-
-        // Gifted chat requires the messages to be reverse ordered.
-        _messages: [
-            ...abstractReduxProps._messages
-        ].reverse(),
         _solidBackground: state['features/base/conference'].audioOnly
     };
 }
