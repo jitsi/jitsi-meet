@@ -20,11 +20,6 @@ const DEFAULT_STATE = {
     currentPoll: null,
 
     /**
-     * Current User vote ID: ?string
-     */
-    currentVote: null,
-
-    /**
      * All Polls Objects stored by ID.
      */
     polls: {},
@@ -73,8 +68,7 @@ ReducerRegistry.register('features/polls', (state = DEFAULT_STATE, action) => {
     case POLL_SESSION_FINISHED: {
         return {
             ...state,
-            currentPoll: null,
-            currentVote: null
+            currentPoll: null
         };
     }
     }

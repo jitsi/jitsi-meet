@@ -18,11 +18,6 @@ type Props = {
     choices: Object,
 
     /**
-     * User current vote.
-     */
-    currentVote: ?string,
-
-    /**
      * Redux.
      */
     dispatch: Function,
@@ -110,10 +105,10 @@ class VoteForm extends Component<Props, *> {
      * @returns {Component}
      */
     _renderPollChoice(item: string, id: number) {
-        const { choices, currentVote } = this.props;
+        const { choices, userID } = this.props;
         const choice = choices[item];
         const numberOfVotes = choice.votes.length;
-        const selected = currentVote === item;
+        const selected = choice.votes.findIndex(x => x === userID) > -1;
 
         return (
             <PollChoice
@@ -137,24 +132,21 @@ class VoteForm extends Component<Props, *> {
      * @returns {boolean}
      */
     _voteButtonClicked(id: string) {
-        const { currentVote, dispatch } = this.props;
-
-        if (currentVote !== id) {
-            dispatch(vote(id));
-        }
+        this.props.dispatch(vote(id));
     }
 
-    _onEndVoteClicked: () => boolean;
+    _onEndVoteClicked: (Object) => boolean;
 
     /**
      * End Poll Session button handler.
      *
+     * @param {Object} event - Button click event.
      * @returns {boolean}
      */
-    _onEndVoteClicked() {
-        this.props.dispatch(endPoll());
+    _onEndVoteClicked(event: Object) {
+        event.preventDefault();
 
-        return true;
+        this.props.dispatch(endPoll());
     }
 }
 
@@ -166,11 +158,10 @@ class VoteForm extends Component<Props, *> {
  */
 function _mapStateToProps(state: Object) {
     const {
+        choices,
         currentPoll,
         polls,
-        questions,
-        choices,
-        currentVote
+        questions
     } = state['features/polls'];
     const userID = getLocalParticipant(state).id;
 
@@ -178,8 +169,7 @@ function _mapStateToProps(state: Object) {
         poll: polls[currentPoll],
         userID,
         questions,
-        choices,
-        currentVote
+        choices
     };
 }
 

@@ -99,7 +99,7 @@ class PollDialog extends Component<Props, *> {
      * @returns {boolean}
      */
     _onSubmit() {
-        this._closeDialog();
+        // this._closeDialog();
     }
 }
 

@@ -104,7 +104,7 @@ class PollChoice extends Component<Props, *> {
                         <input
                             checked = { selected }
                             disabled = { disabled }
-                            onChange = { this._onVoteChange }
+                            onClick = { this._onVoteChange }
                             type = { 'radio' }
                             value = { '' } />
                     </div>

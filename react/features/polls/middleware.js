@@ -45,9 +45,6 @@ MiddlewareRegistry.register(store => next => action => {
         APP.conference.endPoll();
         break;
     }
-    case ENDPOINT_MESSAGE_RECEIVED: {
-        console.log(action);
-    }
     }
 
     return next(action);
