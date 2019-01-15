@@ -45,6 +45,8 @@
 	</array>
 	<key>CFBundleVersion</key>
 	<string>1</string>
+	<key>FirebaseScreenReportingEnabled</key>
+	<false/>
 	<key>ITSAppUsesNonExemptEncryption</key>
 	<false/>
 	<key>LSRequiresIPhoneOS</key>
@@ -68,6 +70,10 @@
 	<string></string>
 	<key>NSMicrophoneUsageDescription</key>
 	<string>Participate in meetings with voice.</string>
+	<key>NSUserActivityTypes</key>
+	<array>
+		<string>org.jitsi.JitsiMeet.ios.conference</string>
+	</array>
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>audio</string>
@@ -93,13 +99,7 @@
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
-	<key>FirebaseScreenReportingEnabled</key>
-	<false/>
 	<key>firebase_crashlytics_collection_enabled</key>
 	<string>false</string>
-	<key>NSUserActivityTypes</key>
-	<array>
-		<string>org.jitsi.JitsiMeet.ios.conference</string>
-	</array>
 </dict>
 </plist>
