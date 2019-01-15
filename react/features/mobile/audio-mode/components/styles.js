@@ -1,5 +1,6 @@
 // @flow
 
+import { MD_ITEM_HEIGHT } from '../../../base/dialog';
 import { ColorPalette, createStyleSheet } from '../../../base/styles';
 
 /**
@@ -16,7 +17,7 @@ export default createStyleSheet({
     deviceRow: {
         alignItems: 'center',
         flexDirection: 'row',
-        height: 48
+        height: MD_ITEM_HEIGHT
     },
 
     /**

@@ -7,5 +7,7 @@
 		<string>applinks:beta.meet.jit.si</string>
 		<string>applinks:meet.jit.si</string>
 	</array>
+	<key>com.apple.developer.siri</key>
+	<true/>
 </dict>
 </plist>

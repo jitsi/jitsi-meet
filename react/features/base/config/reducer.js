@@ -157,43 +157,45 @@ function _translateLegacyConfig(oldValue: Object) {
 
     let newValue = oldValue;
 
-    // At the time of this writing lib-jitsi-meet will rely on config having a
-    // property with the name p2p and with a value of type Object.
-    if (typeof oldValue.p2p !== 'object') {
-        newValue = set(newValue, 'p2p', {});
-    }
-
-    /* eslint-disable indent */
+    const oldConfigToNewConfig = {
+        p2p: [
+            [ 'backToP2PDelay', 'backToP2PDelay' ],
+            [ 'enableP2P', 'enabled' ],
+            [ 'p2pStunServers', 'stunServers' ]
+        ],
+        analytics: [
+            [ 'analyticsScriptUrls', 'scriptURLs' ],
+            [ 'googleAnalyticsTrackingId', 'googleAnalyticsTrackingId' ]
+        ]
+    };
 
     // Translate the old config properties into the new config.p2p properties.
-    for (const [ oldKey, newKey ]
-            of [
-                [ 'backToP2PDelay', 'backToP2PDelay' ],
-                [ 'enableP2P', 'enabled' ],
-                [ 'p2pStunServers', 'stunServers' ]
-            ]) {
+    Object.keys(oldConfigToNewConfig).forEach(section => {
+        if (typeof oldValue[section] !== 'object') {
+            newValue = set(newValue, section, {});
+        }
 
-    /* eslint-enable indent */
+        for (const [ oldKey, newKey ] of oldConfigToNewConfig[section]) {
+            if (oldKey in newValue && !(newKey in newValue[section])) {
+                const v = newValue[oldKey];
 
-        if (oldKey in newValue && !(newKey in newValue.p2p)) {
-            const v = newValue[oldKey];
+                // Do not modify oldValue.
+                if (newValue === oldValue) {
+                    newValue = {
+                        ...newValue
+                    };
+                }
+                delete newValue[oldKey];
 
-            // Do not modify oldValue.
-            if (newValue === oldValue) {
-                newValue = {
-                    ...newValue
+                // Do not modify the section because it may be from oldValue
+                // i.e. do not modify oldValue.
+                newValue[section] = {
+                    ...newValue[section],
+                    [newKey]: v
                 };
             }
-            delete newValue[oldKey];
-
-            // Do not modify p2p because it may be from oldValue i.e. do not
-            // modify oldValue.
-            newValue.p2p = {
-                ...newValue.p2p,
-                [newKey]: v
-            };
         }
-    }
+    });
 
     return newValue;
 }

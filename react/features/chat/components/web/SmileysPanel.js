@@ -2,7 +2,7 @@
 
 import React, { PureComponent } from 'react';
 import Emoji from 'react-emoji-render';
-import { smileys } from '../smileys';
+import { smileys } from '../../smileys';
 
 /**
  * The type of the React {@code Component} props of {@link SmileysPanel}.

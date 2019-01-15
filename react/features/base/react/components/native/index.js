@@ -1,7 +1,10 @@
+export { default as BackButton } from './BackButton';
 export { default as Container } from './Container';
 export { default as Header } from './Header';
+export { default as HeaderLabel } from './HeaderLabel';
 export { default as Link } from './Link';
 export { default as LoadingIndicator } from './LoadingIndicator';
+export { default as Modal } from './Modal';
 export { default as NavigateSectionListEmptyComponent } from
     './NavigateSectionListEmptyComponent';
 export { default as NavigateSectionListItem }

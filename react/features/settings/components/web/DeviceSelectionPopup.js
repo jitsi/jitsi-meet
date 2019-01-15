@@ -9,10 +9,11 @@ import { I18nextProvider } from 'react-i18next';
 import {
     PostMessageTransportBackend,
     Transport
-} from '../../../modules/transport';
-import { parseURLParams } from '../base/config';
-import { DeviceSelection } from '../device-selection';
-import { DialogWithTabs } from '../base/dialog';
+} from '../../../../../modules/transport';
+
+import { parseURLParams } from '../../../base/config';
+import { DialogWithTabs } from '../../../base/dialog';
+import { DeviceSelection } from '../../../device-selection';
 
 const logger = Logger.getLogger(__filename);
 

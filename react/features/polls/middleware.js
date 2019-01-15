@@ -16,7 +16,6 @@ import {
 import { isButtonEnabled } from '../toolbox';
 import { CONFERENCE_JOINED } from '../base/conference';
 import { JitsiConferenceEvents } from '../base/lib-jitsi-meet';
-import { ENDPOINT_MESSAGE_RECEIVED } from '../subtitles';
 
 declare var APP: Object;
 declare var interfaceConfig : Object;

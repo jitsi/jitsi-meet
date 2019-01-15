@@ -1,6 +1,11 @@
-import { ADD_MESSAGE, SEND_MESSAGE, TOGGLE_CHAT } from './actionTypes';
+// @flow
 
-/* eslint-disable max-params */
+import {
+    ADD_MESSAGE,
+    CLEAR_MESSAGES,
+    SEND_MESSAGE,
+    TOGGLE_CHAT
+} from './actionTypes';
 
 /**
  * Adds a chat message to the collection of messages.
@@ -24,10 +29,23 @@ import { ADD_MESSAGE, SEND_MESSAGE, TOGGLE_CHAT } from './actionTypes';
  *     timestamp: string,
  * }}
  */
-export function addMessage(messageDetails) {
+export function addMessage(messageDetails: Object) {
     return {
         type: ADD_MESSAGE,
         ...messageDetails
+    };
+}
+
+/**
+ * Clears the chat messages in Redux.
+ *
+ * @returns {{
+ *     type: CLEAR_MESSAGES
+ * }}
+ */
+export function clearMessages() {
+    return {
+        type: CLEAR_MESSAGES
     };
 }
 
@@ -40,7 +58,7 @@ export function addMessage(messageDetails) {
  *     message: string
  * }}
  */
-export function sendMessage(message) {
+export function sendMessage(message: string) {
     return {
         type: SEND_MESSAGE,
         message

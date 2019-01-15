@@ -3,7 +3,7 @@
 import VideoLayout from '../../../modules/UI/videolayout/VideoLayout.js';
 import UIEvents from '../../../service/UI/UIEvents';
 
-import { CONFERENCE_JOINED } from '../base/conference';
+import { CONFERENCE_JOINED, CONFERENCE_WILL_LEAVE } from '../base/conference';
 import {
     DOMINANT_SPEAKER_CHANGED,
     PARTICIPANT_JOINED,
@@ -38,6 +38,10 @@ MiddlewareRegistry.register(store => next => action => {
     switch (action.type) {
     case CONFERENCE_JOINED:
         VideoLayout.mucJoined();
+        break;
+
+    case CONFERENCE_WILL_LEAVE:
+        VideoLayout.reset();
         break;
 
     case PARTICIPANT_JOINED:

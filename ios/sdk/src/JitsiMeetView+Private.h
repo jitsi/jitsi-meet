@@ -18,6 +18,7 @@
 
 @interface JitsiMeetView ()
 
++ (NSDictionary *)conferenceURLFromUserActivity:(NSUserActivity *)userActivity;
 + (instancetype)viewForExternalAPIScope:(NSString *)externalAPIScope;
 
 @end

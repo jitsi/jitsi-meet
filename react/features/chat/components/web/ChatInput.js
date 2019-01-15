@@ -4,7 +4,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import Emoji from 'react-emoji-render';
 
-import { sendMessage } from '../actions';
+import { sendMessage } from '../../actions';
 
 import SmileysPanel from './SmileysPanel';
 

@@ -1,3 +1,5 @@
+// @flow
+
 /**
  * The type of the action which signals to add a new chat message.
  *
@@ -12,6 +14,15 @@
  * }
  */
 export const ADD_MESSAGE = Symbol('ADD_MESSAGE');
+
+/**
+ * The type of the action which signals to clear messages in Redux.
+ *
+ * {
+ *     type: CLEAR_MESSAGES
+ * }
+ */
+export const CLEAR_MESSAGES = Symbol('CLEAR_MESSAGES');
 
 /**
  * The type of the action which signals a send a chat message to everyone in the

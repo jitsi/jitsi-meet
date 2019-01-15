@@ -2,6 +2,15 @@ platform :ios, '10.0'
 
 workspace 'jitsi-meet'
 
+target 'jitsi-meet' do
+  project 'app/app.xcodeproj'
+
+  pod 'Crashlytics'
+  pod 'Fabric'
+  pod 'Firebase/Core'
+  pod 'Firebase/DynamicLinks'
+end
+
 target 'JitsiMeet' do
   project 'sdk/sdk.xcodeproj'
 

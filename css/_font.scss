@@ -25,6 +25,9 @@
     -moz-osx-font-smoothing: grayscale;
 }
 
+.icon-chat-unread:before {
+  content: "\e0b7";
+}
 .icon-arrow_back:before {
   content: "\e5c4";
 }

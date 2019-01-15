@@ -43,10 +43,18 @@ export function initAnalytics({ getState }: { getState: Function }) {
 
     const state = getState();
     const config = state['features/base/config'];
-    const { analyticsScriptUrls, deploymentInfo, googleAnalyticsTrackingId }
-        = config;
+    const {
+        analytics: analyticsConfig = {},
+        deploymentInfo
+    } = config;
+    const {
+        amplitudeAPPKey,
+        scriptURLs,
+        googleAnalyticsTrackingId
+    } = analyticsConfig;
     const { group, server, user } = state['features/base/jwt'];
     const handlerConstructorOptions = {
+        amplitudeAPPKey,
         envType: (deploymentInfo && deploymentInfo.envType) || 'dev',
         googleAnalyticsTrackingId,
         group,
@@ -56,7 +64,7 @@ export function initAnalytics({ getState }: { getState: Function }) {
         version: JitsiMeetJS.version
     };
 
-    _loadHandlers(analyticsScriptUrls, handlerConstructorOptions)
+    _loadHandlers(scriptURLs, handlerConstructorOptions)
         .then(handlers => {
             const roomName = state['features/base/conference'].room;
             const permanentProperties = {};
@@ -83,8 +91,11 @@ export function initAnalytics({ getState }: { getState: Function }) {
 
             // Set the handlers last, since this triggers emptying of the cache
             analytics.setAnalyticsHandlers(handlers);
-        },
-        error => analytics.dispose() && logger.error(error));
+        })
+        .catch(error => {
+            analytics.dispose();
+            logger.error(error);
+        });
 }
 
 /**

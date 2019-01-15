@@ -1,7 +1,13 @@
 // @flow
 
 export { default as KickButton } from './KickButton';
+export {
+    default as KickRemoteParticipantDialog
+} from './KickRemoteParticipantDialog';
 export { default as MuteButton } from './MuteButton';
+export {
+    default as MuteRemoteParticipantDialog
+} from './MuteRemoteParticipantDialog';
 export {
     REMOTE_CONTROL_MENU_STATES,
     default as RemoteControlButton

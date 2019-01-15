@@ -10,6 +10,16 @@ const BORDER_RADIUS = 5;
 const DIALOG_BORDER_COLOR = 'rgba(255, 255, 255, 0.2)';
 
 export const FIELD_UNDERLINE = ColorPalette.transparent;
+
+/**
+ * NOTE: These Material guidelines based values are currently only used in
+ * dialogs (and related) but later on it would be nice to export it into a base
+ * Material feature.
+ */
+export const MD_FONT_SIZE = 16;
+export const MD_ITEM_HEIGHT = 48;
+export const MD_ITEM_MARGIN_PADDING = 16;
+
 export const PLACEHOLDER_COLOR = ColorPalette.lightGrey;
 
 /**
@@ -25,7 +35,7 @@ const bottomSheetItemStyles = createStyleSheet({
     style: {
         alignItems: 'center',
         flexDirection: 'row',
-        height: 48
+        height: MD_ITEM_HEIGHT
     },
 
     /**
@@ -42,7 +52,7 @@ const bottomSheetItemStyles = createStyleSheet({
     labelStyle: {
         color: ColorPalette.white,
         flexShrink: 1,
-        fontSize: 16,
+        fontSize: MD_FONT_SIZE,
         marginLeft: 32,
         opacity: 0.90
     }
@@ -92,7 +102,7 @@ export const bottomSheetStyles = createStyleSheet({
     sheet: {
         backgroundColor: 'rgb(0, 3, 6)',
         flex: 1,
-        paddingHorizontal: 16,
+        paddingHorizontal: MD_ITEM_MARGIN_PADDING,
         paddingVertical: 8
     }
 });
@@ -134,7 +144,7 @@ export const brandedDialog = createStyleSheet({
 
     closeStyle: {
         color: ColorPalette.white,
-        fontSize: 16
+        fontSize: MD_FONT_SIZE
     },
 
     closeWrapper: {
@@ -173,7 +183,7 @@ export const brandedDialog = createStyleSheet({
 
     text: {
         color: ColorPalette.white,
-        fontSize: 16,
+        fontSize: MD_FONT_SIZE,
         textAlign: 'center'
     }
 });
