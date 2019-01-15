@@ -60,6 +60,9 @@ function initCommands() {
             sendAnalytics(createApiEvent('display.name.changed'));
             APP.conference.changeLocalDisplayName(displayName);
         },
+        'proxy-connection-event': event => {
+            APP.conference.onProxyConnectionEvent(event);
+        },
         'submit-feedback': feedback => {
             sendAnalytics(createApiEvent('submit.feedback'));
             APP.conference.submitFeedback(feedback.score, feedback.message);
@@ -257,6 +260,20 @@ class API {
         this._sendEvent({
             name: 'large-video-visibility-changed',
             isVisible: !isHidden
+        });
+    }
+
+    /**
+     * Notifies the external application (spot) that the local jitsi-participant
+     * has a status update.
+     *
+     * @param {Object} event - The message to pass onto spot.
+     * @returns {void}
+     */
+    sendProxyConnectionEvent(event: Object) {
+        this._sendEvent({
+            name: 'proxy-connection-event',
+            ...event
         });
     }
 
