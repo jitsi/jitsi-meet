@@ -76,10 +76,10 @@ import {
     dominantSpeakerChanged,
     getAvatarURLByParticipantId,
     getLocalParticipant,
+    getNormalizedDisplayName,
     getParticipantById,
     localParticipantConnectionStatusChanged,
     localParticipantRoleChanged,
-    MAX_DISPLAY_NAME_LENGTH,
     participantConnectionStatusChanged,
     participantPresenceChanged,
     participantRoleChanged,
@@ -1841,7 +1841,7 @@ export default {
             JitsiConferenceEvents.DISPLAY_NAME_CHANGED,
             (id, displayName) => {
                 const formattedDisplayName
-                    = displayName.substr(0, MAX_DISPLAY_NAME_LENGTH);
+                    = getNormalizedDisplayName(displayName);
 
                 APP.store.dispatch(participantUpdated({
                     conference: room,
@@ -2627,8 +2627,7 @@ export default {
      * @param nickname {string} the new display name
      */
     changeLocalDisplayName(nickname = '') {
-        const formattedNickname
-            = nickname.trim().substr(0, MAX_DISPLAY_NAME_LENGTH);
+        const formattedNickname = getNormalizedDisplayName(nickname);
         const { id, name } = getLocalParticipant(APP.store.getState());
 
         if (formattedNickname === name) {
