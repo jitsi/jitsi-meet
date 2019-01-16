@@ -73,6 +73,15 @@
   public *;
 }
 
+# WebRTC
+
+-keep class org.webrtc.** { *; }
+-dontwarn org.chromium.build.BuildHooksAndroid
+
+# Jisti Meet SDK
+
+-keep class org.jitsi.meet.sdk.** { *; }
+
 # We added the following when we switched minifyEnabled on. Probably because we
 # ran the app and hit problems...
 
@@ -83,7 +92,6 @@
 -keep class com.facebook.react.bridge.ReadableType { *; }
 -keep class com.facebook.react.bridge.queue.NativeRunnable { *; }
 -keep class com.facebook.react.devsupport.** { *; }
--keep class org.webrtc.** { *; }
 
 -dontwarn com.facebook.react.devsupport.**
 -dontwarn com.google.appengine.**
