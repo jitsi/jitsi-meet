@@ -68,6 +68,32 @@ function _setRoom({ dispatch, getState }, next, action) {
     const state = getState();
     const { room } = action;
     const roomIsValid = isRoomValid(room);
+    const { error } = state['features/base/conference'];
+    const { audioOnly: previousAudioOnly } = state['features/base/conference'];
+    const { audio, video } = state['features/base/media'];
+
+    let audioMuted, facingMode, videoMuted;
+
+    // startAudioOnly
+    //
+    // FIXME Technically, the audio-only feature is owned by base/conference,
+    // not base/media so the following should be in base/conference.
+    // Practically, I presume it was easier to write the source code here
+    // because it looks like startWithAudioMuted and startWithVideoMuted.
+    //
+    // XXX After the introduction of the "Video <-> Voice" toggle on the
+    // WelcomePage, startAudioOnly is utilized even outside of
+    // conferences/meetings.
+    let audioOnly;
+
+    if (room && error) {
+        // This is a conference rejoin, so we want to reuse the values that are
+        // in 'features/base/media'
+        audio && (audioMuted = audio.muted);
+        video && (videoMuted = video.muted);
+        video && (facingMode = video.facingMode);
+        audioOnly = previousAudioOnly;
+    }
 
     // XXX The configurations/preferences/settings startWithAudioMuted,
     // startWithVideoMuted, and startAudioOnly were introduced for
@@ -89,16 +115,65 @@ function _setRoom({ dispatch, getState }, next, action) {
         // We don't have startWithAudioMuted and startWithVideoMuted here:
         jwt: false
     };
-    const audioMuted
-        = roomIsValid
-            ? Boolean(
-                getPropertyValue(state, 'startWithAudioMuted', mutedSources))
-            : _AUDIO_INITIAL_MEDIA_STATE.muted;
-    const videoMuted
-        = roomIsValid
-            ? Boolean(
-                getPropertyValue(state, 'startWithVideoMuted', mutedSources))
-            : _VIDEO_INITIAL_MEDIA_STATE.muted;
+
+    if (typeof audioMuted === 'undefined') {
+        audioMuted
+            = roomIsValid
+                ? Boolean(
+                    getPropertyValue(
+                        state, 'startWithAudioMuted', mutedSources))
+                : _AUDIO_INITIAL_MEDIA_STATE.muted;
+    }
+
+    if (typeof videoMuted === 'undefined') {
+        videoMuted
+            = roomIsValid
+                ? Boolean(
+                    getPropertyValue(
+                        state, 'startWithVideoMuted', mutedSources))
+                : _VIDEO_INITIAL_MEDIA_STATE.muted;
+    }
+
+    if (typeof facingMode === 'undefined') {
+        facingMode = CAMERA_FACING_MODE.USER;
+    }
+
+    if (typeof audioOnly === 'undefined') {
+        if (JitsiMeetJS.mediaDevices.supportsVideo()) {
+            audioOnly
+                = Boolean(
+                    getPropertyValue(
+                        state,
+                        'startAudioOnly',
+                        /* sources */ {
+                            // FIXME Practically, base/config is (really)
+                            // correct only if roomIsValid. At the time of this
+                            // writing, base/config is overwritten by URL params
+                            // which leaves base/config incorrect on the
+                            // WelcomePage after leaving a conference which
+                            // explicitly overwrites base/config with URL
+                            // params.
+                            config: roomIsValid,
+
+                            // XXX We've already overwritten base/config with
+                            // urlParams if roomIsValid. However, settings are
+                            // more important than the server-side config.
+                            // Consequently, we need to read from urlParams
+                            // anyway. We also probably want to read from
+                            // urlParams when !roomIsValid.
+                            urlParams: true,
+
+                            // The following don't have complications around
+                            // whether they are defined or not:
+                            jwt: false,
+                            settings: true
+                        }));
+        } else {
+            // Default to audio-only if the (execution) environment does not
+            // support (sending and/or receiving) video.
+            audioOnly = true;
+        }
+    }
 
     sendAnalytics(
         createStartMutedConfigurationEvent('local', audioMuted, videoMuted));
@@ -110,54 +185,8 @@ function _setRoom({ dispatch, getState }, next, action) {
     // the user i.e. the state of base/media. Eventually, practice/reality i.e.
     // the state of base/tracks will or will not agree with the desires.
     dispatch(setAudioMuted(audioMuted));
-    dispatch(setCameraFacingMode(CAMERA_FACING_MODE.USER));
+    dispatch(setCameraFacingMode(facingMode));
     dispatch(setVideoMuted(videoMuted));
-
-    // startAudioOnly
-    //
-    // FIXME Technically, the audio-only feature is owned by base/conference,
-    // not base/media so the following should be in base/conference.
-    // Practically, I presume it was easier to write the source code here
-    // because it looks like startWithAudioMuted and startWithVideoMuted.
-    //
-    // XXX After the introduction of the "Video <-> Voice" toggle on the
-    // WelcomePage, startAudioOnly is utilized even outside of
-    // conferences/meetings.
-    let audioOnly;
-
-    if (JitsiMeetJS.mediaDevices.supportsVideo()) {
-        audioOnly
-            = Boolean(
-                getPropertyValue(
-                    state,
-                    'startAudioOnly',
-                    /* sources */ {
-                        // FIXME Practically, base/config is (really) correct
-                        // only if roomIsValid. At the time of this writing,
-                        // base/config is overwritten by URL params which leaves
-                        // base/config incorrect on the WelcomePage after
-                        // leaving a conference which explicitly overwrites
-                        // base/config with URL params.
-                        config: roomIsValid,
-
-                        // XXX We've already overwritten base/config with
-                        // urlParams if roomIsValid. However, settings are more
-                        // important than the server-side config. Consequently,
-                        // we need to read from urlParams anyway. We also
-                        // probably want to read from urlParams when
-                        // !roomIsValid.
-                        urlParams: true,
-
-                        // The following don't have complications around whether
-                        // they are defined or not:
-                        jwt: false,
-                        settings: true
-                    }));
-    } else {
-        // Default to audio-only if the (execution) environment does not
-        // support (sending and/or receiving) video.
-        audioOnly = true;
-    }
 
     sendAnalytics(createStartAudioOnlyEvent(audioOnly));
     logger.log(`Start audio only set to ${audioOnly.toString()}`);
