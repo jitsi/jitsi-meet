@@ -2509,6 +2509,9 @@ export default {
             requestFeedbackPromise,
             this.leaveRoomAndDisconnect()
         ]).then(values => {
+            this._room = undefined;
+            room = undefined;
+
             APP.API.notifyReadyToClose();
             maybeRedirectToWelcomePage(values[0]);
         });
@@ -2523,11 +2526,7 @@ export default {
         APP.store.dispatch(conferenceWillLeave(room));
 
         return room.leave()
-            .then(disconnect, disconnect)
-            .then(() => {
-                this._room = undefined;
-                room = undefined;
-            });
+            .then(disconnect, disconnect);
     },
 
     /**
