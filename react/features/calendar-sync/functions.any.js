@@ -6,7 +6,6 @@ import { setCalendarEvents } from './actions';
 import { APP_LINK_SCHEME, parseURIString } from '../base/util';
 import { MAX_LIST_LENGTH } from './constants';
 
-const logger = require('jitsi-meet-logger').getLogger(__filename);
 const ALLDAY_EVENT_LENGTH = 23 * 60 * 60 * 1000;
 
 /**
@@ -143,14 +142,7 @@ function _parseCalendarEntry(event, knownDomains) {
             || (navigator.product !== 'ReactNative'
                     && !url
                     && !event.calendarId)) {
-            logger.debug(
-                'Skipping invalid calendar event',
-                event.title,
-                event.startDate,
-                event.endDate,
-                url,
-                event.calendarId
-            );
+            // Ignore the event.
         } else {
             return {
                 allDay: event.allDay,
