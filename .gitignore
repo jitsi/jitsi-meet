@@ -77,3 +77,4 @@ buck-out/
 .jshintignore
 .jshintrc
 
+/nbproject/private/

@@ -32,10 +32,10 @@ const DEFAULT_STATE = {
     joining: undefined,
     leaving: undefined,
     locked: undefined,
-    maxReceiverVideoQuality: VIDEO_QUALITY_LEVELS.HIGH,
+    maxReceiverVideoQuality: VIDEO_QUALITY_LEVELS.STANDARD, /*3ks  HIGH to Standard*/  
     password: undefined,
     passwordRequired: undefined,
-    preferredReceiverVideoQuality: VIDEO_QUALITY_LEVELS.HIGH
+    preferredReceiverVideoQuality: VIDEO_QUALITY_LEVELS.STANDARD /*3ks  HIGH to Standard*/  
 };
 
 /**

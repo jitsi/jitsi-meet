@@ -23,7 +23,7 @@ const DEFAULT_STATE = {
     cameraDeviceId: undefined,
     displayName: undefined,
     email: undefined,
-    localFlipX: true,
+    localFlipX: false,/*3ks no flip video */
     micDeviceId: undefined,
     serverURL: undefined,
     startAudioOnly: false,
