@@ -36,16 +36,6 @@ const logger = require('jitsi-meet-logger').getLogger(__filename);
 type Props = AbstractAppProps & {
 
     /**
-     * Whether the add people feature is enabled.
-     */
-    addPeopleEnabled: boolean,
-
-    /**
-     * Whether the dial-out feature is enabled.
-     */
-    dialOutEnabled: boolean,
-
-    /**
      * Whether Picture-in-Picture is enabled. If {@code true}, a toolbar button
      * is rendered in the {@link Conference} view to afford entering
      * Picture-in-Picture.
