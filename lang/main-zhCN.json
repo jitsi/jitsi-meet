@@ -454,17 +454,18 @@
         "ATTACHED": "已接入"
     },
     "recording": {
-        "busy": "",
-        "busyTitle": "",
+        "busy": "录像服务器忙",
+        "busyTitle": "服务器忙",
         "buttonTooltip": "开始 / 结束录制",
         "error": "录制失败。请重新尝试。",
         "failedToStart": "录制启动失败",
         "off": "录制已停止",
         "on": "录制中",
         "pending": "录制中，等待一位与会者加入",
-        "unavailable": "",
+        "unavailable": "录像服务器不可用",
         "startRecordingBody": "确定要录像吗？",
-        "unavailableTitle": ""
+        "unavailableTitle": "服务器不可用",
+        "rec": "录像中"
     },
     "\u0005recording": {},
     "liveStreaming": {
