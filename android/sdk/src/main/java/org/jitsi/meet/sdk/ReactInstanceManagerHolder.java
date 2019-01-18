@@ -54,7 +54,6 @@ class ReactInstanceManagerHolder {
                 new ProximityModule(reactContext),
                 new WiFiStatsModule(reactContext),
                 new org.jitsi.meet.sdk.dropbox.Dropbox(reactContext),
-                new org.jitsi.meet.sdk.invite.InviteModule(reactContext),
                 new org.jitsi.meet.sdk.net.NAT64AddrInfoModule(reactContext)));
 
         if (android.os.Build.VERSION.SDK_INT

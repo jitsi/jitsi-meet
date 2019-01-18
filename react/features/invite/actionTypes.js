@@ -1,17 +1,4 @@
 /**
- * The type of redux action to set the {@code EventEmitter} subscriptions
- * utilized by the feature invite.
- *
- * {
- *     type: _SET_EMITTER_SUBSCRIPTIONS,
- *     emitterSubscriptions: Array|undefined
- * }
- *
- * @protected
- */
-export const _SET_EMITTER_SUBSCRIPTIONS = Symbol('_SET_EMITTER_SUBSCRIPTIONS');
-
-/**
  * The type of redux action which will add pending invite request to the redux
  * store.
  *

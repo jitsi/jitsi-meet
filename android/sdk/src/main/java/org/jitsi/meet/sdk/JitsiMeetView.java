@@ -24,8 +24,6 @@ import android.util.Log;
 
 import com.facebook.react.bridge.ReadableMap;
 
-import org.jitsi.meet.sdk.invite.InviteController;
-
 import java.lang.reflect.Method;
 import java.net.URL;
 import java.util.Map;
@@ -79,12 +77,6 @@ public class JitsiMeetView
     private URL defaultURL;
 
     /**
-     * The entry point into the invite feature of Jitsi Meet. The Java
-     * counterpart of the JavaScript {@code InviteButton}.
-     */
-    private final InviteController inviteController;
-
-    /**
      * Whether Picture-in-Picture is enabled. If {@code null}, defaults to
      * {@code true} iff the Android platform supports Picture-in-Picture
      * natively.
@@ -105,10 +97,6 @@ public class JitsiMeetView
 
     public JitsiMeetView(@NonNull Context context) {
         super(context);
-
-        // The entry point into the invite feature of Jitsi Meet. The Java
-        // counterpart of the JavaScript InviteButton.
-        inviteController = new InviteController(externalAPIScope);
 
         // Check if the parent Activity implements JitsiMeetActivityInterface,
         // otherwise things may go wrong.
@@ -153,19 +141,6 @@ public class JitsiMeetView
      */
     public URL getDefaultURL() {
         return defaultURL;
-    }
-
-    /**
-     * Gets the {@link InviteController} which represents the entry point into
-     * the invite feature of Jitsi Meet and is the Java counterpart of the
-     * JavaScript {@code InviteButton}.
-     *
-     * @return the {@link InviteController} which represents the entry point
-     * into the invite feature of Jitsi Meet and is the Java counterpart of the
-     * JavaScript {@code InviteButton}
-     */
-    public InviteController getInviteController() {
-        return inviteController;
     }
 
     /**
@@ -236,18 +211,6 @@ public class JitsiMeetView
         // defaultURL
         if (defaultURL != null) {
             props.putString("defaultURL", defaultURL.toString());
-        }
-
-        // inviteController
-        InviteController inviteController = getInviteController();
-
-        if (inviteController != null) {
-            props.putBoolean(
-                "addPeopleEnabled",
-                inviteController.isAddPeopleEnabled());
-            props.putBoolean(
-                "dialOutEnabled",
-                inviteController.isDialOutEnabled());
         }
 
         // pictureInPictureEnabled
