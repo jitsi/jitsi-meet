@@ -16,6 +16,7 @@
 
 package org.jitsi.meet.sdk;
 
+import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.PictureInPictureParams;
 import android.os.Build;
@@ -53,6 +54,7 @@ class PictureInPictureModule
      * including when the activity is not visible (paused or stopped), if the
      * screen is locked or if the user has an activity pinned.
      */
+    @TargetApi(Build.VERSION_CODES.O)
     public void enterPictureInPicture() {
         if (!isPictureInPictureSupported()) {
             throw new IllegalStateException("Picture-in-Picture not supported");
