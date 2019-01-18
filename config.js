@@ -175,7 +175,7 @@ var config = {
     // Whether to enable file recording or not.
     fileRecordingsEnabled: true,
 
-    // hiddenDomain: 'recorder.i.vmeeting.top',
+    hiddenDomain: 'recorder.i.vmeeting.top',
     // Enable the dropbox integration.
     // dropbox: {
     //     appKey: '<APP_KEY>' // Specify your app key here.

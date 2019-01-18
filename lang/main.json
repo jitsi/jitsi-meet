@@ -476,8 +476,8 @@
         "pending": "录制中，等待一位与会者加入",
         "unavailable": "录像服务器不可用",
         "startRecordingBody": "确定要录像吗？",
-        "unavailableTitle": "服务器不可用",
-        "rec": "录像中"
+        "rec": "REC",
+        "unavailableTitle": "服务器不可用"        
     },
     "liveStreaming": {
         "busy": "",
