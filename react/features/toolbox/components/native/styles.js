@@ -1,4 +1,6 @@
 // @flow
+
+import { schemeColor } from '../../../base/color-scheme';
 import { BoxModel, ColorPalette, createStyleSheet } from '../../../base/styles';
 
 import { HANGUP_BUTTON_SIZE } from '../../constants';
@@ -42,7 +44,7 @@ const styles = createStyleSheet({
      */
     hangupButton: {
         ...toolbarButton,
-        backgroundColor: ColorPalette.red,
+        backgroundColor: schemeColor('hangupButton'),
         borderRadius: 30,
         height: HANGUP_BUTTON_SIZE,
         width: HANGUP_BUTTON_SIZE

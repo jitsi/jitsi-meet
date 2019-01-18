@@ -54,6 +54,8 @@ static NSString * const ADD_PEOPLE_CONTROLLER_QUERY = nil;
 
 #endif // #ifdef DEBUG
 
+    view.colorScheme = @{@"hangupButton": @"blue"};
+
     // As this is the Jitsi Meet app (i.e. not the Jitsi Meet SDK), we do want
     // the Welcome page to be enabled. It defaults to disabled in the SDK at the
     // time of this writing but it is clearer to be explicit about what we want

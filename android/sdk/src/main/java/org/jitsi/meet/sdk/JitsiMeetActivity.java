@@ -27,6 +27,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.KeyEvent;
 
 import com.facebook.react.ReactInstanceManager;
+import com.facebook.react.bridge.WritableMap;
 import com.facebook.react.modules.core.PermissionListener;
 
 import java.net.URL;
@@ -51,6 +52,11 @@ public class JitsiMeetActivity
      */
     private static final int OVERLAY_PERMISSION_REQUEST_CODE
         = (int) (Math.random() * Short.MAX_VALUE);
+
+    /**
+     * A color scheme object to override the default color is the SDK.
+     */
+    private WritableMap colorScheme;
 
     /**
      * The default base {@code URL} used to join a conference when a partial URL
@@ -120,6 +126,7 @@ public class JitsiMeetActivity
 
         // XXX Before calling JitsiMeetView#loadURL, make sure to call whatever
         // is documented to need such an order in order to take effect:
+        view.setColorScheme(colorScheme);
         view.setDefaultURL(defaultURL);
         if (pictureInPictureEnabled != null) {
             view.setPictureInPictureEnabled(
@@ -284,6 +291,17 @@ public class JitsiMeetActivity
     @Override
     public void requestPermissions(String[] permissions, int requestCode, PermissionListener listener) {
         ReactActivityLifecycleCallbacks.requestPermissions(this, permissions, requestCode, listener);
+    }
+
+    /**
+     * @see JitsiMeetView#setColorScheme(WritableMap)
+     */
+    public void setColorScheme(WritableMap colorScheme) {
+        if (view == null) {
+            this.colorScheme = colorScheme;
+        } else {
+            view.setColorScheme(colorScheme);
+        }
     }
 
     /**

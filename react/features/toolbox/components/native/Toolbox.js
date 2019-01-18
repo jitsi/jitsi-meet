@@ -5,6 +5,8 @@ import { View } from 'react-native';
 import { connect } from 'react-redux';
 
 import { Container } from '../../../base/react';
+import { createColorSchemedStyle } from '../../../base/color-scheme';
+import { StyleType } from '../../../base/styles';
 import { ChatButton } from '../../../chat';
 
 import AudioMuteButton from '../AudioMuteButton';
@@ -39,6 +41,11 @@ const _BUTTON_SIZE_FACTOR = 0.85;
  * The type of {@link Toolbox}'s React {@code Component} props.
  */
 type Props = {
+
+    /**
+     * The style of the hangup button with the color scheme applied to it.
+     */
+    _hangupButtonStyles: StyleType,
 
     /**
      * The indicator which determines whether the toolbox is visible.
@@ -193,6 +200,7 @@ class Toolbox extends Component<Props, State> {
      * @returns {React$Node}
      */
     _renderToolbar() {
+        const { _hangupButtonStyles } = this.props;
         const buttonSize = this._calculateButtonSize();
         let buttonStyles = toolbarButtonStyles;
         let toggledButtonStyles = toolbarToggledButtonStyles;
@@ -238,7 +246,7 @@ class Toolbox extends Component<Props, State> {
                 <AudioMuteButton
                     styles = { buttonStyles }
                     toggledStyles = { toggledButtonStyles } />
-                <HangupButton styles = { hangupButtonStyles } />
+                <HangupButton styles = { _hangupButtonStyles } />
                 <VideoMuteButton
                     styles = { buttonStyles }
                     toggledStyles = { toggledButtonStyles } />
@@ -258,6 +266,7 @@ class Toolbox extends Component<Props, State> {
  * {@code Toolbox} props.
  * @private
  * @returns {{
+ *     _hangupButtonStyles: StyleType,
  *     _visible: boolean
  * }}
  */
@@ -265,6 +274,7 @@ function _mapStateToProps(state: Object): Object {
     const { alwaysVisible, enabled, visible } = state['features/toolbox'];
 
     return {
+        _hangupButtonStyles: createColorSchemedStyle(state, hangupButtonStyles),
         _visible: enabled && (alwaysVisible || visible)
     };
 }

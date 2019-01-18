@@ -30,7 +30,10 @@ import org.jitsi.meet.sdk.invite.InviteController;
 import org.jitsi.meet.sdk.invite.InviteControllerListener;
 
 import com.crashlytics.android.Crashlytics;
+import com.facebook.react.bridge.Arguments;
+import com.facebook.react.bridge.JavaOnlyMap;
 import com.facebook.react.bridge.UiThreadUtil;
+import com.facebook.react.bridge.WritableMap;
 import com.google.firebase.dynamiclinks.FirebaseDynamicLinks;
 import io.fabric.sdk.android.Fabric;
 
@@ -187,6 +190,11 @@ public class MainActivity extends JitsiMeetActivity {
         // The welcome page defaults to disabled in the SDK at the time of this
         // writing but it is clearer to be explicit about what we want anyway.
         setWelcomePageEnabled(true);
+
+        WritableMap colorScheme = new JavaOnlyMap();
+        //colorScheme.putString("hangupButton", "#1c2025");
+        colorScheme.putString("hangupButton", "green");
+        setColorScheme(colorScheme);
 
         super.onCreate(savedInstanceState);
 

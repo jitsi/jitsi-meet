@@ -5,6 +5,7 @@ import { Linking } from 'react-native';
 
 import '../../analytics';
 import '../../authentication';
+import { setColorScheme } from '../../base/color-scheme';
 import { DialogContainer } from '../../base/dialog';
 import '../../base/jwt';
 import { Platform } from '../../base/react';
@@ -41,6 +42,11 @@ type Props = AbstractAppProps & {
     addPeopleEnabled: boolean,
 
     /**
+     * An object of colors that override the default colors of the app.
+     */
+    colorScheme: Object,
+
+    /**
      * Whether the dial-out feature is enabled.
      */
     dialOutEnabled: boolean,
@@ -66,6 +72,8 @@ type Props = AbstractAppProps & {
  * @extends AbstractApp
  */
 export class App extends AbstractApp {
+    _init: Promise<*>;
+
     /**
      * Initializes a new {@code App} instance.
      *
@@ -95,6 +103,10 @@ export class App extends AbstractApp {
      */
     componentDidMount() {
         super.componentDidMount();
+
+        this._init.then(() => {
+            this.state.store.dispatch(setColorScheme(this.props.colorScheme));
+        });
 
         Linking.addEventListener('url', this._onLinkingURL);
     }
