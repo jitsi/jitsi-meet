@@ -1,0 +1,28 @@
+default_platform(:ios)
+
+platform :ios do
+  desc "Push a new beta build to TestFlight"
+  lane :beta do
+    # Set the app identifier
+    update_app_identifier(
+      xcodeproj: "app/app.xcodeproj",
+      plist_path: "src/Info.plist",
+      app_identifier: "com.atlassian.JitsiMeet.ios"
+    )
+
+    # Inrement the build number by 1
+    increment_build_number(
+      build_number: latest_testflight_build_number + 1,
+      xcodeproj: "app/app.xcodeproj"
+    )
+
+    # Actually build the app
+    build_app(scheme: "jitsi-meet", include_bitcode: false)
+
+    # Upload the build to TestFlight (but don't distribute it)
+    upload_to_testflight(skip_submission: true, skip_waiting_for_build_processing: true)
+
+    # Cleanup
+    clean_build_artifacts
+  end
+end

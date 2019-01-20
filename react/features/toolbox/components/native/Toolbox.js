@@ -5,12 +5,13 @@ import { View } from 'react-native';
 import { connect } from 'react-redux';
 
 import { Container } from '../../../base/react';
-import { InviteButton } from '../../../invite';
+import { ChatButton } from '../../../chat';
 
 import AudioMuteButton from '../AudioMuteButton';
 import HangupButton from '../HangupButton';
 import OverflowMenuButton from './OverflowMenuButton';
 import styles, {
+    chatButtonOverride,
     hangupButtonStyles,
     toolbarButtonStyles,
     toolbarToggledButtonStyles
@@ -141,6 +142,35 @@ class Toolbox extends Component<Props, State> {
         return 2 * Math.round(buttonSize / 2);
     }
 
+    /**
+     * Constructs the toggled style of the chat button. This cannot be done by
+     * simple style inheritance due to the size calculation done in this
+     * component.
+     *
+     * @param {Object} baseStyle - The base style that was originally
+     * calculated.
+     * @returns {Object | Array}
+     */
+    _getChatButtonToggledStyle(baseStyle) {
+        if (Array.isArray(baseStyle.style)) {
+            return {
+                ...baseStyle,
+                style: [
+                    ...baseStyle.style,
+                    chatButtonOverride.toggled
+                ]
+            };
+        }
+
+        return {
+            ...baseStyle,
+            style: [
+                baseStyle.style,
+                chatButtonOverride.toggled
+            ]
+        };
+    }
+
     _onLayout: (Object) => void;
 
     /**
@@ -200,7 +230,11 @@ class Toolbox extends Component<Props, State> {
             <View
                 pointerEvents = 'box-none'
                 style = { styles.toolbar }>
-                <InviteButton styles = { buttonStyles } />
+                <ChatButton
+                    styles = { buttonStyles }
+                    toggledStyles = {
+                        this._getChatButtonToggledStyle(toggledButtonStyles)
+                    } />
                 <AudioMuteButton
                     styles = { buttonStyles }
                     toggledStyles = { toggledButtonStyles } />

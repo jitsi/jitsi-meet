@@ -17,6 +17,7 @@ declare var $: Object;
  * @type Array
  */
 const WHITELISTED_KEYS = [
+    '_desktopSharingSourceDevice',
     '_peerConnStatusOutOfLastNTimeout',
     '_peerConnStatusRtcMuteTimeout',
     'abTesting',

@@ -124,6 +124,7 @@ android.libraryVariants.all { def variant ->
         // Bundle sounds
         //
         copy {
+            from("${projectDir}/../../sounds/incomingMessage.wav")
             from("${projectDir}/../../sounds/joined.wav")
             from("${projectDir}/../../sounds/left.wav")
             from("${projectDir}/../../sounds/outgoingRinging.wav")

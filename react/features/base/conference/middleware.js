@@ -15,6 +15,7 @@ import {
     getLocalParticipant,
     getParticipantById,
     getPinnedParticipant,
+    PARTICIPANT_UPDATED,
     PIN_PARTICIPANT
 } from '../participants';
 import { MiddlewareRegistry, StateListenerRegistry } from '../redux';
@@ -79,6 +80,9 @@ MiddlewareRegistry.register(store => next => action => {
 
     case DATA_CHANNEL_OPENED:
         return _syncReceiveVideoQuality(store, next, action);
+
+    case PARTICIPANT_UPDATED:
+        return _updateLocalParticipantInConference(store, next, action);
 
     case PIN_PARTICIPANT:
         return _pinParticipant(store, next, action);
@@ -390,10 +394,18 @@ function _pinParticipant({ getState }, next, action) {
         const local
             = (participantById && participantById.local)
                 || (!id && pinnedParticipant && pinnedParticipant.local);
+        let participantIdForEvent;
+
+        if (local) {
+            participantIdForEvent = local;
+        } else {
+            participantIdForEvent = actionName === ACTION_PINNED
+                ? id : pinnedParticipant && pinnedParticipant.id;
+        }
 
         sendAnalytics(createPinnedEvent(
             actionName,
-            local ? 'local' : id,
+            participantIdForEvent,
             {
                 local,
                 'participant_count': conference.getParticipantCount()
@@ -642,4 +654,28 @@ function _trackAddedOrRemoved(store, next, action) {
     }
 
     return next(action);
+}
+
+/**
+ * Updates the conference object when the local participant is updated.
+ *
+ * @param {Store} store - The redux store in which the specified {@code action}
+ * is being dispatched.
+ * @param {Dispatch} next - The redux {@code dispatch} function to dispatch the
+ * specified {@code action} to the specified {@code store}.
+ * @param {Action} action - The redux action which is being dispatched in the
+ * specified {@code store}.
+ * @private
+ * @returns {Object} The value returned by {@code next(action)}.
+ */
+function _updateLocalParticipantInConference({ getState }, next, action) {
+    const { conference } = getState()['features/base/conference'];
+    const { participant } = action;
+    const result = next(action);
+
+    if (conference && participant.local) {
+        conference.setDisplayName(participant.name);
+    }
+
+    return result;
 }

@@ -670,7 +670,7 @@ UI.handleLastNEndpoints = function(leavingIds, enteringIds) {
  * Prompt user for nickname.
  */
 UI.promptDisplayName = () => {
-    APP.store.dispatch(openDisplayNamePrompt());
+    APP.store.dispatch(openDisplayNamePrompt(undefined));
 };
 
 /**
