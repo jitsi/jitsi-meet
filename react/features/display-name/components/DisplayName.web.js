@@ -6,12 +6,20 @@ import { connect } from 'react-redux';
 import { appendSuffix } from '../functions';
 
 import { translate } from '../../base/i18n';
-import { participantDisplayNameChanged } from '../../base/participants';
+import {
+    getParticipantDisplayName
+} from '../../base/participants';
+import { updateSettings } from '../../base/settings';
 
 /**
  * The type of the React {@code Component} props of {@link DisplayName}.
  */
 type Props = {
+
+    /**
+     * The participant's current display name.
+     */
+    _displayName: string,
 
     /**
      * Whether or not the display name should be editable on click.
@@ -22,11 +30,6 @@ type Props = {
      * Invoked to update the participant's display name.
      */
     dispatch: Dispatch<*>,
-
-    /**
-     * The participant's current display name.
-     */
-    displayName: string,
 
     /**
      * A string to append to the displayName, if provided.
@@ -130,8 +133,8 @@ class DisplayName extends Component<Props, State> {
      */
     render() {
         const {
+            _displayName,
             allowEditing,
-            displayName,
             displayNameSuffix,
             elementID,
             t
@@ -159,7 +162,7 @@ class DisplayName extends Component<Props, State> {
                 className = 'displayname'
                 id = { elementID }
                 onClick = { this._onStartEditing }>
-                { appendSuffix(displayName, displayNameSuffix) }
+                { appendSuffix(_displayName, displayNameSuffix) }
             </span>
         );
     }
@@ -208,7 +211,7 @@ class DisplayName extends Component<Props, State> {
         if (this.props.allowEditing) {
             this.setState({
                 isEditing: true,
-                editDisplayNameValue: this.props.displayName || ''
+                editDisplayNameValue: this.props._displayName || ''
             });
         }
     }
@@ -226,10 +229,12 @@ class DisplayName extends Component<Props, State> {
      */
     _onSubmit() {
         const { editDisplayNameValue } = this.state;
-        const { dispatch, participantID } = this.props;
+        const { dispatch } = this.props;
 
-        dispatch(participantDisplayNameChanged(
-            participantID, editDisplayNameValue));
+        // Store display name in settings
+        dispatch(updateSettings({
+            displayName: editDisplayNameValue
+        }));
 
         this.setState({
             isEditing: false,
@@ -255,4 +260,23 @@ class DisplayName extends Component<Props, State> {
     }
 }
 
-export default translate(connect()(DisplayName));
+/**
+ * Maps (parts of) the redux state to the props of this component.
+ *
+ * @param {Object} state - The redux store/state.
+ * @param {Props} ownProps - The own props of the component.
+ * @private
+ * @returns {{
+ *     _displayName: string
+ * }}
+ */
+function _mapStateToProps(state, ownProps) {
+    const { participantID } = ownProps;
+
+    return {
+        _displayName: getParticipantDisplayName(
+            state, participantID)
+    };
+}
+
+export default translate(connect(_mapStateToProps)(DisplayName));

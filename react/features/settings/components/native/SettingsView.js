@@ -3,29 +3,27 @@
 import React from 'react';
 import {
     Alert,
-    Modal,
     SafeAreaView,
     ScrollView,
     Switch,
-    Text,
     TextInput,
     View
 } from 'react-native';
 import { connect } from 'react-redux';
 
 import { translate } from '../../../base/i18n';
-import { Header } from '../../../base/react';
+import { BackButton, Header, Modal } from '../../../base/react';
 
 import {
     AbstractSettingsView,
     _mapStateToProps
 } from '../AbstractSettingsView';
 import { setSettingsViewVisible } from '../../actions';
-import BackButton from './BackButton';
 import FormRow from './FormRow';
 import FormSectionHeader from './FormSectionHeader';
 import { normalizeUserInputURL } from '../../functions';
 import styles from './styles';
+import { HeaderLabel } from '../../../base/react/components/native';
 
 /**
  * The native container rendering the app settings page.
@@ -59,13 +57,8 @@ class SettingsView extends AbstractSettingsView {
     render() {
         return (
             <Modal
-                animationType = 'slide'
                 onRequestClose = { this._onRequestClose }
-                presentationStyle = 'fullScreen'
-                supportedOrientations = { [
-                    'landscape',
-                    'portrait'
-                ] }
+                presentationStyle = 'overFullScreen'
                 visible = { this.props._visible }>
                 <View style = { Header.pageStyle }>
                     { this._renderHeader() }
@@ -205,13 +198,7 @@ class SettingsView extends AbstractSettingsView {
         return (
             <Header>
                 <BackButton onPress = { this._onRequestClose } />
-                <Text
-                    style = { [
-                        styles.text,
-                        Header.textStyle
-                    ] }>
-                    { this.props.t('settingsView.header') }
-                </Text>
+                <HeaderLabel labelKey = 'settingsView.header' />
             </Header>
         );
     }

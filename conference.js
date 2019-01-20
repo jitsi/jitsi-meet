@@ -76,10 +76,10 @@ import {
     dominantSpeakerChanged,
     getAvatarURLByParticipantId,
     getLocalParticipant,
+    getNormalizedDisplayName,
     getParticipantById,
     localParticipantConnectionStatusChanged,
     localParticipantRoleChanged,
-    MAX_DISPLAY_NAME_LENGTH,
     participantConnectionStatusChanged,
     participantPresenceChanged,
     participantRoleChanged,
@@ -1488,6 +1488,8 @@ export default {
         const wasVideoMuted = this.isLocalVideoMuted();
 
         return createLocalTracksF({
+            desktopSharingSourceDevice: options.desktopSharingSources
+                ? null : config._desktopSharingSourceDevice,
             desktopSharingSources: options.desktopSharingSources,
             devices: [ 'desktop' ],
             desktopSharingExtensionExternalInstallation: {
@@ -1645,6 +1647,7 @@ export default {
         // Handling:
         // JitsiTrackErrors.PERMISSION_DENIED
         // JitsiTrackErrors.CHROME_EXTENSION_INSTALLATION_ERROR
+        // JitsiTrackErrors.CONSTRAINT_FAILED
         // JitsiTrackErrors.GENERAL
         // and any other
         let descriptionKey;
@@ -1668,6 +1671,9 @@ export default {
                 descriptionKey = 'dialog.screenSharingPermissionDeniedError';
                 titleKey = 'dialog.screenSharingFailedToInstallTitle';
             }
+        } else if (error.name === JitsiTrackErrors.CONSTRAINT_FAILED) {
+            descriptionKey = 'dialog.cameraConstraintFailedError';
+            titleKey = 'deviceError.cameraError';
         } else {
             descriptionKey = 'dialog.screenSharingFailedToInstall';
             titleKey = 'dialog.screenSharingFailedToInstallTitle';
@@ -1841,7 +1847,7 @@ export default {
             JitsiConferenceEvents.DISPLAY_NAME_CHANGED,
             (id, displayName) => {
                 const formattedDisplayName
-                    = displayName.substr(0, MAX_DISPLAY_NAME_LENGTH);
+                    = getNormalizedDisplayName(displayName);
 
                 APP.store.dispatch(participantUpdated({
                     conference: room,
@@ -2503,6 +2509,9 @@ export default {
             requestFeedbackPromise,
             this.leaveRoomAndDisconnect()
         ]).then(values => {
+            this._room = undefined;
+            room = undefined;
+
             APP.API.notifyReadyToClose();
             maybeRedirectToWelcomePage(values[0]);
         });
@@ -2517,11 +2526,7 @@ export default {
         APP.store.dispatch(conferenceWillLeave(room));
 
         return room.leave()
-            .then(disconnect, disconnect)
-            .then(() => {
-                this._room = undefined;
-                room = undefined;
-            });
+            .then(disconnect, disconnect);
     },
 
     /**
@@ -2627,8 +2632,7 @@ export default {
      * @param nickname {string} the new display name
      */
     changeLocalDisplayName(nickname = '') {
-        const formattedNickname
-            = nickname.trim().substr(0, MAX_DISPLAY_NAME_LENGTH);
+        const formattedNickname = getNormalizedDisplayName(nickname);
         const { id, name } = getLocalParticipant(APP.store.getState());
 
         if (formattedNickname === name) {
@@ -2660,7 +2664,6 @@ export default {
         });
 
         if (room) {
-            room.setDisplayName(formattedNickname);
             APP.UI.changeDisplayName(id, formattedNickname);
         }
     },

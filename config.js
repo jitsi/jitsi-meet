@@ -410,6 +410,13 @@ var config = {
         analyticsInterval: 60000
     },
 
+    // If set, will attempt to use the provided video input device label when
+    // triggering a screenshare, instead of proceeding through the normal flow
+    // for obtaining a desktop stream.
+    // NOTE: This option is experimental and is currently intended for internal
+    // use only.
+    // _desktopSharingSourceDevice: 'sample-id-or-label'
+
     // List of undocumented settings used in jitsi-meet
     etherpad_base: 'https://i.vmeeting.top/etherpad/p/'
 

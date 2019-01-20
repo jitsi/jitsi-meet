@@ -150,6 +150,7 @@
 				B35383AD1DDA0083008F406A /* Adjust embedded framework architectures */,
 				0BB7DA181EC9E695007AAE98 /* Adjust ATS */,
 				DEC2069321CBBD6900072F03 /* Setup Fabric */,
+				DE11877A21EE09640078D059 /* Setup Google reverse URL handler */,
 			);
 			buildRules = (
 			);
@@ -278,6 +279,24 @@
 			shellPath = /bin/sh;
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
+		};
+		DE11877A21EE09640078D059 /* Setup Google reverse URL handler */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "Setup Google reverse URL handler";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "INFO_PLIST=\"$BUILT_PRODUCTS_DIR/$INFOPLIST_PATH\"\nREVERSED_CLIENT_ID=$(/usr/libexec/PlistBuddy -c \"Print :REVERSED_CLIENT_ID:\" $PROJECT_DIR/GoogleService-Info.plist)\n\n/usr/libexec/PlistBuddy -c \"Set :CFBundleURLTypes:1:CFBundleURLSchemes:0 $REVERSED_CLIENT_ID\" $INFO_PLIST\n";
 		};
 		DEC2069321CBBD6900072F03 /* Setup Fabric */ = {
 			isa = PBXShellScriptBuildPhase;
