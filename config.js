@@ -35,10 +35,10 @@ var config = {
 
         // XMPP MUC domain. FIXME: use XEP-0030 to discover it.
         muc: 'conference.i.vmeeting.top',
-        bridge: 'jitsi-videobridge.i.vmeeting.top',
-        focus: 'focus.i.vmeeting.top'
+        //bridge: 'jitsi-videobridge.i.vmeeting.top',
+        //focus: 'focus.i.vmeeting.top'
     },
-    useNicks: false,
+    useNicks: true,
 
     // BOSH URL. FIXME: use XEP-0156 to discover it.
     bosh: '//i.vmeeting.top/http-bind',
@@ -59,7 +59,7 @@ var config = {
 
         // P2P test mode disables automatic switching to P2P when there are 2
         // participants in the conference.
-        p2pTestMode: true
+        p2pTestMode: false
 
         // Enables the test specific features consumed by jitsi-meet-torture
         // testMode: false
@@ -137,7 +137,7 @@ var config = {
     // Note that it's not recommended to do this because simulcast is not
     // supported when  using H.264. For 1-to-1 calls this setting is enabled by
     // default and can be toggled in the p2p section.
-    // preferH264: true,
+    preferH264: true,
 
     // If set to true, disable H.264 video codec by stripping it out of the
     // SDP.
@@ -146,7 +146,7 @@ var config = {
     // Desktop sharing
 
     // The ID of the jidesha extension for Chrome.
-    // desktopSharingChromeExtId: 'kglhbbefdnlheedjiejgomgmfplipfeb',
+    desktopSharingChromeExtId: null,
 
     // Whether desktop sharing should be disabled on Chrome.
     desktopSharingChromeDisabled: true,
@@ -186,7 +186,7 @@ var config = {
 
     // Transcription (in interface_config,
     // subtitles and buttons can be configured)
-    // transcribingEnabled: false,
+    //transcribingEnabled: false,
 
     // Misc
 
@@ -309,25 +309,25 @@ var config = {
         enabled: true,
 
         // Use XEP-0215 to fetch STUN and TURN servers.
-        useStunTurn: true,
+        //useStunTurn: true,
 
         // The STUN servers that will be used in the peer to peer connections
         stunServers: [
-            {
-                urls: 'turn:47.100.170.169:34708',
-                credential: 'QMturnuser',
-                password: 'QMturnpass'
-            },
-            {
-                urls: 'turn:39.105.139.90:34708',
-                credential: 'QMturnuser',
-                password: 'QMturnpass'
-            },
-            {
-                urls: 'turn:211.149.170.209:34708',
-                credential: 'QMturnuser',
-                password: 'QMturnpass'
-            },
+            // {
+            //     urls: 'turn:47.100.170.169:34708',
+            //     credential: 'QMturnuser',
+            //     password: 'QMturnpass'
+            // },
+            // {
+            //     urls: 'turn:39.105.139.90:34708',
+            //     credential: 'QMturnuser',
+            //     password: 'QMturnpass'
+            // },
+            // {
+            //     urls: 'turn:211.149.170.209:34708',
+            //     credential: 'QMturnuser',
+            //     password: 'QMturnpass'
+            // },
             { urls: 'stun:211.149.170.209:34708' },
             { urls: 'stun:39.105.139.90:34708' },
             { urls: 'stun:47.100.170.169:34708' }
