@@ -382,10 +382,11 @@ export function createConference() {
  * @returns {Function}
  */
 export function checkIfCanJoin() {
-    return (dispatch: Dispatch<*>, getState: Function) => {
+    return (dispatch: Function, getState: Function) => {
         const { authRequired, password }
             = getState()['features/base/conference'];
 
+        authRequired && dispatch(_conferenceWillJoin(authRequired));
         authRequired && authRequired.join(password);
     };
 }
