@@ -6,6 +6,7 @@ import {
     type AbstractButtonProps
 } from '../../base/toolbox';
 import { openDialog } from '../../base/dialog';
+import { translate } from '../../base/i18n';
 
 import PollDialog from './PollDialog';
 
@@ -14,7 +15,12 @@ export type Props = AbstractButtonProps & {
     /**
      * Redux dispatch function.
      */
-    dispatch: Function
+    dispatch: Function,
+
+    /**
+     * The i18n translate function.
+     */
+    t: Function
 };
 
 /**
@@ -23,6 +29,8 @@ export type Props = AbstractButtonProps & {
 class PollButton<P: Props> extends AbstractButton<P, *> {
     label = 'dialog.polls';
     toggledLabel = 'dialog.polls';
+    iconName = 'icon-polls';
+    toggledIconName = 'icon-polls';
 
     /**
      * Action handler when button is clicked.
@@ -52,4 +60,4 @@ class PollButton<P: Props> extends AbstractButton<P, *> {
     }
 }
 
-export default connect()(PollButton);
+export default translate(connect()(PollButton));

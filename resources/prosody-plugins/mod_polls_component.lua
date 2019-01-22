@@ -1,8 +1,5 @@
 local get_room_from_jid = module:require "util".get_room_from_jid;
-local jid_resource = require "util.jid".resource;
-local ext_events = module:require "ext_events"
 local st = require "util.stanza";
-local socket = require "socket";
 local json = require "util.json";
 
 local muc_component_host = module:get_option_string("muc_component");
@@ -33,6 +30,8 @@ function on_message(event)
             log("warn", "No room found %s", roomAddress);
             return false;
         end
+
+        log("info", "%s", tostring(polls.attr.poll));
 
         if polls.attr.poll then
             room.poll = polls.attr.poll;

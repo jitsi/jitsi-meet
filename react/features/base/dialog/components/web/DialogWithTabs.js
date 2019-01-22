@@ -36,10 +36,14 @@ export type Props = {
     disableBlanketClickDismiss: boolean,
 
     /**
+     * Optional i18n key to change the ok button title.
+     */
+    okTitleKey: string,
+
+    /**
      * Callback invoked when the Save button has been pressed.
      */
     onSubmit: Function,
-
 
     /**
      * Invoked to obtain translated strings.
@@ -110,6 +114,7 @@ class DialogWithTabs extends Component<Props, State> {
             <StatelessDialog
                 disableBlanketClickDismiss
                     = { this.props.disableBlanketClickDismiss }
+                okTitleKey = { this.props.okTitleKey }
                 onCancel = { onCancel }
                 onSubmit = { this._onSubmit }
                 titleKey = { this.props.titleKey } >

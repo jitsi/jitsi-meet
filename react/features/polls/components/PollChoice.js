@@ -80,15 +80,17 @@ class PollChoice extends Component<Props, *> {
         const itemControls = this.props.editable
             ? (
                 <div
-                    id = { 'poll-item-button' } >
+                    className = { 'pollChoiceRemoveButtonContainer' } >
                     <button
+                        id = { 'pollChoiceRemoveButton' }
                         onClick = { this._onClickHandler }
-                        text = { '+' }
-                        type = { 'button' } />
+                        type = { 'button' } >
+                        ×
+                    </button>
                 </div>
             ) : (
                 <div
-                    id = { 'poll-item-votes' } >
+                    className = { 'pollChoiceVotesContainer' } >
                     <label>
                         { this.props.votes }
                     </label>
@@ -98,21 +100,25 @@ class PollChoice extends Component<Props, *> {
         return (
             <li>
                 <div
-                    id = { 'poll-item' } >
+                    className = { 'pollChoiceContainer' } >
                     <div
-                        id = { 'poll-item-radio' } >
+                        className = { 'pollVoteButtonContainer' } >
                         <input
                             checked = { selected }
                             disabled = { disabled }
+                            id = { 'pollVoteButton' }
                             onClick = { this._onVoteChange }
                             type = { 'radio' }
                             value = { '' } />
                     </div>
                     <div
-                        id = { 'poll-item-text' } >
+                        className = { 'pollChoiceTextContainer' } >
                         <FieldTextStateless
                             disabled = { !editable }
+                            id = { 'pollChoiceText' }
+                            isLabelHidden = { true }
                             onChange = { this._onTextChange }
+                            shouldFitContainer = { true }
                             value = { this.props.text } />
                     </div>
                     { itemControls }

@@ -82,17 +82,20 @@ class PollResultsForm extends Component<Props, *> {
 
         return (
             <Container
+                className = { 'pollResultsFormContainer' }
                 key = { num.toString() } >
                 <FieldTextStateless
                     autoFocus = { true }
                     disabled = { true }
-                    id = { 'poll-question' }
+                    id = { 'pollQuestion' }
+                    isLabelHidden = { true }
                     type = 'text'
                     value = { question.text } />
 
-                <div>
+                <div
+                    className = { 'pollChoicesListContainer' } >
                     <ul
-                        id = { 'poll-items-list' } >
+                        id = { 'pollChoicesList' } >
                         { renderedChoices }
                     </ul>
                 </div>

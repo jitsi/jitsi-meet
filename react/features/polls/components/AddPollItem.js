@@ -29,11 +29,13 @@ class AddPollItem extends Component<Props, *> {
      */
     render() {
         return (
-            <div>
+            <div
+                className = { 'pollNewChoiceButtonContainer' } >
                 <button
-                    id = { 'new-poll-choice-button' }
-                    onClick = { this._onClick }
-                    text = { '+' } />
+                    id = { 'pollNewChoiceButton' }
+                    onClick = { this._onClick } >
+                    +
+                </button>
             </div>
         );
     }

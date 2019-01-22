@@ -1,52 +1,62 @@
-#poll-items-list {
+.pollCreateFormContainer, .voteFormContainer, .pollResultsFormContainer {
+    width: 500px;
+    text-align:center;
+}
+.pollChoicesListContainer {
+    text-align: center;
+}
+#pollChoicesList {
     list-style-type: none;
 }
-#poll-item {
+.pollChoiceContainer {
     width: 300px;
-    height: 50px;
+    height: 40px;
     display: flex;
     align-items: center;
-    min-height: 20px;
+    margin: auto;
 }
-#poll-item-radio {
+.pollVoteButtonContainer {
+    flex-direction: row;
+}
+#pollVoteButton {
     margin-right: 5px;
+    cursor: pointer;
+    height: 20px;
 }
-#poll-item-text {
-    width: 200px;
-    padding: 5px;
-    min-height: 20px;
+.pollChoiceTextContainer {
+    width: 220px;
+    flex-direction: row;
 }
-#poll-item-votes {
-    margin-left: 5x;
+#pollQuestion {
+    width: 350px;
+    min-width: 100px;
+}
+.pollChoiceVotesContainer {
+    margin-left: 5px;
     margin-right: 5px;
     border-radius: 50%;
     border: 2px solid #666;
     text-align: center;
+    flex-direction: row;
 }
-#poll-item-button {
+.pollChoiceRemoveButtonContainer {
+    flex-direction: row;
+}
+#pollChoiceRemoveButton {
     margin-left: 5px;
-    border: none;
-    text-align: center;
-    text-decoration: none;
-    display: inline-block;
+    font-size: 14px;
+    cursor: pointer;
     border-radius: 50%;
-    transform: rotate(90deg);
+    background-color: #fc0000;
 }
-#new-poll-choice-button {
-    width: 10px;
-    height: 10px;
-    text-align: center;
-    text-decoration: none;
+.pollNewChoiceButtonContainer {
+    margin: auto;
+}
+#pollNewChoiceButton {
+    margin-top: 5px;
+    font-size: 14px;
     display: inline-block;
+    text-align: center;
     border-radius: 50%;
-}
-.new-poll-button {
-    width: 30px;
-    height: 20px;
-    text-align: center;
-    text-decoration: none;
-    display: inline-block;
-}
-#poll-create-form {
-    width: 500px;
+    cursor: pointer;
 }

@@ -6,8 +6,6 @@ import {
     Container
 } from '../../base/react';
 import { FieldTextStateless } from '@atlaskit/field-text';
-import { getLocalParticipant } from '../../base/participants';
-import { vote, endPoll } from '../actions';
 import PollChoice from './PollChoice';
 
 type Props = {
@@ -21,6 +19,11 @@ type Props = {
      * Redux.
      */
     dispatch: Function,
+
+    /**
+     * Function handler when vote button clicked.
+     */
+    onVoteClicked: Function,
 
     /**
      * Current Poll Object.
@@ -40,7 +43,7 @@ type Props = {
     /**
      * Poll questions.
      */
-    questions: Object,
+    questions: Object
 };
 
 /**
@@ -56,8 +59,6 @@ class VoteForm extends Component<Props, *> {
         super(props);
 
         this._renderPollChoice = this._renderPollChoice.bind(this);
-        this._voteButtonClicked = this._voteButtonClicked.bind(this);
-        this._onEndVoteClicked = this._onEndVoteClicked.bind(this);
     }
 
     /**
@@ -66,31 +67,28 @@ class VoteForm extends Component<Props, *> {
      * @inheritdoc
      */
     render() {
-        const { poll, questions, userID } = this.props;
+        const { poll, questions } = this.props;
         const question = questions[poll.question];
         const renderedChoices = poll.choices.map(this._renderPollChoice);
-        const endVoteDisabled = poll.owner !== userID;
 
         return (
-            <Container>
+            <Container
+                className = { 'voteFormContainer' }>
                 <FieldTextStateless
                     autoFocus = { true }
                     disabled = { true }
-                    id = { 'poll-question' }
+                    id = { 'pollQuestion' }
+                    isLabelHidden = { true }
                     type = 'text'
                     value = { question.text } />
 
-                <div>
+                <div
+                    className = { 'pollChoicesListContainer' } >
                     <ul
-                        id = { 'poll-items-list' } >
+                        id = { 'pollChoicesList' } >
                         { renderedChoices }
                     </ul>
                 </div>
-
-                <button
-                    disabled = { endVoteDisabled }
-                    id = { 'end-poll-button' }
-                    onClick = { this._onEndVoteClicked } />
             </Container>
         );
     }
@@ -105,7 +103,7 @@ class VoteForm extends Component<Props, *> {
      * @returns {Component}
      */
     _renderPollChoice(item: string, id: number) {
-        const { choices, userID } = this.props;
+        const { choices, userID, onVoteClicked } = this.props;
         const choice = choices[item];
         const numberOfVotes = choice.votes.length;
         const selected = choice.votes.findIndex(x => x === userID) > -1;
@@ -118,35 +116,9 @@ class VoteForm extends Component<Props, *> {
                 key = { id.toString() }
                 selected = { selected }
                 text = { choice.text }
-                voteHandler = { this._voteButtonClicked }
+                voteHandler = { onVoteClicked }
                 votes = { numberOfVotes } />
         );
-    }
-
-    _voteButtonClicked: (string) => void;
-
-    /**
-     * Handle logic for voting for a specific option.
-     *
-     * @param {string} id - ID of selected item.
-     * @returns {boolean}
-     */
-    _voteButtonClicked(id: string) {
-        this.props.dispatch(vote(id));
-    }
-
-    _onEndVoteClicked: (Object) => boolean;
-
-    /**
-     * End Poll Session button handler.
-     *
-     * @param {Object} event - Button click event.
-     * @returns {boolean}
-     */
-    _onEndVoteClicked(event: Object) {
-        event.preventDefault();
-
-        this.props.dispatch(endPoll());
     }
 }
 
@@ -163,11 +135,9 @@ function _mapStateToProps(state: Object) {
         polls,
         questions
     } = state['features/polls'];
-    const userID = getLocalParticipant(state).id;
 
     return {
         poll: polls[currentPoll],
-        userID,
         questions,
         choices
     };
