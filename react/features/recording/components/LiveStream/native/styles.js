@@ -99,8 +99,7 @@ export default createStyleSheet({
      * Label for the previous field.
      */
     streamKeyInputLabel: {
-        alignSelf: 'flex-start',
-        color: ColorPalette.white
+        alignSelf: 'flex-start'
     },
 
     /**
@@ -146,7 +145,8 @@ export default createStyleSheet({
     },
 
     text: {
-        color: ColorPalette.white
+        fontSize: 14,
+        textAlign: 'left'
     },
 
     /**

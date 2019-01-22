@@ -1,13 +1,16 @@
 import { StyleSheet } from 'react-native';
 
-import { ColorPalette, createStyleSheet } from '../../base/styles';
+import { ColorSchemeRegistry, schemeColor } from '../../base/color-scheme';
 
 /**
  * Size for the Avatar.
  */
 export const AVATAR_SIZE = 200;
 
-export default createStyleSheet({
+/**
+ * Color schemed styles for the @{LargeVideo} component.
+ */
+ColorSchemeRegistry.register('LargeVideo', {
 
     /**
      * Large video container style.
@@ -15,7 +18,7 @@ export default createStyleSheet({
     largeVideo: {
         ...StyleSheet.absoluteFillObject,
         alignItems: 'stretch',
-        backgroundColor: ColorPalette.appBackground,
+        backgroundColor: schemeColor('background'),
         flex: 1,
         justifyContent: 'center'
     }

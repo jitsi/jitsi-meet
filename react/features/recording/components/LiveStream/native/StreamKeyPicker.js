@@ -8,14 +8,22 @@ import {
     TouchableOpacity,
     View
 } from 'react-native';
+import { connect } from 'react-redux';
 
+import { _abstractMapStateToProps } from '../../../../base/dialog';
 import { translate } from '../../../../base/i18n';
+import { StyleType } from '../../../../base/styles';
 
 import { YOUTUBE_LIVE_DASHBOARD_URL } from '../constants';
 
 import styles, { ACTIVE_OPACITY, TOUCHABLE_UNDERLAY } from './styles';
 
 type Props = {
+
+    /**
+     * Style of the dialogs feature.
+     */
+    _dialogStyles: StyleType,
 
     /**
      * The list of broadcasts the user can pick from.
@@ -74,7 +82,7 @@ class StreamKeyPicker extends Component<Props, State> {
      * @inheritdoc
      */
     render() {
-        const { broadcasts } = this.props;
+        const { _dialogStyles, broadcasts } = this.props;
 
         if (!broadcasts) {
             return null;
@@ -85,7 +93,11 @@ class StreamKeyPicker extends Component<Props, State> {
                 <View style = { styles.formWrapper }>
                     <TouchableOpacity
                         onPress = { this._onOpenYoutubeDashboard }>
-                        <Text style = { styles.warningText }>
+                        <Text
+                            style = { [
+                                _dialogStyles.text,
+                                styles.warningText
+                            ] }>
                             { this.props.t(
                                 'liveStreaming.getStreamKeyManually') }
                         </Text>
@@ -97,7 +109,11 @@ class StreamKeyPicker extends Component<Props, State> {
         return (
             <View style = { styles.formWrapper }>
                 <View style = { styles.streamKeyPickerCta }>
-                    <Text style = { styles.text }>
+                    <Text
+                        style = { [
+                            _dialogStyles.text,
+                            styles.text
+                        ] }>
                         { this.props.t('liveStreaming.choose') }
                     </Text>
                 </View>
@@ -113,7 +129,11 @@ class StreamKeyPicker extends Component<Props, State> {
                                     ? styles.streamKeyPickerItemHighlight : null
                             ] }
                             underlayColor = { TOUCHABLE_UNDERLAY }>
-                            <Text style = { styles.text }>
+                            <Text
+                                style = { [
+                                    _dialogStyles.text,
+                                    styles.text
+                                ] }>
                                 { broadcast.title }
                             </Text>
                         </TouchableHighlight>))
@@ -155,4 +175,5 @@ class StreamKeyPicker extends Component<Props, State> {
     }
 }
 
-export default translate(StreamKeyPicker);
+export default translate(
+    connect(_abstractMapStateToProps)(StreamKeyPicker));

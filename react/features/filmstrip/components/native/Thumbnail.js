@@ -3,6 +3,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
+import { ColorSchemeRegistry } from '../../../base/color-scheme';
 import { openDialog } from '../../../base/dialog';
 import { Audio, MEDIA_TYPE } from '../../../base/media';
 import {
@@ -12,6 +13,7 @@ import {
     pinParticipant
 } from '../../../base/participants';
 import { Container } from '../../../base/react';
+import { StyleType } from '../../../base/styles';
 import { getTrackByMediaTypeAndParticipant } from '../../../base/tracks';
 
 import { RemoteVideoMenu } from '../../../remote-video-menu';
@@ -52,6 +54,11 @@ type Props = {
      * Handles long press on the thumbnail.
      */
     _onShowRemoteVideoMenu: ?Function,
+
+    /**
+     * The color-schemed stylesheet of the feature.
+     */
+    _styles: StyleType,
 
     /**
      * The Redux representation of the participant's video track.
@@ -106,6 +113,7 @@ class Thumbnail extends Component<Props> {
             _largeVideo: largeVideo,
             _onClick,
             _onShowRemoteVideoMenu,
+            _styles,
             _videoTrack: videoTrack,
             disablePin,
             disableTint,
@@ -135,7 +143,7 @@ class Thumbnail extends Component<Props> {
                 style = { [
                     styles.thumbnail,
                     participant.pinned && !disablePin
-                        ? styles.thumbnailPinned : null,
+                        ? _styles.thumbnailPinned : null,
                     this.props.styleOverrides || null
                 ] }
                 touchFeedback = { false }>
@@ -148,7 +156,9 @@ class Thumbnail extends Component<Props> {
                 <ParticipantView
                     avatarSize = { AVATAR_SIZE }
                     participantId = { participantId }
+                    style = { _styles.participantViewStyle }
                     tintEnabled = { participantInLargeVideo && !disableTint }
+                    tintStyle = { _styles.activeThumbnailTint }
                     zOrder = { 1 } />
 
                 { participant.role === PARTICIPANT_ROLE.MODERATOR
@@ -219,6 +229,7 @@ function _mapDispatchToProps(dispatch: Function, ownProps): Object {
  *      _audioTrack: Track,
  *      _isModerator: boolean,
  *      _largeVideo: Object,
+ *      _styles: StyleType,
  *      _videoTrack: Track
  *  }}
  */
@@ -238,6 +249,7 @@ function _mapStateToProps(state, ownProps) {
         _audioTrack: audioTrack,
         _isModerator: isLocalParticipantModerator(state),
         _largeVideo: largeVideo,
+        _styles: ColorSchemeRegistry.get(state, 'Thumbnail'),
         _videoTrack: videoTrack
     };
 }
