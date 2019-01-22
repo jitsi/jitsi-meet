@@ -5,6 +5,7 @@ import { Linking } from 'react-native';
 
 import '../../analytics';
 import '../../authentication';
+import { setColorScheme } from '../../base/color-scheme';
 import { DialogContainer } from '../../base/dialog';
 import '../../base/jwt';
 import { Platform } from '../../base/react';
@@ -36,6 +37,11 @@ const logger = require('jitsi-meet-logger').getLogger(__filename);
 type Props = AbstractAppProps & {
 
     /**
+     * An object of colors that override the default colors of the app/sdk.
+     */
+    colorScheme: Object,
+
+    /**
      * Whether Picture-in-Picture is enabled. If {@code true}, a toolbar button
      * is rendered in the {@link Conference} view to afford entering
      * Picture-in-Picture.
@@ -56,6 +62,8 @@ type Props = AbstractAppProps & {
  * @extends AbstractApp
  */
 export class App extends AbstractApp {
+    _init: Promise<*>;
+
     /**
      * Initializes a new {@code App} instance.
      *
@@ -85,6 +93,12 @@ export class App extends AbstractApp {
      */
     componentDidMount() {
         super.componentDidMount();
+
+        this._init.then(() => {
+            // We set the color scheme early enough so then we avoid any
+            // unnecessary re-renders.
+            this.state.store.dispatch(setColorScheme(this.props.colorScheme));
+        });
 
         Linking.addEventListener('url', this._onLinkingURL);
     }
