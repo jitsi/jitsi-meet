@@ -5,7 +5,7 @@ import CallKit from './CallKit';
 import ConnectionService from './ConnectionService';
 
 (CallKit || ConnectionService) && ReducerRegistry.register(
-    'features/callkit',
+    'features/call-integration',
     (state = {}, action) => {
         switch (action.type) {
         case _SET_CALL_INTEGRATION_SUBSCRIPTIONS:

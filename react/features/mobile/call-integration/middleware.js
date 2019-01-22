@@ -338,7 +338,7 @@ function _setAudioOnly({ getState }, next, action) {
  * @returns {*} The value returned by {@code next(action)}.
  */
 function _setCallKitSubscriptions({ getState }, next, action) {
-    const { subscriptions } = getState()['features/callkit'];
+    const { subscriptions } = getState()['features/call-integration'];
 
     if (subscriptions) {
         for (const subscription of subscriptions) {
