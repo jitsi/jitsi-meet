@@ -18,6 +18,7 @@ export const ColorPalette = {
      * the sake of consistency.
      */
     black: BLACK,
+    blackBlue: 'rgb(0, 3, 6)',
     blue: '#17A0DB',
     blueHighlight: '#1081b2',
     buttonUnderlay: '#495258',

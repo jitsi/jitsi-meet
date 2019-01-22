@@ -3,10 +3,12 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
+import { ColorSchemeRegistry } from '../../base/color-scheme';
 import { ParticipantView } from '../../base/participants';
 import { DimensionsDetector } from '../../base/responsive-ui';
+import { StyleType } from '../../base/styles';
 
-import styles, { AVATAR_SIZE } from './styles';
+import { AVATAR_SIZE } from './styles';
 
 /**
  * The type of the React {@link Component} props of {@link LargeVideo}.
@@ -14,16 +16,21 @@ import styles, { AVATAR_SIZE } from './styles';
 type Props = {
 
     /**
-     * Callback to invoke when the {@code LargeVideo} is clicked/pressed.
-     */
-    onClick: Function,
-
-    /**
      * The ID of the participant (to be) depicted by LargeVideo.
      *
      * @private
      */
-    _participantId: string
+    _participantId: string,
+
+    /**
+     * The color-schemed stylesheet of the feature.
+     */
+    _styles: StyleType,
+
+    /**
+     * Callback to invoke when the {@code LargeVideo} is clicked/pressed.
+     */
+    onClick: Function,
 };
 
 /**
@@ -114,6 +121,7 @@ class LargeVideo extends Component<Props, State> {
         } = this.state;
         const {
             _participantId,
+            _styles,
             onClick
         } = this.props;
 
@@ -124,7 +132,7 @@ class LargeVideo extends Component<Props, State> {
                     avatarSize = { avatarSize }
                     onPress = { onClick }
                     participantId = { _participantId }
-                    style = { styles.largeVideo }
+                    style = { _styles.largeVideo }
                     testHintId = 'org.jitsi.meet.LargeVideo'
                     useConnectivityInfoLabel = { useConnectivityInfoLabel }
                     zOrder = { 0 }
@@ -140,12 +148,14 @@ class LargeVideo extends Component<Props, State> {
  * @param {Object} state - Redux state.
  * @private
  * @returns {{
- *     _participantId: string
+ *     _participantId: string,
+ *     _styles: StyleType
  * }}
  */
 function _mapStateToProps(state) {
     return {
-        _participantId: state['features/large-video'].participantId
+        _participantId: state['features/large-video'].participantId,
+        _styles: ColorSchemeRegistry.get(state, 'LargeVideo')
     };
 }
 

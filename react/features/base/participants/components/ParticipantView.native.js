@@ -12,6 +12,7 @@ import {
     VideoTrack
 } from '../../media';
 import { Container, TintedView } from '../../react';
+import { StyleType } from '../../styles';
 import { TestHint } from '../../testing/components';
 import { getTrackByMediaTypeAndParticipant } from '../../tracks';
 
@@ -96,6 +97,11 @@ type Props = {
      * avatar is rendered.
      */
     tintEnabled: boolean,
+
+    /**
+     * The style of the tinting when applied.
+     */
+    tintStyle: StyleType,
 
     /**
      * The test hint id which can be used to locate the {@code ParticipantView}
@@ -186,11 +192,12 @@ class ParticipantView extends Component<Props> {
      */
     render() {
         const {
-            onPress,
             _avatar: avatar,
             _connectionStatus: connectionStatus,
             _renderVideo: renderVideo,
-            _videoTrack: videoTrack
+            _videoTrack: videoTrack,
+            onPress,
+            tintStyle
         } = this.props;
 
         const waitForVideoStarted = false;
@@ -199,9 +206,10 @@ class ParticipantView extends Component<Props> {
         const renderAvatar = Boolean(!renderVideo && avatar);
 
         // If the connection has problems, we will "tint" the video / avatar.
+        const connectionProblem
+            = connectionStatus !== JitsiParticipantConnectionStatus.ACTIVE;
         const useTint
-            = connectionStatus !== JitsiParticipantConnectionStatus.ACTIVE
-                || this.props.tintEnabled;
+            = connectionProblem || this.props.tintEnabled;
 
         const testHintId
             = this.props.testHintId
@@ -238,7 +246,9 @@ class ParticipantView extends Component<Props> {
                 { useTint
 
                     // If the connection has problems, tint the video / avatar.
-                    && <TintedView /> }
+                    && <TintedView
+                        style = {
+                            connectionProblem ? undefined : tintStyle } /> }
 
                 { this.props.useConnectivityInfoLabel
                     && this._renderConnectionInfo(connectionStatus) }

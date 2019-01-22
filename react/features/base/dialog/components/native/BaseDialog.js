@@ -8,6 +8,7 @@ import {
 } from 'react-native';
 
 import { Icon } from '../../../font-icons';
+import { StyleType } from '../../../styles';
 
 import AbstractDialog, {
     type Props as AbstractProps,
@@ -17,6 +18,11 @@ import { brandedDialog as styles } from './styles';
 
 export type Props = {
     ...AbstractProps,
+
+    /**
+     * The color-schemed stylesheet of the feature.
+     */
+    _dialogStyles: StyleType,
 
     t: Function
 }
@@ -43,7 +49,7 @@ class BaseDialog<P: Props, S: State> extends AbstractDialog<P, S> {
      * @returns {ReactElement}
      */
     render() {
-        const { style } = this.props;
+        const { _dialogStyles, style } = this.props;
 
         return (
             <View
@@ -55,7 +61,7 @@ class BaseDialog<P: Props, S: State> extends AbstractDialog<P, S> {
                 <View
                     pointerEvents = 'box-none'
                     style = { [
-                        styles.dialog,
+                        _dialogStyles.dialog,
                         this.props.style
                     ] }>
                     <TouchableOpacity
@@ -63,7 +69,7 @@ class BaseDialog<P: Props, S: State> extends AbstractDialog<P, S> {
                         style = { styles.closeWrapper }>
                         <Icon
                             name = 'close'
-                            style = { styles.closeStyle } />
+                            style = { _dialogStyles.closeStyle } />
                     </TouchableOpacity>
                     { this._renderContent() }
                 </View>

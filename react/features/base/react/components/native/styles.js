@@ -324,6 +324,11 @@ const SIDEBAR_STYLES = {
     }
 };
 
+export const TINTED_VIEW_DEFAULT = {
+    backgroundColor: ColorPalette.appBackground,
+    opacity: 0.8
+};
+
 /**
  * The styles of the generic React {@code Component}s implemented by the feature
  * base/react.

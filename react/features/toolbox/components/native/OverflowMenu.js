@@ -4,11 +4,12 @@ import React, { Component } from 'react';
 import { Platform } from 'react-native';
 import { connect } from 'react-redux';
 
+import { ColorSchemeRegistry } from '../../../base/color-scheme';
 import {
     BottomSheet,
-    bottomSheetItemStylesCombined,
     hideDialog
 } from '../../../base/dialog';
+import { StyleType } from '../../../base/styles';
 import { InviteButton } from '../../../invite';
 import { AudioRouteButton } from '../../../mobile/audio-mode';
 import { LiveStreamButton, RecordButton } from '../../../recording';
@@ -27,9 +28,14 @@ declare var __DEV__;
 type Props = {
 
     /**
+     * The color-schemed stylesheet of the dialog feature.
+     */
+    _bottomSheetStyles: StyleType,
+
+    /**
      * Used for hiding the dialog when the selection was completed.
      */
-    dispatch: Function,
+    dispatch: Function
 };
 
 /**
@@ -68,7 +74,7 @@ class OverflowMenu extends Component<Props> {
         const buttonProps = {
             afterClick: this._onCancel,
             showLabel: true,
-            styles: bottomSheetItemStylesCombined
+            styles: this.props._bottomSheetStyles
         };
 
         return (
@@ -106,6 +112,22 @@ class OverflowMenu extends Component<Props> {
     }
 }
 
-OverflowMenu_ = connect()(OverflowMenu);
+/**
+ * Function that maps parts of Redux state tree into component props.
+ *
+ * @param {Object} state - Redux state.
+ * @private
+ * @returns {{
+ *      _bottomSheetStyles: StyleType
+ *  }}
+ */
+function _mapStateToProps(state) {
+    return {
+        _bottomSheetStyles:
+            ColorSchemeRegistry.get(state, 'BottomSheet')
+    };
+}
+
+OverflowMenu_ = connect(_mapStateToProps)(OverflowMenu);
 
 export default OverflowMenu_;
