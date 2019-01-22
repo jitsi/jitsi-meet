@@ -10,8 +10,8 @@ import { getName } from '../../app';
 import { JitsiConferenceEvents } from '../lib-jitsi-meet';
 import { setAudioMuted, setVideoMuted } from '../media';
 import {
-    MAX_DISPLAY_NAME_LENGTH,
     dominantSpeakerChanged,
+    getNormalizedDisplayName,
     participantConnectionStatusChanged,
     participantPresenceChanged,
     participantRoleChanged,
@@ -131,7 +131,7 @@ function _addConferenceListeners(conference, dispatch) {
         (id, displayName) => dispatch(participantUpdated({
             conference,
             id,
-            name: displayName.substr(0, MAX_DISPLAY_NAME_LENGTH)
+            name: getNormalizedDisplayName(displayName)
         })));
 
     conference.on(
@@ -382,10 +382,11 @@ export function createConference() {
  * @returns {Function}
  */
 export function checkIfCanJoin() {
-    return (dispatch: Dispatch<*>, getState: Function) => {
+    return (dispatch: Function, getState: Function) => {
         const { authRequired, password }
             = getState()['features/base/conference'];
 
+        authRequired && dispatch(_conferenceWillJoin(authRequired));
         authRequired && authRequired.join(password);
     };
 }

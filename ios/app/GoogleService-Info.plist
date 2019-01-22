@@ -9,7 +9,7 @@
 	<key>CLIENT_ID</key>
 	<string>correct_client_id</string>
 	<key>REVERSED_CLIENT_ID</key>
-	<string>correct_reversed_client_id</string>
+	<string>com.google.correct-reversed-client-id</string>
 	<key>GOOGLE_APP_ID</key>
 	<string>1:123:ios:123abc</string>
 	<key>GCM_SENDER_ID</key>

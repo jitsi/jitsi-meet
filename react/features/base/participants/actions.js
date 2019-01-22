@@ -17,8 +17,7 @@ import {
     PARTICIPANT_UPDATED,
     PIN_PARTICIPANT
 } from './actionTypes';
-import { MAX_DISPLAY_NAME_LENGTH } from './constants';
-import { getLocalParticipant } from './functions';
+import { getLocalParticipant, getNormalizedDisplayName } from './functions';
 
 /**
  * Create an action for when dominant speaker changes.
@@ -369,13 +368,17 @@ export function participantRoleChanged(id, role) {
  * }}
  */
 export function participantUpdated(participant = {}) {
+    const participantToUpdate = {
+        ...participant
+    };
+
     if (participant.name) {
-        participant.name = participant.name.substr(0, MAX_DISPLAY_NAME_LENGTH);
+        participantToUpdate.name = getNormalizedDisplayName(participant.name);
     }
 
     return {
         type: PARTICIPANT_UPDATED,
-        participant
+        participant: participantToUpdate
     };
 }
 

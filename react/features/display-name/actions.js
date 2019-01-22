@@ -11,7 +11,7 @@ import { DisplayNamePrompt } from './components';
  * submit of the dialog.
  * @returns {Object}
  */
-export function openDisplayNamePrompt(onPostSubmit: ?Function = undefined) {
+export function openDisplayNamePrompt(onPostSubmit: ?Function) {
     return openDialog(DisplayNamePrompt, {
         onPostSubmit
     });
