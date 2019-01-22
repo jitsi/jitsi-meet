@@ -22,7 +22,9 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
+import com.facebook.react.bridge.Arguments;
 import com.facebook.react.bridge.ReadableMap;
+import com.facebook.react.bridge.WritableMap;
 
 import java.lang.reflect.Method;
 import java.net.URL;
@@ -68,6 +70,11 @@ public class JitsiMeetView
 
         return loaded;
     }
+
+    /**
+     * A color scheme object to override the default color is the SDK.
+     */
+    private WritableMap colorScheme;
 
     /**
      * The default base {@code URL} used to join a conference when a partial URL
@@ -128,6 +135,15 @@ public class JitsiMeetView
                 }
             }
         }
+    }
+
+    /**
+     * Gets the color scheme used in the SDK.
+     *
+     * @return The color scheme map.
+     */
+    public WritableMap getColorScheme() {
+        return colorScheme;
     }
 
     /**
@@ -207,6 +223,11 @@ public class JitsiMeetView
      */
     public void loadURLObject(@Nullable Bundle urlObject) {
         Bundle props = new Bundle();
+
+        // color scheme
+        if (colorScheme != null) {
+            props.putBundle("colorScheme", Arguments.toBundle(colorScheme));
+        }
 
         // defaultURL
         if (defaultURL != null) {
@@ -303,6 +324,15 @@ public class JitsiMeetView
         maybeSetViewURL(name, data);
 
         onExternalAPIEvent(LISTENER_METHODS, name, data);
+    }
+
+    /**
+     * Sets the color scheme to override the default colors of the SDK.
+     *
+     * @param colorScheme The color scheme map.
+     */
+    public void setColorScheme(WritableMap colorScheme) {
+        this.colorScheme = colorScheme;
     }
 
     /**

@@ -231,6 +231,7 @@ static NSMapTable<NSString *, JitsiMeetView *> *views;
         props[@"defaultURL"] = [self.defaultURL absoluteString];
     }
 
+    props[@"colorScheme"] = self.colorScheme;
     props[@"externalAPIScope"] = externalAPIScope;
     props[@"pictureInPictureEnabled"] = @(self.pictureInPictureEnabled);
     props[@"welcomePageEnabled"] = @(self.welcomePageEnabled);
