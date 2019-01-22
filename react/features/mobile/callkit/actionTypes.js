@@ -1,12 +1,13 @@
 /**
- * FIXME rename event and whole module ?
- * The type of redux action to set CallKit's event subscriptions.
+ * The type of redux action to set CallKit's and ConnectionService's event
+ * subscriptions.
  *
  * {
- *     type: _SET_CALLKIT_SUBSCRIPTIONS,
+ *     type: __SET_CALL_INTEGRATION_SUBSCRIPTIONS,
  *     subscriptions: Array|undefined
  * }
  *
  * @protected
  */
-export const _SET_CALLKIT_SUBSCRIPTIONS = Symbol('_SET_CALLKIT_SUBSCRIPTIONS');
+export const _SET_CALL_INTEGRATION_SUBSCRIPTIONS
+    = Symbol('_SET_CALL_INTEGRATION_SUBSCRIPTIONS');

@@ -27,7 +27,7 @@ import {
     isLocalTrackMuted
 } from '../../base/tracks';
 
-import { _SET_CALLKIT_SUBSCRIPTIONS } from './actionTypes';
+import { _SET_CALL_INTEGRATION_SUBSCRIPTIONS } from './actionTypes';
 
 import ConnectionService from './ConnectionService';
 import CallKit from './CallKit';
@@ -42,7 +42,7 @@ const CallIntegration = CallKit || ConnectionService;
  */
 CallIntegration && MiddlewareRegistry.register(store => next => action => {
     switch (action.type) {
-    case _SET_CALLKIT_SUBSCRIPTIONS:
+    case _SET_CALL_INTEGRATION_SUBSCRIPTIONS:
         return _setCallKitSubscriptions(store, next, action);
 
     case APP_WILL_MOUNT:
@@ -50,7 +50,7 @@ CallIntegration && MiddlewareRegistry.register(store => next => action => {
 
     case APP_WILL_UNMOUNT:
         store.dispatch({
-            type: _SET_CALLKIT_SUBSCRIPTIONS,
+            type: _SET_CALL_INTEGRATION_SUBSCRIPTIONS,
             subscriptions: undefined
         });
         break;
@@ -109,7 +109,7 @@ function _appWillMount({ dispatch, getState }, next, action) {
         = CallIntegration.registerSubscriptions(context, delegate);
 
     subscriptions && dispatch({
-        type: _SET_CALLKIT_SUBSCRIPTIONS,
+        type: _SET_CALL_INTEGRATION_SUBSCRIPTIONS,
         subscriptions
     });
 
@@ -324,15 +324,16 @@ function _setAudioOnly({ getState }, next, action) {
 
 /**
  * Notifies the feature callkit that the action
- * {@link _SET_CALLKIT_SUBSCRIPTIONS} is being dispatched within a specific
- * redux {@code store}.
+ * {@link _SET_CALL_INTEGRATION_SUBSCRIPTIONS} is being dispatched within
+ * a specific redux {@code store}.
  *
  * @param {Store} store - The redux store in which the specified {@code action}
  * is being dispatched.
  * @param {Dispatch} next - The redux {@code dispatch} function to dispatch the
  * specified {@code action} in the specified {@code store}.
- * @param {Action} action - The redux action {@code _SET_CALLKIT_SUBSCRIPTIONS}
- * which is being dispatched in the specified {@code store}.
+ * @param {Action} action - The redux action
+ * {@code _SET_CALL_INTEGRATION_SUBSCRIPTIONS} which is being dispatched in
+ * the specified {@code store}.
  * @private
  * @returns {*} The value returned by {@code next(action)}.
  */
