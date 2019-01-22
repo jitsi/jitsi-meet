@@ -25,11 +25,17 @@ import com.facebook.react.bridge.ReactContext;
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.common.LifecycleState;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 class ReactInstanceManagerHolder {
     /**
+     * FIXME (from linter): Do not place Android context classes in static
+     * fields (static reference to ReactInstanceManager which has field
+     * mApplicationContext pointing to Context); this is a memory leak (and
+     * also breaks Instant Run).
+     *
      * React Native bridge. The instance manager allows embedding applications
      * to create multiple root views off the same JavaScript bundle.
      */
@@ -37,19 +43,28 @@ class ReactInstanceManagerHolder {
 
     private static List<NativeModule> createNativeModules(
             ReactApplicationContext reactContext) {
-        return Arrays.<NativeModule>asList(
-            new AndroidSettingsModule(reactContext),
-            new AppInfoModule(reactContext),
-            new AudioModeModule(reactContext),
-            new ExternalAPIModule(reactContext),
-            new LocaleDetector(reactContext),
-            new PictureInPictureModule(reactContext),
-            new ProximityModule(reactContext),
-            new WiFiStatsModule(reactContext),
-            new org.jitsi.meet.sdk.dropbox.Dropbox(reactContext),
-            new org.jitsi.meet.sdk.invite.InviteModule(reactContext),
-            new org.jitsi.meet.sdk.net.NAT64AddrInfoModule(reactContext)
-        );
+        List<NativeModule> nativeModules
+            = new ArrayList<>(Arrays.<NativeModule>asList(
+                new AndroidSettingsModule(reactContext),
+                new AppInfoModule(reactContext),
+                new AudioModeModule(reactContext),
+                new ExternalAPIModule(reactContext),
+                new LocaleDetector(reactContext),
+                new PictureInPictureModule(reactContext),
+                new ProximityModule(reactContext),
+                new WiFiStatsModule(reactContext),
+                new org.jitsi.meet.sdk.dropbox.Dropbox(reactContext),
+                new org.jitsi.meet.sdk.invite.InviteModule(reactContext),
+                new org.jitsi.meet.sdk.net.NAT64AddrInfoModule(reactContext)));
+
+        if (android.os.Build.VERSION.SDK_INT
+                >= android.os.Build.VERSION_CODES.O) {
+            nativeModules.add(
+                new org.jitsi.meet.sdk.connection_service.RNConnectionService(
+                        reactContext));
+        }
+
+        return nativeModules;
     }
 
     /**

@@ -1,4 +1,5 @@
 /**
+ * FIXME rename event and whole module ?
  * The type of redux action to set CallKit's event subscriptions.
  *
  * {

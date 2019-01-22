@@ -2,8 +2,9 @@ import { assign, ReducerRegistry } from '../../base/redux';
 
 import { _SET_CALLKIT_SUBSCRIPTIONS } from './actionTypes';
 import CallKit from './CallKit';
+import ConnectionService from './ConnectionService';
 
-CallKit && ReducerRegistry.register(
+(CallKit || ConnectionService) && ReducerRegistry.register(
     'features/callkit',
     (state = {}, action) => {
         switch (action.type) {
