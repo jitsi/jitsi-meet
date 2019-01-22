@@ -23,6 +23,8 @@
 
 @property (class, copy, nonatomic, nullable) NSString *conferenceActivityType;
 
+@property (nonatomic) NSDictionary *colorScheme;
+
 @property (copy, nonatomic, nullable) NSURL *defaultURL;
 
 @property (nonatomic, nullable, weak) id<JitsiMeetViewDelegate> delegate;
