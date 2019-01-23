@@ -136,7 +136,12 @@ class PollResultsForm extends Component<Props, *> {
  * Map Redux state to Component props.
  *
  * @param {Object} state - Redux state.
- * @returns {{}}
+ * @returns {{
+ *      choices,
+ *      polls,
+ *      userID,
+ *      questions
+ * }}
  */
 function _mapStateToProps(state: Object) {
     const {

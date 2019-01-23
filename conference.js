@@ -2612,17 +2612,29 @@ export default {
     },
 
     /**
-     * Save the poll infromation in backend.
-     * @param {Object} event - Event.
+     * Creates a new poll in the chat room.
+     * @param {Object} poll - Object containing the information about the poll.
+     * @param {Object} choices - Object containing poll choices by their ID.
+     * @param {Object} question - Object with information about
+     *  the question asked.
+     * @returns {void}
      */
     startPoll(poll, choices, question) {
         room.startPoll(poll, choices, question);
     },
 
+    /**
+     * Update the user vote in the currently active poll.
+     * @param {string} choiceID - ID of the choice voted for.
+     */
     voteInPoll(choiceID) {
         room.voteInPoll(choiceID);
     },
 
+    /**
+     * End the currently active poll.
+     * @returns {void}
+     */
     endPoll() {
         room.endPoll();
     },

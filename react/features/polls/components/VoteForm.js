@@ -126,7 +126,11 @@ class VoteForm extends Component<Props, *> {
  * Map Redux state to Component props.
  *
  * @param {Object} state - Redux store state.
- * @returns {{}}
+ * @returns {{
+ *      poll,
+ *      questions,
+ *      choices
+ * }}
  */
 function _mapStateToProps(state: Object) {
     const {

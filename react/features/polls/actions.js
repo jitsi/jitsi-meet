@@ -109,7 +109,7 @@ export function updateVote(choice: Object) {
 
 
 /**
- * End poll session action.
+ * Local user action to end the poll.
  *
  * @returns {{}}
  */
@@ -120,7 +120,7 @@ export function endPoll() {
 }
 
 /**
- * End poll session action.
+ * Recieved command to end the poll.
  *
  * @returns {{}}
  */

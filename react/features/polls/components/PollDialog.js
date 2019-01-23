@@ -97,7 +97,6 @@ class PollDialog extends Component<Props, State> {
      * @returns {void}
      */
     _closeDialog() {
-        console.log('Close');
         this.props.dispatch(hideDialog());
     }
 
@@ -152,12 +151,12 @@ class PollDialog extends Component<Props, State> {
         );
     }
 
-    _onSubmit: (Object) => void;
+    _onSubmit: () => void;
 
     /**
      * Submit button handler.
      *
-     * @returns {boolean}
+     * @returns {void}
      */
     _onSubmit() {
         const { isPollRunning } = this.props;
@@ -237,7 +236,7 @@ class PollDialog extends Component<Props, State> {
     /**
      * Click handler for creating a new poll.
      *
-     * @returns {boolean}
+     * @returns {void}
      */
     _createNewPoll() {
         const { question, choices, poll } = this.state;
@@ -257,8 +256,6 @@ class PollDialog extends Component<Props, State> {
             question,
             choices: uniqueChoices
         };
-
-        console.log(payload);
 
         dispatch(startPoll(payload));
 
@@ -348,7 +345,10 @@ class PollDialog extends Component<Props, State> {
  * Map Redux state to Component props.
  *
  * @param {Object} state - Redux store state.
- * @returns {{}}
+ * @returns {{
+ *      isPollRunning,
+ *      userID
+ * }}
  */
 function _mapStateToProps(state: Object) {
     const { currentPoll } = state['features/polls'];

@@ -106,7 +106,7 @@ class PollCreateForm extends Component<Props, *> {
      * Renders choices' list item.
      *
      * @param {string} item - List item.
-     * @param {string} id - Item key.
+     * @param {number} id - Item key.
      * @returns {Component}
      */
     _renderPollChoice(item: string, id: number) {
