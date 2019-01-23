@@ -1,5 +1,6 @@
 /*
- * Copyright @ 2017-present Atlassian Pty Ltd
+ * Copyright @ 2018-present 8x8, Inc.
+ * Copyright @ 2017-2018 Atlassian Pty Ltd
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,18 +16,14 @@
  */
 
 #import <Availability.h>
-#import <CoreSpotlight/CoreSpotlight.h>
-#import <MobileCoreServices/MobileCoreServices.h>
+
+@import CoreSpotlight;
+@import MobileCoreServices;
+@import Intents;  // Needed for NSUserActivity suggestedInvocationPhrase
 
 #import "Types.h"
 #import "ViewController.h"
 
-// Needed for NSUserActivity suggestedInvocationPhrase
-@import Intents;
-
-
-@interface ViewController ()
-@end
 
 @implementation ViewController
 
@@ -42,10 +39,8 @@
     // anyway.
     view.welcomePageEnabled = YES;
 
-    [view loadURL:nil];
+    [view loadURL:[[JitsiMeet sharedInstance] getInitialURL]];
 }
-
-
 
 // JitsiMeetViewDelegate
 
