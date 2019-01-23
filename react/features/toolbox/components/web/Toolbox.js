@@ -948,7 +948,8 @@ class Toolbox extends Component<Props> {
             <RecordButton
                 key = 'record'
                 showLabel = { true } />,
-            <PollButton
+            this._shouldShowButton('polls')
+            && <PollButton
                 key = 'poll'
                 showLabel = { true } />,
             this._shouldShowButton('sharedvideo')
