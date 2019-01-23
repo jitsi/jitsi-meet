@@ -1,5 +1,6 @@
 /*
- * Copyright @ 2017-present Atlassian Pty Ltd
+ * Copyright @ 2018-present 8x8, Inc.
+ * Copyright @ 2017-2018 Atlassian Pty Ltd
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,62 +15,15 @@
  * limitations under the License.
  */
 
-#import <Intents/Intents.h>
-
 #include <mach/mach_time.h>
 
-#import <React/RCTAssert.h>
-#import <React/RCTLinkingManager.h>
 #import <React/RCTRootView.h>
 
-#import <RNGoogleSignin/RNGoogleSignin.h>
-
-#import "Dropbox.h"
+#import "JitsiMeet+Private.h"
 #import "JitsiMeetView+Private.h"
-#import "RCTBridgeWrapper.h"
 
-/**
- * A `RCTFatalHandler` implementation which swallows JavaScript errors. In the
- * Release configuration, React Native will (intentionally) raise an unhandled
- * `NSException` for an unhandled JavaScript error. This will effectively kill
- * the application. `_RCTFatal` is suitable to be in accord with the Web i.e.
- * not kill the application.
- */
-RCTFatalHandler _RCTFatal = ^(NSError *error) {
-    id jsStackTrace = error.userInfo[RCTJSStackTraceKey];
-    @try {
-        NSString *name
-            = [NSString stringWithFormat:@"%@: %@",
-                        RCTFatalExceptionName,
-                        error.localizedDescription];
-        NSString *message
-            = RCTFormatError(error.localizedDescription, jsStackTrace, 75);
-        [NSException raise:name format:@"%@", message];
-    } @catch (NSException *e) {
-        if (!jsStackTrace) {
-            @throw;
-        }
-    }
-};
 
-/**
- * Helper function to register a fatal error handler for React. Our handler
- * won't kill the process, it will swallow JS errors and print stack traces
- * instead.
- */
-void registerFatalErrorHandler() {
-#if !DEBUG
-    // In the Release configuration, React Native will (intentionally) raise an
-    // unhandled `NSException` for an unhandled JavaScript error. This will
-    // effectively kill the application. In accord with the Web, do not kill the
-    // application.
-    if (!RCTGetFatalHandler()) {
-        RCTSetFatalHandler(_RCTFatal);
-    }
-#endif
-}
-
-@interface JitsiMeetView() {
+@implementation JitsiMeetView {
     /**
      * The unique identifier of this `JitsiMeetView` within the process for the
      * purposes of `ExternalAPI`. The name scope was inspired by postis which we
@@ -78,26 +32,11 @@ void registerFatalErrorHandler() {
     NSString *externalAPIScope;
 
     RCTRootView *rootView;
-}
 
-@end
-
-@implementation JitsiMeetView {
     NSNumber *_pictureInPictureEnabled;
 }
 
 @dynamic pictureInPictureEnabled;
-
-static NSString *_conferenceActivityType;
-
-static RCTBridgeWrapper *bridgeWrapper;
-
-/**
- * Copy of the `launchOptions` dictionary that the application was started with.
- * It is required for the initial URL to be used if a (Universal) link was used
- * to launch a new instance of the application.
- */
-static NSDictionary *_launchOptions;
 
 /**
  * The `JitsiMeetView`s associated with their `ExternalAPI` scopes (i.e. unique
@@ -105,71 +44,12 @@ static NSDictionary *_launchOptions;
  */
 static NSMapTable<NSString *, JitsiMeetView *> *views;
 
-+             (BOOL)application:(UIApplication *)application
-  didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
-    // Store launch options, will be used when we create the bridge.
-    _launchOptions = [launchOptions copy];
-
-    [Dropbox setAppKey];
-
-    return YES;
-}
-
-#pragma mark Linking delegate helpers
-// https://facebook.github.io/react-native/docs/linking.html
-
-+    (BOOL)application:(UIApplication *)application
-  continueUserActivity:(NSUserActivity *)userActivity
-    restorationHandler:(void (^)(NSArray *restorableObjects))restorationHandler
-{
-    // XXX At least twice we received bug reports about malfunctioning loadURL
-    // in the Jitsi Meet SDK while the Jitsi Meet app seemed to functioning as
-    // expected in our testing. But that was to be expected because the app does
-    // not exercise loadURL. In order to increase the test coverage of loadURL,
-    // channel Universal linking through loadURL.
-
-    id url = [self conferenceURLFromUserActivity:userActivity];
-
-    if (url && [self loadURLObjectInViews:url]) {
-        return YES;
-    }
-
-    return [RCTLinkingManager application:application
-                     continueUserActivity:userActivity
-                       restorationHandler:restorationHandler];
-}
-
-+ (BOOL)application:(UIApplication *)app
-            openURL:(NSURL *)url
-            options:(NSDictionary<UIApplicationOpenURLOptionsKey,id> *)options {
-    if ([Dropbox application:app openURL:url options:options]) {
-        return YES;
-    }
-
-    if ([RNGoogleSignin application:app
-                            openURL:url
-                  sourceApplication:options[UIApplicationOpenURLOptionsSourceApplicationKey]
-                         annotation:options[UIApplicationOpenURLOptionsAnnotationKey]]) {
-        return YES;
-    }
-
-    // XXX At least twice we received bug reports about malfunctioning loadURL
-    // in the Jitsi Meet SDK while the Jitsi Meet app seemed to functioning as
-    // expected in our testing. But that was to be expected because the app does
-    // not exercise loadURL. In order to increase the test coverage of loadURL,
-    // channel Universal linking through loadURL.
-    if ([self loadURLInViews:url]) {
-        return YES;
-    }
-
-    return [RCTLinkingManager application:app openURL:url options:options];
-}
-
-+ (BOOL)application:(UIApplication *)application
-            openURL:(NSURL *)url
-  sourceApplication:(NSString *)sourceApplication
-         annotation:(id)annotation {
-    return [self application:application openURL:url options:@{}];
+/**
+ * This gets called automagically when the program starts.
+ */
+__attribute__((constructor))
+static void initializeViewsMap() {
+    views = [NSMapTable strongToWeakObjectsMapTable];
 }
 
 #pragma mark Initializers
@@ -201,18 +81,25 @@ static NSMapTable<NSString *, JitsiMeetView *> *views;
     return self;
 }
 
-#pragma mark API
-
 /**
- * Loads a specific `NSURL` which may identify a conference to join. If the
- * specified `NSURL` is `nil` and the Welcome page is enabled, the Welcome page
- * is displayed instead.
+ * Internal initialization:
  *
- * @param url The `NSURL` to load which may identify a conference to join.
+ * - sets the background color
+ * - initializes the external API scope
  */
-- (void)loadURL:(NSURL *)url {
-    [self loadURLString:url ? url.absoluteString : nil];
+- (void)initWithXXX {
+    // Hook this JitsiMeetView into ExternalAPI.
+    externalAPIScope = [NSUUID UUID].UUIDString;
+    [views setObject:self forKey:externalAPIScope];
+
+    // Set a background color which is in accord with the JavaScript and Android
+    // parts of the application and causes less perceived visual flicker than
+    // the default background color.
+    self.backgroundColor
+    = [UIColor colorWithRed:.07f green:.07f blue:.07f alpha:1];
 }
+
+#pragma mark API
 
 /**
  * Loads a specific URL which may identify a conference to join. The URL is
@@ -224,7 +111,7 @@ static NSMapTable<NSString *, JitsiMeetView *> *views;
  *
  * @param urlObject The URL to load which may identify a conference to join.
  */
-- (void)loadURLObject:(NSDictionary *)urlObject {
+- (void)loadURL:(NSDictionary *_Nullable)urlObject {
     NSMutableDictionary *props = [[NSMutableDictionary alloc] init];
 
     if (self.defaultURL) {
@@ -242,14 +129,14 @@ static NSMapTable<NSString *, JitsiMeetView *> *views;
         props[@"url"] = urlObject;
     }
 
-    // XXX The method loadURLObject: is supposed to be imperative i.e. a second
+    // XXX The method loadURL: is supposed to be imperative i.e. a second
     // invocation with one and the same URL is expected to join the respective
     // conference again if the first invocation was followed by leaving the
     // conference. However, React and, respectively,
     // appProperties/initialProperties are declarative expressions i.e. one and
     // the same URL will not trigger an automatic re-render in the JavaScript
     // source code. The workaround implemented bellow introduces imperativeness
-    // in React Component props by defining a unique value per loadURLObject:
+    // in React Component props by defining a unique value per loadURL:
     // invocation.
     props[@"timestamp"] = @(mach_absolute_time());
 
@@ -257,8 +144,9 @@ static NSMapTable<NSString *, JitsiMeetView *> *views;
         // Update props with the new URL.
         rootView.appProperties = props;
     } else {
+        RCTBridge *bridge = [[JitsiMeet sharedInstance] getReactBridge];
         rootView
-            = [[RCTRootView alloc] initWithBridge:bridgeWrapper.bridge
+            = [[RCTRootView alloc] initWithBridge:bridge
                                        moduleName:@"App"
                                 initialProperties:props];
         rootView.backgroundColor = self.backgroundColor;
@@ -270,28 +158,6 @@ static NSMapTable<NSString *, JitsiMeetView *> *views;
                 | UIViewAutoresizingFlexibleHeight;
         [self addSubview:rootView];
     }
-}
-
-/**
- * Loads a specific URL `NSString` which may identify a conference to
- * join. If the specified URL `NSString` is `nil` and the Welcome page is
- * enabled, the Welcome page is displayed instead.
- *
- * @param urlString The URL `NSString` to load which may identify a conference
- * to join.
- */
-- (void)loadURLString:(NSString *)urlString {
-    [self loadURLObject:urlString ? @{ @"url": urlString } : nil];
-}
-
-#pragma conferenceActivityType getter / setter
-
-+ (NSString *)conferenceActivityType {
-    return _conferenceActivityType;
-}
-
-+ (void) setConferenceActivityType:(NSString *)conferenceActivityType {
-    _conferenceActivityType = conferenceActivityType;
 }
 
 #pragma pictureInPictureEnabled getter / setter
@@ -318,19 +184,7 @@ static NSMapTable<NSString *, JitsiMeetView *> *views;
 
 #pragma mark Private methods
 
-/**
- * Loads a specific `NSURL` in all existing `JitsiMeetView`s.
- *
- * @param url The `NSURL` to load in all existing `JitsiMeetView`s.
- * @return `YES` if the specified `url` was submitted for loading in at least
- * one `JitsiMeetView`; otherwise, `NO`.
- */
-+ (BOOL)loadURLInViews:(NSURL *)url {
-    return
-        [self loadURLObjectInViews:url ? @{ @"url": url.absoluteString } : nil];
-}
-
-+ (BOOL)loadURLObjectInViews:(NSDictionary *)urlObject {
++ (BOOL)loadURLInViews:(NSDictionary *)urlObject {
     BOOL handled = NO;
 
     if (views) {
@@ -339,7 +193,7 @@ static NSMapTable<NSString *, JitsiMeetView *> *views;
                 = [self viewForExternalAPIScope:externalAPIScope];
 
             if (view) {
-                [view loadURLObject:urlObject];
+                [view loadURL:urlObject];
                 handled = YES;
             }
         }
@@ -348,79 +202,8 @@ static NSMapTable<NSString *, JitsiMeetView *> *views;
     return handled;
 }
 
-+ (NSDictionary *)conferenceURLFromUserActivity:(NSUserActivity *)userActivity {
-    NSString *activityType = userActivity.activityType;
-
-    if ([activityType isEqualToString:NSUserActivityTypeBrowsingWeb]) {
-        // App was started by opening a URL in the browser
-        return @{ @"url" : userActivity.webpageURL.absoluteString };
-    } else if ([activityType isEqualToString:@"INStartAudioCallIntent"]
-               || [activityType isEqualToString:@"INStartVideoCallIntent"]) {
-        // App was started by a CallKit Intent
-        INIntent *intent = userActivity.interaction.intent;
-        NSArray<INPerson *> *contacts;
-        NSString *url;
-        BOOL startAudioOnly = NO;
-
-        if ([intent isKindOfClass:[INStartAudioCallIntent class]]) {
-            contacts = ((INStartAudioCallIntent *) intent).contacts;
-            startAudioOnly = YES;
-        } else if ([intent isKindOfClass:[INStartVideoCallIntent class]]) {
-            contacts = ((INStartVideoCallIntent *) intent).contacts;
-        }
-
-        if (contacts && (url = contacts.firstObject.personHandle.value)) {
-            return @{
-                @"config": @{@"startAudioOnly":@(startAudioOnly)},
-                @"url": url
-                };
-        }
-    } else if (_conferenceActivityType && [activityType isEqualToString:_conferenceActivityType]) {
-        // App was started by continuing a registered NSUserActivity (SiriKit, Handoff, ...)
-        NSString *url;
-
-        if ((url = userActivity.userInfo[@"url"])) {
-            return @{ @"url" : url };
-        }
-    }
-
-    return nil;
-}
-
 + (instancetype)viewForExternalAPIScope:(NSString *)externalAPIScope {
     return [views objectForKey:externalAPIScope];
-}
-
-/**
- * Internal initialization:
- *
- * - sets the background color
- * - creates the React bridge
- * - loads the necessary custom fonts
- * - registers a custom fatal error error handler for React
- */
-- (void)initWithXXX {
-    static dispatch_once_t dispatchOncePredicate;
-
-    dispatch_once(&dispatchOncePredicate, ^{
-        // Initialize the static state of JitsiMeetView.
-        bridgeWrapper
-            = [[RCTBridgeWrapper alloc] initWithLaunchOptions:_launchOptions];
-        views = [NSMapTable strongToWeakObjectsMapTable];
-
-        // Register a fatal error handler for React.
-        registerFatalErrorHandler();
-    });
-
-    // Hook this JitsiMeetView into ExternalAPI.
-    externalAPIScope = [NSUUID UUID].UUIDString;
-    [views setObject:self forKey:externalAPIScope];
-
-    // Set a background color which is in accord with the JavaScript and Android
-    // parts of the application and causes less perceived visual flicker than
-    // the default background color.
-    self.backgroundColor
-        = [UIColor colorWithRed:.07f green:.07f blue:.07f alpha:1];
 }
 
 @end

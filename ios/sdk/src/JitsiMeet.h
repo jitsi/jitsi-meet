@@ -1,5 +1,6 @@
 /*
- * Copyright @ 2017-present Atlassian Pty Ltd
+ * Copyright @ 2018-present 8x8, Inc.
+ * Copyright @ 2017-2018 Atlassian Pty Ltd
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,6 +15,32 @@
  * limitations under the License.
  */
 
-// JitsiMeetView
 #import <JitsiMeet/JitsiMeetView.h>
 #import <JitsiMeet/JitsiMeetViewDelegate.h>
+
+@interface JitsiMeet : NSObject
+
+@property (copy, nonatomic, nullable) NSString *conferenceActivityType;
+
+#pragma mak - This class is a singleton
+
++ (instancetype)sharedInstance;
+
+#pragma mark - Methods that the App delegate must call
+
+-             (BOOL)application:(UIApplication *_Nonnull)application
+  didFinishLaunchingWithOptions:(NSDictionary *_Nonnull)launchOptions;
+
+-    (BOOL)application:(UIApplication * _Nonnull)application
+  continueUserActivity:(NSUserActivity * _Nonnull)userActivity
+    restorationHandler:(void (^ _Nullable)(NSArray * _Nullable))restorationHandler;
+
+- (BOOL)application:(UIApplication *)app
+            openURL:(NSURL *)url
+            options:(NSDictionary<UIApplicationOpenURLOptionsKey,id> *)options;
+
+#pragma mark - Utility methods
+
+- (NSDictionary *)getInitialURL;
+
+@end

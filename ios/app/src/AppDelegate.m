@@ -19,11 +19,10 @@
 #import "FIRUtilities.h"
 #import "Types.h"
 
-#import <JitsiMeet/JitsiMeet.h>
-
 @import Crashlytics;
 @import Fabric;
 @import Firebase;
+@import JitsiMeet;
 
 
 @implementation AppDelegate
@@ -40,10 +39,10 @@
 
     // Set the conference activity type defined in this application.
     // This cannot be defined by the SDK.
-    JitsiMeetView.conferenceActivityType = JitsiMeetConferenceActivityType;
+    [JitsiMeet sharedInstance].conferenceActivityType = JitsiMeetConferenceActivityType;
+    [[JitsiMeet sharedInstance] application:application didFinishLaunchingWithOptions:launchOptions];
 
-    return [JitsiMeetView application:application
-        didFinishLaunchingWithOptions:launchOptions];
+    return YES;
 }
 
 #pragma mark Linking delegate methods
@@ -63,9 +62,9 @@
            NSURL *dynamicLinkURL = dynamicLink.url;
            if (dynamicLinkURL) {
              userActivity.webpageURL = dynamicLinkURL;
-             [JitsiMeetView application:application
-                   continueUserActivity:userActivity
-                     restorationHandler:restorationHandler];
+             [[JitsiMeet sharedInstance] application:application
+                                continueUserActivity:userActivity
+                                  restorationHandler:restorationHandler];
            }
         }];
 
@@ -75,9 +74,9 @@
     }
 
     // 2. Default to plain old, non-Firebase-assisted Universal Links.
-    return [JitsiMeetView application:application
-                 continueUserActivity:userActivity
-                   restorationHandler:restorationHandler];
+    return [[JitsiMeet sharedInstance] application:application
+                              continueUserActivity:userActivity
+                                restorationHandler:restorationHandler];
 }
 
 - (BOOL)application:(UIApplication *)app
@@ -100,9 +99,9 @@
         }
     }
 
-    return [JitsiMeetView application:app
-                              openURL:openUrl
-                              options:options];
+    return [[JitsiMeet sharedInstance] application:app
+                                           openURL:openUrl
+                                           options:options];
 }
 
 @end
