@@ -87,6 +87,10 @@ Change this value (which represents the Maven repository location used internall
 
 Make sure to do this in both files! Each file should require one line to be changed.
 
+To prevent artifacts from previous builds affecting you're outcome, it's good to start with cleaning your work directories:
+
+    $ ./gradlew clean
+
 To create the release assembly for any _specific_ third-party React Native module that you need, you can execture the following commands, replace the module name in the examples below.
 
     $ ./gradlew :react-native-webrtc:assembleRelease
@@ -99,7 +103,7 @@ You build and publish the SDK itself in the same way:
 
 Alternatively, you can assemble and publish _all_ subprojects, which include the react-native modules, but also the SDK itself, with a single command:
 
-    $ ./gradlew assembleRelease publish
+    $ ./gradlew clean assembleRelease publish
 
 You're now ready to use the artifacts. In _your_ project, add the Maven repository that you used above (`/tmp/repo`) into your top-level `build.gradle` file:
 
