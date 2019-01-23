@@ -26,11 +26,6 @@ if (ConnectionService) {
         setMuted() {
             // Currently no-op, but remember to remove when implemented on
             // the native side
-        },
-
-        updateCall() {
-            // Currently no-op, but remember to remove when implemented on
-            // the native side
         }
     };
 }

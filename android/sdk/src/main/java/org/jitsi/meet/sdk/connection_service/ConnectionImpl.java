@@ -18,6 +18,13 @@ import org.jitsi.meet.sdk.ReactContextUtils;
 @RequiresApi(api = Build.VERSION_CODES.O)
 public class ConnectionImpl extends Connection {
 
+    /**
+     * The constant which defines the key for the "has video" property. The key
+     * is used in the map which carries the call's state passed as the arugment
+     * of the {@link RNConnectionService#updateCall} method.
+     */
+    static final String KEY_HAS_VIDEO = "hasVideo";
+
     private final ConnectionService service;
 
     ConnectionImpl(ConnectionService service) {

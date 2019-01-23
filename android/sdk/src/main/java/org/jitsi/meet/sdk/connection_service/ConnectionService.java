@@ -52,6 +52,11 @@ public class ConnectionService extends android.telecom.ConnectionService {
             request.getAddress(),
             TelecomManager.PRESENTATION_ALLOWED);
         connection.setExtras(request.getExtras());
+        // NOTE there's a time gap between the placeCall and this callback when
+        // things could get out of sync, but they are put back in sync once
+        // the startCall Promise is resolved below. That's because on
+        // the JavaScript side there's a logic to sync up in .then() callback.
+        connection.setVideoState(request.getVideoState());
 
         Bundle moreExtras = new Bundle();
 
@@ -73,11 +78,6 @@ public class ConnectionService extends android.telecom.ConnectionService {
                 "onCreateOutgoingConnection: no start call Promise for %s",
                 connection.getCallUUID()));
         }
-
-        // TODO Implement video state. Currently there's not much use of it
-        // without the incoming call scenario.
-        //
-        // connection.setVideoState(request.getVideoState());
 
         return connection;
     }

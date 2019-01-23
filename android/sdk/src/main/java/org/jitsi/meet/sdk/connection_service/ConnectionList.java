@@ -3,9 +3,11 @@ package org.jitsi.meet.sdk.connection_service;
 import android.os.Build;
 import android.support.annotation.RequiresApi;
 import android.telecom.DisconnectCause;
+import android.telecom.VideoProfile;
 import android.util.Log;
 
 import com.facebook.react.bridge.Promise;
+import com.facebook.react.bridge.ReadableMap;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -126,5 +128,32 @@ public class ConnectionList {
      */
     Promise unregisterStartCallPromise(String uuid) {
         return startCallPromises.remove(uuid);
+    }
+
+    /**
+     * Used to adjusts the call's state.
+     *
+     * @param callUUID the call UUID which identifies the connection.
+     * @param callState a map which carries the properties to be modified. See
+     *        "KEY_*" constants in {@link ConnectionImpl} for the list of keys.
+     */
+    void updateCall(String callUUID, ReadableMap callState) {
+        ConnectionImpl connection = connections.get(callUUID);
+
+        if (connection != null) {
+            if (callState.hasKey(ConnectionImpl.KEY_HAS_VIDEO)) {
+                boolean hasVideo
+                    = callState.getBoolean(ConnectionImpl.KEY_HAS_VIDEO);
+
+                Log.d(TAG, String.format(
+                    "updateCall: %s hasVideo: %s", callUUID, hasVideo));
+                connection.setVideoState(
+                    hasVideo
+                        ? VideoProfile.STATE_BIDIRECTIONAL
+                        : VideoProfile.STATE_AUDIO_ONLY);
+            }
+        } else {
+            Log.e(TAG, "updateCall no connection for UUID: " + callUUID);
+        }
     }
 }
