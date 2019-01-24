@@ -18,16 +18,13 @@
 package org.jitsi.meet.sdk;
 
 import android.content.Intent;
-import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
-import android.provider.Settings;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v7.app.AppCompatActivity;
-import android.view.KeyEvent;
-
-import com.facebook.react.ReactInstanceManager;
-import com.facebook.react.modules.core.PermissionListener;
+import android.support.v4.app.Fragment;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 
 import java.net.URL;
 
@@ -42,15 +39,7 @@ import java.net.URL;
  * hooked to the React Native subsystem via proxy calls through the
  * {@code JitsiMeetView} static methods.
  */
-public class JitsiMeetActivity
-    extends AppCompatActivity implements JitsiMeetActivityInterface {
-
-    /**
-     * The request code identifying requests for the permission to draw on top
-     * of other apps. The value must be 16-bit and is arbitrarily chosen here.
-     */
-    private static final int OVERLAY_PERMISSION_REQUEST_CODE
-        = (int) (Math.random() * Short.MAX_VALUE);
+public class JitsiMeetFragment extends Fragment {
 
     /**
      * A color scheme object to override the default color is the SDK.
@@ -81,14 +70,6 @@ public class JitsiMeetActivity
      */
     private boolean welcomePageEnabled;
 
-    private boolean canRequestOverlayPermission() {
-        return
-            BuildConfig.DEBUG
-                && Build.VERSION.SDK_INT >= Build.VERSION_CODES.M
-                && getApplicationInfo().targetSdkVersion
-                    >= Build.VERSION_CODES.M;
-    }
-
     /**
      *
      * @see JitsiMeetView#getDefaultURL()
@@ -97,22 +78,12 @@ public class JitsiMeetActivity
         return view == null ? defaultURL : view.getDefaultURL();
     }
 
-    /**
-     * Initializes the {@link #view} of this {@code JitsiMeetActivity} with a
-     * new {@link JitsiMeetView} instance.
-     */
-    private void initializeContentView() {
-        JitsiMeetView view = initializeView();
+    @Nullable
+    @Override
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        this.view = initializeView();
 
-        if (view != null) {
-            // XXX Allow extenders who override initializeView() to configure
-            // the view before the first loadURL(). Probably works around a
-            // problem related to ReactRootView#setAppProperties().
-            view.loadURL(null);
-
-            this.view = view;
-            setContentView(this.view);
-        }
+        return this.view;
     }
 
     /**
@@ -121,7 +92,7 @@ public class JitsiMeetActivity
      * @return a new {@code JitsiMeetView} instance.
      */
     protected JitsiMeetView initializeView() {
-        JitsiMeetView view = new JitsiMeetView(this);
+        JitsiMeetView view = new JitsiMeetView(getActivity());
 
         // XXX Before calling JitsiMeetView#loadURL, make sure to call whatever
         // is documented to need such an order in order to take effect:
@@ -161,97 +132,31 @@ public class JitsiMeetActivity
      *
      * @param url The conference URL.
      */
-    public void loadURL(@Nullable URL url) {
-        view.loadURL(url);
+    public void loadURL(@Nullable String url) {
+        view.loadURLString(url);
     }
 
     @Override
-    protected void onActivityResult(
-            int requestCode,
-            int resultCode,
-            Intent data) {
-        if (requestCode == OVERLAY_PERMISSION_REQUEST_CODE
-                && canRequestOverlayPermission()) {
-            if (Settings.canDrawOverlays(this)) {
-                initializeContentView();
-            }
-
-            return;
-        }
-
-        ReactActivityLifecycleCallbacks.onActivityResult(
-                this, requestCode, resultCode, data);
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        JitsiMeetActivityDelegate.onActivityResult(
+                getActivity(), requestCode, resultCode, data);
     }
 
     @Override
-    public void onBackPressed() {
-        ReactActivityLifecycleCallbacks.onBackPressed();
-    }
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
-        // In Debug builds React needs permission to write over other apps in
-        // order to display the warning and error overlays.
-        if (canRequestOverlayPermission() && !Settings.canDrawOverlays(this)) {
-            Intent intent
-                = new Intent(
-                        Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
-                        Uri.parse("package:" + getPackageName()));
-
-            startActivityForResult(intent, OVERLAY_PERMISSION_REQUEST_CODE);
-            return;
-        }
-
-        initializeContentView();
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-
+    public void onDestroyView() {
         if (view != null) {
             view.dispose();
             view = null;
         }
 
-        ReactActivityLifecycleCallbacks.onHostDestroy(this);
-    }
-
-    // ReactAndroid/src/main/java/com/facebook/react/ReactActivity.java
-    @Override
-    public boolean onKeyUp(int keyCode, KeyEvent event) {
-        ReactInstanceManager reactInstanceManager;
-
-        if (!super.onKeyUp(keyCode, event)
-                && BuildConfig.DEBUG
-                && (reactInstanceManager
-                        = ReactInstanceManagerHolder.getReactInstanceManager())
-                    != null
-                && keyCode == KeyEvent.KEYCODE_MENU) {
-            reactInstanceManager.showDevOptionsDialog();
-            return true;
-        }
-        return false;
+        super.onDestroyView();
     }
 
     @Override
-    public void onNewIntent(Intent intent) {
-        // XXX At least twice we received bug reports about malfunctioning
-        // loadURL in the Jitsi Meet SDK while the Jitsi Meet app seemed to
-        // functioning as expected in our testing. But that was to be expected
-        // because the app does not exercise loadURL. In order to increase the
-        // test coverage of loadURL, channel deep linking through loadURL.
-        Uri uri;
+    public void onDestroy() {
+        super.onDestroy();
 
-        if (Intent.ACTION_VIEW.equals(intent.getAction())
-                && (uri = intent.getData()) != null
-                && JitsiMeetView.loadURLStringInViews(uri.toString())) {
-            return;
-        }
-
-        ReactActivityLifecycleCallbacks.onNewIntent(intent);
+        JitsiMeetActivityDelegate.onHostDestroy(getActivity());
     }
 
     // https://developer.android.com/reference/android/support/v4/app/ActivityCompat.OnRequestPermissionsResultCallback
@@ -260,39 +165,31 @@ public class JitsiMeetActivity
             final int requestCode,
             final String[] permissions,
             final int[] grantResults) {
-        ReactActivityLifecycleCallbacks.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        JitsiMeetActivityDelegate.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
 
     @Override
-    protected void onResume() {
+    public void onResume() {
         super.onResume();
 
-        ReactActivityLifecycleCallbacks.onHostResume(this);
+        JitsiMeetActivityDelegate.onHostResume(getActivity());
     }
 
     @Override
     public void onStop() {
         super.onStop();
 
-        ReactActivityLifecycleCallbacks.onHostPause(this);
+        JitsiMeetActivityDelegate.onHostPause(getActivity());
     }
 
-    @Override
-    protected void onUserLeaveHint() {
+    public void enterPictureInPicture() {
         if (view != null) {
             view.enterPictureInPicture();
         }
     }
 
     /**
-     * Implementation of the {@code PermissionAwareActivity} interface.
-     */
-    @Override
-    public void requestPermissions(String[] permissions, int requestCode, PermissionListener listener) {
-        ReactActivityLifecycleCallbacks.requestPermissions(this, permissions, requestCode, listener);
-    }
-
-    /**
+     *
      * @see JitsiMeetView#setColorScheme(Bundle)
      */
     public void setColorScheme(Bundle colorScheme) {
