@@ -132,8 +132,6 @@ RCT_EXPORT_METHOD(getSpaceUsage: (NSString *)token
     if (authResult) {
         if ([authResult isSuccess]) {
             currentResolve(authResult.accessToken.accessToken);
-            currentResolve = nil;
-            currentReject = nil;
         } else {
             NSString *msg;
             if ([authResult isError]) {
@@ -142,9 +140,10 @@ RCT_EXPORT_METHOD(getSpaceUsage: (NSString *)token
                 msg = @"OAuth canceled!";
             }
             currentReject(@"authorize", msg, nil);
-            currentResolve = nil;
-            currentReject = nil;
         }
+        currentResolve = nil;
+        currentReject = nil;
+
         return YES;
     }
     return NO;
