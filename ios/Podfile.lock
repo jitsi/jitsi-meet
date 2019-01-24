@@ -1,4 +1,5 @@
 PODS:
+  - Amplitude-iOS (4.0.4)
   - boost-for-react-native (1.63.0)
   - BVLinearGradient (2.5.3):
     - React
@@ -154,6 +155,7 @@ PODS:
   - yoga (0.57.8.React)
 
 DEPENDENCIES:
+  - Amplitude-iOS (~> 4.0.4)
   - BVLinearGradient (from `../node_modules/react-native-linear-gradient`)
   - Crashlytics
   - DoubleConversion (from `../node_modules/react-native/third-party-podspecs/DoubleConversion.podspec`)
@@ -185,6 +187,7 @@ DEPENDENCIES:
 
 SPEC REPOS:
   https://github.com/cocoapods/specs.git:
+    - Amplitude-iOS
     - boost-for-react-native
     - Crashlytics
     - Fabric
@@ -235,6 +238,7 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native/ReactCommon/yoga"
 
 SPEC CHECKSUMS:
+  Amplitude-iOS: 2ad4d7270c99186236c1272a3a9425463b1ae1a7
   boost-for-react-native: 39c7adb57c4e60d6c5479dd8623128eb5b3f0f2c
   BVLinearGradient: 0d985ec461359c82bc254f26d11008bdae50d17a
   Crashlytics: 07fb167b1694128c1c9a5a5cc319b0e9c3ca0933
@@ -268,6 +272,6 @@ SPEC CHECKSUMS:
   SDWebImage: c5594f1a19c48d526d321e548902b56b479cd508
   yoga: 74cdf036c30820443b25ade59916236b1e95ee93
 
-PODFILE CHECKSUM: 7d1909450626f31f9ea2de80122a66a50af2e1ea
+PODFILE CHECKSUM: b300161e95d65c24b91368803afb8873f4b873cc
 
-COCOAPODS: 1.6.0
+COCOAPODS: 1.6.1

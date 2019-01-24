@@ -53,6 +53,7 @@ class ReactInstanceManagerHolder {
                 new PictureInPictureModule(reactContext),
                 new ProximityModule(reactContext),
                 new WiFiStatsModule(reactContext),
+                new org.jitsi.meet.sdk.analytics.AmplitudeModule(reactContext),
                 new org.jitsi.meet.sdk.dropbox.Dropbox(reactContext),
                 new org.jitsi.meet.sdk.net.NAT64AddrInfoModule(reactContext)));
 

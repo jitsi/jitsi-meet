@@ -35,6 +35,7 @@ target 'JitsiMeet' do
   pod 'Folly',
     :podspec => '../node_modules/react-native/third-party-podspecs/Folly.podspec'
 
+  pod 'Amplitude-iOS', '~> 4.0.4'
   pod 'ObjectiveDropboxOfficial'
 
   pod 'react-native-background-timer',

@@ -135,9 +135,7 @@ module.exports = [
                 './react/features/local-recording/'
                     + 'recording/flac/flacEncodeWorker.js',
             'analytics-ga':
-                './react/features/analytics/handlers/GoogleAnalyticsHandler.js',
-            'analytics-amplitude':
-                './react/features/analytics/handlers/AmplitudeHandler.js'
+                './react/features/analytics/handlers/GoogleAnalyticsHandler.js'
         }
     }),
 
