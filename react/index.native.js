@@ -10,14 +10,11 @@
 // collect the polyfills' files.
 import './features/base/lib-jitsi-meet/native/polyfills-bundler';
 
-import React, { Component } from 'react';
-import { AppRegistry, Linking, NativeModules } from 'react-native';
+import React, { PureComponent } from 'react';
+import { AppRegistry } from 'react-native';
 
 import { App } from './features/app';
-import { equals } from './features/base/redux';
 import { IncomingCallApp } from './features/mobile/incoming-call';
-
-const logger = require('jitsi-meet-logger').getLogger(__filename);
 
 /**
  * The type of the React {@code Component} props of {@link Root}.
@@ -31,99 +28,13 @@ type Props = {
 };
 
 /**
- * The type of the React {@code Component} state of {@link Root}.
- */
-type State = {
-
-    /**
-     * The URL, if any, with which the app was launched.
-     */
-    url: ?Object | string
-};
-
-/**
  * React Native doesn't support specifying props to the main/root component (in
  * the JS/JSX source code). So create a wrapper React Component (class) around
  * features/app's App instead.
  *
  * @extends Component
  */
-class Root extends Component<Props, State> {
-    /**
-     * Initializes a new {@code Root} instance.
-     *
-     * @param {Props} props - The read-only properties with which the new
-     * instance is to be initialized.
-     */
-    constructor(props) {
-        super(props);
-
-        this.state = {
-            url: this.props.url
-        };
-
-        // Handle the URL, if any, with which the app was launched. But props
-        // have precedence.
-        if (typeof this.props.url === 'undefined') {
-            this._getInitialURL()
-                .then(url => {
-                    if (typeof this.state.url === 'undefined') {
-                        this.setState({ url });
-                    }
-                })
-                .catch(err => {
-                    logger.error('Failed to get initial URL', err);
-
-                    if (typeof this.state.url === 'undefined') {
-                        // Start with an empty URL if getting the initial URL
-                        // fails; otherwise, nothing will be rendered.
-                        this.setState({ url: null });
-                    }
-                });
-        }
-    }
-
-    /**
-     * Gets the initial URL the app was launched with. This can be a universal
-     * (or deep) link, or a CallKit intent in iOS. Since the native
-     * {@code Linking} module doesn't provide a way to access intents in iOS,
-     * those are handled with the {@code LaunchOptions} module, which
-     * essentially provides a replacement which takes that into consideration.
-     *
-     * @private
-     * @returns {Promise} - A promise which will be fulfilled with the URL that
-     * the app was launched with.
-     */
-    _getInitialURL() {
-        if (NativeModules.LaunchOptions) {
-            return NativeModules.LaunchOptions.getInitialURL();
-        }
-
-        return Linking.getInitialURL();
-    }
-
-    /**
-     * Implements React's {@link Component#componentDidUpdate()}.
-     *
-     * New props can be set from the native side by setting the appProperties
-     * property (on iOS) or calling setAppProperties (on Android).
-     *
-     * @inheritdoc
-     */
-    componentDidUpdate(prevProps, prevState) {
-        // Ignore the special state update triggered on {@code Root}
-        // instantiation where an undefined url prop is set to a default.
-        if (typeof prevState.url === 'undefined'
-                && typeof this.state.url !== 'undefined') {
-            return;
-        }
-
-        if (!equals(prevProps.url, this.props.url)) {
-            // eslint-disable-next-line  react/no-did-update-set-state
-            this.setState({ url: this.props.url || null });
-        }
-    }
-
+class Root extends PureComponent<Props> {
     /**
      * Implements React's {@link Component#render()}.
      *
@@ -131,26 +42,9 @@ class Root extends Component<Props, State> {
      * @returns {ReactElement}
      */
     render() {
-        const { url } = this.state;
-
-        // XXX We don't render the App component until we get the initial URL.
-        // Either it's null or some other non-null defined value.
-        if (typeof url === 'undefined') {
-            return null;
-        }
-
-        const {
-            // The following props are forked in state:
-            url: _, // eslint-disable-line no-unused-vars
-
-            // The remaining props are passed through to App.
-            ...props
-        } = this.props;
-
         return (
             <App
-                { ...props }
-                url = { url } />
+                { ...this.props } />
         );
     }
 }
