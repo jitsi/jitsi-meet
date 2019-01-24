@@ -1,6 +1,6 @@
 ---
 name: Need help with Jitsi Meet?
-about: Please ask it in our community: https://community.jitsi.org
+about: Please ask it in our community at https://community.jitsi.org
 
 ---
 
