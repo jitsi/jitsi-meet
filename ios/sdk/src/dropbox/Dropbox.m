@@ -149,8 +149,7 @@ RCT_EXPORT_METHOD(getSpaceUsage: (NSString *)token
     return NO;
 }
 
-+ (UIViewController *)topMostController
-{
++ (UIViewController *)topMostController {
     UIViewController *topController
         = [UIApplication sharedApplication].keyWindow.rootViewController;
     
