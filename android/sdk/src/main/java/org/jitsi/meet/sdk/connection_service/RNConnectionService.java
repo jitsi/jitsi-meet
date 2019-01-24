@@ -28,6 +28,19 @@ import com.facebook.react.bridge.ReadableMap;
 public class RNConnectionService
     extends ReactContextBaseJavaModule {
 
+    /**
+     * Sets the audio route on all existing {@link android.telecom.Connection}s
+     *
+     * @param audioRoute the new audio route to be set. See
+     * {@link android.telecom.CallAudioState} constants prefixed with "ROUTE_".
+     */
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    static public void setAudioRoute(int audioRoute) {
+        for (ConnectionImpl c : ConnectionList.getInstance().getAll()) {
+            c.setAudioRoute(audioRoute);
+        }
+    }
+
     public RNConnectionService(ReactApplicationContext reactContext) {
         super(reactContext);
     }

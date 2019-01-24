@@ -29,7 +29,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-class ReactInstanceManagerHolder {
+// FIXME do not make public ?
+public class ReactInstanceManagerHolder {
     /**
      * FIXME (from linter): Do not place Android context classes in static
      * fields (static reference to ReactInstanceManager which has field
@@ -104,7 +105,7 @@ class ReactInstanceManagerHolder {
      * {@code null} if no instance for this interface is available, or if
      * {@link #reactInstanceManager} has not been initialized yet.
      */
-    static <T extends NativeModule> T getNativeModule(
+    public static <T extends NativeModule> T getNativeModule(
             Class<T> nativeModuleClass) {
         ReactContext reactContext
             = reactInstanceManager != null

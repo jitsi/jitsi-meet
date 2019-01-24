@@ -2,13 +2,17 @@ package org.jitsi.meet.sdk.connection_service;
 
 import android.os.Build;
 import android.support.annotation.RequiresApi;
+import android.telecom.CallAudioState;
 import android.telecom.Connection;
 import android.telecom.PhoneAccountHandle;
 import android.telecom.TelecomManager;
+import android.util.Log;
 
 import com.facebook.react.bridge.WritableNativeMap;
 
+import org.jitsi.meet.sdk.AudioModeModule;
 import org.jitsi.meet.sdk.ReactContextUtils;
+import org.jitsi.meet.sdk.ReactInstanceManagerHolder;
 
 /**
  * Connection implementation for Jitsi Meet's {@link ConnectionService}.
@@ -24,6 +28,12 @@ public class ConnectionImpl extends Connection {
      * of the {@link RNConnectionService#updateCall} method.
      */
     static final String KEY_HAS_VIDEO = "hasVideo";
+
+    /**
+     * The logger's TAG.
+     * FIXME use MODULE_NAME constant
+     */
+    private static final String TAG = ConnectionService.TAG;
 
     private final ConnectionService service;
 
@@ -59,6 +69,24 @@ public class ConnectionImpl extends Connection {
                 null,
                 "org.jitsi.meet:features/connection_service#abort",
                 data);
+    }
+
+    /**
+     * Called when there's change to the call audio state. Either by the system
+     * after the connection is initialized or in response to
+     * {@link #setAudioRoute(int)}.
+     *
+     * @param state the new {@link CallAudioState}
+     */
+    @Override
+    public void onCallAudioStateChanged(CallAudioState state) {
+        Log.d(TAG, "onCallAudioStateChanged: " + state);
+        AudioModeModule audioModeModule
+            = ReactInstanceManagerHolder
+                    .getNativeModule(AudioModeModule.class);
+        if (audioModeModule != null) {
+            audioModeModule.onCallAudioStateChange(state);
+        }
     }
 
     /**

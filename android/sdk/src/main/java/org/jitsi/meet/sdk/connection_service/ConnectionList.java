@@ -9,7 +9,9 @@ import android.util.Log;
 import com.facebook.react.bridge.Promise;
 import com.facebook.react.bridge.ReadableMap;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -55,6 +57,15 @@ public class ConnectionList {
      */
     void add(ConnectionImpl connection) {
         connections.put(connection.getCallUUID(), connection);
+    }
+
+    /**
+     * Returns all {@link ConnectionImpl} instances held in this list.
+     *
+     * @return a list of {@link ConnectionImpl}.
+     */
+    List<ConnectionImpl> getAll() {
+        return new ArrayList<>(connections.values());
     }
 
     /**
