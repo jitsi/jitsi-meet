@@ -2713,6 +2713,13 @@ export default {
         if (!this._proxyConnection) {
             this._proxyConnection = new JitsiMeetJS.ProxyConnectionService({
                 /**
+                 * The proxy connection feature is currently tailored towards
+                 * taking a proxied video stream and showing it as a local
+                 * desktop screen.
+                 */
+                convertVideoToDesktop: true,
+
+                /**
                  * Callback invoked to pass messages from the local client back
                  * out to the external client.
                  *
@@ -2733,12 +2740,20 @@ export default {
                  * has provided a video stream, intended to be used as a local
                  * desktop stream.
                  *
-                 * @param {JitsiLocalTrack} desktopStream - The media stream to
-                 * use as a local desktop stream.
+                 * @param {JitsiLocalTrack} remoteProxyStream - The media
+                 * stream to use as a local desktop stream.
                  * @returns {void}
                  */
-                onRemoteStream: desktopStream =>
-                    this.toggleScreenSharing(undefined, { desktopStream })
+                onRemoteStream: desktopStream => {
+                    if (desktopStream.videoType !== 'desktop') {
+                        logger.warn('Received a non-desktop stream to proxy.');
+                        desktopStream.dispose();
+
+                        return;
+                    }
+
+                    this.toggleScreenSharing(undefined, { desktopStream });
+                }
             });
         }
 
