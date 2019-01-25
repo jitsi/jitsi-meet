@@ -56,6 +56,13 @@ public class ConnectionImpl extends Connection {
                     null,
                     "org.jitsi.meet:features/connection_service#disconnect",
                     data);
+        // The JavaScript side will not go back to the native with 'endCall',
+        // so the Connection must be removed immediately.
+        ConnectionList
+                .getInstance()
+                .setConnectionDisconnected(
+                        getCallUUID(),
+                        new DisconnectCause(DisconnectCause.LOCAL));
     }
 
     /**
@@ -72,6 +79,13 @@ public class ConnectionImpl extends Connection {
                 null,
                 "org.jitsi.meet:features/connection_service#abort",
                 data);
+        // The JavaScript side will not go back to the native with 'endCall',
+        // so the Connection must be removed immediately.
+        ConnectionList
+                .getInstance()
+                .setConnectionDisconnected(
+                        getCallUUID(),
+                        new DisconnectCause(DisconnectCause.CANCELED));
     }
 
     /**
