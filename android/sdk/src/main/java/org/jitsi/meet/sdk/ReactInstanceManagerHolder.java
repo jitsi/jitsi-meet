@@ -29,8 +29,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-// FIXME do not make public ?
-public class ReactInstanceManagerHolder {
+class ReactInstanceManagerHolder {
     /**
      * FIXME (from linter): Do not place Android context classes in static
      * fields (static reference to ReactInstanceManager which has field
@@ -60,9 +59,7 @@ public class ReactInstanceManagerHolder {
 
         if (android.os.Build.VERSION.SDK_INT
                 >= android.os.Build.VERSION_CODES.O) {
-            nativeModules.add(
-                new org.jitsi.meet.sdk.connection_service.RNConnectionService(
-                        reactContext));
+            nativeModules.add(new RNConnectionService(reactContext));
         }
 
         return nativeModules;
@@ -74,7 +71,7 @@ public class ReactInstanceManagerHolder {
      * @param eventName {@code String} containing the event name.
      * @param data {@code Object} optional ancillary data for the event.
      */
-    public static boolean emitEvent(
+    static boolean emitEvent(
             String eventName,
             @Nullable Object data) {
         ReactInstanceManager reactInstanceManager
@@ -105,7 +102,7 @@ public class ReactInstanceManagerHolder {
      * {@code null} if no instance for this interface is available, or if
      * {@link #reactInstanceManager} has not been initialized yet.
      */
-    public static <T extends NativeModule> T getNativeModule(
+    static <T extends NativeModule> T getNativeModule(
             Class<T> nativeModuleClass) {
         ReactContext reactContext
             = reactInstanceManager != null

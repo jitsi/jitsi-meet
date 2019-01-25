@@ -1,4 +1,4 @@
-package org.jitsi.meet.sdk.connection_service;
+package org.jitsi.meet.sdk;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -26,7 +26,7 @@ import com.facebook.react.bridge.ReadableMap;
  * @author Pawel Domas
  */
 @RequiresApi(api = Build.VERSION_CODES.O)
-public class RNConnectionService
+class RNConnectionService
     extends ReactContextBaseJavaModule {
 
     private final static String TAG = ConnectionService.TAG;
@@ -38,13 +38,14 @@ public class RNConnectionService
      * {@link android.telecom.CallAudioState} constants prefixed with "ROUTE_".
      */
     @RequiresApi(api = Build.VERSION_CODES.O)
-    static public void setAudioRoute(int audioRoute) {
-        for (ConnectionImpl c : ConnectionList.getInstance().getAll()) {
+    static void setAudioRoute(int audioRoute) {
+        for (ConnectionService.ConnectionImpl c
+                : ConnectionService.getConnections()) {
             c.setAudioRoute(audioRoute);
         }
     }
 
-    public RNConnectionService(ReactApplicationContext reactContext) {
+    RNConnectionService(ReactApplicationContext reactContext) {
         super(reactContext);
     }
 
@@ -98,9 +99,7 @@ public class RNConnectionService
         extras.putParcelable(
             TelecomManager.EXTRA_OUTGOING_CALL_EXTRAS, outgoingCallExtras);
 
-        ConnectionList
-            .getInstance()
-            .registerStartCallPromise(callUUID, promise);
+        ConnectionService.registerStartCallPromise(callUUID, promise);
 
         try {
             TelecomManager tm
@@ -109,7 +108,7 @@ public class RNConnectionService
 
             tm.placeCall(address, extras);
         } catch (Exception e) {
-            ConnectionList.getInstance().unregisterStartCallPromise(callUUID);
+            ConnectionService.unregisterStartCallPromise(callUUID);
             promise.reject(e);
         }
     }
@@ -122,10 +121,9 @@ public class RNConnectionService
     @ReactMethod
     public void reportCallFailed(String callUUID) {
         Log.d(TAG, "reportCallFailed " + callUUID);
-        ConnectionList
-                .getInstance()
-                .setConnectionDisconnected(
-                    callUUID, new DisconnectCause(DisconnectCause.ERROR));
+        ConnectionService.setConnectionDisconnected(
+                callUUID,
+                new DisconnectCause(DisconnectCause.ERROR));
     }
 
     /**
@@ -136,10 +134,9 @@ public class RNConnectionService
     @ReactMethod
     public void endCall(String callUUID) {
         Log.d(TAG, "endCall " + callUUID);
-        ConnectionList
-                .getInstance()
-                .setConnectionDisconnected(
-                    callUUID, new DisconnectCause(DisconnectCause.LOCAL));
+        ConnectionService.setConnectionDisconnected(
+                callUUID,
+                new DisconnectCause(DisconnectCause.LOCAL));
     }
 
     /**
@@ -150,9 +147,7 @@ public class RNConnectionService
     @ReactMethod
     public void reportConnectedOutgoingCall(String callUUID) {
         Log.d(TAG, "reportConnectedOutgoingCall " + callUUID);
-        ConnectionList
-                .getInstance()
-                .setConnectionActive(callUUID);
+        ConnectionService.setConnectionActive(callUUID);
     }
 
     @Override
@@ -165,13 +160,12 @@ public class RNConnectionService
      *
      * @param callUUID - the call's UUID.
      * @param callState - the map which carries infor about the current call's
-     *        state. See static fields in {@link ConnectionImpl} prefixed with
-     *        "KEY_" for the values supported by the Android implementation.
+     * state. See static fields in {@link ConnectionService.ConnectionImpl}
+     * prefixed with "KEY_" for the values supported by the Android
+     * implementation.
      */
     @ReactMethod
     public void updateCall(String callUUID, ReadableMap callState) {
-        ConnectionList
-            .getInstance()
-            .updateCall(callUUID, callState);
+        ConnectionService.updateCall(callUUID, callState);
     }
 }

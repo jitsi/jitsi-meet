@@ -37,8 +37,6 @@ import com.facebook.react.bridge.ReactMethod;
 import com.facebook.react.bridge.WritableArray;
 import com.facebook.react.bridge.WritableMap;
 
-import org.jitsi.meet.sdk.connection_service.RNConnectionService;
-
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;

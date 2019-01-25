@@ -27,7 +27,7 @@
       android:supportsRtl="true">
     <activity
         android:name="com.facebook.react.devsupport.DevSettingsActivity" />
-    <service android:name="org.jitsi.meet.sdk.connection_service.ConnectionService"
+    <service android:name="org.jitsi.meet.sdk.ConnectionService"
         android:permission="android.permission.BIND_TELECOM_CONNECTION_SERVICE">
       <intent-filter>
         <action android:name="android.telecom.ConnectionService" />
