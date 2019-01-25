@@ -11,6 +11,7 @@ import android.telecom.PhoneAccount;
 import android.telecom.PhoneAccountHandle;
 import android.telecom.TelecomManager;
 import android.telecom.VideoProfile;
+import android.util.Log;
 
 import com.facebook.react.bridge.Promise;
 import com.facebook.react.bridge.ReactApplicationContext;
@@ -27,6 +28,8 @@ import com.facebook.react.bridge.ReadableMap;
 @RequiresApi(api = Build.VERSION_CODES.O)
 public class RNConnectionService
     extends ReactContextBaseJavaModule {
+
+    private final static String TAG = ConnectionService.TAG;
 
     /**
      * Sets the audio route on all existing {@link android.telecom.Connection}s
@@ -66,6 +69,11 @@ public class RNConnectionService
             String handle,
             boolean hasVideo,
             Promise promise) {
+        Log.d(TAG,
+              String.format("startCall UUID=%s, h=%s, v=%s",
+                            callUUID,
+                            handle,
+                            hasVideo));
 
         ReactApplicationContext ctx = getReactApplicationContext();
 
@@ -113,6 +121,7 @@ public class RNConnectionService
      */
     @ReactMethod
     public void reportCallFailed(String callUUID) {
+        Log.d(TAG, "reportCallFailed " + callUUID);
         ConnectionList
                 .getInstance()
                 .setConnectionDisconnected(
@@ -126,6 +135,7 @@ public class RNConnectionService
      */
     @ReactMethod
     public void endCall(String callUUID) {
+        Log.d(TAG, "endCall " + callUUID);
         ConnectionList
                 .getInstance()
                 .setConnectionDisconnected(
@@ -139,6 +149,7 @@ public class RNConnectionService
      */
     @ReactMethod
     public void reportConnectedOutgoingCall(String callUUID) {
+        Log.d(TAG, "reportConnectedOutgoingCall " + callUUID);
         ConnectionList
                 .getInstance()
                 .setConnectionActive(callUUID);

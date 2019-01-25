@@ -72,6 +72,8 @@ public class ConnectionService extends android.telecom.ConnectionService {
                 .unregisterStartCallPromise(connection.getCallUUID());
 
         if (startCallPromise != null) {
+            Log.d(TAG,
+                  "onCreateOutgoingConnection " + connection.getCallUUID());
             startCallPromise.resolve(null);
         } else {
             Log.e(TAG, String.format(
@@ -95,9 +97,9 @@ public class ConnectionService extends android.telecom.ConnectionService {
     @Override
     public void onCreateOutgoingConnectionFailed(
             PhoneAccountHandle account, ConnectionRequest request) {
-        Log.e(TAG, "onCreateOutgoingConnectionFailed");
-
         String callUUID = request.getExtras().getString(EXTRAS_CALL_UUID);
+
+        Log.e(TAG, "onCreateOutgoingConnectionFailed " + callUUID);
 
         if (callUUID != null) {
             Promise startCallPromise

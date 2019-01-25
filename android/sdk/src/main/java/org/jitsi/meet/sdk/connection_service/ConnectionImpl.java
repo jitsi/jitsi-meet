@@ -4,6 +4,7 @@ import android.os.Build;
 import android.support.annotation.RequiresApi;
 import android.telecom.CallAudioState;
 import android.telecom.Connection;
+import android.telecom.DisconnectCause;
 import android.telecom.PhoneAccountHandle;
 import android.telecom.TelecomManager;
 import android.util.Log;
@@ -48,6 +49,7 @@ public class ConnectionImpl extends Connection {
      */
     @Override
     public void onDisconnect() {
+        Log.d(TAG, "onDisconnect " + getCallUUID());
         WritableNativeMap data = new WritableNativeMap();
         data.putString("callUUID", getCallUUID());
         ReactContextUtils.emitEvent(
@@ -63,6 +65,7 @@ public class ConnectionImpl extends Connection {
      */
     @Override
     public void onAbort() {
+        Log.d(TAG, "onAbort " + getCallUUID());
         WritableNativeMap data = new WritableNativeMap();
         data.putString("callUUID", getCallUUID());
         ReactContextUtils.emitEvent(
@@ -96,7 +99,10 @@ public class ConnectionImpl extends Connection {
      */
     @Override
     public void onStateChanged(int state) {
-        super.onStateChanged(state);
+        Log.d(TAG,
+              String.format("onStateChanged: %s %s",
+                            Connection.stateToString(state),
+                            getCallUUID()));
 
         if (state == STATE_DISCONNECTED) {
             ConnectionList.getInstance().remove(this);
