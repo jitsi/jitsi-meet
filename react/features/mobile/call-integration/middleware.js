@@ -209,7 +209,7 @@ function _conferenceLeft(store, next, action) {
  * @private
  * @returns {*} The value returned by {@code next(action)}.
  */
-function _conferenceWillJoin({ getState }, next, action) {
+function _conferenceWillJoin({ dispatch, getState }, next, action) {
     const result = next(action);
 
     const { conference } = action;
@@ -244,6 +244,26 @@ function _conferenceWillJoin({ getState }, next, action) {
                     hasVideo
                 });
             CallIntegration.setMuted(conference.callUUID, muted);
+        })
+        .catch(error => {
+            // Currently this error code is emitted only by Android.
+            if (error.code === 'CREATE_OUTGOING_CALL_FAILED') {
+                // We're not tracking the call anymore - it doesn't exist on
+                // the native side.
+                delete conference.callUUID;
+                dispatch({
+                    type: CONFERENCE_FAILED,
+                    conference,
+                    error: {
+                        name: 'REQUEST_DENIED_BY_THE_SYSTEM',
+                        recoverable: false
+                    }
+                });
+                dispatch(appNavigate(undefined));
+
+                // FIXME show a dialog saying "Unable to place the call,
+                // please end any ongoing calls and try again."
+            }
         });
 
     return result;

@@ -110,7 +110,7 @@ public class ConnectionService extends android.telecom.ConnectionService {
             if (startCallPromise != null) {
                 startCallPromise.reject(
                         "CREATE_OUTGOING_CALL_FAILED",
-                        "create outgoing call failed");
+                        "The request has been denied by the system");
             } else {
                 Log.e(TAG, String.format(
                         "startCallFailed - no start call Promise for UUID: %s",
