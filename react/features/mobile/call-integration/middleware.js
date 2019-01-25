@@ -1,5 +1,6 @@
 // @flow
 
+import { Alert } from 'react-native';
 import uuid from 'uuid';
 
 import { createTrackMutedEvent, sendAnalytics } from '../../analytics';
@@ -261,8 +262,14 @@ function _conferenceWillJoin({ dispatch, getState }, next, action) {
                 });
                 dispatch(appNavigate(undefined));
 
-                // FIXME show a dialog saying "Unable to place the call,
-                // please end any ongoing calls and try again."
+                Alert.alert(
+                    'Call aborted',
+                    'There\'s already another call in progress.'
+                        + ' Please end it first and try again.',
+                    [
+                        { text: 'OK' }
+                    ],
+                    { cancelable: false });
             }
         });
 
