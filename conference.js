@@ -1400,6 +1400,8 @@ export default {
             receiver.stop();
         }
 
+        this._stopProxyConnection();
+
         let promise = null;
 
         if (didHaveVideo) {
@@ -1475,9 +1477,12 @@ export default {
 
     /**
      * Creates desktop (screensharing) {@link JitsiLocalTrack}
+     *
      * @param {Object} [options] - Screen sharing options that will be passed to
      * createLocalTracks.
-     *
+     * @param {Object} [options.desktopSharing]
+     * @param {Object} [options.desktopStream] - An existing desktop stream to
+     * use instead of creating a new desktop stream.
      * @return {Promise.<JitsiLocalTrack>} - A Promise resolved with
      * {@link JitsiLocalTrack} for the screensharing or rejected with
      * {@link JitsiTrackError}.
@@ -1490,49 +1495,52 @@ export default {
         const didHaveVideo = Boolean(this.localVideo);
         const wasVideoMuted = this.isLocalVideoMuted();
 
-        return createLocalTracksF({
-            desktopSharingSourceDevice: options.desktopSharingSources
-                ? null : config._desktopSharingSourceDevice,
-            desktopSharingSources: options.desktopSharingSources,
-            devices: [ 'desktop' ],
-            desktopSharingExtensionExternalInstallation: {
-                interval: 500,
-                checkAgain: () => DSExternalInstallationInProgress,
-                listener: (status, url) => {
-                    switch (status) {
-                    case 'waitingForExtension': {
-                        DSExternalInstallationInProgress = true;
-                        externalInstallation = true;
-                        const listener = () => {
-                            // Wait a little bit more just to be sure that we
-                            // won't miss the extension installation
-                            setTimeout(
-                                () => {
+        const getDesktopStreamPromise = options.desktopStream
+            ? Promise.resolve([ options.desktopStream ])
+            : createLocalTracksF({
+                desktopSharingSourceDevice: options.desktopSharingSources
+                    ? null : config._desktopSharingSourceDevice,
+                desktopSharingSources: options.desktopSharingSources,
+                devices: [ 'desktop' ],
+                desktopSharingExtensionExternalInstallation: {
+                    interval: 500,
+                    checkAgain: () => DSExternalInstallationInProgress,
+                    listener: (status, url) => {
+                        switch (status) {
+                        case 'waitingForExtension': {
+                            DSExternalInstallationInProgress = true;
+                            externalInstallation = true;
+                            const listener = () => {
+                                // Wait a little bit more just to be sure that
+                                // we won't miss the extension installation
+                                setTimeout(() => {
                                     DSExternalInstallationInProgress = false;
                                 },
                                 500);
-                            APP.UI.removeListener(
+                                APP.UI.removeListener(
+                                    UIEvents.EXTERNAL_INSTALLATION_CANCELED,
+                                    listener);
+                            };
+
+                            APP.UI.addListener(
                                 UIEvents.EXTERNAL_INSTALLATION_CANCELED,
                                 listener);
-                        };
+                            APP.UI.showExtensionExternalInstallationDialog(url);
+                            break;
+                        }
+                        case 'extensionFound':
+                            // Close the dialog.
+                            externalInstallation && $.prompt.close();
+                            break;
+                        default:
 
-                        APP.UI.addListener(
-                            UIEvents.EXTERNAL_INSTALLATION_CANCELED,
-                            listener);
-                        APP.UI.showExtensionExternalInstallationDialog(url);
-                        break;
-                    }
-                    case 'extensionFound':
-                        // Close the dialog.
-                        externalInstallation && $.prompt.close();
-                        break;
-                    default:
-
-                        // Unknown status
+                            // Unknown status
+                        }
                     }
                 }
-            }
-        }).then(([ desktopStream ]) => {
+            });
+
+        return getDesktopStreamPromise.then(([ desktopStream ]) => {
             // Stores the "untoggle" handler which remembers whether was
             // there any video before and whether was it muted.
             this._untoggleScreenSharing
@@ -2477,6 +2485,8 @@ export default {
     hangup(requestFeedback = false) {
         eventEmitter.emit(JitsiMeetConferenceEvents.BEFORE_HANGUP);
 
+        this._stopProxyConnection();
+
         APP.store.dispatch(destroyLocalTracks());
         this._localTracksInitialized = false;
         this.localVideo = null;
@@ -2695,6 +2705,65 @@ export default {
     },
 
     /**
+     * Callback invoked by the external api create or update a direct connection
+     * from the local client to an external client.
+     *
+     * @param {Object} event - The object containing information that should be
+     * passed to the {@code ProxyConnectionService}.
+     * @returns {void}
+     */
+    onProxyConnectionEvent(event) {
+        if (!this._proxyConnection) {
+            this._proxyConnection = new JitsiMeetJS.ProxyConnectionService({
+                /**
+                 * The proxy connection feature is currently tailored towards
+                 * taking a proxied video stream and showing it as a local
+                 * desktop screen.
+                 */
+                convertVideoToDesktop: true,
+
+                /**
+                 * Callback invoked to pass messages from the local client back
+                 * out to the external client.
+                 *
+                 * @param {string} peerJid - The jid of the intended recipient
+                 * of the message.
+                 * @param {Object} data - The message that should be sent. For
+                 * screensharing this is an iq.
+                 * @returns {void}
+                 */
+                onSendMessage: (peerJid, data) =>
+                    APP.API.sendProxyConnectionEvent({
+                        data,
+                        to: peerJid
+                    }),
+
+                /**
+                 * Callback invoked when the remote peer of the proxy connection
+                 * has provided a video stream, intended to be used as a local
+                 * desktop stream.
+                 *
+                 * @param {JitsiLocalTrack} remoteProxyStream - The media
+                 * stream to use as a local desktop stream.
+                 * @returns {void}
+                 */
+                onRemoteStream: desktopStream => {
+                    if (desktopStream.videoType !== 'desktop') {
+                        logger.warn('Received a non-desktop stream to proxy.');
+                        desktopStream.dispose();
+
+                        return;
+                    }
+
+                    this.toggleScreenSharing(undefined, { desktopStream });
+                }
+            });
+        }
+
+        this._proxyConnection.processMessage(event);
+    },
+
+    /**
      * Sets the video muted status.
      *
      * @param {boolean} muted - New muted status.
@@ -2728,5 +2797,19 @@ export default {
         if (score === -1 || (score >= 1 && score <= 5)) {
             APP.store.dispatch(submitFeedback(score, message, room));
         }
+    },
+
+    /**
+     * Terminates any proxy screensharing connection that is active.
+     *
+     * @private
+     * @returns {void}
+     */
+    _stopProxyConnection() {
+        if (this._proxyConnection) {
+            this._proxyConnection.stop();
+        }
+
+        this._proxyConnection = null;
     }
 };

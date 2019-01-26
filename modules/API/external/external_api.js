@@ -46,6 +46,7 @@ const events = {
     'outgoing-message': 'outgoingMessage',
     'participant-joined': 'participantJoined',
     'participant-left': 'participantLeft',
+    'proxy-connection-event': 'proxyConnectionEvent',
     'video-ready-to-close': 'readyToClose',
     'video-conference-joined': 'videoConferenceJoined',
     'video-conference-left': 'videoConferenceLeft',
@@ -741,6 +742,25 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
      */
     removeEventListeners(eventList) {
         eventList.forEach(event => this.removeEventListener(event));
+    }
+
+    /**
+     * Passes an event along to the local conference participant to establish
+     * or update a direct peer connection. This is currently used for developing
+     * wireless screensharing with room integration and it is advised against to
+     * use as its api may change.
+     *
+     * @param {Object} event - An object with information to pass along.
+     * @param {Object} event.data - The payload of the event.
+     * @param {string} event.from - The jid of the sender of the event. Needed
+     * when a reply is to be sent regarding the event.
+     * @returns {void}
+     */
+    sendProxyConnectionEvent(event) {
+        this._transport.sendEvent({
+            data: [ event ],
+            name: 'proxy-connection-event'
+        });
     }
 
     /**
