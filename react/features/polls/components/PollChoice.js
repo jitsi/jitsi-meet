@@ -107,8 +107,6 @@ class PollChoice extends Component<Props, *> {
             return;
         }
 
-        console.log(onVote);
-
         if (onVote) {
             onVote(id);
         }
