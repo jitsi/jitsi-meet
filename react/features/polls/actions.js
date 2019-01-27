@@ -1,5 +1,6 @@
 // @flow
 
+import { showNotification } from '../notifications/actions';
 import {
     END_POLL,
     START_POLL,
@@ -8,30 +9,20 @@ import {
     POLL_SESSION_VOTE,
     POLL_SESSION_FINISHED
 } from './actionTypes';
-import { showNotification } from '../notifications/actions';
 
 /**
- * Initiate a poll session.
+ * Adds a new poll to the Redux state.
  *
- * @param {Object} payload - Poll object.
+ * @param {{
+ *     poll: Object,
+ *     choices: Object,
+ *     question: Object
+ * }} payload - Expectes three objects that represent the poll.
  * @returns {{
- *      type: POLL_SESSION_INITIATED,
- *      question: string,
- *      items: Array<Object>
- * }}
- */
-export function startPoll(payload: Object) {
-    return {
-        type: START_POLL,
-        ...payload
-    };
-}
-
-/**
- * Start Poll session for participants other than the creator.
- *
- * @param {Object} payload - Poll object.
- * @returns {{
+ *     type: POLL_SESSION_STARTED,
+ *     poll: Object,
+ *     question: Object,
+ *     choices: Object
  * }}
  */
 export function addPoll(payload: Object) {
@@ -42,76 +33,11 @@ export function addPoll(payload: Object) {
 }
 
 /**
- * Show UI notification about the start of the poll session.
+ * Called by local user to end current poll.
  *
- * @returns {{}}
- */
-export function showPollStartNotification() {
-    // FIXME: update text.
-    const props = {
-        title: 'Poll Started!',
-        description: 'A Poll has been created'
-    };
-
-    return showNotification({
-        isDismissAllowed: true,
-        ...props
-    });
-}
-
-/**
- * Show UI notification about the end of the poll session.
- *
- * @returns {{}}
- */
-export function showPollEndNotification() {
-    // FIXME: update text.
-    const props = {
-        title: 'Poll Finished!',
-        description: 'Current Poll has been ended'
-    };
-
-    return showNotification({
-        isDismissAllowed: true,
-        ...props
-    });
-}
-
-/**
- * Vote for an option.
- *
- * @param {string} choiceID - Option voted for identified by text.
  * @returns {{
- *      type: POLL_SESSION_VOTE,
- *      item: string,
- *      user: string
+ *     type: END_POLL
  * }}
- */
-export function vote(choiceID: string) {
-    return {
-        type: VOTE_POLL,
-        choiceID
-    };
-}
-
-/**
- * Update state about other participant vote.
- *
- * @param {Object} choice - Option voted for.
- * @returns {{}}
- */
-export function updateVote(choice: Object) {
-    return {
-        type: POLL_SESSION_VOTE,
-        choice
-    };
-}
-
-
-/**
- * Local user action to end the poll.
- *
- * @returns {{}}
  */
 export function endPoll() {
     return {
@@ -120,12 +46,102 @@ export function endPoll() {
 }
 
 /**
- * Recieved command to end the poll.
+ * Update Redux state to end current poll.
  *
- * @returns {{}}
+ * @returns {{
+ *     type: POLL_SESSION_FINISHED
+ * }}
  */
 export function finishPoll() {
     return {
         type: POLL_SESSION_FINISHED
+    };
+}
+
+/**
+ * Show UI notification about the end of the poll session.
+ *
+ * @returns {{}}
+ */
+export function showPollEndNotification() {
+    const props = {
+        titleKey: 'polls.endNotificationTitle',
+        descriptionKey: 'polls.endNotificationBody'
+    };
+
+    return showNotification({
+        isDismissAllowed: true,
+        ...props
+    });
+}
+
+/**
+ * Show UI notification about the start of the poll session.
+ *
+ * @returns {{}}
+ */
+export function showPollStartNotification() {
+    const props = {
+        titleKey: 'polls.startNotificationTitle',
+        descriptionKey: 'polls.startNotificationBody'
+    };
+
+    return showNotification({
+        ...props
+    });
+}
+
+/**
+ * Called by local user to initiate a poll
+ * in the conference room.
+ *
+ * @param {{
+ *     poll: Object,
+ *     choices: Object,
+ *     question: Object
+ * }} payload - Expectes three objects that represent the poll.
+ * @returns {{
+ *     type: START_POLL,
+ *     poll: Object,
+ *     question: Object,
+ *     choices: Object
+ * }}
+ */
+export function startPoll(payload: Object) {
+    return {
+        type: START_POLL,
+        ...payload
+    };
+}
+
+/**
+ * Update Redux state about a user's vote.
+ *
+ * @param {Object} choice - Option voted for.
+ * @returns {{
+ *     type: POLL_SESSION_VOTE,
+ *     choice: Object
+ * }}
+ */
+export function updateVote(choice: Object) {
+    return {
+        type: POLL_SESSION_VOTE,
+        choice
+    };
+}
+
+/**
+ * Called by local user to toggle their vote.
+ *
+ * @param {string} choiceID - Option voted for identified by text.
+ * @returns {{
+ *     type: VOTE_POLL,
+ *     choiceID: string
+ * }}
+ */
+export function vote(choiceID: string) {
+    return {
+        type: VOTE_POLL,
+        choiceID
     };
 }

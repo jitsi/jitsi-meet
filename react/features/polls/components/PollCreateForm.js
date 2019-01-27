@@ -1,11 +1,12 @@
 // @flow
 
 import React, { Component } from 'react';
-import { Container } from '../../base/react';
 import { FieldTextStateless } from '@atlaskit/field-text';
-import AddPollItem from './AddPollItem';
-import PollChoice from './PollChoice';
+
 import { translate } from '../../base/i18n';
+import { Container } from '../../base/react';
+
+import EditablePollChoice from './EditablePollChoice';
 
 type Props = {
 
@@ -20,14 +21,14 @@ type Props = {
     dispatch: Function,
 
     /**
-     * Function handler to add a new choice.
-     */
-    onAddChoice: Function,
-
-    /**
      * Function handler when poll choice text change.
      */
     onChoiceTextChange: Function,
+
+    /**
+     * Function handler when a key is pressed in the choices' text fields.
+     */
+    onKeyDown: Function,
 
     /**
      * Function handler to remove poll choice.
@@ -72,30 +73,27 @@ class PollCreateForm extends Component<Props, *> {
      * @inheritdoc
      */
     render() {
-        const { onAddChoice, onQuestionTextChange, t } = this.props;
+        const { onQuestionTextChange, t } = this.props;
         const choices = Object.keys(this.props.choices)
             .map(this._renderPollChoice);
 
         return (
-            <Container
-                className = { 'pollCreateFormContainer' } >
+            <Container>
                 <FieldTextStateless
                     autoFocus = { true }
-                    id = { 'pollQuestion' }
+                    id = 'pollQuestion'
                     isLabelHidden = { true }
                     onChange = { onQuestionTextChange }
                     placeholder = { t('polls.placeholder') }
                     type = 'text' />
 
                 <div
-                    className = { 'pollChoicesListContainer' } >
+                    className = 'pollChoicesListContainer' >
                     <ul
-                        id = { 'pollChoicesList' } >
+                        id = 'pollChoicesList' >
                         { choices }
                     </ul>
                 </div>
-                <AddPollItem
-                    addItemHandler = { onAddChoice } />
             </Container>
         );
     }
@@ -110,20 +108,17 @@ class PollCreateForm extends Component<Props, *> {
      * @returns {Component}
      */
     _renderPollChoice(item: string, id: number) {
-        const { onChoiceTextChange, onRemoveChoice } = this.props;
+        const { onChoiceTextChange, onKeyDown, onRemoveChoice } = this.props;
         const text = this.props.choices[item].text;
 
         return (
-            <PollChoice
-                deleteHandler = { onRemoveChoice }
-                disabled = { true }
-                editable = { true }
+            <EditablePollChoice
                 id = { item }
                 key = { id.toString() }
-                selected = { false }
-                text = { text }
-                textChangeHandler = { onChoiceTextChange }
-                votes = { 0 } />
+                onDelete = { onRemoveChoice }
+                onKeyDown = { onKeyDown }
+                onTextChange = { onChoiceTextChange }
+                text = { text } />
         );
     }
 }

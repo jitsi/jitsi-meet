@@ -2,19 +2,21 @@
 
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { DialogWithTabs, hideDialog } from '../../base/dialog';
-import PollCreateForm from './PollCreateForm';
-import VoteForm from './VoteForm';
-import PollResultsForm from './PollResultsForm';
-import { translate } from '../../base/i18n';
 import v1 from 'uuid/v1';
+
+import { DialogWithTabs, hideDialog } from '../../base/dialog';
+import { translate } from '../../base/i18n';
+import { getLocalParticipant } from '../../base/participants';
+
 import {
     startPoll,
     vote, endPoll
 } from '../actions';
 import { getUniquePollChoices } from '../functions';
 
-import { getLocalParticipant } from '../../base/participants';
+import PollCreateForm from './PollCreateForm';
+import PollResultsForm from './PollResultsForm';
+import VoteForm from './VoteForm';
 
 type Props = {
 
@@ -70,102 +72,24 @@ class PollDialog extends Component<Props, State> {
     constructor(props: Props) {
         super(props);
 
-        this._closeDialog = this._closeDialog.bind(this);
-        this._onSubmit = this._onSubmit.bind(this);
         this._addChoice = this._addChoice.bind(this);
-        this._removeChoice = this._removeChoice.bind(this);
-        this._onQuestionTextChange = this._onQuestionTextChange.bind(this);
-        this._createNewPoll = this._createNewPoll.bind(this);
         this._choiceTextChange = this._choiceTextChange.bind(this);
-        this._vote = this._vote.bind(this);
+        this._closeDialog = this._closeDialog.bind(this);
+        this._createNewPoll = this._createNewPoll.bind(this);
+        this._createNewState = this._createNewState.bind(this);
         this._endPoll = this._endPoll.bind(this);
-        this._clearState = this._clearState.bind(this);
+        this._onChoiceTextSubmit = this._onChoiceTextSubmit.bind(this);
+        this._onQuestionTextChange = this._onQuestionTextChange.bind(this);
+        this._onSubmit = this._onSubmit.bind(this);
+        this._removeChoice = this._removeChoice.bind(this);
+        this._vote = this._vote.bind(this);
 
-        const initialState = this._clearState();
+        // create a new poll ID an list of choices
+        const initialState = this._createNewState();
 
         this.state = {
             ...initialState
         };
-    }
-
-    _closeDialog: () => void;
-
-    /**
-     * Callback invoked to close the dialog without saving changes.
-     *
-     * @private
-     * @returns {void}
-     */
-    _closeDialog() {
-        this.props.dispatch(hideDialog());
-    }
-
-    /**
-     * Component render method.
-     *
-     * @inheritdoc
-     */
-    render() {
-        const { isPollRunning, userID } = this.props;
-        const title = isPollRunning ? 'dialog.endPoll' : 'dialog.startPoll';
-        const tabs = isPollRunning ? [ {
-            component: VoteForm,
-            label: 'polls.vote',
-            props: {
-                userID,
-                onVoteClicked: this._vote
-            },
-            submit: null
-        } ] : [ {
-            component: PollCreateForm,
-            label: 'polls.create',
-            props: {
-                choices: this.state.choices,
-                onAddChoice: this._addChoice,
-                onChoiceTextChange: this._choiceTextChange,
-                onRemoveChoice: this._removeChoice,
-                onQuestionTextChange: this._onQuestionTextChange
-            },
-            propsUpdateFunction: (oldProps, newProps) => {
-                return { ...newProps };
-            },
-            submit: null
-        } ];
-
-        tabs.push({
-            component: PollResultsForm,
-            label: 'polls.results',
-            props: {},
-            submit: null
-        });
-
-        return (
-            <DialogWithTabs
-                closeDialog = { this._closeDialog }
-                cssClassName = { 'polls-dialog' }
-                key = { isPollRunning.toString() }
-                okTitleKey = { title }
-                onSubmit = { this._onSubmit }
-                tabs = { tabs }
-                titleKey = { 'dialog.polls' } />
-        );
-    }
-
-    _onSubmit: () => void;
-
-    /**
-     * Submit button handler.
-     *
-     * @returns {void}
-     */
-    _onSubmit() {
-        const { isPollRunning } = this.props;
-
-        if (isPollRunning) {
-            this._endPoll();
-        } else {
-            this._createNewPoll();
-        }
     }
 
     _addChoice: (void) => void;
@@ -190,24 +114,6 @@ class PollDialog extends Component<Props, State> {
         });
     }
 
-    _removeChoice: (number) => void;
-
-    /**
-     * Removes an item from list.
-     *
-     * @param {string} id - ID of item in list.
-     * @returns {void}
-     */
-    _removeChoice(id: string) {
-        const filteredChoices = Object.assign({}, this.state.choices);
-
-        delete filteredChoices[id];
-
-        this.setState({
-            choices: filteredChoices
-        });
-    }
-
     _choiceTextChange: (string, string) => void;
 
     /**
@@ -229,6 +135,18 @@ class PollDialog extends Component<Props, State> {
                 }
             }
         });
+    }
+
+    _closeDialog: () => void;
+
+    /**
+     * Callback invoked to close the dialog without saving changes.
+     *
+     * @private
+     * @returns {void}
+     */
+    _closeDialog() {
+        this.props.dispatch(hideDialog());
     }
 
     _createNewPoll: () => void;
@@ -259,12 +177,80 @@ class PollDialog extends Component<Props, State> {
 
         dispatch(startPoll(payload));
 
-        // Clear Object
-        const newState = this._clearState();
+        // we need to reset the state and prepare new IDs and a new list
+        // of choices. This is needed because otherwise all polls will
+        // be created with the same IDs and the list of choices will
+        // reappear after a poll has ended because PollCreateForm recieves
+        // the choices list as props from the PollDialog
+        const newState = this._createNewState();
 
         this.setState({
             ...newState
         });
+    }
+
+    _createNewState: () => Object;
+
+    /**
+     * Returns a new object that can be set to clear state.
+     *
+     * @returns {Object}
+     */
+    _createNewState() {
+        const pollID = v1();
+        const questionID = v1();
+        const choiceID = v1();
+
+        return {
+            choices: {
+                [choiceID]: {
+                    id: choiceID,
+                    text: '',
+                    votes: []
+                }
+            },
+            poll: {
+                id: pollID,
+                question: questionID,
+                choices: [],
+                owner: this.props.userID
+            },
+            question: {
+                id: questionID,
+                text: ''
+            }
+        };
+    }
+
+    _endPoll: () => void;
+
+    /**
+     * Dispatch action to end poll.
+     *
+     * @returns {boolean}
+     */
+    _endPoll() {
+        const { dispatch } = this.props;
+
+        dispatch(endPoll());
+    }
+
+    _onChoiceTextSubmit: (Object) => void;
+
+    /**
+     * Function to handle when enter key is pressed in the choice text input
+     * field to automatically add a new choice to the list.
+     *
+     * @param {Object} event - Key press event.
+     * @returns {void}
+     */
+    _onChoiceTextSubmit(event: Object) {
+        if (event.keyCode === 13
+            && event.shiftKey === false) {
+            event.preventDefault();
+
+            this._addChoice();
+        }
     }
 
     _onQuestionTextChange: (Object) => void;
@@ -286,19 +272,94 @@ class PollDialog extends Component<Props, State> {
         });
     }
 
-    _endPoll: () => void;
+    _onSubmit: () => void;
 
     /**
-     * Dispatch action to end poll.
+     * Submit button handler.
      *
-     * @returns {boolean}
+     * @returns {void}
      */
-    _endPoll() {
-        const { dispatch } = this.props;
+    _onSubmit() {
+        const { isPollRunning } = this.props;
 
-        dispatch(endPoll());
+        if (isPollRunning) {
+            this._endPoll();
+        } else {
+            this._createNewPoll();
+        }
     }
 
+    _removeChoice: (number) => void;
+
+    /**
+     * Removes an item from list.
+     *
+     * @param {string} id - ID of item in list.
+     * @returns {void}
+     */
+    _removeChoice(id: string) {
+        const filteredChoices = { ...this.state.choices };
+
+        delete filteredChoices[id];
+
+        this.setState({
+            choices: filteredChoices
+        });
+    }
+
+    /**
+     * Component render method.
+     *
+     * @inheritdoc
+     */
+    render() {
+        const { isPollRunning, userID } = this.props;
+        const title = isPollRunning ? 'dialog.endPoll' : 'dialog.startPoll';
+        const tabs = isPollRunning ? [ {
+            component: VoteForm,
+            label: 'polls.vote',
+            props: {
+                userID,
+                onVote: this._vote
+            },
+            styles: 'voteFormContainer',
+            submit: null
+        } ] : [ {
+            component: PollCreateForm,
+            label: 'polls.create',
+            props: {
+                choices: this.state.choices,
+                onKeyDown: this._onChoiceTextSubmit,
+                onChoiceTextChange: this._choiceTextChange,
+                onRemoveChoice: this._removeChoice,
+                onQuestionTextChange: this._onQuestionTextChange
+            },
+            propsUpdateFunction: (oldProps, newProps) => {
+                return { ...newProps };
+            },
+            styles: 'pollCreateFormContainer',
+            submit: null
+        } ];
+
+        tabs.push({
+            component: PollResultsForm,
+            label: 'polls.results',
+            props: {},
+            styles: 'pollResultsFormContainer',
+            submit: null
+        });
+
+        return (
+            <DialogWithTabs
+                closeDialog = { this._closeDialog }
+                cssClassName = 'polls-dialog'
+                key = { isPollRunning.toString() }
+                okTitleKey = { title }
+                onSubmit = { this._onSubmit }
+                tabs = { tabs }
+                titleKey = 'dialog.polls' />
+        );
+    }
 
     _vote: (string) => void;
 
@@ -312,32 +373,6 @@ class PollDialog extends Component<Props, State> {
         const { dispatch } = this.props;
 
         dispatch(vote(id));
-    }
-
-    _clearState: () => Object;
-
-    /**
-     * Returns a new object that can be set to clear state.
-     *
-     * @returns {Object}
-     */
-    _clearState() {
-        const pollID = v1();
-        const questionID = v1();
-
-        return {
-            choices: {},
-            poll: {
-                id: pollID,
-                question: questionID,
-                choices: [],
-                owner: this.props.userID
-            },
-            question: {
-                id: questionID,
-                text: ''
-            }
-        };
     }
 }
 
@@ -355,7 +390,7 @@ function _mapStateToProps(state: Object) {
     const userID = getLocalParticipant(state).id;
 
     return {
-        isPollRunning: currentPoll !== null,
+        isPollRunning: Boolean(currentPoll),
         userID
     };
 }

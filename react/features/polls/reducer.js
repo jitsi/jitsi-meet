@@ -32,6 +32,12 @@ const DEFAULT_STATE = {
 
 ReducerRegistry.register('features/polls', (state = DEFAULT_STATE, action) => {
     switch (action.type) {
+    case POLL_SESSION_FINISHED: {
+        return {
+            ...state,
+            currentPoll: null
+        };
+    }
     case POLL_SESSION_STARTED: {
         const { poll, question, choices } = action;
 
@@ -63,12 +69,6 @@ ReducerRegistry.register('features/polls', (state = DEFAULT_STATE, action) => {
                     choice
                 }
             }
-        };
-    }
-    case POLL_SESSION_FINISHED: {
-        return {
-            ...state,
-            currentPoll: null
         };
     }
     }

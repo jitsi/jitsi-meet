@@ -466,6 +466,16 @@
         "suboptimalExperienceTitle": "Browser Warning"
     },
     "passwordSetRemotely": "set by another member",
+    "polls": {
+        "create": "Create Poll",
+        "endNotificationBody": "Current Poll has been ended",
+        "endNotificationTitle": "Poll Finished!",
+        "placeholder": "Ask a question...",
+        "results": "Poll Results",
+        "startNotificationBody": "A Poll has been created",
+        "startNotificationTitle": "Poll Started!",
+        "vote": "Vote"
+    },
     "poweredby": "powered by",
     "presenceStatus": {
         "busy": "Busy",
@@ -751,11 +761,5 @@
         "sendFeedback": "Send feedback",
         "terms": "Terms",
         "title": "Secure, fully featured, and completely free video conferencing"
-    },
-    "polls": {
-        "results": "Poll Results",
-        "create": "Create Poll",
-        "vote": "Vote",
-        "placeholder": "Ask a question..."
     }
 }

@@ -1,62 +1,42 @@
-.pollCreateFormContainer, .voteFormContainer, .pollResultsFormContainer {
-    width: 500px;
-    text-align:center;
-}
-.pollChoicesListContainer {
-    text-align: center;
+.pollChoiceContainer {
+    align-items: center;
+    display: flex;
+    margin: 10px;
 }
 #pollChoicesList {
     list-style-type: none;
 }
-.pollChoiceContainer {
-    width: 300px;
-    height: 40px;
-    display: flex;
-    align-items: center;
-    margin: auto;
-}
-.pollVoteButtonContainer {
-    flex-direction: row;
-}
-#pollVoteButton {
-    margin-right: 5px;
+#pollChoiceRemoveButton {
+    background-color: #fc0000;
+    border-radius: 50%;
     cursor: pointer;
-    height: 20px;
+    font-size: 14px;
+    margin-left: 5px;
 }
 .pollChoiceTextContainer {
-    width: 220px;
-    flex-direction: row;
-}
-#pollQuestion {
-    width: 350px;
-    min-width: 100px;
+    width: 200px;
 }
 .pollChoiceVotesContainer {
     margin-left: 5px;
-    margin-right: 5px;
-    border-radius: 50%;
-    border: 2px solid #666;
+    font-size: 18px;
+}
+.pollCreateFormContainer, .voteFormContainer, .pollResultsFormContainer {
     text-align: center;
-    flex-direction: row;
-}
-.pollChoiceRemoveButtonContainer {
-    flex-direction: row;
-}
-#pollChoiceRemoveButton {
-    margin-left: 5px;
-    font-size: 14px;
-    cursor: pointer;
-    border-radius: 50%;
-    background-color: #fc0000;
-}
-.pollNewChoiceButtonContainer {
-    margin: auto;
+    margin: 10px auto;
 }
 #pollNewChoiceButton {
-    margin-top: 5px;
-    font-size: 14px;
-    display: inline-block;
-    text-align: center;
     border-radius: 50%;
     cursor: pointer;
+    display: inline-block;
+    font-size: 14px;
+    margin-top: 5px;
+}
+#pollVoteButton {
+    cursor: pointer;
+    height: 20px;
+    margin-right: 5px;
+}
+#pollQuestion {
+    min-width: 100px;
+    width: 350px;
 }

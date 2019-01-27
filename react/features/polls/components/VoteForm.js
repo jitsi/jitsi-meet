@@ -2,10 +2,12 @@
 
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import { FieldTextStateless } from '@atlaskit/field-text';
+
 import {
     Container
 } from '../../base/react';
-import { FieldTextStateless } from '@atlaskit/field-text';
+
 import PollChoice from './PollChoice';
 
 type Props = {
@@ -23,7 +25,7 @@ type Props = {
     /**
      * Function handler when vote button clicked.
      */
-    onVoteClicked: Function,
+    onVote: Function,
 
     /**
      * Current Poll Object.
@@ -72,20 +74,19 @@ class VoteForm extends Component<Props, *> {
         const renderedChoices = poll.choices.map(this._renderPollChoice);
 
         return (
-            <Container
-                className = { 'voteFormContainer' }>
+            <Container>
                 <FieldTextStateless
                     autoFocus = { true }
                     disabled = { true }
-                    id = { 'pollQuestion' }
+                    id = 'pollQuestion'
                     isLabelHidden = { true }
                     type = 'text'
                     value = { question.text } />
 
                 <div
-                    className = { 'pollChoicesListContainer' } >
+                    className = 'pollChoicesListContainer' >
                     <ul
-                        id = { 'pollChoicesList' } >
+                        id = 'pollChoicesList' >
                         { renderedChoices }
                     </ul>
                 </div>
@@ -103,7 +104,7 @@ class VoteForm extends Component<Props, *> {
      * @returns {Component}
      */
     _renderPollChoice(item: string, id: number) {
-        const { choices, userID, onVoteClicked } = this.props;
+        const { choices, userID, onVote } = this.props;
         const choice = choices[item];
         const numberOfVotes = choice.votes.length;
         const selected = choice.votes.findIndex(x => x === userID) > -1;
@@ -111,12 +112,11 @@ class VoteForm extends Component<Props, *> {
         return (
             <PollChoice
                 disabled = { false }
-                editable = { false }
                 id = { item }
                 key = { id.toString() }
+                onVote = { onVote }
                 selected = { selected }
                 text = { choice.text }
-                voteHandler = { onVoteClicked }
                 votes = { numberOfVotes } />
         );
     }

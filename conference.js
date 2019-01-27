@@ -2640,15 +2640,6 @@ export default {
     },
 
     /**
-     * Send generic message through muc.
-     * @param {string | Object} msg - Message to send.
-     * @param {string} to - JID of receipent or '' to broadcast.
-     */
-    sendMessage(msg, to = '') {
-        room.sendMessage(msg, to);
-    },
-
-    /**
      * Adds new listener.
      * @param {String} eventName the name of the event
      * @param {Function} listener the listener.

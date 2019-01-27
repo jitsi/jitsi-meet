@@ -11,16 +11,6 @@ type Props = {
     id: string,
 
     /**
-     * Container delete method.
-     */
-    deleteHandler?: Function,
-
-    /**
-     * Can be removed, or changed. Need remove and text handlers.
-     */
-    editable: boolean,
-
-    /**
      * True if item can't be voted.
      */
     disabled: boolean,
@@ -31,25 +21,19 @@ type Props = {
     selected: boolean,
 
     /**
-     * Text of the voting option.
+     * Text of the voting choice.
      */
     text: string,
 
     /**
-     * Container text update method.
+     * Function handler when user vote for this choice.
      */
-    textChangeHandler?: Function,
+    onVote?: Function,
 
     /**
-     * Option voting handling method.
-     */
-    voteHandler?: Function,
-
-    /**
-     * Number of votes for this option.
+     * Number of votes for this choice.
      */
     votes: number
-
 };
 
 /**
@@ -65,8 +49,6 @@ class PollChoice extends Component<Props, *> {
     constructor(props: Props) {
         super(props);
 
-        this._onClickHandler = this._onClickHandler.bind(this);
-        this._onTextChange = this._onTextChange.bind(this);
         this._onVoteChange = this._onVoteChange.bind(this);
     }
 
@@ -76,112 +58,60 @@ class PollChoice extends Component<Props, *> {
      * @inheritdoc
      */
     render() {
-        const { disabled, editable, selected } = this.props;
-        const itemControls = this.props.editable
-            ? (
-                <div
-                    className = { 'pollChoiceRemoveButtonContainer' } >
-                    <button
-                        id = { 'pollChoiceRemoveButton' }
-                        onClick = { this._onClickHandler }
-                        type = { 'button' } >
-                        ×
-                    </button>
-                </div>
-            ) : (
-                <div
-                    className = { 'pollChoiceVotesContainer' } >
-                    <label>
-                        { this.props.votes }
-                    </label>
-                </div>
-            );
+        const { disabled, selected, text, votes } = this.props;
 
         return (
             <li>
                 <div
-                    className = { 'pollChoiceContainer' } >
+                    className = 'pollChoiceContainer' >
                     <div
-                        className = { 'pollVoteButtonContainer' } >
+                        className = 'pollVoteButtonContainer' >
                         <input
                             checked = { selected }
                             disabled = { disabled }
-                            id = { 'pollVoteButton' }
+                            id = 'pollVoteButton'
                             onClick = { this._onVoteChange }
-                            type = { 'radio' }
-                            value = { '' } />
+                            type = { 'radio' } />
                     </div>
                     <div
-                        className = { 'pollChoiceTextContainer' } >
+                        className = 'pollChoiceTextContainer' >
                         <FieldTextStateless
-                            disabled = { !editable }
-                            id = { 'pollChoiceText' }
+                            disabled = { true }
+                            id = 'pollChoiceText'
                             isLabelHidden = { true }
-                            onChange = { this._onTextChange }
                             shouldFitContainer = { true }
-                            value = { this.props.text } />
+                            value = { text } />
                     </div>
-                    { itemControls }
+                    <div
+                        className = 'pollChoiceVotesContainer' >
+                        <label>
+                            { votes }
+                        </label>
+                    </div>
                 </div>
             </li>
         );
     }
 
-    _onClickHandler: () => void;
-
-    /**
-     * Handles button click.
-     *
-     * @returns {void}
-     */
-    _onClickHandler() {
-        const { deleteHandler } = this.props;
-
-        if (deleteHandler) {
-            deleteHandler(this.props.id);
-        }
-    }
-
-    _onTextChange: (Object) => void;
-
-    /**
-     * Text change event handler.
-     *
-     * @param {Object} event - Text change event.
-     * @returns {void}
-     */
-    _onTextChange(event: Object) {
-        const { editable, textChangeHandler } = this.props;
-
-        if (!editable) {
-            return;
-        }
-
-        if (textChangeHandler) {
-            textChangeHandler(this.props.id, event.target.value);
-        }
-
-    }
-
-    _onVoteChange: () => boolean;
+    _onVoteChange: () => void;
 
     /**
      * Radio Button for voting check change.
      *
-     * @returns {boolean}
+     * @returns {void}
      */
     _onVoteChange() {
-        const { disabled, voteHandler } = this.props;
+        const { disabled, id, onVote } = this.props;
 
         if (disabled) {
             return;
         }
 
-        if (voteHandler) {
-            voteHandler(this.props.id);
-        }
+        console.log(onVote);
 
-        return true;
+        if (onVote) {
+            onVote(id);
+        }
     }
 }
 

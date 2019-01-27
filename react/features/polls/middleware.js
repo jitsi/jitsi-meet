@@ -1,6 +1,10 @@
 // @flow
 
+import { CONFERENCE_JOINED } from '../base/conference';
+import { JitsiConferenceEvents } from '../base/lib-jitsi-meet';
 import { MiddlewareRegistry } from '../base/redux';
+import { isButtonEnabled } from '../toolbox';
+
 import {
     END_POLL,
     START_POLL,
@@ -13,9 +17,6 @@ import {
     updateVote,
     finishPoll
 } from './actions';
-import { isButtonEnabled } from '../toolbox';
-import { CONFERENCE_JOINED } from '../base/conference';
-import { JitsiConferenceEvents } from '../base/lib-jitsi-meet';
 
 declare var APP: Object;
 declare var interfaceConfig : Object;
@@ -27,7 +28,7 @@ MiddlewareRegistry.register(store => next => action => {
             || _addPollMsgListener(action.conference, store);
         break;
     case START_POLL: {
-        if (APP !== 'undefined') {
+        if (typeof APP !== 'undefined') {
             const { poll, choices, question } = action;
 
             APP.conference.startPoll(poll, choices, question);

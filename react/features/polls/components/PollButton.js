@@ -1,12 +1,13 @@
 // @flow
 
 import { connect } from 'react-redux';
+
+import { openDialog } from '../../base/dialog';
+import { translate } from '../../base/i18n';
 import {
     AbstractButton,
     type AbstractButtonProps
 } from '../../base/toolbox';
-import { openDialog } from '../../base/dialog';
-import { translate } from '../../base/i18n';
 
 import PollDialog from './PollDialog';
 
@@ -39,24 +40,6 @@ class PollButton<P: Props> extends AbstractButton<P, *> {
      */
     _handleClick() {
         this.props.dispatch(openDialog(PollDialog));
-    }
-
-    /**
-     * Is button disabled.
-     *
-     * @inheritdoc
-     */
-    _isDisabled() {
-        return false;
-    }
-
-    /**
-     * Is button toggled.
-     *
-     * @inheritdoc
-     */
-    _isToggled() {
-        return false;
     }
 }
 

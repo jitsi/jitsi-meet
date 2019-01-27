@@ -2,13 +2,17 @@
 
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import { FieldTextStateless } from '@atlaskit/field-text';
+
+import { getLocalParticipant } from '../../base/participants';
 import {
     Container
 } from '../../base/react';
-import { FieldTextStateless } from '@atlaskit/field-text';
-import PollChoice from './PollChoice';
+
 import { getPastPolls } from '../functions';
-import { getLocalParticipant } from '../../base/participants';
+
+import PollChoice from './PollChoice';
+
 
 type Props = {
 
@@ -82,20 +86,19 @@ class PollResultsForm extends Component<Props, *> {
 
         return (
             <Container
-                className = { 'pollResultsFormContainer' }
                 key = { num.toString() } >
                 <FieldTextStateless
                     autoFocus = { true }
                     disabled = { true }
-                    id = { 'pollQuestion' }
+                    id = 'pollQuestion'
                     isLabelHidden = { true }
                     type = 'text'
                     value = { question.text } />
 
                 <div
-                    className = { 'pollChoicesListContainer' } >
+                    className = 'pollChoicesListContainer' >
                     <ul
-                        id = { 'pollChoicesList' } >
+                        id = 'pollChoicesList' >
                         { renderedChoices }
                     </ul>
                 </div>
@@ -121,7 +124,6 @@ class PollResultsForm extends Component<Props, *> {
         return (
             <PollChoice
                 disabled = { true }
-                editable = { false }
                 id = { item }
                 key = { id.toString() }
                 selected = { selected }
