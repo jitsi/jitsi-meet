@@ -27,6 +27,7 @@ import { Captions } from '../../subtitles';
 import { setToolboxVisible, Toolbox } from '../../toolbox';
 import { shouldDisplayTileView } from '../../video-layout';
 
+import DisplayNameLabel from './DisplayNameLabel';
 import styles from './styles';
 
 /**
@@ -282,6 +283,8 @@ class Conference extends Component<Props> {
                     style = { styles.toolboxAndFilmstripContainer }>
 
                     <Captions onPress = { this._onClick } />
+
+                    <DisplayNameLabel />
 
                     {/*
                       * The Toolbox is in a stacking layer bellow the Filmstrip.
