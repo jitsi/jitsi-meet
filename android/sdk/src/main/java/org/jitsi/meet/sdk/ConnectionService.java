@@ -236,10 +236,24 @@ public class ConnectionService extends android.telecom.ConnectionService {
     }
     @Override
     public void onCreateOutgoingConnectionFailed(
-            PhoneAccountHandle account, ConnectionRequest request) {
+            PhoneAccountHandle accountHandle, ConnectionRequest request) {
         String callUUID = request.getExtras().getString(EXTRAS_CALL_UUID);
 
         Log.e(TAG, "onCreateOutgoingConnectionFailed " + callUUID);
+
+        if (callUUID == null) {
+            Log.w(TAG,
+                  "onCreateOutgoingConnectionFailed "
+                          + "- no call UUID in the request");
+            // NOTE this is a workaround for some Android flavours which do not
+            // include EXTRAS_CALL_UUID in the ConnectionRequest on
+            // onCreateOutgoingConnectionFailed
+            TelecomManager telecom = getSystemService(TelecomManager.class);
+            PhoneAccount account
+                = telecom != null
+                    ? telecom.getPhoneAccount(accountHandle) : null;
+            callUUID = account != null ? account.getLabel().toString() : null;
+        }
 
         if (callUUID != null) {
             Promise startCallPromise = unregisterStartCallPromise(callUUID);
@@ -254,9 +268,9 @@ public class ConnectionService extends android.telecom.ConnectionService {
                         callUUID));
             }
         } else {
-            Log.e(TAG,
-                "onCreateOutgoingConnectionFailed "
-                    + "- no call UUID in the request");
+            Log.e(
+                TAG,
+                "onCreateOutgoingConnectionFailed - unable to fetch call UUID");
         }
     }
 
