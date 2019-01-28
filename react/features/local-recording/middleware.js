@@ -64,7 +64,7 @@ MiddlewareRegistry.register(({ getState, dispatch }) => next => action => {
                 dispatch(toggleDialog(LocalRecordingInfoDialog));
             }, 'keyboardShortcuts.localRecording');
 
-        if (localRecording && localRecording.format) {
+        if (localRecording.format) {
             recordingController.switchFormat(localRecording.format);
         }
 
