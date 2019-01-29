@@ -343,6 +343,16 @@ public class ConnectionService extends android.telecom.ConnectionService {
                     new DisconnectCause(DisconnectCause.CANCELED));
         }
 
+        @Override
+        public void onHold() {
+            // What ?! Android will still call this method even if we do not add
+            // the HOLD capability, so do the same thing as on abort.
+            Log.d(TAG, String.format(
+                  "onHold %s - HOLD is not supported, aborting the call...",
+                  getCallUUID()));
+            this.onAbort();
+        }
+
         /**
          * Called when there's change to the call audio state. Either by
          * the system after the connection is initialized or in response to
