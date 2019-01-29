@@ -224,15 +224,18 @@ public class ConnectionService extends android.telecom.ConnectionService {
             PhoneAccountHandle accountHandle, ConnectionRequest request) {
         throw new RuntimeException("Not implemented");
     }
+
     @Override
     public void onCreateIncomingConnectionFailed(
             PhoneAccountHandle accountHandle, ConnectionRequest request) {
         throw new RuntimeException("Not implemented");
     }
+
     @Override
     public void onCreateOutgoingConnectionFailed(
             PhoneAccountHandle accountHandle, ConnectionRequest request) {
-        String callUUID = request.getAccountHandle().getId();
+        PhoneAccountHandle theAccountHandle = request.getAccountHandle();
+        String callUUID = theAccountHandle.getId();
 
         Log.e(TAG, "onCreateOutgoingConnectionFailed " + callUUID);
 
@@ -250,6 +253,21 @@ public class ConnectionService extends android.telecom.ConnectionService {
             }
         } else {
             Log.e(TAG, "onCreateOutgoingConnectionFailed - no call UUID");
+        }
+
+        unregisterPhoneAccount(theAccountHandle);
+    }
+
+    private void unregisterPhoneAccount(PhoneAccountHandle phoneAccountHandle) {
+        TelecomManager telecom = getSystemService(TelecomManager.class);
+        if (telecom != null) {
+            if (phoneAccountHandle != null) {
+                telecom.unregisterPhoneAccount(phoneAccountHandle);
+            } else {
+                Log.e(TAG, "unregisterPhoneAccount - account handle is null");
+            }
+        } else {
+            Log.e(TAG, "unregisterPhoneAccount - telecom is null");
         }
     }
 
@@ -385,14 +403,7 @@ public class ConnectionService extends android.telecom.ConnectionService {
 
             if (state == STATE_DISCONNECTED) {
                 removeConnection(this);
-                // FIXME unregister the account also onOutgoingConnectionFailed
-                TelecomManager telecom = getSystemService(TelecomManager.class);
-                if (telecom != null) {
-                    PhoneAccountHandle account = getPhoneAccountHandle();
-                    if (account != null) {
-                        telecom.unregisterPhoneAccount(account);
-                    }
-                }
+                unregisterPhoneAccount(getPhoneAccountHandle());
             }
         }
 
