@@ -3,6 +3,10 @@ import { getAvatarURL as _getAvatarURL } from 'js-utils/avatar';
 
 import { toState } from '../redux';
 
+import { JitsiParticipantConnectionStatus } from '../lib-jitsi-meet';
+import { MEDIA_TYPE, shouldRenderVideoTrack } from '../media';
+import { getTrackByMediaTypeAndParticipant } from '../tracks';
+
 import {
     DEFAULT_AVATAR_RELATIVE_PATH,
     LOCAL_PARTICIPANT_DEFAULT_ID,
@@ -121,7 +125,8 @@ export function getNormalizedDisplayName(name: string) {
  * @private
  * @returns {(Participant|undefined)}
  */
-export function getParticipantById(stateful: Object | Function, id: string) {
+export function getParticipantById(
+        stateful: Object | Function, id: string): ?Object {
     const participants = _getAllParticipants(stateful);
 
     return participants.find(p => p.id === id);
@@ -275,4 +280,46 @@ export function isLocalParticipantModerator(stateful: Object | Function) {
         localParticipant.role === PARTICIPANT_ROLE.MODERATOR
             && (!state['features/base/config'].enableUserRolesBasedOnToken
                 || !state['features/base/jwt'].isGuest));
+}
+
+/**
+ * Returns true if the video of the participant should be rendered.
+ *
+ * @param {Object|Function} stateful - Object or function that can be resolved
+ * to the Redux state.
+ * @param {string} id - The ID of the participant.
+ * @returns {boolean}
+ */
+export function shouldRenderParticipantVideo(
+        stateful: Object | Function, id: string) {
+    const state = toState(stateful);
+    const participant = getParticipantById(state, id);
+
+    if (!participant) {
+        return false;
+    }
+
+    const audioOnly = state['features/base/conference'].audioOnly;
+    const connectionStatus = participant.connectionStatus
+        || JitsiParticipantConnectionStatus.ACTIVE;
+    const videoTrack = getTrackByMediaTypeAndParticipant(
+        state['features/base/tracks'],
+        MEDIA_TYPE.VIDEO,
+        id);
+
+    // Is the video to be rendered?
+    // FIXME It's currently impossible to have true as the value of
+    // waitForVideoStarted because videoTrack's state videoStarted will be
+    // updated only after videoTrack is rendered.
+    // XXX Note that, unlike on web, we don't render video when the
+    // connection status is interrupted, this is because the renderer
+    // doesn't retain the last frame forever, so we would end up with a
+    // black screen.
+    const waitForVideoStarted = false;
+
+    return !audioOnly
+        && (connectionStatus
+            === JitsiParticipantConnectionStatus.ACTIVE)
+        && shouldRenderVideoTrack(videoTrack, waitForVideoStarted);
+
 }

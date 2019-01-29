@@ -1,7 +1,7 @@
 // @flow
 
 import React, { Component } from 'react';
-import { Platform, Text, View } from 'react-native';
+import { Text, View } from 'react-native';
 import { connect } from 'react-redux';
 
 import { translate } from '../../../../base/i18n';
@@ -74,18 +74,6 @@ class GoogleSigninForm extends Component<Props> {
      * @inheritdoc
      */
     componentDidMount() {
-        if (Platform.OS === 'ios') {
-            const majorVersionIOS = parseInt(Platform.Version, 10);
-
-            if (majorVersionIOS <= 10) {
-                // Disable it on iOS 10 and earlier, since it doesn't work
-                // properly.
-                this._setApiState(GOOGLE_API_STATES.NOT_AVAILABLE);
-
-                return;
-            }
-        }
-
         googleApi.hasPlayServices()
             .then(() => {
                 googleApi.configure({

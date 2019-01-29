@@ -18,6 +18,20 @@ export default createStyleSheet({
         flex: 1
     }),
 
+    displayNameBackdrop: {
+        alignSelf: 'center',
+        backgroundColor: 'rgba(28, 32, 37, 0.6)',
+        borderRadius: 4,
+        margin: 16,
+        paddingHorizontal: 16,
+        paddingVertical: 4
+    },
+
+    displayNameText: {
+        color: ColorPalette.white,
+        fontSize: 14
+    },
+
     /**
      * The style of the {@link View} which expands over the whole
      * {@link Conference} area and splits it between the {@link Filmstrip} and
