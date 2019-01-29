@@ -91,18 +91,10 @@ gradle.projectsEvaluated {
     // Dropbox integration
     //
 
-    def plistParser = new XmlSlurper(
-            /* validating */ false,
-            /* namespaceAware */ false,
-            /* allowDocTypeDeclaration */ true)
-    plistParser.setFeature(
-            'http://apache.org/xml/features/nonvalidating/load-external-dtd',
-            false)
-    def plist = plistParser.parse('../ios/app/src/Info.plist')
-    def dropboxScheme = plist.dict.array.dict.array.string.find { string ->
-        string.text().startsWith('db-')
+    def dropboxAppKey
+    if (project.file('dropbox.key').exists()) {
+        dropboxAppKey = project.file('dropbox.key').text.trim() - 'db-'
     }
-    def dropboxAppKey = dropboxScheme?.text() - 'db-'
 
     if (dropboxAppKey) {
         android.defaultConfig.resValue('string', 'dropbox_app_key', "${dropboxAppKey}")
@@ -118,7 +110,7 @@ gradle.projectsEvaluated {
               <category android:name="android.intent.category.DEFAULT" />
               <data android:scheme="db-${dropboxAppKey}" />
             </intent-filter>
-          </activity>""";
+          </activity>"""
 
         android.applicationVariants.all { variant ->
             variant.outputs.each { output ->
