@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * Jitsi Meet implementation of {@link ConnectionService}. At the time of this
@@ -38,12 +39,6 @@ public class ConnectionService extends android.telecom.ConnectionService {
      * Tag used for logging.
      */
     static final String TAG = "JitsiConnectionService";
-
-    /**
-     * The extra added to the {@link ConnectionImpl} and
-     * {@link ConnectionRequest} which stores the call's UUID.
-     */
-    static final String EXTRAS_CALL_UUID = "org.jitsi.meet.CALL_UUID";
 
     /**
      * The extra added to the {@link ConnectionImpl} and
@@ -203,7 +198,7 @@ public class ConnectionService extends android.telecom.ConnectionService {
 
         moreExtras.putParcelable(
             EXTRA_PHONE_ACCOUNT_HANDLE,
-            request.getAccountHandle());
+            Objects.requireNonNull(request.getAccountHandle(), "accountHandle"));
         connection.putExtras(moreExtras);
 
         addConnection(connection);
@@ -237,23 +232,9 @@ public class ConnectionService extends android.telecom.ConnectionService {
     @Override
     public void onCreateOutgoingConnectionFailed(
             PhoneAccountHandle accountHandle, ConnectionRequest request) {
-        String callUUID = request.getExtras().getString(EXTRAS_CALL_UUID);
+        String callUUID = request.getAccountHandle().getId();
 
         Log.e(TAG, "onCreateOutgoingConnectionFailed " + callUUID);
-
-        if (callUUID == null) {
-            Log.w(TAG,
-                  "onCreateOutgoingConnectionFailed "
-                          + "- no call UUID in the request");
-            // NOTE this is a workaround for some Android flavours which do not
-            // include EXTRAS_CALL_UUID in the ConnectionRequest on
-            // onCreateOutgoingConnectionFailed
-            TelecomManager telecom = getSystemService(TelecomManager.class);
-            PhoneAccount account
-                = telecom != null
-                    ? telecom.getPhoneAccount(accountHandle) : null;
-            callUUID = account != null ? account.getLabel().toString() : null;
-        }
 
         if (callUUID != null) {
             Promise startCallPromise = unregisterStartCallPromise(callUUID);
@@ -268,9 +249,7 @@ public class ConnectionService extends android.telecom.ConnectionService {
                         callUUID));
             }
         } else {
-            Log.e(
-                TAG,
-                "onCreateOutgoingConnectionFailed - unable to fetch call UUID");
+            Log.e(TAG, "onCreateOutgoingConnectionFailed - no call UUID");
         }
     }
 
@@ -281,6 +260,7 @@ public class ConnectionService extends android.telecom.ConnectionService {
      * @param address the phone account's address. At the time of this writing
      *        it's the call handle passed from the Java Script side.
      * @param callUUID the call's UUID for which the account is to be created.
+     *        It will be used as the account's id.
      * @return {@link PhoneAccountHandle} described by the given arguments.
      */
     static PhoneAccountHandle registerPhoneAccount(
@@ -288,10 +268,10 @@ public class ConnectionService extends android.telecom.ConnectionService {
         PhoneAccountHandle phoneAccountHandle
             = new PhoneAccountHandle(
                     new ComponentName(context, ConnectionService.class),
-                    address.toString());
+                    callUUID);
 
         PhoneAccount.Builder builder
-            = PhoneAccount.builder(phoneAccountHandle, callUUID)
+            = PhoneAccount.builder(phoneAccountHandle, address.toString())
                 .setAddress(address)
                 .setCapabilities(PhoneAccount.CAPABILITY_SELF_MANAGED |
                         PhoneAccount.CAPABILITY_VIDEO_CALLING |
@@ -395,6 +375,7 @@ public class ConnectionService extends android.telecom.ConnectionService {
 
             if (state == STATE_DISCONNECTED) {
                 removeConnection(this);
+                // FIXME unregister the account also onOutgoingConnectionFailed
                 TelecomManager telecom = getSystemService(TelecomManager.class);
                 if (telecom != null) {
                     PhoneAccountHandle account = getPhoneAccountHandle();
@@ -411,7 +392,7 @@ public class ConnectionService extends android.telecom.ConnectionService {
          * @return call UUID
          */
         String getCallUUID() {
-            return getExtras().getString(ConnectionService.EXTRAS_CALL_UUID);
+            return getPhoneAccountHandle().getId();
         }
 
         private PhoneAccountHandle getPhoneAccountHandle() {

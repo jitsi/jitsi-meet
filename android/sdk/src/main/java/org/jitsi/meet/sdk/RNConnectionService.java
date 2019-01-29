@@ -93,12 +93,6 @@ class RNConnectionService
                 ? VideoProfile.STATE_BIDIRECTIONAL
                 : VideoProfile.STATE_AUDIO_ONLY);
 
-        Bundle outgoingCallExtras = new Bundle();
-        outgoingCallExtras.putString(
-            ConnectionService.EXTRAS_CALL_UUID, callUUID);
-        extras.putParcelable(
-            TelecomManager.EXTRA_OUTGOING_CALL_EXTRAS, outgoingCallExtras);
-
         ConnectionService.registerStartCallPromise(callUUID, promise);
 
         try {
