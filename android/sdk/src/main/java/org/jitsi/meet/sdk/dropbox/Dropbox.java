@@ -41,9 +41,11 @@ public class Dropbox
     public Dropbox(ReactApplicationContext reactContext) {
         super(reactContext);
 
+        String pkg = reactContext.getApplicationContext().getPackageName();
+        int resId = reactContext.getResources()
+            .getIdentifier("dropbox_app_key", "string", pkg);
         appKey
-            = reactContext.getString(
-                org.jitsi.meet.sdk.R.string.dropbox_app_key);
+            = reactContext.getString(resId);
         isEnabled = !TextUtils.isEmpty(appKey);
 
         clientId = generateClientId();
