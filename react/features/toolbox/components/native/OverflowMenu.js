@@ -11,7 +11,6 @@ import {
 } from '../../../base/dialog';
 import { InviteButton } from '../../../invite';
 import { AudioRouteButton } from '../../../mobile/audio-mode';
-import { PictureInPictureButton } from '../../../mobile/picture-in-picture';
 import { LiveStreamButton, RecordButton } from '../../../recording';
 import { RoomLockButton } from '../../../room-lock';
 import { ClosedCaptionButton } from '../../../subtitles';
@@ -90,7 +89,6 @@ class OverflowMenu extends Component<Props> {
                 <LiveStreamButton { ...buttonProps } />
                 <TileViewButton { ...buttonProps } />
                 <InviteButton { ...buttonProps } />
-                <PictureInPictureButton { ...buttonProps } />
             </BottomSheet>
         );
     }

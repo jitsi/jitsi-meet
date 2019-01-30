@@ -12,7 +12,9 @@ import {
 import {
     RecordingExpandedLabel
 } from '../../../recording';
+import { isToolboxVisible } from '../../../toolbox';
 import { TranscribingExpandedLabel } from '../../../transcribing';
+import { shouldDisplayTileView } from '../../../video-layout';
 import { VideoQualityExpandedLabel } from '../../../video-quality';
 
 import AbstractLabels, {
@@ -37,7 +39,12 @@ type Props = AbstractLabelsProps & {
      *
      * @private
      */
-    _reducedUI: boolean
+    _reducedUI: boolean,
+
+    /**
+     * True if the labels should be visible, false otherwise.
+     */
+    _visible: boolean
 };
 
 type State = {
@@ -148,6 +155,10 @@ class Labels extends AbstractLabels<Props, State> {
      * @inheritdoc
      */
     render() {
+        if (!this.props._visible) {
+            return null;
+        }
+
         const wide = !isNarrowAspectRatio(this);
         const { _filmstripVisible, _reducedUI } = this.props;
 
@@ -344,13 +355,15 @@ class Labels extends AbstractLabels<Props, State> {
  * @private
  * @returns {{
  *     _filmstripVisible: boolean,
- *     _reducedUI: boolean
+ *     _reducedUI: boolean,
+ *     _visible: boolean
  * }}
  */
 function _mapStateToProps(state) {
     return {
         ..._abstractMapStateToProps(state),
-        _reducedUI: state['features/base/responsive-ui'].reducedUI
+        _reducedUI: state['features/base/responsive-ui'].reducedUI,
+        _visible: !isToolboxVisible(state) && !shouldDisplayTileView(state)
     };
 }
 

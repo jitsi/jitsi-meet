@@ -29,6 +29,7 @@ import { shouldDisplayTileView } from '../../../video-layout';
 
 import DisplayNameLabel from './DisplayNameLabel';
 import Labels from './Labels';
+import NavigationBar from './NavigationBar';
 import styles from './styles';
 
 /**
@@ -305,6 +306,8 @@ class Conference extends Component<Props> {
                         _shouldDisplayTileView ? undefined : <Filmstrip />
                     }
                 </View>
+
+                <NavigationBar />
 
                 <TestConnectionInfo />
 

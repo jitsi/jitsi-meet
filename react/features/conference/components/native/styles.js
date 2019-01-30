@@ -7,6 +7,8 @@ import {
 
 import { FILMSTRIP_SIZE } from '../../../filmstrip';
 
+export const NAVBAR_GRADIENT_COLORS = [ 'black', '#00000000' ];
+
 /**
  * The styles of the feature conference.
  */
@@ -34,6 +36,14 @@ export default createStyleSheet({
         fontSize: 14
     },
 
+    gradient: {
+        flex: 1
+    },
+
+    gradientStretch: {
+        height: 116
+    },
+
     /**
      * View that contains the indicators.
      */
@@ -56,6 +66,54 @@ export default createStyleSheet({
         position: 'absolute',
         right: 0,
         top: 0
+    },
+
+    navBarButton: {
+        iconStyle: {
+            color: ColorPalette.white,
+            fontSize: 24
+        },
+
+        underlayColor: 'transparent'
+    },
+
+    navBarContainer: {
+        flexDirection: 'column',
+        left: 0,
+        position: 'absolute',
+        right: 0,
+        top: 0
+    },
+
+    navBarSafeView: {
+        left: 0,
+        position: 'absolute',
+        right: 0,
+        top: 0
+    },
+
+    navBarWrapper: {
+        alignItems: 'center',
+        flex: 1,
+        flexDirection: 'row',
+        height: 44,
+        justifyContent: 'space-between',
+        paddingHorizontal: 14
+    },
+
+    roomName: {
+        color: ColorPalette.white,
+        fontSize: 17,
+        fontWeight: '400'
+    },
+
+    roomNameWrapper: {
+        flexDirection: 'row',
+        justifyContent: 'center',
+        left: 0,
+        paddingHorizontal: 48,
+        position: 'absolute',
+        right: 0
     },
 
     /**
