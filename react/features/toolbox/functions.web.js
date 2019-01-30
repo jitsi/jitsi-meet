@@ -1,5 +1,7 @@
 // @flow
 
+export * from './functions.any';
+
 declare var interfaceConfig: Object;
 
 /**

@@ -7,8 +7,12 @@ import { connect } from 'react-redux';
 import { Container } from '../../../base/react';
 import { ChatButton } from '../../../chat';
 
+import { isToolboxVisible } from '../../functions';
+
 import AudioMuteButton from '../AudioMuteButton';
 import HangupButton from '../HangupButton';
+import VideoMuteButton from '../VideoMuteButton';
+
 import OverflowMenuButton from './OverflowMenuButton';
 import styles, {
     chatButtonOverride,
@@ -16,7 +20,6 @@ import styles, {
     toolbarButtonStyles,
     toolbarToggledButtonStyles
 } from './styles';
-import VideoMuteButton from '../VideoMuteButton';
 
 /**
  * The number of buttons other than {@link HangupButton} to render in
@@ -262,10 +265,8 @@ class Toolbox extends Component<Props, State> {
  * }}
  */
 function _mapStateToProps(state: Object): Object {
-    const { alwaysVisible, enabled, visible } = state['features/toolbox'];
-
     return {
-        _visible: enabled && (alwaysVisible || visible)
+        _visible: isToolboxVisible(state)
     };
 }
 
