@@ -59,7 +59,7 @@ import java.util.concurrent.Executors;
  * Before a call has started and after it has ended the
  * {@code AudioModeModule.DEFAULT} mode should be used.
  */
-public class AudioModeModule
+class AudioModeModule
     extends ReactContextBaseJavaModule
     implements AudioManager.OnAudioFocusChangeListener {
 
@@ -432,30 +432,36 @@ public class AudioModeModule
         });
     }
 
-    // FIXME does it need to run on main/audio thread ?
     @RequiresApi(api = Build.VERSION_CODES.O)
-    public void onCallAudioStateChange(CallAudioState callAudioState) {
-        boolean audioDevicesChanged
-                = supportedRouteMask != callAudioState.getSupportedRouteMask();
-        if (audioDevicesChanged) {
-            supportedRouteMask = callAudioState.getSupportedRouteMask();
-            availableDevices = routesToDeviceNames(supportedRouteMask);
-            Log.d(TAG,
-                  "Available audio devices: " + availableDevices.toString());
-        }
+    void onCallAudioStateChange(final CallAudioState callAudioState) {
+        runInAudioThread(new Runnable() {
+            @Override
+            public void run() {
+                int newSupportedRoutes = callAudioState.getSupportedRouteMask();
+                boolean audioDevicesChanged
+                        = supportedRouteMask != newSupportedRoutes;
+                if (audioDevicesChanged) {
+                    supportedRouteMask = newSupportedRoutes;
+                    availableDevices = routesToDeviceNames(supportedRouteMask);
+                    Log.d(TAG,
+                          "Available audio devices: "
+                                  + availableDevices.toString());
+                }
 
-        boolean audioRouteChanged
-                = audioDeviceToRouteInt(selectedDevice)
-                != callAudioState.getRoute();
+                boolean audioRouteChanged
+                    = audioDeviceToRouteInt(selectedDevice)
+                            != callAudioState.getRoute();
 
-        if (audioRouteChanged || audioDevicesChanged) {
-            // Reset user selection
-            userSelectedDevice = null;
+                if (audioRouteChanged || audioDevicesChanged) {
+                    // Reset user selection
+                    userSelectedDevice = null;
 
-            if (mode != -1) {
-                updateAudioRoute(mode);
+                    if (mode != -1) {
+                        updateAudioRoute(mode);
+                    }
+                }
             }
-        }
+        });
     }
 
     /**
