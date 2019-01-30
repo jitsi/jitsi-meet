@@ -34,6 +34,7 @@
 
 @property (nonatomic) BOOL welcomePageEnabled;
 
-- (void)loadURL:(NSDictionary * _Nullable)urlObject;
+- (void)join:(NSDictionary * _Nullable)url;
+- (void)leave;
 
 @end
