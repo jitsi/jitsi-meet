@@ -37,9 +37,10 @@
         [Fabric with:@[[Crashlytics class]]];
     }
 
-    // Set the conference activity type defined in this application.
-    // This cannot be defined by the SDK.
     [JitsiMeet sharedInstance].conferenceActivityType = JitsiMeetConferenceActivityType;
+    [JitsiMeet sharedInstance].customUrlScheme = @"org.jitsi.meet";
+    [JitsiMeet sharedInstance].universalLinkDomains = @[@"meet.jit.si", @"beta.meet.jit.si"];
+
     [[JitsiMeet sharedInstance] application:application didFinishLaunchingWithOptions:launchOptions];
 
     return YES;

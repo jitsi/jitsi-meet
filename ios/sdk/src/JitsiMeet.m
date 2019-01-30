@@ -91,6 +91,10 @@
         return YES;
     }
 
+    if (![_customUrlScheme isEqualToString:url.scheme]) {
+        return NO;
+    }
+
     return [JitsiMeetView loadURLInViews:@{ @"url" : url.absoluteString }];
 }
 
@@ -118,7 +122,10 @@
 
     if ([activityType isEqualToString:NSUserActivityTypeBrowsingWeb]) {
         // App was started by opening a URL in the browser
-        return @{ @"url" : userActivity.webpageURL.absoluteString };
+        NSURL *url = userActivity.webpageURL;
+        if ([_universalLinkDomains containsObject:url.host]) {
+            return @{ @"url" : url.absoluteString };
+        }
     } else if ([activityType isEqualToString:@"INStartAudioCallIntent"]
                || [activityType isEqualToString:@"INStartVideoCallIntent"]) {
         // App was started by a CallKit Intent
@@ -150,6 +157,16 @@
     }
 
     return nil;
+}
+
+#pragma mark - Property getter / setters
+
+- (NSString *)customUrlScheme {
+    return _customUrlScheme ? _customUrlScheme : @"org.jitsi.meet";
+}
+
+- (NSArray<NSString *> *)universalLinkDomains {
+    return _universalLinkDomains ? _universalLinkDomains : @[@"meet.jit.si"];
 }
 
 #pragma mark - Private API methods
