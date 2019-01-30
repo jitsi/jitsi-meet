@@ -96,15 +96,12 @@ class EditablePollChoice extends Component<Props, *> {
                             onKeyDown = { onKeyDown }
                             shouldFitContainer = { true }
                             value = { text } />
-                    </div>
-                    <div
-                        className = 'pollChoiceRemoveButtonContainer' >
-                        <button
+
+                        <span
                             id = 'pollChoiceRemoveButton'
-                            onClick = { this._onClickHandler }
-                            type = 'button'>
+                            onClick = { this._onClickHandler } >
                             ×
-                        </button>
+                        </span>
                     </div>
                 </div>
             </li>

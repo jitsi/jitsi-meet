@@ -298,7 +298,15 @@ class PollDialog extends Component<Props, State> {
      * @returns {void}
      */
     _removeChoice(id: string) {
-        const filteredChoices = { ...this.state.choices };
+        const { choices } = this.state;
+
+        // if this is the last available choice, don't remove it.
+        // there must be atleast 1 choice so user can add more
+        if (Object.keys(choices).length === 1) {
+            return;
+        }
+
+        const filteredChoices = { ...choices };
 
         delete filteredChoices[id];
 

@@ -10,11 +10,16 @@
     background-color: #fc0000;
     border-radius: 50%;
     cursor: pointer;
-    font-size: 14px;
-    margin-left: 5px;
+    font-size: 18px;
+    position: absolute;
+    right: -5px;
+    top: -5px;
+    line-height: 10px;
+    padding: 3px;
 }
 .pollChoiceTextContainer {
     width: 200px;
+    position: relative;
 }
 .pollChoiceVotesContainer {
     margin-left: 5px;
@@ -38,5 +43,5 @@
 }
 #pollQuestion {
     min-width: 100px;
-    width: 350px;
+    width: 300px;
 }
