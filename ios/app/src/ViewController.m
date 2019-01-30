@@ -39,7 +39,7 @@
     // anyway.
     view.welcomePageEnabled = YES;
 
-    [view loadURL:[[JitsiMeet sharedInstance] getInitialURL]];
+    [view join:[[JitsiMeet sharedInstance] getInitialURL]];
 }
 
 // JitsiMeetViewDelegate

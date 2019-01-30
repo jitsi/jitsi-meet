@@ -101,6 +101,38 @@ static void initializeViewsMap() {
 
 #pragma mark API
 
+- (void)join:(NSDictionary *_Nullable)url {
+    [self loadURL:url];
+}
+
+- (void)leave {
+    [self loadURL:nil];
+}
+
+#pragma pictureInPictureEnabled getter / setter
+
+- (void) setPictureInPictureEnabled:(BOOL)pictureInPictureEnabled {
+    _pictureInPictureEnabled
+        = [NSNumber numberWithBool:pictureInPictureEnabled];
+}
+
+- (BOOL) pictureInPictureEnabled {
+    if (_pictureInPictureEnabled) {
+        return [_pictureInPictureEnabled boolValue];
+    }
+
+    // The SDK/JitsiMeetView client/consumer did not explicitly enable/disable
+    // Picture-in-Picture. However, we may automatically deduce their
+    // intentions: we need the support of the client in order to implement
+    // Picture-in-Picture on iOS (in contrast to Android) so if the client
+    // appears to have provided the support then we can assume that they did it
+    // with the intention to have Picture-in-Picture enabled.
+    return self.delegate
+        && [self.delegate respondsToSelector:@selector(enterPictureInPicture:)];
+}
+
+#pragma mark Private methods
+
 /**
  * Loads a specific URL which may identify a conference to join. The URL is
  * specified in the form of an `NSDictionary` of properties which (1)
@@ -159,30 +191,6 @@ static void initializeViewsMap() {
         [self addSubview:rootView];
     }
 }
-
-#pragma pictureInPictureEnabled getter / setter
-
-- (void) setPictureInPictureEnabled:(BOOL)pictureInPictureEnabled {
-    _pictureInPictureEnabled
-        = [NSNumber numberWithBool:pictureInPictureEnabled];
-}
-
-- (BOOL) pictureInPictureEnabled {
-    if (_pictureInPictureEnabled) {
-        return [_pictureInPictureEnabled boolValue];
-    }
-
-    // The SDK/JitsiMeetView client/consumer did not explicitly enable/disable
-    // Picture-in-Picture. However, we may automatically deduce their
-    // intentions: we need the support of the client in order to implement
-    // Picture-in-Picture on iOS (in contrast to Android) so if the client
-    // appears to have provided the support then we can assume that they did it
-    // with the intention to have Picture-in-Picture enabled.
-    return self.delegate
-        && [self.delegate respondsToSelector:@selector(enterPictureInPicture:)];
-}
-
-#pragma mark Private methods
 
 + (BOOL)loadURLInViews:(NSDictionary *)urlObject {
     BOOL handled = NO;
