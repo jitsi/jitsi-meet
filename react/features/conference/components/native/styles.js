@@ -3,7 +3,7 @@ import {
     ColorPalette,
     createStyleSheet,
     fixAndroidViewClipping
-} from '../../base/styles';
+} from '../../../base/styles';
 
 /**
  * The styles of the feature conference.

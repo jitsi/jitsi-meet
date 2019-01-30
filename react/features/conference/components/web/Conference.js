@@ -4,31 +4,32 @@ import _ from 'lodash';
 import React, { Component } from 'react';
 import { connect as reactReduxConnect } from 'react-redux';
 
-import VideoLayout from '../../../../modules/UI/videolayout/VideoLayout';
+import VideoLayout from '../../../../../modules/UI/videolayout/VideoLayout';
 
-import { obtainConfig } from '../../base/config';
-import { connect, disconnect } from '../../base/connection';
-import { translate } from '../../base/i18n';
-import { Chat } from '../../chat';
-import { Filmstrip } from '../../filmstrip';
-import { CalleeInfoContainer } from '../../invite';
-import { LargeVideo } from '../../large-video';
-import { NotificationsContainer } from '../../notifications';
+import { obtainConfig } from '../../../base/config';
+import { connect, disconnect } from '../../../base/connection';
+import { translate } from '../../../base/i18n';
+import { Chat } from '../../../chat';
+import { Filmstrip } from '../../../filmstrip';
+import { CalleeInfoContainer } from '../../../invite';
+import { LargeVideo } from '../../../large-video';
+import { NotificationsContainer } from '../../../notifications';
 import {
     LAYOUTS,
     getCurrentLayout,
     shouldDisplayTileView
-} from '../../video-layout';
+} from '../../../video-layout';
 
-import { default as Notice } from './Notice';
 import {
     Toolbox,
     fullScreenChanged,
     setToolboxAlwaysVisible,
     showToolbox
-} from '../../toolbox';
+} from '../../../toolbox';
 
-import { maybeShowSuboptimalExperienceNotification } from '../functions';
+import { maybeShowSuboptimalExperienceNotification } from '../../functions';
+
+import { default as Notice } from './Notice';
 
 declare var APP: Object;
 declare var config: Object;

@@ -5,27 +5,27 @@ import React, { Component } from 'react';
 import { BackHandler, StatusBar, View } from 'react-native';
 import { connect as reactReduxConnect } from 'react-redux';
 
-import { appNavigate } from '../../app';
-import { connect, disconnect } from '../../base/connection';
-import { getParticipantCount } from '../../base/participants';
-import { Container, LoadingIndicator, TintedView } from '../../base/react';
+import { appNavigate } from '../../../app';
+import { connect, disconnect } from '../../../base/connection';
+import { getParticipantCount } from '../../../base/participants';
+import { Container, LoadingIndicator, TintedView } from '../../../base/react';
 import {
     makeAspectRatioAware
-} from '../../base/responsive-ui';
-import { TestConnectionInfo } from '../../base/testing';
-import { createDesiredLocalTracks } from '../../base/tracks';
-import { ConferenceNotification } from '../../calendar-sync';
-import { Chat } from '../../chat';
+} from '../../../base/responsive-ui';
+import { TestConnectionInfo } from '../../../base/testing';
+import { createDesiredLocalTracks } from '../../../base/tracks';
+import { ConferenceNotification } from '../../../calendar-sync';
+import { Chat } from '../../../chat';
 import {
     Filmstrip,
     isFilmstripVisible,
     TileView
-} from '../../filmstrip';
-import { LargeVideo } from '../../large-video';
-import { CalleeInfoContainer } from '../../invite';
-import { Captions } from '../../subtitles';
-import { setToolboxVisible, Toolbox } from '../../toolbox';
-import { shouldDisplayTileView } from '../../video-layout';
+} from '../../../filmstrip';
+import { LargeVideo } from '../../../large-video';
+import { CalleeInfoContainer } from '../../../invite';
+import { Captions } from '../../../subtitles';
+import { setToolboxVisible, Toolbox } from '../../../toolbox';
+import { shouldDisplayTileView } from '../../../video-layout';
 
 import DisplayNameLabel from './DisplayNameLabel';
 import styles from './styles';
