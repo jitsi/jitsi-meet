@@ -6,6 +6,13 @@
 #pollChoicesList {
     list-style-type: none;
 }
+#pollChoiceDisabledText {
+    font-size: 14px;
+}
+#pollChoiceEnabledText {
+    font-size: 14px;
+    cursor: pointer;
+}
 #pollChoiceRemoveButton {
     background-color: #fc0000;
     border-radius: 50%;
@@ -23,7 +30,7 @@
 }
 .pollChoiceVotesContainer {
     margin-left: 5px;
-    font-size: 18px;
+    font-size: 16px;
 }
 .pollCreateFormContainer, .voteFormContainer, .pollResultsFormContainer {
     text-align: center;
@@ -44,4 +51,5 @@
 #pollQuestion {
     min-width: 100px;
     width: 300px;
+    font-size: 16px;
 }

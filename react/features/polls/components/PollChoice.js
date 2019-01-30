@@ -1,7 +1,6 @@
 // @flow
 
 import React, { Component } from 'react';
-import { FieldTextStateless } from '@atlaskit/field-text';
 
 type Props = {
 
@@ -59,29 +58,33 @@ class PollChoice extends Component<Props, *> {
      */
     render() {
         const { disabled, selected, text, votes } = this.props;
+        const textCSSID = disabled ? 'pollChoiceDisabledText'
+            : 'pollChoiceEnabledText';
+        const renderedRadioButton = (
+            <div
+                className = 'pollVoteButtonContainer' >
+                <input
+                    checked = { selected }
+                    id = 'pollVoteButton'
+                    onClick = { this._onVoteChange }
+                    type = { 'radio' } />
+            </div>
+        );
 
         return (
             <li>
                 <div
                     className = 'pollChoiceContainer' >
-                    <div
-                        className = 'pollVoteButtonContainer' >
-                        <input
-                            checked = { selected }
-                            disabled = { disabled }
-                            id = 'pollVoteButton'
-                            onClick = { this._onVoteChange }
-                            type = { 'radio' } />
-                    </div>
+                    { !disabled && renderedRadioButton}
                     <div
                         className = 'pollChoiceTextContainer' >
-                        <FieldTextStateless
-                            disabled = { true }
-                            id = 'pollChoiceText'
-                            isLabelHidden = { true }
-                            shouldFitContainer = { true }
-                            value = { text } />
+                        <text
+                            id = { textCSSID }
+                            onClick = { this._onVoteChange } >
+                            { text }
+                        </text>
                     </div>
+
                     <div
                         className = 'pollChoiceVotesContainer' >
                         <label>

@@ -2,7 +2,6 @@
 
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { FieldTextStateless } from '@atlaskit/field-text';
 
 import {
     Container
@@ -75,13 +74,10 @@ class VoteForm extends Component<Props, *> {
 
         return (
             <Container>
-                <FieldTextStateless
-                    autoFocus = { true }
-                    disabled = { true }
-                    id = 'pollQuestion'
-                    isLabelHidden = { true }
-                    type = 'text'
-                    value = { question.text } />
+                <text
+                    id = 'pollQuestion' >
+                    { question.text }
+                </text>
 
                 <div
                     className = 'pollChoicesListContainer' >
