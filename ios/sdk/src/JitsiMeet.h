@@ -18,9 +18,12 @@
 #import <JitsiMeet/JitsiMeetView.h>
 #import <JitsiMeet/JitsiMeetViewDelegate.h>
 
+
 @interface JitsiMeet : NSObject
 
 @property (copy, nonatomic, nullable) NSString *conferenceActivityType;
+@property (copy, nonatomic, nullable) NSString *customUrlScheme;
+@property (copy, nonatomic, nullable) NSArray<NSString *> *universalLinkDomains;
 
 #pragma mak - This class is a singleton
 
