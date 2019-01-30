@@ -30,8 +30,8 @@ import {
 
 import { _SET_CALL_INTEGRATION_SUBSCRIPTIONS } from './actionTypes';
 
-import ConnectionService from './ConnectionService';
 import CallKit from './CallKit';
+import ConnectionService from './ConnectionService';
 
 const CallIntegration = CallKit || ConnectionService;
 
@@ -224,7 +224,7 @@ function _conferenceWillJoin({ dispatch, getState }, next, action) {
     // it upper cased.
     conference.callUUID = (callUUID || uuid.v4()).toUpperCase();
 
-    CallIntegration.startCall(conference.callUUID.toString(), handle, hasVideo)
+    CallIntegration.startCall(conference.callUUID, handle, hasVideo)
         .then(() => {
             const { callee } = state['features/base/jwt'];
             const displayName
@@ -237,7 +237,6 @@ function _conferenceWillJoin({ dispatch, getState }, next, action) {
                     state['features/base/tracks'],
                     MEDIA_TYPE.AUDIO);
 
-            // eslint-disable-next-line object-property-newline
             CallIntegration.updateCall(
                 conference.callUUID,
                 {
@@ -252,16 +251,7 @@ function _conferenceWillJoin({ dispatch, getState }, next, action) {
                 // We're not tracking the call anymore - it doesn't exist on
                 // the native side.
                 delete conference.callUUID;
-                dispatch({
-                    type: CONFERENCE_FAILED,
-                    conference,
-                    error: {
-                        name: 'REQUEST_DENIED_BY_THE_SYSTEM',
-                        recoverable: false
-                    }
-                });
                 dispatch(appNavigate(undefined));
-
                 Alert.alert(
                     'Call aborted',
                     'There\'s already another call in progress.'
@@ -309,8 +299,8 @@ function _onPerformSetMutedCallAction({ callUUID, muted }) {
 
     if (conference && conference.callUUID === callUUID) {
         muted = Boolean(muted); // eslint-disable-line no-param-reassign
-        // FIXME callkit event name
-        sendAnalytics(createTrackMutedEvent('audio', 'callkit', muted));
+        sendAnalytics(
+            createTrackMutedEvent('audio', 'call-integration', muted));
         dispatch(setAudioMuted(muted, /* ensureTrack */ true));
     }
 }

@@ -3,7 +3,7 @@
  * subscriptions.
  *
  * {
- *     type: __SET_CALL_INTEGRATION_SUBSCRIPTIONS,
+ *     type: _SET_CALL_INTEGRATION_SUBSCRIPTIONS,
  *     subscriptions: Array|undefined
  * }
  *

@@ -30,6 +30,9 @@ import java.util.Objects;
  * Jitsi Meet implementation of {@link ConnectionService}. At the time of this
  * writing it implements only the outgoing call scenario.
  *
+ * NOTE the class needs to be public, but is not part of the SDK API and should
+ * never be used directly.
+ *
  * @author Pawel Domas
  */
 @RequiresApi(api = Build.VERSION_CODES.O)
@@ -365,6 +368,7 @@ public class ConnectionService extends android.telecom.ConnectionService {
         public void onHold() {
             // What ?! Android will still call this method even if we do not add
             // the HOLD capability, so do the same thing as on abort.
+            // TODO implement HOLD
             Log.d(TAG, String.format(
                   "onHold %s - HOLD is not supported, aborting the call...",
                   getCallUUID()));
