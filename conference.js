@@ -2613,10 +2613,12 @@ export default {
 
     /**
      * Creates a new poll in the chat room.
-     * @param {Object} poll - Object containing the information about the poll.
-     * @param {Object} choices - Object containing poll choices by their ID.
-     * @param {Object} question - Object with information about
-     *  the question asked.
+     * @param {Object} poll - Object that contain IDs of the poll's question
+     * and list of choices.
+     * @param {Object} choices - Object containing poll choices by their IDs
+     * as keys.
+     * @param {Object} question - Object with the actual text of the question
+     * asked in the poll.
      * @returns {void}
      */
     startPoll(poll, choices, question) {
