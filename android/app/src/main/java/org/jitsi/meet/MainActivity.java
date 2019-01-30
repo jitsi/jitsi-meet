@@ -58,7 +58,7 @@ public class MainActivity extends FragmentActivity implements JitsiMeetActivityI
     private void initialize() {
         JitsiMeetFragment fragment = getFragment();
         fragment.setWelcomePageEnabled(true);
-        fragment.loadURL(getIntentUrl(getIntent()));
+        fragment.getJitsiView().join(getIntentUrl(getIntent()));
     }
 
     private @Nullable String getIntentUrl(Intent intent) {
@@ -113,7 +113,7 @@ public class MainActivity extends FragmentActivity implements JitsiMeetActivityI
         String url;
 
         if ((url = getIntentUrl(intent)) != null) {
-            getFragment().loadURL(url);
+            getFragment().getJitsiView().join(url);
             return;
         }
 
@@ -145,7 +145,7 @@ public class MainActivity extends FragmentActivity implements JitsiMeetActivityI
                     }
 
                     if (dynamicLink != null) {
-                        getFragment().loadURL(dynamicLink.toString());
+                        getFragment().getJitsiView().join(dynamicLink.toString());
                     }
                 });
         }

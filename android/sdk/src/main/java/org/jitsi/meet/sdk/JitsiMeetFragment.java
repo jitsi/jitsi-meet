@@ -107,6 +107,10 @@ public class JitsiMeetFragment extends Fragment {
         return view;
     }
 
+    public JitsiMeetView getJitsiView() {
+        return view;
+    }
+
     /**
      *
      * @see JitsiMeetView#isPictureInPictureEnabled()
@@ -124,16 +128,6 @@ public class JitsiMeetFragment extends Fragment {
      */
     public boolean isWelcomePageEnabled() {
         return view == null ? welcomePageEnabled : view.isWelcomePageEnabled();
-    }
-
-    /**
-     * Loads the given URL and displays the conference. If the specified URL is
-     * null, the welcome page is displayed instead.
-     *
-     * @param url The conference URL.
-     */
-    public void loadURL(@Nullable String url) {
-        view.loadURLString(url);
     }
 
     @Override

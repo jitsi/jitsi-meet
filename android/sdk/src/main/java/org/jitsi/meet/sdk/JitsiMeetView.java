@@ -1,5 +1,6 @@
 /*
- * Copyright @ 2017-present Atlassian Pty Ltd
+ * Copyright @ 2018-present 8x8, Inc.
+ * Copyright @ 2017-2018 Atlassian Pty Ltd
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -43,31 +44,6 @@ public class JitsiMeetView
      * {@code JitsiMeetView}.
      */
     private static final String TAG = JitsiMeetView.class.getSimpleName();
-
-    /**
-     * Loads a specific URL {@code String} in all existing
-     * {@code JitsiMeetView}s.
-     *
-     * @param urlString he URL {@code String} to load in all existing
-     * {@code JitsiMeetView}s.
-     * @return If the specified {@code urlString} was submitted for loading in
-     * at least one {@code JitsiMeetView}, then {@code true}; otherwise,
-     * {@code false}.
-     */
-    public static boolean loadURLStringInViews(String urlString) {
-        boolean loaded = false;
-
-        synchronized (views) {
-            for (BaseReactView view : views) {
-                if (view instanceof JitsiMeetView) {
-                    ((JitsiMeetView)view).loadURLString(urlString);
-                    loaded = true;
-                }
-            }
-        }
-
-        return loaded;
-    }
 
     /**
      * A color scheme object to override the default color is the SDK.
@@ -197,16 +173,20 @@ public class JitsiMeetView
         return welcomePageEnabled;
     }
 
-    /**
-     * Loads a specific {@link URL} which may identify a conference to join. If
-     * the specified {@code URL} is {@code null} and the Welcome page is
-     * enabled, the Welcome page is displayed instead.
-     *
-     * @param url The {@code URL} to load which may identify a conference to
-     * join.
-     */
-    public void loadURL(@Nullable URL url) {
-        loadURLString(url == null ? null : url.toString());
+    public void join(@Nullable String url) {
+        Bundle urlObject;
+
+        if (url == null) {
+            urlObject = null;
+        } else {
+            urlObject = new Bundle();
+            urlObject.putString("url", url);
+        }
+        loadURL(urlObject);
+    }
+
+    public void leave() {
+        loadURL(null);
     }
 
     /**
@@ -219,7 +199,7 @@ public class JitsiMeetView
      *
      * @param urlObject The URL to load which may identify a conference to join.
      */
-    public void loadURLObject(@Nullable Bundle urlObject) {
+    private void loadURL(@Nullable Bundle urlObject) {
         Bundle props = new Bundle();
 
         // color scheme
@@ -257,26 +237,6 @@ public class JitsiMeetView
         props.putLong("timestamp", System.currentTimeMillis());
 
         createReactRootView("App", props);
-    }
-
-    /**
-     * Loads a specific URL {@link String} which may identify a conference to
-     * join. If the specified URL {@code String} is {@code null} and the Welcome
-     * page is enabled, the Welcome page is displayed instead.
-     *
-     * @param urlString The URL {@code String} to load which may identify a
-     * conference to join.
-     */
-    public void loadURLString(@Nullable String urlString) {
-        Bundle urlObject;
-
-        if (urlString == null) {
-            urlObject = null;
-        } else {
-            urlObject = new Bundle();
-            urlObject.putString("url", urlString);
-        }
-        loadURLObject(urlObject);
     }
 
     /**
