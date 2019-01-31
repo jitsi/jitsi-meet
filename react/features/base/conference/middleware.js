@@ -673,7 +673,7 @@ function _updateLocalParticipantInConference({ getState }, next, action) {
     const { participant } = action;
     const result = next(action);
 
-    if (conference && participant.local) {
+    if (conference && participant.local && 'name' in participant) {
         conference.setDisplayName(participant.name);
     }
 
