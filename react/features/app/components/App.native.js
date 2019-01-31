@@ -15,7 +15,7 @@ import {
 import '../../google-api';
 import '../../mobile/audio-mode';
 import '../../mobile/background';
-import '../../mobile/callkit';
+import '../../mobile/call-integration';
 import '../../mobile/external-api';
 import '../../mobile/full-screen';
 import '../../mobile/permissions';
