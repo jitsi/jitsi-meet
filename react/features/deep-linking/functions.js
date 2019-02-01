@@ -51,7 +51,7 @@ export function generateDeepLinkingURL() {
     // https://developer.chrome.com/multidevice/android/intents
     if (Platform.OS === 'android') {
         // https://meet.jit.si/foo -> meet.jit.si/foo
-        const url = href.replace(regex, '').substr(3);
+        const url = href.replace(regex, '').substr(2);
         const pkg = interfaceConfig.ANDROID_APP_PACKAGE || 'org.jitsi.meet';
 
         return `intent://${url}/#Intent;scheme=${appScheme};package=${pkg};end`;
