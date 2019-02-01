@@ -33,7 +33,6 @@
     "@atlaskit/theme": "7.0.2",
     "@atlaskit/toggle": "5.0.14",
     "@atlaskit/tooltip": "12.1.13",
-    "@babel/polyfill": "7.2.5",
     "@microsoft/microsoft-graph-client": "1.1.0",
     "@webcomponents/url": "0.7.1",
     "amplitude-js": "4.5.2",
