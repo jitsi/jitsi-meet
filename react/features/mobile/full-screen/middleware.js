@@ -1,6 +1,5 @@
 // @flow
 
-import { StatusBar } from 'react-native';
 import { Immersive } from 'react-native-immersive';
 
 import { APP_WILL_MOUNT, APP_WILL_UNMOUNT } from '../../base/app';
@@ -91,10 +90,6 @@ function _setFullScreen(fullScreen: boolean) {
     // throws on other platforms.
     if (Platform.OS === 'android') {
         fullScreen ? Immersive.on() : Immersive.off();
-    } else {
-        // On platforms other than Android go with whatever React Native itself
-        // supports.
-        StatusBar.setHidden(fullScreen, 'slide');
     }
 }
 
