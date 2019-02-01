@@ -1,8 +1,5 @@
 /* application specific logic */
 
-import '@babel/polyfill';
-import '@webcomponents/url';
-
 import 'jquery';
 import 'jquery-contextmenu';
 import 'jQuery-Impromptu';

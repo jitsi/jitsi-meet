@@ -54,15 +54,9 @@ const config = {
                     [
                         require.resolve('@babel/preset-env'),
 
-                        {
-                            // Tell babel to avoid compiling imports into
-                            // CommonJS so that webpack may do tree shaking.
-                            modules: false,
-
-                            // Tell babel to replace the @babel/polyfill import
-                            // with individual, used polyfills.
-                            useBuiltIns: 'entry'
-                        }
+                        // Tell babel to avoid compiling imports into CommonJS
+                        // so that webpack may do tree shaking.
+                        { modules: false }
                     ],
                     require.resolve('@babel/preset-flow'),
                     require.resolve('@babel/preset-react')
@@ -140,6 +134,12 @@ module.exports = [
             'flacEncodeWorker':
                 './react/features/local-recording/'
                     + 'recording/flac/flacEncodeWorker.js',
+
+            'polyfills': [
+                '@babel/polyfill',
+                '@webcomponents/url'
+            ],
+
             'analytics-ga':
                 './react/features/analytics/handlers/GoogleAnalyticsHandler.js',
             'analytics-amplitude':
