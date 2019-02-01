@@ -8,6 +8,12 @@
     <link rel="stylesheet" href="css/all.css">
 
     <script>
+        // IE11 and earlier can be identified via their user agent and be
+        // redirected to a page that is known to have no newer js syntax.
+        if (window.navigator.userAgent.match(/(MSIE|Trident)/)) {
+            window.location.href = "static/recommendedBrowsers.html";
+        }
+
         window.indexLoadedTime = window.performance.now();
         console.log("(TIME) index.html loaded:\t", indexLoadedTime);
         // XXX the code below listeners for errors and displays an error message
