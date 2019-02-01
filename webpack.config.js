@@ -135,6 +135,9 @@ module.exports = [
                 './react/features/local-recording/'
                     + 'recording/flac/flacEncodeWorker.js',
 
+            // The polyfills bundle is needed for IE11, and potentially other
+            // older browsers, to fill in missing js features used by
+            // lib-jitsi-meet at load time.
             'polyfills': [
                 '@babel/polyfill',
                 '@webcomponents/url'
