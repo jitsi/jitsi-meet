@@ -56,12 +56,22 @@ export function getDialInConferenceID(
  * Sends a GET request for phone numbers used to dial into a conference.
  *
  * @param {string} url - The service that returns confernce dial-in numbers.
+ * @param {string} roomName - The conference name to find the associated
+ * conference ID.
+ * @param {string} mucURL - In which MUC the conference exists.
  * @returns {Promise} - The promise created by the request. The returned numbers
  * may be an array of numbers or an object with countries as keys and arrays of
  * phone number strings.
  */
-export function getDialInNumbers(url: string): Promise<*> {
-    return doGetJSON(url);
+export function getDialInNumbers(
+        url: string,
+        roomName: string,
+        mucURL: string
+): Promise<*> {
+
+    const fullUrl = `${url}?conference=${roomName}@${mucURL}`;
+
+    return doGetJSON(fullUrl);
 }
 
 /**
@@ -442,7 +452,7 @@ export function getShareInfoText(
             }
 
             numbersPromise = Promise.all([
-                getDialInNumbers(dialInNumbersUrl),
+                getDialInNumbers(dialInNumbersUrl, room, mucURL),
                 getDialInConferenceID(dialInConfCodeUrl, room, mucURL)
             ]).then(([ { defaultCountry, numbers }, {
                 conference, id, message } ]) => {

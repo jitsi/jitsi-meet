@@ -174,7 +174,7 @@ export function updateDialInNumbers() {
         const { room } = state['features/base/conference'];
 
         Promise.all([
-            getDialInNumbers(dialInNumbersUrl),
+            getDialInNumbers(dialInNumbersUrl, room, mucURL),
             getDialInConferenceID(dialInConfCodeUrl, room, mucURL)
         ])
             .then(([ dialInNumbers, { conference, id, message } ]) => {
