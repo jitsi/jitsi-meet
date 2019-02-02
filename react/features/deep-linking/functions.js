@@ -54,7 +54,7 @@ export function generateDeepLinkingURL() {
         const url = href.replace(regex, '').substr(2);
         const pkg = interfaceConfig.ANDROID_APP_PACKAGE || 'org.jitsi.meet';
 
-        return `intent://${url}/#Intent;scheme=${appScheme};package=${pkg};end`;
+        return `intent://${url}#Intent;scheme=${appScheme};package=${pkg};end`;
     }
 
     // iOS: Replace the protocol part with the app scheme.
