@@ -71,7 +71,7 @@ function _fixRoom(room: ?string) {
  * @returns {string}
  */
 function _fixURIStringScheme(uri: string) {
-    const regex = new RegExp(`${URI_PROTOCOL_PATTERN}+`, 'gi');
+    const regex = new RegExp(`${URI_PROTOCOL_PATTERN}+`, 'i');
     const match: Array<string> | null = regex.exec(uri);
 
     if (match) {
