@@ -38,7 +38,6 @@ var config = {
         //bridge: 'jitsi-videobridge.i.vmeeting.top',
         //focus: 'focus.i.vmeeting.top'
     },
-    useNicks: true,
 
     // BOSH URL. FIXME: use XEP-0156 to discover it.
     bosh: '//i.vmeeting.top/http-bind',
@@ -47,7 +46,7 @@ var config = {
     clientNode: 'http://i.vmeeting.top/',
 
     // The real JID of focus participant - can be overridden here
-    focusUserJid: 'focus@i.i.vmeeting.top',
+    // focusUserJid: 'focus@auth.jitsi-meet.example.com',
 
 
     // Testing / experimental features.
@@ -71,7 +70,7 @@ var config = {
 
     // Disables ICE/TCP by filtering out local and remote TCP candidates in
     // signalling.
-    webrtcIceTcpDisable: true,
+    // webrtcIceTcpDisable: false,
 
 
     // Media
@@ -96,7 +95,7 @@ var config = {
     // Video
 
     // Sets the preferred resolution (height) for local video. Defaults to 720.
-    resolution: 720,
+    resolution: 1080,
 
     // w3c spec-compliant video constraints to use for video capture. Currently
     // used by browsers that return true from lib-jitsi-meet's
@@ -107,8 +106,8 @@ var config = {
         video: {
             aspectRatio: 16 / 9,
             height: {
-                ideal: 720,
-                max: 720,
+                ideal: 1080,
+                max: 1080,
                 min: 240
             }
         }
@@ -137,7 +136,7 @@ var config = {
     // Note that it's not recommended to do this because simulcast is not
     // supported when  using H.264. For 1-to-1 calls this setting is enabled by
     // default and can be toggled in the p2p section.
-    preferH264: true,
+    // preferH264: true,
 
     // If set to true, disable H.264 video codec by stripping it out of the
     // SDP.
@@ -313,21 +312,6 @@ var config = {
 
         // The STUN servers that will be used in the peer to peer connections
         stunServers: [
-            // {
-            //     urls: 'turn:47.100.170.169:34708',
-            //     credential: 'QMturnuser',
-            //     password: 'QMturnpass'
-            // },
-            // {
-            //     urls: 'turn:39.105.139.90:34708',
-            //     credential: 'QMturnuser',
-            //     password: 'QMturnpass'
-            // },
-            // {
-            //     urls: 'turn:211.149.170.209:34708',
-            //     credential: 'QMturnuser',
-            //     password: 'QMturnpass'
-            // },
             { urls: 'stun:211.149.170.209:34708' },
             { urls: 'stun:39.105.139.90:34708' },
             { urls: 'stun:47.100.170.169:34708' }
@@ -398,17 +382,16 @@ var config = {
     },
 
     // Options related to end-to-end (participant to participant) ping.
-    e2eping: {
-
-        // The interval in milliseconds at which pings will be sent.
-        // Defaults to 10000, set to <= 0 to disable.
-        pingInterval: 10000,
-
-        // The interval in milliseconds at which analytics events
-        // with the measured RTT will be sent. Defaults to 60000, set
-        // to <= 0 to disable.
-        analyticsInterval: 60000
-    },
+    // e2eping: {
+    //   // The interval in milliseconds at which pings will be sent.
+    //   // Defaults to 10000, set to <= 0 to disable.
+    //   pingInterval: 10000,
+    //
+    //   // The interval in milliseconds at which analytics events
+    //   // with the measured RTT will be sent. Defaults to 60000, set
+    //   // to <= 0 to disable.
+    //   analyticsInterval: 60000,
+    //   }
 
     // If set, will attempt to use the provided video input device label when
     // triggering a screenshare, instead of proceeding through the normal flow

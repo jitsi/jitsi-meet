@@ -171,7 +171,7 @@ var interfaceConfig = {
      *
      * @type {boolean}
      */
-    RECENT_LIST_ENABLED: false
+    RECENT_LIST_ENABLED: true
 
     /**
      * How many columns the tile view can expand to. The respected range is
