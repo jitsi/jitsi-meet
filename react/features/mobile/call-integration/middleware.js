@@ -1,9 +1,10 @@
 // @flow
 
+import { Alert } from 'react-native';
 import uuid from 'uuid';
 
 import { createTrackMutedEvent, sendAnalytics } from '../../analytics';
-import { appNavigate, getName } from '../../app';
+import { appNavigate } from '../../app';
 import { APP_WILL_MOUNT, APP_WILL_UNMOUNT } from '../../base/app';
 import {
     CONFERENCE_FAILED,
@@ -27,8 +28,12 @@ import {
     isLocalTrackMuted
 } from '../../base/tracks';
 
-import { _SET_CALLKIT_SUBSCRIPTIONS } from './actionTypes';
+import { _SET_CALL_INTEGRATION_SUBSCRIPTIONS } from './actionTypes';
+
 import CallKit from './CallKit';
+import ConnectionService from './ConnectionService';
+
+const CallIntegration = CallKit || ConnectionService;
 
 /**
  * Middleware that captures system actions and hooks up CallKit.
@@ -36,9 +41,9 @@ import CallKit from './CallKit';
  * @param {Store} store - The redux store.
  * @returns {Function}
  */
-CallKit && MiddlewareRegistry.register(store => next => action => {
+CallIntegration && MiddlewareRegistry.register(store => next => action => {
     switch (action.type) {
-    case _SET_CALLKIT_SUBSCRIPTIONS:
+    case _SET_CALL_INTEGRATION_SUBSCRIPTIONS:
         return _setCallKitSubscriptions(store, next, action);
 
     case APP_WILL_MOUNT:
@@ -46,7 +51,7 @@ CallKit && MiddlewareRegistry.register(store => next => action => {
 
     case APP_WILL_UNMOUNT:
         store.dispatch({
-            type: _SET_CALLKIT_SUBSCRIPTIONS,
+            type: _SET_CALL_INTEGRATION_SUBSCRIPTIONS,
             subscriptions: undefined
         });
         break;
@@ -91,36 +96,21 @@ CallKit && MiddlewareRegistry.register(store => next => action => {
 function _appWillMount({ dispatch, getState }, next, action) {
     const result = next(action);
 
-    CallKit.setProviderConfiguration({
-        iconTemplateImageName: 'CallKitIcon',
-        localizedName: getName()
-    });
-
     const context = {
         dispatch,
         getState
     };
-    const subscriptions = [
-        CallKit.addListener(
-            'performEndCallAction',
-            _onPerformEndCallAction,
-            context),
-        CallKit.addListener(
-            'performSetMutedCallAction',
-            _onPerformSetMutedCallAction,
-            context),
 
-        // According to CallKit's documentation, when the system resets we
-        // should terminate all calls. Hence, providerDidReset is the same to us
-        // as performEndCallAction.
-        CallKit.addListener(
-            'providerDidReset',
-            _onPerformEndCallAction,
-            context)
-    ];
+    const delegate = {
+        _onPerformSetMutedCallAction,
+        _onPerformEndCallAction
+    };
 
-    dispatch({
-        type: _SET_CALLKIT_SUBSCRIPTIONS,
+    const subscriptions
+        = CallIntegration.registerSubscriptions(context, delegate);
+
+    subscriptions && dispatch({
+        type: _SET_CALL_INTEGRATION_SUBSCRIPTIONS,
         subscriptions
     });
 
@@ -150,7 +140,7 @@ function _conferenceFailed(store, next, action) {
         const { callUUID } = action.conference;
 
         if (callUUID) {
-            CallKit.reportCallFailed(callUUID);
+            CallIntegration.reportCallFailed(callUUID);
         }
     }
 
@@ -176,7 +166,7 @@ function _conferenceJoined(store, next, action) {
     const { callUUID } = action.conference;
 
     if (callUUID) {
-        CallKit.reportConnectedOutgoingCall(callUUID);
+        CallIntegration.reportConnectedOutgoingCall(callUUID);
     }
 
     return result;
@@ -201,7 +191,7 @@ function _conferenceLeft(store, next, action) {
     const { callUUID } = action.conference;
 
     if (callUUID) {
-        CallKit.endCall(callUUID);
+        CallIntegration.endCall(callUUID);
     }
 
     return result;
@@ -220,7 +210,7 @@ function _conferenceLeft(store, next, action) {
  * @private
  * @returns {*} The value returned by {@code next(action)}.
  */
-function _conferenceWillJoin({ getState }, next, action) {
+function _conferenceWillJoin({ dispatch, getState }, next, action) {
     const result = next(action);
 
     const { conference } = action;
@@ -234,7 +224,7 @@ function _conferenceWillJoin({ getState }, next, action) {
     // it upper cased.
     conference.callUUID = (callUUID || uuid.v4()).toUpperCase();
 
-    CallKit.startCall(conference.callUUID, handle, hasVideo)
+    CallIntegration.startCall(conference.callUUID, handle, hasVideo)
         .then(() => {
             const { callee } = state['features/base/jwt'];
             const displayName
@@ -247,9 +237,30 @@ function _conferenceWillJoin({ getState }, next, action) {
                     state['features/base/tracks'],
                     MEDIA_TYPE.AUDIO);
 
-            // eslint-disable-next-line object-property-newline
-            CallKit.updateCall(conference.callUUID, { displayName, hasVideo });
-            CallKit.setMuted(conference.callUUID, muted);
+            CallIntegration.updateCall(
+                conference.callUUID,
+                {
+                    displayName,
+                    hasVideo
+                });
+            CallIntegration.setMuted(conference.callUUID, muted);
+        })
+        .catch(error => {
+            // Currently this error code is emitted only by Android.
+            if (error.code === 'CREATE_OUTGOING_CALL_FAILED') {
+                // We're not tracking the call anymore - it doesn't exist on
+                // the native side.
+                delete conference.callUUID;
+                dispatch(appNavigate(undefined));
+                Alert.alert(
+                    'Call aborted',
+                    'There\'s already another call in progress.'
+                        + ' Please end it first and try again.',
+                    [
+                        { text: 'OK' }
+                    ],
+                    { cancelable: false });
+            }
         });
 
     return result;
@@ -288,7 +299,8 @@ function _onPerformSetMutedCallAction({ callUUID, muted }) {
 
     if (conference && conference.callUUID === callUUID) {
         muted = Boolean(muted); // eslint-disable-line no-param-reassign
-        sendAnalytics(createTrackMutedEvent('audio', 'callkit', muted));
+        sendAnalytics(
+            createTrackMutedEvent('audio', 'call-integration', muted));
         dispatch(setAudioMuted(muted, /* ensureTrack */ true));
     }
 }
@@ -319,7 +331,7 @@ function _setAudioOnly({ getState }, next, action) {
     const conference = getCurrentConference(state);
 
     if (conference && conference.callUUID) {
-        CallKit.updateCall(
+        CallIntegration.updateCall(
             conference.callUUID,
             { hasVideo: !action.audioOnly });
     }
@@ -329,20 +341,21 @@ function _setAudioOnly({ getState }, next, action) {
 
 /**
  * Notifies the feature callkit that the action
- * {@link _SET_CALLKIT_SUBSCRIPTIONS} is being dispatched within a specific
- * redux {@code store}.
+ * {@link _SET_CALL_INTEGRATION_SUBSCRIPTIONS} is being dispatched within
+ * a specific redux {@code store}.
  *
  * @param {Store} store - The redux store in which the specified {@code action}
  * is being dispatched.
  * @param {Dispatch} next - The redux {@code dispatch} function to dispatch the
  * specified {@code action} in the specified {@code store}.
- * @param {Action} action - The redux action {@code _SET_CALLKIT_SUBSCRIPTIONS}
- * which is being dispatched in the specified {@code store}.
+ * @param {Action} action - The redux action
+ * {@code _SET_CALL_INTEGRATION_SUBSCRIPTIONS} which is being dispatched in
+ * the specified {@code store}.
  * @private
  * @returns {*} The value returned by {@code next(action)}.
  */
 function _setCallKitSubscriptions({ getState }, next, action) {
-    const { subscriptions } = getState()['features/callkit'];
+    const { subscriptions } = getState()['features/call-integration'];
 
     if (subscriptions) {
         for (const subscription of subscriptions) {
@@ -377,11 +390,11 @@ function _syncTrackState({ getState }, next, action) {
             const tracks = state['features/base/tracks'];
             const muted = isLocalTrackMuted(tracks, MEDIA_TYPE.AUDIO);
 
-            CallKit.setMuted(conference.callUUID, muted);
+            CallIntegration.setMuted(conference.callUUID, muted);
             break;
         }
         case 'video': {
-            CallKit.updateCall(
+            CallIntegration.updateCall(
                 conference.callUUID,
                 { hasVideo: !isVideoMutedByAudioOnly(state) });
             break;

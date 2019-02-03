@@ -2234,34 +2234,6 @@ export default {
      * @returns {void}
      */
     _onConferenceJoined() {
-        if (APP.logCollector) {
-            // Start the LogCollector's periodic "store logs" task
-            APP.logCollector.start();
-            APP.logCollectorStarted = true;
-
-            // Make an attempt to flush in case a lot of logs have been
-            // cached, before the collector was started.
-            APP.logCollector.flush();
-
-            // This event listener will flush the logs, before
-            // the statistics module (CallStats) is stopped.
-            //
-            // NOTE The LogCollector is not stopped, because this event can
-            // be triggered multiple times during single conference
-            // (whenever statistics module is stopped). That includes
-            // the case when Jicofo terminates the single person left in the
-            // room. It will then restart the media session when someone
-            // eventually join the room which will start the stats again.
-            APP.conference.addConferenceListener(
-                JitsiConferenceEvents.BEFORE_STATISTICS_DISPOSED,
-                () => {
-                    if (APP.logCollector) {
-                        APP.logCollector.flush();
-                    }
-                }
-            );
-        }
-
         APP.UI.initConference();
 
         APP.keyboardshortcut.init();
