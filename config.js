@@ -34,7 +34,7 @@ var config = {
         // focus: 'focus.i.vmeeting.top',
 
         // XMPP MUC domain. FIXME: use XEP-0030 to discover it.
-        muc: 'conference.i.vmeeting.top',
+        muc: 'conference.i.vmeeting.top'
         //bridge: 'jitsi-videobridge.i.vmeeting.top',
         //focus: 'focus.i.vmeeting.top'
     },
