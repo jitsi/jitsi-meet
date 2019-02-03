@@ -1,8 +1,8 @@
 // @flow
 
-import { equals, ReducerRegistry } from '../redux';
+import { equals, ReducerRegistry, set } from '../redux';
 
-import { SET_LOGGING_CONFIG } from './actionTypes';
+import { SET_LOG_COLLECTOR, SET_LOGGING_CONFIG } from './actionTypes';
 
 /**
  * The default/initial redux state of the feature base/logging.
@@ -12,7 +12,12 @@ import { SET_LOGGING_CONFIG } from './actionTypes';
  * }}
  */
 const DEFAULT_STATE = {
-    config: require('../../../../logging_config.js')
+    config: require('../../../../logging_config.js'),
+
+    /**
+     * The log collector.
+     */
+    logCollector: undefined
 };
 
 ReducerRegistry.register(
@@ -21,6 +26,9 @@ ReducerRegistry.register(
         switch (action.type) {
         case SET_LOGGING_CONFIG:
             return _setLoggingConfig(state, action);
+        case SET_LOG_COLLECTOR: {
+            return _setLogCollector(state, action);
+        }
 
         default:
             return state;
@@ -53,4 +61,18 @@ function _setLoggingConfig(state, action) {
         ...state,
         config
     };
+}
+
+/**
+ * Reduces a specific Redux action SET_LOG_COLLECTOR of the feature
+ * base/logging.
+ *
+ * @param {Object} state - The Redux state of the feature base/logging.
+ * @param {Action} action - The Redux action SET_LOG_COLLECTOR to reduce.
+ * @private
+ * @returns {Object} The new state of the feature base/logging after the
+ * reduction of the specified action.
+ */
+function _setLogCollector(state, action) {
+    return set(state, 'logCollector', action.logCollector);
 }

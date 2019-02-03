@@ -190,13 +190,25 @@ class DialInSummary extends Component<Props, State> {
      * @returns {Promise}
      */
     _getNumbers() {
-        const { dialInNumbersUrl } = config;
+        const { room } = this.props;
+        const { dialInNumbersUrl, hosts } = config;
+        const mucURL = hosts && hosts.muc;
+        let URLSuffix = '';
 
         if (!dialInNumbersUrl) {
             return Promise.reject(this.props.t('info.dialInNotSupported'));
         }
 
-        return fetch(dialInNumbersUrl)
+        // when room and mucURL are available
+        // provide conference when looking up dial in numbers
+
+        if (room && mucURL) {
+            URLSuffix = `?conference=${room}@${mucURL}`;
+        }
+        const conferenceIDURL
+        = `${dialInNumbersUrl}${URLSuffix}`;
+
+        return fetch(conferenceIDURL)
             .then(response => response.json())
             .catch(() => Promise.reject(this.props.t('info.genericError')));
     }

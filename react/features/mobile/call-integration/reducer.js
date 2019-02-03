@@ -1,13 +1,14 @@
 import { assign, ReducerRegistry } from '../../base/redux';
 
-import { _SET_CALLKIT_SUBSCRIPTIONS } from './actionTypes';
+import { _SET_CALL_INTEGRATION_SUBSCRIPTIONS } from './actionTypes';
 import CallKit from './CallKit';
+import ConnectionService from './ConnectionService';
 
-CallKit && ReducerRegistry.register(
-    'features/callkit',
+(CallKit || ConnectionService) && ReducerRegistry.register(
+    'features/call-integration',
     (state = {}, action) => {
         switch (action.type) {
-        case _SET_CALLKIT_SUBSCRIPTIONS:
+        case _SET_CALL_INTEGRATION_SUBSCRIPTIONS:
             return assign(state, 'subscriptions', action.subscriptions);
         }
 

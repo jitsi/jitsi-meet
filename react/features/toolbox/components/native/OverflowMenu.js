@@ -20,6 +20,8 @@ import { TileViewButton } from '../../../video-layout';
 import AudioOnlyButton from './AudioOnlyButton';
 import ToggleCameraButton from './ToggleCameraButton';
 
+declare var __DEV__;
+
 /**
  * The type of the React {@code Component} props of {@link OverflowMenu}.
  */
@@ -82,7 +84,7 @@ class OverflowMenu extends Component<Props> {
                     // Apple rejected our app because they claim requiring a
                     // Dropbox account for recording is not acceptable.
                     // Ddisable it until we can find a way around it.
-                    Platform.OS !== 'ios'
+                    (__DEV__ || Platform.OS !== 'ios')
                         && <RecordButton { ...buttonProps } />
                 }
                 <LiveStreamButton { ...buttonProps } />

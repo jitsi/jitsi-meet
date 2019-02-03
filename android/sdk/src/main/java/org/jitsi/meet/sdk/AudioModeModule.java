@@ -25,6 +25,8 @@ import android.content.pm.PackageManager;
 import android.media.AudioDeviceInfo;
 import android.media.AudioManager;
 import android.os.Build;
+import android.support.annotation.RequiresApi;
+import android.telecom.CallAudioState;
 import android.util.Log;
 
 import com.facebook.react.bridge.Arguments;
@@ -99,6 +101,69 @@ class AudioModeModule
      * The {@code Log} tag {@code AudioModeModule} is to log messages with.
      */
     static final String TAG = MODULE_NAME;
+
+    /**
+     * Converts any of the "DEVICE_" constants into the corresponding
+     * {@link CallAudioState} "ROUTE_" number.
+     *
+     * @param audioDevice one of the "DEVICE_" constants.
+     * @return a route number {@link CallAudioState#ROUTE_EARPIECE} if no match
+     * is found.
+     */
+    @RequiresApi(api = Build.VERSION_CODES.M)
+    private static int audioDeviceToRouteInt(String audioDevice) {
+        if (audioDevice == null) {
+            return CallAudioState.ROUTE_EARPIECE;
+        }
+        switch (audioDevice) {
+            case DEVICE_BLUETOOTH:
+                return CallAudioState.ROUTE_BLUETOOTH;
+            case DEVICE_EARPIECE:
+                return CallAudioState.ROUTE_EARPIECE;
+            case DEVICE_HEADPHONES:
+                return CallAudioState.ROUTE_WIRED_HEADSET;
+            case DEVICE_SPEAKER:
+                return CallAudioState.ROUTE_SPEAKER;
+            default:
+                Log.e(TAG, "Unsupported device name: " + audioDevice);
+                return CallAudioState.ROUTE_EARPIECE;
+        }
+    }
+
+    /**
+     * Populates given route mask into the "DEVICE_" list.
+     *
+     * @param supportedRouteMask an integer coming from
+     * {@link CallAudioState#getSupportedRouteMask()}.
+     * @return a list of device names.
+     */
+    private static Set<String> routesToDeviceNames(int supportedRouteMask) {
+        Set<String> devices = new HashSet<>();
+        if ((supportedRouteMask & CallAudioState.ROUTE_EARPIECE)
+                == CallAudioState.ROUTE_EARPIECE) {
+            devices.add(DEVICE_EARPIECE);
+        }
+        if ((supportedRouteMask & CallAudioState.ROUTE_BLUETOOTH)
+                == CallAudioState.ROUTE_BLUETOOTH) {
+            devices.add(DEVICE_BLUETOOTH);
+        }
+        if ((supportedRouteMask & CallAudioState.ROUTE_SPEAKER)
+                == CallAudioState.ROUTE_SPEAKER) {
+            devices.add(DEVICE_SPEAKER);
+        }
+        if ((supportedRouteMask & CallAudioState.ROUTE_WIRED_HEADSET)
+                == CallAudioState.ROUTE_WIRED_HEADSET) {
+            devices.add(DEVICE_HEADPHONES);
+        }
+        return devices;
+    }
+
+    /**
+     * Whether or not the ConnectionService is used for selecting audio devices.
+     */
+    private static boolean useConnectionService() {
+        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.O;
+    }
 
     /**
      * Indicator that we have lost audio focus.
@@ -205,6 +270,15 @@ class AudioModeModule
     private String selectedDevice;
 
     /**
+     * Used on API >= 26 to store the most recently reported audio devices.
+     * Makes it easier to compare for a change, because the devices are stored
+     * as a mask in the {@link CallAudioState}. The mask is populated into
+     * the {@link #availableDevices} on each update.
+     */
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    private int supportedRouteMask;
+
+    /**
      * User selected device. When null the default is used depending on the
      * mode.
      */
@@ -224,21 +298,25 @@ class AudioModeModule
             = (AudioManager)
                 reactContext.getSystemService(Context.AUDIO_SERVICE);
 
-        // Setup runtime device change detection.
-        setupAudioRouteChangeDetection();
+        // Starting Oreo the ConnectionImpl from ConnectionService us used to
+        // detect the available devices.
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
+            // Setup runtime device change detection.
+            setupAudioRouteChangeDetection();
 
-        // Do an initial detection on Android >= M.
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            runInAudioThread(onAudioDeviceChangeRunner);
-        } else {
-            // On Android < M, detect if we have an earpiece.
-            PackageManager pm = reactContext.getPackageManager();
-            if (pm.hasSystemFeature(PackageManager.FEATURE_TELEPHONY)) {
-                availableDevices.add(DEVICE_EARPIECE);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                // Do an initial detection on Android >= M.
+                runInAudioThread(onAudioDeviceChangeRunner);
+            } else {
+                // On Android < M, detect if we have an earpiece.
+                PackageManager pm = reactContext.getPackageManager();
+                if (pm.hasSystemFeature(PackageManager.FEATURE_TELEPHONY)) {
+                    availableDevices.add(DEVICE_EARPIECE);
+                }
+
+                // Always assume there is a speaker.
+                availableDevices.add(DEVICE_SPEAKER);
             }
-
-            // Always assume there is a speaker.
-            availableDevices.add(DEVICE_SPEAKER);
         }
     }
 
@@ -354,6 +432,38 @@ class AudioModeModule
         });
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    void onCallAudioStateChange(final CallAudioState callAudioState) {
+        runInAudioThread(new Runnable() {
+            @Override
+            public void run() {
+                int newSupportedRoutes = callAudioState.getSupportedRouteMask();
+                boolean audioDevicesChanged
+                        = supportedRouteMask != newSupportedRoutes;
+                if (audioDevicesChanged) {
+                    supportedRouteMask = newSupportedRoutes;
+                    availableDevices = routesToDeviceNames(supportedRouteMask);
+                    Log.d(TAG,
+                          "Available audio devices: "
+                                  + availableDevices.toString());
+                }
+
+                boolean audioRouteChanged
+                    = audioDeviceToRouteInt(selectedDevice)
+                            != callAudioState.getRoute();
+
+                if (audioRouteChanged || audioDevicesChanged) {
+                    // Reset user selection
+                    userSelectedDevice = null;
+
+                    if (mode != -1) {
+                        updateAudioRoute(mode);
+                    }
+                }
+            }
+        });
+    }
+
     /**
      * {@link AudioManager.OnAudioFocusChangeListener} interface method. Called
      * when the audio focus of the system is updated.
@@ -418,6 +528,31 @@ class AudioModeModule
     }
 
     /**
+     * The API >= 26 way of adjusting the audio route.
+     *
+     * @param audioDevice one of the "DEVICE_" names to set as the audio route.
+     */
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    private void setAudioRoute(String audioDevice) {
+        int newAudioRoute = audioDeviceToRouteInt(audioDevice);
+
+        RNConnectionService.setAudioRoute(newAudioRoute);
+    }
+
+    /**
+     * The API < 26 way of adjusting the audio route.
+     *
+     * @param audioDevice one of the "DEVICE_" names to set as the audio route.
+     */
+    private void setAudioRoutePreO(String audioDevice) {
+        // Turn bluetooth on / off
+        setBluetoothAudioRoute(audioDevice.equals(DEVICE_BLUETOOTH));
+
+        // Turn speaker on / off
+        audioManager.setSpeakerphoneOn(audioDevice.equals(DEVICE_SPEAKER));
+    }
+
+    /**
      * Helper method to set the output route to a Bluetooth device.
      *
      * @param enabled true if Bluetooth should use used, false otherwise.
@@ -475,7 +610,7 @@ class AudioModeModule
 
     /**
      * Setup the audio route change detection mechanism. We use the
-     * {@link android.media.AudioDeviceCallback} API on Android >= 23 only.
+     * {@link android.media.AudioDeviceCallback} on 23 >= Android API < 26.
      */
     private void setupAudioRouteChangeDetection() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -486,7 +621,7 @@ class AudioModeModule
     }
 
     /**
-     * Audio route change detection mechanism for Android API >= 23.
+     * Audio route change detection mechanism for 23 >= Android API < 26.
      */
     @TargetApi(Build.VERSION_CODES.M)
     private void setupAudioRouteChangeDetectionM() {
@@ -542,27 +677,31 @@ class AudioModeModule
         Log.d(TAG, "Update audio route for mode: " + mode);
 
         if (mode == DEFAULT) {
-            audioFocusLost = false;
-            audioManager.setMode(AudioManager.MODE_NORMAL);
-            audioManager.abandonAudioFocus(this);
-            audioManager.setSpeakerphoneOn(false);
-            setBluetoothAudioRoute(false);
+            if (!useConnectionService()) {
+                audioFocusLost = false;
+                audioManager.setMode(AudioManager.MODE_NORMAL);
+                audioManager.abandonAudioFocus(this);
+                audioManager.setSpeakerphoneOn(false);
+                setBluetoothAudioRoute(false);
+            }
             selectedDevice = null;
             userSelectedDevice = null;
 
             return true;
         }
 
-        audioManager.setMode(AudioManager.MODE_IN_COMMUNICATION);
-        audioManager.setMicrophoneMute(false);
+        if (!useConnectionService()) {
+            audioManager.setMode(AudioManager.MODE_IN_COMMUNICATION);
+            audioManager.setMicrophoneMute(false);
 
-        if (audioManager.requestAudioFocus(
+            if (audioManager.requestAudioFocus(
                     this,
                     AudioManager.STREAM_VOICE_CALL,
                     AudioManager.AUDIOFOCUS_GAIN)
-                == AudioManager.AUDIOFOCUS_REQUEST_FAILED) {
-            Log.d(TAG, "Audio focus request failed");
-            return false;
+                    == AudioManager.AUDIOFOCUS_REQUEST_FAILED) {
+                Log.d(TAG, "Audio focus request failed");
+                return false;
+            }
         }
 
         boolean bluetoothAvailable = availableDevices.contains(DEVICE_BLUETOOTH);
@@ -596,11 +735,11 @@ class AudioModeModule
         selectedDevice = audioDevice;
         Log.d(TAG, "Selected audio device: " + audioDevice);
 
-        // Turn bluetooth on / off
-        setBluetoothAudioRoute(audioDevice.equals(DEVICE_BLUETOOTH));
-
-        // Turn speaker on / off
-        audioManager.setSpeakerphoneOn(audioDevice.equals(DEVICE_SPEAKER));
+        if (useConnectionService()) {
+            setAudioRoute(audioDevice);
+        } else {
+            setAudioRoutePreO(audioDevice);
+        }
 
         return true;
     }
