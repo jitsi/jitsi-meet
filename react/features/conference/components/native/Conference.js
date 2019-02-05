@@ -28,6 +28,7 @@ import { setToolboxVisible, Toolbox } from '../../../toolbox';
 import { shouldDisplayTileView } from '../../../video-layout';
 
 import DisplayNameLabel from './DisplayNameLabel';
+import Labels from './Labels';
 import styles from './styles';
 
 /**
@@ -281,6 +282,8 @@ class Conference extends Component<Props> {
                 <View
                     pointerEvents = 'box-none'
                     style = { styles.toolboxAndFilmstripContainer }>
+
+                    <Labels />
 
                     <Captions onPress = { this._onClick } />
 

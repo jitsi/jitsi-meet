@@ -29,6 +29,7 @@ import {
 
 import { maybeShowSuboptimalExperienceNotification } from '../../functions';
 
+import Labels from './Labels';
 import { default as Notice } from './Notice';
 
 declare var APP: Object;
@@ -217,8 +218,9 @@ class Conference extends Component<Props> {
                 onMouseMove = { this._onShowToolbar }>
                 <Notice />
                 <div id = 'videospace'>
-                    <LargeVideo
-                        hideVideoQualityLabel = { hideVideoQualityLabel } />
+                    <LargeVideo />
+                    { hideVideoQualityLabel
+                        || <Labels /> }
                     <Filmstrip filmstripOnly = { filmstripOnly } />
                 </div>
 

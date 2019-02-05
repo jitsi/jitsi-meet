@@ -4,21 +4,21 @@ import React from 'react';
 import { TouchableOpacity, View } from 'react-native';
 import { connect } from 'react-redux';
 
-import { JitsiRecordingConstants } from '../../base/lib-jitsi-meet';
-import {
-    RecordingExpandedLabel
-} from '../../recording';
+import { JitsiRecordingConstants } from '../../../base/lib-jitsi-meet';
 import {
     isNarrowAspectRatio,
     makeAspectRatioAware
-} from '../../base/responsive-ui';
-import { TranscribingExpandedLabel } from '../../transcribing';
-import { VideoQualityExpandedLabel } from '../../video-quality';
+} from '../../../base/responsive-ui';
+import {
+    RecordingExpandedLabel
+} from '../../../recording';
+import { TranscribingExpandedLabel } from '../../../transcribing';
+import { VideoQualityExpandedLabel } from '../../../video-quality';
 
 import AbstractLabels, {
     _abstractMapStateToProps,
     type Props as AbstractLabelsProps
-} from './AbstractLabels';
+} from '../AbstractLabels';
 import styles from './styles';
 
 /**
