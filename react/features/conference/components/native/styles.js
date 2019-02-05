@@ -5,6 +5,8 @@ import {
     fixAndroidViewClipping
 } from '../../../base/styles';
 
+import { FILMSTRIP_SIZE } from '../../../filmstrip';
+
 /**
  * The styles of the feature conference.
  */
@@ -30,6 +32,30 @@ export default createStyleSheet({
     displayNameText: {
         color: ColorPalette.white,
         fontSize: 14
+    },
+
+    /**
+     * View that contains the indicators.
+     */
+    indicatorContainer: {
+        flex: 1,
+        flexDirection: 'row',
+        justifyContent: 'flex-end',
+        margin: BoxModel.margin
+    },
+
+    /**
+     * Indicator container for wide aspect ratio.
+     */
+    indicatorContainerWide: {
+        marginRight: FILMSTRIP_SIZE + BoxModel.margin
+    },
+
+    labelWrapper: {
+        flexDirection: 'column',
+        position: 'absolute',
+        right: 0,
+        top: 0
     },
 
     /**

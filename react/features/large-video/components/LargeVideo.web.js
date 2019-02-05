@@ -5,20 +5,7 @@ import React, { Component } from 'react';
 import { Watermarks } from '../../base/react';
 import { Captions } from '../../subtitles/';
 
-import Labels from './Labels';
-
 declare var interfaceConfig: Object;
-
-/**
- * The type of the React {@code Component} props of {@link LargeVideo}.
- */
-type Props = {
-
-    /**
-     * True if the {@code VideoQualityLabel} should not be displayed.
-     */
-    hideVideoQualityLabel: boolean
-};
 
 /**
  * Implements a React {@link Component} which represents the large video (a.k.a.
@@ -26,7 +13,7 @@ type Props = {
  *
  * @extends Component
  */
-export default class LargeVideo extends Component<Props> {
+export default class LargeVideo extends Component<{}> {
     /**
      * Implements React's {@link Component#render()}.
      *
@@ -74,8 +61,6 @@ export default class LargeVideo extends Component<Props> {
                 { interfaceConfig.DISABLE_TRANSCRIPTION_SUBTITLES
                     || <Captions /> }
                 <span id = 'localConnectionMessage' />
-                { this.props.hideVideoQualityLabel
-                    || <Labels /> }
             </div>
         );
     }

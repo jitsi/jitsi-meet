@@ -6,7 +6,6 @@ import { connect } from 'react-redux';
 import { ParticipantView } from '../../base/participants';
 import { DimensionsDetector } from '../../base/responsive-ui';
 
-import Labels from './Labels';
 import styles, { AVATAR_SIZE } from './styles';
 
 /**
@@ -130,7 +129,6 @@ class LargeVideo extends Component<Props, State> {
                     useConnectivityInfoLabel = { useConnectivityInfoLabel }
                     zOrder = { 0 }
                     zoomEnabled = { true } />
-                <Labels />
             </DimensionsDetector>
         );
     }
