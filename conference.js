@@ -1237,10 +1237,10 @@ export default {
             = connection.initJitsiConference(
                 APP.conference.roomName,
                 this._getConferenceOptions());
-        this._room = room; // FIXME do not use this
 
         APP.store.dispatch(conferenceWillJoin(room));
         this._setLocalAudioVideoStreams(localTracks);
+        this._room = room; // FIXME do not use this
 
         sendLocalParticipant(APP.store, room);
 
