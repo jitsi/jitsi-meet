@@ -265,7 +265,7 @@ export class VideoContainer extends LargeContainer {
          */
         this.$wrapperParent = this.$wrapper.parent();
 
-        this.avatarHeight = $('#dominantSpeakerAvatar').height();
+        this.avatarHeight = $('#dominantSpeakerAvatarContainer').height();
 
         const onPlayingCallback = function(event) {
             if (typeof resizeContainer === 'function') {
@@ -408,7 +408,7 @@ export class VideoContainer extends LargeContainer {
      */
     _positionParticipantStatus($element) {
         if (this.avatarDisplayed) {
-            const $avatarImage = $('#dominantSpeakerAvatar');
+            const $avatarImage = $('#dominantSpeakerAvatarContainer');
 
             $element.css(
                 'top',

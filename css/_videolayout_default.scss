@@ -496,18 +496,22 @@
     display:none !important;
 }
 
+#dominantSpeakerAvatarContainer,
 #dominantSpeakerAvatar,
 .dynamic-shadow {
     width: 200px;
     height: 200px;
 }
 
-#dominantSpeakerAvatar {
+#dominantSpeakerAvatarContainer {
     top: 50px;
     margin: auto;
     position: relative;
     border-radius: 100px;
+    overflow: hidden;
     visibility: inherit;
+}
+#dominantSpeakerAvatar {
     background-color: #000000;
 }
 
