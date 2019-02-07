@@ -80,22 +80,6 @@ export class AbstractApp extends BaseApp<Props, *> {
     }
 
     /**
-     * Gets a {@code Location} object from the window with information about the
-     * current location of the document. Explicitly defined to allow extenders
-     * to override because React Native does not usually have a location
-     * property on its window unless debugging remotely in which case the
-     * browser that is the remote debugger will provide a location property on
-     * the window.
-     *
-     * @public
-     * @returns {Location} A {@code Location} object with information about the
-     * current location of the document.
-     */
-    getWindowLocation() {
-        return undefined;
-    }
-
-    /**
      * Creates an extra {@link ReactElement}s to be added (unconditionaly)
      * alongside the main element.
      *
