@@ -25,17 +25,19 @@ import { LargeVideo } from '../../../large-video';
 import { AddPeopleDialog, CalleeInfoContainer } from '../../../invite';
 import { Captions } from '../../../subtitles';
 import { setToolboxVisible, Toolbox } from '../../../toolbox';
-import { shouldDisplayTileView } from '../../../video-layout';
 
+import { abstractMapStateToProps } from '../AbstractConference';
 import DisplayNameLabel from './DisplayNameLabel';
 import Labels from './Labels';
 import NavigationBar from './NavigationBar';
 import styles from './styles';
 
+import type { AbstractProps } from '../AbstractConference';
+
 /**
  * The type of the React {@code Component} props of {@link Conference}.
  */
-type Props = {
+type Props = AbstractProps & {
 
     /**
      * The indicator which determines that we are still connecting to the
@@ -104,13 +106,6 @@ type Props = {
     _reducedUI: boolean,
 
     /**
-     * The current conference room name.
-     *
-     * @private
-     */
-    _room: string,
-
-    /**
      * The handler which dispatches the (redux) action {@link setToolboxVisible}
      * to show/hide the {@link Toolbox}.
      *
@@ -120,13 +115,6 @@ type Props = {
      * @returns {void}
      */
     _setToolboxVisible: Function,
-
-    /**
-     * Whether or not the layout should change to support tile view mode.
-     *
-     * @private
-     */
-    _shouldDisplayTileView: boolean,
 
     /**
      * The indicator which determines whether the Toolbox is visible.
@@ -424,16 +412,7 @@ function _mapDispatchToProps(dispatch) {
  *
  * @param {Object} state - The redux state.
  * @private
- * @returns {{
- *     _connecting: boolean,
- *     _filmstripVisible: boolean,
- *     _locationURL: URL,
- *     _participantCount: number,
- *     _reducedUI: boolean,
- *     _room: string,
- *     _toolboxVisible: boolean,
- *     _toolboxAlwaysVisible: boolean
- * }}
+ * @returns {Props}
  */
 function _mapStateToProps(state) {
     const { connecting, connection, locationURL }
@@ -441,8 +420,7 @@ function _mapStateToProps(state) {
     const {
         conference,
         joining,
-        leaving,
-        room
+        leaving
     } = state['features/base/conference'];
     const { reducedUI } = state['features/base/responsive-ui'];
     const { alwaysVisible, visible } = state['features/toolbox'];
@@ -460,6 +438,8 @@ function _mapStateToProps(state) {
         = connecting || (connection && (joining || (!conference && !leaving)));
 
     return {
+        ...abstractMapStateToProps(state),
+
         /**
          * The indicator which determines that we are still connecting to the
          * conference which includes establishing the XMPP connection and then
@@ -500,22 +480,6 @@ function _mapStateToProps(state) {
          * @type {boolean}
          */
         _reducedUI: reducedUI,
-
-        /**
-         * The current conference room name.
-         *
-         * @private
-         * @type {string}
-         */
-        _room: room,
-
-        /**
-         * Whether or not the layout should change to support tile view mode.
-         *
-         * @private
-         * @type {boolean}
-         */
-        _shouldDisplayTileView: shouldDisplayTileView(state),
 
         /**
          * The indicator which determines whether the Toolbox is visible.
