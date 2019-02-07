@@ -52,17 +52,39 @@ export default class AbstractNotificationsContainer<P: Props>
     }
 
     /**
+     * Sets a timeout for the first notification (if applicable).
+     *
+     * @inheritdoc
+     */
+    componentDidMount() {
+        // Set the initial dismiss timeout (if any)
+        this._manageDismissTimeout();
+    }
+
+    /**
      * Sets a timeout if the currently displayed notification has changed.
      *
      * @inheritdoc
      */
     componentDidUpdate(prevProps: P) {
+        this._manageDismissTimeout(prevProps);
+    }
+
+    /**
+     * Sets/clears the dismiss timeout for the top notification.
+     *
+     * @param {P} [prevProps] - The previous properties (if called from
+     * {@code componentDidUpdate}).
+     * @returns {void}
+     * @private
+     */
+    _manageDismissTimeout(prevProps: ?P) {
         const { _notifications } = this.props;
 
         if (_notifications.length) {
             const notification = _notifications[0];
             const previousNotification
-                = prevProps._notifications.length
+                = prevProps && prevProps._notifications.length
                     ? prevProps._notifications[0]
                     : undefined;
 
