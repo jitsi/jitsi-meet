@@ -16,9 +16,29 @@
  */
 package org.jitsi.meet.sdk;
 
+import android.os.Bundle;
+
 import com.facebook.react.ReactInstanceManager;
 
 public class JitsiMeet {
+    private static JitsiMeetConferenceOptions defaultConferenceOptions;
+
+    public static JitsiMeetConferenceOptions getDefaultConferenceOptions() {
+        return defaultConferenceOptions;
+    }
+
+    static Bundle getDefaultProps() {
+        if (defaultConferenceOptions != null) {
+            return defaultConferenceOptions.asProps();
+        }
+
+        return new Bundle();
+    }
+
+    public static void setDefaultConferenceOptions(JitsiMeetConferenceOptions options) {
+        defaultConferenceOptions = options;
+    }
+
     public static void showDevOptions() {
         ReactInstanceManager reactInstanceManager
             = ReactInstanceManagerHolder.getReactInstanceManager();
