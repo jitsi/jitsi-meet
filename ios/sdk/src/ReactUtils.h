@@ -14,9 +14,10 @@
  * limitations under the License.
  */
 
-#ifndef ReactUtils_h
-#define ReactUtils_h
+#ifndef JM_REACTUTILS_H
+#define JM_REACTUTILS_H
 
+NSMutableDictionary* mergeProps(NSDictionary *a, NSDictionary *b);
 void registerReactFatalErrorHandler(void);
 
-#endif /* ReactUtils_h */
+#endif /* JM_REACTUTILS_H */

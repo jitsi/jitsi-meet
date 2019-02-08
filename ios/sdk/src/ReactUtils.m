@@ -18,6 +18,46 @@
 
 #import "ReactUtils.h"
 
+#pragma mark - Utility functions
+
+/**
+ * Merges 2 sets of props into a single one.
+ */
+NSMutableDictionary* mergeProps(NSDictionary *a, NSDictionary *b) {
+    if (a == nil) {
+        return [NSMutableDictionary dictionaryWithDictionary:b == nil ? @{} : b];
+    }
+
+    if (b == nil) {
+        return [NSMutableDictionary dictionaryWithDictionary:a];
+    }
+
+    // Both have values, let's merge them, the strategy is to take the value from a first,
+    // then override it with the one from b. If the value is a dictionary, merge them
+    // recursively. Same goes for arrays.
+    NSMutableDictionary *result = [NSMutableDictionary dictionaryWithDictionary:a];
+
+    for (NSString *key in b) {
+        id value = b[key];
+        id aValue = result[key];
+
+        if (aValue == nil) {
+            result[key] = value;
+            continue;
+        }
+
+        if ([value isKindOfClass:NSArray.class]) {
+            result[key] = [aValue arrayByAddingObjectsFromArray:value];
+        } else if ([value isKindOfClass:NSDictionary.class]) {
+            result[key] = mergeProps(aValue, value);
+        } else {
+            result[key] = value;
+        }
+    }
+
+    return result;
+}
+
 /**
  * A `RCTFatalHandler` implementation which swallows JavaScript errors. In the
  * Release configuration, React Native will (intentionally) raise an unhandled

@@ -18,6 +18,7 @@
 
 @interface JitsiMeet ()
 
+- (NSDictionary *)getDefaultProps;
 - (RCTBridge *)getReactBridge;
 
 @end

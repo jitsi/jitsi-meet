@@ -20,7 +20,9 @@
 #import <React/RCTRootView.h>
 
 #import "JitsiMeet+Private.h"
+#import "JitsiMeetConferenceOptions+Private.h"
 #import "JitsiMeetView+Private.h"
+#import "ReactUtils.h"
 
 
 @implementation JitsiMeetView {
@@ -32,11 +34,7 @@
     NSString *externalAPIScope;
 
     RCTRootView *rootView;
-
-    NSNumber *_pictureInPictureEnabled;
 }
-
-@dynamic pictureInPictureEnabled;
 
 /**
  * The `JitsiMeetView`s associated with their `ExternalAPI` scopes (i.e. unique
@@ -96,80 +94,46 @@ static void initializeViewsMap() {
     // parts of the application and causes less perceived visual flicker than
     // the default background color.
     self.backgroundColor
-    = [UIColor colorWithRed:.07f green:.07f blue:.07f alpha:1];
+        = [UIColor colorWithRed:.07f green:.07f blue:.07f alpha:1];
 }
 
 #pragma mark API
 
-- (void)join:(NSDictionary *_Nullable)url {
-    [self loadURL:url];
+- (void)join:(JitsiMeetConferenceOptions *)options {
+    [self setProps:options == nil ? @{} : [options asProps]];
 }
 
 - (void)leave {
-    [self loadURL:nil];
-}
-
-#pragma pictureInPictureEnabled getter / setter
-
-- (void) setPictureInPictureEnabled:(BOOL)pictureInPictureEnabled {
-    _pictureInPictureEnabled
-        = [NSNumber numberWithBool:pictureInPictureEnabled];
-}
-
-- (BOOL) pictureInPictureEnabled {
-    if (_pictureInPictureEnabled) {
-        return [_pictureInPictureEnabled boolValue];
-    }
-
-    // The SDK/JitsiMeetView client/consumer did not explicitly enable/disable
-    // Picture-in-Picture. However, we may automatically deduce their
-    // intentions: we need the support of the client in order to implement
-    // Picture-in-Picture on iOS (in contrast to Android) so if the client
-    // appears to have provided the support then we can assume that they did it
-    // with the intention to have Picture-in-Picture enabled.
-    return self.delegate
-        && [self.delegate respondsToSelector:@selector(enterPictureInPicture:)];
+    [self setProps:@{}];
 }
 
 #pragma mark Private methods
 
 /**
- * Loads a specific URL which may identify a conference to join. The URL is
- * specified in the form of an `NSDictionary` of properties which (1)
- * internally are sufficient to construct a URL `NSString` while (2) abstracting
- * the specifics of constructing the URL away from API clients/consumers. If the
- * specified URL is `nil` and the Welcome page is enabled, the Welcome page is
- * displayed instead.
+ * Passes the given props to the React Native application. The props which we pass
+ * are a combination of 3 different sources:
  *
- * @param urlObject The URL to load which may identify a conference to join.
+ * - JitsiMeet.defaultConferenceOptions
+ * - This function's parameters
+ * - Some extras which are added by this function
  */
-- (void)loadURL:(NSDictionary *_Nullable)urlObject {
-    NSMutableDictionary *props = [[NSMutableDictionary alloc] init];
+- (void)setProps:(NSDictionary *_Nonnull)newProps {
+    NSMutableDictionary *props = mergeProps([[JitsiMeet sharedInstance] getDefaultProps], newProps);
 
-    if (self.defaultURL) {
-        props[@"defaultURL"] = [self.defaultURL absoluteString];
-    }
-
-    props[@"colorScheme"] = self.colorScheme;
     props[@"externalAPIScope"] = externalAPIScope;
-    props[@"pictureInPictureEnabled"] = @(self.pictureInPictureEnabled);
-    props[@"welcomePageEnabled"] = @(self.welcomePageEnabled);
 
-    // XXX If urlObject is nil, then it must appear as undefined in the
-    // JavaScript source code so that we check the launchOptions there.
-    if (urlObject) {
-        props[@"url"] = urlObject;
-    }
+    // TODO: put this in some 'flags' field
+    props[@"pictureInPictureEnabled"]
+        = @(self.delegate && [self.delegate respondsToSelector:@selector(enterPictureInPicture:)]);
 
-    // XXX The method loadURL: is supposed to be imperative i.e. a second
+    // This method is supposed to be imperative i.e. a second
     // invocation with one and the same URL is expected to join the respective
     // conference again if the first invocation was followed by leaving the
     // conference. However, React and, respectively,
     // appProperties/initialProperties are declarative expressions i.e. one and
     // the same URL will not trigger an automatic re-render in the JavaScript
     // source code. The workaround implemented bellow introduces imperativeness
-    // in React Component props by defining a unique value per loadURL:
-    // invocation.
+    // in React Component props by defining a unique value per invocation.
     props[@"timestamp"] = @(mach_absolute_time());
 
     if (rootView) {
@@ -192,7 +156,7 @@ static void initializeViewsMap() {
     }
 }
 
-+ (BOOL)loadURLInViews:(NSDictionary *)urlObject {
++ (BOOL)setPropsInViews:(NSDictionary *_Nonnull)newProps {
     BOOL handled = NO;
 
     if (views) {
@@ -201,7 +165,7 @@ static void initializeViewsMap() {
                 = [self viewForExternalAPIScope:externalAPIScope];
 
             if (view) {
-                [view loadURL:urlObject];
+                [view setProps:newProps];
                 handled = YES;
             }
         }
