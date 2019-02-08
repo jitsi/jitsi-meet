@@ -142,7 +142,13 @@ export default class AbstractNotificationsContainer<P: Props>
      * @returns {void}
      */
     _onDismissed(uid) {
-        this._clearNotificationDismissTimeout();
+        const { _notifications } = this.props;
+
+        // Clear the timeout only if it's the top notification that's being
+        // dismissed (the timeout is set only for the top one).
+        if (!_notifications.length || _notifications[0].uid === uid) {
+            this._clearNotificationDismissTimeout();
+        }
 
         this.props.dispatch(hideNotification(uid));
     }
