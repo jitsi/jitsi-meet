@@ -37,11 +37,18 @@
         [Fabric with:@[[Crashlytics class]]];
     }
 
-    [JitsiMeet sharedInstance].conferenceActivityType = JitsiMeetConferenceActivityType;
-    [JitsiMeet sharedInstance].customUrlScheme = @"org.jitsi.meet";
-    [JitsiMeet sharedInstance].universalLinkDomains = @[@"meet.jit.si", @"beta.meet.jit.si"];
+    JitsiMeet *jitsiMeet = [JitsiMeet sharedInstance];
 
-    [[JitsiMeet sharedInstance] application:application didFinishLaunchingWithOptions:launchOptions];
+    jitsiMeet.conferenceActivityType = JitsiMeetConferenceActivityType;
+    jitsiMeet.customUrlScheme = @"org.jitsi.meet";
+    jitsiMeet.universalLinkDomains = @[@"meet.jit.si", @"beta.meet.jit.si"];
+
+    jitsiMeet.defaultConferenceOptions = [JitsiMeetConferenceOptions fromBuilder:^(JitsiMeetConferenceOptionsBuilder *builder) {
+        builder.serverURL = [NSURL URLWithString:@"https://meet.jit.si"];
+        builder.welcomePageEnabled = YES;
+    }];
+
+    [jitsiMeet application:application didFinishLaunchingWithOptions:launchOptions];
 
     return YES;
 }

@@ -42,7 +42,8 @@
 		C69EFA0E209A0F660027712B /* JMCallKitListener.swift in Sources */ = {isa = PBXBuildFile; fileRef = C69EFA0B209A0F660027712B /* JMCallKitListener.swift */; };
 		C6A34261204EF76800E062DD /* DragGestureController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6A3425E204EF76800E062DD /* DragGestureController.swift */; };
 		C6CC49AF207412CF000DFA42 /* PiPViewCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6CC49AE207412CF000DFA42 /* PiPViewCoordinator.swift */; };
-		C6F99C15204DB63E0001F710 /* JitsiMeetView+Private.h in Headers */ = {isa = PBXBuildFile; fileRef = C6F99C13204DB63D0001F710 /* JitsiMeetView+Private.h */; };
+		DEAD3226220C497000E93636 /* JitsiMeetConferenceOptions.h in Headers */ = {isa = PBXBuildFile; fileRef = DEAD3224220C497000E93636 /* JitsiMeetConferenceOptions.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		DEAD3227220C497000E93636 /* JitsiMeetConferenceOptions.m in Sources */ = {isa = PBXBuildFile; fileRef = DEAD3225220C497000E93636 /* JitsiMeetConferenceOptions.m */; };
 		DEFC743F21B178FA00E4DD96 /* LocaleDetector.m in Sources */ = {isa = PBXBuildFile; fileRef = DEFC743D21B178FA00E4DD96 /* LocaleDetector.m */; };
 		DEFE535421FB1BF800011A3A /* JitsiMeet.m in Sources */ = {isa = PBXBuildFile; fileRef = DEFE535321FB1BF800011A3A /* JitsiMeet.m */; };
 		DEFE535621FB2E8300011A3A /* ReactUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = DEFE535521FB2E8300011A3A /* ReactUtils.m */; };
@@ -92,6 +93,9 @@
 		C6A3425E204EF76800E062DD /* DragGestureController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DragGestureController.swift; sourceTree = "<group>"; };
 		C6CC49AE207412CF000DFA42 /* PiPViewCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PiPViewCoordinator.swift; sourceTree = "<group>"; };
 		C6F99C13204DB63D0001F710 /* JitsiMeetView+Private.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "JitsiMeetView+Private.h"; sourceTree = "<group>"; };
+		DEAD3224220C497000E93636 /* JitsiMeetConferenceOptions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JitsiMeetConferenceOptions.h; sourceTree = "<group>"; };
+		DEAD3225220C497000E93636 /* JitsiMeetConferenceOptions.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JitsiMeetConferenceOptions.m; sourceTree = "<group>"; };
+		DEAD3228220C734300E93636 /* JitsiMeetConferenceOptions+Private.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "JitsiMeetConferenceOptions+Private.h"; sourceTree = "<group>"; };
 		DEFC743D21B178FA00E4DD96 /* LocaleDetector.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = LocaleDetector.m; sourceTree = "<group>"; };
 		DEFE535321FB1BF800011A3A /* JitsiMeet.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JitsiMeet.m; sourceTree = "<group>"; };
 		DEFE535521FB2E8300011A3A /* ReactUtils.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ReactUtils.m; sourceTree = "<group>"; };
@@ -164,6 +168,9 @@
 				0BD906E81EC0C00300C8C18E /* JitsiMeet.h */,
 				DEFE535821FB311F00011A3A /* JitsiMeet+Private.h */,
 				DEFE535321FB1BF800011A3A /* JitsiMeet.m */,
+				DEAD3224220C497000E93636 /* JitsiMeetConferenceOptions.h */,
+				DEAD3228220C734300E93636 /* JitsiMeetConferenceOptions+Private.h */,
+				DEAD3225220C497000E93636 /* JitsiMeetConferenceOptions.m */,
 				0B412F161EDEC65D00B1A0A6 /* JitsiMeetView.h */,
 				0B412F171EDEC65D00B1A0A6 /* JitsiMeetView.m */,
 				C6F99C13204DB63D0001F710 /* JitsiMeetView+Private.h */,
@@ -247,11 +254,11 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				C6F99C15204DB63E0001F710 /* JitsiMeetView+Private.h in Headers */,
 				0B412F181EDEC65D00B1A0A6 /* JitsiMeetView.h in Headers */,
 				0B93EF7E1EC9DDCD0030D24D /* RCTBridgeWrapper.h in Headers */,
 				0B412F221EDEF6EA00B1A0A6 /* JitsiMeetViewDelegate.h in Headers */,
 				0BD906EA1EC0C00300C8C18E /* JitsiMeet.h in Headers */,
+				DEAD3226220C497000E93636 /* JitsiMeetConferenceOptions.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -451,6 +458,7 @@
 			files = (
 				0BB9AD7B1F5EC8F4001C08DB /* CallKit.m in Sources */,
 				0BB9AD7D1F60356D001C08DB /* AppInfo.m in Sources */,
+				DEAD3227220C497000E93636 /* JitsiMeetConferenceOptions.m in Sources */,
 				0B93EF7F1EC9DDCD0030D24D /* RCTBridgeWrapper.m in Sources */,
 				0BA13D311EE83FF8007BEF7F /* ExternalAPI.m in Sources */,
 				0BCA49601EC4B6C600B793EE /* POSIX.m in Sources */,
