@@ -70,8 +70,9 @@ buck-out/
 */fastlane/Preview.html
 */fastlane/screenshots
 
-# Bundle artifact
+# Build artifacts
 *.jsbundle
+*.framework
 
 # precommit-hook
 .jshintignore
