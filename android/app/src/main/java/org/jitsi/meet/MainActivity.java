@@ -27,21 +27,25 @@ import android.support.v4.app.FragmentActivity;
 import android.view.KeyEvent;
 
 import org.jitsi.meet.sdk.JitsiMeet;
-import org.jitsi.meet.sdk.JitsiMeetFragment;
 import org.jitsi.meet.sdk.JitsiMeetActivityInterface;
 import org.jitsi.meet.sdk.JitsiMeetActivityDelegate;
+import org.jitsi.meet.sdk.JitsiMeetFragment;
+import org.jitsi.meet.sdk.JitsiMeetConferenceOptions;
 
 import com.crashlytics.android.Crashlytics;
 import com.facebook.react.modules.core.PermissionListener;
 import com.google.firebase.dynamiclinks.FirebaseDynamicLinks;
 import io.fabric.sdk.android.Fabric;
 
+import java.net.MalformedURLException;
+import java.net.URL;
+
 /**
- * The one and only {@link Activity} that the Jitsi Meet app needs. The
+ * The one and only {@link FragmentActivity} that the Jitsi Meet app needs. The
  * {@code Activity} is launched in {@code singleTask} mode, so it will be
  * created upon application initialization and there will be a single instance
  * of it. Further attempts at launching the application once it was already
- * launched will result in {@link Activity#onNewIntent(Intent)} being called.
+ * launched will result in {@link FragmentActivity#onNewIntent(Intent)} being called.
  */
 public class MainActivity extends FragmentActivity implements JitsiMeetActivityInterface {
     /**
@@ -51,14 +55,40 @@ public class MainActivity extends FragmentActivity implements JitsiMeetActivityI
     private static final int OVERLAY_PERMISSION_REQUEST_CODE
         = (int) (Math.random() * Short.MAX_VALUE);
 
+    private static final String TAG = "MainActivity";
+
     private JitsiMeetFragment getFragment() {
         return (JitsiMeetFragment) getSupportFragmentManager().findFragmentById(R.id.jitsiFragment);
     }
 
+    private @Nullable URL buildURL(String urlStr) {
+        try {
+            return new URL(urlStr);
+        } catch (MalformedURLException e) {
+            return null;
+        }
+    }
+
     private void initialize() {
-        JitsiMeetFragment fragment = getFragment();
-        fragment.setWelcomePageEnabled(true);
-        fragment.getJitsiView().join(getIntentUrl(getIntent()));
+        // Set default options
+        JitsiMeetConferenceOptions defaultOptions
+            = new JitsiMeetConferenceOptions.Builder()
+                .setWelcomePageEnabled(true)
+                .setServerURL(buildURL("https://meet.jit.si"))
+                .build();
+        JitsiMeet.setDefaultConferenceOptions(defaultOptions);
+
+        // Join the room specified by the URL the app was launched with.
+        // Joining without the room option displays the welcome page.
+        join(getIntentUrl(getIntent()));
+    }
+
+    private void join(@Nullable String url) {
+        JitsiMeetConferenceOptions options
+            = new JitsiMeetConferenceOptions.Builder()
+                .setRoom(url)
+                .build();
+        getFragment().getJitsiView().join(options);
     }
 
     private @Nullable String getIntentUrl(Intent intent) {
@@ -113,7 +143,7 @@ public class MainActivity extends FragmentActivity implements JitsiMeetActivityI
         String url;
 
         if ((url = getIntentUrl(intent)) != null) {
-            getFragment().getJitsiView().join(url);
+            join(url);
             return;
         }
 
@@ -145,7 +175,7 @@ public class MainActivity extends FragmentActivity implements JitsiMeetActivityI
                     }
 
                     if (dynamicLink != null) {
-                        getFragment().getJitsiView().join(dynamicLink.toString());
+                        join(dynamicLink.toString());
                     }
                 });
         }
