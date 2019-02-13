@@ -5,7 +5,6 @@ import { StyleSheet } from 'react-native';
 import { BoxModel, ColorPalette, createStyleSheet } from '../../../styles';
 
 const AVATAR_OPACITY = 0.4;
-const AVATAR_SIZE = 65;
 const HEADER_COLOR = ColorPalette.blue;
 
 // Header height is from Android guidelines. Also, this looks good.
@@ -13,6 +12,7 @@ const HEADER_HEIGHT = 56;
 const OVERLAY_FONT_COLOR = 'rgba(255, 255, 255, 0.6)';
 const SECONDARY_ACTION_BUTTON_SIZE = 30;
 
+export const AVATAR_SIZE = 65;
 export const HEADER_PADDING = BoxModel.padding;
 export const STATUSBAR_COLOR = ColorPalette.blueHighlight;
 export const SIDEBAR_WIDTH = 250;
@@ -153,10 +153,7 @@ const SECTION_LIST_STYLES = {
     avatar: {
         alignItems: 'center',
         backgroundColor: `rgba(23, 160, 219, ${AVATAR_OPACITY})`,
-        borderRadius: AVATAR_SIZE,
-        height: AVATAR_SIZE,
-        justifyContent: 'center',
-        width: AVATAR_SIZE
+        justifyContent: 'center'
     },
 
     /**
@@ -200,7 +197,7 @@ const SECTION_LIST_STYLES = {
     avatarContent: {
         backgroundColor: 'rgba(0, 0, 0, 0)',
         color: OVERLAY_FONT_COLOR,
-        fontSize: 32,
+        fontSize: Math.floor(AVATAR_SIZE / 2),
         fontWeight: '100',
         textAlign: 'center'
     },
