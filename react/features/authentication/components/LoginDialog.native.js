@@ -9,10 +9,12 @@ import {
     CustomSubmitDialog,
     FIELD_UNDERLINE,
     PLACEHOLDER_COLOR,
+    _abstractMapStateToProps,
     inputDialog as inputDialogStyle
 } from '../../base/dialog';
 import { translate } from '../../base/i18n';
 import { JitsiConnectionErrors } from '../../base/lib-jitsi-meet';
+import { StyleType } from '../../base/styles';
 
 import { authenticateAndUpgradeRole, cancelLogin } from '../actions';
 import styles from './styles';
@@ -37,6 +39,11 @@ type Props = {
      * Indicates if the dialog should display "connecting" status message.
      */
     _connecting: boolean,
+
+    /**
+     * The color-schemed stylesheet of the base/dialog feature.
+     */
+    _dialogStyles: StyleType,
 
     /**
      * The error which occurred during login/authentication.
@@ -134,6 +141,7 @@ class LoginDialog extends Component<Props, State> {
     render() {
         const {
             _connecting: connecting,
+            _dialogStyles,
             _error: error,
             _progress: progress,
             t
@@ -186,7 +194,7 @@ class LoginDialog extends Component<Props, State> {
                         onChangeText = { this._onUsernameChange }
                         placeholder = { 'user@domain.com' }
                         placeholderTextColor = { PLACEHOLDER_COLOR }
-                        style = { inputDialogStyle.field }
+                        style = { _dialogStyles.field }
                         underlineColorAndroid = { FIELD_UNDERLINE }
                         value = { this.state.username } />
                     <TextInput
@@ -195,7 +203,7 @@ class LoginDialog extends Component<Props, State> {
                         placeholderTextColor = { PLACEHOLDER_COLOR }
                         secureTextEntry = { true }
                         style = { [
-                            inputDialogStyle.field,
+                            _dialogStyles.field,
                             inputDialogStyle.bottomField
                         ] }
                         underlineColorAndroid = { FIELD_UNDERLINE }
@@ -289,6 +297,7 @@ class LoginDialog extends Component<Props, State> {
  *     _conference: JitsiConference,
  *     _configHosts: Object,
  *     _connecting: boolean,
+ *     _dialogStyles: StyleType,
  *     _error: Object,
  *     _progress: number
  * }}
@@ -307,6 +316,7 @@ function _mapStateToProps(state) {
     } = state['features/base/connection'];
 
     return {
+        ..._abstractMapStateToProps(state),
         _conference: authRequired,
         _configHosts: configHosts,
         _connecting: Boolean(connecting) || Boolean(thenableWithCancel),

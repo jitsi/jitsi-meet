@@ -28,10 +28,6 @@ export default createStyleSheet({
         paddingBottom: _PADDING
     },
 
-    noIntegrationContent: {
-        color: ColorPalette.white
-    },
-
     startRecordingText: {
         paddingBottom: _PADDING
     },
@@ -42,7 +38,6 @@ export default createStyleSheet({
     },
 
     title: {
-        color: ColorPalette.white,
         fontSize: 16,
         fontWeight: 'bold'
     },

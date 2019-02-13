@@ -17,9 +17,3 @@
 // JitsiMeetView
 #import <JitsiMeet/JitsiMeetView.h>
 #import <JitsiMeet/JitsiMeetViewDelegate.h>
-
-// invite/
-#import <JitsiMeet/AddPeopleController.h>
-#import <JitsiMeet/AddPeopleControllerDelegate.h>
-#import <JitsiMeet/InviteController.h>
-#import <JitsiMeet/InviteControllerDelegate.h>

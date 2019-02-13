@@ -22,9 +22,9 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
+import com.facebook.react.bridge.Arguments;
 import com.facebook.react.bridge.ReadableMap;
-
-import org.jitsi.meet.sdk.invite.InviteController;
+import com.facebook.react.bridge.WritableMap;
 
 import java.lang.reflect.Method;
 import java.net.URL;
@@ -72,17 +72,16 @@ public class JitsiMeetView
     }
 
     /**
+     * A color scheme object to override the default color is the SDK.
+     */
+    private WritableMap colorScheme;
+
+    /**
      * The default base {@code URL} used to join a conference when a partial URL
      * (e.g. a room name only) is specified to {@link #loadURLString(String)} or
      * {@link #loadURLObject(Bundle)}.
      */
     private URL defaultURL;
-
-    /**
-     * The entry point into the invite feature of Jitsi Meet. The Java
-     * counterpart of the JavaScript {@code InviteButton}.
-     */
-    private final InviteController inviteController;
 
     /**
      * Whether Picture-in-Picture is enabled. If {@code null}, defaults to
@@ -105,10 +104,6 @@ public class JitsiMeetView
 
     public JitsiMeetView(@NonNull Context context) {
         super(context);
-
-        // The entry point into the invite feature of Jitsi Meet. The Java
-        // counterpart of the JavaScript InviteButton.
-        inviteController = new InviteController(externalAPIScope);
 
         // Check if the parent Activity implements JitsiMeetActivityInterface,
         // otherwise things may go wrong.
@@ -143,6 +138,15 @@ public class JitsiMeetView
     }
 
     /**
+     * Gets the color scheme used in the SDK.
+     *
+     * @return The color scheme map.
+     */
+    public WritableMap getColorScheme() {
+        return colorScheme;
+    }
+
+    /**
      * Gets the default base {@code URL} used to join a conference when a
      * partial URL (e.g. a room name only) is specified to
      * {@link #loadURLString(String)} or {@link #loadURLObject(Bundle)}. If not
@@ -153,19 +157,6 @@ public class JitsiMeetView
      */
     public URL getDefaultURL() {
         return defaultURL;
-    }
-
-    /**
-     * Gets the {@link InviteController} which represents the entry point into
-     * the invite feature of Jitsi Meet and is the Java counterpart of the
-     * JavaScript {@code InviteButton}.
-     *
-     * @return the {@link InviteController} which represents the entry point
-     * into the invite feature of Jitsi Meet and is the Java counterpart of the
-     * JavaScript {@code InviteButton}
-     */
-    public InviteController getInviteController() {
-        return inviteController;
     }
 
     /**
@@ -233,21 +224,14 @@ public class JitsiMeetView
     public void loadURLObject(@Nullable Bundle urlObject) {
         Bundle props = new Bundle();
 
+        // color scheme
+        if (colorScheme != null) {
+            props.putBundle("colorScheme", Arguments.toBundle(colorScheme));
+        }
+
         // defaultURL
         if (defaultURL != null) {
             props.putString("defaultURL", defaultURL.toString());
-        }
-
-        // inviteController
-        InviteController inviteController = getInviteController();
-
-        if (inviteController != null) {
-            props.putBoolean(
-                "addPeopleEnabled",
-                inviteController.isAddPeopleEnabled());
-            props.putBoolean(
-                "dialOutEnabled",
-                inviteController.isDialOutEnabled());
         }
 
         // pictureInPictureEnabled
@@ -340,6 +324,15 @@ public class JitsiMeetView
         maybeSetViewURL(name, data);
 
         onExternalAPIEvent(LISTENER_METHODS, name, data);
+    }
+
+    /**
+     * Sets the color scheme to override the default colors of the SDK.
+     *
+     * @param colorScheme The color scheme map.
+     */
+    public void setColorScheme(WritableMap colorScheme) {
+        this.colorScheme = colorScheme;
     }
 
     /**

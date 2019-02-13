@@ -12,6 +12,7 @@ import {
     CONFERENCE_WILL_JOIN,
     CONFERENCE_JOINED,
     SET_AUDIO_ONLY,
+    getConferenceName,
     getCurrentConference
 } from '../../base/conference';
 import { getInviteURL } from '../../base/connection';
@@ -226,12 +227,7 @@ function _conferenceWillJoin({ dispatch, getState }, next, action) {
 
     CallIntegration.startCall(conference.callUUID, handle, hasVideo)
         .then(() => {
-            const { callee } = state['features/base/jwt'];
-            const displayName
-                 = state['features/base/config'].callDisplayName
-                     || (callee && callee.name)
-                     || state['features/base/conference'].room;
-
+            const displayName = getConferenceName(state);
             const muted
                 = isLocalTrackMuted(
                     state['features/base/tracks'],

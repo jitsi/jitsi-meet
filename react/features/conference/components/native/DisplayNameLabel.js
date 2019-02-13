@@ -8,9 +8,9 @@ import {
     getLocalParticipant,
     getParticipantDisplayName,
     shouldRenderParticipantVideo
-} from '../../base/participants';
+} from '../../../base/participants';
 
-import { shouldDisplayTileView } from '../../video-layout';
+import { shouldDisplayTileView } from '../../../video-layout';
 
 import styles from './styles';
 

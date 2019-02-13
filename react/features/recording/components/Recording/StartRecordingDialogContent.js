@@ -7,7 +7,10 @@ import {
     createRecordingDialogEvent,
     sendAnalytics
 } from '../../../analytics';
-import { DialogContent } from '../../../base/dialog';
+import {
+    DialogContent,
+    _abstractMapStateToProps
+} from '../../../base/dialog';
 import { translate } from '../../../base/i18n';
 import {
     Container,
@@ -15,12 +18,18 @@ import {
     Switch,
     Text
 } from '../../../base/react';
+import { StyleType } from '../../../base/styles';
 import { authorizeDropbox, updateDropboxToken } from '../../../dropbox';
 
 import styles from './styles';
 import { getRecordingDurationEstimation } from '../../functions';
 
 type Props = {
+
+    /**
+     * Style of the dialogs feature.
+     */
+    _dialogStyles: StyleType,
 
     /**
      * The redux dispatch function.
@@ -99,7 +108,7 @@ class StartRecordingDialogContent extends Component<Props> {
      */
     _renderNoIntegrationsContent() {
         return (
-            <DialogContent style = { styles.noIntegrationContent }>
+            <DialogContent style = { this.props._dialogStyles.text }>
                 { this.props.t('recording.startRecordingBody') }
             </DialogContent>
         );
@@ -112,7 +121,7 @@ class StartRecordingDialogContent extends Component<Props> {
      * @returns {React$Component}
      */
     _renderIntegrationsContent() {
-        const { isTokenValid, isValidating, t } = this.props;
+        const { _dialogStyles, isTokenValid, isValidating, t } = this.props;
 
         let content = null;
 
@@ -135,7 +144,10 @@ class StartRecordingDialogContent extends Component<Props> {
                     style = { styles.header }>
                     <Text
                         className = 'recording-title'
-                        style = { styles.title }>
+                        style = { [
+                            _dialogStyles.text,
+                            styles.title
+                        ] }>
                         { t('recording.authDropboxText') }
                     </Text>
                     <Switch
@@ -248,4 +260,5 @@ class StartRecordingDialogContent extends Component<Props> {
     }
 }
 
-export default translate(connect()(StartRecordingDialogContent));
+export default translate(
+    connect(_abstractMapStateToProps)(StartRecordingDialogContent));

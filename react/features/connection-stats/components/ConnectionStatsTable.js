@@ -515,12 +515,14 @@ class ConnectionStatsTable extends Component<Props> {
                 || transport[0].remoteCandidateType === 'relay';
         }
 
-        let additionalData = null;
+        const additionalData = [];
 
         if (isP2P) {
-            additionalData = isTURN
-                ? <span>{ t('connectionindicator.turn') }</span>
-                : <span>{ t('connectionindicator.peer_to_peer') }</span>;
+            additionalData.push(
+                <span>{ t('connectionindicator.peer_to_peer') }</span>);
+        }
+        if (isTURN) {
+            additionalData.push(<span>{ t('connectionindicator.turn') }</span>);
         }
 
         // First show remote statistics, then local, and then transport type.

@@ -2,12 +2,23 @@
 
 import React from 'react';
 import { Linking, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { connect } from 'react-redux';
 
+import { _abstractMapStateToProps } from '../../../../base/dialog';
 import { translate } from '../../../../base/i18n';
+import { StyleType } from '../../../../base/styles';
 
 import AbstractStreamKeyForm, {
-    type Props
+    type Props as AbstractProps
 } from '../AbstractStreamKeyForm';
+
+type Props = AbstractProps & {
+
+    /**
+     * Style of the dialogs feature.
+     */
+    _dialogStyles: StyleType
+};
 
 import styles, { PLACEHOLDER_COLOR } from './styles';
 
@@ -16,7 +27,7 @@ import styles, { PLACEHOLDER_COLOR } from './styles';
  *
  * @extends Component
  */
-class StreamKeyForm extends AbstractStreamKeyForm {
+class StreamKeyForm extends AbstractStreamKeyForm<Props> {
     /**
      * Initializes a new {@code StreamKeyForm} instance.
      *
@@ -37,11 +48,16 @@ class StreamKeyForm extends AbstractStreamKeyForm {
      * @returns {ReactElement}
      */
     render() {
-        const { t } = this.props;
+        const { _dialogStyles, t } = this.props;
 
         return (
             <View style = { styles.formWrapper }>
-                <Text style = { styles.streamKeyInputLabel }>
+                <Text
+                    style = { [
+                        _dialogStyles.text,
+                        styles.text,
+                        styles.streamKeyInputLabel
+                    ] }>
                     {
                         t('dialog.streamKey')
                     }
@@ -56,7 +72,11 @@ class StreamKeyForm extends AbstractStreamKeyForm {
                     {
                         this.state.showValidationError
                             ? <View style = { styles.formFooterItem }>
-                                <Text style = { styles.warningText }>
+                                <Text
+                                    style = { [
+                                        _dialogStyles.text,
+                                        styles.warningText
+                                    ] }>
                                     { t('liveStreaming.invalidStreamKey') }
                                 </Text>
                             </View>
@@ -66,7 +86,11 @@ class StreamKeyForm extends AbstractStreamKeyForm {
                         <TouchableOpacity
                             onPress = { this._onOpenHelp }
                             style = { styles.streamKeyHelp } >
-                            <Text style = { styles.text }>
+                            <Text
+                                style = { [
+                                    _dialogStyles.text,
+                                    styles.text
+                                ] }>
                                 {
                                     t('liveStreaming.streamIdHelp')
                                 }
@@ -98,4 +122,4 @@ class StreamKeyForm extends AbstractStreamKeyForm {
     }
 }
 
-export default translate(StreamKeyForm);
+export default translate(connect(_abstractMapStateToProps)(StreamKeyForm));
