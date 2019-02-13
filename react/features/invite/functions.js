@@ -274,22 +274,19 @@ export function invitePeopleAndChatRooms( // eslint-disable-line max-params
         return Promise.resolve();
     }
 
-    return new Promise((resolve, reject) => {
-        $.ajax({
-            url: `${inviteServiceUrl}?token=${jwt}`,
-            data: JSON.stringify({
-                'invited': inviteItems,
-                'url': inviteUrl
-            }),
-            dataType: 'json',
-            contentType: 'application/json', // send as JSON
-            success: resolve, // called when success is reached
-            // called when there is an error
-            error: (jqxhr, textStatus, error) => {
-                reject(error);
-            }
-        });
-    });
+    return fetch(
+           `${inviteServiceUrl}?token=${jwt}`,
+           {
+               body: JSON.stringify({
+                   'invited': inviteItems,
+                   'url': inviteUrl
+               }),
+               method: 'POST',
+               headers: {
+                   'Content-Type': 'application/json'
+               }
+           }
+    );
 }
 
 /**
