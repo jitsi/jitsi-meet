@@ -2,8 +2,11 @@
 
 import React, { Component, type Node } from 'react';
 import { TouchableWithoutFeedback, View } from 'react-native';
+import { connect } from 'react-redux';
 
+import { ColorSchemeRegistry } from '../../../color-scheme';
 import { Modal } from '../../../react';
+import { StyleType } from '../../../styles';
 
 import { bottomSheetStyles as styles } from './styles';
 
@@ -11,6 +14,11 @@ import { bottomSheetStyles as styles } from './styles';
  * The type of {@code BottomSheet}'s React {@code Component} prop types.
  */
 type Props = {
+
+    /**
+     * The color-schemed stylesheet of the feature.
+     */
+    _styles: StyleType,
 
     /**
      * The children to be displayed within this component.
@@ -28,7 +36,7 @@ type Props = {
  * A component emulating Android's BottomSheet. For all intents and purposes,
  * this component has been designed to work and behave as a {@code Dialog}.
  */
-export default class BottomSheet extends Component<Props> {
+class BottomSheet extends Component<Props> {
     /**
      * Initializes a new {@code BottomSheet} instance.
      *
@@ -47,6 +55,8 @@ export default class BottomSheet extends Component<Props> {
      * @returns {ReactElement}
      */
     render() {
+        const { _styles } = this.props;
+
         return [
             <View
                 key = 'overlay'
@@ -60,7 +70,7 @@ export default class BottomSheet extends Component<Props> {
                         onPress = { this._onCancel } >
                         <View style = { styles.backdrop } />
                     </TouchableWithoutFeedback>
-                    <View style = { styles.sheet }>
+                    <View style = { _styles.sheet }>
                         { this.props.children }
                     </View>
                 </View>
@@ -82,3 +92,19 @@ export default class BottomSheet extends Component<Props> {
         onCancel && onCancel();
     }
 }
+
+/**
+ * Maps part of the Redux state to the props of this component.
+ *
+ * @param {Object} state - The Redux state.
+ * @returns {{
+ *     _styles: StyleType
+ * }}
+ */
+function _mapStateToProps(state) {
+    return {
+        _styles: ColorSchemeRegistry.get(state, 'BottomSheet')
+    };
+}
+
+export default connect(_mapStateToProps)(BottomSheet);

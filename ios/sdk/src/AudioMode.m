@@ -20,6 +20,12 @@
 #import <React/RCTBridgeModule.h>
 #import <React/RCTLog.h>
 
+typedef enum {
+    kAudioModeDefault,
+    kAudioModeAudioCall,
+    kAudioModeVideoCall
+} JitsiMeetAudioMode;
+
 @interface AudioMode : NSObject<RCTBridgeModule>
 
 @property(nonatomic, strong) dispatch_queue_t workerQueue;
@@ -27,17 +33,12 @@
 @end
 
 @implementation AudioMode {
-    NSString *_category;
-    NSString *_mode;
+    NSString *_avCategory;
+    NSString *_avMode;
+    JitsiMeetAudioMode _mode;
 }
 
 RCT_EXPORT_MODULE();
-
-typedef enum {
-    kAudioModeDefault,
-    kAudioModeAudioCall,
-    kAudioModeVideoCall
-} JitsiMeetAudioMode;
 
 + (BOOL)requiresMainQueueSetup {
     return NO;
@@ -54,13 +55,23 @@ typedef enum {
 - (instancetype)init {
     self = [super init];
     if (self) {
-        _category = nil;
-        _mode = nil;
+        _avCategory = nil;
+        _avMode = nil;
+        _mode = kAudioModeDefault;
 
         dispatch_queue_attr_t attributes =
         dispatch_queue_attr_make_with_qos_class(DISPATCH_QUEUE_SERIAL,
                                                 QOS_CLASS_USER_INITIATED, -1);
         _workerQueue = dispatch_queue_create("AudioMode.queue", attributes);
+
+        // AVAudioSession is a singleton and other parts of the application such as
+        // WebRTC may undo the settings. Make sure that the settings are reapplied
+        // upon undoes.
+        [[NSNotificationCenter defaultCenter]
+             addObserver:self
+                selector:@selector(routeChanged:)
+                    name:AVAudioSessionRouteChangeNotification
+                  object:nil];
     }
     return self;
 }
@@ -82,7 +93,7 @@ typedef enum {
         // needed. This notification is posted on a secondary thread, so make
         // sure we switch to our worker thread.
         dispatch_async(_workerQueue, ^{
-            [self setCategory:self->_category mode:self->_mode error:nil];
+            [self setCategory:self->_avCategory mode:self->_avMode error:nil];
         });
         break;
     }
@@ -96,6 +107,18 @@ typedef enum {
                mode:(NSString *)mode
               error:(NSError * _Nullable *)outError {
     AVAudioSession *session = [AVAudioSession sharedInstance];
+
+    // We don't want to touch the category when setting the default mode.
+    // This is to play well with other components which could be integrated
+    // into the final application.
+    if (_mode == kAudioModeDefault) {
+        return YES;
+    }
+
+    // Nothing to do.
+    if (category == nil && mode == nil) {
+        return YES;
+    }
 
     if (session.category != category
             && ![session setCategory:category error:outError]) {
@@ -114,8 +137,8 @@ typedef enum {
 RCT_EXPORT_METHOD(setMode:(int)mode
                   resolve:(RCTPromiseResolveBlock)resolve
                    reject:(RCTPromiseRejectBlock)reject) {
-    NSString *avCategory;
-    NSString *avMode;
+    NSString *avCategory = nil;
+    NSString *avMode = nil;
     NSError *error;
 
     switch (mode) {
@@ -124,8 +147,6 @@ RCT_EXPORT_METHOD(setMode:(int)mode
         avMode = AVAudioSessionModeVoiceChat;
         break;
     case kAudioModeDefault:
-        avCategory = AVAudioSessionCategorySoloAmbient;
-        avMode = AVAudioSessionModeDefault;
         break;
     case kAudioModeVideoCall:
         avCategory = AVAudioSessionCategoryPlayAndRecord;
@@ -136,29 +157,17 @@ RCT_EXPORT_METHOD(setMode:(int)mode
         return;
     }
 
+    // Save the desired/specified category and mode so that they may be
+    // reapplied.
+    _avCategory = avCategory;
+    _avMode = avMode;
+    _mode = mode;
+
     if (![self setCategory:avCategory mode:avMode error:&error] || error) {
         reject(@"setMode", error.localizedDescription, error);
-        return;
+    } else {
+        resolve(nil);
     }
-
-    // Even though the specified category and mode were successfully set, the
-    // AVAudioSession is a singleton and other parts of the application such as
-    // WebRTC may undo the settings. Make sure that the settings are reapplied
-    // upon undoes.
-    if (!_category || !_mode) {
-        [[NSNotificationCenter defaultCenter]
-            addObserver:self
-               selector:@selector(routeChanged:)
-                   name:AVAudioSessionRouteChangeNotification
-                 object:nil];
-    }
-
-    // Save the desired/specified category and mode so that they may be
-    // reapplied (upon undoes as described above).
-    _category = avCategory;
-    _mode = avMode;
-
-    resolve(nil);
 }
 
 @end

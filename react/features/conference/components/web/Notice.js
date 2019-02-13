@@ -3,7 +3,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
-import { translate } from '../../base/i18n';
+import { translate } from '../../../base/i18n';
 
 declare var config: Object;
 

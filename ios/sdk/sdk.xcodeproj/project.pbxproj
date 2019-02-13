@@ -35,13 +35,6 @@
 		87FE6F3321E52437004A5DC7 /* incomingMessage.wav in Resources */ = {isa = PBXBuildFile; fileRef = 87FE6F3221E52437004A5DC7 /* incomingMessage.wav */; };
 		A4414AE020B37F1A003546E6 /* rejected.wav in Resources */ = {isa = PBXBuildFile; fileRef = A4414ADF20B37F1A003546E6 /* rejected.wav */; };
 		A4A934E9212F3ADB001E9388 /* Dropbox.m in Sources */ = {isa = PBXBuildFile; fileRef = A4A934E8212F3ADB001E9388 /* Dropbox.m */; };
-		B386B85720981A75000DEF7A /* InviteController.m in Sources */ = {isa = PBXBuildFile; fileRef = B386B85020981A74000DEF7A /* InviteController.m */; };
-		B386B85820981A75000DEF7A /* AddPeopleController.m in Sources */ = {isa = PBXBuildFile; fileRef = B386B85120981A74000DEF7A /* AddPeopleController.m */; };
-		B386B85920981A75000DEF7A /* AddPeopleControllerDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = B386B85220981A74000DEF7A /* AddPeopleControllerDelegate.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		B386B85A20981A75000DEF7A /* AddPeopleController.h in Headers */ = {isa = PBXBuildFile; fileRef = B386B85320981A74000DEF7A /* AddPeopleController.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		B386B85B20981A75000DEF7A /* InviteControllerDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = B386B85420981A74000DEF7A /* InviteControllerDelegate.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		B386B85C20981A75000DEF7A /* InviteController.h in Headers */ = {isa = PBXBuildFile; fileRef = B386B85520981A75000DEF7A /* InviteController.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		B386B85D20981A75000DEF7A /* Invite.m in Sources */ = {isa = PBXBuildFile; fileRef = B386B85620981A75000DEF7A /* Invite.m */; };
 		C6245F5D2053091D0040BE68 /* image-resize@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = C6245F5B2053091D0040BE68 /* image-resize@2x.png */; };
 		C6245F5E2053091D0040BE68 /* image-resize@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = C6245F5C2053091D0040BE68 /* image-resize@3x.png */; };
 		C69EFA0C209A0F660027712B /* JMCallKitEmitter.swift in Sources */ = {isa = PBXBuildFile; fileRef = C69EFA09209A0F650027712B /* JMCallKitEmitter.swift */; };
@@ -61,9 +54,6 @@
 		0B44A0181F902126009D1D64 /* MPVolumeViewManager.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MPVolumeViewManager.m; sourceTree = "<group>"; };
 		0B49424320AD8DBD00BD2DE0 /* outgoingStart.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; name = outgoingStart.wav; path = ../../sounds/outgoingStart.wav; sourceTree = "<group>"; };
 		0B49424420AD8DBD00BD2DE0 /* outgoingRinging.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; name = outgoingRinging.wav; path = ../../sounds/outgoingRinging.wav; sourceTree = "<group>"; };
-		0B6F414F20987DE600FF6789 /* Invite+Private.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Invite+Private.h"; sourceTree = "<group>"; };
-		0B6F41502098840600FF6789 /* InviteController+Private.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "InviteController+Private.h"; sourceTree = "<group>"; };
-		0B6F4151209884E500FF6789 /* AddPeopleController+Private.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "AddPeopleController+Private.h"; sourceTree = "<group>"; };
 		0B7C2CFC200F51D60060D076 /* LaunchOptions.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = LaunchOptions.m; sourceTree = "<group>"; };
 		0B93EF7A1EC608550030D24D /* CoreText.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreText.framework; path = System/Library/Frameworks/CoreText.framework; sourceTree = SDKROOT; };
 		0B93EF7C1EC9DDCD0030D24D /* RCTBridgeWrapper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RCTBridgeWrapper.h; sourceTree = "<group>"; };
@@ -92,13 +82,6 @@
 		A4414ADF20B37F1A003546E6 /* rejected.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; name = rejected.wav; path = ../../sounds/rejected.wav; sourceTree = "<group>"; };
 		A4A934E8212F3ADB001E9388 /* Dropbox.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Dropbox.m; sourceTree = "<group>"; };
 		A4A934EB21349A06001E9388 /* Dropbox.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Dropbox.h; sourceTree = "<group>"; };
-		B386B85020981A74000DEF7A /* InviteController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = InviteController.m; sourceTree = "<group>"; };
-		B386B85120981A74000DEF7A /* AddPeopleController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AddPeopleController.m; sourceTree = "<group>"; };
-		B386B85220981A74000DEF7A /* AddPeopleControllerDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AddPeopleControllerDelegate.h; sourceTree = "<group>"; };
-		B386B85320981A74000DEF7A /* AddPeopleController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AddPeopleController.h; sourceTree = "<group>"; };
-		B386B85420981A74000DEF7A /* InviteControllerDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InviteControllerDelegate.h; sourceTree = "<group>"; };
-		B386B85520981A75000DEF7A /* InviteController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InviteController.h; sourceTree = "<group>"; };
-		B386B85620981A75000DEF7A /* Invite.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Invite.m; sourceTree = "<group>"; };
 		C6245F5B2053091D0040BE68 /* image-resize@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "image-resize@2x.png"; path = "src/picture-in-picture/image-resize@2x.png"; sourceTree = "<group>"; };
 		C6245F5C2053091D0040BE68 /* image-resize@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "image-resize@3x.png"; path = "src/picture-in-picture/image-resize@3x.png"; sourceTree = "<group>"; };
 		C69EFA09209A0F650027712B /* JMCallKitEmitter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = JMCallKitEmitter.swift; sourceTree = "<group>"; };
@@ -171,7 +154,6 @@
 				A4A934E7212F3AB8001E9388 /* dropbox */,
 				0BA13D301EE83FF8007BEF7F /* ExternalAPI.m */,
 				0BD906E91EC0C00300C8C18E /* Info.plist */,
-				B386B84F20981A11000DEF7A /* invite */,
 				0BD906E81EC0C00300C8C18E /* JitsiMeet.h */,
 				0B412F161EDEC65D00B1A0A6 /* JitsiMeetView.h */,
 				0B412F171EDEC65D00B1A0A6 /* JitsiMeetView.m */,
@@ -210,23 +192,6 @@
 			path = dropbox;
 			sourceTree = "<group>";
 		};
-		B386B84F20981A11000DEF7A /* invite */ = {
-			isa = PBXGroup;
-			children = (
-				B386B85320981A74000DEF7A /* AddPeopleController.h */,
-				B386B85120981A74000DEF7A /* AddPeopleController.m */,
-				0B6F4151209884E500FF6789 /* AddPeopleController+Private.h */,
-				B386B85220981A74000DEF7A /* AddPeopleControllerDelegate.h */,
-				B386B85620981A75000DEF7A /* Invite.m */,
-				0B6F414F20987DE600FF6789 /* Invite+Private.h */,
-				B386B85520981A75000DEF7A /* InviteController.h */,
-				B386B85020981A74000DEF7A /* InviteController.m */,
-				0B6F41502098840600FF6789 /* InviteController+Private.h */,
-				B386B85420981A74000DEF7A /* InviteControllerDelegate.h */,
-			);
-			path = invite;
-			sourceTree = "<group>";
-		};
 		C5E72ADFC30ED96F9B35F076 /* Pods */ = {
 			isa = PBXGroup;
 			children = (
@@ -263,14 +228,10 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B386B85C20981A75000DEF7A /* InviteController.h in Headers */,
-				B386B85B20981A75000DEF7A /* InviteControllerDelegate.h in Headers */,
 				C6F99C15204DB63E0001F710 /* JitsiMeetView+Private.h in Headers */,
 				0B412F181EDEC65D00B1A0A6 /* JitsiMeetView.h in Headers */,
-				B386B85920981A75000DEF7A /* AddPeopleControllerDelegate.h in Headers */,
 				0B93EF7E1EC9DDCD0030D24D /* RCTBridgeWrapper.h in Headers */,
 				0B412F221EDEF6EA00B1A0A6 /* JitsiMeetViewDelegate.h in Headers */,
-				B386B85A20981A75000DEF7A /* AddPeopleController.h in Headers */,
 				0BD906EA1EC0C00300C8C18E /* JitsiMeet.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -466,12 +427,9 @@
 				0B93EF7F1EC9DDCD0030D24D /* RCTBridgeWrapper.m in Sources */,
 				0BA13D311EE83FF8007BEF7F /* ExternalAPI.m in Sources */,
 				0BCA49601EC4B6C600B793EE /* POSIX.m in Sources */,
-				B386B85D20981A75000DEF7A /* Invite.m in Sources */,
 				0B7C2CFD200F51D60060D076 /* LaunchOptions.m in Sources */,
 				C6CC49AF207412CF000DFA42 /* PiPViewCoordinator.swift in Sources */,
-				B386B85720981A75000DEF7A /* InviteController.m in Sources */,
 				DEFC743F21B178FA00E4DD96 /* LocaleDetector.m in Sources */,
-				B386B85820981A75000DEF7A /* AddPeopleController.m in Sources */,
 				0BCA495F1EC4B6C600B793EE /* AudioMode.m in Sources */,
 				0B44A0191F902126009D1D64 /* MPVolumeViewManager.m in Sources */,
 				0BCA49611EC4B6C600B793EE /* Proximity.m in Sources */,

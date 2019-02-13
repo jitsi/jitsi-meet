@@ -4,21 +4,23 @@ import React from 'react';
 import { TouchableOpacity, View } from 'react-native';
 import { connect } from 'react-redux';
 
-import { JitsiRecordingConstants } from '../../base/lib-jitsi-meet';
-import {
-    RecordingExpandedLabel
-} from '../../recording';
+import { JitsiRecordingConstants } from '../../../base/lib-jitsi-meet';
 import {
     isNarrowAspectRatio,
     makeAspectRatioAware
-} from '../../base/responsive-ui';
-import { TranscribingExpandedLabel } from '../../transcribing';
-import { VideoQualityExpandedLabel } from '../../video-quality';
+} from '../../../base/responsive-ui';
+import {
+    RecordingExpandedLabel
+} from '../../../recording';
+import { isToolboxVisible } from '../../../toolbox';
+import { TranscribingExpandedLabel } from '../../../transcribing';
+import { shouldDisplayTileView } from '../../../video-layout';
+import { VideoQualityExpandedLabel } from '../../../video-quality';
 
 import AbstractLabels, {
     _abstractMapStateToProps,
     type Props as AbstractLabelsProps
-} from './AbstractLabels';
+} from '../AbstractLabels';
 import styles from './styles';
 
 /**
@@ -37,7 +39,12 @@ type Props = AbstractLabelsProps & {
      *
      * @private
      */
-    _reducedUI: boolean
+    _reducedUI: boolean,
+
+    /**
+     * True if the labels should be visible, false otherwise.
+     */
+    _visible: boolean
 };
 
 type State = {
@@ -148,6 +155,10 @@ class Labels extends AbstractLabels<Props, State> {
      * @inheritdoc
      */
     render() {
+        if (!this.props._visible) {
+            return null;
+        }
+
         const wide = !isNarrowAspectRatio(this);
         const { _filmstripVisible, _reducedUI } = this.props;
 
@@ -344,13 +355,15 @@ class Labels extends AbstractLabels<Props, State> {
  * @private
  * @returns {{
  *     _filmstripVisible: boolean,
- *     _reducedUI: boolean
+ *     _reducedUI: boolean,
+ *     _visible: boolean
  * }}
  */
 function _mapStateToProps(state) {
     return {
         ..._abstractMapStateToProps(state),
-        _reducedUI: state['features/base/responsive-ui'].reducedUI
+        _reducedUI: state['features/base/responsive-ui'].reducedUI,
+        _visible: !isToolboxVisible(state) && !shouldDisplayTileView(state)
     };
 }
 

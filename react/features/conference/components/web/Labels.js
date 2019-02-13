@@ -3,12 +3,12 @@
 import React from 'react';
 import { connect } from 'react-redux';
 
-import { JitsiRecordingConstants } from '../../base/lib-jitsi-meet';
+import { JitsiRecordingConstants } from '../../../base/lib-jitsi-meet';
 
 import AbstractLabels, {
     _abstractMapStateToProps as _mapStateToProps,
     type Props
-} from './AbstractLabels';
+} from '../AbstractLabels';
 
 /**
  * The type of the React {@code Component} state of {@link Labels}.
