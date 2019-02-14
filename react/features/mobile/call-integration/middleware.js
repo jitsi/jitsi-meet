@@ -8,9 +8,10 @@ import { appNavigate } from '../../app';
 import { APP_WILL_MOUNT, APP_WILL_UNMOUNT } from '../../base/app';
 import {
     CONFERENCE_FAILED,
+    CONFERENCE_JOINED,
     CONFERENCE_LEFT,
     CONFERENCE_WILL_JOIN,
-    CONFERENCE_JOINED,
+    CONFERENCE_WILL_LEAVE,
     SET_AUDIO_ONLY,
     getConferenceName,
     getCurrentConference
@@ -63,7 +64,14 @@ CallIntegration && MiddlewareRegistry.register(store => next => action => {
     case CONFERENCE_JOINED:
         return _conferenceJoined(store, next, action);
 
+    // If a conference is being left in a graceful manner then
+    // the CONFERENCE_WILL_LEAVE fires as soon as the conference starts
+    // disconnecting. We need to destroy the call on the native side as soon
+    // as possible, because the disconnection process is asynchronous and
+    // Android not always supports two simultaneous calls at the same time
+    // (even though it should according to the spec).
     case CONFERENCE_LEFT:
+    case CONFERENCE_WILL_LEAVE:
         return _conferenceLeft(store, next, action);
 
     case CONFERENCE_WILL_JOIN:
@@ -141,6 +149,7 @@ function _conferenceFailed(store, next, action) {
         const { callUUID } = action.conference;
 
         if (callUUID) {
+            delete action.conference.callUUID;
             CallIntegration.reportCallFailed(callUUID);
         }
     }
@@ -192,6 +201,7 @@ function _conferenceLeft(store, next, action) {
     const { callUUID } = action.conference;
 
     if (callUUID) {
+        delete action.conference.callUUID;
         CallIntegration.endCall(callUUID);
     }
 
