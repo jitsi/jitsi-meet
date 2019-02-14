@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { SafeAreaView } from 'react-native';
-import { GiftedChat } from 'react-native-gifted-chat';
+import { GiftedChat,Send } from 'react-native-gifted-chat';
 import { connect } from 'react-redux';
 
 import { translate } from '../../../base/i18n';
@@ -43,6 +43,7 @@ class Chat extends AbstractChat<Props> {
         this._onSend = this._onSend.bind(this);
         this._renderMessage = this._renderMessage.bind(this);
         this._transformMessage = this._transformMessage.bind(this);
+        this._renderSend = this._renderSend.bind(this);
     }
 
     /**
@@ -78,12 +79,16 @@ class Chat extends AbstractChat<Props> {
                     <GiftedChat
                         messages = { messages }
                         onSend = { this._onSend }
-                        renderMessage = { this._renderMessage } />
+                        renderMessage = { this._renderMessage }
+                        renderSend = { this._renderSend }
+                        placeholder = '请输入文本...' />
                 </SafeAreaView>
             </Modal>
         );
     }
 
+
+    
     _onSend: (Array<Object>) => void;
 
     /**
@@ -142,6 +147,24 @@ class Chat extends AbstractChat<Props> {
                     name: message.displayName
                 }
             }
+        );
+    }
+    
+    _renderSend: Object => React$Element<*>
+    
+    /**
+     * Renders send button.
+     *
+     * @param {Object} props - The message props object to be rendered.
+     * @returns {React$Element<*>}
+     */
+    _renderSend(props) {
+        return (
+            <Send
+                {...props}
+                label = '发送'
+            >
+            </Send>
         );
     }
 }

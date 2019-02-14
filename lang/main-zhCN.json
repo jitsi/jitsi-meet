@@ -163,6 +163,7 @@
         "moreActions": "更多设置",
         "callQuality": "视频质量",
         "pip": "进入小窗口模式",
+        "shareRoom": "分享会议室",
         "raiseHand": "请求 / 取消 发言"
     },
     "unsupportedBrowser": {
@@ -182,6 +183,8 @@
             "title": "请在下面的方框内输入昵称",
             "popover": "选择一个昵称"
         },
+        "title": "聊天",
+        "button": "发送",
         "messagebox": "请输入文本..."
     },
     "audioDevices": {
@@ -270,6 +273,10 @@
         "muted": "您已经开始了通话，并处于静音状态。",
         "mutedTitle": "您已被静音！",
         "raisedHand": "请求发言"
+    },
+    "share": {
+        "dialInfoText": "\n\n=====\n\nJust want to dial in on your phone?\n\n__defaultDialInNumber__Click this link to see the dial in phone numbers for this meeting\n__dialInfoPageUrl__",
+        "mainText": "输入以下链接进入会议室:\n__roomUrl__"
     },
     "dialog": {
         "add": "添加",
@@ -451,7 +458,12 @@
         "CONNECTED": "已连接",
         "DISCONNECTED": "已断开连接",
         "DISCONNECTING": "断开连接中",
-        "ATTACHED": "已接入"
+        "ATTACHED": "已接入",    
+        "FETCH_SESSION_ID": "获取连接...",
+        "GET_SESSION_ID_ERROR": "获取连接id 错误: __code__",
+        "GOT_SESSION_ID": "获取连接id完成",
+        "LOW_BANDWIDTH": "__displayName__ 视频已关闭，以便节省带宽。",
+        "USER_CONNECTION_INTERRUPTED": "__displayName__ 连接发生故障..."
     },
     "recording": {
         "busy": "录像服务器忙",
