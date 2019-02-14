@@ -62,6 +62,8 @@ import Foundation
     @objc public static func configureProvider(localizedName: String,
                                                ringtoneSound: String?,
                                                iconTemplateImageData: Data?) {
+        guard enabled else { return }
+
         let configuration = CXProviderConfiguration(localizedName: localizedName)
         configuration.iconTemplateImageData = iconTemplateImageData
         configuration.maximumCallGroups = 1
