@@ -116,7 +116,7 @@ class ChatInput extends Component<Props, State> {
                         id = 'usermsg'
                         onChange = { this._onMessageChange }
                         onKeyDown = { this._onDetectSubmit }
-                        placeholder = { 'Enter Text...' }
+                        placeholder = { '请输入文本...' }
                         ref = { this._setTextAreaRef }
                         value = { this.state.message } />
                 </div>
