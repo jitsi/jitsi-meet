@@ -56,7 +56,7 @@ public class JitsiMeetActivity
     /**
      * A color scheme object to override the default color is the SDK.
      */
-    private WritableMap colorScheme;
+    private Bundle colorScheme;
 
     /**
      * The default base {@code URL} used to join a conference when a partial URL
@@ -294,9 +294,9 @@ public class JitsiMeetActivity
     }
 
     /**
-     * @see JitsiMeetView#setColorScheme(WritableMap)
+     * @see JitsiMeetView#setColorScheme(Bundle)
      */
-    public void setColorScheme(WritableMap colorScheme) {
+    public void setColorScheme(Bundle colorScheme) {
         if (view == null) {
             this.colorScheme = colorScheme;
         } else {
