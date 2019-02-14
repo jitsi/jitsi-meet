@@ -113,15 +113,6 @@ allprojects {
                 }
             }
 
-            task androidJavadocs(type: Javadoc) {
-                source = android.sourceSets.main.java.source
-                classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
-                failOnError false
-            }
-            task androidJavadocsJar(type: Jar, dependsOn: androidJavadocs) {
-                classifier = 'javadoc'
-                from androidJavadocs.destinationDir
-            }
             task androidSourcesJar(type: Jar) {
                 classifier = 'sources'
                 from android.sourceSets.main.java.source
@@ -137,7 +128,6 @@ allprojects {
                         extension "aar"
                     }
                     artifact(androidSourcesJar)
-                    artifact(androidJavadocsJar)
                     pom.withXml {
                         def pomXml = asNode()
                         pomXml.appendNode('name', project.name)
