@@ -120,6 +120,16 @@ export const P2P_STATUS_CHANGED = Symbol('P2P_STATUS_CHANGED');
 export const SET_AUDIO_ONLY = Symbol('SET_AUDIO_ONLY');
 
 /**
+ * The type of (redux) action, which indicates to set conference subject.
+ *
+ * {
+ *     type: SET_CONFERENCE_SUBJECT
+ *     subject: string
+ * }
+ */
+export const SET_CONFERENCE_SUBJECT = Symbol('SET_CONFERENCE_SUBJECT');
+
+/**
  * The type of (redux) action which sets the desktop sharing enabled flag for
  * the current conference.
  *

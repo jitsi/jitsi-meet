@@ -35,6 +35,7 @@ import {
     CONFERENCE_WILL_LEAVE,
     DATA_CHANNEL_OPENED,
     SET_AUDIO_ONLY,
+    SET_CONFERENCE_SUBJECT,
     SET_LASTN,
     SET_ROOM
 } from './actionTypes';
@@ -89,6 +90,9 @@ MiddlewareRegistry.register(store => next => action => {
 
     case SET_AUDIO_ONLY:
         return _setAudioOnly(store, next, action);
+
+    case SET_CONFERENCE_SUBJECT:
+        return _setSubject(store, next, action);
 
     case SET_LASTN:
         return _setLastN(store, next, action);
@@ -678,4 +682,27 @@ function _updateLocalParticipantInConference({ getState }, next, action) {
     }
 
     return result;
+}
+
+/**
+ * Changing conference subject.
+ *
+ * @param {Store} store - The redux store in which the specified {@code action}
+ * is being dispatched.
+ * @param {Dispatch} next - The redux {@code dispatch} function to dispatch the
+ * specified {@code action} to the specified {@code store}.
+ * @param {Action} action - The redux action which is being dispatched in the
+ * specified {@code store}.
+ * @private
+ * @returns {Object} The value returned by {@code next(action)}.
+ */
+function _setSubject({ getState }, next, action) {
+    const { conference } = getState()['features/base/conference'];
+    const { subject } = action;
+
+    if (subject) {
+        conference.setSubject(subject);
+    }
+
+    return next(action);
 }
