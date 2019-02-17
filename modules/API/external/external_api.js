@@ -23,6 +23,7 @@ const commands = {
     displayName: 'display-name',
     email: 'email',
     hangup: 'video-hangup',
+    subject: 'subject',
     submitFeedback: 'submit-feedback',
     toggleAudio: 'toggle-audio',
     toggleChat: 'toggle-chat',
@@ -52,7 +53,8 @@ const events = {
     'video-conference-left': 'videoConferenceLeft',
     'video-availability-changed': 'videoAvailabilityChanged',
     'video-mute-status-changed': 'videoMuteStatusChanged',
-    'screen-sharing-status-changed': 'screenSharingStatusChanged'
+    'screen-sharing-status-changed': 'screenSharingStatusChanged',
+    'subject-change': 'subjectChange'
 };
 
 /**
@@ -542,6 +544,9 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
      * Executes command. The available commands are:
      * {@code displayName} - Sets the display name of the local participant to
      * the value passed in the arguments array.
+     * {@code subject} - Sets the subject of the conference, the value passed
+     * in the arguments array. Note: available only for moderator.
+     *
      * {@code toggleAudio} - Mutes / unmutes audio with no arguments.
      * {@code toggleVideo} - Mutes / unmutes video with no arguments.
      * {@code toggleFilmStrip} - Hides / shows the filmstrip with no arguments.

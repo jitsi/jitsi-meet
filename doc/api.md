@@ -78,6 +78,11 @@ The `command` parameter is String object with the name of the command. The follo
 api.executeCommand('displayName', 'New Nickname');
 ```
 
+* **subject** - Sets the subject of the conference. This command requires one argument - the new subject to be set.
+```javascript
+api.executeCommand('subject', 'New Conference Subject');
+```
+
 * **toggleAudio** - Mutes / unmutes the audio for the local participant. No arguments are required.
 ```javascript
 api.executeCommand('toggleAudio')
@@ -250,6 +255,14 @@ changes. The listener will receive an object with the following structure:
 ```
 
 * **readyToClose** - event notification fired when Jitsi Meet is ready to be closed (hangup operations are completed).
+
+* **subjectChange** - event notifications about subject of conference changes. 
+The listener will receive an object with the following structure:
+```javascript
+{
+"subject": subject // the new subject
+}
+```
 
 You can also add multiple event listeners by using `addEventListeners`.
 This method requires one argument of type Object. The object argument must
