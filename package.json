@@ -37,6 +37,7 @@
     "@webcomponents/url": "0.7.1",
     "amplitude-js": "4.5.2",
     "dropbox": "4.0.9",
+    "i18n-iso-countries": "3.7.8",
     "i18next": "8.4.3",
     "i18next-browser-languagedetector": "2.0.0",
     "i18next-xhr-backend": "1.4.2",

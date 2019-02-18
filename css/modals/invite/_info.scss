@@ -139,7 +139,7 @@
     width: 100%;
 
     .dial-in-numbers-list {
-        font-size: 24px;
+        font-size: 20px;
         margin-top: 20px;
     }
 
@@ -147,6 +147,51 @@
         text-align: center;
         min-width: 200px;
         width: 30%;
+    }
+
+    .dial-in-numbers-list hr {
+        border: 0;
+        border-bottom: 1px solid #d1dbe8;
+        overflow: hidden;
+        margin-block-start: 0px;
+    }
+
+    .number-group {
+        display: flex;
+    }
+
+    .flag {
+        width: 40px;
+    }
+
+    .numbers-and-country {
+        display: flex;
+    }
+
+    .country {
+        font-weight: bold;
+        min-width: 230px;
+    }
+
+    .numbers-list {
+        min-width: 140px;
+    }
+
+    ul.numbers-list {
+        margin: 0;
+        list-style: none;
+        margin-block-end: 10px;
+    }
+
+    .toll-free-list {
+        font-weight: bold;
+    }
+
+    ul.toll-free-list {
+        margin: 0;
+        list-style: none;
+        margin-block-end: 10px;
+        padding-inline-start: 40px;
     }
 }
 

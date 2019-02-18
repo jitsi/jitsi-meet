@@ -17,10 +17,10 @@ type Props = {
     conferenceID: number,
 
     /**
-     * The phone numbers to display. Can be an array of numbers or an object
-     * with countries as keys and an array of numbers as values.
+     * The phone numbers to display. Can be an array of number Objects or an
+     * object with countries as keys and an array of numbers as values.
      */
-    numbers: { [string]: Array<string> } | Array<string>,
+    numbers: { [string]: Array<string> } | Array<Object>,
 
     /**
      * Invoked to obtain translated strings.
@@ -41,76 +41,144 @@ class NumbersList extends Component<Props> {
      * @returns {ReactElement}
      */
     render() {
-        const { numbers, t } = this.props;
+        const { numbers } = this.props;
 
         return (
-            <table className = 'dial-in-numbers-list'>
-                <thead>
-                    <tr>
-                        { Array.isArray(numbers)
-                            ? null
-                            : <th>{ t('info.country') }</th> }
-                        <th>{ t('info.numbers') }</th>
-                    </tr>
-                </thead>
-                <tbody className = 'dial-in-numbers-body'>
-                    { Array.isArray(numbers)
-                        ? numbers.map(this._renderNumberRow)
-                        : this._renderWithCountries(numbers) }
-                </tbody>
-            </table>);
+            <div className = 'dial-in-numbers-list'>
+                { this._renderWithCountries(numbers) }
+            </div>);
     }
 
     /**
      * Renders rows of countries and associated phone numbers.
      *
-     * @param {Object} numbersMapping - An object with country names as keys
-     * and values as arrays of phone numbers.
+     * @param {Object|Array<Object>} numbersMapping - An object with country
+     * names as keys and values as arrays of phone numbers.
      * @private
      * @returns {ReactElement[]}
      */
-    _renderWithCountries(numbersMapping: Object) {
-        const rows = [];
+    _renderWithCountries(
+            numbersMapping: { numbers: Array<string> } | Array<Object>) {
+        const { t } = this.props;
+        let numbers;
 
-        for (const [ country, numbers ] of Object.entries(numbersMapping)) {
-            if (!Array.isArray(numbers)) {
-                return;
-            }
+        if (Array.isArray(numbersMapping)) {
+            numbers = numbersMapping.reduce(
+                (resultNumbers, number) => {
+                    const countryName
+                        = t(`countries:countries.${number.countryCode}`);
 
-            const formattedNumbers = numbers.map(number => {
-                if (typeof number === 'string') {
-                    return this._renderNumberDiv(number);
+                    if (resultNumbers[countryName]) {
+                        resultNumbers[countryName].push(number);
+                    } else {
+                        resultNumbers[countryName] = [ number ];
+                    }
+
+                    return resultNumbers;
+                }, {});
+        } else {
+            numbers = {};
+
+            for (const [ country, numbersArray ]
+                of Object.entries(numbersMapping.numbers)) {
+                if (!Array.isArray(numbersArray)) {
+                    return;
                 }
 
-                return null;
-            });
+                /* eslint-disable arrow-body-style */
+                const formattedNumbers = numbersArray.map(number => ({
+                    formattedNumber: number
+                }));
+                /* eslint-enable arrow-body-style */
+
+                numbers[country] = formattedNumbers;
+            }
+        }
+
+        let hrKey = 0;
+        const rows = [ <hr key = { hrKey++ } /> ];
+
+        Object.keys(numbers).forEach((countryName: string) => {
+            const numbersArray = numbers[countryName];
 
             rows.push(
-                <tr key = { country }>
-                    <td>{ country }</td>
-                    <td className = 'dial-in-numbers'>{ formattedNumbers }</td>
-                </tr>
+                <div
+                    className = 'number-group'
+                    key = { countryName }>
+                    {this._renderFlag(numbersArray[0].countryCode)}
+                    <div className = 'numbers-and-country' >
+                        <div className = 'country' > { countryName } </div>
+                        <ul className = 'numbers-list'>
+                            {this._renderNumbersList(numbersArray)}
+                        </ul>
+                        <ul className = 'toll-free-list' >
+                            {this._renderNumbersTollFreeList(numbersArray)}
+                        </ul>
+                    </div>
+                </div>
             );
-        }
+            rows.push(<hr key = { hrKey++ } />);
+        });
 
         return rows;
     }
 
     /**
-     * Renders a table row for a phone number.
+     * Renders a div container for a phone number.
      *
-     * @param {string} number - The phone number to display.
+     * @param {string} countryCode - The phone number to display.
+     * @private
+     * @returns {ReactElement}
+     */
+    _renderFlag(countryCode) {
+        const OFFSET = 127397;
+
+        if (countryCode) {
+            // ensure country code is all caps
+            const cc = countryCode.toUpperCase();
+
+            // return the emoji flag corresponding to country_code or null
+            const countryFlag = /^[A-Z]{2}$/.test(cc)
+                ? String.fromCodePoint(...[ ...cc ]
+                    .map(c => c.charCodeAt() + OFFSET))
+                : null;
+
+            return <div className = 'flag'>{ countryFlag }</div>;
+        }
+
+        return null;
+    }
+
+    /**
+     * Renders a div container for a phone number.
+     *
+     * @param {Array} numbers - The phone number to display.
      * @private
      * @returns {ReactElement[]}
      */
-    _renderNumberRow(number) {
-        return (
-            <tr key = { number }>
-                <td className = 'dial-in-number'>
-                    { this._renderNumberLink(number) }
-                </td>
-            </tr>
-        );
+    _renderNumbersList(numbers) {
+        return numbers.map(number =>
+            (<li
+                className = 'number-row'
+                key = { number.formattedNumber }>
+                { number.formattedNumber }
+            </li>));
+    }
+
+    /**
+     * Renders a div container for a phone number.
+     *
+     * @param {Array} numbers - The phone number to display.
+     * @private
+     * @returns {ReactElement[]}
+     */
+    _renderNumbersTollFreeList(numbers) {
+        return numbers.map(number =>
+            (<li
+                className = 'toll-free'
+                key = { number.formattedNumber }>
+                { number.tollFree ? 'Toll Free' : '' }
+            </li>));
     }
 
     /**

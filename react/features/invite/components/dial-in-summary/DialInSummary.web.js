@@ -240,15 +240,17 @@ class DialInSummary extends Component<Props, State> {
      *
      * @param {Object} response - The response from fetching dial-in numbers.
      * @param {Array|Object} response.numbers - The dial-in numbers.
-     * @param {boolean} reponse.numbersEnabled - Whether or not dial-in is
-     * enabled.
+     * @param {boolean} response.numbersEnabled - Whether or not dial-in is
+     * enabled, old syntax that is deprecated.
      * @private
      * @returns {void}
      */
-    _onGetNumbersSuccess({ numbers, numbersEnabled }) {
+    _onGetNumbersSuccess(response) {
+        const { numbersEnabled } = response;
+
         this.setState({
-            numbersEnabled,
-            numbers
+            numbersEnabled: Array.isArray(response) ? true : numbersEnabled,
+            numbers: response
         });
     }
 
