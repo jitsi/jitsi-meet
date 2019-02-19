@@ -43,6 +43,7 @@ const events = {
     'display-name-change': 'displayNameChange',
     'email-change': 'emailChange',
     'feedback-submitted': 'feedbackSubmitted',
+    'feedback-prompt-displayed': 'feedbackPromptDisplayed',
     'incoming-message': 'incomingMessage',
     'outgoing-message': 'outgoingMessage',
     'participant-joined': 'participantJoined',
