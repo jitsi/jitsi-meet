@@ -18,7 +18,7 @@ local provider = {};
 local host = module.host;
 
 -- Extract 'token' param from BOSH URL when session is created
-module:hook("bosh-session", function(event)
+module:hook_global("bosh-session", function(event)
 	local session, request = event.session, event.request;
 	local query = request.url.query;
 
