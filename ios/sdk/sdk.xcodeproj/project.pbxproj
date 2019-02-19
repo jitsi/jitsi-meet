@@ -63,7 +63,7 @@
 		0BB9AD781F5EC6D7001C08DB /* Intents.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Intents.framework; path = System/Library/Frameworks/Intents.framework; sourceTree = SDKROOT; };
 		0BB9AD7A1F5EC8F4001C08DB /* CallKit.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CallKit.m; sourceTree = "<group>"; };
 		0BB9AD7C1F60356D001C08DB /* AppInfo.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AppInfo.m; sourceTree = "<group>"; };
-		0BC4B8681F8C01E100CE8B21 /* CallKitIcon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = CallKitIcon.png; path = ../../react/features/mobile/call-integration/CallKitIcon.png; sourceTree = "<group>"; };
+		0BC4B8681F8C01E100CE8B21 /* CallKitIcon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = CallKitIcon.png; path = "../../react/features/mobile/call-integration/CallKitIcon.png"; sourceTree = "<group>"; };
 		0BCA495C1EC4B6C600B793EE /* AudioMode.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AudioMode.m; sourceTree = "<group>"; };
 		0BCA495D1EC4B6C600B793EE /* POSIX.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = POSIX.m; sourceTree = "<group>"; };
 		0BCA495E1EC4B6C600B793EE /* Proximity.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Proximity.m; sourceTree = "<group>"; };
@@ -347,7 +347,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "if [[ \"$CONFIGURATION\" == *Debug* && ! \"$PLATFORM_NAME\" == *simulator ]]; then\n    IP=$(ipconfig getifaddr en0)\n    if [ -z \"$IP\" ]; then\n        IP=$(ifconfig | grep 'inet ' | grep -v ' 127.' | cut -d\\   -f2  | awk 'NR==1{print $1}')\n    fi\n    DEST=$CONFIGURATION_BUILD_DIR/$UNLOCALIZED_RESOURCES_FOLDER_PATH\n    echo \"$IP\" > \"$DEST/ip.txt\"\n    exit 0\nfi\nexport NODE_BINARY=node\n../../node_modules/react-native/scripts/react-native-xcode.sh";
+			shellScript = "if [[ \"$CONFIGURATION\" == *Debug* && ! \"$PLATFORM_NAME\" == *simulator ]]; then\n    IP=$(ipconfig getifaddr en0)\n    if [ -z \"$IP\" ]; then\n        IP=$(ifconfig | grep 'inet ' | grep -v ' 127.' | cut -d\\   -f2  | awk 'NR==1{print $1}')\n    fi\n    DEST=$CONFIGURATION_BUILD_DIR/$UNLOCALIZED_RESOURCES_FOLDER_PATH\n    echo \"$IP\" > \"$DEST/ip.txt\"\n    exit 0\nfi\nexport NODE_BINARY=node\n../../node_modules/react-native/scripts/react-native-xcode.sh\n";
 		};
 		26796D8589142D80C8AFDA51 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -373,7 +373,7 @@
 			files = (
 			);
 			inputPaths = (
-				"${SRCROOT}/../Pods/Target Support Files/Pods-JitsiMeet/Pods-JitsiMeet-resources.sh",
+				"${PODS_ROOT}/Target Support Files/Pods-JitsiMeet/Pods-JitsiMeet-resources.sh",
 				"${PODS_ROOT}/GoogleSignIn/Resources/GoogleSignIn.bundle",
 				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/AntDesign.ttf",
 				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/Entypo.ttf",
@@ -412,7 +412,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/../Pods/Target Support Files/Pods-JitsiMeet/Pods-JitsiMeet-resources.sh\"\n";
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-JitsiMeet/Pods-JitsiMeet-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */
