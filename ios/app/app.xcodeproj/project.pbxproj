@@ -243,7 +243,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "../scripts/run-packager.sh";
+			shellScript = "../scripts/run-packager.sh\n";
 		};
 		B35383AD1DDA0083008F406A /* Adjust embedded framework architectures */ = {
 			isa = PBXShellScriptBuildPhase;
