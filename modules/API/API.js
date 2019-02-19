@@ -542,6 +542,16 @@ class API {
     }
 
     /**
+     * Notify external application (if API is enabled) that the feedback prompt
+     * has been displayed.
+     *
+     * @returns {void}
+     */
+    notifyFeedbackPromptDisplayed() {
+        this._sendEvent({ name: 'feedback-prompt-displayed' });
+    }
+
+    /**
      * Notify external application (if API is enabled) that the screen sharing
      * has been turned on/off.
      *
