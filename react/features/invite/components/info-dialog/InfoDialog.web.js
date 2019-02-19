@@ -155,8 +155,9 @@ class InfoDialog extends Component<Props, State> {
     constructor(props: Props) {
         super(props);
 
-        if (props.dialIn) {
-            this.state.phoneNumber = _getDefaultPhoneNumber(props.dialIn);
+        if (props.dialIn && props.dialIn.numbers) {
+            this.state.phoneNumber
+                = _getDefaultPhoneNumber(props.dialIn.numbers);
         }
 
         /**

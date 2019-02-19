@@ -56,9 +56,9 @@ type State = {
     loading: boolean,
 
     /**
-     * The dial-in numbers. entered by the local participant.
+     * The dial-in numbers entered by the local participant.
      */
-    numbers: ?Array<Object>,
+    numbers: ?Array<Object> | ?Object,
 
     /**
      * Whether or not dial-in is allowed.
@@ -238,18 +238,21 @@ class DialInSummary extends Component<Props, State> {
      * Callback invoked when fetching dial-in numbers succeeds. Sets the
      * internal to show the numbers.
      *
-     * @param {Object} response - The response from fetching dial-in numbers.
+     * @param {Array|Object} response - The response from fetching
+     * dial-in numbers.
      * @param {Array|Object} response.numbers - The dial-in numbers.
      * @param {boolean} response.numbersEnabled - Whether or not dial-in is
      * enabled, old syntax that is deprecated.
      * @private
      * @returns {void}
      */
-    _onGetNumbersSuccess(response) {
-        const { numbersEnabled } = response;
+    _onGetNumbersSuccess(
+            response: Array<Object> | { numbersEnabled?: boolean }) {
 
         this.setState({
-            numbersEnabled: Array.isArray(response) ? true : numbersEnabled,
+            numbersEnabled:
+                Array.isArray(response)
+                    ? response.length > 0 : response.numbersEnabled,
             numbers: response
         });
     }
