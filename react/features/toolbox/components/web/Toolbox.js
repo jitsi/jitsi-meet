@@ -312,21 +312,9 @@ class Toolbox extends Component<Props> {
      * @returns {ReactElement}
      */
     render() {
-        const {
-            _chatOpen,
-            _hideInviteButton,
-            _overflowMenuVisible,
-            _raisedHand,
-            _visible,
-            _visibleButtons,
-            t
-        } = this.props;
+        const { _visible, _visibleButtons } = this.props;
         const rootClassNames = `new-toolbox ${_visible ? 'visible' : ''} ${
             _visibleButtons.size ? '' : 'no-buttons'}`;
-        const overflowMenuContent = this._renderOverflowMenuContent();
-        const overflowHasItems = Boolean(overflowMenuContent.filter(
-            child => child).length);
-        const toolbarAccLabel = 'toolbar.accessibilityLabel.moreActionsMenu';
 
         return (
             <div
@@ -334,72 +322,8 @@ class Toolbox extends Component<Props> {
                 id = 'new-toolbox'
                 onMouseOut = { this._onMouseOut }
                 onMouseOver = { this._onMouseOver }>
-                <div className = 'button-group-left'>
-                    { this._shouldShowButton('desktop')
-                        && this._renderDesktopSharingButton() }
-                    { this._shouldShowButton('raisehand')
-                        && <ToolbarButton
-                            accessibilityLabel =
-                                { t('toolbar.accessibilityLabel.raiseHand') }
-                            iconName = { _raisedHand
-                                ? 'icon-raised-hand toggled'
-                                : 'icon-raised-hand' }
-                            onClick = { this._onToolbarToggleRaiseHand }
-                            tooltip = { t('toolbar.raiseHand') } /> }
-                    { this._shouldShowButton('chat')
-                        && <div className = 'toolbar-button-with-badge'>
-                            <ToolbarButton
-                                accessibilityLabel =
-                                    { t('toolbar.accessibilityLabel.chat') }
-                                iconName = { _chatOpen
-                                    ? 'icon-chat toggled'
-                                    : 'icon-chat' }
-                                onClick = { this._onToolbarToggleChat }
-                                tooltip = { t('toolbar.chat') } />
-                            <ChatCounter />
-                        </div> }
-                    {
-                        this._shouldShowButton('closedcaptions')
-                            && <ClosedCaptionButton />
-                    }
-                </div>
-                <div className = 'button-group-center'>
-                    <AudioMuteButton
-                        visible = { this._shouldShowButton('microphone') } />
-                    <HangupButton
-                        visible = { this._shouldShowButton('hangup') } />
-                    <VideoMuteButton
-                        visible = { this._shouldShowButton('camera') } />
-                </div>
-                <div className = 'button-group-right'>
-                    { this._shouldShowButton('localrecording')
-                        && <LocalRecordingButton
-                            onClick = {
-                                this._onToolbarOpenLocalRecordingInfoDialog
-                            } />
-                    }
-                    { this._shouldShowButton('tileview')
-                        && <TileViewButton /> }
-                    { this._shouldShowButton('invite')
-                        && !_hideInviteButton
-                        && <ToolbarButton
-                            accessibilityLabel =
-                                { t('toolbar.accessibilityLabel.invite') }
-                            iconName = 'icon-add'
-                            onClick = { this._onToolbarOpenInvite }
-                            tooltip = { t('toolbar.invite') } /> }
-                    { this._shouldShowButton('info') && <InfoDialogButton /> }
-                    { overflowHasItems
-                        && <OverflowMenuButton
-                            isOpen = { _overflowMenuVisible }
-                            onVisibilityChange = { this._onSetOverflowVisible }>
-                            <ul
-                                aria-label = { t(toolbarAccLabel) }
-                                className = 'overflow-menu'>
-                                { overflowMenuContent }
-                            </ul>
-                        </OverflowMenuButton> }
-                </div>
+                <div className = 'toolbox-background' />
+                { this._renderToolboxContent() }
             </div>
         );
     }
@@ -998,6 +922,97 @@ class Toolbox extends Component<Props> {
                     onClick = { this._onToolbarOpenKeyboardShortcuts }
                     text = { t('toolbar.shortcuts') } />
         ];
+    }
+
+    /**
+     * Renders the toolbox content.
+     *
+     * @returns {Array<ReactElement>}
+     */
+    _renderToolboxContent() {
+        const {
+            _chatOpen,
+            _hideInviteButton,
+            _overflowMenuVisible,
+            _raisedHand,
+            t
+        } = this.props;
+        const overflowMenuContent = this._renderOverflowMenuContent();
+        const overflowHasItems = Boolean(overflowMenuContent.filter(
+            child => child).length);
+        const toolbarAccLabel = 'toolbar.accessibilityLabel.moreActionsMenu';
+
+        return (
+            <div className = 'toolbox-content'>
+                <div className = 'button-group-left'>
+                    { this._shouldShowButton('desktop')
+                        && this._renderDesktopSharingButton() }
+                    { this._shouldShowButton('raisehand')
+                        && <ToolbarButton
+                            accessibilityLabel =
+                                {
+                                    t('toolbar.accessibilityLabel.raiseHand')
+                                }
+                            iconName = { _raisedHand
+                                ? 'icon-raised-hand toggled'
+                                : 'icon-raised-hand' }
+                            onClick = { this._onToolbarToggleRaiseHand }
+                            tooltip = { t('toolbar.raiseHand') } /> }
+                    { this._shouldShowButton('chat')
+                        && <div className = 'toolbar-button-with-badge'>
+                            <ToolbarButton
+                                accessibilityLabel =
+                                    { t('toolbar.accessibilityLabel.chat') }
+                                iconName = { _chatOpen
+                                    ? 'icon-chat toggled'
+                                    : 'icon-chat' }
+                                onClick = { this._onToolbarToggleChat }
+                                tooltip = { t('toolbar.chat') } />
+                            <ChatCounter />
+                        </div> }
+                    {
+                        this._shouldShowButton('closedcaptions')
+                            && <ClosedCaptionButton />
+                    }
+                </div>
+                <div className = 'button-group-center'>
+                    <AudioMuteButton
+                        visible = { this._shouldShowButton('microphone') } />
+                    <HangupButton
+                        visible = { this._shouldShowButton('hangup') } />
+                    <VideoMuteButton
+                        visible = { this._shouldShowButton('camera') } />
+                </div>
+                <div className = 'button-group-right'>
+                    { this._shouldShowButton('localrecording')
+                        && <LocalRecordingButton
+                            onClick = {
+                                this._onToolbarOpenLocalRecordingInfoDialog
+                            } />
+                    }
+                    { this._shouldShowButton('tileview')
+                        && <TileViewButton /> }
+                    { this._shouldShowButton('invite')
+                        && !_hideInviteButton
+                        && <ToolbarButton
+                            accessibilityLabel =
+                                { t('toolbar.accessibilityLabel.invite') }
+                            iconName = 'icon-add'
+                            onClick = { this._onToolbarOpenInvite }
+                            tooltip = { t('toolbar.invite') } /> }
+                    { this._shouldShowButton('info') && <InfoDialogButton /> }
+                    { overflowHasItems
+                        && <OverflowMenuButton
+                            isOpen = { _overflowMenuVisible }
+                            onVisibilityChange = { this._onSetOverflowVisible }>
+                            <ul
+                                aria-label = { t(toolbarAccLabel) }
+                                className = 'overflow-menu'>
+                                { overflowMenuContent }
+                            </ul>
+                        </OverflowMenuButton> }
+                </div>
+            </div>);
     }
 
     _shouldShowButton: (string) => boolean;
