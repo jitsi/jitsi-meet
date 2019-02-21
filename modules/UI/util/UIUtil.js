@@ -19,16 +19,6 @@ const ThumbnailSizes = {
 };
 
 /**
- * Contains font sizes for thumbnail indicators
- * @type {{SMALL: number, MEDIUM: number}}
- */
-const IndicatorFontSizes = {
-    SMALL: 5,
-    MEDIUM: 6,
-    NORMAL: 8
-};
-
-/**
  * Created by hristo on 12/22/14.
  */
 const UIUtil = {
@@ -310,6 +300,11 @@ const UIUtil = {
             ? $('#localVideoContainer').height() : thumbnailHeight;
 
         const { SMALL, MEDIUM } = ThumbnailSizes;
+        const IndicatorFontSizes = interfaceConfig.INDICATOR_FONT_SIZES || {
+            SMALL: 5,
+            MEDIUM: 6,
+            NORMAL: 8
+        };
         let fontSize = IndicatorFontSizes.NORMAL;
 
         if (height <= SMALL) {
