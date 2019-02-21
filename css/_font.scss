@@ -1,10 +1,10 @@
 @font-face {
     font-family: 'jitsi';
-    src:url('../fonts/jitsi.eot?94d075');
-    src:url('../fonts/jitsi.eot?#iefix94d075') format('embedded-opentype'),
-        url('../fonts/jitsi.woff?94d075') format('woff'),
-        url('../fonts/jitsi.ttf?94d075') format('truetype'),
-        url('../fonts/jitsi.svg?94d075#jitsi') format('svg');
+    src:  url('../fonts/jitsi.eot?zd9m7b');
+    src:  url('../fonts/jitsi.eot?zd9m7b#iefix') format('embedded-opentype'),
+        url('../fonts/jitsi.ttf?zd9m7b') format('truetype'),
+        url('../fonts/jitsi.woff?zd9m7b') format('woff'),
+        url('../fonts/jitsi.svg?zd9m7b#jitsi') format('svg');
     font-weight: normal;
     font-style: normal;
 }
@@ -28,167 +28,74 @@
 .icon-chat-unread:before {
   content: "\e0b7";
 }
-.icon-arrow_back:before {
-  content: "\e5c4";
+.icon-closed_caption:before {
+  content: "\e930";
+}
+.icon-tiles-many:before {
+  content: "\e92e";
 }
 .icon-close:before {
   content: "\e5cd";
 }
-.icon-event_note:before {
-    content: "\e616";
-}
-.icon-menu:before {
-  content: "\e5d2";
-}
-.icon-navigate_before:before {
-  content: "\e408";
-}
-.icon-navigate_next:before {
-  content: "\e409";
-}
-.icon-public:before {
-    content: "\e80b";
+.icon-open_in_new:before {
+  content: "\e89e";
 }
 .icon-restore:before {
   content: "\e8b3";
 }
-.icon-timer:before {
-    content: "\e425";
+.icon-navigate_next:before {
+  content: "\e409";
+}
+.icon-menu:before {
+  content: "\e5d2";
+}
+.icon-arrow_back:before {
+  content: "\e5c4";
+}
+.icon-public:before {
+  content: "\e80b";
+}
+.icon-event_note:before {
+  content: "\e616";
+}
+.icon-bluetooth:before {
+  content: "\e1aa";
+}
+.icon-headset:before {
+  content: "\e310";
+}
+.icon-phone-talk:before {
+  content: "\e61d";
 }
 .icon-thumb-menu:before {
-    content: "\e5d4";
-}
-.icon-mic-camera-combined:before {
-    content: "\e903";
-}
-.icon-feedback:before {
-    content: "\e91d";
-}
-.icon-toggle-filmstrip:before {
-    content: "\e91c";
-}
-.icon-avatar:before {
-    content: "\e901";
-}
-.icon-hangup:before {
-    content: "\e905";
-}
-.icon-chat:before {
-    content: "\e906";
-}
-.icon-download:before {
-    content: "\e902";
-}
-.icon-edit:before {
-    content: "\e907";
-}
-.icon-share-doc:before {
-    content: "\e908";
-}
-.icon-kick:before {
-    content: "\e904";
-}
-.icon-menu-up:before {
-    content: "\e91f";
-}
-.icon-menu-down:before {
-    content: "\e920";
-}
-.icon-full-screen:before {
-    content: "\e90b";
-}
-.icon-exit-full-screen:before {
-    content: "\e90c";
-}
-.icon-star-full:before {
-    content: "\e90a";
-}
-.icon-security:before {
-    content: "\e90d";
-}
-.icon-security-locked:before {
-    content: "\e90e";
-}
-.icon-reload:before {
-    content: "\e90f";
-}
-.icon-microphone:before {
-    content: "\e910";
-}
-.icon-mic-empty:before {
-    content: "\e911";
-}
-.icon-mic-disabled:before {
-    content: "\e912";
+  content: "\e5d4";
 }
 .icon-ninja:before {
-    content: "\e909";
+  content: "\e909";
 }
-.icon-raised-hand:before {
-    content: "\e91e";
-}
-.icon-contactList:before {
-    content: "\e91b";
-}
-.icon-link:before {
-    content: "\e913";
-}
-.icon-shared-video:before {
-    content: "\e914";
-}
-.icon-settings:before {
-    content: "\e915";
-}
-.icon-star:before {
-    content: "\e916";
-}
-.icon-switch-camera:before {
-    content: "\e921";
-}
-.icon-share-desktop:before {
-    content: "\e917";
-}
-.icon-camera:before {
-    content: "\e918";
-}
-.icon-camera-disabled:before {
-    content: "\e919";
-}
-.icon-volume:before {
-    content: "\e91a";
-}
-.icon-recDisable:before {
-    content: "\e613";
-}
-.icon-recEnable:before {
-    content: "\e614";
-}
-.icon-presentation:before {
-    content: "\e603";
-}
-.icon-dialpad:before {
-    content: "\e925";
-}
-.icon-visibility:before {
-    content: "\e923";
-}
-.icon-visibility-off:before {
-    content: "\e924";
-}
-.icon-telephone:before {
-    content: "\e0cd";
+.icon-invite:before {
+  content: "\e145";
 }
 .icon-add:before {
-    content: "\e145";
+  content: "\e146";
 }
-.icon-info:before {
-    content: "\e922";
+.icon-play:before {
+  content: "\f04b";
 }
-.icon-gsm-bars:before {
-    content: "\e926";
+.icon-stop:before {
+  content: "\f04d";
 }
-.icon-open_in_new:before {
-  content: "\e89e";
+.icon-dominant-speaker:before {
+  content: "\f0a1";
+}
+.icon-speaker:before {
+  content: "\e92d";
+}
+.icon-rec:before {
+  content: "\e92b";
+}
+.icon-camera-take-picture:before {
+  content: "\e92a";
 }
 .icon-AUD:before {
   content: "\e900";
@@ -202,33 +109,90 @@
 .icon-SD:before {
   content: "\e929";
 }
-.icon-camera-take-picture:before {
-  content: "\e92a";
+.icon-gsm-bars-black:before {
+  content: "\e926";
 }
-.icon-rec:before {
-  content: "\e92b";
+.icon-info:before {
+  content: "\e922";
 }
-.icon-live:before {
-  content: "\e92c";
+.icon-mic-camera-combined:before {
+  content: "\e903";
 }
-.icon-speaker:before {
-    content: "\e92d";
+.icon-feedback:before {
+  content: "\e91d";
 }
-.icon-tiles-many:before {
-  content: "\e92e";
+.icon-hangup:before {
+  content: "\e905";
 }
-.icon-tiles-one:before {
-  content: "\e92f";
+.icon-chat:before {
+  content: "\e906";
 }
-.icon-closed_caption:before {
-    content: "\e930";
+.icon-share-doc:before {
+  content: "\e908";
 }
-.icon-play:before {
-    content: "\f04b";
+.icon-kick:before {
+  content: "\e904";
 }
-.icon-stop:before {
-    content: "\f04d";
+.icon-menu-up:before {
+  content: "\e91f";
 }
-.icon-dominant-speaker:before {
-    content: "\f0a1";
+.icon-menu-down:before {
+  content: "\e920";
+}
+.icon-full-screen:before {
+  content: "\e90b";
+}
+.icon-exit-full-screen:before {
+  content: "\e90c";
+}
+.icon-security:before {
+  content: "\e90d";
+}
+.icon-security-locked:before {
+  content: "\e90e";
+}
+.icon-microphone:before {
+  content: "\e910";
+}
+.icon-mic-disabled:before {
+  content: "\e912";
+}
+.icon-raised-hand:before {
+  content: "\e91e";
+}
+.icon-link:before {
+  content: "\e913";
+}
+.icon-shared-video:before {
+  content: "\e914";
+}
+.icon-settings:before {
+  content: "\e915";
+}
+.icon-star:before {
+  content: "\e916";
+}
+.icon-switch-camera:before {
+  content: "\e921";
+}
+.icon-share-desktop:before {
+  content: "\e917";
+}
+.icon-camera:before {
+  content: "\e918";
+}
+.icon-camera-disabled:before {
+  content: "\e919";
+}
+.icon-volume:before {
+  content: "\e91a";
+}
+.icon-presentation:before {
+  content: "\e603";
+}
+.icon-visibility:before {
+  content: "\e923";
+}
+.icon-visibility-off:before {
+  content: "\e924";
 }
