@@ -22,9 +22,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
-import com.facebook.react.bridge.Arguments;
 import com.facebook.react.bridge.ReadableMap;
-import com.facebook.react.bridge.WritableMap;
 
 import java.lang.reflect.Method;
 import java.net.URL;
@@ -74,7 +72,7 @@ public class JitsiMeetView
     /**
      * A color scheme object to override the default color is the SDK.
      */
-    private WritableMap colorScheme;
+    private Bundle colorScheme;
 
     /**
      * The default base {@code URL} used to join a conference when a partial URL
@@ -142,7 +140,7 @@ public class JitsiMeetView
      *
      * @return The color scheme map.
      */
-    public WritableMap getColorScheme() {
+    public Bundle getColorScheme() {
         return colorScheme;
     }
 
@@ -226,7 +224,7 @@ public class JitsiMeetView
 
         // color scheme
         if (colorScheme != null) {
-            props.putBundle("colorScheme", Arguments.toBundle(colorScheme));
+            props.putBundle("colorScheme", colorScheme);
         }
 
         // defaultURL
@@ -331,7 +329,7 @@ public class JitsiMeetView
      *
      * @param colorScheme The color scheme map.
      */
-    public void setColorScheme(WritableMap colorScheme) {
+    public void setColorScheme(Bundle colorScheme) {
         this.colorScheme = colorScheme;
     }
 

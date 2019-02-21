@@ -27,7 +27,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.KeyEvent;
 
 import com.facebook.react.ReactInstanceManager;
-import com.facebook.react.bridge.WritableMap;
 import com.facebook.react.modules.core.PermissionListener;
 
 import java.net.URL;
@@ -56,7 +55,7 @@ public class JitsiMeetActivity
     /**
      * A color scheme object to override the default color is the SDK.
      */
-    private WritableMap colorScheme;
+    private Bundle colorScheme;
 
     /**
      * The default base {@code URL} used to join a conference when a partial URL
@@ -294,9 +293,9 @@ public class JitsiMeetActivity
     }
 
     /**
-     * @see JitsiMeetView#setColorScheme(WritableMap)
+     * @see JitsiMeetView#setColorScheme(Bundle)
      */
-    public void setColorScheme(WritableMap colorScheme) {
+    public void setColorScheme(Bundle colorScheme) {
         if (view == null) {
             this.colorScheme = colorScheme;
         } else {

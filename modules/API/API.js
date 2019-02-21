@@ -63,6 +63,10 @@ function initCommands() {
         'proxy-connection-event': event => {
             APP.conference.onProxyConnectionEvent(event);
         },
+        'subject': subject => {
+            sendAnalytics(createApiEvent('subject.changed'));
+            APP.conference.setSubject(subject);
+        },
         'submit-feedback': feedback => {
             sendAnalytics(createApiEvent('submit.feedback'));
             APP.conference.submitFeedback(feedback.score, feedback.message);
@@ -538,6 +542,16 @@ class API {
     }
 
     /**
+     * Notify external application (if API is enabled) that the feedback prompt
+     * has been displayed.
+     *
+     * @returns {void}
+     */
+    notifyFeedbackPromptDisplayed() {
+        this._sendEvent({ name: 'feedback-prompt-displayed' });
+    }
+
+    /**
      * Notify external application (if API is enabled) that the screen sharing
      * has been turned on/off.
      *
@@ -548,6 +562,20 @@ class API {
         this._sendEvent({
             name: 'screen-sharing-status-changed',
             on
+        });
+    }
+
+    /**
+     * Notify external application (if API is enabled) that the conference
+     * changed their subject.
+     *
+     * @param {string} subject - Conference subject.
+     * @returns {void}
+     */
+    notifySubjectChanged(subject: string) {
+        this._sendEvent({
+            name: 'subject-change',
+            subject
         });
     }
 
