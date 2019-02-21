@@ -153,15 +153,16 @@
         .overflow-menu {
             font-size: 1.2em;
             list-style-type: none;
+            background-color: $overflowMenuBG;
             /**
              * Undo atlaskit padding by reducing margins.
              */
-            margin: -15px -24px;
+            margin: -16px -24px;
             padding: 4px 0;
 
             .overflow-menu-item {
                 align-items: center;
-                color: #B8C7E0;
+                color: $overflowMenuItemColor;
                 cursor: pointer;
                 display: flex;
                 font-size: 14px;
@@ -175,7 +176,8 @@
                 }
 
                 &:hover {
-                    background: #313D52;
+                    background-color: $overflowMenuItemHoverBG;
+                    color: $overflowMenuItemHoverColor;
                 }
 
                 &.unclickable {
@@ -191,9 +193,9 @@
             }
 
             .beta-tag {
-                background: #B8C7E0;
+                background: $overflowMenuItemColor;
                 border-radius: 2px;
-                color: $newToolbarBackgroundColor;
+                color: $overflowMenuBG;
                 font-size: 11px;
                 font-weight: bold;
                 margin-left: 8px;
