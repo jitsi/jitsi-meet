@@ -2315,7 +2315,8 @@ export default {
                         }));
                     }
 
-                    if (this.localVideo) {
+                    if (this.localVideo
+                        && this.localVideo.videoType === 'camera') {
                         dispatch(updateSettings({
                             cameraDeviceId: this.localVideo.getDeviceId()
                         }));
