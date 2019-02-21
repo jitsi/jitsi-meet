@@ -997,7 +997,7 @@ class Toolbox extends Component<Props> {
                         && <ToolbarButton
                             accessibilityLabel =
                                 { t('toolbar.accessibilityLabel.invite') }
-                            iconName = 'icon-add'
+                            iconName = 'icon-invite'
                             onClick = { this._onToolbarOpenInvite }
                             tooltip = { t('toolbar.invite') } /> }
                     { this._shouldShowButton('info') && <InfoDialogButton /> }
