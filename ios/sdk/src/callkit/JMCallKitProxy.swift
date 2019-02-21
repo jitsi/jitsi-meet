@@ -1,5 +1,6 @@
 /*
- * Copyright @ 2018-present Atlassian Pty Ltd
+ * Copyright @ 2019-present 8x8, Inc.
+ * Copyright @ 2018-2019 Atlassian Pty Ltd
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -53,6 +54,7 @@ import Foundation
         didSet {
             if enabled == false {
                 provider.setDelegate(nil, queue: nil)
+                provider.invalidate()
             }
         }
     }
@@ -60,6 +62,8 @@ import Foundation
     @objc public static func configureProvider(localizedName: String,
                                                ringtoneSound: String?,
                                                iconTemplateImageData: Data?) {
+        guard enabled else { return }
+
         let configuration = CXProviderConfiguration(localizedName: localizedName)
         configuration.iconTemplateImageData = iconTemplateImageData
         configuration.maximumCallGroups = 1
@@ -187,3 +191,4 @@ import Foundation
         return update
     }
 }
+

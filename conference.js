@@ -45,7 +45,8 @@ import {
     onStartMutedPolicyChanged,
     p2pStatusChanged,
     sendLocalParticipant,
-    setDesktopSharingEnabled
+    setDesktopSharingEnabled,
+    setSubject
 } from './react/features/base/conference';
 import {
     getAvailableDevices,
@@ -1825,6 +1826,8 @@ export default {
         room.on(JitsiConferenceEvents.TALK_WHILE_MUTED, () => {
             APP.UI.showToolbar(6000);
         });
+        room.on(JitsiConferenceEvents.SUBJECT_CHANGED,
+            subject => APP.API.notifySubjectChanged(subject));
 
         room.on(
             JitsiConferenceEvents.LAST_N_ENDPOINTS_CHANGED,
@@ -2754,6 +2757,16 @@ export default {
     setAudioMuteStatus(muted) {
         APP.UI.setAudioMuted(this.getMyUserId(), muted);
         APP.API.notifyAudioMutedStatusChanged(muted);
+    },
+
+    /**
+     * Changes the subject of the conference.
+     * Note: available only for moderator.
+     *
+     * @param subject {string} the new subject for the conference.
+     */
+    setSubject(subject) {
+        APP.store.dispatch(setSubject(subject));
     },
 
     /**

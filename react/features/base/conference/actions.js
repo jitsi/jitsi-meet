@@ -33,6 +33,7 @@ import {
     LOCK_STATE_CHANGED,
     P2P_STATUS_CHANGED,
     SET_AUDIO_ONLY,
+    SET_CONFERENCE_SUBJECT,
     SET_DESKTOP_SHARING_ENABLED,
     SET_FOLLOW_ME,
     SET_LASTN,
@@ -726,5 +727,18 @@ export function toggleAudioOnly() {
         const { audioOnly } = getState()['features/base/conference'];
 
         return dispatch(setAudioOnly(!audioOnly, true));
+    };
+}
+
+/**
+ * Changing conference subject.
+ *
+ * @param {string} subject - The new subject.
+ * @returns {void}
+ */
+export function setSubject(subject: String) {
+    return {
+        type: SET_CONFERENCE_SUBJECT,
+        subject
     };
 }
