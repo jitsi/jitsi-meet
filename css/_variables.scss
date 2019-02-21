@@ -43,6 +43,10 @@ $newToolbarHangupFontSize: 32px;
 $newToolbarSize: 40px;
 $newToolbarSizeWithPadding: calc(#{$newToolbarSize} + 24px);
 $toolbarTitleFontSize: 19px;
+$overflowMenuBG: initial;
+$overflowMenuItemHoverBG: #313D52;
+$overflowMenuItemHoverColor: #B8C7E0;
+$overflowMenuItemColor: #B8C7E0;
 
 /**
  * Video layout
@@ -59,6 +63,7 @@ $audioLevelShadow: rgba(9, 36, 77, 0.9);
 $videoStateIndicatorColor: $defaultColor;
 $videoStateIndicatorBackground: $toolbarBackground;
 $videoStateIndicatorSize: 40px;
+$remoteVideoMenuIconLeft: initial;
 
 /**
  * Feedback Modal
