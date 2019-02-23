@@ -1,6 +1,6 @@
 # Jitsi Meet API
 
-You can use the Jitsi Meet API to embed Jitsi Meet in to your application.
+You can use the Jitsi Meet API to embed Jitsi Meet in to your application. You are also welcome to use it for embedding the globally distributed and highly available deployment on meet.jit.si itself. The only thing we ask for in that case is that you please DO NOT remove the jitsi.org logo from the top left corner.
 
 ## Installation
 
