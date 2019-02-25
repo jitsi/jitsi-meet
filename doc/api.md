@@ -256,7 +256,7 @@ changes. The listener will receive an object with the following structure:
 
 * **readyToClose** - event notification fired when Jitsi Meet is ready to be closed (hangup operations are completed).
 
-* **subjectChange** - event notifications about subject of conference changes. 
+* **subjectChange** - event notifications about subject of conference changes.
 The listener will receive an object with the following structure:
 ```javascript
 {
