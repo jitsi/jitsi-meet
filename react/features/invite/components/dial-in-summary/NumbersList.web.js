@@ -79,17 +79,16 @@ class NumbersList extends Component<Props> {
 
             for (const [ country, numbersArray ]
                 of Object.entries(numbersMapping.numbers)) {
-                if (!Array.isArray(numbersArray)) {
-                    return;
+
+                if (Array.isArray(numbersArray)) {
+                    /* eslint-disable arrow-body-style */
+                    const formattedNumbers = numbersArray.map(number => ({
+                        formattedNumber: number
+                    }));
+                    /* eslint-enable arrow-body-style */
+
+                    numbers[country] = formattedNumbers;
                 }
-
-                /* eslint-disable arrow-body-style */
-                const formattedNumbers = numbersArray.map(number => ({
-                    formattedNumber: number
-                }));
-                /* eslint-enable arrow-body-style */
-
-                numbers[country] = formattedNumbers;
             }
         }
 
