@@ -28,7 +28,7 @@
         max-width: 40em;
         padding: 35px 0 40px 0;
         text-align: center;
-        width: 75%;
+        width: 90%;
 
         a:active {
             text-decoration: none;
@@ -46,7 +46,7 @@
 
     &__text,
     .deep-linking-dial-in  {
-        font-size: 1.2em;
+        font-size: 1em;
         line-height: em(29px, 21px);
         margin-bottom: 0.65em;
 
@@ -58,6 +58,26 @@
             strong {
                 font-size: em(21, 18);
             }
+        }
+
+        table {
+            font-size: 1em;
+        }
+
+        .dial-in-conference-id {
+            margin: 10px 0 10px 0;
+        }
+
+        .dial-in-conference-description {
+            font-size: 0.8em;
+        }
+
+        .toll-free-list {
+            min-width: 80px;
+        }
+
+        .numbers-list {
+            min-width: 150px;
         }
     }
 

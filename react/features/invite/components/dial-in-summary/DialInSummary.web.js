@@ -143,6 +143,7 @@ class DialInSummary extends Component<Props, State> {
                 conferenceID
                     ? <ConferenceID
                         conferenceID = { conferenceID }
+                        conferenceName = { this.props.room }
                         key = 'conferenceID' />
                     : null,
                 <NumbersList

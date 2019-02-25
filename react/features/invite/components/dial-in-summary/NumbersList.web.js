@@ -43,10 +43,7 @@ class NumbersList extends Component<Props> {
     render() {
         const { numbers } = this.props;
 
-        return (
-            <div className = 'dial-in-numbers-list'>
-                { this._renderWithCountries(numbers) }
-            </div>);
+        return this._renderWithCountries(numbers);
     }
 
     /**
@@ -60,9 +57,10 @@ class NumbersList extends Component<Props> {
     _renderWithCountries(
             numbersMapping: { numbers: Array<string> } | Array<Object>) {
         const { t } = this.props;
-        let numbers;
+        let hasFlags = false, numbers;
 
         if (Array.isArray(numbersMapping)) {
+            hasFlags = true;
             numbers = numbersMapping.reduce(
                 (resultNumbers, number) => {
                     const countryName
@@ -95,32 +93,42 @@ class NumbersList extends Component<Props> {
             }
         }
 
-        let hrKey = 0;
-        const rows = [ <hr key = { hrKey++ } /> ];
+        const rows = [];
 
         Object.keys(numbers).forEach((countryName: string) => {
             const numbersArray = numbers[countryName];
 
             rows.push(
-                <div
+                <tr
                     className = 'number-group'
                     key = { countryName }>
-                    {this._renderFlag(numbersArray[0].countryCode)}
-                    <div className = 'numbers-and-country' >
-                        <div className = 'country' > { countryName } </div>
-                        <ul className = 'numbers-list'>
-                            {this._renderNumbersList(numbersArray)}
-                        </ul>
-                        <ul className = 'toll-free-list' >
-                            {this._renderNumbersTollFreeList(numbersArray)}
-                        </ul>
-                    </div>
-                </div>
+                    { this._renderFlag(numbersArray[0].countryCode) }
+                    <td className = 'country' >{ countryName }</td>
+                    <td className = 'numbers-list-column'>
+                        { this._renderNumbersList(numbersArray) }
+                    </td>
+                    <td className = 'toll-free-list-column' >
+                        { this._renderNumbersTollFreeList(numbersArray) }
+                    </td>
+                </tr>
             );
-            rows.push(<hr key = { hrKey++ } />);
         });
 
-        return rows;
+        return (
+            <table className = 'dial-in-numbers-list'>
+                <thead>
+                    <tr>
+                        { hasFlags ? <th /> : null}
+                        <th>{ t('info.country') }</th>
+                        <th>{ t('info.numbers') }</th>
+                        <th />
+                    </tr>
+                </thead>
+                <tbody className = 'dial-in-numbers-body'>
+                    { rows }
+                </tbody>
+            </table>
+        );
     }
 
     /**
@@ -143,7 +151,7 @@ class NumbersList extends Component<Props> {
                     .map(c => c.charCodeAt() + OFFSET))
                 : null;
 
-            return <div className = 'flag'>{ countryFlag }</div>;
+            return <td className = 'flag'>{ countryFlag }</td>;
         }
 
         return null;
@@ -157,44 +165,42 @@ class NumbersList extends Component<Props> {
      * @returns {ReactElement[]}
      */
     _renderNumbersList(numbers) {
-        return numbers.map(number =>
+        const numbersListItems = numbers.map(number =>
             (<li
-                className = 'number-row'
+                className = 'dial-in-number'
                 key = { number.formattedNumber }>
-                { number.formattedNumber }
+                { this._renderNumberLink(number.formattedNumber) }
             </li>));
+
+        return (
+            <ul className = 'numbers-list'>
+                { numbersListItems }
+            </ul>
+        );
     }
 
     /**
-     * Renders a div container for a phone number.
+     * Renders list with a toll free text on the position where there is a
+     * number marked as toll free.
      *
-     * @param {Array} numbers - The phone number to display.
+     * @param {Array} numbers - The phone number that are displayed.
      * @private
      * @returns {ReactElement[]}
      */
     _renderNumbersTollFreeList(numbers) {
-        return numbers.map(number =>
+        const { t } = this.props;
+
+        const tollNumbersListItems = numbers.map(number =>
             (<li
                 className = 'toll-free'
                 key = { number.formattedNumber }>
-                { number.tollFree ? 'Toll Free' : '' }
+                { number.tollFree ? t('info.dialInTollFree') : '' }
             </li>));
-    }
 
-    /**
-     * Renders a div container for a phone number.
-     *
-     * @param {string} number - The phone number to display.
-     * @private
-     * @returns {ReactElement[]}
-     */
-    _renderNumberDiv(number) {
         return (
-            <div
-                className = 'dial-in-number'
-                key = { number }>
-                { this._renderNumberLink(number) }
-            </div>
+            <ul className = 'toll-free-list'>
+                { tollNumbersListItems }
+            </ul>
         );
     }
 
@@ -209,9 +215,12 @@ class NumbersList extends Component<Props> {
      */
     _renderNumberLink(number) {
         if (this.props.clickableNumbers) {
+            // Url encode # to %23, Android phone was cutting the # after
+            // clicking it.
+            // Seems that using ',' and '%23' works on iOS and Android.
             return (
                 <a
-                    href = { `tel:${number}p${this.props.conferenceID}#` }
+                    href = { `tel:${number},${this.props.conferenceID}%23` }
                     key = { number } >
                     { number }
                 </a>
