@@ -56,7 +56,7 @@ type State = {
     loading: boolean,
 
     /**
-     * The dial-in numbers entered by the local participant.
+     * The dial-in numbers to be displayed.
      */
     numbers: ?Array<Object> | ?Object,
 
