@@ -4,7 +4,7 @@
     line-height: 20px;
     color: $welcomePageTitleColor;
     text-align: left;
-    font-family: 'open_sanslight', Helvetica, sans-serif;
+    font-family: $baseFontFamily;
 }
 %navigate-section-list-tile-text {
     @extend %navigate-section-list-text;
