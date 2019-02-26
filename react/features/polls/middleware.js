@@ -11,11 +11,11 @@ import {
     VOTE_POLL
 } from './actionTypes';
 import {
-    addPoll,
+    endedPoll,
     showPollStartNotification,
     showPollEndNotification,
-    updateVote,
-    finishPoll
+    startedPoll,
+    voted
 } from './actions';
 
 declare var interfaceConfig : Object;
@@ -74,7 +74,7 @@ function _addPollMsgListener(conference, store) {
 
     conference.on(
         JitsiConferenceEvents.POLL_FINISHED, () => {
-            store.dispatch(finishPoll());
+            store.dispatch(endedPoll());
             store.dispatch(showPollEndNotification());
         }
     );
@@ -82,7 +82,7 @@ function _addPollMsgListener(conference, store) {
     conference.on(
         JitsiConferenceEvents.POLL_STARTED,
         (choices, poll, question) => {
-            store.dispatch(addPoll({
+            store.dispatch(startedPoll({
                 choices,
                 poll,
                 question
@@ -94,7 +94,7 @@ function _addPollMsgListener(conference, store) {
     conference.on(
         JitsiConferenceEvents.POLL_VOTE_UPDATED,
         choice => {
-            store.dispatch(updateVote({ choice }));
+            store.dispatch(voted({ choice }));
         }
     );
 }

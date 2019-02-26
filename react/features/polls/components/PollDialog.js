@@ -9,8 +9,9 @@ import { translate } from '../../base/i18n';
 import { getLocalParticipant } from '../../base/participants';
 
 import {
+    endPoll,
     startPoll,
-    vote, endPoll
+    vote
 } from '../actions';
 import { getUniquePollChoices } from '../functions';
 

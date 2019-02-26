@@ -3,34 +3,12 @@
 import { showNotification } from '../notifications/actions';
 import {
     END_POLL,
+    POLL_ENDED,
+    POLL_STARTED,
+    POLL_VOTED,
     START_POLL,
-    VOTE_POLL,
-    POLL_SESSION_STARTED,
-    POLL_SESSION_VOTE,
-    POLL_SESSION_FINISHED
+    VOTE_POLL
 } from './actionTypes';
-
-/**
- * Adds a new poll to the Redux state.
- *
- * @param {{
- *     poll: Object,
- *     choices: Object,
- *     question: Object
- * }} payload - Expectes three objects that represent the poll.
- * @returns {{
- *     type: POLL_SESSION_STARTED,
- *     poll: Object,
- *     question: Object,
- *     choices: Object
- * }}
- */
-export function addPoll(payload: Object) {
-    return {
-        type: POLL_SESSION_STARTED,
-        ...payload
-    };
-}
 
 /**
  * Called by local user to end current poll.
@@ -49,12 +27,12 @@ export function endPoll() {
  * Update Redux state to end current poll.
  *
  * @returns {{
- *     type: POLL_SESSION_FINISHED
+ *     type: POLL_ENDED
  * }}
  */
-export function finishPoll() {
+export function endedPoll() {
     return {
-        type: POLL_SESSION_FINISHED
+        type: POLL_ENDED
     };
 }
 
@@ -64,14 +42,9 @@ export function finishPoll() {
  * @returns {{}}
  */
 export function showPollEndNotification() {
-    const props = {
+    return showNotification({
         titleKey: 'polls.endNotificationTitle',
         descriptionKey: 'polls.endNotificationBody'
-    };
-
-    return showNotification({
-        isDismissAllowed: true,
-        ...props
     });
 }
 
@@ -81,13 +54,9 @@ export function showPollEndNotification() {
  * @returns {{}}
  */
 export function showPollStartNotification() {
-    const props = {
+    return showNotification({
         titleKey: 'polls.startNotificationTitle',
         descriptionKey: 'polls.startNotificationBody'
-    };
-
-    return showNotification({
-        ...props
     });
 }
 
@@ -115,18 +84,24 @@ export function startPoll(payload: Object) {
 }
 
 /**
- * Update Redux state about a user's vote.
+ * Adds a new poll to the Redux state.
  *
- * @param {Object} choice - Option voted for.
+ * @param {{
+ *     poll: Object,
+ *     choices: Object,
+ *     question: Object
+ * }} payload - Expectes three objects that represent the poll.
  * @returns {{
- *     type: POLL_SESSION_VOTE,
- *     choice: Object
+ *     type: POLL_STARTED,
+ *     poll: Object,
+ *     question: Object,
+ *     choices: Object
  * }}
  */
-export function updateVote(choice: Object) {
+export function startedPoll(payload: Object) {
     return {
-        type: POLL_SESSION_VOTE,
-        choice
+        type: POLL_STARTED,
+        ...payload
     };
 }
 
@@ -143,5 +118,21 @@ export function vote(choiceID: string) {
     return {
         type: VOTE_POLL,
         choiceID
+    };
+}
+
+/**
+ * Update Redux state about a user's vote.
+ *
+ * @param {Object} choice - Option voted for.
+ * @returns {{
+ *     type: POLL_VOTED,
+ *     choice: Object
+ * }}
+ */
+export function voted(choice: Object) {
+    return {
+        type: POLL_VOTED,
+        choice
     };
 }

@@ -2,9 +2,9 @@
 
 import { ReducerRegistry } from '../base/redux';
 import {
-    POLL_SESSION_STARTED,
-    POLL_SESSION_VOTE,
-    POLL_SESSION_FINISHED
+    POLL_ENDED,
+    POLL_STARTED,
+    POLL_VOTED
 } from './actionTypes';
 
 const DEFAULT_STATE = {
@@ -32,13 +32,13 @@ const DEFAULT_STATE = {
 
 ReducerRegistry.register('features/polls', (state = DEFAULT_STATE, action) => {
     switch (action.type) {
-    case POLL_SESSION_FINISHED: {
+    case POLL_ENDED: {
         return {
             ...state,
             currentPoll: null
         };
     }
-    case POLL_SESSION_STARTED: {
+    case POLL_STARTED: {
         const { poll, question, choices } = action;
 
         return {
@@ -58,7 +58,7 @@ ReducerRegistry.register('features/polls', (state = DEFAULT_STATE, action) => {
             }
         };
     }
-    case POLL_SESSION_VOTE: {
+    case POLL_VOTED: {
         const { choice } = action;
 
         return {
