@@ -8,8 +8,6 @@ import {
     Container
 } from '../../base/react';
 
-import { getPastPolls } from '../functions';
-
 import PollChoice from './PollChoice';
 
 
@@ -69,23 +67,22 @@ class PollResultsForm extends Component<Props, *> {
         );
     }
 
-    _renderPoll: (string, number) => React$Node;
+    _renderPoll: (string) => React$Node;
 
     /**
      * Render a given Poll results.
      *
      * @param {string} id - ID of the poll.
-     * @param {number} num - Number of item in list.
      * @returns {React$Node}
      */
-    _renderPoll(id: string, num: number) {
+    _renderPoll(id: string) {
         const poll = this.props.polls[id];
         const question = this.props.questions[poll.question];
         const renderedChoices = poll.choices.map(this._renderPollChoice);
 
         return (
             <Container
-                key = { num.toString() } >
+                key = { id } >
                 <text
                     id = 'pollQuestion'>
                     { question.text }
@@ -115,7 +112,7 @@ class PollResultsForm extends Component<Props, *> {
         const { choices, userID } = this.props;
         const choice = choices[item];
         const numberOfVotes = choice.votes.length;
-        const selected = choice.votes.findIndex(x => x === userID) > -1;
+        const selected = choice.votes.includes(userID);
 
         return (
             <PollChoice
@@ -128,6 +125,25 @@ class PollResultsForm extends Component<Props, *> {
         );
     }
 
+}
+
+/**
+ * Filter current poll from previous polls.
+ *
+ * @param {Object} polls - Object contating all polls by ID.
+ * @param {string} currentPoll - Current Poll ID or null.
+ * @returns {Object} - Object with past polls only.
+ */
+function _getPastPolls(polls: Object, currentPoll: ?string): Object {
+    const filtered = Object.keys(polls)
+        .filter(key => key !== currentPoll)
+        .reduce((obj, key) => {
+            obj[key] = polls[key];
+
+            return obj;
+        }, {});
+
+    return filtered;
 }
 
 /**
@@ -152,7 +168,7 @@ function _mapStateToProps(state: Object) {
 
     return {
         choices,
-        polls: getPastPolls(polls, currentPoll),
+        polls: _getPastPolls(polls, currentPoll),
         userID,
         questions
     };
