@@ -17,18 +17,17 @@
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
 
-#import "InviteController.h"
 #import "JitsiMeetViewDelegate.h"
 
 @interface JitsiMeetView : UIView
 
 @property (class, copy, nonatomic, nullable) NSString *conferenceActivityType;
 
+@property (nonatomic) NSDictionary *colorScheme;
+
 @property (copy, nonatomic, nullable) NSURL *defaultURL;
 
 @property (nonatomic, nullable, weak) id<JitsiMeetViewDelegate> delegate;
-
-@property (nonatomic, readonly, nonnull) JMInviteController *inviteController;
 
 @property (nonatomic) BOOL pictureInPictureEnabled;
 

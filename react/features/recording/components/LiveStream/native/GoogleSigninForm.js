@@ -1,10 +1,12 @@
 // @flow
 
 import React, { Component } from 'react';
-import { Platform, Text, View } from 'react-native';
+import { Text, View } from 'react-native';
 import { connect } from 'react-redux';
 
+import { _abstractMapStateToProps } from '../../../../base/dialog';
 import { translate } from '../../../../base/i18n';
+import { StyleType } from '../../../../base/styles';
 
 import {
     GOOGLE_API_STATES,
@@ -22,6 +24,11 @@ const logger = require('jitsi-meet-logger').getLogger(__filename);
  * Prop type of the component {@code GoogleSigninForm}.
  */
 type Props = {
+
+    /**
+     * Style of the dialogs feature.
+     */
+    _dialogStyles: StyleType,
 
     /**
      * The Redux dispatch Function.
@@ -74,18 +81,6 @@ class GoogleSigninForm extends Component<Props> {
      * @inheritdoc
      */
     componentDidMount() {
-        if (Platform.OS === 'ios') {
-            const majorVersionIOS = parseInt(Platform.Version, 10);
-
-            if (majorVersionIOS <= 10) {
-                // Disable it on iOS 10 and earlier, since it doesn't work
-                // properly.
-                this._setApiState(GOOGLE_API_STATES.NOT_AVAILABLE);
-
-                return;
-            }
-        }
-
         googleApi.hasPlayServices()
             .then(() => {
                 googleApi.configure({
@@ -114,7 +109,7 @@ class GoogleSigninForm extends Component<Props> {
      * @inheritdoc
      */
     render() {
-        const { t } = this.props;
+        const { _dialogStyles, t } = this.props;
         const { googleAPIState, googleResponse } = this.props;
         const signedInUser = googleResponse
             && googleResponse.user
@@ -133,7 +128,11 @@ class GoogleSigninForm extends Component<Props> {
         return (
             <View style = { styles.formWrapper }>
                 <View style = { styles.helpText }>
-                    <Text style = { styles.text }>
+                    <Text
+                        style = { [
+                            _dialogStyles.text,
+                            styles.text
+                        ] }>
                         { userInfo }
                     </Text>
                 </View>
@@ -237,6 +236,7 @@ function _mapStateToProps(state: Object) {
     const { googleAPIState, googleResponse } = state['features/google-api'];
 
     return {
+        ..._abstractMapStateToProps(state),
         googleAPIState,
         googleResponse
     };

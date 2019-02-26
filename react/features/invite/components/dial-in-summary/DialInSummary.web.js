@@ -56,9 +56,9 @@ type State = {
     loading: boolean,
 
     /**
-     * The dial-in numbers. entered by the local participant.
+     * The dial-in numbers to be displayed.
      */
-    numbers: ?Array<Object>,
+    numbers: ?Array<Object> | ?Object,
 
     /**
      * Whether or not dial-in is allowed.
@@ -143,6 +143,7 @@ class DialInSummary extends Component<Props, State> {
                 conferenceID
                     ? <ConferenceID
                         conferenceID = { conferenceID }
+                        conferenceName = { this.props.room }
                         key = 'conferenceID' />
                     : null,
                 <NumbersList
@@ -190,13 +191,25 @@ class DialInSummary extends Component<Props, State> {
      * @returns {Promise}
      */
     _getNumbers() {
-        const { dialInNumbersUrl } = config;
+        const { room } = this.props;
+        const { dialInNumbersUrl, hosts } = config;
+        const mucURL = hosts && hosts.muc;
+        let URLSuffix = '';
 
         if (!dialInNumbersUrl) {
             return Promise.reject(this.props.t('info.dialInNotSupported'));
         }
 
-        return fetch(dialInNumbersUrl)
+        // when room and mucURL are available
+        // provide conference when looking up dial in numbers
+
+        if (room && mucURL) {
+            URLSuffix = `?conference=${room}@${mucURL}`;
+        }
+        const conferenceIDURL
+        = `${dialInNumbersUrl}${URLSuffix}`;
+
+        return fetch(conferenceIDURL)
             .then(response => response.json())
             .catch(() => Promise.reject(this.props.t('info.genericError')));
     }
@@ -226,17 +239,22 @@ class DialInSummary extends Component<Props, State> {
      * Callback invoked when fetching dial-in numbers succeeds. Sets the
      * internal to show the numbers.
      *
-     * @param {Object} response - The response from fetching dial-in numbers.
+     * @param {Array|Object} response - The response from fetching
+     * dial-in numbers.
      * @param {Array|Object} response.numbers - The dial-in numbers.
-     * @param {boolean} reponse.numbersEnabled - Whether or not dial-in is
-     * enabled.
+     * @param {boolean} response.numbersEnabled - Whether or not dial-in is
+     * enabled, old syntax that is deprecated.
      * @private
      * @returns {void}
      */
-    _onGetNumbersSuccess({ numbers, numbersEnabled }) {
+    _onGetNumbersSuccess(
+            response: Array<Object> | { numbersEnabled?: boolean }) {
+
         this.setState({
-            numbersEnabled,
-            numbers
+            numbersEnabled:
+                Array.isArray(response)
+                    ? response.length > 0 : response.numbersEnabled,
+            numbers: response
         });
     }
 

@@ -66,7 +66,7 @@ RCT_EXPORT_METHOD(authorize:(RCTPromiseResolveBlock)resolve
         [DBClientsManager authorizeFromController:[UIApplication sharedApplication]
                                        controller:[[self class] topMostController]
                                           openURL:^(NSURL *url) {
-                                              [[UIApplication sharedApplication] openURL:url];
+                                              [[UIApplication sharedApplication] openURL:url options:@{} completionHandler:nil];
                                           }];
     });
 }
@@ -132,26 +132,24 @@ RCT_EXPORT_METHOD(getSpaceUsage: (NSString *)token
     if (authResult) {
         if ([authResult isSuccess]) {
             currentResolve(authResult.accessToken.accessToken);
-            currentResolve = nil;
-            currentReject = nil;
         } else {
             NSString *msg;
             if ([authResult isError]) {
-                msg = [NSString stringWithFormat:@"%@, error type: %ld",[authResult errorDescription], [authResult errorType]];
+                msg = [NSString stringWithFormat:@"%@, error type: %zd",[authResult errorDescription], [authResult errorType]];
             } else {
                 msg = @"OAuth canceled!";
             }
             currentReject(@"authorize", msg, nil);
-            currentResolve = nil;
-            currentReject = nil;
         }
+        currentResolve = nil;
+        currentReject = nil;
+
         return YES;
     }
     return NO;
 }
 
-+ (UIViewController *)topMostController
-{
++ (UIViewController *)topMostController {
     UIViewController *topController
         = [UIApplication sharedApplication].keyWindow.rootViewController;
     

@@ -1,3 +1,6 @@
+// @flow
+
+import { ColorSchemeRegistry, schemeColor } from '../../base/color-scheme';
 import { ColorPalette } from '../../base/styles';
 import { FILMSTRIP_SIZE } from '../constants';
 
@@ -134,19 +137,6 @@ export default {
         position: 'absolute'
     },
 
-    /**
-     * Pinned video thumbnail style.
-     */
-    thumbnailPinned: {
-        borderColor: ColorPalette.blue,
-        shadowColor: ColorPalette.black,
-        shadowOffset: {
-            height: 5,
-            width: 5
-        },
-        shadowRadius: 5
-    },
-
     tileView: {
         alignSelf: 'center'
     },
@@ -160,3 +150,36 @@ export default {
         justifyContent: 'center'
     }
 };
+
+/**
+ * Color schemed styles for the @{code Thumbnail} component.
+ */
+ColorSchemeRegistry.register('Thumbnail', {
+
+    /**
+     * Tinting style of the on-stage participant thumbnail.
+     */
+    activeThumbnailTint: {
+        backgroundColor: schemeColor('activeParticipantTint')
+    },
+
+    /**
+     * Coloring if the thumbnail background.
+     */
+    participantViewStyle: {
+        backgroundColor: schemeColor('background')
+    },
+
+    /**
+     * Pinned video thumbnail style.
+     */
+    thumbnailPinned: {
+        borderColor: schemeColor('activeParticipantHighlight'),
+        shadowColor: schemeColor('activeParticipantHighlight'),
+        shadowOffset: {
+            height: 5,
+            width: 5
+        },
+        shadowRadius: 5
+    }
+});

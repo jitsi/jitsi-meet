@@ -52,7 +52,11 @@ case "$1" in
         db_set jitsi-meet/jvb-hostname $JVB_HOSTNAME
 
         NGINX_INSTALL_CHECK="$(dpkg-query -f '${Status}' -W 'nginx' 2>/dev/null | awk '{print $3}' || true)"
-        if [ "$NGINX_INSTALL_CHECK" = "installed" ] || [ "$NGINX_INSTALL_CHECK" = "unpacked" ] ; then
+        NGINX_EXTRAS_INSTALL_CHECK="$(dpkg-query -f '${Status}' -W 'nginx-extras' 2>/dev/null | awk '{print $3}' || true)"
+        if [ "$NGINX_INSTALL_CHECK" = "installed" ] \
+           || [ "$NGINX_INSTALL_CHECK" = "unpacked" ] \
+           || [ "$NGINX_EXTRAS_INSTALL_CHECK" = "installed" ] \
+           || [ "$NGINX_EXTRAS_INSTALL_CHECK" = "unpacked" ] ; then
             FORCE_NGINX="true"
         fi
         APACHE_INSTALL_CHECK="$(dpkg-query -f '${Status}' -W 'apache2' 2>/dev/null | awk '{print $3}' || true)"

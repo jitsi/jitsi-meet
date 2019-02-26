@@ -9,10 +9,10 @@ import { translate } from '../../i18n';
 import { JitsiParticipantConnectionStatus } from '../../lib-jitsi-meet';
 import {
     MEDIA_TYPE,
-    shouldRenderVideoTrack,
     VideoTrack
 } from '../../media';
 import { Container, TintedView } from '../../react';
+import { StyleType } from '../../styles';
 import { TestHint } from '../../testing/components';
 import { getTrackByMediaTypeAndParticipant } from '../../tracks';
 
@@ -20,7 +20,8 @@ import Avatar from './Avatar';
 import {
     getAvatarURL,
     getParticipantById,
-    getParticipantDisplayName
+    getParticipantDisplayName,
+    shouldRenderParticipantVideo
 } from '../functions';
 import styles from './styles';
 
@@ -28,14 +29,6 @@ import styles from './styles';
  * The type of the React {@link Component} props of {@link ParticipantView}.
  */
 type Props = {
-
-    /**
-     * The indicator which determines whether conferencing is in audio-only
-     * mode.
-     *
-     * @private
-     */
-    _audioOnly: boolean,
 
     /**
      * The source (e.g. URI, URL) of the avatar image of the participant with
@@ -60,6 +53,11 @@ type Props = {
      * @private
      */
     _participantName: string,
+
+    /**
+     * True if the video should be rendered, false otherwise.
+     */
+    _renderVideo: boolean,
 
     /**
      * The video Track of the participant with {@link #participantId}.
@@ -99,6 +97,11 @@ type Props = {
      * avatar is rendered.
      */
     tintEnabled: boolean,
+
+    /**
+     * The style of the tinting when applied.
+     */
+    tintStyle: StyleType,
 
     /**
      * The test hint id which can be used to locate the {@code ParticipantView}
@@ -189,34 +192,24 @@ class ParticipantView extends Component<Props> {
      */
     render() {
         const {
-            onPress,
             _avatar: avatar,
             _connectionStatus: connectionStatus,
-            _videoTrack: videoTrack
+            _renderVideo: renderVideo,
+            _videoTrack: videoTrack,
+            onPress,
+            tintStyle
         } = this.props;
 
-        // Is the video to be rendered?
-        // FIXME It's currently impossible to have true as the value of
-        // waitForVideoStarted because videoTrack's state videoStarted will be
-        // updated only after videoTrack is rendered.
-        // XXX Note that, unlike on web, we don't render video when the
-        // connection status is interrupted, this is because the renderer
-        // doesn't retain the last frame forever, so we would end up with a
-        // black screen.
         const waitForVideoStarted = false;
-        const renderVideo
-            = !this.props._audioOnly
-                && (connectionStatus
-                    === JitsiParticipantConnectionStatus.ACTIVE)
-                && shouldRenderVideoTrack(videoTrack, waitForVideoStarted);
 
         // Is the avatar to be rendered?
         const renderAvatar = Boolean(!renderVideo && avatar);
 
         // If the connection has problems, we will "tint" the video / avatar.
+        const connectionProblem
+            = connectionStatus !== JitsiParticipantConnectionStatus.ACTIVE;
         const useTint
-            = connectionStatus !== JitsiParticipantConnectionStatus.ACTIVE
-                || this.props.tintEnabled;
+            = connectionProblem || this.props.tintEnabled;
 
         const testHintId
             = this.props.testHintId
@@ -253,7 +246,9 @@ class ParticipantView extends Component<Props> {
                 { useTint
 
                     // If the connection has problems, tint the video / avatar.
-                    && <TintedView /> }
+                    && <TintedView
+                        style = {
+                            connectionProblem ? undefined : tintStyle } /> }
 
                 { this.props.useConnectivityInfoLabel
                     && this._renderConnectionInfo(connectionStatus) }
@@ -271,10 +266,10 @@ class ParticipantView extends Component<Props> {
  * associated (instance of) {@code ParticipantView}.
  * @private
  * @returns {{
- *     _audioOnly: boolean,
  *     _avatar: string,
  *     _connectionStatus: string,
  *     _participantName: string,
+ *     _renderVideo: boolean,
  *     _videoTrack: Track
  * }}
  */
@@ -308,12 +303,12 @@ function _mapStateToProps(state, ownProps) {
     }
 
     return {
-        _audioOnly: state['features/base/conference'].audioOnly,
         _avatar: avatar,
         _connectionStatus:
             connectionStatus
                 || JitsiParticipantConnectionStatus.ACTIVE,
         _participantName: participantName,
+        _renderVideo: shouldRenderParticipantVideo(state, participantId),
         _videoTrack:
             getTrackByMediaTypeAndParticipant(
                 state['features/base/tracks'],

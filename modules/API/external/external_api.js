@@ -23,6 +23,7 @@ const commands = {
     displayName: 'display-name',
     email: 'email',
     hangup: 'video-hangup',
+    subject: 'subject',
     submitFeedback: 'submit-feedback',
     toggleAudio: 'toggle-audio',
     toggleChat: 'toggle-chat',
@@ -42,16 +43,19 @@ const events = {
     'display-name-change': 'displayNameChange',
     'email-change': 'emailChange',
     'feedback-submitted': 'feedbackSubmitted',
+    'feedback-prompt-displayed': 'feedbackPromptDisplayed',
     'incoming-message': 'incomingMessage',
     'outgoing-message': 'outgoingMessage',
     'participant-joined': 'participantJoined',
     'participant-left': 'participantLeft',
+    'proxy-connection-event': 'proxyConnectionEvent',
     'video-ready-to-close': 'readyToClose',
     'video-conference-joined': 'videoConferenceJoined',
     'video-conference-left': 'videoConferenceLeft',
     'video-availability-changed': 'videoAvailabilityChanged',
     'video-mute-status-changed': 'videoMuteStatusChanged',
-    'screen-sharing-status-changed': 'screenSharingStatusChanged'
+    'screen-sharing-status-changed': 'screenSharingStatusChanged',
+    'subject-change': 'subjectChange'
 };
 
 /**
@@ -541,6 +545,9 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
      * Executes command. The available commands are:
      * {@code displayName} - Sets the display name of the local participant to
      * the value passed in the arguments array.
+     * {@code subject} - Sets the subject of the conference, the value passed
+     * in the arguments array. Note: available only for moderator.
+     *
      * {@code toggleAudio} - Mutes / unmutes audio with no arguments.
      * {@code toggleVideo} - Mutes / unmutes video with no arguments.
      * {@code toggleFilmStrip} - Hides / shows the filmstrip with no arguments.
@@ -741,6 +748,25 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
      */
     removeEventListeners(eventList) {
         eventList.forEach(event => this.removeEventListener(event));
+    }
+
+    /**
+     * Passes an event along to the local conference participant to establish
+     * or update a direct peer connection. This is currently used for developing
+     * wireless screensharing with room integration and it is advised against to
+     * use as its api may change.
+     *
+     * @param {Object} event - An object with information to pass along.
+     * @param {Object} event.data - The payload of the event.
+     * @param {string} event.from - The jid of the sender of the event. Needed
+     * when a reply is to be sent regarding the event.
+     * @returns {void}
+     */
+    sendProxyConnectionEvent(event) {
+        this._transport.sendEvent({
+            data: [ event ],
+            name: 'proxy-connection-event'
+        });
     }
 
     /**

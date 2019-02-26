@@ -10,6 +10,7 @@ import {
 } from '../../../react/features/base/lib-jitsi-meet';
 import { VIDEO_TYPE } from '../../../react/features/base/media';
 import {
+    getLocalParticipant as getLocalParticipantFromStore,
     getPinnedParticipant,
     pinParticipant
 } from '../../../react/features/base/participants';
@@ -73,6 +74,16 @@ function getAllThumbnails() {
         localVideoThumbnail,
         ...Object.values(remoteVideos)
     ];
+}
+
+/**
+ * Private helper to get the redux representation of the local participant.
+ *
+ * @private
+ * @returns {Object}
+ */
+function getLocalParticipant() {
+    return getLocalParticipantFromStore(APP.store.getState());
 }
 
 /**
@@ -181,7 +192,7 @@ const VideoLayout = {
     },
 
     changeLocalVideo(stream) {
-        const localId = APP.conference.getMyUserId();
+        const localId = getLocalParticipant().id;
 
         this.onVideoTypeChanged(localId, stream.videoType);
 
@@ -198,7 +209,7 @@ const VideoLayout = {
      */
     mucJoined() {
         if (largeVideo && !largeVideo.id) {
-            this.updateLargeVideo(APP.conference.getMyUserId(), true);
+            this.updateLargeVideo(getLocalParticipant().id, true);
         }
 
         // FIXME: replace this call with a generic update call once SmallVideo
@@ -302,7 +313,7 @@ const VideoLayout = {
         // Go with local video
         logger.info('Fallback to local video...');
 
-        const id = APP.conference.getMyUserId();
+        const { id } = getLocalParticipant();
 
         logger.info(`electLastVisibleVideo: ${id}`);
 

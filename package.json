@@ -37,6 +37,7 @@
     "@webcomponents/url": "0.7.1",
     "amplitude-js": "4.5.2",
     "dropbox": "4.0.9",
+    "i18n-iso-countries": "3.7.8",
     "i18next": "8.4.3",
     "i18next-browser-languagedetector": "2.0.0",
     "i18next-xhr-backend": "1.4.2",
@@ -50,7 +51,7 @@
     "jsc-android": "224109.1.0",
     "jsrsasign": "8.0.12",
     "jwt-decode": "2.2.0",
-    "lib-jitsi-meet": "github:jitsi/lib-jitsi-meet#b596bc7d288e1f8f3fa95eace66c6ab13d73a2c3",
+    "lib-jitsi-meet": "github:jitsi/lib-jitsi-meet#5a9fc76739bcf0bed50676c7be160f688f3a19b5",
     "libflacjs": "github:mmig/libflac.js#93d37e7f811f01cf7d8b6a603e38bd3c3810907d",
     "lodash": "4.17.11",
     "moment": "2.19.4",
@@ -64,7 +65,7 @@
     "react-native": "0.57.8",
     "react-native-background-timer": "2.1.1",
     "react-native-calendar-events": "1.6.4",
-    "react-native-callstats": "3.53.4",
+    "react-native-callstats": "3.57.1",
     "react-native-fast-image": "5.1.1",
     "react-native-gifted-chat": "0.6.0",
     "react-native-google-signin": "1.0.2",
@@ -114,7 +115,7 @@
     "style-loader": "0.19.0",
     "webpack": "4.26.1",
     "webpack-cli": "3.1.2",
-    "webpack-dev-server": "3.1.10"
+    "webpack-dev-server": "3.1.14"
   },
   "engines": {
     "node": ">=8.0.0",

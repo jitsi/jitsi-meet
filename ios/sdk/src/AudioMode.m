@@ -19,25 +19,28 @@
 
 #import <React/RCTBridgeModule.h>
 #import <React/RCTLog.h>
-
-@interface AudioMode : NSObject<RCTBridgeModule>
-
-@property(nonatomic, strong) dispatch_queue_t workerQueue;
-
-@end
-
-@implementation AudioMode {
-    NSString *_category;
-    NSString *_mode;
-}
-
-RCT_EXPORT_MODULE();
+#import <WebRTC/WebRTC.h>
 
 typedef enum {
     kAudioModeDefault,
     kAudioModeAudioCall,
     kAudioModeVideoCall
 } JitsiMeetAudioMode;
+
+@interface AudioMode : NSObject<RCTBridgeModule, RTCAudioSessionDelegate>
+
+@property(nonatomic, strong) dispatch_queue_t workerQueue;
+
+@end
+
+@implementation AudioMode {
+    JitsiMeetAudioMode activeMode;
+    RTCAudioSessionConfiguration *defaultConfig;
+    RTCAudioSessionConfiguration *audioCallConfig;
+    RTCAudioSessionConfiguration *videoCallConfig;
+}
+
+RCT_EXPORT_MODULE();
 
 + (BOOL)requiresMainQueueSetup {
     return NO;
@@ -54,14 +57,32 @@ typedef enum {
 - (instancetype)init {
     self = [super init];
     if (self) {
-        _category = nil;
-        _mode = nil;
-
         dispatch_queue_attr_t attributes =
         dispatch_queue_attr_make_with_qos_class(DISPATCH_QUEUE_SERIAL,
                                                 QOS_CLASS_USER_INITIATED, -1);
         _workerQueue = dispatch_queue_create("AudioMode.queue", attributes);
+
+        activeMode = kAudioModeDefault;
+
+        defaultConfig = [[RTCAudioSessionConfiguration alloc] init];
+        defaultConfig.category = AVAudioSessionCategoryAmbient;
+        defaultConfig.categoryOptions = 0;
+        defaultConfig.mode = AVAudioSessionModeDefault;
+
+        audioCallConfig = [[RTCAudioSessionConfiguration alloc] init];
+        audioCallConfig.category = AVAudioSessionCategoryPlayAndRecord;
+        audioCallConfig.categoryOptions = AVAudioSessionCategoryOptionAllowBluetooth;
+        audioCallConfig.mode = AVAudioSessionModeVoiceChat;
+
+        videoCallConfig = [[RTCAudioSessionConfiguration alloc] init];
+        videoCallConfig.category = AVAudioSessionCategoryPlayAndRecord;
+        videoCallConfig.categoryOptions = AVAudioSessionCategoryOptionAllowBluetooth;
+        videoCallConfig.mode = AVAudioSessionModeVideoChat;
+
+        RTCAudioSession *session = [RTCAudioSession sharedInstance];
+        [session addDelegate:self];
     }
+
     return self;
 }
 
@@ -70,95 +91,74 @@ typedef enum {
     return _workerQueue;
 }
 
-- (void)routeChanged:(NSNotification*)notification {
-    NSInteger reason
-        = [[notification.userInfo
-                valueForKey:AVAudioSessionRouteChangeReasonKey]
-            integerValue];
+- (BOOL)setConfig:(RTCAudioSessionConfiguration *)config
+            error:(NSError * _Nullable *)outError {
 
-    switch (reason) {
-    case AVAudioSessionRouteChangeReasonCategoryChange: {
-        // The category has changed. Check if it's the one we want and adjust as
-        // needed. This notification is posted on a secondary thread, so make
-        // sure we switch to our worker thread.
-        dispatch_async(_workerQueue, ^{
-            [self setCategory:self->_category mode:self->_mode error:nil];
-        });
-        break;
-    }
-    default:
-        // Do nothing.
-        break;
-    }
+    RTCAudioSession *session = [RTCAudioSession sharedInstance];
+    [session lockForConfiguration];
+    BOOL success = [session setConfiguration:config error:outError];
+    [session unlockForConfiguration];
+
+    return success;
 }
 
-- (BOOL)setCategory:(NSString *)category
-               mode:(NSString *)mode
-              error:(NSError * _Nullable *)outError {
-    AVAudioSession *session = [AVAudioSession sharedInstance];
-
-    if (session.category != category
-            && ![session setCategory:category error:outError]) {
-        RCTLogError(@"Failed to (re)apply specified AVAudioSession category!");
-        return NO;
-    }
-
-    if (session.mode != mode && ![session setMode:mode error:outError]) {
-        RCTLogError(@"Failed to (re)apply specified AVAudioSession mode!");
-        return NO;
-    }
-
-    return YES;
-}
+#pragma mark - Exported methods
 
 RCT_EXPORT_METHOD(setMode:(int)mode
                   resolve:(RCTPromiseResolveBlock)resolve
                    reject:(RCTPromiseRejectBlock)reject) {
-    NSString *avCategory;
-    NSString *avMode;
+    RTCAudioSessionConfiguration *config;
     NSError *error;
 
     switch (mode) {
     case kAudioModeAudioCall:
-        avCategory = AVAudioSessionCategoryPlayAndRecord;
-        avMode = AVAudioSessionModeVoiceChat;
+        config = audioCallConfig;
         break;
     case kAudioModeDefault:
-        avCategory = AVAudioSessionCategorySoloAmbient;
-        avMode = AVAudioSessionModeDefault;
+        config = defaultConfig;
         break;
     case kAudioModeVideoCall:
-        avCategory = AVAudioSessionCategoryPlayAndRecord;
-        avMode = AVAudioSessionModeVideoChat;
+        config = videoCallConfig;
         break;
     default:
         reject(@"setMode", @"Invalid mode", nil);
         return;
     }
 
-    if (![self setCategory:avCategory mode:avMode error:&error] || error) {
+    activeMode = mode;
+
+    if ([self setConfig:config error:&error]) {
+        resolve(nil);
+    } else {
         reject(@"setMode", error.localizedDescription, error);
-        return;
     }
+}
 
-    // Even though the specified category and mode were successfully set, the
-    // AVAudioSession is a singleton and other parts of the application such as
-    // WebRTC may undo the settings. Make sure that the settings are reapplied
-    // upon undoes.
-    if (!_category || !_mode) {
-        [[NSNotificationCenter defaultCenter]
-            addObserver:self
-               selector:@selector(routeChanged:)
-                   name:AVAudioSessionRouteChangeNotification
-                 object:nil];
+#pragma mark - RTCAudioSessionDelegate
+
+- (void)audioSessionDidChangeRoute:(RTCAudioSession *)session
+                            reason:(AVAudioSessionRouteChangeReason)reason
+                     previousRoute:(AVAudioSessionRouteDescription *)previousRoute {
+    if (reason == AVAudioSessionRouteChangeReasonCategoryChange) {
+        // The category has changed. Check if it's the one we want and adjust as
+        // needed. This notification is posted on a secondary thread, so make
+        // sure we switch to our worker thread.
+        dispatch_async(_workerQueue, ^{
+            // We don't want to touch the category when in default mode.
+            // This is to play well with other components which could be integrated
+            // into the final application.
+            if (self->activeMode != kAudioModeDefault) {
+                NSLog(@"Audio route changed, reapplying RTCAudioSession config");
+                RTCAudioSessionConfiguration *config
+                    = self->activeMode == kAudioModeAudioCall ? self->audioCallConfig : self->videoCallConfig;
+                [self setConfig:config error:nil];
+            }
+        });
     }
+}
 
-    // Save the desired/specified category and mode so that they may be
-    // reapplied (upon undoes as described above).
-    _category = avCategory;
-    _mode = avMode;
-
-    resolve(nil);
+- (void)audioSession:(RTCAudioSession *)audioSession didSetActive:(BOOL)active {
+    NSLog(@"[AudioMode] Audio session didSetActive:%d", active);
 }
 
 @end

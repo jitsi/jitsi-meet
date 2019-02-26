@@ -5,6 +5,9 @@ import { View, Text, TextInput, TouchableOpacity } from 'react-native';
 import { connect } from 'react-redux';
 
 import { translate } from '../../../i18n';
+import { StyleType } from '../../../styles';
+
+import { _abstractMapStateToProps } from '../../functions';
 
 import { type State as AbstractState } from '../AbstractDialog';
 
@@ -17,6 +20,11 @@ import {
 
 type Props = {
     ...BaseProps,
+
+    /**
+     * The color-schemed stylesheet of the feature.
+     */
+    _dialogStyles: StyleType,
 
     /**
      * The untranslated i18n key for the field label on the dialog.
@@ -63,7 +71,7 @@ class InputDialog extends BaseDialog<Props, State> {
      * @inheritdoc
      */
     _renderContent() {
-        const { okDisabled, t } = this.props;
+        const { _dialogStyles, okDisabled, t } = this.props;
 
         return (
             <View>
@@ -72,12 +80,12 @@ class InputDialog extends BaseDialog<Props, State> {
                         brandedDialog.mainWrapper,
                         styles.fieldWrapper
                     ] }>
-                    <Text style = { styles.fieldLabel }>
+                    <Text style = { _dialogStyles.fieldLabel }>
                         { t(this.props.contentKey) }
                     </Text>
                     <TextInput
                         onChangeText = { this._onChangeText }
-                        style = { styles.field }
+                        style = { _dialogStyles.field }
                         underlineColorAndroid = { FIELD_UNDERLINE }
                         value = { this.state.fieldValue }
                         { ...this.props.textInputProps } />
@@ -91,7 +99,7 @@ class InputDialog extends BaseDialog<Props, State> {
                             brandedDialog.buttonFarLeft,
                             brandedDialog.buttonFarRight
                         ] }>
-                        <Text style = { brandedDialog.text }>
+                        <Text style = { _dialogStyles.text }>
                             { t('dialog.Ok') }
                         </Text>
                     </TouchableOpacity>
@@ -130,4 +138,4 @@ class InputDialog extends BaseDialog<Props, State> {
     }
 }
 
-export default translate(connect()(InputDialog));
+export default translate(connect(_abstractMapStateToProps)(InputDialog));

@@ -1,6 +1,6 @@
 # Jitsi Meet API
 
-You can use the Jitsi Meet API to embed Jitsi Meet in to your application.
+You can use the Jitsi Meet API to embed Jitsi Meet in to your application. You are also welcome to use it for embedding the globally distributed and highly available deployment on meet.jit.si itself. The only thing we ask for in that case is that you please DO NOT remove the jitsi.org logo from the top left corner.
 
 ## Installation
 
@@ -76,6 +76,11 @@ The `command` parameter is String object with the name of the command. The follo
 * **displayName** - Sets the display name of the local participant. This command requires one argument - the new display name to be set.
 ```javascript
 api.executeCommand('displayName', 'New Nickname');
+```
+
+* **subject** - Sets the subject of the conference. This command requires one argument - the new subject to be set.
+```javascript
+api.executeCommand('subject', 'New Conference Subject');
 ```
 
 * **toggleAudio** - Mutes / unmutes the audio for the local participant. No arguments are required.
@@ -250,6 +255,14 @@ changes. The listener will receive an object with the following structure:
 ```
 
 * **readyToClose** - event notification fired when Jitsi Meet is ready to be closed (hangup operations are completed).
+
+* **subjectChange** - event notifications about subject of conference changes. 
+The listener will receive an object with the following structure:
+```javascript
+{
+"subject": subject // the new subject
+}
+```
 
 You can also add multiple event listeners by using `addEventListeners`.
 This method requires one argument of type Object. The object argument must

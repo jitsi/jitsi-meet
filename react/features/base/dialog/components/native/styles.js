@@ -2,12 +2,12 @@
 
 import { StyleSheet } from 'react-native';
 
+import { ColorSchemeRegistry, schemeColor } from '../../../color-scheme';
 import { BoxModel, ColorPalette, createStyleSheet } from '../../../styles';
 
 import { PREFERRED_DIALOG_SIZE } from '../../constants';
 
 const BORDER_RADIUS = 5;
-const DIALOG_BORDER_COLOR = 'rgba(255, 255, 255, 0.2)';
 
 export const FIELD_UNDERLINE = ColorPalette.transparent;
 
@@ -21,47 +21,6 @@ export const MD_ITEM_HEIGHT = 48;
 export const MD_ITEM_MARGIN_PADDING = 16;
 
 export const PLACEHOLDER_COLOR = ColorPalette.lightGrey;
-
-/**
- * Default styles for the items of a {@code BottomSheet}-based menu.
- *
- * These have been implemented as per the Material Design guidelines:
- * {@link https://material.io/guidelines/components/bottom-sheets.html}.
- */
-const bottomSheetItemStyles = createStyleSheet({
-    /**
-     * Container style for a generic item rendered in the menu.
-     */
-    style: {
-        alignItems: 'center',
-        flexDirection: 'row',
-        height: MD_ITEM_HEIGHT
-    },
-
-    /**
-     * Style for the {@code Icon} element in a generic item of the menu.
-     */
-    iconStyle: {
-        color: ColorPalette.white,
-        fontSize: 24
-    },
-
-    /**
-     * Style for the label in a generic item rendered in the menu.
-     */
-    labelStyle: {
-        color: ColorPalette.white,
-        flexShrink: 1,
-        fontSize: MD_FONT_SIZE,
-        marginLeft: 32,
-        opacity: 0.90
-    }
-});
-
-export const bottomSheetItemStylesCombined = {
-    ...bottomSheetItemStyles,
-    underlayColor: ColorPalette.overflowMenuItemUnderlay
-};
 
 /**
  * The React {@code Component} styles of {@code BottomSheet}. These have
@@ -94,16 +53,6 @@ export const bottomSheetStyles = createStyleSheet({
     overlay: {
         ...StyleSheet.absoluteFillObject,
         backgroundColor: 'rgba(127, 127, 127, 0.6)'
-    },
-
-    /**
-     * Bottom sheet's base style.
-     */
-    sheet: {
-        backgroundColor: 'rgb(0, 3, 6)',
-        flex: 1,
-        paddingHorizontal: MD_ITEM_MARGIN_PADDING,
-        paddingVertical: 8
     }
 });
 
@@ -131,36 +80,15 @@ export const brandedDialog = createStyleSheet({
         borderBottomRightRadius: BORDER_RADIUS
     },
 
-    buttonSeparator: {
-        borderRightColor: DIALOG_BORDER_COLOR,
-        borderRightWidth: 1
-    },
-
     buttonWrapper: {
         alignItems: 'stretch',
         borderRadius: BORDER_RADIUS,
         flexDirection: 'row'
     },
 
-    closeStyle: {
-        color: ColorPalette.white,
-        fontSize: MD_FONT_SIZE
-    },
-
     closeWrapper: {
         alignSelf: 'flex-end',
         padding: BoxModel.padding
-    },
-
-    dialog: {
-        alignItems: 'stretch',
-        backgroundColor: 'rgb(0, 3, 6)',
-        borderColor: DIALOG_BORDER_COLOR,
-        borderRadius: BORDER_RADIUS,
-        borderWidth: 1,
-        flex: 1,
-        flexDirection: 'column',
-        maxWidth: PREFERRED_DIALOG_SIZE
     },
 
     mainWrapper: {
@@ -179,56 +107,135 @@ export const brandedDialog = createStyleSheet({
         flexDirection: 'row',
         justifyContent: 'center',
         padding: 30
-    },
-
-    text: {
-        color: ColorPalette.white,
-        fontSize: MD_FONT_SIZE,
-        textAlign: 'center'
     }
 });
 
 /**
- * The React {@code Component} styles of {@code Dialog}.
+ * Reusable (colored) style for text in any branded dialogs.
  */
-export const dialog = createStyleSheet({
-    /**
-     * The style of the {@code Text} in a {@code Dialog} button.
-     */
-    buttonText: {
-        color: ColorPalette.blue
-    },
-
-    /**
-     * The style of the {@code Text} in a {@code Dialog} button which is
-     * disabled.
-     */
-    disabledButtonText: {
-        color: ColorPalette.darkGrey
-    }
-});
+const brandedDialogText = {
+    color: schemeColor('text'),
+    fontSize: MD_FONT_SIZE,
+    textAlign: 'center'
+};
 
 export const inputDialog = createStyleSheet({
     bottomField: {
         marginBottom: 0
     },
 
-    field: {
-        ...brandedDialog.text,
-        borderBottomWidth: 1,
-        borderColor: DIALOG_BORDER_COLOR,
-        margin: BoxModel.margin,
-        textAlign: 'left'
-    },
-
-    fieldLabel: {
-        ...brandedDialog.text,
-        margin: BoxModel.margin,
-        textAlign: 'left'
-    },
-
     fieldWrapper: {
         ...brandedDialog.mainWrapper,
         paddingBottom: BoxModel.padding * 2
+    }
+});
+
+/**
+ * Default styles for the items of a {@code BottomSheet}-based menu.
+ *
+ * These have been implemented as per the Material Design guidelines:
+ * {@link https://material.io/guidelines/components/bottom-sheets.html}.
+ */
+ColorSchemeRegistry.register('BottomSheet', {
+    /**
+     * Style for the {@code Icon} element in a generic item of the menu.
+     */
+    iconStyle: {
+        color: schemeColor('icon'),
+        fontSize: 24
+    },
+
+    /**
+     * Style for the label in a generic item rendered in the menu.
+     */
+    labelStyle: {
+        color: schemeColor('label'),
+        flexShrink: 1,
+        fontSize: MD_FONT_SIZE,
+        marginLeft: 32,
+        opacity: 0.90
+    },
+
+    /**
+     * Bottom sheet's base style.
+     */
+    sheet: {
+        backgroundColor: schemeColor('background'),
+        flex: 1,
+        paddingHorizontal: MD_ITEM_MARGIN_PADDING,
+        paddingVertical: 8
+    },
+
+    /**
+     * Container style for a generic item rendered in the menu.
+     */
+    style: {
+        alignItems: 'center',
+        flexDirection: 'row',
+        height: MD_ITEM_HEIGHT
+    },
+
+    /**
+     * Additional style that is not directly used as a style object.
+     */
+    underlayColor: ColorPalette.overflowMenuItemUnderlay
+});
+
+/**
+ * Color schemed styles for all the component based on the abstract dialog.
+ */
+ColorSchemeRegistry.register('Dialog', {
+    /**
+     * Separator line for the buttons in a dialog.
+     */
+    buttonSeparator: {
+        borderRightColor: schemeColor('border'),
+        borderRightWidth: 1
+    },
+
+    /**
+     * Style of the close icon on a dialog.
+     */
+    closeStyle: {
+        color: schemeColor('icon'),
+        fontSize: MD_FONT_SIZE
+    },
+
+    /**
+     * Base style of the dialogs.
+     */
+    dialog: {
+        alignItems: 'stretch',
+        backgroundColor: schemeColor('background'),
+        borderColor: schemeColor('border'),
+        borderRadius: BORDER_RADIUS,
+        borderWidth: 1,
+        flex: 1,
+        flexDirection: 'column',
+        maxWidth: PREFERRED_DIALOG_SIZE
+    },
+
+    /**
+     * Field on an input dialog.
+     */
+    field: {
+        ...brandedDialogText,
+        borderBottomWidth: 1,
+        borderColor: schemeColor('border'),
+        margin: BoxModel.margin,
+        textAlign: 'left'
+    },
+
+    /**
+     * Style for the field label on an input dialog.
+     */
+    fieldLabel: {
+        ...brandedDialogText,
+        margin: BoxModel.margin,
+        textAlign: 'left'
+    },
+
+    text: {
+        ...brandedDialogText
     }
 });

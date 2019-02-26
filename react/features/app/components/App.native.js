@@ -5,6 +5,7 @@ import { Linking } from 'react-native';
 
 import '../../analytics';
 import '../../authentication';
+import { setColorScheme } from '../../base/color-scheme';
 import { DialogContainer } from '../../base/dialog';
 import '../../base/jwt';
 import { Platform } from '../../base/react';
@@ -15,7 +16,7 @@ import {
 import '../../google-api';
 import '../../mobile/audio-mode';
 import '../../mobile/background';
-import '../../mobile/callkit';
+import '../../mobile/call-integration';
 import '../../mobile/external-api';
 import '../../mobile/full-screen';
 import '../../mobile/permissions';
@@ -36,14 +37,9 @@ const logger = require('jitsi-meet-logger').getLogger(__filename);
 type Props = AbstractAppProps & {
 
     /**
-     * Whether the add people feature is enabled.
+     * An object of colors that override the default colors of the app/sdk.
      */
-    addPeopleEnabled: boolean,
-
-    /**
-     * Whether the dial-out feature is enabled.
-     */
-    dialOutEnabled: boolean,
+    colorScheme: Object,
 
     /**
      * Whether Picture-in-Picture is enabled. If {@code true}, a toolbar button
@@ -66,6 +62,8 @@ type Props = AbstractAppProps & {
  * @extends AbstractApp
  */
 export class App extends AbstractApp {
+    _init: Promise<*>;
+
     /**
      * Initializes a new {@code App} instance.
      *
@@ -95,6 +93,12 @@ export class App extends AbstractApp {
      */
     componentDidMount() {
         super.componentDidMount();
+
+        this._init.then(() => {
+            // We set the color scheme early enough so then we avoid any
+            // unnecessary re-renders.
+            this.state.store.dispatch(setColorScheme(this.props.colorScheme));
+        });
 
         Linking.addEventListener('url', this._onLinkingURL);
     }

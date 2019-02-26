@@ -121,9 +121,7 @@ class InfoDialog extends Component<Props, State> {
         let phoneNumber = state.phoneNumber;
 
         if (!state.phoneNumber && props.dialIn.numbers) {
-            const { defaultCountry, numbers } = props.dialIn;
-
-            phoneNumber = _getDefaultPhoneNumber(numbers, defaultCountry);
+            phoneNumber = _getDefaultPhoneNumber(props.dialIn);
         }
 
         return {
@@ -157,11 +155,9 @@ class InfoDialog extends Component<Props, State> {
     constructor(props: Props) {
         super(props);
 
-        const { defaultCountry, numbers } = props.dialIn;
-
-        if (numbers) {
+        if (props.dialIn && props.dialIn.numbers) {
             this.state.phoneNumber
-                = _getDefaultPhoneNumber(numbers, defaultCountry);
+                = _getDefaultPhoneNumber(props.dialIn.numbers);
         }
 
         /**

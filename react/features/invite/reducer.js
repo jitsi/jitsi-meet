@@ -1,15 +1,16 @@
 // @flow
 
-import { assign, ReducerRegistry } from '../base/redux';
+import { ReducerRegistry } from '../base/redux';
 
 import {
-    _SET_EMITTER_SUBSCRIPTIONS,
     ADD_PENDING_INVITE_REQUEST,
     REMOVE_PENDING_INVITE_REQUESTS,
     SET_CALLEE_INFO_VISIBLE,
     UPDATE_DIAL_IN_NUMBERS_FAILED,
     UPDATE_DIAL_IN_NUMBERS_SUCCESS
 } from './actionTypes';
+
+const logger = require('jitsi-meet-logger').getLogger(__filename);
 
 const DEFAULT_STATE = {
     /**
@@ -26,9 +27,6 @@ const DEFAULT_STATE = {
 
 ReducerRegistry.register('features/invite', (state = DEFAULT_STATE, action) => {
     switch (action.type) {
-    case _SET_EMITTER_SUBSCRIPTIONS:
-        return (
-            assign(state, 'emitterSubscriptions', action.emitterSubscriptions));
     case ADD_PENDING_INVITE_REQUEST:
         return {
             ...state,
@@ -37,6 +35,7 @@ ReducerRegistry.register('features/invite', (state = DEFAULT_STATE, action) => {
                 action.request
             ]
         };
+
     case REMOVE_PENDING_INVITE_REQUESTS:
         return {
             ...state,
@@ -57,17 +56,24 @@ ReducerRegistry.register('features/invite', (state = DEFAULT_STATE, action) => {
         };
 
     case UPDATE_DIAL_IN_NUMBERS_SUCCESS: {
-        const {
-            defaultCountry,
-            numbers,
-            numbersEnabled
-        } = action.dialInNumbers;
+        if (Array.isArray(action.dialInNumbers)) {
+            return {
+                ...state,
+                conferenceID: action.conferenceID,
+                numbers: action.dialInNumbers,
+                numbersEnabled: true
+            };
+        }
+
+        // this is the old format which is deprecated
+        logger.warn('Using deprecated API for retrieving phone numbers');
+
+        const { numbersEnabled } = action.dialInNumbers;
 
         return {
             ...state,
             conferenceID: action.conferenceID,
-            defaultCountry,
-            numbers,
+            numbers: action.dialInNumbers,
             numbersEnabled
         };
     }

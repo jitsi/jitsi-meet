@@ -41,7 +41,7 @@ const _URI_PATH_PATTERN = '([^?#]*)';
  *
  * @type {string}
  */
-export const URI_PROTOCOL_PATTERN = '([a-z][a-z0-9\\.\\+-]*:)';
+export const URI_PROTOCOL_PATTERN = '^([a-z][a-z0-9\\.\\+-]*:)';
 
 /**
  * Excludes/removes certain characters from a specific room (name) which are
@@ -71,7 +71,7 @@ function _fixRoom(room: ?string) {
  * @returns {string}
  */
 function _fixURIStringScheme(uri: string) {
-    const regex = new RegExp(`^${URI_PROTOCOL_PATTERN}+`, 'gi');
+    const regex = new RegExp(`${URI_PROTOCOL_PATTERN}+`, 'gi');
     const match: Array<string> | null = regex.exec(uri);
 
     if (match) {
@@ -175,7 +175,7 @@ export function parseStandardURIString(str: string) {
     str = str.replace(/\s/g, '');
 
     // protocol
-    regex = new RegExp(`^${URI_PROTOCOL_PATTERN}`, 'gi');
+    regex = new RegExp(URI_PROTOCOL_PATTERN, 'gi');
     match = regex.exec(str);
     if (match) {
         obj.protocol = match[1].toLowerCase();

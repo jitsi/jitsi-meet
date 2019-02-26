@@ -4,7 +4,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 
 import { translate } from '../../../../base/i18n';
-import { ConfirmDialog, CustomSubmitDialog } from '../../../../base/dialog';
+import { CustomSubmitDialog } from '../../../../base/dialog';
 
 import AbstractStartRecordingDialog, {
     mapStateToProps
@@ -27,19 +27,12 @@ class StartRecordingDialog extends AbstractStartRecordingDialog {
         const { isTokenValid, isValidating, spaceLeft, userName } = this.state;
         const { _isDropboxEnabled } = this.props;
 
-        if (!_isDropboxEnabled) {
-            return (
-                <ConfirmDialog
-                    contentKey = 'recording.startRecordingBody'
-                    onSubmit = { this._onSubmit } />
-            );
-        }
-
         return (
             <CustomSubmitDialog
-                okDisabled = { !isTokenValid }
+                okDisabled = { _isDropboxEnabled && !isTokenValid }
                 onSubmit = { this._onSubmit } >
                 <StartRecordingDialogContent
+                    integrationsEnabled = { _isDropboxEnabled }
                     isTokenValid = { isTokenValid }
                     isValidating = { isValidating }
                     spaceLeft = { spaceLeft }

@@ -146,7 +146,7 @@ var config = {
     desktopSharingChromeExtId: null,
 
     // Whether desktop sharing should be disabled on Chrome.
-    desktopSharingChromeDisabled: true,
+    // desktopSharingChromeDisabled: false,
 
     // The media sources to use when using screen sharing with the Chrome
     // extension.
@@ -156,7 +156,7 @@ var config = {
     desktopSharingChromeMinExtVersion: '0.1',
 
     // Whether desktop sharing should be disabled on Firefox.
-    desktopSharingFirefoxDisabled: false,
+    // desktopSharingFirefoxDisabled: false,
 
     // Optional desktop sharing frame rate options. Default value: min:5, max:5.
     // desktopSharingFrameRate: {

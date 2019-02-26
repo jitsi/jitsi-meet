@@ -53,6 +53,11 @@ public class JitsiMeetActivity
         = (int) (Math.random() * Short.MAX_VALUE);
 
     /**
+     * A color scheme object to override the default color is the SDK.
+     */
+    private Bundle colorScheme;
+
+    /**
      * The default base {@code URL} used to join a conference when a partial URL
      * (e.g. a room name only) is specified. The value is used only while
      * {@link #view} equals {@code null}.
@@ -120,6 +125,7 @@ public class JitsiMeetActivity
 
         // XXX Before calling JitsiMeetView#loadURL, make sure to call whatever
         // is documented to need such an order in order to take effect:
+        view.setColorScheme(colorScheme);
         view.setDefaultURL(defaultURL);
         if (pictureInPictureEnabled != null) {
             view.setPictureInPictureEnabled(
@@ -284,6 +290,17 @@ public class JitsiMeetActivity
     @Override
     public void requestPermissions(String[] permissions, int requestCode, PermissionListener listener) {
         ReactActivityLifecycleCallbacks.requestPermissions(this, permissions, requestCode, listener);
+    }
+
+    /**
+     * @see JitsiMeetView#setColorScheme(Bundle)
+     */
+    public void setColorScheme(Bundle colorScheme) {
+        if (view == null) {
+            this.colorScheme = colorScheme;
+        } else {
+            view.setColorScheme(colorScheme);
+        }
     }
 
     /**

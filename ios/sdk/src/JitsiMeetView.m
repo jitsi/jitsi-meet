@@ -22,9 +22,9 @@
 #import <React/RCTLinkingManager.h>
 #import <React/RCTRootView.h>
 
+#import <RNGoogleSignin/RNGoogleSignin.h>
+
 #import "Dropbox.h"
-#import "Invite+Private.h"
-#import "InviteController+Private.h"
 #import "JitsiMeetView+Private.h"
 #import "RCTBridgeWrapper.h"
 
@@ -146,6 +146,13 @@ static NSMapTable<NSString *, JitsiMeetView *> *views;
         return YES;
     }
 
+    if ([RNGoogleSignin application:app
+                            openURL:url
+                  sourceApplication:options[UIApplicationOpenURLOptionsSourceApplicationKey]
+                         annotation:options[UIApplicationOpenURLOptionsAnnotationKey]]) {
+        return YES;
+    }
+
     // XXX At least twice we received bug reports about malfunctioning loadURL
     // in the Jitsi Meet SDK while the Jitsi Meet app seemed to functioning as
     // expected in our testing. But that was to be expected because the app does
@@ -224,12 +231,10 @@ static NSMapTable<NSString *, JitsiMeetView *> *views;
         props[@"defaultURL"] = [self.defaultURL absoluteString];
     }
 
+    props[@"colorScheme"] = self.colorScheme;
     props[@"externalAPIScope"] = externalAPIScope;
     props[@"pictureInPictureEnabled"] = @(self.pictureInPictureEnabled);
     props[@"welcomePageEnabled"] = @(self.welcomePageEnabled);
-
-    props[@"addPeopleEnabled"] = @(_inviteController.addPeopleEnabled);
-    props[@"dialOutEnabled"] = @(_inviteController.dialOutEnabled);
 
     // XXX If urlObject is nil, then it must appear as undefined in the
     // JavaScript source code so that we check the launchOptions there.
@@ -410,10 +415,6 @@ static NSMapTable<NSString *, JitsiMeetView *> *views;
     // Hook this JitsiMeetView into ExternalAPI.
     externalAPIScope = [NSUUID UUID].UUIDString;
     [views setObject:self forKey:externalAPIScope];
-
-    _inviteController
-        = [[JMInviteController alloc] initWithExternalAPIScope:externalAPIScope
-                                                 bridgeWrapper:bridgeWrapper];
 
     // Set a background color which is in accord with the JavaScript and Android
     // parts of the application and causes less perceived visual flicker than

@@ -60,6 +60,13 @@ function initCommands() {
             sendAnalytics(createApiEvent('display.name.changed'));
             APP.conference.changeLocalDisplayName(displayName);
         },
+        'proxy-connection-event': event => {
+            APP.conference.onProxyConnectionEvent(event);
+        },
+        'subject': subject => {
+            sendAnalytics(createApiEvent('subject.changed'));
+            APP.conference.setSubject(subject);
+        },
         'submit-feedback': feedback => {
             sendAnalytics(createApiEvent('submit.feedback'));
             APP.conference.submitFeedback(feedback.score, feedback.message);
@@ -257,6 +264,20 @@ class API {
         this._sendEvent({
             name: 'large-video-visibility-changed',
             isVisible: !isHidden
+        });
+    }
+
+    /**
+     * Notifies the external application (spot) that the local jitsi-participant
+     * has a status update.
+     *
+     * @param {Object} event - The message to pass onto spot.
+     * @returns {void}
+     */
+    sendProxyConnectionEvent(event: Object) {
+        this._sendEvent({
+            name: 'proxy-connection-event',
+            ...event
         });
     }
 
@@ -521,6 +542,16 @@ class API {
     }
 
     /**
+     * Notify external application (if API is enabled) that the feedback prompt
+     * has been displayed.
+     *
+     * @returns {void}
+     */
+    notifyFeedbackPromptDisplayed() {
+        this._sendEvent({ name: 'feedback-prompt-displayed' });
+    }
+
+    /**
      * Notify external application (if API is enabled) that the screen sharing
      * has been turned on/off.
      *
@@ -531,6 +562,20 @@ class API {
         this._sendEvent({
             name: 'screen-sharing-status-changed',
             on
+        });
+    }
+
+    /**
+     * Notify external application (if API is enabled) that the conference
+     * changed their subject.
+     *
+     * @param {string} subject - Conference subject.
+     * @returns {void}
+     */
+    notifySubjectChanged(subject: string) {
+        this._sendEvent({
+            name: 'subject-change',
+            subject
         });
     }
 

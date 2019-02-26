@@ -7,6 +7,23 @@ declare type StyleSheet = Object;
 export type StyleType = StyleSheet | Array<StyleSheet>;
 
 /**
+ * RegExp pattern for long HEX color format.
+ */
+const HEX_LONG_COLOR_FORMAT
+    = /^#([0-9A-F]{2,2})([0-9A-F]{2,2})([0-9A-F]{2,2})$/i;
+
+/**
+ * RegExp pattern for short HEX color format.
+ */
+const HEX_SHORT_COLOR_FORMAT
+    = /^#([0-9A-F]{1,1})([0-9A-F]{1,1})([0-9A-F]{1,1})$/i;
+
+/**
+ * RegExp pattern for RGB color format.
+ */
+const RGB_COLOR_FORMAT = /^rgb\((\d{1,3}),\s*(\d{1,3}),\s*(\d{1,3})\)$/i;
+
+/**
  * The list of the well-known style properties which may not be numbers on Web
  * but must be numbers on React Native.
  *
@@ -85,6 +102,49 @@ export function fixAndroidViewClipping<T: StyleSheet>(styles: T): T {
     }
 
     return styles;
+}
+
+/**
+ * Returns an rgba format of the provided color if it's in hex or rgb format.
+ *
+ * NOTE: The function will return the same color if it's not in one of those
+ * two formats (e.g. 'white').
+ *
+ * @param {string} color - The string representation of the color in rgb or hex
+ * format.
+ * @param {number} alpha - The alpha value to apply.
+ * @returns {string}
+ */
+export function getRGBAFormat(color: string, alpha: number): string {
+    let match = color.match(HEX_LONG_COLOR_FORMAT);
+
+    if (match) {
+        return `#${match[1]}${match[2]}${match[3]}${_getAlphaInHex(alpha)}`;
+    }
+
+    match = color.match(HEX_SHORT_COLOR_FORMAT);
+    if (match) {
+        return `#${match[1]}${match[1]}${match[2]}${match[2]}${match[3]}${
+            match[3]}${_getAlphaInHex(alpha)}`;
+    }
+
+    match = color.match(RGB_COLOR_FORMAT);
+    if (match) {
+        return `rgba(${match[1]}, ${match[2]}, ${match[3]}, ${alpha})`;
+    }
+
+    return color;
+}
+
+/**
+ * Converts an [0..1] alpha value into HEX.
+ *
+ * @param {number} alpha - The alpha value to convert.
+ * @returns {string}
+ */
+function _getAlphaInHex(alpha: number): string {
+    return Number(Math.round(255 * alpha)).toString(16)
+        .padStart(2, '0');
 }
 
 /**
