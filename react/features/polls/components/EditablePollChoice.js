@@ -44,32 +44,34 @@ class EditablePollChoice extends Component<Props, *> {
     constructor(props: Props) {
         super(props);
 
-        this._onClickHandler = this._onClickHandler.bind(this);
-        this._onTextChange = this._onTextChange.bind(this);
+        this._onDeleteChoiceClicked = this._onDeleteChoiceClicked.bind(this);
+        this._onChoiceTextChanged = this._onChoiceTextChanged.bind(this);
     }
 
-    _onClickHandler: () => void;
+    _onDeleteChoiceClicked: () => void;
 
     /**
-     * Handles button click.
+     * Event handler when the delete button of the choice is clicked. Call's
+     * parent event handler passing the choice ID.
      *
      * @returns {void}
      */
-    _onClickHandler() {
+    _onDeleteChoiceClicked() {
         const { id, onDelete } = this.props;
 
         onDelete(id);
     }
 
-    _onTextChange: (Object) => void;
+    _onChoiceTextChanged: (Object) => void;
 
     /**
-     * Text change event handler.
+     * Event handler when the poll choice text has been modified. Call's
+     * parent event handler passing the choice ID and new text.
      *
      * @param {Object} event - Text change event.
      * @returns {void}
      */
-    _onTextChange(event: Object) {
+    _onChoiceTextChanged(event: Object) {
         const { id, onTextChange } = this.props;
 
         onTextChange(id, event.target.value);
@@ -92,14 +94,14 @@ class EditablePollChoice extends Component<Props, *> {
                         <FieldTextStateless
                             id = 'pollChoiceText'
                             isLabelHidden = { true }
-                            onChange = { this._onTextChange }
+                            onChange = { this._onChoiceTextChanged }
                             onKeyDown = { onKeyDown }
                             shouldFitContainer = { true }
                             value = { text } />
 
                         <span
                             className = 'pollChoiceRemoveButton'
-                            onClick = { this._onClickHandler } >
+                            onClick = { this._onDeleteChoiceClicked } >
                             ×
                         </span>
                     </div>

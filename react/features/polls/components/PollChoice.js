@@ -5,7 +5,7 @@ import React, { Component } from 'react';
 type Props = {
 
     /**
-     * Item ID in list.
+     * The ID of the choice.
      */
     id: string,
 
@@ -60,36 +60,34 @@ class PollChoice extends Component<Props, *> {
         const { disabled, selected, text, votes } = this.props;
         const textCSSClass = disabled ? 'pollChoiceDisabledText'
             : 'pollChoiceEnabledText';
-        const renderedRadioButton = (
-            <div
-                className = 'pollVoteButtonContainer' >
-                <input
-                    checked = { selected }
-                    id = 'pollVoteButton'
-                    onClick = { this._onVoteChange }
-                    type = { 'radio' } />
-            </div>
-        );
 
         return (
             <li>
                 <div
                     className = 'pollChoiceContainer' >
-                    { !disabled && renderedRadioButton}
+                    {
+                        !disabled
+                        && <div
+                            className = 'pollVoteButtonContainer' >
+                            <input
+                                checked = { selected }
+                                id = 'pollVoteButton'
+                                onClick = { this._onVoteChange }
+                                type = { 'radio' } />
+                        </div>
+                    }
                     <div
                         className = 'pollChoiceTextContainer' >
-                        <text
+                        <span
                             className = { textCSSClass }
                             onClick = { this._onVoteChange } >
                             { text }
-                        </text>
+                        </span>
                     </div>
 
                     <div
                         className = 'pollChoiceVotesContainer' >
-                        <label>
-                            { votes }
-                        </label>
+                        { votes }
                     </div>
                 </div>
             </li>
@@ -99,18 +97,15 @@ class PollChoice extends Component<Props, *> {
     _onVoteChange: () => void;
 
     /**
-     * Radio Button for voting check change.
+     * Event handler when user click either the choice text or radio button.
+     * Call's parent element event handler passing the ID of the chosen choice.
      *
      * @returns {void}
      */
     _onVoteChange() {
         const { disabled, id, onVote } = this.props;
 
-        if (disabled) {
-            return;
-        }
-
-        if (onVote) {
+        if (!disabled && onVote) {
             onVote(id);
         }
     }
