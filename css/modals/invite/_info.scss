@@ -166,6 +166,11 @@
         list-style: none;
         vertical-align: top;
     }
+
+    li.toll-free:empty:before {
+        content: '.';
+        visibility: hidden;
+    }
 }
 
 .dial-in-page {
