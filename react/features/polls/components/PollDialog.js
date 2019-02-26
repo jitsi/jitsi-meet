@@ -13,7 +13,6 @@ import {
     startPoll,
     vote
 } from '../actions';
-import { getUniquePollChoices } from '../functions';
 
 import PollCreateForm from './PollCreateForm';
 import PollResultsForm from './PollResultsForm';
@@ -79,6 +78,7 @@ class PollDialog extends Component<Props, State> {
         this._createNewPoll = this._createNewPoll.bind(this);
         this._createNewState = this._createNewState.bind(this);
         this._endPoll = this._endPoll.bind(this);
+        this._getUniquePollChoices = this._getUniquePollChoices.bind(this);
         this._onChoiceTextSubmit = this._onChoiceTextSubmit.bind(this);
         this._onQuestionTextChange = this._onQuestionTextChange.bind(this);
         this._onSubmit = this._onSubmit.bind(this);
@@ -160,19 +160,33 @@ class PollDialog extends Component<Props, State> {
     _createNewPoll() {
         const { question, choices, poll } = this.state;
         const { dispatch } = this.props;
-        const uniqueChoices = getUniquePollChoices(choices);
+        const newPoll = { ...poll };
+        const newQuestion = { ...question };
 
-        if (!question.text.trim() || Object.keys(uniqueChoices).length < 2) {
+        // check if question is not empty
+        newQuestion.text = newQuestion.text.trim();
+        if (!newQuestion.text) {
             return false;
         }
 
-        Object.keys(uniqueChoices).forEach(x => {
-            poll.choices.push(x);
+        // remove duplicate choices and ensure we have enough of them to start
+        // the poll
+        const uniqueChoices = this._getUniquePollChoices(choices);
+
+        if (Object.keys(uniqueChoices).length < 2) {
+            return false;
+        }
+
+        // update the list of choices in the poll to remove any duplicates
+        // that might have been present and removed by _getUniquePollChoices
+        newPoll.choices = [];
+        Object.keys(uniqueChoices).forEach(choice => {
+            newPoll.choices.push(choice);
         });
 
         const payload = {
-            poll,
-            question,
+            poll: newPoll,
+            question: newQuestion,
             choices: uniqueChoices
         };
 
@@ -234,6 +248,32 @@ class PollDialog extends Component<Props, State> {
         const { dispatch } = this.props;
 
         dispatch(endPoll());
+    }
+
+    _getUniquePollChoices: (Object) => Object;
+
+    /**
+     * Filter out duplicate choices.
+     *
+     * @param {Object} choices - Object containing choices listed by ID.
+     * @returns {Object}
+     */
+    _getUniquePollChoices(choices: Object) {
+        const newObj = {};
+        const seen = new Set<string>();
+
+        for (const key in choices) {
+            if (Object.prototype.hasOwnProperty.call(choices, key)) {
+                const text = choices[key].text.trim();
+
+                if (!seen.has(text) && text !== '') {
+                    newObj[key] = choices[key];
+                    seen.add(text);
+                }
+            }
+        }
+
+        return newObj;
     }
 
     _onChoiceTextSubmit: (Object) => void;
