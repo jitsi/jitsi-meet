@@ -18,31 +18,38 @@ import {
     finishPoll
 } from './actions';
 
-declare var APP: Object;
 declare var interfaceConfig : Object;
 
 MiddlewareRegistry.register(store => next => action => {
     switch (action.type) {
     case CONFERENCE_JOINED:
-        typeof APP === 'undefined'
-            || _addPollMsgListener(action.conference, store);
+        _addPollMsgListener(action.conference, store);
         break;
     case START_POLL: {
-        if (typeof APP !== 'undefined') {
-            const { poll, choices, question } = action;
+        const { conference } = store.getState()['features/base/conference'];
+        const { poll, choices, question } = action;
 
-            APP.conference.startPoll(poll, choices, question);
+        if (conference) {
+            conference.startPoll(poll, choices, question);
         }
         break;
     }
     case VOTE_POLL: {
+        const { conference } = store.getState()['features/base/conference'];
         const { choiceID } = action;
 
-        APP.conference.voteInPoll(choiceID);
+        if (conference) {
+            conference.voteInPoll(choiceID);
+        }
+
         break;
     }
     case END_POLL: {
-        APP.conference.endPoll();
+        const { conference } = store.getState()['features/base/conference'];
+
+        if (conference) {
+            conference.endPoll();
+        }
         break;
     }
     }

@@ -2599,36 +2599,6 @@ export default {
     },
 
     /**
-     * Creates a new poll in the chat room.
-     * @param {Object} poll - Object that contain IDs of the poll's question
-     * and list of choices.
-     * @param {Object} choices - Object containing poll choices by their IDs
-     * as keys.
-     * @param {Object} question - Object with the actual text of the question
-     * asked in the poll.
-     * @returns {void}
-     */
-    startPoll(poll, choices, question) {
-        room.startPoll(poll, choices, question);
-    },
-
-    /**
-     * Update the user vote in the currently active poll.
-     * @param {string} choiceID - ID of the choice voted for.
-     */
-    voteInPoll(choiceID) {
-        room.voteInPoll(choiceID);
-    },
-
-    /**
-     * End the currently active poll.
-     * @returns {void}
-     */
-    endPoll() {
-        room.endPoll();
-    },
-
-    /**
      * Adds new listener.
      * @param {String} eventName the name of the event
      * @param {Function} listener the listener.
