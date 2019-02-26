@@ -229,6 +229,7 @@
         "passwordNotSupportedTitle": "Password not supported",
         "passwordRequired": "Password required",
         "permissionDenied": "Permission Denied",
+        "polls": "Polls",
         "popupError": "Your browser is blocking pop-up windows from this site. Please enable pop-ups in your browser's security settings and try again.",
         "popupErrorTitle": "Pop-up blocked",
         "recording": "Recording",
@@ -289,10 +290,7 @@
         "WaitingForHost": "Waiting for the host ...",
         "warning": "Warning",
         "Yes": "Yes",
-        "yourEntireScreen": "Your entire screen",
-        "polls": "Polls",
-        "startPoll": "Create",
-        "endPoll": "End"
+        "yourEntireScreen": "Your entire screen"
     },
     "dialOut": {
         "statusMessage": "is now __status__"
@@ -471,10 +469,12 @@
         "create": "Create Poll",
         "endNotificationBody": "Current Poll has been ended",
         "endNotificationTitle": "Poll Finished!",
+        "endPoll": "End",
         "placeholder": "Ask a question...",
         "results": "Poll Results",
         "startNotificationBody": "A Poll has been created",
         "startNotificationTitle": "Poll Started!",
+        "startPoll": "Create",
         "vote": "Vote"
     },
     "poweredby": "powered by",

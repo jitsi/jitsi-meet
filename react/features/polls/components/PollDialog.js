@@ -322,7 +322,7 @@ class PollDialog extends Component<Props, State> {
      */
     render() {
         const { isPollRunning, userID } = this.props;
-        const title = isPollRunning ? 'dialog.endPoll' : 'dialog.startPoll';
+        const title = isPollRunning ? 'polls.endPoll' : 'polls.startPoll';
         const tabs = isPollRunning ? [ {
             component: VoteForm,
             label: 'polls.vote',
