@@ -3,6 +3,7 @@
 export { default as AvatarListItem } from './AvatarListItem';
 export { default as BackButton } from './BackButton';
 export { default as Container } from './Container';
+export { default as ForwardButton } from './ForwardButton';
 export { default as Header } from './Header';
 export { default as HeaderLabel } from './HeaderLabel';
 export { default as Link } from './Link';

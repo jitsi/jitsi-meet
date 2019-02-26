@@ -364,6 +364,16 @@
         "title": "Share",
         "tooltip": "Share link and dial-in info for this meeting"
     },
+    "inviteDialog": {
+        "alertOk": "Ok",
+        "alertText": "Failed to invite some participants.",
+        "alertTitle": "Invite",
+        "header": "Invite",
+        "searchCallOnlyPlaceholder": "Enter phone number",
+        "searchPeopleOnlyPlaceholder": "Search for participants",
+        "searchPlaceholder": "Participant or phone number",
+        "send": "Send"
+    },
     "inlineDialogFailure": {
         "msg": "We stumbled a bit.",
         "retry": "Try again",

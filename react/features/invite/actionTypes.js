@@ -42,6 +42,16 @@ export const REMOVE_PENDING_INVITE_REQUESTS
 export const SET_CALLEE_INFO_VISIBLE = Symbol('SET_CALLEE_INFO_VISIBLE');
 
 /**
+ * The type of redux action which sets the invite dialog visible or invisible.
+ *
+ * {
+ *     type: SET_INVITE_DIALOG_VISIBLE,
+ *     visible: boolean
+ * }
+ */
+export const SET_INVITE_DIALOG_VISIBLE = Symbol('SET_INVITE_DIALOG_VISIBLE');
+
+/**
  * The type of the action which signals an error occurred while requesting dial-
  * in numbers.
  *

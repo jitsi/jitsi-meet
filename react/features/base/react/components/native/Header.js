@@ -38,7 +38,7 @@ export default class Header extends Component<Props> {
      * @returns {Object}
      */
     static get buttonStyle(): Object {
-        return styles.headerButton;
+        return styles.headerButtonIcon;
     }
 
     /**
