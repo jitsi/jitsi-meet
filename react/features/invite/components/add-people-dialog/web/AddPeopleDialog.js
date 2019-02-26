@@ -2,26 +2,27 @@
 
 import Avatar from '@atlaskit/avatar';
 import InlineMessage from '@atlaskit/inline-message';
-import React, { Component } from 'react';
+import React from 'react';
 import { connect } from 'react-redux';
 
-import { createInviteDialogEvent, sendAnalytics } from '../../analytics';
-import { Dialog, hideDialog } from '../../base/dialog';
-import { translate, translateToHTML } from '../../base/i18n';
-import { getLocalParticipant } from '../../base/participants';
-import { MultiSelectAutocomplete } from '../../base/react';
+import { createInviteDialogEvent, sendAnalytics } from '../../../../analytics';
+import { Dialog, hideDialog } from '../../../../base/dialog';
+import { translate, translateToHTML } from '../../../../base/i18n';
+import { getLocalParticipant } from '../../../../base/participants';
+import { MultiSelectAutocomplete } from '../../../../base/react';
 
-import { invite } from '../actions';
-import { getInviteResultsForQuery, getInviteTypeCounts } from '../functions';
-
-const logger = require('jitsi-meet-logger').getLogger(__filename);
+import AbstractAddPeopleDialog, {
+    type Props as AbstractProps,
+    type State,
+    _mapStateToProps as _abstractMapStateToProps
+} from '../AbstractAddPeopleDialog';
 
 declare var interfaceConfig: Object;
 
 /**
  * The type of the React {@code Component} props of {@link AddPeopleDialog}.
  */
-type Props = {
+type Props = AbstractProps & {
 
     /**
      * The {@link JitsiMeetConference} which will be used to invite "room"
@@ -30,39 +31,9 @@ type Props = {
     _conference: Object,
 
     /**
-     * The URL for validating if a phone number can be called.
-     */
-    _dialOutAuthUrl: string,
-
-    /**
      * Whether to show a footer text after the search results as a last element.
      */
     _footerTextEnabled: boolean,
-
-    /**
-     * The JWT token.
-     */
-    _jwt: string,
-
-    /**
-     * The query types used when searching people.
-     */
-    _peopleSearchQueryTypes: Array<string>,
-
-    /**
-     * The URL pointing to the service allowing for people search.
-     */
-    _peopleSearchUrl: string,
-
-    /**
-     * Whether or not to show Add People functionality.
-     */
-    addPeopleEnabled: boolean,
-
-    /**
-     * Whether or not to show Dial Out functionality.
-     */
-    dialOutEnabled: boolean,
 
     /**
      * The redux {@code dispatch} function.
@@ -76,31 +47,9 @@ type Props = {
 };
 
 /**
- * The type of the React {@code Component} state of {@link AddPeopleDialog}.
- */
-type State = {
-
-    /**
-     * Indicating that an error occurred when adding people to the call.
-     */
-    addToCallError: boolean,
-
-    /**
-     * Indicating that we're currently adding the new people to the
-     * call.
-     */
-    addToCallInProgress: boolean,
-
-    /**
-     * The list of invite items.
-     */
-    inviteItems: Array<Object>
-};
-
-/**
  * The dialog that allows to invite people to the call.
  */
-class AddPeopleDialog extends Component<Props, State> {
+class AddPeopleDialog extends AbstractAddPeopleDialog<Props, State> {
     _multiselect = null;
 
     _resourceClient: Object;
@@ -121,12 +70,10 @@ class AddPeopleDialog extends Component<Props, State> {
         super(props);
 
         // Bind event handlers so they are only bound once per instance.
-        this._isAddDisabled = this._isAddDisabled.bind(this);
         this._onItemSelected = this._onItemSelected.bind(this);
         this._onSelectionChange = this._onSelectionChange.bind(this);
         this._onSubmit = this._onSubmit.bind(this);
         this._parseQueryResults = this._parseQueryResults.bind(this);
-        this._query = this._query.bind(this);
         this._setMultiSelectElement = this._setMultiSelectElement.bind(this);
 
         this._resourceClient = {
@@ -183,25 +130,27 @@ class AddPeopleDialog extends Component<Props, State> {
      * @returns {ReactElement}
      */
     render() {
-        const { _footerTextEnabled,
-            addPeopleEnabled,
-            dialOutEnabled,
-            t } = this.props;
+        const {
+            _addPeopleEnabled,
+            _dialOutEnabled,
+            _footerTextEnabled,
+            t
+        } = this.props;
         let isMultiSelectDisabled = this.state.addToCallInProgress || false;
         let placeholder;
         let loadingMessage;
         let noMatches;
         let footerText;
 
-        if (addPeopleEnabled && dialOutEnabled) {
+        if (_addPeopleEnabled && _dialOutEnabled) {
             loadingMessage = 'addPeople.loading';
             noMatches = 'addPeople.noResults';
             placeholder = 'addPeople.searchPeopleAndNumbers';
-        } else if (addPeopleEnabled) {
+        } else if (_addPeopleEnabled) {
             loadingMessage = 'addPeople.loadingPeople';
             noMatches = 'addPeople.noResults';
             placeholder = 'addPeople.searchPeople';
-        } else if (dialOutEnabled) {
+        } else if (_dialOutEnabled) {
             loadingMessage = 'addPeople.loadingNumber';
             noMatches = 'addPeople.noValidNumbers';
             placeholder = 'addPeople.searchNumbers';
@@ -250,19 +199,9 @@ class AddPeopleDialog extends Component<Props, State> {
         );
     }
 
-    _isAddDisabled: () => boolean;
+    _invite: Array<Object> => Promise<*>
 
-    /**
-     * Indicates if the Add button should be disabled.
-     *
-     * @private
-     * @returns {boolean} - True to indicate that the Add button should
-     * be disabled, false otherwise.
-     */
-    _isAddDisabled() {
-        return !this.state.inviteItems.length
-            || this.state.addToCallInProgress;
-    }
+    _isAddDisabled: () => boolean;
 
     _onItemSelected: (Object) => Object;
 
@@ -300,12 +239,7 @@ class AddPeopleDialog extends Component<Props, State> {
     _onSubmit: () => void;
 
     /**
-     * Invite people and numbers to the conference. The logic works by inviting
-     * numbers, people/rooms, and videosipgw in parallel. All invitees are
-     * stored in an array. As each invite succeeds, the invitee is removed
-     * from the array. After all invites finish, close the modal if there are
-     * no invites left to send. If any are left, that means an invite failed
-     * and an error state should display.
+     * Submits the selection for inviting.
      *
      * @private
      * @returns {void}
@@ -313,45 +247,10 @@ class AddPeopleDialog extends Component<Props, State> {
     _onSubmit() {
         const { inviteItems } = this.state;
         const invitees = inviteItems.map(({ item }) => item);
-        const inviteTypeCounts = getInviteTypeCounts(invitees);
 
-        sendAnalytics(createInviteDialogEvent(
-            'clicked', 'inviteButton', {
-                ...inviteTypeCounts,
-                inviteAllowed: this._isAddDisabled()
-            }));
-
-        if (this._isAddDisabled()) {
-            return;
-        }
-
-        this.setState({
-            addToCallInProgress: true
-        });
-
-        const { dispatch } = this.props;
-
-        dispatch(invite(invitees))
+        this._invite(invitees)
             .then(invitesLeftToSend => {
-                // If any invites are left that means something failed to send
-                // so treat it as an error.
                 if (invitesLeftToSend.length) {
-                    const erroredInviteTypeCounts
-                        = getInviteTypeCounts(invitesLeftToSend);
-
-                    logger.error(`${invitesLeftToSend.length} invites failed`,
-                        erroredInviteTypeCounts);
-
-                    sendAnalytics(createInviteDialogEvent(
-                        'error', 'invite', {
-                            ...erroredInviteTypeCounts
-                        }));
-
-                    this.setState({
-                        addToCallInProgress: false,
-                        addToCallError: true
-                    });
-
                     const unsentInviteIDs
                         = invitesLeftToSend.map(invitee =>
                             invitee.id || invitee.number);
@@ -362,15 +261,9 @@ class AddPeopleDialog extends Component<Props, State> {
                     if (this._multiselect) {
                         this._multiselect.setSelectedItems(itemsToSelect);
                     }
-
-                    return;
+                } else {
+                    this.props.dispatch(hideDialog());
                 }
-
-                this.setState({
-                    addToCallInProgress: false
-                });
-
-                dispatch(hideDialog());
             });
     }
 
@@ -441,34 +334,6 @@ class AddPeopleDialog extends Component<Props, State> {
     }
 
     _query: (string) => Promise<Array<Object>>;
-
-    /**
-     * Performs a people and phone number search request.
-     *
-     * @param {string} query - The search text.
-     * @private
-     * @returns {Promise}
-     */
-    _query(query = '') {
-        const {
-            addPeopleEnabled,
-            dialOutEnabled,
-            _dialOutAuthUrl,
-            _jwt,
-            _peopleSearchQueryTypes,
-            _peopleSearchUrl
-        } = this.props;
-        const options = {
-            dialOutAuthUrl: _dialOutAuthUrl,
-            addPeopleEnabled,
-            dialOutEnabled,
-            jwt: _jwt,
-            peopleSearchQueryTypes: _peopleSearchQueryTypes,
-            peopleSearchUrl: _peopleSearchUrl
-        };
-
-        return getInviteResultsForQuery(query, options);
-    }
 
     /**
      * Renders the error message if the add doesn't succeed.
@@ -557,10 +422,7 @@ class AddPeopleDialog extends Component<Props, State> {
  */
 function _mapStateToProps(state) {
     const {
-        dialOutAuthUrl,
-        enableFeaturesBasedOnToken,
-        peopleSearchQueryTypes,
-        peopleSearchUrl
+        enableFeaturesBasedOnToken
     } = state['features/base/config'];
     let footerTextEnabled = false;
 
@@ -573,11 +435,8 @@ function _mapStateToProps(state) {
     }
 
     return {
-        _dialOutAuthUrl: dialOutAuthUrl,
-        _footerTextEnabled: footerTextEnabled,
-        _jwt: state['features/base/jwt'].jwt,
-        _peopleSearchQueryTypes: peopleSearchQueryTypes,
-        _peopleSearchUrl: peopleSearchUrl
+        ..._abstractMapStateToProps(state),
+        _footerTextEnabled: footerTextEnabled
     };
 }
 

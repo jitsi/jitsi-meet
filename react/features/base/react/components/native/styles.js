@@ -19,14 +19,24 @@ export const SIDEBAR_WIDTH = 250;
 export const UNDERLAY_COLOR = 'rgba(255, 255, 255, 0.2)';
 
 const HEADER_STYLES = {
+
+    disabledButtonText: {
+        opacity: 0.6
+    },
+
     /**
      * Platform specific header button (e.g. back, menu, etc).
      */
-    headerButton: {
+    headerButtonIcon: {
         alignSelf: 'center',
         color: ColorPalette.white,
         fontSize: 26,
         paddingRight: 22
+    },
+
+    headerButtonText: {
+        color: ColorPalette.white,
+        fontSize: 20
     },
 
     /**
@@ -42,6 +52,14 @@ const HEADER_STYLES = {
     headerText: {
         color: ColorPalette.white,
         fontSize: 20
+    },
+
+    headerTextWrapper: {
+        alignItems: 'center',
+        justifyContent: 'center',
+        left: 0,
+        position: 'absolute',
+        right: 0
     },
 
     /**
@@ -63,7 +81,7 @@ const HEADER_STYLES = {
         backgroundColor: HEADER_COLOR,
         flexDirection: 'row',
         height: HEADER_HEIGHT,
-        justifyContent: 'flex-start',
+        justifyContent: 'space-between',
         padding: HEADER_PADDING
     }
 };

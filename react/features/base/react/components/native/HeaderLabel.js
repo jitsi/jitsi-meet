@@ -1,7 +1,7 @@
 // @flow
 
 import React, { Component } from 'react';
-import { Text } from 'react-native';
+import { Text, View } from 'react-native';
 
 import { translate } from '../../../i18n';
 
@@ -35,12 +35,16 @@ class HeaderLabel extends Component<Props> {
      */
     render() {
         return (
-            <Text
-                style = { [
-                    styles.headerText
-                ] }>
-                { this.props.t(this.props.labelKey) }
-            </Text>
+            <View
+                pointerEvents = 'box-none'
+                style = { styles.headerTextWrapper }>
+                <Text
+                    style = { [
+                        styles.headerText
+                    ] }>
+                    { this.props.t(this.props.labelKey) }
+                </Text>
+            </View>
         );
     }
 }
