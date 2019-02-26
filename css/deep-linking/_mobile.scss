@@ -79,6 +79,11 @@
         .numbers-list {
             min-width: 150px;
         }
+
+        li.toll-free:empty:before {
+            content: '.';
+            visibility: hidden;
+        }
     }
 
     &__href {
