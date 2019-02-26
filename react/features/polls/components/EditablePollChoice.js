@@ -98,7 +98,7 @@ class EditablePollChoice extends Component<Props, *> {
                             value = { text } />
 
                         <span
-                            id = 'pollChoiceRemoveButton'
+                            className = 'pollChoiceRemoveButton'
                             onClick = { this._onClickHandler } >
                             ×
                         </span>

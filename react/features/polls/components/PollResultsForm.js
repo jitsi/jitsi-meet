@@ -94,7 +94,7 @@ class PollResultsForm extends Component<Props, *> {
                 <div
                     className = 'pollChoicesListContainer' >
                     <ul
-                        id = 'pollChoicesList' >
+                        className = 'pollChoicesList' >
                         { renderedChoices }
                     </ul>
                 </div>

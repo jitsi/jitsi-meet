@@ -90,7 +90,7 @@ class PollCreateForm extends Component<Props, *> {
                 <div
                     className = 'pollChoicesListContainer' >
                     <ul
-                        id = 'pollChoicesList' >
+                        className = 'pollChoicesList' >
                         { choices }
                     </ul>
                 </div>

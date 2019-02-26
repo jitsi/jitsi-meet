@@ -58,7 +58,7 @@ class PollChoice extends Component<Props, *> {
      */
     render() {
         const { disabled, selected, text, votes } = this.props;
-        const textCSSID = disabled ? 'pollChoiceDisabledText'
+        const textCSSClass = disabled ? 'pollChoiceDisabledText'
             : 'pollChoiceEnabledText';
         const renderedRadioButton = (
             <div
@@ -79,7 +79,7 @@ class PollChoice extends Component<Props, *> {
                     <div
                         className = 'pollChoiceTextContainer' >
                         <text
-                            id = { textCSSID }
+                            className = { textCSSClass }
                             onClick = { this._onVoteChange } >
                             { text }
                         </text>

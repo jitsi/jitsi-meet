@@ -3,17 +3,17 @@
     display: flex;
     margin: 10px;
 }
-#pollChoicesList {
+.pollChoicesList {
     list-style-type: none;
 }
-#pollChoiceDisabledText {
+.pollChoiceDisabledText {
     font-size: 14px;
 }
-#pollChoiceEnabledText {
+.pollChoiceEnabledText {
     font-size: 14px;
     cursor: pointer;
 }
-#pollChoiceRemoveButton {
+.pollChoiceRemoveButton {
     background-color: #fc0000;
     border-radius: 50%;
     cursor: pointer;
@@ -36,14 +36,7 @@
     text-align: center;
     margin: 10px auto;
 }
-#pollNewChoiceButton {
-    border-radius: 50%;
-    cursor: pointer;
-    display: inline-block;
-    font-size: 14px;
-    margin-top: 5px;
-}
-#pollVoteButton {
+.pollVoteButton {
     cursor: pointer;
     height: 20px;
     margin-right: 5px;
