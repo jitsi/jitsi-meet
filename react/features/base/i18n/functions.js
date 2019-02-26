@@ -13,7 +13,7 @@ import { translate as reactI18nextTranslate } from 'react-i18next';
 export function translate(component, options = { wait: true }) {
     // Use the default list of namespaces.
     return (
-        reactI18nextTranslate([ 'main', 'languages' ], options)(
+        reactI18nextTranslate([ 'main', 'languages', 'countries' ], options)(
             component));
 }
 

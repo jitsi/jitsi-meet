@@ -10,6 +10,8 @@ import {
     UPDATE_DIAL_IN_NUMBERS_SUCCESS
 } from './actionTypes';
 
+const logger = require('jitsi-meet-logger').getLogger(__filename);
+
 const DEFAULT_STATE = {
     /**
      * The indicator which determines whether (the) {@code CalleeInfo} is
@@ -54,17 +56,24 @@ ReducerRegistry.register('features/invite', (state = DEFAULT_STATE, action) => {
         };
 
     case UPDATE_DIAL_IN_NUMBERS_SUCCESS: {
-        const {
-            defaultCountry,
-            numbers,
-            numbersEnabled
-        } = action.dialInNumbers;
+        if (Array.isArray(action.dialInNumbers)) {
+            return {
+                ...state,
+                conferenceID: action.conferenceID,
+                numbers: action.dialInNumbers,
+                numbersEnabled: true
+            };
+        }
+
+        // this is the old format which is deprecated
+        logger.warn('Using deprecated API for retrieving phone numbers');
+
+        const { numbersEnabled } = action.dialInNumbers;
 
         return {
             ...state,
             conferenceID: action.conferenceID,
-            defaultCountry,
-            numbers,
+            numbers: action.dialInNumbers,
             numbersEnabled
         };
     }
