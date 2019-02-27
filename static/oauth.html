@@ -16,7 +16,7 @@
                 if (globalNS.oauthCallbacks
                     && typeof globalNS.oauthCallbacks[windowName]
                         === 'function') {
-                    globalNS.oauthCallbacks[windowName]();
+                    globalNS.oauthCallbacks[windowName](window.location.href);
                 }
             }
         })();
