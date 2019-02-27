@@ -16,13 +16,13 @@ var config = {
 
     hosts: {
         // XMPP domain.
-        domain: 'i.vmeeting.top',
+        domain: '192.168.3.119',
 
         // When using authentication, domain for guest users.
         // anonymousdomain: 'guest.example.com',
 
         // Domain for authenticated users. Defaults to <domain>.
-        // authdomain: 'i.vmeeting.top',
+        // authdomain: '192.168.3.119',
 
         // Jirecon recording component domain.
         // jirecon: 'jirecon.jitsi-meet.example.com',
@@ -31,19 +31,19 @@ var config = {
         // call_control: 'callcontrol.jitsi-meet.example.com',
 
         // Focus component domain. Defaults to focus.<domain>.
-        // focus: 'focus.i.vmeeting.top',
+        // focus: 'focus.192.168.3.119',
 
         // XMPP MUC domain. FIXME: use XEP-0030 to discover it.
-        muc: 'conference.i.vmeeting.top'
-        //bridge: 'jitsi-videobridge.i.vmeeting.top',
-        //focus: 'focus.i.vmeeting.top'
+        muc: 'conference.192.168.3.119'
+        //bridge: 'jitsi-videobridge.192.168.3.119',
+        //focus: 'focus.192.168.3.119'
     },
 
     // BOSH URL. FIXME: use XEP-0156 to discover it.
-    bosh: '//i.vmeeting.top/http-bind',
+    bosh: '//192.168.3.119/http-bind',
 
     // The name of client node advertised in XEP-0115 'c' stanza
-    clientNode: 'http://i.vmeeting.top/',
+    clientNode: 'http://192.168.3.119/',
 
     // The real JID of focus participant - can be overridden here
     // focusUserJid: 'focus@auth.jitsi-meet.example.com',
@@ -114,7 +114,7 @@ var config = {
     },
 
     // Enable / disable simulcast support.
-    disableSimulcast: true,
+    disableSimulcast: false,
 
     // Enable / disable layer suspension.  If enabled, endpoints whose HD
     // layers are not in use will be suspended (no longer sent) until they
@@ -174,7 +174,7 @@ var config = {
     // Whether to enable file recording or not.
     fileRecordingsEnabled: true,
 
-    hiddenDomain: 'recorder.i.vmeeting.top',
+    hiddenDomain: 'recorder.192.168.3.119',
     // Enable the dropbox integration.
     // dropbox: {
     //     appKey: '<APP_KEY>' // Specify your app key here.
@@ -292,7 +292,7 @@ var config = {
     // If third party requests are disabled, no other server will be contacted.
     // This means avatars will be locally generated and callstats integration
     // will not function.
-    // disableThirdPartyRequests: false,
+    disableThirdPartyRequests: true,
 
 
     // Peer-To-Peer mode: used (if enabled) when there are just 2 participants.
@@ -401,7 +401,7 @@ var config = {
     // _desktopSharingSourceDevice: 'sample-id-or-label'
 
     // List of undocumented settings used in jitsi-meet
-    etherpad_base: 'https://i.vmeeting.top/etherpad/p/'
+    etherpad_base: 'https://192.168.3.119/etherpad/p/'
 
     /**
      _immediateReloadThreshold

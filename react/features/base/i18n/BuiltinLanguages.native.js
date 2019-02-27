@@ -104,10 +104,10 @@ const _LANGUAGES = {
     // },
 
     // // Chinese (China)
-    // 'zhCN': {
-    //     languages: require('../../../../lang/languages-zhCN'),
-    //     main: require('../../../../lang/main-zhCN')
-    // }
+    'zhCN': {
+        languages: require('../../../../lang/languages-zhCN'),
+        main: require('../../../../lang/main-zhCN')
+    }
 };
 
 // Register all builtin languages with the i18n library.
