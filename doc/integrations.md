@@ -16,8 +16,9 @@ Document describing enabling various jitsi-meet integrations.
 1. Go to https://apps.dev.microsoft.com/
 1. Proceed through the "Add an app" flow. Once created, a page with several Graph Permissions fields should display.
 1. Under "Platforms" add "Web"
-1. Add a redirect URL for the Microsoft auth flow to visit once a user has confirmed authentication. Target domain is just 'yourdomain.com' (the deployment address) and the redirect URL is `https://yourdomain.com/static/msredirect.html`.
-1. Check `Allow Implicit Flow` and `Restrict token issuing to this app`.
+1. Add a redirect URL for the Microsoft auth flow to visit once a user has confirmed authentication. Target domain if available is just 'yourdomain.com' (the deployment address) and the redirect URL is `https://yourdomain.com/static/msredirect.html`.
+1. Add Microsoft Graph delegated permissions, if this option is available: Calendars.Read, Calendars.ReadWrite, Calendars.Read.Shared, Calendars.ReadWrite.Shared.
+1. Check `Allow Implicit Flow` (and `Restrict token issuing to this app` if available).
 1. Save the changes.
 
 ## Creating the Dropbox app for Dropbox recording integration
