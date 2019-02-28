@@ -44,7 +44,7 @@ type Props = AbstractButtonProps & {
  */
 class AudioRouteButton extends AbstractButton<Props, *> {
     accessibilityLabel = 'toolbar.accessibilityLabel.audioRoute';
-    iconName = 'icon-volume';
+    iconName = 'audio-output';
     label = 'toolbar.audioRoute';
 
     _volumeComponent: ?Object;
