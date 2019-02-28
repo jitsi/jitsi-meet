@@ -103,7 +103,7 @@ const _LANGUAGES = {
     //     main: require('../../../../lang/main-tr')
     // },
 
-    // // Chinese (China)
+    // Chinese (China)
     'zhCN': {
         languages: require('../../../../lang/languages-zhCN'),
         main: require('../../../../lang/main-zhCN')

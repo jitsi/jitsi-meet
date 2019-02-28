@@ -128,7 +128,7 @@ public class JitsiMeetActivity
         // is documented to need such an order in order to take effect:
 		view.setColorScheme(colorScheme);
         try {
-            view.setDefaultURL(new URL("https://i.vmeeting.top"));
+            view.setDefaultURL(new URL("https://beta.vmeeting.top"));
         } catch (MalformedURLException e) {
             e.printStackTrace();
         }

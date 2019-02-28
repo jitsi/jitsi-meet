@@ -216,7 +216,7 @@ class AvatarContent extends Component<Props, State> {
             // ToolbarButtons. That's where I copied the value from and we
             // may want to think about "standardizing" the opacity in the
             // app in a way similar to ColorPalette.
-            opacity: 0.1,
+            // opacity: 0.1,
             overflow: 'hidden'
         };
 

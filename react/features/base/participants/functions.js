@@ -41,24 +41,29 @@ export function getAvatarURL({ avatarID, avatarURL, email, id }: {
     if (typeof config === 'object' && config.disableThirdPartyRequests) {
         return DEFAULT_AVATAR_RELATIVE_PATH;
     }
-
-    // If an avatarURL is specified, then obviously there's nothing to generate.
-    if (avatarURL) {
-        return avatarURL;
+    else {
+        return '#';
     }
 
-    // The deployment is allowed to choose the avatar service which is to
-    // generate the random avatars.
-    const avatarService
-        = typeof interfaceConfig === 'object'
-                && interfaceConfig.RANDOM_AVATAR_URL_PREFIX
-            ? {
-                urlPrefix: interfaceConfig.RANDOM_AVATAR_URL_PREFIX,
-                urlSuffix: interfaceConfig.RANDOM_AVATAR_URL_SUFFIX }
-            : undefined;
 
-    // eslint-disable-next-line object-property-newline
-    return _getAvatarURL({ avatarID, email, id }, avatarService);
+
+    // If an avatarURL is specified, then obviously there's nothing to generate.
+    // if (avatarURL) {
+    //     return avatarURL;
+    // }
+
+    // // The deployment is allowed to choose the avatar service which is to
+    // // generate the random avatars.
+    // const avatarService
+    //     = typeof interfaceConfig === 'object'
+    //             && interfaceConfig.RANDOM_AVATAR_URL_PREFIX
+    //         ? {
+    //             urlPrefix: interfaceConfig.RANDOM_AVATAR_URL_PREFIX,
+    //             urlSuffix: interfaceConfig.RANDOM_AVATAR_URL_SUFFIX }
+    //         : undefined;
+
+    // // eslint-disable-next-line object-property-newline
+    // return _getAvatarURL({ avatarID, email, id }, avatarService);
 }
 
 /**

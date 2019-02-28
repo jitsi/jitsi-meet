@@ -8,7 +8,8 @@ import {
     Avatar,
     getAvatarURL,
     getLocalParticipant,
-    getParticipantDisplayName
+    getParticipantDisplayName,
+    DEFAULT_AVATAR_RELATIVE_PATH
 } from '../../base/participants';
 import {
     Header,
@@ -19,7 +20,6 @@ import { setSettingsViewVisible } from '../../settings';
 import { setSideBarVisible } from '../actions';
 import SideBarItem from './SideBarItem';
 import styles, { SIDEBAR_AVATAR_SIZE } from './styles';
-
 /**
  * The URL at which the privacy policy is available to the user.
  */
