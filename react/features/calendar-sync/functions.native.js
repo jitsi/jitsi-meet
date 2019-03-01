@@ -1,6 +1,6 @@
 // @flow
 
-import { NativeModules, Platform } from 'react-native';
+import { Platform } from 'react-native';
 import RNCalendarEvents from 'react-native-calendar-events';
 
 import { getShareInfoText } from '../invite';
@@ -56,9 +56,8 @@ export function addLinkToCalendarEntry(
  * otherwise, {@code false}.
  */
 export function isCalendarEnabled() {
-    const { calendarEnabled = true } = NativeModules.AppInfo;
-
-    return calendarEnabled;
+    // special build for 8x8, calendar has to be disabled.
+    return false;
 }
 
 /**
