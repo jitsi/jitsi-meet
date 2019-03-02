@@ -8,8 +8,7 @@ import {
     Avatar,
     getAvatarURL,
     getLocalParticipant,
-    getParticipantDisplayName,
-    DEFAULT_AVATAR_RELATIVE_PATH
+    getParticipantDisplayName
 } from '../../base/participants';
 import {
     Header,

@@ -976,6 +976,15 @@ class Toolbox extends Component<Props> {
                     }
                 </div>
                 <div className = 'button-group-center'>
+                    <div className = 'toolbar-button-with-badge'>
+                            <ToolbarButton
+                                accessibilityLabel =
+                                    { t('toolbar.accessibilityLabel.contactlist') }
+                                iconName = 'icon-contactlist'
+                                onClick = { this._onToolbarToggleChat }
+                                tooltip = { t('toolbar.contactlist') } />
+                            <ChatCounter />
+                    </div> 
                     <AudioMuteButton
                         visible = { this._shouldShowButton('microphone') } />
                     <HangupButton

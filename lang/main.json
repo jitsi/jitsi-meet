@@ -143,6 +143,7 @@
         "lock": "锁定 / 解锁 房间",
         "invite": "分享链接",
         "chat": "开启 / 关闭 聊天",
+        "contactlist": "管理参会人员",
         "etherpad": "开启 / 关闭 共享文档",
         "sharedvideo": "分享YouTube视频",
         "sharescreen": "开启 / 关闭 屏幕共享",

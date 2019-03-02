@@ -206,7 +206,8 @@ class DeviceSelection extends AbstractDialogTab<Props, State> {
         const {
             hideAudioInputPreview,
             hideAudioOutputSelect,
-            selectedAudioOutputId
+            selectedAudioOutputId,
+            selectedAudioInputId
         } = this.props;
 
         return (
@@ -219,7 +220,9 @@ class DeviceSelection extends AbstractDialogTab<Props, State> {
                     </div>
                     { !hideAudioInputPreview
                         && <AudioInputPreview
-                            track = { this.state.previewAudioTrack } /> }
+                            track = { this.state.previewAudioTrack }
+                            outDeviceId = { selectedAudioOutputId } 
+                            inDeviceId = { selectedAudioInputId } /> }
                 </div>
                 <div className = 'device-selection-column column-selectors'>
                     <div className = 'device-selectors'>

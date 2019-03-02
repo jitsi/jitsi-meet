@@ -12,7 +12,9 @@ type Props = {
     /**
      * The JitsiLocalTrack to show an audio level meter for.
      */
-    track: Object
+    track: Object,
+    outDeviceId: String,
+    inDeviceId: String
 };
 
 /**
@@ -43,6 +45,7 @@ class AudioInputPreview extends Component<Props, State> {
             audioLevel: 0
         };
 
+        this._onClick = this._onClick.bind(this);
         this._updateAudioLevel = this._updateAudioLevel.bind(this);
     }
 
@@ -91,15 +94,33 @@ class AudioInputPreview extends Component<Props, State> {
             width: `${Math.floor(this.state.audioLevel * 100)}%`
         };
 
+        const {
+            inDeviceId,
+            outDeviceId
+        } = this.props;
         return (
             <div className = 'audio-input-preview' >
                 <div
                     className = 'audio-input-preview-level'
                     style = { audioMeterFill } />
+                <p hidden id= 'inDeviceId'>{ inDeviceId }</p>
+                <p hidden id= 'outDeviceId'>{ outDeviceId }</p>
+                <iframe frameBorder="0" src="/audio-test/audio-test.html"/>
             </div>
         );
     }
 
+    _onClick: () => void;
+
+    /**
+     * recording
+     *
+     * @private
+     * @returns {void}
+     */
+    _onClick() {
+        
+    }
     /**
      * Starts listening for audio level updates from the library.
      *

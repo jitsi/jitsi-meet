@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <style type='text/css'>
+    .btn {
+        color: #2684FF;    
+        background-color: #FFFFFF00;
+        border: 0px none;  //去边框
+    }
+    .btn:disabled {
+        color: #b6b6b6;    
+        background-color: #FFFFFF00;
+        border: 0px none;  //去边框
+    }
+    .btn:hover{
+        color:#B3D4FF;
+        border: none;
+        cursor: hand;
+        cursor: pointer;
+    }
+    .btn:focus { 
+        outline: none;    //去边框
+    } 
+  </style>
+</head>
+<body>
+  <button class="btn" onclick="startRecording(this);">测试录音</button>
+  <button class="btn" onclick="stopRecording(this);" disabled>停止录音</button>
+  <button class="btn" onclick="play(this);" disabled>回放录音</button>  
+  <!--button class="btn" onclick="test(this);" >test</button-->  
+  <script>
+  function __log(e, data) {
+  }
+
+  var audio_context;
+  var recorder;
+  var player;
+  var inDeviceId;
+
+  function startUserMedia(stream) {
+    var input = audio_context.createMediaStreamSource(stream);
+    __log('Media stream created.');
+
+    // Uncomment if you want the audio to feedback directly
+    //input.connect(audio_context.destination);
+    //__log('Input connected to audio context destination.');
+    
+    recorder = new Recorder(input);
+    recorder && recorder.record();
+    __log('Recorder initialised.');
+  }
+
+  function startRecording(button) {
+  	inDeviceId = parent.window.document.getElementById("inDeviceId").innerText;
+  	init();
+    button.disabled = true;
+    button.nextElementSibling.disabled = false;
+    __log('Recording...');
+  }
+
+  function play(button) {
+  	player && player.setSinkId(parent.window.document.getElementById("outDeviceId").innerText);
+  	player && player.play();
+  }
+  function test(button) {
+  	alert(parent.window.document.getElementById("inDeviceId").innerText);
+  }
+  function stopRecording(button) {
+    recorder && recorder.stop();
+    button.disabled = true;
+    button.previousElementSibling.disabled = false;
+    button.nextElementSibling.disabled = false;
+    __log('Stopped recording.');
+    
+    // create WAV download link using audio data blob
+    createDownloadLink();
+    
+    recorder.clear();
+  }
+
+  function createDownloadLink() {
+    recorder && recorder.exportWAV(function(blob) {
+      var url = URL.createObjectURL(blob);
+      player = document.createElement('audio');      
+      player.controls = true;
+      player.src = url;
+    });
+  }
+
+  function init() {
+    try {
+      // webkit shim
+      window.AudioContext = window.AudioContext || window.webkitAudioContext;
+      navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia;
+      window.URL = window.URL || window.webkitURL;
+      
+      audio_context = new AudioContext;
+      __log('Audio context set up.');
+      __log('navigator.getUserMedia ' + (navigator.getUserMedia ? 'available.' : 'not present!'));
+    } catch (e) {
+      alert('No web audio support in this browser!');
+    }
+    var constraints = {
+    audio: {
+      deviceId: {exact: inDeviceId}
+    }
+  };
+    navigator.getUserMedia(constraints, startUserMedia, function(e) {
+      __log('No live audio input: ' + e);
+    });
+  };
+  </script>
+
+  <script src="./dist/recorder.js"></script>
+</body>
+</html>
