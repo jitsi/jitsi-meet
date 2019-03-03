@@ -14,7 +14,7 @@ android {
     buildToolsVersion rootProject.ext.buildToolsVersion
 
     defaultConfig {
-        applicationId 'top.vmeeting.beta.android'
+        applicationId 'top.vmeeting.android'
         versionCode Integer.parseInt(project.buildNumber)
         versionName project.appVersion
 
