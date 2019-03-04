@@ -1,7 +1,7 @@
 // @flow
 
 import React, { Component } from 'react';
-import { Text, TouchableOpacity, View } from 'react-native';
+import { SafeAreaView, Text, TouchableOpacity, View } from 'react-native';
 import { connect } from 'react-redux';
 
 import { Icon } from '../../../font-icons';
@@ -215,13 +215,13 @@ class PagedList extends Component<Props, State> {
                 {
                     this._renderPage(pages[pageIndex], disabled)
                 }
-                <View style = { styles.pageIndicatorContainer }>
+                <SafeAreaView style = { styles.pageIndicatorContainer }>
                     {
                         pages.map((page, index) => this._renderPageIndicator(
                             page, index, disabled
                         ))
                     }
-                </View>
+                </SafeAreaView>
             </View>
         );
     }
@@ -247,7 +247,7 @@ class PagedList extends Component<Props, State> {
                 key = { index }
                 onPress = { this._onSelectPage(index) }
                 style = { styles.pageIndicator } >
-                <View style = { styles.pageIndicator }>
+                <View style = { styles.pageIndicatorContent }>
                     <Icon
                         name = { page.icon }
                         style = { [
