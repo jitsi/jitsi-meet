@@ -7,13 +7,12 @@ import { BoxModel, ColorPalette, createStyleSheet } from '../../../styles';
 const AVATAR_OPACITY = 0.4;
 const HEADER_COLOR = ColorPalette.blue;
 
-// Header height is from Android guidelines. Also, this looks good.
-const HEADER_HEIGHT = 56;
+const HEADER_HEIGHT = 48;
 const OVERLAY_FONT_COLOR = 'rgba(255, 255, 255, 0.6)';
 const SECONDARY_ACTION_BUTTON_SIZE = 30;
 
 export const AVATAR_SIZE = 65;
-export const HEADER_PADDING = BoxModel.padding;
+export const HEADER_PADDING = BoxModel.padding / 2;
 export const STATUSBAR_COLOR = ColorPalette.blueHighlight;
 export const SIDEBAR_WIDTH = 250;
 export const UNDERLAY_COLOR = 'rgba(255, 255, 255, 0.2)';
@@ -30,8 +29,9 @@ const HEADER_STYLES = {
     headerButtonIcon: {
         alignSelf: 'center',
         color: ColorPalette.white,
-        fontSize: 26,
-        paddingRight: 22
+        fontSize: 22,
+        marginRight: 12,
+        padding: 8
     },
 
     headerButtonText: {
@@ -51,7 +51,7 @@ const HEADER_STYLES = {
      */
     headerText: {
         color: ColorPalette.white,
-        fontSize: 20
+        fontSize: 18
     },
 
     headerTextWrapper: {
@@ -82,7 +82,8 @@ const HEADER_STYLES = {
         flexDirection: 'row',
         height: HEADER_HEIGHT,
         justifyContent: 'space-between',
-        padding: HEADER_PADDING
+        paddingHorizontal: BoxModel.padding,
+        paddingVertical: HEADER_PADDING
     }
 };
 
