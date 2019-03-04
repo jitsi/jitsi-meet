@@ -104,9 +104,9 @@ const PAGED_LIST_STYLES = {
      */
     pageIndicator: {
         alignItems: 'center',
-        flex: 1,
         flexDirection: 'column',
-        justifyContent: 'center'
+        justifyContent: 'center',
+        padding: BoxModel.padding / 2
     },
 
     /**
@@ -120,10 +120,15 @@ const PAGED_LIST_STYLES = {
      * Container for the page indicators (Android).
      */
     pageIndicatorContainer: {
-        alignItems: 'stretch',
+        alignItems: 'center',
         backgroundColor: ColorPalette.blue,
         flexDirection: 'row',
-        height: 56,
+        justifyContent: 'space-around'
+    },
+
+    pageIndicatorContent: {
+        alignItems: 'center',
+        flexDirection: 'column',
         justifyContent: 'center'
     },
 
