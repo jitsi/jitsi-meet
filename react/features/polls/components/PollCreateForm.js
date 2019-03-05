@@ -84,7 +84,7 @@ class PollCreateForm extends Component<Props, *> {
                     id = 'pollQuestion'
                     isLabelHidden = { true }
                     onChange = { onQuestionTextChange }
-                    placeholder = { t('polls.placeholder') }
+                    placeholder = { t('polls.questionPlaceholder') }
                     type = 'text' />
 
                 <div

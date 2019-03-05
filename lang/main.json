@@ -476,16 +476,21 @@
     },
     "passwordSetRemotely": "set by another member",
     "polls": {
+        "choicesPlaceholder": "Give a choice...",
         "create": "Create Poll",
         "endNotificationBody": "Current Poll has been ended",
         "endNotificationTitle": "Poll Finished!",
         "endPoll": "End",
-        "placeholder": "Ask a question...",
+        "errorEmptyQuestion": "Can't create a poll without a question",
+        "errorEmptyQuestionTitle": "Can't create poll!",
+        "errorNotEnoughChoices": "Can't create a poll without atleast 2 unique choices",
+        "errorNotEnoughChoicesTitle": "Can't create poll!",
         "results": "Poll Results",
         "startNotificationBody": "A Poll has been created",
         "startNotificationTitle": "Poll Started!",
         "startPoll": "Create",
-        "vote": "Vote"
+        "vote": "Vote",
+        "questionPlaceholder": "Ask a question..."
     },
     "poweredby": "powered by",
     "presenceStatus": {

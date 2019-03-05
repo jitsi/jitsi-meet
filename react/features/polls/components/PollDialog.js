@@ -8,6 +8,8 @@ import { DialogWithTabs, hideDialog } from '../../base/dialog';
 import { translate } from '../../base/i18n';
 import { getLocalParticipant } from '../../base/participants';
 
+import { showWarningNotification } from '../../notifications';
+
 import {
     endPoll,
     startPoll,
@@ -166,6 +168,11 @@ class PollDialog extends Component<Props, State> {
         // check if question is not empty
         newQuestion.text = newQuestion.text.trim();
         if (!newQuestion.text) {
+            dispatch(showWarningNotification({
+                descriptionKey: 'polls.errorEmptyQuestion',
+                titleKey: 'polls.errorEmptyQuestionTitle'
+            }));
+
             return false;
         }
 
@@ -174,6 +181,11 @@ class PollDialog extends Component<Props, State> {
         const uniqueChoices = this._getUniquePollChoices(choices);
 
         if (Object.keys(uniqueChoices).length < 2) {
+            dispatch(showWarningNotification({
+                descriptionKey: 'polls.errorNotEnoughChoices',
+                titleKey: 'polls.errorNotEnoughChoicesTitle'
+            }));
+
             return false;
         }
 
@@ -214,12 +226,19 @@ class PollDialog extends Component<Props, State> {
     _createNewState() {
         const pollID = v1();
         const questionID = v1();
-        const choiceID = v1();
+        const choice1ID = v1();
+        const choice2ID = v1();
 
+        // keep 2 ready choices as it is required to have them to create a poll
         return {
             choices: {
-                [choiceID]: {
-                    id: choiceID,
+                [choice1ID]: {
+                    id: choice1ID,
+                    text: '',
+                    votes: []
+                },
+                [choice2ID]: {
+                    id: choice2ID,
                     text: '',
                     votes: []
                 }
@@ -341,9 +360,10 @@ class PollDialog extends Component<Props, State> {
     _removeChoice(id: string) {
         const { choices } = this.state;
 
-        // if this is the last available choice, don't remove it.
-        // there must be atleast 1 choice so user can add more
-        if (Object.keys(choices).length === 1) {
+        // don't delete if these are 2 remaining choices
+        // keep 2 choices since this is the requirement to create a new poll
+        // and it is easier to show the user what they have to fill
+        if (Object.keys(choices).length === 2) {
             return;
         }
 

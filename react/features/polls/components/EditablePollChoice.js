@@ -3,6 +3,8 @@
 import React, { Component } from 'react';
 import { FieldTextStateless } from '@atlaskit/field-text';
 
+import { translate } from '../../base/i18n';
+
 type Props = {
 
     /**
@@ -16,11 +18,6 @@ type Props = {
     onDelete: Function,
 
     /**
-     * Text of the voting option.
-     */
-    text: string,
-
-    /**
      * Function handler when a key is pressed in the text field.
      */
     onKeyDown: Function,
@@ -28,7 +25,17 @@ type Props = {
     /**
      * Container text update method.
      */
-    onTextChange: Function
+    onTextChange: Function,
+
+    /**
+     * The i18n translate function.
+     */
+    t: Function,
+
+    /**
+     * Text of the voting option.
+     */
+    text: string
 };
 
 /**
@@ -83,7 +90,7 @@ class EditablePollChoice extends Component<Props, *> {
      * @inheritdoc
      */
     render() {
-        const { onKeyDown, text } = this.props;
+        const { onKeyDown, t, text } = this.props;
 
         return (
             <li>
@@ -96,6 +103,7 @@ class EditablePollChoice extends Component<Props, *> {
                             isLabelHidden = { true }
                             onChange = { this._onChoiceTextChanged }
                             onKeyDown = { onKeyDown }
+                            placeholder = { t('polls.choicesPlaceholder') }
                             shouldFitContainer = { true }
                             value = { text } />
 
@@ -111,4 +119,4 @@ class EditablePollChoice extends Component<Props, *> {
     }
 }
 
-export default EditablePollChoice;
+export default translate(EditablePollChoice);
