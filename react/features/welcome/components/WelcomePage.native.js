@@ -10,6 +10,7 @@ import {
 } from 'react-native';
 import { connect } from 'react-redux';
 
+import { ColorSchemeRegistry } from '../../base/color-scheme';
 import { translate } from '../../base/i18n';
 import { Icon } from '../../base/font-icons';
 import { MEDIA_TYPE } from '../../base/media';
@@ -21,7 +22,10 @@ import {
 } from '../../base/tracks';
 import { SettingsView } from '../../settings';
 
-import { AbstractWelcomePage, _mapStateToProps } from './AbstractWelcomePage';
+import {
+    AbstractWelcomePage,
+    _mapStateToProps as _abstractMapStateToProps
+} from './AbstractWelcomePage';
 import { setSideBarVisible } from '../actions';
 import LocalVideoTrackUnderlay from './LocalVideoTrackUnderlay';
 import styles, { PLACEHOLDER_TEXT_COLOR } from './styles';
@@ -90,18 +94,17 @@ class WelcomePage extends AbstractWelcomePage {
      * @returns {ReactElement}
      */
     render() {
-        const { buttonStyle, pageStyle } = Header;
         const roomnameAccLabel = 'welcomepage.accessibilityLabel.roomname';
-        const { t } = this.props;
+        const { _headerStyles, t } = this.props;
 
         return (
             <LocalVideoTrackUnderlay style = { styles.welcomePage }>
-                <View style = { pageStyle }>
+                <View style = { _headerStyles.page }>
                     <Header style = { styles.header }>
                         <TouchableOpacity onPress = { this._onShowSideBar } >
                             <Icon
                                 name = 'menu'
-                                style = { buttonStyle } />
+                                style = { _headerStyles.headerButtonIcon } />
                         </TouchableOpacity>
                         <VideoSwitch />
                     </Header>
@@ -267,6 +270,21 @@ class WelcomePage extends AbstractWelcomePage {
             </TouchableHighlight>
         );
     }
+}
+
+/**
+ * Maps part of the Redux state to the props of this component.
+ *
+ * @param {Object} state - The Redux state.
+ * @returns {{
+ *     _headerStyles: Object
+ * }}
+ */
+function _mapStateToProps(state) {
+    return {
+        ..._abstractMapStateToProps(state),
+        _headerStyles: ColorSchemeRegistry.get(state, 'Header')
+    };
 }
 
 export default translate(connect(_mapStateToProps)(WelcomePage));

@@ -4,8 +4,9 @@ import React, { Component } from 'react';
 import { Switch, TouchableWithoutFeedback, View } from 'react-native';
 import { connect } from 'react-redux';
 
+import { ColorSchemeRegistry } from '../../base/color-scheme';
 import { translate } from '../../base/i18n';
-import { Header, Text } from '../../base/react';
+import { Text } from '../../base/react';
 import { updateSettings } from '../../base/settings';
 
 import styles, { SWITCH_THUMB_COLOR, SWITCH_UNDER_COLOR } from './styles';
@@ -24,6 +25,11 @@ type Props = {
      * The i18n translate function.
      */
     t: Function,
+
+    /**
+     * Color schemed style of the header component.
+     */
+    _headerStyles: Object,
 
     /**
      * The current settings from redux.
@@ -55,15 +61,14 @@ class VideoSwitch extends Component<Props> {
      * @inheritdoc
      */
     render() {
-        const { t, _settings } = this.props;
-        const { textStyle } = Header;
+        const { t, _headerStyles, _settings } = this.props;
 
         return (
             <View style = { styles.audioVideoSwitchContainer }>
                 <TouchableWithoutFeedback
                     onPress = { this._onStartAudioOnlyFalse }>
                     <View style = { styles.switchLabel }>
-                        <Text style = { textStyle }>
+                        <Text style = { _headerStyles.headerText }>
                             { t('welcomepage.audioVideoSwitch.video') }
                         </Text>
                     </View>
@@ -77,7 +82,7 @@ class VideoSwitch extends Component<Props> {
                 <TouchableWithoutFeedback
                     onPress = { this._onStartAudioOnlyTrue }>
                     <View style = { styles.switchLabel }>
-                        <Text style = { textStyle }>
+                        <Text style = { _headerStyles.headerText }>
                             { t('welcomepage.audioVideoSwitch.audio') }
                         </Text>
                     </View>
@@ -132,6 +137,7 @@ class VideoSwitch extends Component<Props> {
  */
 export function _mapStateToProps(state: Object) {
     return {
+        _headerStyles: ColorSchemeRegistry.get(state, 'Header'),
         _settings: state['features/base/settings']
     };
 }

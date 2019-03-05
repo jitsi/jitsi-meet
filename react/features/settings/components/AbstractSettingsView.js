@@ -9,7 +9,7 @@ import { updateSettings } from '../../base/settings';
  * The type of the React {@code Component} props of
  * {@link AbstractSettingsView}.
  */
-type Props = {
+export type Props = {
 
     /**
      * The default URL for when there is no custom URL set in the settings.
@@ -47,15 +47,15 @@ type Props = {
  *
  * @abstract
  */
-export class AbstractSettingsView extends Component<Props> {
+export class AbstractSettingsView<P: Props> extends Component<P> {
 
     /**
      * Initializes a new {@code AbstractSettingsView} instance.
      *
-     * @param {Props} props - The React {@code Component} props to initialize
+     * @param {P} props - The React {@code Component} props to initialize
      * the component.
      */
-    constructor(props: Props) {
+    constructor(props: P) {
         super(props);
 
         // Bind event handlers so they are only bound once per instance.

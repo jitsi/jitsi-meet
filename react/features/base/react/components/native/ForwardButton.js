@@ -2,10 +2,10 @@
 
 import React, { Component } from 'react';
 import { Text, TouchableOpacity } from 'react-native';
+import { connect } from 'react-redux';
 
+import { ColorSchemeRegistry } from '../../../color-scheme';
 import { translate } from '../../../i18n';
-
-import styles from './styles';
 
 /**
  * The type of the React {@code Component} props of {@link ForwardButton}
@@ -35,7 +35,12 @@ type Props = {
     /**
      * The function to be used to translate i18n labels.
      */
-    t: Function
+    t: Function,
+
+    /**
+     * The color schemed style of the Header component.
+     */
+    _headerStyles: Object
 };
 
 /**
@@ -49,6 +54,8 @@ class ForwardButton extends Component<Props> {
      * @returns {ReactElement}
      */
     render() {
+        const { _headerStyles } = this.props;
+
         return (
             <TouchableOpacity
                 accessibilityLabel = { 'Forward' }
@@ -56,8 +63,8 @@ class ForwardButton extends Component<Props> {
                 onPress = { this.props.onPress } >
                 <Text
                     style = { [
-                        styles.headerButtonText,
-                        this.props.disabled && styles.disabledButtonText,
+                        _headerStyles.headerButtonText,
+                        this.props.disabled && _headerStyles.disabledButtonText,
                         this.props.style
                     ] }>
                     { this.props.t(this.props.labelKey) }
@@ -67,4 +74,18 @@ class ForwardButton extends Component<Props> {
     }
 }
 
-export default translate(ForwardButton);
+/**
+ * Maps part of the Redux state to the props of the component.
+ *
+ * @param {Object} state - The Redux state.
+ * @returns {{
+ *     _headerStyles: Object
+ * }}
+ */
+function _mapStateToProps(state) {
+    return {
+        _headerStyles: ColorSchemeRegistry.get(state, 'Header')
+    };
+}
+
+export default translate(connect(_mapStateToProps)(ForwardButton));

@@ -24,6 +24,12 @@ const HEX_SHORT_COLOR_FORMAT
 const RGB_COLOR_FORMAT = /^rgb\((\d{1,3}),\s*(\d{1,3}),\s*(\d{1,3})\)$/i;
 
 /**
+ * RegExp pattern for RGBA color format.
+ */
+const RGBA_COLOR_FORMAT
+    = /^rgba\((\d{1,3}),\s*(\d{1,3}),\s*(\d{1,3}),\s*([0-9.]+)\)$/i;
+
+/**
  * The list of the well-known style properties which may not be numbers on Web
  * but must be numbers on React Native.
  *
@@ -137,6 +143,23 @@ export function getRGBAFormat(color: string, alpha: number): string {
 }
 
 /**
+ * Decides if a color is light or dark based on the ITU-R BT.709 and W3C
+ * recommendations.
+ *
+ * NOTE: Please see https://www.w3.org/TR/WCAG20/#relativeluminancedef.
+ *
+ * @param {string} color - The color in rgb, rgba or hex format.
+ * @returns {boolean}
+ */
+export function isDarkColor(color: string): boolean {
+    const rgb = _getRGBObjectFormat(color);
+
+    return ((_getColorLuminance(rgb.r) * 0.2126)
+    + (_getColorLuminance(rgb.g) * 0.7152)
+    + (_getColorLuminance(rgb.b) * 0.0722)) <= 0.179;
+}
+
+/**
  * Converts an [0..1] alpha value into HEX.
  *
  * @param {number} alpha - The alpha value to convert.
@@ -145,6 +168,67 @@ export function getRGBAFormat(color: string, alpha: number): string {
 function _getAlphaInHex(alpha: number): string {
     return Number(Math.round(255 * alpha)).toString(16)
         .padStart(2, '0');
+}
+
+/**
+ * Calculated the color luminance component for an individual color channel.
+ *
+ * NOTE: Please see https://www.w3.org/TR/WCAG20/#relativeluminancedef.
+ *
+ * @param {number} c - The color which we need the individual luminance
+ * for.
+ * @returns {number}
+ */
+function _getColorLuminance(c: number): number {
+    return c <= 0.03928 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4);
+}
+
+/**
+ * Parses a color string into an object containing the RGB values as numbers.
+ *
+ * NOTE: Object properties are not alpha-sorted for sanity.
+ *
+ * @param {string} color - The color to convert.
+ * @returns {{
+ *     r: number,
+ *     g: number,
+ *     b: number
+ * }}
+ */
+function _getRGBObjectFormat(color: string): {r: number, g: number, b: number} {
+    let match = color.match(HEX_LONG_COLOR_FORMAT);
+
+    if (match) {
+        return {
+            r: parseInt(match[1], 16) / 255.0,
+            g: parseInt(match[2], 16) / 255.0,
+            b: parseInt(match[3], 16) / 255.0
+        };
+    }
+
+    match = color.match(HEX_SHORT_COLOR_FORMAT);
+    if (match) {
+        return {
+            r: parseInt(`${match[1]}${match[1]}`, 16) / 255.0,
+            g: parseInt(`${match[2]}${match[2]}`, 16) / 255.0,
+            b: parseInt(`${match[3]}${match[3]}`, 16) / 255.0
+        };
+    }
+
+    match = color.match(RGB_COLOR_FORMAT) || color.match(RGBA_COLOR_FORMAT);
+    if (match) {
+        return {
+            r: parseInt(match[1], 10) / 255.0,
+            g: parseInt(match[2], 10) / 255.0,
+            b: parseInt(match[3], 10) / 255.0
+        };
+    }
+
+    return {
+        r: 0,
+        g: 0,
+        b: 0
+    };
 }
 
 /**
