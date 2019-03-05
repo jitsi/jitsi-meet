@@ -2,10 +2,10 @@
 
 import React, { Component } from 'react';
 import { Text, View } from 'react-native';
+import { connect } from 'react-redux';
 
+import { ColorSchemeRegistry } from '../../../color-scheme';
 import { translate } from '../../../i18n';
-
-import styles from './styles';
 
 /**
  * The type of the React {@code Component} props of {@link HeaderLabel}
@@ -20,7 +20,12 @@ type Props = {
     /**
      * The i18n translate function.
      */
-    t: Function
+    t: Function,
+
+    /**
+     * The color schemed style of the Header component.
+     */
+    _headerStyles: Object
 };
 
 /**
@@ -34,13 +39,15 @@ class HeaderLabel extends Component<Props> {
      * @returns {ReactElement}
      */
     render() {
+        const { _headerStyles } = this.props;
+
         return (
             <View
                 pointerEvents = 'box-none'
-                style = { styles.headerTextWrapper }>
+                style = { _headerStyles.headerTextWrapper }>
                 <Text
                     style = { [
-                        styles.headerText
+                        _headerStyles.headerText
                     ] }>
                     { this.props.t(this.props.labelKey) }
                 </Text>
@@ -49,4 +56,18 @@ class HeaderLabel extends Component<Props> {
     }
 }
 
-export default translate(HeaderLabel);
+/**
+ * Maps part of the Redux state to the props of this component.
+ *
+ * @param {Object} state - The Redux state.
+ * @returns {{
+ *     _headerStyles: Object
+ * }}
+ */
+function _mapStateToProps(state) {
+    return {
+        _headerStyles: ColorSchemeRegistry.get(state, 'Header')
+    };
+}
+
+export default translate(connect(_mapStateToProps)(HeaderLabel));

@@ -17,6 +17,13 @@ export default {
         icon: ColorPalette.white,
         text: ColorPalette.white
     },
+    'Header': {
+        background: ColorPalette.blue,
+        icon: ColorPalette.white,
+        statusBar: ColorPalette.blueHighlight,
+        statusBarContent: ColorPalette.white,
+        text: ColorPalette.white
+    },
     'LargeVideo': {
         background: ColorPalette.black
     },

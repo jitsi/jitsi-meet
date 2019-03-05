@@ -2,10 +2,10 @@
 
 import React, { Component } from 'react';
 import { TouchableOpacity } from 'react-native';
+import { connect } from 'react-redux';
 
+import { ColorSchemeRegistry } from '../../../color-scheme';
 import { Icon } from '../../../font-icons';
-
-import styles from './styles';
 
 /**
  * The type of the React {@code Component} props of {@link BackButton}
@@ -20,13 +20,18 @@ type Props = {
     /**
      * An external style object passed to the component.
      */
-    style?: Object
+    style?: Object,
+
+    /**
+     * The color schemed style of the Header component.
+     */
+    _headerStyles: Object
 };
 
 /**
  * A component rendering a back button.
  */
-export default class BackButton extends Component<Props> {
+class BackButton extends Component<Props> {
     /**
      * Implements React's {@link Component#render()}, renders the button.
      *
@@ -41,10 +46,26 @@ export default class BackButton extends Component<Props> {
                 <Icon
                     name = { 'arrow_back' }
                     style = { [
-                        styles.headerButtonIcon,
+                        this.props._headerStyles.headerButtonIcon,
                         this.props.style
                     ] } />
             </TouchableOpacity>
         );
     }
 }
+
+/**
+ * Maps part of the Redux state to the props of this component.
+ *
+ * @param {Object} state - The Redux state.
+ * @returns {{
+ *     _headerStyles: Object
+ * }}
+ */
+function _mapStateToProps(state) {
+    return {
+        _headerStyles: ColorSchemeRegistry.get(state, 'Header')
+    };
+}
+
+export default connect(_mapStateToProps)(BackButton);

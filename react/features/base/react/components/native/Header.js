@@ -2,13 +2,23 @@
 
 import React, { Component, type Node } from 'react';
 import { Platform, SafeAreaView, StatusBar, View } from 'react-native';
+import { connect } from 'react-redux';
 
-import styles, { HEADER_PADDING, STATUSBAR_COLOR } from './styles';
+import { ColorSchemeRegistry } from '../../../color-scheme';
+import { isDarkColor } from '../../../styles';
+
+import { HEADER_PADDING } from './headerstyles';
 
 /**
  * Compatibility header padding size for iOS 10 (and older) devices.
  */
 const IOS10_PADDING = 20;
+
+/**
+ * Constanst for the (currently) supported statusbar colors.
+ */
+const STATUSBAR_DARK = 'dark-content';
+const STATUSBAR_LIGHT = 'light-content';
 
 /**
  * The type of the React {@code Component} props of {@link Header}
@@ -23,43 +33,18 @@ type Props = {
     /**
      * The component's external style
      */
-    style: Object
+    style: Object,
+
+    /**
+     * The color schemed style of the component.
+     */
+    _styles: Object
 }
 
 /**
  * A generic screen header component.
  */
-export default class Header extends Component<Props> {
-
-    /**
-     * The style of button-like React {@code Component}s rendered in
-     * {@code Header}.
-     *
-     * @returns {Object}
-     */
-    static get buttonStyle(): Object {
-        return styles.headerButtonIcon;
-    }
-
-    /**
-     * The style of a React {@code Component} rendering a {@code Header} as its
-     * child.
-     *
-     * @returns {Object}
-     */
-    static get pageStyle(): Object {
-        return styles.page;
-    }
-
-    /**
-     * The style of text rendered in {@code Header}.
-     *
-     * @returns {Object}
-     */
-    static get textStyle(): Object {
-        return styles.headerText;
-    }
-
+class Header extends Component<Props> {
     /**
      * Initializes a new {@code Header} instance.
      *
@@ -78,20 +63,22 @@ export default class Header extends Component<Props> {
      * @inheritdoc
      */
     render() {
+        const { _styles } = this.props;
+
         return (
             <View
                 style = { [
-                    styles.headerOverlay,
+                    _styles.headerOverlay,
                     this._getIOS10CompatiblePadding()
                 ] } >
                 <StatusBar
-                    backgroundColor = { STATUSBAR_COLOR }
-                    barStyle = 'light-content'
+                    backgroundColor = { _styles.statusBar }
+                    barStyle = { this._getStatusBarContentColor() }
                     translucent = { false } />
                 <SafeAreaView>
                     <View
                         style = { [
-                            styles.screenHeader,
+                            _styles.screenHeader,
                             this.props.style
                         ] }>
                         {
@@ -128,4 +115,54 @@ export default class Header extends Component<Props> {
 
         return null;
     }
+
+    /**
+     * Calculates the color of the statusbar content (light or dark) based on
+     * certain criterias.
+     *
+     * @returns {string}
+     */
+    _getStatusBarContentColor() {
+        const { _styles } = this.props;
+        const { statusBarContent } = _styles;
+
+        if (statusBarContent) {
+            // We have the possibility to define the statusbar color in the
+            // color scheme feature, but since mobile devices (at the moment)
+            // only support two colors (light and dark) we need to normalize
+            // the value.
+
+            if (isDarkColor(statusBarContent)) {
+                return STATUSBAR_DARK;
+            }
+
+            return STATUSBAR_LIGHT;
+        }
+
+        // The statusbar color is not defined, so we need to base our choice
+        // on the header colors
+        const { statusBar, screenHeader } = _styles;
+
+        if (isDarkColor(statusBar || screenHeader.backgroundColor)) {
+            return STATUSBAR_LIGHT;
+        }
+
+        return STATUSBAR_DARK;
+    }
 }
+
+/**
+ * Maps part of the Redux state to the props of the component.
+ *
+ * @param {Object} state - The Redux state.
+ * @returns {{
+ *     _styles: Object
+ * }}
+ */
+function _mapStateToProps(state) {
+    return {
+        _styles: ColorSchemeRegistry.get(state, 'Header')
+    };
+}
+
+export default connect(_mapStateToProps)(Header);
