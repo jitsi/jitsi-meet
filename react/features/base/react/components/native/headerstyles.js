@@ -5,6 +5,7 @@ import { StyleSheet } from 'react-native';
 import { ColorSchemeRegistry, schemeColor } from '../../../color-scheme';
 import { BoxModel } from '../../../styles';
 
+const HEADER_FONT_SIZE = 18;
 const HEADER_HEIGHT = 48;
 
 export const HEADER_PADDING = BoxModel.padding / 2;
@@ -31,7 +32,7 @@ ColorSchemeRegistry.register('Header', {
 
     headerButtonText: {
         color: schemeColor('text'),
-        fontSize: 20
+        fontSize: HEADER_FONT_SIZE
     },
 
     /**
@@ -46,7 +47,7 @@ ColorSchemeRegistry.register('Header', {
      */
     headerText: {
         color: schemeColor('text'),
-        fontSize: 18
+        fontSize: HEADER_FONT_SIZE
     },
 
     headerTextWrapper: {
