@@ -66,12 +66,6 @@ export const brandedDialog = createStyleSheet({
         fontWeight: 'bold'
     },
 
-    button: {
-        backgroundColor: ColorPalette.blue,
-        flex: 1,
-        padding: BoxModel.padding * 1.5
-    },
-
     buttonFarLeft: {
         borderBottomLeftRadius: BORDER_RADIUS
     },
@@ -185,12 +179,24 @@ ColorSchemeRegistry.register('BottomSheet', {
  * Color schemed styles for all the component based on the abstract dialog.
  */
 ColorSchemeRegistry.register('Dialog', {
+    button: {
+        backgroundColor: schemeColor('buttonBackground'),
+        flex: 1,
+        padding: BoxModel.padding * 1.5
+    },
+
     /**
      * Separator line for the buttons in a dialog.
      */
     buttonSeparator: {
         borderRightColor: schemeColor('border'),
         borderRightWidth: 1
+    },
+
+    buttonLabel: {
+        color: schemeColor('buttonLabel'),
+        fontSize: MD_FONT_SIZE,
+        textAlign: 'center'
     },
 
     /**
