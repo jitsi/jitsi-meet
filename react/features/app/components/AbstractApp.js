@@ -15,12 +15,6 @@ import { getDefaultURL } from '../functions';
 export type Props = {
 
     /**
-     * The default URL {@code AbstractApp} is to open when not in any
-     * conference/room.
-     */
-    defaultURL: string,
-
-    /**
      * XXX Refer to the implementation of loadURLObject: in
      * ios/sdk/src/JitsiMeetView.m for further information.
      */
