@@ -8,29 +8,21 @@ import { AbstractButton } from '../../base/toolbox';
 import type { AbstractButtonProps } from '../../base/toolbox';
 import { beginShareRoom } from '../../share-room';
 
-import { beginAddPeople } from '../actions';
+import { setAddPeopleDialogVisible } from '../actions';
 import { isAddPeopleEnabled, isDialOutEnabled } from '../functions';
 
 type Props = AbstractButtonProps & {
 
     /**
-     * Whether or not the feature to directly invite people into the
+     * Whether or not the feature to invite people to join the
      * conference is available.
      */
     _addPeopleEnabled: boolean,
 
     /**
-     * Whether or not the feature to dial out to number to join the
-     * conference is available.
+     * Opens the add people dialog.
      */
-    _dialOutEnabled: boolean,
-
-    /**
-     * Launches native invite dialog.
-     *
-     * @protected
-     */
-    _onAddPeople: Function,
+    _onOpenAddPeopleDialog: Function,
 
     /**
      * Begins the UI procedure to share the conference/room URL.
@@ -54,12 +46,17 @@ class InviteButton extends AbstractButton<Props, *> {
      * @returns {void}
      */
     _handleClick() {
-        // FIXME: dispatch _onAddPeople here, when we have a dialog for it.
         const {
+            _addPeopleEnabled,
+            _onOpenAddPeopleDialog,
             _onShareRoom
         } = this.props;
 
-        _onShareRoom();
+        if (_addPeopleEnabled) {
+            _onOpenAddPeopleDialog();
+        } else {
+            _onShareRoom();
+        }
     }
 }
 
@@ -69,22 +66,23 @@ class InviteButton extends AbstractButton<Props, *> {
  *
  * @param {Function} dispatch - The redux action {@code dispatch} function.
  * @returns {{
- *     _onAddPeople,
+ *     _onOpenAddPeopleDialog,
  *     _onShareRoom
  * }}
  * @private
  */
 function _mapDispatchToProps(dispatch: Dispatch<*>) {
     return {
+
         /**
-         * Launches the add people dialog.
+         * Opens the add people dialog.
          *
          * @private
          * @returns {void}
          * @type {Function}
          */
-        _onAddPeople() {
-            dispatch(beginAddPeople());
+        _onOpenAddPeopleDialog() {
+            dispatch(setAddPeopleDialogVisible(true));
         },
 
         /**
@@ -107,25 +105,12 @@ function _mapDispatchToProps(dispatch: Dispatch<*>) {
  * @param {Object} state - The redux store/state.
  * @private
  * @returns {{
+ *   _addPeopleEnabled: boolean
  * }}
  */
 function _mapStateToProps(state) {
     return {
-        /**
-         * Whether or not the feature to directly invite people into the
-         * conference is available.
-         *
-         * @type {boolean}
-         */
-        _addPeopleEnabled: isAddPeopleEnabled(state),
-
-        /**
-         * Whether or not the feature to dial out to number to join the
-         * conference is available.
-         *
-         * @type {boolean}
-         */
-        _dialOutEnabled: isDialOutEnabled(state)
+        _addPeopleEnabled: isAddPeopleEnabled(state) || isDialOutEnabled(state)
     };
 }
 

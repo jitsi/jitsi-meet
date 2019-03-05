@@ -140,10 +140,13 @@
         border-bottom: 1px solid #d1dbe8;
     }
 
-    .flag {
-        border-bottom-style: none;
-        width: 30px;
+    .flag-cell {
         vertical-align: top;
+        width: 30px;
+    }
+    .flag {
+        display: block;
+        margin: 5px 5px 0px 5px;
     }
 
     .country {
@@ -165,6 +168,11 @@
         font-weight: bold;
         list-style: none;
         vertical-align: top;
+    }
+
+    li.toll-free:empty:before {
+        content: '.';
+        visibility: hidden;
     }
 }
 

@@ -131,26 +131,18 @@ class NumbersList extends Component<Props> {
     }
 
     /**
-     * Renders a div container for a phone number.
+     * Renders a div container for a flag for the country of the phone number.
      *
-     * @param {string} countryCode - The phone number to display.
+     * @param {string} countryCode - The country code flag to display.
      * @private
      * @returns {ReactElement}
      */
     _renderFlag(countryCode) {
-        const OFFSET = 127397;
-
         if (countryCode) {
-            // ensure country code is all caps
-            const cc = countryCode.toUpperCase();
-
-            // return the emoji flag corresponding to country_code or null
-            const countryFlag = /^[A-Z]{2}$/.test(cc)
-                ? String.fromCodePoint(...[ ...cc ]
-                    .map(c => c.charCodeAt() + OFFSET))
-                : null;
-
-            return <td className = 'flag'>{ countryFlag }</td>;
+            return (
+                <td className = 'flag-cell'>
+                    <i className = { `flag iti-flag ${countryCode}` } />
+                </td>);
         }
 
         return null;

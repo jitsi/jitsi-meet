@@ -25,6 +25,18 @@
     -moz-osx-font-smoothing: grayscale;
 }
 
+.icon-phone:before {
+  content: "\e0cd";
+}
+.icon-radio_button_unchecked:before {
+  content: "\e836";
+}
+.icon-radio_button_checked:before {
+  content: "\e837";
+}
+.icon-search:before {
+  content: "\e8b6";
+}
 .icon-chat-unread:before {
   content: "\e0b7";
 }

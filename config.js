@@ -412,7 +412,6 @@ var config = {
      externalConnectUrl
      firefox_fake_device
      googleApiApplicationClientID
-     googleApiIOSClientID
      iAmRecorder
      iAmSipGateway
      microsoftApiApplicationClientID

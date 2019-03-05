@@ -41,7 +41,7 @@ export default class BackButton extends Component<Props> {
                 <Icon
                     name = { 'arrow_back' }
                     style = { [
-                        styles.headerButton,
+                        styles.headerButtonIcon,
                         this.props.style
                     ] } />
             </TouchableOpacity>
