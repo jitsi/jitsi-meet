@@ -63,11 +63,11 @@ class ConfirmDialog extends BaseSubmitDialog<Props, *> {
             <TouchableOpacity
                 onPress = { this._onCancel }
                 style = { [
-                    brandedDialog.button,
+                    _dialogStyles.button,
                     brandedDialog.buttonFarLeft,
                     _dialogStyles.buttonSeparator
                 ] }>
-                <Text style = { _dialogStyles.text }>
+                <Text style = { _dialogStyles.buttonLabel }>
                     { t(cancelKey || 'dialog.confirmNo') }
                 </Text>
             </TouchableOpacity>

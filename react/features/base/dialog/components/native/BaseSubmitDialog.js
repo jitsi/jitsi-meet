@@ -67,12 +67,12 @@ class BaseSubmitDialog<P: Props, S: *> extends BaseDialog<P, S> {
                         disabled = { this.props.okDisabled }
                         onPress = { this._onSubmit }
                         style = { [
-                            brandedDialog.button,
+                            _dialogStyles.button,
                             additionalButtons
                                 ? null : brandedDialog.buttonFarLeft,
                             brandedDialog.buttonFarRight
                         ] }>
-                        <Text style = { _dialogStyles.text }>
+                        <Text style = { _dialogStyles.buttonLabel }>
                             { t(this._getSubmitButtonKey()) }
                         </Text>
                     </TouchableOpacity>
