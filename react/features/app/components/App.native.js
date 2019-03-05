@@ -38,7 +38,12 @@ type Props = AbstractAppProps & {
     /**
      * An object of colors that override the default colors of the app/sdk.
      */
-    colorScheme: Object,
+    colorScheme: ?Object,
+
+    /**
+     * Identifier for this app on the native side.
+     */
+    externalAPIScope: string,
 
     /**
      * Whether Picture-in-Picture is enabled. If {@code true}, a toolbar button
