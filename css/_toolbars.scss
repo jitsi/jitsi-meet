@@ -190,6 +190,14 @@
                     cursor: initial;
                     color: #3b475c;
                 }
+
+                i.toggled {
+                    background: inherit;
+                }
+
+                i.toggled:hover {
+                    background: inherit;
+                }
             }
 
             .beta-tag {
