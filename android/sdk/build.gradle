@@ -25,7 +25,7 @@ dependencies {
     implementation "com.android.support:appcompat-v7:${rootProject.ext.supportLibVersion}"
 
     implementation 'org.webkit:android-jsc:+'
-    implementation 'com.dropbox.core:dropbox-core-sdk:3.0.8'
+//    implementation 'com.dropbox.core:dropbox-core-sdk:3.0.8'
     api 'com.facebook.react:react-native:+'
 
     implementation project(':react-native-background-timer')
@@ -33,10 +33,10 @@ dependencies {
     implementation(project(':react-native-fast-image')) {
         exclude group: 'com.android.support'
     }
-    implementation(project(":react-native-google-signin")) {
-        exclude group: 'com.google.android.gms'
-        exclude group: 'com.android.support'
-    }
+//    implementation(project(":react-native-google-signin")) {
+//        exclude group: 'com.google.android.gms'
+//        exclude group: 'com.android.support'
+//    }
     implementation project(':react-native-immersive')
     implementation project(':react-native-keep-awake')
     implementation project(':react-native-linear-gradient')

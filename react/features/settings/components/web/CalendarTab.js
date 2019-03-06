@@ -14,7 +14,6 @@ import {
     isCalendarEnabled,
     signIn
 } from '../../../calendar-sync';
-import { GoogleSignInButton } from '../../../google-api';
 
 const logger = require('jitsi-meet-logger').getLogger(__filename);
 
@@ -210,7 +209,6 @@ class CalendarTab extends Component<Props, State> {
     _renderSignInState() {
         const {
             _appName,
-            _enableGoogleIntegration,
             _enableMicrosoftIntegration,
             t
         } = this.props;
@@ -221,12 +219,6 @@ class CalendarTab extends Component<Props, State> {
                     { t('settings.calendar.about',
                         { appName: _appName || '' }) }
                 </p>
-                { _enableGoogleIntegration
-                    && <div className = 'calendar-tab-sign-in'>
-                        <GoogleSignInButton
-                            onClick = { this._onClickGoogle }
-                            text = { t('liveStreaming.signIn') } />
-                    </div> }
                 { _enableMicrosoftIntegration
                     && <div className = 'calendar-tab-sign-in'>
                         <MicrosoftSignInButton
