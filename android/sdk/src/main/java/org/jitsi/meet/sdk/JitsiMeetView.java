@@ -185,7 +185,7 @@ public class JitsiMeetView extends BaseReactView<JitsiMeetViewListener> {
      * by/associated with the specified {@code name}.
      */
     @Override
-    public void onExternalAPIEvent(String name, ReadableMap data) {
+    protected void onExternalAPIEvent(String name, ReadableMap data) {
         // XXX The JitsiMeetView property URL was introduced in order to address
         // an exception in the Picture-in-Picture functionality which arose
         // because of delays related to bridging between JavaScript and Java. To
