@@ -23,7 +23,7 @@ const logger = require('jitsi-meet-logger').getLogger(__filename);
  * The type of the React {@code Component} props of
  * {@link AbstractPageReloadOverlay}.
  */
-type Props = {
+export type Props = {
 
     /**
      * The details is an object containing more information about the connection
@@ -82,8 +82,8 @@ type State = {
 /**
  * Implements an abstract React {@link Component} for the page reload overlays.
  */
-export default class AbstractPageReloadOverlay
-    extends Component<Props, State> {
+export default class AbstractPageReloadOverlay<P: Props>
+    extends Component<P, State> {
     /**
      * Determines whether this overlay needs to be rendered (according to a
      * specific redux state). Called by {@link OverlayContainer}.
@@ -132,7 +132,7 @@ export default class AbstractPageReloadOverlay
      * instance is to be initialized.
      * @public
      */
-    constructor(props: Object) {
+    constructor(props: P) {
         super(props);
 
         /**
