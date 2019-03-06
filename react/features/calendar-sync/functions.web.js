@@ -14,7 +14,6 @@ import {
     FETCH_START_DAYS
 } from './constants';
 import { _updateCalendarEntries } from './functions';
-import { googleCalendarApi } from './web/googleCalendar';
 import { microsoftCalendarApi } from './web/microsoftCalendar';
 
 const logger = require('jitsi-meet-logger').getLogger(__filename);
@@ -105,8 +104,6 @@ export function _fetchCalendarEntries(
  */
 export function _getCalendarIntegration(calendarType: string) {
     switch (calendarType) {
-    case CALENDAR_TYPE.GOOGLE:
-        return googleCalendarApi;
     case CALENDAR_TYPE.MICROSOFT:
         return microsoftCalendarApi;
     }

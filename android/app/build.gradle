@@ -42,7 +42,7 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules-debug.pro'
         }
         release {
-            minifyEnabled true
+            minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules-release.pro'
         }
     }
@@ -61,7 +61,7 @@ dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation "com.android.support:support-v4:${rootProject.ext.supportLibVersion}"
     implementation "com.android.support:appcompat-v7:${rootProject.ext.supportLibVersion}"
-    implementation 'com.google.android.gms:play-services-auth:16.0.1'
+//    implementation 'com.google.android.gms:play-services-auth:16.0.1'
 
     implementation project(':sdk')
 
@@ -80,9 +80,9 @@ dependencies {
     // Firebase
     //  - Crashlytics
     //  - Dynamic Links
-    implementation 'com.google.firebase:firebase-core:16.0.6'
-    implementation 'com.crashlytics.sdk.android:crashlytics:2.9.8'
-    implementation 'com.google.firebase:firebase-dynamic-links:16.1.5'
+//    implementation 'com.google.firebase:firebase-core:16.0.6'
+//    implementation 'com.crashlytics.sdk.android:crashlytics:2.9.8'
+//    implementation 'com.google.firebase:firebase-dynamic-links:16.1.5'
 }
 
 gradle.projectsEvaluated {

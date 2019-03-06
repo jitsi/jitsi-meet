@@ -1,7 +1,5 @@
 // @flow
 
-import { loadGoogleAPI } from '../google-api';
-
 import { refreshCalendar, setCalendarEvents } from './actions';
 import { createCalendarConnectedEvent, sendAnalytics } from '../analytics';
 
@@ -42,10 +40,6 @@ export function bootstrapCalendarIntegration(): Function {
 
         return Promise.resolve()
             .then(() => {
-                if (googleApiApplicationClientID) {
-                    return dispatch(
-                        loadGoogleAPI(googleApiApplicationClientID));
-                }
             })
             .then(() => {
                 if (!integrationType || integrationReady) {

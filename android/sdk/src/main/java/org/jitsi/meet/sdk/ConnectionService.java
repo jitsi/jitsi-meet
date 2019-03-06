@@ -389,7 +389,7 @@ public class ConnectionService extends android.telecom.ConnectionService {
                     = ReactInstanceManagerHolder
                     .getNativeModule(AudioModeModule.class);
             if (audioModeModule != null) {
-                audioModeModule.onCallAudioStateChange(state);
+//                audioModeModule.onCallAudioStateChange(state);
             }
         }
 

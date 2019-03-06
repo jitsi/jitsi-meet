@@ -53,7 +53,7 @@ class ReactInstanceManagerHolder {
                 new PictureInPictureModule(reactContext),
                 new ProximityModule(reactContext),
                 new WiFiStatsModule(reactContext),
-                new org.jitsi.meet.sdk.dropbox.Dropbox(reactContext),
+//                new org.jitsi.meet.sdk.dropbox.Dropbox(reactContext),
                 new org.jitsi.meet.sdk.net.NAT64AddrInfoModule(reactContext)));
 
         if (android.os.Build.VERSION.SDK_INT
@@ -133,7 +133,7 @@ class ReactInstanceManagerHolder {
                 .setApplication(application)
                 .setBundleAssetName("index.android.bundle")
                 .setJSMainModulePath("index.android")
-                .addPackage(new co.apptailor.googlesignin.RNGoogleSigninPackage())
+//                .addPackage(new co.apptailor.googlesignin.RNGoogleSigninPackage())
                 .addPackage(new com.BV.LinearGradient.LinearGradientPackage())
                 .addPackage(new com.calendarevents.CalendarEventsPackage())
                 .addPackage(new com.corbt.keepawake.KCKeepAwakePackage())
