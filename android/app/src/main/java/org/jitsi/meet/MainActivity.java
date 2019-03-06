@@ -152,7 +152,7 @@ public class MainActivity extends FragmentActivity implements JitsiMeetActivityI
 
     @Override
     protected void onUserLeaveHint() {
-        getFragment().enterPictureInPicture();
+        getFragment().getJitsiView().enterPictureInPicture();
     }
 
     @Override

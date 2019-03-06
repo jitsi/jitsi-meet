@@ -103,10 +103,4 @@ public class JitsiMeetFragment extends Fragment {
 
         JitsiMeetActivityDelegate.onHostPause(getActivity());
     }
-
-    public void enterPictureInPicture() {
-        if (view != null) {
-            view.enterPictureInPicture();
-        }
-    }
 }
