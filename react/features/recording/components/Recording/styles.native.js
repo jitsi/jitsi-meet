@@ -37,11 +37,6 @@ export default createStyleSheet({
         paddingRight: BoxModel.padding
     },
 
-    title: {
-        fontSize: 16,
-        fontWeight: 'bold'
-    },
-
     text: {
         color: ColorPalette.white
     }

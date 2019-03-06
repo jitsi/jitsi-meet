@@ -144,10 +144,7 @@ class StartRecordingDialogContent extends Component<Props> {
                     style = { styles.header }>
                     <Text
                         className = 'recording-title'
-                        style = {{
-                            ..._dialogStyles.text,
-                            ...styles.title
-                        }}>
+                        style = { _dialogStyles.text }>
                         { t('recording.authDropboxText') }
                     </Text>
                     <Switch
