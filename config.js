@@ -175,6 +175,9 @@ var config = {
     // dropbox: {
     //     appKey: '<APP_KEY>' // Specify your app key here.
     // },
+    // When integrations like dropbox are enabled only that will be shown,
+    // by enabling fileRecordingsServiceEnabled, we force to show both
+    // fileRecordingsServiceEnabled: false
 
     // Whether to enable live streaming or not.
     // liveStreamingEnabled: false,
