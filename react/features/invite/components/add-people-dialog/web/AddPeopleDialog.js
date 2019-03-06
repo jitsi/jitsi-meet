@@ -176,7 +176,7 @@ class AddPeopleDialog extends AbstractAddPeopleDialog<Props, State> {
         return (
             <Dialog
                 okDisabled = { this._isAddDisabled() }
-                okTitleKey = 'addPeople.add'
+                okKey = 'addPeople.add'
                 onSubmit = { this._onSubmit }
                 titleKey = 'addPeople.title'
                 width = 'medium'>
