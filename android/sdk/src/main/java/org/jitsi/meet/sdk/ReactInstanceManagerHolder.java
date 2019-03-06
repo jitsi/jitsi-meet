@@ -24,6 +24,7 @@ import com.facebook.react.bridge.NativeModule;
 import com.facebook.react.bridge.ReactContext;
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.common.LifecycleState;
+import com.facebook.react.modules.core.DeviceEventManagerModule;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -81,12 +82,13 @@ class ReactInstanceManagerHolder {
             ReactContext reactContext
                 = reactInstanceManager.getCurrentReactContext();
 
-            return
-                reactContext != null
-                    && ReactContextUtils.emitEvent(
-                        reactContext,
-                        eventName,
-                        data);
+            if (reactContext != null) {
+                reactContext
+                    .getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class)
+                    .emit(eventName, data);
+
+                return true;
+            }
         }
 
         return false;
