@@ -18,7 +18,7 @@ type Props = {
      * Indicates the css style of the overlay. If true, then lighter; darker,
      * otherwise.
      */
-    isLightOverlay: boolean
+    isLightOverlay?: boolean
 };
 
 /**
