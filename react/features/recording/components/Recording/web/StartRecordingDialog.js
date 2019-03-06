@@ -30,7 +30,7 @@ class StartRecordingDialog extends AbstractStartRecordingDialog {
         return (
             <Dialog
                 okDisabled = { !isTokenValid && _isDropboxEnabled }
-                okTitleKey = 'dialog.confirm'
+                okKey = 'dialog.confirm'
                 onSubmit = { this._onSubmit }
                 titleKey = 'dialog.recording'
                 width = 'small'>

@@ -10,7 +10,7 @@ export type DialogProps = {
     /**
      * Optional i18n key to change the cancel button title.
      */
-    cancelTitleKey: string,
+    cancelKey: string,
 
     /**
      * The React {@code Component} children which represents the dialog's body.
@@ -25,7 +25,7 @@ export type DialogProps = {
     /**
      * Optional i18n key to change the ok button title.
      */
-    okTitleKey: string,
+    okKey: string,
 
     /**
      * The handler for onCancel event.

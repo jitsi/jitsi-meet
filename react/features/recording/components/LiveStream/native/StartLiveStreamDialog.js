@@ -47,7 +47,7 @@ class StartLiveStreamDialog extends AbstractStartLiveStreamDialog<Props> {
     render() {
         return (
             <CustomSubmitDialog
-                okTitleKey = 'dialog.startLiveStreaming'
+                okKey = 'dialog.startLiveStreaming'
                 onCancel = { this._onCancel }
                 onSubmit = { this._onSubmit } >
                 <View style = { styles.startDialogWrapper }>

@@ -149,7 +149,7 @@ class LocalRecordingInfoDialog extends Component<Props, State> {
 
         return (
             <Dialog
-                cancelTitleKey = { 'dialog.close' }
+                cancelKey = { 'dialog.close' }
                 submitDisabled = { true }
                 titleKey = 'localRecording.dialogTitle'>
                 <div className = 'localrec-control'>

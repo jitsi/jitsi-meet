@@ -99,7 +99,7 @@ class SpeakerStats extends Component<Props, State> {
 
         return (
             <Dialog
-                cancelTitleKey = { 'dialog.close' }
+                cancelKey = { 'dialog.close' }
                 submitDisabled = { true }
                 titleKey = 'speakerStats.speakerStats'>
                 <div className = 'speaker-stats'>

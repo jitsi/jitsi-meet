@@ -228,7 +228,7 @@ class FeedbackDialog extends Component<Props, State> {
 
         return (
             <Dialog
-                okTitleKey = 'dialog.Submit'
+                okKey = 'dialog.Submit'
                 onCancel = { this._onCancel }
                 onSubmit = { this._onSubmit }
                 titleKey = 'feedback.rateExperience'>

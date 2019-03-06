@@ -63,7 +63,7 @@ class RemoteControlAuthorizationDialog extends Component<Props> {
     render() {
         return (
             <Dialog
-                okTitleKey = { 'dialog.allow' }
+                okKey = { 'dialog.allow' }
                 onCancel = { this._onCancel }
                 onSubmit = { this._onSubmit }
                 titleKey = 'dialog.remoteControlTitle'

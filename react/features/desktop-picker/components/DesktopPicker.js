@@ -189,7 +189,7 @@ class DesktopPicker extends PureComponent<Props, State> {
             <Dialog
                 isModal = { false }
                 okDisabled = { Boolean(!this.state.selectedSource.id) }
-                okTitleKey = 'dialog.Share'
+                okKey = 'dialog.Share'
                 onCancel = { this._onCloseModal }
                 onSubmit = { this._onSubmit }
                 titleKey = 'dialog.shareYourScreen'
