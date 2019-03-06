@@ -55,8 +55,6 @@ public class MainActivity extends FragmentActivity implements JitsiMeetActivityI
     private static final int OVERLAY_PERMISSION_REQUEST_CODE
         = (int) (Math.random() * Short.MAX_VALUE);
 
-    private static final String TAG = "MainActivity";
-
     private JitsiMeetFragment getFragment() {
         return (JitsiMeetFragment) getSupportFragmentManager().findFragmentById(R.id.jitsiFragment);
     }
@@ -186,8 +184,8 @@ public class MainActivity extends FragmentActivity implements JitsiMeetActivityI
             if (canRequestOverlayPermission() && !Settings.canDrawOverlays(this)) {
                 Intent intent
                     = new Intent(
-                    Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
-                    Uri.parse("package:" + getPackageName()));
+                        Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
+                        Uri.parse("package:" + getPackageName()));
 
                 startActivityForResult(intent, OVERLAY_PERMISSION_REQUEST_CODE);
                 return;
