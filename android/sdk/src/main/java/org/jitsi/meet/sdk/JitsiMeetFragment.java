@@ -29,15 +29,15 @@ import android.view.ViewGroup;
 import java.net.URL;
 
 /**
- * Base Activity for applications integrating Jitsi Meet at a higher level. It
+ * Base {@link Fragment} for applications integrating Jitsi Meet at a higher level. It
  * contains all the required wiring between the {@code JitsiMeetView} and
- * the Activity lifecycle methods already implemented.
+ * the Fragment lifecycle methods already implemented.
  *
- * In this activity we use a single {@code JitsiMeetView} instance. This
+ * In this fragment we use a single {@code JitsiMeetView} instance. This
  * instance gives us access to a view which displays the welcome page and the
- * conference itself. All lifetime methods associated with this Activity are
+ * conference itself. All lifecycle methods associated with this Fragment are
  * hooked to the React Native subsystem via proxy calls through the
- * {@code JitsiMeetView} static methods.
+ * {@code JitsiMeetActivityDelegate} static methods.
  */
 public class JitsiMeetFragment extends Fragment {
 

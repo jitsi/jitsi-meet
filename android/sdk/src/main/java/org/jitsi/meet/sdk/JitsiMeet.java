@@ -21,12 +21,26 @@ import android.os.Bundle;
 import com.facebook.react.ReactInstanceManager;
 
 public class JitsiMeet {
+    /**
+     * Default {@link JitsiMeetConferenceOptions} which will be used for all conferences. When
+     * joining a conference these options will be merged with the ones passed to
+     * {@link JitsiMeetView} join().
+     */
     private static JitsiMeetConferenceOptions defaultConferenceOptions;
 
     public static JitsiMeetConferenceOptions getDefaultConferenceOptions() {
         return defaultConferenceOptions;
     }
 
+    public static void setDefaultConferenceOptions(JitsiMeetConferenceOptions options) {
+        defaultConferenceOptions = options;
+    }
+
+    /**
+     * Helper to get the default conference options as a {@link Bundle}.
+     *
+     * @return a {@link Bundle} with the default conference options.
+     */
     static Bundle getDefaultProps() {
         if (defaultConferenceOptions != null) {
             return defaultConferenceOptions.asProps();
@@ -35,10 +49,9 @@ public class JitsiMeet {
         return new Bundle();
     }
 
-    public static void setDefaultConferenceOptions(JitsiMeetConferenceOptions options) {
-        defaultConferenceOptions = options;
-    }
-
+    /**
+     * Used in development mode. It displays the React Native development menu.
+     */
     public static void showDevOptions() {
         ReactInstanceManager reactInstanceManager
             = ReactInstanceManagerHolder.getReactInstanceManager();

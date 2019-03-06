@@ -21,17 +21,45 @@ import android.os.Bundle;
 import java.net.URL;
 
 
+/**
+ * This class represents the options when joining a Jitsi Meet conference. The user can create an
+ * instance by using {@link JitsiMeetConferenceOptions.Builder} and setting the desired options
+ * there.
+ *
+ * The resulting {@link JitsiMeetConferenceOptions} object is immutable and represents how the
+ * conference will be joined.
+ */
 public class JitsiMeetConferenceOptions {
+    /**
+     * Server where the conference should take place.
+     */
     private URL serverURL;
+    /**
+     * Room name.
+     */
     private String room;
+    /**
+     * JWT token used for authentication.
+     */
     private String token;
 
+    /**
+     * Color scheme override, see: https://github.com/jitsi/jitsi-meet/blob/dbedee5e22e5dcf9c92db96ef5bb3c9982fc526d/react/features/base/color-scheme/defaultScheme.js
+     */
     private Bundle colorScheme;
 
+    /**
+     * Set to {@code true} to join the conference with audio / video muted or to start in audio
+     * only mode respectively.
+     */
     private Boolean audioMuted;
     private Boolean audioOnly;
     private Boolean videoMuted;
 
+    /**
+     * Set to {@code true} to enable the welcome page. Typically SDK users won't need this enabled
+     * since the host application decides which meeting to join.
+     */
     private Boolean welcomePageEnabled;
 
     public static class Builder {

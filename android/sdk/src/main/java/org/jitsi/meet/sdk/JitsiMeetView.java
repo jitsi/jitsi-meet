@@ -51,6 +51,13 @@ public class JitsiMeetView extends BaseReactView<JitsiMeetViewListener> {
     // fine to have this field volatile without additional synchronization.
     private volatile String url;
 
+    /**
+     * Helper method to recursively merge 2 {@link Bundle} objects representing React Native props.
+     *
+     * @param a - The first {@link Bundle}.
+     * @param b - The second {@link Bundle}.
+     * @return The merged {@link Bundle} object.
+     */
     private static Bundle mergeProps(@Nullable Bundle a, @Nullable Bundle b) {
         Bundle result = new Bundle();
 
@@ -125,27 +132,39 @@ public class JitsiMeetView extends BaseReactView<JitsiMeetViewListener> {
         }
     }
 
+    /**
+     * Joins the conference specified by the given {@link JitsiMeetConferenceOptions}.
+     * @param options - Description of what conference must be joined and what options will be used
+     *                when doing so.
+     */
     public void join(@Nullable JitsiMeetConferenceOptions options) {
         setProps(options != null ? options.asProps() : new Bundle());
     }
 
+    /**
+     * Leaves the currently active conference.
+     */
     public void leave() {
         setProps(new Bundle());
     }
 
+    /**
+     * Helper method to set the React Native props.
+     * @param newProps - New props to be set on the React Native view.
+     */
     private void setProps(@NonNull Bundle newProps) {
         // Merge the default options with the newly provided ones.
         Bundle props = mergeProps(JitsiMeet.getDefaultProps(), newProps);
 
-        // XXX The method loadURLObject: is supposed to be imperative i.e.
+        // XXX The setProps() method is supposed to be imperative i.e.
         // a second invocation with one and the same URL is expected to join
         // the respective conference again if the first invocation was followed
         // by leaving the conference. However, React and, respectively,
         // appProperties/initialProperties are declarative expressions i.e. one
         // and the same URL will not trigger an automatic re-render in the
         // JavaScript source code. The workaround implemented bellow introduces
-        // imperativeness in React Component props by defining a unique value
-        // per loadURLObject: invocation.
+        // "imperativeness" in React Component props by defining a unique value
+        // per setProps() invocation.
         props.putLong("timestamp", System.currentTimeMillis());
 
         createReactRootView("App", props);
