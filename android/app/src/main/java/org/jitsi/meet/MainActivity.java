@@ -20,34 +20,31 @@ package org.jitsi.meet;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
-import android.os.Bundle;
 import android.provider.Settings;
 import android.support.annotation.Nullable;
-import android.support.v4.app.FragmentActivity;
+import android.util.Log;
 import android.view.KeyEvent;
 
 import org.jitsi.meet.sdk.JitsiMeet;
-import org.jitsi.meet.sdk.JitsiMeetActivityInterface;
-import org.jitsi.meet.sdk.JitsiMeetActivityDelegate;
-import org.jitsi.meet.sdk.JitsiMeetFragment;
+import org.jitsi.meet.sdk.JitsiMeetActivity;
 import org.jitsi.meet.sdk.JitsiMeetConferenceOptions;
 
 import com.crashlytics.android.Crashlytics;
-import com.facebook.react.modules.core.PermissionListener;
 import com.google.firebase.dynamiclinks.FirebaseDynamicLinks;
 import io.fabric.sdk.android.Fabric;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Map;
 
 /**
- * The one and only {@link FragmentActivity} that the Jitsi Meet app needs. The
+ * The one and only Activity that the Jitsi Meet app needs. The
  * {@code Activity} is launched in {@code singleTask} mode, so it will be
  * created upon application initialization and there will be a single instance
  * of it. Further attempts at launching the application once it was already
- * launched will result in {@link FragmentActivity#onNewIntent(Intent)} being called.
+ * launched will result in {@link MainActivity#onNewIntent(Intent)} being called.
  */
-public class MainActivity extends FragmentActivity implements JitsiMeetActivityInterface {
+public class MainActivity extends JitsiMeetActivity {
     /**
      * The request code identifying requests for the permission to draw on top
      * of other apps. The value must be 16-bit and is arbitrarily chosen here.
@@ -55,111 +52,11 @@ public class MainActivity extends FragmentActivity implements JitsiMeetActivityI
     private static final int OVERLAY_PERMISSION_REQUEST_CODE
         = (int) (Math.random() * Short.MAX_VALUE);
 
-    private JitsiMeetFragment getFragment() {
-        return (JitsiMeetFragment) getSupportFragmentManager().findFragmentById(R.id.jitsiFragment);
-    }
-
-    private @Nullable URL buildURL(String urlStr) {
-        try {
-            return new URL(urlStr);
-        } catch (MalformedURLException e) {
-            return null;
-        }
-    }
-
-    private void initialize() {
-        // Set default options
-        JitsiMeetConferenceOptions defaultOptions
-            = new JitsiMeetConferenceOptions.Builder()
-                .setWelcomePageEnabled(true)
-                .setServerURL(buildURL("https://meet.jit.si"))
-                .build();
-        JitsiMeet.setDefaultConferenceOptions(defaultOptions);
-
-        // Join the room specified by the URL the app was launched with.
-        // Joining without the room option displays the welcome page.
-        join(getIntentUrl(getIntent()));
-    }
-
-    private void join(@Nullable String url) {
-        JitsiMeetConferenceOptions options
-            = new JitsiMeetConferenceOptions.Builder()
-                .setRoom(url)
-                .build();
-        getFragment().getJitsiView().join(options);
-    }
-
-    private @Nullable String getIntentUrl(Intent intent) {
-        Uri uri;
-
-        if (Intent.ACTION_VIEW.equals(intent.getAction())
-                && (uri = intent.getData()) != null) {
-            return uri.toString();
-        }
-
-        return null;
-    }
-
-    private boolean canRequestOverlayPermission() {
-        return
-            Build.VERSION.SDK_INT >= Build.VERSION_CODES.M
-                && getApplicationInfo().targetSdkVersion >= Build.VERSION_CODES.M;
-    }
+    // JitsiMeetActivity overrides
+    //
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == OVERLAY_PERMISSION_REQUEST_CODE
-                && canRequestOverlayPermission()) {
-            if (Settings.canDrawOverlays(this)) {
-                initialize();
-            }
-
-            return;
-        }
-
-        super.onActivityResult(requestCode, resultCode, data);
-    }
-
-    @Override
-    public void onBackPressed() {
-        JitsiMeetActivityDelegate.onBackPressed();
-    }
-
-    // ReactAndroid/src/main/java/com/facebook/react/ReactActivity.java
-    @Override
-    public boolean onKeyUp(int keyCode, KeyEvent event) {
-        if (BuildConfig.DEBUG && keyCode == KeyEvent.KEYCODE_MENU) {
-            JitsiMeet.showDevOptions();
-            return true;
-        }
-
-        return super.onKeyUp(keyCode, event);
-    }
-
-    @Override
-    public void onNewIntent(Intent intent) {
-        String url;
-
-        if ((url = getIntentUrl(intent)) != null) {
-            join(url);
-            return;
-        }
-
-        JitsiMeetActivityDelegate.onNewIntent(intent);
-    }
-
-    @Override
-    protected void onUserLeaveHint() {
-        getFragment().getJitsiView().enterPictureInPicture();
-    }
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
-        // Set the Activity's content view.
-        setContentView(R.layout.main_layout);
-
+    protected boolean extraInitialize() {
         // Setup Crashlytics and Firebase Dynamic Links
         if (BuildConfig.GOOGLE_SERVICES_ENABLED) {
             Fabric.with(this, new Crashlytics());
@@ -184,20 +81,88 @@ public class MainActivity extends FragmentActivity implements JitsiMeetActivityI
             if (canRequestOverlayPermission() && !Settings.canDrawOverlays(this)) {
                 Intent intent
                     = new Intent(
-                        Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
-                        Uri.parse("package:" + getPackageName()));
+                    Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
+                    Uri.parse("package:" + getPackageName()));
 
                 startActivityForResult(intent, OVERLAY_PERMISSION_REQUEST_CODE);
-                return;
+
+                return true;
             }
         }
 
-        initialize();
+        return false;
     }
 
     @Override
-    public void requestPermissions(String[] permissions, int requestCode, PermissionListener listener) {
-        JitsiMeetActivityDelegate.requestPermissions(this, permissions, requestCode, listener);
+    protected void initialize() {
+        // Set default options
+        JitsiMeetConferenceOptions defaultOptions
+            = new JitsiMeetConferenceOptions.Builder()
+                .setWelcomePageEnabled(true)
+                .setServerURL(buildURL("https://meet.jit.si"))
+                .build();
+        JitsiMeet.setDefaultConferenceOptions(defaultOptions);
+
+        super.initialize();
     }
 
+    @Override
+    public void onConferenceFailed(Map<String, Object> data) {
+        Log.d(TAG, "Conference failed: " + data);
+    }
+
+    @Override
+    public void onConferenceLeft(Map<String, Object> data) {
+        Log.d(TAG, "Conference left: " + data);
+    }
+
+    @Override
+    public void onLoadConfigError(Map<String, Object> data) {
+        Log.d(TAG, "Error loading config: " + data);
+    }
+
+    // Activity lifecycle method overrides
+    //
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == OVERLAY_PERMISSION_REQUEST_CODE
+                && canRequestOverlayPermission()) {
+            if (Settings.canDrawOverlays(this)) {
+                initialize();
+            }
+
+            return;
+        }
+
+        super.onActivityResult(requestCode, resultCode, data);
+    }
+
+    // ReactAndroid/src/main/java/com/facebook/react/ReactActivity.java
+    @Override
+    public boolean onKeyUp(int keyCode, KeyEvent event) {
+        if (BuildConfig.DEBUG && keyCode == KeyEvent.KEYCODE_MENU) {
+            JitsiMeet.showDevOptions();
+            return true;
+        }
+
+        return super.onKeyUp(keyCode, event);
+    }
+
+    // Helper methods
+    //
+
+    private @Nullable URL buildURL(String urlStr) {
+        try {
+            return new URL(urlStr);
+        } catch (MalformedURLException e) {
+            return null;
+        }
+    }
+
+    private boolean canRequestOverlayPermission() {
+        return
+            Build.VERSION.SDK_INT >= Build.VERSION_CODES.M
+                && getApplicationInfo().targetSdkVersion >= Build.VERSION_CODES.M;
+    }
 }
