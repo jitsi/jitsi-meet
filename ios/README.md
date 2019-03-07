@@ -43,9 +43,15 @@ To get started:
   [super viewDidLoad];
 
   JitsiMeetView *jitsiMeetView = (JitsiMeetView *) self.view;
-
   jitsiMeetView.delegate = self;
-  [jitsiMeetView loadURL:nil];
+
+  JitsiMeetConferenceOptions *options = [JitsiMeetConferenceOptions fromBuilder:^(JitsiMeetConferenceOptionsBuilder *builder) {
+      builder.serverURL = [NSURL URLWithString:@"https://meet.jit.si"];
+      builder.room = @"test123";
+      builder.audioOnly = YES;
+  }];
+
+  [jitsiMeetView join:options];
 }
 ```
 
@@ -58,75 +64,35 @@ The `JitsiMeetView` class is the entry point to the SDK. It a subclass of
 
 Property to get/set the `JitsiMeetViewDelegate` on `JitsiMeetView`.
 
-#### defaultURL
+#### join:JitsiMeetConferenceOptions
 
-Property to get/set the default base URL used to join a conference when a
-partial URL (e.g. a room name only) is specified to
-`loadURLString:`/`loadURLObject:`. If not set or if set to `nil`, the default
-built in JavaScript is used: https://meet.jit.si.
-
-NOTE: Must be set (if at all) before `loadURL:`/`loadURLString:` for it to take
-effect.
-
-#### pictureInPictureEnabled
-
-Property to get / set whether Picture-in-Picture is enabled. Defaults to `YES`
-if `delegate` implements `enterPictureInPicture:`; otherwise, `NO`.
-
-NOTE: Must be set (if at all) before `loadURL:`/`loadURLString:` for it to take
-effect.
-
-#### welcomePageEnabled
-
-Property to get/set whether the Welcome page is enabled. If `NO`, a black empty
-view will be rendered when not in a conference. Defaults to `NO`.
-
-NOTE: Must be set (if at all) before `loadURL:`/`loadURLString:` for it to take
-effect.
-
-#### loadURL:NSURL
+Joins the conference specified by the given options.
 
 ```objc
-[jitsiMeetView loadURL:[NSURL URLWithString:@"https://meet.jit.si/test123"]];
+  JitsiMeetConferenceOptions *options = [JitsiMeetConferenceOptions fromBuilder:^(JitsiMeetConferenceOptionsBuilder *builder) {
+      builder.serverURL = [NSURL URLWithString:@"https://meet.jit.si"];
+      builder.room = @"test123";
+      builder.audioOnly = NO;
+      builder.audioMuted = NO;
+      builder.videoMuted = NO;
+      builder.welcomePageEnabled = NO;
+  }];
+
+  [jitsiMeetView join:options];
 ```
 
-Loads a specific URL which may identify a conference to join. If the specified
-URL is `nil` and the Welcome page is enabled, the Welcome page is displayed
-instead.
+#### leave
 
-#### loadURLObject:NSDictionary
-
-```objc
-[jitsiMeetView loadURLObject:@{
-    @"config": @{
-        @"startWithAudioMuted": @YES,
-        @"startWithVideoMuted": @NO
-    },
-    @"url": @"https://meet.jit.si/test123"
-}];
-```
-
-Loads a specific URL which may identify a conference to join. The URL is
-specified in the form of an `NSDictionary` of properties which (1) internally
-are sufficient to construct a URL (string) while (2) abstracting the specifics
-of constructing the URL away from API clients/consumers. If the specified URL is
-`nil` and the Welcome page is enabled, the Welcome page is displayed instead.
-
-#### loadURLString:NSString
-
-```objc
-[jitsiMeetView loadURLString:@"https://meet.jit.si/test123"];
-```
-
-Loads a specific URL which may identify a conference to join. If the specified
-URL is `nil` and the Welcome page is enabled, the Welcome page is displayed
-instead.
+Leaves the currently active conference.
 
 #### Universal / deep linking
 
 In order to support Universal / deep linking, `JitsiMeetView` offers 2 class
 methods that you app's delegate should call in order for the app to follow those
 links.
+
+If these functions return NO it means the URL wasn't handled by the SDK. This
+is useful when the host application uses other SDKs which also use linking.
 
 ```objc
 -  (BOOL)application:(UIApplication *)application
@@ -151,22 +117,6 @@ And also one of the following:
                             options: options];
 }
 ```
-or
-```objc
-// See https://developer.apple.com/documentation/uikit/uiapplicationdelegate/1623112-application?language=objc
-- (BOOL)application:(UIApplication *)application
-            openURL:(NSURL *)url
-  sourceApplication:(NSString *)sourceApplication
-         annotation:(id)annotation
-{
-  return [JitsiMeetView application:application
-                            openURL:url
-                  sourceApplication:sourceApplication
-                         annotation:annotation];
-}
-```
-
-NOTE: The latter is deprecated.
 
 ### JitsiMeetViewDelegate
 
@@ -239,9 +189,8 @@ Jitsi Meet SDK does not currently implement native Picture-in-Picture on iOS. If
 desired, apps need to implement non-native Picture-in-Picture themselves and
 resize `JitsiMeetView`.
 
-If `pictureInPictureEnabled` is set to `YES` or `delegate` implements
-`enterPictureInPicture:`, the in-call toolbar will render a button to afford the
-user to request entering Picture-in-Picture.
+If `delegate` implements `enterPictureInPicture:`, the in-call toolbar will
+render a button to afford the user to request entering Picture-in-Picture.
 
 ## Dropbox integration
 
@@ -268,13 +217,5 @@ Dropbox app key:
 </array>
 ```
 
-2. Add the following to the app's `AppDelegate`:
-```objc
-- (BOOL)application:(UIApplication *)app
-            openURL:(NSURL *)url
-            options:(NSDictionary<UIApplicationOpenURLOptionsKey,id> *)options {
-  return [JitsiMeetView application:app
-                            openURL:url
-                            options:options];
-}
-```
+2. Make sure your app calls the Jitsi Meet SDK universal / deep linking delegate
+   methods.

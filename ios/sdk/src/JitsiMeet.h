@@ -22,10 +22,24 @@
 
 @interface JitsiMeet : NSObject
 
+/**
+ * Name for the conference NSUserActivity type. This is used when integrating with
+ * SiriKit or Handoff, for example.
+ */
 @property (copy, nonatomic, nullable) NSString *conferenceActivityType;
+/**
+ * Custom URL scheme used for deep-linking.
+ */
 @property (copy, nonatomic, nullable) NSString *customUrlScheme;
+/**
+ * List of domains used for universal linking.
+ */
 @property (copy, nonatomic, nullable) NSArray<NSString *> *universalLinkDomains;
 
+/**
+ * Default conference options used for all conferences. These options will be merged
+ * with those passed to JitsiMeetView.join when joining a conference.
+ */
 @property (nonatomic, nullable) JitsiMeetConferenceOptions *defaultConferenceOptions;
 
 #pragma mak - This class is a singleton
