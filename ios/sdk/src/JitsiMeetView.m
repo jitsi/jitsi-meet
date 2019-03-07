@@ -33,6 +33,9 @@
      */
     NSString *externalAPIScope;
 
+    /**
+     * React Native view where the entire content will be rendered.
+     */
     RCTRootView *rootView;
 }
 

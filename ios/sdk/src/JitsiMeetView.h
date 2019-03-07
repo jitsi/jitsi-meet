@@ -25,7 +25,14 @@
 
 @property (nonatomic, nullable, weak) id<JitsiMeetViewDelegate> delegate;
 
+/**
+ * Joins the conference specified by the given options. The gievn options will
+ * be merged with the defaultConferenceOptions (if set) in JitsiMeet.
+ */
 - (void)join:(JitsiMeetConferenceOptions *)options;
+/**
+ * Leaves the currently active conference.
+ */
 - (void)leave;
 
 @end
