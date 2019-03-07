@@ -174,6 +174,11 @@ var config = {
     // Enable the dropbox integration.
     // dropbox: {
     //     appKey: '<APP_KEY>' // Specify your app key here.
+    //     // A URL to redirect the user to, after authenticating
+    //     // by default uses:
+    //     // 'https://jitsi-meet.example.com/static/oauth.html'
+    //     redirectURI:
+    //          'https://jitsi-meet.example.com/subfolder/static/oauth.html'
     // },
 
     // Whether to enable live streaming or not.
