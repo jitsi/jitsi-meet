@@ -11,6 +11,7 @@ import {
     getDropboxData,
     isEnabled as isDropboxEnabled
 } from '../../../dropbox';
+import { RECORDING_TYPES } from '../../constants';
 
 type Props = {
 
@@ -179,14 +180,14 @@ class AbstractStartRecordingDialog extends Component<Props, State> {
             appData = JSON.stringify({
                 'file_recording_metadata': {
                     'upload_credentials': {
-                        'service_name': 'dropbox',
+                        'service_name': RECORDING_TYPES.DROPBOX,
                         'token': _token
                     }
                 }
             });
-            attributes.type = 'dropbox';
+            attributes.type = RECORDING_TYPES.DROPBOX;
         } else {
-            attributes.type = 'recording-service';
+            attributes.type = RECORDING_TYPES.JITSI_REC_SERVICE;
         }
 
         sendAnalytics(

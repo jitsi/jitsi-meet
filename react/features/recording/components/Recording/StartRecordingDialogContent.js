@@ -28,6 +28,7 @@ import {
     JITSI_LOGO
 } from './styles';
 
+import { RECORDING_TYPES } from '../../constants';
 import { getRecordingDurationEstimation } from '../../functions';
 
 type Props = {
@@ -85,14 +86,9 @@ type Props = {
 type State = {
 
     /**
-     * True if the jitsi recording service is selected to be used.
+     * The currently selected recording service of type: RECORDING_TYPES.
      */
-    jitsiRecordingSelected: boolean,
-
-    /**
-     * True if dropbox is selected for storing the recording.
-     */
-    dropboxRecordingSelected: boolean
+    selectedRecordingService: string
 };
 
 
@@ -118,17 +114,10 @@ class StartRecordingDialogContent extends Component<Props, State> {
         this._onRecordingServiceSwitchChange
             = this._onRecordingServiceSwitchChange.bind(this);
 
-        // enable jitsi recording if force enabled
-        // or if there are no integrations enabled.
-        const enableJitsiRecordingService
-            = this.props.fileRecordingsServiceEnabled === true
-                || !this.props.integrationsEnabled;
-
+        // the initial state is jitsi rec service is always selected
+        // if only one type of recording is enabled this state will be ignored
         this.state = {
-            jitsiRecordingSelected: enableJitsiRecordingService,
-            dropboxRecordingSelected:
-                this.props.integrationsEnabled
-                    && !enableJitsiRecordingService
+            selectedRecordingService: RECORDING_TYPES.JITSI_REC_SERVICE
         };
     }
 
@@ -175,7 +164,9 @@ class StartRecordingDialogContent extends Component<Props, State> {
                             = { this._onRecordingServiceSwitchChange }
                         style = { styles.switch }
                         trackColor = {{ false: ColorPalette.lightGrey }}
-                        value = { this.state.jitsiRecordingSelected } />
+                        value = {
+                            this.state.selectedRecordingService
+                                === RECORDING_TYPES.JITSI_REC_SERVICE } />
                 ) : null;
 
         return (
@@ -252,7 +243,8 @@ class StartRecordingDialogContent extends Component<Props, State> {
                     onValueChange = { this._onDropboxSwitchChange }
                     style = { styles.switch }
                     trackColor = {{ false: ColorPalette.lightGrey }}
-                    value = { this.state.dropboxRecordingSelected } />
+                    value = { this.state.selectedRecordingService
+                        === RECORDING_TYPES.DROPBOX } />
             );
         }
 
@@ -297,13 +289,13 @@ class StartRecordingDialogContent extends Component<Props, State> {
     _onRecordingServiceSwitchChange() {
 
         // act like group, cannot toggle off
-        if (this.state.jitsiRecordingSelected) {
+        if (this.state.selectedRecordingService
+                === RECORDING_TYPES.JITSI_REC_SERVICE) {
             return;
         }
 
         this.setState({
-            jitsiRecordingSelected: true,
-            dropboxRecordingSelected: false
+            selectedRecordingService: RECORDING_TYPES.JITSI_REC_SERVICE
         });
 
         if (this.props.isTokenValid) {
@@ -318,13 +310,13 @@ class StartRecordingDialogContent extends Component<Props, State> {
      */
     _onDropboxSwitchChange() {
         // act like group, cannot toggle off
-        if (this.state.dropboxRecordingSelected) {
+        if (this.state.selectedRecordingService
+                === RECORDING_TYPES.DROPBOX) {
             return;
         }
 
         this.setState({
-            jitsiRecordingSelected: false,
-            dropboxRecordingSelected: true
+            selectedRecordingService: RECORDING_TYPES.DROPBOX
         });
 
         if (!this.props.isTokenValid) {
