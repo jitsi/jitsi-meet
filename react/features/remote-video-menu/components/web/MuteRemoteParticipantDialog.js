@@ -25,7 +25,7 @@ class MuteRemoteParticipantDialog extends AbstractMuteRemoteParticipantDialog {
     render() {
         return (
             <Dialog
-                okTitleKey = 'dialog.muteParticipantButton'
+                okKey = 'dialog.muteParticipantButton'
                 onSubmit = { this._onSubmit }
                 titleKey = 'dialog.muteParticipantTitle'
                 width = 'small'>

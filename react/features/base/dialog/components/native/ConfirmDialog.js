@@ -43,7 +43,7 @@ class ConfirmDialog extends BaseSubmitDialog<Props, *> {
      * @returns {string}
      */
     _getSubmitButtonKey() {
-        return 'dialog.confirmYes';
+        return this.props.okKey || 'dialog.confirmYes';
     }
 
     _onCancel: () => void;
@@ -57,7 +57,7 @@ class ConfirmDialog extends BaseSubmitDialog<Props, *> {
      * @inheritdoc
      */
     _renderAdditionalButtons() {
-        const { _dialogStyles, t } = this.props;
+        const { _dialogStyles, cancelKey, t } = this.props;
 
         return (
             <TouchableOpacity
@@ -68,7 +68,7 @@ class ConfirmDialog extends BaseSubmitDialog<Props, *> {
                     _dialogStyles.buttonSeparator
                 ] }>
                 <Text style = { _dialogStyles.text }>
-                    { t('dialog.confirmNo') }
+                    { t(cancelKey || 'dialog.confirmNo') }
                 </Text>
             </TouchableOpacity>
         );
@@ -80,6 +80,10 @@ class ConfirmDialog extends BaseSubmitDialog<Props, *> {
      * @inheritdoc
      */
     _renderSubmittable() {
+        if (this.props.children) {
+            return this.props.children;
+        }
+
         const { _dialogStyles, contentKey, t } = this.props;
         const content
             = typeof contentKey === 'string'

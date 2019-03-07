@@ -27,7 +27,7 @@ class StopLiveStreamDialog extends AbstractStopLiveStreamDialog {
     render() {
         return (
             <Dialog
-                okTitleKey = 'dialog.stopLiveStreaming'
+                okKey = 'dialog.stopLiveStreaming'
                 onSubmit = { this._onSubmit }
                 titleKey = 'dialog.liveStreaming'
                 width = 'small'>

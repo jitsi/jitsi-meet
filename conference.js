@@ -1326,7 +1326,14 @@ export default {
         this.isSharingScreen = newStream && newStream.videoType === 'desktop';
 
         if (wasSharingScreen !== this.isSharingScreen) {
-            APP.API.notifyScreenSharingStatusChanged(this.isSharingScreen);
+            const details = {};
+
+            if (this.isSharingScreen) {
+                details.sourceType = newStream.sourceType;
+            }
+
+            APP.API.notifyScreenSharingStatusChanged(
+                this.isSharingScreen, details);
         }
     },
 
