@@ -87,8 +87,8 @@ class StartLiveStreamDialog
 
         return (
             <Dialog
-                cancelTitleKey = 'dialog.Cancel'
-                okTitleKey = 'dialog.startLiveStreaming'
+                cancelKey = 'dialog.Cancel'
+                okKey = 'dialog.startLiveStreaming'
                 onCancel = { this._onCancel }
                 onSubmit = { this._onSubmit }
                 titleKey = 'liveStreaming.start'

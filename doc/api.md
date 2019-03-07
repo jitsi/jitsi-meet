@@ -168,7 +168,14 @@ changes. The listener will receive an object with the following structure:
 * **screenSharingStatusChanged** - receives event notifications about turning on/off the local user screen sharing. The listener will receive object with the following structure:
 ```javascript
 {
-"on": on //whether screen sharing is on
+"on": on, //whether screen sharing is on
+"details": {
+
+    // From where the screen sharing is capturing, if known. Values which are
+    // passed include "window", "screen", "proxy", "device". The value undefined
+    // will be passed if the source type is unknown or screen share is off.
+    sourceType: sourceType
+}
 }
 ```
 

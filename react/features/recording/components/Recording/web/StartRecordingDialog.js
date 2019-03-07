@@ -38,7 +38,7 @@ class StartRecordingDialog extends AbstractStartRecordingDialog {
         return (
             <Dialog
                 okDisabled = { isOkDisabled }
-                okTitleKey = 'dialog.startRecording'
+                okKey = 'dialog.startRecording'
                 onSubmit = { this._onSubmit }
                 titleKey = 'dialog.startRecording'
                 width = 'small'>
