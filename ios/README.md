@@ -128,35 +128,24 @@ fail?
 
 All methods in this delegate are optional.
 
-##### conferenceFailed
-
-Called when a joining a conference was unsuccessful or when there was an error
-while in a conference.
-
-The `data` dictionary contains an "error" key describing the error and a "url"
-key with the conference URL.
-
 #### conferenceJoined
 
 Called when a conference was joined.
 
 The `data` dictionary contains a "url" key with the conference URL.
 
-#### conferenceLeft
+#### conferenceTerminated
 
-Called when a conference was left.
+Called when a conference was terminated either by user choice or due to a
+failure.
 
-The `data` dictionary contains a "url" key with the conference URL.
+The `data` dictionary contains an "error" key with the error and a "url" key
+with the conference URL. If the conference finished gracefully no `error`
+key will be present.
 
 #### conferenceWillJoin
 
 Called before a conference is joined.
-
-The `data` dictionary contains a "url" key with the conference URL.
-
-#### conferenceWillLeave
-
-Called before a conference is left.
 
 The `data` dictionary contains a "url" key with the conference URL.
 
@@ -169,15 +158,6 @@ its user interface to a variant appropriate for the small size ordinarily
 associated with Picture-in-Picture.)
 
 The `data` dictionary is empty.
-
-#### loadConfigError
-
-Called when loading the main configuration file from the Jitsi Meet deployment
-fails.
-
-The `data` dictionary contains an "error" key with the error and a "url" key
-with the conference URL which necessitated the loading of the configuration
-file.
 
 ### Picture-in-Picture
 

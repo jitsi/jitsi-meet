@@ -186,9 +186,7 @@ public class JitsiMeetView extends BaseReactView<JitsiMeetViewListener> {
             this.url = url;
             break;
 
-        case "CONFERENCE_FAILED":
-        case "CONFERENCE_WILL_LEAVE":
-        case "LOAD_CONFIG_ERROR":
+        case "CONFERENCE_TERMINATED":
             if (url != null && url.equals(this.url)) {
                 this.url = null;
             }

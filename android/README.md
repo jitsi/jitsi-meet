@@ -376,49 +376,26 @@ This is a static method.
 `JitsiMeetViewListener` provides an interface apps can implement to listen to
 the state of the Jitsi Meet conference displayed in a `JitsiMeetView`.
 
-`JitsiMeetViewAdapter`, a default implementation of the
-`JitsiMeetViewListener` interface is also provided. Apps may extend the class
-instead of implementing the interface in order to minimize boilerplate.
-
-##### onConferenceFailed
-
-Called when a joining a conference was unsuccessful or when there was an error
-while in a conference.
-
-The `data` `Map` contains an "error" key describing the error and a "url" key
-with the conference URL.
-
 #### onConferenceJoined
 
 Called when a conference was joined.
 
 The `data` `Map` contains a "url" key with the conference URL.
 
-#### onConferenceLeft
+#### onConferenceTerminated
 
-Called when a conference was left.
+Called when a conference was terminated either by user choice or due to a
+failure.
 
-The `data` `Map` contains a "url" key with the conference URL.
+The `data` `Map` contains an "error" key with the error and a "url" key
+with the conference URL. If the conference finished gracefully no `error`
+key will be present.
 
 #### onConferenceWillJoin
 
 Called before a conference is joined.
 
 The `data` `Map` contains a "url" key with the conference URL.
-
-#### onConferenceWillLeave
-
-Called before a conference is left.
-
-The `data` `Map` contains a "url" key with the conference URL.
-
-#### onLoadConfigError
-
-Called when loading the main configuration file from the Jitsi Meet deployment
-fails.
-
-The `data` `Map` contains an "error" key with the error and a "url" key with the
-conference URL which necessitated the loading of the configuration file.
 
 ## ProGuard rules
 

@@ -155,35 +155,18 @@ public class JitsiMeetActivity extends FragmentActivity
     //
 
     @Override
-    public void onConferenceFailed(Map<String, Object> data) {
-        Log.d(TAG, "Conference failed: " + data);
-        finish();
-    }
-
-    @Override
     public void onConferenceJoined(Map<String, Object> data) {
         Log.d(TAG, "Conference joined: " + data);
     }
 
     @Override
-    public void onConferenceLeft(Map<String, Object> data) {
-        Log.d(TAG, "Conference left: " + data);
+    public void onConferenceTerminated(Map<String, Object> data) {
+        Log.d(TAG, "Conference terminated: " + data);
         finish();
     }
 
     @Override
     public void onConferenceWillJoin(Map<String, Object> data) {
         Log.d(TAG, "Conference will join: " + data);
-    }
-
-    @Override
-    public void onConferenceWillLeave(Map<String, Object> data) {
-        Log.d(TAG, "Conference will leave: " + data);
-    }
-
-    @Override
-    public void onLoadConfigError(Map<String, Object> data) {
-        Log.d(TAG, "Error loading config: " + data);
-        finish();
     }
 }

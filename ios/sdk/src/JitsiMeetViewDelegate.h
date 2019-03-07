@@ -19,15 +19,6 @@
 @optional
 
 /**
- * Called when a joining a conference was unsuccessful or when there was an
- * error while in a conference.
- *
- * The `data` dictionary contains an `error` key describing the error and a
- * `url` key with the conference URL.
- */
-- (void)conferenceFailed:(NSDictionary *)data;
-
-/**
  * Called when a conference was joined.
  *
  * The `data` dictionary contains a `url` key with the conference URL.
@@ -35,11 +26,14 @@
 - (void)conferenceJoined:(NSDictionary *)data;
 
 /**
- * Called when a conference was left.
+ * Called when the active conference ends, be it because of user choice or
+ * because of a failure.
  *
- * The `data` dictionary contains a `url` key with the conference URL.
+ * The `data` dictionary contains an `error` key with the error and a `url` key
+ * with the conference URL. If the conference finished gracefully no `error`
+ * key will be present.
  */
-- (void)conferenceLeft:(NSDictionary *)data;
+- (void)conferenceTerminated:(NSDictionary *)data;
 
 /**
  * Called before a conference is joined.
@@ -47,13 +41,6 @@
  * The `data` dictionary contains a `url` key with the conference URL.
  */
 - (void)conferenceWillJoin:(NSDictionary *)data;
-
-/**
- * Called before a conference is left.
- *
- * The `data` dictionary contains a `url` key with the conference URL.
- */
-- (void)conferenceWillLeave:(NSDictionary *)data;
 
 /**
  * Called when entering Picture-in-Picture is requested by the user. The app
@@ -65,15 +52,5 @@
  * The `data` dictionary is empty.
  */
 - (void)enterPictureInPicture:(NSDictionary *)data;
-
-/**
- * Called when loading the main configuration file from the Jitsi Meet
- * deployment file.
- *
- * The `data` dictionary contains an `error` key with the error and a `url` key
- * with the conference URL which necessitated the loading of the configuration
- * file.
- */
-- (void)loadConfigError:(NSDictionary *)data;
 
 @end
