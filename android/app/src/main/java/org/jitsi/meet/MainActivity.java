@@ -107,18 +107,8 @@ public class MainActivity extends JitsiMeetActivity {
     }
 
     @Override
-    public void onConferenceFailed(Map<String, Object> data) {
-        Log.d(TAG, "Conference failed: " + data);
-    }
-
-    @Override
-    public void onConferenceLeft(Map<String, Object> data) {
-        Log.d(TAG, "Conference left: " + data);
-    }
-
-    @Override
-    public void onLoadConfigError(Map<String, Object> data) {
-        Log.d(TAG, "Error loading config: " + data);
+    public void onConferenceTerminated(Map<String, Object> data) {
+        Log.d(TAG, "Conference terminated: " + data);
     }
 
     // Activity lifecycle method overrides

@@ -54,10 +54,6 @@
 #endif
 }
 
-- (void)conferenceFailed:(NSDictionary *)data {
-    [self _onJitsiMeetViewDelegateEvent:@"CONFERENCE_FAILED" withData:data];
-}
-
 - (void)conferenceJoined:(NSDictionary *)data {
     [self _onJitsiMeetViewDelegateEvent:@"CONFERENCE_JOINED" withData:data];
 
@@ -92,20 +88,12 @@
 
 }
 
-- (void)conferenceLeft:(NSDictionary *)data {
-    [self _onJitsiMeetViewDelegateEvent:@"CONFERENCE_LEFT" withData:data];
+- (void)conferenceTerminated:(NSDictionary *)data {
+    [self _onJitsiMeetViewDelegateEvent:@"CONFERENCE_TERMINATED" withData:data];
 }
 
 - (void)conferenceWillJoin:(NSDictionary *)data {
     [self _onJitsiMeetViewDelegateEvent:@"CONFERENCE_WILL_JOIN" withData:data];
-}
-
-- (void)conferenceWillLeave:(NSDictionary *)data {
-    [self _onJitsiMeetViewDelegateEvent:@"CONFERENCE_WILL_LEAVE" withData:data];
-}
-
-- (void)loadConfigError:(NSDictionary *)data {
-    [self _onJitsiMeetViewDelegateEvent:@"LOAD_CONFIG_ERROR" withData:data];
 }
 
 @end

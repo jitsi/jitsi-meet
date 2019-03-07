@@ -23,15 +23,6 @@ import java.util.Map;
  */
 public interface JitsiMeetViewListener {
     /**
-     * Called when joining a conference fails or an ongoing conference is
-     * interrupted due to a failure.
-     *
-     * @param data Map with an "error" key describing the problem, and a "url"
-     * key with the conference URL.
-     */
-    void onConferenceFailed(Map<String, Object> data);
-
-    /**
      * Called when a conference was joined.
      *
      * @param data Map with a "url" key with the conference URL.
@@ -39,11 +30,14 @@ public interface JitsiMeetViewListener {
     void onConferenceJoined(Map<String, Object> data);
 
     /**
-     * Called when the conference was left, typically after hanging up.
+     * Called when the active conference ends, be it because of user choice or
+     * because of a failure.
      *
-     * @param data Map with a "url" key with the conference URL.
+     * @param data Map with an "error" key with the error and a "url" key with
+     * the conference URL. If the conference finished gracefully no `error`
+     * key will be present.
      */
-    void onConferenceLeft(Map<String, Object> data);
+    void onConferenceTerminated(Map<String, Object> data);
 
     /**
      * Called before the conference is joined.
@@ -51,21 +45,4 @@ public interface JitsiMeetViewListener {
      * @param data Map with a "url" key with the conference URL.
      */
     void onConferenceWillJoin(Map<String, Object> data);
-
-    /**
-     * Called before the conference is left.
-     *
-     * @param data Map with a "url" key with the conference URL.
-     */
-    void onConferenceWillLeave(Map<String, Object> data);
-
-    /**
-     * Called when loading the main configuration file from the Jitsi Meet
-     * deployment fails.
-     *
-     * @param data Map with an "error" key with the error and a "url" key with
-     * the conference URL which necessitated the loading of the configuration
-     * file.
-     */
-    void onLoadConfigError(Map<String, Object> data);
 }
