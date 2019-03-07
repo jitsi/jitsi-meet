@@ -1,8 +1,8 @@
 // @flow
 
 import React from 'react';
-import { SafeAreaView } from 'react-native';
 import { GiftedChat } from 'react-native-gifted-chat';
+import SafeAreaView from 'react-native-safe-area-view';
 import { connect } from 'react-redux';
 
 import { translate } from '../../../base/i18n';
