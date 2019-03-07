@@ -156,8 +156,10 @@ class StartRecordingDialogContent extends Component<Props, State> {
      */
     _renderNoIntegrationsContent() {
 
-        if (!this.props.fileRecordingsServiceEnabled
-            && this.props.integrationsEnabled) {
+        // show the non integrations part only if fileRecordingsServiceEnabled
+        // is enabled or when there are no integrations enabled
+        if (!(this.props.fileRecordingsServiceEnabled
+            || !this.props.integrationsEnabled)) {
             return null;
         }
 
