@@ -107,13 +107,17 @@ android.libraryVariants.all { def variant ->
 
     currentBundleTask.ext.generatedResFolders = files(resourcesDir).builtBy(currentBundleTask)
     currentBundleTask.ext.generatedAssetsFolders = files(jsBundleDir).builtBy(currentBundleTask)
-
     variant.registerGeneratedResFolders(currentBundleTask.generatedResFolders)
-    variant.mergeResources.dependsOn(currentBundleTask)
 
-    def assetsDir = variant.mergeAssets.outputDir
+    def mergeAssetsTask = variant.mergeAssetsProvider.get()
+    def mergeResourcesTask = variant.mergeResourcesProvider.get()
 
-    variant.mergeAssets.doLast {
+    mergeAssetsTask.dependsOn(currentBundleTask)
+    mergeResourcesTask.dependsOn(currentBundleTask)
+
+    mergeAssetsTask.doLast {
+        def assetsDir = mergeAssetsTask.outputDir
+
         // Bundle fonts
         //
         copy {
@@ -139,19 +143,19 @@ android.libraryVariants.all { def variant ->
         //
         if (currentBundleTask.enabled) {
             copy {
-                from(jsBundleDir)
+                from(jsBundleFile)
                 into(assetsDir)
             }
         }
     }
 
-    variant.mergeResources.doLast {
+    mergeResourcesTask.doLast {
         // Copy React resources
         //
         if (currentBundleTask.enabled) {
             copy {
                 from(resourcesDir)
-                into(variant.mergeResources.outputDir)
+                into(mergeResourcesTask.outputDir)
             }
         }
     }

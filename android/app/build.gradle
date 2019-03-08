@@ -115,16 +115,13 @@ gradle.projectsEvaluated {
         android.applicationVariants.all { variant ->
             variant.outputs.each { output ->
                 output.processManifest.doLast {
-                    def f = new File(manifestOutputDirectory, 'AndroidManifest.xml')
-                    if (!f.isFile()) {
-                        f = new File(new File(manifestOutputDirectory, output.dirName), 'AndroidManifest.xml')
-                    }
-                    if (f.exists()) {
-                        def charset = 'UTF-8'
-                        def s = f.getText(charset)
-                        s = s.replace('</application>', "${dropboxActivity}</application>")
-                        f.write(s, charset)
-                    }
+                    def outputDir = manifestOutputDirectory.get().asFile
+                    def manifestPath = new File(outputDir, 'AndroidManifest.xml')
+                    def charset = 'UTF-8'
+                    def text
+                    text = manifestPath.getText(charset)
+                    text = text.replace('</application>', "${dropboxActivity}</application>")
+                    manifestPath.write(text, charset)
                 }
             }
         }
