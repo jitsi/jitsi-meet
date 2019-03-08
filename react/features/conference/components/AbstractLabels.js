@@ -9,6 +9,7 @@ import { TranscribingLabel } from '../../transcribing';
 import { shouldDisplayTileView } from '../../video-layout';
 import { VideoQualityLabel } from '../../video-quality';
 
+declare var interfaceConfig: Object;
 /**
  * The type of the React {@code Component} props of {@link AbstractLabels}.
  */
@@ -19,7 +20,6 @@ export type Props = {
      * display classes to set.
      */
     _filmstripVisible: boolean,
-
     /**
      * Whether the video quality label should be displayed.
      */
@@ -79,7 +79,9 @@ export default class AbstractLabels<P: Props, S> extends Component<P, S> {
      */
     _renderVideoQualityLabel() {
         return (
-            <VideoQualityLabel />
+            (typeof interfaceConfig === 'undefined'
+                || interfaceConfig.VIDEO_QUALITY_LABEL_DISABLED )
+                || <VideoQualityLabel />
         );
     }
 }
