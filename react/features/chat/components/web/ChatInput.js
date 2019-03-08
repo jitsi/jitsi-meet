@@ -157,9 +157,13 @@ class ChatInput extends Component<Props, State> {
             && event.shiftKey === false) {
             event.preventDefault();
 
-            this.props.dispatch(sendMessage(this.state.message));
+            const trimmed = this.state.message.trim();
 
-            this.setState({ message: '' });
+            if (trimmed) {
+                this.props.dispatch(sendMessage(trimmed));
+
+                this.setState({ message: '' });
+            }
         }
     }
 
