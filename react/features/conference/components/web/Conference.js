@@ -208,7 +208,6 @@ class Conference extends Component<Props> {
         } = interfaceConfig;
         const hideVideoQualityLabel
             = filmstripOnly
-                || VIDEO_QUALITY_LABEL_DISABLED
                 || this.props._iAmRecorder;
 
         return (
