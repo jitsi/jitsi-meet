@@ -26,7 +26,6 @@ import android.media.AudioDeviceInfo;
 import android.media.AudioManager;
 import android.os.Build;
 import android.support.annotation.RequiresApi;
-import android.telecom.CallAudioState;
 import android.util.Log;
 
 import com.facebook.react.bridge.Arguments;
@@ -59,8 +58,7 @@ import java.util.concurrent.Executors;
  * Before a call has started and after it has ended the
  * {@code AudioModeModule.DEFAULT} mode should be used.
  */
-class AudioModeModule
-    extends ReactContextBaseJavaModule
+class AudioModeModule extends ReactContextBaseJavaModule
     implements AudioManager.OnAudioFocusChangeListener {
 
     /**
@@ -104,29 +102,29 @@ class AudioModeModule
 
     /**
      * Converts any of the "DEVICE_" constants into the corresponding
-     * {@link CallAudioState} "ROUTE_" number.
+     * {@link android.telecom.CallAudioState} "ROUTE_" number.
      *
      * @param audioDevice one of the "DEVICE_" constants.
-     * @return a route number {@link CallAudioState#ROUTE_EARPIECE} if no match
-     * is found.
+     * @return a route number {@link android.telecom.CallAudioState#ROUTE_EARPIECE} if
+     * no match is found.
      */
     @RequiresApi(api = Build.VERSION_CODES.M)
     private static int audioDeviceToRouteInt(String audioDevice) {
         if (audioDevice == null) {
-            return CallAudioState.ROUTE_EARPIECE;
+            return android.telecom.CallAudioState.ROUTE_EARPIECE;
         }
         switch (audioDevice) {
             case DEVICE_BLUETOOTH:
-                return CallAudioState.ROUTE_BLUETOOTH;
+                return android.telecom.CallAudioState.ROUTE_BLUETOOTH;
             case DEVICE_EARPIECE:
-                return CallAudioState.ROUTE_EARPIECE;
+                return android.telecom.CallAudioState.ROUTE_EARPIECE;
             case DEVICE_HEADPHONES:
-                return CallAudioState.ROUTE_WIRED_HEADSET;
+                return android.telecom.CallAudioState.ROUTE_WIRED_HEADSET;
             case DEVICE_SPEAKER:
-                return CallAudioState.ROUTE_SPEAKER;
+                return android.telecom.CallAudioState.ROUTE_SPEAKER;
             default:
                 Log.e(TAG, "Unsupported device name: " + audioDevice);
-                return CallAudioState.ROUTE_EARPIECE;
+                return android.telecom.CallAudioState.ROUTE_EARPIECE;
         }
     }
 
@@ -134,25 +132,26 @@ class AudioModeModule
      * Populates given route mask into the "DEVICE_" list.
      *
      * @param supportedRouteMask an integer coming from
-     * {@link CallAudioState#getSupportedRouteMask()}.
+     * {@link android.telecom.CallAudioState#getSupportedRouteMask()}.
      * @return a list of device names.
      */
+    @RequiresApi(api = Build.VERSION_CODES.M)
     private static Set<String> routesToDeviceNames(int supportedRouteMask) {
         Set<String> devices = new HashSet<>();
-        if ((supportedRouteMask & CallAudioState.ROUTE_EARPIECE)
-                == CallAudioState.ROUTE_EARPIECE) {
+        if ((supportedRouteMask & android.telecom.CallAudioState.ROUTE_EARPIECE)
+                == android.telecom.CallAudioState.ROUTE_EARPIECE) {
             devices.add(DEVICE_EARPIECE);
         }
-        if ((supportedRouteMask & CallAudioState.ROUTE_BLUETOOTH)
-                == CallAudioState.ROUTE_BLUETOOTH) {
+        if ((supportedRouteMask & android.telecom.CallAudioState.ROUTE_BLUETOOTH)
+                == android.telecom.CallAudioState.ROUTE_BLUETOOTH) {
             devices.add(DEVICE_BLUETOOTH);
         }
-        if ((supportedRouteMask & CallAudioState.ROUTE_SPEAKER)
-                == CallAudioState.ROUTE_SPEAKER) {
+        if ((supportedRouteMask & android.telecom.CallAudioState.ROUTE_SPEAKER)
+                == android.telecom.CallAudioState.ROUTE_SPEAKER) {
             devices.add(DEVICE_SPEAKER);
         }
-        if ((supportedRouteMask & CallAudioState.ROUTE_WIRED_HEADSET)
-                == CallAudioState.ROUTE_WIRED_HEADSET) {
+        if ((supportedRouteMask & android.telecom.CallAudioState.ROUTE_WIRED_HEADSET)
+                == android.telecom.CallAudioState.ROUTE_WIRED_HEADSET) {
             devices.add(DEVICE_HEADPHONES);
         }
         return devices;
@@ -272,7 +271,7 @@ class AudioModeModule
     /**
      * Used on API >= 26 to store the most recently reported audio devices.
      * Makes it easier to compare for a change, because the devices are stored
-     * as a mask in the {@link CallAudioState}. The mask is populated into
+     * as a mask in the {@link android.telecom.CallAudioState}. The mask is populated into
      * the {@link #availableDevices} on each update.
      */
     @RequiresApi(api = Build.VERSION_CODES.O)
@@ -433,7 +432,9 @@ class AudioModeModule
     }
 
     @RequiresApi(api = Build.VERSION_CODES.O)
-    void onCallAudioStateChange(final CallAudioState callAudioState) {
+    void onCallAudioStateChange(Object callAudioState_) {
+        final android.telecom.CallAudioState callAudioState
+            = (android.telecom.CallAudioState)callAudioState_;
         runInAudioThread(new Runnable() {
             @Override
             public void run() {
