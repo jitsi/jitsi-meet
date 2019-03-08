@@ -95,26 +95,26 @@ var config = {
     // Video
 
     // Sets the preferred resolution (height) for local video. Defaults to 720.
-    resolution: 1080,
+    // resolution: 1080,
 
     // w3c spec-compliant video constraints to use for video capture. Currently
     // used by browsers that return true from lib-jitsi-meet's
     // util#browser#usesNewGumFlow. The constraints are independency from
     // this config's resolution value. Defaults to requesting an ideal aspect
     // ratio of 16:9 with an ideal resolution of 720.
-    constraints: {
-        video: {
-            aspectRatio: 16 / 9,
-            height: {
-                ideal: 1080,
-                max: 1080,
-                min: 240
-            }
-        }
-    },
+    // constraints: {
+    //     video: {
+    //         aspectRatio: 16 / 9,
+    //         height: {
+    //             ideal: 1080,
+    //             max: 1080,
+    //             min: 240
+    //         }
+    //     }
+    // },
 
     // Enable / disable simulcast support.
-    disableSimulcast: true,
+    disableSimulcast: false,
 
     // Enable / disable layer suspension.  If enabled, endpoints whose HD
     // layers are not in use will be suspended (no longer sent) until they
@@ -292,7 +292,7 @@ var config = {
     // If third party requests are disabled, no other server will be contacted.
     // This means avatars will be locally generated and callstats integration
     // will not function.
-    // disableThirdPartyRequests: false,
+    disableThirdPartyRequests: true,
 
 
     // Peer-To-Peer mode: used (if enabled) when there are just 2 participants.
