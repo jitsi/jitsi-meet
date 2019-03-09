@@ -32,7 +32,6 @@ import {
     LocalRecordingInfoDialog
 } from '../../../local-recording';
 import {
-    LiveStreamButton,
     RecordButton
 } from '../../../recording';
 import {
@@ -865,9 +864,6 @@ class Toolbox extends Component<Props> {
                     text = { _fullScreen
                         ? t('toolbar.exitFullScreen')
                         : t('toolbar.enterFullScreen') } />,
-            <LiveStreamButton
-                key = 'livestreaming'
-                showLabel = { true } />,
             <RecordButton
                 key = 'record'
                 showLabel = { true } />,
