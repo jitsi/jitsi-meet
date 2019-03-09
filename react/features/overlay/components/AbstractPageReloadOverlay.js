@@ -1,5 +1,6 @@
 // @flow
 
+import { randomInt } from 'js-utils/random';
 import React, { Component } from 'react';
 
 import {
@@ -11,7 +12,6 @@ import {
     isFatalJitsiConferenceError,
     isFatalJitsiConnectionError
 } from '../../base/lib-jitsi-meet';
-import { randomInt } from '../../base/util';
 
 import ReloadButton from './ReloadButton';
 

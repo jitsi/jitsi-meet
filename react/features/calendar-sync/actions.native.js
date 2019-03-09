@@ -1,8 +1,8 @@
 // @flow
+import { generateRoomWithoutSeparator } from 'js-utils/random';
 
 import { getDefaultURL } from '../app';
 import { openDialog } from '../base/dialog';
-import { generateRoomWithoutSeparator } from '../welcome';
 
 import { refreshCalendar } from './actions';
 import { addLinkToCalendarEntry } from './functions.native';

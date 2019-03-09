@@ -48,7 +48,7 @@
     "jquery-contextmenu": "2.4.5",
     "jquery-i18next": "1.2.0",
     "js-md5": "0.6.1",
-    "js-utils": "github:jitsi/js-utils#446497893023aa8dec403e0e4e35a22cae6bc87d",
+    "js-utils": "github:jitsi/js-utils#f74211aad649b5a24e5b0913b9e6adeebe62eba4",
     "jsc-android": "224109.1.0",
     "jsrsasign": "8.0.12",
     "jwt-decode": "2.2.0",

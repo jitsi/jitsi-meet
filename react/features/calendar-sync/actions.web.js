@@ -1,5 +1,7 @@
 // @flow
 
+import { generateRoomWithoutSeparator } from 'js-utils/random';
+
 import { loadGoogleAPI } from '../google-api';
 
 import { refreshCalendar, setCalendarEvents } from './actions';
@@ -14,7 +16,6 @@ import {
     SET_LOADING_CALENDAR_EVENTS
 } from './actionTypes';
 import { _getCalendarIntegration, isCalendarEnabled } from './functions';
-import { generateRoomWithoutSeparator } from '../welcome';
 
 export * from './actions.any';
 
