@@ -105,7 +105,7 @@ class AudioInputPreview extends Component<Props, State> {
                     style = { audioMeterFill } />
                 <p hidden id= 'inDeviceId'>{ inDeviceId }</p>
                 <p hidden id= 'outDeviceId'>{ outDeviceId }</p>
-                <iframe frameBorder="0" src="/audio-test/
+                <iframe frameBorder="0" src="/audio-test/audio-test.html"/>
             </div>
         );
     }
