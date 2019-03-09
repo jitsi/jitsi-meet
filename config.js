@@ -16,13 +16,13 @@ var config = {
 
     hosts: {
         // XMPP domain.
-        domain: '192.168.3.119',
+        domain: '192.168.3.225',
 
         // When using authentication, domain for guest users.
         // anonymousdomain: 'guest.example.com',
 
         // Domain for authenticated users. Defaults to <domain>.
-        // authdomain: '192.168.3.119',
+        // authdomain: '192.168.3.225',
 
         // Jirecon recording component domain.
         // jirecon: 'jirecon.jitsi-meet.example.com',
@@ -31,19 +31,19 @@ var config = {
         // call_control: 'callcontrol.jitsi-meet.example.com',
 
         // Focus component domain. Defaults to focus.<domain>.
-        // focus: 'focus.192.168.3.119',
+        // focus: 'focus.192.168.3.225',
 
         // XMPP MUC domain. FIXME: use XEP-0030 to discover it.
-        muc: 'conference.192.168.3.119'
-        //bridge: 'jitsi-videobridge.192.168.3.119',
-        //focus: 'focus.192.168.3.119'
+        muc: 'conference.192.168.3.225'
+        //bridge: 'jitsi-videobridge.192.168.3.225',
+        //focus: 'focus.192.168.3.225'
     },
 
     // BOSH URL. FIXME: use XEP-0156 to discover it.
-    bosh: '//192.168.3.119/http-bind',
+    bosh: '//192.168.3.225/http-bind',
 
     // The name of client node advertised in XEP-0115 'c' stanza
-    clientNode: 'http://192.168.3.119/',
+    clientNode: 'http://192.168.3.225/',
 
     // The real JID of focus participant - can be overridden here
     // focusUserJid: 'focus@auth.jitsi-meet.example.com',
@@ -174,7 +174,7 @@ var config = {
     // Whether to enable file recording or not.
     fileRecordingsEnabled: true,
 
-    hiddenDomain: 'recorder.192.168.3.119',
+    hiddenDomain: 'recorder.192.168.3.225',
     // Enable the dropbox integration.
     // dropbox: {
     //     appKey: '<APP_KEY>' // Specify your app key here.
@@ -401,7 +401,7 @@ var config = {
     // _desktopSharingSourceDevice: 'sample-id-or-label'
 
     // List of undocumented settings used in jitsi-meet
-    etherpad_base: 'https://192.168.3.119/etherpad/p/'
+    etherpad_base: 'https://192.168.3.225/etherpad/p/'
 
     /**
      _immediateReloadThreshold
