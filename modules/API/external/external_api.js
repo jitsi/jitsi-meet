@@ -44,6 +44,7 @@ const events = {
     'email-change': 'emailChange',
     'feedback-submitted': 'feedbackSubmitted',
     'feedback-prompt-displayed': 'feedbackPromptDisplayed',
+    'filmstrip-display-changed': 'filmstripDisplayChanged',
     'incoming-message': 'incomingMessage',
     'outgoing-message': 'outgoingMessage',
     'participant-joined': 'participantJoined',
