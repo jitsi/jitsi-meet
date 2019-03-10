@@ -35,6 +35,7 @@ export default class LargeVideo extends Component<{}> {
                 <div id = 'dominantSpeaker'>
                     <div className = 'dynamic-shadow' />
                     <div id = 'dominantSpeakerAvatarContainer' />
+                    <div className = 'speakerDisplayNamecontainer' id = 'dominantSpeakerNameContainer' />
                 </div>
                 <div id = 'remotePresenceMessage' />
                 <span id = 'remoteConnectionMessage' />

@@ -907,7 +907,7 @@ const VideoLayout = {
             );
         }
         if (this.isCurrentlyOnLarge(id)) {
-            largeVideo.updateAvatar(avatarUrl);
+            largeVideo.updateAvatar(avatarUrl,id);
         }
     },
 
