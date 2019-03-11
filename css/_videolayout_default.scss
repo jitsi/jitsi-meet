@@ -271,7 +271,7 @@
     position: absolute;
     left: 10%;
     width: 80%;
-    top: 50%;
+    top: 85%;
     @include transform(translateY(-40%));
     color: $participantNameColor;
     text-align: center;
@@ -282,6 +282,7 @@
     white-space: nowrap;
     line-height: $thumbnailToolbarHeight;
     z-index: $zindex2;
+    font-family: '黑体';
 }
 
 #alwaysOnTop .displayname {
@@ -317,7 +318,7 @@
     line-height: $thumbnailToolbarHeight;
     z-index: $zindex2;
     overflow: visible;
-    font-family: '黑体'
+    font-family: '黑体';
 }
 /**
  * Positions video thumbnail display name editor.
@@ -728,7 +729,7 @@
     }
 
     .displayNameContainer {
-        visibility: hidden;
+        visibility: visible;
     }
 
     .videocontainer__hoverOverlay {
