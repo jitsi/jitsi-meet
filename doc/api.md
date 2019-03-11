@@ -214,6 +214,12 @@ changes. The listener will receive an object with the following structure:
 "email": email // the new email
 }
 ```
+* **filmstripDisplayChanged** - event notifications about the visibility of the filmstrip being updated.
+```javascript
+{
+"visible": visible, // Whether or not the filmstrip is displayed or hidden.
+}
+```
 
 * **participantJoined** - event notifications about new participants who join the room. The listener will receive an object with the following structure:
 ```javascript
