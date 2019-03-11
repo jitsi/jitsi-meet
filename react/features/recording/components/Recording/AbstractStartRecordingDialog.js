@@ -11,6 +11,7 @@ import {
     getDropboxData,
     isEnabled as isDropboxEnabled
 } from '../../../dropbox';
+import { RECORDING_TYPES } from '../../constants';
 
 type Props = {
 
@@ -23,6 +24,12 @@ type Props = {
      * The app key for the dropbox authentication.
      */
     _appKey: string,
+
+    /**
+     * Whether to show file recordings service, even if integrations
+     * are enabled.
+     */
+    _fileRecordingsServiceEnabled: boolean,
 
     /**
      * If true the dropbox integration is enabled, otherwise - disabled.
@@ -165,22 +172,27 @@ class AbstractStartRecordingDialog extends Component<Props, State> {
      * @returns {boolean} - True (to note that the modal should be closed).
      */
     _onSubmit() {
-        sendAnalytics(
-            createRecordingDialogEvent('start', 'confirm.button')
-        );
         const { _conference, _isDropboxEnabled, _token } = this.props;
         let appData;
+        const attributes = {};
 
-        if (_isDropboxEnabled) {
+        if (_isDropboxEnabled && _token) {
             appData = JSON.stringify({
                 'file_recording_metadata': {
                     'upload_credentials': {
-                        'service_name': 'dropbox',
+                        'service_name': RECORDING_TYPES.DROPBOX,
                         'token': _token
                     }
                 }
             });
+            attributes.type = RECORDING_TYPES.DROPBOX;
+        } else {
+            attributes.type = RECORDING_TYPES.JITSI_REC_SERVICE;
         }
+
+        sendAnalytics(
+            createRecordingDialogEvent('start', 'confirm.button', attributes)
+        );
 
         _conference.startRecording({
             mode: JitsiRecordingConstants.mode.FILE,
@@ -212,11 +224,15 @@ class AbstractStartRecordingDialog extends Component<Props, State> {
  * }}
  */
 export function mapStateToProps(state: Object) {
-    const { dropbox = {} } = state['features/base/config'];
+    const {
+        fileRecordingsServiceEnabled = false,
+        dropbox = {}
+    } = state['features/base/config'];
 
     return {
         _appKey: dropbox.appKey,
         _conference: state['features/base/conference'].conference,
+        _fileRecordingsServiceEnabled: fileRecordingsServiceEnabled,
         _isDropboxEnabled: isDropboxEnabled(state),
         _token: state['features/dropbox'].token
     };

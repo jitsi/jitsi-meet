@@ -180,6 +180,11 @@ var config = {
     //     redirectURI:
     //          'https://jitsi-meet.example.com/subfolder/static/oauth.html'
     // },
+    // When integrations like dropbox are enabled only that will be shown,
+    // by enabling fileRecordingsServiceEnabled, we show both the integrations
+    // and the generic recording service (its configuration and storage type
+    // depends on jibri configuration)
+    // fileRecordingsServiceEnabled: false
 
     // Whether to enable live streaming or not.
     // liveStreamingEnabled: false,

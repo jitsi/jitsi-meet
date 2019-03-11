@@ -518,9 +518,10 @@
         "on": "Recording",
         "pending": "Preparing to record the meeting...",
         "rec": "REC",
+        "serviceDescription": "Your recording will be saved by the recording service",
         "serviceName": "Recording service",
-        "signIn": "sign in",
-        "signOut": "Sign Out",
+        "signIn": "Sign in",
+        "signOut": "Sign out",
         "startRecordingBody": "Are you sure you would like to start recording?",
         "unavailable": "Oops! The __serviceName__ is currently unavailable. We're working on resolving the issue. Please try again later.",
         "unavailableTitle": "Recording unavailable"

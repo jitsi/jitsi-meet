@@ -8,20 +8,27 @@ import {
     sendAnalytics
 } from '../../../analytics';
 import {
-    DialogContent,
     _abstractMapStateToProps
 } from '../../../base/dialog';
 import { translate } from '../../../base/i18n';
 import {
+    Button,
     Container,
+    Image,
     LoadingIndicator,
     Switch,
     Text
 } from '../../../base/react';
-import { StyleType } from '../../../base/styles';
+import { ColorPalette, StyleType } from '../../../base/styles';
 import { authorizeDropbox, updateDropboxToken } from '../../../dropbox';
 
-import styles from './styles';
+import {
+    default as styles,
+    DROPBOX_LOGO,
+    JITSI_LOGO
+} from './styles';
+
+import { RECORDING_TYPES } from '../../constants';
 import { getRecordingDurationEstimation } from '../../functions';
 
 type Props = {
@@ -35,6 +42,12 @@ type Props = {
      * The redux dispatch function.
      */
     dispatch: Function,
+
+    /**
+     * Whether to show file recordings service, even if integrations
+     * are enabled.
+     */
+    fileRecordingsServiceEnabled: boolean,
 
     /**
      * If true the content related to the integrations will be shown.
@@ -68,11 +81,23 @@ type Props = {
 };
 
 /**
+ * State of the component.
+ */
+type State = {
+
+    /**
+     * The currently selected recording service of type: RECORDING_TYPES.
+     */
+    selectedRecordingService: string
+};
+
+
+/**
  * React Component for getting confirmation to start a file recording session.
  *
  * @extends Component
  */
-class StartRecordingDialogContent extends Component<Props> {
+class StartRecordingDialogContent extends Component<Props, State> {
     /**
      * Initializes a new {@code StartRecordingDialogContent} instance.
      *
@@ -82,9 +107,18 @@ class StartRecordingDialogContent extends Component<Props> {
         super(props);
 
         // Bind event handler so it is only bound once for every instance.
-        this._signIn = this._signIn.bind(this);
-        this._signOut = this._signOut.bind(this);
-        this._onSwitchChange = this._onSwitchChange.bind(this);
+        this._onSignIn = this._onSignIn.bind(this);
+        this._onSignOut = this._onSignOut.bind(this);
+        this._onDropboxSwitchChange
+            = this._onDropboxSwitchChange.bind(this);
+        this._onRecordingServiceSwitchChange
+            = this._onRecordingServiceSwitchChange.bind(this);
+
+        // the initial state is jitsi rec service is always selected
+        // if only one type of recording is enabled this state will be ignored
+        this.state = {
+            selectedRecordingService: RECORDING_TYPES.JITSI_REC_SERVICE
+        };
     }
 
     /**
@@ -94,11 +128,14 @@ class StartRecordingDialogContent extends Component<Props> {
      * @returns {React$Component}
      */
     render() {
-        if (this.props.integrationsEnabled === true) { // explicit true needed
-            return this._renderIntegrationsContent();
-        }
-
-        return this._renderNoIntegrationsContent();
+        return (
+            <Container
+                className = 'recording-dialog'
+                style = { styles.container }>
+                { this._renderNoIntegrationsContent() }
+                { this._renderIntegrationsContent() }
+            </Container>
+        );
     }
 
     /**
@@ -107,10 +144,51 @@ class StartRecordingDialogContent extends Component<Props> {
      * @returns {React$Component}
      */
     _renderNoIntegrationsContent() {
+
+        // show the non integrations part only if fileRecordingsServiceEnabled
+        // is enabled or when there are no integrations enabled
+        if (!(this.props.fileRecordingsServiceEnabled
+            || !this.props.integrationsEnabled)) {
+            return null;
+        }
+
+        const { _dialogStyles, isValidating, t } = this.props;
+
+        const switchContent
+            = this.props.integrationsEnabled
+                ? (
+                    <Switch
+                        className = 'recording-switch'
+                        disabled = { isValidating }
+                        onValueChange
+                            = { this._onRecordingServiceSwitchChange }
+                        style = { styles.switch }
+                        trackColor = {{ false: ColorPalette.lightGrey }}
+                        value = {
+                            this.state.selectedRecordingService
+                                === RECORDING_TYPES.JITSI_REC_SERVICE } />
+                ) : null;
+
         return (
-            <DialogContent style = { this.props._dialogStyles.text }>
-                { this.props.t('recording.startRecordingBody') }
-            </DialogContent>
+            <Container
+                className = 'recording-header'
+                style = { styles.header }>
+                <Container className = 'recording-icon-container'>
+                    <Image
+                        className = 'recording-icon'
+                        src = { JITSI_LOGO }
+                        style = { styles.recordingIcon } />
+                </Container>
+                <Text
+                    className = 'recording-title'
+                    style = {{
+                        ..._dialogStyles.text,
+                        ...styles.title
+                    }}>
+                    { t('recording.serviceDescription') }
+                </Text>
+                { switchContent }
+            </Container>
         );
     }
 
@@ -121,27 +199,67 @@ class StartRecordingDialogContent extends Component<Props> {
      * @returns {React$Component}
      */
     _renderIntegrationsContent() {
+        if (!this.props.integrationsEnabled) {
+            return null;
+        }
+
         const { _dialogStyles, isTokenValid, isValidating, t } = this.props;
 
         let content = null;
+        let switchContent = null;
 
         if (isValidating) {
             content = this._renderSpinner();
+            switchContent = <Container className = 'recording-switch' />;
         } else if (isTokenValid) {
             content = this._renderSignOut();
+            switchContent = (
+                <Container className = 'recording-switch'>
+                    <Button
+                        onValueChange = { this._onSignOut }
+                        style = { styles.signButton }>
+                        { t('recording.signOut') }
+                    </Button>
+                </Container>
+            );
+
+        } else {
+            switchContent = (
+                <Container className = 'recording-switch'>
+                    <Button
+                        onValueChange = { this._onSignIn }
+                        style = { styles.signButton }>
+                        { t('recording.signIn') }
+                    </Button>
+                </Container>
+            );
         }
 
-        // else { // Sign in screen:
-        // We don't need to render any additional information.
-        // }
+        if (this.props.fileRecordingsServiceEnabled) {
+            switchContent = (
+                <Switch
+                    className = 'recording-switch'
+                    disabled = { isValidating }
+                    onValueChange = { this._onDropboxSwitchChange }
+                    style = { styles.switch }
+                    trackColor = {{ false: ColorPalette.lightGrey }}
+                    value = { this.state.selectedRecordingService
+                        === RECORDING_TYPES.DROPBOX } />
+            );
+        }
 
         return (
-            <Container
-                className = 'recording-dialog'
-                style = { styles.container }>
+            <Container>
                 <Container
                     className = 'recording-header'
                     style = { styles.header }>
+                    <Container
+                        className = 'recording-icon-container'>
+                        <Image
+                            className = 'recording-icon'
+                            src = { DROPBOX_LOGO }
+                            style = { styles.recordingIcon } />
+                    </Container>
                     <Text
                         className = 'recording-title'
                         style = {{
@@ -150,11 +268,7 @@ class StartRecordingDialogContent extends Component<Props> {
                         }}>
                         { t('recording.authDropboxText') }
                     </Text>
-                    <Switch
-                        disabled = { isValidating }
-                        onValueChange = { this._onSwitchChange }
-                        style = { styles.switch }
-                        value = { isTokenValid } />
+                    { switchContent }
                 </Container>
                 <Container
                     className = 'authorization-panel'>
@@ -164,18 +278,49 @@ class StartRecordingDialogContent extends Component<Props> {
         );
     }
 
-    _onSwitchChange: boolean => void;
+    _onDropboxSwitchChange: boolean => void;
+    _onRecordingServiceSwitchChange: boolean => void;
 
     /**
      * Handler for onValueChange events from the Switch component.
      *
      * @returns {void}
      */
-    _onSwitchChange() {
+    _onRecordingServiceSwitchChange() {
+
+        // act like group, cannot toggle off
+        if (this.state.selectedRecordingService
+                === RECORDING_TYPES.JITSI_REC_SERVICE) {
+            return;
+        }
+
+        this.setState({
+            selectedRecordingService: RECORDING_TYPES.JITSI_REC_SERVICE
+        });
+
         if (this.props.isTokenValid) {
-            this._signOut();
-        } else {
-            this._signIn();
+            this._onSignOut();
+        }
+    }
+
+    /**
+     * Handler for onValueChange events from the Switch component.
+     *
+     * @returns {void}
+     */
+    _onDropboxSwitchChange() {
+        // act like group, cannot toggle off
+        if (this.state.selectedRecordingService
+                === RECORDING_TYPES.DROPBOX) {
+            return;
+        }
+
+        this.setState({
+            selectedRecordingService: RECORDING_TYPES.DROPBOX
+        });
+
+        if (!this.props.isTokenValid) {
+            this._onSignIn();
         }
     }
 
@@ -222,37 +367,32 @@ class StartRecordingDialogContent extends Component<Props> {
                         </Text>
                     </Container>
                 </Container>
-                <Container style = { styles.startRecordingText }>
-                    <Text style = { styles.text }>
-                        { t('recording.startRecordingBody') }
-                    </Text>
-                </Container>
             </Container>
         );
     }
 
-    _signIn: () => {};
+    _onSignIn: () => {};
 
     /**
      * Sings in a user.
      *
      * @returns {void}
      */
-    _signIn() {
+    _onSignIn() {
         sendAnalytics(
             createRecordingDialogEvent('start', 'signIn.button')
         );
         this.props.dispatch(authorizeDropbox());
     }
 
-    _signOut: () => {};
+    _onSignOut: () => {};
 
     /**
      * Sings out an user from dropbox.
      *
      * @returns {void}
      */
-    _signOut() {
+    _onSignOut() {
         sendAnalytics(
             createRecordingDialogEvent('start', 'signOut.button')
         );

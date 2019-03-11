@@ -25,13 +25,23 @@ class StartRecordingDialog extends AbstractStartRecordingDialog {
      */
     render() {
         const { isTokenValid, isValidating, spaceLeft, userName } = this.state;
-        const { _isDropboxEnabled } = this.props;
+        const { _fileRecordingsServiceEnabled, _isDropboxEnabled } = this.props;
+
+        // disable ok button id recording service is shown only, when
+        // validating dropbox token, if that is not enabled we either always
+        // show the ok button or if just dropbox is enabled ok is available
+        // when there is token
+        const isOkDisabled
+            = _fileRecordingsServiceEnabled ? isValidating
+                : _isDropboxEnabled ? !isTokenValid : false;
 
         return (
             <CustomSubmitDialog
-                okDisabled = { _isDropboxEnabled && !isTokenValid }
+                okDisabled = { isOkDisabled }
                 onSubmit = { this._onSubmit } >
                 <StartRecordingDialogContent
+                    fileRecordingsServiceEnabled
+                        = { _fileRecordingsServiceEnabled }
                     integrationsEnabled = { _isDropboxEnabled }
                     isTokenValid = { isTokenValid }
                     isValidating = { isValidating }
