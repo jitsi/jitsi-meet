@@ -41,3 +41,10 @@
     top: -25px;
     width: 100%;
 }
+
+.popover {
+    background-color: $popoverBg;
+    border-radius: 3px;
+    margin: -16px -24px;
+    padding: 16px 24px;
+}
