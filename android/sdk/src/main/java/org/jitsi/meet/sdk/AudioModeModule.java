@@ -457,6 +457,10 @@ class AudioModeModule extends ReactContextBaseJavaModule
                     // Reset user selection
                     userSelectedDevice = null;
 
+                    // If the OS changes the Audio Route or Devices we could have lost
+                    // the selected audio device
+                    selectedDevice = null;
+
                     if (mode != -1) {
                         updateAudioRoute(mode);
                     }
