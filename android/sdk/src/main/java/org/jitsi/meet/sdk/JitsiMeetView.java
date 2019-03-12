@@ -133,7 +133,8 @@ public class JitsiMeetView extends BaseReactView<JitsiMeetViewListener> {
     }
 
     /**
-     * Joins the conference specified by the given {@link JitsiMeetConferenceOptions}.
+     * Joins the conference specified by the given {@link JitsiMeetConferenceOptions}. If there is
+     * already an active conference, it will be left and the new one will be joined.
      * @param options - Description of what conference must be joined and what options will be used
      *                when doing so.
      */
