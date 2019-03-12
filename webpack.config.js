@@ -116,7 +116,7 @@ const config = {
 module.exports = [
     Object.assign({}, config, {
         entry: {
-            'app.bundle': './app.js',
+            'app.bundle': [ '@babel/polyfill', './app.js' ],
 
             'device_selection_popup_bundle':
                 './react/features/settings/popup.js',

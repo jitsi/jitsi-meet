@@ -91,6 +91,7 @@
     "@babel/plugin-proposal-export-default-from": "7.0.0",
     "@babel/plugin-proposal-export-namespace-from": "7.0.0",
     "@babel/plugin-transform-flow-strip-types": "7.0.0",
+    "@babel/polyfill": "7.2.5",
     "@babel/preset-env": "7.1.0",
     "@babel/preset-flow": "7.0.0",
     "@babel/preset-react": "7.0.0",

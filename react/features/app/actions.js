@@ -31,112 +31,54 @@ declare var APP: Object;
  * @returns {Function}
  */
 export function appNavigate(uri: ?string) {
-    return (dispatch: Dispatch<*>, getState: Function) =>
-        _appNavigateToOptionalLocation(dispatch, getState, parseURIString(uri));
-}
+    return async(dispatch: Dispatch<*>, getState: Function) => {
+        let location = parseURIString(uri);
 
-/**
- * Triggers an in-app navigation to a specific location URI.
- *
- * @param {Dispatch} dispatch - The redux {@code dispatch} function.
- * @param {Function} getState - The redux function that gets/retrieves the redux
- * state.
- * @param {Object} newLocation - The location URI to navigate to. The value
- * cannot be undefined and is assumed to have all properties such as
- * {@code host}, {@code contextRoot}, and {@code room} defined. Depending on the
- * property, it may have a value equal to {@code undefined} and that may be
- * acceptable.
- * @private
- * @returns {Promise<void>}
- */
-function _appNavigateToMandatoryLocation(
-        dispatch: Dispatch<*>, getState: Function,
-        newLocation: Object
-): Promise<void> {
-    const { room } = newLocation;
-    const locationURL = new URL(newLocation.toString());
+        // If the specified location (URI) does not identify a host, use the
+        // app's default.
+        if (!location || !location.host) {
+            const defaultLocation = parseURIString(getDefaultURL(getState));
 
-    dispatch(configWillLoad(locationURL));
+            if (location) {
+                location.host = defaultLocation.host;
 
-    return (
-        _loadConfig(dispatch, getState, newLocation)
-            .then(
-                config => loadConfigSettled(/* error */ undefined, config),
-                error => loadConfigSettled(error, /* config */ undefined))
-            .then(() => dispatch(setRoom(room))));
+                // FIXME Turn location's host, hostname, and port properties
+                // into setters in order to reduce the risks of inconsistent
+                // state.
+                location.hostname = defaultLocation.hostname;
+                location.pathname
+                    = defaultLocation.pathname + location.pathname.substr(1);
+                location.port = defaultLocation.port;
+                location.protocol = defaultLocation.protocol;
+            } else {
+                // eslint-disable-next-line no-param-reassign
+                location = defaultLocation;
+            }
+        }
 
-    /**
-     * Notifies that an attempt to load a configuration has completed. Due to
-     * the asynchronous nature of the loading, the specified {@code config} may
-     * or may not be required by the time the notification arrives.
-     *
-     * @param {string|undefined} error - If the loading has failed, the error
-     * detailing the cause of the failure.
-     * @param {Object|undefined} config - If the loading has succeeded, the
-     * loaded configuration.
-     * @returns {void}
-     */
-    function loadConfigSettled(error, config) {
-        // Due to the asynchronous nature of the loading, the specified config
-        // may or may not be required by the time the notification arrives. If
-        // we receive the config for a location we are no longer interested in,
-        // "ignore" it - deliver it to the external API, for example, but do not
-        // proceed with the appNavigate procedure/process.
-        if (getState()['features/base/config'].locationURL === locationURL) {
-            dispatch(setLocationURL(locationURL));
-            dispatch(setConfig(config));
-        } else {
-            // eslint-disable-next-line no-param-reassign
-            error || (error = new Error('Config no longer needed!'));
+        location.protocol || (location.protocol = 'https:');
 
-            // XXX The failure could be, for example, because of a
-            // certificate-related error. In which case the connection will fail
-            // later in Strophe anyway.
+        const { room } = location;
+        const locationURL = new URL(location.toString());
+
+        dispatch(configWillLoad(locationURL));
+
+        try {
+            const config = await _loadConfig(dispatch, getState, location);
+
+            if (getState()['features/base/config'].locationURL
+                    === locationURL) {
+                dispatch(setConfig(config));
+                dispatch(setLocationURL(locationURL));
+                dispatch(setRoom(room));
+            } else {
+                dispatch(loadConfigError(
+                    new Error('Config no longer needed!'), locationURL));
+            }
+        } catch (error) {
             dispatch(loadConfigError(error, locationURL));
-
-            throw error;
         }
-    }
-}
-
-/**
- * Triggers an in-app navigation to a specific or undefined location (URI).
- *
- * @param {Dispatch} dispatch - The redux {@code dispatch} function.
- * @param {Function} getState - The redux function that gets/retrieves the redux
- * state.
- * @param {Object} location - The location (URI) to navigate to. The value may
- * be undefined.
- * @private
- * @returns {void}
- */
-function _appNavigateToOptionalLocation(
-        dispatch: Dispatch<*>, getState: Function,
-        location: Object) {
-    // If the specified location (URI) does not identify a host, use the app's
-    // default.
-    if (!location || !location.host) {
-        const defaultLocation = parseURIString(getDefaultURL(getState));
-
-        if (location) {
-            location.host = defaultLocation.host;
-
-            // FIXME Turn location's host, hostname, and port properties into
-            // setters in order to reduce the risks of inconsistent state.
-            location.hostname = defaultLocation.hostname;
-            location.pathname
-                = defaultLocation.pathname + location.pathname.substr(1);
-            location.port = defaultLocation.port;
-            location.protocol = defaultLocation.protocol;
-        } else {
-            // eslint-disable-next-line no-param-reassign
-            location = defaultLocation;
-        }
-    }
-
-    location.protocol || (location.protocol = 'https:');
-
-    return _appNavigateToMandatoryLocation(dispatch, getState, location);
+    };
 }
 
 /**
@@ -149,17 +91,10 @@ function _appNavigateToOptionalLocation(
  * @private
  * @returns {Promise<Object>}
  */
-function _loadConfig(
+async function _loadConfig(
         dispatch: Dispatch<*>,
         getState: Function,
         { contextRoot, host, protocol, room }) {
-    // XXX As the mobile/React Native app does not employ config on the
-    // WelcomePage, do not download config.js from the deployment when
-    // navigating to the WelcomePage - the perceived/visible navigation will be
-    // faster.
-    if (!room && typeof APP === 'undefined') {
-        return Promise.resolve();
-    }
 
     /* eslint-disable no-param-reassign */
 
@@ -179,28 +114,20 @@ function _loadConfig(
 
     /* eslint-enable no-param-reassign */
 
-    return loadConfig(url).then(
-        /* onFulfilled */ config => {
-            // FIXME If the config is no longer needed (in the terms of
-            // _loadConfig) and that happened because of an intervening
-            // _loadConfig for the same baseURL, then the unneeded config may be
-            // stored after the needed config. Anyway.
-            dispatch(storeConfig(baseURL, config));
+    let config;
 
-            return config;
-        },
-        /* onRejected */ error => {
-            // XXX The (down)loading of config failed. Try to use the last
-            // successfully fetched for that deployment. It may not match the
-            // shard.
-            const config = restoreConfig(baseURL);
+    try {
+        config = await loadConfig(url);
+        dispatch(storeConfig(baseURL, config));
+    } catch (error) {
+        config = restoreConfig(baseURL);
 
-            if (config) {
-                return config;
-            }
-
+        if (!config) {
             throw error;
-        });
+        }
+    }
+
+    return config;
 }
 
 /**

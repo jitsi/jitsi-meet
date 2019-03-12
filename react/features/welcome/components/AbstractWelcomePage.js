@@ -181,13 +181,12 @@ export class AbstractWelcomePage extends Component<Props, *> {
         if (room) {
             this.setState({ joining: true });
 
-            // By the time the Promise of appNavigate settles, this component
-            // may have already been unmounted.
-            const onAppNavigateSettled
-                = () => this._mounted && this.setState({ joining: false });
-
             this.props.dispatch(appNavigate(room))
-                .then(onAppNavigateSettled, onAppNavigateSettled);
+                .then(() => {
+                    // By the time the Promise of appNavigate settles, this
+                    // component may have already been unmounted.
+                    this._mounted && this.setState({ joining: false });
+                });
         }
     }
 
