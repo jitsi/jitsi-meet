@@ -92,7 +92,7 @@
         return YES;
     }
 
-    if (![_customUrlScheme isEqualToString:url.scheme]) {
+    if (_customUrlScheme == nil || ![_customUrlScheme isEqualToString:url.scheme]) {
         return NO;
     }
 
@@ -172,12 +172,8 @@
 
 #pragma mark - Property getter / setters
 
-- (NSString *)customUrlScheme {
-    return _customUrlScheme ? _customUrlScheme : @"org.jitsi.meet";
-}
-
 - (NSArray<NSString *> *)universalLinkDomains {
-    return _universalLinkDomains ? _universalLinkDomains : @[@"meet.jit.si"];
+    return _universalLinkDomains ? _universalLinkDomains : @[];
 }
 
 #pragma mark - Private API methods
