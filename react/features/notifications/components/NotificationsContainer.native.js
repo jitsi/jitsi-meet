@@ -37,7 +37,11 @@ class NotificationsContainer
     render() {
         const { _notifications } = this.props;
 
-        if (!_notifications || !_notifications.length) {
+        // Currently the native container displays only the topmost notification
+        const theNotification
+            = _notifications && _notifications.length && _notifications[0];
+
+        if (!theNotification) {
             return null;
         }
 
@@ -48,15 +52,10 @@ class NotificationsContainer
                     styles.notificationContainer,
                     this.props.style
                 ] } >
-                {
-                    _notifications.map(
-                        ({ props, uid }) => (
-                            <Notification
-                                { ...props }
-                                key = { uid }
-                                onDismissed = { this._onDismissed }
-                                uid = { uid } />))
-                }
+                <Notification
+                    { ...theNotification.props }
+                    onDismissed = { this._onDismissed }
+                    uid = { theNotification.uid } />
             </View>
         );
     }
