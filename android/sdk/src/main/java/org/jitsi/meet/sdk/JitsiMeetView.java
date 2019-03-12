@@ -90,9 +90,9 @@ public class JitsiMeetView extends BaseReactView<JitsiMeetViewListener> {
                 result.putString(key, (String)bValue);
             } else if (valueType.contentEquals("Bundle")) {
                 result.putBundle(key, mergeProps((Bundle)aValue, (Bundle)bValue));
+            } else {
+                throw new RuntimeException("Unsupported type: " + valueType);
             }
-
-            // TODO: handle string arrays when the need arises.
         }
 
         return result;
