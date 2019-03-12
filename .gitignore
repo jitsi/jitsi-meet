@@ -73,6 +73,7 @@ buck-out/
 # Build artifacts
 *.jsbundle
 *.framework
+android/app/release
 
 # precommit-hook
 .jshintignore
@@ -81,3 +82,8 @@ buck-out/
 # VSCode files
 android/.project
 android/.settings/org.eclipse.buildship.core.prefs
+
+# Secrets
+android/app/dropbox.key
+android/app/google-services.json
+
