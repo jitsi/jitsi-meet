@@ -26,6 +26,7 @@ import {
     CONFERENCE_FAILED,
     CONFERENCE_JOINED,
     CONFERENCE_LEFT,
+    CONFERENCE_SUBJECT_CHANGED,
     CONFERENCE_WILL_JOIN,
     CONFERENCE_WILL_LEAVE,
     DATA_CHANNEL_OPENED,
@@ -33,7 +34,6 @@ import {
     LOCK_STATE_CHANGED,
     P2P_STATUS_CHANGED,
     SET_AUDIO_ONLY,
-    SET_CONFERENCE_SUBJECT,
     SET_DESKTOP_SHARING_ENABLED,
     SET_FOLLOW_ME,
     SET_LASTN,
@@ -42,6 +42,7 @@ import {
     SET_PASSWORD_FAILED,
     SET_PREFERRED_RECEIVER_VIDEO_QUALITY,
     SET_ROOM,
+    SET_PENDING_SUBJECT_CHANGE,
     SET_START_MUTED_POLICY
 } from './actionTypes';
 import {
@@ -269,6 +270,22 @@ export function conferenceLeft(conference: Object) {
     return {
         type: CONFERENCE_LEFT,
         conference
+    };
+}
+
+/**
+ * Signals that the conference subject has been changed.
+ *
+ * @param {string} subject - The new subject.
+ * @returns {{
+ *     type: CONFERENCE_SUBJECT_CHANGED,
+ *     subject: string
+ * }}
+ */
+export function conferenceSubjectChanged(subject: string) {
+    return {
+        type: CONFERENCE_SUBJECT_CHANGED,
+        subject
     };
 }
 
@@ -736,9 +753,21 @@ export function toggleAudioOnly() {
  * @param {string} subject - The new subject.
  * @returns {void}
  */
-export function setSubject(subject: String) {
-    return {
-        type: SET_CONFERENCE_SUBJECT,
-        subject
+export function setSubject(subject: string = '') {
+    return (dispatch: Dispatch<*>, getState: Function) => {
+        const { conference } = getState()['features/base/conference'];
+
+        if (conference) {
+            dispatch({
+                type: SET_PENDING_SUBJECT_CHANGE,
+                subject: undefined
+            });
+            conference.setSubject(subject);
+        } else {
+            dispatch({
+                type: SET_PENDING_SUBJECT_CHANGE,
+                subject
+            });
+        }
     };
 }

@@ -1,7 +1,5 @@
 // @flow
 
-export * from './functions.any';
-
 declare var interfaceConfig: Object;
 
 /**
@@ -25,4 +23,22 @@ export function getToolboxHeight() {
  */
 export function isButtonEnabled(name: string) {
     return interfaceConfig.TOOLBAR_BUTTONS.indexOf(name) !== -1;
+}
+
+
+/**
+ * Indicates if the toolbox is visible or not.
+ *
+ * @param {string} state - The state from the Redux store.
+ * @returns {boolean} - True to indicate that the toolbox is visible, false -
+ * otherwise.
+ */
+export function isToolboxVisible(state: Object) {
+    const {
+        alwaysVisible,
+        timeoutID,
+        visible
+    } = state['features/toolbox'];
+
+    return Boolean(timeoutID || visible || alwaysVisible);
 }

@@ -43,6 +43,16 @@ export const CONFERENCE_JOINED = Symbol('CONFERENCE_JOINED');
 export const CONFERENCE_LEFT = Symbol('CONFERENCE_LEFT');
 
 /**
+ * The type of (redux) action, which indicates conference subject changes.
+ *
+ * {
+ *     type: CONFERENCE_SUBJECT_CHANGED
+ *     subject: string
+ * }
+ */
+export const CONFERENCE_SUBJECT_CHANGED = Symbol('CONFERENCE_SUBJECT_CHANGED');
+
+/**
  * The type of (redux) action which signals that a specific conference will be
  * joined.
  *
@@ -120,16 +130,6 @@ export const P2P_STATUS_CHANGED = Symbol('P2P_STATUS_CHANGED');
 export const SET_AUDIO_ONLY = Symbol('SET_AUDIO_ONLY');
 
 /**
- * The type of (redux) action, which indicates to set conference subject.
- *
- * {
- *     type: SET_CONFERENCE_SUBJECT
- *     subject: string
- * }
- */
-export const SET_CONFERENCE_SUBJECT = Symbol('SET_CONFERENCE_SUBJECT');
-
-/**
  * The type of (redux) action which sets the desktop sharing enabled flag for
  * the current conference.
  *
@@ -198,6 +198,16 @@ export const SET_PASSWORD = Symbol('SET_PASSWORD');
  * }
  */
 export const SET_PASSWORD_FAILED = Symbol('SET_PASSWORD_FAILED');
+
+/**
+ * The type of (redux) action which signals for pending subject changes.
+ *
+ * {
+ *     type: SET_PENDING_SUBJECT_CHANGE,
+ *     subject: string
+ * }
+ */
+export const SET_PENDING_SUBJECT_CHANGE = Symbol('SET_PENDING_SUBJECT_CHANGE');
 
 /**
  * The type of (redux) action which sets the preferred maximum video height that

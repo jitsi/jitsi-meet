@@ -55,6 +55,7 @@ import {
     setToolbarHovered
 } from '../../actions';
 import AudioMuteButton from '../AudioMuteButton';
+import { isToolboxVisible } from '../../functions';
 import HangupButton from '../HangupButton';
 import OverflowMenuButton from './OverflowMenuButton';
 import OverflowMenuProfileItem from './OverflowMenuProfileItem';
@@ -1281,11 +1282,8 @@ function _mapStateToProps(state) {
     } = state['features/base/config'];
     const sharedVideoStatus = state['features/shared-video'].status;
     const {
-        alwaysVisible,
         fullScreen,
-        overflowMenuVisible,
-        timeoutID,
-        visible
+        overflowMenuVisible
     } = state['features/toolbox'];
     const localParticipant = getLocalParticipant(state);
     const localRecordingStates = state['features/local-recording'];
@@ -1333,7 +1331,7 @@ function _mapStateToProps(state) {
         _sharingVideo: sharedVideoStatus === 'playing'
             || sharedVideoStatus === 'start'
             || sharedVideoStatus === 'pause',
-        _visible: Boolean(timeoutID || visible || alwaysVisible),
+        _visible: isToolboxVisible(state),
 
         // XXX: We are not currently using state here, but in the future, when
         // interfaceConfig is part of redux we will.

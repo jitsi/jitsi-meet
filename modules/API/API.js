@@ -5,6 +5,7 @@ import {
     createApiEvent,
     sendAnalytics
 } from '../../react/features/analytics';
+import { setSubject } from '../../react/features/base/conference';
 import { parseJWTFromURLParams } from '../../react/features/base/jwt';
 import { invite } from '../../react/features/invite';
 import { getJitsiMeetTransport } from '../transport';
@@ -65,7 +66,7 @@ function initCommands() {
         },
         'subject': subject => {
             sendAnalytics(createApiEvent('subject.changed'));
-            APP.conference.setSubject(subject);
+            APP.store.dispatch(setSubject(subject));
         },
         'submit-feedback': feedback => {
             sendAnalytics(createApiEvent('submit.feedback'));
