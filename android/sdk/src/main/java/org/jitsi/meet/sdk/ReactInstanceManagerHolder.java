@@ -72,7 +72,7 @@ class ReactInstanceManagerHolder {
      * @param eventName {@code String} containing the event name.
      * @param data {@code Object} optional ancillary data for the event.
      */
-    static boolean emitEvent(
+    static void emitEvent(
             String eventName,
             @Nullable Object data) {
         ReactInstanceManager reactInstanceManager
@@ -86,12 +86,8 @@ class ReactInstanceManagerHolder {
                 reactContext
                     .getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class)
                     .emit(eventName, data);
-
-                return true;
             }
         }
-
-        return false;
     }
 
     /**
