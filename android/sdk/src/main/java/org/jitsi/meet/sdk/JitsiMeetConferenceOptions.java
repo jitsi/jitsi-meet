@@ -62,6 +62,9 @@ public class JitsiMeetConferenceOptions {
      */
     private Boolean welcomePageEnabled;
 
+    /**
+     * Class used to build the immutable {@link JitsiMeetConferenceOptions} object.
+     */
     public static class Builder {
         private URL serverURL;
         private String room;
@@ -78,54 +81,103 @@ public class JitsiMeetConferenceOptions {
         public Builder() {
         }
 
+        /**\
+         * Sets the server URL.
+         * @param url - {@link URL} of the server where the conference should take place.
+         * @return - The {@link Builder} object itself so the method calls can be chained.
+         */
         public Builder setServerURL(URL url) {
             this.serverURL = url;
 
             return this;
         }
 
+        /**
+         * Sets the room where the conference will take place.
+         * @param room - Name of the room.
+         * @return - The {@link Builder} object itself so the method calls can be chained.
+         */
         public Builder setRoom(String room) {
             this.room = room;
 
             return this;
         }
 
+        /**
+         * Sets the JWT token to be used for authentication when joining a conference.
+         * @param token - The JWT token to be used for authentication.
+         * @return - The {@link Builder} object itself so the method calls can be chained.
+         */
         public Builder setToken(String token) {
             this.token = token;
 
             return this;
         }
 
+        /**
+         * Sets the color scheme override so the app is themed. See:
+         * https://github.com/jitsi/jitsi-meet/blob/master/react/features/base/color-scheme/defaultScheme.js
+         * for the structure.
+         * @param colorScheme - A color scheme to be applied to the app.
+         * @return - The {@link Builder} object itself so the method calls can be chained.
+         */
         public Builder setColorScheme(Bundle colorScheme) {
             this.colorScheme = colorScheme;
 
             return this;
         }
 
+        /**
+         * Indicates the conference will be joined with the microphone muted.
+         * @param muted - Muted indication.
+         * @return - The {@link Builder} object itself so the method calls can be chained.
+         */
         public Builder setAudioMuted(boolean muted) {
             this.audioMuted = muted;
 
             return this;
         }
 
+        /**
+         * Indicates the conference will be joined in audio-only mode. In this mode no video is
+         * sent or received.
+         * @param audioOnly - Audio-mode indicator.
+         * @return - The {@link Builder} object itself so the method calls can be chained.
+         */
         public Builder setAudioOnly(boolean audioOnly) {
             this.audioOnly = audioOnly;
 
             return this;
         }
-
+        /**
+         * Indicates the conference will be joined with the camera muted.
+         * @param videoMuted - Muted indication.
+         * @return - The {@link Builder} object itself so the method calls can be chained.
+         */
         public Builder setVideoMuted(boolean videoMuted) {
             this.videoMuted = videoMuted;
 
             return this;
         }
 
+        /**
+         * Sets the welcome page enabled / disabled. The welcome page lists recent meetings and
+         * calendar appointments and it's meant to be used by standalone applications. Defaults to
+         * false.
+         * @param enabled - Whether the welcome page should be enabled or not.
+         * @return - The {@link Builder} object itself so the method calls can be chained.
+         */
         public Builder setWelcomePageEnabled(boolean enabled) {
             this.welcomePageEnabled = enabled;
 
             return this;
         }
 
+        /**
+         * Builds the immutable {@link JitsiMeetConferenceOptions} object with the configuration
+         * that this {@link Builder} instance specified.
+         * @return - The built {@link JitsiMeetConferenceOptions} object.
+         */
         public JitsiMeetConferenceOptions build() {
             JitsiMeetConferenceOptions options = new JitsiMeetConferenceOptions();
 

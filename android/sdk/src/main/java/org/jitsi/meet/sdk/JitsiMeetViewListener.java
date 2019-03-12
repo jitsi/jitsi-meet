@@ -35,7 +35,9 @@ public interface JitsiMeetViewListener {
      *
      * @param data Map with an "error" key with the error and a "url" key with
      * the conference URL. If the conference finished gracefully no `error`
-     * key will be present.
+     * key will be present. The possible values for "error" are described here:
+     * https://github.com/jitsi/lib-jitsi-meet/blob/master/JitsiConnectionErrors.js
+     * https://github.com/jitsi/lib-jitsi-meet/blob/master/JitsiConferenceErrors.js
      */
     void onConferenceTerminated(Map<String, Object> data);
 

@@ -18,16 +18,37 @@
 
 @interface JitsiMeetConferenceOptionsBuilder : NSObject
 
+/**
+ * Server where the conference should take place.
+ */
 @property (nonatomic, copy, nullable) NSURL *serverURL;
+/**
+ * Room name.
+ */
 @property (nonatomic, copy, nullable) NSString *room;
+/**
+ * JWT token used for authentication.
+ */
 @property (nonatomic, copy, nullable) NSString *token;
 
+/**
+ * Color scheme override, see:
+ * https://github.com/jitsi/jitsi-meet/blob/master/react/features/base/color-scheme/defaultScheme.js
+ */
 @property (nonatomic, copy, nullable) NSDictionary *colorScheme;
 
+/**
+ * Set to YES to join the conference with audio / video muted or to start in audio
+ * only mode respectively.
+ */
 @property (nonatomic) BOOL audioOnly;
 @property (nonatomic) BOOL audioMuted;
 @property (nonatomic) BOOL videoMuted;
 
+/**
+ * Set to YES to enable the welcome page. Typically SDK users won't need this enabled
+ * since the host application decides which meeting to join.
+ */
 @property (nonatomic) BOOL welcomePageEnabled;
 
 @end
