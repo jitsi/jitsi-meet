@@ -31,6 +31,7 @@ import { maybeShowSuboptimalExperienceNotification } from '../../functions';
 
 import Labels from './Labels';
 import { default as Notice } from './Notice';
+import { default as Subject } from './Subject';
 
 declare var APP: Object;
 declare var config: Object;
@@ -217,6 +218,7 @@ class Conference extends Component<Props> {
                 id = 'videoconference_page'
                 onMouseMove = { this._onShowToolbar }>
                 <Notice />
+                <Subject />
                 <div id = 'videospace'>
                     <LargeVideo />
                     { hideVideoQualityLabel

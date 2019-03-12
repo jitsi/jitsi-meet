@@ -548,7 +548,7 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
      * {@code displayName} - Sets the display name of the local participant to
      * the value passed in the arguments array.
      * {@code subject} - Sets the subject of the conference, the value passed
-     * in the arguments array. Note: available only for moderator.
+     * in the arguments array. Note: Available only for moderator.
      *
      * {@code toggleAudio} - Mutes / unmutes audio with no arguments.
      * {@code toggleVideo} - Mutes / unmutes video with no arguments.
