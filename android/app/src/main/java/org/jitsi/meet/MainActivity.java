@@ -122,7 +122,7 @@ public class MainActivity extends JitsiMeetActivity {
                 initialize();
             }
 
-            return;
+            throw new RuntimeException("Overlay permission is required when running in Debug mode.");
         }
 
         super.onActivityResult(requestCode, resultCode, data);
