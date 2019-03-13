@@ -2699,6 +2699,13 @@ export default {
     onProxyConnectionEvent(event) {
         if (!this._proxyConnection) {
             this._proxyConnection = new JitsiMeetJS.ProxyConnectionService({
+
+                /**
+                 * Pass the {@code JitsiConnection} instance which will be used
+                 * to fetch TURN credentials.
+                 */
+                jitsiConnection: APP.connection,
+
                 /**
                  * The proxy connection feature is currently tailored towards
                  * taking a proxied video stream and showing it as a local
