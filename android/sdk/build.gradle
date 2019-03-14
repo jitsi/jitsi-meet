@@ -24,7 +24,6 @@ dependencies {
     implementation "com.android.support:support-v4:${rootProject.ext.supportLibVersion}"
     implementation "com.android.support:appcompat-v7:${rootProject.ext.supportLibVersion}"
 
-    implementation 'org.webkit:android-jsc:+'
     implementation 'com.amplitude:android-sdk:2.14.1'
     implementation 'com.dropbox.core:dropbox-core-sdk:3.0.8'
     api 'com.facebook.react:react-native:+'

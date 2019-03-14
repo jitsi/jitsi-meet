@@ -113,7 +113,7 @@ class WelcomePage extends AbstractWelcomePage {
                             <TextInput
                                 accessibilityLabel = { t(roomnameAccLabel) }
                                 autoCapitalize = 'none'
-                                autoComplete = { false }
+                                autoComplete = 'off'
                                 autoCorrect = { false }
                                 autoFocus = { false }
                                 onBlur = { this._onFieldBlur }

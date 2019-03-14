@@ -69,10 +69,6 @@ To copy React Native to your local Maven repository, you can simply copy part of
 
     $ cp -r ../node_modules/react-native/android/com /tmp/repo/
 
-In the same way, copy the JavaScriptCore dependency:
-
-    $ cp -r ../node_modules/jsc-android/dist/org /tmp/repo/
-
 Alternatively, you can use the scripts located in the android/scripts directory to publish these dependencies to your Maven repo.
 
 Third-party React Native _modules_, which Jitsi Meet SDK for Android depends on, are download by NPM in source code form. These need to be assembled into Maven artifacts, and then published to your local Maven repository. The SDK project facilitates this.

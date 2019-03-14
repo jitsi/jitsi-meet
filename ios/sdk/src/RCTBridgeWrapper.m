@@ -97,7 +97,7 @@ static NSURL *serverRootWithHost(NSString *host) {
     NSString *host = [self guessPackagerHost];
 
     if (host != nil) {
-        NSString *path = @"/index.ios.bundle";
+        NSString *path = @"/index.bundle";
         NSString *query = @"platform=ios&dev=true&minify=false";
         NSURLComponents *components
             = [NSURLComponents componentsWithURL:serverRootWithHost(host)
