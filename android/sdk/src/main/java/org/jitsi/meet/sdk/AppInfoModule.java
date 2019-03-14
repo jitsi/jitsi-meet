@@ -23,12 +23,16 @@ import android.content.pm.PackageManager;
 
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContextBaseJavaModule;
+import com.facebook.react.module.annotations.ReactModule;
 
 import java.util.HashMap;
 import java.util.Map;
 
+@ReactModule(name = AppInfoModule.NAME)
 class AppInfoModule
     extends ReactContextBaseJavaModule {
+
+    public static final String NAME = "AppInfo";
 
     public AppInfoModule(ReactApplicationContext reactContext) {
         super(reactContext);
@@ -74,6 +78,6 @@ class AppInfoModule
 
     @Override
     public String getName() {
-        return "AppInfo";
+        return NAME;
     }
 }

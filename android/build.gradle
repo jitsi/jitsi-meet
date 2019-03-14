@@ -25,7 +25,6 @@ allprojects {
     repositories {
         google()
         jcenter()
-        maven { url "$rootDir/../node_modules/jsc-android/dist" }
         // React Native (JS, Obj-C sources, Android binaries) is installed from
         // npm.
         maven { url "$rootDir/../node_modules/react-native/android" }
@@ -41,12 +40,6 @@ allprojects {
                     def file = new File("$rootDir/../node_modules/react-native/package.json")
                     def version = new JsonSlurper().parseText(file.text).version
                     details.useVersion version
-                }
-                if (details.requested.group == 'org.webkit'
-                        && details.requested.name == 'android-jsc') {
-                    def file = new File("$rootDir/../node_modules/jsc-android/package.json")
-                    def version = new JsonSlurper().parseText(file.text).version
-                    details.useVersion "r${version.tokenize('.')[0]}"
                 }
             }
         }
