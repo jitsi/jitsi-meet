@@ -22,6 +22,7 @@ import com.facebook.react.bridge.ReactMethod;
 import com.facebook.react.bridge.ReadableMap;
 
 import com.amplitude.api.Amplitude;
+import com.facebook.react.module.annotations.ReactModule;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -29,8 +30,11 @@ import org.json.JSONObject;
 /**
  * Implements the react-native module for the Amplitude integration.
  */
+@ReactModule(name = AmplitudeModule.NAME)
 public class AmplitudeModule
         extends ReactContextBaseJavaModule {
+
+    public static final String NAME = "Amplitude";
 
     public AmplitudeModule(ReactApplicationContext reactContext) {
         super(reactContext);
@@ -71,9 +75,8 @@ public class AmplitudeModule
      */
     @ReactMethod
     public void logEvent(String instanceName, String eventType, String eventPropsString) {
-        JSONObject eventProps = null;
         try {
-            eventProps = new JSONObject(eventPropsString);
+            JSONObject eventProps = new JSONObject(eventPropsString);
             Amplitude.getInstance(instanceName).logEvent(eventType, eventProps);
         } catch (JSONException e) {
             e.printStackTrace();
@@ -82,6 +85,6 @@ public class AmplitudeModule
 
     @Override
     public String getName() {
-        return "Amplitude";
+        return NAME;
     }
 }

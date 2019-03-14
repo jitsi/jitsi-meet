@@ -20,6 +20,7 @@ import com.facebook.react.bridge.ReactContextBaseJavaModule;
 import com.dropbox.core.android.Auth;
 import com.facebook.react.bridge.ReactMethod;
 import com.facebook.react.bridge.WritableMap;
+import com.facebook.react.module.annotations.ReactModule;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -27,9 +28,13 @@ import java.util.Map;
 /**
  * Implements the react-native module for the dropbox integration.
  */
+@ReactModule(name = Dropbox.NAME)
 public class Dropbox
         extends ReactContextBaseJavaModule
         implements LifecycleEventListener {
+
+    public static final String NAME = "Dropbox";
+
     private String appKey;
 
     private String clientId;
@@ -131,7 +136,7 @@ public class Dropbox
 
     @Override
     public String getName() {
-        return "Dropbox";
+        return NAME;
     }
 
     /**
