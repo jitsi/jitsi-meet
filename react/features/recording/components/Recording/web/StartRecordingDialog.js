@@ -24,7 +24,13 @@ class StartRecordingDialog extends AbstractStartRecordingDialog {
      * @inheritdoc
      */
     render() {
-        const { isTokenValid, isValidating, spaceLeft, userName } = this.state;
+        const {
+            isTokenValid,
+            isValidating,
+            selectedRecordingService,
+            spaceLeft,
+            userName
+        } = this.state;
         const { _fileRecordingsServiceEnabled, _isDropboxEnabled } = this.props;
 
         // disable ok button id recording service is shown only, when
@@ -45,16 +51,20 @@ class StartRecordingDialog extends AbstractStartRecordingDialog {
                 <StartRecordingDialogContent
                     fileRecordingsServiceEnabled
                         = { _fileRecordingsServiceEnabled }
-                    integrationsEnabled = { _isDropboxEnabled }
+                    integrationsEnabled = { this._areIntegrationsEnabled() }
                     isTokenValid = { isTokenValid }
                     isValidating = { isValidating }
+                    onChange = { this._onSelectedRecordingServiceChanged }
+                    selectedRecordingService = { selectedRecordingService }
                     spaceLeft = { spaceLeft }
                     userName = { userName } />
             </Dialog>
         );
     }
 
-    _onSubmit: () => boolean
+    _areIntegrationsEnabled: () => boolean;
+    _onSubmit: () => boolean;
+    _onSelectedRecordingServiceChanged: (string) => void;
 }
 
 export default translate(connect(mapStateToProps)(StartRecordingDialog));
