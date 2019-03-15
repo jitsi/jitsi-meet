@@ -22,17 +22,7 @@ android {
         targetSdkVersion rootProject.ext.targetSdkVersion
 
         ndk {
-            abiFilters 'armeabi-v7a', 'x86'
-        }
-
-        packagingOptions {
-            // The project react-native does not provide 64-bit binaries at the
-            // time of this writing. Unfortunately, packaging any 64-bit
-            // binaries into the .apk will crash the app at runtime on 64-bit
-            // platforms.
-            exclude '/lib/mips64/**'
-            exclude '/lib/arm64-v8a/**'
-            exclude '/lib/x86_64/**'
+            abiFilters 'armeabi-v7a', 'arm64-v8a', 'x86', 'x86_64'
         }
     }
 
