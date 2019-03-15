@@ -1,6 +1,5 @@
 export default {
     NICKNAME_CHANGED: 'UI.nickname_changed',
-    PINNED_ENDPOINT: 'UI.pinned_endpoint',
 
     /**
      * Notifies that local user changed email.
@@ -43,27 +42,11 @@ export default {
      */
     TOGGLE_FILMSTRIP: 'UI.toggle_filmstrip',
 
-    /**
-     * Notifies that the filmstrip was (actually) toggled. The event supplies a
-     * {Boolean} (primitive) value indicating the visibility of the filmstrip
-     * after the toggling (at the time of the event emission).
-     *
-     * @see {TOGGLE_FILMSTRIP}
-     */
-    TOGGLED_FILMSTRIP: 'UI.toggled_filmstrip',
     TOGGLE_SCREENSHARING: 'UI.toggle_screensharing',
-    TOGGLED_SHARED_DOCUMENT: 'UI.toggled_shared_document',
-    TOGGLED_TILE_VIEW: 'UI.toggled_tile_view',
     HANGUP: 'UI.hangup',
     LOGOUT: 'UI.logout',
     VIDEO_DEVICE_CHANGED: 'UI.video_device_changed',
     AUDIO_DEVICE_CHANGED: 'UI.audio_device_changed',
-
-    /**
-     * Notifies interested listeners that the follow-me feature is enabled or
-     * disabled.
-     */
-    FOLLOW_ME_ENABLED: 'UI.follow_me_enabled',
 
     /**
      * Notifies that flipX property of the local video is changed.

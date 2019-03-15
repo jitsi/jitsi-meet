@@ -1,7 +1,5 @@
 // @flow
 
-import UIEvents from '../../../../service/UI/UIEvents';
-
 import {
     createStartMutedConfigurationEvent,
     sendAnalytics
@@ -547,10 +545,6 @@ export function setDesktopSharingEnabled(desktopSharingEnabled: boolean) {
  * }}
  */
 export function setFollowMe(enabled: boolean) {
-    if (typeof APP !== 'undefined') {
-        APP.UI.emitEvent(UIEvents.FOLLOW_ME_ENABLED, enabled);
-    }
-
     return {
         type: SET_FOLLOW_ME,
         enabled

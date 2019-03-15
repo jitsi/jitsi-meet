@@ -1,7 +1,6 @@
 // @flow
 
 import VideoLayout from '../../../modules/UI/videolayout/VideoLayout.js';
-import UIEvents from '../../../service/UI/UIEvents';
 
 import { CONFERENCE_JOINED, CONFERENCE_WILL_LEAVE } from '../base/conference';
 import {
@@ -16,7 +15,6 @@ import { MiddlewareRegistry } from '../base/redux';
 import { TRACK_ADDED } from '../base/tracks';
 import { SET_FILMSTRIP_VISIBLE } from '../filmstrip';
 
-import { SET_TILE_VIEW } from './actionTypes';
 import './middleware.any';
 
 declare var APP: Object;
@@ -73,20 +71,11 @@ MiddlewareRegistry.register(store => next => action => {
 
     case PIN_PARTICIPANT:
         VideoLayout.onPinChange(action.participant.id);
-        APP.UI.emitEvent(
-            UIEvents.PINNED_ENDPOINT,
-            action.participant.id,
-            Boolean(action.participant.id));
         break;
 
     case SET_FILMSTRIP_VISIBLE:
         VideoLayout.resizeVideoArea(true, false);
-        APP.UI.emitEvent(UIEvents.TOGGLED_FILMSTRIP, action.visible);
         APP.API.notifyFilmstripDisplayChanged(action.visible);
-        break;
-
-    case SET_TILE_VIEW:
-        APP.UI.emitEvent(UIEvents.TOGGLED_TILE_VIEW, action.enabled);
         break;
 
     case TRACK_ADDED:
