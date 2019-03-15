@@ -8,13 +8,13 @@
     .header {
         width: 100%;
         height: 70px;
-        background-color: #f1f2f5;
+        background-color: $deepLinkingMobileHeaderBackground;
         text-align: center;
         .logo {
             margin-top: 15px;
             margin-left: auto;
             margin-right: auto;
-            height: 40px;
+            height: $deepLinkingMobileLogoHeight;
         }
     }
 
@@ -133,6 +133,7 @@
 
         .dial-in-numbers-list {
             color: $unsupportedBrowserTextColor;
+            padding-left: 20px;
         }
 
         .dial-in-numbers-body {
