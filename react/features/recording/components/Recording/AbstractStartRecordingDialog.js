@@ -65,6 +65,11 @@ type State = {
     isValidating: boolean,
 
     /**
+     * The currently selected recording service of type: RECORDING_TYPES.
+     */
+    selectedRecordingService: ?string,
+
+    /**
      * Number of MiB of available space in user's Dropbox account.
      */
     spaceLeft: ?number,
@@ -89,15 +94,27 @@ class AbstractStartRecordingDialog extends Component<Props, State> {
 
         // Bind event handler so it is only bound once for every instance.
         this._onSubmit = this._onSubmit.bind(this);
+        this._onSelectedRecordingServiceChanged
+            = this._onSelectedRecordingServiceChanged.bind(this);
+
+        let selectedRecordingService;
+
+        // TODO: Potentially check if we need to handle changes of
+        // _fileRecordingsServiceEnabled and _areIntegrationsEnabled()
+        if (this.props._fileRecordingsServiceEnabled
+                || !this._areIntegrationsEnabled()) {
+            selectedRecordingService = RECORDING_TYPES.JITSI_REC_SERVICE;
+        } else if (this._areIntegrationsEnabled()) {
+            selectedRecordingService = RECORDING_TYPES.DROPBOX;
+        }
 
         this.state = {
             isTokenValid: false,
             isValidating: false,
             userName: undefined,
-            spaceLeft: undefined
+            spaceLeft: undefined,
+            selectedRecordingService
         };
-
-        this._onSubmit = this._onSubmit.bind(this);
     }
 
     /**
@@ -122,6 +139,32 @@ class AbstractStartRecordingDialog extends Component<Props, State> {
         if (this.props._token !== prevProps._token) {
             this._onTokenUpdated();
         }
+    }
+
+    _areIntegrationsEnabled: () => boolean;
+
+    /**
+     * Returns true if the integrations with third party services are enabled
+     * and false otherwise.
+     *
+     * @returns {boolean} - True if the integrations with third party services
+     * are enabled and false otherwise.
+     */
+    _areIntegrationsEnabled() {
+        return this.props._isDropboxEnabled;
+    }
+
+    _onSelectedRecordingServiceChanged: (string) => void;
+
+    /**
+     * Handles selected recording service changes.
+     *
+     * @param {string} selectedRecordingService - The new selected recording
+     * service.
+     * @returns {void}
+     */
+    _onSelectedRecordingServiceChanged(selectedRecordingService) {
+        this.setState({ selectedRecordingService });
     }
 
     /**
@@ -176,7 +219,10 @@ class AbstractStartRecordingDialog extends Component<Props, State> {
         let appData;
         const attributes = {};
 
-        if (_isDropboxEnabled && _token) {
+        if (_isDropboxEnabled
+                && _token
+                && this.state.selectedRecordingService
+                    === RECORDING_TYPES.DROPBOX) {
             appData = JSON.stringify({
                 'file_recording_metadata': {
                     'upload_credentials': {

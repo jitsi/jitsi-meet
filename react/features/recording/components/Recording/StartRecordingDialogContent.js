@@ -65,6 +65,17 @@ type Props = {
     isValidating: boolean,
 
     /**
+     * The function will be called when there are changes related to the
+     * switches.
+     */
+    onChange: Function,
+
+    /**
+     * The currently selected recording service of type: RECORDING_TYPES.
+     */
+    selectedRecordingService: ?string,
+
+    /**
      * Number of MiB of available space in user's Dropbox account.
      */
     spaceLeft: ?number,
@@ -77,27 +88,15 @@ type Props = {
     /**
      * The display name of the user's Dropbox account.
      */
-    userName: ?string,
+    userName: ?string
 };
-
-/**
- * State of the component.
- */
-type State = {
-
-    /**
-     * The currently selected recording service of type: RECORDING_TYPES.
-     */
-    selectedRecordingService: string
-};
-
 
 /**
  * React Component for getting confirmation to start a file recording session.
  *
  * @extends Component
  */
-class StartRecordingDialogContent extends Component<Props, State> {
+class StartRecordingDialogContent extends Component<Props> {
     /**
      * Initializes a new {@code StartRecordingDialogContent} instance.
      *
@@ -113,12 +112,6 @@ class StartRecordingDialogContent extends Component<Props, State> {
             = this._onDropboxSwitchChange.bind(this);
         this._onRecordingServiceSwitchChange
             = this._onRecordingServiceSwitchChange.bind(this);
-
-        // the initial state is jitsi rec service is always selected
-        // if only one type of recording is enabled this state will be ignored
-        this.state = {
-            selectedRecordingService: RECORDING_TYPES.JITSI_REC_SERVICE
-        };
     }
 
     /**
@@ -165,7 +158,7 @@ class StartRecordingDialogContent extends Component<Props, State> {
                         style = { styles.switch }
                         trackColor = {{ false: ColorPalette.lightGrey }}
                         value = {
-                            this.state.selectedRecordingService
+                            this.props.selectedRecordingService
                                 === RECORDING_TYPES.JITSI_REC_SERVICE } />
                 ) : null;
 
@@ -243,7 +236,7 @@ class StartRecordingDialogContent extends Component<Props, State> {
                     onValueChange = { this._onDropboxSwitchChange }
                     style = { styles.switch }
                     trackColor = {{ false: ColorPalette.lightGrey }}
-                    value = { this.state.selectedRecordingService
+                    value = { this.props.selectedRecordingService
                         === RECORDING_TYPES.DROPBOX } />
             );
         }
@@ -287,18 +280,21 @@ class StartRecordingDialogContent extends Component<Props, State> {
      * @returns {void}
      */
     _onRecordingServiceSwitchChange() {
+        const {
+            isTokenValid,
+            onChange,
+            selectedRecordingService
+        } = this.props;
 
         // act like group, cannot toggle off
-        if (this.state.selectedRecordingService
+        if (selectedRecordingService
                 === RECORDING_TYPES.JITSI_REC_SERVICE) {
             return;
         }
 
-        this.setState({
-            selectedRecordingService: RECORDING_TYPES.JITSI_REC_SERVICE
-        });
+        onChange(RECORDING_TYPES.JITSI_REC_SERVICE);
 
-        if (this.props.isTokenValid) {
+        if (isTokenValid) {
             this._onSignOut();
         }
     }
@@ -309,17 +305,21 @@ class StartRecordingDialogContent extends Component<Props, State> {
      * @returns {void}
      */
     _onDropboxSwitchChange() {
+        const {
+            isTokenValid,
+            onChange,
+            selectedRecordingService
+        } = this.props;
+
         // act like group, cannot toggle off
-        if (this.state.selectedRecordingService
+        if (selectedRecordingService
                 === RECORDING_TYPES.DROPBOX) {
             return;
         }
 
-        this.setState({
-            selectedRecordingService: RECORDING_TYPES.DROPBOX
-        });
+        onChange(RECORDING_TYPES.DROPBOX);
 
-        if (!this.props.isTokenValid) {
+        if (!isTokenValid) {
             this._onSignIn();
         }
     }
