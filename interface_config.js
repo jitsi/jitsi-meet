@@ -29,6 +29,7 @@ var interfaceConfig = {
     DISPLAY_WELCOME_PAGE_CONTENT: true,
     APP_NAME: 'Jitsi Meet',
     NATIVE_APP_NAME: 'Jitsi Meet',
+    PROVIDER_NAME: 'Jitsi',
     LANG_DETECTION: false, // Allow i18n to detect the system language
     INVITATION_POWERED_BY: true,
 
@@ -152,11 +153,6 @@ var interfaceConfig = {
      * @type {boolean}
      */
     CONNECTION_INDICATOR_DISABLED: false,
-
-    /**
-     * The name of the application connected to the "Add people" search service.
-     */
-    // ADD_PEOPLE_APP_NAME: "",
 
     /**
      * If true, hides the video quality label indicating the resolution status
