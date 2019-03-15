@@ -75,7 +75,7 @@
     "react-native-sound": "github:jitsi/react-native-sound#e4260ed7f641eeb0377d76eac7987aba72e1cf08",
     "react-native-swipeout": "2.3.6",
     "react-native-vector-icons": "6.0.2",
-    "react-native-webrtc": "github:jitsi/react-native-webrtc#4ded2c299651472ff4569e412161e93826aa5bf3",
+    "react-native-webrtc": "github:jitsi/react-native-webrtc#032ee5c90e2c5ff27ab2f952217104772fcbd155",
     "react-redux": "5.0.7",
     "react-transition-group": "2.4.0",
     "redux": "4.0.0",
