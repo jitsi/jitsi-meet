@@ -83,6 +83,8 @@ MiddlewareRegistry.register(store => next => action => {
  * @returns {void}
  */
 function _onFollowMeCommand(attributes, id, store) {
+    const state = store.getState();
+
     // We require to know who issued the command because (1) only a
     // moderator is allowed to send commands and (2) a command MUST be
     // issued by a defined commander.
@@ -92,11 +94,11 @@ function _onFollowMeCommand(attributes, id, store) {
 
     // The Command(s) API will send us our own commands and we don't want
     // to act upon them.
-    if (getLocalParticipant(store.getState()).id === id) {
+    if (getLocalParticipant(state).id === id) {
         return;
     }
 
-    if (getParticipantById(store.getState(), id).role !== 'moderator') {
+    if (getParticipantById(state, id).role !== 'moderator') {
         logger.warn('Received follow-me command not from moderator');
 
         return;
@@ -113,7 +115,8 @@ function _onFollowMeCommand(attributes, id, store) {
         store.dispatch(setFilmstripVisible(filmstripVisible));
     }
 
-    if (typeof attributes.sharedDocumentVisible !== 'undefined') {
+    if (typeof attributes.sharedDocumentVisible !== 'undefined'
+        && state['features/etherpad'].initialized) {
         // XXX The Command(s) API doesn't preserve the types (of
         // attributes, at least) at the time of this writing so take into
         // account that what originated as a Boolean may be a String on
@@ -123,7 +126,7 @@ function _onFollowMeCommand(attributes, id, store) {
         const documentManager = APP.UI.getSharedDocumentManager();
 
         if (documentManager
-            && etherpadVisible !== documentManager.isVisible()) {
+            && etherpadVisible !== state['features/etherpad'].editing) {
             documentManager.toggleEtherpad();
         }
     }
