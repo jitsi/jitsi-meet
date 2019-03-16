@@ -2,8 +2,8 @@
 
 import { StateListenerRegistry } from '../base/redux';
 import {
-    getLocalParticipant,
-    getPinnedParticipant
+    getPinnedParticipant,
+    isLocalParticipantModerator
 } from '../base/participants';
 
 import { FOLLOW_COMMAND } from './constants';
@@ -93,10 +93,8 @@ function _sendFollowMeCommand(
         return;
     }
 
-    const localParticipant = getLocalParticipant(state);
-
     // Only a moderator is allowed to send commands.
-    if (localParticipant.role !== 'moderator') {
+    if (!isLocalParticipantModerator(state)) {
         return;
     }
 
