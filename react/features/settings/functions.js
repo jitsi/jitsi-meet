@@ -122,7 +122,7 @@ export function getProfileTabProps(stateful: Object | Function) {
 
     return {
         authEnabled: Boolean(conference && authEnabled),
-        authLogin: authLogin,
+        authLogin,
         displayName: localParticipant.name,
         email: localParticipant.email
     };
