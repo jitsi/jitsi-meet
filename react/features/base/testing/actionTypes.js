@@ -6,4 +6,4 @@
  *     type: SET_CONNECTION_STATE
  * }
  */
-export const SET_CONNECTION_STATE = Symbol('SET_CONNECTION_STATE');
+export const SET_CONNECTION_STATE = 'SET_CONNECTION_STATE';

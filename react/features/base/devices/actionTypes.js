@@ -7,7 +7,7 @@
  *     deviceId: string,
  * }
  */
-export const SET_AUDIO_INPUT_DEVICE = Symbol('SET_AUDIO_INPUT_DEVICE');
+export const SET_AUDIO_INPUT_DEVICE = 'SET_AUDIO_INPUT_DEVICE';
 
 /**
  * The type of Redux action which signals that the currently used video
@@ -18,7 +18,7 @@ export const SET_AUDIO_INPUT_DEVICE = Symbol('SET_AUDIO_INPUT_DEVICE');
  *     deviceId: string,
  * }
  */
-export const SET_VIDEO_INPUT_DEVICE = Symbol('SET_VIDEO_INPUT_DEVICE');
+export const SET_VIDEO_INPUT_DEVICE = 'SET_VIDEO_INPUT_DEVICE';
 
 /**
  * The type of Redux action which signals that the list of known available
@@ -29,4 +29,4 @@ export const SET_VIDEO_INPUT_DEVICE = Symbol('SET_VIDEO_INPUT_DEVICE');
  *     devices: Array<MediaDeviceInfo>,
  * }
  */
-export const UPDATE_DEVICE_LIST = Symbol('UPDATE_DEVICE_LIST');
+export const UPDATE_DEVICE_LIST = 'UPDATE_DEVICE_LIST';

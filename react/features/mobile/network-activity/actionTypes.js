@@ -8,7 +8,7 @@
  *
  * @protected
  */
-export const _ADD_NETWORK_REQUEST = Symbol('_ADD_NETWORK_REQUEST');
+export const _ADD_NETWORK_REQUEST = '_ADD_NETWORK_REQUEST';
 
 /**
  * The type of redux action to remove all network requests from the redux
@@ -21,7 +21,7 @@ export const _ADD_NETWORK_REQUEST = Symbol('_ADD_NETWORK_REQUEST');
  * @protected
  */
 export const _REMOVE_ALL_NETWORK_REQUESTS
-    = Symbol('_REMOVE_ALL_NETWORK_REQUESTS');
+    = '_REMOVE_ALL_NETWORK_REQUESTS';
 
 /**
  * The type of redux action to remove a network request from the redux
@@ -34,4 +34,4 @@ export const _REMOVE_ALL_NETWORK_REQUESTS
  *
  * @protected
  */
-export const _REMOVE_NETWORK_REQUEST = Symbol('_REMOVE_NETWORK_REQUEST');
+export const _REMOVE_NETWORK_REQUEST = '_REMOVE_NETWORK_REQUEST';

@@ -5,7 +5,7 @@
  *     type: INCOMING_CALL_ANSWERED
  * }
  */
-export const INCOMING_CALL_ANSWERED = Symbol('INCOMING_CALL_ANSWERED');
+export const INCOMING_CALL_ANSWERED = 'INCOMING_CALL_ANSWERED';
 
 /**
  * The type of redux action to decline an incoming call.
@@ -14,7 +14,7 @@ export const INCOMING_CALL_ANSWERED = Symbol('INCOMING_CALL_ANSWERED');
  *     type: INCOMING_CALL_DECLINED
  * }
  */
-export const INCOMING_CALL_DECLINED = Symbol('INCOMING_CALL_DECLINED');
+export const INCOMING_CALL_DECLINED = 'INCOMING_CALL_DECLINED';
 
 /**
  * The type of redux action to receive an incoming call.
@@ -24,4 +24,4 @@ export const INCOMING_CALL_DECLINED = Symbol('INCOMING_CALL_DECLINED');
  *     caller: Object
  * }
  */
-export const INCOMING_CALL_RECEIVED = Symbol('INCOMING_CALL_RECEIVED');
+export const INCOMING_CALL_RECEIVED = 'INCOMING_CALL_RECEIVED';

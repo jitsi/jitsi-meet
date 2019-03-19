@@ -7,7 +7,7 @@
  *     app: App
  * }
  */
-export const APP_WILL_MOUNT = Symbol('APP_WILL_MOUNT');
+export const APP_WILL_MOUNT = 'APP_WILL_MOUNT';
 
 /**
  * The type of (redux) action which signals that a specific App will unmount (in
@@ -18,4 +18,4 @@ export const APP_WILL_MOUNT = Symbol('APP_WILL_MOUNT');
  *     app: App
  * }
  */
-export const APP_WILL_UNMOUNT = Symbol('APP_WILL_UNMOUNT');
+export const APP_WILL_UNMOUNT = 'APP_WILL_UNMOUNT';

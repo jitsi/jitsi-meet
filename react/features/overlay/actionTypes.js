@@ -10,7 +10,7 @@
  * @public
  */
 export const MEDIA_PERMISSION_PROMPT_VISIBILITY_CHANGED
-    = Symbol('MEDIA_PERMISSION_PROMPT_VISIBILITY_CHANGED');
+    = 'MEDIA_PERMISSION_PROMPT_VISIBILITY_CHANGED';
 
 /**
  * The type of the Redux action which signals that a suspend was detected.
@@ -20,7 +20,7 @@ export const MEDIA_PERMISSION_PROMPT_VISIBILITY_CHANGED
  * }
  * @public
  */
-export const SUSPEND_DETECTED = Symbol('SUSPEND_DETECTED');
+export const SUSPEND_DETECTED = 'SUSPEND_DETECTED';
 
 /**
  * Adjust the state of the fatal error which shows/hides the reload screen. See
@@ -32,4 +32,4 @@ export const SUSPEND_DETECTED = Symbol('SUSPEND_DETECTED');
  * }
  * @public
  */
-export const SET_FATAL_ERROR = Symbol('SET_FATAL_ERROR');
+export const SET_FATAL_ERROR = 'SET_FATAL_ERROR';
