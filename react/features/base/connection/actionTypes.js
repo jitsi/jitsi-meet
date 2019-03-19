@@ -7,7 +7,7 @@
  *     message: string
  * }
  */
-export const CONNECTION_DISCONNECTED = Symbol('CONNECTION_DISCONNECTED');
+export const CONNECTION_DISCONNECTED = 'CONNECTION_DISCONNECTED';
 
 /**
  * The type of (redux) action which signals that a connection was successfully
@@ -19,7 +19,7 @@ export const CONNECTION_DISCONNECTED = Symbol('CONNECTION_DISCONNECTED');
  *     timeEstablished: number,
  * }
  */
-export const CONNECTION_ESTABLISHED = Symbol('CONNECTION_ESTABLISHED');
+export const CONNECTION_ESTABLISHED = 'CONNECTION_ESTABLISHED';
 
 /**
  * The type of (redux) action which signals that a connection failed.
@@ -30,7 +30,7 @@ export const CONNECTION_ESTABLISHED = Symbol('CONNECTION_ESTABLISHED');
  *     error: Object | string
  * }
  */
-export const CONNECTION_FAILED = Symbol('CONNECTION_FAILED');
+export const CONNECTION_FAILED = 'CONNECTION_FAILED';
 
 /**
  * The type of (redux) action which signals that a connection will connect.
@@ -40,7 +40,7 @@ export const CONNECTION_FAILED = Symbol('CONNECTION_FAILED');
  *     connection: JitsiConnection
  * }
  */
-export const CONNECTION_WILL_CONNECT = Symbol('CONNECTION_WILL_CONNECT');
+export const CONNECTION_WILL_CONNECT = 'CONNECTION_WILL_CONNECT';
 
 /**
  * The type of (redux) action which sets the location URL of the application,
@@ -51,4 +51,4 @@ export const CONNECTION_WILL_CONNECT = Symbol('CONNECTION_WILL_CONNECT');
  *     locationURL: ?URL
  * }
  */
-export const SET_LOCATION_URL = Symbol('SET_LOCATION_URL');
+export const SET_LOCATION_URL = 'SET_LOCATION_URL';

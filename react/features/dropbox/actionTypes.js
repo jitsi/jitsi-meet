@@ -8,4 +8,4 @@
  *     token: string
  * }
  */
-export const UPDATE_DROPBOX_TOKEN = Symbol('UPDATE_DROPBOX_TOKEN');
+export const UPDATE_DROPBOX_TOKEN = 'UPDATE_DROPBOX_TOKEN';

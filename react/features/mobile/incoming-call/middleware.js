@@ -1,7 +1,6 @@
 // @flow
 
 import { MiddlewareRegistry } from '../../base/redux';
-import { getSymbolDescription } from '../../base/util';
 
 import { sendEvent } from '../external-api';
 
@@ -20,7 +19,7 @@ MiddlewareRegistry.register(store => next => action => {
     switch (action.type) {
     case INCOMING_CALL_ANSWERED:
     case INCOMING_CALL_DECLINED:
-        sendEvent(store, getSymbolDescription(action.type), /* data */ {});
+        sendEvent(store, action.type, /* data */ {});
         break;
     }
 
