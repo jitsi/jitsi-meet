@@ -10,8 +10,7 @@ import StatelessDialog from './StatelessDialog';
 /**
  * The type of the React {@code Component} props of {@link Dialog}.
  */
-type Props = {
-    ...AbstractDialogProps,
+type Props = AbstractDialogProps & {
 
     /**
      * Whether the dialog is modal. This means clicking on the blanket will
@@ -44,7 +43,7 @@ class Dialog extends AbstractDialog<Props, State> {
      * @param {Object} props - The read-only properties with which the new
      * instance is to be initialized.
      */
-    constructor(props) {
+    constructor(props: Props) {
         super(props);
 
         // Bind event handlers so they are only bound once per instance.
@@ -65,6 +64,7 @@ class Dialog extends AbstractDialog<Props, State> {
             onSubmit: this._onSubmit
         };
 
+        // $FlowExpectedError
         delete props.dispatch;
 
         return <StatelessDialog { ...props } />;
@@ -84,4 +84,5 @@ class Dialog extends AbstractDialog<Props, State> {
     _onSubmit: (?string) => void;
 }
 
+// $FlowExpectedError
 export default connect()(Dialog);

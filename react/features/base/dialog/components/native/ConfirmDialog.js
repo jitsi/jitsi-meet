@@ -13,8 +13,7 @@ import { type Props as BaseProps } from './BaseDialog';
 import BaseSubmitDialog from './BaseSubmitDialog';
 import { brandedDialog } from './styles';
 
-type Props = {
-    ...BaseProps,
+type Props = BaseProps & {
 
     /**
      * The color-schemed stylesheet of the feature.

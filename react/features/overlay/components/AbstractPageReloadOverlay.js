@@ -2,6 +2,7 @@
 
 import { randomInt } from 'js-utils/random';
 import React, { Component } from 'react';
+import type { Dispatch } from 'redux';
 
 import {
     createPageReloadScheduledEvent,
@@ -31,7 +32,7 @@ export type Props = {
      */
     details: Object,
 
-    dispatch: Dispatch<*>,
+    dispatch: Dispatch<any>,
 
     /**
      * The indicator which determines whether the reload was caused by network

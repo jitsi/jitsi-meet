@@ -308,4 +308,5 @@ function _mapStateToProps(state) {
     };
 }
 
+// $FlowExpectedError
 export default reactReduxConnect(_mapStateToProps)(translate(Conference));

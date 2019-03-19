@@ -1,5 +1,7 @@
 // @flow
 
+import type { Dispatch } from 'redux';
+
 import { appNavigate } from '../app';
 import {
     CONFERENCE_FAILED,
@@ -160,7 +162,7 @@ function _clearExistingWaitForOwnerTimeout(
  * @param {Object} store - The redux store.
  * @returns {void}
  */
-function _hideLoginDialog({ dispatch }: { dispatch: Dispatch<*> }) {
+function _hideLoginDialog({ dispatch }: { dispatch: Dispatch<any> }) {
     dispatch(hideDialog(LoginDialog));
 }
 

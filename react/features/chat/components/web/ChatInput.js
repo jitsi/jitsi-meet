@@ -3,6 +3,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import Emoji from 'react-emoji-render';
+import type { Dispatch } from 'redux';
 
 import { sendMessage } from '../../actions';
 
@@ -16,7 +17,7 @@ type Props = {
     /**
      * Invoked to send chat messages.
      */
-    dispatch: Dispatch<*>,
+    dispatch: Dispatch<any>,
 
     /**
      * Optional callback to get a reference to the chat input element.
@@ -231,4 +232,5 @@ class ChatInput extends Component<Props, State> {
     }
 }
 
+// $FlowExpectedError
 export default connect()(ChatInput);

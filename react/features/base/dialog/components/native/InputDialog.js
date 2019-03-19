@@ -18,8 +18,7 @@ import {
     inputDialog as styles
 } from './styles';
 
-type Props = {
-    ...BaseProps,
+type Props = BaseProps & {
 
     /**
      * The color-schemed stylesheet of the feature.

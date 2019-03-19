@@ -10,8 +10,7 @@ import {
     brandedDialog
 } from './styles';
 
-type Props = {
-    ...BaseProps,
+type Props = BaseProps & {
 
     /**
      * The color-schemed stylesheet of the feature.
@@ -83,7 +82,7 @@ class BaseSubmitDialog<P: Props, S: *> extends BaseDialog<P, S> {
 
     _onCancel: () => void;
 
-    _onSubmit: ?string => boolean;
+    _onSubmit: () => boolean;
 
     _renderHTML: string => Object | string
 

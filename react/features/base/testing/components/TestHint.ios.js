@@ -34,4 +34,5 @@ class TestHint extends Component<TestHintProps> {
     }
 }
 
+// $FlowExpectedError
 export default connect(_mapStateToProps)(TestHint);

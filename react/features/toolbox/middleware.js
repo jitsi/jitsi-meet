@@ -43,6 +43,12 @@ MiddlewareRegistry.register(store => next => action => {
     return next(action);
 });
 
+type DocumentElement = {
+    +requestFullscreen?: Function,
+    +mozRequestFullScreen?: Function,
+    +webkitRequestFullscreen?: Function
+}
+
 /**
  * Makes an external request to enter or exit full screen mode.
  *
@@ -58,7 +64,8 @@ function _setFullScreen(next, action) {
         const { fullScreen } = action;
 
         if (fullScreen) {
-            const documentElement = document.documentElement || {};
+            const documentElement: DocumentElement
+                = document.documentElement || {};
 
             if (typeof documentElement.requestFullscreen === 'function') {
                 documentElement.requestFullscreen();

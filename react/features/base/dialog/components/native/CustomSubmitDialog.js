@@ -9,9 +9,7 @@ import { _abstractMapStateToProps } from '../../functions';
 import { type Props as BaseProps } from './BaseDialog';
 import BaseSubmitDialog from './BaseSubmitDialog';
 
-type Props = {
-    ...BaseProps,
-
+type Props = BaseProps & {
     t: Function
 }
 

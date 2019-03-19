@@ -120,9 +120,9 @@ class VideoSwitch extends Component<Props> {
         return () => this._onStartAudioOnlyChange(startAudioOnly);
     }
 
-    _onStartAudioOnlyFalse: boolean => void;
+    _onStartAudioOnlyFalse: () => void;
 
-    _onStartAudioOnlyTrue: boolean => void;
+    _onStartAudioOnlyTrue: () => void;
 }
 
 /**

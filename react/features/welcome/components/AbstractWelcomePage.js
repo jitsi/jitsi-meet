@@ -2,6 +2,7 @@
 
 import { generateRoomWithoutSeparator } from 'js-utils/random';
 import { Component } from 'react';
+import type { Dispatch } from 'redux';
 
 import { createWelcomePageEvent, sendAnalytics } from '../../analytics';
 import { appNavigate } from '../../app';
@@ -25,7 +26,7 @@ type Props = {
     /**
      * The Redux dispatch Function.
      */
-    dispatch: Dispatch<*>
+    dispatch: Dispatch<any>
 };
 
 /**

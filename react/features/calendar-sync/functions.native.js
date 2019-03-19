@@ -2,6 +2,7 @@
 
 import { NativeModules, Platform } from 'react-native';
 import RNCalendarEvents from 'react-native-calendar-events';
+import type { Store } from 'redux';
 
 import { getShareInfoText } from '../invite';
 
@@ -22,7 +23,7 @@ const logger = require('jitsi-meet-logger').getLogger(__filename);
  * @returns {Promise<*>}
  */
 export function addLinkToCalendarEntry(
-        state: Object, id: string, link: string) {
+        state: Object, id: string, link: string): Promise<any> {
     return new Promise((resolve, reject) => {
         getShareInfoText(state, link, true).then(shareInfoText => {
             RNCalendarEvents.findEventById(id).then(event => {
@@ -76,9 +77,9 @@ export function isCalendarEnabled() {
  * @returns {void}
  */
 export function _fetchCalendarEntries(
-        store,
-        maybePromptForPermission,
-        forcePermission) {
+        store: Store<*, *>,
+        maybePromptForPermission: boolean,
+        forcePermission: ?boolean) {
     const { dispatch, getState } = store;
     const promptForPermission
         = (maybePromptForPermission

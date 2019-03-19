@@ -158,7 +158,7 @@ export default class AbstractAddPeopleDialog<P: Props, S: State>
             || this.state.addToCallInProgress;
     }
 
-    _query: (string) => Promise<Array<Object>>;
+    _query: (?string) => Promise<Array<Object>>;
 
     /**
      * Performs a people and phone number search request.

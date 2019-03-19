@@ -1,6 +1,7 @@
 // @flow
 
 import { connect } from 'react-redux';
+import type { Dispatch } from 'redux';
 
 import {
     createToolbarEvent,
@@ -27,7 +28,7 @@ type Props = AbstractButtonProps & {
     /**
      * Used to dispatch actions from the buttons.
      */
-    dispatch: Dispatch<*>
+    dispatch: Dispatch<any>
 };
 
 /**

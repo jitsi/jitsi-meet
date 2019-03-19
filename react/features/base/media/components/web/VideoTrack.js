@@ -11,8 +11,7 @@ import Video from './Video';
 /**
  * The type of the React {@code Component} props of {@link VideoTrack}.
  */
-type Props = {
-    ...AbstractVideoTrackProps,
+type Props = AbstractVideoTrackProps & {
 
     /**
      * CSS classes to add to the video element.
@@ -64,4 +63,5 @@ class VideoTrack extends AbstractVideoTrack<Props> {
     _onVideoPlaying: () => void;
 }
 
+// $FlowExpectedError
 export default connect()(VideoTrack);

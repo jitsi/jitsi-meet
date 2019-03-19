@@ -1,6 +1,7 @@
 // @flow
 
 import { generateRoomWithoutSeparator } from 'js-utils/random';
+import type { Dispatch } from 'redux';
 
 import { loadGoogleAPI } from '../google-api';
 
@@ -197,7 +198,7 @@ export function setIntegrationReady(integrationType: string) {
  * @returns {Function}
  */
 export function signIn(calendarType: string): Function {
-    return (dispatch: Dispatch<*>) => {
+    return (dispatch: Dispatch<any>) => {
         const integration = _getCalendarIntegration(calendarType);
 
         if (!integration) {
@@ -229,7 +230,7 @@ export function signIn(calendarType: string): Function {
  * @returns {Function}
  */
 export function updateCalendarEvent(id: string, calendarId: string): Function {
-    return (dispatch: Dispatch<*>, getState: Function) => {
+    return (dispatch: Dispatch<any>, getState: Function) => {
 
         const { integrationType } = getState()['features/calendar-sync'];
         const integration = _getCalendarIntegration(integrationType);
@@ -276,7 +277,7 @@ export function updateCalendarEvent(id: string, calendarId: string): Function {
  * @returns {Function}
  */
 export function updateProfile(calendarType: string): Function {
-    return (dispatch: Dispatch<*>) => {
+    return (dispatch: Dispatch<any>) => {
         const integration = _getCalendarIntegration(calendarType);
 
         if (!integration) {

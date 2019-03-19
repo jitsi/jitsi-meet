@@ -268,9 +268,11 @@ class AddPeopleDialog extends AbstractAddPeopleDialog<Props, State> {
                 });
             } else {
                 // Item is not selected yet, need to add to the list.
+                const items: Array<*> = inviteItems.concat(item);
+
                 this.setState({
-                    inviteItems: _.orderBy(
-                        inviteItems.concat(item), [ 'name' ], [ 'asc' ])
+                    // $FlowExpectedError
+                    inviteItems: _.orderBy(items, [ 'name' ], [ 'asc' ])
                 });
             }
         };
@@ -320,10 +322,10 @@ class AddPeopleDialog extends AbstractAddPeopleDialog<Props, State> {
                 }
             });
 
-            selectableItems
-                = _.orderBy(
-                    this.state.inviteItems.concat(selectableItems),
-                    [ 'name' ], [ 'asc' ]);
+            const items = this.state.inviteItems.concat(selectableItems);
+
+            // $FlowExpectedError
+            selectableItems = _.orderBy(items, [ 'name' ], [ 'asc' ]);
 
             this.setState({
                 selectableItems
@@ -402,7 +404,7 @@ class AddPeopleDialog extends AbstractAddPeopleDialog<Props, State> {
         );
     }
 
-    _renderSeparator: () => ?React$Element<*>
+    _renderSeparator: () => React$Element<*> | null
 
     /**
      * Renders the item separator.
