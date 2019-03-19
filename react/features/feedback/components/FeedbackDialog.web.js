@@ -10,7 +10,7 @@ import {
     createFeedbackOpenEvent,
     sendAnalytics
 } from '../../analytics';
-import { Dialog } from '../../base/dialog';
+import { Dialog, hideDialog } from '../../base/dialog';
 import { translate } from '../../base/i18n';
 
 import { cancelFeedback, submitFeedback } from '../actions';
@@ -72,7 +72,13 @@ type Props = {
     /**
      * Invoked to obtain translated strings.
      */
-    t: Function
+    t: Function,
+
+    /**
+     * Optional timeout in millis which will limit how long the dialog can be
+     * displayed.
+     */
+    timeout: ?number
 };
 
 /**
@@ -113,6 +119,11 @@ class FeedbackDialog extends Component<Props, State> {
      * once for each score selection icon.
      */
     _scoreClickConfigurations: Array<Object>;
+
+    /**
+     * The timeout ID which hides the dialog if displayed for too long.
+     */
+    _timeout: ?TimeoutID;
 
     /**
      * Initializes a new {@code FeedbackDialog} instance.
@@ -176,6 +187,12 @@ class FeedbackDialog extends Component<Props, State> {
         if (typeof APP !== 'undefined') {
             APP.API.notifyFeedbackPromptDisplayed();
         }
+        if (this.props.timeout && this.props.timeout > 0) {
+            this._timeout = setTimeout(() => {
+                this._onCancel();
+                this.props.dispatch(hideDialog());
+            }, this.props.timeout);
+        }
     }
 
     /**
@@ -186,6 +203,10 @@ class FeedbackDialog extends Component<Props, State> {
     componentWillUnmount() {
         if (this.props.onClose) {
             this.props.onClose();
+        }
+        if (this._timeout) {
+            clearTimeout(this._timeout);
+            this._timeout = null;
         }
     }
 

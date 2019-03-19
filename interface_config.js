@@ -11,6 +11,12 @@ var interfaceConfig = {
      */
     DISABLE_VIDEO_BACKGROUND: false,
 
+    /**
+     * The amount of time given in milliseconds after which the feedback dialog
+     * will be automatically dismissed.
+     */
+    // FEEDBACK_TIMEOUT: 60000,
+
     INITIAL_TOOLBAR_TIMEOUT: 20000,
     TOOLBAR_TIMEOUT: 4000,
     TOOLBAR_ALWAYS_VISIBLE: false,

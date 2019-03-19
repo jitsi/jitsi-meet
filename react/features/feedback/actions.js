@@ -65,13 +65,16 @@ export function maybeOpenFeedbackDialog(conference: Object) {
             });
         } else if (conference.isCallstatsEnabled()) {
             return new Promise(resolve => {
-                dispatch(openFeedbackDialog(conference, () => {
-                    const { submitted } = getState()['features/feedback'];
+                dispatch(openFeedbackDialog(conference, {
+                    onClose: () => {
+                        const { submitted } = getState()['features/feedback'];
 
-                    resolve({
-                        feedbackSubmitted: submitted,
-                        showThankYou: false
-                    });
+                        resolve({
+                            feedbackSubmitted: submitted,
+                            showThankYou: false
+                        });
+                    },
+                    timeout: interfaceConfig.FEEDBACK_TIMEOUT
                 }));
             });
         }
@@ -92,14 +95,25 @@ export function maybeOpenFeedbackDialog(conference: Object) {
  * @param {JitsiConference} conference - The JitsiConference that is being
  * rated. The conference is passed in because feedback can occur after a
  * conference has been left, so references to it may no longer exist in redux.
- * @param {Function} [onClose] - An optional callback to invoke when the dialog
- * is closed.
+ * @param {Object} options - The feedback dialog's properties.
+ * @param {Function} [options.onClose] - An optional callback to invoke when
+ * the dialog is closed.
+ * @param {number} [options.timeout] - How many milliseconds will the dialog be
+ * displayed, before being automatically dismissed. Zero or negative means
+ * never.
  * @returns {Object}
  */
-export function openFeedbackDialog(conference: Object, onClose: ?Function) {
+export function openFeedbackDialog(conference: Object, options: Object = { }) {
+    let timeout = options.timeout;
+
+    if (typeof timeout === 'undefined') {
+        timeout = 60000;
+    }
+
     return openDialog(FeedbackDialog, {
         conference,
-        onClose
+        onClose: options.onClose,
+        timeout
     });
 }
 
