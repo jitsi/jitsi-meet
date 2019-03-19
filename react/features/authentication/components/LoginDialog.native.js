@@ -3,6 +3,7 @@
 import React, { Component } from 'react';
 import { Text, TextInput, View } from 'react-native';
 import { connect as reduxConnect } from 'react-redux';
+import type { Dispatch } from 'redux';
 
 import { connect, toJid } from '../../base/connection';
 import {
@@ -59,7 +60,7 @@ type Props = {
     /**
      * Redux store dispatch method.
      */
-    dispatch: Dispatch<*>,
+    dispatch: Dispatch<any>,
 
     /**
      * Invoked to obtain translated strings.

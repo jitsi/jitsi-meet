@@ -20,7 +20,7 @@ export type Item = {
     /**
      * An optional react element to append to the end of the Item.
      */
-    elementAfter?: ?ComponentType<any>,
+    elementAfter?: ?React$Node,
 
     /**
      * Unique ID of the item.

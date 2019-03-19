@@ -29,4 +29,5 @@ class VideoTrack extends AbstractVideoTrack<Props> {
     }
 }
 
+// $FlowExpectedError
 export default connect()(VideoTrack);

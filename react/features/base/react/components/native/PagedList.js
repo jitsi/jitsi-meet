@@ -283,4 +283,5 @@ class PagedList extends Component<Props, State> {
     }
 }
 
+// $FlowExpectedError
 export default connect()(PagedList);

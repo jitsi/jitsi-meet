@@ -53,7 +53,7 @@ class ReducedUIDetector extends Component<Props> {
  *     _onDimensionsChanged: Function
  * }}
  */
-function _mapDispatchToProps(dispatch: Dispatch<*>) {
+function _mapDispatchToProps(dispatch: Dispatch<any>) {
     return {
         /**
          * Handles the "on dimensions changed" event and dispatches the
@@ -70,4 +70,5 @@ function _mapDispatchToProps(dispatch: Dispatch<*>) {
     };
 }
 
+// $FlowExpectedError
 export default connect(undefined, _mapDispatchToProps)(ReducedUIDetector);

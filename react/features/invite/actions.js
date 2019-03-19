@@ -1,5 +1,7 @@
 // @flow
 
+import type { Dispatch } from 'redux';
+
 import { getInviteURL } from '../base/connection';
 import { inviteVideoRooms } from '../videosipgw';
 import { getParticipants } from '../base/participants';
@@ -51,7 +53,7 @@ export function invite(
         invitees: Array<Object>,
         showCalleeInfo: boolean = false) {
     return (
-            dispatch: Dispatch<*>,
+            dispatch: Dispatch<any>,
             getState: Function): Promise<Array<Object>> => {
         const state = getState();
         const participants = getParticipants(state);
@@ -161,7 +163,7 @@ export function invite(
  * @returns {Function}
  */
 export function updateDialInNumbers() {
-    return (dispatch: Dispatch<*>, getState: Function) => {
+    return (dispatch: Dispatch<any>, getState: Function) => {
         const state = getState();
         const { dialInConfCodeUrl, dialInNumbersUrl, hosts }
             = state['features/base/config'];

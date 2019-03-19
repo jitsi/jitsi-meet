@@ -1,5 +1,7 @@
 // @flow
 
+import type { Dispatch } from 'redux';
+
 import { appNavigate } from '../app';
 import {
     conferenceLeft,
@@ -37,7 +39,7 @@ export function beginRoomLockRequest(conference: ?Object) {
  * @returns {Function}
  */
 export function _cancelPasswordRequiredPrompt(conference: Object) {
-    return (dispatch: Dispatch<*>, getState: Function) => {
+    return (dispatch: Dispatch<any>, getState: Function) => {
         // Canceling PasswordRequiredPrompt is to navigate the app/user to
         // WelcomePage. In other words, the canceling invalidates the
         // locationURL. Make sure that the canceling indeed has the intent to
@@ -105,7 +107,7 @@ export function _openPasswordRequiredPrompt(conference: Object) {
  * @returns {Function}
  */
 export function unlockRoom() {
-    return (dispatch: Dispatch<Function>, getState: Function) => {
+    return (dispatch: Dispatch<any>, getState: Function) => {
         const { conference } = getState()['features/base/conference'];
 
         return dispatch(setPassword(

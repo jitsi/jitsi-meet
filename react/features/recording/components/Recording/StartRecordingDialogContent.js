@@ -271,8 +271,8 @@ class StartRecordingDialogContent extends Component<Props> {
         );
     }
 
-    _onDropboxSwitchChange: boolean => void;
-    _onRecordingServiceSwitchChange: boolean => void;
+    _onDropboxSwitchChange: () => void;
+    _onRecordingServiceSwitchChange: () => void;
 
     /**
      * Handler for onValueChange events from the Switch component.

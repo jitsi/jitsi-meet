@@ -13,7 +13,7 @@ import LocalVideoTrackUnderlay from './LocalVideoTrackUnderlay';
  * The type of React {@code Component} props of {@link BlankPage}.
  */
 type Props = {
-    dispatch: Dispatch<*>
+    dispatch: Dispatch<any>
 };
 
 /**
@@ -48,4 +48,5 @@ class BlankPage extends Component<Props> {
     }
 }
 
+// $FlowExpectedError
 export default connect()(BlankPage);

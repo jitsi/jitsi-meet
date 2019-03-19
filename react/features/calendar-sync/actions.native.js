@@ -1,6 +1,8 @@
 // @flow
 import { generateRoomWithoutSeparator } from 'js-utils/random';
 
+import type { Dispatch } from 'redux';
+
 import { getDefaultURL } from '../app';
 import { openDialog } from '../base/dialog';
 
@@ -35,7 +37,7 @@ export function openUpdateCalendarEventDialog(eventId: string) {
  * @returns {Function}
  */
 export function updateCalendarEvent(eventId: string) {
-    return (dispatch: Dispatch<*>, getState: Function) => {
+    return (dispatch: Dispatch<any>, getState: Function) => {
         const defaultUrl = getDefaultURL(getState);
         const roomName = generateRoomWithoutSeparator();
 

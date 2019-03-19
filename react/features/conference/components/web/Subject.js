@@ -64,4 +64,6 @@ function _mapStateToProps(state) {
         _visible: isToolboxVisible(state)
     };
 }
+
+// $FlowExpectedError
 export default connect(_mapStateToProps)(Subject);

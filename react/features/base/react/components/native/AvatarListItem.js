@@ -32,7 +32,7 @@ type Props = {
     /**
      * Children of the component.
      */
-    children?: ?React$Element<*>,
+    children?: React$Node,
 
     /**
      * item containing data to be rendered
@@ -71,6 +71,44 @@ export default class AvatarListItem extends Component<Props> {
     }
 
     /**
+     * Helper function to render the content in the avatar container.
+     *
+     * @returns {React$Element}
+     */
+    _getAvatarContent() {
+        const {
+            avatarSize = AVATAR_SIZE,
+            avatarTextStyle
+        } = this.props;
+        const { avatar, title } = this.props.item;
+        const isAvatarURL = Boolean(avatar && avatar.match(/^http[s]*:\/\//i));
+
+        if (isAvatarURL) {
+            return (
+                <Avatar
+                    size = { avatarSize }
+                    uri = { avatar } />
+            );
+        }
+
+        if (avatar && !isAvatarURL) {
+            return (
+                <Icon name = { avatar } />
+            );
+        }
+
+        return (
+            <Text
+                style = { [
+                    styles.avatarContent,
+                    avatarTextStyle
+                ] }>
+                { title.substr(0, 1).toUpperCase() }
+            </Text>
+        );
+    }
+
+    /**
      * Implements {@code Component#render}.
      *
      * @inheritdoc
@@ -78,10 +116,9 @@ export default class AvatarListItem extends Component<Props> {
     render() {
         const {
             avatarSize = AVATAR_SIZE,
-            avatarStyle,
-            avatarTextStyle
+            avatarStyle
         } = this.props;
-        const { avatar, colorBase, lines, title } = this.props.item;
+        const { colorBase, lines, title } = this.props.item;
         const avatarStyles = {
             ...styles.avatar,
             ...this._getAvatarColor(colorBase),
@@ -91,8 +128,6 @@ export default class AvatarListItem extends Component<Props> {
             width: avatarSize
         };
 
-        const isAvatarURL = Boolean(avatar && avatar.match(/^http[s]*:\/\//i));
-
         return (
             <Container
                 onClick = { this.props.onPress }
@@ -100,26 +135,7 @@ export default class AvatarListItem extends Component<Props> {
                 underlayColor = { UNDERLAY_COLOR }>
                 <Container style = { styles.avatarContainer }>
                     <Container style = { avatarStyles }>
-                        {
-                            isAvatarURL && <Avatar
-                                size = { avatarSize }
-                                uri = { avatar } />
-                        }
-
-                        {
-                            Boolean(avatar && !isAvatarURL) && <Icon
-                                name = { avatar } />
-                        }
-
-                        {
-                            !avatar && <Text
-                                style = { [
-                                    styles.avatarContent,
-                                    avatarTextStyle
-                                ] }>
-                                { title.substr(0, 1).toUpperCase() }
-                            </Text>
-                        }
+                        { this._getAvatarContent() }
                     </Container>
                 </Container>
                 <Container style = { styles.listItemDetails }>

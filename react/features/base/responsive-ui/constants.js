@@ -4,7 +4,7 @@
  *
  * @type {Symbol}
  */
-export const ASPECT_RATIO_NARROW = Symbol('ASPECT_RATIO_NARROW');
+export const ASPECT_RATIO_NARROW = 'ASPECT_RATIO_NARROW';
 
 /**
  * The aspect ratio constant which indicates that the width (of whatever the
@@ -12,4 +12,4 @@ export const ASPECT_RATIO_NARROW = Symbol('ASPECT_RATIO_NARROW');
  *
  * @type {Symbol}
  */
-export const ASPECT_RATIO_WIDE = Symbol('ASPECT_RATIO_WIDE');
+export const ASPECT_RATIO_WIDE = 'ASPECT_RATIO_WIDE';

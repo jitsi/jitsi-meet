@@ -3,6 +3,7 @@
 import Tabs from '@atlaskit/tabs';
 import React, { PureComponent } from 'react';
 import { connect } from 'react-redux';
+import type { Dispatch } from 'redux';
 
 import { Dialog, hideDialog } from '../../base/dialog';
 import { translate } from '../../base/i18n';
@@ -54,7 +55,7 @@ type Props = {
     /**
      * Used to request DesktopCapturerSources.
      */
-    dispatch: Dispatch<*>,
+    dispatch: Dispatch<any>,
 
     /**
      * The callback to be invoked when the component is closed or when a

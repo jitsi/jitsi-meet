@@ -46,7 +46,7 @@ const _WELL_KNOWN_NUMBER_PROPERTIES = [ 'height', 'width' ];
  * @returns {StyleType} - The merged styles.
  */
 export function combineStyles(a: StyleType, b: StyleType): StyleType {
-    const result = [];
+    const result: Array<StyleSheet> = [];
 
     if (a) {
         if (Array.isArray(a)) {
