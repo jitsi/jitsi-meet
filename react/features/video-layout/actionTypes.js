@@ -7,4 +7,4 @@
  *     enabled: boolean
  * }}
  */
-export const SET_TILE_VIEW = Symbol('SET_TILE_VIEW');
+export const SET_TILE_VIEW = 'SET_TILE_VIEW';

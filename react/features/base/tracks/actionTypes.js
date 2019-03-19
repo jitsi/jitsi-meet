@@ -6,7 +6,7 @@
  *     type: TOGGLE_SCREENSHARING
  * }
  */
-export const TOGGLE_SCREENSHARING = Symbol('TOGGLE_SCREENSHARING');
+export const TOGGLE_SCREENSHARING = 'TOGGLE_SCREENSHARING';
 
 /**
  * The type of redux action dispatched when a track has been (locally or
@@ -17,7 +17,7 @@ export const TOGGLE_SCREENSHARING = Symbol('TOGGLE_SCREENSHARING');
  *     track: Track
  * }
  */
-export const TRACK_ADDED = Symbol('TRACK_ADDED');
+export const TRACK_ADDED = 'TRACK_ADDED';
 
 /**
  * The type of redux action dispatched when a canceled {@code getUserMedia}
@@ -29,7 +29,7 @@ export const TRACK_ADDED = Symbol('TRACK_ADDED');
  *     trackType: MEDIA_TYPE
  * }
  */
-export const TRACK_CREATE_CANCELED = Symbol('TRACK_CREATE_CANCELED');
+export const TRACK_CREATE_CANCELED = 'TRACK_CREATE_CANCELED';
 
 /**
  * The type of redux action dispatched when {@code getUserMedia} fails with an
@@ -41,7 +41,7 @@ export const TRACK_CREATE_CANCELED = Symbol('TRACK_CREATE_CANCELED');
  *     trackType: MEDIA_TYPE
  * }
  */
-export const TRACK_CREATE_ERROR = Symbol('TRACK_CREATE_ERROR');
+export const TRACK_CREATE_ERROR = 'TRACK_CREATE_ERROR';
 
 /**
  * The type of redux action dispatched when a track has been (locally or
@@ -52,7 +52,7 @@ export const TRACK_CREATE_ERROR = Symbol('TRACK_CREATE_ERROR');
  *     track: Track
  * }
  */
-export const TRACK_REMOVED = Symbol('TRACK_REMOVED');
+export const TRACK_REMOVED = 'TRACK_REMOVED';
 
 /**
  * The type of redux action dispatched when a track's properties were updated.
@@ -62,7 +62,7 @@ export const TRACK_REMOVED = Symbol('TRACK_REMOVED');
  *     track: Track
  * }
  */
-export const TRACK_UPDATED = Symbol('TRACK_UPDATED');
+export const TRACK_UPDATED = 'TRACK_UPDATED';
 
 /**
  * The type of redux action dispatched when a local track starts being created
@@ -82,4 +82,4 @@ export const TRACK_UPDATED = Symbol('TRACK_UPDATED');
  *     }
  * }
  */
-export const TRACK_WILL_CREATE = Symbol('TRACK_WILL_CREATE');
+export const TRACK_WILL_CREATE = 'TRACK_WILL_CREATE';

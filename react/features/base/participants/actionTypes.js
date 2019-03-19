@@ -8,7 +8,7 @@
  *     }
  * }
  */
-export const DOMINANT_SPEAKER_CHANGED = Symbol('DOMINANT_SPEAKER_CHANGED');
+export const DOMINANT_SPEAKER_CHANGED = 'DOMINANT_SPEAKER_CHANGED';
 
 /**
  * Create an action for removing a participant from the conference.
@@ -18,7 +18,7 @@ export const DOMINANT_SPEAKER_CHANGED = Symbol('DOMINANT_SPEAKER_CHANGED');
  *     id: string
  * }
  */
-export const KICK_PARTICIPANT = Symbol('KICK_PARTICIPANT');
+export const KICK_PARTICIPANT = 'KICK_PARTICIPANT';
 
 /**
  * Create an action for muting a remote participant.
@@ -28,7 +28,7 @@ export const KICK_PARTICIPANT = Symbol('KICK_PARTICIPANT');
  *     id: string
  * }
  */
-export const MUTE_REMOTE_PARTICIPANT = Symbol('MUTE_REMOTE_PARTICIPANT');
+export const MUTE_REMOTE_PARTICIPANT = 'MUTE_REMOTE_PARTICIPANT';
 
 /**
  * Create an action for when the local participant's display name is updated.
@@ -40,7 +40,7 @@ export const MUTE_REMOTE_PARTICIPANT = Symbol('MUTE_REMOTE_PARTICIPANT');
  * }
  */
 export const PARTICIPANT_DISPLAY_NAME_CHANGED
-    = Symbol('PARTICIPANT_DISPLAY_NAME_CHANGED');
+    = 'PARTICIPANT_DISPLAY_NAME_CHANGED';
 
 /**
  * Action to signal that ID of participant has changed. This happens when
@@ -53,7 +53,7 @@ export const PARTICIPANT_DISPLAY_NAME_CHANGED
  *     oldValue: string
  * }
  */
-export const PARTICIPANT_ID_CHANGED = Symbol('PARTICIPANT_ID_CHANGED');
+export const PARTICIPANT_ID_CHANGED = 'PARTICIPANT_ID_CHANGED';
 
 /**
  * Action to signal that a participant has joined.
@@ -63,7 +63,7 @@ export const PARTICIPANT_ID_CHANGED = Symbol('PARTICIPANT_ID_CHANGED');
  *     participant: Participant
  * }
  */
-export const PARTICIPANT_JOINED = Symbol('PARTICIPANT_JOINED');
+export const PARTICIPANT_JOINED = 'PARTICIPANT_JOINED';
 
 /**
  * Action to handle case when participant lefts.
@@ -75,7 +75,7 @@ export const PARTICIPANT_JOINED = Symbol('PARTICIPANT_JOINED');
  *     }
  * }
  */
-export const PARTICIPANT_LEFT = Symbol('PARTICIPANT_LEFT');
+export const PARTICIPANT_LEFT = 'PARTICIPANT_LEFT';
 
 /**
  * Action to handle case when info about participant changes.
@@ -85,7 +85,7 @@ export const PARTICIPANT_LEFT = Symbol('PARTICIPANT_LEFT');
  *     participant: Participant
  * }
  */
-export const PARTICIPANT_UPDATED = Symbol('PARTICIPANT_UPDATED');
+export const PARTICIPANT_UPDATED = 'PARTICIPANT_UPDATED';
 
 /**
  * The type of the Redux action which pins a conference participant.
@@ -97,7 +97,7 @@ export const PARTICIPANT_UPDATED = Symbol('PARTICIPANT_UPDATED');
  *     }
  * }
  */
-export const PIN_PARTICIPANT = Symbol('PIN_PARTICIPANT');
+export const PIN_PARTICIPANT = 'PIN_PARTICIPANT';
 
 /**
  * Action to signal that a hidden participant has joined.
@@ -107,7 +107,7 @@ export const PIN_PARTICIPANT = Symbol('PIN_PARTICIPANT');
  *     participant: Participant
  * }
  */
-export const HIDDEN_PARTICIPANT_JOINED = Symbol('HIDDEN_PARTICIPANT_JOINED');
+export const HIDDEN_PARTICIPANT_JOINED = 'HIDDEN_PARTICIPANT_JOINED';
 
 /**
  * Action to handle case when hidden participant leaves.
@@ -119,4 +119,4 @@ export const HIDDEN_PARTICIPANT_JOINED = Symbol('HIDDEN_PARTICIPANT_JOINED');
  *     }
  * }
  */
-export const HIDDEN_PARTICIPANT_LEFT = Symbol('HIDDEN_PARTICIPANT_LEFT');
+export const HIDDEN_PARTICIPANT_LEFT = 'HIDDEN_PARTICIPANT_LEFT';

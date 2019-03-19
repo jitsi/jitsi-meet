@@ -5,7 +5,7 @@
  *     type: CLEAR_TOOLBOX_TIMEOUT
  * }
  */
-export const CLEAR_TOOLBOX_TIMEOUT = Symbol('CLEAR_TOOLBOX_TIMEOUT');
+export const CLEAR_TOOLBOX_TIMEOUT = 'CLEAR_TOOLBOX_TIMEOUT';
 
 /**
  * The type of (redux) action which updates whether the conference is or is not
@@ -16,7 +16,7 @@ export const CLEAR_TOOLBOX_TIMEOUT = Symbol('CLEAR_TOOLBOX_TIMEOUT');
  *     fullScreen: boolean
  * }
  */
-export const FULL_SCREEN_CHANGED = Symbol('FULL_SCREEN_CHANGED');
+export const FULL_SCREEN_CHANGED = 'FULL_SCREEN_CHANGED';
 
 /**
  * The type of (redux) action which requests full screen mode be entered or
@@ -27,7 +27,7 @@ export const FULL_SCREEN_CHANGED = Symbol('FULL_SCREEN_CHANGED');
  *     fullScreen: boolean
  * }
  */
-export const SET_FULL_SCREEN = Symbol('SET_FULL_SCREEN');
+export const SET_FULL_SCREEN = 'SET_FULL_SCREEN';
 
 /**
  * The type of the (redux) action which shows/hides the OverflowMenu.
@@ -37,7 +37,7 @@ export const SET_FULL_SCREEN = Symbol('SET_FULL_SCREEN');
  *     visible: boolean
  * }
  */
-export const SET_OVERFLOW_MENU_VISIBLE = Symbol('SET_OVERFLOW_MENU_VISIBLE');
+export const SET_OVERFLOW_MENU_VISIBLE = 'SET_OVERFLOW_MENU_VISIBLE';
 
 /**
  * The type of the action which sets the indicator which determiens whether a
@@ -48,7 +48,7 @@ export const SET_OVERFLOW_MENU_VISIBLE = Symbol('SET_OVERFLOW_MENU_VISIBLE');
  *     hovered: boolean
  * }
  */
-export const SET_TOOLBAR_HOVERED = Symbol('SET_TOOLBAR_HOVERED');
+export const SET_TOOLBAR_HOVERED = 'SET_TOOLBAR_HOVERED';
 
 /**
  * The type of the action which sets the permanent visibility of the Toolbox.
@@ -58,7 +58,7 @@ export const SET_TOOLBAR_HOVERED = Symbol('SET_TOOLBAR_HOVERED');
  *     alwaysVisible: boolean
  * }
  */
-export const SET_TOOLBOX_ALWAYS_VISIBLE = Symbol('SET_TOOLBOX_ALWAYS_VISIBLE');
+export const SET_TOOLBOX_ALWAYS_VISIBLE = 'SET_TOOLBOX_ALWAYS_VISIBLE';
 
 /**
  * The type of the (redux) action which enables/disables the Toolbox.
@@ -68,7 +68,7 @@ export const SET_TOOLBOX_ALWAYS_VISIBLE = Symbol('SET_TOOLBOX_ALWAYS_VISIBLE');
  *     enabled: boolean
  * }
  */
-export const SET_TOOLBOX_ENABLED = Symbol('SET_TOOLBOX_ENABLED');
+export const SET_TOOLBOX_ENABLED = 'SET_TOOLBOX_ENABLED';
 
 /**
  * The type of the action which sets a new Toolbox visibility timeout and its
@@ -80,7 +80,7 @@ export const SET_TOOLBOX_ENABLED = Symbol('SET_TOOLBOX_ENABLED');
  *     timeoutMS: number
  * }
  */
-export const SET_TOOLBOX_TIMEOUT = Symbol('SET_TOOLBOX_TIMEOUT');
+export const SET_TOOLBOX_TIMEOUT = 'SET_TOOLBOX_TIMEOUT';
 
 /**
  * The type of the action which sets the delay in milliseconds after which
@@ -91,7 +91,7 @@ export const SET_TOOLBOX_TIMEOUT = Symbol('SET_TOOLBOX_TIMEOUT');
  *     timeoutMS: number
  * }
  */
-export const SET_TOOLBOX_TIMEOUT_MS = Symbol('SET_TOOLBOX_TIMEOUT');
+export const SET_TOOLBOX_TIMEOUT_MS = 'SET_TOOLBOX_TIMEOUT';
 
 /**
  * The type of the (redux) action which shows/hides the Toolbox.
@@ -101,4 +101,4 @@ export const SET_TOOLBOX_TIMEOUT_MS = Symbol('SET_TOOLBOX_TIMEOUT');
  *     visible: boolean
  * }
  */
-export const SET_TOOLBOX_VISIBLE = Symbol('SET_TOOLBOX_VISIBLE');
+export const SET_TOOLBOX_VISIBLE = 'SET_TOOLBOX_VISIBLE';

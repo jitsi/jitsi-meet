@@ -13,7 +13,7 @@ import {
 import { LOAD_CONFIG_ERROR } from '../../base/config';
 import { CONNECTION_FAILED } from '../../base/connection';
 import { MiddlewareRegistry } from '../../base/redux';
-import { getSymbolDescription, toURLString } from '../../base/util';
+import { toURLString } from '../../base/util';
 import { ENTER_PICTURE_IN_PICTURE } from '../picture-in-picture';
 
 import { sendEvent } from './functions';
@@ -69,7 +69,7 @@ MiddlewareRegistry.register(store => next => action => {
         break;
 
     case ENTER_PICTURE_IN_PICTURE:
-        sendEvent(store, getSymbolDescription(type), /* data */ {});
+        sendEvent(store, type, /* data */ {});
         break;
 
     case LOAD_CONFIG_ERROR: {
@@ -133,7 +133,7 @@ function _maybeTriggerEarlyConferenceWillJoin(store, action) {
 
     isRoomValid(room) && locationURL && sendEvent(
         store,
-        getSymbolDescription(CONFERENCE_WILL_JOIN),
+        CONFERENCE_WILL_JOIN,
         /* data */ {
             url: toURLString(locationURL)
         });
@@ -151,7 +151,7 @@ function _sendConferenceEvent(
         store: Object,
         action: {
             conference: Object,
-            type: Symbol,
+            type: string,
             url: ?string
         }) {
     const { conference, type, ...data } = action;
@@ -175,7 +175,7 @@ function _sendConferenceEvent(
         type_ = CONFERENCE_TERMINATED;
         break;
     default:
-        type_ = getSymbolDescription(type);
+        type_ = type;
         break;
     }
 
