@@ -47,9 +47,9 @@ export function isCalendarEnabled() {
  * @returns {void}
  */
 export function _fetchCalendarEntries(
-        store,
-        maybePromptForPermission,
-        forcePermission) {
+        store: Object,
+        maybePromptForPermission: boolean,
+        forcePermission: ?boolean) {
     /* eslint-enable no-unused-vars */
     const { dispatch, getState } = store;
 

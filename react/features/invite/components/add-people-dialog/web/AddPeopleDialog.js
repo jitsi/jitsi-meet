@@ -4,6 +4,7 @@ import Avatar from '@atlaskit/avatar';
 import InlineMessage from '@atlaskit/inline-message';
 import React from 'react';
 import { connect } from 'react-redux';
+import type { Dispatch } from 'redux';
 
 import { createInviteDialogEvent, sendAnalytics } from '../../../../analytics';
 import { Dialog, hideDialog } from '../../../../base/dialog';
@@ -38,7 +39,7 @@ type Props = AbstractProps & {
     /**
      * The redux {@code dispatch} function.
      */
-    dispatch: Dispatch<*>,
+    dispatch: Dispatch<any>,
 
     /**
      * Invoked to obtain translated strings.
@@ -267,7 +268,7 @@ class AddPeopleDialog extends AbstractAddPeopleDialog<Props, State> {
             });
     }
 
-    _parseQueryResults: (Array<Object>, string) => Array<Object>;
+    _parseQueryResults: (?Array<Object>) => Array<Object>;
 
     /**
      * Processes results from requesting available numbers and people by munging

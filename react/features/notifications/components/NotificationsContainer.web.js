@@ -63,4 +63,5 @@ class NotificationsContainer extends AbstractNotificationsContainer<Props> {
     }
 }
 
+// $FlowExpectedError
 export default connect(_mapStateToProps)(NotificationsContainer);

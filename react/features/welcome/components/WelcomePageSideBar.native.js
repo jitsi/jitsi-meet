@@ -67,7 +67,7 @@ class WelcomePageSideBar extends Component<Props> {
      *
      * @inheritdoc
      */
-    constructor(props) {
+    constructor(props: Props) {
         super(props);
 
         // Bind event handlers so they are only bound once per instance.
@@ -169,4 +169,5 @@ function _mapStateToProps(state: Object) {
     };
 }
 
+// $FlowExpectedError
 export default connect(_mapStateToProps)(WelcomePageSideBar);

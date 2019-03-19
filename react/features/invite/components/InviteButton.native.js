@@ -71,7 +71,7 @@ class InviteButton extends AbstractButton<Props, *> {
  * }}
  * @private
  */
-function _mapDispatchToProps(dispatch: Dispatch<*>) {
+function _mapDispatchToProps(dispatch: Dispatch<any>) {
     return {
 
         /**

@@ -1,8 +1,9 @@
-/* @flow */
+// @flow
 
 import InlineMessage from '@atlaskit/inline-message';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import type { Dispatch } from 'redux';
 
 import {
     createToolbarEvent,
@@ -70,7 +71,7 @@ type Props = {
     /**
      * Invoked to request toggling of audio only mode.
      */
-    dispatch: Dispatch<*>,
+    dispatch: Dispatch<any>,
 
     /**
      * Invoked to obtain translated strings.

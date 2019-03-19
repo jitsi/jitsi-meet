@@ -2,6 +2,7 @@
 
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import type { Dispatch } from 'redux';
 
 import { setPassword } from '../../../base/conference';
 import { getInviteURL } from '../../../base/connection';
@@ -65,7 +66,7 @@ type Props = {
     /**
      * Invoked to open a dialog for adding participants to the conference.
      */
-    dispatch: Dispatch<*>,
+    dispatch: Dispatch<any>,
 
     /**
      * Whether is Atlaskit InlineDialog or a normal dialog.

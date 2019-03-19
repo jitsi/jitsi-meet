@@ -76,7 +76,7 @@ export type ConnectionFailedError = {
  * @returns {Function}
  */
 export function connect(id: ?string, password: ?string) {
-    return (dispatch: Dispatch<*>, getState: Function) => {
+    return (dispatch: Dispatch<any>, getState: Function) => {
         const state = getState();
         const options = _constructOptions(state);
         const { issuer, jwt } = state['features/base/jwt'];
@@ -322,7 +322,7 @@ function _constructOptions(state) {
  * @returns {Function}
  */
 export function disconnect() {
-    return (dispatch: Dispatch<*>, getState: Function): Promise<void> => {
+    return (dispatch: Dispatch<any>, getState: Function): Promise<void> => {
         const state = getState();
 
         // The conference we have already joined or are joining.

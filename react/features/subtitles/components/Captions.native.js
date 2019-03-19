@@ -65,4 +65,5 @@ class Captions
     }
 }
 
+// $FlowExpectedError
 export default connect(_abstractMapStateToProps)(Captions);

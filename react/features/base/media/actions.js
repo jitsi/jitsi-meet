@@ -99,7 +99,7 @@ export function setVideoMuted(
         muted: boolean,
         authority: number = VIDEO_MUTISM_AUTHORITY.USER,
         ensureTrack: boolean = false) {
-    return (dispatch: Dispatch<*>, getState: Function) => {
+    return (dispatch: Dispatch<any>, getState: Function) => {
         const oldValue = getState()['features/base/media'].video.muted;
 
         // eslint-disable-next-line no-bitwise

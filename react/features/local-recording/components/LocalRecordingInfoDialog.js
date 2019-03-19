@@ -1,8 +1,9 @@
-/* @flow */
+// @flow
 
 import moment from 'moment';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import type { Dispatch } from 'redux';
 
 import { Dialog } from '../../base/dialog';
 import { translate } from '../../base/i18n';
@@ -24,7 +25,7 @@ type Props = {
     /**
      * Redux store dispatch function.
      */
-    dispatch: Dispatch<*>,
+    dispatch: Dispatch<any>,
 
     /**
      * Current encoding format.

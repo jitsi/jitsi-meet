@@ -135,4 +135,5 @@ function _mapStateToProps(state, ownProps) {
     };
 }
 
+// $FlowExpectedError
 export default connect(_mapStateToProps)(RemoteVideoMenu);

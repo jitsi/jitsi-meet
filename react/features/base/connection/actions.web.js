@@ -19,7 +19,7 @@ export {
  * @returns {Promise<JitsiConnection>}
  */
 export function connect() {
-    return (dispatch: Dispatch<*>, getState: Function) => {
+    return (dispatch: Dispatch<any>, getState: Function) => {
         // XXX Lib-jitsi-meet does not accept uppercase letters.
         const room = getState()['features/base/conference'].room.toLowerCase();
 

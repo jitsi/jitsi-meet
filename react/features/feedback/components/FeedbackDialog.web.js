@@ -1,10 +1,11 @@
-/* @flow */
+// @flow
 
 import { FieldTextAreaStateless } from '@atlaskit/field-text-area';
 import StarIcon from '@atlaskit/icon/glyph/star';
 import StarFilledIcon from '@atlaskit/icon/glyph/star-filled';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import type { Dispatch } from 'redux';
 
 import {
     createFeedbackOpenEvent,
@@ -62,7 +63,7 @@ type Props = {
     /**
      * Invoked to signal feedback submission or canceling.
      */
-    dispatch: Dispatch<*>,
+    dispatch: Dispatch<any>,
 
     /**
      * Callback invoked when {@code FeedbackDialog} is unmounted.

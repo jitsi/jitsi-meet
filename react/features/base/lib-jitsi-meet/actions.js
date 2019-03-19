@@ -20,7 +20,7 @@ declare var APP: Object;
  * @returns {Function}
  */
 export function disposeLib() {
-    return (dispatch: Dispatch<*>) => {
+    return (dispatch: Dispatch<any>) => {
         dispatch({ type: LIB_WILL_DISPOSE });
 
         // TODO Currently, lib-jitsi-meet doesn't have the functionality to
@@ -36,7 +36,7 @@ export function disposeLib() {
  * @returns {Function}
  */
 export function initLib() {
-    return (dispatch: Dispatch<*>, getState: Function): void => {
+    return (dispatch: Dispatch<any>, getState: Function): void => {
         const config = getState()['features/base/config'];
 
         if (!config) {

@@ -59,7 +59,7 @@ export function loadConfigError(error: Error, locationURL: URL) {
  * @returns {Function}
  */
 export function setConfig(config: Object = {}) {
-    return (dispatch: Dispatch<*>, getState: Function) => {
+    return (dispatch: Dispatch<any>, getState: Function) => {
         const { locationURL } = getState()['features/base/connection'];
 
         // Now that the loading of the config was successful override the values
@@ -99,7 +99,7 @@ export function setConfig(config: Object = {}) {
  * @returns {Function}
  */
 export function storeConfig(baseURL: string, config: Object) {
-    return (dispatch: Dispatch<*>) => {
+    return (dispatch: Dispatch<any>) => {
         // Try to store the configuration in localStorage. If the deployment
         // specified 'getroom' as a function, for example, it does not make
         // sense to and it will not be stored.

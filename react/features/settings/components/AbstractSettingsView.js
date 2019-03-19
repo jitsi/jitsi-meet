@@ -1,6 +1,7 @@
 // @flow
 
 import { Component } from 'react';
+import type { Dispatch } from 'redux';
 
 import { getDefaultURL } from '../../app';
 import { updateSettings } from '../../base/settings';
@@ -33,7 +34,7 @@ export type Props = {
     /**
      * Redux store dispatch function.
      */
-    dispatch: Dispatch<*>,
+    dispatch: Dispatch<any>,
 
     /**
      * The i18n translate function.
