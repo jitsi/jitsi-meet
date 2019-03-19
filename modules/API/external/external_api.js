@@ -29,7 +29,8 @@ const commands = {
     toggleChat: 'toggle-chat',
     toggleFilmStrip: 'toggle-film-strip',
     toggleShareScreen: 'toggle-share-screen',
-    toggleVideo: 'toggle-video'
+    toggleVideo: 'toggle-video',
+    mute: 'mute'
 };
 
 /**
@@ -42,6 +43,7 @@ const events = {
     'audio-mute-status-changed': 'audioMuteStatusChanged',
     'display-name-change': 'displayNameChange',
     'email-change': 'emailChange',
+    'audio-mute-changed': 'audio-mute-changed',
     'feedback-submitted': 'feedbackSubmitted',
     'feedback-prompt-displayed': 'feedbackPromptDisplayed',
     'incoming-message': 'incomingMessage',
@@ -55,6 +57,7 @@ const events = {
     'video-availability-changed': 'videoAvailabilityChanged',
     'video-mute-status-changed': 'videoMuteStatusChanged',
     'screen-sharing-status-changed': 'screenSharingStatusChanged',
+    'show-manager-window': 'show-manager-window',
     'subject-change': 'subjectChange'
 };
 
@@ -411,6 +414,14 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
                 }
                 break;
             }
+            case 'audio-mute-changed': {
+                const user = this._participants[userID];
+
+                if (user) {
+                    user.mute = data.mute;
+                }
+                break;                
+            }
             case 'avatar-changed': {
                 const user = this._participants[userID];
 
@@ -643,6 +654,7 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
 
         return avatarURL;
     }
+
 
     /**
      * Returns the display name of a participant.

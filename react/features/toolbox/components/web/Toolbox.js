@@ -217,6 +217,7 @@ class Toolbox extends Component<Props> {
         this._onToolbarOpenVideoQuality
             = this._onToolbarOpenVideoQuality.bind(this);
         this._onToolbarToggleChat = this._onToolbarToggleChat.bind(this);
+        this._onToolbarOpenManagerWindow = this._onToolbarOpenManagerWindow.bind(this);
         this._onToolbarToggleEtherpad
             = this._onToolbarToggleEtherpad.bind(this);
         this._onToolbarToggleFullScreen
@@ -662,6 +663,21 @@ class Toolbox extends Component<Props> {
 
         this._doToggleChat();
     }
+    _onToolbarOpenManagerWindow: () => void;
+
+    /**
+     * Creates an analytics toolbar event and dispatches an action for toggling
+     * the display of chat.
+     *
+     * @private
+     * @returns {void}
+     */
+    _onToolbarOpenManagerWindow() {
+        this.props._mgrwinOpen = !this.props._mgrwinOpen;
+        console.warn('come in _onToolbarOpenManagerWindow '+this.props._mgrwinOpen);
+        APP.API.notifyOpenMgrWin(this.props._mgrwinOpen);
+    }
+    
 
     _onToolbarToggleEtherpad: () => void;
 
@@ -977,7 +993,7 @@ class Toolbox extends Component<Props> {
                                 accessibilityLabel =
                                     { t('toolbar.accessibilityLabel.contactlist') }
                                 iconName = 'icon-contactlist'
-                                onClick = { this._onToolbarToggleChat }
+                                onClick = { this._onToolbarOpenManagerWindow }
                                 tooltip = { t('toolbar.contactlist') } />
                             <ChatCounter />
                     </div> 
@@ -1054,6 +1070,7 @@ function _mapStateToProps(state) {
     const {
         alwaysVisible,
         fullScreen,
+        mgrwinOpen,
         overflowMenuVisible,
         timeoutID,
         visible
@@ -1085,6 +1102,7 @@ function _mapStateToProps(state) {
 
     return {
         _chatOpen: state['features/chat'].isOpen,
+        _mgrwinOpen: mgrwinOpen,
         _conference: conference,
         _desktopSharingEnabled: desktopSharingEnabled,
         _desktopSharingDisabledTooltipKey: desktopSharingDisabledTooltipKey,

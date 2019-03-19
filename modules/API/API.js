@@ -6,6 +6,7 @@ import {
     sendAnalytics
 } from '../../react/features/analytics';
 import { parseJWTFromURLParams } from '../../react/features/base/jwt';
+import { muteRemoteParticipant } from '../../react/features/base/participants';
 import { invite } from '../../react/features/invite';
 import { getJitsiMeetTransport } from '../transport';
 
@@ -104,6 +105,9 @@ function initCommands() {
         'avatar-url': avatarUrl => {
             sendAnalytics(createApiEvent('avatar.url.changed'));
             APP.conference.changeLocalAvatarUrl(avatarUrl);
+        },
+        'mute': id => {
+            APP.store.dispatch(muteRemoteParticipant(id));
         }
     };
     transport.on('event', ({ data, name }) => {
@@ -416,6 +420,22 @@ class API {
     }
 
     /**
+     * Notify external application (if API is enabled) that user changed their
+     * AudioMute status.
+     *
+     * @param {string} id - User id.
+     * @param {string} mute - The new avatar URL of the participant.
+     * @returns {void}
+     */
+    notifyAudioMuteChanged(id: string, mute: boolean) {
+        this._sendEvent({
+            name: 'audio-mute-changed',
+            mute,
+            id
+        });
+    }
+
+    /**
      * Notify external application (if API is enabled) that the conference has
      * been joined.
      *
@@ -576,6 +596,20 @@ class API {
         this._sendEvent({
             name: 'subject-change',
             subject
+        });
+    }
+
+    /**
+     * Notify external application (if API is enabled) that open manager window
+     *
+     * @param {boolean} isShow - whether show or not.
+     * user.
+     * @returns {void}
+     */
+    notifyOpenMgrWin(isShow: boolean) {
+        this._sendEvent({
+            name: 'show-manager-window',
+            isShow
         });
     }
 

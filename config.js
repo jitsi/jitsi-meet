@@ -16,7 +16,7 @@ var config = {
 
     hosts: {
         // XMPP domain.
-        domain: '192.168.3.225',
+        domain: 'demo.vmeeting.top',
 
         // When using authentication, domain for guest users.
         // anonymousdomain: 'guest.example.com',
@@ -34,16 +34,16 @@ var config = {
         // focus: 'focus.192.168.3.225',
 
         // XMPP MUC domain. FIXME: use XEP-0030 to discover it.
-        muc: 'conference.192.168.3.225'
+        muc: 'conference.demo.vmeeting.top'
         //bridge: 'jitsi-videobridge.192.168.3.225',
         //focus: 'focus.192.168.3.225'
     },
 
     // BOSH URL. FIXME: use XEP-0156 to discover it.
-    bosh: '//192.168.3.225/http-bind',
+    bosh: '//demo.vmeeting.top/http-bind',
 
     // The name of client node advertised in XEP-0115 'c' stanza
-    clientNode: 'http://192.168.3.225/',
+    clientNode: 'http://demo.vmeeting.top/',
 
     // The real JID of focus participant - can be overridden here
     // focusUserJid: 'focus@auth.jitsi-meet.example.com',

@@ -622,6 +622,7 @@ const VideoLayout = {
      * On audio muted event.
      */
     onAudioMute(id, isMuted) {
+        APP.API.notifyAudioMuteChanged(id,isMuted);
         if (APP.conference.isLocalId(id)) {
             localVideoThumbnail.showAudioIndicator(isMuted);
         } else {
