@@ -7,6 +7,7 @@ import {
 } from '../../react/features/analytics';
 import { parseJWTFromURLParams } from '../../react/features/base/jwt';
 import { muteRemoteParticipant } from '../../react/features/base/participants';
+import { kickParticipant } from '../../react/features/base/participants';
 import { invite } from '../../react/features/invite';
 import { getJitsiMeetTransport } from '../transport';
 
@@ -108,6 +109,9 @@ function initCommands() {
         },
         'mute': id => {
             APP.store.dispatch(muteRemoteParticipant(id));
+        },
+        'kick': id => {
+            APP.store.dispatch(kickParticipant(id));
         }
     };
     transport.on('event', ({ data, name }) => {

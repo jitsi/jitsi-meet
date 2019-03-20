@@ -30,7 +30,8 @@ const commands = {
     toggleFilmStrip: 'toggle-film-strip',
     toggleShareScreen: 'toggle-share-screen',
     toggleVideo: 'toggle-video',
-    mute: 'mute'
+    mute: 'mute',
+    kick: 'kick'
 };
 
 /**

@@ -14,7 +14,8 @@ import { translate } from '../../../base/i18n';
 import {
     getLocalParticipant,
     getParticipants,
-    participantUpdated
+    participantUpdated,
+    isLocalParticipantModerator
 } from '../../../base/participants';
 import { getLocalVideoTrack, toggleScreensharing } from '../../../base/tracks';
 import { ChatCounter, toggleChat } from '../../../chat';
@@ -129,6 +130,10 @@ type Props = {
      * The ID of the local participant.
      */
     _localParticipantID: String,
+    /**
+     * Is the local participant .
+     */
+    _isLocalParticipantModerator: boolean,
 
     /**
      * The subsection of Redux state for local recording
@@ -947,6 +952,7 @@ class Toolbox extends Component<Props> {
             _hideInviteButton,
             _overflowMenuVisible,
             _raisedHand,
+            _isLocalParticipantModerator,
             t
         } = this.props;
         const overflowMenuContent = this._renderOverflowMenuContent();
@@ -988,7 +994,8 @@ class Toolbox extends Component<Props> {
                     }
                 </div>
                 <div className = 'button-group-center'>
-                    <div className = 'toolbar-button-with-badge'>
+                   {  _isLocalParticipantModerator
+                      &&  <div className = 'toolbar-button-with-badge'>
                             <ToolbarButton
                                 accessibilityLabel =
                                     { t('toolbar.accessibilityLabel.contactlist') }
@@ -996,7 +1003,8 @@ class Toolbox extends Component<Props> {
                                 onClick = { this._onToolbarOpenManagerWindow }
                                 tooltip = { t('toolbar.contactlist') } />
                             <ChatCounter />
-                    </div> 
+                        </div>}
+                   
                     <AudioMuteButton
                         visible = { this._shouldShowButton('microphone') } />
                     <HangupButton
@@ -1076,6 +1084,7 @@ function _mapStateToProps(state) {
         visible
     } = state['features/toolbox'];
     const localParticipant = getLocalParticipant(state);
+    const isModerator = isLocalParticipantModerator(state);
     const localRecordingStates = state['features/local-recording'];
     const localVideo = getLocalVideoTrack(state['features/base/tracks']);
     const addPeopleEnabled = isAddPeopleEnabled(state);
@@ -1115,6 +1124,7 @@ function _mapStateToProps(state) {
         _isGuest: state['features/base/jwt'].isGuest,
         _fullScreen: fullScreen,
         _localParticipantID: localParticipant.id,
+        _isLocalParticipantModerator: isModerator,
         _localRecState: localRecordingStates,
         _overflowMenuVisible: overflowMenuVisible,
         _raisedHand: localParticipant.raisedHand,
