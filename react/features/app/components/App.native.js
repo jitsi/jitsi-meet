@@ -12,6 +12,7 @@ import {
     AspectRatioDetector,
     ReducedUIDetector
 } from '../../base/responsive-ui';
+import '../../follow-me';
 import '../../google-api';
 import '../../mobile/audio-mode';
 import '../../mobile/background';
