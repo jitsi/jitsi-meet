@@ -116,7 +116,7 @@ function _onFollowMeCommand(attributes, id, store) {
     }
 
     if (typeof attributes.sharedDocumentVisible !== 'undefined'
-        && state['features/etherpad'].initialized) {
+            && state['features/etherpad'].initialized) {
         // XXX The Command(s) API doesn't preserve the types (of
         // attributes, at least) at the time of this writing so take into
         // account that what originated as a Boolean may be a String on
@@ -140,7 +140,7 @@ function _onFollowMeCommand(attributes, id, store) {
     const clickId = attributes.nextOnStage;
 
     if (typeof clickId !== 'undefined'
-        && (!pinnedParticipant || clickId !== pinnedParticipant.id)) {
+            && (!pinnedParticipant || clickId !== pinnedParticipant.id)) {
         _pinVideoThumbnailById(store, clickId);
     } else if (typeof clickId === 'undefined' && pinnedParticipant) {
         store.dispatch(pinParticipant(null));
