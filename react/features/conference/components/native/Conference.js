@@ -1,8 +1,8 @@
 // @flow
 
-import React, { Component } from 'react';
+import React from 'react';
 
-import { BackHandler, StatusBar, View } from 'react-native';
+import { BackHandler, SafeAreaView, StatusBar, View } from 'react-native';
 import { connect as reactReduxConnect } from 'react-redux';
 
 import { appNavigate } from '../../../app';
@@ -10,6 +10,7 @@ import { connect, disconnect } from '../../../base/connection';
 import { getParticipantCount } from '../../../base/participants';
 import { Container, LoadingIndicator, TintedView } from '../../../base/react';
 import {
+    isNarrowAspectRatio,
     makeAspectRatioAware
 } from '../../../base/responsive-ui';
 import { TestConnectionInfo } from '../../../base/testing';
@@ -17,6 +18,7 @@ import { createDesiredLocalTracks } from '../../../base/tracks';
 import { ConferenceNotification } from '../../../calendar-sync';
 import { Chat } from '../../../chat';
 import {
+    FILMSTRIP_SIZE,
     Filmstrip,
     isFilmstripVisible,
     TileView
@@ -26,7 +28,10 @@ import { AddPeopleDialog, CalleeInfoContainer } from '../../../invite';
 import { Captions } from '../../../subtitles';
 import { setToolboxVisible, Toolbox } from '../../../toolbox';
 
-import { abstractMapStateToProps } from '../AbstractConference';
+import {
+    AbstractConference,
+    abstractMapStateToProps
+} from '../AbstractConference';
 import DisplayNameLabel from './DisplayNameLabel';
 import Labels from './Labels';
 import NavigationBar from './NavigationBar';
@@ -134,7 +139,7 @@ type Props = AbstractProps & {
 /**
  * The conference page of the mobile (i.e. React Native) application.
  */
-class Conference extends Component<Props> {
+class Conference extends AbstractConference<Props, *> {
     /**
      * Initializes a new Conference instance.
      *
@@ -296,7 +301,12 @@ class Conference extends Component<Props> {
                     }
                 </View>
 
-                <NavigationBar />
+                <SafeAreaView
+                    pointerEvents = 'box-none'
+                    style = { styles.navBarSafeView }>
+                    <NavigationBar />
+                    { this.renderNotificationsContainer() }
+                </SafeAreaView>
 
                 <TestConnectionInfo />
 
@@ -340,6 +350,37 @@ class Conference extends Component<Props> {
             !this.props._reducedUI && ConferenceNotification
                 ? <ConferenceNotification />
                 : undefined);
+    }
+
+    /**
+     * Renders a container for notifications to be displayed by the
+     * base/notifications feature.
+     *
+     * @private
+     * @returns {React$Element}
+     */
+    renderNotificationsContainer() {
+        const notificationsStyle = {};
+
+        // In the landscape mode (wide) there's problem with notifications being
+        // shadowed by the filmstrip rendered on the right. This makes the "x"
+        // button not clickable. In order to avoid that a margin of the
+        // filmstrip's size is added to the right.
+        //
+        // Pawel: after many attempts I failed to make notifications adjust to
+        // their contents width because of column and rows being used in the
+        // flex layout. The only option that seemed to limit the notification's
+        // size was explicit 'width' value which is not better than the margin
+        // added here.
+        if (this.props._filmstripVisible && !isNarrowAspectRatio(this)) {
+            notificationsStyle.marginRight = FILMSTRIP_SIZE;
+        }
+
+        return super.renderNotificationsContainer(
+            {
+                style: notificationsStyle
+            }
+        );
     }
 }
 
