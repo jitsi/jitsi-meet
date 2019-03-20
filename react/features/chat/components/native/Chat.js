@@ -1,30 +1,27 @@
 // @flow
 
 import React from 'react';
-import { SafeAreaView } from 'react-native';
+import { SafeAreaView, View } from 'react-native';
 import { GiftedChat } from 'react-native-gifted-chat';
 
 import { translate } from '../../../base/i18n';
-import { BackButton, Header, HeaderLabel, Modal } from '../../../base/react';
+
+import {
+    BackButton,
+    Header,
+    HeaderLabel,
+    SlidingView
+} from '../../../base/react';
 import { connect } from '../../../base/redux';
 
 import AbstractChat, {
     _mapDispatchToProps,
-    _mapStateToProps as _abstractMapStateToProps,
-    type Props as AbstractProps
+    _mapStateToProps,
+    type Props
 } from '../AbstractChat';
 
 import ChatMessage from './ChatMessage';
 import styles from './styles';
-
-type Props = AbstractProps & {
-
-    /**
-     * True if the chat window should have a solid BG render.
-     */
-    _solidBackground: boolean
-}
-
 
 /**
  * Implements a React native component that renders the chat window (modal) of
@@ -55,32 +52,24 @@ class Chat extends AbstractChat<Props> {
         // of messages.
         const messages
             = this.props._messages.map(this._transformMessage).reverse();
-        const modalStyle = [
-            styles.modalBackdrop
-        ];
-
-        if (this.props._solidBackground) {
-            // We only use a transparent background, when we are in a video
-            // meeting to give a user a glympse of what's happening. Otherwise
-            // we use a non-transparent background.
-            modalStyle.push(styles.solidModalBackdrop);
-        }
 
         return (
-            <Modal
-                onRequestClose = { this.props._onToggleChat }
-                visible = { this.props._isOpen }>
-                <Header>
-                    <BackButton onPress = { this.props._onToggleChat } />
-                    <HeaderLabel labelKey = 'chat.title' />
-                </Header>
-                <SafeAreaView style = { modalStyle }>
-                    <GiftedChat
-                        messages = { messages }
-                        onSend = { this._onSend }
-                        renderMessage = { this._renderMessage } />
-                </SafeAreaView>
-            </Modal>
+            <SlidingView
+                position = 'bottom'
+                show = { this.props._isOpen } >
+                <View style = { styles.chatContainer }>
+                    <Header>
+                        <BackButton onPress = { this.props._onToggleChat } />
+                        <HeaderLabel labelKey = 'chat.title' />
+                    </Header>
+                    <SafeAreaView style = { styles.backdrop }>
+                        <GiftedChat
+                            messages = { messages }
+                            onSend = { this._onSend }
+                            renderMessage = { this._renderMessage } />
+                    </SafeAreaView>
+                </View>
+            </SlidingView>
         );
     }
 
@@ -144,23 +133,6 @@ class Chat extends AbstractChat<Props> {
             }
         );
     }
-}
-
-/**
- * Maps part of the Redux state to the props of this component.
- *
- * @param {Object} state - The Redux state.
- * @returns {{
- *     _solidBackground: boolean
- * }}
- */
-function _mapStateToProps(state) {
-    const abstractReduxProps = _abstractMapStateToProps(state);
-
-    return {
-        ...abstractReduxProps,
-        _solidBackground: state['features/base/conference'].audioOnly
-    };
 }
 
 export default translate(connect(_mapStateToProps, _mapDispatchToProps)(Chat));

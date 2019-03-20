@@ -172,6 +172,13 @@ export default createStyleSheet({
     },
 
     /**
+     * Container of the side bar.
+     */
+    sideBar: {
+        width: 250
+    },
+
+    /**
      * The body of the side bar where the items are.
      */
     sideBarBody: {

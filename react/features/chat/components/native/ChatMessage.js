@@ -8,8 +8,8 @@ import { Avatar } from '../../../base/participants';
 import { connect } from '../../../base/redux';
 
 import AbstractChatMessage, {
-    _mapStateToProps as _abstractMapStateToProps,
-    type Props as AbstractProps
+    _mapStateToProps,
+    type Props
 } from '../AbstractChatMessage';
 import styles from './styles';
 
@@ -22,14 +22,6 @@ const AVATAR_SIZE = 32;
  * Formatter string to display the message timestamp.
  */
 const TIMESTAMP_FORMAT = 'H:mm';
-
-type Props = AbstractProps & {
-
-    /**
-     * True if the chat window has a solid BG so then we have to adopt in style.
-     */
-    _solidBackground: boolean
-}
 
 /**
  * Renders a single chat message.
@@ -54,9 +46,6 @@ class ChatMessage extends AbstractChatMessage<Props> {
         const textWrapperStyle = [
             styles.textWrapper
         ];
-        const timeTextStyles = [
-            styles.timeText
-        ];
 
         if (localMessage) {
             // The wrapper needs to be aligned to the right.
@@ -67,10 +56,6 @@ class ChatMessage extends AbstractChatMessage<Props> {
         } else if (message.system) {
             // The bubble needs to be differently styled.
             textWrapperStyle.push(styles.systemTextWrapper);
-        }
-
-        if (this.props._solidBackground) {
-            timeTextStyles.push(styles.solidBGTimeText);
         }
 
         return (
@@ -92,7 +77,7 @@ class ChatMessage extends AbstractChatMessage<Props> {
                             { message.text }
                         </Text>
                     </View>
-                    <Text style = { timeTextStyles }>
+                    <Text style = { styles.timeText }>
                         { timeStamp }
                     </Text>
                 </View>
@@ -131,22 +116,6 @@ class ChatMessage extends AbstractChatMessage<Props> {
             </Text>
         );
     }
-}
-
-/**
- * Maps part of the Redux state to the props of this component.
- *
- * @param {Object} state - The Redux state.
- * @param {Props} ownProps - The own props of the component.
- * @returns {{
- *     _solidBackground: boolean
- * }}
- */
-function _mapStateToProps(state, ownProps) {
-    return {
-        ..._abstractMapStateToProps(state, ownProps),
-        _solidBackground: state['features/base/conference'].audioOnly
-    };
 }
 
 export default translate(connect(_mapStateToProps)(ChatMessage));
