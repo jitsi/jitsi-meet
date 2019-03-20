@@ -6,7 +6,7 @@ import {
     isLocalParticipantModerator
 } from '../base/participants';
 
-import { FOLLOW_COMMAND } from './constants';
+import { FOLLOW_ME_COMMAND } from './constants';
 
 /**
  * Subscribes to changes to the Follow Me setting for the local participant to
@@ -101,9 +101,9 @@ function _sendFollowMeCommand(
     // XXX The "Follow Me" command represents a snapshot of all states
     // which are to be followed so don't forget to removeCommand before
     // sendCommand!
-    conference.removeCommand(FOLLOW_COMMAND);
+    conference.removeCommand(FOLLOW_ME_COMMAND);
     conference.sendCommandOnce(
-        FOLLOW_COMMAND,
+        FOLLOW_ME_COMMAND,
         { attributes: _getFollowMeState(state) }
     );
 }

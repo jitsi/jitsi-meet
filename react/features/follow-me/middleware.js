@@ -11,7 +11,7 @@ import { CONFERENCE_WILL_JOIN } from '../base/conference';
 import { setFilmstripVisible } from '../filmstrip';
 import { setTileView } from '../video-layout';
 
-import { FOLLOW_COMMAND } from './constants';
+import { FOLLOW_ME_COMMAND } from './constants';
 
 const logger = require('jitsi-meet-logger').getLogger(__filename);
 
@@ -60,7 +60,7 @@ MiddlewareRegistry.register(store => next => action => {
         // possible, then it may be easiest to always listen to commands. The
         // listener will validate received commands before acting on them.
         conference.addCommandListener(
-            FOLLOW_COMMAND, ({ attributes }, id) => {
+            FOLLOW_ME_COMMAND, ({ attributes }, id) => {
                 _onFollowMeCommand(attributes, id, store);
             });
     }
