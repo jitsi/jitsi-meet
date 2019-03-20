@@ -82,7 +82,7 @@ MiddlewareRegistry.register(store => next => action => {
  * @private
  * @returns {void}
  */
-function _onFollowMeCommand(attributes, id, store) {
+function _onFollowMeCommand(attributes = {}, id, store) {
     const state = store.getState();
 
     // We require to know who issued the command because (1) only a
@@ -104,35 +104,21 @@ function _onFollowMeCommand(attributes, id, store) {
         return;
     }
 
-    if (typeof attributes.filmstripVisible !== 'undefined') {
-        // XXX The Command(s) API doesn't preserve the types (of
-        // attributes, at least) at the time of this writing so take into
-        // account that what originated as a Boolean may be a String on
-        // receipt.
-        // eslint-disable-next-line eqeqeq
-        const filmstripVisible = attributes.filmstripVisible == 'true';
+    // XMPP will translate all booleans to strings, so explicitly check against
+    // the string form of the boolean {@code true}.
+    store.dispatch(setFilmstripVisible(attributes.filmstripVisible === 'true'));
+    store.dispatch(setTileView(attributes.tileViewEnabled === 'true'));
 
-        store.dispatch(setFilmstripVisible(filmstripVisible));
-    }
-
-    if (typeof attributes.sharedDocumentVisible !== 'undefined'
-            && state['features/etherpad'].initialized) {
-        // XXX The Command(s) API doesn't preserve the types (of
-        // attributes, at least) at the time of this writing so take into
-        // account that what originated as a Boolean may be a String on
-        // receipt.
-        // eslint-disable-next-line eqeqeq
-        const etherpadVisible = attributes.sharedDocumentVisible == 'true';
+    // For now gate etherpad checks behind a web-app check to be extra safe
+    // against calling a web-app global.
+    if (typeof APP !== 'undefined' && state['features/etherpad'].initialized) {
+        const isEtherpadVisible = attributes.sharedDocumentVisible === 'true';
         const documentManager = APP.UI.getSharedDocumentManager();
 
         if (documentManager
-            && etherpadVisible !== state['features/etherpad'].editing) {
+                && isEtherpadVisible !== state['features/etherpad'].editing) {
             documentManager.toggleEtherpad();
         }
-    }
-
-    if (typeof attributes.tileViewEnabled !== 'undefined') {
-        store.dispatch(setTileView(attributes.tileViewEnabled === 'true'));
     }
 
     const pinnedParticipant
