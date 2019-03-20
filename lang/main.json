@@ -458,9 +458,9 @@
     },
     "me": "me",
     "notify": {
-        "connectedOneMember": "__name__ connected",
-        "connectedThreePlusMembers": "__name__ and __count__ others connected",
-        "connectedTwoMembers": "__first__ and __second__ connected",
+        "connectedOneMember": "__name__ joined the meeting",
+        "connectedThreePlusMembers": "__name__ and __count__ others joined the meeting",
+        "connectedTwoMembers": "__first__ and __second__ joined the meeting",
         "disconnected": "disconnected",
         "focus": "Conference focus",
         "focusFail": "__component__ not available - retry in __ms__ sec",

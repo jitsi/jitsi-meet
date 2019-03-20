@@ -2,9 +2,8 @@
 
 import { Component } from 'react';
 
-import { getOverlayToRender } from '../../overlay';
-
 import { hideNotification } from '../actions';
+import { areThereNotifications } from '../functions';
 
 export type Props = {
 
@@ -165,12 +164,10 @@ export default class AbstractNotificationsContainer<P: Props>
  * }}
  */
 export function _abstractMapStateToProps(state: Object) {
-    const isAnyOverlayVisible = Boolean(getOverlayToRender(state));
-    const { enabled, notifications } = state['features/notifications'];
-    const { calleeInfoVisible } = state['features/invite'];
+    const { notifications } = state['features/notifications'];
+    const _visible = areThereNotifications(state);
 
     return {
-        _notifications: enabled && !isAnyOverlayVisible && !calleeInfoVisible
-            ? notifications : []
+        _notifications: _visible ? notifications : []
     };
 }

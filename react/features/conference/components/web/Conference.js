@@ -1,7 +1,7 @@
 // @flow
 
 import _ from 'lodash';
-import React, { Component } from 'react';
+import React from 'react';
 import { connect as reactReduxConnect } from 'react-redux';
 
 import VideoLayout from '../../../../../modules/UI/videolayout/VideoLayout';
@@ -13,7 +13,6 @@ import { Chat } from '../../../chat';
 import { Filmstrip } from '../../../filmstrip';
 import { CalleeInfoContainer } from '../../../invite';
 import { LargeVideo } from '../../../large-video';
-import { NotificationsContainer } from '../../../notifications';
 import { LAYOUTS, getCurrentLayout } from '../../../video-layout';
 
 import {
@@ -28,7 +27,10 @@ import { maybeShowSuboptimalExperienceNotification } from '../../functions';
 import Labels from './Labels';
 import { default as Notice } from './Notice';
 import { default as Subject } from './Subject';
-import { abstractMapStateToProps } from '../AbstractConference';
+import {
+    AbstractConference,
+    abstractMapStateToProps
+} from '../AbstractConference';
 
 import type { AbstractProps } from '../AbstractConference';
 
@@ -87,7 +89,7 @@ type Props = AbstractProps & {
 /**
  * The conference page of the Web application.
  */
-class Conference extends Component<Props> {
+class Conference extends AbstractConference<Props, *> {
     _onFullScreenChange: Function;
     _onShowToolbar: Function;
     _originalOnShowToolbar: Function;
@@ -218,7 +220,7 @@ class Conference extends Component<Props> {
                 { filmstripOnly || <Toolbox /> }
                 { filmstripOnly || <Chat /> }
 
-                <NotificationsContainer />
+                { this.renderNotificationsContainer() }
 
                 <CalleeInfoContainer />
             </div>
