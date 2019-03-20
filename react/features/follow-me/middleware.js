@@ -137,12 +137,14 @@ function _onFollowMeCommand(attributes, id, store) {
 
     const pinnedParticipant
         = getPinnedParticipant(store.getState(), attributes.nextOnStage);
-    const clickId = attributes.nextOnStage;
+    const idOfParticipantToPin = attributes.nextOnStage;
 
-    if (typeof clickId !== 'undefined'
-            && (!pinnedParticipant || clickId !== pinnedParticipant.id)) {
-        _pinVideoThumbnailById(store, clickId);
-    } else if (typeof clickId === 'undefined' && pinnedParticipant) {
+    if (typeof idOfParticipantToPin !== 'undefined'
+            && (!pinnedParticipant
+                || idOfParticipantToPin !== pinnedParticipant.id)) {
+        _pinVideoThumbnailById(store, idOfParticipantToPin);
+    } else if (typeof idOfParticipantToPin === 'undefined'
+            && pinnedParticipant) {
         store.dispatch(pinParticipant(null));
     }
 }
