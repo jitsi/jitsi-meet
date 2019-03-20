@@ -1,7 +1,5 @@
 // @flow
 
-import { StyleSheet } from 'react-native';
-
 import { BoxModel, ColorPalette, createStyleSheet } from '../../../styles';
 
 const AVATAR_OPACITY = 0.4;
@@ -9,7 +7,6 @@ const OVERLAY_FONT_COLOR = 'rgba(255, 255, 255, 0.6)';
 const SECONDARY_ACTION_BUTTON_SIZE = 30;
 
 export const AVATAR_SIZE = 65;
-export const SIDEBAR_WIDTH = 250;
 export const UNDERLAY_COLOR = 'rgba(255, 255, 255, 0.2)';
 
 /**
@@ -241,35 +238,6 @@ const SECTION_LIST_STYLES = {
     }
 };
 
-const SIDEBAR_STYLES = {
-    /**
-     * The topmost container of the side bar.
-     */
-    sideMenuContainer: {
-        ...StyleSheet.absoluteFillObject
-    },
-
-    /**
-     * The container of the actual content of the side menu.
-     */
-    sideMenuContent: {
-        bottom: 0,
-        left: -SIDEBAR_WIDTH,
-        position: 'absolute',
-        top: 0,
-        width: SIDEBAR_WIDTH
-    },
-
-    /**
-     * The opaque area that covers the rest of the screen, when the side bar is
-     * open.
-     */
-    sideMenuShadow: {
-        ...StyleSheet.absoluteFillObject,
-        backgroundColor: 'rgba(0, 0, 0, 0.5)'
-    }
-};
-
 export const TINTED_VIEW_DEFAULT = {
     backgroundColor: ColorPalette.appBackground,
     opacity: 0.8
@@ -281,6 +249,5 @@ export const TINTED_VIEW_DEFAULT = {
  */
 export default createStyleSheet({
     ...PAGED_LIST_STYLES,
-    ...SECTION_LIST_STYLES,
-    ...SIDEBAR_STYLES
+    ...SECTION_LIST_STYLES
 });
