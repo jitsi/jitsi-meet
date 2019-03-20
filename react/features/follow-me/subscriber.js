@@ -1,6 +1,7 @@
 // @flow
 
 import { StateListenerRegistry } from '../base/redux';
+import { getCurrentConference } from '../base/conference';
 import {
     getPinnedParticipant,
     isLocalParticipantModerator
@@ -87,9 +88,9 @@ function _getFollowMeState(state) {
 function _sendFollowMeCommand(
         newSelectedValue, store) { // eslint-disable-line no-unused-vars
     const state = store.getState();
-    const { conference, followMeEnabled } = state['features/base/conference'];
+    const conference = getCurrentConference(state);
 
-    if (!conference || !followMeEnabled) {
+    if (!conference || !state['features/base/conference'].followMeEnabled) {
         return;
     }
 
