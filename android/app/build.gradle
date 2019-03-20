@@ -116,6 +116,41 @@ gradle.projectsEvaluated {
             }
         }
     }
+
+    // Run React packager
+    android.applicationVariants.all { variant ->
+        def targetName = variant.name.capitalize()
+
+        def currentRunPackagerTask = tasks.create(
+                name: "run${targetName}ReactPackager",
+                type: Exec) {
+            group = "react"
+            description = "Run the React packager."
+
+            doFirst {
+                println "Starting the React packager..."
+
+                def androidRoot = file("${projectDir}/../")
+
+                // Set up the call to the script
+                workingDir androidRoot
+
+                // Run the packager
+                commandLine("scripts/run-packager.sh")
+            }
+
+            // Set up dev mode
+            def devEnabled = !targetName.toLowerCase().contains("release")
+
+            // Only enable for dev builds
+            enabled devEnabled
+        }
+
+        def packageTask = variant.packageApplicationProvider.get()
+
+        packageTask.dependsOn(currentRunPackagerTask)
+    }
+
 }
 
 if (googleServicesEnabled) {
