@@ -57,8 +57,7 @@ class ReactInstanceManagerHolder {
                 new org.jitsi.meet.sdk.invite.InviteModule(reactContext),
                 new org.jitsi.meet.sdk.net.NAT64AddrInfoModule(reactContext)));
 
-        if (android.os.Build.VERSION.SDK_INT
-                >= android.os.Build.VERSION_CODES.O) {
+        if (AudioModeModule.useConnectionService()) {
             nativeModules.add(new RNConnectionService(reactContext));
         }
 
