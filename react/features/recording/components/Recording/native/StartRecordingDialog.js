@@ -1,10 +1,10 @@
 // @flow
 
 import React from 'react';
-import { connect } from 'react-redux';
 
 import { translate } from '../../../../base/i18n';
 import { CustomSubmitDialog } from '../../../../base/dialog';
+import { connect } from '../../../../base/redux';
 
 import AbstractStartRecordingDialog, {
     mapStateToProps

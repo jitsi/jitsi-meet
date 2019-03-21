@@ -2,13 +2,13 @@
 
 import React, { Component } from 'react';
 import { Platform } from 'react-native';
-import { connect } from 'react-redux';
 
 import { ColorSchemeRegistry } from '../../../base/color-scheme';
 import {
     BottomSheet,
     hideDialog
 } from '../../../base/dialog';
+import { connect } from '../../../base/redux';
 import { StyleType } from '../../../base/styles';
 import { InviteButton } from '../../../invite';
 import { AudioRouteButton } from '../../../mobile/audio-mode';
@@ -128,7 +128,6 @@ function _mapStateToProps(state) {
     };
 }
 
-// $FlowExpectedError
 OverflowMenu_ = connect(_mapStateToProps)(OverflowMenu);
 
 export default OverflowMenu_;

@@ -1,7 +1,7 @@
 /* @flow */
 
 import React from 'react';
-import { connect } from 'react-redux';
+import { connect } from '../../base/redux';
 import { FieldTextStateless as TextField } from '@atlaskit/field-text';
 
 import { Dialog } from '../../base/dialog';

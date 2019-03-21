@@ -2,10 +2,10 @@
 
 import React, { Component } from 'react';
 import { Text, View } from 'react-native';
-import { connect } from 'react-redux';
 
 import { ColorSchemeRegistry } from '../../../color-scheme';
 import { translate } from '../../../i18n';
+import { connect } from '../../../redux';
 
 /**
  * The type of the React {@code Component} props of {@link HeaderLabel}

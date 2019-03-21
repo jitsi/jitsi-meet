@@ -3,7 +3,6 @@
 import React, { Component } from 'react';
 import { Text, View } from 'react-native';
 import FastImage from 'react-native-fast-image';
-import { connect } from 'react-redux';
 
 import { translate } from '../../i18n';
 import { JitsiParticipantConnectionStatus } from '../../lib-jitsi-meet';
@@ -12,6 +11,7 @@ import {
     VideoTrack
 } from '../../media';
 import { Container, TintedView } from '../../react';
+import { connect } from '../../redux';
 import { StyleType } from '../../styles';
 import { TestHint } from '../../testing/components';
 import { getTrackByMediaTypeAndParticipant } from '../../tracks';

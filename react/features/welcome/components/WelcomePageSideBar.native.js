@@ -2,7 +2,6 @@
 
 import React, { Component } from 'react';
 import { SafeAreaView, ScrollView, Text } from 'react-native';
-import { connect } from 'react-redux';
 
 import {
     Avatar,
@@ -14,6 +13,7 @@ import {
     Header,
     SideBar
 } from '../../base/react';
+import { connect } from '../../base/redux';
 import { setSettingsViewVisible } from '../../settings';
 
 import { setSideBarVisible } from '../actions';
@@ -169,5 +169,4 @@ function _mapStateToProps(state: Object) {
     };
 }
 
-// $FlowExpectedError
 export default connect(_mapStateToProps)(WelcomePageSideBar);

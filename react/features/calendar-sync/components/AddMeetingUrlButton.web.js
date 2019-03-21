@@ -2,7 +2,6 @@
 
 import Tooltip from '@atlaskit/tooltip';
 import React, { Component } from 'react';
-import { connect } from 'react-redux';
 import type { Dispatch } from 'redux';
 
 import {
@@ -10,6 +9,7 @@ import {
     sendAnalytics
 } from '../../analytics';
 import { translate } from '../../base/i18n';
+import { connect } from '../../base/redux';
 
 import { updateCalendarEvent } from '../actions';
 

@@ -11,7 +11,7 @@ type Props = {
      * Prop to set the size of the indicator. This is the same as the
      * prop of the native component.
      */
-    size: 'large' | 'medium' | 'small'
+    size: 'large' | 'small'
 };
 
 /**
@@ -40,7 +40,7 @@ export default class LoadingIndicator extends Component<Props> {
             size
         };
 
-        return (// $FlowFixMe
+        return (
             <ActivityIndicator
                 animating = { true }
                 color = { ColorPalette.white }

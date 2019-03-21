@@ -2,13 +2,13 @@
 
 import _ from 'lodash';
 import React from 'react';
-import { connect as reactReduxConnect } from 'react-redux';
 
 import VideoLayout from '../../../../../modules/UI/videolayout/VideoLayout';
 
 import { obtainConfig } from '../../../base/config';
 import { connect, disconnect } from '../../../base/connection';
 import { translate } from '../../../base/i18n';
+import { connect as reactReduxConnect } from '../../../base/redux';
 import { Chat } from '../../../chat';
 import { Filmstrip } from '../../../filmstrip';
 import { CalleeInfoContainer } from '../../../invite';
@@ -293,5 +293,4 @@ function _mapStateToProps(state) {
     };
 }
 
-// $FlowExpectedError
 export default reactReduxConnect(_mapStateToProps)(translate(Conference));

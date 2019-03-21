@@ -1,7 +1,6 @@
 // @flow
 
 import React, { Component } from 'react';
-import { connect } from 'react-redux';
 
 import {
     ACTION_SHORTCUT_TRIGGERED,
@@ -16,6 +15,7 @@ import {
     getParticipants,
     participantUpdated
 } from '../../../base/participants';
+import { connect } from '../../../base/redux';
 import { OverflowMenuItem } from '../../../base/toolbox';
 import { getLocalVideoTrack, toggleScreensharing } from '../../../base/tracks';
 import { ChatCounter, toggleChat } from '../../../chat';

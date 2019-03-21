@@ -3,11 +3,11 @@
 import _ from 'lodash';
 import React, { Component } from 'react';
 import { NativeModules, Text, TouchableHighlight, View } from 'react-native';
-import { connect } from 'react-redux';
 
 import { hideDialog, BottomSheet } from '../../../base/dialog';
 import { translate } from '../../../base/i18n';
 import { Icon } from '../../../base/font-icons';
+import { connect } from '../../../base/redux';
 import { ColorPalette } from '../../../base/styles';
 
 import styles from './styles';

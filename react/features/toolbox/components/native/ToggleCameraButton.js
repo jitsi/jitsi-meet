@@ -1,9 +1,8 @@
 // @flow
 
-import { connect } from 'react-redux';
-
 import { translate } from '../../../base/i18n';
 import { MEDIA_TYPE, toggleCameraFacingMode } from '../../../base/media';
+import { connect } from '../../../base/redux';
 import { AbstractButton } from '../../../base/toolbox';
 import type { AbstractButtonProps } from '../../../base/toolbox';
 import { isLocalTrackMuted } from '../../../base/tracks';

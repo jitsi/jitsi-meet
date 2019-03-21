@@ -55,8 +55,6 @@ export default class BaseApp extends Component<*, State> {
 
         this.state = {
             route: {},
-
-            // $FlowFixMe
             store: undefined
         };
     }

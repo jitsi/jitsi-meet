@@ -1,9 +1,9 @@
 // @flow
 
 import React, { Component } from 'react';
-import { connect } from 'react-redux';
 import type { Dispatch } from 'redux';
 
+import { connect } from '../../base/redux';
 import { destroyLocalTracks } from '../../base/tracks';
 import { NetworkActivityIndicator } from '../../mobile/network-activity';
 
@@ -48,5 +48,4 @@ class BlankPage extends Component<Props> {
     }
 }
 
-// $FlowExpectedError
 export default connect()(BlankPage);

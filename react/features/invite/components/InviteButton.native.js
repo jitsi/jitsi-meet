@@ -1,9 +1,9 @@
 // @flow
 
-import { connect } from 'react-redux';
 import type { Dispatch } from 'redux';
 
 import { translate } from '../../base/i18n';
+import { connect } from '../../base/redux';
 import { AbstractButton } from '../../base/toolbox';
 import type { AbstractButtonProps } from '../../base/toolbox';
 import { beginShareRoom } from '../../share-room';

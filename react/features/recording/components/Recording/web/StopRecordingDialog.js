@@ -1,10 +1,10 @@
 // @flow
 
 import React from 'react';
-import { connect } from 'react-redux';
 
 import { translate } from '../../../../base/i18n';
 import { Dialog } from '../../../../base/dialog';
+import { connect } from '../../../../base/redux';
 
 import AbstractStopRecordingDialog, {
     type Props,

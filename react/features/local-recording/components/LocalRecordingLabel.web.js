@@ -2,10 +2,10 @@
 
 import Tooltip from '@atlaskit/tooltip';
 import React, { Component } from 'react';
-import { connect } from 'react-redux';
 
 import { translate } from '../../base/i18n/index';
 import { CircularLabel } from '../../base/label/index';
+import { connect } from '../../base/redux';
 
 
 /**

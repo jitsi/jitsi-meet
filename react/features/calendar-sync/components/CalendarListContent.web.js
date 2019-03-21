@@ -1,7 +1,6 @@
 // @flow
 
 import React, { Component } from 'react';
-import { connect } from 'react-redux';
 
 import { appNavigate } from '../../app';
 import {
@@ -10,6 +9,7 @@ import {
     sendAnalytics
 } from '../../analytics';
 import { MeetingsList } from '../../base/react';
+import { connect } from '../../base/redux';
 
 import { isCalendarEnabled } from '../functions';
 
@@ -173,7 +173,5 @@ function _mapStateToProps(state: Object) {
 }
 
 export default isCalendarEnabled()
-
-    // $FlowExpectedError
     ? connect(_mapStateToProps)(CalendarListContent)
     : undefined;

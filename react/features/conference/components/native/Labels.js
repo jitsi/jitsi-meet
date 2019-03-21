@@ -2,9 +2,9 @@
 
 import React from 'react';
 import { TouchableOpacity, View } from 'react-native';
-import { connect } from 'react-redux';
 
 import { JitsiRecordingConstants } from '../../../base/lib-jitsi-meet';
+import { connect } from '../../../base/redux';
 import {
     isNarrowAspectRatio,
     makeAspectRatioAware
@@ -370,5 +370,4 @@ function _mapStateToProps(state) {
     };
 }
 
-// $FlowExpectedError
 export default connect(_mapStateToProps)(makeAspectRatioAware(Labels));

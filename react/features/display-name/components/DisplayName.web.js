@@ -1,7 +1,7 @@
 /* @flow */
 
 import React, { Component } from 'react';
-import { connect } from 'react-redux';
+import { connect } from '../../base/redux';
 import type { Dispatch } from 'redux';
 
 import { appendSuffix } from '../functions';

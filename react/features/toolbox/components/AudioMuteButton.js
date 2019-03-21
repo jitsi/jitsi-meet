@@ -1,7 +1,5 @@
 // @flow
 
-import { connect } from 'react-redux';
-
 import {
     ACTION_SHORTCUT_TRIGGERED,
     AUDIO_MUTE,
@@ -11,6 +9,7 @@ import {
 } from '../../analytics';
 import { translate } from '../../base/i18n';
 import { MEDIA_TYPE, setAudioMuted } from '../../base/media';
+import { connect } from '../../base/redux';
 import { AbstractAudioMuteButton } from '../../base/toolbox';
 import type { AbstractButtonProps } from '../../base/toolbox';
 import { isLocalTrackMuted } from '../../base/tracks';

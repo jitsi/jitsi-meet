@@ -1,7 +1,8 @@
 // @flow
 
 import React from 'react';
-import { connect } from 'react-redux';
+
+import { connect } from '../../../redux';
 
 import AbstractDialog from '../AbstractDialog';
 import type { Props as AbstractDialogProps, State } from '../AbstractDialog';
@@ -84,5 +85,4 @@ class Dialog extends AbstractDialog<Props, State> {
     _onSubmit: (?string) => void;
 }
 
-// $FlowExpectedError
 export default connect()(Dialog);

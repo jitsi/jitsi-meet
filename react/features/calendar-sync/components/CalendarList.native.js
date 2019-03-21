@@ -2,11 +2,11 @@
 
 import React from 'react';
 import { Text, TouchableOpacity, View } from 'react-native';
-import { connect } from 'react-redux';
 
 import { openSettings } from '../../mobile/permissions';
 import { translate } from '../../base/i18n';
 import { AbstractPage } from '../../base/react';
+import { connect } from '../../base/redux';
 
 import { refreshCalendar } from '../actions';
 import { isCalendarEnabled } from '../functions';

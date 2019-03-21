@@ -1,7 +1,8 @@
 // @flow
 
 import React, { Component } from 'react';
-import { connect } from 'react-redux';
+
+import { connect } from '../../redux';
 
 import { ASPECT_RATIO_NARROW, ASPECT_RATIO_WIDE } from '../constants';
 
@@ -51,7 +52,6 @@ export function makeAspectRatioAware(
         }
     }
 
-    // $FlowFixMe
     return connect(_mapStateToProps)(AspectRatioAware);
 }
 
