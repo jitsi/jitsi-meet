@@ -11,6 +11,9 @@ import { invite } from '../../react/features/invite';
 import { getJitsiMeetTransport } from '../transport';
 
 import { API_ID } from './constants';
+import {
+    processRequest
+} from '../../react/features/device-selection/functions';
 
 const logger = require('jitsi-meet-logger').getLogger(__filename);
 
@@ -117,6 +120,12 @@ function initCommands() {
         return false;
     });
     transport.on('request', (request, callback) => {
+        const { dispatch, getState } = APP.store;
+
+        if (processRequest(dispatch, getState, request, callback)) {
+            return true;
+        }
+
         const { name } = request;
 
         switch (name) {

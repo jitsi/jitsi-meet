@@ -65,6 +65,84 @@ var api = new JitsiMeetExternalAPI(domain, options);
 
 ### Controlling the embedded Jitsi Meet Conference
 
+You can control the available devices  with the following methods of `JitsiMeetExternalAPI` instance:
+* **getAvailableDevices** - Retrieve a list of available devices.
+
+```javascript
+api.getAvailableDevices().then(function(devices) {
+    // devices = {
+    //     'audioInput': [{
+    //         deviceId: "ID"
+    //         groupId: "grpID"
+    //         kind: "audioinput"
+    //         label: "Label"
+    //     },....],
+    //     'audioOutput': [{
+    //         deviceId: "ID"
+    //         groupId: "grpID"
+    //         kind: "audioOutput"
+    //         label: "Label"
+    //     },....],
+    //     'videoInput': [{
+    //         deviceId: "ID"
+    //         groupId: "grpID"
+    //         kind: "videoInput"
+    //         label: "Label"
+    //     },....]
+    // }
+    ...
+});
+```
+* **getCurrentDevices** - Retrieve a list with the devices that are currently sected.
+
+```javascript
+api.getCurrentDevices().then(function(devices) {
+    // devices = {
+    //     'audioInput': 'deviceID',
+    //     'audioOutput': 'deviceID',
+    //     'videoInput': 'deviceID'
+    // }
+    ...
+});
+```
+* **isDeviceChangeAvailable** - Resolves with true if the device change is available and with false if not.
+
+```javascript
+// The accepted deviceType values are - 'output', 'input' or undefined.
+api.isDeviceChangeAvailable(deviceType).then(function(isDeviceChangeAvailable) {
+    ...
+});
+```
+* **isDeviceListAvailable** - Resolves with true if the device list is available and with false if not.
+
+```javascript
+api.isDeviceListAvailable().then(function(isDeviceListAvailable) {
+    ...
+});
+```
+* **isMultipleAudioInputSupported** - Resolves with true if the device list is available and with false if not.
+
+```javascript
+api.isMultipleAudioInputSupported().then(function(isMultipleAudioInputSupported) {
+    ...
+});
+```
+* **setAudioInputDevice** - Sets the audio input device to the one with the id that is passed.
+
+```javascript
+api.setAudioInputDevice(deviceId);
+```
+* **setAudioOutputDevice** - Sets the audio output device to the one with the id that is passed.
+
+```javascript
+api.setAudioOutputDevice(deviceId);
+```
+* **setVideoInputDevice** - Sets the video input device to the one with the id that is passed.
+
+```javascript
+api.setVideoInputDevice(deviceId);
+```
+
 You can control the embedded Jitsi Meet conference using the `JitsiMeetExternalAPI` object by using `executeCommand`:
 
 ```javascript

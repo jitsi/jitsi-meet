@@ -1,7 +1,6 @@
 /* global JitsiMeetJS */
 
 import { AtlasKitThemeProvider } from '@atlaskit/theme';
-import Logger from 'jitsi-meet-logger';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { I18nextProvider } from 'react-i18next';
@@ -10,12 +9,20 @@ import {
     PostMessageTransportBackend,
     Transport
 } from '../../../../../modules/transport';
+import {
+    getAvailableDevices,
+    getCurrentDevices,
+    isDeviceChangeAvailable,
+    isDeviceListAvailable,
+    isMultipleAudioInputSupported,
+    setAudioInputDevice,
+    setAudioOutputDevice,
+    setVideoInputDevice
+} from '../../../../../modules/API/external';
 
 import { parseURLParams } from '../../../base/config';
 import { DialogWithTabs } from '../../../base/dialog';
 import { DeviceSelection } from '../../../device-selection';
-
-const logger = Logger.getLogger(__filename);
 
 /**
  * Implements a class that renders the React components for the device selection
@@ -102,14 +109,7 @@ export default class DeviceSelectionPopup {
      * @returns {Promise}
      */
     _getAvailableDevices() {
-        return this._transport.sendRequest({
-            type: 'devices',
-            name: 'getAvailableDevices'
-        }).catch(e => {
-            logger.error(e);
-
-            return {};
-        });
+        return getAvailableDevices(this._transport);
     }
 
     /**
@@ -118,14 +118,7 @@ export default class DeviceSelectionPopup {
      * @returns {Promise}
      */
     _getCurrentDevices() {
-        return this._transport.sendRequest({
-            type: 'devices',
-            name: 'getCurrentDevices'
-        }).catch(e => {
-            logger.error(e);
-
-            return {};
-        });
+        return getCurrentDevices(this._transport);
     }
 
     /**
@@ -170,15 +163,7 @@ export default class DeviceSelectionPopup {
      * @returns {Promise}
      */
     _isDeviceChangeAvailable(deviceType) {
-        return this._transport.sendRequest({
-            deviceType,
-            type: 'devices',
-            name: 'isDeviceChangeAvailable'
-        }).catch(e => {
-            logger.error(e);
-
-            return false;
-        });
+        return isDeviceChangeAvailable(this._transport, deviceType);
     }
 
     /**
@@ -188,14 +173,7 @@ export default class DeviceSelectionPopup {
      * @returns {Promise}
      */
     _isDeviceListAvailable() {
-        return this._transport.sendRequest({
-            type: 'devices',
-            name: 'isDeviceListAvailable'
-        }).catch(e => {
-            logger.error(e);
-
-            return false;
-        });
+        return isDeviceListAvailable(this._transport);
     }
 
     /**
@@ -205,14 +183,7 @@ export default class DeviceSelectionPopup {
      * @returns {Promise}
      */
     _isMultipleAudioInputSupported() {
-        return this._transport.sendRequest({
-            type: 'devices',
-            name: 'isMultipleAudioInputSupported'
-        }).catch(e => {
-            logger.error(e);
-
-            return false;
-        });
+        return isMultipleAudioInputSupported(this._transport);
     }
 
     /**
@@ -281,10 +252,7 @@ export default class DeviceSelectionPopup {
      * @returns {Promise}
      */
     _setAudioInputDevice(id) {
-        return this._setDevice({
-            id,
-            kind: 'audioinput'
-        });
+        return setAudioInputDevice(this._transport, id);
     }
 
     /**
@@ -294,24 +262,7 @@ export default class DeviceSelectionPopup {
      * @returns {Promise}
      */
     _setAudioOutputDevice(id) {
-        return this._setDevice({
-            id,
-            kind: 'audiooutput'
-        });
-    }
-
-    /**
-     * Sets the currently used device to the one that is passed.
-     *
-     * @param {Object} device - The new device to be used.
-     * @returns {Promise}
-     */
-    _setDevice(device) {
-        return this._transport.sendRequest({
-            type: 'devices',
-            name: 'setDevice',
-            device
-        });
+        return setAudioOutputDevice(this._transport, id);
     }
 
     /**
@@ -321,10 +272,7 @@ export default class DeviceSelectionPopup {
      * @returns {Promise}
      */
     _setVideoInputDevice(id) {
-        return this._setDevice({
-            id,
-            kind: 'videoinput'
-        });
+        return setVideoInputDevice(this._transport, id);
     }
 
     /**
