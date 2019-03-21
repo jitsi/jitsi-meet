@@ -120,6 +120,7 @@ public class MainActivity extends JitsiMeetActivity {
                 && canRequestOverlayPermission()) {
             if (Settings.canDrawOverlays(this)) {
                 initialize();
+                return;
             }
 
             throw new RuntimeException("Overlay permission is required when running in Debug mode.");
