@@ -5,10 +5,10 @@ workspace 'jitsi-meet'
 target 'jitsi-meet' do
   project 'app/app.xcodeproj'
 
-  pod 'Crashlytics'
-  pod 'Fabric'
-  pod 'Firebase/Core'
-  pod 'Firebase/DynamicLinks'
+  pod 'Crashlytics', '~> 3.12.0'
+  pod 'Fabric', '~> 1.9.0'
+  pod 'Firebase/Core', '~> 5.18.0'
+  pod 'Firebase/DynamicLinks', '~> 5.18.0'
 end
 
 target 'JitsiMeet' do
@@ -36,7 +36,7 @@ target 'JitsiMeet' do
     :podspec => '../node_modules/react-native/third-party-podspecs/Folly.podspec'
 
   pod 'Amplitude-iOS', '~> 4.0.4'
-  pod 'ObjectiveDropboxOfficial'
+  pod 'ObjectiveDropboxOfficial', '~> 3.9.4'
 
   pod 'react-native-background-timer',
     :path => '../node_modules/react-native-background-timer'
