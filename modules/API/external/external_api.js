@@ -7,6 +7,16 @@ import {
 } from '../../transport';
 
 import electronPopupsConfig from './electronPopupsConfig.json';
+import {
+    getAvailableDevices,
+    getCurrentDevices,
+    isDeviceChangeAvailable,
+    isDeviceListAvailable,
+    isMultipleAudioInputSupported,
+    setAudioInputDevice,
+    setAudioOutputDevice,
+    setVideoInputDevice
+} from './functions';
 
 const logger = require('jitsi-meet-logger').getLogger(__filename);
 
@@ -594,6 +604,24 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
     }
 
     /**
+     * Returns Promise that resolves with result an list of available devices.
+     *
+     * @returns {Promise}
+     */
+    getAvailableDevices() {
+        return getAvailableDevices(this._transport);
+    }
+
+    /**
+     * Returns Promise that resolves with current selected devices.
+     *
+     * @returns {Promise}
+     */
+    getCurrentDevices() {
+        return getCurrentDevices(this._transport);
+    }
+
+    /**
      * Check if the audio is available.
      *
      * @returns {Promise} - Resolves with true if the audio available, with
@@ -603,6 +631,38 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
         return this._transport.sendRequest({
             name: 'is-audio-available'
         });
+    }
+
+    /**
+     * Returns Promise that resolves with true if the device change is available
+     * and with false if not.
+     *
+     * @param {string} [deviceType] - Values - 'output', 'input' or undefined.
+     * Default - 'input'.
+     * @returns {Promise}
+     */
+    isDeviceChangeAvailable(deviceType) {
+        return isDeviceChangeAvailable(this._transport, deviceType);
+    }
+
+    /**
+     * Returns Promise that resolves with true if the device list is available
+     * and with false if not.
+     *
+     * @returns {Promise}
+     */
+    isDeviceListAvailable() {
+        return isDeviceListAvailable(this._transport);
+    }
+
+    /**
+     * Returns Promise that resolves with true if the device list is available
+     * and with false if not.
+     *
+     * @returns {Promise}
+     */
+    isMultipleAudioInputSupported() {
+        return isMultipleAudioInputSupported(this._transport);
     }
 
     /**
@@ -769,6 +829,36 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
             data: [ event ],
             name: 'proxy-connection-event'
         });
+    }
+
+    /**
+     * Sets the audio input device to the one with the id that is passed.
+     *
+     * @param {string} deviceId - The id of the new device.
+     * @returns {Promise}
+     */
+    setAudioInputDevice(deviceId) {
+        return setAudioInputDevice(this._transport, deviceId);
+    }
+
+    /**
+     * Sets the audio output device to the one with the id that is passed.
+     *
+     * @param {string} deviceId - The id of the new device.
+     * @returns {Promise}
+     */
+    setAudioOutputDevice(deviceId) {
+        return setAudioOutputDevice(this._transport, deviceId);
+    }
+
+    /**
+     * Sets the video input device to the one with the id that is passed.
+     *
+     * @param {string} deviceId - The id of the new device.
+     * @returns {Promise}
+     */
+    setVideoInputDevice(deviceId) {
+        return setVideoInputDevice(this._transport, deviceId);
     }
 
     /**
