@@ -3,17 +3,12 @@
 import { MiddlewareRegistry } from '../base/redux';
 
 import {
-    _TRANSCRIBER_LEFT,
-    DIAL_TRANSCRIBER,
-    STOP_TRANSCRIBING
+    _TRANSCRIBER_LEFT
 } from './actionTypes';
 import {
-    dialError,
     hidePendingTranscribingNotification,
     potentialTranscriberJoined,
-    showPendingTranscribingNotification,
     showStoppedTranscribingNotification,
-    showTranscribingError,
     transcriberJoined,
     transcriberLeft
 } from './actions';
@@ -23,9 +18,6 @@ import {
     PARTICIPANT_UPDATED
 } from './../base/participants';
 
-declare var APP: Object;
-
-const TRANSCRIBER_DIAL_COMMAND = 'jitsi_meet_transcribe';
 const TRANSCRIBER_DISPLAY_NAME = 'Transcriber';
 
 /**
@@ -37,35 +29,11 @@ const TRANSCRIBER_DISPLAY_NAME = 'Transcriber';
 // eslint-disable-next-line no-unused-vars
 MiddlewareRegistry.register(store => next => action => {
     const {
-        isDialing,
-        isTranscribing,
         transcriberJID,
         potentialTranscriberJIDs
     } = store.getState()['features/transcribing'];
 
-    const { conference } = store.getState()['features/base/conference'];
-
     switch (action.type) {
-    case DIAL_TRANSCRIBER:
-        if (!(isDialing || isTranscribing)) {
-            store.dispatch(showPendingTranscribingNotification());
-
-            conference.room.dial(TRANSCRIBER_DIAL_COMMAND).catch(
-                () => {
-                    store.dispatch(dialError());
-                    store.dispatch(hidePendingTranscribingNotification());
-                    store.dispatch(showTranscribingError());
-                }
-            );
-        }
-        break;
-    case STOP_TRANSCRIBING:
-        if (isTranscribing) {
-            const participant = conference.getParticipantById(transcriberJID);
-
-            conference.room.kick(participant.getJid());
-        }
-        break;
     case _TRANSCRIBER_LEFT:
         store.dispatch(showStoppedTranscribingNotification());
         break;
