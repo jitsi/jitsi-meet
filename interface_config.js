@@ -193,7 +193,14 @@ var interfaceConfig = {
     /**
      * Specify the Android app package name.
      */
-    // ANDROID_APP_PACKAGE: 'org.jitsi.meet'
+    // ANDROID_APP_PACKAGE: 'org.jitsi.meet',
+
+    /**
+     * Override the behavior of some notifications to remain displayed until
+     * explicitly dismissed through a user action. The value is how long, in
+     * milliseconds, those notifications should remain displayed.
+     */
+    // ENFORCE_NOTIFICATION_AUTO_DISMISS_TIMEOUT: 15000,
 };
 
 /* eslint-enable no-unused-vars, no-var, max-len */

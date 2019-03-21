@@ -14,10 +14,18 @@ export type Props = {
     _notifications: Array<Object>,
 
     /**
+     * The length, in milliseconds, to use as a default timeout for all
+     * dismissable timeouts that do not have a timeout specified.
+     */
+    autoDismissTimeout: number,
+
+    /**
      * Invoked to update the redux store in order to remove notifications.
      */
     dispatch: Function
 };
+
+declare var interfaceConfig: Object;
 
 /**
  * Abstract class for {@code NotificationsContainer} component.
@@ -78,7 +86,7 @@ export default class AbstractNotificationsContainer<P: Props>
      * @private
      */
     _manageDismissTimeout(prevProps: ?P) {
-        const { _notifications } = this.props;
+        const { _notifications, autoDismissTimeout } = this.props;
 
         if (_notifications.length) {
             const notification = _notifications[0];
@@ -90,14 +98,18 @@ export default class AbstractNotificationsContainer<P: Props>
             if (notification !== previousNotification) {
                 this._clearNotificationDismissTimeout();
 
-                if (notification) {
-                    const { timeout, uid } = notification;
+                if (notification
+                        && (notification.timeout
+                            || typeof autoDismissTimeout === 'number')
+                        && notification.props.isDismissAllowed !== false) {
+                    const {
+                        timeout = autoDismissTimeout,
+                        uid
+                    } = notification;
 
                     this._notificationDismissTimeout = setTimeout(() => {
                         // Perform a no-op if a timeout is not specified.
-                        if (Number.isInteger(timeout)) {
-                            this._onDismissed(uid);
-                        }
+                        this._onDismissed(uid);
                     }, timeout);
                 }
             }
@@ -168,6 +180,9 @@ export function _abstractMapStateToProps(state: Object) {
     const _visible = areThereNotifications(state);
 
     return {
-        _notifications: _visible ? notifications : []
+        _notifications: _visible ? notifications : [],
+        autoDismissTimeout: typeof interfaceConfig === 'undefined'
+            ? undefined // Ignore for the case of mobile
+            : interfaceConfig.ENFORCE_NOTIFICATION_AUTO_DISMISS_TIMEOUT
     };
 }
