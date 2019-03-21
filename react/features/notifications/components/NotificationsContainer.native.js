@@ -63,4 +63,5 @@ class NotificationsContainer
     _onDismissed: number => void;
 }
 
+// $FlowExpectedError
 export default connect(_abstractMapStateToProps)(NotificationsContainer);
