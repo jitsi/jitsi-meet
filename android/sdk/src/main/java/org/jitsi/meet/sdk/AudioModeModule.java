@@ -160,7 +160,7 @@ class AudioModeModule extends ReactContextBaseJavaModule
     /**
      * Whether or not the ConnectionService is used for selecting audio devices.
      */
-    private static boolean useConnectionService() {
+    static boolean useConnectionService() {
         return Build.VERSION.SDK_INT >= Build.VERSION_CODES.O;
     }
 
@@ -297,9 +297,9 @@ class AudioModeModule extends ReactContextBaseJavaModule
             = (AudioManager)
                 reactContext.getSystemService(Context.AUDIO_SERVICE);
 
-        // Starting Oreo the ConnectionImpl from ConnectionService us used to
+        // Starting Oreo the ConnectionImpl from ConnectionService is used to
         // detect the available devices.
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
+        if (!useConnectionService()) {
             // Setup runtime device change detection.
             setupAudioRouteChangeDetection();
 
