@@ -8,6 +8,11 @@ if (googleServicesEnabled) {
     apply plugin: 'io.fabric'
 }
 
+// Use the number of seconds/10 since Jan 1 2019 as the versionCode.
+// This lets us upload a new build at most every 10 seconds for the
+// next ~680 years.
+// https://stackoverflow.com/a/38643838
+def vcode = (int)(((new Date().getTime()/1000) - 1546297200) / 10)
 
 android {
     compileSdkVersion rootProject.ext.compileSdkVersion
@@ -15,7 +20,7 @@ android {
 
     defaultConfig {
         applicationId 'org.jitsi.meet'
-        versionCode Integer.parseInt(project.buildNumber)
+        versionCode vcode
         versionName project.appVersion
 
         minSdkVersion rootProject.ext.minSdkVersion
