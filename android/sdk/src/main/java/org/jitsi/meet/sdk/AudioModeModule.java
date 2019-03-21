@@ -161,7 +161,10 @@ class AudioModeModule extends ReactContextBaseJavaModule
      * Whether or not the ConnectionService is used for selecting audio devices.
      */
     static boolean useConnectionService() {
-        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.O;
+        // This is a hotfix for a release. Use feature flags added on top of the
+        // new SDK API instead.
+        // return Build.VERSION.SDK_INT >= Build.VERSION_CODES.O;
+        return false;
     }
 
     /**
