@@ -165,14 +165,14 @@ PODS:
 DEPENDENCIES:
   - Amplitude-iOS (~> 4.0.4)
   - BVLinearGradient (from `../node_modules/react-native-linear-gradient`)
-  - Crashlytics
+  - Crashlytics (~> 3.12.0)
   - DoubleConversion (from `../node_modules/react-native/third-party-podspecs/DoubleConversion.podspec`)
-  - Fabric
-  - Firebase/Core
-  - Firebase/DynamicLinks
+  - Fabric (~> 1.9.0)
+  - Firebase/Core (~> 5.18.0)
+  - Firebase/DynamicLinks (~> 5.18.0)
   - Folly (from `../node_modules/react-native/third-party-podspecs/Folly.podspec`)
   - glog (from `../node_modules/react-native/third-party-podspecs/glog.podspec`)
-  - ObjectiveDropboxOfficial
+  - ObjectiveDropboxOfficial (~> 3.9.4)
   - react-native-background-timer (from `../node_modules/react-native-background-timer`)
   - react-native-calendar-events (from `../node_modules/react-native-calendar-events`)
   - react-native-fast-image (from `../node_modules/react-native-fast-image`)
@@ -280,6 +280,6 @@ SPEC CHECKSUMS:
   SDWebImage: 3f3f0c02f09798048c47a5ed0a13f17b063572d8
   yoga: 8fb47f180b19b0dadb285a09e4c74c8a41721d3a
 
-PODFILE CHECKSUM: b300161e95d65c24b91368803afb8873f4b873cc
+PODFILE CHECKSUM: 4a11c3d66127a9845d4a5b2c7fad49f58a9c7a89
 
 COCOAPODS: 1.6.1
