@@ -107,15 +107,16 @@ export function _updateCalendarEntries(events: Array<Object>) {
  */
 function _checkPattern(str, positivePattern, negativePattern) {
     const positiveRegExp = new RegExp(positivePattern, 'gi');
-    let positiveMatch;
+    let positiveMatch = positiveRegExp.exec(str);
 
-    while ((positiveMatch = positiveRegExp.exec(str)) !== null) {
-        // $FlowFixMe
+    while (positiveMatch !== null) {
         const url = positiveMatch[0];
 
         if (!new RegExp(negativePattern, 'gi').exec(url)) {
             return url;
         }
+
+        positiveMatch = positiveRegExp.exec(str);
     }
 }
 

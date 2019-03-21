@@ -1,13 +1,13 @@
 // @flow
 
 import React, { Component } from 'react';
-import { connect } from 'react-redux';
 
 import {
     Avatar,
     getAvatarURL,
     getLocalParticipant
 } from '../../base/participants';
+import { connect } from '../../base/redux';
 
 import OverlayFrame from './OverlayFrame';
 
@@ -112,5 +112,4 @@ function _mapStateToProps(state) {
     };
 }
 
-// $FlowExpectedError
 export default connect(_mapStateToProps)(FilmstripOnlyOverlayFrame);

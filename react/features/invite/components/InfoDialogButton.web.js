@@ -2,7 +2,6 @@
 
 import InlineDialog from '@atlaskit/inline-dialog';
 import React, { Component } from 'react';
-import { connect } from 'react-redux';
 import type { Dispatch } from 'redux';
 
 import { createToolbarEvent, sendAnalytics } from '../../analytics';
@@ -11,6 +10,7 @@ import { translate } from '../../base/i18n';
 import { JitsiRecordingConstants } from '../../base/lib-jitsi-meet';
 import { getParticipantCount } from '../../base/participants';
 import { OverflowMenuItem } from '../../base/toolbox';
+import { connect } from '../../base/redux';
 import { getActiveSession } from '../../recording';
 import { ToolbarButton } from '../../toolbox';
 import { updateDialInNumbers } from '../actions';

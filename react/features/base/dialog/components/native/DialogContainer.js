@@ -1,4 +1,4 @@
-import { connect } from 'react-redux';
+import { connect } from '../../../redux';
 
 import AbstractDialogContainer, {
     abstractMapStateToProps

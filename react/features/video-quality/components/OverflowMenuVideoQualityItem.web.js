@@ -1,10 +1,10 @@
 // @flow
 
 import React, { Component } from 'react';
-import { connect } from 'react-redux';
 
 import { VIDEO_QUALITY_LEVELS } from '../../base/conference';
 import { translate } from '../../base/i18n';
+import { connect } from '../../base/redux';
 
 /**
  * A map of of selectable receive resolutions to corresponding icons.

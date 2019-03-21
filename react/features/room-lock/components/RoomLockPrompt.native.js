@@ -1,10 +1,10 @@
 // @flow
 
 import React, { Component } from 'react';
-import { connect } from 'react-redux';
 import type { Dispatch } from 'redux';
 
 import { InputDialog } from '../../base/dialog';
+import { connect } from '../../base/redux';
 
 import { endRoomLockRequest } from '../actions';
 
@@ -102,5 +102,4 @@ class RoomLockPrompt extends Component<Props> {
     }
 }
 
-// $FlowExpectedError
 export default connect()(RoomLockPrompt);

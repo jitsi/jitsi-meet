@@ -2,13 +2,13 @@
 
 import React, { Component } from 'react';
 import { Text, View } from 'react-native';
-import { connect } from 'react-redux';
 
 import {
     getLocalParticipant,
     getParticipantDisplayName,
     shouldRenderParticipantVideo
 } from '../../../base/participants';
+import { connect } from '../../../base/redux';
 
 import { shouldDisplayTileView } from '../../../video-layout';
 
@@ -76,5 +76,4 @@ function _mapStateToProps(state: Object) {
     };
 }
 
-// $FlowExpectedError
 export default connect(_mapStateToProps)(DisplayNameLabel);

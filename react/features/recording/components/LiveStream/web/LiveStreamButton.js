@@ -1,10 +1,10 @@
 // @flow
 
 import React from 'react';
-import { connect } from 'react-redux';
 
 import { translate } from '../../../../base/i18n';
 import { Container, Text } from '../../../../base/react';
+import { connect } from '../../../../base/redux';
 
 import AbstractLiveStreamButton, {
     _mapStateToProps as _abstractMapStateToProps,

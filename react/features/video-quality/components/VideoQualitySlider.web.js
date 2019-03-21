@@ -2,7 +2,6 @@
 
 import InlineMessage from '@atlaskit/inline-message';
 import React, { Component } from 'react';
-import { connect } from 'react-redux';
 import type { Dispatch } from 'redux';
 
 import {
@@ -16,6 +15,7 @@ import {
 } from '../../base/conference';
 import { translate } from '../../base/i18n';
 import JitsiMeetJS from '../../base/lib-jitsi-meet';
+import { connect } from '../../base/redux';
 
 const logger = require('jitsi-meet-logger').getLogger(__filename);
 

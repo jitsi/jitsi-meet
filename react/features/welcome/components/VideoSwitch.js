@@ -2,11 +2,11 @@
 
 import React, { Component } from 'react';
 import { Switch, TouchableWithoutFeedback, View } from 'react-native';
-import { connect } from 'react-redux';
 
 import { ColorSchemeRegistry } from '../../base/color-scheme';
 import { translate } from '../../base/i18n';
 import { Text } from '../../base/react';
+import { connect } from '../../base/redux';
 import { updateSettings } from '../../base/settings';
 
 import styles, { SWITCH_THUMB_COLOR, SWITCH_UNDER_COLOR } from './styles';

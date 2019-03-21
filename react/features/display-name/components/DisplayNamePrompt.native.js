@@ -1,7 +1,7 @@
 // @flow
 
 import React from 'react';
-import { connect } from 'react-redux';
+import { connect } from '../../base/redux';
 
 import { InputDialog } from '../../base/dialog';
 
@@ -27,5 +27,4 @@ class DisplayNamePrompt extends AbstractDisplayNamePrompt<*> {
     _onSetDisplayName: string => boolean;
 }
 
-// $FlowExpectedError
 export default connect()(DisplayNamePrompt);

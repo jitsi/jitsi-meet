@@ -2,8 +2,9 @@
 
 import React, { Component } from 'react';
 import { PanResponder, PixelRatio, View } from 'react-native';
-import { connect } from 'react-redux';
 import { type Dispatch } from 'redux';
+
+import { connect } from '../../../redux';
 
 import type { PanResponderInstance } from 'PanResponder';
 
@@ -727,5 +728,4 @@ function _mapStateToProps(state) {
     };
 }
 
-// $FlowExpectedError
 export default connect(_mapStateToProps, _mapDispatchToProps)(VideoTransform);

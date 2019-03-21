@@ -2,10 +2,10 @@
 
 import Spinner from '@atlaskit/spinner';
 import React from 'react';
-import { connect } from 'react-redux';
 
 import { Dialog } from '../../../../base/dialog';
 import { translate } from '../../../../base/i18n';
+import { connect } from '../../../../base/redux';
 
 import {
     GOOGLE_API_STATES,

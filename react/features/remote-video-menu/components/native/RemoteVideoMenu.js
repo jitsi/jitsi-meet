@@ -2,7 +2,6 @@
 
 import React, { Component } from 'react';
 import { Text, View } from 'react-native';
-import { connect } from 'react-redux';
 
 import { ColorSchemeRegistry } from '../../../base/color-scheme';
 import {
@@ -13,6 +12,7 @@ import {
     getAvatarURL,
     getParticipantDisplayName
 } from '../../../base/participants';
+import { connect } from '../../../base/redux';
 import { StyleType } from '../../../base/styles';
 
 import { hideRemoteVideoMenu } from '../../actions';
@@ -135,5 +135,4 @@ function _mapStateToProps(state, ownProps) {
     };
 }
 
-// $FlowExpectedError
 export default connect(_mapStateToProps)(RemoteVideoMenu);

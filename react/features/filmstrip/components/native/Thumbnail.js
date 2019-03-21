@@ -1,7 +1,6 @@
 // @flow
 
 import React, { Component } from 'react';
-import { connect } from 'react-redux';
 import type { Dispatch } from 'redux';
 
 import { ColorSchemeRegistry } from '../../../base/color-scheme';
@@ -14,6 +13,7 @@ import {
     pinParticipant
 } from '../../../base/participants';
 import { Container } from '../../../base/react';
+import { connect } from '../../../base/redux';
 import { StyleType } from '../../../base/styles';
 import { getTrackByMediaTypeAndParticipant } from '../../../base/tracks';
 
@@ -255,5 +255,4 @@ function _mapStateToProps(state, ownProps) {
     };
 }
 
-// $FlowExpectedError
 export default connect(_mapStateToProps, _mapDispatchToProps)(Thumbnail);

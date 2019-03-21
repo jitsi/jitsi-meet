@@ -2,10 +2,10 @@
 
 import React from 'react';
 import { View } from 'react-native';
-import { connect } from 'react-redux';
 
 import { CustomSubmitDialog } from '../../../../base/dialog';
 import { translate } from '../../../../base/i18n';
+import { connect } from '../../../../base/redux';
 import { googleApi } from '../../../../google-api';
 
 

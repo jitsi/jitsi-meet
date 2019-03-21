@@ -1,8 +1,7 @@
 // @flow
 
-import { connect } from 'react-redux';
-
 import { translate } from '../../../i18n';
+import { connect } from '../../../redux';
 
 import { _abstractMapStateToProps } from '../../functions';
 

@@ -1,9 +1,9 @@
 /* global interfaceConfig */
 
 import React from 'react';
-import { connect } from 'react-redux';
 
 import { translate, translateToHTML } from '../../base/i18n';
+import { connect } from '../../base/redux';
 
 import AbstractUserMediaPermissionsOverlay, { abstractMapStateToProps }
     from './AbstractUserMediaPermissionsOverlay';

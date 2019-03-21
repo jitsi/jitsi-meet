@@ -2,12 +2,12 @@
 
 import React, { Component } from 'react';
 import { Text, TouchableOpacity, View } from 'react-native';
-import { connect } from 'react-redux';
 
 import { appNavigate } from '../../app';
 import { getURLWithoutParamsNormalized } from '../../base/connection';
 import { Icon } from '../../base/font-icons';
 import { getLocalizedDateFormatter, translate } from '../../base/i18n';
+import { connect } from '../../base/redux';
 import { ASPECT_RATIO_NARROW } from '../../base/responsive-ui';
 
 import { isCalendarEnabled } from '../functions';

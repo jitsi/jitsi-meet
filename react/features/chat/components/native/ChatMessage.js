@@ -2,10 +2,10 @@
 
 import React from 'react';
 import { Text, View } from 'react-native';
-import { connect } from 'react-redux';
 
 import { getLocalizedDateFormatter, translate } from '../../../base/i18n';
 import { Avatar } from '../../../base/participants';
+import { connect } from '../../../base/redux';
 
 import AbstractChatMessage, {
     _mapStateToProps as _abstractMapStateToProps,

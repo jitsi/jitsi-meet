@@ -2,9 +2,9 @@
 
 import React from 'react';
 import { Text, TouchableOpacity } from 'react-native';
-import { connect } from 'react-redux';
 
 import { translate } from '../../../i18n';
+import { connect } from '../../../redux';
 import { StyleType } from '../../../styles';
 
 import { _abstractMapStateToProps } from '../../functions';

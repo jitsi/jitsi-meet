@@ -1,10 +1,10 @@
 // @flow
 
 import React, { Component } from 'react';
-import { connect } from 'react-redux';
 
 import { ColorSchemeRegistry } from '../../base/color-scheme';
 import { ParticipantView } from '../../base/participants';
+import { connect } from '../../base/redux';
 import { DimensionsDetector } from '../../base/responsive-ui';
 import { StyleType } from '../../base/styles';
 
@@ -159,5 +159,4 @@ function _mapStateToProps(state) {
     };
 }
 
-// $FlowExpectedError
 export default connect(_mapStateToProps)(LargeVideo);

@@ -9,11 +9,11 @@ import {
     TextInput,
     View
 } from 'react-native';
-import { connect } from 'react-redux';
 
 import { ColorSchemeRegistry } from '../../../base/color-scheme';
 import { translate } from '../../../base/i18n';
 import { BackButton, Header, Modal } from '../../../base/react';
+import { connect } from '../../../base/redux';
 
 import {
     AbstractSettingsView,

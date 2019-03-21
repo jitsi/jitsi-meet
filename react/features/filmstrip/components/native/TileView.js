@@ -6,13 +6,13 @@ import {
     TouchableWithoutFeedback,
     View
 } from 'react-native';
-import { connect } from 'react-redux';
 import type { Dispatch } from 'redux';
 
 import {
     getNearestReceiverVideoQualityLevel,
     setMaxReceiverVideoQuality
 } from '../../../base/conference';
+import { connect } from '../../../base/redux';
 import {
     DimensionsDetector,
     isNarrowAspectRatio,
@@ -335,5 +335,4 @@ function _mapStateToProps(state) {
     };
 }
 
-// $FlowExpectedError
 export default connect(_mapStateToProps)(makeAspectRatioAware(TileView));

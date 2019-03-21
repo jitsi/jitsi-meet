@@ -1,11 +1,11 @@
 /* @flow */
 
 import React, { Component } from 'react';
-import { connect } from 'react-redux';
 
 import { translate } from '../../base/i18n';
 import { getParticipantById } from '../../base/participants';
 import { Text } from '../../base/react';
+import { connect } from '../../base/redux';
 
 import { STATUS_TO_I18N_KEY } from '../constants';
 

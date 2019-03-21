@@ -1,8 +1,8 @@
 /* @flow */
 
 import React, { Component } from 'react';
-import { connect } from 'react-redux';
 
+import { connect } from '../../../base/redux';
 import { isToolboxVisible } from '../../../toolbox';
 
 /**
@@ -65,5 +65,4 @@ function _mapStateToProps(state) {
     };
 }
 
-// $FlowExpectedError
 export default connect(_mapStateToProps)(Subject);

@@ -2,7 +2,8 @@
 
 import { FlagGroup } from '@atlaskit/flag';
 import React from 'react';
-import { connect } from 'react-redux';
+
+import { connect } from '../../base/redux';
 
 import AbstractNotificationsContainer, {
     _abstractMapStateToProps as _mapStateToProps,
@@ -63,5 +64,4 @@ class NotificationsContainer extends AbstractNotificationsContainer<Props> {
     }
 }
 
-// $FlowExpectedError
 export default connect(_mapStateToProps)(NotificationsContainer);
