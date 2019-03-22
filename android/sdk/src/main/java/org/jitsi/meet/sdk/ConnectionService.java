@@ -189,7 +189,7 @@ public class ConnectionService extends android.telecom.ConnectionService {
         connection.setConnectionProperties(Connection.PROPERTY_SELF_MANAGED);
         connection.setAddress(
             request.getAddress(),
-            TelecomManager.PRESENTATION_ALLOWED);
+            TelecomManager.PRESENTATION_UNKNOWN);
         connection.setExtras(request.getExtras());
 
         connection.setAudioModeIsVoip(true);
