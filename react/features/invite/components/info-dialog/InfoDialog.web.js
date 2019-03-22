@@ -128,7 +128,7 @@ class InfoDialog extends Component<Props, State> {
         let phoneNumber = state.phoneNumber;
 
         if (!state.phoneNumber && props.dialIn.numbers) {
-            phoneNumber = _getDefaultPhoneNumber(props.dialIn);
+            phoneNumber = _getDefaultPhoneNumber(props.dialIn.numbers);
         }
 
         return {
