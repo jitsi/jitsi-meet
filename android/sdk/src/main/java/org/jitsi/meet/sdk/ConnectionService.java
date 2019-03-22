@@ -191,6 +191,9 @@ public class ConnectionService extends android.telecom.ConnectionService {
             request.getAddress(),
             TelecomManager.PRESENTATION_ALLOWED);
         connection.setExtras(request.getExtras());
+
+        connection.setAudioModeIsVoip(true);
+
         // NOTE there's a time gap between the placeCall and this callback when
         // things could get out of sync, but they are put back in sync once
         // the startCall Promise is resolved below. That's because on
@@ -426,7 +429,7 @@ public class ConnectionService extends android.telecom.ConnectionService {
         @Override
         public String toString() {
             return String.format(
-                    "ConnectionImpl[adress=%s, uuid=%s]@%d",
+                    "ConnectionImpl[address=%s, uuid=%s]@%d",
                     getAddress(), getCallUUID(), hashCode());
         }
     }
