@@ -24,6 +24,7 @@ import android.provider.Settings;
 import android.support.annotation.Nullable;
 import android.util.Log;
 import android.view.KeyEvent;
+import android.widget.Toast;
 
 import org.jitsi.meet.sdk.JitsiMeet;
 import org.jitsi.meet.sdk.JitsiMeetActivity;
@@ -89,6 +90,10 @@ public class MainActivity extends JitsiMeetActivity {
     @Override
     public void onConferenceTerminated(Map<String, Object> data) {
         Log.d(TAG, "Conference terminated: " + data);
+        if(data.get("error")!=null && data.get("error").toString().contains("kicked")){
+            Toast.makeText(this,"您已被踢出会议！",Toast.LENGTH_LONG).show();
+        }
+
     }
 
     // Activity lifecycle method overrides

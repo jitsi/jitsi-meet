@@ -264,7 +264,7 @@
         },
         "status": "连接中"
     },
-    "\u0005connectionindicator": {},
+    "connectionindicator": {},
     "notify": {
         "connectedOneMember": "__name__ 进入会议室",
         "connectedTwoMembers": "__first__ 与 __second__ 进入会议室",
@@ -347,9 +347,9 @@
         "removeSharedVideoMsg": "您确定要移除共享的视频吗？",
         "alreadySharedVideoMsg": "",
         "alreadySharedVideoTitle": "",
-        "WaitingForHost": "等待主持人。。。",
-        "WaitForHostMsg": "会议<b>__room__ </b>还没有开始。如果您是主持人请授权开始，否则请等待主持人。",
-        "IamHost": "我是主持人。",
+        "WaitingForHost": "等待开放会议室。。。",
+        "WaitForHostMsg": "会议室<b>__room__ </b>还未开放。如果您是管理员请开放会议室后重新进入。",
+        "IamHost": "确定",
         "Cancel": "取消",
         "Submit": "提交",
         "retry": "重试",
@@ -434,6 +434,7 @@
         "yourEntireScreen": "你的整个屏幕",
         "lockRoom": "设置会议密码",
         "startRecording": "开始录像",
+        "WaitForHostMsgWOk": "会议室<b>__room__ </b>还未开放。如果您是管理员请开放会议室后重新进入。",
         "applicationWindow": "应用窗口"
     },
     "email": {

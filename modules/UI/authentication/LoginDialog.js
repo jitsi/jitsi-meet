@@ -4,6 +4,7 @@ import { toJid } from '../../../react/features/base/connection';
 import {
     JitsiConnectionErrors
 } from '../../../react/features/base/lib-jitsi-meet';
+import { disconnect } from '../../../react/features/base/connection';
 
 /**
  * Build html for "password required" dialog.
@@ -243,12 +244,13 @@ export default {
             buttons,
             (e, submitValue) => {
                 // Do not close the dialog yet.
-                e.preventDefault();
+                // e.preventDefault();
 
-                // Open login popup.
-                if (submitValue === 'authNow') {
-                    onAuthNow();
-                }
+                // // Open login popup.
+                // if (submitValue === 'authNow') {
+                //     onAuthNow();
+                // }
+                APP.store.dispatch(disconnect(true));
             }
         );
     }
