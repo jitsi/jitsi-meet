@@ -2,6 +2,7 @@
 
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import type { Dispatch } from 'redux';
 
 import { appendSuffix } from '../functions';
 
@@ -29,7 +30,7 @@ type Props = {
     /**
      * Invoked to update the participant's display name.
      */
-    dispatch: Dispatch<*>,
+    dispatch: Dispatch<any>,
 
     /**
      * A string to append to the displayName, if provided.

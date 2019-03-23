@@ -1,7 +1,6 @@
 // @flow
 
 import React from 'react';
-import { Linking } from 'react-native';
 
 import '../../analytics';
 import '../../authentication';
@@ -39,7 +38,12 @@ type Props = AbstractAppProps & {
     /**
      * An object of colors that override the default colors of the app/sdk.
      */
-    colorScheme: Object,
+    colorScheme: ?Object,
+
+    /**
+     * Identifier for this app on the native side.
+     */
+    externalAPIScope: string,
 
     /**
      * Whether Picture-in-Picture is enabled. If {@code true}, a toolbar button
@@ -73,9 +77,6 @@ export class App extends AbstractApp {
     constructor(props: Props) {
         super(props);
 
-        // Bind event handlers so they are only bound once for every instance.
-        this._onLinkingURL = this._onLinkingURL.bind(this);
-
         // In the Release configuration, React Native will (intentionally) throw
         // an unhandled JavascriptException for an unhandled JavaScript error.
         // This will effectively kill the app. In accord with the Web, do not
@@ -84,12 +85,11 @@ export class App extends AbstractApp {
     }
 
     /**
-     * Subscribe to notifications about activating URLs registered to be handled
-     * by this app.
+     * Initializes the color scheme.
      *
      * @inheritdoc
+     *
      * @returns {void}
-     * @see https://facebook.github.io/react-native/docs/linking.html
      */
     componentDidMount() {
         super.componentDidMount();
@@ -99,22 +99,6 @@ export class App extends AbstractApp {
             // unnecessary re-renders.
             this.state.store.dispatch(setColorScheme(this.props.colorScheme));
         });
-
-        Linking.addEventListener('url', this._onLinkingURL);
-    }
-
-    /**
-     * Unsubscribe from notifications about activating URLs registered to be
-     * handled by this app.
-     *
-     * @inheritdoc
-     * @returns {void}
-     * @see https://facebook.github.io/react-native/docs/linking.html
-     */
-    componentWillUnmount() {
-        Linking.removeEventListener('url', this._onLinkingURL);
-
-        super.componentWillUnmount();
     }
 
     /**
@@ -168,22 +152,6 @@ export class App extends AbstractApp {
             newHandler.next = oldHandler;
             global.ErrorUtils.setGlobalHandler(newHandler);
         }
-    }
-
-    _onLinkingURL: (*) => void;
-
-    /**
-     * Notified by React's Linking API that a specific URL registered to be
-     * handled by this app was activated.
-     *
-     * @param {Object} event - The details of the notification/event.
-     * @param {string} event.url - The URL registered to be handled by this app
-     * which was activated.
-     * @private
-     * @returns {void}
-     */
-    _onLinkingURL({ url }) {
-        super._openURL(url);
     }
 
     /**

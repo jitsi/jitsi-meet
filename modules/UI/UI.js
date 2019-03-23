@@ -14,10 +14,7 @@ import VideoLayout from './videolayout/VideoLayout';
 import Filmstrip from './videolayout/Filmstrip';
 
 import { JitsiTrackErrors } from '../../react/features/base/lib-jitsi-meet';
-import {
-    getLocalParticipant,
-    showParticipantJoinedNotification
-} from '../../react/features/base/participants';
+import { getLocalParticipant } from '../../react/features/base/participants';
 import { toggleChat } from '../../react/features/chat';
 import { openDisplayNamePrompt } from '../../react/features/display-name';
 import { setEtherpadHasInitialzied } from '../../react/features/etherpad';
@@ -380,8 +377,6 @@ UI.addUser = function(user) {
     if (status) {
         // FIXME: move updateUserStatus in participantPresenceChanged action
         UI.updateUserStatus(user, status);
-    } else {
-        APP.store.dispatch(showParticipantJoinedNotification(displayName));
     }
 
     // set initial display name

@@ -174,7 +174,17 @@ var config = {
     // Enable the dropbox integration.
     // dropbox: {
     //     appKey: '<APP_KEY>' // Specify your app key here.
+    //     // A URL to redirect the user to, after authenticating
+    //     // by default uses:
+    //     // 'https://jitsi-meet.example.com/static/oauth.html'
+    //     redirectURI:
+    //          'https://jitsi-meet.example.com/subfolder/static/oauth.html'
     // },
+    // When integrations like dropbox are enabled only that will be shown,
+    // by enabling fileRecordingsServiceEnabled, we show both the integrations
+    // and the generic recording service (its configuration and storage type
+    // depends on jibri configuration)
+    // fileRecordingsServiceEnabled: false
 
     // Whether to enable live streaming or not.
     // liveStreamingEnabled: false,
@@ -412,7 +422,6 @@ var config = {
      externalConnectUrl
      firefox_fake_device
      googleApiApplicationClientID
-     googleApiIOSClientID
      iAmRecorder
      iAmSipGateway
      microsoftApiApplicationClientID

@@ -19,6 +19,8 @@ class ClosedCaptionButton
     iconName = 'icon-closed_caption';
     toggledIconName = 'icon-closed_caption toggled';
     tooltip = 'transcribing.ccButtonTooltip';
+    label = 'toolbar.startSubtitles';
+    toggledLabel = 'toolbar.stopSubtitles';
 }
 
 export default translate(connect(_abstractMapStateToProps)(

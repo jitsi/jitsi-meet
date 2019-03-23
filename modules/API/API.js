@@ -5,6 +5,7 @@ import {
     createApiEvent,
     sendAnalytics
 } from '../../react/features/analytics';
+import { setSubject } from '../../react/features/base/conference';
 import { parseJWTFromURLParams } from '../../react/features/base/jwt';
 import { invite } from '../../react/features/invite';
 import { getJitsiMeetTransport } from '../transport';
@@ -65,7 +66,7 @@ function initCommands() {
         },
         'subject': subject => {
             sendAnalytics(createApiEvent('subject.changed'));
-            APP.conference.setSubject(subject);
+            APP.store.dispatch(setSubject(subject));
         },
         'submit-feedback': feedback => {
             sendAnalytics(createApiEvent('submit.feedback'));
@@ -552,16 +553,36 @@ class API {
     }
 
     /**
+     * Notify external application (if API is enabled) that the display
+     * configuration of the filmstrip has been changed.
+     *
+     * @param {boolean} visible - Whether or not the filmstrip has been set to
+     * be displayed or hidden.
+     * @returns {void}
+     */
+    notifyFilmstripDisplayChanged(visible: boolean) {
+        this._sendEvent({
+            name: 'filmstrip-display-changed',
+            visible
+        });
+    }
+
+    /**
      * Notify external application (if API is enabled) that the screen sharing
      * has been turned on/off.
      *
      * @param {boolean} on - True if screen sharing is enabled.
+     * @param {Object} details - Additional information about the screen
+     * sharing.
+     * @param {string} details.sourceType - Type of device or window the screen
+     * share is capturing.
      * @returns {void}
      */
-    notifyScreenSharingStatusChanged(on: boolean) {
+    notifyScreenSharingStatusChanged(on: boolean, details: Object) {
         this._sendEvent({
             name: 'screen-sharing-status-changed',
-            on
+            on,
+            details
         });
     }
 

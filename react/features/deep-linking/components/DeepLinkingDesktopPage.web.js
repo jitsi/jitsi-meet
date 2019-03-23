@@ -1,9 +1,10 @@
-/* @flow */
+// @flow
 
 import Button, { ButtonGroup } from '@atlaskit/button';
 import { AtlasKitThemeProvider } from '@atlaskit/theme';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import type { Dispatch } from 'redux';
 
 import { createDeepLinkingPageEvent, sendAnalytics } from '../../analytics';
 import { translate } from '../../base/i18n';
@@ -25,7 +26,7 @@ declare var interfaceConfig: Object;
     /**
      * Used to dispatch actions from the buttons.
      */
-    dispatch: Dispatch<*>,
+    dispatch: Dispatch<any>,
 
     /**
      * Used to obtain translations.

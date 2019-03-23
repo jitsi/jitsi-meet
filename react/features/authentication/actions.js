@@ -1,5 +1,7 @@
 // @flow
 
+import type { Dispatch } from 'redux';
+
 import { appNavigate } from '../app';
 import { checkIfCanJoin, conferenceLeft } from '../base/conference';
 import { connectionFailed } from '../base/connection';
@@ -33,7 +35,7 @@ export function authenticateAndUpgradeRole(
         id: string,
         password: string,
         conference: Object) {
-    return (dispatch: Dispatch, getState: Function) => {
+    return (dispatch: Dispatch<any>, getState: Function) => {
         const { password: roomPassword }
             = getState()['features/base/conference'];
         const process
@@ -73,7 +75,7 @@ export function authenticateAndUpgradeRole(
  * }}
  */
 export function cancelLogin() {
-    return (dispatch: Dispatch<*>, getState: Function) => {
+    return (dispatch: Dispatch<any>, getState: Function) => {
         dispatch({ type: CANCEL_LOGIN });
 
         // XXX The error associated with CONNECTION_FAILED was marked as
@@ -100,7 +102,7 @@ export function cancelLogin() {
  * @returns {Function}
  */
 export function cancelWaitForOwner() {
-    return (dispatch: Dispatch<*>, getState: Function) => {
+    return (dispatch: Dispatch<any>, getState: Function) => {
         dispatch(stopWaitForOwner());
 
         // XXX The error associated with CONFERENCE_FAILED was marked as
@@ -228,7 +230,7 @@ function _upgradeRoleStarted(thenableWithCancel) {
  * @returns {Function}
  */
 export function waitForOwner() {
-    return (dispatch: Dispatch) =>
+    return (dispatch: Dispatch<any>) =>
         dispatch({
             type: WAIT_FOR_OWNER,
             handler: () => dispatch(checkIfCanJoin()),

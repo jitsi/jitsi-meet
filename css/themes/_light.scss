@@ -80,9 +80,12 @@ $errorColor: #c61600;
 $feedbackCancelFontColor: #333;
 
 // Popover colors
-$popoverBg: #000;
-$popoverFontColor: #ffffff;
-$popupMenuSelectedItemBackground: rgba(256, 256, 256, .2);
+$popoverBg: initial;
+$popoverFontColor: #ffffff !important;
+$popupMenuColor: #ffffff !important;
+$popupMenuHoverColor: #ffffff !important;
+$popupMenuHoverBackground: rgba(255, 255, 255, 0.1);
+$popupSliderColor: #0376da;
 
 // Toolbar
 $secondaryToolbarBg: rgba(0, 0, 0, 0.5);

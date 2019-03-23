@@ -15,6 +15,11 @@ type Props = {
     conferenceID: number,
 
     /**
+     * The name of the conference.
+     */
+    conferenceName: ?string,
+
+    /**
      * Invoked to obtain translated strings.
      */
     t: Function
@@ -33,11 +38,19 @@ class ConferenceID extends Component<Props> {
      * @returns {ReactElement}
      */
     render() {
-        const { conferenceID, t } = this.props;
+        const { conferenceID, conferenceName, t } = this.props;
 
         return (
             <div className = 'dial-in-conference-id'>
-                { t('info.dialANumber', { conferenceID }) }
+                <div className = 'dial-in-conference-name'>
+                    { conferenceName }
+                </div>
+                <div className = 'dial-in-conference-description'>
+                    { t('info.dialANumber') }
+                </div>
+                <div className = 'dial-in-conference-pin'>
+                    { `${t('info.dialInConferenceID')} ${conferenceID}` }
+                </div>
             </div>
         );
     }

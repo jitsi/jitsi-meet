@@ -1,5 +1,7 @@
 // @flow
 
+import type { Dispatch } from 'redux';
+
 import { APP_WILL_MOUNT, APP_WILL_UNMOUNT } from './actionTypes';
 
 declare var APP;
@@ -14,7 +16,7 @@ declare var APP;
  * }}
  */
 export function appWillMount(app: Object) {
-    return (dispatch: Dispatch<*>) => {
+    return (dispatch: Dispatch<any>) => {
         dispatch({
             type: APP_WILL_MOUNT,
             app

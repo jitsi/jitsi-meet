@@ -7,6 +7,7 @@ import {
     View
 } from 'react-native';
 import { connect } from 'react-redux';
+import type { Dispatch } from 'redux';
 
 import {
     getNearestReceiverVideoQualityLevel,
@@ -34,7 +35,7 @@ type Props = {
     /**
      * Invoked to update the receiver video quality.
      */
-    dispatch: Dispatch<*>,
+    dispatch: Dispatch<any>,
 
     /**
      * Callback to invoke when tile view is tapped.
@@ -334,4 +335,5 @@ function _mapStateToProps(state) {
     };
 }
 
+// $FlowExpectedError
 export default connect(_mapStateToProps)(makeAspectRatioAware(TileView));

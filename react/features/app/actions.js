@@ -31,7 +31,7 @@ declare var APP: Object;
  * @returns {Function}
  */
 export function appNavigate(uri: ?string) {
-    return (dispatch: Dispatch<*>, getState: Function) =>
+    return (dispatch: Dispatch<any>, getState: Function) =>
         _appNavigateToOptionalLocation(dispatch, getState, parseURIString(uri));
 }
 
@@ -50,7 +50,7 @@ export function appNavigate(uri: ?string) {
  * @returns {Promise<void>}
  */
 function _appNavigateToMandatoryLocation(
-        dispatch: Dispatch<*>, getState: Function,
+        dispatch: Dispatch<any>, getState: Function,
         newLocation: Object
 ): Promise<void> {
     const { room } = newLocation;
@@ -111,7 +111,7 @@ function _appNavigateToMandatoryLocation(
  * @returns {void}
  */
 function _appNavigateToOptionalLocation(
-        dispatch: Dispatch<*>, getState: Function,
+        dispatch: Dispatch<any>, getState: Function,
         location: Object) {
     // If the specified location (URI) does not identify a host, use the app's
     // default.
@@ -150,7 +150,7 @@ function _appNavigateToOptionalLocation(
  * @returns {Promise<Object>}
  */
 function _loadConfig(
-        dispatch: Dispatch<*>,
+        dispatch: Dispatch<any>,
         getState: Function,
         { contextRoot, host, protocol, room }) {
     // XXX As the mobile/React Native app does not employ config on the
@@ -211,7 +211,7 @@ function _loadConfig(
  * @returns {Function}
  */
 export function redirectWithStoredParams(pathname: string) {
-    return (dispatch: Dispatch<*>, getState: Function) => {
+    return (dispatch: Dispatch<any>, getState: Function) => {
         const { locationURL } = getState()['features/base/connection'];
         const newLocationURL = new URL(locationURL.href);
 
@@ -248,7 +248,7 @@ export function reloadNow() {
  * @returns {Function}
  */
 export function reloadWithStoredParams() {
-    return (dispatch: Dispatch<*>, getState: Function) => {
+    return (dispatch: Dispatch<any>, getState: Function) => {
         const { locationURL } = getState()['features/base/connection'];
         const windowLocation = window.location;
         const oldSearchString = windowLocation.search;

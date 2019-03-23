@@ -338,14 +338,36 @@ export function createProfilePanelButtonEvent(buttonName, attributes = {}) {
  * @param {string} dialogName - The name of the dialog (e.g. 'start' or 'stop').
  * @param {string} buttonName - The name of the button (e.g. 'confirm' or
  * 'cancel').
+ * @param {Object} attributes - Attributes to attach to the event.
  * @returns {Object} The event in a format suitable for sending via
  * sendAnalytics.
  */
-export function createRecordingDialogEvent(dialogName, buttonName) {
+export function createRecordingDialogEvent(
+        dialogName, buttonName, attributes = {}) {
     return {
         action: 'clicked',
         actionSubject: buttonName,
+        attributes,
         source: `${dialogName}.recording.dialog`,
+        type: TYPE_UI
+    };
+}
+
+/**
+ * Creates an event which indicates that a specific button on one of the
+ * liveStreaming-related dialogs was clicked.
+ *
+ * @param {string} dialogName - The name of the dialog (e.g. 'start' or 'stop').
+ * @param {string} buttonName - The name of the button (e.g. 'confirm' or
+ * 'cancel').
+ * @returns {Object} The event in a format suitable for sending via
+ * sendAnalytics.
+ */
+export function createLiveStreamingDialogEvent(dialogName, buttonName) {
+    return {
+        action: 'clicked',
+        actionSubject: buttonName,
+        source: `${dialogName}.liveStreaming.dialog`,
         type: TYPE_UI
     };
 }

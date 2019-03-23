@@ -1,5 +1,6 @@
 /*
- * Copyright @ 2017-present Atlassian Pty Ltd
+ * Copyright @ 2018-present 8x8, Inc.
+ * Copyright @ 2017-2018 Atlassian Pty Ltd
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,18 +16,16 @@
  */
 
 #import <Availability.h>
-#import <CoreSpotlight/CoreSpotlight.h>
-#import <MobileCoreServices/MobileCoreServices.h>
+
+@import CoreSpotlight;
+@import MobileCoreServices;
+@import Intents;  // Needed for NSUserActivity suggestedInvocationPhrase
+
+@import JitsiMeet;
 
 #import "Types.h"
 #import "ViewController.h"
 
-// Needed for NSUserActivity suggestedInvocationPhrase
-@import Intents;
-
-
-@interface ViewController ()
-@end
 
 @implementation ViewController
 
@@ -36,16 +35,8 @@
     JitsiMeetView *view = (JitsiMeetView *) self.view;
     view.delegate = self;
 
-    // As this is the Jitsi Meet app (i.e. not the Jitsi Meet SDK), we do want
-    // the Welcome page to be enabled. It defaults to disabled in the SDK at the
-    // time of this writing but it is clearer to be explicit about what we want
-    // anyway.
-    view.welcomePageEnabled = YES;
-
-    [view loadURL:nil];
+    [view join:[[JitsiMeet sharedInstance] getInitialConferenceOptions]];
 }
-
-
 
 // JitsiMeetViewDelegate
 
@@ -61,10 +52,6 @@
         @"JitsiMeetViewDelegate %@ method invoked on a non-main thread",
         name);
 #endif
-}
-
-- (void)conferenceFailed:(NSDictionary *)data {
-    [self _onJitsiMeetViewDelegateEvent:@"CONFERENCE_FAILED" withData:data];
 }
 
 - (void)conferenceJoined:(NSDictionary *)data {
@@ -101,20 +88,12 @@
 
 }
 
-- (void)conferenceLeft:(NSDictionary *)data {
-    [self _onJitsiMeetViewDelegateEvent:@"CONFERENCE_LEFT" withData:data];
+- (void)conferenceTerminated:(NSDictionary *)data {
+    [self _onJitsiMeetViewDelegateEvent:@"CONFERENCE_TERMINATED" withData:data];
 }
 
 - (void)conferenceWillJoin:(NSDictionary *)data {
     [self _onJitsiMeetViewDelegateEvent:@"CONFERENCE_WILL_JOIN" withData:data];
-}
-
-- (void)conferenceWillLeave:(NSDictionary *)data {
-    [self _onJitsiMeetViewDelegateEvent:@"CONFERENCE_WILL_LEAVE" withData:data];
-}
-
-- (void)loadConfigError:(NSDictionary *)data {
-    [self _onJitsiMeetViewDelegateEvent:@"LOAD_CONFIG_ERROR" withData:data];
 }
 
 @end

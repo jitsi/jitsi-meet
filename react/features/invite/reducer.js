@@ -6,9 +6,12 @@ import {
     ADD_PENDING_INVITE_REQUEST,
     REMOVE_PENDING_INVITE_REQUESTS,
     SET_CALLEE_INFO_VISIBLE,
+    SET_INVITE_DIALOG_VISIBLE,
     UPDATE_DIAL_IN_NUMBERS_FAILED,
     UPDATE_DIAL_IN_NUMBERS_SUCCESS
 } from './actionTypes';
+
+const logger = require('jitsi-meet-logger').getLogger(__filename);
 
 const DEFAULT_STATE = {
     /**
@@ -18,7 +21,7 @@ const DEFAULT_STATE = {
      * @type {boolean|undefined}
      */
     calleeInfoVisible: false,
-
+    inviteDialogVisible: false,
     numbersEnabled: true,
     pendingInviteRequests: []
 };
@@ -47,6 +50,12 @@ ReducerRegistry.register('features/invite', (state = DEFAULT_STATE, action) => {
             initialCalleeInfo: action.initialCalleeInfo
         };
 
+    case SET_INVITE_DIALOG_VISIBLE:
+        return {
+            ...state,
+            inviteDialogVisible: action.visible
+        };
+
     case UPDATE_DIAL_IN_NUMBERS_FAILED:
         return {
             ...state,
@@ -54,17 +63,24 @@ ReducerRegistry.register('features/invite', (state = DEFAULT_STATE, action) => {
         };
 
     case UPDATE_DIAL_IN_NUMBERS_SUCCESS: {
-        const {
-            defaultCountry,
-            numbers,
-            numbersEnabled
-        } = action.dialInNumbers;
+        if (Array.isArray(action.dialInNumbers)) {
+            return {
+                ...state,
+                conferenceID: action.conferenceID,
+                numbers: action.dialInNumbers,
+                numbersEnabled: true
+            };
+        }
+
+        // this is the old format which is deprecated
+        logger.warn('Using deprecated API for retrieving phone numbers');
+
+        const { numbersEnabled } = action.dialInNumbers;
 
         return {
             ...state,
             conferenceID: action.conferenceID,
-            defaultCountry,
-            numbers,
+            numbers: action.dialInNumbers,
             numbersEnabled
         };
     }

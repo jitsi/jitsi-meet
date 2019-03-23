@@ -22,7 +22,7 @@ class KickRemoteParticipantDialog extends AbstractKickRemoteParticipantDialog {
     render() {
         return (
             <Dialog
-                okTitleKey = 'dialog.kickParticipantButton'
+                okKey = 'dialog.kickParticipantButton'
                 onSubmit = { this._onSubmit }
                 titleKey = 'dialog.kickParticipantTitle'
                 width = 'small'>

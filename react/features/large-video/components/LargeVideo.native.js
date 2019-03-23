@@ -72,7 +72,7 @@ class LargeVideo extends Component<Props, State> {
      * @param {Object} props - The read-only properties with which the new
      * instance is to be initialized.
      */
-    constructor(props) {
+    constructor(props: Props) {
         super(props);
 
         // Bind event handlers so they are only bound once per instance.
@@ -159,4 +159,5 @@ function _mapStateToProps(state) {
     };
 }
 
+// $FlowExpectedError
 export default connect(_mapStateToProps)(LargeVideo);

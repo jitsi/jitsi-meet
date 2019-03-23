@@ -11,12 +11,14 @@ import {
 } from 'react-native';
 import { connect } from 'react-redux';
 
+import { ColorSchemeRegistry } from '../../../base/color-scheme';
 import { translate } from '../../../base/i18n';
 import { BackButton, Header, Modal } from '../../../base/react';
 
 import {
     AbstractSettingsView,
-    _mapStateToProps
+    _mapStateToProps as _abstractMapStateToProps,
+    type Props as AbstractProps
 } from '../AbstractSettingsView';
 import { setSettingsViewVisible } from '../../actions';
 import FormRow from './FormRow';
@@ -25,12 +27,20 @@ import { normalizeUserInputURL } from '../../functions';
 import styles from './styles';
 import { HeaderLabel } from '../../../base/react/components/native';
 
+type Props = AbstractProps & {
+
+    /**
+     * Color schemed style of the header component.
+     */
+    _headerStyles: Object
+}
+
 /**
  * The native container rendering the app settings page.
  *
  * @extends AbstractSettingsView
  */
-class SettingsView extends AbstractSettingsView {
+class SettingsView extends AbstractSettingsView<Props> {
     _urlField: Object;
 
     /**
@@ -60,7 +70,7 @@ class SettingsView extends AbstractSettingsView {
                 onRequestClose = { this._onRequestClose }
                 presentationStyle = 'overFullScreen'
                 visible = { this.props._visible }>
-                <View style = { Header.pageStyle }>
+                <View style = { this.props._headerStyles.page }>
                     { this._renderHeader() }
                     { this._renderBody() }
                 </View>
@@ -237,6 +247,21 @@ class SettingsView extends AbstractSettingsView {
             ]
         );
     }
+}
+
+/**
+ * Maps part of the Redux state to the props of this component.
+ *
+ * @param {Object} state - The Redux state.
+ * @returns {{
+ *     _headerStyles: Object
+ * }}
+ */
+function _mapStateToProps(state) {
+    return {
+        ..._abstractMapStateToProps(state),
+        _headerStyles: ColorSchemeRegistry.get(state, 'Header')
+    };
 }
 
 export default translate(connect(_mapStateToProps)(SettingsView));

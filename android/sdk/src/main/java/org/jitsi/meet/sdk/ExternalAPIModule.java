@@ -22,14 +22,18 @@ import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContextBaseJavaModule;
 import com.facebook.react.bridge.ReactMethod;
 import com.facebook.react.bridge.ReadableMap;
+import com.facebook.react.module.annotations.ReactModule;
 
 /**
  * Module implementing an API for sending events from JavaScript to native code.
  */
+@ReactModule(name = ExternalAPIModule.NAME)
 class ExternalAPIModule
     extends ReactContextBaseJavaModule {
 
-    private static final String TAG = ExternalAPIModule.class.getSimpleName();
+    public static final String NAME = "ExternalAPI";
+
+    private static final String TAG = NAME;
 
     /**
      * Initializes a new module instance. There shall be a single instance of
@@ -49,7 +53,7 @@ class ExternalAPIModule
      */
     @Override
     public String getName() {
-        return "ExternalAPI";
+        return NAME;
     }
 
     /**

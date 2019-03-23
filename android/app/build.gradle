@@ -22,17 +22,7 @@ android {
         targetSdkVersion rootProject.ext.targetSdkVersion
 
         ndk {
-            abiFilters 'armeabi-v7a', 'x86'
-        }
-
-        packagingOptions {
-            // The project react-native does not provide 64-bit binaries at the
-            // time of this writing. Unfortunately, packaging any 64-bit
-            // binaries into the .apk will crash the app at runtime on 64-bit
-            // platforms.
-            exclude '/lib/mips64/**'
-            exclude '/lib/arm64-v8a/**'
-            exclude '/lib/x86_64/**'
+            abiFilters 'armeabi-v7a', 'arm64-v8a', 'x86', 'x86_64'
         }
     }
 
@@ -114,21 +104,53 @@ gradle.projectsEvaluated {
 
         android.applicationVariants.all { variant ->
             variant.outputs.each { output ->
-                output.processManifest.doLast {
-                    def f = new File(manifestOutputDirectory, 'AndroidManifest.xml')
-                    if (!f.isFile()) {
-                        f = new File(new File(manifestOutputDirectory, output.dirName), 'AndroidManifest.xml')
-                    }
-                    if (f.exists()) {
-                        def charset = 'UTF-8'
-                        def s = f.getText(charset)
-                        s = s.replace('</application>', "${dropboxActivity}</application>")
-                        f.write(s, charset)
-                    }
+                output.getProcessManifestProvider().get().doLast {
+                    def outputDir = manifestOutputDirectory.get().asFile
+                    def manifestPath = new File(outputDir, 'AndroidManifest.xml')
+                    def charset = 'UTF-8'
+                    def text
+                    text = manifestPath.getText(charset)
+                    text = text.replace('</application>', "${dropboxActivity}</application>")
+                    manifestPath.write(text, charset)
                 }
             }
         }
     }
+
+    // Run React packager
+    android.applicationVariants.all { variant ->
+        def targetName = variant.name.capitalize()
+
+        def currentRunPackagerTask = tasks.create(
+                name: "run${targetName}ReactPackager",
+                type: Exec) {
+            group = "react"
+            description = "Run the React packager."
+
+            doFirst {
+                println "Starting the React packager..."
+
+                def androidRoot = file("${projectDir}/../")
+
+                // Set up the call to the script
+                workingDir androidRoot
+
+                // Run the packager
+                commandLine("scripts/run-packager.sh")
+            }
+
+            // Set up dev mode
+            def devEnabled = !targetName.toLowerCase().contains("release")
+
+            // Only enable for dev builds
+            enabled devEnabled
+        }
+
+        def packageTask = variant.packageApplicationProvider.get()
+
+        packageTask.dependsOn(currentRunPackagerTask)
+    }
+
 }
 
 if (googleServicesEnabled) {

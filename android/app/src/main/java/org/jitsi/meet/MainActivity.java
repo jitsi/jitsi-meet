@@ -17,16 +17,19 @@
 
 package org.jitsi.meet;
 
+import android.content.Intent;
 import android.net.Uri;
-import android.os.Bundle;
+import android.os.Build;
+import android.provider.Settings;
+import android.support.annotation.Nullable;
 import android.util.Log;
+import android.view.KeyEvent;
 
+import org.jitsi.meet.sdk.JitsiMeet;
 import org.jitsi.meet.sdk.JitsiMeetActivity;
-import org.jitsi.meet.sdk.JitsiMeetView;
-import org.jitsi.meet.sdk.JitsiMeetViewListener;
+import org.jitsi.meet.sdk.JitsiMeetConferenceOptions;
 
 import com.crashlytics.android.Crashlytics;
-import com.facebook.react.bridge.UiThreadUtil;
 import com.google.firebase.dynamiclinks.FirebaseDynamicLinks;
 import io.fabric.sdk.android.Fabric;
 
@@ -35,87 +38,25 @@ import java.net.URL;
 import java.util.Map;
 
 /**
- * The one and only {@link Activity} that the Jitsi Meet app needs. The
+ * The one and only Activity that the Jitsi Meet app needs. The
  * {@code Activity} is launched in {@code singleTask} mode, so it will be
  * created upon application initialization and there will be a single instance
  * of it. Further attempts at launching the application once it was already
- * launched will result in {@link Activity#onNewIntent(Intent)} being called.
- *
- * This {@code Activity} extends {@link JitsiMeetActivity} to keep the React
- * Native CLI working, since the latter always tries to launch an
- * {@code Activity} named {@code MainActivity} when doing
- * {@code react-native run-android}.
+ * launched will result in {@link MainActivity#onNewIntent(Intent)} being called.
  */
 public class MainActivity extends JitsiMeetActivity {
+    /**
+     * The request code identifying requests for the permission to draw on top
+     * of other apps. The value must be 16-bit and is arbitrarily chosen here.
+     */
+    private static final int OVERLAY_PERMISSION_REQUEST_CODE
+        = (int) (Math.random() * Short.MAX_VALUE);
+
+    // JitsiMeetActivity overrides
+    //
 
     @Override
-    protected JitsiMeetView initializeView() {
-        JitsiMeetView view = super.initializeView();
-
-        // XXX In order to increase (1) awareness of API breakages and (2) API
-        // coverage, utilize JitsiMeetViewListener in the Debug configuration of
-        // the app.
-        if (BuildConfig.DEBUG && view != null) {
-            view.setListener(new JitsiMeetViewListener() {
-                private void on(String name, Map<String, Object> data) {
-                    UiThreadUtil.assertOnUiThread();
-
-                    // Log with the tag "ReactNative" in order to have the log
-                    // visible in react-native log-android as well.
-                    Log.d(
-                        "ReactNative",
-                        JitsiMeetViewListener.class.getSimpleName() + " "
-                            + name + " "
-                            + data);
-                }
-
-                @Override
-                public void onConferenceFailed(Map<String, Object> data) {
-                    on("CONFERENCE_FAILED", data);
-                }
-
-                @Override
-                public void onConferenceJoined(Map<String, Object> data) {
-                    on("CONFERENCE_JOINED", data);
-                }
-
-                @Override
-                public void onConferenceLeft(Map<String, Object> data) {
-                    on("CONFERENCE_LEFT", data);
-                }
-
-                @Override
-                public void onConferenceWillJoin(Map<String, Object> data) {
-                    on("CONFERENCE_WILL_JOIN", data);
-                }
-
-                @Override
-                public void onConferenceWillLeave(Map<String, Object> data) {
-                    on("CONFERENCE_WILL_LEAVE", data);
-                }
-
-                @Override
-                public void onLoadConfigError(Map<String, Object> data) {
-                    on("LOAD_CONFIG_ERROR", data);
-                }
-            });
-
-        }
-
-        return view;
-    }
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        // As this is the Jitsi Meet app (i.e. not the Jitsi Meet SDK), we do
-        // want to enable some options.
-
-        // The welcome page defaults to disabled in the SDK at the time of this
-        // writing but it is clearer to be explicit about what we want anyway.
-        setWelcomePageEnabled(true);
-
-        super.onCreate(savedInstanceState);
-
+    protected boolean extraInitialize() {
         // Setup Crashlytics and Firebase Dynamic Links
         if (BuildConfig.GOOGLE_SERVICES_ENABLED) {
             Fabric.with(this, new Crashlytics());
@@ -129,14 +70,90 @@ public class MainActivity extends JitsiMeetActivity {
                     }
 
                     if (dynamicLink != null) {
-                        try {
-                            loadURL(new URL(dynamicLink.toString()));
-                        } catch (MalformedURLException e) {
-                            Log.d("ReactNative", "Malformed dynamic link", e);
-                        }
+                        join(dynamicLink.toString());
                     }
                 });
         }
+
+        // In Debug builds React needs permission to write over other apps in
+        // order to display the warning and error overlays.
+        if (BuildConfig.DEBUG) {
+            if (canRequestOverlayPermission() && !Settings.canDrawOverlays(this)) {
+                Intent intent
+                    = new Intent(
+                    Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
+                    Uri.parse("package:" + getPackageName()));
+
+                startActivityForResult(intent, OVERLAY_PERMISSION_REQUEST_CODE);
+
+                return true;
+            }
+        }
+
+        return false;
     }
 
+    @Override
+    protected void initialize() {
+        // Set default options
+        JitsiMeetConferenceOptions defaultOptions
+            = new JitsiMeetConferenceOptions.Builder()
+                .setWelcomePageEnabled(true)
+                .setServerURL(buildURL("https://meet.jit.si"))
+                .build();
+        JitsiMeet.setDefaultConferenceOptions(defaultOptions);
+
+        super.initialize();
+    }
+
+    @Override
+    public void onConferenceTerminated(Map<String, Object> data) {
+        Log.d(TAG, "Conference terminated: " + data);
+    }
+
+    // Activity lifecycle method overrides
+    //
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == OVERLAY_PERMISSION_REQUEST_CODE
+                && canRequestOverlayPermission()) {
+            if (Settings.canDrawOverlays(this)) {
+                initialize();
+                return;
+            }
+
+            throw new RuntimeException("Overlay permission is required when running in Debug mode.");
+        }
+
+        super.onActivityResult(requestCode, resultCode, data);
+    }
+
+    // ReactAndroid/src/main/java/com/facebook/react/ReactActivity.java
+    @Override
+    public boolean onKeyUp(int keyCode, KeyEvent event) {
+        if (BuildConfig.DEBUG && keyCode == KeyEvent.KEYCODE_MENU) {
+            JitsiMeet.showDevOptions();
+            return true;
+        }
+
+        return super.onKeyUp(keyCode, event);
+    }
+
+    // Helper methods
+    //
+
+    private @Nullable URL buildURL(String urlStr) {
+        try {
+            return new URL(urlStr);
+        } catch (MalformedURLException e) {
+            return null;
+        }
+    }
+
+    private boolean canRequestOverlayPermission() {
+        return
+            Build.VERSION.SDK_INT >= Build.VERSION_CODES.M
+                && getApplicationInfo().targetSdkVersion >= Build.VERSION_CODES.M;
+    }
 }

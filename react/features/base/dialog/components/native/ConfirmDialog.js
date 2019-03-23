@@ -13,8 +13,7 @@ import { type Props as BaseProps } from './BaseDialog';
 import BaseSubmitDialog from './BaseSubmitDialog';
 import { brandedDialog } from './styles';
 
-type Props = {
-    ...BaseProps,
+type Props = BaseProps & {
 
     /**
      * The color-schemed stylesheet of the feature.
@@ -43,7 +42,7 @@ class ConfirmDialog extends BaseSubmitDialog<Props, *> {
      * @returns {string}
      */
     _getSubmitButtonKey() {
-        return 'dialog.confirmYes';
+        return this.props.okKey || 'dialog.confirmYes';
     }
 
     _onCancel: () => void;
@@ -57,18 +56,18 @@ class ConfirmDialog extends BaseSubmitDialog<Props, *> {
      * @inheritdoc
      */
     _renderAdditionalButtons() {
-        const { _dialogStyles, t } = this.props;
+        const { _dialogStyles, cancelKey, t } = this.props;
 
         return (
             <TouchableOpacity
                 onPress = { this._onCancel }
                 style = { [
-                    brandedDialog.button,
+                    _dialogStyles.button,
                     brandedDialog.buttonFarLeft,
                     _dialogStyles.buttonSeparator
                 ] }>
-                <Text style = { _dialogStyles.text }>
-                    { t('dialog.confirmNo') }
+                <Text style = { _dialogStyles.buttonLabel }>
+                    { t(cancelKey || 'dialog.confirmNo') }
                 </Text>
             </TouchableOpacity>
         );
@@ -80,6 +79,10 @@ class ConfirmDialog extends BaseSubmitDialog<Props, *> {
      * @inheritdoc
      */
     _renderSubmittable() {
+        if (this.props.children) {
+            return this.props.children;
+        }
+
         const { _dialogStyles, contentKey, t } = this.props;
         const content
             = typeof contentKey === 'string'

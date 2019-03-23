@@ -27,4 +27,5 @@ class DisplayNamePrompt extends AbstractDisplayNamePrompt<*> {
     _onSetDisplayName: string => boolean;
 }
 
+// $FlowExpectedError
 export default connect()(DisplayNamePrompt);

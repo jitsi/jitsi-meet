@@ -1,7 +1,7 @@
 // @flow
 
 import _ from 'lodash';
-import React, { Component } from 'react';
+import React from 'react';
 import { connect as reactReduxConnect } from 'react-redux';
 
 import VideoLayout from '../../../../../modules/UI/videolayout/VideoLayout';
@@ -13,12 +13,7 @@ import { Chat } from '../../../chat';
 import { Filmstrip } from '../../../filmstrip';
 import { CalleeInfoContainer } from '../../../invite';
 import { LargeVideo } from '../../../large-video';
-import { NotificationsContainer } from '../../../notifications';
-import {
-    LAYOUTS,
-    getCurrentLayout,
-    shouldDisplayTileView
-} from '../../../video-layout';
+import { LAYOUTS, getCurrentLayout } from '../../../video-layout';
 
 import {
     Toolbox,
@@ -31,6 +26,13 @@ import { maybeShowSuboptimalExperienceNotification } from '../../functions';
 
 import Labels from './Labels';
 import { default as Notice } from './Notice';
+import { default as Subject } from './Subject';
+import {
+    AbstractConference,
+    abstractMapStateToProps
+} from '../AbstractConference';
+
+import type { AbstractProps } from '../AbstractConference';
 
 declare var APP: Object;
 declare var config: Object;
@@ -67,7 +69,7 @@ const LAYOUT_CLASSNAMES = {
 /**
  * The type of the React {@code Component} props of {@link Conference}.
  */
-type Props = {
+type Props = AbstractProps & {
 
     /**
      * Whether the local participant is recording the conference.
@@ -80,16 +82,6 @@ type Props = {
      */
     _layoutClassName: string,
 
-    /**
-     * Conference room name.
-     */
-    _room: string,
-
-    /**
-     * Whether or not the current UI layout should be in tile view.
-     */
-    _shouldDisplayTileView: boolean,
-
     dispatch: Function,
     t: Function
 }
@@ -97,7 +89,7 @@ type Props = {
 /**
  * The conference page of the Web application.
  */
-class Conference extends Component<Props> {
+class Conference extends AbstractConference<Props, *> {
     _onFullScreenChange: Function;
     _onShowToolbar: Function;
     _originalOnShowToolbar: Function;
@@ -217,6 +209,7 @@ class Conference extends Component<Props> {
                 id = 'videoconference_page'
                 onMouseMove = { this._onShowToolbar }>
                 <Notice />
+                <Subject />
                 <div id = 'videospace'>
                     <LargeVideo />
                     { hideVideoQualityLabel
@@ -227,7 +220,7 @@ class Conference extends Component<Props> {
                 { filmstripOnly || <Toolbox /> }
                 { filmstripOnly || <Chat /> }
 
-                <NotificationsContainer />
+                { this.renderNotificationsContainer() }
 
                 <CalleeInfoContainer />
             </div>
@@ -288,22 +281,17 @@ class Conference extends Component<Props> {
  *
  * @param {Object} state - The Redux state.
  * @private
- * @returns {{
- *     _iAmRecorder: boolean,
- *     _layoutClassName: string,
- *     _room: ?string,
- *     _shouldDisplayTileView: boolean
- * }}
+ * @returns {Props}
  */
 function _mapStateToProps(state) {
     const currentLayout = getCurrentLayout(state);
 
     return {
+        ...abstractMapStateToProps(state),
         _iAmRecorder: state['features/base/config'].iAmRecorder,
-        _layoutClassName: LAYOUT_CLASSNAMES[currentLayout],
-        _room: state['features/base/conference'].room,
-        _shouldDisplayTileView: shouldDisplayTileView(state)
+        _layoutClassName: LAYOUT_CLASSNAMES[currentLayout]
     };
 }
 
+// $FlowExpectedError
 export default reactReduxConnect(_mapStateToProps)(translate(Conference));

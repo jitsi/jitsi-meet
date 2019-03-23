@@ -7,7 +7,7 @@
  *     status: string
  * }
  */
-export const SET_SHARED_VIDEO_STATUS = Symbol('SET_SHARED_VIDEO_STATUS');
+export const SET_SHARED_VIDEO_STATUS = 'SET_SHARED_VIDEO_STATUS';
 
 /**
  * The type of the action which signals to start the flow for starting or
@@ -17,4 +17,4 @@ export const SET_SHARED_VIDEO_STATUS = Symbol('SET_SHARED_VIDEO_STATUS');
  *     type: TOGGLE_SHARED_VIDEO
  * }
  */
-export const TOGGLE_SHARED_VIDEO = Symbol('TOGGLE_SHARED_VIDEO');
+export const TOGGLE_SHARED_VIDEO = 'TOGGLE_SHARED_VIDEO';

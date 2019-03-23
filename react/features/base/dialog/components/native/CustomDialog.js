@@ -21,4 +21,5 @@ class CustomDialog extends BaseDialog<Props, *> {
     }
 }
 
+// $FlowExpectedError
 export default connect(_abstractMapStateToProps)(CustomDialog);

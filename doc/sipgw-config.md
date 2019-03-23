@@ -19,10 +19,6 @@ edit /etc/jitsi/jicofo/sip-communicator.properties (or similar), set the appropr
   peopleSearchQueryTypes: ['conferenceRooms'],
   peopleSearchUrl: 'https://api.yourdomain.com/testpath/searchpeople',
 ```
- - interface_config.js:
-```
-  ADD_PEOPLE_APP_NAME: 'Jitsi'
-```
 
 The combination of the above settings and providing a jwt token will enable a button under invite option which will show the dialog 'Add people'.
 

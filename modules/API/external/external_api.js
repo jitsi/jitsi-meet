@@ -44,6 +44,7 @@ const events = {
     'email-change': 'emailChange',
     'feedback-submitted': 'feedbackSubmitted',
     'feedback-prompt-displayed': 'feedbackPromptDisplayed',
+    'filmstrip-display-changed': 'filmstripDisplayChanged',
     'incoming-message': 'incomingMessage',
     'outgoing-message': 'outgoingMessage',
     'participant-joined': 'participantJoined',
@@ -534,6 +535,7 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
      * @returns {void}
      */
     dispose() {
+        this.emit('_willDispose');
         this._transport.dispose();
         this.removeAllListeners();
         if (this._frame) {
@@ -546,7 +548,7 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
      * {@code displayName} - Sets the display name of the local participant to
      * the value passed in the arguments array.
      * {@code subject} - Sets the subject of the conference, the value passed
-     * in the arguments array. Note: available only for moderator.
+     * in the arguments array. Note: Available only for moderator.
      *
      * {@code toggleAudio} - Mutes / unmutes audio with no arguments.
      * {@code toggleVideo} - Mutes / unmutes video with no arguments.

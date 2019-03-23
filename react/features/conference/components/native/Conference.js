@@ -1,8 +1,8 @@
 // @flow
 
-import React, { Component } from 'react';
+import React from 'react';
 
-import { BackHandler, StatusBar, View } from 'react-native';
+import { BackHandler, SafeAreaView, StatusBar, View } from 'react-native';
 import { connect as reactReduxConnect } from 'react-redux';
 
 import { appNavigate } from '../../../app';
@@ -10,6 +10,7 @@ import { connect, disconnect } from '../../../base/connection';
 import { getParticipantCount } from '../../../base/participants';
 import { Container, LoadingIndicator, TintedView } from '../../../base/react';
 import {
+    isNarrowAspectRatio,
     makeAspectRatioAware
 } from '../../../base/responsive-ui';
 import { TestConnectionInfo } from '../../../base/testing';
@@ -17,25 +18,31 @@ import { createDesiredLocalTracks } from '../../../base/tracks';
 import { ConferenceNotification } from '../../../calendar-sync';
 import { Chat } from '../../../chat';
 import {
+    FILMSTRIP_SIZE,
     Filmstrip,
     isFilmstripVisible,
     TileView
 } from '../../../filmstrip';
 import { LargeVideo } from '../../../large-video';
-import { CalleeInfoContainer } from '../../../invite';
+import { AddPeopleDialog, CalleeInfoContainer } from '../../../invite';
 import { Captions } from '../../../subtitles';
 import { setToolboxVisible, Toolbox } from '../../../toolbox';
-import { shouldDisplayTileView } from '../../../video-layout';
 
+import {
+    AbstractConference,
+    abstractMapStateToProps
+} from '../AbstractConference';
 import DisplayNameLabel from './DisplayNameLabel';
 import Labels from './Labels';
 import NavigationBar from './NavigationBar';
 import styles from './styles';
 
+import type { AbstractProps } from '../AbstractConference';
+
 /**
  * The type of the React {@code Component} props of {@link Conference}.
  */
-type Props = {
+type Props = AbstractProps & {
 
     /**
      * The indicator which determines that we are still connecting to the
@@ -104,13 +111,6 @@ type Props = {
     _reducedUI: boolean,
 
     /**
-     * The current conference room name.
-     *
-     * @private
-     */
-    _room: string,
-
-    /**
      * The handler which dispatches the (redux) action {@link setToolboxVisible}
      * to show/hide the {@link Toolbox}.
      *
@@ -120,13 +120,6 @@ type Props = {
      * @returns {void}
      */
     _setToolboxVisible: Function,
-
-    /**
-     * Whether or not the layout should change to support tile view mode.
-     *
-     * @private
-     */
-    _shouldDisplayTileView: boolean,
 
     /**
      * The indicator which determines whether the Toolbox is visible.
@@ -146,7 +139,7 @@ type Props = {
 /**
  * The conference page of the mobile (i.e. React Native) application.
  */
-class Conference extends Component<Props> {
+class Conference extends AbstractConference<Props, *> {
     /**
      * Initializes a new Conference instance.
      *
@@ -255,6 +248,7 @@ class Conference extends Component<Props> {
                     translucent = { true } />
 
                 <Chat />
+                <AddPeopleDialog />
 
                 {/*
                   * The LargeVideo is the lowermost stacking layer.
@@ -307,7 +301,12 @@ class Conference extends Component<Props> {
                     }
                 </View>
 
-                <NavigationBar />
+                <SafeAreaView
+                    pointerEvents = 'box-none'
+                    style = { styles.navBarSafeView }>
+                    <NavigationBar />
+                    { this.renderNotificationsContainer() }
+                </SafeAreaView>
 
                 <TestConnectionInfo />
 
@@ -351,6 +350,37 @@ class Conference extends Component<Props> {
             !this.props._reducedUI && ConferenceNotification
                 ? <ConferenceNotification />
                 : undefined);
+    }
+
+    /**
+     * Renders a container for notifications to be displayed by the
+     * base/notifications feature.
+     *
+     * @private
+     * @returns {React$Element}
+     */
+    renderNotificationsContainer() {
+        const notificationsStyle = {};
+
+        // In the landscape mode (wide) there's problem with notifications being
+        // shadowed by the filmstrip rendered on the right. This makes the "x"
+        // button not clickable. In order to avoid that a margin of the
+        // filmstrip's size is added to the right.
+        //
+        // Pawel: after many attempts I failed to make notifications adjust to
+        // their contents width because of column and rows being used in the
+        // flex layout. The only option that seemed to limit the notification's
+        // size was explicit 'width' value which is not better than the margin
+        // added here.
+        if (this.props._filmstripVisible && !isNarrowAspectRatio(this)) {
+            notificationsStyle.marginRight = FILMSTRIP_SIZE;
+        }
+
+        return super.renderNotificationsContainer(
+            {
+                style: notificationsStyle
+            }
+        );
     }
 }
 
@@ -423,16 +453,7 @@ function _mapDispatchToProps(dispatch) {
  *
  * @param {Object} state - The redux state.
  * @private
- * @returns {{
- *     _connecting: boolean,
- *     _filmstripVisible: boolean,
- *     _locationURL: URL,
- *     _participantCount: number,
- *     _reducedUI: boolean,
- *     _room: string,
- *     _toolboxVisible: boolean,
- *     _toolboxAlwaysVisible: boolean
- * }}
+ * @returns {Props}
  */
 function _mapStateToProps(state) {
     const { connecting, connection, locationURL }
@@ -440,8 +461,7 @@ function _mapStateToProps(state) {
     const {
         conference,
         joining,
-        leaving,
-        room
+        leaving
     } = state['features/base/conference'];
     const { reducedUI } = state['features/base/responsive-ui'];
     const { alwaysVisible, visible } = state['features/toolbox'];
@@ -459,6 +479,8 @@ function _mapStateToProps(state) {
         = connecting || (connection && (joining || (!conference && !leaving)));
 
     return {
+        ...abstractMapStateToProps(state),
+
         /**
          * The indicator which determines that we are still connecting to the
          * conference which includes establishing the XMPP connection and then
@@ -499,22 +521,6 @@ function _mapStateToProps(state) {
          * @type {boolean}
          */
         _reducedUI: reducedUI,
-
-        /**
-         * The current conference room name.
-         *
-         * @private
-         * @type {string}
-         */
-        _room: room,
-
-        /**
-         * Whether or not the layout should change to support tile view mode.
-         *
-         * @private
-         * @type {boolean}
-         */
-        _shouldDisplayTileView: shouldDisplayTileView(state),
 
         /**
          * The indicator which determines whether the Toolbox is visible.

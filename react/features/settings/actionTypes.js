@@ -7,4 +7,4 @@
  *     visible: boolean
  * }
  */
-export const SET_SETTINGS_VIEW_VISIBLE = Symbol('SET_SETTINGS_VIEW_VISIBLE');
+export const SET_SETTINGS_VIEW_VISIBLE = 'SET_SETTINGS_VIEW_VISIBLE';

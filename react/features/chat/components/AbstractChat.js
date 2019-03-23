@@ -1,6 +1,7 @@
 // @flow
 
 import { Component } from 'react';
+import type { Dispatch } from 'redux';
 
 import { getLocalParticipant } from '../../base/participants';
 
@@ -41,7 +42,7 @@ export type Props = {
     /**
      * The Redux dispatch function.
      */
-    dispatch: Dispatch<*>,
+    dispatch: Dispatch<any>,
 
     /**
      * Function to be used to translate i18n labels.
@@ -64,7 +65,7 @@ export default class AbstractChat<P: Props> extends Component<P> {}
  * }}
  * @private
  */
-export function _mapDispatchToProps(dispatch: Dispatch<*>) {
+export function _mapDispatchToProps(dispatch: Dispatch<any>) {
     return {
         /**
          * Toggles the chat window.

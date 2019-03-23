@@ -1,5 +1,7 @@
 // @flow
 
+import type { Store } from 'redux';
+
 const logger = require('jitsi-meet-logger').getLogger(__filename);
 
 /**
@@ -16,7 +18,8 @@ const logger = require('jitsi-meet-logger').getLogger(__filename);
  * invoked only if {@code prevSelection} and {@code selection} are different.
  * Immutable!
  */
-type Listener = (selection: any, store: Store, prevSelection: any) => void;
+type Listener
+    = (selection: any, store: Store<*, *>, prevSelection: any) => void;
 
 /**
  * The type selector supported for registration with
@@ -65,7 +68,10 @@ class StateListenerRegistry {
      */
     _selectorListeners: Set<SelectorListener> = new Set();
 
-    _listener: (Store) => void;
+    _listener: ({
+        prevSelections: Map<SelectorListener, any>,
+        store: Store<*, *>
+    }) => void;
 
     /**
      * Invoked by a specific redux store any time an action is dispatched, and
@@ -78,7 +84,7 @@ class StateListenerRegistry {
      */
     _listener({ prevSelections, store }: {
             prevSelections: Map<SelectorListener, any>,
-            store: Store
+            store: Store<*, *>
     }) {
         for (const selectorListener of this._selectorListeners) {
             const prevSelection = prevSelections.get(selectorListener);
@@ -129,7 +135,7 @@ class StateListenerRegistry {
      * {@code StateListenerRegistry} is to {@code subscribe}.
      * @returns {void}
      */
-    subscribe(store: Store) {
+    subscribe(store: Store<*, *>) {
         // XXX If StateListenerRegistry is not utilized by the app to listen to
         // state changes, do not bother subscribing to the store at all.
         if (this._selectorListeners.size) {

@@ -202,7 +202,7 @@ public class PiPViewCoordinator {
         }
 
         // resize to suggested ratio and position to the bottom right
-        let adjustedBounds = UIEdgeInsetsInsetRect(bounds, dragBoundInsets)
+        let adjustedBounds = bounds.inset(by: dragBoundInsets)
         let size = CGSize(width: bounds.size.width * pipSizeRatio,
                           height: bounds.size.height * pipSizeRatio)
         let x: CGFloat = adjustedBounds.maxX - size.width

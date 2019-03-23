@@ -33,19 +33,6 @@ dependencies {
 }
 ```
 
-Also, enable 32bit mode for react-native, since react-native only supports 32bit apps. (If you have a 64bit device, it will not run unless this setting it set)
-
-```gradle
-android {
-    ...
-    defaultConfig {
-        ndk {
-            abiFilters "armeabi-v7a", "x86"
-        }
-    }
-    ...
-```
-
 ### Build and use your own SDK artifacts/binaries
 
 <details>
@@ -68,10 +55,6 @@ At the time of writing, there are two packages pulled in in binary format.
 To copy React Native to your local Maven repository, you can simply copy part of the directory structure that was pulled in by NPM:
 
     $ cp -r ../node_modules/react-native/android/com /tmp/repo/
-
-In the same way, copy the JavaScriptCore dependency:
-
-    $ cp -r ../node_modules/jsc-android/dist/org /tmp/repo/
 
 Alternatively, you can use the scripts located in the android/scripts directory to publish these dependencies to your Maven repo.
 
@@ -167,14 +150,14 @@ View is strongly recommended.
 package org.jitsi.example;
 
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
+import android.support.v4.app.FragmentActivity;
 
 import org.jitsi.meet.sdk.JitsiMeetView;
 import org.jitsi.meet.sdk.ReactActivityLifecycleCallbacks;
 
 // Example
 //
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends FragmentActivity implements JitsiMeetActivityInterface {
     private JitsiMeetView view;
 
     @Override
@@ -182,13 +165,13 @@ public class MainActivity extends AppCompatActivity {
             int requestCode,
             int resultCode,
             Intent data) {
-        ReactActivityLifecycleCallbacks.onActivityResult(
+        JitsiMeetActivityDelegate.onActivityResult(
                 this, requestCode, resultCode, data);
     }
 
     @Override
     public void onBackPressed() {
-        ReactActivityLifecycleCallbacks.onBackPressed();
+        JitsiMeetActivityDelegate.onBackPressed();
     }
 
     @Override
@@ -196,7 +179,10 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         view = new JitsiMeetView(this);
-        view.loadURL(null);
+        JitsiMeetConferenceOptions options = new JitsiMeetConferenceOptions.Builder()
+            .setRoom("https://meet.jit.si/test123")
+            .build();
+        view.join(options);
 
         setContentView(view);
     }
@@ -208,12 +194,12 @@ public class MainActivity extends AppCompatActivity {
         view.dispose();
         view = null;
 
-        ReactActivityLifecycleCallbacks.onHostDestroy(this);
+        JitsiMeetActivityDelegate.onHostDestroy(this);
     }
 
     @Override
     public void onNewIntent(Intent intent) {
-        ReactActivityLifecycleCallbacks.onNewIntent(intent);
+        JitsiMeetActivityDelegate.onNewIntent(intent);
     }
 
     @Override
@@ -221,21 +207,21 @@ public class MainActivity extends AppCompatActivity {
             final int requestCode,
             final String[] permissions,
             final int[] grantResults) {
-        ReactActivityLifecycleCallbacks.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        JitsiMeetActivityDelegate.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
 
-        ReactActivityLifecycleCallbacks.onHostResume(this);
+        JitsiMeetActivityDelegate.onHostResume(this);
     }
 
     @Override
     protected void onStop() {
         super.onStop();
 
-        ReactActivityLifecycleCallbacks.onHostPause(this);
+        JitsiMeetActivityDelegate.onHostPause(this);
     }
 }
 ```
@@ -262,13 +248,25 @@ implementation("com.github.bumptech.glide:annotations:${glideVersion}") {
 
 ### JitsiMeetActivity
 
-This class encapsulates a high level API in the form of an Android `Activity`
-which displays a single `JitsiMeetView`.
+This class encapsulates a high level API in the form of an Android `FragmentActivity`
+which displays a single `JitsiMeetView`. You can pass a URL as a `ACTION_VIEW`
+on the Intent when starting it and it will join the conference, and will be
+automatically terminated (finish() will be called on the activity) when the
+conference ends or fails.
 
 ### JitsiMeetView
 
 The `JitsiMeetView` class is the core of Jitsi Meet SDK. It's designed to
 display a Jitsi Meet conference (or a welcome page).
+
+#### join(options)
+
+Joins the conference specified by the given `JitsiMeetConferenceOptions`.
+
+#### leave()
+
+Leaves the currently active conference. If the welcome page is enabled it will
+go back to it, otherwise a black window will be shown.
 
 #### dispose()
 
@@ -276,89 +274,36 @@ Releases all resources associated with this view. This method MUST be called
 when the Activity holding this view is going to be destroyed, usually in the
 `onDestroy()` method.
 
-#### getDefaultURL()
-
-Returns the default base URL used to join a conference when a partial URL (e.g.
-a room name only) is specified to `loadURLString`/`loadURLObject`. If not set or
-if set to `null`, the default built in JavaScript is used: https://meet.jit.si.
-
 #### getListener()
 
 Returns the `JitsiMeetViewListener` instance attached to the view.
-
-#### isPictureInPictureEnabled()
-
-Returns `true` if Picture-in-Picture is enabled; `false`, otherwise. If not
-explicitly set (by a preceding `setPictureInPictureEnabled` call), defaults to
-`true` if the platform supports Picture-in-Picture natively; `false`, otherwise.
-
-#### isWelcomePageEnabled()
-
-Returns true if the Welcome page is enabled; otherwise, false. If false, a black
-empty view will be rendered when not in a conference. Defaults to false.
-
-#### loadURL(URL)
-
-Loads a specific URL which may identify a conference to join. If the specified
-URL is null and the Welcome page is enabled, the Welcome page is displayed
-instead.
-
-#### loadURLString(String)
-
-Loads a specific URL which may identify a conference to join. If the specified
-URL is null and the Welcome page is enabled, the Welcome page is displayed
-instead.
-
-#### loadURLObject(Bundle)
-
-Loads a specific URL which may identify a conference to join. The URL is
-specified in the form of a Bundle of properties which (1) internally are
-sufficient to construct a URL (string) while (2) abstracting the specifics of
-constructing the URL away from API clients/consumers. If the specified URL is
-null and the Welcome page is enabled, the Welcome page is displayed instead.
-
-Example:
-
-```java
-Bundle config = new Bundle();
-config.putBoolean("startWithAudioMuted", true);
-config.putBoolean("startWithVideoMuted", false);
-Bundle urlObject = new Bundle();
-urlObject.putBundle("config", config);
-urlObject.putString("url", "https://meet.jit.si/Test123");
-view.loadURLObject(urlObject);
-```
-
-#### setDefaultURL(URL)
-
-Sets the default URL. See `getDefaultURL` for more information.
-
-NOTE: Must be called before (if at all) `loadURL`/`loadURLString` for it to take
-effect.
 
 #### setListener(listener)
 
 Sets the given listener (class implementing the `JitsiMeetViewListener`
 interface) on the view.
 
-#### setPictureInPictureEnabled(boolean)
+### JitsiMeetConferenceOptions
 
-Sets whether Picture-in-Picture is enabled. If not set, Jitsi Meet SDK
-automatically enables/disables Picture-in-Picture based on native platform
-support.
+This object encapsulates all the options that can be tweaked when joining
+a conference.
 
-NOTE: Must be called (if at all) before `loadURL`/`loadURLString` for it to take
-effect.
+Example:
 
-#### setWelcomePageEnabled(boolean)
+```java
+JitsiMeetConferenceOptions options = new JitsiMeetConferenceOptions.Builder()
+    .setServerURL(new URL("https://meet.jit.si"))
+    .setRoom("test123")
+    .setAudioMuted(false)
+    .setVideoMuted(false)
+    .setAudioOnly(false)
+    .setWelcomePageEnabled(false)
+    .build();
+```
 
-Sets whether the Welcome page is enabled. See `isWelcomePageEnabled` for more
-information.
+See the `JitsiMeetConferenceOptions` implementation for all available options.
 
-NOTE: Must be called (if at all) before `loadURL`/`loadURLString` for it to take
-effect.
-
-### ReactActivityLifecycleCallbacks
+### JitsiMeetActivityDelegate
 
 This class handles the interaction between `JitsiMeetView` and its enclosing
 `Activity`. Generally this shouldn't be consumed by users, because they'd be
@@ -414,49 +359,26 @@ This is a static method.
 `JitsiMeetViewListener` provides an interface apps can implement to listen to
 the state of the Jitsi Meet conference displayed in a `JitsiMeetView`.
 
-`JitsiMeetViewAdapter`, a default implementation of the
-`JitsiMeetViewListener` interface is also provided. Apps may extend the class
-instead of implementing the interface in order to minimize boilerplate.
-
-##### onConferenceFailed
-
-Called when a joining a conference was unsuccessful or when there was an error
-while in a conference.
-
-The `data` `Map` contains an "error" key describing the error and a "url" key
-with the conference URL.
-
 #### onConferenceJoined
 
 Called when a conference was joined.
 
 The `data` `Map` contains a "url" key with the conference URL.
 
-#### onConferenceLeft
+#### onConferenceTerminated
 
-Called when a conference was left.
+Called when a conference was terminated either by user choice or due to a
+failure.
 
-The `data` `Map` contains a "url" key with the conference URL.
+The `data` `Map` contains an "error" key with the error and a "url" key
+with the conference URL. If the conference finished gracefully no `error`
+key will be present.
 
 #### onConferenceWillJoin
 
 Called before a conference is joined.
 
 The `data` `Map` contains a "url" key with the conference URL.
-
-#### onConferenceWillLeave
-
-Called before a conference is left.
-
-The `data` `Map` contains a "url" key with the conference URL.
-
-#### onLoadConfigError
-
-Called when loading the main configuration file from the Jitsi Meet deployment
-fails.
-
-The `data` `Map` contains an "error" key with the error and a "url" key with the
-conference URL which necessitated the loading of the configuration file.
 
 ## ProGuard rules
 
@@ -469,10 +391,6 @@ rules file: https://github.com/jitsi/jitsi-meet/blob/master/android/app/proguard
 `JitsiMeetView` will automatically adjust its UI when presented in a
 Picture-in-Picture style scenario, in a rectangle too small to accommodate its
 "full" UI.
-
-Jitsi Meet SDK automatically enables (unless explicitly disabled by a
-`setPictureInPictureEnabled(false)` call) Android's native Picture-in-Picture
-mode iff the platform is supported i.e. Android >= Oreo.
 
 ## Dropbox integration
 

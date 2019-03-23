@@ -23,12 +23,10 @@ function authorize(authUrl: string): Promise<string> {
     return new Promise(resolve => {
         const popup = window.open(authUrl, windowName);
 
-        gloabalNS.oauthCallbacks[windowName] = () => {
-            const returnURL = popup.location.href;
-
+        gloabalNS.oauthCallbacks[windowName] = url => {
             popup.close();
             delete gloabalNS.oauthCallbacks.windowName;
-            resolve(returnURL);
+            resolve(url);
         };
     });
 }

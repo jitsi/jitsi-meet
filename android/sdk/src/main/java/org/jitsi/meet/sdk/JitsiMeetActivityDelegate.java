@@ -32,7 +32,13 @@ import com.facebook.react.modules.core.PermissionListener;
  * {@link Activity} lifecycle methods in order for the React side to be aware of
  * it.
  */
-public class ReactActivityLifecycleCallbacks {
+public class JitsiMeetActivityDelegate {
+    /**
+     * Needed for making sure this class working with the "PermissionsAndroid"
+     * React Native module.
+     */
+    private static PermissionListener permissionListener;
+    private static Callback permissionsCallback;
 
     /**
      * {@link Activity} lifecycle method which should be called from
@@ -56,13 +62,6 @@ public class ReactActivityLifecycleCallbacks {
             reactInstanceManager.onActivityResult(activity, requestCode, resultCode, data);
         }
     }
-
-    /**
-     * Needed for making sure this class working with the "PermissionsAndroid"
-     * React Native module.
-     */
-    private static PermissionListener permissionListener;
-    private static Callback permissionsCallback;
 
     /**
      * {@link Activity} lifecycle method which should be called from
