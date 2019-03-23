@@ -243,7 +243,6 @@ public class JitsiMeetConferenceOptions {
 
         urlProps.putBundle("config", config);
         props.putBundle("url", urlProps);
-
         return props;
     }
 }

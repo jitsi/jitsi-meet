@@ -17,7 +17,11 @@
 
 package org.jitsi.meet;
 
-import android.os.Bundle;
+import android.content.Intent;
+import android.net.Uri;
+import android.os.Build;
+import android.provider.Settings;
+import android.support.annotation.Nullable;
 import android.util.Log;
 import android.view.KeyEvent;
 
@@ -25,10 +29,10 @@ import org.jitsi.meet.sdk.JitsiMeet;
 import org.jitsi.meet.sdk.JitsiMeetActivity;
 import org.jitsi.meet.sdk.JitsiMeetConferenceOptions;
 
-import com.facebook.react.bridge.UiThreadUtil;
 
-import java.util.ArrayList;
-import java.util.List;
+
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.Map;
 
 /**
@@ -50,15 +54,70 @@ public class MainActivity extends JitsiMeetActivity {
     //
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        // As this is the Jitsi Meet app (i.e. not the Jitsi Meet SDK), we do
-        // want to enable some options.
+    protected boolean extraInitialize() {
+        // In Debug builds React needs permission to write over other apps in
+        // order to display the warning and error overlays.
+        if (BuildConfig.DEBUG) {
+            if (canRequestOverlayPermission() && !Settings.canDrawOverlays(this)) {
+                Intent intent
+                    = new Intent(
+                    Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
+                    Uri.parse("package:" + getPackageName()));
 
-        // The welcome page defaults to disabled in the SDK at the time of this
-        // writing but it is clearer to be explicit about what we want anyway.
-        setWelcomePageEnabled(true);
+                startActivityForResult(intent, OVERLAY_PERMISSION_REQUEST_CODE);
 
-        super.onCreate(savedInstanceState);
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    @Override
+    protected void initialize() {
+        // Set default options
+        JitsiMeetConferenceOptions defaultOptions
+            = new JitsiMeetConferenceOptions.Builder()
+                .setWelcomePageEnabled(true)
+                .setServerURL(buildURL("https://demo.vmeeting.top"))
+                .build();
+        JitsiMeet.setDefaultConferenceOptions(defaultOptions);
+
+        super.initialize();
+    }
+
+    @Override
+    public void onConferenceTerminated(Map<String, Object> data) {
+        Log.d(TAG, "Conference terminated: " + data);
+    }
+
+    // Activity lifecycle method overrides
+    //
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == OVERLAY_PERMISSION_REQUEST_CODE
+                && canRequestOverlayPermission()) {
+            if (Settings.canDrawOverlays(this)) {
+                initialize();
+                return;
+            }
+
+            throw new RuntimeException("Overlay permission is required when running in Debug mode.");
+        }
+
+        super.onActivityResult(requestCode, resultCode, data);
+    }
+
+    // ReactAndroid/src/main/java/com/facebook/react/ReactActivity.java
+    @Override
+    public boolean onKeyUp(int keyCode, KeyEvent event) {
+        if (BuildConfig.DEBUG && keyCode == KeyEvent.KEYCODE_MENU) {
+            JitsiMeet.showDevOptions();
+            return true;
+        }
+
+        return super.onKeyUp(keyCode, event);
     }
 
     // Helper methods
