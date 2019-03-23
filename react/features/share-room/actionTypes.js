@@ -8,7 +8,7 @@
  *     includeDialInfo: boolean
  * }
  */
-export const BEGIN_SHARE_ROOM = Symbol('BEGIN_SHARE_ROOM');
+export const BEGIN_SHARE_ROOM = 'BEGIN_SHARE_ROOM';
 
 /**
  * The type of (redux) action which ends the UI procedure to share a specific
@@ -20,4 +20,4 @@ export const BEGIN_SHARE_ROOM = Symbol('BEGIN_SHARE_ROOM');
  *     shared: boolean
  * }
  */
-export const END_SHARE_ROOM = Symbol('END_SHARE_ROOM');
+export const END_SHARE_ROOM = 'END_SHARE_ROOM';

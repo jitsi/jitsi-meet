@@ -198,4 +198,5 @@ function _mapStateToProps(state) {
     return { _tabs: tabs };
 }
 
+// $FlowExpectedError
 export default connect(_mapStateToProps)(SettingsDialog);

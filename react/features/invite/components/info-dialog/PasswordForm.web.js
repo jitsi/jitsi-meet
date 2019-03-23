@@ -83,6 +83,7 @@ class PasswordForm extends Component<Props, State> {
         this._onEnteredPasswordChange
             = this._onEnteredPasswordChange.bind(this);
         this._onPasswordSubmit = this._onPasswordSubmit.bind(this);
+        this._onKeyDown = this._onKeyDown.bind(this);
     }
 
     /**
@@ -119,6 +120,7 @@ class PasswordForm extends Component<Props, State> {
             return (
                 <form
                     className = 'info-password-form'
+                    onKeyDown = { this._onKeyDown }
                     onSubmit = { this._onPasswordSubmit }>
                     <input
                         autoFocus = { true }
@@ -175,8 +177,25 @@ class PasswordForm extends Component<Props, State> {
      */
     _onPasswordSubmit(event) {
         event.preventDefault();
+        event.stopPropagation();
 
         this.props.onSubmit(this.state.enteredPassword);
+    }
+
+    _onKeyDown: (Object) => void;
+
+    /**
+     * Stops the the EnterKey for propagation in order to prevent the dialog
+     * to close.
+     *
+     * @param {Object} event - The key event.
+     * @private
+     * @returns {void}
+     */
+    _onKeyDown(event) {
+        if (event.key === 'Enter') {
+            event.stopPropagation();
+        }
     }
 }
 

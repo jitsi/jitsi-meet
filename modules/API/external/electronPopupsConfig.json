@@ -4,5 +4,11 @@
             "url": "accounts.google.com"
         },
         "target": "electron"
+    },
+    "dropbox-auth": {
+        "matchPatterns": {
+            "url": "dropbox.com/oauth2/authorize"
+        },
+        "target": "electron"
     }
 }

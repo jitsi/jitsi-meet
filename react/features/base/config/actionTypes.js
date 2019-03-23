@@ -7,7 +7,7 @@
  *     locationURL: URL
  * }
  */
-export const CONFIG_WILL_LOAD = Symbol('CONFIG_WILL_LOAD');
+export const CONFIG_WILL_LOAD = 'CONFIG_WILL_LOAD';
 
 /**
  * The redux action which signals that a configuration (commonly known in Jitsi
@@ -19,7 +19,7 @@ export const CONFIG_WILL_LOAD = Symbol('CONFIG_WILL_LOAD');
  *     locationURL: URL
  * }
  */
-export const LOAD_CONFIG_ERROR = Symbol('LOAD_CONFIG_ERROR');
+export const LOAD_CONFIG_ERROR = 'LOAD_CONFIG_ERROR';
 
 /**
  * The redux action which sets the configuration represented by the feature
@@ -32,4 +32,4 @@ export const LOAD_CONFIG_ERROR = Symbol('LOAD_CONFIG_ERROR');
  *     config: Object
  * }
  */
-export const SET_CONFIG = Symbol('SET_CONFIG');
+export const SET_CONFIG = 'SET_CONFIG';

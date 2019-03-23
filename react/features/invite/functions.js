@@ -54,13 +54,14 @@ export function getDialInConferenceID(
 /**
  * Sends a GET request for phone numbers used to dial into a conference.
  *
- * @param {string} url - The service that returns confernce dial-in numbers.
+ * @param {string} url - The service that returns conference dial-in numbers.
  * @param {string} roomName - The conference name to find the associated
  * conference ID.
  * @param {string} mucURL - In which MUC the conference exists.
  * @returns {Promise} - The promise created by the request. The returned numbers
- * may be an array of numbers or an object with countries as keys and arrays of
- * phone number strings.
+ * may be an array of Objects containing numbers, with keys countryCode,
+ * tollFree, formattedNumber or an object with countries as keys and arrays of
+ * phone number strings, as the second one should not be used and is deprecated.
  */
 export function getDialInNumbers(
         url: string,
@@ -432,7 +433,7 @@ export function getShareInfoText(
             numbersPromise = Promise.all([
                 getDialInNumbers(dialInNumbersUrl, room, mucURL),
                 getDialInConferenceID(dialInConfCodeUrl, room, mucURL)
-            ]).then(([ { defaultCountry, numbers }, {
+            ]).then(([ numbers, {
                 conference, id, message } ]) => {
 
                 if (!conference || !id) {
@@ -440,7 +441,6 @@ export function getShareInfoText(
                 }
 
                 return {
-                    defaultCountry,
                     numbers,
                     conferenceID: id
                 };
@@ -448,9 +448,8 @@ export function getShareInfoText(
         }
 
         return numbersPromise.then(
-            ({ conferenceID, defaultCountry, numbers }) => {
-                const phoneNumber
-                    = _getDefaultPhoneNumber(numbers, defaultCountry) || '';
+            ({ conferenceID, numbers }) => {
+                const phoneNumber = _getDefaultPhoneNumber(numbers) || '';
 
                 return `${
                     i18next.t('info.dialInNumber')} ${
@@ -513,27 +512,47 @@ export function getDialInfoPageURL(
  *
  * @param {Array<string>|Object} dialInNumbers - The array or object of
  * numbers to choose a number from.
- * @param {string} defaultCountry - The country code for the country
- * whose phone number should display.
  * @private
  * @returns {string|null}
  */
 export function _getDefaultPhoneNumber(
-        dialInNumbers: Object,
-        defaultCountry: string = 'US'): ?string {
+        dialInNumbers: Object): ?string {
+    const defValueForDefaultCountry = 'US';
+
     if (Array.isArray(dialInNumbers)) {
-        // Dumbly return the first number if an array.
-        return dialInNumbers[0];
-    } else if (Object.keys(dialInNumbers).length > 0) {
-        const defaultNumbers = dialInNumbers[defaultCountry];
+        // new syntax follows
+        // find the default country inside dialInNumbers, US one
+        // or return the first one
+        let defaultNumber = dialInNumbers.find(number => number.default);
+
+        if (!defaultNumber) {
+            defaultNumber = dialInNumbers.find(({ countryCode }) =>
+                countryCode === defValueForDefaultCountry);
+        }
+
+        if (defaultNumber) {
+            return defaultNumber.formattedNumber;
+        }
+
+        return dialInNumbers.length > 0
+            ? dialInNumbers[0].formattedNumber : null;
+    }
+
+    const {
+        defaultCountry = defValueForDefaultCountry,
+        numbers } = dialInNumbers;
+
+    if (numbers && Object.keys(numbers).length > 0) {
+        // deprecated and will be removed
+        const defaultNumbers = numbers[defaultCountry];
 
         if (defaultNumbers) {
             return defaultNumbers[0];
         }
 
-        const firstRegion = Object.keys(dialInNumbers)[0];
+        const firstRegion = Object.keys(numbers)[0];
 
-        return firstRegion && firstRegion[0];
+        return firstRegion && numbers[firstRegion][0];
     }
 
     return null;

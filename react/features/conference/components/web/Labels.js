@@ -38,7 +38,7 @@ class Labels extends AbstractLabels<Props, State> {
      *
      * @inheritdoc
      */
-    static getDerivedStateFromProps(props, prevState) {
+    static getDerivedStateFromProps(props: Props, prevState: State) {
         return {
             filmstripBecomingVisible: !prevState.filmstripBecomingVisible
                 && props._filmstripVisible
@@ -105,4 +105,5 @@ class Labels extends AbstractLabels<Props, State> {
     _renderVideoQualityLabel: () => React$Element<*>;
 }
 
+// $FlowExpectedError
 export default connect(_mapStateToProps)(Labels);

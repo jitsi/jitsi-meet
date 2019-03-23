@@ -1,8 +1,9 @@
 // @flow
 
+import { FieldTextStateless as TextField } from '@atlaskit/field-text';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { FieldTextStateless as TextField } from '@atlaskit/field-text';
+import type { Dispatch } from 'redux';
 
 import { setPassword } from '../../base/conference';
 import { Dialog } from '../../base/dialog';
@@ -22,7 +23,7 @@ type Props = {
     /**
      * The redux store's {@code dispatch} function.
      */
-    dispatch: Dispatch<*>,
+    dispatch: Dispatch<any>,
 
     /**
      * The translate function.

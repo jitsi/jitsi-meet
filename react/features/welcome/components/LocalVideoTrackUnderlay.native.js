@@ -1,4 +1,4 @@
-/* @flow */
+// @flow
 
 import React, { Component } from 'react';
 import { View } from 'react-native';
@@ -77,4 +77,5 @@ function _mapStateToProps(state) {
     };
 }
 
+// $FlowExpectedError
 export default connect(_mapStateToProps)(LocalVideoTrackUnderlay);

@@ -201,6 +201,7 @@ export default class AbstractToolboxItem<P : Props> extends Component<P> {
      */
     _renderItem() {
         // To be implemented by a subclass.
+        return null;
     }
 
     /**

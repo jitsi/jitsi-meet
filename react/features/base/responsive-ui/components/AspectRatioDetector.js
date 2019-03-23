@@ -52,7 +52,7 @@ class AspectRatioDetector extends Component<Props> {
  *     _onDimensionsChanged: Function
  * }}
  */
-function _mapDispatchToProps(dispatch: Dispatch<*>) {
+function _mapDispatchToProps(dispatch: Dispatch<any>) {
     return {
         /**
          * Handles the "on dimensions changed" event and dispatches aspect ratio
@@ -69,4 +69,5 @@ function _mapDispatchToProps(dispatch: Dispatch<*>) {
     };
 }
 
+// $FlowExpectedError
 export default connect(undefined, _mapDispatchToProps)(AspectRatioDetector);

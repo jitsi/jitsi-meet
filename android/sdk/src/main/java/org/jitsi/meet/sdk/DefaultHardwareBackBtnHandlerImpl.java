@@ -22,7 +22,7 @@ import android.app.Activity;
 import com.facebook.react.modules.core.DefaultHardwareBackBtnHandler;
 
 /**
- * Defines the default behavior of {@code JitsiMeetActivity} and
+ * Defines the default behavior of {@code JitsiMeetFragment} and
  * {@code JitsiMeetView} upon invoking the back button if no
  * {@code JitsiMeetView} handles the invocation. For example, a
  * {@code JitsiMeetView} may (1) handle the invocation of the back button

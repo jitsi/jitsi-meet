@@ -1,5 +1,6 @@
 /*
- * Copyright @ 2017-present Atlassian Pty Ltd
+ * Copyright @ 2018-present 8x8, Inc.
+ * Copyright @ 2017-2018 Atlassian Pty Ltd
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,11 +26,10 @@ import android.util.Log;
 import com.facebook.react.bridge.ReadableMap;
 
 import java.lang.reflect.Method;
-import java.net.URL;
 import java.util.Map;
 
-public class JitsiMeetView
-    extends BaseReactView<JitsiMeetViewListener> {
+
+public class JitsiMeetView extends BaseReactView<JitsiMeetViewListener> {
 
     /**
      * The {@code Method}s of {@code JitsiMeetViewListener} by event name i.e.
@@ -45,50 +45,6 @@ public class JitsiMeetView
     private static final String TAG = JitsiMeetView.class.getSimpleName();
 
     /**
-     * Loads a specific URL {@code String} in all existing
-     * {@code JitsiMeetView}s.
-     *
-     * @param urlString he URL {@code String} to load in all existing
-     * {@code JitsiMeetView}s.
-     * @return If the specified {@code urlString} was submitted for loading in
-     * at least one {@code JitsiMeetView}, then {@code true}; otherwise,
-     * {@code false}.
-     */
-    public static boolean loadURLStringInViews(String urlString) {
-        boolean loaded = false;
-
-        synchronized (views) {
-            for (BaseReactView view : views) {
-                if (view instanceof JitsiMeetView) {
-                    ((JitsiMeetView)view).loadURLString(urlString);
-                    loaded = true;
-                }
-            }
-        }
-
-        return loaded;
-    }
-
-    /**
-     * A color scheme object to override the default color is the SDK.
-     */
-    private Bundle colorScheme;
-
-    /**
-     * The default base {@code URL} used to join a conference when a partial URL
-     * (e.g. a room name only) is specified to {@link #loadURLString(String)} or
-     * {@link #loadURLObject(Bundle)}.
-     */
-    private URL defaultURL;
-
-    /**
-     * Whether Picture-in-Picture is enabled. If {@code null}, defaults to
-     * {@code true} iff the Android platform supports Picture-in-Picture
-     * natively.
-     */
-    private Boolean pictureInPictureEnabled;
-
-    /**
      * The URL of the current conference.
      */
     // XXX Currently, one thread writes and one thread reads, so it should be
@@ -96,9 +52,51 @@ public class JitsiMeetView
     private volatile String url;
 
     /**
-     * Whether the Welcome page is enabled.
+     * Helper method to recursively merge 2 {@link Bundle} objects representing React Native props.
+     *
+     * @param a - The first {@link Bundle}.
+     * @param b - The second {@link Bundle}.
+     * @return The merged {@link Bundle} object.
      */
-    private boolean welcomePageEnabled;
+    private static Bundle mergeProps(@Nullable Bundle a, @Nullable Bundle b) {
+        Bundle result = new Bundle();
+
+        if (a == null) {
+            if (b != null) {
+                result.putAll(b);
+            }
+
+            return result;
+        }
+
+        if (b == null) {
+            result.putAll(a);
+
+            return result;
+        }
+
+        // Start by putting all of a in the result.
+        result.putAll(a);
+
+        // Iterate over each key in b and override if appropriate.
+        for (String key : b.keySet()) {
+            Object bValue = b.get(key);
+            Object aValue = a.get(key);
+            String valueType = bValue.getClass().getSimpleName();
+
+            if (valueType.contentEquals("Boolean")) {
+                result.putBoolean(key, (Boolean)bValue);
+            } else if (valueType.contentEquals("String")) {
+                result.putString(key, (String)bValue);
+            } else if (valueType.contentEquals("Bundle")) {
+                result.putBundle(key, mergeProps((Bundle)aValue, (Bundle)bValue));
+            } else {
+                throw new RuntimeException("Unsupported type: " + valueType);
+            }
+        }
+
+        return result;
+    }
 
     public JitsiMeetView(@NonNull Context context) {
         super(context);
@@ -120,163 +118,57 @@ public class JitsiMeetView
      * page.
      */
     public void enterPictureInPicture() {
-        if (isPictureInPictureEnabled() && getURL() != null) {
-            PictureInPictureModule pipModule
-                = ReactInstanceManagerHolder.getNativeModule(
+        PictureInPictureModule pipModule
+            = ReactInstanceManagerHolder.getNativeModule(
                 PictureInPictureModule.class);
-
-            if (pipModule != null) {
-                try {
-                    pipModule.enterPictureInPicture();
-                } catch (RuntimeException re) {
-                    Log.e(TAG, "onUserLeaveHint: failed to enter PiP mode", re);
-                }
+        if (pipModule != null
+                && PictureInPictureModule.isPictureInPictureSupported()
+                && this.url != null) {
+            try {
+                pipModule.enterPictureInPicture();
+            } catch (RuntimeException re) {
+                Log.e(TAG, "failed to enter PiP mode", re);
             }
         }
     }
 
     /**
-     * Gets the color scheme used in the SDK.
-     *
-     * @return The color scheme map.
+     * Joins the conference specified by the given {@link JitsiMeetConferenceOptions}. If there is
+     * already an active conference, it will be left and the new one will be joined.
+     * @param options - Description of what conference must be joined and what options will be used
+     *                when doing so.
      */
-    public Bundle getColorScheme() {
-        return colorScheme;
+    public void join(@Nullable JitsiMeetConferenceOptions options) {
+        setProps(options != null ? options.asProps() : new Bundle());
     }
 
     /**
-     * Gets the default base {@code URL} used to join a conference when a
-     * partial URL (e.g. a room name only) is specified to
-     * {@link #loadURLString(String)} or {@link #loadURLObject(Bundle)}. If not
-     * set or if set to {@code null}, the default built in JavaScript is used:
-     * https://meet.jit.si
-     *
-     * @return The default base {@code URL} or {@code null}.
+     * Leaves the currently active conference.
      */
-    public URL getDefaultURL() {
-        return defaultURL;
+    public void leave() {
+        setProps(new Bundle());
     }
 
     /**
-     * Gets the URL of the current conference.
-     *
-     * XXX The method is meant for internal purposes only at the time of this
-     * writing because there is no equivalent API on iOS.
-     *
-     * @return the URL {@code String} of the current conference if any;
-     * otherwise, {@code null}.
+     * Helper method to set the React Native props.
+     * @param newProps - New props to be set on the React Native view.
      */
-    String getURL() {
-        return url;
-    }
+    private void setProps(@NonNull Bundle newProps) {
+        // Merge the default options with the newly provided ones.
+        Bundle props = mergeProps(JitsiMeet.getDefaultProps(), newProps);
 
-    /**
-     * Gets whether Picture-in-Picture is enabled. Picture-in-Picture is
-     * natively supported on Android API >= 26 (Oreo), so it should not be
-     * enabled on older platform versions.
-     *
-     * @return If Picture-in-Picture is enabled, {@code true}; {@code false},
-     * otherwise.
-     */
-    public boolean isPictureInPictureEnabled() {
-        return
-            PictureInPictureModule.isPictureInPictureSupported()
-                && (pictureInPictureEnabled == null
-                    || pictureInPictureEnabled);
-    }
-
-    /**
-     * Gets whether the Welcome page is enabled. If {@code true}, the Welcome
-     * page is rendered when this {@code JitsiMeetView} is not at a URL
-     * identifying a Jitsi Meet conference/room.
-     *
-     * @return {@code true} if the Welcome page is enabled; otherwise,
-     * {@code false}.
-     */
-    public boolean isWelcomePageEnabled() {
-        return welcomePageEnabled;
-    }
-
-    /**
-     * Loads a specific {@link URL} which may identify a conference to join. If
-     * the specified {@code URL} is {@code null} and the Welcome page is
-     * enabled, the Welcome page is displayed instead.
-     *
-     * @param url The {@code URL} to load which may identify a conference to
-     * join.
-     */
-    public void loadURL(@Nullable URL url) {
-        loadURLString(url == null ? null : url.toString());
-    }
-
-    /**
-     * Loads a specific URL which may identify a conference to join. The URL is
-     * specified in the form of a {@link Bundle} of properties which (1)
-     * internally are sufficient to construct a URL {@code String} while (2)
-     * abstracting the specifics of constructing the URL away from API
-     * clients/consumers. If the specified URL is {@code null} and the Welcome
-     * page is enabled, the Welcome page is displayed instead.
-     *
-     * @param urlObject The URL to load which may identify a conference to join.
-     */
-    public void loadURLObject(@Nullable Bundle urlObject) {
-        Bundle props = new Bundle();
-
-        // color scheme
-        if (colorScheme != null) {
-            props.putBundle("colorScheme", colorScheme);
-        }
-
-        // defaultURL
-        if (defaultURL != null) {
-            props.putString("defaultURL", defaultURL.toString());
-        }
-
-        // pictureInPictureEnabled
-        props.putBoolean(
-            "pictureInPictureEnabled",
-            isPictureInPictureEnabled());
-
-        // url
-        if (urlObject != null) {
-            props.putBundle("url", urlObject);
-        }
-
-        // welcomePageEnabled
-        props.putBoolean("welcomePageEnabled", welcomePageEnabled);
-
-        // XXX The method loadURLObject: is supposed to be imperative i.e.
+        // XXX The setProps() method is supposed to be imperative i.e.
         // a second invocation with one and the same URL is expected to join
         // the respective conference again if the first invocation was followed
         // by leaving the conference. However, React and, respectively,
         // appProperties/initialProperties are declarative expressions i.e. one
         // and the same URL will not trigger an automatic re-render in the
         // JavaScript source code. The workaround implemented bellow introduces
-        // imperativeness in React Component props by defining a unique value
-        // per loadURLObject: invocation.
+        // "imperativeness" in React Component props by defining a unique value
+        // per setProps() invocation.
         props.putLong("timestamp", System.currentTimeMillis());
 
         createReactRootView("App", props);
-    }
-
-    /**
-     * Loads a specific URL {@link String} which may identify a conference to
-     * join. If the specified URL {@code String} is {@code null} and the Welcome
-     * page is enabled, the Welcome page is displayed instead.
-     *
-     * @param urlString The URL {@code String} to load which may identify a
-     * conference to join.
-     */
-    public void loadURLString(@Nullable String urlString) {
-        Bundle urlObject;
-
-        if (urlString == null) {
-            urlObject = null;
-        } else {
-            urlObject = new Bundle();
-            urlObject.putString("url", urlString);
-        }
-        loadURLObject(urlObject);
     }
 
     /**
@@ -288,18 +180,16 @@ public class JitsiMeetView
      * by/associated with the specified {@code eventName}.
      */
     private void maybeSetViewURL(String eventName, ReadableMap eventData) {
+        String url = eventData.getString("url");
+
         switch(eventName) {
         case "CONFERENCE_WILL_JOIN":
-            setURL(eventData.getString("url"));
+            this.url = url;
             break;
 
-        case "CONFERENCE_FAILED":
-        case "CONFERENCE_WILL_LEAVE":
-        case "LOAD_CONFIG_ERROR":
-            String url = eventData.getString("url");
-
-            if (url != null && url.equals(getURL())) {
-                setURL(null);
+        case "CONFERENCE_TERMINATED":
+            if (url != null && url.equals(this.url)) {
+                this.url = null;
             }
             break;
         }
@@ -313,7 +203,7 @@ public class JitsiMeetView
      * by/associated with the specified {@code name}.
      */
     @Override
-    public void onExternalAPIEvent(String name, ReadableMap data) {
+    protected void onExternalAPIEvent(String name, ReadableMap data) {
         // XXX The JitsiMeetView property URL was introduced in order to address
         // an exception in the Picture-in-Picture functionality which arose
         // because of delays related to bridging between JavaScript and Java. To
@@ -322,63 +212,5 @@ public class JitsiMeetView
         maybeSetViewURL(name, data);
 
         onExternalAPIEvent(LISTENER_METHODS, name, data);
-    }
-
-    /**
-     * Sets the color scheme to override the default colors of the SDK.
-     *
-     * @param colorScheme The color scheme map.
-     */
-    public void setColorScheme(Bundle colorScheme) {
-        this.colorScheme = colorScheme;
-    }
-
-    /**
-     * Sets the default base {@code URL} used to join a conference when a
-     * partial URL (e.g. a room name only) is specified to
-     * {@link #loadURLString(String)} or {@link #loadURLObject(Bundle)}. Must be
-     * called before {@link #loadURL(URL)} for it to take effect.
-     *
-     * @param defaultURL The {@code URL} to be set as the default base URL.
-     * @see #getDefaultURL()
-     */
-    public void setDefaultURL(URL defaultURL) {
-        this.defaultURL = defaultURL;
-    }
-
-    /**
-     * Sets whether Picture-in-Picture is enabled. Because Picture-in-Picture is
-     * natively supported only since certain platform versions, specifying
-     * {@code true} will have no effect on unsupported platform versions.
-     *
-     * @param pictureInPictureEnabled To enable Picture-in-Picture,
-     * {@code true}; otherwise, {@code false}.
-     */
-    public void setPictureInPictureEnabled(boolean pictureInPictureEnabled) {
-        this.pictureInPictureEnabled = pictureInPictureEnabled;
-    }
-
-    /**
-     * Sets the URL of the current conference.
-     *
-     * XXX The method is meant for internal purposes only. It does not
-     * {@code loadURL}, it merely remembers the specified URL.
-     *
-     * @param url the URL {@code String} which to be set as the URL of the
-     * current conference.
-     */
-    void setURL(String url) {
-        this.url = url;
-    }
-
-    /**
-     * Sets whether the Welcome page is enabled. Must be called before
-     * {@link #loadURL(URL)} for it to take effect.
-     *
-     * @param welcomePageEnabled {@code true} to enable the Welcome page;
-     * otherwise, {@code false}.
-     */
-    public void setWelcomePageEnabled(boolean welcomePageEnabled) {
-        this.welcomePageEnabled = welcomePageEnabled;
     }
 }

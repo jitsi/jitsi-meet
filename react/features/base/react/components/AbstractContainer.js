@@ -20,7 +20,7 @@ export type Props = {
     /**
      * React Elements to display within the component.
      */
-    children: React$Node | Object,
+    children: React$Node,
 
     /**
      * The event handler/listener to be invoked when this

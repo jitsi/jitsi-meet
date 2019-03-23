@@ -153,4 +153,5 @@ export function _mapDispatchToProps(dispatch: Function) {
     };
 }
 
+// $FlowExpectedError
 export default connect(_mapStateToProps, _mapDispatchToProps)(SoundCollection);

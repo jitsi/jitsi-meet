@@ -27,11 +27,15 @@ import com.facebook.react.bridge.Promise;
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContextBaseJavaModule;
 import com.facebook.react.bridge.ReactMethod;
+import com.facebook.react.module.annotations.ReactModule;
 
+@ReactModule(name = PictureInPictureModule.NAME)
 class PictureInPictureModule
     extends ReactContextBaseJavaModule {
 
-    private final static String TAG = "PictureInPicture";
+    public static final String NAME = "PictureInPicture";
+
+    private static final String TAG = NAME;
 
     static boolean isPictureInPictureSupported() {
         return Build.VERSION.SDK_INT >= Build.VERSION_CODES.O;
@@ -101,6 +105,6 @@ class PictureInPictureModule
 
     @Override
     public String getName() {
-        return TAG;
+        return NAME;
     }
 }

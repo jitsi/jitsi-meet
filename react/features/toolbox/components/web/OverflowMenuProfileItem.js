@@ -1,4 +1,4 @@
-/* @flow */
+// @flow
 
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
@@ -121,4 +121,5 @@ function _mapStateToProps(state) {
     };
 }
 
+// $FlowExpectedError
 export default connect(_mapStateToProps)(OverflowMenuProfileItem);

@@ -1,7 +1,13 @@
-import { getName } from '../app';
 import { translateToHTML } from '../base/i18n';
 import { browser } from '../base/lib-jitsi-meet';
-import { showWarningNotification } from '../notifications';
+import { toState } from '../base/redux';
+
+import { getName } from '../app';
+import {
+    areThereNotifications,
+    showWarningNotification
+} from '../notifications';
+import { getOverlayToRender } from '../overlay';
 
 /**
  * Shows the suboptimal experience notification if needed.
@@ -35,4 +41,21 @@ export function maybeShowSuboptimalExperienceNotification(dispatch, t) {
             )
         );
     }
+}
+
+/**
+ * Tells whether or not the notifications should be displayed within
+ * the conference feature based on the current Redux state.
+ *
+ * @param {Object|Function} stateful - The redux store state.
+ * @returns {boolean}
+ */
+export function shouldDisplayNotifications(stateful) {
+    const state = toState(stateful);
+    const isAnyOverlayVisible = Boolean(getOverlayToRender(state));
+    const { calleeInfoVisible } = state['features/invite'];
+
+    return areThereNotifications(state)
+            && !isAnyOverlayVisible
+            && !calleeInfoVisible;
 }

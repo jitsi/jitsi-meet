@@ -170,7 +170,7 @@ public abstract class BaseReactView<ListenerT>
      * @param data - The details of the event associated with/specific to the
      * specified {@code name}.
      */
-    public abstract void onExternalAPIEvent(String name, ReadableMap data);
+    protected abstract void onExternalAPIEvent(String name, ReadableMap data);
 
     protected void onExternalAPIEvent(
             Map<String, Method> listenerMethods,

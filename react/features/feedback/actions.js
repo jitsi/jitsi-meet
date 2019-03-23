@@ -1,5 +1,7 @@
 // @flow
 
+import type { Dispatch } from 'redux';
+
 import { openDialog } from '../base/dialog';
 import { FEEDBACK_REQUEST_IN_PROGRESS } from '../../../modules/UI/UIErrors';
 
@@ -46,7 +48,7 @@ export function maybeOpenFeedbackDialog(conference: Object) {
         showThankYou: boolean
     };
 
-    return (dispatch: Dispatch<*>, getState: Function): Promise<R> => {
+    return (dispatch: Dispatch<any>, getState: Function): Promise<R> => {
         const state = getState();
 
         if (interfaceConfig.filmStripOnly || config.iAmRecorder) {

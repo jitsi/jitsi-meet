@@ -1,5 +1,7 @@
 // @flow
 
+import type { Dispatch } from 'redux';
+
 import { getInviteURL } from '../base/connection';
 import { inviteVideoRooms } from '../videosipgw';
 import { getParticipants } from '../base/participants';
@@ -9,6 +11,7 @@ import {
     BEGIN_ADD_PEOPLE,
     REMOVE_PENDING_INVITE_REQUESTS,
     SET_CALLEE_INFO_VISIBLE,
+    SET_INVITE_DIALOG_VISIBLE,
     UPDATE_DIAL_IN_NUMBERS_FAILED,
     UPDATE_DIAL_IN_NUMBERS_SUCCESS
 } from './actionTypes';
@@ -50,7 +53,7 @@ export function invite(
         invitees: Array<Object>,
         showCalleeInfo: boolean = false) {
     return (
-            dispatch: Dispatch<*>,
+            dispatch: Dispatch<any>,
             getState: Function): Promise<Array<Object>> => {
         const state = getState();
         const participants = getParticipants(state);
@@ -160,7 +163,7 @@ export function invite(
  * @returns {Function}
  */
 export function updateDialInNumbers() {
-    return (dispatch: Dispatch<*>, getState: Function) => {
+    return (dispatch: Dispatch<any>, getState: Function) => {
         const state = getState();
         const { dialInConfCodeUrl, dialInNumbersUrl, hosts }
             = state['features/base/config'];
@@ -194,6 +197,22 @@ export function updateDialInNumbers() {
                     error
                 });
             });
+    };
+}
+
+/**
+ * Sets the visibility of the invite dialog.
+ *
+ * @param {boolean} visible - The visibility to set.
+ * @returns {{
+ *     type: SET_INVITE_DIALOG_VISIBLE,
+ *     visible: boolean
+ * }}
+ */
+export function setAddPeopleDialogVisible(visible: boolean) {
+    return {
+        type: SET_INVITE_DIALOG_VISIBLE,
+        visible
     };
 }
 

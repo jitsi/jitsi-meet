@@ -26,6 +26,7 @@ import {
     CONFERENCE_FAILED,
     CONFERENCE_JOINED,
     CONFERENCE_LEFT,
+    CONFERENCE_SUBJECT_CHANGED,
     CONFERENCE_WILL_JOIN,
     CONFERENCE_WILL_LEAVE,
     DATA_CHANNEL_OPENED,
@@ -33,7 +34,6 @@ import {
     LOCK_STATE_CHANGED,
     P2P_STATUS_CHANGED,
     SET_AUDIO_ONLY,
-    SET_CONFERENCE_SUBJECT,
     SET_DESKTOP_SHARING_ENABLED,
     SET_FOLLOW_ME,
     SET_LASTN,
@@ -42,6 +42,7 @@ import {
     SET_PASSWORD_FAILED,
     SET_PREFERRED_RECEIVER_VIDEO_QUALITY,
     SET_ROOM,
+    SET_PENDING_SUBJECT_CHANGE,
     SET_START_MUTED_POLICY
 } from './actionTypes';
 import {
@@ -273,6 +274,22 @@ export function conferenceLeft(conference: Object) {
 }
 
 /**
+ * Signals that the conference subject has been changed.
+ *
+ * @param {string} subject - The new subject.
+ * @returns {{
+ *     type: CONFERENCE_SUBJECT_CHANGED,
+ *     subject: string
+ * }}
+ */
+export function conferenceSubjectChanged(subject: string) {
+    return {
+        type: CONFERENCE_SUBJECT_CHANGED,
+        subject
+    };
+}
+
+/**
  * Adds any existing local tracks to a specific conference before the conference
  * is joined. Then signals the intention of the application to have the local
  * participant join the specified conference.
@@ -282,7 +299,7 @@ export function conferenceLeft(conference: Object) {
  * @returns {Function}
  */
 function _conferenceWillJoin(conference: Object) {
-    return (dispatch: Dispatch<*>, getState: Function) => {
+    return (dispatch: Dispatch<any>, getState: Function) => {
         const localTracks
             = getLocalTracks(getState()['features/base/tracks'])
                 .map(t => t.jitsiTrack);
@@ -548,7 +565,7 @@ export function setFollowMe(enabled: boolean) {
  * @returns {Function}
  */
 export function setLastN(lastN: ?number) {
-    return (dispatch: Dispatch<*>, getState: Function) => {
+    return (dispatch: Dispatch<any>, getState: Function) => {
         if (typeof lastN === 'undefined') {
             const config = getState()['features/base/config'];
 
@@ -601,7 +618,7 @@ export function setPassword(
         conference: Object,
         method: Function,
         password: string) {
-    return (dispatch: Dispatch<*>, getState: Function): ?Promise<void> => {
+    return (dispatch: Dispatch<any>, getState: Function): ?Promise<void> => {
         switch (method) {
         case conference.join: {
             let state = getState()['features/base/conference'];
@@ -704,7 +721,7 @@ export function setRoom(room: ?string) {
  */
 export function setStartMutedPolicy(
         startAudioMuted: boolean, startVideoMuted: boolean) {
-    return (dispatch: Dispatch<*>, getState: Function) => {
+    return (dispatch: Dispatch<any>, getState: Function) => {
         const conference = getCurrentConference(getState());
 
         conference && conference.setStartMutedPolicy({
@@ -723,7 +740,7 @@ export function setStartMutedPolicy(
  * @returns {Function}
  */
 export function toggleAudioOnly() {
-    return (dispatch: Dispatch<*>, getState: Function) => {
+    return (dispatch: Dispatch<any>, getState: Function) => {
         const { audioOnly } = getState()['features/base/conference'];
 
         return dispatch(setAudioOnly(!audioOnly, true));
@@ -736,9 +753,21 @@ export function toggleAudioOnly() {
  * @param {string} subject - The new subject.
  * @returns {void}
  */
-export function setSubject(subject: String) {
-    return {
-        type: SET_CONFERENCE_SUBJECT,
-        subject
+export function setSubject(subject: string = '') {
+    return (dispatch: Dispatch<any>, getState: Function) => {
+        const { conference } = getState()['features/base/conference'];
+
+        if (conference) {
+            dispatch({
+                type: SET_PENDING_SUBJECT_CHANGE,
+                subject: undefined
+            });
+            conference.setSubject(subject);
+        } else {
+            dispatch({
+                type: SET_PENDING_SUBJECT_CHANGE,
+                subject
+            });
+        }
     };
 }

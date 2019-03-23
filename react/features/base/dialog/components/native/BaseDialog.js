@@ -16,8 +16,7 @@ import AbstractDialog, {
 } from '../AbstractDialog';
 import { brandedDialog as styles } from './styles';
 
-export type Props = {
-    ...AbstractProps,
+export type Props = AbstractProps & {
 
     /**
      * The color-schemed stylesheet of the feature.

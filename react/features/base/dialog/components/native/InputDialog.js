@@ -18,8 +18,7 @@ import {
     inputDialog as styles
 } from './styles';
 
-type Props = {
-    ...BaseProps,
+type Props = BaseProps & {
 
     /**
      * The color-schemed stylesheet of the feature.
@@ -95,11 +94,11 @@ class InputDialog extends BaseDialog<Props, State> {
                         disabled = { okDisabled }
                         onPress = { this._onSubmitValue }
                         style = { [
-                            brandedDialog.button,
+                            _dialogStyles.button,
                             brandedDialog.buttonFarLeft,
                             brandedDialog.buttonFarRight
                         ] }>
-                        <Text style = { _dialogStyles.text }>
+                        <Text style = { _dialogStyles.buttonLabel }>
                             { t('dialog.Ok') }
                         </Text>
                     </TouchableOpacity>

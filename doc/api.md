@@ -1,6 +1,6 @@
 # Jitsi Meet API
 
-You can use the Jitsi Meet API to embed Jitsi Meet in to your application.
+You can use the Jitsi Meet API to embed Jitsi Meet in to your application. You are also welcome to use it for embedding the globally distributed and highly available deployment on meet.jit.si itself. The only thing we ask for in that case is that you please DO NOT remove the jitsi.org logo from the top left corner.
 
 ## Installation
 
@@ -168,7 +168,14 @@ changes. The listener will receive an object with the following structure:
 * **screenSharingStatusChanged** - receives event notifications about turning on/off the local user screen sharing. The listener will receive object with the following structure:
 ```javascript
 {
-"on": on //whether screen sharing is on
+"on": on, //whether screen sharing is on
+"details": {
+
+    // From where the screen sharing is capturing, if known. Values which are
+    // passed include "window", "screen", "proxy", "device". The value undefined
+    // will be passed if the source type is unknown or screen share is off.
+    sourceType: sourceType
+}
 }
 ```
 
@@ -205,6 +212,12 @@ changes. The listener will receive an object with the following structure:
 {
 "id": id, // the id of the participant that changed his email
 "email": email // the new email
+}
+```
+* **filmstripDisplayChanged** - event notifications about the visibility of the filmstrip being updated.
+```javascript
+{
+"visible": visible, // Whether or not the filmstrip is displayed or hidden.
 }
 ```
 
@@ -256,7 +269,7 @@ changes. The listener will receive an object with the following structure:
 
 * **readyToClose** - event notification fired when Jitsi Meet is ready to be closed (hangup operations are completed).
 
-* **subjectChange** - event notifications about subject of conference changes. 
+* **subjectChange** - event notifications about subject of conference changes.
 The listener will receive an object with the following structure:
 ```javascript
 {

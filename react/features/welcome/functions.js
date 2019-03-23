@@ -4,9 +4,6 @@ import { getAppProp } from '../base/app';
 import { toState } from '../base/redux';
 
 declare var APP: Object;
-declare var config: Object;
-
-export * from './roomnameGenerator';
 
 /**
  * Determines whether the {@code WelcomePage} is enabled by the app itself

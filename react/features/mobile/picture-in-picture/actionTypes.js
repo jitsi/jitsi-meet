@@ -8,4 +8,4 @@
  *
  * @public
  */
-export const ENTER_PICTURE_IN_PICTURE = Symbol('ENTER_PICTURE_IN_PICTURE');
+export const ENTER_PICTURE_IN_PICTURE = 'ENTER_PICTURE_IN_PICTURE';

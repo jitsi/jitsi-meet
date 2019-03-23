@@ -38,6 +38,7 @@ import {
     conferenceFailed,
     conferenceJoined,
     conferenceLeft,
+    conferenceSubjectChanged,
     conferenceWillJoin,
     conferenceWillLeave,
     dataChannelOpened,
@@ -45,8 +46,7 @@ import {
     onStartMutedPolicyChanged,
     p2pStatusChanged,
     sendLocalParticipant,
-    setDesktopSharingEnabled,
-    setSubject
+    setDesktopSharingEnabled
 } from './react/features/base/conference';
 import {
     getAvailableDevices,
@@ -1326,7 +1326,14 @@ export default {
         this.isSharingScreen = newStream && newStream.videoType === 'desktop';
 
         if (wasSharingScreen !== this.isSharingScreen) {
-            APP.API.notifyScreenSharingStatusChanged(this.isSharingScreen);
+            const details = {};
+
+            if (this.isSharingScreen) {
+                details.sourceType = newStream.sourceType;
+            }
+
+            APP.API.notifyScreenSharingStatusChanged(
+                this.isSharingScreen, details);
         }
     },
 
@@ -1827,7 +1834,7 @@ export default {
             APP.UI.showToolbar(6000);
         });
         room.on(JitsiConferenceEvents.SUBJECT_CHANGED,
-            subject => APP.API.notifySubjectChanged(subject));
+            subject => APP.store.dispatch(conferenceSubjectChanged(subject)));
 
         room.on(
             JitsiConferenceEvents.LAST_N_ENDPOINTS_CHANGED,
@@ -2315,7 +2322,8 @@ export default {
                         }));
                     }
 
-                    if (this.localVideo) {
+                    if (this.localVideo
+                        && this.localVideo.videoType === 'camera') {
                         dispatch(updateSettings({
                             cameraDeviceId: this.localVideo.getDeviceId()
                         }));
@@ -2691,6 +2699,13 @@ export default {
     onProxyConnectionEvent(event) {
         if (!this._proxyConnection) {
             this._proxyConnection = new JitsiMeetJS.ProxyConnectionService({
+
+                /**
+                 * Pass the {@code JitsiConnection} instance which will be used
+                 * to fetch TURN credentials.
+                 */
+                jitsiConnection: APP.connection,
+
                 /**
                  * The proxy connection feature is currently tailored towards
                  * taking a proxied video stream and showing it as a local
@@ -2757,16 +2772,6 @@ export default {
     setAudioMuteStatus(muted) {
         APP.UI.setAudioMuted(this.getMyUserId(), muted);
         APP.API.notifyAudioMutedStatusChanged(muted);
-    },
-
-    /**
-     * Changes the subject of the conference.
-     * Note: available only for moderator.
-     *
-     * @param subject {string} the new subject for the conference.
-     */
-    setSubject(subject) {
-        APP.store.dispatch(setSubject(subject));
     },
 
     /**
