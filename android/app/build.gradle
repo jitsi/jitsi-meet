@@ -1,14 +1,5 @@
 apply plugin: 'com.android.application'
 
-boolean googleServicesEnabled = project.file('google-services.json').exists()
-
-// Crashlytics integration is done as part of Firebase now, so it gets
-// automagically activated with google-services.json
-if (googleServicesEnabled) {
-    apply plugin: 'io.fabric'
-}
-
-
 android {
     compileSdkVersion rootProject.ext.compileSdkVersion
     buildToolsVersion rootProject.ext.buildToolsVersion
