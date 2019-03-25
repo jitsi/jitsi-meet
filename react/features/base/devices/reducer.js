@@ -3,6 +3,7 @@ import {
     SET_VIDEO_INPUT_DEVICE,
     UPDATE_DEVICE_LIST
 } from './actionTypes';
+import { groupDevicesByKind } from './functions';
 
 import { ReducerRegistry } from '../redux';
 
@@ -27,7 +28,7 @@ ReducerRegistry.register(
     (state = DEFAULT_STATE, action) => {
         switch (action.type) {
         case UPDATE_DEVICE_LIST: {
-            const deviceList = _groupDevicesByKind(action.devices);
+            const deviceList = groupDevicesByKind(action.devices);
 
             return {
                 ...deviceList
@@ -44,19 +45,3 @@ ReducerRegistry.register(
         }
     });
 
-/**
- * Converts an array of media devices into an object organized by device kind.
- *
- * @param {Array<MediaDeviceInfo>} devices - Available media devices.
- * @private
- * @returns {Object} An object with the media devices split by type. The keys
- * are device type and the values are arrays with devices matching the device
- * type.
- */
-function _groupDevicesByKind(devices) {
-    return {
-        audioInput: devices.filter(device => device.kind === 'audioinput'),
-        audioOutput: devices.filter(device => device.kind === 'audiooutput'),
-        videoInput: devices.filter(device => device.kind === 'videoinput')
-    };
-}

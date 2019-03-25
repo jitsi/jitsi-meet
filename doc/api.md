@@ -29,6 +29,7 @@ Its constructor gets a number of options:
     * **jwt**: (optional) [JWT](https://jwt.io/) token.
     * **onload**: (optional) handler for the iframe onload event.
     * **invitees**: (optional) Array of objects containing information about new participants that will be invited in the call.
+    * **devices**: (optional) A map containing information about the initial devices that will be used in the call.
 
 Example:
 
@@ -39,6 +40,21 @@ var options = {
     width: 700,
     height: 700,
     parentNode: document.querySelector('#meet')
+}
+var api = new JitsiMeetExternalAPI(domain, options);
+```
+
+You can set the initial media devices for the call:
+
+```javascript
+var domain = "meet.jit.si";
+var options = {
+    ...
+    devices: {
+        'audioInput': '<device_id>',
+        'audioOutput': '<device_id>',
+        'videoInput': '<device_id>'
+    }
 }
 var api = new JitsiMeetExternalAPI(domain, options);
 ```

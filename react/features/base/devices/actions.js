@@ -1,10 +1,12 @@
 import JitsiMeetJS from '../lib-jitsi-meet';
+import { updateSettings } from '../settings';
 
 import {
     SET_AUDIO_INPUT_DEVICE,
     SET_VIDEO_INPUT_DEVICE,
     UPDATE_DEVICE_LIST
 } from './actionTypes';
+import { getDevicesFromURL } from './functions';
 
 /**
  * Queries for connected A/V input and output devices and updates the redux
@@ -77,3 +79,22 @@ export function updateDeviceList(devices) {
         devices
     };
 }
+
+/**
+ * Configures the initial A/V devices before the conference has started.
+ *
+ * @returns {Function}
+ */
+export function configureInitialDevices() {
+    return (dispatch, getState) => new Promise(resolve => {
+        const devices = getDevicesFromURL(getState());
+
+        if (devices) {
+            dispatch(updateSettings({
+                ...devices
+            }));
+            resolve();
+        }
+    });
+}
+
