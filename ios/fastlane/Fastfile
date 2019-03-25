@@ -1,8 +1,11 @@
+ENV["FASTLANE_SKIP_UPDATE_CHECK"] = "1"
+opt_out_usage
+
 default_platform(:ios)
 
 platform :ios do
   desc "Push a new beta build to TestFlight"
-  lane :beta do
+  lane :deploy do
     # Set the app identifier
     update_app_identifier(
       xcodeproj: "app/app.xcodeproj",
