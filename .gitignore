@@ -87,4 +87,5 @@ android/.settings/org.eclipse.buildship.core.prefs
 android/app/dropbox.key
 android/app/google-services.json
 ios/app/dropbox.key
+ios/app/GoogleService-Info.plist
 
