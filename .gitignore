@@ -86,4 +86,5 @@ android/.settings/org.eclipse.buildship.core.prefs
 # Secrets
 android/app/dropbox.key
 android/app/google-services.json
+ios/app/dropbox.key
 
