@@ -43,6 +43,7 @@ import {
 import {
     _addLocalTracksToConference,
     forEachConference,
+    getCurrentConference,
     _handleParticipantError,
     _removeLocalTracksFromConference
 } from './functions';
@@ -620,13 +621,10 @@ function _setRoom({ dispatch, getState }, next, action) {
  * @returns {Promise}
  */
 function _syncConferenceLocalTracksWithState({ getState }, action) {
-    const state = getState()['features/base/conference'];
-    const { conference } = state;
+    const conference = getCurrentConference(getState);
     let promise;
 
-    // XXX The conference may already be in the process of being left, that's
-    // why we should not add/remove local tracks to such conference.
-    if (conference && conference !== state.leaving) {
+    if (conference) {
         const track = action.track.jitsiTrack;
 
         if (action.type === TRACK_ADDED) {
