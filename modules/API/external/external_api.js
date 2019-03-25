@@ -221,6 +221,8 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
      * for iframe onload event.
      * @param {Array<Object>} [options.invitees] - Array of objects containing
      * information about new participants that will be invited in the call.
+     * @param {Array<Object>} [options.devices] - Array of objects containing
+     * information about the initial devices that will be used in the call.
      */
     constructor(domain, ...args) {
         super();
@@ -234,7 +236,8 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
             noSSL = false,
             jwt = undefined,
             onload = undefined,
-            invitees
+            invitees,
+            devices
         } = parseArguments(args);
 
         this._parentNode = parentNode;
@@ -243,7 +246,8 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
             interfaceConfigOverwrite,
             jwt,
             noSSL,
-            roomName
+            roomName,
+            devices
         });
         this._createIFrame(height, width, onload);
         this._transport = new Transport({

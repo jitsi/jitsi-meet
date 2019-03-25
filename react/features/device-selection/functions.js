@@ -1,6 +1,8 @@
 // @flow
 import {
     getAudioOutputDeviceId,
+    getAvailableDevices,
+    groupDevicesByKind,
     setAudioInputDevice,
     setAudioOutputDeviceId,
     setVideoInputDevice
@@ -46,7 +48,11 @@ export function getDeviceSelectionDialogProps(stateful: Object | Function) {
  * response.
  * @returns {boolean}
  */
-export function processRequest(dispatch: Dispatch<*>, getState: Function, request: Object, responseCallback: Function) { // eslint-disable-line max-len, max-params
+export function processRequest( // eslint-disable-line max-params
+        dispatch: Dispatch<*>,
+        getState: Function,
+        request: Object,
+        responseCallback: Function) {
     if (request.type === 'devices') {
         const state = getState();
         const settings = state['features/base/settings'];
@@ -71,7 +77,9 @@ export function processRequest(dispatch: Dispatch<*>, getState: Function, reques
             });
             break;
         case 'getAvailableDevices':
-            responseCallback(getState()['features/base/devices']);
+            dispatch(getAvailableDevices()).then(
+                devices => responseCallback(groupDevicesByKind(devices)));
+
             break;
         case 'setDevice': {
             const { device } = request;
@@ -87,7 +95,7 @@ export function processRequest(dispatch: Dispatch<*>, getState: Function, reques
                 dispatch(setVideoInputDevice(device.id));
                 break;
             default:
-
+                responseCallback(false);
             }
 
             responseCallback(true);
