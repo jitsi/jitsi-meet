@@ -151,6 +151,11 @@ public class JitsiMeetActivity extends FragmentActivity
         JitsiMeetActivityDelegate.requestPermissions(this, permissions, requestCode, listener);
     }
 
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        JitsiMeetActivityDelegate.onRequestPermissionsResult(requestCode, permissions, grantResults);
+    }
+
     // JitsiMeetViewListener
     //
 
