@@ -81,15 +81,6 @@ public class JitsiMeetFragment extends Fragment {
         JitsiMeetActivityDelegate.onHostDestroy(getActivity());
     }
 
-    // https://developer.android.com/reference/android/support/v4/app/ActivityCompat.OnRequestPermissionsResultCallback
-    @Override
-    public void onRequestPermissionsResult(
-            final int requestCode,
-            final String[] permissions,
-            final int[] grantResults) {
-        JitsiMeetActivityDelegate.onRequestPermissionsResult(requestCode, permissions, grantResults);
-    }
-
     @Override
     public void onResume() {
         super.onResume();
