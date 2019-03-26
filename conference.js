@@ -1919,21 +1919,6 @@ export default {
             JitsiConferenceEvents.PARTICIPANT_PROPERTY_CHANGED,
             (participant, name, oldValue, newValue) => {
                 switch (name) {
-                case 'features_screen-sharing': {
-                    APP.store.dispatch(participantUpdated({
-                        conference: room,
-                        id: participant.getId(),
-                        features: { 'screen-sharing': true }
-                    }));
-                    break;
-                }
-                case 'raisedHand':
-                    APP.store.dispatch(participantUpdated({
-                        conference: room,
-                        id: participant.getId(),
-                        raisedHand: newValue === 'true'
-                    }));
-                    break;
                 case 'remoteControlSessionStatus':
                     APP.UI.setRemoteControlActiveStatus(
                         participant.getId(),
