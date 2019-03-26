@@ -53,7 +53,7 @@ function RemoteVideo(user, VideoLayout, emitter) {
         ? 'left bottom' : 'top center';
     this.addRemoteVideoContainer();
     this.updateIndicators();
-    this.setDisplayName();
+    this.updateDisplayName();
     this.bindHoverHandler();
     this.flipX = false;
     this.isLocal = false;
@@ -519,9 +519,11 @@ RemoteVideo.prototype.addRemoteStreamElement = function(stream) {
 };
 
 /**
- * Updates the display name component for the given video span id.
+ * Triggers re-rendering of the display name using current instance state.
+ *
+ * @returns {void}
  */
-RemoteVideo.prototype.setDisplayName = function() {
+RemoteVideo.prototype.updateDisplayName = function() {
     if (!this.container) {
         logger.warn(`Unable to set displayName - ${this.videoSpanId
         } does not exist`);
@@ -529,7 +531,7 @@ RemoteVideo.prototype.setDisplayName = function() {
         return;
     }
 
-    this.updateDisplayName({
+    this._renderDisplayName({
         elementID: `${this.videoSpanId}_name`,
         participantID: this.id
     });
