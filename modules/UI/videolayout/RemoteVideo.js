@@ -519,11 +519,9 @@ RemoteVideo.prototype.addRemoteStreamElement = function(stream) {
 };
 
 /**
- * Sets the display name for the given video span id.
- *
- * @param displayName the display name to set
+ * Updates the display name component for the given video span id.
  */
-RemoteVideo.prototype.setDisplayName = function(displayName) {
+RemoteVideo.prototype.setDisplayName = function() {
     if (!this.container) {
         logger.warn(`Unable to set displayName - ${this.videoSpanId
         } does not exist`);
@@ -532,7 +530,6 @@ RemoteVideo.prototype.setDisplayName = function(displayName) {
     }
 
     this.updateDisplayName({
-        displayName: displayName || interfaceConfig.DEFAULT_REMOTE_DISPLAY_NAME,
         elementID: `${this.videoSpanId}_name`,
         participantID: this.id
     });

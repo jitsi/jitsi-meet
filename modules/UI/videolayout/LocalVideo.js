@@ -87,9 +87,9 @@ LocalVideo.prototype.createContainer = function() {
 };
 
 /**
- * Sets the display name for the given video span id.
+ * Updates the display name component for the given video span id.
  */
-LocalVideo.prototype.setDisplayName = function(displayName) {
+LocalVideo.prototype.setDisplayName = function() {
     if (!this.container) {
         logger.warn(
                 `Unable to set displayName - ${this.videoSpanId
@@ -100,7 +100,6 @@ LocalVideo.prototype.setDisplayName = function(displayName) {
 
     this.updateDisplayName({
         allowEditing: APP.store.getState()['features/base/jwt'].isGuest,
-        displayName,
         displayNameSuffix: interfaceConfig.DEFAULT_LOCAL_DISPLAY_NAME,
         elementID: 'localDisplayName',
         participantID: this.id
