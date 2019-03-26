@@ -264,7 +264,6 @@
         },
         "status": "连接中"
     },
-    "connectionindicator": {},
     "notify": {
         "connectedOneMember": "__name__ 进入会议室",
         "connectedTwoMembers": "__first__ 与 __second__ 进入会议室",

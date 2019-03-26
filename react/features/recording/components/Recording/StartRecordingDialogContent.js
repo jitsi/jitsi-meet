@@ -166,19 +166,19 @@ class StartRecordingDialogContent extends Component<Props> {
             <Container
                 className = 'recording-header'
                 style = { styles.header }>
-                <Container className = 'recording-icon-container'>
+                {/* <Container className = 'recording-icon-container'>
                     <Image
                         className = 'recording-icon'
                         src = { JITSI_LOGO }
                         style = { styles.recordingIcon } />
-                </Container>
+                </Container> */}
                 <Text
                     className = 'recording-title'
                     style = {{
                         ..._dialogStyles.text,
                         ...styles.title
                     }}>
-                    { t('recording.serviceDescription') }
+                    { t('recording.startRecordingBody') }
                 </Text>
                 { switchContent }
             </Container>
