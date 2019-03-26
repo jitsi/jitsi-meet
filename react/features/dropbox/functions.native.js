@@ -50,5 +50,5 @@ export function getSpaceUsage(token: string) {
 export function isEnabled(state: Object) {
     const { dropbox = {} } = state['features/base/config'];
 
-    return Dropbox.ENABLED && typeof dropbox.appKey === 'string';
+    return false;
 }
