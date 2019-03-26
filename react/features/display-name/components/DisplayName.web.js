@@ -8,7 +8,8 @@ import { appendSuffix } from '../functions';
 
 import { translate } from '../../base/i18n';
 import {
-    getParticipantDisplayName
+    getParticipantDisplayName,
+    getParticipantById
 } from '../../base/participants';
 import { updateSettings } from '../../base/settings';
 
@@ -18,9 +19,15 @@ import { updateSettings } from '../../base/settings';
 type Props = {
 
     /**
-     * The participant's current display name.
+     * The participant's current display name which should be shown when in
+     * edit mode. Can be different from what is shown when not editing.
      */
-    _displayName: string,
+    _configuredDisplayName: string,
+
+    /**
+     * The participant's current display name which should be shown.
+     */
+    _nameToDisplay: string,
 
     /**
      * Whether or not the display name should be editable on click.
@@ -78,6 +85,10 @@ type State = {
 class DisplayName extends Component<Props, State> {
     _nameInput: ?HTMLInputElement;
 
+    static defaultProps = {
+        _configuredDisplayName: ''
+    };
+
     /**
      * Initializes a new {@code DisplayName} instance.
      *
@@ -134,7 +145,7 @@ class DisplayName extends Component<Props, State> {
      */
     render() {
         const {
-            _displayName,
+            _nameToDisplay,
             allowEditing,
             displayNameSuffix,
             elementID,
@@ -163,7 +174,7 @@ class DisplayName extends Component<Props, State> {
                 className = 'displayname'
                 id = { elementID }
                 onClick = { this._onStartEditing }>
-                { appendSuffix(_displayName, displayNameSuffix) }
+                { appendSuffix(_nameToDisplay, displayNameSuffix) }
             </span>
         );
     }
@@ -212,7 +223,7 @@ class DisplayName extends Component<Props, State> {
         if (this.props.allowEditing) {
             this.setState({
                 isEditing: true,
-                editDisplayNameValue: this.props._displayName || ''
+                editDisplayNameValue: this.props._configuredDisplayName
             });
         }
     }
@@ -268,14 +279,17 @@ class DisplayName extends Component<Props, State> {
  * @param {Props} ownProps - The own props of the component.
  * @private
  * @returns {{
- *     _displayName: string
+ *     _configuredDisplayName: string,
+ *     _nameToDisplay: string
  * }}
  */
 function _mapStateToProps(state, ownProps) {
     const { participantID } = ownProps;
+    const participant = getParticipantById(state, participantID);
 
     return {
-        _displayName: getParticipantDisplayName(
+        _configuredDisplayName: participant && participant.name,
+        _nameToDisplay: getParticipantDisplayName(
             state, participantID)
     };
 }
