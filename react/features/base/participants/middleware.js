@@ -1,14 +1,17 @@
 // @flow
 
+import UIEvents from '../../../../service/UI/UIEvents';
+
+import { CALLING, INVITED } from '../../presence-status';
+
 import { APP_WILL_MOUNT, APP_WILL_UNMOUNT } from '../app';
 import {
     CONFERENCE_WILL_JOIN,
     forEachConference,
     getCurrentConference
 } from '../conference';
-import { CALLING, INVITED } from '../../presence-status';
+import { JitsiConferenceEvents } from '../lib-jitsi-meet';
 import { MiddlewareRegistry, StateListenerRegistry } from '../redux';
-import UIEvents from '../../../../service/UI/UIEvents';
 import { playSound, registerSound, unregisterSound } from '../sounds';
 
 import {
@@ -184,6 +187,42 @@ StateListenerRegistry.register(
             && dispatch(
                 localParticipantIdChanged(LOCAL_PARTICIPANT_DEFAULT_ID));
     });
+
+/**
+ * Registers listeners for participant change events.
+ */
+StateListenerRegistry.register(
+    state => state['features/base/conference'].conference,
+    (conference, { dispatch }) => {
+        if (conference) {
+            // We joined a conference
+            conference.on(
+                JitsiConferenceEvents.PARTICIPANT_PROPERTY_CHANGED,
+                (participant, propertyName, oldValue, newValue) => {
+                    switch (propertyName) {
+                    case 'features_screen-sharing':
+                        store.dispatch(participantUpdated({
+                            conference,
+                            id: participant.getId(),
+                            features: { 'screen-sharing': true }
+                        }));
+                        break;
+                    case 'raisedHand':
+                        dispatch(participantUpdated({
+                            conference,
+                            id: participant.getId(),
+                            raisedHand: newValue === 'true'
+                        }));
+                        break;
+                    default:
+
+                        // Ignore for now.
+                    }
+
+                });
+        }
+    }
+);
 
 /**
  * Initializes the local participant and signals that it joined.
