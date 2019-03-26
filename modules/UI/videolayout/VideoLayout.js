@@ -659,15 +659,15 @@ const VideoLayout = {
     /**
      * Display name changed.
      */
-    onDisplayNameChanged(id, displayName, status) {
+    onDisplayNameChanged(id) {
         if (id === 'localVideoContainer'
             || APP.conference.isLocalId(id)) {
-            localVideoThumbnail.setDisplayName(displayName);
+            localVideoThumbnail.updateDisplayName();
         } else {
             const remoteVideo = remoteVideos[id];
 
             if (remoteVideo) {
-                remoteVideo.setDisplayName(displayName, status);
+                remoteVideo.updateDisplayName();
             }
         }
     },

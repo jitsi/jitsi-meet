@@ -439,9 +439,11 @@ SmallVideo.prototype.$displayName = function() {
  * Creates or updates the participant's display name that is shown over the
  * video preview.
  *
+ * @param {Object} props - The React {@code Component} props to pass into the
+ * {@code DisplayName} component.
  * @returns {void}
  */
-SmallVideo.prototype.updateDisplayName = function(props) {
+SmallVideo.prototype._renderDisplayName = function(props) {
     const displayNameContainer
         = this.container.querySelector('.displayNameContainer');
 
