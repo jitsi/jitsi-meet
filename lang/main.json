@@ -469,7 +469,7 @@
         "moderator": "Moderator rights granted!",
         "muted": "You have started the conversation muted.",
         "mutedTitle": "You're muted!",
-        "raisedHand": "Would like to speak.",
+        "raisedHand": "__name__ would like to speak.",
         "somebody": "Somebody",
         "suboptimalExperienceDescription": "Eer... we are afraid your experience with __appName__ isn't going to be that great here. We are looking for ways to improve this but, until then, please try using one of the <a href='static/recommendedBrowsers.html' target='_blank'>fully supported browsers</a>.",
         "suboptimalExperienceTitle": "Browser Warning"

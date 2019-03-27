@@ -2,6 +2,7 @@
 
 import UIEvents from '../../../../service/UI/UIEvents';
 
+import { showNotification } from '../../notifications';
 import { CALLING, INVITED } from '../../presence-status';
 
 import { APP_WILL_MOUNT, APP_WILL_UNMOUNT } from '../app';
@@ -40,7 +41,8 @@ import {
     getAvatarURLByParticipantId,
     getLocalParticipant,
     getParticipantById,
-    getParticipantCount
+    getParticipantCount,
+    getParticipantDisplayName
 } from './functions';
 import { PARTICIPANT_JOINED_FILE, PARTICIPANT_LEFT_FILE } from './sounds';
 
@@ -193,7 +195,7 @@ StateListenerRegistry.register(
  */
 StateListenerRegistry.register(
     state => state['features/base/conference'].conference,
-    (conference, { dispatch }) => {
+    (conference, store) => {
         if (conference) {
             // We joined a conference
             conference.on(
@@ -207,13 +209,11 @@ StateListenerRegistry.register(
                             features: { 'screen-sharing': true }
                         }));
                         break;
-                    case 'raisedHand':
-                        dispatch(participantUpdated({
-                            conference,
-                            id: participant.getId(),
-                            raisedHand: newValue === 'true'
-                        }));
+                    case 'raisedHand': {
+                        _raiseHandUpdated(
+                            store, conference, participant, newValue);
                         break;
+                    }
                     default:
 
                         // Ignore for now.
@@ -369,6 +369,34 @@ function _participantJoinedOrUpdated({ getState }, next, action) {
     }
 
     return next(action);
+}
+
+/**
+ * Handles a raise hand status update.
+ *
+ * @param {Function} dispatch - The Redux dispatch function.
+ * @param {Object} conference - The conference for which we got an update.
+ * @param {*} participant - The participant from which we got an update.
+ * @param {*} newValue - The new value of the raise hand status.
+ * @returns {void}
+ */
+function _raiseHandUpdated({ dispatch, getState }, conference, participant, newValue) {
+    const raisedHand = newValue === 'true';
+
+    dispatch(participantUpdated({
+        conference,
+        id: participant.getId(),
+        raisedHand
+    }));
+
+    if (raisedHand) {
+        dispatch(showNotification({
+            titleArguments: {
+                name: getParticipantDisplayName(getState, participant.getId())
+            },
+            titleKey: 'notify.raisedHand'
+        }, 2500));
+    }
 }
 
 /**
