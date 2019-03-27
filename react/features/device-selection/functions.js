@@ -1,7 +1,13 @@
 // @flow
+
+import type { Dispatch } from 'redux';
+
 import {
+    addPendingDeviceRequest,
+    areDeviceLabelsInitialized,
     getAudioOutputDeviceId,
     getAvailableDevices,
+    getDeviceIdByLabel,
     groupDevicesByKind,
     setAudioInputDevice,
     setAudioOutputDeviceId,
@@ -49,13 +55,15 @@ export function getDeviceSelectionDialogProps(stateful: Object | Function) {
  * @returns {boolean}
  */
 export function processRequest( // eslint-disable-line max-params
-        dispatch: Dispatch<*>,
+        dispatch: Dispatch<any>,
         getState: Function,
         request: Object,
         responseCallback: Function) {
     if (request.type === 'devices') {
         const state = getState();
         const settings = state['features/base/settings'];
+        const { conference } = state['features/base/conference'];
+        let result = true;
 
         switch (request.name) {
         case 'isDeviceListAvailable':
@@ -70,35 +78,95 @@ export function processRequest( // eslint-disable-line max-params
             responseCallback(JitsiMeetJS.isMultipleAudioInputSupported());
             break;
         case 'getCurrentDevices':
-            responseCallback({
-                audioInput: settings.micDeviceId,
-                audioOutput: getAudioOutputDeviceId(),
-                videoInput: settings.cameraDeviceId
+            dispatch(getAvailableDevices()).then(devices => {
+                if (areDeviceLabelsInitialized(state)) {
+                    let audioInput, audioOutput, videoInput;
+                    const audioOutputDeviceId = getAudioOutputDeviceId();
+                    const { cameraDeviceId, micDeviceId } = settings;
+
+                    devices.forEach(({ deviceId, label }) => {
+                        switch (deviceId) {
+                        case micDeviceId:
+                            audioInput = label;
+                            break;
+                        case audioOutputDeviceId:
+                            audioOutput = label;
+                            break;
+                        case cameraDeviceId:
+                            videoInput = label;
+                            break;
+                        }
+                    });
+
+                    responseCallback({
+                        audioInput,
+                        audioOutput,
+                        videoInput
+                    });
+                } else {
+                    // The labels are not available if the A/V permissions are
+                    // not yet granted.
+                    dispatch(addPendingDeviceRequest({
+                        type: 'devices',
+                        name: 'getCurrentDevices',
+                        responseCallback
+                    }));
+                }
             });
+
             break;
         case 'getAvailableDevices':
-            dispatch(getAvailableDevices()).then(
-                devices => responseCallback(groupDevicesByKind(devices)));
+            dispatch(getAvailableDevices()).then(devices => {
+                if (areDeviceLabelsInitialized(state)) {
+                    responseCallback(groupDevicesByKind(devices));
+                } else {
+                    // The labels are not available if the A/V permissions are
+                    // not yet granted.
+                    dispatch(addPendingDeviceRequest({
+                        type: 'devices',
+                        name: 'getAvailableDevices',
+                        responseCallback
+                    }));
+                }
+            });
 
             break;
         case 'setDevice': {
             const { device } = request;
 
-            switch (device.kind) {
-            case 'audioinput':
-                dispatch(setAudioInputDevice(device.id));
-                break;
-            case 'audiooutput':
-                setAudioOutputDeviceId(device.id, dispatch);
-                break;
-            case 'videoinput':
-                dispatch(setVideoInputDevice(device.id));
-                break;
-            default:
-                responseCallback(false);
+            if (!conference) {
+                dispatch(addPendingDeviceRequest({
+                    type: 'devices',
+                    name: 'setDevice',
+                    device,
+                    responseCallback
+                }));
+
+                return true;
             }
 
-            responseCallback(true);
+            const deviceId = getDeviceIdByLabel(state, device.label);
+
+            if (deviceId) {
+                switch (device.kind) {
+                case 'audioinput': {
+                    dispatch(setAudioInputDevice(deviceId));
+                    break;
+                }
+                case 'audiooutput':
+                    setAudioOutputDeviceId(deviceId, dispatch);
+                    break;
+                case 'videoinput':
+                    dispatch(setVideoInputDevice(deviceId));
+                    break;
+                default:
+                    result = false;
+                }
+            } else {
+                result = false;
+            }
+
+            responseCallback(result);
             break;
         }
         default:
