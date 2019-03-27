@@ -18,6 +18,7 @@ import { ClosedCaptionButton } from '../../../subtitles';
 import { TileViewButton } from '../../../video-layout';
 
 import AudioOnlyButton from './AudioOnlyButton';
+import RaiseHandButton from './RaiseHandButton';
 import ToggleCameraButton from './ToggleCameraButton';
 
 declare var __DEV__;
@@ -95,6 +96,7 @@ class OverflowMenu extends Component<Props> {
                 <LiveStreamButton { ...buttonProps } />
                 <TileViewButton { ...buttonProps } />
                 <InviteButton { ...buttonProps } />
+                <RaiseHandButton { ...buttonProps } />
             </BottomSheet>
         );
     }
