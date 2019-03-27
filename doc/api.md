@@ -51,9 +51,9 @@ var domain = "meet.jit.si";
 var options = {
     ...
     devices: {
-        'audioInput': '<device_id>',
-        'audioOutput': '<device_id>',
-        'videoInput': '<device_id>'
+        'audioInput': '<deviceLabel>',
+        'audioOutput': '<deviceLabel>',
+        'videoInput': '<deviceLabel>'
     }
 }
 var api = new JitsiMeetExternalAPI(domain, options);
@@ -109,14 +109,14 @@ api.getAvailableDevices().then(function(devices) {
     ...
 });
 ```
-* **getCurrentDevices** - Retrieve a list with the devices that are currently sected.
+* **getCurrentDevices** - Retrieve a list with the devices that are currently selected.
 
 ```javascript
 api.getCurrentDevices().then(function(devices) {
     // devices = {
-    //     'audioInput': 'deviceID',
-    //     'audioOutput': 'deviceID',
-    //     'videoInput': 'deviceID'
+    //     'audioInput': 'deviceLabel',
+    //     'audioOutput': 'deviceLabel',
+    //     'videoInput': 'deviceLabel'
     // }
     ...
 });
@@ -143,20 +143,20 @@ api.isMultipleAudioInputSupported().then(function(isMultipleAudioInputSupported)
     ...
 });
 ```
-* **setAudioInputDevice** - Sets the audio input device to the one with the id that is passed.
+* **setAudioInputDevice** - Sets the audio input device to the one with the label that is passed.
 
 ```javascript
-api.setAudioInputDevice(deviceId);
+api.setAudioInputDevice(deviceLabel);
 ```
-* **setAudioOutputDevice** - Sets the audio output device to the one with the id that is passed.
+* **setAudioOutputDevice** - Sets the audio output device to the one with the label that is passed.
 
 ```javascript
-api.setAudioOutputDevice(deviceId);
+api.setAudioOutputDevice(deviceLabel);
 ```
-* **setVideoInputDevice** - Sets the video input device to the one with the id that is passed.
+* **setVideoInputDevice** - Sets the video input device to the one with the label that is passed.
 
 ```javascript
-api.setVideoInputDevice(deviceId);
+api.setVideoInputDevice(deviceLabel);
 ```
 
 You can control the embedded Jitsi Meet conference using the `JitsiMeetExternalAPI` object by using `executeCommand`:

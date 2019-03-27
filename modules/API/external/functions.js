@@ -105,12 +105,12 @@ export function isMultipleAudioInputSupported(transport: Object) {
  *
  * @param {Transport} transport - The @code{Transport} instance responsible for
  * the external communication.
- * @param {string} id - The id of the new device.
+ * @param {string} label - The label of the new device.
  * @returns {Promise}
  */
-export function setAudioInputDevice(transport: Object, id: string) {
+export function setAudioInputDevice(transport: Object, label: string) {
     return _setDevice(transport, {
-        id,
+        label,
         kind: 'audioinput'
     });
 }
@@ -120,12 +120,12 @@ export function setAudioInputDevice(transport: Object, id: string) {
  *
  * @param {Transport} transport - The @code{Transport} instance responsible for
  * the external communication.
- * @param {string} id - The id of the new device.
+ * @param {string} label - The label of the new device.
  * @returns {Promise}
  */
-export function setAudioOutputDevice(transport: Object, id: string) {
+export function setAudioOutputDevice(transport: Object, label: string) {
     return _setDevice(transport, {
-        id,
+        label,
         kind: 'audiooutput'
     });
 }
@@ -151,12 +151,12 @@ function _setDevice(transport: Object, device) {
  *
  * @param {Transport} transport - The @code{Transport} instance responsible for
  * the external communication.
- * @param {string} id - The id of the new device.
+ * @param {string} label - The label of the new device.
  * @returns {Promise}
  */
-export function setVideoInputDevice(transport: Object, id: string) {
+export function setVideoInputDevice(transport: Object, label: string) {
     return _setDevice(transport, {
-        id,
+        label,
         kind: 'videoinput'
     });
 }
