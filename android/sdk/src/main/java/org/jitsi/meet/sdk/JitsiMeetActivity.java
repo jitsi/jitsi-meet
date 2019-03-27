@@ -16,6 +16,7 @@
 
 package org.jitsi.meet.sdk;
 
+import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -36,6 +37,25 @@ public class JitsiMeetActivity extends FragmentActivity
         implements JitsiMeetActivityInterface, JitsiMeetViewListener {
 
     protected static final String TAG = JitsiMeetActivity.class.getSimpleName();
+
+    public static final String ACTION_JITSI_MEET_CONFERENCE = "org.jitsi.meet.CONFERENCE";
+    public static final String JITSI_MEET_CONFERENCE_OPTIONS = "JitsiMeetConferenceOptions";
+
+    // Helpers for starting the activity
+    //
+
+    public static void launch(Context context, JitsiMeetConferenceOptions options) {
+        Intent intent = new Intent(context, JitsiMeetActivity.class);
+        intent.setAction(ACTION_JITSI_MEET_CONFERENCE);
+        intent.putExtra(JITSI_MEET_CONFERENCE_OPTIONS, options);
+        context.startActivity(intent);
+    }
+
+    public static void launch(Context context, String url) {
+        JitsiMeetConferenceOptions options
+            = new JitsiMeetConferenceOptions.Builder().setRoom(url).build();
+        launch(context, options);
+    }
 
     // Overrides
     //
@@ -80,18 +100,16 @@ public class JitsiMeetActivity extends FragmentActivity
     }
 
     private @Nullable JitsiMeetConferenceOptions getConferenceOptions(Intent intent) {
-        Uri uri;
+        String action = intent.getAction();
 
-        if (Intent.ACTION_VIEW.equals(intent.getAction())
-                && (uri = intent.getData()) != null) {
-            JitsiMeetConferenceOptions options
-                = new JitsiMeetConferenceOptions.Builder()
-                    .setRoom(uri.toString())
-                    .build();
-            return options;
+        if (Intent.ACTION_VIEW.equals(action)) {
+            Uri uri = intent.getData();
+            if (uri != null) {
+                return new JitsiMeetConferenceOptions.Builder().setRoom(uri.toString()).build();
+            }
+        } else if (ACTION_JITSI_MEET_CONFERENCE.equals(action)) {
+            return intent.getParcelableExtra(JITSI_MEET_CONFERENCE_OPTIONS);
         }
-
-        // TODO: accept JitsiMeetConferenceOptions directly.
 
         return null;
     }
