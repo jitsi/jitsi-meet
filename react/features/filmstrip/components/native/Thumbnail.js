@@ -22,8 +22,8 @@ import { RemoteVideoMenu } from '../../../remote-video-menu';
 import AudioMutedIndicator from './AudioMutedIndicator';
 import DominantSpeakerIndicator from './DominantSpeakerIndicator';
 import ModeratorIndicator from './ModeratorIndicator';
-import { AVATAR_SIZE } from '../styles';
-import styles from './styles';
+import RaisedHandIndicator from './RaisedHandIndicator';
+import styles, { AVATAR_SIZE } from './styles';
 import VideoMutedIndicator from './VideoMutedIndicator';
 
 /**
@@ -167,6 +167,8 @@ class Thumbnail extends Component<Props> {
 
                 { participant.dominantSpeaker
                     && <DominantSpeakerIndicator /> }
+
+                <RaisedHandIndicator participantId = { participant.id } />
 
                 <Container style = { styles.thumbnailIndicatorContainer }>
                     { audioMuted

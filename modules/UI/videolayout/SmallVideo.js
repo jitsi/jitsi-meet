@@ -824,6 +824,7 @@ SmallVideo.prototype.updateIndicators = function() {
     }
 
     ReactDOM.render(
+        <Provider store = { APP.store }>
             <I18nextProvider i18n = { i18next }>
                 <div>
                     <AtlasKitThemeProvider mode = 'dark'>
@@ -842,6 +843,7 @@ SmallVideo.prototype.updateIndicators = function() {
                         { this._showRaisedHand
                             ? <RaisedHandIndicator
                                 iconSize = { iconSize }
+                                participantId = { this.id }
                                 tooltipPosition = { tooltipPosition } />
                             : null }
                         { this._showDominantSpeaker
@@ -851,7 +853,8 @@ SmallVideo.prototype.updateIndicators = function() {
                             : null }
                     </AtlasKitThemeProvider>
                 </div>
-            </I18nextProvider>,
+            </I18nextProvider>
+        </Provider>,
         indicatorToolbar
     );
 };
