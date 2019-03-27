@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jitsi.meet.sdk.analytics;
+package org.jitsi.meet.sdk;
 
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContextBaseJavaModule;
@@ -31,7 +31,7 @@ import org.json.JSONObject;
  * Implements the react-native module for the Amplitude integration.
  */
 @ReactModule(name = AmplitudeModule.NAME)
-public class AmplitudeModule
+class AmplitudeModule
         extends ReactContextBaseJavaModule {
 
     public static final String NAME = "Amplitude";

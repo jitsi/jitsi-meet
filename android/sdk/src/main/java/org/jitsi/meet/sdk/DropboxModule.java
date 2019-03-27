@@ -1,4 +1,4 @@
-package org.jitsi.meet.sdk.dropbox;
+package org.jitsi.meet.sdk;
 
 import android.content.Context;
 import android.content.pm.ApplicationInfo;
@@ -28,8 +28,8 @@ import java.util.Map;
 /**
  * Implements the react-native module for the dropbox integration.
  */
-@ReactModule(name = Dropbox.NAME)
-public class Dropbox
+@ReactModule(name = DropboxModule.NAME)
+class DropboxModule
         extends ReactContextBaseJavaModule
         implements LifecycleEventListener {
 
@@ -43,7 +43,7 @@ public class Dropbox
 
     private Promise promise;
 
-    public Dropbox(ReactApplicationContext reactContext) {
+    public DropboxModule(ReactApplicationContext reactContext) {
         super(reactContext);
 
         String pkg = reactContext.getApplicationContext().getPackageName();
