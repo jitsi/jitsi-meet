@@ -7,13 +7,13 @@ import WarningIcon from '@atlaskit/icon/glyph/warning';
 import { colors } from '@atlaskit/theme';
 import React from 'react';
 
-import { translate } from '../../base/i18n';
+import { translate } from '../../../base/i18n';
 
-import { NOTIFICATION_TYPE } from '../constants';
+import { NOTIFICATION_TYPE } from '../../constants';
 
 import AbstractNotification, {
     type Props
-} from './AbstractNotification';
+} from '../AbstractNotification';
 
 declare var interfaceConfig: Object;
 

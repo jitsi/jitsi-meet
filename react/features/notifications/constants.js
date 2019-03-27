@@ -1,3 +1,5 @@
+// @flow
+
 /**
  * The set of possible notification types.
  *

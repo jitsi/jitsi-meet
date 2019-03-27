@@ -3,12 +3,13 @@
 import React from 'react';
 import { Text, TouchableOpacity, View } from 'react-native';
 
-import { Icon } from '../../base/font-icons';
-import { translate } from '../../base/i18n';
+import { Icon } from '../../../base/font-icons';
+import { translate } from '../../../base/i18n';
 
 import AbstractNotification, {
     type Props
-} from './AbstractNotification';
+} from '../AbstractNotification';
+
 import styles from './styles';
 
 /**
