@@ -6,7 +6,7 @@ import { View } from 'react-native';
 import { getLocalParticipant } from '../../../base/participants';
 import { connect } from '../../../base/redux';
 
-import styles from '../styles';
+import styles from './styles';
 import Thumbnail from './Thumbnail';
 
 type Props = {
