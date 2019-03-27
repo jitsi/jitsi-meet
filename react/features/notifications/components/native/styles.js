@@ -1,11 +1,11 @@
 // @flow
 
-import { BoxModel, createStyleSheet, ColorPalette } from '../../base/styles';
+import { BoxModel, ColorPalette } from '../../../base/styles';
 
 /**
  * The styles of the React {@code Components} of the feature notifications.
  */
-export default createStyleSheet({
+export default {
 
     /**
      * The content (left) column of the notification.
@@ -58,4 +58,4 @@ export default createStyleSheet({
     notificationContent: {
         flexDirection: 'column'
     }
-});
+};

@@ -3,12 +3,13 @@
 import { FlagGroup } from '@atlaskit/flag';
 import React from 'react';
 
-import { connect } from '../../base/redux';
+import { connect } from '../../../base/redux';
 
 import AbstractNotificationsContainer, {
     _abstractMapStateToProps as _mapStateToProps,
     type Props
-} from './AbstractNotificationsContainer';
+} from '../AbstractNotificationsContainer';
+
 import Notification from './Notification';
 
 /**
