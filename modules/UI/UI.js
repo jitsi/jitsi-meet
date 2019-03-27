@@ -188,13 +188,6 @@ UI.changeDisplayName = function(id, displayName) {
  */
 UI.setRaisedHandStatus = (id, name, raisedHandStatus) => {
     VideoLayout.setRaisedHandStatus(id, raisedHandStatus);
-    if (raisedHandStatus) {
-        messageHandler.participantNotification(
-            name,
-            'notify.somebody',
-            'connected',
-            'notify.raisedHand');
-    }
 };
 
 /**
