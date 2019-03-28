@@ -10,7 +10,7 @@ import { groupDevicesByKind } from './functions';
 import { ReducerRegistry } from '../redux';
 
 const DEFAULT_STATE = {
-    devices: {
+    availableDevices: {
         audioInput: [],
         audioOutput: [],
         videoInput: []
@@ -37,7 +37,7 @@ ReducerRegistry.register(
 
             return {
                 ...state,
-                devices: deviceList
+                availableDevices: deviceList
             };
         }
 

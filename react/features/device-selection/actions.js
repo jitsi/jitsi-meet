@@ -14,7 +14,7 @@ import { i18next } from '../base/i18n';
 import { updateSettings } from '../base/settings';
 
 import { SET_DEVICE_SELECTION_POPUP_DATA } from './actionTypes';
-import { getDeviceSelectionDialogProps, processRequest } from './functions';
+import { getDeviceSelectionDialogProps, processExternalDeviceRequest } from './functions';
 
 const logger = require('jitsi-meet-logger').getLogger(__filename);
 
@@ -58,7 +58,7 @@ export function openDeviceSelectionPopup() {
         });
 
         transport.on('request',
-            processRequest.bind(undefined, dispatch, getState));
+            processExternalDeviceRequest.bind(undefined, dispatch, getState));
         transport.on('event', event => {
             if (event.type === 'devices-dialog' && event.name === 'close') {
                 popup.close();

@@ -55,10 +55,6 @@ export function isDeviceChangeAvailable(transport: Object, deviceType: string) {
         deviceType,
         type: 'devices',
         name: 'isDeviceChangeAvailable'
-    }).catch(e => {
-        logger.error(e);
-
-        return false;
     });
 }
 
@@ -74,15 +70,11 @@ export function isDeviceListAvailable(transport: Object) {
     return transport.sendRequest({
         type: 'devices',
         name: 'isDeviceListAvailable'
-    }).catch(e => {
-        logger.error(e);
-
-        return false;
     });
 }
 
 /**
- * Returns Promise that resolves with true if the device list is available
+ * Returns Promise that resolves with true if multiple audio input is supported
  * and with false if not.
  *
  * @param {Transport} transport - The @code{Transport} instance responsible for
@@ -93,10 +85,6 @@ export function isMultipleAudioInputSupported(transport: Object) {
     return transport.sendRequest({
         type: 'devices',
         name: 'isMultipleAudioInputSupported'
-    }).catch(e => {
-        logger.error(e);
-
-        return false;
     });
 }
 

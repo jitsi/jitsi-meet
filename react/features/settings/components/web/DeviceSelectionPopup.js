@@ -175,7 +175,7 @@ export default class DeviceSelectionPopup {
      * @returns {Promise}
      */
     _isDeviceChangeAvailable(deviceType) {
-        return isDeviceChangeAvailable(this._transport, deviceType);
+        return isDeviceChangeAvailable(this._transport, deviceType).catch(() => false);
     }
 
     /**
@@ -185,17 +185,17 @@ export default class DeviceSelectionPopup {
      * @returns {Promise}
      */
     _isDeviceListAvailable() {
-        return isDeviceListAvailable(this._transport);
+        return isDeviceListAvailable(this._transport).catch(() => false);
     }
 
     /**
-     * Returns Promise that resolves with true if the device list is available
+     * Returns Promise that resolves with true if multiple audio input is supported
      * and with false if not.
      *
      * @returns {Promise}
      */
     _isMultipleAudioInputSupported() {
-        return isMultipleAudioInputSupported(this._transport);
+        return isMultipleAudioInputSupported(this._transport).catch(() => false);
     }
 
     /**

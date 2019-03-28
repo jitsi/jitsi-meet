@@ -81,7 +81,7 @@ var api = new JitsiMeetExternalAPI(domain, options);
 
 ### Controlling the embedded Jitsi Meet Conference
 
-You can control the available devices  with the following methods of `JitsiMeetExternalAPI` instance:
+Device management `JitsiMeetExternalAPI` methods:
 * **getAvailableDevices** - Retrieve a list of available devices.
 
 ```javascript
@@ -151,7 +151,7 @@ api.isDeviceListAvailable().then(function(isDeviceListAvailable) {
     ...
 });
 ```
-* **isMultipleAudioInputSupported** - Resolves with true if the device list is available and with false if not.
+* **isMultipleAudioInputSupported** - Resolves with true if multiple audio input is supported and with false if not.
 
 ```javascript
 api.isMultipleAudioInputSupported().then(function(isMultipleAudioInputSupported) {
