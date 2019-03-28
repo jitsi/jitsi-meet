@@ -84,16 +84,18 @@ export function processRequest( // eslint-disable-line max-params
                     const audioOutputDeviceId = getAudioOutputDeviceId();
                     const { cameraDeviceId, micDeviceId } = settings;
 
-                    devices.forEach(({ deviceId, label }) => {
+                    devices.forEach(device => {
+                        const { deviceId } = device;
+
                         switch (deviceId) {
                         case micDeviceId:
-                            audioInput = label;
+                            audioInput = device;
                             break;
                         case audioOutputDeviceId:
-                            audioOutput = label;
+                            audioOutput = device;
                             break;
                         case cameraDeviceId:
-                            videoInput = label;
+                            videoInput = device;
                             break;
                         }
                     });
@@ -145,7 +147,8 @@ export function processRequest( // eslint-disable-line max-params
                 return true;
             }
 
-            const deviceId = getDeviceIdByLabel(state, device.label);
+            const { label, id } = device;
+            const deviceId = label ? getDeviceIdByLabel(state, device.label) : id;
 
             if (deviceId) {
                 switch (device.kind) {

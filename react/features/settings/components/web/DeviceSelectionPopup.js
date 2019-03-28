@@ -18,7 +18,7 @@ import {
     setAudioInputDevice,
     setAudioOutputDevice,
     setVideoInputDevice
-} from '../../../../../modules/API/external';
+} from '../../../../../modules/API/external/functions';
 
 import { parseURLParams } from '../../../base/config';
 import { DialogWithTabs } from '../../../base/dialog';
@@ -118,7 +118,19 @@ export default class DeviceSelectionPopup {
      * @returns {Promise}
      */
     _getCurrentDevices() {
-        return getCurrentDevices(this._transport);
+        return getCurrentDevices(this._transport).then(currentDevices => {
+            const {
+                audioInput = {},
+                audioOutput = {},
+                videoInput = {}
+            } = currentDevices;
+
+            return {
+                audioInput: audioInput.deviceId,
+                audioOutput: audioOutput.deviceId,
+                videoInput: videoInput.deviceId
+            };
+        });
     }
 
     /**
@@ -252,7 +264,7 @@ export default class DeviceSelectionPopup {
      * @returns {Promise}
      */
     _setAudioInputDevice(id) {
-        return setAudioInputDevice(this._transport, id);
+        return setAudioInputDevice(this._transport, undefined, id);
     }
 
     /**
@@ -262,7 +274,7 @@ export default class DeviceSelectionPopup {
      * @returns {Promise}
      */
     _setAudioOutputDevice(id) {
-        return setAudioOutputDevice(this._transport, id);
+        return setAudioOutputDevice(this._transport, undefined, id);
     }
 
     /**
@@ -272,7 +284,7 @@ export default class DeviceSelectionPopup {
      * @returns {Promise}
      */
     _setVideoInputDevice(id) {
-        return setVideoInputDevice(this._transport, id);
+        return setVideoInputDevice(this._transport, undefined, id);
     }
 
     /**
