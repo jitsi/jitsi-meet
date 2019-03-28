@@ -609,7 +609,7 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
     }
 
     /**
-     * Returns Promise that resolves with result an list of available devices.
+     * Returns Promise that resolves with a list of available devices.
      *
      * @returns {Promise}
      */
@@ -661,7 +661,7 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
     }
 
     /**
-     * Returns Promise that resolves with true if the device list is available
+     * Returns Promise that resolves with true if multiple audio input is supported
      * and with false if not.
      *
      * @returns {Promise}
@@ -837,33 +837,39 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
     }
 
     /**
-     * Sets the audio input device to the one with the id that is passed.
+     * Sets the audio input device to the one with the label or id that is
+     * passed.
      *
+     * @param {string} label - The label of the new device.
      * @param {string} deviceId - The id of the new device.
      * @returns {Promise}
      */
-    setAudioInputDevice(deviceId) {
-        return setAudioInputDevice(this._transport, deviceId);
+    setAudioInputDevice(label, deviceId) {
+        return setAudioInputDevice(this._transport, label, deviceId);
     }
 
     /**
-     * Sets the audio output device to the one with the id that is passed.
+     * Sets the audio output device to the one with the label or id that is
+     * passed.
      *
+     * @param {string} label - The label of the new device.
      * @param {string} deviceId - The id of the new device.
      * @returns {Promise}
      */
-    setAudioOutputDevice(deviceId) {
-        return setAudioOutputDevice(this._transport, deviceId);
+    setAudioOutputDevice(label, deviceId) {
+        return setAudioOutputDevice(this._transport, label, deviceId);
     }
 
     /**
-     * Sets the video input device to the one with the id that is passed.
+     * Sets the video input device to the one with the label or id that is
+     * passed.
      *
+     * @param {string} label - The label of the new device.
      * @param {string} deviceId - The id of the new device.
      * @returns {Promise}
      */
-    setVideoInputDevice(deviceId) {
-        return setVideoInputDevice(this._transport, deviceId);
+    setVideoInputDevice(label, deviceId) {
+        return setVideoInputDevice(this._transport, label, deviceId);
     }
 
     /**

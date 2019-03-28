@@ -15,12 +15,13 @@ declare var APP: Object;
  * otherwise.
  */
 export function areDeviceLabelsInitialized(state: Object) {
+    // TODO: Replace with something that doesn't use APP when the conference.js logic is reactified.
     if (APP.conference._localTracksInitialized) {
         return true;
     }
 
     for (const type of [ 'audioInput', 'audioOutput', 'videoInput' ]) {
-        if (state['features/base/devices'].devices[type].find(d => Boolean(d.label))) {
+        if ((state['features/base/devices'].availableDevices[type] || []).find(d => Boolean(d.label))) {
             return true;
         }
     }
@@ -50,7 +51,7 @@ export function getDeviceIdByLabel(state: Object, label: string) {
 
     for (const type of types) {
         const device
-            = state['features/base/devices'].devices[type]
+            = (state['features/base/devices'].availableDevices[type] || [])
                 .find(d => d.label === label);
 
         if (device) {

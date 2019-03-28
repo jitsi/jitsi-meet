@@ -46,8 +46,7 @@ export const ADD_PENDING_DEVICE_REQUEST = 'ADD_PENDING_DEVICE_REQUEST';
  * The type of Redux action which will remove all pending device requests.
  *
  * {
- *     type: REMOVE_PENDING_DEVICE_REQUESTS,
- *     request: Object
+ *     type: REMOVE_PENDING_DEVICE_REQUESTS
  * }
  */
 export const REMOVE_PENDING_DEVICE_REQUESTS = 'REMOVE_PENDING_DEVICE_REQUESTS';

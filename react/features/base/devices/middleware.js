@@ -1,7 +1,7 @@
 /* global APP */
 
 import { CONFERENCE_JOINED } from '../conference';
-import { processRequest } from '../../device-selection';
+import { processExternalDeviceRequest } from '../../device-selection';
 import { MiddlewareRegistry } from '../redux';
 import UIEvents from '../../../../service/UI/UIEvents';
 
@@ -53,7 +53,7 @@ function _conferenceJoined({ dispatch, getState }, next, action) {
     const { pendingRequests } = state['features/base/devices'];
 
     pendingRequests.forEach(request => {
-        processRequest(
+        processExternalDeviceRequest(
             dispatch,
             getState,
             request,

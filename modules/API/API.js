@@ -12,7 +12,7 @@ import { getJitsiMeetTransport } from '../transport';
 
 import { API_ID } from './constants';
 import {
-    processRequest
+    processExternalDeviceRequest
 } from '../../react/features/device-selection/functions';
 
 const logger = require('jitsi-meet-logger').getLogger(__filename);
@@ -122,7 +122,7 @@ function initCommands() {
     transport.on('request', (request, callback) => {
         const { dispatch, getState } = APP.store;
 
-        if (processRequest(dispatch, getState, request, callback)) {
+        if (processExternalDeviceRequest(dispatch, getState, request, callback)) {
             return true;
         }
 
