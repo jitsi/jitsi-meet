@@ -20,7 +20,7 @@ export function areDeviceLabelsInitialized(state: Object) {
     }
 
     for (const type of [ 'audioInput', 'audioOutput', 'videoInput' ]) {
-        if (state['features/base/devices'][type].find(d => Boolean(d.label))) {
+        if (state['features/base/devices'].devices[type].find(d => Boolean(d.label))) {
             return true;
         }
     }
@@ -50,7 +50,8 @@ export function getDeviceIdByLabel(state: Object, label: string) {
 
     for (const type of types) {
         const device
-            = state['features/base/devices'][type].find(d => d.label === label);
+            = state['features/base/devices'].devices[type]
+                .find(d => d.label === label);
 
         if (device) {
             return device.deviceId;

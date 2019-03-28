@@ -50,6 +50,7 @@ const events = {
     'avatar-changed': 'avatarChanged',
     'audio-availability-changed': 'audioAvailabilityChanged',
     'audio-mute-status-changed': 'audioMuteStatusChanged',
+    'device-list-changed': 'deviceListChanged',
     'display-name-change': 'displayNameChange',
     'email-change': 'emailChange',
     'feedback-submitted': 'feedbackSubmitted',

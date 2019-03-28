@@ -28,7 +28,7 @@ export function getDeviceSelectionDialogProps(stateful: Object | Function) {
     const settings = state['features/base/settings'];
 
     return {
-        availableDevices: state['features/base/devices'],
+        availableDevices: state['features/base/devices'].devices,
         disableAudioInputChange:
             !JitsiMeetJS.isMultipleAudioInputSupported(),
         disableDeviceChange:

@@ -387,6 +387,19 @@ class API {
     }
 
     /**
+     * Notify external application (if API is enabled) that the device list has
+     * changed.
+     *
+     * @param {Object} devices - The new device list.
+     * @returns {void}
+     */
+    notifyDeviceListChanged(devices: Object) {
+        this._sendEvent({
+            name: 'device-list-changed',
+            devices });
+    }
+
+    /**
      * Notify external application (if API is enabled) that user changed their
      * nickname.
      *

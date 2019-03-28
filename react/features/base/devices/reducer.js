@@ -10,9 +10,11 @@ import { groupDevicesByKind } from './functions';
 import { ReducerRegistry } from '../redux';
 
 const DEFAULT_STATE = {
-    audioInput: [],
-    audioOutput: [],
-    videoInput: [],
+    devices: {
+        audioInput: [],
+        audioOutput: [],
+        videoInput: []
+    },
     pendingRequests: []
 };
 
@@ -34,8 +36,8 @@ ReducerRegistry.register(
             const deviceList = groupDevicesByKind(action.devices);
 
             return {
-                pendingRequests: state.pendingRequests,
-                ...deviceList
+                ...state,
+                devices: deviceList
             };
         }
 
