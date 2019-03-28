@@ -1,5 +1,9 @@
+// @flow
+
 import { UPDATE_DEVICE_LIST } from '../base/devices';
 import { MiddlewareRegistry } from '../base/redux';
+
+declare var APP: Object;
 
 /**
  * Implements the middleware of the feature device-selection.
@@ -12,11 +16,19 @@ MiddlewareRegistry.register(store => next => action => {
     const result = next(action);
 
     if (action.type === UPDATE_DEVICE_LIST) {
-        const { popupDialogData }
-            = store.getState()['features/device-selection'];
+        const state = store.getState();
+        const { popupDialogData } = state['features/device-selection'];
+        const { devices } = state['features/base/devices'];
 
         if (popupDialogData) {
-            popupDialogData.transport.sendEvent({ name: 'deviceListChanged' });
+            popupDialogData.transport.sendEvent({
+                name: 'deviceListChanged',
+                devices
+            });
+        }
+
+        if (typeof APP !== 'undefined') {
+            APP.API.notifyDeviceListChanged(devices);
         }
     }
 

@@ -300,6 +300,14 @@ changes. The listener will receive an object with the following structure:
 }
 ```
 
+* **deviceListChanged** - event notifications about device list changes. The listener will receive an object with the following structure:
+```javascript
+{
+"devices": devices // the new list of available devices.
+}
+```
+NOTE: The devices object has the same format as the getAvailableDevices result format.
+
 * **emailChange** - event notifications about email
 changes. The listener will receive an object with the following structure:
 ```javascript

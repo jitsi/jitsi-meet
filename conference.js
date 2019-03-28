@@ -2417,7 +2417,7 @@ export default {
      */
     updateAudioIconEnabled() {
         const audioMediaDevices
-            = APP.store.getState()['features/base/devices'].audioInput;
+            = APP.store.getState()['features/base/devices'].devices.audioInput;
         const audioDeviceCount
             = audioMediaDevices ? audioMediaDevices.length : 0;
 
@@ -2440,7 +2440,7 @@ export default {
      */
     updateVideoIconEnabled() {
         const videoMediaDevices
-            = APP.store.getState()['features/base/devices'].videoInput;
+            = APP.store.getState()['features/base/devices'].devices.videoInput;
         const videoDeviceCount
             = videoMediaDevices ? videoMediaDevices.length : 0;
 
