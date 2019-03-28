@@ -114,9 +114,24 @@ api.getAvailableDevices().then(function(devices) {
 ```javascript
 api.getCurrentDevices().then(function(devices) {
     // devices = {
-    //     'audioInput': 'deviceLabel',
-    //     'audioOutput': 'deviceLabel',
-    //     'videoInput': 'deviceLabel'
+    //     'audioInput': {
+    //         deviceId: "ID"
+    //         groupId: "grpID"
+    //         kind: "videoInput"
+    //         label: "Label"
+    //     },
+    //     'audioOutput': {
+    //         deviceId: "ID"
+    //         groupId: "grpID"
+    //         kind: "videoInput"
+    //         label: "Label"
+    //     },
+    //     'videoInput': {
+    //         deviceId: "ID"
+    //         groupId: "grpID"
+    //         kind: "videoInput"
+    //         label: "Label"
+    //     }
     // }
     ...
 });
@@ -143,20 +158,20 @@ api.isMultipleAudioInputSupported().then(function(isMultipleAudioInputSupported)
     ...
 });
 ```
-* **setAudioInputDevice** - Sets the audio input device to the one with the label that is passed.
+* **setAudioInputDevice** - Sets the audio input device to the one with the label or id that is passed.
 
 ```javascript
-api.setAudioInputDevice(deviceLabel);
+api.setAudioInputDevice(deviceLabel, deviceId);
 ```
-* **setAudioOutputDevice** - Sets the audio output device to the one with the label that is passed.
+* **setAudioOutputDevice** - Sets the audio output device to the one with the label or id that is passed.
 
 ```javascript
-api.setAudioOutputDevice(deviceLabel);
+api.setAudioOutputDevice(deviceLabel, deviceId);
 ```
-* **setVideoInputDevice** - Sets the video input device to the one with the label that is passed.
+* **setVideoInputDevice** - Sets the video input device to the one with the label or id that is passed.
 
 ```javascript
-api.setVideoInputDevice(deviceLabel);
+api.setVideoInputDevice(deviceLabel, deviceId);
 ```
 
 You can control the embedded Jitsi Meet conference using the `JitsiMeetExternalAPI` object by using `executeCommand`:

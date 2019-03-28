@@ -101,32 +101,36 @@ export function isMultipleAudioInputSupported(transport: Object) {
 }
 
 /**
- * Sets the audio input device to the one with the id that is passed.
+ * Sets the audio input device to the one with the label or id that is passed.
  *
  * @param {Transport} transport - The @code{Transport} instance responsible for
  * the external communication.
  * @param {string} label - The label of the new device.
+ * @param {string} id - The id of the new device.
  * @returns {Promise}
  */
-export function setAudioInputDevice(transport: Object, label: string) {
+export function setAudioInputDevice(transport: Object, label: string, id: string) {
     return _setDevice(transport, {
-        label,
-        kind: 'audioinput'
+        id,
+        kind: 'audioinput',
+        label
     });
 }
 
 /**
- * Sets the audio output device to the one with the id that is passed.
+ * Sets the audio output device to the one with the label or id that is passed.
  *
  * @param {Transport} transport - The @code{Transport} instance responsible for
  * the external communication.
  * @param {string} label - The label of the new device.
+ * @param {string} id - The id of the new device.
  * @returns {Promise}
  */
-export function setAudioOutputDevice(transport: Object, label: string) {
+export function setAudioOutputDevice(transport: Object, label: string, id: string) {
     return _setDevice(transport, {
-        label,
-        kind: 'audiooutput'
+        id,
+        kind: 'audiooutput',
+        label
     });
 }
 
@@ -147,16 +151,18 @@ function _setDevice(transport: Object, device) {
 }
 
 /**
- * Sets the video input device to the one with the id that is passed.
+ * Sets the video input device to the one with the label or id that is passed.
  *
  * @param {Transport} transport - The @code{Transport} instance responsible for
  * the external communication.
  * @param {string} label - The label of the new device.
+ * @param {string} id - The id of the new device.
  * @returns {Promise}
  */
-export function setVideoInputDevice(transport: Object, label: string) {
+export function setVideoInputDevice(transport: Object, label: string, id: string) {
     return _setDevice(transport, {
-        label,
-        kind: 'videoinput'
+        id,
+        kind: 'videoinput',
+        label
     });
 }
