@@ -10,6 +10,7 @@ import {
     STOP_TRANSCRIBING
 } from './actionTypes';
 import {
+    NOTIFICATION_TIMEOUT,
     hideNotification,
     showErrorNotification,
     showNotification
@@ -161,7 +162,7 @@ export function hidePendingTranscribingNotification() {
 
 /**
  * Signals that the stopped transcribing notification should be shown on the
- * screen for a 2500 ms.
+ * screen.
  *
  * @returns {showNotification}
  */
@@ -169,7 +170,7 @@ export function showStoppedTranscribingNotification() {
     return showNotification({
         descriptionKey: 'transcribing.off',
         titleKey: 'dialog.transcribing'
-    }, 2500);
+    }, NOTIFICATION_TIMEOUT);
 }
 
 

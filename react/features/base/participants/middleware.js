@@ -2,7 +2,7 @@
 
 import UIEvents from '../../../../service/UI/UIEvents';
 
-import { showNotification } from '../../notifications';
+import { NOTIFICATION_TIMEOUT, showNotification } from '../../notifications';
 import { CALLING, INVITED } from '../../presence-status';
 
 import { APP_WILL_MOUNT, APP_WILL_UNMOUNT } from '../app';
@@ -395,7 +395,7 @@ function _raiseHandUpdated({ dispatch, getState }, conference, participant, newV
                 name: getParticipantDisplayName(getState, participant.getId())
             },
             titleKey: 'notify.raisedHand'
-        }, 2500));
+        }, NOTIFICATION_TIMEOUT));
     }
 }
 
