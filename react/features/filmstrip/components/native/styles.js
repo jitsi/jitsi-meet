@@ -11,18 +11,6 @@ import { FILMSTRIP_SIZE } from '../../constants';
 export const AVATAR_SIZE = 50;
 
 /**
- * The base/default style of indicators such as audioMutedIndicator,
- * moderatorIndicator, and videoMutedIndicator.
- */
-const indicator = {
-    textShadowColor: ColorPalette.black,
-    textShadowOffset: {
-        height: -1,
-        width: 0
-    }
-};
-
-/**
  * The styles of the feature filmstrip.
  */
 export default {
@@ -30,20 +18,27 @@ export default {
      * Dominant speaker indicator style.
      */
     indicator: {
+        backgroundColor: ColorPalette.transparent,
         color: ColorPalette.white,
-        fontSize: 12
+        fontSize: 12,
+        textShadowColor: ColorPalette.black,
+        textShadowOffset: {
+            height: -1,
+            width: 0
+        }
     },
 
     /**
      * Dominant speaker indicator background style.
      */
     indicatorBackground: {
+        alignItems: 'center',
         backgroundColor: ColorPalette.blue,
         borderRadius: 16,
-        left: 4,
-        padding: 4,
-        position: 'absolute',
-        top: 4
+        flexDirection: 'row',
+        justifyContent: 'center',
+        height: 20,
+        width: 20
     },
 
     /**
@@ -84,16 +79,10 @@ export default {
         flexDirection: 'row'
     },
 
-    /**
-     * Moderator indicator style.
-     */
-    moderatorIndicator: {
-        backgroundColor: 'transparent',
+    moderatorIndicatorContainer: {
         bottom: 4,
-        color: ColorPalette.white,
         position: 'absolute',
-        right: 4,
-        ...indicator
+        right: 4
     },
 
     /**
@@ -124,18 +113,6 @@ export default {
     },
 
     /**
-     * The thumbnail audio and video muted indicator style.
-     */
-    thumbnailIndicator: {
-        backgroundColor: 'transparent',
-        color: ColorPalette.white,
-        paddingLeft: 1,
-        paddingRight: 1,
-        position: 'relative',
-        ...indicator
-    },
-
-    /**
      * The thumbnails indicator container.
      */
     thumbnailIndicatorContainer: {
@@ -145,6 +122,13 @@ export default {
         flexDirection: 'row',
         left: 4,
         position: 'absolute'
+    },
+
+    thumbnailTopIndicatorContainer: {
+        left: 0,
+        padding: 4,
+        position: 'absolute',
+        top: 0
     },
 
     tileView: {

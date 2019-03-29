@@ -1,13 +1,13 @@
+// @flow
+
 import React, { Component } from 'react';
 
-import { Icon } from '../../../base/font-icons';
-
-import styles from './styles';
+import BaseIndicator from './BaseIndicator';
 
 /**
  * Thumbnail badge for displaying the video mute status of a participant.
  */
-export default class VideoMutedIndicator extends Component {
+export default class VideoMutedIndicator extends Component<{}> {
     /**
      * Implements React's {@link Component#render()}.
      *
@@ -15,9 +15,9 @@ export default class VideoMutedIndicator extends Component {
      */
     render() {
         return (
-            <Icon
-                name = 'camera-disabled'
-                style = { styles.thumbnailIndicator } />
+            <BaseIndicator
+                highlight = { false }
+                icon = 'camera-disabled' />
         );
     }
 }

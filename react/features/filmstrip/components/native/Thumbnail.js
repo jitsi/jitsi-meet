@@ -1,6 +1,7 @@
 // @flow
 
 import React, { Component } from 'react';
+import { View } from 'react-native';
 import type { Dispatch } from 'redux';
 
 import { ColorSchemeRegistry } from '../../../base/color-scheme';
@@ -163,12 +164,15 @@ class Thumbnail extends Component<Props> {
                     zOrder = { 1 } />
 
                 { participant.role === PARTICIPANT_ROLE.MODERATOR
-                    && <ModeratorIndicator /> }
+                    && <View style = { styles.moderatorIndicatorContainer }>
+                        <ModeratorIndicator />
+                    </View> }
 
-                { participant.dominantSpeaker
-                    && <DominantSpeakerIndicator /> }
-
-                <RaisedHandIndicator participantId = { participant.id } />
+                <View style = { styles.thumbnailTopIndicatorContainer }>
+                    <RaisedHandIndicator participantId = { participant.id } />
+                    { participant.dominantSpeaker
+                        && <DominantSpeakerIndicator /> }
+                </View>
 
                 <Container style = { styles.thumbnailIndicatorContainer }>
                     { audioMuted

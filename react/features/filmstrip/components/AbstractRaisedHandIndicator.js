@@ -15,7 +15,7 @@ export type Props = {
     /**
      * True if the hand is raised for this participant.
      */
-    _raisedHand: boolean
+    _raisedHand?: boolean
 }
 
 /**
@@ -23,6 +23,26 @@ export type Props = {
  */
 export default class AbstractRaisedHandIndicator<P: Props>
     extends Component<P> {
+
+    /**
+     * Implements {@code Component#render}.
+     *
+     * @inheritdoc
+     */
+    render() {
+        if (!this.props._raisedHand) {
+            return null;
+        }
+
+        return this._renderIndicator();
+    }
+
+    /**
+     * Renders the platform specific indicator element.
+     *
+     * @returns {React$Element<*>}
+     */
+    _renderIndicator: () => React$Element<*>
 
 }
 
