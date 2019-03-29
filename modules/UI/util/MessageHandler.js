@@ -4,6 +4,7 @@ const logger = require('jitsi-meet-logger').getLogger(__filename);
 import jitsiLocalStorage from '../../util/JitsiLocalStorage';
 
 import {
+    NOTIFICATION_TIMEOUT,
     showErrorNotification,
     showNotification,
     showWarningNotification
@@ -454,7 +455,7 @@ const messageHandler = {
             cls,
             messageKey,
             messageArguments,
-            timeout = 2500) {
+            timeout = NOTIFICATION_TIMEOUT) {
         APP.store.dispatch(showNotification({
             descriptionArguments: messageArguments,
             descriptionKey: messageKey,
