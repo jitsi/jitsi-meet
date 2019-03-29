@@ -1,13 +1,12 @@
 // @flow
 
-import { MiddlewareRegistry } from '../base/redux';
+import { CONFERENCE_WILL_JOIN } from '../base/conference';
 import {
-    getLocalParticipant,
     getParticipantById,
     getPinnedParticipant,
     pinParticipant
 } from '../base/participants';
-import { CONFERENCE_WILL_JOIN } from '../base/conference';
+import { MiddlewareRegistry } from '../base/redux';
 import { setFilmstripVisible } from '../filmstrip';
 import { setTileView } from '../video-layout';
 
@@ -37,7 +36,7 @@ let nextOnStageTimeout;
 
 /**
  * A count of how many seconds the nextOnStageTimeout has ticked while waiting
- * for a participant to be discovered that should be pinned. This varaible
+ * for a participant to be discovered that should be pinned. This variable
  * works in conjunction with {@code _FOLLOW_ME_RECEIVED_TIMEOUT} and
  * {@code nextOnStageTimeout}.
  *
@@ -46,19 +45,15 @@ let nextOnStageTimeout;
 let nextOnStageTimer = 0;
 
 /**
- * Represents the &quot;Follow Me&quot; feature which enables a moderator to
- * (partially) control the user experience/interface (e.g. filmstrip
- * visibility) of (other) non-moderator particiapnts.
+ * Represents "Follow Me" feature which enables a moderator to (partially)
+ * control the user experience/interface (e.g. filmstrip visibility) of (other)
+ * non-moderator participant.
  */
 MiddlewareRegistry.register(store => next => action => {
     switch (action.type) {
     case CONFERENCE_WILL_JOIN: {
         const { conference } = action;
 
-        // Listen to "Follow Me" commands. I'm not sure whether a moderator can
-        // (in lib-jitsi-meet and/or Meet) become a non-moderator. If that's
-        // possible, then it may be easiest to always listen to commands. The
-        // listener will validate received commands before acting on them.
         conference.addCommandListener(
             FOLLOW_ME_COMMAND, ({ attributes }, id) => {
                 _onFollowMeCommand(attributes, id, store);
@@ -70,7 +65,7 @@ MiddlewareRegistry.register(store => next => action => {
 });
 
 /**
- * Notifies this instance about a "Follow Me" command delivered by the Jitsi
+ * Notifies this instance about a "Follow Me" command received by the Jitsi
  * conference.
  *
  * @param {Object} attributes - The attributes carried by the command.
@@ -92,13 +87,15 @@ function _onFollowMeCommand(attributes = {}, id, store) {
         return;
     }
 
+    const participantSendingCommand = getParticipantById(state, id);
+
     // The Command(s) API will send us our own commands and we don't want
     // to act upon them.
-    if (getLocalParticipant(state).id === id) {
+    if (participantSendingCommand.local) {
         return;
     }
 
-    if (getParticipantById(state, id).role !== 'moderator') {
+    if (participantSendingCommand.role !== 'moderator') {
         logger.warn('Received follow-me command not from moderator');
 
         return;
@@ -122,7 +119,7 @@ function _onFollowMeCommand(attributes = {}, id, store) {
     }
 
     const pinnedParticipant
-        = getPinnedParticipant(store.getState(), attributes.nextOnStage);
+        = getPinnedParticipant(state, attributes.nextOnStage);
     const idOfParticipantToPin = attributes.nextOnStage;
 
     if (typeof idOfParticipantToPin !== 'undefined'
