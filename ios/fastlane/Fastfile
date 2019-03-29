@@ -23,7 +23,11 @@ platform :ios do
     )
 
     # Actually build the app
-    build_app(scheme: "jitsi-meet", include_bitcode: false)
+    build_app(
+        scheme: "jitsi-meet",
+        include_bitcode: false,
+        export_xcargs: "-allowProvisioningUpdates"
+    )
 
     # Upload the build to TestFlight (but don't distribute it)
     upload_to_testflight(skip_submission: true, skip_waiting_for_build_processing: true)
