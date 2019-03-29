@@ -673,22 +673,6 @@ const VideoLayout = {
     },
 
     /**
-     * Sets the "raised hand" status for a participant identified by 'id'.
-     */
-    setRaisedHandStatus(id, raisedHandStatus) {
-        const video
-            = APP.conference.isLocalId(id)
-                ? localVideoThumbnail : remoteVideos[id];
-
-        if (video) {
-            video.showRaisedHandIndicator(raisedHandStatus);
-            if (raisedHandStatus) {
-                video.showDominantSpeakerIndicator(false);
-            }
-        }
-    },
-
-    /**
      * On dominant speaker changed event.
      *
      * @param {string} id - The participant ID of the new dominant speaker.
