@@ -840,12 +840,10 @@ SmallVideo.prototype.updateIndicators = function() {
                                     = { statsPopoverPosition }
                                 userID = { this.id } />
                             : null }
-                        { this._showRaisedHand
-                            ? <RaisedHandIndicator
-                                iconSize = { iconSize }
-                                participantId = { this.id }
-                                tooltipPosition = { tooltipPosition } />
-                            : null }
+                        <RaisedHandIndicator
+                            iconSize = { iconSize }
+                            participantId = { this.id }
+                            tooltipPosition = { tooltipPosition } />
                         { this._showDominantSpeaker
                             ? <DominantSpeakerIndicator
                                 iconSize = { iconSize }

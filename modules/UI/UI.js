@@ -176,30 +176,6 @@ UI.changeDisplayName = function(id, displayName) {
 };
 
 /**
- * Sets the "raised hand" status for a participant.
- *
- * @param {string} id - The id of the participant whose raised hand UI should
- * be updated.
- * @param {string} name - The name of the participant with the raised hand
- * update.
- * @param {boolean} raisedHandStatus - Whether the participant's hand is raised
- * or not.
- * @returns {void}
- */
-UI.setRaisedHandStatus = (id, name, raisedHandStatus) => {
-    VideoLayout.setRaisedHandStatus(id, raisedHandStatus);
-};
-
-/**
- * Sets the local "raised hand" status.
- */
-UI.setLocalRaisedHandStatus
-    = raisedHandStatus =>
-        VideoLayout.setRaisedHandStatus(
-            APP.conference.getMyUserId(),
-            raisedHandStatus);
-
-/**
  * Initialize conference UI.
  */
 UI.initConference = function() {

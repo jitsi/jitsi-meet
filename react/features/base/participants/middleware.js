@@ -40,7 +40,6 @@ import {
 import {
     getAvatarURLByParticipantId,
     getLocalParticipant,
-    getParticipantById,
     getParticipantCount,
     getParticipantDisplayName
 } from './functions';
@@ -331,21 +330,6 @@ function _participantJoinedOrUpdated({ getState }, next, action) {
                 && conference.setLocalParticipantProperty(
                     'raisedHand',
                     raisedHand);
-        }
-
-        if (typeof APP === 'object') {
-            if (local) {
-                APP.UI.onLocalRaiseHandChanged(raisedHand);
-                APP.UI.setLocalRaisedHandStatus(raisedHand);
-            } else {
-                const remoteParticipant = getParticipantById(getState(), id);
-
-                remoteParticipant
-                    && APP.UI.setRaisedHandStatus(
-                        remoteParticipant.id,
-                        remoteParticipant.name,
-                        raisedHand);
-            }
         }
     }
 
