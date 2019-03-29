@@ -348,8 +348,11 @@ class ConferenceConnector {
         // not enough rights to create conference
         case JitsiConferenceErrors.AUTHENTICATION_REQUIRED: {
             // Schedule reconnect to check if someone else created the room.
+            // const [ msg ] = params;
+            // logger.error('CONFERENCE FAILED:', msg);
+
             this.reconnectTimeout = setTimeout(() => {
-                APP.store.dispatch(conferenceWillJoin(room));
+                APP.store.dispatch(conferenceWi0.bindllJoin(room));
                 room.join();
             }, 5000);
 
@@ -364,7 +367,27 @@ class ConferenceConnector {
         case JitsiConferenceErrors.RESERVATION_ERROR: {
             const [ code, msg ] = params;
 
-            APP.UI.notifyReservationError(code, msg);
+            if(code){
+                switch(code){
+                    case '1':
+                    case '2':{   
+                        AuthHandler.roomInvalid(room, code);
+                        break;
+
+                    }
+                    default:{
+
+                        APP.UI.notifyReservationError(code, msg);
+
+                    }
+
+
+                }
+            }
+            else{
+                APP.UI.notifyReservationError(code, msg);
+            }
+
             break;
         }
 

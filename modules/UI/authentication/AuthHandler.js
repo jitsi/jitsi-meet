@@ -13,6 +13,7 @@ const logger = require('jitsi-meet-logger').getLogger(__filename);
 
 let externalAuthWindow;
 let authRequiredDialog;
+let errorDialog;
 
 const isTokenAuthEnabled
     = typeof config.tokenAuthUrl === 'string' && config.tokenAuthUrl.length;
@@ -246,6 +247,20 @@ function requireAuth(room, lockPassword) {
 }
 
 /**
+ * Notify user that authentication is required to create the conference.
+ * @param {JitsiConference} room
+ * @param {string} [code] error code
+ */
+function roomInvalid(room,code) {
+    if (errorDialog) {
+        return;
+    }
+
+    errorDialog = LoginDialog.showErrorDialog(
+        room.getName(), code
+    );
+}
+/**
  * Close auth-related dialogs if there are any.
  */
 function closeAuth() {
@@ -307,6 +322,7 @@ export default {
     authenticate,
     requireAuth,
     requestAuth,
+    roomInvalid,
     closeAuth,
     logout
 };
