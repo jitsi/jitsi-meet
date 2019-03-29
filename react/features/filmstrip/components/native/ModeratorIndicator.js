@@ -1,13 +1,13 @@
+// @flow
+
 import React, { Component } from 'react';
 
-import { Icon } from '../../../base/font-icons';
-
-import styles from './styles';
+import BaseIndicator from './BaseIndicator';
 
 /**
  * Thumbnail badge showing that the participant is a conference moderator.
  */
-export default class ModeratorIndicator extends Component {
+export default class ModeratorIndicator extends Component<{}> {
     /**
      * Implements React's {@link Component#render()}.
      *
@@ -15,9 +15,9 @@ export default class ModeratorIndicator extends Component {
      */
     render() {
         return (
-            <Icon
-                name = 'star'
-                style = { styles.moderatorIndicator } />
+            <BaseIndicator
+                highlight = { false }
+                icon = 'star' />
         );
     }
 }

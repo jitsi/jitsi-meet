@@ -34,15 +34,11 @@ type Props = AbstractProps & {
  */
 class RaisedHandIndicator extends AbstractRaisedHandIndicator<Props> {
     /**
-     * Implements React's {@link Component#render()}.
+     * Renders the platform specific indicator element.
      *
-     * @inheritdoc
+     * @returns {React$Element<*>}
      */
-    render() {
-        if (!this.props._raisedHand) {
-            return null;
-        }
-
+    _renderIndicator() {
         return (
             <BaseIndicator
                 className = 'raisehandindicator indicator show-inline'
