@@ -33,19 +33,12 @@ export default class BaseIndicator extends Component<Props> {
     render() {
         const { highlight, icon } = this.props;
 
-        const iconElement = (<Icon
-            name = { icon }
-            style = { styles.indicator } />
+        return (
+            <View style = { highlight ? styles.highlightedIndicator : null }>
+                <Icon
+                    name = { icon }
+                    style = { styles.indicator } />
+            </View>
         );
-
-        if (highlight) {
-            return (
-                <View style = { styles.indicatorBackground }>
-                    { iconElement }
-                </View>
-            );
-        }
-
-        return iconElement;
     }
 }

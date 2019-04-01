@@ -15,6 +15,15 @@ export const AVATAR_SIZE = 50;
  */
 export default {
     /**
+     * Highlighted indicator additional style.
+     */
+    highlightedIndicator: {
+        backgroundColor: ColorPalette.blue,
+        borderRadius: 16,
+        padding: 4
+    },
+
+    /**
      * Dominant speaker indicator style.
      */
     indicator: {
@@ -26,19 +35,6 @@ export default {
             height: -1,
             width: 0
         }
-    },
-
-    /**
-     * Dominant speaker indicator background style.
-     */
-    indicatorBackground: {
-        alignItems: 'center',
-        backgroundColor: ColorPalette.blue,
-        borderRadius: 16,
-        flexDirection: 'row',
-        justifyContent: 'center',
-        height: 20,
-        width: 20
     },
 
     /**
