@@ -210,7 +210,7 @@ StateListenerRegistry.register(
                         break;
                     case 'raisedHand': {
                         _raiseHandUpdated(
-                            store, conference, participant, newValue);
+                            store, conference, participant.getId(), newValue);
                         break;
                     }
                     default:
@@ -219,6 +219,10 @@ StateListenerRegistry.register(
                     }
 
                 });
+        } else {
+            // We left the conference, raise hand of the local participant must be updated.
+            _raiseHandUpdated(
+                store, conference, undefined, false);
         }
     }
 );
@@ -360,23 +364,25 @@ function _participantJoinedOrUpdated({ getState }, next, action) {
  *
  * @param {Function} dispatch - The Redux dispatch function.
  * @param {Object} conference - The conference for which we got an update.
- * @param {*} participant - The participant from which we got an update.
- * @param {*} newValue - The new value of the raise hand status.
+ * @param {string?} participantId - The ID of the participant from which we got an update. If undefined,
+ * we update the local participant.
+ * @param {boolean} newValue - The new value of the raise hand status.
  * @returns {void}
  */
-function _raiseHandUpdated({ dispatch, getState }, conference, participant, newValue) {
+function _raiseHandUpdated({ dispatch, getState }, conference, participantId, newValue) {
     const raisedHand = newValue === 'true';
+    const pid = participantId || getLocalParticipant(getState()).id;
 
     dispatch(participantUpdated({
         conference,
-        id: participant.getId(),
+        id: pid,
         raisedHand
     }));
 
     if (raisedHand) {
         dispatch(showNotification({
             titleArguments: {
-                name: getParticipantDisplayName(getState, participant.getId())
+                name: getParticipantDisplayName(getState, pid)
             },
             titleKey: 'notify.raisedHand'
         }, NOTIFICATION_TIMEOUT));
