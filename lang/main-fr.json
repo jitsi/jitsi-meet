@@ -57,7 +57,7 @@
             "video": "Vidéo"
         },
         "calendar": "Calendrier",
-        "connectCalendarText": "Connectez votre calendrier pour voir toutes vos réunion dans __app__. Ajoutez les réunions __app__ dans votre calendrier pour les lancer en un seul clic.",
+        "connectCalendarText": "Connectez votre calendrier pour voir toutes vos réunions dans __app__. Ajoutez les réunions __app__ dans votre calendrier pour les lancer en un seul clic.",
         "connectCalendarButton": "Connecter votre calendrier",
         "enterRoomTitle": "Démarrer une nouvelle réunion",
         "go": "Créer",
@@ -239,6 +239,7 @@
         },
         "status": "Connexion:"
     },
+    "\u0005connectionindicator": {},
     "notify": {
         "disconnected": "déconnecté",
         "moderator": "Droits modérateur accordés !",
