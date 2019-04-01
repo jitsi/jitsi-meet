@@ -4,7 +4,7 @@
     "poweredby": "技術支援",
     "inviteUrlDefaultMsg": "您的會議正在建立起來………",
     "me": "我",
-    "speaker": "",
+    "speaker": "發言者",
     "raisedHand": "請求發言",
     "defaultNickname": "例如 阿美 志明",
     "defaultLink": "例如 __url__",
@@ -19,13 +19,13 @@
         "featureToggleDisabled": "在僅用音訊模式下，開關 __feature__ 功能是停用的"
     },
     "userMedia": {
-        "react-nativeGrantPermissions": "",
-        "chromeGrantPermissions": "",
-        "androidGrantPermissions": "",
-        "electronGrantPermissions": "",
+        "react-nativeGrantPermissions": "當瀏覽器要求權限允許時，請選擇 <b><i>允許</i></b>",
+        "chromeGrantPermissions": "當瀏覽器要求權限允許時，請選擇 <b><i>允許</i></b>",
+        "androidGrantPermissions": "當瀏覽器要求權限允許時，請選擇 <b><i>允許</i></b>",
+        "electronGrantPermissions": "請允許權限使用您的攝影裝置和麥克風",
         "firefoxGrantPermissions": "當瀏覽器要求權限允許時，請選擇<b><i>分享設備</i></b> ",
         "operaGrantPermissions": "當瀏覽器要求權限允許時，請選擇 <b><i>允許</i></b>",
-        "iexplorerGrantPermissions": "",
+        "iexplorerGrantPermissions": "當瀏覽器要求權限允許時，請選擇 <b><i>OK</i></b>",
         "safariGrantPermissions": "當瀏覽器要求權限允許時，請選擇 <b><i>OK</i></b>",
         "nwjsGrantPermissions": "請允許權限使用您的攝影裝置和麥克風",
         "edgeGrantPermissions": "當瀏覽器要求權限允許時，請選擇 <b><i>是的</i></b>"
@@ -35,31 +35,42 @@
         "raiseHand": "舉手發言或不作發言",
         "pushToTalk": "按鍵通話",
         "toggleScreensharing": "在攝影鏡頭和螢幕分享之間進行切換",
-        "toggleFilmstrip": "顯示或隱藏視訊",
-        "toggleShortcuts": "顯示或隱藏說明選單",
+        "toggleFilmstrip": "顯示或隱藏視訊影片縮圖",
+        "toggleShortcuts": "顯示或顯示鍵盤快捷鍵",
         "focusLocal": "聚焦於自己的視訊",
-        "focusRemote": "聚焦於另一位通話者的視訊",
+        "focusRemote": "聚焦於另一人的視訊",
         "toggleChat": "開啟或關閉聊天",
         "mute": "靜音或解除靜音",
-        "fullScreen": "進入或退出全螢幕",
+        "fullScreen": "觀看 或 離開 全螢幕",
         "videoMute": "啟動或停止自己的攝影裝置",
-        "showSpeakerStats": "顯示發言者數據"
+        "showSpeakerStats": "顯示發言者數據",
+        "localRecording": "顯示或顯示本地端錄影控制"
     },
     "welcomepage": {
+        "accessibilityLabel": {
+            "join": "輕觸即可參加",
+            "roomname": "輸入會議室名稱"
+        },
         "appDescription": "快來使用吧，團隊全部成員使用視訊通話，可以邀請任何您所認識的人。 __app__ 是一套完全加密、100% 開放源碼的視訊會議解決方案。無需註冊帳號，無時無刻不分日夜均可免費使用。",
         "audioVideoSwitch": {
             "audio": "語音",
             "video": "視訊"
         },
         "calendar": "日曆",
+        "connectCalendarText": "連接你的行事曆，在 __app__ 查看你的會議，此外，增加  __app__ 會議到你的行事曆中，只要按一下就可以啟動。",
+        "connectCalendarButton": "連接你的行事曆",
+        "enterRoomTitle": "啟動新的會議",
         "go": "開始",
         "join": "加入",
         "privacy": "隱私",
+        "recentList": "最近使用",
+        "recentListDelete": "刪除",
+        "recentListEmpty": "目前最近使用是空白的。與你的團隊成員聊天，即會在此處找到最近的會議。",
         "roomname": "輸入會議室名稱",
         "roomnameHint": "請輸入您想加入的會議室 URL 網址或名稱。您可以用個名稱來建立會議室，只要其他人輸入相同的名稱就能加入會議室喔。",
         "sendFeedback": "發送回報",
         "terms": "條款",
-        "title": "更加安全、更具彈性、又完全免費的視訊會議系統"
+        "title": "安全、全功能、完全免費的視訊會議"
     },
     "startupoverlay": {
         "policyText": " ",
@@ -71,8 +82,41 @@
         "rejoinKeyTitle": "重新加入"
     },
     "toolbar": {
+        "accessibilityLabel": {
+            "audioOnly": "切換僅有聲音",
+            "audioRoute": "",
+            "callQuality": "管理通話品質",
+            "chat": "切換聊天視窗",
+            "cc": "切換字幕",
+            "document": "切換分享的文件",
+            "feedback": "留言回報",
+            "fullScreen": "切換全螢幕",
+            "hangup": "離開來電",
+            "invite": "",
+            "localRecording": "切換本地端錄影控制",
+            "lockRoom": "切換會議室鎖定",
+            "moreActions": "切換更多動作功能表",
+            "moreActionsMenu": "更多動作功能表",
+            "mute": "切換靜音",
+            "pip": "切換子母畫面模式",
+            "profile": "編輯您的簡介",
+            "raiseHand": "切換舉手",
+            "recording": "切換錄影",
+            "Settings": "切換設置",
+            "sharedvideo": "切換 Youtube 影片分享",
+            "shareRoom": "邀請某人",
+            "shareYourScreen": "切換螢幕分享",
+            "shortcuts": "切換快捷鍵",
+            "speakerStats": "切換發言人統計",
+            "toggleCamera": "",
+            "tileView": "",
+            "videomute": "切換靜音視訊"
+        },
         "addPeople": "新增人員到您的通話中",
         "audioonly": "啟用/停用 僅用音訊模式（節省頻寬）",
+        "audioOnlyOn": "啟用僅用音訊模式（節省頻寬）",
+        "audioOnlyOff": "關閉僅用音訊模式",
+        "audioRoute": "選擇聲音裝置",
         "callQuality": "管理通話品質",
         "enterFullScreen": "觀看全螢幕",
         "exitFullScreen": "跳出全螢幕",
@@ -86,52 +130,68 @@
         "etherpad": "開啟/關閉 分享文件檔案",
         "documentOpen": "開啟分享的文件檔案",
         "documentClose": "關閉分享的文件檔案",
+        "shareRoom": "分享室",
         "sharedvideo": "分享 YouTube 視訊",
-        "sharescreen": "螢幕分享",
         "stopSharedVideo": "停止 YouTube 視訊",
         "fullscreen": "觀看/跳出 全螢幕",
         "sip": "播打 SIP 號碼",
-        "Settings": "",
+        "Settings": "設置",
         "hangup": "留言",
         "login": "登入",
-        "logout": "",
+        "logout": "登出",
         "sharedVideoMutedPopup": "您分享的視訊已經靜音，現在可以和其他成員交談了。",
+        "toggleCamera": "切換攝影機",
         "micMutedPopup": "您的麥克風已經處於靜音，可以觀看分享視訊了。",
         "talkWhileMutedPopup": "您要發言嗎? 目前您處於靜音。",
         "unableToUnmutePopup": "當分享視訊正在使用時，您不能解除靜音。",
         "cameraDisabled": "攝影裝置無法使用",
         "micDisabled": "麥克風無法使用",
         "filmstrip": "顯示/隱藏 視訊",
+        "pip": "進入子母畫模式",
         "profile": "編輯您的簡介",
         "raiseHand": "舉手/取消 請求發言",
         "shortcuts": "查看快捷鍵",
-        "speakerStats": "發言者數據"
+        "speakerStats": "發言者數據",
+        "tileViewToggle": "切換平鋪檢視",
+        "invite": "邀請人員"
     },
     "chat": {
         "nickname": {
             "title": "請在下面欄位輸入暱稱",
             "popover": "選擇暱稱"
         },
+        "error": "錯誤：你的訊息 \"__originalText__\" 未被送出。原因： __error__",
         "messagebox": "請輸入文字..."
     },
     "settings": {
-        "title": "",
+        "calendar": {
+            "about": "此 __appName__ 行事曆整合是安全存取你的行事曆，所以可以讀取即將發生的事件。",
+            "disconnect": "中斷連接",
+            "microsoftSignIn": "使用 Microsoft 帳戶登入",
+            "signedIn": "目前是以 __email__ 來存取行事曆事件。點按下方取消連接鈕可以停止存取行事曆事件。",
+            "title": "日曆"
+        },
+        "title": "設置",
         "update": "更新",
-        "name": "",
+        "name": "名稱",
         "startAudioMuted": "全部人啟動時處於靜音",
         "startVideoMuted": "全部人啟動時隱藏視訊畫面",
         "selectCamera": "攝影裝置",
         "selectMic": "麥克風",
         "selectAudioOutput": "音訊輸出",
         "followMe": "全部人跟隨仿照我",
-        "noDevice": "",
+        "language": "語言",
+        "loggedIn": "以 __name__ 登入",
+        "noDevice": "無",
         "cameraAndMic": "攝影裝置和麥克風",
         "moderator": "主持人",
+        "more": "更多",
         "password": "設定密碼",
-        "audioVideo": "音訊和視訊"
+        "audioVideo": "音訊和視訊",
+        "devices": "裝置"
     },
     "profile": {
-        "title": "",
+        "title": "簡介",
         "setDisplayNameLabel": "設定您的顯示名稱",
         "setEmailLabel": "設置您的大頭人像電子信箱",
         "setEmailInput": "輸入您的電子信箱"
@@ -142,13 +202,15 @@
         "mute": "成員處於靜音",
         "kick": "踢出",
         "muted": "處於靜音",
-        "domute": "",
+        "domute": "靜音",
         "flip": "翻轉",
         "remoteControl": "遠端控制"
     },
     "connectionindicator": {
         "header": "連接資料",
+        "connectedTo": "已連接至：",
         "bitrate": "比特率：",
+        "bridgeCount": "伺服器計數：",
         "packetloss": "丟包：",
         "resolution": "解析度：",
         "framerate": "影格率：",
@@ -164,7 +226,7 @@
         "na": "一旦會議啟動，即可回到此處查看連接資訊",
         "turn": " (轉)",
         "quality": {
-            "good": "",
+            "good": "很好",
             "inactive": "未啟用",
             "lost": "漏失",
             "nonoptimal": "不甚理想",
@@ -183,7 +245,6 @@
         "focus": "會議焦點",
         "focusFail": "__component__ 無法使用 - 請在 __ms__ 秒後重試",
         "grantedTo": "主持人權限已授予 __to__!",
-        "grantedToUnknown": "主持人權限已經授予 $t(somebody) ！",
         "muted": "您已經啟動通話，並處於靜音狀態。",
         "mutedTitle": "您目前處於靜音！",
         "raisedHand": "請求發言。",
@@ -191,8 +252,13 @@
         "suboptimalExperienceDescription": "呃……恐怕您對 __appName__ 的體驗不是很好，我們正在嘗試找方法改進對此瀏覽器的支援。現下敬請選用 <a href='static/recommendedBrowsers.html' target='_blank'>全力支援的瀏覽器</a> 來進行。"
     },
     "dialog": {
+        "accessibilityLabel": {
+            "liveStreaming": "直播串流"
+        },
         "allow": "允許",
+        "confirm": "確認",
         "kickMessage": "您已經被踢出會議！",
+        "kickTitle": "從會議踢出",
         "popupErrorTitle": "彈出視窗遭到阻攔",
         "popupError": "您的瀏覽器在此網站上阻攔彈出視窗。請在瀏覽器的安全設置中開啟它並再試一次。",
         "passwordErrorTitle": "密碼錯誤",
@@ -201,10 +267,10 @@
         "connectError": "喔哦！發生錯誤，無法連接至會議。",
         "connectErrorWithMsg": "喔哦！發生錯誤，無法連接至會議: __msg__",
         "incorrectPassword": "錯誤的用戶名稱或密碼",
-        "connecting": "",
+        "connecting": "連接中",
         "copy": "複製",
         "contactSupport": "聯絡支援",
-        "error": "",
+        "error": "錯誤",
         "detectext": "嘗試偵測桌面分享擴充應用程式時發生錯誤。",
         "failedpermissions": "未能取得使用本地麥克風或攝影裝置的權限。",
         "conferenceReloadTitle": "不好意思，出錯了。",
@@ -215,9 +281,10 @@
         "rejoinNow": "立即重新加入",
         "maxUsersLimitReachedTitle": "成員人數已經達到上限",
         "maxUsersLimitReached": "由於會議已達到人數上限，額滿不能加入。請聯絡會議發起人，或是稍後再次嘗試！",
+        "lockRoom": "鎖定會議室",
         "lockTitle": "鎖定失敗",
         "lockMessage": "鎖定會議失敗。",
-        "warning": "",
+        "warning": "警告",
         "passwordNotSupportedTitle": "不支援密碼",
         "passwordNotSupported": "不支援設置會議密碼。",
         "internalErrorTitle": "內部錯誤",
@@ -251,9 +318,9 @@
         "sessTerminated": "通話已經終止",
         "hungUp": "我方掛斷",
         "joinAgain": "再次加入",
-        "Share": "",
+        "Share": "分享",
         "Save": "儲存",
-        "recording": "",
+        "recording": "錄製作業中",
         "recordingToken": "輸入錄製標記",
         "Back": "返回",
         "serviceUnavailable": "服務無法使用",
@@ -262,9 +329,10 @@
         "reservationError": "預約系統錯誤",
         "reservationErrorMsg": "錯誤碼: __code__, 訊息: __msg__",
         "password": "輸入密碼",
+        "unlockRoom": "解鎖會議室",
         "userPassword": "用戶密碼",
         "token": "標記",
-        "tokenAuthFailedTitle": "",
+        "tokenAuthFailedTitle": "驗證失敗",
         "tokenAuthFailed": "對不起，您未被允許加入此會議。",
         "displayNameRequired": "顯示名稱是必須的",
         "enterDisplayName": "請輸入您的顯示名稱",
@@ -272,9 +340,9 @@
         "feedbackQuestion": "請告訴我們本次通話體驗！",
         "thankYou": "感謝您使用 __appName__！",
         "sorryFeedback": "很抱歉聽到這些，能告訴我們更多詳情嗎？",
-        "liveStreaming": "",
+        "liveStreaming": "直播串流中",
         "streamKey": "直播串流密鑰",
-        "startLiveStreaming": "立即開始直播",
+        "startLiveStreaming": "啟動直播串流",
         "startRecording": "啟動錄製作業",
         "stopStreamingWarning": "確定要停止直播串流嗎？",
         "stopRecordingWarning": "確定要停止錄製作業嗎？",
@@ -302,12 +370,16 @@
         "cameraNotSendingData": "我們無法取用您的攝影裝置。請檢查是否有其他程序正在使用這個設備，否則請從設置選單裡選擇其他設備或者重新裝載。",
         "goToStore": "前往應用商店",
         "externalInstallationTitle": "需要擴充應用程式",
-        "externalInstallationMsg": "",
+        "externalInstallationMsg": "您需要安裝桌面分享擴充應用程式。",
         "inlineInstallationMsg": "您需要安裝桌面分享擴充應用程式。",
         "inlineInstallExtension": "立即安裝",
         "muteParticipantTitle": "靜音這位成員？",
         "muteParticipantBody": "您無法對他們解除靜音，但是他們自己隨時可以解除靜音。",
         "muteParticipantButton": "靜音",
+        "liveStreamingDisabledTooltip": "啟動直播串流已關閉。",
+        "liveStreamingDisabledForGuestTooltip": "訪客無法啟動直播串流。",
+        "recordingDisabledTooltip": "啟動錄影已關閉。",
+        "recordingDisabledForGuestTooltip": "訪客無法啟動錄影。",
         "remoteControlTitle": "遠端桌面控制",
         "remoteControlRequestMessage": "您要允許 __user__ 遠端控制您的桌面嗎?",
         "remoteControlShareScreenWarning": "注意：如果按下 \"允許\" 您將分享自己的螢幕！",
@@ -318,8 +390,11 @@
         "remoteControlStopMessage": "遠端控制階段結束！",
         "close": "關閉",
         "shareYourScreen": "分享自己的螢幕",
+        "shareYourScreenDisabled": "螢幕分享已關閉。",
+        "shareYourScreenDisabledForGuest": "訪客無法螢幕分享。",
         "yourEntireScreen": "自己的全螢幕",
-        "applicationWindow": "應用程式視窗"
+        "applicationWindow": "應用程式視窗",
+        "transcribing": "轉錄中"
     },
     "email": {
         "sharedKey": [
@@ -349,6 +424,22 @@
         ],
         "and": "與"
     },
+    "share": {
+        "mainText": [
+            "點按以下連結參加會議：",
+            "__roomUrl__"
+        ],
+        "dialInfoText": [
+            "",
+            "",
+            "=====",
+            "",
+            "僅是想要由電話播入嗎？",
+            "",
+            "點按以下連結查看此會議的電話播入號碼",
+            "__dialInfoPageUrl__"
+        ]
+    },
     "connection": {
         "ERROR": "錯誤",
         "CONNECTING": "連接中",
@@ -362,17 +453,41 @@
         "ATTACHED": "已經附加"
     },
     "recording": {
+        "beta": "BETA",
         "busy": "我們正在釋放錄製資源。請過幾分鐘後再試。",
         "busyTitle": "全部錄製設備正在忙碌",
         "buttonTooltip": "啟動/停止 錄製作業",
         "error": "錄製作業失敗。請再次重試。",
+        "expandedOff": "錄影已經停止",
+        "expandedOn": "此會議目前正在錄影。",
+        "expandedPending": "錄影正在啟動…",
         "failedToStart": "錄製啟動失敗",
+        "live": "直播",
         "off": "錄製作業已經停止",
         "on": "錄製作業中",
-        "pending": "錄製作業正在等待成員加入……",
+        "pending": "準備錄影此會議…",
+        "rec": "REC 錄影",
+        "authDropboxText": "上傳至 Dropbox",
         "serviceName": "錄製作業服務",
+        "signOut": "jde eei ",
+        "signIn": "jde bp ",
+        "loggedIn": "以 __userName__ 登入",
+        "availableSpace": "可用空間： __spaceLeft__ MB (大約錄影時間 __duration__ 分鐘)",
+        "startRecordingBody": "確定要停止錄影作業嗎？",
         "unavailable": "喔哦！__serviceName__ 目前無法使用。我們正在解決此問題，請稍後再試。",
         "unavailableTitle": "錄製作業無法使用"
+    },
+    "transcribing": {
+        "pending": "正在準備轉錄會議…",
+        "off": "轉錄已停止",
+        "error": "錄影作業失敗。請重試。",
+        "expandedLabel": "轉錄目前開啟",
+        "failedToStart": "轉錄啟動失敗",
+        "tr": "TR 轉錄",
+        "labelToolTip": "此會議正被轉錄",
+        "ccButtonTooltip": "啟動 / 停止顯示字幕",
+        "start": "啟動顯示字幕",
+        "stop": "停止顯示字幕"
     },
     "liveStreaming": {
         "busy": "我們正在釋放串流資源。請過幾分鐘後再試。",
@@ -384,12 +499,18 @@
         "enterStreamKey": "在此輸入您的 YouTube 直播串流密鑰。",
         "error": "直播串流失敗。請重試。",
         "errorAPI": "取用您的 YouTube 播出時發生錯誤。請重新登入。",
+        "errorLiveStreamNotEnabled": "直播串流在 __email__ 尚未啟用。請開啟直播串流或登入有啟用直播串流的帳戶。",
+        "expandedOff": "直播串流已停止",
+        "expandedOn": "會議串流目前送至 YouTube 。",
+        "expandedPending": "直播串流正被啟動…",
         "failedToStart": "直播串流啟動失敗",
         "off": "直播串流已經停止",
         "on": "直播串流中",
         "pending": "啟動直播串流………",
         "serviceName": "直播串流服務",
+        "signedInAs": "你目前登入名為：",
         "signIn": "使用 Google 帳戶登入",
+        "signOut": "登出",
         "signInCTA": "輸入 YouTube 直播串流密鑰，或登入 YouTube 帳號。",
         "start": "啟動直播串流",
         "streamIdHelp": "這是什麼？",
@@ -420,9 +541,11 @@
         "noPermission": "未取得權限",
         "previewUnavailable": "預覽無法使用",
         "selectADevice": "選擇設備",
-        "testAudio": "測試聲音"
+        "testAudio": "播放測試聲音"
     },
     "videoStatus": {
+        "audioOnly": "AUD 聲音",
+        "audioOnlyExpanded": "你處於僅用音訊模式。這個模式節省頻寬，但無法看見他人影像。",
         "callQuality": "通話品質",
         "hd": "HD 高清",
         "hdTooltip": "觀看高清視訊 HD",
@@ -447,10 +570,11 @@
         "statusMessage": "現在狀態為 __status__"
     },
     "addPeople": {
-        "add": "",
+        "add": "邀請",
         "countryNotSupported": "此目標區域尚未支援。",
         "countryReminder": "嘗試在美國外地通話？請確認開頭使用的國家代碼！",
-        "disabled": "",
+        "disabled": "您不可以邀請人員。",
+        "footerText": "播打已關閉。",
         "invite": "邀請",
         "loading": "尋找聯絡人及電話號碼",
         "loadingNumber": "驗證電話號碼",
@@ -487,6 +611,7 @@
         "veryGood": "極好"
     },
     "info": {
+        "accessibilityLabel": "顯示資訊",
         "addPassword": "新增密碼",
         "cancelPassword": "取消密碼",
         "conferenceURL": "連結：",
@@ -508,7 +633,7 @@
         "numbers": "播入號碼",
         "password": "密碼：",
         "title": "分享",
-        "tooltip": "取得關於會議的連接使用資訊"
+        "tooltip": "顯示此會議的連結及電話播入號碼"
     },
     "settingsView": {
         "alertOk": "確認",
@@ -524,17 +649,21 @@
         "startWithVideoMuted": "啟動並視訊靜音"
     },
     "calendarSync": {
-        "later": "稍後",
-        "next": "即將推出",
+        "addMeetingURL": "增加會議連結",
+        "confirmAddLink": "你要加上 Jitsi 連結於此事件嗎？",
+        "confirmAddLinkTitle": "日曆",
+        "join": "參加",
+        "joinTooltip": "參加會議",
         "nextMeeting": "下次會議",
-        "now": "現在",
+        "noEvents": "沒有預定事件排入行程。",
+        "ongoingMeeting": "即將進行會議",
         "permissionButton": "開啟設定",
-        "permissionMessage": "日曆允許權限是必須的，以列入您的會議於應用程式中。"
+        "permissionMessage": "日曆允許權限是必須的，以查看你的會議於應用程式中。",
+        "refresh": "重新整理行事曆",
+        "today": "今日"
     },
     "recentList": {
-        "today": "今日",
-        "yesterday": "昨天",
-        "earlier": "稍早"
+        "joinPastMeeting": "參加過往會議"
     },
     "sectionList": {
         "pullToRefresh": "下滑以重新整理"
@@ -547,5 +676,60 @@
         "appNotInstalled": "在您的手機上需要 __app__ 行動應用程式去加入這場會議。",
         "downloadApp": "下載應用 APP",
         "openApp": "繼續前往此應用程式"
+    },
+    "presenceStatus": {
+        "invited": "被邀請的",
+        "ringing": "鈴鈴鈴……",
+        "calling": "來電…",
+        "initializingCall": "播打電話…",
+        "connected": "已經連接",
+        "connecting": "連線中...",
+        "connecting2": "通話中*...",
+        "disconnected": "已經中斷連接",
+        "busy": "忙線",
+        "rejected": "拒接",
+        "ignored": "忽略",
+        "expired": "未接"
+    },
+    "dateUtils": {
+        "today": "今日",
+        "yesterday": "昨天",
+        "earlier": "稍早"
+    },
+    "incomingCall": {
+        "answer": "接通",
+        "audioCallTitle": "來電",
+        "decline": "解除",
+        "productLabel": "來自 Jitsi Meet",
+        "videoCallTitle": "視訊來電"
+    },
+    "localRecording": {
+        "localRecording": "本地端錄影中",
+        "dialogTitle": "本地端錄影控制",
+        "start": "啟動錄影作業",
+        "stop": "停止錄影作業",
+        "moderator": "主持人",
+        "me": "自己",
+        "duration": "期間",
+        "durationNA": "N/A",
+        "encoding": "解碼中",
+        "participantStats": "參與者狀態",
+        "participant": "參與者",
+        "sessionToken": "階段標記",
+        "clientState": {
+            "on": "開",
+            "off": "關",
+            "unknown": "不明"
+        },
+        "messages": {
+            "engaged": "本地端錄影已使用。",
+            "finished": "錄影階段 __token__ 已完成。請傳送錄影檔案至主持人。",
+            "finishedModerator": "錄影階段 __token__ 已完成。本地端錄影追蹤已存檔。請要求各參與者提交其錄影檔案。",
+            "notModerator": "你不是主持人，無法啟動或停止本地端錄影。"
+        },
+        "yes": "是的",
+        "no": "沒有",
+        "label": "LOR",
+        "labelToolTip": "本地端錄影使用中"
     }
 }
