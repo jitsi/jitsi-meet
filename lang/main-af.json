@@ -65,7 +65,7 @@
         "privacy": "Privaatheid",
         "recentList": "Onlangs",
         "recentListDelete": "Skrap",
-        "recentListEmpty": "Die lys van onlangse gesprekke is leeg. Gesels met u span al u onlangse gesprekke sal hier wees.",
+        "recentListEmpty": "Die lys van onlangse gesprekke is leeg. Gesels met u span en al u onlangse gesprekke sal hier wys.",
         "roomname": "Gee kamernaam",
         "roomnameHint": "Gee die naam of URL van die kamer waar u wil aansluit. Dink gerus enige naam uit. Laat weet net die mense wat u ontmoet wat dit is sodat hulle die selfde naam gee.",
         "sendFeedback": "Stuur terugvoer",
@@ -241,7 +241,7 @@
     },
     "notify": {
         "disconnected": "ontkoppel",
-        "moderator": "",
+        "moderator": "U is ou moderator!",
         "connectedOneMember": "__name__ het gekoppel",
         "connectedTwoMembers": "__first__ en __second__ het gekoppel",
         "connectedThreePlusMembers": "__name__ en __count__ ander het gekoppel",
@@ -357,7 +357,7 @@
         "permissionDenied": "Toestemming gewyer",
         "screenSharingFailedToInstall": "Oeps! Die uitbreiding vir skermdeling kon nie installeer nie.",
         "screenSharingFailedToInstallTitle": "Uitbreiding vir skermdeling kon nie installeer nie",
-        "screenSharingFirefoxPermissionDeniedError": "",
+        "screenSharingFirefoxPermissionDeniedError": "Iets het skeefgeloop toe ons die skerm probeer deel het. Maak seker dat ons dei toestemming gegee word om dit te doen. ",
         "screenSharingFirefoxPermissionDeniedTitle": "Oeps! Ons kon nie skermdeling begin nie!",
         "screenSharingPermissionDeniedError": "",
         "cameraUnsupportedResolutionError": "Die kamera ondersteun nie die nodige videoresolusie nie.",
@@ -483,13 +483,13 @@
         "unavailableTitle": ""
     },
     "transcribing": {
-        "pending": "",
+        "pending": "Berei tans voor om die vergadering te transkribeer...",
         "off": "",
         "error": "",
         "expandedLabel": "",
         "failedToStart": "",
         "tr": "",
-        "labelToolTip": "",
+        "labelToolTip": "Die vergadering word getranskribeer",
         "ccButtonTooltip": "",
         "start": "",
         "stop": ""
