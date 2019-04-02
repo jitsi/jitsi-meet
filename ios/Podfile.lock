@@ -149,10 +149,10 @@ PODS:
   - RNGoogleSignin (1.0.2):
     - GoogleSignIn
     - React
-  - RNSound (0.10.9):
+  - RNSound (0.10.12):
     - React/Core
-    - RNSound/Core (= 0.10.9)
-  - RNSound/Core (0.10.9):
+    - RNSound/Core (= 0.10.12)
+  - RNSound/Core (0.10.12):
     - React/Core
   - RNVectorIcons (6.0.2):
     - React
@@ -275,7 +275,7 @@ SPEC CHECKSUMS:
   react-native-keep-awake: eba3137546b10003361b37c761f6c429b59814ae
   react-native-webrtc: a14197fefe96ab462dc098b79c428fc5a7f68216
   RNGoogleSignin: 361174d9a3090d295b06257162b560d8efc8a6ed
-  RNSound: 53d2fc9c6589bd68daba530262b7560393def3ac
+  RNSound: e157320f503bdd4f4ee6d8542e948d54f90c3c3a
   RNVectorIcons: d819334932bcda3332deb3d2c8ea4d069e0b98f9
   SDWebImage: 3f3f0c02f09798048c47a5ed0a13f17b063572d8
   yoga: 3768a3026ade0fb46a68f3a31a917cf86bc34fc4
