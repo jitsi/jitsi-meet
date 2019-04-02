@@ -4,8 +4,6 @@ import { updateSettings } from '../settings';
 import {
     ADD_PENDING_DEVICE_REQUEST,
     REMOVE_PENDING_DEVICE_REQUESTS,
-    SET_AUDIO_INPUT_DEVICE,
-    SET_VIDEO_INPUT_DEVICE,
     UPDATE_DEVICE_LIST
 } from './actionTypes';
 import {
@@ -123,38 +121,6 @@ export function getAvailableDevices() {
 export function removePendingDeviceRequests() {
     return {
         type: REMOVE_PENDING_DEVICE_REQUESTS
-    };
-}
-
-/**
- * Signals to update the currently used audio input device.
- *
- * @param {string} deviceId - The id of the new audio input device.
- * @returns {{
- *      type: SET_AUDIO_INPUT_DEVICE,
- *      deviceId: string
- * }}
- */
-export function setAudioInputDevice(deviceId) {
-    return {
-        type: SET_AUDIO_INPUT_DEVICE,
-        deviceId
-    };
-}
-
-/**
- * Signals to update the currently used video input device.
- *
- * @param {string} deviceId - The id of the new video input device.
- * @returns {{
- *      type: SET_VIDEO_INPUT_DEVICE,
- *      deviceId: string
- * }}
- */
-export function setVideoInputDevice(deviceId) {
-    return {
-        type: SET_VIDEO_INPUT_DEVICE,
-        deviceId
     };
 }
 

@@ -1,8 +1,6 @@
 import {
     ADD_PENDING_DEVICE_REQUEST,
     REMOVE_PENDING_DEVICE_REQUESTS,
-    SET_AUDIO_INPUT_DEVICE,
-    SET_VIDEO_INPUT_DEVICE,
     UPDATE_DEVICE_LIST
 } from './actionTypes';
 import { groupDevicesByKind } from './functions';
@@ -56,11 +54,6 @@ ReducerRegistry.register(
                 pendingRequests: [ ]
             };
 
-        // TODO: Changing of current audio and video device id is currently
-        // handled outside of react/redux. Fall through to default logic for
-        // now.
-        case SET_AUDIO_INPUT_DEVICE:
-        case SET_VIDEO_INPUT_DEVICE:
         default:
             return state;
         }

@@ -1,15 +1,8 @@
-/* global APP */
-
 import { CONFERENCE_JOINED } from '../conference';
 import { processExternalDeviceRequest } from '../../device-selection';
 import { MiddlewareRegistry } from '../redux';
-import UIEvents from '../../../../service/UI/UIEvents';
 
 import { removePendingDeviceRequests } from './actions';
-import {
-    SET_AUDIO_INPUT_DEVICE,
-    SET_VIDEO_INPUT_DEVICE
-} from './actionTypes';
 
 /**
  * Implements the middleware of the feature base/devices.
@@ -22,12 +15,6 @@ MiddlewareRegistry.register(store => next => action => {
     switch (action.type) {
     case CONFERENCE_JOINED:
         return _conferenceJoined(store, next, action);
-    case SET_AUDIO_INPUT_DEVICE:
-        APP.UI.emitEvent(UIEvents.AUDIO_DEVICE_CHANGED, action.deviceId);
-        break;
-    case SET_VIDEO_INPUT_DEVICE:
-        APP.UI.emitEvent(UIEvents.VIDEO_DEVICE_CHANGED, action.deviceId);
-        break;
     }
 
     return next(action);

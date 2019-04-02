@@ -2,7 +2,6 @@
 
 import { parseURLParams } from '../config';
 import JitsiMeetJS from '../lib-jitsi-meet';
-import { updateSettings } from '../settings';
 
 declare var APP: Object;
 
@@ -113,11 +112,6 @@ export function groupDevicesByKind(devices: Object[]): Object {
  * @returns {Promise}
  */
 export function setAudioOutputDeviceId(
-        newId: string = 'default',
-        dispatch: Function): Promise<*> {
-    return JitsiMeetJS.mediaDevices.setAudioOutputDevice(newId)
-        .then(() =>
-            dispatch(updateSettings({
-                audioOutputDeviceId: newId
-            })));
+        newId: string = 'default'): Promise<*> {
+    return JitsiMeetJS.mediaDevices.setAudioOutputDevice(newId);
 }
