@@ -1,16 +1,16 @@
-/* @flow */
+// @flow
 
 import React, { Component } from 'react';
 import type { Dispatch } from 'redux';
 
-import { setPassword } from '../../../base/conference';
-import { getInviteURL } from '../../../base/connection';
-import { Dialog } from '../../../base/dialog';
-import { translate } from '../../../base/i18n';
-import { connect } from '../../../base/redux';
-import { isLocalParticipantModerator } from '../../../base/participants';
+import { setPassword } from '../../../../base/conference';
+import { getInviteURL } from '../../../../base/connection';
+import { Dialog } from '../../../../base/dialog';
+import { translate } from '../../../../base/i18n';
+import { connect } from '../../../../base/redux';
+import { isLocalParticipantModerator } from '../../../../base/participants';
 
-import { _getDefaultPhoneNumber, getDialInfoPageURL } from '../../functions';
+import { _getDefaultPhoneNumber, getDialInfoPageURL } from '../../../functions';
 import DialInNumber from './DialInNumber';
 import PasswordForm from './PasswordForm';
 
