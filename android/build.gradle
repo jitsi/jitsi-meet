@@ -73,25 +73,25 @@ allprojects {
             // consequently, we should qualify their version.
             def versionQualifier = '-jitsi-1'
             if ('react-native-background-timer' == project.name)
-                versionQualifier = '-jitsi-3' // 2.0.0 + react-native 0.57
+                versionQualifier = '-jitsi-4' // 2.1.1 + react-native 0.59
             else if ('react-native-calendar-events' == project.name)
-                versionQualifier = '-jitsi-2' // 1.6.4 + react-native 0.57
+                versionQualifier = '-jitsi-3' // 1.6.4 + react-native 0.59
             else if ('react-native-fast-image' == project.name)
-                versionQualifier = '-jitsi-2' // 5.1.1 + react-native 0.57
+                versionQualifier = '-jitsi-3' // 5.1.1 + react-native 0.59
             else if ('react-native-google-signin' == project.name)
-                versionQualifier = '-jitsi-2' // 1.0.2 + react-native 0.57
+                versionQualifier = '-jitsi-3' // 1.0.2 + react-native 0.59
             else if ('react-native-immersive' == project.name)
-                versionQualifier = '-jitsi-5' // 2.0.0 + react-native 0.57
+                versionQualifier = '-jitsi-6' // 2.0.0 + react-native 0.59
             else if ('react-native-keep-awake' == project.name)
-                versionQualifier = '-jitsi-4' // 4.0.0 + react-native 0.57
+                versionQualifier = '-jitsi-5' // 4.0.0 + react-native 0.59
             else if ('react-native-linear-gradient' == project.name)
-                versionQualifier = '-jitsi-1' // 2.4.0 + react-native 0.57
+                versionQualifier = '-jitsi-2' // 2.5.3 + react-native 0.59
             else if ('react-native-sound' == project.name)
-                versionQualifier = '-jitsi-2' // 0.10.9 + react-native 0.57
+                versionQualifier = '-jitsi-3' // 0.10.12 + react-native 0.59
             else if ('react-native-vector-icons' == project.name)
-                versionQualifier = '-jitsi-3' // 6.0.2 + react-native 0.57
+                versionQualifier = '-jitsi-4' // 6.0.2 + react-native 0.59
             else if ('react-native-webrtc' == project.name)
-                versionQualifier = '-jitsi-9' // 6322a9b5a38ce590cfaea4041072ea87c8dbf558 + react-native 0.57
+                versionQualifier = '-jitsi-10' // 032ee5c90e2c5ff27ab2f952217104772fcbd155 + react-native 0.59
 
             project.version = "${json.version}${versionQualifier}"
 
