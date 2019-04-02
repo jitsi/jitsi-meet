@@ -82,31 +82,36 @@ export function processExternalDeviceRequest( // eslint-disable-line max-params
     case 'getCurrentDevices':
         dispatch(getAvailableDevices()).then(devices => {
             if (areDeviceLabelsInitialized(state)) {
-                let audioInput, audioOutput, videoInput;
-                const audioOutputDeviceId = getAudioOutputDeviceId();
-                const { cameraDeviceId, micDeviceId } = settings;
+                const deviceDescriptions = {
+                    audioInput: undefined,
+                    audioOutput: undefined,
+                    videoInput: undefined
+                };
+                const currentlyUsedDeviceIds = new Set([
+                    getAudioOutputDeviceId(),
+                    settings.micDeviceId,
+                    settings.cameraDeviceId
+                ]);
 
                 devices.forEach(device => {
-                    const { deviceId } = device;
+                    const { deviceId, kind } = device;
 
-                    switch (deviceId) {
-                    case micDeviceId:
-                        audioInput = device;
-                        break;
-                    case audioOutputDeviceId:
-                        audioOutput = device;
-                        break;
-                    case cameraDeviceId:
-                        videoInput = device;
-                        break;
+                    if (currentlyUsedDeviceIds.has(deviceId)) {
+                        switch (kind) {
+                        case 'audioinput':
+                            deviceDescriptions.audioInput = device;
+                            break;
+                        case 'audiooutput':
+                            deviceDescriptions.audioOutput = device;
+                            break;
+                        case 'videoinput':
+                            deviceDescriptions.videoInput = device;
+                            break;
+                        }
                     }
                 });
 
-                responseCallback({
-                    audioInput,
-                    audioOutput,
-                    videoInput
-                });
+                responseCallback(deviceDescriptions);
             } else {
                 // The labels are not available if the A/V permissions are
                 // not yet granted.
