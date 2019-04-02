@@ -560,6 +560,7 @@
         "alertOk": "OK",
         "alertTitle": "Warning",
         "alertURLText": "The entered server URL is invalid",
+        "buildInfoSection": "Build Information",
         "conferenceSection": "Conference",
         "displayName": "Display name",
         "email": "Email",
@@ -567,7 +568,8 @@
         "profileSection": "Profile",
         "serverURL": "Server URL",
         "startWithAudioMuted": "Start with audio muted",
-        "startWithVideoMuted": "Start with video muted"
+        "startWithVideoMuted": "Start with video muted",
+        "version": "Version"
     },
     "share": {
         "dialInfoText": "\n\n=====\n\nJust want to dial in on your phone?\n\n__defaultDialInNumber__Click this link to see the dial in phone numbers for this meeting\n__dialInfoPageUrl__",
