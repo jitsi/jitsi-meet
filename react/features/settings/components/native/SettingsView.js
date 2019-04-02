@@ -1,14 +1,7 @@
 // @flow
 
 import React from 'react';
-import {
-    Alert,
-    SafeAreaView,
-    ScrollView,
-    Switch,
-    TextInput,
-    View
-} from 'react-native';
+import { Alert, NativeModules, SafeAreaView, ScrollView, Switch, Text, TextInput, View } from 'react-native';
 
 import { ColorSchemeRegistry } from '../../../base/color-scheme';
 import { translate } from '../../../base/i18n';
@@ -26,6 +19,11 @@ import FormSectionHeader from './FormSectionHeader';
 import { normalizeUserInputURL } from '../../functions';
 import styles from './styles';
 import { HeaderLabel } from '../../../base/react/components/native';
+
+/**
+ * Application information module.
+ */
+const { AppInfo } = NativeModules;
 
 type Props = AbstractProps & {
 
@@ -192,6 +190,15 @@ class SettingsView extends AbstractSettingsView<Props> {
                         <Switch
                             onValueChange = { this._onStartVideoMutedChange }
                             value = { _settings.startWithVideoMuted } />
+                    </FormRow>
+                    <FormSectionHeader
+                        label = 'settingsView.buildInfoSection' />
+                    <FormRow
+                        fieldSeparator = { true }
+                        label = 'settingsView.version'>
+                        <Text>
+                            { `${AppInfo.version} build ${AppInfo.buildNumber}` }
+                        </Text>
                     </FormRow>
                 </ScrollView>
             </SafeAreaView>

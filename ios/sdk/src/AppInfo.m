@@ -61,8 +61,15 @@ RCT_EXPORT_MODULE();
         }
     }
 
+    // build number
+    NSString *buildNumber = infoDictionary[@"CFBundleVersion"];
+    if (buildNumber == nil) {
+        buildNumber = @"";
+    }
+
     return @{
         @"calendarEnabled": [NSNumber numberWithBool:calendarEnabled],
+        @"buildNumber": buildNumber,
         @"name": name,
         @"sdkBundlePath": sdkBundlePath,
         @"version": version
