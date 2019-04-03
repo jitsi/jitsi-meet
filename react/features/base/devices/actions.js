@@ -11,8 +11,11 @@ import {
 import {
     areDeviceLabelsInitialized,
     getDeviceIdByLabel,
-    getDevicesFromURL
+    getDevicesFromURL,
+    setAudioOutputDeviceId
 } from './functions';
+
+const logger = require('jitsi-meet-logger').getLogger(__filename);
 
 /**
  * Adds a pending device request.
@@ -36,11 +39,12 @@ export function addPendingDeviceRequest(request) {
  * @returns {Function}
  */
 export function configureInitialDevices() {
-    return (dispatch, getState) => new Promise(resolve => {
+    return (dispatch, getState) => {
         const deviceLabels = getDevicesFromURL(getState());
+        let updateSettingsPromise;
 
         if (deviceLabels) {
-            dispatch(getAvailableDevices()).then(() => {
+            updateSettingsPromise = dispatch(getAvailableDevices()).then(() => {
                 const state = getState();
 
                 if (!areDeviceLabelsInitialized(state)) {
@@ -59,7 +63,6 @@ export function configureInitialDevices() {
                             responseCallback() {}
                         }));
                     });
-                    resolve();
 
                     return;
                 }
@@ -80,13 +83,21 @@ export function configureInitialDevices() {
                 });
 
                 dispatch(updateSettings(newSettings));
-                resolve();
             });
-
         } else {
-            resolve();
+            updateSettingsPromise = Promise.resolve();
         }
-    });
+
+        return updateSettingsPromise
+            .then(() => {
+                const { audioOutputDeviceId }
+                    = getState()['features/base/settings'];
+
+                return setAudioOutputDeviceId(audioOutputDeviceId, dispatch)
+                    .catch(ex => logger.warn(`Failed to set audio output device.
+                        Default audio output device will be used instead ${ex}`));
+            });
+    };
 }
 
 /**
