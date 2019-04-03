@@ -8,11 +8,13 @@ import {
     getAudioOutputDeviceId,
     getAvailableDevices,
     getDeviceIdByLabel,
-    groupDevicesByKind
+    groupDevicesByKind,
+    setAudioInputDevice,
+    setAudioOutputDeviceId,
+    setVideoInputDevice
 } from '../base/devices';
 import JitsiMeetJS from '../base/lib-jitsi-meet';
 import { toState } from '../base/redux';
-import { updateSettings } from '../base/settings';
 
 /**
  * Returns the properties for the device selection dialog from Redux state.
@@ -154,18 +156,18 @@ export function processExternalDeviceRequest( // eslint-disable-line max-params
 
         const { label, id } = device;
         const deviceId = label ? getDeviceIdByLabel(state, device.label) : id;
-        const newSettings = {};
 
         if (deviceId) {
             switch (device.kind) {
-            case 'audioinput':
-                newSettings.micDeviceId = deviceId;
+            case 'audioinput': {
+                dispatch(setAudioInputDevice(deviceId));
                 break;
+            }
             case 'audiooutput':
-                newSettings.audioOutputDeviceId = deviceId;
+                setAudioOutputDeviceId(deviceId, dispatch);
                 break;
             case 'videoinput':
-                newSettings.cameraDeviceId = deviceId;
+                dispatch(setVideoInputDevice(deviceId));
                 break;
             default:
                 result = false;
@@ -173,8 +175,6 @@ export function processExternalDeviceRequest( // eslint-disable-line max-params
         } else {
             result = false;
         }
-
-        dispatch(updateSettings(newSettings));
 
         responseCallback(result);
         break;

@@ -2066,11 +2066,6 @@ export default {
         APP.UI.addListener(
             UIEvents.VIDEO_DEVICE_CHANGED,
             cameraDeviceId => {
-                if (this.localVideo
-                    && this.localVideo.getDeviceId() === cameraDeviceId) {
-                    return;
-                }
-
                 const videoWasMuted = this.isLocalVideoMuted();
 
                 sendAnalytics(createDeviceChangedEvent('video', 'input'));
@@ -2099,14 +2094,11 @@ export default {
                 })
                 .then(() => {
                     logger.log('switched local video device');
+                    APP.store.dispatch(updateSettings({
+                        cameraDeviceId
+                    }));
                 })
                 .catch(err => {
-                    if (this.localVideo) {
-                        APP.store.dispatch(updateSettings({
-                            cameraDeviceId: this.localVideo.getDeviceId()
-                        }));
-                    }
-
                     APP.UI.showCameraErrorNotification(err);
                 });
             }
@@ -2115,11 +2107,6 @@ export default {
         APP.UI.addListener(
             UIEvents.AUDIO_DEVICE_CHANGED,
             micDeviceId => {
-                if (this.localAudio
-                    && this.localAudio.getDeviceId() === micDeviceId) {
-                    return;
-                }
-
                 const audioWasMuted = this.isLocalAudioMuted();
 
                 sendAnalytics(createDeviceChangedEvent('audio', 'input'));
@@ -2141,14 +2128,11 @@ export default {
                 .then(stream => {
                     this.useAudioStream(stream);
                     logger.log('switched local audio device');
+                    APP.store.dispatch(updateSettings({
+                        micDeviceId
+                    }));
                 })
                 .catch(err => {
-                    if (this.localAudio) {
-                        APP.store.dispatch(updateSettings({
-                            cameraDeviceId: this.localVideo.getDeviceId()
-                        }));
-                    }
-
                     APP.UI.showMicErrorNotification(err);
                 });
             }

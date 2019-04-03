@@ -5,11 +5,18 @@ import {
 } from '../../../modules/transport';
 
 import { createDeviceChangedEvent, sendAnalytics } from '../analytics';
+import {
+    setAudioInputDevice,
+    setAudioOutputDeviceId,
+    setVideoInputDevice
+} from '../base/devices';
 import { i18next } from '../base/i18n';
 import { updateSettings } from '../base/settings';
 
 import { SET_DEVICE_SELECTION_POPUP_DATA } from './actionTypes';
 import { getDeviceSelectionDialogProps, processExternalDeviceRequest } from './functions';
+
+const logger = require('jitsi-meet-logger').getLogger(__filename);
 
 /**
  * Opens a popup window with the device selection dialog in it.
@@ -100,18 +107,27 @@ function _setDeviceSelectionPopupData(popupDialogData) {
 export function submitDeviceSelectionTab(newState) {
     return (dispatch, getState) => {
         const currentState = getDeviceSelectionDialogProps(getState());
-        const newDeviceSettings = {};
 
         if (newState.selectedVideoInputId
             && newState.selectedVideoInputId
                 !== currentState.selectedVideoInputId) {
-            newDeviceSettings.cameraDeviceId = newState.selectedVideoInputId;
+            dispatch(updateSettings({
+                cameraDeviceId: newState.selectedVideoInputId
+            }));
+
+            dispatch(
+                setVideoInputDevice(newState.selectedVideoInputId));
         }
 
         if (newState.selectedAudioInputId
                 && newState.selectedAudioInputId
                   !== currentState.selectedAudioInputId) {
-            newDeviceSettings.micDeviceId = newState.selectedAudioInputId;
+            dispatch(updateSettings({
+                micDeviceId: newState.selectedAudioInputId
+            }));
+
+            dispatch(
+                setAudioInputDevice(newState.selectedAudioInputId));
         }
 
         if (newState.selectedAudioOutputId
@@ -119,10 +135,17 @@ export function submitDeviceSelectionTab(newState) {
                     !== currentState.selectedAudioOutputId) {
             sendAnalytics(createDeviceChangedEvent('audio', 'output'));
 
-            newDeviceSettings.audioOutputDeviceId
-                = newState.selectedAudioOutputId;
+            setAudioOutputDeviceId(
+                newState.selectedAudioOutputId,
+                dispatch)
+                .then(() => logger.log('changed audio output device'))
+                .catch(err => {
+                    logger.warn(
+                        'Failed to change audio output device.',
+                        'Default or previously set audio output device will',
+                        ' be used instead.',
+                        err);
+                });
         }
-
-        dispatch(updateSettings(newDeviceSettings));
     };
 }
