@@ -716,14 +716,33 @@ export default {
     init(options) {
         this.roomName = options.roomName;
 
+        const setAudioOutputPromise = new Promise(resolve => {
+            const { audioOutputDeviceId }
+                = APP.store.getState()['features/base/settings'];
+
+            if (audioOutputDeviceId
+                === JitsiMeetJS.mediaDevices.getAudioOutputDevice()) {
+                resolve();
+            } else {
+                JitsiMeetJS.mediaDevices.setAudioOutputDevice(
+                    audioOutputDeviceId
+                ).catch(ex => {
+                    logger.warn(`Failed to set audio output device. Default
+                        audio output device will be used instead ${ex}`);
+                })
+                .then(resolve);
+            }
+        });
+
         return (
-            this.createInitialLocalTracksAndConnect(
+            setAudioOutputPromise
+            .then(() => this.createInitialLocalTracksAndConnect(
                 options.roomName, {
                     startAudioOnly: config.startAudioOnly,
                     startScreenSharing: config.startScreenSharing,
                     startWithAudioMuted: config.startWithAudioMuted,
                     startWithVideoMuted: config.startWithVideoMuted
-                })
+                }))
             .then(([ tracks, con ]) => {
                 tracks.forEach(track => {
                     if ((track.isAudioTrack() && this.isLocalAudioMuted())

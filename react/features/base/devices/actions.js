@@ -11,8 +11,7 @@ import {
 import {
     areDeviceLabelsInitialized,
     getDeviceIdByLabel,
-    getDevicesFromURL,
-    setAudioOutputDeviceId
+    getDevicesFromURL
 } from './functions';
 
 /**
@@ -79,11 +78,6 @@ export function configureInitialDevices() {
                         newSettings[devicesKeysToSettingsKeys[key]] = deviceId;
                     }
                 });
-
-                if (newSettings.audioOutputDeviceId) {
-                    setAudioOutputDeviceId(
-                        newSettings.audioOutputDeviceId, dispatch);
-                }
 
                 dispatch(updateSettings(newSettings));
                 resolve();

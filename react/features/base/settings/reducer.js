@@ -4,7 +4,7 @@ import { randomHexString } from 'js-utils/random';
 import _ from 'lodash';
 
 import { APP_WILL_MOUNT } from '../app';
-import JitsiMeetJS, { browser } from '../lib-jitsi-meet';
+import { browser } from '../lib-jitsi-meet';
 import { ReducerRegistry } from '../redux';
 import { PersistenceRegistry } from '../storage';
 import { assignIfDefined } from '../util';
@@ -136,17 +136,6 @@ function _initSettings(featureState) {
             localFlipX,
             micDeviceId
         }, settings);
-
-        if (settings.audioOutputDeviceId
-            !== JitsiMeetJS.mediaDevices.getAudioOutputDevice()) {
-            JitsiMeetJS.mediaDevices.setAudioOutputDevice(
-                settings.audioOutputDeviceId
-            ).catch(ex => {
-                logger.warn('Failed to set audio output device from local '
-                    + 'storage. Default audio output device will be used'
-                    + 'instead.', ex);
-            });
-        }
     }
 
     // Things we stored in profile earlier
