@@ -60,40 +60,20 @@ allprojects {
         }
     }
 
+    // Use the number of seconds/10 since Jan 1 2019 as the version qualifier number.
+    // This will last for the next ~680 years.
+    // https://stackoverflow.com/a/38643838
+    def versionQualifierNumber = (int)(((new Date().getTime()/1000) - 1546297200) / 10)
+
     afterEvaluate { project ->
         if (project.name.startsWith('react-native-')) {
             def npmManifest = project.file('../package.json')
             def json = new JsonSlurper().parseText(npmManifest.text)
 
-            // React Native modules have an npm peer dependency on react-native,
-            // they do not have an npm dependency on it. Further below though we
-            // choose a react-native version (range) when we represent them as
-            // Maven artifacts. Effectively, we are forking the projects by not
-            // complying with the full range of their npm peer dependency and,
-            // consequently, we should qualify their version.
-            def versionQualifier = '-jitsi-1'
-            if ('react-native-background-timer' == project.name)
-                versionQualifier = '-jitsi-4' // 2.1.1 + react-native 0.59
-            else if ('react-native-calendar-events' == project.name)
-                versionQualifier = '-jitsi-3' // 1.6.4 + react-native 0.59
-            else if ('react-native-fast-image' == project.name)
-                versionQualifier = '-jitsi-3' // 5.1.1 + react-native 0.59
-            else if ('react-native-google-signin' == project.name)
-                versionQualifier = '-jitsi-3' // 1.0.2 + react-native 0.59
-            else if ('react-native-immersive' == project.name)
-                versionQualifier = '-jitsi-6' // 2.0.0 + react-native 0.59
-            else if ('react-native-keep-awake' == project.name)
-                versionQualifier = '-jitsi-5' // 4.0.0 + react-native 0.59
-            else if ('react-native-linear-gradient' == project.name)
-                versionQualifier = '-jitsi-2' // 2.5.3 + react-native 0.59
-            else if ('react-native-sound' == project.name)
-                versionQualifier = '-jitsi-3' // 0.10.12 + react-native 0.59
-            else if ('react-native-vector-icons' == project.name)
-                versionQualifier = '-jitsi-4' // 6.0.2 + react-native 0.59
-            else if ('react-native-webrtc' == project.name)
-                versionQualifier = '-jitsi-10' // 032ee5c90e2c5ff27ab2f952217104772fcbd155 + react-native 0.59
+            // Release every dependency the SDK has with a -jitsi-XXX qualified version. This allows
+            // us to pin the dependencies and make sure they are always updated, no matter what.
 
-            project.version = "${json.version}${versionQualifier}"
+            project.version = "${json.version}-jitsi-${versionQualifierNumber}"
 
             project.android {
                 compileSdkVersion rootProject.ext.compileSdkVersion
