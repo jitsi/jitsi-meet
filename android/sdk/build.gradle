@@ -201,6 +201,6 @@ publishing {
 
     }
     repositories {
-        maven { url "file:${rootProject.projectDir}/../../jitsi-maven-repository/releases" }
+        maven { url "file:${rootProject.ext.mavenRepo}" }
     }
 }

@@ -55,7 +55,7 @@ allprojects {
         publishing {
             publications {}
             repositories {
-                maven { url "file:${rootProject.projectDir}/../../jitsi-maven-repository/releases" }
+                maven { url "file:${rootProject.ext.mavenRepo}" }
             }
         }
     }
@@ -170,6 +170,9 @@ ext {
     // third-party Maven repositories so we have to deploy to a Maven repository
     // of ours.
     moduleGroupId = 'com.facebook.react'
+
+    // Maven repo where artifacts will be published
+    mavenRepo = System.env.MVN_REPO ?: "${rootProject.projectDir}/../../jitsi-maven-repository/releases"
 
     // Glide
     excludeAppGlideModule = true
