@@ -155,7 +155,9 @@ export function processExternalDeviceRequest( // eslint-disable-line max-params
         }
 
         const { label, id } = device;
-        const deviceId = label ? getDeviceIdByLabel(state, device.label) : id;
+        const deviceId = label
+            ? getDeviceIdByLabel(state, device.label, device.kind)
+            : id;
 
         if (deviceId) {
             switch (device.kind) {
