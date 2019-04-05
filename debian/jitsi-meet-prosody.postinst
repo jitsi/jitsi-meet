@@ -126,16 +126,16 @@ case "$1" in
         fi
 
         PR11_INSTALL_CHECK="$(dpkg-query -f '${Status}' -W 'prosody-0.11' 2>/dev/null | awk '{print $3}' || true)"
-        echo "PR11_INSTALL_CHECK is $PR11_INSTALL_CHECK"
         PR_VER_INSTALLED=$(dpkg-query -f='${Version}\n' --show prosody  2>/dev/null || true)
-        echo "PR_VER_INSTALLED is $PR_VER_INSTALLED"
         if [ "$PR11_INSTALL_CHECK" = "installed" ] \
             || [ "$PR11_INSTALL_CHECK" = "unpacked" ] \
             || dpkg --compare-versions "$PR_VER_INSTALLED" gt "0.11" ; then
-            sed -i 's/storage = \"null\"/storage = \"memory\"/g' $PROSODY_HOST_CONFIG
+            if [ -f $PROSODY_HOST_CONFIG ]; then
+                sed -i 's/storage = \"null\"/storage = \"memory\"/g' $PROSODY_HOST_CONFIG
 
-            # trigger a restart
-            PROSODY_CONFIG_PRESENT="false"
+                # trigger a restart
+                PROSODY_CONFIG_PRESENT="false"
+            fi
         fi
 
         if [ ! -f /var/lib/prosody/$JICOFO_AUTH_DOMAIN.crt ]; then
