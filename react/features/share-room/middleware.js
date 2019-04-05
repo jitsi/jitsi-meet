@@ -19,13 +19,19 @@ const logger = require('jitsi-meet-logger').getLogger(__filename);
  * @returns {Function}
  */
 MiddlewareRegistry.register(store => next => action => {
+    const result = next(action);
+
     switch (action.type) {
     case BEGIN_SHARE_ROOM:
-        _shareRoom(action.roomURL, store);
+        // XXX This is a hack so the action sheet doesn't get automagically closed
+        // when the modal displaying the bottom sheet disappears.
+        setTimeout(() => {
+            _shareRoom(action.roomURL, store);
+        }, 250);
         break;
     }
 
-    return next(action);
+    return result;
 });
 
 /**
