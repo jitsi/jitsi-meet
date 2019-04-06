@@ -4,9 +4,12 @@ import {
     VIDEO_QUALITY_LEVELS,
     setMaxReceiverVideoQuality
 } from '../base/conference';
+import { pinParticipant } from '../base/participants';
 import { StateListenerRegistry } from '../base/redux';
 import { selectParticipant } from '../large-video';
 import { shouldDisplayTileView } from './functions';
+
+declare var interfaceConfig: Object;
 
 /**
  * StateListenerRegistry provides a reliable way of detecting changes to
@@ -22,3 +25,22 @@ StateListenerRegistry.register(
         }
     }
 );
+
+/**
+ * For auto-pin mode, listen for changes to the last known screen share
+ * participant and automatically pin that participant.
+ */
+StateListenerRegistry.register(
+    /* selector */ state => {
+        if (typeof interfaceConfig === 'object'
+                && interfaceConfig.AUTO_PIN_LATEST_SCREEN_SHARE) {
+            return state['features/video-layout'].screenShares;
+        }
+    },
+    /* listener */ (screenShares, { dispatch }) => {
+        if (screenShares) {
+            const latestScreenshare = Array.from(screenShares).pop();
+
+            dispatch(pinParticipant(latestScreenshare || null));
+        }
+    });

@@ -4,6 +4,7 @@ import VideoLayout from '../../../modules/UI/videolayout/VideoLayout.js';
 import UIEvents from '../../../service/UI/UIEvents';
 
 import { CONFERENCE_JOINED, CONFERENCE_WILL_LEAVE } from '../base/conference';
+import { VIDEO_TYPE } from '../base/media';
 import {
     DOMINANT_SPEAKER_CHANGED,
     PARTICIPANT_JOINED,
@@ -13,13 +14,21 @@ import {
     getParticipantById
 } from '../base/participants';
 import { MiddlewareRegistry } from '../base/redux';
-import { TRACK_ADDED } from '../base/tracks';
+import {
+    TRACK_ADDED,
+    TRACK_REMOVED,
+    TRACK_UPDATED,
+    getTrackByJitsiTrack
+} from '../base/tracks';
 import { SET_FILMSTRIP_VISIBLE } from '../filmstrip';
 
 import { SET_TILE_VIEW } from './actionTypes';
+import { screenShareStreamAdded, screenShareStreamRemoved } from './actions';
+
 import './middleware.any';
 
 declare var APP: Object;
+declare var interfaceConfig: Object;
 
 /**
  * Middleware which intercepts actions and updates the legacy component
@@ -98,4 +107,61 @@ MiddlewareRegistry.register(store => next => action => {
     }
 
     return result;
+});
+
+/**
+ * Middleware which listens for actions and performs updates related to the
+ * auto-pin screen share feature.
+ *
+ * @param {Store} store - The redux store.
+ * @returns {Function}
+ */
+MiddlewareRegistry.register(store => next => action => {
+    if (!interfaceConfig.AUTO_PIN_LATEST_SCREEN_SHARE) {
+        return next(action);
+    }
+
+    switch (action.type) {
+    case TRACK_ADDED:
+        if (action.track.videoType === VIDEO_TYPE.DESKTOP) {
+            store.dispatch(screenShareStreamAdded(action.track.participantId));
+        }
+
+        break;
+
+    case TRACK_REMOVED:
+        if (action.track.jitsiTrack.videoType === VIDEO_TYPE.DESKTOP) {
+            const track = getTrackByJitsiTrack(
+                store.getState()['features/base/tracks'],
+                action.track.jitsiTrack
+            );
+
+            store.dispatch(screenShareStreamRemoved(track.participantId));
+        }
+
+        break;
+
+    case TRACK_UPDATED: {
+        if (!action.track.videoType) {
+            break;
+        }
+
+        const currentTrackData = getTrackByJitsiTrack(
+            store.getState()['features/base/tracks'],
+            action.track.jitsiTrack
+        );
+
+        if (action.track.videoType === VIDEO_TYPE.DESKTOP) {
+            store.dispatch(
+                screenShareStreamAdded(currentTrackData.participantId));
+        } else if (currentTrackData.videoType === VIDEO_TYPE.DESKTOP) {
+            store.dispatch(
+                screenShareStreamRemoved(currentTrackData.participantId));
+        }
+
+        break;
+    }
+    }
+
+    return next(action);
 });
