@@ -21,6 +21,7 @@ import AbstractLabels, {
     _abstractMapStateToProps,
     type Props as AbstractLabelsProps
 } from '../AbstractLabels';
+import { shouldDisplayNotifications } from '../../functions';
 import styles from './styles';
 
 /**
@@ -363,8 +364,11 @@ function _mapStateToProps(state) {
     return {
         ..._abstractMapStateToProps(state),
         _reducedUI: state['features/base/responsive-ui'].reducedUI,
-        _visible: !isToolboxVisible(state) && !shouldDisplayTileView(state)
+        _visible: !isToolboxVisible(state)
+            && !shouldDisplayTileView(state)
+            && !shouldDisplayNotifications(state)
     };
 }
 
+// $FlowExpectedError
 export default connect(_mapStateToProps)(makeAspectRatioAware(Labels));

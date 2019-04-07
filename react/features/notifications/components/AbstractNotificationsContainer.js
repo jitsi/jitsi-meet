@@ -2,9 +2,8 @@
 
 import { Component } from 'react';
 
-import { getOverlayToRender } from '../../overlay';
-
 import { hideNotification } from '../actions';
+import { areThereNotifications } from '../functions';
 
 export type Props = {
 
@@ -15,10 +14,18 @@ export type Props = {
     _notifications: Array<Object>,
 
     /**
+     * The length, in milliseconds, to use as a default timeout for all
+     * dismissable timeouts that do not have a timeout specified.
+     */
+    autoDismissTimeout: number,
+
+    /**
      * Invoked to update the redux store in order to remove notifications.
      */
     dispatch: Function
 };
+
+declare var interfaceConfig: Object;
 
 /**
  * Abstract class for {@code NotificationsContainer} component.
@@ -52,31 +59,57 @@ export default class AbstractNotificationsContainer<P: Props>
     }
 
     /**
+     * Sets a timeout for the first notification (if applicable).
+     *
+     * @inheritdoc
+     */
+    componentDidMount() {
+        // Set the initial dismiss timeout (if any)
+        this._manageDismissTimeout();
+    }
+
+    /**
      * Sets a timeout if the currently displayed notification has changed.
      *
      * @inheritdoc
      */
     componentDidUpdate(prevProps: P) {
-        const { _notifications } = this.props;
+        this._manageDismissTimeout(prevProps);
+    }
+
+    /**
+     * Sets/clears the dismiss timeout for the top notification.
+     *
+     * @param {P} [prevProps] - The previous properties (if called from
+     * {@code componentDidUpdate}).
+     * @returns {void}
+     * @private
+     */
+    _manageDismissTimeout(prevProps: ?P) {
+        const { _notifications, autoDismissTimeout } = this.props;
 
         if (_notifications.length) {
             const notification = _notifications[0];
             const previousNotification
-                = prevProps._notifications.length
+                = prevProps && prevProps._notifications.length
                     ? prevProps._notifications[0]
                     : undefined;
 
             if (notification !== previousNotification) {
                 this._clearNotificationDismissTimeout();
 
-                if (notification) {
-                    const { timeout, uid } = notification;
+                if (notification
+                        && (notification.timeout
+                            || typeof autoDismissTimeout === 'number')
+                        && notification.props.isDismissAllowed !== false) {
+                    const {
+                        timeout = autoDismissTimeout,
+                        uid
+                    } = notification;
 
                     this._notificationDismissTimeout = setTimeout(() => {
                         // Perform a no-op if a timeout is not specified.
-                        if (Number.isInteger(timeout)) {
-                            this._onDismissed(uid);
-                        }
+                        this._onDismissed(uid);
                     }, timeout);
                 }
             }
@@ -120,7 +153,13 @@ export default class AbstractNotificationsContainer<P: Props>
      * @returns {void}
      */
     _onDismissed(uid) {
-        this._clearNotificationDismissTimeout();
+        const { _notifications } = this.props;
+
+        // Clear the timeout only if it's the top notification that's being
+        // dismissed (the timeout is set only for the top one).
+        if (!_notifications.length || _notifications[0].uid === uid) {
+            this._clearNotificationDismissTimeout();
+        }
 
         this.props.dispatch(hideNotification(uid));
     }
@@ -137,12 +176,13 @@ export default class AbstractNotificationsContainer<P: Props>
  * }}
  */
 export function _abstractMapStateToProps(state: Object) {
-    const isAnyOverlayVisible = Boolean(getOverlayToRender(state));
-    const { enabled, notifications } = state['features/notifications'];
-    const { calleeInfoVisible } = state['features/invite'];
+    const { notifications } = state['features/notifications'];
+    const _visible = areThereNotifications(state);
 
     return {
-        _notifications: enabled && !isAnyOverlayVisible && !calleeInfoVisible
-            ? notifications : []
+        _notifications: _visible ? notifications : [],
+        autoDismissTimeout: typeof interfaceConfig === 'undefined'
+            ? undefined // Ignore for the case of mobile
+            : interfaceConfig.ENFORCE_NOTIFICATION_AUTO_DISMISS_TIMEOUT
     };
 }

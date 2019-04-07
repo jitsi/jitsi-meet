@@ -3,6 +3,7 @@
 import _ from 'lodash';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import type { Dispatch } from 'redux';
 
 import {
     createShortcutEvent,
@@ -53,7 +54,7 @@ type Props = {
     /**
      * The redux {@code dispatch} function.
      */
-    dispatch: Dispatch<*>
+    dispatch: Dispatch<any>
 };
 
 /**
@@ -318,4 +319,5 @@ function _mapStateToProps(state) {
     };
 }
 
+// $FlowExpectedError
 export default connect(_mapStateToProps)(Filmstrip);

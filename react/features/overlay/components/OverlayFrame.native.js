@@ -1,7 +1,7 @@
 // @flow
 
 import React, { Component, type Node } from 'react';
-import { SafeAreaView } from 'react-native';
+import { SafeAreaView, View } from 'react-native';
 
 import { overlayFrame as styles } from './styles';
 
@@ -28,9 +28,11 @@ export default class OverlayFrame extends Component<Props> {
      */
     render() {
         return (
-            <SafeAreaView style = { styles.container }>
-                { this.props.children }
-            </SafeAreaView>
+            <View style = { styles.container }>
+                <SafeAreaView style = { styles.safeContainer } >
+                    { this.props.children }
+                </SafeAreaView>
+            </View>
         );
     }
 }

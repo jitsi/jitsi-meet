@@ -3,14 +3,16 @@
 import InlineDialog from '@atlaskit/inline-dialog';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import type { Dispatch } from 'redux';
 
 import { createToolbarEvent, sendAnalytics } from '../../analytics';
+import { openDialog } from '../../base/dialog';
 import { translate } from '../../base/i18n';
 import { JitsiRecordingConstants } from '../../base/lib-jitsi-meet';
 import { getParticipantCount } from '../../base/participants';
+import { OverflowMenuItem } from '../../base/toolbox';
 import { getActiveSession } from '../../recording';
 import { ToolbarButton } from '../../toolbox';
-
 import { updateDialInNumbers } from '../actions';
 
 import { InfoDialog } from './info-dialog';
@@ -57,7 +59,12 @@ type Props = {
     /**
      * Invoked to toggle display of the info dialog.
      */
-    dispatch: Dispatch<*>,
+    dispatch: Dispatch<any>,
+
+    /**
+     * Whether to show the label or not.
+     */
+    showLabel: boolean,
 
     /**
      * Invoked to obtain translated strings.
@@ -122,6 +129,8 @@ class InfoDialogButton extends Component<Props, State> {
         // Bind event handlers so they are only bound once for every instance.
         this._onDialogClose = this._onDialogClose.bind(this);
         this._onDialogToggle = this._onDialogToggle.bind(this);
+        this._onClickOverflowMenuButton
+            = this._onClickOverflowMenuButton.bind(this);
     }
 
     /**
@@ -142,9 +151,20 @@ class InfoDialogButton extends Component<Props, State> {
      * @returns {ReactElement}
      */
     render() {
-        const { _dialIn, _liveStreamViewURL, t } = this.props;
+        const { _dialIn, _liveStreamViewURL, showLabel, t } = this.props;
         const { showDialog } = this.state;
         const iconClass = `icon-info ${showDialog ? 'toggled' : ''}`;
+
+        if (showLabel) {
+            return (
+                <OverflowMenuItem
+                    accessibilityLabel = { t('info.accessibilityLabel') }
+                    icon = 'icon-info'
+                    key = 'info-button'
+                    onClick = { this._onClickOverflowMenuButton }
+                    text = { t('info.label') } />
+            );
+        }
 
         return (
             <div className = 'toolbox-button-wth-dialog'>
@@ -152,6 +172,7 @@ class InfoDialogButton extends Component<Props, State> {
                     content = {
                         <InfoDialog
                             dialIn = { _dialIn }
+                            isInlineDialog = { true }
                             liveStreamViewURL = { _liveStreamViewURL }
                             onClose = { this._onDialogClose } /> }
                     isOpen = { showDialog }
@@ -177,6 +198,23 @@ class InfoDialogButton extends Component<Props, State> {
      */
     _onDialogClose() {
         this.setState({ showDialog: false });
+    }
+
+    _onClickOverflowMenuButton: () => void;
+
+    /**
+     * Opens the Info dialog.
+     *
+     * @returns {void}
+     */
+    _onClickOverflowMenuButton() {
+        const { _dialIn, _liveStreamViewURL } = this.props;
+
+        this.props.dispatch(openDialog(InfoDialog, {
+            dialIn: _dialIn,
+            liveStreamViewURL: _liveStreamViewURL,
+            isInlineDialog: false
+        }));
     }
 
     _onDialogToggle: () => void;

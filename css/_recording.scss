@@ -11,41 +11,36 @@
         flex: 0;
         flex-direction: row;
         justify-content: space-between;
-        align-items: center;
+        margin-top: 32px;
 
         .recording-title {
+            display: inline-flex;
+            align-items: center;
             font-size: 16px;
-            font-weight: bold;
+            margin-left: 16px;
         }
+    }
+
+    .recording-icon-container {
+        display: inline-flex;
+        align-items: center;
+    }
+
+    .recording-icon {
+        width: 32px;
+        height: 32px;
+        object-fit: contain;
+    }
+
+    .recording-switch {
+        margin-left: auto;
     }
 
     .authorization-panel {
         display: flex;
         flex-direction: column;
-        margin-bottom: 10px;
+        margin: 0 40px 10px 40px;
         padding-bottom: 10px;
-
-        .dropbox-sign-in {
-            align-items: center;
-            border: 1px solid #4285f4;
-            background-color: white;
-            border-radius: 2px;
-            cursor: pointer;
-            display: inline-flex;
-            padding: 10px;
-            font-size: 18px;
-            font-weight: 600;
-            margin: 10px 0px;
-            color: #4285f4;
-
-            .dropbox-logo {
-                background-color: white;
-                border-radius: 2px;
-                display: inline-block;
-                padding-right: 5px;
-                height: 18px;
-            }
-        }
 
         .logged-in-panel {
             padding: 10px;

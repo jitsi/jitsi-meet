@@ -2,8 +2,9 @@
 
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import type { Dispatch } from 'redux';
 
-import { ConfirmDialog } from '../../base/dialog';
+import { OkDialog } from '../../base/dialog';
 import { translate } from '../../base/i18n';
 
 import { cancelWaitForOwner, _openLoginDialog } from '../actions';
@@ -21,7 +22,7 @@ type Props = {
     /**
      * Redux store dispatch function.
      */
-    dispatch: Dispatch<*>,
+    dispatch: Dispatch<any>,
 
     /**
      * Invoked to obtain translated strings.
@@ -62,15 +63,14 @@ class WaitForOwnerDialog extends Component<Props> {
         } = this.props;
 
         return (
-            <ConfirmDialog
+            <OkDialog
                 contentKey = {
                     {
                         key: 'dialog.WaitForHostMsgWOk',
                         params: { room }
                     }
                 }
-                onCancel = { this._onCancel }
-                onSubmit = { this._onLogin } />
+                onSubmit = { this._onCancel } />
         );
     }
 

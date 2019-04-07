@@ -27,15 +27,16 @@ import {
     conferenceLeft,
     conferenceWillLeave,
     createConference,
-    setLastN
+    setLastN,
+    setSubject
 } from './actions';
 import {
     CONFERENCE_FAILED,
     CONFERENCE_JOINED,
+    CONFERENCE_SUBJECT_CHANGED,
     CONFERENCE_WILL_LEAVE,
     DATA_CHANNEL_OPENED,
     SET_AUDIO_ONLY,
-    SET_CONFERENCE_SUBJECT,
     SET_LASTN,
     SET_ROOM
 } from './actionTypes';
@@ -75,6 +76,9 @@ MiddlewareRegistry.register(store => next => action => {
     case CONNECTION_FAILED:
         return _connectionFailed(store, next, action);
 
+    case CONFERENCE_SUBJECT_CHANGED:
+        return _conferenceSubjectChanged(store, next, action);
+
     case CONFERENCE_WILL_LEAVE:
         _conferenceWillLeave();
         break;
@@ -90,9 +94,6 @@ MiddlewareRegistry.register(store => next => action => {
 
     case SET_AUDIO_ONLY:
         return _setAudioOnly(store, next, action);
-
-    case SET_CONFERENCE_SUBJECT:
-        return _setSubject(store, next, action);
 
     case SET_LASTN:
         return _setLastN(store, next, action);
@@ -192,7 +193,15 @@ function _conferenceFailed(store, next, action) {
 function _conferenceJoined({ dispatch, getState }, next, action) {
     const result = next(action);
 
-    const { audioOnly, conference } = getState()['features/base/conference'];
+    const {
+        audioOnly,
+        conference,
+        pendingSubjectChange
+    } = getState()['features/base/conference'];
+
+    if (pendingSubjectChange) {
+        dispatch(setSubject(pendingSubjectChange));
+    }
 
     // FIXME On Web the audio only mode for "start audio only" is toggled before
     // conference is added to the redux store ("on conference joined" action)
@@ -301,6 +310,29 @@ function _connectionFailed({ dispatch, getState }, next, action) {
             return true;
         });
     }
+
+    return result;
+}
+
+/**
+ * Notifies the feature base/conference that the action
+ * {@code CONFERENCE_SUBJECT_CHANGED} is being dispatched within a specific
+ *  redux store.
+ *
+ * @param {Store} store - The redux store in which the specified {@code action}
+ * is being dispatched.
+ * @param {Dispatch} next - The redux {@code dispatch} function to dispatch the
+ * specified {@code action} to the specified {@code store}.
+ * @param {Action} action - The redux action {@code CONFERENCE_SUBJECT_CHANGED}
+ * which is being dispatched in the specified {@code store}.
+ * @private
+ * @returns {Object} The value returned by {@code next(action)}.
+ */
+function _conferenceSubjectChanged({ getState }, next, action) {
+    const result = next(action);
+    const { subject } = getState()['features/base/conference'];
+
+    typeof APP === 'object' && APP.API.notifySubjectChanged(subject);
 
     return result;
 }
@@ -682,27 +714,4 @@ function _updateLocalParticipantInConference({ getState }, next, action) {
     }
 
     return result;
-}
-
-/**
- * Changing conference subject.
- *
- * @param {Store} store - The redux store in which the specified {@code action}
- * is being dispatched.
- * @param {Dispatch} next - The redux {@code dispatch} function to dispatch the
- * specified {@code action} to the specified {@code store}.
- * @param {Action} action - The redux action which is being dispatched in the
- * specified {@code store}.
- * @private
- * @returns {Object} The value returned by {@code next(action)}.
- */
-function _setSubject({ getState }, next, action) {
-    const { conference } = getState()['features/base/conference'];
-    const { subject } = action;
-
-    if (subject) {
-        conference.setSubject(subject);
-    }
-
-    return next(action);
 }

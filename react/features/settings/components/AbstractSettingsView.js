@@ -1,6 +1,7 @@
 // @flow
 
 import { Component } from 'react';
+import type { Dispatch } from 'redux';
 
 import { getDefaultURL } from '../../app';
 import { updateSettings } from '../../base/settings';
@@ -9,7 +10,7 @@ import { updateSettings } from '../../base/settings';
  * The type of the React {@code Component} props of
  * {@link AbstractSettingsView}.
  */
-type Props = {
+export type Props = {
 
     /**
      * The default URL for when there is no custom URL set in the settings.
@@ -33,7 +34,7 @@ type Props = {
     /**
      * Redux store dispatch function.
      */
-    dispatch: Dispatch<*>,
+    dispatch: Dispatch<any>,
 
     /**
      * The i18n translate function.
@@ -47,15 +48,15 @@ type Props = {
  *
  * @abstract
  */
-export class AbstractSettingsView extends Component<Props> {
+export class AbstractSettingsView<P: Props> extends Component<P> {
 
     /**
      * Initializes a new {@code AbstractSettingsView} instance.
      *
-     * @param {Props} props - The React {@code Component} props to initialize
+     * @param {P} props - The React {@code Component} props to initialize
      * the component.
      */
-    constructor(props: Props) {
+    constructor(props: P) {
         super(props);
 
         // Bind event handlers so they are only bound once per instance.

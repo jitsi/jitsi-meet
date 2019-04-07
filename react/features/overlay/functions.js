@@ -30,7 +30,7 @@ function _getOverlays() {
         ];
     } else {
         overlays = [
-            PageReloadOverlay
+            // PageReloadOverlay
         ];
     }
 

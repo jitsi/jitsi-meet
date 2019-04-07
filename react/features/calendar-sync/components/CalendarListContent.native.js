@@ -108,7 +108,7 @@ class CalendarListContent extends Component<Props> {
         );
     }
 
-    _onPress: (string, string) => Function;
+    _onPress: (string, ?string) => Function;
 
     /**
      * Handles the list's navigate action.

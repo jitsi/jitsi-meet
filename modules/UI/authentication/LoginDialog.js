@@ -4,6 +4,7 @@ import { toJid } from '../../../react/features/base/connection';
 import {
     JitsiConnectionErrors
 } from '../../../react/features/base/lib-jitsi-meet';
+import { disconnect } from '../../../react/features/base/connection';
 
 /**
  * Build html for "password required" dialog.
@@ -243,12 +244,68 @@ export default {
             buttons,
             (e, submitValue) => {
                 // Do not close the dialog yet.
-                e.preventDefault();
+                // e.preventDefault();
 
-                // Open login popup.
-                if (submitValue === 'authNow') {
-                    onAuthNow();
-                }
+                // // Open login popup.
+                // if (submitValue === 'authNow') {
+                //     onAuthNow();
+                // }
+                APP.store.dispatch(disconnect(true));
+            }
+        );
+    },
+    /**
+     * Shows a notification that authentication is required to create the
+     * conference, so the local participant should authenticate or wait for a
+     * host.
+     *
+     * @param {string} room - The name of the conference.
+     * @param {string} code - error code
+     * participant wants to authenticate.
+     * @returns dialog
+     */
+    showErrorDialog(room,code) {
+        let msgTitle = 'dialog.WaitingForHost';
+        let msgBody = '[html]dialog.WaitForHostMsg';
+        switch(code){
+            case '1':
+                msgTitle = 'dialog.InvalidRoomTile';
+                msgBody = '[html]dialog.InvalidRoomBody';
+                break;
+            case '2':
+                msgTitle = 'dialog.ExceedParticipantsNumTitle';
+                msgBody = '[html]dialog.ExceedParticipantsNumBody';
+                break;
+            default:
+                break;
+
+        }
+        const msg = APP.translation.generateTranslationHTML(
+            msgBody,
+            { room }
+        );
+        const buttonTxt = APP.translation.generateTranslationHTML(
+            'dialog.IamHost'
+        );
+        const buttons = [ {
+            title: buttonTxt,
+            value: 'authNow'
+        } ];
+
+        return APP.UI.messageHandler.openDialog(
+            msgTitle,
+            msg,
+            true,
+            buttons,
+            (e, submitValue) => {
+                // Do not close the dialog yet.
+                // e.preventDefault();
+
+                // // Open login popup.
+                // if (submitValue === 'authNow') {
+                //     onAuthNow();
+                // }
+                APP.store.dispatch(disconnect(true));
             }
         );
     }

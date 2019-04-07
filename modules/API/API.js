@@ -5,7 +5,10 @@ import {
     createApiEvent,
     sendAnalytics
 } from '../../react/features/analytics';
+import { setSubject } from '../../react/features/base/conference';
 import { parseJWTFromURLParams } from '../../react/features/base/jwt';
+import { muteRemoteParticipant } from '../../react/features/base/participants';
+import { kickParticipant } from '../../react/features/base/participants';
 import { invite } from '../../react/features/invite';
 import { getJitsiMeetTransport } from '../transport';
 
@@ -65,7 +68,7 @@ function initCommands() {
         },
         'subject': subject => {
             sendAnalytics(createApiEvent('subject.changed'));
-            APP.conference.setSubject(subject);
+            APP.store.dispatch(setSubject(subject));
         },
         'submit-feedback': feedback => {
             sendAnalytics(createApiEvent('submit.feedback'));
@@ -104,6 +107,12 @@ function initCommands() {
         'avatar-url': avatarUrl => {
             sendAnalytics(createApiEvent('avatar.url.changed'));
             APP.conference.changeLocalAvatarUrl(avatarUrl);
+        },
+        'mute': id => {
+            APP.store.dispatch(muteRemoteParticipant(id));
+        },
+        'kick': id => {
+            APP.store.dispatch(kickParticipant(id));
         }
     };
     transport.on('event', ({ data, name }) => {
@@ -416,6 +425,22 @@ class API {
     }
 
     /**
+     * Notify external application (if API is enabled) that user changed their
+     * AudioMute status.
+     *
+     * @param {string} id - User id.
+     * @param {string} mute - The new avatar URL of the participant.
+     * @returns {void}
+     */
+    notifyAudioMuteChanged(id: string, mute: boolean) {
+        this._sendEvent({
+            name: 'audio-mute-changed',
+            mute,
+            id
+        });
+    }
+
+    /**
      * Notify external application (if API is enabled) that the conference has
      * been joined.
      *
@@ -552,16 +577,36 @@ class API {
     }
 
     /**
+     * Notify external application (if API is enabled) that the display
+     * configuration of the filmstrip has been changed.
+     *
+     * @param {boolean} visible - Whether or not the filmstrip has been set to
+     * be displayed or hidden.
+     * @returns {void}
+     */
+    notifyFilmstripDisplayChanged(visible: boolean) {
+        this._sendEvent({
+            name: 'filmstrip-display-changed',
+            visible
+        });
+    }
+
+    /**
      * Notify external application (if API is enabled) that the screen sharing
      * has been turned on/off.
      *
      * @param {boolean} on - True if screen sharing is enabled.
+     * @param {Object} details - Additional information about the screen
+     * sharing.
+     * @param {string} details.sourceType - Type of device or window the screen
+     * share is capturing.
      * @returns {void}
      */
-    notifyScreenSharingStatusChanged(on: boolean) {
+    notifyScreenSharingStatusChanged(on: boolean, details: Object) {
         this._sendEvent({
             name: 'screen-sharing-status-changed',
-            on
+            on,
+            details
         });
     }
 
@@ -576,6 +621,20 @@ class API {
         this._sendEvent({
             name: 'subject-change',
             subject
+        });
+    }
+
+    /**
+     * Notify external application (if API is enabled) that open manager window
+     *
+     * @param {boolean} isShow - whether show or not.
+     * user.
+     * @returns {void}
+     */
+    notifyOpenMgrWin(isShow: boolean) {
+        this._sendEvent({
+            name: 'show-manager-window',
+            isShow
         });
     }
 

@@ -1,6 +1,7 @@
 // @flow
 
 import { connect } from 'react-redux';
+import type { Dispatch } from 'redux';
 
 import {
     createToolbarEvent,
@@ -27,7 +28,7 @@ type Props = AbstractButtonProps & {
     /**
      * Used to dispatch actions from the buttons.
      */
-    dispatch: Dispatch<*>
+    dispatch: Dispatch<any>
 };
 
 /**
@@ -39,6 +40,7 @@ class TileViewButton<P: Props> extends AbstractButton<P, *> {
     accessibilityLabel = 'toolbar.accessibilityLabel.tileView';
     iconName = 'icon-tiles-many';
     label = 'toolbar.tileViewToggle';
+    toggledLabel = 'toolbar.tileViewToggle';
     toggledIconName = 'icon-tiles-many toggled';
     tooltip = 'toolbar.tileViewToggle';
 

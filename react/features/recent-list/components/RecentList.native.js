@@ -1,6 +1,8 @@
 // @flow
+
 import React from 'react';
 import { connect } from 'react-redux';
+import type { Dispatch } from 'redux';
 
 import { getDefaultURL } from '../../app';
 import { translate } from '../../base/i18n';
@@ -24,7 +26,7 @@ type Props = {
     /**
      * The redux store's {@code dispatch} function.
      */
-    dispatch: Dispatch<*>,
+    dispatch: Dispatch<any>,
 
     /**
      * The translate function.

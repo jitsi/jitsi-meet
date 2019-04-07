@@ -82,6 +82,7 @@ MiddlewareRegistry.register(store => next => action => {
     case SET_FILMSTRIP_VISIBLE:
         VideoLayout.resizeVideoArea(true, false);
         APP.UI.emitEvent(UIEvents.TOGGLED_FILMSTRIP, action.visible);
+        APP.API.notifyFilmstripDisplayChanged(action.visible);
         break;
 
     case SET_TILE_VIEW:

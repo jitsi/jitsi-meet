@@ -10,6 +10,7 @@ import {
     CONFERENCE_FAILED,
     CONFERENCE_JOINED,
     CONFERENCE_LEFT,
+    CONFERENCE_SUBJECT_CHANGED,
     CONFERENCE_WILL_JOIN,
     CONFERENCE_WILL_LEAVE,
     LOCK_STATE_CHANGED,
@@ -19,6 +20,7 @@ import {
     SET_FOLLOW_ME,
     SET_MAX_RECEIVER_VIDEO_QUALITY,
     SET_PASSWORD,
+    SET_PENDING_SUBJECT_CHANGE,
     SET_PREFERRED_RECEIVER_VIDEO_QUALITY,
     SET_ROOM,
     SET_SIP_GATEWAY_ENABLED,
@@ -54,6 +56,9 @@ ReducerRegistry.register(
 
         case CONFERENCE_JOINED:
             return _conferenceJoined(state, action);
+
+        case CONFERENCE_SUBJECT_CHANGED:
+            return set(state, 'subject', action.subject);
 
         case CONFERENCE_LEFT:
         case CONFERENCE_WILL_LEAVE:
@@ -91,6 +96,9 @@ ReducerRegistry.register(
 
         case SET_PASSWORD:
             return _setPassword(state, action);
+
+        case SET_PENDING_SUBJECT_CHANGE:
+            return set(state, 'pendingSubjectChange', action.subject);
 
         case SET_PREFERRED_RECEIVER_VIDEO_QUALITY:
             return set(

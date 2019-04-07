@@ -2,6 +2,7 @@
 
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import type { Dispatch } from 'redux';
 
 import { ColorSchemeRegistry } from '../../../base/color-scheme';
 import { openDialog } from '../../../base/dialog';
@@ -81,7 +82,7 @@ type Props = {
     /**
      * Invoked to trigger state changes in Redux.
      */
-    dispatch: Dispatch<*>,
+    dispatch: Dispatch<any>,
 
     /**
      * The Redux representation of the participant to display.
@@ -254,4 +255,5 @@ function _mapStateToProps(state, ownProps) {
     };
 }
 
+// $FlowExpectedError
 export default connect(_mapStateToProps, _mapDispatchToProps)(Thumbnail);

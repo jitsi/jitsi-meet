@@ -8,7 +8,7 @@
  * }
  */
 export const SIP_GW_AVAILABILITY_CHANGED
-    = Symbol('SIP_GW_AVAILABILITY_CHANGED');
+    = 'SIP_GW_AVAILABILITY_CHANGED';
 
 /**
  * The type of the action which signals to invite room participants to the
@@ -20,4 +20,4 @@ export const SIP_GW_AVAILABILITY_CHANGED
  *     rooms: {Immutable.List}
  * }
  */
-export const SIP_GW_INVITE_ROOMS = Symbol('SIP_GW_INVITE_ROOMS');
+export const SIP_GW_INVITE_ROOMS = 'SIP_GW_INVITE_ROOMS';

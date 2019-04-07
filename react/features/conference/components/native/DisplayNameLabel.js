@@ -76,4 +76,5 @@ function _mapStateToProps(state: Object) {
     };
 }
 
+// $FlowExpectedError
 export default connect(_mapStateToProps)(DisplayNameLabel);

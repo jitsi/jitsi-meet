@@ -1,7 +1,5 @@
 // @flow
 
-import { getLocationContextRoot } from '../base/util';
-
 import { UPDATE_DROPBOX_TOKEN } from './actionTypes';
 import { _authorizeDropbox } from './functions';
 
@@ -15,8 +13,14 @@ export function authorizeDropbox() {
         const state = getState();
         const { locationURL } = state['features/base/connection'];
         const { dropbox = {} } = state['features/base/config'];
-        const redirectURI = `${locationURL.origin
-            + getLocationContextRoot(locationURL)}static/oauth.html`;
+
+        // By default we use the static page on the main domain for redirection.
+        // So we need to setup only one redirect URI in dropbox app
+        // configuration (not multiple for all the tenants).
+        // In case deployment is running in subfolder dropbox.redirectURI
+        // can be configured.
+        const redirectURI
+            = dropbox.redirectURI || `${locationURL.origin}/static/oauth.html`;
 
         _authorizeDropbox(dropbox.appKey, redirectURI)
             .then(

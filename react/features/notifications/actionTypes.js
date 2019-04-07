@@ -6,7 +6,7 @@
  *     type: CLEAR_NOTIFICATIONS
  * }
  */
-export const CLEAR_NOTIFICATIONS = Symbol('CLEAR_NOTIFICATIONS');
+export const CLEAR_NOTIFICATIONS = 'CLEAR_NOTIFICATIONS';
 
 /**
  * The type of (redux) action which signals that a specific notification should
@@ -17,7 +17,7 @@ export const CLEAR_NOTIFICATIONS = Symbol('CLEAR_NOTIFICATIONS');
  *     uid: number
  * }
  */
-export const HIDE_NOTIFICATION = Symbol('HIDE_NOTIFICATION');
+export const HIDE_NOTIFICATION = 'HIDE_NOTIFICATION';
 
 /**
  * The type of (redux) action which signals that a notification component should
@@ -31,7 +31,7 @@ export const HIDE_NOTIFICATION = Symbol('HIDE_NOTIFICATION');
  *     uid: number
  * }
  */
-export const SHOW_NOTIFICATION = Symbol('SHOW_NOTIFICATION');
+export const SHOW_NOTIFICATION = 'SHOW_NOTIFICATION';
 
 /**
  * The type of (redux) action which signals that notifications should not
@@ -42,4 +42,4 @@ export const SHOW_NOTIFICATION = Symbol('SHOW_NOTIFICATION');
  *     enabled: Boolean
  * }
  */
-export const SET_NOTIFICATIONS_ENABLED = Symbol('SET_NOTIFICATIONS_ENABLED');
+export const SET_NOTIFICATIONS_ENABLED = 'SET_NOTIFICATIONS_ENABLED';

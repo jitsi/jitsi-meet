@@ -50,7 +50,7 @@ public class IncomingCallView
      * by/associated with the specified {@code name}.
      */
     @Override
-    public void onExternalAPIEvent(String name, ReadableMap data) {
+    protected void onExternalAPIEvent(String name, ReadableMap data) {
         onExternalAPIEvent(LISTENER_METHODS, name, data);
     }
 

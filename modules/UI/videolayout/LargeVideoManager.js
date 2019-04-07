@@ -8,6 +8,7 @@ import { Provider } from 'react-redux';
 import { i18next } from '../../../react/features/base/i18n';
 import {
     Avatar,
+    DisplayNameView,
     getAvatarURLByParticipantId
 } from '../../../react/features/base/participants';
 import { PresenceLabel } from '../../../react/features/presence-status';
@@ -30,6 +31,7 @@ import AudioLevels from '../audio_levels/AudioLevels';
 
 const DESKTOP_CONTAINER_TYPE = 'desktop';
 
+declare var interfaceConfig: Object;
 /**
  * Manager for all Large containers.
  */
@@ -99,6 +101,7 @@ export default class LargeVideoManager {
 
         this._dominantSpeakerAvatarContainer
             = document.getElementById('dominantSpeakerAvatarContainer');
+        this._dominantSpeakerNameContainer = document.getElementById('dominantSpeakerNameContainer');
     }
 
     /**
@@ -114,6 +117,7 @@ export default class LargeVideoManager {
         this.removePresenceLabel();
 
         ReactDOM.unmountComponentAtNode(this._dominantSpeakerAvatarContainer);
+        ReactDOM.unmountComponentAtNode(this._dominantSpeakerNameContainer);
 
         this.$container.css({ display: 'none' });
     }
@@ -208,7 +212,7 @@ export default class LargeVideoManager {
 
             // change the avatar url on large
             this.updateAvatar(
-                getAvatarURLByParticipantId(APP.store.getState(), id));
+                getAvatarURLByParticipantId(APP.store.getState(), id),id);
 
             // If the user's connection is disrupted then the avatar will be
             // displayed in case we have no video image cached. That is if
@@ -399,7 +403,7 @@ export default class LargeVideoManager {
     /**
      * Updates the src of the dominant speaker avatar
      */
-    updateAvatar(avatarUrl) {
+    updateAvatar(avatarUrl,id) {
         if (avatarUrl) {
             ReactDOM.render(
                 <Avatar
@@ -407,9 +411,33 @@ export default class LargeVideoManager {
                     uri = { avatarUrl } />,
                 this._dominantSpeakerAvatarContainer
             );
+            var _displayName;
+            
+            if (APP.conference.isLocalId(id)) {
+                _displayName = interfaceConfig.DEFAULT_LOCAL_DISPLAY_NAME;
+            }
+            else {
+                _displayName = APP.conference.getParticipantDisplayName(id);
+            }
+                
+            ReactDOM.render(
+                <DisplayNameView
+                    id = "speakerDisplayName"
+                    displayName = { _displayName } />,
+                this._dominantSpeakerNameContainer
+            );
+            // ReactDOM.render(
+            //     <Avatar
+            //         id = "dominantSpeakerAvatar"
+            //         uri = { avatarUrl } />,
+            //     this._dominantSpeakerNameContainer
+            // );
         } else {
             ReactDOM.unmountComponentAtNode(
                 this._dominantSpeakerAvatarContainer);
+            ReactDOM.unmountComponentAtNode(
+                this._dominantSpeakerNameContainer);
+            
         }
     }
 

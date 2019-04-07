@@ -30,7 +30,7 @@ const REDUCED_UI_THRESHOLD = 300;
  * }}
  */
 export function setAspectRatio(width: number, height: number): Function {
-    return (dispatch: Dispatch<*>, getState: Function) => {
+    return (dispatch: Dispatch<any>, getState: Function) => {
         // Don't change the aspect ratio if width and height are the same, that
         // is, if we transition to a 1:1 aspect ratio.
         if (width !== height) {
@@ -60,7 +60,7 @@ export function setAspectRatio(width: number, height: number): Function {
  * }}
  */
 export function setReducedUI(width: number, height: number): Function {
-    return (dispatch: Dispatch<*>, getState: Function) => {
+    return (dispatch: Dispatch<any>, getState: Function) => {
         const reducedUI = Math.min(width, height) < REDUCED_UI_THRESHOLD;
 
         if (reducedUI !== getState()['features/base/responsive-ui'].reducedUI) {

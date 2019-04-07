@@ -377,7 +377,19 @@ export function toURLString(obj: ?(Object | string)): ?string {
  * {@code Object}.
  */
 export function urlObjectToString(o: Object): ?string {
-    const url = parseStandardURIString(_fixURIStringScheme(o.url || ''));
+    // First normalize the given url. It come as o.url or split into o.serverURL
+    // and o.room.
+    let tmp;
+
+    if (o.serverURL && o.room) {
+        tmp = new URL(o.room, o.serverURL).toString();
+    } else if (o.room) {
+        tmp = o.room;
+    } else {
+        tmp = o.url || '';
+    }
+
+    const url = parseStandardURIString(_fixURIStringScheme(tmp));
 
     // protocol
     if (!url.protocol) {

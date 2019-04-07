@@ -122,8 +122,11 @@ class ColorSchemeRegistry {
                 } else if (typeof styleValue === 'function') {
                     // The value is a function, which indicates that it's a
                     // dynamic, schemed color we need to resolve.
+                    // $FlowExpectedError
+                    const value = styleValue();
+
                     schemedStyle[styleName]
-                        = this._getColor(stateful, componentName, styleValue());
+                        = this._getColor(stateful, componentName, value);
                 }
 
             }

@@ -132,6 +132,7 @@ function _mapStateToProps(state) {
     };
 }
 
+// $FlowExpectedError
 OverflowMenu_ = connect(_mapStateToProps)(OverflowMenu);
 
 export default OverflowMenu_;

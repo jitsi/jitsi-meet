@@ -3,6 +3,7 @@
 import { FieldTextStateless } from '@atlaskit/field-text';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import type { Dispatch } from 'redux';
 
 import { translate } from '../../../base/i18n';
 import { updateSettings } from '../../../base/settings';
@@ -15,7 +16,7 @@ type Props = {
     /**
      * Invoked to set the local participant display name.
      */
-    dispatch: Dispatch<*>,
+    dispatch: Dispatch<any>,
 
     /**
      * Invoked to obtain translated strings.

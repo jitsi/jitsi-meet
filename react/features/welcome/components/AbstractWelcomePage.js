@@ -1,12 +1,12 @@
 // @flow
 
+import { generateRoomWithoutSeparator } from 'js-utils/random';
 import { Component } from 'react';
+import type { Dispatch } from 'redux';
 
 import { createWelcomePageEvent, sendAnalytics } from '../../analytics';
 import { appNavigate } from '../../app';
 import { isRoomValid } from '../../base/conference';
-
-import { generateRoomWithoutSeparator } from '../functions';
 
 /**
  * {@code AbstractWelcomePage}'s React {@code Component} prop types.
@@ -26,7 +26,7 @@ type Props = {
     /**
      * The Redux dispatch Function.
      */
-    dispatch: Dispatch<*>
+    dispatch: Dispatch<any>
 };
 
 /**

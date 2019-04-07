@@ -5,7 +5,7 @@
  *     type: HIDE_DIALOG
  * }
  */
-export const HIDE_DIALOG = Symbol('HIDE_DIALOG');
+export const HIDE_DIALOG = 'HIDE_DIALOG';
 
 /**
  * The type of Redux action which begins a request to open a dialog.
@@ -17,4 +17,4 @@ export const HIDE_DIALOG = Symbol('HIDE_DIALOG');
  * }
  *
  */
-export const OPEN_DIALOG = Symbol('OPEN_DIALOG');
+export const OPEN_DIALOG = 'OPEN_DIALOG';
