@@ -58,6 +58,10 @@ function _updateAutoPinnedParticipant({ dispatch, getState }) {
     const state = getState();
     const screenShares = state['features/video-layout'].screenShares;
 
+    if (!screenShares) {
+        return;
+    }
+
     const latestScreenshareParticipantId = Array.from(screenShares).pop();
 
     if (latestScreenshareParticipantId) {
