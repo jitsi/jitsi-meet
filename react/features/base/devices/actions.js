@@ -75,7 +75,7 @@ export function configureInitialDevices() {
 
                 Object.keys(deviceLabels).forEach(key => {
                     const label = deviceLabels[key];
-                    const deviceId = getDeviceIdByLabel(state, label);
+                    const deviceId = getDeviceIdByLabel(state, label, key);
 
                     if (deviceId) {
                         newSettings[devicesKeysToSettingsKeys[key]] = deviceId;

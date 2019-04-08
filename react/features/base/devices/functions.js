@@ -44,19 +44,26 @@ export function getAudioOutputDeviceId() {
  *
  * @param {Object} state - The redux state.
  * @param {string} label - The label.
+ * @param {string} kind - The type of the device. One of "audioInput",
+ * "audioOutput", and "videoInput". Also supported is all lowercase versions
+ * of the preceding types.
  * @returns {string|undefined}
  */
-export function getDeviceIdByLabel(state: Object, label: string) {
-    const types = [ 'audioInput', 'audioOutput', 'videoInput' ];
+export function getDeviceIdByLabel(state: Object, label: string, kind: string) {
+    const webrtcKindToJitsiKindTranslator = {
+        audioinput: 'audioInput',
+        audiooutput: 'audioOutput',
+        videoinput: 'videoInput'
+    };
 
-    for (const type of types) {
-        const device
-            = (state['features/base/devices'].availableDevices[type] || [])
-                .find(d => d.label === label);
+    const kindToSearch = webrtcKindToJitsiKindTranslator[kind] || kind;
 
-        if (device) {
-            return device.deviceId;
-        }
+    const device
+        = (state['features/base/devices'].availableDevices[kindToSearch] || [])
+            .find(d => d.label === label);
+
+    if (device) {
+        return device.deviceId;
     }
 }
 
