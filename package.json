@@ -99,7 +99,7 @@
     "clean-css": "3.4.25",
     "css-loader": "0.28.7",
     "eslint": "5.6.1",
-    "eslint-config-jitsi": "github:jitsi/eslint-config-jitsi#1.0.0",
+    "eslint-config-jitsi": "github:jitsi/eslint-config-jitsi#1.0.1",
     "eslint-plugin-flowtype": "2.50.3",
     "eslint-plugin-import": "2.14.0",
     "eslint-plugin-jsdoc": "3.8.0",
