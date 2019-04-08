@@ -4,7 +4,10 @@ import {
     VIDEO_QUALITY_LEVELS,
     setMaxReceiverVideoQuality
 } from '../base/conference';
-import { pinParticipant } from '../base/participants';
+import {
+    getPinnedParticipant,
+    pinParticipant
+} from '../base/participants';
 import { StateListenerRegistry } from '../base/redux';
 import { selectParticipant } from '../large-video';
 import { shouldDisplayTileView } from './functions';
@@ -37,10 +40,17 @@ StateListenerRegistry.register(
             return state['features/video-layout'].screenShares;
         }
     },
-    /* listener */ (screenShares, { dispatch }) => {
-        if (screenShares) {
-            const latestScreenshare = Array.from(screenShares).pop();
+    /* listener */ (screenShares, { dispatch, getState }) => {
+        // Exit early in case auto-pinning is not supported
+        if (!screenShares) {
+            return;
+        }
 
-            dispatch(pinParticipant(latestScreenshare || null));
+        const latestScreenshareParticipantId = Array.from(screenShares).pop();
+
+        if (latestScreenshareParticipantId) {
+            dispatch(pinParticipant(latestScreenshareParticipantId));
+        } else if (getPinnedParticipant(getState()['features/base/participants'])) {
+            dispatch(pinParticipant(null));
         }
     });

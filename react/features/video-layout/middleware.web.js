@@ -124,6 +124,8 @@ MiddlewareRegistry.register(store => next => action => {
     switch (action.type) {
     case TRACK_ADDED:
         if (action.track.videoType === VIDEO_TYPE.DESKTOP) {
+            // TRACK_ADDED action will have a participant ID in the action
+            // itself to use.
             store.dispatch(screenShareStreamAdded(action.track.participantId));
         }
 
@@ -131,12 +133,24 @@ MiddlewareRegistry.register(store => next => action => {
 
     case TRACK_REMOVED:
         if (action.track.jitsiTrack.videoType === VIDEO_TYPE.DESKTOP) {
+            // TRACK_REMOVED action does not include the participant ID in the
+            // action itself so find the redux representation which has the
+            // participant ID.
             const track = getTrackByJitsiTrack(
                 store.getState()['features/base/tracks'],
                 action.track.jitsiTrack
             );
 
-            store.dispatch(screenShareStreamRemoved(track.participantId));
+            // It's possible the track removal has already been processed by
+            // redux due to duplicate events from lib-jitsi-meet. Be defensive
+            // against double events by falling back to ownerEndpointId and
+            // proceeding only if an ID to remove exists.
+            const idToRemove = track
+                ? track.participantId
+                : action.track.jitsiTrack.ownerEndpointId;
+
+            idToRemove
+                && store.dispatch(screenShareStreamRemoved(idToRemove));
         }
 
         break;
@@ -146,6 +160,8 @@ MiddlewareRegistry.register(store => next => action => {
             break;
         }
 
+        // The TRACK_UPDATED action may not include the participant ID for the
+        // owner of the track.
         const currentTrackData = getTrackByJitsiTrack(
             store.getState()['features/base/tracks'],
             action.track.jitsiTrack
