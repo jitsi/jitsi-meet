@@ -5,7 +5,8 @@ import { Text, TextInput, View } from 'react-native';
 import { connect as reduxConnect } from 'react-redux';
 import type { Dispatch } from 'redux';
 
-import { connect, toJid } from '../../base/connection';
+import { toJid } from '../../base/connection';
+import { connect } from '../../base/connection/actions.native';
 import {
     CustomSubmitDialog,
     FIELD_UNDERLINE,
