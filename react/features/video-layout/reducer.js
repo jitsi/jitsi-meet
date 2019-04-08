@@ -9,13 +9,17 @@ import {
     SET_TILE_VIEW
 } from './actionTypes';
 
+const DEFAULT_STATE = {
+    screenShares: new Set()
+};
+
 const STORE_NAME = 'features/video-layout';
 
 PersistenceRegistry.register(STORE_NAME, {
     tileViewEnabled: true
 });
 
-ReducerRegistry.register(STORE_NAME, (state = {}, action) => {
+ReducerRegistry.register(STORE_NAME, (state = DEFAULT_STATE, action) => {
     switch (action.type) {
     case SCREEN_SHARE_STREAM_ADDED: {
         const screenShares = new Set(state.screenShares);
