@@ -20,11 +20,14 @@ declare var interfaceConfig: Object;
  */
 StateListenerRegistry.register(
     /* selector */ state => shouldDisplayTileView(state),
-    /* listener */ (displayTileView, { dispatch }) => {
-        dispatch(selectParticipant());
+    /* listener */ (displayTileView, store) => {
+        store.dispatch(selectParticipant());
 
         if (!displayTileView) {
-            dispatch(setMaxReceiverVideoQuality(VIDEO_QUALITY_LEVELS.HIGH));
+            store.dispatch(
+                setMaxReceiverVideoQuality(VIDEO_QUALITY_LEVELS.HIGH));
+
+            _updateAutoPinnedParticipant(store);
         }
     }
 );
@@ -34,23 +37,32 @@ StateListenerRegistry.register(
  * participant and automatically pin that participant.
  */
 StateListenerRegistry.register(
-    /* selector */ state => {
-        if (typeof interfaceConfig === 'object'
-                && interfaceConfig.AUTO_PIN_LATEST_SCREEN_SHARE) {
-            return state['features/video-layout'].screenShares;
-        }
-    },
-    /* listener */ (screenShares, { dispatch, getState }) => {
-        // Exit early in case auto-pinning is not supported
-        if (!screenShares) {
-            return;
-        }
+    /* selector */ state => state['features/video-layout'].screenShares,
+    /* listener */ (screenShares, store) =>
+        _updateAutoPinnedParticipant(store));
 
-        const latestScreenshareParticipantId = Array.from(screenShares).pop();
 
-        if (latestScreenshareParticipantId) {
-            dispatch(pinParticipant(latestScreenshareParticipantId));
-        } else if (getPinnedParticipant(getState()['features/base/participants'])) {
-            dispatch(pinParticipant(null));
-        }
-    });
+/**
+ * Private helper to automatically pin the latest screen share stream or unpin
+ * if there are no more screen share streams.
+ *
+ * @param {Store} store - The redux store.
+ * @returns {void}
+ */
+function _updateAutoPinnedParticipant({ dispatch, getState }) {
+    if (typeof interfaceConfig !== 'object'
+            || !interfaceConfig.AUTO_PIN_LATEST_SCREEN_SHARE) {
+        return;
+    }
+
+    const state = getState();
+    const screenShares = state['features/video-layout'].screenShares;
+
+    const latestScreenshareParticipantId = Array.from(screenShares).pop();
+
+    if (latestScreenshareParticipantId) {
+        dispatch(pinParticipant(latestScreenshareParticipantId));
+    } else if (getPinnedParticipant(state['features/base/participants'])) {
+        dispatch(pinParticipant(null));
+    }
+}
