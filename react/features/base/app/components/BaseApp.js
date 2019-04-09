@@ -117,7 +117,7 @@ export default class BaseApp extends Component<*, State> {
     render() {
         const { route: { component }, store } = this.state;
 
-        if (store && component) {
+        if (store) {
             return (
                 <I18nextProvider i18n = { i18next }>
                     <Provider store = { store }>
@@ -160,7 +160,7 @@ export default class BaseApp extends Component<*, State> {
      * @protected
      */
     _createMainElement(component, props) {
-        return React.createElement(component, props || {});
+        return component ? React.createElement(component, props || {}) : null;
     }
 
     /**

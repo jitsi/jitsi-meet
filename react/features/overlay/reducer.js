@@ -1,5 +1,6 @@
 // @flow
 
+import { CONFIG_WILL_LOAD, LOAD_CONFIG_ERROR, SET_CONFIG } from '../base/config';
 import { assign, ReducerRegistry, set } from '../base/redux';
 
 import {
@@ -15,6 +16,13 @@ import {
  */
 ReducerRegistry.register('features/overlay', (state = { }, action) => {
     switch (action.type) {
+    case CONFIG_WILL_LOAD:
+        return _setShowLoadConfigOverlay(state, Boolean(action.room));
+
+    case LOAD_CONFIG_ERROR:
+    case SET_CONFIG:
+        return _setShowLoadConfigOverlay(false);
+
     case MEDIA_PERMISSION_PROMPT_VISIBILITY_CHANGED:
         return _mediaPermissionPromptVisibilityChanged(state, action);
 
@@ -48,15 +56,15 @@ function _mediaPermissionPromptVisibilityChanged(
 }
 
 /**
- * Reduces a specific redux action SUSPEND_DETECTED of the feature overlay.
+ * Sets the {@code LoadConfigOverlay} overlay visible or not.
  *
  * @param {Object} state - The redux state of the feature overlay.
- * @private
+ * @param {boolean} show - Whether to show or not the overlay.
  * @returns {Object} The new state of the feature overlay after the reduction of
  * the specified action.
  */
-function _suspendDetected(state) {
-    return set(state, 'suspendDetected', true);
+function _setShowLoadConfigOverlay(state, show) {
+    return set(state, 'loadConfigOverlayVisible', show);
 }
 
 /**
@@ -71,4 +79,16 @@ function _suspendDetected(state) {
  */
 function _setFatalError(state, { fatalError }) {
     return set(state, 'fatalError', fatalError);
+}
+
+/**
+ * Reduces a specific redux action SUSPEND_DETECTED of the feature overlay.
+ *
+ * @param {Object} state - The redux state of the feature overlay.
+ * @private
+ * @returns {Object} The new state of the feature overlay after the reduction of
+ * the specified action.
+ */
+function _suspendDetected(state) {
+    return set(state, 'suspendDetected', true);
 }
