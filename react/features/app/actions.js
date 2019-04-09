@@ -55,12 +55,12 @@ export function appNavigate(uri: ?string) {
         }
 
         location.protocol || (location.protocol = 'https:');
+        const { contextRoot, host, room } = location;
         const locationURL = new URL(location.toString());
 
-        dispatch(configWillLoad(locationURL));
+        dispatch(configWillLoad(locationURL, room));
 
         let protocol = location.protocol.toLowerCase();
-        const { contextRoot, host, room } = location;
 
         // The React Native app supports an app-specific scheme which is sure to not
         // be supported by fetch.

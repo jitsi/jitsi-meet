@@ -3,7 +3,7 @@
 import React, { Component, type Node } from 'react';
 import { SafeAreaView, View } from 'react-native';
 
-import { overlayFrame as styles } from './styles';
+import styles from './styles';
 
 /**
  * The type of the React {@code Component} props of {@code OverlayFrame}.
