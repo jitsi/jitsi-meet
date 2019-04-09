@@ -21,10 +21,12 @@ declare var interfaceConfig: Object;
 StateListenerRegistry.register(
     /* selector */ state => shouldDisplayTileView(state),
     /* listener */ (displayTileView, store) => {
-        store.dispatch(selectParticipant());
+        const { dispatch } = store;
+
+        dispatch(selectParticipant());
 
         if (!displayTileView) {
-            store.dispatch(
+            dispatch(
                 setMaxReceiverVideoQuality(VIDEO_QUALITY_LEVELS.HIGH));
 
             _updateAutoPinnedParticipant(store);
