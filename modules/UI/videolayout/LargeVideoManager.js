@@ -169,7 +169,7 @@ export default class LargeVideoManager {
         const container = this.getCurrentContainer();
 
         // If a user switch for large video is in progress then provide what
-        // wil be the end result of the update.
+        // will be the end result of the update.
         if (this.updateInProcess
             && this.newStreamData
             && this.newStreamData.id !== container.id) {
