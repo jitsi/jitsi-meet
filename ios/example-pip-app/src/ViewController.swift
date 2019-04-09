@@ -1,5 +1,6 @@
 /*
- * Copyright @ 2017-present Atlassian Pty Ltd
+ * Copyright @ 2019-present 8x8, Inc.
+ * Copyright @ 2017-2018 Atlassian Pty Ltd
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -43,11 +44,12 @@ class ViewController: UIViewController {
 
         // create and configure jitsimeet view
         let jitsiMeetView = JitsiMeetView()
-        jitsiMeetView.welcomePageEnabled = true
-        jitsiMeetView.pictureInPictureEnabled = true
-        jitsiMeetView.load(nil)
         jitsiMeetView.delegate = self
         self.jitsiMeetView = jitsiMeetView
+        let options = JitsiMeetConferenceOptions.fromBuilder { (builder) in
+            builder.welcomePageEnabled = true
+        }
+        jitsiMeetView.join(options)
 
         // Enable jitsimeet view to be a view that can be displayed
         // on top of all the things, and let the coordinator to manage
@@ -68,26 +70,17 @@ class ViewController: UIViewController {
 }
 
 extension ViewController: JitsiMeetViewDelegate {
-
-    func conferenceFailed(_ data: [AnyHashable : Any]!) {
-        hideJitsiMeetViewAndCleanUp()
-    }
-
-    func conferenceLeft(_ data: [AnyHashable : Any]!) {
-        hideJitsiMeetViewAndCleanUp()
+    func conferenceTerminated(_ data: [AnyHashable : Any]!) {
+        DispatchQueue.main.async {
+            self.pipViewCoordinator?.hide() { _ in
+                self.cleanUp()
+            }
+        }
     }
 
     func enterPicture(inPicture data: [AnyHashable : Any]!) {
         DispatchQueue.main.async {
             self.pipViewCoordinator?.enterPictureInPicture()
-        }
-    }
-
-    private func hideJitsiMeetViewAndCleanUp() {
-        DispatchQueue.main.async {
-            self.pipViewCoordinator?.hide() { _ in
-                self.cleanUp()
-            }
         }
     }
 }
