@@ -1,39 +1,21 @@
-/* global interfaceConfig */
+// @flow
 
 import React from 'react';
 
-import { translate, translateToHTML } from '../../base/i18n';
-import { connect } from '../../base/redux';
+import { translate, translateToHTML } from '../../../base/i18n';
+import { connect } from '../../../base/redux';
 
 import AbstractUserMediaPermissionsOverlay, { abstractMapStateToProps }
     from './AbstractUserMediaPermissionsOverlay';
 import OverlayFrame from './OverlayFrame';
+
+declare var interfaceConfig: Object;
 
 /**
  * Implements a React Component for overlay with guidance how to proceed with
  * gUM prompt.
  */
 class UserMediaPermissionsOverlay extends AbstractUserMediaPermissionsOverlay {
-    /**
-     * Initializes a new UserMediaPermissionsOverlay instance.
-     *
-     * @param {Object} props - The read-only properties with which the new
-     * instance is to be initialized.
-     * @public
-     */
-    constructor(props) {
-        super(props);
-
-        this.state = {
-            /**
-             * The src value of the image for the policy logo.
-             *
-             * @type {string}
-             */
-            policyLogoSrc: interfaceConfig.POLICY_LOGO
-        };
-    }
-
     /**
      * Implements React's {@link Component#render()}.
      *
@@ -80,7 +62,7 @@ class UserMediaPermissionsOverlay extends AbstractUserMediaPermissionsOverlay {
      * @returns {ReactElement|null}
      */
     _renderPolicyLogo() {
-        const { policyLogoSrc } = this.state;
+        const policyLogoSrc = interfaceConfig.POLICY_LOGO;
 
         if (policyLogoSrc) {
             return (

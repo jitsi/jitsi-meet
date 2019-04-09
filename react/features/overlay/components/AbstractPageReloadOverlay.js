@@ -14,7 +14,7 @@ import {
     isFatalJitsiConnectionError
 } from '../../base/lib-jitsi-meet';
 
-import ReloadButton from './ReloadButton';
+import ReloadButton from './web/ReloadButton';
 
 declare var APP: Object;
 
@@ -82,6 +82,8 @@ type State = {
 
 /**
  * Implements an abstract React {@link Component} for the page reload overlays.
+ *
+ * FIXME: This is not really an abstract class as some components and functions are very web specific.
  */
 export default class AbstractPageReloadOverlay<P: Props>
     extends Component<P, State> {

@@ -1,3 +1,5 @@
+// @flow
+
 /**
  * The type of the Redux action which signals that the prompt for media
  * permission is visible or not.

@@ -1,6 +1,8 @@
+// @flow
+
 import React from 'react';
 
-import { translate, translateToHTML } from '../../base/i18n';
+import { translate, translateToHTML } from '../../../base/i18n';
 
 import AbstractSuspendedOverlay from './AbstractSuspendedOverlay';
 import FilmstripOnlyOverlayFrame from './FilmstripOnlyOverlayFrame';

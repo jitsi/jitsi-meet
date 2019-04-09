@@ -6,8 +6,8 @@ import {
     Avatar,
     getAvatarURL,
     getLocalParticipant
-} from '../../base/participants';
-import { connect } from '../../base/redux';
+} from '../../../base/participants';
+import { connect } from '../../../base/redux';
 
 import OverlayFrame from './OverlayFrame';
 
