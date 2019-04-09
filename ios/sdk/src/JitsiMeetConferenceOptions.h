@@ -67,7 +67,7 @@
 
 @property (nonatomic, readonly) BOOL welcomePageEnabled;
 
-+ (instancetype)fromBuilder:(void (^)(JitsiMeetConferenceOptionsBuilder *))initBlock;
-- (instancetype)init NS_UNAVAILABLE;
++ (instancetype _Nonnull)fromBuilder:(void (^_Nonnull)(JitsiMeetConferenceOptionsBuilder *_Nonnull))initBlock;
+- (instancetype _Nonnull)init NS_UNAVAILABLE;
 
 @end
