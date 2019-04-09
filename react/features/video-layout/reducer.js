@@ -4,13 +4,12 @@ import { ReducerRegistry } from '../base/redux';
 import { PersistenceRegistry } from '../base/storage';
 
 import {
-    SCREEN_SHARE_STREAM_ADDED,
-    SCREEN_SHARE_STREAM_REMOVED,
+    SCREEN_SHARE_PARTICIPANTS_UPDATED,
     SET_TILE_VIEW
 } from './actionTypes';
 
 const DEFAULT_STATE = {
-    screenShares: new Set()
+    screenShares: []
 };
 
 const STORE_NAME = 'features/video-layout';
@@ -21,25 +20,10 @@ PersistenceRegistry.register(STORE_NAME, {
 
 ReducerRegistry.register(STORE_NAME, (state = DEFAULT_STATE, action) => {
     switch (action.type) {
-    case SCREEN_SHARE_STREAM_ADDED: {
-        const screenShares = new Set(state.screenShares);
-
-        screenShares.add(action.participantId);
-
+    case SCREEN_SHARE_PARTICIPANTS_UPDATED: {
         return {
             ...state,
-            screenShares
-        };
-    }
-
-    case SCREEN_SHARE_STREAM_REMOVED: {
-        const screenShares = new Set(state.screenShares);
-
-        screenShares.delete(action.participantId);
-
-        return {
-            ...state,
-            screenShares
+            screenShares: action.participantIds
         };
     }
 

@@ -1,24 +1,14 @@
 /**
- * The type of the action which adds a screen share to the list of known active
- * screen shares being received or sent.
+ * The type of the action which sets the list of known participant IDs which
+ * have an active screen share.
  *
  * @returns {{
- *     type: SCREEN_SHARE_STREAM_ADDED,
- *     participantId: string
+ *     type: SCREEN_SHARE_PARTICIPANTS_UPDATED,
+ *     participantIds: Array<string>
  * }}
  */
-export const SCREEN_SHARE_STREAM_ADDED = 'SCREEN_SHARE_STREAM_ADDED';
-
-/**
- * The type of the action which removes a screen share from the list of known
- * active screen shares being received or sent.
- *
- * @returns {{
- *     type: SCREEN_SHARE_STREAM_REMOVED,
- *     participantId: string
- * }}
- */
-export const SCREEN_SHARE_STREAM_REMOVED = 'SCREEN_SHARE_STREAM_REMOVED';
+export const SCREEN_SHARE_PARTICIPANTS_UPDATED
+    = 'SCREEN_SHARE_PARTICIPANTS_UPDATED';
 
 /**
  * The type of the action which enables or disables the feature for showing

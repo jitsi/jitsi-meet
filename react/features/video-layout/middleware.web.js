@@ -4,7 +4,6 @@ import VideoLayout from '../../../modules/UI/videolayout/VideoLayout.js';
 import UIEvents from '../../../service/UI/UIEvents';
 
 import { CONFERENCE_JOINED, CONFERENCE_WILL_LEAVE } from '../base/conference';
-import { VIDEO_TYPE } from '../base/media';
 import {
     DOMINANT_SPEAKER_CHANGED,
     PARTICIPANT_JOINED,
@@ -14,21 +13,14 @@ import {
     getParticipantById
 } from '../base/participants';
 import { MiddlewareRegistry } from '../base/redux';
-import {
-    TRACK_ADDED,
-    TRACK_REMOVED,
-    TRACK_UPDATED,
-    getTrackByJitsiTrack
-} from '../base/tracks';
+import { TRACK_ADDED } from '../base/tracks';
 import { SET_FILMSTRIP_VISIBLE } from '../filmstrip';
 
 import { SET_TILE_VIEW } from './actionTypes';
-import { screenShareStreamAdded, screenShareStreamRemoved } from './actions';
 
 import './middleware.any';
 
 declare var APP: Object;
-declare var interfaceConfig: Object;
 
 /**
  * Middleware which intercepts actions and updates the legacy component
@@ -107,77 +99,4 @@ MiddlewareRegistry.register(store => next => action => {
     }
 
     return result;
-});
-
-/**
- * Middleware which listens for actions and performs updates related to the
- * auto-pin screen share feature.
- *
- * @param {Store} store - The redux store.
- * @returns {Function}
- */
-MiddlewareRegistry.register(store => next => action => {
-    if (!interfaceConfig.AUTO_PIN_LATEST_SCREEN_SHARE) {
-        return next(action);
-    }
-
-    switch (action.type) {
-    case TRACK_ADDED:
-        if (action.track.videoType === VIDEO_TYPE.DESKTOP) {
-            // TRACK_ADDED action will have a participant ID in the action
-            // itself to use.
-            store.dispatch(screenShareStreamAdded(action.track.participantId));
-        }
-
-        break;
-
-    case TRACK_REMOVED:
-        if (action.track.jitsiTrack.videoType === VIDEO_TYPE.DESKTOP) {
-            // TRACK_REMOVED action does not include the participant ID in the
-            // action itself so find the redux representation which has the
-            // participant ID.
-            const track = getTrackByJitsiTrack(
-                store.getState()['features/base/tracks'],
-                action.track.jitsiTrack
-            );
-
-            // It's possible the track removal has already been processed by
-            // redux due to duplicate events from lib-jitsi-meet. Be defensive
-            // against double events by falling back to ownerEndpointId and
-            // proceeding only if an ID to remove exists.
-            const idToRemove = track
-                ? track.participantId
-                : action.track.jitsiTrack.ownerEndpointId;
-
-            idToRemove
-                && store.dispatch(screenShareStreamRemoved(idToRemove));
-        }
-
-        break;
-
-    case TRACK_UPDATED: {
-        if (!action.track.videoType) {
-            break;
-        }
-
-        // The TRACK_UPDATED action may not include the participant ID for the
-        // owner of the track.
-        const currentTrackData = getTrackByJitsiTrack(
-            store.getState()['features/base/tracks'],
-            action.track.jitsiTrack
-        );
-
-        if (action.track.videoType === VIDEO_TYPE.DESKTOP) {
-            store.dispatch(
-                screenShareStreamAdded(currentTrackData.participantId));
-        } else if (currentTrackData.videoType === VIDEO_TYPE.DESKTOP) {
-            store.dispatch(
-                screenShareStreamRemoved(currentTrackData.participantId));
-        }
-
-        break;
-    }
-    }
-
-    return next(action);
 });

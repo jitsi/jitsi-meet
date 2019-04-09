@@ -1,44 +1,25 @@
 // @flow
 
 import {
-    SCREEN_SHARE_STREAM_ADDED,
-    SCREEN_SHARE_STREAM_REMOVED,
+    SCREEN_SHARE_PARTICIPANTS_UPDATED,
     SET_TILE_VIEW
 } from './actionTypes';
 
 /**
- * Creates a (redux) action which signals that a screen share stream has been
- * started by a participant.
+ * Creates a (redux) action which signals that the list of known participants
+ * with screen shares has changed.
  *
- * @param {string} participantId - The participant associated with the started
- * screen share stream.
+ * @param {string} participantIds - The participants which currently have active
+ * screen share streams.
  * @returns {{
- *     type: SCREEN_SHARE_STREAM_ADDED,
+ *     type: SCREEN_SHARE_PARTICIPANTS_UPDATED,
  *     participantId: string
  * }}
  */
-export function screenShareStreamAdded(participantId: string) {
+export function setParticipantsWithScreenShare(participantIds: Array<string>) {
     return {
-        type: SCREEN_SHARE_STREAM_ADDED,
-        participantId
-    };
-}
-
-/**
- * Creates a (redux) action which signals that a screen share stream has been
- * stopped.
- *
- * @param {string} participantId - The participant associated with the stopped
- * screen share stream.
- * @returns {{
- *     type: SCREEN_SHARE_STREAM_REMOVED,
- *     participantId: string
- * }}
- */
-export function screenShareStreamRemoved(participantId: string) {
-    return {
-        type: SCREEN_SHARE_STREAM_REMOVED,
-        participantId
+        type: SCREEN_SHARE_PARTICIPANTS_UPDATED,
+        participantIds
     };
 }
 
