@@ -1,10 +1,13 @@
+// @flow
+
 import React from 'react';
 
-import { translate } from '../../base/i18n';
-import { connect } from '../../base/redux';
+import { translate } from '../../../base/i18n';
+import { connect } from '../../../base/redux';
 
-import AbstractPageReloadOverlay, { abstractMapStateToProps }
-    from './AbstractPageReloadOverlay';
+import AbstractPageReloadOverlay, { type Props, abstractMapStateToProps }
+    from '../AbstractPageReloadOverlay';
+
 import FilmstripOnlyOverlayFrame from './FilmstripOnlyOverlayFrame';
 
 /**
@@ -12,7 +15,7 @@ import FilmstripOnlyOverlayFrame from './FilmstripOnlyOverlayFrame';
  * mode. Shown before the conference is reloaded. Shows a warning message and
  * counts down towards the reload.
  */
-class PageReloadFilmstripOnlyOverlay extends AbstractPageReloadOverlay {
+class PageReloadFilmstripOnlyOverlay extends AbstractPageReloadOverlay<Props> {
     /**
      * Implements React's {@link Component#render()}.
      *
@@ -38,6 +41,10 @@ class PageReloadFilmstripOnlyOverlay extends AbstractPageReloadOverlay {
             </FilmstripOnlyOverlayFrame>
         );
     }
+
+    _renderButton: () => React$Element<*> | null
+
+    _renderProgressBar: () => React$Element<*> | null
 }
 
 export default translate(

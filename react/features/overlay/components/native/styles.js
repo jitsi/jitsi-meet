@@ -1,6 +1,8 @@
+// @flow
+
 import { StyleSheet } from 'react-native';
 
-import { ColorPalette, createStyleSheet } from '../../base/styles';
+import { ColorPalette } from '../../../base/styles';
 
 /**
  * The React {@code Component} styles of {@code OverlayFrame}.
