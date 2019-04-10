@@ -91,11 +91,6 @@ StateListenerRegistry.register(
  * @returns {void}
  */
 function _updateAutoPinnedParticipant({ dispatch, getState }) {
-    if (typeof interfaceConfig !== 'object'
-            || !interfaceConfig.AUTO_PIN_LATEST_SCREEN_SHARE) {
-        return;
-    }
-
     const state = getState();
     const screenShares = state['features/video-layout'].screenShares;
 
