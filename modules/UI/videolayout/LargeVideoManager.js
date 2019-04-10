@@ -168,6 +168,13 @@ export default class LargeVideoManager {
     get id() {
         const container = this.getCurrentContainer();
 
+        // If a user switch for large video is in progress then provide what
+        // will be the end result of the update.
+        if (this.updateInProcess
+            && this.newStreamData
+            && this.newStreamData.id !== container.id) {
+            return this.newStreamData.id;
+        }
 
         return container.id;
     }
@@ -184,8 +191,8 @@ export default class LargeVideoManager {
 
         // Include hide()/fadeOut only if we're switching between users
         // eslint-disable-next-line eqeqeq
-        const isUserSwitch = this.newStreamData.id != this.id;
         const container = this.getCurrentContainer();
+        const isUserSwitch = this.newStreamData.id !== container.id;
         const preUpdate = isUserSwitch ? container.hide() : Promise.resolve();
 
         preUpdate.then(() => {
