@@ -1,4 +1,5 @@
 // @flow
+
 import {
     VIDEO_QUALITY_LEVELS,
     setMaxReceiverVideoQuality
