@@ -46,29 +46,33 @@ StateListenerRegistry.register(
             return;
         }
 
-        const oldSharingParticipantIds
+        const oldScreenSharesOrder
             = store.getState()['features/video-layout'].screenShares || [];
-        let newSharingParticipantIds = Array.from(oldSharingParticipantIds);
-        const currentDesktopStreams = tracks.filter(track =>
-            track.mediaType === 'video' && track.videoType === 'desktop');
+        const knownSharingParticipantIds = tracks.reduce((acc, track) => {
+            if (track.mediaType === 'video' && track.videoType === 'desktop') {
+                acc.push(track.participantId);
+            }
 
-        // Make sure all new desktop streams get added to the known screen
-        // shares.
-        currentDesktopStreams.forEach(({ participantId }) => {
-            if (!newSharingParticipantIds.includes(participantId)) {
-                newSharingParticipantIds.push(participantId);
+            return acc;
+        }, []);
+
+        // Filter out any participants which are no longer screen sharing
+        // by looping through the known sharing participants and removing any
+        // participant IDs which are no longer sharing.
+        const newScreenSharesOrder = oldScreenSharesOrder.filter(
+            participantId => knownSharingParticipantIds.includes(participantId));
+
+        // Make sure all new sharing participant get added to the end of the
+        // known screen shares.
+        knownSharingParticipantIds.forEach(participantId => {
+            if (!newScreenSharesOrder.includes(participantId)) {
+                newScreenSharesOrder.push(participantId);
             }
         });
 
-        // Filter out any participants which are no longer screen sharing
-        // by looping through the desktop streams and making sure only those
-        // participant IDs with a desktop stream are included.
-        newSharingParticipantIds = newSharingParticipantIds.filter(participantId =>
-            currentDesktopStreams.find(stream => stream.participantId === participantId));
-
-        if (!equals(oldSharingParticipantIds, newSharingParticipantIds)) {
+        if (!equals(oldScreenSharesOrder, newScreenSharesOrder)) {
             store.dispatch(
-                setParticipantsWithScreenShare(newSharingParticipantIds));
+                setParticipantsWithScreenShare(newScreenSharesOrder));
 
             _updateAutoPinnedParticipant(store);
         }
@@ -95,7 +99,8 @@ function _updateAutoPinnedParticipant({ dispatch, getState }) {
         return;
     }
 
-    const latestScreenshareParticipantId = Array.from(screenShares).pop();
+    const latestScreenshareParticipantId
+        = screenShares[screenShares.length - 1];
 
     if (latestScreenshareParticipantId) {
         dispatch(pinParticipant(latestScreenshareParticipantId));
