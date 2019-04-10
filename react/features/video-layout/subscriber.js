@@ -29,7 +29,10 @@ StateListenerRegistry.register(
             dispatch(
                 setMaxReceiverVideoQuality(VIDEO_QUALITY_LEVELS.HIGH));
 
-            _updateAutoPinnedParticipant(store);
+            if (typeof interfaceConfig === 'object'
+                && interfaceConfig.AUTO_PIN_LATEST_SCREEN_SHARE) {
+                _updateAutoPinnedParticipant(store);
+            }
         }
     }
 );
