@@ -46,7 +46,7 @@ StateListenerRegistry.register(
     /* selector */ state => state['features/base/tracks'],
     /* listener */ (tracks, store) => {
         if (typeof interfaceConfig !== 'object'
-            && !interfaceConfig.AUTO_PIN_LATEST_SCREEN_SHARE) {
+            || !interfaceConfig.AUTO_PIN_LATEST_SCREEN_SHARE) {
             return;
         }
 
