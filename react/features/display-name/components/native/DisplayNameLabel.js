@@ -9,7 +9,6 @@ import {
     shouldRenderParticipantVideo
 } from '../../../base/participants';
 import { connect } from '../../../base/redux';
-import { shouldDisplayTileView } from '../../../video-layout';
 
 import styles from './styles';
 
@@ -23,7 +22,12 @@ type Props = {
     /**
      * True of the label needs to be rendered. False otherwise.
      */
-    _render: boolean
+    _render: boolean,
+
+    /**
+     * The ID of the participant to render the label for.
+     */
+    participantId: string
 }
 
 /**
@@ -54,23 +58,24 @@ class DisplayNameLabel extends Component<Props> {
  * Maps part of the Redux state to the props of this component.
  *
  * @param {Object} state - The Redux state.
+ * @param {Props} ownProps - The own props of the component.
  * @returns {{
  * }}
  */
-function _mapStateToProps(state: Object) {
-    const largeVideoParticipantId = state['features/large-video'].participantId;
+function _mapStateToProps(state: Object, ownProps: Props) {
+    const { participantId } = ownProps;
     const localParticipant = getLocalParticipant(state);
 
     // Currently we only render the display name if it's not the local
-    // participant, we're not in tile view and there is no video rendered for
-    // the on-stage participant.
-    const _render = localParticipant.id !== largeVideoParticipantId
-        && !shouldDisplayTileView(state)
-        && !shouldRenderParticipantVideo(state, largeVideoParticipantId);
+    // participant and there is no video rendered for
+    // them.
+    const _render = Boolean(participantId)
+        && localParticipant.id !== participantId
+        && !shouldRenderParticipantVideo(state, participantId);
 
     return {
         _participantName:
-            getParticipantDisplayName(state, largeVideoParticipantId),
+            getParticipantDisplayName(state, participantId),
         _render
     };
 }

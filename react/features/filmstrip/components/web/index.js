@@ -1,3 +1,5 @@
+// @flow
+
 export { default as AudioMutedIndicator } from './AudioMutedIndicator';
 export { default as DominantSpeakerIndicator }
     from './DominantSpeakerIndicator';
