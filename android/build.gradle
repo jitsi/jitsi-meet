@@ -55,7 +55,15 @@ allprojects {
         publishing {
             publications {}
             repositories {
-                maven { url "file:${rootProject.ext.mavenRepo}" }
+                maven {
+                    url rootProject.ext.mavenRepo
+                    if (!rootProject.ext.mavenRepo.startsWith("file")) {
+                        credentials {
+                            username rootProject.ext.mavenUser
+                            password rootProject.ext.mavenPassword
+                        }
+                    }
+                }
             }
         }
     }
@@ -152,7 +160,9 @@ ext {
     moduleGroupId = 'com.facebook.react'
 
     // Maven repo where artifacts will be published
-    mavenRepo = System.env.MVN_REPO ?: "${rootProject.projectDir}/../../jitsi-maven-repository/releases"
+    mavenRepo = System.env.MVN_REPO ?: ""
+    mavenUser = System.env.MVN_USER ?: ""
+    mavenPassword = System.env.MVN_PASSWORD ?: ""
 
     // Glide
     excludeAppGlideModule = true
