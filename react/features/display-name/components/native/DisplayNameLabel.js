@@ -9,7 +9,6 @@ import {
     shouldRenderParticipantVideo
 } from '../../../base/participants';
 import { connect } from '../../../base/redux';
-
 import { shouldDisplayTileView } from '../../../video-layout';
 
 import styles from './styles';

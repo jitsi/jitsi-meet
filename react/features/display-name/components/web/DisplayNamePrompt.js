@@ -1,15 +1,15 @@
 /* @flow */
 
 import React from 'react';
-import { connect } from '../../base/redux';
 import { FieldTextStateless as TextField } from '@atlaskit/field-text';
 
-import { Dialog } from '../../base/dialog';
-import { translate } from '../../base/i18n';
+import { Dialog } from '../../../base/dialog';
+import { translate } from '../../../base/i18n';
+import { connect } from '../../../base/redux';
 
 import AbstractDisplayNamePrompt, {
     type Props
-} from './AbstractDisplayNamePrompt';
+} from '../AbstractDisplayNamePrompt';
 
 /**
  * The type of the React {@code Component} props of {@link DisplayNamePrompt}.
