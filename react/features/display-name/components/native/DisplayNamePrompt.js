@@ -1,11 +1,11 @@
 // @flow
 
 import React from 'react';
-import { connect } from '../../base/redux';
+import { connect } from '../../../base/redux';
 
-import { InputDialog } from '../../base/dialog';
+import { InputDialog } from '../../../base/dialog';
 
-import AbstractDisplayNamePrompt from './AbstractDisplayNamePrompt';
+import AbstractDisplayNamePrompt from '../AbstractDisplayNamePrompt';
 
 /**
  * Implements a component to render a display name prompt.

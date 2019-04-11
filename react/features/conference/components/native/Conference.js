@@ -17,6 +17,7 @@ import { TestConnectionInfo } from '../../../base/testing';
 import { createDesiredLocalTracks } from '../../../base/tracks';
 import { ConferenceNotification } from '../../../calendar-sync';
 import { Chat } from '../../../chat';
+import { DisplayNameLabel } from '../../../display-name/components/native';
 import {
     FILMSTRIP_SIZE,
     Filmstrip,
@@ -32,7 +33,6 @@ import {
     AbstractConference,
     abstractMapStateToProps
 } from '../AbstractConference';
-import DisplayNameLabel from './DisplayNameLabel';
 import Labels from './Labels';
 import NavigationBar from './NavigationBar';
 import styles from './styles';

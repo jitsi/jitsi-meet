@@ -1,17 +1,17 @@
 /* @flow */
 
 import React, { Component } from 'react';
-import { connect } from '../../base/redux';
+import { connect } from '../../../base/redux';
 import type { Dispatch } from 'redux';
 
-import { appendSuffix } from '../functions';
-
-import { translate } from '../../base/i18n';
+import { translate } from '../../../base/i18n';
 import {
     getParticipantDisplayName,
     getParticipantById
-} from '../../base/participants';
-import { updateSettings } from '../../base/settings';
+} from '../../../base/participants';
+import { updateSettings } from '../../../base/settings';
+
+import { appendSuffix } from '../../functions';
 
 /**
  * The type of the React {@code Component} props of {@link DisplayName}.
