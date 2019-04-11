@@ -201,6 +201,14 @@ publishing {
 
     }
     repositories {
-        maven { url "file:${rootProject.ext.mavenRepo}" }
+        maven {
+            url rootProject.ext.mavenRepo
+            if (!rootProject.ext.mavenRepo.startsWith("file")) {
+                credentials {
+                    username rootProject.ext.mavenUser
+                    password rootProject.ext.mavenPassword
+                }
+            }
+        }
     }
 }
