@@ -3,14 +3,30 @@
 import { ReducerRegistry } from '../base/redux';
 import { PersistenceRegistry } from '../base/storage';
 
-import { SET_TILE_VIEW } from './actionTypes';
+import {
+    SCREEN_SHARE_PARTICIPANTS_UPDATED,
+    SET_TILE_VIEW
+} from './actionTypes';
+
+const DEFAULT_STATE = {
+    screenShares: []
+};
 
 const STORE_NAME = 'features/video-layout';
 
-PersistenceRegistry.register(STORE_NAME);
+PersistenceRegistry.register(STORE_NAME, {
+    tileViewEnabled: true
+});
 
-ReducerRegistry.register(STORE_NAME, (state = {}, action) => {
+ReducerRegistry.register(STORE_NAME, (state = DEFAULT_STATE, action) => {
     switch (action.type) {
+    case SCREEN_SHARE_PARTICIPANTS_UPDATED: {
+        return {
+            ...state,
+            screenShares: action.participantIds
+        };
+    }
+
     case SET_TILE_VIEW:
         return {
             ...state,
