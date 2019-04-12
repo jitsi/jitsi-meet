@@ -50,7 +50,9 @@ function getNewAudioInputDevice(newDevices, localAudio) {
         // If we have new audio device and permission to use it was granted
         // (label is not an empty string), then we will try to use the first
         // available device.
-        if (availableAudioInputDevices.length
+        if (selectedAudioInputDevice && selectedAudioInputDeviceId) {
+            return selectedAudioInputDeviceId;
+        } else if (availableAudioInputDevices.length
             && availableAudioInputDevices[0].label !== '') {
             return availableAudioInputDevices[0].deviceId;
         }
@@ -87,7 +89,9 @@ function getNewVideoInputDevice(newDevices, localVideo) {
         // If we have new video device and permission to use it was granted
         // (label is not an empty string), then we will try to use the first
         // available device.
-        if (availableVideoInputDevices.length
+        if (selectedVideoInputDevice && selectedVideoInputDeviceId) {
+            return selectedVideoInputDeviceId;
+        } else if (availableVideoInputDevices.length
             && availableVideoInputDevices[0].label !== '') {
             return availableVideoInputDevices[0].deviceId;
         }
@@ -121,8 +125,7 @@ export default {
             localAudio) {
         return {
             audioinput: getNewAudioInputDevice(newDevices, localAudio),
-            videoinput: !isSharingScreen
-                && getNewVideoInputDevice(newDevices, localVideo),
+            videoinput: isSharingScreen ? undefined : getNewVideoInputDevice(newDevices, localVideo),
             audiooutput: getNewAudioOutputDevice(newDevices)
         };
     },
@@ -180,7 +183,7 @@ export default {
         /**
          *
          */
-        function createAudioTrack(showError) {
+        function createAudioTrack(showError = true) {
             return (
                 createLocalTracks({
                     devices: [ 'audio' ],
@@ -198,7 +201,7 @@ export default {
         /**
          *
          */
-        function createVideoTrack(showError) {
+        function createVideoTrack(showError = true) {
             return (
                 createLocalTracks({
                     devices: [ 'video' ],
