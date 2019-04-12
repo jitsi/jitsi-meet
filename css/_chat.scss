@@ -219,8 +219,6 @@
 
 #smileys {
     font-size: 20pt;
-    display: inline-block;
-    height: 26px;
     margin: auto;
     cursor: pointer;
 }
@@ -232,18 +230,14 @@
 
 #smileysarea {
     background-color: $newToolbarBackgroundColor;
-    border: 0px none;
     display: flex;
-    height: 70px;
     max-height: 150px;
     min-height: 35px;
-    min-width: 31px;
-    padding: 0px;
     overflow: hidden;
-    width: 17%;
 }
 
 .smiley-input {
+    display: flex;
     position: relative;
 }
 
