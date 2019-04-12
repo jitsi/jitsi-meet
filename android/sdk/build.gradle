@@ -167,7 +167,7 @@ publishing {
         aarArchive(MavenPublication) {
             groupId 'org.jitsi.react'
             artifactId 'jitsi-meet-sdk'
-            version project.sdkVersion
+            version System.env.OVERRIDE_SDK_VERSION ?: project.sdkVersion
 
             artifact("${project.buildDir}/outputs/aar/${project.name}-release.aar") {
                 extension "aar"
