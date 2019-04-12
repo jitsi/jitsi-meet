@@ -69,9 +69,7 @@ class ChatMessage extends AbstractChatMessage<Props> {
 
         return (
             <div className = { `chatmessage ${messageTypeClassname}` }>
-                <img
-                    className = 'chatArrow'
-                    src = 'images/chatArrow.svg' />
+                <div className = 'chatArrow' />
                 <div className = 'display-name'>
                     { message.displayName }
                 </div>
