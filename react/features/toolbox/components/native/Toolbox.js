@@ -7,7 +7,6 @@ import { Container } from '../../../base/react';
 import { ColorSchemeRegistry } from '../../../base/color-scheme';
 import { connect } from '../../../base/redux';
 import { StyleType } from '../../../base/styles';
-import { ChatButton } from '../../../chat';
 
 import { isToolboxVisible } from '../../functions';
 import { HANGUP_BUTTON_SIZE } from '../../constants';
@@ -239,11 +238,6 @@ class Toolbox extends Component<Props, State> {
             <View
                 pointerEvents = 'box-none'
                 style = { styles.toolbar }>
-                <ChatButton
-                    styles = { buttonStyles }
-                    toggledStyles = {
-                        this._getChatButtonToggledStyle(toggledButtonStyles)
-                    } />
                 <AudioMuteButton
                     styles = { buttonStyles }
                     toggledStyles = { toggledButtonStyles } />
