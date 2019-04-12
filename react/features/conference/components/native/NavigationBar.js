@@ -9,6 +9,7 @@ import { getConferenceName } from '../../../base/conference';
 import { connect } from '../../../base/redux';
 import { PictureInPictureButton } from '../../../mobile/picture-in-picture';
 import { isToolboxVisible } from '../../../toolbox';
+import { getParticipants } from '../../../base/participants';
 
 import styles, { NAVBAR_GRADIENT_COLORS } from './styles';
 
@@ -22,7 +23,12 @@ type Props = {
     /**
      * True if the navigation bar should be visible.
      */
-    _visible: boolean
+    _visible: boolean,
+
+    /**
+     * List of participants to extract the name.
+     */
+    _participants: [{ name: string }]
 };
 
 /**
@@ -40,6 +46,8 @@ class NavigationBar extends Component<Props> {
             return null;
         }
 
+        const participantsNames = this.props._participants.map(p => p.name).join(', ');
+
         return [
             <LinearGradient
                 colors = { NAVBAR_GRADIENT_COLORS }
@@ -54,21 +62,19 @@ class NavigationBar extends Component<Props> {
                 key = { 2 }
                 pointerEvents = 'box-none'
                 style = { styles.navBarWrapper }>
-                <PictureInPictureButton
-                    styles = { styles.navBarButton } />
+                <PictureInPictureButton styles = { styles.navBarButton } />
                 <View
                     pointerEvents = 'box-none'
                     style = { styles.roomNameWrapper }>
                     <Text
-                        numberOfLines = { 1 }
+                        numberOfLines = { 2 }
                         style = { styles.roomName }>
-                        { this.props._meetingName }
+                        {participantsNames}
                     </Text>
                 </View>
             </View>
         ];
     }
-
 }
 
 /**
@@ -77,13 +83,15 @@ class NavigationBar extends Component<Props> {
  * @param {Object} state - The Redux state.
  * @returns {{
  *     _meetingName: string,
- *     _visible: boolean
+ *     _visible: boolean,
+ *     _participants: Array
  * }}
  */
 function _mapStateToProps(state) {
     return {
         _meetingName: _.startCase(getConferenceName(state)),
-        _visible: isToolboxVisible(state)
+        _visible: isToolboxVisible(state),
+        _participants: getParticipants(state)
     };
 }
 
