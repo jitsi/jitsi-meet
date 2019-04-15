@@ -82,4 +82,4 @@ module.file_ext=.jsx
 module.file_ext=.json
 
 [version]
-^0.92.0
+^0.93.0

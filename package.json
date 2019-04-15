@@ -106,7 +106,7 @@
     "eslint-plugin-react": "7.11.1",
     "eslint-plugin-react-native": "3.3.0",
     "expose-loader": "0.7.5",
-    "flow-bin": "0.92.0",
+    "flow-bin": "0.93.0",
     "imports-loader": "0.7.1",
     "metro-react-native-babel-preset": "0.49.2",
     "node-sass": "4.10.0",
