@@ -2,7 +2,7 @@
 
 import React, { Component } from 'react';
 
-import BaseIndicator from './BaseIndicator';
+import { BaseIndicator } from '../../../base/react';
 
 /**
  * Thumbnail badge for displaying the video mute status of a participant.

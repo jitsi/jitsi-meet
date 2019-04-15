@@ -2,14 +2,13 @@
 
 import React from 'react';
 
+import { BaseIndicator } from '../../../base/react';
 import { connect } from '../../../base/redux';
 
 import AbstractRaisedHandIndicator, {
     type Props,
     _mapStateToProps
 } from '../AbstractRaisedHandIndicator';
-
-import BaseIndicator from './BaseIndicator';
 
 /**
  * Thumbnail badge showing that the participant would like to speak.

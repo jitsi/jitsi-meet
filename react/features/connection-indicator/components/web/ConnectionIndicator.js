@@ -1,23 +1,19 @@
-/* @flow */
+// @flow
 
-import React, { Component } from 'react';
+import React from 'react';
 
-import { translate } from '../../base/i18n';
-import { JitsiParticipantConnectionStatus } from '../../base/lib-jitsi-meet';
-import { Popover } from '../../base/popover';
-import { ConnectionStatsTable } from '../../connection-stats';
+import { translate } from '../../../base/i18n';
+import { JitsiParticipantConnectionStatus } from '../../../base/lib-jitsi-meet';
+import { Popover } from '../../../base/popover';
+import { ConnectionStatsTable } from '../../../connection-stats';
 
-import statsEmitter from '../statsEmitter';
+import AbstractConnectionIndicator, {
+    INDICATOR_DISPLAY_THRESHOLD,
+    type Props as AbstractProps,
+    type State as AbstractState
+} from '../AbstractConnectionIndicator';
 
 declare var interfaceConfig: Object;
-
-/**
- * The connection quality percentage that must be reached to be considered of
- * good quality and can result in the connection indicator being hidden.
- *
- * @type {number}
- */
-const INDICATOR_DISPLAY_THRESHOLD = 30;
 
 /**
  * An array of display configurations for the connection indicator and its bars.
@@ -58,7 +54,7 @@ const QUALITY_TO_WIDTH: Array<Object> = [
 /**
  * The type of the React {@code Component} props of {@link ConnectionIndicator}.
  */
-type Props = {
+type Props = AbstractProps & {
 
     /**
      * Whether or not the component should ignore setting a visibility class for
@@ -97,43 +93,18 @@ type Props = {
     /**
      * Invoked to obtain translated strings.
      */
-    t: Function,
-
-    /**
-     * The user ID associated with the displayed connection indication and
-     * stats.
-     */
-    userID: string
+    t: Function
 };
 
 /**
  * The type of the React {@code Component} state of {@link ConnectionIndicator}.
  */
-type State = {
-
-    /**
-     * The timeout for automatically hiding the indicator.
-     */
-    autoHideTimeout: TimeoutID | null,
-
-    /**
-     * Whether or not a CSS class should be applied to the root for hiding the
-     * connection indicator. By default the indicator should start out hidden
-     * because the current connection status is not known at mount.
-     */
-    showIndicator: boolean,
+type State = AbstractState & {
 
     /**
      * Whether or not the popover content should display additional statistics.
      */
-    showMoreStats: boolean,
-
-    /**
-     * Cache of the stats received from subscribing to stats emitting. The keys
-     * should be the name of the stat. With each stat update, updates stats are
-     * mixed in with cached stats and a new stats object is set in state.
-     */
-    stats: Object
+    showMoreStats: boolean
 };
 
 /**
@@ -142,7 +113,7 @@ type State = {
  *
  * @extends {Component}
  */
-class ConnectionIndicator extends Component<Props, State> {
+class ConnectionIndicator extends AbstractConnectionIndicator<Props, State> {
     /**
      * Initializes a new {@code ConnectionIndicator} instance.
      *
@@ -153,57 +124,14 @@ class ConnectionIndicator extends Component<Props, State> {
         super(props);
 
         this.state = {
-            autoHideTimeout: null,
+            autoHideTimeout: undefined,
             showIndicator: false,
             showMoreStats: false,
             stats: {}
         };
 
         // Bind event handlers so they are only bound once for every instance.
-        this._onStatsUpdated = this._onStatsUpdated.bind(this);
         this._onToggleShowMore = this._onToggleShowMore.bind(this);
-    }
-
-    /**
-     * Starts listening for stat updates.
-     *
-     * @inheritdoc
-     * returns {void}
-     */
-    componentDidMount() {
-        statsEmitter.subscribeToClientStats(
-            this.props.userID, this._onStatsUpdated);
-    }
-
-    /**
-     * Updates which user's stats are being listened to.
-     *
-     * @inheritdoc
-     * returns {void}
-     */
-    componentDidUpdate(prevProps) {
-        if (prevProps.userID !== this.props.userID) {
-            statsEmitter.unsubscribeToClientStats(
-                prevProps.userID, this._onStatsUpdated);
-            statsEmitter.subscribeToClientStats(
-                this.props.userID, this._onStatsUpdated);
-        }
-    }
-
-    /**
-     * Cleans up any queued processes, which includes listening for new stats
-     * and clearing any timeout to hide the indicator.
-     *
-     * @private
-     * @returns {void}
-     */
-    componentWillUnmount() {
-        statsEmitter.unsubscribeToClientStats(
-            this.props.userID, this._onStatsUpdated);
-
-        if (this.state.autoHideTimeout) {
-            clearTimeout(this.state.autoHideTimeout);
-        }
     }
 
     /**
@@ -331,35 +259,6 @@ class ConnectionIndicator extends Component<Props, State> {
             ? 'show-connection-indicator' : 'hide-connection-indicator';
     }
 
-    _onStatsUpdated: (Object) => void;
-
-    /**
-     * Callback invoked when new connection stats associated with the passed in
-     * user ID are available. Will update the component's display of current
-     * statistics.
-     *
-     * @param {Object} stats - Connection stats from the library.
-     * @private
-     * @returns {void}
-     */
-    _onStatsUpdated(stats = {}) {
-        // Rely on React to batch setState actions.
-        const { connectionQuality } = stats;
-        const newPercentageState = typeof connectionQuality === 'undefined'
-            ? {} : { percent: connectionQuality };
-        const newStats = Object.assign(
-            {},
-            this.state.stats,
-            stats,
-            newPercentageState);
-
-        this.setState({
-            stats: newStats
-        });
-
-        this._updateIndicatorAutoHide(newStats.percent);
-    }
-
     _onToggleShowMore: () => void;
 
     /**
@@ -458,39 +357,6 @@ class ConnectionIndicator extends Component<Props, State> {
                 shouldShowMore = { this.state.showMoreStats }
                 transport = { transport } />
         );
-    }
-
-    /**
-     * Updates the internal state for automatically hiding the indicator.
-     *
-     * @param {number} percent - The current connection quality percentage
-     * between the values 0 and 100.
-     * @private
-     * @returns {void}
-     */
-    _updateIndicatorAutoHide(percent) {
-        if (percent < INDICATOR_DISPLAY_THRESHOLD) {
-            if (this.state.autoHideTimeout) {
-                clearTimeout(this.state.autoHideTimeout);
-            }
-
-            this.setState({
-                autoHideTimeout: null,
-                showIndicator: true
-            });
-        } else if (this.state.autoHideTimeout) {
-            // This clause is intentionally left blank because no further action
-            // is needed if the percent is below the threshold and there is an
-            // autoHideTimeout set.
-        } else {
-            this.setState({
-                autoHideTimeout: setTimeout(() => {
-                    this.setState({
-                        showIndicator: false
-                    });
-                }, interfaceConfig.CONNECTION_INDICATOR_AUTO_HIDE_TIMEOUT)
-            });
-        }
     }
 }
 

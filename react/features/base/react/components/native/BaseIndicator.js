@@ -3,9 +3,10 @@
 import React, { Component } from 'react';
 import { View } from 'react-native';
 
-import { Icon } from '../../../base/font-icons';
+import { Icon } from '../../../font-icons';
+import { type StyleType } from '../../../styles';
 
-import styles from './styles';
+import styles from './indicatorstyles';
 
 type Props = {
 
@@ -17,7 +18,12 @@ type Props = {
     /**
      * The name of the icon to be used as the indicator.
      */
-    icon: string
+    icon: string,
+
+    /**
+     * Additional style to be applied to the icon element.
+     */
+    iconStyle: StyleType
 };
 
 /**
@@ -31,13 +37,16 @@ export default class BaseIndicator extends Component<Props> {
      * @inheritdoc
      */
     render() {
-        const { highlight, icon } = this.props;
+        const { highlight, icon, iconStyle } = this.props;
 
         return (
             <View style = { highlight ? styles.highlightedIndicator : null }>
                 <Icon
                     name = { icon }
-                    style = { styles.indicator } />
+                    style = { [
+                        styles.indicator,
+                        iconStyle
+                    ] } />
             </View>
         );
     }

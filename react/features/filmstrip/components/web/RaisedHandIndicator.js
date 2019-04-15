@@ -2,14 +2,13 @@
 
 import React from 'react';
 
+import { BaseIndicator } from '../../../base/react';
 import { connect } from '../../../base/redux';
 
 import AbstractRaisedHandIndicator, {
     type Props as AbstractProps,
     _mapStateToProps
 } from '../AbstractRaisedHandIndicator';
-
-import BaseIndicator from './BaseIndicator';
 
 /**
  * The type of the React {@code Component} props of {@link RaisedHandIndicator}.
