@@ -2,10 +2,7 @@
 
 import React, { Component, Fragment, PureComponent } from 'react';
 import { Dimensions, Image, Platform, View } from 'react-native';
-import FastImage, {
-    type CacheControls,
-    type Priorities
-} from 'react-native-fast-image';
+import FastImage, { type CacheControls, type Priorities } from 'react-native-fast-image';
 
 import { ColorPalette } from '../../styles';
 
@@ -24,7 +21,7 @@ import styles from './styles';
  * @private
  * @type {string}
  */
-const _DEFAULT_SOURCE = require('../../../../../images/avatar.png');
+const _DEFAULT_SOURCE = require('../../../../../images/STClogo.png');
 
 /**
  * The type of the React {@link Component} props of {@link Avatar}.
@@ -36,11 +33,15 @@ type Props = {
      */
     size: number,
 
-
     /**
      * The URI of the {@link Avatar}.
      */
-    uri: string
+    uri: string,
+
+    /**
+     * Has to retunr or not the default logo {@link Avatar}.
+     */
+    defaultLogo: boolean
 };
 
 /**
@@ -70,7 +71,7 @@ type State = {
         uri?: string,
         headers?: Object,
         priority?: Priorities,
-        cache?: CacheControls,
+        cache?: CacheControls
     }
 };
 
@@ -224,23 +225,19 @@ class AvatarContent extends Component<Props, State> {
             // ToolbarButtons. That's where I copied the value from and we
             // may want to think about "standardizing" the opacity in the
             // app in a way similar to ColorPalette.
-            opacity: 0.1,
+            // opacity: 0.1,
             overflow: 'hidden'
         };
 
-        return (
+        return this.props.defaultLogo ? (
             <View style = { viewStyle }>
                 <Image
-
-                    // The Image adds a fade effect without asking, so lets
-                    // explicitly disable it. More info here:
-                    // https://github.com/facebook/react-native/issues/10194
                     fadeDuration = { 0 }
                     resizeMode = 'contain'
                     source = { _DEFAULT_SOURCE }
                     style = { imageStyle } />
             </View>
-        );
+        ) : null;
     }
 
     /**
@@ -289,8 +286,8 @@ class AvatarContent extends Component<Props, State> {
 
         return (
             <Fragment>
-                { source.uri && this._renderAvatar() }
-                { this.useDefaultAvatar && this._renderDefaultAvatar() }
+                {source.uri && this._renderAvatar()}
+                {this.useDefaultAvatar && this._renderDefaultAvatar()}
             </Fragment>
         );
     }
@@ -311,10 +308,8 @@ export default class Avatar extends PureComponent<Props> {
      * @inheritdoc
      */
     render() {
-        return (
-            <AvatarContent
-                key = { this.props.uri }
-                { ...this.props } />
-        );
+        return (<AvatarContent
+            key = { this.props.uri }
+            { ...this.props } />);
     }
 }

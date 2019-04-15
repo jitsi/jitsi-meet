@@ -131,57 +131,47 @@ class Thumbnail extends Component<Props> {
         const audioMuted = !audioTrack || audioTrack.muted;
         const renderAudio = !audioMuted && !audioTrack.local;
         const participantId = participant.id;
-        const participantInLargeVideo
-            = participantId === largeVideo.participantId;
+        const participantInLargeVideo = participantId === largeVideo.participantId;
         const videoMuted = !videoTrack || videoTrack.muted;
         const showRemoteVideoMenu = _isModerator && !participant.local;
 
         return (
             <Container
                 onClick = { disablePin ? undefined : _onClick }
-                onLongPress = {
-                    showRemoteVideoMenu
-                        ? _onShowRemoteVideoMenu : undefined }
+                onLongPress = { showRemoteVideoMenu ? _onShowRemoteVideoMenu : undefined }
                 style = { [
                     styles.thumbnail,
-                    participant.pinned && !disablePin
-                        ? _styles.thumbnailPinned : null,
+                    participant.pinned && !disablePin ? _styles.thumbnailPinned : null,
                     this.props.styleOverrides || null
                 ] }
                 touchFeedback = { false }>
-
-                { renderAudio
-                    && <Audio
-                        stream
-                            = { audioTrack.jitsiTrack.getOriginalStream() } /> }
+                {renderAudio && <Audio stream = { audioTrack.jitsiTrack.getOriginalStream() } />}
 
                 <ParticipantView
                     avatarSize = { AVATAR_SIZE }
+                    defaultLogo = { false }
                     participantId = { participantId }
                     style = { _styles.participantViewStyle }
                     tintEnabled = { participantInLargeVideo && !disableTint }
                     tintStyle = { _styles.activeThumbnailTint }
                     zOrder = { 1 } />
 
-                { participant.role === PARTICIPANT_ROLE.MODERATOR
-                    && <View style = { styles.moderatorIndicatorContainer }>
+                {participant.role === PARTICIPANT_ROLE.MODERATOR && (
+                    <View style = { styles.moderatorIndicatorContainer }>
                         <ModeratorIndicator />
-                    </View> }
+                    </View>
+                )}
 
                 <View style = { styles.thumbnailTopIndicatorContainer }>
                     <RaisedHandIndicator participantId = { participant.id } />
-                    { participant.dominantSpeaker
-                        && <DominantSpeakerIndicator /> }
+                    {participant.dominantSpeaker && <DominantSpeakerIndicator />}
                 </View>
 
                 <Container style = { styles.thumbnailIndicatorContainer }>
-                    { audioMuted
-                        && <AudioMutedIndicator /> }
+                    {audioMuted && <AudioMutedIndicator />}
 
-                    { videoMuted
-                        && <VideoMutedIndicator /> }
+                    {videoMuted && <VideoMutedIndicator />}
                 </Container>
-
             </Container>
         );
     }
@@ -208,8 +198,7 @@ function _mapDispatchToProps(dispatch: Function, ownProps): Object {
         _onClick() {
             const { participant } = ownProps;
 
-            dispatch(
-                pinParticipant(participant.pinned ? null : participant.id));
+            dispatch(pinParticipant(participant.pinned ? null : participant.id));
         },
 
         /**
@@ -220,9 +209,11 @@ function _mapDispatchToProps(dispatch: Function, ownProps): Object {
         _onShowRemoteVideoMenu() {
             const { participant } = ownProps;
 
-            dispatch(openDialog(RemoteVideoMenu, {
-                participant
-            }));
+            dispatch(
+                openDialog(RemoteVideoMenu, {
+                    participant
+                })
+            );
         }
     };
 }
@@ -247,10 +238,8 @@ function _mapStateToProps(state, ownProps) {
     const largeVideo = state['features/large-video'];
     const tracks = state['features/base/tracks'];
     const id = ownProps.participant.id;
-    const audioTrack
-        = getTrackByMediaTypeAndParticipant(tracks, MEDIA_TYPE.AUDIO, id);
-    const videoTrack
-        = getTrackByMediaTypeAndParticipant(tracks, MEDIA_TYPE.VIDEO, id);
+    const audioTrack = getTrackByMediaTypeAndParticipant(tracks, MEDIA_TYPE.AUDIO, id);
+    const videoTrack = getTrackByMediaTypeAndParticipant(tracks, MEDIA_TYPE.VIDEO, id);
 
     return {
         _audioTrack: audioTrack,
@@ -261,4 +250,7 @@ function _mapStateToProps(state, ownProps) {
     };
 }
 
-export default connect(_mapStateToProps, _mapDispatchToProps)(Thumbnail);
+export default connect(
+    _mapStateToProps,
+    _mapDispatchToProps
+)(Thumbnail);
