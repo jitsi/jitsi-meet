@@ -14,28 +14,6 @@ export const AVATAR_SIZE = 50;
  * The styles of the feature filmstrip.
  */
 export default {
-    /**
-     * Highlighted indicator additional style.
-     */
-    highlightedIndicator: {
-        backgroundColor: ColorPalette.blue,
-        borderRadius: 16,
-        padding: 4
-    },
-
-    /**
-     * Dominant speaker indicator style.
-     */
-    indicator: {
-        backgroundColor: ColorPalette.transparent,
-        color: ColorPalette.white,
-        fontSize: 12,
-        textShadowColor: ColorPalette.black,
-        textShadowOffset: {
-            height: -1,
-            width: 0
-        }
-    },
 
     /**
      * The style of the narrow {@link Filmstrip} version which displays
@@ -121,10 +99,17 @@ export default {
     },
 
     thumbnailTopIndicatorContainer: {
-        left: 0,
         padding: 4,
         position: 'absolute',
         top: 0
+    },
+
+    thumbnailTopLeftIndicatorContainer: {
+        left: 0
+    },
+
+    thumbnailTopRightIndicatorContainer: {
+        right: 0
     },
 
     tileView: {

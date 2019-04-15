@@ -2,7 +2,7 @@
 
 import React, { Component } from 'react';
 
-import BaseIndicator from './BaseIndicator';
+import { BaseIndicator } from '../../../base/react';
 
 /**
  * The type of the React {@code Component} props of

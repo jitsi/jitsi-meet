@@ -2,7 +2,7 @@
 
 import React, { Component } from 'react';
 
-import BaseIndicator from './BaseIndicator';
+import { BaseIndicator } from '../../../base/react';
 
 /**
  * Thumbnail badge showing that the participant is the dominant speaker in

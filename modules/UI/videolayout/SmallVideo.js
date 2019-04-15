@@ -836,9 +836,9 @@ SmallVideo.prototype.updateIndicators = function() {
                                 isLocalVideo = { this.isLocal }
                                 enableStatsDisplay
                                     = { !interfaceConfig.filmStripOnly }
+                                participantId = { this.id }
                                 statsPopoverPosition
-                                    = { statsPopoverPosition }
-                                userID = { this.id } />
+                                    = { statsPopoverPosition } />
                             : null }
                         <RaisedHandIndicator
                             iconSize = { iconSize }

@@ -7,8 +7,6 @@ import {
     JitsiE2ePingEvents
 } from '../base/lib-jitsi-meet';
 
-declare var APP: Object;
-
 /**
  * Contains all the callbacks to be notified when stats are updated.
  *

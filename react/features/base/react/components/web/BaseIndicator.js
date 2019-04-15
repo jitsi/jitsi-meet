@@ -3,7 +3,7 @@
 import React, { Component } from 'react';
 import Tooltip from '@atlaskit/tooltip';
 
-import { translate } from '../../../base/i18n';
+import { translate } from '../../../i18n';
 
 /**
  * The type of the React {@code Component} props of {@link BaseIndicator}.
