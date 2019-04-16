@@ -1,5 +1,10 @@
 # Jitsi Meet SDK for Android
 
+## Sample applications using the SDK
+
+If you want to see how easy integrating the Jitsi Meet SDK into a native application is, take a look at the
+[sample applications repository](https://github.com/jitsi/jitsi-meet-sdk-samples).
+
 ## Build your own, or use a pre-build SDK artifacts/binaries
 
 Jitsi conveniently provides a pre-build SDK artifacts/binaries in its Maven repository. When you do not require any
