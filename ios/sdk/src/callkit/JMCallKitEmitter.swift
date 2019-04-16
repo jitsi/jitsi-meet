@@ -21,7 +21,6 @@ import Foundation
 internal final class JMCallKitEmitter: NSObject, CXProviderDelegate {
 
     private var listeners = Set<JMCallKitEventListenerWrapper>()
-    private var pendingMuteActions = Set<UUID>()
 
     internal override init() {}
 
@@ -57,17 +56,10 @@ internal final class JMCallKitEmitter: NSObject, CXProviderDelegate {
         }
     }
 
-    // MARK: - Add mute action
-
-    func addMuteAction(_ actionUUID: UUID) {
-        pendingMuteActions.insert(actionUUID)
-    }
-
     // MARK: - CXProviderDelegate
 
     func providerDidReset(_ provider: CXProvider) {
         listeners.forEach { $0.listener?.providerDidReset?() }
-        pendingMuteActions.removeAll()
     }
 
     func provider(_ provider: CXProvider, perform action: CXAnswerCallAction) {
@@ -87,17 +79,8 @@ internal final class JMCallKitEmitter: NSObject, CXProviderDelegate {
     }
 
     func provider(_ provider: CXProvider, perform action: CXSetMutedCallAction) {
-        let uuid = pendingMuteActions.remove(action.uuid)
-
-        // XXX avoid mute actions ping-pong: if the mute action was caused by
-        // the JS side (we requested a transaction) don't call the delegate
-        // method. If it was called by the provder itself (when the user presses
-        // the mute button in the CallKit view) then call the delegate method.
-        if (uuid == nil) {
-            listeners.forEach {
-                $0.listener?.performSetMutedCall?(UUID: action.callUUID,
-                                                isMuted: action.isMuted)
-            }
+        listeners.forEach {
+            $0.listener?.performSetMutedCall?(UUID: action.callUUID, isMuted: action.isMuted)
         }
 
         action.fulfill()
