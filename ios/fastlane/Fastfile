@@ -26,6 +26,7 @@ platform :ios do
     build_app(
         scheme: "jitsi-meet",
         include_bitcode: false,
+        include_symbols: true,
         export_xcargs: "-allowProvisioningUpdates"
     )
 
