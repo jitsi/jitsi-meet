@@ -21,7 +21,6 @@ export function maybeShowSuboptimalExperienceNotification(dispatch, t) {
             && !browser.isFirefox()
             && !browser.isNWJS()
             && !browser.isElectron()
-            && !(browser.isSafariWithVP8() && browser.usesPlanB())
 
             // Adding react native to the list of recommended browsers is not
             // necessary for now because the function won't be executed at all
