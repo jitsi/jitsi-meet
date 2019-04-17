@@ -12,6 +12,18 @@ const DEFAULT_STATE = {
     screenShares: []
 };
 
+const DEFAULT_STATE = {
+
+    /**
+     * The indicator which determines whether the video layout should display
+     * video thumbnails in a tiled layout.
+     *
+     * @public
+     * @type {boolean}
+     */
+    tileViewEnabled: false
+};
+
 const STORE_NAME = 'features/video-layout';
 
 PersistenceRegistry.register(STORE_NAME, {

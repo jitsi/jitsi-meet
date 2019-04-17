@@ -32,7 +32,6 @@ import {
 const EventEmitter = require('events');
 
 UI.messageHandler = messageHandler;
-import FollowMe from '../FollowMe';
 
 const eventEmitter = new EventEmitter();
 
@@ -40,8 +39,6 @@ UI.eventEmitter = eventEmitter;
 
 let etherpadManager;
 let sharedVideoManager;
-
-let followMeHandler;
 
 const JITSI_TRACK_ERROR_TO_MESSAGE_KEY_MAP = {
     microphone: {},
@@ -86,9 +83,6 @@ const UIListeners = new Map([
     ], [
         UIEvents.TOGGLE_FILMSTRIP,
         () => UI.toggleFilmstrip()
-    ], [
-        UIEvents.FOLLOW_ME_ENABLED,
-        enabled => followMeHandler && followMeHandler.enableFollowMe(enabled)
     ]
 ]);
 
@@ -193,12 +187,6 @@ UI.initConference = function() {
     if (displayName) {
         UI.changeDisplayName('localVideoContainer', displayName);
     }
-
-    // FollowMe attempts to copy certain aspects of the moderator's UI into the
-    // other participants' UI. Consequently, it needs (1) read and write access
-    // to the UI (depending on the moderator role of the local participant) and
-    // (2) APP.conference as means of communication between the participants.
-    followMeHandler = new FollowMe(APP.conference, UI);
 };
 
 /**

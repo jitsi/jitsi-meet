@@ -5,7 +5,6 @@ import { getToolboxHeight } from '../../../react/features/toolbox';
 
 import VideoLayout from '../videolayout/VideoLayout';
 import LargeContainer from '../videolayout/LargeContainer';
-import UIEvents from '../../../service/UI/UIEvents';
 import Filmstrip from '../videolayout/Filmstrip';
 
 /**
@@ -249,9 +248,6 @@ export default class EtherpadManager {
 
         VideoLayout.showLargeVideoContainer(
             ETHERPAD_CONTAINER_TYPE, !isVisible);
-
-        this.eventEmitter
-            .emit(UIEvents.TOGGLED_SHARED_DOCUMENT, !isVisible);
 
         APP.store.dispatch(setDocumentEditingState(!isVisible));
     }
