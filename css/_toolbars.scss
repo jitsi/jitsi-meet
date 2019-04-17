@@ -48,6 +48,7 @@
         height: 160px;
         width: 100%;
         bottom: -160px;
+        pointer-events: none;
         position: absolute;
         z-index: $toolbarBackgroundZ;
     }
