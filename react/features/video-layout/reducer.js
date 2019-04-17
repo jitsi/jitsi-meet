@@ -9,10 +9,7 @@ import {
 } from './actionTypes';
 
 const DEFAULT_STATE = {
-    screenShares: []
-};
-
-const DEFAULT_STATE = {
+    screenShares: [],
 
     /**
      * The indicator which determines whether the video layout should display
