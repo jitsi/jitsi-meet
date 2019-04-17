@@ -27,7 +27,7 @@ import Foundation
 
     // MARK: - CallKit proxy
 
-    private static let provider: CXProvider = {
+    private static var provider: CXProvider = {
         let configuration = CXProviderConfiguration(localizedName: "")
         return CXProvider(configuration: configuration)
     }()
@@ -52,9 +52,13 @@ import Foundation
     /// Defaults to enabled, set to false when you don't want to use CallKit.
     @objc public static var enabled: Bool = true {
         didSet {
-            if enabled == false {
+            provider.invalidate()
+            if enabled {
+                guard isProviderConfigured() else  { return; }
+                provider = CXProvider(configuration: providerConfiguration!)
+                provider.setDelegate(emitter, queue: nil)
+            } else {
                 provider.setDelegate(nil, queue: nil)
-                provider.invalidate()
             }
         }
     }
