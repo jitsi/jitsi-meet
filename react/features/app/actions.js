@@ -15,6 +15,7 @@ import { loadConfig } from '../base/lib-jitsi-meet';
 import { parseURIString, toURLString } from '../base/util';
 import { setFatalError } from '../overlay';
 
+import { APP_NAVIGATE } from './actionTypes';
 import { getDefaultURL } from './functions';
 
 const logger = require('jitsi-meet-logger').getLogger(__filename);
@@ -55,6 +56,9 @@ export function appNavigate(uri: ?string) {
         }
 
         location.protocol || (location.protocol = 'https:');
+
+        dispatch(_navigate(location));
+
         const { contextRoot, host, room } = location;
         const locationURL = new URL(location.toString());
 
@@ -158,5 +162,21 @@ export function reloadWithStoredParams() {
             // reload in addition to replace.
             windowLocation.reload();
         }
+    };
+}
+
+/**
+ * Constructs a Redux action to signal that the app is about to navigate to a new location.
+ *
+ * @param {Object} location - The location we're about to navigate.
+ * @returns {{
+ *      location: Object,
+ *      type: APP_NAVIGATE
+ * }}
+ */
+function _navigate(location) {
+    return {
+        location,
+        type: APP_NAVIGATE
     };
 }
