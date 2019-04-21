@@ -1,10 +1,10 @@
 // @flow
 
 import React, { Component } from 'react';
-import { connect } from 'react-redux';
 
 import { Audio } from '../../media';
 import type { AudioElement } from '../../media';
+import { connect } from '../../redux';
 
 import { _addAudioElement, _removeAudioElement } from '../actions';
 import type { Sound } from '../reducer';
@@ -153,5 +153,4 @@ export function _mapDispatchToProps(dispatch: Function) {
     };
 }
 
-// $FlowExpectedError
 export default connect(_mapStateToProps, _mapDispatchToProps)(SoundCollection);

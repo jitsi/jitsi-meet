@@ -8,10 +8,15 @@ import { ColorPalette } from '../../../styles';
 type Props = {
 
     /**
+     * The color of the spinner.
+     */
+    color: ?string,
+
+    /**
      * Prop to set the size of the indicator. This is the same as the
      * prop of the native component.
      */
-    size: 'large' | 'medium' | 'small'
+    size: 'large' | 'small'
 };
 
 /**
@@ -27,6 +32,7 @@ export default class LoadingIndicator extends Component<Props> {
      * @returns {ReactElement}
      */
     render() {
+        const { color = ColorPalette.white } = this.props;
         let { size = 'large' } = this.props;
 
         if (size === 'medium') {
@@ -35,15 +41,14 @@ export default class LoadingIndicator extends Component<Props> {
 
         const props = {
             animating: true,
-            color: ColorPalette.white,
+            color,
             ...this.props,
             size
         };
 
-        return (// $FlowFixMe
+        return (
             <ActivityIndicator
                 animating = { true }
-                color = { ColorPalette.white }
                 { ...props }
                 size = { size } />
         );

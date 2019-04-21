@@ -1,9 +1,9 @@
 // @flow
 
 import React, { Component, Fragment } from 'react';
-import { connect } from 'react-redux';
 
 import { getLocalParticipant } from '../../participants';
+import { connect } from '../../redux';
 
 // FIXME this imports feature to 'base'
 import { statsEmitter } from '../../../connection-indicator';
@@ -215,5 +215,4 @@ function _mapStateToProps(state) {
     };
 }
 
-// $FlowExpectedError
 export default connect(_mapStateToProps)(TestConnectionInfo);

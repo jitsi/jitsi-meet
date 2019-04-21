@@ -1,3 +1,10 @@
+// @flow
+
+/**
+ * The standard time when auto-disappearing notifications should disappear.
+ */
+export const NOTIFICATION_TIMEOUT = 2500;
+
 /**
  * The set of possible notification types.
  *

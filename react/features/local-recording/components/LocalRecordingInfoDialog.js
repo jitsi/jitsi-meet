@@ -2,7 +2,6 @@
 
 import moment from 'moment';
 import React, { Component } from 'react';
-import { connect } from 'react-redux';
 import type { Dispatch } from 'redux';
 
 import { Dialog } from '../../base/dialog';
@@ -11,6 +10,7 @@ import {
     PARTICIPANT_ROLE,
     getLocalParticipant
 } from '../../base/participants';
+import { connect } from '../../base/redux';
 
 import { statsUpdate } from '../actions';
 import { recordingController } from '../controller';

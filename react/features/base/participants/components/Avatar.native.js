@@ -2,7 +2,10 @@
 
 import React, { Component, Fragment, PureComponent } from 'react';
 import { Dimensions, Image, Platform, View } from 'react-native';
-import FastImage from 'react-native-fast-image';
+import FastImage, {
+    type CacheControls,
+    type Priorities
+} from 'react-native-fast-image';
 
 import { ColorPalette } from '../../styles';
 
@@ -63,7 +66,12 @@ type State = {
     /**
      * Source for the non-local avatar.
      */
-    source: { uri: ?string }
+    source: {
+        uri?: string,
+        headers?: Object,
+        priority?: Priorities,
+        cache?: CacheControls,
+    }
 };
 
 /**
@@ -261,7 +269,7 @@ class AvatarContent extends Component<Props, State> {
             }
         }
 
-        return (// $FlowFixMe
+        return (
             <FastImage
                 onError = { this._onAvatarLoadError }
                 onLoadEnd = { this._onAvatarLoaded }

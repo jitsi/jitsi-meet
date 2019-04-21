@@ -3,7 +3,6 @@
 import Avatar from '@atlaskit/avatar';
 import InlineMessage from '@atlaskit/inline-message';
 import React from 'react';
-import { connect } from 'react-redux';
 import type { Dispatch } from 'redux';
 
 import { createInviteDialogEvent, sendAnalytics } from '../../../../analytics';
@@ -11,6 +10,7 @@ import { Dialog, hideDialog } from '../../../../base/dialog';
 import { translate, translateToHTML } from '../../../../base/i18n';
 import { getLocalParticipant } from '../../../../base/participants';
 import { MultiSelectAutocomplete } from '../../../../base/react';
+import { connect } from '../../../../base/redux';
 
 import AbstractAddPeopleDialog, {
     type Props as AbstractProps,

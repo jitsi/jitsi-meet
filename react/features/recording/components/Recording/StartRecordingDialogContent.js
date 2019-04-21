@@ -1,7 +1,6 @@
 // @flow
 
 import React, { Component } from 'react';
-import { connect } from 'react-redux';
 
 import {
     createRecordingDialogEvent,
@@ -19,6 +18,7 @@ import {
     Switch,
     Text
 } from '../../../base/react';
+import { connect } from '../../../base/redux';
 import { ColorPalette, StyleType } from '../../../base/styles';
 import { authorizeDropbox, updateDropboxToken } from '../../../dropbox';
 
@@ -333,7 +333,7 @@ class StartRecordingDialogContent extends Component<Props> {
         return (
             <LoadingIndicator
                 isCompleting = { false }
-                size = 'medium' />
+                size = 'small' />
         );
     }
 

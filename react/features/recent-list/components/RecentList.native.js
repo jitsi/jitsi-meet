@@ -1,13 +1,12 @@
 // @flow
 
 import React from 'react';
-import { connect } from 'react-redux';
 import type { Dispatch } from 'redux';
 
 import { getDefaultURL } from '../../app';
 import { translate } from '../../base/i18n';
-import { NavigateSectionList } from '../../base/react';
-import type { Section } from '../../base/react';
+import { NavigateSectionList, type Section } from '../../base/react';
+import { connect } from '../../base/redux';
 
 import { deleteRecentListEntry } from '../actions';
 import { isRecentListEnabled, toDisplayableList } from '../functions';

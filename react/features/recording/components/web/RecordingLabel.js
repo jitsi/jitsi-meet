@@ -1,11 +1,11 @@
 // @flow
 
 import React from 'react';
-import { connect } from 'react-redux';
 
 import { CircularLabel } from '../../../base/label';
 import { JitsiRecordingConstants } from '../../../base/lib-jitsi-meet';
 import { translate } from '../../../base/i18n';
+import { connect } from '../../../base/redux';
 
 import AbstractRecordingLabel, {
     _mapStateToProps

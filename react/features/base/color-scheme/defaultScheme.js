@@ -29,6 +29,10 @@ export default {
     'LargeVideo': {
         background: ColorPalette.black
     },
+    'LoadConfigOverlay': {
+        background: ColorPalette.black,
+        text: ColorPalette.white
+    },
     'Thumbnail': {
         activeParticipantHighlight: ColorPalette.blue,
         activeParticipantTint: ColorPalette.black,

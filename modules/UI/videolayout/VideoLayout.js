@@ -660,31 +660,15 @@ const VideoLayout = {
     /**
      * Display name changed.
      */
-    onDisplayNameChanged(id, displayName, status) {
+    onDisplayNameChanged(id) {
         if (id === 'localVideoContainer'
             || APP.conference.isLocalId(id)) {
-            localVideoThumbnail.setDisplayName(displayName);
+            localVideoThumbnail.updateDisplayName();
         } else {
             const remoteVideo = remoteVideos[id];
 
             if (remoteVideo) {
-                remoteVideo.setDisplayName(displayName, status);
-            }
-        }
-    },
-
-    /**
-     * Sets the "raised hand" status for a participant identified by 'id'.
-     */
-    setRaisedHandStatus(id, raisedHandStatus) {
-        const video
-            = APP.conference.isLocalId(id)
-                ? localVideoThumbnail : remoteVideos[id];
-
-        if (video) {
-            video.showRaisedHandIndicator(raisedHandStatus);
-            if (raisedHandStatus) {
-                video.showDominantSpeakerIndicator(false);
+                remoteVideo.updateDisplayName();
             }
         }
     },

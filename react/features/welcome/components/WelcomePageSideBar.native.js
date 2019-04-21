@@ -2,7 +2,6 @@
 
 import React, { Component } from 'react';
 import { SafeAreaView, ScrollView, Text } from 'react-native';
-import { connect } from 'react-redux';
 
 import {
     Avatar,
@@ -12,8 +11,9 @@ import {
 } from '../../base/participants';
 import {
     Header,
-    SideBar
+    SlidingView
 } from '../../base/react';
+import { connect } from '../../base/redux';
 import { setSettingsViewVisible } from '../../settings';
 
 import { setSideBarVisible } from '../actions';
@@ -82,9 +82,11 @@ class WelcomePageSideBar extends Component<Props> {
      */
     render() {
         return (
-            <SideBar
+            <SlidingView
                 onHide = { this._onHideSideBar }
-                show = { this.props._visible }>
+                position = 'left'
+                show = { this.props._visible }
+                style = { styles.sideBar } >
                 <Header style = { styles.sideBarHeader }>
                     <Avatar
                         size = { SIDEBAR_AVATAR_SIZE }
@@ -115,7 +117,7 @@ class WelcomePageSideBar extends Component<Props> {
                             url = { SEND_FEEDBACK_URL } /> */}
                     </ScrollView>
                 </SafeAreaView>
-            </SideBar>
+            </SlidingView>
         );
     }
 
@@ -168,5 +170,4 @@ function _mapStateToProps(state: Object) {
     };
 }
 
-// $FlowExpectedError
 export default connect(_mapStateToProps)(WelcomePageSideBar);

@@ -1,7 +1,8 @@
 // @flow
 
 import React, { Component } from 'react';
-import { connect } from 'react-redux';
+
+import { connect } from '../../../base/redux';
 
 import CalleeInfo from './CalleeInfo';
 
@@ -61,5 +62,4 @@ function _mapStateToProps(state: Object): Object {
     };
 }
 
-// $FlowExpectedError
 export default connect(_mapStateToProps)(CalleeInfoContainer);

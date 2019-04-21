@@ -1,9 +1,6 @@
 // @flow
 
-import {
-    ColorPalette,
-    createStyleSheet
-} from '../../../base/styles';
+import { ColorPalette } from '../../../base/styles';
 
 /**
  * The styles of the feature chat.
@@ -13,13 +10,26 @@ import {
  * need to extract the brand colors and sizes into a branding feature (planned
  * for the future).
  */
-export default createStyleSheet({
+export default {
 
     /**
      * Wrapper View for the avatar.
      */
     avatarWrapper: {
         marginRight: 8
+    },
+
+    /**
+     * Background of the chat screen.
+     */
+    backdrop: {
+        backgroundColor: ColorPalette.white,
+        flex: 1
+    },
+
+    chatContainer: {
+        flex: 1,
+        flexDirection: 'column'
     },
 
     /**
@@ -59,16 +69,6 @@ export default createStyleSheet({
     },
 
     /**
-     * Background of the chat screen. Currently it's set to a transparent value
-     * as the idea is that the participant would still want to see at least a
-     * part of the video when he/she is in the chat window.
-     */
-    modalBackdrop: {
-        backgroundColor: 'rgba(127, 127, 127, 0.8)',
-        flex: 1
-    },
-
-    /**
      * Style modifier for the {@code detailsWrapper} for own messages.
      */
     ownMessageDetailsWrapper: {
@@ -82,17 +82,6 @@ export default createStyleSheet({
         backgroundColor: 'rgb(210, 231, 249)',
         borderTopLeftRadius: 8,
         borderTopRightRadius: 0
-    },
-
-    solidBGTimeText: {
-        color: 'rgb(164, 184, 209)'
-    },
-
-    /**
-     * Style modifier for the chat window when we're in audio only mode.
-     */
-    solidModalBackdrop: {
-        backgroundColor: ColorPalette.white
     },
 
     /**
@@ -118,7 +107,7 @@ export default createStyleSheet({
      * Text node for the timestamp.
      */
     timeText: {
-        color: ColorPalette.white,
+        color: 'rgb(164, 184, 209)',
         fontSize: 13
     }
-});
+};

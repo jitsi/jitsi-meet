@@ -1,7 +1,6 @@
 // @flow
 
 import React, { Component } from 'react';
-import { connect } from 'react-redux';
 
 import { MEDIA_TYPE } from '../../../base/media';
 import {
@@ -12,6 +11,7 @@ import {
     getParticipantPresenceStatus
 } from '../../../base/participants';
 import { Container, Text } from '../../../base/react';
+import { connect } from '../../../base/redux';
 import { isLocalTrackMuted } from '../../../base/tracks';
 import { CALLING, PresenceLabel } from '../../../presence-status';
 
@@ -158,5 +158,4 @@ function _mapStateToProps(state) {
     };
 }
 
-// $FlowExpectedError
 export default connect(_mapStateToProps)(CalleeInfo);

@@ -4,9 +4,9 @@ import _ from 'lodash';
 import React, { Component } from 'react';
 import { SafeAreaView, Text, View } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
-import { connect } from 'react-redux';
 
 import { getConferenceName } from '../../../base/conference';
+import { connect } from '../../../base/redux';
 import { PictureInPictureButton } from '../../../mobile/picture-in-picture';
 import { isToolboxVisible } from '../../../toolbox';
 
@@ -87,5 +87,4 @@ function _mapStateToProps(state) {
     };
 }
 
-// $FlowExpectedError
 export default connect(_mapStateToProps)(NavigationBar);

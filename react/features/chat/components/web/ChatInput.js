@@ -1,9 +1,10 @@
 // @flow
 
 import React, { Component } from 'react';
-import { connect } from 'react-redux';
 import Emoji from 'react-emoji-render';
 import type { Dispatch } from 'redux';
+
+import { connect } from '../../../base/redux';
 
 import { sendMessage } from '../../actions';
 
@@ -232,5 +233,4 @@ class ChatInput extends Component<Props, State> {
     }
 }
 
-// $FlowExpectedError
 export default connect()(ChatInput);

@@ -1,8 +1,7 @@
 // @flow
 
-import { connect } from 'react-redux';
-
 import { getLocalParticipant } from '../../../base/participants';
+import { connect } from '../../../base/redux';
 import {
     AbstractButton,
     type AbstractButtonProps
@@ -126,5 +125,4 @@ function _mapStateToProps(state) {
     };
 }
 
-// $FlowExpectedError
 export default connect(_mapStateToProps, _mapDispatchToProps)(ChatButton);

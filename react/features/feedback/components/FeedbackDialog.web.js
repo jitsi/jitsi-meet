@@ -4,7 +4,7 @@ import { FieldTextAreaStateless } from '@atlaskit/field-text-area';
 import StarIcon from '@atlaskit/icon/glyph/star';
 import StarFilledIcon from '@atlaskit/icon/glyph/star-filled';
 import React, { Component } from 'react';
-import { connect } from 'react-redux';
+import { connect } from '../../base/redux';
 import type { Dispatch } from 'redux';
 
 import {

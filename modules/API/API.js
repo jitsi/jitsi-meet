@@ -13,6 +13,9 @@ import { invite } from '../../react/features/invite';
 import { getJitsiMeetTransport } from '../transport';
 
 import { API_ID } from './constants';
+import {
+    processExternalDeviceRequest
+} from '../../react/features/device-selection/functions';
 
 const logger = require('jitsi-meet-logger').getLogger(__filename);
 
@@ -125,6 +128,12 @@ function initCommands() {
         return false;
     });
     transport.on('request', (request, callback) => {
+        const { dispatch, getState } = APP.store;
+
+        if (processExternalDeviceRequest(dispatch, getState, request, callback)) {
+            return true;
+        }
+
         const { name } = request;
 
         switch (name) {
@@ -383,6 +392,19 @@ class API {
             avatarURL,
             id
         });
+    }
+
+    /**
+     * Notify external application (if API is enabled) that the device list has
+     * changed.
+     *
+     * @param {Object} devices - The new device list.
+     * @returns {void}
+     */
+    notifyDeviceListChanged(devices: Object) {
+        this._sendEvent({
+            name: 'device-list-changed',
+            devices });
     }
 
     /**

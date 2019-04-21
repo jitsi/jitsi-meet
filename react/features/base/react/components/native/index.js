@@ -2,6 +2,7 @@
 
 export { default as AvatarListItem } from './AvatarListItem';
 export { default as BackButton } from './BackButton';
+export { default as BaseIndicator } from './BaseIndicator';
 export { default as Button } from './Button';
 export { default as Container } from './Container';
 export { default as ForwardButton } from './ForwardButton';
@@ -20,7 +21,7 @@ export { default as NavigateSectionListSectionHeader }
 export { default as PagedList } from './PagedList';
 export { default as Pressable } from './Pressable';
 export { default as SectionList } from './SectionList';
-export { default as SideBar } from './SideBar';
+export { default as SlidingView } from './SlidingView';
 export { default as Switch } from './Switch';
 export { default as Text } from './Text';
 export { default as TintedView } from './TintedView';

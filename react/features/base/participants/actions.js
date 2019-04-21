@@ -3,7 +3,7 @@
 import throttle from 'lodash/throttle';
 
 import { set } from '../redux';
-import { showNotification } from '../../notifications';
+import { NOTIFICATION_TIMEOUT, showNotification } from '../../notifications';
 
 import {
     DOMINANT_SPEAKER_CHANGED,
@@ -452,7 +452,7 @@ const _throttledNotifyParticipantConnected = throttle(dispatch => {
 
     if (notificationProps) {
         dispatch(
-            showNotification(notificationProps, 2500));
+            showNotification(notificationProps, NOTIFICATION_TIMEOUT));
     }
 
     joinedParticipantsNames = [];

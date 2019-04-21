@@ -156,14 +156,6 @@ import Foundation
             completion: @escaping (Error?) -> Swift.Void) {
         guard enabled else { return }
 
-        // XXX keep track of muted actions to avoid "ping-pong"ing. See
-        // JMCallKitEmitter for details on the CXSetMutedCallAction handling.
-        for action in transaction.actions {
-            if (action as? CXSetMutedCallAction) != nil {
-                emitter.addMuteAction(action.uuid)
-            }
-        }
-
         callController.request(transaction, completion: completion)
     }
 
@@ -191,4 +183,3 @@ import Foundation
         return update
     }
 }
-

@@ -7,7 +7,7 @@ import { Component } from 'react';
  * playback.
  */
 export type AudioElement = {
-    currentTime?: number,
+    currentTime: number,
     pause: () => void,
     play: () => void,
     setSinkId?: string => void,
