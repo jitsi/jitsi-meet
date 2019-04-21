@@ -242,6 +242,7 @@
         "less": "显示更少",
         "more": "显示更多",
         "address": "地址",
+        "peer_to_peer": " (p2p)",
         "remoteport_plural": "远程端口：",
         "remoteport": "远程端口：",
         "localport_plural": "本地端口：",

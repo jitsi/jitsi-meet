@@ -103,8 +103,9 @@ function _onFollowMeCommand(attributes = {}, id, store) {
 
     // XMPP will translate all booleans to strings, so explicitly check against
     // the string form of the boolean {@code true}.
-    store.dispatch(setFilmstripVisible(attributes.filmstripVisible === 'true'));
-    store.dispatch(setTileView(attributes.tileViewEnabled === 'true'));
+    
+    // store.dispatch(setFilmstripVisible(attributes.filmstripVisible === 'true'));
+    // store.dispatch(setTileView(attributes.tileViewEnabled === 'true'));
 
     // For now gate etherpad checks behind a web-app check to be extra safe
     // against calling a web-app global.

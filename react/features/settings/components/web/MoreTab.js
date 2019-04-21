@@ -220,7 +220,7 @@ class MoreTab extends AbstractDialogTab<Props, State> {
                         ({ target: { checked } }) =>
                             super._onChange({ startVideoMuted: checked })
                     } />
-                <Checkbox
+                {/* <Checkbox
                     isChecked = { followMeEnabled }
                     label = { t('settings.followMe') }
                     name = 'follow-me'
@@ -228,7 +228,7 @@ class MoreTab extends AbstractDialogTab<Props, State> {
                     onChange = {
                         ({ target: { checked } }) =>
                             super._onChange({ followMeEnabled: checked })
-                    } />
+                    } /> */}
             </div>
         );
     }
