@@ -2,7 +2,6 @@
 
 import _ from 'lodash';
 import React, { Component } from 'react';
-import { connect } from 'react-redux';
 import type { Dispatch } from 'redux';
 
 import {
@@ -10,6 +9,7 @@ import {
     createToolbarEvent,
     sendAnalytics
 } from '../../../analytics';
+import { connect } from '../../../base/redux';
 import { dockToolbox } from '../../../toolbox';
 
 import { setFilmstripHovered, setFilmstripVisible } from '../../actions';
@@ -319,5 +319,4 @@ function _mapStateToProps(state) {
     };
 }
 
-// $FlowExpectedError
 export default connect(_mapStateToProps)(Filmstrip);

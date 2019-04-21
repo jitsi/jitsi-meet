@@ -17,6 +17,8 @@
 package org.jitsi.meet.sdk;
 
 import android.os.Bundle;
+import android.os.Parcel;
+import android.os.Parcelable;
 
 import java.net.URL;
 
@@ -29,7 +31,7 @@ import java.net.URL;
  * The resulting {@link JitsiMeetConferenceOptions} object is immutable and represents how the
  * conference will be joined.
  */
-public class JitsiMeetConferenceOptions {
+public class JitsiMeetConferenceOptions implements Parcelable {
     /**
      * Server where the conference should take place.
      */
@@ -197,6 +199,20 @@ public class JitsiMeetConferenceOptions {
     private JitsiMeetConferenceOptions() {
     }
 
+    private JitsiMeetConferenceOptions(Parcel in) {
+        room = in.readString();
+        token = in.readString();
+        colorScheme = in.readBundle();
+        byte tmpAudioMuted = in.readByte();
+        audioMuted = tmpAudioMuted == 0 ? null : tmpAudioMuted == 1;
+        byte tmpAudioOnly = in.readByte();
+        audioOnly = tmpAudioOnly == 0 ? null : tmpAudioOnly == 1;
+        byte tmpVideoMuted = in.readByte();
+        videoMuted = tmpVideoMuted == 0 ? null : tmpVideoMuted == 1;
+        byte tmpWelcomePageEnabled = in.readByte();
+        welcomePageEnabled = tmpWelcomePageEnabled == 0 ? null : tmpWelcomePageEnabled == 1;
+    }
+
     Bundle asProps() {
         Bundle props = new Bundle();
 
@@ -245,5 +261,36 @@ public class JitsiMeetConferenceOptions {
         props.putBundle("url", urlProps);
 
         return props;
+    }
+
+    // Parcelable interface
+    //
+
+    public static final Creator<JitsiMeetConferenceOptions> CREATOR = new Creator<JitsiMeetConferenceOptions>() {
+        @Override
+        public JitsiMeetConferenceOptions createFromParcel(Parcel in) {
+            return new JitsiMeetConferenceOptions(in);
+        }
+
+        @Override
+        public JitsiMeetConferenceOptions[] newArray(int size) {
+            return new JitsiMeetConferenceOptions[size];
+        }
+    };
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(room);
+        dest.writeString(token);
+        dest.writeBundle(colorScheme);
+        dest.writeByte((byte) (audioMuted == null ? 0 : audioMuted ? 1 : 2));
+        dest.writeByte((byte) (audioOnly == null ? 0 : audioOnly ? 1 : 2));
+        dest.writeByte((byte) (videoMuted == null ? 0 : videoMuted ? 1 : 2));
+        dest.writeByte((byte) (welcomePageEnabled == null ? 0 : welcomePageEnabled ? 1 : 2));
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
     }
 }

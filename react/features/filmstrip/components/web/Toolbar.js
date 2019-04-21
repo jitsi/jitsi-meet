@@ -1,8 +1,8 @@
 // @flow
 
 import React, { Component } from 'react';
-import { connect } from 'react-redux';
 
+import { connect } from '../../../base/redux';
 import { SettingsButton } from '../../../settings';
 import {
     AudioMuteButton,
@@ -90,5 +90,4 @@ function _mapStateToProps(state): Object { // eslint-disable-line no-unused-vars
     };
 }
 
-// $FlowExpectedError
 export default connect(_mapStateToProps)(Toolbar);

@@ -63,13 +63,10 @@ export function getLocalizedDurationFormatter(duration: number) {
     // showing the hour and we want to include the hour if the conference is
     // more than an hour long
 
-    // $FlowFixMe
     if (moment.duration(duration).format('h') !== '0') {
-        // $FlowFixMe
         return moment.duration(duration).format('h:mm:ss');
     }
 
-    // $FlowFixMe
     return moment.duration(duration).format('mm:ss', { trim: false });
 }
 
@@ -97,8 +94,6 @@ function _getSupportedLocale() {
                 // FIXME The flow-type definition of moment is v2.3 while our
                 // package.json states v2.19 so maybe locales on moment was
                 // introduced in between?
-                //
-                // $FlowFixMe
                 = moment.locales().find(lang => currentLocaleRegexp.exec(lang));
         }
     }

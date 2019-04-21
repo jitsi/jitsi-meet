@@ -2,10 +2,10 @@
 
 import React, { Component } from 'react';
 import { View } from 'react-native';
-import { connect } from 'react-redux';
 
 import { Container } from '../../../base/react';
 import { ColorSchemeRegistry } from '../../../base/color-scheme';
+import { connect } from '../../../base/redux';
 import { StyleType } from '../../../base/styles';
 import { ChatButton } from '../../../chat';
 
@@ -279,5 +279,4 @@ function _mapStateToProps(state: Object): Object {
     };
 }
 
-// $FlowExpectedError
 export default connect(_mapStateToProps)(Toolbox);

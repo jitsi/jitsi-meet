@@ -1,7 +1,8 @@
 /* @flow */
 
 import React from 'react';
-import { connect } from 'react-redux';
+
+import { connect } from '../../../redux';
 
 import AbstractVideoTrack from '../AbstractVideoTrack';
 import type { Props as AbstractVideoTrackProps } from '../AbstractVideoTrack';
@@ -63,5 +64,4 @@ class VideoTrack extends AbstractVideoTrack<Props> {
     _onVideoPlaying: () => void;
 }
 
-// $FlowExpectedError
 export default connect()(VideoTrack);

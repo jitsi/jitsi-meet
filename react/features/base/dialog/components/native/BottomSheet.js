@@ -2,10 +2,10 @@
 
 import React, { Component, type Node } from 'react';
 import { TouchableWithoutFeedback, View } from 'react-native';
-import { connect } from 'react-redux';
 
 import { ColorSchemeRegistry } from '../../../color-scheme';
 import { Modal } from '../../../react';
+import { connect } from '../../../redux';
 import { StyleType } from '../../../styles';
 
 import { bottomSheetStyles as styles } from './styles';
@@ -107,5 +107,4 @@ function _mapStateToProps(state) {
     };
 }
 
-// $FlowExpectedError
 export default connect(_mapStateToProps)(BottomSheet);

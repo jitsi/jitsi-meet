@@ -42,7 +42,7 @@
     flex: 1;
     font-size: 10pt;
     line-height: 20px;
-    margin-top: 15px;
+    margin-top: $desktopAppDragBarHeight + 5px;
     overflow: auto;
     padding: 5px;
     text-align: left;
@@ -104,7 +104,7 @@
     position: absolute;
     right: 5px;
     text-align: center;
-    top: 5px;
+    top: $desktopAppDragBarHeight;
     width: 10px;
     z-index: 1;
 }
@@ -120,7 +120,6 @@
 
 .usrmsg-form {
     flex: 1;
-    margin-left: 5px;
 }
 
 #usermsg {
@@ -131,7 +130,7 @@
     color: white;
     font-size: 10pt;
     line-height: 30px;
-    padding: 5px 5px 5px 0px;
+    padding: 5px;
     max-height:150px;
     min-height:35px;
     overflow-y: auto;
@@ -178,7 +177,10 @@
 }
 
 .chatArrow {
-    height: 15px;
+    border-color:
+        transparent $newToolbarBackgroundColor transparent transparent;
+    border-style: solid;
+    border-width: 0 10px 10px 0;
     left: -10px;
     position: absolute;
 }
@@ -219,8 +221,6 @@
 
 #smileys {
     font-size: 20pt;
-    display: inline-block;
-    height: 26px;
     margin: auto;
     cursor: pointer;
 }
@@ -232,18 +232,14 @@
 
 #smileysarea {
     background-color: $newToolbarBackgroundColor;
-    border: 0px none;
     display: flex;
-    height: 70px;
     max-height: 150px;
     min-height: 35px;
-    min-width: 31px;
-    padding: 0px;
     overflow: hidden;
-    width: 17%;
 }
 
 .smiley-input {
+    display: flex;
     position: relative;
 }
 

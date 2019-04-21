@@ -48,16 +48,16 @@ class ReactInstanceManagerHolder {
             ReactApplicationContext reactContext) {
         List<NativeModule> nativeModules
             = new ArrayList<>(Arrays.<NativeModule>asList(
+                new AmplitudeModule(reactContext),
                 new AndroidSettingsModule(reactContext),
                 new AppInfoModule(reactContext),
                 new AudioModeModule(reactContext),
+                new DropboxModule(reactContext),
                 new ExternalAPIModule(reactContext),
                 new LocaleDetector(reactContext),
                 new PictureInPictureModule(reactContext),
                 new ProximityModule(reactContext),
                 new WiFiStatsModule(reactContext),
-                new org.jitsi.meet.sdk.analytics.AmplitudeModule(reactContext),
-                new org.jitsi.meet.sdk.dropbox.Dropbox(reactContext),
                 new org.jitsi.meet.sdk.net.NAT64AddrInfoModule(reactContext)));
 
         if (AudioModeModule.useConnectionService()) {

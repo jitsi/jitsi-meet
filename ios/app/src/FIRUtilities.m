@@ -21,8 +21,6 @@ NSString *const kGoogleServiceInfoFileName = @"GoogleService-Info";
 // Plist file type.
 NSString *const kGoogleServiceInfoFileType = @"plist";
 NSString *const kGoogleAppIDPlistKey = @"GOOGLE_APP_ID";
-// Dummy plist GOOGLE_APP_ID
-NSString *const kDummyGoogleAppID = @"1:123:ios:123abc";
 
 
 @implementation FIRUtilities
@@ -57,9 +55,6 @@ NSString *const kDummyGoogleAppID = @"1:123:ios:123abc";
   // Perform a very naive validation by checking to see if the plist has the dummy google app id
   NSString *googleAppID = plist[kGoogleAppIDPlistKey];
   if (!googleAppID.length) {
-    return NO;
-  }
-  if ([googleAppID isEqualToString:kDummyGoogleAppID]) {
     return NO;
   }
 

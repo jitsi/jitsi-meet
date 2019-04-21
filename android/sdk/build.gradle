@@ -167,7 +167,7 @@ publishing {
         aarArchive(MavenPublication) {
             groupId 'org.jitsi.react'
             artifactId 'jitsi-meet-sdk'
-            version project.sdkVersion
+            version System.env.OVERRIDE_SDK_VERSION ?: project.sdkVersion
 
             artifact("${project.buildDir}/outputs/aar/${project.name}-release.aar") {
                 extension "aar"
@@ -201,6 +201,14 @@ publishing {
 
     }
     repositories {
-        maven { url "file:${rootProject.projectDir}/../../jitsi-maven-repository/releases" }
+        maven {
+            url rootProject.ext.mavenRepo
+            if (!rootProject.ext.mavenRepo.startsWith("file")) {
+                credentials {
+                    username rootProject.ext.mavenUser
+                    password rootProject.ext.mavenPassword
+                }
+            }
+        }
     }
 }

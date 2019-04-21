@@ -1,9 +1,9 @@
 // @flow
 
 import React from 'react';
-import { connect } from 'react-redux';
 
 import { JitsiRecordingConstants } from '../../../base/lib-jitsi-meet';
+import { connect } from '../../../base/redux';
 
 import AbstractLabels, {
     _abstractMapStateToProps as _mapStateToProps,
@@ -105,5 +105,4 @@ class Labels extends AbstractLabels<Props, State> {
     _renderVideoQualityLabel: () => React$Element<*>;
 }
 
-// $FlowExpectedError
 export default connect(_mapStateToProps)(Labels);

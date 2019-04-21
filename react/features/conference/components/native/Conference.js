@@ -3,12 +3,12 @@
 import React from 'react';
 
 import { BackHandler, SafeAreaView, StatusBar, View } from 'react-native';
-import { connect as reactReduxConnect } from 'react-redux';
 
 import { appNavigate } from '../../../app';
 import { connect, disconnect } from '../../../base/connection';
 import { getParticipantCount } from '../../../base/participants';
 import { Container, LoadingIndicator, TintedView } from '../../../base/react';
+import { connect as reactReduxConnect } from '../../../base/redux';
 import {
     isNarrowAspectRatio,
     makeAspectRatioAware
@@ -17,6 +17,7 @@ import { TestConnectionInfo } from '../../../base/testing';
 import { createDesiredLocalTracks } from '../../../base/tracks';
 import { ConferenceNotification } from '../../../calendar-sync';
 import { Chat } from '../../../chat';
+import { DisplayNameLabel } from '../../../display-name';
 import {
     FILMSTRIP_SIZE,
     Filmstrip,
@@ -32,7 +33,6 @@ import {
     AbstractConference,
     abstractMapStateToProps
 } from '../AbstractConference';
-import DisplayNameLabel from './DisplayNameLabel';
 import Labels from './Labels';
 import NavigationBar from './NavigationBar';
 import styles from './styles';
@@ -60,6 +60,11 @@ type Props = AbstractProps & {
      * @private
      */
     _filmstripVisible: boolean,
+
+    /**
+     * The ID of the participant currently on stage (if any)
+     */
+    _largeVideoParticipantId: string,
 
     /**
      * Current conference's full URL.
@@ -236,6 +241,7 @@ class Conference extends AbstractConference<Props, *> {
     render() {
         const {
             _connecting,
+            _largeVideoParticipantId,
             _reducedUI,
             _shouldDisplayTileView
         } = this.props;
@@ -282,7 +288,7 @@ class Conference extends AbstractConference<Props, *> {
 
                     <Captions onPress = { this._onClick } />
 
-                    <DisplayNameLabel />
+                    { _shouldDisplayTileView || <DisplayNameLabel participantId = { _largeVideoParticipantId } /> }
 
                     {/*
                       * The Toolbox is in a stacking layer bellow the Filmstrip.
@@ -498,6 +504,11 @@ function _mapStateToProps(state) {
         _filmstripVisible: isFilmstripVisible(state),
 
         /**
+         * The ID of the participant currently on stage.
+         */
+        _largeVideoParticipantId: state['features/large-video'].participantId,
+
+        /**
          * Current conference's full URL.
          *
          * @private
@@ -540,6 +551,5 @@ function _mapStateToProps(state) {
     };
 }
 
-// $FlowFixMe
 export default reactReduxConnect(_mapStateToProps, _mapDispatchToProps)(
     makeAspectRatioAware(Conference));

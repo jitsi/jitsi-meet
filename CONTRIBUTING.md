@@ -13,7 +13,7 @@ Found a bug and know how to fix it? Great! Please read on.
 ## Contributor License Agreement
 While the Jitsi projects are released under the
 [Apache License 2.0](https://github.com/jitsi/jitsi-meet/blob/master/LICENSE), the copyright
-holder and principal creator is [Atlassian](https://www.atlassian.com/). To
+holder and principal creator is [8x8](https://www.8x8.com/). To
 ensure that we can continue making these projects available under an Open Source license,
 we need you to sign our Apache-based contributor
 license agreement as either a [corporation](https://jitsi.org/ccla) or an

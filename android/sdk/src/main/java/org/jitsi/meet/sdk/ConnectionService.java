@@ -82,6 +82,13 @@ public class ConnectionService extends android.telecom.ConnectionService {
     }
 
     /**
+     * @return {@code true} if running a Samsung device.
+     */
+    static boolean isSamsungDevice() {
+        return android.os.Build.MANUFACTURER.toLowerCase().contains("samsung");
+    }
+
+    /**
      * Registers a start call promise.
      *
      * @param uuid - the call UUID to which the start call promise belongs to.
@@ -129,6 +136,14 @@ public class ConnectionService extends android.telecom.ConnectionService {
         ConnectionImpl connection = connections.get(callUUID);
 
         if (connection != null) {
+            if (isSamsungDevice()) {
+                // Required to release the audio focus correctly.
+                connection.setOnHold();
+                // Prevents from including in the native phone calls history
+                connection.setConnectionProperties(
+                    Connection.PROPERTY_SELF_MANAGED
+                        | Connection.PROPERTY_IS_EXTERNAL_CALL);
+            }
             // Note that the connection is not removed from the list here, but
             // in ConnectionImpl's state changed callback. It's a safer
             // approach, because in case the app would crash on the JavaScript
@@ -189,8 +204,11 @@ public class ConnectionService extends android.telecom.ConnectionService {
         connection.setConnectionProperties(Connection.PROPERTY_SELF_MANAGED);
         connection.setAddress(
             request.getAddress(),
-            TelecomManager.PRESENTATION_ALLOWED);
+            TelecomManager.PRESENTATION_UNKNOWN);
         connection.setExtras(request.getExtras());
+
+        connection.setAudioModeIsVoip(true);
+
         // NOTE there's a time gap between the placeCall and this callback when
         // things could get out of sync, but they are put back in sync once
         // the startCall Promise is resolved below. That's because on
@@ -426,7 +444,7 @@ public class ConnectionService extends android.telecom.ConnectionService {
         @Override
         public String toString() {
             return String.format(
-                    "ConnectionImpl[adress=%s, uuid=%s]@%d",
+                    "ConnectionImpl[address=%s, uuid=%s]@%d",
                     getAddress(), getCallUUID(), hashCode());
         }
     }

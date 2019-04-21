@@ -1,7 +1,7 @@
 // @flow
 
 import React, { Component } from 'react';
-import { connect } from 'react-redux';
+import { connect } from '../../base/redux';
 
 import { createDeepLinkingPageEvent, sendAnalytics } from '../../analytics';
 import { translate, translateToHTML } from '../../base/i18n';

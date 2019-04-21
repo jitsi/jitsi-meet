@@ -44,23 +44,23 @@
 
 #pragma mak - This class is a singleton
 
-+ (instancetype)sharedInstance;
++ (instancetype _Nonnull)sharedInstance;
 
 #pragma mark - Methods that the App delegate must call
 
 -             (BOOL)application:(UIApplication *_Nonnull)application
   didFinishLaunchingWithOptions:(NSDictionary *_Nonnull)launchOptions;
 
--    (BOOL)application:(UIApplication * _Nonnull)application
-  continueUserActivity:(NSUserActivity * _Nonnull)userActivity
-    restorationHandler:(void (^ _Nullable)(NSArray * _Nullable))restorationHandler;
+-    (BOOL)application:(UIApplication *_Nonnull)application
+  continueUserActivity:(NSUserActivity *_Nonnull)userActivity
+    restorationHandler:(void (^_Nullable)(NSArray<id<UIUserActivityRestoring>> *_Nonnull))restorationHandler;
 
-- (BOOL)application:(UIApplication *)app
-            openURL:(NSURL *)url
-            options:(NSDictionary<UIApplicationOpenURLOptionsKey,id> *)options;
+- (BOOL)application:(UIApplication *_Nonnull)app
+            openURL:(NSURL *_Nonnull)url
+            options:(NSDictionary<UIApplicationOpenURLOptionsKey,id> *_Nonnull)options;
 
 #pragma mark - Utility methods
 
-- (JitsiMeetConferenceOptions *)getInitialConferenceOptions;
+- (JitsiMeetConferenceOptions *_Nonnull)getInitialConferenceOptions;
 
 @end

@@ -3,10 +3,10 @@
 import React, { Component } from 'react';
 import { Image, Text, View } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
-import { connect } from 'react-redux';
 
 import { translate } from '../../../base/i18n';
 import { Avatar } from '../../../base/participants';
+import { connect } from '../../../base/redux';
 
 import AnswerButton from './AnswerButton';
 import DeclineButton from './DeclineButton';

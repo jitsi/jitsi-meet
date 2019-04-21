@@ -65,6 +65,9 @@ class AppInfoModule
         Map<String, Object> constants = new HashMap<>();
 
         constants.put(
+            "buildNumber",
+            packageInfo == null ? "" : String.valueOf(packageInfo.versionCode));
+        constants.put(
             "name",
             applicationInfo == null
                 ? ""

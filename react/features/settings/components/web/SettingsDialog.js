@@ -1,10 +1,10 @@
 // @flow
 
 import React, { Component } from 'react';
-import { connect } from 'react-redux';
 
 import { getAvailableDevices } from '../../../base/devices';
 import { DialogWithTabs, hideDialog } from '../../../base/dialog';
+import { connect } from '../../../base/redux';
 import { isCalendarEnabled } from '../../../calendar-sync';
 import {
     DeviceSelection,
@@ -198,5 +198,4 @@ function _mapStateToProps(state) {
     return { _tabs: tabs };
 }
 
-// $FlowExpectedError
 export default connect(_mapStateToProps)(SettingsDialog);

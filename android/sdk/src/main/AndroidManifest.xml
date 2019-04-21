@@ -27,7 +27,14 @@
         android:allowBackup="true"
         android:label="@string/app_name"
         android:supportsRtl="true">
-        <activity android:name=".JitsiMeetActivity"></activity>
+        <activity
+            android:name=".JitsiMeetActivity"
+            android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|screenSize|smallestScreenSize"
+            android:launchMode="singleTask"
+            android:resizeableActivity="true"
+            android:supportsPictureInPicture="true"
+            android:windowSoftInputMode="adjustResize">
+        </activity>
         <activity android:name="com.facebook.react.devsupport.DevSettingsActivity" />
 
         <service
