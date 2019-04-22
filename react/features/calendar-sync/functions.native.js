@@ -1,6 +1,6 @@
 // @flow
 
-import { NativeModules, Platform } from 'react-native';
+import { /* NativeModules, */ Platform } from 'react-native';
 import RNCalendarEvents from 'react-native-calendar-events';
 import type { Store } from 'redux';
 
@@ -60,9 +60,8 @@ export function addLinkToCalendarEntry(
  * otherwise, {@code false}.
  */
 export function isCalendarEnabled() {
-    const { calendarEnabled = true } = NativeModules.AppInfo;
-
-    return calendarEnabled;
+    // Calendar explicitly disabled for this release.
+    return false;
 }
 
 /**
