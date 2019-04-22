@@ -323,6 +323,8 @@
         "rejoinNow": "马上重新加入",
         "maxUsersLimitReachedTitle": "用户已达最大数",
         "maxUsersLimitReached": "用户已达最大数",
+        "dateLimitWillReachedTitle": "会议室即将到期",
+        "dateLimitWillReached": "本会议室即将在 __msg__ 到期，请您及时续费，谢谢合作！",
         "lockTitle": "锁定失败",
         "lockMessage": "锁定会议失败。",
         "warning": "警告",

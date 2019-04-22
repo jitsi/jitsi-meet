@@ -1746,6 +1746,13 @@ export default {
             (authEnabled, authLogin) =>
                 APP.store.dispatch(authStatusChanged(authEnabled, authLogin)));
 
+        room.on(
+            JitsiConferenceEvents.EXTENSION_MSG,
+            (extensionMsg) => {                
+                logger.log(`EXTENSION_MSG:`, extensionMsg);
+                APP.UI.notifyDateLimitWillReached(extensionMsg);
+            });
+
         room.on(JitsiConferenceEvents.PARTCIPANT_FEATURES_CHANGED,
             user => APP.UI.onUserFeaturesChanged(user));
         room.on(JitsiConferenceEvents.USER_JOINED, (id, user) => {

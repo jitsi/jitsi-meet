@@ -590,6 +590,19 @@ UI.notifyConnectionFailed = function(stropheErrorMsg) {
     });
 };
 
+/**
+ * Notify user that maximum users limit has been reached.
+ */
+UI.notifyDateLimitWillReached = function(dateStr) {
+    let descriptionArguments;
+    descriptionArguments = { msg: dateStr };
+    messageHandler.showError({
+        descriptionArguments,
+        hideErrorSupportLink: true,
+        descriptionKey: 'dialog.dateLimitWillReached',
+        titleKey: 'dialog.dateLimitWillReachedTitle'
+    });
+};
 
 /**
  * Notify user that maximum users limit has been reached.
