@@ -243,5 +243,10 @@ ColorSchemeRegistry.register('Dialog', {
 
     text: {
         ...brandedDialogText
+    },
+
+    topBorderContainer: {
+        borderTopColor: schemeColor('border'),
+        borderTopWidth: 1
     }
 });

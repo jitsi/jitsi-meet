@@ -28,10 +28,15 @@ class StartRecordingDialog extends AbstractStartRecordingDialog {
             isTokenValid,
             isValidating,
             selectedRecordingService,
+            sharingEnabled,
             spaceLeft,
             userName
         } = this.state;
-        const { _fileRecordingsServiceEnabled, _isDropboxEnabled } = this.props;
+        const {
+            _fileRecordingsServiceEnabled,
+            _fileRecordingsServiceSharingEnabled,
+            _isDropboxEnabled
+        } = this.props;
 
         // disable ok button id recording service is shown only, when
         // validating dropbox token, if that is not enabled we either always
@@ -46,13 +51,15 @@ class StartRecordingDialog extends AbstractStartRecordingDialog {
                 okDisabled = { isOkDisabled }
                 onSubmit = { this._onSubmit } >
                 <StartRecordingDialogContent
-                    fileRecordingsServiceEnabled
-                        = { _fileRecordingsServiceEnabled }
+                    fileRecordingsServiceEnabled = { _fileRecordingsServiceEnabled }
+                    fileRecordingsServiceSharingEnabled = { _fileRecordingsServiceSharingEnabled }
                     integrationsEnabled = { this._areIntegrationsEnabled() }
                     isTokenValid = { isTokenValid }
                     isValidating = { isValidating }
                     onChange = { this._onSelectedRecordingServiceChanged }
+                    onSharingSettingChanged = { this._onSharingSettingChanged }
                     selectedRecordingService = { selectedRecordingService }
+                    sharingSetting = { sharingEnabled }
                     spaceLeft = { spaceLeft }
                     userName = { userName } />
             </CustomSubmitDialog>
@@ -62,6 +69,7 @@ class StartRecordingDialog extends AbstractStartRecordingDialog {
     _areIntegrationsEnabled: () => boolean;
     _onSubmit: () => boolean
     _onSelectedRecordingServiceChanged: (string) => void;
+    _onSharingSettingChanged: () => void;
 }
 
 export default translate(connect(mapStateToProps)(StartRecordingDialog));
