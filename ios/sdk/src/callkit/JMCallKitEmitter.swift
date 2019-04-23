@@ -113,10 +113,13 @@ internal final class JMCallKitEmitter: NSObject, CXProviderDelegate {
 
 fileprivate struct JMCallKitEventListenerWrapper: Hashable {
 
+    public var hashValue: Int
+
     internal weak var listener: JMCallKitListener?
 
     public init(listener: JMCallKitListener) {
         self.listener = listener
+        self.hashValue = listener.hash
     }
 
     public static func ==(lhs: JMCallKitEventListenerWrapper,
@@ -124,9 +127,5 @@ fileprivate struct JMCallKitEventListenerWrapper: Hashable {
         // XXX We're aware that "[t]wo instances with equal hash values are not
         // necessarily equal to each other."
         return lhs.hashValue == rhs.hashValue
-    }
-
-    func hash(into hasher: inout Hasher) {
-        hasher.combine(self.listener?.hash)
     }
 }
