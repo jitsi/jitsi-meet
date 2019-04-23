@@ -25,6 +25,7 @@ import { authorizeDropbox, updateDropboxToken } from '../../../dropbox';
 import {
     default as styles,
     DROPBOX_LOGO,
+    ICON_SHARE,
     JITSI_LOGO
 } from './styles';
 
@@ -50,6 +51,12 @@ type Props = {
     fileRecordingsServiceEnabled: boolean,
 
     /**
+     * Whether to show the possibility to share file recording with other people (e.g. meeting participants), based on
+     * the actual implementation on the backend.
+     */
+    fileRecordingsServiceSharingEnabled: boolean,
+
+    /**
      * If true the content related to the integrations will be shown.
      */
     integrationsEnabled: boolean,
@@ -71,9 +78,19 @@ type Props = {
     onChange: Function,
 
     /**
+     * Callback to be invoked on sharing setting change.
+     */
+    onSharingSettingChanged: Function,
+
+    /**
      * The currently selected recording service of type: RECORDING_TYPES.
      */
     selectedRecordingService: ?string,
+
+    /**
+     * Boolean to set file recording sharing on or off.
+     */
+    sharingSetting: boolean,
 
     /**
      * Number of MiB of available space in user's Dropbox account.
@@ -132,6 +149,60 @@ class StartRecordingDialogContent extends Component<Props> {
     }
 
     /**
+     * Renders the file recording service sharing options, if enabled.
+     *
+     * @returns {React$Component}
+     */
+    _renderFileSharingContent() {
+        if (!this.props.fileRecordingsServiceSharingEnabled) {
+            return null;
+        }
+
+        const {
+            _dialogStyles,
+            isValidating,
+            onSharingSettingChanged,
+            selectedRecordingService,
+            sharingSetting, t } = this.props;
+
+        const controlDisabled = selectedRecordingService !== RECORDING_TYPES.JITSI_REC_SERVICE;
+
+        return (
+            <Container
+                className = 'recording-header'
+                key = 'fileSharingSetting'
+                style = { [
+                    styles.header,
+                    _dialogStyles.topBorderContainer,
+                    controlDisabled ? styles.controlDisabled : null
+                ] }>
+                <Container className = 'recording-icon-container'>
+                    <Image
+                        className = 'recording-icon'
+                        src = { ICON_SHARE }
+                        style = { styles.recordingIcon } />
+                </Container>
+                <Text
+                    className = 'recording-title'
+                    style = {{
+                        ..._dialogStyles.text,
+                        ...styles.title
+                    }}>
+                    { t('recording.fileSharingdescription') }
+                </Text>
+                <Switch
+                    className = 'recording-switch'
+                    disabled = { controlDisabled || isValidating }
+                    onValueChange
+                        = { onSharingSettingChanged }
+                    style = { styles.switch }
+                    trackColor = {{ false: ColorPalette.lightGrey }}
+                    value = { !controlDisabled && sharingSetting } />
+            </Container>
+        );
+    }
+
+    /**
      * Renders the content in case no integrations were enabled.
      *
      * @returns {React$Component}
@@ -162,9 +233,10 @@ class StartRecordingDialogContent extends Component<Props> {
                                 === RECORDING_TYPES.JITSI_REC_SERVICE } />
                 ) : null;
 
-        return (
+        return [
             <Container
                 className = 'recording-header'
+                key = 'noIntegrationSetting'
                 style = { styles.header }>
                 <Container className = 'recording-icon-container'>
                     <Image
@@ -181,8 +253,9 @@ class StartRecordingDialogContent extends Component<Props> {
                     { t('recording.serviceDescription') }
                 </Text>
                 { switchContent }
-            </Container>
-        );
+            </Container>,
+            this._renderFileSharingContent()
+        ];
     }
 
     /**
@@ -267,6 +340,7 @@ class StartRecordingDialogContent extends Component<Props> {
                     className = 'authorization-panel'>
                     { content }
                 </Container>
+                { this._renderFileSharingContent() }
             </Container>
         );
     }
