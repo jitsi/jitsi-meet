@@ -168,7 +168,6 @@ class AddPeopleDialog extends AbstractAddPeopleDialog<Props, State> {
                         </View>
                         <TextInput
                             autoCorrect = { false }
-                            editable = { !this.state.searchInprogress }
                             onChangeText = { this._onTypeQuery }
                             placeholder = {
                                 this.props.t(`inviteDialog.${placeholderKey}`)
