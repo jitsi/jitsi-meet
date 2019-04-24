@@ -162,6 +162,7 @@ export default class SlidingView extends PureComponent<Props, State> {
                     <View style = { styles.sliderViewShadow } />
                 </TouchableWithoutFeedback>
                 <Animated.View
+                    pointerEvents = 'box-none'
                     style = { this._getContentStyle() }>
                     { this.props.children }
                 </Animated.View>
