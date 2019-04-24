@@ -27,6 +27,7 @@ export default {
     },
 
     loadingOverlayWrapper: {
+        ...StyleSheet.absoluteFillObject,
         alignItems: 'center',
         flex: 1,
         flexDirection: 'column',
