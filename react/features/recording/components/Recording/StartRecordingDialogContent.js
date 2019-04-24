@@ -144,6 +144,7 @@ class StartRecordingDialogContent extends Component<Props> {
                 style = { styles.container }>
                 { this._renderNoIntegrationsContent() }
                 { this._renderIntegrationsContent() }
+                { this._renderFileSharingContent() }
             </Container>
         );
     }
@@ -233,7 +234,7 @@ class StartRecordingDialogContent extends Component<Props> {
                                 === RECORDING_TYPES.JITSI_REC_SERVICE } />
                 ) : null;
 
-        return [
+        return (
             <Container
                 className = 'recording-header'
                 key = 'noIntegrationSetting'
@@ -253,9 +254,8 @@ class StartRecordingDialogContent extends Component<Props> {
                     { t('recording.serviceDescription') }
                 </Text>
                 { switchContent }
-            </Container>,
-            this._renderFileSharingContent()
-        ];
+            </Container>
+        );
     }
 
     /**
@@ -340,7 +340,6 @@ class StartRecordingDialogContent extends Component<Props> {
                     className = 'authorization-panel'>
                     { content }
                 </Container>
-                { this._renderFileSharingContent() }
             </Container>
         );
     }
