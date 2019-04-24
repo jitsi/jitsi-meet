@@ -167,10 +167,15 @@ class StartRecordingDialogContent extends Component<Props> {
             sharingSetting, t } = this.props;
 
         const controlDisabled = selectedRecordingService !== RECORDING_TYPES.JITSI_REC_SERVICE;
+        let mainContainerClasses = 'recording-header recording-header-line';
+
+        if (controlDisabled) {
+            mainContainerClasses += ' recording-switch-disabled';
+        }
 
         return (
             <Container
-                className = 'recording-header'
+                className = { mainContainerClasses }
                 key = 'fileSharingSetting'
                 style = { [
                     styles.header,
