@@ -61,4 +61,19 @@ NSString *const kGoogleAppIDPlistKey = @"GOOGLE_APP_ID";
   return YES;
 }
 
++ (NSURL *)extractURL: (FIRDynamicLink*)dynamicLink {
+  NSURL *url = nil;
+  if (dynamicLink != nil) {
+    NSURL *dynamicLinkURL = dynamicLink.url;
+    if (dynamicLinkURL != nil
+        && (dynamicLink.matchType == FIRDLMatchTypeUnique
+            || dynamicLink.matchType == FIRDLMatchTypeDefault)) {
+          // Strong match, process it.
+          url = dynamicLinkURL;
+        }
+  }
+
+  return url;
+}
+
 @end

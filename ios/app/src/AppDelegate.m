@@ -67,9 +67,9 @@
           = [[FIRDynamicLinks dynamicLinks]
                 handleUniversalLink:userActivity.webpageURL
                          completion:^(FIRDynamicLink * _Nullable dynamicLink, NSError * _Nullable error) {
-           NSURL *dynamicLinkURL = dynamicLink.url;
-           if (dynamicLinkURL) {
-             userActivity.webpageURL = dynamicLinkURL;
+           NSURL *firebaseUrl = [FIRUtilities extractURL:dynamicLink];
+           if (firebaseUrl != nil) {
+             userActivity.webpageURL = firebaseUrl;
              [[JitsiMeet sharedInstance] application:application
                                 continueUserActivity:userActivity
                                   restorationHandler:restorationHandler];
@@ -91,19 +91,20 @@
             openURL:(NSURL *)url
             options:(NSDictionary<UIApplicationOpenURLOptionsKey,id> *)options {
 
+    // This shows up during a reload in development, skip it.
+    // https://github.com/firebase/firebase-ios-sdk/issues/233
+    if ([[url absoluteString] containsString:@"google/link/?dismiss=1&is_weak_match=1"]) {
+        return NO;
+    }
+
     NSURL *openUrl = url;
 
     if ([FIRUtilities appContainsRealServiceInfoPlist]) {
         // Process Firebase Dynamic Links
         FIRDynamicLink *dynamicLink = [[FIRDynamicLinks dynamicLinks] dynamicLinkFromCustomSchemeURL:url];
-        if (dynamicLink != nil) {
-            NSURL *dynamicLinkURL = dynamicLink.url;
-            if (dynamicLinkURL != nil
-                    && (dynamicLink.matchType == FIRDLMatchTypeUnique
-                        || dynamicLink.matchType == FIRDLMatchTypeDefault)) {
-                // Strong match, process it.
-                openUrl = dynamicLinkURL;
-            }
+        NSURL *firebaseUrl = [FIRUtilities extractURL:dynamicLink];
+        if (firebaseUrl != nil) {
+            openUrl = firebaseUrl;
         }
     }
 
