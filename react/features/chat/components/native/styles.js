@@ -1,6 +1,6 @@
 // @flow
 
-import { ColorPalette } from '../../../base/styles';
+import { BoxModel, ColorPalette } from '../../../base/styles';
 
 /**
  * The styles of the feature chat.
@@ -28,6 +28,7 @@ export default {
     },
 
     chatContainer: {
+        alignItems: 'stretch',
         flex: 1,
         flexDirection: 'column'
     },
@@ -47,6 +48,29 @@ export default {
     displayName: {
         color: 'rgb(118, 136, 152)',
         fontSize: 13
+    },
+
+    /**
+     * A special padding to avoid issues on some devices (such as Android devices with custom suggestions bar).
+     */
+    extraBarPadding: {
+        paddingBottom: 30
+    },
+
+    inputBar: {
+        borderTopColor: 'rgb(209, 219, 231)',
+        borderTopWidth: 1,
+        flexDirection: 'row',
+        paddingHorizontal: BoxModel.padding
+    },
+
+    inputField: {
+        flex: 1,
+        height: 48
+    },
+
+    messageContainer: {
+        flex: 1
     },
 
     /**
