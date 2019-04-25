@@ -20,51 +20,35 @@ import Foundation
 
 internal final class JMCallKitEmitter: NSObject, CXProviderDelegate {
 
-    private var listeners = Set<JMCallKitEventListenerWrapper>()
+    private let listeners = NSMutableArray()
 
     internal override init() {}
 
     // MARK: - Add/remove listeners
 
     func addListener(_ listener: JMCallKitListener) {
-        let wrapper = JMCallKitEventListenerWrapper(listener: listener)
-        listeners.insert(wrapper)
+        if (!listeners.contains(listener)) {
+            listeners.add(listener)
+        }
     }
 
     func removeListener(_ listener: JMCallKitListener) {
-        // XXX Constructing a new JMCallKitEventListenerWrapper instance in
-        // order to remove the specified listener from listeners is (1) a bit
-        // funny (though may make a statement about performance) and (2) not
-        // really an option because the specified listener may already be
-        // executing its dealloc (like RNCallKit).
-        listeners.forEach {
-            // 1. JMCallKitEventListenerWrapper weakly references
-            //    JMCallKitListener so it may be nice to clean
-            //    JMCallKitEventListenerWrapperinstances up if they've lost
-            //    their associated JMCallKitListener instances (e.g. for
-            //    example, because whoever did addListener forgot to
-            //    removeListener). Unfortunately, I don't know how to do it
-            //    because JMCallKitEventListenerWrapper is a struct.
-            //
-            // 2. XXX JMCallKitEventListenerWrapper implements the weird
-            //    equality by JMCallKitListener hash which (1) I don't
-            //    understand and (2) I don't know how to invoke without
-            //    duplicating.
-            if ($0.hashValue == listener.hash) {
-                listeners.remove($0)
-            }
-        }
+        listeners.remove(listener)
     }
 
     // MARK: - CXProviderDelegate
 
     func providerDidReset(_ provider: CXProvider) {
-        listeners.forEach { $0.listener?.providerDidReset?() }
+        listeners.forEach {
+            let listener = $0 as! JMCallKitListener
+            listener.providerDidReset?()
+        }
     }
 
     func provider(_ provider: CXProvider, perform action: CXAnswerCallAction) {
         listeners.forEach {
-            $0.listener?.performAnswerCall?(UUID: action.callUUID)
+            let listener = $0 as! JMCallKitListener
+            listener.performAnswerCall?(UUID: action.callUUID)
         }
 
         action.fulfill()
@@ -72,7 +56,8 @@ internal final class JMCallKitEmitter: NSObject, CXProviderDelegate {
 
     func provider(_ provider: CXProvider, perform action: CXEndCallAction) {
         listeners.forEach {
-            $0.listener?.performEndCall?(UUID: action.callUUID)
+            let listener = $0 as! JMCallKitListener
+            listener.performEndCall?(UUID: action.callUUID)
         }
 
         action.fulfill()
@@ -80,7 +65,8 @@ internal final class JMCallKitEmitter: NSObject, CXProviderDelegate {
 
     func provider(_ provider: CXProvider, perform action: CXSetMutedCallAction) {
         listeners.forEach {
-            $0.listener?.performSetMutedCall?(UUID: action.callUUID, isMuted: action.isMuted)
+            let listener = $0 as! JMCallKitListener
+            listener.performSetMutedCall?(UUID: action.callUUID, isMuted: action.isMuted)
         }
 
         action.fulfill()
@@ -88,8 +74,8 @@ internal final class JMCallKitEmitter: NSObject, CXProviderDelegate {
 
     func provider(_ provider: CXProvider, perform action: CXStartCallAction) {
         listeners.forEach {
-            $0.listener?.performStartCall?(UUID: action.callUUID,
-                                           isVideo: action.isVideo)
+            let listener = $0 as! JMCallKitListener
+            listener.performStartCall?(UUID: action.callUUID, isVideo: action.isVideo)
         }
 
         action.fulfill()
@@ -98,35 +84,16 @@ internal final class JMCallKitEmitter: NSObject, CXProviderDelegate {
     func provider(_ provider: CXProvider,
                   didActivate audioSession: AVAudioSession) {
         listeners.forEach {
-            $0.listener?.providerDidActivateAudioSession?(session: audioSession)
+            let listener = $0 as! JMCallKitListener
+            listener.providerDidActivateAudioSession?(session: audioSession)
         }
     }
 
     func provider(_ provider: CXProvider,
                   didDeactivate audioSession: AVAudioSession) {
         listeners.forEach {
-            $0.listener?.providerDidDeactivateAudioSession?(
-                session: audioSession)
+            let listener = $0 as! JMCallKitListener
+            listener.providerDidDeactivateAudioSession?(session: audioSession)
         }
-    }
-}
-
-fileprivate struct JMCallKitEventListenerWrapper: Hashable {
-
-    internal weak var listener: JMCallKitListener?
-
-    public init(listener: JMCallKitListener) {
-        self.listener = listener
-    }
-
-    public static func ==(lhs: JMCallKitEventListenerWrapper,
-                          rhs: JMCallKitEventListenerWrapper) -> Bool {
-        // XXX We're aware that "[t]wo instances with equal hash values are not
-        // necessarily equal to each other."
-        return lhs.hashValue == rhs.hashValue
-    }
-
-    func hash(into hasher: inout Hasher) {
-        hasher.combine(self.listener?.hash)
     }
 }
