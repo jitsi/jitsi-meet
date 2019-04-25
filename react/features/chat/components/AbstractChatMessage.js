@@ -43,6 +43,6 @@ export function _mapStateToProps(state: Object, ownProps: Props) {
     const { message } = ownProps;
 
     return {
-        _avatarURL: getAvatarURLByParticipantId(state, message.user._id)
+        _avatarURL: getAvatarURLByParticipantId(state, message.id)
     };
 }
