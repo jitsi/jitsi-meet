@@ -35,7 +35,7 @@ class ChatMessage extends AbstractChatMessage<Props> {
     render() {
         const { message } = this.props;
         const timeStamp = getLocalizedDateFormatter(
-            message.createdAt).format(TIMESTAMP_FORMAT);
+            new Date(message.timestamp)).format(TIMESTAMP_FORMAT);
         const localMessage = message.messageType === 'local';
 
         // Style arrays that need to be updated in various scenarios, such as
@@ -53,7 +53,7 @@ class ChatMessage extends AbstractChatMessage<Props> {
 
             // The bubble needs to be differently styled.
             textWrapperStyle.push(styles.ownTextWrapper);
-        } else if (message.system) {
+        } else if (message.messageType === 'error') {
             // The bubble needs to be differently styled.
             textWrapperStyle.push(styles.systemTextWrapper);
         }
@@ -74,7 +74,12 @@ class ChatMessage extends AbstractChatMessage<Props> {
                             !localMessage && this._renderDisplayName()
                         }
                         <Text style = { styles.messageText }>
-                            { message.text }
+                            { message.messageType === 'error'
+                                ? this.props.t('chat.error', {
+                                    error: message.error,
+                                    originalText: message.message
+                                })
+                                : message.message }
                         </Text>
                     </View>
                     <Text style = { styles.timeText }>
@@ -112,7 +117,7 @@ class ChatMessage extends AbstractChatMessage<Props> {
 
         return (
             <Text style = { styles.displayName }>
-                { message.user.name }
+                { message.displayName }
             </Text>
         );
     }
