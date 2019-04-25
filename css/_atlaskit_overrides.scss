@@ -48,3 +48,11 @@
 .toolbox-button-wth-dialog .eYJELv {
     max-height: initial;
 }
+
+/**
+ * @atlaskit/modal-dialog has a flexbox hack to support IE11 appearance, but
+ * this hack is causing scrollbars to display on Chrome 74.
+ */
+.csUVob {
+    max-height: 100% !important;
+}
