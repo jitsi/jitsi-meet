@@ -5,6 +5,9 @@ import {
     sendAnalytics
 } from '../../analytics';
 import { getName } from '../../app';
+import { endpointMessageReceived } from '../../subtitles';
+
+import { JITSI_CONNECTION_CONFERENCE_KEY } from '../connection';
 import { JitsiConferenceEvents } from '../lib-jitsi-meet';
 import { setAudioMuted, setVideoMuted } from '../media';
 import {
@@ -15,7 +18,6 @@ import {
     participantRoleChanged,
     participantUpdated
 } from '../participants';
-import { endpointMessageReceived } from '../../subtitles';
 import { getLocalTracks, trackAdded, trackRemoved } from '../tracks';
 import { getJitsiMeetGlobalNS } from '../util';
 
@@ -378,7 +380,10 @@ export function createConference() {
                     getWiFiStatsMethod: getJitsiMeetGlobalNS().getWiFiStats
                 });
 
+        connection[JITSI_CONNECTION_CONFERENCE_KEY] = conference;
+
         conference[JITSI_CONFERENCE_URL_KEY] = locationURL;
+
         dispatch(_conferenceWillJoin(conference));
 
         _addConferenceListeners(conference, dispatch);

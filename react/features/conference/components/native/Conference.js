@@ -199,7 +199,7 @@ class Conference extends AbstractConference<Props, *> {
         } = this.props;
 
         // If the location URL changes we need to reconnect.
-        oldLocationURL !== newLocationURL && this.props._onDisconnect();
+        oldLocationURL !== newLocationURL && newRoom && this.props._onDisconnect();
 
         // Start the connection process when there is a (valid) room.
         oldRoom !== newRoom && newRoom && this.props._onConnect();

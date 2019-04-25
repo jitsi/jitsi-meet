@@ -11,7 +11,12 @@ import {
     isRoomValid
 } from '../../base/conference';
 import { LOAD_CONFIG_ERROR } from '../../base/config';
-import { CONNECTION_FAILED } from '../../base/connection';
+import {
+    CONNECTION_DISCONNECTED,
+    CONNECTION_FAILED,
+    JITSI_CONNECTION_CONFERENCE_KEY,
+    JITSI_CONNECTION_URL_KEY
+} from '../../base/connection';
 import { MiddlewareRegistry } from '../../base/redux';
 import { toURLString } from '../../base/util';
 import { ENTER_PICTURE_IN_PICTURE } from '../picture-in-picture';
@@ -62,6 +67,27 @@ MiddlewareRegistry.register(store => next => action => {
     case CONFERENCE_WILL_JOIN:
         _sendConferenceEvent(store, action);
         break;
+
+    case CONNECTION_DISCONNECTED: {
+        // FIXME: This is a hack. See the description in the JITSI_CONNECTION_CONFERENCE_KEY constant definition.
+        // Check if this connection was attached to any conference. If it wasn't, fake a CONFERENCE_TERMINATED event.
+        const { connection } = action;
+        const conference = connection[JITSI_CONNECTION_CONFERENCE_KEY];
+
+        if (!conference) {
+            // This action will arrive late, so the locationURL stored on the state is no longer valid.
+            const locationURL = connection[JITSI_CONNECTION_URL_KEY];
+
+            sendEvent(
+                store,
+                CONFERENCE_TERMINATED,
+                /* data */ {
+                    url: toURLString(locationURL)
+                });
+        }
+
+        break;
+    }
 
     case CONNECTION_FAILED:
         !action.error.recoverable
