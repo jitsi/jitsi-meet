@@ -1,9 +1,11 @@
 // @flow
 
+import { setFollowMeActive } from './actions';
 import { CONFERENCE_WILL_JOIN } from '../base/conference';
 import {
     getParticipantById,
     getPinnedParticipant,
+    PARTICIPANT_LEFT,
     pinParticipant
 } from '../base/participants';
 import { MiddlewareRegistry } from '../base/redux';
@@ -58,7 +60,13 @@ MiddlewareRegistry.register(store => next => action => {
             FOLLOW_ME_COMMAND, ({ attributes }, id) => {
                 _onFollowMeCommand(attributes, id, store);
             });
+        break;
     }
+    case PARTICIPANT_LEFT:
+        if (store.getState()['features/follow-me'].followMeModerator === action.participant.id) {
+            store.dispatch(setFollowMeActive(false));
+        }
+        break;
     }
 
     return next(action);
@@ -97,6 +105,17 @@ function _onFollowMeCommand(attributes = {}, id, store) {
 
     if (participantSendingCommand.role !== 'moderator') {
         logger.warn('Received follow-me command not from moderator');
+
+        return;
+    }
+
+    if (!state['features/follow-me'].followMeActive) {
+        store.dispatch(setFollowMeActive(true, id));
+    }
+
+    // just a command that follow me was turned off
+    if (attributes.off) {
+        store.dispatch(setFollowMeActive(false));
 
         return;
     }

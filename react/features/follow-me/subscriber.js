@@ -12,13 +12,12 @@ import { FOLLOW_ME_COMMAND } from './constants';
 /**
  * Subscribes to changes to the Follow Me setting for the local participant to
  * notify remote participants of current user interface status.
- *
- * @param sharedDocumentVisible {Boolean} {true} if the shared document was
- * shown (as a result of the toggle) or {false} if it was hidden
+ * Changing newSelectedValue param to off, when feature is turned of so we can
+ * notify all listeners.
  */
 StateListenerRegistry.register(
     /* selector */ state => state['features/base/conference'].followMeEnabled,
-    /* listener */ _sendFollowMeCommand);
+    /* listener */ (newSelectedValue, store) => _sendFollowMeCommand(newSelectedValue || 'off', store));
 
 /**
  * Subscribes to changes to the currently pinned participant in the user
@@ -90,12 +89,26 @@ function _sendFollowMeCommand(
     const state = store.getState();
     const conference = getCurrentConference(state);
 
-    if (!conference || !state['features/base/conference'].followMeEnabled) {
+    if (!conference) {
         return;
     }
 
     // Only a moderator is allowed to send commands.
     if (!isLocalParticipantModerator(state)) {
+        return;
+    }
+
+    if (newSelectedValue === 'off') {
+        // if the change is to off, local user turned off follow me and
+        // we want to signal this
+
+        conference.sendCommandOnce(
+            FOLLOW_ME_COMMAND,
+            { attributes: { off: true } }
+        );
+
+        return;
+    } else if (!state['features/base/conference'].followMeEnabled) {
         return;
     }
 
