@@ -1,7 +1,8 @@
 // @flow
 
 import {
-    SET_FOLLOW_ME_ACTIVE, SET_FOLLOW_ME_STATE
+    SET_FOLLOW_ME_MODERATOR,
+    SET_FOLLOW_ME_STATE
 } from './actionTypes';
 import { ReducerRegistry, set } from '../base/redux';
 
@@ -13,18 +14,18 @@ ReducerRegistry.register(
     (state = {}, action) => {
         switch (action.type) {
 
-        case SET_FOLLOW_ME_ACTIVE: {
-            let newState = set(state, 'followMeActive', action.enabled);
+        case SET_FOLLOW_ME_MODERATOR: {
+            let newState = set(state, 'moderator', action.id);
 
-            if (!action.enabled) {
+            if (!action.id) {
                 // clear the state if feature becomes disabled
-                newState = set(newState, 'followMeState', undefined);
+                newState = set(newState, 'state', undefined);
             }
 
-            return set(newState, 'followMeModerator', action.id);
+            return newState;
         }
         case SET_FOLLOW_ME_STATE: {
-            return set(state, 'followMeState', action.state);
+            return set(state, 'state', action.state);
         }
         }
 

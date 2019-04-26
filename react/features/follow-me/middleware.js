@@ -1,7 +1,7 @@
 // @flow
 
 import {
-    setFollowMeActive,
+    setFollowMeModerator,
     setFollowMeState
 } from './actions';
 import { CONFERENCE_WILL_JOIN } from '../base/conference';
@@ -66,8 +66,8 @@ MiddlewareRegistry.register(store => next => action => {
         break;
     }
     case PARTICIPANT_LEFT:
-        if (store.getState()['features/follow-me'].followMeModerator === action.participant.id) {
-            store.dispatch(setFollowMeActive(false));
+        if (store.getState()['features/follow-me'].moderator === action.participant.id) {
+            store.dispatch(setFollowMeModerator());
         }
         break;
     }
@@ -112,18 +112,18 @@ function _onFollowMeCommand(attributes = {}, id, store) {
         return;
     }
 
-    if (!state['features/follow-me'].followMeActive) {
-        store.dispatch(setFollowMeActive(true, id));
+    if (!state['features/follow-me'].moderator) {
+        store.dispatch(setFollowMeModerator(id));
     }
 
     // just a command that follow me was turned off
     if (attributes.off) {
-        store.dispatch(setFollowMeActive(false));
+        store.dispatch(setFollowMeModerator());
 
         return;
     }
 
-    const oldState = state['features/follow-me'].followMeState || {};
+    const oldState = state['features/follow-me'].state || {};
 
     store.dispatch(setFollowMeState(attributes));
 

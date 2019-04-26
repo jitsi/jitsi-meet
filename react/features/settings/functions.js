@@ -81,7 +81,7 @@ export function getMoreTabProps(stateful: Object | Function) {
         startAudioMutedPolicy,
         startVideoMutedPolicy
     } = state['features/base/conference'];
-    const { followMeActive } = state['features/follow-me'];
+    const followMeActive = Boolean(state['features/follow-me'].moderator);
     const configuredTabs = interfaceConfig.SETTINGS_SECTIONS || [];
     const localParticipant = getLocalParticipant(state);
 

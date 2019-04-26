@@ -1,15 +1,14 @@
 // @flow
 
 /**
- * The type of (redux) action which updates the current known status of the
- * Follow Me feature. Is it activated or not.
+ * The id of the Follow Me moderator.
  *
  * {
- *     type: SET_FOLLOW_ME_ACTIVE,
+ *     type: SET_FOLLOW_ME_MODERATOR,
  *     enabled: boolean
  * }
  */
-export const SET_FOLLOW_ME_ACTIVE = 'SET_FOLLOW_ME_ACTIVE';
+export const SET_FOLLOW_ME_MODERATOR = 'SET_FOLLOW_ME_MODERATOR';
 
 /**
  * The type of (redux) action which updates the current known state of the
@@ -17,7 +16,7 @@ export const SET_FOLLOW_ME_ACTIVE = 'SET_FOLLOW_ME_ACTIVE';
  *
  *
  * {
- *     type: SET_FOLLOW_ME_ACTIVE,
+ *     type: SET_FOLLOW_ME_STATE,
  *     enabled: boolean
  * }
  */

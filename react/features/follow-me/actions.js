@@ -1,25 +1,22 @@
 // @flow
 
 import {
-    SET_FOLLOW_ME_ACTIVE,
+    SET_FOLLOW_ME_MODERATOR,
     SET_FOLLOW_ME_STATE
 } from './actionTypes';
 
 /**
- * Sets active or inactive for the Follow Me feature.
+ * Sets the current moderator id or clears it.
  *
- * @param {boolean} enabled - Whether or not Follow Me should be active.
  * @param {?string} id - The Follow Me moderator participant id.
  * @returns {{
- *     type: SET_FOLLOW_ME_ACTIVE,
- *     enabled: boolean,
+ *     type: SET_FOLLOW_ME_MODERATOR,
  *     id, string
  * }}
  */
-export function setFollowMeActive(enabled: boolean, id: ?string) {
+export function setFollowMeModerator(id: ?string) {
     return {
-        type: SET_FOLLOW_ME_ACTIVE,
-        enabled,
+        type: SET_FOLLOW_ME_MODERATOR,
         id
     };
 }
