@@ -65,6 +65,7 @@ export default {
     },
 
     inputField: {
+        color: 'rgb(28, 32, 37)',
         flex: 1,
         height: 48
     },
