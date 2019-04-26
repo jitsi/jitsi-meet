@@ -5,7 +5,7 @@
  *
  * {
  *     type: SET_FOLLOW_ME_MODERATOR,
- *     enabled: boolean
+ *     id: boolean
  * }
  */
 export const SET_FOLLOW_ME_MODERATOR = 'SET_FOLLOW_ME_MODERATOR';
@@ -17,7 +17,7 @@ export const SET_FOLLOW_ME_MODERATOR = 'SET_FOLLOW_ME_MODERATOR';
  *
  * {
  *     type: SET_FOLLOW_ME_STATE,
- *     enabled: boolean
+ *     state: boolean
  * }
  */
 export const SET_FOLLOW_ME_STATE = 'SET_FOLLOW_ME_STATE';
