@@ -236,19 +236,12 @@ invoke-rc.d nginx restart
 ```
 
 ## Running behind NAT
-Jitsi-Videobridge can run behind a NAT, provided that all required ports are routed (forwarded) to the machine that it runs on. By default these ports are (TCP/443 or TCP/4443 and UDP 10000-20000).
+Jitsi-Videobridge can run behind a NAT, provided that all required ports are routed (forwarded) to the machine that it runs on. By default these ports are (TCP/443 or TCP/4443 and UDP 10000).
 
-The following extra lines need to be added the file `~/.sip-communicator/sip-communicator.properties` (in the home directory of the user running the videobridge):
+The following extra lines need to be added the file `/etc/jitsi/videobridge/sip-communicator.properties`
 ```
-org.jitsi.videobridge.NAT_HARVESTER_LOCAL_ADDRESS=<Local.IP.Address>
-org.jitsi.videobridge.NAT_HARVESTER_PUBLIC_ADDRESS=<Public.IP.Address>
-```
-
-So the file should look like this at the end:
-```
-org.jitsi.impl.neomedia.transform.srtp.SRTPCryptoContext.checkReplay=false
-org.jitsi.videobridge.NAT_HARVESTER_LOCAL_ADDRESS=<Local.IP.Address>
-org.jitsi.videobridge.NAT_HARVESTER_PUBLIC_ADDRESS=<Public.IP.Address>
+org.ice4j.ice.harvest.NAT_HARVESTER_LOCAL_ADDRESS=<Local.IP.Address>
+org.ice4j.ice.harvest.NAT_HARVESTER_PUBLIC_ADDRESS=<Public.IP.Address>
 ```
 
 # Hold your first conference
