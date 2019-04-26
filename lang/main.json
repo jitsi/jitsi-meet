@@ -171,7 +171,8 @@
         "pip": "进入小窗口模式",
         "shareRoom": "分享会议室",
         "raiseHand": "请求 / 取消 发言",
-        "raiseYourHand": "请求 / 取消 发言"
+        "raiseYourHand": "请求发言",
+        "lowerYourHand": "取消发言"
     },
     "unsupportedBrowser": {
         "appInstalled": "或者如果您已经安装了<br /><strong>那么</strong>",
