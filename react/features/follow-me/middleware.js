@@ -1,6 +1,9 @@
 // @flow
 
-import { setFollowMeActive } from './actions';
+import {
+    setFollowMeActive,
+    setFollowMeState
+} from './actions';
 import { CONFERENCE_WILL_JOIN } from '../base/conference';
 import {
     getParticipantById,
@@ -120,14 +123,25 @@ function _onFollowMeCommand(attributes = {}, id, store) {
         return;
     }
 
+    const oldState = state['features/follow-me'].followMeState || {};
+
+    store.dispatch(setFollowMeState(attributes));
+
     // XMPP will translate all booleans to strings, so explicitly check against
     // the string form of the boolean {@code true}.
-    store.dispatch(setFilmstripVisible(attributes.filmstripVisible === 'true'));
-    store.dispatch(setTileView(attributes.tileViewEnabled === 'true'));
+    if (oldState.filmstripVisible !== attributes.filmstripVisible) {
+        store.dispatch(setFilmstripVisible(attributes.filmstripVisible === 'true'));
+    }
+
+    if (oldState.tileViewEnabled !== attributes.tileViewEnabled) {
+        store.dispatch(setTileView(attributes.tileViewEnabled === 'true'));
+    }
 
     // For now gate etherpad checks behind a web-app check to be extra safe
     // against calling a web-app global.
-    if (typeof APP !== 'undefined' && state['features/etherpad'].initialized) {
+    if (typeof APP !== 'undefined'
+        && state['features/etherpad'].initialized
+        && oldState.sharedDocumentVisible !== attributes.sharedDocumentVisible) {
         const isEtherpadVisible = attributes.sharedDocumentVisible === 'true';
         const documentManager = APP.UI.getSharedDocumentManager();
 
@@ -143,7 +157,8 @@ function _onFollowMeCommand(attributes = {}, id, store) {
 
     if (typeof idOfParticipantToPin !== 'undefined'
             && (!pinnedParticipant
-                || idOfParticipantToPin !== pinnedParticipant.id)) {
+                || idOfParticipantToPin !== pinnedParticipant.id)
+            && oldState.nextOnStage !== attributes.nextOnStage) {
         _pinVideoThumbnailById(store, idOfParticipantToPin);
     } else if (typeof idOfParticipantToPin === 'undefined'
             && pinnedParticipant) {

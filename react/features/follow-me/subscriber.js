@@ -112,11 +112,7 @@ function _sendFollowMeCommand(
         return;
     }
 
-    // XXX The "Follow Me" command represents a snapshot of all states
-    // which are to be followed so don't forget to removeCommand before
-    // sendCommand!
-    conference.removeCommand(FOLLOW_ME_COMMAND);
-    conference.sendCommandOnce(
+    conference.sendCommand(
         FOLLOW_ME_COMMAND,
         { attributes: _getFollowMeState(state) }
     );

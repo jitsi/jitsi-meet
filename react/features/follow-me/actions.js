@@ -1,7 +1,8 @@
 // @flow
 
 import {
-    SET_FOLLOW_ME_ACTIVE
+    SET_FOLLOW_ME_ACTIVE,
+    SET_FOLLOW_ME_STATE
 } from './actionTypes';
 
 /**
@@ -20,5 +21,21 @@ export function setFollowMeActive(enabled: boolean, id: ?string) {
         type: SET_FOLLOW_ME_ACTIVE,
         enabled,
         id
+    };
+}
+
+/**
+ * Sets the Follow Me feature state.
+ *
+ * @param {?Object} state - The current state.
+ * @returns {{
+ *     type: SET_FOLLOW_ME_STATE,
+ *     state: Object
+ * }}
+ */
+export function setFollowMeState(state: ?Object) {
+    return {
+        type: SET_FOLLOW_ME_STATE,
+        state
     };
 }
