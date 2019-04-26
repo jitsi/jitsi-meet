@@ -191,7 +191,7 @@ class SettingsView extends AbstractSettingsView<Props> {
                             onValueChange = { this._onStartVideoMutedChange }
                             value = { _settings.startWithVideoMuted } />
                     </FormRow>
-                    <FormSectionHeader
+                    {/* <FormSectionHeader
                         label = 'settingsView.buildInfoSection' />
                     <FormRow
                         fieldSeparator = { true }
@@ -199,7 +199,7 @@ class SettingsView extends AbstractSettingsView<Props> {
                         <Text>
                             { `${AppInfo.version} build ${AppInfo.buildNumber}` }
                         </Text>
-                    </FormRow>
+                    </FormRow> */}
                 </ScrollView>
             </SafeAreaView>
         );
