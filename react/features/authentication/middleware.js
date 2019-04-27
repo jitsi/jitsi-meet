@@ -78,7 +78,8 @@ MiddlewareRegistry.register(store => next => action => {
         // JitsiConferenceErrors.AUTHENTICATION_REQUIRED.
         let recoverable;
 
-        if (error.name === JitsiConferenceErrors.AUTHENTICATION_REQUIRED) {
+        if (error.name === JitsiConferenceErrors.AUTHENTICATION_REQUIRED
+            || error.name === JitsiConferenceErrors.RESERVATION_ERROR ) {
             if (typeof error.recoverable === 'undefined') {
                 error.recoverable = true;
             }
