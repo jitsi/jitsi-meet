@@ -166,7 +166,7 @@ class AddPeopleDialog extends AbstractAddPeopleDialog<Props, State> {
                 content: <div className = 'footer-text-wrap'>
                     <div>
                         <span className = 'footer-telephone-icon'>
-                            <i className = 'icon-telephone' />
+                            <i className = 'icon-phone' />
                         </span>
                     </div>
                     { translateToHTML(t, 'addPeople.footerText') }
@@ -388,7 +388,7 @@ class AddPeopleDialog extends AbstractAddPeopleDialog<Props, State> {
     _renderTelephoneIcon() {
         return (
             <span className = 'add-telephone-icon'>
-                <i className = 'icon-telephone' />
+                <i className = 'icon-phone' />
             </span>
         );
     }

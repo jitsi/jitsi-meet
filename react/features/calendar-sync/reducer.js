@@ -1,6 +1,5 @@
 // @flow
 
-import { APP_WILL_MOUNT } from '../base/app';
 import { ReducerRegistry, set } from '../base/redux';
 import { PersistenceRegistry } from '../base/storage';
 
@@ -41,33 +40,19 @@ const DEFAULT_STATE = {
 const STORE_NAME = 'features/calendar-sync';
 
 /**
- * NOTE 1: For legacy purposes, read any {@code knownDomains} persisted by the
- * feature calendar-sync.
- *
- * NOTE 2: Never persist the authorization value as it's needed to remain a
+ * NOTE: Never persist the authorization value as it's needed to remain a
  * runtime value to see if we need to re-request the calendar permission from
  * the user.
  */
 isCalendarEnabled()
     && PersistenceRegistry.register(STORE_NAME, {
         integrationType: true,
-        knownDomains: true,
         msAuthState: true
     });
 
 isCalendarEnabled()
     && ReducerRegistry.register(STORE_NAME, (state = DEFAULT_STATE, action) => {
         switch (action.type) {
-        case APP_WILL_MOUNT:
-            // For legacy purposes, we've allowed the deserialization of
-            // knownDomains. At this point, it should have already been
-            // translated into the new state format (namely, base/known-domains)
-            // and the app no longer needs it.
-            if (typeof state.knownDomains !== 'undefined') {
-                return set(state, 'knownDomains', undefined);
-            }
-            break;
-
         case CLEAR_CALENDAR_INTEGRATION:
             return DEFAULT_STATE;
 

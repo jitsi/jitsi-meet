@@ -18,6 +18,7 @@ import {
     CONNECTION_WILL_CONNECT,
     SET_LOCATION_URL
 } from './actionTypes';
+import { JITSI_CONNECTION_URL_KEY } from './constants';
 
 const logger = require('jitsi-meet-logger').getLogger(__filename);
 
@@ -79,12 +80,15 @@ export function connect(id: ?string, password: ?string) {
     return (dispatch: Dispatch<any>, getState: Function) => {
         const state = getState();
         const options = _constructOptions(state);
+        const { locationURL } = state['features/base/connection'];
         const { issuer, jwt } = state['features/base/jwt'];
         const connection
             = new JitsiMeetJS.JitsiConnection(
                 options.appId,
                 jwt && issuer && issuer !== 'anonymous' ? jwt : undefined,
                 options);
+
+        connection[JITSI_CONNECTION_URL_KEY] = locationURL;
 
         dispatch(_connectionWillConnect(connection));
 
@@ -284,14 +288,13 @@ function _constructOptions(state) {
     let { bosh } = options;
 
     if (bosh) {
+        const { locationURL } = state['features/base/connection'];
+
         if (bosh.startsWith('//')) {
             // By default our config.js doesn't include the protocol.
-            const { locationURL } = state['features/base/connection'];
-
             bosh = `${locationURL.protocol}${bosh}`;
         } else if (bosh.startsWith('/')) {
             // Handle relative URLs, which won't work on mobile.
-            const { locationURL } = state['features/base/connection'];
             const {
                 protocol,
                 hostname,
@@ -366,6 +369,11 @@ export function disconnect() {
 
         if (connection_) {
             promise = promise.then(() => connection_.disconnect());
+        } else {
+            // FIXME: We have no connection! Fake a disconnect. Because of how the current disconnec is implemented
+            // (by doing the diconnect() in the Conference component unmount) we have lost the location URL already.
+            // Oh well, at least send the event.
+            promise.then(() => dispatch(_connectionDisconnected({}, '')));
         }
 
         return promise;

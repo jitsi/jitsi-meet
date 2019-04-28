@@ -18,7 +18,8 @@ import { ADD_KNOWN_DOMAINS } from './actionTypes';
  */
 export const DEFAULT_STATE = [
     'beta.meet.jit.si',
-    'meet.jit.si'
+    'meet.jit.si',
+    '8x8.vc'
 ];
 
 const STORE_NAME = 'features/base/known-domains';

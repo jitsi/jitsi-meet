@@ -16,8 +16,12 @@
 
 #import <Foundation/Foundation.h>
 
+@import Firebase;
+
+
 @interface FIRUtilities : NSObject
 
 + (BOOL)appContainsRealServiceInfoPlist;
++ (NSURL *_Nullable)extractURL: (FIRDynamicLink* _Nullable)dynamicLink;
 
 @end

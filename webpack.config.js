@@ -176,7 +176,8 @@ module.exports = [
  */
 function devServerProxyBypass({ path }) {
     if (path.startsWith('/css/') || path.startsWith('/doc/')
-            || path.startsWith('/fonts/')) {
+            || path.startsWith('/fonts/') || path.startsWith('/images/')
+            || path.startsWith('/static/')) {
         return path;
     }
 
