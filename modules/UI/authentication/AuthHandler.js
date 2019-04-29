@@ -187,8 +187,7 @@ function doXmppAuth(room, lockPassword) {
 
                     if (authenticationError) {
                         loginDialog.displayError(
-                            'connection.GET_SESSION_ID_ERROR',
-                            { msg: authenticationError });
+                            'connection.USER_HAS_NORIGHTS');
                     } else if (connectionError) {
                         loginDialog.displayError(connectionError);
                     }

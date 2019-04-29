@@ -138,7 +138,10 @@ function LoginDialog(successCallback, cancelCallback) {
             // this is a password required error, as login window was already
             // open once, this means username or password is wrong
             messageKey = 'dialog.incorrectPassword';
-        } else {
+        } 
+        else if (error === 'connection.USER_HAS_NORIGHTS') {
+            messageKey = 'connection.USER_HAS_NORIGHTS';        
+        }else {
             messageKey = 'dialog.connectErrorWithMsg';
 
             if (!options) {

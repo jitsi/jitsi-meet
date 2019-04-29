@@ -491,6 +491,7 @@
         "CONNFAIL": "连接失败",
         "AUTHENTICATING": "认证中",
         "AUTHFAIL": "认证失败",
+        "USER_HAS_NORIGHTS": "用户无管理当前会议室权限",
         "CONNECTED": "已连接",
         "DISCONNECTED": "已断开连接",
         "DISCONNECTING": "断开连接中",
