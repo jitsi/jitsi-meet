@@ -118,6 +118,18 @@ type State = {
  * @extends Component
  */
 class DeviceSelection extends AbstractDialogTab<Props, State> {
+
+    /**
+     * Whether current component is mounted or not.
+     *
+     * In component did mount we start a Promise to create tracks and
+     * set the tracks in the state, if we unmount the component in the meanwhile
+     * tracks will be created and will never been disposed (dispose tracks is
+     * in componentWillUnmount). When tracks are created and component is
+     * unmounted we dispose the tracks.
+     */
+    _unMounted: boolean;
+
     /**
      * Initializes a new DeviceSelection instance.
      *
@@ -134,6 +146,7 @@ class DeviceSelection extends AbstractDialogTab<Props, State> {
             previewVideoTrack: null,
             previewVideoTrackError: null
         };
+        this._unMounted = true;
     }
 
     /**
@@ -142,6 +155,7 @@ class DeviceSelection extends AbstractDialogTab<Props, State> {
      * @inheritdoc
      */
     componentDidMount() {
+        this._unMounted = false;
         Promise.all([
             this._createAudioInputTrack(this.props.selectedAudioInputId),
             this._createVideoInputTrack(this.props.selectedVideoInputId)
@@ -193,6 +207,7 @@ class DeviceSelection extends AbstractDialogTab<Props, State> {
      * @inheritdoc
      */
     componentWillUnmount() {
+        this._unMounted = true;
         this._disposeAudioInputPreview();
         this._disposeVideoInputPreview();
     }
@@ -244,6 +259,12 @@ class DeviceSelection extends AbstractDialogTab<Props, State> {
         return this._disposeAudioInputPreview()
             .then(() => createLocalTrack('audio', deviceId))
             .then(jitsiLocalTrack => {
+                if (this._unMounted) {
+                    jitsiLocalTrack.dispose();
+
+                    return;
+                }
+
                 this.setState({
                     previewAudioTrack: jitsiLocalTrack
                 });
@@ -268,6 +289,12 @@ class DeviceSelection extends AbstractDialogTab<Props, State> {
             .then(jitsiLocalTrack => {
                 if (!jitsiLocalTrack) {
                     return Promise.reject();
+                }
+
+                if (this._unMounted) {
+                    jitsiLocalTrack.dispose();
+
+                    return;
                 }
 
                 this.setState({
