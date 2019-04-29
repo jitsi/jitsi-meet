@@ -294,9 +294,15 @@ class InfoDialog extends Component<Props, State> {
      */
     _getTextToCopy() {
         const { liveStreamViewURL, t } = this.props;
+        const shouldDisplayDialIn = this._shouldDisplayDialIn();
+        const moreInfo
+            = shouldDisplayDialIn
+                ? t('info.inviteURLMoreInfo', { conferenceID: this.props.dialIn.conferenceID })
+                : '';
 
         let invite = t('info.inviteURL', {
-            url: this.props._inviteURL
+            url: this.props._inviteURL,
+            moreInfo
         });
 
         if (liveStreamViewURL) {
@@ -307,7 +313,7 @@ class InfoDialog extends Component<Props, State> {
             invite = `${invite}\n${liveStream}`;
         }
 
-        if (this._shouldDisplayDialIn()) {
+        if (shouldDisplayDialIn) {
             const dial = t('info.invitePhone', {
                 number: this.state.phoneNumber,
                 conferenceID: this.props.dialIn.conferenceID
