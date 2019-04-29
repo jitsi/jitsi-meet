@@ -96,9 +96,11 @@ StateListenerRegistry.register(
  */
 function _addChatMsgListener(conference, { dispatch, getState }) {
     if ((typeof interfaceConfig === 'object' && interfaceConfig.filmStripOnly)
-        || (typeof APP !== 'undefined' && !isButtonEnabled('chat'))) {
+        || (typeof APP !== 'undefined' && !isButtonEnabled('chat'))
+        || getState()['features/base/config'].iAmRecorder) {
         // We don't register anything on web if we're in filmStripOnly mode, or
         // the chat button is not enabled in interfaceConfig.
+        // or we are in iAmRecorder mode
         return;
     }
 
