@@ -297,9 +297,10 @@ export function invitePeopleAndChatRooms( // eslint-disable-line max-params
  * @returns {boolean} Indication of whether adding people is currently enabled.
  */
 export function isAddPeopleEnabled(state: Object): boolean {
+    const { peopleSearchUrl } = state['features/base/config'];
     const { isGuest } = state['features/base/jwt'];
 
-    return !isGuest;
+    return !isGuest && Boolean(peopleSearchUrl);
 }
 
 /**
