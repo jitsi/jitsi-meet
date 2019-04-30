@@ -10,10 +10,25 @@ android {
     }
 
     buildTypes {
-        debug {}
+        debug {
+            buildConfigField "boolean", "LIBRE_BUILD", "${rootProject.ext.libreBuild}"
+        }
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            buildConfigField "boolean", "LIBRE_BUILD", "${rootProject.ext.libreBuild}"
+        }
+    }
+
+    sourceSets {
+        main {
+            java {
+                if (rootProject.ext.libreBuild) {
+                    srcDir "src"
+                    exclude "**/AmplitudeModule.java"
+                }
+                exclude "test/"
+            }
         }
     }
 }
@@ -24,17 +39,21 @@ dependencies {
     implementation "com.android.support:support-v4:${rootProject.ext.supportLibVersion}"
     implementation "com.android.support:appcompat-v7:${rootProject.ext.supportLibVersion}"
 
-    implementation 'com.amplitude:android-sdk:2.14.1'
-    implementation 'com.dropbox.core:dropbox-core-sdk:3.0.8'
     api 'com.facebook.react:react-native:+'
+
+    implementation 'com.dropbox.core:dropbox-core-sdk:3.0.8'
+
+    if (!rootProject.ext.libreBuild) {
+        implementation 'com.amplitude:android-sdk:2.14.1'
+        implementation(project(":react-native-google-signin")) {
+            exclude group: 'com.google.android.gms'
+            exclude group: 'com.android.support'
+        }
+    }
 
     implementation project(':react-native-background-timer')
     implementation project(':react-native-calendar-events')
     implementation(project(':react-native-fast-image')) {
-        exclude group: 'com.android.support'
-    }
-    implementation(project(":react-native-google-signin")) {
-        exclude group: 'com.google.android.gms'
         exclude group: 'com.android.support'
     }
     implementation project(':react-native-immersive')
