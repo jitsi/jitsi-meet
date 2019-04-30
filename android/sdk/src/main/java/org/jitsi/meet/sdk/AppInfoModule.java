@@ -75,6 +75,7 @@ class AppInfoModule
         constants.put(
             "version",
             packageInfo == null ? "" : packageInfo.versionName);
+        constants.put("LIBRE_BUILD", BuildConfig.LIBRE_BUILD);
 
         return constants;
     }

@@ -21,6 +21,7 @@ import android.app.Application;
 import android.support.annotation.Nullable;
 
 import com.facebook.react.ReactInstanceManager;
+import com.facebook.react.ReactPackage;
 import com.facebook.react.bridge.NativeModule;
 import com.facebook.react.bridge.ReactContext;
 import com.facebook.react.bridge.ReactApplicationContext;
@@ -28,6 +29,7 @@ import com.facebook.react.common.LifecycleState;
 import com.facebook.react.devsupport.DevInternalSettings;
 import com.facebook.react.modules.core.DeviceEventManagerModule;
 
+import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -48,7 +50,6 @@ class ReactInstanceManagerHolder {
             ReactApplicationContext reactContext) {
         List<NativeModule> nativeModules
             = new ArrayList<>(Arrays.<NativeModule>asList(
-                new AmplitudeModule(reactContext),
                 new AndroidSettingsModule(reactContext),
                 new AppInfoModule(reactContext),
                 new AudioModeModule(reactContext),
@@ -62,6 +63,14 @@ class ReactInstanceManagerHolder {
 
         if (AudioModeModule.useConnectionService()) {
             nativeModules.add(new RNConnectionService(reactContext));
+        }
+
+        try {
+            Class<?> amplitudeModuleClass = Class.forName("AmplitudeModule");
+            Constructor constructor = amplitudeModuleClass.getConstructor(ReactApplicationContext.class);
+            nativeModules.add((NativeModule)constructor.newInstance(reactContext));
+        } catch (Exception e) {
+            // Ignore any error, the module is not compiled when LIBRE_BUILD is enabled.
         }
 
         return nativeModules;
@@ -128,31 +137,39 @@ class ReactInstanceManagerHolder {
             return;
         }
 
+        List<ReactPackage> packages
+            = new ArrayList<>(Arrays.asList(
+                new com.BV.LinearGradient.LinearGradientPackage(),
+                new com.calendarevents.CalendarEventsPackage(),
+                new com.corbt.keepawake.KCKeepAwakePackage(),
+                new com.dylanvann.fastimage.FastImageViewPackage(),
+                new com.facebook.react.shell.MainReactPackage(),
+                new com.oblador.vectoricons.VectorIconsPackage(),
+                new com.ocetnik.timer.BackgroundTimerPackage(),
+                new com.oney.WebRTCModule.WebRTCModulePackage(),
+                new com.rnimmersive.RNImmersivePackage(),
+                new com.zmxv.RNSound.RNSoundPackage(),
+                new ReactPackageAdapter() {
+                    @Override
+                    public List<NativeModule> createNativeModules(ReactApplicationContext reactContext) {
+                        return ReactInstanceManagerHolder.createNativeModules(reactContext);
+                    }
+                }));
+
+        try {
+            Class<?> googlePackageClass = Class.forName("co.apptailor.googlesignin.RNGoogleSigninPackage");
+            Constructor constructor = googlePackageClass.getConstructor();
+            packages.add((ReactPackage)constructor.newInstance());
+        } catch (Exception e) {
+            // Ignore any error, the module is not compiled when LIBRE_BUILD is enabled.
+        }
+
         reactInstanceManager
             = ReactInstanceManager.builder()
                 .setApplication(application)
                 .setBundleAssetName("index.android.bundle")
                 .setJSMainModulePath("index.android")
-                .addPackage(new co.apptailor.googlesignin.RNGoogleSigninPackage())
-                .addPackage(new com.BV.LinearGradient.LinearGradientPackage())
-                .addPackage(new com.calendarevents.CalendarEventsPackage())
-                .addPackage(new com.corbt.keepawake.KCKeepAwakePackage())
-                .addPackage(new com.dylanvann.fastimage.FastImageViewPackage())
-                .addPackage(new com.facebook.react.shell.MainReactPackage())
-                .addPackage(new com.oblador.vectoricons.VectorIconsPackage())
-                .addPackage(new com.ocetnik.timer.BackgroundTimerPackage())
-                .addPackage(new com.oney.WebRTCModule.WebRTCModulePackage())
-                .addPackage(new com.rnimmersive.RNImmersivePackage())
-                .addPackage(new com.zmxv.RNSound.RNSoundPackage())
-                .addPackage(new ReactPackageAdapter() {
-                    @Override
-                    public List<NativeModule> createNativeModules(
-                            ReactApplicationContext reactContext) {
-                        return
-                            ReactInstanceManagerHolder.createNativeModules(
-                                reactContext);
-                    }
-                })
+                .addPackages(packages)
                 .setUseDeveloperSupport(BuildConfig.DEBUG)
                 .setInitialLifecycleState(LifecycleState.RESUMED)
                 .build();

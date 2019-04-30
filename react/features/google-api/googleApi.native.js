@@ -1,8 +1,12 @@
 // @flow
 
-import {
-    GoogleSignin
-} from 'react-native-google-signin';
+import { NativeModules } from 'react-native';
+
+let GoogleSignin;
+
+if (NativeModules.RNGoogleSignin) {
+    GoogleSignin = require('react-native-google-signin').GoogleSignin;
+}
 
 import {
     API_URL_BROADCAST_STREAMS,
@@ -26,7 +30,9 @@ class GoogleApi {
      * @returns {void}
      */
     configure(config: Object) {
-        GoogleSignin.configure(config);
+        if (GoogleSignin) {
+            GoogleSignin.configure(config);
+        }
     }
 
     /**
@@ -58,6 +64,10 @@ class GoogleApi {
      * @returns {Promise<*>}
      */
     hasPlayServices() {
+        if (!GoogleSignin) {
+            return Promise.reject(new Error('Google SignIn not supported'));
+        }
+
         return GoogleSignin.hasPlayServices();
     }
 

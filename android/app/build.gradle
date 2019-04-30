@@ -1,6 +1,7 @@
 apply plugin: 'com.android.application'
 
-boolean googleServicesEnabled = project.file('google-services.json').exists()
+boolean googleServicesEnabled \
+    = project.file('google-services.json').exists() && !rootProject.ext.libreBuild
 
 // Crashlytics integration is done as part of Firebase now, so it gets
 // automagically activated with google-services.json
@@ -36,11 +37,24 @@ android {
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules-debug.pro'
             buildConfigField "boolean", "GOOGLE_SERVICES_ENABLED", "${googleServicesEnabled}"
+            buildConfigField "boolean", "LIBRE_BUILD", "${rootProject.ext.libreBuild}"
         }
         release {
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules-release.pro'
             buildConfigField "boolean", "GOOGLE_SERVICES_ENABLED", "${googleServicesEnabled}"
+            buildConfigField "boolean", "LIBRE_BUILD", "${rootProject.ext.libreBuild}"
+        }
+    }
+
+    sourceSets {
+        main {
+            java {
+                if (rootProject.ext.libreBuild) {
+                    srcDir "src"
+                    exclude "**/GoogleServicesHelper.java"
+                }
+            }
         }
     }
 
@@ -58,7 +72,17 @@ dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation "com.android.support:support-v4:${rootProject.ext.supportLibVersion}"
     implementation "com.android.support:appcompat-v7:${rootProject.ext.supportLibVersion}"
-    implementation 'com.google.android.gms:play-services-auth:16.0.1'
+
+    if (!rootProject.ext.libreBuild) {
+        implementation 'com.google.android.gms:play-services-auth:16.0.1'
+
+        // Firebase
+        //  - Crashlytics
+        //  - Dynamic Links
+        implementation 'com.google.firebase:firebase-core:16.0.6'
+        implementation 'com.crashlytics.sdk.android:crashlytics:2.9.8'
+        implementation 'com.google.firebase:firebase-dynamic-links:16.1.5'
+    }
 
     implementation project(':sdk')
 
@@ -73,13 +97,6 @@ dependencies {
         exclude group: "com.android.support", module: "annotations"
     }
     annotationProcessor "com.github.bumptech.glide:compiler:${rootProject.ext.glideVersion}"
-
-    // Firebase
-    //  - Crashlytics
-    //  - Dynamic Links
-    implementation 'com.google.firebase:firebase-core:16.0.6'
-    implementation 'com.crashlytics.sdk.android:crashlytics:2.9.8'
-    implementation 'com.google.firebase:firebase-dynamic-links:16.1.5'
 }
 
 gradle.projectsEvaluated {

@@ -5,6 +5,7 @@ import _ from 'lodash';
 import { equals, ReducerRegistry, set } from '../redux';
 
 import { CONFIG_WILL_LOAD, LOAD_CONFIG_ERROR, SET_CONFIG } from './actionTypes';
+import { _cleanupConfig } from './functions';
 
 /**
  * The initial state of the feature base/config when executing in a
@@ -29,6 +30,8 @@ const INITIAL_NON_RN_STATE = {
  * @type {Object}
  */
 const INITIAL_RN_STATE = {
+    analytics: {},
+
     // FIXME The support for audio levels in lib-jitsi-meet polls the statistics
     // of WebRTC at a short interval multiple times a second. Unfortunately,
     // React Native is slow to fetch these statistics from the native WebRTC
@@ -134,6 +137,8 @@ function _setConfig(state, { config }) {
         // values that are mandatory.
         _getInitialState()
     );
+
+    _cleanupConfig(newState);
 
     return equals(state, newState) ? state : newState;
 }
