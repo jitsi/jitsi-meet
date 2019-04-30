@@ -73,7 +73,7 @@ public class JitsiMeetActivity extends FragmentActivity
 
     @Override
     public void finish() {
-        getJitsiView().leave();
+        leave();
 
         super.finish();
     }
@@ -97,6 +97,10 @@ public class JitsiMeetActivity extends FragmentActivity
 
     public void join(JitsiMeetConferenceOptions options) {
         getJitsiView().join(options);
+    }
+
+    public void leave() {
+        getJitsiView().leave();
     }
 
     private @Nullable JitsiMeetConferenceOptions getConferenceOptions(Intent intent) {
