@@ -87,7 +87,7 @@ public class JitsiMeetActivity extends FragmentActivity
         return fragment.getJitsiView();
     }
 
-    protected void join(@Nullable String url) {
+    public void join(@Nullable String url) {
         JitsiMeetConferenceOptions options
             = new JitsiMeetConferenceOptions.Builder()
                 .setRoom(url)
@@ -95,7 +95,7 @@ public class JitsiMeetActivity extends FragmentActivity
         join(options);
     }
 
-    protected void join(JitsiMeetConferenceOptions options) {
+    public void join(JitsiMeetConferenceOptions options) {
         getJitsiView().join(options);
     }
 
