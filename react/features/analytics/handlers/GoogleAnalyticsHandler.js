@@ -4,8 +4,6 @@ import { getJitsiMeetGlobalNS } from '../../base/util';
 
 import AbstractHandler from './AbstractHandler';
 
-const logger = require('jitsi-meet-logger').getLogger(__filename);
-
 /**
  * Analytics handler for Google Analytics.
  */
@@ -24,11 +22,7 @@ class GoogleAnalyticsHandler extends AbstractHandler {
         this._userProperties = {};
 
         if (!options.googleAnalyticsTrackingId) {
-            logger.warn(
-                'Failed to initialize Google Analytics handler, no tracking ID'
-            );
-
-            return;
+            throw new Error('Failed to initialize Google Analytics handler, no tracking ID');
         }
 
         this._enabled = true;
