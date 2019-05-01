@@ -117,14 +117,27 @@ export function groupDevicesByKind(devices: Object[]): Object {
  *
  * @param {string} newId - New audio output device id.
  * @param {Function} dispatch - The Redux dispatch function.
+ * @param {boolean} userSelection - Whether this is a user selection update.
  * @returns {Promise}
  */
 export function setAudioOutputDeviceId(
         newId: string = 'default',
-        dispatch: Function): Promise<*> {
+        dispatch: Function,
+        userSelection: boolean = false): Promise<*> {
     return JitsiMeetJS.mediaDevices.setAudioOutputDevice(newId)
-        .then(() =>
-            dispatch(updateSettings({
-                audioOutputDeviceId: newId
-            })));
+        .then(() => {
+            const newSettings = {
+                audioOutputDeviceId: newId,
+                userSelectedAudioOutputDeviceId: undefined
+            };
+
+            if (userSelection) {
+                newSettings.userSelectedAudioOutputDeviceId = newId;
+            } else {
+                // a flow workaround, I needed to add 'userSelectedAudioOutputDeviceId: undefined'
+                delete newSettings.userSelectedAudioOutputDeviceId;
+            }
+
+            return dispatch(updateSettings(newSettings));
+        });
 }

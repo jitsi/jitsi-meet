@@ -2394,7 +2394,15 @@ export default {
                                             : this.useVideoStream.bind(this);
 
                                     // Use the new stream or null if we failed to obtain it.
-                                    return useStream(tracks.find(track => track.getType() === mediaType) || null);
+                                    return useStream(tracks.find(track => track.getType() === mediaType) || null)
+                                        .then(() => {
+                                            const settings
+                                                = mediaType === 'audio'
+                                                    ? { micDeviceId: newDevices.audioinput }
+                                                    : { cameraDeviceId: newDevices.videoinput };
+
+                                            APP.store.dispatch(updateSettings(settings));
+                                        });
                                 }
 
                                 return Promise.resolve();
