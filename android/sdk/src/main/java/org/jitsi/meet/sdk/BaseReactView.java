@@ -111,8 +111,7 @@ public abstract class BaseReactView<ListenerT>
 
         setBackgroundColor(BACKGROUND_COLOR);
 
-        ReactInstanceManagerHolder.initReactInstanceManager(
-            ((Activity) context).getApplication());
+        ReactInstanceManagerHolder.initReactInstanceManager((Activity)context);
 
         // Hook this BaseReactView into ExternalAPI.
         externalAPIScope = UUID.randomUUID().toString();

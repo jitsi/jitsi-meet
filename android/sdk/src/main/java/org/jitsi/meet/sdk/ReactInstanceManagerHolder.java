@@ -18,7 +18,6 @@
 package org.jitsi.meet.sdk;
 
 import android.app.Activity;
-import android.app.Application;
 import android.support.annotation.Nullable;
 
 import com.facebook.react.ReactInstanceManager;
@@ -175,9 +174,9 @@ class ReactInstanceManagerHolder {
      * time. All {@code ReactRootView} instances will be tied to the one and
      * only {@code ReactInstanceManager}.
      *
-     * @param application {@code Application} instance which is running.
+     * @param activity {@code Activity} current running Activity.
      */
-    static void initReactInstanceManager(Application application) {
+    static void initReactInstanceManager(Activity activity) {
         if (reactInstanceManager != null) {
             return;
         }
@@ -215,7 +214,8 @@ class ReactInstanceManagerHolder {
 
         reactInstanceManager
             = ReactInstanceManager.builder()
-                .setApplication(application)
+                .setApplication(activity.getApplication())
+                .setCurrentActivity(activity)
                 .setBundleAssetName("index.android.bundle")
                 .setJSMainModulePath("index.android")
                 .addPackages(packages)
