@@ -26,20 +26,37 @@ import { toState } from '../base/redux';
 export function getDeviceSelectionDialogProps(stateful: Object | Function) {
     const state = toState(stateful);
     const settings = state['features/base/settings'];
+    const { conference } = state['features/base/conference'];
+    let disableAudioInputChange = !JitsiMeetJS.mediaDevices.isMultipleAudioInputSupported();
+    let selectedAudioInputId = settings.micDeviceId;
+    let selectedAudioOutputId = getAudioOutputDeviceId();
+    let selectedVideoInputId = settings.cameraDeviceId;
 
+    // audio input change will be a problem only when we are in a
+    // conference and this is not supported, when we open device selection on
+    // welcome page changing input devices will not be a problem
+    // on welcome page we also show only what we have saved as user selected devices
+    if (!conference) {
+        disableAudioInputChange = false;
+        selectedAudioInputId = settings.userSelectedMicDeviceId;
+        selectedAudioOutputId = settings.userSelectedAudioOutputDeviceId;
+        selectedVideoInputId = settings.userSelectedCameraDeviceId;
+    }
+
+    // we fill the device selection dialog with the devices that are currently
+    // used or if none are currently used with what we have in settings(user selected)
     return {
         availableDevices: state['features/base/devices'].availableDevices,
-        disableAudioInputChange:
-            !JitsiMeetJS.isMultipleAudioInputSupported(),
+        disableAudioInputChange,
         disableDeviceChange:
             !JitsiMeetJS.mediaDevices.isDeviceChangeAvailable(),
         hideAudioInputPreview:
             !JitsiMeetJS.isCollectingLocalStats(),
         hideAudioOutputSelect: !JitsiMeetJS.mediaDevices
                             .isDeviceChangeAvailable('output'),
-        selectedAudioInputId: settings.micDeviceId,
-        selectedAudioOutputId: getAudioOutputDeviceId(),
-        selectedVideoInputId: settings.cameraDeviceId
+        selectedAudioInputId,
+        selectedAudioOutputId,
+        selectedVideoInputId
     };
 }
 

@@ -40,10 +40,10 @@ export function createLocalTracksF(
         const settings = store.getState()['features/base/settings'];
 
         if (typeof cameraDeviceId === 'undefined' || cameraDeviceId === null) {
-            cameraDeviceId = settings.cameraDeviceId;
+            cameraDeviceId = settings.userSelectedCameraDeviceId;
         }
         if (typeof micDeviceId === 'undefined' || micDeviceId === null) {
-            micDeviceId = settings.micDeviceId;
+            micDeviceId = settings.userSelectedMicDeviceId;
         }
     }
 

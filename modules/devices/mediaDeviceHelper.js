@@ -39,7 +39,7 @@ function getNewAudioInputDevice(newDevices, localAudio) {
     const availableAudioInputDevices = newDevices.filter(
         d => d.kind === 'audioinput');
     const settings = APP.store.getState()['features/base/settings'];
-    const selectedAudioInputDeviceId = settings.micDeviceId;
+    const selectedAudioInputDeviceId = settings.userSelectedMicDeviceId;
     const selectedAudioInputDevice = availableAudioInputDevices.find(
         d => d.deviceId === selectedAudioInputDeviceId);
 
@@ -78,7 +78,7 @@ function getNewVideoInputDevice(newDevices, localVideo) {
     const availableVideoInputDevices = newDevices.filter(
         d => d.kind === 'videoinput');
     const settings = APP.store.getState()['features/base/settings'];
-    const selectedVideoInputDeviceId = settings.cameraDeviceId;
+    const selectedVideoInputDeviceId = settings.userSelectedCameraDeviceId;
     const selectedVideoInputDevice = availableVideoInputDevices.find(
         d => d.deviceId === selectedVideoInputDeviceId);
 

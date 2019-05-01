@@ -90,10 +90,10 @@ export function configureInitialDevices() {
 
         return updateSettingsPromise
             .then(() => {
-                const { audioOutputDeviceId }
+                const { userSelectedAudioOutputDeviceId }
                     = getState()['features/base/settings'];
 
-                return setAudioOutputDeviceId(audioOutputDeviceId, dispatch)
+                return setAudioOutputDeviceId(userSelectedAudioOutputDeviceId, dispatch)
                     .catch(ex => logger.warn(`Failed to set audio output device.
                         Default audio output device will be used instead ${ex}`));
             });
