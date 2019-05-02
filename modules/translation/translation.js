@@ -55,6 +55,13 @@ class Translation {
         // XXX i18next expects undefined if options are missing.
         selector.localize(options ? options : undefined);
     }
+
+    /**
+     * Translates a given key.
+     */
+    translate(key: string, options: Object) {
+        return i18next.t(key, options ? options : undefined);
+    }
 }
 
 export default new Translation();
