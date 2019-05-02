@@ -92,7 +92,7 @@
 }
 
 .chat-header {
-    background-color: rgba(42, 58, 75, 0.9);
+    background-color: $chatHeaderBackgroundColor;
     height: 70px;
     position: relative;
     width: 100%;
@@ -120,7 +120,7 @@
 }
 
 #chat-input {
-    border-top: 1px solid #A4B8D1;
+    border-top: 1px solid $chatInputSeparatorColor;
     display: flex;
 
     * {
@@ -188,7 +188,7 @@
 }
 
 .chatmessage {
-    background-color: rgba(240, 243, 247, 0.15);
+    background-color: $chatRemoteMessageBackgroundColor;
     border-radius: 0px 6px 6px 6px;
     margin-top: 3px;
     color: white;
@@ -196,7 +196,7 @@
     position: relative;
 
     &.localuser {
-        background-color: rgba(26, 108, 180, 1);
+        background-color: $chatLocalMessageBackgroundColor;
         border-radius: 6px 0px 6px 6px;
     }
 

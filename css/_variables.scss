@@ -83,11 +83,19 @@ $modalMockAKInputBorder: 1px solid #f4f5f7;
 $modalTextColor: #333;
 
 /**
+ * Chat
+ */
+$chatHeaderBackgroundColor: rgba(42, 58, 75, 0.9);
+$chatInputSeparatorColor: #A4B8D1;
+$chatLocalMessageBackgroundColor: rgba(26, 108, 180, 1);
+$chatRemoteMessageBackgroundColor:  rgba(240, 243, 247, 0.15);
+$sidebarWidth: 375px;
+
+ /**
  * Misc.
  */
 $borderRadius: 4px;
 $defaultWatermarkLink: '../images/watermark.png';
-$sidebarWidth: 375px;
 $popoverMenuPadding: 13px;
 $happySoftwareBackground: transparent;
 $desktopAppDragBarHeight: 25px;
