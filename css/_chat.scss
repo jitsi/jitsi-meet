@@ -176,15 +176,6 @@
     padding-left: 5px;
 }
 
-.chatArrow {
-    border-color:
-        transparent $newToolbarBackgroundColor transparent transparent;
-    border-style: solid;
-    border-width: 0 10px 10px 0;
-    left: -10px;
-    position: absolute;
-}
-
 .chatmessage {
     background-color: $newToolbarBackgroundColor;
     width: 93%;
@@ -202,7 +193,6 @@
     }
 
     &.error {
-        .chatArrow,
         .timestamp,
         .display-name {
             display: none;
