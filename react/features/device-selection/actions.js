@@ -112,7 +112,6 @@ export function submitDeviceSelectionTab(newState) {
             && newState.selectedVideoInputId
                 !== currentState.selectedVideoInputId) {
             dispatch(updateSettings({
-                cameraDeviceId: newState.selectedVideoInputId,
                 userSelectedCameraDeviceId: newState.selectedVideoInputId
             }));
 
@@ -124,7 +123,6 @@ export function submitDeviceSelectionTab(newState) {
                 && newState.selectedAudioInputId
                   !== currentState.selectedAudioInputId) {
             dispatch(updateSettings({
-                micDeviceId: newState.selectedAudioInputId,
                 userSelectedMicDeviceId: newState.selectedAudioInputId
             }));
 
