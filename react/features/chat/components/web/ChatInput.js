@@ -4,6 +4,7 @@ import React, { Component } from 'react';
 import Emoji from 'react-emoji-render';
 import type { Dispatch } from 'redux';
 
+import { translate } from '../../../base/i18n';
 import { connect } from '../../../base/redux';
 
 import { sendMessage } from '../../actions';
@@ -23,7 +24,12 @@ type Props = {
     /**
      * Optional callback to get a reference to the chat input element.
      */
-    getChatInputRef?: Function
+    getChatInputRef?: Function,
+
+    /**
+     * Invoked to obtain translated strings.
+     */
+    t: Function
 };
 
 /**
@@ -114,11 +120,10 @@ class ChatInput extends Component<Props, State> {
                 </div>
                 <div className = 'usrmsg-form'>
                     <textarea
-                        data-i18n = '[placeholder]chat.messagebox'
                         id = 'usermsg'
                         onChange = { this._onMessageChange }
                         onKeyDown = { this._onDetectSubmit }
-                        placeholder = { 'Enter Text...' }
+                        placeholder = { this.props.t('chat.messagebox') }
                         ref = { this._setTextAreaRef }
                         value = { this.state.message } />
                 </div>
@@ -233,4 +238,4 @@ class ChatInput extends Component<Props, State> {
     }
 }
 
-export default connect()(ChatInput);
+export default translate(connect()(ChatInput));
