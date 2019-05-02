@@ -2123,8 +2123,8 @@ export default {
 
                     return stream;
                 })
-                .then(stream => {
-                    this.useAudioStream(stream);
+                .then(stream => this.useAudioStream(stream))
+                .then(() => {
                     logger.log('switched local audio device');
 
                     this._updateAudioDeviceId();
