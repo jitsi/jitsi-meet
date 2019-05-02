@@ -2094,9 +2094,7 @@ export default {
                 })
                 .then(() => {
                     logger.log('switched local video device');
-                    APP.store.dispatch(updateSettings({
-                        cameraDeviceId
-                    }));
+                    this._updateVideoDeviceId();
                 })
                 .catch(err => {
                     APP.UI.showCameraErrorNotification(err);
@@ -2128,9 +2126,8 @@ export default {
                 .then(stream => {
                     this.useAudioStream(stream);
                     logger.log('switched local audio device');
-                    APP.store.dispatch(updateSettings({
-                        micDeviceId
-                    }));
+
+                    this._updateAudioDeviceId();
                 })
                 .catch(err => {
                     APP.UI.showMicErrorNotification(err);
@@ -2301,24 +2298,42 @@ export default {
                     // Ugly way to synchronize real device IDs with local
                     // storage and settings menu. This is a workaround until
                     // getConstraints() method will be implemented in browsers.
-                    if (this.localAudio) {
-                        dispatch(updateSettings({
-                            micDeviceId: this.localAudio.getDeviceId()
-                        }));
-                    }
+                    this._updateAudioDeviceId();
 
-                    if (this.localVideo
-                        && this.localVideo.videoType === 'camera') {
-                        dispatch(updateSettings({
-                            cameraDeviceId: this.localVideo.getDeviceId()
-                        }));
-                    }
+                    this._updateVideoDeviceId();
 
                     APP.UI.onAvailableDevicesChanged(devices);
                 });
         }
 
         return Promise.resolve();
+    },
+
+    /**
+     * Updates the settings for the currently used video device, extracting
+     * the device id from the used track.
+     * @private
+     */
+    _updateVideoDeviceId() {
+        if (this.localVideo
+            && this.localVideo.videoType === 'camera') {
+            APP.store.dispatch(updateSettings({
+                cameraDeviceId: this.localVideo.getDeviceId()
+            }));
+        }
+    },
+
+    /**
+     * Updates the settings for the currently used audio device, extracting
+     * the device id from the used track.
+     * @private
+     */
+    _updateAudioDeviceId() {
+        if (this.localAudio) {
+            APP.store.dispatch(updateSettings({
+                micDeviceId: this.localAudio.getDeviceId()
+            }));
+        }
     },
 
     /**
@@ -2396,12 +2411,9 @@ export default {
                                     // Use the new stream or null if we failed to obtain it.
                                     return useStream(tracks.find(track => track.getType() === mediaType) || null)
                                         .then(() => {
-                                            const settings
-                                                = mediaType === 'audio'
-                                                    ? { micDeviceId: newDevices.audioinput }
-                                                    : { cameraDeviceId: newDevices.videoinput };
-
-                                            APP.store.dispatch(updateSettings(settings));
+                                            mediaType === 'audio'
+                                                ? this._updateAudioDeviceId()
+                                                : this._updateVideoDeviceId();
                                         });
                                 }
 
