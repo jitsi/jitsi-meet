@@ -106,10 +106,28 @@ class Chat extends AbstractChat<Props> {
             <div
                 className = 'sideToolbarContainer__inner'
                 id = 'chat_container'>
+                { this._renderChatHeader() }
                 <div id = 'chatconversation'>
                     { messages }
                 </div>
                 <ChatInput />
+            </div>
+        );
+    }
+
+    /**
+     * Instantiates a React Element to display at the top of {@code Chat} to
+     * close {@code Chat}.
+     *
+     * @private
+     * @returns {ReactElement}
+     */
+    _renderChatHeader() {
+        return (
+            <div className = 'chat-header'>
+                <div
+                    className = 'chat-close'
+                    onClick = { this.props._onToggleChat }>X</div>
             </div>
         );
     }
@@ -145,14 +163,12 @@ class Chat extends AbstractChat<Props> {
     _renderPanelContent(state) {
         this._isExited = state === 'exited';
 
-        const { _isOpen, _onToggleChat, _showNamePrompt } = this.props;
+        const { _isOpen, _showNamePrompt } = this.props;
         const ComponentToRender = !_isOpen && state === 'exited'
             ? null
             : (
                 <div>
-                    <div
-                        className = 'chat-close'
-                        onClick = { _onToggleChat }>X</div>
+                    { this._renderChatHeader() }
                     { _showNamePrompt
                         ? <DisplayNameForm /> : this._renderChat() }
                 </div>

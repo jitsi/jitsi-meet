@@ -42,7 +42,6 @@
     flex: 1;
     font-size: 10pt;
     line-height: 20px;
-    margin-top: $desktopAppDragBarHeight + 5px;
     overflow: auto;
     padding: 5px;
     text-align: left;
@@ -92,21 +91,32 @@
     }
 }
 
-.chat-close {
-    background: gray;
-    border: 3px solid rgba(255, 255, 255, 0.1);
-    border-radius: 100%;
-    color: white;
-    cursor:pointer;
-    height: 10px;
-    line-height: 10px;
-    padding: 4px;
-    position: absolute;
-    right: 5px;
-    text-align: center;
-    top: $desktopAppDragBarHeight;
-    width: 10px;
+.chat-header {
+    background-color: rgba(42, 58, 75, 0.9);
+    height: 70px;
+    position: relative;
+    width: 100%;
     z-index: 1;
+
+    .chat-close {
+        align-items: center;
+        bottom: 8px;
+        color: white;
+        cursor: pointer;
+        display: flex;
+        font-size: 18px;
+        height: 40px;
+        justify-content: center;
+        line-height: 15px;
+        padding: 4px;
+        position: absolute;
+        right: 5px;
+        width: 40px;
+
+        &:hover {
+            color: rgba(255, 255, 255, 0.8);
+        }
+    }
 }
 
 #chat-input {
@@ -146,14 +156,12 @@
 }
 
 #nickname {
-    position: absolute;
     text-align: center;
     color: #9d9d9d;
     font-size: 18px;
-    top: 100px;
+    margin-top: 30px;
     left: 5px;
     right: 5px;
-    width: 95%;
 }
 
 #chat_container .display-name {
