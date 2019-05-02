@@ -181,18 +181,23 @@
     width: 93%;
     margin-left: 9px;
     margin-right: auto;
-    border-radius: 5px;
-    border-top-left-radius: 0px;
+    border-radius: 0px 6px 6px 6px;
     margin-top: 3px;
     color: white;
     padding-bottom: 3px;
     position: relative;
 
-    &.localuser .display-name {
-        color: #4C9AFF
+    &.localuser {
+        border-radius: 6px 0px 6px 6px;
+
+        .display-name {
+            color: #4C9AFF
+        }
     }
 
     &.error {
+        border-radius: 0px;
+
         .timestamp,
         .display-name {
             display: none;
