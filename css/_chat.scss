@@ -177,7 +177,7 @@
 }
 
 .chatmessage {
-    background-color: $newToolbarBackgroundColor;
+    background-color: rgba(240, 243, 247, 0.15);
     width: 93%;
     margin-left: 9px;
     margin-right: auto;
@@ -188,11 +188,8 @@
     position: relative;
 
     &.localuser {
+        background-color: rgba(26, 108, 180, 1);
         border-radius: 6px 0px 6px 6px;
-
-        .display-name {
-            color: #4C9AFF
-        }
     }
 
     &.error {
