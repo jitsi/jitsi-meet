@@ -1,6 +1,6 @@
 #sideToolbarContainer {
     background-color: $newToolbarBackgroundColor;
-    display: flex;
+
     /**
      * Make the sidebar flush with the top of the toolbar. Take the size of
      * the toolbar and subtract from 100%.
@@ -43,7 +43,7 @@
     font-size: 10pt;
     line-height: 20px;
     overflow: auto;
-    padding: 5px;
+    padding: 16px;
     text-align: left;
     width: $sidebarWidth;
     word-wrap: break-word;
@@ -189,9 +189,6 @@
 
 .chatmessage {
     background-color: rgba(240, 243, 247, 0.15);
-    width: 93%;
-    margin-left: 9px;
-    margin-right: auto;
     border-radius: 0px 6px 6px 6px;
     margin-top: 3px;
     color: white;
@@ -248,14 +245,22 @@
 .smileys-panel {
     bottom: 100%;
     box-sizing: border-box;
-    height: 0;
+    height: auto;
+    max-height: 0;
     overflow: hidden;
     position: absolute;
-    transition: height 0.3s;
     width: $sidebarWidth;
 
+    /**
+     * CSS transitions do not apply for auto dimensions. So to produce the css
+     * accordion effect for showing and hiding the smiley-panel, while allowing
+     * for variable panel, height, use a very large max-height and animate off
+     * of that.
+     */
+    transition: max-height 0.3s;
+
     &.show-smileys {
-        height: 146px;
+        max-height: 500%;
     }
 
     #smileysContainer {
