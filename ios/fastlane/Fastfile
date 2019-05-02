@@ -16,6 +16,36 @@ platform :ios do
       app_identifier: "com.atlassian.JitsiMeet.ios"
     )
 
+    # Set the (watch) app identifier
+    update_app_identifier(
+      xcodeproj: "app/app.xcodeproj",
+      plist_path: "watchos/app/Info.plist",
+      app_identifier: "com.atlassian.JitsiMeet.ios.watchkit"
+    )
+
+    # Set the (watch) extension identifier
+    update_app_identifier(
+      xcodeproj: "app/app.xcodeproj",
+      plist_path: "watchos/extension/Info.plist",
+      app_identifier: "com.atlassian.JitsiMeet.ios.watchkit.extension"
+    )
+
+    update_info_plist(
+      xcodeproj: "app/app.xcodeproj",
+      plist_path: "watchos/app/Info.plist",
+      block: proc do |plist|
+        plist["WKCompanionAppBundleIdentifier"] = "com.atlassian.JitsiMeet.ios"
+      end
+    )
+
+    update_info_plist(
+      xcodeproj: "app/app.xcodeproj",
+      plist_path: "watchos/extension/Info.plist",
+      block: proc do |plist|
+        plist["NSExtension"]["NSExtensionAttributes"]["WKAppBundleIdentifier"] = "com.atlassian.JitsiMeet.ios.watchkit"
+      end
+    )
+
     # Inrement the build number by 1
     increment_build_number(
       build_number: latest_testflight_build_number + 1,
