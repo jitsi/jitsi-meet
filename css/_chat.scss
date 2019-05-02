@@ -120,9 +120,12 @@
 }
 
 #chat-input {
-    background-color: $newToolbarBackgroundColor;
     border-top: 1px solid #A4B8D1;
     display: flex;
+
+    * {
+        background-color: transparent;
+    }
 }
 
 .remoteuser {
@@ -134,7 +137,6 @@
 }
 
 #usermsg {
-    background-color: $newToolbarBackgroundColor;
     border: 0px none;
     border-radius:0;
     box-shadow: none;
@@ -232,7 +234,6 @@
 }
 
 #smileysarea {
-    background-color: $newToolbarBackgroundColor;
     display: flex;
     max-height: 150px;
     min-height: 35px;
