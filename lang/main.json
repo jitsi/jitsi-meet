@@ -50,7 +50,7 @@
     },
     "chat": {
         "error": "Error: your message \"__originalText__\" was not sent. Reason: __error__",
-        "messagebox": "Enter text...",
+        "messagebox": "Type a message",
         "nickname": {
             "popover": "Choose a nickname",
             "title": "Enter a nickname to use chat"
