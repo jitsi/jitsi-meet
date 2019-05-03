@@ -97,7 +97,7 @@ PODS:
     - SDWebImage/GIF
   - react-native-keep-awake (4.0.0):
     - React
-  - react-native-webrtc (1.69.0):
+  - react-native-webrtc (1.69.1):
     - React
   - React/Core (0.59.5):
     - yoga (= 0.59.5.React)
@@ -278,7 +278,7 @@ SPEC CHECKSUMS:
   react-native-calendar-events: ee9573e355711ac679e071be70789542431f4ce3
   react-native-fast-image: 47487b71169aea34868e7b38bf870b6b3f2157c5
   react-native-keep-awake: eba3137546b10003361b37c761f6c429b59814ae
-  react-native-webrtc: a14197fefe96ab462dc098b79c428fc5a7f68216
+  react-native-webrtc: 90a847d19deb2d7323fef8cc89ca12b8995fbc90
   RNGoogleSignin: 361174d9a3090d295b06257162b560d8efc8a6ed
   RNSound: e157320f503bdd4f4ee6d8542e948d54f90c3c3a
   RNVectorIcons: d819334932bcda3332deb3d2c8ea4d069e0b98f9
