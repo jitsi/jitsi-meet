@@ -49,6 +49,7 @@ import {
     setDesktopSharingEnabled
 } from './react/features/base/conference';
 import {
+    checkAndNotifyForNewDevice,
     getAvailableDevices,
     setAudioOutputDeviceId,
     updateDeviceList
@@ -2123,8 +2124,8 @@ export default {
 
                     return stream;
                 })
-                .then(stream => {
-                    this.useAudioStream(stream);
+                .then(stream => this.useAudioStream(stream))
+                .then(() => {
                     logger.log('switched local audio device');
 
                     this._updateAudioDeviceId();
@@ -2344,6 +2345,8 @@ export default {
      * @returns {Promise}
      */
     _onDeviceListChanged(devices) {
+        const oldDevices = APP.store.getState()['features/base/devices'].availableDevices;
+
         APP.store.dispatch(updateDeviceList(devices));
 
         const newDevices
@@ -2380,6 +2383,25 @@ export default {
 
         if (requestedInput.video && this.localVideo) {
             this.localVideo.stopStream();
+        }
+
+        // Let's handle unknown/non-preferred devices
+        const newAvailDevices
+            = APP.store.getState()['features/base/devices'].availableDevices;
+
+        if (typeof newDevices.audiooutput === 'undefined') {
+            APP.store.dispatch(
+                checkAndNotifyForNewDevice(newAvailDevices.audioOutput, oldDevices.audioOutput));
+        }
+
+        if (!requestedInput.audio) {
+            APP.store.dispatch(
+                checkAndNotifyForNewDevice(newAvailDevices.audioInput, oldDevices.audioInput));
+        }
+
+        if (!requestedInput.video) {
+            APP.store.dispatch(
+                checkAndNotifyForNewDevice(newAvailDevices.videoInput, oldDevices.videoInput));
         }
 
         promises.push(

@@ -25,6 +25,17 @@ function getNewAudioOutputDevice(newDevices) {
             d.deviceId === selectedAudioOutputDeviceId)) {
         return 'default';
     }
+
+    const settings = APP.store.getState()['features/base/settings'];
+    const preferredAudioOutputDeviceId = settings.userSelectedAudioOutputDeviceId;
+
+    // if the preferred one is not the selected and is available in the new devices
+    // we want to use it as it was just added
+    if (preferredAudioOutputDeviceId
+        && preferredAudioOutputDeviceId !== selectedAudioOutputDeviceId
+        && availableAudioOutputDevices.find(d => d.deviceId === preferredAudioOutputDeviceId)) {
+        return preferredAudioOutputDeviceId;
+    }
 }
 
 /**

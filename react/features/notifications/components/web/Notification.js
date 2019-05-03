@@ -136,6 +136,19 @@ class Notification extends AbstractNotification<Props> {
             ];
 
         default:
+            if (this.props.customActionNameKey && this.props.customActionHandler) {
+                return [
+                    {
+                        content: this.props.t(this.props.customActionNameKey),
+                        onClick: () => {
+                            if (this.props.customActionHandler()) {
+                                this._onDismissed();
+                            }
+                        }
+                    }
+                ];
+            }
+
             return [];
         }
     }
