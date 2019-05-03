@@ -518,18 +518,12 @@ export function getDialInfoPageURL(
  */
 export function _getDefaultPhoneNumber(
         dialInNumbers: Object): ?string {
-    const defValueForDefaultCountry = 'US';
 
     if (Array.isArray(dialInNumbers)) {
         // new syntax follows
         // find the default country inside dialInNumbers, US one
         // or return the first one
-        let defaultNumber = dialInNumbers.find(number => number.default);
-
-        if (!defaultNumber) {
-            defaultNumber = dialInNumbers.find(({ countryCode }) =>
-                countryCode === defValueForDefaultCountry);
-        }
+        const defaultNumber = dialInNumbers.find(number => number.default);
 
         if (defaultNumber) {
             return defaultNumber.formattedNumber;
@@ -539,18 +533,10 @@ export function _getDefaultPhoneNumber(
             ? dialInNumbers[0].formattedNumber : null;
     }
 
-    const {
-        defaultCountry = defValueForDefaultCountry,
-        numbers } = dialInNumbers;
+    const { numbers } = dialInNumbers;
 
     if (numbers && Object.keys(numbers).length > 0) {
         // deprecated and will be removed
-        const defaultNumbers = numbers[defaultCountry];
-
-        if (defaultNumbers) {
-            return defaultNumbers[0];
-        }
-
         const firstRegion = Object.keys(numbers)[0];
 
         return firstRegion && numbers[firstRegion][0];
