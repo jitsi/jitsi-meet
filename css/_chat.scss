@@ -130,7 +130,7 @@
     border-radius:0;
     box-shadow: none;
     color: white;
-    font-size: 10pt;
+    font-size: 15px;
     line-height: 30px;
     padding: 5px;
     max-height:150px;
@@ -162,25 +162,12 @@
     }
 
     .display-name {
-        float: left;
-        padding-left: 5px;
+        font-size: 13px;
         font-weight: bold;
         white-space: nowrap;
         text-overflow: ellipsis;
-        width: 95%;
         overflow: hidden;
     }
-
-    .timestamp {
-        float: right;
-        padding-right: 5px;
-        font-size: 11px;
-    }
-}
-
-.usermessage {
-    padding-top: 20px;
-    padding-left: 5px;
 }
 
 .chatmessage {
@@ -289,4 +276,42 @@
 
 #usermsg::-webkit-scrollbar-track-piece {
     background: #3a3a3a;
+}
+
+.chat-message-group {
+    display: flex;
+    flex-direction: column;
+
+    &.local {
+        align-items: flex-end;
+
+        .display-name {
+            display: none;
+        }
+
+        .chatmessage {
+            background-color: $chatLocalMessageBackgroundColor;
+            border-radius: 6px 0px 6px 6px;
+        }
+    }
+
+    &.error {
+        .chatmessage {
+            border-radius: 0px;
+            color: red;
+        }
+
+        .display-name {
+            display: none;
+        }
+    }
+
+    .chatmessage {
+        background-color: $chatRemoteMessageBackgroundColor;
+        border-radius: 0px 6px 6px 6px;
+        display: inline-block;
+        margin-top: 3px;
+        color: white;
+        padding: 8px;
+    }
 }
