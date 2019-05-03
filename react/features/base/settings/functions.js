@@ -219,7 +219,7 @@ function _getUserSelectedDeviceId(options) {
     const foundMatchingBasedonDeviceId = availableDevices.find(
         candidate => candidate.deviceId === userSelectedDeviceId);
 
-    // Prioritize matching the deviceId of the microphone.
+    // Prioritize matching the deviceId
     if (foundMatchingBasedonDeviceId) {
         return userSelectedDeviceId;
     }
