@@ -12,7 +12,7 @@ import AbstractChat, {
     type Props
 } from '../AbstractChat';
 import ChatInput from './ChatInput';
-import ChatMessage from './ChatMessage';
+import ChatMessageGroup from './ChatMessageGroup';
 import DisplayNameForm from './DisplayNameForm';
 
 /**
@@ -46,7 +46,6 @@ class Chat extends AbstractChat<Props> {
         this._messagesListEnd = null;
 
         // Bind event handlers so they are only bound once for every instance.
-        this._renderMessage = this._renderMessage.bind(this);
         this._renderPanelContent = this._renderPanelContent.bind(this);
         this._setMessageListEndRef = this._setMessageListEndRef.bind(this);
     }
@@ -89,6 +88,37 @@ class Chat extends AbstractChat<Props> {
     }
 
     /**
+     * Iterates over all the messages and creates nested arrays which hold
+     * consecutive messages sent be the same participant.
+     *
+     * @private
+     * @returns {Array<Array<Object>>}
+     */
+    _getMessagesGroupedBySender() {
+        const messagesCount = this.props._messages.length;
+        const groups = [];
+        let currentGrouping = [];
+        let currentGroupParticipantId;
+
+        for (let i = 0; i < messagesCount; i++) {
+            const message = this.props._messages[i];
+
+            if (message.id === currentGroupParticipantId) {
+                currentGrouping.push(message);
+            } else {
+                groups.push(currentGrouping);
+
+                currentGrouping = [ message ];
+                currentGroupParticipantId = message.id;
+            }
+        }
+
+        groups.push(currentGrouping);
+
+        return groups;
+    }
+
+    /**
      * Returns a React Element for showing chat messages and a form to send new
      * chat messages.
      *
@@ -96,7 +126,25 @@ class Chat extends AbstractChat<Props> {
      * @returns {ReactElement}
      */
     _renderChat() {
-        const messages = this.props._messages.map(this._renderMessage);
+        const groupedMessages = this._getMessagesGroupedBySender();
+
+        const messages = groupedMessages.map((group, index) => {
+            const messageType = group[0] && group[0].messageType;
+            let className = 'remote';
+
+            if (messageType === 'local') {
+                className = 'local';
+            } else if (messageType === 'error') {
+                className = 'error';
+            }
+
+            return (
+                <ChatMessageGroup
+                    className = { className }
+                    key = { index }
+                    messages = { group } />
+            );
+        });
 
         messages.push(<div
             key = 'end-marker'
@@ -126,23 +174,6 @@ class Chat extends AbstractChat<Props> {
                     className = 'chat-close'
                     onClick = { this.props._onToggleChat }>X</div>
             </div>
-        );
-    }
-
-    _renderMessage: (Object) => void;
-
-    /**
-     * Called by {@code _onSubmitMessage} to create the chat div.
-     *
-     * @param {string} message - The chat message to display.
-     * @param {string} id - The chat message ID to use as a unique key.
-     * @returns {Array<ReactElement>}
-     */
-    _renderMessage(message: Object, id: string) {
-        return (
-            <ChatMessage
-                key = { id }
-                message = { message } />
         );
     }
 
