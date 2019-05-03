@@ -20,6 +20,12 @@ export type Props = {
     message: Object,
 
     /**
+     * Whether or not the name of the participant which sent the message should
+     * be displayed.
+     */
+    showDisplayName: boolean,
+
+    /**
      * Invoked to receive translated strings.
      */
     t: Function
@@ -28,7 +34,11 @@ export type Props = {
 /**
  * Abstract component to display a chat message.
  */
-export default class AbstractChatMessage<P: Props> extends PureComponent<P> {}
+export default class AbstractChatMessage<P: Props> extends PureComponent<P> {
+    static defaultProps = {
+        showDisplayName: true
+    };
+}
 
 /**
  * Maps part of the Redux state to the props of this component.
