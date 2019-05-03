@@ -1,5 +1,8 @@
 import JitsiMeetJS from '../lib-jitsi-meet';
-import { updateSettings } from '../settings';
+import {
+    getUserSelectedOutputDeviceId,
+    updateSettings
+} from '../settings';
 
 import {
     ADD_PENDING_DEVICE_REQUEST,
@@ -91,8 +94,7 @@ export function configureInitialDevices() {
 
         return updateSettingsPromise
             .then(() => {
-                const { userSelectedAudioOutputDeviceId }
-                    = getState()['features/base/settings'];
+                const userSelectedAudioOutputDeviceId = getUserSelectedOutputDeviceId(getState());
 
                 return setAudioOutputDeviceId(userSelectedAudioOutputDeviceId, dispatch)
                     .catch(ex => logger.warn(`Failed to set audio output device.

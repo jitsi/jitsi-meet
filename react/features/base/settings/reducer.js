@@ -33,7 +33,10 @@ const DEFAULT_STATE = {
     startWithVideoMuted: false,
     userSelectedAudioOutputDeviceId: undefined,
     userSelectedCameraDeviceId: undefined,
-    userSelectedMicDeviceId: undefined
+    userSelectedMicDeviceId: undefined,
+    userSelectedAudioOutputDeviceLabel: undefined,
+    userSelectedCameraDeviceLabel: undefined,
+    userSelectedMicDeviceLabel: undefined
 };
 
 const STORE_NAME = 'features/base/settings';
