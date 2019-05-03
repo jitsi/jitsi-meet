@@ -2391,12 +2391,13 @@ export default {
      * @private
      */
     _checkAndNotifyForNewDevice(newDevices, oldDevices) {
-        // let's find the first device that exists only in new devices
-        const newDevice = newDevices.find(
+        // let's intersect both newDevices and oldDevices and handle thew newly
+        // added devices
+        const onlyNewDevices = newDevices.filter(
             nDevice => !oldDevices.find(
                 device => device.deviceId === nDevice.deviceId));
 
-        if (newDevice) {
+        onlyNewDevices.forEach(newDevice => {
 
             // we want to strip any device details that are not very
             // user friendly, like usb ids put in brackets at the end
@@ -2431,7 +2432,7 @@ export default {
                 customActionNameKey: 'notify.newDeviceAction',
                 customActionHandler: this._useDevice.bind(this, newDevice)
             }));
-        }
+        });
     },
 
     /**
