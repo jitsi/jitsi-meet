@@ -49,10 +49,9 @@ import {
     setDesktopSharingEnabled
 } from './react/features/base/conference';
 import {
+    checkAndNotifyForNewDevice,
     getAvailableDevices,
-    setAudioInputDevice,
     setAudioOutputDeviceId,
-    setVideoInputDevice,
     updateDeviceList
 } from './react/features/base/devices';
 import {
@@ -2339,103 +2338,6 @@ export default {
     },
 
     /**
-     * Set a device to be currently used, selected by the user.
-     *
-     * @param {MediaDeviceInfo} device - The device to save.
-     * @returns {boolean} - Returns true in order notifications to be dismissed.
-     * @private
-     */
-    _useDevice(device) {
-        switch (device.kind) {
-        case 'videoinput': {
-            APP.store.dispatch(updateSettings({
-                userSelectedCameraDeviceId: device.deviceId
-            }));
-
-            APP.store.dispatch(setVideoInputDevice(device.deviceId));
-            break;
-        }
-        case 'audioinput': {
-            APP.store.dispatch(updateSettings({
-                userSelectedMicDeviceId: device.deviceId
-            }));
-
-            APP.store.dispatch(setAudioInputDevice(device.deviceId));
-            break;
-        }
-        case 'audiooutput': {
-            setAudioOutputDeviceId(
-                device.deviceId,
-                APP.store.dispatch,
-                true)
-            .then(() => logger.log('changed audio output device'))
-            .catch(err => {
-                logger.warn(
-                    'Failed to change audio output device.',
-                    'Default or previously set audio output device will',
-                    ' be used instead.',
-                    err);
-            });
-            break;
-        }
-        }
-
-        return true;
-    },
-
-    /**
-     * Finds a new device by comparing new and old array of devices and dispatches
-     * notification with the new device.
-     * @param {MediaDeviceInfo[]} newDevices - The array of new devices we received.
-     * @param {MediaDeviceInfo[]} oldDevices - The array of the old devices we have.
-     * @private
-     */
-    _checkAndNotifyForNewDevice(newDevices, oldDevices) {
-        // let's intersect both newDevices and oldDevices and handle thew newly
-        // added devices
-        const onlyNewDevices = newDevices.filter(
-            nDevice => !oldDevices.find(
-                device => device.deviceId === nDevice.deviceId));
-
-        onlyNewDevices.forEach(newDevice => {
-
-            // we want to strip any device details that are not very
-            // user friendly, like usb ids put in brackets at the end
-            let description = newDevice.label;
-            const ix = description.lastIndexOf('(');
-
-            if (ix !== -1) {
-                description = description.substr(0, ix);
-            }
-
-            let deviceTypeKey;
-
-            switch (newDevice.kind) {
-            case 'videoinput': {
-                deviceTypeKey = 'settings.selectCamera';
-                break;
-            }
-            case 'audioinput': {
-                deviceTypeKey = 'settings.selectMic';
-                break;
-            }
-            case 'audiooutput': {
-                deviceTypeKey = 'settings.selectAudioOutput';
-                break;
-            }
-            }
-
-            APP.store.dispatch(showNotification({
-                description,
-                titleKey: 'notify.newDeviceTitle',
-                titleArguments: { 'deviceType': APP.translation.translate(deviceTypeKey).toLowerCase() },
-                customActionNameKey: 'notify.newDeviceAction',
-                customActionHandler: this._useDevice.bind(this, newDevice)
-            }));
-        });
-    },
-
-    /**
      * Event listener for JitsiMediaDevicesEvents.DEVICE_LIST_CHANGED to
      * handle change of available media devices.
      * @private
@@ -2488,15 +2390,18 @@ export default {
             = APP.store.getState()['features/base/devices'].availableDevices;
 
         if (typeof newDevices.audiooutput === 'undefined') {
-            this._checkAndNotifyForNewDevice(newAvailDevices.audioOutput, oldDevices.audioOutput);
+            APP.store.dispatch(
+                checkAndNotifyForNewDevice(newAvailDevices.audioOutput, oldDevices.audioOutput));
         }
 
         if (!requestedInput.audio) {
-            this._checkAndNotifyForNewDevice(newAvailDevices.audioInput, oldDevices.audioInput);
+            APP.store.dispatch(
+                checkAndNotifyForNewDevice(newAvailDevices.audioInput, oldDevices.audioInput));
         }
 
         if (!requestedInput.video) {
-            this._checkAndNotifyForNewDevice(newAvailDevices.videoInput, oldDevices.videoInput);
+            APP.store.dispatch(
+                checkAndNotifyForNewDevice(newAvailDevices.videoInput, oldDevices.videoInput));
         }
 
         promises.push(

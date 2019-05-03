@@ -3,6 +3,7 @@ import { updateSettings } from '../settings';
 
 import {
     ADD_PENDING_DEVICE_REQUEST,
+    CHECK_AND_NOTIFY_FOR_NEW_DEVICE,
     REMOVE_PENDING_DEVICE_REQUESTS,
     SET_AUDIO_INPUT_DEVICE,
     SET_VIDEO_INPUT_DEVICE,
@@ -186,3 +187,21 @@ export function updateDeviceList(devices) {
     };
 }
 
+/**
+ * Signals to check new and old devices for newly added devices and notify.
+ *
+ * @param {Array<MediaDeviceInfo>} newDevices - Array of the new devices.
+ * @param {Array<MediaDeviceInfo>} oldDevices - Array of the old devices.
+ * @returns {{
+ *      type: CHECK_AND_NOTIFY_FOR_NEW_DEVICE,
+ *      newDevices: Array<MediaDeviceInfo>,
+ *      oldDevices: Array<MediaDeviceInfo>
+ * }}
+ */
+export function checkAndNotifyForNewDevice(newDevices, oldDevices) {
+    return {
+        type: CHECK_AND_NOTIFY_FOR_NEW_DEVICE,
+        newDevices,
+        oldDevices
+    };
+}
