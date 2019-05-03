@@ -438,8 +438,8 @@ class ConferenceConnector {
                     hasRead: true,
                     error: code,
                     message: msg,
-                    timestamp: Date.now(),
-                    type: 'error'
+                    messageType: 'error',
+                    timestamp: Date.now()
                 }));
             }
             break;
