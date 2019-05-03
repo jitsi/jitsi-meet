@@ -103,15 +103,12 @@ class Chat extends AbstractChat<Props> {
             ref = { this._setMessageListEndRef } />);
 
         return (
-            <div
-                className = 'sideToolbarContainer__inner'
-                id = 'chat_container'>
-                { this._renderChatHeader() }
+            <>
                 <div id = 'chatconversation'>
                     { messages }
                 </div>
                 <ChatInput />
-            </div>
+            </>
         );
     }
 
@@ -167,11 +164,11 @@ class Chat extends AbstractChat<Props> {
         const ComponentToRender = !_isOpen && state === 'exited'
             ? null
             : (
-                <div>
+                <>
                     { this._renderChatHeader() }
                     { _showNamePrompt
                         ? <DisplayNameForm /> : this._renderChat() }
-                </div>
+                </>
             );
         let className = '';
 
@@ -183,7 +180,7 @@ class Chat extends AbstractChat<Props> {
 
         return (
             <div
-                className = { className }
+                className = { `sideToolbarContainer ${className}` }
                 id = 'sideToolbarContainer'>
                 { ComponentToRender }
             </div>

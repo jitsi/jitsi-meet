@@ -1,6 +1,9 @@
 #sideToolbarContainer {
     background-color: $newToolbarBackgroundColor;
-
+    box-sizing: border-box;
+    color: #FFF;
+    display: flex;
+    flex-direction: column;
     /**
      * Make the sidebar flush with the top of the toolbar. Take the size of
      * the toolbar and subtract from 100%.
@@ -21,20 +24,6 @@
     &.slideInExt {
         left: 0;
     }
-
-    .sideToolbarContainer__inner {
-        box-sizing: border-box;
-        color: #FFF;
-        display: flex;
-        flex-direction: column;
-        height: 100%;
-        width: $sidebarWidth;
-    }
-}
-
-#chat_container * {
-    -webkit-user-select: text;
-    user-select: text;
 }
 
 #chatconversation {
@@ -166,20 +155,27 @@
     right: 5px;
 }
 
-#chat_container .display-name {
-    float: left;
-    padding-left: 5px;
-    font-weight: bold;
-    white-space: nowrap;
-    text-overflow: ellipsis;
-    width: 95%;
-    overflow: hidden;
-}
+.sideToolbarContainer {
+    * {
+        -webkit-user-select: text;
+        user-select: text;
+    }
 
-#chat_container .timestamp {
-    float: right;
-    padding-right: 5px;
-    font-size: 11px;
+    .display-name {
+        float: left;
+        padding-left: 5px;
+        font-weight: bold;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        width: 95%;
+        overflow: hidden;
+    }
+
+    .timestamp {
+        float: right;
+        padding-right: 5px;
+        font-size: 11px;
+    }
 }
 
 .usermessage {
