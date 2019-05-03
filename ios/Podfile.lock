@@ -84,8 +84,8 @@ PODS:
   - nanopb/decode (0.3.901)
   - nanopb/encode (0.3.901)
   - ObjectiveDropboxOfficial (3.9.4)
-  - React (0.59.4):
-    - React/Core (= 0.59.4)
+  - React (0.59.5):
+    - React/Core (= 0.59.5)
   - react-native-background-timer (2.1.1):
     - React
   - react-native-calendar-events (1.6.4):
@@ -99,50 +99,50 @@ PODS:
     - React
   - react-native-webrtc (1.69.0):
     - React
-  - React/Core (0.59.4):
-    - yoga (= 0.59.4.React)
-  - React/CxxBridge (0.59.4):
+  - React/Core (0.59.5):
+    - yoga (= 0.59.5.React)
+  - React/CxxBridge (0.59.5):
     - Folly (= 2018.10.22.00)
     - React/Core
     - React/cxxreact
     - React/jsiexecutor
-  - React/cxxreact (0.59.4):
+  - React/cxxreact (0.59.5):
     - boost-for-react-native (= 1.63.0)
     - DoubleConversion
     - Folly (= 2018.10.22.00)
     - glog
     - React/jsinspector
-  - React/DevSupport (0.59.4):
+  - React/DevSupport (0.59.5):
     - React/Core
     - React/RCTWebSocket
-  - React/fishhook (0.59.4)
-  - React/jsi (0.59.4):
+  - React/fishhook (0.59.5)
+  - React/jsi (0.59.5):
     - DoubleConversion
     - Folly (= 2018.10.22.00)
     - glog
-  - React/jsiexecutor (0.59.4):
+  - React/jsiexecutor (0.59.5):
     - DoubleConversion
     - Folly (= 2018.10.22.00)
     - glog
     - React/cxxreact
     - React/jsi
-  - React/jsinspector (0.59.4)
-  - React/RCTActionSheet (0.59.4):
+  - React/jsinspector (0.59.5)
+  - React/RCTActionSheet (0.59.5):
     - React/Core
-  - React/RCTAnimation (0.59.4):
+  - React/RCTAnimation (0.59.5):
     - React/Core
-  - React/RCTBlob (0.59.4):
+  - React/RCTBlob (0.59.5):
     - React/Core
-  - React/RCTImage (0.59.4):
+  - React/RCTImage (0.59.5):
     - React/Core
     - React/RCTNetwork
-  - React/RCTLinkingIOS (0.59.4):
+  - React/RCTLinkingIOS (0.59.5):
     - React/Core
-  - React/RCTNetwork (0.59.4):
+  - React/RCTNetwork (0.59.5):
     - React/Core
-  - React/RCTText (0.59.4):
+  - React/RCTText (0.59.5):
     - React/Core
-  - React/RCTWebSocket (0.59.4):
+  - React/RCTWebSocket (0.59.5):
     - React/Core
     - React/fishhook
     - React/RCTBlob
@@ -160,7 +160,7 @@ PODS:
   - SDWebImage/GIF (4.4.6):
     - FLAnimatedImage (~> 1.0)
     - SDWebImage/Core
-  - yoga (0.59.4.React)
+  - yoga (0.59.5.React)
 
 DEPENDENCIES:
   - Amplitude-iOS (~> 4.0.4)
@@ -268,7 +268,7 @@ SPEC CHECKSUMS:
   GTMSessionFetcher: 32aeca0aa144acea523e1c8e053089dec2cb98ca
   nanopb: 2901f78ea1b7b4015c860c2fdd1ea2fee1a18d48
   ObjectiveDropboxOfficial: a5afefc83f6467c42c45f2253f583f2ad1ffc701
-  React: 5cb71fb1a15b5ce04794ab49e24b48ebe4c94e65
+  React: 90adac468c7b72bf1fa6c64bf230650f851a8388
   react-native-background-timer: 0d34748e53a972507c66963490c775321a88f6f2
   react-native-calendar-events: ee9573e355711ac679e071be70789542431f4ce3
   react-native-fast-image: 47487b71169aea34868e7b38bf870b6b3f2157c5
@@ -278,7 +278,7 @@ SPEC CHECKSUMS:
   RNSound: e157320f503bdd4f4ee6d8542e948d54f90c3c3a
   RNVectorIcons: d819334932bcda3332deb3d2c8ea4d069e0b98f9
   SDWebImage: 3f3f0c02f09798048c47a5ed0a13f17b063572d8
-  yoga: 596e61c9b57751d08a22b07aba310dbd3e65ab75
+  yoga: 2e571f113e8cbeb0eb752aeebc86c1bfe7a8200c
 
 PODFILE CHECKSUM: 4a11c3d66127a9845d4a5b2c7fad49f58a9c7a89
 
