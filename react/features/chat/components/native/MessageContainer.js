@@ -1,23 +1,18 @@
 // @flow
 
-import React, { Component } from 'react';
+import React from 'react';
 import { FlatList } from 'react-native';
+
+import AbstractMessageContainer, { type Props }
+    from '../AbstractMessageContainer';
 
 import ChatMessage from './ChatMessage';
 import styles from './styles';
 
-type Props = {
-
-    /**
-     * The messages array to render.
-     */
-    messages: Array<Object>
-}
-
 /**
  * Implements a container to render all the chat messages in a conference.
  */
-export default class MessageContainer extends Component<Props> {
+export default class MessageContainer extends AbstractMessageContainer<Props> {
     /**
      * Instantiates a new instance of the component.
      *
