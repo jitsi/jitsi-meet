@@ -1,27 +1,18 @@
 // @flow
 
-import React, { PureComponent } from 'react';
+import React from 'react';
+
+import AbstractMessageContainer, { type Props }
+    from '../AbstractMessageContainer';
 
 import ChatMessageGroup from './ChatMessageGroup';
-
-type Props = {
-
-    /**
-     * The messages array to render.
-     */
-    messages: Array<Object>
-}
 
 /**
  * Displays all received chat messages, grouped by sender.
  *
- * @extends PureComponent
+ * @extends AbstractMessageContainer
  */
-export default class MessageContainer extends PureComponent<Props> {
-    static defaultProps = {
-        messages: []
-    };
-
+export default class MessageContainer extends AbstractMessageContainer<Props> {
     /**
      * Reference to the HTML element at the end of the list of displayed chat
      * messages. Used for scrolling to the end of the chat messages.
@@ -84,36 +75,7 @@ export default class MessageContainer extends PureComponent<Props> {
         );
     }
 
-    /**
-     * Iterates over all the messages and creates nested arrays which hold
-     * consecutive messages sent by the same participant.
-     *
-     * @private
-     * @returns {Array<Array<Object>>}
-     */
-    _getMessagesGroupedBySender() {
-        const messagesCount = this.props.messages.length;
-        const groups = [];
-        let currentGrouping = [];
-        let currentGroupParticipantId;
-
-        for (let i = 0; i < messagesCount; i++) {
-            const message = this.props.messages[i];
-
-            if (message.id === currentGroupParticipantId) {
-                currentGrouping.push(message);
-            } else {
-                groups.push(currentGrouping);
-
-                currentGrouping = [ message ];
-                currentGroupParticipantId = message.id;
-            }
-        }
-
-        groups.push(currentGrouping);
-
-        return groups;
-    }
+    _getMessagesGroupedBySender: () => Array<Array<Object>>;
 
     /**
      * Automatically scrolls the displayed chat messages down to the latest.
