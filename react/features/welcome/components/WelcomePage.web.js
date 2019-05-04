@@ -119,9 +119,7 @@ class WelcomePage extends AbstractWelcomePage {
                 className = { `welcome ${showAdditionalContent
                     ? 'with-content' : 'without-content'}` }
                 id = 'welcome_page'>
-                <div className = 'welcome-watermark'>
-                    <Watermarks />
-                </div>
+                <Watermarks />
                 <div className = 'header'>
                     <div className = 'welcome-page-settings'>
                         <SettingsButton
