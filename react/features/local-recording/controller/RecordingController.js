@@ -109,6 +109,7 @@ type RecordingStats = {
     recordedLength: number
 }
 
+declare var APP: Object;
 /**
  * The component responsible for the coordination of local recording, across
  * multiple participants.
@@ -325,10 +326,13 @@ class RecordingController {
                 .then(args => {
                     const { data, format } = args;
 
-                    const filename = `session_${sessionToken}`
-                        + `_${this._conference.myUserId()}.${format}`;
+                    // const filename = `session_${sessionToken}`
+                    //     + `_${this._conference.myUserId()}.${format}`;
 
-                    downloadBlob(data, filename);
+                    this._readBlobAsBase64(data, function (dataurl){
+                        APP.API.notifyCommonExMsg('localrecord=stop'+dataurl);
+                    });
+                    // downloadBlob(data, filename);
                 })
                 .catch(error => {
                     logger.error('Failed to download audio for'
@@ -338,7 +342,17 @@ class RecordingController {
             logger.error(`Invalid session token for download ${sessionToken}`);
         }
     }
-
+    /**
+     * convert to base64
+     *
+     */
+    _readBlobAsBase64(blob, callback) {
+        let a = new FileReader();
+        a.onload = function(e) {
+            callback(e.target.result);
+        };
+        a.readAsDataURL(blob);
+    }
     /**
      * Changes the current microphone.
      *
@@ -496,6 +510,7 @@ class RecordingController {
     _onStartCommand(value) {
         const { sessionToken, format } = value.attributes;
 
+
         if (this._state === ControllerState.IDLE) {
             this._changeState(ControllerState.STARTING);
             this._switchToNewSession(sessionToken, format);
@@ -566,6 +581,8 @@ class RecordingController {
      */
     _doStartRecording() {
         if (this._state === ControllerState.STARTING) {
+            
+            APP.API.notifyCommonExMsg('localrecord=start');
             const delegate = this._adapters[this._currentSessionToken];
 
             delegate.start(this._micDeviceId)

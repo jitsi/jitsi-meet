@@ -71,6 +71,7 @@ const events = {
     'video-mute-status-changed': 'videoMuteStatusChanged',
     'screen-sharing-status-changed': 'screenSharingStatusChanged',
     'show-manager-window': 'show-manager-window',
+    'common-extend-message': 'common-extend-message',
     'subject-change': 'subjectChange'
 };
 

@@ -659,6 +659,20 @@ class API {
             isShow
         });
     }
+/**
+     * Notify external application (if API is enabled) that open manager window
+     *
+     * @param {boolean} isShow - whether show or not.
+     * user.
+     * @returns {void}
+     */
+    notifyCommonExMsg(msg: string) {
+        this._sendEvent({
+            name: 'common-extend-message',
+            msg
+        });
+    }
+
 
     /**
      * Disposes the allocated resources.
