@@ -1,18 +1,23 @@
 // @flow
 
-import React from 'react';
+import React, { Component } from 'react';
 import { FlatList } from 'react-native';
 
-import AbstractMessageContainer, { type Props }
-    from '../AbstractMessageContainer';
-
-import ChatMessageGroup from './ChatMessageGroup';
+import ChatMessage from './ChatMessage';
 import styles from './styles';
+
+type Props = {
+
+  /**
+   * The messages array to render.
+   */
+  messages: Array<Object>
+}
 
 /**
  * Implements a container to render all the chat messages in a conference.
  */
-export default class MessageContainer extends AbstractMessageContainer<Props> {
+export default class ChatMessageGroup extends Component<Props> {
     /**
      * Instantiates a new instance of the component.
      *
@@ -22,7 +27,7 @@ export default class MessageContainer extends AbstractMessageContainer<Props> {
         super(props);
 
         this._keyExtractor = this._keyExtractor.bind(this);
-        this._renderMessageGroup = this._renderMessageGroup.bind(this);
+        this._renderMessage = this._renderMessage.bind(this);
     }
 
     /**
@@ -33,15 +38,13 @@ export default class MessageContainer extends AbstractMessageContainer<Props> {
     render() {
         return (
             <FlatList
-                data = { this._getMessagesGroupedBySender() }
+                data = { this.props.messages }
                 inverted = { true }
                 keyExtractor = { this._keyExtractor }
-                renderItem = { this._renderMessageGroup }
+                renderItem = { this._renderMessage }
                 style = { styles.messageContainer } />
         );
     }
-
-    _getMessagesGroupedBySender: () => Array<Array<Object>>;
 
     _keyExtractor: Object => string
 
@@ -57,15 +60,17 @@ export default class MessageContainer extends AbstractMessageContainer<Props> {
         return `key_${index}`;
     }
 
-    _renderMessageGroup: Object => React$Element<*>;
+    _renderMessage: Object => React$Element<*>;
 
     /**
      * Renders a single chat message.
      *
-     * @param {Array<Object>} messages - The chat message to render.
+     * @param {Object} message - The chat message to render.
      * @returns {React$Element<*>}
      */
-    _renderMessageGroup({ item: messages }) {
-        return <ChatMessageGroup messages = { messages } />;
+    _renderMessage({ item: message }) {
+        return (
+            <ChatMessage message = { message } />
+        );
     }
 }
