@@ -2,7 +2,13 @@
 
 import { PureComponent } from 'react';
 
+import { getLocalizedDateFormatter } from '../../base/i18n';
 import { getAvatarURLByParticipantId } from '../../base/participants';
+
+/**
+ * Formatter string to display the message timestamp.
+ */
+const TIMESTAMP_FORMAT = 'H:mm';
 
 /**
  * The type of the React {@code Component} props of {@code AbstractChatMessage}.
@@ -47,11 +53,15 @@ export type Props = {
  * Abstract component to display a chat message.
  */
 export default class AbstractChatMessage<P: Props> extends PureComponent<P> {
-    static defaultProps = {
-        showAvatar: false,
-        showDisplayName: false,
-        showTimestamp: false
-    };
+    /**
+     * Returns the timestamp to display for the message.
+     *
+     * @returns {string}
+     */
+    _getFormattedTimestamp() {
+        return getLocalizedDateFormatter(new Date(this.props.message.timestamp))
+            .format(TIMESTAMP_FORMAT);
+    }
 }
 
 /**
