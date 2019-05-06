@@ -14,11 +14,6 @@ import AbstractChatMessage, {
 import styles from './styles';
 
 /**
- * Size of the rendered avatar in the message.
- */
-const AVATAR_SIZE = 32;
-
-/**
  * Formatter string to display the message timestamp.
  */
 const TIMESTAMP_FORMAT = 'H:mm';
@@ -34,8 +29,6 @@ class ChatMessage extends AbstractChatMessage<Props> {
      */
     render() {
         const { message } = this.props;
-        const timeStamp = getLocalizedDateFormatter(
-            new Date(message.timestamp)).format(TIMESTAMP_FORMAT);
         const localMessage = message.messageType === 'local';
 
         // Style arrays that need to be updated in various scenarios, such as
@@ -60,18 +53,12 @@ class ChatMessage extends AbstractChatMessage<Props> {
 
         return (
             <View style = { styles.messageWrapper } >
-                {
-
-                    // Avatar is only rendered for remote messages.
-                    !localMessage && this._renderAvatar()
-                }
+                { this._renderAvatar() }
                 <View style = { detailsWrapperStyle }>
                     <View style = { textWrapperStyle } >
                         {
-
-                            // Display name is only rendered for remote
-                            // messages.
-                            !localMessage && this._renderDisplayName()
+                            this.props.showDisplayName
+                                && this._renderDisplayName()
                         }
                         <Text style = { styles.messageText }>
                             { message.messageType === 'error'
@@ -82,9 +69,7 @@ class ChatMessage extends AbstractChatMessage<Props> {
                                 : message.message }
                         </Text>
                     </View>
-                    <Text style = { styles.timeText }>
-                        { timeStamp }
-                    </Text>
+                    { this.props.showTimestamp && this._renderTimestamp() }
                 </View>
             </View>
         );
@@ -96,13 +81,12 @@ class ChatMessage extends AbstractChatMessage<Props> {
      * @returns {React$Element<*>}
      */
     _renderAvatar() {
-        const { _avatarURL } = this.props;
-
         return (
             <View style = { styles.avatarWrapper }>
-                <Avatar
-                    size = { AVATAR_SIZE }
-                    uri = { _avatarURL } />
+                { this.props.showAvatar && <Avatar
+                    size = { styles.avatarWrapper.width }
+                    uri = { this.props._avatarURL } />
+                }
             </View>
         );
     }
@@ -113,11 +97,26 @@ class ChatMessage extends AbstractChatMessage<Props> {
      * @returns {React$Element<*>}
      */
     _renderDisplayName() {
-        const { message } = this.props;
-
         return (
             <Text style = { styles.displayName }>
-                { message.displayName }
+                { this.props.message.displayName }
+            </Text>
+        );
+    }
+
+    /**
+     * Renders the time at which the message was sent.
+     *
+     * @returns {React$Element<*>}
+     */
+    _renderTimestamp() {
+        return (
+            <Text style = { styles.timeText }>
+                {
+                    getLocalizedDateFormatter(
+                        new Date(this.props.message.timestamp)
+                    ).format(TIMESTAMP_FORMAT)
+                }
             </Text>
         );
     }
