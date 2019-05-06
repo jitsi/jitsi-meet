@@ -3,7 +3,7 @@
 import React from 'react';
 import { Text, View } from 'react-native';
 
-import { getLocalizedDateFormatter, translate } from '../../../base/i18n';
+import { translate } from '../../../base/i18n';
 import { Avatar } from '../../../base/participants';
 import { connect } from '../../../base/redux';
 
@@ -12,11 +12,6 @@ import AbstractChatMessage, {
     type Props
 } from '../AbstractChatMessage';
 import styles from './styles';
-
-/**
- * Formatter string to display the message timestamp.
- */
-const TIMESTAMP_FORMAT = 'H:mm';
 
 /**
  * Renders a single chat message.
@@ -75,6 +70,8 @@ class ChatMessage extends AbstractChatMessage<Props> {
         );
     }
 
+    _getFormattedTimestamp: () => string;
+
     /**
      * Renders the avatar of the sender.
      *
@@ -112,11 +109,7 @@ class ChatMessage extends AbstractChatMessage<Props> {
     _renderTimestamp() {
         return (
             <Text style = { styles.timeText }>
-                {
-                    getLocalizedDateFormatter(
-                        new Date(this.props.message.timestamp)
-                    ).format(TIMESTAMP_FORMAT)
-                }
+                { this._getFormattedTimestamp() }
             </Text>
         );
     }

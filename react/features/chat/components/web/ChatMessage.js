@@ -56,13 +56,42 @@ class ChatMessage extends AbstractChatMessage<Props> {
         });
 
         return (
-            <div className = 'chatmessage'>
-                { this.props.showDisplayName && <div className = 'display-name'>
-                    { message.displayName }
-                </div> }
-                <div className = 'usermessage'>
-                    { processedMessage }
+            <div>
+                <div className = 'chatmessage'>
+                    { this.props.showDisplayName && this._renderDisplayName() }
+                    <div className = 'usermessage'>
+                        { processedMessage }
+                    </div>
                 </div>
+                { this.props.showTimestamp && this._renderTimestamp() }
+            </div>
+        );
+    }
+
+    _getFormattedTimestamp: () => string;
+
+    /**
+     * Renders the display name of the sender.
+     *
+     * @returns {React$Element<*>}
+     */
+    _renderDisplayName() {
+        return (
+            <div className = 'display-name'>
+                { this.props.message.displayName }
+            </div>
+        );
+    }
+
+    /**
+     * Renders the time at which the message was sent.
+     *
+     * @returns {React$Element<*>}
+     */
+    _renderTimestamp() {
+        return (
+            <div className = 'timestamp'>
+                { this._getFormattedTimestamp() }
             </div>
         );
     }
