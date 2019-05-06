@@ -3,8 +3,6 @@
 import React, { Component } from 'react';
 import ChatMessage from './ChatMessage';
 
-import { getLocalizedDateFormatter } from '../../../base/i18n';
-
 type Props = {
 
     /**
@@ -43,8 +41,6 @@ class ChatMessageGroup extends Component<Props> {
             return null;
         }
 
-        const { timestamp } = messages[messagesLength - 1];
-
         return (
             <div className = { `chat-message-group ${className}` }>
                 {
@@ -52,13 +48,10 @@ class ChatMessageGroup extends Component<Props> {
                         <ChatMessage
                             key = { i }
                             message = { message }
-                            showDisplayName = { i === 0 } />
+                            showDisplayName = { i === 0 }
+                            showTimestamp = { i === messages.length - 1 } />
                     ))
                 }
-                <div className = 'chat-message-group-footer'>
-                    { getLocalizedDateFormatter(
-                        new Date(timestamp)).format('H:mm') }
-                </div>
             </div>
         );
     }

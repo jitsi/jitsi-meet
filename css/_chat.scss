@@ -287,13 +287,17 @@
     &.local {
         align-items: flex-end;
 
+        .chatmessage {
+            background-color: $chatLocalMessageBackgroundColor;
+            border-radius: 6px 0px 6px 6px;
+        }
+
         .display-name {
             display: none;
         }
 
-        .chatmessage {
-            background-color: $chatLocalMessageBackgroundColor;
-            border-radius: 6px 0px 6px 6px;
+        .timestamp {
+            text-align: right;
         }
     }
 
