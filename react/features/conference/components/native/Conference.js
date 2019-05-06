@@ -5,7 +5,6 @@ import React from 'react';
 import { BackHandler, SafeAreaView, StatusBar, View } from 'react-native';
 
 import { appNavigate } from '../../../app';
-import { connect, disconnect } from '../../../base/connection';
 import { getParticipantCount } from '../../../base/participants';
 import { Container, LoadingIndicator, TintedView } from '../../../base/react';
 import { connect as reactReduxConnect } from '../../../base/redux';
@@ -14,7 +13,6 @@ import {
     makeAspectRatioAware
 } from '../../../base/responsive-ui';
 import { TestConnectionInfo } from '../../../base/testing';
-import { createDesiredLocalTracks } from '../../../base/tracks';
 import { ConferenceNotification } from '../../../calendar-sync';
 import { Chat } from '../../../chat';
 import { DisplayNameLabel } from '../../../display-name';
@@ -65,21 +63,6 @@ type Props = AbstractProps & {
      * The ID of the participant currently on stage (if any)
      */
     _largeVideoParticipantId: string,
-
-    /**
-     * Current conference's full URL.
-     *
-     * @private
-     */
-    _locationURL: URL,
-
-    /**
-     * The handler which dispatches the (redux) action connect.
-     *
-     * @private
-     * @returns {void}
-     */
-    _onConnect: Function,
 
     /**
      * The handler which dispatches the (redux) action disconnect.
@@ -166,8 +149,6 @@ class Conference extends AbstractConference<Props, *> {
      * @returns {void}
      */
     componentDidMount() {
-        this.props._onConnect();
-
         BackHandler.addEventListener(
             'hardwareBackPress',
             this.props._onHardwareBackPress);
@@ -186,23 +167,13 @@ class Conference extends AbstractConference<Props, *> {
      */
     componentDidUpdate(pevProps: Props) {
         const {
-            _locationURL: oldLocationURL,
-            _participantCount: oldParticipantCount,
-            _room: oldRoom
+            _participantCount: oldParticipantCount
         } = pevProps;
         const {
-            _locationURL: newLocationURL,
             _participantCount: newParticipantCount,
-            _room: newRoom,
             _setToolboxVisible,
             _toolboxVisible
         } = this.props;
-
-        // If the location URL changes we need to reconnect.
-        oldLocationURL !== newLocationURL && newRoom && this.props._onDisconnect();
-
-        // Start the connection process when there is a (valid) room.
-        oldRoom !== newRoom && newRoom && this.props._onConnect();
 
         if (oldParticipantCount === 1
                 && newParticipantCount > 1
@@ -228,8 +199,6 @@ class Conference extends AbstractConference<Props, *> {
         BackHandler.removeEventListener(
             'hardwareBackPress',
             this.props._onHardwareBackPress);
-
-        this.props._onDisconnect();
     }
 
     /**
@@ -396,36 +365,12 @@ class Conference extends AbstractConference<Props, *> {
  * @param {Function} dispatch - Redux action dispatcher.
  * @private
  * @returns {{
- *     _onConnect: Function,
- *     _onDisconnect: Function,
  *     _onHardwareBackPress: Function,
  *     _setToolboxVisible: Function
  * }}
  */
 function _mapDispatchToProps(dispatch) {
     return {
-        /**
-         * Dispatches actions to create the desired local tracks and for
-         * connecting to the conference.
-         *
-         * @private
-         * @returns {void}
-         */
-        _onConnect() {
-            dispatch(createDesiredLocalTracks());
-            dispatch(connect());
-        },
-
-        /**
-         * Dispatches an action disconnecting from the conference.
-         *
-         * @private
-         * @returns {void}
-         */
-        _onDisconnect() {
-            dispatch(disconnect());
-        },
-
         /**
          * Handles a hardware button press for back navigation. Leaves the
          * associated {@code Conference}.
@@ -462,8 +407,7 @@ function _mapDispatchToProps(dispatch) {
  * @returns {Props}
  */
 function _mapStateToProps(state) {
-    const { connecting, connection, locationURL }
-        = state['features/base/connection'];
+    const { connecting, connection } = state['features/base/connection'];
     const {
         conference,
         joining,
@@ -507,14 +451,6 @@ function _mapStateToProps(state) {
          * The ID of the participant currently on stage.
          */
         _largeVideoParticipantId: state['features/large-video'].participantId,
-
-        /**
-         * Current conference's full URL.
-         *
-         * @private
-         * @type {URL}
-         */
-        _locationURL: locationURL,
 
         /**
          * The number of participants in the conference.

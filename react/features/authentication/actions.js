@@ -113,6 +113,7 @@ export function cancelWaitForOwner() {
         // clients/consumers need an event.
         const { authRequired } = getState()['features/base/conference'];
 
+        // FIXME remove when external-api ported to base/session
         authRequired && dispatch(conferenceLeft(authRequired));
 
         dispatch(appNavigate(undefined));

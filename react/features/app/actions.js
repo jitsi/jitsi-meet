@@ -10,8 +10,10 @@ import {
     setConfig,
     storeConfig
 } from '../base/config';
-import { setLocationURL } from '../base/connection';
+import { connect, setLocationURL } from '../base/connection';
 import { loadConfig } from '../base/lib-jitsi-meet';
+import { endAllSessions, findSessionForLocationURL } from '../base/session';
+import { createDesiredLocalTracks } from '../base/tracks';
 import { parseURIString, toURLString } from '../base/util';
 import { setFatalError } from '../overlay';
 
@@ -32,6 +34,8 @@ declare var APP: Object;
  */
 export function appNavigate(uri: ?string) {
     return async (dispatch: Dispatch<any>, getState: Function) => {
+        dispatch(endAllSessions());
+
         let location = parseURIString(uri);
 
         // If the specified location (URI) does not identify a host, use the app's
@@ -81,7 +85,7 @@ export function appNavigate(uri: ?string) {
             config = restoreConfig(baseURL);
 
             if (!config) {
-                dispatch(loadConfigError(error, locationURL));
+                dispatch(loadConfigError(error, locationURL, room));
 
                 return;
             }
@@ -91,8 +95,15 @@ export function appNavigate(uri: ?string) {
             dispatch(setLocationURL(locationURL));
             dispatch(setConfig(config));
             dispatch(setRoom(room));
+
+            const session = findSessionForLocationURL(getState(), locationURL);
+
+            if (session && typeof APP === 'undefined') {
+                dispatch(createDesiredLocalTracks());
+                dispatch(connect());
+            }
         } else {
-            dispatch(loadConfigError(new Error('Config no longer needed!'), locationURL));
+            dispatch(loadConfigError(new Error('Config no longer needed!'), locationURL, room));
         }
     };
 }

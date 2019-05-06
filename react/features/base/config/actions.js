@@ -38,17 +38,20 @@ export function configWillLoad(locationURL: URL, room: string) {
  * loading of a configuration.
  * @param {URL} locationURL - The URL of the location which necessitated the
  * loading of a configuration.
+ * @param {string} room - The name of the conference room.
  * @returns {{
  *     type: LOAD_CONFIG_ERROR,
  *     error: Error,
- *     locationURL: URL
+ *     locationURL: URL,
+ *     room: string
  * }}
  */
-export function loadConfigError(error: Error, locationURL: URL) {
+export function loadConfigError(error: Error, locationURL: URL, room: ?string) {
     return {
         type: LOAD_CONFIG_ERROR,
         error,
-        locationURL
+        locationURL,
+        room
     };
 }
 

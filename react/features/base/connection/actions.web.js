@@ -12,6 +12,7 @@ import { configureInitialDevices } from '../devices';
 export {
     connectionEstablished,
     connectionFailed,
+    connectionWillConnect,
     setLocationURL
 } from './actions.native';
 

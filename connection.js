@@ -5,7 +5,8 @@ import jitsiLocalStorage from './modules/util/JitsiLocalStorage';
 
 import {
     connectionEstablished,
-    connectionFailed
+    connectionFailed,
+    connectionWillConnect
 } from './react/features/base/connection';
 import {
     isFatalJitsiConnectionError,
@@ -74,6 +75,7 @@ function checkForAttachParametersAndConnect(id, password, connection) {
 function connect(id, password, roomName) {
     const connectionConfig = Object.assign({}, config);
     const { issuer, jwt } = APP.store.getState()['features/base/jwt'];
+    const { locationURL } = APP.store.getState()['features/base/connection'];
 
     connectionConfig.bosh += `?room=${roomName}`;
 
@@ -82,6 +84,8 @@ function connect(id, password, roomName) {
             null,
             jwt && issuer && issuer !== 'anonymous' ? jwt : undefined,
             connectionConfig);
+
+    APP.store.dispatch(connectionWillConnect(connection, locationURL));
 
     return new Promise((resolve, reject) => {
         connection.addEventListener(

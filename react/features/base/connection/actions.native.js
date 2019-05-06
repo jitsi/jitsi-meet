@@ -3,11 +3,6 @@
 import _ from 'lodash';
 import type { Dispatch } from 'redux';
 
-import {
-    conferenceLeft,
-    conferenceWillLeave,
-    getCurrentConference
-} from '../conference';
 import JitsiMeetJS, { JitsiConnectionEvents } from '../lib-jitsi-meet';
 import { parseURIString } from '../util';
 
@@ -20,7 +15,7 @@ import {
 } from './actionTypes';
 import { JITSI_CONNECTION_URL_KEY } from './constants';
 
-const logger = require('jitsi-meet-logger').getLogger(__filename);
+import type JitsiConnection from 'lib-jitsi-meet/JitsiConnection';
 
 /**
  * The error structure passed to the {@link connectionFailed} action.
@@ -90,7 +85,7 @@ export function connect(id: ?string, password: ?string) {
 
         connection[JITSI_CONNECTION_URL_KEY] = locationURL;
 
-        dispatch(_connectionWillConnect(connection));
+        dispatch(connectionWillConnect(connection, locationURL));
 
         connection.addEventListener(
             JitsiConnectionEvents.CONNECTION_DISCONNECTED,
@@ -258,16 +253,18 @@ export function connectionFailed(
  *
  * @param {JitsiConnection} connection - The {@code JitsiConnection} which will
  * connect.
+ * @param {URL} locationURL - FIXME.
  * @private
  * @returns {{
  *     type: CONNECTION_WILL_CONNECT,
  *     connection: JitsiConnection
  * }}
  */
-function _connectionWillConnect(connection) {
+export function connectionWillConnect(connection: JitsiConnection, locationURL: URL) {
     return {
         type: CONNECTION_WILL_CONNECT,
-        connection
+        connection,
+        locationURL
     };
 }
 
@@ -317,67 +314,6 @@ function _constructOptions(state) {
     }
 
     return options;
-}
-
-/**
- * Closes connection.
- *
- * @returns {Function}
- */
-export function disconnect() {
-    return (dispatch: Dispatch<any>, getState: Function): Promise<void> => {
-        const state = getState();
-
-        // The conference we have already joined or are joining.
-        const conference_ = getCurrentConference(state);
-
-        // Promise which completes when the conference has been left and the
-        // connection has been disconnected.
-        let promise;
-
-        // Leave the conference.
-        if (conference_) {
-            // In a fashion similar to JitsiConference's CONFERENCE_LEFT event
-            // (and the respective Redux action) which is fired after the
-            // conference has been left, notify the application about the
-            // intention to leave the conference.
-            dispatch(conferenceWillLeave(conference_));
-
-            promise
-                = conference_.leave()
-                    .catch(error => {
-                        logger.warn(
-                            'JitsiConference.leave() rejected with:',
-                            error);
-
-                        // The library lib-jitsi-meet failed to make the
-                        // JitsiConference leave. Which may be because
-                        // JitsiConference thinks it has already left.
-                        // Regardless of the failure reason, continue in
-                        // jitsi-meet as if the leave has succeeded.
-                        dispatch(conferenceLeft(conference_));
-                    });
-        } else {
-            promise = Promise.resolve();
-        }
-
-        // Disconnect the connection.
-        const { connecting, connection } = state['features/base/connection'];
-
-        // The connection we have already connected or are connecting.
-        const connection_ = connection || connecting;
-
-        if (connection_) {
-            promise = promise.then(() => connection_.disconnect());
-        } else {
-            // FIXME: We have no connection! Fake a disconnect. Because of how the current disconnec is implemented
-            // (by doing the diconnect() in the Conference component unmount) we have lost the location URL already.
-            // Oh well, at least send the event.
-            promise.then(() => dispatch(_connectionDisconnected({}, '')));
-        }
-
-        return promise;
-    };
 }
 
 /**
