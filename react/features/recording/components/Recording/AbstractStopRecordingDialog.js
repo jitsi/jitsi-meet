@@ -10,7 +10,7 @@ import {
 import { JitsiRecordingConstants } from '../../../base/lib-jitsi-meet';
 
 import { getActiveSession } from '../../functions';
-import { showDownloadDialog } from '../../functions';
+// import { showDownloadDialog } from '../../functions';
 
 /**
  * The type of the React {@code Component} props of
@@ -72,7 +72,7 @@ export default class AbstractStopRecordingDialog<P: Props>
             
         }
 
-        showDownloadDialog(APP.conference.roomName);
+        // showDownloadDialog(APP.conference.roomName);
 
         return true;
     }
