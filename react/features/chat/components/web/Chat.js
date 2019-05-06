@@ -28,6 +28,12 @@ class Chat extends AbstractChat<Props> {
     _isExited: boolean;
 
     /**
+     * Reference to the React Component for displaying chat messages. Used for
+     * scrolling to the end of the chat messages.
+     */
+    _messageContainerRef: Object;
+
+    /**
      * Initializes a new {@code Chat} instance.
      *
      * @param {Object} props - The read-only properties with which the new
@@ -37,9 +43,32 @@ class Chat extends AbstractChat<Props> {
         super(props);
 
         this._isExited = true;
+        this._messageContainerRef = React.createRef();
 
         // Bind event handlers so they are only bound once for every instance.
         this._renderPanelContent = this._renderPanelContent.bind(this);
+    }
+
+    /**
+     * Implements {@code Component#componentDidMount}.
+     *
+     * @inheritdoc
+     */
+    componentDidMount() {
+        this._scrollMessageContainerToBottom(true);
+    }
+
+    /**
+     * Implements {@code Component#componentDidUpdate}.
+     *
+     * @inheritdoc
+     */
+    componentDidUpdate(prevProps) {
+        if (this.props._messages !== prevProps._messages) {
+            this._scrollMessageContainerToBottom(true);
+        } else if (this.props._isOpen && !prevProps._isOpen) {
+            this._scrollMessageContainerToBottom(false);
+        }
     }
 
     /**
@@ -99,7 +128,9 @@ class Chat extends AbstractChat<Props> {
     _renderChat() {
         return (
             <>
-                <MessageContainer messages = { this.props._messages } />
+                <MessageContainer
+                    messages = { this.props._messages }
+                    ref = { this._messageContainerRef } />
                 <ChatInput />
             </>
         );
@@ -161,6 +192,20 @@ class Chat extends AbstractChat<Props> {
                 { ComponentToRender }
             </div>
         );
+    }
+
+    /**
+     * Scrolls the chat messages so the latest message is visible.
+     *
+     * @param {boolean} withAnimation - Whether or not to show a scrolling
+     * animation.
+     * @private
+     * @returns {void}
+     */
+    _scrollMessageContainerToBottom(withAnimation) {
+        if (this._messageContainerRef.current) {
+            this._messageContainerRef.current.scrollToBottom(withAnimation);
+        }
     }
 }
 
