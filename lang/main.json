@@ -655,15 +655,15 @@
     }
     ,
     "localRecording": {
-        "localRecording": "本地录音",
-        "dialogTitle": "本地录音控制",
-        "start": "开始录音",
-        "stop": "结束录音",
+        "localRecording": "本地录像",
+        "dialogTitle": "本地录像控制",
+        "start": "开始录像",
+        "stop": "结束录像",
         "moderator": "主持人",
         "me": "我",
         "duration": "时长",
         "durationNA": "N/A",
-        "encoding": "编码",
+        "encoding": "语音编码",
         "participantStats": "与会者统计",
         "participant": "与会者",
         "sessionToken": "会话",
@@ -673,14 +673,14 @@
             "unknown": "未知"
         },
         "messages": {
-            "engaged": "本地录音启动.",
-            "finished": "录音 __token__ 已结束. 请发送录音文件给主持人.",
+            "engaged": "本地录像启动.",
+            "finished": "本地录像结束.",
             "finishedModerator": "录音 __token__ 已结束. 本地录音已保存. 其他与会者录音请向相应与会者索取. ",
             "notModerator": "你不是主持人. 你不能启动本地录音."
         },
-        "yes": "好",
-        "no": "不",
+        "yes": "是",
+        "no": "否",
         "label": "LOR",
-        "labelToolTip": "本地录音启动"
+        "labelToolTip": "本地录像启动"
     }
 }

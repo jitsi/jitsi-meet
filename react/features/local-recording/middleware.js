@@ -68,9 +68,9 @@ MiddlewareRegistry.register(({ getState, dispatch }) => next => action => {
             recordingController.switchFormat(localRecording.format);
         }
 
-        const { conference } = getState()['features/base/conference'];
+        // const { conference } = getState()['features/base/conference'];
 
-        recordingController.registerEvents(conference);
+        // recordingController.registerEvents(conference);
 
         break;
     }

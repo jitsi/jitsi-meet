@@ -279,18 +279,25 @@ class RecordingController {
      * @returns {void}
      */
     startRecording() {
-        this.registerEvents();
-        if (this._conference && this._conference.isModerator()) {
-            this._conference.removeCommand(COMMAND_STOP);
-            this._conference.sendCommand(COMMAND_START, {
-                attributes: {
-                    sessionToken: this._getRandomToken(),
-                    format: this._format
-                }
-            });
-        } else if (this._onWarning) {
-            this._onWarning('localRecording.messages.notModerator');
-        }
+        // this.registerEvents();
+        
+        this._onStartCommand({
+            attributes: {
+                sessionToken: this._getRandomToken(),
+                format: this._format
+            }
+        });
+        // if (this._conference && this._conference.isModerator()) {
+        //     this._conference.removeCommand(COMMAND_STOP);
+        //     this._conference.sendCommand(COMMAND_START, {
+        //         attributes: {
+        //             sessionToken: this._getRandomToken(),
+        //             format: this._format
+        //         }
+        //     });
+        // } else if (this._onWarning) {
+        //     this._onWarning('localRecording.messages.notModerator');
+        // }
     }
 
     /**
@@ -299,18 +306,23 @@ class RecordingController {
      * @returns {void}
      */
     stopRecording() {
-        if (this._conference) {
-            if (this._conference.isModerator()) {
-                this._conference.removeCommand(COMMAND_START);
-                this._conference.sendCommand(COMMAND_STOP, {
-                    attributes: {
-                        sessionToken: this._currentSessionToken
-                    }
-                });
-            } else if (this._onWarning) {
-                this._onWarning('localRecording.messages.notModerator');
+        this._onStopCommand({
+            attributes: {
+                sessionToken: this._currentSessionToken
             }
-        }
+        });
+        // if (this._conference) {
+        //     if (this._conference.isModerator()) {
+        //         // this._conference.removeCommand(COMMAND_START);
+        //         this._conference.sendCommand(COMMAND_STOP, {
+        //             attributes: {
+        //                 sessionToken: this._currentSessionToken
+        //             }
+        //         });
+        //     } else if (this._onWarning) {
+        //         this._onWarning('localRecording.messages.notModerator');
+        //     }
+        // }
     }
 
     /**
@@ -629,9 +641,7 @@ class RecordingController {
                     this.downloadRecordedData(token);
 
                     const messageKey
-                        = this._conference.isModerator()
-                            ? 'localRecording.messages.finishedModerator'
-                            : 'localRecording.messages.finished';
+                        = 'localRecording.messages.finished';
                     const messageParams = {
                         token
                     };

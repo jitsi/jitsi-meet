@@ -298,9 +298,9 @@ class LocalRecordingInfoDialog extends Component<Props, State> {
     _renderModeratorControls() {
         const { isModerator, isEngaged, t } = this.props;
 
-        if (!isModerator) {
-            return null;
-        }
+        // if (!isModerator) {
+        //     return null;
+        // }
 
         return (
             <div>
@@ -317,12 +317,12 @@ class LocalRecordingInfoDialog extends Component<Props, State> {
                         }
                     </div>
                 </div>
-                <div>
+                {/* <div>
                     <span className = 'localrec-control-info-label'>
                         {`${t('localRecording.participantStats')}:`}
                     </span>
                 </div>
-                { this._renderStats() }
+                { this._renderStats() } */}
             </div>
         );
     }
