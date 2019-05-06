@@ -39,7 +39,7 @@ export default class AbstractMessageContainer<P: Props> extends PureComponent<P>
             if (message.id === currentGroupParticipantId) {
                 currentGrouping.push(message);
             } else {
-                groups.push(currentGrouping);
+                currentGrouping.length && groups.push(currentGrouping);
 
                 currentGrouping = [ message ];
                 currentGroupParticipantId = message.id;

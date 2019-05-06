@@ -16,7 +16,8 @@ export default {
      * Wrapper View for the avatar.
      */
     avatarWrapper: {
-        marginRight: 8
+        marginRight: 8,
+        width: 32
     },
 
     /**

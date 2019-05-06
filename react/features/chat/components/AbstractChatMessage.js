@@ -20,10 +20,22 @@ export type Props = {
     message: Object,
 
     /**
+     * Whether or not the avatar image of the participant which sent the message
+     * should be displayed.
+     */
+    showAvatar: boolean,
+
+    /**
      * Whether or not the name of the participant which sent the message should
      * be displayed.
      */
     showDisplayName: boolean,
+
+    /**
+     * Whether or not the time at which the message was sent should be
+     * displayed.
+     */
+    showTimestamp: boolean,
 
     /**
      * Invoked to receive translated strings.
@@ -36,7 +48,9 @@ export type Props = {
  */
 export default class AbstractChatMessage<P: Props> extends PureComponent<P> {
     static defaultProps = {
-        showDisplayName: true
+        showAvatar: false,
+        showDisplayName: false,
+        showTimestamp: false
     };
 }
 

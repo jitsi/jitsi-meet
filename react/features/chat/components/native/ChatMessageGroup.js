@@ -68,9 +68,19 @@ export default class ChatMessageGroup extends Component<Props> {
      * @param {Object} message - The chat message to render.
      * @returns {React$Element<*>}
      */
-    _renderMessage({ item: message }) {
+    _renderMessage({ index, item: message }) {
         return (
-            <ChatMessage message = { message } />
+            <ChatMessage
+                message = { message }
+                showAvatar = {
+                    this.props.messages[0].messageType !== 'local'
+                        && index === this.props.messages.length - 1
+                }
+                showDisplayName = {
+                    this.props.messages[0].messageType === 'remote'
+                        && index === this.props.messages.length - 1
+                }
+                showTimestamp = { index === 0 } />
         );
     }
 }
