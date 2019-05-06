@@ -32,24 +32,6 @@ export default class MessageContainer extends AbstractMessageContainer<Props> {
     }
 
     /**
-     * Implements React's {@link Component#componentDidMount()}.
-     *
-     * @inheritdoc
-     */
-    componentDidMount() {
-        this._scrollMessagesToBottom();
-    }
-
-    /**
-     * Updates chat input focus.
-     *
-     * @inheritdoc
-     */
-    componentDidUpdate() {
-        this._scrollMessagesToBottom();
-    }
-
-    /**
      * Implements {@code Component#render}.
      *
      * @inheritdoc
@@ -75,17 +57,18 @@ export default class MessageContainer extends AbstractMessageContainer<Props> {
         );
     }
 
-    _getMessagesGroupedBySender: () => Array<Array<Object>>;
-
     /**
      * Automatically scrolls the displayed chat messages down to the latest.
      *
-     * @private
+     * @param {boolean} withAnimation - Whether or not to show a scrolling
+     * animation.
      * @returns {void}
      */
-    _scrollMessagesToBottom() {
+    scrollToBottom(withAnimation: boolean) {
         this._messagesListEndRef.current.scrollIntoView({
-            behavior: 'smooth'
+            behavior: withAnimation ? 'smooth' : 'auto'
         });
     }
+
+    _getMessagesGroupedBySender: () => Array<Array<Object>>;
 }
