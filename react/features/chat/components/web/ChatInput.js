@@ -90,7 +90,7 @@ class ChatInput extends Component<Props, State> {
          * HTML Textareas do not support autofocus. Simulate autofocus by
          * manually focusing.
          */
-        this.focus();
+        this._focus();
     }
 
     /**
@@ -132,20 +132,12 @@ class ChatInput extends Component<Props, State> {
     }
 
     /**
-     * Removes cursor focus on this component's text area.
-     *
-     * @returns {void}
-     */
-    blur() {
-        this._textArea && this._textArea.blur();
-    }
-
-    /**
      * Place cursor focus on this component's text area.
      *
+     * @private
      * @returns {void}
      */
-    focus() {
+    _focus() {
         this._textArea && this._textArea.focus();
     }
 
@@ -203,7 +195,7 @@ class ChatInput extends Component<Props, State> {
             showSmileysPanel: false
         });
 
-        this.focus();
+        this._focus();
     }
 
     _onToggleSmileysPanel: () => void;
@@ -217,7 +209,7 @@ class ChatInput extends Component<Props, State> {
     _onToggleSmileysPanel() {
         this.setState({ showSmileysPanel: !this.state.showSmileysPanel });
 
-        this.focus();
+        this._focus();
     }
 
     _setTextAreaRef: (?HTMLTextAreaElement) => void;
