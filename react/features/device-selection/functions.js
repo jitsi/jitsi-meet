@@ -15,6 +15,11 @@ import {
 } from '../base/devices';
 import JitsiMeetJS from '../base/lib-jitsi-meet';
 import { toState } from '../base/redux';
+import {
+    getUserSelectedCameraDeviceId,
+    getUserSelectedMicDeviceId,
+    getUserSelectedOutputDeviceId
+} from '../base/settings';
 
 /**
  * Returns the properties for the device selection dialog from Redux state.
@@ -38,9 +43,9 @@ export function getDeviceSelectionDialogProps(stateful: Object | Function) {
     // on welcome page we also show only what we have saved as user selected devices
     if (!conference) {
         disableAudioInputChange = false;
-        selectedAudioInputId = settings.userSelectedMicDeviceId;
-        selectedAudioOutputId = settings.userSelectedAudioOutputDeviceId;
-        selectedVideoInputId = settings.userSelectedCameraDeviceId;
+        selectedAudioInputId = getUserSelectedMicDeviceId(state);
+        selectedAudioOutputId = getUserSelectedOutputDeviceId(state);
+        selectedVideoInputId = getUserSelectedCameraDeviceId(state);
     }
 
     // we fill the device selection dialog with the devices that are currently

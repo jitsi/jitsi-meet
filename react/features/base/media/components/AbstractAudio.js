@@ -2,6 +2,8 @@
 
 import { Component } from 'react';
 
+const logger = require('jitsi-meet-logger').getLogger(__filename);
+
 /**
  * Describes audio element interface used in the base/media feature for audio
  * playback.
@@ -10,7 +12,7 @@ export type AudioElement = {
     currentTime: number,
     pause: () => void,
     play: () => void,
-    setSinkId?: string => void,
+    setSinkId?: string => Function,
     stop: () => void
 };
 
@@ -113,7 +115,8 @@ export default class AbstractAudio extends Component<Props> {
     setSinkId(sinkId: string): void {
         this._audioElementImpl
             && typeof this._audioElementImpl.setSinkId === 'function'
-            && this._audioElementImpl.setSinkId(sinkId);
+            && this._audioElementImpl.setSinkId(sinkId)
+                .catch(error => logger.error('Error setting sink', error));
     }
 
     /**

@@ -718,13 +718,21 @@ export default {
         this.roomName = options.roomName;
 
         return (
-            this.createInitialLocalTracksAndConnect(
+
+            // Initialize the device list first. This way, when creating tracks
+            // based on preferred devices, loose label matching can be done in
+            // cases where the exact ID match is no longer available, such as
+            // when the camera device has switched USB ports.
+            this._initDeviceList()
+                .catch(error => logger.warn(
+                    'initial device list initialization failed', error))
+                .then(() => this.createInitialLocalTracksAndConnect(
                 options.roomName, {
                     startAudioOnly: config.startAudioOnly,
                     startScreenSharing: config.startScreenSharing,
                     startWithAudioMuted: config.startWithAudioMuted,
                     startWithVideoMuted: config.startWithVideoMuted
-                })
+                }))
             .then(([ tracks, con ]) => {
                 tracks.forEach(track => {
                     if ((track.isAudioTrack() && this.isLocalAudioMuted())
@@ -769,7 +777,10 @@ export default {
                     this.setVideoMuteStatus(true);
                 }
 
-                this._initDeviceList();
+                // Initialize device list a second time to ensure device labels
+                // get populated in case of an initial gUM acceptance; otherwise
+                // they may remain as empty strings.
+                this._initDeviceList(true);
 
                 if (config.iAmRecorder) {
                     this.recorder = new Recorder();
@@ -2277,20 +2288,23 @@ export default {
     },
 
     /**
-     * Inits list of current devices and event listener for device change.
+     * Updates the list of current devices.
+     * @param {boolean} setDeviceListChangeHandler - Whether to add the deviceList change handlers.
      * @private
      * @returns {Promise}
      */
-    _initDeviceList() {
+    _initDeviceList(setDeviceListChangeHandler = false) {
         const { mediaDevices } = JitsiMeetJS;
 
         if (mediaDevices.isDeviceListAvailable()
                 && mediaDevices.isDeviceChangeAvailable()) {
-            this.deviceChangeListener = devices =>
-                window.setTimeout(() => this._onDeviceListChanged(devices), 0);
-            mediaDevices.addEventListener(
-                JitsiMediaDevicesEvents.DEVICE_LIST_CHANGED,
-                this.deviceChangeListener);
+            if (setDeviceListChangeHandler) {
+                this.deviceChangeListener = devices =>
+                    window.setTimeout(() => this._onDeviceListChanged(devices), 0);
+                mediaDevices.addEventListener(
+                    JitsiMediaDevicesEvents.DEVICE_LIST_CHANGED,
+                    this.deviceChangeListener);
+            }
 
             const { dispatch } = APP.store;
 

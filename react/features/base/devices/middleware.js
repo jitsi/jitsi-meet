@@ -147,7 +147,8 @@ function _useDevice({ dispatch }, device) {
     switch (device.kind) {
     case 'videoinput': {
         dispatch(updateSettings({
-            userSelectedCameraDeviceId: device.deviceId
+            userSelectedCameraDeviceId: device.deviceId,
+            userSelectedCameraDeviceLabel: device.label
         }));
 
         dispatch(setVideoInputDevice(device.deviceId));
@@ -155,7 +156,8 @@ function _useDevice({ dispatch }, device) {
     }
     case 'audioinput': {
         dispatch(updateSettings({
-            userSelectedMicDeviceId: device.deviceId
+            userSelectedMicDeviceId: device.deviceId,
+            userSelectedMicDeviceLabel: device.label
         }));
 
         dispatch(setAudioInputDevice(device.deviceId));
@@ -165,7 +167,8 @@ function _useDevice({ dispatch }, device) {
         setAudioOutputDeviceId(
             device.deviceId,
             dispatch,
-            true)
+            true,
+            device.label)
             .then(() => logger.log('changed audio output device'))
             .catch(err => {
                 logger.warn(
