@@ -22,11 +22,6 @@ type Props = {
     dispatch: Dispatch<any>,
 
     /**
-     * Optional callback to get a reference to the chat input element.
-     */
-    getChatInputRef?: Function,
-
-    /**
      * Invoked to obtain translated strings.
      */
     t: Function
@@ -223,10 +218,6 @@ class ChatInput extends Component<Props, State> {
      */
     _setTextAreaRef(textAreaElement: ?HTMLTextAreaElement) {
         this._textArea = textAreaElement;
-
-        if (this.props.getChatInputRef) {
-            this.props.getChatInputRef(textAreaElement);
-        }
     }
 }
 
