@@ -509,6 +509,22 @@ export function getDialInfoPageURL(
 }
 
 /**
+ * Generates the URL for the static dial in info page.
+ *
+ * @param {string} uri - The conference URI string.
+ * @returns {string}
+ */
+export function getDialInfoPageURLForURIString(
+        uri: ?string) {
+    if (!uri) {
+        return undefined;
+    }
+    const { protocol, host, contextRoot, room } = parseURIString(uri);
+
+    return `${protocol}//${host}${contextRoot}static/dialInInfo.html?room=${room}`;
+}
+
+/**
  * Sets the internal state of which dial-in number to display.
  *
  * @param {Array<string>|Object} dialInNumbers - The array or object of

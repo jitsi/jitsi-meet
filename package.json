@@ -76,6 +76,7 @@
     "react-native-vector-icons": "6.0.2",
     "react-native-watch-connectivity": "0.2.0",
     "react-native-webrtc": "github:jitsi/react-native-webrtc#4064c6f2db4f8b961daaaa8dafc6a896d7cfbc43",
+    "react-native-webview": "5.8.1",
     "react-redux": "5.0.7",
     "react-transition-group": "2.4.0",
     "redux": "4.0.0",

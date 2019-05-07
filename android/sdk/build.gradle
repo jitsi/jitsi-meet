@@ -62,6 +62,7 @@ dependencies {
     implementation project(':react-native-sound')
     implementation project(':react-native-vector-icons')
     implementation project(':react-native-webrtc')
+    implementation project(':react-native-webview')
 
     testImplementation 'junit:junit:4.12'
 }

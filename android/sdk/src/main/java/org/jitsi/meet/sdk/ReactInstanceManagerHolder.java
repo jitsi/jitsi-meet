@@ -147,6 +147,7 @@ class ReactInstanceManagerHolder {
                 new com.oblador.vectoricons.VectorIconsPackage(),
                 new com.ocetnik.timer.BackgroundTimerPackage(),
                 new com.oney.WebRTCModule.WebRTCModulePackage(),
+                new com.reactnativecommunity.webview.RNCWebViewPackage(),
                 new com.rnimmersive.RNImmersivePackage(),
                 new com.zmxv.RNSound.RNSoundPackage(),
                 new ReactPackageAdapter() {

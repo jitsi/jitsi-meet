@@ -4,7 +4,6 @@ import { BoxModel, ColorPalette, createStyleSheet } from '../../../styles';
 
 const AVATAR_OPACITY = 0.4;
 const OVERLAY_FONT_COLOR = 'rgba(255, 255, 255, 0.6)';
-const SECONDARY_ACTION_BUTTON_SIZE = 30;
 
 export const AVATAR_SIZE = 65;
 export const UNDERLAY_COLOR = 'rgba(255, 255, 255, 0.2)';
@@ -216,21 +215,6 @@ const SECTION_LIST_STYLES = {
     pullToRefreshText: {
         backgroundColor: 'transparent',
         color: OVERLAY_FONT_COLOR
-    },
-
-    secondaryActionContainer: {
-        alignItems: 'center',
-        backgroundColor: ColorPalette.blue,
-        borderRadius: 3,
-        height: SECONDARY_ACTION_BUTTON_SIZE,
-        justifyContent: 'center',
-        margin: BoxModel.margin * 0.5,
-        marginRight: BoxModel.margin,
-        width: SECONDARY_ACTION_BUTTON_SIZE
-    },
-
-    secondaryActionLabel: {
-        color: ColorPalette.white
     },
 
     touchableView: {

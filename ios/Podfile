@@ -40,10 +40,14 @@ target 'JitsiMeet' do
 
   pod 'react-native-background-timer',
     :path => '../node_modules/react-native-background-timer'
+  pod 'react-native-calendar-events',
+    :path => '../node_modules/react-native-calendar-events'
   pod 'react-native-fast-image',
     :path => '../node_modules/react-native-fast-image'
   pod 'react-native-keep-awake',
     :path => '../node_modules/react-native-keep-awake'
+  pod 'react-native-webview',
+    :path => '../node_modules/react-native-webview'
   pod 'BVLinearGradient',
     :path => '../node_modules/react-native-linear-gradient'
   pod 'react-native-webrtc', :path => '../node_modules/react-native-webrtc'
@@ -52,8 +56,6 @@ target 'JitsiMeet' do
   pod 'RNSound', :path => '../node_modules/react-native-sound'
   pod 'RNVectorIcons', :path => '../node_modules/react-native-vector-icons'
   pod 'RNWatch', :path => '../node_modules/react-native-watch-connectivity'
-  pod 'react-native-calendar-events',
-    :path => '../node_modules/react-native-calendar-events'
 end
 
 post_install do |installer|

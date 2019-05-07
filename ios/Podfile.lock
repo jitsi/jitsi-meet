@@ -99,6 +99,8 @@ PODS:
     - React
   - react-native-webrtc (1.69.1):
     - React
+  - react-native-webview (5.8.1):
+    - React
   - React/Core (0.59.5):
     - yoga (= 0.59.5.React)
   - React/CxxBridge (0.59.5):
@@ -180,6 +182,7 @@ DEPENDENCIES:
   - react-native-fast-image (from `../node_modules/react-native-fast-image`)
   - react-native-keep-awake (from `../node_modules/react-native-keep-awake`)
   - react-native-webrtc (from `../node_modules/react-native-webrtc`)
+  - react-native-webview (from `../node_modules/react-native-webview`)
   - React/Core (from `../node_modules/react-native`)
   - React/CxxBridge (from `../node_modules/react-native`)
   - React/DevSupport (from `../node_modules/react-native`)
@@ -239,6 +242,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-keep-awake"
   react-native-webrtc:
     :path: "../node_modules/react-native-webrtc"
+  react-native-webview:
+    :path: "../node_modules/react-native-webview"
   RNGoogleSignin:
     :path: "../node_modules/react-native-google-signin"
   RNSound:
@@ -279,6 +284,7 @@ SPEC CHECKSUMS:
   react-native-fast-image: 47487b71169aea34868e7b38bf870b6b3f2157c5
   react-native-keep-awake: eba3137546b10003361b37c761f6c429b59814ae
   react-native-webrtc: 90a847d19deb2d7323fef8cc89ca12b8995fbc90
+  react-native-webview: a95842e3f351a6d2c8bc8bcc9eab689c7e7e5ad4
   RNGoogleSignin: 361174d9a3090d295b06257162b560d8efc8a6ed
   RNSound: e157320f503bdd4f4ee6d8542e948d54f90c3c3a
   RNVectorIcons: d819334932bcda3332deb3d2c8ea4d069e0b98f9
@@ -286,6 +292,6 @@ SPEC CHECKSUMS:
   SDWebImage: 3f3f0c02f09798048c47a5ed0a13f17b063572d8
   yoga: 2e571f113e8cbeb0eb752aeebc86c1bfe7a8200c
 
-PODFILE CHECKSUM: 9e6bc935ea7d2974604572cc68938281a88cf35c
+PODFILE CHECKSUM: 0efc5cf3d69bf87368dc776a4e9a3c21935a16cf
 
 COCOAPODS: 1.6.1
