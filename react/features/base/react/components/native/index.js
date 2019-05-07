@@ -8,6 +8,7 @@ export { default as Container } from './Container';
 export { default as ForwardButton } from './ForwardButton';
 export { default as Header } from './Header';
 export { default as HeaderLabel } from './HeaderLabel';
+export { default as HeaderWithNavigation } from './HeaderWithNavigation';
 export { default as Image } from './Image';
 export { default as Link } from './Link';
 export { default as LoadingIndicator } from './LoadingIndicator';
