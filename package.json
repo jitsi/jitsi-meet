@@ -79,6 +79,7 @@
     "react-native-webrtc": "github:jitsi/react-native-webrtc#4064c6f2db4f8b961daaaa8dafc6a896d7cfbc43",
     "react-native-webview": "5.8.1",
     "react-redux": "5.0.7",
+    "react-textarea-autosize": "7.1.0",
     "react-transition-group": "2.4.0",
     "redux": "4.0.0",
     "redux-thunk": "2.2.0",

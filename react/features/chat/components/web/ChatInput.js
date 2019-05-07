@@ -2,6 +2,7 @@
 
 import React, { Component } from 'react';
 import Emoji from 'react-emoji-render';
+import TextareaAutosize from 'react-textarea-autosize';
 import type { Dispatch } from 'redux';
 
 import { translate } from '../../../base/i18n';
@@ -114,12 +115,14 @@ class ChatInput extends Component<Props, State> {
                     </div>
                 </div>
                 <div className = 'usrmsg-form'>
-                    <textarea
+                    <TextareaAutosize
                         id = 'usermsg'
+                        inputRef = { this._setTextAreaRef }
+                        maxRows = { 5 }
+                        minRows = { 2 }
                         onChange = { this._onMessageChange }
                         onKeyDown = { this._onDetectSubmit }
                         placeholder = { this.props.t('chat.messagebox') }
-                        ref = { this._setTextAreaRef }
                         value = { this.state.message } />
                 </div>
             </div>
