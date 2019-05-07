@@ -16,10 +16,7 @@ import { Icon } from '../../../../base/font-icons';
 import { translate } from '../../../../base/i18n';
 import {
     AvatarListItem,
-    BackButton,
-    ForwardButton,
-    Header,
-    HeaderLabel,
+    HeaderWithNavigation,
     Modal,
     type Item
 } from '../../../../base/react';
@@ -146,14 +143,12 @@ class AddPeopleDialog extends AbstractAddPeopleDialog<Props, State> {
             <Modal
                 onRequestClose = { this._onCloseAddPeopleDialog }
                 visible = { this.props._isVisible }>
-                <Header>
-                    <BackButton onPress = { this._onCloseAddPeopleDialog } />
-                    <HeaderLabel labelKey = 'inviteDialog.header' />
-                    <ForwardButton
-                        disabled = { this._isAddDisabled() }
-                        labelKey = 'inviteDialog.send'
-                        onPress = { this._onInvite } />
-                </Header>
+                <HeaderWithNavigation
+                    forwardDisabled = { this._isAddDisabled() }
+                    forwardLabelKey = 'inviteDialog.send'
+                    headerLabelKey = 'inviteDialog.header'
+                    onPressBack = { this._onCloseAddPeopleDialog }
+                    onPressForward = { this._onInvite } />
                 <SafeAreaView style = { styles.dialogWrapper }>
                     <View
                         style = { styles.searchFieldWrapper }>
