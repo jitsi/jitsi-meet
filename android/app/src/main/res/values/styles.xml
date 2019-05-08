@@ -2,5 +2,6 @@
     <!-- Base application theme. -->
     <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <!-- Customize your theme here. -->
+        <item name="android:navigationBarColor">#1081B2</item>
     </style>
 </resources>
