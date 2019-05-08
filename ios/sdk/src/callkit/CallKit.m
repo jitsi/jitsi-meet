@@ -324,4 +324,14 @@ RCT_EXPORT_METHOD(updateCall:(NSString *)callUUID
 
 #endif
 
+// The bridge might already be invalidated by the time a CallKit event is processed,
+// just ignore it and don't emit it.
+- (void)sendEventWithName:(NSString *)name body:(id)body {
+    if (!self.bridge) {
+        return;
+    }
+
+    [super sendEventWithName:name body:body];
+}
+
 @end
