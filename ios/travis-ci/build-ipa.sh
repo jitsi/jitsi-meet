@@ -129,6 +129,9 @@ cp "${CERT_DIR}/dev-profile.mobileprovision"  ~/Library/MobileDevice/Provisionin
 
 npm install
 
+# Ever since the Apple Watch app has been added the bitcode for WebRTC needs to be downloaded in order to build successfully
+./node_modules/react-native-webrtc/tools/downloadBitcode.sh
+
 cd ios
 pod update
 pod install
