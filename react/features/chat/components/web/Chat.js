@@ -130,17 +130,10 @@ class Chat extends AbstractChat<Props> {
 
         const messages = groupedMessages.map((group, index) => {
             const messageType = group[0] && group[0].messageType;
-            let className = 'remote';
-
-            if (messageType === 'local') {
-                className = 'local';
-            } else if (messageType === 'error') {
-                className = 'error';
-            }
 
             return (
                 <ChatMessageGroup
-                    className = { className }
+                    className = { messageType || 'remote' }
                     key = { index }
                     messages = { group } />
             );
