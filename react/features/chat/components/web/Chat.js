@@ -47,6 +47,9 @@ class Chat extends AbstractChat<Props> {
 
         // Bind event handlers so they are only bound once for every instance.
         this._renderPanelContent = this._renderPanelContent.bind(this);
+
+        // Bind event handlers so they are only bound once for every instance.
+        this._onChatInputResize = this._onChatInputResize.bind(this);
     }
 
     /**
@@ -87,6 +90,19 @@ class Chat extends AbstractChat<Props> {
         );
     }
 
+    _onChatInputResize: () => void;
+
+    /**
+     * Callback invoked when {@code ChatInput} changes height. Preserves
+     * displaying the latest message if it is scrolled to.
+     *
+     * @private
+     * @returns {void}
+     */
+    _onChatInputResize() {
+        this._messageContainerRef.current.maybeUpdateBottomScroll();
+    }
+
     /**
      * Returns a React Element for showing chat messages and a form to send new
      * chat messages.
@@ -100,7 +116,7 @@ class Chat extends AbstractChat<Props> {
                 <MessageContainer
                     messages = { this.props._messages }
                     ref = { this._messageContainerRef } />
-                <ChatInput />
+                <ChatInput onResize = { this._onChatInputResize } />
             </>
         );
     }
