@@ -1,6 +1,6 @@
 import { APP_WILL_NAVIGATE } from '../app';
 import { CONFERENCE_FAILED, CONFERENCE_JOINED, CONFERENCE_LEFT, CONFERENCE_WILL_JOIN, SET_ROOM } from '../conference';
-import { CONFIG_WILL_LOAD, LOAD_CONFIG_ERROR } from '../config';
+import { LOAD_CONFIG_ERROR } from '../config';
 import { connect, CONNECTION_DISCONNECTED, CONNECTION_FAILED, CONNECTION_WILL_CONNECT } from '../connection';
 import { MiddlewareRegistry } from '../redux';
 import { createDesiredLocalTracks } from '../tracks';
@@ -16,8 +16,13 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
 
     switch (action.type) {
     case APP_WILL_NAVIGATE: {
+        const { locationURL, room } = action;
+
         // Currently only one session is allowed at a time
         dispatch(endAllSessions());
+
+        // Start a new session if there's a conference room name defined
+        room && room.length && dispatch(createSession(locationURL, room));
         break;
     }
     case CONFERENCE_FAILED: {
@@ -80,14 +85,6 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
         } else {
             console.error('CONFERENCE_WILL_JOIN - no session found');
         }
-        break;
-    }
-    case CONFIG_WILL_LOAD: {
-        const { locationURL, room } = action;
-
-        // Move this to APP_WILL_NAVIGATE ?
-        room && room.length && dispatch(createSession(locationURL, room));
-
         break;
     }
     case LOAD_CONFIG_ERROR: {
