@@ -106,6 +106,12 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
     }
 
     case RECORDING_SESSION_UPDATED: {
+        // When in recorder mode no notifications are shown
+        // or extra sounds are also not desired
+        if (getState()['features/base/config'].iAmRecorder) {
+            break;
+        }
+
         const updatedSessionData
             = getSessionById(getState(), action.sessionData.id);
         const { PENDING, OFF, ON } = JitsiRecordingConstants.status;
