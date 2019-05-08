@@ -1,8 +1,9 @@
 import { APP_WILL_NAVIGATE } from '../app';
-import { CONFERENCE_FAILED, CONFERENCE_JOINED, CONFERENCE_LEFT, CONFERENCE_WILL_JOIN } from '../conference';
+import { CONFERENCE_FAILED, CONFERENCE_JOINED, CONFERENCE_LEFT, CONFERENCE_WILL_JOIN, SET_ROOM } from '../conference';
 import { CONFIG_WILL_LOAD, LOAD_CONFIG_ERROR } from '../config';
-import { CONNECTION_DISCONNECTED, CONNECTION_FAILED, CONNECTION_WILL_CONNECT } from '../connection';
+import { connect, CONNECTION_DISCONNECTED, CONNECTION_FAILED, CONNECTION_WILL_CONNECT } from '../connection';
 import { MiddlewareRegistry } from '../redux';
+import { createDesiredLocalTracks } from '../tracks';
 import { toURLString } from '../util';
 
 import { createSession, endAllSessions, endSession, sessionFailed, sessionStarted, sessionTerminated } from './actions';
@@ -140,6 +141,17 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
             session.connection = connection;
         } else {
             console.error(`CONNECTION_WILL_CONNECT - no session found for: ${toURLString(locationURL)}`);
+        }
+        break;
+    }
+    case SET_ROOM: {
+        const { locationURL } = getState()['features/base/connection'];
+        const session = findSessionForLocationURL(getState(), locationURL);
+
+        // Web has different logic for creating the local tracks and starting the connection
+        if (session && typeof APP === 'undefined') {
+            dispatch(createDesiredLocalTracks());
+            dispatch(connect());
         }
         break;
     }
