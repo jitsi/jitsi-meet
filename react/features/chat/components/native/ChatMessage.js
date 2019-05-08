@@ -1,16 +1,19 @@
 // @flow
 
 import React from 'react';
-import { Text, View } from 'react-native';
+import { Linking, Text, View } from 'react-native';
 
 import { getLocalizedDateFormatter, translate } from '../../../base/i18n';
 import { Avatar } from '../../../base/participants';
 import { connect } from '../../../base/redux';
 
+import Tokenizer from '../../Tokenizer';
+
 import AbstractChatMessage, {
     _mapStateToProps,
     type Props
 } from '../AbstractChatMessage';
+
 import styles from './styles';
 
 /**
@@ -73,14 +76,7 @@ class ChatMessage extends AbstractChatMessage<Props> {
                             // messages.
                             !localMessage && this._renderDisplayName()
                         }
-                        <Text style = { styles.messageText }>
-                            { message.messageType === 'error'
-                                ? this.props.t('chat.error', {
-                                    error: message.error,
-                                    originalText: message.message
-                                })
-                                : message.message }
-                        </Text>
+                        { this._renderMessageContent() }
                     </View>
                     <Text style = { styles.timeText }>
                         { timeStamp }
@@ -88,6 +84,18 @@ class ChatMessage extends AbstractChatMessage<Props> {
                 </View>
             </View>
         );
+    }
+
+    /**
+     * Generates a callback that is used as an onPress prop to render a link in a chat message.
+     *
+     * @param {string} url - The link to nabvigate to.
+     * @returns {Function}
+     */
+    _onPressLink(url: string) {
+        return () => {
+            Linking.openURL(url);
+        };
     }
 
     /**
@@ -119,6 +127,57 @@ class ChatMessage extends AbstractChatMessage<Props> {
             <Text style = { styles.displayName }>
                 { message.displayName }
             </Text>
+        );
+    }
+
+    /**
+     * Renders the message content.
+     *
+     * @returns {React$Component<any>}
+     */
+    _renderMessageContent() {
+        const { message } = this.props;
+        const messageContent = message.messageType === 'error'
+            ? this.props.t('chat.error', {
+                error: message.error,
+                originalText: message.message
+            })
+            : message.message;
+        const tokens = Tokenizer.tokenize(messageContent);
+
+        return (
+            <View style = { styles.messageTokenWrapper }>
+                <Text>
+                    {
+                        tokens.map((token, index) => {
+                            let componentProps;
+                            const textStyle = [
+                                styles.messageText
+                            ];
+
+                            switch (token.type) {
+                            case 'link':
+                                textStyle.push(styles.messageLink);
+                                componentProps = {
+                                    onPress: this._onPressLink(token.content)
+                                };
+
+                            // More token types to come here.
+                            }
+
+                            return (
+                                <Text
+                                    key = { index }
+                                    style = { textStyle }
+                                    { ...componentProps }>
+                                    { token.content }
+                                </Text>
+                            );
+
+                        })
+                    }
+                </Text>
+            </View>
         );
     }
 }

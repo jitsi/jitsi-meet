@@ -74,12 +74,21 @@ export default {
         flex: 1
     },
 
+    messageLink: {
+        color: 'rgb(49, 119, 211)'
+    },
+
     /**
      * The message text itself.
      */
     messageText: {
         color: 'rgb(28, 32, 37)',
         fontSize: 15
+    },
+
+    messageTokenWrapper: {
+        flexDirection: 'row',
+        flexWrap: 'wrap'
     },
 
     /**
