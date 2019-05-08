@@ -2,7 +2,7 @@
 
 import type { Dispatch } from 'redux';
 
-import { APP_WILL_MOUNT, APP_WILL_UNMOUNT } from './actionTypes';
+import { APP_WILL_MOUNT, APP_WILL_NAVIGATE, APP_WILL_UNMOUNT } from './actionTypes';
 
 declare var APP;
 
@@ -30,6 +30,25 @@ export function appWillMount(app: Object) {
         // API module into its own feature yet so we're bound to work on that in
         // the future.
         typeof APP === 'object' && APP.API.init();
+    };
+}
+
+/**
+ * FIXME.
+ *
+ * @param {URL} locationURL - FIXME.
+ * @param {string} room - FIXME.
+ * @returns {{
+ *     type: APP_WILL_NAVIGATE,
+ *     locationURL: URL,
+ *     room: ?string
+ * }}
+ */
+export function appWillNavigate(locationURL: URL, room: ?string) {
+    return {
+        type: APP_WILL_NAVIGATE,
+        locationURL,
+        room
     };
 }
 

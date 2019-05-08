@@ -2,6 +2,7 @@
 
 import type { Dispatch } from 'redux';
 
+import { appWillNavigate } from '../base/app';
 import { setRoom } from '../base/conference';
 import {
     configWillLoad,
@@ -12,7 +13,7 @@ import {
 } from '../base/config';
 import { connect, setLocationURL } from '../base/connection';
 import { loadConfig } from '../base/lib-jitsi-meet';
-import { endAllSessions, findSessionForLocationURL } from '../base/session';
+import { findSessionForLocationURL } from '../base/session';
 import { createDesiredLocalTracks } from '../base/tracks';
 import { parseURIString, toURLString } from '../base/util';
 import { setFatalError } from '../overlay';
@@ -34,8 +35,6 @@ declare var APP: Object;
  */
 export function appNavigate(uri: ?string) {
     return async (dispatch: Dispatch<any>, getState: Function) => {
-        dispatch(endAllSessions());
-
         let location = parseURIString(uri);
 
         // If the specified location (URI) does not identify a host, use the app's
@@ -61,6 +60,9 @@ export function appNavigate(uri: ?string) {
         location.protocol || (location.protocol = 'https:');
         const { contextRoot, host, room } = location;
         const locationURL = new URL(location.toString());
+
+        // XXX this looks like CONFIG_WILL_LOAD ?
+        dispatch(appWillNavigate(locationURL, room));
 
         dispatch(configWillLoad(locationURL, room));
 

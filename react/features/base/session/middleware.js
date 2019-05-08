@@ -1,10 +1,11 @@
+import { APP_WILL_NAVIGATE } from '../app';
 import { CONFERENCE_FAILED, CONFERENCE_JOINED, CONFERENCE_LEFT, CONFERENCE_WILL_JOIN } from '../conference';
 import { CONFIG_WILL_LOAD, LOAD_CONFIG_ERROR } from '../config';
 import { CONNECTION_DISCONNECTED, CONNECTION_FAILED, CONNECTION_WILL_CONNECT } from '../connection';
 import { MiddlewareRegistry } from '../redux';
 import { toURLString } from '../util';
 
-import { createSession, endSession, sessionFailed, sessionStarted, sessionTerminated } from './actions';
+import { createSession, endAllSessions, endSession, sessionFailed, sessionStarted, sessionTerminated } from './actions';
 import { SESSION_CREATED, SESSION_FAILED, SESSION_STARTED, SESSION_TERMINATED } from './actionTypes';
 import { findSessionForConference, findSessionForConnection, findSessionForLocationURL } from './selectors';
 
@@ -13,6 +14,11 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
     const result = next(action);
 
     switch (action.type) {
+    case APP_WILL_NAVIGATE: {
+        // Currently only one session is allowed at a time
+        dispatch(endAllSessions());
+        break;
+    }
     case CONFERENCE_FAILED: {
         const { conference, error } = action;
         const { recoverable } = error;
@@ -78,6 +84,7 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
     case CONFIG_WILL_LOAD: {
         const { locationURL, room } = action;
 
+        // Move this to APP_WILL_NAVIGATE ?
         room && room.length && dispatch(createSession(locationURL, room));
 
         break;
