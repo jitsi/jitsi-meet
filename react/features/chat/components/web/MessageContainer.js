@@ -12,7 +12,7 @@ import ChatMessageGroup from './ChatMessageGroup';
  *
  * @extends AbstractMessageContainer
  */
-export default class MessageContainer extends AbstractMessageContainer<Props> {
+export default class MessageContainer extends AbstractMessageContainer {
     /**
      * Reference to the HTML element at the end of the list of displayed chat
      * messages. Used for scrolling to the end of the chat messages.
