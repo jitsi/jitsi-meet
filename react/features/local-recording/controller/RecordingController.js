@@ -5,8 +5,8 @@ import { i18next } from '../../base/i18n';
 import {
     FlacAdapter,
     OggAdapter,
-    WavAdapter,
-    downloadBlob
+    WavAdapter
+    // downloadBlob
 } from '../recording';
 import { sessionManager } from '../session';
 
