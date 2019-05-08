@@ -88,37 +88,6 @@ class Chat extends AbstractChat<Props> {
     }
 
     /**
-     * Iterates over all the messages and creates nested arrays which hold
-     * consecutive messages sent be the same participant.
-     *
-     * @private
-     * @returns {Array<Array<Object>>}
-     */
-    _getMessagesGroupedBySender() {
-        const messagesCount = this.props._messages.length;
-        const groups = [];
-        let currentGrouping = [];
-        let currentGroupParticipantId;
-
-        for (let i = 0; i < messagesCount; i++) {
-            const message = this.props._messages[i];
-
-            if (message.id === currentGroupParticipantId) {
-                currentGrouping.push(message);
-            } else {
-                groups.push(currentGrouping);
-
-                currentGrouping = [ message ];
-                currentGroupParticipantId = message.id;
-            }
-        }
-
-        groups.push(currentGrouping);
-
-        return groups;
-    }
-
-    /**
      * Returns a React Element for showing chat messages and a form to send new
      * chat messages.
      *
