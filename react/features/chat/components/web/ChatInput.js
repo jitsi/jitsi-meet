@@ -119,7 +119,6 @@ class ChatInput extends Component<Props, State> {
                         id = 'usermsg'
                         inputRef = { this._setTextAreaRef }
                         maxRows = { 5 }
-                        minRows = { 2 }
                         onChange = { this._onMessageChange }
                         onKeyDown = { this._onDetectSubmit }
                         placeholder = { this.props.t('chat.messagebox') }
