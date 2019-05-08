@@ -12,7 +12,7 @@ import styles from './styles';
 /**
  * Implements a container to render all the chat messages in a conference.
  */
-export default class MessageContainer extends AbstractMessageContainer<Props> {
+export default class MessageContainer extends AbstractMessageContainer {
     /**
      * Instantiates a new instance of the component.
      *

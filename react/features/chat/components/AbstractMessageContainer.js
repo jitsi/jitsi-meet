@@ -15,7 +15,7 @@ export type Props = {
  *
  * @extends PureComponent
  */
-export default class AbstractMessageContainer<P: Props> extends PureComponent<P> {
+export default class AbstractMessageContainer extends PureComponent<Props> {
     static defaultProps = {
         messages: []
     };
