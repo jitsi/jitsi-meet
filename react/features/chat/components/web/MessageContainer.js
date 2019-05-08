@@ -14,10 +14,23 @@ import ChatMessageGroup from './ChatMessageGroup';
  */
 export default class MessageContainer extends AbstractMessageContainer {
     /**
+     * Whether or not chat has been scrolled to the bottom of the screen. Used
+     * to determine if chat should be scrolled automatically to the bottom when
+     * the {@code ChatInput} resizes.
+     */
+    _isScrolledToBottom: boolean;
+
+    /**
      * Reference to the HTML element at the end of the list of displayed chat
      * messages. Used for scrolling to the end of the chat messages.
      */
     _messagesListEndRef: Object;
+
+    /**
+     * A React ref to the HTML element containing all {@code ChatMessageGroup}
+     * instances.
+     */
+    _messageListRef: Object;
 
     /**
      * Initializes a new {@code MessageContainer} instance.
@@ -28,7 +41,12 @@ export default class MessageContainer extends AbstractMessageContainer {
     constructor(props: Props) {
         super(props);
 
+        this._isScrolledToBottom = true;
+
+        this._messageListRef = React.createRef();
         this._messagesListEndRef = React.createRef();
+
+        this._onChatScroll = this._onChatScroll.bind(this);
     }
 
     /**
@@ -50,11 +68,27 @@ export default class MessageContainer extends AbstractMessageContainer {
         });
 
         return (
-            <div id = 'chatconversation'>
+            <div
+                id = 'chatconversation'
+                onScroll = { this._onChatScroll }
+                ref = { this._messageListRef }>
                 { messages }
                 <div ref = { this._messagesListEndRef } />
             </div>
         );
+    }
+
+    /**
+     * Scrolls to the bottom again if the instance had previously been scrolled
+     * to the bottom. This method is used when a resize has occurred below the
+     * instance and bottom scroll needs to be maintained.
+     *
+     * @returns {void}
+     */
+    maybeUpdateBottomScroll() {
+        if (this._isScrolledToBottom) {
+            this.scrollToBottom(false);
+        }
     }
 
     /**
@@ -71,4 +105,19 @@ export default class MessageContainer extends AbstractMessageContainer {
     }
 
     _getMessagesGroupedBySender: () => Array<Array<Object>>;
+
+    _onChatScroll: () => void;
+
+    /**
+     * Callback invoked to listen to the current scroll location.
+     *
+     * @private
+     * @returns {void}
+     */
+    _onChatScroll() {
+        const element = this._messageListRef.current;
+
+        this._isScrolledToBottom
+            = element.scrollHeight - element.scrollTop === element.clientHeight;
+    }
 }

@@ -23,6 +23,12 @@ type Props = {
     dispatch: Dispatch<any>,
 
     /**
+     * Optional callback to invoke when the chat textarea has auto-resized to
+     * fit overflowing text.
+     */
+    onResize: ?Function,
+
+    /**
      * Invoked to obtain translated strings.
      */
     t: Function
@@ -120,6 +126,7 @@ class ChatInput extends Component<Props, State> {
                         inputRef = { this._setTextAreaRef }
                         maxRows = { 5 }
                         onChange = { this._onMessageChange }
+                        onHeightChange = { this.props.onResize }
                         onKeyDown = { this._onDetectSubmit }
                         placeholder = { this.props.t('chat.messagebox') }
                         value = { this.state.message } />
