@@ -148,6 +148,8 @@ PODS:
     - React/Core
     - React/fishhook
     - React/RCTBlob
+  - RNCAsyncStorage (1.3.4):
+    - React
   - RNGoogleSignin (1.0.2):
     - GoogleSignIn
     - React
@@ -193,6 +195,7 @@ DEPENDENCIES:
   - React/RCTNetwork (from `../node_modules/react-native`)
   - React/RCTText (from `../node_modules/react-native`)
   - React/RCTWebSocket (from `../node_modules/react-native`)
+  - "RNCAsyncStorage (from `../node_modules/@react-native-community/async-storage`)"
   - RNGoogleSignin (from `../node_modules/react-native-google-signin`)
   - RNSound (from `../node_modules/react-native-sound`)
   - RNVectorIcons (from `../node_modules/react-native-vector-icons`)
@@ -244,6 +247,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-webrtc"
   react-native-webview:
     :path: "../node_modules/react-native-webview"
+  RNCAsyncStorage:
+    :path: "../node_modules/@react-native-community/async-storage"
   RNGoogleSignin:
     :path: "../node_modules/react-native-google-signin"
   RNSound:
@@ -285,6 +290,7 @@ SPEC CHECKSUMS:
   react-native-keep-awake: eba3137546b10003361b37c761f6c429b59814ae
   react-native-webrtc: 90a847d19deb2d7323fef8cc89ca12b8995fbc90
   react-native-webview: a95842e3f351a6d2c8bc8bcc9eab689c7e7e5ad4
+  RNCAsyncStorage: 8e31405a9f12fbf42c2bb330e4560bfd79c18323
   RNGoogleSignin: 361174d9a3090d295b06257162b560d8efc8a6ed
   RNSound: e157320f503bdd4f4ee6d8542e948d54f90c3c3a
   RNVectorIcons: d819334932bcda3332deb3d2c8ea4d069e0b98f9
@@ -292,6 +298,6 @@ SPEC CHECKSUMS:
   SDWebImage: 3f3f0c02f09798048c47a5ed0a13f17b063572d8
   yoga: 2e571f113e8cbeb0eb752aeebc86c1bfe7a8200c
 
-PODFILE CHECKSUM: 531b5a1ff1f50f5c56208c3f53bae152a71e213e
+PODFILE CHECKSUM: b55338cc43312051ed83f8d9c6aadbd8c9402e6a
 
 COCOAPODS: 1.6.1

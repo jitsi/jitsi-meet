@@ -63,6 +63,7 @@ dependencies {
     implementation project(':react-native-vector-icons')
     implementation project(':react-native-webrtc')
     implementation project(':react-native-webview')
+    implementation project(':@react-native-community_async-storage')
 
     testImplementation 'junit:junit:4.12'
 }
@@ -206,7 +207,7 @@ publishing {
                     def groupId = it.moduleGroup
                     def artifactId = it.moduleName
 
-                    if (artifactId.startsWith('react-native-')
+                    if ((artifactId.startsWith('react-native-') || artifactId.startsWith('@react-native-community'))
                             && groupId.equals('jitsi-meet')) {
                         groupId = rootProject.ext.moduleGroupId
                     }
