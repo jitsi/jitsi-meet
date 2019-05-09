@@ -588,7 +588,7 @@ function _mapStateToProps(state) {
     } = state['features/base/conference'];
 
     return {
-        _canEditPassword: isLocalParticipantModerator(state),
+        _canEditPassword: isLocalParticipantModerator(state, state['features/base/config'].lockRoomGuestEnabled),
         _conference: conference,
         _conferenceName: room,
         _inviteURL: getInviteURL(state),
