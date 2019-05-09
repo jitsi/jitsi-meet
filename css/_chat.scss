@@ -312,6 +312,10 @@
         }
     }
 
+    .chatmessage-wrapper {
+        max-width: 100%;
+    }
+
     .chatmessage {
         background-color: $chatRemoteMessageBackgroundColor;
         border-radius: 0px 6px 6px 6px;

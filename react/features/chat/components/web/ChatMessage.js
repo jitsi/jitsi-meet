@@ -56,7 +56,7 @@ class ChatMessage extends AbstractChatMessage<Props> {
         });
 
         return (
-            <div>
+            <div className = 'chatmessage-wrapper'>
                 <div className = 'chatmessage'>
                     { this.props.showDisplayName && this._renderDisplayName() }
                     <div className = 'usermessage'>
