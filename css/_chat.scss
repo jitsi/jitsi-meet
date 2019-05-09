@@ -173,8 +173,10 @@
 .chatmessage {
     background-color: $chatRemoteMessageBackgroundColor;
     border-radius: 0px 6px 6px 6px;
-    margin-top: 3px;
+    box-sizing: border-box;
     color: white;
+    margin-top: 3px;
+    max-width: 100%;
     padding-bottom: 3px;
     position: relative;
 

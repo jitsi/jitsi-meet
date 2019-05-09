@@ -49,12 +49,11 @@ class ChatMessageGroup extends Component<Props> {
             <div className = { `chat-message-group ${className}` }>
                 {
                     messages.map((message, i) => (
-                        <div key = { i }>
-                            <ChatMessage
-                                key = { i }
-                                message = { message }
-                                showDisplayName = { i === 0 } />
-                        </div>))
+                        <ChatMessage
+                            key = { i }
+                            message = { message }
+                            showDisplayName = { i === 0 } />
+                    ))
                 }
                 <div className = 'chat-message-group-footer'>
                     { getLocalizedDateFormatter(
