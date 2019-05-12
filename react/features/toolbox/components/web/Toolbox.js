@@ -1,7 +1,6 @@
 // @flow
 
 import React, { Component } from 'react';
-import { connect } from 'react-redux';
 
 import {
     ACTION_SHORTCUT_TRIGGERED,
@@ -16,6 +15,7 @@ import {
     getParticipants,
     participantUpdated
 } from '../../../base/participants';
+import { connect } from '../../../base/redux';
 import { OverflowMenuItem } from '../../../base/toolbox';
 import { getLocalVideoTrack, toggleScreensharing } from '../../../base/tracks';
 import { ChatCounter, toggleChat } from '../../../chat';
@@ -220,7 +220,7 @@ class Toolbox extends Component<Props, State> {
             = this._onShortcutToggleRaiseHand.bind(this);
         this._onShortcutToggleScreenshare
             = this._onShortcutToggleScreenshare.bind(this);
-        this._onShortcutToggleVideoQuality
+		this._onShortcutToggleVideoQuality
             = this._onShortcutToggleVideoQuality.bind(this);
 
         this._onToolbarOpenFeedback
@@ -281,7 +281,7 @@ class Toolbox extends Component<Props, State> {
                 exec: this._onShortcutToggleFullScreen,
                 helpDescription: 'keyboardShortcuts.fullScreen'
             },
-            this._shouldShowButton('videoquality') && {
+			this._shouldShowButton('videoquality') && {
                 character: 'A',
                 exec: this._onShortcutToggleVideoQuality,
                 helpDescription: 'keyboardShortcuts.videoquality'
@@ -560,8 +560,8 @@ class Toolbox extends Component<Props, State> {
 
         this._doToggleChat();
     }
-
-    _onShortcutToggleVideoQuality: () => void;
+	
+	_onShortcutToggleVideoQuality: () => void;
 
     /**
      * Creates an analytics keyboard shortcut event and dispatches an action for
