@@ -6,7 +6,7 @@
  *     type: CANCEL_LOGIN
  * }
  */
-export const CANCEL_LOGIN = Symbol('CANCEL_LOGIN');
+export const CANCEL_LOGIN = 'CANCEL_LOGIN';
 
 /**
  * The type of (redux) action which signals that the cyclic operation of waiting
@@ -16,7 +16,7 @@ export const CANCEL_LOGIN = Symbol('CANCEL_LOGIN');
  *     type: STOP_WAIT_FOR_OWNER
  * }
  */
-export const STOP_WAIT_FOR_OWNER = Symbol('STOP_WAIT_FOR_OWNER');
+export const STOP_WAIT_FOR_OWNER = 'STOP_WAIT_FOR_OWNER';
 
 /**
  * The type of (redux) action which informs that the authentication and role
@@ -33,7 +33,7 @@ export const STOP_WAIT_FOR_OWNER = Symbol('STOP_WAIT_FOR_OWNER');
  *     thenableWithCancel: Object
  * }
  */
-export const UPGRADE_ROLE_FINISHED = Symbol('UPGRADE_ROLE_FINISHED');
+export const UPGRADE_ROLE_FINISHED = 'UPGRADE_ROLE_FINISHED';
 
 /**
  * The type of (redux) action which signals that the process of authenticating
@@ -44,7 +44,7 @@ export const UPGRADE_ROLE_FINISHED = Symbol('UPGRADE_ROLE_FINISHED');
  *     thenableWithCancel: Object
  * }
  */
-export const UPGRADE_ROLE_STARTED = Symbol('UPGRADE_ROLE_STARTED');
+export const UPGRADE_ROLE_STARTED = 'UPGRADE_ROLE_STARTED';
 
 /**
  * The type of (redux) action that sets delayed handler which will check if
@@ -57,4 +57,4 @@ export const UPGRADE_ROLE_STARTED = Symbol('UPGRADE_ROLE_STARTED');
  *     timeoutMs: number
  * }
  */
-export const WAIT_FOR_OWNER = Symbol('WAIT_FOR_OWNER');
+export const WAIT_FOR_OWNER = 'WAIT_FOR_OWNER';

@@ -87,7 +87,8 @@ const AudioLevels = {
 
         // External circle audio level.
         const ext = {
-            level: ((int.level * scale * level) + int.level).toFixed(0),
+            level: parseFloat(
+                ((int.level * scale * level) + int.level).toFixed(0)),
             color: interfaceConfig.AUDIO_LEVEL_SECONDARY_COLOR
         };
 

@@ -42,7 +42,7 @@ class KeyboardShortcutsDialog extends Component<Props> {
 
         return (
             <Dialog
-                cancelTitleKey = { 'dialog.close' }
+                cancelKey = { 'dialog.close' }
                 submitDisabled = { true }
                 titleKey = 'keyboardShortcuts.keyboardShortcuts'
                 width = 'small'>

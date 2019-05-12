@@ -2,8 +2,11 @@
 
 import React, { Component } from 'react';
 import { PanResponder, PixelRatio, View } from 'react-native';
-import { connect } from 'react-redux';
 import { type Dispatch } from 'redux';
+
+import { connect } from '../../../redux';
+
+import type { PanResponderInstance } from 'PanResponder';
 
 import { storeVideoTransform } from '../../actions';
 import styles from './styles';
@@ -117,7 +120,7 @@ class VideoTransform extends Component<Props, State> {
     /**
      * The gesture handler object.
      */
-    gestureHandlers: PanResponder;
+    gestureHandlers: PanResponderInstance;
 
     /**
      * The initial distance of the fingers on pinch start.
@@ -190,7 +193,7 @@ class VideoTransform extends Component<Props, State> {
      *
      * @inheritdoc
      */
-    componentDidUpdate(prevProps, prevState) {
+    componentDidUpdate(prevProps: Props, prevState: State) {
         if (prevProps.streamId !== this.props.streamId) {
             this._storeTransform(prevProps.streamId, prevState.transform);
             this._restoreTransform(this.props.streamId);
@@ -687,7 +690,7 @@ class VideoTransform extends Component<Props, State> {
  *     _onUnmount: Function
  * }}
  */
-function _mapDispatchToProps(dispatch: Dispatch<*>) {
+function _mapDispatchToProps(dispatch: Dispatch<any>) {
     return {
         /**
          * Dispatches actions to store the last applied transform to a video.

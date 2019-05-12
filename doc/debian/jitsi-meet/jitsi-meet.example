@@ -26,17 +26,16 @@ server {
         alias /etc/jitsi/meet/jitsi-meet.example.com-config.js;
     }
 
+    location /external_api.js {
+        alias /usr/share/jitsi-meet/libs/external_api.min.js;
+    }
+
     location ~ ^/([a-zA-Z0-9=\?]+)$ {
         rewrite ^/(.*)$ / break;
     }
 
     location / {
         ssi on;
-    }
-
-    # Backward compatibility
-    location ~ /external_api.* {
-        root /usr/share/jitsi-meet/libs;
     }
 
     # BOSH

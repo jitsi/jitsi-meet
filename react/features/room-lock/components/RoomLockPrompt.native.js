@@ -1,9 +1,10 @@
 // @flow
 
 import React, { Component } from 'react';
-import { connect } from 'react-redux';
+import type { Dispatch } from 'redux';
 
 import { InputDialog } from '../../base/dialog';
+import { connect } from '../../base/redux';
 
 import { endRoomLockRequest } from '../actions';
 
@@ -30,7 +31,7 @@ type Props = {
     /**
      * Redux store dispatch function.
      */
-    dispatch: Dispatch<*>,
+    dispatch: Dispatch<any>,
 };
 
 /**
@@ -44,7 +45,7 @@ class RoomLockPrompt extends Component<Props> {
      * @param {Props} props - The read-only properties with which the new
      * instance is to be initialized.
      */
-    constructor(props) {
+    constructor(props: Props) {
         super(props);
 
         // Bind event handlers so they are only bound once per instance.

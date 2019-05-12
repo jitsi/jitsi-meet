@@ -69,17 +69,17 @@ const EncoderState = Object.freeze({
     /**
      * Initial state, when libflac.js is not initialized.
      */
-    UNINTIALIZED: Symbol('uninitialized'),
+    UNINTIALIZED: 'uninitialized',
 
     /**
      * Actively encoding new audio bits.
      */
-    WORKING: Symbol('working'),
+    WORKING: 'working',
 
     /**
      * Encoding has finished and encoded bits are available.
      */
-    FINISHED: Symbol('finished')
+    FINISHED: 'finished'
 });
 
 /**

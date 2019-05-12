@@ -1,10 +1,10 @@
 // @flow
 
 import React from 'react';
-import { connect } from 'react-redux';
 
 import { Dialog } from '../../../base/dialog';
 import { translate } from '../../../base/i18n';
+import { connect } from '../../../base/redux';
 
 import AbstractKickRemoteParticipantDialog
     from '../AbstractKickRemoteParticipantDialog';
@@ -22,7 +22,7 @@ class KickRemoteParticipantDialog extends AbstractKickRemoteParticipantDialog {
     render() {
         return (
             <Dialog
-                okTitleKey = 'dialog.kickParticipantButton'
+                okKey = 'dialog.kickParticipantButton'
                 onSubmit = { this._onSubmit }
                 titleKey = 'dialog.kickParticipantTitle'
                 width = 'small'>

@@ -3,13 +3,19 @@
 import React from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
 
+import { StyleType } from '../../../styles';
+
 import BaseDialog, { type Props as BaseProps } from './BaseDialog';
 import {
     brandedDialog
 } from './styles';
 
-type Props = {
-    ...BaseProps,
+type Props = BaseProps & {
+
+    /**
+     * The color-schemed stylesheet of the feature.
+     */
+    _dialogStyles: StyleType,
 
     t: Function
 }
@@ -46,7 +52,7 @@ class BaseSubmitDialog<P: Props, S: *> extends BaseDialog<P, S> {
      * @inheritdoc
      */
     _renderContent() {
-        const { t } = this.props;
+        const { _dialogStyles, t } = this.props;
         const additionalButtons = this._renderAdditionalButtons();
 
         return (
@@ -60,12 +66,12 @@ class BaseSubmitDialog<P: Props, S: *> extends BaseDialog<P, S> {
                         disabled = { this.props.okDisabled }
                         onPress = { this._onSubmit }
                         style = { [
-                            brandedDialog.button,
+                            _dialogStyles.button,
                             additionalButtons
                                 ? null : brandedDialog.buttonFarLeft,
                             brandedDialog.buttonFarRight
                         ] }>
-                        <Text style = { brandedDialog.text }>
+                        <Text style = { _dialogStyles.buttonLabel }>
                             { t(this._getSubmitButtonKey()) }
                         </Text>
                     </TouchableOpacity>
@@ -76,7 +82,7 @@ class BaseSubmitDialog<P: Props, S: *> extends BaseDialog<P, S> {
 
     _onCancel: () => void;
 
-    _onSubmit: ?string => boolean;
+    _onSubmit: () => boolean;
 
     _renderHTML: string => Object | string
 

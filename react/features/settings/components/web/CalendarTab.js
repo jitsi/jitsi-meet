@@ -3,9 +3,9 @@
 import Button from '@atlaskit/button';
 import Spinner from '@atlaskit/spinner';
 import React, { Component } from 'react';
-import { connect } from 'react-redux';
 
 import { translate } from '../../../base/i18n';
+import { connect } from '../../../base/redux';
 import {
     CALENDAR_TYPE,
     MicrosoftSignInButton,

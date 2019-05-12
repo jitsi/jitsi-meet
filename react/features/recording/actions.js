@@ -2,6 +2,7 @@
 
 import JitsiMeetJS, { JitsiRecordingConstants } from '../base/lib-jitsi-meet';
 import {
+    NOTIFICATION_TIMEOUT,
     hideNotification,
     showErrorNotification,
     showNotification
@@ -125,7 +126,7 @@ export function showStoppedRecordingNotification(streamType: string) {
         titleKey: 'dialog.recording'
     };
 
-    return showNotification(dialogProps, 2500);
+    return showNotification(dialogProps, NOTIFICATION_TIMEOUT);
 }
 
 /**

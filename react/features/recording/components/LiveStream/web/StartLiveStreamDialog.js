@@ -2,10 +2,10 @@
 
 import Spinner from '@atlaskit/spinner';
 import React from 'react';
-import { connect } from 'react-redux';
 
 import { Dialog } from '../../../../base/dialog';
 import { translate } from '../../../../base/i18n';
+import { connect } from '../../../../base/redux';
 
 import {
     GOOGLE_API_STATES,
@@ -87,8 +87,8 @@ class StartLiveStreamDialog
 
         return (
             <Dialog
-                cancelTitleKey = 'dialog.Cancel'
-                okTitleKey = 'dialog.startLiveStreaming'
+                cancelKey = 'dialog.Cancel'
+                okKey = 'dialog.startLiveStreaming'
                 onCancel = { this._onCancel }
                 onSubmit = { this._onSubmit }
                 titleKey = 'liveStreaming.start'

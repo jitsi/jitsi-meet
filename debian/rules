@@ -3,12 +3,22 @@
 # Uncomment this to turn on verbose mode.
 #export DH_VERBOSE=1
 
+LANGUAGES := $(shell node -p "Object.keys(require('./lang/languages.json')).join(' ')")
+COUNTRIES_DIR := node_modules/i18n-iso-countries/langs
+
 %:
 	dh $@
 
 # we skip making Makefile exists for updating browserify modules when developing
 override_dh_auto_build:
 
-override_dh_install:
+override_dh_install: $(LANGUAGES)
 	dh_installdirs
 	dh_install -X/config.js -X/package.json
+
+$(LANGUAGES):
+	if [ -f $(COUNTRIES_DIR)/$@.json ] ; \
+	then \
+		dh_install -pjitsi-meet-web $(COUNTRIES_DIR)/$@.json usr/share/jitsi-meet/lang/; \
+		mv debian/jitsi-meet-web/usr/share/jitsi-meet/lang/$@.json debian/jitsi-meet-web/usr/share/jitsi-meet/lang/countries-$@.json; \
+	fi;

@@ -1,0 +1,22 @@
+.subject {
+    top: -120px;
+    transition: top .3s ease-in;
+    height: 95px;
+    width: 100%;
+    pointer-events: none;
+    position: absolute;
+    padding: 25px 140px 0 140px;
+    text-align: center;
+    font-size: 17px;
+    color: #fff;
+    z-index: $toolbarBackgroundZ;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    box-sizing: border-box;
+    white-space: nowrap;
+    background-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0));
+
+    &.visible {
+        top: 0px;
+    }
+}

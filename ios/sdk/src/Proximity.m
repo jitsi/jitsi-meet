@@ -25,6 +25,10 @@
 
 RCT_EXPORT_MODULE();
 
+- (dispatch_queue_t)methodQueue {
+    return dispatch_get_main_queue();
+}
+
 /**
  * Enables / disables the proximity sensor monitoring. On iOS enabling the
  * proximity sensor automatically dims the screen and disables touch controls,

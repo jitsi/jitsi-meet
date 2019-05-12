@@ -19,7 +19,7 @@ export default function SharedVideoThumb(participant, videoType, VideoLayout) {
     this.bindHoverHandler();
     SmallVideo.call(this, VideoLayout);
     this.isVideoMuted = true;
-    this.setDisplayName(participant.name);
+    this.updateDisplayName();
 
     this.container.onclick = this._onContainerClick;
     this.container.ondblclick = this._onContainerDoubleClick;
@@ -65,9 +65,11 @@ SharedVideoThumb.prototype.createContainer = function(spanId) {
 };
 
 /**
- * Sets the display name for the thumb.
+ * Triggers re-rendering of the display name using current instance state.
+ *
+ * @returns {void}
  */
-SharedVideoThumb.prototype.setDisplayName = function(displayName) {
+SharedVideoThumb.prototype.updateDisplayName = function() {
     if (!this.container) {
         logger.warn(`Unable to set displayName - ${this.videoSpanId
         } does not exist`);
@@ -75,8 +77,7 @@ SharedVideoThumb.prototype.setDisplayName = function(displayName) {
         return;
     }
 
-    this.updateDisplayName({
-        displayName: displayName || '',
+    this._renderDisplayName({
         elementID: `${this.videoSpanId}_name`,
         participantID: this.id
     });

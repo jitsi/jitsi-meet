@@ -9,4 +9,4 @@
  *
  * @protected
  */
-export const _SET_IMMERSIVE_LISTENER = Symbol('_SET_IMMERSIVE_LISTENER');
+export const _SET_IMMERSIVE_LISTENER = '_SET_IMMERSIVE_LISTENER';

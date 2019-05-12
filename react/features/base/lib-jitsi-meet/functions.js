@@ -43,16 +43,7 @@ export function createLocalTrack(type: string, deviceId: string) {
  * otherwise.
  */
 export function isAnalyticsEnabled(stateful: Function | Object) {
-    const {
-        analytics = {},
-        disableThirdPartyRequests
-    } = toState(stateful)['features/base/config'];
-    const { scriptURLs } = analytics;
-
-    return (
-        !disableThirdPartyRequests
-            && Array.isArray(scriptURLs)
-            && Boolean(scriptURLs.length));
+    return !toState(stateful)['features/base/config'].disableThirdPartyRequests;
 }
 
 /**
@@ -109,20 +100,14 @@ export function isFatalJitsiConnectionError(error: Object | string) {
  * Loads config.js from a specific remote server.
  *
  * @param {string} url - The URL to load.
- * @param {number} [timeout] - The timeout in milliseconds for the {@code url}
- * to load. If not specified, a default value deemed appropriate for the purpose
- * is used.
  * @returns {Promise<Object>}
  */
-export function loadConfig(
-        url: string,
-        timeout: ?number = 10 /* seconds */ * 1000 /* in milliseconds */
-): Promise<Object> {
+export function loadConfig(url: string): Promise<Object> {
     let promise;
 
     if (typeof APP === 'undefined') {
         promise
-            = loadScript(url, timeout)
+            = loadScript(url, 2.5 * 1000 /* Timeout in ms */)
                 .then(() => {
                     const { config } = window;
 

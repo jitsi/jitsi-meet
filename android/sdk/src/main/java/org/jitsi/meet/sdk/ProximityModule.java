@@ -24,6 +24,7 @@ import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContextBaseJavaModule;
 import com.facebook.react.bridge.ReactMethod;
 import com.facebook.react.bridge.UiThreadUtil;
+import com.facebook.react.module.annotations.ReactModule;
 
 /**
  * Module implementing a simple API to enable a proximity sensor-controlled
@@ -31,14 +32,11 @@ import com.facebook.react.bridge.UiThreadUtil;
  * object it will dim the screen and disable touch controls. The functionality
  * is used with the conference audio-only mode.
  */
+@ReactModule(name = ProximityModule.NAME)
 class ProximityModule
     extends ReactContextBaseJavaModule {
 
-    /**
-     * The name of {@code ProximityModule} to be used in the React Native
-     * bridge.
-     */
-    private static final String MODULE_NAME = "Proximity";
+    public static final String NAME = "Proximity";
 
     /**
      * This type of wake lock (the one activated by the proximity sensor) has
@@ -74,7 +72,7 @@ class ProximityModule
             wakeLock
                 = powerManager.newWakeLock(
                         PROXIMITY_SCREEN_OFF_WAKE_LOCK,
-                        MODULE_NAME);
+                        "jitsi:"+NAME);
         } catch (Throwable ignored) {
             wakeLock = null;
         }
@@ -89,7 +87,7 @@ class ProximityModule
      */
     @Override
     public String getName() {
-        return MODULE_NAME;
+        return NAME;
     }
 
     /**

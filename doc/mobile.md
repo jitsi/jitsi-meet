@@ -1,13 +1,14 @@
 # Jitsi Meet apps for Android and iOS
 
-Jitsi Meet can also be built as a standalone app for Android or iOS. It uses the
+Jitsi Meet can be built as a standalone app for Android or iOS. It uses the
 [React Native] framework.
+
+**If you want to rebuild the SDK yourself look in [Android README] or [iOS README].**
 
 First make sure the [React Native dependencies] are installed.
 
 **NOTE**: This document assumes the app is being built on a macOS system.
-
-**NOTE**: Node 6.X and npm 3.X are recommended for building.
+**NOTE**: Node 10.X and npm 6.X are recommended for building.
 
 
 ## iOS
@@ -20,8 +21,6 @@ First make sure the [React Native dependencies] are installed.
     ```bash
     npm install -g ios-deploy
     ```
-
-    You may need to add ```--unsafe-perm=true``` if you are running on [Mac OS 10.11 or greater](https://github.com/phonegap/ios-deploy#os-x-1011-el-capitan-or-greater).
 
   - Install main dependencies:
 
@@ -68,9 +67,7 @@ First make sure the [React Native dependencies] are installed.
 
 3. Other remarks
 
-    It's likely you'll need to change the bundle ID for deploying to a device
-    because the default bundle ID points to the application signed by Atlassian.
-
+    It's likely you'll need to change the bundle ID for deploying to a device.
     This can be changed in the "General" tab.  Under "Identity" set
     "Bundle Identifier" to a different value, and adjust the "Team" in the
     "Signing" section to match your own.
@@ -102,6 +99,8 @@ code is being interpreted by Chrome's V8 engine, instead of JSCore which React
 Native uses. It's important to keep this in mind due to potential differences in
 supported JavaScript features.
 
+[Android README]: https://github.com/jitsi/jitsi-meet/blob/master/android/README.md
+[iOS README]: https://github.com/jitsi/jitsi-meet/blob/master/ios/README.md
 [Android Studio]: https://developer.android.com/studio/index.html
 [debugging]: https://facebook.github.io/react-native/docs/debugging.html
 [React Native]: https://facebook.github.io/react-native/

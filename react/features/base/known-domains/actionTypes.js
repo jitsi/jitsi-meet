@@ -9,4 +9,4 @@
  *     knownDomains: Array<string>
  * }
  */
-export const ADD_KNOWN_DOMAINS = Symbol('ADD_KNOWN_DOMAINS');
+export const ADD_KNOWN_DOMAINS = 'ADD_KNOWN_DOMAINS';

@@ -90,17 +90,17 @@ export default createStyleSheet({
         alignSelf: 'stretch',
         borderColor: ColorPalette.lightGrey,
         borderBottomWidth: 1,
-        color: ColorPalette.white,
+        fontSize: 14,
         height: 40,
-        marginBottom: 5
+        marginBottom: 5,
+        textAlign: 'left'
     },
 
     /**
      * Label for the previous field.
      */
     streamKeyInputLabel: {
-        alignSelf: 'flex-start',
-        color: ColorPalette.white
+        alignSelf: 'flex-start'
     },
 
     /**
@@ -146,7 +146,8 @@ export default createStyleSheet({
     },
 
     text: {
-        color: ColorPalette.white
+        fontSize: 14,
+        textAlign: 'left'
     },
 
     /**

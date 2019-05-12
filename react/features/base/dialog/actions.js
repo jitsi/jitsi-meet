@@ -1,4 +1,6 @@
-/* @flow */
+// @flow
+
+import type { Dispatch } from 'redux';
 
 import { HIDE_DIALOG, OPEN_DIALOG } from './actionTypes';
 import { isDialogOpen } from './functions';
@@ -53,7 +55,7 @@ export function openDialog(component: Object, componentProps: ?Object) {
  * @returns {Function}
  */
 export function toggleDialog(component: Object, componentProps: ?Object) {
-    return (dispatch: Dispatch, getState: Function) => {
+    return (dispatch: Dispatch<any>, getState: Function) => {
         if (isDialogOpen(getState, component)) {
             dispatch(hideDialog(component));
         } else {

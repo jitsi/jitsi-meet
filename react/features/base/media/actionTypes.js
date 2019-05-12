@@ -6,7 +6,7 @@
  *     muted: boolean
  * }
  */
-export const SET_AUDIO_MUTED = Symbol('SET_AUDIO_MUTED');
+export const SET_AUDIO_MUTED = 'SET_AUDIO_MUTED';
 
 /**
  * The type of (redux) action to adjust the availability of the local audio.
@@ -16,7 +16,7 @@ export const SET_AUDIO_MUTED = Symbol('SET_AUDIO_MUTED');
  *     muted: boolean
  * }
  */
-export const SET_AUDIO_AVAILABLE = Symbol('SET_AUDIO_AVAILABLE');
+export const SET_AUDIO_AVAILABLE = 'SET_AUDIO_AVAILABLE';
 
 /**
  * The type of (redux) action to set the facing mode of the local video camera
@@ -27,7 +27,7 @@ export const SET_AUDIO_AVAILABLE = Symbol('SET_AUDIO_AVAILABLE');
  *     cameraFacingMode: CAMERA_FACING_MODE
  * }
  */
-export const SET_CAMERA_FACING_MODE = Symbol('SET_CAMERA_FACING_MODE');
+export const SET_CAMERA_FACING_MODE = 'SET_CAMERA_FACING_MODE';
 
 /**
  * The type of (redux) action to adjust the availability of the local video.
@@ -37,7 +37,7 @@ export const SET_CAMERA_FACING_MODE = Symbol('SET_CAMERA_FACING_MODE');
  *     available: boolean
  * }
  */
-export const SET_VIDEO_AVAILABLE = Symbol('SET_VIDEO_AVAILABLE');
+export const SET_VIDEO_AVAILABLE = 'SET_VIDEO_AVAILABLE';
 
 /**
  * The type of (redux) action to set the muted state of the local video.
@@ -47,7 +47,7 @@ export const SET_VIDEO_AVAILABLE = Symbol('SET_VIDEO_AVAILABLE');
  *     muted: boolean
  * }
  */
-export const SET_VIDEO_MUTED = Symbol('SET_VIDEO_MUTED');
+export const SET_VIDEO_MUTED = 'SET_VIDEO_MUTED';
 
 /**
  * The type of (redux) action to store the last video {@link Transform} applied
@@ -59,7 +59,7 @@ export const SET_VIDEO_MUTED = Symbol('SET_VIDEO_MUTED');
  *     transform: Transform
  * }
  */
-export const STORE_VIDEO_TRANSFORM = Symbol('STORE_VIDEO_TRANSFORM');
+export const STORE_VIDEO_TRANSFORM = 'STORE_VIDEO_TRANSFORM';
 
 /**
  * The type of (redux) action to toggle the local video camera facing mode. In
@@ -71,4 +71,4 @@ export const STORE_VIDEO_TRANSFORM = Symbol('STORE_VIDEO_TRANSFORM');
  *     type: TOGGLE_CAMERA_FACING_MODE
  * }
  */
-export const TOGGLE_CAMERA_FACING_MODE = Symbol('TOGGLE_CAMERA_FACING_MODE');
+export const TOGGLE_CAMERA_FACING_MODE = 'TOGGLE_CAMERA_FACING_MODE';

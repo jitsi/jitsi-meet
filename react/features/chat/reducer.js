@@ -22,14 +22,22 @@ ReducerRegistry.register('features/chat', (state = DEFAULT_STATE, action) => {
             timestamp: action.timestamp
         };
 
+        // React native, unlike web, needs a reverse sorted message list.
+        const messages = navigator.product === 'ReactNative'
+            ? [
+                newMessage,
+                ...state.messages
+            ]
+            : [
+                ...state.messages,
+                newMessage
+            ];
+
         return {
             ...state,
             lastReadMessage:
                 action.hasRead ? newMessage : state.lastReadMessage,
-            messages: [
-                ...state.messages,
-                newMessage
-            ]
+            messages
         };
     }
 
@@ -44,7 +52,8 @@ ReducerRegistry.register('features/chat', (state = DEFAULT_STATE, action) => {
         return {
             ...state,
             isOpen: !state.isOpen,
-            lastReadMessage: state.messages[state.messages.length - 1]
+            lastReadMessage: state.messages[
+                navigator.product === 'ReactNative' ? 0 : state.messages.length - 1]
         };
     }
 

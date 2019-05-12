@@ -1,11 +1,11 @@
 // @flow
 
 import React, { Component } from 'react';
-import { connect } from 'react-redux';
 
 import { Dialog, hideDialog } from '../../base/dialog';
 import { translate } from '../../base/i18n';
 import { getParticipantById } from '../../base/participants';
+import { connect } from '../../base/redux';
 
 declare var APP: Object;
 
@@ -63,7 +63,7 @@ class RemoteControlAuthorizationDialog extends Component<Props> {
     render() {
         return (
             <Dialog
-                okTitleKey = { 'dialog.allow' }
+                okKey = { 'dialog.allow' }
                 onCancel = { this._onCancel }
                 onSubmit = { this._onSubmit }
                 titleKey = 'dialog.remoteControlTitle'

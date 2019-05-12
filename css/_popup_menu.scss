@@ -5,16 +5,13 @@
 .popupmenu {
     min-width: 75px;
     text-align: left;
-    padding: 0;
+    padding: 0px;
+    width: 150px;
     white-space: nowrap;
 
     &__item {
         list-style-type: none;
         height: 35px;
-
-        &:hover {
-            background-color: rgba(9, 30, 66, 0.04);
-        }
     }
 
     // Link Appearance
@@ -28,6 +25,12 @@
         width: 100%;
         cursor: pointer;
         padding: 0 5px;
+        color: $popupMenuColor;
+
+        &:hover {
+            background-color: $popupMenuHoverBackground;
+            color: $popupMenuHoverColor;
+        }
 
         &.disabled {
             pointer-events: none;
@@ -62,6 +65,18 @@
                 top: 50%;
                 transform: translate(0, -50%);
                 width: 100%;
+
+                &::-webkit-slider-runnable-track {
+                    background-color: $popupSliderColor;
+                }
+
+                &::-moz-range-track {
+                    background-color: $popupSliderColor;
+                }
+
+                &::-ms-fill-lower {
+                    background-color: $popupSliderColor;
+                }
             }
         }
     }
@@ -91,7 +106,7 @@
  * InlineDialogs.
  */
 ul.popupmenu {
-    margin: -15px;
+    margin: -16px -24px;
 }
 
 span.remotevideomenu:hover ul.popupmenu, ul.popupmenu:hover {

@@ -1,5 +1,6 @@
 /* @flow */
 
+import { ColorSchemeRegistry } from '../color-scheme';
 import { toState } from '../redux';
 
 /**
@@ -14,4 +15,18 @@ import { toState } from '../redux';
  */
 export function isDialogOpen(stateful: Function | Object, component: Object) {
     return toState(stateful)['features/base/dialog'].component === component;
+}
+
+/**
+ * Maps part of the Redux state to the props of any Dialog based component.
+ *
+ * @param {Object} state - The Redux state.
+ * @returns {{
+ *     _dialogStyles: StyleType
+ * }}
+ */
+export function _abstractMapStateToProps(state: Object): Object {
+    return {
+        _dialogStyles: ColorSchemeRegistry.get(state, 'Dialog')
+    };
 }

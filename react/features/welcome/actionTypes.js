@@ -9,7 +9,7 @@
  *     visible: boolean
  * }
  */
-export const SET_SIDEBAR_VISIBLE = Symbol('SET_SIDEBAR_VISIBLE');
+export const SET_SIDEBAR_VISIBLE = 'SET_SIDEBAR_VISIBLE';
 
 /**
  * The type of (redux) action to set the default page index of
@@ -21,4 +21,4 @@ export const SET_SIDEBAR_VISIBLE = Symbol('SET_SIDEBAR_VISIBLE');
  * }
  */
 export const SET_WELCOME_PAGE_LISTS_DEFAULT_PAGE
-    = Symbol('SET_WELCOME_PAGE_LIST_DEFAULT_PAGE');
+    = 'SET_WELCOME_PAGE_LIST_DEFAULT_PAGE';

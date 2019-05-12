@@ -3,6 +3,7 @@
 import i18next from 'i18next';
 import I18nextXHRBackend from 'i18next-xhr-backend';
 
+import COUNTRIES_RESOURCES from 'i18n-iso-countries/langs/en.json';
 import LANGUAGES_RESOURCES from '../../../../lang/languages.json';
 import MAIN_RESOURCES from '../../../../lang/main.json';
 
@@ -51,7 +52,7 @@ const options = {
     load: 'unspecific',
     ns: {
         defaultNs: 'main',
-        namespaces: [ 'main', 'languages' ]
+        namespaces: [ 'main', 'languages', 'countries' ]
     },
     resGetPath: 'lang/__ns__-__lng__.json',
     useDataAttrOptions: true
@@ -68,6 +69,12 @@ i18next
     .init(options);
 
 // Add default language which is preloaded from the source code.
+i18next.addResourceBundle(
+    DEFAULT_LANGUAGE,
+    'countries',
+    COUNTRIES_RESOURCES,
+    /* deep */ true,
+    /* overwrite */ true);
 i18next.addResourceBundle(
     DEFAULT_LANGUAGE,
     'languages',

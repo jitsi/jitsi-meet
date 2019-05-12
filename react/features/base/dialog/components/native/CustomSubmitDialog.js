@@ -1,15 +1,14 @@
 // @flow
 
-import { connect } from 'react-redux';
-
 import { translate } from '../../../i18n';
+import { connect } from '../../../redux';
+
+import { _abstractMapStateToProps } from '../../functions';
 
 import { type Props as BaseProps } from './BaseDialog';
 import BaseSubmitDialog from './BaseSubmitDialog';
 
-type Props = {
-    ...BaseProps,
-
+type Props = BaseProps & {
     t: Function
 }
 
@@ -27,4 +26,5 @@ class CustomSubmitDialog extends BaseSubmitDialog<Props, *> {
     }
 }
 
-export default translate(connect()(CustomSubmitDialog));
+export default translate(
+    connect(_abstractMapStateToProps)(CustomSubmitDialog));

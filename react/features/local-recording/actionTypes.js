@@ -7,7 +7,7 @@
  *     recordingEngagedAt: Date
  * }
  */
-export const LOCAL_RECORDING_ENGAGED = Symbol('LOCAL_RECORDING_ENGAGED');
+export const LOCAL_RECORDING_ENGAGED = 'LOCAL_RECORDING_ENGAGED';
 
 /**
  * Action to signal that the local client has stopped recording,
@@ -17,7 +17,7 @@ export const LOCAL_RECORDING_ENGAGED = Symbol('LOCAL_RECORDING_ENGAGED');
  *     type: LOCAL_RECORDING_UNENGAGED
  * }
  */
-export const LOCAL_RECORDING_UNENGAGED = Symbol('LOCAL_RECORDING_UNENGAGED');
+export const LOCAL_RECORDING_UNENGAGED = 'LOCAL_RECORDING_UNENGAGED';
 
 /**
  * Action to update {@code LocalRecordingInfoDialog} with stats from all
@@ -29,4 +29,4 @@ export const LOCAL_RECORDING_UNENGAGED = Symbol('LOCAL_RECORDING_UNENGAGED');
  * }
  */
 export const LOCAL_RECORDING_STATS_UPDATE
-    = Symbol('LOCAL_RECORDING_STATS_UPDATE');
+    = 'LOCAL_RECORDING_STATS_UPDATE';

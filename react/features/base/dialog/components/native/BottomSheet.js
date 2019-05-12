@@ -1,9 +1,12 @@
 // @flow
 
-import React, { Component, type Node } from 'react';
-import { TouchableWithoutFeedback, View } from 'react-native';
+import React, { PureComponent, type Node } from 'react';
+import { SafeAreaView, View } from 'react-native';
 
-import { Modal } from '../../../react';
+import { ColorSchemeRegistry } from '../../../color-scheme';
+import { SlidingView } from '../../../react';
+import { connect } from '../../../redux';
+import { StyleType } from '../../../styles';
 
 import { bottomSheetStyles as styles } from './styles';
 
@@ -11,6 +14,11 @@ import { bottomSheetStyles as styles } from './styles';
  * The type of {@code BottomSheet}'s React {@code Component} prop types.
  */
 type Props = {
+
+    /**
+     * The color-schemed stylesheet of the feature.
+     */
+    _styles: StyleType,
 
     /**
      * The children to be displayed within this component.
@@ -25,19 +33,22 @@ type Props = {
 };
 
 /**
- * A component emulating Android's BottomSheet. For all intents and purposes,
- * this component has been designed to work and behave as a {@code Dialog}.
+ * A component emulating Android's BottomSheet.
  */
-export default class BottomSheet extends Component<Props> {
+class BottomSheet extends PureComponent<Props> {
     /**
-     * Initializes a new {@code BottomSheet} instance.
+     * Assembles a style for the BottomSheet container.
      *
-     * @inheritdoc
+     * @private
+     * @returns {StyleType}
      */
-    constructor(props: Props) {
-        super(props);
+    _getContainerStyle() {
+        const { _styles } = this.props;
 
-        this._onCancel = this._onCancel.bind(this);
+        return {
+            ...styles.container,
+            backgroundColor: _styles.sheet.backgroundColor
+        };
     }
 
     /**
@@ -47,38 +58,36 @@ export default class BottomSheet extends Component<Props> {
      * @returns {ReactElement}
      */
     render() {
-        return [
-            <View
-                key = 'overlay'
-                style = { styles.overlay } />,
-            <Modal
-                key = 'modal'
-                onRequestClose = { this._onCancel }
-                visible = { true }>
-                <View style = { styles.container }>
-                    <TouchableWithoutFeedback
-                        onPress = { this._onCancel } >
-                        <View style = { styles.backdrop } />
-                    </TouchableWithoutFeedback>
-                    <View style = { styles.sheet }>
+        const { _styles } = this.props;
+
+        return (
+            <SlidingView
+                onHide = { this.props.onCancel }
+                position = 'bottom'
+                show = { true }>
+                <SafeAreaView
+                    style = { this._getContainerStyle() }>
+                    <View style = { _styles.sheet }>
                         { this.props.children }
                     </View>
-                </View>
-            </Modal>
-        ];
-    }
-
-    _onCancel: () => void;
-
-    /**
-     * Cancels the dialog by calling the onCancel prop callback.
-     *
-     * @private
-     * @returns {void}
-     */
-    _onCancel() {
-        const { onCancel } = this.props;
-
-        onCancel && onCancel();
+                </SafeAreaView>
+            </SlidingView>
+        );
     }
 }
+
+/**
+ * Maps part of the Redux state to the props of this component.
+ *
+ * @param {Object} state - The Redux state.
+ * @returns {{
+ *     _styles: StyleType
+ * }}
+ */
+function _mapStateToProps(state) {
+    return {
+        _styles: ColorSchemeRegistry.get(state, 'BottomSheet')
+    };
+}
+
+export default connect(_mapStateToProps)(BottomSheet);

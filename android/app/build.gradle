@@ -1,6 +1,7 @@
 apply plugin: 'com.android.application'
 
-boolean googleServicesEnabled = project.file('google-services.json').exists()
+boolean googleServicesEnabled \
+    = project.file('google-services.json').exists() && !rootProject.ext.libreBuild
 
 // Crashlytics integration is done as part of Firebase now, so it gets
 // automagically activated with google-services.json
@@ -8,6 +9,11 @@ if (googleServicesEnabled) {
     apply plugin: 'io.fabric'
 }
 
+// Use the number of seconds/10 since Jan 1 2019 as the versionCode.
+// This lets us upload a new build at most every 10 seconds for the
+// next ~680 years.
+// https://stackoverflow.com/a/38643838
+def vcode = (int)(((new Date().getTime()/1000) - 1546297200) / 10)
 
 android {
     compileSdkVersion rootProject.ext.compileSdkVersion
@@ -15,24 +21,14 @@ android {
 
     defaultConfig {
         applicationId 'org.jitsi.meet'
-        versionCode Integer.parseInt(project.buildNumber)
+        versionCode vcode
         versionName project.appVersion
 
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
 
         ndk {
-            abiFilters 'armeabi-v7a', 'x86'
-        }
-
-        packagingOptions {
-            // The project react-native does not provide 64-bit binaries at the
-            // time of this writing. Unfortunately, packaging any 64-bit
-            // binaries into the .apk will crash the app at runtime on 64-bit
-            // platforms.
-            exclude '/lib/mips64/**'
-            exclude '/lib/arm64-v8a/**'
-            exclude '/lib/x86_64/**'
+            abiFilters 'armeabi-v7a', 'arm64-v8a', 'x86', 'x86_64'
         }
     }
 
@@ -41,11 +37,24 @@ android {
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules-debug.pro'
             buildConfigField "boolean", "GOOGLE_SERVICES_ENABLED", "${googleServicesEnabled}"
+            buildConfigField "boolean", "LIBRE_BUILD", "${rootProject.ext.libreBuild}"
         }
         release {
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules-release.pro'
             buildConfigField "boolean", "GOOGLE_SERVICES_ENABLED", "${googleServicesEnabled}"
+            buildConfigField "boolean", "LIBRE_BUILD", "${rootProject.ext.libreBuild}"
+        }
+    }
+
+    sourceSets {
+        main {
+            java {
+                if (rootProject.ext.libreBuild) {
+                    srcDir "src"
+                    exclude "**/GoogleServicesHelper.java"
+                }
+            }
         }
     }
 
@@ -63,7 +72,17 @@ dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation "com.android.support:support-v4:${rootProject.ext.supportLibVersion}"
     implementation "com.android.support:appcompat-v7:${rootProject.ext.supportLibVersion}"
-    implementation 'com.google.android.gms:play-services-auth:16.0.1'
+
+    if (!rootProject.ext.libreBuild) {
+        implementation 'com.google.android.gms:play-services-auth:16.0.1'
+
+        // Firebase
+        //  - Crashlytics
+        //  - Dynamic Links
+        implementation 'com.google.firebase:firebase-core:16.0.6'
+        implementation 'com.crashlytics.sdk.android:crashlytics:2.9.8'
+        implementation 'com.google.firebase:firebase-dynamic-links:16.1.5'
+    }
 
     implementation project(':sdk')
 
@@ -78,13 +97,6 @@ dependencies {
         exclude group: "com.android.support", module: "annotations"
     }
     annotationProcessor "com.github.bumptech.glide:compiler:${rootProject.ext.glideVersion}"
-
-    // Firebase
-    //  - Crashlytics
-    //  - Dynamic Links
-    implementation 'com.google.firebase:firebase-core:16.0.6'
-    implementation 'com.crashlytics.sdk.android:crashlytics:2.9.8'
-    implementation 'com.google.firebase:firebase-dynamic-links:16.1.5'
 }
 
 gradle.projectsEvaluated {
@@ -114,21 +126,53 @@ gradle.projectsEvaluated {
 
         android.applicationVariants.all { variant ->
             variant.outputs.each { output ->
-                output.processManifest.doLast {
-                    def f = new File(manifestOutputDirectory, 'AndroidManifest.xml')
-                    if (!f.isFile()) {
-                        f = new File(new File(manifestOutputDirectory, output.dirName), 'AndroidManifest.xml')
-                    }
-                    if (f.exists()) {
-                        def charset = 'UTF-8'
-                        def s = f.getText(charset)
-                        s = s.replace('</application>', "${dropboxActivity}</application>")
-                        f.write(s, charset)
-                    }
+                output.getProcessManifestProvider().get().doLast {
+                    def outputDir = manifestOutputDirectory.get().asFile
+                    def manifestPath = new File(outputDir, 'AndroidManifest.xml')
+                    def charset = 'UTF-8'
+                    def text
+                    text = manifestPath.getText(charset)
+                    text = text.replace('</application>', "${dropboxActivity}</application>")
+                    manifestPath.write(text, charset)
                 }
             }
         }
     }
+
+    // Run React packager
+    android.applicationVariants.all { variant ->
+        def targetName = variant.name.capitalize()
+
+        def currentRunPackagerTask = tasks.create(
+                name: "run${targetName}ReactPackager",
+                type: Exec) {
+            group = "react"
+            description = "Run the React packager."
+
+            doFirst {
+                println "Starting the React packager..."
+
+                def androidRoot = file("${projectDir}/../")
+
+                // Set up the call to the script
+                workingDir androidRoot
+
+                // Run the packager
+                commandLine("scripts/run-packager.sh")
+            }
+
+            // Set up dev mode
+            def devEnabled = !targetName.toLowerCase().contains("release")
+
+            // Only enable for dev builds
+            enabled devEnabled
+        }
+
+        def packageTask = variant.packageApplicationProvider.get()
+
+        packageTask.dependsOn(currentRunPackagerTask)
+    }
+
 }
 
 if (googleServicesEnabled) {

@@ -1,7 +1,8 @@
 /* @flow */
 
 import React from 'react';
-import { connect } from 'react-redux';
+
+import { connect } from '../../../redux';
 
 import AbstractVideoTrack from '../AbstractVideoTrack';
 import type { Props as AbstractVideoTrackProps } from '../AbstractVideoTrack';
@@ -11,8 +12,7 @@ import Video from './Video';
 /**
  * The type of the React {@code Component} props of {@link VideoTrack}.
  */
-type Props = {
-    ...AbstractVideoTrackProps,
+type Props = AbstractVideoTrackProps & {
 
     /**
      * CSS classes to add to the video element.

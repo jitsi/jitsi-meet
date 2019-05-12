@@ -1,10 +1,11 @@
 // @flow
 
 import React, { Component } from 'react';
-import { connect } from 'react-redux';
+import type { Dispatch } from 'redux';
 
 import { setPassword } from '../../base/conference';
 import { InputDialog } from '../../base/dialog';
+import { connect } from '../../base/redux';
 
 import { _cancelPasswordRequiredPrompt } from '../actions';
 
@@ -23,7 +24,7 @@ type Props = {
     /**
      * The redux dispatch function.
      */
-    dispatch: Dispatch<*>
+    dispatch: Dispatch<any>
 };
 
 /**

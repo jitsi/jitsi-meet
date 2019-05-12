@@ -1,10 +1,10 @@
 // @flow
 
 import React, { Component } from 'react';
-import { connect } from 'react-redux';
 
 import { getAvailableDevices } from '../../../base/devices';
 import { DialogWithTabs, hideDialog } from '../../../base/dialog';
+import { connect } from '../../../base/redux';
 import { isCalendarEnabled } from '../../../calendar-sync';
 import {
     DeviceSelection,
@@ -190,6 +190,17 @@ function _mapStateToProps(state) {
             component: MoreTab,
             label: 'settings.more',
             props: moreTabProps,
+            propsUpdateFunction: (tabState, newProps) => {
+                // Updates tab props, keeping users selection
+
+                return {
+                    ...newProps,
+                    currentLanguage: tabState.currentLanguage,
+                    followMeEnabled: tabState.followMeEnabled,
+                    startAudioMuted: tabState.startAudioMuted,
+                    startVideoMuted: tabState.startVideoMuted
+                };
+            },
             styles: 'settings-pane more-pane',
             submit: submitMoreTab
         });

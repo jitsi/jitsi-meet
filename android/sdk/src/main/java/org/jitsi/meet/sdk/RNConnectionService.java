@@ -18,6 +18,7 @@ import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContextBaseJavaModule;
 import com.facebook.react.bridge.ReactMethod;
 import com.facebook.react.bridge.ReadableMap;
+import com.facebook.react.module.annotations.ReactModule;
 
 /**
  * The react-native side of Jitsi Meet's {@link ConnectionService}. Exposes
@@ -26,10 +27,13 @@ import com.facebook.react.bridge.ReadableMap;
  * @author Pawel Domas
  */
 @RequiresApi(api = Build.VERSION_CODES.O)
+@ReactModule(name = RNConnectionService.NAME)
 class RNConnectionService
     extends ReactContextBaseJavaModule {
 
-    private final static String TAG = ConnectionService.TAG;
+    public static final String NAME = "ConnectionService";
+
+    private static final String TAG = ConnectionService.TAG;
 
     /**
      * Sets the audio route on all existing {@link android.telecom.Connection}s
@@ -146,7 +150,7 @@ class RNConnectionService
 
     @Override
     public String getName() {
-        return "ConnectionService";
+        return NAME;
     }
 
     /**

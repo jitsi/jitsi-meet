@@ -8,7 +8,7 @@
  *
  * @protected
  */
-export const _SET_APP_STATE_LISTENER = Symbol('_SET_APP_STATE_LISTENER');
+export const _SET_APP_STATE_LISTENER = '_SET_APP_STATE_LISTENER';
 
 /**
  * The type of redux action which signals that the app state has changed (in
@@ -23,4 +23,4 @@ export const _SET_APP_STATE_LISTENER = Symbol('_SET_APP_STATE_LISTENER');
  * @public
  * @see {@link https://facebook.github.io/react-native/docs/appstate.html}
  */
-export const APP_STATE_CHANGED = Symbol('APP_STATE_CHANGED');
+export const APP_STATE_CHANGED = 'APP_STATE_CHANGED';

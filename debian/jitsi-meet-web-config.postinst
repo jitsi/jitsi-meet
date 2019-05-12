@@ -52,7 +52,11 @@ case "$1" in
         db_set jitsi-meet/jvb-hostname $JVB_HOSTNAME
 
         NGINX_INSTALL_CHECK="$(dpkg-query -f '${Status}' -W 'nginx' 2>/dev/null | awk '{print $3}' || true)"
-        if [ "$NGINX_INSTALL_CHECK" = "installed" ] || [ "$NGINX_INSTALL_CHECK" = "unpacked" ] ; then
+        NGINX_EXTRAS_INSTALL_CHECK="$(dpkg-query -f '${Status}' -W 'nginx-extras' 2>/dev/null | awk '{print $3}' || true)"
+        if [ "$NGINX_INSTALL_CHECK" = "installed" ] \
+           || [ "$NGINX_INSTALL_CHECK" = "unpacked" ] \
+           || [ "$NGINX_EXTRAS_INSTALL_CHECK" = "installed" ] \
+           || [ "$NGINX_EXTRAS_INSTALL_CHECK" = "unpacked" ] ; then
             FORCE_NGINX="true"
         fi
         APACHE_INSTALL_CHECK="$(dpkg-query -f '${Status}' -W 'apache2' 2>/dev/null | awk '{print $3}' || true)"
@@ -128,6 +132,7 @@ case "$1" in
             echo "org.jitsi.videobridge.rest.jetty.ResourceHandler.alias./config.js=/etc/jitsi/meet/$JVB_HOSTNAME-config.js" >> $JVB_CONFIG
             echo "org.jitsi.videobridge.rest.jetty.ResourceHandler.alias./interface_config.js=/usr/share/jitsi-meet/interface_config.js" >> $JVB_CONFIG
             echo "org.jitsi.videobridge.rest.jetty.ResourceHandler.alias./logging_config.js=/usr/share/jitsi-meet/logging_config.js" >> $JVB_CONFIG
+            echo "org.jitsi.videobridge.rest.jetty.ResourceHandler.alias./external_api.js=/usr/share/jitsi-meet/libs/external_api.min.js" >> $JVB_CONFIG
             echo "org.jitsi.videobridge.rest.jetty.RewriteHandler.regex=^/([a-zA-Z0-9]+)$" >> $JVB_CONFIG
             echo "org.jitsi.videobridge.rest.jetty.RewriteHandler.replacement=/" >> $JVB_CONFIG
             echo "org.jitsi.videobridge.rest.jetty.SSIResourceHandler.paths=/" >> $JVB_CONFIG

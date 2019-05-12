@@ -98,11 +98,13 @@ curl -L -o ${CERT_DIR}/AppleWWDRCA.cer 'http://developer.apple.com/certification
 curl -L -o ${CERT_DIR}/dev-cert.cer.enc ${IOS_DEV_CERT_URL}
 curl -L -o ${CERT_DIR}/dev-key.p12.enc ${IOS_DEV_CERT_KEY_URL}
 curl -L -o ${CERT_DIR}/dev-profile.mobileprovision.enc ${IOS_DEV_PROV_PROFILE_URL}
+curl -L -o ${CERT_DIR}/dev-watch-profile.mobileprovision.enc ${IOS_DEV_WATCH_PROV_PROFILE_URL}
 curl -L -o ${CERT_DIR}/id_rsa.enc ${DEPLOY_SSH_CERT_URL}
 
 openssl aes-256-cbc -k "$ENCRYPTION_PASSWORD" -in ${CERT_DIR}/dev-cert.cer.enc -d -a -out ${CERT_DIR}/dev-cert.cer
 openssl aes-256-cbc -k "$ENCRYPTION_PASSWORD" -in ${CERT_DIR}/dev-key.p12.enc -d -a -out ${CERT_DIR}/dev-key.p12
 openssl aes-256-cbc -k "$ENCRYPTION_PASSWORD" -in ${CERT_DIR}/dev-profile.mobileprovision.enc -d -a -out ${CERT_DIR}/dev-profile.mobileprovision
+openssl aes-256-cbc -k "$ENCRYPTION_PASSWORD" -in ${CERT_DIR}/dev-watch-profile.mobileprovision.enc -d -a -out ${CERT_DIR}/dev-watch-profile.mobileprovision
 openssl aes-256-cbc -k "$ENCRYPTION_PASSWORD" -in ${CERT_DIR}/id_rsa.enc -d -a -out ${CERT_DIR}/id_rsa
 chmod 0600 ${CERT_DIR}/id_rsa
 
@@ -126,8 +128,12 @@ echo "done set-key-partition-list"
 mkdir -p ~/Library/MobileDevice/Provisioning\ Profiles
 
 cp "${CERT_DIR}/dev-profile.mobileprovision"  ~/Library/MobileDevice/Provisioning\ Profiles/
+cp "${CERT_DIR}/dev-watch-profile.mobileprovision"  ~/Library/MobileDevice/Provisioning\ Profiles/
 
 npm install
+
+# Ever since the Apple Watch app has been added the bitcode for WebRTC needs to be downloaded in order to build successfully
+./node_modules/react-native-webrtc/tools/downloadBitcode.sh
 
 cd ios
 pod update

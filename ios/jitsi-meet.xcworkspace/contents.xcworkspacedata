@@ -2,9 +2,6 @@
 <Workspace
    version = "1.0">
    <FileRef
-      location = "group:example-pip-app/example-pip-app.xcodeproj">
-   </FileRef>
-   <FileRef
       location = "group:app/app.xcodeproj">
    </FileRef>
    <FileRef

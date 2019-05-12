@@ -6,12 +6,13 @@ import {
     TouchableWithoutFeedback,
     View
 } from 'react-native';
-import { connect } from 'react-redux';
+import type { Dispatch } from 'redux';
 
 import {
     getNearestReceiverVideoQualityLevel,
     setMaxReceiverVideoQuality
 } from '../../../base/conference';
+import { connect } from '../../../base/redux';
 import {
     DimensionsDetector,
     isNarrowAspectRatio,
@@ -34,7 +35,7 @@ type Props = {
     /**
      * Invoked to update the receiver video quality.
      */
-    dispatch: Dispatch<*>,
+    dispatch: Dispatch<any>,
 
     /**
      * Callback to invoke when tile view is tapped.
@@ -301,6 +302,7 @@ class TileView extends Component<Props, State> {
                     disableTint = { true }
                     key = { participant.id }
                     participant = { participant }
+                    renderDisplayName = { true }
                     styleOverrides = { styleOverrides } />));
     }
 

@@ -1,5 +1,6 @@
-export { default as AddPeopleDialog } from './AddPeopleDialog';
-export { DialInSummary } from './dial-in-summary';
-export { default as InfoDialogButton } from './InfoDialogButton';
-export { default as InviteButton } from './InviteButton';
+// @flow
+
+export * from './add-people-dialog';
+export * from './dial-in-summary';
+export * from './info-dialog';
 export * from './callee-info';

@@ -45,7 +45,7 @@ export function generateDeepLinkingURL() {
 
     const appScheme = interfaceConfig.APP_SCHEME || 'org.jitsi.meet';
     const { href } = window.location;
-    const regex = new RegExp(URI_PROTOCOL_PATTERN, 'i');
+    const regex = new RegExp(URI_PROTOCOL_PATTERN, 'gi');
 
     // Android: use an intent link, custom schemes don't work in all browsers.
     // https://developer.chrome.com/multidevice/android/intents

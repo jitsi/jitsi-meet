@@ -71,7 +71,7 @@ function _fixRoom(room: ?string) {
  * @returns {string}
  */
 function _fixURIStringScheme(uri: string) {
-    const regex = new RegExp(`${URI_PROTOCOL_PATTERN}+`, 'i');
+    const regex = new RegExp(`${URI_PROTOCOL_PATTERN}+`, 'gi');
     const match: Array<string> | null = regex.exec(uri);
 
     if (match) {
@@ -377,7 +377,19 @@ export function toURLString(obj: ?(Object | string)): ?string {
  * {@code Object}.
  */
 export function urlObjectToString(o: Object): ?string {
-    const url = parseStandardURIString(_fixURIStringScheme(o.url || ''));
+    // First normalize the given url. It come as o.url or split into o.serverURL
+    // and o.room.
+    let tmp;
+
+    if (o.serverURL && o.room) {
+        tmp = new URL(o.room, o.serverURL).toString();
+    } else if (o.room) {
+        tmp = o.room;
+    } else {
+        tmp = o.url || '';
+    }
+
+    const url = parseStandardURIString(_fixURIStringScheme(tmp));
 
     // protocol
     if (!url.protocol) {
@@ -457,16 +469,16 @@ export function urlObjectToString(o: Object): ?string {
 
     let { hash } = url;
 
-    for (const configName of [ 'config', 'interfaceConfig' ]) {
+    for (const urlPrefix of [ 'config', 'interfaceConfig', 'devices' ]) {
         const urlParamsArray
             = _objectToURLParamsArray(
-                o[`${configName}Overwrite`]
-                    || o[configName]
-                    || o[`${configName}Override`]);
+                o[`${urlPrefix}Overwrite`]
+                    || o[urlPrefix]
+                    || o[`${urlPrefix}Override`]);
 
         if (urlParamsArray.length) {
             let urlParamsString
-                = `${configName}.${urlParamsArray.join(`&${configName}.`)}`;
+                = `${urlPrefix}.${urlParamsArray.join(`&${urlPrefix}.`)}`;
 
             if (hash.length) {
                 urlParamsString = `&${urlParamsString}`;

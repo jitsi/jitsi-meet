@@ -66,7 +66,7 @@
     }
 
     .info-dialog-dial-in {
-        white-space: nowrap;
+        word-break: break-all;
 
         .conference-id,
         .phone-number {
@@ -77,6 +77,7 @@
     .info-dialog-icon {
         color: #6453C0;
         font-size: 16px;
+        min-width: 30px;
     }
 
     .info-dialog-url-text,
@@ -124,29 +125,85 @@
     }
 }
 
+.dial-in-numbers-list {
+    margin-top: 20px;
+    font-size: 12px;
+    line-height: 24px;
+    border-collapse: separate;
+    border-spacing: 0 5px;
+
+    thead {
+        text-align: left;
+    }
+
+    td,
+    th {
+        border-bottom: 1px solid #d1dbe8;
+    }
+
+    .flag-cell {
+        vertical-align: top;
+        width: 30px;
+    }
+    .flag {
+        display: block;
+        margin: 5px 5px 0px 5px;
+    }
+
+    .country {
+        font-weight: bold;
+        vertical-align: top;
+        padding: 0 20px 0 0;
+    }
+
+    ul {
+        padding: 0px 0px 0px 0px;
+    }
+
+    .numbers-list {
+        list-style: none;
+        padding: 0 20px 0 0;
+    }
+
+    .toll-free-list {
+        font-weight: bold;
+        list-style: none;
+        vertical-align: top;
+    }
+
+    li.toll-free:empty:before {
+        content: '.';
+        visibility: hidden;
+    }
+}
+
 .dial-in-page {
     align-items: center;
     box-sizing: border-box;
     display: flex;
     flex-direction: column;
-    font-size: 24px;
+    font-size: 12px;
     max-height: 100%;
     overflow: auto;
-    padding: 25px;
+    padding: 15pt;
     position: absolute;
     transform: translateY(-50%);
     top: 50%;
     width: 100%;
 
-    .dial-in-numbers-list {
-        font-size: 24px;
-        margin-top: 20px;
-    }
-
     .dial-in-conference-id {
         text-align: center;
         min-width: 200px;
-        width: 30%;
+        margin-top: 40px;
+    }
+
+    .dial-in-conference-name,
+    .dial-in-conference-pin {
+        font-size: 18px;
+    }
+
+    .dial-in-conference-description {
+        margin: 12px;
     }
 }
 

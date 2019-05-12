@@ -7,6 +7,16 @@ import {
 } from '../../transport';
 
 import electronPopupsConfig from './electronPopupsConfig.json';
+import {
+    getAvailableDevices,
+    getCurrentDevices,
+    isDeviceChangeAvailable,
+    isDeviceListAvailable,
+    isMultipleAudioInputSupported,
+    setAudioInputDevice,
+    setAudioOutputDevice,
+    setVideoInputDevice
+} from './functions';
 
 const logger = require('jitsi-meet-logger').getLogger(__filename);
 
@@ -23,6 +33,7 @@ const commands = {
     displayName: 'display-name',
     email: 'email',
     hangup: 'video-hangup',
+    subject: 'subject',
     submitFeedback: 'submit-feedback',
     toggleAudio: 'toggle-audio',
     toggleChat: 'toggle-chat',
@@ -39,9 +50,12 @@ const events = {
     'avatar-changed': 'avatarChanged',
     'audio-availability-changed': 'audioAvailabilityChanged',
     'audio-mute-status-changed': 'audioMuteStatusChanged',
+    'device-list-changed': 'deviceListChanged',
     'display-name-change': 'displayNameChange',
     'email-change': 'emailChange',
     'feedback-submitted': 'feedbackSubmitted',
+    'feedback-prompt-displayed': 'feedbackPromptDisplayed',
+    'filmstrip-display-changed': 'filmstripDisplayChanged',
     'incoming-message': 'incomingMessage',
     'outgoing-message': 'outgoingMessage',
     'participant-joined': 'participantJoined',
@@ -52,7 +66,8 @@ const events = {
     'video-conference-left': 'videoConferenceLeft',
     'video-availability-changed': 'videoAvailabilityChanged',
     'video-mute-status-changed': 'videoMuteStatusChanged',
-    'screen-sharing-status-changed': 'screenSharingStatusChanged'
+    'screen-sharing-status-changed': 'screenSharingStatusChanged',
+    'subject-change': 'subjectChange'
 };
 
 /**
@@ -207,6 +222,8 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
      * for iframe onload event.
      * @param {Array<Object>} [options.invitees] - Array of objects containing
      * information about new participants that will be invited in the call.
+     * @param {Array<Object>} [options.devices] - Array of objects containing
+     * information about the initial devices that will be used in the call.
      */
     constructor(domain, ...args) {
         super();
@@ -220,7 +237,8 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
             noSSL = false,
             jwt = undefined,
             onload = undefined,
-            invitees
+            invitees,
+            devices
         } = parseArguments(args);
 
         this._parentNode = parentNode;
@@ -229,7 +247,8 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
             interfaceConfigOverwrite,
             jwt,
             noSSL,
-            roomName
+            roomName,
+            devices
         });
         this._createIFrame(height, width, onload);
         this._transport = new Transport({
@@ -531,6 +550,7 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
      * @returns {void}
      */
     dispose() {
+        this.emit('_willDispose');
         this._transport.dispose();
         this.removeAllListeners();
         if (this._frame) {
@@ -542,6 +562,9 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
      * Executes command. The available commands are:
      * {@code displayName} - Sets the display name of the local participant to
      * the value passed in the arguments array.
+     * {@code subject} - Sets the subject of the conference, the value passed
+     * in the arguments array. Note: Available only for moderator.
+     *
      * {@code toggleAudio} - Mutes / unmutes audio with no arguments.
      * {@code toggleVideo} - Mutes / unmutes video with no arguments.
      * {@code toggleFilmStrip} - Hides / shows the filmstrip with no arguments.
@@ -586,6 +609,24 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
     }
 
     /**
+     * Returns Promise that resolves with a list of available devices.
+     *
+     * @returns {Promise}
+     */
+    getAvailableDevices() {
+        return getAvailableDevices(this._transport);
+    }
+
+    /**
+     * Returns Promise that resolves with current selected devices.
+     *
+     * @returns {Promise}
+     */
+    getCurrentDevices() {
+        return getCurrentDevices(this._transport);
+    }
+
+    /**
      * Check if the audio is available.
      *
      * @returns {Promise} - Resolves with true if the audio available, with
@@ -595,6 +636,38 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
         return this._transport.sendRequest({
             name: 'is-audio-available'
         });
+    }
+
+    /**
+     * Returns Promise that resolves with true if the device change is available
+     * and with false if not.
+     *
+     * @param {string} [deviceType] - Values - 'output', 'input' or undefined.
+     * Default - 'input'.
+     * @returns {Promise}
+     */
+    isDeviceChangeAvailable(deviceType) {
+        return isDeviceChangeAvailable(this._transport, deviceType);
+    }
+
+    /**
+     * Returns Promise that resolves with true if the device list is available
+     * and with false if not.
+     *
+     * @returns {Promise}
+     */
+    isDeviceListAvailable() {
+        return isDeviceListAvailable(this._transport);
+    }
+
+    /**
+     * Returns Promise that resolves with true if multiple audio input is supported
+     * and with false if not.
+     *
+     * @returns {Promise}
+     */
+    isMultipleAudioInputSupported() {
+        return isMultipleAudioInputSupported(this._transport);
     }
 
     /**
@@ -761,6 +834,42 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
             data: [ event ],
             name: 'proxy-connection-event'
         });
+    }
+
+    /**
+     * Sets the audio input device to the one with the label or id that is
+     * passed.
+     *
+     * @param {string} label - The label of the new device.
+     * @param {string} deviceId - The id of the new device.
+     * @returns {Promise}
+     */
+    setAudioInputDevice(label, deviceId) {
+        return setAudioInputDevice(this._transport, label, deviceId);
+    }
+
+    /**
+     * Sets the audio output device to the one with the label or id that is
+     * passed.
+     *
+     * @param {string} label - The label of the new device.
+     * @param {string} deviceId - The id of the new device.
+     * @returns {Promise}
+     */
+    setAudioOutputDevice(label, deviceId) {
+        return setAudioOutputDevice(this._transport, label, deviceId);
+    }
+
+    /**
+     * Sets the video input device to the one with the label or id that is
+     * passed.
+     *
+     * @param {string} label - The label of the new device.
+     * @param {string} deviceId - The id of the new device.
+     * @returns {Promise}
+     */
+    setVideoInputDevice(label, deviceId) {
+        return setVideoInputDevice(this._transport, label, deviceId);
     }
 
     /**

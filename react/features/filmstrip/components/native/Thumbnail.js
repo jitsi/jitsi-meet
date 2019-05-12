@@ -1,8 +1,10 @@
 // @flow
 
 import React, { Component } from 'react';
-import { connect } from 'react-redux';
+import { View } from 'react-native';
+import type { Dispatch } from 'redux';
 
+import { ColorSchemeRegistry } from '../../../base/color-scheme';
 import { openDialog } from '../../../base/dialog';
 import { Audio, MEDIA_TYPE } from '../../../base/media';
 import {
@@ -12,15 +14,18 @@ import {
     pinParticipant
 } from '../../../base/participants';
 import { Container } from '../../../base/react';
+import { connect } from '../../../base/redux';
+import { StyleType } from '../../../base/styles';
 import { getTrackByMediaTypeAndParticipant } from '../../../base/tracks';
-
+import { ConnectionIndicator } from '../../../connection-indicator';
+import { DisplayNameLabel } from '../../../display-name';
 import { RemoteVideoMenu } from '../../../remote-video-menu';
 
 import AudioMutedIndicator from './AudioMutedIndicator';
 import DominantSpeakerIndicator from './DominantSpeakerIndicator';
 import ModeratorIndicator from './ModeratorIndicator';
-import { AVATAR_SIZE } from '../styles';
-import styles from './styles';
+import RaisedHandIndicator from './RaisedHandIndicator';
+import styles, { AVATAR_SIZE } from './styles';
 import VideoMutedIndicator from './VideoMutedIndicator';
 
 /**
@@ -54,6 +59,11 @@ type Props = {
     _onShowRemoteVideoMenu: ?Function,
 
     /**
+     * The color-schemed stylesheet of the feature.
+     */
+    _styles: StyleType,
+
+    /**
      * The Redux representation of the participant's video track.
      */
     _videoTrack: Object,
@@ -74,12 +84,17 @@ type Props = {
     /**
      * Invoked to trigger state changes in Redux.
      */
-    dispatch: Dispatch<*>,
+    dispatch: Dispatch<any>,
 
     /**
      * The Redux representation of the participant to display.
      */
     participant: Object,
+
+    /**
+     * Whether to display or hide the display name of the participant in the thumbnail.
+     */
+    renderDisplayName: ?boolean,
 
     /**
      * Optional styling to add or override on the Thumbnail component root.
@@ -106,10 +121,12 @@ class Thumbnail extends Component<Props> {
             _largeVideo: largeVideo,
             _onClick,
             _onShowRemoteVideoMenu,
+            _styles,
             _videoTrack: videoTrack,
             disablePin,
             disableTint,
-            participant
+            participant,
+            renderDisplayName
         } = this.props;
 
         // We don't render audio in any of the following:
@@ -135,7 +152,7 @@ class Thumbnail extends Component<Props> {
                 style = { [
                     styles.thumbnail,
                     participant.pinned && !disablePin
-                        ? styles.thumbnailPinned : null,
+                        ? _styles.thumbnailPinned : null,
                     this.props.styleOverrides || null
                 ] }
                 touchFeedback = { false }>
@@ -148,14 +165,35 @@ class Thumbnail extends Component<Props> {
                 <ParticipantView
                     avatarSize = { AVATAR_SIZE }
                     participantId = { participantId }
+                    style = { _styles.participantViewStyle }
                     tintEnabled = { participantInLargeVideo && !disableTint }
+                    tintStyle = { _styles.activeThumbnailTint }
                     zOrder = { 1 } />
 
-                { participant.role === PARTICIPANT_ROLE.MODERATOR
-                    && <ModeratorIndicator /> }
+                { renderDisplayName && <DisplayNameLabel participantId = { participantId } /> }
 
-                { participant.dominantSpeaker
-                    && <DominantSpeakerIndicator /> }
+                { participant.role === PARTICIPANT_ROLE.MODERATOR
+                    && <View style = { styles.moderatorIndicatorContainer }>
+                        <ModeratorIndicator />
+                    </View> }
+
+                <View
+                    style = { [
+                        styles.thumbnailTopIndicatorContainer,
+                        styles.thumbnailTopLeftIndicatorContainer
+                    ] }>
+                    <RaisedHandIndicator participantId = { participant.id } />
+                    { participant.dominantSpeaker
+                        && <DominantSpeakerIndicator /> }
+                </View>
+
+                <View
+                    style = { [
+                        styles.thumbnailTopIndicatorContainer,
+                        styles.thumbnailTopRightIndicatorContainer
+                    ] }>
+                    <ConnectionIndicator participantId = { participant.id } />
+                </View>
 
                 <Container style = { styles.thumbnailIndicatorContainer }>
                     { audioMuted
@@ -219,6 +257,7 @@ function _mapDispatchToProps(dispatch: Function, ownProps): Object {
  *      _audioTrack: Track,
  *      _isModerator: boolean,
  *      _largeVideo: Object,
+ *      _styles: StyleType,
  *      _videoTrack: Track
  *  }}
  */
@@ -238,6 +277,7 @@ function _mapStateToProps(state, ownProps) {
         _audioTrack: audioTrack,
         _isModerator: isLocalParticipantModerator(state),
         _largeVideo: largeVideo,
+        _styles: ColorSchemeRegistry.get(state, 'Thumbnail'),
         _videoTrack: videoTrack
     };
 }

@@ -146,6 +146,22 @@ export function forEachConference(
 }
 
 /**
+ * Returns the display name of the conference.
+ *
+ * @param {Function | Object} stateful - Reference that can be resolved to Redux
+ * state with the {@code toState} function.
+ * @returns {string}
+ */
+export function getConferenceName(stateful: Function | Object): string {
+    const state = toState(stateful);
+    const { callee } = state['features/base/jwt'];
+
+    return state['features/base/config'].callDisplayName
+                || (callee && callee.name)
+                || state['features/base/conference'].room;
+}
+
+/**
  * Returns the current {@code JitsiConference} which is joining or joined and is
  * not leaving. Please note the contrast with merely reading the
  * {@code conference} state of the feature base/conference which is not joining

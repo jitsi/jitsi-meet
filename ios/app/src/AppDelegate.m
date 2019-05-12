@@ -19,11 +19,10 @@
 #import "FIRUtilities.h"
 #import "Types.h"
 
-#import <JitsiMeet/JitsiMeet.h>
-
 @import Crashlytics;
 @import Fabric;
 @import Firebase;
+@import JitsiMeet;
 
 
 @implementation AppDelegate
@@ -38,12 +37,20 @@
         [Fabric with:@[[Crashlytics class]]];
     }
 
-    // Set the conference activity type defined in this application.
-    // This cannot be defined by the SDK.
-    JitsiMeetView.conferenceActivityType = JitsiMeetConferenceActivityType;
+    JitsiMeet *jitsiMeet = [JitsiMeet sharedInstance];
 
-    return [JitsiMeetView application:application
-        didFinishLaunchingWithOptions:launchOptions];
+    jitsiMeet.conferenceActivityType = JitsiMeetConferenceActivityType;
+    jitsiMeet.customUrlScheme = @"org.jitsi.meet";
+    jitsiMeet.universalLinkDomains = @[@"meet.jit.si", @"alpha.jitsi.net", @"beta.meet.jit.si"];
+
+    jitsiMeet.defaultConferenceOptions = [JitsiMeetConferenceOptions fromBuilder:^(JitsiMeetConferenceOptionsBuilder *builder) {
+        builder.serverURL = [NSURL URLWithString:@"https://meet.jit.si"];
+        builder.welcomePageEnabled = YES;
+    }];
+
+    [jitsiMeet application:application didFinishLaunchingWithOptions:launchOptions];
+
+    return YES;
 }
 
 #pragma mark Linking delegate methods
@@ -60,12 +67,12 @@
           = [[FIRDynamicLinks dynamicLinks]
                 handleUniversalLink:userActivity.webpageURL
                          completion:^(FIRDynamicLink * _Nullable dynamicLink, NSError * _Nullable error) {
-           NSURL *dynamicLinkURL = dynamicLink.url;
-           if (dynamicLinkURL) {
-             userActivity.webpageURL = dynamicLinkURL;
-             [JitsiMeetView application:application
-                   continueUserActivity:userActivity
-                     restorationHandler:restorationHandler];
+           NSURL *firebaseUrl = [FIRUtilities extractURL:dynamicLink];
+           if (firebaseUrl != nil) {
+             userActivity.webpageURL = firebaseUrl;
+             [[JitsiMeet sharedInstance] application:application
+                                continueUserActivity:userActivity
+                                  restorationHandler:restorationHandler];
            }
         }];
 
@@ -75,34 +82,35 @@
     }
 
     // 2. Default to plain old, non-Firebase-assisted Universal Links.
-    return [JitsiMeetView application:application
-                 continueUserActivity:userActivity
-                   restorationHandler:restorationHandler];
+    return [[JitsiMeet sharedInstance] application:application
+                              continueUserActivity:userActivity
+                                restorationHandler:restorationHandler];
 }
 
 - (BOOL)application:(UIApplication *)app
             openURL:(NSURL *)url
             options:(NSDictionary<UIApplicationOpenURLOptionsKey,id> *)options {
 
+    // This shows up during a reload in development, skip it.
+    // https://github.com/firebase/firebase-ios-sdk/issues/233
+    if ([[url absoluteString] containsString:@"google/link/?dismiss=1&is_weak_match=1"]) {
+        return NO;
+    }
+
     NSURL *openUrl = url;
 
     if ([FIRUtilities appContainsRealServiceInfoPlist]) {
         // Process Firebase Dynamic Links
         FIRDynamicLink *dynamicLink = [[FIRDynamicLinks dynamicLinks] dynamicLinkFromCustomSchemeURL:url];
-        if (dynamicLink != nil) {
-            NSURL *dynamicLinkURL = dynamicLink.url;
-            if (dynamicLinkURL != nil
-                    && (dynamicLink.matchType == FIRDLMatchTypeUnique
-                        || dynamicLink.matchType == FIRDLMatchTypeDefault)) {
-                // Strong match, process it.
-                openUrl = dynamicLinkURL;
-            }
+        NSURL *firebaseUrl = [FIRUtilities extractURL:dynamicLink];
+        if (firebaseUrl != nil) {
+            openUrl = firebaseUrl;
         }
     }
 
-    return [JitsiMeetView application:app
-                              openURL:openUrl
-                              options:options];
+    return [[JitsiMeet sharedInstance] application:app
+                                           openURL:openUrl
+                                           options:options];
 }
 
 @end

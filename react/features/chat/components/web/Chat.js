@@ -1,10 +1,10 @@
 // @flow
 
 import React from 'react';
-import { connect } from 'react-redux';
 import Transition from 'react-transition-group/Transition';
 
 import { translate } from '../../../base/i18n';
+import { connect } from '../../../base/redux';
 
 import AbstractChat, {
     _mapDispatchToProps,
@@ -12,7 +12,7 @@ import AbstractChat, {
     type Props
 } from '../AbstractChat';
 import ChatInput from './ChatInput';
-import ChatMessage from './ChatMessage';
+import ChatMessageGroup from './ChatMessageGroup';
 import DisplayNameForm from './DisplayNameForm';
 
 /**
@@ -46,7 +46,6 @@ class Chat extends AbstractChat<Props> {
         this._messagesListEnd = null;
 
         // Bind event handlers so they are only bound once for every instance.
-        this._renderMessage = this._renderMessage.bind(this);
         this._renderPanelContent = this._renderPanelContent.bind(this);
         this._setMessageListEndRef = this._setMessageListEndRef.bind(this);
     }
@@ -89,6 +88,37 @@ class Chat extends AbstractChat<Props> {
     }
 
     /**
+     * Iterates over all the messages and creates nested arrays which hold
+     * consecutive messages sent be the same participant.
+     *
+     * @private
+     * @returns {Array<Array<Object>>}
+     */
+    _getMessagesGroupedBySender() {
+        const messagesCount = this.props._messages.length;
+        const groups = [];
+        let currentGrouping = [];
+        let currentGroupParticipantId;
+
+        for (let i = 0; i < messagesCount; i++) {
+            const message = this.props._messages[i];
+
+            if (message.id === currentGroupParticipantId) {
+                currentGrouping.push(message);
+            } else {
+                groups.push(currentGrouping);
+
+                currentGrouping = [ message ];
+                currentGroupParticipantId = message.id;
+            }
+        }
+
+        groups.push(currentGrouping);
+
+        return groups;
+    }
+
+    /**
      * Returns a React Element for showing chat messages and a form to send new
      * chat messages.
      *
@@ -96,38 +126,47 @@ class Chat extends AbstractChat<Props> {
      * @returns {ReactElement}
      */
     _renderChat() {
-        const messages = this.props._messages.map(this._renderMessage);
+        const groupedMessages = this._getMessagesGroupedBySender();
+
+        const messages = groupedMessages.map((group, index) => {
+            const messageType = group[0] && group[0].messageType;
+
+            return (
+                <ChatMessageGroup
+                    className = { messageType || 'remote' }
+                    key = { index }
+                    messages = { group } />
+            );
+        });
 
         messages.push(<div
             key = 'end-marker'
             ref = { this._setMessageListEndRef } />);
 
         return (
-            <div
-                className = 'sideToolbarContainer__inner'
-                id = 'chat_container'>
+            <>
                 <div id = 'chatconversation'>
                     { messages }
                 </div>
                 <ChatInput />
-            </div>
+            </>
         );
     }
 
-    _renderMessage: (Object) => void;
-
     /**
-     * Called by {@code _onSubmitMessage} to create the chat div.
+     * Instantiates a React Element to display at the top of {@code Chat} to
+     * close {@code Chat}.
      *
-     * @param {string} message - The chat message to display.
-     * @param {string} id - The chat message ID to use as a unique key.
-     * @returns {Array<ReactElement>}
+     * @private
+     * @returns {ReactElement}
      */
-    _renderMessage(message: Object, id: string) {
+    _renderChatHeader() {
         return (
-            <ChatMessage
-                key = { id }
-                message = { message } />
+            <div className = 'chat-header'>
+                <div
+                    className = 'chat-close'
+                    onClick = { this.props._onToggleChat }>X</div>
+            </div>
         );
     }
 
@@ -145,17 +184,15 @@ class Chat extends AbstractChat<Props> {
     _renderPanelContent(state) {
         this._isExited = state === 'exited';
 
-        const { _isOpen, _onToggleChat, _showNamePrompt } = this.props;
+        const { _isOpen, _showNamePrompt } = this.props;
         const ComponentToRender = !_isOpen && state === 'exited'
             ? null
             : (
-                <div>
-                    <div
-                        className = 'chat-close'
-                        onClick = { _onToggleChat }>X</div>
+                <>
+                    { this._renderChatHeader() }
                     { _showNamePrompt
                         ? <DisplayNameForm /> : this._renderChat() }
-                </div>
+                </>
             );
         let className = '';
 
@@ -167,7 +204,7 @@ class Chat extends AbstractChat<Props> {
 
         return (
             <div
-                className = { className }
+                className = { `sideToolbarContainer ${className}` }
                 id = 'sideToolbarContainer'>
                 { ComponentToRender }
             </div>

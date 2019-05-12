@@ -5,19 +5,29 @@ import {
     CONFERENCE_JOINED,
     CONFERENCE_LEFT,
     CONFERENCE_WILL_JOIN,
-    CONFERENCE_WILL_LEAVE,
     JITSI_CONFERENCE_URL_KEY,
     SET_ROOM,
     forEachConference,
     isRoomValid
 } from '../../base/conference';
 import { LOAD_CONFIG_ERROR } from '../../base/config';
-import { CONNECTION_FAILED } from '../../base/connection';
+import {
+    CONNECTION_DISCONNECTED,
+    CONNECTION_FAILED,
+    JITSI_CONNECTION_CONFERENCE_KEY,
+    JITSI_CONNECTION_URL_KEY
+} from '../../base/connection';
 import { MiddlewareRegistry } from '../../base/redux';
-import { getSymbolDescription, toURLString } from '../../base/util';
+import { toURLString } from '../../base/util';
 import { ENTER_PICTURE_IN_PICTURE } from '../picture-in-picture';
 
 import { sendEvent } from './functions';
+
+/**
+ * Event which will be emitted on the native side to indicate the conference
+ * has ended either by user request or because an error was produced.
+ */
+const CONFERENCE_TERMINATED = 'CONFERENCE_TERMINATED';
 
 /**
  * Middleware that captures Redux actions and uses the ExternalAPI module to
@@ -55,9 +65,29 @@ MiddlewareRegistry.register(store => next => action => {
     case CONFERENCE_JOINED:
     case CONFERENCE_LEFT:
     case CONFERENCE_WILL_JOIN:
-    case CONFERENCE_WILL_LEAVE:
         _sendConferenceEvent(store, action);
         break;
+
+    case CONNECTION_DISCONNECTED: {
+        // FIXME: This is a hack. See the description in the JITSI_CONNECTION_CONFERENCE_KEY constant definition.
+        // Check if this connection was attached to any conference. If it wasn't, fake a CONFERENCE_TERMINATED event.
+        const { connection } = action;
+        const conference = connection[JITSI_CONNECTION_CONFERENCE_KEY];
+
+        if (!conference) {
+            // This action will arrive late, so the locationURL stored on the state is no longer valid.
+            const locationURL = connection[JITSI_CONNECTION_URL_KEY];
+
+            sendEvent(
+                store,
+                CONFERENCE_TERMINATED,
+                /* data */ {
+                    url: toURLString(locationURL)
+                });
+        }
+
+        break;
+    }
 
     case CONNECTION_FAILED:
         !action.error.recoverable
@@ -65,7 +95,7 @@ MiddlewareRegistry.register(store => next => action => {
         break;
 
     case ENTER_PICTURE_IN_PICTURE:
-        sendEvent(store, getSymbolDescription(type), /* data */ {});
+        sendEvent(store, type, /* data */ {});
         break;
 
     case LOAD_CONFIG_ERROR: {
@@ -73,7 +103,7 @@ MiddlewareRegistry.register(store => next => action => {
 
         sendEvent(
             store,
-            getSymbolDescription(type),
+            CONFERENCE_TERMINATED,
             /* data */ {
                 error: _toErrorString(error),
                 url: toURLString(locationURL)
@@ -129,7 +159,7 @@ function _maybeTriggerEarlyConferenceWillJoin(store, action) {
 
     isRoomValid(room) && locationURL && sendEvent(
         store,
-        getSymbolDescription(CONFERENCE_WILL_JOIN),
+        CONFERENCE_WILL_JOIN,
         /* data */ {
             url: toURLString(locationURL)
         });
@@ -147,7 +177,7 @@ function _sendConferenceEvent(
         store: Object,
         action: {
             conference: Object,
-            type: Symbol,
+            type: string,
             url: ?string
         }) {
     const { conference, type, ...data } = action;
@@ -159,12 +189,27 @@ function _sendConferenceEvent(
         data.url = toURLString(conference[JITSI_CONFERENCE_URL_KEY]);
     }
 
-    _swallowEvent(store, action, data)
-        || sendEvent(store, getSymbolDescription(type), data);
+    if (_swallowEvent(store, action, data)) {
+        return;
+    }
+
+    let type_;
+
+    switch (type) {
+    case CONFERENCE_FAILED:
+    case CONFERENCE_LEFT:
+        type_ = CONFERENCE_TERMINATED;
+        break;
+    default:
+        type_ = type;
+        break;
+    }
+
+    sendEvent(store, type_, data);
 }
 
 /**
- * Sends {@link CONFERENCE_FAILED} event when the {@link CONNECTION_FAILED}
+ * Sends {@link CONFERENCE_TERMINATED} event when the {@link CONNECTION_FAILED}
  * occurs. It should be done only if the connection fails before the conference
  * instance is created. Otherwise the eventual failure event is supposed to be
  * emitted by the base/conference feature.
@@ -186,7 +231,7 @@ function _sendConferenceFailedOnConnectionError(store, action) {
             conference => conference.getConnection() !== connection)
         && sendEvent(
         store,
-        getSymbolDescription(CONFERENCE_FAILED),
+        CONFERENCE_TERMINATED,
         /* data */ {
             url: toURLString(locationURL),
             error: action.error.name

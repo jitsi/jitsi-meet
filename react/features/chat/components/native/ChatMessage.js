@@ -2,14 +2,14 @@
 
 import React from 'react';
 import { Text, View } from 'react-native';
-import { connect } from 'react-redux';
 
 import { getLocalizedDateFormatter, translate } from '../../../base/i18n';
 import { Avatar } from '../../../base/participants';
+import { connect } from '../../../base/redux';
 
 import AbstractChatMessage, {
-    _mapStateToProps as _abstractMapStateToProps,
-    type Props as AbstractProps
+    _mapStateToProps,
+    type Props
 } from '../AbstractChatMessage';
 import styles from './styles';
 
@@ -23,14 +23,6 @@ const AVATAR_SIZE = 32;
  */
 const TIMESTAMP_FORMAT = 'H:mm';
 
-type Props = AbstractProps & {
-
-    /**
-     * True if the chat window has a solid BG so then we have to adopt in style.
-     */
-    _solidBackground: boolean
-}
-
 /**
  * Renders a single chat message.
  */
@@ -43,7 +35,7 @@ class ChatMessage extends AbstractChatMessage<Props> {
     render() {
         const { message } = this.props;
         const timeStamp = getLocalizedDateFormatter(
-            message.createdAt).format(TIMESTAMP_FORMAT);
+            new Date(message.timestamp)).format(TIMESTAMP_FORMAT);
         const localMessage = message.messageType === 'local';
 
         // Style arrays that need to be updated in various scenarios, such as
@@ -54,9 +46,6 @@ class ChatMessage extends AbstractChatMessage<Props> {
         const textWrapperStyle = [
             styles.textWrapper
         ];
-        const timeTextStyles = [
-            styles.timeText
-        ];
 
         if (localMessage) {
             // The wrapper needs to be aligned to the right.
@@ -64,13 +53,9 @@ class ChatMessage extends AbstractChatMessage<Props> {
 
             // The bubble needs to be differently styled.
             textWrapperStyle.push(styles.ownTextWrapper);
-        } else if (message.system) {
+        } else if (message.messageType === 'error') {
             // The bubble needs to be differently styled.
             textWrapperStyle.push(styles.systemTextWrapper);
-        }
-
-        if (this.props._solidBackground) {
-            timeTextStyles.push(styles.solidBGTimeText);
         }
 
         return (
@@ -89,10 +74,15 @@ class ChatMessage extends AbstractChatMessage<Props> {
                             !localMessage && this._renderDisplayName()
                         }
                         <Text style = { styles.messageText }>
-                            { message.text }
+                            { message.messageType === 'error'
+                                ? this.props.t('chat.error', {
+                                    error: message.error,
+                                    originalText: message.message
+                                })
+                                : message.message }
                         </Text>
                     </View>
-                    <Text style = { timeTextStyles }>
+                    <Text style = { styles.timeText }>
                         { timeStamp }
                     </Text>
                 </View>
@@ -127,26 +117,10 @@ class ChatMessage extends AbstractChatMessage<Props> {
 
         return (
             <Text style = { styles.displayName }>
-                { message.user.name }
+                { message.displayName }
             </Text>
         );
     }
-}
-
-/**
- * Maps part of the Redux state to the props of this component.
- *
- * @param {Object} state - The Redux state.
- * @param {Props} ownProps - The own props of the component.
- * @returns {{
- *     _solidBackground: boolean
- * }}
- */
-function _mapStateToProps(state, ownProps) {
-    return {
-        ..._abstractMapStateToProps(state, ownProps),
-        _solidBackground: state['features/base/conference'].audioOnly
-    };
 }
 
 export default translate(connect(_mapStateToProps)(ChatMessage));

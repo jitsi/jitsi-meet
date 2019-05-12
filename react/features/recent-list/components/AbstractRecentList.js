@@ -1,5 +1,7 @@
 // @flow
+
 import React from 'react';
+import type { Dispatch } from 'redux';
 
 import {
     createRecentClickedEvent,
@@ -23,7 +25,7 @@ type Props = {
     /**
      * The redux store's {@code dispatch} function.
      */
-    dispatch: Dispatch<*>,
+    dispatch: Dispatch<any>,
 
     /**
      * The translate function.

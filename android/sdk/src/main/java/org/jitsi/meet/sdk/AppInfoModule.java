@@ -23,12 +23,16 @@ import android.content.pm.PackageManager;
 
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContextBaseJavaModule;
+import com.facebook.react.module.annotations.ReactModule;
 
 import java.util.HashMap;
 import java.util.Map;
 
+@ReactModule(name = AppInfoModule.NAME)
 class AppInfoModule
     extends ReactContextBaseJavaModule {
+
+    public static final String NAME = "AppInfo";
 
     public AppInfoModule(ReactApplicationContext reactContext) {
         super(reactContext);
@@ -61,6 +65,9 @@ class AppInfoModule
         Map<String, Object> constants = new HashMap<>();
 
         constants.put(
+            "buildNumber",
+            packageInfo == null ? "" : String.valueOf(packageInfo.versionCode));
+        constants.put(
             "name",
             applicationInfo == null
                 ? ""
@@ -68,12 +75,13 @@ class AppInfoModule
         constants.put(
             "version",
             packageInfo == null ? "" : packageInfo.versionName);
+        constants.put("LIBRE_BUILD", BuildConfig.LIBRE_BUILD);
 
         return constants;
     }
 
     @Override
     public String getName() {
-        return "AppInfo";
+        return NAME;
     }
 }

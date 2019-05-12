@@ -1,7 +1,8 @@
 // @flow
 
+import { randomHexString } from 'js-utils/random';
+
 import { ReducerRegistry, set } from '../redux';
-import { randomHexString } from '../util';
 
 import {
     DOMINANT_SPEAKER_CHANGED,

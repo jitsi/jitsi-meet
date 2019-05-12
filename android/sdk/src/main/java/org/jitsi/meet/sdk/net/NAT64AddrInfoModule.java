@@ -21,6 +21,7 @@ import com.facebook.react.bridge.Promise;
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContextBaseJavaModule;
 import com.facebook.react.bridge.ReactMethod;
+import com.facebook.react.module.annotations.ReactModule;
 
 import java.net.UnknownHostException;
 
@@ -32,8 +33,11 @@ import java.net.UnknownHostException;
  * [1]: https://tools.ietf.org/html/rfc6146
  * [2]: https://tools.ietf.org/html/rfc6052
  */
+@ReactModule(name = NAT64AddrInfoModule.NAME)
 public class NAT64AddrInfoModule
     extends ReactContextBaseJavaModule {
+
+    public final static String NAME = "NAT64AddrInfo";
 
     /**
      * The host for which the module wil try to resolve both IPv4 and IPv6
@@ -47,14 +51,9 @@ public class NAT64AddrInfoModule
     private final static long INFO_LIFETIME = 60 * 1000;
 
     /**
-     * The name of this module.
-     */
-    private final static String MODULE_NAME = "NAT64AddrInfo";
-
-    /**
      * The {@code Log} tag {@code NAT64AddrInfoModule} is to log messages with.
      */
-    private final static String TAG = MODULE_NAME;
+    private final static String TAG = NAME;
 
     /**
      * The {@link NAT64AddrInfo} instance which holds NAT64 prefix/suffix.
@@ -119,6 +118,6 @@ public class NAT64AddrInfoModule
 
     @Override
     public String getName() {
-        return MODULE_NAME;
+        return NAME;
     }
 }

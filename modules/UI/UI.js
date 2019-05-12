@@ -14,10 +14,7 @@ import VideoLayout from './videolayout/VideoLayout';
 import Filmstrip from './videolayout/Filmstrip';
 
 import { JitsiTrackErrors } from '../../react/features/base/lib-jitsi-meet';
-import {
-    getLocalParticipant,
-    showParticipantJoinedNotification
-} from '../../react/features/base/participants';
+import { getLocalParticipant } from '../../react/features/base/participants';
 import { toggleChat } from '../../react/features/chat';
 import { openDisplayNamePrompt } from '../../react/features/display-name';
 import { setEtherpadHasInitialzied } from '../../react/features/etherpad';
@@ -35,7 +32,6 @@ import {
 const EventEmitter = require('events');
 
 UI.messageHandler = messageHandler;
-import FollowMe from '../FollowMe';
 
 const eventEmitter = new EventEmitter();
 
@@ -43,8 +39,6 @@ UI.eventEmitter = eventEmitter;
 
 let etherpadManager;
 let sharedVideoManager;
-
-let followMeHandler;
 
 const JITSI_TRACK_ERROR_TO_MESSAGE_KEY_MAP = {
     microphone: {},
@@ -89,9 +83,6 @@ const UIListeners = new Map([
     ], [
         UIEvents.TOGGLE_FILMSTRIP,
         () => UI.toggleFilmstrip()
-    ], [
-        UIEvents.FOLLOW_ME_ENABLED,
-        enabled => followMeHandler && followMeHandler.enableFollowMe(enabled)
     ]
 ]);
 
@@ -179,37 +170,6 @@ UI.changeDisplayName = function(id, displayName) {
 };
 
 /**
- * Sets the "raised hand" status for a participant.
- *
- * @param {string} id - The id of the participant whose raised hand UI should
- * be updated.
- * @param {string} name - The name of the participant with the raised hand
- * update.
- * @param {boolean} raisedHandStatus - Whether the participant's hand is raised
- * or not.
- * @returns {void}
- */
-UI.setRaisedHandStatus = (id, name, raisedHandStatus) => {
-    VideoLayout.setRaisedHandStatus(id, raisedHandStatus);
-    if (raisedHandStatus) {
-        messageHandler.participantNotification(
-            name,
-            'notify.somebody',
-            'connected',
-            'notify.raisedHand');
-    }
-};
-
-/**
- * Sets the local "raised hand" status.
- */
-UI.setLocalRaisedHandStatus
-    = raisedHandStatus =>
-        VideoLayout.setRaisedHandStatus(
-            APP.conference.getMyUserId(),
-            raisedHandStatus);
-
-/**
  * Initialize conference UI.
  */
 UI.initConference = function() {
@@ -227,12 +187,6 @@ UI.initConference = function() {
     if (displayName) {
         UI.changeDisplayName('localVideoContainer', displayName);
     }
-
-    // FollowMe attempts to copy certain aspects of the moderator's UI into the
-    // other participants' UI. Consequently, it needs (1) read and write access
-    // to the UI (depending on the moderator role of the local participant) and
-    // (2) APP.conference as means of communication between the participants.
-    followMeHandler = new FollowMe(APP.conference, UI);
 };
 
 /**
@@ -380,8 +334,6 @@ UI.addUser = function(user) {
     if (status) {
         // FIXME: move updateUserStatus in participantPresenceChanged action
         UI.updateUserStatus(user, status);
-    } else {
-        APP.store.dispatch(showParticipantJoinedNotification(displayName));
     }
 
     // set initial display name

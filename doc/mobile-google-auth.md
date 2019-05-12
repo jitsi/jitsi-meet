@@ -5,7 +5,7 @@ signed Android build for that, that can be a debug self-signed build too, just
 retrieve the signing hash. The key hash of an already signed ap can be obtained
 as follows (on macOS): ```keytool -list -printcert -jarfile the-app.apk```
 - Place the generated ```google-services.json``` file in ```android/app```
-for Android and the ```GoogleService-Info.plist``` into ```ios/app/src``` for
+for Android and the ```GoogleService-Info.plist``` into ```ios/app``` for
 iOS (you can stop at that step, no need for the driver and the code changes they
 suggest in the wizard).
 - You may want to exclude these files in YOUR GIT config (do not exclude them in

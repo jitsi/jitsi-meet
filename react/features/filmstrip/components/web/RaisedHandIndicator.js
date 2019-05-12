@@ -1,13 +1,19 @@
 /* @flow */
 
-import React, { Component } from 'react';
+import React from 'react';
 
-import BaseIndicator from './BaseIndicator';
+import { BaseIndicator } from '../../../base/react';
+import { connect } from '../../../base/redux';
+
+import AbstractRaisedHandIndicator, {
+    type Props as AbstractProps,
+    _mapStateToProps
+} from '../AbstractRaisedHandIndicator';
 
 /**
  * The type of the React {@code Component} props of {@link RaisedHandIndicator}.
  */
-type Props = {
+type Props = AbstractProps & {
 
     /**
      * The font-size for the icon.
@@ -25,13 +31,13 @@ type Props = {
  *
  * @extends Component
  */
-class RaisedHandIndicator extends Component<Props> {
+class RaisedHandIndicator extends AbstractRaisedHandIndicator<Props> {
     /**
-     * Implements React's {@link Component#render()}.
+     * Renders the platform specific indicator element.
      *
-     * @inheritdoc
+     * @returns {React$Element<*>}
      */
-    render() {
+    _renderIndicator() {
         return (
             <BaseIndicator
                 className = 'raisehandindicator indicator show-inline'
@@ -43,4 +49,4 @@ class RaisedHandIndicator extends Component<Props> {
     }
 }
 
-export default RaisedHandIndicator;
+export default connect(_mapStateToProps)(RaisedHandIndicator);

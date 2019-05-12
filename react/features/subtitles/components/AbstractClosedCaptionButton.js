@@ -85,7 +85,7 @@ export class AbstractClosedCaptionButton
 export function _abstractMapStateToProps(state: Object, ownProps: Object) {
     const { _requestingSubtitles } = state['features/subtitles'];
     const { transcribingEnabled } = state['features/base/config'];
-    const { visible = transcribingEnabled } = ownProps;
+    const { visible = Boolean(transcribingEnabled) } = ownProps;
 
     return {
         _requestingSubtitles,

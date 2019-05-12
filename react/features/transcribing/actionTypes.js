@@ -1,24 +1,4 @@
 /**
- * The type of Redux action triggering the transcriber to join (be 'dialed' in)
- *
- * {
- *     type: DIAL_TRANSCRIBER
- * }
- * @public
- */
-export const DIAL_TRANSCRIBER = Symbol('DIAL_TRANSCRIBER');
-
-/**
- * The type of Redux action triggering the transcriber to leave.
- *
- * {
- *     type: STOP_TRANSCRBIBING
- * }
- * @public
- */
-export const STOP_TRANSCRIBING = Symbol('STOP_TRANSCRBIBING');
-
-/**
  * The type of Redux action triggering storage of participantId of transcriber,
  * so that it can later be kicked
  *
@@ -28,7 +8,7 @@ export const STOP_TRANSCRIBING = Symbol('STOP_TRANSCRBIBING');
  * }
  * @private
  */
-export const _TRANSCRIBER_JOINED = Symbol('TRANSCRIBER_JOINED');
+export const _TRANSCRIBER_JOINED = 'TRANSCRIBER_JOINED';
 
 /**
  * The type of Redux action signalling that the transcriber has left
@@ -39,7 +19,7 @@ export const _TRANSCRIBER_JOINED = Symbol('TRANSCRIBER_JOINED');
  * }
  * @private
  */
-export const _TRANSCRIBER_LEFT = Symbol('TRANSCRIBER_LEFT');
+export const _TRANSCRIBER_LEFT = 'TRANSCRIBER_LEFT';
 
 /**
  * The type of a Redux action signalling that a hidden participant has joined,
@@ -51,17 +31,7 @@ export const _TRANSCRIBER_LEFT = Symbol('TRANSCRIBER_LEFT');
  * @private
  */
 export const _POTENTIAL_TRANSCRIBER_JOINED
-    = Symbol('POTENTIAL_TRANSCRIBER_JOINED');
-
-/**
- * The type of a Redux action signalling that dialing the transcriber failed.
- *
- * {
- *     type: _DIAL_ERROR,
- * }
- * @private
- */
-export const _DIAL_ERROR = Symbol('DIAL_ERROR');
+    = 'POTENTIAL_TRANSCRIBER_JOINED';
 
 /**
  * The type of Redux action which sets the pending transcribing notification UID
@@ -75,4 +45,4 @@ export const _DIAL_ERROR = Symbol('DIAL_ERROR');
  * @public
  */
 export const SET_PENDING_TRANSCRIBING_NOTIFICATION_UID
-    = Symbol('SET_PENDING_TRANSCRIBING_NOTIFICATION_UID');
+    = 'SET_PENDING_TRANSCRIBING_NOTIFICATION_UID';

@@ -18,6 +18,8 @@ import { PersistenceRegistry } from '../../storage';
 
 import { appWillMount, appWillUnmount } from '../actions';
 
+const logger = require('jitsi-meet-logger').getLogger(__filename);
+
 declare var APP: Object;
 
 /**
@@ -55,8 +57,6 @@ export default class BaseApp extends Component<*, State> {
 
         this.state = {
             route: {},
-
-            // $FlowFixMe
             store: undefined
         };
     }
@@ -76,14 +76,20 @@ export default class BaseApp extends Component<*, State> {
          * @type {Promise}
          */
         this._init = this._initStorage()
-            .catch(() => { /* BaseApp should always initialize! */ })
+            .catch(err => {
+                /* BaseApp should always initialize! */
+                logger.error(err);
+            })
             .then(() => new Promise(resolve => {
                 this.setState({
                     store: this._createStore()
                 }, resolve);
             }))
             .then(() => this.state.store.dispatch(appWillMount(this)))
-            .catch(() => { /* BaseApp should always initialize! */ });
+            .catch(err => {
+                /* BaseApp should always initialize! */
+                logger.error(err);
+            });
     }
 
     /**
@@ -119,7 +125,7 @@ export default class BaseApp extends Component<*, State> {
     render() {
         const { route: { component }, store } = this.state;
 
-        if (store && component) {
+        if (store) {
             return (
                 <I18nextProvider i18n = { i18next }>
                     <Provider store = { store }>
@@ -162,7 +168,7 @@ export default class BaseApp extends Component<*, State> {
      * @protected
      */
     _createMainElement(component, props) {
-        return React.createElement(component, props || {});
+        return component ? React.createElement(component, props || {}) : null;
     }
 
     /**

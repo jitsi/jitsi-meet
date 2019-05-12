@@ -10,10 +10,25 @@ android {
     }
 
     buildTypes {
-        debug {}
+        debug {
+            buildConfigField "boolean", "LIBRE_BUILD", "${rootProject.ext.libreBuild}"
+        }
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            buildConfigField "boolean", "LIBRE_BUILD", "${rootProject.ext.libreBuild}"
+        }
+    }
+
+    sourceSets {
+        main {
+            java {
+                if (rootProject.ext.libreBuild) {
+                    srcDir "src"
+                    exclude "**/AmplitudeModule.java"
+                }
+                exclude "test/"
+            }
         }
     }
 }
@@ -24,17 +39,21 @@ dependencies {
     implementation "com.android.support:support-v4:${rootProject.ext.supportLibVersion}"
     implementation "com.android.support:appcompat-v7:${rootProject.ext.supportLibVersion}"
 
-    implementation 'org.webkit:android-jsc:+'
-    implementation 'com.dropbox.core:dropbox-core-sdk:3.0.8'
     api 'com.facebook.react:react-native:+'
+
+    implementation 'com.dropbox.core:dropbox-core-sdk:3.0.8'
+
+    if (!rootProject.ext.libreBuild) {
+        implementation 'com.amplitude:android-sdk:2.14.1'
+        implementation(project(":react-native-google-signin")) {
+            exclude group: 'com.google.android.gms'
+            exclude group: 'com.android.support'
+        }
+    }
 
     implementation project(':react-native-background-timer')
     implementation project(':react-native-calendar-events')
     implementation(project(':react-native-fast-image')) {
-        exclude group: 'com.android.support'
-    }
-    implementation(project(":react-native-google-signin")) {
-        exclude group: 'com.google.android.gms'
         exclude group: 'com.android.support'
     }
     implementation project(':react-native-immersive')
@@ -43,6 +62,8 @@ dependencies {
     implementation project(':react-native-sound')
     implementation project(':react-native-vector-icons')
     implementation project(':react-native-webrtc')
+    implementation project(':react-native-webview')
+    implementation project(':@react-native-community_async-storage')
 
     testImplementation 'junit:junit:4.12'
 }
@@ -107,13 +128,17 @@ android.libraryVariants.all { def variant ->
 
     currentBundleTask.ext.generatedResFolders = files(resourcesDir).builtBy(currentBundleTask)
     currentBundleTask.ext.generatedAssetsFolders = files(jsBundleDir).builtBy(currentBundleTask)
-
     variant.registerGeneratedResFolders(currentBundleTask.generatedResFolders)
-    variant.mergeResources.dependsOn(currentBundleTask)
 
-    def assetsDir = variant.mergeAssets.outputDir
+    def mergeAssetsTask = variant.mergeAssetsProvider.get()
+    def mergeResourcesTask = variant.mergeResourcesProvider.get()
 
-    variant.mergeAssets.doLast {
+    mergeAssetsTask.dependsOn(currentBundleTask)
+    mergeResourcesTask.dependsOn(currentBundleTask)
+
+    mergeAssetsTask.doLast {
+        def assetsDir = mergeAssetsTask.outputDir
+
         // Bundle fonts
         //
         copy {
@@ -139,19 +164,19 @@ android.libraryVariants.all { def variant ->
         //
         if (currentBundleTask.enabled) {
             copy {
-                from(jsBundleDir)
+                from(jsBundleFile)
                 into(assetsDir)
             }
         }
     }
 
-    variant.mergeResources.doLast {
+    mergeResourcesTask.doLast {
         // Copy React resources
         //
         if (currentBundleTask.enabled) {
             copy {
                 from(resourcesDir)
-                into(variant.mergeResources.outputDir)
+                into(mergeResourcesTask.outputDir)
             }
         }
     }
@@ -163,7 +188,7 @@ publishing {
         aarArchive(MavenPublication) {
             groupId 'org.jitsi.react'
             artifactId 'jitsi-meet-sdk'
-            version project.sdkVersion
+            version System.env.OVERRIDE_SDK_VERSION ?: project.sdkVersion
 
             artifact("${project.buildDir}/outputs/aar/${project.name}-release.aar") {
                 extension "aar"
@@ -182,7 +207,7 @@ publishing {
                     def groupId = it.moduleGroup
                     def artifactId = it.moduleName
 
-                    if (artifactId.startsWith('react-native-')
+                    if ((artifactId.startsWith('react-native-') || artifactId.startsWith('@react-native-community'))
                             && groupId.equals('jitsi-meet')) {
                         groupId = rootProject.ext.moduleGroupId
                     }
@@ -197,6 +222,14 @@ publishing {
 
     }
     repositories {
-        maven { url "file:${rootProject.projectDir}/../../jitsi-maven-repository/releases" }
+        maven {
+            url rootProject.ext.mavenRepo
+            if (!rootProject.ext.mavenRepo.startsWith("file")) {
+                credentials {
+                    username rootProject.ext.mavenUser
+                    password rootProject.ext.mavenPassword
+                }
+            }
+        }
     }
 }

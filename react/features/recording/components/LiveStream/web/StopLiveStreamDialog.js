@@ -1,10 +1,10 @@
 // @flow
 
 import React from 'react';
-import { connect } from 'react-redux';
 
 import { Dialog } from '../../../../base/dialog';
 import { translate } from '../../../../base/i18n';
+import { connect } from '../../../../base/redux';
 
 import AbstractStopLiveStreamDialog, {
     _mapStateToProps
@@ -27,7 +27,7 @@ class StopLiveStreamDialog extends AbstractStopLiveStreamDialog {
     render() {
         return (
             <Dialog
-                okTitleKey = 'dialog.stopLiveStreaming'
+                okKey = 'dialog.stopLiveStreaming'
                 onSubmit = { this._onSubmit }
                 titleKey = 'dialog.liveStreaming'
                 width = 'small'>

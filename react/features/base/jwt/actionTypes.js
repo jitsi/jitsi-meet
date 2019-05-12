@@ -7,4 +7,4 @@
  *     jwt: string
  * }
  */
-export const SET_JWT = Symbol('SET_JWT');
+export const SET_JWT = 'SET_JWT';

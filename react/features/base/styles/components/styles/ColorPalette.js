@@ -18,6 +18,7 @@ export const ColorPalette = {
      * the sake of consistency.
      */
     black: BLACK,
+    blackBlue: 'rgb(0, 3, 6)',
     blue: '#17A0DB',
     blueHighlight: '#1081b2',
     buttonUnderlay: '#495258',
@@ -27,7 +28,7 @@ export const ColorPalette = {
     overflowMenuItemUnderlay: '#EEEEEE',
     red: '#D00000',
     transparent: 'rgba(0, 0, 0, 0)',
-    white: 'white',
+    white: '#FFFFFF',
 
     /**
      * These are colors from the atlaskit to be used on mobile, when needed.

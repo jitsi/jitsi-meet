@@ -3,7 +3,7 @@
 import { Component } from 'react';
 
 import {
-    createRecordingDialogEvent,
+    createLiveStreamingDialogEvent,
     sendAnalytics
 } from '../../../analytics';
 import { JitsiRecordingConstants } from '../../../base/lib-jitsi-meet';
@@ -149,7 +149,7 @@ export default class AbstractStartLiveStreamDialog<P: Props>
      * @returns {boolean} True is returned to close the modal.
      */
     _onCancel() {
-        sendAnalytics(createRecordingDialogEvent('start', 'cancel.button'));
+        sendAnalytics(createLiveStreamingDialogEvent('start', 'cancel.button'));
 
         return true;
     }
@@ -211,7 +211,7 @@ export default class AbstractStartLiveStreamDialog<P: Props>
         }
 
         sendAnalytics(
-            createRecordingDialogEvent('start', 'confirm.button'));
+            createLiveStreamingDialogEvent('start', 'confirm.button'));
 
         this.props._conference.startRecording({
             broadcastId: selectedBroadcastID,

@@ -6,7 +6,7 @@
  *     enabled: boolean
  * }
  */
-export const SET_FILMSTRIP_ENABLED = Symbol('SET_FILMSTRIP_ENABLED');
+export const SET_FILMSTRIP_ENABLED = 'SET_FILMSTRIP_ENABLED';
 
 /**
  * The type of (redux) action which sets whether or not the filmstrip is being
@@ -17,7 +17,7 @@ export const SET_FILMSTRIP_ENABLED = Symbol('SET_FILMSTRIP_ENABLED');
  *     hovered: boolean
  * }
  */
-export const SET_FILMSTRIP_HOVERED = Symbol('SET_FILMSTRIP_HOVERED');
+export const SET_FILMSTRIP_HOVERED = 'SET_FILMSTRIP_HOVERED';
 
 /**
  * The type of (redux) action which sets whether the filmstrip is visible.
@@ -27,4 +27,4 @@ export const SET_FILMSTRIP_HOVERED = Symbol('SET_FILMSTRIP_HOVERED');
  *     visible: boolean
  * }
  */
-export const SET_FILMSTRIP_VISIBLE = Symbol('SET_FILMSTRIP_VISIBLE');
+export const SET_FILMSTRIP_VISIBLE = 'SET_FILMSTRIP_VISIBLE';

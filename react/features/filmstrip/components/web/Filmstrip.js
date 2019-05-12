@@ -2,13 +2,14 @@
 
 import _ from 'lodash';
 import React, { Component } from 'react';
-import { connect } from 'react-redux';
+import type { Dispatch } from 'redux';
 
 import {
     createShortcutEvent,
     createToolbarEvent,
     sendAnalytics
 } from '../../../analytics';
+import { connect } from '../../../base/redux';
 import { dockToolbox } from '../../../toolbox';
 
 import { setFilmstripHovered, setFilmstripVisible } from '../../actions';
@@ -53,7 +54,7 @@ type Props = {
     /**
      * The redux {@code dispatch} function.
      */
-    dispatch: Dispatch<*>
+    dispatch: Dispatch<any>
 };
 
 /**

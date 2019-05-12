@@ -1,11 +1,11 @@
-/* @flow */
+// @flow
 
 import React, { Component } from 'react';
 import { View } from 'react-native';
-import { connect } from 'react-redux';
 
 import { VideoTrack } from '../../base/media';
 import { TintedView } from '../../base/react';
+import { connect } from '../../base/redux';
 import { getLocalVideoTrack } from '../../base/tracks';
 
 import styles from './styles';

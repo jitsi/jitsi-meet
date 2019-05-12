@@ -206,14 +206,20 @@ RCT_EXPORT_METHOD(updateCall:(NSString *)callUUID
     // iconTemplateImageData
     NSString *iconTemplateImageName = dictionary[@"iconTemplateImageName"];
     NSData *iconTemplateImageData;
+    UIImage *iconTemplateImage;
     if (iconTemplateImageName) {
-        UIImage *iconTemplateImage
-            = [UIImage imageNamed:iconTemplateImageName
-                         inBundle:[NSBundle bundleForClass:self.class]
-    compatibleWithTraitCollection:nil];
+        // First try to load the resource from the main bundle.
+        iconTemplateImage = [UIImage imageNamed:iconTemplateImageName];
+
+        // If that didn't work, use the one built-in.
+        if (!iconTemplateImage) {
+            iconTemplateImage = [UIImage imageNamed:iconTemplateImageName
+                                           inBundle:[NSBundle bundleForClass:self.class]
+                      compatibleWithTraitCollection:nil];
+        }
+
         if (iconTemplateImage) {
-            iconTemplateImageData
-                = UIImagePNGRepresentation(iconTemplateImage);
+            iconTemplateImageData = UIImagePNGRepresentation(iconTemplateImage);
         }
     }
 
@@ -317,5 +323,15 @@ RCT_EXPORT_METHOD(updateCall:(NSString *)callUUID
 }
 
 #endif
+
+// The bridge might already be invalidated by the time a CallKit event is processed,
+// just ignore it and don't emit it.
+- (void)sendEventWithName:(NSString *)name body:(id)body {
+    if (!self.bridge) {
+        return;
+    }
+
+    [super sendEventWithName:name body:body];
+}
 
 @end

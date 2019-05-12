@@ -71,7 +71,7 @@ paths:
             $ref: "#/definitions/ConferenceMapperDetails"
         405:
           description: "Invalid input"
- 
+
   /phoneNumberList:
     get:
       tags:
@@ -96,7 +96,7 @@ securityDefinitions:
     name: "Authorization"
     in: "header"
 definitions:
- 
+
   ConferenceMapperRequest:
     description: "Request to create or find a conference mapping"
     type: "object"
@@ -114,7 +114,7 @@ definitions:
       domain:
         type: "string"
         description: "Domain part of the conference.  Used if 'conference' is not provided.  Defaults to domain of the API endpoint.   Used to generate a 'conference' value (search by conference)"
- 
+
   ConferenceMapperDetails:
     description: "Conference mapping between conference JID and numeric ID"
     type: "object"
@@ -126,22 +126,26 @@ definitions:
         type: "string"
         format: "JID"
         description: "Full JID for the conference OR boolean false if no conference was found (search by ID)"
- 
+
   PhoneNumberList:
-    type: "object"
-    properties:
-      numbersEnabled:
-        type: "boolean"
-        description: "Control flag for Jitsi Meet user interface.  Must be set to true for Jitsi Meet to display phone-in UI elements"
-      numbers:
+    description: "List of dial in numbers for the conference."
+    type: "array"
+    items:
         type: "object"
-        description: "Keys are Country Names, each value is an array of phone numbers"
-        additionalProperties:
-          type: "array"
-          items:
+        properties:
+          countryCode:
             type: "string"
-            format: "phone"
- 
+            description: "ISO 3166-1 country code. Alpha-2 supported."
+          default:
+            type: "boolean"
+            description: "Whether this number is the default one to show. Optional."
+          formattedNumber:
+            type: "string"
+            description: "The formatted telephone number to show."
+          tollFree:
+            type: "boolean"
+            description: "Whether the number is toll free number."
+
 externalDocs:
   description: "Find out more about the Jitsi Cloud API"
   url: "https://jitsi.org/CloudAPI"

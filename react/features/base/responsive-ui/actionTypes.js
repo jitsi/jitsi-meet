@@ -7,7 +7,7 @@
  *     aspectRatio: Symbol
  * }
  */
-export const SET_ASPECT_RATIO = Symbol('SET_ASPECT_RATIO');
+export const SET_ASPECT_RATIO = 'SET_ASPECT_RATIO';
 
 /**
  * The type of redux action which signals that the reduces UI mode was enabled
@@ -20,4 +20,4 @@ export const SET_ASPECT_RATIO = Symbol('SET_ASPECT_RATIO');
  *
  * @public
  */
-export const SET_REDUCED_UI = Symbol('SET_REDUCED_UI');
+export const SET_REDUCED_UI = 'SET_REDUCED_UI';

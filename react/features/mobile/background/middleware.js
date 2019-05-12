@@ -91,7 +91,7 @@ function _appStateChanged(dispatch: Function, appState: string) {
  * @private
  * @returns {void}
  */
-function _onAppStateChange(dispatch: Dispatch<*>, appState: string) {
+function _onAppStateChange(dispatch: Dispatch<any>, appState: string) {
     dispatch(appStateChanged(appState));
 }
 

@@ -1,15 +1,10 @@
-import amplitude from 'amplitude-js';
-
-import { getJitsiMeetGlobalNS } from '../../base/util';
-
 import AbstractHandler from './AbstractHandler';
-
-const logger = require('jitsi-meet-logger').getLogger(__filename);
+import { amplitude } from './amplitude';
 
 /**
  * Analytics handler for Amplitude.
  */
-class AmplitudeHandler extends AbstractHandler {
+export default class AmplitudeHandler extends AbstractHandler {
     /**
      * Creates new instance of the Amplitude analytics handler.
      *
@@ -20,18 +15,19 @@ class AmplitudeHandler extends AbstractHandler {
     constructor(options) {
         super();
 
-        const { amplitudeAPPKey } = options;
+        const { amplitudeAPPKey, host } = options;
 
         if (!amplitudeAPPKey) {
-            logger.warn(
-                'Failed to initialize Amplitude handler, no tracking ID');
-
-            return;
+            throw new Error('Failed to initialize Amplitude handler, no APP key');
         }
 
         this._enabled = true;
 
-        amplitude.getInstance().init(amplitudeAPPKey);
+        this._amplitudeOptions = {
+            host
+        };
+
+        amplitude.getInstance(this._amplitudeOptions).init(amplitudeAPPKey);
     }
 
     /**
@@ -42,7 +38,8 @@ class AmplitudeHandler extends AbstractHandler {
      */
     setUserProperties(userProps) {
         if (this._enabled) {
-            amplitude.getInstance().setUserProperties(userProps);
+            amplitude.getInstance(this._amplitudeOptions)
+                .setUserProperties(userProps);
         }
     }
 
@@ -59,13 +56,8 @@ class AmplitudeHandler extends AbstractHandler {
             return;
         }
 
-        amplitude.getInstance().logEvent(
+        amplitude.getInstance(this._amplitudeOptions).logEvent(
             this._extractName(event),
             event);
     }
 }
-
-const globalNS = getJitsiMeetGlobalNS();
-
-globalNS.analyticsHandlers = globalNS.analyticsHandlers || [];
-globalNS.analyticsHandlers.push(AmplitudeHandler);

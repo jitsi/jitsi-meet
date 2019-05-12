@@ -1,36 +1,43 @@
 // @flow
 
 import React from 'react';
-import {
-    Alert,
-    SafeAreaView,
-    ScrollView,
-    Switch,
-    TextInput,
-    View
-} from 'react-native';
-import { connect } from 'react-redux';
+import { Alert, NativeModules, SafeAreaView, ScrollView, Switch, Text, TextInput, View } from 'react-native';
 
+import { ColorSchemeRegistry } from '../../../base/color-scheme';
 import { translate } from '../../../base/i18n';
-import { BackButton, Header, Modal } from '../../../base/react';
+import { HeaderWithNavigation, Modal } from '../../../base/react';
+import { connect } from '../../../base/redux';
 
 import {
     AbstractSettingsView,
-    _mapStateToProps
+    _mapStateToProps as _abstractMapStateToProps,
+    type Props as AbstractProps
 } from '../AbstractSettingsView';
 import { setSettingsViewVisible } from '../../actions';
 import FormRow from './FormRow';
 import FormSectionHeader from './FormSectionHeader';
 import { normalizeUserInputURL } from '../../functions';
 import styles from './styles';
-import { HeaderLabel } from '../../../base/react/components/native';
+
+/**
+ * Application information module.
+ */
+const { AppInfo } = NativeModules;
+
+type Props = AbstractProps & {
+
+    /**
+     * Color schemed style of the header component.
+     */
+    _headerStyles: Object
+}
 
 /**
  * The native container rendering the app settings page.
  *
  * @extends AbstractSettingsView
  */
-class SettingsView extends AbstractSettingsView {
+class SettingsView extends AbstractSettingsView<Props> {
     _urlField: Object;
 
     /**
@@ -60,7 +67,7 @@ class SettingsView extends AbstractSettingsView {
                 onRequestClose = { this._onRequestClose }
                 presentationStyle = 'overFullScreen'
                 visible = { this.props._visible }>
-                <View style = { Header.pageStyle }>
+                <View style = { this.props._headerStyles.page }>
                     { this._renderHeader() }
                     { this._renderBody() }
                 </View>
@@ -183,6 +190,15 @@ class SettingsView extends AbstractSettingsView {
                             onValueChange = { this._onStartVideoMutedChange }
                             value = { _settings.startWithVideoMuted } />
                     </FormRow>
+                    <FormSectionHeader
+                        label = 'settingsView.buildInfoSection' />
+                    <FormRow
+                        fieldSeparator = { true }
+                        label = 'settingsView.version'>
+                        <Text>
+                            { `${AppInfo.version} build ${AppInfo.buildNumber}` }
+                        </Text>
+                    </FormRow>
                 </ScrollView>
             </SafeAreaView>
         );
@@ -196,10 +212,9 @@ class SettingsView extends AbstractSettingsView {
      */
     _renderHeader() {
         return (
-            <Header>
-                <BackButton onPress = { this._onRequestClose } />
-                <HeaderLabel labelKey = 'settingsView.header' />
-            </Header>
+            <HeaderWithNavigation
+                headerLabelKey = 'settingsView.header'
+                onPressBack = { this._onRequestClose } />
         );
     }
 
@@ -237,6 +252,21 @@ class SettingsView extends AbstractSettingsView {
             ]
         );
     }
+}
+
+/**
+ * Maps part of the Redux state to the props of this component.
+ *
+ * @param {Object} state - The Redux state.
+ * @returns {{
+ *     _headerStyles: Object
+ * }}
+ */
+function _mapStateToProps(state) {
+    return {
+        ..._abstractMapStateToProps(state),
+        _headerStyles: ColorSchemeRegistry.get(state, 'Header')
+    };
 }
 
 export default translate(connect(_mapStateToProps)(SettingsView));

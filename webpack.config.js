@@ -56,7 +56,20 @@ const config = {
 
                         // Tell babel to avoid compiling imports into CommonJS
                         // so that webpack may do tree shaking.
-                        { modules: false }
+                        {
+                            modules: false,
+
+                            // Specify our target browsers so no transpiling is
+                            // done unnecessarily. For browsers not specified
+                            // here, the ES2015+ profile will be used.
+                            targets: {
+                                chrome: 58,
+                                electron: 2,
+                                firefox: 54,
+                                safari: 11
+                            }
+
+                        }
                     ],
                     require.resolve('@babel/preset-flow'),
                     require.resolve('@babel/preset-react')
@@ -135,9 +148,7 @@ module.exports = [
                 './react/features/local-recording/'
                     + 'recording/flac/flacEncodeWorker.js',
             'analytics-ga':
-                './react/features/analytics/handlers/GoogleAnalyticsHandler.js',
-            'analytics-amplitude':
-                './react/features/analytics/handlers/AmplitudeHandler.js'
+                './react/features/analytics/handlers/GoogleAnalyticsHandler.js'
         }
     }),
 
@@ -165,7 +176,8 @@ module.exports = [
  */
 function devServerProxyBypass({ path }) {
     if (path.startsWith('/css/') || path.startsWith('/doc/')
-            || path.startsWith('/fonts/')) {
+            || path.startsWith('/fonts/') || path.startsWith('/images/')
+            || path.startsWith('/static/')) {
         return path;
     }
 

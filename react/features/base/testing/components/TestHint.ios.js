@@ -1,8 +1,9 @@
 /* @flow */
 
 import React, { Component } from 'react';
-import { connect } from 'react-redux';
 import { Text } from 'react-native';
+
+import { connect } from '../../redux';
 
 import type { TestHintProps } from './AbstractTestHint';
 import { _mapStateToProps } from './AbstractTestHint';

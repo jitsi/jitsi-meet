@@ -1,7 +1,6 @@
 // @flow
 
 import React, { Component } from 'react';
-import { connect } from 'react-redux';
 
 import { appNavigate } from '../../app';
 import {
@@ -10,6 +9,7 @@ import {
     sendAnalytics
 } from '../../analytics';
 import { MeetingsList } from '../../base/react';
+import { connect } from '../../base/redux';
 
 import { isCalendarEnabled } from '../functions';
 
@@ -59,7 +59,7 @@ class CalendarListContent extends Component<Props> {
      *
      * @inheritdoc
      */
-    constructor(props) {
+    constructor(props: Props) {
         super(props);
 
         // Bind event handlers so they are only bound once per instance.
@@ -114,7 +114,7 @@ class CalendarListContent extends Component<Props> {
         this._onPress(url, 'calendar.meeting.join');
     }
 
-    _onPress: (string, string) => Function;
+    _onPress: (string, ?string) => Function;
 
     /**
      * Handles the list's navigate action.

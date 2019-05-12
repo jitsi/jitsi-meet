@@ -6,6 +6,8 @@ import JitsiMeetJS, {
 } from '../base/lib-jitsi-meet';
 import { getJitsiMeetGlobalNS, loadScript } from '../base/util';
 
+import { AmplitudeHandler } from './handlers';
+
 const logger = require('jitsi-meet-logger').getLogger(__filename);
 
 /**
@@ -21,6 +23,16 @@ export function sendAnalytics(event: Object) {
     } catch (e) {
         logger.warn(`Error sending analytics event: ${e}`);
     }
+}
+
+/**
+ * Resets the analytics adapter to its initial state - removes handlers, cache,
+ * disabled state, etc.
+ *
+ * @returns {void}
+ */
+export function resetAnalytics() {
+    analytics.reset();
 }
 
 /**
@@ -43,6 +55,9 @@ export function initAnalytics({ getState }: { getState: Function }) {
 
     const state = getState();
     const config = state['features/base/config'];
+    const { locationURL } = state['features/base/connection'];
+    const host = locationURL ? locationURL.host : '';
+
     const {
         analytics: analyticsConfig = {},
         deploymentInfo
@@ -58,6 +73,7 @@ export function initAnalytics({ getState }: { getState: Function }) {
         envType: (deploymentInfo && deploymentInfo.envType) || 'dev',
         googleAnalyticsTrackingId,
         group,
+        host,
         product: deploymentInfo && deploymentInfo.product,
         subproduct: deploymentInfo && deploymentInfo.environment,
         user: user && user.id,
@@ -109,7 +125,7 @@ export function initAnalytics({ getState }: { getState: Function }) {
  * successfully loaded and rejects if there are no handlers loaded or the
  * analytics is disabled.
  */
-function _loadHandlers(scriptURLs, handlerConstructorOptions) {
+function _loadHandlers(scriptURLs = [], handlerConstructorOptions) {
     const promises = [];
 
     for (const url of scriptURLs) {
@@ -139,12 +155,12 @@ function _loadHandlers(scriptURLs, handlerConstructorOptions) {
         // check the old location to provide legacy support
         const analyticsHandlers = [
             ...getJitsiMeetGlobalNS().analyticsHandlers,
-            ...window.analyticsHandlers
-        ];
+            ...window.analyticsHandlers,
 
-        if (analyticsHandlers.length === 0) {
-            throw new Error('No analytics handlers available');
-        }
+            // NOTE: when we add second handler it will be good to put all
+            // build-in handlers in an array and destruct it here.
+            AmplitudeHandler
+        ];
 
         const handlers = [];
 

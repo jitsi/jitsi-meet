@@ -24,6 +24,11 @@ export type Props = {
     currentLanguage: string,
 
     /**
+     * Whether or not follow me is currently active (enabled by some other participant).
+     */
+    followMeActive: boolean,
+
+    /**
      * Whether or not the user has selected the Follow Me feature to be enabled.
      */
     followMeEnabled: boolean,
@@ -189,6 +194,7 @@ class MoreTab extends AbstractDialogTab<Props, State> {
      */
     _renderModeratorSettings() {
         const {
+            followMeActive,
             followMeEnabled,
             startAudioMuted,
             startVideoMuted,
@@ -221,7 +227,8 @@ class MoreTab extends AbstractDialogTab<Props, State> {
                             super._onChange({ startVideoMuted: checked })
                     } />
                 <Checkbox
-                    isChecked = { followMeEnabled }
+                    isChecked = { followMeEnabled && !followMeActive }
+                    isDisabled = { followMeActive }
                     label = { t('settings.followMe') }
                     name = 'follow-me'
                     // eslint-disable-next-line react/jsx-no-bind

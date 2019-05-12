@@ -12,7 +12,7 @@ buildscript {
         }
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.2.1'
+        classpath 'com.android.tools.build:gradle:3.3.2'
         classpath 'com.google.gms:google-services:4.2.0'
         classpath 'io.fabric.tools:gradle:1.27.0'
 
@@ -25,7 +25,6 @@ allprojects {
     repositories {
         google()
         jcenter()
-        maven { url "$rootDir/../node_modules/jsc-android/dist" }
         // React Native (JS, Obj-C sources, Android binaries) is installed from
         // npm.
         maven { url "$rootDir/../node_modules/react-native/android" }
@@ -42,12 +41,6 @@ allprojects {
                     def version = new JsonSlurper().parseText(file.text).version
                     details.useVersion version
                 }
-                if (details.requested.group == 'org.webkit'
-                        && details.requested.name == 'android-jsc') {
-                    def file = new File("$rootDir/../node_modules/jsc-android/package.json")
-                    def version = new JsonSlurper().parseText(file.text).version
-                    details.useVersion "r${version.tokenize('.')[0]}"
-                }
             }
         }
     }
@@ -62,45 +55,33 @@ allprojects {
         publishing {
             publications {}
             repositories {
-                maven { url "file:${rootProject.projectDir}/../../jitsi-maven-repository/releases" }
+                maven {
+                    url rootProject.ext.mavenRepo
+                    if (!rootProject.ext.mavenRepo.startsWith("file")) {
+                        credentials {
+                            username rootProject.ext.mavenUser
+                            password rootProject.ext.mavenPassword
+                        }
+                    }
+                }
             }
         }
     }
+
+    // Use the number of seconds/10 since Jan 1 2019 as the version qualifier number.
+    // This will last for the next ~680 years.
+    // https://stackoverflow.com/a/38643838
+    def versionQualifierNumber = (int)(((new Date().getTime()/1000) - 1546297200) / 10)
 
     afterEvaluate { project ->
         if (project.name.startsWith('react-native-')) {
             def npmManifest = project.file('../package.json')
             def json = new JsonSlurper().parseText(npmManifest.text)
 
-            // React Native modules have an npm peer dependency on react-native,
-            // they do not have an npm dependency on it. Further below though we
-            // choose a react-native version (range) when we represent them as
-            // Maven artifacts. Effectively, we are forking the projects by not
-            // complying with the full range of their npm peer dependency and,
-            // consequently, we should qualify their version.
-            def versionQualifier = '-jitsi-1'
-            if ('react-native-background-timer' == project.name)
-                versionQualifier = '-jitsi-3' // 2.0.0 + react-native 0.57
-            else if ('react-native-calendar-events' == project.name)
-                versionQualifier = '-jitsi-2' // 1.6.4 + react-native 0.57
-            else if ('react-native-fast-image' == project.name)
-                versionQualifier = '-jitsi-2' // 5.1.1 + react-native 0.57
-            else if ('react-native-google-signin' == project.name)
-                versionQualifier = '-jitsi-2' // 1.0.2 + react-native 0.57
-            else if ('react-native-immersive' == project.name)
-                versionQualifier = '-jitsi-5' // 2.0.0 + react-native 0.57
-            else if ('react-native-keep-awake' == project.name)
-                versionQualifier = '-jitsi-4' // 4.0.0 + react-native 0.57
-            else if ('react-native-linear-gradient' == project.name)
-                versionQualifier = '-jitsi-1' // 2.4.0 + react-native 0.57
-            else if ('react-native-sound' == project.name)
-                versionQualifier = '-jitsi-2' // 0.10.9 + react-native 0.57
-            else if ('react-native-vector-icons' == project.name)
-                versionQualifier = '-jitsi-3' // 6.0.2 + react-native 0.57
-            else if ('react-native-webrtc' == project.name)
-                versionQualifier = '-jitsi-9' // 6322a9b5a38ce590cfaea4041072ea87c8dbf558 + react-native 0.57
+            // Release every dependency the SDK has with a -jitsi-XXX qualified version. This allows
+            // us to pin the dependencies and make sure they are always updated, no matter what.
 
-            project.version = "${json.version}${versionQualifier}"
+            project.version = "${json.version}-jitsi-${versionQualifierNumber}"
 
             project.android {
                 compileSdkVersion rootProject.ext.compileSdkVersion
@@ -113,15 +94,6 @@ allprojects {
                 }
             }
 
-            task androidJavadocs(type: Javadoc) {
-                source = android.sourceSets.main.java.source
-                classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
-                failOnError false
-            }
-            task androidJavadocsJar(type: Jar, dependsOn: androidJavadocs) {
-                classifier = 'javadoc'
-                from androidJavadocs.destinationDir
-            }
             task androidSourcesJar(type: Jar) {
                 classifier = 'sources'
                 from android.sourceSets.main.java.source
@@ -137,7 +109,6 @@ allprojects {
                         extension "aar"
                     }
                     artifact(androidSourcesJar)
-                    artifact(androidJavadocsJar)
                     pom.withXml {
                         def pomXml = asNode()
                         pomXml.appendNode('name', project.name)
@@ -188,9 +159,17 @@ ext {
     // of ours.
     moduleGroupId = 'com.facebook.react'
 
+    // Maven repo where artifacts will be published
+    mavenRepo = System.env.MVN_REPO ?: ""
+    mavenUser = System.env.MVN_USER ?: ""
+    mavenPassword = System.env.MVN_PASSWORD ?: ""
+
     // Glide
     excludeAppGlideModule = true
     glideVersion = "4.7.1"  // keep in sync with react-native-fast-image
+
+    // Libre build
+    libreBuild = (System.env.LIBRE_BUILD ?: "true").toBoolean()
 }
 
 // If Android SDK is not installed, accept its license so that it

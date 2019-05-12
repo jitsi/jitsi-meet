@@ -1,6 +1,5 @@
 // @flow
 
-import { getAppProp } from '../base/app';
 import { i18next } from '../base/i18n';
 import { isLocalParticipantModerator } from '../base/participants';
 import { doGetJSON, parseURIString } from '../base/util';
@@ -55,13 +54,14 @@ export function getDialInConferenceID(
 /**
  * Sends a GET request for phone numbers used to dial into a conference.
  *
- * @param {string} url - The service that returns confernce dial-in numbers.
+ * @param {string} url - The service that returns conference dial-in numbers.
  * @param {string} roomName - The conference name to find the associated
  * conference ID.
  * @param {string} mucURL - In which MUC the conference exists.
  * @returns {Promise} - The promise created by the request. The returned numbers
- * may be an array of numbers or an object with countries as keys and arrays of
- * phone number strings.
+ * may be an array of Objects containing numbers, with keys countryCode,
+ * tollFree, formattedNumber or an object with countries as keys and arrays of
+ * phone number strings, as the second one should not be used and is deprecated.
  */
 export function getDialInNumbers(
         url: string,
@@ -275,17 +275,19 @@ export function invitePeopleAndChatRooms( // eslint-disable-line max-params
         return Promise.resolve();
     }
 
-    return new Promise((resolve, reject) => {
-        $.post(
-                `${inviteServiceUrl}?token=${jwt}`,
-                JSON.stringify({
-                    'invited': inviteItems,
-                    'url': inviteUrl
-                }),
-                resolve,
-                'json')
-            .fail((jqxhr, textStatus, error) => reject(error));
-    });
+    return fetch(
+           `${inviteServiceUrl}?token=${jwt}`,
+           {
+               body: JSON.stringify({
+                   'invited': inviteItems,
+                   'url': inviteUrl
+               }),
+               method: 'POST',
+               headers: {
+                   'Content-Type': 'application/json'
+               }
+           }
+    );
 }
 
 /**
@@ -295,20 +297,10 @@ export function invitePeopleAndChatRooms( // eslint-disable-line max-params
  * @returns {boolean} Indication of whether adding people is currently enabled.
  */
 export function isAddPeopleEnabled(state: Object): boolean {
+    const { peopleSearchUrl } = state['features/base/config'];
     const { isGuest } = state['features/base/jwt'];
 
-    if (!isGuest) {
-        // XXX The mobile/react-native app is capable of disabling the
-        // adding/inviting of people in the current conference. Anyway, the
-        // Web/React app does not have that capability so default appropriately.
-        const addPeopleEnabled = getAppProp(state, 'addPeopleEnabled');
-
-        return (
-            (typeof addPeopleEnabled === 'undefined')
-                || Boolean(addPeopleEnabled));
-    }
-
-    return false;
+    return !isGuest && Boolean(peopleSearchUrl);
 }
 
 /**
@@ -319,21 +311,9 @@ export function isAddPeopleEnabled(state: Object): boolean {
  */
 export function isDialOutEnabled(state: Object): boolean {
     const { conference } = state['features/base/conference'];
-    let dialOutEnabled = isLocalParticipantModerator(state)
-        && conference
-        && conference.isSIPCallingSupported();
 
-    if (dialOutEnabled) {
-        // XXX The mobile/react-native app is capable of disabling of dial-out.
-        // Anyway, the Web/React app does not have that capability so default
-        // appropriately.
-        dialOutEnabled = getAppProp(state, 'dialOutEnabled');
-
-        return (
-            (typeof dialOutEnabled === 'undefined') || Boolean(dialOutEnabled));
-    }
-
-    return false;
+    return isLocalParticipantModerator(state)
+        && conference && conference.isSIPCallingSupported();
 }
 
 /**
@@ -454,7 +434,7 @@ export function getShareInfoText(
             numbersPromise = Promise.all([
                 getDialInNumbers(dialInNumbersUrl, room, mucURL),
                 getDialInConferenceID(dialInConfCodeUrl, room, mucURL)
-            ]).then(([ { defaultCountry, numbers }, {
+            ]).then(([ numbers, {
                 conference, id, message } ]) => {
 
                 if (!conference || !id) {
@@ -462,7 +442,6 @@ export function getShareInfoText(
                 }
 
                 return {
-                    defaultCountry,
                     numbers,
                     conferenceID: id
                 };
@@ -470,9 +449,8 @@ export function getShareInfoText(
         }
 
         return numbersPromise.then(
-            ({ conferenceID, defaultCountry, numbers }) => {
-                const phoneNumber
-                    = _getDefaultPhoneNumber(numbers, defaultCountry) || '';
+            ({ conferenceID, numbers }) => {
+                const phoneNumber = _getDefaultPhoneNumber(numbers) || '';
 
                 return `${
                     i18next.t('info.dialInNumber')} ${
@@ -531,31 +509,53 @@ export function getDialInfoPageURL(
 }
 
 /**
+ * Generates the URL for the static dial in info page.
+ *
+ * @param {string} uri - The conference URI string.
+ * @returns {string}
+ */
+export function getDialInfoPageURLForURIString(
+        uri: ?string) {
+    if (!uri) {
+        return undefined;
+    }
+    const { protocol, host, contextRoot, room } = parseURIString(uri);
+
+    return `${protocol}//${host}${contextRoot}static/dialInInfo.html?room=${room}`;
+}
+
+/**
  * Sets the internal state of which dial-in number to display.
  *
  * @param {Array<string>|Object} dialInNumbers - The array or object of
  * numbers to choose a number from.
- * @param {string} defaultCountry - The country code for the country
- * whose phone number should display.
  * @private
  * @returns {string|null}
  */
 export function _getDefaultPhoneNumber(
-        dialInNumbers: Object,
-        defaultCountry: string = 'US'): ?string {
-    if (Array.isArray(dialInNumbers)) {
-        // Dumbly return the first number if an array.
-        return dialInNumbers[0];
-    } else if (Object.keys(dialInNumbers).length > 0) {
-        const defaultNumbers = dialInNumbers[defaultCountry];
+        dialInNumbers: Object): ?string {
 
-        if (defaultNumbers) {
-            return defaultNumbers[0];
+    if (Array.isArray(dialInNumbers)) {
+        // new syntax follows
+        // find the default country inside dialInNumbers, US one
+        // or return the first one
+        const defaultNumber = dialInNumbers.find(number => number.default);
+
+        if (defaultNumber) {
+            return defaultNumber.formattedNumber;
         }
 
-        const firstRegion = Object.keys(dialInNumbers)[0];
+        return dialInNumbers.length > 0
+            ? dialInNumbers[0].formattedNumber : null;
+    }
 
-        return firstRegion && firstRegion[0];
+    const { numbers } = dialInNumbers;
+
+    if (numbers && Object.keys(numbers).length > 0) {
+        // deprecated and will be removed
+        const firstRegion = Object.keys(numbers)[0];
+
+        return firstRegion && numbers[firstRegion][0];
     }
 
     return null;

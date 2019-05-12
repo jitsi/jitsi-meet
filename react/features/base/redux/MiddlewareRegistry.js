@@ -32,14 +32,8 @@ class MiddlewareRegistry {
      * @returns {Middleware}
      */
     applyMiddleware(...additional: Array<Middleware<*, *>>) {
-        // XXX The explicit definition of the local variable middlewares is to
-        // satisfy flow.
-        const middlewares = [
-            ...this._elements,
-            ...additional
-        ];
-
-        return applyMiddleware(...middlewares);
+        // $FlowExpectedError
+        return applyMiddleware(...this._elements, ...additional);
     }
 
     /**

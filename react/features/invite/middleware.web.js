@@ -5,7 +5,6 @@ import { MiddlewareRegistry } from '../base/redux';
 
 import { BEGIN_ADD_PEOPLE } from './actionTypes';
 import { AddPeopleDialog } from './components';
-import { isAddPeopleEnabled, isDialOutEnabled } from './functions';
 import './middleware.any';
 
 /**
@@ -36,15 +35,10 @@ MiddlewareRegistry.register(store => next => action => {
  * @private
  * @returns {*} The value returned by {@code next(action)}.
  */
-function _beginAddPeople({ dispatch, getState }, next, action) {
+function _beginAddPeople({ dispatch }, next, action) {
     const result = next(action);
 
-    const state = getState();
-
-    dispatch(openDialog(AddPeopleDialog, {
-        addPeopleEnabled: isAddPeopleEnabled(state),
-        dialOutEnabled: isDialOutEnabled(state)
-    }));
+    dispatch(openDialog(AddPeopleDialog));
 
     return result;
 }

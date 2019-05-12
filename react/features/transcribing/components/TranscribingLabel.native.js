@@ -1,10 +1,10 @@
 // @flow
 
 import React, { Component } from 'react';
-import { connect } from 'react-redux';
 
 import { translate } from '../../base/i18n';
 import { CircularLabel } from '../../base/label';
+import { connect } from '../../base/redux';
 
 import { _mapStateToProps, type Props } from './AbstractTranscribingLabel';
 

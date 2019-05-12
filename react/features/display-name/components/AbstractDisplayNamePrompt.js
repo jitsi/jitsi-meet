@@ -1,6 +1,7 @@
 // @flow
 
 import { Component } from 'react';
+import type { Dispatch } from 'redux';
 
 import { updateSettings } from '../../base/settings';
 
@@ -13,7 +14,7 @@ export type Props = {
     /**
      * Invoked to update the local participant's display name.
      */
-    dispatch: Dispatch<*>,
+    dispatch: Dispatch<any>,
 
     /**
      * Function to be invoked after a successful display name change.

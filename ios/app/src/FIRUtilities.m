@@ -21,8 +21,6 @@ NSString *const kGoogleServiceInfoFileName = @"GoogleService-Info";
 // Plist file type.
 NSString *const kGoogleServiceInfoFileType = @"plist";
 NSString *const kGoogleAppIDPlistKey = @"GOOGLE_APP_ID";
-// Dummy plist GOOGLE_APP_ID
-NSString *const kDummyGoogleAppID = @"1:123:ios:123abc";
 
 
 @implementation FIRUtilities
@@ -59,11 +57,23 @@ NSString *const kDummyGoogleAppID = @"1:123:ios:123abc";
   if (!googleAppID.length) {
     return NO;
   }
-  if ([googleAppID isEqualToString:kDummyGoogleAppID]) {
-    return NO;
-  }
 
   return YES;
+}
+
++ (NSURL *)extractURL: (FIRDynamicLink*)dynamicLink {
+  NSURL *url = nil;
+  if (dynamicLink != nil) {
+    NSURL *dynamicLinkURL = dynamicLink.url;
+    if (dynamicLinkURL != nil
+        && (dynamicLink.matchType == FIRDLMatchTypeUnique
+            || dynamicLink.matchType == FIRDLMatchTypeDefault)) {
+          // Strong match, process it.
+          url = dynamicLinkURL;
+        }
+  }
+
+  return url;
 }
 
 @end

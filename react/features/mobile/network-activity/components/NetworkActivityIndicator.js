@@ -1,9 +1,9 @@
-/* @flow */
+// @flow
 
 import React, { Component } from 'react';
-import { connect } from 'react-redux';
 
 import { LoadingIndicator } from '../../../base/react';
+import { connect } from '../../../base/redux';
 
 /**
  * The type of the React {@code Component} props of

@@ -439,9 +439,11 @@ SmallVideo.prototype.$displayName = function() {
  * Creates or updates the participant's display name that is shown over the
  * video preview.
  *
+ * @param {Object} props - The React {@code Component} props to pass into the
+ * {@code DisplayName} component.
  * @returns {void}
  */
-SmallVideo.prototype.updateDisplayName = function(props) {
+SmallVideo.prototype._renderDisplayName = function(props) {
     const displayNameContainer
         = this.container.querySelector('.displayNameContainer');
 
@@ -822,6 +824,7 @@ SmallVideo.prototype.updateIndicators = function() {
     }
 
     ReactDOM.render(
+        <Provider store = { APP.store }>
             <I18nextProvider i18n = { i18next }>
                 <div>
                     <AtlasKitThemeProvider mode = 'dark'>
@@ -833,15 +836,14 @@ SmallVideo.prototype.updateIndicators = function() {
                                 isLocalVideo = { this.isLocal }
                                 enableStatsDisplay
                                     = { !interfaceConfig.filmStripOnly }
+                                participantId = { this.id }
                                 statsPopoverPosition
-                                    = { statsPopoverPosition }
-                                userID = { this.id } />
+                                    = { statsPopoverPosition } />
                             : null }
-                        { this._showRaisedHand
-                            ? <RaisedHandIndicator
-                                iconSize = { iconSize }
-                                tooltipPosition = { tooltipPosition } />
-                            : null }
+                        <RaisedHandIndicator
+                            iconSize = { iconSize }
+                            participantId = { this.id }
+                            tooltipPosition = { tooltipPosition } />
                         { this._showDominantSpeaker
                             ? <DominantSpeakerIndicator
                                 iconSize = { iconSize }
@@ -849,7 +851,8 @@ SmallVideo.prototype.updateIndicators = function() {
                             : null }
                     </AtlasKitThemeProvider>
                 </div>
-            </I18nextProvider>,
+            </I18nextProvider>
+        </Provider>,
         indicatorToolbar
     );
 };

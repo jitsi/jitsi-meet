@@ -1,14 +1,15 @@
 // @flow
 
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
 import Tooltip from '@atlaskit/tooltip';
+import React, { Component } from 'react';
+import type { Dispatch } from 'redux';
 
 import {
     createCalendarClickedEvent,
     sendAnalytics
 } from '../../analytics';
 import { translate } from '../../base/i18n';
+import { connect } from '../../base/redux';
 
 import { updateCalendarEvent } from '../actions';
 
@@ -25,7 +26,7 @@ type Props = {
     /**
      * Invoked to add a meeting URL to a calendar event.
      */
-    dispatch: Dispatch<*>,
+    dispatch: Dispatch<any>,
 
     /**
      * The ID of the calendar event that will have a meeting URL added on click.

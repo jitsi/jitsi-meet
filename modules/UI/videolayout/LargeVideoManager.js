@@ -6,6 +6,10 @@ import { I18nextProvider } from 'react-i18next';
 import { Provider } from 'react-redux';
 
 import { i18next } from '../../../react/features/base/i18n';
+import {
+    Avatar,
+    getAvatarURLByParticipantId
+} from '../../../react/features/base/participants';
 import { PresenceLabel } from '../../../react/features/presence-status';
 /* eslint-enable no-unused-vars */
 
@@ -14,9 +18,6 @@ const logger = require('jitsi-meet-logger').getLogger(__filename);
 import {
     JitsiParticipantConnectionStatus
 } from '../../../react/features/base/lib-jitsi-meet';
-import {
-    getAvatarURLByParticipantId
-} from '../../../react/features/base/participants';
 import {
     updateKnownLargeVideoResolution
 } from '../../../react/features/large-video';
@@ -95,6 +96,9 @@ export default class LargeVideoManager {
             = this._onVideoResolutionUpdate.bind(this);
 
         this.videoContainer.addResizeListener(this._onVideoResolutionUpdate);
+
+        this._dominantSpeakerAvatarContainer
+            = document.getElementById('dominantSpeakerAvatarContainer');
     }
 
     /**
@@ -108,6 +112,8 @@ export default class LargeVideoManager {
             this._onVideoResolutionUpdate);
 
         this.removePresenceLabel();
+
+        ReactDOM.unmountComponentAtNode(this._dominantSpeakerAvatarContainer);
 
         this.$container.css({ display: 'none' });
     }
@@ -162,6 +168,13 @@ export default class LargeVideoManager {
     get id() {
         const container = this.getCurrentContainer();
 
+        // If a user switch for large video is in progress then provide what
+        // will be the end result of the update.
+        if (this.updateInProcess
+            && this.newStreamData
+            && this.newStreamData.id !== container.id) {
+            return this.newStreamData.id;
+        }
 
         return container.id;
     }
@@ -178,8 +191,8 @@ export default class LargeVideoManager {
 
         // Include hide()/fadeOut only if we're switching between users
         // eslint-disable-next-line eqeqeq
-        const isUserSwitch = this.newStreamData.id != this.id;
         const container = this.getCurrentContainer();
+        const isUserSwitch = this.newStreamData.id !== container.id;
         const preUpdate = isUserSwitch ? container.hide() : Promise.resolve();
 
         preUpdate.then(() => {
@@ -394,7 +407,17 @@ export default class LargeVideoManager {
      * Updates the src of the dominant speaker avatar
      */
     updateAvatar(avatarUrl) {
-        $('#dominantSpeakerAvatar').attr('src', avatarUrl);
+        if (avatarUrl) {
+            ReactDOM.render(
+                <Avatar
+                    id = "dominantSpeakerAvatar"
+                    uri = { avatarUrl } />,
+                this._dominantSpeakerAvatarContainer
+            );
+        } else {
+            ReactDOM.unmountComponentAtNode(
+                this._dominantSpeakerAvatarContainer);
+        }
     }
 
     /**

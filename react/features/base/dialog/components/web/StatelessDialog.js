@@ -239,7 +239,7 @@ class StatelessDialog extends Component<Props> {
                 key = 'cancel'
                 onClick = { this._onCancel }
                 type = 'button'>
-                { t(this.props.cancelTitleKey || 'dialog.Cancel') }
+                { t(this.props.cancelKey || 'dialog.Cancel') }
             </Button>
         );
     }
@@ -268,7 +268,7 @@ class StatelessDialog extends Component<Props> {
                 key = 'submit'
                 onClick = { this._onSubmit }
                 type = 'button'>
-                { t(this.props.okTitleKey || 'dialog.Ok') }
+                { t(this.props.okKey || 'dialog.Ok') }
             </Button>
         );
     }

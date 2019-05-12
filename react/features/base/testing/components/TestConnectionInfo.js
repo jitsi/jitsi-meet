@@ -1,9 +1,9 @@
 // @flow
 
 import React, { Component, Fragment } from 'react';
-import { connect } from 'react-redux';
 
 import { getLocalParticipant } from '../../participants';
+import { connect } from '../../redux';
 
 // FIXME this imports feature to 'base'
 import { statsEmitter } from '../../../connection-indicator';
@@ -89,7 +89,7 @@ class TestConnectionInfo extends Component<Props, State> {
      * @param {Object} props - The read-only properties with which the new
      * instance is to be initialized.
      */
-    constructor(props: Object) {
+    constructor(props: Props) {
         super(props);
 
         this._onStatsUpdated = this._onStatsUpdated.bind(this);
@@ -142,7 +142,7 @@ class TestConnectionInfo extends Component<Props, State> {
      * @inheritdoc
      * returns {void}
      */
-    componentDidUpdate(prevProps) {
+    componentDidUpdate(prevProps: Props) {
         if (prevProps._localUserId !== this.props._localUserId) {
             statsEmitter.unsubscribeToClientStats(
                 prevProps._localUserId, this._onStatsUpdated);

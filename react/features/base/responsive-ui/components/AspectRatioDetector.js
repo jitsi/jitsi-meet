@@ -1,8 +1,9 @@
 // @flow
 
 import React, { Component, type Node } from 'react';
-import { connect } from 'react-redux';
 import { type Dispatch } from 'redux';
+
+import { connect } from '../../redux';
 
 import { setAspectRatio } from '../actions';
 import DimensionsDetector from './DimensionsDetector';
@@ -52,7 +53,7 @@ class AspectRatioDetector extends Component<Props> {
  *     _onDimensionsChanged: Function
  * }}
  */
-function _mapDispatchToProps(dispatch: Dispatch<*>) {
+function _mapDispatchToProps(dispatch: Dispatch<any>) {
     return {
         /**
          * Handles the "on dimensions changed" event and dispatches aspect ratio

@@ -5,11 +5,15 @@ import {
     createApiEvent,
     sendAnalytics
 } from '../../react/features/analytics';
+import { setSubject } from '../../react/features/base/conference';
 import { parseJWTFromURLParams } from '../../react/features/base/jwt';
 import { invite } from '../../react/features/invite';
 import { getJitsiMeetTransport } from '../transport';
 
 import { API_ID } from './constants';
+import {
+    processExternalDeviceRequest
+} from '../../react/features/device-selection/functions';
 
 const logger = require('jitsi-meet-logger').getLogger(__filename);
 
@@ -63,6 +67,10 @@ function initCommands() {
         'proxy-connection-event': event => {
             APP.conference.onProxyConnectionEvent(event);
         },
+        'subject': subject => {
+            sendAnalytics(createApiEvent('subject.changed'));
+            APP.store.dispatch(setSubject(subject));
+        },
         'submit-feedback': feedback => {
             sendAnalytics(createApiEvent('submit.feedback'));
             APP.conference.submitFeedback(feedback.score, feedback.message);
@@ -112,6 +120,12 @@ function initCommands() {
         return false;
     });
     transport.on('request', (request, callback) => {
+        const { dispatch, getState } = APP.store;
+
+        if (processExternalDeviceRequest(dispatch, getState, request, callback)) {
+            return true;
+        }
+
         const { name } = request;
 
         switch (name) {
@@ -373,6 +387,19 @@ class API {
     }
 
     /**
+     * Notify external application (if API is enabled) that the device list has
+     * changed.
+     *
+     * @param {Object} devices - The new device list.
+     * @returns {void}
+     */
+    notifyDeviceListChanged(devices: Object) {
+        this._sendEvent({
+            name: 'device-list-changed',
+            devices });
+    }
+
+    /**
      * Notify external application (if API is enabled) that user changed their
      * nickname.
      *
@@ -538,16 +565,60 @@ class API {
     }
 
     /**
+     * Notify external application (if API is enabled) that the feedback prompt
+     * has been displayed.
+     *
+     * @returns {void}
+     */
+    notifyFeedbackPromptDisplayed() {
+        this._sendEvent({ name: 'feedback-prompt-displayed' });
+    }
+
+    /**
+     * Notify external application (if API is enabled) that the display
+     * configuration of the filmstrip has been changed.
+     *
+     * @param {boolean} visible - Whether or not the filmstrip has been set to
+     * be displayed or hidden.
+     * @returns {void}
+     */
+    notifyFilmstripDisplayChanged(visible: boolean) {
+        this._sendEvent({
+            name: 'filmstrip-display-changed',
+            visible
+        });
+    }
+
+    /**
      * Notify external application (if API is enabled) that the screen sharing
      * has been turned on/off.
      *
      * @param {boolean} on - True if screen sharing is enabled.
+     * @param {Object} details - Additional information about the screen
+     * sharing.
+     * @param {string} details.sourceType - Type of device or window the screen
+     * share is capturing.
      * @returns {void}
      */
-    notifyScreenSharingStatusChanged(on: boolean) {
+    notifyScreenSharingStatusChanged(on: boolean, details: Object) {
         this._sendEvent({
             name: 'screen-sharing-status-changed',
-            on
+            on,
+            details
+        });
+    }
+
+    /**
+     * Notify external application (if API is enabled) that the conference
+     * changed their subject.
+     *
+     * @param {string} subject - Conference subject.
+     * @returns {void}
+     */
+    notifySubjectChanged(subject: string) {
+        this._sendEvent({
+            name: 'subject-change',
+            subject
         });
     }
 

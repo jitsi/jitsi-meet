@@ -1,11 +1,13 @@
 // @flow
+
+import { randomHexString } from 'js-utils/random';
 import _ from 'lodash';
 
 import { APP_WILL_MOUNT } from '../app';
-import JitsiMeetJS, { browser } from '../lib-jitsi-meet';
+import { browser } from '../lib-jitsi-meet';
 import { ReducerRegistry } from '../redux';
 import { PersistenceRegistry } from '../storage';
-import { assignIfDefined, randomHexString } from '../util';
+import { assignIfDefined } from '../util';
 
 import { SETTINGS_UPDATED } from './actionTypes';
 
@@ -28,7 +30,13 @@ const DEFAULT_STATE = {
     serverURL: undefined,
     startAudioOnly: false,
     startWithAudioMuted: false,
-    startWithVideoMuted: false
+    startWithVideoMuted: false,
+    userSelectedAudioOutputDeviceId: undefined,
+    userSelectedCameraDeviceId: undefined,
+    userSelectedMicDeviceId: undefined,
+    userSelectedAudioOutputDeviceLabel: undefined,
+    userSelectedCameraDeviceLabel: undefined,
+    userSelectedMicDeviceLabel: undefined
 };
 
 const STORE_NAME = 'features/base/settings';
@@ -36,7 +44,20 @@ const STORE_NAME = 'features/base/settings';
 /**
  * Sets up the persistence of the feature {@code base/settings}.
  */
-PersistenceRegistry.register(STORE_NAME);
+const filterSubtree = {};
+
+// start with the default state
+Object.keys(DEFAULT_STATE).forEach(key => {
+    filterSubtree[key] = true;
+});
+
+// we want to filter these props, to not be stored as they represent
+// what is currently opened/used as devices
+filterSubtree.audioOutputDeviceId = false;
+filterSubtree.cameraDeviceId = false;
+filterSubtree.micDeviceId = false;
+
+PersistenceRegistry.register(STORE_NAME, filterSubtree);
 
 ReducerRegistry.register(STORE_NAME, (state = DEFAULT_STATE, action) => {
     switch (action.type) {
@@ -134,17 +155,6 @@ function _initSettings(featureState) {
             localFlipX,
             micDeviceId
         }, settings);
-
-        if (settings.audioOutputDeviceId
-            !== JitsiMeetJS.mediaDevices.getAudioOutputDevice()) {
-            JitsiMeetJS.mediaDevices.setAudioOutputDevice(
-                settings.audioOutputDeviceId
-            ).catch(ex => {
-                logger.warn('Failed to set audio output device from local '
-                    + 'storage. Default audio output device will be used'
-                    + 'instead.', ex);
-            });
-        }
     }
 
     // Things we stored in profile earlier

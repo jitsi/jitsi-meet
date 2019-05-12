@@ -6,17 +6,16 @@ import {
 
 import { createDeviceChangedEvent, sendAnalytics } from '../analytics';
 import {
-    getAudioOutputDeviceId,
+    getDeviceLabelById,
     setAudioInputDevice,
     setAudioOutputDeviceId,
     setVideoInputDevice
 } from '../base/devices';
 import { i18next } from '../base/i18n';
-import JitsiMeetJS from '../base/lib-jitsi-meet';
 import { updateSettings } from '../base/settings';
 
 import { SET_DEVICE_SELECTION_POPUP_DATA } from './actionTypes';
-import { getDeviceSelectionDialogProps } from './functions';
+import { getDeviceSelectionDialogProps, processExternalDeviceRequest } from './functions';
 
 const logger = require('jitsi-meet-logger').getLogger(__filename);
 
@@ -60,7 +59,7 @@ export function openDeviceSelectionPopup() {
         });
 
         transport.on('request',
-            _processRequest.bind(undefined, dispatch, getState));
+            processExternalDeviceRequest.bind(undefined, dispatch, getState));
         transport.on('event', event => {
             if (event.type === 'devices-dialog' && event.name === 'close') {
                 popup.close();
@@ -78,75 +77,6 @@ export function openDeviceSelectionPopup() {
             transport
         }));
     };
-}
-
-/**
- * Processes device requests from external applications.
- *
- * @param {Dispatch} dispatch - The redux {@code dispatch} function.
- * @param {Function} getState - The redux function that gets/retrieves the redux
- * state.
- * @param {Object} request - The request to be processed.
- * @param {Function} responseCallback - The callback that will send the
- * response.
- * @returns {boolean}
- */
-function _processRequest(dispatch, getState, request, responseCallback) { // eslint-disable-line max-len, max-params
-    if (request.type === 'devices') {
-        const state = getState();
-        const settings = state['features/base/settings'];
-
-        switch (request.name) {
-        case 'isDeviceListAvailable':
-            responseCallback(JitsiMeetJS.mediaDevices.isDeviceListAvailable());
-            break;
-        case 'isDeviceChangeAvailable':
-            responseCallback(
-                JitsiMeetJS.mediaDevices.isDeviceChangeAvailable(
-                    request.deviceType));
-            break;
-        case 'isMultipleAudioInputSupported':
-            responseCallback(JitsiMeetJS.isMultipleAudioInputSupported());
-            break;
-        case 'getCurrentDevices':
-            responseCallback({
-                audioInput: settings.micDeviceId,
-                audioOutput: getAudioOutputDeviceId(),
-                videoInput: settings.cameraDeviceId
-            });
-            break;
-        case 'getAvailableDevices':
-            responseCallback(getState()['features/base/devices']);
-            break;
-        case 'setDevice': {
-            const { device } = request;
-
-            switch (device.kind) {
-            case 'audioinput':
-                dispatch(setAudioInputDevice(device.id));
-                break;
-            case 'audiooutput':
-                setAudioOutputDeviceId(device.id, dispatch);
-                break;
-            case 'videoinput':
-                dispatch(setVideoInputDevice(device.id));
-                break;
-            default:
-
-            }
-
-            responseCallback(true);
-            break;
-        }
-        default:
-
-            return false;
-        }
-
-        return true;
-    }
-
-    return false;
 }
 
 /**
@@ -183,7 +113,9 @@ export function submitDeviceSelectionTab(newState) {
             && newState.selectedVideoInputId
                 !== currentState.selectedVideoInputId) {
             dispatch(updateSettings({
-                cameraDeviceId: newState.selectedVideoInputId
+                userSelectedCameraDeviceId: newState.selectedVideoInputId,
+                userSelectedCameraDeviceLabel:
+                    getDeviceLabelById(getState(), newState.selectedVideoInputId, 'videoInput')
             }));
 
             dispatch(
@@ -194,7 +126,9 @@ export function submitDeviceSelectionTab(newState) {
                 && newState.selectedAudioInputId
                   !== currentState.selectedAudioInputId) {
             dispatch(updateSettings({
-                micDeviceId: newState.selectedAudioInputId
+                userSelectedMicDeviceId: newState.selectedAudioInputId,
+                userSelectedMicDeviceLabel:
+                    getDeviceLabelById(getState(), newState.selectedAudioInputId, 'audioInput')
             }));
 
             dispatch(
@@ -208,7 +142,9 @@ export function submitDeviceSelectionTab(newState) {
 
             setAudioOutputDeviceId(
                 newState.selectedAudioOutputId,
-                dispatch)
+                dispatch,
+                true,
+                getDeviceLabelById(getState(), newState.selectedAudioOutputId, 'audioOutput'))
                 .then(() => logger.log('changed audio output device'))
                 .catch(err => {
                     logger.warn(

@@ -1,13 +1,49 @@
+ENV["FASTLANE_SKIP_UPDATE_CHECK"] = "1"
+opt_out_usage
+
 default_platform(:ios)
 
 platform :ios do
   desc "Push a new beta build to TestFlight"
-  lane :beta do
+  lane :deploy do
+    # Make sure we are on a clean tree
+    ensure_git_status_clean
+
     # Set the app identifier
     update_app_identifier(
       xcodeproj: "app/app.xcodeproj",
       plist_path: "src/Info.plist",
       app_identifier: "com.atlassian.JitsiMeet.ios"
+    )
+
+    # Set the (watch) app identifier
+    update_app_identifier(
+      xcodeproj: "app/app.xcodeproj",
+      plist_path: "watchos/app/Info.plist",
+      app_identifier: "com.atlassian.JitsiMeet.ios.watchkit"
+    )
+
+    # Set the (watch) extension identifier
+    update_app_identifier(
+      xcodeproj: "app/app.xcodeproj",
+      plist_path: "watchos/extension/Info.plist",
+      app_identifier: "com.atlassian.JitsiMeet.ios.watchkit.extension"
+    )
+
+    update_info_plist(
+      xcodeproj: "app/app.xcodeproj",
+      plist_path: "watchos/app/Info.plist",
+      block: proc do |plist|
+        plist["WKCompanionAppBundleIdentifier"] = "com.atlassian.JitsiMeet.ios"
+      end
+    )
+
+    update_info_plist(
+      xcodeproj: "app/app.xcodeproj",
+      plist_path: "watchos/extension/Info.plist",
+      block: proc do |plist|
+        plist["NSExtension"]["NSExtensionAttributes"]["WKAppBundleIdentifier"] = "com.atlassian.JitsiMeet.ios.watchkit"
+      end
     )
 
     # Inrement the build number by 1
@@ -17,12 +53,18 @@ platform :ios do
     )
 
     # Actually build the app
-    build_app(scheme: "jitsi-meet", include_bitcode: false)
+    build_app(
+        scheme: "jitsi-meet",
+        include_bitcode: true,
+        include_symbols: true,
+        export_xcargs: "-allowProvisioningUpdates"
+    )
 
     # Upload the build to TestFlight (but don't distribute it)
     upload_to_testflight(skip_submission: true, skip_waiting_for_build_processing: true)
 
     # Cleanup
     clean_build_artifacts
+    reset_git_repo(skip_clean: true)
   end
 end

@@ -1,5 +1,6 @@
 // @flow
 
+import { generateRoomWithoutSeparator } from 'js-utils/random';
 import type { Component } from 'react';
 
 import { isRoomValid } from '../base/conference';
@@ -12,12 +13,9 @@ import { UnsupportedDesktopBrowser } from '../unsupported-browser';
 import {
     BlankPage,
     WelcomePage,
-    generateRoomWithoutSeparator,
     isWelcomePageAppEnabled,
     isWelcomePageUserEnabled
 } from '../welcome';
-
-declare var interfaceConfig: Object;
 
 /**
  * Object describing application route.

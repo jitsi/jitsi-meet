@@ -25,6 +25,7 @@ import com.facebook.react.bridge.Promise;
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContextBaseJavaModule;
 import com.facebook.react.bridge.ReactMethod;
+import com.facebook.react.module.annotations.ReactModule;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -43,19 +44,16 @@ import java.util.concurrent.Executors;
  * Gathers rssi, signal in percentage, timestamp and the addresses of the wifi
  * device.
  */
+@ReactModule(name = WiFiStatsModule.NAME)
 class WiFiStatsModule
     extends ReactContextBaseJavaModule {
 
-    /**
-     * The name of {@code WiFiStatsModule} to be used in the React Native
-     * bridge.
-     */
-    private static final String MODULE_NAME = "WiFiStats";
+    public static final String NAME = "WiFiStats";
 
     /**
      * The {@code Log} tag {@code WiFiStatsModule} is to log messages with.
      */
-    static final String TAG = MODULE_NAME;
+    static final String TAG = NAME;
 
     /**
      * The scale used for the signal value. A level of the signal, given in the
@@ -87,7 +85,7 @@ class WiFiStatsModule
      */
     @Override
     public String getName() {
-        return MODULE_NAME;
+        return NAME;
     }
 
     /**

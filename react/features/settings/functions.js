@@ -81,6 +81,7 @@ export function getMoreTabProps(stateful: Object | Function) {
         startAudioMutedPolicy,
         startVideoMutedPolicy
     } = state['features/base/conference'];
+    const followMeActive = Boolean(state['features/follow-me'].moderator);
     const configuredTabs = interfaceConfig.SETTINGS_SECTIONS || [];
     const localParticipant = getLocalParticipant(state);
 
@@ -93,6 +94,7 @@ export function getMoreTabProps(stateful: Object | Function) {
 
     return {
         currentLanguage: language,
+        followMeActive: Boolean(conference && followMeActive),
         followMeEnabled: Boolean(conference && followMeEnabled),
         languages: LANGUAGES,
         showLanguageSettings: configuredTabs.includes('language'),
@@ -122,7 +124,7 @@ export function getProfileTabProps(stateful: Object | Function) {
 
     return {
         authEnabled: Boolean(conference && authEnabled),
-        authLogin: Boolean(conference && authLogin),
+        authLogin,
         displayName: localParticipant.name,
         email: localParticipant.email
     };

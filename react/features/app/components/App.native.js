@@ -1,10 +1,10 @@
 // @flow
 
 import React from 'react';
-import { Linking } from 'react-native';
 
 import '../../analytics';
 import '../../authentication';
+import { setColorScheme } from '../../base/color-scheme';
 import { DialogContainer } from '../../base/dialog';
 import '../../base/jwt';
 import { Platform } from '../../base/react';
@@ -22,6 +22,7 @@ import '../../mobile/permissions';
 import '../../mobile/picture-in-picture';
 import '../../mobile/proximity';
 import '../../mobile/wake-lock';
+import '../../mobile/watchos';
 
 import { AbstractApp } from './AbstractApp';
 import type { Props as AbstractAppProps } from './AbstractApp';
@@ -36,14 +37,14 @@ const logger = require('jitsi-meet-logger').getLogger(__filename);
 type Props = AbstractAppProps & {
 
     /**
-     * Whether the add people feature is enabled.
+     * An object of colors that override the default colors of the app/sdk.
      */
-    addPeopleEnabled: boolean,
+    colorScheme: ?Object,
 
     /**
-     * Whether the dial-out feature is enabled.
+     * Identifier for this app on the native side.
      */
-    dialOutEnabled: boolean,
+    externalAPIScope: string,
 
     /**
      * Whether Picture-in-Picture is enabled. If {@code true}, a toolbar button
@@ -66,6 +67,8 @@ type Props = AbstractAppProps & {
  * @extends AbstractApp
  */
 export class App extends AbstractApp {
+    _init: Promise<*>;
+
     /**
      * Initializes a new {@code App} instance.
      *
@@ -75,9 +78,6 @@ export class App extends AbstractApp {
     constructor(props: Props) {
         super(props);
 
-        // Bind event handlers so they are only bound once for every instance.
-        this._onLinkingURL = this._onLinkingURL.bind(this);
-
         // In the Release configuration, React Native will (intentionally) throw
         // an unhandled JavascriptException for an unhandled JavaScript error.
         // This will effectively kill the app. In accord with the Web, do not
@@ -86,31 +86,20 @@ export class App extends AbstractApp {
     }
 
     /**
-     * Subscribe to notifications about activating URLs registered to be handled
-     * by this app.
+     * Initializes the color scheme.
      *
      * @inheritdoc
+     *
      * @returns {void}
-     * @see https://facebook.github.io/react-native/docs/linking.html
      */
     componentDidMount() {
         super.componentDidMount();
 
-        Linking.addEventListener('url', this._onLinkingURL);
-    }
-
-    /**
-     * Unsubscribe from notifications about activating URLs registered to be
-     * handled by this app.
-     *
-     * @inheritdoc
-     * @returns {void}
-     * @see https://facebook.github.io/react-native/docs/linking.html
-     */
-    componentWillUnmount() {
-        Linking.removeEventListener('url', this._onLinkingURL);
-
-        super.componentWillUnmount();
+        this._init.then(() => {
+            // We set the color scheme early enough so then we avoid any
+            // unnecessary re-renders.
+            this.state.store.dispatch(setColorScheme(this.props.colorScheme));
+        });
     }
 
     /**
@@ -164,22 +153,6 @@ export class App extends AbstractApp {
             newHandler.next = oldHandler;
             global.ErrorUtils.setGlobalHandler(newHandler);
         }
-    }
-
-    _onLinkingURL: (*) => void;
-
-    /**
-     * Notified by React's Linking API that a specific URL registered to be
-     * handled by this app was activated.
-     *
-     * @param {Object} event - The details of the notification/event.
-     * @param {string} event.url - The URL registered to be handled by this app
-     * which was activated.
-     * @private
-     * @returns {void}
-     */
-    _onLinkingURL({ url }) {
-        super._openURL(url);
     }
 
     /**

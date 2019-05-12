@@ -44,8 +44,11 @@ export function getSpaceUsage(token: string) {
  * Returns <tt>true</tt> if the dropbox features is enabled and <tt>false</tt>
  * otherwise.
  *
+ * @param {Object} state - The redux state.
  * @returns {boolean}
  */
-export function isEnabled() {
-    return Dropbox.ENABLED;
+export function isEnabled(state: Object) {
+    const { dropbox = {} } = state['features/base/config'];
+
+    return Dropbox.ENABLED && typeof dropbox.appKey === 'string';
 }

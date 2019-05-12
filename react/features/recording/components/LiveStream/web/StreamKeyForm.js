@@ -14,7 +14,7 @@ import AbstractStreamKeyForm, {
  *
  * @extends Component
  */
-class StreamKeyForm extends AbstractStreamKeyForm {
+class StreamKeyForm extends AbstractStreamKeyForm<Props> {
 
     /**
      * Initializes a new {@code StreamKeyForm} instance.

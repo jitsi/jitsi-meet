@@ -19,14 +19,13 @@ export const RECORDING_OFF_SOUND_ID = 'RECORDING_OFF_SOUND';
 export const RECORDING_ON_SOUND_ID = 'RECORDING_ON_SOUND';
 
 /**
- * Expected supported recording types. JIBRI is known to support live streaming
- * whereas JIRECON is for recording.
+ * Expected supported recording types.
  *
- * @type {Object}
+ * @enum {string}
  */
 export const RECORDING_TYPES = {
-    JIBRI: 'jibri',
-    JIRECON: 'jirecon'
+    JITSI_REC_SERVICE: 'recording-service',
+    DROPBOX: 'dropbox'
 };
 
 /**

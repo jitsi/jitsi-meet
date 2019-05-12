@@ -7,7 +7,8 @@ import {
     CONFERENCE_FAILED,
     CONFERENCE_LEFT,
     CONFERENCE_JOINED,
-    SET_AUDIO_ONLY
+    SET_AUDIO_ONLY,
+    getCurrentConference
 } from '../../base/conference';
 import { MiddlewareRegistry } from '../../base/redux';
 
@@ -31,9 +32,15 @@ MiddlewareRegistry.register(({ getState }) => next => action => {
         switch (action.type) {
         case APP_WILL_MOUNT:
         case CONFERENCE_FAILED:
-        case CONFERENCE_LEFT:
-            mode = AudioMode.DEFAULT;
+        case CONFERENCE_LEFT: {
+            const conference = getCurrentConference(getState());
+
+            if (typeof conference === 'undefined') {
+                mode = AudioMode.DEFAULT;
+            }
+
             break;
+        }
 
         /*
          * NOTE: We moved the audio mode setting from CONFERENCE_WILL_JOIN to

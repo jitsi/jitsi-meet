@@ -1,5 +1,7 @@
 // @flow
 
+import type { Dispatch } from 'redux';
+
 import {
     createSelectParticipantFailedEvent,
     sendAnalytics
@@ -23,7 +25,7 @@ declare var APP: Object;
  * @returns {Function}
  */
 export function selectParticipant() {
-    return (dispatch: Dispatch<*>, getState: Function) => {
+    return (dispatch: Dispatch<any>, getState: Function) => {
         const state = getState();
         const { conference } = state['features/base/conference'];
 
@@ -54,7 +56,7 @@ export function selectParticipant() {
  * @returns {Function}
  */
 export function selectParticipantInLargeVideo() {
-    return (dispatch: Dispatch<*>, getState: Function) => {
+    return (dispatch: Dispatch<any>, getState: Function) => {
         const state = getState();
         const participantId = _electParticipantInLargeVideo(state);
         const largeVideo = state['features/large-video'];

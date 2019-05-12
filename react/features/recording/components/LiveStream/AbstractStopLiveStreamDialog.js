@@ -3,7 +3,7 @@
 import { Component } from 'react';
 
 import {
-    createRecordingDialogEvent,
+    createLiveStreamingDialogEvent,
     sendAnalytics
 } from '../../../analytics';
 import { JitsiRecordingConstants } from '../../../base/lib-jitsi-meet';
@@ -61,7 +61,7 @@ export default class AbstractStopLiveStreamDialog extends Component<Props> {
      * @returns {boolean} True to close the modal.
      */
     _onSubmit() {
-        sendAnalytics(createRecordingDialogEvent('stop', 'confirm.button'));
+        sendAnalytics(createLiveStreamingDialogEvent('stop', 'confirm.button'));
 
         const { _session } = this.props;
 

@@ -2,10 +2,10 @@
 
 import Spinner from '@atlaskit/spinner';
 import React from 'react';
-import { connect } from 'react-redux';
 
 import { translate } from '../../base/i18n';
 import { AbstractPage } from '../../base/react';
+import { connect } from '../../base/redux';
 import { openSettingsDialog, SETTINGS_TABS } from '../../settings';
 import {
     createCalendarClickedEvent,
@@ -189,7 +189,8 @@ class CalendarList extends AbstractPage<Props> {
             <div className = 'meetings-list-empty'>
                 <p className = 'description'>
                     { t('welcomepage.connectCalendarText', {
-                        app: interfaceConfig.APP_NAME
+                        app: interfaceConfig.APP_NAME,
+                        provider: interfaceConfig.PROVIDER_NAME
                     }) }
                 </p>
                 <div

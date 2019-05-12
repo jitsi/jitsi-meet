@@ -19,4 +19,4 @@
  *     }
  * }
  */
-export const SETTINGS_UPDATED = Symbol('SETTINGS_UPDATED');
+export const SETTINGS_UPDATED = 'SETTINGS_UPDATED';

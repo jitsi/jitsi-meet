@@ -55,7 +55,7 @@ Simply run the following in your shell
 ```
 
 #### Advanced configuration
-If installation is on a machine behind NAT further configuration of jitsi-videobridge is needed in order for it to be accessible.
+If installation is on a machine [behind NAT](https://github.com/jitsi/jitsi-meet/blob/master/doc/faq.md) further configuration of jitsi-videobridge is needed in order for it to be accessible.
 Provided that all required ports are routed (forwarded) to the machine that it runs on. By default these ports are (TCP/443 or TCP/4443 and UDP 10000).
 The following extra lines need to be added the file `/etc/jitsi/videobridge/sip-communicator.properties`:
 ```

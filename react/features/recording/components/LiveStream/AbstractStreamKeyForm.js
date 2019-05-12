@@ -52,7 +52,8 @@ type State = {
  *
  * @extends Component
  */
-export default class AbstractStreamKeyForm extends Component<Props, State> {
+export default class AbstractStreamKeyForm<P: Props>
+    extends Component<P, State> {
     helpURL: string;
     _debouncedUpdateValidationErrorVisibility: Function;
 
@@ -61,7 +62,7 @@ export default class AbstractStreamKeyForm extends Component<Props, State> {
      *
      * @inheritdoc
      */
-    constructor(props: Props) {
+    constructor(props: P) {
         super(props);
 
         this.state = {
@@ -88,7 +89,7 @@ export default class AbstractStreamKeyForm extends Component<Props, State> {
      *
      * @inheritdoc
      */
-    componentDidUpdate(prevProps: Props) {
+    componentDidUpdate(prevProps: P) {
         if (this.props.value !== prevProps.value) {
             this._debouncedUpdateValidationErrorVisibility();
         }

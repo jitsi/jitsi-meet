@@ -2,16 +2,23 @@
 
 import React from 'react';
 import { Text, TouchableOpacity } from 'react-native';
-import { connect } from 'react-redux';
 
 import { translate } from '../../../i18n';
+import { connect } from '../../../redux';
+import { StyleType } from '../../../styles';
+
+import { _abstractMapStateToProps } from '../../functions';
 
 import { type Props as BaseProps } from './BaseDialog';
 import BaseSubmitDialog from './BaseSubmitDialog';
 import { brandedDialog } from './styles';
 
-type Props = {
-    ...BaseProps,
+type Props = BaseProps & {
+
+    /**
+     * The color-schemed stylesheet of the feature.
+     */
+    _dialogStyles: StyleType,
 
     /**
      * Untranslated i18n key of the content to be displayed.
@@ -35,7 +42,7 @@ class ConfirmDialog extends BaseSubmitDialog<Props, *> {
      * @returns {string}
      */
     _getSubmitButtonKey() {
-        return 'dialog.confirmYes';
+        return this.props.okKey || 'dialog.confirmYes';
     }
 
     _onCancel: () => void;
@@ -49,18 +56,18 @@ class ConfirmDialog extends BaseSubmitDialog<Props, *> {
      * @inheritdoc
      */
     _renderAdditionalButtons() {
-        const { t } = this.props;
+        const { _dialogStyles, cancelKey, t } = this.props;
 
         return (
             <TouchableOpacity
                 onPress = { this._onCancel }
                 style = { [
-                    brandedDialog.button,
+                    _dialogStyles.button,
                     brandedDialog.buttonFarLeft,
-                    brandedDialog.buttonSeparator
+                    _dialogStyles.buttonSeparator
                 ] }>
-                <Text style = { brandedDialog.text }>
-                    { t('dialog.confirmNo') }
+                <Text style = { _dialogStyles.buttonLabel }>
+                    { t(cancelKey || 'dialog.confirmNo') }
                 </Text>
             </TouchableOpacity>
         );
@@ -72,14 +79,18 @@ class ConfirmDialog extends BaseSubmitDialog<Props, *> {
      * @inheritdoc
      */
     _renderSubmittable() {
-        const { contentKey, t } = this.props;
+        if (this.props.children) {
+            return this.props.children;
+        }
+
+        const { _dialogStyles, contentKey, t } = this.props;
         const content
             = typeof contentKey === 'string'
                 ? t(contentKey)
                 : this._renderHTML(t(contentKey.key, contentKey.params));
 
         return (
-            <Text style = { brandedDialog.text }>
+            <Text style = { _dialogStyles.text }>
                 { content }
             </Text>
         );
@@ -88,4 +99,4 @@ class ConfirmDialog extends BaseSubmitDialog<Props, *> {
     _renderHTML: string => Object | string
 }
 
-export default translate(connect()(ConfirmDialog));
+export default translate(connect(_abstractMapStateToProps)(ConfirmDialog));

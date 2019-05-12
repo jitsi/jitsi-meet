@@ -1,9 +1,9 @@
 // @flow
 
 import React, { Component } from 'react';
-import { connect } from 'react-redux';
 import type { Dispatch } from 'redux';
 
+import { connect } from '../../base/redux';
 import { destroyLocalTracks } from '../../base/tracks';
 import { NetworkActivityIndicator } from '../../mobile/network-activity';
 
@@ -13,7 +13,7 @@ import LocalVideoTrackUnderlay from './LocalVideoTrackUnderlay';
  * The type of React {@code Component} props of {@link BlankPage}.
  */
 type Props = {
-    dispatch: Dispatch<*>
+    dispatch: Dispatch<any>
 };
 
 /**

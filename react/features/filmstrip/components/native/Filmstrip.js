@@ -2,9 +2,9 @@
 
 import React, { Component } from 'react';
 import { ScrollView } from 'react-native';
-import { connect } from 'react-redux';
 
 import { Container, Platform } from '../../../base/react';
+import { connect } from '../../../base/redux';
 import {
     isNarrowAspectRatio,
     makeAspectRatioAware
