@@ -78,6 +78,8 @@ type Props = {
      */
     _chatOpen: boolean,
 
+	_videoQualityDialogOpen: boolean,
+	
     /**
      * The {@code JitsiConference} for the current conference.
      */
@@ -584,7 +586,11 @@ class Toolbox extends Component<Props, State> {
      * @returns {void}
      */
     _onShortcutToggleVideoQuality() {
-        sendAnalytics(createShortcutEvent('video.quality'));
+        sendAnalytics(createShortcutEvent(
+			'video.quality',
+			{
+				enable: !this.props._videoQualityDialogOpen
+			}));
 
         this._doToggleVideoQuality();
     }
@@ -1347,6 +1353,7 @@ function _mapStateToProps(state) {
 
     return {
         _chatOpen: state['features/chat'].isOpen,
+		_videoQualityDialogOpen: state['features/video-quality'].isOpen,
         _conference: conference,
         _desktopSharingEnabled: desktopSharingEnabled,
         _desktopSharingDisabledTooltipKey: desktopSharingDisabledTooltipKey,
