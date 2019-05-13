@@ -8,7 +8,10 @@ import {
     createToolbarEvent,
     sendAnalytics
 } from '../../../analytics';
-import { openDialog } from '../../../base/dialog';
+import { 
+	openDialog,
+	toggleDialog
+} from '../../../base/dialog';
 import { translate } from '../../../base/i18n';
 import {
     getLocalParticipant,
@@ -156,7 +159,7 @@ type Props = {
      * Whether or not the local participant is sharing a YouTube video.
      */
     _sharingVideo: boolean,
-
+	
     /**
      * Flag showing whether toolbar is visible.
      */
@@ -284,7 +287,7 @@ class Toolbox extends Component<Props, State> {
 			this._shouldShowButton('videoquality') && {
                 character: 'A',
                 exec: this._onShortcutToggleVideoQuality,
-                helpDescription: 'keyboardShortcuts.videoquality'
+                helpDescription: 'keyboardShortcuts.videoQuality'
             }
         ];
 
@@ -327,7 +330,7 @@ class Toolbox extends Component<Props, State> {
      * @returns {void}
      */
     componentWillUnmount() {
-        [ 'C', 'D', 'R', 'S' ].forEach(letter =>
+        [ 'C', 'D', 'R', 'S', 'A' ].forEach(letter =>
             APP.keyboardshortcut.unregisterShortcut(letter));
 
         window.removeEventListener('resize', this._onResize);
@@ -391,13 +394,23 @@ class Toolbox extends Component<Props, State> {
     }
 
     /**
-     * Dispatches an action to toggle the video quality dialog.
+     * Dispatches an action to open the video quality dialog.
      *
      * @private
      * @returns {void}
      */
     _doOpenVideoQuality() {
         this.props.dispatch(openDialog(VideoQualityDialog));
+    }
+	
+	/**
+     * Dispatches an action to toggle the video quality dialog.
+     *
+     * @private
+     * @returns {void}
+     */
+    _doToggleVideoQuality() {
+        this.props.dispatch(toggleDialog(VideoQualityDialog));
     }
 
     /**
@@ -571,9 +584,9 @@ class Toolbox extends Component<Props, State> {
      * @returns {void}
      */
     _onShortcutToggleVideoQuality() {
-        sendAnalytics(createShortcutEvent('Video.quality'));
+        sendAnalytics(createShortcutEvent('video.quality'));
 
-        this._doOpenVideoQuality();
+        this._doToggleVideoQuality();
     }
 
     _onShortcutToggleFullScreen: () => void;
