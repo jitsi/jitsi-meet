@@ -77,7 +77,10 @@ type Props = {
      * Whether or not the chat feature is currently displayed.
      */
     _chatOpen: boolean,
-
+	
+	/**
+     * Whether or not the video quality dialog feature is currently displayed.
+     */
 	_videoQualityDialogOpen: boolean,
 	
     /**
