@@ -152,4 +152,12 @@ xcodebuild -quiet -exportArchive -archivePath /tmp/jitsi-meet/jitsi-meet.xcarchi
 
 echo "Will try deploy the .ipa to: ${IPA_DEPLOY_LOCATION}"
 
-scp -i ${CERT_DIR}/id_rsa -o StrictHostKeyChecking=no -o LogLevel=DEBUG "${IPA_EXPORT_DIR}/jitsi-meet.ipa" "${IPA_DEPLOY_LOCATION}"
+ssh-add ${CERT_DIR}/id_rsa
+
+if [ ! -z ${SCP_PROXY_HOST} ];
+then
+    scp -o ProxyCommand="ssh -t -A -l %r ${SCP_PROXY_HOST} -o \"StrictHostKeyChecking no\" -o \"BatchMode yes\" -W %h:%p"  -o StrictHostKeyChecking=no -o LogLevel=DEBUG "${IPA_EXPORT_DIR}/jitsi-meet.ipa" "${IPA_DEPLOY_LOCATION}"
+else
+    scp -o StrictHostKeyChecking=no -o LogLevel=DEBUG "${IPA_EXPORT_DIR}/jitsi-meet.ipa" "${IPA_DEPLOY_LOCATION}"
+fi
+
