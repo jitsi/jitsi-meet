@@ -24,7 +24,7 @@ popd
 pushd ${PROJECT_REPO}
 rm -rf ios/sdk/JitsiMeet.framework
 xcodebuild -workspace ios/jitsi-meet.xcworkspace -scheme JitsiMeet -destination='generic/platform=iOS' -configuration Release archive
-git tag -a ios-sdk-${SDK_VERSION}
+git tag ios-sdk-${SDK_VERSION}
 popd
 
 pushd ${RELEASE_REPO}

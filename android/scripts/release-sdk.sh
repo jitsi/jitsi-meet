@@ -74,7 +74,7 @@ if [[ $MVN_HTTP == 0 ]]; then
     popd
 
     # Tag the release
-    git tag -a android-sdk-${SDK_VERSION}
+    git tag android-sdk-${SDK_VERSION}
 fi
 
 # Done!
