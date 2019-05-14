@@ -162,4 +162,10 @@ body.welcome-page {
             font-size: 32px;
         }
     }
+
+    .welcome-watermark {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+    }
 }
