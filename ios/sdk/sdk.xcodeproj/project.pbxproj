@@ -270,6 +270,7 @@
 			buildConfigurationList = 0BD906ED1EC0C00300C8C18E /* Build configuration list for PBXNativeTarget "JitsiMeet" */;
 			buildPhases = (
 				26796D8589142D80C8AFDA51 /* [CP] Check Pods Manifest.lock */,
+				DE3D81D6228B50FB00A6C149 /* Bitcode */,
 				0BD906E01EC0C00300C8C18E /* Sources */,
 				0BD906E11EC0C00300C8C18E /* Frameworks */,
 				0BD906E21EC0C00300C8C18E /* Headers */,
@@ -449,6 +450,24 @@
 			shellPath = /bin/sh;
 			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-JitsiMeet/Pods-JitsiMeet-resources.sh\"\n";
 			showEnvVarsInLog = 0;
+		};
+		DE3D81D6228B50FB00A6C149 /* Bitcode */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = Bitcode;
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "../scripts/bitcode.sh\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
