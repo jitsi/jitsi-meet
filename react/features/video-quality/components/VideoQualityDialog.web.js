@@ -3,7 +3,6 @@ import React, { Component } from 'react';
 import { Dialog } from '../../base/dialog';
 
 import VideoQualitySlider from './VideoQualitySlider';
-import AbstractVideoQualityDialog from './AbstractVideoQualityDialog';
 
 /**
  * Implements a React {@link Component} which displays the component
@@ -11,19 +10,8 @@ import AbstractVideoQualityDialog from './AbstractVideoQualityDialog';
  *
  * @extends Component
  */
-export default class VideoQualityDialog extends AbstractVideoQualityDialog<Props> {
-    
-	/**
-     * Initializes a new {@code VideoQualityDialog} instance.
-     *
-     * @param {Object} props - The read-only properties with which the new
-     * instance is to be initialized.
-     */
-	constructor(props: Props) {
-        super(props);
-    }  
-	
-	/**
+export default class VideoQualityDialog extends Component {
+    /**
      * Implements React's {@link Component#render()}.
      *
      * @inheritdoc
