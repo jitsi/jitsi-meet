@@ -404,7 +404,7 @@
         "toggleScreensharing": "Switch between camera and screen sharing",
         "toggleShortcuts": "Show or hide keyboard shortcuts",
         "videoMute": "Start or stop your camera",
-		"videoquality": "Manage call quality"
+		"videoQuality": "Manage call quality"
     },
     "liveStreaming": {
         "busy": "We're working on freeing streaming resources. Please try again in a few minutes.",
