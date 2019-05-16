@@ -1,11 +1,11 @@
 // @flow
 
 import React from 'react';
-import { connect } from 'react-redux';
 import type { Dispatch } from 'redux';
 
 import { translate } from '../../base/i18n';
 import { MeetingsList } from '../../base/react';
+import { connect } from '../../base/redux';
 
 import AbstractRecentList from './AbstractRecentList';
 import { isRecentListEnabled, toDisplayableList } from '../functions';

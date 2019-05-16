@@ -27,8 +27,8 @@
 		0BCA496C1EC4BBF900B793EE /* jitsi.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 0BCA496B1EC4BBF900B793EE /* jitsi.ttf */; };
 		0BD906EA1EC0C00300C8C18E /* JitsiMeet.h in Headers */ = {isa = PBXBuildFile; fileRef = 0BD906E81EC0C00300C8C18E /* JitsiMeet.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		0F65EECE1D95DA94561BB47E /* libPods-JitsiMeet.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 03F2ADC957FF109849B7FCA1 /* libPods-JitsiMeet.a */; };
-		6C31EDC820C06D490089C899 /* recordingOn.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 6C31EDC720C06D490089C899 /* recordingOn.mp3 */; };
-		6C31EDCA20C06D530089C899 /* recordingOff.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 6C31EDC920C06D530089C899 /* recordingOff.mp3 */; };
+		6C31EDC820C06D490089C899 /* recordingOn2.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 6C31EDC720C06D490089C899 /* recordingOn2.mp3 */; };
+		6C31EDCA20C06D530089C899 /* recordingOff2.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 6C31EDC920C06D530089C899 /* recordingOff2.mp3 */; };
 		75635B0A20751D6D00F29C9F /* joined.wav in Resources */ = {isa = PBXBuildFile; fileRef = 75635B0820751D6D00F29C9F /* joined.wav */; };
 		75635B0B20751D6D00F29C9F /* left.wav in Resources */ = {isa = PBXBuildFile; fileRef = 75635B0920751D6D00F29C9F /* left.wav */; };
 		87FE6F3321E52437004A5DC7 /* incomingMessage.wav in Resources */ = {isa = PBXBuildFile; fileRef = 87FE6F3221E52437004A5DC7 /* incomingMessage.wav */; };
@@ -74,8 +74,8 @@
 		0BD906E51EC0C00300C8C18E /* JitsiMeet.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = JitsiMeet.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		0BD906E81EC0C00300C8C18E /* JitsiMeet.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JitsiMeet.h; sourceTree = "<group>"; };
 		0BD906E91EC0C00300C8C18E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		6C31EDC720C06D490089C899 /* recordingOn.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; name = recordingOn.mp3; path = ../../sounds/recordingOn.mp3; sourceTree = "<group>"; };
-		6C31EDC920C06D530089C899 /* recordingOff.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; name = recordingOff.mp3; path = ../../sounds/recordingOff.mp3; sourceTree = "<group>"; };
+		6C31EDC720C06D490089C899 /* recordingOn2.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; name = recordingOn2.mp3; path = ../../sounds/recordingOn2.mp3; sourceTree = "<group>"; };
+		6C31EDC920C06D530089C899 /* recordingOff2.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; name = recordingOff2.mp3; path = ../../sounds/recordingOff2.mp3; sourceTree = "<group>"; };
 		75635B0820751D6D00F29C9F /* joined.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; name = joined.wav; path = ../../sounds/joined.wav; sourceTree = "<group>"; };
 		75635B0920751D6D00F29C9F /* left.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; name = left.wav; path = ../../sounds/left.wav; sourceTree = "<group>"; };
 		87FE6F3221E52437004A5DC7 /* incomingMessage.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; name = incomingMessage.wav; path = ../../sounds/incomingMessage.wav; sourceTree = "<group>"; };
@@ -129,8 +129,8 @@
 				75635B0920751D6D00F29C9F /* left.wav */,
 				0B49424420AD8DBD00BD2DE0 /* outgoingRinging.wav */,
 				0B49424320AD8DBD00BD2DE0 /* outgoingStart.wav */,
-				6C31EDC920C06D530089C899 /* recordingOff.mp3 */,
-				6C31EDC720C06D490089C899 /* recordingOn.mp3 */,
+				6C31EDC920C06D530089C899 /* recordingOff2.mp3 */,
+				6C31EDC720C06D490089C899 /* recordingOn2.mp3 */,
 				A4414ADF20B37F1A003546E6 /* rejected.wav */,
 			);
 			name = Resources;
@@ -293,7 +293,7 @@
 		0BD906DC1EC0C00300C8C18E /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 1000;
+				LastUpgradeCheck = 1020;
 				ORGANIZATIONNAME = Jitsi;
 				TargetAttributes = {
 					0BD906E41EC0C00300C8C18E = {
@@ -305,10 +305,11 @@
 			};
 			buildConfigurationList = 0BD906DF1EC0C00300C8C18E /* Build configuration list for PBXProject "sdk" */;
 			compatibilityVersion = "Xcode 3.2";
-			developmentRegion = English;
+			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				en,
+				Base,
 			);
 			mainGroup = 0BD906DB1EC0C00300C8C18E;
 			productRefGroup = 0BD906E61EC0C00300C8C18E /* Products */;
@@ -327,12 +328,12 @@
 			files = (
 				87FE6F3321E52437004A5DC7 /* incomingMessage.wav in Resources */,
 				0B49424520AD8DBD00BD2DE0 /* outgoingStart.wav in Resources */,
-				6C31EDCA20C06D530089C899 /* recordingOff.mp3 in Resources */,
+				6C31EDCA20C06D530089C899 /* recordingOff2.mp3 in Resources */,
 				A4414AE020B37F1A003546E6 /* rejected.wav in Resources */,
 				0B49424620AD8DBD00BD2DE0 /* outgoingRinging.wav in Resources */,
 				0BCA496C1EC4BBF900B793EE /* jitsi.ttf in Resources */,
 				C6245F5D2053091D0040BE68 /* image-resize@2x.png in Resources */,
-				6C31EDC820C06D490089C899 /* recordingOn.mp3 in Resources */,
+				6C31EDC820C06D490089C899 /* recordingOn2.mp3 in Resources */,
 				0BC4B8691F8C03A700CE8B21 /* CallKitIcon.png in Resources */,
 				75635B0B20751D6D00F29C9F /* left.wav in Resources */,
 				75635B0A20751D6D00F29C9F /* joined.wav in Resources */,
@@ -486,6 +487,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
@@ -547,6 +549,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
@@ -622,8 +625,8 @@
 				SKIP_INSTALL = YES;
 				SWIFT_OBJC_BRIDGING_HEADER = "";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
-				SWIFT_SWIFT3_OBJC_INFERENCE = On;
-				SWIFT_VERSION = 4.2;
+				SWIFT_SWIFT3_OBJC_INFERENCE = Default;
+				SWIFT_VERSION = 5.0;
 			};
 			name = Debug;
 		};
@@ -649,8 +652,8 @@
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
 				SWIFT_OBJC_BRIDGING_HEADER = "";
-				SWIFT_SWIFT3_OBJC_INFERENCE = On;
-				SWIFT_VERSION = 4.2;
+				SWIFT_SWIFT3_OBJC_INFERENCE = Default;
+				SWIFT_VERSION = 5.0;
 			};
 			name = Release;
 		};

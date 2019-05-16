@@ -1,10 +1,10 @@
 // @flow
 
 import React from 'react';
-import { connect } from 'react-redux';
 import Transition from 'react-transition-group/Transition';
 
 import { translate } from '../../../base/i18n';
+import { connect } from '../../../base/redux';
 
 import AbstractChat, {
     _mapDispatchToProps,

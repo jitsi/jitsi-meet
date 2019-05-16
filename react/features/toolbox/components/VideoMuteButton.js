@@ -1,7 +1,5 @@
 // @flow
 
-import { connect } from 'react-redux';
-
 import {
     ACTION_SHORTCUT_TRIGGERED,
     VIDEO_MUTE,
@@ -15,6 +13,7 @@ import {
     VIDEO_MUTISM_AUTHORITY,
     setVideoMuted
 } from '../../base/media';
+import { connect } from '../../base/redux';
 import { AbstractVideoMuteButton } from '../../base/toolbox';
 import type { AbstractButtonProps } from '../../base/toolbox';
 import { isLocalTrackMuted } from '../../base/tracks';

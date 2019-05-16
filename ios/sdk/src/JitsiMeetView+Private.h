@@ -19,7 +19,7 @@
 
 @interface JitsiMeetView ()
 
-+ (instancetype)viewForExternalAPIScope:(NSString *)externalAPIScope;
++ (instancetype _Nullable)viewForExternalAPIScope:(NSString *_Nonnull)externalAPIScope;
 + (BOOL)setPropsInViews:(NSDictionary *_Nonnull)newProps;
 
 @end

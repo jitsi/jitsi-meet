@@ -4,6 +4,13 @@ import { JitsiRecordingConstants } from '../base/lib-jitsi-meet';
 
 import { RECORDING_STATUS_PRIORITIES } from './constants';
 
+const logger = require('jitsi-meet-logger').getLogger(__filename);
+
+
+import {
+    downloadUrl
+} from '../local-recording/recording';
+
 /**
  * Searches in the passed in redux state for an active recording session of the
  * passed in mode.
@@ -71,4 +78,101 @@ export function getSessionStatusToShow(state: Object, mode: string): ?string {
     }
 
     return status;
+}
+
+
+let dialog = null;
+let checkFileTimeout = null;
+export function showDownloadDialog(roomName) {
+    const i18n = APP.translation;
+    const downloadMsg
+        = i18n.generateTranslationHTML('dialog.DownloadRecordFileMsg');
+    const downloadingMsg
+        = i18n.generateTranslationHTML('dialog.DownloadingRecordFileMsg');
+    const cancelButton = i18n.generateTranslationHTML('dialog.Cancel');
+    const downloadButton = i18n.generateTranslationHTML('dialog.Download');
+    dialog = APP.UI.messageHandler.openDialogWithStates({
+        state0: {
+            titleKey: 'dialog.DownloadRecordFileTitle',
+            html: downloadMsg,
+            persistent: false,
+            buttons: [
+                { title: cancelButton,
+                    value: false },
+                { title: downloadButton,
+                    value: true }
+            ],
+            focus: ':input:first',
+            defaultButton: 1,
+            submit(e, v, m, f) { // eslint-disable-line max-params
+                e.preventDefault();
+                if (!v) {
+                    if (checkFileTimeout !== null) {
+                        clearTimeout(checkFileTimeout);
+                        checkFileTimeout = null;
+                    }
+                    dialog.close();
+                    return;
+                }
+                dialog.goToState('state1');
+                _startCheckFileTimer(roomName);
+            }
+        },
+
+        state1: {
+            titleKey: 'dialog.DownloadRecordFileTitle',
+            html: downloadingMsg,
+            persistent: false,
+            buttons: [
+                { title: cancelButton,
+                    value: false }
+            ],
+            focus: ':input:first',
+            defaultButton: 0,
+            submit(e, v) {
+                e.preventDefault();
+                if (checkFileTimeout !== null) {
+                    clearTimeout(checkFileTimeout);
+                    checkFileTimeout = null;
+                }
+                dialog.close();
+            }
+        }
+    }, {
+        close() {
+            dialog = null;
+        }
+    }, {
+    });
+    // dialog = APP.UI.messageHandler.openTwoButtonDialog({
+    //     titleKey: 'dialog.DownloadRecordFileTitle',
+    //     msgKey: 'dialog.DownloadRecordFileMsg',
+    //     leftButtonKey: 'dialog.Download',
+    //     submitFunction,
+    //     closeFunction
+    // });
+}
+
+function _startCheckFileTimer(roomName){
+
+    checkFileTimeout = setTimeout(() => {
+        fetch('/record/'+roomName+'.mp4',{ method:'HEAD' })
+            .then(response => {
+                if(response.status != '200'){
+                    logger.log("file not exit!");
+                    _startCheckFileTimer(roomName);
+                    return;
+                }     
+                logger.log("file found!");           
+                clearTimeout(checkFileTimeout);
+                checkFileTimeout = null;
+                downloadUrl('/record/'+roomName+'.mp4', roomName+'.mp4');
+                dialog.close();
+            })
+            .catch(error => {
+                logger.log("file not exit!");
+                _startCheckFileTimer(roomName);
+            });
+
+    }, 1000);
 }

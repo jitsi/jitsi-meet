@@ -469,16 +469,16 @@ export function urlObjectToString(o: Object): ?string {
 
     let { hash } = url;
 
-    for (const configName of [ 'config', 'interfaceConfig' ]) {
+    for (const urlPrefix of [ 'config', 'interfaceConfig', 'devices' ]) {
         const urlParamsArray
             = _objectToURLParamsArray(
-                o[`${configName}Overwrite`]
-                    || o[configName]
-                    || o[`${configName}Override`]);
+                o[`${urlPrefix}Overwrite`]
+                    || o[urlPrefix]
+                    || o[`${urlPrefix}Override`]);
 
         if (urlParamsArray.length) {
             let urlParamsString
-                = `${configName}.${urlParamsArray.join(`&${configName}.`)}`;
+                = `${urlPrefix}.${urlParamsArray.join(`&${urlPrefix}.`)}`;
 
             if (hash.length) {
                 urlParamsString = `&${urlParamsString}`;

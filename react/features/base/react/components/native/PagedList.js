@@ -2,9 +2,9 @@
 
 import React, { Component } from 'react';
 import { SafeAreaView, Text, TouchableOpacity, View } from 'react-native';
-import { connect } from 'react-redux';
 
 import { Icon } from '../../../font-icons';
+import { connect } from '../../../redux';
 
 import styles from './styles';
 
@@ -283,5 +283,4 @@ class PagedList extends Component<Props, State> {
     }
 }
 
-// $FlowExpectedError
 export default connect()(PagedList);

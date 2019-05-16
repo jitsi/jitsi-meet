@@ -25,6 +25,15 @@
     -moz-osx-font-smoothing: grayscale;
 }
 
+.icon-signal_cellular_0:before {
+  content: "\e901";
+}
+.icon-signal_cellular_1:before {
+  content: "\e902";
+}
+.icon-signal_cellular_2:before {
+  content: "\e907";
+}
 .icon-phone:before {
   content: "\e0cd";
 }

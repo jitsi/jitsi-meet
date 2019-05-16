@@ -1,8 +1,9 @@
 // @flow
 
 import React, { Component, type Node } from 'react';
-import { connect } from 'react-redux';
 import { type Dispatch } from 'redux';
+
+import { connect } from '../../redux';
 
 import { setAspectRatio } from '../actions';
 import DimensionsDetector from './DimensionsDetector';
@@ -69,5 +70,4 @@ function _mapDispatchToProps(dispatch: Dispatch<any>) {
     };
 }
 
-// $FlowExpectedError
 export default connect(undefined, _mapDispatchToProps)(AspectRatioDetector);

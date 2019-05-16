@@ -2,7 +2,7 @@
 
 import Tabs from '@atlaskit/tabs';
 import React, { PureComponent } from 'react';
-import { connect } from 'react-redux';
+import { connect } from '../../base/redux';
 import type { Dispatch } from 'redux';
 
 import { Dialog, hideDialog } from '../../base/dialog';

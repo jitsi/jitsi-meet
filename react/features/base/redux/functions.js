@@ -1,6 +1,7 @@
 // @flow
 
 import _ from 'lodash';
+import { connect as reduxConnect } from 'react-redux';
 
 /**
  * Sets specific properties of a specific state to specific values and prevents
@@ -23,6 +24,19 @@ export function assign(target: Object, source: Object) {
     }
 
     return t;
+}
+
+/**
+ * Wrapper function for the react-redux connect function to avoid having to
+ * declare function types for flow, but still let flow warn for other errors.
+ *
+ * @param {Function?} mapStateToProps - Redux mapStateToProps function.
+ * @param {Function?} mapDispatchToProps - Redux mapDispatchToProps function.
+ * @returns {Connector}
+ */
+export function connect(
+        mapStateToProps?: Function, mapDispatchToProps?: Function) {
+    return reduxConnect<*, *, *, *, *, *>(mapStateToProps, mapDispatchToProps);
 }
 
 /**

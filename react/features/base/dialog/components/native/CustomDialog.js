@@ -1,6 +1,6 @@
 // @flow
 
-import { connect } from 'react-redux';
+import { connect } from '../../../redux';
 
 import { _abstractMapStateToProps } from '../../functions';
 
@@ -21,5 +21,4 @@ class CustomDialog extends BaseDialog<Props, *> {
     }
 }
 
-// $FlowExpectedError
 export default connect(_abstractMapStateToProps)(CustomDialog);

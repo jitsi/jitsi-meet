@@ -1,3 +1,5 @@
+// @flow
+
 import { toState } from '../base/redux';
 
 /**
@@ -7,7 +9,7 @@ import { toState } from '../base/redux';
  * @param {Object|Function} stateful - The redux store state.
  * @returns {boolean}
  */
-export function areThereNotifications(stateful) {
+export function areThereNotifications(stateful: Object | Function) {
     const state = toState(stateful);
     const { enabled, notifications } = state['features/notifications'];
 

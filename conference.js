@@ -348,11 +348,8 @@ class ConferenceConnector {
         // not enough rights to create conference
         case JitsiConferenceErrors.AUTHENTICATION_REQUIRED: {
             // Schedule reconnect to check if someone else created the room.
-            // const [ msg ] = params;
-            // logger.error('CONFERENCE FAILED:', msg);
-
             this.reconnectTimeout = setTimeout(() => {
-                APP.store.dispatch(conferenceWi0.bindllJoin(room));
+                APP.store.dispatch(conferenceWillJoin(room));
                 room.join();
             }, 5000);
 
@@ -1746,6 +1743,13 @@ export default {
             (authEnabled, authLogin) =>
                 APP.store.dispatch(authStatusChanged(authEnabled, authLogin)));
 
+        room.on(
+            JitsiConferenceEvents.EXTENSION_MSG,
+            (extensionMsg) => {                
+                logger.log(`EXTENSION_MSG:`, extensionMsg);
+                APP.UI.notifyDateLimitWillReached(extensionMsg);
+            });
+
         room.on(JitsiConferenceEvents.PARTCIPANT_FEATURES_CHANGED,
             user => APP.UI.onUserFeaturesChanged(user));
         room.on(JitsiConferenceEvents.USER_JOINED, (id, user) => {
@@ -1942,21 +1946,6 @@ export default {
             JitsiConferenceEvents.PARTICIPANT_PROPERTY_CHANGED,
             (participant, name, oldValue, newValue) => {
                 switch (name) {
-                case 'features_screen-sharing': {
-                    APP.store.dispatch(participantUpdated({
-                        conference: room,
-                        id: participant.getId(),
-                        features: { 'screen-sharing': true }
-                    }));
-                    break;
-                }
-                case 'raisedHand':
-                    APP.store.dispatch(participantUpdated({
-                        conference: room,
-                        id: participant.getId(),
-                        raisedHand: newValue === 'true'
-                    }));
-                    break;
                 case 'remoteControlSessionStatus':
                     APP.UI.setRemoteControlActiveStatus(
                         participant.getId(),
@@ -2378,6 +2367,10 @@ export default {
         const promises = [];
         const audioWasMuted = this.isLocalAudioMuted();
         const videoWasMuted = this.isLocalVideoMuted();
+        const requestedInput = {
+            audio: Boolean(newDevices.audioinput),
+            video: Boolean(newDevices.videoinput)
+        };
 
         if (typeof newDevices.audiooutput !== 'undefined') {
             const { dispatch } = APP.store;
@@ -2387,6 +2380,18 @@ export default {
 
 
             promises.push(setAudioOutputPromise);
+        }
+
+        // Handles the use case when the default device is changed (we are always stopping the streams because it's
+        // simpler):
+        // If the default device is changed we need to first stop the local streams and then call GUM. Otherwise GUM
+        // will return a stream using the old default device.
+        if (requestedInput.audio && this.localAudio) {
+            this.localAudio.stopStream();
+        }
+
+        if (requestedInput.video && this.localVideo) {
+            this.localVideo.stopStream();
         }
 
         promises.push(
@@ -2407,8 +2412,20 @@ export default {
                     });
 
                     return Promise.all(muteSyncPromises)
-                        .then(() => Promise.all(
-                            this._setLocalAudioVideoStreams(tracks)));
+                        .then(() =>
+                            Promise.all(Object.keys(requestedInput).map(mediaType => {
+                                if (requestedInput[mediaType]) {
+                                    const useStream
+                                        = mediaType === 'audio'
+                                            ? this.useAudioStream.bind(this)
+                                            : this.useVideoStream.bind(this);
+
+                                    // Use the new stream or null if we failed to obtain it.
+                                    return useStream(tracks.find(track => track.getType() === mediaType) || null);
+                                }
+
+                                return Promise.resolve();
+                            })));
                 })
                 .then(() => {
                     // Log and sync known mute state.
@@ -2440,7 +2457,7 @@ export default {
      */
     updateAudioIconEnabled() {
         const audioMediaDevices
-            = APP.store.getState()['features/base/devices'].audioInput;
+            = APP.store.getState()['features/base/devices'].availableDevices.audioInput;
         const audioDeviceCount
             = audioMediaDevices ? audioMediaDevices.length : 0;
 
@@ -2463,7 +2480,7 @@ export default {
      */
     updateVideoIconEnabled() {
         const videoMediaDevices
-            = APP.store.getState()['features/base/devices'].videoInput;
+            = APP.store.getState()['features/base/devices'].availableDevices.videoInput;
         const videoDeviceCount
             = videoMediaDevices ? videoMediaDevices.length : 0;
 

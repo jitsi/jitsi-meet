@@ -4,7 +4,8 @@
  *
  * {
  *     type: CONFIG_WILL_LOAD,
- *     locationURL: URL
+ *     locationURL: URL,
+ *     room: string
  * }
  */
 export const CONFIG_WILL_LOAD = 'CONFIG_WILL_LOAD';

@@ -196,6 +196,12 @@ var interfaceConfig = {
     // ANDROID_APP_PACKAGE: 'org.jitsi.meet',
 
     /**
+     * A UX mode where the last screen share participant is automatically
+     * pinned. Note: this mode is experimental and subject to breakage.
+     */
+    // AUTO_PIN_LATEST_SCREEN_SHARE: false,
+
+    /**
      * Override the behavior of some notifications to remain displayed until
      * explicitly dismissed through a user action. The value is how long, in
      * milliseconds, those notifications should remain displayed.

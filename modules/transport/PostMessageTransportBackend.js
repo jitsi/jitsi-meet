@@ -43,6 +43,7 @@ const LEGACY_OUTGOING_METHODS = [
     'participant-left',
     'video-conference-joined',
     'show-manager-window',
+    'common-extend-message',
     'video-conference-left',
     'video-ready-to-close'
 ];

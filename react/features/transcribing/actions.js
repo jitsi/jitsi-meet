@@ -1,46 +1,17 @@
 // @flow
 
 import {
-    _DIAL_ERROR,
     _POTENTIAL_TRANSCRIBER_JOINED,
     _TRANSCRIBER_JOINED,
     _TRANSCRIBER_LEFT,
-    DIAL_TRANSCRIBER,
-    SET_PENDING_TRANSCRIBING_NOTIFICATION_UID,
-    STOP_TRANSCRIBING
+    SET_PENDING_TRANSCRIBING_NOTIFICATION_UID
 } from './actionTypes';
 import {
+    NOTIFICATION_TIMEOUT,
     hideNotification,
     showErrorNotification,
     showNotification
 } from '../notifications';
-
-/**
- * Dial the transcriber into the room.
- *
- * @public
- * @returns {{
- *     type: DIAL_TRANSCRIBER
- * }}
- */
-export function dialTranscriber() {
-    return {
-        type: DIAL_TRANSCRIBER
-    };
-}
-
-/**
- * Stop the transcribing by kicking the transcriber participant.
- *
- * @returns {{
- *     type: STOP_TRANSCRIBING
- * }}
- */
-export function stopTranscribing() {
-    return {
-        type: STOP_TRANSCRIBING
-    };
-}
 
 /**
  * Notify that the transcriber, with a unique ID, has joined.
@@ -87,19 +58,6 @@ export function potentialTranscriberJoined(participantId: string) {
     return {
         type: _POTENTIAL_TRANSCRIBER_JOINED,
         transcriberJID: participantId
-    };
-}
-
-/**
- * Notify that dialing the transcriber resulted in an error.
- *
- * @returns {{
- *      type: _DIAL_ERROR
- * }}
- */
-export function dialError() {
-    return {
-        type: _DIAL_ERROR
     };
 }
 
@@ -161,7 +119,7 @@ export function hidePendingTranscribingNotification() {
 
 /**
  * Signals that the stopped transcribing notification should be shown on the
- * screen for a 2500 ms.
+ * screen.
  *
  * @returns {showNotification}
  */
@@ -169,7 +127,7 @@ export function showStoppedTranscribingNotification() {
     return showNotification({
         descriptionKey: 'transcribing.off',
         titleKey: 'dialog.transcribing'
-    }, 2500);
+    }, NOTIFICATION_TIMEOUT);
 }
 
 

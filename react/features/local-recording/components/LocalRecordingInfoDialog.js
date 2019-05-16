@@ -2,7 +2,6 @@
 
 import moment from 'moment';
 import React, { Component } from 'react';
-import { connect } from 'react-redux';
 import type { Dispatch } from 'redux';
 
 import { Dialog } from '../../base/dialog';
@@ -11,6 +10,7 @@ import {
     PARTICIPANT_ROLE,
     getLocalParticipant
 } from '../../base/participants';
+import { connect } from '../../base/redux';
 
 import { statsUpdate } from '../actions';
 import { recordingController } from '../controller';
@@ -298,9 +298,9 @@ class LocalRecordingInfoDialog extends Component<Props, State> {
     _renderModeratorControls() {
         const { isModerator, isEngaged, t } = this.props;
 
-        if (!isModerator) {
-            return null;
-        }
+        // if (!isModerator) {
+        //     return null;
+        // }
 
         return (
             <div>
@@ -317,12 +317,12 @@ class LocalRecordingInfoDialog extends Component<Props, State> {
                         }
                     </div>
                 </div>
-                <div>
+                {/* <div>
                     <span className = 'localrec-control-info-label'>
                         {`${t('localRecording.participantStats')}:`}
                     </span>
                 </div>
-                { this._renderStats() }
+                { this._renderStats() } */}
             </div>
         );
     }

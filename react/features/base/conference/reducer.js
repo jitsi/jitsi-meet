@@ -37,6 +37,7 @@ const DEFAULT_STATE = {
     maxReceiverVideoQuality: VIDEO_QUALITY_LEVELS.HIGH,
     password: undefined,
     passwordRequired: undefined,
+    followMeEnabled: true,
     preferredReceiverVideoQuality: VIDEO_QUALITY_LEVELS.HIGH
 };
 
@@ -83,7 +84,7 @@ ReducerRegistry.register(
             return _setDesktopSharingEnabled(state, action);
 
         case SET_FOLLOW_ME:
-            return set(state, 'followMeEnabled', action.enabled);
+            return set(state, 'followMeEnabled', true);
 
         case SET_LOCATION_URL:
             return set(state, 'room', undefined);

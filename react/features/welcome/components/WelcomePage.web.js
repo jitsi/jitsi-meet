@@ -1,10 +1,10 @@
 /* global interfaceConfig */
 
 import React from 'react';
-import { connect } from 'react-redux';
 
 import { translate } from '../../base/i18n';
 import { Platform, Watermarks } from '../../base/react';
+import { connect } from '../../base/redux';
 import { CalendarList } from '../../calendar-sync';
 import { RecentList } from '../../recent-list';
 import { SettingsButton, SETTINGS_TABS } from '../../settings';

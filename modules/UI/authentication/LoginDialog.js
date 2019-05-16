@@ -138,7 +138,10 @@ function LoginDialog(successCallback, cancelCallback) {
             // this is a password required error, as login window was already
             // open once, this means username or password is wrong
             messageKey = 'dialog.incorrectPassword';
-        } else {
+        } 
+        else if (error === 'connection.USER_HAS_NORIGHTS') {
+            messageKey = 'connection.USER_HAS_NORIGHTS';        
+        }else {
             messageKey = 'dialog.connectErrorWithMsg';
 
             if (!options) {
@@ -244,13 +247,12 @@ export default {
             buttons,
             (e, submitValue) => {
                 // Do not close the dialog yet.
-                // e.preventDefault();
+                e.preventDefault();
 
-                // // Open login popup.
-                // if (submitValue === 'authNow') {
-                //     onAuthNow();
-                // }
-                APP.store.dispatch(disconnect(true));
+                // Open login popup.
+                if (submitValue === 'authNow') {
+                    onAuthNow();
+                }
             }
         );
     },
@@ -265,8 +267,8 @@ export default {
      * @returns dialog
      */
     showErrorDialog(room,code) {
-        let msgTitle = 'dialog.WaitingForHost';
-        let msgBody = '[html]dialog.WaitForHostMsg';
+        let msgTitle = 'dialog.InvalidRoomTile';
+        let msgBody = '[html]dialog.InvalidRoomBody';
         switch(code){
             case '1':
                 msgTitle = 'dialog.InvalidRoomTile';
@@ -285,11 +287,11 @@ export default {
             { room }
         );
         const buttonTxt = APP.translation.generateTranslationHTML(
-            'dialog.IamHost'
+            'dialog.Ok'
         );
         const buttons = [ {
             title: buttonTxt,
-            value: 'authNow'
+            value: 'ok'
         } ];
 
         return APP.UI.messageHandler.openDialog(
@@ -297,15 +299,10 @@ export default {
             msg,
             true,
             buttons,
-            (e, submitValue) => {
-                // Do not close the dialog yet.
-                // e.preventDefault();
-
-                // // Open login popup.
-                // if (submitValue === 'authNow') {
-                //     onAuthNow();
-                // }
-                APP.store.dispatch(disconnect(true));
+            (e, submitValue) => {                
+                if (submitValue === 'ok') {
+                    APP.store.dispatch(disconnect(true));
+                }
             }
         );
     }

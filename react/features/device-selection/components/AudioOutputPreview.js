@@ -42,19 +42,8 @@ class AudioOutputPreview extends Component<Props> {
 
         this._audioElement = null;
 
+        this._audioElementReady = this._audioElementReady.bind(this);
         this._onClick = this._onClick.bind(this);
-        this._setAudioElement = this._setAudioElement.bind(this);
-    }
-
-    /**
-     * Sets the target output device on the component's audio element after
-     * initial render.
-     *
-     * @inheritdoc
-     * @returns {void}
-     */
-    componentDidMount() {
-        this._setAudioSink();
     }
 
     /**
@@ -81,10 +70,26 @@ class AudioOutputPreview extends Component<Props> {
                     { this.props.t('deviceSelection.testAudio') }
                 </a>
                 <Audio
-                    setRef = { this._setAudioElement }
+                    setRef = { this._audioElementReady }
                     src = { TEST_SOUND_PATH } />
             </div>
         );
+    }
+
+    _audioElementReady: (Object) => void;
+
+    /**
+     * Sets the instance variable for the component's audio element so it can be
+     * accessed directly.
+     *
+     * @param {Object} element - The DOM element for the component's audio.
+     * @private
+     * @returns {void}
+     */
+    _audioElementReady(element: Object) {
+        this._audioElement = element;
+
+        this._setAudioSink();
     }
 
     _onClick: () => void;
@@ -97,21 +102,7 @@ class AudioOutputPreview extends Component<Props> {
      */
     _onClick() {
         this._audioElement
-        && this._audioElement.play();
-    }
-
-    _setAudioElement: (Object) => void;
-
-    /**
-     * Sets the instance variable for the component's audio element so it can be
-     * accessed directly.
-     *
-     * @param {Object} element - The DOM element for the component's audio.
-     * @private
-     * @returns {void}
-     */
-    _setAudioElement(element: Object) {
-        this._audioElement = element;
+            && this._audioElement.play();
     }
 
     /**
@@ -122,7 +113,7 @@ class AudioOutputPreview extends Component<Props> {
      */
     _setAudioSink() {
         this._audioElement
-        && this._audioElement.setSinkId(this.props.deviceId);
+            && this._audioElement.setSinkId(this.props.deviceId);
     }
 }
 

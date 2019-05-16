@@ -50,7 +50,7 @@ function LocalVideo(VideoLayout, emitter, streamEndedCallback) {
     SmallVideo.call(this, VideoLayout);
 
     // Set default display name.
-    this.setDisplayName();
+    this.updateDisplayName();
 
     // Initialize the avatar display with an avatar url selected from the redux
     // state. Redux stores the local user with a hardcoded participant id of
@@ -87,9 +87,11 @@ LocalVideo.prototype.createContainer = function() {
 };
 
 /**
- * Sets the display name for the given video span id.
+ * Triggers re-rendering of the display name using current instance state.
+ *
+ * @returns {void}
  */
-LocalVideo.prototype.setDisplayName = function(displayName) {
+LocalVideo.prototype.updateDisplayName = function() {
     if (!this.container) {
         logger.warn(
                 `Unable to set displayName - ${this.videoSpanId
@@ -98,9 +100,8 @@ LocalVideo.prototype.setDisplayName = function(displayName) {
         return;
     }
 
-    this.updateDisplayName({
+    this._renderDisplayName({
         allowEditing: APP.store.getState()['features/base/jwt'].isGuest,
-        displayName,
         displayNameSuffix: interfaceConfig.DEFAULT_LOCAL_DISPLAY_NAME,
         elementID: 'localDisplayName',
         participantID: this.id

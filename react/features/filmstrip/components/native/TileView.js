@@ -6,13 +6,13 @@ import {
     TouchableWithoutFeedback,
     View
 } from 'react-native';
-import { connect } from 'react-redux';
 import type { Dispatch } from 'redux';
 
 import {
     getNearestReceiverVideoQualityLevel,
     setMaxReceiverVideoQuality
 } from '../../../base/conference';
+import { connect } from '../../../base/redux';
 import {
     DimensionsDetector,
     isNarrowAspectRatio,
@@ -302,6 +302,7 @@ class TileView extends Component<Props, State> {
                     disableTint = { true }
                     key = { participant.id }
                     participant = { participant }
+                    renderDisplayName = { true }
                     styleOverrides = { styleOverrides } />));
     }
 
@@ -335,5 +336,4 @@ function _mapStateToProps(state) {
     };
 }
 
-// $FlowExpectedError
 export default connect(_mapStateToProps)(makeAspectRatioAware(TileView));

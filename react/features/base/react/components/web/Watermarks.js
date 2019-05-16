@@ -1,9 +1,9 @@
 /* @flow */
 
 import React, { Component } from 'react';
-import { connect } from 'react-redux';
 
 import { translate } from '../../../i18n';
+import { connect } from '../../../redux';
 
 declare var interfaceConfig: Object;
 
@@ -242,5 +242,4 @@ function _mapStateToProps(state) {
     };
 }
 
-// $FlowExpectedError
 export default connect(_mapStateToProps)(translate(Watermarks));

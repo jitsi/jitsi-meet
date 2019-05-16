@@ -1,9 +1,9 @@
 // @flow
 
 import React from 'react';
-import { connect } from 'react-redux';
 
 import { Container, Text } from '../../base/react';
+import { connect } from '../../base/redux';
 
 import {
     _abstractMapStateToProps,
@@ -65,5 +65,4 @@ class Captions
     }
 }
 
-// $FlowExpectedError
 export default connect(_abstractMapStateToProps)(Captions);
