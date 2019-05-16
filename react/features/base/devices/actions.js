@@ -22,6 +22,28 @@ import {
 const logger = require('jitsi-meet-logger').getLogger(__filename);
 
 /**
+ * Maps the WebRTC string for device type to the keys used to store configure,
+ * within redux, which devices should be used by default.
+ */
+const DEVICE_TYPE_TO_SETTINGS_KEYS = {
+    audioInput: {
+        currentDeviceId: 'micDeviceId',
+        userSelectedDeviceId: 'userSelectedMicDeviceId',
+        userSelectedDeviceLabel: 'userSelectedMicDeviceLabel'
+    },
+    audioOutput: {
+        currentDeviceId: 'audioOutputDeviceId',
+        userSelectedDeviceId: 'userSelectedAudioOutputDeviceId',
+        userSelectedDeviceLabel: 'userSelectedAudioOutputDeviceLabel'
+    },
+    videoInput: {
+        currentDeviceId: 'audioOutputDeviceId',
+        userSelectedDeviceId: 'userSelectedCameraDeviceId',
+        userSelectedDeviceLabel: 'userSelectedCameraDeviceLabel'
+    }
+};
+
+/**
  * Adds a pending device request.
  *
  * @param {Object} request - The request to be added.
@@ -70,19 +92,19 @@ export function configureInitialDevices() {
 
                     return;
                 }
+
                 const newSettings = {};
-                const devicesKeysToSettingsKeys = {
-                    audioInput: 'micDeviceId',
-                    audioOutput: 'audioOutputDeviceId',
-                    videoInput: 'cameraDeviceId'
-                };
 
                 Object.keys(deviceLabels).forEach(key => {
                     const label = deviceLabels[key];
                     const deviceId = getDeviceIdByLabel(state, label, key);
 
                     if (deviceId) {
-                        newSettings[devicesKeysToSettingsKeys[key]] = deviceId;
+                        const settingsTranslationMap = DEVICE_TYPE_TO_SETTINGS_KEYS[key];
+
+                        newSettings[settingsTranslationMap.currentDeviceId] = deviceId;
+                        newSettings[settingsTranslationMap.userSelectedDeviceId] = deviceId;
+                        newSettings[settingsTranslationMap.userSelectedDeviceLabel] = label;
                     }
                 });
 
