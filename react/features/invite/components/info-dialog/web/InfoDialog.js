@@ -8,7 +8,10 @@ import { getInviteURL } from '../../../../base/connection';
 import { Dialog } from '../../../../base/dialog';
 import { translate } from '../../../../base/i18n';
 import { connect } from '../../../../base/redux';
-import { isLocalParticipantModerator } from '../../../../base/participants';
+import {
+    isLocalParticipantModerator,
+    getLocalParticipant
+} from '../../../../base/participants';
 
 import { _getDefaultPhoneNumber, getDialInfoPageURL } from '../../../functions';
 import DialInNumber from './DialInNumber';
@@ -41,6 +44,11 @@ type Props = {
      * The current url of the conference to be copied onto the clipboard.
      */
     _inviteURL: string,
+
+    /**
+     * The redux representation of the local participant.
+     */
+    _localParticipant: Object,
 
     /**
      * The current location url of the conference.
@@ -293,10 +301,20 @@ class InfoDialog extends Component<Props, State> {
      * @returns {string}
      */
     _getTextToCopy() {
-        const { liveStreamViewURL, t } = this.props;
+        const { _localParticipant, liveStreamViewURL, t } = this.props;
+        const shouldDisplayDialIn = this._shouldDisplayDialIn();
+        const moreInfo
+            = shouldDisplayDialIn
+                ? t('info.inviteURLMoreInfo', { conferenceID: this.props.dialIn.conferenceID })
+                : '';
 
-        let invite = t('info.inviteURL', {
-            url: this.props._inviteURL
+        let invite = _localParticipant && _localParticipant.name
+            ? t('info.inviteURLFirstPartPersonal', { name: _localParticipant.name })
+            : t('info.inviteURLFirstPartGeneral');
+
+        invite += t('info.inviteURLSecondPart', {
+            url: this.props._inviteURL,
+            moreInfo
         });
 
         if (liveStreamViewURL) {
@@ -307,7 +325,7 @@ class InfoDialog extends Component<Props, State> {
             invite = `${invite}\n${liveStream}`;
         }
 
-        if (this._shouldDisplayDialIn()) {
+        if (shouldDisplayDialIn) {
             const dial = t('info.invitePhone', {
                 number: this.state.phoneNumber,
                 conferenceID: this.props.dialIn.conferenceID
@@ -570,10 +588,11 @@ function _mapStateToProps(state) {
     } = state['features/base/conference'];
 
     return {
-        _canEditPassword: isLocalParticipantModerator(state),
+        _canEditPassword: isLocalParticipantModerator(state, state['features/base/config'].lockRoomGuestEnabled),
         _conference: conference,
         _conferenceName: room,
         _inviteURL: getInviteURL(state),
+        _localParticipant: getLocalParticipant(state),
         _locationURL: state['features/base/connection'].locationURL,
         _locked: locked,
         _password: password

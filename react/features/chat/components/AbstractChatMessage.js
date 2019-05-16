@@ -2,7 +2,13 @@
 
 import { PureComponent } from 'react';
 
+import { getLocalizedDateFormatter } from '../../base/i18n';
 import { getAvatarURLByParticipantId } from '../../base/participants';
+
+/**
+ * Formatter string to display the message timestamp.
+ */
+const TIMESTAMP_FORMAT = 'H:mm';
 
 /**
  * The type of the React {@code Component} props of {@code AbstractChatMessage}.
@@ -20,6 +26,24 @@ export type Props = {
     message: Object,
 
     /**
+     * Whether or not the avatar image of the participant which sent the message
+     * should be displayed.
+     */
+    showAvatar: boolean,
+
+    /**
+     * Whether or not the name of the participant which sent the message should
+     * be displayed.
+     */
+    showDisplayName: boolean,
+
+    /**
+     * Whether or not the time at which the message was sent should be
+     * displayed.
+     */
+    showTimestamp: boolean,
+
+    /**
      * Invoked to receive translated strings.
      */
     t: Function
@@ -28,7 +52,17 @@ export type Props = {
 /**
  * Abstract component to display a chat message.
  */
-export default class AbstractChatMessage<P: Props> extends PureComponent<P> {}
+export default class AbstractChatMessage<P: Props> extends PureComponent<P> {
+    /**
+     * Returns the timestamp to display for the message.
+     *
+     * @returns {string}
+     */
+    _getFormattedTimestamp() {
+        return getLocalizedDateFormatter(new Date(this.props.message.timestamp))
+            .format(TIMESTAMP_FORMAT);
+    }
+}
 
 /**
  * Maps part of the Redux state to the props of this component.

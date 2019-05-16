@@ -1,6 +1,9 @@
 #sideToolbarContainer {
     background-color: $newToolbarBackgroundColor;
+    box-sizing: border-box;
+    color: #FFF;
     display: flex;
+    flex-direction: column;
     /**
      * Make the sidebar flush with the top of the toolbar. Take the size of
      * the toolbar and subtract from 100%.
@@ -21,20 +24,6 @@
     &.slideInExt {
         left: 0;
     }
-
-    .sideToolbarContainer__inner {
-        box-sizing: border-box;
-        color: #FFF;
-        display: flex;
-        flex-direction: column;
-        height: 100%;
-        width: $sidebarWidth;
-    }
-}
-
-#chat_container * {
-    -webkit-user-select: text;
-    user-select: text;
 }
 
 #chatconversation {
@@ -42,9 +31,8 @@
     flex: 1;
     font-size: 10pt;
     line-height: 20px;
-    margin-top: $desktopAppDragBarHeight + 5px;
     overflow: auto;
-    padding: 5px;
+    padding: 16px;
     text-align: left;
     width: $sidebarWidth;
     word-wrap: break-word;
@@ -92,26 +80,41 @@
     }
 }
 
-.chat-close {
-    background: gray;
-    border: 3px solid rgba(255, 255, 255, 0.1);
-    border-radius: 100%;
-    color: white;
-    cursor:pointer;
-    height: 10px;
-    line-height: 10px;
-    padding: 4px;
-    position: absolute;
-    right: 5px;
-    text-align: center;
-    top: $desktopAppDragBarHeight;
-    width: 10px;
+.chat-header {
+    background-color: $chatHeaderBackgroundColor;
+    height: 70px;
+    position: relative;
+    width: 100%;
     z-index: 1;
+
+    .chat-close {
+        align-items: center;
+        bottom: 8px;
+        color: white;
+        cursor: pointer;
+        display: flex;
+        font-size: 18px;
+        height: 40px;
+        justify-content: center;
+        line-height: 15px;
+        padding: 4px;
+        position: absolute;
+        right: 5px;
+        width: 40px;
+
+        &:hover {
+            color: rgba(255, 255, 255, 0.8);
+        }
+    }
 }
 
 #chat-input {
-    background-color: $newToolbarBackgroundColor;
+    border-top: 1px solid $chatInputSeparatorColor;
     display: flex;
+
+    * {
+        background-color: transparent;
+    }
 }
 
 .remoteuser {
@@ -123,16 +126,13 @@
 }
 
 #usermsg {
-    background-color: $newToolbarBackgroundColor;
     border: 0px none;
     border-radius:0;
     box-shadow: none;
     color: white;
-    font-size: 10pt;
+    font-size: 15px;
     line-height: 30px;
     padding: 5px;
-    max-height:150px;
-    min-height:35px;
     overflow-y: auto;
     resize: none;
     width: 100%;
@@ -145,64 +145,47 @@
 }
 
 #nickname {
-    position: absolute;
     text-align: center;
     color: #9d9d9d;
     font-size: 18px;
-    top: 100px;
+    margin-top: 30px;
     left: 5px;
     right: 5px;
-    width: 95%;
 }
 
-#chat_container .display-name {
-    float: left;
-    padding-left: 5px;
-    font-weight: bold;
-    white-space: nowrap;
-    text-overflow: ellipsis;
-    width: 95%;
-    overflow: hidden;
-}
+.sideToolbarContainer {
+    * {
+        -webkit-user-select: text;
+        user-select: text;
+    }
 
-#chat_container .timestamp {
-    float: right;
-    padding-right: 5px;
-    font-size: 11px;
-}
-
-.usermessage {
-    padding-top: 20px;
-    padding-left: 5px;
-}
-
-.chatArrow {
-    border-color:
-        transparent $newToolbarBackgroundColor transparent transparent;
-    border-style: solid;
-    border-width: 0 10px 10px 0;
-    left: -10px;
-    position: absolute;
+    .display-name {
+        font-size: 13px;
+        font-weight: bold;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        overflow: hidden;
+    }
 }
 
 .chatmessage {
-    background-color: $newToolbarBackgroundColor;
-    width: 93%;
-    margin-left: 9px;
-    margin-right: auto;
-    border-radius: 5px;
-    border-top-left-radius: 0px;
-    margin-top: 3px;
+    background-color: $chatRemoteMessageBackgroundColor;
+    border-radius: 0px 6px 6px 6px;
+    box-sizing: border-box;
     color: white;
+    margin-top: 3px;
+    max-width: 100%;
     padding-bottom: 3px;
     position: relative;
 
-    &.localuser .display-name {
-        color: #4C9AFF
+    &.localuser {
+        background-color: $chatLocalMessageBackgroundColor;
+        border-radius: 6px 0px 6px 6px;
     }
 
     &.error {
-        .chatArrow,
+        border-radius: 0px;
+
         .timestamp,
         .display-name {
             display: none;
@@ -231,7 +214,6 @@
 }
 
 #smileysarea {
-    background-color: $newToolbarBackgroundColor;
     display: flex;
     max-height: 150px;
     min-height: 35px;
@@ -246,14 +228,22 @@
 .smileys-panel {
     bottom: 100%;
     box-sizing: border-box;
-    height: 0;
+    height: auto;
+    max-height: 0;
     overflow: hidden;
     position: absolute;
-    transition: height 0.3s;
     width: $sidebarWidth;
 
+    /**
+     * CSS transitions do not apply for auto dimensions. So to produce the css
+     * accordion effect for showing and hiding the smiley-panel, while allowing
+     * for variable panel, height, use a very large max-height and animate off
+     * of that.
+     */
+    transition: max-height 0.3s;
+
     &.show-smileys {
-        height: 146px;
+        max-height: 500%;
     }
 
     #smileysContainer {
@@ -286,4 +276,50 @@
 
 #usermsg::-webkit-scrollbar-track-piece {
     background: #3a3a3a;
+}
+
+.chat-message-group {
+    display: flex;
+    flex-direction: column;
+
+    &.local {
+        align-items: flex-end;
+
+        .chatmessage {
+            background-color: $chatLocalMessageBackgroundColor;
+            border-radius: 6px 0px 6px 6px;
+        }
+
+        .display-name {
+            display: none;
+        }
+
+        .timestamp {
+            text-align: right;
+        }
+    }
+
+    &.error {
+        .chatmessage {
+            border-radius: 0px;
+            color: red;
+        }
+
+        .display-name {
+            display: none;
+        }
+    }
+
+    .chatmessage-wrapper {
+        max-width: 100%;
+    }
+
+    .chatmessage {
+        background-color: $chatRemoteMessageBackgroundColor;
+        border-radius: 0px 6px 6px 6px;
+        display: inline-block;
+        margin-top: 3px;
+        color: white;
+        padding: 8px;
+    }
 }

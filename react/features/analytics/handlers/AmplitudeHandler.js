@@ -1,8 +1,6 @@
 import AbstractHandler from './AbstractHandler';
 import { amplitude } from './amplitude';
 
-const logger = require('jitsi-meet-logger').getLogger(__filename);
-
 /**
  * Analytics handler for Amplitude.
  */
@@ -20,10 +18,7 @@ export default class AmplitudeHandler extends AbstractHandler {
         const { amplitudeAPPKey, host } = options;
 
         if (!amplitudeAPPKey) {
-            logger.warn(
-                'Failed to initialize Amplitude handler, no APP key');
-
-            return;
+            throw new Error('Failed to initialize Amplitude handler, no APP key');
         }
 
         this._enabled = true;

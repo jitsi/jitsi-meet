@@ -266,6 +266,9 @@ var config = {
     // Whether or not some features are checked based on token.
     // enableFeaturesBasedOnToken: false,
 
+    // Enable lock room for all moderators, even when userRolesBasedOnToken is enabled and participants are guests.
+    // lockRoomGuestEnabled: false,
+
     // Message to show the users. Example: 'The service will be down for
     // maintenance at 01:00 AM GMT,
     // noticeMessage: '',

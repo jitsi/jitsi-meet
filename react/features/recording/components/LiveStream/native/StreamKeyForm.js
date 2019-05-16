@@ -66,7 +66,10 @@ class StreamKeyForm extends AbstractStreamKeyForm<Props> {
                     onChangeText = { this._onInputChange }
                     placeholder = { t('liveStreaming.enterStreamKey') }
                     placeholderTextColor = { PLACEHOLDER_COLOR }
-                    style = { styles.streamKeyInput }
+                    style = { [
+                        _dialogStyles.text,
+                        styles.streamKeyInput
+                    ] }
                     value = { this.props.value } />
                 <View style = { styles.formFooter }>
                     {

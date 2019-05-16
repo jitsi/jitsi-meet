@@ -2,6 +2,8 @@
 
 import React, { Component } from 'react';
 
+import { getFixedPlatformStyle } from '../../styles';
+
 /**
  * {@code AbstractContainer} component's property types.
  */
@@ -80,6 +82,7 @@ export default class AbstractContainer<P: Props> extends Component<P> {
     _render(type, props?: P) {
         const {
             children,
+            style,
 
             /* eslint-disable no-unused-vars */
 
@@ -94,7 +97,12 @@ export default class AbstractContainer<P: Props> extends Component<P> {
             ...filteredProps
         } = props || this.props;
 
+        const _style = getFixedPlatformStyle(style);
+
         // $FlowFixMe
-        return React.createElement(type, filteredProps, children);
+        return React.createElement(type, {
+            style: _style,
+            ...filteredProps
+        }, children);
     }
 }

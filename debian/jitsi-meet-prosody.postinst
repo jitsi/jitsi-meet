@@ -126,12 +126,26 @@ case "$1" in
         fi
 
         PR11_INSTALL_CHECK="$(dpkg-query -f '${Status}' -W 'prosody-0.11' 2>/dev/null | awk '{print $3}' || true)"
+        PR10_INSTALL_CHECK="$(dpkg-query -f '${Status}' -W 'prosody-0.10' 2>/dev/null | awk '{print $3}' || true)"
         PR_VER_INSTALLED=$(dpkg-query -f='${Version}\n' --show prosody  2>/dev/null || true)
         if [ "$PR11_INSTALL_CHECK" = "installed" ] \
             || [ "$PR11_INSTALL_CHECK" = "unpacked" ] \
             || dpkg --compare-versions "$PR_VER_INSTALLED" gt "0.11" ; then
             if [ -f $PROSODY_HOST_CONFIG ]; then
                 sed -i 's/storage = \"null\"/storage = \"memory\"/g' $PROSODY_HOST_CONFIG
+
+                # trigger a restart
+                PROSODY_CONFIG_PRESENT="false"
+            fi
+        fi
+        if [ "$PR10_INSTALL_CHECK" = "installed" ] \
+            || [ "$PR10_INSTALL_CHECK" = "unpacked" ] \
+            || dpkg --compare-versions "$PR_VER_INSTALLED" gt "0.10" ; then
+
+            # if the version is 0.10.X (>0.10 and <0.11)
+            if [ -f $PROSODY_HOST_CONFIG ] \
+                && dpkg --compare-versions "$PR_VER_INSTALLED" lt "0.11" ; then
+                sed -i 's/storage = \"null\"/storage = \"none\"/g' $PROSODY_HOST_CONFIG
 
                 # trigger a restart
                 PROSODY_CONFIG_PRESENT="false"

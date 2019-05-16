@@ -50,3 +50,15 @@ export const ADD_PENDING_DEVICE_REQUEST = 'ADD_PENDING_DEVICE_REQUEST';
  * }
  */
 export const REMOVE_PENDING_DEVICE_REQUESTS = 'REMOVE_PENDING_DEVICE_REQUESTS';
+
+/**
+ * The type of Redux action which will check passed old and passed new devices
+ * and if needed will show notifications asking the user whether to use those.
+ *
+ * {
+ *     type: CHECK_AND_NOTIFY_FOR_NEW_DEVICE
+ *     newDevices: Array<MediaDeviceInfo>
+ *     oldDevices: Array<MediaDeviceInfo>
+ * }
+ */
+export const CHECK_AND_NOTIFY_FOR_NEW_DEVICE = 'CHECK_AND_NOTIFY_FOR_NEW_DEVICE';

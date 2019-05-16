@@ -1,10 +1,10 @@
 // @flow
 
-import React, { Component, type Node } from 'react';
-import { TouchableWithoutFeedback, View } from 'react-native';
+import React, { PureComponent, type Node } from 'react';
+import { SafeAreaView, View } from 'react-native';
 
 import { ColorSchemeRegistry } from '../../../color-scheme';
-import { Modal } from '../../../react';
+import { SlidingView } from '../../../react';
 import { connect } from '../../../redux';
 import { StyleType } from '../../../styles';
 
@@ -33,19 +33,22 @@ type Props = {
 };
 
 /**
- * A component emulating Android's BottomSheet. For all intents and purposes,
- * this component has been designed to work and behave as a {@code Dialog}.
+ * A component emulating Android's BottomSheet.
  */
-class BottomSheet extends Component<Props> {
+class BottomSheet extends PureComponent<Props> {
     /**
-     * Initializes a new {@code BottomSheet} instance.
+     * Assembles a style for the BottomSheet container.
      *
-     * @inheritdoc
+     * @private
+     * @returns {StyleType}
      */
-    constructor(props: Props) {
-        super(props);
+    _getContainerStyle() {
+        const { _styles } = this.props;
 
-        this._onCancel = this._onCancel.bind(this);
+        return {
+            ...styles.container,
+            backgroundColor: _styles.sheet.backgroundColor
+        };
     }
 
     /**
@@ -57,39 +60,19 @@ class BottomSheet extends Component<Props> {
     render() {
         const { _styles } = this.props;
 
-        return [
-            <View
-                key = 'overlay'
-                style = { styles.overlay } />,
-            <Modal
-                key = 'modal'
-                onRequestClose = { this._onCancel }
-                visible = { true }>
-                <View style = { styles.container }>
-                    <TouchableWithoutFeedback
-                        onPress = { this._onCancel } >
-                        <View style = { styles.backdrop } />
-                    </TouchableWithoutFeedback>
+        return (
+            <SlidingView
+                onHide = { this.props.onCancel }
+                position = 'bottom'
+                show = { true }>
+                <SafeAreaView
+                    style = { this._getContainerStyle() }>
                     <View style = { _styles.sheet }>
                         { this.props.children }
                     </View>
-                </View>
-            </Modal>
-        ];
-    }
-
-    _onCancel: () => void;
-
-    /**
-     * Cancels the dialog by calling the onCancel prop callback.
-     *
-     * @private
-     * @returns {void}
-     */
-    _onCancel() {
-        const { onCancel } = this.props;
-
-        onCancel && onCancel();
+                </SafeAreaView>
+            </SlidingView>
+        );
     }
 }
 

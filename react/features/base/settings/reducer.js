@@ -30,7 +30,13 @@ const DEFAULT_STATE = {
     serverURL: undefined,
     startAudioOnly: false,
     startWithAudioMuted: false,
-    startWithVideoMuted: false
+    startWithVideoMuted: false,
+    userSelectedAudioOutputDeviceId: undefined,
+    userSelectedCameraDeviceId: undefined,
+    userSelectedMicDeviceId: undefined,
+    userSelectedAudioOutputDeviceLabel: undefined,
+    userSelectedCameraDeviceLabel: undefined,
+    userSelectedMicDeviceLabel: undefined
 };
 
 const STORE_NAME = 'features/base/settings';
@@ -38,7 +44,20 @@ const STORE_NAME = 'features/base/settings';
 /**
  * Sets up the persistence of the feature {@code base/settings}.
  */
-PersistenceRegistry.register(STORE_NAME);
+const filterSubtree = {};
+
+// start with the default state
+Object.keys(DEFAULT_STATE).forEach(key => {
+    filterSubtree[key] = true;
+});
+
+// we want to filter these props, to not be stored as they represent
+// what is currently opened/used as devices
+filterSubtree.audioOutputDeviceId = false;
+filterSubtree.cameraDeviceId = false;
+filterSubtree.micDeviceId = false;
+
+PersistenceRegistry.register(STORE_NAME, filterSubtree);
 
 ReducerRegistry.register(STORE_NAME, (state = DEFAULT_STATE, action) => {
     switch (action.type) {

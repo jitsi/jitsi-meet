@@ -297,9 +297,10 @@ export function invitePeopleAndChatRooms( // eslint-disable-line max-params
  * @returns {boolean} Indication of whether adding people is currently enabled.
  */
 export function isAddPeopleEnabled(state: Object): boolean {
+    const { peopleSearchUrl } = state['features/base/config'];
     const { isGuest } = state['features/base/jwt'];
 
-    return !isGuest;
+    return !isGuest && Boolean(peopleSearchUrl);
 }
 
 /**
@@ -508,6 +509,22 @@ export function getDialInfoPageURL(
 }
 
 /**
+ * Generates the URL for the static dial in info page.
+ *
+ * @param {string} uri - The conference URI string.
+ * @returns {string}
+ */
+export function getDialInfoPageURLForURIString(
+        uri: ?string) {
+    if (!uri) {
+        return undefined;
+    }
+    const { protocol, host, contextRoot, room } = parseURIString(uri);
+
+    return `${protocol}//${host}${contextRoot}static/dialInInfo.html?room=${room}`;
+}
+
+/**
  * Sets the internal state of which dial-in number to display.
  *
  * @param {Array<string>|Object} dialInNumbers - The array or object of
@@ -517,18 +534,12 @@ export function getDialInfoPageURL(
  */
 export function _getDefaultPhoneNumber(
         dialInNumbers: Object): ?string {
-    const defValueForDefaultCountry = 'US';
 
     if (Array.isArray(dialInNumbers)) {
         // new syntax follows
         // find the default country inside dialInNumbers, US one
         // or return the first one
-        let defaultNumber = dialInNumbers.find(number => number.default);
-
-        if (!defaultNumber) {
-            defaultNumber = dialInNumbers.find(({ countryCode }) =>
-                countryCode === defValueForDefaultCountry);
-        }
+        const defaultNumber = dialInNumbers.find(number => number.default);
 
         if (defaultNumber) {
             return defaultNumber.formattedNumber;
@@ -538,18 +549,10 @@ export function _getDefaultPhoneNumber(
             ? dialInNumbers[0].formattedNumber : null;
     }
 
-    const {
-        defaultCountry = defValueForDefaultCountry,
-        numbers } = dialInNumbers;
+    const { numbers } = dialInNumbers;
 
     if (numbers && Object.keys(numbers).length > 0) {
         // deprecated and will be removed
-        const defaultNumbers = numbers[defaultCountry];
-
-        if (defaultNumbers) {
-            return defaultNumbers[0];
-        }
-
         const firstRegion = Object.keys(numbers)[0];
 
         return firstRegion && numbers[firstRegion][0];

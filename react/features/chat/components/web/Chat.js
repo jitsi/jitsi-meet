@@ -12,8 +12,8 @@ import AbstractChat, {
     type Props
 } from '../AbstractChat';
 import ChatInput from './ChatInput';
-import ChatMessage from './ChatMessage';
 import DisplayNameForm from './DisplayNameForm';
+import MessageContainer from './MessageContainer';
 
 /**
  * React Component for holding the chat feature in a side panel that slides in
@@ -28,10 +28,10 @@ class Chat extends AbstractChat<Props> {
     _isExited: boolean;
 
     /**
-     * Reference to the HTML element at the end of the list of displayed chat
-     * messages. Used for scrolling to the end of the chat messages.
+     * Reference to the React Component for displaying chat messages. Used for
+     * scrolling to the end of the chat messages.
      */
-    _messagesListEnd: ?HTMLElement;
+    _messageContainerRef: Object;
 
     /**
      * Initializes a new {@code Chat} instance.
@@ -43,32 +43,34 @@ class Chat extends AbstractChat<Props> {
         super(props);
 
         this._isExited = true;
-        this._messagesListEnd = null;
+        this._messageContainerRef = React.createRef();
 
         // Bind event handlers so they are only bound once for every instance.
-        this._renderMessage = this._renderMessage.bind(this);
         this._renderPanelContent = this._renderPanelContent.bind(this);
-        this._setMessageListEndRef = this._setMessageListEndRef.bind(this);
+
+        // Bind event handlers so they are only bound once for every instance.
+        this._onChatInputResize = this._onChatInputResize.bind(this);
     }
 
     /**
-     * Implements React's {@link Component#componentDidMount()}.
+     * Implements {@code Component#componentDidMount}.
      *
      * @inheritdoc
      */
     componentDidMount() {
-        this._scrollMessagesToBottom();
+        this._scrollMessageContainerToBottom(true);
     }
 
     /**
-     * Updates chat input focus.
+     * Implements {@code Component#componentDidUpdate}.
      *
      * @inheritdoc
      */
     componentDidUpdate(prevProps) {
         if (this.props._messages !== prevProps._messages) {
-            this._scrollMessagesToBottom();
-
+            this._scrollMessageContainerToBottom(true);
+        } else if (this.props._isOpen && !prevProps._isOpen) {
+            this._scrollMessageContainerToBottom(false);
         }
     }
 
@@ -88,6 +90,19 @@ class Chat extends AbstractChat<Props> {
         );
     }
 
+    _onChatInputResize: () => void;
+
+    /**
+     * Callback invoked when {@code ChatInput} changes height. Preserves
+     * displaying the latest message if it is scrolled to.
+     *
+     * @private
+     * @returns {void}
+     */
+    _onChatInputResize() {
+        this._messageContainerRef.current.maybeUpdateBottomScroll();
+    }
+
     /**
      * Returns a React Element for showing chat messages and a form to send new
      * chat messages.
@@ -96,38 +111,30 @@ class Chat extends AbstractChat<Props> {
      * @returns {ReactElement}
      */
     _renderChat() {
-        const messages = this.props._messages.map(this._renderMessage);
-
-        messages.push(<div
-            key = 'end-marker'
-            ref = { this._setMessageListEndRef } />);
-
         return (
-            <div
-                className = 'sideToolbarContainer__inner'
-                id = 'chat_container'>
-                <div id = 'chatconversation'>
-                    { messages }
-                </div>
-                <ChatInput />
-            </div>
+            <>
+                <MessageContainer
+                    messages = { this.props._messages }
+                    ref = { this._messageContainerRef } />
+                <ChatInput onResize = { this._onChatInputResize } />
+            </>
         );
     }
 
-    _renderMessage: (Object) => void;
-
     /**
-     * Called by {@code _onSubmitMessage} to create the chat div.
+     * Instantiates a React Element to display at the top of {@code Chat} to
+     * close {@code Chat}.
      *
-     * @param {string} message - The chat message to display.
-     * @param {string} id - The chat message ID to use as a unique key.
-     * @returns {Array<ReactElement>}
+     * @private
+     * @returns {ReactElement}
      */
-    _renderMessage(message: Object, id: string) {
+    _renderChatHeader() {
         return (
-            <ChatMessage
-                key = { id }
-                message = { message } />
+            <div className = 'chat-header'>
+                <div
+                    className = 'chat-close'
+                    onClick = { this.props._onToggleChat }>X</div>
+            </div>
         );
     }
 
@@ -145,17 +152,15 @@ class Chat extends AbstractChat<Props> {
     _renderPanelContent(state) {
         this._isExited = state === 'exited';
 
-        const { _isOpen, _onToggleChat, _showNamePrompt } = this.props;
+        const { _isOpen, _showNamePrompt } = this.props;
         const ComponentToRender = !_isOpen && state === 'exited'
             ? null
             : (
-                <div>
-                    <div
-                        className = 'chat-close'
-                        onClick = { _onToggleChat }>X</div>
+                <>
+                    { this._renderChatHeader() }
                     { _showNamePrompt
                         ? <DisplayNameForm /> : this._renderChat() }
-                </div>
+                </>
             );
         let className = '';
 
@@ -167,7 +172,7 @@ class Chat extends AbstractChat<Props> {
 
         return (
             <div
-                className = { className }
+                className = { `sideToolbarContainer ${className}` }
                 id = 'sideToolbarContainer'>
                 { ComponentToRender }
             </div>
@@ -175,30 +180,17 @@ class Chat extends AbstractChat<Props> {
     }
 
     /**
-     * Automatically scrolls the displayed chat messages down to the latest.
+     * Scrolls the chat messages so the latest message is visible.
      *
+     * @param {boolean} withAnimation - Whether or not to show a scrolling
+     * animation.
      * @private
      * @returns {void}
      */
-    _scrollMessagesToBottom() {
-        if (this._messagesListEnd) {
-            this._messagesListEnd.scrollIntoView({
-                behavior: this._isExited ? 'auto' : 'smooth'
-            });
+    _scrollMessageContainerToBottom(withAnimation) {
+        if (this._messageContainerRef.current) {
+            this._messageContainerRef.current.scrollToBottom(withAnimation);
         }
-    }
-
-    _setMessageListEndRef: (?HTMLElement) => void;
-
-    /**
-     * Sets a reference to the HTML element at the bottom of the message list.
-     *
-     * @param {Object} messageListEnd - The HTML element.
-     * @private
-     * @returns {void}
-     */
-    _setMessageListEndRef(messageListEnd: ?HTMLElement) {
-        this._messagesListEnd = messageListEnd;
     }
 }
 

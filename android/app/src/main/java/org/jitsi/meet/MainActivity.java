@@ -29,10 +29,7 @@ import org.jitsi.meet.sdk.JitsiMeet;
 import org.jitsi.meet.sdk.JitsiMeetActivity;
 import org.jitsi.meet.sdk.JitsiMeetConferenceOptions;
 
-import com.crashlytics.android.Crashlytics;
-import com.google.firebase.dynamiclinks.FirebaseDynamicLinks;
-import io.fabric.sdk.android.Fabric;
-
+import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Map;
@@ -57,22 +54,16 @@ public class MainActivity extends JitsiMeetActivity {
 
     @Override
     protected boolean extraInitialize() {
+        Log.d(this.getClass().getSimpleName(), "LIBRE_BUILD="+BuildConfig.LIBRE_BUILD);
+
         // Setup Crashlytics and Firebase Dynamic Links
-        if (BuildConfig.GOOGLE_SERVICES_ENABLED) {
-            Fabric.with(this, new Crashlytics());
-
-            FirebaseDynamicLinks.getInstance().getDynamicLink(getIntent())
-                .addOnSuccessListener(this, pendingDynamicLinkData -> {
-                    Uri dynamicLink = null;
-
-                    if (pendingDynamicLinkData != null) {
-                        dynamicLink = pendingDynamicLinkData.getLink();
-                    }
-
-                    if (dynamicLink != null) {
-                        join(dynamicLink.toString());
-                    }
-                });
+        // Here we are using reflection since it may have been disabled at compile time.
+        try {
+            Class<?> cls = Class.forName("org.jitsi.meet.GoogleServicesHelper");
+            Method m = cls.getMethod("initialize", JitsiMeetActivity.class);
+            m.invoke(null, this);
+        } catch (Exception e) {
+            // Ignore any error, the module is not compiled when LIBRE_BUILD is enabled.
         }
 
         // In Debug builds React needs permission to write over other apps in

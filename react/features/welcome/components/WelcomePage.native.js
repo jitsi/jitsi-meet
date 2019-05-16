@@ -20,6 +20,7 @@ import {
     createDesiredLocalTracks,
     destroyLocalTracks
 } from '../../base/tracks';
+import { DialInSummary } from '../../invite';
 import { SettingsView } from '../../settings';
 
 import {
@@ -135,6 +136,7 @@ class WelcomePage extends AbstractWelcomePage {
                     </SafeAreaView>
                     <WelcomePageLists disabled = { this.state._fieldFocused } />
                     <SettingsView />
+                    <DialInSummary />
                 </View>
                 <WelcomePageSideBar />
             </LocalVideoTrackUnderlay>

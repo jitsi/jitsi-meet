@@ -23,24 +23,12 @@ class ChatMessage extends AbstractChatMessage<Props> {
      */
     render() {
         const { message } = this.props;
-        let messageTypeClassname = '';
-        let messageToDisplay = message.message;
-
-        switch (message.messageType) {
-        case 'local':
-            messageTypeClassname = 'localuser';
-
-            break;
-        case 'error':
-            messageTypeClassname = 'error';
-            messageToDisplay = this.props.t('chat.error', {
+        const messageToDisplay = message.messageType === 'error'
+            ? this.props.t('chat.error', {
                 error: message.error,
-                originalText: messageToDisplay
-            });
-            break;
-        default:
-            messageTypeClassname = 'remoteuser';
-        }
+                originalText: message.message
+            })
+            : message.message;
 
         // replace links and smileys
         // Strophe already escapes special symbols on sending,
@@ -68,47 +56,44 @@ class ChatMessage extends AbstractChatMessage<Props> {
         });
 
         return (
-            <div className = { `chatmessage ${messageTypeClassname}` }>
-                <div className = 'chatArrow' />
-                <div className = 'display-name'>
-                    { message.displayName }
+            <div className = 'chatmessage-wrapper'>
+                <div className = 'chatmessage'>
+                    { this.props.showDisplayName && this._renderDisplayName() }
+                    <div className = 'usermessage'>
+                        { processedMessage }
+                    </div>
                 </div>
-                <div className = { 'timestamp' }>
-                    { ChatMessage.formatTimestamp(message.timestamp) }
-                </div>
-                <div className = 'usermessage'>
-                    { processedMessage }
-                </div>
+                { this.props.showTimestamp && this._renderTimestamp() }
+            </div>
+        );
+    }
+
+    _getFormattedTimestamp: () => string;
+
+    /**
+     * Renders the display name of the sender.
+     *
+     * @returns {React$Element<*>}
+     */
+    _renderDisplayName() {
+        return (
+            <div className = 'display-name'>
+                { this.props.message.displayName }
             </div>
         );
     }
 
     /**
-     * Returns a timestamp formatted for display.
+     * Renders the time at which the message was sent.
      *
-     * @param {number} timestamp - The timestamp for the chat message.
-     * @private
-     * @returns {string}
+     * @returns {React$Element<*>}
      */
-    static formatTimestamp(timestamp) {
-        const now = new Date(timestamp);
-        let hour = now.getHours();
-        let minute = now.getMinutes();
-        let second = now.getSeconds();
-
-        if (hour.toString().length === 1) {
-            hour = `0${hour}`;
-        }
-
-        if (minute.toString().length === 1) {
-            minute = `0${minute}`;
-        }
-
-        if (second.toString().length === 1) {
-            second = `0${second}`;
-        }
-
-        return `${hour}:${minute}:${second}`;
+    _renderTimestamp() {
+        return (
+            <div className = 'timestamp'>
+                { this._getFormattedTimestamp() }
+            </div>
+        );
     }
 }
 

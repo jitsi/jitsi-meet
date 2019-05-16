@@ -1,6 +1,11 @@
 /* global APP, JitsiMeetJS */
 
 import { getAudioOutputDeviceId } from '../../react/features/base/devices';
+import {
+    getUserSelectedCameraDeviceId,
+    getUserSelectedMicDeviceId,
+    getUserSelectedOutputDeviceId
+} from '../../react/features/base/settings';
 
 /**
  * Determines if currently selected audio output device should be changed after
@@ -25,6 +30,16 @@ function getNewAudioOutputDevice(newDevices) {
             d.deviceId === selectedAudioOutputDeviceId)) {
         return 'default';
     }
+
+    const preferredAudioOutputDeviceId = getUserSelectedOutputDeviceId(APP.store.getState());
+
+    // if the preferred one is not the selected and is available in the new devices
+    // we want to use it as it was just added
+    if (preferredAudioOutputDeviceId
+        && preferredAudioOutputDeviceId !== selectedAudioOutputDeviceId
+        && availableAudioOutputDevices.find(d => d.deviceId === preferredAudioOutputDeviceId)) {
+        return preferredAudioOutputDeviceId;
+    }
 }
 
 /**
@@ -38,8 +53,7 @@ function getNewAudioOutputDevice(newDevices) {
 function getNewAudioInputDevice(newDevices, localAudio) {
     const availableAudioInputDevices = newDevices.filter(
         d => d.kind === 'audioinput');
-    const settings = APP.store.getState()['features/base/settings'];
-    const selectedAudioInputDeviceId = settings.micDeviceId;
+    const selectedAudioInputDeviceId = getUserSelectedMicDeviceId(APP.store.getState());
     const selectedAudioInputDevice = availableAudioInputDevices.find(
         d => d.deviceId === selectedAudioInputDeviceId);
 
@@ -77,8 +91,7 @@ function getNewAudioInputDevice(newDevices, localAudio) {
 function getNewVideoInputDevice(newDevices, localVideo) {
     const availableVideoInputDevices = newDevices.filter(
         d => d.kind === 'videoinput');
-    const settings = APP.store.getState()['features/base/settings'];
-    const selectedVideoInputDeviceId = settings.cameraDeviceId;
+    const selectedVideoInputDeviceId = getUserSelectedCameraDeviceId(APP.store.getState());
     const selectedVideoInputDevice = availableVideoInputDevices.find(
         d => d.deviceId === selectedVideoInputDeviceId);
 
