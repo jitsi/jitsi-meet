@@ -167,7 +167,13 @@ var interfaceConfig = {
      *
      * @type {boolean}
      */
-    RECENT_LIST_ENABLED: true
+    RECENT_LIST_ENABLED: true,
+
+    /**
+     * A UX mode where the last screen share participant is automatically
+     * pinned. Note: this mode is experimental and subject to breakage.
+     */
+    AUTO_PIN_LATEST_SCREEN_SHARE: true
 
     /**
      * How many columns the tile view can expand to. The respected range is
@@ -194,12 +200,6 @@ var interfaceConfig = {
      * Specify the Android app package name.
      */
     // ANDROID_APP_PACKAGE: 'org.jitsi.meet',
-
-    /**
-     * A UX mode where the last screen share participant is automatically
-     * pinned. Note: this mode is experimental and subject to breakage.
-     */
-    // AUTO_PIN_LATEST_SCREEN_SHARE: false,
 
     /**
      * Override the behavior of some notifications to remain displayed until
