@@ -171,7 +171,7 @@ export class AbstractWelcomePage extends Component<Props, *> {
      * @returns {void}
      */
     _onJoin() {
-        slugify.config({ lowercase: true, separator: ' ' })
+        slugify.config({ lowercase: true, separator: ' ', allowedChars: 'a-zA-Z0-9' });
         const room = slugify(this.state.room || this.state.generatedRoomname).replace(/\s+/g,"");
         if( room != this.state.room ){
             const key = "roomName_"+room;
