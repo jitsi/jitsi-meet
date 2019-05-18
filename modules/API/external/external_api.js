@@ -39,6 +39,7 @@ const commands = {
     toggleChat: 'toggle-chat',
     toggleFilmStrip: 'toggle-film-strip',
     toggleShareScreen: 'toggle-share-screen',
+    toggleTileView: 'toggle-tile-view',
     toggleVideo: 'toggle-video'
 };
 
@@ -67,7 +68,8 @@ const events = {
     'video-availability-changed': 'videoAvailabilityChanged',
     'video-mute-status-changed': 'videoMuteStatusChanged',
     'screen-sharing-status-changed': 'screenSharingStatusChanged',
-    'subject-change': 'subjectChange'
+    'subject-change': 'subjectChange',
+    'tile-view-changed': 'tileViewChanged'
 };
 
 /**
