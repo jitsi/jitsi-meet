@@ -7,7 +7,8 @@ import type { Dispatch } from 'redux';
 import { createWelcomePageEvent, sendAnalytics } from '../../analytics';
 import { appNavigate } from '../../app';
 import { isRoomValid } from '../../base/conference';
-
+import { slugify } from 'transliteration';
+import jitsiLocalStorage from '../../../../modules/util/JitsiLocalStorage';
 /**
  * {@code AbstractWelcomePage}'s React {@code Component} prop types.
  */
@@ -170,7 +171,12 @@ export class AbstractWelcomePage extends Component<Props, *> {
      * @returns {void}
      */
     _onJoin() {
-        const room = this.state.room || this.state.generatedRoomname;
+        slugify.config({ lowercase: true, separator: ' ', allowedChars: 'a-zA-Z0-9' });
+        const room = slugify(this.state.room || this.state.generatedRoomname).replace(/\s+/g,"");
+        if( room != this.state.room ){
+            const key = "roomName_"+room;
+            jitsiLocalStorage.setItem(key,this.state.room );
+        }
 
         sendAnalytics(
             createWelcomePageEvent('clicked', 'joinButton', {
@@ -202,6 +208,10 @@ export class AbstractWelcomePage extends Component<Props, *> {
      * @returns {void}
      */
     _onRoomChange(value: string) {
+
+        // const roomRealName = transliterate(value);
+
+
         this.setState({ room: value });
     }
 

@@ -1,5 +1,6 @@
 // @flow
 
+import jitsiLocalStorage from '../../../../modules/util/JitsiLocalStorage';
 const logger = require('jitsi-meet-logger').getLogger(__filename);
 
 /**
@@ -492,4 +493,16 @@ export function urlObjectToString(o: Object): ?string {
     url.hash = hash;
 
     return url.toString() || undefined;
+}
+
+/**
+ * 
+ */
+export function convertForTrans(uri: ?string) {
+    const displayName = jitsiLocalStorage.getItem("roomName_"+uri);
+    if( displayName && displayName.length > 0){
+        return displayName;
+    }
+
+    return uri;
 }

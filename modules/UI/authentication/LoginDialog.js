@@ -5,6 +5,7 @@ import {
     JitsiConnectionErrors
 } from '../../../react/features/base/lib-jitsi-meet';
 import { disconnect } from '../../../react/features/base/connection';
+import { convertForTrans } from '../../../react/features/base/util';
 
 /**
  * Build html for "password required" dialog.
@@ -282,6 +283,7 @@ export default {
                 break;
 
         }
+        room = convertForTrans( room );
         const msg = APP.translation.generateTranslationHTML(
             msgBody,
             { room }
