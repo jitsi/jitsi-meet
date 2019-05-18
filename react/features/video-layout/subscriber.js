@@ -13,6 +13,7 @@ import { selectParticipant } from '../large-video';
 import { shouldDisplayTileView } from './functions';
 import { setParticipantsWithScreenShare } from './actions';
 
+declare var APP: Object;
 declare var interfaceConfig: Object;
 
 /**
@@ -34,6 +35,10 @@ StateListenerRegistry.register(
                 && interfaceConfig.AUTO_PIN_LATEST_SCREEN_SHARE) {
                 _updateAutoPinnedParticipant(store);
             }
+        }
+
+        if (typeof APP === 'object') {
+            APP.API.notifyTileViewChanged(displayTileView);
         }
     }
 );

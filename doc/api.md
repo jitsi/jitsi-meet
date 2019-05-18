@@ -222,6 +222,11 @@ api.executeCommand('toggleChat');
 api.executeCommand('toggleShareScreen');
 ```
 
+* **toggleTileView** - Enter / exit tile view layout mode. No arguments are required.
+```javascript
+api.executeCommand('toggleTileView');
+```
+
 * **hangup** - Hangups the call. No arguments are required.
 ```javascript
 api.executeCommand('hangup');
@@ -293,6 +298,13 @@ changes. The listener will receive an object with the following structure:
         // will be passed if the source type is unknown or screen share is off.
         sourceType: string|undefined
     }
+}
+```
+
+* **tileViewChanged** - event notifications about tile view layout mode being entered or exited. The listener will receive object with the following structure:
+```javascript
+{
+    enabled: boolean, // whether tile view is not displayed or not
 }
 ```
 

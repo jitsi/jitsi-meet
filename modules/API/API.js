@@ -8,6 +8,7 @@ import {
 import { setSubject } from '../../react/features/base/conference';
 import { parseJWTFromURLParams } from '../../react/features/base/jwt';
 import { invite } from '../../react/features/invite';
+import { toggleTileView } from '../../react/features/video-layout';
 import { getJitsiMeetTransport } from '../transport';
 
 import { API_ID } from './constants';
@@ -96,6 +97,11 @@ function initCommands() {
         'toggle-share-screen': () => {
             sendAnalytics(createApiEvent('screen.sharing.toggled'));
             toggleScreenSharing();
+        },
+        'toggle-tile-view': () => {
+            sendAnalytics(createApiEvent('tile-view.toggled'));
+
+            APP.store.dispatch(toggleTileView());
         },
         'video-hangup': () => {
             sendAnalytics(createApiEvent('video.hangup'));
@@ -619,6 +625,21 @@ class API {
         this._sendEvent({
             name: 'subject-change',
             subject
+        });
+    }
+
+    /**
+     * Notify external application (if API is enabled) that tile view has been
+     * entered or exited.
+     *
+     * @param {string} enabled - True if tile view is currently displayed, false
+     * otherwise.
+     * @returns {void}
+     */
+    notifyTileViewChanged(enabled: boolean) {
+        this._sendEvent({
+            name: 'tile-view-changed',
+            enabled
         });
     }
 
