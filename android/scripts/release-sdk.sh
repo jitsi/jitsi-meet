@@ -69,7 +69,7 @@ if [[ $MVN_HTTP == 0 ]]; then
     pushd ${MVN_REPO_PATH}
     if [[ "$(git rev-parse --is-inside-work-tree 2>/dev/null)" == "true" ]]; then
         git add -A .
-        git commit -m "Jitsi Meet SDK + dependencies"
+        git commit -m "Jitsi Meet SDK + dependencies: ${SDK_VERSION}"
     fi
     popd
 
