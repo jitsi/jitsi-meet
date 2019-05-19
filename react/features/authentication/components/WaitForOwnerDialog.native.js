@@ -1,11 +1,11 @@
 // @flow
 
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import type { Dispatch } from 'redux';
 
-import { OkDialog } from '../../base/dialog';
+import { ConfirmDialog } from '../../base/dialog';
 import { translate } from '../../base/i18n';
-import { connect } from '../../base/redux';
 
 import { cancelWaitForOwner, _openLoginDialog } from '../actions';
 
@@ -63,14 +63,15 @@ class WaitForOwnerDialog extends Component<Props> {
         } = this.props;
 
         return (
-            <OkDialog
+            <ConfirmDialog
                 contentKey = {
                     {
                         key: 'dialog.WaitForHostMsgWOk',
                         params: { room }
                     }
                 }
-                onSubmit = { this._onCancel } />
+                onCancel = { this._onCancel }
+                onSubmit = { this._onLogin } />
         );
     }
 

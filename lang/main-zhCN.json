@@ -456,7 +456,7 @@
         "yourEntireScreen": "你的整个屏幕",
         "lockRoom": "设置会议密码",
         "startRecording": "开始录像",
-        "WaitForHostMsgWOk": "会议室<b>__room__ </b>还未开放。如果您是管理员请开放会议室后重新进入。",
+        "WaitForHostMsgWOk": "会议室<b>__room__ </b>还未开放。如果您是管理员请先登录。",
         "applicationWindow": "应用窗口"
     },
     "email": {
