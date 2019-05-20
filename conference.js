@@ -2402,17 +2402,26 @@ export default {
         // Let's handle unknown/non-preferred devices
         const newAvailDevices
             = APP.store.getState()['features/base/devices'].availableDevices;
+        let newAudioDevices = [];
+        let oldAudioDevices = [];
 
         if (typeof newDevices.audiooutput === 'undefined') {
-            APP.store.dispatch(
-                checkAndNotifyForNewDevice(newAvailDevices.audioOutput, oldDevices.audioOutput));
+            newAudioDevices = newAvailDevices.audioOutput;
+            oldAudioDevices = oldDevices.audioOutput;
         }
 
         if (!requestedInput.audio) {
-            APP.store.dispatch(
-                checkAndNotifyForNewDevice(newAvailDevices.audioInput, oldDevices.audioInput));
+            newAudioDevices = newAudioDevices.concat(newAvailDevices.audioInput);
+            oldAudioDevices = oldAudioDevices.concat(oldDevices.audioInput);
         }
 
+        // check for audio
+        if (newAudioDevices.length > 0) {
+            APP.store.dispatch(
+                checkAndNotifyForNewDevice(newAudioDevices, oldAudioDevices));
+        }
+
+        // check for video
         if (!requestedInput.video) {
             APP.store.dispatch(
                 checkAndNotifyForNewDevice(newAvailDevices.videoInput, oldDevices.videoInput));

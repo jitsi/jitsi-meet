@@ -481,8 +481,7 @@
         "suboptimalExperienceDescription": "Eer... we are afraid your experience with __appName__ isn't going to be that great here. We are looking for ways to improve this but, until then, please try using one of the <a href='static/recommendedBrowsers.html' target='_blank'>fully supported browsers</a>.",
         "suboptimalExperienceTitle": "Browser Warning",
         "newDeviceCameraTitle": "New camera detected",
-        "newDeviceMicTitle": "New microphone detected",
-        "newDeviceCameraTitle": "New audio output detected",
+        "newDeviceAudioTitle": "New audio device detected",
         "newDeviceAction": "Use"
     },
     "passwordSetRemotely": "set by another member",
