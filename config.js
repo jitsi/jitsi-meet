@@ -269,6 +269,9 @@ var config = {
     // Enable lock room for all moderators, even when userRolesBasedOnToken is enabled and participants are guests.
     // lockRoomGuestEnabled: false,
 
+    // When enabled the password used for locking a room is restricted to up to 10 digits
+    // digitOnlyRoomPasswords: false,
+
     // Message to show the users. Example: 'The service will be down for
     // maintenance at 01:00 AM GMT,
     // noticeMessage: '',

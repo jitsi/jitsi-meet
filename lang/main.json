@@ -486,6 +486,7 @@
         "newDeviceAction": "Use"
     },
     "passwordSetRemotely": "set by another member",
+    "passwordDigitsOnly": "Up to 10 digits",
     "poweredby": "powered by",
     "presenceStatus": {
         "busy": "Busy",

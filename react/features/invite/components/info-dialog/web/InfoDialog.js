@@ -41,6 +41,11 @@ type Props = {
     _conferenceName: string,
 
     /**
+     * Whether passwords are only digits.
+     */
+    _digitOnlyPasswords: boolean,
+
+    /**
      * The current url of the conference to be copied onto the clipboard.
      */
     _inviteURL: string,
@@ -242,6 +247,7 @@ class InfoDialog extends Component<Props, State> {
                     { liveStreamViewURL && this._renderLiveStreamURL() }
                     <div className = 'info-dialog-password'>
                         <PasswordForm
+                            digitOnlyPasswords = { this.props._digitOnlyPasswords }
                             editEnabled = { this.state.passwordEditEnabled }
                             locked = { this.props._locked }
                             onSubmit = { this._onPasswordSubmit }
@@ -591,6 +597,7 @@ function _mapStateToProps(state) {
         _canEditPassword: isLocalParticipantModerator(state, state['features/base/config'].lockRoomGuestEnabled),
         _conference: conference,
         _conferenceName: room,
+        _digitOnlyPasswords: state['features/base/config'].digitOnlyRoomPasswords,
         _inviteURL: getInviteURL(state),
         _localParticipant: getLocalParticipant(state),
         _locationURL: state['features/base/connection'].locationURL,

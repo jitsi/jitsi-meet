@@ -16,6 +16,11 @@ type Props = {
     editEnabled: boolean,
 
     /**
+     * Whether passwords are only digits.
+     */
+    digitOnlyPasswords: boolean,
+
+    /**
      * The value for how the conference is locked (or undefined if not locked)
      * as defined by room-lock constants.
      */
@@ -117,6 +122,8 @@ class PasswordForm extends Component<Props, State> {
      */
     _renderPasswordField() {
         if (this.props.editEnabled) {
+            const placeHolderText = this.props.digitOnlyPasswords ? this.props.t('passwordDigitsOnly') : undefined;
+
             return (
                 <form
                     className = 'info-password-form'
@@ -126,6 +133,7 @@ class PasswordForm extends Component<Props, State> {
                         autoFocus = { true }
                         className = 'info-password-input'
                         onChange = { this._onEnteredPasswordChange }
+                        placeholder = { placeHolderText }
                         spellCheck = { 'false' }
                         type = 'text'
                         value = { this.state.enteredPassword } />
@@ -162,7 +170,15 @@ class PasswordForm extends Component<Props, State> {
      * @returns {void}
      */
     _onEnteredPasswordChange(event) {
-        this.setState({ enteredPassword: event.target.value });
+        const enteredPassword = event.target.value;
+
+        // if digits are enabled we want to input only digits and
+        // allow empty string so user can delete its input
+        if (!this.props.digitOnlyPasswords
+            || ((enteredPassword.length === 0 || /^\d+$/.test(enteredPassword))
+                && enteredPassword.length <= 10)) {
+            this.setState({ enteredPassword });
+        }
     }
 
     _onPasswordSubmit: (Object) => void;
