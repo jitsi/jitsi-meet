@@ -146,7 +146,7 @@ function _checkAndNotifyForNewDevice(store, newDevices, oldDevices) {
             description,
             titleKey,
             customActionNameKey: 'notify.newDeviceAction',
-            customActionHandler: _useDevice.bind(undefined, store, newDevices)
+            customActionHandler: _useDevice.bind(undefined, store, devicesArray)
         }));
     });
 }
