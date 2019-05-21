@@ -19,15 +19,6 @@ const _TEXT_INPUT_PROPS = {
 };
 
 /**
- * The style of the {@link TextInput} rendered by {@code RoomLockPrompt} when
- * only digits are required.
- */
-const _DIGITS_INPUT_PROPS = {
-    keyboardType: 'number-pad',
-    maxLength: 10
-};
-
-/**
  * The type of the React {@code Component} props of {@link RoomLockPrompt}.
  */
 type Props = {
@@ -38,9 +29,9 @@ type Props = {
     conference: Object,
 
     /**
-     * Whether passwords are only digits.
+     * The number of digits to be used in the password.
      */
-    digitOnlyPasswords: boolean,
+    passwordNumberOfDigits: ?number,
 
     /**
      * Redux store dispatch function.
@@ -76,10 +67,11 @@ class RoomLockPrompt extends Component<Props> {
     render() {
         let textInputProps = _TEXT_INPUT_PROPS;
 
-        if (this.props.digitOnlyPasswords) {
+        if (this.props.passwordNumberOfDigits) {
             textInputProps = {
                 ...textInputProps,
-                ..._DIGITS_INPUT_PROPS
+                keyboardType: 'number-pad',
+                maxLength: this.props.passwordNumberOfDigits
             };
         }
 

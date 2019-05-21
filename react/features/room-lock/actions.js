@@ -25,11 +25,11 @@ export function beginRoomLockRequest(conference: ?Object) {
             conference = getState()['features/base/conference'].conference;
         }
         if (conference) {
-            const digitOnlyPasswords = getState()['features/base/config'].digitOnlyRoomPasswords;
+            const passwordNumberOfDigits = getState()['features/base/config'].roomPasswordNumberOfDigits;
 
             dispatch(openDialog(RoomLockPrompt, {
                 conference,
-                digitOnlyPasswords }));
+                passwordNumberOfDigits }));
         }
     };
 }

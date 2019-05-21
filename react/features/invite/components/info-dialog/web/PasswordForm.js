@@ -16,11 +16,6 @@ type Props = {
     editEnabled: boolean,
 
     /**
-     * Whether passwords are only digits.
-     */
-    digitOnlyPasswords: boolean,
-
-    /**
      * The value for how the conference is locked (or undefined if not locked)
      * as defined by room-lock constants.
      */
@@ -36,6 +31,11 @@ type Props = {
      * The current known password for the JitsiConference.
      */
     password: string,
+
+    /**
+     * The number of digits to be used in the password.
+     */
+    passwordNumberOfDigits: boolean,
 
     /**
      * Invoked to obtain translated strings.
@@ -122,7 +122,9 @@ class PasswordForm extends Component<Props, State> {
      */
     _renderPasswordField() {
         if (this.props.editEnabled) {
-            const placeHolderText = this.props.digitOnlyPasswords ? this.props.t('passwordDigitsOnly') : undefined;
+            const placeHolderText = this.props.passwordNumberOfDigits
+                ? this.props.t('passwordDigitsOnly', { number: this.props.passwordNumberOfDigits })
+                : undefined;
 
             return (
                 <form
@@ -174,9 +176,9 @@ class PasswordForm extends Component<Props, State> {
 
         // if digits are enabled we want to input only digits and
         // allow empty string so user can delete its input
-        if (!this.props.digitOnlyPasswords
+        if (!this.props.passwordNumberOfDigits
             || ((enteredPassword.length === 0 || /^\d+$/.test(enteredPassword))
-                && enteredPassword.length <= 10)) {
+                && enteredPassword.length <= this.props.passwordNumberOfDigits)) {
             this.setState({ enteredPassword });
         }
     }
