@@ -35,31 +35,43 @@
         "raiseHand": "Hand erheben",
         "pushToTalk": "Drücken um zu sprechen",
         "toggleScreensharing": "Zwischen Kamera und Bildschirmfreigabe wechseln",
-        "toggleFilmstrip": "Videos anzeigen oder verbergen",
-        "toggleShortcuts": "Hilfe-Menu anzeigen oder verdecken",
+        "toggleFilmstrip": "",
+        "toggleShortcuts": "",
         "focusLocal": "Lokales Video fokussieren",
         "focusRemote": "Auf das Video eines anderen Teilnehmers fokussieren",
         "toggleChat": "Chat öffnen oder schliessen",
         "mute": "Stummschaltung aktivieren oder deaktivieren",
         "fullScreen": "Vollbildmodus aktivieren / deaktivieren",
         "videoMute": "Kamera starten oder stoppen",
-        "showSpeakerStats": "Statistiken für Sprecher anzeigen"
+        "showSpeakerStats": "Statistiken für Sprecher anzeigen",
+        "localRecording": ""
     },
+    "\u0005keyboardShortcuts": {},
     "welcomepage": {
+        "accessibilityLabel": {
+            "join": "",
+            "roomname": "Konferenzname eingeben"
+        },
         "appDescription": "Auf geht's! Beginne eine Videokonferenz mit dem ganzen Team. Oder eigentlich, lade alle ein die du kennst. __app__ ist eine vollständig verschlüsselte, aus 100% Open-Source-Software bestehende Videokonferenzlösung die du den ganzen Tag kostenlos verwenden kannst — ohne Registrierung.",
         "audioVideoSwitch": {
             "audio": "Sprache",
             "video": "Video"
         },
         "calendar": "Kalender",
+        "connectCalendarText": "",
+        "connectCalendarButton": "",
+        "enterRoomTitle": "",
         "go": "Los",
         "join": "Beitreten",
         "privacy": "Privatsphäre",
+        "recentList": "",
+        "recentListDelete": "",
+        "recentListEmpty": "",
         "roomname": "Konferenzname eingeben",
         "roomnameHint": "Name oder URL der Konferenz der Sie beitreten möchten. Sie können einen Namen erfinden, er muss nur den anderen Teilnehmern übermittelt werden damit sie der gleichen Konferenz beitreten.",
         "sendFeedback": "Senden Sie uns Ihr Feedback",
         "terms": "Bedingungen",
-        "title": "Sichere, flexible und vollständig freie Videokonferenzen"
+        "title": ""
     },
     "startupoverlay": {
         "policyText": "",
@@ -71,8 +83,41 @@
         "rejoinKeyTitle": "Erneut teilnehmen"
     },
     "toolbar": {
+        "accessibilityLabel": {
+            "audioOnly": "",
+            "audioRoute": "",
+            "callQuality": "Qualitätseinstellungen",
+            "chat": "",
+            "cc": "",
+            "document": "Geteiltes Dokument schliessen",
+            "feedback": "Feedback hinterlasen",
+            "fullScreen": "",
+            "hangup": "",
+            "invite": "Teilnehmer einladen",
+            "localRecording": "",
+            "lockRoom": "",
+            "moreActions": "",
+            "moreActionsMenu": "",
+            "mute": "",
+            "pip": "",
+            "profile": "Profil bearbeiten",
+            "raiseHand": "",
+            "recording": "",
+            "Settings": "",
+            "sharedvideo": "",
+            "shareRoom": "",
+            "shareYourScreen": "",
+            "shortcuts": "",
+            "speakerStats": "",
+            "toggleCamera": "",
+            "tileView": "",
+            "videomute": ""
+        },
         "addPeople": "Teilnehmer zur Konferenz hinzufügen",
         "audioonly": "Nur-Audio-Modus aktivieren/deaktivieren (spart Bandbreite)",
+        "audioOnlyOn": "Nur-Audio-Modus aktivieren/deaktivieren (spart Bandbreite)",
+        "audioOnlyOff": "",
+        "audioRoute": "",
         "callQuality": "Qualitätseinstellungen",
         "enterFullScreen": "Vollbildmodus",
         "exitFullScreen": "Vollbildmodus verlassen",
@@ -86,8 +131,8 @@
         "etherpad": "Geteiltes Dokument öffnen / schliessen",
         "documentOpen": "Geteiltes Dokument öffnen",
         "documentClose": "Geteiltes Dokument schliessen",
+        "shareRoom": "",
         "sharedvideo": "YouTube-Video teilen",
-        "sharescreen": "Bildschirmfreigabe",
         "stopSharedVideo": "YouTube Video stoppen",
         "fullscreen": "Vollbildmodus aktivieren / deaktivieren",
         "sip": "SIP Nummer anrufen",
@@ -96,25 +141,40 @@
         "login": "Anmelden",
         "logout": "Abmelden",
         "sharedVideoMutedPopup": "Das freigegebene Video wurde stumm geschaltet um mit den anderen Teilnehmern zu sprechen.",
+        "toggleCamera": "",
         "micMutedPopup": "Das Mikrofon wurde stumm geschaltet um das freigegebene Video geniessen zu können.",
         "talkWhileMutedPopup": "Versuchen sie zu sprechen? Ihr Mikrofon ist stummgeschaltet.",
         "unableToUnmutePopup": "Die Stummschaltung kann nicht aufgehoben werden während das geteilte Video abgespielt wird.",
         "cameraDisabled": "Keine Kamera verfügbar",
         "micDisabled": "Kein Mikrofon verfügbar",
         "filmstrip": "Videos anzeigen / verbergen",
+        "pip": "",
         "profile": "Profil bearbeiten",
         "raiseHand": "Hand erheben",
         "shortcuts": "Tastenkürzel anzeigen",
-        "speakerStats": "Sprecher-Statistiken"
+        "speakerStats": "Sprecher-Statistiken",
+        "tileViewToggle": "",
+        "invite": "Teilnehmer einladen"
+    },
+    "\u0005toolbar": {
+        "accessibilityLabel": {}
     },
     "chat": {
         "nickname": {
             "title": "Name eingeben",
             "popover": "Name"
         },
+        "error": "",
         "messagebox": "Text eingeben..."
     },
     "settings": {
+        "calendar": {
+            "about": "",
+            "disconnect": "Getrennt",
+            "microsoftSignIn": "",
+            "signedIn": "",
+            "title": "Kalender"
+        },
         "title": "Einstellungen",
         "update": "Aktualisieren",
         "name": "Name",
@@ -124,11 +184,18 @@
         "selectMic": "Mikrofon",
         "selectAudioOutput": "Audioausgabe",
         "followMe": "Follow-me für alle Teilnehmer",
+        "language": "",
+        "loggedIn": "",
         "noDevice": "Kein",
         "cameraAndMic": "Kamera und Mikrofon",
-        "moderator": "MODERATOR",
+        "moderator": "Moderator",
+        "more": "",
         "password": "PASSWORT SETZEN",
-        "audioVideo": "AUDIO UND VIDEO"
+        "audioVideo": "AUDIO UND VIDEO",
+        "devices": ""
+    },
+    "\u0005settings": {
+        "calendar": {}
     },
     "profile": {
         "title": "Profil",
@@ -148,7 +215,9 @@
     },
     "connectionindicator": {
         "header": "Verbindungsdaten",
+        "connectedTo": "",
         "bitrate": "Bitrate:",
+        "bridgeCount": "",
         "packetloss": "Paketverlust:",
         "resolution": "Auflösung:",
         "framerate": "Bildwiederholrate:",
@@ -187,7 +256,6 @@
         "focus": "Konferenz-Organisator",
         "focusFail": "__component__ ist im Moment nicht verfügbar - wiederholen in __ms__ Sekunden",
         "grantedTo": "Moderatorenrechte an __to__ vergeben.",
-        "grantedToUnknown": "Moderatorenrechte an $t(notify.somebody) vergeben.",
         "muted": "Der Konferenz wurde stumm beigetreten.",
         "mutedTitle": "Stummschaltung aktiv!",
         "raisedHand": "Möchte sprechen.",
@@ -195,8 +263,13 @@
         "suboptimalExperienceDescription": "Tut uns leid, aber die Konferenz wird mit __appName__ kein grossartiges Erlebnis. Wir versuchen immer die Situation zu verbessern, bis dahin empfehlen wir aber die Verwendung einer der <a href=\"static/recommendedBrowsers.html\" target=\"_blank\">vollständig unterstützen Browser</a>."
     },
     "dialog": {
+        "accessibilityLabel": {
+            "liveStreaming": "Livestream:"
+        },
         "allow": "Erlauben",
+        "confirm": "",
         "kickMessage": "Oh! Sie wurden aus der Konferenz ausgeschlossen.",
+        "kickTitle": "",
         "popupErrorTitle": "Popup blockiert",
         "popupError": "Ihr Browser blockiert Popups von dieser Website. Bitte aktivieren Sie Popups in den Sicherheitseinstellungen des Browsers und versuchen Sie es erneut.",
         "passwordErrorTitle": "Passwort-Fehler",
@@ -219,6 +292,7 @@
         "rejoinNow": "Jetzt erneut beitreten",
         "maxUsersLimitReachedTitle": "Maximale Anzahl Teilnehmer ist erreicht",
         "maxUsersLimitReached": "Das Limit der maximalen Anzahl Teilnehmer wurde erreicht. Die Konferenz ist voll. Bitte benachrichtigen Sie den Konferenzorganisator oder versuchen Sie es später noch einmal.",
+        "lockRoom": "",
         "lockTitle": "Sperren fehlgeschlagen",
         "lockMessage": "Die Konferenz konnte nicht gesperrt werden.",
         "warning": "Warnung",
@@ -266,6 +340,7 @@
         "reservationError": "Fehler im Reservationssystem",
         "reservationErrorMsg": "Fehler, Nummer: __code__, Nachricht: __msg__",
         "password": "Passwort eingeben",
+        "unlockRoom": "",
         "userPassword": "Benutzerpasswort",
         "token": "Token",
         "tokenAuthFailedTitle": "Authentifizierung fehlgeschlagen",
@@ -278,7 +353,7 @@
         "sorryFeedback": "Tut uns leid. Möchten Sie uns mehr mitteilen?",
         "liveStreaming": "Live-Streaming",
         "streamKey": "Name/Schlüssel für den Stream",
-        "startLiveStreaming": "Live-Streaming starten",
+        "startLiveStreaming": "Einen Livestream starten",
         "startRecording": "Aufnahme starten",
         "stopStreamingWarning": "Sind Sie sicher dass Sie das Live-Streaming stoppen möchten?",
         "stopRecordingWarning": "Sind Sie sicher dass Sie die Aufnahme stoppen möchten?",
@@ -312,6 +387,10 @@
         "muteParticipantTitle": "Diesen Teilnehmer stummschalten?",
         "muteParticipantBody": "Sie können die Stummschaltung anderer Teilnehmer nicht aufheben, aber ein Teilnehmer kann seine eigene Stummschaltung jederzeit beenden.",
         "muteParticipantButton": "Stummschalten",
+        "liveStreamingDisabledTooltip": "",
+        "liveStreamingDisabledForGuestTooltip": "",
+        "recordingDisabledTooltip": "",
+        "recordingDisabledForGuestTooltip": "",
         "remoteControlTitle": "Fernsteuerung",
         "remoteControlRequestMessage": "Möchten Sie __user__ erlauben den Computer fernzusteuern?",
         "remoteControlShareScreenWarning": "Achtung, wenn Sie die Anfrage genehmigen starten Sie die Bildschirmfreigabe!",
@@ -322,10 +401,15 @@
         "remoteControlStopMessage": "Die Fernsteuerung wurde beendet.",
         "close": "Schliessen",
         "shareYourScreen": "Bildschirm freigeben",
+        "shareYourScreenDisabled": "",
+        "shareYourScreenDisabledForGuest": "",
         "yourEntireScreen": "Ganzer Bildschirm",
-        "applicationWindow": "Anwendungsfenster"
+        "applicationWindow": "Anwendungsfenster",
+        "transcribing": ""
     },
-    "\u0005dialog": {},
+    "\u0005dialog": {
+        "accessibilityLabel": {}
+    },
     "email": {
         "sharedKey": [
             "Diese Konferenz ist passwortgeschützt. Bitte verwenden Sie diese PIN zum Beitreten:",
@@ -357,6 +441,10 @@
         ],
         "and": "und"
     },
+    "share": {
+        "mainText": "",
+        "dialInfoText": ""
+    },
     "connection": {
         "ERROR": "Fehler",
         "CONNECTING": "Verbindung wird hergestellt",
@@ -370,18 +458,44 @@
         "ATTACHED": "Angehängt"
     },
     "recording": {
+        "beta": "",
         "busy": "Es werden Resourcen für eine Aufnahme bereitgestellt. Bitte in ein paar Minuten erneut versuchen.",
         "busyTitle": "Alle Aufnahme-Instanzen sind in Gebrauch",
         "buttonTooltip": "Aufnahme starten / stoppen",
         "error": "Die Aufzeichnung ist fehlgeschlagen. Bitte versuchen Sie es erneut.",
+        "expandedOff": "",
+        "expandedOn": "",
+        "expandedPending": "",
         "failedToStart": "Die Aufnahme konnte nicht gestartet werden",
+        "live": "",
         "off": "Aufnahme gestoppt",
         "on": "Aufnahme",
-        "pending": "Die Aufnahme wartet auf den Beitritt eines Teilnehmers...",
+        "pending": "",
+        "rec": "",
+        "authDropboxText": "",
         "serviceName": "Aufnahmedienst",
+        "signOut": "",
+        "signIn": "",
+        "loggedIn": "",
+        "availableSpace": "",
+        "startRecordingBody": "Sind Sie sicher dass Sie die Aufnahme stoppen möchten?",
         "unavailable": "Oh! Der __serviceName__ ist aktuell nicht verfügbar. Wir arbeiten an der Behebung des Problems. Bitte versuchen Sie es später noch einmal.",
         "unavailableTitle": "Aufnahme nicht verfügbar"
     },
+    "\u0005recording": {},
+    "transcribing": {
+        "pending": "",
+        "off": "",
+        "error": "Die Aufzeichnung ist fehlgeschlagen. Bitte versuchen Sie es erneut.",
+        "expandedLabel": "",
+        "failedToStart": "",
+        "tr": "",
+        "labelToolTip": "",
+        "ccButtonTooltip": "",
+        "start": "",
+        "stop": ""
+    },
+    "\u0005transcribing": {},
     "liveStreaming": {
         "busy": "Es werden Resourcen zum Streamen bereitgestellt. Bitte in ein paar Minuten erneut versuchen.",
         "busyTitle": "Alle Streaming-Instanzen sind in Gebrauch",
@@ -392,17 +506,24 @@
         "enterStreamKey": "Name/Schlüssel für den YouTube Livestream hier eingeben.",
         "error": "Das Live-Streaming ist fehlgeschlagen. Bitte versuchen Sie es erneut.",
         "errorAPI": "Beim abrufen der YouTube Livestreams ist ein Fehler aufgetreten. Bitte versuchen Sie sich erneut anzumelden.",
+        "errorLiveStreamNotEnabled": "",
+        "expandedOff": "",
+        "expandedOn": "",
+        "expandedPending": "",
         "failedToStart": "Live-Streaming konnte nicht gestartet werden",
         "off": "Live-Streaming gestoppt",
         "on": "Live-Streaming",
         "pending": "Live-Stream wird gestartet...",
         "serviceName": "Live Streaming-Dienst",
+        "signedInAs": "",
         "signIn": "Mit Google anmelden",
+        "signOut": "",
         "signInCTA": "Anmelden oder den Name/Schlüssel des YouTube Livestreams eingeben.",
         "start": "Einen Livestream starten",
         "streamIdHelp": "Was ist das?",
         "unavailableTitle": "Live-Streaming nicht verfügbar"
     },
+    "\u0005liveStreaming": {},
     "videoSIPGW": {
         "busy": "Es stehen keine freien Ressourcen zur Verfügung. Bitte versuchen Sie es später noch einmal.",
         "busyTitle": "Keine freien Ressourcen",
@@ -428,9 +549,11 @@
         "noPermission": "Berechtigungen nicht erteilt",
         "previewUnavailable": "Keine Vorschau verfügbar",
         "selectADevice": "Ein Gerät wählen",
-        "testAudio": "Audio testen"
+        "testAudio": ""
     },
     "videoStatus": {
+        "audioOnly": "",
+        "audioOnlyExpanded": "",
         "callQuality": "Konferenzqualität",
         "hd": "HD",
         "hdTooltip": "Video wird in HD angezeigt",
@@ -458,7 +581,8 @@
         "add": "Einladen",
         "countryNotSupported": "Wir unterstützen dieses Land noch nicht.",
         "countryReminder": "Telefonnummer nicht in den USA? Bitte sicherstellen, dass die Telefonnummer mit dem Ländercode beginnt.",
-        "disabled": "",
+        "disabled": "Sie können keine Teilnehmer einladen.",
+        "footerText": "",
         "invite": "Einladen",
         "loading": "Suche nach Teilnehmern und Telefonnummern",
         "loadingNumber": "Telefonnummer wird überprüft",
@@ -495,6 +619,7 @@
         "veryGood": "Sehr gut"
     },
     "info": {
+        "accessibilityLabel": "",
         "addPassword": "Passwort hinzufügen",
         "cancelPassword": "Password abbrechen",
         "conferenceURL": "Link:",
@@ -516,7 +641,7 @@
         "numbers": "Einwählnummern",
         "password": "Passwort:",
         "title": "Teilen",
-        "tooltip": "Zugriffsinformationen über die Konferenz abrufen"
+        "tooltip": ""
     },
     "settingsView": {
         "alertOk": "OK",
@@ -532,17 +657,22 @@
         "startWithVideoMuted": "Ohne Video beitreten"
     },
     "calendarSync": {
-        "later": "Später",
-        "next": "Folgend",
+        "addMeetingURL": "",
+        "confirmAddLink": "",
+        "confirmAddLinkTitle": "Kalender",
+        "join": "",
+        "joinTooltip": "",
         "nextMeeting": "Nächste Konferenz",
-        "now": "Jetzt",
+        "noEvents": "",
+        "ongoingMeeting": "",
         "permissionButton": "Einstellungen öffnen",
-        "permissionMessage": "Die App benötigt Zugriff auf den Kalender um die Termine und Konferenzen anzuzeigen."
+        "permissionMessage": "Die App benötigt Zugriff auf den Kalender um die Termine und Konferenzen anzuzeigen.",
+        "refresh": "",
+        "today": "Heute"
     },
+    "\u0005calendarSync": {},
     "recentList": {
-        "today": "Heute",
-        "yesterday": "Gestern",
-        "earlier": "Früher"
+        "joinPastMeeting": ""
     },
     "sectionList": {
         "pullToRefresh": "Ziehen um zu aktualisieren"
@@ -555,5 +685,62 @@
         "appNotInstalled": "Sie benötigen die __app__ App um der Konferenz auf dem Smartphone beizutreten.",
         "downloadApp": "App herunterladen",
         "openApp": "In der App fortfahren"
-    }
+    },
+    "presenceStatus": {
+        "invited": "Einladen",
+        "ringing": "",
+        "calling": "",
+        "initializingCall": "",
+        "connected": "Verbunden",
+        "connecting": "Verbindung wird hergestellt",
+        "connecting2": "",
+        "disconnected": "Getrennt",
+        "busy": "",
+        "rejected": "",
+        "ignored": "",
+        "expired": ""
+    },
+    "\u0005presenceStatus": {},
+    "dateUtils": {
+        "today": "Heute",
+        "yesterday": "Gestern",
+        "earlier": "Früher"
+    },
+    "incomingCall": {
+        "answer": "",
+        "audioCallTitle": "",
+        "decline": "OK",
+        "productLabel": "",
+        "videoCallTitle": ""
+    },
+    "localRecording": {
+        "localRecording": "",
+        "dialogTitle": "",
+        "start": "Aufnahme starten",
+        "stop": "Aufnahme stoppen",
+        "moderator": "Moderator",
+        "me": "Ich",
+        "duration": "",
+        "durationNA": "",
+        "encoding": "",
+        "participantStats": "",
+        "participant": "Teilnehmer",
+        "sessionToken": "",
+        "clientState": {
+            "on": "",
+            "off": "",
+            "unknown": ""
+        },
+        "messages": {
+            "engaged": "",
+            "finished": "",
+            "finishedModerator": "",
+            "notModerator": ""
+        },
+        "yes": "Ja",
+        "no": "",
+        "label": "",
+        "labelToolTip": ""
+    },
+    "\u0005localRecording": {}
 }
