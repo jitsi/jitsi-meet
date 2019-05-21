@@ -50,12 +50,15 @@
     },
     "chat": {
         "error": "",
-        "messagebox": "Въведете текст...",
+        "messagebox": "",
         "nickname": {
             "popover": "Избор на име",
             "title": ""
         },
         "title": ""
+    },
+    "connectingOverlay": {
+        "joiningRoom": ""
     },
     "connection": {
         "ATTACHED": "Прикрепен",
@@ -321,12 +324,16 @@
         "dialInConferenceID": "",
         "dialInNotSupported": "",
         "dialInNumber": "",
+        "dialInSummaryError": "",
         "dialInTollFree": "",
         "genericError": "",
         "inviteLiveStream": "",
         "invitePhone": "",
         "invitePhoneAlternatives": "",
-        "inviteURL": "",
+        "inviteURLFirstPartGeneral": "",
+        "inviteURLFirstPartPersonal": "",
+        "inviteURLSecondPart": "",
+        "inviteURLMoreInfo": "",
         "liveStreamURL": "",
         "moreNumbers": "",
         "noNumbers": "",
@@ -442,10 +449,13 @@
         "moderator": "Придобихте права на модератор!",
         "muted": "Започвате разговора без звук.",
         "mutedTitle": "Звукът ви е спрян!",
-        "raisedHand": "Иска думата.",
+        "raisedHand": "",
         "somebody": "Някой",
         "suboptimalExperienceDescription": "",
-        "suboptimalExperienceTitle": ""
+        "suboptimalExperienceTitle": "",
+        "newDeviceCameraTitle": "",
+        "newDeviceAudioTitle": "",
+        "newDeviceAction": ""
     },
     "passwordSetRemotely": "зададена от друг участник",
     "poweredby": "с подкрепата на",
@@ -485,6 +495,7 @@
         "expandedOn": "",
         "expandedPending": "",
         "failedToStart": "Неуспешен опит за записване",
+        "fileSharingdescription": "",
         "live": "",
         "loggedIn": "",
         "off": "Записът спрян",
@@ -533,6 +544,7 @@
         "alertOk": "",
         "alertTitle": "Внимание",
         "alertURLText": "",
+        "buildInfoSection": "",
         "conferenceSection": "",
         "displayName": "",
         "email": "",
@@ -540,7 +552,8 @@
         "profileSection": "Профил",
         "serverURL": "",
         "startWithAudioMuted": "",
-        "startWithVideoMuted": ""
+        "startWithVideoMuted": "",
+        "version": ""
     },
     "share": {
         "dialInfoText": "",
@@ -736,6 +749,7 @@
         "enterRoomTitle": "",
         "go": "НАПРЕД",
         "join": "ПРИСЪЕДИНЯВАНЕ",
+        "info": "",
         "privacy": "Поверителност",
         "recentList": "",
         "recentListDelete": "",
