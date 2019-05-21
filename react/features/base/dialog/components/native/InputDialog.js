@@ -118,6 +118,16 @@ class InputDialog extends BaseDialog<Props, State> {
      * @returns {void}
      */
     _onChangeText(fieldValue) {
+        const inputKeyboardType = this.props.textInputProps
+            ? this.props.textInputProps.keyboardType : undefined;
+
+        // we want only digits, but both number-pad and numeric add ',' and '.' as symbols
+        if ((inputKeyboardType === 'number-pad' || inputKeyboardType === 'numeric')
+                && fieldValue.length > 0
+                && !/^\d+$/.test(fieldValue)) {
+            return;
+        }
+
         this.setState({
             fieldValue
         });
