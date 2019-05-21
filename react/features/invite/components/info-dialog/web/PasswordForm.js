@@ -122,9 +122,13 @@ class PasswordForm extends Component<Props, State> {
      */
     _renderPasswordField() {
         if (this.props.editEnabled) {
-            const placeHolderText = this.props.passwordNumberOfDigits
-                ? this.props.t('passwordDigitsOnly', { number: this.props.passwordNumberOfDigits })
-                : undefined;
+            let digitPattern, placeHolderText;
+
+            if (this.props.passwordNumberOfDigits) {
+                placeHolderText = this.props.t('passwordDigitsOnly', {
+                    number: this.props.passwordNumberOfDigits });
+                digitPattern = '\\d*';
+            }
 
             return (
                 <form
@@ -134,7 +138,9 @@ class PasswordForm extends Component<Props, State> {
                     <input
                         autoFocus = { true }
                         className = 'info-password-input'
+                        maxLength = { this.props.passwordNumberOfDigits }
                         onChange = { this._onEnteredPasswordChange }
+                        pattern = { digitPattern }
                         placeholder = { placeHolderText }
                         spellCheck = { 'false' }
                         type = 'text'
@@ -172,15 +178,7 @@ class PasswordForm extends Component<Props, State> {
      * @returns {void}
      */
     _onEnteredPasswordChange(event) {
-        const enteredPassword = event.target.value;
-
-        // if digits are enabled we want to input only digits and
-        // allow empty string so user can delete its input
-        if (!this.props.passwordNumberOfDigits
-            || ((enteredPassword.length === 0 || /^\d+$/.test(enteredPassword))
-                && enteredPassword.length <= this.props.passwordNumberOfDigits)) {
-            this.setState({ enteredPassword });
-        }
+        this.setState({ enteredPassword: event.target.value });
     }
 
     _onPasswordSubmit: (Object) => void;
