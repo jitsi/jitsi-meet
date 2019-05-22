@@ -24,7 +24,6 @@ import { TRACK_ADDED, TRACK_REMOVED } from '../tracks';
 
 import {
     conferenceFailed,
-    conferenceLeft,
     conferenceWillLeave,
     createConference,
     setLastN,
@@ -37,8 +36,7 @@ import {
     CONFERENCE_WILL_LEAVE,
     DATA_CHANNEL_OPENED,
     SET_AUDIO_ONLY,
-    SET_LASTN,
-    SET_ROOM
+    SET_LASTN
 } from './actionTypes';
 import {
     _addLocalTracksToConference,
@@ -98,9 +96,6 @@ MiddlewareRegistry.register(store => next => action => {
 
     case SET_LASTN:
         return _setLastN(store, next, action);
-
-    case SET_ROOM:
-        return _setRoom(store, next, action);
 
     case TRACK_ADDED:
     case TRACK_REMOVED:
@@ -564,51 +559,6 @@ function _setReceiverVideoConstraint(conference, preferred, max) {
     if (conference) {
         conference.setReceiverVideoConstraint(Math.min(preferred, max));
     }
-}
-
-/**
- * Notifies the feature {@code base/conference} that the redix action
- * {@link SET_ROOM} is being dispatched within a specific redux store.
- *
- * @param {Store} store - The redux store in which the specified {@code action}
- * is being dispatched.
- * @param {Dispatch} next - The redux {@code dispatch} function to dispatch the
- * specified {@code action} to the specified {@code store}.
- * @param {Action} action - The redux action {@code SET_ROOM} which is being
- * dispatched in the specified {@code store}.
- * @private
- * @returns {Object} The value returned by {@code next(action)}.
- */
-function _setRoom({ dispatch, getState }, next, action) {
-    const result = next(action);
-
-    // By the time SET_ROOM is dispatched, base/connection's locationURL and
-    // base/conference's leaving should be the only conference-related sources
-    // of truth.
-    const state = getState();
-    const { leaving } = state['features/base/conference'];
-    const { locationURL } = state['features/base/connection'];
-    const dispatchConferenceLeft = new Set();
-
-    // Figure out which of the JitsiConferences referenced by base/conference
-    // have not dispatched or are not likely to dispatch CONFERENCE_FAILED and
-    // CONFERENCE_LEFT.
-    forEachConference(state, (conference, url) => {
-        if (conference !== leaving && url && url !== locationURL) {
-            dispatchConferenceLeft.add(conference);
-        }
-
-        return true; // All JitsiConference instances are to be examined.
-    });
-
-    // Dispatch CONFERENCE_LEFT for the JitsiConferences referenced by
-    // base/conference which have not dispatched or are not likely to dispatch
-    // CONFERENCE_FAILED or CONFERENCE_LEFT.
-    for (const conference of dispatchConferenceLeft) {
-        dispatch(conferenceLeft(conference));
-    }
-
-    return result;
 }
 
 /**
