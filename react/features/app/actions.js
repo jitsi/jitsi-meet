@@ -10,8 +10,9 @@ import {
     setConfig,
     storeConfig
 } from '../base/config';
-import { setLocationURL } from '../base/connection';
+import { connect, disconnect, setLocationURL } from '../base/connection';
 import { loadConfig } from '../base/lib-jitsi-meet';
+import { createDesiredLocalTracks } from '../base/tracks';
 import { parseURIString, toURLString } from '../base/util';
 import { setFatalError } from '../overlay';
 
@@ -58,6 +59,12 @@ export function appNavigate(uri: ?string) {
         const { contextRoot, host, room } = location;
         const locationURL = new URL(location.toString());
 
+        // Disconnect from any current conference.
+        // FIXME: unify with web.
+        if (navigator.product === 'ReactNative') {
+            dispatch(disconnect());
+        }
+
         dispatch(configWillLoad(locationURL, room));
 
         let protocol = location.protocol.toLowerCase();
@@ -87,12 +94,20 @@ export function appNavigate(uri: ?string) {
             }
         }
 
-        if (getState()['features/base/config'].locationURL === locationURL) {
-            dispatch(setLocationURL(locationURL));
-            dispatch(setConfig(config));
-            dispatch(setRoom(room));
-        } else {
+        if (getState()['features/base/config'].locationURL !== locationURL) {
             dispatch(loadConfigError(new Error('Config no longer needed!'), locationURL));
+
+            return;
+        }
+
+        dispatch(setLocationURL(locationURL));
+        dispatch(setConfig(config));
+        dispatch(setRoom(room));
+
+        // FIXME: unify with web, currently the connection and track creation happens in conference.js.
+        if (room && navigator.product === 'ReactNative') {
+            dispatch(createDesiredLocalTracks());
+            dispatch(connect());
         }
     };
 }
