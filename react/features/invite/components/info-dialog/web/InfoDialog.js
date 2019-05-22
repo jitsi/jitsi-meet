@@ -41,6 +41,11 @@ type Props = {
     _conferenceName: string,
 
     /**
+     * The number of digits to be used in the password.
+     */
+    _passwordNumberOfDigits: ?number,
+
+    /**
      * The current url of the conference to be copied onto the clipboard.
      */
     _inviteURL: string,
@@ -245,7 +250,8 @@ class InfoDialog extends Component<Props, State> {
                             editEnabled = { this.state.passwordEditEnabled }
                             locked = { this.props._locked }
                             onSubmit = { this._onPasswordSubmit }
-                            password = { this.props._password } />
+                            password = { this.props._password }
+                            passwordNumberOfDigits = { this.props._passwordNumberOfDigits } />
                     </div>
                     <div className = 'info-dialog-action-links'>
                         <div className = 'info-dialog-action-link'>
@@ -591,6 +597,7 @@ function _mapStateToProps(state) {
         _canEditPassword: isLocalParticipantModerator(state, state['features/base/config'].lockRoomGuestEnabled),
         _conference: conference,
         _conferenceName: room,
+        _passwordNumberOfDigits: state['features/base/config'].roomPasswordNumberOfDigits,
         _inviteURL: getInviteURL(state),
         _localParticipant: getLocalParticipant(state),
         _locationURL: state['features/base/connection'].locationURL,

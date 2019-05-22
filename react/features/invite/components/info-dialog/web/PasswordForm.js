@@ -33,6 +33,11 @@ type Props = {
     password: string,
 
     /**
+     * The number of digits to be used in the password.
+     */
+    passwordNumberOfDigits: boolean,
+
+    /**
      * Invoked to obtain translated strings.
      */
     t: Function
@@ -117,6 +122,14 @@ class PasswordForm extends Component<Props, State> {
      */
     _renderPasswordField() {
         if (this.props.editEnabled) {
+            let digitPattern, placeHolderText;
+
+            if (this.props.passwordNumberOfDigits) {
+                placeHolderText = this.props.t('passwordDigitsOnly', {
+                    number: this.props.passwordNumberOfDigits });
+                digitPattern = '\\d*';
+            }
+
             return (
                 <form
                     className = 'info-password-form'
@@ -125,7 +138,10 @@ class PasswordForm extends Component<Props, State> {
                     <input
                         autoFocus = { true }
                         className = 'info-password-input'
+                        maxLength = { this.props.passwordNumberOfDigits }
                         onChange = { this._onEnteredPasswordChange }
+                        pattern = { digitPattern }
+                        placeholder = { placeHolderText }
                         spellCheck = { 'false' }
                         type = 'text'
                         value = { this.state.enteredPassword } />
