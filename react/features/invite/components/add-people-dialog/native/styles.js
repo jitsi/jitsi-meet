@@ -55,6 +55,7 @@ export default {
         backgroundColor: 'rgb(240, 243, 247)',
         borderBottomRightRadius: 10,
         borderTopRightRadius: 10,
+        color: DARK_GREY,
         flex: 1,
         fontSize: 17,
         paddingVertical: 7
