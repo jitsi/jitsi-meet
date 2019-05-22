@@ -10,6 +10,7 @@ import { Audio, MEDIA_TYPE } from '../../../base/media';
 import {
     PARTICIPANT_ROLE,
     ParticipantView,
+    isEveryoneModerator,
     isLocalParticipantModerator,
     pinParticipant
 } from '../../../base/participants';
@@ -37,6 +38,11 @@ type Props = {
      * The Redux representation of the participant's audio track.
      */
     _audioTrack: Object,
+
+    /**
+     * True if everone in the meeting is moderator.
+     */
+    _isEveryoneModerator: boolean,
 
     /**
      * True if the local participant is a moderator.
@@ -117,6 +123,7 @@ class Thumbnail extends Component<Props> {
     render() {
         const {
             _audioTrack: audioTrack,
+            _isEveryoneModerator,
             _isModerator,
             _largeVideo: largeVideo,
             _onClick,
@@ -172,7 +179,7 @@ class Thumbnail extends Component<Props> {
 
                 { renderDisplayName && <DisplayNameLabel participantId = { participantId } /> }
 
-                { participant.role === PARTICIPANT_ROLE.MODERATOR
+                { !_isEveryoneModerator && participant.role === PARTICIPANT_ROLE.MODERATOR
                     && <View style = { styles.moderatorIndicatorContainer }>
                         <ModeratorIndicator />
                     </View> }
@@ -275,6 +282,7 @@ function _mapStateToProps(state, ownProps) {
 
     return {
         _audioTrack: audioTrack,
+        _isEveryoneModerator: isEveryoneModerator(state),
         _isModerator: isLocalParticipantModerator(state),
         _largeVideo: largeVideo,
         _styles: ColorSchemeRegistry.get(state, 'Thumbnail'),
