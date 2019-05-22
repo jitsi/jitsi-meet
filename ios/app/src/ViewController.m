@@ -42,11 +42,11 @@
 
 - (void)_onJitsiMeetViewDelegateEvent:(NSString *)name
                              withData:(NSDictionary *)data {
-#if DEBUG
     NSLog(
         @"[%s:%d] JitsiMeetViewDelegate %@ %@",
         __FILE__, __LINE__, name, data);
 
+#if DEBUG
     NSAssert(
         [NSThread isMainThread],
         @"JitsiMeetViewDelegate %@ method invoked on a non-main thread",
