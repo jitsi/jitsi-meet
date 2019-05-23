@@ -525,12 +525,21 @@
     transition: box-shadow 0.3s ease;
 }
 
-.userAvatar {
+.avatar-container {
     @include maxSize(60px);
     @include absoluteAligning();
     border-radius: 50%;
+    display: flex;
+    justify-content: center;
     height: 50%;
+    overflow: hidden;
     width: auto;
+
+    .userAvatar {
+        height: 100%;
+        object-fit: cover;
+        width: 100%;
+    }
 }
 
 #videoNotAvailableScreen {
