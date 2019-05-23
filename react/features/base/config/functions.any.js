@@ -101,7 +101,7 @@ const WHITELISTED_KEYS = [
     'enableDisplayNameInStats',
     'enableLayerSuspension',
     'enableLipSync',
-    'enableLocalVideoFlip',
+    'disableLocalVideoFlip',
     'enableRemb',
     'enableStatsID',
     'enableTalkWhileMuted',
