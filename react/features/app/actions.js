@@ -81,16 +81,23 @@ export function appNavigate(uri: ?string) {
 
         let config;
 
-        try {
-            config = await loadConfig(url);
-            dispatch(storeConfig(baseURL, config));
-        } catch (error) {
+        // Avoid (re)loading the config when there is no room.
+        if (!room) {
             config = restoreConfig(baseURL);
+        }
 
-            if (!config) {
-                dispatch(loadConfigError(error, locationURL));
+        if (!config) {
+            try {
+                config = await loadConfig(url);
+                dispatch(storeConfig(baseURL, config));
+            } catch (error) {
+                config = restoreConfig(baseURL);
 
-                return;
+                if (!config) {
+                    dispatch(loadConfigError(error, locationURL));
+
+                    return;
+                }
             }
         }
 
