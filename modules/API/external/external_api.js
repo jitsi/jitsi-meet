@@ -72,7 +72,8 @@ const events = {
     'screen-sharing-status-changed': 'screenSharingStatusChanged',
     'show-manager-window': 'show-manager-window',
     'common-extend-message': 'common-extend-message',
-    'subject-change': 'subjectChange'
+    'subject-change': 'subjectChange',
+    'conference-log': 'conference-log'
 };
 
 /**
