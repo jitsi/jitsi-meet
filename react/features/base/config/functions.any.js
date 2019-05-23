@@ -21,6 +21,7 @@ const WHITELISTED_KEYS = [
     '_peerConnStatusOutOfLastNTimeout',
     '_peerConnStatusRtcMuteTimeout',
     'abTesting',
+    'analytics.disabled',
     'autoRecord',
     'autoRecordToken',
     'avgRtpStatsN',
