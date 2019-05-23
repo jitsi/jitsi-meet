@@ -377,7 +377,20 @@ class API {
             id
         });
     }
-
+    /**
+     * Notify 
+     *
+     * @param {string} log - log message.
+     * @returns {void}
+     */
+    notifyConferenceLog(log: string) {
+        console.warn('conference-log');
+        this._sendEvent({
+            name: 'conference-log',
+            log
+        });
+    }
+    
     /**
      * Notify external application (if API is enabled) that user changed their
      * avatar.

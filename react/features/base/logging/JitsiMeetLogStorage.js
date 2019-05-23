@@ -51,12 +51,12 @@ export default class JitsiMeetLogStorage {
      * @returns {void}
      */
     storeLogs(logEntries) {
-        const conference = getCurrentConference(this.getState());
+        // const conference = getCurrentConference(this.getState());
 
-        if (!conference || !conference.isCallstatsEnabled()) {
-            // Discard the logs if CallStats is not enabled.
-            return;
-        }
+        // if (!conference || !conference.isCallstatsEnabled()) {
+        //     // Discard the logs if CallStats is not enabled.
+        //     return;
+        // }
 
         let logMessage = `{"log${this.counter}":"\n`;
 
@@ -79,7 +79,8 @@ export default class JitsiMeetLogStorage {
         // on the way that could be uninitialized if the storeLogs
         // attempt would be made very early (which is unlikely)
         try {
-            conference.sendApplicationLog(logMessage);
+            // conference.sendApplicationLog(logMessage);
+            APP.API.notifyConferenceLog(logMessage);
         } catch (error) {
             // NOTE console is intentional here
             console.error(

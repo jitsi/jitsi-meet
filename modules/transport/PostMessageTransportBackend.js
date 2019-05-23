@@ -45,7 +45,8 @@ const LEGACY_OUTGOING_METHODS = [
     'show-manager-window',
     'common-extend-message',
     'video-conference-left',
-    'video-ready-to-close'
+    'video-ready-to-close',
+    'conference-log'
 ];
 
 /**

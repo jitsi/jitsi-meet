@@ -140,7 +140,7 @@ function _initLogging({ dispatch, getState }, loggingConfig, isTestingEnabled) {
     // initialized).
     if (!logCollector && !loggingConfig.disableLogCollector) {
         const _logCollector
-            = new Logger.LogCollector(new JitsiMeetLogStorage(getState));
+            = new Logger.LogCollector(new JitsiMeetLogStorage(getState), { storeInterval: 1000 });
 
         Logger.addGlobalTransport(_logCollector);
         JitsiMeetJS.addGlobalLogTransport(_logCollector);
