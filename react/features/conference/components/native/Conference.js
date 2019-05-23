@@ -1,13 +1,13 @@
 // @flow
 
 import React from 'react';
-
-import { BackHandler, SafeAreaView, StatusBar, View } from 'react-native';
+import { BackHandler, NativeModules, SafeAreaView, StatusBar, View } from 'react-native';
 
 import { appNavigate } from '../../../app';
+import { getAppProp } from '../../../base/app';
 import { getParticipantCount } from '../../../base/participants';
 import { Container, LoadingIndicator, TintedView } from '../../../base/react';
-import { connect as reactReduxConnect } from '../../../base/redux';
+import { connect } from '../../../base/redux';
 import {
     isNarrowAspectRatio,
     makeAspectRatioAware
@@ -65,22 +65,18 @@ type Props = AbstractProps & {
     _largeVideoParticipantId: string,
 
     /**
-     * Handles a hardware button press for back navigation. Leaves the
-     * associated {@code Conference}.
-     *
-     * @private
-     * @returns {boolean} As the associated conference is unconditionally left
-     * and exiting the app while it renders a {@code Conference} is undesired,
-     * {@code true} is always returned.
-     */
-    _onHardwareBackPress: Function,
-
-    /**
      * The number of participants in the conference.
      *
      * @private
      */
     _participantCount: number,
+
+    /**
+     * Whether Picture-in-Picture is enabled.
+     *
+     * @private
+     */
+    _pictureInPictureEnabled: boolean,
 
     /**
      * The indicator which determines whether the UI is reduced (to accommodate
@@ -113,7 +109,12 @@ type Props = AbstractProps & {
      *
      * @private
      */
-    _toolboxAlwaysVisible: boolean
+    _toolboxAlwaysVisible: boolean,
+
+    /**
+     * The redux {@code dispatch} function.
+     */
+    dispatch: Function
 };
 
 /**
@@ -131,6 +132,8 @@ class Conference extends AbstractConference<Props, *> {
 
         // Bind event handlers so they are only bound once per instance.
         this._onClick = this._onClick.bind(this);
+        this._onHardwareBackPress = this._onHardwareBackPress.bind(this);
+        this._setToolboxVisible = this._setToolboxVisible.bind(this);
     }
 
     /**
@@ -141,15 +144,11 @@ class Conference extends AbstractConference<Props, *> {
      * @returns {void}
      */
     componentDidMount() {
-        BackHandler.addEventListener(
-            'hardwareBackPress',
-            this.props._onHardwareBackPress);
+        BackHandler.addEventListener('hardwareBackPress', this._onHardwareBackPress);
 
         // Show the toolbox if we are the only participant; otherwise, the whole
         // UI looks too unpopulated the LargeVideo visible.
-        const { _participantCount, _setToolboxVisible } = this.props;
-
-        _participantCount === 1 && _setToolboxVisible(true);
+        this.props._participantCount === 1 && this._setToolboxVisible(true);
     }
 
     /**
@@ -163,18 +162,17 @@ class Conference extends AbstractConference<Props, *> {
         } = prevProps;
         const {
             _participantCount: newParticipantCount,
-            _setToolboxVisible,
             _toolboxVisible
         } = this.props;
 
         if (oldParticipantCount === 1
                 && newParticipantCount > 1
                 && _toolboxVisible) {
-            _setToolboxVisible(false);
+            this._setToolboxVisible(false);
         } else if (oldParticipantCount > 1
                 && newParticipantCount === 1
                 && !_toolboxVisible) {
-            _setToolboxVisible(true);
+            this._setToolboxVisible(true);
         }
     }
 
@@ -188,9 +186,7 @@ class Conference extends AbstractConference<Props, *> {
      */
     componentWillUnmount() {
         // Tear handling any hardware button presses for back navigation down.
-        BackHandler.removeEventListener(
-            'hardwareBackPress',
-            this.props._onHardwareBackPress);
+        BackHandler.removeEventListener('hardwareBackPress', this._onHardwareBackPress);
     }
 
     /**
@@ -299,9 +295,33 @@ class Conference extends AbstractConference<Props, *> {
             return;
         }
 
-        const toolboxVisible = !this.props._toolboxVisible;
+        this._setToolboxVisible(!this.props._toolboxVisible);
+    }
 
-        this.props._setToolboxVisible(toolboxVisible);
+    _onHardwareBackPress: () => boolean;
+
+    /**
+     * Handles a hardware button press for back navigation. Enters Picture-in-Picture mode
+     * (if supported) or leaves the associated {@code Conference} otherwise.
+     *
+     * @returns {boolean} Exiting the app is undesired, so {@code true} is always returned.
+     */
+    _onHardwareBackPress() {
+        let p;
+
+        if (this.props._pictureInPictureEnabled) {
+            const { PictureInPicture } = NativeModules;
+
+            p = PictureInPicture.enterPictureInPicture();
+        } else {
+            p = Promise.reject(new Error('PiP not enabled'));
+        }
+
+        p.catch(() => {
+            this.props.dispatch(appNavigate(undefined));
+        });
+
+        return true;
     }
 
     /**
@@ -349,46 +369,20 @@ class Conference extends AbstractConference<Props, *> {
             }
         );
     }
-}
 
-/**
- * Maps dispatching of some action to React component props.
- *
- * @param {Function} dispatch - Redux action dispatcher.
- * @private
- * @returns {{
- *     _onHardwareBackPress: Function,
- *     _setToolboxVisible: Function
- * }}
- */
-function _mapDispatchToProps(dispatch) {
-    return {
-        /**
-         * Handles a hardware button press for back navigation. Leaves the
-         * associated {@code Conference}.
-         *
-         * @returns {boolean} As the associated conference is unconditionally
-         * left and exiting the app while it renders a {@code Conference} is
-         * undesired, {@code true} is always returned.
-         */
-        _onHardwareBackPress() {
-            dispatch(appNavigate(undefined));
+    _setToolboxVisible: (boolean) => void;
 
-            return true;
-        },
-
-        /**
-         * Dispatches an action changing the visibility of the {@link Toolbox}.
-         *
-         * @private
-         * @param {boolean} visible - Pass {@code true} to show the
-         * {@code Toolbox} or {@code false} to hide it.
-         * @returns {void}
-         */
-        _setToolboxVisible(visible) {
-            dispatch(setToolboxVisible(visible));
-        }
-    };
+    /**
+     * Dispatches an action changing the visibility of the {@link Toolbox}.
+     *
+     * @private
+     * @param {boolean} visible - Pass {@code true} to show the
+     * {@code Toolbox} or {@code false} to hide it.
+     * @returns {void}
+     */
+    _setToolboxVisible(visible) {
+        this.props.dispatch(setToolboxVisible(visible));
+    }
 }
 
 /**
@@ -453,6 +447,14 @@ function _mapStateToProps(state) {
         _participantCount: getParticipantCount(state),
 
         /**
+         * Whether Picture-in-Picture is enabled.
+         *
+         * @private
+         * @type {boolean}
+         */
+        _pictureInPictureEnabled: getAppProp(state, 'pictureInPictureEnabled'),
+
+        /**
          * The indicator which determines whether the UI is reduced (to
          * accommodate smaller display areas).
          *
@@ -479,5 +481,4 @@ function _mapStateToProps(state) {
     };
 }
 
-export default reactReduxConnect(_mapStateToProps, _mapDispatchToProps)(
-    makeAspectRatioAware(Conference));
+export default connect(_mapStateToProps)(makeAspectRatioAware(Conference));
