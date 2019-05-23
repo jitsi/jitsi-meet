@@ -414,6 +414,10 @@ var config = {
     // use only.
     // _desktopSharingSourceDevice: 'sample-id-or-label'
 
+    // A property to disable the right click context menu for localVideo
+    // the menu has option to flip the locally seen video for local presentations
+    // disableLocalVideoFlip: false
+
     // List of undocumented settings used in jitsi-meet
     /**
      _immediateReloadThreshold
@@ -428,7 +432,6 @@ var config = {
      dialOutCodesUrl
      disableRemoteControl
      displayJids
-     enableLocalVideoFlip
      etherpad_base
      externalConnectUrl
      firefox_fake_device
