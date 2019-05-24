@@ -37,12 +37,15 @@ export const bottomSheetStyles = {
      * Style for the container of the sheet.
      */
     sheetContainer: {
-        alignContent: 'stretch',
+        alignItems: 'stretch',
         flex: 1,
-        flexDirection: 'column'
+        flexDirection: 'column',
+        justifyContent: 'flex-end'
     },
 
     sheetItemContainer: {
+        flex: -1,
+        maxHeight: '60%',
         paddingHorizontal: MD_ITEM_MARGIN_PADDING
     }
 };
