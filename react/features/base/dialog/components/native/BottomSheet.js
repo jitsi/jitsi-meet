@@ -1,7 +1,7 @@
 // @flow
 
 import React, { PureComponent, type Node } from 'react';
-import { Platform, SafeAreaView, View } from 'react-native';
+import { Platform, SafeAreaView, ScrollView, View } from 'react-native';
 
 import { ColorSchemeRegistry } from '../../../color-scheme';
 import { SlidingView } from '../../../react';
@@ -61,7 +61,9 @@ class BottomSheet extends PureComponent<Props> {
                             styles.sheetItemContainer,
                             _styles.sheet
                         ] }>
-                        { this._getWrappedContent() }
+                        <ScrollView bounces = { false }>
+                            { this._getWrappedContent() }
+                        </ScrollView>
                     </View>
                 </View>
             </SlidingView>
