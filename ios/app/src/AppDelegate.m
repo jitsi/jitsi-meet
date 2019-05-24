@@ -46,6 +46,12 @@
     jitsiMeet.defaultConferenceOptions = [JitsiMeetConferenceOptions fromBuilder:^(JitsiMeetConferenceOptionsBuilder *builder) {
         builder.serverURL = [NSURL URLWithString:@"https://meet.jit.si"];
         builder.welcomePageEnabled = YES;
+
+        // Apple rejected our app because they claim requiring a
+        // Dropbox account for recording is not acceptable.
+#if DEBUG
+        [builder setFeatureFlag:@"ios.recording.enabled" withBoolean:YES];
+#endif
     }];
 
     [jitsiMeet application:application didFinishLaunchingWithOptions:launchOptions];
