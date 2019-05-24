@@ -55,18 +55,17 @@ public class JitsiMeetConferenceOptions implements Parcelable {
     private Bundle colorScheme;
 
     /**
+     * Feature flags. See: https://github.com/jitsi/jitsi-meet/blob/master/react/features/base/flags/constants.js
+     */
+    private Bundle featureFlags;
+
+    /**
      * Set to {@code true} to join the conference with audio / video muted or to start in audio
      * only mode respectively.
      */
     private Boolean audioMuted;
     private Boolean audioOnly;
     private Boolean videoMuted;
-
-    /**
-     * Set to {@code true} to enable the welcome page. Typically SDK users won't need this enabled
-     * since the host application decides which meeting to join.
-     */
-    private Boolean welcomePageEnabled;
 
     /**
      * Class used to build the immutable {@link JitsiMeetConferenceOptions} object.
@@ -78,14 +77,14 @@ public class JitsiMeetConferenceOptions implements Parcelable {
         private String token;
 
         private Bundle colorScheme;
+        private Bundle featureFlags;
 
         private Boolean audioMuted;
         private Boolean audioOnly;
         private Boolean videoMuted;
 
-        private Boolean welcomePageEnabled;
-
         public Builder() {
+            featureFlags = new Bundle();
         }
 
         /**\
@@ -186,7 +185,25 @@ public class JitsiMeetConferenceOptions implements Parcelable {
          * @return - The {@link Builder} object itself so the method calls can be chained.
          */
         public Builder setWelcomePageEnabled(boolean enabled) {
-            this.welcomePageEnabled = enabled;
+            this.featureFlags.putBoolean("welcomepage.enabled", enabled);
+
+            return this;
+        }
+
+        public Builder setFeatureFlag(String flag, boolean value) {
+            this.featureFlags.putBoolean(flag, value);
+
+            return this;
+        }
+
+        public Builder setFeatureFlag(String flag, String value) {
+            this.featureFlags.putString(flag, value);
+
+            return this;
+        }
+
+        public Builder setFeatureFlag(String flag, int value) {
+            this.featureFlags.putInt(flag, value);
 
             return this;
         }
@@ -204,10 +221,10 @@ public class JitsiMeetConferenceOptions implements Parcelable {
             options.subject = this.subject;
             options.token = this.token;
             options.colorScheme = this.colorScheme;
+            options.featureFlags = this.featureFlags;
             options.audioMuted = this.audioMuted;
             options.audioOnly = this.audioOnly;
             options.videoMuted = this.videoMuted;
-            options.welcomePageEnabled = this.welcomePageEnabled;
 
             return options;
         }
@@ -221,29 +238,28 @@ public class JitsiMeetConferenceOptions implements Parcelable {
         subject = in.readString();
         token = in.readString();
         colorScheme = in.readBundle();
+        featureFlags = in.readBundle();
         byte tmpAudioMuted = in.readByte();
         audioMuted = tmpAudioMuted == 0 ? null : tmpAudioMuted == 1;
         byte tmpAudioOnly = in.readByte();
         audioOnly = tmpAudioOnly == 0 ? null : tmpAudioOnly == 1;
         byte tmpVideoMuted = in.readByte();
         videoMuted = tmpVideoMuted == 0 ? null : tmpVideoMuted == 1;
-        byte tmpWelcomePageEnabled = in.readByte();
-        welcomePageEnabled = tmpWelcomePageEnabled == 0 ? null : tmpWelcomePageEnabled == 1;
     }
 
     Bundle asProps() {
         Bundle props = new Bundle();
 
+        // Android always has the PiP flag set by default.
+        if (!featureFlags.containsKey("pip.enabled")) {
+            featureFlags.putBoolean("pip.enabled", true);
+        }
+
+        props.putBundle("flags", featureFlags);
+
         if (colorScheme != null) {
             props.putBundle("colorScheme", colorScheme);
         }
-
-        if (welcomePageEnabled != null) {
-            props.putBoolean("welcomePageEnabled", welcomePageEnabled);
-        }
-
-        // TODO: get rid of this.
-        props.putBoolean("pictureInPictureEnabled", true);
 
         Bundle config = new Bundle();
 
@@ -305,10 +321,10 @@ public class JitsiMeetConferenceOptions implements Parcelable {
         dest.writeString(subject);
         dest.writeString(token);
         dest.writeBundle(colorScheme);
+        dest.writeBundle(featureFlags);
         dest.writeByte((byte) (audioMuted == null ? 0 : audioMuted ? 1 : 2));
         dest.writeByte((byte) (audioOnly == null ? 0 : audioOnly ? 1 : 2));
         dest.writeByte((byte) (videoMuted == null ? 0 : videoMuted ? 1 : 2));
-        dest.writeByte((byte) (welcomePageEnabled == null ? 0 : welcomePageEnabled ? 1 : 2));
     }
 
     @Override

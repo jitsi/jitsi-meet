@@ -6,6 +6,7 @@ import '../../analytics';
 import '../../authentication';
 import { setColorScheme } from '../../base/color-scheme';
 import { DialogContainer } from '../../base/dialog';
+import { updateFlags } from '../../base/flags';
 import '../../base/jwt';
 import { Platform } from '../../base/react';
 import {
@@ -47,18 +48,9 @@ type Props = AbstractAppProps & {
     externalAPIScope: string,
 
     /**
-     * Whether Picture-in-Picture is enabled. If {@code true}, a toolbar button
-     * is rendered in the {@link Conference} view to afford entering
-     * Picture-in-Picture.
+     * An object with the feature flags.
      */
-    pictureInPictureEnabled: boolean,
-
-    /**
-     * Whether the Welcome page is enabled. If {@code true}, the Welcome page is
-     * rendered when the {@link App} is not at a location (URL) identifying
-     * a Jitsi Meet conference/room.
-     */
-    welcomePageEnabled: boolean
+    flags: Object
 };
 
 /**
@@ -99,6 +91,9 @@ export class App extends AbstractApp {
             // We set the color scheme early enough so then we avoid any
             // unnecessary re-renders.
             this.state.store.dispatch(setColorScheme(this.props.colorScheme));
+
+            // Ditto for feature flags.
+            this.state.store.dispatch(updateFlags(this.props.flags));
         });
     }
 
