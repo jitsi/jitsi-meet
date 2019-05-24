@@ -4,7 +4,7 @@ import React from 'react';
 import { BackHandler, NativeModules, SafeAreaView, StatusBar, View } from 'react-native';
 
 import { appNavigate } from '../../../app';
-import { getAppProp } from '../../../base/app';
+import { PIP_ENABLED, getFeatureFlag } from '../../../base/flags';
 import { getParticipantCount } from '../../../base/participants';
 import { Container, LoadingIndicator, TintedView } from '../../../base/react';
 import { connect } from '../../../base/redux';
@@ -452,7 +452,7 @@ function _mapStateToProps(state) {
          * @private
          * @type {boolean}
          */
-        _pictureInPictureEnabled: getAppProp(state, 'pictureInPictureEnabled'),
+        _pictureInPictureEnabled: getFeatureFlag(state, PIP_ENABLED),
 
         /**
          * The indicator which determines whether the UI is reduced (to
