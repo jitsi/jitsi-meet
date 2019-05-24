@@ -27,17 +27,25 @@ export const PLACEHOLDER_COLOR = ColorPalette.lightGrey;
  * been implemented as per the Material Design guidelines:
  * {@link https://material.io/guidelines/components/bottom-sheets.html}.
  */
-export const bottomSheetStyles = createStyleSheet({
+export const bottomSheetStyles = {
+    sheetAreaCover: {
+        backgroundColor: ColorPalette.transparent,
+        flex: 1
+    },
+
     /**
      * Style for the container of the sheet.
      */
-    container: {
-        bottom: 0,
-        left: 0,
-        position: 'absolute',
-        right: 0
+    sheetContainer: {
+        alignContent: 'stretch',
+        flex: 1,
+        flexDirection: 'column'
+    },
+
+    sheetItemContainer: {
+        paddingHorizontal: MD_ITEM_MARGIN_PADDING
     }
-});
+};
 
 export const brandedDialog = createStyleSheet({
 
@@ -137,10 +145,7 @@ ColorSchemeRegistry.register('BottomSheet', {
      * Bottom sheet's base style.
      */
     sheet: {
-        backgroundColor: schemeColor('background'),
-        flex: 1,
-        paddingHorizontal: MD_ITEM_MARGIN_PADDING,
-        paddingVertical: 8
+        backgroundColor: schemeColor('background')
     },
 
     /**

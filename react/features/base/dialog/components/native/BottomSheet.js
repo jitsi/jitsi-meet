@@ -1,7 +1,7 @@
 // @flow
 
 import React, { PureComponent, type Node } from 'react';
-import { SafeAreaView, View } from 'react-native';
+import { Platform, SafeAreaView, View } from 'react-native';
 
 import { ColorSchemeRegistry } from '../../../color-scheme';
 import { SlidingView } from '../../../react';
@@ -37,21 +37,6 @@ type Props = {
  */
 class BottomSheet extends PureComponent<Props> {
     /**
-     * Assembles a style for the BottomSheet container.
-     *
-     * @private
-     * @returns {StyleType}
-     */
-    _getContainerStyle() {
-        const { _styles } = this.props;
-
-        return {
-            ...styles.container,
-            backgroundColor: _styles.sheet.backgroundColor
-        };
-    }
-
-    /**
      * Implements React's {@link Component#render()}.
      *
      * @inheritdoc
@@ -65,14 +50,43 @@ class BottomSheet extends PureComponent<Props> {
                 onHide = { this.props.onCancel }
                 position = 'bottom'
                 show = { true }>
-                <SafeAreaView
-                    style = { this._getContainerStyle() }>
-                    <View style = { _styles.sheet }>
-                        { this.props.children }
+                <View
+                    pointerEvents = 'box-none'
+                    style = { styles.sheetContainer }>
+                    <View
+                        pointerEvents = 'box-none'
+                        style = { styles.sheetAreaCover } />
+                    <View
+                        style = { [
+                            styles.sheetItemContainer,
+                            _styles.sheet
+                        ] }>
+                        { this._getWrappedContent() }
                     </View>
-                </SafeAreaView>
+                </View>
             </SlidingView>
         );
+    }
+
+    /**
+     * Wraps the content when needed (iOS 11 and above), or just returns the original children.
+     *
+     * @returns {React$Element}
+     */
+    _getWrappedContent() {
+        if (Platform.OS === 'ios') {
+            const majorVersionIOS = parseInt(Platform.Version, 10);
+
+            if (majorVersionIOS > 10) {
+                return (
+                    <SafeAreaView>
+                        { this.props.children }
+                    </SafeAreaView>
+                );
+            }
+        }
+
+        return this.props.children;
     }
 }
 
