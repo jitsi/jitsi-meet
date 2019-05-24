@@ -1,6 +1,12 @@
 // @flow
 
 /**
+ * Flag indicating if recording should be enabled in iOS.
+ * Default: disabled (false).
+ */
+export const IOS_RECORDING_ENABLED = 'ios.recording.enabled';
+
+/**
  * Flag indicating if Picture-in-Picture should be enabled.
  * Default: auto-detected.
  */
