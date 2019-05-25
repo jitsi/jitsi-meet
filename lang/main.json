@@ -115,7 +115,10 @@
         "privacy": "隐私",
         "roomnamePlaceHolder": "房间名",
         "terms": "条款",
-        "calendar": "日历"
+        "calendar": "日历",
+        "about": "关于我们",
+        "support": "技术支持",
+        "version": "版本号"
     },
     "startupoverlay": {
         "policyText": "~",
