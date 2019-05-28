@@ -5,7 +5,7 @@ import { Platform } from 'react-native';
 
 import { ColorSchemeRegistry } from '../../../base/color-scheme';
 import { BottomSheet, hideDialog } from '../../../base/dialog';
-import { IOS_RECORDING_ENABLED, getFeatureFlag } from '../../../base/flags';
+import { CHAT_ENABLED, IOS_RECORDING_ENABLED, getFeatureFlag } from '../../../base/flags';
 import { connect } from '../../../base/redux';
 import { StyleType } from '../../../base/styles';
 import { InfoDialogButton, InviteButton } from '../../../invite';
@@ -28,6 +28,11 @@ type Props = {
      * The color-schemed stylesheet of the dialog feature.
      */
     _bottomSheetStyles: StyleType,
+
+    /**
+     * Whether the chat feature has been enabled. The meeting info button will be displayed in its place when disabled.
+     */
+    _chatEnabled: boolean,
 
     /**
      * Whether the recoding button should be enabled or not.
@@ -93,7 +98,10 @@ class OverflowMenu extends Component<Props> {
                 <LiveStreamButton { ...buttonProps } />
                 <TileViewButton { ...buttonProps } />
                 <InviteButton { ...buttonProps } />
-                <InfoDialogButton { ...buttonProps } />
+                {
+                    this.props._chatEnabled
+                        && <InfoDialogButton { ...buttonProps } />
+                }
                 <RaiseHandButton { ...buttonProps } />
             </BottomSheet>
         );
@@ -119,6 +127,7 @@ class OverflowMenu extends Component<Props> {
  * @private
  * @returns {{
  *      _bottomSheetStyles: StyleType,
+ *      _chatEnabled: boolean,
  *      _recordingEnabled: boolean
  *  }}
  */
@@ -126,6 +135,7 @@ function _mapStateToProps(state) {
     return {
         _bottomSheetStyles:
             ColorSchemeRegistry.get(state, 'BottomSheet'),
+        _chatEnabled: getFeatureFlag(state, CHAT_ENABLED, true),
         _recordingEnabled: Platform.OS !== 'ios' || getFeatureFlag(state, IOS_RECORDING_ENABLED)
     };
 }

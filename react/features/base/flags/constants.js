@@ -1,6 +1,17 @@
 // @flow
 
 /**
+ * Flag indicating if calendar integration should be disabled.
+ */
+export const CALENDAR_DISABLED = 'calendar.disabled';
+
+/**
+ * Flag indicating if chat should be enabled.
+ * Default: enabled (true).
+ */
+export const CHAT_ENABLED = 'chat.enabled';
+
+/**
  * Flag indicating if recording should be enabled in iOS.
  * Default: disabled (false).
  */
