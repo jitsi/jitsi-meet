@@ -259,12 +259,6 @@ UI.addLocalStream = track => {
 };
 
 /**
- * Removed remote stream from UI.
- * @param {JitsiTrack} track stream to remove
- */
-UI.removeRemoteStream = track => VideoLayout.onRemoteStreamRemoved(track);
-
-/**
  * Setup and show Etherpad.
  * @param {string} name etherpad id
  */
