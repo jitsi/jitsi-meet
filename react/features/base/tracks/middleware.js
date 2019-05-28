@@ -15,7 +15,6 @@ import UIEvents from '../../../../service/UI/UIEvents';
 import { createLocalTracksA } from './actions';
 import {
     TOGGLE_SCREENSHARING,
-    TRACK_REMOVED,
     TRACK_UPDATED
 } from './actionTypes';
 import { getLocalTrack, setTrackMuted } from './functions';
@@ -89,14 +88,6 @@ MiddlewareRegistry.register(store => next => action => {
     case TOGGLE_SCREENSHARING:
         if (typeof APP === 'object') {
             APP.UI.emitEvent(UIEvents.TOGGLE_SCREENSHARING);
-        }
-        break;
-
-    case TRACK_REMOVED:
-        // TODO Remove this middleware case once all UI interested in tracks
-        // being removed are converted to react and listening for store changes.
-        if (typeof APP !== 'undefined' && !action.track.local) {
-            APP.UI.removeRemoteStream(action.track.jitsiTrack);
         }
         break;
 
