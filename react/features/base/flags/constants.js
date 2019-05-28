@@ -1,9 +1,10 @@
 // @flow
 
 /**
- * Flag indicating if calendar integration should be disabled.
+ * Flag indicating if calendar integration should be enabled.
+ * Default: enabled (true) on Android, auto-detected on iOS.
  */
-export const CALENDAR_DISABLED = 'calendar.disabled';
+export const CALENDAR_ENABLED = 'calendar.enabled';
 
 /**
  * Flag indicating if chat should be enabled.

@@ -4,6 +4,7 @@ import { NativeModules, Platform } from 'react-native';
 import RNCalendarEvents from 'react-native-calendar-events';
 import type { Store } from 'redux';
 
+import { CALENDAR_ENABLED, getFeatureFlag } from '../base/flags';
 import { getShareInfoText } from '../invite';
 
 import { setCalendarAuthorization } from './actions';
@@ -54,12 +55,20 @@ export function addLinkToCalendarEntry(
  * Determines whether the calendar feature is enabled by the app. For
  * example, Apple through its App Store requires
  * {@code NSCalendarsUsageDescription} in the app's Info.plist or App Store
- * rejects the app.
+ * rejects the app. It could also be disabled with a feature flag.
  *
+ * @param {Function|Object} stateful - The redux store or {@code getState}
+ * function.
  * @returns {boolean} If the app has enabled the calendar feature, {@code true};
  * otherwise, {@code false}.
  */
-export function isCalendarEnabled() {
+export function isCalendarEnabled(stateful: Function | Object) {
+    const flag = getFeatureFlag(stateful, CALENDAR_ENABLED);
+
+    if (typeof flag !== 'undefined') {
+        return flag;
+    }
+
     const { calendarEnabled = true } = NativeModules.AppInfo;
 
     return calendarEnabled;

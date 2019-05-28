@@ -13,7 +13,7 @@ import {
     makeAspectRatioAware
 } from '../../../base/responsive-ui';
 import { TestConnectionInfo } from '../../../base/testing';
-import { ConferenceNotification } from '../../../calendar-sync';
+import { ConferenceNotification, isCalendarEnabled } from '../../../calendar-sync';
 import { Chat } from '../../../chat';
 import { DisplayNameLabel } from '../../../display-name';
 import {
@@ -41,6 +41,13 @@ import type { AbstractProps } from '../AbstractConference';
  * The type of the React {@code Component} props of {@link Conference}.
  */
 type Props = AbstractProps & {
+
+    /**
+     * Wherther the calendar feature is enabled or not.
+     *
+     * @private
+     */
+    _calendarEnabled: boolean,
 
     /**
      * The indicator which determines that we are still connecting to the
@@ -331,10 +338,10 @@ class Conference extends AbstractConference<Props, *> {
      * @returns {React$Node}
      */
     _renderConferenceNotification() {
-        // XXX If the calendar feature is disabled on a platform, then we don't
-        // have its components exported so an undefined check is necessary.
+        const { _calendarEnabled, _reducedUI } = this.props;
+
         return (
-            !this.props._reducedUI && ConferenceNotification
+            _calendarEnabled && !_reducedUI
                 ? <ConferenceNotification />
                 : undefined);
     }
@@ -416,6 +423,14 @@ function _mapStateToProps(state) {
 
     return {
         ...abstractMapStateToProps(state),
+
+        /**
+         * Wherther the calendar feature is enabled or not.
+         *
+         * @private
+         * @type {boolean}
+         */
+        _calendarEnabled: isCalendarEnabled(state),
 
         /**
          * The indicator which determines that we are still connecting to the

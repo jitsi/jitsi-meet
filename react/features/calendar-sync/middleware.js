@@ -9,51 +9,55 @@ import { setCalendarAuthorization } from './actions';
 import { REFRESH_CALENDAR } from './actionTypes';
 import { _fetchCalendarEntries, isCalendarEnabled } from './functions';
 
-isCalendarEnabled()
-    && MiddlewareRegistry.register(store => next => action => {
-        switch (action.type) {
-        case ADD_KNOWN_DOMAINS: {
-            // XXX Fetch new calendar entries only when an actual domain has
-            // become known.
-            const { getState } = store;
-            const oldValue = getState()['features/base/known-domains'];
-            const result = next(action);
-            const newValue = getState()['features/base/known-domains'];
+MiddlewareRegistry.register(store => next => action => {
+    const { getState } = store;
 
-            equals(oldValue, newValue)
-                || _fetchCalendarEntries(store, false, false);
-
-            return result;
-        }
-
-        case APP_STATE_CHANGED: {
-            const result = next(action);
-
-            _maybeClearAccessStatus(store, action);
-
-            return result;
-        }
-
-        case SET_CONFIG: {
-            const result = next(action);
-
-            _fetchCalendarEntries(store, false, false);
-
-            return result;
-        }
-
-        case REFRESH_CALENDAR: {
-            const result = next(action);
-
-            _fetchCalendarEntries(
-                store, action.isInteractive, action.forcePermission);
-
-            return result;
-        }
-        }
-
+    if (!isCalendarEnabled(getState)) {
         return next(action);
-    });
+    }
+
+    switch (action.type) {
+    case ADD_KNOWN_DOMAINS: {
+        // XXX Fetch new calendar entries only when an actual domain has
+        // become known.
+        const oldValue = getState()['features/base/known-domains'];
+        const result = next(action);
+        const newValue = getState()['features/base/known-domains'];
+
+        equals(oldValue, newValue)
+            || _fetchCalendarEntries(store, false, false);
+
+        return result;
+    }
+
+    case APP_STATE_CHANGED: {
+        const result = next(action);
+
+        _maybeClearAccessStatus(store, action);
+
+        return result;
+    }
+
+    case SET_CONFIG: {
+        const result = next(action);
+
+        _fetchCalendarEntries(store, false, false);
+
+        return result;
+    }
+
+    case REFRESH_CALENDAR: {
+        const result = next(action);
+
+        _fetchCalendarEntries(
+            store, action.isInteractive, action.forcePermission);
+
+        return result;
+    }
+    }
+
+    return next(action);
+});
 
 /**
  * Clears the calendar access status when the app comes back from the
