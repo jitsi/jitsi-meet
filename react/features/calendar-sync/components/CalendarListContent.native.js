@@ -13,7 +13,6 @@ import { NavigateSectionList } from '../../base/react';
 import { connect } from '../../base/redux';
 
 import { refreshCalendar, openUpdateCalendarEventDialog } from '../actions';
-import { isCalendarEnabled } from '../functions';
 
 
 /**
@@ -271,6 +270,4 @@ function _mapStateToProps(state: Object) {
     };
 }
 
-export default isCalendarEnabled()
-    ? translate(connect(_mapStateToProps)(CalendarListContent))
-    : undefined;
+export default translate(connect(_mapStateToProps)(CalendarListContent));
