@@ -80,7 +80,8 @@ export default class JitsiMeetLogStorage {
         // attempt would be made very early (which is unlikely)
         try {
             // conference.sendApplicationLog(logMessage);
-            APP.API.notifyConferenceLog(logMessage);
+            typeof APP === 'object' && typeof APP.API === 'object' &&  APP.API.notifyConferenceLog(logMessage);
+            
         } catch (error) {
             // NOTE console is intentional here
             console.error(
