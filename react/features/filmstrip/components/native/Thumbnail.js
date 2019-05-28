@@ -18,7 +18,7 @@ import { connect } from '../../../base/redux';
 import { StyleType } from '../../../base/styles';
 import { getTrackByMediaTypeAndParticipant } from '../../../base/tracks';
 import { ConnectionIndicator } from '../../../connection-indicator';
-import { DisplayNameLabel } from '../../../display-name';
+import { DisplayNameLabel,NameLabel } from '../../../display-name';
 import { RemoteVideoMenu } from '../../../remote-video-menu';
 
 import AudioMutedIndicator from './AudioMutedIndicator';
@@ -172,6 +172,7 @@ class Thumbnail extends Component<Props> {
 
                 { renderDisplayName && <DisplayNameLabel participantId = { participantId } /> }
 
+
                 { participant.role === PARTICIPANT_ROLE.MODERATOR
                     && <View style = { styles.moderatorIndicatorContainer }>
                         <ModeratorIndicator />
@@ -201,6 +202,8 @@ class Thumbnail extends Component<Props> {
 
                     { videoMuted
                         && <VideoMutedIndicator /> }
+                    { !videoMuted && <NameLabel participantId = { participantId } /> }
+                        
                 </Container>
 
             </Container>

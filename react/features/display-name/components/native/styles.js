@@ -15,5 +15,12 @@ export default {
     displayNameText: {
         color: ColorPalette.white,
         fontSize: 14
+    },
+
+    displayNameTextBottom: {
+        color: ColorPalette.white,
+        fontSize: 12,
+        paddingLeft: 5,
+        paddingBottom: 5
     }
 };
