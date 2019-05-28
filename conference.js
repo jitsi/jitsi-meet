@@ -51,6 +51,8 @@ import {
 import {
     checkAndNotifyForNewDevice,
     getAvailableDevices,
+    notifyCameraError,
+    notifyMicError,
     setAudioOutputDeviceId,
     updateDeviceList
 } from './react/features/base/devices';
@@ -694,13 +696,14 @@ export default {
                         // If both requests for 'audio' + 'video' and 'audio'
                         // only failed, we assume that there are some problems
                         // with user's microphone and show corresponding dialog.
-                        APP.UI.showMicErrorNotification(audioOnlyError);
-                        APP.UI.showCameraErrorNotification(videoOnlyError);
+                        APP.store.dispatch(notifyMicError(audioOnlyError));
+                        APP.store.dispatch(notifyCameraError(videoOnlyError));
                     } else {
                         // If request for 'audio' + 'video' failed, but request
                         // for 'audio' only was OK, we assume that we had
                         // problems with camera and show corresponding dialog.
-                        APP.UI.showCameraErrorNotification(audioAndVideoError);
+                        APP.store.dispatch(
+                            notifyCameraError(audioAndVideoError));
                     }
                 }
 
@@ -839,7 +842,7 @@ export default {
 
         if (!this.localAudio && !mute) {
             const maybeShowErrorDialog = error => {
-                showUI && APP.UI.showMicErrorNotification(error);
+                showUI && APP.store.dispatch(notifyMicError(error));
             };
 
             createLocalTracksF({ devices: [ 'audio' ] }, false)
@@ -902,7 +905,7 @@ export default {
 
         if (!this.localVideo && !mute) {
             const maybeShowErrorDialog = error => {
-                showUI && APP.UI.showCameraErrorNotification(error);
+                showUI && APP.store.dispatch(notifyCameraError(error));
             };
 
             // Try to create local video if there wasn't any.
@@ -2109,7 +2112,7 @@ export default {
                     this._updateVideoDeviceId();
                 })
                 .catch(err => {
-                    APP.UI.showCameraErrorNotification(err);
+                    APP.store.dispatch(notifyCameraError(err));
                 });
             }
         );
@@ -2142,7 +2145,7 @@ export default {
                     this._updateAudioDeviceId();
                 })
                 .catch(err => {
-                    APP.UI.showMicErrorNotification(err);
+                    APP.store.dispatch(notifyMicError(err));
                 });
             }
         );
