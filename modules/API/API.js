@@ -11,6 +11,7 @@ import { muteRemoteParticipant } from '../../react/features/base/participants';
 import { kickParticipant } from '../../react/features/base/participants';
 import { invite } from '../../react/features/invite';
 import { getJitsiMeetTransport } from '../transport';
+import jitsiLocalStorage from '../util/JitsiLocalStorage';
 
 import { API_ID } from './constants';
 import {
@@ -116,6 +117,10 @@ function initCommands() {
         },
         'kick': id => {
             APP.store.dispatch(kickParticipant(id));
+        },
+        'saveRoomName': (displayName,roomName) => {
+            const key = "roomName_"+roomName;
+            jitsiLocalStorage.setItem(key,displayName );
         }
     };
     transport.on('event', ({ data, name }) => {
