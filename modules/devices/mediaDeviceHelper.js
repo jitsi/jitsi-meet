@@ -1,6 +1,10 @@
 /* global APP, JitsiMeetJS */
 
-import { getAudioOutputDeviceId } from '../../react/features/base/devices';
+import {
+    getAudioOutputDeviceId,
+    notifyCameraError,
+    notifyMicError
+} from '../../react/features/base/devices';
 import {
     getUserSelectedCameraDeviceId,
     getUserSelectedMicDeviceId,
@@ -176,11 +180,11 @@ export default {
                 ]))
                 .then(tracks => {
                     if (audioTrackError) {
-                        APP.UI.showMicErrorNotification(audioTrackError);
+                        APP.store.dispatch(notifyMicError(audioTrackError));
                     }
 
                     if (videoTrackError) {
-                        APP.UI.showCameraErrorNotification(videoTrackError);
+                        APP.store.dispatch(notifyCameraError(videoTrackError));
                     }
 
                     return tracks.filter(t => typeof t !== 'undefined');
@@ -205,7 +209,7 @@ export default {
                 })
                 .catch(err => {
                     audioTrackError = err;
-                    showError && APP.UI.showMicErrorNotification(err);
+                    showError && APP.store.disptach(notifyMicError(err));
 
                     return [];
                 }));
@@ -223,7 +227,7 @@ export default {
                 })
                 .catch(err => {
                     videoTrackError = err;
-                    showError && APP.UI.showCameraErrorNotification(err);
+                    showError && APP.store.dispatch(notifyCameraError(err));
 
                     return [];
                 }));

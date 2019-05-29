@@ -1,4 +1,26 @@
 /**
+ * The type of Redux action which signals that an error occurred while obtaining
+ * a camera.
+ *
+ * {
+ *     type: NOTIFY_CAMERA_ERROR,
+ *     error: Object
+ * }
+ */
+export const NOTIFY_CAMERA_ERROR = 'NOTIFY_CAMERA_ERROR';
+
+/**
+ * The type of Redux action which signals that an error occurred while obtaining
+ * a microphone.
+ *
+ * {
+ *     type: NOTIFY_MIC_ERROR,
+ *     error: Object
+ * }
+ */
+export const NOTIFY_MIC_ERROR = 'NOTIFY_MIC_ERROR';
+
+/**
  * The type of Redux action which signals that the currently used audio
  * input device should be changed.
  *

@@ -13,16 +13,12 @@ import SharedVideoManager from './shared_video/SharedVideo';
 import VideoLayout from './videolayout/VideoLayout';
 import Filmstrip from './videolayout/Filmstrip';
 
-import { JitsiTrackErrors } from '../../react/features/base/lib-jitsi-meet';
 import { getLocalParticipant } from '../../react/features/base/participants';
 import { toggleChat } from '../../react/features/chat';
 import { openDisplayNamePrompt } from '../../react/features/display-name';
 import { setEtherpadHasInitialzied } from '../../react/features/etherpad';
 import { setFilmstripVisible } from '../../react/features/filmstrip';
-import {
-    setNotificationsEnabled,
-    showWarningNotification
-} from '../../react/features/notifications';
+import { setNotificationsEnabled } from '../../react/features/notifications';
 import {
     dockToolbox,
     setToolboxEnabled,
@@ -39,39 +35,6 @@ UI.eventEmitter = eventEmitter;
 
 let etherpadManager;
 let sharedVideoManager;
-
-const JITSI_TRACK_ERROR_TO_MESSAGE_KEY_MAP = {
-    microphone: {},
-    camera: {}
-};
-
-JITSI_TRACK_ERROR_TO_MESSAGE_KEY_MAP
-    .camera[JitsiTrackErrors.UNSUPPORTED_RESOLUTION]
-        = 'dialog.cameraUnsupportedResolutionError';
-JITSI_TRACK_ERROR_TO_MESSAGE_KEY_MAP.camera[JitsiTrackErrors.GENERAL]
-    = 'dialog.cameraUnknownError';
-JITSI_TRACK_ERROR_TO_MESSAGE_KEY_MAP.camera[JitsiTrackErrors.PERMISSION_DENIED]
-    = 'dialog.cameraPermissionDeniedError';
-JITSI_TRACK_ERROR_TO_MESSAGE_KEY_MAP.camera[JitsiTrackErrors.NOT_FOUND]
-    = 'dialog.cameraNotFoundError';
-JITSI_TRACK_ERROR_TO_MESSAGE_KEY_MAP.camera[JitsiTrackErrors.CONSTRAINT_FAILED]
-    = 'dialog.cameraConstraintFailedError';
-JITSI_TRACK_ERROR_TO_MESSAGE_KEY_MAP
-    .camera[JitsiTrackErrors.NO_DATA_FROM_SOURCE]
-        = 'dialog.cameraNotSendingData';
-JITSI_TRACK_ERROR_TO_MESSAGE_KEY_MAP.microphone[JitsiTrackErrors.GENERAL]
-    = 'dialog.micUnknownError';
-JITSI_TRACK_ERROR_TO_MESSAGE_KEY_MAP
-    .microphone[JitsiTrackErrors.PERMISSION_DENIED]
-        = 'dialog.micPermissionDeniedError';
-JITSI_TRACK_ERROR_TO_MESSAGE_KEY_MAP.microphone[JitsiTrackErrors.NOT_FOUND]
-    = 'dialog.micNotFoundError';
-JITSI_TRACK_ERROR_TO_MESSAGE_KEY_MAP
-    .microphone[JitsiTrackErrors.CONSTRAINT_FAILED]
-        = 'dialog.micConstraintFailedError';
-JITSI_TRACK_ERROR_TO_MESSAGE_KEY_MAP
-    .microphone[JitsiTrackErrors.NO_DATA_FROM_SOURCE]
-        = 'dialog.micNotSendingData';
 
 const UIListeners = new Map([
     [
@@ -772,65 +735,6 @@ UI.showExtensionInlineInstallationDialog = function(callback) {
         loadedFunction: $.noop,
         closeFunction
     });
-};
-
-/**
- * Shows a notifications about the passed in microphone error.
- *
- * @param {JitsiTrackError} micError - An error object related to using or
- * acquiring an audio stream.
- * @returns {void}
- */
-UI.showMicErrorNotification = function(micError) {
-    if (!micError) {
-        return;
-    }
-
-    const { message, name } = micError;
-
-    const micJitsiTrackErrorMsg
-        = JITSI_TRACK_ERROR_TO_MESSAGE_KEY_MAP.microphone[name];
-    const micErrorMsg = micJitsiTrackErrorMsg
-        || JITSI_TRACK_ERROR_TO_MESSAGE_KEY_MAP
-            .microphone[JitsiTrackErrors.GENERAL];
-    const additionalMicErrorMsg = micJitsiTrackErrorMsg ? null : message;
-
-    APP.store.dispatch(showWarningNotification({
-        description: additionalMicErrorMsg,
-        descriptionKey: micErrorMsg,
-        titleKey: name === JitsiTrackErrors.PERMISSION_DENIED
-            ? 'deviceError.microphonePermission'
-            : 'deviceError.microphoneError'
-    }));
-};
-
-/**
- * Shows a notifications about the passed in camera error.
- *
- * @param {JitsiTrackError} cameraError - An error object related to using or
- * acquiring a video stream.
- * @returns {void}
- */
-UI.showCameraErrorNotification = function(cameraError) {
-    if (!cameraError) {
-        return;
-    }
-
-    const { message, name } = cameraError;
-
-    const cameraJitsiTrackErrorMsg
-        = JITSI_TRACK_ERROR_TO_MESSAGE_KEY_MAP.camera[name];
-    const cameraErrorMsg = cameraJitsiTrackErrorMsg
-        || JITSI_TRACK_ERROR_TO_MESSAGE_KEY_MAP
-            .camera[JitsiTrackErrors.GENERAL];
-    const additionalCameraErrorMsg = cameraJitsiTrackErrorMsg ? null : message;
-
-    APP.store.dispatch(showWarningNotification({
-        description: additionalCameraErrorMsg,
-        descriptionKey: cameraErrorMsg,
-        titleKey: name === JitsiTrackErrors.PERMISSION_DENIED
-            ? 'deviceError.cameraPermission' : 'deviceError.cameraError'
-    }));
 };
 
 /**

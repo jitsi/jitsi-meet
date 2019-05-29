@@ -7,6 +7,8 @@ import {
 import {
     ADD_PENDING_DEVICE_REQUEST,
     CHECK_AND_NOTIFY_FOR_NEW_DEVICE,
+    NOTIFY_CAMERA_ERROR,
+    NOTIFY_MIC_ERROR,
     REMOVE_PENDING_DEVICE_REQUESTS,
     SET_AUDIO_INPUT_DEVICE,
     SET_VIDEO_INPUT_DEVICE,
@@ -148,6 +150,43 @@ export function getAvailableDevices() {
     });
 }
 
+/**
+ * Signals that an error occurred while trying to obtain a track from a camera.
+ *
+ * @param {Object} error - The device error, as provided by lib-jitsi-meet.
+ * @param {string} error.name - The constant for the type of the error.
+ * @param {string} error.message - Optional additional information about the
+ * error.
+ * @returns {{
+ *     type: NOTIFY_CAMERA_ERROR,
+ *     error: Object
+ * }}
+ */
+export function notifyCameraError(error) {
+    return {
+        type: NOTIFY_CAMERA_ERROR,
+        error
+    };
+}
+
+/**
+ * Signals that an error occurred while trying to obtain a track from a mic.
+ *
+ * @param {Object} error - The device error, as provided by lib-jitsi-meet.
+ * @param {Object} error.name - The constant for the type of the error.
+ * @param {string} error.message - Optional additional information about the
+ * error.
+ * @returns {{
+ *     type: NOTIFY_MIC_ERROR,
+ *     error: Object
+ * }}
+ */
+export function notifyMicError(error) {
+    return {
+        type: NOTIFY_MIC_ERROR,
+        error
+    };
+}
 
 /**
  * Remove all pending device requests.
