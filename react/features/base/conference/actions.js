@@ -84,6 +84,8 @@ function _addConferenceListeners(conference, dispatch) {
     conference.on(
         JitsiConferenceEvents.CONFERENCE_LEFT,
         (...args) => dispatch(conferenceLeft(conference, ...args)));
+    conference.on(JitsiConferenceEvents.SUBJECT_CHANGED,
+        (...args) => dispatch(conferenceSubjectChanged(...args)));
 
     conference.on(
         JitsiConferenceEvents.KICKED,
