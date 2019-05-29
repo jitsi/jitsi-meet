@@ -1,5 +1,7 @@
 // @flow
 
+import _ from 'lodash';
+
 import { JitsiTrackErrors } from '../lib-jitsi-meet';
 import {
     getLocalParticipant,
@@ -155,10 +157,10 @@ export function forEachConference(
 export function getConferenceName(stateful: Function | Object): string {
     const state = toState(stateful);
     const { callee } = state['features/base/jwt'];
+    const { callDisplayName } = state['features/base/config'];
+    const { pendingSubjectChange, room, subject } = state['features/base/conference'];
 
-    return state['features/base/config'].callDisplayName
-                || (callee && callee.name)
-                || state['features/base/conference'].room;
+    return pendingSubjectChange || subject || callDisplayName || (callee && callee.name) || _.startCase(room);
 }
 
 /**
