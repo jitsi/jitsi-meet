@@ -136,6 +136,7 @@ const WHITELISTED_KEYS = [
     'startVideoMuted',
     'startWithAudioMuted',
     'startWithVideoMuted',
+    'subject',
     'testing',
     'useIPv6',
     'useNicks',
