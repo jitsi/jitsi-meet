@@ -37,7 +37,8 @@ import {
     DATA_CHANNEL_OPENED,
     SET_AUDIO_ONLY,
     SET_LASTN,
-    SET_PENDING_SUBJECT_CHANGE
+    SET_PENDING_SUBJECT_CHANGE,
+    SET_ROOM
 } from './actionTypes';
 import {
     _addLocalTracksToConference,
@@ -97,6 +98,9 @@ MiddlewareRegistry.register(store => next => action => {
 
     case SET_LASTN:
         return _setLastN(store, next, action);
+
+    case SET_ROOM:
+        return _setRoom(store, next, action);
 
     case TRACK_ADDED:
     case TRACK_REMOVED:
@@ -567,6 +571,33 @@ function _setReceiverVideoConstraint(conference, preferred, max) {
     if (conference) {
         conference.setReceiverVideoConstraint(Math.min(preferred, max));
     }
+}
+
+/**
+ * Notifies the feature base/conference that the action
+ * {@code SET_ROOM} is being dispatched within a specific
+ *  redux store.
+ *
+ * @param {Store} store - The redux store in which the specified {@code action}
+ * is being dispatched.
+ * @param {Dispatch} next - The redux {@code dispatch} function to dispatch the
+ * specified {@code action} to the specified {@code store}.
+ * @param {Action} action - The redux action {@code SET_ROOM}
+ * which is being dispatched in the specified {@code store}.
+ * @private
+ * @returns {Object} The value returned by {@code next(action)}.
+ */
+function _setRoom({ dispatch, getState }, next, action) {
+    const state = getState();
+    const { subject } = state['features/base/config'];
+    const { room } = action;
+
+    if (room) {
+        // Set the stored subject.
+        dispatch(setSubject(subject));
+    }
+
+    return next(action);
 }
 
 /**
