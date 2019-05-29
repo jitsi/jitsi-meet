@@ -236,9 +236,16 @@ export default {
         const buttonTxt = APP.translation.generateTranslationHTML(
             'dialog.IamHost'
         );
-        const buttons = [ {
+        const buttonTxtCancel = APP.translation.generateTranslationHTML(
+            'dialog.Cancel'
+        );
+        const buttons = [{
             title: buttonTxt,
             value: 'authNow'
+
+        } ,{
+            title: buttonTxtCancel,
+            value: 'cancel'
         } ];
 
         return APP.UI.messageHandler.openDialog(
@@ -253,6 +260,9 @@ export default {
                 // Open login popup.
                 if (submitValue === 'authNow') {
                     onAuthNow();
+                }
+                else{
+                    APP.store.dispatch(disconnect(true));
                 }
             }
         );

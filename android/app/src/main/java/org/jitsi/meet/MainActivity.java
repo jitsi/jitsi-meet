@@ -80,7 +80,7 @@ public class MainActivity extends JitsiMeetActivity {
         JitsiMeetConferenceOptions defaultOptions
             = new JitsiMeetConferenceOptions.Builder()
                 .setWelcomePageEnabled(true)
-                .setServerURL(buildURL("https://sz.vmeeting.top"))
+                .setServerURL(buildURL("https://i.yiyangzzt.com"))
                 .build();
         JitsiMeet.setDefaultConferenceOptions(defaultOptions);
 
