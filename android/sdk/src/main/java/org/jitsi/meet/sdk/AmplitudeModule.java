@@ -53,6 +53,17 @@ class AmplitudeModule
     }
 
     /**
+     * Sets the user ID for an Amplitude instance.
+     *
+     * @param instanceName The name of the Amplitude instance.
+     * @param userId The new value for the user ID.
+     */
+    @ReactMethod
+    public void setUserId(String instanceName, String userId) {
+            Amplitude.getInstance(instanceName).setUserId(userId);
+    }
+
+    /**
      * Sets the user properties for an Amplitude instance.
      *
      * @param instanceName The name of the Amplitude instance.

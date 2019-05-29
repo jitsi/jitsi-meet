@@ -33,6 +33,10 @@ RCT_EXPORT_METHOD(init:(NSString*)instanceName API_KEY:(NSString*)apiKey) {
     [[Amplitude instanceWithName:instanceName] initializeApiKey:apiKey];
 }
 
+RCT_EXPORT_METHOD(setUserId:(NSString*)instanceName userId: (NSString *) userId) {
+    [[Amplitude instanceWithName:instanceName] setUserId:userId];
+}
+
 RCT_EXPORT_METHOD(setUserProperties:(NSString*)instanceName userPropsString:(NSDictionary*)userProps) {
     if (userProps != nil) {
         [[Amplitude instanceWithName:instanceName] setUserProperties:userProps];
