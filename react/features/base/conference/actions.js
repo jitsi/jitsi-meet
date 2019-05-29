@@ -759,10 +759,6 @@ export function setSubject(subject: string = '') {
         const { conference } = getState()['features/base/conference'];
 
         if (conference) {
-            dispatch({
-                type: SET_PENDING_SUBJECT_CHANGE,
-                subject: undefined
-            });
             conference.setSubject(subject);
         } else {
             dispatch({
