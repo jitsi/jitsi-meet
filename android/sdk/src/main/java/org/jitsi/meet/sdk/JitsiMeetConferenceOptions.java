@@ -41,6 +41,10 @@ public class JitsiMeetConferenceOptions implements Parcelable {
      */
     private String room;
     /**
+     * Conference subject.
+     */
+    private String subject;
+    /**
      * JWT token used for authentication.
      */
     private String token;
@@ -70,6 +74,7 @@ public class JitsiMeetConferenceOptions implements Parcelable {
     public static class Builder {
         private URL serverURL;
         private String room;
+        private String subject;
         private String token;
 
         private Bundle colorScheme;
@@ -101,6 +106,17 @@ public class JitsiMeetConferenceOptions implements Parcelable {
          */
         public Builder setRoom(String room) {
             this.room = room;
+
+            return this;
+        }
+
+        /**
+         * Sets the conference subject.
+         * @param subject - Subject for the conference.
+         * @return - The {@link Builder} object itself so the method calls can be chained.
+         */
+        public Builder setSubject(String subject) {
+            this.subject = subject;
 
             return this;
         }
@@ -185,6 +201,7 @@ public class JitsiMeetConferenceOptions implements Parcelable {
 
             options.serverURL = this.serverURL;
             options.room = this.room;
+            options.subject = this.subject;
             options.token = this.token;
             options.colorScheme = this.colorScheme;
             options.audioMuted = this.audioMuted;
@@ -201,6 +218,7 @@ public class JitsiMeetConferenceOptions implements Parcelable {
 
     private JitsiMeetConferenceOptions(Parcel in) {
         room = in.readString();
+        subject = in.readString();
         token = in.readString();
         colorScheme = in.readBundle();
         byte tmpAudioMuted = in.readByte();
@@ -237,6 +255,9 @@ public class JitsiMeetConferenceOptions implements Parcelable {
         }
         if (videoMuted != null) {
             config.putBoolean("startWithVideoMuted", videoMuted);
+        }
+        if (subject != null) {
+            config.putString("subject", subject);
         }
 
         Bundle urlProps = new Bundle();
@@ -281,6 +302,7 @@ public class JitsiMeetConferenceOptions implements Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(room);
+        dest.writeString(subject);
         dest.writeString(token);
         dest.writeBundle(colorScheme);
         dest.writeByte((byte) (audioMuted == null ? 0 : audioMuted ? 1 : 2));
