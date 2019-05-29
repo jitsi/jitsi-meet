@@ -4,6 +4,7 @@ import { CONFERENCE_JOINED } from '../conference';
 import { processExternalDeviceRequest } from '../../device-selection';
 import { MiddlewareRegistry } from '../redux';
 import UIEvents from '../../../../service/UI/UIEvents';
+import { JitsiTrackErrors } from '../lib-jitsi-meet';
 
 import {
     removePendingDeviceRequests,
@@ -12,14 +13,34 @@ import {
 } from './actions';
 import {
     CHECK_AND_NOTIFY_FOR_NEW_DEVICE,
+    NOTIFY_CAMERA_ERROR,
+    NOTIFY_MIC_ERROR,
     SET_AUDIO_INPUT_DEVICE,
     SET_VIDEO_INPUT_DEVICE
 } from './actionTypes';
-import { showNotification } from '../../notifications';
+import { showNotification, showWarningNotification } from '../../notifications';
 import { updateSettings } from '../settings';
 import { setAudioOutputDeviceId } from './functions';
 
 const logger = require('jitsi-meet-logger').getLogger(__filename);
+
+const JITSI_TRACK_ERROR_TO_MESSAGE_KEY_MAP = {
+    microphone: {
+        [JitsiTrackErrors.CONSTRAINT_FAILED]: 'dialog.micConstraintFailedError',
+        [JitsiTrackErrors.GENERAL]: 'dialog.micUnknownError',
+        [JitsiTrackErrors.NO_DATA_FROM_SOURCE]: 'dialog.micNotSendingData',
+        [JitsiTrackErrors.NOT_FOUND]: 'dialog.micNotFoundError',
+        [JitsiTrackErrors.PERMISSION_DENIED]: 'dialog.micPermissionDeniedError'
+    },
+    camera: {
+        [JitsiTrackErrors.CONSTRAINT_FAILED]: 'dialog.cameraConstraintFailedError',
+        [JitsiTrackErrors.GENERAL]: 'dialog.cameraUnknownError',
+        [JitsiTrackErrors.NO_DATA_FROM_SOURCE]: 'dialog.cameraNotSendingData',
+        [JitsiTrackErrors.NOT_FOUND]: 'dialog.cameraNotFoundError',
+        [JitsiTrackErrors.PERMISSION_DENIED]: 'dialog.cameraPermissionDeniedError',
+        [JitsiTrackErrors.UNSUPPORTED_RESOLUTION]: 'dialog.cameraUnsupportedResolutionError'
+    }
+};
 
 /**
  * Implements the middleware of the feature base/devices.
@@ -32,6 +53,53 @@ MiddlewareRegistry.register(store => next => action => {
     switch (action.type) {
     case CONFERENCE_JOINED:
         return _conferenceJoined(store, next, action);
+    case NOTIFY_CAMERA_ERROR: {
+        if (typeof APP !== 'object' || !action.error) {
+            break;
+        }
+
+        const { message, name } = action.error;
+
+        const cameraJitsiTrackErrorMsg
+            = JITSI_TRACK_ERROR_TO_MESSAGE_KEY_MAP.camera[name];
+        const cameraErrorMsg = cameraJitsiTrackErrorMsg
+            || JITSI_TRACK_ERROR_TO_MESSAGE_KEY_MAP
+                .camera[JitsiTrackErrors.GENERAL];
+        const additionalCameraErrorMsg = cameraJitsiTrackErrorMsg ? null : message;
+
+        store.dispatch(showWarningNotification({
+            description: additionalCameraErrorMsg,
+            descriptionKey: cameraErrorMsg,
+            titleKey: name === JitsiTrackErrors.PERMISSION_DENIED
+                ? 'deviceError.cameraPermission' : 'deviceError.cameraError'
+        }));
+
+        break;
+    }
+    case NOTIFY_MIC_ERROR: {
+        if (typeof APP !== 'object' || !action.error) {
+            break;
+        }
+
+        const { message, name } = action.error;
+
+        const micJitsiTrackErrorMsg
+            = JITSI_TRACK_ERROR_TO_MESSAGE_KEY_MAP.microphone[name];
+        const micErrorMsg = micJitsiTrackErrorMsg
+            || JITSI_TRACK_ERROR_TO_MESSAGE_KEY_MAP
+                .microphone[JitsiTrackErrors.GENERAL];
+        const additionalMicErrorMsg = micJitsiTrackErrorMsg ? null : message;
+
+        store.dispatch(showWarningNotification({
+            description: additionalMicErrorMsg,
+            descriptionKey: micErrorMsg,
+            titleKey: name === JitsiTrackErrors.PERMISSION_DENIED
+                ? 'deviceError.microphonePermission'
+                : 'deviceError.microphoneError'
+        }));
+
+        break;
+    }
     case SET_AUDIO_INPUT_DEVICE:
         APP.UI.emitEvent(UIEvents.AUDIO_DEVICE_CHANGED, action.deviceId);
         break;
