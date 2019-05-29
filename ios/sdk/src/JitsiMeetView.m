@@ -17,12 +17,11 @@
 
 #include <mach/mach_time.h>
 
-#import <React/RCTRootView.h>
-
 #import "JitsiMeet+Private.h"
 #import "JitsiMeetConferenceOptions+Private.h"
 #import "JitsiMeetView+Private.h"
 #import "ReactUtils.h"
+#import "RNRootView.h"
 
 
 @implementation JitsiMeetView {
@@ -36,7 +35,7 @@
     /**
      * React Native view where the entire content will be rendered.
      */
-    RCTRootView *rootView;
+    RNRootView *rootView;
 }
 
 /**
@@ -145,9 +144,9 @@ static void initializeViewsMap() {
     } else {
         RCTBridge *bridge = [[JitsiMeet sharedInstance] getReactBridge];
         rootView
-            = [[RCTRootView alloc] initWithBridge:bridge
-                                       moduleName:@"App"
-                                initialProperties:props];
+            = [[RNRootView alloc] initWithBridge:bridge
+                                      moduleName:@"App"
+                               initialProperties:props];
         rootView.backgroundColor = self.backgroundColor;
 
         // Add rootView as a subview which completely covers this one.
