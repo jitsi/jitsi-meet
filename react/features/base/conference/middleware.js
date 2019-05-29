@@ -36,7 +36,8 @@ import {
     CONFERENCE_WILL_LEAVE,
     DATA_CHANNEL_OPENED,
     SET_AUDIO_ONLY,
-    SET_LASTN
+    SET_LASTN,
+    SET_PENDING_SUBJECT_CHANGE
 } from './actionTypes';
 import {
     _addLocalTracksToConference,
@@ -324,9 +325,16 @@ function _connectionFailed({ dispatch, getState }, next, action) {
  * @private
  * @returns {Object} The value returned by {@code next(action)}.
  */
-function _conferenceSubjectChanged({ getState }, next, action) {
+function _conferenceSubjectChanged({ dispatch, getState }, next, action) {
     const result = next(action);
     const { subject } = getState()['features/base/conference'];
+
+    if (subject) {
+        dispatch({
+            type: SET_PENDING_SUBJECT_CHANGE,
+            subject: undefined
+        });
+    }
 
     typeof APP === 'object' && APP.API.notifySubjectChanged(subject);
 
