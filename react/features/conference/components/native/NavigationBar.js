@@ -11,6 +11,7 @@ import { PictureInPictureButton } from '../../../mobile/picture-in-picture';
 import { isToolboxVisible } from '../../../toolbox';
 
 import styles, { NAVBAR_GRADIENT_COLORS } from './styles';
+import { convertForTrans } from '../../../base/util';
 
 type Props = {
 
@@ -40,6 +41,8 @@ class NavigationBar extends Component<Props> {
             return null;
         }
 
+        const displayName = convertForTrans(this.props._meetingName);
+
         return [
             <LinearGradient
                 colors = { NAVBAR_GRADIENT_COLORS }
@@ -62,7 +65,7 @@ class NavigationBar extends Component<Props> {
                     <Text
                         numberOfLines = { 1 }
                         style = { styles.roomName }>
-                        { this.props._meetingName }
+                        { displayName }
                     </Text>
                 </View>
             </View>
@@ -82,7 +85,7 @@ class NavigationBar extends Component<Props> {
  */
 function _mapStateToProps(state) {
     return {
-        _meetingName: _.startCase(getConferenceName(state)),
+        _meetingName: getConferenceName(state),
         _visible: isToolboxVisible(state)
     };
 }
