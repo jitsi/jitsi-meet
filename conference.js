@@ -488,10 +488,13 @@ class ConferenceConnector {
  * call in hangup() to resolve when all operations are finished.
  */
 function disconnect() {
-    connection.disconnect();
-    APP.API.notifyConferenceLeft(APP.conference.roomName);
+    const onDisconnected = () => {
+        APP.API.notifyConferenceLeft(APP.conference.roomName);
 
-    return Promise.resolve();
+        return Promise.resolve();
+    };
+
+    return connection.disconnect().then(onDisconnected, onDisconnected);
 }
 
 /**
@@ -2603,8 +2606,7 @@ export default {
     leaveRoomAndDisconnect() {
         APP.store.dispatch(conferenceWillLeave(room));
 
-        return room.leave()
-            .then(disconnect, disconnect);
+        return room.leave().then(disconnect, disconnect);
     },
 
     /**
