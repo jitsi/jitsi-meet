@@ -103,9 +103,9 @@ function initCommands() {
 
             APP.store.dispatch(toggleTileView());
         },
-        'video-hangup': () => {
+        'video-hangup': (showFeedbackDialog = true) => {
             sendAnalytics(createApiEvent('video.hangup'));
-            APP.conference.hangup(true);
+            APP.conference.hangup(showFeedbackDialog);
         },
         'email': email => {
             sendAnalytics(createApiEvent('email.changed'));
