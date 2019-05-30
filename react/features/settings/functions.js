@@ -2,7 +2,10 @@
 import { toState } from '../base/redux';
 import { parseStandardURIString } from '../base/util';
 import { i18next, DEFAULT_LANGUAGE, LANGUAGES } from '../base/i18n';
-import { getLocalParticipant, PARTICIPANT_ROLE } from '../base/participants';
+import {
+    getLocalParticipant,
+    isLocalParticipantModerator
+} from '../base/participants';
 
 declare var interfaceConfig: Object;
 
@@ -83,14 +86,12 @@ export function getMoreTabProps(stateful: Object | Function) {
     } = state['features/base/conference'];
     const followMeActive = Boolean(state['features/follow-me'].moderator);
     const configuredTabs = interfaceConfig.SETTINGS_SECTIONS || [];
-    const localParticipant = getLocalParticipant(state);
-
 
     // The settings sections to display.
     const showModeratorSettings = Boolean(
         conference
             && configuredTabs.includes('moderator')
-            && localParticipant.role === PARTICIPANT_ROLE.MODERATOR);
+            && isLocalParticipantModerator(state));
 
     return {
         currentLanguage: language,
