@@ -88,10 +88,10 @@ export function getMoreTabProps(stateful: Object | Function) {
     const configuredTabs = interfaceConfig.SETTINGS_SECTIONS || [];
 
     // The settings sections to display.
-    const showModeratorSettings
-        = conference
+    const showModeratorSettings = Boolean(
+        conference
             && configuredTabs.includes('moderator')
-            && isLocalParticipantModerator(state);
+            && isLocalParticipantModerator(state));
 
     return {
         currentLanguage: language,
