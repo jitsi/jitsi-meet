@@ -145,7 +145,7 @@
     "dialog": {
         "accessibilityLabel": {
             "liveStreaming": "Live Stream"
-        },
+        }, 
         "allow": "Allow",
         "alreadySharedVideoMsg": "Another member is already sharing a video. This conference allows only one shared video at a time.",
         "alreadySharedVideoTitle": "Only one shared video is allowed at a time",
