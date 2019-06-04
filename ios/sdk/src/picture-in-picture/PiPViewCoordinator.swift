@@ -37,6 +37,15 @@ public class PiPViewCoordinator {
         }
     }
 
+    public enum Position {
+        case lowerRightCorner
+        case upperRightCorner
+        case lowerLeftCorner
+        case upperLeftCorner
+    }
+    
+    public var initialPositionInSuperview = Position.lowerRightCorner
+    
     /// The size ratio of the view when in PiP mode
     public var pipSizeRatio: CGFloat = {
         let deviceIdiom = UIScreen.main.traitCollection.userInterfaceIdiom
@@ -205,9 +214,21 @@ public class PiPViewCoordinator {
         let adjustedBounds = bounds.inset(by: dragBoundInsets)
         let size = CGSize(width: bounds.size.width * pipSizeRatio,
                           height: bounds.size.height * pipSizeRatio)
-        let x: CGFloat = adjustedBounds.maxX - size.width
-        let y: CGFloat = adjustedBounds.maxY - size.height
-        return CGRect(x: x, y: y, width: size.width, height: size.height)
+        let origin = initialPositionFor(pipSize: size, bounds: adjustedBounds)
+        return CGRect(x: origin.x, y: origin.y, width: size.width, height: size.height)
+    }
+    
+    private func initialPositionFor(pipSize size: CGSize, bounds: CGRect) -> CGPoint {
+        switch initialPositionInSuperview {
+        case .lowerLeftCorner:
+            return CGPoint(x: bounds.minX, y: bounds.maxY - size.height)
+        case .lowerRightCorner:
+            return CGPoint(x: bounds.maxX - size.width, y: bounds.maxY - size.height)
+        case .upperLeftCorner:
+            return CGPoint(x: bounds.minX, y: bounds.minY)
+        case .upperRightCorner:
+            return CGPoint(x: bounds.maxX - size.width, y: bounds.minY)
+        }
     }
 
     // MARK: - Animation helpers
