@@ -49,60 +49,71 @@ export function _getRouteToRender(stateful: Function | Object): Promise<Route> {
         href: undefined
     };
 
-    return new Promise(resolve => {
-        // First, check if the current endpoint supports WebRTC. We are
-        // intentionally not performing the check for mobile browsers because:
-        // - the WelcomePage is mobile ready;
-        // - if the URL points to a conference, getDeepLinkingPage will take
-        //   care of it.
-        if (!isMobileBrowser && !JitsiMeetJS.isWebRtcSupported()) {
-            route.component = UnsupportedDesktopBrowser;
-            resolve(route);
+    const joiningValidRoom = isRoomValid(room);
 
-            return;
-        }
-
-        if (isRoomValid(room)) {
-            if (isMobileApp) {
-                route.component = Conference;
-                resolve(route);
-            } else {
-                // Update the location if it doesn't match. This happens when a
-                // room is joined from the welcome page. The reason for doing
-                // this instead of using the history API is that we want to load
-                // the config.js which takes the room into account.
-                const { locationURL } = state['features/base/connection'];
-
-                // eslint-disable-next-line no-negated-condition
-                if (window.location.href !== locationURL.href) {
-                    route.href = locationURL.href;
-                    resolve(route);
-                } else {
-                    // Maybe show deep-linking, otherwise go to Conference.
-                    getDeepLinkingPage(state).then(component => {
-                        route.component = component || Conference;
-                        resolve(route);
-                    });
-                }
-            }
-
-            return;
-        }
-
-        if (!isWelcomePageUserEnabled(state)) {
-            // Web: if the welcome page is disabled, go directly to a random
-            // room.
-
-            let href = window.location.href;
-
-            href.endsWith('/') || (href += '/');
-            route.href = href + generateRoomWithoutSeparator();
+    // Mobile custom routing
+    if (isMobileApp) {
+        if (joiningValidRoom) {
+            route.component = Conference;
         } else if (isWelcomePageAppEnabled(state)) {
-            // Mobile: only go to the welcome page if enabled.
-
             route.component = WelcomePage;
         }
 
-        resolve(route);
-    });
+        return Promise.resolve(route);
+    }
+
+    // Web custom routing when trying to join a meeting. There are essentially
+    // two possible handled routes here: welcome page and conference.
+
+    // We are intentionally not performing the check for mobile browsers because:
+    // - the WelcomePage is mobile ready;
+    // - if the URL points to a conference, getDeepLinkingPage will take
+    //   care of it.
+    const isUnsupportedBrowser
+        = !isMobileBrowser && !JitsiMeetJS.isWebRtcSupported();
+
+    if (joiningValidRoom) {
+        // Update the location if it doesn't match. This happens when a room is
+        // joined from the welcome page. The reason for doing this instead of
+        // using the history API is that we want to load the config.js which
+        // takes the room into account.
+        const { locationURL } = state['features/base/connection'];
+
+        if (window.location.href !== locationURL.href) {
+            route.href = locationURL.href;
+
+            return Promise.resolve(route);
+        }
+
+        return getDeepLinkingPage(state)
+            .then(component => {
+                if (component) {
+                    route.component = component;
+                } else if (isUnsupportedBrowser) {
+                    route.component = UnsupportedDesktopBrowser;
+                } else {
+                    route.component = Conference;
+                }
+
+                return Promise.resolve(route);
+            });
+    }
+
+    // Web custom routing when trying to view the welcome page
+    if (isWelcomePageUserEnabled(state)) {
+        if (isUnsupportedBrowser) {
+            route.component = UnsupportedDesktopBrowser;
+        } else {
+            route.component = WelcomePage;
+        }
+    } else {
+        // Web: if the welcome page is disabled, go directly to a random room.
+
+        let href = window.location.href;
+
+        href.endsWith('/') || (href += '/');
+        route.href = href + generateRoomWithoutSeparator();
+    }
+
+    return Promise.resolve(route);
 }
