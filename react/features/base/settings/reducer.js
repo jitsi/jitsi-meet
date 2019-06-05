@@ -119,11 +119,21 @@ function _initSettings(featureState) {
     let settings = featureState;
 
     // Old Settings.js values
-    // FIXME: Let's remove this after a predefined time (e.g. by July 2018) to
-    // avoid garbage in the source.
-    const displayName = _.escape(window.localStorage.getItem('displayname'));
-    const email = _.escape(window.localStorage.getItem('email'));
+    // FIXME: jibri uses old settings.js local storage values to set its display
+    // name and email. Provide another way for jibri to set these values, update
+    // jibri, and remove the old settings.js values.
+    const savedDisplayName = window.localStorage.getItem('displayname');
+    const savedEmail = window.localStorage.getItem('email');
     let avatarID = _.escape(window.localStorage.getItem('avatarId'));
+
+    // The helper _.escape will convert null to an empty strings. The empty
+    // string will be saved in settings. On app re-load, because an empty string
+    // is a defined value, it will override any value found in local storage.
+    // The workaround is sidestepping _.escape when the value is not set in
+    // local storage.
+    const displayName
+        = savedDisplayName === null ? undefined : _.escape(savedDisplayName);
+    const email = savedEmail === null ? undefined : _.escape(savedEmail);
 
     if (!avatarID) {
         // if there is no avatar id, we generate a unique one and use it forever
