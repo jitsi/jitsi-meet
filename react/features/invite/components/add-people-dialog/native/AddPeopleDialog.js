@@ -163,6 +163,7 @@ class AddPeopleDialog extends AbstractAddPeopleDialog<Props, State> {
                         </View>
                         <TextInput
                             autoCorrect = { false }
+                            autoFocus = { true }
                             onChangeText = { this._onTypeQuery }
                             placeholder = {
                                 this.props.t(`inviteDialog.${placeholderKey}`)
