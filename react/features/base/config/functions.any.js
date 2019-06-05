@@ -132,6 +132,7 @@ const WHITELISTED_KEYS = [
     'startAudioMuted',
     'startAudioOnly',
     'startBitrate',
+    'startSilent',
     'startScreenSharing',
     'startVideoMuted',
     'startWithAudioMuted',

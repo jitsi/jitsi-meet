@@ -90,6 +90,10 @@ var config = {
     // applied locally. FIXME: having these 2 options is confusing.
     // startWithAudioMuted: false,
 
+    // Enabling it (with #params) will disable local audio output of remote
+    // participants and to enable it back a reload is needed.
+    // startSilent: false
+
     // Video
 
     // Sets the preferred resolution (height) for local video. Defaults to 720.
