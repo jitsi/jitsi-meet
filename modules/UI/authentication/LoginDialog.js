@@ -257,10 +257,10 @@ export default {
             buttons,
             (e, submitValue) => {
                 // Do not close the dialog yet.
-                e.preventDefault();
 
                 // Open login popup.
                 if (submitValue === 'authNow') {
+                    e.preventDefault();
                     onAuthNow();
                 }
                 else{
