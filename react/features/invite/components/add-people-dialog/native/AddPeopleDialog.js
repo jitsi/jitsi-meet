@@ -267,8 +267,7 @@ class AddPeopleDialog extends AbstractAddPeopleDialog<Props, State> {
                 const items: Array<*> = inviteItems.concat(item);
 
                 this.setState({
-                    // $FlowExpectedError
-                    inviteItems: _.orderBy(items, [ 'name' ], [ 'asc' ])
+                    inviteItems: _.sortBy(items, [ 'name', 'number' ])
                 });
             }
         };
@@ -318,13 +317,10 @@ class AddPeopleDialog extends AbstractAddPeopleDialog<Props, State> {
                 }
             });
 
-            const items = this.state.inviteItems.concat(selectableItems);
-
-            // $FlowExpectedError
-            selectableItems = _.orderBy(items, [ 'name' ], [ 'asc' ]);
+            selectableItems = _.sortBy(selectableItems, [ 'name', 'number' ]);
 
             this.setState({
-                selectableItems
+                selectableItems: this.state.inviteItems.concat(selectableItems)
             });
         })
         .finally(() => {
