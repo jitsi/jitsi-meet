@@ -175,6 +175,7 @@ class AddPeopleDialog extends AbstractAddPeopleDialog<Props, State> {
                         data = { this.state.selectableItems }
                         extraData = { inviteItems }
                         keyExtractor = { this._keyExtractor }
+                        keyboardShouldPersistTaps = 'always'
                         renderItem = { this._renderItem }
                         style = { styles.resultList } />
                 </SafeAreaView>
