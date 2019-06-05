@@ -1,4 +1,4 @@
-/* global $, APP, interfaceConfig */
+/* global $, APP, config, interfaceConfig */
 
 /* eslint-disable no-unused-vars */
 import React from 'react';
@@ -199,6 +199,8 @@ SmallVideo.createStreamElement = function(stream) {
 
     if (isVideo) {
         element.setAttribute('muted', 'true');
+    } else if (config.startSilent) {
+        element.muted = true;
     }
 
     element.autoplay = true;

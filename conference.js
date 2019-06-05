@@ -792,6 +792,13 @@ export default {
                     this.recorder = new Recorder();
                 }
 
+                if (config.startSilent) {
+                    APP.store.dispatch(showNotification({
+                        descriptionKey: 'notify.startSilentDescription',
+                        titleKey: 'notify.startSilentTitle'
+                    }));
+                }
+
                 // XXX The API will take care of disconnecting from the XMPP
                 // server (and, thus, leaving the room) on unload.
                 return new Promise((resolve, reject) => {
