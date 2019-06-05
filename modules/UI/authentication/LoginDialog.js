@@ -229,6 +229,8 @@ export default {
      * @returns dialog
      */
     showAuthRequiredDialog(room, onAuthNow) {
+        
+        room = convertForTrans( room );
         const msg = APP.translation.generateTranslationHTML(
             '[html]dialog.WaitForHostMsg',
             { room }
