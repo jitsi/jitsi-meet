@@ -115,7 +115,10 @@
         "privacy": "隐私",
         "roomnamePlaceHolder": "房间名",
         "terms": "条款",
-        "calendar": "日历"
+        "calendar": "日历",
+        "about": "关于我们",
+        "support": "技术支持",
+        "version": "版本号"
     },
     "startupoverlay": {
         "policyText": "~",
@@ -453,6 +456,7 @@
         "yourEntireScreen": "你的整个屏幕",
         "lockRoom": "设置会议密码",
         "startRecording": "开始云端录像",
+        "unlockRoom": "解除会议密码",
         "WaitForHostMsgWOk": "会议室<b>__room__ </b>还未开放。如果您是管理员请先登录。",
         "applicationWindow": "应用窗口"
     },

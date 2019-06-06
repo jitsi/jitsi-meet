@@ -34,6 +34,10 @@ import styles, { SIDEBAR_AVATAR_SIZE } from './styles';
  */
 // const TERMS_URL = '';
 
+const ABOUT_URL = 'http://www.yiyangzzt.com';
+const SUPPORT_URL = 'http://www.yiyangzzt.com';
+const VERSION_URL = 'http://www.yiyangzzt.com';
+
 type Props = {
 
     /**
@@ -103,18 +107,18 @@ class WelcomePageSideBar extends Component<Props> {
                             icon = 'settings'
                             label = 'settings.title'
                             onPress = { this._onOpenSettings } />
-                        {/* <SideBarItem
-                            icon = 'info'
-                            label = 'welcomepage.terms'
-                            url = { TERMS_URL } />
                         <SideBarItem
                             icon = 'info'
-                            label = 'welcomepage.privacy'
-                            url = { PRIVACY_URL } />
+                            label = 'welcomepage.about'
+                            url = { ABOUT_URL } />
                         <SideBarItem
                             icon = 'info'
-                            label = 'welcomepage.sendFeedback'
-                            url = { SEND_FEEDBACK_URL } /> */}
+                            label = 'welcomepage.support'
+                            url = { SUPPORT_URL } />
+                        <SideBarItem
+                            icon = 'info'
+                            label = 'welcomepage.version'
+                            url = { VERSION_URL } />
                     </ScrollView>
                 </SafeAreaView>
             </SlidingView>

@@ -41,7 +41,8 @@ const commands = {
     toggleShareScreen: 'toggle-share-screen',
     toggleVideo: 'toggle-video',
     mute: 'mute',
-    kick: 'kick'
+    kick: 'kick',
+    saveRoomName: 'saveRoomName'
 };
 
 /**

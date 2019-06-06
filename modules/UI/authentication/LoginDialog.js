@@ -229,6 +229,8 @@ export default {
      * @returns dialog
      */
     showAuthRequiredDialog(room, onAuthNow) {
+        
+        room = convertForTrans( room );
         const msg = APP.translation.generateTranslationHTML(
             '[html]dialog.WaitForHostMsg',
             { room }
@@ -236,9 +238,16 @@ export default {
         const buttonTxt = APP.translation.generateTranslationHTML(
             'dialog.IamHost'
         );
-        const buttons = [ {
+        const buttonTxtCancel = APP.translation.generateTranslationHTML(
+            'dialog.Cancel'
+        );
+        const buttons = [{
             title: buttonTxt,
             value: 'authNow'
+
+        } ,{
+            title: buttonTxtCancel,
+            value: 'cancel'
         } ];
 
         return APP.UI.messageHandler.openDialog(
@@ -248,11 +257,14 @@ export default {
             buttons,
             (e, submitValue) => {
                 // Do not close the dialog yet.
-                e.preventDefault();
 
                 // Open login popup.
                 if (submitValue === 'authNow') {
+                    e.preventDefault();
                     onAuthNow();
+                }
+                else{
+                    APP.store.dispatch(disconnect(true));
                 }
             }
         );
