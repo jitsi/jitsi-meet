@@ -4,9 +4,8 @@ import { generateRoomWithoutSeparator } from 'js-utils/random';
 import type { Component } from 'react';
 
 import { isRoomValid } from '../base/conference';
-import JitsiMeetJS from '../base/lib-jitsi-meet';
-import { Platform } from '../base/react';
 import { toState } from '../base/redux';
+import { isSupportedBrowser } from '../base/environment';
 import { Conference } from '../conference';
 import { getDeepLinkingPage } from '../deep-linking';
 import { UnsupportedDesktopBrowser } from '../unsupported-browser';
@@ -98,7 +97,7 @@ function _getWebConferenceRoute(state): ?Promise<Route> {
         .then(deepLinkComponent => {
             if (deepLinkComponent) {
                 route.component = deepLinkComponent;
-            } else if (_isSupportedBrowser()) {
+            } else if (isSupportedBrowser()) {
                 route.component = Conference;
             } else {
                 route.component = UnsupportedDesktopBrowser;
@@ -118,7 +117,7 @@ function _getWebWelcomePageRoute(state): Promise<Route> {
     const route = _getEmptyRoute();
 
     if (isWelcomePageUserEnabled(state)) {
-        if (_isSupportedBrowser()) {
+        if (isSupportedBrowser()) {
             route.component = WelcomePage;
         } else {
             route.component = UnsupportedDesktopBrowser;
@@ -133,25 +132,6 @@ function _getWebWelcomePageRoute(state): Promise<Route> {
     }
 
     return Promise.resolve(route);
-}
-
-/**
- * Returns whether or not the current browser should allow the app to display.
- *
- * @returns {boolean}
- */
-function _isSupportedBrowser() {
-    if (navigator.product === 'ReactNative') {
-        return false;
-    }
-
-    // We are intentionally allow mobile browsers because:
-    // - the WelcomePage is mobile ready;
-    // - if the URL points to a conference, getDeepLinkingPage will take
-    //   care of it.
-    return Platform.OS === 'android'
-        || Platform.OS === 'ios'
-        || JitsiMeetJS.isWebRtcSupported();
 }
 
 /**
