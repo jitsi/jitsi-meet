@@ -14,6 +14,7 @@
             <objects>
                 <controller title="Meetings" id="AgC-eL-Hgc" customClass="InterfaceController" customModule="JitsiMeetCompanion" customModuleProvider="target">
                     <items>
+                        <label alignment="left" textAlignment="left" numberOfLines="0" id="OQN-sx-tDt"/>
                         <table alignment="left" id="gpO-ql-Xsr">
                             <items>
                                 <tableRow identifier="MeetingRowType" id="GGl-av-xeJ" customClass="MeetingRowController" customModule="JitsiMeetCompanion_Extension">
@@ -39,6 +40,7 @@
                         </table>
                     </items>
                     <connections>
+                        <outlet property="infoLabel" destination="OQN-sx-tDt" id="Juv-tb-SNj"/>
                         <outlet property="table" destination="gpO-ql-Xsr" id="aVV-iZ-z3l"/>
                     </connections>
                 </controller>

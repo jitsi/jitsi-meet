@@ -32,6 +32,16 @@ class Amplitude {
     }
 
     /**
+     * Sets an identifier for the current user.
+     *
+     * @param {string} userId - The new user id.
+     * @returns {void}
+     */
+    setUserId(userId) {
+        AmplitudeNative.setUserId(this._instanceName, userId);
+    }
+
+    /**
      * Sets user properties for the current user.
      *
      * @param {Object} userProperties - The user properties to be set.

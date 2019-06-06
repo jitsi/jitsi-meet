@@ -348,10 +348,6 @@ const VideoLayout = {
             remoteVideo.removeRemoteStreamElement(stream);
         }
 
-        if (stream.isVideoTrack()) {
-            this._updateLargeVideoIfDisplayed(id);
-        }
-
         this.updateMutedForNoTracks(id, stream.getType());
     },
 

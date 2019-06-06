@@ -16,17 +16,31 @@
  */
 
 import WatchKit
+import WatchConnectivity
 import Foundation
 
 
 class InterfaceController: WKInterfaceController {
 
+    @IBOutlet var infoLabel: WKInterfaceLabel!
     @IBOutlet var table: WKInterfaceTable!
 
+    override func didAppear(){
+        self.updateUI(ExtensionDelegate.currentJitsiMeetContext)
+    }
+
     func updateUI(_ newContext:JitsiMeetContext) {
-        if let recentURLsArray = newContext.recentURLs {
-            updateRecents(withRecents:  recentURLsArray, currentContext: newContext)
-        }
+      if (newContext.recentURLs == nil || newContext.recentURLs!.count == 0) {
+        infoLabel.setText("There are no recent meetings. Please use the app on the phone to start a new call.")
+
+        table.setHidden(true)
+        infoLabel.setHidden(false)
+      } else {
+        updateRecents(withRecents: newContext.recentURLs!, currentContext: newContext)
+
+        table.setHidden(false)
+        infoLabel.setHidden(true)
+      }
     }
 
     private func updateRecents(withRecents recents: NSArray, currentContext: JitsiMeetContext) {
@@ -68,7 +82,7 @@ class InterfaceController: WKInterfaceController {
     override func contextForSegue(withIdentifier segueIdentifier: String, in table: WKInterfaceTable, rowIndex: Int) -> Any? {
         let controller = table.rowController(at: rowIndex) as! MeetingRowController
         let currentContext = ExtensionDelegate.currentJitsiMeetContext
-      
+
         // Copy the current context and add the joinConferenceURL to trigger the command when the in-call screen is displayed
         let actionContext = JitsiMeetContext(jmContext: currentContext)
         actionContext.joinConferenceURL = controller.roomUrl

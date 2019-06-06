@@ -53,6 +53,7 @@ dependencies {
 
     implementation project(':react-native-background-timer')
     implementation project(':react-native-calendar-events')
+    implementation project(':react-native-community-async-storage')
     implementation(project(':react-native-fast-image')) {
         exclude group: 'com.android.support'
     }
@@ -63,7 +64,6 @@ dependencies {
     implementation project(':react-native-vector-icons')
     implementation project(':react-native-webrtc')
     implementation project(':react-native-webview')
-    implementation project(':@react-native-community_async-storage')
 
     testImplementation 'junit:junit:4.12'
 }
@@ -207,8 +207,7 @@ publishing {
                     def groupId = it.moduleGroup
                     def artifactId = it.moduleName
 
-                    if ((artifactId.startsWith('react-native-') || artifactId.startsWith('@react-native-community'))
-                            && groupId.equals('jitsi-meet')) {
+                    if (artifactId.startsWith('react-native-') && groupId.equals('jitsi-meet')) {
                         groupId = rootProject.ext.moduleGroupId
                     }
 

@@ -32,7 +32,7 @@ function LocalVideo(VideoLayout, emitter, streamEndedCallback) {
 
     this.localVideoId = null;
     this.bindHoverHandler();
-    if (config.enableLocalVideoFlip) {
+    if (!config.disableLocalVideoFlip) {
         this._buildContextMenu();
     }
     this.isLocal = true;

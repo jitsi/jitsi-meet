@@ -14,13 +14,7 @@
  * limitations under the License.
  */
 
-#import <React/RCTBridge.h>
+#import <React/RCTRootView.h>
 
-#import "JitsiMeet.h"
-
-@interface JitsiMeet ()
-
-- (NSDictionary *)getDefaultProps;
-- (RCTBridge *)getReactBridge;
-
+@interface RNRootView : RCTRootView
 @end

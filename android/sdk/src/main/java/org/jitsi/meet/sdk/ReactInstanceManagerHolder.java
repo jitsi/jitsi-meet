@@ -66,7 +66,7 @@ class ReactInstanceManagerHolder {
         }
 
         try {
-            Class<?> amplitudeModuleClass = Class.forName("AmplitudeModule");
+            Class<?> amplitudeModuleClass = Class.forName("org.jitsi.meet.sdk.AmplitudeModule");
             Constructor constructor = amplitudeModuleClass.getConstructor(ReactApplicationContext.class);
             nativeModules.add((NativeModule)constructor.newInstance(reactContext));
         } catch (Exception e) {

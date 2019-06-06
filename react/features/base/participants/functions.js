@@ -261,6 +261,25 @@ function _getAllParticipants(stateful) {
 }
 
 /**
+ * Returns true if all of the meeting participants are moderators.
+ *
+ * @param {Object|Function} stateful -Object or function that can be resolved
+ * to the Redux state.
+ * @returns {boolean}
+ */
+export function isEveryoneModerator(stateful: Object | Function) {
+    const participants = _getAllParticipants(stateful);
+
+    for (const participant of participants) {
+        if (participant.role !== PARTICIPANT_ROLE.MODERATOR) {
+            return false;
+        }
+    }
+
+    return true;
+}
+
+/**
  * Returns true if the current local participant is a moderator in the
  * conference.
  *

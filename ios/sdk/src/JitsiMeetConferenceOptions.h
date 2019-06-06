@@ -27,6 +27,10 @@
  */
 @property (nonatomic, copy, nullable) NSString *room;
 /**
+ * Conference subject.
+ */
+@property (nonatomic, copy, nullable) NSString *subject;
+/**
  * JWT token used for authentication.
  */
 @property (nonatomic, copy, nullable) NSString *token;
@@ -56,7 +60,9 @@
 @interface JitsiMeetConferenceOptions : NSObject
 
 @property (nonatomic, copy, nullable, readonly) NSURL *serverURL;
+
 @property (nonatomic, copy, nullable, readonly) NSString *room;
+@property (nonatomic, copy, nullable, readonly) NSString *subject;
 @property (nonatomic, copy, nullable, readonly) NSString *token;
 
 @property (nonatomic, copy, nullable) NSDictionary *colorScheme;

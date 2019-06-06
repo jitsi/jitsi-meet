@@ -92,7 +92,7 @@ Leaves the currently active conference.
 
 #### Universal / deep linking
 
-In order to support Universal / deep linking, `JitsiMeetView` offers 2 class
+In order to support Universal / deep linking, `JitsiMeet` offers 2 class
 methods that you app's delegate should call in order for the app to follow those
 links.
 
@@ -104,7 +104,7 @@ is useful when the host application uses other SDKs which also use linking.
 continueUserActivity:(NSUserActivity *)userActivity
   restorationHandler:(void (^)(NSArray *restorableObjects))restorationHandler
 {
-  return [JitsiMeetView application:application
+  return [[JitsiMeet sharedInstance] application:application
                continueUserActivity:userActivity
                  restorationHandler:restorationHandler];
 }
@@ -117,7 +117,7 @@ And also one of the following:
 - (BOOL)application:(UIApplication *)app
             openURL:(NSURL *)url
             options:(NSDictionary<UIApplicationOpenURLOptionsKey,id> *)options {
-  return [JitsiMeetView application:app
+  return [[JitsiMeet sharedInstance] application:app
                             openURL:url
                             options: options];
 }

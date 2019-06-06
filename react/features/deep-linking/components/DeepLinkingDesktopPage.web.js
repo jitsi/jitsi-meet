@@ -50,7 +50,6 @@ class DeepLinkingDesktopPage<P : Props> extends Component<P> {
         super(props);
 
         // Bind event handlers so they are only bound once per instance.
-        this._openDesktopApp = this._openDesktopApp.bind(this);
         this._onLaunchWeb = this._onLaunchWeb.bind(this);
         this._onTryAgain = this._onTryAgain.bind(this);
     }
@@ -61,7 +60,6 @@ class DeepLinkingDesktopPage<P : Props> extends Component<P> {
      * @inheritdoc
      */
     componentDidMount() {
-        this._openDesktopApp();
         sendAnalytics(
             createDeepLinkingPageEvent(
                 'displayed', 'DeepLinkingDesktop', { isMobileBrowser: false }));
@@ -133,17 +131,6 @@ class DeepLinkingDesktopPage<P : Props> extends Component<P> {
         );
     }
 
-    _openDesktopApp: () => {}
-
-    /**
-     * Dispatches the <tt>openDesktopApp</tt> action.
-     *
-     * @returns {void}
-     */
-    _openDesktopApp() {
-        this.props.dispatch(openDesktopApp());
-    }
-
     _onTryAgain: () => {}
 
     /**
@@ -155,7 +142,7 @@ class DeepLinkingDesktopPage<P : Props> extends Component<P> {
         sendAnalytics(
             createDeepLinkingPageEvent(
                 'clicked', 'tryAgainButton', { isMobileBrowser: false }));
-        this._openDesktopApp();
+        this.props.dispatch(openDesktopApp());
     }
 
     _onLaunchWeb: () => {}

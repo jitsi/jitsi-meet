@@ -7,6 +7,8 @@ import {
 import {
     ADD_PENDING_DEVICE_REQUEST,
     CHECK_AND_NOTIFY_FOR_NEW_DEVICE,
+    NOTIFY_CAMERA_ERROR,
+    NOTIFY_MIC_ERROR,
     REMOVE_PENDING_DEVICE_REQUESTS,
     SET_AUDIO_INPUT_DEVICE,
     SET_VIDEO_INPUT_DEVICE,
@@ -20,6 +22,28 @@ import {
 } from './functions';
 
 const logger = require('jitsi-meet-logger').getLogger(__filename);
+
+/**
+ * Maps the WebRTC string for device type to the keys used to store configure,
+ * within redux, which devices should be used by default.
+ */
+const DEVICE_TYPE_TO_SETTINGS_KEYS = {
+    audioInput: {
+        currentDeviceId: 'micDeviceId',
+        userSelectedDeviceId: 'userSelectedMicDeviceId',
+        userSelectedDeviceLabel: 'userSelectedMicDeviceLabel'
+    },
+    audioOutput: {
+        currentDeviceId: 'audioOutputDeviceId',
+        userSelectedDeviceId: 'userSelectedAudioOutputDeviceId',
+        userSelectedDeviceLabel: 'userSelectedAudioOutputDeviceLabel'
+    },
+    videoInput: {
+        currentDeviceId: 'audioOutputDeviceId',
+        userSelectedDeviceId: 'userSelectedCameraDeviceId',
+        userSelectedDeviceLabel: 'userSelectedCameraDeviceLabel'
+    }
+};
 
 /**
  * Adds a pending device request.
@@ -70,19 +94,19 @@ export function configureInitialDevices() {
 
                     return;
                 }
+
                 const newSettings = {};
-                const devicesKeysToSettingsKeys = {
-                    audioInput: 'micDeviceId',
-                    audioOutput: 'audioOutputDeviceId',
-                    videoInput: 'cameraDeviceId'
-                };
 
                 Object.keys(deviceLabels).forEach(key => {
                     const label = deviceLabels[key];
                     const deviceId = getDeviceIdByLabel(state, label, key);
 
                     if (deviceId) {
-                        newSettings[devicesKeysToSettingsKeys[key]] = deviceId;
+                        const settingsTranslationMap = DEVICE_TYPE_TO_SETTINGS_KEYS[key];
+
+                        newSettings[settingsTranslationMap.currentDeviceId] = deviceId;
+                        newSettings[settingsTranslationMap.userSelectedDeviceId] = deviceId;
+                        newSettings[settingsTranslationMap.userSelectedDeviceLabel] = label;
                     }
                 });
 
@@ -126,6 +150,43 @@ export function getAvailableDevices() {
     });
 }
 
+/**
+ * Signals that an error occurred while trying to obtain a track from a camera.
+ *
+ * @param {Object} error - The device error, as provided by lib-jitsi-meet.
+ * @param {string} error.name - The constant for the type of the error.
+ * @param {string} error.message - Optional additional information about the
+ * error.
+ * @returns {{
+ *     type: NOTIFY_CAMERA_ERROR,
+ *     error: Object
+ * }}
+ */
+export function notifyCameraError(error) {
+    return {
+        type: NOTIFY_CAMERA_ERROR,
+        error
+    };
+}
+
+/**
+ * Signals that an error occurred while trying to obtain a track from a mic.
+ *
+ * @param {Object} error - The device error, as provided by lib-jitsi-meet.
+ * @param {Object} error.name - The constant for the type of the error.
+ * @param {string} error.message - Optional additional information about the
+ * error.
+ * @returns {{
+ *     type: NOTIFY_MIC_ERROR,
+ *     error: Object
+ * }}
+ */
+export function notifyMicError(error) {
+    return {
+        type: NOTIFY_MIC_ERROR,
+        error
+    };
+}
 
 /**
  * Remove all pending device requests.

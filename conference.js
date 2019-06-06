@@ -51,6 +51,8 @@ import {
 import {
     checkAndNotifyForNewDevice,
     getAvailableDevices,
+    notifyCameraError,
+    notifyMicError,
     setAudioOutputDeviceId,
     updateDeviceList
 } from './react/features/base/devices';
@@ -486,10 +488,13 @@ class ConferenceConnector {
  * call in hangup() to resolve when all operations are finished.
  */
 function disconnect() {
-    connection.disconnect();
-    APP.API.notifyConferenceLeft(APP.conference.roomName);
+    const onDisconnected = () => {
+        APP.API.notifyConferenceLeft(APP.conference.roomName);
 
-    return Promise.resolve();
+        return Promise.resolve();
+    };
+
+    return connection.disconnect().then(onDisconnected, onDisconnected);
 }
 
 /**
@@ -694,13 +699,14 @@ export default {
                         // If both requests for 'audio' + 'video' and 'audio'
                         // only failed, we assume that there are some problems
                         // with user's microphone and show corresponding dialog.
-                        APP.UI.showMicErrorNotification(audioOnlyError);
-                        APP.UI.showCameraErrorNotification(videoOnlyError);
+                        APP.store.dispatch(notifyMicError(audioOnlyError));
+                        APP.store.dispatch(notifyCameraError(videoOnlyError));
                     } else {
                         // If request for 'audio' + 'video' failed, but request
                         // for 'audio' only was OK, we assume that we had
                         // problems with camera and show corresponding dialog.
-                        APP.UI.showCameraErrorNotification(audioAndVideoError);
+                        APP.store.dispatch(
+                            notifyCameraError(audioAndVideoError));
                     }
                 }
 
@@ -786,6 +792,13 @@ export default {
                     this.recorder = new Recorder();
                 }
 
+                if (config.startSilent) {
+                    APP.store.dispatch(showNotification({
+                        descriptionKey: 'notify.startSilentDescription',
+                        titleKey: 'notify.startSilentTitle'
+                    }));
+                }
+
                 // XXX The API will take care of disconnecting from the XMPP
                 // server (and, thus, leaving the room) on unload.
                 return new Promise((resolve, reject) => {
@@ -839,7 +852,7 @@ export default {
 
         if (!this.localAudio && !mute) {
             const maybeShowErrorDialog = error => {
-                showUI && APP.UI.showMicErrorNotification(error);
+                showUI && APP.store.dispatch(notifyMicError(error));
             };
 
             createLocalTracksF({ devices: [ 'audio' ] }, false)
@@ -902,7 +915,7 @@ export default {
 
         if (!this.localVideo && !mute) {
             const maybeShowErrorDialog = error => {
-                showUI && APP.UI.showCameraErrorNotification(error);
+                showUI && APP.store.dispatch(notifyCameraError(error));
             };
 
             // Try to create local video if there wasn't any.
@@ -2109,7 +2122,7 @@ export default {
                     this._updateVideoDeviceId();
                 })
                 .catch(err => {
-                    APP.UI.showCameraErrorNotification(err);
+                    APP.store.dispatch(notifyCameraError(err));
                 });
             }
         );
@@ -2142,7 +2155,7 @@ export default {
                     this._updateAudioDeviceId();
                 })
                 .catch(err => {
-                    APP.UI.showMicErrorNotification(err);
+                    APP.store.dispatch(notifyMicError(err));
                 });
             }
         );
@@ -2402,17 +2415,26 @@ export default {
         // Let's handle unknown/non-preferred devices
         const newAvailDevices
             = APP.store.getState()['features/base/devices'].availableDevices;
+        let newAudioDevices = [];
+        let oldAudioDevices = [];
 
         if (typeof newDevices.audiooutput === 'undefined') {
-            APP.store.dispatch(
-                checkAndNotifyForNewDevice(newAvailDevices.audioOutput, oldDevices.audioOutput));
+            newAudioDevices = newAvailDevices.audioOutput;
+            oldAudioDevices = oldDevices.audioOutput;
         }
 
         if (!requestedInput.audio) {
-            APP.store.dispatch(
-                checkAndNotifyForNewDevice(newAvailDevices.audioInput, oldDevices.audioInput));
+            newAudioDevices = newAudioDevices.concat(newAvailDevices.audioInput);
+            oldAudioDevices = oldAudioDevices.concat(oldDevices.audioInput);
         }
 
+        // check for audio
+        if (newAudioDevices.length > 0) {
+            APP.store.dispatch(
+                checkAndNotifyForNewDevice(newAudioDevices, oldAudioDevices));
+        }
+
+        // check for video
         if (!requestedInput.video) {
             APP.store.dispatch(
                 checkAndNotifyForNewDevice(newAvailDevices.videoInput, oldDevices.videoInput));
@@ -2591,8 +2613,7 @@ export default {
     leaveRoomAndDisconnect() {
         APP.store.dispatch(conferenceWillLeave(room));
 
-        return room.leave()
-            .then(disconnect, disconnect);
+        return room.leave().then(disconnect, disconnect);
     },
 
     /**

@@ -1,5 +1,7 @@
 // @flow
 
+import type { Dispatch } from 'redux';
+
 import {
     SCREEN_SHARE_PARTICIPANTS_UPDATED,
     SET_TILE_VIEW
@@ -37,5 +39,19 @@ export function setTileView(enabled: boolean) {
     return {
         type: SET_TILE_VIEW,
         enabled
+    };
+}
+
+/**
+ * Creates a (redux) action which signals either to exit tile view if currently
+ * enabled or enter tile view if currently disabled.
+ *
+ * @returns {Function}
+ */
+export function toggleTileView() {
+    return (dispatch: Dispatch<any>, getState: Function) => {
+        const { tileViewEnabled } = getState()['features/video-layout'];
+
+        dispatch(setTileView(!tileViewEnabled));
     };
 }

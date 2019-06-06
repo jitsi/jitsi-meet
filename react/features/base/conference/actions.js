@@ -84,6 +84,8 @@ function _addConferenceListeners(conference, dispatch) {
     conference.on(
         JitsiConferenceEvents.CONFERENCE_LEFT,
         (...args) => dispatch(conferenceLeft(conference, ...args)));
+    conference.on(JitsiConferenceEvents.SUBJECT_CHANGED,
+        (...args) => dispatch(conferenceSubjectChanged(...args)));
 
     conference.on(
         JitsiConferenceEvents.KICKED,
@@ -757,10 +759,6 @@ export function setSubject(subject: string = '') {
         const { conference } = getState()['features/base/conference'];
 
         if (conference) {
-            dispatch({
-                type: SET_PENDING_SUBJECT_CHANGE,
-                subject: undefined
-            });
             conference.setSubject(subject);
         } else {
             dispatch({
