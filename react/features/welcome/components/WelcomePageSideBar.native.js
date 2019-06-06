@@ -34,9 +34,9 @@ import styles, { SIDEBAR_AVATAR_SIZE } from './styles';
  */
 // const TERMS_URL = '';
 
-const ABOUT_URL = 'http://www.yiyangzzt.com';
-const SUPPORT_URL = 'http://www.yiyangzzt.com';
-const VERSION_URL = 'http://www.yiyangzzt.com';
+const ABOUT_URL = 'http://www.vmeeting.top';
+const SUPPORT_URL = 'http://www.vmeeting.top';
+const VERSION_URL = 'http://www.vmeeting.top';
 
 type Props = {
 
