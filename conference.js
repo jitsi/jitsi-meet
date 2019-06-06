@@ -2257,7 +2257,8 @@ export default {
         APP.keyboardshortcut.init();
 
         if (config.requireDisplayName
-                && !APP.conference.getLocalDisplayName()) {
+                && !APP.conference.getLocalDisplayName()
+                && !this._room.isHidden()) {
             APP.UI.promptDisplayName();
         }
 
