@@ -100,13 +100,14 @@ function Util.new(module)
     return self
 end
 
+function Util:set_asap_key_server(asapKeyServer)
+    self.asapKeyServer = asapKeyServer
+end
+
 --- Returns the public key by keyID
 -- @param keyId the key ID to request
 -- @return the public key (the content of requested resource) or nil
-function Util:get_public_key(keyId,asapKeyServer)
-    if asapKeyServer == "" then
-        asapKeyServer = self.asapKeyServer)
-    end
+function Util:get_public_key(keyId)
     local content = cache:get(keyId);
     if content == nil then
         -- If the key is not found in the cache.
@@ -120,7 +121,7 @@ function Util:get_public_key(keyId,asapKeyServer)
             end
             done();
         end
-        local keyurl = path.join(asapKeyServer, hex.to(sha256(keyId))..'.pem');
+        local keyurl = path.join(self.asapKeyServer, hex.to(sha256(keyId))..'.pem');
         module:log("debug", "Fetching public key from: "..keyurl);
 
         -- We hash the key ID to work around some legacy behavior and make
@@ -242,13 +243,6 @@ end
 -- @param session the current session
 -- @return false and error
 function Util:process_and_verify_token(session)
-    return self:process_and_verify_token_with_keyserver(session,"")
-end
-function Util:process_and_verify_token_with_keyserver(session,asapKeyServer)
-    if asapKeyServer == "" then
-        asapKeyServer = self.asapKeyServer
-    end
-
     if session.auth_token == nil then
         if self.allowEmptyToken then
             return true;
@@ -258,7 +252,7 @@ function Util:process_and_verify_token_with_keyserver(session,asapKeyServer)
     end
 
     local pubKey;
-    if asapKeyServer and session.auth_token ~= nil then
+    if self.asapKeyServer and session.auth_token ~= nil then
         local dotFirst = session.auth_token:find("%.");
         if not dotFirst then return nil, "Invalid token" end
         local header = json.decode(basexx.from_url64(session.auth_token:sub(1,dotFirst-1)));
@@ -266,7 +260,7 @@ function Util:process_and_verify_token_with_keyserver(session,asapKeyServer)
         if kid == nil then
             return false, "not-allowed", "'kid' claim is missing";
         end
-        pubKey = self:get_public_key(kid,asapKeyServer);
+        pubKey = self:get_public_key(kid);
         if pubKey == nil then
             return false, "not-allowed", "could not obtain public key";
         end
@@ -274,7 +268,7 @@ function Util:process_and_verify_token_with_keyserver(session,asapKeyServer)
 
     -- now verify the whole token
     local claims, msg;
-    if asapKeyServer then
+    if self.asapKeyServer then
         claims, msg = self:verify_token(session.auth_token, pubKey);
     else
         claims, msg = self:verify_token(session.auth_token, self.appSecret);
