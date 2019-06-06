@@ -1,8 +1,8 @@
-/* @flow */
+// @flow
 
 import React, { Component } from 'react';
 
-import { translate } from '../../../base/i18n';
+import { translate } from '../../../../base/i18n';
 
 import ConferenceID from './ConferenceID';
 import NumbersList from './NumbersList';

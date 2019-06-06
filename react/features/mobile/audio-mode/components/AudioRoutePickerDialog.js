@@ -4,11 +4,12 @@ import _ from 'lodash';
 import React, { Component } from 'react';
 import { NativeModules, Text, TouchableHighlight, View } from 'react-native';
 
+import { ColorSchemeRegistry } from '../../../base/color-scheme';
 import { hideDialog, BottomSheet } from '../../../base/dialog';
 import { translate } from '../../../base/i18n';
 import { Icon } from '../../../base/font-icons';
 import { connect } from '../../../base/redux';
-import { ColorPalette } from '../../../base/styles';
+import { ColorPalette, type StyleType } from '../../../base/styles';
 
 import styles from './styles';
 
@@ -43,6 +44,11 @@ type Device = {
  * {@code AudioRoutePickerDialog}'s React {@code Component} prop types.
  */
 type Props = {
+
+    /**
+     * Style of the bottom sheet feature.
+     */
+    _bottomSheetStyles: StyleType,
 
     /**
      * Used for hiding the dialog when the selection was completed.
@@ -203,6 +209,7 @@ class AudioRoutePickerDialog extends Component<Props, State> {
      * @returns {ReactElement}
      */
     _renderDevice(device: Device) {
+        const { _bottomSheetStyles } = this.props;
         const { iconName, selected, text } = device;
         const selectedStyle = selected ? styles.selectedText : {};
 
@@ -214,8 +221,8 @@ class AudioRoutePickerDialog extends Component<Props, State> {
                 <View style = { styles.deviceRow } >
                     <Icon
                         name = { iconName }
-                        style = { [ styles.deviceIcon, selectedStyle ] } />
-                    <Text style = { [ styles.deviceText, selectedStyle ] } >
+                        style = { [ styles.deviceIcon, _bottomSheetStyles.iconStyle, selectedStyle ] } />
+                    <Text style = { [ styles.deviceText, _bottomSheetStyles.labelStyle, selectedStyle ] } >
                         { text }
                     </Text>
                 </View>
@@ -244,10 +251,22 @@ class AudioRoutePickerDialog extends Component<Props, State> {
     }
 }
 
+/**
+ * Maps part of the Redux state to the props of this component.
+ *
+ * @param {Object} state - The Redux state.
+ * @returns {Object}
+ */
+function _mapStateToProps(state) {
+    return {
+        _bottomSheetStyles: ColorSchemeRegistry.get(state, 'BottomSheet')
+    };
+}
+
 // Only export the dialog if we have support for getting / setting audio devices
 // in AudioMode.
 if (AudioMode.getAudioDevices && AudioMode.setAudioDevice) {
-    AudioRoutePickerDialog_ = translate(connect()(AudioRoutePickerDialog));
+    AudioRoutePickerDialog_ = translate(connect(_mapStateToProps)(AudioRoutePickerDialog));
 }
 
 export default AudioRoutePickerDialog_;

@@ -29,9 +29,14 @@ type Props = {
     conference: Object,
 
     /**
+     * The number of digits to be used in the password.
+     */
+    passwordNumberOfDigits: ?number,
+
+    /**
      * Redux store dispatch function.
      */
-    dispatch: Dispatch<any>,
+    dispatch: Dispatch<any>
 };
 
 /**
@@ -51,6 +56,7 @@ class RoomLockPrompt extends Component<Props> {
         // Bind event handlers so they are only bound once per instance.
         this._onCancel = this._onCancel.bind(this);
         this._onSubmit = this._onSubmit.bind(this);
+        this._validateInput = this._validateInput.bind(this);
     }
 
     /**
@@ -60,12 +66,23 @@ class RoomLockPrompt extends Component<Props> {
      * @returns {ReactElement}
      */
     render() {
+        let textInputProps = _TEXT_INPUT_PROPS;
+
+        if (this.props.passwordNumberOfDigits) {
+            textInputProps = {
+                ...textInputProps,
+                keyboardType: 'number-pad',
+                maxLength: this.props.passwordNumberOfDigits
+            };
+        }
+
         return (
             <InputDialog
                 contentKey = 'dialog.passwordLabel'
                 onCancel = { this._onCancel }
                 onSubmit = { this._onSubmit }
-                textInputProps = { _TEXT_INPUT_PROPS } />
+                textInputProps = { textInputProps }
+                validateInput = { this._validateInput } />
         );
     }
 
@@ -99,6 +116,28 @@ class RoomLockPrompt extends Component<Props> {
         this.props.dispatch(endRoomLockRequest(this.props.conference, value));
 
         return false; // Do not hide.
+    }
+
+    _validateInput: (string) => boolean;
+
+    /**
+     * Verifies input in case only digits are required.
+     *
+     * @param {string|undefined} value - The submitted value.
+     * @private
+     * @returns {boolean} False when the value is not valid and True otherwise.
+     */
+    _validateInput(value: string) {
+
+        // we want only digits, but both number-pad and numeric add ',' and '.' as symbols
+        if (this.props.passwordNumberOfDigits
+            && value.length > 0
+            && !/^\d+$/.test(value)) {
+
+            return false;
+        }
+
+        return true;
     }
 }
 

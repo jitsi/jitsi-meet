@@ -26,8 +26,9 @@ module:hook("bosh-session", function(event)
         local params = formdecode(query);
         session.auth_token = query and params.token or nil;
 
-        -- The room name from the bosh query
+        -- The room name and optional prefix from the bosh query
         session.jitsi_bosh_query_room = params.room;
+        session.jitsi_bosh_query_prefix = params.prefix or "";
     end
 end);
 

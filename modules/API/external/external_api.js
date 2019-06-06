@@ -42,7 +42,8 @@ const commands = {
     toggleVideo: 'toggle-video',
     mute: 'mute',
     kick: 'kick',
-    saveRoomName: 'saveRoomName'
+    saveRoomName: 'saveRoomName',
+    toggleTileView: 'toggle-tile-view'
 };
 
 /**
@@ -53,6 +54,7 @@ const events = {
     'avatar-changed': 'avatarChanged',
     'audio-availability-changed': 'audioAvailabilityChanged',
     'audio-mute-status-changed': 'audioMuteStatusChanged',
+    'camera-error': 'cameraError',
     'device-list-changed': 'deviceListChanged',
     'display-name-change': 'displayNameChange',
     'email-change': 'emailChange',
@@ -61,6 +63,7 @@ const events = {
     'feedback-prompt-displayed': 'feedbackPromptDisplayed',
     'filmstrip-display-changed': 'filmstripDisplayChanged',
     'incoming-message': 'incomingMessage',
+    'mic-error': 'micError',
     'outgoing-message': 'outgoingMessage',
     'participant-joined': 'participantJoined',
     'participant-left': 'participantLeft',
@@ -74,7 +77,8 @@ const events = {
     'show-manager-window': 'show-manager-window',
     'common-extend-message': 'common-extend-message',
     'subject-change': 'subjectChange',
-    'conference-log': 'conference-log'
+    'conference-log': 'conference-log',
+    'tile-view-changed': 'tileViewChanged'
 };
 
 /**

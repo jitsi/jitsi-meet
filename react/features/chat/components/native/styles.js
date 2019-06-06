@@ -16,7 +16,8 @@ export default {
      * Wrapper View for the avatar.
      */
     avatarWrapper: {
-        marginRight: 8
+        marginRight: 8,
+        width: 32
     },
 
     /**
@@ -65,6 +66,7 @@ export default {
     },
 
     inputField: {
+        color: 'rgb(28, 32, 37)',
         flex: 1,
         height: 48
     },

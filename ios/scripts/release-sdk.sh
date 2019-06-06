@@ -5,7 +5,9 @@ set -e -u
 THIS_DIR=$(cd -P "$(dirname "$(readlink "${BASH_SOURCE[0]}" || echo "${BASH_SOURCE[0]}")")" && pwd)
 PROJECT_REPO=$(realpath ${THIS_DIR}/../..)
 RELEASE_REPO=$(realpath ${THIS_DIR}/../../../jitsi-meet-ios-sdk-releases)
-SDK_VERSION=$(/usr/libexec/PlistBuddy -c "Print CFBundleShortVersionString" ${THIS_DIR}/../sdk/src/Info.plist)
+DEFAULT_SDK_VERSION=$(/usr/libexec/PlistBuddy -c "Print CFBundleShortVersionString" ${THIS_DIR}/../sdk/src/Info.plist)
+SDK_VERSION=${OVERRIDE_SDK_VERSION:-${DEFAULT_SDK_VERSION}}
+DO_GIT_TAG=${GIT_TAG:-0}
 
 
 echo "Releasing Jitsi Meet SDK ${SDK_VERSION}"
@@ -24,7 +26,9 @@ popd
 pushd ${PROJECT_REPO}
 rm -rf ios/sdk/JitsiMeet.framework
 xcodebuild -workspace ios/jitsi-meet.xcworkspace -scheme JitsiMeet -destination='generic/platform=iOS' -configuration Release archive
-git tag -a ios-sdk-${SDK_VERSION}
+if [[ $DO_GIT_TAG == 1 ]]; then
+    git tag ios-sdk-${SDK_VERSION}
+fi
 popd
 
 pushd ${RELEASE_REPO}
@@ -33,10 +37,16 @@ pushd ${RELEASE_REPO}
 cp -r ${PROJECT_REPO}/ios/sdk/JitsiMeet.framework Frameworks/
 cp -r ${PROJECT_REPO}/node_modules/react-native-webrtc/ios/WebRTC.framework Frameworks/
 
+# Strip bitcode
+xcrun bitcode_strip -r Frameworks/JitsiMeet.framework/JitsiMeet -o Frameworks/JitsiMeet.framework/JitsiMeet
+xcrun bitcode_strip -r Frameworks/WebRTC.framework/WebRTC -o Frameworks/WebRTC.framework/WebRTC
+
 # Add all files to git
-git add -A .
-git commit -m "${SDK_VERSION}"
-git tag ${SDK_VERSION}
+if [[ $DO_GIT_TAG == 1 ]]; then
+    git add -A .
+    git commit -m "${SDK_VERSION}"
+    git tag ${SDK_VERSION}
+fi
 
 popd
 

@@ -6,6 +6,7 @@ import {
     ADD_PENDING_INVITE_REQUEST,
     REMOVE_PENDING_INVITE_REQUESTS,
     SET_CALLEE_INFO_VISIBLE,
+    SET_DIAL_IN_SUMMARY_VISIBLE,
     SET_INVITE_DIALOG_VISIBLE,
     UPDATE_DIAL_IN_NUMBERS_FAILED,
     UPDATE_DIAL_IN_NUMBERS_SUCCESS
@@ -48,6 +49,12 @@ ReducerRegistry.register('features/invite', (state = DEFAULT_STATE, action) => {
             ...state,
             calleeInfoVisible: action.calleeInfoVisible,
             initialCalleeInfo: action.initialCalleeInfo
+        };
+
+    case SET_DIAL_IN_SUMMARY_VISIBLE:
+        return {
+            ...state,
+            summaryUrl: action.summaryUrl
         };
 
     case SET_INVITE_DIALOG_VISIBLE:

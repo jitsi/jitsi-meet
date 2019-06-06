@@ -6,6 +6,7 @@ import {
 
 import { createDeviceChangedEvent, sendAnalytics } from '../analytics';
 import {
+    getDeviceLabelById,
     setAudioInputDevice,
     setAudioOutputDeviceId,
     setVideoInputDevice
@@ -112,7 +113,9 @@ export function submitDeviceSelectionTab(newState) {
             && newState.selectedVideoInputId
                 !== currentState.selectedVideoInputId) {
             dispatch(updateSettings({
-                cameraDeviceId: newState.selectedVideoInputId
+                userSelectedCameraDeviceId: newState.selectedVideoInputId,
+                userSelectedCameraDeviceLabel:
+                    getDeviceLabelById(getState(), newState.selectedVideoInputId, 'videoInput')
             }));
 
             dispatch(
@@ -123,7 +126,9 @@ export function submitDeviceSelectionTab(newState) {
                 && newState.selectedAudioInputId
                   !== currentState.selectedAudioInputId) {
             dispatch(updateSettings({
-                micDeviceId: newState.selectedAudioInputId
+                userSelectedMicDeviceId: newState.selectedAudioInputId,
+                userSelectedMicDeviceLabel:
+                    getDeviceLabelById(getState(), newState.selectedAudioInputId, 'audioInput')
             }));
 
             dispatch(
@@ -137,7 +142,9 @@ export function submitDeviceSelectionTab(newState) {
 
             setAudioOutputDeviceId(
                 newState.selectedAudioOutputId,
-                dispatch)
+                dispatch,
+                true,
+                getDeviceLabelById(getState(), newState.selectedAudioOutputId, 'audioOutput'))
                 .then(() => logger.log('changed audio output device'))
                 .catch(err => {
                     logger.warn(

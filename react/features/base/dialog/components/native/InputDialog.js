@@ -32,7 +32,12 @@ type Props = BaseProps & {
 
     t: Function,
 
-    textInputProps: ?Object
+    textInputProps: ?Object,
+
+    /**
+     * Validating of the input.
+     */
+    validateInput: ?Function
 }
 
 type State = {
@@ -118,6 +123,12 @@ class InputDialog extends BaseDialog<Props, State> {
      * @returns {void}
      */
     _onChangeText(fieldValue) {
+
+        if (this.props.validateInput
+                && !this.props.validateInput(fieldValue)) {
+            return;
+        }
+
         this.setState({
             fieldValue
         });

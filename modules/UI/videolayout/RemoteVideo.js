@@ -357,6 +357,11 @@ RemoteVideo.prototype.removeRemoteStreamElement = function(stream) {
     logger.info(`${isVideo ? 'Video' : 'Audio'
     } removed ${this.id}`, select);
 
+
+    if (stream === this.videoStream) {
+        this.videoStream = null;
+    }
+
     this.updateView();
 };
 

@@ -113,6 +113,7 @@ class AudioOutputPreview extends Component<Props> {
      */
     _setAudioSink() {
         this._audioElement
+            && this.props.deviceId
             && this._audioElement.setSinkId(this.props.deviceId);
     }
 }

@@ -5,7 +5,7 @@ import { Alert, NativeModules, SafeAreaView, ScrollView, Switch, Text, TextInput
 
 import { ColorSchemeRegistry } from '../../../base/color-scheme';
 import { translate } from '../../../base/i18n';
-import { BackButton, Header, Modal } from '../../../base/react';
+import { HeaderWithNavigation, Modal } from '../../../base/react';
 import { connect } from '../../../base/redux';
 
 import {
@@ -18,7 +18,6 @@ import FormRow from './FormRow';
 import FormSectionHeader from './FormSectionHeader';
 import { normalizeUserInputURL } from '../../functions';
 import styles from './styles';
-import { HeaderLabel } from '../../../base/react/components/native';
 
 /**
  * Application information module.
@@ -213,10 +212,9 @@ class SettingsView extends AbstractSettingsView<Props> {
      */
     _renderHeader() {
         return (
-            <Header>
-                <BackButton onPress = { this._onRequestClose } />
-                <HeaderLabel labelKey = 'settingsView.header' />
-            </Header>
+            <HeaderWithNavigation
+                headerLabelKey = 'settingsView.header'
+                onPressBack = { this._onRequestClose } />
         );
     }
 

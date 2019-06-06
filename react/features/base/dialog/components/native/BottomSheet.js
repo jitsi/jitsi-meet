@@ -1,10 +1,10 @@
 // @flow
 
-import React, { Component, type Node } from 'react';
-import { TouchableWithoutFeedback, View } from 'react-native';
+import React, { PureComponent, type Node } from 'react';
+import { Platform, SafeAreaView, ScrollView, View } from 'react-native';
 
 import { ColorSchemeRegistry } from '../../../color-scheme';
-import { Modal } from '../../../react';
+import { SlidingView } from '../../../react';
 import { connect } from '../../../redux';
 import { StyleType } from '../../../styles';
 
@@ -33,21 +33,9 @@ type Props = {
 };
 
 /**
- * A component emulating Android's BottomSheet. For all intents and purposes,
- * this component has been designed to work and behave as a {@code Dialog}.
+ * A component emulating Android's BottomSheet.
  */
-class BottomSheet extends Component<Props> {
-    /**
-     * Initializes a new {@code BottomSheet} instance.
-     *
-     * @inheritdoc
-     */
-    constructor(props: Props) {
-        super(props);
-
-        this._onCancel = this._onCancel.bind(this);
-    }
-
+class BottomSheet extends PureComponent<Props> {
     /**
      * Implements React's {@link Component#render()}.
      *
@@ -57,39 +45,50 @@ class BottomSheet extends Component<Props> {
     render() {
         const { _styles } = this.props;
 
-        return [
-            <View
-                key = 'overlay'
-                style = { styles.overlay } />,
-            <Modal
-                key = 'modal'
-                onRequestClose = { this._onCancel }
-                visible = { true }>
-                <View style = { styles.container }>
-                    <TouchableWithoutFeedback
-                        onPress = { this._onCancel } >
-                        <View style = { styles.backdrop } />
-                    </TouchableWithoutFeedback>
-                    <View style = { _styles.sheet }>
-                        { this.props.children }
+        return (
+            <SlidingView
+                onHide = { this.props.onCancel }
+                position = 'bottom'
+                show = { true }>
+                <View
+                    pointerEvents = 'box-none'
+                    style = { styles.sheetContainer }>
+                    <View
+                        pointerEvents = 'box-none'
+                        style = { styles.sheetAreaCover } />
+                    <View
+                        style = { [
+                            styles.sheetItemContainer,
+                            _styles.sheet
+                        ] }>
+                        <ScrollView bounces = { false }>
+                            { this._getWrappedContent() }
+                        </ScrollView>
                     </View>
                 </View>
-            </Modal>
-        ];
+            </SlidingView>
+        );
     }
 
-    _onCancel: () => void;
-
     /**
-     * Cancels the dialog by calling the onCancel prop callback.
+     * Wraps the content when needed (iOS 11 and above), or just returns the original children.
      *
-     * @private
-     * @returns {void}
+     * @returns {React$Element}
      */
-    _onCancel() {
-        const { onCancel } = this.props;
+    _getWrappedContent() {
+        if (Platform.OS === 'ios') {
+            const majorVersionIOS = parseInt(Platform.Version, 10);
 
-        onCancel && onCancel();
+            if (majorVersionIOS > 10) {
+                return (
+                    <SafeAreaView>
+                        { this.props.children }
+                    </SafeAreaView>
+                );
+            }
+        }
+
+        return this.props.children;
     }
 }
 

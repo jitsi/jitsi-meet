@@ -123,6 +123,7 @@ public class JitsiMeetView extends BaseReactView<JitsiMeetViewListener> {
                 PictureInPictureModule.class);
         if (pipModule != null
                 && PictureInPictureModule.isPictureInPictureSupported()
+                && !JitsiMeetActivityDelegate.arePermissionsBeingRequested()
                 && this.url != null) {
             try {
                 pipModule.enterPictureInPicture();

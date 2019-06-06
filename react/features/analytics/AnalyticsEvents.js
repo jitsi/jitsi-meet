@@ -373,6 +373,28 @@ export function createLiveStreamingDialogEvent(dialogName, buttonName) {
 }
 
 /**
+ * Creates an event with the local tracks duration.
+ *
+ * @param {Object} duration - The object with the duration of the local tracks.
+ * @returns {Object} The event in a format suitable for sending via
+ * sendAnalytics.
+ */
+export function createLocalTracksDurationEvent(duration) {
+    const { audio, video, conference } = duration;
+    const { camera, desktop } = video;
+
+    return {
+        action: 'local.tracks.durations',
+        attributes: {
+            audio: audio.value,
+            camera: camera.value,
+            conference: conference.value,
+            desktop: desktop.value
+        }
+    };
+}
+
+/**
  * Creates an event which indicates that an action related to recording has
  * occured.
  *

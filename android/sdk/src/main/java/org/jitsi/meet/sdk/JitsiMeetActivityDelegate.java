@@ -41,6 +41,15 @@ public class JitsiMeetActivityDelegate {
     private static Callback permissionsCallback;
 
     /**
+     * Tells whether or not the permissions request is currently in progress.
+     *
+     * @return {@code true} if the permssions are being requested or {@code false} otherwise.
+     */
+    static boolean arePermissionsBeingRequested() {
+        return permissionListener != null;
+    }
+
+    /**
      * {@link Activity} lifecycle method which should be called from
      * {@code Activity#onActivityResult} so we are notified about results of external intents
      * started/finished.

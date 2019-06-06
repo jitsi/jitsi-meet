@@ -13,6 +13,11 @@ class Amplitude {
      * be used only for multi-project logging.
      */
     constructor(instanceName) {
+        // It might not have been included in the build.
+        if (!AmplitudeNative) {
+            throw new Error('Amplitude analytics is not supported');
+        }
+
         this._instanceName = instanceName;
     }
 
@@ -24,6 +29,16 @@ class Amplitude {
      */
     init(apiKey) {
         AmplitudeNative.init(this._instanceName, apiKey);
+    }
+
+    /**
+     * Sets an identifier for the current user.
+     *
+     * @param {string} userId - The new user id.
+     * @returns {void}
+     */
+    setUserId(userId) {
+        AmplitudeNative.setUserId(this._instanceName, userId);
     }
 
     /**

@@ -266,14 +266,36 @@ function _getAllParticipants(stateful) {
 }
 
 /**
+ * Returns true if all of the meeting participants are moderators.
+ *
+ * @param {Object|Function} stateful -Object or function that can be resolved
+ * to the Redux state.
+ * @returns {boolean}
+ */
+export function isEveryoneModerator(stateful: Object | Function) {
+    const participants = _getAllParticipants(stateful);
+
+    for (const participant of participants) {
+        if (participant.role !== PARTICIPANT_ROLE.MODERATOR) {
+            return false;
+        }
+    }
+
+    return true;
+}
+
+/**
  * Returns true if the current local participant is a moderator in the
  * conference.
  *
  * @param {Object|Function} stateful - Object or function that can be resolved
  * to the Redux state.
+ * @param {?boolean} ignoreToken - When true we ignore the token check.
  * @returns {boolean}
  */
-export function isLocalParticipantModerator(stateful: Object | Function) {
+export function isLocalParticipantModerator(
+        stateful: Object | Function,
+        ignoreToken: ?boolean = false) {
     const state = toState(stateful);
     const localParticipant = getLocalParticipant(state);
 
@@ -283,7 +305,8 @@ export function isLocalParticipantModerator(stateful: Object | Function) {
 
     return (
         localParticipant.role === PARTICIPANT_ROLE.MODERATOR
-            && (!state['features/base/config'].enableUserRolesBasedOnToken
+        && (ignoreToken
+                || !state['features/base/config'].enableUserRolesBasedOnToken
                 || !state['features/base/jwt'].isGuest));
 }
 

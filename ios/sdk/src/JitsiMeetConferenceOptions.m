@@ -34,6 +34,7 @@
     if (self = [super init]) {
         _serverURL = nil;
         _room = nil;
+        _subject = nil;
         _token = nil;
 
         _colorScheme = nil;
@@ -138,6 +139,7 @@
     if (self = [super init]) {
         _serverURL = builder.serverURL;
         _room = builder.room;
+        _subject = builder.subject;
         _token = builder.token;
 
         _colorScheme = builder.colorScheme;
@@ -182,6 +184,9 @@
     }
     if (_videoMuted != nil) {
         config[@"startWithVideoMuted"] = @(self.videoMuted);
+    }
+    if (_subject != nil) {
+        config[@"subject"] = self.subject;
     }
 
     NSMutableDictionary *urlProps = [[NSMutableDictionary alloc] init];

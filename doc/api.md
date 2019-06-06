@@ -222,6 +222,11 @@ api.executeCommand('toggleChat');
 api.executeCommand('toggleShareScreen');
 ```
 
+* **toggleTileView** - Enter / exit tile view layout mode. No arguments are required.
+```javascript
+api.executeCommand('toggleTileView');
+```
+
 * **hangup** - Hangups the call. No arguments are required.
 ```javascript
 api.executeCommand('hangup');
@@ -259,6 +264,14 @@ The `event` parameter is a String object with the name of the event.
 The `listener` parameter is a Function object with one argument that will be notified when the event occurs with data related to the event.
 
 The following events are currently supported:
+* **cameraError** - event notifications about Jitsi-Meet having failed to access the camera. The listener will receive an object with the following structure:
+```javascript
+{
+    type: string, // A constant representing the overall type of the error.
+    message: string // Additional information about the error.
+}
+```
+
 * **avatarChanged** - event notifications about avatar
 changes. The listener will receive an object with the following structure:
 ```javascript
@@ -282,6 +295,14 @@ changes. The listener will receive an object with the following structure:
 }
 ```
 
+* **micError** - event notifications about Jitsi-Meet having failed to access the mic. The listener will receive an object with the following structure:
+```javascript
+{
+    type: string, // A constant representing the overall type of the error.
+    message: string // Additional information about the error.
+}
+```
+
 * **screenSharingStatusChanged** - receives event notifications about turning on/off the local user screen sharing. The listener will receive object with the following structure:
 ```javascript
 {
@@ -293,6 +314,13 @@ changes. The listener will receive an object with the following structure:
         // will be passed if the source type is unknown or screen share is off.
         sourceType: string|undefined
     }
+}
+```
+
+* **tileViewChanged** - event notifications about tile view layout mode being entered or exited. The listener will receive object with the following structure:
+```javascript
+{
+    enabled: boolean, // whether tile view is not displayed or not
 }
 ```
 

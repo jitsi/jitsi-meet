@@ -361,6 +361,12 @@ const Filmstrip = {
                 'min-width': `${local.thumbWidth}px`,
                 width: `${local.thumbWidth}px`
             });
+
+            const avatarSize = local.thumbHeight / 2;
+
+            thumbs.localThumb.find('.avatar-container')
+                .height(avatarSize)
+                .width(avatarSize);
         }
 
         if (thumbs.remoteThumbs) {
@@ -371,6 +377,12 @@ const Filmstrip = {
                 'min-width': `${remote.thumbWidth}px`,
                 width: `${remote.thumbWidth}px`
             });
+
+            const avatarSize = remote.thumbHeight / 2;
+
+            thumbs.remoteThumbs.find('.avatar-container')
+                .height(avatarSize)
+                .width(avatarSize);
         }
 
         const currentLayout = getCurrentLayout(APP.store.getState());

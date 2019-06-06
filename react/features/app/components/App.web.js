@@ -6,6 +6,7 @@ import React from 'react';
 import { DialogContainer } from '../../base/dialog';
 import '../../base/responsive-ui';
 import '../../chat';
+import '../../external-api';
 import '../../room-lock';
 import '../../video-layout';
 

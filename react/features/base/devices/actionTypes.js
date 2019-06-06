@@ -1,4 +1,26 @@
 /**
+ * The type of Redux action which signals that an error occurred while obtaining
+ * a camera.
+ *
+ * {
+ *     type: NOTIFY_CAMERA_ERROR,
+ *     error: Object
+ * }
+ */
+export const NOTIFY_CAMERA_ERROR = 'NOTIFY_CAMERA_ERROR';
+
+/**
+ * The type of Redux action which signals that an error occurred while obtaining
+ * a microphone.
+ *
+ * {
+ *     type: NOTIFY_MIC_ERROR,
+ *     error: Object
+ * }
+ */
+export const NOTIFY_MIC_ERROR = 'NOTIFY_MIC_ERROR';
+
+/**
  * The type of Redux action which signals that the currently used audio
  * input device should be changed.
  *
@@ -50,3 +72,15 @@ export const ADD_PENDING_DEVICE_REQUEST = 'ADD_PENDING_DEVICE_REQUEST';
  * }
  */
 export const REMOVE_PENDING_DEVICE_REQUESTS = 'REMOVE_PENDING_DEVICE_REQUESTS';
+
+/**
+ * The type of Redux action which will check passed old and passed new devices
+ * and if needed will show notifications asking the user whether to use those.
+ *
+ * {
+ *     type: CHECK_AND_NOTIFY_FOR_NEW_DEVICE
+ *     newDevices: Array<MediaDeviceInfo>
+ *     oldDevices: Array<MediaDeviceInfo>
+ * }
+ */
+export const CHECK_AND_NOTIFY_FOR_NEW_DEVICE = 'CHECK_AND_NOTIFY_FOR_NEW_DEVICE';

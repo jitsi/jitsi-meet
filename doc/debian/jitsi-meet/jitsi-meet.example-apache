@@ -36,6 +36,11 @@
     Require all granted
   </Location>
 
+  Alias "/external_api.js" "/usr/share/jitsi-meet/libs/external_api.min.js"
+  <Location /external_api.js>
+    Require all granted
+  </Location>
+
   ProxyPreserveHost on
   ProxyPass /http-bind http://localhost:5280/http-bind/
   ProxyPassReverse /http-bind http://localhost:5280/http-bind/

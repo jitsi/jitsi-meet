@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder.WatchKit.Storyboard" version="3.0" toolsVersion="14490.70" targetRuntime="watchKit" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="AgC-eL-Hgc">
+    <device id="watch38" orientation="portrait">
+        <adaptation id="fullscreen"/>
+    </device>
+    <dependencies>
+        <deployment identifier="watchOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14490.49"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBWatchKitPlugin" version="14490.21"/>
+    </dependencies>
+    <scenes>
+        <!--Meetings-->
+        <scene sceneID="aou-V4-d1y">
+            <objects>
+                <controller title="Meetings" id="AgC-eL-Hgc" customClass="InterfaceController" customModule="JitsiMeetCompanion" customModuleProvider="target">
+                    <items>
+                        <label alignment="left" textAlignment="left" numberOfLines="0" id="OQN-sx-tDt"/>
+                        <table alignment="left" id="gpO-ql-Xsr">
+                            <items>
+                                <tableRow identifier="MeetingRowType" id="GGl-av-xeJ" customClass="MeetingRowController" customModule="JitsiMeetCompanion_Extension">
+                                    <group key="rootItem" width="1" height="0.0" alignment="left" layout="vertical" id="5XE-gq-qzG">
+                                        <items>
+                                            <label alignment="left" text="Label" id="Sij-up-N4p"/>
+                                            <label alignment="left" text="Label" id="V5K-sm-jEH">
+                                                <color key="textColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
+                                                <fontDescription key="font" style="UICTFontTextStyleFootnote"/>
+                                            </label>
+                                        </items>
+                                        <connections>
+                                            <segue destination="9RD-qP-1Z0" kind="push" id="Boa-6E-eZs"/>
+                                        </connections>
+                                    </group>
+                                    <connections>
+                                        <outlet property="roomLabel" destination="Sij-up-N4p" id="PdS-SO-ylc"/>
+                                        <outlet property="rowGroup" destination="5XE-gq-qzG" id="GZN-2c-2Gz"/>
+                                        <outlet property="timeLabel" destination="V5K-sm-jEH" id="fWQ-kx-vE4"/>
+                                    </connections>
+                                </tableRow>
+                            </items>
+                        </table>
+                    </items>
+                    <connections>
+                        <outlet property="infoLabel" destination="OQN-sx-tDt" id="Juv-tb-SNj"/>
+                        <outlet property="table" destination="gpO-ql-Xsr" id="aVV-iZ-z3l"/>
+                    </connections>
+                </controller>
+            </objects>
+            <point key="canvasLocation" x="-99" y="117"/>
+        </scene>
+        <!--Meetings-->
+        <scene sceneID="ns4-Kh-qqU">
+            <objects>
+                <controller identifier="InCallController" title="Meetings" hidesWhenLoading="NO" id="9RD-qP-1Z0" customClass="InCallController" customModule="JitsiMeetCompanion" customModuleProvider="target">
+                    <items>
+                        <label alignment="center" text="Label" id="vFt-lL-SNY"/>
+                        <timer alignment="center" textAlignment="center" previewedSeconds="0" id="W8S-uZ-MPm">
+                            <color key="textColor" red="0.024725984125768763" green="1" blue="0.24241188365329402" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                            <fontDescription key="font" style="UICTFontTextStyleHeadline"/>
+                        </timer>
+                        <group alignment="center" verticalAlignment="bottom" spacing="10" id="Hfk-a0-uWj">
+                            <items>
+                                <button width="60" height="60" alignment="left" verticalAlignment="bottom" backgroundImage="hangup" id="8jF-SI-UHz">
+                                    <connections>
+                                        <action selector="hangupClicked" destination="9RD-qP-1Z0" id="cXK-lw-tsd"/>
+                                    </connections>
+                                </button>
+                                <button width="60" height="60" alignment="right" verticalAlignment="bottom" backgroundImage="mute-off" id="LmN-FI-aQq">
+                                    <connections>
+                                        <action selector="muteClicked" destination="9RD-qP-1Z0" id="dJg-kV-cqH"/>
+                                    </connections>
+                                </button>
+                            </items>
+                        </group>
+                    </items>
+                    <connections>
+                        <outlet property="mutedButton" destination="LmN-FI-aQq" id="gfi-4T-gdN"/>
+                        <outlet property="roomLabel" destination="vFt-lL-SNY" id="cYB-Tf-Efz"/>
+                        <outlet property="timer" destination="W8S-uZ-MPm" id="r7T-j1-9VJ"/>
+                    </connections>
+                </controller>
+            </objects>
+            <point key="canvasLocation" x="213" y="117"/>
+        </scene>
+    </scenes>
+</document>

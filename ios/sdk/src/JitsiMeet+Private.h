@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+#import <React/RCTBridge.h>
+
 #import "JitsiMeet.h"
 
 @interface JitsiMeet ()

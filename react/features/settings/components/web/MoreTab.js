@@ -24,6 +24,11 @@ export type Props = {
     currentLanguage: string,
 
     /**
+     * Whether or not follow me is currently active (enabled by some other participant).
+     */
+    followMeActive: boolean,
+
+    /**
      * Whether or not the user has selected the Follow Me feature to be enabled.
      */
     followMeEnabled: boolean,
@@ -189,6 +194,7 @@ class MoreTab extends AbstractDialogTab<Props, State> {
      */
     _renderModeratorSettings() {
         const {
+            followMeActive,
             followMeEnabled,
             startAudioMuted,
             startVideoMuted,

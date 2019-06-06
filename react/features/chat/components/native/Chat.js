@@ -5,12 +5,7 @@ import { KeyboardAvoidingView, SafeAreaView } from 'react-native';
 
 import { translate } from '../../../base/i18n';
 
-import {
-    BackButton,
-    Header,
-    HeaderLabel,
-    SlidingView
-} from '../../../base/react';
+import { HeaderWithNavigation, SlidingView } from '../../../base/react';
 import { connect } from '../../../base/redux';
 
 import AbstractChat, {
@@ -41,10 +36,9 @@ class Chat extends AbstractChat<Props> {
                 <KeyboardAvoidingView
                     behavior = 'padding'
                     style = { styles.chatContainer }>
-                    <Header>
-                        <BackButton onPress = { this.props._onToggleChat } />
-                        <HeaderLabel labelKey = 'chat.title' />
-                    </Header>
+                    <HeaderWithNavigation
+                        headerLabelKey = 'chat.title'
+                        onPressBack = { this.props._onToggleChat } />
                     <SafeAreaView style = { styles.backdrop }>
                         <MessageContainer messages = { this.props._messages } />
                         <ChatInputBar onSend = { this.props._onSendMessage } />

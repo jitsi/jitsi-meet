@@ -167,22 +167,6 @@ function getCameraVideoPosition( // eslint-disable-line max-params
 }
 
 /**
- * Returns an array of the video horizontal and vertical indents.
- * Centers horizontally and top aligns vertically.
- *
- * @return an array with 2 elements, the horizontal indent and the vertical
- * indent
- */
-function getDesktopVideoPosition(videoWidth, videoHeight, videoSpaceWidth) {
-    const horizontalIndent = (videoSpaceWidth - videoWidth) / 2;
-
-    const verticalIndent = 0;// Top aligned
-
-    return { horizontalIndent,
-        verticalIndent };
-}
-
-/**
  * Container for user video.
  */
 export class VideoContainer extends LargeContainer {
@@ -366,23 +350,23 @@ export class VideoContainer extends LargeContainer {
      * @returns {{horizontalIndent, verticalIndent}}
      */
     getVideoPosition(width, height, containerWidth, containerHeight) {
+        let containerWidthToUse = containerWidth;
+
         /* eslint-enable max-params */
         if (this.stream && this.isScreenSharing()) {
-            let availableContainerWidth = containerWidth;
-
             if (interfaceConfig.VERTICAL_FILMSTRIP) {
-                availableContainerWidth -= Filmstrip.getFilmstripWidth();
+                containerWidthToUse -= Filmstrip.getFilmstripWidth();
             }
 
-            return getDesktopVideoPosition(width,
+            return getCameraVideoPosition(width,
                 height,
-                availableContainerWidth,
+                containerWidthToUse,
                 containerHeight);
         }
 
         return getCameraVideoPosition(width,
                 height,
-                containerWidth,
+                containerWidthToUse,
                 containerHeight);
 
     }
