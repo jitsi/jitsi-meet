@@ -129,7 +129,6 @@ class ChatInput extends Component<Props, State> {
                         onHeightChange = { this.props.onResize }
                         onKeyDown = { this._onDetectSubmit }
                         placeholder = { '请输入文本...' }
-                        ref = { this._setTextAreaRef }
                         value = { this.state.message } />
                 </div>
             </div>
