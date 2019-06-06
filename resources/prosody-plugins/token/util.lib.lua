@@ -100,6 +100,10 @@ function Util.new(module)
     return self
 end
 
+function Util:set_asap_key_server(asapKeyServer)
+    self.asapKeyServer = asapKeyServer
+end
+
 --- Returns the public key by keyID
 -- @param keyId the key ID to request
 -- @return the public key (the content of requested resource) or nil
@@ -239,7 +243,6 @@ end
 -- @param session the current session
 -- @return false and error
 function Util:process_and_verify_token(session)
-
     if session.auth_token == nil then
         if self.allowEmptyToken then
             return true;
