@@ -1,12 +1,13 @@
 apply plugin: 'com.android.application'
 
+def vcode = (int)(((new Date().getTime()/1000) - 1546297200) / 10)
 android {
     compileSdkVersion rootProject.ext.compileSdkVersion
     buildToolsVersion rootProject.ext.buildToolsVersion
 
     defaultConfig {
         applicationId 'top.vmeeting.android'
-        versionCode Integer.parseInt(project.buildNumber)
+        versionCode vcode
         versionName project.appVersion
 
         minSdkVersion rootProject.ext.minSdkVersion
@@ -23,7 +24,7 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules-debug.pro'
         }
         release {
-            minifyEnabled false
+            minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules-release.pro'
         }
     }
