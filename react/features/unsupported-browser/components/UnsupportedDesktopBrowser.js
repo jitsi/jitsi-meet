@@ -3,9 +3,8 @@
 import React, { Component } from 'react';
 
 import { translate } from '../../base/i18n';
-import { Platform } from '../../base/react';
 
-import { CHROME, /* EDGE, */ FIREFOX, SAFARI } from './browserLinks';
+import { CHROME, FIREFOX } from './browserLinks';
 
 /**
  * The namespace of the CSS styles of UnsupportedDesktopBrowser.
@@ -51,54 +50,10 @@ class UnsupportedDesktopBrowser extends Component<Props> {
                         href = { CHROME } >Chrome</a> and&nbsp;
                     <a
                         className = { `${_SNS}__link` }
-                        href = { FIREFOX }>Firefox</a>&nbsp;
-                    {
-                        this._renderOSSpecificBrowserDownloadLink()
-                    }
+                        href = { FIREFOX }>Firefox</a>
                 </p>
             </div>
         );
-    }
-
-    /**
-     * Depending on the platform returns the link to Safari browser.
-     *
-     * @returns {ReactElement|null}
-     * @private
-     */
-    _renderOSSpecificBrowserDownloadLink() {
-        let link;
-        let text;
-
-        switch (Platform.OS) {
-        case 'macos':
-            link = SAFARI;
-            text = 'Safari';
-            break;
-
-        /*
-        case 'windows':
-            link = EDGE;
-            text = 'Edge';
-            break;
-        */
-        }
-        if (typeof link !== 'undefined') {
-            return (
-                <span>
-                    or&nbsp;
-                    <a
-                        className = { `${_SNS}__link` }
-                        href = { link }>
-                        {
-                            text
-                        }
-                    </a>
-                </span>
-            );
-        }
-
-        return null;
     }
 }
 
