@@ -16,6 +16,7 @@ import * as JitsiMeetConferenceEvents from './ConferenceEvents';
 
 import {
     createDeviceChangedEvent,
+    createStartSilentEvent,
     createScreenSharingEvent,
     createStreamSwitchDelayEvent,
     createTrackMutedEvent,
@@ -794,6 +795,7 @@ export default {
                 }
 
                 if (config.startSilent) {
+                    sendAnalytics(createStartSilentEvent());
                     APP.store.dispatch(showNotification({
                         descriptionKey: 'notify.startSilentDescription',
                         titleKey: 'notify.startSilentTitle'
