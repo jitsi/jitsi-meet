@@ -7,6 +7,7 @@ import {
     createToolbarEvent,
     sendAnalytics
 } from '../../analytics';
+import { setAudioOnly } from '../../base/conference';
 import { translate } from '../../base/i18n';
 import {
     MEDIA_TYPE,
@@ -92,17 +93,6 @@ class VideoMuteButton extends AbstractVideoMuteButton<Props, *> {
     }
 
     /**
-     * Indicates if this button should be disabled or not.
-     *
-     * @override
-     * @protected
-     * @returns {boolean}
-     */
-    _isDisabled() {
-        return this.props._audioOnly;
-    }
-
-    /**
      * Indicates if video is currently muted ot nor.
      *
      * @override
@@ -142,11 +132,16 @@ class VideoMuteButton extends AbstractVideoMuteButton<Props, *> {
      */
     _setVideoMuted(videoMuted: boolean) {
         sendAnalytics(createToolbarEvent(VIDEO_MUTE, { enable: videoMuted }));
-        this.props.dispatch(
-            setVideoMuted(
-                videoMuted,
-                VIDEO_MUTISM_AUTHORITY.USER,
-                /* ensureTrack */ true));
+        if (this.props._audioOnly) {
+            this.props.dispatch(
+                setAudioOnly(false, /* ensureTrack */ true));
+        } else {
+            this.props.dispatch(
+                setVideoMuted(
+                    videoMuted,
+                    VIDEO_MUTISM_AUTHORITY.USER,
+                    /* ensureTrack */ true));
+        }
 
         // FIXME: The old conference logic still relies on this event being
         // emitted.
