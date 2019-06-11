@@ -6,6 +6,7 @@ import {
     ActivityIndicator,
     Alert,
     FlatList,
+    KeyboardAvoidingView,
     SafeAreaView,
     TextInput,
     TouchableOpacity,
@@ -149,37 +150,41 @@ class AddPeopleDialog extends AbstractAddPeopleDialog<Props, State> {
                     headerLabelKey = 'inviteDialog.header'
                     onPressBack = { this._onCloseAddPeopleDialog }
                     onPressForward = { this._onInvite } />
-                <SafeAreaView style = { styles.dialogWrapper }>
-                    <View
-                        style = { styles.searchFieldWrapper }>
-                        <View style = { styles.searchIconWrapper }>
-                            { this.state.searchInprogress
-                                ? <ActivityIndicator
-                                    color = { DARK_GREY }
-                                    size = 'small' />
-                                : <Icon
-                                    name = { 'search' }
-                                    style = { styles.searchIcon } />}
+                <KeyboardAvoidingView
+                    behavior = 'padding'
+                    style = { styles.avoidingView }>
+                    <SafeAreaView style = { styles.dialogWrapper }>
+                        <View
+                            style = { styles.searchFieldWrapper }>
+                            <View style = { styles.searchIconWrapper }>
+                                { this.state.searchInprogress
+                                    ? <ActivityIndicator
+                                        color = { DARK_GREY }
+                                        size = 'small' />
+                                    : <Icon
+                                        name = { 'search' }
+                                        style = { styles.searchIcon } />}
+                            </View>
+                            <TextInput
+                                autoCorrect = { false }
+                                autoFocus = { true }
+                                onChangeText = { this._onTypeQuery }
+                                placeholder = {
+                                    this.props.t(`inviteDialog.${placeholderKey}`)
+                                }
+                                ref = { this._setFieldRef }
+                                style = { styles.searchField } />
                         </View>
-                        <TextInput
-                            autoCorrect = { false }
-                            autoFocus = { true }
-                            onChangeText = { this._onTypeQuery }
-                            placeholder = {
-                                this.props.t(`inviteDialog.${placeholderKey}`)
-                            }
-                            ref = { this._setFieldRef }
-                            style = { styles.searchField } />
-                    </View>
-                    <FlatList
-                        ItemSeparatorComponent = { this._renderSeparator }
-                        data = { this.state.selectableItems }
-                        extraData = { inviteItems }
-                        keyExtractor = { this._keyExtractor }
-                        keyboardShouldPersistTaps = 'always'
-                        renderItem = { this._renderItem }
-                        style = { styles.resultList } />
-                </SafeAreaView>
+                        <FlatList
+                            ItemSeparatorComponent = { this._renderSeparator }
+                            data = { this.state.selectableItems }
+                            extraData = { inviteItems }
+                            keyExtractor = { this._keyExtractor }
+                            keyboardShouldPersistTaps = 'always'
+                            renderItem = { this._renderItem }
+                            style = { styles.resultList } />
+                    </SafeAreaView>
+                </KeyboardAvoidingView>
             </Modal>
         );
     }
