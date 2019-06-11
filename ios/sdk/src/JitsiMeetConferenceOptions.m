@@ -17,6 +17,7 @@
 #import <React/RCTUtils.h>
 
 #import "JitsiMeetConferenceOptions+Private.h"
+#import "JitsiMeetUserInfo+Private.h"
 
 /**
  * Backwards compatibility: turn the boolean property into a feature flag.
@@ -49,6 +50,8 @@ static NSString *const WelcomePageEnabledFeatureFlag = @"welcomepage.enabled";
         _audioOnly = nil;
         _audioMuted = nil;
         _videoMuted = nil;
+
+        _userInfo = nil;
     }
     
     return self;
@@ -163,6 +166,8 @@ static NSString *const WelcomePageEnabledFeatureFlag = @"welcomepage.enabled";
         _videoMuted = [builder getVideoMuted];
 
         _featureFlags = [NSDictionary dictionaryWithDictionary:builder.featureFlags];
+
+        _userInfo = builder.userInfo;
     }
 
     return self;
@@ -218,6 +223,10 @@ static NSString *const WelcomePageEnabledFeatureFlag = @"welcomepage.enabled";
 
     if (_token != nil) {
         urlProps[@"jwt"] = _token;
+    }
+
+    if (_token == nil && _userInfo != nil) {
+        props[@"userInfo"] = [self.userInfo asDict];
     }
 
     urlProps[@"config"] = config;

@@ -16,6 +16,9 @@
 
 #import <Foundation/Foundation.h>
 
+#import "JitsiMeetUserInfo.h"
+
+
 @interface JitsiMeetConferenceOptionsBuilder : NSObject
 
 /**
@@ -60,6 +63,11 @@
  */
 @property (nonatomic) BOOL welcomePageEnabled;
 
+/**
+ * Information about the local user. It will be used in absence of a token.
+ */
+@property (nonatomic, nullable) JitsiMeetUserInfo *userInfo;
+
 - (void)setFeatureFlag:(NSString *_Nonnull)flag withBoolean:(BOOL)value;
 - (void)setFeatureFlag:(NSString *_Nonnull)flag withValue:(id _Nonnull)value;
 
@@ -81,6 +89,8 @@
 @property (nonatomic, readonly) BOOL videoMuted;
 
 @property (nonatomic, readonly) BOOL welcomePageEnabled;
+
+@property (nonatomic, nullable) JitsiMeetUserInfo *userInfo;
 
 + (instancetype _Nonnull)fromBuilder:(void (^_Nonnull)(JitsiMeetConferenceOptionsBuilder *_Nonnull))initBlock;
 - (instancetype _Nonnull)init NS_UNAVAILABLE;
