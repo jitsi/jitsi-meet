@@ -68,6 +68,11 @@ public class JitsiMeetConferenceOptions implements Parcelable {
     private Boolean videoMuted;
 
     /**
+     * USer information, to be used when no token is specified.
+     */
+    private JitsiMeetUserInfo userInfo;
+
+    /**
      * Class used to build the immutable {@link JitsiMeetConferenceOptions} object.
      */
     public static class Builder {
@@ -82,6 +87,8 @@ public class JitsiMeetConferenceOptions implements Parcelable {
         private Boolean audioMuted;
         private Boolean audioOnly;
         private Boolean videoMuted;
+
+        private JitsiMeetUserInfo userInfo;
 
         public Builder() {
             featureFlags = new Bundle();
@@ -208,6 +215,12 @@ public class JitsiMeetConferenceOptions implements Parcelable {
             return this;
         }
 
+        public Builder setUserInfo(JitsiMeetUserInfo userInfo) {
+            this.userInfo = userInfo;
+
+            return this;
+        }
+
         /**
          * Builds the immutable {@link JitsiMeetConferenceOptions} object with the configuration
          * that this {@link Builder} instance specified.
@@ -225,6 +238,7 @@ public class JitsiMeetConferenceOptions implements Parcelable {
             options.audioMuted = this.audioMuted;
             options.audioOnly = this.audioOnly;
             options.videoMuted = this.videoMuted;
+            options.userInfo = this.userInfo;
 
             return options;
         }
@@ -239,6 +253,7 @@ public class JitsiMeetConferenceOptions implements Parcelable {
         token = in.readString();
         colorScheme = in.readBundle();
         featureFlags = in.readBundle();
+        userInfo = new JitsiMeetUserInfo(in.readBundle());
         byte tmpAudioMuted = in.readByte();
         audioMuted = tmpAudioMuted == 0 ? null : tmpAudioMuted == 1;
         byte tmpAudioOnly = in.readByte();
@@ -294,6 +309,10 @@ public class JitsiMeetConferenceOptions implements Parcelable {
             urlProps.putString("jwt", token);
         }
 
+        if (token == null && userInfo != null) {
+            props.putBundle("userInfo", userInfo.asBundle());
+        }
+
         urlProps.putBundle("config", config);
         props.putBundle("url", urlProps);
 
@@ -322,6 +341,7 @@ public class JitsiMeetConferenceOptions implements Parcelable {
         dest.writeString(token);
         dest.writeBundle(colorScheme);
         dest.writeBundle(featureFlags);
+        dest.writeBundle(userInfo.asBundle());
         dest.writeByte((byte) (audioMuted == null ? 0 : audioMuted ? 1 : 2));
         dest.writeByte((byte) (audioOnly == null ? 0 : audioOnly ? 1 : 2));
         dest.writeByte((byte) (videoMuted == null ? 0 : videoMuted ? 1 : 2));

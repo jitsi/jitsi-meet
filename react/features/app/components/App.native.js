@@ -13,6 +13,7 @@ import {
     AspectRatioDetector,
     ReducedUIDetector
 } from '../../base/responsive-ui';
+import { updateSettings } from '../../base/settings';
 import '../../google-api';
 import '../../mobile/audio-mode';
 import '../../mobile/background';
@@ -50,7 +51,12 @@ type Props = AbstractAppProps & {
     /**
      * An object with the feature flags.
      */
-    flags: Object
+    flags: Object,
+
+    /**
+     * An object with user information (display name, email, avatar URL).
+     */
+    userInfo: ?Object
 };
 
 /**
@@ -88,12 +94,12 @@ export class App extends AbstractApp {
         super.componentDidMount();
 
         this._init.then(() => {
-            // We set the color scheme early enough so then we avoid any
-            // unnecessary re-renders.
-            this.state.store.dispatch(setColorScheme(this.props.colorScheme));
+            // We set these early enough so then we avoid any unnecessary re-renders.
+            const { dispatch } = this.state.store;
 
-            // Ditto for feature flags.
-            this.state.store.dispatch(updateFlags(this.props.flags));
+            dispatch(setColorScheme(this.props.colorScheme));
+            dispatch(updateFlags(this.props.flags));
+            dispatch(updateSettings(this.props.userInfo || {}));
         });
     }
 
