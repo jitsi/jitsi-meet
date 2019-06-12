@@ -731,24 +731,6 @@ UI.showExtensionInlineInstallationDialog = function(callback) {
     });
 };
 
-/**
- * Shows error dialog that informs the user that no data is received from the
- * device.
- *
- * @param {boolean} isAudioTrack - Whether or not the dialog is for an audio
- * track error.
- * @returns {void}
- */
-UI.showTrackNotWorkingDialog = function(isAudioTrack) {
-    messageHandler.showError({
-        descriptionKey: isAudioTrack
-            ? 'dialog.micNotSendingData' : 'dialog.cameraNotSendingData',
-        titleKey: isAudioTrack
-            ? 'dialog.micNotSendingDataTitle'
-            : 'dialog.cameraNotSendingDataTitle'
-    });
-};
-
 UI.updateDevicesAvailability = function(id, devices) {
     VideoLayout.setDeviceAvailabilityIcons(id, devices);
 };
