@@ -20,6 +20,9 @@ import android.os.Bundle;
 
 import com.facebook.react.ReactInstanceManager;
 
+import org.webrtc.voiceengine.WebRtcAudioManager;
+import org.webrtc.voiceengine.WebRtcAudioUtils;
+
 public class JitsiMeet {
     /**
      * Default {@link JitsiMeetConferenceOptions} which will be used for all conferences. When
@@ -37,16 +40,26 @@ public class JitsiMeet {
     }
 
     /**
-     * Helper to get the default conference options as a {@link Bundle}.
+     * Set if the native HW AEC should be used or not. It defaults to automatic detection. Some
+     * devices have bogus HW AECs so it would be a good idea to set this to false to try and improve
+     * the situation.
      *
-     * @return a {@link Bundle} with the default conference options.
+     * When the native AEC is not in use a WebRTC provided one is used.
+     *
+     * @param enabled - Whether the native AEC should be used or not.
      */
-    static Bundle getDefaultProps() {
-        if (defaultConferenceOptions != null) {
-            return defaultConferenceOptions.asProps();
-        }
+    public static void setNativeAcousticEchoCanceler(boolean enabled) {
+        WebRtcAudioUtils.setWebRtcBasedAcousticEchoCanceler(!enabled);
+    }
 
-        return new Bundle();
+    /**
+     * Set if OpenSLES should be used or not. It defaults to automatic detection. Some devices may
+     * be better off with it disabled.
+     *
+     * @param enabled - Whether OpenSLES usage should be enabled or not.
+     */
+    public static void setOpenSLESUsageEnabled(boolean enabled) {
+        WebRtcAudioManager.setBlacklistDeviceForOpenSLESUsage(!enabled);
     }
 
     /**
@@ -59,5 +72,18 @@ public class JitsiMeet {
         if (reactInstanceManager != null) {
             reactInstanceManager.showDevOptionsDialog();
         }
+    }
+
+    /**
+     * Helper to get the default conference options as a {@link Bundle}.
+     *
+     * @return a {@link Bundle} with the default conference options.
+     */
+    static Bundle getDefaultProps() {
+        if (defaultConferenceOptions != null) {
+            return defaultConferenceOptions.asProps();
+        }
+
+        return new Bundle();
     }
 }
