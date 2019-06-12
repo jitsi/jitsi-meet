@@ -1,10 +1,15 @@
 // @flow
 
+import { NativeModules } from 'react-native';
+
+import { APP_WILL_MOUNT } from '../app';
 import { setAudioOnly } from '../conference';
 import { getLocalParticipant, participantUpdated } from '../participants';
 import { MiddlewareRegistry } from '../redux';
 
 import { SETTINGS_UPDATED } from './actionTypes';
+
+const { AudioUtils } = NativeModules;
 
 /**
  * The middleware of the feature base/settings. Distributes changes to the state
@@ -18,9 +23,20 @@ MiddlewareRegistry.register(store => next => action => {
     const result = next(action);
 
     switch (action.type) {
-    case SETTINGS_UPDATED:
+    case APP_WILL_MOUNT: {
+        const settings = store.getState()['features/base/settings'];
+
+        _maybeSetAdvancedAudioOptions(settings);
+        break;
+    }
+
+    case SETTINGS_UPDATED: {
+        _maybeSetAdvancedAudioOptions(action.settings);
         _maybeSetAudioOnly(store, action);
         _updateLocalParticipant(store, action);
+
+        break;
+    }
     }
 
     return result;
@@ -41,6 +57,27 @@ function _mapSettingsFieldToParticipant(settingsField) {
     }
 
     return settingsField;
+}
+
+/**
+ * Updates {@code startAudioOnly} flag if it's updated in the settings.
+ *
+ * @param {Object} settings - The settings object.
+ * @private
+ * @returns {void}
+ */
+function _maybeSetAdvancedAudioOptions({ useNativeAEC, useOpenSLES }) {
+    if (!AudioUtils) {
+        return;
+    }
+
+    if (typeof useNativeAEC === 'boolean') {
+        AudioUtils.setNativeAcousticEchoCanceler(useNativeAEC);
+    }
+
+    if (typeof useOpenSLES === 'boolean') {
+        AudioUtils.setOpenSLESUsageEnabled(useOpenSLES);
+    }
 }
 
 /**

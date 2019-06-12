@@ -19,10 +19,8 @@ import FormSectionHeader from './FormSectionHeader';
 import { normalizeUserInputURL } from '../../functions';
 import styles from './styles';
 
-/**
- * Application information module.
- */
-const { AppInfo } = NativeModules;
+
+const { AppInfo, AudioUtils } = NativeModules;
 
 type Props = AbstractProps & {
 
@@ -51,6 +49,8 @@ class SettingsView extends AbstractSettingsView<Props> {
         // Bind event handlers so they are only bound once per instance.
         this._onBlurServerURL = this._onBlurServerURL.bind(this);
         this._onRequestClose = this._onRequestClose.bind(this);
+        this._onUseNativeAECChange = this._onUseNativeAECChange.bind(this);
+        this._onUseOpenSLESChange = this._onUseOpenSLESChange.bind(this);
         this._setURLFieldReference = this._setURLFieldReference.bind(this);
         this._showURLAlert = this._showURLAlert.bind(this);
     }
@@ -110,6 +110,34 @@ class SettingsView extends AbstractSettingsView<Props> {
 
     _onStartVideoMutedChange: (boolean) => void;
 
+    _onUseNativeAECChange: (boolean) => void;
+
+    /**
+     * Handles the "use native AEC" field value change.
+     *
+     * @param {boolean} newValue - New value for the option.
+     * @returns {void}
+     */
+    _onUseNativeAECChange(newValue) {
+        super._updateSettings({
+            useNativeAEC: newValue
+        });
+    }
+
+    _onUseOpenSLESChange: (boolean) => void;
+
+    /**
+     * Handles the "use OpenSLES" field value change.
+     *
+     * @param {boolean} newValue - New value for the option.
+     * @returns {void}
+     */
+    _onUseOpenSLESChange(newValue) {
+        super._updateSettings({
+            useOpenSLES: newValue
+        });
+    }
+
     /**
      * Processes the server URL. It normalizes it and an error alert is
      * displayed in case it's incorrect.
@@ -131,6 +159,41 @@ class SettingsView extends AbstractSettingsView<Props> {
                 this.props.dispatch(setSettingsViewVisible(false));
             }
         }
+    }
+
+    /**
+     * Render the advanced audio options.
+     *
+     * @private
+     * @returns {React$Element}
+     */
+    _renderAdvancedAudio() {
+        if (!AudioUtils) {
+            return null;
+        }
+
+        const { _settings } = this.props;
+
+        return (
+            <>
+                <FormSectionHeader
+                    label = 'settingsView.advancedAudioSection' />
+                <FormRow
+                    fieldSeparator = { true }
+                    label = 'settingsView.useNativeAEC'>
+                    <Switch
+                        onValueChange = { this._onUseNativeAECChange }
+                        value = { _settings.useNativeAEC } />
+                </FormRow>
+                <FormRow
+                    fieldSeparator = { false }
+                    label = 'settingsView.useOpenSLES'>
+                    <Switch
+                        onValueChange = { this._onUseOpenSLESChange }
+                        value = { _settings.useOpenSLES } />
+                </FormRow>
+            </>
+        );
     }
 
     /**
@@ -190,6 +253,7 @@ class SettingsView extends AbstractSettingsView<Props> {
                             onValueChange = { this._onStartVideoMutedChange }
                             value = { _settings.startWithVideoMuted } />
                     </FormRow>
+                    { this._renderAdvancedAudio() }
                     <FormSectionHeader
                         label = 'settingsView.buildInfoSection' />
                     <FormRow

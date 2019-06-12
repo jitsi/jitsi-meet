@@ -572,6 +572,7 @@
         "update": "Update"
     },
     "settingsView": {
+        "advancedAudioSection": "Advanced Audio",
         "alertOk": "OK",
         "alertTitle": "Warning",
         "alertURLText": "The entered server URL is invalid",
@@ -584,6 +585,8 @@
         "serverURL": "Server URL",
         "startWithAudioMuted": "Start with audio muted",
         "startWithVideoMuted": "Start with video muted",
+        "useNativeAEC": "Use native HW AEC (if available)",
+        "useOpenSLES": "Use OpenSLES (if available)",
         "version": "Version"
     },
     "share": {

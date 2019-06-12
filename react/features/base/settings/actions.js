@@ -15,6 +15,8 @@ import { SETTINGS_UPDATED } from './actionTypes';
  *         email: string,
  *         localFlipX: boolean,
  *         micDeviceId: string,
+ *         useNativeAEC: boolean,
+ *         useOpenSLES: boolean,
  *         serverURL: string,
  *         startAudioOnly: boolean,
  *         startWithAudioMuted: boolean,
