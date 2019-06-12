@@ -3,6 +3,7 @@ import {
     sendAnalytics
 } from '../../analytics';
 import { JitsiTrackErrors, JitsiTrackEvents } from '../lib-jitsi-meet';
+import { showErrorNotification, showNotification } from '../../notifications';
 import {
     CAMERA_FACING_MODE,
     MEDIA_TYPE,
@@ -17,11 +18,12 @@ import {
     TRACK_ADDED,
     TRACK_CREATE_CANCELED,
     TRACK_CREATE_ERROR,
+    TRACK_NO_DATA_FROM_SOURCE,
     TRACK_REMOVED,
     TRACK_UPDATED,
     TRACK_WILL_CREATE
 } from './actionTypes';
-import { createLocalTracksF, getLocalTrack, getLocalTracks } from './functions';
+import { createLocalTracksF, getLocalTrack, getLocalTracks, getTrackByJitsiTrack } from './functions';
 
 const logger = require('jitsi-meet-logger').getLogger(__filename);
 
@@ -190,6 +192,55 @@ export function destroyLocalTracks() {
 }
 
 /**
+ * Signals that the passed JitsiLocalTrack has triggered a no data from source event.
+ *
+ * @param {JitsiLocalTrack} track - The track.
+ * @returns {{
+*     type: TRACK_NO_DATA_FROM_SOURCE,
+*     track: Track
+* }}
+*/
+export function noDataFromSource(track) {
+    return {
+        type: TRACK_NO_DATA_FROM_SOURCE,
+        track
+    };
+}
+
+/**
+ * Displays a no data from source video error if needed.
+ *
+ * @param {JitsiLocalTrack} jitsiTrack - The track.
+ * @returns {Function}
+ */
+export function showNoDataFromSourceVideoError(jitsiTrack) {
+    return (dispatch, getState) => {
+        let notificationInfo;
+
+        const track = getTrackByJitsiTrack(getState()['features/base/tracks'], jitsiTrack);
+
+        if (!track) {
+            return;
+        }
+
+        if (track.isReceivingData) {
+            notificationInfo = undefined;
+        } else {
+            const notificationAction = showErrorNotification({
+                descriptionKey: 'dialog.cameraNotSendingData',
+                titleKey: 'dialog.cameraNotSendingDataTitle'
+            });
+
+            dispatch(notificationAction);
+            notificationInfo = {
+                uid: notificationAction.uid
+            };
+        }
+        dispatch(trackNoDataFromSourceNotificationInfoChanged(jitsiTrack, notificationInfo));
+    };
+}
+
+/**
  * Signals that the local participant is ending screensharing or beginning the
  * screensharing flow.
  *
@@ -288,7 +339,8 @@ export function trackAdded(track) {
 
         // participantId
         const local = track.isLocal();
-        let participantId;
+        const mediaType = track.getType();
+        let isReceivingData, noDataFromSourceNotificationInfo, participantId;
 
         if (local) {
             const participant = getLocalParticipant(getState);
@@ -296,18 +348,40 @@ export function trackAdded(track) {
             if (participant) {
                 participantId = participant.id;
             }
+
+            isReceivingData = track.isReceivingData();
+            track.on(JitsiTrackEvents.NO_DATA_FROM_SOURCE, () => dispatch(noDataFromSource({ jitsiTrack: track })));
+            if (!isReceivingData) {
+                if (mediaType === MEDIA_TYPE.AUDIO) {
+                    const notificationAction = showNotification({
+                        descriptionKey: 'dialog.micNotSendingData',
+                        titleKey: 'dialog.micNotSendingDataTitle'
+                    });
+
+                    dispatch(notificationAction);
+                    noDataFromSourceNotificationInfo = { uid: notificationAction.uid };
+                } else {
+                    const timeout = setTimeout(() => dispatch(showNoDataFromSourceVideoError(track)), 5000);
+
+                    noDataFromSourceNotificationInfo = { timeout };
+                }
+
+            }
         } else {
             participantId = track.getParticipantId();
+            isReceivingData = true;
         }
 
         return dispatch({
             type: TRACK_ADDED,
             track: {
                 jitsiTrack: track,
+                isReceivingData,
                 local,
-                mediaType: track.getType(),
+                mediaType,
                 mirror: _shouldMirror(track),
                 muted: track.isMuted(),
+                noDataFromSourceNotificationInfo,
                 participantId,
                 videoStarted: false,
                 videoType: track.videoType
@@ -337,6 +411,26 @@ export function trackMutedChanged(track) {
 }
 
 /**
+ * Create an action for when a track's no data from source notification information changes.
+ *
+ * @param {JitsiLocalTrack} track - JitsiTrack instance.
+ * @param {Object} noDataFromSourceNotificationInfo - Information about no data from source notification.
+ * @returns {{
+ *     type: TRACK_UPDATED,
+ *     track: Track
+ * }}
+ */
+export function trackNoDataFromSourceNotificationInfoChanged(track, noDataFromSourceNotificationInfo) {
+    return {
+        type: TRACK_UPDATED,
+        track: {
+            jitsiTrack: track,
+            noDataFromSourceNotificationInfo
+        }
+    };
+}
+
+/**
  * Create an action for when a track has been signaled for removal from the
  * conference.
  *
@@ -349,6 +443,7 @@ export function trackMutedChanged(track) {
 export function trackRemoved(track) {
     track.removeAllListeners(JitsiTrackEvents.TRACK_MUTE_CHANGED);
     track.removeAllListeners(JitsiTrackEvents.TRACK_VIDEOTYPE_CHANGED);
+    track.removeAllListeners(JitsiTrackEvents.NO_DATA_FROM_SOURCE);
 
     return {
         type: TRACK_REMOVED,
