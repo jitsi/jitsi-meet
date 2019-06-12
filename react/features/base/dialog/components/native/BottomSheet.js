@@ -61,7 +61,9 @@ class BottomSheet extends PureComponent<Props> {
                             styles.sheetItemContainer,
                             _styles.sheet
                         ] }>
-                        <ScrollView bounces = { false }>
+                        <ScrollView
+                            bounces = { false }
+                            showsVerticalScrollIndicator = { false }>
                             { this._getWrappedContent() }
                         </ScrollView>
                     </View>
