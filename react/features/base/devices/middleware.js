@@ -28,14 +28,12 @@ const JITSI_TRACK_ERROR_TO_MESSAGE_KEY_MAP = {
     microphone: {
         [JitsiTrackErrors.CONSTRAINT_FAILED]: 'dialog.micConstraintFailedError',
         [JitsiTrackErrors.GENERAL]: 'dialog.micUnknownError',
-        [JitsiTrackErrors.NO_DATA_FROM_SOURCE]: 'dialog.micNotSendingData',
         [JitsiTrackErrors.NOT_FOUND]: 'dialog.micNotFoundError',
         [JitsiTrackErrors.PERMISSION_DENIED]: 'dialog.micPermissionDeniedError'
     },
     camera: {
         [JitsiTrackErrors.CONSTRAINT_FAILED]: 'dialog.cameraConstraintFailedError',
         [JitsiTrackErrors.GENERAL]: 'dialog.cameraUnknownError',
-        [JitsiTrackErrors.NO_DATA_FROM_SOURCE]: 'dialog.cameraNotSendingData',
         [JitsiTrackErrors.NOT_FOUND]: 'dialog.cameraNotFoundError',
         [JitsiTrackErrors.PERMISSION_DENIED]: 'dialog.cameraPermissionDeniedError',
         [JitsiTrackErrors.UNSUPPORTED_RESOLUTION]: 'dialog.cameraUnsupportedResolutionError'
