@@ -101,12 +101,19 @@ UI.notifyReservationError = function(code, msg) {
 
 /**
  * Notify user that he has been kicked from the server.
+ * @param participant {JitsiParticipant} the participant initiating the kick.
  */
-UI.notifyKicked = function() {
+UI.notifyKicked = function(participant) {
+    const args = {
+        participantDisplayName: participant.getDisplayName()
+    };
+
     messageHandler.showError({
         hideErrorSupportLink: true,
         descriptionKey: 'dialog.kickMessage',
-        titleKey: 'dialog.kickTitle'
+        descriptionArguments: args,
+        titleKey: 'dialog.kickTitle',
+        titleArguments: args
     });
 };
 

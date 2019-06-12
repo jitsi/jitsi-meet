@@ -1955,9 +1955,9 @@ export default {
                 }
             });
 
-        room.on(JitsiConferenceEvents.KICKED, () => {
+        room.on(JitsiConferenceEvents.KICKED, participant => {
             APP.UI.hideStats();
-            APP.UI.notifyKicked();
+            APP.UI.notifyKicked(participant);
 
             // FIXME close
         });

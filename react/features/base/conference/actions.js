@@ -89,7 +89,7 @@ function _addConferenceListeners(conference, dispatch) {
 
     conference.on(
         JitsiConferenceEvents.KICKED,
-        () => dispatch(kickedOut(conference)));
+        (...args) => dispatch(kickedOut(conference, ...args)));
 
     conference.on(
         JitsiConferenceEvents.LOCK_STATE_CHANGED,
@@ -432,15 +432,19 @@ export function dataChannelOpened() {
  *
  * @param {JitsiConference} conference - The {@link JitsiConference} instance
  * for which the event is being signaled.
+ * @param {JitsiParticipant} participant - The {@link JitsiParticipant}
+ * instance which initiated the kick event.
  * @returns {{
  *     type: KICKED_OUT,
- *     conference: JitsiConference
+ *     conference: JitsiConference,
+ *     participant: JitsiParticipant
  * }}
  */
-export function kickedOut(conference: Object) {
+export function kickedOut(conference: Object, participant: Object) {
     return {
         type: KICKED_OUT,
-        conference
+        conference,
+        participant
     };
 }
 
