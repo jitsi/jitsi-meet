@@ -135,13 +135,13 @@ class VideoMuteButton extends AbstractVideoMuteButton<Props, *> {
         if (this.props._audioOnly) {
             this.props.dispatch(
                 setAudioOnly(false, /* ensureTrack */ true));
-        } else {
-            this.props.dispatch(
-                setVideoMuted(
-                    videoMuted,
-                    VIDEO_MUTISM_AUTHORITY.USER,
-                    /* ensureTrack */ true));
         }
+
+        this.props.dispatch(
+            setVideoMuted(
+                videoMuted,
+                VIDEO_MUTISM_AUTHORITY.USER,
+                /* ensureTrack */ true));
 
         // FIXME: The old conference logic still relies on this event being
         // emitted.
