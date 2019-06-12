@@ -118,6 +118,20 @@ UI.notifyKicked = function(participant) {
 };
 
 /**
+ * Notify user that someone has been kicked from the server.
+ * @param kicker {JitsiParticipant} the participant initiating the kick.
+ * @param kicked {JitsiParticipant} the participant that was kicked.
+ */
+UI.notifyParticipantKicked = function(kicker, kicked) {
+    messageHandler.participantNotification(
+        kicked.getDisplayName(),
+        undefined,
+        'disconnected',
+        'notify.kickParticipant',
+        { participantDisplayName: kicker.getDisplayName() });
+};
+
+/**
  * Notify user that conference was destroyed.
  * @param reason {string} the reason text
  */

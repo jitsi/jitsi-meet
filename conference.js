@@ -1962,6 +1962,10 @@ export default {
             // FIXME close
         });
 
+        room.on(JitsiConferenceEvents.PARTICIPANT_KICKED, (kicker, kicked) => {
+            APP.UI.notifyParticipantKicked(kicker, kicked);
+        });
+
         room.on(JitsiConferenceEvents.SUSPEND_DETECTED, () => {
             APP.store.dispatch(suspendDetected());
 
