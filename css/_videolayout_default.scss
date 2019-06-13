@@ -23,14 +23,9 @@
     top: 0;
     width: 100%;
 
-    &.fit-full-height #largeVideoBackground {
-        height: 100%;
-        width: auto;
-    }
-
-    .fit-full-width #largeVideoBackground {
-        height: auto;
-        width: 100%;
+    #largeVideoBackground {
+        min-height: 100%;
+        min-width: 100%;
     }
 }
 #largeVideoBackgroundContainer {
