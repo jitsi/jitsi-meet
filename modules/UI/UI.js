@@ -18,10 +18,7 @@ import { toggleChat } from '../../react/features/chat';
 import { openDisplayNamePrompt } from '../../react/features/display-name';
 import { setEtherpadHasInitialzied } from '../../react/features/etherpad';
 import { setFilmstripVisible } from '../../react/features/filmstrip';
-import {
-    showNotification,
-    setNotificationsEnabled
-} from '../../react/features/notifications';
+import { setNotificationsEnabled } from '../../react/features/notifications';
 import {
     dockToolbox,
     setToolboxEnabled,
@@ -132,18 +129,6 @@ UI.notifyParticipantKicked = function(kicker, kicked) {
         'disconnected',
         'notify.kickParticipant',
         { participantDisplayName: kicker.getDisplayName() });
-};
-
-/**
- * Notify user that he has been muted from the server.
- * @param participant {JitsiParticipant} the participant initiating the mute.
- */
-UI.notifyMuted = function(participant) {
-    APP.store.dispatch(showNotification({
-        descriptionKey: 'notify.mutedRemotelyDescription',
-        titleKey: 'notify.mutedRemotelyTitle',
-        titleArguments: { participantDisplayName: participant.getDisplayName() }
-    }));
 };
 
 /**

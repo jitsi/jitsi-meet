@@ -383,6 +383,28 @@ export function participantUpdated(participant = {}) {
 }
 
 /**
+ * Action to signal that a participant has muted us.
+ *
+ * @param {JitsiParticipant} participant - Information about participant.
+ * @returns {Promise}
+ */
+export function participantMutedUs(participant) {
+    return dispatch => {
+        if (!participant) {
+            return;
+        }
+
+        dispatch(showNotification({
+            descriptionKey: 'notify.mutedRemotelyDescription',
+            titleKey: 'notify.mutedRemotelyTitle',
+            titleArguments: {
+                participantDisplayName: getNormalizedDisplayName(participant.getDisplayName())
+            }
+        }));
+    };
+}
+
+/**
  * Create an action which pins a conference participant.
  *
  * @param {string|null} id - The ID of the conference participant to pin or null

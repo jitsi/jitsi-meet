@@ -85,6 +85,7 @@ import {
     localParticipantConnectionStatusChanged,
     localParticipantRoleChanged,
     participantConnectionStatusChanged,
+    participantMutedUs,
     participantPresenceChanged,
     participantRoleChanged,
     participantUpdated
@@ -1857,7 +1858,7 @@ export default {
 
         room.on(JitsiConferenceEvents.TRACK_MUTE_CHANGED, (_, participantThatMutedUs) => {
             if (participantThatMutedUs) {
-                APP.UI.notifyMuted(participantThatMutedUs);
+                APP.store.dispatch(participantMutedUs(participantThatMutedUs));
             }
         });
 
