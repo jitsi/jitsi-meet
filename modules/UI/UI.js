@@ -18,7 +18,10 @@ import { toggleChat } from '../../react/features/chat';
 import { openDisplayNamePrompt } from '../../react/features/display-name';
 import { setEtherpadHasInitialzied } from '../../react/features/etherpad';
 import { setFilmstripVisible } from '../../react/features/filmstrip';
-import { setNotificationsEnabled } from '../../react/features/notifications';
+import {
+    showNotification,
+    setNotificationsEnabled
+} from '../../react/features/notifications';
 import {
     dockToolbox,
     setToolboxEnabled,
@@ -136,11 +139,11 @@ UI.notifyParticipantKicked = function(kicker, kicked) {
  * @param participant {JitsiParticipant} the participant initiating the mute.
  */
 UI.notifyMuted = function(participant) {
-    messageHandler.showWarning({
+    APP.store.dispatch(showNotification({
         descriptionKey: 'notify.mutedRemotelyDescription',
         titleKey: 'notify.mutedRemotelyTitle',
         titleArguments: { participantDisplayName: participant.getDisplayName() }
-    });
+    }));
 };
 
 /**
