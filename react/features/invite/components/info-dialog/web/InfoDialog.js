@@ -309,18 +309,13 @@ class InfoDialog extends Component<Props, State> {
     _getTextToCopy() {
         const { _localParticipant, liveStreamViewURL, t } = this.props;
         const shouldDisplayDialIn = this._shouldDisplayDialIn();
-        const moreInfo
-            = shouldDisplayDialIn
-                ? t('info.inviteURLMoreInfo', { conferenceID: this.props.dialIn.conferenceID })
-                : '';
 
         let invite = _localParticipant && _localParticipant.name
             ? t('info.inviteURLFirstPartPersonal', { name: _localParticipant.name })
             : t('info.inviteURLFirstPartGeneral');
 
         invite += t('info.inviteURLSecondPart', {
-            url: this.props._inviteURL,
-            moreInfo
+            url: this.props._inviteURL
         });
 
         if (liveStreamViewURL) {
@@ -337,7 +332,8 @@ class InfoDialog extends Component<Props, State> {
                 conferenceID: this.props.dialIn.conferenceID
             });
             const moreNumbers = t('info.invitePhoneAlternatives', {
-                url: this._getDialInfoPageURL()
+                url: this._getDialInfoPageURL(),
+                silentUrl: `${this.props._inviteURL}#config.startSilent=true`
             });
 
             invite = `${invite}\n${dial}\n${moreNumbers}`;
