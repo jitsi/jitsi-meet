@@ -85,6 +85,7 @@
     "redux-thunk": "2.2.0",
     "styled-components": "3.4.9",
     "uuid": "3.1.0",
+    "windows-iana": "^3.1.0",
     "xmldom": "0.1.27"
   },
   "devDependencies": {
