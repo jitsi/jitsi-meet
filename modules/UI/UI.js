@@ -132,6 +132,18 @@ UI.notifyParticipantKicked = function(kicker, kicked) {
 };
 
 /**
+ * Notify user that he has been muted from the server.
+ * @param participant {JitsiParticipant} the participant initiating the mute.
+ */
+UI.notifyMuted = function(participant) {
+    messageHandler.showWarning({
+        descriptionKey: 'notify.mutedRemotelyDescription',
+        titleKey: 'notify.mutedRemotelyTitle',
+        titleArguments: { participantDisplayName: participant.getDisplayName() }
+    });
+};
+
+/**
  * Notify user that conference was destroyed.
  * @param reason {string} the reason text
  */

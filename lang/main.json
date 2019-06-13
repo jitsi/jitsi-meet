@@ -478,6 +478,8 @@
         "moderator": "Moderator rights granted!",
         "muted": "You have started the conversation muted.",
         "mutedTitle": "You're muted!",
+        "mutedRemotelyTitle": "You have been muted by __participantDisplayName__!",
+        "mutedRemotelyDescription": "You can always unmute when you're ready to speak. Mute back when you're done to keep noise away from the meeting.",
         "raisedHand": "__name__ would like to speak.",
         "somebody": "Somebody",
         "startSilentTitle": "You joined with no audio output!",

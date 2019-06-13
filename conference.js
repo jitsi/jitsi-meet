@@ -1855,6 +1855,12 @@ export default {
             APP.UI.setAudioLevel(id, newLvl);
         });
 
+        room.on(JitsiConferenceEvents.TRACK_MUTE_CHANGED, (_, participantThatMutedUs) => {
+            if (participantThatMutedUs) {
+                APP.UI.notifyMuted(participantThatMutedUs);
+            }
+        });
+
         room.on(JitsiConferenceEvents.TALK_WHILE_MUTED, () => {
             APP.UI.showToolbar(6000);
         });
