@@ -13,7 +13,6 @@ import {
     SET_CALENDAR_PROFILE_EMAIL,
     SET_LOADING_CALENDAR_EVENTS
 } from './actionTypes';
-import { isCalendarEnabled } from './functions';
 
 /**
  * The default state of the calendar feature.
@@ -50,10 +49,6 @@ PersistenceRegistry.register(STORE_NAME, {
 });
 
 ReducerRegistry.register(STORE_NAME, (state = DEFAULT_STATE, action) => {
-    if (!isCalendarEnabled(state)) {
-        return state;
-    }
-
     switch (action.type) {
     case CLEAR_CALENDAR_INTEGRATION:
         return DEFAULT_STATE;
