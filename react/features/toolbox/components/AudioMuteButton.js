@@ -28,6 +28,11 @@ type Props = AbstractButtonProps & {
     _audioMuted: boolean,
 
     /**
+     * Whether the button is disabled.
+     */
+    _disabled: boolean,
+
+    /**
      * The redux {@code dispatch} function.
      */
     dispatch: Function
@@ -128,6 +133,15 @@ class AudioMuteButton extends AbstractAudioMuteButton<Props, *> {
         typeof APP === 'undefined'
             || APP.UI.emitEvent(UIEvents.AUDIO_MUTED, audioMuted, true);
     }
+
+    /**
+     * Return a boolean value indicating if this button is disabled or not.
+     *
+     * @returns {boolean}
+     */
+    _isDisabled() {
+        return this.props._disabled;
+    }
 }
 
 /**
@@ -144,7 +158,8 @@ function _mapStateToProps(state): Object {
     const tracks = state['features/base/tracks'];
 
     return {
-        _audioMuted: isLocalTrackMuted(tracks, MEDIA_TYPE.AUDIO)
+        _audioMuted: isLocalTrackMuted(tracks, MEDIA_TYPE.AUDIO),
+        _disabled: state['features/base/config'].startSilent
     };
 }
 

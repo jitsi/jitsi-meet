@@ -16,6 +16,7 @@ import * as JitsiMeetConferenceEvents from './ConferenceEvents';
 
 import {
     createDeviceChangedEvent,
+    createStartSilentEvent,
     createScreenSharingEvent,
     createStreamSwitchDelayEvent,
     createTrackMutedEvent,
@@ -729,6 +730,7 @@ export default {
             // based on preferred devices, loose label matching can be done in
             // cases where the exact ID match is no longer available, such as
             // when the camera device has switched USB ports.
+            // when in startSilent mode we want to start with audio muted
             this._initDeviceList()
                 .catch(error => logger.warn(
                     'initial device list initialization failed', error))
@@ -736,7 +738,7 @@ export default {
                 options.roomName, {
                     startAudioOnly: config.startAudioOnly,
                     startScreenSharing: config.startScreenSharing,
-                    startWithAudioMuted: config.startWithAudioMuted,
+                    startWithAudioMuted: config.startWithAudioMuted || config.startSilent,
                     startWithVideoMuted: config.startWithVideoMuted
                 }))
             .then(([ tracks, con ]) => {
@@ -793,6 +795,7 @@ export default {
                 }
 
                 if (config.startSilent) {
+                    sendAnalytics(createStartSilentEvent());
                     APP.store.dispatch(showNotification({
                         descriptionKey: 'notify.startSilentDescription',
                         titleKey: 'notify.startSilentTitle'

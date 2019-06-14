@@ -552,6 +552,18 @@ export function createStartAudioOnlyEvent(audioOnly) {
 }
 
 /**
+ * Creates an event which indicates the "start silent" configuration.
+ *
+ * @returns {Object} The event in a format suitable for sending via
+ * sendAnalytics.
+ */
+export function createStartSilentEvent() {
+    return {
+        action: 'start.silent'
+    };
+}
+
+/**
  * Creates an event which indicates the "start muted" configuration.
  *
  * @param {string} source - The source of the configuration, 'local' or

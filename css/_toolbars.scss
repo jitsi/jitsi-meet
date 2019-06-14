@@ -116,9 +116,9 @@
             }
         }
         i.disabled, .disabled i {
-            cursor: initial;
-            color: #fff;
-            background-color: #a4b8d1;
+            cursor: initial !important;
+            color: #fff !important;
+            background-color: #a4b8d1 !important;
         }
 
         .icon-mic-disabled, .icon-microphone, .icon-camera-disabled, .icon-camera {
