@@ -14,6 +14,7 @@ import {
     dominantSpeakerChanged,
     getNormalizedDisplayName,
     participantConnectionStatusChanged,
+    participantKicked,
     participantMutedUs,
     participantPresenceChanged,
     participantRoleChanged,
@@ -91,6 +92,10 @@ function _addConferenceListeners(conference, dispatch) {
     conference.on(
         JitsiConferenceEvents.KICKED,
         (...args) => dispatch(kickedOut(conference, ...args)));
+
+    conference.on(
+        JitsiConferenceEvents.PARTICIPANT_KICKED,
+        (kicker, kicked) => dispatch(participantKicked(kicker, kicked)));
 
     conference.on(
         JitsiConferenceEvents.LOCK_STATE_CHANGED,

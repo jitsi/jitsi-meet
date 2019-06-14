@@ -100,38 +100,6 @@ UI.notifyReservationError = function(code, msg) {
 };
 
 /**
- * Notify user that he has been kicked from the server.
- * @param participant {JitsiParticipant} the participant initiating the kick.
- */
-UI.notifyKicked = function(participant) {
-    const args = {
-        participantDisplayName: participant.getDisplayName()
-    };
-
-    messageHandler.showError({
-        hideErrorSupportLink: true,
-        descriptionKey: 'dialog.kickMessage',
-        descriptionArguments: args,
-        titleKey: 'dialog.kickTitle',
-        titleArguments: args
-    });
-};
-
-/**
- * Notify user that someone has been kicked from the server.
- * @param kicker {JitsiParticipant} the participant initiating the kick.
- * @param kicked {JitsiParticipant} the participant that was kicked.
- */
-UI.notifyParticipantKicked = function(kicker, kicked) {
-    messageHandler.participantNotification(
-        kicked.getDisplayName(),
-        undefined,
-        'disconnected',
-        'notify.kickParticipant',
-        { participantDisplayName: kicker.getDisplayName() });
-};
-
-/**
  * Notify user that conference was destroyed.
  * @param reason {string} the reason text
  */

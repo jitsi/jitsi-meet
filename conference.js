@@ -85,6 +85,7 @@ import {
     localParticipantConnectionStatusChanged,
     localParticipantRoleChanged,
     participantConnectionStatusChanged,
+    participantKicked,
     participantMutedUs,
     participantPresenceChanged,
     participantRoleChanged,
@@ -103,6 +104,7 @@ import {
     getLocationContextRoot,
     getJitsiMeetGlobalNS
 } from './react/features/base/util';
+import { notifyKickedOut } from './react/features/conference';
 import { addMessage } from './react/features/chat';
 import { showDesktopPicker } from './react/features/desktop-picker';
 import { appendSuffix } from './react/features/display-name';
@@ -1964,13 +1966,13 @@ export default {
 
         room.on(JitsiConferenceEvents.KICKED, participant => {
             APP.UI.hideStats();
-            APP.UI.notifyKicked(participant);
+            APP.store.dispatch(notifyKickedOut(participant));
 
             // FIXME close
         });
 
         room.on(JitsiConferenceEvents.PARTICIPANT_KICKED, (kicker, kicked) => {
-            APP.UI.notifyParticipantKicked(kicker, kicked);
+            APP.store.dispatch(participantKicked(kicker, kicked));
         });
 
         room.on(JitsiConferenceEvents.SUSPEND_DETECTED, () => {
