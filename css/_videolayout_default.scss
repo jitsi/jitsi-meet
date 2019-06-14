@@ -541,13 +541,17 @@
 #videoNotAvailableScreen {
     text-align: center;
     #avatarContainer {
+        border-radius: 50%;
+        display: inline-block;
         height: 50vh;
-        display:inline-block;
         margin-top: 25vh;
+        overflow: hidden;
+        width: 50vh;
 
         #avatar {
-            border-radius: 50%;
             height: 100%;
+            object-fit: cover;
+            width: 100%;
         }
     }
 }
