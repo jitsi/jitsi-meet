@@ -379,13 +379,6 @@ class ConferenceConnector {
             APP.UI.notifyGracefulShutdown();
             break;
 
-        case JitsiConferenceErrors.JINGLE_FATAL_ERROR: {
-            const [ error ] = params;
-
-            APP.UI.notifyInternalError(error);
-            break;
-        }
-
         case JitsiConferenceErrors.CONFERENCE_DESTROYED: {
             const [ reason ] = params;
 
@@ -407,6 +400,7 @@ class ConferenceConnector {
 
         case JitsiConferenceErrors.FOCUS_LEFT:
         case JitsiConferenceErrors.VIDEOBRIDGE_NOT_AVAILABLE:
+        case JitsiConferenceErrors.OFFER_ANSWER_FAILED:
             APP.store.dispatch(conferenceWillLeave(room));
 
             // FIXME the conference should be stopped by the library and not by
