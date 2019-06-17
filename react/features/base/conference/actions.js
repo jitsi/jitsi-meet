@@ -14,6 +14,8 @@ import {
     dominantSpeakerChanged,
     getNormalizedDisplayName,
     participantConnectionStatusChanged,
+    participantKicked,
+    participantMutedUs,
     participantPresenceChanged,
     participantRoleChanged,
     participantUpdated
@@ -89,7 +91,11 @@ function _addConferenceListeners(conference, dispatch) {
 
     conference.on(
         JitsiConferenceEvents.KICKED,
-        () => dispatch(kickedOut(conference)));
+        (...args) => dispatch(kickedOut(conference, ...args)));
+
+    conference.on(
+        JitsiConferenceEvents.PARTICIPANT_KICKED,
+        (kicker, kicked) => dispatch(participantKicked(kicker, kicked)));
 
     conference.on(
         JitsiConferenceEvents.LOCK_STATE_CHANGED,
@@ -128,6 +134,14 @@ function _addConferenceListeners(conference, dispatch) {
     conference.on(
         JitsiConferenceEvents.TRACK_REMOVED,
         t => t && !t.isLocal() && dispatch(trackRemoved(t)));
+
+    conference.on(
+        JitsiConferenceEvents.TRACK_MUTE_CHANGED,
+        (_, participantThatMutedUs) => {
+            if (participantThatMutedUs) {
+                dispatch(participantMutedUs(participantThatMutedUs));
+            }
+        });
 
     // Dispatches into features/base/participants follow:
     conference.on(
@@ -432,15 +446,19 @@ export function dataChannelOpened() {
  *
  * @param {JitsiConference} conference - The {@link JitsiConference} instance
  * for which the event is being signaled.
+ * @param {JitsiParticipant} participant - The {@link JitsiParticipant}
+ * instance which initiated the kick event.
  * @returns {{
  *     type: KICKED_OUT,
- *     conference: JitsiConference
+ *     conference: JitsiConference,
+ *     participant: JitsiParticipant
  * }}
  */
-export function kickedOut(conference: Object) {
+export function kickedOut(conference: Object, participant: Object) {
     return {
         type: KICKED_OUT,
-        conference
+        conference,
+        participant
     };
 }
 

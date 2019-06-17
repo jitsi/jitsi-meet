@@ -100,17 +100,6 @@ UI.notifyReservationError = function(code, msg) {
 };
 
 /**
- * Notify user that he has been kicked from the server.
- */
-UI.notifyKicked = function() {
-    messageHandler.showError({
-        hideErrorSupportLink: true,
-        descriptionKey: 'dialog.kickMessage',
-        titleKey: 'dialog.kickTitle'
-    });
-};
-
-/**
  * Notify user that conference was destroyed.
  * @param reason {string} the reason text
  */

@@ -86,6 +86,8 @@ import {
     localParticipantConnectionStatusChanged,
     localParticipantRoleChanged,
     participantConnectionStatusChanged,
+    participantKicked,
+    participantMutedUs,
     participantPresenceChanged,
     participantRoleChanged,
     participantUpdated
@@ -103,6 +105,7 @@ import {
     getLocationContextRoot,
     getJitsiMeetGlobalNS
 } from './react/features/base/util';
+import { notifyKickedOut } from './react/features/conference';
 import { addMessage } from './react/features/chat';
 import { showDesktopPicker } from './react/features/desktop-picker';
 import { appendSuffix } from './react/features/display-name';
@@ -1858,6 +1861,12 @@ export default {
             APP.UI.setAudioLevel(id, newLvl);
         });
 
+        room.on(JitsiConferenceEvents.TRACK_MUTE_CHANGED, (_, participantThatMutedUs) => {
+            if (participantThatMutedUs) {
+                APP.store.dispatch(participantMutedUs(participantThatMutedUs));
+            }
+        });
+
         room.on(JitsiConferenceEvents.TALK_WHILE_MUTED, () => {
             APP.UI.showToolbar(6000);
         });
@@ -1958,11 +1967,15 @@ export default {
                 }
             });
 
-        room.on(JitsiConferenceEvents.KICKED, () => {
+        room.on(JitsiConferenceEvents.KICKED, participant => {
             APP.UI.hideStats();
-            APP.UI.notifyKicked();
+            APP.store.dispatch(notifyKickedOut(participant));
 
             // FIXME close
+        });
+
+        room.on(JitsiConferenceEvents.PARTICIPANT_KICKED, (kicker, kicked) => {
+            APP.store.dispatch(participantKicked(kicker, kicked));
         });
 
         room.on(JitsiConferenceEvents.SUSPEND_DETECTED, () => {
