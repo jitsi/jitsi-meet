@@ -4,7 +4,7 @@ import React, { Component } from 'react';
 
 import { translate } from '../../base/i18n';
 
-import { CHROME, FIREFOX } from './browserLinks';
+import { CHROME } from './browserLinks';
 
 /**
  * The namespace of the CSS styles of UnsupportedDesktopBrowser.
@@ -47,10 +47,7 @@ class UnsupportedDesktopBrowser extends Component<Props> {
                     Please try again with the latest version of&nbsp;
                     <a
                         className = { `${_SNS}__link` }
-                        href = { CHROME } >Chrome</a> and&nbsp;
-                    <a
-                        className = { `${_SNS}__link` }
-                        href = { FIREFOX }>Firefox</a>
+                        href = { CHROME } >Chrome</a>
                 </p>
             </div>
         );

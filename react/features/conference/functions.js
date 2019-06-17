@@ -18,7 +18,6 @@ import { getOverlayToRender } from '../overlay';
  */
 export function maybeShowSuboptimalExperienceNotification(dispatch, t) {
     if (!browser.isChrome()
-            && !browser.isFirefox()
             && !browser.isNWJS()
             && !browser.isElectron()
 
