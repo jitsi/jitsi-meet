@@ -272,6 +272,18 @@ export function createInviteDialogEvent(
 }
 
 /**
+ * Creates an "offer/answer failure" event.
+ *
+ * @returns {Object} The event in a format suitable for sending via
+ * sendAnalytics.
+ */
+export function createOfferAnswerFailedEvent() {
+    return {
+        action: 'offer.answer.failure'
+    };
+}
+
+/**
  * Creates a "page reload" event.
  *
  * @param {string} reason - The reason for the reload.
