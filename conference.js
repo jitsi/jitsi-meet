@@ -16,6 +16,7 @@ import * as JitsiMeetConferenceEvents from './ConferenceEvents';
 
 import {
     createDeviceChangedEvent,
+    createStartSilentEvent,
     createScreenSharingEvent,
     createStreamSwitchDelayEvent,
     createTrackMutedEvent,
@@ -85,6 +86,8 @@ import {
     localParticipantConnectionStatusChanged,
     localParticipantRoleChanged,
     participantConnectionStatusChanged,
+    participantKicked,
+    participantMutedUs,
     participantPresenceChanged,
     participantRoleChanged,
     participantUpdated
@@ -102,6 +105,7 @@ import {
     getLocationContextRoot,
     getJitsiMeetGlobalNS
 } from './react/features/base/util';
+import { notifyKickedOut } from './react/features/conference';
 import { addMessage } from './react/features/chat';
 import { showDesktopPicker } from './react/features/desktop-picker';
 import { appendSuffix } from './react/features/display-name';
@@ -729,6 +733,7 @@ export default {
             // based on preferred devices, loose label matching can be done in
             // cases where the exact ID match is no longer available, such as
             // when the camera device has switched USB ports.
+            // when in startSilent mode we want to start with audio muted
             this._initDeviceList()
                 .catch(error => logger.warn(
                     'initial device list initialization failed', error))
@@ -736,7 +741,7 @@ export default {
                 options.roomName, {
                     startAudioOnly: config.startAudioOnly,
                     startScreenSharing: config.startScreenSharing,
-                    startWithAudioMuted: config.startWithAudioMuted,
+                    startWithAudioMuted: config.startWithAudioMuted || config.startSilent,
                     startWithVideoMuted: config.startWithVideoMuted
                 }))
             .then(([ tracks, con ]) => {
@@ -793,6 +798,7 @@ export default {
                 }
 
                 if (config.startSilent) {
+                    sendAnalytics(createStartSilentEvent());
                     APP.store.dispatch(showNotification({
                         descriptionKey: 'notify.startSilentDescription',
                         titleKey: 'notify.startSilentTitle'
@@ -1855,6 +1861,12 @@ export default {
             APP.UI.setAudioLevel(id, newLvl);
         });
 
+        room.on(JitsiConferenceEvents.TRACK_MUTE_CHANGED, (_, participantThatMutedUs) => {
+            if (participantThatMutedUs) {
+                APP.store.dispatch(participantMutedUs(participantThatMutedUs));
+            }
+        });
+
         room.on(JitsiConferenceEvents.TALK_WHILE_MUTED, () => {
             APP.UI.showToolbar(6000);
         });
@@ -1955,11 +1967,15 @@ export default {
                 }
             });
 
-        room.on(JitsiConferenceEvents.KICKED, () => {
+        room.on(JitsiConferenceEvents.KICKED, participant => {
             APP.UI.hideStats();
-            APP.UI.notifyKicked();
+            APP.store.dispatch(notifyKickedOut(participant));
 
             // FIXME close
+        });
+
+        room.on(JitsiConferenceEvents.PARTICIPANT_KICKED, (kicker, kicked) => {
+            APP.store.dispatch(participantKicked(kicker, kicked));
         });
 
         room.on(JitsiConferenceEvents.SUSPEND_DETECTED, () => {
@@ -2257,7 +2273,8 @@ export default {
         APP.keyboardshortcut.init();
 
         if (config.requireDisplayName
-                && !APP.conference.getLocalDisplayName()) {
+                && !APP.conference.getLocalDisplayName()
+                && !this._room.isHidden()) {
             APP.UI.promptDisplayName();
         }
 

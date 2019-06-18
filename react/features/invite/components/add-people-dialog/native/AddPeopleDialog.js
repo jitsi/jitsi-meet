@@ -6,6 +6,7 @@ import {
     ActivityIndicator,
     Alert,
     FlatList,
+    KeyboardAvoidingView,
     SafeAreaView,
     TextInput,
     TouchableOpacity,
@@ -149,35 +150,41 @@ class AddPeopleDialog extends AbstractAddPeopleDialog<Props, State> {
                     headerLabelKey = 'inviteDialog.header'
                     onPressBack = { this._onCloseAddPeopleDialog }
                     onPressForward = { this._onInvite } />
-                <SafeAreaView style = { styles.dialogWrapper }>
-                    <View
-                        style = { styles.searchFieldWrapper }>
-                        <View style = { styles.searchIconWrapper }>
-                            { this.state.searchInprogress
-                                ? <ActivityIndicator
-                                    color = { DARK_GREY }
-                                    size = 'small' />
-                                : <Icon
-                                    name = { 'search' }
-                                    style = { styles.searchIcon } />}
+                <KeyboardAvoidingView
+                    behavior = 'padding'
+                    style = { styles.avoidingView }>
+                    <SafeAreaView style = { styles.dialogWrapper }>
+                        <View
+                            style = { styles.searchFieldWrapper }>
+                            <View style = { styles.searchIconWrapper }>
+                                { this.state.searchInprogress
+                                    ? <ActivityIndicator
+                                        color = { DARK_GREY }
+                                        size = 'small' />
+                                    : <Icon
+                                        name = { 'search' }
+                                        style = { styles.searchIcon } />}
+                            </View>
+                            <TextInput
+                                autoCorrect = { false }
+                                autoFocus = { true }
+                                onChangeText = { this._onTypeQuery }
+                                placeholder = {
+                                    this.props.t(`inviteDialog.${placeholderKey}`)
+                                }
+                                ref = { this._setFieldRef }
+                                style = { styles.searchField } />
                         </View>
-                        <TextInput
-                            autoCorrect = { false }
-                            onChangeText = { this._onTypeQuery }
-                            placeholder = {
-                                this.props.t(`inviteDialog.${placeholderKey}`)
-                            }
-                            ref = { this._setFieldRef }
-                            style = { styles.searchField } />
-                    </View>
-                    <FlatList
-                        ItemSeparatorComponent = { this._renderSeparator }
-                        data = { this.state.selectableItems }
-                        extraData = { inviteItems }
-                        keyExtractor = { this._keyExtractor }
-                        renderItem = { this._renderItem }
-                        style = { styles.resultList } />
-                </SafeAreaView>
+                        <FlatList
+                            ItemSeparatorComponent = { this._renderSeparator }
+                            data = { this.state.selectableItems }
+                            extraData = { inviteItems }
+                            keyExtractor = { this._keyExtractor }
+                            keyboardShouldPersistTaps = 'always'
+                            renderItem = { this._renderItem }
+                            style = { styles.resultList } />
+                    </SafeAreaView>
+                </KeyboardAvoidingView>
             </Modal>
         );
     }
@@ -265,8 +272,7 @@ class AddPeopleDialog extends AbstractAddPeopleDialog<Props, State> {
                 const items: Array<*> = inviteItems.concat(item);
 
                 this.setState({
-                    // $FlowExpectedError
-                    inviteItems: _.orderBy(items, [ 'name' ], [ 'asc' ])
+                    inviteItems: _.sortBy(items, [ 'name', 'number' ])
                 });
             }
         };
@@ -316,13 +322,10 @@ class AddPeopleDialog extends AbstractAddPeopleDialog<Props, State> {
                 }
             });
 
-            const items = this.state.inviteItems.concat(selectableItems);
-
-            // $FlowExpectedError
-            selectableItems = _.orderBy(items, [ 'name' ], [ 'asc' ]);
+            selectableItems = _.sortBy(selectableItems, [ 'name', 'number' ]);
 
             this.setState({
-                selectableItems
+                selectableItems: this.state.inviteItems.concat(selectableItems)
             });
         })
         .finally(() => {

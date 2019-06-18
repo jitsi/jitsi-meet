@@ -7,6 +7,7 @@ import { connect } from '../../base/redux';
 import type { Dispatch } from 'redux';
 
 import { createDeepLinkingPageEvent, sendAnalytics } from '../../analytics';
+import { isSupportedBrowser } from '../../base/environment';
 import { translate } from '../../base/i18n';
 
 import {
@@ -107,8 +108,12 @@ class DeepLinkingDesktopPage<P : Props> extends Component<P> {
                                 </h1>
                                 <p className = 'description'>
                                     {
-                                        t(`${_TNS}.description`,
-                                            { app: NATIVE_APP_NAME })
+                                        t(
+                                            `${_TNS}.${isSupportedBrowser()
+                                                ? 'description'
+                                                : 'descriptionWithoutWeb'}`,
+                                            { app: NATIVE_APP_NAME }
+                                        )
                                     }
                                 </p>
                                 <div className = 'buttons'>
@@ -118,9 +123,12 @@ class DeepLinkingDesktopPage<P : Props> extends Component<P> {
                                             onClick = { this._onTryAgain }>
                                             { t(`${_TNS}.tryAgainButton`) }
                                         </Button>
-                                        <Button onClick = { this._onLaunchWeb }>
-                                            { t(`${_TNS}.launchWebButton`) }
-                                        </Button>
+                                        {
+                                            isSupportedBrowser()
+                                                && <Button onClick = { this._onLaunchWeb }>
+                                                    { t(`${_TNS}.launchWebButton`) }
+                                                </Button>
+                                        }
                                     </ButtonGroup>
                                 </div>
                             </div>

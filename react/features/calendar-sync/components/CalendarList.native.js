@@ -9,7 +9,6 @@ import { AbstractPage } from '../../base/react';
 import { connect } from '../../base/redux';
 
 import { refreshCalendar } from '../actions';
-import { isCalendarEnabled } from '../functions';
 import styles from './styles';
 
 import CalendarListContent from './CalendarListContent';
@@ -138,6 +137,4 @@ function _mapStateToProps(state: Object) {
     };
 }
 
-export default isCalendarEnabled()
-    ? translate(connect(_mapStateToProps)(CalendarList))
-    : undefined;
+export default translate(connect(_mapStateToProps)(CalendarList));

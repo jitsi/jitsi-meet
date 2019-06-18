@@ -192,6 +192,11 @@ The `command` parameter is String object with the name of the command. The follo
 api.executeCommand('displayName', 'New Nickname');
 ```
 
+* **password** - Sets the password for the room. This command requires one argument - the password name to be set.
+```javascript
+api.executeCommand('password', 'The Password');
+```
+
 * **subject** - Sets the subject of the conference. This command requires one argument - the new subject to be set.
 ```javascript
 api.executeCommand('subject', 'New Conference Subject');
@@ -388,6 +393,8 @@ changes. The listener will receive an object with the following structure:
     id: string // the id of the participant
 }
 ```
+
+* **passwordRequired** - event notifications fired when failing to join a room because it has a password.
 
 * **videoConferenceJoined** - event notifications fired when the local user has joined the video conference. The listener will receive an object with the following structure:
 ```javascript

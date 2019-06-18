@@ -24,6 +24,12 @@
 #import "RNRootView.h"
 
 
+/**
+ * Backwards compatibility: turn the boolean prop into a feature flag.
+ */
+static NSString *const PiPEnabledFeatureFlag = @"pip.enabled";
+
+
 @implementation JitsiMeetView {
     /**
      * The unique identifier of this `JitsiMeetView` within the process for the
@@ -122,11 +128,15 @@ static void initializeViewsMap() {
 - (void)setProps:(NSDictionary *_Nonnull)newProps {
     NSMutableDictionary *props = mergeProps([[JitsiMeet sharedInstance] getDefaultProps], newProps);
 
-    props[@"externalAPIScope"] = externalAPIScope;
+    // Set the PiP flag if it wasn't manually set.
+    NSMutableDictionary *featureFlags = props[@"flags"];
+    if (featureFlags[PiPEnabledFeatureFlag] == nil) {
+        featureFlags[PiPEnabledFeatureFlag]
+            = [NSNumber numberWithBool:
+               self.delegate && [self.delegate respondsToSelector:@selector(enterPictureInPicture:)]];
+    }
 
-    // TODO: put this in some 'flags' field
-    props[@"pictureInPictureEnabled"]
-        = @(self.delegate && [self.delegate respondsToSelector:@selector(enterPictureInPicture:)]);
+    props[@"externalAPIScope"] = externalAPIScope;
 
     // This method is supposed to be imperative i.e. a second
     // invocation with one and the same URL is expected to join the respective

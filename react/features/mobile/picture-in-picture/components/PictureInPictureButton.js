@@ -1,6 +1,6 @@
 // @flow
 
-import { getAppProp } from '../../../base/app';
+import { PIP_ENABLED, getFeatureFlag } from '../../../base/flags';
 import { translate } from '../../../base/i18n';
 import { connect } from '../../../base/redux';
 import { AbstractButton } from '../../../base/toolbox';
@@ -62,7 +62,7 @@ class PictureInPictureButton extends AbstractButton<Props, *> {
  */
 function _mapStateToProps(state): Object {
     return {
-        _enabled: Boolean(getAppProp(state, 'pictureInPictureEnabled'))
+        _enabled: Boolean(getFeatureFlag(state, PIP_ENABLED))
     };
 }
 

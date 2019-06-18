@@ -17,7 +17,11 @@ import {
     PARTICIPANT_UPDATED,
     PIN_PARTICIPANT
 } from './actionTypes';
-import { getLocalParticipant, getNormalizedDisplayName } from './functions';
+import {
+    getLocalParticipant,
+    getNormalizedDisplayName,
+    getParticipantDisplayName
+} from './functions';
 
 /**
  * Create an action for when dominant speaker changes.
@@ -379,6 +383,51 @@ export function participantUpdated(participant = {}) {
     return {
         type: PARTICIPANT_UPDATED,
         participant: participantToUpdate
+    };
+}
+
+/**
+ * Action to signal that a participant has muted us.
+ *
+ * @param {JitsiParticipant} participant - Information about participant.
+ * @returns {Promise}
+ */
+export function participantMutedUs(participant) {
+    return (dispatch, getState) => {
+        if (!participant) {
+            return;
+        }
+
+        dispatch(showNotification({
+            descriptionKey: 'notify.mutedRemotelyDescription',
+            titleKey: 'notify.mutedRemotelyTitle',
+            titleArguments: {
+                participantDisplayName:
+                    getParticipantDisplayName(getState, participant.getId())
+            }
+        }));
+    };
+}
+
+/**
+ * Action to signal that a participant had been kicked.
+ *
+ * @param {JitsiParticipant} kicker - Information about participant performing the kick.
+ * @param {JitsiParticipant} kicked - Information about participant that was kicked.
+ * @returns {Promise}
+ */
+export function participantKicked(kicker, kicked) {
+    return (dispatch, getState) => {
+
+        dispatch(showNotification({
+            titleArguments: {
+                kicked:
+                    getParticipantDisplayName(getState, kicked.getId()),
+                kicker:
+                    getParticipantDisplayName(getState, kicker.getId())
+            },
+            titleKey: 'notify.kickParticipant'
+        }, NOTIFICATION_TIMEOUT * 2)); // leave more time for this
     };
 }
 

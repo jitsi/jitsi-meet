@@ -1,7 +1,6 @@
 /* global APP */
 
-import JitsiMeetJS, { JitsiTrackErrors, JitsiTrackEvents }
-    from '../lib-jitsi-meet';
+import JitsiMeetJS, { JitsiTrackErrors } from '../lib-jitsi-meet';
 import { MEDIA_TYPE } from '../media';
 import {
     getUserSelectedCameraDeviceId,
@@ -77,21 +76,6 @@ export function createLocalTracksF(
                 resolution
             },
             firePermissionPromptIsShownEvent)
-        .then(tracks => {
-            // TODO JitsiTrackEvents.NO_DATA_FROM_SOURCE should probably be
-            // dispatched in the redux store here and then
-            // APP.UI.showTrackNotWorkingDialog should be in a middleware
-            // somewhere else.
-            if (typeof APP !== 'undefined') {
-                tracks.forEach(track =>
-                    track.on(
-                        JitsiTrackEvents.NO_DATA_FROM_SOURCE,
-                        APP.UI.showTrackNotWorkingDialog.bind(
-                            null, track.isAudioTrack())));
-            }
-
-            return tracks;
-        })
         .catch(err => {
             logger.error('Failed to create local tracks', options.devices, err);
 

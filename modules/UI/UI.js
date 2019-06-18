@@ -100,17 +100,6 @@ UI.notifyReservationError = function(code, msg) {
 };
 
 /**
- * Notify user that he has been kicked from the server.
- */
-UI.notifyKicked = function() {
-    messageHandler.showError({
-        hideErrorSupportLink: true,
-        descriptionKey: 'dialog.kickMessage',
-        titleKey: 'dialog.kickTitle'
-    });
-};
-
-/**
  * Notify user that conference was destroyed.
  * @param reason {string} the reason text
  */
@@ -728,24 +717,6 @@ UI.showExtensionInlineInstallationDialog = function(callback) {
         submitFunction,
         loadedFunction: $.noop,
         closeFunction
-    });
-};
-
-/**
- * Shows error dialog that informs the user that no data is received from the
- * device.
- *
- * @param {boolean} isAudioTrack - Whether or not the dialog is for an audio
- * track error.
- * @returns {void}
- */
-UI.showTrackNotWorkingDialog = function(isAudioTrack) {
-    messageHandler.showError({
-        descriptionKey: isAudioTrack
-            ? 'dialog.micNotSendingData' : 'dialog.cameraNotSendingData',
-        titleKey: isAudioTrack
-            ? 'dialog.micNotSendingDataTitle'
-            : 'dialog.cameraNotSendingDataTitle'
     });
 };
 

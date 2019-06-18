@@ -96,7 +96,7 @@ function _mapDispatchToProps(dispatch: Function) {
         },
 
         /**
-         * Displays a diaply name prompt.
+         * Displays a display name prompt.
          *
          * @param {Function} onPostSubmit - The function to invoke after a
          * succesfulsetting of the display name.

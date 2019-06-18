@@ -16,18 +16,6 @@ export const ORIENTATION = {
 };
 
 /**
- * A mapping of orientations to a class that should fit the
- * {@code LargeVideoBackground} into its container.
- *
- * @private
- * @type {Object}
- */
-const ORIENTATION_TO_CLASS = {
-    [ORIENTATION.LANDSCAPE]: 'fit-full-width',
-    [ORIENTATION.PORTRAIT]: 'fit-full-height'
-};
-
-/**
  * The type of the React {@code Component} props of
  * {@link LargeVideoBackgroundCanvas}.
  */
@@ -150,14 +138,11 @@ export class LargeVideoBackground extends Component<Props> {
         const {
             hidden,
             mirror,
-            orientationFit,
             showLocalProblemFilter,
             showRemoteProblemFilter
         } = this.props;
-        const orientationClass = orientationFit
-            ? ORIENTATION_TO_CLASS[orientationFit] : '';
         const classNames = `large-video-background ${mirror ? 'flip-x' : ''} ${
-            hidden ? 'invisible' : ''} ${orientationClass} ${
+            hidden ? 'invisible' : ''} ${
             showLocalProblemFilter ? 'videoProblemFilter' : ''} ${
             showRemoteProblemFilter ? 'remoteVideoProblemFilter' : ''}`;
 

@@ -285,7 +285,7 @@ function _mapStateToProps(state) {
         googleApiApplicationClientID,
         microsoftApiApplicationClientID
     } = state['features/base/config'];
-    const calendarEnabled = isCalendarEnabled();
+    const calendarEnabled = isCalendarEnabled(state);
 
     return {
         _appName: interfaceConfig.APP_NAME,

@@ -74,6 +74,12 @@ RCT_EXPORT_METHOD(endCall:(NSString *)callUUID
 #endif
 
     NSUUID *callUUID_ = [[NSUUID alloc] initWithUUIDString:callUUID];
+
+    if (!callUUID_) {
+        reject(nil, [NSString stringWithFormat:@"Invalid UUID: %@", callUUID], nil);
+        return;
+    }
+
     CXEndCallAction *action
         = [[CXEndCallAction alloc] initWithCallUUID:callUUID_];
     [self requestTransaction:[[CXTransaction alloc] initWithAction:action]
@@ -91,6 +97,12 @@ RCT_EXPORT_METHOD(setMuted:(NSString *)callUUID
 #endif
 
     NSUUID *callUUID_ = [[NSUUID alloc] initWithUUIDString:callUUID];
+
+    if (!callUUID_) {
+        reject(nil, [NSString stringWithFormat:@"Invalid UUID: %@", callUUID], nil);
+        return;
+    }
+
     CXSetMutedCallAction *action
         = [[CXSetMutedCallAction alloc] initWithCallUUID:callUUID_ muted:muted];
     [self requestTransaction:[[CXTransaction alloc] initWithAction:action]
@@ -123,6 +135,13 @@ RCT_EXPORT_METHOD(startCall:(NSString *)callUUID
     NSLog(@"[RNCallKit][startCall] callUUID = %@", callUUID);
 #endif
 
+    NSUUID *callUUID_ = [[NSUUID alloc] initWithUUIDString:callUUID];
+
+    if (!callUUID_) {
+        reject(nil, [NSString stringWithFormat:@"Invalid UUID: %@", callUUID], nil);
+        return;
+    }
+
     // Don't start a new call if there's an active call for the specified
     // callUUID. JitsiMeetView was configured for an incoming call.
     if ([JMCallKitProxy hasActiveCallForUUID:callUUID]) {
@@ -132,7 +151,6 @@ RCT_EXPORT_METHOD(startCall:(NSString *)callUUID
 
     CXHandle *handle_
         = [[CXHandle alloc] initWithType:CXHandleTypeGeneric value:handle];
-    NSUUID *callUUID_ = [[NSUUID alloc] initWithUUIDString:callUUID];
     CXStartCallAction *action
         = [[CXStartCallAction alloc] initWithCallUUID:callUUID_
                                                handle:handle_];
@@ -146,6 +164,12 @@ RCT_EXPORT_METHOD(reportCallFailed:(NSString *)callUUID
                            resolve:(RCTPromiseResolveBlock)resolve
                             reject:(RCTPromiseRejectBlock)reject) {
     NSUUID *callUUID_ = [[NSUUID alloc] initWithUUIDString:callUUID];
+
+    if (!callUUID_) {
+        reject(nil, [NSString stringWithFormat:@"Invalid UUID: %@", callUUID], nil);
+        return;
+    }
+
     [JMCallKitProxy reportCallWith:callUUID_
                            endedAt:nil
                             reason:CXCallEndedReasonFailed];
@@ -157,6 +181,12 @@ RCT_EXPORT_METHOD(reportConnectedOutgoingCall:(NSString *)callUUID
                                       resolve:(RCTPromiseResolveBlock)resolve
                                        reject:(RCTPromiseRejectBlock)reject) {
     NSUUID *callUUID_ = [[NSUUID alloc] initWithUUIDString:callUUID];
+
+    if (!callUUID_) {
+        reject(nil, [NSString stringWithFormat:@"Invalid UUID: %@", callUUID], nil);
+        return;
+    }
+
     [JMCallKitProxy reportOutgoingCallWith:callUUID_
                                connectedAt:nil];
     resolve(nil);
@@ -175,6 +205,12 @@ RCT_EXPORT_METHOD(updateCall:(NSString *)callUUID
 #endif
 
     NSUUID *callUUID_ = [[NSUUID alloc] initWithUUIDString:callUUID];
+
+    if (!callUUID_) {
+        reject(nil, [NSString stringWithFormat:@"Invalid UUID: %@", callUUID], nil);
+        return;
+    }
+
     NSString *displayName = options[@"displayName"];
     BOOL hasVideo = [(NSNumber*)options[@"hasVideo"] boolValue];
 

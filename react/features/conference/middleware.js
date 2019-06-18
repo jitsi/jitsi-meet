@@ -1,5 +1,5 @@
 // @flow
-
+import { notifyKickedOut } from './actions';
 import { appNavigate } from '../app';
 import {
     CONFERENCE_JOINED,
@@ -43,9 +43,15 @@ MiddlewareRegistry.register(store => next => action => {
     case KICKED_OUT: {
         const { dispatch } = store;
 
-        dispatch(
-            conferenceFailed(action.conference, JitsiConferenceEvents.KICKED));
-        dispatch(appNavigate(undefined));
+        dispatch(notifyKickedOut(
+            action.participant,
+            () => {
+                dispatch(
+                    conferenceFailed(action.conference, JitsiConferenceEvents.KICKED));
+                dispatch(appNavigate(undefined));
+            }
+        ));
+
         break;
     }
     }

@@ -17,6 +17,10 @@ export default {
         fontSize: 12
     },
 
+    avoidingView: {
+        flex: 1
+    },
+
     dialogWrapper: {
         alignItems: 'stretch',
         backgroundColor: ColorPalette.white,

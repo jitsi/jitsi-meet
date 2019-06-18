@@ -11,8 +11,6 @@ import {
 import { MeetingsList } from '../../base/react';
 import { connect } from '../../base/redux';
 
-import { isCalendarEnabled } from '../functions';
-
 import AddMeetingUrlButton from './AddMeetingUrlButton';
 import JoinButton from './JoinButton';
 
@@ -172,6 +170,4 @@ function _mapStateToProps(state: Object) {
     };
 }
 
-export default isCalendarEnabled()
-    ? connect(_mapStateToProps)(CalendarListContent)
-    : undefined;
+export default connect(_mapStateToProps)(CalendarListContent);

@@ -17,12 +17,19 @@
 #import <React/RCTUtils.h>
 
 #import "JitsiMeetConferenceOptions+Private.h"
+#import "JitsiMeetUserInfo+Private.h"
+
+/**
+ * Backwards compatibility: turn the boolean property into a feature flag.
+ */
+static NSString *const WelcomePageEnabledFeatureFlag = @"welcomepage.enabled";
+
 
 @implementation JitsiMeetConferenceOptionsBuilder {
     NSNumber *_audioOnly;
     NSNumber *_audioMuted;
     NSNumber *_videoMuted;
-    NSNumber *_welcomePageEnabled;
+    NSMutableDictionary *_featureFlags;
 }
 
 @dynamic audioOnly;
@@ -38,15 +45,24 @@
         _token = nil;
 
         _colorScheme = nil;
+        _featureFlags = [[NSMutableDictionary alloc] init];
 
         _audioOnly = nil;
         _audioMuted = nil;
         _videoMuted = nil;
 
-        _welcomePageEnabled = nil;
+        _userInfo = nil;
     }
     
     return self;
+}
+
+- (void)setFeatureFlag:(NSString *)flag withBoolean:(BOOL)value {
+    [self setFeatureFlag:flag withValue:[NSNumber numberWithBool:value]];
+}
+
+- (void)setFeatureFlag:(NSString *)flag withValue:(id)value {
+    _featureFlags[flag] = value;
 }
 
 #pragma mark - Dynamic properties
@@ -76,11 +92,14 @@
 }
 
 - (void)setWelcomePageEnabled:(BOOL)welcomePageEnabled {
-    _welcomePageEnabled = [NSNumber numberWithBool:welcomePageEnabled];
+    [self setFeatureFlag:WelcomePageEnabledFeatureFlag
+               withBoolean:welcomePageEnabled];
 }
 
 - (BOOL)welcomePageEnabled {
-    return _welcomePageEnabled && [_welcomePageEnabled boolValue];
+    NSNumber *n = _featureFlags[WelcomePageEnabledFeatureFlag];
+
+    return n != nil ? [n boolValue] : NO;
 }
 
 #pragma mark - Private API
@@ -97,17 +116,13 @@
     return _videoMuted;
 }
 
-- (NSNumber *)getWelcomePageEnabled {
-    return _welcomePageEnabled;
-}
-
 @end
 
 @implementation JitsiMeetConferenceOptions {
     NSNumber *_audioOnly;
     NSNumber *_audioMuted;
     NSNumber *_videoMuted;
-    NSNumber *_welcomePageEnabled;
+    NSDictionary *_featureFlags;
 }
 
 @dynamic audioOnly;
@@ -130,7 +145,9 @@
 }
 
 - (BOOL)welcomePageEnabled {
-    return _welcomePageEnabled && [_welcomePageEnabled boolValue];
+    NSNumber *n = _featureFlags[WelcomePageEnabledFeatureFlag];
+
+    return n != nil ? [n boolValue] : NO;
 }
 
 #pragma mark - Internal initializer
@@ -148,7 +165,9 @@
         _audioMuted = [builder getAudioMuted];
         _videoMuted = [builder getVideoMuted];
 
-        _welcomePageEnabled = [builder getWelcomePageEnabled];
+        _featureFlags = [NSDictionary dictionaryWithDictionary:builder.featureFlags];
+
+        _userInfo = builder.userInfo;
     }
 
     return self;
@@ -167,12 +186,10 @@
 - (NSDictionary *)asProps {
     NSMutableDictionary *props = [[NSMutableDictionary alloc] init];
 
+    props[@"flags"] = [NSMutableDictionary dictionaryWithDictionary:_featureFlags];
+
     if (_colorScheme != nil) {
         props[@"colorScheme"] = self.colorScheme;
-    }
-
-    if (_welcomePageEnabled != nil) {
-        props[@"welcomePageEnabled"] = @(self.welcomePageEnabled);
     }
 
     NSMutableDictionary *config = [[NSMutableDictionary alloc] init];
@@ -206,6 +223,10 @@
 
     if (_token != nil) {
         urlProps[@"jwt"] = _token;
+    }
+
+    if (_token == nil && _userInfo != nil) {
+        props[@"userInfo"] = [self.userInfo asDict];
     }
 
     urlProps[@"config"] = config;

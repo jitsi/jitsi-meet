@@ -6,12 +6,18 @@ import type { Dispatch } from 'redux';
 
 import { createWelcomePageEvent, sendAnalytics } from '../../analytics';
 import { appNavigate } from '../../app';
+import { isCalendarEnabled } from '../../calendar-sync';
 import { isRoomValid } from '../../base/conference';
 
 /**
  * {@code AbstractWelcomePage}'s React {@code Component} prop types.
  */
 type Props = {
+
+    /**
+     * Whether the calendar functionality is enabled or not.
+     */
+    _calendarEnabled: boolean,
 
     /**
      * Room name to join to.
@@ -237,12 +243,14 @@ export class AbstractWelcomePage extends Component<Props, *> {
  * @param {Object} state - The redux state.
  * @protected
  * @returns {{
+ *     _calendarEnabled: boolean,
  *     _room: string,
  *     _settings: Object
  * }}
  */
 export function _mapStateToProps(state: Object) {
     return {
+        _calendarEnabled: isCalendarEnabled(state),
         _room: state['features/base/conference'].room,
         _settings: state['features/base/settings']
     };
