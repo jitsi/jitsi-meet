@@ -22,7 +22,6 @@ export default function SharedVideoThumb(participant, videoType, VideoLayout) {
     this.updateDisplayName();
 
     this.container.onclick = this._onContainerClick;
-    this.container.ondblclick = this._onContainerDoubleClick;
 }
 SharedVideoThumb.prototype = Object.create(SmallVideo.prototype);
 SharedVideoThumb.prototype.constructor = SharedVideoThumb;
