@@ -144,7 +144,6 @@ function SmallVideo(VideoLayout) {
     this.updateView = this.updateView.bind(this);
 
     this._onContainerClick = this._onContainerClick.bind(this);
-    this._onContainerDoubleClick = this._onContainerDoubleClick.bind(this);
 }
 
 /**
@@ -860,20 +859,6 @@ SmallVideo.prototype.updateIndicators = function() {
 };
 
 /**
- * Callback invoked when the thumbnail is double clicked. Will pin the
- * participant if in tile view.
- *
- * @param {MouseEvent} event - The click event to intercept.
- * @private
- * @returns {void}
- */
-SmallVideo.prototype._onContainerDoubleClick = function(event) {
-    if (this._pinningRequiresDoubleClick() && this._shouldTriggerPin(event)) {
-        APP.store.dispatch(pinParticipant(this.id));
-    }
-};
-
-/**
  * Callback invoked when the thumbnail is clicked and potentially trigger
  * pinning of the participant.
  *
@@ -882,8 +867,7 @@ SmallVideo.prototype._onContainerDoubleClick = function(event) {
  * @returns {void}
  */
 SmallVideo.prototype._onContainerClick = function(event) {
-    const triggerPin = this._shouldTriggerPin(event)
-        && !this._pinningRequiresDoubleClick();
+    const triggerPin = this._shouldTriggerPin(event);
 
     if (event.stopPropagation && triggerPin) {
         event.stopPropagation();
@@ -932,17 +916,6 @@ SmallVideo.prototype.togglePin = function() {
             ? null : this.id;
 
     APP.store.dispatch(pinParticipant(participantIdToPin));
-};
-
-/**
- * Returns whether or not clicking to pin the participant needs to be a double
- * click instead of a single click.
- *
- * @private
- * @returns {boolean}
- */
-SmallVideo.prototype._pinningRequiresDoubleClick = function() {
-    return shouldDisplayTileView(APP.store.getState());
 };
 
 /**

@@ -62,7 +62,6 @@ function LocalVideo(VideoLayout, emitter, streamEndedCallback) {
     this.updateIndicators();
 
     this.container.onclick = this._onContainerClick;
-    this.container.ondblclick = this._onContainerDoubleClick;
 }
 
 LocalVideo.prototype = Object.create(SmallVideo.prototype);
