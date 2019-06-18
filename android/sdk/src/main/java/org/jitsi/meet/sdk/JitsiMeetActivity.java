@@ -144,6 +144,11 @@ public class JitsiMeetActivity extends FragmentActivity
     //
 
     @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        JitsiMeetActivityDelegate.onActivityResult(this, requestCode, resultCode, data);
+    }
+
+    @Override
     public void onBackPressed() {
         JitsiMeetActivityDelegate.onBackPressed();
     }
