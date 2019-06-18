@@ -14,6 +14,7 @@ if nc -w 5 -z localhost ${RCT_METRO_PORT} ; then
     exit 2
   fi
 else
+    adb reverse tcp:8081 tcp:8081
     CMD="${THIS_DIR}/../../node_modules/react-native/scripts/launchPackager.command"
     if [[ `uname` == "Darwin"  ]]; then
         open -g "${CMD}" || echo "Can't start packager automatically"
