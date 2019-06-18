@@ -14,6 +14,9 @@ b.) You only need to do this if you want to ___host your own Jitsi server___. If
 
 ## Basic Jitsi Meet install
 
+### Point Domain to ip of server
+change ipv4 to ip address, deete any ipv6
+
 ### Add the repository
 ```sh
 echo 'deb https://download.jitsi.org stable/' >> /etc/apt/sources.list.d/jitsi-stable.list
