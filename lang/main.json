@@ -407,7 +407,7 @@
         "stopStreamingWarning": "确定要停止流媒体直播吗？",
         "stopRecordingWarning": "确定要停止录制吗",
         "stopLiveStreaming": "停止流媒体直播",
-        "stopRecording": "停止云端录制",
+        "stopRecording": "停止服务器录像",
         "doNotShowWarningAgain": "不再显示此警告",
         "doNotShowMessageAgain": "不再显示此信息",
         "permissionDenied": "许可禁止",
@@ -455,7 +455,7 @@
         "shareYourScreenDisabledForGuest": "",
         "yourEntireScreen": "你的整个屏幕",
         "lockRoom": "设置会议密码",
-        "startRecording": "开始云端录像",
+        "startRecording": "启动服务器录像",
         "unlockRoom": "解除会议密码",
         "WaitForHostMsgWOk": "会议室<b>__room__ </b>还未开放。如果您是管理员请先登录。",
         "applicationWindow": "应用窗口"
@@ -515,10 +515,10 @@
         "off": "录制已停止",
         "on": "录制中",
         "pending": "录制中，等待一位与会者加入",
-        "unavailable": "录像服务器不可用",
+        "unavailable": "没有发现录像设备，您需要先购买一台录像设备进行服务器端录像。",
         "startRecordingBody": "确定要录像吗？",
         "rec": "REC",
-        "unavailableTitle": "服务器不可用"        
+        "unavailableTitle": "录像设备不可用"        
     },
     "liveStreaming": {
         "busy": "",

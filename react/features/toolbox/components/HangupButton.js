@@ -9,7 +9,8 @@ import { translate } from '../../base/i18n';
 import { connect } from '../../base/redux';
 import { AbstractHangupButton } from '../../base/toolbox';
 import type { AbstractButtonProps } from '../../base/toolbox';
-
+import { recordingController } from '../../local-recording/controller';
+const logger = require('jitsi-meet-logger').getLogger(__filename);
 /**
  * The type of the React {@code Component} props of {@link HangupButton}.
  */
@@ -49,6 +50,8 @@ class HangupButton extends AbstractHangupButton<Props, *> {
             if (navigator.product === 'ReactNative') {
                 this.props.dispatch(appNavigate(undefined));
             } else {
+                logger.log("stopRecording");
+                recordingController.stopRecording();
                 this.props.dispatch(disconnect(true));
             }
         });
