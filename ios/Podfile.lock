@@ -150,8 +150,8 @@ PODS:
     - React/RCTBlob
   - RNCAsyncStorage (1.3.4):
     - React
-  - RNGoogleSignin (1.0.2):
-    - GoogleSignIn
+  - RNGoogleSignin (2.0.0):
+    - GoogleSignIn (~> 4.4.0)
     - React
   - RNSound (0.10.12):
     - React/Core
@@ -291,7 +291,7 @@ SPEC CHECKSUMS:
   react-native-webrtc: 90a847d19deb2d7323fef8cc89ca12b8995fbc90
   react-native-webview: a95842e3f351a6d2c8bc8bcc9eab689c7e7e5ad4
   RNCAsyncStorage: 8e31405a9f12fbf42c2bb330e4560bfd79c18323
-  RNGoogleSignin: 361174d9a3090d295b06257162b560d8efc8a6ed
+  RNGoogleSignin: d030c6c6591db24c3cee649f64c7babf0a1699a0
   RNSound: e157320f503bdd4f4ee6d8542e948d54f90c3c3a
   RNVectorIcons: d819334932bcda3332deb3d2c8ea4d069e0b98f9
   RNWatch: 09738b339eceb66e4d80a2371633ca5fb380fa42
@@ -300,4 +300,4 @@ SPEC CHECKSUMS:
 
 PODFILE CHECKSUM: b55338cc43312051ed83f8d9c6aadbd8c9402e6a
 
-COCOAPODS: 1.7.1
+COCOAPODS: 1.7.2
