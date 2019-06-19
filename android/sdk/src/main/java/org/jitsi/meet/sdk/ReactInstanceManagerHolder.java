@@ -182,5 +182,8 @@ class ReactInstanceManagerHolder {
         if (devSettings != null) {
             devSettings.setBundleDeltasEnabled(false);
         }
+
+        // Register our uncaught exception handler.
+        JitsiMeetUncaughtExceptionHandler.register();
     }
 }
