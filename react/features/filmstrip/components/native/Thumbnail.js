@@ -11,7 +11,6 @@ import {
     PARTICIPANT_ROLE,
     ParticipantView,
     isEveryoneModerator,
-    isLocalParticipantModerator,
     pinParticipant
 } from '../../../base/participants';
 import { Container } from '../../../base/react';
@@ -44,11 +43,6 @@ type Props = {
      * True if everone in the meeting is moderator.
      */
     _isEveryoneModerator: boolean,
-
-    /**
-     * True if the local participant is a moderator.
-     */
-    _isModerator: boolean,
 
     /**
      * The Redux representation of the state "features/large-video".
@@ -124,7 +118,6 @@ class Thumbnail extends Component<Props> {
         const {
             _audioTrack: audioTrack,
             _isEveryoneModerator,
-            _isModerator,
             _largeVideo: largeVideo,
             _onClick,
             _onShowRemoteVideoMenu,
@@ -148,14 +141,11 @@ class Thumbnail extends Component<Props> {
         const participantInLargeVideo
             = participantId === largeVideo.participantId;
         const videoMuted = !videoTrack || videoTrack.muted;
-        const showRemoteVideoMenu = _isModerator && !participant.local;
 
         return (
             <Container
                 onClick = { _onClick }
-                onLongPress = {
-                    showRemoteVideoMenu
-                        ? _onShowRemoteVideoMenu : undefined }
+                onLongPress = { participant.local ? undefined : _onShowRemoteVideoMenu }
                 style = { [
                     styles.thumbnail,
                     participant.pinned && !tileView
@@ -265,7 +255,6 @@ function _mapDispatchToProps(dispatch: Function, ownProps): Object {
  * @param {Props} ownProps - Properties of component.
  * @returns {{
  *      _audioTrack: Track,
- *      _isModerator: boolean,
  *      _largeVideo: Object,
  *      _styles: StyleType,
  *      _videoTrack: Track
@@ -286,7 +275,6 @@ function _mapStateToProps(state, ownProps) {
     return {
         _audioTrack: audioTrack,
         _isEveryoneModerator: isEveryoneModerator(state),
-        _isModerator: isLocalParticipantModerator(state),
         _largeVideo: largeVideo,
         _styles: ColorSchemeRegistry.get(state, 'Thumbnail'),
         _videoTrack: videoTrack

@@ -1,14 +1,21 @@
 // @flow
 
 import { translate } from '../../../base/i18n';
+import { isLocalParticipantModerator } from '../../../base/participants';
 import { connect } from '../../../base/redux';
 
 import AbstractKickButton from '../AbstractKickButton';
 
 /**
- * We don't need any further implementation for this on mobile, but we keep it
- * here for clarity and consistency with web. Once web uses the
- * {@code AbstractButton} base class, we can remove all these and just use
- * the {@code AbstractKickButton} as {@KickButton}.
+ * Maps part of the Redux state to the props of this component.
+ *
+ * @param {Object} state - The Redux state.
+ * @returns {Props}
  */
-export default translate(connect()(AbstractKickButton));
+function _mapStateToProps(state) {
+    return {
+        visible: isLocalParticipantModerator(state)
+    };
+}
+
+export default translate(connect(_mapStateToProps)(AbstractKickButton));
