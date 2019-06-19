@@ -2,6 +2,7 @@
 
 import React, { Component } from 'react';
 
+import { isBrowsersOptimal } from '../../base/environment';
 import { translate } from '../../base/i18n';
 
 import { CHROME, FIREFOX } from './browserLinks';
@@ -47,13 +48,25 @@ class UnsupportedDesktopBrowser extends Component<Props> {
                     Please try again with the latest version of&nbsp;
                     <a
                         className = { `${_SNS}__link` }
-                        href = { CHROME } >Chrome</a> and&nbsp;
-                    <a
-                        className = { `${_SNS}__link` }
-                        href = { FIREFOX }>Firefox</a>
+                        href = { CHROME } >Chrome</a>&nbsp;
+                    {
+                        this._showFirefox() && <>and <a
+                            className = { `${_SNS}__link` }
+                            href = { FIREFOX }>Firefox</a></>
+                    }
                 </p>
             </div>
         );
+    }
+
+    /**
+     * Returns whether or not a link to download Firefox is displayed.
+     *
+     * @private
+     * @returns {boolean}
+     */
+    _showFirefox() {
+        return isBrowsersOptimal('firefox');
     }
 }
 
