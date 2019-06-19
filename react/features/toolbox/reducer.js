@@ -11,7 +11,8 @@ import {
     SET_TOOLBOX_ENABLED,
     SET_TOOLBOX_TIMEOUT,
     SET_TOOLBOX_TIMEOUT_MS,
-    SET_TOOLBOX_VISIBLE
+    SET_TOOLBOX_VISIBLE,
+    TOGGLE_TOOLBOX_VISIBLE
 } from './actionTypes';
 
 declare var interfaceConfig: Object;
@@ -165,7 +166,10 @@ ReducerRegistry.register(
             };
 
         case SET_TOOLBOX_VISIBLE:
-            return set(state, 'visible', action.visible);
+            return set(state, 'visible', state.alwaysVisible || action.visible);
+
+        case TOGGLE_TOOLBOX_VISIBLE:
+            return set(state, 'visible', state.alwaysVisible || !state.visible);
         }
 
         return state;

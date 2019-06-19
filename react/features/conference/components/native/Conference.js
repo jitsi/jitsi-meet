@@ -112,13 +112,6 @@ type Props = AbstractProps & {
     _toolboxVisible: boolean,
 
     /**
-     * The indicator which determines whether the Toolbox is always visible.
-     *
-     * @private
-     */
-    _toolboxAlwaysVisible: boolean,
-
-    /**
      * The redux {@code dispatch} function.
      */
     dispatch: Function
@@ -298,10 +291,6 @@ class Conference extends AbstractConference<Props, *> {
      * @returns {void}
      */
     _onClick() {
-        if (this.props._toolboxAlwaysVisible) {
-            return;
-        }
-
         this._setToolboxVisible(!this.props._toolboxVisible);
     }
 
@@ -407,7 +396,7 @@ function _mapStateToProps(state) {
         leaving
     } = state['features/base/conference'];
     const { reducedUI } = state['features/base/responsive-ui'];
-    const { alwaysVisible, visible } = state['features/toolbox'];
+    const { visible } = state['features/toolbox'];
 
     // XXX There is a window of time between the successful establishment of the
     // XMPP connection and the subsequent commencement of joining the MUC during
@@ -484,15 +473,7 @@ function _mapStateToProps(state) {
          * @private
          * @type {boolean}
          */
-        _toolboxVisible: visible,
-
-        /**
-         * The indicator which determines whether the Toolbox is always visible.
-         *
-         * @private
-         * @type {boolean}
-         */
-        _toolboxAlwaysVisible: alwaysVisible
+        _toolboxVisible: visible
     };
 }
 
