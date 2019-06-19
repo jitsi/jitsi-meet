@@ -21,6 +21,7 @@ import { getTrackByMediaTypeAndParticipant } from '../../../base/tracks';
 import { ConnectionIndicator } from '../../../connection-indicator';
 import { DisplayNameLabel } from '../../../display-name';
 import { RemoteVideoMenu } from '../../../remote-video-menu';
+import { toggleToolboxVisible } from '../../../toolbox';
 
 import AudioMutedIndicator from './AudioMutedIndicator';
 import DominantSpeakerIndicator from './DominantSpeakerIndicator';
@@ -75,12 +76,6 @@ type Props = {
     _videoTrack: Object,
 
     /**
-     * If true, tapping on the thumbnail will not pin the participant to large
-     * video. By default tapping does pin the participant.
-     */
-    disablePin?: boolean,
-
-    /**
      * If true, there will be no color overlay (tint) on the thumbnail
      * indicating the participant associated with the thumbnail is displayed on
      * large video. By default there will be a tint.
@@ -105,7 +100,12 @@ type Props = {
     /**
      * Optional styling to add or override on the Thumbnail component root.
      */
-    styleOverrides?: Object
+    styleOverrides?: Object,
+
+    /**
+     * If true, it tells the thumbnail that it needs to behave differently. E.g. react differently to a single tap.
+     */
+    tileView?: boolean
 };
 
 /**
@@ -130,10 +130,10 @@ class Thumbnail extends Component<Props> {
             _onShowRemoteVideoMenu,
             _styles,
             _videoTrack: videoTrack,
-            disablePin,
             disableTint,
             participant,
-            renderDisplayName
+            renderDisplayName,
+            tileView
         } = this.props;
 
         // We don't render audio in any of the following:
@@ -152,13 +152,13 @@ class Thumbnail extends Component<Props> {
 
         return (
             <Container
-                onClick = { disablePin ? undefined : _onClick }
+                onClick = { _onClick }
                 onLongPress = {
                     showRemoteVideoMenu
                         ? _onShowRemoteVideoMenu : undefined }
                 style = { [
                     styles.thumbnail,
-                    participant.pinned && !disablePin
+                    participant.pinned && !tileView
                         ? _styles.thumbnailPinned : null,
                     this.props.styleOverrides || null
                 ] }
@@ -234,10 +234,13 @@ function _mapDispatchToProps(dispatch: Function, ownProps): Object {
          * @returns {void}
          */
         _onClick() {
-            const { participant } = ownProps;
+            const { participant, tileView } = ownProps;
 
-            dispatch(
-                pinParticipant(participant.pinned ? null : participant.id));
+            if (tileView) {
+                dispatch(toggleToolboxVisible());
+            } else {
+                dispatch(pinParticipant(participant.pinned ? null : participant.id));
+            }
         },
 
         /**

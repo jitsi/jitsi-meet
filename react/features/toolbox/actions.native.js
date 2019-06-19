@@ -8,7 +8,8 @@ import {
     SET_TOOLBOX_ENABLED,
     SET_TOOLBOX_TIMEOUT,
     SET_TOOLBOX_TIMEOUT_MS,
-    SET_TOOLBOX_VISIBLE
+    SET_TOOLBOX_VISIBLE,
+    TOGGLE_TOOLBOX_VISIBLE
 } from './actionTypes';
 
 
@@ -142,5 +143,18 @@ export function setToolboxVisible(visible: boolean): Object {
     return {
         type: SET_TOOLBOX_VISIBLE,
         visible
+    };
+}
+
+/**
+ * Action to toggle the toolbox visibility.
+ *
+ * @returns {{
+ *     type: TOGGLE_TOOLBOX_VISIBLE
+ * }}
+ */
+export function toggleToolboxVisible() {
+    return {
+        type: TOGGLE_TOOLBOX_VISIBLE
     };
 }
