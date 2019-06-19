@@ -25,6 +25,9 @@
     -moz-osx-font-smoothing: grayscale;
 }
 
+.icon-enlarge:before {
+  content: "\e90a";
+}
 .icon-signal_cellular_0:before {
   content: "\e901";
 }
