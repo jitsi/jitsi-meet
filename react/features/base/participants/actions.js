@@ -1,5 +1,3 @@
-/* global interfaceConfig */
-
 import throttle from 'lodash/throttle';
 
 import { set } from '../redux';
@@ -517,8 +515,7 @@ const _throttledNotifyParticipantConnected = throttle(dispatch => {
  * @returns {Function}
  */
 export function showParticipantJoinedNotification(displayName) {
-    joinedParticipantsNames.push(
-        displayName || interfaceConfig.DEFAULT_REMOTE_DISPLAY_NAME);
+    joinedParticipantsNames.push(displayName);
 
     return dispatch => _throttledNotifyParticipantConnected(dispatch);
 }
