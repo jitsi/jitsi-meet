@@ -19,6 +19,7 @@ import '../../mobile/audio-mode';
 import '../../mobile/background';
 import '../../mobile/call-integration';
 import '../../mobile/external-api';
+import '../../mobile/foreground-service';
 import '../../mobile/full-screen';
 import '../../mobile/permissions';
 import '../../mobile/picture-in-picture';

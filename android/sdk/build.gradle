@@ -57,6 +57,7 @@ dependencies {
     implementation(project(':react-native-fast-image')) {
         exclude group: 'com.android.support'
     }
+    implementation project(':react-native-foreground-service')
     implementation project(':react-native-immersive')
     implementation project(':react-native-keep-awake')
     implementation project(':react-native-linear-gradient')

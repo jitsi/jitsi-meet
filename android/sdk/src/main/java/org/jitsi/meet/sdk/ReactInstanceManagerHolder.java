@@ -150,6 +150,7 @@ class ReactInstanceManagerHolder {
                 new com.reactnativecommunity.asyncstorage.AsyncStoragePackage(),
                 new com.reactnativecommunity.webview.RNCWebViewPackage(),
                 new com.rnimmersive.RNImmersivePackage(),
+                new com.voximplant.foregroundservice.VIForegroundServicePackage(),
                 new com.zmxv.RNSound.RNSoundPackage(),
                 new ReactPackageAdapter() {
                     @Override
