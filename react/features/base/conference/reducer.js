@@ -213,7 +213,8 @@ function _conferenceJoined(state, { conference }) {
     // i.e. password-protected is private to lib-jitsi-meet. However, the
     // library does not fire LOCK_STATE_CHANGED upon joining a JitsiConference
     // with a password.
-    const locked = conference.room.locked ? LOCKED_REMOTELY : undefined;
+    // FIXME Technically JitsiConference.room is a private field.
+    const locked = conference.room && conference.room.locked ? LOCKED_REMOTELY : undefined;
 
     return assign(state, {
         authRequired: undefined,
