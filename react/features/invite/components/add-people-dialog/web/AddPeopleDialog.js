@@ -291,12 +291,13 @@ class AddPeopleDialog extends AbstractAddPeopleDialog<Props, State> {
                     size = 'small'
                     src = { user.avatar } />,
                 item: user,
+                key: user.user_id,
                 tag: {
                     elemBefore: <Avatar
                         size = 'xsmall'
                         src = { user.avatar } />
                 },
-                value: user.id
+                value: user.user_id
             };
         });
 
