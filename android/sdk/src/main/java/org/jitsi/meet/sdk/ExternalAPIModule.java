@@ -73,6 +73,7 @@ class ExternalAPIModule
         BaseReactView view = BaseReactView.findViewByExternalAPIScope(scope);
 
         if (view != null) {
+            Log.d(TAG, "Sending event: " + name + " with data: " + data);
             try {
                 view.onExternalAPIEvent(name, data);
             } catch(Exception e) {
