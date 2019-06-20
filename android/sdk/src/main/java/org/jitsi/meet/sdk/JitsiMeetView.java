@@ -181,7 +181,7 @@ public class JitsiMeetView extends BaseReactView<JitsiMeetViewListener> {
      * by/associated with the specified {@code eventName}.
      */
     private void maybeSetViewURL(String eventName, ReadableMap eventData) {
-        String url = eventData.getString("url");
+        String url = eventData.hasKey("url") ? eventData.getString("url") : null;
 
         switch(eventName) {
         case "CONFERENCE_WILL_JOIN":
