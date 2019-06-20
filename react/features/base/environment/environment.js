@@ -16,12 +16,12 @@ const DEFAULT_UNSUPPORTED_BROWSERS = [];
 
 const browserNameToCheck = {
     chrome: browser.isChrome.bind(browser),
+    edge: browser.isEdge.bind(browser),
     electron: browser.isElectron.bind(browser),
     firefox: browser.isFirefox.bind(browser),
     nwjs: browser.isNWJS.bind(browser),
     opera: browser.isOpera.bind(browser),
-    safari: browser.isSafari.bind(browser),
-    edge: browser.isEdge.bind(browser)
+    safari: browser.isSafari.bind(browser)
 };
 
 declare var interfaceConfig: Object;
