@@ -55,7 +55,13 @@ StateListenerRegistry.register(
             = store.getState()['features/video-layout'].screenShares || [];
         const knownSharingParticipantIds = tracks.reduce((acc, track) => {
             if (track.mediaType === 'video' && track.videoType === 'desktop') {
-                acc.push(track.participantId);
+                const skipTrack
+                    = interfaceConfig.AUTO_PIN_LATEST_SCREEN_SHARE === 'remote-only'
+                        && track.local;
+
+                if (!skipTrack) {
+                    acc.push(track.participantId);
+                }
             }
 
             return acc;
