@@ -155,6 +155,8 @@ public class JitsiMeetActivity extends FragmentActivity
 
     @Override
     public void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+
         JitsiMeetConferenceOptions options;
 
         if ((options = getConferenceOptions(intent)) != null) {
