@@ -177,7 +177,17 @@ var interfaceConfig = {
 
     // Browsers, in addition to those which do not fully support WebRTC, that
     // are not supported and should show the unsupported browser page.
-    UNSUPPORTED_BROWSERS: []
+    UNSUPPORTED_BROWSERS: [],
+
+    /**
+     * A UX mode where the last screen share participant is automatically
+     * pinned. Valid values are the string "remote-only" so remote participants
+     * get pinned but not local, otherwise any truthy value for all participants,
+     * and any falsy value to disable the feature.
+     *
+     * Note: this mode is experimental and subject to breakage.
+     */
+    AUTO_PIN_LATEST_SCREEN_SHARE: 'remote-only'
 
     /**
      * How many columns the tile view can expand to. The respected range is
@@ -204,12 +214,6 @@ var interfaceConfig = {
      * Specify the Android app package name.
      */
     // ANDROID_APP_PACKAGE: 'org.jitsi.meet',
-
-    /**
-     * A UX mode where the last screen share participant is automatically
-     * pinned. Note: this mode is experimental and subject to breakage.
-     */
-    // AUTO_PIN_LATEST_SCREEN_SHARE: false,
 
     /**
      * Override the behavior of some notifications to remain displayed until
