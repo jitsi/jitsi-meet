@@ -96,10 +96,7 @@ function _addOrRemoveAudioElement(state, action) {
                 }));
         }
     } else {
-        const actionName
-            = isAddAction ? '_ADD_AUDIO_ELEMENT' : '_REMOVE_AUDIO_ELEMENT';
-
-        logger.error(`${actionName}: no sound for id: ${soundId}`);
+        logger.warn(`${action.type}: no sound for id: ${soundId}`);
     }
 
     return nextState;
