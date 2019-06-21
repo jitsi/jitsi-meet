@@ -212,7 +212,7 @@ class AddPeopleDialog extends AbstractAddPeopleDialog<Props, State> {
      * @returns {string}
      */
     _keyExtractor(item) {
-        return item.type === 'user' ? item.user_id : item.number;
+        return item.type === 'user' ? item.id || item.user_id : item.number;
     }
 
     _onCloseAddPeopleDialog: () => void
@@ -315,8 +315,9 @@ class AddPeopleDialog extends AbstractAddPeopleDialog<Props, State> {
                         && !inviteItems.find(
                             _.matchesProperty('number', result.number));
                 case 'user':
-                    return result.user_id && !inviteItems.find(
-                        _.matchesProperty('user_id', result.user_id));
+                    return !inviteItems.find(
+                        (result.user_id && _.matchesProperty('id', result.id))
+                        || (result.user_id && _.matchesProperty('user_id', result.user_id)));
                 default:
                     return false;
                 }
@@ -367,10 +368,12 @@ class AddPeopleDialog extends AbstractAddPeopleDialog<Props, State> {
             break;
         case 'user':
             selected
-                = inviteItems.find(_.matchesProperty('user_id', item.user_id));
+                = item.id
+                    ? inviteItems.find(_.matchesProperty('id', item.id))
+                    : inviteItems.find(_.matchesProperty('user_id', item.user_id));
             renderableItem = {
                 avatar: item.avatar,
-                key: item.user_id,
+                key: item.id || item.user_id,
                 title: item.name
             };
             break;

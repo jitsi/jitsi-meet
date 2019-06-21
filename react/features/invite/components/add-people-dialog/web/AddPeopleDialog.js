@@ -254,10 +254,10 @@ class AddPeopleDialog extends AbstractAddPeopleDialog<Props, State> {
                 if (invitesLeftToSend.length) {
                     const unsentInviteIDs
                         = invitesLeftToSend.map(invitee =>
-                            invitee.id || invitee.number);
+                            invitee.id || invitee.user_id || invitee.number);
                     const itemsToSelect
                         = inviteItems.filter(({ item }) =>
-                            unsentInviteIDs.includes(item.id || item.number));
+                            unsentInviteIDs.includes(item.id || item.user_id || item.number));
 
                     if (this._multiselect) {
                         this._multiselect.setSelectedItems(itemsToSelect);
@@ -291,13 +291,12 @@ class AddPeopleDialog extends AbstractAddPeopleDialog<Props, State> {
                     size = 'small'
                     src = { user.avatar } />,
                 item: user,
-                key: user.user_id,
                 tag: {
                     elemBefore: <Avatar
                         size = 'xsmall'
                         src = { user.avatar } />
                 },
-                value: user.user_id
+                value: user.id || user.user_id
             };
         });
 
