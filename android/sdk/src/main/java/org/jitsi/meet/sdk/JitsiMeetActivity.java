@@ -72,6 +72,13 @@ public class JitsiMeetActivity extends FragmentActivity
     }
 
     @Override
+    public void onDestroy() {
+        leave();
+
+        super.onDestroy();
+    }
+
+    @Override
     public void finish() {
         leave();
 
