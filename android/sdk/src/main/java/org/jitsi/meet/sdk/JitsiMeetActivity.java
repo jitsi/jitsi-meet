@@ -38,8 +38,8 @@ public class JitsiMeetActivity extends FragmentActivity
 
     protected static final String TAG = JitsiMeetActivity.class.getSimpleName();
 
-    public static final String ACTION_JITSI_MEET_CONFERENCE = "org.jitsi.meet.CONFERENCE";
-    public static final String JITSI_MEET_CONFERENCE_OPTIONS = "JitsiMeetConferenceOptions";
+    private static final String ACTION_JITSI_MEET_CONFERENCE = "org.jitsi.meet.CONFERENCE";
+    private static final String JITSI_MEET_CONFERENCE_OPTIONS = "JitsiMeetConferenceOptions";
 
     // Helpers for starting the activity
     //
