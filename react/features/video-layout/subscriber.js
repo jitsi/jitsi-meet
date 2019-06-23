@@ -36,10 +36,6 @@ StateListenerRegistry.register(
                 _updateAutoPinnedParticipant(store);
             }
         }
-
-        if (typeof APP === 'object') {
-            APP.API.notifyTileViewChanged(displayTileView);
-        }
     }
 );
 

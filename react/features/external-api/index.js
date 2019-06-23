@@ -1,1 +1,2 @@
 import './middleware';
+import './subscriber';
