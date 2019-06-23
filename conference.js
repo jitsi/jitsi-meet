@@ -2753,14 +2753,6 @@ export default {
             displayName: formattedNickname
         }));
 
-        APP.API.notifyDisplayNameChanged(id, {
-            displayName: formattedNickname,
-            formattedDisplayName:
-                appendSuffix(
-                    formattedNickname,
-                    interfaceConfig.DEFAULT_LOCAL_DISPLAY_NAME)
-        });
-
         if (room) {
             APP.UI.changeDisplayName(id, formattedNickname);
         }
