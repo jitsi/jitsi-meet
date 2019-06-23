@@ -4,6 +4,7 @@ import { CONFERENCE_FAILED } from '../base/conference';
 import { NOTIFY_CAMERA_ERROR, NOTIFY_MIC_ERROR } from '../base/devices';
 import { JitsiConferenceErrors } from '../base/lib-jitsi-meet';
 import { MiddlewareRegistry } from '../base/redux';
+import { SUBMIT_FEEDBACK } from '../feedback';
 
 declare var APP: Object;
 
@@ -33,6 +34,10 @@ MiddlewareRegistry.register((/* store */) => next => action => {
         if (action.error) {
             APP.API.notifyOnMicError(action.error.name, action.error.message);
         }
+        break;
+
+    case SUBMIT_FEEDBACK:
+        APP.API.notifyFeedbackSubmitted();
         break;
     }
 
