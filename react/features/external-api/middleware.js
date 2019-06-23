@@ -5,6 +5,7 @@ import { NOTIFY_CAMERA_ERROR, NOTIFY_MIC_ERROR } from '../base/devices';
 import { JitsiConferenceErrors } from '../base/lib-jitsi-meet';
 import { MiddlewareRegistry } from '../base/redux';
 import { SUBMIT_FEEDBACK } from '../feedback';
+import { SET_FILMSTRIP_VISIBLE } from '../filmstrip';
 
 declare var APP: Object;
 
@@ -34,6 +35,10 @@ MiddlewareRegistry.register((/* store */) => next => action => {
         if (action.error) {
             APP.API.notifyOnMicError(action.error.name, action.error.message);
         }
+        break;
+
+    case SET_FILMSTRIP_VISIBLE:
+        APP.API.notifyFilmstripDisplayChanged(action.visible);
         break;
 
     case SUBMIT_FEEDBACK:
