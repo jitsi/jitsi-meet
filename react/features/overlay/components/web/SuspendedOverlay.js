@@ -2,7 +2,7 @@
 
 import React from 'react';
 
-import { translate, translateToHTML } from '../../../base/i18n';
+import { translate } from '../../../base/i18n';
 
 import AbstractSuspendedOverlay from './AbstractSuspendedOverlay';
 import OverlayFrame from './OverlayFrame';
@@ -31,11 +31,6 @@ class SuspendedOverlay extends AbstractSuspendedOverlay {
                         className = 'inlay__title'>
                         { t('suspendedoverlay.title') }
                     </h3>
-                    <span className = 'inlay__text'>
-                        {
-                            translateToHTML(t, 'suspendedoverlay.title')
-                        }
-                    </span>
                     <ReloadButton textKey = 'suspendedoverlay.rejoinKeyTitle' />
                 </div>
             </OverlayFrame>
