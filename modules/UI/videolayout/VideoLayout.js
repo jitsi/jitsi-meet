@@ -637,7 +637,7 @@ const VideoLayout = {
      */
     onVideoMute(id, value) {
         if (APP.conference.isLocalId(id)) {
-            localVideoThumbnail.setVideoMutedView(value);
+            localVideoThumbnail && localVideoThumbnail.setVideoMutedView(value);
         } else {
             const remoteVideo = remoteVideos[id];
 
@@ -985,7 +985,7 @@ const VideoLayout = {
         } else if (currentId) {
             const currentSmallVideo = this.getSmallVideo(currentId);
 
-            currentSmallVideo.updateView();
+            currentSmallVideo && currentSmallVideo.updateView();
         }
     },
 
