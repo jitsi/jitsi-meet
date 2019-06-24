@@ -240,6 +240,7 @@
     },
     "connectionindicator": {        
         "header": "连接数据",
+        "connectedTo": "所属区域:",
         "bitrate": "比特率",
         "packetloss": "丢包",
         "resolution": "分辨率",
