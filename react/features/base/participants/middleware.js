@@ -118,13 +118,15 @@ MiddlewareRegistry.register(store => next => action => {
     case PARTICIPANT_JOINED: {
         _maybePlaySounds(store, action);
 
+        const result = _participantJoinedOrUpdated(store, next, action);
+
         const { participant: p } = action;
 
         if (!p.local) {
             store.dispatch(showParticipantJoinedNotification(getParticipantDisplayName(store.getState, p.id)));
         }
 
-        return _participantJoinedOrUpdated(store, next, action);
+        return result;
     }
 
     case PARTICIPANT_LEFT:
