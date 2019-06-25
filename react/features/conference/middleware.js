@@ -5,12 +5,11 @@ import {
     CONFERENCE_JOINED,
     KICKED_OUT,
     VIDEO_QUALITY_LEVELS,
-    conferenceFailed,
+    conferenceLeft,
     getCurrentConference,
     setPreferredReceiverVideoQuality
 } from '../base/conference';
 import { hideDialog, isDialogOpen } from '../base/dialog';
-import { JitsiConferenceEvents } from '../base/lib-jitsi-meet';
 import { pinParticipant } from '../base/participants';
 import { SET_REDUCED_UI } from '../base/responsive-ui';
 import { MiddlewareRegistry, StateListenerRegistry } from '../base/redux';
@@ -46,8 +45,7 @@ MiddlewareRegistry.register(store => next => action => {
         dispatch(notifyKickedOut(
             action.participant,
             () => {
-                dispatch(
-                    conferenceFailed(action.conference, JitsiConferenceEvents.KICKED));
+                dispatch(conferenceLeft(action.conference));
                 dispatch(appNavigate(undefined));
             }
         ));
