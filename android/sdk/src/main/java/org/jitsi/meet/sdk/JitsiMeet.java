@@ -42,7 +42,7 @@ public class JitsiMeet {
      * @return the current conference URL.
      */
     public static String getCurrentConference() {
-        return OngoingConferenceTracker.getCurrentConference();
+        return OngoingConferenceTracker.getInstance().getCurrentConference();
     }
 
     /**
