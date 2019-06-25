@@ -9,6 +9,8 @@ import { NOTIFY_CAMERA_ERROR, NOTIFY_MIC_ERROR } from '../base/devices';
 import { JitsiConferenceErrors } from '../base/lib-jitsi-meet';
 import {
     PARTICIPANT_KICKED,
+    PARTICIPANT_LEFT,
+    PARTICIPANT_JOINED,
     SET_LOADABLE_AVATAR_URL,
     getLocalParticipant,
     getParticipantById
@@ -128,6 +130,27 @@ MiddlewareRegistry.register(store => next => action => {
             },
             { id: action.kicker });
         break;
+
+    case PARTICIPANT_LEFT:
+        APP.API.notifyUserLeft(action.participant.id);
+        break;
+
+    case PARTICIPANT_JOINED: {
+        const { participant } = action;
+        const { id, local, name } = participant;
+
+        // The version of external api outside of middleware did not emit
+        // the local participant being created.
+        if (!local) {
+            APP.API.notifyUserJoined(id, {
+                displayName: name,
+                formattedDisplayName: appendSuffix(
+                    name || interfaceConfig.DEFAULT_REMOTE_DISPLAY_NAME)
+            });
+        }
+
+        break;
+    }
 
     case SET_FILMSTRIP_VISIBLE:
         APP.API.notifyFilmstripDisplayChanged(action.visible);
