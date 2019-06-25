@@ -37,6 +37,15 @@ public class JitsiMeet {
     }
 
     /**
+     * Returns the current conference URL as a string.
+     *
+     * @return the current conference URL.
+     */
+    public static String getCurrentConference() {
+        return OngoingConferenceTracker.getCurrentConference();
+    }
+
+    /**
      * Helper to get the default conference options as a {@link Bundle}.
      *
      * @return a {@link Bundle} with the default conference options.
