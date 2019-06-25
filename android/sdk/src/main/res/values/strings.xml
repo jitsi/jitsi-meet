@@ -1,4 +1,6 @@
 <resources>
     <string name="app_name">Jitsi Meet SDK</string>
     <string name="dropbox_app_key"></string>
+    <string name="ongoing_notification_title">Ongoing meeting</string>
+    <string name="ongoing_notification_text">You are currently in a meeting. Tap to return to it.</string>
 </resources>

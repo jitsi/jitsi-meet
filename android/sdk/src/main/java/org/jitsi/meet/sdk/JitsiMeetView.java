@@ -108,12 +108,12 @@ public class JitsiMeetView extends BaseReactView<JitsiMeetViewListener>
             throw new RuntimeException("Enclosing Activity must implement JitsiMeetActivityInterface");
         }
 
-        OngoingConferenceTracker.addListener(this);
+        OngoingConferenceTracker.getInstance().addListener(this);
     }
 
     @Override
     public void dispose() {
-        OngoingConferenceTracker.removeListener(this);
+        OngoingConferenceTracker.getInstance().removeListener(this);
         super.dispose();
     }
 

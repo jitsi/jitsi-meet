@@ -22,47 +22,71 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 
-class OngoingConferenceTracker {
-    private static final Collection<OngoingConferenceListener> listeners =
-        Collections.synchronizedSet(new HashSet<OngoingConferenceListener>());
-    private static String currentConference;
 
-    static synchronized String getCurrentConference() {
+/**
+ * Helper class to keep track of what the current conference is.
+ */
+class OngoingConferenceTracker {
+    private static final OngoingConferenceTracker instance = new OngoingConferenceTracker();
+
+    private static final String CONFERENCE_WILL_JOIN = "CONFERENCE_WILL_JOIN";
+    private static final String CONFERENCE_TERMINATED = "CONFERENCE_TERMINATED";
+
+    private final Collection<OngoingConferenceListener> listeners =
+        Collections.synchronizedSet(new HashSet<OngoingConferenceListener>());
+    private String currentConference;
+
+    public OngoingConferenceTracker() {
+    }
+
+    public static OngoingConferenceTracker getInstance() {
+        return instance;
+    }
+
+    /**
+     * Gets the current active conference URL.
+     *
+     * @return - The current conference URL as a String.
+     */
+    synchronized String getCurrentConference() {
         return currentConference;
     }
 
-    static synchronized void onExternalAPIEvent(String name, ReadableMap data) {
+    synchronized void onExternalAPIEvent(String name, ReadableMap data) {
         if (!data.hasKey("url")) {
             return;
         }
 
         String url = data.getString("url");
+        if (url == null) {
+            return;
+        }
 
         switch(name) {
-            case "CONFERENCE_WILL_JOIN":
+            case CONFERENCE_WILL_JOIN:
                 currentConference = url;
-                updateCurrentConference();
+                updateListeners();
                 break;
 
-            case "CONFERENCE_TERMINATED":
-                if (currentConference != null && url.equals(currentConference)) {
+            case CONFERENCE_TERMINATED:
+                if (url.equals(currentConference)) {
                     currentConference = null;
-                    updateCurrentConference();
+                    updateListeners();
                 }
                 break;
         }
     }
 
-    static void addListener(OngoingConferenceListener listener) {
+    void addListener(OngoingConferenceListener listener) {
         listeners.add(listener);
     }
 
-    static void removeListener(OngoingConferenceListener listener) {
+    void removeListener(OngoingConferenceListener listener) {
         listeners.remove(listener);
     }
 
-    private static synchronized void updateCurrentConference() {
-        for (OngoingConferenceListener listener: listeners) {
+    private void updateListeners() {
+        for (OngoingConferenceListener listener : listeners) {
             listener.onCurrentConferenceChanged(currentConference);
         }
     }
