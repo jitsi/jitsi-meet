@@ -16,7 +16,6 @@
 
 package org.jitsi.meet.sdk;
 
-import android.app.Activity;
 import android.app.Notification;
 import android.app.Service;
 import android.content.ComponentName;
@@ -35,12 +34,6 @@ public class JitsiMeetOngoingConferenceService extends Service implements Ongoin
     static final class Actions {
         static final String ONGOING_CONFERENCE = TAG + ":ONGOING_CONFERENCE";
         static final String HANGUP = TAG + ":HANGUP";
-    }
-
-    private static Class pendingIntentActivityClass;
-
-    public static void setPendingIntentActivityClass(Class clazz) {
-        pendingIntentActivityClass = clazz;
     }
 
     static void launch(Context context) {
@@ -79,7 +72,7 @@ public class JitsiMeetOngoingConferenceService extends Service implements Ongoin
         final String action = intent.getAction();
         if (action.equals(Actions.ONGOING_CONFERENCE)) {
             Notification notification
-                = NotificationUtils.buildOngoingConferenceNotification(pendingIntentActivityClass);
+                = NotificationUtils.buildOngoingConferenceNotification();
             startForeground(NOTIFICATION_ID, notification);
             Log.i(TAG, "Service started");
         } else if (action.equals(Actions.HANGUP)) {
@@ -90,6 +83,7 @@ public class JitsiMeetOngoingConferenceService extends Service implements Ongoin
             }
         } else {
             Log.w(TAG, "Unknown action received: " + action);
+            stopSelf();
         }
 
         return START_NOT_STICKY;

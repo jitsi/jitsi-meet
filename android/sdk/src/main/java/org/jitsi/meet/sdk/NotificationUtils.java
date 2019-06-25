@@ -65,17 +65,14 @@ class NotificationUtils {
         notificationManager.createNotificationChannel(channel);
     }
 
-    static Notification buildOngoingConferenceNotification(Class pendingIntentActivityClass) {
+    static Notification buildOngoingConferenceNotification() {
         Context context = ReactInstanceManagerHolder.getCurrentActivity();
         if (context == null) {
             Log.w(TAG, "Cannot create notification: no current context");
             return null;
         }
 
-        Class clazz
-            = pendingIntentActivityClass != null ? pendingIntentActivityClass : context.getClass();
-
-        Intent notificationIntent = new Intent(context, clazz);
+        Intent notificationIntent = new Intent(context, context.getClass());
         PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, notificationIntent, 0);
 
         NotificationCompat.Builder builder;
