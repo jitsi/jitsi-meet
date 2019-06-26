@@ -79,7 +79,6 @@ import {
 import { showNotification } from './react/features/notifications';
 import {
     dominantSpeakerChanged,
-    getAvatarURLByParticipantId,
     getLocalParticipant,
     getNormalizedDisplayName,
     getParticipantById,
@@ -2278,18 +2277,6 @@ export default {
             = APP.store.getState()['features/base/settings'].displayName;
 
         APP.UI.changeDisplayName('localVideoContainer', displayName);
-        APP.API.notifyConferenceJoined(
-            this.roomName,
-            this._room.myUserId(),
-            {
-                displayName,
-                formattedDisplayName: appendSuffix(
-                    displayName,
-                    interfaceConfig.DEFAULT_LOCAL_DISPLAY_NAME),
-                avatarURL: getAvatarURLByParticipantId(
-                    APP.store.getState(), this._room.myUserId())
-            }
-        );
     },
 
     /**
