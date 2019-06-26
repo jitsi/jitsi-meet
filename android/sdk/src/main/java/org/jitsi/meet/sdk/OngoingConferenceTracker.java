@@ -24,6 +24,10 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 
+
+/**
+ * Helper class to keep track of what the current conference is.
+ */
 class OngoingConferenceTracker {
     private static final OngoingConferenceTracker instance = new OngoingConferenceTracker();
 
@@ -41,6 +45,11 @@ class OngoingConferenceTracker {
         return instance;
     }
 
+    /**
+     * Gets the current active conference URL.
+     *
+     * @return - The current conference URL as a String.
+     */
     synchronized String getCurrentConference() {
         return currentConference;
     }
@@ -79,12 +88,10 @@ class OngoingConferenceTracker {
     }
 
     private void updateOnConferenceJoined() {
-        // Launch the service, if we have a current conference.
-        if (currentConference != null) {
-            Activity currentActivity = ReactInstanceManagerHolder.getCurrentActivity();
-            if (currentActivity != null) {
-                JitsiMeetOngoingConferenceService.launch(currentActivity);
-            }
+        // Launch the service.
+        Activity currentActivity = ReactInstanceManagerHolder.getCurrentActivity();
+        if (currentActivity != null) {
+            JitsiMeetOngoingConferenceService.launch(currentActivity);
         }
 
         updateListeners();

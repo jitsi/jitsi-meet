@@ -29,6 +29,11 @@ import android.util.Log;
 import java.util.Random;
 
 
+/**
+ * Helper class for creating the ongoing notification which is used with
+ * {@link JitsiMeetOngoingConferenceService}. It allows the user to easily get back to the app
+ * and to hangup from within the notification itself.
+ */
 class OngoingNotification {
     private static final String TAG = OngoingNotification.class.getSimpleName();
 

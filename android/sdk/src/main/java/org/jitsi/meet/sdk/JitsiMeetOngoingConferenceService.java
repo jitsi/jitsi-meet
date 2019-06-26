@@ -25,6 +25,13 @@ import android.os.IBinder;
 import android.util.Log;
 
 
+/**
+ * This class implements an Android {@link Service}, a foreground one specifically, and it's
+ * responsible for presenting an ongoing notification when a conference is in progress.
+ * The service will help keep the app running while in the background.
+ *
+ * See: https://developer.android.com/guide/components/services
+ */
 public class JitsiMeetOngoingConferenceService extends Service
         implements OngoingConferenceTracker.OngoingConferenceListener {
     private static final String TAG = JitsiMeetOngoingConferenceService.class.getSimpleName();
