@@ -50,12 +50,12 @@ public class JitsiMeetOngoingConferenceService extends Service
     public void onCreate() {
         super.onCreate();
 
-        OngoingConferenceTracker.addListener(this);
+        OngoingConferenceTracker.getInstance().addListener(this);
     }
 
     @Override
     public void onDestroy() {
-        OngoingConferenceTracker.removeListener(this);
+        OngoingConferenceTracker.getInstance().removeListener(this);
 
         super.onDestroy();
     }

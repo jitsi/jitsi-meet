@@ -68,7 +68,7 @@ class ExternalAPIModule
     @ReactMethod
     public void sendEvent(String name, ReadableMap data, String scope) {
         // Keep track of the current ongoing conference.
-        OngoingConferenceTracker.onExternalAPIEvent(name, data);
+        OngoingConferenceTracker.getInstance().onExternalAPIEvent(name, data);
 
         // The JavaScript App needs to provide uniquely identifying information
         // to the native ExternalAPI module so that the latter may match the
