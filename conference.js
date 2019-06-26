@@ -1781,11 +1781,6 @@ export default {
 
             logger.log(`USER ${id} LEFT:`, user);
             APP.API.notifyUserLeft(id);
-            APP.UI.messageHandler.participantNotification(
-                user.getDisplayName(),
-                'notify.somebody',
-                'disconnected',
-                'notify.disconnected');
             APP.UI.onSharedVideoStop(id);
         });
 
