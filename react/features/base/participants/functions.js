@@ -1,11 +1,15 @@
 // @flow
-import { getAvatarURL as _getAvatarURL } from 'js-utils/avatar';
+import {
+    getAvatarURL as _getAvatarURL,
+    getGravatarURL
+} from 'js-utils/avatar';
 
 import { toState } from '../redux';
 
 import { JitsiParticipantConnectionStatus } from '../lib-jitsi-meet';
 import { MEDIA_TYPE, shouldRenderVideoTrack } from '../media';
 import { getTrackByMediaTypeAndParticipant } from '../tracks';
+import { createDeferred } from '../util';
 
 import {
     DEFAULT_AVATAR_RELATIVE_PATH,
@@ -13,9 +17,26 @@ import {
     MAX_DISPLAY_NAME_LENGTH,
     PARTICIPANT_ROLE
 } from './constants';
+import { preloadImage } from './preloadImage';
 
 declare var config: Object;
 declare var interfaceConfig: Object;
+
+/**
+ * Temp structures for avatar urls to be checked/preloaded.
+ */
+const AVATAR_QUEUE = [];
+const AVATAR_CHECKED_URLS = new Map();
+/* eslint-disable arrow-body-style */
+const AVATAR_CHECKER_FUNCTIONS = [
+    participant => {
+        return participant && participant.avatarURL ? participant.avatarURL : null;
+    },
+    participant => {
+        return participant && participant.email ? getGravatarURL(participant.email) : null;
+    }
+];
+/* eslint-enable arrow-body-style */
 
 /**
  * Returns the URL of the image for the avatar of a specific participant.
@@ -82,6 +103,36 @@ export function getAvatarURLByParticipantId(
     const participant = getParticipantById(stateful, id);
 
     return participant && getAvatarURL(participant);
+}
+
+/**
+ * Resolves the first loadable avatar URL for a participant.
+ *
+ * @param {Object} participant - The participant to resolve avatars for.
+ * @returns {Promise}
+ */
+export function getFirstLoadableAvatarUrl(participant: Object) {
+    const deferred = createDeferred();
+    const fullPromise = deferred.promise
+        .then(() => _getFirstLoadableAvatarUrl(participant))
+        .then(src => {
+
+            if (AVATAR_QUEUE.length) {
+                const next = AVATAR_QUEUE.shift();
+
+                next.resolve();
+            }
+
+            return src;
+        });
+
+    if (AVATAR_QUEUE.length) {
+        AVATAR_QUEUE.push(deferred);
+    } else {
+        deferred.resolve();
+    }
+
+    return fullPromise;
 }
 
 /**
@@ -169,7 +220,6 @@ export function getParticipantCountWithFake(stateful: Object | Function) {
  * @param {(Function|Object)} stateful - The (whole) redux state, or redux's
  * {@code getState} function to be used to retrieve the state.
  * @param {string} id - The ID of the participant's display name to retrieve.
- * @private
  * @returns {string}
  */
 export function getParticipantDisplayName(
@@ -345,4 +395,36 @@ export function shouldRenderParticipantVideo(
             === JitsiParticipantConnectionStatus.ACTIVE)
         && shouldRenderVideoTrack(videoTrack, waitForVideoStarted);
 
+}
+
+/**
+ * Resolves the first loadable avatar URL for a participant.
+ *
+ * @param {Object} participant - The participant to resolve avatars for.
+ * @returns {?string}
+ */
+async function _getFirstLoadableAvatarUrl(participant) {
+    for (let i = 0; i < AVATAR_CHECKER_FUNCTIONS.length; i++) {
+        const url = AVATAR_CHECKER_FUNCTIONS[i](participant);
+
+        if (url) {
+            if (AVATAR_CHECKED_URLS.has(url)) {
+                if (AVATAR_CHECKED_URLS.get(url)) {
+                    return url;
+                }
+            } else {
+                try {
+                    const finalUrl = await preloadImage(url);
+
+                    AVATAR_CHECKED_URLS.set(finalUrl, true);
+
+                    return finalUrl;
+                } catch (e) {
+                    AVATAR_CHECKED_URLS.set(url, false);
+                }
+            }
+        }
+    }
+
+    return undefined;
 }

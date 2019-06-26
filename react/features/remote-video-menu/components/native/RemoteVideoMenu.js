@@ -3,15 +3,12 @@
 import React, { Component } from 'react';
 import { Text, View } from 'react-native';
 
+import { Avatar } from '../../../base/avatar';
 import { ColorSchemeRegistry } from '../../../base/color-scheme';
 import {
     BottomSheet
 } from '../../../base/dialog';
-import {
-    Avatar,
-    getAvatarURL,
-    getParticipantDisplayName
-} from '../../../base/participants';
+import { getParticipantDisplayName } from '../../../base/participants';
 import { connect } from '../../../base/redux';
 import { StyleType } from '../../../base/styles';
 
@@ -38,11 +35,6 @@ type Props = {
      * The participant for which this menu opened for.
      */
     participant: Object,
-
-    /**
-     * URL of the avatar of the participant.
-     */
-    _avatarURL: string,
 
     /**
      * The color-schemed stylesheet of the BottomSheet.
@@ -76,10 +68,11 @@ class RemoteVideoMenu extends Component<Props> {
      * @inheritdoc
      */
     render() {
+        const { participant } = this.props;
         const buttonProps = {
             afterClick: this._onCancel,
             showLabel: true,
-            participantID: this.props.participant.id,
+            participantID: participant.id,
             styles: this.props._bottomSheetStyles
         };
 
@@ -87,8 +80,8 @@ class RemoteVideoMenu extends Component<Props> {
             <BottomSheet onCancel = { this._onCancel }>
                 <View style = { styles.participantNameContainer }>
                     <Avatar
-                        size = { AVATAR_SIZE }
-                        uri = { this.props._avatarURL } />
+                        participantId = { participant.id }
+                        size = { AVATAR_SIZE } />
                     <Text style = { styles.participantNameLabel }>
                         { this.props._participantDisplayName }
                     </Text>
@@ -120,7 +113,6 @@ class RemoteVideoMenu extends Component<Props> {
  * @param {Object} ownProps - Properties of component.
  * @private
  * @returns {{
- *      _avatarURL: string,
  *      _bottomSheetStyles: StyleType,
  *      _participantDisplayName: string
  *  }}
@@ -129,7 +121,6 @@ function _mapStateToProps(state, ownProps) {
     const { participant } = ownProps;
 
     return {
-        _avatarURL: getAvatarURL(participant),
         _bottomSheetStyles:
             ColorSchemeRegistry.get(state, 'BottomSheet'),
         _participantDisplayName: getParticipantDisplayName(

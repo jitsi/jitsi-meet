@@ -1,3 +1,5 @@
+// @flow
+
 /**
  * Create an action for when dominant speaker changes.
  *
@@ -132,3 +134,17 @@ export const HIDDEN_PARTICIPANT_JOINED = 'HIDDEN_PARTICIPANT_JOINED';
  * }
  */
 export const HIDDEN_PARTICIPANT_LEFT = 'HIDDEN_PARTICIPANT_LEFT';
+
+/**
+ * The type of Redux action which notifies the app that the loadable avatar URL has changed.
+ *
+ * {
+ *     type: SET_LOADABLE_AVATAR_URL,
+ *     participant: {
+ *         id: string,
+           loadableAvatarUrl: string
+ *     }
+ * }
+ */
+export const SET_LOADABLE_AVATAR_URL = 'SET_LOADABLE_AVATAR_URL';
+

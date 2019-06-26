@@ -2,7 +2,6 @@
 
 import { BoxModel, ColorPalette, createStyleSheet } from '../../../styles';
 
-const AVATAR_OPACITY = 0.4;
 const OVERLAY_FONT_COLOR = 'rgba(255, 255, 255, 0.6)';
 
 export const AVATAR_SIZE = 65;
@@ -92,40 +91,6 @@ const PAGED_LIST_STYLES = {
 };
 
 const SECTION_LIST_STYLES = {
-    /**
-     * The style of the actual avatar.
-     */
-    avatar: {
-        alignItems: 'center',
-        backgroundColor: `rgba(23, 160, 219, ${AVATAR_OPACITY})`,
-        justifyContent: 'center'
-    },
-
-    /**
-     * List of styles of the avatar of a remote meeting (not the default
-     * server). The number of colors are limited because they should match
-     * nicely.
-     */
-    avatarColor1: {
-        backgroundColor: `rgba(232, 105, 156, ${AVATAR_OPACITY})`
-    },
-
-    avatarColor2: {
-        backgroundColor: `rgba(255, 198, 115, ${AVATAR_OPACITY})`
-    },
-
-    avatarColor3: {
-        backgroundColor: `rgba(128, 128, 255, ${AVATAR_OPACITY})`
-    },
-
-    avatarColor4: {
-        backgroundColor: `rgba(105, 232, 194, ${AVATAR_OPACITY})`
-    },
-
-    avatarColor5: {
-        backgroundColor: `rgba(234, 255, 128, ${AVATAR_OPACITY})`
-    },
-
     /**
      * The style of the avatar container that makes the avatar rounded.
      */

@@ -2,10 +2,9 @@
 
 import React, { Component } from 'react';
 
+import { Avatar } from '../../../base/avatar';
 import { MEDIA_TYPE } from '../../../base/media';
 import {
-    Avatar,
-    getAvatarURL,
     getParticipants,
     getParticipantDisplayName,
     getParticipantPresenceStatus
@@ -23,7 +22,7 @@ import styles from './styles';
 type Props = {
 
     /**
-     * The callee's information such as avatar and display name.
+     * The callee's information such as display name.
      */
     _callee: Object,
 
@@ -46,7 +45,7 @@ class CalleeInfo extends Component<Props> {
      */
     render() {
         const {
-            avatar,
+            id,
             name,
             status = CALLING
         } = this.props._callee;
@@ -60,7 +59,7 @@ class CalleeInfo extends Component<Props> {
                     { ...this._style('ringing__content') }>
                     <Avatar
                         { ...this._style('ringing__avatar') }
-                        uri = { avatar } />
+                        participantId = { id } />
                     <Container { ...this._style('ringing__status') }>
                         <PresenceLabel
                             defaultPresence = { status }
@@ -144,7 +143,7 @@ function _mapStateToProps(state) {
 
         return {
             _callee: {
-                avatar: getAvatarURL(poltergeist),
+                id,
                 name: getParticipantDisplayName(state, id),
                 status: getParticipantPresenceStatus(state, id)
             },

@@ -49,7 +49,7 @@
     "jquery-contextmenu": "2.4.5",
     "jquery-i18next": "1.2.0",
     "js-md5": "0.6.1",
-    "js-utils": "github:jitsi/js-utils#73a67a7a60d52f8e895f50939c8fcbd1f20fe7b5",
+    "js-utils": "github:jitsi/js-utils#192b1c996e8c05530eb1f19e82a31069c3021e31",
     "jsrsasign": "8.0.12",
     "jwt-decode": "2.2.0",
     "lib-jitsi-meet": "github:jitsi/lib-jitsi-meet#9bcc2a26cc94683b8ed302418695a331b450df97",

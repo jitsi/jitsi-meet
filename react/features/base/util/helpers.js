@@ -3,6 +3,22 @@
 const logger = require('jitsi-meet-logger').getLogger(__filename);
 
 /**
+ * Creates a deferred object.
+ *
+ * @returns {{promise, resolve, reject}}
+ */
+export function createDeferred(): Object {
+    const deferred = {};
+
+    deferred.promise = new Promise((resolve, reject) => {
+        deferred.resolve = resolve;
+        deferred.reject = reject;
+    });
+
+    return deferred;
+}
+
+/**
  * Returns the namespace for all global variables, functions, etc that we need.
  *
  * @returns {Object} The namespace.

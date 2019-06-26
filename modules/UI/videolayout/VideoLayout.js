@@ -880,7 +880,7 @@ const VideoLayout = {
         const smallVideo = VideoLayout.getSmallVideo(id);
 
         if (smallVideo) {
-            smallVideo.avatarChanged(avatarUrl);
+            smallVideo.initializeAvatar();
         } else {
             logger.warn(
                 `Missed avatar update - no small video yet for ${id}`

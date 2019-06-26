@@ -493,7 +493,6 @@
 }
 
 #dominantSpeakerAvatarContainer,
-#dominantSpeakerAvatar,
 .dynamic-shadow {
     width: 200px;
     height: 200px;
@@ -503,13 +502,8 @@
     top: 50px;
     margin: auto;
     position: relative;
-    border-radius: 100px;
     overflow: hidden;
     visibility: inherit;
-}
-#dominantSpeakerAvatar {
-    background-color: #000000;
-    object-fit: cover;
 }
 
 .dynamic-shadow {
@@ -524,7 +518,6 @@
 .avatar-container {
     @include maxSize(60px);
     @include absoluteAligning();
-    border-radius: 50%;
     display: flex;
     justify-content: center;
     height: 50%;

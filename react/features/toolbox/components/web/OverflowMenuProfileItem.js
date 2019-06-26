@@ -2,13 +2,9 @@
 
 import React, { Component } from 'react';
 
+import { Avatar } from '../../../base/avatar';
+import { getLocalParticipant } from '../../../base/participants';
 import { connect } from '../../../base/redux';
-
-import {
-    Avatar,
-    getAvatarURL,
-    getLocalParticipant
-} from '../../../base/participants';
 
 declare var interfaceConfig: Object;
 
@@ -65,7 +61,6 @@ class OverflowMenuProfileItem extends Component<Props> {
         const { _localParticipant, _unclickable } = this.props;
         const classNames = `overflow-menu-item ${
             _unclickable ? 'unclickable' : ''}`;
-        const avatarURL = getAvatarURL(_localParticipant);
         let displayName;
 
         if (_localParticipant && _localParticipant.name) {
@@ -80,7 +75,9 @@ class OverflowMenuProfileItem extends Component<Props> {
                 className = { classNames }
                 onClick = { this._onClick }>
                 <span className = 'overflow-menu-item-icon'>
-                    <Avatar uri = { avatarURL } />
+                    <Avatar
+                        participantId = { _localParticipant.id }
+                        size = { 24 } />
                 </span>
                 <span className = 'profile-text'>
                     { displayName }

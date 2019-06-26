@@ -2,11 +2,8 @@
 
 import React, { Component } from 'react';
 
-import {
-    Avatar,
-    getAvatarURL,
-    getLocalParticipant
-} from '../../../base/participants';
+import { Avatar } from '../../../base/avatar';
+import { getLocalParticipant } from '../../../base/participants';
 import { connect } from '../../../base/redux';
 
 import OverlayFrame from './OverlayFrame';
@@ -18,9 +15,9 @@ import OverlayFrame from './OverlayFrame';
 type Props = {
 
     /**
-     * The source (e.g. URI, URL) of the avatar image of the local participant.
+     * The ID of the local participant.
      */
-    _avatar: string,
+    _localParticipantId: string,
 
     /**
      * The children components to be displayed into the overlay frame for
@@ -85,7 +82,7 @@ class FilmstripOnlyOverlayFrame extends Component<Props> {
                         }
                     </div>
                     <div className = 'inlay-filmstrip-only__avatar-container'>
-                        <Avatar uri = { this.props._avatar } />
+                        <Avatar participantId = { this.props._localParticipantId } />
                         {
                             this._renderIcon()
                         }
@@ -103,12 +100,12 @@ class FilmstripOnlyOverlayFrame extends Component<Props> {
  * @param {Object} state - The Redux state.
  * @private
  * @returns {{
- *     _avatar: string
+ *     _localParticipantId: string
  * }}
  */
 function _mapStateToProps(state) {
     return {
-        _avatar: getAvatarURL(getLocalParticipant(state) || {})
+        _localParticipantId: (getLocalParticipant(state) || {}).id
     };
 }
 

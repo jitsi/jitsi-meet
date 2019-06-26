@@ -33,7 +33,7 @@ SharedVideoThumb.prototype.constructor = SharedVideoThumb;
 SharedVideoThumb.prototype.setDeviceAvailabilityIcons = function() {};
 
 // eslint-disable-next-line no-empty-function
-SharedVideoThumb.prototype.avatarChanged = function() {};
+SharedVideoThumb.prototype.initializeAvatar = function() {};
 
 SharedVideoThumb.prototype.createContainer = function(spanId) {
     const container = document.createElement('span');

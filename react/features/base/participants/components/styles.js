@@ -1,15 +1,17 @@
-import { BoxModel, ColorPalette, createStyleSheet } from '../../styles';
+// @flow
+
+import { BoxModel, ColorPalette } from '../../styles';
 
 /**
  * The styles of the feature base/participants.
  */
-export default createStyleSheet({
+export default {
     /**
-     * The style of the avatar of the participant.
+     * Container for the avatar in the view.
      */
-    avatar: {
-        alignSelf: 'center',
-        flex: 0
+    avatarContainer: {
+        alignItems: 'center',
+        justifyContent: 'center'
     },
 
     /**
@@ -42,4 +44,4 @@ export default createStyleSheet({
         flex: 1,
         justifyContent: 'center'
     }
-});
+};
