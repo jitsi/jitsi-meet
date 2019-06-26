@@ -1998,6 +1998,8 @@ export default {
                 this.localAudio.dispose();
                 this.localAudio = null;
             }
+
+            APP.API.notifySuspendDetected();
         });
 
         APP.UI.addListener(UIEvents.AUDIO_MUTED, muted => {
