@@ -43,6 +43,7 @@ import {
     conferenceWillJoin,
     conferenceWillLeave,
     dataChannelOpened,
+    kickedOut,
     lockStateChanged,
     onStartMutedPolicyChanged,
     p2pStatusChanged,
@@ -104,7 +105,6 @@ import {
     getLocationContextRoot,
     getJitsiMeetGlobalNS
 } from './react/features/base/util';
-import { notifyKickedOut } from './react/features/conference';
 import { addMessage } from './react/features/chat';
 import { showDesktopPicker } from './react/features/desktop-picker';
 import { appendSuffix } from './react/features/display-name';
@@ -1962,7 +1962,7 @@ export default {
 
         room.on(JitsiConferenceEvents.KICKED, participant => {
             APP.UI.hideStats();
-            APP.store.dispatch(notifyKickedOut(participant));
+            APP.store.dispatch(kickedOut(room, participant));
 
             // FIXME close
         });
