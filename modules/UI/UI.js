@@ -510,8 +510,8 @@ UI.dockToolbar = dock => APP.store.dispatch(dockToolbox(dock));
  * @param {string} avatarURL - The URL to avatar image to display.
  * @returns {void}
  */
-UI.refreshAvatarDisplay = function(id, avatarURL) {
-    VideoLayout.changeUserAvatar(id, avatarURL);
+UI.refreshAvatarDisplay = function(id) {
+    VideoLayout.changeUserAvatar(id);
 };
 
 /**

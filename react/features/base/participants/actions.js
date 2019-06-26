@@ -12,7 +12,8 @@ import {
     PARTICIPANT_KICKED,
     PARTICIPANT_LEFT,
     PARTICIPANT_UPDATED,
-    PIN_PARTICIPANT
+    PIN_PARTICIPANT,
+    SET_LOADABLE_AVATAR_URL
 } from './actionTypes';
 import {
     getLocalParticipant,
@@ -451,6 +452,29 @@ export function pinParticipant(id) {
         type: PIN_PARTICIPANT,
         participant: {
             id
+        }
+    };
+}
+
+/**
+ * Creates an action which notifies the app that the loadable URL of the avatar of a participant got updated.
+ *
+ * @param {string} participantId - The ID of the participant.
+ * @param {string} url - The new URL.
+ * @returns {{
+ *     type: SET_LOADABLE_AVATAR_URL,
+ *     participant: {
+ *         id: string,
+ *         loadableAvatarUrl: string
+ *     }
+ * }}
+*/
+export function setLoadableAvatarUrl(participantId, url) {
+    return {
+        type: SET_LOADABLE_AVATAR_URL,
+        participant: {
+            id: participantId,
+            loadableAvatarUrl: url
         }
     };
 }

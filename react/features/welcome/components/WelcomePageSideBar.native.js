@@ -3,9 +3,8 @@
 import React, { Component } from 'react';
 import { SafeAreaView, ScrollView, Text } from 'react-native';
 
+import { Avatar } from '../../base/avatar';
 import {
-    Avatar,
-    getAvatarURL,
     getLocalParticipant,
     getParticipantDisplayName
 } from '../../base/participants';
@@ -43,14 +42,14 @@ type Props = {
     dispatch: Function,
 
     /**
-     * The avatar URL to be rendered.
-     */
-    _avatarURL: string,
-
-    /**
      * Display name of the local participant.
      */
     _displayName: string,
+
+    /**
+     * ID of the local participant.
+     */
+    _localParticipantId: string,
 
     /**
      * Sets the side bar visible or hidden.
@@ -90,9 +89,8 @@ class WelcomePageSideBar extends Component<Props> {
                 style = { styles.sideBar } >
                 <Header style = { styles.sideBarHeader }>
                     <Avatar
-                        size = { SIDEBAR_AVATAR_SIZE }
-                        style = { styles.avatar }
-                        uri = { this.props._avatarURL } />
+                        participantId = { this.props._localParticipantId }
+                        size = { SIDEBAR_AVATAR_SIZE } />
                     <Text style = { styles.displayName }>
                         { this.props._displayName }
                     </Text>
@@ -155,18 +153,14 @@ class WelcomePageSideBar extends Component<Props> {
  *
  * @param {Object} state - The redux state.
  * @protected
- * @returns {{
- *     _avatarURL: string,
- *     _displayName: string,
- *     _visible: boolean
- * }}
+ * @returns {Props}
  */
 function _mapStateToProps(state: Object) {
-    const localParticipant = getLocalParticipant(state);
+    const _localParticipant = getLocalParticipant(state);
 
     return {
-        _avatarURL: getAvatarURL(localParticipant),
-        _displayName: getParticipantDisplayName(state, localParticipant.id),
+        _displayName: getParticipantDisplayName(state, _localParticipant.id),
+        _localParticipantId: _localParticipant.id,
         _visible: state['features/welcome'].sideBarVisible
     };
 }

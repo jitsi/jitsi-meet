@@ -3,8 +3,7 @@
 import React, { Component } from 'react';
 import { Text } from 'react-native';
 
-import { Icon } from '../../../font-icons';
-import { Avatar } from '../../../participants';
+import { Avatar } from '../../../avatar';
 import { StyleType } from '../../../styles';
 
 import { type Item } from '../../Types';
@@ -71,44 +70,6 @@ export default class AvatarListItem extends Component<Props> {
     }
 
     /**
-     * Helper function to render the content in the avatar container.
-     *
-     * @returns {React$Element}
-     */
-    _getAvatarContent() {
-        const {
-            avatarSize = AVATAR_SIZE,
-            avatarTextStyle
-        } = this.props;
-        const { avatar, title } = this.props.item;
-        const isAvatarURL = Boolean(avatar && avatar.match(/^http[s]*:\/\//i));
-
-        if (isAvatarURL) {
-            return (
-                <Avatar
-                    size = { avatarSize }
-                    uri = { avatar } />
-            );
-        }
-
-        if (avatar && !isAvatarURL) {
-            return (
-                <Icon name = { avatar } />
-            );
-        }
-
-        return (
-            <Text
-                style = { [
-                    styles.avatarContent,
-                    avatarTextStyle
-                ] }>
-                { title.substr(0, 1).toUpperCase() }
-            </Text>
-        );
-    }
-
-    /**
      * Implements {@code Component#render}.
      *
      * @inheritdoc
@@ -118,26 +79,19 @@ export default class AvatarListItem extends Component<Props> {
             avatarSize = AVATAR_SIZE,
             avatarStyle
         } = this.props;
-        const { colorBase, lines, title } = this.props.item;
-        const avatarStyles = {
-            ...styles.avatar,
-            ...this._getAvatarColor(colorBase),
-            ...avatarStyle,
-            borderRadius: avatarSize / 2,
-            height: avatarSize,
-            width: avatarSize
-        };
+        const { avatar, colorBase, lines, title } = this.props.item;
 
         return (
             <Container
                 onClick = { this.props.onPress }
                 style = { styles.listItem }
                 underlayColor = { UNDERLAY_COLOR }>
-                <Container style = { styles.avatarContainer }>
-                    <Container style = { avatarStyles }>
-                        { this._getAvatarContent() }
-                    </Container>
-                </Container>
+                <Avatar
+                    colorBase = { colorBase }
+                    displayName = { title }
+                    size = { avatarSize }
+                    style = { avatarStyle }
+                    uri = { avatar } />
                 <Container style = { styles.listItemDetails }>
                     <Text
                         numberOfLines = { 1 }
@@ -153,27 +107,6 @@ export default class AvatarListItem extends Component<Props> {
                 { this.props.children }
             </Container>
         );
-    }
-
-    /**
-     * Returns a style (color) based on the string that determines the color of
-     * the avatar.
-     *
-     * @param {string} colorBase - The string that is the base of the color.
-     * @private
-     * @returns {Object}
-     */
-    _getAvatarColor(colorBase) {
-        if (!colorBase) {
-            return null;
-        }
-        let nameHash = 0;
-
-        for (let i = 0; i < colorBase.length; i++) {
-            nameHash += colorBase.codePointAt(i);
-        }
-
-        return styles[`avatarColor${(nameHash % 5) + 1}`];
     }
 
     _renderItemLine: (string, number) => React$Node;

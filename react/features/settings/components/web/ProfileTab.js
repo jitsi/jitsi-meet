@@ -53,6 +53,11 @@ export type Props = {
  * @extends Component
  */
 class ProfileTab extends AbstractDialogTab<Props> {
+    static defaultProps = {
+        displayName: '',
+        email: ''
+    };
+
     /**
      * Initializes a new {@code ConnectedSettingsDialog} instance.
      *

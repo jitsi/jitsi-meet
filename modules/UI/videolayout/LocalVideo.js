@@ -7,9 +7,6 @@ import { Provider } from 'react-redux';
 
 import { JitsiTrackEvents } from '../../../react/features/base/lib-jitsi-meet';
 import { VideoTrack } from '../../../react/features/base/media';
-import {
-    getAvatarURLByParticipantId
-} from '../../../react/features/base/participants';
 import { updateSettings } from '../../../react/features/base/settings';
 import { getLocalVideoTrack } from '../../../react/features/base/tracks';
 import { shouldDisplayTileView } from '../../../react/features/video-layout';
@@ -55,8 +52,7 @@ function LocalVideo(VideoLayout, emitter, streamEndedCallback) {
     // Initialize the avatar display with an avatar url selected from the redux
     // state. Redux stores the local user with a hardcoded participant id of
     // 'local' if no id has been assigned yet.
-    this.avatarChanged(
-        getAvatarURLByParticipantId(APP.store.getState(), this.id));
+    this.initializeAvatar();
 
     this.addAudioLevelIndicator();
     this.updateIndicators();

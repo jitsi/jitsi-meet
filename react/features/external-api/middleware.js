@@ -9,8 +9,10 @@ import { NOTIFY_CAMERA_ERROR, NOTIFY_MIC_ERROR } from '../base/devices';
 import { JitsiConferenceErrors } from '../base/lib-jitsi-meet';
 import {
     PARTICIPANT_KICKED,
+    SET_LOADABLE_AVATAR_URL,
     getAvatarURLByParticipantId,
-    getLocalParticipant
+    getLocalParticipant,
+    getParticipantById
 } from '../base/participants';
 import { MiddlewareRegistry } from '../base/redux';
 import { appendSuffix } from '../display-name';
@@ -26,8 +28,31 @@ declare var interfaceConfig: Object;
  * @returns {Function}
  */
 MiddlewareRegistry.register(store => next => action => {
+    // We need to do these before executing the rest of the middelware chain
+    switch (action.type) {
+    case SET_LOADABLE_AVATAR_URL: {
+        const { id, loadableAvatarUrl } = action.participant;
+        const participant = getParticipantById(
+            store.getState(),
+            id
+        );
+
+        const result = next(action);
+
+        if (participant.loadableAvatarUrl !== loadableAvatarUrl) {
+            APP.API.notifyAvatarChanged(
+                id,
+                loadableAvatarUrl
+            );
+        }
+
+        return result;
+    }
+    }
+
     const result = next(action);
 
+    // These should happen after the rest of the middleware chain ran
     switch (action.type) {
     case CONFERENCE_FAILED: {
         if (action.conference
@@ -54,7 +79,6 @@ MiddlewareRegistry.register(store => next => action => {
                 avatarURL: getAvatarURLByParticipantId(state, id)
             }
         );
-
         break;
     }
 

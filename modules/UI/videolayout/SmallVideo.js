@@ -10,9 +10,8 @@ import { Provider } from 'react-redux';
 import { i18next } from '../../../react/features/base/i18n';
 import { AudioLevelIndicator }
     from '../../../react/features/audio-level-indicator';
+import { Avatar as AvatarDisplay } from '../../../react/features/base/avatar';
 import {
-    Avatar as AvatarDisplay,
-    getAvatarURLByParticipantId,
     getPinnedParticipant,
     pinParticipant
 } from '../../../react/features/base/participants';
@@ -570,8 +569,7 @@ SmallVideo.prototype.updateView = function() {
     if (!this.hasAvatar) {
         if (this.id) {
             // Init avatar
-            this.avatarChanged(
-                getAvatarURLByParticipantId(APP.store.getState(), this.id));
+            this.initializeAvatar();
         } else {
             logger.error('Unable to init avatar - no id', this);
 
@@ -609,19 +607,22 @@ SmallVideo.prototype.updateView = function() {
  * Updates the react component displaying the avatar with the passed in avatar
  * url.
  *
- * @param {string} avatarUrl - The uri to the avatar image.
  * @returns {void}
  */
-SmallVideo.prototype.avatarChanged = function(avatarUrl) {
+SmallVideo.prototype.initializeAvatar = function() {
     const thumbnail = this.$avatar().get(0);
 
     this.hasAvatar = true;
 
     if (thumbnail) {
+        // Maybe add a special case for local participant, as on init of
+        // LocalVideo.js the id is set to "local" but will get updated later.
         ReactDOM.render(
-            <AvatarDisplay
-                className = 'userAvatar'
-                uri = { avatarUrl } />,
+            <Provider store = { APP.store }>
+                <AvatarDisplay
+                    className = 'userAvatar'
+                    participantId = { this.id } />
+            </Provider>,
             thumbnail
         );
     }

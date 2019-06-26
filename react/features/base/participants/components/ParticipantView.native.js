@@ -2,8 +2,8 @@
 
 import React, { Component } from 'react';
 import { Text, View } from 'react-native';
-import FastImage from 'react-native-fast-image';
 
+import { Avatar } from '../../avatar';
 import { translate } from '../../i18n';
 import { JitsiParticipantConnectionStatus } from '../../lib-jitsi-meet';
 import {
@@ -16,27 +16,13 @@ import { StyleType } from '../../styles';
 import { TestHint } from '../../testing/components';
 import { getTrackByMediaTypeAndParticipant } from '../../tracks';
 
-import Avatar from './Avatar';
-import {
-    getAvatarURL,
-    getParticipantById,
-    getParticipantDisplayName,
-    shouldRenderParticipantVideo
-} from '../functions';
+import { shouldRenderParticipantVideo } from '../functions';
 import styles from './styles';
 
 /**
  * The type of the React {@link Component} props of {@link ParticipantView}.
  */
 type Props = {
-
-    /**
-     * The source (e.g. URI, URL) of the avatar image of the participant with
-     * {@link #participantId}.
-     *
-     * @private
-     */
-    _avatar: string,
 
     /**
      * The connection status of the participant. Her video will only be rendered
@@ -192,7 +178,6 @@ class ParticipantView extends Component<Props> {
      */
     render() {
         const {
-            _avatar: avatar,
             _connectionStatus: connectionStatus,
             _renderVideo: renderVideo,
             _videoTrack: videoTrack,
@@ -201,9 +186,6 @@ class ParticipantView extends Component<Props> {
         } = this.props;
 
         const waitForVideoStarted = false;
-
-        // Is the avatar to be rendered?
-        const renderAvatar = Boolean(!renderVideo && avatar);
 
         // If the connection has problems, we will "tint" the video / avatar.
         const connectionProblem
@@ -238,10 +220,12 @@ class ParticipantView extends Component<Props> {
                         zOrder = { this.props.zOrder }
                         zoomEnabled = { this.props.zoomEnabled } /> }
 
-                { renderAvatar
-                    && <Avatar
-                        size = { this.props.avatarSize }
-                        uri = { avatar } /> }
+                { !renderVideo
+                    && <View style = { styles.avatarContainer }>
+                        <Avatar
+                            participantId = { this.props.participantId }
+                            size = { this.props.avatarSize } />
+                    </View> }
 
                 { useTint
 
@@ -265,45 +249,14 @@ class ParticipantView extends Component<Props> {
  * @param {Object} ownProps - The React {@code Component} props passed to the
  * associated (instance of) {@code ParticipantView}.
  * @private
- * @returns {{
- *     _avatar: string,
- *     _connectionStatus: string,
- *     _participantName: string,
- *     _renderVideo: boolean,
- *     _videoTrack: Track
- * }}
+ * @returns {Props}
  */
 function _mapStateToProps(state, ownProps) {
     const { participantId } = ownProps;
-    const participant = getParticipantById(state, participantId);
-    let avatar;
     let connectionStatus;
     let participantName;
 
-    if (participant) {
-        avatar = getAvatarURL(participant);
-        connectionStatus = participant.connectionStatus;
-        participantName = getParticipantDisplayName(state, participant.id);
-
-        // Avatar (on React Native) now has the ability to generate an
-        // automatically-colored default image when no URI/URL is specified or
-        // when it fails to load. In order to make the coloring permanent(ish)
-        // per participant, Avatar will need something permanent(ish) per
-        // perticipant, obviously. A participant's ID is such a piece of data.
-        // But the local participant changes her ID as she joins, leaves.
-        // TODO @lyubomir: The participants may change their avatar URLs at
-        // runtime which means that, if their old and new avatar URLs fail to
-        // download, Avatar will change their automatically-generated colors.
-        avatar || participant.local || (avatar = `#${participant.id}`);
-
-        // ParticipantView knows before Avatar that an avatar URL will be used
-        // so it's advisable to prefetch here.
-        avatar && !avatar.startsWith('#')
-            && FastImage.preload([ { uri: avatar } ]);
-    }
-
     return {
-        _avatar: avatar,
         _connectionStatus:
             connectionStatus
                 || JitsiParticipantConnectionStatus.ACTIVE,

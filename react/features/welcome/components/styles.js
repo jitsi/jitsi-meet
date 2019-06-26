@@ -39,14 +39,6 @@ export default createStyleSheet({
     },
 
     /**
-     * Style of the avatar in te side bar.
-     */
-    avatar: {
-        alignSelf: 'center',
-        flex: 0
-    },
-
-    /**
      * Join button style.
      */
     button: {
