@@ -164,6 +164,21 @@ export default createStyleSheet({
     },
 
     /**
+     * The styles for reduced UI mode.
+     */
+    reducedUIContainer: {
+        alignItems: 'center',
+        backgroundColor: ColorPalette.blue,
+        flex: 1,
+        justifyContent: 'center'
+    },
+
+    reducedUIText: {
+        color: TEXT_COLOR,
+        fontSize: 12
+    },
+
+    /**
      * Container for room name input box and 'join' button.
      */
     roomContainer: {
