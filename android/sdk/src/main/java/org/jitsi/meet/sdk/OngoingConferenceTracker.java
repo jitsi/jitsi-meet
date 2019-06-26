@@ -16,8 +16,6 @@
 
 package org.jitsi.meet.sdk;
 
-import android.app.Activity;
-
 import com.facebook.react.bridge.ReadableMap;
 
 import java.util.Collection;
@@ -67,13 +65,13 @@ class OngoingConferenceTracker {
         switch(name) {
             case CONFERENCE_WILL_JOIN:
                 currentConference = url;
-                updateOnConferenceJoined();
+                updateListeners();
                 break;
 
             case CONFERENCE_TERMINATED:
                 if (url.equals(currentConference)) {
                     currentConference = null;
-                    updateOnConferenceTerminated();
+                    updateListeners();
                 }
                 break;
         }
@@ -85,20 +83,6 @@ class OngoingConferenceTracker {
 
     void removeListener(OngoingConferenceListener listener) {
         listeners.remove(listener);
-    }
-
-    private void updateOnConferenceJoined() {
-        // Launch the service.
-        Activity currentActivity = ReactInstanceManagerHolder.getCurrentActivity();
-        if (currentActivity != null) {
-            JitsiMeetOngoingConferenceService.launch(currentActivity);
-        }
-
-        updateListeners();
-    }
-
-    private void updateOnConferenceTerminated() {
-        updateListeners();
     }
 
     private void updateListeners() {

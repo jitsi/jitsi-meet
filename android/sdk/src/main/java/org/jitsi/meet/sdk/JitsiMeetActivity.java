@@ -73,7 +73,18 @@ public class JitsiMeetActivity extends FragmentActivity
 
     @Override
     public void onDestroy() {
+        // Here we are trying to handle the following corner case: an application using the SDK
+        // is using this Activity for displaying meetings, but there is another "main" Activity
+        // with other content. If this Activity is "swiped out" from the recent list we will get
+        // Activity#onDestroy() called without warning. At this point we can try to leave the
+        // current meeting, but when our view is detached from React the JS <-> Native bridge won't
+        // be operational so the external API won't be able to notify the native side that the
+        // conference terminated. Thus, try our best to clean up.
         leave();
+        if (AudioModeModule.useConnectionService()) {
+            ConnectionService.abortConnections();
+        }
+        JitsiMeetOngoingConferenceService.abort(this);
 
         super.onDestroy();
     }
@@ -198,6 +209,8 @@ public class JitsiMeetActivity extends FragmentActivity
     @Override
     public void onConferenceJoined(Map<String, Object> data) {
         Log.d(TAG, "Conference joined: " + data);
+        // Launch the service for the ongoing notification.
+        JitsiMeetOngoingConferenceService.launch(this);
     }
 
     @Override
