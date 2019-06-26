@@ -86,8 +86,8 @@ class OngoingNotification {
 
         builder
             .setCategory(NotificationCompat.CATEGORY_CALL)
-            .setContentTitle("Ongoing meeting")
-            .setContentText("You are currently in a meeting. Tap to return to it.")
+            .setContentTitle(context.getString(R.string.ongoing_notification_title))
+            .setContentText(context.getString(R.string.ongoing_notification_text))
             .setPriority(NotificationCompat.PRIORITY_DEFAULT)
             .setContentIntent(pendingIntent)
             .setOngoing(true)

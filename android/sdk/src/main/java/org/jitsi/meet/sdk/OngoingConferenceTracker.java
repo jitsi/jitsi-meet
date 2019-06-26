@@ -27,6 +27,9 @@ import java.util.HashSet;
 class OngoingConferenceTracker {
     private static final OngoingConferenceTracker instance = new OngoingConferenceTracker();
 
+    private static final String CONFERENCE_WILL_JOIN = "CONFERENCE_WILL_JOIN";
+    private static final String CONFERENCE_TERMINATED = "CONFERENCE_TERMINATED";
+
     private final Collection<OngoingConferenceListener> listeners =
         Collections.synchronizedSet(new HashSet<OngoingConferenceListener>());
     private String currentConference;
@@ -53,12 +56,12 @@ class OngoingConferenceTracker {
         }
 
         switch(name) {
-            case "CONFERENCE_WILL_JOIN":
+            case CONFERENCE_WILL_JOIN:
                 currentConference = url;
                 updateOnConferenceJoined();
                 break;
 
-            case "CONFERENCE_TERMINATED":
+            case CONFERENCE_TERMINATED:
                 if (url.equals(currentConference)) {
                     currentConference = null;
                     updateOnConferenceTerminated();
