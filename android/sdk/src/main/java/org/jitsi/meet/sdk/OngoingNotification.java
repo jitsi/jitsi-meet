@@ -26,12 +26,17 @@ import android.os.Build;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
+import java.util.Random;
 
-class NotificationUtils {
-    private static final String TAG = NotificationUtils.class.getSimpleName();
 
-    private static final String ONGOING_CONFERENCEE_CHANNEL_ID = "JitsiNotificationChannel";
-    private static final String ONGOING_CONFERENCEE_CHANNEL_NAME = "Ongoing Conference Notifications";
+class OngoingNotification {
+    private static final String TAG = OngoingNotification.class.getSimpleName();
+
+    private static final String CHANNEL_ID = "JitsiNotificationChannel";
+    private static final String CHANNEL_NAME = "Ongoing Conference Notifications";
+
+    static final int NOTIFICATION_ID = new Random().nextInt(99999) + 10000;
+
 
     static void createOngoingConferenceNotificationChannel() {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
@@ -48,16 +53,13 @@ class NotificationUtils {
             = (NotificationManager)context.getSystemService(Context.NOTIFICATION_SERVICE);
 
         NotificationChannel channel
-            = notificationManager.getNotificationChannel(ONGOING_CONFERENCEE_CHANNEL_ID);
+            = notificationManager.getNotificationChannel(CHANNEL_ID);
         if (channel != null) {
             // The channel was already created, no need to do it again.
             return;
         }
 
-        channel = new NotificationChannel(
-                ONGOING_CONFERENCEE_CHANNEL_ID,
-                ONGOING_CONFERENCEE_CHANNEL_NAME,
-                NotificationManager.IMPORTANCE_DEFAULT);
+        channel = new NotificationChannel(CHANNEL_ID, CHANNEL_NAME, NotificationManager.IMPORTANCE_DEFAULT);
         channel.enableLights(false);
         channel.enableVibration(false);
         channel.setShowBadge(false);
@@ -77,7 +79,7 @@ class NotificationUtils {
 
         NotificationCompat.Builder builder;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            builder = new NotificationCompat.Builder(context, ONGOING_CONFERENCEE_CHANNEL_ID);
+            builder = new NotificationCompat.Builder(context, CHANNEL_ID);
         } else {
             builder = new NotificationCompat.Builder(context);
         }

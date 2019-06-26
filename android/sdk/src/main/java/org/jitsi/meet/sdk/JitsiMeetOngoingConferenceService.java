@@ -24,23 +24,21 @@ import android.content.Intent;
 import android.os.IBinder;
 import android.util.Log;
 
-import java.util.Random;
 
-public class JitsiMeetOngoingConferenceService extends Service implements OngoingConferenceTracker.OngoingConferenceListener {
+public class JitsiMeetOngoingConferenceService extends Service
+        implements OngoingConferenceTracker.OngoingConferenceListener {
     private static final String TAG = JitsiMeetOngoingConferenceService.class.getSimpleName();
 
-    private static final int NOTIFICATION_ID = new Random().nextInt(99999) + 10000;
-
     static final class Actions {
-        static final String ONGOING_CONFERENCE = TAG + ":ONGOING_CONFERENCE";
+        static final String START = TAG + ":START";
         static final String HANGUP = TAG + ":HANGUP";
     }
 
     static void launch(Context context) {
-        NotificationUtils.createOngoingConferenceNotificationChannel();
+        OngoingNotification.createOngoingConferenceNotificationChannel();
 
         Intent intent = new Intent(context, JitsiMeetOngoingConferenceService.class);
-        intent.setAction(Actions.ONGOING_CONFERENCE);
+        intent.setAction(Actions.START);
 
         ComponentName componentName = context.startService(intent);
         if (componentName == null) {
@@ -70,10 +68,9 @@ public class JitsiMeetOngoingConferenceService extends Service implements Ongoin
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         final String action = intent.getAction();
-        if (action.equals(Actions.ONGOING_CONFERENCE)) {
-            Notification notification
-                = NotificationUtils.buildOngoingConferenceNotification();
-            startForeground(NOTIFICATION_ID, notification);
+        if (action.equals(Actions.START)) {
+            Notification notification = OngoingNotification.buildOngoingConferenceNotification();
+            startForeground(OngoingNotification.NOTIFICATION_ID, notification);
             Log.i(TAG, "Service started");
         } else if (action.equals(Actions.HANGUP)) {
             Log.i(TAG, "Hangup requested");
@@ -81,6 +78,7 @@ public class JitsiMeetOngoingConferenceService extends Service implements Ongoin
             if (AudioModeModule.useConnectionService()) {
                 ConnectionService.abortConnections();
             }
+            stopSelf();
         } else {
             Log.w(TAG, "Unknown action received: " + action);
             stopSelf();
