@@ -437,6 +437,8 @@ The listener will receive an object with the following structure:
 }
 ```
 
+* **suspendDetected** - event notifications about detecting suspend event in host computer.
+
 You can also add multiple event listeners by using `addEventListeners`.
 This method requires one argument of type Object. The object argument must
 have the names of the events as keys and the listeners of the events as values.

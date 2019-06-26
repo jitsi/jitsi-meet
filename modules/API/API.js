@@ -510,6 +510,15 @@ class API {
     }
 
     /**
+     * Notify external application (if API is enabled) that a suspend event in host computer.
+     *
+     * @returns {void}
+     */
+    notifySuspendDetected() {
+        this._sendEvent({ name: 'suspend-detected' });
+    }
+
+    /**
      * Notify external application (if API is enabled) for audio muted status
      * changed.
      *
