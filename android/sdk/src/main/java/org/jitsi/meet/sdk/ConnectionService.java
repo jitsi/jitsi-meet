@@ -243,7 +243,7 @@ public class ConnectionService extends android.telecom.ConnectionService {
             startCallPromise.resolve(null);
         } else {
             Log.e(TAG, String.format(
-                "onCreateOutgoingConnection: no start call Promise for %s",
+                "o1nCreateOutgoingConnection: no start call Promise for %s",
                 connection.getCallUUID()));
         }
 
