@@ -561,7 +561,7 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
         this.emit('_willDispose');
         this._transport.dispose();
         this.removeAllListeners();
-        if (this._frame) {
+        if (this._frame && this._frame.parentNode) {
             this._frame.parentNode.removeChild(this._frame);
         }
     }
