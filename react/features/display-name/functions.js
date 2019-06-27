@@ -8,6 +8,6 @@
  * @returns {string} The formatted display name.
  */
 export function appendSuffix(displayName: string, suffix: string = '') {
-    return `${displayName || suffix || ''}${
+    return `${displayName || suffix}${
         displayName && suffix && displayName !== suffix ? ` (${suffix})` : ''}`;
 }
