@@ -97,9 +97,19 @@ type State = {
     hasVideoPermission: boolean,
 
     /**
+     * The id of the audio input device that is opened for preview.
+     */
+    previewAudioInputId: ?Object,
+
+    /**
      * The JitsiTrack to use for previewing audio input.
      */
     previewAudioTrack: ?Object,
+
+    /**
+     * The id of the video input device that is opened for preview.
+     */
+    previewVideoInputId: ?Object,
 
     /**
      * The JitsiTrack to use for previewing video input.
@@ -266,11 +276,13 @@ class DeviceSelection extends AbstractDialogTab<Props, State> {
                 }
 
                 this.setState({
+                    previewAudioInputId: jitsiLocalTrack.getDeviceId(),
                     previewAudioTrack: jitsiLocalTrack
                 });
             })
             .catch(() => {
                 this.setState({
+                    previewAudioInputId: null,
                     previewAudioTrack: null
                 });
             });
@@ -298,12 +310,14 @@ class DeviceSelection extends AbstractDialogTab<Props, State> {
                 }
 
                 this.setState({
+                    previewVideoInputId: jitsiLocalTrack.getDeviceId(),
                     previewVideoTrack: jitsiLocalTrack,
                     previewVideoTrackError: null
                 });
             })
             .catch(() => {
                 this.setState({
+                    previewVideoInputId: null,
                     previewVideoTrack: null,
                     previewVideoTrackError:
                         this.props.t('deviceSelection.previewUnavailable')
@@ -372,7 +386,7 @@ class DeviceSelection extends AbstractDialogTab<Props, State> {
                 label: 'settings.selectCamera',
                 onSelect: selectedVideoInputId =>
                     super._onChange({ selectedVideoInputId }),
-                selectedDeviceId: this.props.selectedVideoInputId
+                selectedDeviceId: this.state.previewVideoInputId
             },
             {
                 devices: availableDevices.audioInput,
@@ -384,7 +398,7 @@ class DeviceSelection extends AbstractDialogTab<Props, State> {
                 label: 'settings.selectMic',
                 onSelect: selectedAudioInputId =>
                     super._onChange({ selectedAudioInputId }),
-                selectedDeviceId: this.props.selectedAudioInputId
+                selectedDeviceId: this.state.previewAudioInputId
             }
         ];
 
