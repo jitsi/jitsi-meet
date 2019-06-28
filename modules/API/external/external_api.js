@@ -63,6 +63,7 @@ const events = {
     'mic-error': 'micError',
     'outgoing-message': 'outgoingMessage',
     'participant-joined': 'participantJoined',
+    'participant-kicked-out': 'participantKickedOut',
     'participant-left': 'participantLeft',
     'password-required': 'passwordRequired',
     'proxy-connection-event': 'proxyConnectionEvent',

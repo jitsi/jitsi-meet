@@ -387,6 +387,19 @@ changes. The listener will receive an object with the following structure:
 }
 ```
 
+* **participantKickedOut** - event notifications about a participants being removed from the room. The listener will receive an object with the following structure:
+```javascript
+{
+    kicked: {
+        id: string, // the id of the participant removed from the room
+        local: boolean // whether or not the participant is the local particiapnt
+    },
+    kicker: {
+        id: string // the id of the participant who kicked out the other participant
+    }
+}
+```
+
 * **participantLeft** - event notifications about participants that leave the room. The listener will receive an object with the following structure:
 ```javascript
 {
