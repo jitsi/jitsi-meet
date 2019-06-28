@@ -45,6 +45,8 @@ deploy-appbundle:
 		$(OUTPUT_DIR)/analytics-ga.js \
 		$(BUILD_DIR)/analytics-ga.min.js \
 		$(BUILD_DIR)/analytics-ga.min.map \
+		$(BUILD_DIR)/video-blur-effect.min.js \
+		$(BUILD_DIR)/video-blur-effect.min.map \
 		$(DEPLOY_DIR)
 
 deploy-lib-jitsi-meet:

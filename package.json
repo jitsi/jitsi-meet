@@ -35,6 +35,8 @@
     "@atlaskit/tooltip": "12.1.13",
     "@microsoft/microsoft-graph-client": "1.1.0",
     "@react-native-community/async-storage": "1.3.4",
+    "@tensorflow-models/body-pix": "^1.0.1",
+    "@tensorflow/tfjs": "^1.1.2",
     "@webcomponents/url": "0.7.1",
     "amplitude-js": "4.5.2",
     "bc-css-flags": "3.0.0",

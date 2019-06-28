@@ -151,6 +151,16 @@ module.exports = [
                 './react/features/analytics/handlers/GoogleAnalyticsHandler.js'
         }
     }),
+    Object.assign({}, config, {
+        entry: {
+            'video-blur-effect':
+                './react/features/stream-effects/JitsiStreamBlurEffect.js'
+        },
+        output: Object.assign({}, config.output, {
+            library: [ 'JitsiMeetJS', 'app', 'effects' ],
+            libraryTarget: 'window'
+        })
+    }),
 
     // The Webpack configuration to bundle external_api.js (aka
     // JitsiMeetExternalAPI).

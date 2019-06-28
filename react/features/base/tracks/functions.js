@@ -71,6 +71,7 @@ export function createLocalTracksF(
 
                 // Copy array to avoid mutations inside library.
                 devices: options.devices.slice(0),
+                effects: options.effects,
                 firefox_fake_device, // eslint-disable-line camelcase
                 micDeviceId,
                 resolution

@@ -468,6 +468,21 @@ export function createRemoteVideoMenuButtonEvent(buttonName, attributes) {
 }
 
 /**
+ * Creates an event indicating that an action related to video blur
+ * occurred (e.g. It was started or stopped).
+ *
+ * @param {string} action - The action which occurred.
+ * @returns {Object} The event in a format suitable for sending via
+ * sendAnalytics.
+ */
+export function createVideoBlurEvent(action) {
+    return {
+        action,
+        actionSubject: 'video.blur'
+    };
+}
+
+/**
  * Creates an event indicating that an action related to screen sharing
  * occurred (e.g. It was started or stopped).
  *
