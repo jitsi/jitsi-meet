@@ -615,7 +615,8 @@
             "speakerStats": "Toggle speaker statistics",
             "tileView": "Toggle tile view",
             "toggleCamera": "Toggle camera",
-            "videomute": "Toggle mute video"
+            "videomute": "Toggle mute video",
+            "videoblur": "Toggle video blur"
         },
         "addPeople": "Add people to your call",
         "audioonly": "Enable / Disable audio only mode",
@@ -668,7 +669,9 @@
         "tileViewToggle": "Toggle tile view",
         "toggleCamera": "Toggle camera",
         "unableToUnmutePopup": "You cannot un-mute while the shared video is on.",
-        "videomute": "Start / Stop camera"
+        "videomute": "Start / Stop camera",
+        "startvideoblur": "Blur my background",
+        "stopvideoblur": "Disable background blur"
     },
     "transcribing": {
         "ccButtonTooltip": "Start / Stop subtitles",
