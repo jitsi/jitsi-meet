@@ -9,6 +9,7 @@ import {
     MUTE_REMOTE_PARTICIPANT,
     PARTICIPANT_ID_CHANGED,
     PARTICIPANT_JOINED,
+    PARTICIPANT_KICKED,
     PARTICIPANT_LEFT,
     PARTICIPANT_UPDATED,
     PIN_PARTICIPANT
@@ -414,6 +415,12 @@ export function participantMutedUs(participant) {
  */
 export function participantKicked(kicker, kicked) {
     return (dispatch, getState) => {
+
+        dispatch({
+            type: PARTICIPANT_KICKED,
+            kicked: kicked.getId(),
+            kicker: kicker.getId()
+        });
 
         dispatch(showNotification({
             titleArguments: {

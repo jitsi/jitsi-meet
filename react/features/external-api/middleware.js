@@ -1,9 +1,14 @@
 // @flow
 
-import { CONFERENCE_FAILED, CONFERENCE_JOINED } from '../base/conference';
+import {
+    CONFERENCE_FAILED,
+    CONFERENCE_JOINED,
+    KICKED_OUT
+} from '../base/conference';
 import { NOTIFY_CAMERA_ERROR, NOTIFY_MIC_ERROR } from '../base/devices';
 import { JitsiConferenceErrors } from '../base/lib-jitsi-meet';
 import {
+    PARTICIPANT_KICKED,
     getAvatarURLByParticipantId,
     getLocalParticipant
 } from '../base/participants';
@@ -53,6 +58,16 @@ MiddlewareRegistry.register(store => next => action => {
         break;
     }
 
+    case KICKED_OUT:
+        APP.API.notifyKickedOut(
+            {
+                id: getLocalParticipant(store.getState()).id,
+                local: true
+            },
+            { id: action.participant.getId() }
+        );
+        break;
+
     case NOTIFY_CAMERA_ERROR:
         if (action.error) {
             APP.API.notifyOnCameraError(
@@ -64,6 +79,15 @@ MiddlewareRegistry.register(store => next => action => {
         if (action.error) {
             APP.API.notifyOnMicError(action.error.name, action.error.message);
         }
+        break;
+
+    case PARTICIPANT_KICKED:
+        APP.API.notifyKickedOut(
+            {
+                id: action.kicked,
+                local: false
+            },
+            { id: action.kicker });
         break;
 
     case SET_FILMSTRIP_VISIBLE:

@@ -66,6 +66,18 @@ export const PARTICIPANT_ID_CHANGED = 'PARTICIPANT_ID_CHANGED';
 export const PARTICIPANT_JOINED = 'PARTICIPANT_JOINED';
 
 /**
+ * Action to signal that a participant has been removed from a conference by
+ * another participant.
+ *
+ * {
+ *     type: PARTICIPANT_KICKED,
+ *     kicked: Object,
+ *     kicker: Object
+ * }
+ */
+export const PARTICIPANT_KICKED = 'PARTICIPANT_KICKED';
+
+/**
  * Action to handle case when participant lefts.
  *
  * {
