@@ -8,7 +8,6 @@ import {
 } from '../app';
 import {
     conferenceLeft,
-    conferenceWillLeave,
     JITSI_CONFERENCE_URL_KEY,
     setPassword
 } from '../base/conference';
@@ -51,22 +50,11 @@ export function beginRoomLockRequest(conference: ?Object) {
 export function _cancelPasswordRequiredPrompt(conference: Object) {
     return (dispatch: Dispatch<any>, getState: Function) => {
 
-        // mimics what web does now after showing the feedback on hangup
         if (typeof APP !== 'undefined') {
-
-            APP.store.dispatch(conferenceWillLeave(conference));
-
-            const onDisconnected = () => {
-                APP.API.notifyConferenceLeft(APP.conference.roomName);
-                APP.API.notifyReadyToClose();
-
-                dispatch(maybeRedirectToWelcomePage());
-
-                return Promise.resolve();
-            };
-
-            APP.connection.disconnect()
-                .then(onDisconnected, onDisconnected);
+            // when we are redirecting the library should handle any
+            // unload and clean of the connection.
+            APP.API.notifyReadyToClose();
+            dispatch(maybeRedirectToWelcomePage());
 
             return;
         }

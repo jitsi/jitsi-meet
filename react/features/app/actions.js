@@ -225,11 +225,11 @@ export function reloadWithStoredParams() {
  * If we have a close page enabled, redirect to it without
  * showing any other dialog.
  *
- * @param {Object} options - used to decide which particular close page to show
- * or if close page is disabled, whether we should show the thankyou dialog
- * @param {boolean} options.showThankYou - whether we should
- * show thank you dialog
- * @param {boolean} options.feedbackSubmitted - whether feedback was submitted
+ * @param {Object} options - Used to decide which particular close page to show
+ * or if close page is disabled, whether we should show the thankyou dialog.
+ * @param {boolean} options.showThankYou - Whether we should
+ * show thank you dialog.
+ * @param {boolean} options.feedbackSubmitted - Whether feedback was submitted.
  * @returns {Function}
  */
 export function maybeRedirectToWelcomePage(options: Object = {}) {
