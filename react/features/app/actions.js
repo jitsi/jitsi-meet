@@ -13,10 +13,18 @@ import {
 import { connect, disconnect, setLocationURL } from '../base/connection';
 import { loadConfig } from '../base/lib-jitsi-meet';
 import { createDesiredLocalTracks } from '../base/tracks';
-import { parseURIString, toURLString } from '../base/util';
+import {
+    getLocationContextRoot,
+    parseURIString,
+    toURLString
+} from '../base/util';
+import { showNotification } from '../notifications';
 import { setFatalError } from '../overlay';
 
-import { getDefaultURL } from './functions';
+import {
+    getDefaultURL,
+    getName
+} from './functions';
 
 const logger = require('jitsi-meet-logger').getLogger(__filename);
 
@@ -137,6 +145,34 @@ export function redirectWithStoredParams(pathname: string) {
 }
 
 /**
+ * Assigns a specific pathname to window.location.pathname taking into account
+ * the context root of the Web app.
+ *
+ * @param {string} pathname - The pathname to assign to
+ * window.location.pathname. If the specified pathname is relative, the context
+ * root of the Web app will be prepended to the specified pathname before
+ * assigning it to window.location.pathname.
+ * @returns {Function}
+ */
+export function redirectToStaticPage(pathname: string) {
+    return () => {
+        const windowLocation = window.location;
+        let newPathname = pathname;
+
+        if (!newPathname.startsWith('/')) {
+            // A pathname equal to ./ specifies the current directory. It will be
+            // fine but pointless to include it because contextRoot is the current
+            // directory.
+            newPathname.startsWith('./')
+            && (newPathname = newPathname.substring(2));
+            newPathname = getLocationContextRoot(windowLocation) + newPathname;
+        }
+
+        windowLocation.pathname = newPathname;
+    };
+}
+
+/**
  * Reloads the page.
  *
  * @protected
@@ -182,3 +218,58 @@ export function reloadWithStoredParams() {
         }
     };
 }
+
+/**
+ * Check if the welcome page is enabled and redirects to it.
+ * If requested show a thank you dialog before that.
+ * If we have a close page enabled, redirect to it without
+ * showing any other dialog.
+ *
+ * @param {Object} options - Used to decide which particular close page to show
+ * or if close page is disabled, whether we should show the thankyou dialog.
+ * @param {boolean} options.showThankYou - Whether we should
+ * show thank you dialog.
+ * @param {boolean} options.feedbackSubmitted - Whether feedback was submitted.
+ * @returns {Function}
+ */
+export function maybeRedirectToWelcomePage(options: Object = {}) {
+    return (dispatch: Dispatch<any>, getState: Function) => {
+
+        const {
+            enableClosePage
+        } = getState()['features/base/config'];
+
+        // if close page is enabled redirect to it, without further action
+        if (enableClosePage) {
+            const { isGuest } = getState()['features/base/jwt'];
+
+            // save whether current user is guest or not, before navigating
+            // to close page
+            window.sessionStorage.setItem('guest', isGuest);
+
+            dispatch(redirectToStaticPage(`static/${
+                options.feedbackSubmitted ? 'close.html' : 'close2.html'}`));
+
+            return;
+        }
+
+        // else: show thankYou dialog only if there is no feedback
+        if (options.showThankYou) {
+            dispatch(showNotification({
+                titleArguments: { appName: getName() },
+                titleKey: 'dialog.thankYou'
+            }));
+        }
+
+        // if Welcome page is enabled redirect to welcome page after 3 sec, if
+        // there is a thank you message to be shown, 0.5s otherwise.
+        if (getState()['features/base/config'].enableWelcomePage) {
+            setTimeout(
+                () => {
+                    dispatch(redirectWithStoredParams('/'));
+                },
+                options.showThankYou ? 3000 : 500);
+        }
+    };
+}
+

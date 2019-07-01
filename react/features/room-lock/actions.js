@@ -2,7 +2,10 @@
 
 import type { Dispatch } from 'redux';
 
-import { appNavigate } from '../app';
+import {
+    appNavigate,
+    maybeRedirectToWelcomePage
+} from '../app';
 import {
     conferenceLeft,
     JITSI_CONFERENCE_URL_KEY,
@@ -10,6 +13,8 @@ import {
 } from '../base/conference';
 import { hideDialog, openDialog } from '../base/dialog';
 import { PasswordRequiredPrompt, RoomLockPrompt } from './components';
+
+declare var APP: Object;
 
 /**
  * Begins a (user) request to lock a specific conference/room.
@@ -44,6 +49,16 @@ export function beginRoomLockRequest(conference: ?Object) {
  */
 export function _cancelPasswordRequiredPrompt(conference: Object) {
     return (dispatch: Dispatch<any>, getState: Function) => {
+
+        if (typeof APP !== 'undefined') {
+            // when we are redirecting the library should handle any
+            // unload and clean of the connection.
+            APP.API.notifyReadyToClose();
+            dispatch(maybeRedirectToWelcomePage());
+
+            return;
+        }
+
         // Canceling PasswordRequiredPrompt is to navigate the app/user to
         // WelcomePage. In other words, the canceling invalidates the
         // locationURL. Make sure that the canceling indeed has the intent to
