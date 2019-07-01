@@ -482,6 +482,7 @@
         "mutedTitle": "You're muted!",
         "mutedRemotelyTitle": "You have been muted by __participantDisplayName__!",
         "mutedRemotelyDescription": "You can always unmute when you're ready to speak. Mute back when you're done to keep noise away from the meeting.",
+        "passwordSetRemotely": "Password set by another participant",
         "raisedHand": "__name__ would like to speak.",
         "somebody": "Somebody",
         "startSilentTitle": "You joined with no audio output!",
@@ -492,7 +493,7 @@
         "newDeviceAudioTitle": "New audio device detected",
         "newDeviceAction": "Use"
     },
-    "passwordSetRemotely": "set by another member",
+    "passwordSetRemotely": "set by another participant",
     "passwordDigitsOnly": "Up to __number__ digits",
     "poweredby": "powered by",
     "presenceStatus": {
