@@ -1796,7 +1796,9 @@ export default {
 
         room.on(JitsiConferenceEvents.TALK_WHILE_MUTED, () => {
             const action = APP.store.dispatch(showNotification({
-                titleKey: 'toolbar.talkWhileMutedPopup'
+                titleKey: 'toolbar.talkWhileMutedPopup',
+                customActionNameKey: 'notify.unmute',
+                customActionHandler: muteLocalAudio.bind(this, false)
             }));
 
             lastNotificationId = action.uid;
