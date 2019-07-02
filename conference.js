@@ -948,17 +948,15 @@ export default {
      * Returns the connection times stored in the library.
      */
     getConnectionTimes() {
-        return this._room.getConnectionTimes();
+        return room.getConnectionTimes();
     },
 
     // used by torture currently
     isJoined() {
-        return this._room
-            && this._room.isJoined();
+        return room && room.isJoined();
     },
     getConnectionState() {
-        return this._room
-            && this._room.getConnectionState();
+        return room && room.getConnectionState();
     },
 
     /**
@@ -967,8 +965,7 @@ export default {
      * P2P connection
      */
     getP2PConnectionState() {
-        return this._room
-            && this._room.getP2PConnectionState();
+        return room && room.getP2PConnectionState();
     },
 
     /**
@@ -977,7 +974,7 @@ export default {
      */
     _startP2P() {
         try {
-            this._room && this._room.startP2PSession();
+            room && room.startP2PSession();
         } catch (error) {
             logger.error('Start P2P failed', error);
             throw error;
@@ -990,7 +987,7 @@ export default {
      */
     _stopP2P() {
         try {
-            this._room && this._room.stopP2PSession();
+            room && room.stopP2PSession();
         } catch (error) {
             logger.error('Stop P2P failed', error);
             throw error;
@@ -1005,7 +1002,7 @@ export default {
      * false otherwise.
      */
     isConnectionInterrupted() {
-        return this._room.isConnectionInterrupted();
+        return room.isConnectionInterrupted();
     },
 
     /**
@@ -1066,7 +1063,7 @@ export default {
     },
 
     getMyUserId() {
-        return this._room && this._room.myUserId();
+        return room && room.myUserId();
     },
 
     /**
@@ -1089,7 +1086,7 @@ export default {
      * least one track.
      */
     getNumberOfParticipantsWithTracks() {
-        return this._room.getParticipants()
+        return room.getParticipants()
             .filter(p => p.getTracks().length > 0)
             .length;
     },
@@ -2206,7 +2203,7 @@ export default {
 
         if (config.requireDisplayName
                 && !APP.conference.getLocalDisplayName()
-                && !this._room.isHidden()) {
+                && !room.isHidden()) {
             APP.UI.promptDisplayName();
         }
 
