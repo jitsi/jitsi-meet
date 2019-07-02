@@ -1253,7 +1253,7 @@ export default {
                         this.localVideo = newStream;
                         this._setSharingScreen(newStream);
                         if (newStream) {
-                            APP.UI.addLocalStream(newStream);
+                            APP.UI.addLocalVideoStream(newStream);
                         }
                         this.setVideoMuteStatus(this.isLocalVideoMuted());
                     })
@@ -1304,9 +1304,6 @@ export default {
                 replaceLocalTrack(this.localAudio, newStream, room))
                     .then(() => {
                         this.localAudio = newStream;
-                        if (newStream) {
-                            APP.UI.addLocalStream(newStream);
-                        }
                         this.setAudioMuteStatus(this.isLocalAudioMuted());
                     })
                     .then(resolve)
