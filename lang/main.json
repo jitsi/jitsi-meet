@@ -4,7 +4,7 @@
         "countryNotSupported": "We do not support this destination yet.",
         "countryReminder": "Calling outside the US? Please make sure you start with the country code!",
         "disabled": "You can't invite people.",
-        "failedToAdd": "Failed to add members",
+        "failedToAdd": "Failed to add participants",
         "footerText": "Dialing out is disabled.",
         "invite": "Invite",
         "loading": "Searching for people and phone numbers",
@@ -112,7 +112,6 @@
         "transport_plural": "Transports:",
         "turn": " (turn)"
     },
-    "contactlist_plural": "__count__ Members",
     "dateUtils": {
         "earlier": "Earlier",
         "today": "Today",
@@ -148,7 +147,7 @@
             "liveStreaming": "Live Stream"
         },
         "allow": "Allow",
-        "alreadySharedVideoMsg": "Another member is already sharing a video. This conference allows only one shared video at a time.",
+        "alreadySharedVideoMsg": "Another participant is already sharing a video. This conference allows only one shared video at a time.",
         "alreadySharedVideoTitle": "Only one shared video is allowed at a time",
         "applicationWindow": "Application window",
         "Back": "Back",
@@ -199,7 +198,7 @@
         "kickMessage": "You can contact __participantDisplayName__ for more details.",
         "kickParticipantButton": "Kick",
         "kickParticipantDialog": "Are you sure you want to kick this participant?",
-        "kickParticipantTitle": "Kick this member?",
+        "kickParticipantTitle": "Kick this participant?",
         "kickTitle": "Ouch! __participantDisplayName__ kicked you out of the meeting",
         "liveStreaming": "Live Streaming",
         "liveStreamingDisabledForGuestTooltip": "Guests can't start live streaming.",
@@ -209,8 +208,8 @@
         "lockTitle": "Lock failed",
         "logoutQuestion": "Are you sure you want to logout and stop the conference?",
         "logoutTitle": "Logout",
-        "maxUsersLimitReached": "The limit for maximum number of members has been reached. The conference is full. Please contact the meeting owner or try again later!",
-        "maxUsersLimitReachedTitle": "Maximum members limit reached",
+        "maxUsersLimitReached": "The limit for maximum number of participants has been reached. The conference is full. Please contact the meeting owner or try again later!",
+        "maxUsersLimitReachedTitle": "Maximum participants limit reached",
         "micConstraintFailedError": "Your microphone does not satisfy some of the required constraints.",
         "micNotFoundError": "Microphone was not found.",
         "micNotSendingData": "Go to your computer's settings to unmute your mic and adjust its level",
@@ -220,7 +219,7 @@
         "muteParticipantBody": "You won't be able to unmute them, but they can unmute themselves at any time.",
         "muteParticipantButton": "Mute",
         "muteParticipantDialog": "Are you sure you want to mute this participant? You won't be able to unmute them, but they can unmute themselves at any time.",
-        "muteParticipantTitle": "Mute this member?",
+        "muteParticipantTitle": "Mute this participant?",
         "Ok": "Ok",
         "oops": "Oops!",
         "passwordLabel": "$t(lockRoomPasswordUppercase)",
@@ -653,7 +652,7 @@
         "raiseYourHand": "Raise your hand",
         "Settings": "Settings",
         "sharedvideo": "Share a YouTube video",
-        "sharedVideoMutedPopup": "Your shared video has been muted so that you can talk to the other members.",
+        "sharedVideoMutedPopup": "Your shared video has been muted so that you can talk to the other participants.",
         "shareRoom": "Invite someone",
         "shortcuts": "View shortcuts",
         "sip": "Call SIP number",
@@ -733,11 +732,11 @@
         "flip": "Flip",
         "kick": "Kick out",
         "moderator": "Moderator",
-        "mute": "Member is muted",
+        "mute": "Participant is muted",
         "muted": "Muted",
         "remoteControl": "Remote control",
         "show": "Show on stage",
-        "videomute": "Member has stopped the camera"
+        "videomute": "Participant has stopped the camera"
     },
     "welcomepage": {
         "accessibilityLabel": {
