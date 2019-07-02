@@ -42,7 +42,7 @@
  */
 @property (nonatomic, nullable) JitsiMeetConferenceOptions *defaultConferenceOptions;
 
-#pragma mak - This class is a singleton
+#pragma mark - This class is a singleton
 
 + (instancetype _Nonnull)sharedInstance;
 
