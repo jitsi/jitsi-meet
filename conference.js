@@ -78,7 +78,10 @@ import {
     setVideoAvailable,
     setVideoMuted
 } from './react/features/base/media';
-import { showNotification } from './react/features/notifications';
+import {
+    hideNotification,
+    showNotification
+} from './react/features/notifications';
 import {
     dominantSpeakerChanged,
     getLocalParticipant,
@@ -1776,14 +1779,29 @@ export default {
             APP.UI.setAudioLevel(id, newLvl);
         });
 
-        room.on(JitsiConferenceEvents.TRACK_MUTE_CHANGED, (_, participantThatMutedUs) => {
+        // we store the last start muted notification id that we showed,
+        // so we can hide it when unmuted mic is detected
+        let lastNotificationId;
+
+        room.on(JitsiConferenceEvents.TRACK_MUTE_CHANGED, (track, participantThatMutedUs) => {
             if (participantThatMutedUs) {
                 APP.store.dispatch(participantMutedUs(participantThatMutedUs));
+            }
+
+            if (lastNotificationId && track.isAudioTrack() && track.isLocal() && !track.isMuted()) {
+                APP.store.dispatch(hideNotification(lastNotificationId));
+                lastNotificationId = undefined;
             }
         });
 
         room.on(JitsiConferenceEvents.TALK_WHILE_MUTED, () => {
-            APP.UI.showToolbar(6000);
+            const action = APP.store.dispatch(showNotification({
+                titleKey: 'toolbar.talkWhileMutedPopup',
+                customActionNameKey: 'notify.unmute',
+                customActionHandler: muteLocalAudio.bind(this, false)
+            }));
+
+            lastNotificationId = action.uid;
         });
         room.on(JitsiConferenceEvents.SUBJECT_CHANGED,
             subject => APP.store.dispatch(conferenceSubjectChanged(subject)));
