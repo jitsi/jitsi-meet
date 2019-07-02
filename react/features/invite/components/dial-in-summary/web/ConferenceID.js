@@ -4,6 +4,8 @@ import React, { Component } from 'react';
 
 import { translate } from '../../../../base/i18n';
 
+import { _formatConferenceIDPin } from '../../../_utils';
+
 /**
  * The type of the React {@code Component} props of {@link ConferenceID}.
  */
@@ -49,7 +51,7 @@ class ConferenceID extends Component<Props> {
                     { t('info.dialANumber') }
                 </div>
                 <div className = 'dial-in-conference-pin'>
-                    { `${t('info.dialInConferenceID')} ${conferenceID}` }
+                    { `${t('info.dialInConferenceID')} ${_formatConferenceIDPin(conferenceID)}` }
                 </div>
             </div>
         );

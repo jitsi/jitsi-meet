@@ -4,6 +4,8 @@ import React, { Component } from 'react';
 
 import { translate } from '../../../../base/i18n';
 
+import { _formatConferenceIDPin } from '../../../_utils';
+
 /**
  * The type of the React {@code Component} props of {@link DialInNumber}.
  */
@@ -61,7 +63,7 @@ class DialInNumber extends Component<Props> {
                     </span>
                     <span className = 'spacer'>&nbsp;</span>
                     <span className = 'info-value'>
-                        { `${conferenceID}#` }
+                        { `${_formatConferenceIDPin(conferenceID)}#` }
                     </span>
                 </span>
             </div>
