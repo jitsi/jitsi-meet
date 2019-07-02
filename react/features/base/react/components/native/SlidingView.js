@@ -264,7 +264,9 @@ export default class SlidingView extends PureComponent<Props, State> {
                     })
                 .start(({ finished }) => {
                     finished && this._mounted && !show
-                        && this.setState({ showOverlay: false });
+                        && this.setState({ showOverlay: false }, () => {
+                            this.forceUpdate();
+                        });
                     resolve();
                 });
         });
