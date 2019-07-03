@@ -2,12 +2,14 @@
 
 import { ColorPalette } from '../../../styles';
 
+const DEFAULT_SIZE = 65;
+
 /**
  * The styles of the feature base/participants.
  */
 export default {
 
-    avatarContainer: (size: number) => {
+    avatarContainer: (size: number = DEFAULT_SIZE) => {
         return {
             alignItems: 'center',
             borderRadius: size / 2,
@@ -18,7 +20,7 @@ export default {
         };
     },
 
-    avatarContent: (size: number) => {
+    avatarContent: (size: number = DEFAULT_SIZE) => {
         return {
             height: size,
             width: size
@@ -32,7 +34,7 @@ export default {
         justifyContent: 'center'
     },
 
-    initialsText: (size: number) => {
+    initialsText: (size: number = DEFAULT_SIZE) => {
         return {
             color: 'rgba(255, 255, 255, 0.6)',
             fontSize: size * 0.5,

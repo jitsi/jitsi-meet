@@ -91,7 +91,7 @@ export default class AvatarListItem extends Component<Props> {
                     displayName = { title }
                     size = { avatarSize }
                     style = { avatarStyle }
-                    uri = { avatar } />
+                    url = { avatar } />
                 <Container style = { styles.listItemDetails }>
                     <Text
                         numberOfLines = { 1 }

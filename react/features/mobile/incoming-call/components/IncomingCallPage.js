@@ -130,7 +130,7 @@ class IncomingCallPage extends Component<Props> {
                 <View style = { styles.avatar }>
                     <Avatar
                         size = { CALLER_AVATAR_SIZE }
-                        uri = { this.props._callerAvatarURL } />
+                        url = { this.props._callerAvatarURL } />
                 </View>
             </View>
         );
