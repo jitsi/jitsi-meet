@@ -57,7 +57,7 @@ class Avatar extends AbstractAvatar<Props> {
             <img
                 className = { this._getAvatarClassName('defaultAvatar') }
                 id = { this.props.id }
-                src = '/images/avatar.png'
+                src = 'images/avatar.png'
                 style = { this._getAvatarStyle() } />
         );
     }
