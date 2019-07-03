@@ -39,13 +39,6 @@ class JitsiMeetUncaughtExceptionHandler implements Thread.UncaughtExceptionHandl
     public void uncaughtException(Thread t, Throwable e) {
         Log.e(this.getClass().getSimpleName(), "FATAL ERROR", e);
 
-        // Terminate all conferences
-        for (BaseReactView view: BaseReactView.getViews()) {
-            if (view instanceof JitsiMeetView) {
-                ((JitsiMeetView) view).leave();
-            }
-        }
-
         // Abort all ConnectionService ongoing calls
         if (AudioModeModule.useConnectionService()) {
             ConnectionService.abortConnections();
