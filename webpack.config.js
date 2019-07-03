@@ -153,8 +153,7 @@ module.exports = [
     }),
     Object.assign({}, config, {
         entry: {
-            'video-blur-effect':
-                './react/features/stream-effects/JitsiStreamBlurEffect.js'
+            'video-blur-effect': './react/features/stream-effects/blur/index.js'
         },
         output: Object.assign({}, config.output, {
             library: [ 'JitsiMeetJS', 'app', 'effects' ],

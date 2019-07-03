@@ -105,10 +105,8 @@ import {
     trackAdded,
     trackRemoved
 } from './react/features/base/tracks';
-import {
-    getJitsiMeetGlobalNS,
-    loadScript
-} from './react/features/base/util';
+import { getJitsiMeetGlobalNS } from './react/features/base/util';
+import { getBlurEffect } from './react/features/blur';
 import { addMessage } from './react/features/chat';
 import { showDesktopPicker } from './react/features/desktop-picker';
 import { appendSuffix } from './react/features/display-name';
@@ -562,25 +560,14 @@ export default {
             // Resolve with no tracks
             tryCreateLocalTracks = Promise.resolve([]);
         } else {
-
             const loadEffectsPromise = options.startWithBlurEnabled
-                ? loadScript('libs/video-blur-effect.min.js')
-                        .then(() =>
-                            getJitsiMeetGlobalNS().effects.createBlurEffect()
-                                .then(blurEffectInstance =>
-                                    Promise.resolve([ blurEffectInstance ])
-                                )
-                                .catch(error => {
-                                    logger.log('Failed to create JitsiStreamBlurEffect!', error);
+                ? getBlurEffect()
+                    .then(blurEffect => [ blurEffect ])
+                    .catch(error => {
+                        logger.error('Failed to obtain the blur effect instance with error: ', error);
 
-                                    return Promise.resolve([]);
-                                })
-                        )
-                        .catch(error => {
-                            logger.error('loadScript failed with error: ', error);
-
-                            return Promise.resolve([]);
-                        })
+                        return Promise.resolve([]);
+                    })
                 : Promise.resolve([]);
 
             tryCreateLocalTracks = loadEffectsPromise.then(trackEffects =>
@@ -678,7 +665,6 @@ export default {
      */
     init(options) {
         this.roomName = options.roomName;
-        const videoBlurEffectEnabled = APP.store.getState()['features/blur'].blurEnabled;
 
         return (
 
@@ -692,7 +678,7 @@ export default {
                     'initial device list initialization failed', error))
                 .then(() => this.createInitialLocalTracksAndConnect(
                 options.roomName, {
-                    startWithBlurEnabled: videoBlurEffectEnabled,
+                    startWithBlurEnabled: APP.store.getState()['features/blur'].blurEnabled,
                     startAudioOnly: config.startAudioOnly,
                     startScreenSharing: config.startScreenSharing,
                     startWithAudioMuted: config.startWithAudioMuted || config.startSilent,

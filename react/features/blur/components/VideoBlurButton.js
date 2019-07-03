@@ -5,14 +5,8 @@ import { translate } from '../../base/i18n';
 import { connect } from '../../base/redux';
 import { AbstractButton } from '../../base/toolbox';
 import type { AbstractButtonProps } from '../../base/toolbox';
-import {
-    getJitsiMeetGlobalNS,
-    loadScript
-} from '../../base/util';
 
 import { toggleBlurEffect } from '../actions';
-
-const logger = require('jitsi-meet-logger').getLogger(__filename);
 
 /**
  * The type of the React {@code Component} props of {@link VideoBlurButton}.
@@ -49,27 +43,11 @@ class VideoBlurButton extends AbstractButton<Props, *> {
      * @returns {void}
      */
     _handleClick() {
-        const {
-            _isVideoBlurred,
-            dispatch
-        } = this.props;
+        const { _isVideoBlurred, dispatch } = this.props;
+        const value = !_isVideoBlurred;
 
-        if (!getJitsiMeetGlobalNS().effects
-            || !getJitsiMeetGlobalNS().effects.createBlurEffect) {
-
-            loadScript('libs/video-blur-effect.min.js')
-                .then(() => {
-                    this._handleClick();
-                })
-                .catch(error => {
-                    logger.error('Failed to load script with error: ', error);
-                });
-
-        } else {
-            sendAnalytics(createVideoBlurEvent(_isVideoBlurred ? 'started' : 'stopped'));
-
-            dispatch(toggleBlurEffect(!_isVideoBlurred));
-        }
+        sendAnalytics(createVideoBlurEvent(value ? 'started' : 'stopped'));
+        dispatch(toggleBlurEffect(value));
     }
 
     /**
@@ -80,16 +58,7 @@ class VideoBlurButton extends AbstractButton<Props, *> {
      * @returns {boolean}
      */
     _isToggled() {
-        const {
-            _isVideoBlurred
-        } = this.props;
-
-        if (!getJitsiMeetGlobalNS().effects
-            || !getJitsiMeetGlobalNS().effects.createBlurEffect) {
-            return false;
-        }
-
-        return _isVideoBlurred;
+        return this.props._isVideoBlurred;
     }
 }
 
