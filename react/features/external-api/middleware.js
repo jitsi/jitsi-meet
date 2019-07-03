@@ -10,11 +10,11 @@ import { JitsiConferenceErrors } from '../base/lib-jitsi-meet';
 import {
     PARTICIPANT_KICKED,
     SET_LOADABLE_AVATAR_URL,
-    getAvatarURLByParticipantId,
     getLocalParticipant,
     getParticipantById
 } from '../base/participants';
 import { MiddlewareRegistry } from '../base/redux';
+import { getBaseUrl } from '../base/util';
 import { appendSuffix } from '../display-name';
 import { SUBMIT_FEEDBACK } from '../feedback';
 import { SET_FILMSTRIP_VISIBLE } from '../filmstrip';
@@ -39,11 +39,26 @@ MiddlewareRegistry.register(store => next => action => {
 
         const result = next(action);
 
-        if (participant && (participant.loadableAvatarUrl !== loadableAvatarUrl)) {
-            APP.API.notifyAvatarChanged(
-                id,
-                loadableAvatarUrl
-            );
+        if (participant) {
+            if (loadableAvatarUrl) {
+                participant.loadableAvatarUrl !== loadableAvatarUrl && APP.API.notifyAvatarChanged(
+                    id,
+                    loadableAvatarUrl
+                );
+            } else {
+                // There is no loadable explicit URL. In this case the Avatar component would
+                // decide to render initials or the default avatar, but the external API needs
+                // a URL when it needs to be rendered, so if there is no initials, we return the default
+                // Avatar URL as if it was a usual avatar URL. If there are (or may be) initials
+                // we send undefined to signal the api user that it's not an URL that needs to be rendered.
+                //
+                // NOTE: we may implement a special URL format later to signal that the avatar is based
+                // on initials, that API consumers can handle as they want, e.g. initials://jm
+                APP.API.notifyAvatarChanged(
+                    id,
+                    participant.name ? undefined : _getDefaultAvatarUrl()
+                );
+            }
         }
 
         return result;
@@ -65,7 +80,7 @@ MiddlewareRegistry.register(store => next => action => {
     case CONFERENCE_JOINED: {
         const state = store.getState();
         const { room } = state['features/base/conference'];
-        const { name, id } = getLocalParticipant(state);
+        const { loadableAvatarUrl, name, id } = getLocalParticipant(state);
 
         APP.API.notifyConferenceJoined(
             room,
@@ -76,7 +91,7 @@ MiddlewareRegistry.register(store => next => action => {
                     name,
                     interfaceConfig.DEFAULT_LOCAL_DISPLAY_NAME
                 ),
-                avatarURL: getAvatarURLByParticipantId(state, id)
+                avatarURL: loadableAvatarUrl
             }
         );
         break;
@@ -125,3 +140,12 @@ MiddlewareRegistry.register(store => next => action => {
 
     return result;
 });
+
+/**
+ * Returns the absolute URL of the default avatar.
+ *
+ * @returns {string}
+ */
+function _getDefaultAvatarUrl() {
+    return new URL('images/avatar.png', getBaseUrl()).href;
+}

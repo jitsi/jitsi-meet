@@ -1,10 +1,13 @@
 // @flow
 
-import { PureComponent } from 'react';
+import React, { PureComponent } from 'react';
 
 import { getParticipantById } from '../../participants';
+import { connect } from '../../redux';
 
 import { getAvatarColor, getInitials } from '../functions';
+
+import { StatelessAvatar } from '.';
 
 export type Props = {
 
@@ -19,6 +22,11 @@ export type Props = {
     _loadableAvatarUrl: ?string,
 
     /**
+     * A prop to maintain compatibility with web.
+     */
+    className?: string,
+
+    /**
      * A string to override the initials to generate a color of. This is handy if you don't want to make
      * the background color match the string that the initials are generated from.
      */
@@ -31,6 +39,11 @@ export type Props = {
     displayName?: string,
 
     /**
+     * ID of the element, if any.
+     */
+    id?: string,
+
+    /**
      * The ID of the participant to render an avatar for (if it's a participant avatar).
      */
     participantId?: string,
@@ -41,9 +54,9 @@ export type Props = {
     size: number,
 
     /**
-     * URI of the avatar, if any.
+     * URL of the avatar, if any.
      */
-    uri: ?string,
+    url: ?string,
 }
 
 type State = {
@@ -53,9 +66,9 @@ type State = {
 export const DEFAULT_SIZE = 65;
 
 /**
- * Implements an abstract class to render avatars in the app.
+ * Implements a class to render avatars in the app.
  */
-export default class AbstractAvatar<P: Props> extends PureComponent<P, State> {
+class Avatar<P: Props> extends PureComponent<P, State> {
     /**
      * Instantiates a new {@code Component}.
      *
@@ -77,7 +90,7 @@ export default class AbstractAvatar<P: Props> extends PureComponent<P, State> {
      * @inheritdoc
      */
     componentDidUpdate(prevProps: P) {
-        if (prevProps.uri !== this.props.uri) {
+        if (prevProps.url !== this.props.url) {
 
             // URI changed, so we need to try to fetch it again.
             // Eslint doesn't like this statement, but based on the React doc, it's safe if it's
@@ -99,25 +112,45 @@ export default class AbstractAvatar<P: Props> extends PureComponent<P, State> {
         const {
             _initialsBase,
             _loadableAvatarUrl,
+            className,
             colorBase,
-            uri
+            id,
+            size,
+            url
         } = this.props;
         const { avatarFailed } = this.state;
+
+        const avatarProps = {
+            className,
+            color: undefined,
+            id,
+            initials: undefined,
+            onAvatarLoadError: undefined,
+            size,
+            url: undefined
+        };
 
         // _loadableAvatarUrl is validated that it can be loaded, but uri (if present) is not, so
         // we still need to do a check for that. And an explicitly provided URI is higher priority than
         // an avatar URL anyhow.
-        if ((uri && !avatarFailed) || _loadableAvatarUrl) {
-            return this._renderURLAvatar((!avatarFailed && uri) || _loadableAvatarUrl);
+        const effectiveURL = (!avatarFailed && url) || _loadableAvatarUrl;
+
+        if (effectiveURL) {
+            avatarProps.onAvatarLoadError = this._onAvatarLoadError;
+            avatarProps.url = effectiveURL;
+        } else {
+            const initials = getInitials(_initialsBase);
+
+            if (initials) {
+                avatarProps.color = getAvatarColor(colorBase || _initialsBase);
+                avatarProps.initials = initials;
+            }
         }
 
-        const _initials = getInitials(_initialsBase);
-
-        if (_initials) {
-            return this._renderInitialsAvatar(_initials, getAvatarColor(colorBase || _initialsBase));
-        }
-
-        return this._renderDefaultAvatar();
+        return (
+            <StatelessAvatar
+                { ...avatarProps } />
+        );
     }
 
     _onAvatarLoadError: () => void;
@@ -132,30 +165,6 @@ export default class AbstractAvatar<P: Props> extends PureComponent<P, State> {
             avatarFailed: true
         });
     }
-
-    /**
-     * Function to render the actual, platform specific default avatar component.
-     *
-     * @returns {React$Element<*>}
-     */
-    _renderDefaultAvatar: () => React$Element<*>
-
-    /**
-     * Function to render the actual, platform specific initials-based avatar component.
-     *
-     * @param {string} initials - The initials to use.
-     * @param {string} color - The color to use.
-     * @returns {React$Element<*>}
-     */
-    _renderInitialsAvatar: (string, string) => React$Element<*>
-
-    /**
-     * Function to render the actual, platform specific URL-based avatar component.
-     *
-     * @param {string} uri - The URI of the avatar.
-     * @returns {React$Element<*>}
-     */
-    _renderURLAvatar: ?string => React$Element<*>
 }
 
 /**
@@ -168,10 +177,12 @@ export default class AbstractAvatar<P: Props> extends PureComponent<P, State> {
 export function _mapStateToProps(state: Object, ownProps: Props) {
     const { displayName, participantId } = ownProps;
     const _participant = participantId && getParticipantById(state, participantId);
-    const _initialsBase = (_participant && (_participant.name || _participant.email)) || displayName;
+    const _initialsBase = (_participant && _participant.name) || displayName;
 
     return {
         _initialsBase,
         _loadableAvatarUrl: _participant && _participant.loadableAvatarUrl
     };
 }
+
+export default connect(_mapStateToProps)(Avatar);
