@@ -39,7 +39,7 @@ MiddlewareRegistry.register(store => next => action => {
 
         const result = next(action);
 
-        if (participant.loadableAvatarUrl !== loadableAvatarUrl) {
+        if (participant && (participant.loadableAvatarUrl !== loadableAvatarUrl)) {
             APP.API.notifyAvatarChanged(
                 id,
                 loadableAvatarUrl
