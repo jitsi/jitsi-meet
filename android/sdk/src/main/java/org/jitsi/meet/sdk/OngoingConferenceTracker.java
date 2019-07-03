@@ -86,8 +86,10 @@ class OngoingConferenceTracker {
     }
 
     private void updateListeners() {
-        for (OngoingConferenceListener listener : listeners) {
-            listener.onCurrentConferenceChanged(currentConference);
+        synchronized (listeners) {
+            for (OngoingConferenceListener listener : listeners) {
+                listener.onCurrentConferenceChanged(currentConference);
+            }
         }
     }
 
