@@ -18,9 +18,7 @@ import {
 import { connect } from '../../../base/redux';
 import { OverflowMenuItem } from '../../../base/toolbox';
 import { getLocalVideoTrack, toggleScreensharing } from '../../../base/tracks';
-import {
-    VideoBlurButton
-} from '../../../blur';
+import { VideoBlurButton } from '../../../blur';
 import { ChatCounter, toggleChat } from '../../../chat';
 import { toggleDocument } from '../../../etherpad';
 import { openFeedbackDialog } from '../../../feedback';

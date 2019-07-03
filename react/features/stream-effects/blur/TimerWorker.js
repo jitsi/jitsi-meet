@@ -9,7 +9,7 @@
  *      timeMs: 33
  * }
  */
-export const SET_INTERVAL = 2;
+export const SET_INTERVAL = 1;
 
 /**
  * CLEAR_INTERVAL constant is used to clear the interval and it is set in
@@ -19,7 +19,7 @@ export const SET_INTERVAL = 2;
  *      id: CLEAR_INTERVAL
  * }
  */
-export const CLEAR_INTERVAL = 3;
+export const CLEAR_INTERVAL = 2;
 
 /**
  * INTERVAL_TIMEOUT constant is used as response and it is set in the id property.
@@ -28,15 +28,15 @@ export const CLEAR_INTERVAL = 3;
  *      id: INTERVAL_TIMEOUT
  * }
  */
-export const INTERVAL_TIMEOUT = 22;
+export const INTERVAL_TIMEOUT = 3;
 
 /**
  * The following code is needed as string to create a URL from a Blob.
  * The URL is then passed to a WebWorker. Reason for this is to enable
  * use of setInterval that is not throttled when tab is inactive.
  */
-const code
-= `   let timer = null;
+const code = `
+    var timer;
 
     onmessage = function(request) {
         switch (request.data.id) {
@@ -47,13 +47,13 @@ const code
             break;
         }
         case ${CLEAR_INTERVAL}: {
-            clearInterval(timer);
+            if (timer) {
+                clearInterval(timer);
+            }
             break;
         }
         }
     };
 `;
 
-const blob = new Blob([ code ], { type: 'application/javascript' });
-
-export const timerWorkerScript = URL.createObjectURL(blob);
+export const timerWorkerScript = URL.createObjectURL(new Blob([ code ], { type: 'application/javascript' }));
