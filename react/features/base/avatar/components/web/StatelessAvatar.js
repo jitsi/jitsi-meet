@@ -34,6 +34,18 @@ export default class StatelessAvatar extends AbstractStatelessAvatar<Props> {
      */
     render() {
         const { initials, url } = this.props;
+        const icon = this._parseIconUrl(url);
+
+        if (icon) {
+            return (
+                <div
+                    className = { this._getAvatarClassName() }
+                    id = { this.props.id }
+                    style = { this._getAvatarStyle(this.props.color) }>
+                    <i className = { `icon-${icon}` } />
+                </div>
+            );
+        }
 
         if (url) {
             return (
@@ -106,4 +118,6 @@ export default class StatelessAvatar extends AbstractStatelessAvatar<Props> {
     _getAvatarClassName(additional) {
         return `avatar ${additional || ''} ${this.props.className || ''}`;
     }
+
+    _parseIconUrl: ?string => ?string
 }

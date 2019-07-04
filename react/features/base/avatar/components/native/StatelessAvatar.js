@@ -8,6 +8,7 @@ import { type StyleType } from '../../../styles';
 import AbstractStatelessAvatar, { type Props as AbstractProps } from '../AbstractStatelessAvatar';
 
 import styles from './styles';
+import { Icon } from '../../../font-icons';
 
 type Props = AbstractProps & {
 
@@ -34,7 +35,11 @@ export default class StatelessAvatar extends AbstractStatelessAvatar<Props> {
 
         let avatar;
 
-        if (url) {
+        const icon = this._parseIconUrl(url);
+
+        if (icon) {
+            avatar = this._renderIconAvatar(icon);
+        } else if (url) {
             avatar = this._renderURLAvatar();
         } else if (initials) {
             avatar = this._renderInitialsAvatar();
@@ -53,6 +58,8 @@ export default class StatelessAvatar extends AbstractStatelessAvatar<Props> {
         );
     }
 
+    _parseIconUrl: ?string => ?string
+
     /**
      * Renders the default avatar.
      *
@@ -68,6 +75,30 @@ export default class StatelessAvatar extends AbstractStatelessAvatar<Props> {
                     styles.avatarContent(size),
                     styles.staticAvatar
                 ] } />
+        );
+    }
+
+    /**
+     * Renders the initials-based avatar.
+     *
+     * @param {string} icon - The icon name to render.
+     * @returns {React$Element<*>}
+     */
+    _renderIconAvatar(icon) {
+        const { color, size } = this.props;
+
+        return (
+            <View
+                style = { [
+                    styles.initialsContainer,
+                    {
+                        backgroundColor: color
+                    }
+                ] }>
+                <Icon
+                    name = { icon }
+                    style = { styles.initialsText(size) } />
+            </View>
         );
     }
 
