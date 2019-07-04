@@ -1,8 +1,5 @@
 // @flow
-import {
-    getAvatarURL as _getAvatarURL,
-    getGravatarURL
-} from 'js-utils/avatar';
+import { getGravatarURL } from 'js-utils/avatar';
 
 import { toState } from '../redux';
 
@@ -12,8 +9,6 @@ import { getTrackByMediaTypeAndParticipant } from '../tracks';
 import { createDeferred } from '../util';
 
 import {
-    DEFAULT_AVATAR_RELATIVE_PATH,
-    LOCAL_PARTICIPANT_DEFAULT_ID,
     MAX_DISPLAY_NAME_LENGTH,
     PARTICIPANT_ROLE
 } from './constants';
@@ -37,73 +32,6 @@ const AVATAR_CHECKER_FUNCTIONS = [
     }
 ];
 /* eslint-enable arrow-body-style */
-
-/**
- * Returns the URL of the image for the avatar of a specific participant.
- *
- * @param {Participant} [participant] - The participant to return the avatar URL
- * of.
- * @param {string} [participant.avatarID] - Participant's avatar ID.
- * @param {string} [participant.avatarURL] - Participant's avatar URL.
- * @param {string} [participant.email] - Participant's e-mail address.
- * @param {string} [participant.id] - Participant's ID.
- * @public
- * @returns {string} The URL of the image for the avatar of the specified
- * participant.
- */
-export function getAvatarURL({ avatarID, avatarURL, email, id }: {
-        avatarID: string,
-        avatarURL: string,
-        email: string,
-        id: string
-}) {
-    // If disableThirdPartyRequests disables third-party avatar services, we are
-    // restricted to a stock image of ours.
-    if (typeof config === 'object' && config.disableThirdPartyRequests) {
-        return DEFAULT_AVATAR_RELATIVE_PATH;
-    }
-
-    // If an avatarURL is specified, then obviously there's nothing to generate.
-    if (avatarURL) {
-        return avatarURL;
-    }
-
-    // The deployment is allowed to choose the avatar service which is to
-    // generate the random avatars.
-    const avatarService
-        = typeof interfaceConfig === 'object'
-                && interfaceConfig.RANDOM_AVATAR_URL_PREFIX
-            ? {
-                urlPrefix: interfaceConfig.RANDOM_AVATAR_URL_PREFIX,
-                urlSuffix: interfaceConfig.RANDOM_AVATAR_URL_SUFFIX }
-            : undefined;
-
-    // eslint-disable-next-line object-property-newline
-    return _getAvatarURL({ avatarID, email, id }, avatarService);
-}
-
-/**
- * Returns the avatarURL for the participant associated with the passed in
- * participant ID.
- *
- * @param {(Function|Object|Participant[])} stateful - The redux state
- * features/base/participants, the (whole) redux state, or redux's
- * {@code getState} function to be used to retrieve the state
- * features/base/participants.
- * @param {string} id - The ID of the participant to retrieve.
- * @param {boolean} isLocal - An optional parameter indicating whether or not
- * the partcipant id is for the local user. If true, a different logic flow is
- * used find the local user, ignoring the id value as it can change through the
- * beginning and end of a call.
- * @returns {(string|undefined)}
- */
-export function getAvatarURLByParticipantId(
-        stateful: Object | Function,
-        id: string = LOCAL_PARTICIPANT_DEFAULT_ID) {
-    const participant = getParticipantById(stateful, id);
-
-    return participant && getAvatarURL(participant);
-}
 
 /**
  * Resolves the first loadable avatar URL for a participant.
