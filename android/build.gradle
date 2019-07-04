@@ -164,10 +164,6 @@ ext {
     mavenUser = System.env.MVN_USER ?: ""
     mavenPassword = System.env.MVN_PASSWORD ?: ""
 
-    // Glide
-    excludeAppGlideModule = true
-    glideVersion = "4.7.1"  // keep in sync with react-native-fast-image
-
     // Libre build
     libreBuild = (System.env.LIBRE_BUILD ?: "false").toBoolean()
 }

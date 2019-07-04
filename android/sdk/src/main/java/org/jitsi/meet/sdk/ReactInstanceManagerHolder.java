@@ -155,7 +155,6 @@ class ReactInstanceManagerHolder {
                 new com.BV.LinearGradient.LinearGradientPackage(),
                 new com.calendarevents.CalendarEventsPackage(),
                 new com.corbt.keepawake.KCKeepAwakePackage(),
-                new com.dylanvann.fastimage.FastImageViewPackage(),
                 new com.facebook.react.shell.MainReactPackage(),
                 new com.oblador.vectoricons.VectorIconsPackage(),
                 new com.ocetnik.timer.BackgroundTimerPackage(),
