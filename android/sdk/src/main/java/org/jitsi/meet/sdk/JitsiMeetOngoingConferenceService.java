@@ -82,8 +82,13 @@ public class JitsiMeetOngoingConferenceService extends Service
         final String action = intent.getAction();
         if (action.equals(Actions.START)) {
             Notification notification = OngoingNotification.buildOngoingConferenceNotification();
-            startForeground(OngoingNotification.NOTIFICATION_ID, notification);
-            Log.i(TAG, "Service started");
+            if (notification == null) {
+                stopSelf();
+                Log.w(TAG, "Couldn't start service, notification is null");
+            } else {
+                startForeground(OngoingNotification.NOTIFICATION_ID, notification);
+                Log.i(TAG, "Service started");
+            }
         } else if (action.equals(Actions.HANGUP)) {
             Log.i(TAG, "Hangup requested");
             // Abort all ongoing calls
