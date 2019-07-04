@@ -34,4 +34,16 @@ export type Props = {
  * Implements an abstract stateless avatar component that renders an avatar purely from what gets passed through
  * props.
  */
-export default class AbstractStatelessAvatar<P: Props> extends PureComponent<P> {}
+export default class AbstractStatelessAvatar<P: Props> extends PureComponent<P> {
+    /**
+     * Parses an icon out of a specially constructed icon URL and returns the icon name.
+     *
+     * @param {string?} url - The url to parse.
+     * @returns {string?}
+     */
+    _parseIconUrl(url: ?string): ?string {
+        const match = url && url.match(/icon:\/\/(.+)/i);
+
+        return (match && match[1]) || undefined;
+    }
+}

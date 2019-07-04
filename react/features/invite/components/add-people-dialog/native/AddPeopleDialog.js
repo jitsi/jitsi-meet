@@ -417,7 +417,7 @@ class AddPeopleDialog extends AbstractAddPeopleDialog<Props, State> {
             selected
                 = inviteItems.find(_.matchesProperty('number', item.number));
             renderableItem = {
-                avatar: 'phone',
+                avatar: 'icon://phone',
                 key: item.number,
                 title: item.number
             };

@@ -138,13 +138,13 @@ class Avatar<P: Props> extends PureComponent<P, State> {
         if (effectiveURL) {
             avatarProps.onAvatarLoadError = this._onAvatarLoadError;
             avatarProps.url = effectiveURL;
-        } else {
-            const initials = getInitials(_initialsBase);
+        }
 
-            if (initials) {
-                avatarProps.color = getAvatarColor(colorBase || _initialsBase);
-                avatarProps.initials = initials;
-            }
+        const initials = getInitials(_initialsBase);
+
+        if (initials) {
+            avatarProps.color = getAvatarColor(colorBase || _initialsBase);
+            avatarProps.initials = initials;
         }
 
         return (
@@ -175,14 +175,15 @@ class Avatar<P: Props> extends PureComponent<P, State> {
  * @returns {Props}
  */
 export function _mapStateToProps(state: Object, ownProps: Props) {
-    const { colorBase, displayName, participantId } = ownProps;
+    const { colorBase, displayName, participantId, url } = ownProps;
     const _participant = participantId && getParticipantById(state, participantId);
     const _initialsBase = (_participant && _participant.name) || displayName;
 
     return {
         _initialsBase,
         _loadableAvatarUrl: _participant && _participant.loadableAvatarUrl,
-        colorBase: !colorBase && _participant ? _participant.id : colorBase
+        colorBase: !colorBase && _participant ? _participant.id : colorBase,
+        url: !url && _participant && _participant.isJigasi ? 'icon://phone' : url
     };
 }
 
