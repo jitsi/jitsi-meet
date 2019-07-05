@@ -289,7 +289,10 @@
         "grantedToUnknown": "主持权限已授予$t(somebody)！",
         "muted": "您已经开始了通话，并处于静音状态。",
         "mutedTitle": "您已被静音！",
-        "raisedHand": "请求发言"
+        "raisedHand": "请求发言",
+        "newDeviceCameraTitle": "发现新的摄像头",
+        "newDeviceAudioTitle": "发现新的声音设备",
+        "newDeviceAction": "新设备"
     },
     "share": {
         "dialInfoText": "\n\n=====\n\nJust want to dial in on your phone?\n\n__defaultDialInNumber__Click this link to see the dial in phone numbers for this meeting\n__dialInfoPageUrl__",
