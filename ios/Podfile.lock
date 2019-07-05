@@ -91,7 +91,7 @@ PODS:
     - React
   - react-native-keep-awake (4.0.0):
     - React
-  - react-native-webrtc (1.69.1):
+  - react-native-webrtc (1.69.2):
     - React
   - react-native-webview (5.8.1):
     - React
@@ -271,7 +271,7 @@ SPEC CHECKSUMS:
   react-native-background-timer: 0d34748e53a972507c66963490c775321a88f6f2
   react-native-calendar-events: ee9573e355711ac679e071be70789542431f4ce3
   react-native-keep-awake: eba3137546b10003361b37c761f6c429b59814ae
-  react-native-webrtc: 90a847d19deb2d7323fef8cc89ca12b8995fbc90
+  react-native-webrtc: 1415d2a54b2246dd85ba95eb3e4bf2b66533f951
   react-native-webview: a95842e3f351a6d2c8bc8bcc9eab689c7e7e5ad4
   RNCAsyncStorage: 8e31405a9f12fbf42c2bb330e4560bfd79c18323
   RNGoogleSignin: d030c6c6591db24c3cee649f64c7babf0a1699a0
