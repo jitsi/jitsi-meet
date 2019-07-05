@@ -237,7 +237,7 @@ class InfoDialog extends Component<Props, State> {
                                 className = 'info-dialog-url-text'
                                 href = { this.props._inviteURL }
                                 onClick = { this._onClickURLText } >
-                                { this._getURLToDisplay() }
+                                { decodeURI(this._getURLToDisplay()) }
                             </a>
                         </span>
                     </div>
@@ -289,25 +289,13 @@ class InfoDialog extends Component<Props, State> {
     }
 
     /**
-     * Generates the URL for the static dial in info page.
-     *
-     * @private
-     * @returns {string}
-     */
-    _getDialInfoPageURL() {
-        return getDialInfoPageURL(
-            encodeURIComponent(this.props._conferenceName),
-            this.props._locationURL);
-    }
-
-    /**
      * Creates a message describing how to dial in to the conference.
      *
      * @private
      * @returns {string}
      */
     _getTextToCopy() {
-        const { _localParticipant, liveStreamViewURL, t } = this.props;
+        const { _inviteURL, _localParticipant, liveStreamViewURL, t } = this.props;
         const shouldDisplayDialIn = this._shouldDisplayDialIn();
 
         let invite = _localParticipant && _localParticipant.name
@@ -315,7 +303,7 @@ class InfoDialog extends Component<Props, State> {
             : t('info.inviteURLFirstPartGeneral');
 
         invite += t('info.inviteURLSecondPart', {
-            url: this.props._inviteURL
+            url: _inviteURL
         });
 
         if (liveStreamViewURL) {
@@ -332,8 +320,11 @@ class InfoDialog extends Component<Props, State> {
                 conferenceID: this.props.dialIn.conferenceID
             });
             const moreNumbers = t('info.invitePhoneAlternatives', {
-                url: this._getDialInfoPageURL(),
-                silentUrl: `${this.props._inviteURL}#config.startSilent=true`
+                url: getDialInfoPageURL(
+                    this.props._conferenceName,
+                    this.props._locationURL
+                ),
+                silentUrl: `${_inviteURL}#config.startSilent=true`
             });
 
             invite = `${invite}\n${dial}\n${moreNumbers}`;
@@ -457,7 +448,12 @@ class InfoDialog extends Component<Props, State> {
                     phoneNumber = { this.state.phoneNumber } />
                 <a
                     className = 'more-numbers'
-                    href = { this._getDialInfoPageURL() }
+                    href = {
+                        getDialInfoPageURL(
+                            this.props._conferenceName,
+                            this.props._locationURL
+                        )
+                    }
                     rel = 'noopener noreferrer'
                     target = '_blank'>
                     { this.props.t('info.moreNumbers') }

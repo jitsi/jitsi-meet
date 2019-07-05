@@ -21,7 +21,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 ? <DialInSummary
                     className = 'dial-in-page'
                     clickableNumbers = { isUsingMobileBrowser }
-                    room = { room } />
+                    room = { decodeURIComponent(room) } />
                 : <NoRoomError className = 'dial-in-page' /> }
         </I18nextProvider>,
         document.getElementById('react')
