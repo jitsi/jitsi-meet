@@ -1,23 +1,23 @@
 // @flow
 
-import { ColorPalette, getRGBAFormat } from '../styles';
+import { ColorPalette } from '../styles';
 
 /**
  * The default color scheme of the application.
  */
 export default {
     'BottomSheet': {
-        background: ColorPalette.blackBlue,
-        icon: ColorPalette.white,
-        label: ColorPalette.white
+        background: 'rgb(255, 255, 255)',
+        icon: '#1c2025',
+        label: '#1c2025'
     },
     'Dialog': {
-        background: ColorPalette.blackBlue,
-        border: getRGBAFormat(ColorPalette.white, 0.2),
+        background: 'rgb(255, 255, 255)',
+        border: 'rgba(0, 3, 6, 0.6)',
         buttonBackground: ColorPalette.blue,
         buttonLabel: ColorPalette.white,
-        icon: ColorPalette.white,
-        text: ColorPalette.white
+        icon: '#1c2025',
+        text: '#1c2025'
     },
     'Header': {
         background: ColorPalette.blue,
@@ -27,22 +27,21 @@ export default {
         text: ColorPalette.white
     },
     'LargeVideo': {
-        background: ColorPalette.black
+        background: 'rgb(42, 58, 75)'
     },
     'LoadConfigOverlay': {
-        background: ColorPalette.black,
-        text: ColorPalette.white
+        background: 'rgb(249, 249, 249)',
+        text: 'rgb(28, 32, 37)'
     },
     'Thumbnail': {
-        activeParticipantHighlight: ColorPalette.blue,
-        activeParticipantTint: ColorPalette.black,
-        background: ColorPalette.black
+        activeParticipantHighlight: 'rgb(81, 214, 170)',
+        activeParticipantTint: 'rgba(49, 183, 106, 0.3)',
+        background: 'rgb(94, 109, 122)'
     },
     'Toolbox': {
-        button: getRGBAFormat(ColorPalette.white, 0.7),
-        buttonToggled: getRGBAFormat(ColorPalette.buttonUnderlay, 0.7),
-        buttonToggledBorder:
-            getRGBAFormat(ColorPalette.buttonUnderlay, 0.7),
-        hangup: ColorPalette.red
+        button: 'rgb(255, 255, 255)',
+        buttonToggled: 'rgba(255, 255, 255, 0)',
+        buttonToggledBorder: '#a4b8d1',
+        hangup: 'rgb(225, 45, 45)'
     }
 };
