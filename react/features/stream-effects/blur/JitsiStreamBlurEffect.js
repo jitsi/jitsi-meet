@@ -160,7 +160,7 @@ export default class JitsiStreamBlurEffect {
      * false otherwise.
      */
     isEnabled(jitsiLocalTrack) {
-        return jitsiLocalTrack.isVideoTrack();
+        return jitsiLocalTrack.isVideoTrack() && jitsiLocalTrack.videoType === 'camera';
     }
 }
 
