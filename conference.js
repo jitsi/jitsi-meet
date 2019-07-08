@@ -1247,9 +1247,24 @@ export default {
         }
 
         options.applicationName = interfaceConfig.APP_NAME;
-        options.getWiFiStatsMethod = getJitsiMeetGlobalNS().getWiFiStats;
+        options.getWiFiStatsMethod = this._getWiFiStatsMethod;
 
         return options;
+    },
+
+    /**
+     * Returns the result of getWiFiStats from the global NS or does nothing
+     * (returns empty result).
+     * Fixes a concurrency problem where we need to pass a function when creating
+     * JitsiConference, but that method is added to the context later.
+     *
+     * @returns {Promise}
+     * @private
+     */
+    _getWiFiStatsMethod() {
+        const gloabalNS = getJitsiMeetGlobalNS();
+
+        return gloabalNS.getWiFiStats ? gloabalNS.getWiFiStats() : Promise.resolve('{}');
     },
 
     /**
