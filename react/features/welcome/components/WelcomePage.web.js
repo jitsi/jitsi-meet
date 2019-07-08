@@ -80,6 +80,7 @@ class WelcomePage extends AbstractWelcomePage {
      */
     componentDidMount() {
         document.body.classList.add('welcome-page');
+        document.title = interfaceConfig.APP_NAME;
 
         if (this.state.generateRoomnames) {
             this._updateRoomname();
