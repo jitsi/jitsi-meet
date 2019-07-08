@@ -42,9 +42,11 @@ export default function parseURLParams(
 
         try {
             value = param[1];
+
             if (!dontParse) {
-                value
-                    = JSON.parse(decodeURIComponent(value).replace(/\\&/, '&'));
+                const decoded = decodeURIComponent(value).replace(/\\&/, '&');
+
+                value = decoded === 'undefined' ? undefined : JSON.parse(decoded);
             }
         } catch (e) {
             reportError(
