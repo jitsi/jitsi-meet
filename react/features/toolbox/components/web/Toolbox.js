@@ -918,6 +918,7 @@ class Toolbox extends Component<Props, State> {
             _etherpadInitialized,
             _feedbackConfigured,
             _fullScreen,
+            _screensharing,
             _sharingVideo,
             t
         } = this.props;
@@ -973,7 +974,7 @@ class Toolbox extends Component<Props, State> {
             <VideoBlurButton
                 key = 'videobackgroundblur'
                 showLabel = { true }
-                visible = { this._shouldShowButton('videobackgroundblur') } />,
+                visible = { this._shouldShowButton('videobackgroundblur') && !_screensharing } />,
             <SettingsButton
                 key = 'settings'
                 showLabel = { true }
