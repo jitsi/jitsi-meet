@@ -1,12 +1,12 @@
 @font-face {
-    font-family: 'jitsi';
-    src:  url('../fonts/jitsi.eot?3vw865');
-    src:  url('../fonts/jitsi.eot?3vw865#iefix') format('embedded-opentype'),
-        url('../fonts/jitsi.ttf?3vw865') format('truetype'),
-        url('../fonts/jitsi.woff?3vw865') format('woff'),
-        url('../fonts/jitsi.svg?3vw865#jitsi') format('svg');
-    font-weight: normal;
-    font-style: normal;
+  font-family: 'jitsi';
+  src:  url('../fonts/jitsi.eot?icrce1');
+  src:  url('../fonts/jitsi.eot?icrce1#iefix') format('embedded-opentype'),
+    url('../fonts/jitsi.ttf?icrce1') format('truetype'),
+    url('../fonts/jitsi.woff?icrce1') format('woff'),
+    url('../fonts/jitsi.svg?icrce1#jitsi') format('svg');
+  font-weight: normal;
+  font-style: normal;
 }
 
 [class^="icon-"], [class*=" icon-"] {
@@ -25,92 +25,9 @@
     -moz-osx-font-smoothing: grayscale;
 }
 
-.icon-enlarge:before {
-  content: "\e90a";
-}
-.icon-signal_cellular_0:before {
-  content: "\e901";
-}
-.icon-signal_cellular_1:before {
-  content: "\e902";
-}
-.icon-signal_cellular_2:before {
-  content: "\e907";
-}
-.icon-phone:before {
-  content: "\e0cd";
-}
-.icon-radio_button_unchecked:before {
-  content: "\e836";
-}
-.icon-radio_button_checked:before {
-  content: "\e837";
-}
-.icon-search:before {
-  content: "\e8b6";
-}
-.icon-chat-unread:before {
-  content: "\e0b7";
-}
-.icon-closed_caption:before {
-  content: "\e930";
-}
-.icon-tiles-many:before {
-  content: "\e92e";
-}
-.icon-close:before {
-  content: "\e5cd";
-}
-.icon-open_in_new:before {
-  content: "\e89e";
-}
-.icon-restore:before {
-  content: "\e8b3";
-}
-.icon-navigate_next:before {
-  content: "\e409";
-}
-.icon-menu:before {
-  content: "\e5d2";
-}
-.icon-arrow_back:before {
-  content: "\e5c4";
-}
-.icon-public:before {
-  content: "\e80b";
-}
-.icon-event_note:before {
-  content: "\e616";
-}
-.icon-bluetooth:before {
-  content: "\e1aa";
-}
-.icon-headset:before {
-  content: "\e310";
-}
-.icon-phone-talk:before {
-  content: "\e61d";
-}
-.icon-thumb-menu:before {
-  content: "\e5d4";
-}
-.icon-ninja:before {
-  content: "\e909";
-}
-.icon-invite:before {
-  content: "\e145";
-}
-.icon-add:before {
-  content: "\e146";
-}
-.icon-play:before {
-  content: "\f04b";
-}
-.icon-stop:before {
-  content: "\f04d";
-}
-.icon-dominant-speaker:before {
-  content: "\f0a1";
+.icon-blur-background:before {
+  content: "\e90f";
+  color: #a4b8d1;
 }
 .icon-speaker:before {
   content: "\e92d";
@@ -220,7 +137,90 @@
 .icon-visibility-off:before {
   content: "\e924";
 }
-.icon-blur-background:before {
+.icon-enlarge:before {
+  content: "\e90a";
+}
+.icon-signal_cellular_0:before {
   content: "\e901";
-  color: #a4b8d1;
+}
+.icon-signal_cellular_1:before {
+  content: "\e902";
+}
+.icon-signal_cellular_2:before {
+  content: "\e907";
+}
+.icon-phone:before {
+  content: "\e0cd";
+}
+.icon-radio_button_unchecked:before {
+  content: "\e836";
+}
+.icon-radio_button_checked:before {
+  content: "\e837";
+}
+.icon-search:before {
+  content: "\e8b6";
+}
+.icon-chat-unread:before {
+  content: "\e0b7";
+}
+.icon-closed_caption:before {
+  content: "\e930";
+}
+.icon-tiles-many:before {
+  content: "\e92e";
+}
+.icon-close:before {
+  content: "\e5cd";
+}
+.icon-open_in_new:before {
+  content: "\e89e";
+}
+.icon-restore:before {
+  content: "\e8b3";
+}
+.icon-navigate_next:before {
+  content: "\e409";
+}
+.icon-menu:before {
+  content: "\e5d2";
+}
+.icon-arrow_back:before {
+  content: "\e5c4";
+}
+.icon-public:before {
+  content: "\e80b";
+}
+.icon-event_note:before {
+  content: "\e616";
+}
+.icon-bluetooth:before {
+  content: "\e1aa";
+}
+.icon-headset:before {
+  content: "\e310";
+}
+.icon-phone-talk:before {
+  content: "\e61d";
+}
+.icon-thumb-menu:before {
+  content: "\e5d4";
+}
+.icon-ninja:before {
+  content: "\e909";
+}
+.icon-invite:before {
+  content: "\e145";
+}
+.icon-add:before {
+  content: "\e146";
+}
+.icon-play:before {
+  content: "\f04b";
+}
+.icon-stop:before {
+  content: "\f04d";
+}
+.icon-dominant-speaker:before {
+  content: "\f0a1";
 }
