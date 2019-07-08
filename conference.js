@@ -106,7 +106,6 @@ import {
     trackRemoved
 } from './react/features/base/tracks';
 import { getJitsiMeetGlobalNS } from './react/features/base/util';
-import { getBlurEffect } from './react/features/blur';
 import { addMessage } from './react/features/chat';
 import { showDesktopPicker } from './react/features/desktop-picker';
 import { appendSuffix } from './react/features/display-name';
@@ -560,63 +559,47 @@ export default {
             // Resolve with no tracks
             tryCreateLocalTracks = Promise.resolve([]);
         } else {
-            const loadEffectsPromise = options.startWithBlurEnabled
-                ? getBlurEffect()
-                    .then(blurEffect => [ blurEffect ])
-                    .catch(error => {
-                        logger.error('Failed to obtain the blur effect instance with error: ', error);
+            tryCreateLocalTracks = createLocalTracksF({ devices: initialDevices }, true)
+                .catch(err => {
+                    if (requestedAudio && requestedVideo) {
 
-                        return Promise.resolve([]);
-                    })
-                : Promise.resolve([]);
+                        // Try audio only...
+                        audioAndVideoError = err;
 
-            tryCreateLocalTracks = loadEffectsPromise.then(trackEffects =>
-                createLocalTracksF(
-                    {
-                        devices: initialDevices,
-                        effects: trackEffects
-                    }, true)
-                    .catch(err => {
-                        if (requestedAudio && requestedVideo) {
-
-                            // Try audio only...
-                            audioAndVideoError = err;
-
-                            return (
-                                createLocalTracksF({ devices: [ 'audio' ] }, true));
-                        } else if (requestedAudio && !requestedVideo) {
-                            audioOnlyError = err;
-
-                            return [];
-                        } else if (requestedVideo && !requestedAudio) {
-                            videoOnlyError = err;
-
-                            return [];
-                        }
-                        logger.error('Should never happen');
-                    })
-                    .catch(err => {
-                        // Log this just in case...
-                        if (!requestedAudio) {
-                            logger.error('The impossible just happened', err);
-                        }
+                        return (
+                            createLocalTracksF({ devices: [ 'audio' ] }, true));
+                    } else if (requestedAudio && !requestedVideo) {
                         audioOnlyError = err;
 
-                        // Try video only...
-                        return requestedVideo
-                            ? createLocalTracksF({ devices: [ 'video' ] }, true)
-                            : [];
-                    })
-                    .catch(err => {
-                        // Log this just in case...
-                        if (!requestedVideo) {
-                            logger.error('The impossible just happened', err);
-                        }
+                        return [];
+                    } else if (requestedVideo && !requestedAudio) {
                         videoOnlyError = err;
 
                         return [];
-                    })
-            );
+                    }
+                    logger.error('Should never happen');
+                })
+                .catch(err => {
+                    // Log this just in case...
+                    if (!requestedAudio) {
+                        logger.error('The impossible just happened', err);
+                    }
+                    audioOnlyError = err;
+
+                    // Try video only...
+                    return requestedVideo
+                        ? createLocalTracksF({ devices: [ 'video' ] }, true)
+                        : [];
+                })
+                .catch(err => {
+                    // Log this just in case...
+                    if (!requestedVideo) {
+                        logger.error('The impossible just happened', err);
+                    }
+                    videoOnlyError = err;
+
+                    return [];
+                });
         }
 
         // Hide the permissions prompt/overlay as soon as the tracks are
@@ -678,7 +661,6 @@ export default {
                     'initial device list initialization failed', error))
                 .then(() => this.createInitialLocalTracksAndConnect(
                 options.roomName, {
-                    startWithBlurEnabled: APP.store.getState()['features/blur'].blurEnabled,
                     startAudioOnly: config.startAudioOnly,
                     startScreenSharing: config.startScreenSharing,
                     startWithAudioMuted: config.startWithAudioMuted || config.startSilent,
