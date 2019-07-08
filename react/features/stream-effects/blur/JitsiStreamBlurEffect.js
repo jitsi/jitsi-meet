@@ -28,6 +28,10 @@ export default class JitsiStreamBlurEffect {
         this._onVideoFrameTimer = this._onVideoFrameTimer.bind(this);
 
         this._outputCanvasElement = document.createElement('canvas');
+
+        // Workaround for FF issue https://bugzilla.mozilla.org/show_bug.cgi?id=1388974
+        this._outputCanvasElement.getContext('2d');
+
         this._maskCanvasElement = document.createElement('canvas');
         this._inputVideoElement = document.createElement('video');
 
