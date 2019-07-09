@@ -35,7 +35,6 @@ PODS:
     - FirebaseCore (~> 5.2)
     - GoogleUtilities/Environment (~> 5.2)
     - GoogleUtilities/UserDefaults (~> 5.2)
-  - FLAnimatedImage (1.0.12)
   - Folly (2018.10.22.00):
     - boost-for-react-native
     - DoubleConversion
@@ -90,11 +89,6 @@ PODS:
     - React
   - react-native-calendar-events (1.6.4):
     - React
-  - react-native-fast-image (5.1.1):
-    - FLAnimatedImage
-    - React
-    - SDWebImage/Core
-    - SDWebImage/GIF
   - react-native-keep-awake (4.0.0):
     - React
   - react-native-webrtc (1.69.1):
@@ -162,10 +156,6 @@ PODS:
     - React
   - RNWatch (0.2.0):
     - React
-  - SDWebImage/Core (4.4.6)
-  - SDWebImage/GIF (4.4.6):
-    - FLAnimatedImage (~> 1.0)
-    - SDWebImage/Core
   - yoga (0.59.8.React)
 
 DEPENDENCIES:
@@ -181,7 +171,6 @@ DEPENDENCIES:
   - ObjectiveDropboxOfficial (~> 3.9.4)
   - react-native-background-timer (from `../node_modules/react-native-background-timer`)
   - react-native-calendar-events (from `../node_modules/react-native-calendar-events`)
-  - react-native-fast-image (from `../node_modules/react-native-fast-image`)
   - react-native-keep-awake (from `../node_modules/react-native-keep-awake`)
   - react-native-webrtc (from `../node_modules/react-native-webrtc`)
   - react-native-webview (from `../node_modules/react-native-webview`)
@@ -214,7 +203,6 @@ SPEC REPOS:
     - FirebaseCore
     - FirebaseDynamicLinks
     - FirebaseInstanceID
-    - FLAnimatedImage
     - GoogleAppMeasurement
     - GoogleSignIn
     - GoogleToolboxForMac
@@ -222,7 +210,6 @@ SPEC REPOS:
     - GTMSessionFetcher
     - nanopb
     - ObjectiveDropboxOfficial
-    - SDWebImage
 
 EXTERNAL SOURCES:
   BVLinearGradient:
@@ -239,8 +226,6 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-background-timer"
   react-native-calendar-events:
     :path: "../node_modules/react-native-calendar-events"
-  react-native-fast-image:
-    :path: "../node_modules/react-native-fast-image"
   react-native-keep-awake:
     :path: "../node_modules/react-native-keep-awake"
   react-native-webrtc:
@@ -273,7 +258,6 @@ SPEC CHECKSUMS:
   FirebaseCore: 52f851b30e11360f1e67cf04b1edfebf0a47a2d3
   FirebaseDynamicLinks: f209c3caccd82102caa0e91d393e3ccc593501fd
   FirebaseInstanceID: bd6fc5a258884e206fd5c474ebe4f5b00e21770e
-  FLAnimatedImage: 4a0b56255d9b05f18b6dd7ee06871be5d3b89e31
   Folly: de497beb10f102453a1afa9edbf8cf8a251890de
   glog: aefd1eb5dda2ab95ba0938556f34b98e2da3a60d
   GoogleAppMeasurement: 6cf307834da065863f9faf4c0de0a936d81dd832
@@ -286,7 +270,6 @@ SPEC CHECKSUMS:
   React: 76e6aa2b87d05eb6cccb6926d72685c9a07df152
   react-native-background-timer: 0d34748e53a972507c66963490c775321a88f6f2
   react-native-calendar-events: ee9573e355711ac679e071be70789542431f4ce3
-  react-native-fast-image: 47487b71169aea34868e7b38bf870b6b3f2157c5
   react-native-keep-awake: eba3137546b10003361b37c761f6c429b59814ae
   react-native-webrtc: 90a847d19deb2d7323fef8cc89ca12b8995fbc90
   react-native-webview: a95842e3f351a6d2c8bc8bcc9eab689c7e7e5ad4
@@ -295,9 +278,8 @@ SPEC CHECKSUMS:
   RNSound: e157320f503bdd4f4ee6d8542e948d54f90c3c3a
   RNVectorIcons: d819334932bcda3332deb3d2c8ea4d069e0b98f9
   RNWatch: 09738b339eceb66e4d80a2371633ca5fb380fa42
-  SDWebImage: 3f3f0c02f09798048c47a5ed0a13f17b063572d8
   yoga: 92b2102c3d373d1a790db4ab761d2b0ffc634f64
 
-PODFILE CHECKSUM: b55338cc43312051ed83f8d9c6aadbd8c9402e6a
+PODFILE CHECKSUM: d540f088d564bfe3b8ca3d13eec4cc0ce9c6e4bc
 
 COCOAPODS: 1.7.2
