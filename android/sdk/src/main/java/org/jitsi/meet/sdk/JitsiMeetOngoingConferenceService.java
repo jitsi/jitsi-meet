@@ -21,6 +21,7 @@ import android.app.Service;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 import android.os.IBinder;
 import android.util.Log;
 
@@ -47,7 +48,12 @@ public class JitsiMeetOngoingConferenceService extends Service
         Intent intent = new Intent(context, JitsiMeetOngoingConferenceService.class);
         intent.setAction(Actions.START);
 
-        ComponentName componentName = context.startService(intent);
+        ComponentName componentName;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            componentName = context.startForegroundService(intent);
+        } else {
+            componentName = context.startService(intent);
+        }
         if (componentName == null) {
             Log.w(TAG, "Ongoing conference service not started");
         }
