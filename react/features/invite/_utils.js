@@ -9,7 +9,7 @@
  * Formats the conference pin in readable way for UI to display it.
  * Formats the pin in 3 groups of digits:
  * XXXX XXXX XX or XXXXX XXXXX XXX.
- * The length of first and second group is Math.ceil(pin.length / 3)
+ * The length of first and second group is Math.ceil(pin.length / 3).
  *
  * @param {Object} conferenceID - The conference id to format, string or number.
  * @returns {string} - The formatted conference pin.

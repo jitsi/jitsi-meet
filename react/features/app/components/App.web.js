@@ -7,6 +7,7 @@ import { DialogContainer } from '../../base/dialog';
 import '../../base/responsive-ui';
 import '../../chat';
 import '../../external-api';
+import '../../power-monitor';
 import '../../room-lock';
 import '../../video-layout';
 
