@@ -13,7 +13,11 @@ import {
     getLocalParticipant
 } from '../../../../base/participants';
 
-import { _getDefaultPhoneNumber, getDialInfoPageURL } from '../../../functions';
+import {
+    _decodeRoomURI,
+    _getDefaultPhoneNumber,
+    getDialInfoPageURL
+} from '../../../functions';
 import DialInNumber from './DialInNumber';
 import PasswordForm from './PasswordForm';
 
@@ -295,8 +299,9 @@ class InfoDialog extends Component<Props, State> {
      * @returns {string}
      */
     _getTextToCopy() {
-        const { _inviteURL, _localParticipant, liveStreamViewURL, t } = this.props;
+        const { _localParticipant, liveStreamViewURL, t } = this.props;
         const shouldDisplayDialIn = this._shouldDisplayDialIn();
+        const _inviteURL = _decodeRoomURI(this.props._inviteURL);
 
         let invite = _localParticipant && _localParticipant.name
             ? t('info.inviteURLFirstPartPersonal', { name: _localParticipant.name })
