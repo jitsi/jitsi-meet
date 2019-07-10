@@ -340,9 +340,7 @@
         "label": "Meeting info"
     },
     "inviteDialog": {
-        "alertOk": "Ok",
         "alertText": "Failed to invite some participants.",
-        "alertTitle": "Invite",
         "header": "Invite",
         "searchCallOnlyPlaceholder": "Enter phone number",
         "searchPeopleOnlyPlaceholder": "Search for participants",
