@@ -226,7 +226,8 @@ export function isRemoteTrackMuted(tracks, mediaType, participantId) {
 export function isUserInteractionRequiredForUnmute(state) {
     const { browser } = JitsiMeetJS.util;
 
-    return !browser.isChrome()
+    return !browser.isReactNative()
+        && !browser.isChrome()
         && !browser.isChromiumBased()
         && !browser.isElectron()
         && window
