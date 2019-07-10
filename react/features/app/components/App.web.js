@@ -4,6 +4,7 @@ import { AtlasKitThemeProvider } from '@atlaskit/theme';
 import React from 'react';
 
 import { DialogContainer } from '../../base/dialog';
+import '../../base/user-interaction';
 import '../../base/responsive-ui';
 import '../../chat';
 import '../../external-api';

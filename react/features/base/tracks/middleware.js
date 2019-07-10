@@ -24,7 +24,12 @@ import {
     TRACK_REMOVED,
     TRACK_UPDATED
 } from './actionTypes';
-import { getLocalTrack, getTrackByJitsiTrack, setTrackMuted } from './functions';
+import {
+    getLocalTrack,
+    getTrackByJitsiTrack,
+    isUserInteractionRequiredForUnmute,
+    setTrackMuted
+} from './functions';
 
 declare var APP: Object;
 
@@ -50,6 +55,11 @@ MiddlewareRegistry.register(store => next => action => {
         break;
     }
     case SET_AUDIO_MUTED:
+        if (!action.muted
+                && isUserInteractionRequiredForUnmute(store.getState())) {
+            return;
+        }
+
         _setMuted(store, action, MEDIA_TYPE.AUDIO);
         break;
 
@@ -74,6 +84,11 @@ MiddlewareRegistry.register(store => next => action => {
     }
 
     case SET_VIDEO_MUTED:
+        if (!action.muted
+                && isUserInteractionRequiredForUnmute(store.getState())) {
+            return;
+        }
+
         _setMuted(store, action, MEDIA_TYPE.VIDEO);
         break;
 

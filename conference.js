@@ -101,6 +101,7 @@ import {
     createLocalTracksF,
     destroyLocalTracks,
     isLocalTrackMuted,
+    isUserInteractionRequiredForUnmute,
     replaceLocalTrack,
     trackAdded,
     trackRemoved
@@ -681,8 +682,11 @@ export default {
                     startWithBlurEnabled: APP.store.getState()['features/blur'].blurEnabled,
                     startAudioOnly: config.startAudioOnly,
                     startScreenSharing: config.startScreenSharing,
-                    startWithAudioMuted: config.startWithAudioMuted || config.startSilent,
+                    startWithAudioMuted: config.startWithAudioMuted
+                        || config.startSilent
+                        || isUserInteractionRequiredForUnmute(APP.store.getState()),
                     startWithVideoMuted: config.startWithVideoMuted
+                        || isUserInteractionRequiredForUnmute(APP.store.getState())
                 }))
             .then(([ tracks, con ]) => {
                 tracks.forEach(track => {
@@ -783,6 +787,13 @@ export default {
      * dialogs in case of media permissions error.
      */
     muteAudio(mute, showUI = true) {
+        if (!mute
+                && isUserInteractionRequiredForUnmute(APP.store.getState())) {
+            logger.error('Unmuting audio requires user interaction');
+
+            return;
+        }
+
         // Not ready to modify track's state yet
         if (!this._localTracksInitialized) {
             // This will only modify base/media.audio.muted which is then synced
@@ -846,6 +857,13 @@ export default {
      * dialogs in case of media permissions error.
      */
     muteVideo(mute, showUI = true) {
+        if (!mute
+                && isUserInteractionRequiredForUnmute(APP.store.getState())) {
+            logger.error('Unmuting video requires user interaction');
+
+            return;
+        }
+
         // If not ready to modify track's state yet adjust the base/media
         if (!this._localTracksInitialized) {
             // This will only modify base/media.video.muted which is then synced
