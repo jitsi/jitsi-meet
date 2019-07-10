@@ -189,6 +189,7 @@
         "gracefulShutdown": "Our service is currently down for maintenance. Please try again later.",
         "hungUp": "You hung up",
         "IamHost": "I am the host",
+        "incorrectRoomLockPassword": "Incorrect password",
         "incorrectPassword": "Incorrect username or password",
         "inlineInstallationMsg": "You need to install our desktop sharing extension.",
         "inlineInstallExtension": "Install now",
