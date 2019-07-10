@@ -229,6 +229,25 @@ export function isRemoteTrackMuted(tracks, mediaType, participantId) {
 }
 
 /**
+ * Returns whether or not the current environment needs a user interaction with
+ * the page before any unmute can occur.
+ *
+ * @param {Object} state - The redux state.
+ * @returns {boolean}
+ */
+export function isUserInteractionRequiredForUnmute(state) {
+    const { browser } = JitsiMeetJS.util;
+
+    return !browser.isReactNative()
+        && !browser.isChrome()
+        && !browser.isChromiumBased()
+        && !browser.isElectron()
+        && window
+        && window.self !== window.top
+        && !state['features/base/user-interaction'].interacted;
+}
+
+/**
  * Mutes or unmutes a specific {@code JitsiLocalTrack}. If the muted state of
  * the specified {@code track} is already in accord with the specified
  * {@code muted} value, then does nothing.
