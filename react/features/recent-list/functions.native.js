@@ -31,7 +31,7 @@ function toDisplayableItem(item, defaultServerURL, t) {
             _toDurationString(item.duration),
             serverName
         ],
-        title: location.room,
+        title: decodeURIComponent(location.room),
         url: item.conference
     };
 }
