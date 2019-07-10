@@ -128,8 +128,12 @@ export default class SlidingView extends PureComponent<Props, State> {
      *
      * @inheritdoc
      */
-    componentDidUpdate() {
-        this._setShow(this.props.show);
+    componentDidUpdate(prevProps: Props) {
+        const { show } = this.props;
+
+        if (prevProps.show !== show) {
+            this._setShow(show);
+        }
     }
 
     /**
