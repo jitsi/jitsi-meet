@@ -3,7 +3,7 @@
 import { StyleSheet } from 'react-native';
 
 import { ColorSchemeRegistry, schemeColor } from '../../../color-scheme';
-import { BoxModel, ColorPalette, createStyleSheet } from '../../../styles';
+import { BoxModel, ColorPalette } from '../../../styles';
 
 import { PREFERRED_DIALOG_SIZE } from '../../constants';
 
@@ -50,7 +50,7 @@ export const bottomSheetStyles = {
     }
 };
 
-export const brandedDialog = createStyleSheet({
+export const brandedDialog = {
 
     /**
      * The style of bold {@code Text} rendered by the {@code Dialog}s of the
@@ -95,8 +95,12 @@ export const brandedDialog = createStyleSheet({
         flexDirection: 'row',
         justifyContent: 'center',
         padding: 30
+    },
+
+    overlayTouchable: {
+        ...StyleSheet.absoluteFillObject
     }
-});
+};
 
 /**
  * Reusable (colored) style for text in any branded dialogs.
@@ -107,7 +111,7 @@ const brandedDialogText = {
     textAlign: 'center'
 };
 
-export const inputDialog = createStyleSheet({
+export const inputDialog = {
     bottomField: {
         marginBottom: 0
     },
@@ -122,7 +126,7 @@ export const inputDialog = createStyleSheet({
         fontStyle: 'italic',
         margin: BoxModel.margin
     }
-});
+};
 
 /**
  * Default styles for the items of a {@code BottomSheet}-based menu.
