@@ -115,6 +115,12 @@ export const inputDialog = createStyleSheet({
     fieldWrapper: {
         ...brandedDialog.mainWrapper,
         paddingBottom: BoxModel.padding * 2
+    },
+
+    formMessage: {
+        alignSelf: 'flex-start',
+        fontStyle: 'italic',
+        margin: BoxModel.margin
     }
 });
 
