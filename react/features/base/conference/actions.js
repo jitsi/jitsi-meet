@@ -393,7 +393,8 @@ export function createConference() {
                 room.toLowerCase(), {
                     ...state['features/base/config'],
                     applicationName: getName(),
-                    getWiFiStatsMethod: getJitsiMeetGlobalNS().getWiFiStats
+                    getWiFiStatsMethod: getJitsiMeetGlobalNS().getWiFiStats,
+                    confID: `${locationURL.host}${locationURL.pathname}`
                 });
 
         connection[JITSI_CONNECTION_CONFERENCE_KEY] = conference;
