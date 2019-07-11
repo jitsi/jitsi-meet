@@ -150,6 +150,7 @@ class AddPeopleDialog extends AbstractAddPeopleDialog<Props, State> {
 
         return (
             <SlidingView
+                onHide = { this._onCloseAddPeopleDialog }
                 position = 'bottom'
                 show = { this.props._isVisible } >
                 <HeaderWithNavigation
@@ -242,15 +243,21 @@ class AddPeopleDialog extends AbstractAddPeopleDialog<Props, State> {
         this._onTypeQuery('');
     }
 
-    _onCloseAddPeopleDialog: () => void
+    _onCloseAddPeopleDialog: () => boolean
 
     /**
      * Closes the dialog.
      *
-     * @returns {void}
+     * @returns {boolean}
      */
     _onCloseAddPeopleDialog() {
-        this.props.dispatch(setAddPeopleDialogVisible(false));
+        if (this.props._isVisible) {
+            this.props.dispatch(setAddPeopleDialogVisible(false));
+
+            return true;
+        }
+
+        return false;
     }
 
     _onInvite: () => void

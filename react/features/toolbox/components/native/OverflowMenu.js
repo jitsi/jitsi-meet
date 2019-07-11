@@ -4,7 +4,7 @@ import React, { Component } from 'react';
 import { Platform } from 'react-native';
 
 import { ColorSchemeRegistry } from '../../../base/color-scheme';
-import { BottomSheet, hideDialog } from '../../../base/dialog';
+import { BottomSheet, hideDialog, isDialogOpen } from '../../../base/dialog';
 import { CHAT_ENABLED, IOS_RECORDING_ENABLED, getFeatureFlag } from '../../../base/flags';
 import { connect } from '../../../base/redux';
 import { StyleType } from '../../../base/styles';
@@ -33,6 +33,11 @@ type Props = {
      * Whether the chat feature has been enabled. The meeting info button will be displayed in its place when disabled.
      */
     _chatEnabled: boolean,
+
+    /**
+     * True if the overflow menu is currently visible, false otherwise.
+     */
+    _isOpen: boolean,
 
     /**
      * Whether the recoding button should be enabled or not.
@@ -107,16 +112,22 @@ class OverflowMenu extends Component<Props> {
         );
     }
 
-    _onCancel: () => void;
+    _onCancel: () => boolean;
 
     /**
      * Hides this {@code OverflowMenu}.
      *
      * @private
-     * @returns {void}
+     * @returns {boolean}
      */
     _onCancel() {
-        this.props.dispatch(hideDialog(OverflowMenu_));
+        if (this.props._isOpen) {
+            this.props.dispatch(hideDialog(OverflowMenu_));
+
+            return true;
+        }
+
+        return false;
     }
 }
 
@@ -125,17 +136,14 @@ class OverflowMenu extends Component<Props> {
  *
  * @param {Object} state - Redux state.
  * @private
- * @returns {{
- *      _bottomSheetStyles: StyleType,
- *      _chatEnabled: boolean,
- *      _recordingEnabled: boolean
- *  }}
+ * @returns {Props}
  */
 function _mapStateToProps(state) {
     return {
         _bottomSheetStyles:
             ColorSchemeRegistry.get(state, 'BottomSheet'),
         _chatEnabled: getFeatureFlag(state, CHAT_ENABLED, true),
+        _isOpen: isDialogOpen(state, OverflowMenu_),
         _recordingEnabled: Platform.OS !== 'ios' || getFeatureFlag(state, IOS_RECORDING_ENABLED)
     };
 }

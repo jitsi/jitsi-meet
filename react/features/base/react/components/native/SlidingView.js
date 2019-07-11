@@ -8,6 +8,8 @@ import {
     View
 } from 'react-native';
 
+import { BackButtonRegistry } from '../../../../mobile/back-button';
+
 import { type StyleType } from '../../../styles';
 
 import styles from './slidingviewstyles';
@@ -110,6 +112,7 @@ export default class SlidingView extends PureComponent<Props, State> {
         };
 
         // Bind event handlers so they are only bound once per instance.
+        this._onHardwareBackPress = this._onHardwareBackPress.bind(this);
         this._onHide = this._onHide.bind(this);
     }
 
@@ -119,6 +122,8 @@ export default class SlidingView extends PureComponent<Props, State> {
      * @inheritdoc
      */
     componentDidMount() {
+        BackButtonRegistry.addListener(this._onHardwareBackPress, true);
+
         this._mounted = true;
         this._setShow(this.props.show);
     }
@@ -142,6 +147,8 @@ export default class SlidingView extends PureComponent<Props, State> {
      * @inheritdoc
      */
     componentWillUnmount() {
+        BackButtonRegistry.removeListener(this._onHardwareBackPress);
+
         this._mounted = false;
     }
 
@@ -213,6 +220,23 @@ export default class SlidingView extends PureComponent<Props, State> {
         }
 
         return style;
+    }
+
+    _onHardwareBackPress: () => boolean;
+
+    /**
+     * Callback to handle the hardware back button.
+     *
+     * @returns {boolean}
+     */
+    _onHardwareBackPress() {
+        const { onHide } = this.props;
+
+        if (typeof onHide === 'function') {
+            return onHide();
+        }
+
+        return false;
     }
 
     _onHide: () => void;

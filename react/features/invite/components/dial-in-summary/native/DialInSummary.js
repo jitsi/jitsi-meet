@@ -59,6 +59,7 @@ class DialInSummary extends Component<Props> {
 
         return (
             <SlidingView
+                onHide = { this._onCloseView }
                 position = 'bottom'
                 show = { Boolean(_summaryUrl) } >
                 <View style = { styles.webViewWrapper }>
@@ -77,15 +78,21 @@ class DialInSummary extends Component<Props> {
         );
     }
 
-    _onCloseView: () => void;
+    _onCloseView: () => boolean;
 
     /**
      * Closes the view.
      *
-     * @returns {void}
+     * @returns {boolean}
      */
     _onCloseView() {
-        this.props.dispatch(hideDialInSummary());
+        if (this.props._summaryUrl) {
+            this.props.dispatch(hideDialInSummary());
+
+            return true;
+        }
+
+        return false;
     }
 
     _onError: () => void;
