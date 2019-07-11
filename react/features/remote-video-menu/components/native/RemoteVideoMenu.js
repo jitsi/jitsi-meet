@@ -5,9 +5,7 @@ import { Text, View } from 'react-native';
 
 import { Avatar } from '../../../base/avatar';
 import { ColorSchemeRegistry } from '../../../base/color-scheme';
-import {
-    BottomSheet
-} from '../../../base/dialog';
+import { BottomSheet, isDialogOpen } from '../../../base/dialog';
 import { getParticipantDisplayName } from '../../../base/participants';
 import { connect } from '../../../base/redux';
 import { StyleType } from '../../../base/styles';
@@ -42,10 +40,18 @@ type Props = {
     _bottomSheetStyles: StyleType,
 
     /**
+     * True if the menu is currently open, false otherwise.
+     */
+    _isOpen: boolean,
+
+    /**
      * Display name of the participant retreived from Redux.
      */
     _participantDisplayName: string
 }
+
+// eslint-disable-next-line prefer-const
+let RemoteVideoMenu_;
 
 /**
  * Class to implement a popup menu that opens upon long pressing a thumbnail.
@@ -93,16 +99,22 @@ class RemoteVideoMenu extends Component<Props> {
         );
     }
 
-    _onCancel: () => void;
+    _onCancel: () => boolean;
 
     /**
      * Callback to hide the {@code RemoteVideoMenu}.
      *
      * @private
-     * @returns {void}
+     * @returns {boolean}
      */
     _onCancel() {
-        this.props.dispatch(hideRemoteVideoMenu());
+        if (this.props._isOpen) {
+            this.props.dispatch(hideRemoteVideoMenu());
+
+            return true;
+        }
+
+        return false;
     }
 }
 
@@ -112,10 +124,7 @@ class RemoteVideoMenu extends Component<Props> {
  * @param {Object} state - Redux state.
  * @param {Object} ownProps - Properties of component.
  * @private
- * @returns {{
- *      _bottomSheetStyles: StyleType,
- *      _participantDisplayName: string
- *  }}
+ * @returns {Props}
  */
 function _mapStateToProps(state, ownProps) {
     const { participant } = ownProps;
@@ -123,9 +132,12 @@ function _mapStateToProps(state, ownProps) {
     return {
         _bottomSheetStyles:
             ColorSchemeRegistry.get(state, 'BottomSheet'),
+        _isOpen: isDialogOpen(state, RemoteVideoMenu_),
         _participantDisplayName: getParticipantDisplayName(
             state, participant.id)
     };
 }
 
-export default connect(_mapStateToProps)(RemoteVideoMenu);
+RemoteVideoMenu_ = connect(_mapStateToProps)(RemoteVideoMenu);
+
+export default RemoteVideoMenu_;
