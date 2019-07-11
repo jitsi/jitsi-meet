@@ -1713,14 +1713,7 @@ export default {
                 return;
             }
 
-            const displayName = user.getDisplayName();
-
             logger.log(`USER ${id} connnected:`, user);
-            APP.API.notifyUserJoined(id, {
-                displayName,
-                formattedDisplayName: appendSuffix(
-                    displayName || interfaceConfig.DEFAULT_REMOTE_DISPLAY_NAME)
-            });
             APP.UI.addUser(user);
 
             // check the roles for the new user and reflect them
@@ -1736,7 +1729,7 @@ export default {
             }
 
             logger.log(`USER ${id} LEFT:`, user);
-            APP.API.notifyUserLeft(id);
+
             APP.UI.onSharedVideoStop(id);
         });
 
