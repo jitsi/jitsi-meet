@@ -893,8 +893,10 @@ const VideoLayout = {
      * will be set.
      */
     _setRemoteControlProperties(user, remoteVideo) {
-        APP.remoteControl.checkUserRemoteControlSupport(user).then(result =>
-            remoteVideo.setRemoteControlSupport(result));
+        APP.remoteControl.checkUserRemoteControlSupport(user)
+            .then(result => remoteVideo.setRemoteControlSupport(result))
+            .catch(error =>
+                logger.warn('could not get remote control properties', error));
     },
 
     /**
