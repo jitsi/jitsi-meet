@@ -12,7 +12,6 @@ import { ChatButton } from '../../../chat';
 import { InfoDialogButton } from '../../../invite';
 
 import { isToolboxVisible } from '../../functions';
-import { HANGUP_BUTTON_SIZE } from '../../constants';
 
 import AudioMuteButton from '../AudioMuteButton';
 import HangupButton from '../HangupButton';
@@ -22,21 +21,13 @@ import styles from './styles';
 import VideoMuteButton from '../VideoMuteButton';
 
 /**
- * The number of buttons other than {@link HangupButton} to render in
+ * The number of buttons to render in
  * {@link Toolbox}.
  *
  * @private
  * @type number
  */
-const _BUTTON_COUNT = 4;
-
-/**
- * Factor relating the hangup button and other toolbar buttons.
- *
- * @private
- * @type number
- */
-const _BUTTON_SIZE_FACTOR = 0.85;
+const _BUTTON_COUNT = 5;
 
 /**
  * The type of {@link Toolbox}'s React {@code Component} props.
@@ -129,28 +120,17 @@ class Toolbox extends Component<Props, State> {
             return width;
         }
 
-        const hangupButtonSize = HANGUP_BUTTON_SIZE;
         const { style } = _styles.buttonStyles;
         let buttonSize
             = (width
 
-                    // Account for HangupButton without its margin which is not
-                    // included in _BUTTON_COUNT:
-                    - hangupButtonSize
-
                     // Account for the horizontal margins of all buttons:
-                    - ((_BUTTON_COUNT + 1) * style.marginHorizontal * 2))
-                / _BUTTON_COUNT;
+                    - (_BUTTON_COUNT * style.marginHorizontal * 2)) / _BUTTON_COUNT;
 
         // Well, don't return a non-positive button size.
         if (buttonSize <= 0) {
             buttonSize = style.width;
         }
-
-        // The button should be at most _BUTTON_SIZE_FACTOR of the hangup
-        // button's size.
-        buttonSize
-            = Math.min(buttonSize, hangupButtonSize * _BUTTON_SIZE_FACTOR);
 
         // Make sure it's an even number.
         return 2 * Math.round(buttonSize / 2);
@@ -187,6 +167,24 @@ class Toolbox extends Component<Props, State> {
         };
     }
 
+    /**
+     * Applies the recalculated size to the button style object, if needed.
+     *
+     * @param {Object} baseStyle - The base style object of the button.
+     * @param {Object} extraStyle - The extra style object of the button.
+     * @returns {Object}
+     */
+    _getResizedStyle(baseStyle, extraStyle) {
+        if (baseStyle.style.width !== extraStyle.width) {
+            return {
+                ...baseStyle,
+                style: [ baseStyle.style, extraStyle ]
+            };
+        }
+
+        return baseStyle;
+    }
+
     _onLayout: (Object) => void;
 
     /**
@@ -211,7 +209,7 @@ class Toolbox extends Component<Props, State> {
     _renderToolbar() {
         const { _chatEnabled, _styles } = this.props;
         const buttonSize = this._calculateButtonSize();
-        let { buttonStyles, toggledButtonStyles } = _styles;
+        let { buttonStyles, buttonStylesBorderless, hangupButtonStyles, toggledButtonStyles } = _styles;
 
         if (buttonSize > 0) {
             const extraButtonStyle = {
@@ -222,18 +220,12 @@ class Toolbox extends Component<Props, State> {
 
             // XXX The following width equality checks attempt to minimize
             // unnecessary objects and possibly re-renders.
-            if (buttonStyles.style.width !== extraButtonStyle.width) {
-                buttonStyles = {
-                    ...buttonStyles,
-                    style: [ buttonStyles.style, extraButtonStyle ]
-                };
-            }
-            if (toggledButtonStyles.style.width !== extraButtonStyle.width) {
-                toggledButtonStyles = {
-                    ...toggledButtonStyles,
-                    style: [ toggledButtonStyles.style, extraButtonStyle ]
-                };
-            }
+            //
+            // TODO: This needs a refactor!
+            buttonStyles = this._getResizedStyle(buttonStyles, extraButtonStyle);
+            buttonStylesBorderless = this._getResizedStyle(buttonStylesBorderless, extraButtonStyle);
+            hangupButtonStyles = this._getResizedStyle(hangupButtonStyles, extraButtonStyle);
+            toggledButtonStyles = this._getResizedStyle(toggledButtonStyles, extraButtonStyle);
         } else {
             // XXX In order to avoid a weird visual effect in which the toolbar
             // is (visually) rendered and then visibly changes its size, it is
@@ -249,7 +241,7 @@ class Toolbox extends Component<Props, State> {
                 {
                     _chatEnabled
                         && <ChatButton
-                            styles = { buttonStyles }
+                            styles = { buttonStylesBorderless }
                             toggledStyles = {
                                 this._getChatButtonToggledStyle(toggledButtonStyles)
                             } />
@@ -264,12 +256,12 @@ class Toolbox extends Component<Props, State> {
                     styles = { buttonStyles }
                     toggledStyles = { toggledButtonStyles } />
                 <HangupButton
-                    styles = { _styles.hangupButtonStyles } />
+                    styles = { hangupButtonStyles } />
                 <VideoMuteButton
                     styles = { buttonStyles }
                     toggledStyles = { toggledButtonStyles } />
                 <OverflowMenuButton
-                    styles = { buttonStyles }
+                    styles = { buttonStylesBorderless }
                     toggledStyles = { toggledButtonStyles } />
             </View>
         );
