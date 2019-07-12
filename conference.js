@@ -114,10 +114,8 @@ import {
     maybeOpenFeedbackDialog,
     submitFeedback
 } from './react/features/feedback';
-import {
-    mediaPermissionPromptVisibilityChanged,
-    suspendDetected
-} from './react/features/overlay';
+import { mediaPermissionPromptVisibilityChanged } from './react/features/overlay';
+import { suspendDetected } from './react/features/power-monitor';
 import { setSharedVideoStatus } from './react/features/shared-video';
 import { isButtonEnabled } from './react/features/toolbox';
 import { endpointMessageReceived } from './react/features/subtitles';
@@ -1932,33 +1930,6 @@ export default {
 
         room.on(JitsiConferenceEvents.SUSPEND_DETECTED, () => {
             APP.store.dispatch(suspendDetected());
-
-            // After wake up, we will be in a state where conference is left
-            // there will be dialog shown to user.
-            // We do not want video/audio as we show an overlay and after it
-            // user need to rejoin or close, while waking up we can detect
-            // camera wakeup as a problem with device.
-            // We also do not care about device change, which happens
-            // on resume after suspending PC.
-            if (this.deviceChangeListener) {
-                JitsiMeetJS.mediaDevices.removeEventListener(
-                    JitsiMediaDevicesEvents.DEVICE_LIST_CHANGED,
-                    this.deviceChangeListener);
-            }
-
-            // stop local video
-            if (this.localVideo) {
-                this.localVideo.dispose();
-                this.localVideo = null;
-            }
-
-            // stop local audio
-            if (this.localAudio) {
-                this.localAudio.dispose();
-                this.localAudio = null;
-            }
-
-            APP.API.notifySuspendDetected();
         });
 
         APP.UI.addListener(UIEvents.AUDIO_MUTED, muted => {
@@ -2212,6 +2183,27 @@ export default {
                     APP.UI.onSharedVideoUpdate(id, value, attributes);
                 }
             });
+    },
+
+    /**
+     * Cleanups local conference on suspend.
+     */
+    onSuspendDetected() {
+        // After wake up, we will be in a state where conference is left
+        // there will be dialog shown to user.
+        // We do not want video/audio as we show an overlay and after it
+        // user need to rejoin or close, while waking up we can detect
+        // camera wakeup as a problem with device.
+        // We also do not care about device change, which happens
+        // on resume after suspending PC.
+        if (this.deviceChangeListener) {
+            JitsiMeetJS.mediaDevices.removeEventListener(
+                JitsiMediaDevicesEvents.DEVICE_LIST_CHANGED,
+                this.deviceChangeListener);
+        }
+
+        this.localVideo = null;
+        this.localAudio = null;
     },
 
     /**
