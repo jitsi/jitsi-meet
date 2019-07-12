@@ -6,9 +6,7 @@ import { Transport } from '../../../modules/transport';
 import { SET_TRANSPORT } from './actionTypes';
 
 /**
- * Reduces the redux actions of the feature overlay.
- *
- * FIXME: these pieces of state should probably be in a different place.
+ * Reduces the redux actions of the feature power monitor.
  */
 ReducerRegistry.register('features/power-monitor', (state = { }, action) => {
     switch (action.type) {

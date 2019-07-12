@@ -25,13 +25,3 @@ export const MEDIA_PERMISSION_PROMPT_VISIBILITY_CHANGED
  * @public
  */
 export const SET_FATAL_ERROR = 'SET_FATAL_ERROR';
-
-/**
- * The type of the Redux action which signals that a suspend was detected.
- *
- * {
- *     type: SUSPEND_DETECTED
- * }
- * @public
- */
-export const SUSPEND_DETECTED = 'SUSPEND_DETECTED';

@@ -1,6 +1,10 @@
 // @flow
 
-import { setTransport } from './actions';
+import {
+    setTransport,
+    suspendDetected
+} from './actions';
+import { SUSPEND_DETECTED } from './actionTypes';
 
 import {
     CONFERENCE_JOINED,
@@ -11,9 +15,7 @@ import {
     PostMessageTransportBackend,
     Transport
 } from '../../../modules/transport';
-import { SUSPEND_DETECTED } from '../overlay/actionTypes';
 import { destroyLocalTracks } from '../base/tracks';
-import { suspendDetected } from '../overlay';
 
 declare var APP: Object;
 

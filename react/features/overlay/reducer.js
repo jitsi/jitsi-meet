@@ -2,11 +2,11 @@
 
 import { CONFIG_WILL_LOAD, LOAD_CONFIG_ERROR, SET_CONFIG } from '../base/config';
 import { assign, ReducerRegistry, set } from '../base/redux';
+import { SUSPEND_DETECTED } from '../power-monitor';
 
 import {
     MEDIA_PERMISSION_PROMPT_VISIBILITY_CHANGED,
-    SET_FATAL_ERROR,
-    SUSPEND_DETECTED
+    SET_FATAL_ERROR
 } from './actionTypes';
 
 /**
