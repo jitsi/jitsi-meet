@@ -579,30 +579,9 @@ function _onCreateLocalTracksRejected({ gum }, device) {
             const { error } = gum;
 
             if (error) {
-                // FIXME For whatever reason (which is probably an
-                // implementation fault), react-native-webrtc will give the
-                // error in one of the following formats depending on whether it
-                // is attached to a remote debugger or not. (The remote debugger
-                // scenario suggests that react-native-webrtc is at fault
-                // because the remote debugger is Google Chrome and then its
-                // JavaScript engine will define DOMException. I suspect I wrote
-                // react-native-webrtc to return the error in the alternative
-                // format if DOMException is not defined.)
-                let trackPermissionError;
-
-                switch (error.name) {
-                case 'DOMException':
-                    trackPermissionError = error.message === 'NotAllowedError';
-                    break;
-
-                case 'NotAllowedError':
-                    trackPermissionError = error instanceof DOMException;
-                    break;
-                }
-
                 dispatch({
                     type: TRACK_CREATE_ERROR,
-                    permissionDenied: trackPermissionError,
+                    permissionDenied: error.name === 'SecurityError',
                     trackType: device
                 });
             }
