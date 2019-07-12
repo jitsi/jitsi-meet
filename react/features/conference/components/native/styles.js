@@ -1,18 +1,27 @@
-import {
-    BoxModel,
-    ColorPalette,
-    createStyleSheet,
-    fixAndroidViewClipping
-} from '../../../base/styles';
+import { BoxModel, ColorPalette, fixAndroidViewClipping } from '../../../base/styles';
 
 import { FILMSTRIP_SIZE } from '../../../filmstrip';
 
-export const NAVBAR_GRADIENT_COLORS = [ 'black', '#00000000' ];
+export const NAVBAR_GRADIENT_COLORS = [ '#0000007F', '#00000000' ];
+
+// From brand guideline
+const GRADIENT_HEIGHT = 116;
 
 /**
  * The styles of the feature conference.
  */
-export default createStyleSheet({
+export default {
+
+    bottomGradient: {
+        bottom: 0,
+        flexDirection: 'column',
+        justifyContent: 'flex-end',
+        minHeight: GRADIENT_HEIGHT,
+        left: 0,
+        position: 'absolute',
+        right: 0
+    },
+
     /**
      * {@code Conference} style.
      */
@@ -30,8 +39,12 @@ export default createStyleSheet({
         flex: 1
     },
 
+    gradientStretchBottom: {
+        height: GRADIENT_HEIGHT + FILMSTRIP_SIZE
+    },
+
     gradientStretch: {
-        height: 116
+        height: GRADIENT_HEIGHT
     },
 
     /**
@@ -112,10 +125,11 @@ export default createStyleSheet({
      * the {@link Toolbox}.
      */
     toolboxAndFilmstripContainer: {
-        bottom: BoxModel.margin,
+        bottom: 0,
         flexDirection: 'column',
         justifyContent: 'flex-end',
         left: 0,
+        paddingBottom: BoxModel.padding,
         position: 'absolute',
         right: 0,
 
@@ -124,4 +138,4 @@ export default createStyleSheet({
         // not enough.
         top: BoxModel.margin * 3
     }
-});
+};

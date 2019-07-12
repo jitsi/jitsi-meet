@@ -2,6 +2,7 @@
 
 import React from 'react';
 import { NativeModules, SafeAreaView, StatusBar, View } from 'react-native';
+import LinearGradient from 'react-native-linear-gradient';
 
 import { appNavigate } from '../../../app';
 import { PIP_ENABLED, getFeatureFlag } from '../../../base/flags';
@@ -34,7 +35,7 @@ import {
 } from '../AbstractConference';
 import Labels from './Labels';
 import NavigationBar from './NavigationBar';
-import styles from './styles';
+import styles, { NAVBAR_GRADIENT_COLORS } from './styles';
 
 import type { AbstractProps } from '../AbstractConference';
 
@@ -199,10 +200,14 @@ class Conference extends AbstractConference<Props, *> {
     render() {
         const {
             _connecting,
+            _filmstripVisible,
             _largeVideoParticipantId,
             _reducedUI,
-            _shouldDisplayTileView
+            _shouldDisplayTileView,
+            _toolboxVisible
         } = this.props;
+        const showGradient = _toolboxVisible;
+        const applyGradientStretching = _filmstripVisible && isNarrowAspectRatio(this) && !_shouldDisplayTileView;
 
         return (
             <Container style = { styles.conference }>
@@ -242,6 +247,22 @@ class Conference extends AbstractConference<Props, *> {
                     pointerEvents = 'box-none'
                     style = { styles.toolboxAndFilmstripContainer }>
 
+                    { showGradient && <LinearGradient
+                        colors = { NAVBAR_GRADIENT_COLORS }
+                        end = {{
+                            x: 0.0,
+                            y: 0.0
+                        }}
+                        pointerEvents = 'none'
+                        start = {{
+                            x: 0.0,
+                            y: applyGradientStretching ? 0.5 : 1.0
+                        }}
+                        style = { [
+                            styles.bottomGradient,
+                            applyGradientStretching ? styles.gradientStretchBottom : undefined
+                        ] } />}
+
                     <Labels />
 
                     <Captions onPress = { this._onClick } />
@@ -249,7 +270,7 @@ class Conference extends AbstractConference<Props, *> {
                     { _shouldDisplayTileView || <DisplayNameLabel participantId = { _largeVideoParticipantId } /> }
 
                     {/*
-                      * The Toolbox is in a stacking layer bellow the Filmstrip.
+                      * The Toolbox is in a stacking layer below the Filmstrip.
                       */}
                     <Toolbox />
 
