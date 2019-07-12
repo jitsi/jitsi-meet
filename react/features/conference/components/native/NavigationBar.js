@@ -46,7 +46,7 @@ class NavigationBar extends Component<Props> {
                 pointerEvents = 'none'
                 style = { styles.gradient }>
                 <SafeAreaView>
-                    <View style = { styles.gradientStretch } />
+                    <View style = { styles.gradientStretchTop } />
                 </SafeAreaView>
             </LinearGradient>,
             <View

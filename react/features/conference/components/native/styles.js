@@ -2,10 +2,11 @@ import { BoxModel, ColorPalette, fixAndroidViewClipping } from '../../../base/st
 
 import { FILMSTRIP_SIZE } from '../../../filmstrip';
 
-export const NAVBAR_GRADIENT_COLORS = [ '#0000007F', '#00000000' ];
+export const NAVBAR_GRADIENT_COLORS = [ '#000000FF', '#00000000' ];
 
 // From brand guideline
-const GRADIENT_HEIGHT = 116;
+const BOTTOM_GRADIENT_HEIGHT = 290;
+const DEFAULT_GRADIENT_SIZE = 140;
 
 /**
  * The styles of the feature conference.
@@ -16,7 +17,7 @@ export default {
         bottom: 0,
         flexDirection: 'column',
         justifyContent: 'flex-end',
-        minHeight: GRADIENT_HEIGHT,
+        minHeight: DEFAULT_GRADIENT_SIZE,
         left: 0,
         position: 'absolute',
         right: 0
@@ -40,11 +41,11 @@ export default {
     },
 
     gradientStretchBottom: {
-        height: GRADIENT_HEIGHT + FILMSTRIP_SIZE
+        height: BOTTOM_GRADIENT_HEIGHT
     },
 
-    gradientStretch: {
-        height: GRADIENT_HEIGHT
+    gradientStretchTop: {
+        height: DEFAULT_GRADIENT_SIZE
     },
 
     /**

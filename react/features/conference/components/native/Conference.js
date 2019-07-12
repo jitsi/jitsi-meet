@@ -256,7 +256,7 @@ class Conference extends AbstractConference<Props, *> {
                         pointerEvents = 'none'
                         start = {{
                             x: 0.0,
-                            y: applyGradientStretching ? 0.5 : 1.0
+                            y: 1.0
                         }}
                         style = { [
                             styles.bottomGradient,
