@@ -1239,6 +1239,7 @@ export default {
         const options = config;
 
         const nick = APP.store.getState()['features/base/settings'].displayName;
+        const { locationURL } = APP.store.getState()['features/base/connection'];
 
         if (nick) {
             options.displayName = nick;
@@ -1246,6 +1247,7 @@ export default {
 
         options.applicationName = interfaceConfig.APP_NAME;
         options.getWiFiStatsMethod = this._getWiFiStatsMethod;
+        options.confID = `${locationURL.host}${locationURL.pathname}`;
 
         return options;
     },
