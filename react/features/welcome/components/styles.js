@@ -39,14 +39,6 @@ export default createStyleSheet({
     },
 
     /**
-     * Style of the avatar in te side bar.
-     */
-    avatar: {
-        alignSelf: 'center',
-        flex: 0
-    },
-
-    /**
      * Join button style.
      */
     button: {
@@ -161,6 +153,21 @@ export default createStyleSheet({
     page: {
         flex: 1,
         flexDirection: 'column'
+    },
+
+    /**
+     * The styles for reduced UI mode.
+     */
+    reducedUIContainer: {
+        alignItems: 'center',
+        backgroundColor: ColorPalette.blue,
+        flex: 1,
+        justifyContent: 'center'
+    },
+
+    reducedUIText: {
+        color: TEXT_COLOR,
+        fontSize: 12
     },
 
     /**

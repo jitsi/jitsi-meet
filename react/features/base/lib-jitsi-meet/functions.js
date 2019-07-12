@@ -70,6 +70,7 @@ export function isFatalJitsiConferenceError(error: Object | string) {
     return (
         error === JitsiConferenceErrors.FOCUS_DISCONNECTED
             || error === JitsiConferenceErrors.FOCUS_LEFT
+            || error === JitsiConferenceErrors.OFFER_ANSWER_FAILED
             || error === JitsiConferenceErrors.VIDEOBRIDGE_NOT_AVAILABLE);
 }
 

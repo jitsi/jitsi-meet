@@ -13,12 +13,6 @@ import { isAddPeopleEnabled, isDialOutEnabled } from '../../../functions';
 type Props = AbstractButtonProps & {
 
     /**
-     * Whether or not the feature to invite people to join the
-     * conference is available.
-     */
-    _addPeopleEnabled: boolean,
-
-    /**
      * The Redux dispatch function.
      */
     dispatch: Dispatch<any>
@@ -42,16 +36,6 @@ class InviteButton extends AbstractButton<Props, *> {
     _handleClick() {
         this.props.dispatch(setAddPeopleDialogVisible(true));
     }
-
-    /**
-     * Returns true if none of the invite methods are available.
-     *
-     * @protected
-     * @returns {boolean}
-     */
-    _isDisabled() {
-        return !this.props._addPeopleEnabled;
-    }
 }
 
 /**
@@ -59,14 +43,17 @@ class InviteButton extends AbstractButton<Props, *> {
  * props.
  *
  * @param {Object} state - The redux store/state.
+ * @param {Object} ownProps - The properties explicitly passed to the component
+ * instance.
  * @private
- * @returns {{
- *   _addPeopleEnabled: boolean
- * }}
+ * @returns {Object}
  */
-function _mapStateToProps(state) {
+function _mapStateToProps(state: Object, ownProps: Object) {
+    const addPeopleEnabled = isAddPeopleEnabled(state) || isDialOutEnabled(state);
+    const { visible = Boolean(addPeopleEnabled) } = ownProps;
+
     return {
-        _addPeopleEnabled: isAddPeopleEnabled(state) || isDialOutEnabled(state)
+        visible
     };
 }
 

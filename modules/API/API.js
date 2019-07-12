@@ -510,6 +510,15 @@ class API {
     }
 
     /**
+     * Notify external application (if API is enabled) that a suspend event in host computer.
+     *
+     * @returns {void}
+     */
+    notifySuspendDetected() {
+        this._sendEvent({ name: 'suspend-detected' });
+    }
+
+    /**
      * Notify external application (if API is enabled) for audio muted status
      * changed.
      *
@@ -646,6 +655,24 @@ class API {
         this._sendEvent({
             name: 'filmstrip-display-changed',
             visible
+        });
+    }
+
+    /**
+     * Notify external application of a participant, remote or local, being
+     * removed from the conference by another participant.
+     *
+     * @param {string} kicked - The ID of the participant removed from the
+     * conference.
+     * @param {string} kicker - The ID of the participant that removed the
+     * other participant.
+     * @returns {void}
+     */
+    notifyKickedOut(kicked: Object, kicker: Object) {
+        this._sendEvent({
+            name: 'participant-kicked-out',
+            kicked,
+            kicker
         });
     }
 

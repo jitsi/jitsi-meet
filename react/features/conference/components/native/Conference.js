@@ -1,7 +1,7 @@
 // @flow
 
 import React from 'react';
-import { BackHandler, NativeModules, SafeAreaView, StatusBar, View } from 'react-native';
+import { NativeModules, SafeAreaView, StatusBar, View } from 'react-native';
 
 import { appNavigate } from '../../../app';
 import { PIP_ENABLED, getFeatureFlag } from '../../../base/flags';
@@ -23,6 +23,7 @@ import {
     TileView
 } from '../../../filmstrip';
 import { LargeVideo } from '../../../large-video';
+import { BackButtonRegistry } from '../../../mobile/back-button';
 import { AddPeopleDialog, CalleeInfoContainer } from '../../../invite';
 import { Captions } from '../../../subtitles';
 import { setToolboxVisible, Toolbox } from '../../../toolbox';
@@ -112,13 +113,6 @@ type Props = AbstractProps & {
     _toolboxVisible: boolean,
 
     /**
-     * The indicator which determines whether the Toolbox is always visible.
-     *
-     * @private
-     */
-    _toolboxAlwaysVisible: boolean,
-
-    /**
      * The redux {@code dispatch} function.
      */
     dispatch: Function
@@ -151,7 +145,7 @@ class Conference extends AbstractConference<Props, *> {
      * @returns {void}
      */
     componentDidMount() {
-        BackHandler.addEventListener('hardwareBackPress', this._onHardwareBackPress);
+        BackButtonRegistry.addListener(this._onHardwareBackPress);
 
         // Show the toolbox if we are the only participant; otherwise, the whole
         // UI looks too unpopulated the LargeVideo visible.
@@ -193,7 +187,7 @@ class Conference extends AbstractConference<Props, *> {
      */
     componentWillUnmount() {
         // Tear handling any hardware button presses for back navigation down.
-        BackHandler.removeEventListener('hardwareBackPress', this._onHardwareBackPress);
+        BackButtonRegistry.removeListener(this._onHardwareBackPress);
     }
 
     /**
@@ -298,10 +292,6 @@ class Conference extends AbstractConference<Props, *> {
      * @returns {void}
      */
     _onClick() {
-        if (this.props._toolboxAlwaysVisible) {
-            return;
-        }
-
         this._setToolboxVisible(!this.props._toolboxVisible);
     }
 
@@ -407,7 +397,7 @@ function _mapStateToProps(state) {
         leaving
     } = state['features/base/conference'];
     const { reducedUI } = state['features/base/responsive-ui'];
-    const { alwaysVisible, visible } = state['features/toolbox'];
+    const { visible } = state['features/toolbox'];
 
     // XXX There is a window of time between the successful establishment of the
     // XMPP connection and the subsequent commencement of joining the MUC during
@@ -484,15 +474,7 @@ function _mapStateToProps(state) {
          * @private
          * @type {boolean}
          */
-        _toolboxVisible: visible,
-
-        /**
-         * The indicator which determines whether the Toolbox is always visible.
-         *
-         * @private
-         * @type {boolean}
-         */
-        _toolboxAlwaysVisible: alwaysVisible
+        _toolboxVisible: visible
     };
 }
 

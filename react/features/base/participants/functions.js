@@ -1,87 +1,66 @@
 // @flow
-import { getAvatarURL as _getAvatarURL } from 'js-utils/avatar';
+import { getGravatarURL } from 'js-utils/avatar';
 
 import { toState } from '../redux';
 
 import { JitsiParticipantConnectionStatus } from '../lib-jitsi-meet';
 import { MEDIA_TYPE, shouldRenderVideoTrack } from '../media';
 import { getTrackByMediaTypeAndParticipant } from '../tracks';
+import { createDeferred } from '../util';
 
 import {
-    DEFAULT_AVATAR_RELATIVE_PATH,
-    LOCAL_PARTICIPANT_DEFAULT_ID,
     MAX_DISPLAY_NAME_LENGTH,
     PARTICIPANT_ROLE
 } from './constants';
+import { preloadImage } from './preloadImage';
 
 declare var config: Object;
 declare var interfaceConfig: Object;
 
 /**
- * Returns the URL of the image for the avatar of a specific participant.
- *
- * @param {Participant} [participant] - The participant to return the avatar URL
- * of.
- * @param {string} [participant.avatarID] - Participant's avatar ID.
- * @param {string} [participant.avatarURL] - Participant's avatar URL.
- * @param {string} [participant.email] - Participant's e-mail address.
- * @param {string} [participant.id] - Participant's ID.
- * @public
- * @returns {string} The URL of the image for the avatar of the specified
- * participant.
+ * Temp structures for avatar urls to be checked/preloaded.
  */
-export function getAvatarURL({ avatarID, avatarURL, email, id }: {
-        avatarID: string,
-        avatarURL: string,
-        email: string,
-        id: string
-}) {
-    // If disableThirdPartyRequests disables third-party avatar services, we are
-    // restricted to a stock image of ours.
-    if (typeof config === 'object' && config.disableThirdPartyRequests) {
-        return DEFAULT_AVATAR_RELATIVE_PATH;
+const AVATAR_QUEUE = [];
+const AVATAR_CHECKED_URLS = new Map();
+/* eslint-disable arrow-body-style */
+const AVATAR_CHECKER_FUNCTIONS = [
+    participant => {
+        return participant && participant.avatarURL ? participant.avatarURL : null;
+    },
+    participant => {
+        return participant && participant.email ? getGravatarURL(participant.email) : null;
     }
-
-    // If an avatarURL is specified, then obviously there's nothing to generate.
-    if (avatarURL) {
-        return avatarURL;
-    }
-
-    // The deployment is allowed to choose the avatar service which is to
-    // generate the random avatars.
-    const avatarService
-        = typeof interfaceConfig === 'object'
-                && interfaceConfig.RANDOM_AVATAR_URL_PREFIX
-            ? {
-                urlPrefix: interfaceConfig.RANDOM_AVATAR_URL_PREFIX,
-                urlSuffix: interfaceConfig.RANDOM_AVATAR_URL_SUFFIX }
-            : undefined;
-
-    // eslint-disable-next-line object-property-newline
-    return _getAvatarURL({ avatarID, email, id }, avatarService);
-}
+];
+/* eslint-enable arrow-body-style */
 
 /**
- * Returns the avatarURL for the participant associated with the passed in
- * participant ID.
+ * Resolves the first loadable avatar URL for a participant.
  *
- * @param {(Function|Object|Participant[])} stateful - The redux state
- * features/base/participants, the (whole) redux state, or redux's
- * {@code getState} function to be used to retrieve the state
- * features/base/participants.
- * @param {string} id - The ID of the participant to retrieve.
- * @param {boolean} isLocal - An optional parameter indicating whether or not
- * the partcipant id is for the local user. If true, a different logic flow is
- * used find the local user, ignoring the id value as it can change through the
- * beginning and end of a call.
- * @returns {(string|undefined)}
+ * @param {Object} participant - The participant to resolve avatars for.
+ * @returns {Promise}
  */
-export function getAvatarURLByParticipantId(
-        stateful: Object | Function,
-        id: string = LOCAL_PARTICIPANT_DEFAULT_ID) {
-    const participant = getParticipantById(stateful, id);
+export function getFirstLoadableAvatarUrl(participant: Object) {
+    const deferred = createDeferred();
+    const fullPromise = deferred.promise
+        .then(() => _getFirstLoadableAvatarUrl(participant))
+        .then(src => {
 
-    return participant && getAvatarURL(participant);
+            if (AVATAR_QUEUE.length) {
+                const next = AVATAR_QUEUE.shift();
+
+                next.resolve();
+            }
+
+            return src;
+        });
+
+    if (AVATAR_QUEUE.length) {
+        AVATAR_QUEUE.push(deferred);
+    } else {
+        deferred.resolve();
+    }
+
+    return fullPromise;
 }
 
 /**
@@ -169,7 +148,6 @@ export function getParticipantCountWithFake(stateful: Object | Function) {
  * @param {(Function|Object)} stateful - The (whole) redux state, or redux's
  * {@code getState} function to be used to retrieve the state.
  * @param {string} id - The ID of the participant's display name to retrieve.
- * @private
  * @returns {string}
  */
 export function getParticipantDisplayName(
@@ -345,4 +323,36 @@ export function shouldRenderParticipantVideo(
             === JitsiParticipantConnectionStatus.ACTIVE)
         && shouldRenderVideoTrack(videoTrack, waitForVideoStarted);
 
+}
+
+/**
+ * Resolves the first loadable avatar URL for a participant.
+ *
+ * @param {Object} participant - The participant to resolve avatars for.
+ * @returns {?string}
+ */
+async function _getFirstLoadableAvatarUrl(participant) {
+    for (let i = 0; i < AVATAR_CHECKER_FUNCTIONS.length; i++) {
+        const url = AVATAR_CHECKER_FUNCTIONS[i](participant);
+
+        if (url) {
+            if (AVATAR_CHECKED_URLS.has(url)) {
+                if (AVATAR_CHECKED_URLS.get(url)) {
+                    return url;
+                }
+            } else {
+                try {
+                    const finalUrl = await preloadImage(url);
+
+                    AVATAR_CHECKED_URLS.set(finalUrl, true);
+
+                    return finalUrl;
+                } catch (e) {
+                    AVATAR_CHECKED_URLS.set(url, false);
+                }
+            }
+        }
+    }
+
+    return undefined;
 }

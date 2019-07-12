@@ -12,6 +12,8 @@ import { getShareInfoText } from '../../invite';
 
 import { setCalendarAPIAuthState } from '../actions';
 
+import { findWindows } from 'windows-iana';
+
 /**
  * Constants used for interacting with the Microsoft API.
  *
@@ -560,9 +562,13 @@ function requestCalendarEvents( // eslint-disable-line max-params
         startDate.toISOString()}' and End/DateTime lt '${
         endDate.toISOString()}'`;
 
+    const ianaTimeZone = new Intl.DateTimeFormat().resolvedOptions().timeZone;
+    const windowsTimeZone = findWindows(ianaTimeZone);
+
     return client
         .api(`/me/calendars/${calendarId}/events`)
         .filter(filter)
+        .header('Prefer', `outlook.timezone="${windowsTimeZone}"`)
         .select('id,subject,start,end,location,body')
         .orderby('createdDateTime DESC')
         .get()

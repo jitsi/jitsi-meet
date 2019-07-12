@@ -9,6 +9,8 @@ import {
     View
 } from 'react-native';
 
+import { getName } from '../../app';
+
 import { ColorSchemeRegistry } from '../../base/color-scheme';
 import { translate } from '../../base/i18n';
 import { Icon } from '../../base/font-icons';
@@ -23,11 +25,12 @@ import {
 import { DialInSummary } from '../../invite';
 import { SettingsView } from '../../settings';
 
+import { setSideBarVisible } from '../actions';
+
 import {
     AbstractWelcomePage,
     _mapStateToProps as _abstractMapStateToProps
 } from './AbstractWelcomePage';
-import { setSideBarVisible } from '../actions';
 import LocalVideoTrackUnderlay from './LocalVideoTrackUnderlay';
 import styles, { PLACEHOLDER_TEXT_COLOR } from './styles';
 import VideoSwitch from './VideoSwitch';
@@ -95,52 +98,13 @@ class WelcomePage extends AbstractWelcomePage {
      * @returns {ReactElement}
      */
     render() {
-        const roomnameAccLabel = 'welcomepage.accessibilityLabel.roomname';
-        const { _headerStyles, t } = this.props;
+        const { _reducedUI } = this.props;
 
-        return (
-            <LocalVideoTrackUnderlay style = { styles.welcomePage }>
-                <View style = { _headerStyles.page }>
-                    <Header style = { styles.header }>
-                        <TouchableOpacity onPress = { this._onShowSideBar } >
-                            <Icon
-                                name = 'menu'
-                                style = { _headerStyles.headerButtonIcon } />
-                        </TouchableOpacity>
-                        <VideoSwitch />
-                    </Header>
-                    <SafeAreaView style = { styles.roomContainer } >
-                        <View style = { styles.joinControls } >
-                            <TextInput
-                                accessibilityLabel = { t(roomnameAccLabel) }
-                                autoCapitalize = 'none'
-                                autoComplete = 'off'
-                                autoCorrect = { false }
-                                autoFocus = { false }
-                                onBlur = { this._onFieldBlur }
-                                onChangeText = { this._onRoomChange }
-                                onFocus = { this._onFieldFocus }
-                                onSubmitEditing = { this._onJoin }
-                                placeholder = { t('welcomepage.roomname') }
-                                placeholderTextColor = {
-                                    PLACEHOLDER_TEXT_COLOR
-                                }
-                                returnKeyType = { 'go' }
-                                style = { styles.textInput }
-                                underlineColorAndroid = 'transparent'
-                                value = { this.state.room } />
-                            {
-                                this._renderHintBox()
-                            }
-                        </View>
-                    </SafeAreaView>
-                    <WelcomePageLists disabled = { this.state._fieldFocused } />
-                    <SettingsView />
-                    <DialInSummary />
-                </View>
-                <WelcomePageSideBar />
-            </LocalVideoTrackUnderlay>
-        );
+        if (_reducedUI) {
+            return this._renderReducedUI();
+        }
+
+        return this._renderFullUI();
     }
 
     /**
@@ -272,20 +236,92 @@ class WelcomePage extends AbstractWelcomePage {
             </TouchableHighlight>
         );
     }
+
+    /**
+     * Renders the full welcome page.
+     *
+     * @returns {ReactElement}
+     */
+    _renderFullUI() {
+        const roomnameAccLabel = 'welcomepage.accessibilityLabel.roomname';
+        const { _headerStyles, t } = this.props;
+
+        return (
+            <LocalVideoTrackUnderlay style = { styles.welcomePage }>
+                <View style = { _headerStyles.page }>
+                    <Header style = { styles.header }>
+                        <TouchableOpacity onPress = { this._onShowSideBar } >
+                            <Icon
+                                name = 'menu'
+                                style = { _headerStyles.headerButtonIcon } />
+                        </TouchableOpacity>
+                        <VideoSwitch />
+                    </Header>
+                    <SafeAreaView style = { styles.roomContainer } >
+                        <View style = { styles.joinControls } >
+                            <TextInput
+                                accessibilityLabel = { t(roomnameAccLabel) }
+                                autoCapitalize = 'none'
+                                autoComplete = 'off'
+                                autoCorrect = { false }
+                                autoFocus = { false }
+                                onBlur = { this._onFieldBlur }
+                                onChangeText = { this._onRoomChange }
+                                onFocus = { this._onFieldFocus }
+                                onSubmitEditing = { this._onJoin }
+                                placeholder = { t('welcomepage.roomname') }
+                                placeholderTextColor = {
+                                    PLACEHOLDER_TEXT_COLOR
+                                }
+                                returnKeyType = { 'go' }
+                                style = { styles.textInput }
+                                underlineColorAndroid = 'transparent'
+                                value = { this.state.room } />
+                            {
+                                this._renderHintBox()
+                            }
+                        </View>
+                    </SafeAreaView>
+                    <WelcomePageLists disabled = { this.state._fieldFocused } />
+                    <SettingsView />
+                    <DialInSummary />
+                </View>
+                <WelcomePageSideBar />
+            </LocalVideoTrackUnderlay>
+        );
+    }
+
+    /**
+     * Renders a "reduced" version of the welcome page.
+     *
+     * @returns {ReactElement}
+     */
+    _renderReducedUI() {
+        const { t } = this.props;
+
+        return (
+            <View style = { styles.reducedUIContainer }>
+                <Text style = { styles.reducedUIText }>
+                    { t('welcomepage.reducedUIText', { app: getName() }) }
+                </Text>
+            </View>
+        );
+    }
 }
 
 /**
  * Maps part of the Redux state to the props of this component.
  *
  * @param {Object} state - The Redux state.
- * @returns {{
- *     _headerStyles: Object
- * }}
+ * @returns {Object}
  */
 function _mapStateToProps(state) {
+    const { reducedUI } = state['features/base/responsive-ui'];
+
     return {
         ..._abstractMapStateToProps(state),
-        _headerStyles: ColorSchemeRegistry.get(state, 'Header')
+        _headerStyles: ColorSchemeRegistry.get(state, 'Header'),
+        _reducedUI: reducedUI
     };
 }
 

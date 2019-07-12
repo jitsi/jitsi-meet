@@ -2,6 +2,11 @@
 
 import React, { Component } from 'react';
 
+// We need to reference these files directly to avoid loading things that are not available
+// in this environment (e.g. JitsiMeetJS or interfaceConfig)
+import StatelessAvatar from '../base/avatar/components/web/StatelessAvatar';
+import { getAvatarColor, getInitials } from '../base/avatar/functions';
+
 import Toolbar from './Toolbar';
 
 const { api } = window.alwaysOnTop;
@@ -17,7 +22,9 @@ const TOOLBAR_TIMEOUT = 4000;
 type State = {
     avatarURL: string,
     displayName: string,
+    formattedDisplayName: string,
     isVideoDisplayed: boolean,
+    userID: string,
     visible: boolean
 };
 
@@ -42,7 +49,9 @@ export default class AlwaysOnTop extends Component<*, State> {
         this.state = {
             avatarURL: '',
             displayName: '',
+            formattedDisplayName: '',
             isVideoDisplayed: true,
+            userID: '',
             visible: true
         };
 
@@ -78,10 +87,15 @@ export default class AlwaysOnTop extends Component<*, State> {
      *
      * @returns {void}
      */
-    _displayNameChangedListener({ formattedDisplayName, id }) {
+    _displayNameChangedListener({ displayname, formattedDisplayName, id }) {
         if (api._getOnStageParticipant() === id
-                && formattedDisplayName !== this.state.displayName) {
-            this.setState({ displayName: formattedDisplayName });
+                && (formattedDisplayName !== this.state.formattedDisplayName
+                    || displayname !== this.state.displayName)) {
+            // I think the API has a typo using lowercase n for the displayname
+            this.setState({
+                displayName: displayname,
+                formattedDisplayName
+            });
         }
     }
 
@@ -112,13 +126,16 @@ export default class AlwaysOnTop extends Component<*, State> {
     _largeVideoChangedListener() {
         const userID = api._getOnStageParticipant();
         const avatarURL = api.getAvatarURL(userID);
-        const displayName = api._getFormattedDisplayName(userID);
+        const displayName = api.getDisplayName(userID);
+        const formattedDisplayName = api._getFormattedDisplayName(userID);
         const isVideoDisplayed = Boolean(api._getLargeVideo());
 
         this.setState({
             avatarURL,
             displayName,
-            isVideoDisplayed
+            formattedDisplayName,
+            isVideoDisplayed,
+            userID
         });
     }
 
@@ -161,7 +178,7 @@ export default class AlwaysOnTop extends Component<*, State> {
      * @returns {ReactElement}
      */
     _renderVideoNotAvailableScreen() {
-        const { avatarURL, displayName, isVideoDisplayed } = this.state;
+        const { avatarURL, displayName, formattedDisplayName, isVideoDisplayed, userID } = this.state;
 
         if (isVideoDisplayed) {
             return null;
@@ -169,19 +186,17 @@ export default class AlwaysOnTop extends Component<*, State> {
 
         return (
             <div id = 'videoNotAvailableScreen'>
-                {
-                    avatarURL
-                        ? <div id = 'avatarContainer'>
-                            <img
-                                id = 'avatar'
-                                src = { avatarURL } />
-                        </div>
-                        : null
-                }
+                <div id = 'avatarContainer'>
+                    <StatelessAvatar
+                        color = { getAvatarColor(userID) }
+                        id = 'avatar'
+                        initials = { getInitials(displayName) }
+                        url = { avatarURL } />)
+                </div>
                 <div
                     className = 'displayname'
                     id = 'displayname'>
-                    { displayName }
+                    { formattedDisplayName }
                 </div>
             </div>
         );

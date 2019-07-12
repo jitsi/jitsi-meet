@@ -6,10 +6,12 @@ import {
     ACTION_UNPINNED,
     createAudioOnlyChangedEvent,
     createConnectionEvent,
+    createOfferAnswerFailedEvent,
     createPinnedEvent,
     sendAnalytics
 } from '../../analytics';
 import { CONNECTION_ESTABLISHED, CONNECTION_FAILED } from '../connection';
+import { JitsiConferenceErrors } from '../lib-jitsi-meet';
 import { setVideoMuted, VIDEO_MUTISM_AUTHORITY } from '../media';
 import {
     getLocalParticipant,
@@ -152,6 +154,12 @@ StateListenerRegistry.register(
 function _conferenceFailed(store, next, action) {
     const result = next(action);
 
+    const { conference, error } = action;
+
+    if (error.name === JitsiConferenceErrors.OFFER_ANSWER_FAILED) {
+        sendAnalytics(createOfferAnswerFailedEvent());
+    }
+
     // FIXME: Workaround for the web version. Currently, the creation of the
     // conference is handled by /conference.js and appropriate failure handlers
     // are set there.
@@ -165,8 +173,6 @@ function _conferenceFailed(store, next, action) {
     }
 
     // XXX After next(action), it is clear whether the error is recoverable.
-    const { conference, error } = action;
-
     !error.recoverable
         && conference
         && conference.leave().catch(reason => {

@@ -24,6 +24,17 @@ import styles from './styles';
  */
 class Chat extends AbstractChat<Props> {
     /**
+     * Instantiates a new instance.
+     *
+     * @inheritdoc
+     */
+    constructor(props: Props) {
+        super(props);
+
+        this._onClose = this._onClose.bind(this);
+    }
+
+    /**
      * Implements React's {@link Component#render()}.
      *
      * @inheritdoc
@@ -31,6 +42,7 @@ class Chat extends AbstractChat<Props> {
     render() {
         return (
             <SlidingView
+                onHide = { this._onClose }
                 position = 'bottom'
                 show = { this.props._isOpen } >
                 <KeyboardAvoidingView
@@ -38,7 +50,7 @@ class Chat extends AbstractChat<Props> {
                     style = { styles.chatContainer }>
                     <HeaderWithNavigation
                         headerLabelKey = 'chat.title'
-                        onPressBack = { this.props._onToggleChat } />
+                        onPressBack = { this._onClose } />
                     <SafeAreaView style = { styles.backdrop }>
                         <MessageContainer messages = { this.props._messages } />
                         <ChatInputBar onSend = { this.props._onSendMessage } />
@@ -46,6 +58,23 @@ class Chat extends AbstractChat<Props> {
                 </KeyboardAvoidingView>
             </SlidingView>
         );
+    }
+
+    _onClose: () => boolean
+
+    /**
+     * Closes the chat window.
+     *
+     * @returns {boolean}
+     */
+    _onClose() {
+        if (this.props._isOpen) {
+            this.props._onToggleChat();
+
+            return true;
+        }
+
+        return false;
     }
 }
 

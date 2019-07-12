@@ -29,6 +29,11 @@ type Props = {
  *
  */
 export default class Tabs extends Component<Props> {
+    static defaultProps = {
+        tabs: [],
+        selected: 0
+    };
+
     /**
      * Implements the React Components's render method.
      *
@@ -36,7 +41,9 @@ export default class Tabs extends Component<Props> {
      */
     render() {
         const { onSelect, selected, tabs } = this.props;
-        const { content } = tabs[selected];
+        const { content = null } = tabs.length
+            ? tabs[Math.min(selected, tabs.length - 1)]
+            : {};
 
         return (
             <div className = 'tab-container'>

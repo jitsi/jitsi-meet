@@ -1,2 +1,3 @@
-export { default as Avatar } from './Avatar';
+// @flow
+
 export { default as ParticipantView } from './ParticipantView';

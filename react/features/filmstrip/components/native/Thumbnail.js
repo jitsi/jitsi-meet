@@ -11,7 +11,6 @@ import {
     PARTICIPANT_ROLE,
     ParticipantView,
     isEveryoneModerator,
-    isLocalParticipantModerator,
     pinParticipant
 } from '../../../base/participants';
 import { Container } from '../../../base/react';
@@ -21,6 +20,7 @@ import { getTrackByMediaTypeAndParticipant } from '../../../base/tracks';
 import { ConnectionIndicator } from '../../../connection-indicator';
 import { DisplayNameLabel } from '../../../display-name';
 import { RemoteVideoMenu } from '../../../remote-video-menu';
+import { toggleToolboxVisible } from '../../../toolbox';
 
 import AudioMutedIndicator from './AudioMutedIndicator';
 import DominantSpeakerIndicator from './DominantSpeakerIndicator';
@@ -43,11 +43,6 @@ type Props = {
      * True if everone in the meeting is moderator.
      */
     _isEveryoneModerator: boolean,
-
-    /**
-     * True if the local participant is a moderator.
-     */
-    _isModerator: boolean,
 
     /**
      * The Redux representation of the state "features/large-video".
@@ -75,12 +70,6 @@ type Props = {
     _videoTrack: Object,
 
     /**
-     * If true, tapping on the thumbnail will not pin the participant to large
-     * video. By default tapping does pin the participant.
-     */
-    disablePin?: boolean,
-
-    /**
      * If true, there will be no color overlay (tint) on the thumbnail
      * indicating the participant associated with the thumbnail is displayed on
      * large video. By default there will be a tint.
@@ -105,7 +94,12 @@ type Props = {
     /**
      * Optional styling to add or override on the Thumbnail component root.
      */
-    styleOverrides?: Object
+    styleOverrides?: Object,
+
+    /**
+     * If true, it tells the thumbnail that it needs to behave differently. E.g. react differently to a single tap.
+     */
+    tileView?: boolean
 };
 
 /**
@@ -124,16 +118,15 @@ class Thumbnail extends Component<Props> {
         const {
             _audioTrack: audioTrack,
             _isEveryoneModerator,
-            _isModerator,
             _largeVideo: largeVideo,
             _onClick,
             _onShowRemoteVideoMenu,
             _styles,
             _videoTrack: videoTrack,
-            disablePin,
             disableTint,
             participant,
-            renderDisplayName
+            renderDisplayName,
+            tileView
         } = this.props;
 
         // We don't render audio in any of the following:
@@ -148,17 +141,14 @@ class Thumbnail extends Component<Props> {
         const participantInLargeVideo
             = participantId === largeVideo.participantId;
         const videoMuted = !videoTrack || videoTrack.muted;
-        const showRemoteVideoMenu = _isModerator && !participant.local;
 
         return (
             <Container
-                onClick = { disablePin ? undefined : _onClick }
-                onLongPress = {
-                    showRemoteVideoMenu
-                        ? _onShowRemoteVideoMenu : undefined }
+                onClick = { _onClick }
+                onLongPress = { participant.local ? undefined : _onShowRemoteVideoMenu }
                 style = { [
                     styles.thumbnail,
-                    participant.pinned && !disablePin
+                    participant.pinned && !tileView
                         ? _styles.thumbnailPinned : null,
                     this.props.styleOverrides || null
                 ] }
@@ -234,10 +224,13 @@ function _mapDispatchToProps(dispatch: Function, ownProps): Object {
          * @returns {void}
          */
         _onClick() {
-            const { participant } = ownProps;
+            const { participant, tileView } = ownProps;
 
-            dispatch(
-                pinParticipant(participant.pinned ? null : participant.id));
+            if (tileView) {
+                dispatch(toggleToolboxVisible());
+            } else {
+                dispatch(pinParticipant(participant.pinned ? null : participant.id));
+            }
         },
 
         /**
@@ -262,7 +255,6 @@ function _mapDispatchToProps(dispatch: Function, ownProps): Object {
  * @param {Props} ownProps - Properties of component.
  * @returns {{
  *      _audioTrack: Track,
- *      _isModerator: boolean,
  *      _largeVideo: Object,
  *      _styles: StyleType,
  *      _videoTrack: Track
@@ -283,7 +275,6 @@ function _mapStateToProps(state, ownProps) {
     return {
         _audioTrack: audioTrack,
         _isEveryoneModerator: isEveryoneModerator(state),
-        _isModerator: isLocalParticipantModerator(state),
         _largeVideo: largeVideo,
         _styles: ColorSchemeRegistry.get(state, 'Thumbnail'),
         _videoTrack: videoTrack

@@ -401,7 +401,7 @@ export function searchDirectory( // eslint-disable-line max-params
  */
 export function getShareInfoText(
         state: Object, inviteUrl: string, useHtml: ?boolean): Promise<string> {
-    let roomUrl = inviteUrl;
+    let roomUrl = _decodeRoomURI(inviteUrl);
     const includeDialInfo = state['features/base/config'] !== undefined;
 
     if (useHtml) {
@@ -505,7 +505,7 @@ export function getDialInfoPageURL(
         return accumulator;
     }, '');
 
-    return `${origin}${newPath}/static/dialInInfo.html?room=${conferenceName}`;
+    return `${origin}${newPath}/static/dialInInfo.html?room=${_decodeRoomURI(conferenceName)}`;
 }
 
 /**
@@ -559,4 +559,23 @@ export function _getDefaultPhoneNumber(
     }
 
     return null;
+}
+
+/**
+ * Decodes URI only if doesn't contain a space(' ').
+ *
+ * @param {string} url - The string to decode.
+ * @returns {string} - It the string contains space, encoded value is '%20' returns
+ * same string, otherwise decoded one.
+ * @private
+ */
+export function _decodeRoomURI(url: string) {
+    let roomUrl = url;
+
+    // we want to decode urls when the do not contain space, ' ', which url encoded is %20
+    if (roomUrl && !roomUrl.includes('%20')) {
+        roomUrl = decodeURI(roomUrl);
+    }
+
+    return roomUrl;
 }

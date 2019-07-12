@@ -22,7 +22,6 @@ export default function SharedVideoThumb(participant, videoType, VideoLayout) {
     this.updateDisplayName();
 
     this.container.onclick = this._onContainerClick;
-    this.container.ondblclick = this._onContainerDoubleClick;
 }
 SharedVideoThumb.prototype = Object.create(SmallVideo.prototype);
 SharedVideoThumb.prototype.constructor = SharedVideoThumb;
@@ -34,7 +33,7 @@ SharedVideoThumb.prototype.constructor = SharedVideoThumb;
 SharedVideoThumb.prototype.setDeviceAvailabilityIcons = function() {};
 
 // eslint-disable-next-line no-empty-function
-SharedVideoThumb.prototype.avatarChanged = function() {};
+SharedVideoThumb.prototype.initializeAvatar = function() {};
 
 SharedVideoThumb.prototype.createContainer = function(spanId) {
     const container = document.createElement('span');

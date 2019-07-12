@@ -54,9 +54,6 @@ dependencies {
     implementation project(':react-native-background-timer')
     implementation project(':react-native-calendar-events')
     implementation project(':react-native-community-async-storage')
-    implementation(project(':react-native-fast-image')) {
-        exclude group: 'com.android.support'
-    }
     implementation project(':react-native-immersive')
     implementation project(':react-native-keep-awake')
     implementation project(':react-native-linear-gradient')

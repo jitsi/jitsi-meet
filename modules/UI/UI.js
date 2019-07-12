@@ -229,22 +229,11 @@ UI.unbindEvents = () => {
 };
 
 /**
- * Show local stream on UI.
+ * Show local video stream on UI.
  * @param {JitsiTrack} track stream to show
  */
-UI.addLocalStream = track => {
-    switch (track.getType()) {
-    case 'audio':
-        // Local audio is not rendered so no further action is needed at this
-        // point.
-        break;
-    case 'video':
-        VideoLayout.changeLocalVideo(track);
-        break;
-    default:
-        logger.error(`Unknown stream type: ${track.getType()}`);
-        break;
-    }
+UI.addLocalVideoStream = track => {
+    VideoLayout.changeLocalVideo(track);
 };
 
 /**
@@ -510,8 +499,8 @@ UI.dockToolbar = dock => APP.store.dispatch(dockToolbox(dock));
  * @param {string} avatarURL - The URL to avatar image to display.
  * @returns {void}
  */
-UI.refreshAvatarDisplay = function(id, avatarURL) {
-    VideoLayout.changeUserAvatar(id, avatarURL);
+UI.refreshAvatarDisplay = function(id) {
+    VideoLayout.changeUserAvatar(id);
 };
 
 /**

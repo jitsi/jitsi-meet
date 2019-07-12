@@ -21,7 +21,7 @@ import {
     localParticipantLeft,
     participantLeft,
     participantUpdated,
-    showParticipantJoinedNotification
+    setLoadableAvatarUrl
 } from './actions';
 import {
     DOMINANT_SPEAKER_CHANGED,
@@ -38,8 +38,9 @@ import {
     PARTICIPANT_LEFT_SOUND_ID
 } from './constants';
 import {
-    getAvatarURLByParticipantId,
+    getFirstLoadableAvatarUrl,
     getLocalParticipant,
+    getParticipantById,
     getParticipantCount,
     getParticipantDisplayName
 } from './functions';
@@ -118,12 +119,6 @@ MiddlewareRegistry.register(store => next => action => {
     case PARTICIPANT_JOINED: {
         _maybePlaySounds(store, action);
 
-        const { participant: { name } } = action;
-
-        if (name) {
-            store.dispatch(showParticipantJoinedNotification(name));
-        }
-
         return _participantJoinedOrUpdated(store, next, action);
     }
 
@@ -201,6 +196,13 @@ StateListenerRegistry.register(
                 JitsiConferenceEvents.PARTICIPANT_PROPERTY_CHANGED,
                 (participant, propertyName, oldValue, newValue) => {
                     switch (propertyName) {
+                    case 'features_jigasi':
+                        store.dispatch(participantUpdated({
+                            conference,
+                            id: participant.getId(),
+                            isJigasi: newValue
+                        }));
+                        break;
                     case 'features_screen-sharing':
                         store.dispatch(participantUpdated({
                             conference,
@@ -321,8 +323,8 @@ function _maybePlaySounds({ getState, dispatch }, action) {
  * @private
  * @returns {Object} The value returned by {@code next(action)}.
  */
-function _participantJoinedOrUpdated({ getState }, next, action) {
-    const { participant: { id, local, raisedHand } } = action;
+function _participantJoinedOrUpdated({ dispatch, getState }, next, action) {
+    const { participant: { avatarURL, email, id, local, name, raisedHand } } = action;
 
     // Send an external update of the local participant's raised hand state
     // if a new raised hand state is defined in the action.
@@ -337,26 +339,29 @@ function _participantJoinedOrUpdated({ getState }, next, action) {
         }
     }
 
-    // Notify external listeners of potential avatarURL changes.
-    if (typeof APP === 'object') {
-        const oldAvatarURL = getAvatarURLByParticipantId(getState(), id);
+    // Allow the redux update to go through and compare the old avatar
+    // to the new avatar and emit out change events if necessary.
+    const result = next(action);
 
-        // Allow the redux update to go through and compare the old avatar
-        // to the new avatar and emit out change events if necessary.
-        const result = next(action);
-        const newAvatarURL = getAvatarURLByParticipantId(getState(), id);
+    if (avatarURL || email || id || name) {
+        const participantId = !id && local ? getLocalParticipant(getState()).id : id;
+        const updatedParticipant = getParticipantById(getState(), participantId);
 
-        if (oldAvatarURL !== newAvatarURL) {
-            const currentKnownId = local ? APP.conference.getMyUserId() : id;
-
-            APP.UI.refreshAvatarDisplay(currentKnownId, newAvatarURL);
-            APP.API.notifyAvatarChanged(currentKnownId, newAvatarURL);
-        }
-
-        return result;
+        getFirstLoadableAvatarUrl(updatedParticipant)
+            .then(url => {
+                dispatch(setLoadableAvatarUrl(participantId, url));
+            });
     }
 
-    return next(action);
+    // Notify external listeners of potential avatarURL changes.
+    if (typeof APP === 'object') {
+        const currentKnownId = local ? APP.conference.getMyUserId() : id;
+
+        // Force update of local video getting a new id.
+        APP.UI.refreshAvatarDisplay(currentKnownId);
+    }
+
+    return result;
 }
 
 /**

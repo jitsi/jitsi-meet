@@ -207,24 +207,6 @@ public class MainActivity extends FragmentActivity implements JitsiMeetActivityI
 
 </details>
 
-Starting with SDK version 1.22, a Glide module must be provided by the host app.
-This makes it possible to use the Glide image processing library from both the
-SDK and the host app itself.
-
-You can use the code in `JitsiGlideModule.java` and adjust the package name.
-When building, add the following code in your `app/build.gradle` file, adjusting
-the Glide version to match the one in https://github.com/jitsi/jitsi-meet/blob/master/android/build.gradle
-
-```
-// Glide
-implementation("com.github.bumptech.glide:glide:${glideVersion}") {
-    exclude group: "com.android.support", module: "glide"
-}
-implementation("com.github.bumptech.glide:annotations:${glideVersion}") {
-    exclude group: "com.android.support", module: "annotations"
-}
-```
-
 ### JitsiMeetActivity
 
 This class encapsulates a high level API in the form of an Android `FragmentActivity`

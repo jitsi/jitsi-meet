@@ -10,9 +10,8 @@ import { Provider } from 'react-redux';
 import { i18next } from '../../../react/features/base/i18n';
 import { AudioLevelIndicator }
     from '../../../react/features/audio-level-indicator';
+import { Avatar as AvatarDisplay } from '../../../react/features/base/avatar';
 import {
-    Avatar as AvatarDisplay,
-    getAvatarURLByParticipantId,
     getPinnedParticipant,
     pinParticipant
 } from '../../../react/features/base/participants';
@@ -144,7 +143,6 @@ function SmallVideo(VideoLayout) {
     this.updateView = this.updateView.bind(this);
 
     this._onContainerClick = this._onContainerClick.bind(this);
-    this._onContainerDoubleClick = this._onContainerDoubleClick.bind(this);
 }
 
 /**
@@ -571,8 +569,7 @@ SmallVideo.prototype.updateView = function() {
     if (!this.hasAvatar) {
         if (this.id) {
             // Init avatar
-            this.avatarChanged(
-                getAvatarURLByParticipantId(APP.store.getState(), this.id));
+            this.initializeAvatar();
         } else {
             logger.error('Unable to init avatar - no id', this);
 
@@ -610,19 +607,22 @@ SmallVideo.prototype.updateView = function() {
  * Updates the react component displaying the avatar with the passed in avatar
  * url.
  *
- * @param {string} avatarUrl - The uri to the avatar image.
  * @returns {void}
  */
-SmallVideo.prototype.avatarChanged = function(avatarUrl) {
+SmallVideo.prototype.initializeAvatar = function() {
     const thumbnail = this.$avatar().get(0);
 
     this.hasAvatar = true;
 
     if (thumbnail) {
+        // Maybe add a special case for local participant, as on init of
+        // LocalVideo.js the id is set to "local" but will get updated later.
         ReactDOM.render(
-            <AvatarDisplay
-                className = 'userAvatar'
-                uri = { avatarUrl } />,
+            <Provider store = { APP.store }>
+                <AvatarDisplay
+                    className = 'userAvatar'
+                    participantId = { this.id } />
+            </Provider>,
             thumbnail
         );
     }
@@ -860,20 +860,6 @@ SmallVideo.prototype.updateIndicators = function() {
 };
 
 /**
- * Callback invoked when the thumbnail is double clicked. Will pin the
- * participant if in tile view.
- *
- * @param {MouseEvent} event - The click event to intercept.
- * @private
- * @returns {void}
- */
-SmallVideo.prototype._onContainerDoubleClick = function(event) {
-    if (this._pinningRequiresDoubleClick() && this._shouldTriggerPin(event)) {
-        APP.store.dispatch(pinParticipant(this.id));
-    }
-};
-
-/**
  * Callback invoked when the thumbnail is clicked and potentially trigger
  * pinning of the participant.
  *
@@ -882,8 +868,7 @@ SmallVideo.prototype._onContainerDoubleClick = function(event) {
  * @returns {void}
  */
 SmallVideo.prototype._onContainerClick = function(event) {
-    const triggerPin = this._shouldTriggerPin(event)
-        && !this._pinningRequiresDoubleClick();
+    const triggerPin = this._shouldTriggerPin(event);
 
     if (event.stopPropagation && triggerPin) {
         event.stopPropagation();
@@ -932,17 +917,6 @@ SmallVideo.prototype.togglePin = function() {
             ? null : this.id;
 
     APP.store.dispatch(pinParticipant(participantIdToPin));
-};
-
-/**
- * Returns whether or not clicking to pin the participant needs to be a double
- * click instead of a single click.
- *
- * @private
- * @returns {boolean}
- */
-SmallVideo.prototype._pinningRequiresDoubleClick = function() {
-    return shouldDisplayTileView(APP.store.getState());
 };
 
 /**

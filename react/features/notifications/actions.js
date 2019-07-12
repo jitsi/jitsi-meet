@@ -1,5 +1,9 @@
 // @flow
 
+import throttle from 'lodash/throttle';
+
+import type { Dispatch } from 'redux';
+
 import {
     CLEAR_NOTIFICATIONS,
     HIDE_NOTIFICATION,
@@ -7,7 +11,7 @@ import {
     SHOW_NOTIFICATION
 } from './actionTypes';
 
-import { NOTIFICATION_TYPE } from './constants';
+import { NOTIFICATION_TIMEOUT, NOTIFICATION_TYPE } from './constants';
 
 /**
  * Clears (removes) all the notifications.
@@ -101,4 +105,74 @@ export function showWarningNotification(props: Object) {
         ...props,
         appearance: NOTIFICATION_TYPE.WARNING
     });
+}
+
+/**
+ * An array of names of participants that have joined the conference. The array
+ * is replaced with an empty array as notifications are displayed.
+ *
+ * @private
+ * @type {string[]}
+ */
+let joinedParticipantsNames = [];
+
+/**
+ * A throttled internal function that takes the internal list of participant
+ * names, {@code joinedParticipantsNames}, and triggers the display of a
+ * notification informing of their joining.
+ *
+ * @private
+ * @type {Function}
+ */
+const _throttledNotifyParticipantConnected = throttle((dispatch: Dispatch<any>) => {
+    const joinedParticipantsCount = joinedParticipantsNames.length;
+
+    let notificationProps;
+
+    if (joinedParticipantsCount >= 3) {
+        notificationProps = {
+            titleArguments: {
+                name: joinedParticipantsNames[0],
+                count: joinedParticipantsCount - 1
+            },
+            titleKey: 'notify.connectedThreePlusMembers'
+        };
+    } else if (joinedParticipantsCount === 2) {
+        notificationProps = {
+            titleArguments: {
+                first: joinedParticipantsNames[0],
+                second: joinedParticipantsNames[1]
+            },
+            titleKey: 'notify.connectedTwoMembers'
+        };
+    } else if (joinedParticipantsCount) {
+        notificationProps = {
+            titleArguments: {
+                name: joinedParticipantsNames[0]
+            },
+            titleKey: 'notify.connectedOneMember'
+        };
+    }
+
+    if (notificationProps) {
+        dispatch(
+            showNotification(notificationProps, NOTIFICATION_TIMEOUT));
+    }
+
+    joinedParticipantsNames = [];
+
+}, 500, { leading: false });
+
+/**
+ * Queues the display of a notification of a participant having connected to
+ * the meeting. The notifications are batched so that quick consecutive
+ * connection events are shown in one notification.
+ *
+ * @param {string} displayName - The name of the participant that connected.
+ * @returns {Function}
+ */
+export function showParticipantJoinedNotification(displayName: string) {
+    joinedParticipantsNames.push(displayName);
+
+    return (dispatch: Dispatch<any>) => _throttledNotifyParticipantConnected(dispatch);
 }

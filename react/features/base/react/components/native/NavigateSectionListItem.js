@@ -8,6 +8,7 @@ import { ColorPalette } from '../../../styles';
 import type { Item } from '../../Types';
 
 import AvatarListItem from './AvatarListItem';
+import Container from './Container';
 import Text from './Text';
 import styles from './styles';
 
@@ -93,6 +94,24 @@ export default class NavigateSectionListItem extends Component<Props> {
     }
 
     /**
+     * Renders the secondary action label.
+     *
+     * @private
+     * @returns {React$Node}
+     */
+    _renderSecondaryAction() {
+        const { secondaryAction } = this.props;
+
+        return (
+            <Container
+                onClick = { secondaryAction }
+                style = { styles.secondaryActionContainer }>
+                <Text style = { styles.secondaryActionLabel }>+</Text>
+            </Container>
+        );
+    }
+
+    /**
      * Renders the content of this component.
      *
      * @returns {ReactElement}
@@ -124,7 +143,10 @@ export default class NavigateSectionListItem extends Component<Props> {
                 right = { right }>
                 <AvatarListItem
                     item = { item }
-                    onPress = { this.props.onPress } />
+                    onPress = { this.props.onPress } >
+                    { this.props.secondaryAction
+                            && this._renderSecondaryAction() }
+                </AvatarListItem>
             </Swipeout>
         );
     }

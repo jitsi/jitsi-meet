@@ -89,7 +89,6 @@ function RemoteVideo(user, VideoLayout, emitter) {
     this._stopRemoteControl = this._stopRemoteControl.bind(this);
 
     this.container.onclick = this._onContainerClick;
-    this.container.ondblclick = this._onContainerDoubleClick;
 }
 
 RemoteVideo.prototype = Object.create(SmallVideo.prototype);

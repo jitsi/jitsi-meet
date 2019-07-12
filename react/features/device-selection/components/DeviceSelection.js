@@ -372,7 +372,8 @@ class DeviceSelection extends AbstractDialogTab<Props, State> {
                 label: 'settings.selectCamera',
                 onSelect: selectedVideoInputId =>
                     super._onChange({ selectedVideoInputId }),
-                selectedDeviceId: this.props.selectedVideoInputId
+                selectedDeviceId: this.state.previewVideoTrack
+                    ? this.state.previewVideoTrack.getDeviceId() : null
             },
             {
                 devices: availableDevices.audioInput,
@@ -384,7 +385,8 @@ class DeviceSelection extends AbstractDialogTab<Props, State> {
                 label: 'settings.selectMic',
                 onSelect: selectedAudioInputId =>
                     super._onChange({ selectedAudioInputId }),
-                selectedDeviceId: this.props.selectedAudioInputId
+                selectedDeviceId: this.state.previewAudioTrack
+                    ? this.state.previewAudioTrack.getDeviceId() : null
             }
         ];
 

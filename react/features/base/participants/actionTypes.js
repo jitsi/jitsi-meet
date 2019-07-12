@@ -1,3 +1,5 @@
+// @flow
+
 /**
  * Create an action for when dominant speaker changes.
  *
@@ -66,6 +68,18 @@ export const PARTICIPANT_ID_CHANGED = 'PARTICIPANT_ID_CHANGED';
 export const PARTICIPANT_JOINED = 'PARTICIPANT_JOINED';
 
 /**
+ * Action to signal that a participant has been removed from a conference by
+ * another participant.
+ *
+ * {
+ *     type: PARTICIPANT_KICKED,
+ *     kicked: Object,
+ *     kicker: Object
+ * }
+ */
+export const PARTICIPANT_KICKED = 'PARTICIPANT_KICKED';
+
+/**
  * Action to handle case when participant lefts.
  *
  * {
@@ -120,3 +134,17 @@ export const HIDDEN_PARTICIPANT_JOINED = 'HIDDEN_PARTICIPANT_JOINED';
  * }
  */
 export const HIDDEN_PARTICIPANT_LEFT = 'HIDDEN_PARTICIPANT_LEFT';
+
+/**
+ * The type of Redux action which notifies the app that the loadable avatar URL has changed.
+ *
+ * {
+ *     type: SET_LOADABLE_AVATAR_URL,
+ *     participant: {
+ *         id: string,
+           loadableAvatarUrl: string
+ *     }
+ * }
+ */
+export const SET_LOADABLE_AVATAR_URL = 'SET_LOADABLE_AVATAR_URL';
+

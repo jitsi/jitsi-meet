@@ -11,6 +11,10 @@ import {
     isAddPeopleEnabled,
     isDialOutEnabled
 } from '../../functions';
+import {
+    NOTIFICATION_TIMEOUT,
+    showNotification
+} from '../../../notifications';
 
 const logger = require('jitsi-meet-logger').getLogger(__filename);
 
@@ -20,6 +24,11 @@ export type Props = {
      * Whether or not to show Add People functionality.
      */
     _addPeopleEnabled: boolean,
+
+    /**
+     * Whether or not call flows are enabled.
+     */
+    _callFlowsEnabled: boolean,
 
     /**
      * The URL for validating if a phone number can be called.
@@ -115,7 +124,7 @@ export default class AbstractAddPeopleDialog<P: Props, S: State>
             addToCallInProgress: true
         });
 
-        const { dispatch } = this.props;
+        const { _callFlowsEnabled, dispatch } = this.props;
 
         return dispatch(invite(invitees))
             .then(invitesLeftToSend => {
@@ -140,6 +149,39 @@ export default class AbstractAddPeopleDialog<P: Props, S: State>
                     this.setState({
                         addToCallError: true
                     });
+                } else if (!_callFlowsEnabled) {
+                    const invitedCount = invitees.length;
+                    let notificationProps;
+
+                    if (invitedCount >= 3) {
+                        notificationProps = {
+                            titleArguments: {
+                                name: invitees[0].name,
+                                count: invitedCount - 1
+                            },
+                            titleKey: 'notify.invitedThreePlusMembers'
+                        };
+                    } else if (invitedCount === 2) {
+                        notificationProps = {
+                            titleArguments: {
+                                first: invitees[0].name,
+                                second: invitees[1].name
+                            },
+                            titleKey: 'notify.invitedTwoMembers'
+                        };
+                    } else if (invitedCount) {
+                        notificationProps = {
+                            titleArguments: {
+                                name: invitees[0].name
+                            },
+                            titleKey: 'notify.invitedOneMember'
+                        };
+                    }
+
+                    if (notificationProps) {
+                        dispatch(
+                            showNotification(notificationProps, NOTIFICATION_TIMEOUT));
+                    }
                 }
 
                 return invitesLeftToSend;
@@ -206,6 +248,7 @@ export default class AbstractAddPeopleDialog<P: Props, S: State>
  */
 export function _mapStateToProps(state: Object) {
     const {
+        callFlowsEnabled,
         dialOutAuthUrl,
         peopleSearchQueryTypes,
         peopleSearchUrl
@@ -213,6 +256,7 @@ export function _mapStateToProps(state: Object) {
 
     return {
         _addPeopleEnabled: isAddPeopleEnabled(state),
+        _callFlowsEnabled: callFlowsEnabled,
         _dialOutAuthUrl: dialOutAuthUrl,
         _dialOutEnabled: isDialOutEnabled(state),
         _jwt: state['features/base/jwt'].jwt,

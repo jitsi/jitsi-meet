@@ -1,5 +1,5 @@
 import { translateToHTML } from '../base/i18n';
-import { browser } from '../base/lib-jitsi-meet';
+import { isSuboptimalBrowser } from '../base/environment';
 import { toState } from '../base/redux';
 
 import { getName } from '../app';
@@ -17,16 +17,7 @@ import { getOverlayToRender } from '../overlay';
  * @returns {void}
  */
 export function maybeShowSuboptimalExperienceNotification(dispatch, t) {
-    if (!browser.isChrome()
-            && !browser.isFirefox()
-            && !browser.isNWJS()
-            && !browser.isElectron()
-
-            // Adding react native to the list of recommended browsers is not
-            // necessary for now because the function won't be executed at all
-            // in this case but I'm adding it for completeness.
-            && !browser.isReactNative()
-    ) {
+    if (isSuboptimalBrowser()) {
         dispatch(
             showWarningNotification(
                 {

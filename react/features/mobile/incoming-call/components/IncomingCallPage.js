@@ -4,8 +4,8 @@ import React, { Component } from 'react';
 import { Image, Text, View } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 
+import { Avatar } from '../../../base/avatar';
 import { translate } from '../../../base/i18n';
-import { Avatar } from '../../../base/participants';
 import { connect } from '../../../base/redux';
 
 import AnswerButton from './AnswerButton';
@@ -130,7 +130,7 @@ class IncomingCallPage extends Component<Props> {
                 <View style = { styles.avatar }>
                     <Avatar
                         size = { CALLER_AVATAR_SIZE }
-                        uri = { this.props._callerAvatarURL } />
+                        url = { this.props._callerAvatarURL } />
                 </View>
             </View>
         );

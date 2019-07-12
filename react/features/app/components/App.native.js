@@ -16,6 +16,7 @@ import {
 import { updateSettings } from '../../base/settings';
 import '../../google-api';
 import '../../mobile/audio-mode';
+import '../../mobile/back-button';
 import '../../mobile/background';
 import '../../mobile/call-integration';
 import '../../mobile/external-api';
