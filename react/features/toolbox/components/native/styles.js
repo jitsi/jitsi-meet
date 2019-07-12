@@ -3,8 +3,6 @@
 import { ColorSchemeRegistry, schemeColor } from '../../../base/color-scheme';
 import { BoxModel, ColorPalette, createStyleSheet } from '../../../base/styles';
 
-import { HANGUP_BUTTON_SIZE } from '../../constants';
-
 // Toolbox, toolbar:
 
 /**
@@ -90,6 +88,14 @@ ColorSchemeRegistry.register('Toolbox', {
         style: toolbarButton
     },
 
+    buttonStylesBorderless: {
+        iconStyle: whiteToolbarButtonIcon,
+        style: {
+            ...toolbarButton,
+            backgroundColor: 'transparent'
+        }
+    },
+
     /**
      * Overrides to the standard styles that we apply to the chat button, as
      * that behaves slightly differently to other buttons.
@@ -104,10 +110,7 @@ ColorSchemeRegistry.register('Toolbox', {
         iconStyle: whiteToolbarButtonIcon,
         style: {
             ...toolbarButton,
-            backgroundColor: schemeColor('hangup'),
-            borderRadius: HANGUP_BUTTON_SIZE / 2,
-            height: HANGUP_BUTTON_SIZE,
-            width: HANGUP_BUTTON_SIZE
+            backgroundColor: schemeColor('hangup')
         },
         underlayColor: ColorPalette.buttonUnderlay
     },
