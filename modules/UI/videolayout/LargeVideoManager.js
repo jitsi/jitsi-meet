@@ -270,7 +270,7 @@ export default class LargeVideoManager {
             let messageKey = null;
 
             if (isConnectionInterrupted) {
-                messageKey = 'connection.USER_CONNECTION_INTERRUPTED';
+                messageKey = '';
             } else if (connectionStatus
                     === JitsiParticipantConnectionStatus.INACTIVE) {
                 messageKey = 'connection.LOW_BANDWIDTH';
