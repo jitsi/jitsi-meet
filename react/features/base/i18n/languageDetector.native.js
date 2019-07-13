@@ -17,7 +17,9 @@ export default {
     detect() {
         const { LocaleDetector } = NativeModules;
 
-        return LocaleDetector.locale.replace(/_/, '-');
+        // console.log('wly locale: ', LocaleDetector.locale);
+
+        return LocaleDetector.locale.replace(/_/, '');
     },
 
     init: Function.prototype,
