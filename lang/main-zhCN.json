@@ -2,7 +2,7 @@
     "contactlist_plural": "__count__ 位成员",
     "passwordSetRemotely": "被其他用户设置",
     "poweredby": "技术支持",
-    "inviteUrlDefaultMsg": "您的会议正在被创建。。。",
+    "inviteUrlDefaultMsg": "您的会议正在被创建...",
     "me": "我",
     "speaker": "发言人",
     "raisedHand": "请求发言",
@@ -655,6 +655,7 @@
         "alertOk": "确认",
         "alertTitle": "警告",
         "alertURLText": "服务器 URL 无效",
+        "buildInfoSection": "应用信息",
         "conferenceSection": "会议",
         "displayName": "显示名称",
         "email": "电子邮件",
@@ -662,7 +663,8 @@
         "profileSection": "简介",
         "serverURL": "服务器 URL",
         "startWithAudioMuted": "启动并关闭音频",
-        "startWithVideoMuted": "启动并关闭视频"
+        "startWithVideoMuted": "启动并关闭视频",
+        "version": "版本"
     },
     "calendarSync": {
         "addMeetingURL": "",
@@ -682,7 +684,7 @@
         "joinPastMeeting": ""
     },
     "sectionList": {
-        "pullToRefresh": ""
+        "pullToRefresh": "下拉刷新"
     },
     "deepLinking": {
         "title": "",
