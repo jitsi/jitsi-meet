@@ -21,15 +21,6 @@ import styles from './styles';
 import VideoMuteButton from '../VideoMuteButton';
 
 /**
- * The number of buttons to render in
- * {@link Toolbox}.
- *
- * @private
- * @type number
- */
-const _BUTTON_COUNT = 5;
-
-/**
  * The type of {@link Toolbox}'s React {@code Component} props.
  */
 type Props = {
@@ -104,39 +95,6 @@ class Toolbox extends Component<Props, State> {
     }
 
     /**
-     * Calculates how large our toolbar buttons can be, given the available
-     * width. In the future we might want to have a size threshold, and once
-     * it's passed a completely different style could be used, akin to the web.
-     *
-     * @private
-     * @returns {number}
-     */
-    _calculateButtonSize() {
-        const { _styles } = this.props;
-        const { width } = this.state;
-
-        if (width <= 0) {
-            // We don't know how much space is allocated to the toolbar yet.
-            return width;
-        }
-
-        const { style } = _styles.buttonStyles;
-        let buttonSize
-            = (width
-
-                    // Account for the horizontal margins of all buttons:
-                    - (_BUTTON_COUNT * style.marginHorizontal * 2)) / _BUTTON_COUNT;
-
-        // Well, don't return a non-positive button size.
-        if (buttonSize <= 0) {
-            buttonSize = style.width;
-        }
-
-        // Make sure it's an even number.
-        return 2 * Math.round(buttonSize / 2);
-    }
-
-    /**
      * Constructs the toggled style of the chat button. This cannot be done by
      * simple style inheritance due to the size calculation done in this
      * component.
@@ -167,24 +125,6 @@ class Toolbox extends Component<Props, State> {
         };
     }
 
-    /**
-     * Applies the recalculated size to the button style object, if needed.
-     *
-     * @param {Object} baseStyle - The base style object of the button.
-     * @param {Object} extraStyle - The extra style object of the button.
-     * @returns {Object}
-     */
-    _getResizedStyle(baseStyle, extraStyle) {
-        if (baseStyle.style.width !== extraStyle.width) {
-            return {
-                ...baseStyle,
-                style: [ baseStyle.style, extraStyle ]
-            };
-        }
-
-        return baseStyle;
-    }
-
     _onLayout: (Object) => void;
 
     /**
@@ -208,31 +148,7 @@ class Toolbox extends Component<Props, State> {
      */
     _renderToolbar() {
         const { _chatEnabled, _styles } = this.props;
-        const buttonSize = this._calculateButtonSize();
-        let { buttonStyles, buttonStylesBorderless, hangupButtonStyles, toggledButtonStyles } = _styles;
-
-        if (buttonSize > 0) {
-            const extraButtonStyle = {
-                borderRadius: buttonSize / 2,
-                height: buttonSize,
-                width: buttonSize
-            };
-
-            // XXX The following width equality checks attempt to minimize
-            // unnecessary objects and possibly re-renders.
-            //
-            // TODO: This needs a refactor!
-            buttonStyles = this._getResizedStyle(buttonStyles, extraButtonStyle);
-            buttonStylesBorderless = this._getResizedStyle(buttonStylesBorderless, extraButtonStyle);
-            hangupButtonStyles = this._getResizedStyle(hangupButtonStyles, extraButtonStyle);
-            toggledButtonStyles = this._getResizedStyle(toggledButtonStyles, extraButtonStyle);
-        } else {
-            // XXX In order to avoid a weird visual effect in which the toolbar
-            // is (visually) rendered and then visibly changes its size, it is
-            // rendered only after we've figured out the width available to the
-            // toolbar.
-            return null;
-        }
+        const { buttonStyles, buttonStylesBorderless, hangupButtonStyles, toggledButtonStyles } = _styles;
 
         return (
             <View
