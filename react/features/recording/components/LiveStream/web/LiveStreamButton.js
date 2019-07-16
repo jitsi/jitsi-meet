@@ -3,8 +3,8 @@
 import React from 'react';
 
 import { translate } from '../../../../base/i18n';
-import { Container, Text } from '../../../../base/react';
 import { connect } from '../../../../base/redux';
+import { BetaTag } from '../../../../base/toolbox';
 
 import AbstractLiveStreamButton, {
     _mapStateToProps as _abstractMapStateToProps,
@@ -46,14 +46,7 @@ class LiveStreamButton extends AbstractLiveStreamButton<Props> {
      * @returns {ReactElement}
      */
     _getElementAfter() {
-        return (
-            <Container
-                className = { 'beta-tag' }>
-                <Text>
-                    { this.props.t('recording.beta') }
-                </Text>
-            </Container>
-        );
+        return <BetaTag />;
     }
 
     /**
