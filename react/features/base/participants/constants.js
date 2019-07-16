@@ -14,6 +14,13 @@
 export const DEFAULT_AVATAR_RELATIVE_PATH = 'images/avatar.png';
 
 /**
+ * Icon URL for jigasi participants.
+ *
+ * @type {string}
+ */
+export const JIGASI_PARTICIPANT_ICON = 'icon://phone';
+
+/**
  * The local participant might not have real ID until she joins a conference,
  * so use 'local' as her default ID.
  *

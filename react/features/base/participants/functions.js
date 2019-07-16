@@ -9,6 +9,7 @@ import { getTrackByMediaTypeAndParticipant } from '../tracks';
 import { createDeferred } from '../util';
 
 import {
+    JIGASI_PARTICIPANT_ICON,
     MAX_DISPLAY_NAME_LENGTH,
     PARTICIPANT_ROLE
 } from './constants';
@@ -24,6 +25,9 @@ const AVATAR_QUEUE = [];
 const AVATAR_CHECKED_URLS = new Map();
 /* eslint-disable arrow-body-style */
 const AVATAR_CHECKER_FUNCTIONS = [
+    participant => {
+        return participant && participant.isJigasi ? JIGASI_PARTICIPANT_ICON : null;
+    },
     participant => {
         return participant && participant.avatarURL ? participant.avatarURL : null;
     },
@@ -255,6 +259,16 @@ export function isEveryoneModerator(stateful: Object | Function) {
     }
 
     return true;
+}
+
+/**
+ * Checks a URL string and returns true if it's an icon url.
+ *
+ * @param {string?} url - The URL string to check.
+ * @returns {boolean}
+ */
+export function isIconUrl(url: ?string) {
+    return Boolean(url && url.match(/icon:\/\/(.+)/i));
 }
 
 /**

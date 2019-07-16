@@ -1,6 +1,8 @@
 
 // @flow
 
+import { isIconUrl } from './functions';
+
 declare var config: Object;
 
 /**
@@ -10,6 +12,10 @@ declare var config: Object;
  * @returns {Promise}
  */
 export function preloadImage(src: string): Promise<string> {
+    if (isIconUrl(src)) {
+        return Promise.resolve(src);
+    }
+
     if (typeof config === 'object' && config.disableThirdPartyRequests) {
         return Promise.reject();
     }
