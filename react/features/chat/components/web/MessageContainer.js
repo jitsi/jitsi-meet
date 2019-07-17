@@ -100,7 +100,8 @@ export default class MessageContainer extends AbstractMessageContainer {
      */
     scrollToBottom(withAnimation: boolean) {
         this._messagesListEndRef.current.scrollIntoView({
-            behavior: withAnimation ? 'smooth' : 'auto'
+            behavior: withAnimation ? 'smooth' : 'auto',
+            block: 'nearest'
         });
     }
 
