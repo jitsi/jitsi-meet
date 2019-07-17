@@ -84,6 +84,15 @@ StateListenerRegistry.register(
         }
     });
 
+StateListenerRegistry.register(
+    state => state['features/chat'].isOpen,
+    (isOpen, { dispatch }) => {
+        if (typeof APP !== 'undefined' && isOpen) {
+            dispatch(showToolbox());
+        }
+    }
+);
+
 /**
  * Registers listener for {@link JitsiConferenceEvents.MESSAGE_RECEIVED} that
  * will perform various chat related activities.
