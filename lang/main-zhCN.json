@@ -102,6 +102,7 @@
             "pip": "切换子母画面模式",
             "profile": "编辑您的简介",
             "raiseHand": "举手 / 取消举手",
+            "raiseYourHand": "举手",
             "recording": "开启 / 停止 视频录制",
             "Settings": "显示 / 隐藏 设置",
             "sharedvideo": "切换 Youtube 影片分享",
@@ -121,6 +122,8 @@
         "callQuality": "管理通话质量",
         "enterFullScreen": "全屏观看",
         "exitFullScreen": "退出全屏",
+        "enterTileView": "进入平铺视图",
+        "exitTileView": "退出平铺视图",
         "feedback": "反馈",
         "moreActions": "显示 / 隐藏 更多选择",
         "mute": "静音 / 解除静音",
@@ -212,6 +215,9 @@
         "domute": "静音",
         "flip": "翻转",
         "remoteControl": "远程控制"
+    },
+    "connectingOverlay": {
+        "joiningRoom": "正在连接到您的会议..."
     },
     "connectionindicator": {
         "header": "连接数据",
@@ -478,6 +484,7 @@
         "pending": "准备录制此会议...",
         "rec": "REC录制",
         "authDropboxText": "上传至 Dropbox",
+        "serviceDescription": "录制服务将保存您的录制",
         "serviceName": "录像服务",
         "signOut": "登出",
         "signIn": "登录",
@@ -648,7 +655,8 @@
         "numbers": "呼入号码",
         "password": "密码：",
         "title": "分享",
-        "tooltip": ""
+        "tooltip": "",
+        "label": "会议信息"
     },
     "\u0005info": {},
     "settingsView": {
