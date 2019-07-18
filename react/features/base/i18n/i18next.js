@@ -40,26 +40,25 @@ const options = {
     app:
         (typeof interfaceConfig !== 'undefined' && interfaceConfig.APP_NAME)
             || 'Jitsi Meet',
-    fallbackLng: DEFAULT_LANGUAGE,
-    returnEmptyString: false,
-    returnNull: false,
-
-    interpolation: {
-        escapeValue: false // not needed for react as it escapes by default
-    },
-
-    // XXX i18next modifies the array lngWhitelist so make sure to clone
-    // LANGUAGES.
-    whitelist: LANGUAGES.slice(),
-    load: 'languageOnly',
-    ns: [ 'main', 'languages', 'countries' ],
-    defaultNs: 'main',
     backend: {
         loadPath: 'lang/__ns__-__lng__.json'
     },
+    defaultNs: 'main',
+    fallbackLng: DEFAULT_LANGUAGE,
+    interpolation: {
+        escapeValue: false // not needed for react as it escapes by default
+    },
+    load: 'languageOnly',
+    ns: [ 'main', 'languages', 'countries' ],
     react: {
         useSuspense: false
-    }
+    },
+    returnEmptyString: false,
+    returnNull: false,
+
+    // XXX i18next modifies the array lngWhitelist so make sure to clone
+    // LANGUAGES.
+    whitelist: LANGUAGES.slice()
 };
 
 i18next
