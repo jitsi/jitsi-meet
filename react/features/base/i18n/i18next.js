@@ -43,7 +43,7 @@ const options = {
     backend: {
         loadPath: 'lang/__ns__-__lng__.json'
     },
-    defaultNs: 'main',
+    defaultNS: 'main',
     fallbackLng: DEFAULT_LANGUAGE,
     interpolation: {
         escapeValue: false // not needed for react as it escapes by default
