@@ -2,6 +2,7 @@
 
 import React, { Component } from 'react';
 
+import { browser } from '../../../base/lib-jitsi-meet';
 import {
     ACTION_SHORTCUT_TRIGGERED,
     createShortcutEvent,
@@ -64,6 +65,7 @@ import VideoMuteButton from '../VideoMuteButton';
 import {
     ClosedCaptionButton
 } from '../../../subtitles';
+import { Platform } from '../../../base/react';
 
 /**
  * The type of the React {@code Component} props of {@link Toolbox}.
@@ -1228,6 +1230,8 @@ class Toolbox extends Component<Props, State> {
                 </div>
                 <div className = 'button-group-center'>
                    {  _isLocalParticipantModerator
+                      &&
+                      browser.isElectron()
                       &&  <div className = 'toolbar-button-with-badge'>
                             <ToolbarButton
                                 accessibilityLabel =
@@ -1247,6 +1251,10 @@ class Toolbox extends Component<Props, State> {
                 </div>
                 <div className = 'button-group-right'>
                     { buttonsRight.indexOf('localrecording') !== -1
+                        &&
+                        browser.isElectron()
+                        &&
+                        Platform.OS == 'windows'
                         && <LocalRecordingButton
                             onClick = {
                                 this._onToolbarOpenLocalRecordingInfoDialog
