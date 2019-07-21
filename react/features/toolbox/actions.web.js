@@ -14,6 +14,9 @@ import {
 } from './actionTypes';
 
 declare var interfaceConfig: Object;
+declare var APP: Object;
+
+
 
 export * from './actions.native';
 
@@ -133,6 +136,12 @@ export function showToolbox(timeout: number = 0): Object {
         } = state['features/toolbox'];
 
         if (enabled && !visible) {
+            const { controller } = APP.remoteControl;
+            if(controller && controller.isStarted()){
+                //if remote controller started,hide toolbox
+                dispatch(setToolboxVisible(false));
+                return;
+            }
             dispatch(setToolboxVisible(true));
 
             // If the Toolbox is always visible, there's no need for a timeout

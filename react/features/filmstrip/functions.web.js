@@ -7,6 +7,7 @@ import {
 import { toState } from '../base/redux';
 
 declare var interfaceConfig: Object;
+declare var APP: Object;
 
 /**
  * Returns true if the filmstrip on mobile is visible, false otherwise.
@@ -41,6 +42,8 @@ export function shouldRemoteVideosBeVisible(state: Object) {
     // in the filmstrip.
     const participantCount = getParticipantCountWithFake(state);
     let pinnedParticipant;
+    
+    const { controller } = APP.remoteControl;
 
     return Boolean(
         participantCount > 2
@@ -51,6 +54,7 @@ export function shouldRemoteVideosBeVisible(state: Object) {
             || (participantCount > 1
                 && (state['features/filmstrip'].hovered
                     || state['features/toolbox'].visible
+                    || (controller && controller.isStarted())
                     || ((pinnedParticipant = getPinnedParticipant(state))
                         && pinnedParticipant.local)))
 
