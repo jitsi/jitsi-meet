@@ -1,0 +1,33 @@
+// @flow
+
+import _ from 'lodash';
+
+import { ReducerRegistry } from '../redux';
+
+import { UPDATE_FLAGS } from './actionTypes';
+
+/**
+ * Default state value for the feature flags.
+ */
+const DEFAULT_STATE = {};
+
+/**
+ * Reduces redux actions which handle feature flags.
+ *
+ * @param {State} state - The current redux state.
+ * @param {Action} action - The redux action to reduce.
+ * @param {string} action.type - The type of the redux action to reduce.
+ * @returns {State} The next redux state that is the result of reducing the
+ * specified action.
+ */
+ReducerRegistry.register('features/base/flags', (state = DEFAULT_STATE, action) => {
+    switch (action.type) {
+    case UPDATE_FLAGS: {
+        const newState = _.merge({}, state, action.flags);
+
+        return _.isEqual(state, newState) ? state : newState;
+    }
+    }
+
+    return state;
+});

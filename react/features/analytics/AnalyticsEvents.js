@@ -272,6 +272,18 @@ export function createInviteDialogEvent(
 }
 
 /**
+ * Creates an "offer/answer failure" event.
+ *
+ * @returns {Object} The event in a format suitable for sending via
+ * sendAnalytics.
+ */
+export function createOfferAnswerFailedEvent() {
+    return {
+        action: 'offer.answer.failure'
+    };
+}
+
+/**
  * Creates a "page reload" event.
  *
  * @param {string} reason - The reason for the reload.
@@ -456,6 +468,21 @@ export function createRemoteVideoMenuButtonEvent(buttonName, attributes) {
 }
 
 /**
+ * Creates an event indicating that an action related to video blur
+ * occurred (e.g. It was started or stopped).
+ *
+ * @param {string} action - The action which occurred.
+ * @returns {Object} The event in a format suitable for sending via
+ * sendAnalytics.
+ */
+export function createVideoBlurEvent(action) {
+    return {
+        action,
+        actionSubject: 'video.blur'
+    };
+}
+
+/**
  * Creates an event indicating that an action related to screen sharing
  * occurred (e.g. It was started or stopped).
  *
@@ -548,6 +575,18 @@ export function createStartAudioOnlyEvent(audioOnly) {
         attributes: {
             enabled: audioOnly
         }
+    };
+}
+
+/**
+ * Creates an event which indicates the "start silent" configuration.
+ *
+ * @returns {Object} The event in a format suitable for sending via
+ * sendAnalytics.
+ */
+export function createStartSilentEvent() {
+    return {
+        action: 'start.silent'
     };
 }
 

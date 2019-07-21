@@ -135,7 +135,7 @@ function _mapStateToProps(state) {
     const showProfileSettings
         = configuredTabs.includes('profile') && jwt.isGuest;
     const showCalendarSettings
-        = configuredTabs.includes('calendar') && isCalendarEnabled();
+        = configuredTabs.includes('calendar') && isCalendarEnabled(state);
     const tabs = [];
 
     if (showDeviceSettings) {

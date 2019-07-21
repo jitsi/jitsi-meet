@@ -225,11 +225,11 @@ class WelcomePage extends AbstractWelcomePage {
             return null;
         }
 
-        const { t } = this.props;
+        const { _calendarEnabled, t } = this.props;
 
         const tabs = [];
 
-        if (CalendarList) {
+        if (_calendarEnabled) {
             tabs.push({
                 label: t('welcomepage.calendar'),
                 content: <CalendarList />

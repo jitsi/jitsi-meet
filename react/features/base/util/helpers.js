@@ -3,6 +3,41 @@
 const logger = require('jitsi-meet-logger').getLogger(__filename);
 
 /**
+ * Creates a deferred object.
+ *
+ * @returns {{promise, resolve, reject}}
+ */
+export function createDeferred(): Object {
+    const deferred = {};
+
+    deferred.promise = new Promise((resolve, reject) => {
+        deferred.resolve = resolve;
+        deferred.reject = reject;
+    });
+
+    return deferred;
+}
+
+/**
+ * Returns the base URL of the app.
+ *
+ * @param {Object} w - Window object to use instead of the built in one.
+ * @returns {string}
+ */
+export function getBaseUrl(w: Object = window) {
+    const doc = w.document;
+    const base = doc.querySelector('base');
+
+    if (base && base.href) {
+        return base.href;
+    }
+
+    const { protocol, host } = w.location;
+
+    return `${protocol}//${host}`;
+}
+
+/**
  * Returns the namespace for all global variables, functions, etc that we need.
  *
  * @returns {Object} The namespace.

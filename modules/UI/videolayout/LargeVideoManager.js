@@ -4,12 +4,11 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import { I18nextProvider } from 'react-i18next';
 import { Provider } from 'react-redux';
-
+import { Avatar } from '../../../react/features/base/avatar';
 import { i18next } from '../../../react/features/base/i18n';
 import {
-    Avatar,
-    DisplayNameView,
-    getAvatarURLByParticipantId
+    getAvatarURL,
+    DisplayNameView
 } from '../../../react/features/base/participants';
 import { PresenceLabel } from '../../../react/features/presence-status';
 /* eslint-enable no-unused-vars */
@@ -218,8 +217,7 @@ export default class LargeVideoManager {
             container.setStream(id, stream, videoType);
 
             // change the avatar url on large
-            this.updateAvatar(
-                getAvatarURLByParticipantId(APP.store.getState(), id),id);
+            this.updateAvatar(id);
 
             // If the user's connection is disrupted then the avatar will be
             // displayed in case we have no video image cached. That is if
@@ -410,12 +408,16 @@ export default class LargeVideoManager {
     /**
      * Updates the src of the dominant speaker avatar
      */
-    updateAvatar(avatarUrl,id) {
-        if (avatarUrl) {
+    updateAvatar(id) {
+        var url = getAvatarURL(id);
             ReactDOM.render(
+            <Provider store = { APP.store }>
                 <Avatar
                     id = "dominantSpeakerAvatar"
-                    uri = { avatarUrl } />,
+                    participantId = { this.id }
+                    url = { url }
+                    size = { 200 } />
+            </Provider>,
                 this._dominantSpeakerAvatarContainer
             );
             var _displayName;
@@ -428,24 +430,13 @@ export default class LargeVideoManager {
             }
                 
             ReactDOM.render(
+            <Provider store = { APP.store }>
                 <DisplayNameView
                     id = "speakerDisplayName"
-                    displayName = { _displayName } />,
+                    displayName = { _displayName } />
+            </Provider>,
                 this._dominantSpeakerNameContainer
             );
-            // ReactDOM.render(
-            //     <Avatar
-            //         id = "dominantSpeakerAvatar"
-            //         uri = { avatarUrl } />,
-            //     this._dominantSpeakerNameContainer
-            // );
-        } else {
-            ReactDOM.unmountComponentAtNode(
-                this._dominantSpeakerAvatarContainer);
-            ReactDOM.unmountComponentAtNode(
-                this._dominantSpeakerNameContainer);
-            
-        }
     }
 
     /**

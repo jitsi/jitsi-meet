@@ -16,6 +16,7 @@
 
 package org.jitsi.meet.sdk;
 
+import android.app.Activity;
 import android.app.Application;
 import android.support.annotation.Nullable;
 
@@ -120,6 +121,18 @@ class ReactInstanceManagerHolder {
                 ? reactContext.getNativeModule(nativeModuleClass) : null;
     }
 
+    /**
+     * Gets the current {@link Activity} linked to React Native.
+     *
+     * @return An activity attached to React Native.
+     */
+    static Activity getCurrentActivity() {
+        ReactContext reactContext
+            = reactInstanceManager != null
+            ? reactInstanceManager.getCurrentReactContext() : null;
+        return reactContext != null ? reactContext.getCurrentActivity() : null;
+    }
+
     static ReactInstanceManager getReactInstanceManager() {
         return reactInstanceManager;
     }
@@ -142,7 +155,6 @@ class ReactInstanceManagerHolder {
                 new com.BV.LinearGradient.LinearGradientPackage(),
                 new com.calendarevents.CalendarEventsPackage(),
                 new com.corbt.keepawake.KCKeepAwakePackage(),
-                new com.dylanvann.fastimage.FastImageViewPackage(),
                 new com.facebook.react.shell.MainReactPackage(),
                 new com.oblador.vectoricons.VectorIconsPackage(),
                 new com.ocetnik.timer.BackgroundTimerPackage(),
@@ -182,5 +194,8 @@ class ReactInstanceManagerHolder {
         if (devSettings != null) {
             devSettings.setBundleDeltasEnabled(false);
         }
+
+        // Register our uncaught exception handler.
+        JitsiMeetUncaughtExceptionHandler.register();
     }
 }

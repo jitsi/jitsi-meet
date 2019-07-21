@@ -145,7 +145,16 @@ function _electParticipantInLargeVideo(state) {
                 //    As a last resort, pick the last participant who joined the
                 //    conference (regardless of whether they are local or
                 //    remote).
-                participant = participants[participants.length - 1];
+                //
+                // HOWEVER: We don't want to show poltergeist or other bot type participants on stage
+                // automatically, because it's misleading (users may think they are already
+                // joined and maybe speaking).
+                for (let i = participants.length; i > 0 && !participant; i--) {
+                    const p = participants[i - 1];
+
+                    !p.botType && (participant = p);
+                }
+
                 id = participant && participant.id;
             }
         }

@@ -5,7 +5,7 @@ import {
     createApiEvent,
     sendAnalytics
 } from '../../react/features/analytics';
-import { setSubject } from '../../react/features/base/conference';
+import { setPassword, setSubject } from '../../react/features/base/conference';
 import { parseJWTFromURLParams } from '../../react/features/base/jwt';
 import { muteRemoteParticipant } from '../../react/features/base/participants';
 import { kickParticipant } from '../../react/features/base/participants';
@@ -67,6 +67,28 @@ function initCommands() {
         'display-name': displayName => {
             sendAnalytics(createApiEvent('display.name.changed'));
             APP.conference.changeLocalDisplayName(displayName);
+        },
+        'password': password => {
+            const { conference, passwordRequired }
+                = APP.store.getState()['features/base/conference'];
+
+            if (passwordRequired) {
+                sendAnalytics(createApiEvent('submit.password'));
+
+                APP.store.dispatch(setPassword(
+                    passwordRequired,
+                    passwordRequired.join,
+                    password
+                ));
+            } else {
+                sendAnalytics(createApiEvent('password.changed'));
+
+                APP.store.dispatch(setPassword(
+                    conference,
+                    conference.lock,
+                    password
+                ));
+            }
         },
         'proxy-connection-event': event => {
             APP.conference.onProxyConnectionEvent(event);
@@ -530,6 +552,15 @@ class API {
     }
 
     /**
+     * Notify external application (if API is enabled) that a suspend event in host computer.
+     *
+     * @returns {void}
+     */
+    notifySuspendDetected() {
+        this._sendEvent({ name: 'suspend-detected' });
+    }
+
+    /**
      * Notify external application (if API is enabled) for audio muted status
      * changed.
      *
@@ -667,6 +698,34 @@ class API {
             name: 'filmstrip-display-changed',
             visible
         });
+    }
+
+    /**
+     * Notify external application of a participant, remote or local, being
+     * removed from the conference by another participant.
+     *
+     * @param {string} kicked - The ID of the participant removed from the
+     * conference.
+     * @param {string} kicker - The ID of the participant that removed the
+     * other participant.
+     * @returns {void}
+     */
+    notifyKickedOut(kicked: Object, kicker: Object) {
+        this._sendEvent({
+            name: 'participant-kicked-out',
+            kicked,
+            kicker
+        });
+    }
+
+    /**
+     * Notify external application of the current meeting requiring a password
+     * to join.
+     *
+     * @returns {void}
+     */
+    notifyOnPasswordRequired() {
+        this._sendEvent({ name: 'password-required' });
     }
 
     /**

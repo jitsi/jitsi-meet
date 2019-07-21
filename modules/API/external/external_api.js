@@ -33,6 +33,7 @@ const commands = {
     displayName: 'display-name',
     email: 'email',
     hangup: 'video-hangup',
+    password: 'password',
     subject: 'subject',
     submitFeedback: 'submit-feedback',
     toggleAudio: 'toggle-audio',
@@ -66,7 +67,9 @@ const events = {
     'mic-error': 'micError',
     'outgoing-message': 'outgoingMessage',
     'participant-joined': 'participantJoined',
+    'participant-kicked-out': 'participantKickedOut',
     'participant-left': 'participantLeft',
+    'password-required': 'passwordRequired',
     'proxy-connection-event': 'proxyConnectionEvent',
     'video-ready-to-close': 'readyToClose',
     'video-conference-joined': 'videoConferenceJoined',
@@ -78,6 +81,7 @@ const events = {
     'common-extend-message': 'common-extend-message',
     'subject-change': 'subjectChange',
     'conference-log': 'conference-log',
+    'suspend-detected': 'suspendDetected',
     'tile-view-changed': 'tileViewChanged'
 };
 
@@ -550,6 +554,7 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
      * {{
      * on: on //whether screen sharing is on
      * }}
+     * {@code suspendDetected} - receives event notifications about detecting suspend event in host computer.
      * {@code readyToClose} - all hangup operations are completed and Jitsi Meet
      * is ready to be disposed.
      * @returns {void}
@@ -572,7 +577,7 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
         this.emit('_willDispose');
         this._transport.dispose();
         this.removeAllListeners();
-        if (this._frame) {
+        if (this._frame && this._frame.parentNode) {
             this._frame.parentNode.removeChild(this._frame);
         }
     }

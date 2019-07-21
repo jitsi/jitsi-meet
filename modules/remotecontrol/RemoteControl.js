@@ -91,9 +91,8 @@ class RemoteControl extends EventEmitter {
      * the user supports remote control and with false if not.
      */
     checkUserRemoteControlSupport(user: Object) {
-        return user.getFeatures().then(
-            features => features.has(DISCO_REMOTE_CONTROL_FEATURE),
-            () => false);
+        return user.getFeatures()
+            .then(features => features.has(DISCO_REMOTE_CONTROL_FEATURE));
     }
 }
 

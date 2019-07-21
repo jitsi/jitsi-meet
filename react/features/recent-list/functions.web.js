@@ -19,6 +19,7 @@ export function toDisplayableList(recentList) {
                     duration: item.duration,
                     time: [ item.date ],
                     title: convertForTrans(parseURIString(item.conference).room),
+                    title: decodeURIComponent(parseURIString(item.conference).room),
                     url: item.conference
                 };
             }));

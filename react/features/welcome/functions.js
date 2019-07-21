@@ -1,6 +1,6 @@
 // @flow
 
-import { getAppProp } from '../base/app';
+import { WELCOME_PAGE_ENABLED, getFeatureFlag } from '../base/flags';
 import { toState } from '../base/redux';
 
 declare var APP: Object;
@@ -24,7 +24,7 @@ export function isWelcomePageAppEnabled(stateful: Function | Object) {
         // - Enabling/disabling the Welcome page on Web historically
         // automatically redirects to a random room and that does not make sense
         // on mobile (right now).
-        return Boolean(getAppProp(stateful, 'welcomePageEnabled'));
+        return Boolean(getFeatureFlag(stateful, WELCOME_PAGE_ENABLED));
     }
 
     return true;

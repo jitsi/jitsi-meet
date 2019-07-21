@@ -217,7 +217,7 @@ class DeepLinkingMobilePage extends Component<Props> {
  */
 function _mapStateToProps(state) {
     return {
-        _room: state['features/base/conference'].room
+        _room: decodeURIComponent(state['features/base/conference'].room)
     };
 }
 

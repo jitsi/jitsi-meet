@@ -14,7 +14,6 @@ import {
 
 import { refreshCalendar } from '../actions';
 import { ERRORS } from '../constants';
-import { isCalendarEnabled } from '../functions';
 
 import CalendarListContent from './CalendarListContent';
 
@@ -257,6 +256,4 @@ function _mapStateToProps(state) {
     };
 }
 
-export default isCalendarEnabled()
-    ? translate(connect(_mapStateToProps)(CalendarList))
-    : undefined;
+export default translate(connect(_mapStateToProps)(CalendarList));

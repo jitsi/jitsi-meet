@@ -1,10 +1,10 @@
 // @flow
 
 import React from 'react';
-import { BackHandler, NativeModules, SafeAreaView, StatusBar, View } from 'react-native';
+import { NativeModules, SafeAreaView, StatusBar, View } from 'react-native';
 
 import { appNavigate } from '../../../app';
-import { getAppProp } from '../../../base/app';
+import { PIP_ENABLED, getFeatureFlag } from '../../../base/flags';
 import { getParticipantCount } from '../../../base/participants';
 import { Container, LoadingIndicator, TintedView } from '../../../base/react';
 import { connect } from '../../../base/redux';
@@ -13,7 +13,7 @@ import {
     makeAspectRatioAware
 } from '../../../base/responsive-ui';
 import { TestConnectionInfo } from '../../../base/testing';
-import { ConferenceNotification } from '../../../calendar-sync';
+import { ConferenceNotification, isCalendarEnabled } from '../../../calendar-sync';
 import { Chat } from '../../../chat';
 import { DisplayNameLabel } from '../../../display-name';
 import {
@@ -23,6 +23,7 @@ import {
     TileView
 } from '../../../filmstrip';
 import { LargeVideo } from '../../../large-video';
+import { BackButtonRegistry } from '../../../mobile/back-button';
 import { AddPeopleDialog, CalleeInfoContainer } from '../../../invite';
 import { Captions } from '../../../subtitles';
 import { setToolboxVisible, Toolbox } from '../../../toolbox';
@@ -41,6 +42,13 @@ import type { AbstractProps } from '../AbstractConference';
  * The type of the React {@code Component} props of {@link Conference}.
  */
 type Props = AbstractProps & {
+
+    /**
+     * Wherther the calendar feature is enabled or not.
+     *
+     * @private
+     */
+    _calendarEnabled: boolean,
 
     /**
      * The indicator which determines that we are still connecting to the
@@ -105,13 +113,6 @@ type Props = AbstractProps & {
     _toolboxVisible: boolean,
 
     /**
-     * The indicator which determines whether the Toolbox is always visible.
-     *
-     * @private
-     */
-    _toolboxAlwaysVisible: boolean,
-
-    /**
      * The redux {@code dispatch} function.
      */
     dispatch: Function
@@ -144,7 +145,7 @@ class Conference extends AbstractConference<Props, *> {
      * @returns {void}
      */
     componentDidMount() {
-        BackHandler.addEventListener('hardwareBackPress', this._onHardwareBackPress);
+        BackButtonRegistry.addListener(this._onHardwareBackPress);
 
         // Show the toolbox if we are the only participant; otherwise, the whole
         // UI looks too unpopulated the LargeVideo visible.
@@ -186,7 +187,7 @@ class Conference extends AbstractConference<Props, *> {
      */
     componentWillUnmount() {
         // Tear handling any hardware button presses for back navigation down.
-        BackHandler.removeEventListener('hardwareBackPress', this._onHardwareBackPress);
+        BackButtonRegistry.removeListener(this._onHardwareBackPress);
     }
 
     /**
@@ -291,10 +292,6 @@ class Conference extends AbstractConference<Props, *> {
      * @returns {void}
      */
     _onClick() {
-        if (this.props._toolboxAlwaysVisible) {
-            return;
-        }
-
         this._setToolboxVisible(!this.props._toolboxVisible);
     }
 
@@ -331,10 +328,10 @@ class Conference extends AbstractConference<Props, *> {
      * @returns {React$Node}
      */
     _renderConferenceNotification() {
-        // XXX If the calendar feature is disabled on a platform, then we don't
-        // have its components exported so an undefined check is necessary.
+        const { _calendarEnabled, _reducedUI } = this.props;
+
         return (
-            !this.props._reducedUI && ConferenceNotification
+            _calendarEnabled && !_reducedUI
                 ? <ConferenceNotification />
                 : undefined);
     }
@@ -400,7 +397,7 @@ function _mapStateToProps(state) {
         leaving
     } = state['features/base/conference'];
     const { reducedUI } = state['features/base/responsive-ui'];
-    const { alwaysVisible, visible } = state['features/toolbox'];
+    const { visible } = state['features/toolbox'];
 
     // XXX There is a window of time between the successful establishment of the
     // XMPP connection and the subsequent commencement of joining the MUC during
@@ -416,6 +413,14 @@ function _mapStateToProps(state) {
 
     return {
         ...abstractMapStateToProps(state),
+
+        /**
+         * Wherther the calendar feature is enabled or not.
+         *
+         * @private
+         * @type {boolean}
+         */
+        _calendarEnabled: isCalendarEnabled(state),
 
         /**
          * The indicator which determines that we are still connecting to the
@@ -452,7 +457,7 @@ function _mapStateToProps(state) {
          * @private
          * @type {boolean}
          */
-        _pictureInPictureEnabled: getAppProp(state, 'pictureInPictureEnabled'),
+        _pictureInPictureEnabled: getFeatureFlag(state, PIP_ENABLED),
 
         /**
          * The indicator which determines whether the UI is reduced (to
@@ -469,15 +474,7 @@ function _mapStateToProps(state) {
          * @private
          * @type {boolean}
          */
-        _toolboxVisible: visible,
-
-        /**
-         * The indicator which determines whether the Toolbox is always visible.
-         *
-         * @private
-         * @type {boolean}
-         */
-        _toolboxAlwaysVisible: alwaysVisible
+        _toolboxVisible: visible
     };
 }
 

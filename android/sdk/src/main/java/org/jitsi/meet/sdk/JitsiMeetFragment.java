@@ -26,8 +26,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import java.net.URL;
-
 /**
  * Base {@link Fragment} for applications integrating Jitsi Meet at a higher level. It
  * contains all the required wiring between the {@code JitsiMeetView} and

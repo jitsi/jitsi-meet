@@ -100,17 +100,6 @@ UI.notifyReservationError = function(code, msg) {
 };
 
 /**
- * Notify user that he has been kicked from the server.
- */
-UI.notifyKicked = function() {
-    messageHandler.showError({
-        hideErrorSupportLink: true,
-        descriptionKey: 'dialog.kickMessage',
-        titleKey: 'dialog.kickTitle'
-    });
-};
-
-/**
  * Notify user that conference was destroyed.
  * @param reason {string} the reason text
  */
@@ -240,22 +229,11 @@ UI.unbindEvents = () => {
 };
 
 /**
- * Show local stream on UI.
+ * Show local video stream on UI.
  * @param {JitsiTrack} track stream to show
  */
-UI.addLocalStream = track => {
-    switch (track.getType()) {
-    case 'audio':
-        // Local audio is not rendered so no further action is needed at this
-        // point.
-        break;
-    case 'video':
-        VideoLayout.changeLocalVideo(track);
-        break;
-    default:
-        logger.error(`Unknown stream type: ${track.getType()}`);
-        break;
-    }
+UI.addLocalVideoStream = track => {
+    VideoLayout.changeLocalVideo(track);
 };
 
 /**
@@ -521,8 +499,8 @@ UI.dockToolbar = dock => APP.store.dispatch(dockToolbox(dock));
  * @param {string} avatarURL - The URL to avatar image to display.
  * @returns {void}
  */
-UI.refreshAvatarDisplay = function(id, avatarURL) {
-    VideoLayout.changeUserAvatar(id, avatarURL);
+UI.refreshAvatarDisplay = function(id) {
+    VideoLayout.changeUserAvatar(id);
 };
 
 /**
@@ -741,24 +719,6 @@ UI.showExtensionInlineInstallationDialog = function(callback) {
         submitFunction,
         loadedFunction: $.noop,
         closeFunction
-    });
-};
-
-/**
- * Shows error dialog that informs the user that no data is received from the
- * device.
- *
- * @param {boolean} isAudioTrack - Whether or not the dialog is for an audio
- * track error.
- * @returns {void}
- */
-UI.showTrackNotWorkingDialog = function(isAudioTrack) {
-    messageHandler.showError({
-        descriptionKey: isAudioTrack
-            ? 'dialog.micNotSendingData' : 'dialog.cameraNotSendingData',
-        titleKey: isAudioTrack
-            ? 'dialog.micNotSendingDataTitle'
-            : 'dialog.cameraNotSendingDataTitle'
     });
 };
 

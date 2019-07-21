@@ -93,11 +93,14 @@
                         + "font-size:small;"
                         + "cursor: pointer'>" + showMoreText + "</a>"
                         + "&nbsp;&nbsp;&nbsp;"
-                        + "<a href='" + href + "' style='"
+                        + "<a id ='reloadLink' style='"
                         + "text-decoration: underline;"
                         + "font-size:small;"
                         + "'>reload now</a>"
                         + "</div>";
+
+                    var reloadLink = document.getElementById('reloadLink');
+                    reloadLink.setAttribute('href', href);
 
                     var showMoreElem = document.getElementById("showMore");
                     showMoreElem.addEventListener('click', function () {

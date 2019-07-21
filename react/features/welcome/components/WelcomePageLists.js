@@ -5,7 +5,7 @@ import React, { Component } from 'react';
 import { translate } from '../../base/i18n';
 import { PagedList } from '../../base/react';
 import { connect } from '../../base/redux';
-import { CalendarList } from '../../calendar-sync';
+import { CalendarList, isCalendarEnabled } from '../../calendar-sync';
 import { RecentList } from '../../recent-list';
 
 import { setWelcomePageListsDefaultPage } from '../actions';
@@ -14,6 +14,11 @@ import { setWelcomePageListsDefaultPage } from '../actions';
  * The type of the React {@code Component} props of {@link WelcomePageLists}.
  */
 type Props = {
+
+    /**
+     * Whether the calendar functionality is enabled or not.
+     */
+    _calendarEnabled: boolean,
 
     /**
      * The stored default page index.
@@ -41,40 +46,12 @@ type Props = {
  */
 class WelcomePageLists extends Component<Props> {
     /**
-     * The pages to be rendered.
-     *
-     * Note: An element's  {@code component} may be {@code undefined} if a
-     * feature (such as Calendar) is disabled, and that means that the page must
-     * not be rendered.
-     */
-    pages: Array<{
-        component: ?Object,
-        icon: string | number,
-        title: string
-    }>;
-
-    /**
      * Initializes a new {@code WelcomePageLists} instance.
      *
      * @inheritdoc
      */
     constructor(props) {
         super(props);
-
-        const { t } = props;
-
-        this.pages = [
-            {
-                component: RecentList,
-                icon: 'restore',
-                title: t('welcomepage.recentList')
-            },
-            {
-                component: CalendarList,
-                icon: 'event_note',
-                title: t('welcomepage.calendar')
-            }
-        ];
 
         // Bind event handlers so they are only bound once per instance.
         this._onSelectPage = this._onSelectPage.bind(this);
@@ -86,10 +63,28 @@ class WelcomePageLists extends Component<Props> {
      * @inheritdoc
      */
     render() {
-        const { _defaultPage } = this.props;
+        const { _calendarEnabled, _defaultPage, t } = this.props;
 
         if (typeof _defaultPage === 'undefined') {
             return null;
+        }
+
+        const pages = [
+            {
+                component: RecentList,
+                icon: 'restore',
+                title: t('welcomepage.recentList')
+            }
+        ];
+
+        if (_calendarEnabled) {
+            pages.push(
+                {
+                    component: CalendarList,
+                    icon: 'event_note',
+                    title: t('welcomepage.calendar')
+                }
+            );
         }
 
         return (
@@ -97,7 +92,7 @@ class WelcomePageLists extends Component<Props> {
                 defaultPage = { _defaultPage }
                 disabled = { this.props.disabled }
                 onSelectPage = { this._onSelectPage }
-                pages = { this.pages } />
+                pages = { pages } />
         );
     }
 
@@ -122,6 +117,7 @@ class WelcomePageLists extends Component<Props> {
  * @param {Object} state - The redux state.
  * @protected
  * @returns {{
+ *     _calendarEnabled: boolean,
  *     _defaultPage: number
  * }}
  */
@@ -135,6 +131,7 @@ function _mapStateToProps(state: Object) {
     }
 
     return {
+        _calendarEnabled: isCalendarEnabled(state),
         _defaultPage: defaultPage
     };
 }

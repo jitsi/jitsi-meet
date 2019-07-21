@@ -29,6 +29,7 @@ import com.facebook.react.bridge.ReadableMap;
 import com.rnimmersive.RNImmersiveModule;
 
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
@@ -75,6 +76,15 @@ public abstract class BaseReactView<ListenerT>
         }
 
         return null;
+    }
+
+    /**
+     * Gets all registered React views.
+     *
+     * @return An {@link ArrayList} containing all views currently held by React.
+     */
+    static ArrayList<BaseReactView> getViews() {
+        return new ArrayList<>(views);
     }
 
     /**

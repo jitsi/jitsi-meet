@@ -192,6 +192,11 @@ The `command` parameter is String object with the name of the command. The follo
 api.executeCommand('displayName', 'New Nickname');
 ```
 
+* **password** - Sets the password for the room. This command requires one argument - the password name to be set.
+```javascript
+api.executeCommand('password', 'The Password');
+```
+
 * **subject** - Sets the subject of the conference. This command requires one argument - the new subject to be set.
 ```javascript
 api.executeCommand('subject', 'New Conference Subject');
@@ -382,12 +387,27 @@ changes. The listener will receive an object with the following structure:
 }
 ```
 
+* **participantKickedOut** - event notifications about a participants being removed from the room. The listener will receive an object with the following structure:
+```javascript
+{
+    kicked: {
+        id: string, // the id of the participant removed from the room
+        local: boolean // whether or not the participant is the local particiapnt
+    },
+    kicker: {
+        id: string // the id of the participant who kicked out the other participant
+    }
+}
+```
+
 * **participantLeft** - event notifications about participants that leave the room. The listener will receive an object with the following structure:
 ```javascript
 {
     id: string // the id of the participant
 }
 ```
+
+* **passwordRequired** - event notifications fired when failing to join a room because it has a password.
 
 * **videoConferenceJoined** - event notifications fired when the local user has joined the video conference. The listener will receive an object with the following structure:
 ```javascript
@@ -429,6 +449,8 @@ The listener will receive an object with the following structure:
     subject: string // the new subject
 }
 ```
+
+* **suspendDetected** - event notifications about detecting suspend event in host computer.
 
 You can also add multiple event listeners by using `addEventListeners`.
 This method requires one argument of type Object. The object argument must

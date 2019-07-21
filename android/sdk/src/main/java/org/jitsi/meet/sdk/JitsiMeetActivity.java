@@ -38,8 +38,8 @@ public class JitsiMeetActivity extends FragmentActivity
 
     protected static final String TAG = JitsiMeetActivity.class.getSimpleName();
 
-    public static final String ACTION_JITSI_MEET_CONFERENCE = "org.jitsi.meet.CONFERENCE";
-    public static final String JITSI_MEET_CONFERENCE_OPTIONS = "JitsiMeetConferenceOptions";
+    private static final String ACTION_JITSI_MEET_CONFERENCE = "org.jitsi.meet.CONFERENCE";
+    private static final String JITSI_MEET_CONFERENCE_OPTIONS = "JitsiMeetConferenceOptions";
 
     // Helpers for starting the activity
     //
@@ -69,6 +69,24 @@ public class JitsiMeetActivity extends FragmentActivity
         if (!extraInitialize()) {
             initialize();
         }
+    }
+
+    @Override
+    public void onDestroy() {
+        // Here we are trying to handle the following corner case: an application using the SDK
+        // is using this Activity for displaying meetings, but there is another "main" Activity
+        // with other content. If this Activity is "swiped out" from the recent list we will get
+        // Activity#onDestroy() called without warning. At this point we can try to leave the
+        // current meeting, but when our view is detached from React the JS <-> Native bridge won't
+        // be operational so the external API won't be able to notify the native side that the
+        // conference terminated. Thus, try our best to clean up.
+        leave();
+        if (AudioModeModule.useConnectionService()) {
+            ConnectionService.abortConnections();
+        }
+        JitsiMeetOngoingConferenceService.abort(this);
+
+        super.onDestroy();
     }
 
     @Override
@@ -144,12 +162,19 @@ public class JitsiMeetActivity extends FragmentActivity
     //
 
     @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        JitsiMeetActivityDelegate.onActivityResult(this, requestCode, resultCode, data);
+    }
+
+    @Override
     public void onBackPressed() {
         JitsiMeetActivityDelegate.onBackPressed();
     }
 
     @Override
     public void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+
         JitsiMeetConferenceOptions options;
 
         if ((options = getConferenceOptions(intent)) != null) {
@@ -184,6 +209,8 @@ public class JitsiMeetActivity extends FragmentActivity
     @Override
     public void onConferenceJoined(Map<String, Object> data) {
         Log.d(TAG, "Conference joined: " + data);
+        // Launch the service for the ongoing notification.
+        JitsiMeetOngoingConferenceService.launch(this);
     }
 
     @Override

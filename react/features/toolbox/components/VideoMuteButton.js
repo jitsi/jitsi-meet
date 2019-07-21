@@ -7,6 +7,7 @@ import {
     createToolbarEvent,
     sendAnalytics
 } from '../../analytics';
+import { setAudioOnly } from '../../base/conference';
 import { translate } from '../../base/i18n';
 import {
     MEDIA_TYPE,
@@ -92,17 +93,6 @@ class VideoMuteButton extends AbstractVideoMuteButton<Props, *> {
     }
 
     /**
-     * Indicates if this button should be disabled or not.
-     *
-     * @override
-     * @protected
-     * @returns {boolean}
-     */
-    _isDisabled() {
-        return this.props._audioOnly;
-    }
-
-    /**
      * Indicates if video is currently muted ot nor.
      *
      * @override
@@ -142,6 +132,11 @@ class VideoMuteButton extends AbstractVideoMuteButton<Props, *> {
      */
     _setVideoMuted(videoMuted: boolean) {
         sendAnalytics(createToolbarEvent(VIDEO_MUTE, { enable: videoMuted }));
+        if (this.props._audioOnly) {
+            this.props.dispatch(
+                setAudioOnly(false, /* ensureTrack */ true));
+        }
+
         this.props.dispatch(
             setVideoMuted(
                 videoMuted,

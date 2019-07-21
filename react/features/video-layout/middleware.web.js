@@ -75,7 +75,6 @@ MiddlewareRegistry.register(store => next => action => {
 
     case SET_FILMSTRIP_VISIBLE:
         VideoLayout.resizeVideoArea(true, false);
-        APP.API.notifyFilmstripDisplayChanged(action.visible);
         break;
 
     case TRACK_ADDED:

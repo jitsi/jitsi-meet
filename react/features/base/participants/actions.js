@@ -1,7 +1,3 @@
-/* global interfaceConfig */
-
-import throttle from 'lodash/throttle';
-
 import { set } from '../redux';
 import { NOTIFICATION_TIMEOUT, showNotification } from '../../notifications';
 
@@ -13,11 +9,17 @@ import {
     MUTE_REMOTE_PARTICIPANT,
     PARTICIPANT_ID_CHANGED,
     PARTICIPANT_JOINED,
+    PARTICIPANT_KICKED,
     PARTICIPANT_LEFT,
     PARTICIPANT_UPDATED,
-    PIN_PARTICIPANT
+    PIN_PARTICIPANT,
+    SET_LOADABLE_AVATAR_URL
 } from './actionTypes';
-import { getLocalParticipant, getNormalizedDisplayName } from './functions';
+import {
+    getLocalParticipant,
+    getNormalizedDisplayName,
+    getParticipantDisplayName
+} from './functions';
 
 /**
  * Create an action for when dominant speaker changes.
@@ -383,6 +385,57 @@ export function participantUpdated(participant = {}) {
 }
 
 /**
+ * Action to signal that a participant has muted us.
+ *
+ * @param {JitsiParticipant} participant - Information about participant.
+ * @returns {Promise}
+ */
+export function participantMutedUs(participant) {
+    return (dispatch, getState) => {
+        if (!participant) {
+            return;
+        }
+
+        dispatch(showNotification({
+            descriptionKey: 'notify.mutedRemotelyDescription',
+            titleKey: 'notify.mutedRemotelyTitle',
+            titleArguments: {
+                participantDisplayName:
+                    getParticipantDisplayName(getState, participant.getId())
+            }
+        }));
+    };
+}
+
+/**
+ * Action to signal that a participant had been kicked.
+ *
+ * @param {JitsiParticipant} kicker - Information about participant performing the kick.
+ * @param {JitsiParticipant} kicked - Information about participant that was kicked.
+ * @returns {Promise}
+ */
+export function participantKicked(kicker, kicked) {
+    return (dispatch, getState) => {
+
+        dispatch({
+            type: PARTICIPANT_KICKED,
+            kicked: kicked.getId(),
+            kicker: kicker.getId()
+        });
+
+        dispatch(showNotification({
+            titleArguments: {
+                kicked:
+                    getParticipantDisplayName(getState, kicked.getId()),
+                kicker:
+                    getParticipantDisplayName(getState, kicker.getId())
+            },
+            titleKey: 'notify.kickParticipant'
+        }, NOTIFICATION_TIMEOUT * 2)); // leave more time for this
+    };
+}
+
+/**
  * Create an action which pins a conference participant.
  *
  * @param {string|null} id - The ID of the conference participant to pin or null
@@ -404,72 +457,24 @@ export function pinParticipant(id) {
 }
 
 /**
- * An array of names of participants that have joined the conference. The array
- * is replaced with an empty array as notifications are displayed.
+ * Creates an action which notifies the app that the loadable URL of the avatar of a participant got updated.
  *
- * @private
- * @type {string[]}
- */
-let joinedParticipantsNames = [];
-
-/**
- * A throttled internal function that takes the internal list of participant
- * names, {@code joinedParticipantsNames}, and triggers the display of a
- * notification informing of their joining.
- *
- * @private
- * @type {Function}
- */
-const _throttledNotifyParticipantConnected = throttle(dispatch => {
-    const joinedParticipantsCount = joinedParticipantsNames.length;
-
-    let notificationProps;
-
-    if (joinedParticipantsCount >= 3) {
-        notificationProps = {
-            titleArguments: {
-                name: joinedParticipantsNames[0],
-                count: joinedParticipantsCount - 1
-            },
-            titleKey: 'notify.connectedThreePlusMembers'
-        };
-    } else if (joinedParticipantsCount === 2) {
-        notificationProps = {
-            titleArguments: {
-                first: joinedParticipantsNames[0],
-                second: joinedParticipantsNames[1]
-            },
-            titleKey: 'notify.connectedTwoMembers'
-        };
-    } else if (joinedParticipantsCount) {
-        notificationProps = {
-            titleArguments: {
-                name: joinedParticipantsNames[0]
-            },
-            titleKey: 'notify.connectedOneMember'
-        };
-    }
-
-    if (notificationProps) {
-        dispatch(
-            showNotification(notificationProps, NOTIFICATION_TIMEOUT));
-    }
-
-    joinedParticipantsNames = [];
-
-}, 500, { leading: false });
-
-/**
- * Queues the display of a notification of a participant having connected to
- * the meeting. The notifications are batched so that quick consecutive
- * connection events are shown in one notification.
- *
- * @param {string} displayName - The name of the participant that connected.
- * @returns {Function}
- */
-export function showParticipantJoinedNotification(displayName) {
-    joinedParticipantsNames.push(
-        displayName || interfaceConfig.DEFAULT_REMOTE_DISPLAY_NAME);
-
-    return dispatch => _throttledNotifyParticipantConnected(dispatch);
+ * @param {string} participantId - The ID of the participant.
+ * @param {string} url - The new URL.
+ * @returns {{
+ *     type: SET_LOADABLE_AVATAR_URL,
+ *     participant: {
+ *         id: string,
+ *         loadableAvatarUrl: string
+ *     }
+ * }}
+*/
+export function setLoadableAvatarUrl(participantId, url) {
+    return {
+        type: SET_LOADABLE_AVATAR_URL,
+        participant: {
+            id: participantId,
+            loadableAvatarUrl: url
+        }
+    };
 }

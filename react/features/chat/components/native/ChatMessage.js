@@ -3,14 +3,10 @@
 import React from 'react';
 import { Text, View } from 'react-native';
 
+import { Avatar } from '../../../base/avatar';
 import { translate } from '../../../base/i18n';
-import { Avatar } from '../../../base/participants';
-import { connect } from '../../../base/redux';
 
-import AbstractChatMessage, {
-    _mapStateToProps,
-    type Props
-} from '../AbstractChatMessage';
+import AbstractChatMessage, { type Props } from '../AbstractChatMessage';
 import styles from './styles';
 
 /**
@@ -81,8 +77,8 @@ class ChatMessage extends AbstractChatMessage<Props> {
         return (
             <View style = { styles.avatarWrapper }>
                 { this.props.showAvatar && <Avatar
-                    size = { styles.avatarWrapper.width }
-                    uri = { this.props._avatarURL } />
+                    participantId = { this.props.message.id }
+                    size = { styles.avatarWrapper.width } />
                 }
             </View>
         );
@@ -115,4 +111,4 @@ class ChatMessage extends AbstractChatMessage<Props> {
     }
 }
 
-export default translate(connect(_mapStateToProps)(ChatMessage));
+export default translate(ChatMessage);

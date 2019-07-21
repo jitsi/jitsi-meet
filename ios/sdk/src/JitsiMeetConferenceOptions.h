@@ -16,6 +16,9 @@
 
 #import <Foundation/Foundation.h>
 
+#import "JitsiMeetUserInfo.h"
+
+
 @interface JitsiMeetConferenceOptionsBuilder : NSObject
 
 /**
@@ -42,6 +45,11 @@
 @property (nonatomic, copy, nullable) NSDictionary *colorScheme;
 
 /**
+ * Feature flags. See: https://github.com/jitsi/jitsi-meet/blob/master/react/features/base/flags/constants.js
+ */
+@property (nonatomic, readonly, nonnull) NSDictionary *featureFlags;
+
+/**
  * Set to YES to join the conference with audio / video muted or to start in audio
  * only mode respectively.
  */
@@ -55,6 +63,14 @@
  */
 @property (nonatomic) BOOL welcomePageEnabled;
 
+/**
+ * Information about the local user. It will be used in absence of a token.
+ */
+@property (nonatomic, nullable) JitsiMeetUserInfo *userInfo;
+
+- (void)setFeatureFlag:(NSString *_Nonnull)flag withBoolean:(BOOL)value;
+- (void)setFeatureFlag:(NSString *_Nonnull)flag withValue:(id _Nonnull)value;
+
 @end
 
 @interface JitsiMeetConferenceOptions : NSObject
@@ -66,12 +82,15 @@
 @property (nonatomic, copy, nullable, readonly) NSString *token;
 
 @property (nonatomic, copy, nullable) NSDictionary *colorScheme;
+@property (nonatomic, readonly, nonnull) NSDictionary *featureFlags;
 
 @property (nonatomic, readonly) BOOL audioOnly;
 @property (nonatomic, readonly) BOOL audioMuted;
 @property (nonatomic, readonly) BOOL videoMuted;
 
 @property (nonatomic, readonly) BOOL welcomePageEnabled;
+
+@property (nonatomic, nullable) JitsiMeetUserInfo *userInfo;
 
 + (instancetype _Nonnull)fromBuilder:(void (^_Nonnull)(JitsiMeetConferenceOptionsBuilder *_Nonnull))initBlock;
 - (instancetype _Nonnull)init NS_UNAVAILABLE;

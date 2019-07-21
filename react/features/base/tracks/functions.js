@@ -1,7 +1,7 @@
 /* global APP */
 
-import JitsiMeetJS, { JitsiTrackErrors, JitsiTrackEvents }
-    from '../lib-jitsi-meet';
+import { getBlurEffect } from '../../blur';
+import JitsiMeetJS, { JitsiTrackErrors } from '../lib-jitsi-meet';
 import { MEDIA_TYPE } from '../media';
 import {
     getUserSelectedCameraDeviceId,
@@ -51,52 +51,49 @@ export function createLocalTracksF(
         }
     }
 
+    const state = store.getState();
     const {
         constraints,
         desktopSharingFrameRate,
         firefox_fake_device, // eslint-disable-line camelcase
         resolution
-    } = store.getState()['features/base/config'];
+    } = state['features/base/config'];
+    const loadEffectsPromise = state['features/blur'].blurEnabled
+        ? getBlurEffect()
+            .then(blurEffect => [ blurEffect ])
+            .catch(error => {
+                logger.error('Failed to obtain the blur effect instance with error: ', error);
+
+                return Promise.resolve([]);
+            })
+        : Promise.resolve([]);
 
     return (
-        JitsiMeetJS.createLocalTracks(
-            {
-                cameraDeviceId,
-                constraints,
-                desktopSharingExtensionExternalInstallation:
-                    options.desktopSharingExtensionExternalInstallation,
-                desktopSharingFrameRate,
-                desktopSharingSourceDevice:
-                    options.desktopSharingSourceDevice,
-                desktopSharingSources: options.desktopSharingSources,
+        loadEffectsPromise.then(effects =>
+            JitsiMeetJS.createLocalTracks(
+                {
+                    cameraDeviceId,
+                    constraints,
+                    desktopSharingExtensionExternalInstallation:
+                        options.desktopSharingExtensionExternalInstallation,
+                    desktopSharingFrameRate,
+                    desktopSharingSourceDevice:
+                        options.desktopSharingSourceDevice,
+                    desktopSharingSources: options.desktopSharingSources,
 
-                // Copy array to avoid mutations inside library.
-                devices: options.devices.slice(0),
-                firefox_fake_device, // eslint-disable-line camelcase
-                micDeviceId,
-                resolution
-            },
-            firePermissionPromptIsShownEvent)
-        .then(tracks => {
-            // TODO JitsiTrackEvents.NO_DATA_FROM_SOURCE should probably be
-            // dispatched in the redux store here and then
-            // APP.UI.showTrackNotWorkingDialog should be in a middleware
-            // somewhere else.
-            if (typeof APP !== 'undefined') {
-                tracks.forEach(track =>
-                    track.on(
-                        JitsiTrackEvents.NO_DATA_FROM_SOURCE,
-                        APP.UI.showTrackNotWorkingDialog.bind(
-                            null, track.isAudioTrack())));
-            }
+                    // Copy array to avoid mutations inside library.
+                    devices: options.devices.slice(0),
+                    effects,
+                    firefox_fake_device, // eslint-disable-line camelcase
+                    micDeviceId,
+                    resolution
+                },
+                firePermissionPromptIsShownEvent)
+            .catch(err => {
+                logger.error('Failed to create local tracks', options.devices, err);
 
-            return tracks;
-        })
-        .catch(err => {
-            logger.error('Failed to create local tracks', options.devices, err);
-
-            return Promise.reject(err);
-        }));
+                return Promise.reject(err);
+            })));
 }
 
 /**
@@ -229,6 +226,25 @@ export function isRemoteTrackMuted(tracks, mediaType, participantId) {
         tracks, mediaType, participantId);
 
     return !track || track.muted;
+}
+
+/**
+ * Returns whether or not the current environment needs a user interaction with
+ * the page before any unmute can occur.
+ *
+ * @param {Object} state - The redux state.
+ * @returns {boolean}
+ */
+export function isUserInteractionRequiredForUnmute(state) {
+    const { browser } = JitsiMeetJS.util;
+
+    return !browser.isReactNative()
+        && !browser.isChrome()
+        && !browser.isChromiumBased()
+        && !browser.isElectron()
+        && window
+        && window.self !== window.top
+        && !state['features/base/user-interaction'].interacted;
 }
 
 /**

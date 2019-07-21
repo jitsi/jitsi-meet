@@ -5,6 +5,7 @@ import {
     TRACK_ADDED,
     TRACK_CREATE_CANCELED,
     TRACK_CREATE_ERROR,
+    TRACK_NO_DATA_FROM_SOURCE,
     TRACK_REMOVED,
     TRACK_UPDATED,
     TRACK_WILL_CREATE
@@ -75,6 +76,21 @@ function track(state, action) {
         }
         break;
     }
+    case TRACK_NO_DATA_FROM_SOURCE: {
+        const t = action.track;
+
+        if (state.jitsiTrack === t.jitsiTrack) {
+            const isReceivingData = t.jitsiTrack.isReceivingData();
+
+            if (state.isReceivingData !== isReceivingData) {
+                return {
+                    ...state,
+                    isReceivingData
+                };
+            }
+        }
+        break;
+    }
     }
 
     return state;
@@ -86,6 +102,7 @@ function track(state, action) {
 ReducerRegistry.register('features/base/tracks', (state = [], action) => {
     switch (action.type) {
     case PARTICIPANT_ID_CHANGED:
+    case TRACK_NO_DATA_FROM_SOURCE:
     case TRACK_UPDATED:
         return state.map(t => track(t, action));
 

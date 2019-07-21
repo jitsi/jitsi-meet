@@ -89,7 +89,6 @@ function RemoteVideo(user, VideoLayout, emitter) {
     this._stopRemoteControl = this._stopRemoteControl.bind(this);
 
     this.container.onclick = this._onContainerClick;
-    this.container.ondblclick = this._onContainerDoubleClick;
 }
 
 RemoteVideo.prototype = Object.create(SmallVideo.prototype);
@@ -165,7 +164,10 @@ RemoteVideo.prototype._generatePopupContent = function() {
 
     const initialVolumeValue
         = this._audioStreamElement && this._audioStreamElement.volume;
-    const onVolumeChange = this._setAudioVolume;
+
+    // hide volume when in silent mode
+    const onVolumeChange = APP.store.getState()['features/base/config'].startSilent
+        ? undefined : this._setAudioVolume;
     const { isModerator } = APP.conference;
     const participantID = this.id;
 

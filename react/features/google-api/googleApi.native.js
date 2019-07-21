@@ -36,6 +36,15 @@ class GoogleApi {
     }
 
     /**
+     * Retrieves the current tokens.
+     *
+     * @returns {Promise}
+     */
+    getTokens(): Promise<*> {
+        return GoogleSignin.getTokens();
+    }
+
+    /**
      * Retrieves the available YouTube streams the user can use for live
      * streaming.
      *

@@ -29,6 +29,7 @@ import android.widget.Toast;
 import org.jitsi.meet.sdk.JitsiMeet;
 import org.jitsi.meet.sdk.JitsiMeetActivity;
 import org.jitsi.meet.sdk.JitsiMeetConferenceOptions;
+import org.jitsi.meet.sdk.JitsiMeetUserInfo;
 
 
 
@@ -100,7 +101,7 @@ public class MainActivity extends JitsiMeetActivity {
     //
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == OVERLAY_PERMISSION_REQUEST_CODE
                 && canRequestOverlayPermission()) {
             if (Settings.canDrawOverlays(this)) {

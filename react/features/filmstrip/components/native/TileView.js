@@ -298,12 +298,12 @@ class TileView extends Component<Props, State> {
         return this._getSortedParticipants()
             .map(participant => (
                 <Thumbnail
-                    disablePin = { true }
                     disableTint = { true }
                     key = { participant.id }
                     participant = { participant }
                     renderDisplayName = { true }
-                    styleOverrides = { styleOverrides } />));
+                    styleOverrides = { styleOverrides }
+                    tileView = { true } />));
     }
 
     /**

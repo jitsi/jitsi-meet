@@ -4,20 +4,22 @@ import _ from 'lodash';
 import React from 'react';
 import {
     ActivityIndicator,
-    Alert,
     FlatList,
+    KeyboardAvoidingView,
+    Platform,
     SafeAreaView,
     TextInput,
     TouchableOpacity,
     View
 } from 'react-native';
 
+import { AlertDialog, openDialog } from '../../../../base/dialog';
 import { Icon } from '../../../../base/font-icons';
 import { translate } from '../../../../base/i18n';
 import {
     AvatarListItem,
     HeaderWithNavigation,
-    Modal,
+    SlidingView,
     type Item
 } from '../../../../base/react';
 import { connect } from '../../../../base/redux';
@@ -51,6 +53,11 @@ type Props = AbstractProps & {
 type State = AbstractState & {
 
     /**
+     * State variable to keep track of the search field value.
+     */
+    fieldValue: string,
+
+    /**
      * True if a search is in progress, false otherwise.
      */
     searchInprogress: boolean,
@@ -72,6 +79,7 @@ class AddPeopleDialog extends AbstractAddPeopleDialog<Props, State> {
     defaultState = {
         addToCallError: false,
         addToCallInProgress: false,
+        fieldValue: '',
         inviteItems: [],
         searchInprogress: false,
         selectableItems: []
@@ -100,6 +108,7 @@ class AddPeopleDialog extends AbstractAddPeopleDialog<Props, State> {
         this._keyExtractor = this._keyExtractor.bind(this);
         this._renderItem = this._renderItem.bind(this);
         this._renderSeparator = this._renderSeparator.bind(this);
+        this._onClearField = this._onClearField.bind(this);
         this._onCloseAddPeopleDialog = this._onCloseAddPeopleDialog.bind(this);
         this._onInvite = this._onInvite.bind(this);
         this._onPressItem = this._onPressItem.bind(this);
@@ -140,45 +149,55 @@ class AddPeopleDialog extends AbstractAddPeopleDialog<Props, State> {
         }
 
         return (
-            <Modal
-                onRequestClose = { this._onCloseAddPeopleDialog }
-                visible = { this.props._isVisible }>
+            <SlidingView
+                onHide = { this._onCloseAddPeopleDialog }
+                position = 'bottom'
+                show = { this.props._isVisible } >
                 <HeaderWithNavigation
                     forwardDisabled = { this._isAddDisabled() }
                     forwardLabelKey = 'inviteDialog.send'
                     headerLabelKey = 'inviteDialog.header'
                     onPressBack = { this._onCloseAddPeopleDialog }
                     onPressForward = { this._onInvite } />
-                <SafeAreaView style = { styles.dialogWrapper }>
-                    <View
-                        style = { styles.searchFieldWrapper }>
-                        <View style = { styles.searchIconWrapper }>
-                            { this.state.searchInprogress
-                                ? <ActivityIndicator
-                                    color = { DARK_GREY }
-                                    size = 'small' />
-                                : <Icon
-                                    name = { 'search' }
-                                    style = { styles.searchIcon } />}
+                <KeyboardAvoidingView
+                    behavior = 'padding'
+                    style = { styles.avoidingView }>
+                    <SafeAreaView style = { styles.dialogWrapper }>
+                        <View
+                            style = { styles.searchFieldWrapper }>
+                            <View style = { styles.searchIconWrapper }>
+                                { this.state.searchInprogress
+                                    ? <ActivityIndicator
+                                        color = { DARK_GREY }
+                                        size = 'small' />
+                                    : <Icon
+                                        name = { 'search' }
+                                        style = { styles.searchIcon } />}
+                            </View>
+                            <TextInput
+                                autoCorrect = { false }
+                                autoFocus = { true }
+                                clearButtonMode = 'always' // iOS only
+                                onChangeText = { this._onTypeQuery }
+                                placeholder = {
+                                    this.props.t(`inviteDialog.${placeholderKey}`)
+                                }
+                                ref = { this._setFieldRef }
+                                style = { styles.searchField }
+                                value = { this.state.fieldValue } />
+                            { this._renderAndroidClearButton() }
                         </View>
-                        <TextInput
-                            autoCorrect = { false }
-                            onChangeText = { this._onTypeQuery }
-                            placeholder = {
-                                this.props.t(`inviteDialog.${placeholderKey}`)
-                            }
-                            ref = { this._setFieldRef }
-                            style = { styles.searchField } />
-                    </View>
-                    <FlatList
-                        ItemSeparatorComponent = { this._renderSeparator }
-                        data = { this.state.selectableItems }
-                        extraData = { inviteItems }
-                        keyExtractor = { this._keyExtractor }
-                        renderItem = { this._renderItem }
-                        style = { styles.resultList } />
-                </SafeAreaView>
-            </Modal>
+                        <FlatList
+                            ItemSeparatorComponent = { this._renderSeparator }
+                            data = { this.state.selectableItems }
+                            extraData = { inviteItems }
+                            keyExtractor = { this._keyExtractor }
+                            keyboardShouldPersistTaps = 'always'
+                            renderItem = { this._renderItem }
+                            style = { styles.resultList } />
+                    </SafeAreaView>
+                </KeyboardAvoidingView>
+            </SlidingView>
         );
     }
 
@@ -205,18 +224,40 @@ class AddPeopleDialog extends AbstractAddPeopleDialog<Props, State> {
      * @returns {string}
      */
     _keyExtractor(item) {
-        return item.type === 'user' ? item.user_id : item.number;
+        return item.type === 'user' ? item.id || item.user_id : item.number;
     }
 
-    _onCloseAddPeopleDialog: () => void
+    _onClearField: () => void
+
+    /**
+     * Callback to clear the text field.
+     *
+     * @returns {void}
+     */
+    _onClearField() {
+        this.setState({
+            fieldValue: ''
+        });
+
+        // Clear search results
+        this._onTypeQuery('');
+    }
+
+    _onCloseAddPeopleDialog: () => boolean
 
     /**
      * Closes the dialog.
      *
-     * @returns {void}
+     * @returns {boolean}
      */
     _onCloseAddPeopleDialog() {
-        this.props.dispatch(setAddPeopleDialogVisible(false));
+        if (this.props._isVisible) {
+            this.props.dispatch(setAddPeopleDialogVisible(false));
+
+            return true;
+        }
+
+        return false;
     }
 
     _onInvite: () => void
@@ -265,8 +306,7 @@ class AddPeopleDialog extends AbstractAddPeopleDialog<Props, State> {
                 const items: Array<*> = inviteItems.concat(item);
 
                 this.setState({
-                    // $FlowExpectedError
-                    inviteItems: _.orderBy(items, [ 'name' ], [ 'asc' ])
+                    inviteItems: _.sortBy(items, [ 'name', 'number' ])
                 });
             }
         };
@@ -282,6 +322,10 @@ class AddPeopleDialog extends AbstractAddPeopleDialog<Props, State> {
      * @returns {void}
      */
     _onTypeQuery(query) {
+        this.setState({
+            fieldValue: query
+        });
+
         clearTimeout(this.searchTimeout);
         this.searchTimeout = setTimeout(() => {
             this.setState({
@@ -309,20 +353,18 @@ class AddPeopleDialog extends AbstractAddPeopleDialog<Props, State> {
                         && !inviteItems.find(
                             _.matchesProperty('number', result.number));
                 case 'user':
-                    return result.user_id && !inviteItems.find(
-                        _.matchesProperty('user_id', result.user_id));
+                    return !inviteItems.find(
+                        (result.user_id && _.matchesProperty('id', result.id))
+                        || (result.user_id && _.matchesProperty('user_id', result.user_id)));
                 default:
                     return false;
                 }
             });
 
-            const items = this.state.inviteItems.concat(selectableItems);
-
-            // $FlowExpectedError
-            selectableItems = _.orderBy(items, [ 'name' ], [ 'asc' ]);
+            selectableItems = _.sortBy(selectableItems, [ 'name', 'number' ]);
 
             this.setState({
-                selectableItems
+                selectableItems: this.state.inviteItems.concat(selectableItems)
             });
         })
         .finally(() => {
@@ -337,6 +379,31 @@ class AddPeopleDialog extends AbstractAddPeopleDialog<Props, State> {
     _query: (string) => Promise<Array<Object>>;
 
     _renderItem: Object => ?React$Element<*>
+
+    /**
+     * Renders a button to clear the text field on Android.
+     *
+     * NOTE: For the best platform experience we use the native solution on iOS.
+     *
+     * @returns {React#Element<*>}
+     */
+    _renderAndroidClearButton() {
+        if (Platform.OS !== 'android' || !this.state.fieldValue.length) {
+            return null;
+        }
+
+        return (
+            <TouchableOpacity
+                onPress = { this._onClearField }
+                style = { styles.clearButton }>
+                <View style = { styles.clearIconContainer }>
+                    <Icon
+                        name = 'close'
+                        style = { styles.clearIcon } />
+                </View>
+            </TouchableOpacity>
+        );
+    }
 
     /**
      * Renders a single item in the {@code FlatList}.
@@ -357,17 +424,19 @@ class AddPeopleDialog extends AbstractAddPeopleDialog<Props, State> {
             selected
                 = inviteItems.find(_.matchesProperty('number', item.number));
             renderableItem = {
-                avatar: 'phone',
+                avatar: 'icon://phone',
                 key: item.number,
                 title: item.number
             };
             break;
         case 'user':
             selected
-                = inviteItems.find(_.matchesProperty('user_id', item.user_id));
+                = item.id
+                    ? inviteItems.find(_.matchesProperty('id', item.id))
+                    : inviteItems.find(_.matchesProperty('user_id', item.user_id));
             renderableItem = {
                 avatar: item.avatar,
-                key: item.user_id,
+                key: item.id || item.user_id,
                 title: item.name
             };
             break;
@@ -433,17 +502,11 @@ class AddPeopleDialog extends AbstractAddPeopleDialog<Props, State> {
      * @returns {void}
      */
     _showFailedInviteAlert() {
-        const { t } = this.props;
-
-        Alert.alert(
-            t('inviteDialog.alertTitle'),
-            t('inviteDialog.alertText'),
-            [
-                {
-                    text: t('inviteDialog.alertOk')
-                }
-            ]
-        );
+        this.props.dispatch(openDialog(AlertDialog, {
+            contentKey: {
+                key: 'inviteDialog.alertText'
+            }
+        }));
     }
 }
 

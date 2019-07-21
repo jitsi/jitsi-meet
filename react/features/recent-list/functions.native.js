@@ -32,6 +32,7 @@ function toDisplayableItem(item, defaultServerURL, t) {
             serverName
         ],
         title: convertForTrans(location.room),
+        title: decodeURIComponent(location.room),
         url: item.conference
     };
 }
