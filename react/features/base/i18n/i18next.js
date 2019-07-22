@@ -41,7 +41,7 @@ const options = {
         (typeof interfaceConfig !== 'undefined' && interfaceConfig.APP_NAME)
             || 'Jitsi Meet',
     backend: {
-        loadPath: 'lang/__ns__-__lng__.json'
+        loadPath: 'lang/{{ns}}-{{lng}}.json'
     },
     defaultNS: 'main',
     fallbackLng: DEFAULT_LANGUAGE,
