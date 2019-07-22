@@ -253,7 +253,6 @@
         "Yes": "是",
         "yourEntireScreen": "你的整个屏幕"
     },
-    "\u0005dialog": {},
     "dialOut": {
         "statusMessage": "现在状态为 {{status}}"
     },
@@ -290,7 +289,7 @@
         "invitePhone": "",
         "invitePhoneAlternatives": "",
         "inviteURLFirstPartGeneral": "您被邀请加入一个会议。",
-        "inviteURLFirstPartPersonal": "__name__ 正在邀请您加入一个会议。",
+        "inviteURLFirstPartPersonal": "{{name}} 正在邀请您加入一个会议。\n",
         "inviteURLSecondPart": "",
         "liveStreamURL": "直播：",
         "moreNumbers": "更多成员",
@@ -303,7 +302,6 @@
         "tooltip": "共享此会议的链接和拨入信息",
         "label": "会议信息"
     },
-    "\u0005info": {},
     "inviteDialog": {
         "alertText": "邀请成员失败。",
         "header": "邀请",
@@ -402,7 +400,7 @@
         "focus": "会议聚焦",
         "focusFail": "{{component}} 不可用 -  在{{ms}}秒后重试",
         "grantedTo": "主持权限已授予{{to}}！",
-        "invitedOneMember": "__displayName__ 已被邀请",
+        "invitedOneMember": "{{name}} 已被邀请",
         "invitedThreePlusMembers": "",
         "invitedTwoMembers": "",
         "kickParticipant": "",
@@ -425,7 +423,6 @@
         "newDeviceAudioTitle": "检测到新音频设备",
         "newDeviceAction": "使用"
     },
-    "\u0005notify": {},
     "passwordSetRemotely": "由其他与会者设置",
     "passwordDigitsOnly": "",
     "poweredby": "技术支持",
@@ -443,7 +440,6 @@
         "rejected": "拒绝",
         "ringing": "响铃..."
     },
-    "\u0005presenceStatus": {},
     "profile": {
         "setDisplayNameLabel": "设定您的显示名称",
         "setEmailInput": "输入您的邮箱",
@@ -518,12 +514,8 @@
     },
     "share": {
         "dialInfoText": "",
-        "mainText": [
-            "点击以下链接加入会议：",
-            "__roomUrl__"
-        ]
+        "mainText": "点击以下链接加入会议：{{roomUrl}}\n"
     },
-    "\u0005share": {},
     "speaker": "发言人",
     "speakerStats": {
         "hours": "{{count}}h",
@@ -621,7 +613,6 @@
         "startvideoblur": "",
         "stopvideoblur": ""
     },
-    "\u0005toolbar": {},
     "transcribing": {
         "ccButtonTooltip": "开启 / 关闭字幕",
         "error": "转录失败。请重新尝试。",
