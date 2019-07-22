@@ -294,7 +294,7 @@
         "invitePhone": "",
         "invitePhoneAlternatives": "",
         "inviteURLFirstPartGeneral": "Bạn được mời tham gia một cuộc họp.",
-        "inviteURLFirstPartPersonal": "__name__ mời bạn tham gia một cuộc họp.",
+        "inviteURLFirstPartPersonal": "{{name}} mời bạn tham gia một cuộc họp.\n",
         "inviteURLSecondPart": "",
         "liveStreamURL": "Phát trực tuyến:",
         "moreNumbers": "Nhiều số hơn",
@@ -405,7 +405,7 @@
         "focus": "Hội nghị tập trung",
         "focusFail": "{{component}} không khả dụng - thử lại trong {{ms}} giây",
         "grantedTo": "Quyền của người điều hành đã được cấp cho {{to}}!",
-        "invitedOneMember": "__displayName__  đã được mời",
+        "invitedOneMember": "{{name}} đã được mời",
         "invitedThreePlusMembers": "",
         "invitedTwoMembers": "",
         "kickParticipant": "",
@@ -519,7 +519,7 @@
     },
     "share": {
         "dialInfoText": "",
-        "mainText": "Chọn liên kết dưới để tham gia họp:\n__roomUrl__"
+        "mainText": "Chọn liên kết dưới để tham gia họp:\n{{roomUrl}}"
     },
     "speaker": "Diễn giả",
     "speakerStats": {
