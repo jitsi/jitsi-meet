@@ -291,14 +291,17 @@
         "dialInTollFree": "Toll Free",
         "genericError": "Whoops, something went wrong.",
         "inviteLiveStream": "To view the live stream of this meeting, click this link: {{url}}",
-        "invitePhone": "One tap audio Dial In: __number__,,__conferenceID__#",
+        "invitePhone": "One tap audio Dial In: {{number}},,{{conferenceID}}#",
         "invitePhoneAlternatives": "",
         "inviteURLFirstPartGeneral": "You are invited to join a meeting.",
-        "inviteURLFirstPartPersonal": "__name__ is inviting you to a meeting.",
+        "inviteURLFirstPartPersonal": [
+            "{{name}} is inviting you to a meeting.",
+            ""
+        ],
         "inviteURLSecondPart": [
             "",
-            "__moreInfo__",
-            "Join meeting: __url__",
+            "Join the meeting:",
+            "{{url}}",
             ""
         ],
         "liveStreamURL": "Live stream:",
@@ -411,15 +414,15 @@
         "focus": "Conference focus",
         "focusFail": "{{component}} not available - retry in {{ms}} sec",
         "grantedTo": "Moderator rights granted to {{to}}!",
-        "invitedOneMember": "",
-        "invitedThreePlusMembers": "",
-        "invitedTwoMembers": "",
-        "kickParticipant": "",
+        "invitedOneMember": "{{name}} has been invited",
+        "invitedThreePlusMembers": "{{name}} and {{count}} others have been invited",
+        "invitedTwoMembers": "{{first}} and {{second}} have been invited",
+        "kickParticipant": "{{kicked}} was kicked by {{kicker}}",
         "me": "Me",
         "moderator": "Moderator rights granted!",
         "muted": "You have started the conversation muted.",
         "mutedTitle": "You're muted!",
-        "mutedRemotelyTitle": "",
+        "mutedRemotelyTitle": "You have been muted by {{participantDisplayName}}!",
         "mutedRemotelyDescription": "",
         "passwordRemovedRemotely": "",
         "passwordSetRemotely": "",
@@ -524,13 +527,21 @@
         "version": "Version"
     },
     "share": {
-        "dialInfoText": "",
+        "dialInfoText": [
+            "",
+            "",
+            "=====",
+            "",
+            "Just want to dial in on your phone?",
+            "",
+            "{{defaultDialInNumber}}Click this link to see the dial in phone numbers for this meeting",
+            "{{dialInfoPageUrl}}"
+        ],
         "mainText": [
             "Click the following link to join the meeting:",
-            "__roomUrl__"
+            "{{roomUrl}}"
         ]
     },
-    "\u0005share": {},
     "speaker": "Speaker",
     "speakerStats": {
         "hours": "{{count}}h",
