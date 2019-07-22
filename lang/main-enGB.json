@@ -76,10 +76,10 @@
         "connectedTo": "Connected to:",
         "framerate": "Frame rate:",
         "less": "Show less",
-        "localaddress_plural": "Local address:",
-        "localaddress": "Local addresses:",
-        "localport_plural": "Local port:",
-        "localport": "Local ports:",
+        "localaddress": "Local address:",
+        "localaddress_plural": "Local addresses:",
+        "localport": "Local port:",
+        "localport_plural": "Local ports:",
         "more": "Show more",
         "packetloss": "Packet loss:",
         "quality": {
@@ -89,14 +89,14 @@
             "nonoptimal": "Nonoptimal",
             "poor": "Poor"
         },
-        "remoteaddress_plural": "Remote address:",
-        "remoteaddress": "Remote addresses:",
-        "remoteport_plural": "Remote port:",
-        "remoteport": "Remote ports:",
+        "remoteaddress": "Remote address:",
+        "remoteaddress_plural": "Remote addresses:",
+        "remoteport": "Remote port:",
+        "remoteport_plural": "Remote ports:",
         "resolution": "Resolution:",
         "status": "Connection:",
-        "transport_plural": "Transport:",
-        "transport": "Transports:",
+        "transport": "Transport:",
+        "transport_plural": "Transports:",
         "turn": " (turn)"
     },
     "dateUtils": {
@@ -294,16 +294,8 @@
         "invitePhone": "One tap audio Dial In: {{number}},,{{conferenceID}}#",
         "invitePhoneAlternatives": "",
         "inviteURLFirstPartGeneral": "You are invited to join a meeting.",
-        "inviteURLFirstPartPersonal": [
-            "{{name}} is inviting you to a meeting.",
-            ""
-        ],
-        "inviteURLSecondPart": [
-            "",
-            "Join the meeting:",
-            "{{url}}",
-            ""
-        ],
+        "inviteURLFirstPartPersonal": "{{name}} is inviting you to a meeting.\n",
+        "inviteURLSecondPart": "\nJoin the meeting:\n{{url}}\n",
         "liveStreamURL": "Live stream:",
         "moreNumbers": "More numbers",
         "noNumbers": "No dial-in numbers.",
@@ -315,7 +307,6 @@
         "tooltip": "Share link and dial-in info for this meeting",
         "label": "Meeting info"
     },
-    "\u0005info": {},
     "inviteDialog": {
         "alertText": "Failed to invite some participants.",
         "header": "Invite",
@@ -527,20 +518,8 @@
         "version": "Version"
     },
     "share": {
-        "dialInfoText": [
-            "",
-            "",
-            "=====",
-            "",
-            "Just want to dial in on your phone?",
-            "",
-            "{{defaultDialInNumber}}Click this link to see the dial in phone numbers for this meeting",
-            "{{dialInfoPageUrl}}"
-        ],
-        "mainText": [
-            "Click the following link to join the meeting:",
-            "{{roomUrl}}"
-        ]
+        "dialInfoText": "\n\n=====\n\nJust want to dial in on your phone?\n\n{{defaultDialInNumber}}Click this link to see the dial in phone numbers for this meeting\n{{dialInfoPageUrl}}",
+        "mainText": "Click the following link to join the meeting:\n{{roomUrl}}"
     },
     "speaker": "Speaker",
     "speakerStats": {
