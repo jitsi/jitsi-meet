@@ -99,7 +99,6 @@
         "transport_plural": "Transports :",
         "turn": "(tour)"
     },
-    "\u0005connectionindicator": {},
     "dateUtils": {
         "earlier": "Plus tôt",
         "today": "Aujourd'hui",
@@ -259,7 +258,6 @@
         "Yes": "Oui",
         "yourEntireScreen": "Votre écran entier"
     },
-    "\u0005dialog": {},
     "dialOut": {
         "statusMessage": "est maintenant {{status}}"
     },
@@ -521,12 +519,8 @@
     },
     "share": {
         "dialInfoText": "",
-        "mainText": [
-            "Cliquez sur le lien suivant pour rejoindre une conférence :",
-            "__roomUrl__"
-        ]
+        "mainText": "Cliquez sur le lien suivant pour rejoindre une conférence :\n{{roomUrl}}"
     },
-    "\u0005share": {},
     "speaker": "Haut-parleur",
     "speakerStats": {
         "hours": "{{count}}h",
@@ -623,9 +617,6 @@
         "videomute": "Démarrer / Arrêter la caméra",
         "startvideoblur": "",
         "stopvideoblur": ""
-    },
-    "\u0005toolbar": {
-        "accessibilityLabel": {}
     },
     "transcribing": {
         "ccButtonTooltip": "Activer/Désactiver les sous-titres",
