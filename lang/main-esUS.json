@@ -76,10 +76,10 @@
         "connectedTo": "Conectado a:",
         "framerate": "Velocidad de cuadro:",
         "less": "Mostrar menos",
-        "localaddress_plural": "Dirección local:",
-        "localaddress": "Direcciones locales:",
-        "localport_plural": "Puerto local:",
-        "localport": "Puertos locales:",
+        "localaddress": "Dirección local:",
+        "localaddress_plural": "Direcciones locales:",
+        "localport": "Puerto local:",
+        "localport_plural": "Puertos locales:",
         "more": "Mostrar más",
         "packetloss": "Pérdida de paquetes:",
         "quality": {
@@ -89,14 +89,14 @@
             "nonoptimal": "No es óptimo",
             "poor": "Deficiente"
         },
-        "remoteaddress_plural": "Dirección remota:",
-        "remoteaddress": "Direcciones remotas:",
-        "remoteport_plural": "Puerto remoto:",
-        "remoteport": "Puertos remotos:",
+        "remoteaddress": "Dirección remota:",
+        "remoteaddress_plural": "Direcciones remotas:",
+        "remoteport": "Puerto remoto:",
+        "remoteport_plural": "Puertos remotos:",
         "resolution": "Resolución:",
         "status": "Conexión:",
-        "transport_plural": "Transporte:",
-        "transport": "Transportes:",
+        "transport": "Transporte:",
+        "transport_plural": "Transportes:",
         "turn": " (activar/desactivar)"
     },
     "dateUtils": {
@@ -519,12 +519,8 @@
     },
     "share": {
         "dialInfoText": "",
-        "mainText": [
-            "Haz clic en el enlace siguiente para unirte a la reunión:",
-            "__roomUrl__"
-        ]
+        "mainText": "Haz clic en el enlace siguiente para unirte a la reunión:\n{{roomUrl}}"
     },
-    "\u0005share": {},
     "speaker": "Altavoz",
     "speakerStats": {
         "hours": "{{count}} h",
