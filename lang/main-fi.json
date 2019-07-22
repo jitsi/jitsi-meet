@@ -405,7 +405,7 @@
         "focus": "Kokouksen painopiste",
         "focusFail": "{{component}} ei käytettävissä. Yritä uudelleen {{ms}} sekunnin kuluttua",
         "grantedTo": "Valvojan oikeudet myönnetty käyttäjälle {{to}}!",
-        "invitedOneMember": "__displayName__ on kutsuttu",
+        "invitedOneMember": "{{name}} on kutsuttu",
         "invitedThreePlusMembers": "",
         "invitedTwoMembers": "",
         "kickParticipant": "",
@@ -428,7 +428,6 @@
         "newDeviceAudioTitle": "Uusi äänilaite havaittu",
         "newDeviceAction": "Käytä"
     },
-    "\u0005notify": {},
     "passwordSetRemotely": "",
     "passwordDigitsOnly": "",
     "poweredby": "tukija:",
@@ -520,12 +519,8 @@
     },
     "share": {
         "dialInfoText": "",
-        "mainText": [
-            "Liity kokoukseen seuraavasta linkistä:",
-            "__roomUrl__"
-        ]
+        "mainText": "Liity kokoukseen seuraavasta linkistä:\n{{roomUrl}}"
     },
-    "\u0005share": {},
     "speaker": "Puhuja",
     "speakerStats": {
         "hours": "{{count}} t",
