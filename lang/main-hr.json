@@ -469,7 +469,7 @@
         "failedToStart": "",
         "fileSharingdescription": "",
         "live": "",
-        "loggedIn": "Prijavljen kao __name__",
+        "loggedIn": "Prijavljen kao {{userName}}",
         "off": "",
         "on": "Snimanje",
         "pending": "",
