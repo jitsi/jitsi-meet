@@ -258,7 +258,6 @@
         "Yes": "Sí",
         "yourEntireScreen": "Su pantalla completa"
     },
-    "\u0005dialog": {},
     "dialOut": {
         "statusMessage": "esta {{status}}"
     },
@@ -295,7 +294,7 @@
         "invitePhone": "",
         "invitePhoneAlternatives": "",
         "inviteURLFirstPartGeneral": "Usted está invitado a unirse a una reunión.",
-        "inviteURLFirstPartPersonal": "__name__ te esta invitando a una sesión.",
+        "inviteURLFirstPartPersonal": "{{name}} te esta invitando a una sesión.\n",
         "inviteURLSecondPart": "",
         "liveStreamURL": "Transmisión en vivo:",
         "moreNumbers": "Más números",
@@ -308,7 +307,6 @@
         "tooltip": "Compartir el enlace y la información de acceso telefónico para esta reunión",
         "label": "Información de la sesión"
     },
-    "\u0005info": {},
     "inviteDialog": {
         "alertText": "Error al invitar a algunos participantes ",
         "header": "Invitar",
@@ -521,12 +519,8 @@
     },
     "share": {
         "dialInfoText": "",
-        "mainText": [
-            "Pulse en el siguiente enlace para unirse a la reunión:",
-            "__roomUrl___"
-        ]
+        "mainText": "Pulse en el siguiente enlace para unirse a la reunión:\n{{roomUrl}}"
     },
-    "\u0005share": {},
     "speaker": "Orador",
     "speakerStats": {
         "hours": "{{count}}h",
@@ -623,9 +617,6 @@
         "videomute": "Iniciar / detener cámara",
         "startvideoblur": "",
         "stopvideoblur": ""
-    },
-    "\u0005toolbar": {
-        "accessibilityLabel": {}
     },
     "transcribing": {
         "ccButtonTooltip": "Iniciar / Detener Subtítulos",
