@@ -76,12 +76,12 @@
         "connectedTo": "Spojen na:",
         "framerate": "Sličice po sekundi:",
         "less": "Prikaži manje",
-        "localaddress": "Lokalna adresa:",
-        "localaddress_plural_2": "Lokalne adrese:",
-        "localaddress_plural_5": "",
-        "localport": "Lokalni priključak:",
-        "localport_plural_2": "Lokalni priključci:",
-        "localport_plural_5": "",
+        "localaddress_0": "Lokalna adresa:",
+        "localaddress_1": "Lokalne adrese:",
+        "localaddress_2": "",
+        "localport_0": "Lokalni priključak:",
+        "localport_1": "Lokalni priključci:",
+        "localport_2": "",
         "more": "Prikaži više",
         "packetloss": "Gubitak paketa:",
         "quality": {
@@ -91,20 +91,19 @@
             "nonoptimal": "Nije optimalno",
             "poor": "Slaba"
         },
-        "remoteaddress": "Udaljena adresa:",
-        "remoteaddress_plural_2": "Udaljene adrese:",
-        "remoteaddress_plural_5": "",
-        "remoteport": "Udaljeni priključak:",
-        "remoteport_plural_2": "Udaljeni priključci:",
-        "remoteport_plural_5": "",
+        "remoteaddress_0": "Udaljena adresa:",
+        "remoteaddress_1": "Udaljene adrese:",
+        "remoteaddress_2": "",
+        "remoteport_0": "Udaljeni priključak:",
+        "remoteport_1": "Udaljeni priključci:",
+        "remoteport_2": "",
         "resolution": "Rezolucija:",
         "status": "Povezivanje",
-        "transport": "",
-        "transport_plural_2": "",
-        "transport_plural_5": "",
+        "transport_0": "",
+        "transport_1": "",
+        "transport_2": "",
         "turn": ""
     },
-    "\u0005connectionindicator": {},
     "dateUtils": {
         "earlier": "Ranije",
         "today": "Danas",
@@ -264,7 +263,6 @@
         "Yes": "Da",
         "yourEntireScreen": "Vaš cijeli zaslon"
     },
-    "\u0005dialog": {},
     "dialOut": {
         "statusMessage": "je sada {{status}}"
     },
@@ -344,7 +342,6 @@
         "toggleShortcuts": "Prikaži ili sakrij prečace tipkovnice",
         "videoMute": "Pokreni ili zaustavi kameru"
     },
-    "\u0005keyboardShortcuts": {},
     "liveStreaming": {
         "busy": "Radimo na oslobađanju streaming resursa. Molim pokušajte ponovno za par minuta.",
         "busyTitle": "Svi stream-ovi su trenutno zauzeti",
@@ -402,7 +399,6 @@
         "stop": "Zaustavi snimanje",
         "yes": "Da"
     },
-    "\u0005localRecording": {},
     "lockRoomPassword": "Lozinka",
     "lockRoomPasswordUppercase": "Lozinka",
     "me": "",
@@ -437,7 +433,6 @@
         "newDeviceAudioTitle": "",
         "newDeviceAction": ""
     },
-    "\u0005notify": {},
     "passwordSetRemotely": "",
     "passwordDigitsOnly": "",
     "poweredby": "",
@@ -455,7 +450,6 @@
         "rejected": "",
         "ringing": ""
     },
-    "\u0005presenceStatus": {},
     "profile": {
         "setDisplayNameLabel": "",
         "setEmailInput": "",
@@ -487,7 +481,6 @@
         "unavailable": "",
         "unavailableTitle": ""
     },
-    "\u0005recording": {},
     "sectionList": {
         "pullToRefresh": ""
     },
@@ -514,7 +507,6 @@
         "startVideoMuted": "Svi počinju sakriveni",
         "title": "Postavke"
     },
-    "\u0005settings": {},
     "settingsView": {
         "alertOk": "U redu",
         "alertTitle": "",
@@ -631,9 +623,6 @@
         "startvideoblur": "",
         "stopvideoblur": ""
     },
-    "\u0005toolbar": {
-        "accessibilityLabel": {}
-    },
     "transcribing": {
         "ccButtonTooltip": "",
         "error": "Emitiranje uživo nije uspjelo. Pokušajte ponovno.",
@@ -646,7 +635,6 @@
         "stop": "",
         "tr": ""
     },
-    "\u0005transcribing": {},
     "userMedia": {
         "androidGrantPermissions": "",
         "chromeGrantPermissions": "",
@@ -698,7 +686,6 @@
         "show": "",
         "videomute": ""
     },
-    "\u0005videothumbnail": {},
     "welcomepage": {
         "accessibilityLabel": {
             "join": "Dodirnite za pridruživanje",
