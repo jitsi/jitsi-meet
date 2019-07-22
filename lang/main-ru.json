@@ -44,7 +44,6 @@
         "refresh": "Обновить календарь",
         "today": "Сегодня"
     },
-    "\u0005calendarSync": {},
     "chat": {
         "error": "",
         "messagebox": "",
@@ -77,12 +76,12 @@
         "connectedTo": "",
         "framerate": "Частота кадров:",
         "less": "Меньше",
-        "localaddress": "Локальные адреса:",
-        "localaddress_plural_2": "Локальные адреса:",
-        "localaddress_plural_5": "Локальные адреса:",
-        "localport": "Локальные порты:",
-        "localport_plural_2": "Локальные порты:",
-        "localport_plural_5": "Локальные порты:",
+        "localaddress_0": "Локальные адреса:",
+        "localaddress_1": "Локальные адреса:",
+        "localaddress_2": "Локальные адреса:",
+        "localport_0": "Локальные порты:",
+        "localport_1": "Локальные порты:",
+        "localport_2": "Локальные порты:",
         "more": "Больше",
         "packetloss": "Потери пакетов:",
         "quality": {
@@ -92,17 +91,17 @@
             "nonoptimal": "не оптимально",
             "poor": "плохо"
         },
-        "remoteaddress": "Удаленные адреса:",
-        "remoteaddress_plural_2": "Удаленные адреса:",
-        "remoteaddress_plural_5": "Удаленные адреса:",
-        "remoteport": "Удаленные порты:",
-        "remoteport_plural_2": "Удаленные порты:",
-        "remoteport_plural_5": "Удаленные порты:",
+        "remoteaddress_0": "Удаленные адреса:",
+        "remoteaddress_1": "Удаленные адреса:",
+        "remoteaddress_2": "Удаленные адреса:",
+        "remoteport_0": "Удаленные порты:",
+        "remoteport_1": "Удаленные порты:",
+        "remoteport_2": "Удаленные порты:",
         "resolution": "Разрешение:",
         "status": "Связь:",
-        "transport": "Методы отправки:",
-        "transport_plural_2": "Методы отправки:",
-        "transport_plural_5": "Методы отправки:",
+        "transport_0": "Методы отправки:",
+        "transport_1": "Методы отправки:",
+        "transport_2": "Методы отправки:",
         "turn": " (повернуть)"
     },
     "dateUtils": {
@@ -264,7 +263,6 @@
         "Yes": "Да",
         "yourEntireScreen": "Весь экран"
     },
-    "\u0005dialog": {},
     "dialOut": {
         "statusMessage": "сейчас {{status}}"
     },
@@ -314,7 +312,6 @@
         "tooltip": "Поделитесь ссылкой и номером для подключения к этой конференции",
         "label": ""
     },
-    "\u0005info": {},
     "inviteDialog": {
         "alertText": "",
         "header": "Пригласить",
@@ -402,7 +399,6 @@
         "stop": "Остановить запись",
         "yes": "Да"
     },
-    "\u0005localRecording": {},
     "lockRoomPassword": "пароль",
     "lockRoomPasswordUppercase": "Пароль",
     "me": "я",
@@ -431,7 +427,7 @@
         "startSilentTitle": "",
         "startSilentDescription": "",
         "suboptimalExperienceDescription": "К сожалению, этот браузер не очень подходит для работы с {{appName}}. Мы работаем над проблемой, а пока попробуйте один из <a href='static/recommendedBrowsers.html 'target='_blank'>полностью поддерживаемых браузеров</a>.",
-        "suboptimalExperienceTitle": "К сожалению, этот браузер может не подойти для работы с __appName__. Мы работаем над проблемой, а пока попробуйте один из <a href='static/recommendedBrowsers.html 'target='_blank'>полностью поддерживаемых браузеров</a>.",
+        "suboptimalExperienceTitle": "Предупреждение",
         "unmute": "",
         "newDeviceCameraTitle": "",
         "newDeviceAudioTitle": "",
@@ -485,7 +481,6 @@
         "unavailable": "Служба {{serviceName}} сейчас недоступна. Мы работаем над исправлением этой ошибки. Пожалуйста, попробуйте позже.",
         "unavailableTitle": "Запись невозможна"
     },
-    "\u0005recording": {},
     "sectionList": {
         "pullToRefresh": "Потяните для обновления"
     },
@@ -529,12 +524,8 @@
     },
     "share": {
         "dialInfoText": "",
-        "mainText": [
-            "Нажмите на ссылку чтобы присоединиться к конференции:",
-            "__roomUrl__"
-        ]
+        "mainText": "Нажмите на ссылку чтобы присоединиться к конференции:\n{{roomUrl}}"
     },
-    "\u0005share": {},
     "speaker": "Колонка",
     "speakerStats": {
         "hours": "{{count}}ч",
@@ -632,9 +623,6 @@
         "startvideoblur": "",
         "stopvideoblur": ""
     },
-    "\u0005toolbar": {
-        "accessibilityLabel": {}
-    },
     "transcribing": {
         "ccButtonTooltip": "",
         "error": "Ошибка записи. Пожалуйста, попробуйте позже.",
@@ -647,7 +635,6 @@
         "stop": "Вкл/Выкл показ субтитров",
         "tr": ""
     },
-    "\u0005transcribing": {},
     "userMedia": {
         "androidGrantPermissions": "Выберите <b><i>Разрешить</i></b>, когда браузер спросит о разрешениях.",
         "chromeGrantPermissions": "Выберите <b><i>Разрешить</i></b>, когда браузер спросит о разрешениях.",
@@ -726,6 +713,5 @@
         "sendFeedback": "Обратная связь",
         "terms": "Условия",
         "title": ""
-    },
-    "\u0005welcomepage": {}
+    }
 }
