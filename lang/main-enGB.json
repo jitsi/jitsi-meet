@@ -294,10 +294,7 @@
         "invitePhone": "One tap audio Dial In: {{number}},,{{conferenceID}}#",
         "invitePhoneAlternatives": "",
         "inviteURLFirstPartGeneral": "You are invited to join a meeting.",
-        "inviteURLFirstPartPersonal": [
-            "{{name}} is inviting you to a meeting.",
-            ""
-        ],
+        "inviteURLFirstPartPersonal": "{{name}} is inviting you to a meeting.\\n",
         "inviteURLSecondPart": [
             "",
             "Join the meeting:",
