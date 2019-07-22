@@ -76,10 +76,10 @@
         "connectedTo": "Đã kết nối tới:",
         "framerate": "Tỷ lệ khung hình:",
         "less": "Hiển thị ít hơn",
-        "localaddress": "Địa chỉ địa phương:",
-        "localaddress_plural_undefined": "Các địa chỉ địa phương:",
-        "localport": "Cổng địa phương:",
-        "localport_plural_undefined": "Các cổng địa phương:",
+        "localaddress_0": "Địa chỉ địa phương:",
+        "localaddress_1": "Các địa chỉ địa phương:",
+        "localport_0": "Cổng địa phương:",
+        "localport_1": "Các cổng địa phương:",
         "more": "Hiển thị nhiều hơn",
         "packetloss": "Mất gói tin:",
         "quality": {
@@ -89,14 +89,14 @@
             "nonoptimal": "Không tối ưu",
             "poor": "Kém chất lượng"
         },
-        "remoteaddress": "Địa chỉ từ xa:",
-        "remoteaddress_plural_undefined": "Các địa chỉ từ xa:",
-        "remoteport": "Cổng từ xa:",
-        "remoteport_plural_undefined": "Các cổng từ xa:",
+        "remoteaddress_0": "Địa chỉ từ xa:",
+        "remoteaddress_1": "Các địa chỉ từ xa:",
+        "remoteport_0": "Cổng từ xa:",
+        "remoteport_1": "Các cổng từ xa:",
         "resolution": "Độ phân giải:",
         "status": "Kết nối:",
-        "transport": "Vận chuyển:",
-        "transport_plural_undefined": "Các vận chuyển:",
+        "transport_0": "Vận chuyển:",
+        "transport_1": "Các vận chuyển:",
         "turn": "turn"
     },
     "dateUtils": {
@@ -258,7 +258,6 @@
         "Yes": "Có",
         "yourEntireScreen": "Toàn bộ màn hình của bạn"
     },
-    "\u0005dialog": {},
     "dialOut": {
         "statusMessage": "hiện đang {{status}}"
     },
@@ -308,7 +307,6 @@
         "tooltip": "Chia sẻ liên kết và thông tin quay số của cuộc họp này",
         "label": "Thông tin cuộc họp"
     },
-    "\u0005info": {},
     "inviteDialog": {
         "alertText": "Không thể mời một vài người.",
         "header": "Mời",
@@ -430,7 +428,6 @@
         "newDeviceAudioTitle": "Thiết bị âm thanh mới được phát hiện",
         "newDeviceAction": "Sử dụng"
     },
-    "\u0005notify": {},
     "passwordSetRemotely": "được thiết lập bởi một người khác",
     "passwordDigitsOnly": "",
     "poweredby": "Được hỗ trợ bởi",
@@ -522,12 +519,8 @@
     },
     "share": {
         "dialInfoText": "",
-        "mainText": [
-            "Chọn liên kết dưới để tham gia họp:",
-            "__roomUrl__"
-        ]
+        "mainText": "Chọn liên kết dưới để tham gia họp:\n__roomUrl__"
     },
-    "\u0005share": {},
     "speaker": "Diễn giả",
     "speakerStats": {
         "hours": "{{count}}h",
@@ -625,7 +618,6 @@
         "startvideoblur": "",
         "stopvideoblur": ""
     },
-    "\u0005toolbar": {},
     "transcribing": {
         "ccButtonTooltip": "Chạy/Dừng phụ đề",
         "error": "Phiên âm không thành công. Vui lòng thử lại.",
