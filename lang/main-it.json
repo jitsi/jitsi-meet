@@ -257,7 +257,6 @@
         "Yes": "Sì",
         "yourEntireScreen": "Schermo intero"
     },
-    "\u0005dialog": {},
     "dialOut": {
         "statusMessage": "è ora {{status}}"
     },
@@ -307,7 +306,6 @@
         "tooltip": "Condividi collegamento e informazioni di chiamata per questa conferenza",
         "label": ""
     },
-    "\u0005info": {},
     "inviteDialog": {
         "alertText": "",
         "header": "Invita",
@@ -477,7 +475,6 @@
         "unavailable": "Ops! Il {{serviceName}} non è al momento disponibile. Stiamo lavorando per risolvere il problema. Riprova più tardi.",
         "unavailableTitle": "Registrazione non disponibile"
     },
-    "\u0005recording": {},
     "sectionList": {
         "pullToRefresh": "Trascina per aggiornare"
     },
@@ -521,12 +518,8 @@
     },
     "share": {
         "dialInfoText": "",
-        "mainText": [
-            "Clicca sul link seguente per partecipare alla conferenza:",
-            "__roomUrl__"
-        ]
+        "mainText": "Clicca sul link seguente per partecipare alla conferenza:\n{{roomUrl}}"
     },
-    "\u0005share": {},
     "speaker": "Relatore",
     "speakerStats": {
         "hours": "{{count}}h",
@@ -623,9 +616,6 @@
         "videomute": "Attiva / Disattiva videocamera",
         "startvideoblur": "",
         "stopvideoblur": ""
-    },
-    "\u0005toolbar": {
-        "accessibilityLabel": {}
     },
     "transcribing": {
         "ccButtonTooltip": "",
