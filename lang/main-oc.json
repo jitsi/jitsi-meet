@@ -257,7 +257,6 @@
         "Yes": "Òc",
         "yourEntireScreen": "Vòstre ecran complet"
     },
-    "\u0005dialog": {},
     "dialOut": {
         "statusMessage": "ara es {{status}}"
     },
@@ -294,7 +293,7 @@
         "invitePhone": "",
         "invitePhoneAlternatives": "",
         "inviteURLFirstPartGeneral": "Sètz convidat a participar a la conferéncia.",
-        "inviteURLFirstPartPersonal": "__name__ vos convida a la conferéncia.",
+        "inviteURLFirstPartPersonal": "{{name}} vos convida a la conferéncia.\n",
         "inviteURLSecondPart": "",
         "liveStreamURL": "Flux dirècte :",
         "moreNumbers": "Mai de numèros",
@@ -307,7 +306,6 @@
         "tooltip": "Partejar lo ligam e las informacions d’aquesta conferéncia",
         "label": "Info conferéncia"
     },
-    "\u0005info": {},
     "inviteDialog": {
         "alertText": "",
         "header": "Convidar",
@@ -520,12 +518,8 @@
     },
     "share": {
         "dialInfoText": "",
-        "mainText": [
-            "Copiatz lo ligam seguent per dintrar dins la conferéncia :",
-            "__roomUrl__"
-        ]
+        "mainText": "Copiatz lo ligam seguent per dintrar dins la conferéncia :\n{{roomUrl}}"
     },
-    "\u0005share": {},
     "speaker": "Nautparlaire",
     "speakerStats": {
         "hours": "{{count}} oras",
@@ -622,9 +616,6 @@
         "videomute": "Aviar / Arrestar la camèra",
         "startvideoblur": "",
         "stopvideoblur": ""
-    },
-    "\u0005toolbar": {
-        "accessibilityLabel": {}
     },
     "transcribing": {
         "ccButtonTooltip": "",
