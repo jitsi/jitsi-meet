@@ -253,7 +253,6 @@
         "Yes": "是的",
         "yourEntireScreen": "自己的全螢幕"
     },
-    "\u0005dialog": {},
     "dialOut": {
         "statusMessage": "現在狀態為 {{status}}"
     },
@@ -303,7 +302,6 @@
         "tooltip": "顯示此會議的連結及電話播入號碼",
         "label": ""
     },
-    "\u0005info": {},
     "inviteDialog": {
         "alertText": "",
         "header": "邀請",
@@ -473,7 +471,6 @@
         "unavailable": "喔哦！{{serviceName}} 目前無法使用。我們正在解決此問題，請稍後再試。",
         "unavailableTitle": "錄製作業無法使用"
     },
-    "\u0005recording": {},
     "sectionList": {
         "pullToRefresh": "下滑以重新整理"
     },
@@ -517,12 +514,8 @@
     },
     "share": {
         "dialInfoText": "",
-        "mainText": [
-            "點按以下連結參加會議：",
-            "__roomUrl__"
-        ]
+        "mainText": "點按以下連結參加會議：{{roomUrl}}\n"
     },
-    "\u0005share": {},
     "speaker": "發言者",
     "speakerStats": {
         "hours": "{{count}}h",
@@ -620,7 +613,6 @@
         "startvideoblur": "",
         "stopvideoblur": ""
     },
-    "\u0005toolbar": {},
     "transcribing": {
         "ccButtonTooltip": "",
         "error": "錄影作業失敗。請重試。",
