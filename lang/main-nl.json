@@ -291,16 +291,11 @@
         "dialInTollFree": "Gratis",
         "genericError": "Er is iets misgegaan.",
         "inviteLiveStream": "Klik op de volgende link als u de livestream van deze vergadering wilt bekijken: {{url}}",
-        "invitePhone": "Met één druk op de knop inbellen: __number__,,__conferenceID__#",
+        "invitePhone": "Met één druk op de knop inbellen: {{number}},,{{conferenceID}}#\n",
         "invitePhoneAlternatives": "",
         "inviteURLFirstPartGeneral": "U bent uitgenodigd om aan een vergadering deel te nemen.",
-        "inviteURLFirstPartPersonal": "__name__ nodigt u uit voor een vergadering.",
-        "inviteURLSecondPart": [
-            "",
-            "__moreInfo__",
-            "Deelnemen aan vergadering: __url__",
-            ""
-        ],
+        "inviteURLFirstPartPersonal": "{{name}} nodigt u uit voor een vergadering.\n",
+        "inviteURLSecondPart": "\nDeelnemen aan vergadering:\n{{url}}\n",
         "liveStreamURL": "Livestream:",
         "moreNumbers": "Meer nummers",
         "noNumbers": "Geen inbelnummers.",
@@ -312,7 +307,6 @@
         "tooltip": "De link en inbelgegevens voor deze vergadering delen",
         "label": "Vergaderingsgegevens"
     },
-    "\u0005info": {},
     "inviteDialog": {
         "alertText": "Niet alle deelnemers zijn uitgenodigd.",
         "header": "Uitnodigen",
@@ -525,12 +519,8 @@
     },
     "share": {
         "dialInfoText": "",
-        "mainText": [
-            "Klik op de volgende link om deel te nemen aan de vergadering:",
-            "__roomUrl__"
-        ]
+        "mainText": "Klik op de volgende link om deel te nemen aan de vergadering:\n{{roomUrl}}"
     },
-    "\u0005share": {},
     "speaker": "Spreker",
     "speakerStats": {
         "hours": "{{count}} u",
