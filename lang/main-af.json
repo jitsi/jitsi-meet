@@ -68,7 +68,6 @@
         "ERROR": "Fout",
         "RECONNECTING": "’n Netwerkprobleem het voorgekom. Herkoppel tans..."
     },
-    "\u0005connection": {},
     "connectionindicator": {
         "address": "Adres:",
         "bandwidth": "Geraamde bandwydte:",
@@ -259,7 +258,6 @@
         "Yes": "Ja",
         "yourEntireScreen": "U hele skerm"
     },
-    "\u0005dialog": {},
     "dialOut": {
         "statusMessage": "is nou {{status}}"
     },
@@ -309,7 +307,6 @@
         "tooltip": "Deelskakel en inbelinligting vir dié vergadering",
         "label": ""
     },
-    "\u0005info": {},
     "inviteDialog": {
         "alertText": "",
         "header": "Nooi uit",
@@ -368,7 +365,6 @@
         "streamIdHelp": "Wat’s dié?",
         "unavailableTitle": "Regstreekse strome nie beskikbaar nie"
     },
-    "\u0005liveStreaming": {},
     "localRecording": {
         "clientState": {
             "off": "Af",
@@ -480,7 +476,6 @@
         "unavailable": "",
         "unavailableTitle": ""
     },
-    "\u0005recording": {},
     "sectionList": {
         "pullToRefresh": ""
     },
@@ -524,12 +519,8 @@
     },
     "share": {
         "dialInfoText": "",
-        "mainText": [
-            "Klik die volgende skakel om by die vergadering aan te sluit:",
-            "__roomUrl__"
-        ]
+        "mainText": "Klik die volgende skakel om by die vergadering aan te sluit:\n{{roomUrl}}"
     },
-    "\u0005share": {},
     "speaker": "Luidspreker",
     "speakerStats": {
         "hours": "{{count}}h",
@@ -627,7 +618,6 @@
         "startvideoblur": "",
         "stopvideoblur": ""
     },
-    "\u0005toolbar": {},
     "transcribing": {
         "ccButtonTooltip": "",
         "error": "Opname het misluk. Probeer gerus weer.",
@@ -640,7 +630,6 @@
         "stop": "",
         "tr": ""
     },
-    "\u0005transcribing": {},
     "userMedia": {
         "androidGrantPermissions": "Kies <b><i>Allow</i></b> wanneer die blaaier vir toestemming vra.",
         "chromeGrantPermissions": "Kies <b><i>Allow</i></b> wanneer die blaaier vir toestemming vra.",
