@@ -12,10 +12,8 @@ import {
 } from '../notifications';
 
 import { setCurrentNotificationUid } from './actions';
-import {
-    TALK_WHILE_MUTED_SOUND_FILE,
-    TALK_WHILE_MUTED_SOUND_ID
-} from './constants';
+import { TALK_WHILE_MUTED_SOUND_ID } from './constants';
+import { TALK_WHILE_MUTED_SOUND_FILE } from './sounds';
 
 MiddlewareRegistry.register(store => next => action => {
     const result = next(action);
