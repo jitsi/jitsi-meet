@@ -98,11 +98,20 @@ class WelcomePage extends AbstractWelcomePage {
      * @returns {ReactElement}
      */
     render() {
+        // We want to have the welcome page support the reduced UI layout,
+        // but we ran into serious issues enabling it so we disable it
+        // until we have a proper fix in place. We leave the code here though, because
+        // this part should be fine when the bug is fixed.
+        //
+        // NOTE: when re-enabling, don't forget to uncomment the respective _mapStateToProps line too
+
+        /*
         const { _reducedUI } = this.props;
 
         if (_reducedUI) {
             return this._renderReducedUI();
         }
+        */
 
         return this._renderFullUI();
     }
@@ -316,12 +325,11 @@ class WelcomePage extends AbstractWelcomePage {
  * @returns {Object}
  */
 function _mapStateToProps(state) {
-    const { reducedUI } = state['features/base/responsive-ui'];
-
     return {
         ..._abstractMapStateToProps(state),
-        _headerStyles: ColorSchemeRegistry.get(state, 'Header'),
-        _reducedUI: reducedUI
+        _headerStyles: ColorSchemeRegistry.get(state, 'Header')
+
+        // _reducedUI: state['features/base/responsive-ui'].reducedUI
     };
 }
 
