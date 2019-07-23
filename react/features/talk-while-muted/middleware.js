@@ -1,11 +1,5 @@
 // @flow
 
-import { setCurrentNotificationUid } from './actions';
-import {
-    TALK_WHILE_MUTED_SOUND_FILE,
-    TALK_WHILE_MUTED_SOUND_ID
-} from './constants';
-
 import { APP_WILL_MOUNT, APP_WILL_UNMOUNT } from '../base/app';
 import { CONFERENCE_JOINED } from '../base/conference';
 import { JitsiConferenceEvents } from '../base/lib-jitsi-meet';
@@ -16,6 +10,12 @@ import {
     hideNotification,
     showNotification
 } from '../notifications';
+
+import { setCurrentNotificationUid } from './actions';
+import {
+    TALK_WHILE_MUTED_SOUND_FILE,
+    TALK_WHILE_MUTED_SOUND_ID
+} from './constants';
 
 MiddlewareRegistry.register(store => next => action => {
     const result = next(action);
@@ -43,11 +43,13 @@ MiddlewareRegistry.register(store => next => action => {
             });
         conference.on(
             JitsiConferenceEvents.TALK_WHILE_MUTED, () => {
-                const notification = dispatch(showNotification({
+                const notification = showNotification({
                     titleKey: 'toolbar.talkWhileMutedPopup',
                     customActionNameKey: 'notify.unmute',
                     customActionHandler: () => dispatch(setAudioMuted(false))
-                }));
+                });
+
+                dispatch(notification);
 
                 dispatch(playSound(TALK_WHILE_MUTED_SOUND_ID));
 
