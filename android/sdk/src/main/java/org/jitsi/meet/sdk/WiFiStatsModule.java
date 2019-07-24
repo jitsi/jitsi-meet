@@ -144,8 +144,7 @@ class WiFiStatsModule
                     JSONObject result = new JSONObject();
                     result.put("rssi", rssi)
                         .put("signal", signalLevel)
-                        .put("timestamp",
-                                String.valueOf(System.currentTimeMillis()));
+                        .put("timestamp", System.currentTimeMillis());
 
                     JSONArray addresses = new JSONArray();
 
