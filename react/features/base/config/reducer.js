@@ -158,23 +158,16 @@ function _setConfig(state, { config }) {
  * supported by jitsi-meet.
  */
 function _translateLegacyConfig(oldValue: Object) {
-    // jitsi/jitsi-meet#3ea2f005787c9f49c48febaeed9dc0340fe0a01b
-
     let newValue = oldValue;
 
     const oldConfigToNewConfig = {
-        p2p: [
-            [ 'backToP2PDelay', 'backToP2PDelay' ],
-            [ 'enableP2P', 'enabled' ],
-            [ 'p2pStunServers', 'stunServers' ]
-        ],
         analytics: [
             [ 'analyticsScriptUrls', 'scriptURLs' ],
             [ 'googleAnalyticsTrackingId', 'googleAnalyticsTrackingId' ]
         ]
     };
 
-    // Translate the old config properties into the new config.p2p properties.
+    // Translate the old config properties into the new config properties.
     Object.keys(oldConfigToNewConfig).forEach(section => {
         if (typeof oldValue[section] !== 'object') {
             newValue = set(newValue, section, {});
