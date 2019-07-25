@@ -7,6 +7,9 @@ import { toURLString } from '../../base/util';
 import '../../follow-me';
 import { OverlayContainer } from '../../overlay';
 
+// Enable rejoin analytics
+import '../../rejoin';
+
 import { appNavigate } from '../actions';
 import { getDefaultURL } from '../functions';
 
