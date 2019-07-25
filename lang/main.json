@@ -122,6 +122,7 @@
         "tryAgainButton": "Try again in desktop"
     },
     "defaultLink": "e.g. {{url}}",
+    "defaultNickname": "ex. Jane Pink",
     "deviceError": {
         "cameraError": "Failed to access your camera",
         "cameraPermission": "Error obtaining camera permission",
@@ -664,10 +665,12 @@
         "audioOnlyExpanded": "You are in audio only mode. This mode saves bandwidth but you won't see videos of others.",
         "callQuality": "Video Quality",
         "hd": "HD",
+        "hdTooltip": "Viewing high definition video",
         "highDefinition": "High definition",
         "labelTooiltipNoVideo": "No video",
         "labelTooltipAudioOnly": "Audio-only mode enabled",
         "ld": "LD",
+        "ldTooltip": "Viewing low definition video",
         "lowDefinition": "Low definition",
         "onlyAudioAvailable": "Only audio is available",
         "onlyAudioSupported": "We only support audio in this browser.",
@@ -675,6 +678,7 @@
         "p2pVideoQualityDescription": "In peer to peer mode, received video quality can only be toggled between high and audio only. Other settings will not be honored until peer to peer is exited.",
         "recHighDefinitionOnly": "Will prefer high definition.",
         "sd": "SD",
+        "sdTooltip": "Viewing standard definition video",
         "standardDefinition": "Standard definition"
     },
     "videothumbnail": {
