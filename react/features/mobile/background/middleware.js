@@ -69,14 +69,9 @@ function _appStateChanged(dispatch: Function, appState: string) {
         muted = false;
         break;
 
-    case 'background':
+    default:
         muted = true;
         break;
-
-    case 'inactive':
-    default:
-        // XXX: We purposely don't handle the 'inactive' app state.
-        return;
     }
 
     dispatch(_setBackgroundVideoMuted(muted));

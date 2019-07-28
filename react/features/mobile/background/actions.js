@@ -40,13 +40,21 @@ export function _setAppStateListener(listener: ?Function) {
  */
 export function _setBackgroundVideoMuted(muted: boolean) {
     return (dispatch: Dispatch<any>, getState: Function) => {
-        // Disable remote video when we mute by setting lastN to 0. Skip it if
-        // the conference is in audio-only mode, as it's already configured to
-        // have no video. Leave it as undefined when unmuting, the default value
-        // for last N will be chosen automatically.
-        const { audioOnly } = getState()['features/base/conference'];
+        if (muted) {
+            // We could have it set to 1 if someone is screen-sharing, so re-set it to 0, just in case.
+            dispatch(setLastN(0));
+        } else {
+            const state = getState();
+            const { audioOnly } = state['features/base/conference'];
+            const screenShares = state['features/video-layout'].screenShares || [];
+            const latestScreenshare = screenShares[screenShares.length - 1];
 
-        audioOnly || dispatch(setLastN(muted ? 0 : undefined));
+            if (audioOnly) {
+                dispatch(setLastN(latestScreenshare ? 1 : 0));
+            } else {
+                dispatch(setLastN(undefined));
+            }
+        }
 
         sendAnalytics(createTrackMutedEvent(
             'video',

@@ -2,6 +2,7 @@
 
 import {
     VIDEO_QUALITY_LEVELS,
+    setLastN,
     setMaxReceiverVideoQuality
 } from '../base/conference';
 import {
@@ -101,6 +102,9 @@ StateListenerRegistry.register(
 function _updateAutoPinnedParticipant({ dispatch, getState }) {
     const state = getState();
     const screenShares = state['features/video-layout'].screenShares;
+    const pinnedParticipant = getPinnedParticipant(state['features/base/participants']);
+    const { audioOnly } = state['features/base/conference'];
+    const { appState } = state['features/background'];
 
     if (!screenShares) {
         return;
@@ -111,7 +115,13 @@ function _updateAutoPinnedParticipant({ dispatch, getState }) {
 
     if (latestScreenshareParticipantId) {
         dispatch(pinParticipant(latestScreenshareParticipantId));
-    } else if (getPinnedParticipant(state['features/base/participants'])) {
+
+        // If we are in audio-only mode, set last N to 1.
+        appState === 'active' && audioOnly && dispatch(setLastN(1));
+    } else if (pinnedParticipant) {
         dispatch(pinParticipant(null));
+
+        // If we were in audio-only mode, set last N back to 0.
+        appState === 'active' && audioOnly && dispatch(setLastN(0));
     }
 }

@@ -309,11 +309,13 @@ export function shouldRenderParticipantVideo(
         stateful: Object | Function, id: string) {
     const state = toState(stateful);
     const participant = getParticipantById(state, id);
+    const screenShares = state['features/video-layout'].screenShares || [];
 
     if (!participant) {
         return false;
     }
 
+    const latestScreenshare = screenShares[screenShares.length - 1];
     const audioOnly = state['features/base/conference'].audioOnly;
     const connectionStatus = participant.connectionStatus
         || JitsiParticipantConnectionStatus.ACTIVE;
@@ -332,11 +334,10 @@ export function shouldRenderParticipantVideo(
     // black screen.
     const waitForVideoStarted = false;
 
-    return !audioOnly
+    return (!audioOnly || id === latestScreenshare)
         && (connectionStatus
             === JitsiParticipantConnectionStatus.ACTIVE)
         && shouldRenderVideoTrack(videoTrack, waitForVideoStarted);
-
 }
 
 /**
