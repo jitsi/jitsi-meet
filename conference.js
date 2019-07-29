@@ -2728,6 +2728,18 @@ export default {
                 convertVideoToDesktop: true,
 
                 /**
+                 * Callback invoked when the connection has been closed
+                 * automatically. Triggers cleanup of screensharing if active.
+                 *
+                 * @returns {void}
+                 */
+                onConnectionClosed: () => {
+                    if (this._untoggleScreenSharing) {
+                        this._untoggleScreenSharing();
+                    }
+                },
+
+                /**
                  * Callback invoked to pass messages from the local client back
                  * out to the external client.
                  *
