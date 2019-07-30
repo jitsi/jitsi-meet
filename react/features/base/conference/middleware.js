@@ -435,30 +435,27 @@ function _pinParticipant({ getState }, next, action) {
     const participants = state['features/base/participants'];
     const id = action.participant.id;
     const participantById = getParticipantById(participants, id);
+    const pinnedParticipant = getPinnedParticipant(participants);
+    const actionName = id ? ACTION_PINNED : ACTION_UNPINNED;
+    const local
+        = (participantById && participantById.local)
+            || (!id && pinnedParticipant && pinnedParticipant.local);
+    let participantIdForEvent;
 
-    if (typeof APP !== 'undefined') {
-        const pinnedParticipant = getPinnedParticipant(participants);
-        const actionName = id ? ACTION_PINNED : ACTION_UNPINNED;
-        const local
-            = (participantById && participantById.local)
-                || (!id && pinnedParticipant && pinnedParticipant.local);
-        let participantIdForEvent;
-
-        if (local) {
-            participantIdForEvent = local;
-        } else {
-            participantIdForEvent = actionName === ACTION_PINNED
-                ? id : pinnedParticipant && pinnedParticipant.id;
-        }
-
-        sendAnalytics(createPinnedEvent(
-            actionName,
-            participantIdForEvent,
-            {
-                local,
-                'participant_count': conference.getParticipantCount()
-            }));
+    if (local) {
+        participantIdForEvent = local;
+    } else {
+        participantIdForEvent
+            = actionName === ACTION_PINNED ? id : pinnedParticipant && pinnedParticipant.id;
     }
+
+    sendAnalytics(createPinnedEvent(
+        actionName,
+        participantIdForEvent,
+        {
+            local,
+            'participant_count': conference.getParticipantCount()
+        }));
 
     return next(action);
 }
