@@ -1,7 +1,6 @@
 // @flow
 
 import { setLastN } from '../base/conference';
-import { pinParticipant } from '../base/participants';
 import { MiddlewareRegistry } from '../base/redux';
 
 import { SET_FILMSTRIP_ENABLED } from './actionTypes';
@@ -33,15 +32,11 @@ MiddlewareRegistry.register(store => next => action => {
 function _setFilmstripEnabled({ dispatch, getState }, next, action) {
     const result = next(action);
 
-    // FIXME The logic for participant pinning / unpinning is not on React yet
-    // so dispatching the action is not enough. Hence, perform the following
-    // only where it will be sufficient i.e. mobile.
+    // FIXME This action is not currently dispatched on web.
     if (typeof APP === 'undefined') {
         const state = getState();
         const { enabled } = state['features/filmstrip'];
         const { audioOnly } = state['features/base/conference'];
-
-        enabled || dispatch(pinParticipant(null));
 
         // FIXME Audio-only mode fiddles with lastN as well. That's why we don't
         // touch lastN in audio-only mode. But it's not clear what the value of
