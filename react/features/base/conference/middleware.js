@@ -14,7 +14,6 @@ import { CONNECTION_ESTABLISHED, CONNECTION_FAILED } from '../connection';
 import { JitsiConferenceErrors } from '../lib-jitsi-meet';
 import { setVideoMuted, VIDEO_MUTISM_AUTHORITY } from '../media';
 import {
-    getLocalParticipant,
     getParticipantById,
     getPinnedParticipant,
     PARTICIPANT_UPDATED,
@@ -46,7 +45,6 @@ import {
     _addLocalTracksToConference,
     forEachConference,
     getCurrentConference,
-    _handleParticipantError,
     _removeLocalTracksFromConference
 } from './functions';
 
@@ -460,30 +458,6 @@ function _pinParticipant({ getState }, next, action) {
                 local,
                 'participant_count': conference.getParticipantCount()
             }));
-    }
-
-    // The following condition prevents signaling to pin local participant and
-    // shared videos. The logic is:
-    // - If we have an ID, we check if the participant identified by that ID is
-    //   local or a bot/fake participant (such as with shared video).
-    // - If we don't have an ID (i.e. no participant identified by an ID), we
-    //   check for local participant. If she's currently pinned, then this
-    //   action will unpin her and that's why we won't signal here too.
-    let pin;
-
-    if (participantById) {
-        pin = !participantById.local && !participantById.isFakeParticipant;
-    } else {
-        const localParticipant = getLocalParticipant(participants);
-
-        pin = !localParticipant || !localParticipant.pinned;
-    }
-    if (pin) {
-        try {
-            conference.pinParticipant(id);
-        } catch (err) {
-            _handleParticipantError(err);
-        }
     }
 
     return next(action);
