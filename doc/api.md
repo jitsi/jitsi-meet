@@ -372,6 +372,13 @@ changes. The listener will receive an object with the following structure:
     email: string // the new email
 }
 ```
+* **feedbackSubmitted** - event notifications about conference feedback submission
+```javascript
+{
+    error: string // The error which occurred during submission, if any.
+}
+```
+
 * **filmstripDisplayChanged** - event notifications about the visibility of the filmstrip being updated.
 ```javascript
 {
