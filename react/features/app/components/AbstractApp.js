@@ -7,8 +7,8 @@ import { toURLString } from '../../base/util';
 import '../../follow-me';
 import { OverlayContainer } from '../../overlay';
 
-// Enable rejoin analytics
-import '../../rejoin';
+import '../../base/lastn'; // Register lastN middleware
+import '../../rejoin'; // Enable rejoin analytics
 
 import { appNavigate } from '../actions';
 import { getDefaultURL } from '../functions';

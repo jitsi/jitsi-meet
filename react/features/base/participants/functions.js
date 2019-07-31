@@ -314,7 +314,7 @@ export function shouldRenderParticipantVideo(
         return false;
     }
 
-    const audioOnly = state['features/base/conference'].audioOnly;
+    const audioOnly = state['features/base/audio-only'].enabled;
     const connectionStatus = participant.connectionStatus
         || JitsiParticipantConnectionStatus.ACTIVE;
     const videoTrack = getTrackByMediaTypeAndParticipant(

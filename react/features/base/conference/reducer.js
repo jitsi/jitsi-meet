@@ -15,7 +15,6 @@ import {
     CONFERENCE_WILL_LEAVE,
     LOCK_STATE_CHANGED,
     P2P_STATUS_CHANGED,
-    SET_AUDIO_ONLY,
     SET_DESKTOP_SHARING_ENABLED,
     SET_FOLLOW_ME,
     SET_MAX_RECEIVER_VIDEO_QUALITY,
@@ -75,9 +74,6 @@ ReducerRegistry.register(
 
         case P2P_STATUS_CHANGED:
             return _p2pStatusChanged(state, action);
-
-        case SET_AUDIO_ONLY:
-            return _setAudioOnly(state, action);
 
         case SET_DESKTOP_SHARING_ENABLED:
             return _setDesktopSharingEnabled(state, action);
@@ -344,20 +340,6 @@ function _lockStateChanged(state, { conference, locked }) {
  */
 function _p2pStatusChanged(state, action) {
     return set(state, 'p2p', action.p2p);
-}
-
-/**
- * Reduces a specific Redux action SET_AUDIO_ONLY of the feature
- * base/conference.
- *
- * @param {Object} state - The Redux state of the feature base/conference.
- * @param {Action} action - The Redux action SET_AUDIO_ONLY to reduce.
- * @private
- * @returns {Object} The new state of the feature base/conference after the
- * reduction of the specified action.
- */
-function _setAudioOnly(state, action) {
-    return set(state, 'audioOnly', action.audioOnly);
 }
 
 /**
