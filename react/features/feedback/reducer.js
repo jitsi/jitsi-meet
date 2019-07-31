@@ -4,7 +4,8 @@ import {
 
 import {
     CANCEL_FEEDBACK,
-    SUBMIT_FEEDBACK
+    SUBMIT_FEEDBACK_ERROR,
+    SUBMIT_FEEDBACK_SUCCESS
 } from './actionTypes';
 
 const DEFAULT_STATE = {
@@ -31,7 +32,8 @@ ReducerRegistry.register(
             };
         }
 
-        case SUBMIT_FEEDBACK: {
+        case SUBMIT_FEEDBACK_ERROR:
+        case SUBMIT_FEEDBACK_SUCCESS: {
             return {
                 ...state,
                 message: '',

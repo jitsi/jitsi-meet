@@ -627,10 +627,14 @@ class API {
      * has been submitted. Intended to be used in conjunction with the
      * submit-feedback command to get notified if feedback was submitted.
      *
+     * @param {string} error - A failure message, if any.
      * @returns {void}
      */
-    notifyFeedbackSubmitted() {
-        this._sendEvent({ name: 'feedback-submitted' });
+    notifyFeedbackSubmitted(error: string) {
+        this._sendEvent({
+            name: 'feedback-submitted',
+            error
+        });
     }
 
     /**
