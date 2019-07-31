@@ -4,7 +4,6 @@ import { reloadNow } from '../../app';
 import {
     ACTION_PINNED,
     ACTION_UNPINNED,
-    createAudioOnlyChangedEvent,
     createConnectionEvent,
     createOfferAnswerFailedEvent,
     createPinnedEvent,
@@ -12,7 +11,6 @@ import {
 } from '../../analytics';
 import { CONNECTION_ESTABLISHED, CONNECTION_FAILED } from '../connection';
 import { JitsiConferenceErrors } from '../lib-jitsi-meet';
-import { setVideoMuted, VIDEO_MUTISM_AUTHORITY } from '../media';
 import {
     getParticipantById,
     getPinnedParticipant,
@@ -20,14 +18,12 @@ import {
     PIN_PARTICIPANT
 } from '../participants';
 import { MiddlewareRegistry, StateListenerRegistry } from '../redux';
-import UIEvents from '../../../../service/UI/UIEvents';
 import { TRACK_ADDED, TRACK_REMOVED } from '../tracks';
 
 import {
     conferenceFailed,
     conferenceWillLeave,
     createConference,
-    setLastN,
     setSubject
 } from './actions';
 import {
@@ -36,16 +32,14 @@ import {
     CONFERENCE_SUBJECT_CHANGED,
     CONFERENCE_WILL_LEAVE,
     DATA_CHANNEL_OPENED,
-    SET_AUDIO_ONLY,
-    SET_LASTN,
     SET_PENDING_SUBJECT_CHANGE,
     SET_ROOM
 } from './actionTypes';
 import {
     _addLocalTracksToConference,
+    _removeLocalTracksFromConference,
     forEachConference,
-    getCurrentConference,
-    _removeLocalTracksFromConference
+    getCurrentConference
 } from './functions';
 
 const logger = require('jitsi-meet-logger').getLogger(__filename);
@@ -92,12 +86,6 @@ MiddlewareRegistry.register(store => next => action => {
 
     case PIN_PARTICIPANT:
         return _pinParticipant(store, next, action);
-
-    case SET_AUDIO_ONLY:
-        return _setAudioOnly(store, next, action);
-
-    case SET_LASTN:
-        return _setLastN(store, next, action);
 
     case SET_ROOM:
         return _setRoom(store, next, action);
@@ -197,21 +185,10 @@ function _conferenceFailed(store, next, action) {
  */
 function _conferenceJoined({ dispatch, getState }, next, action) {
     const result = next(action);
+    const { conference } = action;
+    const { pendingSubjectChange } = getState()['features/base/conference'];
 
-    const {
-        audioOnly,
-        conference,
-        pendingSubjectChange
-    } = getState()['features/base/conference'];
-
-    if (pendingSubjectChange) {
-        dispatch(setSubject(pendingSubjectChange));
-    }
-
-    // FIXME On Web the audio only mode for "start audio only" is toggled before
-    // conference is added to the redux store ("on conference joined" action)
-    // and the LastN value needs to be synchronized here.
-    audioOnly && conference.getLastN() !== 0 && dispatch(setLastN(0));
+    pendingSubjectChange && dispatch(setSubject(pendingSubjectChange));
 
     // FIXME: Very dirty solution. This will work on web only.
     // When the user closes the window or quits the browser, lib-jitsi-meet
@@ -456,79 +433,6 @@ function _pinParticipant({ getState }, next, action) {
             local,
             'participant_count': conference.getParticipantCount()
         }));
-
-    return next(action);
-}
-
-/**
- * Sets the audio-only flag for the current conference. When audio-only is set,
- * local video is muted and last N is set to 0 to avoid receiving remote video.
- *
- * @param {Store} store - The redux store in which the specified {@code action}
- * is being dispatched.
- * @param {Dispatch} next - The redux {@code dispatch} function to dispatch the
- * specified {@code action} to the specified {@code store}.
- * @param {Action} action - The redux action {@code SET_AUDIO_ONLY} which is
- * being dispatched in the specified {@code store}.
- * @private
- * @returns {Object} The value returned by {@code next(action)}.
- */
-function _setAudioOnly({ dispatch, getState }, next, action) {
-    const { audioOnly: oldValue } = getState()['features/base/conference'];
-    const result = next(action);
-    const { audioOnly: newValue } = getState()['features/base/conference'];
-
-    // Send analytics. We could've done it in the action creator setAudioOnly.
-    // I don't know why it has to happen as early as possible but the analytics
-    // were originally sent before the SET_AUDIO_ONLY action was even dispatched
-    // in the redux store so I'm now sending the analytics as early as possible.
-    if (oldValue !== newValue) {
-        sendAnalytics(createAudioOnlyChangedEvent(newValue));
-        logger.log(`Audio-only ${newValue ? 'enabled' : 'disabled'}`);
-    }
-
-    // Set lastN to 0 in case audio-only is desired; leave it as undefined,
-    // otherwise, and the default lastN value will be chosen automatically.
-    dispatch(setLastN(newValue ? 0 : undefined));
-
-    // Mute/unmute the local video.
-    dispatch(
-        setVideoMuted(
-            newValue,
-            VIDEO_MUTISM_AUTHORITY.AUDIO_ONLY,
-            action.ensureVideoTrack));
-
-    if (typeof APP !== 'undefined') {
-        // TODO This should be a temporary solution that lasts only until video
-        // tracks and all ui is moved into react/redux on the web.
-        APP.UI.emitEvent(UIEvents.TOGGLE_AUDIO_ONLY, newValue);
-    }
-
-    return result;
-}
-
-/**
- * Sets the last N (value) of the video channel in the conference.
- *
- * @param {Store} store - The redux store in which the specified {@code action}
- * is being dispatched.
- * @param {Dispatch} next - The redux {@code dispatch} function to dispatch the
- * specified {@code action} to the specified {@code store}.
- * @param {Action} action - The redux action {@code SET_LASTN} which is being
- * dispatched in the specified {@code store}.
- * @private
- * @returns {Object} The value returned by {@code next(action)}.
- */
-function _setLastN({ getState }, next, action) {
-    const { conference } = getState()['features/base/conference'];
-
-    if (conference) {
-        try {
-            conference.setLastN(action.lastN);
-        } catch (err) {
-            logger.error(`Failed to set lastN: ${err}`);
-        }
-    }
 
     return next(action);
 }

@@ -35,10 +35,8 @@ import {
     KICKED_OUT,
     LOCK_STATE_CHANGED,
     P2P_STATUS_CHANGED,
-    SET_AUDIO_ONLY,
     SET_DESKTOP_SHARING_ENABLED,
     SET_FOLLOW_ME,
-    SET_LASTN,
     SET_MAX_RECEIVER_VIDEO_QUALITY,
     SET_PASSWORD,
     SET_PASSWORD_FAILED,
@@ -523,29 +521,6 @@ export function p2pStatusChanged(p2p: boolean) {
 }
 
 /**
- * Sets the audio-only flag for the current JitsiConference.
- *
- * @param {boolean} audioOnly - True if the conference should be audio only;
- * false, otherwise.
- * @param {boolean} ensureVideoTrack - Define if conference should ensure
- * to create a video track.
- * @returns {{
- *     type: SET_AUDIO_ONLY,
- *     audioOnly: boolean,
- *     ensureVideoTrack: boolean
- * }}
- */
-export function setAudioOnly(
-        audioOnly: boolean,
-        ensureVideoTrack: boolean = false) {
-    return {
-        type: SET_AUDIO_ONLY,
-        audioOnly,
-        ensureVideoTrack
-    };
-}
-
-/**
  * Sets the flag for indicating if desktop sharing is enabled.
  *
  * @param {boolean} desktopSharingEnabled - True if desktop sharing is enabled.
@@ -574,35 +549,6 @@ export function setFollowMe(enabled: boolean) {
     return {
         type: SET_FOLLOW_ME,
         enabled
-    };
-}
-
-/**
- * Sets the video channel's last N (value) of the current conference. A value of
- * undefined shall be used to reset it to the default value.
- *
- * @param {(number|undefined)} lastN - The last N value to be set.
- * @returns {Function}
- */
-export function setLastN(lastN: ?number) {
-    return (dispatch: Dispatch<any>, getState: Function) => {
-        if (typeof lastN === 'undefined') {
-            const config = getState()['features/base/config'];
-
-            /* eslint-disable no-param-reassign */
-
-            lastN = config.channelLastN;
-            if (typeof lastN === 'undefined') {
-                lastN = -1;
-            }
-
-            /* eslint-enable no-param-reassign */
-        }
-
-        dispatch({
-            type: SET_LASTN,
-            lastN
-        });
     };
 }
 
@@ -751,19 +697,6 @@ export function setStartMutedPolicy(
 
         return dispatch(
             onStartMutedPolicyChanged(startAudioMuted, startVideoMuted));
-    };
-}
-
-/**
- * Toggles the audio-only flag for the current JitsiConference.
- *
- * @returns {Function}
- */
-export function toggleAudioOnly() {
-    return (dispatch: Dispatch<any>, getState: Function) => {
-        const { audioOnly } = getState()['features/base/conference'];
-
-        return dispatch(setAudioOnly(!audioOnly, true));
     };
 }
 

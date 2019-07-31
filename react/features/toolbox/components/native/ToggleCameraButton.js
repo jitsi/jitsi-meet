@@ -71,7 +71,7 @@ class ToggleCameraButton extends AbstractButton<Props, *> {
  * }}
  */
 function _mapStateToProps(state): Object {
-    const { audioOnly } = state['features/base/conference'];
+    const { enabled: audioOnly } = state['features/base/audio-only'];
     const tracks = state['features/base/tracks'];
 
     return {

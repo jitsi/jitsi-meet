@@ -1345,8 +1345,7 @@ export default {
      * @returns {boolean}
      */
     isAudioOnly() {
-        return Boolean(
-            APP.store.getState()['features/base/conference'].audioOnly);
+        return Boolean(APP.store.getState()['features/base/audio-only'].enabled);
     },
 
     videoSwitchInProgress: false,

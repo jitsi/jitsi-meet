@@ -1,6 +1,6 @@
 // @flow
 
-import { toggleAudioOnly } from '../../../base/conference';
+import { toggleAudioOnly } from '../../../base/audio-only';
 import { translate } from '../../../base/i18n';
 import { connect } from '../../../base/redux';
 import { AbstractButton } from '../../../base/toolbox';
@@ -66,7 +66,7 @@ class AudioOnlyButton extends AbstractButton<Props, *> {
  * }}
  */
 function _mapStateToProps(state): Object {
-    const { audioOnly } = state['features/base/conference'];
+    const { enabled: audioOnly } = state['features/base/audio-only'];
 
     return {
         _audioOnly: Boolean(audioOnly)
