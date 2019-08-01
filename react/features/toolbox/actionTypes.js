@@ -30,6 +30,15 @@ export const FULL_SCREEN_CHANGED = 'FULL_SCREEN_CHANGED';
 export const SET_FULL_SCREEN = 'SET_FULL_SCREEN';
 
 /**
+ * type of open manager window.
+ * 
+ * {
+ *     type: OPEN_MGRWIN,
+ *     mgrwinOpen: boolean
+ * }
+ */
+export const OPEN_MGRWIN = 'OPEN_MGRWIN';
+/**
  * The type of the (redux) action which shows/hides the OverflowMenu.
  *
  * {

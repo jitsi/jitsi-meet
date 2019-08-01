@@ -10,7 +10,8 @@ import {
 } from './actions.native';
 import {
     FULL_SCREEN_CHANGED,
-    SET_FULL_SCREEN
+    SET_FULL_SCREEN,
+    OPEN_MGRWIN
 } from './actionTypes';
 
 declare var interfaceConfig: Object;
@@ -119,6 +120,21 @@ export function setFullScreen(fullScreen: boolean) {
     };
 }
 
+/**
+ * open manager window.
+ *
+ * @param {boolean} mgrwinOpen - True to open, false to close.
+ * @returns {{
+ *     type: OPEN_MGRWIN,
+ *     mgrwinOpen: boolean
+ * }}
+ */
+export function openMGRWin(mgrwinOpen: boolean) {
+    return {
+        type: OPEN_MGRWIN,
+        mgrwinOpen
+    };
+}
 /**
  * Shows the toolbox for specified timeout.
  *

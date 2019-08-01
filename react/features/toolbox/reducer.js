@@ -12,7 +12,8 @@ import {
     SET_TOOLBOX_TIMEOUT,
     SET_TOOLBOX_TIMEOUT_MS,
     SET_TOOLBOX_VISIBLE,
-    TOGGLE_TOOLBOX_VISIBLE
+    TOGGLE_TOOLBOX_VISIBLE,
+    OPEN_MGRWIN
 } from './actionTypes';
 
 declare var interfaceConfig: Object;
@@ -163,6 +164,11 @@ ReducerRegistry.register(
             return {
                 ...state,
                 timeoutMS: action.timeoutMS
+            };
+        case OPEN_MGRWIN:
+            return {
+                ...state,
+                mgrwinOpen: action.mgrwinOpen
             };
 
         case SET_TOOLBOX_VISIBLE:

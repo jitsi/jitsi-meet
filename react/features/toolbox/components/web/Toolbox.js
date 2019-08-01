@@ -44,6 +44,7 @@ import {
     openSettingsDialog
 } from '../../../settings';
 import { toggleSharedVideo } from '../../../shared-video';
+import { toggleShareWhiteBoard } from '../../../openboard';
 import { SpeakerStats } from '../../../speaker-stats';
 import { TileViewButton } from '../../../video-layout';
 import {
@@ -54,7 +55,9 @@ import {
 import {
     setFullScreen,
     setOverflowMenuVisible,
-    setToolbarHovered
+    setToolbarHovered,
+    openMGRWin,
+    openWhiteBoard,
 } from '../../actions';
 import AudioMuteButton from '../AudioMuteButton';
 import { isToolboxVisible } from '../../functions';
@@ -169,6 +172,8 @@ type Props = {
      */
     _visible: boolean,
 
+    _mgrwinOpen: boolean,
+
     /**
      * Set with the buttons which this Toolbox should display.
      */
@@ -238,6 +243,9 @@ class Toolbox extends Component<Props, State> {
             = this._onToolbarOpenVideoQuality.bind(this);
         this._onToolbarToggleChat = this._onToolbarToggleChat.bind(this);
         this._onToolbarOpenManagerWindow = this._onToolbarOpenManagerWindow.bind(this);
+        this._onToolbarWhiteBoard = this._onToolbarWhiteBoard.bind(this);
+        
+        this._onToolbarShareVideo = this._onToolbarShareVideo.bind(this);
         this._onToolbarToggleEtherpad
             = this._onToolbarToggleEtherpad.bind(this);
         this._onToolbarToggleFullScreen
@@ -247,7 +255,9 @@ class Toolbox extends Component<Props, State> {
         this._onToolbarToggleRaiseHand
             = this._onToolbarToggleRaiseHand.bind(this);
         this._onToolbarToggleScreenshare
-            = this._onToolbarToggleScreenshare.bind(this);
+            = this._onToolbarToggleScreenshare.bind(this);            
+        this._onToolbarToggleSteroMix
+            = this._onToolbarToggleSteroMix.bind(this);
         this._onToolbarToggleSharedVideo
             = this._onToolbarToggleSharedVideo.bind(this);
         this._onToolbarOpenLocalRecordingInfoDialog
@@ -475,7 +485,15 @@ class Toolbox extends Component<Props, State> {
             this.props.dispatch(toggleScreensharing());
         }
     }
-
+/**
+     * Dispatches an action to toggle screensharing.
+     *
+     * @private
+     * @returns {void}
+     */
+    _doToggleSteroMix() {
+        // this.props.dispatch(toggleSteroMix());
+    }
     /**
      * Dispatches an action to toggle YouTube video sharing.
      *
@@ -719,11 +737,36 @@ class Toolbox extends Component<Props, State> {
      * @returns {void}
      */
     _onToolbarOpenManagerWindow() {
-        this.props._mgrwinOpen = !this.props._mgrwinOpen;
-        console.warn('come in _onToolbarOpenManagerWindow '+this.props._mgrwinOpen);
-        APP.API.notifyOpenMgrWin(this.props._mgrwinOpen);
+        console.warn('come in _onToolbarOpenManagerWindow '+!this.props._mgrwinOpen);
+        this.props.dispatch(openMGRWin(!this.props._mgrwinOpen));
     }
-    
+
+    _onToolbarWhiteBoard: () => void;
+
+    /**
+     * Creates an analytics toolbar event and dispatches an action for toggling
+     * the display of chat.
+     *
+     * @private
+     * @returns {void}
+     */
+    _onToolbarWhiteBoard() {
+        console.warn('come in _onToolbarWhiteBoard ');
+        this.props.dispatch(toggleShareWhiteBoard());
+    }
+    _onToolbarShareVideo: () => void;
+    /**
+     * Creates an analytics toolbar event and dispatches an action for toggling
+     * the display of chat.
+     *
+     * @private
+     * @returns {void}
+     */
+    _onToolbarShareVideo() {
+        // this.props._shareVideo = !this.props._shareVideo;
+        // console.warn('come in _onToolbarShareVideo '+this.props._mgrwinOpen);
+        // APP.API.notifyOpenMgrWin(this.props._mgrwinOpen);
+    }
 
     _onToolbarToggleEtherpad: () => void;
 
@@ -816,7 +859,19 @@ class Toolbox extends Component<Props, State> {
 
         this._doToggleScreenshare();
     }
+    _onToolbarToggleSteroMix: () => void;
 
+    /**
+     * Creates an analytics toolbar event and dispatches an action for toggling
+     * screensharing.
+     *
+     * @private
+     * @returns {void}
+     */
+    _onToolbarToggleSteroMix() {
+
+        this._doToggleSteroMix();
+    }
     _onToolbarToggleSharedVideo: () => void;
 
     /**
@@ -863,7 +918,42 @@ class Toolbox extends Component<Props, State> {
 
         return _desktopSharingEnabled || _desktopSharingDisabledTooltipKey;
     }
+/**
+     * Renders a button for toggleing stero mix.
+     *
+     * @private
+     * @param {boolean} isInOverflowMenu - True if the button is moved to the
+     * overflow menu.
+     * @returns {ReactElement|null}
+     */
+    _renderSteroMixButton(isInOverflowMenu = false) {
 
+        const {
+            _desktopSharingEnabled,
+            _steroMix,
+            t
+        } = this.props;
+
+        if (isInOverflowMenu) {
+            return;
+        }
+
+        const classNames = `icon-speaker ${
+            _steroMix ? 'toggled' : ''} ${
+            _desktopSharingEnabled ? '' : 'disabled'}`;
+        const tooltip = t(
+            _desktopSharingEnabled
+                ? 'dialog.steroMix' : 'dialog.steroMix');
+
+        return (
+            <ToolbarButton
+                accessibilityLabel
+                    = { t('toolbar.accessibilityLabel.steroMix') }
+                iconName = { classNames }
+                onClick = { this._onToolbarToggleSteroMix }
+                tooltip = { tooltip } />
+        );
+    }
     /**
      * Renders a button for toggleing screen sharing.
      *
@@ -1205,6 +1295,8 @@ class Toolbox extends Component<Props, State> {
                 <div className = 'button-group-left'>
                     { buttonsLeft.indexOf('desktop') !== -1
                         && this._renderDesktopSharingButton() }
+                    {/* { buttonsLeft.indexOf('desktop') !== -1
+                        && this._renderSteroMixButton() } */}
                     { buttonsLeft.indexOf('raisehand') !== -1
                         && <ToolbarButton
                             accessibilityLabel =
@@ -1237,15 +1329,12 @@ class Toolbox extends Component<Props, State> {
                    {  _isLocalParticipantModerator
                       &&
                       browser.isElectron()
-                      &&  <div className = 'toolbar-button-with-badge'>
-                            <ToolbarButton
+                      &&   <ToolbarButton
                                 accessibilityLabel =
                                     { t('toolbar.accessibilityLabel.contactlist') }
                                 iconName = 'icon-contactlist'
                                 onClick = { this._onToolbarOpenManagerWindow }
-                                tooltip = { t('toolbar.contactlist') } />
-                            <ChatCounter />
-                        </div>}
+                                tooltip = { t('toolbar.contactlist') } />}
                    
                     <AudioMuteButton
                         visible = { this._shouldShowButton('microphone') } />
@@ -1253,8 +1342,31 @@ class Toolbox extends Component<Props, State> {
                         visible = { this._shouldShowButton('hangup') } />
                     <VideoMuteButton
                         visible = { this._shouldShowButton('camera') } />
+                    {   _isLocalParticipantModerator
+                        &&
+                        browser.isElectron()
+                        &&
+                        Platform.OS == 'windows'
+                        && <ToolbarButton
+                            accessibilityLabel =
+                                { t('toolbar.accessibilityLabel.whiteBoard') }
+                            iconName = 'icon-photo'
+                            onClick = { this._onToolbarWhiteBoard }
+                            tooltip = { t('toolbar.whiteBoard') } />}
                 </div>
                 <div className = 'button-group-right'>
+                    {/* {   _isLocalParticipantModerator
+                        &&
+                        browser.isElectron()
+                        &&
+                        Platform.OS == 'windows'
+                        && <ToolbarButton
+                            accessibilityLabel =
+                                { t('toolbar.accessibilityLabel.sharedvideo') }
+                            iconName = 'icon-shared-video'
+                            onClick = { this._onToolbarShareVideo }
+                            tooltip = { t('toolbar.sharedvideo') } />
+                    } */}
                     { buttonsRight.indexOf('localrecording') !== -1
                         &&
                         browser.isElectron()
@@ -1326,6 +1438,8 @@ function _mapStateToProps(state) {
     const {
         fullScreen,
         mgrwinOpen,
+        steroMix,
+        shareVideo,
         overflowMenuVisible,
         timeoutID,
         visible
@@ -1358,8 +1472,9 @@ function _mapStateToProps(state) {
 
     return {
         _chatOpen: state['features/chat'].isOpen,
-        _mgrwinOpen: mgrwinOpen,
+        _shareVideo: shareVideo,
         _conference: conference,
+        _mgrwinOpen: mgrwinOpen,
         _desktopSharingEnabled: desktopSharingEnabled,
         _desktopSharingDisabledTooltipKey: desktopSharingDisabledTooltipKey,
         _dialog: Boolean(state['features/base/dialog'].component),
@@ -1376,6 +1491,7 @@ function _mapStateToProps(state) {
         _overflowMenuVisible: overflowMenuVisible,
         _raisedHand: localParticipant.raisedHand,
         _screensharing: localVideo && localVideo.videoType === 'desktop',
+        _steroMix: steroMix,
         _sharingVideo: sharedVideoStatus === 'playing'
             || sharedVideoStatus === 'start'
             || sharedVideoStatus === 'pause',

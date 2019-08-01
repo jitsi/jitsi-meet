@@ -5,7 +5,8 @@ import { MiddlewareRegistry } from '../base/redux';
 import {
     CLEAR_TOOLBOX_TIMEOUT,
     SET_TOOLBOX_TIMEOUT,
-    SET_FULL_SCREEN
+    SET_FULL_SCREEN,
+    OPEN_MGRWIN
 } from './actionTypes';
 
 declare var APP: Object;
@@ -29,6 +30,9 @@ MiddlewareRegistry.register(store => next => action => {
     case SET_FULL_SCREEN:
         return _setFullScreen(next, action);
 
+    case OPEN_MGRWIN:
+        return _openMGRWin(next, action);    
+
     case SET_TOOLBOX_TIMEOUT: {
         const { timeoutID } = store.getState()['features/toolbox'];
         const { handler, timeoutMS } = action;
@@ -43,6 +47,23 @@ MiddlewareRegistry.register(store => next => action => {
     return next(action);
 });
 
+/**
+ * Open manager window.
+ *
+ * @param {Dispatch} next - The redux dispatch function to dispatch the
+ * specified action to the specified store.
+ * @param {Action} action - The redux action OPEN_MGRWIN which is being
+ * dispatched in the specified store.
+ * @private
+ * @returns {Object} The value returned by {@code next(action)}.
+ */
+function _openMGRWin(next, action) {
+    if (typeof APP === 'object') {
+        const { mgrwinOpen } = action;
+        APP.API.notifyOpenMgrWin(mgrwinOpen);
+    }
+    return next(action);
+}
 type DocumentElement = {
     +requestFullscreen?: Function,
     +mozRequestFullScreen?: Function,
