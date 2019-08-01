@@ -9,8 +9,6 @@ import MAIN_RESOURCES from '../../../../lang/main.json';
 
 import languageDetector from './languageDetector';
 
-declare var interfaceConfig: Object;
-
 /**
  * The available/supported languages.
  *
@@ -37,9 +35,6 @@ export const DEFAULT_LANGUAGE = LANGUAGES[0];
  * @type {Object}
  */
 const options = {
-    app:
-        (typeof interfaceConfig !== 'undefined' && interfaceConfig.APP_NAME)
-            || 'Jitsi Meet',
     backend: {
         loadPath: 'lang/{{ns}}-{{lng}}.json'
     },
@@ -64,11 +59,6 @@ const options = {
 i18next
     .use(navigator.product === 'ReactNative' ? {} : I18nextXHRBackend)
     .use(languageDetector)
-    .use({
-        name: 'resolveAppName',
-        process: (res, key) => i18next.t(key, { app: options.app }),
-        type: 'postProcessor'
-    })
     .init(options);
 
 // Add default language which is preloaded from the source code.
