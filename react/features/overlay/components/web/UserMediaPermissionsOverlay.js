@@ -33,7 +33,7 @@ class UserMediaPermissionsOverlay extends AbstractUserMediaPermissionsOverlay {
                     <h3 className = 'inlay__title'>
                         {
                             t('startupoverlay.title',
-                                { postProcess: 'resolveAppName' })
+                                { app: interfaceConfig.APP_NAME })
                         }
                     </h3>
                     <span className = 'inlay__text'>
