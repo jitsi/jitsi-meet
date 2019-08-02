@@ -24,7 +24,7 @@
         "speaker": "Speaker"
     },
     "audioOnly": {
-        "audioOnly": "Audio only"
+        "audioOnly": "Low bandwidth"
     },
     "calendarSync": {
         "addMeetingURL": "Add a meeting link",
@@ -584,8 +584,8 @@
             "videoblur": "Toggle video blur"
         },
         "addPeople": "Add people to your call",
-        "audioOnlyOff": "Disable audio only mode",
-        "audioOnlyOn": "Enable audio only mode",
+        "audioOnlyOff": "Disable low bandwidth mode",
+        "audioOnlyOn": "Enable low bandwidth mode",
         "audioRoute": "Select the sound device",
         "authenticate": "Authenticate",
         "callQuality": "Manage video quality",
@@ -663,13 +663,13 @@
     },
     "videoStatus": {
         "audioOnly": "AUD",
-        "audioOnlyExpanded": "You are in audio only mode. This mode saves bandwidth but you won't see videos of others.",
+        "audioOnlyExpanded": "You are in low bandwidth mode. In this mode you will receive only audio and screen sharing.",
         "callQuality": "Video Quality",
         "hd": "HD",
         "hdTooltip": "Viewing high definition video",
         "highDefinition": "High definition",
         "labelTooiltipNoVideo": "No video",
-        "labelTooltipAudioOnly": "Audio-only mode enabled",
+        "labelTooltipAudioOnly": "Low bandwidth mode enabled",
         "ld": "LD",
         "ldTooltip": "Viewing low definition video",
         "lowDefinition": "Low definition",

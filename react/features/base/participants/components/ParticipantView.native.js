@@ -185,8 +185,6 @@ class ParticipantView extends Component<Props> {
             tintStyle
         } = this.props;
 
-        const waitForVideoStarted = false;
-
         // If the connection has problems, we will "tint" the video / avatar.
         const connectionProblem
             = connectionStatus !== JitsiParticipantConnectionStatus.ACTIVE;
@@ -216,7 +214,7 @@ class ParticipantView extends Component<Props> {
                     && <VideoTrack
                         onPress = { onPress }
                         videoTrack = { videoTrack }
-                        waitForVideoStarted = { waitForVideoStarted }
+                        waitForVideoStarted = { false }
                         zOrder = { this.props.zOrder }
                         zoomEnabled = { this.props.zoomEnabled } /> }
 
