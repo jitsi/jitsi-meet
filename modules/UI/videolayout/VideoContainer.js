@@ -15,7 +15,6 @@ import Filmstrip from './Filmstrip';
 import LargeContainer from './LargeContainer';
 import UIEvents from '../../../service/UI/UIEvents';
 import UIUtil from '../util/UIUtil';
-
 // FIXME should be 'video'
 export const VIDEO_CONTAINER_TYPE = 'camera';
 
@@ -493,12 +492,13 @@ export class VideoContainer extends LargeContainer {
         // detach old stream
         if (this.stream) {
             this.stream.detach(this.$video[0]);
+            this.stream = null;
         }
 
-        this.stream = stream;
         this.videoType = videoType;
+        this.stream = stream;
 
-        if (!stream) {
+        if (!stream || !this.stream) {
             return;
         }
 

@@ -173,6 +173,7 @@ type Props = {
     _visible: boolean,
 
     _mgrwinOpen: boolean,
+    _whiteBoardOpen: boolean,
 
     /**
      * Set with the buttons which this Toolbox should display.
@@ -851,6 +852,9 @@ class Toolbox extends Component<Props, State> {
         if (!this.props._desktopSharingEnabled) {
             return;
         }
+        if (this.props._whiteBoardOpen) {
+            return;
+        }
 
         sendAnalytics(createShortcutEvent(
             'toggle.screen.sharing',
@@ -967,6 +971,7 @@ class Toolbox extends Component<Props, State> {
             _desktopSharingEnabled,
             _desktopSharingDisabledTooltipKey,
             _screensharing,
+            _whiteBoardOpen,
             t
         } = this.props;
 
@@ -993,7 +998,7 @@ class Toolbox extends Component<Props, State> {
         }
 
         const classNames = `icon-share-desktop ${
-            _screensharing ? 'toggled' : ''} ${
+            _screensharing && !_whiteBoardOpen ? 'toggled' : ''} ${
             _desktopSharingEnabled ? '' : 'disabled'}`;
         const tooltip = t(
             _desktopSharingEnabled
@@ -1210,6 +1215,8 @@ class Toolbox extends Component<Props, State> {
             _overflowMenuVisible,
             _raisedHand,
             _isLocalParticipantModerator,
+            _whiteBoardOpen,
+            _desktopSharingEnabled,
             t
         } = this.props;
         const overflowMenuContent = this._renderOverflowMenuContent();
@@ -1289,12 +1296,28 @@ class Toolbox extends Component<Props, State> {
 
         overflowMenuContent.splice(
             1, 0, ...this._renderMovedButtons(movedButtons));
+        
+        const whiteBoardClassName = `icon-window ${
+            _whiteBoardOpen ? 'toggled' : ''} ${
+            _desktopSharingEnabled ? '' : 'disabled'}`;
 
         return (
             <div className = 'toolbox-content'>
                 <div className = 'button-group-left'>
                     { buttonsLeft.indexOf('desktop') !== -1
                         && this._renderDesktopSharingButton() }
+                    
+                    {   _isLocalParticipantModerator
+                        &&
+                        browser.isElectron()
+                        &&
+                        Platform.OS == 'windows'
+                        && <ToolbarButton
+                            accessibilityLabel =
+                                { t('toolbar.accessibilityLabel.whiteBoard') }
+                            iconName = { whiteBoardClassName }
+                            onClick = { this._onToolbarWhiteBoard }
+                            tooltip = { t('toolbar.whiteBoard') } />}
                     {/* { buttonsLeft.indexOf('desktop') !== -1
                         && this._renderSteroMixButton() } */}
                     { buttonsLeft.indexOf('raisehand') !== -1
@@ -1342,17 +1365,6 @@ class Toolbox extends Component<Props, State> {
                         visible = { this._shouldShowButton('hangup') } />
                     <VideoMuteButton
                         visible = { this._shouldShowButton('camera') } />
-                    {   _isLocalParticipantModerator
-                        &&
-                        browser.isElectron()
-                        &&
-                        Platform.OS == 'windows'
-                        && <ToolbarButton
-                            accessibilityLabel =
-                                { t('toolbar.accessibilityLabel.whiteBoard') }
-                            iconName = 'icon-photo'
-                            onClick = { this._onToolbarWhiteBoard }
-                            tooltip = { t('toolbar.whiteBoard') } />}
                 </div>
                 <div className = 'button-group-right'>
                     {/* {   _isLocalParticipantModerator
@@ -1475,6 +1487,7 @@ function _mapStateToProps(state) {
         _shareVideo: shareVideo,
         _conference: conference,
         _mgrwinOpen: mgrwinOpen,
+        _whiteBoardOpen: state['features/openboard'].whiteBoardOpen,
         _desktopSharingEnabled: desktopSharingEnabled,
         _desktopSharingDisabledTooltipKey: desktopSharingDisabledTooltipKey,
         _dialog: Boolean(state['features/base/dialog'].component),

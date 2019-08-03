@@ -7,6 +7,7 @@ import Recorder from './modules/recorder/Recorder';
 
 import mediaDeviceHelper from './modules/devices/mediaDeviceHelper';
 
+import { recordingController } from './react/features/local-recording/controller';
 import * as RemoteControlEvents
     from './service/remotecontrol/RemoteControlEvents';
 import UIEvents from './service/UI/UIEvents';
@@ -68,7 +69,8 @@ import {
     JitsiMediaDevicesEvents,
     JitsiParticipantConnectionStatus,
     JitsiTrackErrors,
-    JitsiTrackEvents
+    JitsiTrackEvents,
+    createLocalTrack
 } from './react/features/base/lib-jitsi-meet';
 import {
     isVideoMutedByUser,
@@ -94,7 +96,8 @@ import {
     participantMutedUs,
     participantPresenceChanged,
     participantRoleChanged,
-    participantUpdated
+    participantUpdated,
+    pinParticipant
 } from './react/features/base/participants';
 import { updateSettings } from './react/features/base/settings';
 import {
@@ -108,7 +111,7 @@ import {
 } from './react/features/base/tracks';
 import { getJitsiMeetGlobalNS } from './react/features/base/util';
 import { addMessage } from './react/features/chat';
-import { showDesktopPicker } from './react/features/desktop-picker';
+import { showDesktopPicker,notShowDesktopPicker } from './react/features/desktop-picker';
 import { appendSuffix } from './react/features/display-name';
 import {
     maybeOpenFeedbackDialog,
@@ -121,7 +124,9 @@ import {
 import { setSharedVideoStatus } from './react/features/shared-video';
 import { isButtonEnabled } from './react/features/toolbox';
 import { endpointMessageReceived } from './react/features/subtitles';
-
+import {
+    getUserSelectedCameraDeviceId
+} from './react/features/base/settings';
 const logger = require('jitsi-meet-logger').getLogger(__filename);
 
 const eventEmitter = new EventEmitter();
@@ -135,7 +140,15 @@ let connection;
  */
 window.JitsiMeetScreenObtainer = {
     openDesktopPicker(options, onSourceChoose) {
-        APP.store.dispatch(showDesktopPicker(options, onSourceChoose));
+        const state = APP.store.getState();
+        const { whiteBoardOpen } = state['features/openboard'];
+        logger.log("openDesktopPicker whiteBoardOpen="+whiteBoardOpen);
+        if( whiteBoardOpen ){
+            notShowDesktopPicker(options, onSourceChoose);
+        }
+        else {
+            APP.store.dispatch(showDesktopPicker(options, onSourceChoose));
+        }
     }
 };
 
@@ -498,6 +511,8 @@ export default {
      * @type {JitsiLocalTrack|null}
      */
     localVideo: null,
+
+    localFakeVideo: null,
 
     /**
      * Creates local media tracks and connects to a room. Will show error
@@ -1288,6 +1303,17 @@ export default {
     },
 
     /**
+     * Utility function for disposing the current video input preview.
+     *
+     * @private
+     * @returns {Promise}
+     */
+    _disposeVideoInputPreview(): Promise<*> {
+        return this.localFakeVideo
+            ? this.localFakeVideo.dispose() : Promise.resolve();
+    },
+    
+    /**
      * Start using provided video stream.
      * Stops previous video stream.
      * @param {JitsiLocalTrack} [stream] new stream to use or null
@@ -1302,7 +1328,32 @@ export default {
                         this.localVideo = newStream;
                         this._setSharingScreen(newStream);
                         if (newStream) {
-                            APP.UI.addLocalVideoStream(newStream);
+                            if ( newStream.videoType === 'desktop'){
+                                const state = APP.store.getState();
+                                this._disposeVideoInputPreview()
+                                .then(() => createLocalTrack('video', getUserSelectedCameraDeviceId(state)))
+                                .then(jitsiLocalTrack => {
+                                    logger.log("jitsiLocalTrack "+jitsiLocalTrack);
+                                    if (!jitsiLocalTrack) {                                        
+                                        return Promise.reject();
+                                    }
+    
+                                    this.localFakeVideo = jitsiLocalTrack;    
+                                    APP.UI.addLocalVideoStream(jitsiLocalTrack);
+                                    const localParticipant = getLocalParticipant(APP.store.getState());
+                                    APP.store.dispatch(pinParticipant(localParticipant.id));
+                                })
+                                .catch(() => {
+                                });
+                            }
+                            else{
+                                this._disposeVideoInputPreview()
+                                .then(() => {
+                                    this.localFakeVideo = null;
+                                });
+                                APP.UI.addLocalVideoStream(newStream);
+                            }
+                            // APP.UI.addLocalVideoStream(newStream);
                         }
                         this.setVideoMuteStatus(this.isLocalVideoMuted());
                     })
@@ -2546,6 +2597,9 @@ export default {
     hangup(requestFeedback = false) {
         eventEmitter.emit(JitsiMeetConferenceEvents.BEFORE_HANGUP);
 
+        
+        APP.API.notifyCommonExMsg("whiteboard=close");
+        
         this._stopProxyConnection();
 
         APP.store.dispatch(destroyLocalTracks());

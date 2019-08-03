@@ -39,9 +39,9 @@ MiddlewareRegistry.register(store => next => action => {
         const state = store.getState();
 
         if (action.enabled) {
-            if (getPinnedParticipant(state)) {
-                store.dispatch(pinParticipant(null));
-            }
+            // if (getPinnedParticipant(state)) {
+            //     store.dispatch(pinParticipant(null));
+            // }
 
             if (state['features/etherpad'].editing) {
                 store.dispatch(toggleDocument());

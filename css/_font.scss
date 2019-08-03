@@ -1,10 +1,10 @@
 @font-face {
     font-family: 'jitsi';
-    src:  url('../fonts/jitsi.eot?3vw865');
-    src:  url('../fonts/jitsi.eot?3vw865#iefix') format('embedded-opentype'),
-        url('../fonts/jitsi.ttf?3vw865') format('truetype'),
-        url('../fonts/jitsi.woff?3vw865') format('woff'),
-        url('../fonts/jitsi.svg?3vw865#jitsi') format('svg');
+    src:  url('../fonts/jitsi.eot?r49naa');
+    src:  url('../fonts/jitsi.eot?r49naa#iefix') format('embedded-opentype'),
+        url('../fonts/jitsi.ttf?r49naa') format('truetype'),
+        url('../fonts/jitsi.woff?r49naa') format('woff'),
+        url('../fonts/jitsi.svg?r49naa#jitsi') format('svg');
     font-weight: normal;
     font-style: normal;
 }
@@ -24,7 +24,13 @@
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
 }
+.icon-photo:before {
+  content: "\e90f";
+}
 
+.icon-window:before {
+  content: "\e90a";
+}
 .icon-signal_cellular_0:before {
   content: "\e901";
 }

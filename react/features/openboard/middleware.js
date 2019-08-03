@@ -17,9 +17,11 @@ const logger = require('jitsi-meet-logger').getLogger(__filename);
 MiddlewareRegistry.register(store => next => action => {
     switch (action.type) {
     case TOGGLE_SHARE_WHITEBOARD:
-        const { getState } = store;
-        const state = getState();
-        _toggleShareWhiteBoard(state,next, action);
+        setTimeout(() => {    
+            const { getState } = store;
+            const { whiteBoardOpen } = getState()['features/openboard'];        
+            _toggleShareWhiteBoard(whiteBoardOpen);
+        }, 0);
         break;
     }
 
@@ -32,13 +34,12 @@ MiddlewareRegistry.register(store => next => action => {
  * @private
  * @returns {void}
  */
-function _toggleShareWhiteBoard(state,next, action) {
+function _toggleShareWhiteBoard(whiteBoardOpen) {
     
     if (typeof APP === 'object') {
-        const { whiteBoardOpen } = state['features/openboard'];
         logger.log('_toggleShareWhiteBoard.'+whiteBoardOpen);
 
-        if(!whiteBoardOpen){
+        if(whiteBoardOpen){
             _beginShareWhiteBoard();
         }
         else{
@@ -92,5 +93,5 @@ function _endShareWhiteBoard() {
                 });
     } else {
     }
-        APP.API.notifyCommonExMsg("whiteboard=close");
+    APP.API.notifyCommonExMsg("whiteboard=close");
 }

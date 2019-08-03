@@ -82,6 +82,6 @@ export function shouldDisplayTileView(state: Object = {}) {
             // should never be enabled for filmstrip only mode.
             && (typeof interfaceConfig === 'undefined'
                 || !interfaceConfig.filmStripOnly)
-            && !getPinnedParticipant(state)
+            // && !getPinnedParticipant(state)
     );
 }
