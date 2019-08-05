@@ -36,6 +36,7 @@ export default class MessageContainer extends AbstractMessageContainer {
                 data = { this._getMessagesGroupedBySender() }
                 inverted = { true }
                 keyExtractor = { this._keyExtractor }
+                keyboardShouldPersistTaps = 'always'
                 renderItem = { this._renderMessageGroup }
                 style = { styles.messageContainer } />
         );

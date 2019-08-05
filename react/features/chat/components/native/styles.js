@@ -34,6 +34,10 @@ export default {
         flexDirection: 'column'
     },
 
+    chatLink: {
+        color: ColorPalette.blue
+    },
+
     /**
      * Wrapper for the details together, such as name, message and time.
      */

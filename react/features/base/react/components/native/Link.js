@@ -18,12 +18,12 @@ type Props = {
     /**
      * Notifies that this Link failed to open the URL associated with it.
      */
-    onLinkingOpenURLRejected: Function,
+    onLinkingOpenURLRejected?: Function,
 
     /**
      * The CSS style to be applied to this Link for the purposes of display.
      */
-    style: Object,
+    style?: Object,
 
     /**
      * The URL to be opened when this Link is clicked/pressed.
