@@ -2,10 +2,10 @@
 
 import React from 'react';
 import { toArray } from 'react-emoji-render';
-import Linkify from 'react-linkify';
 
 
 import { translate } from '../../../base/i18n';
+import { Linkify } from '../../../base/react';
 
 import AbstractChatMessage, {
     type Props
@@ -43,13 +43,7 @@ class ChatMessage extends AbstractChatMessage<Props> {
 
         content.forEach(i => {
             if (typeof i === 'string') {
-                processedMessage.push(
-                    <Linkify
-                        key = { i }
-                        properties = {{
-                            rel: 'noopener noreferrer',
-                            target: '_blank'
-                        }}>{ i }</Linkify>);
+                processedMessage.push(<Linkify key = { i }>{ i }</Linkify>);
             } else {
                 processedMessage.push(i);
             }
