@@ -126,7 +126,7 @@ var config = {
     disableSuspendVideo: true,
 
     // Every participant after the Nth will start video muted.
-    // startVideoMuted: 10,
+    startVideoMuted: 10,
 
     // Start calls with video muted. Unlike the option above, this one is only
     // applied locally. FIXME: having these 2 options is confusing.
@@ -161,10 +161,10 @@ var config = {
     desktopSharingFirefoxDisabled: false,
 
     // Optional desktop sharing frame rate options. Default value: min:5, max:5.
-    // desktopSharingFrameRate: {
-    //     min: 5,
-    //     max: 5
-    // },
+    desktopSharingFrameRate: {
+        min: 5,
+        max: 30
+    },
 
     // Try to start calls with screen-sharing instead of camera video.
     // startScreenSharing: false,
@@ -190,7 +190,7 @@ var config = {
     // Misc
 
     // Default value for the channel "last N" attribute. -1 for unlimited.
-    channelLastN: -1,
+    channelLastN: 10,
 
     // Disables or enables RTX (RFC 4588) (defaults to false).
     // disableRtx: false,

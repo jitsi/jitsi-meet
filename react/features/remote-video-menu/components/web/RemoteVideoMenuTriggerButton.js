@@ -124,7 +124,7 @@ class RemoteVideoMenuTriggerButton extends Component<Props> {
                     className = 'popover-trigger remote-video-menu-trigger'>
                     <i
                         className = 'icon-thumb-menu'
-                        title = 'Remote user controls' />
+                        title = '控制对方' />
                 </span>
             </Popover>
         );
