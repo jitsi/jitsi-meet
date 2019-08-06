@@ -7,7 +7,7 @@ import {
     createToolbarEvent,
     sendAnalytics
 } from '../../analytics';
-import { setAudioOnly } from '../../base/conference';
+import { setAudioOnly } from '../../base/audio-only';
 import { translate } from '../../base/i18n';
 import {
     MEDIA_TYPE,
@@ -162,7 +162,7 @@ class VideoMuteButton extends AbstractVideoMuteButton<Props, *> {
  * }}
  */
 function _mapStateToProps(state): Object {
-    const { audioOnly } = state['features/base/conference'];
+    const { enabled: audioOnly } = state['features/base/audio-only'];
     const tracks = state['features/base/tracks'];
 
     return {

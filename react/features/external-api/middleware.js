@@ -18,7 +18,7 @@ import {
 import { MiddlewareRegistry } from '../base/redux';
 import { getBaseUrl } from '../base/util';
 import { appendSuffix } from '../display-name';
-import { SUBMIT_FEEDBACK } from '../feedback';
+import { SUBMIT_FEEDBACK_ERROR, SUBMIT_FEEDBACK_SUCCESS } from '../feedback';
 import { SET_FILMSTRIP_VISIBLE } from '../filmstrip';
 
 declare var APP: Object;
@@ -156,7 +156,11 @@ MiddlewareRegistry.register(store => next => action => {
         APP.API.notifyFilmstripDisplayChanged(action.visible);
         break;
 
-    case SUBMIT_FEEDBACK:
+    case SUBMIT_FEEDBACK_ERROR:
+        APP.API.notifyFeedbackSubmitted(action.error || 'Unknown error');
+        break;
+
+    case SUBMIT_FEEDBACK_SUCCESS:
         APP.API.notifyFeedbackSubmitted();
         break;
     }

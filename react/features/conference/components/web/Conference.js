@@ -124,6 +124,8 @@ class Conference extends AbstractConference<Props, *> {
      * @inheritdoc
      */
     componentDidMount() {
+        document.title = interfaceConfig.APP_NAME;
+
         const { configLocation } = config;
 
         if (configLocation) {

@@ -60,6 +60,7 @@
 -keep class sun.misc.Unsafe { *; }
 -dontwarn java.nio.file.*
 -dontwarn org.codehaus.mojo.animal_sniffer.IgnoreJRERequirement
+-keep class okio.** { *; }
 -dontwarn okio.**
 
 # WebRTC

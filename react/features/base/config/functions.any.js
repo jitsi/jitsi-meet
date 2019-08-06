@@ -91,6 +91,7 @@ const WHITELISTED_KEYS = [
     'disableAGC',
     'disableAP',
     'disableAudioLevels',
+    'disableDeepLinking',
     'disableH264',
     'disableHPF',
     'disableNS',

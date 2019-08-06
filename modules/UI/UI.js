@@ -156,8 +156,6 @@ UI.getSharedVideoManager = function() {
  * established, false - otherwise (for example in the case of welcome page)
  */
 UI.start = function() {
-    document.title = interfaceConfig.APP_NAME;
-
     // Set the defaults for prompt dialogs.
     $.prompt.setDefaults({ persistent: false });
 
@@ -189,8 +187,6 @@ UI.start = function() {
         APP.store.dispatch(setNotificationsEnabled(false));
         UI.messageHandler.enablePopups(false);
     }
-
-    document.title = interfaceConfig.APP_NAME;
 };
 
 /**

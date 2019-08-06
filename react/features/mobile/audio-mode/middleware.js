@@ -2,12 +2,12 @@
 
 import { NativeModules } from 'react-native';
 
+import { SET_AUDIO_ONLY } from '../../base/audio-only';
 import { APP_WILL_MOUNT } from '../../base/app';
 import {
     CONFERENCE_FAILED,
     CONFERENCE_LEFT,
     CONFERENCE_JOINED,
-    SET_AUDIO_ONLY,
     getCurrentConference
 } from '../../base/conference';
 import { MiddlewareRegistry } from '../../base/redux';
@@ -53,8 +53,9 @@ MiddlewareRegistry.register(({ getState }) => next => action => {
          */
         case CONFERENCE_JOINED:
         case SET_AUDIO_ONLY: {
-            const { audioOnly, conference }
-                = getState()['features/base/conference'];
+            const state = getState();
+            const { conference } = state['features/base/conference'];
+            const { enabled: audioOnly } = state['features/base/audio-only'];
 
             conference
                 && (mode = audioOnly

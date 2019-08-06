@@ -2,8 +2,7 @@
 
 import {
     MEDIA_PERMISSION_PROMPT_VISIBILITY_CHANGED,
-    SET_FATAL_ERROR,
-    SUSPEND_DETECTED
+    SET_FATAL_ERROR
 } from './actionTypes';
 
 /**
@@ -24,20 +23,6 @@ export function mediaPermissionPromptVisibilityChanged(isVisible: boolean, brows
         type: MEDIA_PERMISSION_PROMPT_VISIBILITY_CHANGED,
         browser,
         isVisible
-    };
-}
-
-/**
- * Signals that suspend was detected.
- *
- * @public
- * @returns {{
- *     type: SUSPEND_DETECTED
- * }}
- */
-export function suspendDetected() {
-    return {
-        type: SUSPEND_DETECTED
     };
 }
 

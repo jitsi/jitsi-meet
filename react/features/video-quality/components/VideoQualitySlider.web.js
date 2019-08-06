@@ -4,15 +4,9 @@ import InlineMessage from '@atlaskit/inline-message';
 import React, { Component } from 'react';
 import type { Dispatch } from 'redux';
 
-import {
-    createToolbarEvent,
-    sendAnalytics
-} from '../../analytics';
-import {
-    VIDEO_QUALITY_LEVELS,
-    setAudioOnly,
-    setPreferredReceiverVideoQuality
-} from '../../base/conference';
+import { createToolbarEvent, sendAnalytics } from '../../analytics';
+import { setAudioOnly } from '../../base/audio-only';
+import { VIDEO_QUALITY_LEVELS, setPreferredReceiverVideoQuality } from '../../base/conference';
 import { translate } from '../../base/i18n';
 import JitsiMeetJS from '../../base/lib-jitsi-meet';
 import { connect } from '../../base/redux';
@@ -406,11 +400,8 @@ class VideoQualitySlider extends Component<Props> {
  * }}
  */
 function _mapStateToProps(state) {
-    const {
-        audioOnly,
-        p2p,
-        preferredReceiverVideoQuality
-    } = state['features/base/conference'];
+    const { enabled: audioOnly } = state['features/base/audio-only'];
+    const { p2p, preferredReceiverVideoQuality } = state['features/base/conference'];
 
     return {
         _audioOnly: audioOnly,

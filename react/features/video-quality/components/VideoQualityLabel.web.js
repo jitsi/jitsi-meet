@@ -156,7 +156,7 @@ function _mapResolutionToTranslationsKeys(resolution) {
  * }}
  */
 function _mapStateToProps(state) {
-    const { audioOnly } = state['features/base/conference'];
+    const { enabled: audioOnly } = state['features/base/audio-only'];
     const { resolution, participantId } = state['features/large-video'];
     const videoTrackOnLargeVideo = getTrackByMediaTypeAndParticipant(
         state['features/base/tracks'],

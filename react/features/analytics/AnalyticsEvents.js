@@ -428,6 +428,25 @@ export function createRecordingEvent(action, type, value) {
 }
 
 /**
+ * Creates an event which indicates that the same conference has been rejoined.
+ *
+ * @param {string} url - The full conference URL.
+ * @param {number} lastConferenceDuration - How many seconds user stayed in the previous conference.
+ * @param {number} timeSinceLeft - How many seconds since the last conference was left.
+ * @returns {Object} The event in a format suitable for sending via sendAnalytics.
+ */
+export function createRejoinedEvent({ url, lastConferenceDuration, timeSinceLeft }) {
+    return {
+        action: 'rejoined',
+        attributes: {
+            lastConferenceDuration,
+            timeSinceLeft,
+            url
+        }
+    };
+}
+
+/**
  * Creates an event which specifies that the "confirm" button on the remote
  * mute dialog has been clicked.
  *

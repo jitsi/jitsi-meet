@@ -33,7 +33,7 @@ export default class AbstractVideoQualityLabel<P: Props> extends Component<P> {
  * }}
  */
 export function _abstractMapStateToProps(state: Object) {
-    const { audioOnly } = state['features/base/conference'];
+    const { enabled: audioOnly } = state['features/base/audio-only'];
 
     return {
         _audioOnly: audioOnly

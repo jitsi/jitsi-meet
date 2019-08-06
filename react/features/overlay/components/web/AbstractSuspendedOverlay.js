@@ -28,6 +28,6 @@ export default class AbstractSuspendedOverlay extends Component<Props> {
      * {@code false}, otherwise.
      */
     static needsRender(state: Object) {
-        return state['features/overlay'].suspendDetected;
+        return state['features/power-monitor'].suspendDetected;
     }
 }

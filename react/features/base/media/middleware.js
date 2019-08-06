@@ -4,16 +4,20 @@ import {
     createStartAudioOnlyEvent,
     createStartMutedConfigurationEvent,
     createSyncTrackStateEvent,
+    createTrackMutedEvent,
     sendAnalytics
 } from '../../analytics';
-import { isRoomValid, SET_ROOM, setAudioOnly } from '../conference';
+import { APP_STATE_CHANGED } from '../../mobile/background';
+
+import { SET_AUDIO_ONLY, setAudioOnly } from '../audio-only';
+import { isRoomValid, SET_ROOM } from '../conference';
 import JitsiMeetJS from '../lib-jitsi-meet';
 import { MiddlewareRegistry } from '../redux';
 import { getPropertyValue } from '../settings';
 import { setTrackMuted, TRACK_ADDED } from '../tracks';
 
 import { setAudioMuted, setCameraFacingMode, setVideoMuted } from './actions';
-import { CAMERA_FACING_MODE } from './constants';
+import { CAMERA_FACING_MODE, VIDEO_MUTISM_AUTHORITY } from './constants';
 import {
     _AUDIO_INITIAL_MEDIA_STATE,
     _VIDEO_INITIAL_MEDIA_STATE
@@ -29,6 +33,12 @@ const logger = require('jitsi-meet-logger').getLogger(__filename);
  */
 MiddlewareRegistry.register(store => next => action => {
     switch (action.type) {
+    case APP_STATE_CHANGED:
+        return _appStateChanged(store, next, action);
+
+    case SET_AUDIO_ONLY:
+        return _setAudioOnly(store, next, action);
+
     case SET_ROOM:
         return _setRoom(store, next, action);
 
@@ -44,6 +54,51 @@ MiddlewareRegistry.register(store => next => action => {
 
     return next(action);
 });
+
+/**
+ * Adjusts the video muted state based on the app state.
+ *
+ * @param {Store} store - The redux store in which the specified {@code action}
+ * is being dispatched.
+ * @param {Dispatch} next - The redux {@code dispatch} function to dispatch the
+ * specified {@code action} to the specified {@code store}.
+ * @param {Action} action - The redux action {@code APP_STATE_CHANGED} which is
+ * being dispatched in the specified {@code store}.
+ * @private
+ * @returns {Object} The value returned by {@code next(action)}.
+ */
+function _appStateChanged({ dispatch }, next, action) {
+    const { appState } = action;
+    const mute = appState !== 'active'; // Note that 'background' and 'inactive' are treated equal.
+
+    sendAnalytics(createTrackMutedEvent('video', 'background mode', mute));
+
+    dispatch(setVideoMuted(mute, VIDEO_MUTISM_AUTHORITY.BACKGROUND));
+
+    return next(action);
+}
+
+/**
+ * Adjusts the video muted state based on the audio-only state.
+ *
+ * @param {Store} store - The redux store in which the specified {@code action}
+ * is being dispatched.
+ * @param {Dispatch} next - The redux {@code dispatch} function to dispatch the
+ * specified {@code action} to the specified {@code store}.
+ * @param {Action} action - The redux action {@code SET_AUDIO_ONLY} which is
+ * being dispatched in the specified {@code store}.
+ * @private
+ * @returns {Object} The value returned by {@code next(action)}.
+ */
+function _setAudioOnly({ dispatch }, next, action) {
+    const { audioOnly } = action;
+
+    sendAnalytics(createTrackMutedEvent('video', 'audio-only mode', audioOnly));
+
+    dispatch(setVideoMuted(audioOnly, VIDEO_MUTISM_AUTHORITY.AUDIO_ONLY));
+
+    return next(action);
+}
 
 /**
  * Notifies the feature base/media that the action {@link SET_ROOM} is being
