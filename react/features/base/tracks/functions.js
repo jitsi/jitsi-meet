@@ -1,7 +1,7 @@
 /* global APP */
 
 import { getBlurEffect } from '../../blur';
-import JitsiMeetJS, { JitsiTrackErrors } from '../lib-jitsi-meet';
+import JitsiMeetJS, { JitsiTrackErrors, browser } from '../lib-jitsi-meet';
 import { MEDIA_TYPE } from '../media';
 import {
     getUserSelectedCameraDeviceId,
@@ -236,12 +236,7 @@ export function isRemoteTrackMuted(tracks, mediaType, participantId) {
  * @returns {boolean}
  */
 export function isUserInteractionRequiredForUnmute(state) {
-    const { browser } = JitsiMeetJS.util;
-
-    return !browser.isReactNative()
-        && !browser.isChrome()
-        && !browser.isChromiumBased()
-        && !browser.isElectron()
+    return browser.isUserInteractionRequiredForUnmute()
         && window
         && window.self !== window.top
         && !state['features/base/user-interaction'].interacted;

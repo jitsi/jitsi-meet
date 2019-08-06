@@ -3,6 +3,8 @@
 
 import { Image } from 'react-native';
 
+import { isIconUrl } from './functions';
+
 /**
  * Tries to preload an image.
  *
@@ -10,6 +12,10 @@ import { Image } from 'react-native';
  * @returns {Promise}
  */
 export function preloadImage(src: string): Promise<string> {
+    if (isIconUrl(src)) {
+        return Promise.resolve(src);
+    }
+
     return new Promise((resolve, reject) => {
         Image.prefetch(src).then(() => resolve(src), reject);
     });

@@ -10,12 +10,20 @@
 export const CANCEL_FEEDBACK = 'CANCEL_FEEDBACK';
 
 /**
- * The type of the action which signals feedback was submitted for recording.
+ * The type of the action which signals feedback failed to be recorded.
  *
  * {
- *     type: SUBMIT_FEEDBACK,
- *     message: string,
- *     score: number
+ *     type: SUBMIT_FEEDBACK_ERROR
+ *     error: string
  * }
  */
-export const SUBMIT_FEEDBACK = 'SUBMIT_FEEDBACK';
+export const SUBMIT_FEEDBACK_ERROR = 'SUBMIT_FEEDBACK_ERROR';
+
+/**
+ * The type of the action which signals feedback has been recorded.
+ *
+ * {
+ *     type: SUBMIT_FEEDBACK_SUCCESS,
+ * }
+ */
+export const SUBMIT_FEEDBACK_SUCCESS = 'SUBMIT_FEEDBACK_SUCCESS';

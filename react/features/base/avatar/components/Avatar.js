@@ -175,15 +175,14 @@ class Avatar<P: Props> extends PureComponent<P, State> {
  * @returns {Props}
  */
 export function _mapStateToProps(state: Object, ownProps: Props) {
-    const { colorBase, displayName, participantId, url } = ownProps;
+    const { colorBase, displayName, participantId } = ownProps;
     const _participant = participantId && getParticipantById(state, participantId);
     const _initialsBase = (_participant && _participant.name) || displayName;
 
     return {
         _initialsBase,
         _loadableAvatarUrl: _participant && _participant.loadableAvatarUrl,
-        colorBase: !colorBase && _participant ? _participant.id : colorBase,
-        url: !url && _participant && _participant.isJigasi ? 'icon://phone' : url
+        colorBase: !colorBase && _participant ? _participant.id : colorBase
     };
 }
 

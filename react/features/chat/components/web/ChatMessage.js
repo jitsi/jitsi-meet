@@ -97,4 +97,4 @@ class ChatMessage extends AbstractChatMessage<Props> {
     }
 }
 
-export default translate(ChatMessage, { wait: false });
+export default translate(ChatMessage);

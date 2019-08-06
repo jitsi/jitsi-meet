@@ -7,14 +7,13 @@ import { appNavigate } from '../../app';
 
 import { APP_WILL_MOUNT } from '../../base/app';
 import { CONFERENCE_JOINED } from '../../base/conference';
-import { getInviteURL, isInviteURLReady } from '../../base/connection';
+import { getCurrentConferenceUrl } from '../../base/connection';
 import { setAudioMuted } from '../../base/media';
 import {
     MiddlewareRegistry,
     StateListenerRegistry,
     toState
 } from '../../base/redux';
-import { toURLString } from '../../base/util';
 
 import { setConferenceTimestamp, setSessionId, setWatchReachable } from './actions';
 import { CMD_HANG_UP, CMD_JOIN_CONFERENCE, CMD_SET_MUTED, MAX_RECENT_URLS } from './constants';
@@ -39,7 +38,7 @@ watchOSEnabled && StateListenerRegistry.register(
 
 // Handles the conference URL state sent to the watch
 watchOSEnabled && StateListenerRegistry.register(
-    /* selector */ state => _getCurrentConferenceUrl(state),
+    /* selector */ state => getCurrentConferenceUrl(state),
     /* listener */ (currentUrl, { dispatch, getState }) => {
         dispatch(setSessionId());
         _updateApplicationContext(getState);
@@ -101,13 +100,13 @@ function _appWillMount({ dispatch, getState }) {
 
         switch (command) {
         case CMD_HANG_UP:
-            if (typeof _getCurrentConferenceUrl(getState()) !== undefined) {
+            if (typeof getCurrentConferenceUrl(getState()) !== undefined) {
                 dispatch(appNavigate(undefined));
             }
             break;
         case CMD_JOIN_CONFERENCE: {
             const newConferenceURL = message.data;
-            const oldConferenceURL = _getCurrentConferenceUrl(getState());
+            const oldConferenceURL = getCurrentConferenceUrl(getState());
 
             if (oldConferenceURL !== newConferenceURL) {
                 dispatch(appNavigate(newConferenceURL));
@@ -122,30 +121,6 @@ function _appWillMount({ dispatch, getState }) {
             break;
         }
     });
-}
-
-/**
- * Figures out what's the current conference URL which is supposed to indicate what conference is currently active.
- * When not currently in any conference and not trying to join any then the 'NULL' string value is returned.
- *
- * @param {Object|Function} stateful - Either the whole Redux state object or the Redux store's {@code getState} method.
- * @returns {string}
- * @private
- */
-function _getCurrentConferenceUrl(stateful) {
-    const state = toState(stateful);
-    let currentUrl;
-
-    if (isInviteURLReady(state)) {
-        currentUrl = toURLString(getInviteURL(state));
-    }
-
-    // Check if the URL doesn't end with a slash
-    if (currentUrl && currentUrl.substr(-1) === '/') {
-        currentUrl = undefined;
-    }
-
-    return currentUrl ? currentUrl : undefined;
 }
 
 /**
@@ -214,7 +189,7 @@ function _updateApplicationContext(stateful) {
     try {
         watch.updateApplicationContext({
             conferenceTimestamp,
-            conferenceURL: _getCurrentConferenceUrl(state),
+            conferenceURL: getCurrentConferenceUrl(state),
             micMuted: _isAudioMuted(state),
             recentURLs: _getRecentUrls(state),
             sessionID

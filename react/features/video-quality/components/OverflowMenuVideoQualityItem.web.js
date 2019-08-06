@@ -96,7 +96,7 @@ class OverflowMenuVideoQualityItem extends Component<Props> {
  */
 function _mapStateToProps(state) {
     return {
-        _audioOnly: state['features/base/conference'].audioOnly,
+        _audioOnly: state['features/base/audio-only'].enabled,
         _receiverVideoQuality:
             state['features/base/conference'].preferredReceiverVideoQuality
     };

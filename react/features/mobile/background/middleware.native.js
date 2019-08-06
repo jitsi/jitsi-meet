@@ -8,13 +8,9 @@ import { MiddlewareRegistry } from '../../base/redux';
 
 import {
     _setAppStateListener as _setAppStateListenerA,
-    _setBackgroundVideoMuted,
     appStateChanged
 } from './actions';
-import {
-    _SET_APP_STATE_LISTENER,
-    APP_STATE_CHANGED
-} from './actionTypes';
+import { _SET_APP_STATE_LISTENER } from './actionTypes';
 
 /**
  * Middleware that captures App lifetime actions and subscribes to application
@@ -31,15 +27,10 @@ MiddlewareRegistry.register(store => next => action => {
     case _SET_APP_STATE_LISTENER:
         return _setAppStateListenerF(store, next, action);
 
-    case APP_STATE_CHANGED:
-        _appStateChanged(store.dispatch, action.appState);
-        break;
-
     case APP_WILL_MOUNT: {
         const { dispatch } = store;
 
-        dispatch(
-            _setAppStateListenerA(_onAppStateChange.bind(undefined, dispatch)));
+        dispatch(_setAppStateListenerA(_onAppStateChange.bind(undefined, dispatch)));
         break;
     }
 
@@ -50,37 +41,6 @@ MiddlewareRegistry.register(store => next => action => {
 
     return next(action);
 });
-
-/**
- * Handles app state changes. Dispatches the necessary redux actions for the
- * local video to be muted when the app goes to the background, and to be
- * unmuted when the app comes back.
- *
- * @param {Dispatch} dispatch - The redux {@code dispatch} function.
- * @param {string} appState - The current app state.
- * @private
- * @returns {void}
- */
-function _appStateChanged(dispatch: Function, appState: string) {
-    let muted;
-
-    switch (appState) {
-    case 'active':
-        muted = false;
-        break;
-
-    case 'background':
-        muted = true;
-        break;
-
-    case 'inactive':
-    default:
-        // XXX: We purposely don't handle the 'inactive' app state.
-        return;
-    }
-
-    dispatch(_setBackgroundVideoMuted(muted));
-}
 
 /**
  * Called by React Native's AppState API to notify that the application state

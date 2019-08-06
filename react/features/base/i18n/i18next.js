@@ -9,8 +9,6 @@ import MAIN_RESOURCES from '../../../../lang/main.json';
 
 import languageDetector from './languageDetector';
 
-declare var interfaceConfig: Object;
-
 /**
  * The available/supported languages.
  *
@@ -37,35 +35,30 @@ export const DEFAULT_LANGUAGE = LANGUAGES[0];
  * @type {Object}
  */
 const options = {
-    app:
-        (typeof interfaceConfig !== 'undefined' && interfaceConfig.APP_NAME)
-            || 'Jitsi Meet',
-    compatibilityAPI: 'v1',
-    compatibilityJSON: 'v1',
+    backend: {
+        loadPath: 'lang/{{ns}}-{{lng}}.json'
+    },
+    defaultNS: 'main',
     fallbackLng: DEFAULT_LANGUAGE,
-    fallbackOnEmpty: true,
-    fallbackOnNull: true,
+    interpolation: {
+        escapeValue: false // not needed for react as it escapes by default
+    },
+    load: 'languageOnly',
+    ns: [ 'main', 'languages', 'countries' ],
+    react: {
+        useSuspense: false
+    },
+    returnEmptyString: false,
+    returnNull: false,
 
     // XXX i18next modifies the array lngWhitelist so make sure to clone
     // LANGUAGES.
-    lngWhitelist: LANGUAGES.slice(),
-    load: 'unspecific',
-    ns: {
-        defaultNs: 'main',
-        namespaces: [ 'main', 'languages', 'countries' ]
-    },
-    resGetPath: 'lang/__ns__-__lng__.json',
-    useDataAttrOptions: true
+    whitelist: LANGUAGES.slice()
 };
 
 i18next
     .use(navigator.product === 'ReactNative' ? {} : I18nextXHRBackend)
     .use(languageDetector)
-    .use({
-        name: 'resolveAppName',
-        process: (res, key) => i18next.t(key, { app: options.app }),
-        type: 'postProcessor'
-    })
     .init(options);
 
 // Add default language which is preloaded from the source code.

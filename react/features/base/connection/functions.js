@@ -1,6 +1,31 @@
 /* @flow */
 
 import { toState } from '../redux';
+import { toURLString } from '../util';
+
+/**
+ * Figures out what's the current conference URL which is supposed to indicate what conference is currently active.
+ * When not currently in any conference and not trying to join any then 'undefined' is returned.
+ *
+ * @param {Object|Function} stateful - Either the whole Redux state object or the Redux store's {@code getState} method.
+ * @returns {string|undefined}
+ * @private
+ */
+export function getCurrentConferenceUrl(stateful: Function | Object) {
+    const state = toState(stateful);
+    let currentUrl;
+
+    if (isInviteURLReady(state)) {
+        currentUrl = toURLString(getInviteURL(state));
+    }
+
+    // Check if the URL doesn't end with a slash
+    if (currentUrl && currentUrl.substr(-1) === '/') {
+        currentUrl = undefined;
+    }
+
+    return currentUrl ? currentUrl : undefined;
+}
 
 /**
  * Retrieves a simplified version of the conference/location URL stripped of URL params (i.e. Query/search and hash)

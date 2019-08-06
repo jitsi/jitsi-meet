@@ -8,7 +8,9 @@ import '../../base/user-interaction';
 import '../../base/responsive-ui';
 import '../../chat';
 import '../../external-api';
+import '../../power-monitor';
 import '../../room-lock';
+import '../../talk-while-muted';
 import '../../video-layout';
 
 import { AbstractApp } from './AbstractApp';

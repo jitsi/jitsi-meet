@@ -78,10 +78,7 @@ import {
     setVideoAvailable,
     setVideoMuted
 } from './react/features/base/media';
-import {
-    hideNotification,
-    showNotification
-} from './react/features/notifications';
+import { showNotification } from './react/features/notifications';
 import {
     dominantSpeakerChanged,
     getLocalParticipant,
@@ -114,10 +111,8 @@ import {
     maybeOpenFeedbackDialog,
     submitFeedback
 } from './react/features/feedback';
-import {
-    mediaPermissionPromptVisibilityChanged,
-    suspendDetected
-} from './react/features/overlay';
+import { mediaPermissionPromptVisibilityChanged } from './react/features/overlay';
+import { suspendDetected } from './react/features/power-monitor';
 import { setSharedVideoStatus } from './react/features/shared-video';
 import { isButtonEnabled } from './react/features/toolbox';
 import { endpointMessageReceived } from './react/features/subtitles';
@@ -1241,6 +1236,7 @@ export default {
         const options = config;
 
         const nick = APP.store.getState()['features/base/settings'].displayName;
+        const { locationURL } = APP.store.getState()['features/base/connection'];
 
         if (nick) {
             options.displayName = nick;
@@ -1248,6 +1244,7 @@ export default {
 
         options.applicationName = interfaceConfig.APP_NAME;
         options.getWiFiStatsMethod = this._getWiFiStatsMethod;
+        options.confID = `${locationURL.host}${locationURL.pathname}`;
 
         return options;
     },
@@ -1348,8 +1345,7 @@ export default {
      * @returns {boolean}
      */
     isAudioOnly() {
-        return Boolean(
-            APP.store.getState()['features/base/conference'].audioOnly);
+        return Boolean(APP.store.getState()['features/base/audio-only'].enabled);
     },
 
     videoSwitchInProgress: false,
@@ -1798,30 +1794,12 @@ export default {
             APP.UI.setAudioLevel(id, newLvl);
         });
 
-        // we store the last start muted notification id that we showed,
-        // so we can hide it when unmuted mic is detected
-        let lastNotificationId;
-
         room.on(JitsiConferenceEvents.TRACK_MUTE_CHANGED, (track, participantThatMutedUs) => {
             if (participantThatMutedUs) {
                 APP.store.dispatch(participantMutedUs(participantThatMutedUs));
             }
-
-            if (lastNotificationId && track.isAudioTrack() && track.isLocal() && !track.isMuted()) {
-                APP.store.dispatch(hideNotification(lastNotificationId));
-                lastNotificationId = undefined;
-            }
         });
 
-        room.on(JitsiConferenceEvents.TALK_WHILE_MUTED, () => {
-            const action = APP.store.dispatch(showNotification({
-                titleKey: 'toolbar.talkWhileMutedPopup',
-                customActionNameKey: 'notify.unmute',
-                customActionHandler: muteLocalAudio.bind(this, false)
-            }));
-
-            lastNotificationId = action.uid;
-        });
         room.on(JitsiConferenceEvents.SUBJECT_CHANGED,
             subject => APP.store.dispatch(conferenceSubjectChanged(subject)));
 
@@ -1932,33 +1910,6 @@ export default {
 
         room.on(JitsiConferenceEvents.SUSPEND_DETECTED, () => {
             APP.store.dispatch(suspendDetected());
-
-            // After wake up, we will be in a state where conference is left
-            // there will be dialog shown to user.
-            // We do not want video/audio as we show an overlay and after it
-            // user need to rejoin or close, while waking up we can detect
-            // camera wakeup as a problem with device.
-            // We also do not care about device change, which happens
-            // on resume after suspending PC.
-            if (this.deviceChangeListener) {
-                JitsiMeetJS.mediaDevices.removeEventListener(
-                    JitsiMediaDevicesEvents.DEVICE_LIST_CHANGED,
-                    this.deviceChangeListener);
-            }
-
-            // stop local video
-            if (this.localVideo) {
-                this.localVideo.dispose();
-                this.localVideo = null;
-            }
-
-            // stop local audio
-            if (this.localAudio) {
-                this.localAudio.dispose();
-                this.localAudio = null;
-            }
-
-            APP.API.notifySuspendDetected();
         });
 
         APP.UI.addListener(UIEvents.AUDIO_MUTED, muted => {
@@ -2212,6 +2163,27 @@ export default {
                     APP.UI.onSharedVideoUpdate(id, value, attributes);
                 }
             });
+    },
+
+    /**
+     * Cleanups local conference on suspend.
+     */
+    onSuspendDetected() {
+        // After wake up, we will be in a state where conference is left
+        // there will be dialog shown to user.
+        // We do not want video/audio as we show an overlay and after it
+        // user need to rejoin or close, while waking up we can detect
+        // camera wakeup as a problem with device.
+        // We also do not care about device change, which happens
+        // on resume after suspending PC.
+        if (this.deviceChangeListener) {
+            JitsiMeetJS.mediaDevices.removeEventListener(
+                JitsiMediaDevicesEvents.DEVICE_LIST_CHANGED,
+                this.deviceChangeListener);
+        }
+
+        this.localVideo = null;
+        this.localAudio = null;
     },
 
     /**
@@ -2753,6 +2725,18 @@ export default {
                  * desktop screen.
                  */
                 convertVideoToDesktop: true,
+
+                /**
+                 * Callback invoked when the connection has been closed
+                 * automatically. Triggers cleanup of screensharing if active.
+                 *
+                 * @returns {void}
+                 */
+                onConnectionClosed: () => {
+                    if (this._untoggleScreenSharing) {
+                        this._untoggleScreenSharing();
+                    }
+                },
 
                 /**
                  * Callback invoked to pass messages from the local client back

@@ -341,7 +341,7 @@ public class JitsiMeetConferenceOptions implements Parcelable {
         dest.writeString(token);
         dest.writeBundle(colorScheme);
         dest.writeBundle(featureFlags);
-        dest.writeBundle(userInfo.asBundle());
+        dest.writeBundle(userInfo != null ? userInfo.asBundle() : new Bundle());
         dest.writeByte((byte) (audioMuted == null ? 0 : audioMuted ? 1 : 2));
         dest.writeByte((byte) (audioOnly == null ? 0 : audioOnly ? 1 : 2));
         dest.writeByte((byte) (videoMuted == null ? 0 : videoMuted ? 1 : 2));
