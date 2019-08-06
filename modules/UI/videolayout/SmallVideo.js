@@ -557,24 +557,19 @@ SmallVideo.prototype._isHovered = function() {
  * Hides or shows the user's avatar.
  * This update assumes that large video had been updated and we will
  * reflect it on this small video.
- *
- * @param show whether we should show the avatar or not
- * video because there is no dominant speaker and no focused speaker
  */
 SmallVideo.prototype.updateView = function() {
     if (this.disableUpdateView) {
         return;
     }
 
-    if (!this.hasAvatar) {
-        if (this.id) {
-            // Init avatar
-            this.initializeAvatar();
-        } else {
-            logger.error('Unable to init avatar - no id', this);
+    if (this.id) {
+        // Init / refresh avatar
+        this.initializeAvatar();
+    } else {
+        logger.error('Unable to init avatar - no id', this);
 
-            return;
-        }
+        return;
     }
 
     this.$container.removeClass((index, classNames) =>
@@ -621,7 +616,8 @@ SmallVideo.prototype.initializeAvatar = function() {
             <Provider store = { APP.store }>
                 <AvatarDisplay
                     className = 'userAvatar'
-                    participantId = { this.id } />
+                    participantId = { this.id }
+                    size = { this.$avatar().width() } />
             </Provider>,
             thumbnail
         );
