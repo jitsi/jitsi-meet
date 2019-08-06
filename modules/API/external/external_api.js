@@ -522,13 +522,13 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
      * {{
      * jid: jid //the jid of the participant
      * }}
-     * {@code video-conference-joined} - receives event notifications about the
+     * {@code videoConferenceJoined} - receives event notifications about the
      * local user has successfully joined the video conference.
      * The listener will receive object with the following structure:
      * {{
      * roomName: room //the room name of the conference
      * }}
-     * {@code video-conference-left} - receives event notifications about the
+     * {@code videoConferenceLeft} - receives event notifications about the
      * local user has left the video conference.
      * The listener will receive object with the following structure:
      * {{
@@ -539,6 +539,12 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
      * The listener will receive object with the following structure:
      * {{
      * on: on //whether screen sharing is on
+     * }}
+     * {@code dominantSpeakerChanged} - receives event notifications about
+     * change in the dominant speaker.
+     * The listener will receive object with the following structure:
+     * {{
+     * id: participantId //participantId of the new dominant speaker
      * }}
      * {@code suspendDetected} - receives event notifications about detecting suspend event in host computer.
      * {@code readyToClose} - all hangup operations are completed and Jitsi Meet

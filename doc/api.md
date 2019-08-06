@@ -322,6 +322,13 @@ changes. The listener will receive an object with the following structure:
 }
 ```
 
+* **dominantSpeakerChanged** - receives event notifications about change in the dominant speaker. The listener will receive object with the following structure:
+```javascript
+{
+    id: string //participantId of the new dominant speaker
+}
+```
+
 * **tileViewChanged** - event notifications about tile view layout mode being entered or exited. The listener will receive object with the following structure:
 ```javascript
 {
