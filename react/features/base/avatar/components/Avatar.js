@@ -178,10 +178,17 @@ export function _mapStateToProps(state: Object, ownProps: Props) {
     const { colorBase, displayName, participantId } = ownProps;
     const _participant = participantId && getParticipantById(state, participantId);
     const _initialsBase = (_participant && _participant.name) || displayName;
+    const screenShares = state['features/video-layout'].screenShares || [];
+
+    let _loadableAvatarUrl = _participant && _participant.loadableAvatarUrl;
+
+    if (participantId && screenShares.includes(participantId)) {
+        _loadableAvatarUrl = 'icon://share-desktop';
+    }
 
     return {
         _initialsBase,
-        _loadableAvatarUrl: _participant && _participant.loadableAvatarUrl,
+        _loadableAvatarUrl,
         colorBase: !colorBase && _participant ? _participant.id : colorBase
     };
 }
