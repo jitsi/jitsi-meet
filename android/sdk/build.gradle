@@ -41,26 +41,14 @@ dependencies {
 
     api 'com.facebook.react:react-native:+'
 
-    implementation 'com.dropbox.core:dropbox-core-sdk:3.0.8'
 
     if (!rootProject.ext.libreBuild) {
         implementation 'com.amplitude:android-sdk:2.14.1'
-        implementation(project(":react-native-google-signin")) {
-            exclude group: 'com.google.android.gms'
-            exclude group: 'com.android.support'
-        }
     }
 
     implementation project(':react-native-background-timer')
     implementation project(':react-native-calendar-events')
     implementation project(':react-native-community-async-storage')
-    implementation(project(':react-native-fast-image')) {
-        exclude group: 'com.android.support'
-    }
-//    implementation(project(":react-native-google-signin")) {
-//        exclude group: 'com.google.android.gms'
-//        exclude group: 'com.android.support'
-//    }
     implementation project(':react-native-immersive')
     implementation project(':react-native-keep-awake')
     implementation project(':react-native-linear-gradient')
@@ -225,6 +213,14 @@ publishing {
 
     }
     repositories {
-        maven { url "file:${rootProject.projectDir}/../../jitsi-maven-repository/releases" }
+        maven {
+            url rootProject.ext.mavenRepo
+            if (!rootProject.ext.mavenRepo.startsWith("file")) {
+                credentials {
+                    username rootProject.ext.mavenUser
+                    password rootProject.ext.mavenPassword
+                }
+            }
+        }
     }
 }

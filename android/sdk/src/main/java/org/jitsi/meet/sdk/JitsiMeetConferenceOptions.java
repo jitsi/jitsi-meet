@@ -315,6 +315,7 @@ public class JitsiMeetConferenceOptions implements Parcelable {
 
         urlProps.putBundle("config", config);
         props.putBundle("url", urlProps);
+
         return props;
     }
 

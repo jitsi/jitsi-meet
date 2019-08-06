@@ -166,8 +166,6 @@ public class JitsiMeetView extends BaseReactView<JitsiMeetViewListener>
     private void setProps(@NonNull Bundle newProps) {
         // Merge the default options with the newly provided ones.
         Bundle props = mergeProps(JitsiMeet.getDefaultProps(), newProps);
-        Log.d(TAG,"setProps:"+props.get("url"));
-        Log.d(TAG,"setProps:"+props);
 
         // XXX The setProps() method is supposed to be imperative i.e.
         // a second invocation with one and the same URL is expected to join
