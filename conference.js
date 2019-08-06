@@ -1820,7 +1820,11 @@ export default {
 
         room.on(
             JitsiConferenceEvents.DOMINANT_SPEAKER_CHANGED,
-            id => APP.store.dispatch(dominantSpeakerChanged(id, room)));
+            id => {
+                APP.store.dispatch(dominantSpeakerChanged(id, room));
+                APP.API.notifyDominantSpeakerChanged(id);
+            }
+        );
 
         room.on(JitsiConferenceEvents.CONNECTION_INTERRUPTED, () => {
             APP.store.dispatch(localParticipantConnectionStatusChanged(

@@ -73,6 +73,7 @@ const events = {
     'video-availability-changed': 'videoAvailabilityChanged',
     'video-mute-status-changed': 'videoMuteStatusChanged',
     'screen-sharing-status-changed': 'screenSharingStatusChanged',
+    'dominant-speaker-changed': 'dominantSpeakerChanged',
     'subject-change': 'subjectChange',
     'suspend-detected': 'suspendDetected',
     'tile-view-changed': 'tileViewChanged'
