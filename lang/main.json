@@ -689,7 +689,7 @@
         "liveStreamURL": "直播：",
         "moreNumbers": "更多成员",
         "noNumbers": "无呼入号码。",
-        "noPassword": "未发现设备",
+        "noPassword": "密码未设置",
         "noRoom": "没有指定要呼入的房间。",
         "numbers": "呼入号码",
         "label": "会议信息",
