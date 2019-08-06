@@ -74,10 +74,13 @@ class ChatMessage extends AbstractChatMessage<Props> {
      * @returns {React$Element<*>}
      */
     _renderAvatar() {
+        const { message } = this.props;
+
         return (
             <View style = { styles.avatarWrapper }>
                 { this.props.showAvatar && <Avatar
-                    participantId = { this.props.message.id }
+                    displayName = { message.displayName }
+                    participantId = { message.id }
                     size = { styles.avatarWrapper.width } />
                 }
             </View>

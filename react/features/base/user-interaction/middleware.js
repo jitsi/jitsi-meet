@@ -3,10 +3,15 @@
 import { APP_WILL_MOUNT, APP_WILL_UNMOUNT } from '../app';
 import { MiddlewareRegistry } from '../redux';
 
-import {
-    SET_USER_INTERACTION_LISTENER,
-    USER_INTERACTION_RECEIVED
-} from './actionTypes';
+import { USER_INTERACTION_RECEIVED } from './actionTypes';
+
+/**
+ * Reference to any callback that has been created to be invoked on user
+ * interaction.
+ *
+ * @type {Function|null}
+ */
+let userInteractionListener = null;
 
 /**
  * Implements the entry point of the middleware of the feature base/user-interaction.
@@ -21,13 +26,30 @@ MiddlewareRegistry.register(store => next => action => {
         break;
 
     case APP_WILL_UNMOUNT:
-    case USER_INTERACTION_RECEIVED:
-        _stopListeningForUserInteraction(store);
+        _stopListeningForUserInteraction();
         break;
     }
 
     return next(action);
 });
+
+/**
+ * Callback invoked when the user interacts with the page.
+ *
+ * @param {Function} dispatch - The redux dispatch function.
+ * @param {Object} event - The DOM event for a user interacting with the page.
+ * @private
+ * @returns {void}
+ */
+function _onUserInteractionReceived(dispatch, event) {
+    if (event.isTrusted) {
+        dispatch({
+            type: USER_INTERACTION_RECEIVED
+        });
+
+        _stopListeningForUserInteraction();
+    }
+}
 
 /**
  * Registers listeners to notify redux of any user interaction with the page.
@@ -36,44 +58,24 @@ MiddlewareRegistry.register(store => next => action => {
  * @private
  * @returns {void}
  */
-function _startListeningForUserInteraction(store) {
-    const userInteractionListener = event => {
-        if (event.isTrusted) {
-            store.dispatch({
-                type: USER_INTERACTION_RECEIVED
-            });
+function _startListeningForUserInteraction({ dispatch }) {
+    _stopListeningForUserInteraction();
 
-            _stopListeningForUserInteraction(store);
-        }
-    };
+    userInteractionListener = _onUserInteractionReceived.bind(null, dispatch);
 
     window.addEventListener('mousedown', userInteractionListener);
     window.addEventListener('keydown', userInteractionListener);
-
-    store.dispatch({
-        type: SET_USER_INTERACTION_LISTENER,
-        userInteractionListener
-    });
 }
 
 /**
- * Un-registers listeners intended to notify when the user has interacted with
- * the page.
+ * De-registers listeners for user interaction with the page.
  *
- * @param {Object} store - The redux store.
  * @private
  * @returns {void}
  */
-function _stopListeningForUserInteraction({ getState, dispatch }) {
-    const { userInteractionListener } = getState()['features/base/app'];
+function _stopListeningForUserInteraction() {
+    window.removeEventListener('mousedown', userInteractionListener);
+    window.removeEventListener('keydown', userInteractionListener);
 
-    if (userInteractionListener) {
-        window.removeEventListener('mousedown', userInteractionListener);
-        window.removeEventListener('keydown', userInteractionListener);
-
-        dispatch({
-            type: SET_USER_INTERACTION_LISTENER,
-            userInteractionListener: undefined
-        });
-    }
+    userInteractionListener = null;
 }

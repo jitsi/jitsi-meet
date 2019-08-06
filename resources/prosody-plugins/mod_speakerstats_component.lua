@@ -10,13 +10,8 @@ if muc_component_host == nil then
     log("error", "No muc_component specified. No muc to operate on!");
     return;
 end
-local muc_module = module:context("conference."..muc_component_host);
-if muc_module == nil then
-    log("error", "No such muc found, check muc_component config.");
-    return;
-end
 
-log("debug", "Starting speakerstats for %s", muc_component_host);
+log("info", "Starting speakerstats for %s", muc_component_host);
 
 -- receives messages from client currently connected to the room
 -- clients indicates their own dominant speaker events
@@ -128,7 +123,7 @@ function occupant_joined(event)
 
                     -- before sending we need to calculate current dominant speaker
                     -- state
-                    if values:isDominantSpeaker() ~= nil then
+                    if values:isDominantSpeaker() then
                         local timeElapsed = math.floor(
                             socket.gettime()*1000 - values._dominantSpeakerStart);
                         totalDominantSpeakerTime = totalDominantSpeakerTime
@@ -184,7 +179,25 @@ function room_destroyed(event)
 end
 
 module:hook("message/host", on_message);
-muc_module:hook("muc-room-created", room_created, -1);
-muc_module:hook("muc-occupant-joined", occupant_joined, -1);
-muc_module:hook("muc-occupant-pre-leave", occupant_leaving, -1);
-muc_module:hook("muc-room-destroyed", room_destroyed, -1);
+
+-- executed on every host added internally in prosody, including components
+function process_host(host)
+    if host == muc_component_host then -- the conference muc component
+        module:log("info","Hook to muc events on %s", host);
+
+        local muc_module = module:context(host);
+        muc_module:hook("muc-room-created", room_created, -1);
+        muc_module:hook("muc-occupant-joined", occupant_joined, -1);
+        muc_module:hook("muc-occupant-pre-leave", occupant_leaving, -1);
+        muc_module:hook("muc-room-destroyed", room_destroyed, -1);
+    end
+end
+
+if prosody.hosts[muc_component_host] == nil then
+    module:log("info","No muc component found, will listen for it: %s", muc_component_host)
+
+    -- when a host or component is added
+    prosody.events.add_handler("host-activated", process_host);
+else
+    process_host(muc_component_host);
+end

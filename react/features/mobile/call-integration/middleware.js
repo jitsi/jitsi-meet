@@ -6,13 +6,13 @@ import uuid from 'uuid';
 import { createTrackMutedEvent, sendAnalytics } from '../../analytics';
 import { appNavigate } from '../../app';
 import { APP_WILL_MOUNT, APP_WILL_UNMOUNT } from '../../base/app';
+import { SET_AUDIO_ONLY } from '../../base/audio-only';
 import {
     CONFERENCE_FAILED,
     CONFERENCE_JOINED,
     CONFERENCE_LEFT,
     CONFERENCE_WILL_JOIN,
     CONFERENCE_WILL_LEAVE,
-    SET_AUDIO_ONLY,
     getConferenceName,
     getCurrentConference
 } from '../../base/conference';

@@ -64,25 +64,26 @@ class Notification extends AbstractNotification<Props> {
     _renderContent() {
         const { t, title, titleArguments, titleKey } = this.props;
         const titleText = title || (titleKey && t(titleKey, titleArguments));
+        const description = this._getDescription();
 
-        if (titleText) {
-            return (
+        if (description && description.length) {
+            return description.map((line, index) => (
                 <Text
+                    key = { index }
                     numberOfLines = { 1 }
-                    style = { styles.contentText } >
-                    { titleText }
+                    style = { styles.contentText }>
+                    { line }
                 </Text>
-            );
+            ));
         }
 
-        return this._getDescription().map((line, index) => (
+        return (
             <Text
-                key = { index }
                 numberOfLines = { 1 }
-                style = { styles.contentText }>
-                { line }
+                style = { styles.contentText } >
+                { titleText }
             </Text>
-        ));
+        );
     }
 
     _getDescription: () => Array<string>;

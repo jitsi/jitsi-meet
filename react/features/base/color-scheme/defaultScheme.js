@@ -1,6 +1,6 @@
 // @flow
 
-import { ColorPalette } from '../styles';
+import { ColorPalette, getRGBAFormat } from '../styles';
 
 /**
  * The default color scheme of the application.
@@ -40,8 +40,8 @@ export default {
     },
     'Toolbox': {
         button: 'rgb(255, 255, 255)',
-        buttonToggled: 'rgba(255, 255, 255, 0)',
-        buttonToggledBorder: '#a4b8d1',
+        buttonToggled: 'rgb(38, 58, 76)',
+        buttonToggledBorder: getRGBAFormat('#a4b8d1', 0.6),
         hangup: 'rgb(225, 45, 45)'
     }
 };

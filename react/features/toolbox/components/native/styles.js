@@ -1,9 +1,9 @@
 // @flow
 
 import { ColorSchemeRegistry, schemeColor } from '../../../base/color-scheme';
-import { BoxModel, ColorPalette, createStyleSheet } from '../../../base/styles';
+import { BoxModel, ColorPalette } from '../../../base/styles';
 
-import { HANGUP_BUTTON_SIZE } from '../../constants';
+const BUTTON_SIZE = 50;
 
 // Toolbox, toolbar:
 
@@ -12,17 +12,17 @@ import { HANGUP_BUTTON_SIZE } from '../../constants';
  */
 const toolbarButton = {
     backgroundColor: schemeColor('button'),
-    borderRadius: 20,
+    borderRadius: BUTTON_SIZE / 2,
     borderWidth: 0,
     flex: 0,
     flexDirection: 'row',
-    height: 40,
+    height: BUTTON_SIZE,
     justifyContent: 'center',
 
     // XXX We probably tested BoxModel.margin and discovered it to be too small
     // for our taste.
     marginHorizontal: 7,
-    width: 40
+    width: BUTTON_SIZE
 };
 
 /**
@@ -53,7 +53,7 @@ const whiteToolbarButtonIcon = {
 /**
  * The Toolbox and toolbar related styles.
  */
-const styles = createStyleSheet({
+const styles = {
 
     /**
      * The style of the toolbar.
@@ -74,7 +74,7 @@ const styles = createStyleSheet({
         flexDirection: 'column',
         flexGrow: 0
     }
-});
+};
 
 export default styles;
 
@@ -88,6 +88,14 @@ ColorSchemeRegistry.register('Toolbox', {
     buttonStyles: {
         iconStyle: toolbarButtonIcon,
         style: toolbarButton
+    },
+
+    buttonStylesBorderless: {
+        iconStyle: whiteToolbarButtonIcon,
+        style: {
+            ...toolbarButton,
+            backgroundColor: 'transparent'
+        }
     },
 
     /**
@@ -104,10 +112,7 @@ ColorSchemeRegistry.register('Toolbox', {
         iconStyle: whiteToolbarButtonIcon,
         style: {
             ...toolbarButton,
-            backgroundColor: schemeColor('hangup'),
-            borderRadius: HANGUP_BUTTON_SIZE / 2,
-            height: HANGUP_BUTTON_SIZE,
-            width: HANGUP_BUTTON_SIZE
+            backgroundColor: schemeColor('hangup')
         },
         underlayColor: ColorPalette.buttonUnderlay
     },

@@ -182,8 +182,8 @@ function _showRecordingErrorNotification(recorderSession, dispatch) {
             descriptionKey: 'recording.unavailable',
             descriptionArguments: {
                 serviceName: isStreamMode
-                    ? 'Live Streaming service'
-                    : 'Recording service'
+                    ? '$t(liveStreaming.serviceName)'
+                    : '$t(recording.serviceName)'
             },
             titleKey: isStreamMode
                 ? 'liveStreaming.unavailableTitle'

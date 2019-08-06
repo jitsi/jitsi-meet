@@ -2,7 +2,6 @@ import { translateToHTML } from '../base/i18n';
 import { isSuboptimalBrowser } from '../base/environment';
 import { toState } from '../base/redux';
 
-import { getName } from '../app';
 import {
     areThereNotifications,
     showWarningNotification
@@ -24,10 +23,8 @@ export function maybeShowSuboptimalExperienceNotification(dispatch, t) {
                     titleKey: 'notify.suboptimalExperienceTitle',
                     description: translateToHTML(
                         t,
-                        'notify.suboptimalExperienceDescription',
-                        {
-                            appName: getName()
-                        })
+                        'notify.suboptimalBrowserWarning'
+                    )
                 }
             )
         );

@@ -51,7 +51,7 @@ export function getDeepLinkingPage(state) {
     const { room } = state['features/base/conference'];
 
     // Show only if we are about to join a conference.
-    if (!room) {
+    if (!room || state['features/base/config'].disableDeepLinking) {
         return Promise.resolve();
     }
 

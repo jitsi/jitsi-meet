@@ -46,7 +46,7 @@ MiddlewareRegistry.register(store => next => action => {
 
 StateListenerRegistry.register(
     /* selector */ state => {
-        const { audioOnly } = state['features/base/conference'];
+        const { enabled: audioOnly } = state['features/base/audio-only'];
         const conference = getCurrentConference(state);
 
         return conference ? !audioOnly : false;
@@ -68,7 +68,7 @@ function _onImmersiveChange({ getState }) {
     const { appState } = state['features/background'];
 
     if (appState === 'active') {
-        const { audioOnly } = state['features/base/conference'];
+        const { enabled: audioOnly } = state['features/base/audio-only'];
         const conference = getCurrentConference(state);
         const fullScreen = conference ? !audioOnly : false;
 

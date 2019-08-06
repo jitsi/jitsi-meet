@@ -49,22 +49,6 @@ dependencies {
 
     debugImplementation 'com.squareup.leakcanary:leakcanary-android:1.6.1'
     releaseImplementation 'com.squareup.leakcanary:leakcanary-android-no-op:1.6.1'
-
-    // Glide
-    implementation("com.github.bumptech.glide:glide:${rootProject.ext.glideVersion}") {
-        exclude group: "com.android.support", module: "glide"
-    }
-    implementation("com.github.bumptech.glide:annotations:${rootProject.ext.glideVersion}") {
-        exclude group: "com.android.support", module: "annotations"
-    }
-    annotationProcessor "com.github.bumptech.glide:compiler:${rootProject.ext.glideVersion}"
-
-    // Firebase
-    //  - Crashlytics
-    //  - Dynamic Links
-//    implementation 'com.google.firebase:firebase-core:16.0.6'
-//    implementation 'com.crashlytics.sdk.android:crashlytics:2.9.8'
-//    implementation 'com.google.firebase:firebase-dynamic-links:16.1.5'
 }
 
 gradle.projectsEvaluated {
