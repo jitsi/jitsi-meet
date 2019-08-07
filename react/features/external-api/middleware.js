@@ -8,6 +8,7 @@ import {
 import { NOTIFY_CAMERA_ERROR, NOTIFY_MIC_ERROR } from '../base/devices';
 import { JitsiConferenceErrors } from '../base/lib-jitsi-meet';
 import {
+    DOMINANT_SPEAKER_CHANGED,
     PARTICIPANT_KICKED,
     PARTICIPANT_LEFT,
     PARTICIPANT_JOINED,
@@ -162,6 +163,10 @@ MiddlewareRegistry.register(store => next => action => {
 
     case SUBMIT_FEEDBACK_SUCCESS:
         APP.API.notifyFeedbackSubmitted();
+        break;
+
+    case DOMINANT_SPEAKER_CHANGED:
+        APP.API.notifyDominantSpeakerChanged(action.participant.id);
         break;
     }
 
