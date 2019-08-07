@@ -56,6 +56,11 @@ type Props = {
     avatarSize: number,
 
     /**
+     * Whether video should be disabled for his view.
+     */
+    disableVideo: ?boolean,
+
+    /**
      * Callback to invoke when the {@code ParticipantView} is clicked/pressed.
      */
     onPress: Function,
@@ -250,7 +255,7 @@ class ParticipantView extends Component<Props> {
  * @returns {Props}
  */
 function _mapStateToProps(state, ownProps) {
-    const { participantId } = ownProps;
+    const { disableVideo, participantId } = ownProps;
     let connectionStatus;
     let participantName;
 
@@ -259,7 +264,7 @@ function _mapStateToProps(state, ownProps) {
             connectionStatus
                 || JitsiParticipantConnectionStatus.ACTIVE,
         _participantName: participantName,
-        _renderVideo: shouldRenderParticipantVideo(state, participantId),
+        _renderVideo: shouldRenderParticipantVideo(state, participantId) && !disableVideo,
         _videoTrack:
             getTrackByMediaTypeAndParticipant(
                 state['features/base/tracks'],
