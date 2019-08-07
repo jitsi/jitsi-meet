@@ -459,6 +459,7 @@
         "setEmailLabel": "Set your gravatar email",
         "title": "Profile"
     },
+    "raisedHand": "Would like to speak",
     "recording": {
         "authDropboxText": "Upload to Dropbox",
         "availableSpace": "Available space: {{spaceLeft}} MB (approximately {{duration}} minutes of recording)",
