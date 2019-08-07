@@ -134,13 +134,13 @@ const _LANGUAGES = {
     },
 
     // Chinese (China)
-    'zhCN': {
+    'zh': {
         languages: require('../../../../lang/languages-zhCN'),
         main: require('../../../../lang/main-zhCN')
     },
 
     // Chinese (Taiwan)
-    'zhTW': {
+    'zh-TW': {
         languages: require('../../../../lang/languages-zhTW'),
         main: require('../../../../lang/main-zhTW')
     }

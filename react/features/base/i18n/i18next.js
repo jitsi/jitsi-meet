@@ -43,7 +43,7 @@ const options = {
     interpolation: {
         escapeValue: false // not needed for react as it escapes by default
     },
-    load: 'languageOnly',
+    load: 'all',
     ns: [ 'main', 'languages', 'countries' ],
     react: {
         useSuspense: false
