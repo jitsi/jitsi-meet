@@ -68,6 +68,12 @@
  */
 @property (nonatomic, nullable) JitsiMeetUserInfo *userInfo;
 
+/**
+ * Message to display when only one participant has joined the conference.
+ */
+@property (nonatomic, nullable) NSString *onlyOneParticipantMessage;
+
+
 - (void)setFeatureFlag:(NSString *_Nonnull)flag withBoolean:(BOOL)value;
 - (void)setFeatureFlag:(NSString *_Nonnull)flag withValue:(id _Nonnull)value;
 
@@ -91,6 +97,7 @@
 @property (nonatomic, readonly) BOOL welcomePageEnabled;
 
 @property (nonatomic, nullable) JitsiMeetUserInfo *userInfo;
+@property (nonatomic, nullable, readonly) NSString *onlyOneParticipantMessage;
 
 + (instancetype _Nonnull)fromBuilder:(void (^_Nonnull)(JitsiMeetConferenceOptionsBuilder *_Nonnull))initBlock;
 - (instancetype _Nonnull)init NS_UNAVAILABLE;

@@ -52,6 +52,7 @@ static NSString *const WelcomePageEnabledFeatureFlag = @"welcomepage.enabled";
         _videoMuted = nil;
 
         _userInfo = nil;
+        _onlyOneParticipantMessage = nil;
     }
     
     return self;
@@ -168,6 +169,7 @@ static NSString *const WelcomePageEnabledFeatureFlag = @"welcomepage.enabled";
         _featureFlags = [NSDictionary dictionaryWithDictionary:builder.featureFlags];
 
         _userInfo = builder.userInfo;
+        _onlyOneParticipantMessage = builder.onlyOneParticipantMessage;
     }
 
     return self;
@@ -227,6 +229,10 @@ static NSString *const WelcomePageEnabledFeatureFlag = @"welcomepage.enabled";
 
     if (_token == nil && _userInfo != nil) {
         props[@"userInfo"] = [self.userInfo asDict];
+    }
+    
+    if (_onlyOneParticipantMessage != nil) {
+        props[@"onlyOneParticipantMessage"] = _onlyOneParticipantMessage;
     }
 
     urlProps[@"config"] = config;

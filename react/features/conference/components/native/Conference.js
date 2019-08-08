@@ -202,6 +202,7 @@ class Conference extends AbstractConference<Props, *> {
             _connecting,
             _filmstripVisible,
             _largeVideoParticipantId,
+            _participantCount,
             _reducedUI,
             _shouldDisplayTileView,
             _toolboxVisible
@@ -224,7 +225,9 @@ class Conference extends AbstractConference<Props, *> {
                   */
                     _shouldDisplayTileView
                         ? <TileView onClick = { this._onClick } />
-                        : <LargeVideo onClick = { this._onClick } />
+                        : <LargeVideo
+                            onClick = { this._onClick }
+                            participantCount = { _participantCount } />
                 }
 
                 {/*
