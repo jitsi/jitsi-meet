@@ -8,6 +8,7 @@ import { ConfirmDialog } from '../../base/dialog';
 import { translate } from '../../base/i18n';
 
 import { cancelWaitForOwner, _openLoginDialog } from '../actions';
+import { convertForTrans } from '../../base/util';
 
 /**
  * The type of the React {@code Component} props of {@link WaitForOwnerDialog}.
@@ -61,6 +62,7 @@ class WaitForOwnerDialog extends Component<Props> {
         const {
             _room: room
         } = this.props;
+
 
         return (
             <ConfirmDialog
@@ -116,7 +118,7 @@ function _mapStateToProps(state) {
     const { authRequired } = state['features/base/conference'];
 
     return {
-        _room: authRequired && authRequired.getName()
+        _room: authRequired && convertForTrans(authRequired.getName())
     };
 }
 

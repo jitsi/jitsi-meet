@@ -31,11 +31,11 @@ function toDisplayableItem(item, defaultServerURL, t) {
             _toDurationString(item.duration),
             serverName
         ],
-        title: convertForTrans(location.room),
-        title: decodeURIComponent(location.room),
+        title: convertForTrans(decodeURIComponent(location.room)),
         url: item.conference
     };
 }
+
 
 /**
  * Generates a duration string for the item.

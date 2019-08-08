@@ -34,14 +34,16 @@ class JitsiLocalStorage extends DummyLocalStorage {
      */
     constructor() {
         super();
-        let storage;
+        // let storage;
 
-        try {
-            storage = window.localStorage;
-        } catch (error) {
-            logger.error(error);
-        }
-        this.storage = storage || new DummyLocalStorage();
+        // try {
+        //     storage = window.localStorage;
+
+
+        // } catch (error) {
+        //     logger.error(error);
+        // }
+        // this.storage = storage || new DummyLocalStorage();
     }
 
     /**
@@ -52,7 +54,7 @@ class JitsiLocalStorage extends DummyLocalStorage {
      * null is returned.
      */
     getItem(keyName) {
-        return this.storage.getItem(keyName);
+        return window.localStorage.getItem(keyName);
     }
 
     /**
@@ -62,7 +64,7 @@ class JitsiLocalStorage extends DummyLocalStorage {
      * creating/updating.
      */
     setItem(keyName, keyValue) {
-        return this.storage.setItem(keyName, keyValue);
+        return window.localStorage.setItem(keyName, keyValue);
     }
 
     /**
@@ -70,7 +72,7 @@ class JitsiLocalStorage extends DummyLocalStorage {
      * @param {string} keyName the name of the key you want to remove.
      */
     removeItem(keyName) {
-        return this.storage.removeItem(keyName);
+        return window.localStorage.removeItem(keyName);
     }
 }
 
