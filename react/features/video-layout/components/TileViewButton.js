@@ -1,5 +1,6 @@
 // @flow
 
+import Logger from 'jitsi-meet-logger';
 import type { Dispatch } from 'redux';
 
 import {
@@ -14,6 +15,8 @@ import {
 } from '../../base/toolbox';
 
 import { setTileView } from '../actions';
+
+const logger = Logger.getLogger(__filename);
 
 /**
  * The type of the React {@code Component} props of {@link TileViewButton}.
@@ -59,8 +62,10 @@ class TileViewButton<P: Props> extends AbstractButton<P, *> {
             {
                 'is_enabled': _tileViewEnabled
             }));
+        const value = !_tileViewEnabled;
 
-        dispatch(setTileView(!_tileViewEnabled));
+        logger.debug(`Tile view ${value ? 'enable' : 'disable'}`);
+        dispatch(setTileView(value));
     }
 
     /**
