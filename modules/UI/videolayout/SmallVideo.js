@@ -91,9 +91,6 @@ function SmallVideo(VideoLayout) {
     this.VideoLayout = VideoLayout;
     this.videoIsHovered = false;
 
-    // we can stop updating the thumbnail
-    this.disableUpdateView = false;
-
     /**
      * The current state of the user's bridge connection. The value should be
      * a string as enumerated in the library's participantConnectionStatus
@@ -513,8 +510,7 @@ SmallVideo.prototype.isCurrentlyOnLargeVideo = function() {
  * or <tt>false</tt> otherwise.
  */
 SmallVideo.prototype.isVideoPlayable = function() {
-    return this.videoStream // Is there anything to display ?
-        && !this.isVideoMuted && !this.videoStream.isMuted(); // Muted ?
+    return this.videoStream && !this.isVideoMuted && !this.videoStream.isMuted();
 };
 
 /**
@@ -524,23 +520,48 @@ SmallVideo.prototype.isVideoPlayable = function() {
  * or <tt>DISPLAY_BLACKNESS_WITH_NAME</tt>.
  */
 SmallVideo.prototype.selectDisplayMode = function() {
+    const isAudioOnly = APP.conference.isAudioOnly();
+    const tileViewEnabled = shouldDisplayTileView(APP.store.getState());
+    const isVideoPlayable = this.isVideoPlayable();
+    const hasVideo = Boolean(this.selectVideoElement().length);
+
     // Display name is always and only displayed when user is on the stage
-    if (this.isCurrentlyOnLargeVideo()
-        && !shouldDisplayTileView(APP.store.getState())) {
-        return this.isVideoPlayable() && !APP.conference.isAudioOnly()
-            ? DISPLAY_BLACKNESS_WITH_NAME : DISPLAY_AVATAR_WITH_NAME;
-    } else if (this.isVideoPlayable()
-        && this.selectVideoElement().length
-        && !APP.conference.isAudioOnly()) {
+    if (this.isCurrentlyOnLargeVideo() && !tileViewEnabled) {
+        return isVideoPlayable && !isAudioOnly ? DISPLAY_BLACKNESS_WITH_NAME : DISPLAY_AVATAR_WITH_NAME;
+    } else if (isVideoPlayable && hasVideo && !isAudioOnly) {
         // check hovering and change state to video with name
-        return this._isHovered()
-            ? DISPLAY_VIDEO_WITH_NAME : DISPLAY_VIDEO;
+        return this._isHovered() ? DISPLAY_VIDEO_WITH_NAME : DISPLAY_VIDEO;
     }
 
     // check hovering and change state to avatar with name
-    return this._isHovered()
-        ? DISPLAY_AVATAR_WITH_NAME : DISPLAY_AVATAR;
+    return this._isHovered() ? DISPLAY_AVATAR_WITH_NAME : DISPLAY_AVATAR;
+};
 
+/**
+ * Prints information about the current display mode.
+ *
+ * @param {string} mode - The current mode.
+ * @returns {void}
+ */
+SmallVideo.prototype._printDisplayModeInfo = function(mode) {
+    const isAudioOnly = APP.conference.isAudioOnly();
+    const tileViewEnabled = shouldDisplayTileView(APP.store.getState());
+    const isVideoPlayable = this.isVideoPlayable();
+    const hasVideo = Boolean(this.selectVideoElement().length);
+    const displayModeInfo = {
+        isAudioOnly,
+        tileViewEnabled,
+        isVideoPlayable,
+        hasVideo,
+        connectionStatus: APP.conference.getParticipantConnectionStatus(this.id),
+        mutedWhileDisconnected: this.mutedWhileDisconnected,
+        wasVideoPlayed: this.wasVideoPlayed,
+        videoStream: Boolean(this.videoStream),
+        isVideoMuted: this.isVideoMuted,
+        videoStreamMuted: this.videoStream ? this.videoStream.isMuted() : 'no stream'
+    };
+
+    logger.debug(`Displaying ${mode} for ${this.id}, reason: [${JSON.stringify(displayModeInfo)}]`);
 };
 
 /**
@@ -559,10 +580,6 @@ SmallVideo.prototype._isHovered = function() {
  * reflect it on this small video.
  */
 SmallVideo.prototype.updateView = function() {
-    if (this.disableUpdateView) {
-        return;
-    }
-
     if (this.id) {
         // Init / refresh avatar
         this.initializeAvatar();
@@ -575,26 +592,38 @@ SmallVideo.prototype.updateView = function() {
     this.$container.removeClass((index, classNames) =>
         classNames.split(' ').filter(name => name.startsWith('display-')));
 
-    // Determine whether video, avatar or blackness should be displayed
-    const displayMode = this.selectDisplayMode();
+    const oldDisplayMode = this.displayMode;
+    let displayModeString = '';
 
-    switch (displayMode) {
+    // Determine whether video, avatar or blackness should be displayed
+    this.displayMode = this.selectDisplayMode();
+
+    switch (this.displayMode) {
     case DISPLAY_AVATAR_WITH_NAME:
+        displayModeString = 'avatar-with-name';
         this.$container.addClass('display-avatar-with-name');
         break;
     case DISPLAY_BLACKNESS_WITH_NAME:
+        displayModeString = 'blackness-with-name';
         this.$container.addClass('display-name-on-black');
         break;
     case DISPLAY_VIDEO:
+        displayModeString = 'video';
         this.$container.addClass('display-video');
         break;
     case DISPLAY_VIDEO_WITH_NAME:
+        displayModeString = 'video-with-name';
         this.$container.addClass('display-name-on-video');
         break;
     case DISPLAY_AVATAR:
     default:
+        displayModeString = 'avatar';
         this.$container.addClass('display-avatar-only');
         break;
+    }
+
+    if (this.displayMode !== oldDisplayMode) {
+        this._printDisplayModeInfo(displayModeString);
     }
 };
 
