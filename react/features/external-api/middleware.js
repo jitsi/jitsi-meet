@@ -100,6 +100,10 @@ MiddlewareRegistry.register(store => next => action => {
         break;
     }
 
+    case DOMINANT_SPEAKER_CHANGED:
+        APP.API.notifyDominantSpeakerChanged(action.participant.id);
+        break;
+
     case KICKED_OUT:
         APP.API.notifyKickedOut(
             {
@@ -163,10 +167,6 @@ MiddlewareRegistry.register(store => next => action => {
 
     case SUBMIT_FEEDBACK_SUCCESS:
         APP.API.notifyFeedbackSubmitted();
-        break;
-
-    case DOMINANT_SPEAKER_CHANGED:
-        APP.API.notifyDominantSpeakerChanged(action.participant.id);
         break;
     }
 
