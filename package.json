@@ -56,7 +56,7 @@
     "jwt-decode": "2.2.0",
     "lib-jitsi-meet": "github:jitsi/lib-jitsi-meet#070c67bf5dad7092b29d99604f4d1f2a363159c3",
     "libflacjs": "github:mmig/libflac.js#93d37e7f811f01cf7d8b6a603e38bd3c3810907d",
-    "lodash": "4.17.11",
+    "lodash": "4.17.13",
     "moment": "2.19.4",
     "moment-duration-format": "2.2.2",
     "postis": "2.2.0",

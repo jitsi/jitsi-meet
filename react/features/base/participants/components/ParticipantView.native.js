@@ -57,6 +57,11 @@ type Props = {
     avatarSize: number,
 
     /**
+     * Whether video should be disabled for his view.
+     */
+    disableVideo: ?boolean,
+
+    /**
      * Message to display when only one participant has joined.
      */
     _onlyOneParticipantMessage: string,
@@ -223,8 +228,6 @@ class ParticipantView extends Component<Props> {
         const renderOnlyOneParticipant = onlyOneParticipantMessage
             && onlyOneParticipantMessage.length > 0 && this.props.participantCount === 1;
 
-        const waitForVideoStarted = false;
-
         // If the connection has problems, we will "tint" the video / avatar.
         const connectionProblem
             = connectionStatus !== JitsiParticipantConnectionStatus.ACTIVE;
@@ -254,7 +257,7 @@ class ParticipantView extends Component<Props> {
                     && <VideoTrack
                         onPress = { onPress }
                         videoTrack = { videoTrack }
-                        waitForVideoStarted = { waitForVideoStarted }
+                        waitForVideoStarted = { false }
                         zOrder = { this.props.zOrder }
                         zoomEnabled = { this.props.zoomEnabled } /> }
 
@@ -292,7 +295,7 @@ class ParticipantView extends Component<Props> {
  * @returns {Props}
  */
 function _mapStateToProps(state, ownProps) {
-    const { participantId } = ownProps;
+    const { disableVideo, participantId } = ownProps;
     let connectionStatus;
     const onlyOneParticipantMessage = getAppProp(state, 'onlyOneParticipantMessage');
     let participantName;
@@ -303,7 +306,7 @@ function _mapStateToProps(state, ownProps) {
                 || JitsiParticipantConnectionStatus.ACTIVE,
         _onlyOneParticipantMessage: onlyOneParticipantMessage,
         _participantName: participantName,
-        _renderVideo: shouldRenderParticipantVideo(state, participantId),
+        _renderVideo: shouldRenderParticipantVideo(state, participantId) && !disableVideo,
         _videoTrack:
             getTrackByMediaTypeAndParticipant(
                 state['features/base/tracks'],

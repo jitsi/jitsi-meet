@@ -6,7 +6,7 @@ import type { Dispatch } from 'redux';
 
 import { ColorSchemeRegistry } from '../../../base/color-scheme';
 import { openDialog } from '../../../base/dialog';
-import { Audio, MEDIA_TYPE } from '../../../base/media';
+import { MEDIA_TYPE, VIDEO_TYPE, Audio } from '../../../base/media';
 import {
     PARTICIPANT_ROLE,
     ParticipantView,
@@ -141,6 +141,7 @@ class Thumbnail extends Component<Props> {
         const participantInLargeVideo
             = participantId === largeVideo.participantId;
         const videoMuted = !videoTrack || videoTrack.muted;
+        const isScreenShare = videoTrack && videoTrack.videoType === VIDEO_TYPE.DESKTOP;
 
         return (
             <Container
@@ -161,6 +162,7 @@ class Thumbnail extends Component<Props> {
 
                 <ParticipantView
                     avatarSize = { AVATAR_SIZE }
+                    disableVideo = { isScreenShare }
                     participantId = { participantId }
                     style = { _styles.participantViewStyle }
                     tintEnabled = { participantInLargeVideo && !disableTint }

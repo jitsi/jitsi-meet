@@ -299,14 +299,14 @@ export function isLocalParticipantModerator(
 
 /**
  * Returns true if the video of the participant should be rendered.
+ * NOTE: This is currently only used on mobile.
  *
  * @param {Object|Function} stateful - Object or function that can be resolved
  * to the Redux state.
  * @param {string} id - The ID of the participant.
  * @returns {boolean}
  */
-export function shouldRenderParticipantVideo(
-        stateful: Object | Function, id: string) {
+export function shouldRenderParticipantVideo(stateful: Object | Function, id: string) {
     const state = toState(stateful);
     const participant = getParticipantById(state, id);
 
@@ -314,29 +314,35 @@ export function shouldRenderParticipantVideo(
         return false;
     }
 
+    /* First check if we have an unmuted video track. */
+    const videoTrack
+        = getTrackByMediaTypeAndParticipant(state['features/base/tracks'], MEDIA_TYPE.VIDEO, id);
+
+    if (!shouldRenderVideoTrack(videoTrack, /* waitForVideoStarted */ false)) {
+        return false;
+    }
+
+    /* Then check if the participant connection is active. */
+    const connectionStatus = participant.connectionStatus || JitsiParticipantConnectionStatus.ACTIVE;
+
+    if (connectionStatus !== JitsiParticipantConnectionStatus.ACTIVE) {
+        return false;
+    }
+
+    /* Then check if audio-only mode is not active. */
     const audioOnly = state['features/base/audio-only'].enabled;
-    const connectionStatus = participant.connectionStatus
-        || JitsiParticipantConnectionStatus.ACTIVE;
-    const videoTrack = getTrackByMediaTypeAndParticipant(
-        state['features/base/tracks'],
-        MEDIA_TYPE.VIDEO,
-        id);
 
-    // Is the video to be rendered?
-    // FIXME It's currently impossible to have true as the value of
-    // waitForVideoStarted because videoTrack's state videoStarted will be
-    // updated only after videoTrack is rendered.
-    // XXX Note that, unlike on web, we don't render video when the
-    // connection status is interrupted, this is because the renderer
-    // doesn't retain the last frame forever, so we would end up with a
-    // black screen.
-    const waitForVideoStarted = false;
+    if (!audioOnly) {
+        return true;
+    }
 
-    return !audioOnly
-        && (connectionStatus
-            === JitsiParticipantConnectionStatus.ACTIVE)
-        && shouldRenderVideoTrack(videoTrack, waitForVideoStarted);
+    /* Last, check if the participant is sharing their screen and they are on stage. */
+    const screenShares = state['features/video-layout'].screenShares || [];
+    const largeVideoParticipantId = state['features/large-video'].participantId;
+    const participantIsInLargeVideoWithScreen
+        = participant.id === largeVideoParticipantId && screenShares.includes(participant.id);
 
+    return participantIsInLargeVideoWithScreen;
 }
 
 /**
