@@ -185,7 +185,7 @@ class ParticipantView extends Component<Props> {
     }
 
     /**
-     * Renders message when only one person joined.
+     * Renders message when only one participant joined.
      *
      * @param {string} message - The message to display.
      * @private

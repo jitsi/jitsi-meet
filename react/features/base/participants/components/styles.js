@@ -47,7 +47,7 @@ export default {
     },
 
     /**
-     * Style for the text rendered when there's only one person in the room.
+     * Style for the text rendered when there's only one participant in the room.
      */
     onlyOneParticipantMessageText: {
         color: ColorPalette.white,
