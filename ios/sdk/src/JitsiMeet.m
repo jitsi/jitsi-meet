@@ -135,27 +135,27 @@
                 builder.room = [url absoluteString];
             }];
         }
-    } else if ([activityType isEqualToString:@"INStartAudioCallIntent"]
-               || [activityType isEqualToString:@"INStartVideoCallIntent"]) {
-        // App was started by a CallKit Intent
-        INIntent *intent = userActivity.interaction.intent;
-        NSArray<INPerson *> *contacts;
-        NSString *url;
-        BOOL audioOnly = NO;
-
-        if ([intent isKindOfClass:[INStartAudioCallIntent class]]) {
-            contacts = ((INStartAudioCallIntent *) intent).contacts;
-            audioOnly = YES;
-        } else if ([intent isKindOfClass:[INStartVideoCallIntent class]]) {
-            contacts = ((INStartVideoCallIntent *) intent).contacts;
-        }
-
-        if (contacts && (url = contacts.firstObject.personHandle.value)) {
-            return [JitsiMeetConferenceOptions fromBuilder:^(JitsiMeetConferenceOptionsBuilder *builder) {
-                builder.audioOnly = audioOnly;
-                builder.room = url;
-            }];
-        }
+//    } else if ([activityType isEqualToString:@"INStartAudioCallIntent"]
+//               || [activityType isEqualToString:@"INStartVideoCallIntent"]) {
+//        // App was started by a CallKit Intent
+//        INIntent *intent = userActivity.interaction.intent;
+//        NSArray<INPerson *> *contacts;
+//        NSString *url;
+//        BOOL audioOnly = NO;
+//
+//        if ([intent isKindOfClass:[INStartAudioCallIntent class]]) {
+//            contacts = ((INStartAudioCallIntent *) intent).contacts;
+//            audioOnly = YES;
+//        } else if ([intent isKindOfClass:[INStartVideoCallIntent class]]) {
+//            contacts = ((INStartVideoCallIntent *) intent).contacts;
+//        }
+//
+//        if (contacts && (url = contacts.firstObject.personHandle.value)) {
+//            return [JitsiMeetConferenceOptions fromBuilder:^(JitsiMeetConferenceOptionsBuilder *builder) {
+//                builder.audioOnly = audioOnly;
+//                builder.room = url;
+//            }];
+//        }
     } else if (self.conferenceActivityType && [activityType isEqualToString:self.conferenceActivityType]) {
         // App was started by continuing a registered NSUserActivity (SiriKit, Handoff, ...)
         NSString *url;
