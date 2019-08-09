@@ -257,6 +257,11 @@ class AudioModeModule extends ReactContextBaseJavaModule
     private static final String DEVICE_SPEAKER    = "SPEAKER";
 
     /**
+     * Device change event.
+     */
+    private static final String DEVICE_CHANGE_EVENT = "org.jitsi.meet:features/audio-mode#devices-update";
+
+    /**
      * List of currently available audio devices.
      */
     private Set<String> availableDevices = new HashSet<>();
@@ -303,7 +308,7 @@ class AudioModeModule extends ReactContextBaseJavaModule
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 // Do an initial detection on Android >= M.
-                runInAudioThread(onAudioDeviceChangeRunner);
+                onAudioDeviceChange();
             } else {
                 // On Android < M, detect if we have an earpiece.
                 PackageManager pm = reactContext.getPackageManager();
@@ -327,6 +332,7 @@ class AudioModeModule extends ReactContextBaseJavaModule
     public Map<String, Object> getConstants() {
         Map<String, Object> constants = new HashMap<>();
 
+        constants.put("DEVICE_CHANGE_EVENT", DEVICE_CHANGE_EVENT);
         constants.put("AUDIO_CALL", AUDIO_CALL);
         constants.put("DEFAULT", DEFAULT);
         constants.put("VIDEO_CALL", VIDEO_CALL);
@@ -335,31 +341,26 @@ class AudioModeModule extends ReactContextBaseJavaModule
     }
 
     /**
-     * Gets the list of available audio device categories, i.e. 'bluetooth',
-     * 'earpiece ', 'speaker', 'headphones'.
-     *
-     * @param promise a {@link Promise} which will be resolved with an object
-     *                containing a 'devices' key with a list of devices, plus a
-     *                'selected' key with the selected one.
+     * Notifies JS land that the devices list has changed.
      */
-    @ReactMethod
-    public void getAudioDevices(final Promise promise) {
+    private void notifyDevicesChanged() {
         runInAudioThread(new Runnable() {
             @Override
             public void run() {
-                WritableMap map = Arguments.createMap();
-                map.putString("selected", selectedDevice);
-                WritableArray devices = Arguments.createArray();
+                WritableArray data = Arguments.createArray();
+                final boolean hasHeadphones = availableDevices.contains(DEVICE_HEADPHONES);
                 for (String device : availableDevices) {
-                    if (mode == VIDEO_CALL && device.equals(DEVICE_EARPIECE)) {
-                        // Skip earpiece when in video call mode.
+                    if (hasHeadphones && device.equals(DEVICE_EARPIECE)) {
+                        // Skip earpiece when headphones are plugged in.
                         continue;
                     }
-                    devices.pushString(device);
+                    WritableMap deviceInfo = Arguments.createMap();
+                    deviceInfo.putString("type", device);
+                    deviceInfo.putBoolean("selected", device.equals(selectedDevice));
+                    data.pushMap(deviceInfo);
                 }
-                map.putArray("devices", devices);
-
-                promise.resolve(map);
+                ReactInstanceManagerHolder.emitEvent(DEVICE_CHANGE_EVENT, data);
+                Log.i(TAG, "Updating audio device list");
             }
         });
     }
@@ -584,7 +585,7 @@ class AudioModeModule extends ReactContextBaseJavaModule
             return;
         }
 
-        Runnable r = new Runnable() {
+        runInAudioThread(new Runnable() {
             @Override
             public void run() {
                 boolean success;
@@ -607,8 +608,7 @@ class AudioModeModule extends ReactContextBaseJavaModule
                             "Failed to set audio mode to " + mode);
                 }
             }
-        };
-        runInAudioThread(r);
+        });
     }
 
     /**
@@ -690,6 +690,7 @@ class AudioModeModule extends ReactContextBaseJavaModule
             selectedDevice = null;
             userSelectedDevice = null;
 
+            notifyDevicesChanged();
             return true;
         }
 
@@ -708,7 +709,6 @@ class AudioModeModule extends ReactContextBaseJavaModule
         }
 
         boolean bluetoothAvailable = availableDevices.contains(DEVICE_BLUETOOTH);
-        boolean earpieceAvailable = availableDevices.contains(DEVICE_EARPIECE);
         boolean headsetAvailable = availableDevices.contains(DEVICE_HEADPHONES);
 
         // Pick the desired device based on what's available and the mode.
@@ -717,8 +717,6 @@ class AudioModeModule extends ReactContextBaseJavaModule
             audioDevice = DEVICE_BLUETOOTH;
         } else if (headsetAvailable) {
             audioDevice = DEVICE_HEADPHONES;
-        } else if (mode == AUDIO_CALL && earpieceAvailable) {
-            audioDevice = DEVICE_EARPIECE;
         } else {
             audioDevice = DEVICE_SPEAKER;
         }
@@ -744,6 +742,7 @@ class AudioModeModule extends ReactContextBaseJavaModule
             setAudioRoutePreO(audioDevice);
         }
 
+        notifyDevicesChanged();
         return true;
     }
 }

@@ -21,7 +21,8 @@
         "bluetooth": "Bluetooth",
         "headphones": "Headphones",
         "phone": "Phone",
-        "speaker": "Speaker"
+        "speaker": "Speaker",
+        "none": "No audio devices available"
     },
     "audioOnly": {
         "audioOnly": "Low bandwidth"
