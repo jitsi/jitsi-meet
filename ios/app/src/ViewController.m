@@ -19,7 +19,7 @@
 
 @import CoreSpotlight;
 @import MobileCoreServices;
-@import Intents;  // Needed for NSUserActivity suggestedInvocationPhrase
+//@import Intents;  // Needed for NSUserActivity suggestedInvocationPhrase
 
 @import JitsiMeet;
 
@@ -42,11 +42,11 @@
 
 - (void)_onJitsiMeetViewDelegateEvent:(NSString *)name
                              withData:(NSDictionary *)data {
+#if DEBUG
     NSLog(
         @"[%s:%d] JitsiMeetViewDelegate %@ %@",
         __FILE__, __LINE__, name, data);
 
-#if DEBUG
     NSAssert(
         [NSThread isMainThread],
         @"JitsiMeetViewDelegate %@ method invoked on a non-main thread",
@@ -60,30 +60,30 @@
     // Register a NSUserActivity for this conference so it can be invoked as a
     // Siri shortcut. This is only supported in iOS >= 12.
 #ifdef __IPHONE_12_0
-    if (@available(iOS 12.0, *)) {
-      NSUserActivity *userActivity
-        = [[NSUserActivity alloc] initWithActivityType:JitsiMeetConferenceActivityType];
-
-      NSString *urlStr = data[@"url"];
-      NSURL *url = [NSURL URLWithString:urlStr];
-      NSString *conference = [url.pathComponents lastObject];
-
-      userActivity.title = [NSString stringWithFormat:@"Join %@", conference];
-      userActivity.suggestedInvocationPhrase = @"Join my Jitsi meeting";
-      userActivity.userInfo = @{@"url": urlStr};
-      [userActivity setEligibleForSearch:YES];
-      [userActivity setEligibleForPrediction:YES];
-      [userActivity setPersistentIdentifier:urlStr];
-
-      // Subtitle
-      CSSearchableItemAttributeSet *attributes
-        = [[CSSearchableItemAttributeSet alloc] initWithItemContentType:(NSString *)kUTTypeItem];
-      attributes.contentDescription = urlStr;
-      userActivity.contentAttributeSet = attributes;
-
-      self.userActivity = userActivity;
-      [userActivity becomeCurrent];
-    }
+//    if (@available(iOS 12.0, *)) {
+//      NSUserActivity *userActivity
+//        = [[NSUserActivity alloc] initWithActivityType:JitsiMeetConferenceActivityType];
+//
+//      NSString *urlStr = data[@"url"];
+//      NSURL *url = [NSURL URLWithString:urlStr];
+//      NSString *conference = [url.pathComponents lastObject];
+//
+//      userActivity.title = [NSString stringWithFormat:@"Join %@", conference];
+//      userActivity.suggestedInvocationPhrase = @"Join my Jitsi meeting";
+//      userActivity.userInfo = @{@"url": urlStr};
+//      [userActivity setEligibleForSearch:YES];
+//      [userActivity setEligibleForPrediction:YES];
+//      [userActivity setPersistentIdentifier:urlStr];
+//
+//      // Subtitle
+//      CSSearchableItemAttributeSet *attributes
+//        = [[CSSearchableItemAttributeSet alloc] initWithItemContentType:(NSString *)kUTTypeItem];
+//      attributes.contentDescription = urlStr;
+//      userActivity.contentAttributeSet = attributes;
+//
+//      self.userActivity = userActivity;
+//      [userActivity becomeCurrent];
+//    }
 #endif
 
 }
