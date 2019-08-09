@@ -710,6 +710,20 @@ class API {
     }
 
     /**
+     * Notify external application (if API is enabled) that the dominant speaker
+     * has been turned on/off.
+     *
+     * @param {string} id - Id of the dominant participant.
+     * @returns {void}
+     */
+    notifyDominantSpeakerChanged(id: string) {
+        this._sendEvent({
+            name: 'dominant-speaker-changed',
+            id
+        });
+    }
+
+    /**
      * Notify external application (if API is enabled) that the conference
      * changed their subject.
      *
