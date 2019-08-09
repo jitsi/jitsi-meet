@@ -114,7 +114,6 @@
 		13B07FB71A68108700A75B9A /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		4670A512A688E2DC34528282 /* Pods-jitsi-meet.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-jitsi-meet.debug.xcconfig"; path = "../Pods/Target Support Files/Pods-jitsi-meet/Pods-jitsi-meet.debug.xcconfig"; sourceTree = "<group>"; };
 		489E8EFE2C720D10F5961AEF /* libPods-jitsi-meet.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-jitsi-meet.a"; sourceTree = BUILT_PRODUCTS_DIR; };
-		B3B083EB1D4955FF0069CEE7 /* app.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = app.entitlements; sourceTree = "<group>"; };
 		DE4C455F21DE1E4E00EA0709 /* FIRUtilities.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FIRUtilities.m; sourceTree = "<group>"; };
 		DE4C456021DE1E4E00EA0709 /* FIRUtilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FIRUtilities.h; sourceTree = "<group>"; };
 		E58801132278944E008B0561 /* JitsiMeetContext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JitsiMeetContext.swift; sourceTree = "<group>"; };
@@ -178,7 +177,6 @@
 				0BEA5C3A1F7B8F73000D0AB4 /* ComplicationController.swift */,
 				0BEA5C3C1F7B8F73000D0AB4 /* Assets.xcassets */,
 				0BEA5C3E1F7B8F73000D0AB4 /* Info.plist */,
-				0B70016F1F7C51CC005944F4 /* InCallController.swift */,
 				0B5418461F7C5D8C00A2DD86 /* MeetingRowController.swift */,
 				E58801132278944E008B0561 /* JitsiMeetContext.swift */,
 				E5C97B62227A1EB400199214 /* JitsiMeetCommands.swift */,
@@ -218,7 +216,6 @@
 		83CBB9F61A601CBA00E9B192 = {
 			isa = PBXGroup;
 			children = (
-				B3B083EB1D4955FF0069CEE7 /* app.entitlements */,
 				0B26BE711EC5BC4D00EEFB41 /* Frameworks */,
 				83CBBA001A601CBA00E9B192 /* Products */,
 				13B07FAE1A68108700A75B9A /* src */,
@@ -536,7 +533,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				0B7001701F7C51CC005944F4 /* InCallController.swift in Sources */,
 				E5C97B63227A1EB400199214 /* JitsiMeetCommands.swift in Sources */,
 				0B5418471F7C5D8C00A2DD86 /* MeetingRowController.swift in Sources */,
 				E588011722789D43008B0561 /* JitsiMeetContext.swift in Sources */,

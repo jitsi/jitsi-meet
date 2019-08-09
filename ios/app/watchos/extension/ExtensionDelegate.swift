@@ -89,12 +89,12 @@ class ExtensionDelegate: NSObject, WCSessionDelegate, WKExtensionDelegate {
                         && self.currentContext.conferenceURL != newContext.conferenceURL {
                       currentController.pushController(withName: "InCallController", context: newContext)
                 }
-            } else if let inCallController = WKExtension.shared().visibleInterfaceController as? InCallController {
-                if newContext.conferenceURL == nil {
-                      inCallController.popToRootController()
-                } else {
-                      inCallController.updateUI(newContext)
-                }
+//            } else if let inCallController = WKExtension.shared().visibleInterfaceController as? InCallController {
+//                if newContext.conferenceURL == nil {
+//                      inCallController.popToRootController()
+//                } else {
+//                      inCallController.updateUI(newContext)
+//                }
             }
 
             self.currentContext = newContext;

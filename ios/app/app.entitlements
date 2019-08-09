@@ -9,6 +9,6 @@
 		<string>applinks:meet.jit.si</string>
 	</array>
 	<key>com.apple.developer.siri</key>
-	<true/>
+	<false/>
 </dict>
 </plist>
