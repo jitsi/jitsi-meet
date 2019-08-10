@@ -37,10 +37,6 @@ pushd ${RELEASE_REPO}
 cp -r ${PROJECT_REPO}/ios/sdk/JitsiMeet.framework Frameworks/
 cp -r ${PROJECT_REPO}/node_modules/react-native-webrtc/ios/WebRTC.framework Frameworks/
 
-# Strip bitcode
-xcrun bitcode_strip -r Frameworks/JitsiMeet.framework/JitsiMeet -o Frameworks/JitsiMeet.framework/JitsiMeet
-xcrun bitcode_strip -r Frameworks/WebRTC.framework/WebRTC -o Frameworks/WebRTC.framework/WebRTC
-
 # Add all files to git
 if [[ $DO_GIT_TAG == 1 ]]; then
     git add -A .
