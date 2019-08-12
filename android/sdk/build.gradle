@@ -149,6 +149,8 @@ android.libraryVariants.all { def variant ->
             from("${projectDir}/../../sounds/incomingMessage.wav")
             from("${projectDir}/../../sounds/joined.wav")
             from("${projectDir}/../../sounds/left.wav")
+            from("${projectDir}/../../sounds/liveStreamingOn.mp3")
+            from("${projectDir}/../../sounds/liveStreamingOff.mp3")
             from("${projectDir}/../../sounds/outgoingRinging.wav")
             from("${projectDir}/../../sounds/outgoingStart.wav")
             from("${projectDir}/../../sounds/recordingOn.mp3")
