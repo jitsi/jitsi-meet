@@ -1,5 +1,7 @@
 // @flow
 
+import debounce from 'lodash/debounce';
+
 import {
     VIDEO_QUALITY_LEVELS,
     setMaxReceiverVideoQuality
@@ -44,11 +46,12 @@ StateListenerRegistry.register(
 
 /**
  * For auto-pin mode, listen for changes to the known media tracks and look
- * for updates to screen shares.
+ * for updates to screen shares. The listener is debounced to avoid state
+ * thrashing that might occur, especially when switching in or out of p2p.
  */
 StateListenerRegistry.register(
     /* selector */ state => state['features/base/tracks'],
-    /* listener */ (tracks, store) => {
+    /* listener */ debounce((tracks, store) => {
         if (!AUTO_PIN_LATEST_SCREEN_SHARE) {
             return;
         }
@@ -88,8 +91,7 @@ StateListenerRegistry.register(
 
             _updateAutoPinnedParticipant(store);
         }
-    }
-);
+    }, 100));
 
 /**
  * Private helper to automatically pin the latest screen share stream or unpin
