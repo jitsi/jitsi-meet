@@ -2,17 +2,30 @@
 
 import { JitsiRecordingConstants } from '../base/lib-jitsi-meet';
 
+
 /**
- * The identifier of the sound to be played when a recording or live streaming
- * session is stopped.
+ * The identifier of the sound to be played when a live streaming session is stopped.
+ *
+ * @type {string}
+ */
+export const LIVE_STREAMING_OFF_SOUND_ID = 'LIVE_STREAMING_OFF_SOUND';
+
+/**
+ * The identifier of the sound to be played when a live streaming session is started.
+ *
+ * @type {string}
+ */
+export const LIVE_STREAMING_ON_SOUND_ID = 'LIVE_STREAMING_ON_SOUND';
+
+/**
+ * The identifier of the sound to be played when a recording session is stopped.
  *
  * @type {string}
  */
 export const RECORDING_OFF_SOUND_ID = 'RECORDING_OFF_SOUND';
 
 /**
- * The identifier of the sound to be played when a recording or live streaming
- * session is started.
+ * The identifier of the sound to be played when a recording session is started.
  *
  * @type {string}
  */
