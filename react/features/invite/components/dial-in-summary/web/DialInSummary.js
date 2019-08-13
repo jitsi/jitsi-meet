@@ -177,7 +177,7 @@ class DialInSummary extends Component<Props, State> {
             return Promise.resolve();
         }
 
-        return doGetJSON(`${dialInConfCodeUrl}?conference=${room}@${mucURL}`)
+        return doGetJSON(`${dialInConfCodeUrl}?conference=${room}@${mucURL}`, true)
             .catch(() => Promise.reject(this.props.t('info.genericError')));
     }
 
@@ -204,7 +204,7 @@ class DialInSummary extends Component<Props, State> {
             URLSuffix = `?conference=${room}@${mucURL}`;
         }
 
-        return doGetJSON(`${dialInNumbersUrl}${URLSuffix}`)
+        return doGetJSON(`${dialInNumbersUrl}${URLSuffix}`, true)
             .catch(() => Promise.reject(this.props.t('info.genericError')));
     }
 
