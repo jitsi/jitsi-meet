@@ -3,6 +3,7 @@
 import React, { Component } from 'react';
 
 import { translate } from '../../../../base/i18n';
+import { doGetJSON } from '../../../../base/util';
 
 import ConferenceID from './ConferenceID';
 import NumbersList from './NumbersList';
@@ -176,11 +177,7 @@ class DialInSummary extends Component<Props, State> {
             return Promise.resolve();
         }
 
-        const conferenceIDURL
-            = `${dialInConfCodeUrl}?conference=${room}@${mucURL}`;
-
-        return fetch(conferenceIDURL)
-            .then(response => response.json())
+        return doGetJSON(`${dialInConfCodeUrl}?conference=${room}@${mucURL}`)
             .catch(() => Promise.reject(this.props.t('info.genericError')));
     }
 
@@ -206,11 +203,8 @@ class DialInSummary extends Component<Props, State> {
         if (room && mucURL) {
             URLSuffix = `?conference=${room}@${mucURL}`;
         }
-        const conferenceIDURL
-        = `${dialInNumbersUrl}${URLSuffix}`;
 
-        return fetch(conferenceIDURL)
-            .then(response => response.json())
+        return doGetJSON(`${dialInNumbersUrl}${URLSuffix}`)
             .catch(() => Promise.reject(this.props.t('info.genericError')));
     }
 
