@@ -2544,7 +2544,11 @@ export default {
     leaveRoomAndDisconnect() {
         APP.store.dispatch(conferenceWillLeave(room));
 
-        return room.leave().then(disconnect, disconnect);
+        if (room.isJoined()) {
+            return room.leave().then(disconnect, disconnect);
+        }
+
+        return disconnect();
     },
 
     /**
