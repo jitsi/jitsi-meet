@@ -48,7 +48,7 @@ export function getDialInConferenceID(
 
     const conferenceIDURL = `${baseUrl}?conference=${roomName}@${mucURL}`;
 
-    return doGetJSON(conferenceIDURL);
+    return doGetJSON(conferenceIDURL, true);
 }
 
 /**
@@ -71,7 +71,7 @@ export function getDialInNumbers(
 
     const fullUrl = `${url}?conference=${roomName}@${mucURL}`;
 
-    return doGetJSON(fullUrl);
+    return doGetJSON(fullUrl, true);
 }
 
 /**
