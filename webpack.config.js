@@ -45,10 +45,10 @@ const config = {
                 plugins: [
                     require.resolve('@babel/plugin-transform-flow-strip-types'),
                     require.resolve('@babel/plugin-proposal-class-properties'),
-                    require.resolve(
-                        '@babel/plugin-proposal-export-default-from'),
-                    require.resolve(
-                        '@babel/plugin-proposal-export-namespace-from')
+                    require.resolve('@babel/plugin-proposal-export-default-from'),
+                    require.resolve('@babel/plugin-proposal-export-namespace-from'),
+                    require.resolve('@babel/plugin-proposal-nullish-coalescing-operator'),
+                    require.resolve('@babel/plugin-proposal-optional-chaining')
                 ],
                 presets: [
                     [
