@@ -139,7 +139,7 @@ class DeepLinkingDesktopPage<P : Props> extends Component<P> {
         );
     }
 
-    _onTryAgain: () => {}
+    _onTryAgain: () => void;
 
     /**
      * Handles try again button clicks.
@@ -153,7 +153,7 @@ class DeepLinkingDesktopPage<P : Props> extends Component<P> {
         this.props.dispatch(openDesktopApp());
     }
 
-    _onLaunchWeb: () => {}
+    _onLaunchWeb: () => void;
 
     /**
      * Handles launch web button clicks.

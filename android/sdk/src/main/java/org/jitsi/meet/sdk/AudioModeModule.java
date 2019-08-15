@@ -25,8 +25,8 @@ import android.content.pm.PackageManager;
 import android.media.AudioDeviceInfo;
 import android.media.AudioManager;
 import android.os.Build;
-import android.support.annotation.RequiresApi;
 import android.util.Log;
+import androidx.annotation.RequiresApi;
 
 import com.facebook.react.bridge.Arguments;
 import com.facebook.react.bridge.Promise;

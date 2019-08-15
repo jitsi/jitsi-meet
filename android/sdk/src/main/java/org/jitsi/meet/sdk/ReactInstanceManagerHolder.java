@@ -18,7 +18,7 @@
 package org.jitsi.meet.sdk;
 
 import android.app.Activity;
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 
 import com.facebook.react.ReactInstanceManager;
 import com.facebook.react.ReactPackage;
@@ -27,8 +27,10 @@ import com.facebook.react.bridge.ReactContext;
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.common.LifecycleState;
 import com.facebook.react.devsupport.DevInternalSettings;
+import com.facebook.react.jscexecutor.JSCExecutorFactory;
 import com.facebook.react.modules.core.DeviceEventManagerModule;
 import com.facebook.react.uimanager.ViewManager;
+import com.facebook.soloader.SoLoader;
 import com.oney.WebRTCModule.RTCVideoViewManager;
 import com.oney.WebRTCModule.WebRTCModule;
 
@@ -38,7 +40,6 @@ import org.webrtc.VideoDecoderFactory;
 import org.webrtc.VideoEncoderFactory;
 import org.webrtc.audio.AudioDeviceModule;
 import org.webrtc.audio.JavaAudioDeviceModule;
-import org.webrtc.voiceengine.WebRtcAudioManager;
 
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
@@ -181,6 +182,8 @@ class ReactInstanceManagerHolder {
             return;
         }
 
+        SoLoader.init(activity, /* native exopackage */ false);
+
         List<ReactPackage> packages
             = new ArrayList<>(Arrays.asList(
                 new com.BV.LinearGradient.LinearGradientPackage(),
@@ -212,12 +215,17 @@ class ReactInstanceManagerHolder {
             // Ignore any error, the module is not compiled when LIBRE_BUILD is enabled.
         }
 
+        // Keep on using JSC, the jury is out on Hermes.
+        JSCExecutorFactory jsFactory
+            = new JSCExecutorFactory("", "");
+
         reactInstanceManager
             = ReactInstanceManager.builder()
                 .setApplication(activity.getApplication())
                 .setCurrentActivity(activity)
                 .setBundleAssetName("index.android.bundle")
                 .setJSMainModulePath("index.android")
+                .setJavaScriptExecutorFactory(jsFactory)
                 .addPackages(packages)
                 .setUseDeveloperSupport(BuildConfig.DEBUG)
                 .setInitialLifecycleState(LifecycleState.RESUMED)

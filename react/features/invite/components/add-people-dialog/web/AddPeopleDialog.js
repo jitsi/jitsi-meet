@@ -393,7 +393,7 @@ class AddPeopleDialog extends AbstractAddPeopleDialog<Props, State> {
         );
     }
 
-    _setMultiSelectElement: (React$ElementRef<*> | null) => mixed;
+    _setMultiSelectElement: (React$ElementRef<*> | null) => void;
 
     /**
      * Sets the instance variable for the multi select component
