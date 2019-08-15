@@ -43,7 +43,7 @@ class AbstractDialogTab extends Component<Props> {
         this._onChange = this._onChange.bind(this);
     }
 
-    _onChange: (Object) => {};
+    _onChange: (Object) => void;
 
     /**
      * Uses the onTabStateChange function to pass the changed state of the

@@ -43,7 +43,7 @@ export default class Tab extends Component<Props> {
         this._onSelect = this._onSelect.bind(this);
     }
 
-    _onSelect: () => {};
+    _onSelect: () => void;
 
     /**
      * Selects a tab.
