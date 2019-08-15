@@ -114,6 +114,7 @@
     },
     "deepLinking": {
         "appNotInstalled": "You need the {{app}} mobile app to join this meeting on your phone.",
+        "description": "Nothing happened? We tried launching your meeting in the {{app}} desktop app. Try again or launch it in the {{app}} web app.",
         "descriptionWithoutWeb": "Nothing happened? We tried launching your meeting in the {{app}} desktop app.",
         "downloadApp": "Download the app",
         "launchWebButton": "Launch in web",
