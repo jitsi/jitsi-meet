@@ -40,7 +40,6 @@ class NavigationBar extends Component<Props> {
             return null;
         }
 
-        const displayName = convertForTrans(this.props._meetingName);
 
         return [
             <LinearGradient
@@ -64,7 +63,7 @@ class NavigationBar extends Component<Props> {
                     <Text
                         numberOfLines = { 1 }
                         style = { styles.roomName }>
-                        { displayName }
+                        { this.props._meetingName }
                     </Text>
                 </View>
             </View>
@@ -84,7 +83,7 @@ class NavigationBar extends Component<Props> {
  */
 function _mapStateToProps(state) {
     return {
-        _meetingName: getConferenceName(state),
+        _meetingName: convertForTrans(getConferenceName(state)),
         _visible: isToolboxVisible(state)
     };
 }
