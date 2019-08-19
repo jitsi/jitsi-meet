@@ -31,7 +31,7 @@ export const PIP_ENABLED = 'pip.enabled';
 export const WELCOME_PAGE_ENABLED = 'welcomepage.enabled';
 
 /**
- * Flag indicating if one participant message should be enabled.
- * Default: enabled (true).
+ * Flag indicating if single participant message should be enabled.
+ * Default: enabled (false).
  */
-export const ONE_PARTICIPANT_MESSAGE_ENABLED = 'one.participant.message.enabled';
+export const SINGLE_PARTICIPANT_MESSAGE_ENABLED = 'single.participant.message.enabled';

@@ -49,7 +49,7 @@ export default {
     /**
      * Style for the text rendered when there's only one participant in the room.
      */
-    onlyOneParticipantMessageText: {
+    singleParticipantMessageText: {
         color: ColorPalette.white,
         fontSize: 16,
         marginVertical: BoxModel.margin,
@@ -61,7 +61,7 @@ export default {
      * Style for the container of the text rendered when there is
      * only one participant.
      */
-    onlyOneParticipantContainer: {
+    singleParticipantContainer: {
         ...StyleSheet.absoluteFillObject,
         backgroundColor: 'rgba(0, 0, 0, 0.5)',
         justifyContent: 'center'

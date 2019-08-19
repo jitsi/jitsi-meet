@@ -19,7 +19,7 @@ import { getTrackByMediaTypeAndParticipant } from '../../tracks';
 import { shouldRenderParticipantVideo } from '../functions';
 import styles from './styles';
 import { getAppProp } from '../../../base/app';
-import { ONE_PARTICIPANT_MESSAGE_ENABLED, getFeatureFlag } from '../../flags';
+import { SINGLE_PARTICIPANT_MESSAGE_ENABLED, getFeatureFlag } from '../../flags';
 
 /**
  * The type of the React {@link Component} props of {@link ParticipantView}.
@@ -63,14 +63,14 @@ type Props = {
     disableVideo: ?boolean,
 
     /**
-     * Whether the one participant message feature has been enabled.
-     */
-    _oneParticipantMessageEnabled: boolean,
-
-    /**
      * Message to display when only one participant has joined.
      */
-    _onlyOneParticipantMessage: string,
+    _singleParticipantMessage: string,
+
+    /**
+     * Whether the single participant message feature has been enabled.
+     */
+    _singleParticipantMessageEnabled: boolean,
 
     /**
      * Callback to invoke when the {@code ParticipantView} is clicked/pressed.
@@ -201,23 +201,23 @@ class ParticipantView extends Component<Props> {
      * @private
      * @returns {ReactElement|null}
      */
-    _renderOnlyOneParticipantMessage() {
+    _renderSingleParticipantMessage() {
 
         const {
-            _onlyOneParticipantMessage: onlyOneParticipantMessage,
+            _singleParticipantMessage: singleParticipantMessage,
             t
         } = this.props;
 
-        const messageText = onlyOneParticipantMessage
-        && onlyOneParticipantMessage.length > 0
-            ? onlyOneParticipantMessage
-            : t('onlyOneParticipant');
+        const messageText = singleParticipantMessage
+        && singleParticipantMessage.length > 0
+            ? singleParticipantMessage
+            : t('singleParticipant');
 
         return (
             <View
                 pointerEvents = 'box-none'
-                style = { styles.onlyOneParticipantContainer }>
-                <Text style = { styles.onlyOneParticipantMessageText }>
+                style = { styles.singleParticipantContainer }>
+                <Text style = { styles.singleParticipantMessageText }>
                     { messageText }
                 </Text>
             </View>
@@ -235,12 +235,12 @@ class ParticipantView extends Component<Props> {
             _connectionStatus: connectionStatus,
             _renderVideo: renderVideo,
             _videoTrack: videoTrack,
-            _oneParticipantMessageEnabled: onlyOneParticipantMessageEnabled,
+            _singleParticipantMessageEnabled: singleParticipantMessageEnabled,
             onPress,
             tintStyle
         } = this.props;
 
-        const renderOnlyOneParticipant = onlyOneParticipantMessageEnabled
+        const renderSingleParticipant = singleParticipantMessageEnabled
             && this.props.participantCount === 1;
 
         // If the connection has problems, we will "tint" the video / avatar.
@@ -290,7 +290,7 @@ class ParticipantView extends Component<Props> {
                         style = {
                             connectionProblem ? undefined : tintStyle } /> }
 
-                { renderOnlyOneParticipant && this._renderOnlyOneParticipantMessage() }
+                { renderSingleParticipant && this._renderSingleParticipantMessage() }
 
                 { this.props.useConnectivityInfoLabel
                     && this._renderConnectionInfo(connectionStatus) }
@@ -312,15 +312,15 @@ class ParticipantView extends Component<Props> {
 function _mapStateToProps(state, ownProps) {
     const { disableVideo, participantId } = ownProps;
     let connectionStatus;
-    const onlyOneParticipantMessage = getAppProp(state, 'onlyOneParticipantMessage');
+    const singleParticipantMessage = getAppProp(state, 'singleParticipantMessage');
     let participantName;
 
     return {
         _connectionStatus:
             connectionStatus
                 || JitsiParticipantConnectionStatus.ACTIVE,
-        _oneParticipantMessageEnabled: getFeatureFlag(state, ONE_PARTICIPANT_MESSAGE_ENABLED, true),
-        _onlyOneParticipantMessage: onlyOneParticipantMessage,
+        _singleParticipantMessageEnabled: getFeatureFlag(state, SINGLE_PARTICIPANT_MESSAGE_ENABLED, false),
+        _singleParticipantMessage: singleParticipantMessage,
         _participantName: participantName,
         _renderVideo: shouldRenderParticipantVideo(state, participantId) && !disableVideo,
         _videoTrack:

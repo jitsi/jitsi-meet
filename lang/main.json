@@ -122,7 +122,7 @@
     },
     "defaultLink": "e.g. {{url}}",
     "defaultNickname": "ex. Jane Pink",
-    "onlyOneParticipant": "Please wait for others to join",
+    "singleParticipant": "Please wait for others to join",
     "deviceError": {
         "cameraError": "Failed to access your camera",
         "cameraPermission": "Error obtaining camera permission",
