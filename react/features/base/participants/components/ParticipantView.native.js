@@ -19,6 +19,7 @@ import { getTrackByMediaTypeAndParticipant } from '../../tracks';
 import { shouldRenderParticipantVideo } from '../functions';
 import styles from './styles';
 import { getAppProp } from '../../../base/app';
+import { ONE_PARTICIPANT_MESSAGE_ENABLED, getFeatureFlag } from '../../flags';
 
 /**
  * The type of the React {@link Component} props of {@link ParticipantView}.
@@ -60,6 +61,11 @@ type Props = {
      * Whether video should be disabled for his view.
      */
     disableVideo: ?boolean,
+
+    /**
+     * Whether the one participant message feature has been enabled.
+     */
+    _oneParticipantMessageEnabled: boolean,
 
     /**
      * Message to display when only one participant has joined.
@@ -192,18 +198,27 @@ class ParticipantView extends Component<Props> {
     /**
      * Renders message when only one participant joined.
      *
-     * @param {string} message - The message to display.
      * @private
      * @returns {ReactElement|null}
      */
-    _renderOnlyOneParticipantMessage(message) {
+    _renderOnlyOneParticipantMessage() {
+
+        const {
+            _onlyOneParticipantMessage: onlyOneParticipantMessage,
+            t
+        } = this.props;
+
+        const messageText = onlyOneParticipantMessage
+        && onlyOneParticipantMessage.length > 0
+            ? onlyOneParticipantMessage
+            : t('onlyOneParticipant');
 
         return (
             <View
                 pointerEvents = 'box-none'
                 style = { styles.onlyOneParticipantContainer }>
                 <Text style = { styles.onlyOneParticipantMessageText }>
-                    { message }
+                    { messageText }
                 </Text>
             </View>
         );
@@ -220,13 +235,13 @@ class ParticipantView extends Component<Props> {
             _connectionStatus: connectionStatus,
             _renderVideo: renderVideo,
             _videoTrack: videoTrack,
-            _onlyOneParticipantMessage: onlyOneParticipantMessage,
+            _oneParticipantMessageEnabled: onlyOneParticipantMessageEnabled,
             onPress,
             tintStyle
         } = this.props;
 
-        const renderOnlyOneParticipant = onlyOneParticipantMessage
-            && onlyOneParticipantMessage.length > 0 && this.props.participantCount === 1;
+        const renderOnlyOneParticipant = onlyOneParticipantMessageEnabled
+            && this.props.participantCount === 1;
 
         // If the connection has problems, we will "tint" the video / avatar.
         const connectionProblem
@@ -275,7 +290,7 @@ class ParticipantView extends Component<Props> {
                         style = {
                             connectionProblem ? undefined : tintStyle } /> }
 
-                { renderOnlyOneParticipant && this._renderOnlyOneParticipantMessage(onlyOneParticipantMessage) }
+                { renderOnlyOneParticipant && this._renderOnlyOneParticipantMessage() }
 
                 { this.props.useConnectivityInfoLabel
                     && this._renderConnectionInfo(connectionStatus) }
@@ -304,6 +319,7 @@ function _mapStateToProps(state, ownProps) {
         _connectionStatus:
             connectionStatus
                 || JitsiParticipantConnectionStatus.ACTIVE,
+        _oneParticipantMessageEnabled: getFeatureFlag(state, ONE_PARTICIPANT_MESSAGE_ENABLED, true),
         _onlyOneParticipantMessage: onlyOneParticipantMessage,
         _participantName: participantName,
         _renderVideo: shouldRenderParticipantVideo(state, participantId) && !disableVideo,
