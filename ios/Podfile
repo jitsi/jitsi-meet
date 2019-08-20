@@ -48,6 +48,7 @@ target 'JitsiMeet' do
   pod 'RNSound', :path => '../node_modules/react-native-sound'
   pod 'RNVectorIcons', :path => '../node_modules/react-native-vector-icons'
   pod 'RNWatch', :path => '../node_modules/react-native-watch-connectivity'
+  pod 'react-native-torch', :path => '../node_modules/react-native-torch'
 
   # Native pod dependencies
   #

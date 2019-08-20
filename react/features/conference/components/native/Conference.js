@@ -1,7 +1,7 @@
 // @flow
 
 import React from 'react';
-import { NativeModules, SafeAreaView, StatusBar, View } from 'react-native';
+import { NativeModules, SafeAreaView, StatusBar, View, Platform } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 
 import { appNavigate } from '../../../app';
@@ -38,11 +38,19 @@ import NavigationBar from './NavigationBar';
 import styles, { NAVBAR_GRADIENT_COLORS } from './styles';
 
 import type { AbstractProps } from '../AbstractConference';
+import { toggleFlashlight } from '../../../flashlight';
+import { isLocalTrackMuted } from '../../../base/tracks';
+import { CAMERA_FACING_MODE, MEDIA_TYPE } from '../../../base/media';
 
 /**
  * The type of the React {@code Component} props of {@link Conference}.
  */
 type Props = AbstractProps & {
+
+    /**
+     * Whether the current conference is in audio only mode or not.
+     */
+    _audioOnly: boolean,
 
     /**
      * Wherther the calendar feature is enabled or not.
@@ -62,11 +70,21 @@ type Props = AbstractProps & {
     _connecting: boolean,
 
     /**
+     * camera FacingMode.
+     */
+    _facingMode: string,
+
+    /**
      * Set to {@code true} when the filmstrip is currently visible.
      *
      * @private
      */
     _filmstripVisible: boolean,
+
+    /**
+     * Whether Flash is turn-on or off.
+     */
+    _isFlashlightOn: boolean,
 
     /**
      * The ID of the participant currently on stage (if any)
@@ -112,6 +130,11 @@ type Props = AbstractProps & {
      * @private
      */
     _toolboxVisible: boolean,
+
+    /**
+     * Whether video is currently muted or not.
+     */
+    _videoMuted: boolean,
 
     /**
      * The redux {@code dispatch} function.
@@ -175,6 +198,18 @@ class Conference extends AbstractConference<Props, *> {
                 && newParticipantCount === 1
                 && !_toolboxVisible) {
             this._setToolboxVisible(true);
+        }
+
+        if (Platform.OS === 'ios') {
+            if (prevProps._audioOnly !== this.props._audioOnly
+                || prevProps._videoMuted !== this.props._videoMuted
+                || prevProps._facingMode !== this.props._facingMode) {
+                if ((this.props._audioOnly || this.props._videoMuted
+                    || this.props._facingMode === CAMERA_FACING_MODE.USER)
+                    && this.props._isFlashlightOn) {
+                    this.props.dispatch(toggleFlashlight());
+                }
+            }
         }
     }
 
@@ -419,6 +454,10 @@ function _mapStateToProps(state) {
     } = state['features/base/conference'];
     const { reducedUI } = state['features/base/responsive-ui'];
     const { visible } = state['features/toolbox'];
+    const { enabled: audioOnly } = state['features/base/audio-only'];
+    const tracks = state['features/base/tracks'];
+    const facingMode = state['features/base/media'].video.facingMode;
+    const isFlashlightOn = state['features/flashlight'].isFlashlightOn;
 
     // XXX There is a window of time between the successful establishment of the
     // XMPP connection and the subsequent commencement of joining the MUC during
@@ -434,6 +473,7 @@ function _mapStateToProps(state) {
 
     return {
         ...abstractMapStateToProps(state),
+        _audioOnly: Boolean(audioOnly),
 
         /**
          * Wherther the calendar feature is enabled or not.
@@ -454,10 +494,14 @@ function _mapStateToProps(state) {
          */
         _connecting: Boolean(connecting_),
 
+        _facingMode: facingMode,
+
         /**
          * Is {@code true} when the filmstrip is currently visible.
          */
         _filmstripVisible: isFilmstripVisible(state),
+
+        _isFlashlightOn: isFlashlightOn,
 
         /**
          * The ID of the participant currently on stage.
@@ -495,7 +539,9 @@ function _mapStateToProps(state) {
          * @private
          * @type {boolean}
          */
-        _toolboxVisible: visible
+        _toolboxVisible: visible,
+        _videoMuted: isLocalTrackMuted(tracks, MEDIA_TYPE.VIDEO)
+
     };
 }
 

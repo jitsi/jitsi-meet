@@ -13,6 +13,12 @@ export const CALENDAR_ENABLED = 'calendar.enabled';
 export const CHAT_ENABLED = 'chat.enabled';
 
 /**
+ * Flag indicating if flashlight should be enabled in iOS.
+ * Default: enabled (true).
+ */
+export const IOS_FLASHLIGHT_ENABLED = 'ios.flashlight.enabled';
+
+/**
  * Flag indicating if recording should be enabled in iOS.
  * Default: disabled (false).
  */
