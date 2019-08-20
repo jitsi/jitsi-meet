@@ -2,3 +2,5 @@ osx_image: xcode10.2
 language: objective-c
 script:
 - "./ios/travis-ci/build-ipa.sh"
+after_script:
+  - sleep 10
