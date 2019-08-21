@@ -1,8 +1,9 @@
 // @flow
 
 import React, { Component } from 'react';
-import { TextInput, View } from 'react-native';
+import { TextInput, TouchableOpacity, View } from 'react-native';
 
+import { Icon } from '../../../base/font-icons';
 import { Platform } from '../../../base/react';
 
 import styles from './styles';
@@ -25,7 +26,12 @@ type State = {
     /**
      * The value of the input field.
      */
-    message: string
+    message: string,
+
+    /**
+     * Boolean to show or hide the send button.
+     */
+    showSend: boolean
 };
 
 /**
@@ -42,7 +48,8 @@ export default class ChatInputBar extends Component<Props, State> {
 
         this.state = {
             addPadding: false,
-            message: ''
+            message: '',
+            showSend: false
         };
 
         this._onChangeText = this._onChangeText.bind(this);
@@ -72,6 +79,13 @@ export default class ChatInputBar extends Component<Props, State> {
                     returnKeyType = 'send'
                     style = { styles.inputField }
                     value = { this.state.message } />
+                {
+                    this.state.showSend && <TouchableOpacity onPress = { this._onSubmit }>
+                        <Icon
+                            name = 'send'
+                            style = { styles.sendButtonIcon } />
+                    </TouchableOpacity>
+                }
             </View>
         );
     }
@@ -86,7 +100,8 @@ export default class ChatInputBar extends Component<Props, State> {
      */
     _onChangeText(text) {
         this.setState({
-            message: text
+            message: text,
+            showSend: Boolean(text)
         });
     }
 
@@ -117,6 +132,9 @@ export default class ChatInputBar extends Component<Props, State> {
         const message = this.state.message.trim();
 
         message && this.props.onSend(message);
-        this.setState({ message: '' });
+        this.setState({
+            message: '',
+            showSend: false
+        });
     }
 }
