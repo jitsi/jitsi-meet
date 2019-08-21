@@ -19,8 +19,7 @@ import {
     SET_LOCATION_URL
 } from './actionTypes';
 import { JITSI_CONNECTION_URL_KEY } from './constants';
-
-const logger = require('jitsi-meet-logger').getLogger(__filename);
+import logger from './logger';
 
 /**
  * The error structure passed to the {@link connectionFailed} action.

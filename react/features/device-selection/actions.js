@@ -16,8 +16,7 @@ import { updateSettings } from '../base/settings';
 
 import { SET_DEVICE_SELECTION_POPUP_DATA } from './actionTypes';
 import { getDeviceSelectionDialogProps, processExternalDeviceRequest } from './functions';
-
-const logger = require('jitsi-meet-logger').getLogger(__filename);
+import logger from './logger';
 
 /**
  * Opens a popup window with the device selection dialog in it.

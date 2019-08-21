@@ -1,6 +1,6 @@
 import { timeoutPromise } from './timeoutPromise';
 
-const logger = require('jitsi-meet-logger').getLogger(__filename);
+import logger from './logger';
 
 /**
  * The number of milliseconds before deciding that we need retry a fetch request.

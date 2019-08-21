@@ -21,8 +21,7 @@ import {
 import { showNotification, showWarningNotification } from '../../notifications';
 import { updateSettings } from '../settings';
 import { setAudioOutputDeviceId } from './functions';
-
-const logger = require('jitsi-meet-logger').getLogger(__filename);
+import logger from './logger';
 
 const JITSI_TRACK_ERROR_TO_MESSAGE_KEY_MAP = {
     microphone: {

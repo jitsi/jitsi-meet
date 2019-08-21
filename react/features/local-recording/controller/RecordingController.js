@@ -2,6 +2,7 @@
 
 import { i18next } from '../../base/i18n';
 
+import logger from '../logger';
 import {
     FlacAdapter,
     OggAdapter,
@@ -9,8 +10,6 @@ import {
     downloadBlob
 } from '../recording';
 import { sessionManager } from '../session';
-
-const logger = require('jitsi-meet-logger').getLogger(__filename);
 
 /**
  * XMPP command for signaling the start of local recording to all clients.

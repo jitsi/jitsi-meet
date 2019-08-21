@@ -16,9 +16,9 @@ import {
     setGoogleAPIState
 } from '../../../../google-api';
 
-import styles from './styles';
+import logger from '../../../logger';
 
-const logger = require('jitsi-meet-logger').getLogger(__filename);
+import styles from './styles';
 
 /**
  * Prop type of the component {@code GoogleSigninForm}.

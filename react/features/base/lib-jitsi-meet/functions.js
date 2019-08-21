@@ -4,13 +4,12 @@ import { toState } from '../redux';
 import { loadScript } from '../util';
 
 import JitsiMeetJS from './_';
+import logger from './logger';
 
 declare var APP: Object;
 
 const JitsiConferenceErrors = JitsiMeetJS.errors.conference;
 const JitsiConnectionErrors = JitsiMeetJS.errors.connection;
-
-const logger = require('jitsi-meet-logger').getLogger(__filename);
 
 /**
  * Creates a {@link JitsiLocalTrack} model from the given device id.

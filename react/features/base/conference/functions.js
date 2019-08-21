@@ -19,8 +19,7 @@ import {
     JITSI_CONFERENCE_URL_KEY,
     VIDEO_QUALITY_LEVELS
 } from './constants';
-
-const logger = require('jitsi-meet-logger').getLogger(__filename);
+import logger from './logger';
 
 /**
  * Attach a set of local tracks to a conference.

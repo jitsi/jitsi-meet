@@ -1,5 +1,5 @@
 
-const logger = require('jitsi-meet-logger').getLogger(__filename);
+import logger from './logger';
 
 /**
  * Begins a request to get available DesktopCapturerSources.

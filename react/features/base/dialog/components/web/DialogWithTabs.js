@@ -6,7 +6,7 @@ import React, { Component } from 'react';
 import { StatelessDialog } from '../../../dialog';
 import { translate } from '../../../i18n';
 
-const logger = require('jitsi-meet-logger').getLogger(__filename);
+import logger from '../../logger';
 
 /**
  * The type of the React {@code Component} props of {@link DialogWithTabs}.

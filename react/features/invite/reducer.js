@@ -11,8 +11,7 @@ import {
     UPDATE_DIAL_IN_NUMBERS_FAILED,
     UPDATE_DIAL_IN_NUMBERS_SUCCESS
 } from './actionTypes';
-
-const logger = require('jitsi-meet-logger').getLogger(__filename);
+import logger from './logger';
 
 const DEFAULT_STATE = {
     /**

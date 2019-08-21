@@ -1,5 +1,7 @@
 // @flow
 
+import type { Dispatch } from 'redux';
+
 import {
     createStartMutedConfigurationEvent,
     sendAnalytics
@@ -58,9 +60,7 @@ import {
     getCurrentConference,
     sendLocalParticipant
 } from './functions';
-import type { Dispatch } from 'redux';
-
-const logger = require('jitsi-meet-logger').getLogger(__filename);
+import logger from './logger';
 
 declare var APP: Object;
 
