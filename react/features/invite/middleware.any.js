@@ -45,9 +45,8 @@ import {
     OUTGOING_CALL_RINGING_SOUND_ID,
     OUTGOING_CALL_START_SOUND_ID
 } from './constants';
+import logger from './logger';
 import { sounds } from './sounds';
-
-const logger = require('jitsi-meet-logger').getLogger(__filename);
 
 declare var interfaceConfig: Object;
 

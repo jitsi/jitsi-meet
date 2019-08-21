@@ -11,7 +11,7 @@ import { translate } from '../../base/i18n';
 import JitsiMeetJS from '../../base/lib-jitsi-meet';
 import { connect } from '../../base/redux';
 
-const logger = require('jitsi-meet-logger').getLogger(__filename);
+import logger from '../logger';
 
 const {
     HIGH,

@@ -14,11 +14,10 @@ import {
     isFatalJitsiConnectionError
 } from '../../base/lib-jitsi-meet';
 
+import logger from '../logger';
 import ReloadButton from './web/ReloadButton';
 
 declare var APP: Object;
-
-const logger = require('jitsi-meet-logger').getLogger(__filename);
 
 /**
  * The type of the React {@code Component} props of

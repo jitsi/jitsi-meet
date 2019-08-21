@@ -5,8 +5,9 @@
 import AbstractVideoMuteButton from '../base/toolbox/components/AbstractVideoMuteButton';
 import type { Props } from '../base/toolbox/components/AbstractButton';
 
+import logger from './logger';
+
 const { api } = window.alwaysOnTop;
-const logger = require('jitsi-meet-logger').getLogger(__filename);
 
 /**
  * The type of the React {@code Component} state of {@link VideoMuteButton}.

@@ -5,9 +5,9 @@ import AKInlineDialog from '@atlaskit/inline-dialog';
 import _debounce from 'lodash/debounce';
 import React, { Component } from 'react';
 
-import InlineDialogFailure from './InlineDialogFailure';
+import logger from '../../logger';
 
-const logger = require('jitsi-meet-logger').getLogger(__filename);
+import InlineDialogFailure from './InlineDialogFailure';
 
 /**
  * The type of the React {@code Component} props of

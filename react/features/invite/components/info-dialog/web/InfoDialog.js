@@ -18,10 +18,9 @@ import {
     _getDefaultPhoneNumber,
     getDialInfoPageURL
 } from '../../../functions';
+import logger from '../../../logger';
 import DialInNumber from './DialInNumber';
 import PasswordForm from './PasswordForm';
-
-const logger = require('jitsi-meet-logger').getLogger(__filename);
 
 /**
  * The type of the React {@code Component} props of {@link InfoDialog}.

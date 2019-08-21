@@ -17,10 +17,9 @@ import UIEvents from '../../../service/UI/UIEvents';
 import { _openPasswordRequiredPrompt } from './actions';
 import { PasswordRequiredPrompt, RoomLockPrompt } from './components';
 import { LOCKED_REMOTELY } from './constants';
+import logger from './logger';
 
 declare var APP: Object;
-
-const logger = require('jitsi-meet-logger').getLogger(__filename);
 
 /**
  * Middleware that captures conference failed and checks for password required

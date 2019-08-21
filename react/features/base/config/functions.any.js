@@ -4,6 +4,7 @@ import _ from 'lodash';
 
 import { _CONFIG_STORE_PREFIX } from './constants';
 import parseURLParams from './parseURLParams';
+import logger from './logger';
 
 declare var $: Object;
 
@@ -146,8 +147,6 @@ const WHITELISTED_KEYS = [
     'webrtcIceTcpDisable',
     'webrtcIceUdpDisable'
 ];
-
-const logger = require('jitsi-meet-logger').getLogger(__filename);
 
 // XXX The functions getRoomName and parseURLParams are split out of
 // functions.js because they are bundled in both app.bundle and

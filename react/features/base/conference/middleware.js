@@ -41,8 +41,7 @@ import {
     forEachConference,
     getCurrentConference
 } from './functions';
-
-const logger = require('jitsi-meet-logger').getLogger(__filename);
+import logger from './logger';
 
 declare var APP: Object;
 

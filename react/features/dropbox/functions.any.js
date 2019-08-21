@@ -2,8 +2,7 @@
 export * from './functions';
 
 import { getDisplayName, getSpaceUsage } from './functions';
-
-const logger = require('jitsi-meet-logger').getLogger(__filename);
+import logger from './logger';
 
 /**
  * Information related to the user's dropbox account.

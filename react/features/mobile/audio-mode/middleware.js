@@ -13,10 +13,10 @@ import {
 import { MiddlewareRegistry } from '../../base/redux';
 
 import { _SET_AUDIOMODE_DEVICES, _SET_AUDIOMODE_SUBSCRIPTIONS } from './actionTypes';
+import logger from './logger';
 
 const { AudioMode } = NativeModules;
 const AudioModeEmitter = new NativeEventEmitter(AudioMode);
-const logger = require('jitsi-meet-logger').getLogger(__filename);
 
 /**
  * Middleware that captures conference actions and sets the correct audio mode

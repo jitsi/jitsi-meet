@@ -1,6 +1,5 @@
+import logger from '../logger';
 import { AbstractAudioContextAdapter } from './AbstractAudioContextAdapter';
-
-const logger = require('jitsi-meet-logger').getLogger(__filename);
 
 const WAV_BITS_PER_SAMPLE = 16;
 

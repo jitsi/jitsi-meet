@@ -17,10 +17,9 @@ import {
     SET_LOADING_CALENDAR_EVENTS
 } from './actionTypes';
 import { _getCalendarIntegration, isCalendarEnabled } from './functions';
+import logger from './logger';
 
 export * from './actions.any';
-
-const logger = require('jitsi-meet-logger').getLogger(__filename);
 
 /**
  * Sets the initial state of calendar integration by loading third party APIs

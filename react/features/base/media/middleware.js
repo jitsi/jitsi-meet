@@ -18,12 +18,11 @@ import { setTrackMuted, TRACK_ADDED } from '../tracks';
 
 import { setAudioMuted, setCameraFacingMode, setVideoMuted } from './actions';
 import { CAMERA_FACING_MODE, VIDEO_MUTISM_AUTHORITY } from './constants';
+import logger from './logger';
 import {
     _AUDIO_INITIAL_MEDIA_STATE,
     _VIDEO_INITIAL_MEDIA_STATE
 } from './reducer';
-
-const logger = require('jitsi-meet-logger').getLogger(__filename);
 
 /**
  * Implements the entry point of the middleware of the feature base/media.
