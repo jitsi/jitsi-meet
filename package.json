@@ -46,7 +46,7 @@
     "i18next-browser-languagedetector": "3.0.1",
     "i18next-xhr-backend": "3.0.0",
     "jQuery-Impromptu": "github:trentrichardson/jQuery-Impromptu#v6.0.0",
-    "jitsi-meet-logger": "github:jitsi/jitsi-meet-logger#6fff754a77a56ab52499f3559105a15886942a1e",
+    "jitsi-meet-logger": "github:jitsi/jitsi-meet-logger#5da3033d647054457597920252b3387fa43a17fa",
     "jquery": "3.4.0",
     "jquery-contextmenu": "2.4.5",
     "jquery-i18next": "1.2.1",
