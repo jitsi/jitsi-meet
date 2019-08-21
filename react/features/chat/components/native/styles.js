@@ -63,6 +63,7 @@ export default {
     },
 
     inputBar: {
+        alignItems: 'center',
         borderTopColor: 'rgb(209, 219, 231)',
         borderTopWidth: 1,
         flexDirection: 'row',
@@ -112,6 +113,11 @@ export default {
         backgroundColor: 'rgb(210, 231, 249)',
         borderTopLeftRadius: 8,
         borderTopRightRadius: 0
+    },
+
+    sendButtonIcon: {
+        color: ColorPalette.darkGrey,
+        fontSize: 22
     },
 
     /**

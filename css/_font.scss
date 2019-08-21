@@ -25,6 +25,9 @@
     -moz-osx-font-smoothing: grayscale;
 }
 
+.icon-send:before {
+  content: "\e911";
+}
 .icon-blur-background:before {
   content: "\e90f";
   color: #a4b8d1;
