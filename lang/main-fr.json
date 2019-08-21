@@ -21,10 +21,11 @@
         "bluetooth": "Bluetooth",
         "headphones": "Écouteurs",
         "phone": "Téléphone",
-        "speaker": "Haut-parleur"
+        "speaker": "Haut-parleur",
+        "none": ""
     },
     "audioOnly": {
-        "audioOnly": "Audio uniquement"
+        "audioOnly": "Bande passante faible"
     },
     "calendarSync": {
         "addMeetingURL": "Ajouter un lien de conférence",
@@ -115,6 +116,7 @@
         "tryAgainButton": "Réessayez sur le bureau"
     },
     "defaultLink": "ex. {{url}}",
+    "defaultNickname": "ex. Jean Dupont",
     "deviceError": {
         "cameraError": "Impossible d'accéder à votre caméra",
         "cameraPermission": "Erreur lors de l'obtention de la permission de la caméra ",
@@ -252,8 +254,8 @@
         "transcribing": "Transcription",
         "unlockRoom": "",
         "userPassword": "mot de passe utilisateur",
-        "WaitForHostMsg": "La conférence <b>＿room＿</b> n'a pas encore commencé. Si vous en êtes l'hôte, veuillez vous authentifier. Sinon, veuillez attendre son arrivée.",
-        "WaitForHostMsgWOk": "La conférence <b>＿room＿</b> n'a pas encore commencé. Si vous en êtes l'hôte, veuillez appuyer sur Ok pour vous authentifier. Sinon, veuillez attendre son arrivée.",
+        "WaitForHostMsg": "La conférence <b>{{room}}</b> n'a pas encore commencé. Si vous en êtes l'hôte, veuillez vous authentifier. Sinon, veuillez attendre son arrivée.",
+        "WaitForHostMsgWOk": "La conférence <b>{{room}}</b> n'a pas encore commencé. Si vous en êtes l'hôte, veuillez appuyer sur Ok pour vous authentifier. Sinon, veuillez attendre son arrivée.",
         "WaitingForHost": "En attente de l'hôte ...",
         "Yes": "Oui",
         "yourEntireScreen": "Votre écran entier"
@@ -335,7 +337,8 @@
         "toggleFilmstrip": "Afficher ou masquer les vignettes vidéos",
         "toggleScreensharing": "Basculer entre la caméra et le partage d'écran",
         "toggleShortcuts": "Afficher ou masquer les raccourcis clavier",
-        "videoMute": "Démarrer ou arrêter votre caméra"
+        "videoMute": "Démarrer ou arrêter votre caméra",
+        "videoQuality": "Accorder la qualité des appels"
     },
     "liveStreaming": {
         "busy": "Nous travaillons sur la libération des ressources de Streaming. Veuillez réessayez dans quelques minutes.",
@@ -398,9 +401,9 @@
     "lockRoomPasswordUppercase": "Mot de passe",
     "me": "moi",
     "notify": {
-        "connectedOneMember": "＿name＿ a rejoint la réunion.",
-        "connectedThreePlusMembers": "＿name＿ et ＿count＿ autres personnes ont rejoint la réunion.",
-        "connectedTwoMembers": "＿first＿ et ＿second＿ ont rejoint la réunion.",
+        "connectedOneMember": "{{name}} a rejoint la réunion.",
+        "connectedThreePlusMembers": "{{name}} et {{count}} autres personnes ont rejoint la réunion.",
+        "connectedTwoMembers": "{{first}} et {{second}} ont rejoint la réunion.",
         "disconnected": "déconnecté",
         "focus": "Focus de conférence",
         "focusFail": "{{component}} n'est pas disponible - réessayez dans {{ms}} sec",
@@ -417,11 +420,11 @@
         "mutedRemotelyDescription": "",
         "passwordRemovedRemotely": "",
         "passwordSetRemotely": "",
-        "raisedHand": "＿name＿ aimerait prendre la parole.",
+        "raisedHand": "{{name}} aimerait prendre la parole.",
         "somebody": "Quelqu'un",
         "startSilentTitle": "",
         "startSilentDescription": "",
-        "suboptimalExperienceDescription": "Eer ... nous craignons que votre expérience avec {{appName}} ne sera pas aussi excellente que nous le pensions. Nous cherchons des moyens d'améliorer cela, mais jusque là, essayez d'utiliser l'un des <a href='static/recommendedBrowsers.html' target='_blank'>navigateurs entièrement pris en charge</a>.",
+        "suboptimalBrowserWarning": "",
         "suboptimalExperienceTitle": "Avertissement du navigateur",
         "unmute": "",
         "newDeviceCameraTitle": "Nouvelle caméra détectée",
@@ -451,6 +454,7 @@
         "setEmailLabel": "Définir votre courriel Gravatar",
         "title": "Profil"
     },
+    "raisedHand": "Aimerait prendre la parole",
     "recording": {
         "authDropboxText": "Téléchargement vers Dropbox",
         "availableSpace": "Espace disponible: {{spaceLeft}} Mo (approximativement {{duration}} minutes d'enregistrement)",
@@ -575,8 +579,8 @@
             "videoblur": ""
         },
         "addPeople": "Ajouter des personnes à votre appel",
-        "audioOnlyOff": "Désactiver le mode audio uniquement",
-        "audioOnlyOn": "Activer le mode Audio uniquement",
+        "audioOnlyOff": "",
+        "audioOnlyOn": "",
         "audioRoute": "Sélectionner le périphérique audio",
         "authenticate": "Authentifiez-vous",
         "callQuality": "Accorder la qualité des appels",
@@ -654,13 +658,15 @@
     },
     "videoStatus": {
         "audioOnly": "VOIX",
-        "audioOnlyExpanded": "Vous êtes en mode audio uniquement. Ce mode économise de la bande passant mais vous ne pourrez pas voir la vidéo des autres participants.",
+        "audioOnlyExpanded": "",
         "callQuality": "",
         "hd": "HD",
+        "hdTooltip": "Regardez la vidéo en haute définition",
         "highDefinition": "Haute définition",
         "labelTooiltipNoVideo": "Aucune vidéo",
-        "labelTooltipAudioOnly": "Mode audio uniquement activé",
+        "labelTooltipAudioOnly": "",
         "ld": "BD",
+        "ldTooltip": "Regardez la vidéo en basse définition",
         "lowDefinition": "Basse définition",
         "onlyAudioAvailable": "Seul l'audio est disponible",
         "onlyAudioSupported": "Nous ne supportons que l'audio sur ce navigateur.",
@@ -668,6 +674,7 @@
         "p2pVideoQualityDescription": "",
         "recHighDefinitionOnly": "Va préférer la haute définition",
         "sd": "MD",
+        "sdTooltip": "Regardez la vidéo en définition standard",
         "standardDefinition": "Moyenne Définition"
     },
     "videothumbnail": {
@@ -693,7 +700,7 @@
         },
         "calendar": "Calendrier",
         "connectCalendarButton": "Connecter votre calendrier",
-        "connectCalendarText": "Connectez-vous à votre calendrier pour afficher toutes les réunions ＿app＿. Ajoutez également les réunions de ＿provider＿ à votre calendrier et démarrez-les d'un simple clic.",
+        "connectCalendarText": "Connectez-vous à votre calendrier pour afficher toutes les réunions {{app}}. Ajoutez également les réunions de {{provider}} à votre calendrier et démarrez-les d'un simple clic.",
         "enterRoomTitle": "Démarrer une nouvelle réunion",
         "go": "Créer",
         "join": "REJOINDRE",
