@@ -369,7 +369,7 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
     /**
      * Getter for participant specific video element in Jitsi Meet.
      *
-     * @param {string} participantId - Participant id or "local" for local video.
+     * @param {string} participantId - Id of participant to return the video for.
      *
      * @returns {HTMLElement|undefined} - The requested video.
      */
@@ -382,11 +382,11 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
             return;
         }
 
-        if (participantId == "local") {
-            return iframe.contentWindow.document.getElementById("localVideo_container");
+        if (participantId === this._myUserID) {
+            return iframe.contentWindow.document.getElementById('localVideo_container');
         }
 
-        return iframe.contentWindow.document.querySelector("#participant_" + participantId + " video");
+        return iframe.contentWindow.document.querySelector('#participant_' + participantId + ' video');
     }
 
     /**
