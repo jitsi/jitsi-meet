@@ -171,7 +171,7 @@ class DeepLinkingMobilePage extends Component<Props> {
             IUS}&efr=1`;
     }
 
-    _onDownloadApp: () => {};
+    _onDownloadApp: () => void;
 
     /**
      * Handles download app button clicks.
@@ -185,7 +185,7 @@ class DeepLinkingMobilePage extends Component<Props> {
                 'clicked', 'downloadAppButton', { isMobileBrowser: true }));
     }
 
-    _onOpenApp: () => {};
+    _onOpenApp: () => void;
 
     /**
      * Handles open app button clicks.

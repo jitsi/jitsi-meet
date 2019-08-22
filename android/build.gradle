@@ -25,9 +25,10 @@ allprojects {
     repositories {
         google()
         jcenter()
-        // React Native (JS, Obj-C sources, Android binaries) is installed from
-        // npm.
+        // React Native (JS, Obj-C sources, Android binaries) is installed from npm.
         maven { url "$rootDir/../node_modules/react-native/android" }
+        // Android JSC is installed from npm.
+        maven { url("$rootDir/../node_modules/jsc-android/dist") }
     }
 
     // Make sure we use the react-native version in node_modules and not the one
@@ -74,6 +75,13 @@ allprojects {
     def versionQualifierNumber = (int)(((new Date().getTime()/1000) - 1546297200) / 10)
 
     afterEvaluate { project ->
+        if (project.plugins.hasPlugin('android') || project.plugins.hasPlugin('android-library')) {
+            project.android {
+                compileSdkVersion rootProject.ext.compileSdkVersion
+                buildToolsVersion rootProject.ext.buildToolsVersion
+            }
+        }
+
         if (project.name.startsWith('react-native-')) {
             def npmManifest = project.file('../package.json')
             def json = new JsonSlurper().parseText(npmManifest.text)
@@ -82,17 +90,6 @@ allprojects {
             // us to pin the dependencies and make sure they are always updated, no matter what.
 
             project.version = "${json.version}-jitsi-${versionQualifierNumber}"
-
-            project.android {
-                compileSdkVersion rootProject.ext.compileSdkVersion
-                if (rootProject.ext.has('buildToolsVersion')) {
-                    buildToolsVersion rootProject.ext.buildToolsVersion
-                }
-                defaultConfig {
-                    minSdkVersion rootProject.ext.minSdkVersion
-                    targetSdkVersion rootProject.ext.targetSdkVersion
-                }
-            }
 
             task androidSourcesJar(type: Jar) {
                 classifier = 'sources'

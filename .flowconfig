@@ -2,22 +2,27 @@
 ; We fork some components by platform
 .*/*[.]android.js
 
-; Ignore "BUCK" generated dirs
-<PROJECT_ROOT>/\.buckd/
-
 ; Ignore unexpected extra "@providesModule"
 .*/node_modules/.*/node_modules/fbjs/.*
+node_modules/react-native/Libraries/react-native/React.js
 
 ; Ignore duplicate module providers
 ; For RN Apps installed via npm, "Libraries" folder is inside
 ; "node_modules/react-native" but in the source repo it is in the root
-.*/Libraries/react-native/React.js
+node_modules/react-native/Libraries/react-native/React.js
 
 ; Ignore polyfills
-.*/Libraries/polyfills/.*
+node_modules/react-native/Libraries/polyfills/.*
 
-; Ignore metro
-.*/node_modules/metro/.*
+; These should not be required directly
+; require from fbjs/lib instead: require('fbjs/lib/warning')
+node_modules/warning/.*
+
+; Flow doesn't support platforms
+.*/Libraries/Utilities/HMRLoadingView.js
+
+[untyped]
+.*/node_modules/@react-native-community/cli/.*/.*
 
 ; Ignore packages in node_modules which we (i.e. the jitsi-meet project) have
 ; seen to cause errors and we have chosen not to fix.
@@ -40,6 +45,18 @@ emoji=true
 esproposal.optional_chaining=enable
 esproposal.nullish_coalescing=enable
 
+; We (i.e. the jitsi-meet project) are using the haste module system on Web as
+; well, not only on React Native. Unfortunately, Flow does not support .web.js
+; by default. Override Flow's defaults to include .web.js as well. Technically,
+; we have .native.js as well so the choice of .web.js may lead to errors.
+; Practically though, it is a potential future problem that we do not have at
+; the time of this writing.
+module.file_ext=.web.js
+; Flow's defaults:
+module.file_ext=.js
+module.file_ext=.json
+module.file_ext=.ios.js
+
 module.system=haste
 module.system.haste.use_name_reducers=true
 # get basename
@@ -52,8 +69,11 @@ module.system.haste.name_reducers='^\(.*\)\.android$' -> '\1'
 module.system.haste.name_reducers='^\(.*\)\.native$' -> '\1'
 module.system.haste.paths.blacklist=.*/__tests__/.*
 module.system.haste.paths.blacklist=.*/__mocks__/.*
-module.system.haste.paths.blacklist=<PROJECT_ROOT>/node_modules/react-native/Libraries/Animated/src/polyfills/.*
 module.system.haste.paths.whitelist=<PROJECT_ROOT>/node_modules/react-native/Libraries/.*
+module.system.haste.paths.whitelist=<PROJECT_ROOT>/node_modules/react-native/RNTester/.*
+module.system.haste.paths.whitelist=<PROJECT_ROOT>/node_modules/react-native/IntegrationTests/.*
+module.system.haste.paths.blacklist=<PROJECT_ROOT>/node_modules/react-native/Libraries/react-native/react-native-implementation.js
+module.system.haste.paths.blacklist=<PROJECT_ROOT>/node_modules/react-native/Libraries/Animated/src/polyfills/.*
 
 munge_underscores=true
 
@@ -64,22 +84,32 @@ suppress_type=$FlowFixMe
 suppress_type=$FlowFixMeProps
 suppress_type=$FlowFixMeState
 
-suppress_comment=\\(.\\|\n\\)*\\$FlowFixMe\\($\\|[^(]\\|(\\(<VERSION>\\)? *\\(site=[a-z,_]*react_native[a-z,_]*\\)?)\\)
-suppress_comment=\\(.\\|\n\\)*\\$FlowIssue\\((\\(<VERSION>\\)? *\\(site=[a-z,_]*react_native[a-z,_]*\\)?)\\)?:? #[0-9]+
-suppress_comment=\\(.\\|\n\\)*\\$FlowFixedInNextDeploy
+suppress_comment=\\(.\\|\n\\)*\\$FlowFixMe\\($\\|[^(]\\|(\\(<VERSION>\\)? *\\(site=[a-z,_]*react_native\\(_ios\\)?_\\(oss\\|fb\\)[a-z,_]*\\)?)\\)
+suppress_comment=\\(.\\|\n\\)*\\$FlowIssue\\((\\(<VERSION>\\)? *\\(site=[a-z,_]*react_native\\(_ios\\)?_\\(oss\\|fb\\)[a-z,_]*\\)?)\\)?:? #[0-9]+
+
 suppress_comment=\\(.\\|\n\\)*\\$FlowExpectedError
 
-; We (i.e. the jitsi-meet project) are using the haste module system on Web as
-; well, not only on React Native. Unfortunately, Flow does not support .web.js
-; by default. Override Flow's defaults to include .web.js as well. Technically,
-; we have .native.js as well so the choice of .web.js may lead to errors.
-; Practically though, it is a potential future problem that we do not have at
-; the time of this writing.
-module.file_ext=.web.js
-; Flow's defaults:
-module.file_ext=.js
-module.file_ext=.jsx
-module.file_ext=.json
+[lints]
+sketchy-null-number=warn
+sketchy-null-mixed=warn
+sketchy-number=warn
+untyped-type-import=warn
+nonstrict-import=warn
+deprecated-type=warn
+unsafe-getters-setters=warn
+inexact-spread=warn
+unnecessary-invariant=warn
+signature-verification-failure=warn
+deprecated-utility=error
+
+[strict]
+deprecated-type
+nonstrict-import
+sketchy-null
+unclear-type
+unsafe-getters-setters
+untyped-import
+untyped-type-import
 
 [version]
-^0.92.0
+^0.98.0

@@ -1,5 +1,5 @@
-// flow-typed signature: f26fda66e3a551aef37d3b0f53058e6a
-// flow-typed version: 44ad941b7a/jquery_v3.x.x/flow_>=v0.28.x
+// flow-typed signature: 538d762382091f2239d2d55cab1b574d
+// flow-typed version: c6154227d1/jquery_v3.x.x/flow_>=v0.28.x <=v0.103.x
 
 /* eslint-disable max-len, no-unused-vars, flowtype/no-weak-types */
 

@@ -45,10 +45,10 @@ const config = {
                 plugins: [
                     require.resolve('@babel/plugin-transform-flow-strip-types'),
                     require.resolve('@babel/plugin-proposal-class-properties'),
-                    require.resolve(
-                        '@babel/plugin-proposal-export-default-from'),
-                    require.resolve(
-                        '@babel/plugin-proposal-export-namespace-from')
+                    require.resolve('@babel/plugin-proposal-export-default-from'),
+                    require.resolve('@babel/plugin-proposal-export-namespace-from'),
+                    require.resolve('@babel/plugin-proposal-nullish-coalescing-operator'),
+                    require.resolve('@babel/plugin-proposal-optional-chaining')
                 ],
                 presets: [
                     [
@@ -91,6 +91,20 @@ const config = {
                 'style-loader',
                 'css-loader'
             ]
+        }, {
+            test: /\/node_modules\/@atlaskit\/modal-dialog\/.*\.js$/,
+            resolve: {
+                alias: {
+                    'react-focus-lock': `${__dirname}/react/features/base/util/react-focus-lock-wrapper.js`
+                }
+            }
+        }, {
+            test: /\/react\/features\/base\/util\/react-focus-lock-wrapper.js$/,
+            resolve: {
+                alias: {
+                    'react-focus-lock': `${__dirname}/node_modules/react-focus-lock`
+                }
+            }
         } ]
     },
     node: {

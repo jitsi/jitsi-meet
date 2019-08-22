@@ -36,10 +36,12 @@ android {
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 
-    implementation "com.android.support:support-v4:${rootProject.ext.supportLibVersion}"
-    implementation "com.android.support:appcompat-v7:${rootProject.ext.supportLibVersion}"
+    implementation 'androidx.legacy:legacy-support-v4:1.0.0'
+    implementation 'androidx.appcompat:appcompat:1.0.2'
+    implementation 'androidx.fragment:fragment:1.0.0'
 
     api 'com.facebook.react:react-native:+'
+    implementation 'org.webkit:android-jsc:+'
 
     implementation 'com.dropbox.core:dropbox-core-sdk:3.0.8'
 
@@ -47,7 +49,7 @@ dependencies {
         implementation 'com.amplitude:android-sdk:2.14.1'
         implementation(project(":react-native-google-signin")) {
             exclude group: 'com.google.android.gms'
-            exclude group: 'com.android.support'
+            exclude group: 'androidx'
         }
     }
 

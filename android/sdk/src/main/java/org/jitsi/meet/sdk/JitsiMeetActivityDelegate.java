@@ -25,6 +25,7 @@ import android.os.Build;
 import com.calendarevents.CalendarEventsPackage;
 import com.facebook.react.ReactInstanceManager;
 import com.facebook.react.bridge.Callback;
+import com.facebook.react.bridge.ReactContext;
 import com.facebook.react.modules.core.PermissionListener;
 
 /**
@@ -117,7 +118,13 @@ public class JitsiMeetActivityDelegate {
             = ReactInstanceManagerHolder.getReactInstanceManager();
 
         if (reactInstanceManager != null) {
-            reactInstanceManager.onHostPause(activity);
+            // Try to avoid a crash because some devices trip on this assert:
+            // https://github.com/facebook/react-native/blob/df4e67fe75d781d1eb264128cadf079989542755/ReactAndroid/src/main/java/com/facebook/react/ReactInstanceManager.java#L512
+            // Why this happens is a mystery wrapped in an enigma.
+            ReactContext reactContext = reactInstanceManager.getCurrentReactContext();
+            if (activity == reactContext.getCurrentActivity()) {
+                reactInstanceManager.onHostPause(activity);
+            }
         }
     }
 

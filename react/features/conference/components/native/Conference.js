@@ -6,7 +6,6 @@ import LinearGradient from 'react-native-linear-gradient';
 
 import { appNavigate } from '../../../app';
 import { PIP_ENABLED, getFeatureFlag } from '../../../base/flags';
-import { getParticipantCount } from '../../../base/participants';
 import { Container, LoadingIndicator, TintedView } from '../../../base/react';
 import { connect } from '../../../base/redux';
 import {
@@ -27,7 +26,7 @@ import { LargeVideo } from '../../../large-video';
 import { BackButtonRegistry } from '../../../mobile/back-button';
 import { AddPeopleDialog, CalleeInfoContainer } from '../../../invite';
 import { Captions } from '../../../subtitles';
-import { setToolboxVisible, Toolbox } from '../../../toolbox';
+import { isToolboxVisible, setToolboxVisible, Toolbox } from '../../../toolbox';
 
 import {
     AbstractConference,
@@ -90,13 +89,6 @@ type Props = AbstractProps & {
      * The ID of the participant currently on stage (if any)
      */
     _largeVideoParticipantId: string,
-
-    /**
-     * The number of participants in the conference.
-     *
-     * @private
-     */
-    _participantCount: number,
 
     /**
      * Whether Picture-in-Picture is enabled.
@@ -170,10 +162,6 @@ class Conference extends AbstractConference<Props, *> {
      */
     componentDidMount() {
         BackButtonRegistry.addListener(this._onHardwareBackPress);
-
-        // Show the toolbox if we are the only participant; otherwise, the whole
-        // UI looks too unpopulated the LargeVideo visible.
-        this.props._participantCount === 1 && this._setToolboxVisible(true);
     }
 
     /**
@@ -182,24 +170,6 @@ class Conference extends AbstractConference<Props, *> {
      * @inheritdoc
      */
     componentDidUpdate(prevProps: Props) {
-        const {
-            _participantCount: oldParticipantCount
-        } = prevProps;
-        const {
-            _participantCount: newParticipantCount,
-            _toolboxVisible
-        } = this.props;
-
-        if (oldParticipantCount === 1
-                && newParticipantCount > 1
-                && _toolboxVisible) {
-            this._setToolboxVisible(false);
-        } else if (oldParticipantCount > 1
-                && newParticipantCount === 1
-                && !_toolboxVisible) {
-            this._setToolboxVisible(true);
-        }
-
         if (Platform.OS === 'ios') {
             if (prevProps._audioOnly !== this.props._audioOnly
                 || prevProps._videoMuted !== this.props._videoMuted
@@ -453,7 +423,6 @@ function _mapStateToProps(state) {
         leaving
     } = state['features/base/conference'];
     const { reducedUI } = state['features/base/responsive-ui'];
-    const { visible } = state['features/toolbox'];
     const { enabled: audioOnly } = state['features/base/audio-only'];
     const tracks = state['features/base/tracks'];
     const facingMode = state['features/base/media'].video.facingMode;
@@ -509,14 +478,6 @@ function _mapStateToProps(state) {
         _largeVideoParticipantId: state['features/large-video'].participantId,
 
         /**
-         * The number of participants in the conference.
-         *
-         * @private
-         * @type {number}
-         */
-        _participantCount: getParticipantCount(state),
-
-        /**
          * Whether Picture-in-Picture is enabled.
          *
          * @private
@@ -539,9 +500,8 @@ function _mapStateToProps(state) {
          * @private
          * @type {boolean}
          */
-        _toolboxVisible: visible,
+        _toolboxVisible: isToolboxVisible(state),
         _videoMuted: isLocalTrackMuted(tracks, MEDIA_TYPE.VIDEO)
-
     };
 }
 
