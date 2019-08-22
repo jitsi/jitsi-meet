@@ -6,6 +6,7 @@ import {
     SET_ROOM
 } from '../base/conference';
 import { SET_CONFIG } from '../base/config';
+import { SET_NETWORK_INFO } from '../base/net-info';
 import { MiddlewareRegistry } from '../base/redux';
 import {
     getLocalAudioTrack,
@@ -16,7 +17,7 @@ import {
 } from '../base/tracks';
 
 import { UPDATE_LOCAL_TRACKS_DURATION } from './actionTypes';
-import { createLocalTracksDurationEvent } from './AnalyticsEvents';
+import { createLocalTracksDurationEvent, createNetworkInfoEvent } from './AnalyticsEvents';
 import { initAnalytics, resetAnalytics, sendAnalytics } from './functions';
 
 /**
@@ -127,6 +128,14 @@ MiddlewareRegistry.register(store => next => action => {
         });
         break;
     }
+    case SET_NETWORK_INFO:
+        sendAnalytics(
+            createNetworkInfoEvent({
+                isOnline: action.isOnline,
+                details: action.details,
+                networkType: action.networkType
+            }));
+        break;
     case SET_ROOM: {
         initAnalytics(store);
         break;

@@ -139,6 +139,8 @@ PODS:
     - React
   - react-native-keep-awake (4.0.0):
     - React
+  - react-native-netinfo (4.1.5):
+    - React
   - react-native-webrtc (1.69.2):
     - React
   - react-native-webview (5.8.1):
@@ -203,6 +205,7 @@ DEPENDENCIES:
   - react-native-background-timer (from `../node_modules/react-native-background-timer`)
   - react-native-calendar-events (from `../node_modules/react-native-calendar-events`)
   - react-native-keep-awake (from `../node_modules/react-native-keep-awake`)
+  - react-native-netinfo (from `../node_modules/@react-native-community/netinfo`)
   - react-native-webrtc (from `../node_modules/react-native-webrtc`)
   - react-native-webview (from `../node_modules/react-native-webview`)
   - React-RCTActionSheet (from `../node_modules/react-native/Libraries/ActionSheetIOS`)
@@ -271,6 +274,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-calendar-events"
   react-native-keep-awake:
     :path: "../node_modules/react-native-keep-awake"
+  react-native-netinfo:
+    :path: "../node_modules/@react-native-community/netinfo"
   react-native-webrtc:
     :path: "../node_modules/react-native-webrtc"
   react-native-webview:
@@ -340,6 +345,7 @@ SPEC CHECKSUMS:
   react-native-background-timer: 0d34748e53a972507c66963490c775321a88f6f2
   react-native-calendar-events: 2fe35a9294af05de0ed819d3a1b5dac048d2c010
   react-native-keep-awake: eba3137546b10003361b37c761f6c429b59814ae
+  react-native-netinfo: 8d8db463bcc5db66a8ac5c48a7d86beb3b92f61a
   react-native-webrtc: 1415d2a54b2246dd85ba95eb3e4bf2b66533f951
   react-native-webview: a95842e3f351a6d2c8bc8bcc9eab689c7e7e5ad4
   React-RCTActionSheet: b0f1ea83f4bf75fb966eae9bfc47b78c8d3efd90
@@ -359,6 +365,6 @@ SPEC CHECKSUMS:
   RNWatch: 09738b339eceb66e4d80a2371633ca5fb380fa42
   yoga: 312528f5bbbba37b4dcea5ef00e8b4033fdd9411
 
-PODFILE CHECKSUM: 6b6e260b4be4e86f9d05c0d7dab40f60118bb355
+PODFILE CHECKSUM: 0907bfe60b5b5f11dbdc6b4e65d40a248d000513
 
 COCOAPODS: 1.7.2
