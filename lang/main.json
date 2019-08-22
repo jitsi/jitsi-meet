@@ -89,7 +89,6 @@
         "localport_plural": "Local ports:",
         "more": "Show more",
         "packetloss": "Packet loss:",
-        "peer_to_peer": " (p2p)",
         "quality": {
             "good": "Good",
             "inactive": "Inactive",
@@ -104,8 +103,7 @@
         "resolution": "Resolution:",
         "status": "Connection:",
         "transport": "Transport:",
-        "transport_plural": "Transports:",
-        "turn": " (turn)"
+        "transport_plural": "Transports:"
     },
     "dateUtils": {
         "earlier": "Earlier",
