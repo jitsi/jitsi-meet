@@ -9,11 +9,13 @@ import {
 import { addKnownDomains } from '../base/known-domains';
 import { MiddlewareRegistry } from '../base/redux';
 import { parseURIString } from '../base/util';
+import { isRoomValid } from '../base/conference';
 
 import { _storeCurrentConference, _updateConferenceDuration } from './actions';
 import { isRecentListEnabled } from './functions';
 
 declare var APP: Object;
+let conference_timer;
 
 /**
  * Middleware that captures joined rooms so they can be saved into
@@ -29,6 +31,7 @@ MiddlewareRegistry.register(store => next => action => {
             return _appWillMount(store, next, action);
 
         case CONFERENCE_WILL_LEAVE:
+            clearInterval(conference_timer);
             return _conferenceWillLeave(store, next, action);
 
         case SET_ROOM:
@@ -126,6 +129,19 @@ function _setRoom({ dispatch, getState }, next, action) {
         const { locationURL } = getState()['features/base/connection'];
 
         if (locationURL) {
+            clearInterval(conference_timer);
+            
+            conference_timer = setInterval(
+                () => {
+                    if(isRoomValid(getState()['features/base/conference'].room)){
+                        dispatch(_updateConferenceDuration(locationURL));
+                    }
+                    else{
+                        clearInterval(conference_timer);
+                    }
+                },
+                60000
+            );
             dispatch(_storeCurrentConference(locationURL));
 
             // Whatever domain the feature recent-list knows about, the app as a

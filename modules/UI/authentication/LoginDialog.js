@@ -12,17 +12,14 @@ import { convertForTrans } from '../../../react/features/base/util';
  * @returns {string} html string
  */
 function getPasswordInputHtml() {
-    const placeholder = config.hosts.authdomain
-        ? 'user identity'
-        : 'user@domain.net';
 
     return `
         <input name="username" type="text"
                class="input-control"
-               placeholder=${placeholder} autofocus>
+               data-i18n="[placeholder]dialog.moderatorName" autofocus>
         <input name="password" type="password"
                class="input-control"
-               data-i18n="[placeholder]dialog.userPassword">`;
+               data-i18n="[placeholder]dialog.moderatorPassword">`;
 }
 
 /**
