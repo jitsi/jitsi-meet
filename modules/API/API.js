@@ -116,9 +116,19 @@ function initCommands() {
             sendAnalytics(createApiEvent('chat.toggled'));
             APP.UI.toggleChat();
         },
-        'toggle-share-screen': () => {
+
+        /**
+         * Callback to invoke when the "toggle-share-screen" command is received.
+         *
+         * @param {Object} options - Additional details of how to perform
+         * the action. Note this parameter is undocumented and experimental.
+         * @param {boolean} options.enable - Whether trying to enable screen
+         * sharing or to turn it off.
+         * @returns {void}
+         */
+        'toggle-share-screen': (options = {}) => {
             sendAnalytics(createApiEvent('screen.sharing.toggled'));
-            toggleScreenSharing();
+            toggleScreenSharing(options.enable);
         },
         'toggle-tile-view': () => {
             sendAnalytics(createApiEvent('tile-view.toggled'));
@@ -242,13 +252,17 @@ function shouldBeEnabled() {
 /**
  * Executes on toggle-share-screen command.
  *
+ * @param {boolean} [enable] - Whether this toggle is to explicitly enable or
+ * disable screensharing. If not defined, the application will automatically
+ * attempt to toggle between enabled and disabled. This boolean is useful for
+ * explicitly setting desired screensharing state.
  * @returns {void}
  */
-function toggleScreenSharing() {
+function toggleScreenSharing(enable) {
     if (APP.conference.isDesktopSharingEnabled) {
 
         // eslint-disable-next-line no-empty-function
-        APP.conference.toggleScreenSharing().catch(() => {});
+        APP.conference.toggleScreenSharing(enable).catch(() => {});
     } else {
         initialScreenSharingState = !initialScreenSharingState;
     }
