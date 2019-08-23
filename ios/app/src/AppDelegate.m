@@ -50,7 +50,7 @@
         // Apple rejected our app because they claim requiring a
         // Dropbox account for recording is not acceptable.
 #if DEBUG
-        [builder setFeatureFlag:@"ios.recording.enabled" withBoolean:YES];
+        [builder setFeatureFlag:@"recording.enabled" withBoolean:YES];
 #endif
     }];
 

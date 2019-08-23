@@ -130,7 +130,7 @@ export default {
         flexDirection: 'column',
         justifyContent: 'flex-end',
         left: 0,
-        paddingBottom: BoxModel.padding,
+        paddingBottom: BoxModel.padding * 3,
         position: 'absolute',
         right: 0,
 
