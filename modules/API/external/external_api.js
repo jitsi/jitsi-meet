@@ -370,7 +370,7 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
      * Getter for participant specific video element in Jitsi Meet.
      *
      * @param {string|undefined} participantId - Id of participant to return the video for.
-     * 
+     *
      * @returns {HTMLElement|undefined} - The requested video. Will return the local video
      * by default if participantId is undefined.
      */
@@ -387,7 +387,7 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
             return iframe.contentWindow.document.getElementById('localVideo_container');
         }
 
-        return iframe.contentWindow.document.querySelector('#participant_${participantId} video');
+        return iframe.contentWindow.document.querySelector(`#participant_${participantId} video`);
     }
 
     /**
