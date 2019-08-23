@@ -7,7 +7,10 @@ import { Avatar } from '../../../base/avatar';
 import { translate } from '../../../base/i18n';
 import { Linkify } from '../../../base/react';
 
+import { replaceNonUnicodeEmojis } from '../../functions';
+
 import AbstractChatMessage, { type Props } from '../AbstractChatMessage';
+
 import styles from './styles';
 
 /**
@@ -60,7 +63,7 @@ class ChatMessage extends AbstractChatMessage<Props> {
                                 && this._renderDisplayName()
                         }
                         <Linkify linkStyle = { styles.chatLink }>
-                            { messageText }
+                            { replaceNonUnicodeEmojis(messageText) }
                         </Linkify>
                     </View>
                     { this.props.showTimestamp && this._renderTimestamp() }

@@ -63,7 +63,7 @@
     "postis": "2.2.0",
     "react": "16.8.6",
     "react-dom": "16.8.6",
-    "react-emoji-render": "0.4.6",
+    "react-emoji-render": "1.0.0",
     "react-i18next": "10.11.4",
     "react-linkify": "1.0.0-alpha",
     "react-native": "0.60.5",
