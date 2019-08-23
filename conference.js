@@ -1457,7 +1457,9 @@ export default {
             return this._switchToScreenSharing(options);
         }
 
-        return this._untoggleScreenSharing();
+        return this._untoggleScreenSharing
+            ? this._untoggleScreenSharing()
+            : Promise.resolve();
     },
 
     /**
