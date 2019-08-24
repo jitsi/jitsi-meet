@@ -10,6 +10,8 @@ import { VideoTrack } from '../../../react/features/base/media';
 import { updateSettings } from '../../../react/features/base/settings';
 import { getLocalVideoTrack } from '../../../react/features/base/tracks';
 import { shouldDisplayTileView } from '../../../react/features/video-layout';
+import { i18next } from '../../../react/features/base/i18n';
+
 /* eslint-enable no-unused-vars */
 
 const logger = require('jitsi-meet-logger').getLogger(__filename);
@@ -194,7 +196,7 @@ LocalVideo.prototype._buildContextMenu = function() {
         zIndex: 10000,
         items: {
             flip: {
-                name: 'Flip',
+                name: i18next.t('videothumbnail.flip'),
                 callback: () => {
                     const { store } = APP;
                     const val = !store.getState()['features/base/settings']
@@ -209,9 +211,6 @@ LocalVideo.prototype._buildContextMenu = function() {
         },
         events: {
             show(options) {
-                options.items.flip.name
-                    = APP.translation.generateTranslationHTML(
-                        'videothumbnail.flip');
             }
         }
     });
