@@ -1,6 +1,8 @@
 // @flow
 
 import { reloadNow } from '../../app';
+import { openDisplayNamePrompt } from '../../display-name';
+
 import {
     ACTION_PINNED,
     ACTION_UNPINNED,
@@ -12,6 +14,7 @@ import {
 import { CONNECTION_ESTABLISHED, CONNECTION_FAILED } from '../connection';
 import { JitsiConferenceErrors } from '../lib-jitsi-meet';
 import {
+    getLocalParticipant,
     getParticipantById,
     getPinnedParticipant,
     PARTICIPANT_UPDATED,
@@ -186,6 +189,7 @@ function _conferenceJoined({ dispatch, getState }, next, action) {
     const result = next(action);
     const { conference } = action;
     const { pendingSubjectChange } = getState()['features/base/conference'];
+    const { requireDisplayName } = getState()['features/base/config'];
 
     pendingSubjectChange && dispatch(setSubject(pendingSubjectChange));
 
@@ -198,6 +202,12 @@ function _conferenceJoined({ dispatch, getState }, next, action) {
         dispatch(conferenceWillLeave(conference));
     };
     window.addEventListener('beforeunload', beforeUnloadHandler);
+
+    if (requireDisplayName
+        && !getLocalParticipant(getState)?.name
+        && !conference.isHidden()) {
+        dispatch(openDisplayNamePrompt(undefined));
+    }
 
     return result;
 }

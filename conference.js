@@ -2198,12 +2198,6 @@ export default {
 
         APP.keyboardshortcut.init();
 
-        if (config.requireDisplayName
-                && !APP.conference.getLocalDisplayName()
-                && !room.isHidden()) {
-            APP.UI.promptDisplayName();
-        }
-
         APP.store.dispatch(conferenceJoined(room));
 
         const displayName
