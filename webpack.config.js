@@ -135,7 +135,12 @@ const config = {
         // Allow the use of the real filename of the module being executed. By
         // default Webpack does not leak path-related information and provides a
         // value that is a mock (/index.js).
-        __filename: true
+        __filename: true,
+
+        // Emscripten generated glue code "rnnoise.js" expects node fs module,
+        // we need to specify this parameter so webpack knows how to properly
+        // interpret it when encountered.
+        fs: 'empty'
     },
     optimization: {
         concatenateModules: minimize,
@@ -214,16 +219,40 @@ module.exports = [
         },
         performance: getPerformanceHints(5 * 1024)
     }),
+
+    // Because both video-blur-effect and rnnoise-processor modules are loaded
+    // in a lazy matter using the loadScript function with a hard coded name,
+    // i.e.loadScript('libs/rnnoise-processor.min.js'), webpack dev server
+    // won't know how to properly load them using the default config filename
+    // and sourceMapFilename parameters which target libs without .min in dev
+    // mode. Thus we change these modules to have the same filename in both
+    // prod and dev mode.
     Object.assign({}, config, {
         entry: {
             'video-blur-effect': './react/features/stream-effects/blur/index.js'
         },
         output: Object.assign({}, config.output, {
             library: [ 'JitsiMeetJS', 'app', 'effects' ],
-            libraryTarget: 'window'
-        }),
-        performance: getPerformanceHints(1 * 1024 * 1024)
+            libraryTarget: 'window',
+            filename: '[name].min.js',
+            sourceMapFilename: '[name].min.map'
+        })
     }),
+
+    Object.assign({}, config, {
+        entry: {
+            'rnnoise-processor': './react/features/stream-effects/rnnoise/index.js'
+        },
+        output: Object.assign({}, config.output, {
+            library: [ 'JitsiMeetJS', 'app', 'effects' ],
+            libraryTarget: 'window',
+            filename: '[name].min.js',
+            sourceMapFilename: '[name].min.map'
+        })
+    }),
+
+    // The Webpack configuration to bundle external_api.js (aka
+    // JitsiMeetExternalAPI).
     Object.assign({}, config, {
         entry: {
             'external_api': './modules/API/external/index.js'
@@ -274,6 +303,8 @@ function devServerProxyBypass({ path }) {
                             }
                         });
                     }
+
+                    return true;
                 }
             })) {
         return path;
