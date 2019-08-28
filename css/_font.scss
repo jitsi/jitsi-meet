@@ -25,6 +25,12 @@
     -moz-osx-font-smoothing: grayscale;
 }
 
+.icon-cancel:before {
+  content: "\e91c";
+}
+.icon-check:before {
+  content: "\e91b";
+}
 .icon-send:before {
   content: "\e911";
 }
