@@ -20,7 +20,6 @@ import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.PictureInPictureParams;
 import android.os.Build;
-import android.util.Log;
 import android.util.Rational;
 
 import com.facebook.react.bridge.Promise;
@@ -28,6 +27,8 @@ import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContextBaseJavaModule;
 import com.facebook.react.bridge.ReactMethod;
 import com.facebook.react.module.annotations.ReactModule;
+
+import org.jitsi.meet.sdk.log.JitsiMeetLogger;
 
 @ReactModule(name = PictureInPictureModule.NAME)
 class PictureInPictureModule
@@ -70,7 +71,7 @@ class PictureInPictureModule
             throw new IllegalStateException("No current Activity!");
         }
 
-        Log.d(TAG, "Entering Picture-in-Picture");
+        JitsiMeetLogger.i(TAG + " Entering Picture-in-Picture");
 
         PictureInPictureParams.Builder builder
             = new PictureInPictureParams.Builder()

@@ -15,13 +15,13 @@
  */
 package org.jitsi.meet.sdk.net;
 
-import android.util.Log;
-
 import com.facebook.react.bridge.Promise;
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContextBaseJavaModule;
 import com.facebook.react.bridge.ReactMethod;
 import com.facebook.react.module.annotations.ReactModule;
+
+import org.jitsi.meet.sdk.log.JitsiMeetLogger;
 
 import java.net.UnknownHostException;
 
@@ -97,7 +97,7 @@ public class NAT64AddrInfoModule
             try {
                 info = NAT64AddrInfo.discover(host);
             } catch (UnknownHostException e) {
-                Log.e(TAG, "NAT64AddrInfo.discover: " + host, e);
+                JitsiMeetLogger.e(e, TAG + " NAT64AddrInfo.discover: " + host);
             }
             infoTimestamp = System.currentTimeMillis();
         }
@@ -107,7 +107,7 @@ public class NAT64AddrInfoModule
         try {
             result = info == null ? null : info.getIPv6Address(ipv4Address);
         } catch (IllegalArgumentException exc) {
-            Log.e(TAG, "Failed to get IPv6 address for: " + ipv4Address, exc);
+            JitsiMeetLogger.e(exc, TAG + " Failed to get IPv6 address for: " + ipv4Address);
 
             // We don't want to reject. It's not a big deal if there's no IPv6
             // address resolved.

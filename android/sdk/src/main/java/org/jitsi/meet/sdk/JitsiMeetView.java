@@ -19,11 +19,12 @@ package org.jitsi.meet.sdk;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.facebook.react.bridge.ReadableMap;
+
+import org.jitsi.meet.sdk.log.JitsiMeetLogger;
 
 import java.lang.reflect.Method;
 import java.util.Map;
@@ -38,12 +39,6 @@ public class JitsiMeetView extends BaseReactView<JitsiMeetViewListener>
      */
     private static final Map<String, Method> LISTENER_METHODS
         = ListenerUtils.mapListenerMethods(JitsiMeetViewListener.class);
-
-    /**
-     * The {@link Log} tag which identifies the source of the log messages of
-     * {@code JitsiMeetView}.
-     */
-    private static final String TAG = JitsiMeetView.class.getSimpleName();
 
     /**
      * The URL of the current conference.
@@ -137,7 +132,7 @@ public class JitsiMeetView extends BaseReactView<JitsiMeetViewListener>
             try {
                 pipModule.enterPictureInPicture();
             } catch (RuntimeException re) {
-                Log.e(TAG, "failed to enter PiP mode", re);
+                JitsiMeetLogger.e(re, "Failed to enter PiP mode");
             }
         }
     }

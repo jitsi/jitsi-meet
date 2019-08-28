@@ -26,8 +26,6 @@
 		0BCA496C1EC4BBF900B793EE /* jitsi.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 0BCA496B1EC4BBF900B793EE /* jitsi.ttf */; };
 		0BD906EA1EC0C00300C8C18E /* JitsiMeet.h in Headers */ = {isa = PBXBuildFile; fileRef = 0BD906E81EC0C00300C8C18E /* JitsiMeet.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		0F65EECE1D95DA94561BB47E /* libPods-JitsiMeet.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 03F2ADC957FF109849B7FCA1 /* libPods-JitsiMeet.a */; };
-		C30F88D0CB0F4F5593216D24 /* liveStreamingOff.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = C30F88D1CB0F4F5593216D24 /* liveStreamingOff.mp3 */; };
-		C30F88D2CB0F4F5593216D24 /* liveStreamingOn.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = C30F88D3CB0F4F5593216D24 /* liveStreamingOn.mp3 */; };
 		6C31EDC820C06D490089C899 /* recordingOn.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 6C31EDC720C06D490089C899 /* recordingOn.mp3 */; };
 		6C31EDCA20C06D530089C899 /* recordingOff.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 6C31EDC920C06D530089C899 /* recordingOff.mp3 */; };
 		75635B0A20751D6D00F29C9F /* joined.wav in Resources */ = {isa = PBXBuildFile; fileRef = 75635B0820751D6D00F29C9F /* joined.wav */; };
@@ -36,6 +34,8 @@
 		A4414AE020B37F1A003546E6 /* rejected.wav in Resources */ = {isa = PBXBuildFile; fileRef = A4414ADF20B37F1A003546E6 /* rejected.wav */; };
 		A480429C21EE335600289B73 /* AmplitudeModule.m in Sources */ = {isa = PBXBuildFile; fileRef = A480429B21EE335600289B73 /* AmplitudeModule.m */; };
 		A4A934E9212F3ADB001E9388 /* Dropbox.m in Sources */ = {isa = PBXBuildFile; fileRef = A4A934E8212F3ADB001E9388 /* Dropbox.m */; };
+		C30F88D0CB0F4F5593216D24 /* liveStreamingOff.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = C30F88D1CB0F4F5593216D24 /* liveStreamingOff.mp3 */; };
+		C30F88D2CB0F4F5593216D24 /* liveStreamingOn.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = C30F88D3CB0F4F5593216D24 /* liveStreamingOn.mp3 */; };
 		C6245F5D2053091D0040BE68 /* image-resize@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = C6245F5B2053091D0040BE68 /* image-resize@2x.png */; };
 		C6245F5E2053091D0040BE68 /* image-resize@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = C6245F5C2053091D0040BE68 /* image-resize@3x.png */; };
 		C69EFA0C209A0F660027712B /* JMCallKitEmitter.swift in Sources */ = {isa = PBXBuildFile; fileRef = C69EFA09209A0F650027712B /* JMCallKitEmitter.swift */; };
@@ -43,8 +43,15 @@
 		C69EFA0E209A0F660027712B /* JMCallKitListener.swift in Sources */ = {isa = PBXBuildFile; fileRef = C69EFA0B209A0F660027712B /* JMCallKitListener.swift */; };
 		C6A34261204EF76800E062DD /* DragGestureController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6A3425E204EF76800E062DD /* DragGestureController.swift */; };
 		C6CC49AF207412CF000DFA42 /* PiPViewCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6CC49AE207412CF000DFA42 /* PiPViewCoordinator.swift */; };
+		DE65AACA2317FFCD00290BEC /* LogUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = DE65AAC92317FFCD00290BEC /* LogUtils.h */; };
+		DE65AACC2318028300290BEC /* JitsiMeetBaseLogHandler+Private.h in Headers */ = {isa = PBXBuildFile; fileRef = DE65AACB2318028300290BEC /* JitsiMeetBaseLogHandler+Private.h */; };
 		DE762DB422AFDE76000DEBD6 /* JitsiMeetUserInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = DE762DB322AFDE76000DEBD6 /* JitsiMeetUserInfo.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		DE762DB622AFDE8D000DEBD6 /* JitsiMeetUserInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = DE762DB522AFDE8D000DEBD6 /* JitsiMeetUserInfo.m */; };
+		DE81A2D42316AC4D00AE1940 /* JitsiMeetLogger.h in Headers */ = {isa = PBXBuildFile; fileRef = DE81A2D22316AC4D00AE1940 /* JitsiMeetLogger.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		DE81A2D52316AC4D00AE1940 /* JitsiMeetLogger.m in Sources */ = {isa = PBXBuildFile; fileRef = DE81A2D32316AC4D00AE1940 /* JitsiMeetLogger.m */; };
+		DE81A2D92316AC7600AE1940 /* LogBridge.m in Sources */ = {isa = PBXBuildFile; fileRef = DE81A2D72316AC7600AE1940 /* LogBridge.m */; };
+		DE81A2DE2317ED5400AE1940 /* JitsiMeetBaseLogHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = DE81A2DC2317ED5400AE1940 /* JitsiMeetBaseLogHandler.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		DE81A2DF2317ED5400AE1940 /* JitsiMeetBaseLogHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = DE81A2DD2317ED5400AE1940 /* JitsiMeetBaseLogHandler.m */; };
 		DEAD3226220C497000E93636 /* JitsiMeetConferenceOptions.h in Headers */ = {isa = PBXBuildFile; fileRef = DEAD3224220C497000E93636 /* JitsiMeetConferenceOptions.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		DEAD3227220C497000E93636 /* JitsiMeetConferenceOptions.m in Sources */ = {isa = PBXBuildFile; fileRef = DEAD3225220C497000E93636 /* JitsiMeetConferenceOptions.m */; };
 		DEAFA779229EAD520033A7FA /* RNRootView.m in Sources */ = {isa = PBXBuildFile; fileRef = DEAFA778229EAD520033A7FA /* RNRootView.m */; };
@@ -77,8 +84,6 @@
 		0BD906E51EC0C00300C8C18E /* JitsiMeet.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = JitsiMeet.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		0BD906E81EC0C00300C8C18E /* JitsiMeet.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JitsiMeet.h; sourceTree = "<group>"; };
 		0BD906E91EC0C00300C8C18E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		C30F88D1CB0F4F5593216D24 /* liveStreamingOff.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; name = liveStreamingOff.mp3; path = ../../sounds/liveStreamingOff.mp3; sourceTree = "<group>"; };
-		C30F88D3CB0F4F5593216D24 /* liveStreamingOn.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; name = liveStreamingOn.mp3; path = ../../sounds/liveStreamingOn.mp3; sourceTree = "<group>"; };
 		6C31EDC720C06D490089C899 /* recordingOn.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; name = recordingOn.mp3; path = ../../sounds/recordingOn.mp3; sourceTree = "<group>"; };
 		6C31EDC920C06D530089C899 /* recordingOff.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; name = recordingOff.mp3; path = ../../sounds/recordingOff.mp3; sourceTree = "<group>"; };
 		75635B0820751D6D00F29C9F /* joined.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; name = joined.wav; path = ../../sounds/joined.wav; sourceTree = "<group>"; };
@@ -90,6 +95,8 @@
 		A480429B21EE335600289B73 /* AmplitudeModule.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = AmplitudeModule.m; path = src/analytics/AmplitudeModule.m; sourceTree = SOURCE_ROOT; };
 		A4A934E8212F3ADB001E9388 /* Dropbox.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Dropbox.m; sourceTree = "<group>"; };
 		A4A934EB21349A06001E9388 /* Dropbox.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Dropbox.h; sourceTree = "<group>"; };
+		C30F88D1CB0F4F5593216D24 /* liveStreamingOff.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; name = liveStreamingOff.mp3; path = ../../sounds/liveStreamingOff.mp3; sourceTree = "<group>"; };
+		C30F88D3CB0F4F5593216D24 /* liveStreamingOn.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; name = liveStreamingOn.mp3; path = ../../sounds/liveStreamingOn.mp3; sourceTree = "<group>"; };
 		C6245F5B2053091D0040BE68 /* image-resize@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "image-resize@2x.png"; path = "src/picture-in-picture/image-resize@2x.png"; sourceTree = "<group>"; };
 		C6245F5C2053091D0040BE68 /* image-resize@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "image-resize@3x.png"; path = "src/picture-in-picture/image-resize@3x.png"; sourceTree = "<group>"; };
 		C69EFA09209A0F650027712B /* JMCallKitEmitter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = JMCallKitEmitter.swift; sourceTree = "<group>"; };
@@ -98,9 +105,16 @@
 		C6A3425E204EF76800E062DD /* DragGestureController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DragGestureController.swift; sourceTree = "<group>"; };
 		C6CC49AE207412CF000DFA42 /* PiPViewCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PiPViewCoordinator.swift; sourceTree = "<group>"; };
 		C6F99C13204DB63D0001F710 /* JitsiMeetView+Private.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "JitsiMeetView+Private.h"; sourceTree = "<group>"; };
+		DE65AAC92317FFCD00290BEC /* LogUtils.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LogUtils.h; sourceTree = "<group>"; };
+		DE65AACB2318028300290BEC /* JitsiMeetBaseLogHandler+Private.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "JitsiMeetBaseLogHandler+Private.h"; sourceTree = "<group>"; };
 		DE762DB322AFDE76000DEBD6 /* JitsiMeetUserInfo.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JitsiMeetUserInfo.h; sourceTree = "<group>"; };
 		DE762DB522AFDE8D000DEBD6 /* JitsiMeetUserInfo.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JitsiMeetUserInfo.m; sourceTree = "<group>"; };
 		DE762DB722AFE166000DEBD6 /* JitsiMeetUserInfo+Private.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "JitsiMeetUserInfo+Private.h"; sourceTree = "<group>"; };
+		DE81A2D22316AC4D00AE1940 /* JitsiMeetLogger.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JitsiMeetLogger.h; sourceTree = "<group>"; };
+		DE81A2D32316AC4D00AE1940 /* JitsiMeetLogger.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JitsiMeetLogger.m; sourceTree = "<group>"; };
+		DE81A2D72316AC7600AE1940 /* LogBridge.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = LogBridge.m; sourceTree = "<group>"; };
+		DE81A2DC2317ED5400AE1940 /* JitsiMeetBaseLogHandler.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JitsiMeetBaseLogHandler.h; sourceTree = "<group>"; };
+		DE81A2DD2317ED5400AE1940 /* JitsiMeetBaseLogHandler.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JitsiMeetBaseLogHandler.m; sourceTree = "<group>"; };
 		DEAD3224220C497000E93636 /* JitsiMeetConferenceOptions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JitsiMeetConferenceOptions.h; sourceTree = "<group>"; };
 		DEAD3225220C497000E93636 /* JitsiMeetConferenceOptions.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JitsiMeetConferenceOptions.m; sourceTree = "<group>"; };
 		DEAD3228220C734300E93636 /* JitsiMeetConferenceOptions+Private.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "JitsiMeetConferenceOptions+Private.h"; sourceTree = "<group>"; };
@@ -186,8 +200,15 @@
 				DE762DB322AFDE76000DEBD6 /* JitsiMeetUserInfo.h */,
 				DE762DB722AFE166000DEBD6 /* JitsiMeetUserInfo+Private.h */,
 				DE762DB522AFDE8D000DEBD6 /* JitsiMeetUserInfo.m */,
+				DE81A2D22316AC4D00AE1940 /* JitsiMeetLogger.h */,
+				DE81A2D32316AC4D00AE1940 /* JitsiMeetLogger.m */,
+				DE81A2DC2317ED5400AE1940 /* JitsiMeetBaseLogHandler.h */,
+				DE65AACB2318028300290BEC /* JitsiMeetBaseLogHandler+Private.h */,
+				DE81A2DD2317ED5400AE1940 /* JitsiMeetBaseLogHandler.m */,
 				0B412F161EDEC65D00B1A0A6 /* JitsiMeetView.h */,
 				0B412F171EDEC65D00B1A0A6 /* JitsiMeetView.m */,
+				DE81A2D72316AC7600AE1940 /* LogBridge.m */,
+				DE65AAC92317FFCD00290BEC /* LogUtils.h */,
 				DEAFA777229EAD3B0033A7FA /* RNRootView.h */,
 				DEAFA778229EAD520033A7FA /* RNRootView.m */,
 				C6F99C13204DB63D0001F710 /* JitsiMeetView+Private.h */,
@@ -273,8 +294,12 @@
 				DE762DB422AFDE76000DEBD6 /* JitsiMeetUserInfo.h in Headers */,
 				0B412F181EDEC65D00B1A0A6 /* JitsiMeetView.h in Headers */,
 				0B93EF7E1EC9DDCD0030D24D /* RCTBridgeWrapper.h in Headers */,
+				DE81A2DE2317ED5400AE1940 /* JitsiMeetBaseLogHandler.h in Headers */,
+				DE65AACC2318028300290BEC /* JitsiMeetBaseLogHandler+Private.h in Headers */,
 				0B412F221EDEF6EA00B1A0A6 /* JitsiMeetViewDelegate.h in Headers */,
 				0BD906EA1EC0C00300C8C18E /* JitsiMeet.h in Headers */,
+				DE81A2D42316AC4D00AE1940 /* JitsiMeetLogger.h in Headers */,
+				DE65AACA2317FFCD00290BEC /* LogUtils.h in Headers */,
 				DEAD3226220C497000E93636 /* JitsiMeetConferenceOptions.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -496,7 +521,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				0BB9AD7B1F5EC8F4001C08DB /* CallKit.m in Sources */,
+				DE81A2DF2317ED5400AE1940 /* JitsiMeetBaseLogHandler.m in Sources */,
 				0BB9AD7D1F60356D001C08DB /* AppInfo.m in Sources */,
+				DE81A2D92316AC7600AE1940 /* LogBridge.m in Sources */,
 				DEAFA779229EAD520033A7FA /* RNRootView.m in Sources */,
 				DE762DB622AFDE8D000DEBD6 /* JitsiMeetUserInfo.m in Sources */,
 				DEAD3227220C497000E93636 /* JitsiMeetConferenceOptions.m in Sources */,
@@ -513,6 +540,7 @@
 				C6A34261204EF76800E062DD /* DragGestureController.swift in Sources */,
 				A4A934E9212F3ADB001E9388 /* Dropbox.m in Sources */,
 				C69EFA0D209A0F660027712B /* JMCallKitProxy.swift in Sources */,
+				DE81A2D52316AC4D00AE1940 /* JitsiMeetLogger.m in Sources */,
 				C69EFA0E209A0F660027712B /* JMCallKitListener.swift in Sources */,
 				0B412F191EDEC65D00B1A0A6 /* JitsiMeetView.m in Sources */,
 				DEFE535421FB1BF800011A3A /* JitsiMeet.m in Sources */,
