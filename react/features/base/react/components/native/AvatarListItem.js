@@ -14,6 +14,11 @@ import styles, { AVATAR_SIZE, UNDERLAY_COLOR } from './styles';
 type Props = {
 
     /**
+     * If true, only the avatar gets rendered, no lines of text.
+     */
+    avatarOnly?: boolean,
+
+    /**
      * Preferred size of the avatar.
      */
     avatarSize?: number,
@@ -76,6 +81,7 @@ export default class AvatarListItem extends Component<Props> {
      */
     render() {
         const {
+            avatarOnly,
             avatarSize = AVATAR_SIZE,
             avatarStyle
         } = this.props;
@@ -92,7 +98,7 @@ export default class AvatarListItem extends Component<Props> {
                     size = { avatarSize }
                     style = { avatarStyle }
                     url = { avatar } />
-                <Container style = { styles.listItemDetails }>
+                { avatarOnly || <Container style = { styles.listItemDetails }>
                     <Text
                         numberOfLines = { 1 }
                         style = { [
@@ -103,7 +109,7 @@ export default class AvatarListItem extends Component<Props> {
                         { title }
                     </Text>
                     {this._renderItemLines(lines)}
-                </Container>
+                </Container>}
                 { this.props.children }
             </Container>
         );
