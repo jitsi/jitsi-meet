@@ -3,6 +3,9 @@ PODS:
   - boost-for-react-native (1.63.0)
   - BVLinearGradient (2.5.6):
     - React
+  - CocoaLumberjack (3.5.3):
+    - CocoaLumberjack/Core (= 3.5.3)
+  - CocoaLumberjack/Core (3.5.3)
   - Crashlytics (3.12.0):
     - Fabric (~> 1.9.0)
   - DoubleConversion (1.1.6)
@@ -187,6 +190,7 @@ PODS:
 DEPENDENCIES:
   - Amplitude-iOS (~> 4.0.4)
   - BVLinearGradient (from `../node_modules/react-native-linear-gradient`)
+  - CocoaLumberjack (~> 3.5.3)
   - Crashlytics (~> 3.12.0)
   - DoubleConversion (from `../node_modules/react-native/third-party-podspecs/DoubleConversion.podspec`)
   - Fabric (~> 1.9.0)
@@ -205,7 +209,7 @@ DEPENDENCIES:
   - react-native-background-timer (from `../node_modules/react-native-background-timer`)
   - react-native-calendar-events (from `../node_modules/react-native-calendar-events`)
   - react-native-keep-awake (from `../node_modules/react-native-keep-awake`)
-  - react-native-netinfo (from `../node_modules/@react-native-community/netinfo`)
+  - "react-native-netinfo (from `../node_modules/@react-native-community/netinfo`)"
   - react-native-webrtc (from `../node_modules/react-native-webrtc`)
   - react-native-webview (from `../node_modules/react-native-webview`)
   - React-RCTActionSheet (from `../node_modules/react-native/Libraries/ActionSheetIOS`)
@@ -229,6 +233,7 @@ SPEC REPOS:
   https://github.com/cocoapods/specs.git:
     - Amplitude-iOS
     - boost-for-react-native
+    - CocoaLumberjack
     - Crashlytics
     - Fabric
     - Firebase
@@ -317,6 +322,7 @@ SPEC CHECKSUMS:
   Amplitude-iOS: 2ad4d7270c99186236c1272a3a9425463b1ae1a7
   boost-for-react-native: 39c7adb57c4e60d6c5479dd8623128eb5b3f0f2c
   BVLinearGradient: e3aad03778a456d77928f594a649e96995f1c872
+  CocoaLumberjack: 2f44e60eb91c176d471fdba43b9e3eae6a721947
   Crashlytics: 07fb167b1694128c1c9a5a5cc319b0e9c3ca0933
   DoubleConversion: 5805e889d232975c086db112ece9ed034df7a0b2
   Fabric: f988e33c97f08930a413e08123064d2e5f68d655
@@ -365,6 +371,6 @@ SPEC CHECKSUMS:
   RNWatch: 09738b339eceb66e4d80a2371633ca5fb380fa42
   yoga: 312528f5bbbba37b4dcea5ef00e8b4033fdd9411
 
-PODFILE CHECKSUM: 0907bfe60b5b5f11dbdc6b4e65d40a248d000513
+PODFILE CHECKSUM: 0e3406a4217cc348dcadad5b016e8d939d4aa61f
 
 COCOAPODS: 1.7.2

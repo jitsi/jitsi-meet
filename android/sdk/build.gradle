@@ -44,6 +44,7 @@ dependencies {
     implementation 'org.webkit:android-jsc:+'
 
     implementation 'com.dropbox.core:dropbox-core-sdk:3.0.8'
+    implementation 'com.jakewharton.timber:timber:4.7.1'
 
     if (!rootProject.ext.libreBuild) {
         implementation 'com.amplitude:android-sdk:2.14.1'

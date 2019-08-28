@@ -23,7 +23,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.os.IBinder;
-import android.util.Log;
+
+import org.jitsi.meet.sdk.log.JitsiMeetLogger;
 
 
 /**
@@ -55,7 +56,7 @@ public class JitsiMeetOngoingConferenceService extends Service
             componentName = context.startService(intent);
         }
         if (componentName == null) {
-            Log.w(TAG, "Ongoing conference service not started");
+            JitsiMeetLogger.w(TAG + " Ongoing conference service not started");
         }
     }
 
@@ -90,20 +91,20 @@ public class JitsiMeetOngoingConferenceService extends Service
             Notification notification = OngoingNotification.buildOngoingConferenceNotification();
             if (notification == null) {
                 stopSelf();
-                Log.w(TAG, "Couldn't start service, notification is null");
+                JitsiMeetLogger.w(TAG + " Couldn't start service, notification is null");
             } else {
                 startForeground(OngoingNotification.NOTIFICATION_ID, notification);
-                Log.i(TAG, "Service started");
+                JitsiMeetLogger.i(TAG + " Service started");
             }
         } else if (action.equals(Actions.HANGUP)) {
-            Log.i(TAG, "Hangup requested");
+            JitsiMeetLogger.i(TAG + " Hangup requested");
             // Abort all ongoing calls
             if (AudioModeModule.useConnectionService()) {
                 ConnectionService.abortConnections();
             }
             stopSelf();
         } else {
-            Log.w(TAG, "Unknown action received: " + action);
+            JitsiMeetLogger.w(TAG + " Unknown action received: " + action);
             stopSelf();
         }
 
@@ -114,7 +115,7 @@ public class JitsiMeetOngoingConferenceService extends Service
     public void onCurrentConferenceChanged(String conferenceUrl) {
         if (conferenceUrl == null) {
             stopSelf();
-            Log.i(TAG, "Service stopped");
+            JitsiMeetLogger.i(TAG + "Service stopped");
         }
     }
 }

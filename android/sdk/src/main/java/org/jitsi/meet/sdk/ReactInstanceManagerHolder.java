@@ -34,6 +34,7 @@ import com.facebook.soloader.SoLoader;
 import com.oney.WebRTCModule.RTCVideoViewManager;
 import com.oney.WebRTCModule.WebRTCModule;
 
+import org.jitsi.meet.sdk.log.JitsiMeetLogger;
 import org.webrtc.SoftwareVideoDecoderFactory;
 import org.webrtc.SoftwareVideoEncoderFactory;
 import org.webrtc.VideoDecoderFactory;
@@ -67,6 +68,7 @@ class ReactInstanceManagerHolder {
                 new DropboxModule(reactContext),
                 new ExternalAPIModule(reactContext),
                 new LocaleDetector(reactContext),
+                new LogBridgeModule(reactContext),
                 new PictureInPictureModule(reactContext),
                 new ProximityModule(reactContext),
                 new WiFiStatsModule(reactContext),

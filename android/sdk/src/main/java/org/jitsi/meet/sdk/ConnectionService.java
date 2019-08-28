@@ -13,12 +13,13 @@ import android.telecom.PhoneAccount;
 import android.telecom.PhoneAccountHandle;
 import android.telecom.TelecomManager;
 import android.telecom.VideoProfile;
-import android.util.Log;
 import androidx.annotation.RequiresApi;
 
 import com.facebook.react.bridge.Promise;
 import com.facebook.react.bridge.ReadableMap;
 import com.facebook.react.bridge.WritableNativeMap;
+
+import org.jitsi.meet.sdk.log.JitsiMeetLogger;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -129,9 +130,7 @@ public class ConnectionService extends android.telecom.ConnectionService {
         if (connection != null) {
             connection.setActive();
         } else {
-            Log.e(TAG, String.format(
-                    "setConnectionActive - no connection for UUID: %s",
-                    callUUID));
+            JitsiMeetLogger.e("% setConnectionActive - no connection for UUID: %s", TAG, callUUID);
         }
     }
 
@@ -162,7 +161,7 @@ public class ConnectionService extends android.telecom.ConnectionService {
             connection.setDisconnected(cause);
             connection.destroy();
         } else {
-            Log.e(TAG, "endCall no connection for UUID: " + callUUID);
+            JitsiMeetLogger.e(TAG + " endCall no connection for UUID: " + callUUID);
         }
     }
 
@@ -194,15 +193,14 @@ public class ConnectionService extends android.telecom.ConnectionService {
                 boolean hasVideo
                         = callState.getBoolean(ConnectionImpl.KEY_HAS_VIDEO);
 
-                Log.d(TAG, String.format(
-                        "updateCall: %s hasVideo: %s", callUUID, hasVideo));
+                JitsiMeetLogger.i(" %s updateCall: %s hasVideo: %s", TAG, callUUID, hasVideo);
                 connection.setVideoState(
                         hasVideo
                                 ? VideoProfile.STATE_BIDIRECTIONAL
                                 : VideoProfile.STATE_AUDIO_ONLY);
             }
         } else {
-            Log.e(TAG, "updateCall no connection for UUID: " + callUUID);
+            JitsiMeetLogger.e(TAG +     " updateCall no connection for UUID: " + callUUID);
         }
     }
 
@@ -238,13 +236,11 @@ public class ConnectionService extends android.telecom.ConnectionService {
             = unregisterStartCallPromise(connection.getCallUUID());
 
         if (startCallPromise != null) {
-            Log.d(TAG,
-                  "onCreateOutgoingConnection " + connection.getCallUUID());
+            JitsiMeetLogger.d(TAG + " onCreateOutgoingConnection " + connection.getCallUUID());
             startCallPromise.resolve(null);
         } else {
-            Log.e(TAG, String.format(
-                "onCreateOutgoingConnection: no start call Promise for %s",
-                connection.getCallUUID()));
+            JitsiMeetLogger.e(
+                TAG + " onCreateOutgoingConnection: no start call Promise for " + connection.getCallUUID());
         }
 
         return connection;
@@ -268,7 +264,7 @@ public class ConnectionService extends android.telecom.ConnectionService {
         PhoneAccountHandle theAccountHandle = request.getAccountHandle();
         String callUUID = theAccountHandle.getId();
 
-        Log.e(TAG, "onCreateOutgoingConnectionFailed " + callUUID);
+        JitsiMeetLogger.e(TAG + " onCreateOutgoingConnectionFailed " + callUUID);
 
         if (callUUID != null) {
             Promise startCallPromise = unregisterStartCallPromise(callUUID);
@@ -278,12 +274,10 @@ public class ConnectionService extends android.telecom.ConnectionService {
                         "CREATE_OUTGOING_CALL_FAILED",
                         "The request has been denied by the system");
             } else {
-                Log.e(TAG, String.format(
-                        "startCallFailed - no start call Promise for UUID: %s",
-                        callUUID));
+                JitsiMeetLogger.e(TAG + " startCallFailed - no start call Promise for UUID: " + callUUID);
             }
         } else {
-            Log.e(TAG, "onCreateOutgoingConnectionFailed - no call UUID");
+            JitsiMeetLogger.e(TAG + " onCreateOutgoingConnectionFailed - no call UUID");
         }
 
         unregisterPhoneAccount(theAccountHandle);
@@ -295,10 +289,10 @@ public class ConnectionService extends android.telecom.ConnectionService {
             if (phoneAccountHandle != null) {
                 telecom.unregisterPhoneAccount(phoneAccountHandle);
             } else {
-                Log.e(TAG, "unregisterPhoneAccount - account handle is null");
+                JitsiMeetLogger.e(TAG + " unregisterPhoneAccount - account handle is null");
             }
         } else {
-            Log.e(TAG, "unregisterPhoneAccount - telecom is null");
+            JitsiMeetLogger.e(TAG + "unregisterPhoneAccount - telecom is null");
         }
     }
 
@@ -357,7 +351,7 @@ public class ConnectionService extends android.telecom.ConnectionService {
          */
         @Override
         public void onDisconnect() {
-            Log.d(TAG, "onDisconnect " + getCallUUID());
+            JitsiMeetLogger.i(TAG + " onDisconnect " + getCallUUID());
             WritableNativeMap data = new WritableNativeMap();
             data.putString("callUUID", getCallUUID());
             ReactInstanceManagerHolder.emitEvent(
@@ -377,7 +371,7 @@ public class ConnectionService extends android.telecom.ConnectionService {
          */
         @Override
         public void onAbort() {
-            Log.d(TAG, "onAbort " + getCallUUID());
+            JitsiMeetLogger.i(TAG + " onAbort " + getCallUUID());
             WritableNativeMap data = new WritableNativeMap();
             data.putString("callUUID", getCallUUID());
             ReactInstanceManagerHolder.emitEvent(
@@ -395,9 +389,7 @@ public class ConnectionService extends android.telecom.ConnectionService {
             // What ?! Android will still call this method even if we do not add
             // the HOLD capability, so do the same thing as on abort.
             // TODO implement HOLD
-            Log.d(TAG, String.format(
-                  "onHold %s - HOLD is not supported, aborting the call...",
-                  getCallUUID()));
+            JitsiMeetLogger.w(TAG + " onHold %s - HOLD is not supported, aborting the call...", getCallUUID());
             this.onAbort();
         }
 
@@ -410,7 +402,7 @@ public class ConnectionService extends android.telecom.ConnectionService {
          */
         @Override
         public void onCallAudioStateChanged(CallAudioState state) {
-            Log.d(TAG, "onCallAudioStateChanged: " + state);
+            JitsiMeetLogger.d(TAG + " onCallAudioStateChanged: " + state);
             AudioModeModule audioModeModule
                     = ReactInstanceManagerHolder
                     .getNativeModule(AudioModeModule.class);
@@ -426,10 +418,8 @@ public class ConnectionService extends android.telecom.ConnectionService {
          */
         @Override
         public void onStateChanged(int state) {
-            Log.d(TAG,
-                  String.format("onStateChanged: %s %s",
-                                Connection.stateToString(state),
-                                getCallUUID()));
+            JitsiMeetLogger.d(
+                "%s onStateChanged: %s %s", TAG, Connection.stateToString(state), getCallUUID());
 
             if (state == STATE_DISCONNECTED) {
                 removeConnection(this);
