@@ -2,7 +2,7 @@
 
 import md5 from 'js-md5';
 
-const logger = require('jitsi-meet-logger').getLogger(__filename);
+import logger from './logger';
 
 /**
  * The name of the {@code localStorage} store where the app persists its values.

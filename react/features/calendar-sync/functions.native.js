@@ -10,10 +10,9 @@ import { getShareInfoText } from '../invite';
 import { setCalendarAuthorization } from './actions';
 import { FETCH_END_DAYS, FETCH_START_DAYS } from './constants';
 import { _updateCalendarEntries } from './functions';
+import logger from './logger';
 
 export * from './functions.any';
-
-const logger = require('jitsi-meet-logger').getLogger(__filename);
 
 /**
  * Adds a Jitsi link to a calendar entry.

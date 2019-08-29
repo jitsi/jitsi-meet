@@ -1,3 +1,4 @@
+import logger from '../../logger';
 import {
     MAIN_THREAD_FINISH,
     MAIN_THREAD_INIT,
@@ -5,8 +6,6 @@ import {
     WORKER_BLOB_READY,
     WORKER_LIBFLAC_READY
 } from './messageTypes';
-
-const logger = require('jitsi-meet-logger').getLogger(__filename);
 
 /**
  * WebWorker that does FLAC encoding using libflac.js

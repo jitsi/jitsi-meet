@@ -1,6 +1,6 @@
 // @flow
 
-const logger = require('jitsi-meet-logger').getLogger(__filename);
+import logger from './logger';
 
 /**
  * The app linking scheme.

@@ -1,18 +1,15 @@
 // @flow
 
-import { getLogger } from 'jitsi-meet-logger';
-
 import UIEvents from '../../../../service/UI/UIEvents';
 
 import { createAudioOnlyChangedEvent, sendAnalytics } from '../../analytics';
 
 import { SET_AUDIO_ONLY } from './actionTypes';
+import logger from './logger';
 
 import type { Dispatch } from 'redux';
 
 declare var APP: Object;
-const logger = getLogger('features/base/audio-only');
-
 
 /**
  * Sets the audio-only flag for the current JitsiConference.

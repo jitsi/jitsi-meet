@@ -7,8 +7,7 @@ import JitsiMeetJS, {
 import { getJitsiMeetGlobalNS, loadScript } from '../base/util';
 
 import { AmplitudeHandler } from './handlers';
-
-const logger = require('jitsi-meet-logger').getLogger(__filename);
+import logger from './logger';
 
 /**
  * Sends an event through the lib-jitsi-meet AnalyticsAdapter interface.

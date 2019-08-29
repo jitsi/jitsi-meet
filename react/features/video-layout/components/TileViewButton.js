@@ -1,6 +1,5 @@
 // @flow
 
-import Logger from 'jitsi-meet-logger';
 import type { Dispatch } from 'redux';
 
 import {
@@ -15,8 +14,7 @@ import {
 } from '../../base/toolbox';
 
 import { setTileView } from '../actions';
-
-const logger = Logger.getLogger(__filename);
+import logger from '../logger';
 
 /**
  * The type of the React {@code Component} props of {@link TileViewButton}.

@@ -23,6 +23,7 @@ import {
 } from '../../../toolbox';
 
 import { maybeShowSuboptimalExperienceNotification } from '../../functions';
+import logger from '../../logger';
 
 import Labels from './Labels';
 import { default as Notice } from './Notice';
@@ -31,14 +32,11 @@ import {
     AbstractConference,
     abstractMapStateToProps
 } from '../AbstractConference';
-
 import type { AbstractProps } from '../AbstractConference';
 
 declare var APP: Object;
 declare var config: Object;
 declare var interfaceConfig: Object;
-
-const logger = require('jitsi-meet-logger').getLogger(__filename);
 
 /**
  * DOM events for when full screen mode has changed. Different browsers need

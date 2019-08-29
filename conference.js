@@ -1457,7 +1457,9 @@ export default {
             return this._switchToScreenSharing(options);
         }
 
-        return this._untoggleScreenSharing();
+        return this._untoggleScreenSharing
+            ? this._untoggleScreenSharing()
+            : Promise.resolve();
     },
 
     /**
@@ -2197,12 +2199,6 @@ export default {
         APP.UI.initConference();
 
         APP.keyboardshortcut.init();
-
-        if (config.requireDisplayName
-                && !APP.conference.getLocalDisplayName()
-                && !room.isHidden()) {
-            APP.UI.promptDisplayName();
-        }
 
         APP.store.dispatch(conferenceJoined(room));
 

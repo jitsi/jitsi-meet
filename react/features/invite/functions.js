@@ -4,10 +4,10 @@ import { i18next } from '../base/i18n';
 import { isLocalParticipantModerator } from '../base/participants';
 import { doGetJSON, parseURIString } from '../base/util';
 
+import logger from './logger';
+
 declare var $: Function;
 declare var interfaceConfig: Object;
-
-const logger = require('jitsi-meet-logger').getLogger(__filename);
 
 /**
  * Sends an ajax request to check if the phone number can be called.
