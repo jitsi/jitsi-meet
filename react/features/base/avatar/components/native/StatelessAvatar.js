@@ -35,8 +35,6 @@ export default class StatelessAvatar extends AbstractStatelessAvatar<Props> {
 
         let avatar;
 
-        const icon = this._parseIconUrl(url);
-
         avatar = this._renderDefaultAvatar();
         
 
