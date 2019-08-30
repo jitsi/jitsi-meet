@@ -200,9 +200,9 @@ api.executeCommand('password', 'The Password');
 * **sendTones** - Play touch tones.
 ```javascript
 api.executeCommand('sendTones', {
-    tones: string,
-    duration: number, // optional
-    pause: number // optional
+    tones: string, // The dial pad touch tones to play. For example, '12345#'.
+    duration: number, // Optional. The number of milliseconds each tone should play. The default is 200.
+    pause: number // Optional. The number of milliseconds between each tone. The default is 200.
 });
 ```
 
