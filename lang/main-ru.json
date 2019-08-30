@@ -21,10 +21,11 @@
         "bluetooth": "Bluetooth",
         "headphones": "Наушники",
         "phone": "Телефон",
-        "speaker": "Колонка"
+        "speaker": "Колонка",
+        "none": ""
     },
     "audioOnly": {
-        "audioOnly": "Только звук"
+        "audioOnly": "Не нагружает канал"
     },
     "calendarSync": {
         "addMeetingURL": "Добавить ссылку конференции",
@@ -101,8 +102,7 @@
         "status": "Связь:",
         "transport_0": "Методы отправки:",
         "transport_1": "Методы отправки:",
-        "transport_2": "Методы отправки:",
-        "turn": " (повернуть)"
+        "transport_2": "Методы отправки:"
     },
     "dateUtils": {
         "earlier": "Ранее",
@@ -120,6 +120,7 @@
         "tryAgainButton": "Повторите в настольном приложении"
     },
     "defaultLink": "напр. {{url}}",
+    "defaultNickname": "напр. Яна Цветкова",
     "deviceError": {
         "cameraError": "Ошибка доступа к камере",
         "cameraPermission": "Ошибка доступа к микрофону",
@@ -340,7 +341,8 @@
         "toggleFilmstrip": "Показать/Скрыть краткое описание",
         "toggleScreensharing": "Переключиться между камерой и показом экрана",
         "toggleShortcuts": "Скрыть/Показать горячие клавиши",
-        "videoMute": "Камера (вкл./выкл.)"
+        "videoMute": "Камера (вкл./выкл.)",
+        "videoQuality": "Качество связи"
     },
     "liveStreaming": {
         "busy": "Освобождаем новые ресурсы для трансляции. Пожалуйста, попробуйте снова через несколько минут.",
@@ -365,7 +367,7 @@
         "signedInAs": "",
         "signIn": "Войти через Google",
         "signInCTA": "Войдите или введите свой ключ трансляции YouTube.",
-        "signOut": "",
+        "signOut": "Выход",
         "start": "Начать трансляцию",
         "streamIdHelp": "Что это?",
         "unavailableTitle": "Трансляция недоступна"
@@ -426,7 +428,7 @@
         "somebody": "Кто-то",
         "startSilentTitle": "",
         "startSilentDescription": "",
-        "suboptimalExperienceDescription": "К сожалению, этот браузер не очень подходит для работы с {{appName}}. Мы работаем над проблемой, а пока попробуйте один из <a href='static/recommendedBrowsers.html 'target='_blank'>полностью поддерживаемых браузеров</a>.",
+        "suboptimalBrowserWarning": "",
         "suboptimalExperienceTitle": "Предупреждение",
         "unmute": "",
         "newDeviceCameraTitle": "",
@@ -456,6 +458,7 @@
         "setEmailLabel": "E-mail для gravatar",
         "title": "Профиль"
     },
+    "raisedHand": "Хочет говорить",
     "recording": {
         "authDropboxText": "",
         "availableSpace": "Доступно места: {{spaceLeft}} MB (примерно {{duration}} минут записи)",
@@ -548,7 +551,7 @@
         "accessibilityLabel": {
             "audioOnly": "Вкл/выкл только звук",
             "audioRoute": "Выбрать аудиоустройство",
-            "callQuality": "",
+            "callQuality": "Качество связи",
             "cc": "Вкл/выкл субтитры",
             "chat": "Показать/скрыть окно чата",
             "document": "Закрыть общий документ",
@@ -580,8 +583,8 @@
             "videoblur": ""
         },
         "addPeople": "Добавить людей к вашему сеансу связи",
-        "audioOnlyOff": "Выключить режим 'только звук'",
-        "audioOnlyOn": "Выключить режим 'только звук'",
+        "audioOnlyOff": "",
+        "audioOnlyOn": "",
         "audioRoute": "Выбрать аудиоустройство",
         "authenticate": "Аутентифицировать",
         "callQuality": "Качество связи",
@@ -662,10 +665,12 @@
         "audioOnlyExpanded": "",
         "callQuality": "",
         "hd": "HD",
+        "hdTooltip": "Видео высокого качества",
         "highDefinition": "Высокое качество",
         "labelTooiltipNoVideo": "Нет видео",
-        "labelTooltipAudioOnly": "Включен режим \"только звук\"",
+        "labelTooltipAudioOnly": "",
         "ld": "LD",
+        "ldTooltip": "Видео низкого качества",
         "lowDefinition": "Низкое качество",
         "onlyAudioAvailable": "Только звук",
         "onlyAudioSupported": "В этом браузере разрешен только звук.",
@@ -673,6 +678,7 @@
         "p2pVideoQualityDescription": "",
         "recHighDefinitionOnly": "Предпочтительно высокое качество.",
         "sd": "SD",
+        "sdTooltip": "Видео стандартного качества",
         "standardDefinition": "Стандартное качество (SD)"
     },
     "videothumbnail": {
