@@ -12,8 +12,14 @@ import {
     isEnabled as isDropboxEnabled
 } from '../../../dropbox';
 import { RECORDING_TYPES } from '../../constants';
+import { toggleRequestingSubtitles } from '../../../subtitles';
 
 type Props = {
+
+    /**
+     * Requests subtitles when recording is turned on.
+     */
+    _autoCaptionOnRecord: boolean,
 
     /**
      * The {@code JitsiConference} for the current conference.
@@ -241,7 +247,7 @@ class AbstractStartRecordingDialog extends Component<Props, State> {
      * @returns {boolean} - True (to note that the modal should be closed).
      */
     _onSubmit() {
-        const { _conference, _isDropboxEnabled, _token } = this.props;
+        const { _autoCaptionOnRecord, _conference, _isDropboxEnabled, _token, dispatch } = this.props;
         let appData;
         const attributes = {};
 
@@ -276,6 +282,10 @@ class AbstractStartRecordingDialog extends Component<Props, State> {
             appData
         });
 
+        if (_autoCaptionOnRecord) {
+            dispatch(toggleRequestingSubtitles());
+        }
+
         return true;
     }
 
@@ -296,6 +306,7 @@ class AbstractStartRecordingDialog extends Component<Props, State> {
  * @private
  * @returns {{
  *     _appKey: string,
+ *     _autoCaptionOnRecord: boolean,
  *     _conference: JitsiConference,
  *     _fileRecordingsServiceEnabled: boolean,
  *     _fileRecordingsServiceSharingEnabled: boolean,
@@ -305,6 +316,7 @@ class AbstractStartRecordingDialog extends Component<Props, State> {
  */
 export function mapStateToProps(state: Object) {
     const {
+        autoCaptionOnRecord = false,
         fileRecordingsServiceEnabled = false,
         fileRecordingsServiceSharingEnabled = false,
         dropbox = {}
@@ -312,6 +324,7 @@ export function mapStateToProps(state: Object) {
 
     return {
         _appKey: dropbox.appKey,
+        _autoCaptionOnRecord: autoCaptionOnRecord,
         _conference: state['features/base/conference'].conference,
         _fileRecordingsServiceEnabled: fileRecordingsServiceEnabled,
         _fileRecordingsServiceSharingEnabled: fileRecordingsServiceSharingEnabled,
