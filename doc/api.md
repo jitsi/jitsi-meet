@@ -197,6 +197,15 @@ api.executeCommand('displayName', 'New Nickname');
 api.executeCommand('password', 'The Password');
 ```
 
+* **sendTones** - Play touch tones.
+```javascript
+api.executeCommand('sendTones', {
+    tones: string,
+    duration: number, // optional
+    pause: number // optional
+});
+```
+
 * **subject** - Sets the subject of the conference. This command requires one argument - the new subject to be set.
 ```javascript
 api.executeCommand('subject', 'New Conference Subject');

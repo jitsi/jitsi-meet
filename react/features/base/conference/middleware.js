@@ -35,6 +35,7 @@ import {
     CONFERENCE_SUBJECT_CHANGED,
     CONFERENCE_WILL_LEAVE,
     DATA_CHANNEL_OPENED,
+    SEND_TONES,
     SET_PENDING_SUBJECT_CHANGE,
     SET_ROOM
 } from './actionTypes';
@@ -88,6 +89,9 @@ MiddlewareRegistry.register(store => next => action => {
 
     case PIN_PARTICIPANT:
         return _pinParticipant(store, next, action);
+
+    case SEND_TONES:
+        return _sendTones(store, next, action);
 
     case SET_ROOM:
         return _setRoom(store, next, action);
@@ -442,6 +446,31 @@ function _pinParticipant({ getState }, next, action) {
             local,
             'participant_count': conference.getParticipantCount()
         }));
+
+    return next(action);
+}
+
+/**
+ * Requests the specified tones to be played.
+ *
+ * @param {Store} store - The redux store in which the specified {@code action}
+ * is being dispatched.
+ * @param {Dispatch} next - The redux {@code dispatch} function to dispatch the
+ * specified {@code action} to the specified {@code store}.
+ * @param {Action} action - The redux action {@code SEND_TONES} which is
+ * being dispatched in the specified {@code store}.
+ * @private
+ * @returns {Object} The value returned by {@code next(action)}.
+ */
+function _sendTones({ getState }, next, action) {
+    const state = getState();
+    const { conference } = state['features/base/conference'];
+
+    if (conference) {
+        const { duration, tones, pause } = action;
+
+        conference.sendTones(tones, duration, pause);
+    }
 
     return next(action);
 }
