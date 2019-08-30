@@ -34,6 +34,7 @@ const commands = {
     email: 'email',
     hangup: 'video-hangup',
     password: 'password',
+    sendTones: 'send-tones',
     subject: 'subject',
     submitFeedback: 'submit-feedback',
     toggleAudio: 'toggle-audio',
