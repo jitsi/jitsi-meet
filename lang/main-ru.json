@@ -254,7 +254,7 @@
         "token": "токен",
         "tokenAuthFailed": "Извините, вам не разрешено присоединиться к этому сеансу связи.",
         "tokenAuthFailedTitle": "Ошибка аутентификации",
-        "transcribing": "",
+        "transcribing": "Расшифровка",
         "unlockRoom": "",
         "userPassword": "пароль пользователя",
         "WaitForHostMsg": "",
@@ -329,7 +329,7 @@
     "keyboardShortcuts": {
         "focusLocal": "Фокус на ваше видео",
         "focusRemote": "Фокус на видео другого участника",
-        "fullScreen": "Вкл/выкл полноэкранный режим",
+        "fullScreen": "Вкл/выкл полноэкранный режим ",
         "keyboardShortcuts": "Комбинации клавиш",
         "localRecording": "",
         "mute": "Микрофон (вкл./выкл.)",
@@ -339,7 +339,7 @@
         "toggleChat": "Чат (открыть/закрыть)",
         "toggleFilmstrip": "Показать/Скрыть краткое описание",
         "toggleScreensharing": "Переключиться между камерой и показом экрана",
-        "toggleShortcuts": "",
+        "toggleShortcuts": "Скрыть/Показать горячие клавиши",
         "videoMute": "Камера (вкл./выкл.)"
     },
     "liveStreaming": {
@@ -376,12 +376,12 @@
             "on": "Подключен",
             "unknown": "Неизвестен"
         },
-        "dialogTitle": "",
+        "dialogTitle": "Кнопки локальной записи",
         "duration": "Длительность",
         "durationNA": "неизвестно",
         "encoding": "Кодировка",
-        "label": "",
-        "labelToolTip": "",
+        "label": "Левый/Правый",
+        "labelToolTip": "Локальная запись активна",
         "localRecording": "",
         "me": "Я",
         "messages": {
