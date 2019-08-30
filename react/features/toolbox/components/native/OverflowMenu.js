@@ -1,12 +1,12 @@
 // @flow
 
 import React, { Component } from 'react';
+import { Platform } from 'react-native';
 
 import { ColorSchemeRegistry } from '../../../base/color-scheme';
 import { BottomSheet, hideDialog, isDialogOpen } from '../../../base/dialog';
-import { AUDIO_ONLY_ENABLED, AUDIO_ROUTE_ENABLED, CHAT_ENABLED, CLOSED_CAPTION_ENABLED, INFO_DIALOG_ENABLED,
-    INVITE_ENABLED, RECORDING_ENABLED, LIVE_STREAM_ENABLED, RAISE_HAND_ENABLED, ROOM_LOCK_ENABLED, TILE_VIEW_ENABLED,
-    TOGGLE_CAMERA_ENABLED, getFeatureFlag } from '../../../base/flags';
+import { CHAT_ENABLED, DEFAULT_TOOLBAR_BUTTONS, IOS_RECORDING_ENABLED, TOOLBAR_BUTTONS,
+    getFeatureFlag } from '../../../base/flags';
 import { connect } from '../../../base/redux';
 import { StyleType } from '../../../base/styles';
 import { InfoDialogButton, InviteButton } from '../../../invite';
@@ -217,22 +217,26 @@ class OverflowMenu extends Component<Props> {
  * @returns {Props}
  */
 function _mapStateToProps(state) {
+    const overflowButtons = getFeatureFlag(state, TOOLBAR_BUTTONS, DEFAULT_TOOLBAR_BUTTONS);
+    const recordingEnabled = Platform.OS === 'ios' ? getFeatureFlag(state, IOS_RECORDING_ENABLED)
+        && overflowButtons.includes('recording') : overflowButtons.includes('recording');
+
     return {
-        _audioOnlyEnabled: getFeatureFlag(state, AUDIO_ONLY_ENABLED, true),
-        _audioRouteEnabled: getFeatureFlag(state, AUDIO_ROUTE_ENABLED, true),
+        _audioOnlyEnabled: overflowButtons.includes('audioonly'),
+        _audioRouteEnabled: overflowButtons.includes('audioroute'),
         _bottomSheetStyles:
             ColorSchemeRegistry.get(state, 'BottomSheet'),
         _chatEnabled: getFeatureFlag(state, CHAT_ENABLED, true),
-        _closedCaptionEnabled: getFeatureFlag(state, CLOSED_CAPTION_ENABLED, true),
-        _infoDialogEnabled: getFeatureFlag(state, INFO_DIALOG_ENABLED, true),
-        _inviteEnabled: getFeatureFlag(state, INVITE_ENABLED, true),
+        _closedCaptionEnabled: overflowButtons.includes('closedcaption'),
+        _infoDialogEnabled: overflowButtons.includes('infodialog'),
+        _inviteEnabled: overflowButtons.includes('invite'),
         _isOpen: isDialogOpen(state, OverflowMenu_),
-        _liveStreamEnabled: getFeatureFlag(state, LIVE_STREAM_ENABLED, true),
-        _raiseHandEnabled: getFeatureFlag(state, RAISE_HAND_ENABLED, true),
-        _recordingEnabled: getFeatureFlag(state, RECORDING_ENABLED),
-        _roomLockEnabled: getFeatureFlag(state, ROOM_LOCK_ENABLED, true),
-        _tileViewEnabled: getFeatureFlag(state, TILE_VIEW_ENABLED, true),
-        _toggleCameraEnabled: getFeatureFlag(state, TOGGLE_CAMERA_ENABLED, true)
+        _liveStreamEnabled: overflowButtons.includes('livestream'),
+        _raiseHandEnabled: overflowButtons.includes('raisehand'),
+        _recordingEnabled: recordingEnabled,
+        _roomLockEnabled: overflowButtons.includes('roomlock'),
+        _tileViewEnabled: overflowButtons.includes('tileview'),
+        _toggleCameraEnabled: overflowButtons.includes('togglecamera')
     };
 }
 

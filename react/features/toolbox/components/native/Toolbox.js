@@ -4,8 +4,7 @@ import React, { Component } from 'react';
 import { View } from 'react-native';
 
 import { ColorSchemeRegistry } from '../../../base/color-scheme';
-import { AUDIO_MUTE_ENABLED, CHAT_ENABLED, HANGUP_ENABLED, INFO_DIALOG_ENABLED, OVERFLOW_MENU_ENABLED,
-    VIDEO_MUTE_ENABLED, getFeatureFlag } from '../../../base/flags';
+import { CHAT_ENABLED, DEFAULT_TOOLBAR_BUTTONS, TOOLBAR_BUTTONS, getFeatureFlag } from '../../../base/flags';
 import { Container } from '../../../base/react';
 import { connect } from '../../../base/redux';
 import { StyleType } from '../../../base/styles';
@@ -242,14 +241,16 @@ class Toolbox extends Component<Props, State> {
  * }}
  */
 function _mapStateToProps(state: Object): Object {
+    const toolbarButtons = getFeatureFlag(state, TOOLBAR_BUTTONS, DEFAULT_TOOLBAR_BUTTONS);
+
     return {
-        _audioMuteEnabled: getFeatureFlag(state, AUDIO_MUTE_ENABLED, true),
+        _audioMuteEnabled: toolbarButtons.includes('audiomute'),
         _chatEnabled: getFeatureFlag(state, CHAT_ENABLED, true),
-        _hangupEnabled: getFeatureFlag(state, HANGUP_ENABLED, true),
-        _infoDialogEnabled: getFeatureFlag(state, INFO_DIALOG_ENABLED, true),
-        _overflowMenuEnabled: getFeatureFlag(state, OVERFLOW_MENU_ENABLED, true),
+        _hangupEnabled: toolbarButtons.includes('hangup'),
+        _infoDialogEnabled: toolbarButtons.includes('infodialog'),
+        _overflowMenuEnabled: toolbarButtons.includes('overflowmenu'),
         _styles: ColorSchemeRegistry.get(state, 'Toolbox'),
-        _videoMuteEnabled: getFeatureFlag(state, VIDEO_MUTE_ENABLED, true),
+        _videoMuteEnabled: toolbarButtons.includes('videomute'),
         _visible: isToolboxVisible(state)
     };
 }
