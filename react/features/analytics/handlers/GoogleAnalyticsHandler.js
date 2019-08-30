@@ -17,7 +17,7 @@ class GoogleAnalyticsHandler extends AbstractHandler {
      * required by the GA API.
      */
     constructor(options) {
-        super();
+        super(options);
 
         this._userProperties = {};
 
