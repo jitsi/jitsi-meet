@@ -38,6 +38,31 @@ const RGBA_COLOR_FORMAT
 const _WELL_KNOWN_NUMBER_PROPERTIES = [ 'height', 'width' ];
 
 /**
+ * Function to convert complex StyleType styles into a single flat object,
+ * so then they can be deconstructed for further processing.
+ *
+ * @param {Styletype} st - The complex style type.
+ * @returns {Object}
+ */
+export function styleTypeToObject(st: StyleType): Object {
+    if (!st) {
+        return {};
+    }
+
+    if (Array.isArray(st)) {
+        const flatStyle = {};
+
+        for (const styleElement of st) {
+            Object.assign(flatStyle, styleTypeToObject(styleElement));
+        }
+
+        return flatStyle;
+    }
+
+    return st;
+}
+
+/**
  * Combines the given 2 styles into a single one.
  *
  * @param {StyleType} a - An object or array of styles.

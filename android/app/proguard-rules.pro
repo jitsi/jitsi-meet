@@ -83,3 +83,6 @@
 -dontwarn javax.servlet.**
 
 # ^^^ We added the above when we switched minifyEnabled on.
+
+# Rule to avoid build errors related to SVGs.
+-keep public class com.horcrux.svg.** {*;}

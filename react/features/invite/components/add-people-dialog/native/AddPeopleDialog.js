@@ -14,8 +14,8 @@ import {
 } from 'react-native';
 
 import { AlertDialog, openDialog } from '../../../../base/dialog';
-import { Icon } from '../../../../base/font-icons';
 import { translate } from '../../../../base/i18n';
+import { Icon, IconCancelSelection, IconCheck, IconClose, IconPhone, IconSearch } from '../../../../base/icons';
 import {
     AvatarListItem,
     HeaderWithNavigation,
@@ -172,7 +172,7 @@ class AddPeopleDialog extends AbstractAddPeopleDialog<Props, State> {
                                         color = { DARK_GREY }
                                         size = 'small' />
                                     : <Icon
-                                        name = { 'search' }
+                                        src = { IconSearch }
                                         style = { styles.searchIcon } />}
                             </View>
                             <TextInput
@@ -232,7 +232,7 @@ class AddPeopleDialog extends AbstractAddPeopleDialog<Props, State> {
         switch (item.type) {
         case 'phone':
             return {
-                avatar: 'icon://phone',
+                avatar: IconPhone,
                 key: item.number,
                 title: item.number
             };
@@ -414,7 +414,7 @@ class AddPeopleDialog extends AbstractAddPeopleDialog<Props, State> {
                 style = { styles.clearButton }>
                 <View style = { styles.clearIconContainer }>
                     <Icon
-                        name = 'close'
+                        src = { IconClose }
                         style = { styles.clearIcon } />
                 </View>
             </TouchableOpacity>
@@ -450,7 +450,7 @@ class AddPeopleDialog extends AbstractAddPeopleDialog<Props, State> {
                         linesStyle = { styles.itemLinesStyle }
                         titleStyle = { styles.itemText } />
                     <Icon
-                        name = 'cancel'
+                        src = { IconCancelSelection }
                         style = { styles.unselectIcon } />
                 </View>
             </TouchableOpacity>
@@ -504,7 +504,7 @@ class AddPeopleDialog extends AbstractAddPeopleDialog<Props, State> {
                         linesStyle = { styles.itemLinesStyle }
                         titleStyle = { styles.itemText } />
                     { selected && <Icon
-                        name = 'check'
+                        src = { IconCheck }
                         style = { styles.selectedIcon } /> }
                 </View>
             </TouchableOpacity>

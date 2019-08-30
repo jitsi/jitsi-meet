@@ -2,6 +2,8 @@
 
 import React, { Component } from 'react';
 
+import { Icon, IconVolume } from '../../../base/icons';
+
 /**
  * Used to modify initialValue, which is expected to be a decimal value between
  * 0 and 1, and converts it to a number representable by an input slider, which
@@ -74,7 +76,7 @@ class VolumeSlider extends Component<Props, State> {
             <li className = 'popupmenu__item'>
                 <div className = 'popupmenu__contents'>
                     <span className = 'popupmenu__icon'>
-                        <i className = 'icon-volume' />
+                        <Icon src = { IconVolume } />
                     </span>
                     <div className = 'popupmenu__slider_container'>
                         <input

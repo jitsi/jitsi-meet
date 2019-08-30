@@ -73,82 +73,67 @@
 
         .button-group-center {
             justify-content: center;
-            .toolbox-icon {
-                margin: 0px 4px;
+
+            .toolbox-button {
+
+                .toolbox-icon {
+                    background-color: #fff;
+                    border-radius: 50%;
+                    border: 1px solid #d1dbe8;
+                    margin: 0px 4px;
+                    width: 38px;
+                    height: 38px;
+        
+                    &:hover {
+                        background-color: #daebfa;
+                        border: 1px solid #daebfa;
+                    }
+        
+                    &.toggled {
+                        background: #2a3a4b;
+                        border: 1px solid #5e6d7a;
+    
+                        svg {
+                            fill: #fff;
+                        }
+        
+                        &:hover {
+                            background-color: #5e6d7a;
+                        }
+                    }
+        
+                    &.disabled, .disabled & {
+                        cursor: initial;
+                        color: #fff;
+                        background-color: #a4b8d1;
+                    }
+    
+                    svg {
+                        fill: #5e6d7a;
+                    }
+                }
+
+                &:nth-child(2) {
+                    .toolbox-icon {
+                        background-color: $hangupColor;
+                        border: 1px solid $hangupColor;
+                        width: 40px;
+                        height: 40px;
+                
+                        &:hover {
+                            background-color: $hangupColor;
+                        }
+
+                        svg {
+                            fill: #fff;
+                        }
+                    }
+                }
             }
         }
 
         .button-group-right {
             justify-content: flex-end;
-        }
-
-        i {
-            border-radius: 5px;
-            cursor: pointer;
-            display: block;
-            font-size: inherit;
-            height: 100%;
-            line-height: inherit;
-            width: 100%;
-        }
-
-        i:hover {
-            background: $newToolbarButtonHoverColor;
-        }
-
-        i.toggled {
-            background: $newToolbarButtonToggleColor;
-        }
-
-        i.toggled:hover {
-            background: $newToolbarButtonHoverColor;
-        }
-
-        .icon-hangup {
-            background-color: #e12d2d;
-            color: #fff;
-            border-radius: 50%;
-            width: 40px;
-            height: 40px;
-
-            &:hover {
-                background-color: #e54b4b;
-            }
-        }
-        i.disabled, .disabled i {
-            cursor: initial !important;
-            color: #fff !important;
-            background-color: #a4b8d1 !important;
-        }
-
-        .icon-mic-disabled, .icon-microphone, .icon-camera-disabled, .icon-camera {
-            background-color: #fff;
-            color: #5e6d7a;
-            border-radius: 50%;
-            border: 1px solid #d1dbe8;
-            width: 38px;
-            height: 38px;
-
-            &:hover {
-                background-color: #daebfa;
-                border: 1px solid #daebfa;
-            }
-
-            &.toggled {
-                background: #2a3a4b;
-                color: #fff;
-                border: 1px solid #5e6d7a;
-
-                &:hover {
-                    background-color: #5e6d7a;
-                }
-            }
-
-            &.disabled, .disabled & {
-                cursor: initial;
-                color: #fff;
-                background-color: #a4b8d1;
-            }
         }
 
         .overflow-menu {
@@ -191,14 +176,6 @@
                     cursor: initial;
                     color: #3b475c;
                 }
-
-                i.toggled {
-                    background: inherit;
-                }
-
-                i.toggled:hover {
-                    background: inherit;
-                }
             }
 
             .beta-tag {
@@ -226,6 +203,10 @@
                 img {
                     max-width: 24px;
                     max-height: 24px;
+                }
+
+                svg {
+                    fill: #B8C7E0 !important;
                 }
             }
 
@@ -265,9 +246,26 @@
         }
 
         .toolbox-icon {
-            height: $newToolbarSize;
+            display: flex;
+            border-radius: 5px;
+            flex-direction: column;
             font-size: 24px;
+            height: $newToolbarSize;
+            justify-content: center;
             width: $newToolbarSize;
+
+            &:hover, &.toggled {
+                background: $newToolbarButtonHoverColor;
+            }
+    
+            &.disabled {
+                cursor: initial !important;
+                background-color: #a4b8d1 !important;
+
+                svg {
+                    fill: #fff !important;
+                }
+            }
         }
     }
 }
@@ -297,10 +295,6 @@
         background-color: $AOTToolbarButtonHoverColor;
     }
 
-    .icon-hangup {
-        color: $hangupColor;
-    }
-
     .toolbox-button {
         color: $toolbarButtonColor;
         cursor: pointer;
@@ -323,10 +317,6 @@
         height: $newToolbarSize;
         line-height: $newToolbarSize;
         width: $newToolbarSize;
-    }
-
-    .icon-hangup {
-        font-size: $newToolbarHangupFontSize;
     }
 
     .disabled {

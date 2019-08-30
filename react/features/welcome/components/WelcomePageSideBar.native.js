@@ -4,6 +4,7 @@ import React, { Component } from 'react';
 import { SafeAreaView, ScrollView, Text } from 'react-native';
 
 import { Avatar } from '../../base/avatar';
+import { IconInfo, IconSettings } from '../../base/icons';
 import {
     getLocalParticipant,
     getParticipantDisplayName
@@ -99,19 +100,19 @@ class WelcomePageSideBar extends Component<Props> {
                     <ScrollView
                         style = { styles.itemContainer }>
                         <SideBarItem
-                            icon = 'settings'
+                            icon = { IconSettings }
                             label = 'settings.title'
                             onPress = { this._onOpenSettings } />
                         <SideBarItem
-                            icon = 'info'
+                            icon = { IconInfo }
                             label = 'welcomepage.terms'
                             url = { TERMS_URL } />
                         <SideBarItem
-                            icon = 'info'
+                            icon = { IconInfo }
                             label = 'welcomepage.privacy'
                             url = { PRIVACY_URL } />
                         <SideBarItem
-                            icon = 'info'
+                            icon = { IconInfo }
                             label = 'welcomepage.sendFeedback'
                             url = { SEND_FEEDBACK_URL } />
                     </ScrollView>

@@ -83,11 +83,11 @@ export default class AbstractButton<P: Props, S: *> extends Component<P, S> {
     accessibilityLabel: string;
 
     /**
-     * The name of the icon of this button.
+     * The icon of this button.
      *
      * @abstract
      */
-    iconName: string;
+    icon: Object;
 
     /**
      * The text associated with this button. When `showLabel` is set to
@@ -103,11 +103,11 @@ export default class AbstractButton<P: Props, S: *> extends Component<P, S> {
     toggledLabel: string;
 
     /**
-     * The name of the icon of this button, when toggled.
+     * The icon of this button, when toggled.
      *
      * @abstract
      */
-    toggledIconName: string;
+    toggledIcon: Object;
 
     /**
      * The text to display in the tooltip. Used only on web.
@@ -152,17 +152,17 @@ export default class AbstractButton<P: Props, S: *> extends Component<P, S> {
     }
 
     /**
-     * Gets the current icon name, taking the toggled state into account. If no
+     * Gets the current icon, taking the toggled state into account. If no
      * toggled icon is provided, the regular icon will also be used in the
      * toggled state.
      *
      * @private
      * @returns {string}
      */
-    _getIconName() {
+    _getIcon() {
         return (
-            this._isToggled() ? this.toggledIconName : this.iconName
-        ) || this.iconName;
+            this._isToggled() ? this.toggledIcon : this.icon
+        ) || this.icon;
     }
 
     /**
@@ -265,10 +265,12 @@ export default class AbstractButton<P: Props, S: *> extends Component<P, S> {
         const props = {
             ...this.props,
             accessibilityLabel: this.accessibilityLabel,
+            disabled: this._isDisabled(),
             elementAfter: this._getElementAfter(),
-            iconName: this._getIconName(),
+            icon: this._getIcon(),
             label: this._getLabel(),
             styles: this._getStyles(),
+            toggled: this._isToggled(),
             tooltip: this._getTooltip()
         };
 

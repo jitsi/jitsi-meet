@@ -1,6 +1,7 @@
 // @flow
 
 import { translate } from '../../base/i18n';
+import { IconClosedCaption } from '../../base/icons';
 import { connect } from '../../base/redux';
 
 import {
@@ -13,11 +14,9 @@ import {
  */
 class ClosedCaptionButton
     extends AbstractClosedCaptionButton {
-
     accessibilityLabel = 'toolbar.accessibilityLabel.cc';
-    iconName = 'closed_caption';
+    icon = IconClosedCaption;
     label = 'transcribing.start';
-    toggledIconName = 'closed_caption';
     toggledLabel = 'transcribing.stop';
 }
 

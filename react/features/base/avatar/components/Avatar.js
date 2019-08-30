@@ -2,6 +2,7 @@
 
 import React, { PureComponent } from 'react';
 
+import { IconShareDesktop } from '../../icons';
 import { getParticipantById } from '../../participants';
 import { connect } from '../../redux';
 
@@ -183,7 +184,7 @@ export function _mapStateToProps(state: Object, ownProps: Props) {
     let _loadableAvatarUrl = _participant?.loadableAvatarUrl;
 
     if (participantId && screenShares.includes(participantId)) {
-        _loadableAvatarUrl = 'icon://share-desktop';
+        _loadableAvatarUrl = IconShareDesktop;
     }
 
     return {

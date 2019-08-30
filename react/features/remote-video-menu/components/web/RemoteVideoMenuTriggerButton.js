@@ -2,6 +2,7 @@
 
 import React, { Component } from 'react';
 
+import { Icon, IconMenuThumb } from '../../../base/icons';
 import { Popover } from '../../../base/popover';
 
 import {
@@ -122,8 +123,9 @@ class RemoteVideoMenuTriggerButton extends Component<Props> {
                 position = { this.props.menuPosition }>
                 <span
                     className = 'popover-trigger remote-video-menu-trigger'>
-                    <i
-                        className = 'icon-thumb-menu'
+                    <Icon
+                        size = '1em'
+                        src = { IconMenuThumb }
                         title = 'Remote user controls' />
                 </span>
             </Popover>

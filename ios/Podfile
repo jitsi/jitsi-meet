@@ -54,7 +54,7 @@ target 'JitsiMeet' do
   pod 'RNCAsyncStorage', :path => '../node_modules/@react-native-community/async-storage'
   pod 'RNGoogleSignin', :path => '../node_modules/react-native-google-signin'
   pod 'RNSound', :path => '../node_modules/react-native-sound'
-  pod 'RNVectorIcons', :path => '../node_modules/react-native-vector-icons'
+  pod 'RNSVG', :path => '../node_modules/react-native-svg'
   pod 'RNWatch', :path => '../node_modules/react-native-watch-connectivity'
 
   # Native pod dependencies

@@ -120,6 +120,15 @@ const config = {
                     'react-focus-lock': `${__dirname}/node_modules/react-focus-lock`
                 }
             }
+        }, {
+            test: /\.svg$/,
+            use: [ {
+                loader: '@svgr/webpack',
+                options: {
+                    dimensions: false,
+                    expandProps: 'start'
+                }
+            } ]
         } ]
     },
     node: {

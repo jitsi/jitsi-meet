@@ -7,6 +7,7 @@ import type { Dispatch } from 'redux';
 import { createToolbarEvent, sendAnalytics } from '../../../../analytics';
 import { openDialog } from '../../../../base/dialog';
 import { translate } from '../../../../base/i18n';
+import { IconInfo } from '../../../../base/icons';
 import { JitsiRecordingConstants } from '../../../../base/lib-jitsi-meet';
 import { getParticipantCount } from '../../../../base/participants';
 import { OverflowMenuItem } from '../../../../base/toolbox';
@@ -153,7 +154,6 @@ class InfoDialogButton extends Component<Props, State> {
     render() {
         const { _dialIn, _liveStreamViewURL, showLabel, t } = this.props;
         const { showDialog } = this.state;
-        const iconClass = `icon-info ${showDialog ? 'toggled' : ''}`;
 
         if (showLabel) {
             return (
@@ -180,7 +180,7 @@ class InfoDialogButton extends Component<Props, State> {
                     position = { 'top right' }>
                     <ToolbarButton
                         accessibilityLabel = { t('info.accessibilityLabel') }
-                        iconName = { iconClass }
+                        icon = { IconInfo }
                         onClick = { this._onDialogToggle }
                         tooltip = { t('info.tooltip') } />
                 </InlineDialog>

@@ -262,13 +262,13 @@ export function isEveryoneModerator(stateful: Object | Function) {
 }
 
 /**
- * Checks a URL string and returns true if it's an icon url.
+ * Checks a value and returns true if it's a preloaded icon object.
  *
- * @param {string?} url - The URL string to check.
+ * @param {?string | ?Object} icon - The icon to check.
  * @returns {boolean}
  */
-export function isIconUrl(url: ?string) {
-    return Boolean(url && url.match(/icon:\/\/(.+)/i));
+export function isIconUrl(icon: ?string | ?Object) {
+    return Boolean(icon) && typeof icon === 'object';
 }
 
 /**

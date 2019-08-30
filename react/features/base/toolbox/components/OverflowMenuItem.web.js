@@ -3,6 +3,8 @@
 import Tooltip from '@atlaskit/tooltip';
 import React, { Component } from 'react';
 
+import { Icon } from '../../icons';
+
 /**
  * The type of the React {@code Component} props of {@link OverflowMenuItem}.
  */
@@ -27,7 +29,12 @@ type Props = {
     /**
      * The icon class to use for displaying an icon before the link text.
      */
-    icon: string,
+    icon: Object,
+
+    /**
+     * Id of the icon to be rendered.
+     */
+    iconId?: string,
 
     /**
      * The callback to invoke when {@code OverflowMenuItem} is clicked.
@@ -74,21 +81,25 @@ class OverflowMenuItem extends Component<Props> {
      * @returns {ReactElement}
      */
     render() {
+        const { accessibilityLabel, disabled, elementAfter, icon, iconId, onClick } = this.props;
+
         let className = 'overflow-menu-item';
 
         className += this.props.disabled ? ' disabled' : '';
 
         return (
             <li
-                aria-label = { this.props.accessibilityLabel }
+                aria-label = { accessibilityLabel }
                 className = { className }
-                onClick = { this.props.disabled ? null : this.props.onClick }>
+                onClick = { disabled ? null : onClick }>
                 <span className = 'overflow-menu-item-icon'>
-                    <i className = { this.props.icon } />
+                    <Icon
+                        id = { iconId }
+                        src = { icon } />
                 </span>
                 { this._renderText() }
                 {
-                    this.props.elementAfter || null
+                    elementAfter || null
                 }
             </li>
         );

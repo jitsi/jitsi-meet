@@ -3,12 +3,12 @@
 import React from 'react';
 import { Image, Text, View } from 'react-native';
 
+import { Icon } from '../../../icons';
 import { type StyleType } from '../../../styles';
 
 import AbstractStatelessAvatar, { type Props as AbstractProps } from '../AbstractStatelessAvatar';
 
 import styles from './styles';
-import { Icon } from '../../../font-icons';
 
 type Props = AbstractProps & {
 
@@ -35,10 +35,8 @@ export default class StatelessAvatar extends AbstractStatelessAvatar<Props> {
 
         let avatar;
 
-        const icon = this._parseIconUrl(url);
-
-        if (icon) {
-            avatar = this._renderIconAvatar(icon);
+        if (this._isIcon(url)) {
+            avatar = this._renderIconAvatar(url);
         } else if (url) {
             avatar = this._renderURLAvatar();
         } else if (initials) {
@@ -58,7 +56,7 @@ export default class StatelessAvatar extends AbstractStatelessAvatar<Props> {
         );
     }
 
-    _parseIconUrl: ?string => ?string
+    _isIcon: (?string | ?Object) => boolean
 
     /**
      * Renders the default avatar.
@@ -79,9 +77,9 @@ export default class StatelessAvatar extends AbstractStatelessAvatar<Props> {
     }
 
     /**
-     * Renders the initials-based avatar.
+     * Renders the icon avatar.
      *
-     * @param {string} icon - The icon name to render.
+     * @param {Object} icon - The icon component to render.
      * @returns {React$Element<*>}
      */
     _renderIconAvatar(icon) {
@@ -96,7 +94,7 @@ export default class StatelessAvatar extends AbstractStatelessAvatar<Props> {
                     }
                 ] }>
                 <Icon
-                    name = { icon }
+                    src = { icon }
                     style = { styles.initialsText(size) } />
             </View>
         );

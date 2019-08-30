@@ -2,6 +2,7 @@
 
 import React from 'react';
 
+import { IconRaisedHand } from '../../../base/icons';
 import { BaseIndicator } from '../../../base/react';
 import { connect } from '../../../base/redux';
 
@@ -25,7 +26,7 @@ class RaisedHandIndicator extends AbstractRaisedHandIndicator<Props> {
         return (
             <BaseIndicator
                 highlight = { true }
-                icon = 'raised-hand' />
+                icon = { IconRaisedHand } />
         );
     }
 }

@@ -8,6 +8,7 @@ import type { Dispatch } from 'redux';
 import { createInviteDialogEvent, sendAnalytics } from '../../../../analytics';
 import { Dialog, hideDialog } from '../../../../base/dialog';
 import { translate, translateToHTML } from '../../../../base/i18n';
+import { Icon, IconPhone } from '../../../../base/icons';
 import { getLocalParticipant } from '../../../../base/participants';
 import { MultiSelectAutocomplete } from '../../../../base/react';
 import { connect } from '../../../../base/redux';
@@ -166,7 +167,7 @@ class AddPeopleDialog extends AbstractAddPeopleDialog<Props, State> {
                 content: <div className = 'footer-text-wrap'>
                     <div>
                         <span className = 'footer-telephone-icon'>
-                            <i className = 'icon-phone' />
+                            <Icon src = { IconPhone } />
                         </span>
                     </div>
                     { translateToHTML(t, 'addPeople.footerText') }
@@ -388,7 +389,7 @@ class AddPeopleDialog extends AbstractAddPeopleDialog<Props, State> {
     _renderTelephoneIcon() {
         return (
             <span className = 'add-telephone-icon'>
-                <i className = 'icon-phone' />
+                <Icon src = { IconPhone } />
             </span>
         );
     }

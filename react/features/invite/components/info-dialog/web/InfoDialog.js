@@ -7,6 +7,7 @@ import { setPassword } from '../../../../base/conference';
 import { getInviteURL } from '../../../../base/connection';
 import { Dialog } from '../../../../base/dialog';
 import { translate } from '../../../../base/i18n';
+import { Icon, IconInfo } from '../../../../base/icons';
 import { connect } from '../../../../base/redux';
 import {
     isLocalParticipantModerator,
@@ -21,6 +22,7 @@ import {
 import logger from '../../../logger';
 import DialInNumber from './DialInNumber';
 import PasswordForm from './PasswordForm';
+
 
 /**
  * The type of the React {@code Component} props of {@link InfoDialog}.
@@ -223,7 +225,7 @@ class InfoDialog extends Component<Props, State> {
                 onMouseOver = { onMouseOver } >
                 <div className = 'info-dialog-column'>
                     <h4 className = 'info-dialog-icon'>
-                        <i className = 'icon-info' />
+                        <Icon src = { IconInfo } />
                     </h4>
                 </div>
                 <div className = 'info-dialog-column'>
