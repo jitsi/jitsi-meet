@@ -8,10 +8,10 @@ declare var config: Object;
 /**
  * Tries to preload an image.
  *
- * @param {string} src - Source of the avatar.
+ * @param {string | Object} src - Source of the avatar.
  * @returns {Promise}
  */
-export function preloadImage(src: string): Promise<string> {
+export function preloadImage(src: string | Object): Promise<string> {
     if (isIconUrl(src)) {
         return Promise.resolve(src);
     }

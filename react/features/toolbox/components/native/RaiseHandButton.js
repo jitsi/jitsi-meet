@@ -7,6 +7,7 @@ import {
     sendAnalytics
 } from '../../../analytics';
 import { translate } from '../../../base/i18n';
+import { IconRaisedHand } from '../../../base/icons';
 import {
     getLocalParticipant,
     participantUpdated
@@ -41,9 +42,8 @@ type Props = AbstractButtonProps & {
  */
 class RaiseHandButton extends AbstractButton<Props, *> {
     accessibilityLabel = 'toolbar.accessibilityLabel.raiseHand';
-    iconName = 'raised-hand';
+    icon = IconRaisedHand;
     label = 'toolbar.raiseYourHand';
-    toggledIconName = 'raised-hand';
     toggledLabel = 'toolbar.lowerYourHand';
 
     /**

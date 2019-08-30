@@ -33,6 +33,10 @@ body {
     }
 }
 
+svg {
+    fill: white;
+}
+
 /**
  * AtlasKitThemeProvider sets a background color on an app-wrapping div, thereby
  * preventing transparency in filmstrip-only mode. The selector chosen to

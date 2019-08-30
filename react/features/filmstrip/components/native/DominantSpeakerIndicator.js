@@ -2,6 +2,7 @@
 
 import React, { Component } from 'react';
 
+import { IconDominantSpeaker } from '../../../base/icons';
 import { BaseIndicator } from '../../../base/react';
 
 /**
@@ -18,7 +19,7 @@ export default class DominantSpeakerIndicator extends Component<{}> {
         return (
             <BaseIndicator
                 highlight = { true }
-                icon = 'dominant-speaker' />
+                icon = { IconDominantSpeaker } />
         );
     }
 }

@@ -27,7 +27,7 @@ export type Props = {
     /**
      * The URL of the avatar to render.
      */
-    url?: ?string
+    url?: ?string | Object
 };
 
 /**
@@ -36,14 +36,12 @@ export type Props = {
  */
 export default class AbstractStatelessAvatar<P: Props> extends PureComponent<P> {
     /**
-     * Parses an icon out of a specially constructed icon URL and returns the icon name.
+     * Checks if the passed prop is a loaded icon or not.
      *
-     * @param {string?} url - The url to parse.
-     * @returns {string?}
+     * @param {string? | Object?} iconProp - The prop to check.
+     * @returns {boolean}
      */
-    _parseIconUrl(url: ?string): ?string {
-        const match = url && url.match(/icon:\/\/(.+)/i);
-
-        return (match && match[1]) || undefined;
+    _isIcon(iconProp: ?string | ?Object): boolean {
+        return Boolean(iconProp) && typeof iconProp === 'object';
     }
 }

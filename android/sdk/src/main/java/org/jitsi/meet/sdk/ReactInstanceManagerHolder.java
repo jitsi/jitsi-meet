@@ -192,7 +192,7 @@ class ReactInstanceManagerHolder {
                 new com.calendarevents.CalendarEventsPackage(),
                 new com.corbt.keepawake.KCKeepAwakePackage(),
                 new com.facebook.react.shell.MainReactPackage(),
-                new com.oblador.vectoricons.VectorIconsPackage(),
+                new com.horcrux.svg.SvgPackage(),
                 new com.ocetnik.timer.BackgroundTimerPackage(),
                 new com.reactnativecommunity.asyncstorage.AsyncStoragePackage(),
                 new com.reactnativecommunity.netinfo.NetInfoPackage(),

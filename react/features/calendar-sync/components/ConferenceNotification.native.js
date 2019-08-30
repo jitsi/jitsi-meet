@@ -5,8 +5,8 @@ import { Text, TouchableOpacity, View } from 'react-native';
 
 import { appNavigate } from '../../app';
 import { getURLWithoutParamsNormalized } from '../../base/connection';
-import { Icon } from '../../base/font-icons';
 import { getLocalizedDateFormatter, translate } from '../../base/i18n';
+import { Icon, IconNotificationJoin } from '../../base/icons';
 import { connect } from '../../base/redux';
 import { ASPECT_RATIO_NARROW } from '../../base/responsive-ui';
 
@@ -155,7 +155,7 @@ class ConferenceNotification extends Component<Props, State> {
                                         styles.notificationIconContainer
                                     }>
                                     <Icon
-                                        name = 'navigate_next'
+                                        src = { IconNotificationJoin }
                                         style = { styles.notificationIcon } />
                                 </View>
                             </View>

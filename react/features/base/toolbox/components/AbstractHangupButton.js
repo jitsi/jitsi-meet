@@ -1,5 +1,7 @@
 // @flow
 
+import { IconHangup } from '../../icons';
+
 import AbstractButton from './AbstractButton';
 import type { Props } from './AbstractButton';
 
@@ -9,7 +11,7 @@ import type { Props } from './AbstractButton';
 export default class AbstractHangupButton<P : Props, S: *>
     extends AbstractButton<P, S> {
 
-    iconName = 'icon-hangup';
+    icon = IconHangup;
 
     /**
      * Handles clicking / pressing the button, and disconnects the conference.

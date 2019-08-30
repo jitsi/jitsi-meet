@@ -3,7 +3,7 @@
 import React, { Component } from 'react';
 import { View } from 'react-native';
 
-import { Icon } from '../../../font-icons';
+import { Icon } from '../../../icons';
 import { type StyleType } from '../../../styles';
 
 import styles from './indicatorstyles';
@@ -42,7 +42,7 @@ export default class BaseIndicator extends Component<Props> {
         return (
             <View style = { highlight ? styles.highlightedIndicator : null }>
                 <Icon
-                    name = { icon }
+                    src = { icon }
                     style = { [
                         styles.indicator,
                         iconStyle

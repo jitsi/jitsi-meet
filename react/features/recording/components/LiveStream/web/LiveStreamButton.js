@@ -3,6 +3,7 @@
 import React from 'react';
 
 import { translate } from '../../../../base/i18n';
+import { IconLiveStreaming } from '../../../../base/icons';
 import { connect } from '../../../../base/redux';
 import { BetaTag } from '../../../../base/toolbox';
 
@@ -34,8 +35,7 @@ type Props = AbstractProps & {
  * An implementation of a button for starting and stopping live streaming.
  */
 class LiveStreamButton extends AbstractLiveStreamButton<Props> {
-    iconName = 'icon-public';
-    toggledIconName = 'icon-public';
+    icon = IconLiveStreaming;
 
     /**
      * Helper function to be implemented by subclasses, which returns

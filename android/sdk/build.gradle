@@ -62,7 +62,7 @@ dependencies {
     implementation project(':react-native-keep-awake')
     implementation project(':react-native-linear-gradient')
     implementation project(':react-native-sound')
-    implementation project(':react-native-vector-icons')
+    implementation project(':react-native-svg')
     implementation project(':react-native-webrtc')
     implementation project(':react-native-webview')
 
@@ -139,13 +139,6 @@ android.libraryVariants.all { def variant ->
 
     mergeAssetsTask.doLast {
         def assetsDir = mergeAssetsTask.outputDir
-
-        // Bundle fonts
-        //
-        copy {
-            from("${projectDir}/../../fonts/jitsi.ttf")
-            into("${assetsDir}/fonts")
-        }
 
         // Bundle sounds
         //

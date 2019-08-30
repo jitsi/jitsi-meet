@@ -13,7 +13,7 @@ import { getName } from '../../app';
 
 import { ColorSchemeRegistry } from '../../base/color-scheme';
 import { translate } from '../../base/i18n';
-import { Icon } from '../../base/font-icons';
+import { Icon, IconMenu } from '../../base/icons';
 import { MEDIA_TYPE } from '../../base/media';
 import { Header, LoadingIndicator, Text } from '../../base/react';
 import { connect } from '../../base/redux';
@@ -261,7 +261,7 @@ class WelcomePage extends AbstractWelcomePage {
                     <Header style = { styles.header }>
                         <TouchableOpacity onPress = { this._onShowSideBar } >
                             <Icon
-                                name = 'menu'
+                                src = { IconMenu }
                                 style = { _headerStyles.headerButtonIcon } />
                         </TouchableOpacity>
                         <VideoSwitch />

@@ -181,7 +181,7 @@ PODS:
     - RNSound/Core (= 0.11.0)
   - RNSound/Core (0.11.0):
     - React
-  - RNVectorIcons (6.0.2):
+  - RNSVG (9.7.1):
     - React
   - RNWatch (0.2.0):
     - React
@@ -225,7 +225,7 @@ DEPENDENCIES:
   - "RNCAsyncStorage (from `../node_modules/@react-native-community/async-storage`)"
   - RNGoogleSignin (from `../node_modules/react-native-google-signin`)
   - RNSound (from `../node_modules/react-native-sound`)
-  - RNVectorIcons (from `../node_modules/react-native-vector-icons`)
+  - RNSVG (from `../node_modules/react-native-svg`)
   - RNWatch (from `../node_modules/react-native-watch-connectivity`)
   - yoga (from `../node_modules/react-native/ReactCommon/yoga`)
 
@@ -311,8 +311,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-google-signin"
   RNSound:
     :path: "../node_modules/react-native-sound"
-  RNVectorIcons:
-    :path: "../node_modules/react-native-vector-icons"
+  RNSVG:
+    :path: "../node_modules/react-native-svg"
   RNWatch:
     :path: "../node_modules/react-native-watch-connectivity"
   yoga:
@@ -367,10 +367,10 @@ SPEC CHECKSUMS:
   RNCAsyncStorage: 8e31405a9f12fbf42c2bb330e4560bfd79c18323
   RNGoogleSignin: d030c6c6591db24c3cee649f64c7babf0a1699a0
   RNSound: c980916b596cc15c8dcd2f6ecd3b13c4881dbe20
-  RNVectorIcons: d819334932bcda3332deb3d2c8ea4d069e0b98f9
+  RNSVG: aac12785382e8fd4f28d072fe640612e34914631
   RNWatch: 09738b339eceb66e4d80a2371633ca5fb380fa42
   yoga: 312528f5bbbba37b4dcea5ef00e8b4033fdd9411
 
-PODFILE CHECKSUM: 0e3406a4217cc348dcadad5b016e8d939d4aa61f
+PODFILE CHECKSUM: 86bb4d2bc94c6c76b971b9a33e5b2ced9bbfb09f
 
 COCOAPODS: 1.7.2
