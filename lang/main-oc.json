@@ -21,10 +21,11 @@
         "bluetooth": "Bluetooth",
         "headphones": "Escotadors",
         "phone": "Telefòn",
-        "speaker": "Nautparlaire"
+        "speaker": "Nautparlaire",
+        "none": ""
     },
     "audioOnly": {
-        "audioOnly": "Àudio solament"
+        "audioOnly": "Benda passanta febla"
     },
     "calendarSync": {
         "addMeetingURL": "Ajustar un ligam de reünion",
@@ -95,8 +96,7 @@
         "remoteport_plural": "Pòrts distants :",
         "resolution": "Resolucion :",
         "status": "Connexion :",
-        "transport": "Transpòrt :",
-        "turn": " (virar)"
+        "transport": "Transpòrt :"
     },
     "dateUtils": {
         "earlier": "Mai d’ora",
@@ -114,6 +114,7 @@
         "tryAgainButton": "Tornar ensajar del burèu"
     },
     "defaultLink": "ex. {{url}}",
+    "defaultNickname": "ex. Joan Delpuèch",
     "deviceError": {
         "cameraError": "Fracàs de l’accès a vòstra camèra",
         "cameraPermission": "Error d'obtencion de la permission per la camèra",
@@ -334,7 +335,8 @@
         "toggleFilmstrip": "Mostrar o amagar la vinheta vidèo",
         "toggleScreensharing": "Caplevar entre camèra e partatge d'ecran",
         "toggleShortcuts": "Mostrar o amagar los acorchis clavièr",
-        "videoMute": "Aviar o arrestar vòstra camèra"
+        "videoMute": "Aviar o arrestar vòstra camèra",
+        "videoQuality": "Gerir la qualitat de las sonadas"
     },
     "liveStreaming": {
         "busy": "Sèm a ensajar de liurar de ressorças flux. Mercés de tornar ensajar dins una estona.",
@@ -420,7 +422,7 @@
         "somebody": "Qualqu'un",
         "startSilentTitle": "Avètz jonch sens cap de sortida àudio !",
         "startSilentDescription": "Rejónher la conferéncia per activar l’àudio",
-        "suboptimalExperienceDescription": "Mmm, o plànhem que vòstra experiéncia amb {{appName}} es pas tan bona qu’aquò. Sèm a cercar de biais de melhorar aquò, per ara, podètz utilizar un dels <a href='static/recommendedBrowsers.html' target='_blank'> navegadors complètament compatibles</a>.",
+        "suboptimalBrowserWarning": "",
         "suboptimalExperienceTitle": "Avertiment del navegador",
         "unmute": "Restablir lo son",
         "newDeviceCameraTitle": "Nòva camèra detectada",
@@ -450,6 +452,7 @@
         "setEmailLabel": "Definissètz vòstre corrièl per gravatar",
         "title": "Perfil"
     },
+    "raisedHand": "Volriá charrar",
     "recording": {
         "authDropboxText": "Enviar a Dropbox",
         "availableSpace": "Espaci disponible : {{spaceLeft}} Mo (altorn de {{duration}} minutas d’enregistrament)",
@@ -542,7 +545,7 @@
         "accessibilityLabel": {
             "audioOnly": "Passar al sol àudio",
             "audioRoute": "Seleccionar lo periferic àudio",
-            "callQuality": "",
+            "callQuality": "Gerir la qualitat vidèo",
             "cc": "Passar als jostítols",
             "chat": "Passar a la fenèstra chat",
             "document": "Tampar los documents partejats",
@@ -574,8 +577,8 @@
             "videoblur": ""
         },
         "addPeople": "Ajustar de monde a vòstra sonada",
-        "audioOnlyOff": "Desactivar lo mòde àudio sol",
-        "audioOnlyOn": "Activar lo mòde àudio sol",
+        "audioOnlyOff": "",
+        "audioOnlyOn": "",
         "audioRoute": "Seleccionar lo periferic àudio",
         "authenticate": "Autentificatz-vos",
         "callQuality": "Gerir la qualitat vidèo",
@@ -653,13 +656,15 @@
     },
     "videoStatus": {
         "audioOnly": "AUD",
-        "audioOnlyExpanded": "Sètz en mòde àudio solament. Aqueste mòde estàlvia la connexion mas poiretz pas veire las vidèos dels autres.  ",
+        "audioOnlyExpanded": "",
         "callQuality": "Qualitat vidèo",
         "hd": "HD",
+        "hdTooltip": "Difusion vidèo en nauta definicion",
         "highDefinition": "Nauta definicion",
         "labelTooiltipNoVideo": "Pas cap de vidèo",
-        "labelTooltipAudioOnly": "Mòde àudio sol activat",
+        "labelTooltipAudioOnly": "",
         "ld": "Bassa definicion",
+        "ldTooltip": "Difusion vidèo en bassa definicion",
         "lowDefinition": "Bassa definicion",
         "onlyAudioAvailable": "Pas que l’àudio es disponible",
         "onlyAudioSupported": "Sèm compatibles solament amb l’àudio dins aqueste navigator.",
@@ -667,6 +672,7 @@
         "p2pVideoQualityDescription": "",
         "recHighDefinitionOnly": "Nauta definicion preferida.",
         "sd": "SD",
+        "sdTooltip": "Difusion vidèo en definicion estandard",
         "standardDefinition": "Definicion estandard"
     },
     "videothumbnail": {
