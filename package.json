@@ -68,7 +68,7 @@
     "react-linkify": "1.0.0-alpha",
     "react-native": "0.60.5",
     "react-native-background-timer": "2.1.1",
-    "react-native-calendar-events": "github:jitsi/react-native-calendar-events#f621cbe97b182cfaca41545fd6b818a85d632506",
+    "react-native-calendar-events": "github:jitsi/react-native-calendar-events#902e6e92d6bae450a6052f76ba4d02f977ffd8f2",
     "react-native-callstats": "3.61.0",
     "react-native-google-signin": "2.0.0",
     "react-native-immersive": "2.0.0",
