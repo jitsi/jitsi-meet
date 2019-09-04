@@ -15,7 +15,9 @@
  */
 
 #import <React/RCTAssert.h>
+#import <React/RCTLog.h>
 
+#import "LogUtils.h"
 #import "ReactUtils.h"
 
 #pragma mark - Utility functions
@@ -67,19 +69,11 @@ NSMutableDictionary* mergeProps(NSDictionary *a, NSDictionary *b) {
  */
 RCTFatalHandler _RCTFatal = ^(NSError *error) {
     id jsStackTrace = error.userInfo[RCTJSStackTraceKey];
-    @try {
-        NSString *name
-        = [NSString stringWithFormat:@"%@: %@",
-           RCTFatalExceptionName,
-           error.localizedDescription];
-        NSString *message
-        = RCTFormatError(error.localizedDescription, jsStackTrace, 75);
-        [NSException raise:name format:@"%@", message];
-    } @catch (NSException *e) {
-        if (!jsStackTrace) {
-            @throw;
-        }
-    }
+    NSString *name
+        = [NSString stringWithFormat:@"%@: %@", RCTFatalExceptionName, error.localizedDescription];
+    NSString *message
+        = RCTFormatError(error.localizedDescription, jsStackTrace, -1);
+    DDLogError(@"FATAL ERROR: %@\n%@", name, message);
 };
 
 /**
