@@ -51,6 +51,9 @@
 
         // Register a fatal error handler for React.
         registerReactFatalErrorHandler();
+
+        // Register a log handler for React.
+        registerReactLogHanler();
     }
 
     return self;

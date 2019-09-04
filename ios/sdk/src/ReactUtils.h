@@ -19,5 +19,6 @@
 
 NSMutableDictionary* mergeProps(NSDictionary *a, NSDictionary *b);
 void registerReactFatalErrorHandler(void);
+void registerReactLogHandler(void);
 
 #endif /* JM_REACTUTILS_H */
