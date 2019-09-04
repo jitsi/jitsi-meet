@@ -53,7 +53,7 @@
         registerReactFatalErrorHandler();
 
         // Register a log handler for React.
-        registerReactLogHanler();
+        registerReactLogHandler();
     }
 
     return self;

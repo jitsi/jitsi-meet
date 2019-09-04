@@ -92,3 +92,62 @@ void registerReactFatalErrorHandler() {
     }
 #endif
 }
+
+/**
+ * A `RTCLogFunction` implementation which uses CocoaLumberjack.
+ */
+RCTLogFunction _RCTLog
+    = ^(RCTLogLevel level, __unused RCTLogSource source, NSString *fileName, NSNumber *lineNumber, NSString *message)
+{
+    // Convert RN log levels into Lumberjack's log flags.
+    //
+    DDLogFlag logFlag;
+    switch (level) {
+        case RCTLogLevelTrace:
+            logFlag = DDLogFlagDebug;
+            break;
+        case RCTLogLevelInfo:
+            logFlag = DDLogFlagInfo;
+            break;
+        case RCTLogLevelWarning:
+            logFlag = DDLogFlagWarning;
+            break;
+        case RCTLogLevelError:
+            logFlag = DDLogFlagError;
+            break;
+        case RCTLogLevelFatal:
+            logFlag = DDLogFlagError;
+            break;
+        default:
+            // Just in case more are added in the future.
+            logFlag = DDLogFlagInfo;
+            break;
+    }
+
+    // Build the message object we want to log.
+    //
+    DDLogMessage *logMessage
+        = [[DDLogMessage alloc] initWithMessage:message
+                                          level:LOG_LEVEL_DEF
+                                           flag:logFlag
+                                        context:0
+                                           file:fileName
+                                       function:nil
+                                           line:[lineNumber integerValue]
+                                            tag:nil
+                                        options:0
+                                      timestamp:nil];
+
+    // Log the message. Errors are logged synchronously, and other async, as the Lumberjack defaults.
+    //
+    [DDLog log:logFlag != DDLogFlagError
+       message:logMessage];
+};
+
+/**
+ * Helper function which registers a React Native log handler.
+ */
+void registerReactLogHandler() {
+    RCTSetLogFunction(_RCTLog);
+    RCTSetLogThreshold(RCTLogLevelInfo);
+}
