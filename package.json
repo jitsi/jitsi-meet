@@ -78,7 +78,7 @@
     "react-native-swipeout": "2.3.6",
     "react-native-vector-icons": "6.0.2",
     "react-native-watch-connectivity": "0.2.0",
-    "react-native-webrtc": "github:react-native-webrtc/react-native-webrtc#6fd465d17cfb8d081af9928700a0a4ea33db798a",
+    "react-native-webrtc": "github:react-native-webrtc/react-native-webrtc#b1275ccf1e0e083d2a5c238e7d21c37657766463",
     "react-native-webview": "5.8.1",
     "react-redux": "7.1.0",
     "react-textarea-autosize": "7.1.0",
