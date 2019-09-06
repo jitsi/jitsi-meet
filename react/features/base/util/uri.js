@@ -1,7 +1,5 @@
 // @flow
 
-import logger from './logger';
-
 /**
  * The app linking scheme.
  * TODO: This should be read from the manifest files later.
@@ -133,7 +131,7 @@ function _objectToURLParamsArray(obj = {}) {
             params.push(
                 `${key}=${encodeURIComponent(JSON.stringify(obj[key]))}`);
         } catch (e) {
-            logger.warn(`Error encoding ${key}: ${e}`);
+            console.warn(`Error encoding ${key}: ${e}`);
         }
     }
 

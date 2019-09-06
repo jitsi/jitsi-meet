@@ -1,7 +1,5 @@
 import { timeoutPromise } from './timeoutPromise';
 
-import logger from './logger';
-
 /**
  * The number of milliseconds before deciding that we need retry a fetch request.
  *
@@ -29,11 +27,6 @@ export function doGetJSON(url, retry) {
 
             return jsonify
                 .then(result => Promise.reject(result));
-        })
-        .catch(error => {
-            logger.error('Error performing get:', url, error);
-
-            return Promise.reject(error);
         });
 
     if (retry) {
