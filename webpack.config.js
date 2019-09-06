@@ -151,16 +151,15 @@ module.exports = [
             'alwaysontop':
                 './react/features/always-on-top/index.js',
 
-            'dial_in_info_bundle': [
-                './react/features/invite/components/dial-in-info-page'
-            ],
+            'dial_in_info_bundle':
+                './react/features/invite/components/dial-in-info-page',
 
             'do_external_connect':
                 './connection_optimization/do_external_connect.js',
 
             'flacEncodeWorker':
-                './react/features/local-recording/'
-                    + 'recording/flac/flacEncodeWorker.js',
+                './react/features/local-recording/recording/flac/flacEncodeWorker.js',
+
             'analytics-ga':
                 './react/features/analytics/handlers/GoogleAnalyticsHandler.js'
         }
