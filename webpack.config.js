@@ -16,6 +16,18 @@ const minimize
     = process.argv.indexOf('-p') !== -1
         || process.argv.indexOf('--optimize-minimize') !== -1;
 
+/**
+ * Build a Performance configuration object for the given size.
+ * See: https://webpack.js.org/configuration/performance/
+ */
+function getPerformanceHints(size) {
+    return {
+        hints: minimize ? 'error' : false,
+        maxAssetSize: size,
+        maxEntrypointSize: size
+    };
+}
+
 // The base Webpack configuration to bundle the JavaScript artifacts of
 // jitsi-meet such as app.bundle.js and external_api.js.
 const config = {
@@ -153,26 +165,45 @@ const config = {
 module.exports = [
     Object.assign({}, config, {
         entry: {
-            'app.bundle': './app.js',
-
-            'device_selection_popup_bundle':
-                './react/features/settings/popup.js',
-
-            'alwaysontop':
-                './react/features/always-on-top/index.js',
-
-            'dial_in_info_bundle':
-                './react/features/invite/components/dial-in-info-page',
-
-            'do_external_connect':
-                './connection_optimization/do_external_connect.js',
-
-            'flacEncodeWorker':
-                './react/features/local-recording/recording/flac/flacEncodeWorker.js',
-
-            'analytics-ga':
-                './react/features/analytics/handlers/GoogleAnalyticsHandler.js'
-        }
+            'app.bundle': './app.js'
+        },
+        performance: getPerformanceHints(3 * 1024 * 1024)
+    }),
+    Object.assign({}, config, {
+        entry: {
+            'device_selection_popup_bundle': './react/features/settings/popup.js'
+        },
+        performance: getPerformanceHints(2.5 * 1024 * 1024)
+    }),
+    Object.assign({}, config, {
+        entry: {
+            'alwaysontop': './react/features/always-on-top/index.js'
+        },
+        performance: getPerformanceHints(400 * 1024)
+    }),
+    Object.assign({}, config, {
+        entry: {
+            'dial_in_info_bundle': './react/features/invite/components/dial-in-info-page'
+        },
+        performance: getPerformanceHints(500 * 1024)
+    }),
+    Object.assign({}, config, {
+        entry: {
+            'do_external_connect': './connection_optimization/do_external_connect.js'
+        },
+        performance: getPerformanceHints(5 * 1024)
+    }),
+    Object.assign({}, config, {
+        entry: {
+            'flacEncodeWorker': './react/features/local-recording/recording/flac/flacEncodeWorker.js'
+        },
+        performance: getPerformanceHints(5 * 1024)
+    }),
+    Object.assign({}, config, {
+        entry: {
+            'analytics-ga': './react/features/analytics/handlers/GoogleAnalyticsHandler.js'
+        },
+        performance: getPerformanceHints(5 * 1024)
     }),
     Object.assign({}, config, {
         entry: {
@@ -181,11 +212,9 @@ module.exports = [
         output: Object.assign({}, config.output, {
             library: [ 'JitsiMeetJS', 'app', 'effects' ],
             libraryTarget: 'window'
-        })
+        }),
+        performance: getPerformanceHints(1 * 1024 * 1024)
     }),
-
-    // The Webpack configuration to bundle external_api.js (aka
-    // JitsiMeetExternalAPI).
     Object.assign({}, config, {
         entry: {
             'external_api': './modules/API/external/index.js'
@@ -193,7 +222,8 @@ module.exports = [
         output: Object.assign({}, config.output, {
             library: 'JitsiMeetExternalAPI',
             libraryTarget: 'umd'
-        })
+        }),
+        performance: getPerformanceHints(30 * 1024)
     })
 ];
 
