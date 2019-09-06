@@ -1,6 +1,7 @@
 /* global __dirname */
 
 const process = require('process');
+const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
 
 /**
  * The URL of the Jitsi Meet deployment to be proxy to in the context of
@@ -8,6 +9,8 @@ const process = require('process');
  */
 const devServerProxyTarget
     = process.env.WEBPACK_DEV_SERVER_PROXY_TARGET || 'https://beta.meet.jit.si';
+
+const analyzeBundle = process.argv.indexOf('--analyze-bundle') !== -1;
 
 const minimize
     = process.argv.indexOf('-p') !== -1
@@ -123,6 +126,13 @@ const config = {
         publicPath: '/libs/',
         sourceMapFilename: `[name].${minimize ? 'min' : 'js'}.map`
     },
+    plugins: [
+        analyzeBundle
+            && new BundleAnalyzerPlugin({
+                analyzerMode: 'disabled',
+                generateStatsFile: true
+            })
+    ].filter(Boolean),
     resolve: {
         alias: {
             jquery: `jquery/dist/jquery${minimize ? '.min' : ''}.js`
