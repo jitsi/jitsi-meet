@@ -1,4 +1,4 @@
-import logger from '../../logger';
+
 import {
     MAIN_THREAD_FINISH,
     MAIN_THREAD_INIT,
@@ -262,7 +262,7 @@ class Encoder {
             const errorNo
                 = Flac.FLAC__stream_encoder_get_state(this._encoderId);
 
-            logger.error('Error during encoding', FLAC_ERRORS[errorNo]);
+            console.error('Error during encoding', FLAC_ERRORS[errorNo]);
         }
     }
 
@@ -277,7 +277,7 @@ class Encoder {
 
             const status = Flac.FLAC__stream_encoder_finish(this._encoderId);
 
-            logger.log('Flac encoding finished: ', status);
+            console.log('Flac encoding finished: ', status);
 
             // free up resources
             Flac.FLAC__stream_encoder_delete(this._encoderId);
@@ -371,8 +371,7 @@ self.onmessage = function(e) {
 
     case MAIN_THREAD_NEW_DATA_ARRIVED:
         if (encoder === null) {
-            logger.error('flacEncoderWorker received data when the encoder is'
-                + 'not ready.');
+            console.error('flacEncoderWorker received data when the encoder is not ready.');
         } else {
             encoder.encode(e.data.buf);
         }
