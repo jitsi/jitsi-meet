@@ -75,7 +75,7 @@ class RNConnectionService
             String handle,
             boolean hasVideo,
             Promise promise) {
-        JitsiMeetLogger.d("%d startCall UUID=%s, h=%s, v=%s",
+        JitsiMeetLogger.d("%s startCall UUID=%s, h=%s, v=%s",
                             TAG,
                             callUUID,
                             handle,
