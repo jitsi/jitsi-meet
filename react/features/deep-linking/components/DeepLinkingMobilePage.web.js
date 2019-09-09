@@ -4,7 +4,7 @@ import React, { Component } from 'react';
 import { connect } from '../../base/redux';
 
 import { createDeepLinkingPageEvent, sendAnalytics } from '../../analytics';
-import { translate, translateToHTML } from '../../base/i18n';
+import { translate } from '../../base/i18n';
 import { Platform } from '../../base/react';
 import { DialInSummary } from '../../invite';
 
@@ -109,12 +109,7 @@ class DeepLinkingMobilePage extends Component<Props> {
                             : null
                     }
                     <p className = { `${_SNS}__text` }>
-                        {
-                            translateToHTML(
-                                t,
-                                `${_TNS}.appNotInstalled`,
-                                { app: NATIVE_APP_NAME })
-                        }
+                        { t(`${_TNS}.appNotInstalled`, { app: NATIVE_APP_NAME }) }
                     </p>
                     <a
                         href = { this._generateDownloadURL() }
@@ -176,7 +171,7 @@ class DeepLinkingMobilePage extends Component<Props> {
             IUS}&efr=1`;
     }
 
-    _onDownloadApp: () => {};
+    _onDownloadApp: () => void;
 
     /**
      * Handles download app button clicks.
@@ -190,7 +185,7 @@ class DeepLinkingMobilePage extends Component<Props> {
                 'clicked', 'downloadAppButton', { isMobileBrowser: true }));
     }
 
-    _onOpenApp: () => {};
+    _onOpenApp: () => void;
 
     /**
      * Handles open app button clicks.

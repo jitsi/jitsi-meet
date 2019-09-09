@@ -13,6 +13,8 @@ import { ColorPalette, type StyleType } from '../../../base/styles';
 
 import styles from './styles';
 
+const { AudioMode } = NativeModules;
+
 /**
  * Type definition for a single entry in the device list.
  */
@@ -37,7 +39,38 @@ type Device = {
     /**
      * Device type.
      */
-    type: string
+    type: string,
+
+    /**
+     * Unique device ID.
+     */
+    uid: ?string
+};
+
+/**
+ * "Raw" device, as returned by native.
+ */
+type RawDevice = {
+
+    /**
+     * Display name for the device.
+     */
+    name: ?string,
+
+    /**
+     * is this device selected?
+     */
+    selected: boolean,
+
+    /**
+     * Device type.
+     */
+    type: string,
+
+    /**
+     * Unique device ID.
+     */
+    uid: ?string
 };
 
 /**
@@ -49,6 +82,11 @@ type Props = {
      * Style of the bottom sheet feature.
      */
     _bottomSheetStyles: StyleType,
+
+    /**
+     * Object describing available devices.
+     */
+    _devices: Array<RawDevice>,
 
     /**
      * Used for hiding the dialog when the selection was completed.
@@ -71,8 +109,6 @@ type State = {
      */
     devices: Array<Device>
 };
-
-const { AudioMode } = NativeModules;
 
 /**
  * Maps each device type to a display name and icon.
@@ -101,11 +137,9 @@ const deviceInfoMap = {
 };
 
 /**
- * The exported React {@code Component}. {@code AudioRoutePickerDialog} is
- * exported only if the {@code AudioMode} module has the capability to get / set
- * audio devices.
+ * The exported React {@code Component}.
  */
-let AudioRoutePickerDialog_;
+let AudioRoutePickerDialog_; // eslint-disable-line prefer-const
 
 /**
  * Implements a React {@code Component} which prompts the user when a password
@@ -115,10 +149,46 @@ class AudioRoutePickerDialog extends Component<Props, State> {
     state = {
         /**
          * Available audio devices, it will be set in
-         * {@link #componentDidMount()}.
+         * {@link #getDerivedStateFromProps()}.
          */
         devices: []
     };
+
+    /**
+     * Implements React's {@link Component#getDerivedStateFromProps()}.
+     *
+     * @inheritdoc
+     */
+    static getDerivedStateFromProps(props: Props) {
+        const { _devices: devices } = props;
+
+        if (!devices) {
+            return null;
+        }
+
+        const audioDevices = [];
+
+        for (const device of devices) {
+            const infoMap = deviceInfoMap[device.type];
+            const text = device.type === 'BLUETOOTH' && device.name ? device.name : infoMap.text;
+
+            if (infoMap) {
+                const info = {
+                    ...infoMap,
+                    selected: Boolean(device.selected),
+                    text: props.t(text),
+                    uid: device.uid
+                };
+
+                audioDevices.push(info);
+            }
+        }
+
+        // Make sure devices is alphabetically sorted.
+        return {
+            devices: _.sortBy(audioDevices, 'text')
+        };
+    }
 
     /**
      * Initializes a new {@code PasswordRequiredPrompt} instance.
@@ -131,36 +201,9 @@ class AudioRoutePickerDialog extends Component<Props, State> {
 
         // Bind event handlers so they are only bound once per instance.
         this._onCancel = this._onCancel.bind(this);
-    }
 
-    /**
-     * Initializes the device list by querying {@code AudioMode}.
-     *
-     * @inheritdoc
-     */
-    componentDidMount() {
-        AudioMode.getAudioDevices().then(({ devices, selected }) => {
-            const audioDevices = [];
-
-            if (devices) {
-                for (const device of devices) {
-                    if (deviceInfoMap[device]) {
-                        const info = Object.assign({}, deviceInfoMap[device]);
-
-                        info.selected = device === selected;
-                        info.text = this.props.t(info.text);
-                        audioDevices.push(info);
-                    }
-                }
-            }
-
-            if (audioDevices) {
-                // Make sure devices is alphabetically sorted.
-                this.setState({
-                    devices: _.sortBy(audioDevices, 'text')
-                });
-            }
-        });
+        // Trigger an initial update.
+        AudioMode.updateDeviceList && AudioMode.updateDeviceList();
     }
 
     /**
@@ -197,7 +240,7 @@ class AudioRoutePickerDialog extends Component<Props, State> {
     _onSelectDeviceFn(device: Device) {
         return () => {
             this._hide();
-            AudioMode.setAudioDevice(device.type);
+            AudioMode.setAudioDevice(device.uid || device.type);
         };
     }
 
@@ -231,6 +274,27 @@ class AudioRoutePickerDialog extends Component<Props, State> {
     }
 
     /**
+     * Renders a "fake" device row indicating there are no devices.
+     *
+     * @private
+     * @returns {ReactElement}
+     */
+    _renderNoDevices() {
+        const { _bottomSheetStyles, t } = this.props;
+
+        return (
+            <View style = { styles.deviceRow } >
+                <Icon
+                    name = { deviceInfoMap.SPEAKER.iconName }
+                    style = { [ styles.deviceIcon, _bottomSheetStyles.iconStyle ] } />
+                <Text style = { [ styles.deviceText, _bottomSheetStyles.labelStyle ] } >
+                    { t('audioDevices.none') }
+                </Text>
+            </View>
+        );
+    }
+
+    /**
      * Implements React's {@link Component#render()}.
      *
      * @inheritdoc
@@ -238,14 +302,17 @@ class AudioRoutePickerDialog extends Component<Props, State> {
      */
     render() {
         const { devices } = this.state;
+        let content;
 
-        if (!devices.length) {
-            return null;
+        if (devices.length === 0) {
+            content = this._renderNoDevices();
+        } else {
+            content = this.state.devices.map(this._renderDevice, this);
         }
 
         return (
             <BottomSheet onCancel = { this._onCancel }>
-                { this.state.devices.map(this._renderDevice, this) }
+                { content }
             </BottomSheet>
         );
     }
@@ -259,14 +326,11 @@ class AudioRoutePickerDialog extends Component<Props, State> {
  */
 function _mapStateToProps(state) {
     return {
-        _bottomSheetStyles: ColorSchemeRegistry.get(state, 'BottomSheet')
+        _bottomSheetStyles: ColorSchemeRegistry.get(state, 'BottomSheet'),
+        _devices: state['features/mobile/audio-mode'].devices
     };
 }
 
-// Only export the dialog if we have support for getting / setting audio devices
-// in AudioMode.
-if (AudioMode.getAudioDevices && AudioMode.setAudioDevice) {
-    AudioRoutePickerDialog_ = translate(connect(_mapStateToProps)(AudioRoutePickerDialog));
-}
+AudioRoutePickerDialog_ = translate(connect(_mapStateToProps)(AudioRoutePickerDialog));
 
 export default AudioRoutePickerDialog_;

@@ -1345,8 +1345,7 @@ export default {
      * @returns {boolean}
      */
     isAudioOnly() {
-        return Boolean(
-            APP.store.getState()['features/base/conference'].audioOnly);
+        return Boolean(APP.store.getState()['features/base/audio-only'].enabled);
     },
 
     videoSwitchInProgress: false,
@@ -1458,7 +1457,9 @@ export default {
             return this._switchToScreenSharing(options);
         }
 
-        return this._untoggleScreenSharing();
+        return this._untoggleScreenSharing
+            ? this._untoggleScreenSharing()
+            : Promise.resolve();
     },
 
     /**
@@ -2199,12 +2200,6 @@ export default {
 
         APP.keyboardshortcut.init();
 
-        if (config.requireDisplayName
-                && !APP.conference.getLocalDisplayName()
-                && !room.isHidden()) {
-            APP.UI.promptDisplayName();
-        }
-
         APP.store.dispatch(conferenceJoined(room));
 
         const displayName
@@ -2545,7 +2540,11 @@ export default {
     leaveRoomAndDisconnect() {
         APP.store.dispatch(conferenceWillLeave(room));
 
-        return room.leave().then(disconnect, disconnect);
+        if (room.isJoined()) {
+            return room.leave().then(disconnect, disconnect);
+        }
+
+        return disconnect();
     },
 
     /**
@@ -2726,6 +2725,18 @@ export default {
                  * desktop screen.
                  */
                 convertVideoToDesktop: true,
+
+                /**
+                 * Callback invoked when the connection has been closed
+                 * automatically. Triggers cleanup of screensharing if active.
+                 *
+                 * @returns {void}
+                 */
+                onConnectionClosed: () => {
+                    if (this._untoggleScreenSharing) {
+                        this._untoggleScreenSharing();
+                    }
+                },
 
                 /**
                  * Callback invoked to pass messages from the local client back

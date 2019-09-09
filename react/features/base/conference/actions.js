@@ -1,5 +1,7 @@
 // @flow
 
+import type { Dispatch } from 'redux';
+
 import {
     createStartMutedConfigurationEvent,
     sendAnalytics
@@ -35,10 +37,9 @@ import {
     KICKED_OUT,
     LOCK_STATE_CHANGED,
     P2P_STATUS_CHANGED,
-    SET_AUDIO_ONLY,
+    SEND_TONES,
     SET_DESKTOP_SHARING_ENABLED,
     SET_FOLLOW_ME,
-    SET_LASTN,
     SET_MAX_RECEIVER_VIDEO_QUALITY,
     SET_PASSWORD,
     SET_PASSWORD_FAILED,
@@ -60,9 +61,7 @@ import {
     getCurrentConference,
     sendLocalParticipant
 } from './functions';
-import type { Dispatch } from 'redux';
-
-const logger = require('jitsi-meet-logger').getLogger(__filename);
+import logger from './logger';
 
 declare var APP: Object;
 
@@ -523,25 +522,24 @@ export function p2pStatusChanged(p2p: boolean) {
 }
 
 /**
- * Sets the audio-only flag for the current JitsiConference.
+ * Signals to play touch tones.
  *
- * @param {boolean} audioOnly - True if the conference should be audio only;
- * false, otherwise.
- * @param {boolean} ensureVideoTrack - Define if conference should ensure
- * to create a video track.
+ * @param {string} tones - The tones to play.
+ * @param {number} [duration] - How long to play each tone.
+ * @param {number} [pause] - How long to pause between each tone.
  * @returns {{
- *     type: SET_AUDIO_ONLY,
- *     audioOnly: boolean,
- *     ensureVideoTrack: boolean
+ *     type: SEND_TONES,
+ *     tones: string,
+ *     duration: number,
+ *     pause: number
  * }}
  */
-export function setAudioOnly(
-        audioOnly: boolean,
-        ensureVideoTrack: boolean = false) {
+export function sendTones(tones: string, duration: number, pause: number) {
     return {
-        type: SET_AUDIO_ONLY,
-        audioOnly,
-        ensureVideoTrack
+        type: SEND_TONES,
+        tones,
+        duration,
+        pause
     };
 }
 
@@ -574,35 +572,6 @@ export function setFollowMe(enabled: boolean) {
     return {
         type: SET_FOLLOW_ME,
         enabled
-    };
-}
-
-/**
- * Sets the video channel's last N (value) of the current conference. A value of
- * undefined shall be used to reset it to the default value.
- *
- * @param {(number|undefined)} lastN - The last N value to be set.
- * @returns {Function}
- */
-export function setLastN(lastN: ?number) {
-    return (dispatch: Dispatch<any>, getState: Function) => {
-        if (typeof lastN === 'undefined') {
-            const config = getState()['features/base/config'];
-
-            /* eslint-disable no-param-reassign */
-
-            lastN = config.channelLastN;
-            if (typeof lastN === 'undefined') {
-                lastN = -1;
-            }
-
-            /* eslint-enable no-param-reassign */
-        }
-
-        dispatch({
-            type: SET_LASTN,
-            lastN
-        });
     };
 }
 
@@ -751,19 +720,6 @@ export function setStartMutedPolicy(
 
         return dispatch(
             onStartMutedPolicyChanged(startAudioMuted, startVideoMuted));
-    };
-}
-
-/**
- * Toggles the audio-only flag for the current JitsiConference.
- *
- * @returns {Function}
- */
-export function toggleAudioOnly() {
-    return (dispatch: Dispatch<any>, getState: Function) => {
-        const { audioOnly } = getState()['features/base/conference'];
-
-        return dispatch(setAudioOnly(!audioOnly, true));
     };
 }
 

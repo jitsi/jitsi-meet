@@ -14,6 +14,7 @@ import {
 } from '../../base/toolbox';
 
 import { setTileView } from '../actions';
+import logger from '../logger';
 
 /**
  * The type of the React {@code Component} props of {@link TileViewButton}.
@@ -59,8 +60,10 @@ class TileViewButton<P: Props> extends AbstractButton<P, *> {
             {
                 'is_enabled': _tileViewEnabled
             }));
+        const value = !_tileViewEnabled;
 
-        dispatch(setTileView(!_tileViewEnabled));
+        logger.debug(`Tile view ${value ? 'enable' : 'disable'}`);
+        dispatch(setTileView(value));
     }
 
     /**

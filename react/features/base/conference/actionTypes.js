@@ -119,15 +119,16 @@ export const LOCK_STATE_CHANGED = 'LOCK_STATE_CHANGED';
 export const P2P_STATUS_CHANGED = 'P2P_STATUS_CHANGED';
 
 /**
- * The type of (redux) action which sets the audio-only flag for the current
- * conference.
+ * The type of (redux) action which signals to play specified touch tones.
  *
  * {
- *     type: SET_AUDIO_ONLY,
- *     audioOnly: boolean
+ *     type: SEND_TONES,
+ *     tones: string,
+ *     duration: number,
+ *     pause: number
  * }
  */
-export const SET_AUDIO_ONLY = 'SET_AUDIO_ONLY';
+export const SEND_TONES = 'SEND_TONES';
 
 /**
  * The type of (redux) action which sets the desktop sharing enabled flag for
@@ -151,16 +152,6 @@ export const SET_DESKTOP_SHARING_ENABLED
  * }
  */
 export const SET_FOLLOW_ME = 'SET_FOLLOW_ME';
-
-/**
- * The type of (redux) action which sets the video channel's lastN (value).
- *
- * {
- *     type: SET_LASTN,
- *     lastN: number
- * }
- */
-export const SET_LASTN = 'SET_LASTN';
 
 /**
  * The type of (redux) action which sets the maximum video height that should be

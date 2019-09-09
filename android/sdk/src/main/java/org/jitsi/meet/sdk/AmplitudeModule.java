@@ -24,6 +24,7 @@ import com.facebook.react.bridge.ReadableMap;
 import com.amplitude.api.Amplitude;
 import com.facebook.react.module.annotations.ReactModule;
 
+import org.jitsi.meet.sdk.log.JitsiMeetLogger;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -90,7 +91,7 @@ class AmplitudeModule
             JSONObject eventProps = new JSONObject(eventPropsString);
             Amplitude.getInstance(instanceName).logEvent(eventType, eventProps);
         } catch (JSONException e) {
-            e.printStackTrace();
+            JitsiMeetLogger.e(e, "Error logging event");
         }
     }
 

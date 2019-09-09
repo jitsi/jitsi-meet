@@ -10,6 +10,7 @@ MVN_HTTP=0
 DEFAULT_SDK_VERSION=$(grep sdkVersion ${THIS_DIR}/../gradle.properties | cut -d"=" -f2)
 SDK_VERSION=${OVERRIDE_SDK_VERSION:-${DEFAULT_SDK_VERSION}}
 RN_VERSION=$(jq -r '.dependencies."react-native"' ${THIS_DIR}/../../package.json)
+JSC_VERSION="r"$(jq -r '.dependencies."jsc-android"' ${THIS_DIR}/../../node_modules/react-native/package.json | cut -d . -f 1)
 DO_GIT_TAG=${GIT_TAG:-0}
 
 if [[ $THE_MVN_REPO == http* ]]; then
@@ -37,14 +38,20 @@ if [[ $MVN_HTTP == 1 ]]; then
         -DgeneratePom=false \
         -DpomFile=react-native-${RN_VERSION}.pom || true
     popd
+    # Push JSC
+    echo "Pushing JSC ${JSC_VERSION} to the Maven repo"
+    pushd ${THIS_DIR}/../../node_modules/jsc-android/dist/org/webkit/android-jsc/${JSC_VERSION}
+    mvn \
+        deploy:deploy-file \
+        -Durl=${MVN_REPO} \
+        -DrepositoryId=${MVN_REPO_ID} \
+        -Dfile=android-jsc-${JSC_VERSION}.aar \
+        -Dpackaging=aar \
+        -DgeneratePom=false \
+        -DpomFile=android-jsc-${JSC_VERSION}.pom || true
+    popd
 else
-    # Check if an SDK with that same version has already been released
-    if [[ -d ${MVN_REPO}/org/jitsi/react/jitsi-meet-sdk/${SDK_VERSION} ]]; then
-        echo "There is already a release with that version in the Maven repo!"
-        exit 1
-    fi
-
-    # First push React Native, if necessary
+    # Push React Native, if necessary
     if [[ ! -d ${MVN_REPO}/com/facebook/react/react-native/${RN_VERSION} ]]; then
         echo "Pushing React Native ${RN_VERSION} to the Maven repo"
         pushd ${THIS_DIR}/../../node_modules/react-native/android/com/facebook/react/react-native/${RN_VERSION}
@@ -56,6 +63,26 @@ else
             -DgeneratePom=false \
             -DpomFile=react-native-${RN_VERSION}.pom
         popd
+    fi
+
+    # Push JSC, if necessary
+    if [[ ! -d ${MVN_REPO}/org/webkit/android-jsc/${JSC_VERSION} ]]; then
+        echo "Pushing JSC ${JSC_VERSION} to the Maven repo"
+        pushd ${THIS_DIR}/../../node_modules/jsc-android/dist/org/webkit/android-jsc/${JSC_VERSION}
+        mvn \
+            deploy:deploy-file \
+            -Durl=${MVN_REPO} \
+            -Dfile=android-jsc-${JSC_VERSION}.aar \
+            -Dpackaging=aar \
+            -DgeneratePom=false \
+            -DpomFile=android-jsc-${JSC_VERSION}.pom
+        popd
+    fi
+
+    # Check if an SDK with that same version has already been released
+    if [[ -d ${MVN_REPO}/org/jitsi/react/jitsi-meet-sdk/${SDK_VERSION} ]]; then
+        echo "There is already a release with that version in the Maven repo!"
+        exit 1
     fi
 fi
 

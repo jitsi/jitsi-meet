@@ -14,22 +14,20 @@ const DEFAULT_STATE = {
     appState: 'active'
 };
 
-ReducerRegistry.register(
-    'features/background',
-    (state = DEFAULT_STATE, action) => {
-        switch (action.type) {
-        case _SET_APP_STATE_LISTENER:
-            return {
-                ...state,
-                appStateListener: action.listener
-            };
+ReducerRegistry.register('features/background', (state = DEFAULT_STATE, action) => {
+    switch (action.type) {
+    case _SET_APP_STATE_LISTENER:
+        return {
+            ...state,
+            appStateListener: action.listener
+        };
 
-        case APP_STATE_CHANGED:
-            return {
-                ...state,
-                appState: action.appState
-            };
-        }
+    case APP_STATE_CHANGED:
+        return {
+            ...state,
+            appState: action.appState
+        };
+    }
 
-        return state;
-    });
+    return state;
+});

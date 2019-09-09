@@ -21,10 +21,11 @@
         "bluetooth": "Bluetooth",
         "headphones": "Headphones",
         "phone": "Phone",
-        "speaker": "Speaker"
+        "speaker": "Speaker",
+        "none": "No audio devices available"
     },
     "audioOnly": {
-        "audioOnly": "Audio only"
+        "audioOnly": "Low bandwidth"
     },
     "calendarSync": {
         "addMeetingURL": "Add a meeting link",
@@ -88,7 +89,6 @@
         "localport_plural": "Local ports:",
         "more": "Show more",
         "packetloss": "Packet loss:",
-        "peer_to_peer": " (p2p)",
         "quality": {
             "good": "Good",
             "inactive": "Inactive",
@@ -103,8 +103,7 @@
         "resolution": "Resolution:",
         "status": "Connection:",
         "transport": "Transport:",
-        "transport_plural": "Transports:",
-        "turn": " (turn)"
+        "transport_plural": "Transports:"
     },
     "dateUtils": {
         "earlier": "Earlier",
@@ -430,7 +429,7 @@
         "somebody": "Somebody",
         "startSilentTitle": "You joined with no audio output!",
         "startSilentDescription": "Rejoin the meeting to enable audio",
-        "suboptimalExperienceDescription": "Eer... we are afraid your experience with {{appName}} isn't going to be that great here. We are looking for ways to improve this but, until then, please try using one of the <a href='static/recommendedBrowsers.html' target='_blank'>fully supported browsers</a>.",
+        "suboptimalBrowserWarning": "We are afraid your meeting experience isn't going to be that great here. We are looking for ways to improve this, but until then please try using one of the <a href='static/recommendedBrowsers.html' target='_blank'>fully supported browsers</a>.",
         "suboptimalExperienceTitle": "Browser Warning",
         "unmute": "Unmute",
         "newDeviceCameraTitle": "New camera detected",
@@ -460,6 +459,7 @@
         "setEmailLabel": "Set your gravatar email",
         "title": "Profile"
     },
+    "raisedHand": "Would like to speak",
     "recording": {
         "authDropboxText": "Upload to Dropbox",
         "availableSpace": "Available space: {{spaceLeft}} MB (approximately {{duration}} minutes of recording)",
@@ -584,8 +584,8 @@
             "videoblur": "Toggle video blur"
         },
         "addPeople": "Add people to your call",
-        "audioOnlyOff": "Disable audio only mode",
-        "audioOnlyOn": "Enable audio only mode",
+        "audioOnlyOff": "Disable low bandwidth mode",
+        "audioOnlyOn": "Enable low bandwidth mode",
         "audioRoute": "Select the sound device",
         "authenticate": "Authenticate",
         "callQuality": "Manage video quality",
@@ -663,13 +663,13 @@
     },
     "videoStatus": {
         "audioOnly": "AUD",
-        "audioOnlyExpanded": "You are in audio only mode. This mode saves bandwidth but you won't see videos of others.",
+        "audioOnlyExpanded": "You are in low bandwidth mode. In this mode you will receive only audio and screen sharing.",
         "callQuality": "Video Quality",
         "hd": "HD",
         "hdTooltip": "Viewing high definition video",
         "highDefinition": "High definition",
         "labelTooiltipNoVideo": "No video",
-        "labelTooltipAudioOnly": "Audio-only mode enabled",
+        "labelTooltipAudioOnly": "Low bandwidth mode enabled",
         "ld": "LD",
         "ldTooltip": "Viewing low definition video",
         "lowDefinition": "Low definition",

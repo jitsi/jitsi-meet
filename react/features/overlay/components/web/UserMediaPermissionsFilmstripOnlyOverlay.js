@@ -9,6 +9,8 @@ import AbstractUserMediaPermissionsOverlay, { abstractMapStateToProps }
     from './AbstractUserMediaPermissionsOverlay';
 import FilmstripOnlyOverlayFrame from './FilmstripOnlyOverlayFrame';
 
+declare var interfaceConfig: Object;
+
 /**
  * Implements a React Component for overlay with guidance how to proceed with
  * gUM prompt. This component will be displayed only for filmstrip only mode.
@@ -34,7 +36,7 @@ class UserMediaPermissionsFilmstripOnlyOverlay
                     <div className = 'inlay-filmstrip-only__title'>
                         {
                             t('startupoverlay.title',
-                                { postProcess: 'resolveAppName' })
+                                { app: interfaceConfig.APP_NAME })
                         }
                     </div>
                     <div className = 'inlay-filmstrip-only__text'>

@@ -8,8 +8,7 @@ import { getShareInfoText } from '../invite';
 
 import { endShareRoom } from './actions';
 import { BEGIN_SHARE_ROOM } from './actionTypes';
-
-const logger = require('jitsi-meet-logger').getLogger(__filename);
+import logger from './logger';
 
 /**
  * Middleware that captures room URL sharing actions and starts the sharing

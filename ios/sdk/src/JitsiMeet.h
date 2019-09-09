@@ -18,6 +18,8 @@
 #import <JitsiMeet/JitsiMeetView.h>
 #import <JitsiMeet/JitsiMeetViewDelegate.h>
 #import <JitsiMeet/JitsiMeetConferenceOptions.h>
+#import <JitsiMeet/JitsiMeetLogger.h>
+#import <JitsiMeet/JitsiMeetBaseLogHandler.h>
 
 
 @interface JitsiMeet : NSObject

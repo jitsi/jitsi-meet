@@ -426,6 +426,10 @@ const VideoLayout = {
             APP.store.dispatch(setMaxReceiverVideoQuality(qualityLevel));
         }
 
+        localVideoThumbnail && localVideoThumbnail.rerender();
+        Object.values(remoteVideos).forEach(
+            remoteVideoThumbnail => remoteVideoThumbnail.rerender());
+
         if (onComplete && typeof onComplete === 'function') {
             onComplete();
         }
@@ -947,11 +951,6 @@ const VideoLayout = {
     refreshLayout() {
         localVideoThumbnail && localVideoThumbnail.updateDOMLocation();
         VideoLayout.resizeVideoArea();
-
-        localVideoThumbnail && localVideoThumbnail.rerender();
-        Object.values(remoteVideos).forEach(
-            remoteVideo => remoteVideo.rerender()
-        );
     },
 
     /**

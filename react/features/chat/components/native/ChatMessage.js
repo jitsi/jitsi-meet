@@ -5,8 +5,12 @@ import { Text, View } from 'react-native';
 
 import { Avatar } from '../../../base/avatar';
 import { translate } from '../../../base/i18n';
+import { Linkify } from '../../../base/react';
+
+import { replaceNonUnicodeEmojis } from '../../functions';
 
 import AbstractChatMessage, { type Props } from '../AbstractChatMessage';
+
 import styles from './styles';
 
 /**
@@ -42,6 +46,13 @@ class ChatMessage extends AbstractChatMessage<Props> {
             textWrapperStyle.push(styles.systemTextWrapper);
         }
 
+        const messageText = message.messageType === 'error'
+            ? this.props.t('chat.error', {
+                error: message.error,
+                originalText: message.message
+            })
+            : message.message;
+
         return (
             <View style = { styles.messageWrapper } >
                 { this._renderAvatar() }
@@ -51,14 +62,9 @@ class ChatMessage extends AbstractChatMessage<Props> {
                             this.props.showDisplayName
                                 && this._renderDisplayName()
                         }
-                        <Text style = { styles.messageText }>
-                            { message.messageType === 'error'
-                                ? this.props.t('chat.error', {
-                                    error: message.error,
-                                    originalText: message.message
-                                })
-                                : message.message }
-                        </Text>
+                        <Linkify linkStyle = { styles.chatLink }>
+                            { replaceNonUnicodeEmojis(messageText) }
+                        </Linkify>
                     </View>
                     { this.props.showTimestamp && this._renderTimestamp() }
                 </View>
@@ -74,10 +80,13 @@ class ChatMessage extends AbstractChatMessage<Props> {
      * @returns {React$Element<*>}
      */
     _renderAvatar() {
+        const { message } = this.props;
+
         return (
             <View style = { styles.avatarWrapper }>
                 { this.props.showAvatar && <Avatar
-                    participantId = { this.props.message.id }
+                    displayName = { message.displayName }
+                    participantId = { message.id }
                     size = { styles.avatarWrapper.width } />
                 }
             </View>

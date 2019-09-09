@@ -1,14 +1,11 @@
-/* @flow */
-
-import Logger from 'jitsi-meet-logger';
-
-const logger = Logger.getLogger(__filename);
+// @flow
 
 import { MiddlewareRegistry } from '../redux';
 
 import { CONFERENCE_WILL_JOIN } from '../conference';
 import { JitsiConferenceEvents } from '../lib-jitsi-meet';
 import { setConnectionState } from './actions';
+import logger from './logger';
 
 /**
  * The Redux middleware of the feature testing.

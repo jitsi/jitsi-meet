@@ -272,6 +272,27 @@ export function createInviteDialogEvent(
 }
 
 /**
+ * Creates an event which reports about the current network information reported by the operating system.
+ *
+ * @param {boolean} isOnline - Tells whether or not the internet is reachable.
+ * @param {string} [networkType] - Network type, see {@code NetworkInfo} type defined by the 'base/net-info' feature.
+ * @param {Object} [details] - Extra info, see {@code NetworkInfo} type defined by the 'base/net-info' feature.
+ * @returns {Object}
+ */
+export function createNetworkInfoEvent({ isOnline, networkType, details }) {
+    const attributes = { isOnline };
+
+    // Do no include optional stuff or Amplitude handler will log warnings.
+    networkType && (attributes.networkType = networkType);
+    details && (attributes.details = details);
+
+    return {
+        action: 'network.info',
+        attributes
+    };
+}
+
+/**
  * Creates an "offer/answer failure" event.
  *
  * @returns {Object} The event in a format suitable for sending via

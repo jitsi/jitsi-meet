@@ -20,8 +20,7 @@ import {
     getDevicesFromURL,
     setAudioOutputDeviceId
 } from './functions';
-
-const logger = require('jitsi-meet-logger').getLogger(__filename);
+import logger from './logger';
 
 /**
  * Maps the WebRTC string for device type to the keys used to store configure,

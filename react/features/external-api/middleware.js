@@ -8,6 +8,7 @@ import {
 import { NOTIFY_CAMERA_ERROR, NOTIFY_MIC_ERROR } from '../base/devices';
 import { JitsiConferenceErrors } from '../base/lib-jitsi-meet';
 import {
+    DOMINANT_SPEAKER_CHANGED,
     PARTICIPANT_KICKED,
     PARTICIPANT_LEFT,
     PARTICIPANT_JOINED,
@@ -18,7 +19,7 @@ import {
 import { MiddlewareRegistry } from '../base/redux';
 import { getBaseUrl } from '../base/util';
 import { appendSuffix } from '../display-name';
-import { SUBMIT_FEEDBACK } from '../feedback';
+import { SUBMIT_FEEDBACK_ERROR, SUBMIT_FEEDBACK_SUCCESS } from '../feedback';
 import { SET_FILMSTRIP_VISIBLE } from '../filmstrip';
 
 declare var APP: Object;
@@ -99,6 +100,10 @@ MiddlewareRegistry.register(store => next => action => {
         break;
     }
 
+    case DOMINANT_SPEAKER_CHANGED:
+        APP.API.notifyDominantSpeakerChanged(action.participant.id);
+        break;
+
     case KICKED_OUT:
         APP.API.notifyKickedOut(
             {
@@ -156,7 +161,11 @@ MiddlewareRegistry.register(store => next => action => {
         APP.API.notifyFilmstripDisplayChanged(action.visible);
         break;
 
-    case SUBMIT_FEEDBACK:
+    case SUBMIT_FEEDBACK_ERROR:
+        APP.API.notifyFeedbackSubmitted(action.error || 'Unknown error');
+        break;
+
+    case SUBMIT_FEEDBACK_SUCCESS:
         APP.API.notifyFeedbackSubmitted();
         break;
     }

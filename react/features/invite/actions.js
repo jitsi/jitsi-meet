@@ -21,8 +21,7 @@ import {
     getDialInNumbers,
     invitePeopleAndChatRooms
 } from './functions';
-
-const logger = require('jitsi-meet-logger').getLogger(__filename);
+import logger from './logger';
 
 /**
  * Creates a (redux) action to signal that a click/tap has been performed on

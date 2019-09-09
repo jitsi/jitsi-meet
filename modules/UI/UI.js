@@ -15,7 +15,6 @@ import Filmstrip from './videolayout/Filmstrip';
 
 import { getLocalParticipant } from '../../react/features/base/participants';
 import { toggleChat } from '../../react/features/chat';
-import { openDisplayNamePrompt } from '../../react/features/display-name';
 import { setEtherpadHasInitialzied } from '../../react/features/etherpad';
 import { setFilmstripVisible } from '../../react/features/filmstrip';
 import { setNotificationsEnabled } from '../../react/features/notifications';
@@ -547,13 +546,6 @@ UI.notifyInitiallyMuted = function() {
 
 UI.handleLastNEndpoints = function(leavingIds, enteringIds) {
     VideoLayout.onLastNEndpointsChanged(leavingIds, enteringIds);
-};
-
-/**
- * Prompt user for nickname.
- */
-UI.promptDisplayName = () => {
-    APP.store.dispatch(openDisplayNamePrompt(undefined));
 };
 
 /**

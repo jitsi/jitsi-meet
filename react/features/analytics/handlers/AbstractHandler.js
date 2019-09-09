@@ -4,12 +4,22 @@
 export default class AbstractHandler {
     /**
      * Creates new instance.
+     *
+     * @param {Object} options - Optional parameters.
      */
-    constructor() {
+    constructor(options = {}) {
         this._enabled = false;
-        this._ignoredEvents
-            = [ 'e2e_rtt', 'rtp.stats', 'rtt.by.region', 'available.device',
-                'stream.switch.delay', 'ice.state.changed', 'ice.duration' ];
+        this._whiteListedEvents = options.whiteListedEvents;
+
+        // FIXME:
+        // Keeping the list with the very noisy events so that we don't flood with events whoever hasn't configured
+        // white/black lists yet. We need to solve this issue properly by either making these events not so noisy or
+        // by removing them completely from the code.
+        this._blackListedEvents = [
+            ...(options.blackListedEvents || []), // eslint-disable-line no-extra-parens
+            'e2e_rtt', 'rtp.stats', 'rtt.by.region', 'available.device', 'stream.switch.delay', 'ice.state.changed',
+            'ice.duration'
+        ];
     }
 
     /**
@@ -60,7 +70,16 @@ export default class AbstractHandler {
             return true;
         }
 
-        // Temporary removing some of the events that are too noisy.
-        return this._ignoredEvents.indexOf(event.action) !== -1;
+        const name = this._extractName(event);
+
+        if (Array.isArray(this._whiteListedEvents)) {
+            return this._whiteListedEvents.indexOf(name) === -1;
+        }
+
+        if (Array.isArray(this._blackListedEvents)) {
+            return this._blackListedEvents.indexOf(name) !== -1;
+        }
+
+        return false;
     }
 }

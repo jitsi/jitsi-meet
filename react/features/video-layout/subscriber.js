@@ -1,5 +1,7 @@
 // @flow
 
+import debounce from 'lodash/debounce';
+
 import {
     VIDEO_QUALITY_LEVELS,
     setMaxReceiverVideoQuality
@@ -16,10 +18,6 @@ import { setParticipantsWithScreenShare } from './actions';
 declare var APP: Object;
 declare var interfaceConfig: Object;
 
-// TODO: interfaceConfig should be in redux so we didn't have to do this.
-const AUTO_PIN_LATEST_SCREEN_SHARE
-    = typeof interfaceConfig === 'object' ? interfaceConfig.AUTO_PIN_LATEST_SCREEN_SHARE : 'remote-only';
-
 /**
  * StateListenerRegistry provides a reliable way of detecting changes to
  * preferred layout state and dispatching additional actions.
@@ -35,7 +33,7 @@ StateListenerRegistry.register(
             dispatch(
                 setMaxReceiverVideoQuality(VIDEO_QUALITY_LEVELS.HIGH));
 
-            if (AUTO_PIN_LATEST_SCREEN_SHARE) {
+            if (_getAutoPinSetting()) {
                 _updateAutoPinnedParticipant(store);
             }
         }
@@ -44,12 +42,13 @@ StateListenerRegistry.register(
 
 /**
  * For auto-pin mode, listen for changes to the known media tracks and look
- * for updates to screen shares.
+ * for updates to screen shares. The listener is debounced to avoid state
+ * thrashing that might occur, especially when switching in or out of p2p.
  */
 StateListenerRegistry.register(
     /* selector */ state => state['features/base/tracks'],
-    /* listener */ (tracks, store) => {
-        if (!AUTO_PIN_LATEST_SCREEN_SHARE) {
+    /* listener */ debounce((tracks, store) => {
+        if (!_getAutoPinSetting()) {
             return;
         }
 
@@ -57,8 +56,7 @@ StateListenerRegistry.register(
             = store.getState()['features/video-layout'].screenShares || [];
         const knownSharingParticipantIds = tracks.reduce((acc, track) => {
             if (track.mediaType === 'video' && track.videoType === 'desktop') {
-                const skipTrack
-                    = AUTO_PIN_LATEST_SCREEN_SHARE === 'remote-only' && track.local;
+                const skipTrack = _getAutoPinSetting() === 'remote-only' && track.local;
 
                 if (!skipTrack) {
                     acc.push(track.participantId);
@@ -88,8 +86,22 @@ StateListenerRegistry.register(
 
             _updateAutoPinnedParticipant(store);
         }
-    }
-);
+    }, 100));
+
+/**
+ * A selector for retrieving the current automatic pinning setting.
+ *
+ * @private
+ * @returns {string|undefined} The string "remote-only" is returned if only
+ * remote screensharing should be automatically pinned, any other truthy value
+ * means automatically pin all screenshares. Falsy means do not automatically
+ * pin any screenshares.
+ */
+function _getAutoPinSetting() {
+    return typeof interfaceConfig === 'object'
+        ? interfaceConfig.AUTO_PIN_LATEST_SCREEN_SHARE
+        : 'remote-only';
+}
 
 /**
  * Private helper to automatically pin the latest screen share stream or unpin

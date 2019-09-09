@@ -115,7 +115,7 @@ function _addChatMsgListener(conference, { dispatch, getState }) {
 
     conference.on(
         JitsiConferenceEvents.MESSAGE_RECEIVED,
-        (id, message, timestamp) => {
+        (id, message, timestamp, nick) => {
             // Logic for all platforms:
             const state = getState();
             const { isOpen: isChatOpen } = state['features/chat'];
@@ -127,7 +127,7 @@ function _addChatMsgListener(conference, { dispatch, getState }) {
             // Provide a default for for the case when a message is being
             // backfilled for a participant that has left the conference.
             const participant = getParticipantById(state, id) || {};
-            const displayName = getParticipantDisplayName(getState, id);
+            const displayName = participant.name || nick || getParticipantDisplayName(state, id);
             const hasRead = participant.local || isChatOpen;
             const timestampToDate = timestamp
                 ? new Date(timestamp) : new Date();

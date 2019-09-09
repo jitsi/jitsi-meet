@@ -9,7 +9,7 @@ import { StateListenerRegistry } from '../../base/redux';
  */
 StateListenerRegistry.register(
     /* selector */ state => {
-        const { audioOnly } = state['features/base/conference'];
+        const { enabled: audioOnly } = state['features/base/audio-only'];
         const conference = getCurrentConference(state);
 
         return Boolean(conference && !audioOnly);

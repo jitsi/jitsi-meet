@@ -1,3 +1,4 @@
+import logger from '../../logger';
 import {
     DEBUG,
     MAIN_THREAD_FINISH,
@@ -8,8 +9,6 @@ import {
 } from './messageTypes';
 
 import { AbstractAudioContextAdapter } from '../AbstractAudioContextAdapter';
-
-const logger = require('jitsi-meet-logger').getLogger(__filename);
 
 /**
  * Recording adapter that uses libflac.js in the background.

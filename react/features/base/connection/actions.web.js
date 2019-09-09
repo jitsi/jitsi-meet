@@ -5,8 +5,6 @@ import type { Dispatch } from 'redux';
 declare var APP: Object;
 declare var config: Object;
 
-const logger = require('jitsi-meet-logger').getLogger(__filename);
-
 import { configureInitialDevices } from '../devices';
 
 export {
@@ -14,6 +12,7 @@ export {
     connectionFailed,
     setLocationURL
 } from './actions.native';
+import logger from './logger';
 
 /**
  * Opens new connection.

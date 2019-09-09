@@ -7,12 +7,12 @@ import type { Props as AbstractDialogTabProps } from '../../base/dialog';
 import { translate } from '../../base/i18n';
 import JitsiMeetJS, { createLocalTrack } from '../../base/lib-jitsi-meet';
 
+import logger from '../logger';
+
 import AudioInputPreview from './AudioInputPreview';
 import AudioOutputPreview from './AudioOutputPreview';
 import DeviceSelector from './DeviceSelector';
 import VideoInputPreview from './VideoInputPreview';
-
-const logger = require('jitsi-meet-logger').getLogger(__filename);
 
 /**
  * The type of the React {@code Component} props of {@link DeviceSelection}.

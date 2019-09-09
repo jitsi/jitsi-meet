@@ -4,8 +4,7 @@ import { getLocalVideoTrack } from '../../features/base/tracks';
 
 import { BLUR_DISABLED, BLUR_ENABLED } from './actionTypes';
 import { getBlurEffect } from './functions';
-
-const logger = require('jitsi-meet-logger').getLogger(__filename);
+import logger from './logger';
 
 /**
 * Signals the local participant is switching between blurred or non blurred video.

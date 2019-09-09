@@ -201,6 +201,9 @@ var config = {
     // subtitles and buttons can be configured)
     // transcribingEnabled: false,
 
+    // Enables automatic turning on captions when recording is started
+    // autoCaptionOnRecord: false,
+
     // Misc
 
     // Default value for the channel "last N" attribute. -1 for unlimited.

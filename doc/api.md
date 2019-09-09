@@ -197,6 +197,15 @@ api.executeCommand('displayName', 'New Nickname');
 api.executeCommand('password', 'The Password');
 ```
 
+* **sendTones** - Play touch tones.
+```javascript
+api.executeCommand('sendTones', {
+    tones: string, // The dial pad touch tones to play. For example, '12345#'.
+    duration: number, // Optional. The number of milliseconds each tone should play. The default is 200.
+    pause: number // Optional. The number of milliseconds between each tone. The default is 200.
+});
+```
+
 * **subject** - Sets the subject of the conference. This command requires one argument - the new subject to be set.
 ```javascript
 api.executeCommand('subject', 'New Conference Subject');
@@ -322,6 +331,13 @@ changes. The listener will receive an object with the following structure:
 }
 ```
 
+* **dominantSpeakerChanged** - receives event notifications about change in the dominant speaker. The listener will receive object with the following structure:
+```javascript
+{
+    id: string //participantId of the new dominant speaker
+}
+```
+
 * **tileViewChanged** - event notifications about tile view layout mode being entered or exited. The listener will receive object with the following structure:
 ```javascript
 {
@@ -372,6 +388,13 @@ changes. The listener will receive an object with the following structure:
     email: string // the new email
 }
 ```
+* **feedbackSubmitted** - event notifications about conference feedback submission
+```javascript
+{
+    error: string // The error which occurred during submission, if any.
+}
+```
+
 * **filmstripDisplayChanged** - event notifications about the visibility of the filmstrip being updated.
 ```javascript
 {

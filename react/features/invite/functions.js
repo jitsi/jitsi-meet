@@ -4,10 +4,10 @@ import { i18next } from '../base/i18n';
 import { isLocalParticipantModerator } from '../base/participants';
 import { doGetJSON, parseURIString } from '../base/util';
 
+import logger from './logger';
+
 declare var $: Function;
 declare var interfaceConfig: Object;
-
-const logger = require('jitsi-meet-logger').getLogger(__filename);
 
 /**
  * Sends an ajax request to check if the phone number can be called.
@@ -48,7 +48,7 @@ export function getDialInConferenceID(
 
     const conferenceIDURL = `${baseUrl}?conference=${roomName}@${mucURL}`;
 
-    return doGetJSON(conferenceIDURL);
+    return doGetJSON(conferenceIDURL, true);
 }
 
 /**
@@ -71,7 +71,7 @@ export function getDialInNumbers(
 
     const fullUrl = `${url}?conference=${roomName}@${mucURL}`;
 
-    return doGetJSON(fullUrl);
+    return doGetJSON(fullUrl, true);
 }
 
 /**

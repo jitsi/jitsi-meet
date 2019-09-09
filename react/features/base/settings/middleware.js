@@ -1,6 +1,6 @@
 // @flow
 
-import { setAudioOnly } from '../conference';
+import { setAudioOnly } from '../audio-only';
 import { getLocalParticipant, participantUpdated } from '../participants';
 import { MiddlewareRegistry } from '../redux';
 

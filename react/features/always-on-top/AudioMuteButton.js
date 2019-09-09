@@ -6,7 +6,6 @@ import AbstractAudioMuteButton from '../base/toolbox/components/AbstractAudioMut
 import type { Props } from '../base/toolbox/components/AbstractButton';
 
 const { api } = window.alwaysOnTop;
-const logger = require('jitsi-meet-logger').getLogger(__filename);
 
 /**
  * The type of the React {@code Component} state of {@link AudioMuteButton}.
@@ -71,7 +70,7 @@ export default class AudioMuteButton
                     audioAvailable,
                     audioMuted
                 }))
-            .catch(logger.error);
+            .catch(console.error);
     }
 
     /**
