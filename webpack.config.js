@@ -254,7 +254,7 @@ function devServerProxyBypass({ path }) {
                         // Since webpack-dev-server is serving non-minimized
                         // artifacts, serve them even if the minimized ones are
                         // requested.
-                        Object.keys(c.entry).some(e => {
+                        return Object.keys(c.entry).some(e => {
                             const name = `${e}.min.js`;
 
                             if (path.indexOf(name) !== -1) {
@@ -265,8 +265,6 @@ function devServerProxyBypass({ path }) {
                             }
                         });
                     }
-
-                    return true;
                 }
             })) {
         return path;
