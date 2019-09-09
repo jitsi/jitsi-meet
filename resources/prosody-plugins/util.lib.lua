@@ -39,6 +39,25 @@ local function room_jid_match_rewrite(room_jid)
     return room_jid
 end
 
+-- Utility function to check and convert a room JID from real [foo]room1@muc.example.com to virtual room1@muc.foo.example.com
+local function room_jid_match_rewrite_from_internal(room_jid)
+    local node, host, resource = jid.split(room_jid);
+    if host ~= muc_domain or not node then
+        module:log("debug", "No need to rewrite %s (not from the MUC host)", room_jid);
+
+        return room_jid;
+    end
+    local target_subdomain, target_node = node:match("^%[([^%]]+)%](.+)$");
+    if not (target_node and target_subdomain) then
+        module:log("debug", "Not rewriting... unexpected node format: %s", node);
+        return room_jid;
+    end
+    -- Ok, rewrite room_jid address to pretty format
+    local new_node, new_host, new_resource = target_node, muc_domain_prefix..".".. target_subdomain.."."..muc_domain_base, resource;
+    room_jid = jid.join(new_node, new_host, new_resource);
+    module:log("debug", "Rewrote to %s", room_jid);
+    return room_jid
+end
 
 --- Finds and returns room by its jid
 -- @param room_jid the room jid to search in the muc component
@@ -194,5 +213,6 @@ return {
     wrap_async_run = wrap_async_run;
     async_handler_wrapper = async_handler_wrapper;
     room_jid_match_rewrite = room_jid_match_rewrite;
+    room_jid_match_rewrite_from_internal = room_jid_match_rewrite_from_internal
     update_presence_identity = update_presence_identity;
 };
