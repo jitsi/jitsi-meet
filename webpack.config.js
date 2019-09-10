@@ -236,7 +236,8 @@ module.exports = [
             libraryTarget: 'window',
             filename: '[name].min.js',
             sourceMapFilename: '[name].min.map'
-        })
+        }),
+        performance: getPerformanceHints(1 * 1024 * 1024)
     }),
 
     Object.assign({}, config, {
@@ -248,7 +249,9 @@ module.exports = [
             libraryTarget: 'window',
             filename: '[name].min.js',
             sourceMapFilename: '[name].min.map'
-        })
+        }),
+        performance: getPerformanceHints(4 * 1024 * 1024)
+
     }),
 
     // The Webpack configuration to bundle external_api.js (aka
