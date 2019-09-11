@@ -130,7 +130,7 @@ public class ConnectionService extends android.telecom.ConnectionService {
         if (connection != null) {
             connection.setActive();
         } else {
-            JitsiMeetLogger.e("% setConnectionActive - no connection for UUID: %s", TAG, callUUID);
+            JitsiMeetLogger.e("%s setConnectionActive - no connection for UUID: %s", TAG, callUUID);
         }
     }
 
@@ -200,7 +200,7 @@ public class ConnectionService extends android.telecom.ConnectionService {
                                 : VideoProfile.STATE_AUDIO_ONLY);
             }
         } else {
-            JitsiMeetLogger.e(TAG +     " updateCall no connection for UUID: " + callUUID);
+            JitsiMeetLogger.e(TAG + " updateCall no connection for UUID: " + callUUID);
         }
     }
 
@@ -292,7 +292,7 @@ public class ConnectionService extends android.telecom.ConnectionService {
                 JitsiMeetLogger.e(TAG + " unregisterPhoneAccount - account handle is null");
             }
         } else {
-            JitsiMeetLogger.e(TAG + "unregisterPhoneAccount - telecom is null");
+            JitsiMeetLogger.e(TAG + " unregisterPhoneAccount - telecom is null");
         }
     }
 
