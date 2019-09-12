@@ -12,6 +12,7 @@ import { AudioLevelIndicator }
     from '../../../react/features/audio-level-indicator';
 import { Avatar as AvatarDisplay } from '../../../react/features/base/avatar';
 import {
+    getParticipantCount,
     getPinnedParticipant,
     pinParticipant
 } from '../../../react/features/base/participants';
@@ -836,7 +837,9 @@ SmallVideo.prototype.updateIndicators = function() {
     const iconSize = UIUtil.getIndicatorFontSize();
     const showConnectionIndicator = this.videoIsHovered
         || !interfaceConfig.CONNECTION_INDICATOR_AUTO_HIDE_ENABLED;
-    const currentLayout = getCurrentLayout(APP.store.getState());
+    const state = APP.store.getState();
+    const currentLayout = getCurrentLayout(state);
+    const participantCount = getParticipantCount(state);
     let statsPopoverPosition, tooltipPosition;
 
     if (currentLayout === LAYOUTS.TILE_VIEW) {
@@ -871,7 +874,7 @@ SmallVideo.prototype.updateIndicators = function() {
                             iconSize = { iconSize }
                             participantId = { this.id }
                             tooltipPosition = { tooltipPosition } />
-                        { this._showDominantSpeaker
+                        { this._showDominantSpeaker && participantCount > 2
                             ? <DominantSpeakerIndicator
                                 iconSize = { iconSize }
                                 tooltipPosition = { tooltipPosition } />
