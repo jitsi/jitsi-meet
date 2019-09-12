@@ -33,7 +33,7 @@ public class JitsiMeetDefaultLogHandler extends JitsiMeetBaseLogHandler {
     }
 
     @Override
-    protected String getTag() {
+    protected String getDefaultTag() {
         return TAG;
     }
 }

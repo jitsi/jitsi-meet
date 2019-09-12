@@ -37,13 +37,13 @@ public abstract class JitsiMeetBaseLogHandler extends Timber.Tree {
     protected void log(int priority, @Nullable String tag, @NotNull String msg, @Nullable Throwable t) {
         String errmsg = Log.getStackTraceString(t);
         if (errmsg.isEmpty()) {
-            doLog(priority, getTag(), msg);
+            doLog(priority, getDefaultTag(), msg);
         } else {
-            doLog(priority, getTag(), MessageFormat.format("{0}\n{1}", msg, errmsg));
+            doLog(priority, getDefaultTag(), MessageFormat.format("{0}\n{1}", msg, errmsg));
         }
     }
 
     protected abstract void doLog(int priority, @NotNull String tag, @NotNull String msg);
 
-    protected abstract String getTag();
+    protected abstract String getDefaultTag();
 }
