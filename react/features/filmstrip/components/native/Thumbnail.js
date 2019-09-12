@@ -10,6 +10,7 @@ import { MEDIA_TYPE, VIDEO_TYPE, Audio } from '../../../base/media';
 import {
     PARTICIPANT_ROLE,
     ParticipantView,
+    getParticipantCount,
     isEveryoneModerator,
     pinParticipant
 } from '../../../base/participants';
@@ -58,6 +59,11 @@ type Props = {
      * Handles long press on the thumbnail.
      */
     _onShowRemoteVideoMenu: ?Function,
+
+    /**
+     * Whether to show the dominant speaker indicator or not.
+     */
+    _showDominantSpeakerIndicator: boolean,
 
     /**
      * The color-schemed stylesheet of the feature.
@@ -121,6 +127,7 @@ class Thumbnail extends Component<Props> {
             _largeVideo: largeVideo,
             _onClick,
             _onShowRemoteVideoMenu,
+            _showDominantSpeakerIndicator: showDominantSpeakerIndicator,
             _styles,
             _videoTrack: videoTrack,
             disableTint,
@@ -182,8 +189,7 @@ class Thumbnail extends Component<Props> {
                         styles.thumbnailTopLeftIndicatorContainer
                     ] }>
                     <RaisedHandIndicator participantId = { participant.id } />
-                    { participant.dominantSpeaker
-                        && <DominantSpeakerIndicator /> }
+                    { showDominantSpeakerIndicator && <DominantSpeakerIndicator /> }
                 </View>
 
                 <View
@@ -255,12 +261,7 @@ function _mapDispatchToProps(dispatch: Function, ownProps): Object {
  *
  * @param {Object} state - Redux state.
  * @param {Props} ownProps - Properties of component.
- * @returns {{
- *      _audioTrack: Track,
- *      _largeVideo: Object,
- *      _styles: StyleType,
- *      _videoTrack: Track
- *  }}
+ * @returns {Object}
  */
 function _mapStateToProps(state, ownProps) {
     // We need read-only access to the state of features/large-video so that the
@@ -273,11 +274,14 @@ function _mapStateToProps(state, ownProps) {
         = getTrackByMediaTypeAndParticipant(tracks, MEDIA_TYPE.AUDIO, id);
     const videoTrack
         = getTrackByMediaTypeAndParticipant(tracks, MEDIA_TYPE.VIDEO, id);
+    const participantCount = getParticipantCount(state);
+    const showDominantSpeakerIndicator = ownProps.participant.dominantSpeaker && participantCount > 2;
 
     return {
         _audioTrack: audioTrack,
         _isEveryoneModerator: isEveryoneModerator(state),
         _largeVideo: largeVideo,
+        _showDominantSpeakerIndicator: showDominantSpeakerIndicator,
         _styles: ColorSchemeRegistry.get(state, 'Thumbnail'),
         _videoTrack: videoTrack
     };
