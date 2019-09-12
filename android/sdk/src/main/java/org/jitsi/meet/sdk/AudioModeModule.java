@@ -232,19 +232,6 @@ class AudioModeModule extends ReactContextBaseJavaModule
     };
 
     /**
-     * {@link Runnable} for running update operation on the main thread.
-     */
-    private final Runnable updateAudioRouteRunner
-        = new Runnable() {
-            @Override
-            public void run() {
-                if (mode != -1) {
-                    updateAudioRoute(mode);
-                }
-            }
-        };
-
-    /**
      * Audio mode currently in use.
      */
     private int mode = -1;
