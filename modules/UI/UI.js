@@ -174,7 +174,9 @@ UI.start = function() {
 
     sharedVideoManager = new SharedVideoManager(eventEmitter);
 
-    if (interfaceConfig.filmStripOnly) {
+    if (config.hideFilmstrip) {
+        $('.filmstrip').hide();
+    } else if (interfaceConfig.filmStripOnly) {
         $('body').addClass('filmstrip-only');
         APP.store.dispatch(setNotificationsEnabled(false));
     } else if (config.iAmRecorder) {
