@@ -174,7 +174,7 @@ UI.start = function() {
 
     sharedVideoManager = new SharedVideoManager(eventEmitter);
 
-    if (config.hideFilmstrip) {
+    if (interfaceConfig.hideFilmstrip) {
         $('.filmstrip').hide();
     } else if (interfaceConfig.filmStripOnly) {
         $('body').addClass('filmstrip-only');

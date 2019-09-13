@@ -284,8 +284,6 @@ var config = {
     // Enables calendar integration, depends on googleApiApplicationClientID
     // and microsoftApiApplicationClientID
     // enableCalendarIntegration: false,
-    // To hide filmstrip
-    hideFilmstrip: false,
 
     // Stats
     //

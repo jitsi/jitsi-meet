@@ -66,6 +66,9 @@ var interfaceConfig = {
      */
     filmStripOnly: false,
 
+    // To hide filmstrip
+    hideFilmstrip: false,
+
     /**
      * Whether to show thumbnails in filmstrip as a column instead of as a row.
      */
