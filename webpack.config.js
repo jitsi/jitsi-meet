@@ -182,7 +182,7 @@ module.exports = [
         entry: {
             'device_selection_popup_bundle': './react/features/settings/popup.js'
         },
-        performance: getPerformanceHints(2.5 * 1024 * 1024)
+        performance: getPerformanceHints(700 * 1024)
     }),
     Object.assign({}, config, {
         entry: {

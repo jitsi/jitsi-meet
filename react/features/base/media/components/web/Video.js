@@ -21,7 +21,7 @@ type Props = {
     /**
      * Optional callback to invoke once the video starts playing.
      */
-    onVideoPlaying: Function,
+    onVideoPlaying?: Function,
 
     /**
      * The JitsiLocalTrack to display.
