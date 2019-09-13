@@ -6,7 +6,7 @@ import type { Dispatch } from 'redux';
 
 import { ColorSchemeRegistry } from '../../../base/color-scheme';
 import { openDialog } from '../../../base/dialog';
-import { MEDIA_TYPE, VIDEO_TYPE, Audio } from '../../../base/media';
+import { MEDIA_TYPE, VIDEO_TYPE } from '../../../base/media';
 import {
     PARTICIPANT_ROLE,
     ParticipantView,
@@ -36,9 +36,9 @@ import VideoMutedIndicator from './VideoMutedIndicator';
 type Props = {
 
     /**
-     * The Redux representation of the participant's audio track.
+     * Whether local audio (microphone) is muted or not.
      */
-    _audioTrack: Object,
+    _audioMuted: boolean,
 
     /**
      * The Redux representation of the state "features/large-video".
@@ -122,7 +122,7 @@ class Thumbnail extends Component<Props> {
      */
     render() {
         const {
-            _audioTrack: audioTrack,
+            _audioMuted: audioMuted,
             _largeVideo: largeVideo,
             _onClick,
             _onShowRemoteVideoMenu,
@@ -136,14 +136,6 @@ class Thumbnail extends Component<Props> {
             tileView
         } = this.props;
 
-        // We don't render audio in any of the following:
-        // 1. The audio (source) is muted. There's no practical reason (that we
-        //    know of, anyway) why we'd want to render it given that it's
-        //    silence (& not even comfort noise).
-        // 2. The audio is local. If we were to render local audio, the local
-        //    participants would be hearing themselves.
-        const audioMuted = !audioTrack || audioTrack.muted;
-        const renderAudio = !audioMuted && !audioTrack.local;
         const participantId = participant.id;
         const participantInLargeVideo
             = participantId === largeVideo.participantId;
@@ -161,11 +153,6 @@ class Thumbnail extends Component<Props> {
                     this.props.styleOverrides || null
                 ] }
                 touchFeedback = { false }>
-
-                { renderAudio
-                    && <Audio
-                        stream
-                            = { audioTrack.jitsiTrack.getOriginalStream() } /> }
 
                 <ParticipantView
                     avatarSize = { AVATAR_SIZE }
@@ -281,7 +268,7 @@ function _mapStateToProps(state, ownProps) {
     const renderModeratorIndicator = !_isEveryoneModerator && participant.role === PARTICIPANT_ROLE.MODERATOR;
 
     return {
-        _audioTrack: audioTrack,
+        _audioMuted: audioTrack?.muted ?? true,
         _largeVideo: largeVideo,
         _renderDominantSpeakerIndicator: renderDominantSpeakerIndicator,
         _renderModeratorIndicator: renderModeratorIndicator,
