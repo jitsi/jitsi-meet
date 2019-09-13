@@ -156,6 +156,29 @@ export { default as getRoomName } from './getRoomName';
 export { parseURLParams };
 
 /**
+ * Create a "fake" configuration object for the given base URL. This is used in case the config
+ * couldn't be loaded in the welcome page, so at least we have something to try with.
+ *
+ * @param {string} baseURL - URL of the deployment for which we want the fake config.
+ * @returns {Object}
+ */
+export function createFakeConfig(baseURL: string) {
+    const url = new URL(baseURL);
+
+    return {
+        hosts: {
+            domain: url.hostname,
+            muc: `conference.${url.hostname}`
+        },
+        bosh: `${baseURL}http-bind`,
+        clientNode: 'https://jitsi.org/jitsi-meet',
+        p2p: {
+            enabled: true
+        }
+    };
+}
+
+/**
  * Promise wrapper on obtain config method. When HttpConfigFetch will be moved
  * to React app it's better to use load config instead.
  *
