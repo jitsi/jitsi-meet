@@ -90,11 +90,11 @@ function _appStateChanged({ dispatch }, next, action) {
  * @returns {Object} The value returned by {@code next(action)}.
  */
 function _setAudioOnly({ dispatch }, next, action) {
-    const { audioOnly } = action;
+    const { audioOnly, ensureVideoTrack } = action;
 
     sendAnalytics(createTrackMutedEvent('video', 'audio-only mode', audioOnly));
 
-    dispatch(setVideoMuted(audioOnly, VIDEO_MUTISM_AUTHORITY.AUDIO_ONLY));
+    dispatch(setVideoMuted(audioOnly, VIDEO_MUTISM_AUTHORITY.AUDIO_ONLY, ensureVideoTrack));
 
     return next(action);
 }
