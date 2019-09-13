@@ -2,10 +2,12 @@
 
 import React from 'react';
 
-import { AbstractDialogTab } from '../../base/dialog';
-import type { Props as AbstractDialogTabProps } from '../../base/dialog';
-import { translate } from '../../base/i18n';
-import JitsiMeetJS, { createLocalTrack } from '../../base/lib-jitsi-meet';
+import AbstractDialogTab, {
+    type Props as AbstractDialogTabProps
+} from '../../base/dialog/components/web/AbstractDialogTab';
+import { translate } from '../../base/i18n/functions';
+import JitsiMeetJS from '../../base/lib-jitsi-meet/_';
+import { createLocalTrack } from '../../base/lib-jitsi-meet/functions';
 
 import logger from '../logger';
 

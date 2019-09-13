@@ -33,7 +33,7 @@ export const _initLogging = _.once(() => {
     }
 
     // Lazy load it to avoid cycles in early web bootstrap code.
-    const { default: JitsiMeetJS } = require('../lib-jitsi-meet');
+    const { default: JitsiMeetJS } = require('../lib-jitsi-meet/_');
 
     Logger.setGlobalOptions(DEFAULT_RN_OPTS);
     JitsiMeetJS.setGlobalLogOptions(DEFAULT_RN_OPTS);

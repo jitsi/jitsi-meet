@@ -4,7 +4,7 @@ import AKDropdownMenu from '@atlaskit/dropdown-menu';
 import ChevronDownIcon from '@atlaskit/icon/glyph/chevron-down';
 import React, { Component } from 'react';
 
-import { translate } from '../../base/i18n';
+import { translate } from '../../base/i18n/functions';
 
 /**
  * The type of the React {@code Component} props of {@link DeviceSelector}.
