@@ -41,11 +41,6 @@ type Props = {
     _audioTrack: Object,
 
     /**
-     * True if everone in the meeting is moderator.
-     */
-    _isEveryoneModerator: boolean,
-
-    /**
      * The Redux representation of the state "features/large-video".
      */
     _largeVideo: Object,
@@ -63,7 +58,12 @@ type Props = {
     /**
      * Whether to show the dominant speaker indicator or not.
      */
-    _showDominantSpeakerIndicator: boolean,
+    _renderDominantSpeakerIndicator: boolean,
+
+    /**
+     * Whether to show the moderator indicator or not.
+     */
+    _renderModeratorIndicator: boolean,
 
     /**
      * The color-schemed stylesheet of the feature.
@@ -123,11 +123,11 @@ class Thumbnail extends Component<Props> {
     render() {
         const {
             _audioTrack: audioTrack,
-            _isEveryoneModerator,
             _largeVideo: largeVideo,
             _onClick,
             _onShowRemoteVideoMenu,
-            _showDominantSpeakerIndicator: showDominantSpeakerIndicator,
+            _renderDominantSpeakerIndicator: renderDominantSpeakerIndicator,
+            _renderModeratorIndicator: renderModeratorIndicator,
             _styles,
             _videoTrack: videoTrack,
             disableTint,
@@ -178,7 +178,7 @@ class Thumbnail extends Component<Props> {
 
                 { renderDisplayName && <DisplayNameLabel participantId = { participantId } /> }
 
-                { !_isEveryoneModerator && participant.role === PARTICIPANT_ROLE.MODERATOR
+                { renderModeratorIndicator
                     && <View style = { styles.moderatorIndicatorContainer }>
                         <ModeratorIndicator />
                     </View> }
@@ -189,7 +189,7 @@ class Thumbnail extends Component<Props> {
                         styles.thumbnailTopLeftIndicatorContainer
                     ] }>
                     <RaisedHandIndicator participantId = { participant.id } />
-                    { showDominantSpeakerIndicator && <DominantSpeakerIndicator /> }
+                    { renderDominantSpeakerIndicator && <DominantSpeakerIndicator /> }
                 </View>
 
                 <View
@@ -269,19 +269,22 @@ function _mapStateToProps(state, ownProps) {
     // the stage i.e. as a large video.
     const largeVideo = state['features/large-video'];
     const tracks = state['features/base/tracks'];
-    const id = ownProps.participant.id;
+    const { participant } = ownProps;
+    const id = participant.id;
     const audioTrack
         = getTrackByMediaTypeAndParticipant(tracks, MEDIA_TYPE.AUDIO, id);
     const videoTrack
         = getTrackByMediaTypeAndParticipant(tracks, MEDIA_TYPE.VIDEO, id);
     const participantCount = getParticipantCount(state);
-    const showDominantSpeakerIndicator = ownProps.participant.dominantSpeaker && participantCount > 2;
+    const renderDominantSpeakerIndicator = participant.dominantSpeaker && participantCount > 2;
+    const _isEveryoneModerator = isEveryoneModerator(state);
+    const renderModeratorIndicator = !_isEveryoneModerator && participant.role === PARTICIPANT_ROLE.MODERATOR;
 
     return {
         _audioTrack: audioTrack,
-        _isEveryoneModerator: isEveryoneModerator(state),
         _largeVideo: largeVideo,
-        _showDominantSpeakerIndicator: showDominantSpeakerIndicator,
+        _renderDominantSpeakerIndicator: renderDominantSpeakerIndicator,
+        _renderModeratorIndicator: renderModeratorIndicator,
         _styles: ColorSchemeRegistry.get(state, 'Thumbnail'),
         _videoTrack: videoTrack
     };
