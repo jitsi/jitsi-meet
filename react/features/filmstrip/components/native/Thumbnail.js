@@ -1,6 +1,6 @@
 // @flow
 
-import React, { Component } from 'react';
+import React from 'react';
 import { View } from 'react-native';
 import type { Dispatch } from 'redux';
 
@@ -111,93 +111,86 @@ type Props = {
 /**
  * React component for video thumbnail.
  *
- * @extends Component
+ * @param {Props} props - Properties passed to this functional component.
+ * @returns {Component} - A React component.
  */
-class Thumbnail extends Component<Props> {
-    /**
-     * Implements React's {@link Component#render()}.
-     *
-     * @inheritdoc
-     * @returns {ReactElement}
-     */
-    render() {
-        const {
-            _audioMuted: audioMuted,
-            _largeVideo: largeVideo,
-            _onClick,
-            _onShowRemoteVideoMenu,
-            _renderDominantSpeakerIndicator: renderDominantSpeakerIndicator,
-            _renderModeratorIndicator: renderModeratorIndicator,
-            _styles,
-            _videoTrack: videoTrack,
-            disableTint,
-            participant,
-            renderDisplayName,
-            tileView
-        } = this.props;
+function Thumbnail(props: Props) {
+    const {
+        _audioMuted: audioMuted,
+        _largeVideo: largeVideo,
+        _onClick,
+        _onShowRemoteVideoMenu,
+        _renderDominantSpeakerIndicator: renderDominantSpeakerIndicator,
+        _renderModeratorIndicator: renderModeratorIndicator,
+        _styles,
+        _videoTrack: videoTrack,
+        disableTint,
+        participant,
+        renderDisplayName,
+        tileView
+    } = props;
 
-        const participantId = participant.id;
-        const participantInLargeVideo
-            = participantId === largeVideo.participantId;
-        const videoMuted = !videoTrack || videoTrack.muted;
-        const isScreenShare = videoTrack && videoTrack.videoType === VIDEO_TYPE.DESKTOP;
+    const participantId = participant.id;
+    const participantInLargeVideo
+        = participantId === largeVideo.participantId;
+    const videoMuted = !videoTrack || videoTrack.muted;
+    const isScreenShare = videoTrack && videoTrack.videoType === VIDEO_TYPE.DESKTOP;
 
-        return (
-            <Container
-                onClick = { _onClick }
-                onLongPress = { participant.local ? undefined : _onShowRemoteVideoMenu }
+    return (
+        <Container
+            onClick = { _onClick }
+            onLongPress = { participant.local ? undefined : _onShowRemoteVideoMenu }
+            style = { [
+                styles.thumbnail,
+                participant.pinned && !tileView
+                    ? _styles.thumbnailPinned : null,
+                this.props.styleOverrides || null
+            ] }
+            touchFeedback = { false }>
+
+            <ParticipantView
+                avatarSize = { AVATAR_SIZE }
+                disableVideo = { isScreenShare }
+                participantId = { participantId }
+                style = { _styles.participantViewStyle }
+                tintEnabled = { participantInLargeVideo && !disableTint }
+                tintStyle = { _styles.activeThumbnailTint }
+                zOrder = { 1 } />
+
+            { renderDisplayName && <DisplayNameLabel participantId = { participantId } /> }
+
+            { renderModeratorIndicator
+                && <View style = { styles.moderatorIndicatorContainer }>
+                    <ModeratorIndicator />
+                </View> }
+
+            <View
                 style = { [
-                    styles.thumbnail,
-                    participant.pinned && !tileView
-                        ? _styles.thumbnailPinned : null,
-                    this.props.styleOverrides || null
-                ] }
-                touchFeedback = { false }>
+                    styles.thumbnailTopIndicatorContainer,
+                    styles.thumbnailTopLeftIndicatorContainer
+                ] }>
+                <RaisedHandIndicator participantId = { participant.id } />
+                { renderDominantSpeakerIndicator && <DominantSpeakerIndicator /> }
+            </View>
 
-                <ParticipantView
-                    avatarSize = { AVATAR_SIZE }
-                    disableVideo = { isScreenShare }
-                    participantId = { participantId }
-                    style = { _styles.participantViewStyle }
-                    tintEnabled = { participantInLargeVideo && !disableTint }
-                    tintStyle = { _styles.activeThumbnailTint }
-                    zOrder = { 1 } />
+            <View
+                style = { [
+                    styles.thumbnailTopIndicatorContainer,
+                    styles.thumbnailTopRightIndicatorContainer
+                ] }>
+                <ConnectionIndicator participantId = { participant.id } />
+            </View>
 
-                { renderDisplayName && <DisplayNameLabel participantId = { participantId } /> }
+            <Container style = { styles.thumbnailIndicatorContainer }>
+                { audioMuted
+                    && <AudioMutedIndicator /> }
 
-                { renderModeratorIndicator
-                    && <View style = { styles.moderatorIndicatorContainer }>
-                        <ModeratorIndicator />
-                    </View> }
-
-                <View
-                    style = { [
-                        styles.thumbnailTopIndicatorContainer,
-                        styles.thumbnailTopLeftIndicatorContainer
-                    ] }>
-                    <RaisedHandIndicator participantId = { participant.id } />
-                    { renderDominantSpeakerIndicator && <DominantSpeakerIndicator /> }
-                </View>
-
-                <View
-                    style = { [
-                        styles.thumbnailTopIndicatorContainer,
-                        styles.thumbnailTopRightIndicatorContainer
-                    ] }>
-                    <ConnectionIndicator participantId = { participant.id } />
-                </View>
-
-                <Container style = { styles.thumbnailIndicatorContainer }>
-                    { audioMuted
-                        && <AudioMutedIndicator /> }
-
-                    { videoMuted
-                        && <VideoMutedIndicator /> }
-                </Container>
-
+                { videoMuted
+                    && <VideoMutedIndicator /> }
             </Container>
-        );
-    }
+
+        </Container>
+    );
 }
 
 /**
