@@ -147,6 +147,8 @@ class WelcomePage extends AbstractWelcomePage {
                                 <input
                                     autoFocus = { true }
                                     className = 'enter-room-input'
+                                    pattern = '^[a-zA-Z0-9=\?]+$'
+                                    title = { t('welcomepage.onlyAsciiAllowed') }
                                     id = 'enter_room_field'
                                     onChange = { this._onRoomChange }
                                     placeholder
