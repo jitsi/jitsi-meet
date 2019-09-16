@@ -144,7 +144,7 @@ function Thumbnail(props: Props) {
                 styles.thumbnail,
                 participant.pinned && !tileView
                     ? _styles.thumbnailPinned : null,
-                this.props.styleOverrides || null
+                props.styleOverrides || null
             ] }
             touchFeedback = { false }>
 
