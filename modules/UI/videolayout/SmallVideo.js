@@ -511,7 +511,7 @@ SmallVideo.prototype.isCurrentlyOnLargeVideo = function() {
  * or <tt>false</tt> otherwise.
  */
 SmallVideo.prototype.isVideoPlayable = function() {
-    return this.videoStream && !this.isVideoMuted && !this.videoStream.isMuted();
+    return this.videoStream && !this.isVideoMuted && !APP.conference.isAudioOnly();
 };
 
 /**
