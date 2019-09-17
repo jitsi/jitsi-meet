@@ -71,7 +71,7 @@ deploy-css:
 deploy-local:
 	([ ! -x deploy-local.sh ] || ./deploy-local.sh)
 
-dev: deploy-init deploy-css deploy-lib-jitsi-meet deploy-libflac
+dev: compile deploy-init deploy-appbundle deploy-css deploy-lib-jitsi-meet deploy-libflac
 	$(WEBPACK_DEV_SERVER)
 
 source-package:
