@@ -11,7 +11,7 @@ type Props = {
     /**
      * Class name for the web platform, if any.
      */
-    className?: string,
+    className: string,
 
     /**
      * Color of the icon (if not provided by the style object).
@@ -68,7 +68,7 @@ export default function Icon(props: Props) {
 
     return (
         <Container
-            className = { className }
+            className = { `jitsi-icon ${className}` }
             style = { restStyle }>
             <IconComponent
                 fill = { calculatedColor }
@@ -79,3 +79,6 @@ export default function Icon(props: Props) {
     );
 }
 
+Icon.defaultProps = {
+    className: ''
+};
