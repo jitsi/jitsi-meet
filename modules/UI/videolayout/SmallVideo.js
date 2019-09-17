@@ -617,7 +617,7 @@ SmallVideo.prototype.updateView = function() {
     }
 
     if (this.displayMode !== oldDisplayMode) {
-        logger.debug(`Displaying ${displayModeString} for ${this.id}, reason: [${JSON.stringify(displayModeInput)}]`);
+        logger.debug(`Displaying ${displayModeString} for ${this.id}, data: [${JSON.stringify(displayModeInput)}]`);
     }
 };
 
