@@ -1,7 +1,9 @@
 // @flow
 
+import EventEmitter from 'events';
 import logger from './logger';
 import TrackVADEmitter from './TrackVADEmitter';
+import { VAD_SCORE_PUBLISHED, VAD_REPORT_PUBLISHED } from './VADEvents';
 import type { VADScore } from './TrackVADEmitter';
 export type { VADScore };
 
@@ -37,12 +39,34 @@ type VADDeviceContext = {
 };
 
 /**
+ * The structure used by VADReportingService to relay a score report
+ */
+export type VADReportScore = {
+
+    /**
+     * Epoch time at which PCM was recorded
+     */
+    timestamp: number,
+
+    /**
+     * The PCM score from 0 - 1 i.e. 0.60
+     */
+    score: number,
+
+    /**
+     * Device ID associated with the VAD score
+     */
+    deviceId: string
+};
+
+
+/**
  * Voice activity detection reporting service. The service create TrackVADEmitters for the provided devices and
- * publishes an average of their VAD score over the specified interval.
+ * publishes an average of their VAD score over the specified interval via EventEmitter.
  * The service is not reusable if destroyed a new one needs to be created, i.e. when a new device is added to the system
  * a new service needs to be created and the old discarded.
  */
-export default class VADReportingService {
+export default class VADReportingService extends EventEmitter {
     /**
      * Map containing context for devices currently being monitored by the reporting service.
      */
@@ -64,20 +88,15 @@ export default class VADReportingService {
     _intervalId: ?IntervalID;
 
     /**
-     * Callback function that publishes the VAD score of each monitored device at the specified interval.
-     */
-    _publishScore: Function;
-
-    /**
      * Constructor.
      *
      * @param {number} intervalDelay - Delay at which to publish VAD score for monitored devices.
      * @param {Function} publishScoreCallBack - Function called on the specific interval with the calculated VAD score.
      */
-    constructor(intervalDelay: number, publishScoreCallBack: Function) {
+    constructor(intervalDelay: number) {
+        super();
         this._contextMap = new Map();
         this._intervalDelay = intervalDelay;
-        this._publishScore = publishScoreCallBack;
 
         logger.log(`Constructed VADReportingService with publish interval of: ${intervalDelay}`);
     }
@@ -92,8 +111,8 @@ export default class VADReportingService {
      *
      * @returns {Promise<VADReportingService>}
      */
-    static create(micDeviceList: Array<MediaDeviceInfo>, intervalDelay: number, publishScoreCallBack: Function) {
-        const vadReportingService = new VADReportingService(intervalDelay, publishScoreCallBack);
+    static create(micDeviceList: Array<MediaDeviceInfo>, intervalDelay: number) {
+        const vadReportingService = new VADReportingService(intervalDelay);
         const emitterPromiseArray = [];
 
         // Create a TrackVADEmitter for each provided audioinput device.
@@ -106,11 +125,9 @@ export default class VADReportingService {
 
             logger.log(`Initializing VAD context for mic: ${micDevice.label} -> ${micDevice.deviceId}`);
 
-            const emitterPromise = TrackVADEmitter.create(
-                micDevice.deviceId,
-                SCRIPT_NODE_SAMPLE_RATE,
-                vadReportingService.devicePublishVADScore.bind(vadReportingService)
-            ).then(emitter => {
+            const emitterPromise = TrackVADEmitter.create(micDevice.deviceId, SCRIPT_NODE_SAMPLE_RATE).then(emitter => {
+                emitter.on(VAD_SCORE_PUBLISHED, vadReportingService._devicePublishVADScore.bind(vadReportingService));
+
                 return {
                     vadEmitter: emitter,
                     deviceInfo: micDevice,
@@ -223,7 +240,21 @@ export default class VADReportingService {
             });
         }
 
-        this._publishScore(vadComputeScoreArray);
+        this.emit(VAD_REPORT_PUBLISHED, vadComputeScoreArray);
+    }
+
+    /**
+     * Callback method passed to vad emitters in order to publish their score.
+     *
+     * @param {VADScore} vadScore - Mic publishing the score.
+     * @returns {void}
+     */
+    _devicePublishVADScore(vadScore: VADScore) {
+        const context = this._contextMap.get(vadScore.deviceId);
+
+        if (context) {
+            context.scoreArray.push(vadScore);
+        }
     }
 
     /**
@@ -248,17 +279,4 @@ export default class VADReportingService {
         this._destroyed = true;
     }
 
-    /**
-     * Callback method passed to vad emitters in order to publish their score.
-     *
-     * @param {VADScore} vadScore - Mic publishing the score.
-     * @returns {void}
-     */
-    devicePublishVADScore(vadScore: VADScore) {
-        const context = this._contextMap.get(vadScore.deviceId);
-
-        if (context) {
-            context.scoreArray.push(vadScore);
-        }
-    }
 }
