@@ -222,7 +222,7 @@ module.exports = [
             library: [ 'JitsiMeetJS', 'app', 'effects' ],
             libraryTarget: 'window'
         }),
-        performance: getPerformanceHints(1 * 1024 * 1024)
+        performance: getPerformanceHints(2 * 1024 * 1024)
     }),
     Object.assign({}, config, {
         entry: {
