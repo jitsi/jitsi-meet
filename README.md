@@ -45,7 +45,8 @@ see our [guidelines for contributing](CONTRIBUTING.md).
 Jitsi Meet provides a very flexible way of embedding in external applications by using the [Jitsi Meet API](doc/api.md).
 
 ## Security
-WebRTC does not provide a way of conducting multi-party conversations with end-to-end encryption. 
+
+WebRTC does not (yet) provide a way of conducting multi-party conversations with end-to-end encryption. 
 Unless you consistently compare DTLS fingerprints with your peers vocally, the same goes for one-to-one calls.
 As a result, your stream is encrypted on the network but decrypted on the machine that hosts the bridge when using Jitsi Meet.
 
@@ -56,6 +57,14 @@ Jitsi Meet in terms of security.
 
 The [meet.jit.si](https://meet.jit.si) service is maintained by the Jitsi team
 at [8x8](https://8x8.com).
+
+## Security issues
+
+We take security very seriously and develop all Jitsi projects to be secure and safe.
+
+If you find (or simply suspect) a security issue in any of the Jitsi projects, please send us an email to security@jitsi.org.
+
+**We encourage responsible disclosure for the sake of our users, so please reach out before posting in a public space.**
 
 ## Acknowledgements
 
