@@ -1,5 +1,6 @@
 // @flow
-import { createRnnoiseProcessor, RnnoiseProcessor, RNNOISE_SAMPLE_LENGTH } from '../stream-effects/rnnoise';
+
+import { createRnnoiseProcessorPromise, getSampleLength } from '../rnnoise/';
 import JitsiMeetJS from '../base/lib-jitsi-meet';
 import logger from './logger';
 
@@ -25,6 +26,27 @@ export type VADScore = {
 };
 
 /**
+ * Creates a lib-jitsi-meet track associated with a target microphone.
+ *
+ * @param {string} micDeviceId - Target microphone device id.
+ *
+ * @returns {Promise<jitsiLocalTrack>}
+ */
+function getAudioTrack(micDeviceId: string) {
+    return JitsiMeetJS.createLocalTracks({
+        devices: [ 'audio' ],
+        micDeviceId
+    }).then(result => {
+        // Because we specify the deviceId there should be a single stream available.
+        if (result[0] === undefined) {
+            throw new Error('Failed to create jitsi local track.');
+        }
+
+        return result[0];
+    });
+}
+
+/**
  * Connects an audio JitsiLocalTrack to a RnnoiseProcessor using WebAudio ScriptProcessorNode.
  * Once an object is created audio from the local track flows through the ScriptProcessorNode as raw PCM.
  * The PCM is processed by the rnnoise module and a VAD (voice activity detection) score is obtained, the
@@ -33,19 +55,9 @@ export type VADScore = {
  */
 export default class TrackVADEmitter {
     /**
-     * Something.
-     */
-    _micDeviceId: string;
-
-    /**
      * The AudioContext instance.
      */
     _audioContext: AudioContext;
-
-    /**
-     * The JitsiLocalTrack instance.
-     */
-    _jitsiLocalTrack: Object;
 
     /**
      * The MediaStreamAudioSourceNode instance.
@@ -58,29 +70,9 @@ export default class TrackVADEmitter {
     _audioProcessingNode: ScriptProcessorNode;
 
     /**
-     * Function type definition.
-     */
-    _onAudioProcess: (audioEvent: Object) => void;
-
-    /**
-     * Rnnoise adapter that allows us to calculate VAD score for PCM samples
-     */
-    _rnnoiseProcessor: RnnoiseProcessor;
-
-    /**
-     * Sample rate of the ScriptProcessorNode.
-     */
-    _procNodeSampleRate: number;
-
-    /**
      * Buffer to hold residue PCM resulting after a ScriptProcessorNode callback
      */
     _bufferResidue: Float32Array;
-
-    /**
-     * Callback function with which the emitter publishes its periodic VAD scoring
-     */
-    _publishVAD: (score: VADScore) => void;
 
     /**
      * State flag, check if the instance was destroyed
@@ -88,55 +80,66 @@ export default class TrackVADEmitter {
     _destroyed: boolean = false;
 
     /**
+     * The JitsiLocalTrack instance.
+     */
+    _localTrack: Object;
+
+    /**
+     * Device ID of the target microphone.
+     */
+    _micDeviceId: string;
+
+    /**
+     * Callback function that will be called by the ScriptProcessNode with raw PCM data, depending on the set sample
+     * rate.
+     */
+    _onAudioProcess: (audioEvent: Object) => void;
+
+    /**
+     * Sample rate of the ScriptProcessorNode.
+     */
+    _procNodeSampleRate: number;
+
+    /**
+     * Callback function with which the emitter publishes its periodic VAD scoring
+     */
+    _publishVAD: (score: VADScore) => void;
+
+    /**
+     * Rnnoise adapter that allows us to calculate VAD score for PCM samples
+     */
+    _rnnoiseProcessor: Object;
+
+    /**
+     * PCM Sample size expected by the RnnoiseProcessor instance.
+     */
+    _rnnoiseSampleSize: number;
+
+    /**
      * Constructor.
      *
-     * @param {number} procNodeSampleRate - Sample rate of the proc node.
+     * @param {number} procNodeSampleRate - Sample rate of the ScriptProcessorNode. Possible values  256, 512, 1024,
+     *  2048, 4096, 8192, 16384. Passing other values will default to closes neighbor.
      * @param {Function} publishVAD - VAD score callback function.
-     * @param {RnnoiseProcessor} rnnoiseProcessor - Rnnoise adapter that allows us to calculate VAD score
+     * @param {Object} rnnoiseProcessor - Rnnoise adapter that allows us to calculate VAD score
      * for PCM samples.
      * @param {Object} jitsiLocalTrack - JitsiLocalTrack corresponding to micDeviceId.
      */
-    constructor(
-            procNodeSampleRate: number,
-            publishVAD: Function,
-            rnnoiseProcessor: RnnoiseProcessor,
-            jitsiLocalTrack: Object
-    ) {
+    constructor(procNodeSampleRate: number, publishVAD: Function, rnnoiseProcessor: Object, jitsiLocalTrack: Object) {
         this._procNodeSampleRate = procNodeSampleRate;
         this._publishVAD = publishVAD;
         this._rnnoiseProcessor = rnnoiseProcessor;
-        this._jitsiLocalTrack = jitsiLocalTrack;
+        this._localTrack = jitsiLocalTrack;
         this._micDeviceId = jitsiLocalTrack.getDeviceId();
         this._bufferResidue = new Float32Array([]);
         this._audioContext = new AudioContext();
-
+        this._rnnoiseSampleSize = getSampleLength();
         this._onAudioProcess = this._onAudioProcess.bind(this);
 
         this._initializeAudioContext();
         this._connectAudioGraph();
 
         logger.log(`Constructed VAD emitter for device: ${this._micDeviceId}`);
-    }
-
-    /**
-     * Creates a lib-jitsi-meet track associated with a target microphone.
-     *
-     * @param {string} micDeviceId - Target microphone device id.
-     *
-     * @returns {Promise<jitsiLocalTrack>}
-     */
-    static _getAudioStream(micDeviceId: string) {
-        return JitsiMeetJS.createLocalTracks({
-            devices: [ 'audio' ],
-            micDeviceId
-        }).then(result => {
-            // Because we specify the deviceId there should be a single stream available.
-            if (result[0] === undefined) {
-                throw new Error('Failed to create jitsi local track.');
-            }
-
-            return result[0];
-        });
     }
 
     /**
@@ -154,12 +157,12 @@ export default class TrackVADEmitter {
 
         logger.log(`Initializing TrackVADEmitter for device: ${micDeviceId}`);
 
-        return createRnnoiseProcessor()
+        return createRnnoiseProcessorPromise()
             .then(rnnoiseProcessor => {
                 closureRnnoiseProc = rnnoiseProcessor;
             })
             .then(() =>
-                TrackVADEmitter._getAudioStream(micDeviceId)
+                getAudioTrack(micDeviceId)
                     .then(jitsiLocalTrack => {
                         closureLocalTrack = jitsiLocalTrack;
                     })
@@ -188,7 +191,7 @@ export default class TrackVADEmitter {
      * @returns {Promise<void>}
      */
     _initializeAudioContext() {
-        this._audioSource = this._audioContext.createMediaStreamSource(this._jitsiLocalTrack.stream);
+        this._audioSource = this._audioContext.createMediaStreamSource(this._localTrack.stream);
 
         // TODO AudioProcessingNode is deprecated check and replace with alternative.
         // We don't need stereo for determining the VAD score so we create a single chanel processing node.
@@ -213,8 +216,8 @@ export default class TrackVADEmitter {
 
         let i = 0;
 
-        for (; i + RNNOISE_SAMPLE_LENGTH < completeInData.length; i += RNNOISE_SAMPLE_LENGTH) {
-            const pcmSample = completeInData.slice(i, i + RNNOISE_SAMPLE_LENGTH);
+        for (; i + this._rnnoiseSampleSize < completeInData.length; i += this._rnnoiseSampleSize) {
+            const pcmSample = completeInData.slice(i, i + this._rnnoiseSampleSize);
             const vadScore = this._rnnoiseProcessor.calculateAudioFrameVAD(pcmSample);
 
             this._publishVAD({ timestamp: sampleTimestamp,
@@ -241,7 +244,7 @@ export default class TrackVADEmitter {
      * @returns {void}
      */
     _disconnectAudioGraph() {
-        // Even thought we disconnect the processing node some it seems that some callbacks remain queued,
+        // Even thought we disconnect the processing node it seems that some callbacks remain queued,
         // resulting in calls with and uninitialized context.
         // eslint-disable-next-line no-empty-function
         this._audioProcessingNode.onaudioprocess = () => {};
@@ -258,7 +261,7 @@ export default class TrackVADEmitter {
         logger.debug(`Cleaning up resources for device ${this._micDeviceId}!`);
 
         this._disconnectAudioGraph();
-        this._jitsiLocalTrack.stopStream();
+        this._localTrack.stopStream();
         this._rnnoiseProcessor.destroy();
     }
 
@@ -269,9 +272,7 @@ export default class TrackVADEmitter {
      */
     destroy() {
         if (this._destroyed) {
-            logger.warn(
-                `TrackVADEmitter instance for device ${this._micDeviceId} is destroyed please create another one!`
-            );
+            return;
         }
 
         logger.log(`Destroying TrackVADEmitter for mic: ${this._micDeviceId}`);

@@ -5,6 +5,14 @@ import TrackVADEmitter from './TrackVADEmitter';
 import type { VADScore } from './TrackVADEmitter';
 export type { VADScore };
 
+/**
+ * Sample rate used by TrackVADEmitter, this value determines how often the ScriptProcessorNode is going to call the
+ * process audio function and with what sample size.
+ * Basically lower values mean more callbacks with lower processing times bigger values less callbacks with longer
+ * processing times. This value is somewhere in the middle, so we strike a balance between flooding with callbacks
+ * and processing time. Possible values  256, 512, 1024, 2048, 4096, 8192, 16384. Passing other values will default
+ * to closes neighbor.
+ */
 const SCRIPT_NODE_SAMPLE_RATE = 4096;
 
 /**
@@ -41,14 +49,19 @@ export default class VADReportingService {
     _contextMap: Map<string, VADDeviceContext>;
 
     /**
-     * Identifier for the interval publishing stats on the set interval.
+     * State flag, check if the instance was destroyed.
      */
-    _intervalId: ?IntervalID;
+    _destroyed: boolean = false;
 
     /**
      * Delay at which to publish VAD score for monitored devices.
      */
     _intervalDelay: number;
+
+    /**
+     * Identifier for the interval publishing stats on the set interval.
+     */
+    _intervalId: ?IntervalID;
 
     /**
      * Callback function that publishes the VAD score of each monitored device at the specified interval.
@@ -84,8 +97,7 @@ export default class VADReportingService {
         const emitterPromiseArray = [];
 
         // Create a TrackVADEmitter for each provided audioinput device.
-        micDeviceList.forEach((micDevice: Object) => {
-
+        for (const micDevice of micDeviceList) {
             if (micDevice.kind !== 'audioinput') {
                 logger.warn(`Provided device ${micDevice.label} -> ${micDevice.deviceId}, is not audioinput ignoring!`);
 
@@ -107,7 +119,7 @@ export default class VADReportingService {
             });
 
             emitterPromiseArray.push(emitterPromise);
-        });
+        }
 
         // Once all the TrackVADEmitter promises are resolved check if all of them resolved properly if not reject
         // the promise and clear the already created emitters.
@@ -116,7 +128,7 @@ export default class VADReportingService {
             const vadContextArray = [];
             const rejectedEmitterPromiseArray = [];
 
-            outcomeArray.forEach(outcome => {
+            for (const outcome of outcomeArray) {
                 if (outcome.status === 'fulfilled') {
                     vadContextArray.push(outcome.value);
                 } else {
@@ -125,16 +137,12 @@ export default class VADReportingService {
 
                     rejectedEmitterPromiseArray.push(outcome);
                 }
-            });
+            }
 
             // Check if there were any rejected promises and clear the already created ones list.
             if (rejectedEmitterPromiseArray.length > 0) {
-
                 logger.error('Cleaning up remaining VADDeviceContext, due to create fail!');
-
-                vadContextArray.forEach(context => {
-                    context.vadEmitter.destroy();
-                });
+                vadContextArray.forEach(context => context.vadEmitter.destroy());
 
                 // Reject create promise if one emitter failed to instantiate, we might one just ignore it,
                 // leaving it like this for now
@@ -154,7 +162,9 @@ export default class VADReportingService {
      * @returns {void}
      */
     _clearContextMap() {
-        this._contextMap.forEach(vadContext => vadContext.vadEmitter.destroy());
+        for (const vadContext of this._contextMap.values()) {
+            vadContext.vadEmitter.destroy();
+        }
         this._contextMap.clear();
     }
 
@@ -165,9 +175,9 @@ export default class VADReportingService {
      * @returns {void}
      */
     _setVADContextArray(vadContextArray: Array<VADDeviceContext>): void {
-        vadContextArray.forEach((vadContext: Object) => {
+        for (const vadContext of vadContextArray) {
             this._contextMap.set(vadContext.deviceInfo.deviceId, vadContext);
-        });
+        }
     }
 
     /**
@@ -192,7 +202,8 @@ export default class VADReportingService {
         const computeTimestamp = Date.now();
 
         // Go through each device and compute cumulated VAD score.
-        this._contextMap.forEach((vadContext, deviceId) => {
+
+        for (const [ deviceId, vadContext ] of this._contextMap) {
             const nrOfVADScores = vadContext.scoreArray.length;
             let vadSum = 0;
 
@@ -210,7 +221,8 @@ export default class VADReportingService {
                 score: avgVAD,
                 deviceId
             });
-        });
+        }
+
         this._publishScore(vadComputeScoreArray);
     }
 
@@ -222,6 +234,10 @@ export default class VADReportingService {
      * @returns {void}.
      */
     destroy() {
+        if (this._destroyed) {
+            return;
+        }
+
         logger.log('Destroying VADReportingService.');
 
         if (this._intervalId) {
@@ -229,6 +245,7 @@ export default class VADReportingService {
             this._intervalId = null;
         }
         this._clearContextMap();
+        this._destroyed = true;
     }
 
     /**
