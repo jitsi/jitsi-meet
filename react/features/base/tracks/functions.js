@@ -1,5 +1,6 @@
 /* global APP */
 
+import { createScreenshotCaptureEffect } from '../../stream-effects/screenshot-capture';
 import { getBlurEffect } from '../../blur';
 import JitsiMeetJS, { JitsiTrackErrors, browser } from '../lib-jitsi-meet';
 import { MEDIA_TYPE } from '../media';
@@ -101,21 +102,30 @@ export function createLocalTracksF(
     const constraints = options.constraints
         ?? state['features/base/config'].constraints;
 
-    // Do not load blur effect if option for ignoring effects is present.
-    // This is needed when we are creating a video track for presenter mode.
-    const loadEffectsPromise = state['features/blur'].blurEnabled
+    const blurPromise = state['features/blur'].blurEnabled
         ? getBlurEffect()
-            .then(blurEffect => [ blurEffect ])
             .catch(error => {
                 logger.error('Failed to obtain the blur effect instance with error: ', error);
 
-                return Promise.resolve([]);
+                return Promise.resolve();
             })
-        : Promise.resolve([]);
+        : Promise.resolve();
+    const screenshotCapturePromise = state['features/screenshot-capture'].capturesEnabled
+        ? createScreenshotCaptureEffect(state)
+            .catch(error => {
+                logger.error('Failed to obtain the screenshot capture effect effect instance with error: ', error);
+
+                return Promise.resolve();
+            })
+        : Promise.resolve();
+    const loadEffectsPromise = Promise.all([ blurPromise, screenshotCapturePromise ]);
 
     return (
-        loadEffectsPromise.then(effects =>
-            JitsiMeetJS.createLocalTracks(
+        loadEffectsPromise.then(effectsArray => {
+            // Filter any undefined values returned by Promise.resolve().
+            const effects = effectsArray.filter(effect => Boolean(effect));
+
+            return JitsiMeetJS.createLocalTracks(
                 {
                     cameraDeviceId,
                     constraints,
@@ -138,7 +148,8 @@ export function createLocalTracksF(
                 logger.error('Failed to create local tracks', options.devices, err);
 
                 return Promise.reject(err);
-            })));
+            });
+        }));
 }
 
 /**

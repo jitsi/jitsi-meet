@@ -61,6 +61,7 @@
     "lodash": "4.17.13",
     "moment": "2.19.4",
     "moment-duration-format": "2.2.2",
+    "pixelmatch": "5.1.0",
     "react": "16.9",
     "react-dom": "16.9",
     "react-emoji-render": "1.0.0",
