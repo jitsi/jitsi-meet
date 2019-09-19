@@ -122,6 +122,7 @@ import { setSharedVideoStatus } from './react/features/shared-video';
 import { createPresenterEffect } from './react/features/stream-effects/presenter';
 import { endpointMessageReceived } from './react/features/subtitles';
 import { createRnnoiseProcessorPromise } from './react/features/rnnoise';
+import { toggleScreenshotCaptureEffect } from './react/features/screenshot-capture';
 
 const logger = require('jitsi-meet-logger').getLogger(__filename);
 
@@ -1460,6 +1461,8 @@ export default {
             promise = promise.then(() => this.useVideoStream(null));
         }
 
+        APP.store.dispatch(toggleScreenshotCaptureEffect(false));
+
         return promise.then(
             () => {
                 this.videoSwitchInProgress = false;
@@ -1731,6 +1734,7 @@ export default {
             .then(stream => this.useVideoStream(stream))
             .then(() => {
                 this.videoSwitchInProgress = false;
+                APP.store.dispatch(toggleScreenshotCaptureEffect(true));
                 sendAnalytics(createScreenSharingEvent('started'));
                 logger.log('Screen sharing started');
             })
