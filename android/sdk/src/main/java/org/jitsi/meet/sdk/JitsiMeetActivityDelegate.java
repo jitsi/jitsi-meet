@@ -122,7 +122,7 @@ public class JitsiMeetActivityDelegate {
             // https://github.com/facebook/react-native/blob/df4e67fe75d781d1eb264128cadf079989542755/ReactAndroid/src/main/java/com/facebook/react/ReactInstanceManager.java#L512
             // Why this happens is a mystery wrapped in an enigma.
             ReactContext reactContext = reactInstanceManager.getCurrentReactContext();
-            if (activity == reactContext.getCurrentActivity()) {
+            if (reactContext != null && activity == reactContext.getCurrentActivity()) {
                 reactInstanceManager.onHostPause(activity);
             }
         }
