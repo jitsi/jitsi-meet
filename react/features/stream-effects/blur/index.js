@@ -1,10 +1,8 @@
 // @flow
 
 import { load } from '@tensorflow-models/body-pix';
-import * as TF from '@tensorflow/tfjs';
+import * as tfc from '@tensorflow/tfjs-core';
 import JitsiStreamBlurEffect from './JitsiStreamBlurEffect';
-import { getLogger } from 'jitsi-meet-logger';
-const logger = getLogger(__filename);
 
 /**
  * This promise represents the loading of the BodyPix model that is used
@@ -12,6 +10,12 @@ const logger = getLogger(__filename);
  * improved performance on a larger range of CPUs.
  */
 const bpModelPromise = load(0.25);
+
+/**
+ * Configure the Tensor Flow model to use the webgl backend which is the
+ * most powerful backend for the browser.
+ */
+const webGlBackend = 'webgl';
 
 /**
  * Creates a new instance of JitsiStreamBlurEffect.
@@ -23,14 +27,12 @@ export function createBlurEffect() {
         return Promise.reject(new Error('JitsiStreamBlurEffect not supported!'));
     }
 
-    // change the TF backend to use WebGL
-    TF.setBackend('webgl').then(() => {
-        logger.info('TensorFlow backend changed to use the WebGL');
-    })
-    .catch(error => {
-        logger.info('TensorFlow backend could not be changed to use WebGL, performance may suffer: ',
-            error);
-    });
+    tfc.setBackend(webGlBackend, true);
+    if (tfc.getBackend() !== webGlBackend) {
+        console.debug('TensorFlow backend could not be changed to use WebGL');
+
+        return Promise.reject(new Error('JitsiStreamBlurEffect not supported!'));
+    }
 
     return bpModelPromise.then(bpmodel => new JitsiStreamBlurEffect(bpmodel));
 }
