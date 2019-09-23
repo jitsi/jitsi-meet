@@ -27,11 +27,17 @@ export function createBlurEffect() {
         return Promise.reject(new Error('JitsiStreamBlurEffect not supported!'));
     }
 
-    tfc.setBackend(webGlBackend, true);
     if (tfc.getBackend() !== webGlBackend) {
-        console.debug('TensorFlow backend could not be changed to use WebGL');
+        tfc.setBackend(webGlBackend).then(() => {
+            console.info('TensorFlow backend changed to use WebGL');
 
-        return Promise.reject(new Error('JitsiStreamBlurEffect not supported!'));
+            return bpModelPromise.then(bpmodel => new JitsiStreamBlurEffect(bpmodel));
+        })
+        .catch(err => {
+            console.error('TensorFlow backend could not be changed to use WebGL: ', err);
+
+            return Promise.reject(new Error('JitsiStreamBlurEffect not supported!'));
+        });
     }
 
     return bpModelPromise.then(bpmodel => new JitsiStreamBlurEffect(bpmodel));
