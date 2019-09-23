@@ -200,7 +200,11 @@ const VideoLayout = {
         const id = stream.getParticipantId();
         const remoteVideo = remoteVideos[id];
 
+        logger.debug(`Received a new ${stream.getType()} stream for ${id}`);
+
         if (!remoteVideo) {
+            logger.debug('No remote video element to add stream');
+
             return;
         }
 

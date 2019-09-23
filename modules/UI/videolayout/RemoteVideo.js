@@ -486,6 +486,8 @@ RemoteVideo.prototype.hasVideoStarted = function() {
 
 RemoteVideo.prototype.addRemoteStreamElement = function(stream) {
     if (!this.container) {
+        logger.debug('Not attaching remote stream due to no container');
+
         return;
     }
 
@@ -498,6 +500,8 @@ RemoteVideo.prototype.addRemoteStreamElement = function(stream) {
     }
 
     if (!stream.getOriginalStream()) {
+        logger.debug('Remote video stream has no original stream');
+
         return;
     }
 

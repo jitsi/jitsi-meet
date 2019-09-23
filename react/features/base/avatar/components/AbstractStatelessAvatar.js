@@ -42,6 +42,6 @@ export default class AbstractStatelessAvatar<P: Props> extends PureComponent<P> 
      * @returns {boolean}
      */
     _isIcon(iconProp: ?string | ?Object): boolean {
-        return Boolean(iconProp) && typeof iconProp === 'object';
+        return Boolean(iconProp) && (typeof iconProp === 'object' || typeof iconProp === 'function');
     }
 }

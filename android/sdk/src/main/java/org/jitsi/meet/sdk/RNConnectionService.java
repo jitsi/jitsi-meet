@@ -144,9 +144,10 @@ class RNConnectionService
      * @param callUUID - the call's UUID.
      */
     @ReactMethod
-    public void reportConnectedOutgoingCall(String callUUID) {
+    public void reportConnectedOutgoingCall(String callUUID, Promise promise) {
         JitsiMeetLogger.d(TAG + " reportConnectedOutgoingCall " + callUUID);
         ConnectionService.setConnectionActive(callUUID);
+        promise.resolve(null);
     }
 
     @Override
