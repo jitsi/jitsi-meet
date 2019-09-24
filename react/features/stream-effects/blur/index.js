@@ -1,7 +1,7 @@
 // @flow
 
 import { load } from '@tensorflow-models/body-pix';
-
+import * as tfc from '@tensorflow/tfjs-core';
 import JitsiStreamBlurEffect from './JitsiStreamBlurEffect';
 
 /**
@@ -10,6 +10,12 @@ import JitsiStreamBlurEffect from './JitsiStreamBlurEffect';
  * improved performance on a larger range of CPUs.
  */
 const bpModelPromise = load(0.25);
+
+/**
+ * Configure the Tensor Flow model to use the webgl backend which is the
+ * most powerful backend for the browser.
+ */
+const webGlBackend = 'webgl';
 
 /**
  * Creates a new instance of JitsiStreamBlurEffect.
@@ -21,5 +27,18 @@ export function createBlurEffect() {
         return Promise.reject(new Error('JitsiStreamBlurEffect not supported!'));
     }
 
-    return bpModelPromise.then(bpmodel => new JitsiStreamBlurEffect(bpmodel));
+    const setBackendPromise = new Promise((resolve, reject) => {
+        if (tfc.getBackend() === webGlBackend) {
+            resolve();
+
+            return;
+        }
+
+        return tfc.setBackend(webGlBackend)
+            .then(resolve, reject);
+    });
+
+    return setBackendPromise
+        .then(() => bpModelPromise)
+        .then(bpmodel => new JitsiStreamBlurEffect(bpmodel));
 }
