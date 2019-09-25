@@ -553,6 +553,11 @@
         "speakerStats": "Speaker Stats",
         "speakerTime": "Speaker Time"
     },
+    "spot": {
+        "controllerViewTitle": "Spot",
+        "defaultDeviceName": "Unknown Spot device",
+        "devicesListViewTitle": "Nearby devices"
+    },
     "startupoverlay": {
         "policyText": " ",
         "title": "{{app}} needs to use your microphone and camera."

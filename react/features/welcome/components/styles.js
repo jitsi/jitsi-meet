@@ -147,6 +147,8 @@ export default {
      * A view that contains the field and hint box.
      */
     joinControls: {
+        alignItems: 'center',
+        flexDirection: 'row',
         padding: BoxModel.padding
     },
 
@@ -250,6 +252,10 @@ export default {
         fontWeight: 'bold'
     },
 
+    spotCastButton: {
+        marginLeft: BoxModel.padding
+    },
+
     /**
      * The container of the label of the audio-video switch.
      */
@@ -266,6 +272,7 @@ export default {
         borderRadius: 4,
         borderWidth: 1,
         color: TEXT_COLOR,
+        flex: 1,
         fontSize: 23,
         height: 50,
         padding: 4,

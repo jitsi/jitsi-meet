@@ -1,3 +1,4 @@
+import { SpotStreamButton } from 'jitsi-spot-sdk';
 import React from 'react';
 import {
     Animated,
@@ -24,6 +25,7 @@ import {
 } from '../../base/tracks';
 import { DialInSummary } from '../../invite';
 import { SettingsView } from '../../settings';
+import { toggleSpotDevicesList, SpotControllerView, SpotDevicesListView } from '../../spot';
 
 import { setSideBarVisible } from '../actions';
 
@@ -62,6 +64,7 @@ class WelcomePage extends AbstractWelcomePage {
         // Specially bind functions to avoid function definition on render.
         this._onFieldBlur = this._onFieldFocusChange.bind(this, false);
         this._onFieldFocus = this._onFieldFocusChange.bind(this, true);
+        this._onPressStream = this._onPressStream.bind(this);
     }
 
     /**
@@ -157,6 +160,16 @@ class WelcomePage extends AbstractWelcomePage {
                     && this.setState({
                         _fieldFocused: false
                     }));
+    }
+
+    /**
+     * Opens the spot (modal-like) device selector screen to pick a spot instance
+     * to connect to.
+     *
+     * @returns {void}
+     */
+    _onPressStream() {
+        this.props.dispatch(toggleSpotDevicesList(true));
     }
 
     /**
@@ -289,10 +302,15 @@ class WelcomePage extends AbstractWelcomePage {
                             {
                                 this._renderHintBox()
                             }
+                            <SpotStreamButton
+                                onPress = { this._onPressStream }
+                                style = { styles.spotCastButton } />
                         </View>
                     </SafeAreaView>
                     <WelcomePageLists disabled = { this.state._fieldFocused } />
                     <SettingsView />
+                    <SpotDevicesListView />
+                    <SpotControllerView />
                     <DialInSummary />
                 </View>
                 <WelcomePageSideBar />

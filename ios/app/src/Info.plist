@@ -101,5 +101,17 @@
 	<false/>
 	<key>firebase_crashlytics_collection_enabled</key>
 	<string>false</string>
+	<key>NSBluetoothAlwaysUsageDescription</key>
+	<string>Allows Jitsi Meet to detect Spot TVs and Spot TV equipped meeting rooms nearby.</string>
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+	<string>Allows Jitsi Meet to detect Spot TVs and Spot TV equipped meeting rooms nearby.</string>
+	<key>NSBluetoothPeripheralUsageDescription</key>
+	<string>Allows Jitsi Meet to detect Spot TVs and Spot TV equipped meeting rooms nearby.</string>
+	<key>NSLocationAlwaysUsageDescription</key>
+	<string>Allows Jitsi Meet to detect Spot TVs and Spot TV equipped meeting rooms nearby.</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>Allows Jitsi Meet to detect Spot TVs and Spot TV equipped meeting rooms nearby.</string>
+	<key>NSLocationUsageDescription</key>
+	<string>Allows Jitsi Meet to detect Spot TVs and Spot TV equipped meeting rooms nearby.</string>
 </dict>
 </plist>
