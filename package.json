@@ -80,7 +80,7 @@
     "react-native-svg-transformer": "0.13.0",
     "react-native-swipeout": "2.3.6",
     "react-native-watch-connectivity": "0.2.0",
-    "react-native-webrtc": "github:react-native-webrtc/react-native-webrtc#b1275ccf1e0e083d2a5c238e7d21c37657766463",
+    "react-native-webrtc": "github:react-native-webrtc/react-native-webrtc#1ce96e1c1fcfdfda2ab1907763c485c580e04963",
     "react-native-webview": "5.8.1",
     "react-redux": "7.1.0",
     "react-textarea-autosize": "7.1.0",
