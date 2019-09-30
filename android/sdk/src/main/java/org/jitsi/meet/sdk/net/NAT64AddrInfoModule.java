@@ -43,7 +43,7 @@ public class NAT64AddrInfoModule
      * The host for which the module wil try to resolve both IPv4 and IPv6
      * addresses in order to figure out the NAT64 prefix.
      */
-    private final static String HOST = "nat64.jitsi.net";
+    private final static String HOST = "ipv4only.arpa";
 
     /**
      * How long is the {@link NAT64AddrInfo} instance valid.
