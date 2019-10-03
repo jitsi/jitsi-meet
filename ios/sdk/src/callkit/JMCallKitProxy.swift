@@ -53,7 +53,7 @@ import Foundation
     @objc public static var enabled: Bool = true {
         didSet {
             provider.invalidate()
-            if enabled {
+            if enabled && provider.isSupported {
                 guard isProviderConfigured() else  { return; }
                 provider = CXProvider(configuration: providerConfiguration!)
                 provider.setDelegate(emitter, queue: nil)
