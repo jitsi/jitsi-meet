@@ -52,8 +52,9 @@ import Foundation
     /// Defaults to enabled, set to false when you don't want to use CallKit.
     @objc public static var enabled: Bool = true {
         didSet {
+            let regionCode = Locale.current.regionCode as String?
             provider.invalidate()
-            if enabled && provider.isSupported {
+            if enabled && !regionCode!.contains("CN") && !regionCode!.contains("CHN") {
                 guard isProviderConfigured() else  { return; }
                 provider = CXProvider(configuration: providerConfiguration!)
                 provider.setDelegate(emitter, queue: nil)
