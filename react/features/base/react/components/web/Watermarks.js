@@ -182,7 +182,7 @@ class Watermarks extends Component<Props, State> {
             if (_logoLink) {
                 reactElement = (
                     <a
-                        href = { _logoLink }
+                        href = { "http://jane.app" }
                         target = '_new'>
                         { reactElement }
                     </a>

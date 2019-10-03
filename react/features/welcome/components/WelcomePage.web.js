@@ -48,6 +48,7 @@ class WelcomePage extends AbstractWelcomePage {
      * instance is to be initialized.
      */
     constructor(props) {
+        console.log()
         super(props);
 
         this.state = {
@@ -174,26 +175,20 @@ class WelcomePage extends AbstractWelcomePage {
                 </div>
                 <div className = 'header'>
                     <div className = 'welcome-page-settings'>
-                        <SettingsButton
-                            defaultTab = { SETTINGS_TABS.CALENDAR } />
-                        { showAdditionalToolbarContent
-                            ? <div
-                                className = 'settings-toolbar-content'
-                                ref = { this._setAdditionalToolbarContentRef } />
-                            : null
-                        }
+                        {/* <SettingsButton
+                            defaultTab = { SETTINGS_TABS.CALENDAR } /> */}
                     </div>
-                    <div className = 'header-image' />
+                    {/* <div className = 'header-image' /> */}
                     <div className = 'header-text'>
                         <h1 className = 'header-text-title'>
-                            { t('welcomepage.title') }
+                            Welcome to Jane Video Chat
                         </h1>
-                        <p className = 'header-text-description'>
+                        {/* <p className = 'header-text-description'>
                             { t('welcomepage.appDescription',
                                 { app: APP_NAME }) }
-                        </p>
+                        </p> */}
                     </div>
-                    <div id = 'enter_room'>
+                    {/* <div id = 'enter_room'>
                         <div className = 'enter-room-input-container'>
                             <div className = 'enter-room-title'>
                                 { t('welcomepage.enterRoomTitle') }
@@ -235,6 +230,7 @@ class WelcomePage extends AbstractWelcomePage {
                         </div>
                     ) }
                     { this._renderTabs() }
+                    </div> */}
                 </div>
                 { showAdditionalContent
                     ? <div
@@ -388,6 +384,7 @@ class WelcomePage extends AbstractWelcomePage {
      * @returns {boolean}
      */
     _shouldShowAdditionalContent() {
+        return false;
         return interfaceConfig.DISPLAY_WELCOME_PAGE_CONTENT
             && this._additionalContentTemplate
             && this._additionalContentTemplate.content
