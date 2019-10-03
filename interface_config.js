@@ -14,10 +14,10 @@ var interfaceConfig = {
     INITIAL_TOOLBAR_TIMEOUT: 20000,
     TOOLBAR_TIMEOUT: 4000,
     TOOLBAR_ALWAYS_VISIBLE: false,
-    DEFAULT_REMOTE_DISPLAY_NAME: 'Fellow Jitster',
-    DEFAULT_LOCAL_DISPLAY_NAME: 'me',
+    DEFAULT_REMOTE_DISPLAY_NAME: 'Jane VideoChat Participant',
+    DEFAULT_LOCAL_DISPLAY_NAME: 'Me',
     SHOW_JITSI_WATERMARK: true,
-    JITSI_WATERMARK_LINK: 'https://jitsi.org',
+    JITSI_WATERMARK_LINK: 'http://jane.app',
 
     // if watermark is disabled by default, it can be shown only for guests
     SHOW_WATERMARK_FOR_GUESTS: true,
@@ -28,10 +28,10 @@ var interfaceConfig = {
     GENERATE_ROOMNAMES_ON_WELCOME_PAGE: true,
     DISPLAY_WELCOME_PAGE_CONTENT: true,
     DISPLAY_WELCOME_PAGE_TOOLBAR_ADDITIONAL_CONTENT: false,
-    APP_NAME: 'Jitsi Meet',
-    NATIVE_APP_NAME: 'Jitsi Meet',
-    PROVIDER_NAME: 'Jitsi',
-    LANG_DETECTION: true, // Allow i18n to detect the system language
+    APP_NAME: 'Jane Video Chat',
+    NATIVE_APP_NAME: 'Jane Video Chat',
+    PROVIDER_NAME: 'Jane',
+    LANG_DETECTION: false, // Allow i18n to detect the system language
     INVITATION_POWERED_BY: true,
 
     /**
@@ -128,7 +128,7 @@ var interfaceConfig = {
      * If indicated some of the error dialogs may point to the support URL for
      * help.
      */
-    SUPPORT_URL: 'https://community.jitsi.org/',
+    SUPPORT_URL: 'https://github.com/jitsi/jitsi-meet/issues/new',
 
     /**
      * Whether the connection indicator icon should hide itself based on
