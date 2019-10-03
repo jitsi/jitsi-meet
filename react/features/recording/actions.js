@@ -130,7 +130,7 @@ export function showStoppedRecordingNotification(streamType: string, participant
         titleKey: 'dialog.recording'
     };
 
-    return showNotification(dialogProps, NOTIFICATION_TIMEOUT * 2);
+    return showNotification(dialogProps, NOTIFICATION_TIMEOUT);
 }
 
 /**
@@ -156,7 +156,7 @@ export function showStartedRecordingNotification(streamType: string, participant
         titleKey: 'dialog.recording'
     };
 
-    return showNotification(dialogProps, NOTIFICATION_TIMEOUT * 2);
+    return showNotification(dialogProps, NOTIFICATION_TIMEOUT);
 }
 
 /**
