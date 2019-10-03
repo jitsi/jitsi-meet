@@ -479,14 +479,18 @@ export default {
             audioOnlyError,
             screenSharingError,
             videoOnlyError;
-        const initialDevices = [];
-        let requestedAudio = false;
+        const initialDevices = [ 'audio' ];
+        const requestedAudio = true;
         let requestedVideo = false;
 
-        if (!options.startWithAudioMuted) {
-            initialDevices.push('audio');
-            requestedAudio = true;
+        // Always get a handle on the audio input device so that we have statistics even if the user joins the
+        // conference muted. Previous implementation would only acquire the handle when the user first unmuted,
+        // which would results in statistics ( such as "No audio input" or "Are you trying to speak?") being available
+        // only after that point.
+        if (options.startWithAudioMuted) {
+            this.muteAudio(true, true);
         }
+
         if (!options.startWithVideoMuted
                 && !options.startAudioOnly
                 && !options.startScreenSharing) {

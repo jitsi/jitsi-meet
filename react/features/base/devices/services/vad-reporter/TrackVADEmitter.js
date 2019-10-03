@@ -1,10 +1,10 @@
 // @flow
 
-import { createRnnoiseProcessorPromise, getSampleLength } from '../rnnoise/';
+import { createRnnoiseProcessorPromise, getSampleLength } from '../../../../rnnoise';
 import EventEmitter from 'events';
-import JitsiMeetJS from '../base/lib-jitsi-meet';
-import logger from './logger';
-import { VAD_SCORE_PUBLISHED } from './VADEvents';
+import JitsiMeetJS from '../../../lib-jitsi-meet';
+import logger from '../../logger';
+import { VAD_SCORE_PUBLISHED } from './Events';
 
 /**
  * The structure used by TrackVADEmitter to relay a score
