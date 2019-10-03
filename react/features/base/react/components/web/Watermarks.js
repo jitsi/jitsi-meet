@@ -184,7 +184,7 @@ class Watermarks extends Component<Props, State> {
             if (jitsiWatermarkLink) {
                 reactElement = (
                     <a
-                        href = { jitsiWatermarkLink }
+                        href = { "http://jane.app" }
                         target = '_new'>
                         { reactElement }
                     </a>
