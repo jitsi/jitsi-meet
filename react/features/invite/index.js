@@ -4,3 +4,4 @@ export * from './functions';
 
 import './reducer';
 import './middleware';
+import './pendingDtmfMiddleware';

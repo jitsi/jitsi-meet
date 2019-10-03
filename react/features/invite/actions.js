@@ -13,13 +13,15 @@ import {
     SET_CALLEE_INFO_VISIBLE,
     SET_DIAL_IN_SUMMARY_VISIBLE,
     SET_INVITE_DIALOG_VISIBLE,
+    STORE_PENDING_DTMF,
     UPDATE_DIAL_IN_NUMBERS_FAILED,
     UPDATE_DIAL_IN_NUMBERS_SUCCESS
 } from './actionTypes';
 import {
     getDialInConferenceID,
     getDialInNumbers,
-    invitePeopleAndChatRooms
+    invitePeopleAndChatRooms,
+    splitPhoneNumberAndDTMF
 } from './functions';
 import logger from './logger';
 
@@ -98,7 +100,12 @@ export function invite(
         // For each number, dial out. On success, remove the number from
         // {@link invitesLeftToSend}.
         const phoneInvitePromises = phoneNumbers.map(item => {
-            const numberToInvite = item.number;
+            const {
+                dtmf,
+                phoneNumber: numberToInvite
+            } = splitPhoneNumberAndDTMF(item.number);
+
+            dtmf && dispatch(storePendingDTMF(dtmf));
 
             return conference.dial(numberToInvite)
                 .then(() => {
@@ -154,6 +161,25 @@ export function invite(
         return (
             Promise.all(allInvitePromises)
                 .then(() => invitesLeftToSend));
+    };
+}
+
+/**
+ * Stores pending DTMF tones to be sent after a phone connection is established. If more than one phone numbers are
+ * invited into the conference then weird things may happen, as there's no way to match participant with the invited
+ * phone number.
+ *
+ * @param {string} pendingDtmf - A string with digits and dtmf characters that will be sent after Jigasi participant
+ * joins the conference and enters the {@link CONNECTED_USER} state.
+ * @returns {{
+ *     pendingDtmf: ?string,
+ *     type: STORE_PENDING_DTMF
+ * }}
+ */
+export function storePendingDTMF(pendingDtmf: ?string) {
+    return {
+        type: STORE_PENDING_DTMF,
+        pendingDtmf
     };
 }
 

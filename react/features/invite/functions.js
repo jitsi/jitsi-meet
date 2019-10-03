@@ -340,13 +340,46 @@ function isMaybeAPhoneNumber(text: string): boolean {
  * @returns {RegExp}
  */
 function isPhoneNumberRegex(): RegExp {
-    let regexString = '^[0-9+()-\\s]*$';
+    // The ',' '*' '#' characters are allowed to be able to specify pending DTMF tones to be dialed just after the phone
+    // connection is established.
+    let regexString = '^[0-9+()-\\s,*#]*$';
 
     if (typeof interfaceConfig !== 'undefined') {
         regexString = interfaceConfig.PHONE_NUMBER_REGEX || regexString;
     }
 
     return new RegExp(regexString);
+}
+
+/**
+ * Extracts the DTMF part out of the phone number text. The DTMF is to be specified after a comma and must contain
+ * only DTMF tone characters for example: "+12223334444,23,4*9#".
+ *
+ * @param {string} phoneNumberText - See the text above.
+ * @returns {{
+ *      phoneNumber: string,
+ *      dtmf: ?string
+ * }}
+ */
+export function splitPhoneNumberAndDTMF(phoneNumberText: string) {
+    const firstCommaIdx = phoneNumberText.indexOf(',');
+    let dtmf, phoneNumber = phoneNumberText;
+
+    if (firstCommaIdx !== -1) {
+        dtmf = phoneNumberText.substr(firstCommaIdx);
+
+        phoneNumber = phoneNumberText.substr(0, firstCommaIdx);
+
+        // There's no point in playing just commas, so clear the dtmf var
+        if (!dtmf.replace(',', '').length) {
+            dtmf = undefined;
+        }
+    }
+
+    return {
+        phoneNumber,
+        dtmf
+    };
 }
 
 /**

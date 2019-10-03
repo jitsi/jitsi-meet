@@ -8,6 +8,7 @@ import {
     SET_CALLEE_INFO_VISIBLE,
     SET_DIAL_IN_SUMMARY_VISIBLE,
     SET_INVITE_DIALOG_VISIBLE,
+    STORE_PENDING_DTMF,
     UPDATE_DIAL_IN_NUMBERS_FAILED,
     UPDATE_DIAL_IN_NUMBERS_SUCCESS
 } from './actionTypes';
@@ -23,6 +24,13 @@ const DEFAULT_STATE = {
     calleeInfoVisible: false,
     inviteDialogVisible: false,
     numbersEnabled: true,
+
+    /**
+     * Pending DTMF tones. See {@link storePendingDTMF} for more info.
+     *
+     * @type {string|undefined}
+     */
+    pendingDtmf: undefined,
     pendingInviteRequests: []
 };
 
@@ -60,6 +68,12 @@ ReducerRegistry.register('features/invite', (state = DEFAULT_STATE, action) => {
         return {
             ...state,
             inviteDialogVisible: action.visible
+        };
+
+    case STORE_PENDING_DTMF:
+        return {
+            ...state,
+            pendingDtmf: action.pendingDtmf
         };
 
     case UPDATE_DIAL_IN_NUMBERS_FAILED:

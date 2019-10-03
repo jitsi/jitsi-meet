@@ -62,6 +62,15 @@ export const SET_DIAL_IN_SUMMARY_VISIBLE = 'SET_DIAL_IN_SUMMARY_VISIBLE';
 export const SET_INVITE_DIALOG_VISIBLE = 'SET_INVITE_DIALOG_VISIBLE';
 
 /**
+ * The type of Redux action which stores pending dtmf. Check out the {@link storePendingDTMF} action for more details.
+ * {
+ *     type: STORE_PENDING_DTMF,
+ *     pendingDtmf: ?string
+ * }
+ */
+export const STORE_PENDING_DTMF = 'STORE_PENDING_DTMF';
+
+/**
  * The type of the action which signals an error occurred while requesting dial-
  * in numbers.
  *
