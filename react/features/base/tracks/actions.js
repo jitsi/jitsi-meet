@@ -14,6 +14,7 @@ import {
 import { getLocalParticipant } from '../participants';
 
 import {
+    SET_NO_SRC_DATA_NOTI_UID,
     TOGGLE_SCREENSHARING,
     TRACK_ADDED,
     TRACK_CREATE_CANCELED,
@@ -342,6 +343,9 @@ export function trackAdded(track) {
         let isReceivingData, noDataFromSourceNotificationInfo, participantId;
 
         if (local) {
+            // Reset the no data from src notification state when we change the track, as it's context is set
+            // on a per device basis.
+            dispatch(setNoSrcDataNotificationUid());
             const participant = getLocalParticipant(getState);
 
             if (participant) {
@@ -358,6 +362,12 @@ export function trackAdded(track) {
                     });
 
                     dispatch(notificationAction);
+
+                    // Set the notification ID so that other parts of the application know that this was
+                    // displayed in the context of the current device.
+                    // I.E. The no-audio-signal notification shouldn't be displayed if this was already shown.
+                    dispatch(setNoSrcDataNotificationUid(notificationAction.uid));
+
                     noDataFromSourceNotificationInfo = { uid: notificationAction.uid };
                 } else {
                     const timeout = setTimeout(() => dispatch(showNoDataFromSourceVideoError(track)), 5000);
@@ -636,5 +646,22 @@ function _trackCreateCanceled(mediaType) {
     return {
         type: TRACK_CREATE_CANCELED,
         trackType: mediaType
+    };
+}
+
+/**
+ * Sets UID of the displayed no data from source notification. Used to track
+ * if the notification was previously displayed in this context.
+ *
+ * @param {number} uid - Notification UID.
+ * @returns {{
+    *     type: SET_NO_AUDIO_SIGNAL_UID,
+    *     uid: number
+    * }}
+    */
+export function setNoSrcDataNotificationUid(uid) {
+    return {
+        type: SET_NO_SRC_DATA_NOTI_UID,
+        uid
     };
 }

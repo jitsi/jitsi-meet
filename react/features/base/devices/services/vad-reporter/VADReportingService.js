@@ -1,9 +1,9 @@
 // @flow
 
 import EventEmitter from 'events';
-import logger from './logger';
+import logger from '../../logger';
 import TrackVADEmitter from './TrackVADEmitter';
-import { VAD_SCORE_PUBLISHED, VAD_REPORT_PUBLISHED } from './VADEvents';
+import { VAD_SCORE_PUBLISHED, VAD_REPORT_PUBLISHED } from './Events';
 import type { VADScore } from './TrackVADEmitter';
 export type { VADScore };
 

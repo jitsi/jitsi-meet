@@ -1,7 +1,8 @@
 import { PARTICIPANT_ID_CHANGED } from '../participants';
-import { ReducerRegistry } from '../redux';
+import { ReducerRegistry, set } from '../redux';
 
 import {
+    SET_NO_SRC_DATA_NOTI_UID,
     TRACK_ADDED,
     TRACK_CREATE_CANCELED,
     TRACK_CREATE_ERROR,
@@ -133,3 +134,17 @@ ReducerRegistry.register('features/base/tracks', (state = [], action) => {
         return state;
     }
 });
+
+/**
+ * Listen for actions that mutate the no-src-data state, like the current notification id
+ */
+ReducerRegistry.register('features/base/no-src-data', (state = {}, action) => {
+    switch (action.type) {
+    case SET_NO_SRC_DATA_NOTI_UID:
+        return set(state, 'noSrcDataNotiUid', action.uid);
+
+    default:
+        return state;
+    }
+});
+

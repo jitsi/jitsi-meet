@@ -9,6 +9,7 @@ import '../../chat';
 import '../../external-api';
 import '../../power-monitor';
 import '../../room-lock';
+import '../../no-audio-signal';
 import '../../talk-while-muted';
 import '../../video-layout';
 
