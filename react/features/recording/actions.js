@@ -113,16 +113,46 @@ export function showRecordingError(props: Object) {
  *
  * @param {string} streamType - The type of the stream ({@code file} or
  * {@code stream}).
+ * @param {string?} participantName - The participant name stopping the recording.
  * @returns {showNotification}
  */
-export function showStoppedRecordingNotification(streamType: string) {
+export function showStoppedRecordingNotification(streamType: string, participantName?: string) {
     const isLiveStreaming
         = streamType === JitsiMeetJS.constants.recording.mode.STREAM;
+    const descriptionArguments = { name: participantName };
     const dialogProps = isLiveStreaming ? {
-        descriptionKey: 'liveStreaming.off',
+        descriptionKey: participantName ? 'liveStreaming.offBy' : 'liveStreaming.off',
+        descriptionArguments,
         titleKey: 'dialog.liveStreaming'
     } : {
-        descriptionKey: 'recording.off',
+        descriptionKey: participantName ? 'recording.offBy' : 'recording.off',
+        descriptionArguments,
+        titleKey: 'dialog.recording'
+    };
+
+    return showNotification(dialogProps, NOTIFICATION_TIMEOUT);
+}
+
+/**
+ * Signals that a started recording notification should be shown on the
+ * screen for a given period.
+ *
+ * @param {string} streamType - The type of the stream ({@code file} or
+ * {@code stream}).
+ * @param {string} participantName - The participant name that started the recording.
+ * @returns {showNotification}
+ */
+export function showStartedRecordingNotification(streamType: string, participantName: string) {
+    const isLiveStreaming
+        = streamType === JitsiMeetJS.constants.recording.mode.STREAM;
+    const descriptionArguments = { name: participantName };
+    const dialogProps = isLiveStreaming ? {
+        descriptionKey: 'liveStreaming.onBy',
+        descriptionArguments,
+        titleKey: 'dialog.liveStreaming'
+    } : {
+        descriptionKey: 'recording.onBy',
+        descriptionArguments,
         titleKey: 'dialog.recording'
     };
 
@@ -151,9 +181,11 @@ export function updateRecordingSessionData(session: Object) {
         sessionData: {
             error: session.getError(),
             id: session.getID(),
+            initiator: session.getInitiator(),
             liveStreamViewURL: session.getLiveStreamViewURL(),
             mode: session.getMode(),
             status,
+            terminator: session.getTerminator(),
             timestamp
         }
     };
