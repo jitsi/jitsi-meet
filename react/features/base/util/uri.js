@@ -97,6 +97,47 @@ function _fixURIStringScheme(uri: string) {
 }
 
 /**
+ * Converts a room name to a backend-safe format. Properly lowercased and url encoded.
+ *
+ * @param {string?} room - The room name to convert.
+ * @returns {string?}
+ */
+export function getBackendSafeRoomName(room: ?string): ?string {
+    if (!room) {
+        return room;
+    }
+
+    /* eslint-disable no-param-reassign */
+    try {
+        // We do not know if we get an already encoded string at this point
+        // as different platforms do it differently, but we need a decoded one
+        // for sure. However since decoding a non-encoded string is a noop, we're safe
+        // doing it here.
+        room = decodeURIComponent(room);
+    } catch (e) {
+        // This can happen though if we get an unencoded string and it contains
+        // some characters that look like an encoded entity, but it's not.
+        // But in this case we're fine goin on...
+    }
+
+    // Normalize the character set
+    room = room.normalize('NFKC');
+
+    // Only decoded and normalized strings can be lowercased properly.
+    room = room.toLowerCase();
+
+    // But we still need to (re)encode it.
+    room = encodeURIComponent(room);
+    /* eslint-enable no-param-reassign */
+
+    // Unfortunately we still need to lowercase it, because encoding a string will
+    // add some uppercase characters, but some backend services
+    // expect it to be full lowercase. However lowercasing an encoded string
+    // doesn't change the string value.
+    return room.toLowerCase();
+}
+
+/**
  * Gets the (Web application) context root defined by a specific location (URI).
  *
  * @param {Object} location - The location (URI) which defines the (Web
