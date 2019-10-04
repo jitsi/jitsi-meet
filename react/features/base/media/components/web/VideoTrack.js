@@ -9,6 +9,8 @@ import type { Props as AbstractVideoTrackProps } from '../AbstractVideoTrack';
 
 import Video from './Video';
 
+declare var config: Object;
+
 /**
  * The type of the React {@code Component} props of {@link VideoTrack}.
  */
@@ -53,7 +55,7 @@ class VideoTrack extends AbstractVideoTrack<Props> {
     render() {
         return (
             <Video
-                autoPlay = { true }
+                autoPlay = { !config.testing.noAutoPlayVideo }
                 className = { this.props.className }
                 id = { this.props.id }
                 onVideoPlaying = { this._onVideoPlaying }

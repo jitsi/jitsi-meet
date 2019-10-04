@@ -2,6 +2,8 @@
 
 import React, { Component } from 'react';
 
+declare var config: Object;
+
 /**
  * The type of the React {@code Component} props of {@link Video}.
  */
@@ -131,7 +133,7 @@ class Video extends Component<Props> {
     render() {
         return (
             <video
-                autoPlay = { true }
+                autoPlay = { !config.testing.noAutoPlayVideo }
                 className = { this.props.className }
                 id = { this.props.id }
                 ref = { this._setVideoElement } />

@@ -60,6 +60,10 @@ var config = {
 
         // Enables the test specific features consumed by jitsi-meet-torture
         // testMode: false
+
+        // Disables the auto-play behavior of *all* newly created video element.
+        // This is useful when the client runs on a host with limited resources.
+        // noAutoPlayVideo: false
     },
 
     // Disables ICE/UDP by filtering out local and remote UDP candidates in

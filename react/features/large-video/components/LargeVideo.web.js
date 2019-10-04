@@ -6,6 +6,7 @@ import { Watermarks } from '../../base/react';
 import { Captions } from '../../subtitles/';
 
 declare var interfaceConfig: Object;
+declare var config: Object;
 
 /**
  * Implements a React {@link Component} which represents the large video (a.k.a.
@@ -51,7 +52,7 @@ export default class LargeVideo extends Component<{}> {
                       */}
                     <div id = 'largeVideoWrapper'>
                         <video
-                            autoPlay = { true }
+                            autoPlay = { !config.testing.noAutoPlayVideo }
                             id = 'largeVideo'
                             muted = { true } />
                     </div>
