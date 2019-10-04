@@ -6,6 +6,7 @@ declare var APP: Object;
 declare var config: Object;
 
 import { configureInitialDevices } from '../devices';
+import { getBackendSafeRoomName } from '../util';
 
 export {
     connectionEstablished,
@@ -21,8 +22,7 @@ import logger from './logger';
  */
 export function connect() {
     return (dispatch: Dispatch<any>, getState: Function) => {
-        // XXX Lib-jitsi-meet does not accept uppercase letters.
-        const room = getState()['features/base/conference'].room.toLowerCase();
+        const room = getBackendSafeRoomName(getState()['features/base/conference'].room);
 
         // XXX For web based version we use conference initialization logic
         // from the old app (at the moment of writing).

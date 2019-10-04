@@ -192,7 +192,7 @@ export class AbstractWelcomePage extends Component<Props, *> {
             const onAppNavigateSettled
                 = () => this._mounted && this.setState({ joining: false });
 
-            this.props.dispatch(appNavigate(encodeURI(room)))
+            this.props.dispatch(appNavigate(room))
                 .then(onAppNavigateSettled, onAppNavigateSettled);
         }
     }
