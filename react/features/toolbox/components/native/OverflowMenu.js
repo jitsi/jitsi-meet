@@ -8,6 +8,7 @@ import { BottomSheet, hideDialog, isDialogOpen } from '../../../base/dialog';
 import { CHAT_ENABLED, IOS_RECORDING_ENABLED, getFeatureFlag } from '../../../base/flags';
 import { connect } from '../../../base/redux';
 import { StyleType } from '../../../base/styles';
+import { SharedDocumentButton } from '../../../etherpad';
 import { InfoDialogButton, InviteButton } from '../../../invite';
 import { AudioRouteButton } from '../../../mobile/audio-mode';
 import { LiveStreamButton, RecordButton } from '../../../recording';
@@ -108,6 +109,7 @@ class OverflowMenu extends Component<Props> {
                         && <InfoDialogButton { ...buttonProps } />
                 }
                 <RaiseHandButton { ...buttonProps } />
+                <SharedDocumentButton { ...buttonProps } />
             </BottomSheet>
         );
     }

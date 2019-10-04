@@ -4,10 +4,16 @@ import { ReducerRegistry } from '../base/redux';
 
 import {
     ETHERPAD_INITIALIZED,
-    SET_DOCUMENT_EDITING_STATUS
+    SET_DOCUMENT_EDITING_STATUS,
+    SET_DOCUMENT_URL
 } from './actionTypes';
 
 const DEFAULT_STATE = {
+
+    /**
+     * URL for the shared document.
+     */
+    documentUrl: undefined,
 
     /**
      * Whether or not Etherpad is currently open.
@@ -43,6 +49,12 @@ ReducerRegistry.register(
             return {
                 ...state,
                 editing: action.editing
+            };
+
+        case SET_DOCUMENT_URL:
+            return {
+                ...state,
+                documentUrl: action.documentUrl
             };
 
         default:

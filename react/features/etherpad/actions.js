@@ -3,6 +3,7 @@
 import {
     ETHERPAD_INITIALIZED,
     SET_DOCUMENT_EDITING_STATUS,
+    SET_DOCUMENT_URL,
     TOGGLE_DOCUMENT_EDITING
 } from './actionTypes';
 
@@ -20,6 +21,22 @@ export function setDocumentEditingState(editing: boolean) {
     return {
         type: SET_DOCUMENT_EDITING_STATUS,
         editing
+    };
+}
+
+/**
+ * Dispatches an action to set the shared document URL.
+ *
+ * @param {string} documentUrl - The shared document URL.
+ * @returns {{
+ *    type: SET_DOCUMENT_URL,
+ *    documentUrl: string
+ * }}
+ */
+export function setDocumentUrl(documentUrl: ?string) {
+    return {
+        type: SET_DOCUMENT_URL,
+        documentUrl
     };
 }
 

@@ -16,6 +16,7 @@ import { TestConnectionInfo } from '../../../base/testing';
 import { ConferenceNotification, isCalendarEnabled } from '../../../calendar-sync';
 import { Chat } from '../../../chat';
 import { DisplayNameLabel } from '../../../display-name';
+import { SharedDocument } from '../../../etherpad';
 import {
     FILMSTRIP_SIZE,
     Filmstrip,
@@ -179,8 +180,9 @@ class Conference extends AbstractConference<Props, *> {
                     hidden = { true }
                     translucent = { true } />
 
-                <Chat />
                 <AddPeopleDialog />
+                <Chat />
+                <SharedDocument />
 
                 {/*
                   * The LargeVideo is the lowermost stacking layer.
