@@ -275,6 +275,9 @@
     "dialOut": {
         "statusMessage": "is now {{status}}"
     },
+    "documentSharing" : {
+        "title": "Shared Document"
+    },
     "feedback": {
         "average": "Average",
         "bad": "Bad",
