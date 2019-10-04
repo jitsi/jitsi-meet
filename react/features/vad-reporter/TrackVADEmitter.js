@@ -12,9 +12,9 @@ import { VAD_SCORE_PUBLISHED } from './VADEvents';
 export type VADScore = {
 
     /**
-     * Epoch time at which PCM was recorded
+     * Device ID associated with the VAD score
      */
-    timestamp: number,
+    deviceId: string,
 
     /**
      * The PCM score from 0 - 1 i.e. 0.60
@@ -22,16 +22,17 @@ export type VADScore = {
     score: number,
 
     /**
-     * Device ID associated with the VAD score
+     * Epoch time at which PCM was recorded
      */
-    deviceId: string
+    timestamp: number
+
 };
 
 /**
  * Connects an audio JitsiLocalTrack to a RnnoiseProcessor using WebAudio ScriptProcessorNode.
  * Once an object is created audio from the local track flows through the ScriptProcessorNode as raw PCM.
  * The PCM is processed by the rnnoise module and a VAD (voice activity detection) score is obtained, the
- * score is published to consumers via an EventEmitter..
+ * score is published to consumers via an EventEmitter.
  * After work is done with this service the destroy method needs to be called for a proper cleanup.
  */
 export default class TrackVADEmitter extends EventEmitter {

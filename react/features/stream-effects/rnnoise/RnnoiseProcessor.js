@@ -34,7 +34,7 @@ export default class RnnoiseProcessor {
     /**
      * WASM dynamic memory buffer used as input for rnnoise processing method.
      */
-    _wasmPcmInput: ?Object;
+    _wasmPcmInput: Object;
 
     /**
      * The Float32Array index representing the start point in the wasm heap of the _wasmPcmInput buffer.
@@ -44,7 +44,7 @@ export default class RnnoiseProcessor {
     /**
      * WASM dynamic memory buffer used as output for rnnoise processing method.
      */
-    _wasmPcmOutput: ?Object;
+    _wasmPcmOutput: Object;
 
     /**
      * Constructor.
@@ -72,16 +72,12 @@ export default class RnnoiseProcessor {
                 throw Error('Failed to create wasm output memory buffer!');
             }
 
-
             // The HEAPF32.set function requires an index relative to a Float32 array view of the wasm memory model
             // which is an array of bytes. This means we have to divide it by the size of a float to get the index
             // relative to a Float32 Array.
-            if (this._wasmPcmInput) {
-                this._wasmPcmInputF32Index = this._wasmPcmInput / 4;
-            }
+            this._wasmPcmInputF32Index = this._wasmPcmInput / 4;
 
             this._context = this._wasmInterface._rnnoise_create();
-
         } catch (error) {
             // release can be called even if not all the components were initialized.
             this._releaseWasmResources();
@@ -106,11 +102,10 @@ export default class RnnoiseProcessor {
      * @returns {void}
      */
     _convertTo16BitPCM(f32Array: Float32Array) {
-        f32Array.forEach((value, index) => {
+        for (const [ index, value ] of f32Array.entries()) {
             f32Array[index] = value * 0x7fff;
-        });
+        }
     }
-
 
     /**
      * Release resources associated with the wasm context. If something goes downhill here

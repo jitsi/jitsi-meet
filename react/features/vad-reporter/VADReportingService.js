@@ -23,11 +23,6 @@ const SCRIPT_NODE_SAMPLE_RATE = 4096;
 type VADDeviceContext = {
 
     /**
-     * TrackVADEmitter associated with media device
-     */
-    vadEmitter: TrackVADEmitter,
-
-    /**
      * MediaDeviceInfo for associated context
      */
     deviceInfo: MediaDeviceInfo,
@@ -35,7 +30,12 @@ type VADDeviceContext = {
     /**
      * Array with VAD scores publish from the emitter.
      */
-    scoreArray: Array<VADScore>
+    scoreArray: Array<VADScore>,
+
+    /**
+     * TrackVADEmitter associated with media device
+     */
+    vadEmitter: TrackVADEmitter
 };
 
 /**
@@ -44,9 +44,9 @@ type VADDeviceContext = {
 export type VADReportScore = {
 
     /**
-     * Epoch time at which PCM was recorded
+     * Device ID associated with the VAD score
      */
-    timestamp: number,
+    deviceId: string,
 
     /**
      * The PCM score from 0 - 1 i.e. 0.60
@@ -54,9 +54,9 @@ export type VADReportScore = {
     score: number,
 
     /**
-     * Device ID associated with the VAD score
+     * Epoch time at which PCM was recorded
      */
-    deviceId: string
+    timestamp: number
 };
 
 
@@ -159,7 +159,10 @@ export default class VADReportingService extends EventEmitter {
             // Check if there were any rejected promises and clear the already created ones list.
             if (rejectedEmitterPromiseArray.length > 0) {
                 logger.error('Cleaning up remaining VADDeviceContext, due to create fail!');
-                vadContextArray.forEach(context => context.vadEmitter.destroy());
+
+                for (const context of vadContextArray) {
+                    context.vadEmitter.destroy();
+                }
 
                 // Reject create promise if one emitter failed to instantiate, we might one just ignore it,
                 // leaving it like this for now
@@ -260,7 +263,6 @@ export default class VADReportingService extends EventEmitter {
     /**
      * Destroy the VADReportingService, stops the setInterval reporting, destroys the emitters and clears the map.
      * After this call the instance is no longer usable.
-     * TODO add state for destroyed state check.
      *
      * @returns {void}.
      */

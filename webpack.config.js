@@ -246,13 +246,12 @@ module.exports = [
             fs: 'empty'
         },
         output: Object.assign({}, config.output, {
-            library: [ 'JitsiMeetJS', 'app', 'effects' ],
+            library: [ 'JitsiMeetJS', 'app', 'effects', 'rnnoise' ],
             libraryTarget: 'window',
             filename: '[name].min.js',
             sourceMapFilename: '[name].min.map'
         }),
-        performance: getPerformanceHints(4 * 1024 * 1024)
-
+        performance: getPerformanceHints(30 * 1024)
     }),
 
     Object.assign({}, config, {

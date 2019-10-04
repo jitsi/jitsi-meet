@@ -10,18 +10,20 @@ let loadRnnoisePromise;
  * @returns {Promise<RnnoiseProcessor>} - Resolves with the blur effect instance.
  */
 export function createRnnoiseProcessorPromise() {
-    const ns = getJitsiMeetGlobalNS();
-
-    if (ns.effects && ns.effects.createRnnoiseProcessor) {
-        return ns.effects.createRnnoiseProcessor();
-    }
-
     // Subsequent calls should not attempt to load the script multiple times.
     if (!loadRnnoisePromise) {
         loadRnnoisePromise = loadScript('libs/rnnoise-processor.min.js');
     }
 
-    return loadRnnoisePromise.then(() => ns.effects.createRnnoiseProcessor());
+    return loadRnnoisePromise.then(() => {
+        const ns = getJitsiMeetGlobalNS();
+
+        if (ns?.effects?.rnnoise?.createRnnoiseProcessor) {
+            return ns.effects.rnnoise.createRnnoiseProcessor();
+        }
+
+        throw new Error('Rnnoise module binding createRnnoiseProcessor not found!');
+    });
 }
 
 /**
@@ -32,10 +34,11 @@ export function createRnnoiseProcessorPromise() {
 export function getSampleLength() {
     const ns = getJitsiMeetGlobalNS();
 
-    if (ns.effects && ns.effects.RNNOISE_SAMPLE_LENGTH) {
-        return ns.effects.RNNOISE_SAMPLE_LENGTH;
+    const rnnoiseSample = ns?.effects?.rnnoise?.RNNOISE_SAMPLE_LENGTH;
+
+    if (!rnnoiseSample) {
+        throw new Error('Please call createRnnoiseProcessorPromise first or wait for promise to resolve!');
     }
 
-    throw new Error('Please call createRnnoiseProcessorPromise first or wait for promise to resolve!');
-
+    return rnnoiseSample;
 }
