@@ -23,7 +23,10 @@ import {
     participantUpdated
 } from '../participants';
 import { getLocalTracks, trackAdded, trackRemoved } from '../tracks';
-import { getJitsiMeetGlobalNS } from '../util';
+import {
+    getBackendSafeRoomName,
+    getJitsiMeetGlobalNS
+} from '../util';
 
 import {
     AUTH_STATUS_CHANGED,
@@ -388,8 +391,7 @@ export function createConference() {
         const conference
             = connection.initJitsiConference(
 
-                // XXX Lib-jitsi-meet does not accept uppercase letters.
-                room.toLowerCase(), {
+                getBackendSafeRoomName(room), {
                     ...state['features/base/config'],
                     applicationName: getName(),
                     getWiFiStatsMethod: getJitsiMeetGlobalNS().getWiFiStats,
