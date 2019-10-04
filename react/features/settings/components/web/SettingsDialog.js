@@ -2,11 +2,15 @@
 
 import React, { Component } from 'react';
 
-import { getAvailableDevices, groupDevicesByKind } from '../../../base/devices';
+import { getAvailableDevices } from '../../../base/devices';
 import { DialogWithTabs, hideDialog } from '../../../base/dialog';
 import { connect } from '../../../base/redux';
 import { isCalendarEnabled } from '../../../calendar-sync';
-import { DeviceSelection, getDeviceSelectionDialogProps, submitDeviceSelectionTab } from '../../../device-selection';
+import {
+    DeviceSelection,
+    getDeviceSelectionDialogProps,
+    submitDeviceSelectionTab
+} from '../../../device-selection';
 
 import CalendarTab from './CalendarTab';
 import MoreTab from './MoreTab';
@@ -14,9 +18,6 @@ import ProfileTab from './ProfileTab';
 import { getMoreTabProps, getProfileTabProps } from '../../functions';
 import { submitMoreTab, submitProfileTab } from '../../actions';
 import { SETTINGS_TABS } from '../../constants';
-import VADReportingService from '../../../vad-reporter/VADReportingService';
-import { VAD_REPORT_PUBLISHED } from '../../../vad-reporter/VADEvents';
-import type { VADScore } from '../../../vad-reporter/VADReportingService';
 
 declare var APP: Object;
 declare var interfaceConfig: Object;
@@ -53,13 +54,6 @@ type Props = {
  */
 class SettingsDialog extends Component<Props> {
     /**
-     * VADReportingService instance
-     */
-    _vadReportingService: VADReportingService;
-
-    _vadInitPromise: Promise<VADReportingService>;
-
-    /**
      * Initializes a new {@code ConnectedSettingsDialog} instance.
      *
      * @param {Props} props - The React {@code Component} props to initialize
@@ -70,48 +64,6 @@ class SettingsDialog extends Component<Props> {
 
         // Bind event handlers so they are only bound once for every instance.
         this._closeDialog = this._closeDialog.bind(this);
-
-        console.log('[AND-DBG] Hello friend!');
-    }
-
-    /**
-     * Initializes the app.
-     *
-     * @inheritdoc
-     */
-    componentDidMount() {
-        this.props.dispatch(getAvailableDevices()).then(devices => {
-            const { audioInput } = groupDevicesByKind(devices);
-
-            // $FlowFixMe
-            this._vadInitPromise = VADReportingService.create(audioInput, 5000).then(reportingService => {
-                reportingService.on(VAD_REPORT_PUBLISHED, this.vadCallback.bind(this));
-                this._vadReportingService = reportingService;
-            });
-            console.log('[AND-DBG] VAD reporting started!');
-        });
-    }
-
-    /** Uninitialized the app.
-     *
-     * @inheritdoc
-     */
-    componentWillUnmount() {
-        this._vadInitPromise.then(() => {
-            this._vadReportingService.destroy();
-            console.log('[AND-DBG] VAD reporting stopped!');
-        });
-    }
-
-    /**
-     * Testing.
-     *
-     * @param {Array<VADScore>} vadScore - Problem.
-     *
-     * @returns {void}
-     */
-    vadCallback(vadScore: Array<VADScore>) {
-        console.log('[AND-DBG] SCORE:', vadScore);
     }
 
     /**
@@ -123,12 +75,16 @@ class SettingsDialog extends Component<Props> {
     render() {
         const { _tabs, defaultTab, dispatch } = this.props;
         const onSubmit = this._closeDialog;
-        const defaultTabIdx = _tabs.findIndex(({ name }) => name === defaultTab);
+        const defaultTabIdx
+            = _tabs.findIndex(({ name }) => name === defaultTab);
         const tabs = _tabs.map(tab => {
             return {
                 ...tab,
-                onMount: tab.onMount ? (...args) => dispatch(tab.onMount(...args)) : undefined,
-                submit: (...args) => tab.submit && dispatch(tab.submit(...args))
+                onMount: tab.onMount
+                    ? (...args) => dispatch(tab.onMount(...args))
+                    : undefined,
+                submit: (...args) => tab.submit
+                    && dispatch(tab.submit(...args))
             };
         });
 
@@ -136,7 +92,9 @@ class SettingsDialog extends Component<Props> {
             <DialogWithTabs
                 closeDialog = { this._closeDialog }
                 cssClassName = 'settings-dialog'
-                defaultTab = { defaultTabIdx === -1 ? undefined : defaultTabIdx }
+                defaultTab = {
+                    defaultTabIdx === -1 ? undefined : defaultTabIdx
+                }
                 onSubmit = { onSubmit }
                 tabs = { tabs }
                 titleKey = 'settings.title' />
@@ -174,8 +132,10 @@ function _mapStateToProps(state) {
     const showDeviceSettings = configuredTabs.includes('devices');
     const moreTabProps = getMoreTabProps(state);
     const { showModeratorSettings, showLanguageSettings } = moreTabProps;
-    const showProfileSettings = configuredTabs.includes('profile') && jwt.isGuest;
-    const showCalendarSettings = configuredTabs.includes('calendar') && isCalendarEnabled(state);
+    const showProfileSettings
+        = configuredTabs.includes('profile') && jwt.isGuest;
+    const showCalendarSettings
+        = configuredTabs.includes('calendar') && isCalendarEnabled(state);
     const tabs = [];
 
     if (showDeviceSettings) {
