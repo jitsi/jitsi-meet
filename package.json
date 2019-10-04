@@ -87,6 +87,7 @@
     "react-transition-group": "2.4.0",
     "redux": "4.0.4",
     "redux-thunk": "2.2.0",
+    "rnnoise-wasm": "github:jitsi/rnnoise-wasm.git#db96d11f175a22ef56c7db1ba9550835b716e615",
     "styled-components": "3.4.9",
     "util": "0.12.1",
     "uuid": "3.1.0",
