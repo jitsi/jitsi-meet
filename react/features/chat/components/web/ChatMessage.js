@@ -10,6 +10,7 @@ import { Linkify } from '../../../base/react';
 import AbstractChatMessage, {
     type Props
 } from '../AbstractChatMessage';
+import PrivateMessageButton from '../PrivateMessageButton';
 
 /**
  * Renders a single chat message.
@@ -45,11 +46,19 @@ class ChatMessage extends AbstractChatMessage<Props> {
 
         return (
             <div className = 'chatmessage-wrapper'>
-                <div className = 'chatmessage'>
-                    { this.props.showDisplayName && this._renderDisplayName() }
-                    <div className = 'usermessage'>
-                        { processedMessage }
+                <div className = 'replywrapper'>
+                    <div className = 'chatmessage'>
+                        { this.props.showDisplayName && this._renderDisplayName() }
+                        <div className = 'usermessage'>
+                            { processedMessage }
+                        </div>
+                        { message.privateMessage && this._renderPrivateNotice() }
                     </div>
+                    { message.privateMessage && message.messageType !== 'local'
+                    && <PrivateMessageButton
+                        participantID = { message.id }
+                        reply = { true }
+                        showLabel = { false } /> }
                 </div>
                 { this.props.showTimestamp && this._renderTimestamp() }
             </div>
@@ -57,6 +66,8 @@ class ChatMessage extends AbstractChatMessage<Props> {
     }
 
     _getFormattedTimestamp: () => string;
+
+    _getPrivateNoticeMessage: () => string;
 
     /**
      * Renders the display name of the sender.
@@ -67,6 +78,19 @@ class ChatMessage extends AbstractChatMessage<Props> {
         return (
             <div className = 'display-name'>
                 { this.props.message.displayName }
+            </div>
+        );
+    }
+
+    /**
+     * Renders the message privacy notice.
+     *
+     * @returns {React$Element<*>}
+     */
+    _renderPrivateNotice() {
+        return (
+            <div className = 'privatemessagenotice'>
+                { this._getPrivateNoticeMessage() }
             </div>
         );
     }

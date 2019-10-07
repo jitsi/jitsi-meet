@@ -48,11 +48,14 @@
     "chat": {
         "error": "Error: your message \"{{originalText}}\" was not sent. Reason: {{error}}",
         "messagebox": "Type a message",
+        "messageTo": "Private message to {{recipient}}",
         "nickname": {
             "popover": "Choose a nickname",
             "title": "Enter a nickname to use chat"
         },
-        "title": "Chat"
+        "privateNotice": "Private message to {{recipient}}",
+        "title": "Chat",
+        "you": "you"
     },
     "connectingOverlay": {
         "joiningRoom": "Connecting you to your meeting..."
@@ -235,6 +238,10 @@
         "screenSharingFirefoxPermissionDeniedError": "Something went wrong while we were trying to share your screen. Please make sure that you have given us permission to do so. ",
         "screenSharingFirefoxPermissionDeniedTitle": "Oops! We weren’t able to start screen sharing!",
         "screenSharingPermissionDeniedError": "Oops! Something went wrong with your screen sharing extension permissions. Please reload and try again.",
+        "sendPrivateMessage": "You recently received a private message. Did you intend to reply to that privately, or you want to send your message to the group?",
+        "sendPrivateMessageCancel": "Send to the group",
+        "sendPrivateMessageOk": "Send privately",
+        "sendPrivateMessageTitle": "Send privately?",
         "serviceUnavailable": "Service unavailable",
         "sessTerminated": "Call terminated",
         "Share": "Share",
@@ -571,6 +578,7 @@
             "moreActionsMenu": "More actions menu",
             "mute": "Toggle mute audio",
             "pip": "Toggle Picture-in-Picture mode",
+            "privateMessage": "Send private message",
             "profile": "Edit your profile",
             "raiseHand": "Toggle raise hand",
             "recording": "Toggle recording",
@@ -611,6 +619,7 @@
         "mute": "Mute / Unmute",
         "openChat": "Open chat",
         "pip": "Enter Picture-in-Picture mode",
+        "privateMessage": "Send private message",
         "profile": "Edit your profile",
         "raiseHand": "Raise / Lower your hand",
         "raiseYourHand": "Raise your hand",

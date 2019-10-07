@@ -80,6 +80,27 @@
     }
 }
 
+#chat-recipient {
+    align-items: center;
+    background-color: $defaultWarningColor;
+    display: flex;
+    flex-direction: row;
+    padding: 10px;
+
+    span {
+        color: white;
+        display: flex;
+        flex: 1;
+    }
+
+    div {
+        svg {
+            cursor: pointer;
+            fill: white
+        }
+    }
+}
+
 .chat-header {
     background-color: $chatHeaderBackgroundColor;
     height: 70px;
@@ -196,6 +217,11 @@
             padding: 0;
         }
     }
+
+    .privatemessagenotice {
+        color: $defaultWarningColor;
+        font-style: italic;
+    }
 }
 
 .smiley {
@@ -228,6 +254,7 @@
 .smileys-panel {
     bottom: 100%;
     box-sizing: border-box;
+    background-color: rgba(0, 0, 0, .6) !important;
     height: auto;
     max-height: 0;
     overflow: hidden;
@@ -312,6 +339,16 @@
 
     .chatmessage-wrapper {
         max-width: 100%;
+
+        .replywrapper {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+
+            .toolbox-icon {
+                cursor: pointer;
+            }
+        }
     }
 
     .chatmessage {

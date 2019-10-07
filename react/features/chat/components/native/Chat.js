@@ -16,6 +16,7 @@ import AbstractChat, {
 
 import ChatInputBar from './ChatInputBar';
 import MessageContainer from './MessageContainer';
+import MessageRecipient from './MessageRecipient';
 import styles from './styles';
 
 /**
@@ -53,6 +54,7 @@ class Chat extends AbstractChat<Props> {
                         onPressBack = { this._onClose } />
                     <SafeAreaView style = { styles.backdrop }>
                         <MessageContainer messages = { this.props._messages } />
+                        <MessageRecipient />
                         <ChatInputBar onSend = { this.props._onSendMessage } />
                     </SafeAreaView>
                 </KeyboardAvoidingView>
