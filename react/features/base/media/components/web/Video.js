@@ -33,7 +33,7 @@ type Props = {
      * Used to determine the value of the autoplay attribute of the underlying
      * video element.
      */
-    noAutoPlayVideo: boolean
+    _noAutoPlayVideo: boolean
 };
 
 /**
@@ -138,7 +138,7 @@ class Video extends Component<Props> {
     render() {
         return (
             <video
-                autoPlay = { !this.props.noAutoPlayVideo }
+                autoPlay = { !this.props._noAutoPlayVideo }
                 className = { this.props.className }
                 id = { this.props.id }
                 ref = { this._setVideoElement } />
@@ -213,14 +213,14 @@ class Video extends Component<Props> {
  * @param {Object} state - The Redux state.
  * @private
  * @returns {{
- *     noAutoPlayVideo: boolean
+ *     _noAutoPlayVideo: boolean
  * }}
  */
 function _mapStateToProps(state) {
     const testingConfig = state['features/base/config'].testing;
 
     return {
-        noAutoPlayVideo: testingConfig && testingConfig.noAutoPlayVideo
+        _noAutoPlayVideo: testingConfig && testingConfig.noAutoPlayVideo
     };
 }
 
