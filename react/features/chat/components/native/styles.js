@@ -80,6 +80,23 @@ export default {
         flex: 1
     },
 
+    messageRecipientCancelIcon: {
+        color: ColorPalette.white,
+        fontSize: 18
+    },
+
+    messageRecipientContainer: {
+        alignItems: 'center',
+        backgroundColor: ColorPalette.warning,
+        flexDirection: 'row',
+        padding: BoxModel.padding
+    },
+
+    messageRecipientText: {
+        color: ColorPalette.white,
+        flex: 1
+    },
+
     /**
      * The message text itself.
      */
@@ -113,6 +130,25 @@ export default {
         backgroundColor: 'rgb(210, 231, 249)',
         borderTopLeftRadius: 8,
         borderTopRightRadius: 0
+    },
+
+    replyWrapper: {
+        alignItems: 'center',
+        flexDirection: 'row'
+    },
+
+    replyStyles: {
+        iconStyle: {
+            color: 'rgb(118, 136, 152)',
+            fontSize: 22,
+            margin: BoxModel.margin / 2
+        }
+    },
+
+    privateNotice: {
+        color: ColorPalette.warning,
+        fontSize: 13,
+        fontStyle: 'italic'
     },
 
     sendButtonIcon: {

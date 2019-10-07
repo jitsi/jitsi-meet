@@ -5,8 +5,10 @@ import {
     CONFERENCE_JOINED,
     getCurrentConference
 } from '../base/conference';
+import { openDialog } from '../base/dialog';
 import { JitsiConferenceEvents } from '../base/lib-jitsi-meet';
 import {
+    getLocalParticipant,
     getParticipantById,
     getParticipantDisplayName
 } from '../base/participants';
@@ -14,13 +16,22 @@ import { MiddlewareRegistry, StateListenerRegistry } from '../base/redux';
 import { playSound, registerSound, unregisterSound } from '../base/sounds';
 import { isButtonEnabled, showToolbox } from '../toolbox';
 
-import { SEND_MESSAGE } from './actionTypes';
+import { SEND_MESSAGE, SET_PRIVATE_MESSAGE_RECIPIENT } from './actionTypes';
 import { addMessage, clearMessages, toggleChat } from './actions';
+import { ChatPrivacyDialog } from './components';
 import { INCOMING_MSG_SOUND_ID } from './constants';
 import { INCOMING_MSG_SOUND_FILE } from './sounds';
 
 declare var APP: Object;
 declare var interfaceConfig : Object;
+
+/**
+ * Timeout for when to show the privacy notice after a private message was received.
+ *
+ * E.g. if this value is 20 secs (20000ms), then we show the privacy notice when sending a non private
+ * message after we have received a private message in the last 20 seconds.
+ */
+const PRIVACY_NOTICE_TIMEOUT = 20 * 1000;
 
 /**
  * Implements the middleware of the chat feature.
@@ -29,14 +40,16 @@ declare var interfaceConfig : Object;
  * @returns {Function}
  */
 MiddlewareRegistry.register(store => next => action => {
+    const { dispatch } = store;
+
     switch (action.type) {
     case APP_WILL_MOUNT:
-        store.dispatch(
+        dispatch(
                 registerSound(INCOMING_MSG_SOUND_ID, INCOMING_MSG_SOUND_FILE));
         break;
 
     case APP_WILL_UNMOUNT:
-        store.dispatch(unregisterSound(INCOMING_MSG_SOUND_ID));
+        dispatch(unregisterSound(INCOMING_MSG_SOUND_ID));
         break;
 
     case CONFERENCE_JOINED:
@@ -44,14 +57,41 @@ MiddlewareRegistry.register(store => next => action => {
         break;
 
     case SEND_MESSAGE: {
-        const { conference } = store.getState()['features/base/conference'];
+        const state = store.getState();
+        const { conference } = state['features/base/conference'];
 
         if (conference) {
-            if (typeof APP !== 'undefined') {
-                APP.API.notifySendingChatMessage(action.message);
+            // There may be cases when we intend to send a private message but we forget to set the
+            // recipient. This logic tries to mitigate this risk.
+            const shouldSendPrivateMessageTo = _shouldSendPrivateMessageTo(state, action);
+
+            if (shouldSendPrivateMessageTo) {
+                dispatch(openDialog(ChatPrivacyDialog, {
+                    message: action.message,
+                    participantID: shouldSendPrivateMessageTo
+                }));
+            } else {
+                // Sending the message if privacy notice doesn't need to be shown.
+
+                if (typeof APP !== 'undefined') {
+                    APP.API.notifySendingChatMessage(action.message);
+                }
+
+                const { privateMessageRecipient } = state['features/chat'];
+
+                if (privateMessageRecipient) {
+                    conference.sendPrivateTextMessage(privateMessageRecipient.id, action.message);
+                    _persistSentPrivateMessage(store, privateMessageRecipient.id, action.message);
+                } else {
+                    conference.sendTextMessage(action.message);
+                }
             }
-            conference.sendTextMessage(action.message);
         }
+        break;
+    }
+
+    case SET_PRIVATE_MESSAGE_RECIPIENT: {
+        _maybeFocusField();
         break;
     }
     }
@@ -112,44 +152,183 @@ function _addChatMsgListener(conference, { dispatch, getState }) {
     conference.on(
         JitsiConferenceEvents.MESSAGE_RECEIVED,
         (id, message, timestamp, nick) => {
-            // Logic for all platforms:
-            const state = getState();
-            const { isOpen: isChatOpen } = state['features/chat'];
-
-            if (!isChatOpen) {
-                dispatch(playSound(INCOMING_MSG_SOUND_ID));
-            }
-
-            // Provide a default for for the case when a message is being
-            // backfilled for a participant that has left the conference.
-            const participant = getParticipantById(state, id) || {};
-            const displayName = participant.name || nick || getParticipantDisplayName(state, id);
-            const hasRead = participant.local || isChatOpen;
-            const timestampToDate = timestamp
-                ? new Date(timestamp) : new Date();
-            const millisecondsTimestamp = timestampToDate.getTime();
-
-            dispatch(addMessage({
-                displayName,
-                hasRead,
+            _handleReceivedMessage({
+                dispatch,
+                getState
+            }, {
                 id,
-                messageType: participant.local ? 'local' : 'remote',
                 message,
-                timestamp: millisecondsTimestamp
-            }));
-
-            if (typeof APP !== 'undefined') {
-                // Logic for web only:
-
-                APP.API.notifyReceivedChatMessage({
-                    body: message,
-                    id,
-                    nick: displayName,
-                    ts: timestamp
-                });
-
-                dispatch(showToolbox(4000));
-            }
+                nick,
+                privateMessage: false,
+                timestamp
+            });
         }
     );
+
+    conference.on(
+        JitsiConferenceEvents.PRIVATE_MESSAGE_RECEIVED,
+        (id, message, timestamp) => {
+            _handleReceivedMessage({
+                dispatch,
+                getState
+            }, {
+                id,
+                message,
+                privateMessage: true,
+                timestamp,
+                nick: undefined
+            });
+        }
+    );
+}
+
+/**
+ * Function to handle an incoming chat message.
+ *
+ * @param {Store} store - The Redux store.
+ * @param {Object} message - The message object.
+ * @returns {void}
+ */
+function _handleReceivedMessage({ dispatch, getState }, { id, message, nick, privateMessage, timestamp }) {
+    // Logic for all platforms:
+    const state = getState();
+    const { isOpen: isChatOpen } = state['features/chat'];
+
+    if (!isChatOpen) {
+        dispatch(playSound(INCOMING_MSG_SOUND_ID));
+    }
+
+    // Provide a default for for the case when a message is being
+    // backfilled for a participant that has left the conference.
+    const participant = getParticipantById(state, id) || {};
+    const localParticipant = getLocalParticipant(getState);
+    const displayName = participant.name || nick || getParticipantDisplayName(state, id);
+    const hasRead = participant.local || isChatOpen;
+    const timestampToDate = timestamp
+        ? new Date(timestamp) : new Date();
+    const millisecondsTimestamp = timestampToDate.getTime();
+
+    dispatch(addMessage({
+        displayName,
+        hasRead,
+        id,
+        messageType: participant.local ? 'local' : 'remote',
+        message,
+        privateMessage,
+        recipient: getParticipantDisplayName(state, localParticipant.id),
+        timestamp: millisecondsTimestamp
+    }));
+
+    if (typeof APP !== 'undefined') {
+        // Logic for web only:
+
+        APP.API.notifyReceivedChatMessage({
+            body: message,
+            id,
+            nick: displayName,
+            ts: timestamp
+        });
+
+        dispatch(showToolbox(4000));
+    }
+}
+
+/**
+ * Focuses the chat text field on web after the message recipient was updated, if needed.
+ *
+ * @returns {void}
+ */
+function _maybeFocusField() {
+    if (navigator.product !== 'ReactNative') {
+        const textField = document.getElementById('usermsg');
+
+        textField && textField.focus();
+    }
+}
+
+/**
+ * Persists the sent private messages as if they were received over the muc.
+ *
+ * This is required as we rely on the fact that we receive all messages from the muc that we send
+ * (as they are sent to everybody), but we don't receive the private messages we send to another participant.
+ * But those messages should be in the store as well, otherwise they don't appear in the chat window.
+ *
+ * @param {Store} store - The Redux store.
+ * @param {string} recipientID - The ID of the recipient the private message was sent to.
+ * @param {string} message - The sent message.
+ * @returns {void}
+ */
+function _persistSentPrivateMessage({ dispatch, getState }, recipientID, message) {
+    const localParticipant = getLocalParticipant(getState);
+    const displayName = getParticipantDisplayName(getState, localParticipant.id);
+
+    dispatch(addMessage({
+        displayName,
+        hasRead: true,
+        id: localParticipant.id,
+        messageType: 'local',
+        message,
+        privateMessage: true,
+        recipient: getParticipantDisplayName(getState, recipientID),
+        timestamp: Date.now()
+    }));
+}
+
+/**
+ * Returns the ID of the participant who we may have wanted to send the message
+ * that we're about to send.
+ *
+ * @param {Object} state - The Redux state.
+ * @param {Object} action - The action being dispatched now.
+ * @returns {string?}
+ */
+function _shouldSendPrivateMessageTo(state, action): ?string {
+    if (action.ignorePrivacy) {
+        // Shortcut: this is only true, if we already displayed the notice, so no need to show it again.
+        return undefined;
+    }
+
+    const { messages, privateMessageRecipient } = state['features/chat'];
+
+    if (privateMessageRecipient) {
+        // We're already sending a private message, no need to warn about privacy.
+        return undefined;
+    }
+
+    if (!messages.length) {
+        // No messages yet, no need to warn for privacy.
+        return undefined;
+    }
+
+    // Platforms sort messages differently
+    const lastMessage = navigator.product === 'ReactNative'
+        ? messages[0] : messages[messages.length - 1];
+
+    if (lastMessage.messageType === 'local') {
+        // The sender is probably aware of any private messages as already sent
+        // a message since then. Doesn't make sense to display the notice now.
+        return undefined;
+    }
+
+    if (lastMessage.privateMessage) {
+        // We show the notice if the last received message was private.
+        return lastMessage.id;
+    }
+
+    // But messages may come rapidly, we want to protect our users from mis-sending a message
+    // even when there was a reasonable recently received private message.
+    const now = Date.now();
+    const recentPrivateMessages = messages.filter(
+        message =>
+            message.messageType !== 'local'
+            && message.privateMessage
+            && message.timestamp + PRIVACY_NOTICE_TIMEOUT > now);
+    const recentPrivateMessage = navigator.product === 'ReactNative'
+        ? recentPrivateMessages[0] : recentPrivateMessages[recentPrivateMessages.length - 1];
+
+    if (recentPrivateMessage) {
+        return recentPrivateMessage.id;
+    }
+
+    return undefined;
 }
