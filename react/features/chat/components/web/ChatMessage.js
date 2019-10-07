@@ -30,16 +30,10 @@ class ChatMessage extends AbstractChatMessage<Props> {
             })
             : message.message;
 
-        // replace links and smileys
-        // Strophe already escapes special symbols on sending,
-        // so we escape here only tags to avoid double &amp;
-        const escMessage = messageToDisplay.replace(/</g, '&lt;')
-            .replace(/>/g, '&gt;')
-            .replace(/\n/g, '<br/>');
         const processedMessage = [];
 
         // content is an array of text and emoji components
-        const content = toArray(escMessage, { className: 'smiley' });
+        const content = toArray(messageToDisplay, { className: 'smiley' });
 
         content.forEach(i => {
             if (typeof i === 'string') {
