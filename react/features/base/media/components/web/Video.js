@@ -1,8 +1,7 @@
 /* @flow */
 
 import React, { Component } from 'react';
-
-declare var config: Object;
+import { connect } from '../../../redux';
 
 /**
  * The type of the React {@code Component} props of {@link Video}.
@@ -28,7 +27,13 @@ type Props = {
     /**
      * The JitsiLocalTrack to display.
      */
-    videoTrack: ?Object
+    videoTrack: ?Object,
+
+    /**
+     * Used to determine the value of the autoplay attribute of the underlying
+     * video element.
+     */
+    noAutoPlayVideo: boolean
 };
 
 /**
@@ -133,7 +138,7 @@ class Video extends Component<Props> {
     render() {
         return (
             <video
-                autoPlay = { !config.testing.noAutoPlayVideo }
+                autoPlay = { !this.props.noAutoPlayVideo }
                 className = { this.props.className }
                 id = { this.props.id }
                 ref = { this._setVideoElement } />
@@ -202,4 +207,22 @@ class Video extends Component<Props> {
     }
 }
 
-export default Video;
+/**
+ * Maps (parts of) the Redux state to the associated Video props.
+ *
+ * @param {Object} state - The Redux state.
+ * @private
+ * @returns {{
+ *     noAutoPlayVideo: boolean
+ * }}
+ */
+function _mapStateToProps(state) {
+    const testingConfig = state['features/base/config'].testing;
+
+    return {
+        noAutoPlayVideo: testingConfig && testingConfig.noAutoPlayVideo
+    };
+}
+
+export default connect(_mapStateToProps)(Video);
+

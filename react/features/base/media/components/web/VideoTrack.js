@@ -9,8 +9,6 @@ import type { Props as AbstractVideoTrackProps } from '../AbstractVideoTrack';
 
 import Video from './Video';
 
-declare var config: Object;
-
 /**
  * The type of the React {@code Component} props of {@link VideoTrack}.
  */
@@ -25,7 +23,14 @@ type Props = AbstractVideoTrackProps & {
      * The value of the id attribute of the video. Used by the torture tests
      * to locate video elements.
      */
-    id: string
+    id: string,
+
+    /**
+     *
+     * Used to determine the value of the autoplay attribute of the underlying
+     * video element.
+     */
+    noAutoPlayVideo: boolean
 };
 
 /**
@@ -55,7 +60,7 @@ class VideoTrack extends AbstractVideoTrack<Props> {
     render() {
         return (
             <Video
-                autoPlay = { !config.testing.noAutoPlayVideo }
+                autoPlay = { !this.props.noAutoPlayVideo }
                 className = { this.props.className }
                 id = { this.props.id }
                 onVideoPlaying = { this._onVideoPlaying }
@@ -66,4 +71,22 @@ class VideoTrack extends AbstractVideoTrack<Props> {
     _onVideoPlaying: () => void;
 }
 
-export default connect()(VideoTrack);
+
+/**
+ * Maps (parts of) the Redux state to the associated VideoTracks props.
+ *
+ * @param {Object} state - The Redux state.
+ * @private
+ * @returns {{
+ *     noAutoPlayVideo: boolean
+ * }}
+ */
+function _mapStateToProps(state) {
+    const testingConfig = state['features/base/config'].testing;
+
+    return {
+        noAutoPlayVideo: testingConfig && testingConfig.noAutoPlayVideo
+    };
+}
+
+export default connect(_mapStateToProps)(VideoTrack);
