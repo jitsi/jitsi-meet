@@ -1,7 +1,5 @@
 // @flow
 
-import UIUtil from '../../../modules/UI/util/UIUtil';
-
 import { APP_WILL_MOUNT, APP_WILL_UNMOUNT } from '../base/app';
 import {
     CONFERENCE_JOINED,
@@ -49,12 +47,10 @@ MiddlewareRegistry.register(store => next => action => {
         const { conference } = store.getState()['features/base/conference'];
 
         if (conference) {
-            const escapedMessage = UIUtil.escapeHtml(action.message);
-
             if (typeof APP !== 'undefined') {
-                APP.API.notifySendingChatMessage(escapedMessage);
+                APP.API.notifySendingChatMessage(action.message);
             }
-            conference.sendTextMessage(escapedMessage);
+            conference.sendTextMessage(action.message);
         }
         break;
     }
