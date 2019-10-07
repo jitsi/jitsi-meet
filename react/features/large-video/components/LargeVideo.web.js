@@ -88,7 +88,7 @@ function _mapStateToProps(state) {
     const testingConfig = state['features/base/config'].testing;
 
     return {
-        _noAutoPlayVideo: testingConfig && testingConfig.noAutoPlayVideo
+        _noAutoPlayVideo: testingConfig?.noAutoPlayVideo
     };
 }
 
