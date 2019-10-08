@@ -1,7 +1,6 @@
 /* @flow */
 
 import React, { Component } from 'react';
-import { connect } from '../../../redux';
 
 /**
  * The type of the React {@code Component} props of {@link Video}.
@@ -33,7 +32,7 @@ type Props = {
      * Used to determine the value of the autoplay attribute of the underlying
      * video element.
      */
-    _noAutoPlayVideo: boolean
+    autoPlay: boolean
 };
 
 /**
@@ -51,7 +50,7 @@ class Video extends Component<Props> {
      */
     static defaultProps = {
         className: '',
-
+        autoPlay: true,
         id: ''
     };
 
@@ -138,7 +137,7 @@ class Video extends Component<Props> {
     render() {
         return (
             <video
-                autoPlay = { !this.props._noAutoPlayVideo }
+                autoPlay = { this.props.autoPlay }
                 className = { this.props.className }
                 id = { this.props.id }
                 ref = { this._setVideoElement } />
@@ -207,22 +206,4 @@ class Video extends Component<Props> {
     }
 }
 
-/**
- * Maps (parts of) the Redux state to the associated Video props.
- *
- * @param {Object} state - The Redux state.
- * @private
- * @returns {{
- *     _noAutoPlayVideo: boolean
- * }}
- */
-function _mapStateToProps(state) {
-    const testingConfig = state['features/base/config'].testing;
-
-    return {
-        _noAutoPlayVideo: testingConfig?.noAutoPlayVideo
-    };
-}
-
-export default connect(_mapStateToProps)(Video);
-
+export default Video;
