@@ -9,7 +9,7 @@ export default {
     indicatorWrapper: {
         alignItems: 'center',
         backgroundColor: ColorPalette.white,
-        flex: 1,
+        height: '100%',
         justifyContent: 'center'
     },
 
