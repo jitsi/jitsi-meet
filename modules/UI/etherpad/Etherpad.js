@@ -1,21 +1,11 @@
 /* global $, APP, interfaceConfig */
 
-import { setDocumentEditingState } from '../../../react/features/etherpad';
+import { getSharedDocumentUrl, setDocumentEditingState } from '../../../react/features/etherpad';
 import { getToolboxHeight } from '../../../react/features/toolbox';
 
 import VideoLayout from '../videolayout/VideoLayout';
 import LargeContainer from '../videolayout/LargeContainer';
 import Filmstrip from '../videolayout/Filmstrip';
-
-/**
- * Etherpad options.
- */
-const options = $.param({
-    showControls: true,
-    showChat: false,
-    showLineNumbers: true,
-    useMonospaceFont: false
-});
 
 /**
  *
@@ -70,13 +60,13 @@ class Etherpad extends LargeContainer {
     /**
      * Creates new Etherpad object
      */
-    constructor(domain, name) {
+    constructor(url) {
         super();
 
         const iframe = document.createElement('iframe');
 
         iframe.id = 'etherpadIFrame';
-        iframe.src = `${domain + name}?${options}`;
+        iframe.src = url;
         iframe.frameBorder = 0;
         iframe.scrolling = 'no';
         iframe.width = DEFAULT_WIDTH;
@@ -199,13 +189,7 @@ export default class EtherpadManager {
     /**
      *
      */
-    constructor(domain, name, eventEmitter) {
-        if (!domain || !name) {
-            throw new Error('missing domain or name');
-        }
-
-        this.domain = domain;
-        this.name = name;
+    constructor(eventEmitter) {
         this.eventEmitter = eventEmitter;
         this.etherpad = null;
     }
@@ -228,7 +212,7 @@ export default class EtherpadManager {
      * Create new Etherpad frame.
      */
     openEtherpad() {
-        this.etherpad = new Etherpad(this.domain, this.name);
+        this.etherpad = new Etherpad(getSharedDocumentUrl(APP.store.getState));
         VideoLayout.addLargeVideoContainer(
             ETHERPAD_CONTAINER_TYPE,
             this.etherpad

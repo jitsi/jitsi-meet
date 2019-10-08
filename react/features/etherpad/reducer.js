@@ -2,11 +2,7 @@
 
 import { ReducerRegistry } from '../base/redux';
 
-import {
-    ETHERPAD_INITIALIZED,
-    SET_DOCUMENT_EDITING_STATUS,
-    SET_DOCUMENT_URL
-} from './actionTypes';
+import { SET_DOCUMENT_EDITING_STATUS, SET_DOCUMENT_URL } from './actionTypes';
 
 const DEFAULT_STATE = {
 
@@ -21,15 +17,7 @@ const DEFAULT_STATE = {
      * @public
      * @type {boolean}
      */
-    editing: false,
-
-    /**
-     * Whether or not Etherpad is ready to use.
-     *
-     * @public
-     * @type {boolean}
-     */
-    initialized: false
+    editing: false
 };
 
 /**
@@ -39,12 +27,6 @@ ReducerRegistry.register(
     'features/etherpad',
     (state = DEFAULT_STATE, action) => {
         switch (action.type) {
-        case ETHERPAD_INITIALIZED:
-            return {
-                ...state,
-                initialized: true
-            };
-
         case SET_DOCUMENT_EDITING_STATUS:
             return {
                 ...state,

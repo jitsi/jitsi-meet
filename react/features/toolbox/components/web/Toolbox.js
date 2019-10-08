@@ -21,7 +21,6 @@ import {
     IconRaisedHand,
     IconRec,
     IconShareDesktop,
-    IconShareDoc,
     IconShareVideo
 } from '../../../base/icons';
 import {
@@ -34,7 +33,7 @@ import { OverflowMenuItem } from '../../../base/toolbox';
 import { getLocalVideoTrack, toggleScreensharing } from '../../../base/tracks';
 import { VideoBlurButton } from '../../../blur';
 import { ChatCounter, toggleChat } from '../../../chat';
-import { toggleDocument } from '../../../etherpad';
+import { SharedDocumentButton } from '../../../etherpad';
 import { openFeedbackDialog } from '../../../feedback';
 import {
     beginAddPeople,
@@ -110,16 +109,6 @@ type Props = {
      * Whether or not a dialog is displayed.
      */
     _dialog: boolean,
-
-    /**
-     * Whether or not the local participant is currently editing a document.
-     */
-    _editingDocument: boolean,
-
-    /**
-     * Whether or not collaborative document editing is enabled.
-     */
-    _etherpadInitialized: boolean,
 
     /**
      * Whether or not call feedback can be sent.
@@ -247,8 +236,6 @@ class Toolbox extends Component<Props, State> {
         this._onToolbarOpenVideoQuality
             = this._onToolbarOpenVideoQuality.bind(this);
         this._onToolbarToggleChat = this._onToolbarToggleChat.bind(this);
-        this._onToolbarToggleEtherpad
-            = this._onToolbarToggleEtherpad.bind(this);
         this._onToolbarToggleFullScreen
             = this._onToolbarToggleFullScreen.bind(this);
         this._onToolbarToggleProfile
@@ -422,16 +409,6 @@ class Toolbox extends Component<Props, State> {
      */
     _doToggleChat() {
         this.props.dispatch(toggleChat());
-    }
-
-    /**
-     * Dispatches an action to show or hide document editing.
-     *
-     * @private
-     * @returns {void}
-     */
-    _doToggleEtherpad() {
-        this.props.dispatch(toggleDocument());
     }
 
     /**
@@ -749,25 +726,6 @@ class Toolbox extends Component<Props, State> {
         this._doToggleChat();
     }
 
-    _onToolbarToggleEtherpad: () => void;
-
-    /**
-     * Creates an analytics toolbar event and dispatches an action for toggling
-     * the display of document editing.
-     *
-     * @private
-     * @returns {void}
-     */
-    _onToolbarToggleEtherpad() {
-        sendAnalytics(createToolbarEvent(
-            'toggle.etherpad',
-            {
-                enable: !this.props._editingDocument
-            }));
-
-        this._doToggleEtherpad();
-    }
-
     _onToolbarToggleFullScreen: () => void;
 
     /**
@@ -960,8 +918,6 @@ class Toolbox extends Component<Props, State> {
      */
     _renderOverflowMenuContent() {
         const {
-            _editingDocument,
-            _etherpadInitialized,
             _feedbackConfigured,
             _fullScreen,
             _screensharing,
@@ -1007,16 +963,9 @@ class Toolbox extends Component<Props, State> {
                         ? t('toolbar.stopSharedVideo')
                         : t('toolbar.sharedvideo') } />,
             this._shouldShowButton('etherpad')
-                && _etherpadInitialized
-                && <OverflowMenuItem
-                    accessibilityLabel =
-                        { t('toolbar.accessibilityLabel.document') }
-                    icon = { IconShareDoc }
+                && <SharedDocumentButton
                     key = 'etherpad'
-                    onClick = { this._onToolbarToggleEtherpad }
-                    text = { _editingDocument
-                        ? t('toolbar.documentClose')
-                        : t('toolbar.documentOpen') } />,
+                    showLabel = { true } />,
             <VideoBlurButton
                 key = 'videobackgroundblur'
                 showLabel = { true }
@@ -1365,8 +1314,6 @@ function _mapStateToProps(state) {
         _desktopSharingEnabled: desktopSharingEnabled,
         _desktopSharingDisabledTooltipKey: desktopSharingDisabledTooltipKey,
         _dialog: Boolean(state['features/base/dialog'].component),
-        _editingDocument: Boolean(state['features/etherpad'].editing),
-        _etherpadInitialized: Boolean(state['features/etherpad'].initialized),
         _feedbackConfigured: Boolean(callStatsID),
         _hideInviteButton:
             iAmRecorder || (!addPeopleEnabled && !dialOutEnabled),

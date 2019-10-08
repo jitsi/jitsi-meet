@@ -15,7 +15,7 @@ import Filmstrip from './videolayout/Filmstrip';
 
 import { getLocalParticipant } from '../../react/features/base/participants';
 import { toggleChat } from '../../react/features/chat';
-import { setEtherpadHasInitialzied } from '../../react/features/etherpad';
+import { setDocumentUrl } from '../../react/features/etherpad';
 import { setFilmstripVisible } from '../../react/features/filmstrip';
 import { setNotificationsEnabled } from '../../react/features/notifications';
 import {
@@ -240,10 +240,12 @@ UI.initEtherpad = name => {
         return;
     }
     logger.log('Etherpad is enabled');
-    etherpadManager
-        = new EtherpadManager(config.etherpad_base, name, eventEmitter);
 
-    APP.store.dispatch(setEtherpadHasInitialzied());
+    etherpadManager = new EtherpadManager(eventEmitter);
+
+    const url = new URL(name, config.etherpad_base);
+
+    APP.store.dispatch(setDocumentUrl(url.toString()));
 };
 
 /**

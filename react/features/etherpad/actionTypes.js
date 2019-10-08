@@ -1,14 +1,4 @@
 /**
- * The type of the action which signals document editing has been enabled.
- *
- * {
- *     type: ETHERPAD_INITIALIZED
- * }
- */
-export const ETHERPAD_INITIALIZED = 'ETHERPAD_INITIALIZED';
-
-
-/**
  * The type of the action which signals document editing has stopped or started.
  *
  * {
