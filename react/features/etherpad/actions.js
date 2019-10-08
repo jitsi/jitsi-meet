@@ -1,7 +1,6 @@
 // @flow
 
 import {
-    ETHERPAD_INITIALIZED,
     SET_DOCUMENT_EDITING_STATUS,
     SET_DOCUMENT_URL,
     TOGGLE_DOCUMENT_EDITING
@@ -37,19 +36,6 @@ export function setDocumentUrl(documentUrl: ?string) {
     return {
         type: SET_DOCUMENT_URL,
         documentUrl
-    };
-}
-
-/**
- * Dispatches an action to set Etherpad as having been initialized.
- *
- * @returns {{
- *    type: ETHERPAD_INITIALIZED
- * }}
- */
-export function setEtherpadHasInitialzied() {
-    return {
-        type: ETHERPAD_INITIALIZED
     };
 }
 
