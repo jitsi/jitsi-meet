@@ -7,7 +7,7 @@ import { setPassword } from '../../../../base/conference';
 import { getInviteURL } from '../../../../base/connection';
 import { Dialog } from '../../../../base/dialog';
 import { translate } from '../../../../base/i18n';
-import { Icon, IconInfo } from '../../../../base/icons';
+import { Icon, IconInfo, IconCopy } from '../../../../base/icons';
 import { connect } from '../../../../base/redux';
 import {
     isLocalParticipantModerator,
@@ -136,6 +136,7 @@ type State = {
  */
 class InfoDialog extends Component<Props, State> {
     _copyElement: ?Object;
+    _copyUrlElement: ?Object;
 
     /**
      * Implements React's {@link Component#getDerivedStateFromProps()}.
@@ -197,12 +198,14 @@ class InfoDialog extends Component<Props, State> {
 
         // Bind event handlers so they are only bound once for every instance.
         this._onClickURLText = this._onClickURLText.bind(this);
-        this._onCopyInviteURL = this._onCopyInviteURL.bind(this);
+        this._onCopyInviteInfo = this._onCopyInviteInfo.bind(this);
+        this._onCopyInviteUrl = this._onCopyInviteUrl.bind(this);
         this._onPasswordRemove = this._onPasswordRemove.bind(this);
         this._onPasswordSubmit = this._onPasswordSubmit.bind(this);
         this._onTogglePasswordEditState
             = this._onTogglePasswordEditState.bind(this);
         this._setCopyElement = this._setCopyElement.bind(this);
+        this._setCopyUrlElement = this._setCopyUrlElement.bind(this);
     }
 
     /**
@@ -239,11 +242,17 @@ class InfoDialog extends Component<Props, State> {
                         <span className = 'spacer'>&nbsp;</span>
                         <span className = 'info-value'>
                             <a
-                                className = 'info-dialog-url-text'
+                                className = 'info-dialog-url-text info-dialog-url-text-unselectable'
                                 href = { this.props._inviteURL }
                                 onClick = { this._onClickURLText } >
                                 { decodeURI(this._getURLToDisplay()) }
                             </a>
+                        </span>
+                        <span className = 'info-dialog-url-icon'>
+                            <Icon
+                                onClick = { this._onCopyInviteUrl }
+                                size = { 18 }
+                                src = { IconCopy } />
                         </span>
                     </div>
                     <div className = 'info-dialog-dial-in'>
@@ -262,7 +271,7 @@ class InfoDialog extends Component<Props, State> {
                         <div className = 'info-dialog-action-link'>
                             <a
                                 className = 'info-copy'
-                                onClick = { this._onCopyInviteURL }>
+                                onClick = { this._onCopyInviteInfo }>
                                 { t('dialog.copy') }
                             </a>
                         </div>
@@ -275,6 +284,12 @@ class InfoDialog extends Component<Props, State> {
                     ref = { this._setCopyElement }
                     tabIndex = '-1'
                     value = { this._getTextToCopy() } />
+                <textarea
+                    className = 'info-dialog-copy-element'
+                    readOnly = { true }
+                    ref = { this._setCopyUrlElement }
+                    tabIndex = '-1'
+                    value = { this.props._inviteURL } />
             </div>
         );
 
@@ -365,7 +380,7 @@ class InfoDialog extends Component<Props, State> {
         event.preventDefault();
     }
 
-    _onCopyInviteURL: () => void;
+    _onCopyInviteInfo: () => void;
 
     /**
      * Callback invoked to copy the contents of {@code this._copyElement} to the
@@ -374,7 +389,7 @@ class InfoDialog extends Component<Props, State> {
      * @private
      * @returns {void}
      */
-    _onCopyInviteURL() {
+    _onCopyInviteInfo() {
         try {
             if (!this._copyElement) {
                 throw new Error('No element to copy from.');
@@ -383,6 +398,28 @@ class InfoDialog extends Component<Props, State> {
             this._copyElement && this._copyElement.select();
             document.execCommand('copy');
             this._copyElement && this._copyElement.blur();
+        } catch (err) {
+            logger.error('error when copying the text', err);
+        }
+    }
+
+    _onCopyInviteUrl: () => void;
+
+    /**
+     * Callback invoked to copy the contents of {@code this._copyUrlElement} to the clipboard.
+     *
+     * @private
+     * @returns {void}
+     */
+    _onCopyInviteUrl() {
+        try {
+            if (!this._copyUrlElement) {
+                throw new Error('No element to copy from.');
+            }
+
+            this._copyUrlElement && this._copyUrlElement.select();
+            document.execCommand('copy');
+            this._copyUrlElement && this._copyUrlElement.blur();
         } catch (err) {
             logger.error('error when copying the text', err);
         }
@@ -564,6 +601,21 @@ class InfoDialog extends Component<Props, State> {
      */
     _setCopyElement(element: Object) {
         this._copyElement = element;
+    }
+
+    _setCopyUrlElement: () => void;
+
+    /**
+     * Sets the internal reference to the DOM/HTML element backing the React
+     * {@code Component} input.
+     *
+     * @param {HTMLInputElement} element - The DOM/HTML element for this
+     * {@code Component}'s input.
+     * @private
+     * @returns {void}
+     */
+    _setCopyUrlElement(element: Object) {
+        this._copyUrlElement = element;
     }
 }
 
