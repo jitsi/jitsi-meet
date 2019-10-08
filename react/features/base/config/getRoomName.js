@@ -1,7 +1,5 @@
 /* @flow */
 
-import { getBackendSafeRoomName } from '../util';
-
 declare var config: Object;
 
 /**
@@ -22,8 +20,10 @@ export default function getRoomName(): ?string {
         // URL maps to the room (name). It currently assumes a deployment in
         // which the last non-directory component of the path (name) is the
         // room.
-        roomName = path.substring(path.lastIndexOf('/') + 1) || undefined;
+        roomName
+            = path.substring(path.lastIndexOf('/') + 1).toLowerCase()
+                || undefined;
     }
 
-    return getBackendSafeRoomName(roomName);
+    return roomName;
 }
