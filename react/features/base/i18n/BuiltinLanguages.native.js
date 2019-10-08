@@ -73,6 +73,12 @@ const _LANGUAGES = {
         main: require('../../../../lang/main-hr')
     },
 
+    // Hungarian
+    'hu': {
+        languages: require('../../../../lang/languages-hu'),
+        main: require('../../../../lang/main-hu')
+    },
+
     // Italian
     'it': {
         languages: require('../../../../lang/languages-it'),
