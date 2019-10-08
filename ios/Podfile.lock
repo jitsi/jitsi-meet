@@ -272,7 +272,7 @@ PODS:
     - React
   - react-native-webrtc (1.75.0):
     - React
-  - react-native-webview (5.8.1):
+  - react-native-webview (7.4.1):
     - React
   - React-RCTActionSheet (0.61.1):
     - React-Core/RCTActionSheetHeaders (= 0.61.1)
@@ -528,7 +528,7 @@ SPEC CHECKSUMS:
   react-native-keep-awake: eba3137546b10003361b37c761f6c429b59814ae
   react-native-netinfo: 8d8db463bcc5db66a8ac5c48a7d86beb3b92f61a
   react-native-webrtc: c5e3d631179a933548a8e49bddbd8fad02586095
-  react-native-webview: a95842e3f351a6d2c8bc8bcc9eab689c7e7e5ad4
+  react-native-webview: 4dbc1d2a4a6b9c5e9e723c62651917aa2b5e579e
   React-RCTActionSheet: af4d951113b1e068bb30611f91b984a7a73597ff
   React-RCTAnimation: 4f518d70bb6890b7c3d9d732f84786d6693ca297
   React-RCTBlob: 072a4888c08de0eef6d04eaa727d25e577e6ff26
