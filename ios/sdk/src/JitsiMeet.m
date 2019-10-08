@@ -179,6 +179,15 @@
     return _universalLinkDomains ? _universalLinkDomains : @[];
 }
 
+- (void)setDefaultConferenceOptions:(JitsiMeetConferenceOptions *)defaultConferenceOptions {
+    if (defaultConferenceOptions != nil && _defaultConferenceOptions.room != nil) {
+        @throw [NSException exceptionWithName:@"RuntimeError"
+                                       reason:@"'room' must be null in the default conference options"
+                                     userInfo:nil];
+    }
+    _defaultConferenceOptions = defaultConferenceOptions;
+}
+
 #pragma mark - Private API methods
 
 - (NSDictionary *)getDefaultProps {
