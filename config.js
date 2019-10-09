@@ -1,16 +1,6 @@
 /* eslint-disable no-unused-vars, no-var */
 
 var config = {
-    // Configuration
-    //
-
-    // Alternative location for the configuration.
-    // configLocation: './config.json',
-
-    // Custom function which given the URL path should return a room name.
-    // getroomnode: function (path) { return 'someprefixpossiblybasedonpath'; },
-
-
     // Connection
     //
 
