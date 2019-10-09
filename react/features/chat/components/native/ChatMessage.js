@@ -47,13 +47,6 @@ class ChatMessage extends AbstractChatMessage<Props> {
             textWrapperStyle.push(styles.systemTextWrapper);
         }
 
-        const messageText = message.messageType === 'error'
-            ? this.props.t('chat.error', {
-                error: message.error,
-                originalText: message.message
-            })
-            : message.message;
-
         return (
             <View style = { styles.messageWrapper } >
                 { this._renderAvatar() }
@@ -65,7 +58,7 @@ class ChatMessage extends AbstractChatMessage<Props> {
                                     && this._renderDisplayName()
                             }
                             <Linkify linkStyle = { styles.chatLink }>
-                                { replaceNonUnicodeEmojis(messageText) }
+                                { replaceNonUnicodeEmojis(this._getMessageText()) }
                             </Linkify>
                             {
                                 message.privateMessage
@@ -86,6 +79,8 @@ class ChatMessage extends AbstractChatMessage<Props> {
     }
 
     _getFormattedTimestamp: () => string;
+
+    _getMessageText: () => string;
 
     _getPrivateNoticeMessage: () => string;
 

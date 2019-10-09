@@ -58,6 +58,21 @@ export default class AbstractChatMessage<P: Props> extends PureComponent<P> {
     }
 
     /**
+     * Generates the message text to be redered in the component.
+     *
+     * @returns {string}
+     */
+    _getMessageText() {
+        const { message } = this.props;
+
+        return message.messageType === 'error'
+            ? this.props.t('chat.error', {
+                error: message.message
+            })
+            : message.message;
+    }
+
+    /**
      * Returns the message that is displayed as a notice for private messages.
      *
      * @returns {string}
