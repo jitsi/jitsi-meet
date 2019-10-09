@@ -310,5 +310,7 @@ function devServerProxyBypass({ path }) {
         return path;
     }
 
-    /* eslint-enable array-callback-return, indent */
+    if (path.startsWith('/libs/')) {
+        return path;
+    }
 }
