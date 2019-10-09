@@ -24,17 +24,10 @@ class ChatMessage extends AbstractChatMessage<Props> {
      */
     render() {
         const { message } = this.props;
-        const messageToDisplay = message.messageType === 'error'
-            ? this.props.t('chat.error', {
-                error: message.error,
-                originalText: message.message
-            })
-            : message.message;
-
         const processedMessage = [];
 
         // content is an array of text and emoji components
-        const content = toArray(messageToDisplay, { className: 'smiley' });
+        const content = toArray(this._getMessageText(), { className: 'smiley' });
 
         content.forEach(i => {
             if (typeof i === 'string') {
@@ -66,6 +59,8 @@ class ChatMessage extends AbstractChatMessage<Props> {
     }
 
     _getFormattedTimestamp: () => string;
+
+    _getMessageText: () => string;
 
     _getPrivateNoticeMessage: () => string;
 

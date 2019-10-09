@@ -77,6 +77,11 @@ declare var APP: Object;
  * @returns {void}
  */
 function _addConferenceListeners(conference, dispatch) {
+    // A simple logger for conference errors received through
+    // the listener. These errors are not handled now, but logged.
+    conference.on(JitsiConferenceEvents.CONFERENCE_ERROR,
+        error => logger.error('Conference error.', error));
+
     // Dispatches into features/base/conference follow:
 
     conference.on(

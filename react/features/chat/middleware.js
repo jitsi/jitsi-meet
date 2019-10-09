@@ -6,7 +6,10 @@ import {
     getCurrentConference
 } from '../base/conference';
 import { openDialog } from '../base/dialog';
-import { JitsiConferenceEvents } from '../base/lib-jitsi-meet';
+import {
+    JitsiConferenceErrors,
+    JitsiConferenceEvents
+} from '../base/lib-jitsi-meet';
 import {
     getLocalParticipant,
     getParticipantById,
@@ -139,10 +142,10 @@ StateListenerRegistry.register(
  * @private
  * @returns {void}
  */
-function _addChatMsgListener(conference, { dispatch, getState }) {
+function _addChatMsgListener(conference, store) {
     if ((typeof interfaceConfig === 'object' && interfaceConfig.filmStripOnly)
         || (typeof APP !== 'undefined' && !isButtonEnabled('chat'))
-        || getState()['features/base/config'].iAmRecorder) {
+        || store.getState()['features/base/config'].iAmRecorder) {
         // We don't register anything on web if we're in filmStripOnly mode, or
         // the chat button is not enabled in interfaceConfig.
         // or we are in iAmRecorder mode
@@ -152,10 +155,7 @@ function _addChatMsgListener(conference, { dispatch, getState }) {
     conference.on(
         JitsiConferenceEvents.MESSAGE_RECEIVED,
         (id, message, timestamp, nick) => {
-            _handleReceivedMessage({
-                dispatch,
-                getState
-            }, {
+            _handleReceivedMessage(store, {
                 id,
                 message,
                 nick,
@@ -168,10 +168,7 @@ function _addChatMsgListener(conference, { dispatch, getState }) {
     conference.on(
         JitsiConferenceEvents.PRIVATE_MESSAGE_RECEIVED,
         (id, message, timestamp) => {
-            _handleReceivedMessage({
-                dispatch,
-                getState
-            }, {
+            _handleReceivedMessage(store, {
                 id,
                 message,
                 privateMessage: true,
@@ -180,6 +177,28 @@ function _addChatMsgListener(conference, { dispatch, getState }) {
             });
         }
     );
+
+    conference.on(
+        JitsiConferenceEvents.CONFERENCE_ERROR, (errorType, error) => {
+            errorType === JitsiConferenceErrors.CHAT_ERROR && _handleChatError(store, error);
+        });
+}
+
+/**
+ * Handles a chat error received from the xmpp server.
+ *
+ * @param {Store} store - The Redux store.
+ * @param  {string} error - The error message.
+ * @returns {void}
+ */
+function _handleChatError({ dispatch }, error) {
+    dispatch(addMessage({
+        hasRead: true,
+        messageType: 'error',
+        message: error,
+        privateMessage: false,
+        timestamp: Date.now()
+    }));
 }
 
 /**
