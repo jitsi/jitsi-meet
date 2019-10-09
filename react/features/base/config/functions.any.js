@@ -8,8 +8,6 @@ import INTERFACE_CONFIG_WHITELIST from './interfaceConfigWhitelist';
 import parseURLParams from './parseURLParams';
 import logger from './logger';
 
-declare var $: Object;
-
 // XXX The functions getRoomName and parseURLParams are split out of
 // functions.js because they are bundled in both app.bundle and
 // do_external_connect, webpack 1 does not support tree shaking, and we don't
@@ -38,69 +36,6 @@ export function createFakeConfig(baseURL: string) {
             enabled: true
         }
     };
-}
-
-/**
- * Promise wrapper on obtain config method. When HttpConfigFetch will be moved
- * to React app it's better to use load config instead.
- *
- * @param {string} location - URL of the domain from which the config is to be
- * obtained.
- * @param {string} room - Room name.
- * @private
- * @returns {Promise<void>}
- */
-export function obtainConfig(location: string, room: string): Promise<void> {
-    return new Promise((resolve, reject) =>
-        _obtainConfig(location, room, (success, error) => {
-            success ? resolve() : reject(error);
-        })
-    );
-}
-
-/**
- * Sends HTTP POST request to specified {@code endpoint}. In request the name
- * of the room is included in JSON format:
- * {
- *     "rooomName": "someroom12345"
- * }.
- *
- * @param {string} endpoint - The name of HTTP endpoint to which to send
- * the HTTP POST request.
- * @param {string} roomName - The name of the conference room for which config
- * is requested.
- * @param {Function} complete - The callback to invoke upon success or failure.
- * @returns {void}
- */
-function _obtainConfig(endpoint: string, roomName: string, complete: Function) {
-    logger.info(`Send config request to ${endpoint} for room: ${roomName}`);
-    $.ajax(
-        endpoint,
-        {
-            contentType: 'application/json',
-            data: JSON.stringify({ roomName }),
-            dataType: 'json',
-            method: 'POST',
-
-            error(jqXHR, textStatus, errorThrown) {
-                logger.error('Get config error: ', jqXHR, errorThrown);
-                complete(false, `Get config response status: ${textStatus}`);
-            },
-            success(data) {
-                const { config, interfaceConfig, loggingConfig } = window;
-
-                try {
-                    overrideConfigJSON(
-                        config, interfaceConfig, loggingConfig,
-                        data);
-                    complete(true);
-                } catch (e) {
-                    logger.error('Parse config error: ', e);
-                    complete(false, e);
-                }
-            }
-        }
-    );
 }
 
 /* eslint-disable max-params, no-shadow */
