@@ -27,6 +27,7 @@ var interfaceConfig = {
     SHOW_DEEP_LINKING_IMAGE: false,
     GENERATE_ROOMNAMES_ON_WELCOME_PAGE: true,
     DISPLAY_WELCOME_PAGE_CONTENT: true,
+    DISPLAY_WELCOME_PAGE_TOOLBAR_CONTENT: false,
     APP_NAME: 'Jitsi Meet',
     NATIVE_APP_NAME: 'Jitsi Meet',
     PROVIDER_NAME: 'Jitsi',
