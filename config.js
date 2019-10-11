@@ -419,6 +419,10 @@ var config = {
     // the menu has option to flip the locally seen video for local presentations
     // disableLocalVideoFlip: false
 
+    // If specified a 'Help' button will be displayed in the overflow menu with a link to the specified URL for
+    // user documentation.
+    // userDocumentationURL: 'https://docs.example.com/video-meetings.html'
+
     // List of undocumented settings used in jitsi-meet
     /**
      _immediateReloadThreshold

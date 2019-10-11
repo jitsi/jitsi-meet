@@ -190,12 +190,6 @@ var interfaceConfig = {
     AUTO_PIN_LATEST_SCREEN_SHARE: 'remote-only'
 
     /**
-     * The link to the user documentation.
-     */
-    // HELP_LINK: 'https://docs.example.com/video-meetings.html',
-
-
-    /**
      * How many columns the tile view can expand to. The respected range is
      * between 1 and 5.
      */
