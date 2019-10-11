@@ -162,108 +162,13 @@ class Conference extends AbstractConference<Props, *> {
      * @returns {ReactElement}
      */
     render() {
-        const {
-            _connecting,
-            _filmstripVisible,
-            _largeVideoParticipantId,
-            _reducedUI,
-            _shouldDisplayTileView,
-            _toolboxVisible
-        } = this.props;
-        const showGradient = _toolboxVisible;
-        const applyGradientStretching = _filmstripVisible && isNarrowAspectRatio(this) && !_shouldDisplayTileView;
-
         return (
             <Container style = { styles.conference }>
                 <StatusBar
                     barStyle = 'light-content'
                     hidden = { true }
                     translucent = { true } />
-
-                <AddPeopleDialog />
-                <Chat />
-                <SharedDocument />
-
-                {/*
-                  * The LargeVideo is the lowermost stacking layer.
-                  */
-                    _shouldDisplayTileView
-                        ? <TileView onClick = { this._onClick } />
-                        : <LargeVideo onClick = { this._onClick } />
-                }
-
-                {/*
-                  * If there is a ringing call, show the callee's info.
-                  */
-                    _reducedUI || <CalleeInfoContainer />
-                }
-
-                {/*
-                  * The activity/loading indicator goes above everything, except
-                  * the toolbox/toolbars and the dialogs.
-                  */
-                    _connecting
-                        && <TintedView>
-                            <LoadingIndicator />
-                        </TintedView>
-                }
-
-                <View
-                    pointerEvents = 'box-none'
-                    style = { styles.toolboxAndFilmstripContainer }>
-
-                    { showGradient && <LinearGradient
-                        colors = { NAVBAR_GRADIENT_COLORS }
-                        end = {{
-                            x: 0.0,
-                            y: 0.0
-                        }}
-                        pointerEvents = 'none'
-                        start = {{
-                            x: 0.0,
-                            y: 1.0
-                        }}
-                        style = { [
-                            styles.bottomGradient,
-                            applyGradientStretching ? styles.gradientStretchBottom : undefined
-                        ] } />}
-
-                    <Labels />
-
-                    <Captions onPress = { this._onClick } />
-
-                    { _shouldDisplayTileView || <DisplayNameLabel participantId = { _largeVideoParticipantId } /> }
-
-                    {/*
-                      * The Toolbox is in a stacking layer below the Filmstrip.
-                      */}
-                    <Toolbox />
-
-                    {/*
-                      * The Filmstrip is in a stacking layer above the
-                      * LargeVideo. The LargeVideo and the Filmstrip form what
-                      * the Web/React app calls "videospace". Presumably, the
-                      * name and grouping stem from the fact that these two
-                      * React Components depict the videos of the conference's
-                      * participants.
-                      */
-                        _shouldDisplayTileView ? undefined : <Filmstrip />
-                    }
-                </View>
-
-                <SafeAreaView
-                    pointerEvents = 'box-none'
-                    style = { styles.navBarSafeView }>
-                    <NavigationBar />
-                    { this.renderNotificationsContainer() }
-                </SafeAreaView>
-
-                <TestConnectionInfo />
-
-                {
-                    this._renderConferenceNotification()
-                }
-
+                { this._renderContent() }
             </Container>
         );
     }
@@ -323,13 +228,145 @@ class Conference extends AbstractConference<Props, *> {
     }
 
     /**
+     * Renders the content for the Conference container.
+     *
+     * @private
+     * @returns {React$Element}
+     */
+    _renderContent() {
+        const {
+            _connecting,
+            _filmstripVisible,
+            _largeVideoParticipantId,
+            _reducedUI,
+            _shouldDisplayTileView,
+            _toolboxVisible
+        } = this.props;
+        const showGradient = _toolboxVisible;
+        const applyGradientStretching = _filmstripVisible && isNarrowAspectRatio(this) && !_shouldDisplayTileView;
+
+        if (_reducedUI) {
+            return this._renderContentForReducedUi();
+        }
+
+        return (
+            <>
+                <AddPeopleDialog />
+                <Chat />
+                <SharedDocument />
+
+                {/*
+                  * The LargeVideo is the lowermost stacking layer.
+                  */
+                    _shouldDisplayTileView
+                        ? <TileView onClick = { this._onClick } />
+                        : <LargeVideo onClick = { this._onClick } />
+                }
+
+                {/*
+                  * If there is a ringing call, show the callee's info.
+                  */
+                    <CalleeInfoContainer />
+                }
+
+                {/*
+                  * The activity/loading indicator goes above everything, except
+                  * the toolbox/toolbars and the dialogs.
+                  */
+                    _connecting
+                        && <TintedView>
+                            <LoadingIndicator />
+                        </TintedView>
+                }
+
+                <View
+                    pointerEvents = 'box-none'
+                    style = { styles.toolboxAndFilmstripContainer }>
+
+                    { showGradient && <LinearGradient
+                        colors = { NAVBAR_GRADIENT_COLORS }
+                        end = {{
+                            x: 0.0,
+                            y: 0.0
+                        }}
+                        pointerEvents = 'none'
+                        start = {{
+                            x: 0.0,
+                            y: 1.0
+                        }}
+                        style = { [
+                            styles.bottomGradient,
+                            applyGradientStretching ? styles.gradientStretchBottom : undefined
+                        ] } />}
+
+                    <Labels />
+
+                    <Captions onPress = { this._onClick } />
+
+                    { _shouldDisplayTileView || <DisplayNameLabel participantId = { _largeVideoParticipantId } /> }
+
+                    {/*
+                      * The Toolbox is in a stacking layer below the Filmstrip.
+                      */}
+                    <Toolbox />
+
+                    {/*
+                      * The Filmstrip is in a stacking layer above the
+                      * LargeVideo. The LargeVideo and the Filmstrip form what
+                      * the Web/React app calls "videospace". Presumably, the
+                      * name and grouping stem from the fact that these two
+                      * React Components depict the videos of the conference's
+                      * participants.
+                      */
+                        _shouldDisplayTileView ? undefined : <Filmstrip />
+                    }
+                </View>
+
+                <SafeAreaView
+                    pointerEvents = 'box-none'
+                    style = { styles.navBarSafeView }>
+                    <NavigationBar />
+                    { this._renderNotificationsContainer() }
+                </SafeAreaView>
+
+                <TestConnectionInfo />
+
+                { this._renderConferenceNotification() }
+            </>
+        );
+    }
+
+    /**
+     * Renders the content for the Conference container when in "reduced UI" mode.
+     *
+     * @private
+     * @returns {React$Element}
+     */
+    _renderContentForReducedUi() {
+        const { _connecting } = this.props;
+
+        return (
+            <>
+                <LargeVideo onClick = { this._onClick } />
+
+                {
+                    _connecting
+                        && <TintedView>
+                            <LoadingIndicator />
+                        </TintedView>
+                }
+            </>
+        );
+    }
+
+    /**
      * Renders a container for notifications to be displayed by the
      * base/notifications feature.
      *
      * @private
      * @returns {React$Element}
      */
-    renderNotificationsContainer() {
+    _renderNotificationsContainer() {
         const notificationsStyle = {};
 
         // In the landscape mode (wide) there's problem with notifications being
