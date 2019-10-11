@@ -1,5 +1,10 @@
 PODS:
   - Amplitude-iOS (4.0.4)
+  - AppAuth (1.2.0):
+    - AppAuth/Core (= 1.2.0)
+    - AppAuth/ExternalUserAgent (= 1.2.0)
+  - AppAuth/Core (1.2.0)
+  - AppAuth/ExternalUserAgent (1.2.0)
   - boost-for-react-native (1.63.0)
   - BVLinearGradient (2.5.6):
     - React
@@ -62,18 +67,10 @@ PODS:
     - GoogleUtilities/Network (~> 5.2)
     - "GoogleUtilities/NSData+zlib (~> 5.2)"
     - nanopb (~> 0.3)
-  - GoogleSignIn (4.4.0):
-    - "GoogleToolboxForMac/NSDictionary+URLArguments (~> 2.1)"
-    - "GoogleToolboxForMac/NSString+URLArguments (~> 2.1)"
+  - GoogleSignIn (5.0.1):
+    - AppAuth (~> 1.2)
+    - GTMAppAuth (~> 1.0)
     - GTMSessionFetcher/Core (~> 1.1)
-  - GoogleToolboxForMac/DebugUtils (2.2.0):
-    - GoogleToolboxForMac/Defines (= 2.2.0)
-  - GoogleToolboxForMac/Defines (2.2.0)
-  - "GoogleToolboxForMac/NSDictionary+URLArguments (2.2.0)":
-    - GoogleToolboxForMac/DebugUtils (= 2.2.0)
-    - GoogleToolboxForMac/Defines (= 2.2.0)
-    - "GoogleToolboxForMac/NSString+URLArguments (= 2.2.0)"
-  - "GoogleToolboxForMac/NSString+URLArguments (2.2.0)"
   - GoogleUtilities/AppDelegateSwizzler (5.4.1):
     - GoogleUtilities/Environment
     - GoogleUtilities/Logger
@@ -92,7 +89,14 @@ PODS:
     - GoogleUtilities/Logger
   - GoogleUtilities/UserDefaults (5.4.1):
     - GoogleUtilities/Logger
-  - GTMSessionFetcher/Core (1.2.1)
+  - GTMAppAuth (1.0.0):
+    - AppAuth/Core (~> 1.0)
+    - GTMSessionFetcher (~> 1.1)
+  - GTMSessionFetcher (1.2.2):
+    - GTMSessionFetcher/Full (= 1.2.2)
+  - GTMSessionFetcher/Core (1.2.2)
+  - GTMSessionFetcher/Full (1.2.2):
+    - GTMSessionFetcher/Core (= 1.2.2)
   - nanopb (0.3.901):
     - nanopb/decode (= 0.3.901)
     - nanopb/encode (= 0.3.901)
@@ -330,8 +334,8 @@ PODS:
     - ReactCommon/turbomodule/core (= 0.61.1)
   - RNCAsyncStorage (1.3.4):
     - React
-  - RNGoogleSignin (2.0.0):
-    - GoogleSignIn (~> 4.4.0)
+  - RNGoogleSignin (3.0.1):
+    - GoogleSignIn (~> 5.0.0)
     - React
   - RNSound (0.11.0):
     - React
@@ -386,7 +390,7 @@ DEPENDENCIES:
   - React-RCTVibration (from `../node_modules/react-native/Libraries/Vibration`)
   - ReactCommon/turbomodule (from `../node_modules/react-native/ReactCommon`)
   - "RNCAsyncStorage (from `../node_modules/@react-native-community/async-storage`)"
-  - RNGoogleSignin (from `../node_modules/react-native-google-signin`)
+  - "RNGoogleSignin (from `../node_modules/@react-native-community/google-signin`)"
   - RNSound (from `../node_modules/react-native-sound`)
   - RNSVG (from `../node_modules/react-native-svg`)
   - RNWatch (from `../node_modules/react-native-watch-connectivity`)
@@ -406,12 +410,14 @@ SPEC REPOS:
     - FirebaseDynamicLinks
     - FirebaseInstanceID
     - GoogleAppMeasurement
-    - GoogleSignIn
-    - GoogleToolboxForMac
     - GoogleUtilities
-    - GTMSessionFetcher
     - nanopb
     - ObjectiveDropboxOfficial
+  trunk:
+    - AppAuth
+    - GoogleSignIn
+    - GTMAppAuth
+    - GTMSessionFetcher
 
 EXTERNAL SOURCES:
   BVLinearGradient:
@@ -479,7 +485,7 @@ EXTERNAL SOURCES:
   RNCAsyncStorage:
     :path: "../node_modules/@react-native-community/async-storage"
   RNGoogleSignin:
-    :path: "../node_modules/react-native-google-signin"
+    :path: "../node_modules/@react-native-community/google-signin"
   RNSound:
     :path: "../node_modules/react-native-sound"
   RNSVG:
@@ -491,6 +497,7 @@ EXTERNAL SOURCES:
 
 SPEC CHECKSUMS:
   Amplitude-iOS: 2ad4d7270c99186236c1272a3a9425463b1ae1a7
+  AppAuth: bce82c76043657c99d91e7882e8a9e1a93650cd4
   boost-for-react-native: 39c7adb57c4e60d6c5479dd8623128eb5b3f0f2c
   BVLinearGradient: e3aad03778a456d77928f594a649e96995f1c872
   CocoaLumberjack: 2f44e60eb91c176d471fdba43b9e3eae6a721947
@@ -508,10 +515,10 @@ SPEC CHECKSUMS:
   Folly: 30e7936e1c45c08d884aa59369ed951a8e68cf51
   glog: 1f3da668190260b06b429bb211bfbee5cd790c28
   GoogleAppMeasurement: 6cf307834da065863f9faf4c0de0a936d81dd832
-  GoogleSignIn: 7ff245e1a7b26d379099d3243a562f5747e23d39
-  GoogleToolboxForMac: ff31605b7d66400dcec09bed5861689aebadda4d
+  GoogleSignIn: 3a51b9bb8e48b635fd7f4272cee06ca260345b86
   GoogleUtilities: 1e25823cbf46540b4284f6ef8e17b3a68ee12bbc
-  GTMSessionFetcher: 32aeca0aa144acea523e1c8e053089dec2cb98ca
+  GTMAppAuth: 4deac854479704f348309e7b66189e604cf5e01e
+  GTMSessionFetcher: 61bb0f61a4cb560030f1222021178008a5727a23
   nanopb: 2901f78ea1b7b4015c860c2fdd1ea2fee1a18d48
   ObjectiveDropboxOfficial: a5afefc83f6467c42c45f2253f583f2ad1ffc701
   RCTRequired: 53825815218847d3e9c7b6d92ad2d197a926d51e
@@ -540,12 +547,12 @@ SPEC CHECKSUMS:
   React-RCTVibration: 8be61459e3749d1fb02cf414edd05b3007622882
   ReactCommon: 4fba5be89efdf0b5720e0adb3d8d7edf6e532db0
   RNCAsyncStorage: 8e31405a9f12fbf42c2bb330e4560bfd79c18323
-  RNGoogleSignin: d030c6c6591db24c3cee649f64c7babf0a1699a0
+  RNGoogleSignin: 39336070b35fc4cea6a98cf111e00480317be0ae
   RNSound: c980916b596cc15c8dcd2f6ecd3b13c4881dbe20
   RNSVG: aac12785382e8fd4f28d072fe640612e34914631
   RNWatch: 09738b339eceb66e4d80a2371633ca5fb380fa42
   Yoga: d8c572ddec8d05b7dba08e4e5f1924004a177078
 
-PODFILE CHECKSUM: 0ac392c47cc78d9db03eea7b58950184336d6cf4
+PODFILE CHECKSUM: cb84b325b724c6ef7c8b24aa52ca7b6f681a095c
 
 COCOAPODS: 1.8.1

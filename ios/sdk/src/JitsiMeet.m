@@ -90,8 +90,7 @@
 
     if ([RNGoogleSignin application:app
                             openURL:url
-                  sourceApplication:options[UIApplicationOpenURLOptionsSourceApplicationKey]
-                         annotation:options[UIApplicationOpenURLOptionsAnnotationKey]]) {
+                            options:options]) {
         return YES;
     }
 
