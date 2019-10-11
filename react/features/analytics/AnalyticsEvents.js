@@ -693,6 +693,21 @@ export function createSyncTrackStateEvent(mediaType, muted) {
 }
 
 /**
+ * Creates an event that indicates the thumbnail offset parent is null.
+ *
+ * @param {string} id - The id of the user related to the thumbnail.
+ * @returns {Object} The event in a format suitable for sending via sendAnalytics.
+ */
+export function createThumbnailOffsetParentIsNullEvent(id) {
+    return {
+        action: 'OffsetParentIsNull',
+        attributes: {
+            id
+        }
+    };
+}
+
+/**
  * Creates an event associated with a toolbar button being clicked/pressed. By
  * convention, where appropriate an attribute named 'enable' should be used to
  * indicate the action which resulted by the shortcut being pressed (e.g.

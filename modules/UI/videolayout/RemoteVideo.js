@@ -7,6 +7,7 @@ import { Provider } from 'react-redux';
 import { I18nextProvider } from 'react-i18next';
 import { AtlasKitThemeProvider } from '@atlaskit/theme';
 
+import { createThumbnailOffsetParentIsNullEvent, sendAnalytics } from '../../../react/features/analytics';
 import { i18next } from '../../../react/features/base/i18n';
 import {
     JitsiParticipantConnectionStatus
@@ -512,11 +513,31 @@ RemoteVideo.prototype.addRemoteStreamElement = function(stream) {
 
     $(streamElement).hide();
 
-    // If the container is currently visible
-    // we attach the stream to the element.
-    if (!isVideo || (this.container.offsetParent !== null && isVideo)) {
-        this.waitForPlayback(streamElement, stream);
-        stream.attach(streamElement);
+    this.waitForPlayback(streamElement, stream);
+    stream.attach(streamElement);
+
+    // TODO: Remove once we verify that this.container.offsetParent === null was the reason for not attached video
+    // streams to the thumbnail.
+    if (isVideo && this.container.offsetParent === null) {
+        sendAnalytics(createThumbnailOffsetParentIsNullEvent(this.id));
+        const parentNodesDisplayProps = [
+            '#filmstripRemoteVideosContainer',
+            '#filmstripRemoteVideos',
+            '#remoteVideos',
+            '.filmstrip',
+            '#videospace',
+            '#videoconference_page',
+            '#react'
+        ].map(selector => `${selector} - ${$(selector).css('display')}`);
+        const videoConferencePageParent = $('#videoconference_page').parent();
+        const reactDiv = document.getElementById('react');
+
+        parentNodesDisplayProps.push(
+            `${videoConferencePageParent.attr('class')} - ${videoConferencePageParent.css('display')}`);
+        parentNodesDisplayProps.push(`this.container - ${this.$container.css('display')}`);
+        logger.debug(`this.container.offsetParent is null [user: ${this.id}, ${
+            parentNodesDisplayProps.join(', ')}, #react.offsetParent - ${
+            reactDiv && reactDiv.offsetParent !== null ? 'not null' : 'null'}]`);
     }
 
     if (!isVideo) {
