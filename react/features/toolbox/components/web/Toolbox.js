@@ -71,6 +71,7 @@ import {
 import AudioMuteButton from '../AudioMuteButton';
 import { isToolboxVisible } from '../../functions';
 import HangupButton from '../HangupButton';
+import HelpButton from './HelpButton';
 import OverflowMenuButton from './OverflowMenuButton';
 import OverflowMenuProfileItem from './OverflowMenuProfileItem';
 import ToolbarButton from './ToolbarButton';
@@ -218,36 +219,22 @@ class Toolbox extends Component<Props, State> {
         this._onSetOverflowVisible = this._onSetOverflowVisible.bind(this);
 
         this._onShortcutToggleChat = this._onShortcutToggleChat.bind(this);
-        this._onShortcutToggleFullScreen
-            = this._onShortcutToggleFullScreen.bind(this);
-        this._onShortcutToggleRaiseHand
-            = this._onShortcutToggleRaiseHand.bind(this);
-        this._onShortcutToggleScreenshare
-            = this._onShortcutToggleScreenshare.bind(this);
-        this._onShortcutToggleVideoQuality
-            = this._onShortcutToggleVideoQuality.bind(this);
-        this._onToolbarOpenFeedback
-            = this._onToolbarOpenFeedback.bind(this);
+        this._onShortcutToggleFullScreen = this._onShortcutToggleFullScreen.bind(this);
+        this._onShortcutToggleRaiseHand = this._onShortcutToggleRaiseHand.bind(this);
+        this._onShortcutToggleScreenshare = this._onShortcutToggleScreenshare.bind(this);
+        this._onShortcutToggleVideoQuality = this._onShortcutToggleVideoQuality.bind(this);
+        this._onToolbarOpenFeedback = this._onToolbarOpenFeedback.bind(this);
         this._onToolbarOpenInvite = this._onToolbarOpenInvite.bind(this);
-        this._onToolbarOpenKeyboardShortcuts
-            = this._onToolbarOpenKeyboardShortcuts.bind(this);
-        this._onToolbarOpenSpeakerStats
-            = this._onToolbarOpenSpeakerStats.bind(this);
-        this._onToolbarOpenVideoQuality
-            = this._onToolbarOpenVideoQuality.bind(this);
+        this._onToolbarOpenKeyboardShortcuts = this._onToolbarOpenKeyboardShortcuts.bind(this);
+        this._onToolbarOpenSpeakerStats = this._onToolbarOpenSpeakerStats.bind(this);
+        this._onToolbarOpenVideoQuality = this._onToolbarOpenVideoQuality.bind(this);
         this._onToolbarToggleChat = this._onToolbarToggleChat.bind(this);
-        this._onToolbarToggleFullScreen
-            = this._onToolbarToggleFullScreen.bind(this);
-        this._onToolbarToggleProfile
-            = this._onToolbarToggleProfile.bind(this);
-        this._onToolbarToggleRaiseHand
-            = this._onToolbarToggleRaiseHand.bind(this);
-        this._onToolbarToggleScreenshare
-            = this._onToolbarToggleScreenshare.bind(this);
-        this._onToolbarToggleSharedVideo
-            = this._onToolbarToggleSharedVideo.bind(this);
-        this._onToolbarOpenLocalRecordingInfoDialog
-            = this._onToolbarOpenLocalRecordingInfoDialog.bind(this);
+        this._onToolbarToggleFullScreen = this._onToolbarToggleFullScreen.bind(this);
+        this._onToolbarToggleProfile = this._onToolbarToggleProfile.bind(this);
+        this._onToolbarToggleRaiseHand = this._onToolbarToggleRaiseHand.bind(this);
+        this._onToolbarToggleScreenshare = this._onToolbarToggleScreenshare.bind(this);
+        this._onToolbarToggleSharedVideo = this._onToolbarToggleSharedVideo.bind(this);
+        this._onToolbarOpenLocalRecordingInfoDialog = this._onToolbarOpenLocalRecordingInfoDialog.bind(this);
 
         this.state = {
             windowWidth: window.innerWidth
@@ -936,16 +923,11 @@ class Toolbox extends Component<Props, State> {
                     onClick = { this._onToolbarOpenVideoQuality } />,
             this._shouldShowButton('fullscreen')
                 && <OverflowMenuItem
-                    accessibilityLabel =
-                        { t('toolbar.accessibilityLabel.fullScreen') }
-                    icon = { _fullScreen
-                        ? IconExitFullScreen
-                        : IconFullScreen }
+                    accessibilityLabel = { t('toolbar.accessibilityLabel.fullScreen') }
+                    icon = { _fullScreen ? IconExitFullScreen : IconFullScreen }
                     key = 'fullscreen'
                     onClick = { this._onToolbarToggleFullScreen }
-                    text = { _fullScreen
-                        ? t('toolbar.exitFullScreen')
-                        : t('toolbar.enterFullScreen') } />,
+                    text = { _fullScreen ? t('toolbar.exitFullScreen') : t('toolbar.enterFullScreen') } />,
             <LiveStreamButton
                 key = 'livestreaming'
                 showLabel = { true } />,
@@ -954,14 +936,11 @@ class Toolbox extends Component<Props, State> {
                 showLabel = { true } />,
             this._shouldShowButton('sharedvideo')
                 && <OverflowMenuItem
-                    accessibilityLabel =
-                        { t('toolbar.accessibilityLabel.sharedvideo') }
+                    accessibilityLabel = { t('toolbar.accessibilityLabel.sharedvideo') }
                     icon = { IconShareVideo }
                     key = 'sharedvideo'
                     onClick = { this._onToolbarToggleSharedVideo }
-                    text = { _sharingVideo
-                        ? t('toolbar.stopSharedVideo')
-                        : t('toolbar.sharedvideo') } />,
+                    text = { _sharingVideo ? t('toolbar.stopSharedVideo') : t('toolbar.sharedvideo') } />,
             this._shouldShowButton('etherpad')
                 && <SharedDocumentButton
                     key = 'etherpad'
@@ -976,8 +955,7 @@ class Toolbox extends Component<Props, State> {
                 visible = { this._shouldShowButton('settings') } />,
             this._shouldShowButton('stats')
                 && <OverflowMenuItem
-                    accessibilityLabel =
-                        { t('toolbar.accessibilityLabel.speakerStats') }
+                    accessibilityLabel = { t('toolbar.accessibilityLabel.speakerStats') }
                     icon = { IconPresentation }
                     key = 'stats'
                     onClick = { this._onToolbarOpenSpeakerStats }
@@ -985,20 +963,22 @@ class Toolbox extends Component<Props, State> {
             this._shouldShowButton('feedback')
                 && _feedbackConfigured
                 && <OverflowMenuItem
-                    accessibilityLabel =
-                        { t('toolbar.accessibilityLabel.feedback') }
+                    accessibilityLabel = { t('toolbar.accessibilityLabel.feedback') }
                     icon = { IconFeedback }
                     key = 'feedback'
                     onClick = { this._onToolbarOpenFeedback }
                     text = { t('toolbar.feedback') } />,
             this._shouldShowButton('shortcuts')
                 && <OverflowMenuItem
-                    accessibilityLabel =
-                        { t('toolbar.accessibilityLabel.shortcuts') }
+                    accessibilityLabel = { t('toolbar.accessibilityLabel.shortcuts') }
                     icon = { IconOpenInNew }
                     key = 'shortcuts'
                     onClick = { this._onToolbarOpenKeyboardShortcuts }
-                    text = { t('toolbar.shortcuts') } />
+                    text = { t('toolbar.shortcuts') } />,
+            this._shouldShowButton('help')
+                && <HelpButton
+                    key = 'help'
+                    showLabel = { true } />
         ];
     }
 
@@ -1057,8 +1037,7 @@ class Toolbox extends Component<Props, State> {
             case 'invite':
                 return (
                     <OverflowMenuItem
-                        accessibilityLabel =
-                            { t('toolbar.accessibilityLabel.invite') }
+                        accessibilityLabel = { t('toolbar.accessibilityLabel.invite') }
                         icon = { IconInvite }
                         key = 'invite'
                         onClick = { this._onToolbarOpenInvite }
@@ -1069,13 +1048,10 @@ class Toolbox extends Component<Props, State> {
             case 'localrecording':
                 return (
                     <OverflowMenuItem
-                        accessibilityLabel
-                            = { t('toolbar.accessibilityLabel.localRecording') }
+                        accessibilityLabel = { t('toolbar.accessibilityLabel.localRecording') }
                         icon = { IconRec }
                         key = 'localrecording'
-                        onClick = {
-                            this._onToolbarOpenLocalRecordingInfoDialog
-                        }
+                        onClick = { this._onToolbarOpenLocalRecordingInfoDialog }
                         text = { t('localRecording.dialogTitle') } />
                 );
             default:
@@ -1098,8 +1074,7 @@ class Toolbox extends Component<Props, State> {
             t
         } = this.props;
         const overflowMenuContent = this._renderOverflowMenuContent();
-        const overflowHasItems = Boolean(overflowMenuContent.filter(
-            child => child).length);
+        const overflowHasItems = Boolean(overflowMenuContent.filter(child => child).length);
         const toolbarAccLabel = 'toolbar.accessibilityLabel.moreActionsMenu';
         const buttonsLeft = [];
         const buttonsRight = [];
@@ -1182,10 +1157,7 @@ class Toolbox extends Component<Props, State> {
                         && this._renderDesktopSharingButton() }
                     { buttonsLeft.indexOf('raisehand') !== -1
                         && <ToolbarButton
-                            accessibilityLabel =
-                                {
-                                    t('toolbar.accessibilityLabel.raiseHand')
-                                }
+                            accessibilityLabel = { t('toolbar.accessibilityLabel.raiseHand') }
                             icon = { IconRaisedHand }
                             onClick = { this._onToolbarToggleRaiseHand }
                             toggled = { _raisedHand }
@@ -1193,8 +1165,7 @@ class Toolbox extends Component<Props, State> {
                     { buttonsLeft.indexOf('chat') !== -1
                         && <div className = 'toolbar-button-with-badge'>
                             <ToolbarButton
-                                accessibilityLabel =
-                                    { t('toolbar.accessibilityLabel.chat') }
+                                accessibilityLabel = { t('toolbar.accessibilityLabel.chat') }
                                 icon = { IconChat }
                                 onClick = { this._onToolbarToggleChat }
                                 toggled = { _chatOpen }
