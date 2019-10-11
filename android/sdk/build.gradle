@@ -45,6 +45,7 @@ dependencies {
 
     implementation 'com.dropbox.core:dropbox-core-sdk:3.0.8'
     implementation 'com.jakewharton.timber:timber:4.7.1'
+    implementation 'com.squareup.duktape:duktape-android:1.3.0'
 
     if (!rootProject.ext.libreBuild) {
         implementation 'com.amplitude:android-sdk:2.14.1'
