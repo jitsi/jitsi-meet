@@ -61,11 +61,7 @@ class BottomSheet extends PureComponent<Props> {
                             styles.sheetItemContainer,
                             _styles.sheet
                         ] }>
-                        <ScrollView
-                            bounces = { false }
-                            showsVerticalScrollIndicator = { false }>
-                            { this._getWrappedContent() }
-                        </ScrollView>
+                        { this._getWrappedContent() }
                     </View>
                 </View>
             </SlidingView>
@@ -73,24 +69,32 @@ class BottomSheet extends PureComponent<Props> {
     }
 
     /**
-     * Wraps the content when needed (iOS 11 and above), or just returns the original children.
+     * Wraps the content when needed (iOS 11 and above), or just returns the original content.
      *
      * @returns {React$Element}
      */
     _getWrappedContent() {
+        const content = (
+            <ScrollView
+                bounces = { false }
+                showsVerticalScrollIndicator = { false } >
+                { this.props.children }
+            </ScrollView>
+        );
+
         if (Platform.OS === 'ios') {
             const majorVersionIOS = parseInt(Platform.Version, 10);
 
             if (majorVersionIOS > 10) {
                 return (
                     <SafeAreaView>
-                        { this.props.children }
+                        { content }
                     </SafeAreaView>
                 );
             }
         }
 
-        return this.props.children;
+        return content;
     }
 }
 
