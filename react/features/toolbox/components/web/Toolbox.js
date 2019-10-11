@@ -71,7 +71,7 @@ import {
 import AudioMuteButton from '../AudioMuteButton';
 import { isToolboxVisible } from '../../functions';
 import HangupButton from '../HangupButton';
-import HelpButton from './HelpButton';
+import HelpButton from '../HelpButton';
 import OverflowMenuButton from './OverflowMenuButton';
 import OverflowMenuProfileItem from './OverflowMenuProfileItem';
 import ToolbarButton from './ToolbarButton';

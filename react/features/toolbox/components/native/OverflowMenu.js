@@ -17,6 +17,7 @@ import { ClosedCaptionButton } from '../../../subtitles';
 import { TileViewButton } from '../../../video-layout';
 
 import AudioOnlyButton from './AudioOnlyButton';
+import HelpButton from '../HelpButton';
 import RaiseHandButton from './RaiseHandButton';
 import ToggleCameraButton from './ToggleCameraButton';
 
@@ -110,6 +111,7 @@ class OverflowMenu extends Component<Props> {
                 }
                 <RaiseHandButton { ...buttonProps } />
                 <SharedDocumentButton { ...buttonProps } />
+                <HelpButton { ...buttonProps } />
             </BottomSheet>
         );
     }
