@@ -13,6 +13,12 @@ import { AbstractWelcomePage, _mapStateToProps } from './AbstractWelcomePage';
 import Tabs from './Tabs';
 
 /**
+ * The pattern used to validate room name.
+ * @type {string}
+ */
+export const ROOM_NAME_VALIDATE_PATTERN_STR = '^[^?&:\u0022\u0027%#]+$';
+
+/**
  * The Web container rendering the welcome page.
  *
  * @extends AbstractWelcomePage
@@ -53,6 +59,8 @@ class WelcomePage extends AbstractWelcomePage {
          */
         this._additionalContentRef = null;
 
+        this._roomInputRef = null;
+
         /**
          * The HTML Element used as the container for additional toolbar content. Used
          * for directly appending the additional content template to the dom.
@@ -88,6 +96,7 @@ class WelcomePage extends AbstractWelcomePage {
         this._onRoomChange = this._onRoomChange.bind(this);
         this._setAdditionalContentRef
             = this._setAdditionalContentRef.bind(this);
+        this._setRoomInputRef = this._setRoomInputRef.bind(this);
         this._setAdditionalToolbarContentRef
             = this._setAdditionalToolbarContentRef.bind(this);
         this._onTabSelected = this._onTabSelected.bind(this);
@@ -184,9 +193,10 @@ class WelcomePage extends AbstractWelcomePage {
                                     className = 'enter-room-input'
                                     id = 'enter_room_field'
                                     onChange = { this._onRoomChange }
-                                    pattern = '^[a-zA-Z0-9=\?]+$'
+                                    pattern = { ROOM_NAME_VALIDATE_PATTERN_STR }
                                     placeholder = { this.state.roomPlaceholder }
-                                    title = { t('welcomepage.onlyAsciiAllowed') }
+                                    ref = { this._setRoomInputRef }
+                                    title = { t('welcomepage.roomNameAllowedChars') }
                                     type = 'text'
                                     value = { this.state.room } />
                             </form>
@@ -194,7 +204,7 @@ class WelcomePage extends AbstractWelcomePage {
                         <div
                             className = 'welcome-page-button'
                             id = 'enter_room_button'
-                            onClick = { this._onJoin }>
+                            onClick = { this._onFormSubmit }>
                             { t('welcomepage.go') }
                         </div>
                     </div>
@@ -219,7 +229,9 @@ class WelcomePage extends AbstractWelcomePage {
     _onFormSubmit(event) {
         event.preventDefault();
 
-        this._onJoin();
+        if (!this._roomInputRef || this._roomInputRef.reportValidity()) {
+            this._onJoin();
+        }
     }
 
     /**
@@ -309,6 +321,18 @@ class WelcomePage extends AbstractWelcomePage {
      */
     _setAdditionalToolbarContentRef(el) {
         this._additionalToolbarContentRef = el;
+    }
+
+    /**
+     * Sets the internal reference to the HTMLInputElement used to hold the
+     * welcome page input room element.
+     *
+     * @param {HTMLInputElement} el - The HTMLElement for the input of the room name on the welcome page.
+     * @private
+     * @returns {void}
+     */
+    _setRoomInputRef(el) {
+        this._roomInputRef = el;
     }
 
     /**
