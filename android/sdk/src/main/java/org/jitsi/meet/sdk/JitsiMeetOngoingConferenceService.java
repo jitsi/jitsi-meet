@@ -87,7 +87,7 @@ public class JitsiMeetOngoingConferenceService extends Service
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         final String action = intent.getAction();
-        if (action.equals(Actions.START)) {
+        if (Actions.START.equals(action)) {
             Notification notification = OngoingNotification.buildOngoingConferenceNotification();
             if (notification == null) {
                 stopSelf();
@@ -96,7 +96,7 @@ public class JitsiMeetOngoingConferenceService extends Service
                 startForeground(OngoingNotification.NOTIFICATION_ID, notification);
                 JitsiMeetLogger.i(TAG + " Service started");
             }
-        } else if (action.equals(Actions.HANGUP)) {
+        } else if (Actions.HANGUP.equals(action)) {
             JitsiMeetLogger.i(TAG + " Hangup requested");
             // Abort all ongoing calls
             if (AudioModeModule.useConnectionService()) {
