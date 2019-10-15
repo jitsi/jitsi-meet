@@ -3,6 +3,8 @@
 import React, { Component } from 'react';
 import { FlatList } from 'react-native';
 
+import { MESSAGE_TYPE_LOCAL, MESSAGE_TYPE_REMOTE } from '../../constants';
+
 import ChatMessage from './ChatMessage';
 import styles from './styles';
 
@@ -73,11 +75,11 @@ export default class ChatMessageGroup extends Component<Props> {
             <ChatMessage
                 message = { message }
                 showAvatar = {
-                    this.props.messages[0].messageType !== 'local'
+                    this.props.messages[0].messageType !== MESSAGE_TYPE_LOCAL
                         && index === this.props.messages.length - 1
                 }
                 showDisplayName = {
-                    this.props.messages[0].messageType === 'remote'
+                    this.props.messages[0].messageType === MESSAGE_TYPE_REMOTE
                         && index === this.props.messages.length - 1
                 }
                 showTimestamp = { index === 0 } />

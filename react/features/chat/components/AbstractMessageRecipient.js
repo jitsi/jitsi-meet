@@ -6,7 +6,7 @@ import { getParticipantDisplayName } from '../../base/participants';
 
 import { setPrivateMessageRecipient } from '../actions';
 
-type Props = {
+export type Props = {
 
     /**
      * Function used to translate i18n labels.
@@ -27,7 +27,7 @@ type Props = {
 /**
  * Abstract class for the {@code MessageRecipient} component.
  */
-export default class AbstractMessageRecipient extends PureComponent<Props> {
+export default class AbstractMessageRecipient<P: Props> extends PureComponent<P> {
 
 }
 

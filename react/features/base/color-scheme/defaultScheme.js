@@ -6,18 +6,26 @@ import { ColorPalette, getRGBAFormat } from '../styles';
  * The default color scheme of the application.
  */
 export default {
-    'BottomSheet': {
+    '_defaultTheme': {
+        // Generic app theme colors that are used accross the entire app.
+        // All scheme definitions below inherit these values.
         background: 'rgb(255, 255, 255)',
-        icon: '#1c2025',
-        label: '#1c2025'
+        icon: 'rgb(28, 32, 37)',
+        text: 'rgb(28, 32, 37)'
+    },
+    'Chat': {
+        displayName: 'rgb(94, 109, 121)',
+        localMsgBackground: 'rgb(215, 230, 249)',
+        privateMsgBackground: 'rgb(250, 219, 219)',
+        privateMsgNotice: 'rgb(186, 39, 58)',
+        remoteMsgBackground: 'rgb(241, 242, 246)',
+        replyBorder: 'rgb(219, 197, 200)',
+        replyIcon: 'rgb(94, 109, 121)'
     },
     'Dialog': {
-        background: 'rgb(255, 255, 255)',
         border: 'rgba(0, 3, 6, 0.6)',
         buttonBackground: ColorPalette.blue,
-        buttonLabel: ColorPalette.white,
-        icon: '#1c2025',
-        text: '#1c2025'
+        buttonLabel: ColorPalette.white
     },
     'Header': {
         background: ColorPalette.blue,
@@ -30,8 +38,7 @@ export default {
         background: 'rgb(42, 58, 75)'
     },
     'LoadConfigOverlay': {
-        background: 'rgb(249, 249, 249)',
-        text: 'rgb(28, 32, 37)'
+        background: 'rgb(249, 249, 249)'
     },
     'Thumbnail': {
         activeParticipantHighlight: 'rgb(81, 214, 170)',

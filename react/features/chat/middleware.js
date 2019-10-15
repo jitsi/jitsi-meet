@@ -22,7 +22,7 @@ import { isButtonEnabled, showToolbox } from '../toolbox';
 import { SEND_MESSAGE, SET_PRIVATE_MESSAGE_RECIPIENT } from './actionTypes';
 import { addMessage, clearMessages, toggleChat } from './actions';
 import { ChatPrivacyDialog } from './components';
-import { INCOMING_MSG_SOUND_ID } from './constants';
+import { INCOMING_MSG_SOUND_ID, MESSAGE_TYPE_ERROR, MESSAGE_TYPE_LOCAL, MESSAGE_TYPE_REMOTE } from './constants';
 import { INCOMING_MSG_SOUND_FILE } from './sounds';
 
 declare var APP: Object;
@@ -194,7 +194,7 @@ function _addChatMsgListener(conference, store) {
 function _handleChatError({ dispatch }, error) {
     dispatch(addMessage({
         hasRead: true,
-        messageType: 'error',
+        messageType: MESSAGE_TYPE_ERROR,
         message: error,
         privateMessage: false,
         timestamp: Date.now()
@@ -231,7 +231,7 @@ function _handleReceivedMessage({ dispatch, getState }, { id, message, nick, pri
         displayName,
         hasRead,
         id,
-        messageType: participant.local ? 'local' : 'remote',
+        messageType: participant.local ? MESSAGE_TYPE_LOCAL : MESSAGE_TYPE_REMOTE,
         message,
         privateMessage,
         recipient: getParticipantDisplayName(state, localParticipant.id),
@@ -285,7 +285,7 @@ function _persistSentPrivateMessage({ dispatch, getState }, recipientID, message
         displayName,
         hasRead: true,
         id: localParticipant.id,
-        messageType: 'local',
+        messageType: MESSAGE_TYPE_LOCAL,
         message,
         privateMessage: true,
         recipient: getParticipantDisplayName(getState, recipientID),
@@ -323,7 +323,7 @@ function _shouldSendPrivateMessageTo(state, action): ?string {
     const lastMessage = navigator.product === 'ReactNative'
         ? messages[0] : messages[messages.length - 1];
 
-    if (lastMessage.messageType === 'local') {
+    if (lastMessage.messageType === MESSAGE_TYPE_LOCAL) {
         // The sender is probably aware of any private messages as already sent
         // a message since then. Doesn't make sense to display the notice now.
         return undefined;
@@ -339,7 +339,7 @@ function _shouldSendPrivateMessageTo(state, action): ?string {
     const now = Date.now();
     const recentPrivateMessages = messages.filter(
         message =>
-            message.messageType !== 'local'
+            message.messageType !== MESSAGE_TYPE_LOCAL
             && message.privateMessage
             && message.timestamp + PRIVACY_NOTICE_TIMEOUT > now);
     const recentPrivateMessage = navigator.product === 'ReactNative'

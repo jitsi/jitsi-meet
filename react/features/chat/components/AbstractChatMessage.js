@@ -4,6 +4,8 @@ import { PureComponent } from 'react';
 
 import { getLocalizedDateFormatter } from '../../base/i18n';
 
+import { MESSAGE_TYPE_ERROR, MESSAGE_TYPE_LOCAL } from '../constants';
+
 /**
  * Formatter string to display the message timestamp.
  */
@@ -65,7 +67,7 @@ export default class AbstractChatMessage<P: Props> extends PureComponent<P> {
     _getMessageText() {
         const { message } = this.props;
 
-        return message.messageType === 'error'
+        return message.messageType === MESSAGE_TYPE_ERROR
             ? this.props.t('chat.error', {
                 error: message.message
             })
@@ -81,7 +83,7 @@ export default class AbstractChatMessage<P: Props> extends PureComponent<P> {
         const { message, t } = this.props;
 
         return t('chat.privateNotice', {
-            recipient: message.messageType === 'local' ? message.recipient : t('chat.you')
+            recipient: message.messageType === MESSAGE_TYPE_LOCAL ? message.recipient : t('chat.you')
         });
     }
 }
