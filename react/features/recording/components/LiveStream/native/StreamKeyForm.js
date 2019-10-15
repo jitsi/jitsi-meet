@@ -1,12 +1,13 @@
 // @flow
 
 import React from 'react';
-import { Linking, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { Text, TextInput, TouchableOpacity, View } from 'react-native';
 
 import { _abstractMapStateToProps } from '../../../../base/dialog';
 import { translate } from '../../../../base/i18n';
 import { connect } from '../../../../base/redux';
 import { StyleType } from '../../../../base/styles';
+import { openURLInBrowser } from '../../../../base/util';
 
 import AbstractStreamKeyForm, {
     type Props as AbstractProps
@@ -120,7 +121,7 @@ class StreamKeyForm extends AbstractStreamKeyForm<Props> {
         const { helpURL } = this;
 
         if (typeof helpURL === 'string') {
-            Linking.openURL(helpURL);
+            openURLInBrowser(helpURL);
         }
     }
 }

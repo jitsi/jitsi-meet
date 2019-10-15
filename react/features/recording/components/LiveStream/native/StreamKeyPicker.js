@@ -2,7 +2,6 @@
 
 import React, { Component } from 'react';
 import {
-    Linking,
     Text,
     TouchableHighlight,
     TouchableOpacity,
@@ -13,6 +12,7 @@ import { _abstractMapStateToProps } from '../../../../base/dialog';
 import { translate } from '../../../../base/i18n';
 import { connect } from '../../../../base/redux';
 import { StyleType } from '../../../../base/styles';
+import { openURLInBrowser } from '../../../../base/util';
 
 import { YOUTUBE_LIVE_DASHBOARD_URL } from '../constants';
 
@@ -153,7 +153,7 @@ class StreamKeyPicker extends Component<Props, State> {
      * @returns {void}
      */
     _onOpenYoutubeDashboard() {
-        Linking.openURL(YOUTUBE_LIVE_DASHBOARD_URL);
+        openURLInBrowser(YOUTUBE_LIVE_DASHBOARD_URL);
     }
 
     _onStreamPick: string => Function
