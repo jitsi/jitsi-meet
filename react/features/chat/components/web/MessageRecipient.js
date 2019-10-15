@@ -8,13 +8,14 @@ import { connect } from '../../../base/redux';
 
 import AbstractMessageRecipient, {
     _mapDispatchToProps,
-    _mapStateToProps
+    _mapStateToProps,
+    type Props
 } from '../AbstractMessageRecipient';
 
 /**
  * Class to implement the displaying of the recipient of the next message.
  */
-class MessageRecipient extends AbstractMessageRecipient {
+class MessageRecipient extends AbstractMessageRecipient<Props> {
     /**
      * Implements {@code PureComponent#render}.
      *

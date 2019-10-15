@@ -3,21 +3,30 @@
 import React from 'react';
 import { KeyboardAvoidingView, SafeAreaView } from 'react-native';
 
+import { ColorSchemeRegistry } from '../../../base/color-scheme';
 import { translate } from '../../../base/i18n';
-
 import { HeaderWithNavigation, SlidingView } from '../../../base/react';
 import { connect } from '../../../base/redux';
+import { StyleType } from '../../../base/styles';
 
 import AbstractChat, {
     _mapDispatchToProps,
-    _mapStateToProps,
-    type Props
+    _mapStateToProps as _abstractMapStateToProps,
+    type Props as AbstractProps
 } from '../AbstractChat';
 
 import ChatInputBar from './ChatInputBar';
 import MessageContainer from './MessageContainer';
 import MessageRecipient from './MessageRecipient';
 import styles from './styles';
+
+type Props = AbstractProps & {
+
+    /**
+     * The color-schemed stylesheet of the feature.
+     */
+    _styles: StyleType
+};
 
 /**
  * Implements a React native component that renders the chat window (modal) of
@@ -41,6 +50,8 @@ class Chat extends AbstractChat<Props> {
      * @inheritdoc
      */
     render() {
+        const { _styles } = this.props;
+
         return (
             <SlidingView
                 onHide = { this._onClose }
@@ -52,7 +63,7 @@ class Chat extends AbstractChat<Props> {
                     <HeaderWithNavigation
                         headerLabelKey = 'chat.title'
                         onPressBack = { this._onClose } />
-                    <SafeAreaView style = { styles.backdrop }>
+                    <SafeAreaView style = { _styles.backdrop }>
                         <MessageContainer messages = { this.props._messages } />
                         <MessageRecipient />
                         <ChatInputBar onSend = { this.props._onSendMessage } />
@@ -78,6 +89,19 @@ class Chat extends AbstractChat<Props> {
 
         return false;
     }
+}
+
+/**
+ * Maps part of the redux state to the props of this component.
+ *
+ * @param {Object} state - The Redux state.
+ * @returns {Props}
+ */
+function _mapStateToProps(state) {
+    return {
+        ..._abstractMapStateToProps(state),
+        _styles: ColorSchemeRegistry.get(state, 'Chat')
+    };
 }
 
 export default translate(connect(_mapStateToProps, _mapDispatchToProps)(Chat));
