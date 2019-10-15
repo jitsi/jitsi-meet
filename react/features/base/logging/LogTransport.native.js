@@ -39,7 +39,8 @@ function buildTransport() {
         'warn',
         'error'
     ].reduce((logger, logName) => {
-        logger[logName] = (...args: Array<string>) => {
+        logger[logName] = (timestamp: string, ...args: Array<string>) => {
+            // It ignores the timestamp argument, because LogBridge will add it on the native side anyway
             const nargs = args.map(arg => {
                 if (arg instanceof Error) {
                     const errorBody = {
