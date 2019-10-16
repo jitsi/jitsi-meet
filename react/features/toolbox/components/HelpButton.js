@@ -44,7 +44,7 @@ class HelpButton extends AbstractButton<Props, *> {
  * @returns {Object}
  */
 function _mapStateToProps(state: Object) {
-    const { userDocumentationURL } = state['features/base/config'];
+    const { userDocumentationURL } = state['features/base/config'].deploymentUrls || {};
     const visible = typeof userDocumentationURL === 'string';
 
     return {
