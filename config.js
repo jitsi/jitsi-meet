@@ -423,6 +423,13 @@ var config = {
     // user documentation.
     // userDocumentationURL: 'https://docs.example.com/video-meetings.html'
 
+    // URLs meant to be opened in different windows.
+    // deploymentUrls: {
+    //  // If specified a 'Download our apps' button will be displayed in the overflow menu with a link
+    //  // to the specified URL for an app download page.
+    //  downloadAppsUrl: 'https://docs.example.com/our-apps.html'
+    // }
+
     // List of undocumented settings used in jitsi-meet
     /**
      _immediateReloadThreshold
