@@ -6,6 +6,8 @@ The Jitsi Meet client runs in your browser, without installing anything on your 
 
 Jitsi Meet allows very efficient collaboration. Users can stream their desktop or only some windows. It also supports shared document editing with Etherpad.
 
+something bla bla
+
 ## Installation
 
 On the client side, no installation is necessary. You just point your browser to the URL of your deployment. This section is about installing a Jitsi Meet suite on your server and hosting your own conferencing service.
