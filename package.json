@@ -122,14 +122,14 @@
     "imports-loader": "0.7.1",
     "jetifier": "1.6.4",
     "metro-react-native-babel-preset": "0.56.0",
-    "node-sass": "4.10.0",
+    "node-sass": "4.12.0",
     "precommit-hook": "3.0.0",
     "string-replace-loader": "2.1.1",
     "style-loader": "0.19.0",
-    "webpack": "4.26.1",
+    "webpack": "4.27.1",
     "webpack-bundle-analyzer": "3.4.1",
     "webpack-cli": "3.1.2",
-    "webpack-dev-server": "3.1.14"
+    "webpack-dev-server": "3.8.2"
   },
   "engines": {
     "node": ">=8.0.0",
