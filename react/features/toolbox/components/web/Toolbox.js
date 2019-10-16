@@ -69,6 +69,7 @@ import {
     setToolbarHovered
 } from '../../actions';
 import AudioMuteButton from '../AudioMuteButton';
+import DownloadButton from '../DownloadButton';
 import { isToolboxVisible } from '../../functions';
 import HangupButton from '../HangupButton';
 import HelpButton from '../HelpButton';
@@ -975,6 +976,10 @@ class Toolbox extends Component<Props, State> {
                     key = 'shortcuts'
                     onClick = { this._onToolbarOpenKeyboardShortcuts }
                     text = { t('toolbar.shortcuts') } />,
+            this._shouldShowButton('download')
+                && <DownloadButton
+                    key = 'download'
+                    showLabel = { true } />,
             this._shouldShowButton('help')
                 && <HelpButton
                     key = 'help'
