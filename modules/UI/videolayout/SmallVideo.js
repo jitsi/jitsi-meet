@@ -199,7 +199,7 @@ SmallVideo.createStreamElement = function(stream) {
         element.muted = true;
     }
 
-    element.autoplay = true;
+    element.autoplay = !config.testing?.noAutoPlayVideo;
     element.id = SmallVideo.getStreamElementID(stream);
 
     return element;

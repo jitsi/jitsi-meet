@@ -23,7 +23,10 @@ import {
     participantUpdated
 } from '../participants';
 import { getLocalTracks, trackAdded, trackRemoved } from '../tracks';
-import { getJitsiMeetGlobalNS } from '../util';
+import {
+    getBackendSafeRoomName,
+    getJitsiMeetGlobalNS
+} from '../util';
 
 import {
     AUTH_STATUS_CHANGED,
@@ -74,6 +77,11 @@ declare var APP: Object;
  * @returns {void}
  */
 function _addConferenceListeners(conference, dispatch) {
+    // A simple logger for conference errors received through
+    // the listener. These errors are not handled now, but logged.
+    conference.on(JitsiConferenceEvents.CONFERENCE_ERROR,
+        error => logger.error('Conference error.', error));
+
     // Dispatches into features/base/conference follow:
 
     conference.on(
@@ -388,8 +396,7 @@ export function createConference() {
         const conference
             = connection.initJitsiConference(
 
-                // XXX Lib-jitsi-meet does not accept uppercase letters.
-                room.toLowerCase(), {
+                getBackendSafeRoomName(room), {
                     ...state['features/base/config'],
                     applicationName: getName(),
                     getWiFiStatsMethod: getJitsiMeetGlobalNS().getWiFiStats,

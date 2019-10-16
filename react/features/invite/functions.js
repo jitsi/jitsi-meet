@@ -577,5 +577,12 @@ export function _decodeRoomURI(url: string) {
         roomUrl = decodeURI(roomUrl);
     }
 
+    // Handles a special case where the room name has % encoded, the decoded will have
+    // % followed by a char (non-digit) which is not a valid URL and room name ... so we do not
+    // want to show this decoded
+    if (roomUrl.match(/.*%[^\d].*/)) {
+        return url;
+    }
+
     return roomUrl;
 }

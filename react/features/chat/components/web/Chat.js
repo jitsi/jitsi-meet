@@ -14,6 +14,7 @@ import AbstractChat, {
 import ChatInput from './ChatInput';
 import DisplayNameForm from './DisplayNameForm';
 import MessageContainer from './MessageContainer';
+import MessageRecipient from './MessageRecipient';
 
 /**
  * React Component for holding the chat feature in a side panel that slides in
@@ -116,7 +117,10 @@ class Chat extends AbstractChat<Props> {
                 <MessageContainer
                     messages = { this.props._messages }
                     ref = { this._messageContainerRef } />
-                <ChatInput onResize = { this._onChatInputResize } />
+                <MessageRecipient />
+                <ChatInput
+                    onResize = { this._onChatInputResize }
+                    onSend = { this.props._onSendMessage } />
             </>
         );
     }

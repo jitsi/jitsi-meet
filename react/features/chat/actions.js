@@ -4,6 +4,7 @@ import {
     ADD_MESSAGE,
     CLEAR_MESSAGES,
     SEND_MESSAGE,
+    SET_PRIVATE_MESSAGE_RECIPIENT,
     TOGGLE_CHAT
 } from './actionTypes';
 
@@ -53,15 +54,34 @@ export function clearMessages() {
  * Sends a chat message to everyone in the conference.
  *
  * @param {string} message - The chat message to send out.
+ * @param {boolean} ignorePrivacy - True if the privacy notification should be ignored.
  * @returns {{
  *     type: SEND_MESSAGE,
+ *     ignorePrivacy: boolean,
  *     message: string
  * }}
  */
-export function sendMessage(message: string) {
+export function sendMessage(message: string, ignorePrivacy: boolean = false) {
     return {
         type: SEND_MESSAGE,
+        ignorePrivacy,
         message
+    };
+}
+
+/**
+ * Initiates the sending of a private message to the supplied participant.
+ *
+ * @param {Participant} participant - The participant to set the recipient to.
+ * @returns {{
+ *     participant: Participant,
+ *     type: SET_PRIVATE_MESSAGE_RECIPIENT
+ * }}
+ */
+export function setPrivateMessageRecipient(participant: Object) {
+    return {
+        participant,
+        type: SET_PRIVATE_MESSAGE_RECIPIENT
     };
 }
 

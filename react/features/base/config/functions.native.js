@@ -11,8 +11,8 @@ export * from './functions.any';
  * @returns {void}
  */
 export function _cleanupConfig(config: Object) {
+    config.analytics.scriptURLs = [];
     if (NativeModules.AppInfo.LIBRE_BUILD) {
-        config.analytics.scriptURLs = [];
         delete config.analytics.amplitudeAPPKey;
         delete config.analytics.googleAnalyticsTrackingId;
         delete config.callStatsID;

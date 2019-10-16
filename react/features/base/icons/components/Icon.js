@@ -24,6 +24,11 @@ type Props = {
     id?: string,
 
     /**
+     * Function to invoke on click.
+     */
+    onClick?: Function,
+
+    /**
      * The size of the icon (if not provided by the style object).
      */
     size?: number | string,
@@ -53,6 +58,7 @@ export default function Icon(props: Props) {
         className,
         color,
         id,
+        onClick,
         size,
         src: IconComponent,
         style
@@ -69,6 +75,7 @@ export default function Icon(props: Props) {
     return (
         <Container
             className = { `jitsi-icon ${className}` }
+            onClick = { onClick }
             style = { restStyle }>
             <IconComponent
                 fill = { calculatedColor }

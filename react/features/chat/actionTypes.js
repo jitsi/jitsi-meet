@@ -30,10 +30,22 @@ export const CLEAR_MESSAGES = 'CLEAR_MESSAGES';
  *
  * {
  *     type: SEND_MESSAGE,
+ *     ignorePrivacy: boolean,
  *     message: string
  * }
  */
 export const SEND_MESSAGE = 'SEND_MESSAGE';
+
+/**
+ * The type of action which signals the initiation of sending of as private message to the
+ * supplied recipient.
+ *
+ * {
+ *     participant: Participant,
+ *     type: SET_PRIVATE_MESSAGE_RECIPIENT
+ * }
+ */
+export const SET_PRIVATE_MESSAGE_RECIPIENT = 'SET_PRIVATE_MESSAGE_RECIPIENT';
 
 /**
  * The type of the action which signals to toggle the display of the chat panel.

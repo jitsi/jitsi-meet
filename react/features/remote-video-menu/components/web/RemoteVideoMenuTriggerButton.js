@@ -8,6 +8,7 @@ import { Popover } from '../../../base/popover';
 import {
     MuteButton,
     KickButton,
+    PrivateMessageMenuButton,
     RemoteControlButton,
     RemoteVideoMenu,
     VolumeSlider
@@ -187,6 +188,12 @@ class RemoteVideoMenuTriggerButton extends Component<Props> {
                     remoteControlState = { remoteControlState } />
             );
         }
+
+        buttons.push(
+            <PrivateMessageMenuButton
+                key = 'privateMessage'
+                participantID = { participantID } />
+        );
 
         if (onVolumeChange) {
             buttons.push(

@@ -5,7 +5,6 @@ import React from 'react';
 
 import VideoLayout from '../../../../../modules/UI/videolayout/VideoLayout';
 
-import { obtainConfig } from '../../../base/config';
 import { connect, disconnect } from '../../../base/connection';
 import { translate } from '../../../base/i18n';
 import { connect as reactReduxConnect } from '../../../base/redux';
@@ -23,7 +22,6 @@ import {
 } from '../../../toolbox';
 
 import { maybeShowSuboptimalExperienceNotification } from '../../functions';
-import logger from '../../logger';
 
 import Labels from './Labels';
 import { default as Notice } from './Notice';
@@ -123,31 +121,7 @@ class Conference extends AbstractConference<Props, *> {
      */
     componentDidMount() {
         document.title = interfaceConfig.APP_NAME;
-
-        const { configLocation } = config;
-
-        if (configLocation) {
-            obtainConfig(configLocation, this.props._room)
-                .then(() => {
-                    const now = window.performance.now();
-
-                    APP.connectionTimes['configuration.fetched'] = now;
-                    logger.log('(TIME) configuration fetched:\t', now);
-
-                    this._start();
-                })
-                .catch(err => {
-                    logger.log(err);
-
-                    // Show obtain config error.
-                    APP.UI.messageHandler.showError({
-                        descriptionKey: 'dialog.connectError',
-                        titleKey: 'connection.CONNFAIL'
-                    });
-                });
-        } else {
-            this._start();
-        }
+        this._start();
     }
 
     /**

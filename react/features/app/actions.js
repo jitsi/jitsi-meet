@@ -15,6 +15,7 @@ import { connect, disconnect, setLocationURL } from '../base/connection';
 import { loadConfig } from '../base/lib-jitsi-meet';
 import { createDesiredLocalTracks } from '../base/tracks';
 import {
+    getBackendSafeRoomName,
     getLocationContextRoot,
     parseURIString,
     toURLString
@@ -85,7 +86,7 @@ export function appNavigate(uri: ?string) {
         let url = `${baseURL}config.js`;
 
         // XXX In order to support multiple shards, tell the room to the deployment.
-        room && (url += `?room=${room.toLowerCase()}`);
+        room && (url += `?room=${getBackendSafeRoomName(room)}`);
 
         let config;
 

@@ -9,7 +9,10 @@ import {
     getCurrentConference
 } from '../conference';
 import JitsiMeetJS, { JitsiConnectionEvents } from '../lib-jitsi-meet';
-import { parseURIString } from '../util';
+import {
+    getBackendSafeRoomName,
+    parseURIString
+} from '../util';
 
 import {
     CONNECTION_DISCONNECTED,
@@ -307,10 +310,7 @@ function _constructOptions(state) {
         // Append room to the URL's search.
         const { room } = state['features/base/conference'];
 
-        // XXX The Jitsi Meet deployments require the room argument to be in
-        // lower case at the time of this writing but, unfortunately, they do
-        // not ignore case themselves.
-        room && (bosh += `?room=${room.toLowerCase()}`);
+        room && (bosh += `?room=${getBackendSafeRoomName(room)}`);
 
         options.bosh = bosh;
     }

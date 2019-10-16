@@ -1,12 +1,7 @@
 // @flow
 
 import { toState } from '../redux';
-import { loadScript } from '../util';
-
 import JitsiMeetJS from './_';
-import logger from './logger';
-
-declare var APP: Object;
 
 const JitsiConferenceErrors = JitsiMeetJS.errors.conference;
 const JitsiConnectionErrors = JitsiMeetJS.errors.connection;
@@ -96,43 +91,4 @@ export function isFatalJitsiConnectionError(error: Object | string) {
         error === JitsiConnectionErrors.CONNECTION_DROPPED_ERROR
             || error === JitsiConnectionErrors.OTHER_ERROR
             || error === JitsiConnectionErrors.SERVER_ERROR);
-}
-
-/**
- * Loads config.js from a specific remote server.
- *
- * @param {string} url - The URL to load.
- * @returns {Promise<Object>}
- */
-export function loadConfig(url: string): Promise<Object> {
-    let promise;
-
-    if (typeof APP === 'undefined') {
-        promise
-            = loadScript(url, 2.5 * 1000 /* Timeout in ms */)
-                .then(() => {
-                    const { config } = window;
-
-                    // We don't want to pollute the global scope.
-                    window.config = undefined;
-
-                    if (typeof config !== 'object') {
-                        throw new Error('window.config is not an object');
-                    }
-
-                    return config;
-                })
-                .catch(err => {
-                    logger.error(`Failed to load config from ${url}`, err);
-
-                    throw err;
-                });
-    } else {
-        // Return "the config.js file" from the global scope - that is how the
-        // Web app on both the client and the server was implemented before the
-        // React Native app was even conceived.
-        promise = Promise.resolve(window.config);
-    }
-
-    return promise;
 }

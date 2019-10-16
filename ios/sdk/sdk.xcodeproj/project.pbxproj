@@ -42,6 +42,7 @@
 		C69EFA0E209A0F660027712B /* JMCallKitListener.swift in Sources */ = {isa = PBXBuildFile; fileRef = C69EFA0B209A0F660027712B /* JMCallKitListener.swift */; };
 		C6A34261204EF76800E062DD /* DragGestureController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6A3425E204EF76800E062DD /* DragGestureController.swift */; };
 		C6CC49AF207412CF000DFA42 /* PiPViewCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6CC49AE207412CF000DFA42 /* PiPViewCoordinator.swift */; };
+		DE438CDA2350934700DD541D /* JavaScriptSandbox.m in Sources */ = {isa = PBXBuildFile; fileRef = DE438CD82350934700DD541D /* JavaScriptSandbox.m */; };
 		DE65AACA2317FFCD00290BEC /* LogUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = DE65AAC92317FFCD00290BEC /* LogUtils.h */; };
 		DE65AACC2318028300290BEC /* JitsiMeetBaseLogHandler+Private.h in Headers */ = {isa = PBXBuildFile; fileRef = DE65AACB2318028300290BEC /* JitsiMeetBaseLogHandler+Private.h */; };
 		DE762DB422AFDE76000DEBD6 /* JitsiMeetUserInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = DE762DB322AFDE76000DEBD6 /* JitsiMeetUserInfo.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -104,6 +105,7 @@
 		C6A3425E204EF76800E062DD /* DragGestureController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DragGestureController.swift; sourceTree = "<group>"; };
 		C6CC49AE207412CF000DFA42 /* PiPViewCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PiPViewCoordinator.swift; sourceTree = "<group>"; };
 		C6F99C13204DB63D0001F710 /* JitsiMeetView+Private.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "JitsiMeetView+Private.h"; sourceTree = "<group>"; };
+		DE438CD82350934700DD541D /* JavaScriptSandbox.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JavaScriptSandbox.m; sourceTree = "<group>"; };
 		DE65AAC92317FFCD00290BEC /* LogUtils.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LogUtils.h; sourceTree = "<group>"; };
 		DE65AACB2318028300290BEC /* JitsiMeetBaseLogHandler+Private.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "JitsiMeetBaseLogHandler+Private.h"; sourceTree = "<group>"; };
 		DE762DB322AFDE76000DEBD6 /* JitsiMeetUserInfo.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JitsiMeetUserInfo.h; sourceTree = "<group>"; };
@@ -190,6 +192,7 @@
 				A4A934E7212F3AB8001E9388 /* dropbox */,
 				0BA13D301EE83FF8007BEF7F /* ExternalAPI.m */,
 				0BD906E91EC0C00300C8C18E /* Info.plist */,
+				DE438CD82350934700DD541D /* JavaScriptSandbox.m */,
 				0BD906E81EC0C00300C8C18E /* JitsiMeet.h */,
 				DEFE535821FB311F00011A3A /* JitsiMeet+Private.h */,
 				DEFE535321FB1BF800011A3A /* JitsiMeet.m */,
@@ -493,6 +496,7 @@
 				C69EFA0E209A0F660027712B /* JMCallKitListener.swift in Sources */,
 				0B412F191EDEC65D00B1A0A6 /* JitsiMeetView.m in Sources */,
 				DEFE535421FB1BF800011A3A /* JitsiMeet.m in Sources */,
+				DE438CDA2350934700DD541D /* JavaScriptSandbox.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -635,11 +639,7 @@
 				INFOPLIST_FILE = src/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@loader_path/Frameworks",
-				);
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = org.jitsi.JitsiMeetSDK.ios;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -670,11 +670,7 @@
 				INFOPLIST_FILE = src/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@loader_path/Frameworks",
-				);
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = org.jitsi.JitsiMeetSDK.ios;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
