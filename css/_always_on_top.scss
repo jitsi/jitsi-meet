@@ -1,0 +1,48 @@
+
+.always-on-top-toolbox {
+    background-color: $newToolbarBackgroundColor;
+    border-radius: 3px;
+    display: flex;
+    flex-direction: row;
+    left: 50%;
+    position: absolute;
+    top: 10px;
+    transform: translateX(-50%);
+    z-index: $toolbarZ;
+
+    .toolbox-icon {
+        cursor: pointer;
+        padding: 7px;
+
+        &.toggled {
+            background: $AOTToolbarButtonToggleColor;
+        }
+
+        &.disabled {
+            cursor: initial;
+        }
+    }
+
+    .toolbox-button {
+        &:first-child {
+            .toolbox-icon {
+                border-top-left-radius: 3px;
+                border-bottom-left-radius: 3px;
+            }
+        }
+
+        &:nth-child(2) {
+            svg {
+                fill: $hangupColor;
+            }
+        }
+
+        &:last-child {
+            .toolbox-icon {
+                border-top-right-radius: 3px;
+                border-bottom-right-radius: 3px;
+            }
+        }
+    }
+    
+}
