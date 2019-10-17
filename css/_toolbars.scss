@@ -270,7 +270,6 @@
     }
 }
 
-.always-on-top-toolbox,
 .filmstrip-toolbox {
     background-color: $newToolbarBackgroundColor;
     box-sizing: border-box;
@@ -302,36 +301,6 @@
     }
 
     border-radius: 3px;
-}
-
-.always-on-top-toolbox {
-    flex-direction: row;
-    left: 50%;
-    position: absolute;
-    top: 10px;
-    transform: translateX(-50%);
-    z-index: $toolbarZ;
-
-    i {
-        font-size: $newToolbarFontSize;
-        height: $newToolbarSize;
-        line-height: $newToolbarSize;
-        width: $newToolbarSize;
-    }
-
-    .disabled {
-        cursor: initial;
-    }
-
-    .toolbox-button:first-child i {
-        border-top-left-radius: 3px;
-        border-bottom-left-radius: 3px;
-    }
-
-    .toolbox-button:last-child i {
-        border-top-right-radius: 3px;
-        border-bottom-right-radius: 3px;
-    }
 }
 
 .filmstrip-toolbox {
