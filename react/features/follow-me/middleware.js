@@ -139,7 +139,6 @@ function _onFollowMeCommand(attributes = {}, id, store) {
     // For now gate etherpad checks behind a web-app check to be extra safe
     // against calling a web-app global.
     if (typeof APP !== 'undefined'
-        && state['features/etherpad'].initialized
         && oldState.sharedDocumentVisible !== attributes.sharedDocumentVisible) {
         const isEtherpadVisible = attributes.sharedDocumentVisible === 'true';
         const documentManager = APP.UI.getSharedDocumentManager();
