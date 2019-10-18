@@ -24,6 +24,7 @@
 #import "ReactUtils.h"
 
 #import <RNGoogleSignin/RNGoogleSignin.h>
+#import <WebRTC/RTCLogging.h>
 
 
 @implementation JitsiMeet {
@@ -54,6 +55,11 @@
 
         // Register a log handler for React.
         registerReactLogHandler();
+
+#if 0
+        // Enable WebRTC logs
+        RTCSetMinDebugLogLevel(RTCLoggingSeverityInfo);
+#endif
     }
 
     return self;
