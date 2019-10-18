@@ -270,58 +270,6 @@
     }
 }
 
-.filmstrip-toolbox {
-    background-color: $newToolbarBackgroundColor;
-    box-sizing: border-box;
-    display: flex;
-    flex-direction: column;
-    z-index: $toolbarZ;
-
-    i {
-        cursor: pointer;
-        display: block;
-    }
-
-    i:hover {
-        background-color: $AOTToolbarButtonHoverColor;
-    }
-
-    i.toggled {
-        background: $AOTToolbarButtonToggleColor;
-    }
-
-    i.toggled:hover:not(.disabled) {
-        background-color: $AOTToolbarButtonHoverColor;
-    }
-
-    .toolbox-button {
-        color: $toolbarButtonColor;
-        cursor: pointer;
-        text-align: center;
-    }
-
-    border-radius: 3px;
-}
-
-.filmstrip-toolbox {
-    i {
-        font-size: 1.9em;
-        height: 37px;
-        line-height: 37px;
-        width: 37px;
-    }
-
-    .toolbox-button:first-child i {
-        border-top-left-radius: 3px;
-        border-top-right-radius: 3px;
-    }
-
-    .toolbox-button:last-child i {
-        border-bottom-left-radius: 3px;
-        border-bottom-right-radius: 3px;
-    }
-}
-
 /**
  * START of fade in animation for main toolbar
  */

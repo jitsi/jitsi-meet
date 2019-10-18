@@ -1,13 +1,8 @@
-
+.filmstrip-toolbox,
 .always-on-top-toolbox {
     background-color: $newToolbarBackgroundColor;
     border-radius: 3px;
     display: flex;
-    flex-direction: row;
-    left: 50%;
-    position: absolute;
-    top: 10px;
-    transform: translateX(-50%);
     z-index: $toolbarZ;
 
     .toolbox-icon {
@@ -24,16 +19,27 @@
     }
 
     .toolbox-button {
+        &:nth-child(2) {
+            svg {
+                fill: $hangupColor;
+            }
+        }
+    }
+
+}
+
+.always-on-top-toolbox {
+    flex-direction: row;
+    left: 50%;
+    position: absolute;
+    top: 10px;
+    transform: translateX(-50%);
+
+    .toolbox-button {
         &:first-child {
             .toolbox-icon {
                 border-top-left-radius: 3px;
                 border-bottom-left-radius: 3px;
-            }
-        }
-
-        &:nth-child(2) {
-            svg {
-                fill: $hangupColor;
             }
         }
 
@@ -44,5 +50,14 @@
             }
         }
     }
-    
+}
+
+.filmstrip-toolbox {
+    flex-direction: column;
+
+    .toolbox-button {
+        .toolbox-icon {
+            border-radius: 3px;
+        }
+    }
 }
