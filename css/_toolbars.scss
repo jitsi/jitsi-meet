@@ -82,6 +82,10 @@
             .toolbox-button {
 
                 .toolbox-icon {
+                    @media all and (max-width: 420px) {
+                        height: 60px;
+                        width: 60px;
+                    }
                     background-color: #fff;
                     border-radius: 50%;
                     border: 1px solid #d1dbe8;
@@ -120,6 +124,10 @@
 
                 &:nth-child(2) {
                     .toolbox-icon {
+                        @media all and (max-width: 420px) {
+                            height: 60px;
+                            width: 60px;
+                        }
                         background-color: $hangupColor;
                         border: 1px solid $hangupColor;
                         width: 40px;

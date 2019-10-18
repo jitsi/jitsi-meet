@@ -16,6 +16,7 @@ import { getOverlayToRender } from '../overlay';
  */
 export function maybeShowSuboptimalExperienceNotification(dispatch, t) {
     if (isSuboptimalBrowser()) {
+        return
         dispatch(
             showWarningNotification(
                 {
