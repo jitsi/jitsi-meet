@@ -17,7 +17,7 @@ const detectCircularDeps = process.argv.indexOf('--detect-circular-deps') !== -1
 
 const minimize
     = process.argv.indexOf('-p') !== -1
-        || process.argv.indexOf('--optimize-minimize') !== -1;
+    || process.argv.indexOf('--optimize-minimize') !== -1;
 
 /**
  * Build a Performance configuration object for the given size.
@@ -180,11 +180,11 @@ const config = {
     },
     plugins: [
         detectCircularDeps
-            && new CircularDependencyPlugin({
-                allowAsyncCycles: false,
-                exclude: /node_modules/,
-                failOnError: false
-            })
+        && new CircularDependencyPlugin({
+            allowAsyncCycles: false,
+            exclude: /node_modules/,
+            failOnError: false
+        })
     ].filter(Boolean),
     resolve: {
         alias: {
@@ -305,12 +305,12 @@ module.exports = [
  */
 function devServerProxyBypass({ path }) {
     if (path.startsWith('/css/') || path.startsWith('/doc/')
-            || path.startsWith('/fonts/')
-            || path.startsWith('/images/')
-            || path.startsWith('/lang/')
-            || path.startsWith('/sounds/')
-            || path.startsWith('/static/')
-            || path.endsWith('.wasm')) {
+        || path.startsWith('/fonts/')
+        || path.startsWith('/images/')
+        || path.startsWith('/lang/')
+        || path.startsWith('/sounds/')
+        || path.startsWith('/static/')
+        || path.endsWith('.wasm')) {
 
         return path;
     }
@@ -320,24 +320,24 @@ function devServerProxyBypass({ path }) {
     /* eslint-disable array-callback-return, indent */
 
     if ((Array.isArray(configs) ? configs : Array(configs)).some(c => {
-            if (path.startsWith(c.output.publicPath)) {
-                    if (!minimize) {
-                        // Since webpack-dev-server is serving non-minimized
-                        // artifacts, serve them even if the minimized ones are
-                        // requested.
-                        return Object.keys(c.entry).some(e => {
-                            const name = `${e}.min.js`;
+        if (path.startsWith(c.output.publicPath)) {
+            if (!minimize) {
+                // Since webpack-dev-server is serving non-minimized
+                // artifacts, serve them even if the minimized ones are
+                // requested.
+                return Object.keys(c.entry).some(e => {
+                    const name = `${e}.min.js`;
 
-                            if (path.indexOf(name) !== -1) {
-                                // eslint-disable-next-line no-param-reassign
-                                path = path.replace(name, `${e}.js`);
+                    if (path.indexOf(name) !== -1) {
+                        // eslint-disable-next-line no-param-reassign
+                        path = path.replace(name, `${e}.js`);
 
-                                return true;
-                            }
-                        });
+                        return true;
                     }
-                }
-            })) {
+                });
+            }
+        }
+    })) {
         return path;
     }
 

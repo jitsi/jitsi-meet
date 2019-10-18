@@ -16,6 +16,7 @@ import { ADD_KNOWN_DOMAINS } from './actionTypes';
  * out of the Andorid manifest.
  */
 export const DEFAULT_STATE = [
+    'videochat-jwt.jane.qa',
     'alpha.jitsi.net',
     'beta.meet.jit.si',
     'meet.jit.si',
