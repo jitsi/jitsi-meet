@@ -26,13 +26,13 @@ $flagsImagePath: "../images/";
 /* Modules BEGIN */
 
 @import 'aui_reset';
-@import 'always_on_top';
 @import 'atlaskit_overrides';
 @import 'base';
 @import 'utils';
 @import 'overlay/overlay';
 @import 'inlay';
 @import 'reload_overlay/reload_overlay';
+@import 'mini_toolbox';
 @import 'modals/desktop-picker/desktop-picker';
 @import 'modals/device-selection/device-selection';
 @import 'modals/dialog';
