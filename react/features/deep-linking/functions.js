@@ -58,7 +58,11 @@ export function getDeepLinkingPage(state) {
         return Promise.resolve();
     }
 
-    if (isMobileBrowser()) { // mobile
+    // eslint-disable-next-line no-unused-vars
+    const OS = Platform.OS;
+    const isUsingMobileBrowser = false;
+
+    if (isUsingMobileBrowser) { // mobile
         const mobileAppPromo
             = typeof interfaceConfig === 'object'
                 && interfaceConfig.MOBILE_APP_PROMO;
