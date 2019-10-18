@@ -34,6 +34,7 @@ import { _SET_CALL_INTEGRATION_SUBSCRIPTIONS } from './actionTypes';
 
 import CallKit from './CallKit';
 import ConnectionService from './ConnectionService';
+import { isCallIntegrationEnabled } from './functions';
 
 const CallIntegration = CallKit || ConnectionService;
 
@@ -139,8 +140,12 @@ function _appWillMount({ dispatch, getState }, next, action) {
  * @private
  * @returns {*} The value returned by {@code next(action)}.
  */
-function _conferenceFailed(store, next, action) {
+function _conferenceFailed({ getState }, next, action) {
     const result = next(action);
+
+    if (!isCallIntegrationEnabled(getState)) {
+        return result;
+    }
 
     // XXX Certain CONFERENCE_FAILED errors are recoverable i.e. they have
     // prevented the user from joining a specific conference but the app may be
@@ -173,6 +178,10 @@ function _conferenceFailed(store, next, action) {
 function _conferenceJoined({ getState }, next, action) {
     const result = next(action);
 
+    if (!isCallIntegrationEnabled(getState)) {
+        return result;
+    }
+
     const { callUUID } = action.conference;
 
     if (callUUID) {
@@ -201,8 +210,12 @@ function _conferenceJoined({ getState }, next, action) {
  * @private
  * @returns {*} The value returned by {@code next(action)}.
  */
-function _conferenceLeft(store, next, action) {
+function _conferenceLeft({ getState }, next, action) {
     const result = next(action);
+
+    if (!isCallIntegrationEnabled(getState)) {
+        return result;
+    }
 
     const { callUUID } = action.conference;
 
@@ -229,6 +242,10 @@ function _conferenceLeft(store, next, action) {
  */
 function _conferenceWillJoin({ dispatch, getState }, next, action) {
     const result = next(action);
+
+    if (!isCallIntegrationEnabled(getState)) {
+        return result;
+    }
 
     const { conference } = action;
     const state = getState();
@@ -341,6 +358,11 @@ function _onPerformSetMutedCallAction({ callUUID, muted }) {
 function _setAudioOnly({ getState }, next, action) {
     const result = next(action);
     const state = getState();
+
+    if (!isCallIntegrationEnabled(state)) {
+        return result;
+    }
+
     const conference = getCurrentConference(state);
 
     if (conference && conference.callUUID) {
@@ -393,6 +415,11 @@ function _setCallKitSubscriptions({ getState }, next, action) {
  */
 function _syncTrackState({ getState }, next, action) {
     const result = next(action);
+
+    if (!isCallIntegrationEnabled(getState)) {
+        return result;
+    }
+
     const { jitsiTrack } = action.track;
     const state = getState();
     const conference = getCurrentConference(state);

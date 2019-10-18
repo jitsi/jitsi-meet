@@ -7,6 +7,13 @@
 export const CALENDAR_ENABLED = 'calendar.enabled';
 
 /**
+ * Flag indicating if call integration (CallKit on iOS, ConnectionService on Android)
+ * should be enabled.
+ * Default: enabled (true).
+ */
+export const CALL_INTEGRATION_ENABLED = 'call-integration.enabled';
+
+/**
  * Flag indicating if chat should be enabled.
  * Default: enabled (true).
  */

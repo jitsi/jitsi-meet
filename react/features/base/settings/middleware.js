@@ -5,6 +5,7 @@ import { getLocalParticipant, participantUpdated } from '../participants';
 import { MiddlewareRegistry } from '../redux';
 
 import { SETTINGS_UPDATED } from './actionTypes';
+import { handleCallIntegrationChange } from './functions';
 
 /**
  * The middleware of the feature base/settings. Distributes changes to the state
@@ -19,6 +20,7 @@ MiddlewareRegistry.register(store => next => action => {
 
     switch (action.type) {
     case SETTINGS_UPDATED:
+        _maybeHandleCallIntegrationChange(action);
         _maybeSetAudioOnly(store, action);
         _updateLocalParticipant(store, action);
     }
@@ -41,6 +43,19 @@ function _mapSettingsFieldToParticipant(settingsField) {
     }
 
     return settingsField;
+}
+
+/**
+ * Updates {@code startAudioOnly} flag if it's updated in the settings.
+ *
+ * @param {Object} action - The redux action.
+ * @private
+ * @returns {void}
+ */
+function _maybeHandleCallIntegrationChange({ settings: { disableCallIntegration } }) {
+    if (typeof disableCallIntegration === 'boolean') {
+        handleCallIntegrationChange(disableCallIntegration);
+    }
 }
 
 /**
