@@ -17,15 +17,6 @@
             cursor: initial;
         }
     }
-
-    .toolbox-button {
-        &:nth-child(2) {
-            svg {
-                fill: $hangupColor;
-            }
-        }
-    }
-
 }
 
 .always-on-top-toolbox {
@@ -43,6 +34,12 @@
             }
         }
 
+        &:nth-child(2) {
+            svg {
+                fill: $hangupColor;
+            }
+        }
+
         &:last-child {
             .toolbox-icon {
                 border-top-right-radius: 3px;
@@ -56,6 +53,12 @@
     flex-direction: column;
 
     .toolbox-button {
+        &:nth-child(1) {
+            svg {
+                fill: $hangupColor;
+            }
+        }
+
         .toolbox-icon {
             border-radius: 3px;
         }
