@@ -10,7 +10,7 @@ MVN_HTTP=0
 DEFAULT_SDK_VERSION=$(grep sdkVersion ${THIS_DIR}/../gradle.properties | cut -d"=" -f2)
 SDK_VERSION=${OVERRIDE_SDK_VERSION:-${DEFAULT_SDK_VERSION}}
 RN_VERSION=$(jq -r '.dependencies."react-native"' ${THIS_DIR}/../../package.json)
-JSC_VERSION="r"$(jq -r '.dependencies."jsc-android"' ${THIS_DIR}/../../node_modules/react-native/package.json | cut -d . -f 1)
+JSC_VERSION="r"$(jq -r '.dependencies."jsc-android"' ${THIS_DIR}/../../node_modules/react-native/package.json | cut -d . -f 1 | cut -c 2-)
 DO_GIT_TAG=${GIT_TAG:-0}
 
 if [[ $THE_MVN_REPO == http* ]]; then
