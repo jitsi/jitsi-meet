@@ -41,19 +41,25 @@ class ChatMessage extends AbstractChatMessage<Props> {
 
         return (
             <div className = 'chatmessage-wrapper'>
-                <div className = 'replywrapper'>
-                    <div className = 'chatmessage'>
-                        { this.props.showDisplayName && this._renderDisplayName() }
-                        <div className = 'usermessage'>
-                            { processedMessage }
+                <div className = { `chatmessage ${message.privateMessage ? 'privatemessage' : ''}` }>
+                    <div className = 'replywrapper'>
+                        <div className = 'messagecontent'>
+                            { this.props.showDisplayName && this._renderDisplayName() }
+                            <div className = 'usermessage'>
+                                { processedMessage }
+                            </div>
+                            { message.privateMessage && this._renderPrivateNotice() }
                         </div>
-                        { message.privateMessage && this._renderPrivateNotice() }
+                        { message.privateMessage && message.messageType !== MESSAGE_TYPE_LOCAL
+                            && (
+                                <div className = 'messageactions'>
+                                    <PrivateMessageButton
+                                        participantID = { message.id }
+                                        reply = { true }
+                                        showLabel = { false } />
+                                </div>
+                            ) }
                     </div>
-                    { message.privateMessage && message.messageType !== MESSAGE_TYPE_LOCAL
-                    && <PrivateMessageButton
-                        participantID = { message.id }
-                        reply = { true }
-                        showLabel = { false } /> }
                 </div>
                 { this.props.showTimestamp && this._renderTimestamp() }
             </div>
