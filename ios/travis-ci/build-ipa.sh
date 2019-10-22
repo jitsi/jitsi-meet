@@ -103,7 +103,7 @@ npm install
 ./node_modules/react-native-webrtc/tools/downloadBitcode.sh
 
 cd ios
-pod install --deployment --repo-update --no-ansi
+pod install --repo-update --no-ansi
 cd ..
 
 mkdir -p /tmp/jitsi-meet/
