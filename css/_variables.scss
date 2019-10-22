@@ -180,8 +180,17 @@ $welcomePageHeaderTextMarginTop: 35px;
 $welcomePageHeaderTextMarginBottom: 35px;
 
 $welcomePageHeaderTextTitleMarginBottom: 16px;
+$welcomePageHeaderTextTitleFontSize: 2.5rem;
+$welcomePageHeaderTextTitleFontWeight: 500;
+$welcomePageHeaderTextTitleLineHeight: 1.18;
+$welcomePageHeaderTextTitleOpacity: 1;
 
 $welcomePageHeaderTextDescriptionDisplay: inherit;
+$welcomePageHeaderTextDescriptionFontSize: 1rem;
+$welcomePageHeaderTextDescriptionFontWeight: 400;
+$welcomePageHeaderTextDescriptionLineHeight: 24px;
+$welcomePageHeaderTextDescriptionMarginBottom: 20px;
+$welcomePageHeaderTextDescriptionAlignSelf: inherit;
 
 $welcomePageEnterRoomWidth: 680px;
 $welcomePageEnterRoomPadding: 25px 30px;
@@ -200,6 +209,8 @@ $welcomePageTabButtonsDisplay: flex;
 $welcomePageTabDisplay: block;
 
 $welcomePageButtonWidth: 51px;
+$welcomePageButtonMinWidth: inherit;
+$welcomePageButtonFontSize: 14px;
 $welcomePageButtonHeight: 35px;
 $welcomePageButtonFontWeight: inherit;
 $welcomePageButtonBorderRadius: 4px;
