@@ -13,6 +13,12 @@ export const CALENDAR_ENABLED = 'calendar.enabled';
 export const CHAT_ENABLED = 'chat.enabled';
 
 /**
+ * Flag indicating if invite functionality should be enabled.
+ * Default: enabled (true).
+ */
+export const INVITE_ENABLED = 'invite.enabled';
+
+/**
  * Flag indicating if recording should be enabled in iOS.
  * Default: disabled (false).
  */
