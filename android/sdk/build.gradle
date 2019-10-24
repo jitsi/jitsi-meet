@@ -41,7 +41,6 @@ dependencies {
     implementation 'androidx.fragment:fragment:1.0.0'
 
     api 'com.facebook.react:react-native:+'
-    implementation 'org.webkit:android-jsc:+'
 
     implementation 'com.dropbox.core:dropbox-core-sdk:3.0.8'
     implementation 'com.jakewharton.timber:timber:4.7.1'
