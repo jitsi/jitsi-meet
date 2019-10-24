@@ -43,7 +43,7 @@ export function shouldDisplayNotifications(stateful) {
     const state = toState(stateful);
     const isAnyOverlayVisible = Boolean(getOverlayToRender(state));
     const { calleeInfoVisible } = state['features/invite'];
-
+//
     return areThereNotifications(state)
             && !isAnyOverlayVisible
             && !calleeInfoVisible;
