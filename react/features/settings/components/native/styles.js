@@ -60,7 +60,6 @@ export default createStyleSheet({
      */
     formSectionTitle: {
         backgroundColor: 'rgba(0, 0, 0, 0.1)',
-        marginTop: 5,
         padding: 5
     },
 
