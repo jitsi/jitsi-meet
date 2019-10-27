@@ -119,6 +119,18 @@ export const LOCK_STATE_CHANGED = 'LOCK_STATE_CHANGED';
 export const P2P_STATUS_CHANGED = 'P2P_STATUS_CHANGED';
 
 /**
+ * The type of (redux) action which signals to play specified touch tones.
+ *
+ * {
+ *     type: SEND_TONES,
+ *     tones: string,
+ *     duration: number,
+ *     pause: number
+ * }
+ */
+export const SEND_TONES = 'SEND_TONES';
+
+/**
  * The type of (redux) action which sets the desktop sharing enabled flag for
  * the current conference.
  *

@@ -27,6 +27,7 @@ var interfaceConfig = {
     SHOW_DEEP_LINKING_IMAGE: false,
     GENERATE_ROOMNAMES_ON_WELCOME_PAGE: true,
     DISPLAY_WELCOME_PAGE_CONTENT: true,
+    DISPLAY_WELCOME_PAGE_TOOLBAR_ADDITIONAL_CONTENT: false,
     APP_NAME: 'Jitsi Meet',
     NATIVE_APP_NAME: 'Jitsi Meet',
     PROVIDER_NAME: 'Jitsi',
@@ -50,7 +51,7 @@ var interfaceConfig = {
         'fodeviceselection', 'hangup', 'profile', 'info', 'chat', 'recording',
         'livestreaming', 'etherpad', 'sharedvideo', 'settings', 'raisehand',
         'videoquality', 'filmstrip', 'invite', 'feedback', 'stats', 'shortcuts',
-        'tileview', 'videobackgroundblur'
+        'tileview', 'videobackgroundblur', 'download', 'help'
     ],
 
     SETTINGS_SECTIONS: [ 'devices', 'language', 'moderator', 'profile', 'calendar' ],
@@ -221,6 +222,13 @@ var interfaceConfig = {
      * milliseconds, those notifications should remain displayed.
      */
     // ENFORCE_NOTIFICATION_AUTO_DISMISS_TIMEOUT: 15000,
+
+    // List of undocumented settings
+    /**
+     INDICATOR_FONT_SIZES
+     MOBILE_DYNAMIC_LINK
+     PHONE_NUMBER_REGEX
+    */
 };
 
 /* eslint-enable no-unused-vars, no-var, max-len */

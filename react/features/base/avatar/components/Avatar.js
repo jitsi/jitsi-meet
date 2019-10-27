@@ -2,6 +2,7 @@
 
 import React, { PureComponent } from 'react';
 
+import { IconShareDesktop } from '../../icons';
 import { getParticipantById } from '../../participants';
 import { connect } from '../../redux';
 
@@ -176,12 +177,19 @@ class Avatar<P: Props> extends PureComponent<P, State> {
  */
 export function _mapStateToProps(state: Object, ownProps: Props) {
     const { colorBase, displayName, participantId } = ownProps;
-    const _participant = participantId && getParticipantById(state, participantId);
-    const _initialsBase = (_participant && _participant.name) || displayName;
+    const _participant: ?Object = participantId && getParticipantById(state, participantId);
+    const _initialsBase = _participant?.name ?? displayName;
+    const screenShares = state['features/video-layout'].screenShares || [];
+
+    let _loadableAvatarUrl = _participant?.loadableAvatarUrl;
+
+    if (participantId && screenShares.includes(participantId)) {
+        _loadableAvatarUrl = IconShareDesktop;
+    }
 
     return {
         _initialsBase,
-        _loadableAvatarUrl: _participant && _participant.loadableAvatarUrl,
+        _loadableAvatarUrl,
         colorBase: !colorBase && _participant ? _participant.id : colorBase
     };
 }

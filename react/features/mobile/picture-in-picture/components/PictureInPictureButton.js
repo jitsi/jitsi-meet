@@ -2,6 +2,7 @@
 
 import { PIP_ENABLED, getFeatureFlag } from '../../../base/flags';
 import { translate } from '../../../base/i18n';
+import { IconMenuDown } from '../../../base/icons';
 import { connect } from '../../../base/redux';
 import { AbstractButton } from '../../../base/toolbox';
 import type { AbstractButtonProps } from '../../../base/toolbox';
@@ -26,7 +27,7 @@ type Props = AbstractButtonProps & {
  */
 class PictureInPictureButton extends AbstractButton<Props, *> {
     accessibilityLabel = 'toolbar.accessibilityLabel.pip';
-    iconName = 'icon-menu-down';
+    icon = IconMenuDown;
     label = 'toolbar.pip';
 
     /**

@@ -24,7 +24,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.media.AudioManager;
-import android.util.Log;
+
+import org.jitsi.meet.sdk.log.JitsiMeetLogger;
 
 /**
  * Helper class to detect and handle Bluetooth device changes.  It monitors
@@ -77,7 +78,7 @@ class BluetoothHeadsetMonitor {
             = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
 
         if (!audioManager.isBluetoothScoAvailableOffCall()) {
-            Log.w(AudioModeModule.TAG, "Bluetooth SCO is not available");
+            JitsiMeetLogger.w(AudioModeModule.TAG + " Bluetooth SCO is not available");
             return;
         }
 
@@ -93,7 +94,7 @@ class BluetoothHeadsetMonitor {
         BluetoothAdapter adapter = BluetoothAdapter.getDefaultAdapter();
 
         if (adapter == null) {
-            Log.w(AudioModeModule.TAG, "Device doesn't support Bluetooth");
+            JitsiMeetLogger.w(AudioModeModule.TAG + " Device doesn't support Bluetooth");
             return false;
         }
 
@@ -148,9 +149,7 @@ class BluetoothHeadsetMonitor {
             switch (state) {
             case BluetoothHeadset.STATE_CONNECTED:
             case BluetoothHeadset.STATE_DISCONNECTED:
-                Log.d(
-                        AudioModeModule.TAG,
-                        "BT headset connection state changed: " + state);
+                JitsiMeetLogger.d(AudioModeModule.TAG + " BT headset connection state changed: " + state);
                 updateDevices();
                 break;
             }
@@ -164,9 +163,7 @@ class BluetoothHeadsetMonitor {
             switch (state) {
             case AudioManager.SCO_AUDIO_STATE_CONNECTED:
             case AudioManager.SCO_AUDIO_STATE_DISCONNECTED:
-                Log.d(
-                        AudioModeModule.TAG,
-                        "BT SCO connection state changed: " + state);
+                JitsiMeetLogger.d(AudioModeModule.TAG + " BT SCO connection state changed: " + state);
                 updateDevices();
                 break;
             }

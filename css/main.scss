@@ -23,12 +23,6 @@ $flagsImagePath: "../images/";
 @import "../node_modules/bc-css-flags/dist/css/bc-css-flags.scss";
 /* Flags END */
 
-/* Fonts BEGIN */
-
-@import 'font';
-
-/* Fonts END */
-
 /* Modules BEGIN */
 
 @import 'aui_reset';
@@ -38,6 +32,7 @@ $flagsImagePath: "../images/";
 @import 'overlay/overlay';
 @import 'inlay';
 @import 'reload_overlay/reload_overlay';
+@import 'mini_toolbox';
 @import 'modals/desktop-picker/desktop-picker';
 @import 'modals/device-selection/device-selection';
 @import 'modals/dialog';
@@ -57,6 +52,7 @@ $flagsImagePath: "../images/";
 @import 'ringing/ringing';
 @import 'welcome_page';
 @import 'welcome_page_content';
+@import 'welcome_page_settings_toolbar';
 @import 'toolbars';
 @import 'jquery.contextMenu';
 @import 'keyboard-shortcuts';

@@ -1,11 +1,6 @@
-/* @flow */
+// @flow
 
-import Logger from 'jitsi-meet-logger';
 import { CONFERENCE_WILL_JOIN } from '../base/conference';
-import {
-    SIP_GW_AVAILABILITY_CHANGED,
-    SIP_GW_INVITE_ROOMS
-} from './actionTypes';
 import {
     JitsiConferenceEvents,
     JitsiSIPVideoGWStatus
@@ -17,7 +12,11 @@ import {
     showWarningNotification
 } from '../notifications';
 
-const logger = Logger.getLogger(__filename);
+import {
+    SIP_GW_AVAILABILITY_CHANGED,
+    SIP_GW_INVITE_ROOMS
+} from './actionTypes';
+import logger from './logger';
 
 /**
  * Middleware that captures conference video sip gw events and stores

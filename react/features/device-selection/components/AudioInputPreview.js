@@ -2,7 +2,9 @@
 
 import React, { Component } from 'react';
 
-import { JitsiTrackEvents } from '../../base/lib-jitsi-meet';
+import JitsiMeetJS from '../../base/lib-jitsi-meet/_';
+
+const JitsiTrackEvents = JitsiMeetJS.events.track;
 
 /**
  * The type of the React {@code Component} props of {@link AudioInputPreview}.

@@ -3,8 +3,8 @@
 import React, { Component } from 'react';
 import { Linking, Text, TouchableOpacity, View } from 'react-native';
 
-import { Icon } from '../../base/font-icons';
 import { translate } from '../../base/i18n';
+import { Icon } from '../../base/icons';
 
 import styles from './styles';
 
@@ -13,7 +13,7 @@ type Props = {
     /**
      * The icon of the item.
      */
-    icon: string,
+    icon: Object,
 
     /**
      * The i18n label of the item.
@@ -71,7 +71,7 @@ class SideBarItem extends Component<Props> {
                 style = { styles.sideBarItem }>
                 <View style = { styles.sideBarItemButtonContainer }>
                     <Icon
-                        name = { this.props.icon }
+                        src = { this.props.icon }
                         style = { styles.sideBarItemIcon } />
                     <Text style = { styles.sideBarItemText }>
                         { t(label) }

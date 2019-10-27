@@ -2,8 +2,8 @@
 
 import React, { Component } from 'react';
 
-import { translate } from '../../base/i18n';
-import { Audio } from '../../base/media';
+import { translate } from '../../base/i18n/functions';
+import Audio from '../../base/media/components/Audio';
 
 const TEST_SOUND_PATH = 'sounds/ring.wav';
 

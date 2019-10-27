@@ -5,6 +5,7 @@ import React, { Component } from 'react';
 
 import { createToolbarEvent, sendAnalytics } from '../../../analytics';
 import { translate } from '../../../base/i18n';
+import { IconMenuThumb } from '../../../base/icons';
 
 import ToolbarButton from './ToolbarButton';
 
@@ -63,7 +64,6 @@ class OverflowMenuButton extends Component<Props> {
      */
     render() {
         const { children, isOpen, t } = this.props;
-        const iconClasses = `icon-thumb-menu ${isOpen ? 'toggled' : ''}`;
 
         return (
             <div className = 'toolbox-button-wth-dialog'>
@@ -75,8 +75,9 @@ class OverflowMenuButton extends Component<Props> {
                     <ToolbarButton
                         accessibilityLabel =
                             { t('toolbar.accessibilityLabel.moreActions') }
-                        iconName = { iconClasses }
+                        icon = { IconMenuThumb }
                         onClick = { this._onToggleDialogVisibility }
+                        toggled = { isOpen }
                         tooltip = { t('toolbar.moreActions') } />
                 </InlineDialog>
             </div>

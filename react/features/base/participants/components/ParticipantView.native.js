@@ -12,7 +12,7 @@ import {
 } from '../../media';
 import { Container, TintedView } from '../../react';
 import { connect } from '../../redux';
-import { StyleType } from '../../styles';
+import type { StyleType } from '../../styles';
 import { TestHint } from '../../testing/components';
 import { getTrackByMediaTypeAndParticipant } from '../../tracks';
 
@@ -54,6 +54,11 @@ type Props = {
      * The avatar size.
      */
     avatarSize: number,
+
+    /**
+     * Whether video should be disabled for his view.
+     */
+    disableVideo: ?boolean,
 
     /**
      * Callback to invoke when the {@code ParticipantView} is clicked/pressed.
@@ -185,8 +190,6 @@ class ParticipantView extends Component<Props> {
             tintStyle
         } = this.props;
 
-        const waitForVideoStarted = false;
-
         // If the connection has problems, we will "tint" the video / avatar.
         const connectionProblem
             = connectionStatus !== JitsiParticipantConnectionStatus.ACTIVE;
@@ -216,7 +219,7 @@ class ParticipantView extends Component<Props> {
                     && <VideoTrack
                         onPress = { onPress }
                         videoTrack = { videoTrack }
-                        waitForVideoStarted = { waitForVideoStarted }
+                        waitForVideoStarted = { false }
                         zOrder = { this.props.zOrder }
                         zoomEnabled = { this.props.zoomEnabled } /> }
 
@@ -252,7 +255,7 @@ class ParticipantView extends Component<Props> {
  * @returns {Props}
  */
 function _mapStateToProps(state, ownProps) {
-    const { participantId } = ownProps;
+    const { disableVideo, participantId } = ownProps;
     let connectionStatus;
     let participantName;
 
@@ -261,7 +264,7 @@ function _mapStateToProps(state, ownProps) {
             connectionStatus
                 || JitsiParticipantConnectionStatus.ACTIVE,
         _participantName: participantName,
-        _renderVideo: shouldRenderParticipantVideo(state, participantId),
+        _renderVideo: shouldRenderParticipantVideo(state, participantId) && !disableVideo,
         _videoTrack:
             getTrackByMediaTypeAndParticipant(
                 state['features/base/tracks'],

@@ -2,7 +2,7 @@
 
 import { Component } from 'react';
 
-const logger = require('jitsi-meet-logger').getLogger(__filename);
+import logger from '../logger';
 
 /**
  * Describes audio element interface used in the base/media feature for audio
@@ -36,7 +36,7 @@ type Props = {
      * @type {Object | string}
      */
     src: Object | string,
-    stream: Object,
+    stream?: Object,
     loop?: ?boolean
 }
 

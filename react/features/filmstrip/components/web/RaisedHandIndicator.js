@@ -2,6 +2,7 @@
 
 import React from 'react';
 
+import { IconRaisedHand } from '../../../base/icons';
 import { BaseIndicator } from '../../../base/react';
 import { connect } from '../../../base/redux';
 
@@ -41,7 +42,8 @@ class RaisedHandIndicator extends AbstractRaisedHandIndicator<Props> {
         return (
             <BaseIndicator
                 className = 'raisehandindicator indicator show-inline'
-                iconClassName = 'icon-raised-hand indicatoricon'
+                icon = { IconRaisedHand }
+                iconClassName = 'indicatoricon'
                 iconSize = { `${this.props.iconSize}px` }
                 tooltipKey = 'raisedHand'
                 tooltipPosition = { this.props.tooltipPosition } />

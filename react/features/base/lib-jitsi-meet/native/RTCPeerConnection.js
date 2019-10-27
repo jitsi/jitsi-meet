@@ -3,7 +3,7 @@
 import { NativeModules } from 'react-native';
 import { RTCPeerConnection, RTCSessionDescription } from 'react-native-webrtc';
 
-const logger = require('jitsi-meet-logger').getLogger(__filename);
+import logger from '../logger';
 
 /* eslint-disable no-unused-vars */
 

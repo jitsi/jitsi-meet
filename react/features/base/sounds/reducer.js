@@ -9,8 +9,7 @@ import {
     REGISTER_SOUND,
     UNREGISTER_SOUND
 } from './actionTypes';
-
-const logger = require('jitsi-meet-logger').getLogger(__filename);
+import logger from './logger';
 
 /**
  * The structure use by this reducer to describe a sound.

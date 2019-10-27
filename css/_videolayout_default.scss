@@ -344,8 +344,11 @@
 /**
  * Toolbar icon internal i elements (font icons).
  */
-.toolbar-icon>i {
-    line-height: $thumbnailToolbarHeight;
+.toolbar-icon>div {
+    height: $thumbnailToolbarHeight;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
 }
 
 /**

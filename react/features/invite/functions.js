@@ -4,10 +4,10 @@ import { i18next } from '../base/i18n';
 import { isLocalParticipantModerator } from '../base/participants';
 import { doGetJSON, parseURIString } from '../base/util';
 
+import logger from './logger';
+
 declare var $: Function;
 declare var interfaceConfig: Object;
-
-const logger = require('jitsi-meet-logger').getLogger(__filename);
 
 /**
  * Sends an ajax request to check if the phone number can be called.
@@ -48,7 +48,7 @@ export function getDialInConferenceID(
 
     const conferenceIDURL = `${baseUrl}?conference=${roomName}@${mucURL}`;
 
-    return doGetJSON(conferenceIDURL);
+    return doGetJSON(conferenceIDURL, true);
 }
 
 /**
@@ -71,7 +71,7 @@ export function getDialInNumbers(
 
     const fullUrl = `${url}?conference=${roomName}@${mucURL}`;
 
-    return doGetJSON(fullUrl);
+    return doGetJSON(fullUrl, true);
 }
 
 /**
@@ -575,6 +575,13 @@ export function _decodeRoomURI(url: string) {
     // we want to decode urls when the do not contain space, ' ', which url encoded is %20
     if (roomUrl && !roomUrl.includes('%20')) {
         roomUrl = decodeURI(roomUrl);
+    }
+
+    // Handles a special case where the room name has % encoded, the decoded will have
+    // % followed by a char (non-digit) which is not a valid URL and room name ... so we do not
+    // want to show this decoded
+    if (roomUrl.match(/.*%[^\d].*/)) {
+        return url;
     }
 
     return roomUrl;

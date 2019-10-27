@@ -3,6 +3,7 @@
 import React, { Component } from 'react';
 
 import { translate } from '../../base/i18n';
+import { IconRec } from '../../base/icons';
 import { ToolbarButton } from '../../toolbox';
 
 /**
@@ -56,16 +57,14 @@ class LocalRecordingButton extends Component<Props> {
      */
     render() {
         const { isDialogShown, t } = this.props;
-        const iconClasses
-            = `icon-thumb-menu ${isDialogShown
-                ? 'icon-rec toggled' : 'icon-rec'}`;
 
         return (
             <ToolbarButton
                 accessibilityLabel
                     = { t('toolbar.accessibilityLabel.localRecording') }
-                iconName = { iconClasses }
+                icon = { IconRec }
                 onClick = { this._onClick }
+                toggled = { isDialogShown }
                 tooltip = { t('localRecording.dialogTitle') } />
         );
     }

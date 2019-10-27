@@ -519,10 +519,10 @@ class ConnectionStatsTable extends Component<Props> {
 
         if (isP2P) {
             additionalData.push(
-                <span>{ t('connectionindicator.peer_to_peer') }</span>);
+                <span> (p2p)</span>);
         }
         if (isTURN) {
-            additionalData.push(<span>{ t('connectionindicator.turn') }</span>);
+            additionalData.push(<span> (turn)</span>);
         }
 
         // First show remote statistics, then local, and then transport type.

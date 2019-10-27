@@ -1,5 +1,5 @@
-// flow-typed signature: 3cf668e64747095cab0bb360cf2fb34f
-// flow-typed version: d659bd0cb8/uuid_v3.x.x/flow_>=v0.32.x
+// flow-typed signature: 609c1622fc97de96d59519934aa5ce87
+// flow-typed version: c6154227d1/uuid_v3.x.x/flow_>=v0.32.x <=v0.103.x
 
 declare module "uuid" {
   declare class uuid {

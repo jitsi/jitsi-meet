@@ -7,6 +7,7 @@ import {
     sendAnalytics
 } from '../../analytics';
 import { translate } from '../../base/i18n';
+import { IconTileView } from '../../base/icons';
 import { connect } from '../../base/redux';
 import {
     AbstractButton,
@@ -14,6 +15,7 @@ import {
 } from '../../base/toolbox';
 
 import { setTileView } from '../actions';
+import logger from '../logger';
 
 /**
  * The type of the React {@code Component} props of {@link TileViewButton}.
@@ -38,10 +40,9 @@ type Props = AbstractButtonProps & {
  */
 class TileViewButton<P: Props> extends AbstractButton<P, *> {
     accessibilityLabel = 'toolbar.accessibilityLabel.tileView';
-    iconName = 'icon-tiles-many';
+    icon = IconTileView;
     label = 'toolbar.enterTileView';
     toggledLabel = 'toolbar.exitTileView';
-    toggledIconName = 'icon-tiles-many toggled';
     tooltip = 'toolbar.tileViewToggle';
 
     /**
@@ -59,8 +60,10 @@ class TileViewButton<P: Props> extends AbstractButton<P, *> {
             {
                 'is_enabled': _tileViewEnabled
             }));
+        const value = !_tileViewEnabled;
 
-        dispatch(setTileView(!_tileViewEnabled));
+        logger.debug(`Tile view ${value ? 'enable' : 'disable'}`);
+        dispatch(setTileView(value));
     }
 
     /**

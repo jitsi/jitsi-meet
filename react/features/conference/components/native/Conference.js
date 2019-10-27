@@ -6,7 +6,6 @@ import LinearGradient from 'react-native-linear-gradient';
 
 import { appNavigate } from '../../../app';
 import { PIP_ENABLED, getFeatureFlag } from '../../../base/flags';
-import { getParticipantCount } from '../../../base/participants';
 import { Container, LoadingIndicator, TintedView } from '../../../base/react';
 import { connect } from '../../../base/redux';
 import {
@@ -17,6 +16,7 @@ import { TestConnectionInfo } from '../../../base/testing';
 import { ConferenceNotification, isCalendarEnabled } from '../../../calendar-sync';
 import { Chat } from '../../../chat';
 import { DisplayNameLabel } from '../../../display-name';
+import { SharedDocument } from '../../../etherpad';
 import {
     FILMSTRIP_SIZE,
     Filmstrip,
@@ -27,7 +27,7 @@ import { LargeVideo } from '../../../large-video';
 import { BackButtonRegistry } from '../../../mobile/back-button';
 import { AddPeopleDialog, CalleeInfoContainer } from '../../../invite';
 import { Captions } from '../../../subtitles';
-import { setToolboxVisible, Toolbox } from '../../../toolbox';
+import { isToolboxVisible, setToolboxVisible, Toolbox } from '../../../toolbox';
 
 import {
     AbstractConference,
@@ -72,13 +72,6 @@ type Props = AbstractProps & {
      * The ID of the participant currently on stage (if any)
      */
     _largeVideoParticipantId: string,
-
-    /**
-     * The number of participants in the conference.
-     *
-     * @private
-     */
-    _participantCount: number,
 
     /**
      * Whether Picture-in-Picture is enabled.
@@ -147,35 +140,6 @@ class Conference extends AbstractConference<Props, *> {
      */
     componentDidMount() {
         BackButtonRegistry.addListener(this._onHardwareBackPress);
-
-        // Show the toolbox if we are the only participant; otherwise, the whole
-        // UI looks too unpopulated the LargeVideo visible.
-        this.props._participantCount === 1 && this._setToolboxVisible(true);
-    }
-
-    /**
-     * Implements React's {@link Component#componentDidUpdate()}.
-     *
-     * @inheritdoc
-     */
-    componentDidUpdate(prevProps: Props) {
-        const {
-            _participantCount: oldParticipantCount
-        } = prevProps;
-        const {
-            _participantCount: newParticipantCount,
-            _toolboxVisible
-        } = this.props;
-
-        if (oldParticipantCount === 1
-                && newParticipantCount > 1
-                && _toolboxVisible) {
-            this._setToolboxVisible(false);
-        } else if (oldParticipantCount > 1
-                && newParticipantCount === 1
-                && !_toolboxVisible) {
-            this._setToolboxVisible(true);
-        }
     }
 
     /**
@@ -198,107 +162,13 @@ class Conference extends AbstractConference<Props, *> {
      * @returns {ReactElement}
      */
     render() {
-        const {
-            _connecting,
-            _filmstripVisible,
-            _largeVideoParticipantId,
-            _reducedUI,
-            _shouldDisplayTileView,
-            _toolboxVisible
-        } = this.props;
-        const showGradient = _toolboxVisible;
-        const applyGradientStretching = _filmstripVisible && isNarrowAspectRatio(this) && !_shouldDisplayTileView;
-
         return (
             <Container style = { styles.conference }>
                 <StatusBar
                     barStyle = 'light-content'
                     hidden = { true }
                     translucent = { true } />
-
-                <Chat />
-                <AddPeopleDialog />
-
-                {/*
-                  * The LargeVideo is the lowermost stacking layer.
-                  */
-                    _shouldDisplayTileView
-                        ? <TileView onClick = { this._onClick } />
-                        : <LargeVideo onClick = { this._onClick } />
-                }
-
-                {/*
-                  * If there is a ringing call, show the callee's info.
-                  */
-                    _reducedUI || <CalleeInfoContainer />
-                }
-
-                {/*
-                  * The activity/loading indicator goes above everything, except
-                  * the toolbox/toolbars and the dialogs.
-                  */
-                    _connecting
-                        && <TintedView>
-                            <LoadingIndicator />
-                        </TintedView>
-                }
-
-                <View
-                    pointerEvents = 'box-none'
-                    style = { styles.toolboxAndFilmstripContainer }>
-
-                    { showGradient && <LinearGradient
-                        colors = { NAVBAR_GRADIENT_COLORS }
-                        end = {{
-                            x: 0.0,
-                            y: 0.0
-                        }}
-                        pointerEvents = 'none'
-                        start = {{
-                            x: 0.0,
-                            y: 1.0
-                        }}
-                        style = { [
-                            styles.bottomGradient,
-                            applyGradientStretching ? styles.gradientStretchBottom : undefined
-                        ] } />}
-
-                    <Labels />
-
-                    <Captions onPress = { this._onClick } />
-
-                    { _shouldDisplayTileView || <DisplayNameLabel participantId = { _largeVideoParticipantId } /> }
-
-                    {/*
-                      * The Toolbox is in a stacking layer below the Filmstrip.
-                      */}
-                    <Toolbox />
-
-                    {/*
-                      * The Filmstrip is in a stacking layer above the
-                      * LargeVideo. The LargeVideo and the Filmstrip form what
-                      * the Web/React app calls "videospace". Presumably, the
-                      * name and grouping stem from the fact that these two
-                      * React Components depict the videos of the conference's
-                      * participants.
-                      */
-                        _shouldDisplayTileView ? undefined : <Filmstrip />
-                    }
-                </View>
-
-                <SafeAreaView
-                    pointerEvents = 'box-none'
-                    style = { styles.navBarSafeView }>
-                    <NavigationBar />
-                    { this.renderNotificationsContainer() }
-                </SafeAreaView>
-
-                <TestConnectionInfo />
-
-                {
-                    this._renderConferenceNotification()
-                }
-
+                { this._renderContent() }
             </Container>
         );
     }
@@ -358,13 +228,145 @@ class Conference extends AbstractConference<Props, *> {
     }
 
     /**
+     * Renders the content for the Conference container.
+     *
+     * @private
+     * @returns {React$Element}
+     */
+    _renderContent() {
+        const {
+            _connecting,
+            _filmstripVisible,
+            _largeVideoParticipantId,
+            _reducedUI,
+            _shouldDisplayTileView,
+            _toolboxVisible
+        } = this.props;
+        const showGradient = _toolboxVisible;
+        const applyGradientStretching = _filmstripVisible && isNarrowAspectRatio(this) && !_shouldDisplayTileView;
+
+        if (_reducedUI) {
+            return this._renderContentForReducedUi();
+        }
+
+        return (
+            <>
+                <AddPeopleDialog />
+                <Chat />
+                <SharedDocument />
+
+                {/*
+                  * The LargeVideo is the lowermost stacking layer.
+                  */
+                    _shouldDisplayTileView
+                        ? <TileView onClick = { this._onClick } />
+                        : <LargeVideo onClick = { this._onClick } />
+                }
+
+                {/*
+                  * If there is a ringing call, show the callee's info.
+                  */
+                    <CalleeInfoContainer />
+                }
+
+                {/*
+                  * The activity/loading indicator goes above everything, except
+                  * the toolbox/toolbars and the dialogs.
+                  */
+                    _connecting
+                        && <TintedView>
+                            <LoadingIndicator />
+                        </TintedView>
+                }
+
+                <View
+                    pointerEvents = 'box-none'
+                    style = { styles.toolboxAndFilmstripContainer }>
+
+                    { showGradient && <LinearGradient
+                        colors = { NAVBAR_GRADIENT_COLORS }
+                        end = {{
+                            x: 0.0,
+                            y: 0.0
+                        }}
+                        pointerEvents = 'none'
+                        start = {{
+                            x: 0.0,
+                            y: 1.0
+                        }}
+                        style = { [
+                            styles.bottomGradient,
+                            applyGradientStretching ? styles.gradientStretchBottom : undefined
+                        ] } />}
+
+                    <Labels />
+
+                    <Captions onPress = { this._onClick } />
+
+                    { _shouldDisplayTileView || <DisplayNameLabel participantId = { _largeVideoParticipantId } /> }
+
+                    {/*
+                      * The Toolbox is in a stacking layer below the Filmstrip.
+                      */}
+                    <Toolbox />
+
+                    {/*
+                      * The Filmstrip is in a stacking layer above the
+                      * LargeVideo. The LargeVideo and the Filmstrip form what
+                      * the Web/React app calls "videospace". Presumably, the
+                      * name and grouping stem from the fact that these two
+                      * React Components depict the videos of the conference's
+                      * participants.
+                      */
+                        _shouldDisplayTileView ? undefined : <Filmstrip />
+                    }
+                </View>
+
+                <SafeAreaView
+                    pointerEvents = 'box-none'
+                    style = { styles.navBarSafeView }>
+                    <NavigationBar />
+                    { this._renderNotificationsContainer() }
+                </SafeAreaView>
+
+                <TestConnectionInfo />
+
+                { this._renderConferenceNotification() }
+            </>
+        );
+    }
+
+    /**
+     * Renders the content for the Conference container when in "reduced UI" mode.
+     *
+     * @private
+     * @returns {React$Element}
+     */
+    _renderContentForReducedUi() {
+        const { _connecting } = this.props;
+
+        return (
+            <>
+                <LargeVideo onClick = { this._onClick } />
+
+                {
+                    _connecting
+                        && <TintedView>
+                            <LoadingIndicator />
+                        </TintedView>
+                }
+            </>
+        );
+    }
+
+    /**
      * Renders a container for notifications to be displayed by the
      * base/notifications feature.
      *
      * @private
      * @returns {React$Element}
      */
-    renderNotificationsContainer() {
+    _renderNotificationsContainer() {
         const notificationsStyle = {};
 
         // In the landscape mode (wide) there's problem with notifications being
@@ -418,7 +420,6 @@ function _mapStateToProps(state) {
         leaving
     } = state['features/base/conference'];
     const { reducedUI } = state['features/base/responsive-ui'];
-    const { visible } = state['features/toolbox'];
 
     // XXX There is a window of time between the successful establishment of the
     // XMPP connection and the subsequent commencement of joining the MUC during
@@ -465,14 +466,6 @@ function _mapStateToProps(state) {
         _largeVideoParticipantId: state['features/large-video'].participantId,
 
         /**
-         * The number of participants in the conference.
-         *
-         * @private
-         * @type {number}
-         */
-        _participantCount: getParticipantCount(state),
-
-        /**
          * Whether Picture-in-Picture is enabled.
          *
          * @private
@@ -495,7 +488,7 @@ function _mapStateToProps(state) {
          * @private
          * @type {boolean}
          */
-        _toolboxVisible: visible
+        _toolboxVisible: isToolboxVisible(state)
     };
 }
 

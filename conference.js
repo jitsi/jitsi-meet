@@ -104,7 +104,6 @@ import {
     trackRemoved
 } from './react/features/base/tracks';
 import { getJitsiMeetGlobalNS } from './react/features/base/util';
-import { addMessage } from './react/features/chat';
 import { showDesktopPicker } from './react/features/desktop-picker';
 import { appendSuffix } from './react/features/display-name';
 import {
@@ -114,7 +113,6 @@ import {
 import { mediaPermissionPromptVisibilityChanged } from './react/features/overlay';
 import { suspendDetected } from './react/features/power-monitor';
 import { setSharedVideoStatus } from './react/features/shared-video';
-import { isButtonEnabled } from './react/features/toolbox';
 import { endpointMessageReceived } from './react/features/subtitles';
 
 const logger = require('jitsi-meet-logger').getLogger(__filename);
@@ -244,8 +242,6 @@ class ConferenceConnector {
             this._handleConferenceJoined.bind(this));
         room.on(JitsiConferenceEvents.CONFERENCE_FAILED,
             this._onConferenceFailed.bind(this));
-        room.on(JitsiConferenceEvents.CONFERENCE_ERROR,
-            this._onConferenceError.bind(this));
     }
 
     /**
@@ -345,31 +341,6 @@ class ConferenceConnector {
 
         default:
             this._handleConferenceFailed(err, ...params);
-        }
-    }
-
-    /**
-     *
-     */
-    _onConferenceError(err, ...params) {
-        logger.error('CONFERENCE Error:', err, params);
-        switch (err) {
-        case JitsiConferenceErrors.CHAT_ERROR:
-            logger.error('Chat error.', err);
-            if (isButtonEnabled('chat') && !interfaceConfig.filmStripOnly) {
-                const [ code, msg ] = params;
-
-                APP.store.dispatch(addMessage({
-                    hasRead: true,
-                    error: code,
-                    message: msg,
-                    messageType: 'error',
-                    timestamp: Date.now()
-                }));
-            }
-            break;
-        default:
-            logger.error('Unknown error.', err);
         }
     }
 
@@ -1457,7 +1428,9 @@ export default {
             return this._switchToScreenSharing(options);
         }
 
-        return this._untoggleScreenSharing();
+        return this._untoggleScreenSharing
+            ? this._untoggleScreenSharing()
+            : Promise.resolve();
     },
 
     /**
@@ -2198,12 +2171,6 @@ export default {
 
         APP.keyboardshortcut.init();
 
-        if (config.requireDisplayName
-                && !APP.conference.getLocalDisplayName()
-                && !room.isHidden()) {
-            APP.UI.promptDisplayName();
-        }
-
         APP.store.dispatch(conferenceJoined(room));
 
         const displayName
@@ -2544,7 +2511,11 @@ export default {
     leaveRoomAndDisconnect() {
         APP.store.dispatch(conferenceWillLeave(room));
 
-        return room.leave().then(disconnect, disconnect);
+        if (room.isJoined()) {
+            return room.leave().then(disconnect, disconnect);
+        }
+
+        return disconnect();
     },
 
     /**

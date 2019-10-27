@@ -12,6 +12,7 @@ import { PresenceLabel } from '../../../react/features/presence-status';
 
 const logger = require('jitsi-meet-logger').getLogger(__filename);
 
+import { VIDEO_TYPE } from '../../../react/features/base/media';
 import {
     JitsiParticipantConnectionStatus
 } from '../../../react/features/base/lib-jitsi-meet';
@@ -232,7 +233,7 @@ export default class LargeVideoManager {
 
             const showAvatar
                 = isVideoContainer
-                    && (APP.conference.isAudioOnly() || !isVideoRenderable);
+                    && ((APP.conference.isAudioOnly() && videoType !== VIDEO_TYPE.DESKTOP) || !isVideoRenderable);
 
             let promise;
 

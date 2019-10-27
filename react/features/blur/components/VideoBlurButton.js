@@ -4,6 +4,7 @@ import React from 'react';
 
 import { createVideoBlurEvent, sendAnalytics } from '../../analytics';
 import { translate } from '../../base/i18n';
+import { IconBlurBackground } from '../../base/icons';
 import { connect } from '../../base/redux';
 import { AbstractButton, BetaTag } from '../../base/toolbox';
 import type { AbstractButtonProps } from '../../base/toolbox';
@@ -32,7 +33,7 @@ type Props = AbstractButtonProps & {
  */
 class VideoBlurButton extends AbstractButton<Props, *> {
     accessibilityLabel = 'toolbar.accessibilityLabel.videoblur';
-    iconName = 'icon-blur-background';
+    icon = IconBlurBackground;
     label = 'toolbar.startvideoblur';
     tooltip = 'toolbar.startvideoblur';
     toggledLabel = 'toolbar.stopvideoblur';

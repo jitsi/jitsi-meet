@@ -18,8 +18,6 @@ import {
     setVideoInputDevice
 } from './functions';
 
-const logger = require('jitsi-meet-logger').getLogger(__filename);
-
 const ALWAYS_ON_TOP_FILENAMES = [
     'css/all.css', 'libs/alwaysontop.min.js'
 ];
@@ -34,6 +32,7 @@ const commands = {
     email: 'email',
     hangup: 'video-hangup',
     password: 'password',
+    sendTones: 'send-tones',
     subject: 'subject',
     submitFeedback: 'submit-feedback',
     toggleAudio: 'toggle-audio',
@@ -73,6 +72,7 @@ const events = {
     'video-availability-changed': 'videoAvailabilityChanged',
     'video-mute-status-changed': 'videoMuteStatusChanged',
     'screen-sharing-status-changed': 'screenSharingStatusChanged',
+    'dominant-speaker-changed': 'dominantSpeakerChanged',
     'subject-change': 'subjectChange',
     'suspend-detected': 'suspendDetected',
     'tile-view-changed': 'tileViewChanged'
@@ -366,6 +366,30 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
     }
 
     /**
+     * Getter for participant specific video element in Jitsi Meet.
+     *
+     * @param {string|undefined} participantId - Id of participant to return the video for.
+     *
+     * @returns {HTMLElement|undefined} - The requested video. Will return the local video
+     * by default if participantId is undefined.
+     */
+    _getParticipantVideo(participantId) {
+        const iframe = this.getIFrame();
+
+        if (!iframe
+                || !iframe.contentWindow
+                || !iframe.contentWindow.document) {
+            return;
+        }
+
+        if (typeof participantId === 'undefined' || participantId === this._myUserID) {
+            return iframe.contentWindow.document.getElementById('localVideo_container');
+        }
+
+        return iframe.contentWindow.document.querySelector(`#participant_${participantId} video`);
+    }
+
+    /**
      * Sets the size of the iframe element.
      *
      * @param {number|string} height - The height of the iframe.
@@ -521,13 +545,13 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
      * {{
      * jid: jid //the jid of the participant
      * }}
-     * {@code video-conference-joined} - receives event notifications about the
+     * {@code videoConferenceJoined} - receives event notifications about the
      * local user has successfully joined the video conference.
      * The listener will receive object with the following structure:
      * {{
      * roomName: room //the room name of the conference
      * }}
-     * {@code video-conference-left} - receives event notifications about the
+     * {@code videoConferenceLeft} - receives event notifications about the
      * local user has left the video conference.
      * The listener will receive object with the following structure:
      * {{
@@ -538,6 +562,12 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
      * The listener will receive object with the following structure:
      * {{
      * on: on //whether screen sharing is on
+     * }}
+     * {@code dominantSpeakerChanged} - receives event notifications about
+     * change in the dominant speaker.
+     * The listener will receive object with the following structure:
+     * {{
+     * id: participantId //participantId of the new dominant speaker
      * }}
      * {@code suspendDetected} - receives event notifications about detecting suspend event in host computer.
      * {@code readyToClose} - all hangup operations are completed and Jitsi Meet
@@ -586,7 +616,7 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
      */
     executeCommand(name, ...args) {
         if (!(name in commands)) {
-            logger.error('Not supported command name.');
+            console.error('Not supported command name.');
 
             return;
         }
