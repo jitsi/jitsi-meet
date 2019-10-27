@@ -42,17 +42,17 @@ class ChatMessage extends AbstractChatMessage<Props> {
         const content = toArray(escMessage, { className: 'smiley' });
 
         content.forEach(i => {
-            if (typeof i === 'string') {
-                processedMessage.push(
-                    <Linkify
-                        key = { i }
-                        properties = {{
-                            rel: 'noopener noreferrer',
-                            target: '_blank'
-                        }}>{ i }</Linkify>);
-            } else {
+            // if (typeof i === 'string') {
+            //     processedMessage.push(
+            //         <Linkify
+            //             key = { i }
+            //             properties = {{
+            //                 rel: 'noopener noreferrer',
+            //                 target: '_blank'
+            //             }}>{ i }</Linkify>);
+            // } else {
                 processedMessage.push(i);
-            }
+            // }
         });
 
         return (
