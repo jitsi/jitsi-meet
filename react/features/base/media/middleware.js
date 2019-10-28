@@ -14,7 +14,7 @@ import { isRoomValid, SET_ROOM } from '../conference';
 import JitsiMeetJS from '../lib-jitsi-meet';
 import { MiddlewareRegistry } from '../redux';
 import { getPropertyValue } from '../settings';
-import { setTrackMuted, TRACK_ADDED } from '../tracks';
+import { setTrackMuted, TRACK_ADDED, PRESENTER_TRACK_ADDED } from '../tracks';
 
 import { setAudioMuted, setCameraFacingMode, setVideoMuted } from './actions';
 import { CAMERA_FACING_MODE, VIDEO_MUTISM_AUTHORITY } from './constants';
@@ -41,6 +41,7 @@ MiddlewareRegistry.register(store => next => action => {
     case SET_ROOM:
         return _setRoom(store, next, action);
 
+    case PRESENTER_TRACK_ADDED:
     case TRACK_ADDED: {
         const result = next(action);
         const { track } = action;

@@ -345,6 +345,7 @@
         "keyboardShortcuts": "Keyboard shortcuts",
         "localRecording": "Show or hide local recording controls",
         "mute": "Mute or unmute your microphone",
+        "presenterMute": "Start / Stop Camera",
         "pushToTalk": "Push to talk",
         "raiseHand": "Raise or lower your hand",
         "showSpeakerStats": "Show speaker stats",
@@ -602,7 +603,9 @@
             "tileView": "Toggle tile view",
             "toggleCamera": "Toggle camera",
             "videomute": "Toggle mute video",
-            "videoblur": "Toggle video blur"
+            "videoblur": "Toggle video blur",
+            "cropperson": "Toggle video crop",
+            "presentermute": "Toggle presenter video"
         },
         "addPeople": "Add people to your call",
         "audioOnlyOff": "Disable low bandwidth mode",
@@ -648,8 +651,12 @@
         "tileViewToggle": "Toggle tile view",
         "toggleCamera": "Toggle camera",
         "videomute": "Start / Stop camera",
+        "startpersoncrop" : "Crop my foreground",
         "startvideoblur": "Blur my background",
-        "stopvideoblur": "Disable background blur"
+        "stopvideoblur": "Disable background blur",
+        "presentermute": "Start / Stop Presenter Camera",
+        "startcropperson": "Crop the foreground",
+        "stopcropperson": "Disable foreground crop"
     },
     "transcribing": {
         "ccButtonTooltip": "Start / Stop subtitles",

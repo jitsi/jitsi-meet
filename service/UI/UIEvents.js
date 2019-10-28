@@ -10,6 +10,7 @@ export default {
      * Notifies that "start muted" settings changed.
      */
     AUDIO_MUTED: 'UI.audio_muted',
+    PRESENTER_MUTED: 'UI.presenter_muted',
     VIDEO_MUTED: 'UI.video_muted',
     ETHERPAD_CLICKED: 'UI.etherpad_clicked',
     SHARED_VIDEO_CLICKED: 'UI.start_shared_video',

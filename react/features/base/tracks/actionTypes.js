@@ -9,6 +9,28 @@
 export const TOGGLE_SCREENSHARING = 'TOGGLE_SCREENSHARING';
 
 /**
+ * The type of redux action dispatched when a presenter video track has
+ * been locally added to the conference.
+ * 
+ * {
+ *      type: PRESENTER_TRACK_ADDED,
+ *      track: Track
+ * }
+ */
+export const PRESENTER_TRACK_ADDED = 'PRESENTER_TRACK_ADDED';
+
+/**
+ * The type of redux action dispatched when a presenter video track has
+ * been locally removed from the conference.
+ * 
+ * {
+ *      type: PRESENTER_TRACK_REMOVED,
+ *      track: Track
+ * }
+ */
+export const PRESENTER_TRACK_REMOVED = 'PRESENTER_TRACK_REMOVED';
+
+/**
  * The type of redux action dispatched when a track has been (locally or
  * remotely) added to the conference.
  *

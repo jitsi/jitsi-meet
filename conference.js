@@ -72,9 +72,11 @@ import {
 } from './react/features/base/lib-jitsi-meet';
 import {
     isVideoMutedByUser,
+    isPresenterMutedByUser,
     MEDIA_TYPE,
     setAudioAvailable,
     setAudioMuted,
+    setPresenterMuted,
     setVideoAvailable,
     setVideoMuted
 } from './react/features/base/media';
@@ -99,6 +101,8 @@ import {
     destroyLocalTracks,
     isLocalTrackMuted,
     isUserInteractionRequiredForUnmute,
+    presenterTrackAdded,
+    presenterTrackRemoved,
     replaceLocalTrack,
     trackAdded,
     trackRemoved
@@ -114,6 +118,7 @@ import { mediaPermissionPromptVisibilityChanged } from './react/features/overlay
 import { suspendDetected } from './react/features/power-monitor';
 import { setSharedVideoStatus } from './react/features/shared-video';
 import { endpointMessageReceived } from './react/features/subtitles';
+import { getPresenterEffect } from './react/features/presenter';
 
 const logger = require('jitsi-meet-logger').getLogger(__filename);
 
@@ -195,6 +200,16 @@ function getDisplayName(id) {
  */
 function muteLocalAudio(muted) {
     APP.store.dispatch(setAudioMuted(muted));
+}
+
+/**
+ * Mute or unmute local presenter video stream if it exists.
+ * @param {boolean} muted if presenter video stream should be
+ * muted or unmuted.
+ *
+ */
+function muteLocalPresenter(muted) {
+    APP.store.dispatch(setPresenterMuted(muted));
 }
 
 /**
@@ -443,6 +458,14 @@ export default {
      * more refactoring is required around screen sharing ('localVideo' usages).
      * @type {JitsiLocalTrack|null}
      */
+    localPresenterVideo: null,
+
+    /**
+     * The local video track (if any).
+     * FIXME tracks from redux store should be the single source of truth, but
+     * more refactoring is required around screen sharing ('localVideo' usages).
+     * @type {JitsiLocalTrack|null}
+     */
     localVideo: null,
 
     /**
@@ -680,6 +703,9 @@ export default {
                     this.setVideoMuteStatus(true);
                 }
 
+                // set the presenter mode status to falsey
+                this.setPresenterMuteStatus(true);
+
                 // Initialize device list a second time to ensure device labels
                 // get populated in case of an initial gUM acceptance; otherwise
                 // they may remain as empty strings.
@@ -696,6 +722,10 @@ export default {
                         titleKey: 'notify.startSilentTitle'
                     }));
                 }
+
+                // hack
+                interfaceConfig.TOOLBAR_BUTTONS.push('presenter');
+                interfaceConfig.TOOLBAR_BUTTONS.push('videocropforeground');
 
                 // XXX The API will take care of disconnecting from the XMPP
                 // server (and, thus, leaving the room) on unload.
@@ -726,6 +756,19 @@ export default {
                 APP.store.getState()['features/base/tracks'],
                 MEDIA_TYPE.VIDEO)
             : isVideoMutedByUser(APP.store);
+    },
+
+    /**
+     * Tells whether the local presenter video is muted or not.
+     * @return {boolean}
+     */
+    isLocalPresenterMuted() {
+        // If the tracks are not ready, read from base/media state
+        return this._localTracksInitialized
+            ? isLocalTrackMuted(
+                APP.store.getState()['features/base/tracks'],
+                MEDIA_TYPE.PRESENTER)
+            : isPresenterMutedByUser(APP.store);
     },
 
     /**
@@ -799,6 +842,89 @@ export default {
     },
 
     /**
+     * Simulates toolbar button click for presenter video mute. Used by 
+     * shortcuts and API.
+     * @param mute true for mute and false for unmute.
+     * @param {boolean} [showUI] when set to false will not display any error
+     * dialogs in case of media permissions error.
+     */
+    mutePresenterVideo(mute, showUI = true) {
+        if (!mute
+                && isUserInteractionRequiredForUnmute(APP.store.getState())) {
+            logger.error('Unmuting video requires user interaction');
+
+            return;
+        }
+
+        const maybeShowErrorDialog = error => {
+            showUI && APP.store.dispatch(notifyCameraError(error));
+        };
+
+        if (!mute && this.localPresenterVideo) {
+            getPresenterEffect(this.localPresenterVideo.stream)
+                .then(presenterEffect => this.localVideo.setEffect(presenterEffect))
+                .then(() => this.setPresenterMuteStatus(his.isLocalPresenterMuted()))
+                .catch(err => {
+
+                    // dispose the track if setEffect fails
+                    logger.error('setEffect failed on local video: ', err);
+                    muteLocalPresenter(true);
+                    return null;
+                });
+
+        } else if (!mute && this.localVideo) {
+            const { height } = this.localVideo.track.getSettings();
+
+            // figure out the camera resolution based on
+            // the screen resolution that is getting shared
+            const presenterCameraConstraints
+                = this._createCameraConstraints(height);
+
+            createLocalTracksF({
+                devices: [ 'video' ],
+                presenterMode: presenterCameraConstraints
+            })
+            .then(([ videoTrack ]) => {
+                this.localPresenterVideo = videoTrack;
+                return getPresenterEffect(videoTrack.stream);
+            })
+            .catch(error => {
+
+                // FIXME should send some feedback to the API on error ?
+                maybeShowErrorDialog(error);
+
+                // Rollback the video muted status by using null track
+                return null;
+            })
+            .then(presenterEffect => this.localVideo.setEffect(presenterEffect))
+            .then(() => {
+                this.localPresenterVideo.type = MEDIA_TYPE.PRESENTER;
+                APP.store.dispatch(presenterTrackAdded(this.localPresenterVideo));
+                this.setPresenterMuteStatus(mute);
+            })
+            .catch(err => {
+
+                // dispose the track if setEffect fails
+                logger.error('setEffect failed on local video: ', err);
+                muteLocalPresenter(true);
+                return null;
+            });
+            
+        } else {
+            this.localVideo.setEffect(undefined)
+            .then(() => {
+                muteLocalPresenter(mute);
+                APP.store.dispatch(presenterTrackRemoved(this.localPresenterVideo));
+                this.localPresenterVideo = null;
+            })
+            .catch(err => {
+                maybeShowErrorDialog(err);
+                return null;
+            });
+        }
+    },
+
+    /**
      * Simulates toolbar button click for video mute. Used by shortcuts and API.
      * @param mute true for mute and false for unmute.
      * @param {boolean} [showUI] when set to false will not display any error
@@ -852,6 +978,14 @@ export default {
             // FIXME show error dialog if it fails (should be handled by react)
             muteLocalVideo(mute);
         }
+    },
+
+    /**
+     *
+     * @param {*} showUI
+     */
+    togglePresenterMuted(showUI = true) {
+        this.mutePresenterVideo(!this.isLocalPresenterMuted(), showUI);
     },
 
     /**
@@ -1359,6 +1493,17 @@ export default {
         if (receiver) {
             receiver.stop();
         }
+        
+        // Get rid of the presenter video track if present.
+        if (this.localPresenterVideo) {
+            this.localVideo.setEffect(undefined)
+                .then(() => {
+                    muteLocalPresenter(true);
+                    APP.store.dispatch(
+                        presenterTrackRemoved(this.localPresenterVideo));
+                    this.localPresenterVideo = null;
+                });
+        }
 
         this._stopProxyConnection();
 
@@ -1530,6 +1675,30 @@ export default {
             externalInstallation && $.prompt.close();
             throw error;
         });
+    },
+
+    /**
+     * 
+     * @param {*} desktopHeight 
+     */
+    _createCameraConstraints(desktopHeight) {
+        const cameraHeights = [ 180, 270, 360, 540, 720 ];
+        let result;
+
+        cameraHeights.forEach(height => {
+            if ((desktopHeight / 5) < height && !result) {
+                result = height;
+            }
+        });
+
+        return {
+            video: {
+                aspectRatio: 1,
+                height: {
+                    exact: result
+                }
+            }
+        };
     },
 
     /**
@@ -1894,6 +2063,9 @@ export default {
         });
         APP.UI.addListener(UIEvents.VIDEO_MUTED, muted => {
             this.muteVideo(muted);
+        });
+        APP.UI.addListener(UIEvents.PRESENTER_MUTED, muted => {
+            this.mutePresenterVideo(muted);
         });
 
         room.addCommandListener(this.commands.defaults.ETHERPAD,
@@ -2752,6 +2924,15 @@ export default {
         }
 
         this._proxyConnection.processMessage(event);
+    },
+
+    /**
+     * Sets the presenter muted status.
+     *
+     * @param {boolean} muted - New muted status.
+     */
+    setPresenterMuteStatus(muted) {
+        APP.API.notifyPresenterMutedStatusChanged(muted);
     },
 
     /**

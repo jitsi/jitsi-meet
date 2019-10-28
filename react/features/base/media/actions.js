@@ -6,6 +6,7 @@ import {
     SET_AUDIO_MUTED,
     SET_AUDIO_AVAILABLE,
     SET_CAMERA_FACING_MODE,
+    SET_PRESENTER_MUTED,
     SET_VIDEO_AVAILABLE,
     SET_VIDEO_MUTED,
     STORE_VIDEO_TRANSFORM,
@@ -64,6 +65,35 @@ export function setCameraFacingMode(cameraFacingMode: CAMERA_FACING_MODE) {
     return {
         type: SET_CAMERA_FACING_MODE,
         cameraFacingMode
+    };
+}
+
+/**
+ * Action to set the muted state of the local presenter video.
+ *
+ * @param {boolean} muted - True if the presenter video is to be muted or false
+ * if the local presenter video is to be unmuted.
+ * @param {number} authority - The {@link VIDEO_MUTISM_AUTHORITY} which is
+ * muting/unmuting the local video.
+ * @param {boolean} ensureTrack - True if we want to ensure that a new track is
+ * created if missing.
+ * @returns {Function}
+ */
+export function setPresenterMuted(
+        muted: boolean,
+        authority: number = VIDEO_MUTISM_AUTHORITY.USER,
+        ensureTrack: boolean = false) {
+    return (dispatch: Dispatch<any>, getState: Function) => {
+        const oldValue = getState()['features/base/media'].presenter.muted;
+
+        // eslint-disable-next-line no-bitwise
+        const newValue = muted ? oldValue | authority : oldValue & ~authority;
+
+        return dispatch({
+            type: SET_PRESENTER_MUTED,
+            ensureTrack,
+            muted: newValue
+        });
     };
 }
 

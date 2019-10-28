@@ -109,6 +109,16 @@ var config = {
     //     }
     // },
 
+    // Sets the preferred resolution (height) for the presenter mode video.
+    // presenterCameraConstraints: {
+    //    video: {
+    //        aspectRatio: 1,
+    //        height: {
+    //            exact: 180,
+    //        }
+    //    }
+    // },
+
     // Enable / disable simulcast support.
     // disableSimulcast: false,
 

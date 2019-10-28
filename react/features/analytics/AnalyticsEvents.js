@@ -1,3 +1,4 @@
+
 /**
  * The constant for the event type 'track'.
  * TODO: keep these constants in a single place. Can we import them from
@@ -60,6 +61,12 @@ export const ACTION_SHORTCUT_TRIGGERED = 'triggered';
  * The name of the keyboard shortcut or toolbar button for muting audio.
  */
 export const AUDIO_MUTE = 'audio.mute';
+
+/**
+ * The name of the keyboard shortcut or toolbar button for muting presenter
+ * video.
+ */
+export const PRESENTER_MUTE = 'presenter.mute';
 
 /**
  * The name of the keyboard shortcut or toolbar button for muting video.
@@ -428,6 +435,21 @@ export function createLocalTracksDurationEvent(duration) {
 }
 
 /**
+ * Creates an event indicating that an action related to presenter
+ * occurred (e.g. It was started or stopped).
+ *
+ * @param {string} action - The action which occurred.
+ * @returns {Object} The event in a format suitable for sending via
+ * sendAnalytics.
+ */
+export function createPresenterEvent(action) {
+    return {
+        action,
+        actionSubject: 'video.presenter'
+    };
+}
+
+/**
  * Creates an event which indicates that an action related to recording has
  * occured.
  *
@@ -519,6 +541,17 @@ export function createVideoBlurEvent(action) {
     return {
         action,
         actionSubject: 'video.blur'
+    };
+}
+
+/**
+ * 
+ * @param {*} action 
+ */
+export function createVideoCropPersonEvent(action) {
+    return {
+        action,
+        actionSubject: 'video.crop'
     };
 }
 

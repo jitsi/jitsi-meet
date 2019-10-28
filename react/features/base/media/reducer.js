@@ -8,6 +8,7 @@ import {
     SET_AUDIO_AVAILABLE,
     SET_AUDIO_MUTED,
     SET_CAMERA_FACING_MODE,
+    SET_PRESENTER_MUTED,
     SET_VIDEO_AVAILABLE,
     SET_VIDEO_MUTED,
     STORE_VIDEO_TRANSFORM,
@@ -151,6 +152,49 @@ function _video(state = _VIDEO_INITIAL_MEDIA_STATE, action) {
     }
 }
 
+// FIXME Technically, _VIDEO_INITIAL_MEDIA_STATE is a constant internal to the
+// feature base/media and used in multiple files so it should be in
+// constants.js. Practically though, VideoMediaState would then be used in
+// multiple files as well so I don't know where and how to move it.
+/**
+ * Initial state for video.
+ *
+ * @type {PresenterMediaState}
+ */
+export const _PRESENTER_INITIAL_MEDIA_STATE = {
+    available: true,
+    muted: 0,
+};
+
+/**
+ * Reducer for presenter camera media state.
+ *
+ * @param {PresenterMediaState} state - Media state of local video.
+ * @param {Object} action - Action object.
+ * @param {string} action.type - Type of action.
+ * @private
+ * @returns {PresenterMediaState}
+ */
+function _presenter(state = _PRESENTER_INITIAL_MEDIA_STATE, action) {
+    switch (action.type) {
+
+    case SET_VIDEO_AVAILABLE:
+        return {
+            ...state,
+            available: action.available
+        };
+
+    case SET_PRESENTER_MUTED:
+        return {
+            ...state,
+            muted: action.muted
+        };
+
+    default:
+        return state;
+    }
+}
+
 /**
  * Listen for various actions related to media devices.
  *
@@ -163,7 +207,8 @@ function _video(state = _VIDEO_INITIAL_MEDIA_STATE, action) {
  */
 ReducerRegistry.register('features/base/media', combineReducers({
     audio: _audio,
-    video: _video
+    video: _video,
+    presenter: _presenter
 }));
 
 /**

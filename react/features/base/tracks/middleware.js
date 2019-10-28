@@ -5,6 +5,7 @@ import {
     MEDIA_TYPE,
     SET_AUDIO_MUTED,
     SET_CAMERA_FACING_MODE,
+    SET_PRESENTER_MUTED,
     SET_VIDEO_MUTED,
     TOGGLE_CAMERA_FACING_MODE,
     toggleCameraFacingMode
@@ -82,6 +83,15 @@ MiddlewareRegistry.register(store => next => action => {
         }
         break;
     }
+
+    case SET_PRESENTER_MUTED:
+        if (!action.muted
+                && isUserInteractionRequiredForUnmute(store.getState())) {
+            return;
+        }
+
+        _setMuted(store, action, MEDIA_TYPE.PRESENTER);
+        break;
 
     case SET_VIDEO_MUTED:
         if (!action.muted

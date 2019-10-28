@@ -4,6 +4,7 @@ import React, { Component } from 'react';
 
 import AudioMuteButton from './AudioMuteButton';
 import HangupButton from './HangupButton';
+import PresenterMuteButton from './PresenterMuteButton';
 import VideoMuteButton from './VideoMuteButton';
 
 /**
@@ -53,6 +54,7 @@ export default class Toolbar extends Component<Props> {
                 onMouseOver = { onMouseOver }>
                 <AudioMuteButton />
                 <HangupButton />
+                <PresenterMuteButton />
                 <VideoMuteButton />
             </div>
         );

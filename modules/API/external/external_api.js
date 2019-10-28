@@ -38,6 +38,7 @@ const commands = {
     toggleAudio: 'toggle-audio',
     toggleChat: 'toggle-chat',
     toggleFilmStrip: 'toggle-film-strip',
+    togglePresenter: 'toggle-presenter',
     toggleShareScreen: 'toggle-share-screen',
     toggleTileView: 'toggle-tile-view',
     toggleVideo: 'toggle-video'
@@ -65,6 +66,7 @@ const events = {
     'participant-kicked-out': 'participantKickedOut',
     'participant-left': 'participantLeft',
     'password-required': 'passwordRequired',
+    'presenter-mute-status-changed': 'presenterMuteStatusChanged',
     'proxy-connection-event': 'proxyConnectionEvent',
     'video-ready-to-close': 'readyToClose',
     'video-conference-joined': 'videoConferenceJoined',
@@ -609,6 +611,7 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
      * in the arguments array. Note: Available only for moderator.
      *
      * {@code toggleAudio} - Mutes / unmutes audio with no arguments.
+     * {@code togglePresenter} - Mutes / unmutes presenter video with no arguments.
      * {@code toggleVideo} - Mutes / unmutes video with no arguments.
      * {@code toggleFilmStrip} - Hides / shows the filmstrip with no arguments.
      *
@@ -635,6 +638,7 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
      * {@code displayName} - Sets the display name of the local participant to
      * the value passed in the arguments array.
      * {@code toggleAudio} - Mutes / unmutes audio. No arguments.
+     * {@code togglePresenter} - Mutes / unmutes presenter video with no arguments.
      * {@code toggleVideo} - Mutes / unmutes video. No arguments.
      * {@code toggleFilmStrip} - Hides / shows the filmstrip. No arguments.
      * {@code toggleChat} - Hides / shows chat. No arguments.

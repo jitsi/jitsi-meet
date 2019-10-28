@@ -117,6 +117,11 @@ function initCommands() {
             logger.log('Video toggle: API command received');
             APP.conference.toggleVideoMuted(false /* no UI */);
         },
+        'toggle-presenter': () => {
+            sendAnalytics(createApiEvent('toggle-presenter'));
+            logger.log('Presenter toggle: API command received');
+            APP.conference.togglePresenterMuted(false /* no UI */);
+        },
         'toggle-film-strip': () => {
             sendAnalytics(createApiEvent('film.strip.toggled'));
             APP.UI.toggleFilmstrip();
@@ -551,6 +556,20 @@ class API {
     notifyAudioMutedStatusChanged(muted: boolean) {
         this._sendEvent({
             name: 'audio-mute-status-changed',
+            muted
+        });
+    }
+
+    /**
+     * Notify external application (if API is enabled) for video muted status
+     * changed.
+     *
+     * @param {boolean} muted - The new muted status.
+     * @returns {void}
+     */
+    notifyPresenterMutedStatusChanged(muted: boolean) {
+        this._sendEvent({
+            name: 'presenter-mute-status-changed',
             muted
         });
     }

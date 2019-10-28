@@ -14,6 +14,8 @@ import {
 import { getLocalParticipant } from '../participants';
 
 import {
+    PRESENTER_TRACK_ADDED,
+    PRESENTER_TRACK_REMOVED,
     TOGGLE_SCREENSHARING,
     TRACK_ADDED,
     TRACK_CREATE_CANCELED,
@@ -317,6 +319,52 @@ export function replaceLocalTrack(oldTrack, newTrack, conference) {
                         }
                     });
             });
+    };
+}
+
+/**
+ * Create an action for when a new presenter track has been created and the 
+ * video track is updated after applying the presenter stream effect.
+ * 
+ * @param {JitsiLocalTrack} track - JitsiLocalTrack instance.
+ * @returns {{ type: PRESENTER_TRACK_ADDED, track: Track }}
+ */
+export function presenterTrackAdded(track) {
+
+    return (dispatch, getState) => {
+        const local = track.isLocal();
+        const mediaType = track.getType();
+        let participantId;
+        if (local) {
+            participantId = getLocalParticipant(getState);
+        }
+
+        return dispatch({
+            type: PRESENTER_TRACK_ADDED,
+            track: {
+                jitsiTrack: track,
+                local,
+                mediaType,
+                participantId,
+                muted: track.isMuted(),
+            }
+        });
+    };
+}
+
+/**
+ * Create an action for when a presenter track has been removed from the
+ * conference.
+ *
+ * @param {JitsiLocalTrack} track - JitsiLocalTrack instance.
+ * @returns {{ type: PRESENTER_TRACK_REMOVED, track: Track }}
+ */
+export function presenterTrackRemoved(track) {
+    return {
+        type: PRESENTER_TRACK_REMOVED,
+        track: {
+            jitsiTrack: track
+        }
     };
 }
 

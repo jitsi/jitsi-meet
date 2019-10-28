@@ -58,8 +58,8 @@ export function createLocalTracksF(
         firefox_fake_device, // eslint-disable-line camelcase
         resolution
     } = state['features/base/config'];
-    const loadEffectsPromise = state['features/blur'].blurEnabled
-        ? getBlurEffect()
+    const loadEffectsPromise = !options.presenterMode
+        && state['features/blur'].blurEnabled ? getBlurEffect()
             .then(blurEffect => [ blurEffect ])
             .catch(error => {
                 logger.error('Failed to obtain the blur effect instance with error: ', error);
@@ -67,6 +67,11 @@ export function createLocalTracksF(
                 return Promise.resolve([]);
             })
         : Promise.resolve([]);
+    let presenterCameraConstraints;
+
+    if (options.presenterMode) {
+        presenterCameraConstraints = options.presenterMode;
+    }
 
     return (
         loadEffectsPromise.then(effects =>
@@ -86,6 +91,7 @@ export function createLocalTracksF(
                     effects,
                     firefox_fake_device, // eslint-disable-line camelcase
                     micDeviceId,
+                    presenterCameraConstraints,
                     resolution
                 },
                 firePermissionPromptIsShownEvent)
@@ -145,6 +151,16 @@ export function getLocalTracks(tracks, includePending = false) {
     // never make it to the store nor there will be any
     // `TRACK_ADDED`/`TRACK_REMOVED` actions dispatched for it.
     return tracks.filter(t => t.local && (t.jitsiTrack || includePending));
+}
+
+/**
+ * Returns local presenter track.
+ * 
+ * @param {Track[]} tracks - List of all tracks.
+ * @returns {(Track|undefined)}
+ */
+export function getLocalPresenterTrack(tracks) {
+    return getLocalTrack(tracks, MEDIA_TYPE.PRESENTER);
 }
 
 /**
@@ -261,6 +277,10 @@ export function setTrackMuted(track, muted) {
     }
 
     const f = muted ? 'mute' : 'unmute';
+
+    if (track.type === 'presenter') {
+        return Promise.resolve();
+    }
 
     return track[f]().catch(error => {
         // Track might be already disposed so ignore such an error.

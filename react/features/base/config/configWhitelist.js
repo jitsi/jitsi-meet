@@ -118,6 +118,7 @@ export default [
     'openBridgeChannel',
     'p2p',
     'preferH264',
+    'presenterCameraConstraints',
     'requireDisplayName',
     'resolution',
     'startAudioMuted',

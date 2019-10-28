@@ -234,6 +234,10 @@ api.executeCommand('toggleAudio');
 ```javascript
 api.executeCommand('toggleVideo');
 ```
+* **togglePresenter** - Mutes / unmutes the video for the presenter. No arguments are required.
+```javascript
+api.executeCommand('togglePresenter');
+```
 
 * **toggleFilmStrip** - Hides / shows the filmstrip. No arguments are required.
 ```javascript
@@ -471,6 +475,12 @@ changes. The listener will receive an object with the following structure:
 ```
 
 * **videoMuteStatusChanged** - event notifications about video mute status changes. The listener will receive an object with the following structure:
+```javascript
+{
+    muted: boolean // new muted status - boolean
+}
+```
+* **presenterMuteStatusChanged** - event notifications about presenter video mute status changes. The listener will receive an object with the following structure:
 ```javascript
 {
     muted: boolean // new muted status - boolean

@@ -30,6 +30,16 @@ export const SET_AUDIO_AVAILABLE = 'SET_AUDIO_AVAILABLE';
 export const SET_CAMERA_FACING_MODE = 'SET_CAMERA_FACING_MODE';
 
 /**
+ * The type of (redux) action to set the muted state of the local presenter video.
+ *
+ * {
+ *     type: SET_PRESENTER_MUTED,
+ *     muted: boolean
+ * }
+ */
+export const SET_PRESENTER_MUTED = 'SET_PRESENTER_MUTED';
+
+/**
  * The type of (redux) action to adjust the availability of the local video.
  *
  * {

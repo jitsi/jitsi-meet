@@ -2,6 +2,8 @@ import { PARTICIPANT_ID_CHANGED } from '../participants';
 import { ReducerRegistry } from '../redux';
 
 import {
+    PRESENTER_TRACK_ADDED,
+    PRESENTER_TRACK_REMOVED,
     TRACK_ADDED,
     TRACK_CREATE_CANCELED,
     TRACK_CREATE_ERROR,
@@ -106,6 +108,7 @@ ReducerRegistry.register('features/base/tracks', (state = [], action) => {
     case TRACK_UPDATED:
         return state.map(t => track(t, action));
 
+    case PRESENTER_TRACK_ADDED:
     case TRACK_ADDED: {
         let withoutTrackStub = state;
 
@@ -123,6 +126,7 @@ ReducerRegistry.register('features/base/tracks', (state = [], action) => {
         return state.filter(t => !t.local || t.mediaType !== action.trackType);
     }
 
+    case PRESENTER_TRACK_REMOVED:
     case TRACK_REMOVED:
         return state.filter(t => t.jitsiTrack !== action.track.jitsiTrack);
 

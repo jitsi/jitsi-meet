@@ -5,6 +5,37 @@ import { toState } from '../redux';
 import { VIDEO_MUTISM_AUTHORITY } from './constants';
 
 /**
+ * 
+ * @param {*} stateful 
+ */
+export function isPresenterMutedByAudioOnly(stateful: Function | Object) {
+    return (
+        _isPresenterMutedByAuthority(stateful, VIDEO_MUTISM_AUTHORITY.AUDIO_ONLY));
+}
+
+/**
+ * 
+ * @param {*} stateful 
+ * @param {*} videoMutismAuthority 
+ */
+function _isPresenterMutedByAuthority(
+        stateful: Function | Object,
+        videoMutismAuthority: number) {
+    const { muted } = toState(stateful)['features/base/media'].presenter;
+
+    // eslint-disable-next-line no-bitwise
+    return Boolean(muted & videoMutismAuthority);
+}
+
+/**
+ * 
+ * @param {*} stateful 
+ */
+export function isPresenterMutedByUser(stateful: Function | Object) {
+    return _isPresenterMutedByAuthority(stateful, VIDEO_MUTISM_AUTHORITY.USER);
+}
+
+/**
  * Determines whether video is currently muted by the audio-only authority.
  *
  * @param {Function|Object} stateful - The redux store, state, or

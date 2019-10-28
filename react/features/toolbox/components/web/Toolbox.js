@@ -30,8 +30,9 @@ import {
 } from '../../../base/participants';
 import { connect } from '../../../base/redux';
 import { OverflowMenuItem } from '../../../base/toolbox';
-import { getLocalVideoTrack, toggleScreensharing } from '../../../base/tracks';
+import { getLocalVideoTrack, toggleScreensharing, getLocalPresenterTrack } from '../../../base/tracks';
 import { VideoBlurButton } from '../../../blur';
+import { VideoCropPersonButton } from '../../../cropPerson';
 import { ChatCounter, toggleChat } from '../../../chat';
 import { SharedDocumentButton } from '../../../etherpad';
 import { openFeedbackDialog } from '../../../feedback';
@@ -75,6 +76,7 @@ import HangupButton from '../HangupButton';
 import HelpButton from '../HelpButton';
 import OverflowMenuButton from './OverflowMenuButton';
 import OverflowMenuProfileItem from './OverflowMenuProfileItem';
+import PresenterMuteButton from '../PresenterMuteButton';
 import ToolbarButton from './ToolbarButton';
 import VideoMuteButton from '../VideoMuteButton';
 import {
@@ -148,6 +150,10 @@ type Props = {
      */
     _overflowMenuVisible: boolean,
 
+    /**
+     * Whether or not the local participant is in presenter mode.
+     */
+    _presenterMode: boolean,
     /**
      * Whether or not the local participant's hand is raised.
      */
@@ -908,6 +914,7 @@ class Toolbox extends Component<Props, State> {
         const {
             _feedbackConfigured,
             _fullScreen,
+            _isPresenter,
             _screensharing,
             _sharingVideo,
             t
@@ -950,6 +957,10 @@ class Toolbox extends Component<Props, State> {
                 key = 'videobackgroundblur'
                 showLabel = { true }
                 visible = { this._shouldShowButton('videobackgroundblur') && !_screensharing } />,
+            <VideoCropPersonButton
+                key = 'videocropforeground'
+                showLabel = { true }
+                visible = { this._shouldShowButton('videocropforeground') && _screensharing && _isPresenter } />,
             <SettingsButton
                 key = 'settings'
                 showLabel = { true }
@@ -1076,6 +1087,7 @@ class Toolbox extends Component<Props, State> {
             _hideInviteButton,
             _overflowMenuVisible,
             _raisedHand,
+            _screensharing,
             t
         } = this.props;
         const overflowMenuContent = this._renderOverflowMenuContent();
@@ -1187,8 +1199,10 @@ class Toolbox extends Component<Props, State> {
                         visible = { this._shouldShowButton('microphone') } />
                     <HangupButton
                         visible = { this._shouldShowButton('hangup') } />
+                    <PresenterMuteButton
+                        visible = { this._shouldShowButton('presenter') && _screensharing } />
                     <VideoMuteButton
-                        visible = { this._shouldShowButton('camera') } />
+                        visible = { this._shouldShowButton('camera') && !_screensharing } />
                 </div>
                 <div className = 'button-group-right'>
                     { buttonsRight.indexOf('localrecording') !== -1
@@ -1260,6 +1274,7 @@ function _mapStateToProps(state) {
         overflowMenuVisible
     } = state['features/toolbox'];
     const localParticipant = getLocalParticipant(state);
+    const localPresenter = getLocalPresenterTrack(state['features/base/tracks']);
     const localRecordingStates = state['features/local-recording'];
     const localVideo = getLocalVideoTrack(state['features/base/tracks']);
     const addPeopleEnabled = isAddPeopleEnabled(state);
@@ -1294,6 +1309,7 @@ function _mapStateToProps(state) {
         _hideInviteButton:
             iAmRecorder || (!addPeopleEnabled && !dialOutEnabled),
         _isGuest: state['features/base/jwt'].isGuest,
+        _isPresenter: localPresenter,
         _fullScreen: fullScreen,
         _localParticipantID: localParticipant.id,
         _localRecState: localRecordingStates,
