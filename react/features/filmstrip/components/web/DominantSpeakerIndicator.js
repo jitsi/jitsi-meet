@@ -2,6 +2,7 @@
 
 import React, { Component } from 'react';
 
+import { IconDominantSpeaker } from '../../../base/icons';
 import { BaseIndicator } from '../../../base/react';
 
 /**
@@ -37,7 +38,8 @@ class DominantSpeakerIndicator extends Component<Props> {
         return (
             <BaseIndicator
                 className = 'indicator show-inline'
-                iconClassName = 'indicatoricon icon-dominant-speaker'
+                icon = { IconDominantSpeaker }
+                iconClassName = 'indicatoricon'
                 iconSize = { `${this.props.iconSize}px` }
                 id = 'dominantspeakerindicator'
                 tooltipKey = 'speaker'

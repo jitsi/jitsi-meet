@@ -25,12 +25,11 @@ import '../../mobile/picture-in-picture';
 import '../../mobile/proximity';
 import '../../mobile/wake-lock';
 
+import logger from '../logger';
 import { AbstractApp } from './AbstractApp';
 import type { Props as AbstractAppProps } from './AbstractApp';
 
 declare var __DEV__;
-
-const logger = require('jitsi-meet-logger').getLogger(__filename);
 
 /**
  * The type of React {@code Component} props of {@link App}.

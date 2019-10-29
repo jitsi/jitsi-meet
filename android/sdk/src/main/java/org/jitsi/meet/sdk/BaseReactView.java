@@ -20,9 +20,9 @@ package org.jitsi.meet.sdk;
 import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.widget.FrameLayout;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import com.facebook.react.ReactRootView;
 import com.facebook.react.bridge.ReadableMap;
@@ -111,8 +111,7 @@ public abstract class BaseReactView<ListenerT>
 
         setBackgroundColor(BACKGROUND_COLOR);
 
-        ReactInstanceManagerHolder.initReactInstanceManager(
-            ((Activity) context).getApplication());
+        ReactInstanceManagerHolder.initReactInstanceManager((Activity)context);
 
         // Hook this BaseReactView into ExternalAPI.
         externalAPIScope = UUID.randomUUID().toString();

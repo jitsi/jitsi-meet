@@ -4,6 +4,7 @@ import React, { Component } from 'react';
 import { SafeAreaView, ScrollView, Text } from 'react-native';
 
 import { Avatar } from '../../base/avatar';
+import { IconInfo, IconSettings } from '../../base/icons';
 import {
     getLocalParticipant,
     getParticipantDisplayName
@@ -47,12 +48,12 @@ type Props = {
     /**
      * Display name of the local participant.
      */
-    _displayName: string,
+    _displayName: ?string,
 
     /**
      * ID of the local participant.
      */
-    _localParticipantId: string,
+    _localParticipantId: ?string,
 
     /**
      * Sets the side bar visible or hidden.
@@ -102,19 +103,19 @@ class WelcomePageSideBar extends Component<Props> {
                     <ScrollView
                         style = { styles.itemContainer }>
                         <SideBarItem
-                            icon = 'settings'
+                            icon = { IconSettings }
                             label = 'settings.title'
                             onPress = { this._onOpenSettings } />
                         <SideBarItem
-                            icon = 'info'
+                            icon = { IconInfo }
                             label = 'welcomepage.about'
                             url = { ABOUT_URL } />
                         <SideBarItem
-                            icon = 'info'
+                            icon = { IconInfo }
                             label = 'welcomepage.support'
                             url = { SUPPORT_URL } />
                         <SideBarItem
-                            icon = 'info'
+                            icon = { IconInfo }
                             label = 'welcomepage.version'
                             url = { VERSION_URL } />
                     </ScrollView>
@@ -160,10 +161,12 @@ class WelcomePageSideBar extends Component<Props> {
  */
 function _mapStateToProps(state: Object) {
     const _localParticipant = getLocalParticipant(state);
+    const _localParticipantId = _localParticipant?.id;
+    const _displayName = _localParticipant && getParticipantDisplayName(state, _localParticipantId);
 
     return {
-        _displayName: getParticipantDisplayName(state, _localParticipant.id),
-        _localParticipantId: _localParticipant.id,
+        _displayName,
+        _localParticipantId,
         _visible: state['features/welcome'].sideBarVisible
     };
 }

@@ -9,13 +9,6 @@
 
 # Add any project specific keep options here:
 
-# If your project uses WebView with JS, uncomment the following
-# and specify the fully qualified class name to the JavaScript interface
-# class:
-#-keepclassmembers class fqcn.of.javascript.interface.for.webview {
-#   public *;
-#}
-
 # React Native
 
 # Keep our interfaces so they can be used by other ProGuard rules.
@@ -90,3 +83,6 @@
 -dontwarn javax.servlet.**
 
 # ^^^ We added the above when we switched minifyEnabled on.
+
+# Rule to avoid build errors related to SVGs.
+-keep public class com.horcrux.svg.** {*;}

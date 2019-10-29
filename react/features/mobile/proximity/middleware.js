@@ -7,14 +7,15 @@ import { StateListenerRegistry } from '../../base/redux';
  * State listener which enables / disables the proximity sensor based on the
  * current conference state. If the proximity sensor is enabled, it will dim
  * the screen and disable touch controls when an object is nearby. The
- * functionality is  enabled when a conference is in audio-only mode.
+ * functionality is  enabled when the current audio device is the earpiece.
  */
 StateListenerRegistry.register(
     /* selector */ state => {
-        const { enabled: audioOnly } = state['features/base/audio-only'];
+        const { devices } = state['features/mobile/audio-mode'];
+        const selectedDevice = devices.filter(d => d.selected)[0];
         const conference = getCurrentConference(state);
 
-        return Boolean(conference && audioOnly);
+        return Boolean(conference && selectedDevice?.type === 'EARPIECE');
     },
     /* listener */ proximityEnabled => _setProximityEnabled(proximityEnabled)
 );

@@ -1,8 +1,8 @@
 // @flow
 
 import {
-    ETHERPAD_INITIALIZED,
     SET_DOCUMENT_EDITING_STATUS,
+    SET_DOCUMENT_URL,
     TOGGLE_DOCUMENT_EDITING
 } from './actionTypes';
 
@@ -24,15 +24,18 @@ export function setDocumentEditingState(editing: boolean) {
 }
 
 /**
- * Dispatches an action to set Etherpad as having been initialized.
+ * Dispatches an action to set the shared document URL.
  *
+ * @param {string} documentUrl - The shared document URL.
  * @returns {{
- *    type: ETHERPAD_INITIALIZED
+ *    type: SET_DOCUMENT_URL,
+ *    documentUrl: string
  * }}
  */
-export function setEtherpadHasInitialzied() {
+export function setDocumentUrl(documentUrl: ?string) {
     return {
-        type: ETHERPAD_INITIALIZED
+        type: SET_DOCUMENT_URL,
+        documentUrl
     };
 }
 

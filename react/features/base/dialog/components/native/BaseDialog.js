@@ -8,7 +8,7 @@ import {
     View
 } from 'react-native';
 
-import { Icon } from '../../../font-icons';
+import { Icon, IconClose } from '../../../icons';
 import { StyleType } from '../../../styles';
 
 import AbstractDialog, {
@@ -68,7 +68,7 @@ class BaseDialog<P: Props, S: State> extends AbstractDialog<P, S> {
                             onPress = { this._onCancel }
                             style = { styles.closeWrapper }>
                             <Icon
-                                name = 'close'
+                                src = { IconClose }
                                 style = { _dialogStyles.closeStyle } />
                         </TouchableOpacity>
                         { this._renderContent() }

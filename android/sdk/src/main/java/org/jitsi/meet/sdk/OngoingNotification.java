@@ -23,8 +23,9 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
-import android.support.v4.app.NotificationCompat;
-import android.util.Log;
+import androidx.core.app.NotificationCompat;
+
+import org.jitsi.meet.sdk.log.JitsiMeetLogger;
 
 import java.util.Random;
 
@@ -50,7 +51,7 @@ class OngoingNotification {
 
         Context context = ReactInstanceManagerHolder.getCurrentActivity();
         if (context == null) {
-            Log.w(TAG, "Cannot create notification channel: no current context");
+            JitsiMeetLogger.w(TAG + " Cannot create notification channel: no current context");
             return;
         }
 
@@ -75,7 +76,7 @@ class OngoingNotification {
     static Notification buildOngoingConferenceNotification() {
         Context context = ReactInstanceManagerHolder.getCurrentActivity();
         if (context == null) {
-            Log.w(TAG, "Cannot create notification: no current context");
+            JitsiMeetLogger.w(TAG + " Cannot create notification: no current context");
             return null;
         }
 

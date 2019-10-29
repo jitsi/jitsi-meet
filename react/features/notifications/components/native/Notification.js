@@ -3,8 +3,8 @@
 import React from 'react';
 import { Text, TouchableOpacity, View } from 'react-native';
 
-import { Icon } from '../../../base/font-icons';
 import { translate } from '../../../base/i18n';
+import { Icon, IconClose } from '../../../base/icons';
 
 import AbstractNotification, {
     type Props
@@ -46,7 +46,7 @@ class Notification extends AbstractNotification<Props> {
                     isDismissAllowed
                     && <TouchableOpacity onPress = { this._onDismissed }>
                         <Icon
-                            name = { 'close' }
+                            src = { IconClose }
                             style = { styles.dismissIcon } />
                     </TouchableOpacity>
                 }

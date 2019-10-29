@@ -8,7 +8,7 @@ import { i18next } from '../../../base/i18n';
 import { DialInSummary } from '../dial-in-summary';
 
 import NoRoomError from './NoRoomError';
-import { Platform } from '../../../base/react';
+import Platform from '../../../base/react/Platform.web';
 
 document.addEventListener('DOMContentLoaded', () => {
     const { room } = parseURLParams(window.location, true, 'search');

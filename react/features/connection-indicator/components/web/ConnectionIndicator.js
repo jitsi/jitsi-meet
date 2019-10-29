@@ -3,6 +3,7 @@
 import React from 'react';
 
 import { translate } from '../../../base/i18n';
+import { Icon, IconConnectionActive, IconConnectionInactive } from '../../../base/icons';
 import { JitsiParticipantConnectionStatus } from '../../../base/lib-jitsi-meet';
 import { Popover } from '../../../base/popover';
 import { ConnectionStatsTable } from '../../../connection-stats';
@@ -283,7 +284,10 @@ class ConnectionIndicator extends AbstractConnectionIndicator<Props, State> {
             === JitsiParticipantConnectionStatus.INACTIVE) {
             return (
                 <span className = 'connection_ninja'>
-                    <i className = 'icon-ninja' />
+                    <Icon
+                        className = 'icon-ninja'
+                        size = '1.5em'
+                        src = { IconConnectionInactive } />
                 </span>
             );
         }
@@ -310,13 +314,19 @@ class ConnectionIndicator extends AbstractConnectionIndicator<Props, State> {
             <span
                 className = { emptyIconWrapperClassName }
                 key = 'icon-empty'>
-                <i className = 'icon-gsm-bars' />
+                <Icon
+                    className = 'icon-gsm-bars'
+                    size = '1em'
+                    src = { IconConnectionActive } />
             </span>,
             <span
                 className = 'connection_full'
                 key = 'icon-full'
                 style = {{ width: iconWidth }}>
-                <i className = 'icon-gsm-bars' />
+                <Icon
+                    className = 'icon-gsm-bars'
+                    size = '1em'
+                    src = { IconConnectionActive } />
             </span>
         ];
     }

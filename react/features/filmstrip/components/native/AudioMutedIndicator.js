@@ -2,6 +2,7 @@
 
 import React, { Component } from 'react';
 
+import { IconMicDisabled } from '../../../base/icons';
 import { BaseIndicator } from '../../../base/react';
 
 /**
@@ -17,7 +18,7 @@ export default class AudioMutedIndicator extends Component<{}> {
         return (
             <BaseIndicator
                 highlight = { false }
-                icon = 'mic-disabled' />
+                icon = { IconMicDisabled } />
         );
     }
 }

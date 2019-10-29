@@ -6,9 +6,10 @@ import ReactDOM from 'react-dom';
 import { getJitsiMeetTransport } from '../modules/transport';
 
 import { App } from './features/app';
+import { getLogger } from './features/base/logging/functions';
 import { Platform } from './features/base/react';
 
-const logger = require('jitsi-meet-logger').getLogger(__filename);
+const logger = getLogger('index.web');
 const OS = Platform.OS;
 
 /**

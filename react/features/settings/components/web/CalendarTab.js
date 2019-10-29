@@ -15,7 +15,7 @@ import {
     signIn
 } from '../../../calendar-sync';
 
-const logger = require('jitsi-meet-logger').getLogger(__filename);
+import logger from '../../logger';
 
 declare var interfaceConfig: Object;
 

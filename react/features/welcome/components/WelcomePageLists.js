@@ -3,6 +3,7 @@
 import React, { Component } from 'react';
 
 import { translate } from '../../base/i18n';
+import { IconEventNote, IconRestore } from '../../base/icons';
 import { PagedList } from '../../base/react';
 import { connect } from '../../base/redux';
 import { CalendarList, isCalendarEnabled } from '../../calendar-sync';
@@ -72,7 +73,7 @@ class WelcomePageLists extends Component<Props> {
         const pages = [
             {
                 component: RecentList,
-                icon: 'restore',
+                icon: IconRestore,
                 title: t('welcomepage.recentList')
             }
         ];
@@ -81,7 +82,7 @@ class WelcomePageLists extends Component<Props> {
             pages.push(
                 {
                     component: CalendarList,
-                    icon: 'event_note',
+                    icon: IconEventNote,
                     title: t('welcomepage.calendar')
                 }
             );

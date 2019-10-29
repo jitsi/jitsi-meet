@@ -5,13 +5,12 @@ import android.content.Context;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.annotation.RequiresApi;
 import android.telecom.DisconnectCause;
 import android.telecom.PhoneAccount;
 import android.telecom.PhoneAccountHandle;
 import android.telecom.TelecomManager;
 import android.telecom.VideoProfile;
-import android.util.Log;
+import androidx.annotation.RequiresApi;
 
 import com.facebook.react.bridge.Promise;
 import com.facebook.react.bridge.ReactApplicationContext;
@@ -19,6 +18,8 @@ import com.facebook.react.bridge.ReactContextBaseJavaModule;
 import com.facebook.react.bridge.ReactMethod;
 import com.facebook.react.bridge.ReadableMap;
 import com.facebook.react.module.annotations.ReactModule;
+
+import org.jitsi.meet.sdk.log.JitsiMeetLogger;
 
 /**
  * The react-native side of Jitsi Meet's {@link ConnectionService}. Exposes
@@ -74,11 +75,11 @@ class RNConnectionService
             String handle,
             boolean hasVideo,
             Promise promise) {
-        Log.d(TAG,
-              String.format("startCall UUID=%s, h=%s, v=%s",
+        JitsiMeetLogger.d("%s startCall UUID=%s, h=%s, v=%s",
+                            TAG,
                             callUUID,
                             handle,
-                            hasVideo));
+                            hasVideo);
 
         ReactApplicationContext ctx = getReactApplicationContext();
 
@@ -118,7 +119,7 @@ class RNConnectionService
      */
     @ReactMethod
     public void reportCallFailed(String callUUID) {
-        Log.d(TAG, "reportCallFailed " + callUUID);
+        JitsiMeetLogger.d(TAG + " reportCallFailed " + callUUID);
         ConnectionService.setConnectionDisconnected(
                 callUUID,
                 new DisconnectCause(DisconnectCause.ERROR));
@@ -131,7 +132,7 @@ class RNConnectionService
      */
     @ReactMethod
     public void endCall(String callUUID) {
-        Log.d(TAG, "endCall " + callUUID);
+        JitsiMeetLogger.d(TAG + " endCall " + callUUID);
         ConnectionService.setConnectionDisconnected(
                 callUUID,
                 new DisconnectCause(DisconnectCause.LOCAL));
@@ -143,9 +144,10 @@ class RNConnectionService
      * @param callUUID - the call's UUID.
      */
     @ReactMethod
-    public void reportConnectedOutgoingCall(String callUUID) {
-        Log.d(TAG, "reportConnectedOutgoingCall " + callUUID);
+    public void reportConnectedOutgoingCall(String callUUID, Promise promise) {
+        JitsiMeetLogger.d(TAG + " reportConnectedOutgoingCall " + callUUID);
         ConnectionService.setConnectionActive(callUUID);
+        promise.resolve(null);
     }
 
     @Override

@@ -16,13 +16,13 @@
 
 package org.jitsi.meet.sdk;
 
-import android.util.Log;
-
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContextBaseJavaModule;
 import com.facebook.react.bridge.ReactMethod;
 import com.facebook.react.bridge.ReadableMap;
 import com.facebook.react.module.annotations.ReactModule;
+
+import org.jitsi.meet.sdk.log.JitsiMeetLogger;
 
 /**
  * Module implementing an API for sending events from JavaScript to native code.
@@ -76,11 +76,11 @@ class ExternalAPIModule
         BaseReactView view = BaseReactView.findViewByExternalAPIScope(scope);
 
         if (view != null) {
-            Log.d(TAG, "Sending event: " + name + " with data: " + data);
+            JitsiMeetLogger.d(TAG + " Sending event: " + name + " with data: " + data);
             try {
                 view.onExternalAPIEvent(name, data);
             } catch(Exception e) {
-                Log.e(TAG, "onExternalAPIEvent: error sending event", e);
+                JitsiMeetLogger.e(e, TAG + " onExternalAPIEvent: error sending event");
             }
         }
     }

@@ -15,10 +15,12 @@
  */
 
 #import <React/RCTBridgeModule.h>
+
 #import "Amplitude.h"
+#import "LogUtils.h"
+
 
 @interface AmplitudeModule : NSObject<RCTBridgeModule>
-
 @end
 
 @implementation AmplitudeModule
@@ -50,7 +52,7 @@ RCT_EXPORT_METHOD(logEvent:(NSString*)instanceName eventType:(NSString*)eventTyp
                                                                    options:NSJSONReadingMutableContainers
                                                                      error:&error];
     if (eventProperties == nil) {
-        NSLog(@"[Amplitude handler] Error parsing event properties: %@", error);
+        DDLogError(@"[Amplitude] Error parsing event properties: %@", error);
     } else {
         [[Amplitude instanceWithName:instanceName] logEvent:eventType withEventProperties:eventProperties];
     }

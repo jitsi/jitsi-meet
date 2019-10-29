@@ -17,7 +17,7 @@ import { _updateCalendarEntries } from './functions';
 import { microsoftCalendarApi } from './web/microsoftCalendar';
 import { toState } from '../base/redux';
 
-const logger = require('jitsi-meet-logger').getLogger(__filename);
+import logger from './logger';
 
 /**
  * Determines whether the calendar feature is enabled by the web.

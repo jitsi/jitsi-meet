@@ -2,7 +2,7 @@
 
 import type { Store } from 'redux';
 
-const logger = require('jitsi-meet-logger').getLogger(__filename);
+import logger from './logger';
 
 /**
  * The type listener supported for registration with

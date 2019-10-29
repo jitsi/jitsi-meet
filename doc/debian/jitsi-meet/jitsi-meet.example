@@ -19,29 +19,37 @@ server {
     ssl_certificate_key /etc/jitsi/meet/jitsi-meet.example.com.key;
 
     root /usr/share/jitsi-meet;
+    ssi on;
     index index.html index.htm;
     error_page 404 /static/404.html;
 
-    location /config.js {
+    location = /config.js {
         alias /etc/jitsi/meet/jitsi-meet.example.com-config.js;
     }
 
-    location /external_api.js {
+    location = /external_api.js {
         alias /usr/share/jitsi-meet/libs/external_api.min.js;
     }
 
-    location ~ ^/([a-zA-Z0-9=\?]+)$ {
-        rewrite ^/(.*)$ / break;
-    }
-
-    location / {
-        ssi on;
+    #ensure all static content can always be found first
+    location ~ ^/(libs|css|static|images|fonts|lang|sounds|connection_optimization|.well-known)/(.*)$
+    {
+        add_header 'Access-Control-Allow-Origin' '*';
+        alias /usr/share/jitsi-meet/$1/$2;
     }
 
     # BOSH
-    location /http-bind {
+    location = /http-bind {
         proxy_pass      http://localhost:5280/http-bind;
         proxy_set_header X-Forwarded-For $remote_addr;
         proxy_set_header Host $http_host;
+    }
+
+    location ~ ^/([^?&:’“]+)$ {
+        try_files $uri @root_path;
+    }
+
+    location @root_path {
+        rewrite ^/(.*)$ / break;
     }
 }

@@ -7,8 +7,7 @@ import JitsiMeetJS, {
 import { getJitsiMeetGlobalNS, loadScript } from '../base/util';
 
 import { AmplitudeHandler } from './handlers';
-
-const logger = require('jitsi-meet-logger').getLogger(__filename);
+import logger from './logger';
 
 /**
  * Sends an event through the lib-jitsi-meet AnalyticsAdapter interface.
@@ -64,12 +63,15 @@ export function initAnalytics({ getState }: { getState: Function }) {
     } = config;
     const {
         amplitudeAPPKey,
+        blackListedEvents,
         scriptURLs,
-        googleAnalyticsTrackingId
+        googleAnalyticsTrackingId,
+        whiteListedEvents
     } = analyticsConfig;
     const { group, server, user } = state['features/base/jwt'];
     const handlerConstructorOptions = {
         amplitudeAPPKey,
+        blackListedEvents,
         envType: (deploymentInfo && deploymentInfo.envType) || 'dev',
         googleAnalyticsTrackingId,
         group,
@@ -77,7 +79,8 @@ export function initAnalytics({ getState }: { getState: Function }) {
         product: deploymentInfo && deploymentInfo.product,
         subproduct: deploymentInfo && deploymentInfo.environment,
         user: user && user.id,
-        version: JitsiMeetJS.version
+        version: JitsiMeetJS.version,
+        whiteListedEvents
     };
 
     _loadHandlers(scriptURLs, handlerConstructorOptions)

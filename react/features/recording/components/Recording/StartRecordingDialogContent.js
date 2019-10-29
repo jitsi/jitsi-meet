@@ -449,7 +449,7 @@ class StartRecordingDialogContent extends Component<Props> {
         );
     }
 
-    _onSignIn: () => {};
+    _onSignIn: () => void;
 
     /**
      * Sings in a user.
@@ -463,7 +463,7 @@ class StartRecordingDialogContent extends Component<Props> {
         this.props.dispatch(authorizeDropbox());
     }
 
-    _onSignOut: () => {};
+    _onSignOut: () => void;
 
     /**
      * Sings out an user from dropbox.

@@ -8,7 +8,7 @@ import {
     getUserSelectedMicDeviceId
 } from '../settings';
 
-const logger = require('jitsi-meet-logger').getLogger(__filename);
+import logger from './logger';
 
 /**
  * Create local tracks of specific types.

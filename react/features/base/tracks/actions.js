@@ -24,8 +24,7 @@ import {
     TRACK_WILL_CREATE
 } from './actionTypes';
 import { createLocalTracksF, getLocalTrack, getLocalTracks, getTrackByJitsiTrack } from './functions';
-
-const logger = require('jitsi-meet-logger').getLogger(__filename);
+import logger from './logger';
 
 /**
  * Requests the creating of the desired media type tracks. Desire is expressed

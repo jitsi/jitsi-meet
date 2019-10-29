@@ -10,8 +10,7 @@ import {
     DELETE_RECENT_LIST_ENTRY
 } from './actionTypes';
 import { isRecentListEnabled } from './functions';
-
-const logger = require('jitsi-meet-logger').getLogger(__filename);
+import logger from './logger';
 
 /**
  * The default/initial redux state of the feature {@code recent-list}.

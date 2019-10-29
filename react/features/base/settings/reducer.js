@@ -10,8 +10,7 @@ import { PersistenceRegistry } from '../storage';
 import { assignIfDefined } from '../util';
 
 import { SETTINGS_UPDATED } from './actionTypes';
-
-const logger = require('jitsi-meet-logger').getLogger(__filename);
+import logger from './logger';
 
 /**
  * The default/initial redux state of the feature {@code base/settings}.

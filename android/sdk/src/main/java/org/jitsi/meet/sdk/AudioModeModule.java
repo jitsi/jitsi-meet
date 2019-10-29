@@ -25,8 +25,7 @@ import android.content.pm.PackageManager;
 import android.media.AudioDeviceInfo;
 import android.media.AudioManager;
 import android.os.Build;
-import android.support.annotation.RequiresApi;
-import android.util.Log;
+import androidx.annotation.RequiresApi;
 
 import com.facebook.react.bridge.Arguments;
 import com.facebook.react.bridge.Promise;
@@ -36,6 +35,8 @@ import com.facebook.react.bridge.ReactMethod;
 import com.facebook.react.bridge.WritableArray;
 import com.facebook.react.bridge.WritableMap;
 import com.facebook.react.module.annotations.ReactModule;
+
+import org.jitsi.meet.sdk.log.JitsiMeetLogger;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -121,7 +122,7 @@ class AudioModeModule extends ReactContextBaseJavaModule
             case DEVICE_SPEAKER:
                 return android.telecom.CallAudioState.ROUTE_SPEAKER;
             default:
-                Log.e(TAG, "Unsupported device name: " + audioDevice);
+                JitsiMeetLogger.e(TAG + " Unsupported device name: " + audioDevice);
                 return android.telecom.CallAudioState.ROUTE_EARPIECE;
         }
     }
@@ -218,7 +219,7 @@ class AudioModeModule extends ReactContextBaseJavaModule
             }
 
             availableDevices = devices;
-            Log.d(TAG, "Available audio devices: " +
+            JitsiMeetLogger.i(TAG + " Available audio devices: " +
                 availableDevices.toString());
 
             // Reset user selection
@@ -229,19 +230,6 @@ class AudioModeModule extends ReactContextBaseJavaModule
             }
         }
     };
-
-    /**
-     * {@link Runnable} for running update operation on the main thread.
-     */
-    private final Runnable updateAudioRouteRunner
-        = new Runnable() {
-            @Override
-            public void run() {
-                if (mode != -1) {
-                    updateAudioRoute(mode);
-                }
-            }
-        };
 
     /**
      * Audio mode currently in use.
@@ -255,6 +243,11 @@ class AudioModeModule extends ReactContextBaseJavaModule
     private static final String DEVICE_EARPIECE   = "EARPIECE";
     private static final String DEVICE_HEADPHONES = "HEADPHONES";
     private static final String DEVICE_SPEAKER    = "SPEAKER";
+
+    /**
+     * Device change event.
+     */
+    private static final String DEVICE_CHANGE_EVENT = "org.jitsi.meet:features/audio-mode#devices-update";
 
     /**
      * List of currently available audio devices.
@@ -303,7 +296,7 @@ class AudioModeModule extends ReactContextBaseJavaModule
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 // Do an initial detection on Android >= M.
-                runInAudioThread(onAudioDeviceChangeRunner);
+                onAudioDeviceChange();
             } else {
                 // On Android < M, detect if we have an earpiece.
                 PackageManager pm = reactContext.getPackageManager();
@@ -327,6 +320,7 @@ class AudioModeModule extends ReactContextBaseJavaModule
     public Map<String, Object> getConstants() {
         Map<String, Object> constants = new HashMap<>();
 
+        constants.put("DEVICE_CHANGE_EVENT", DEVICE_CHANGE_EVENT);
         constants.put("AUDIO_CALL", AUDIO_CALL);
         constants.put("DEFAULT", DEFAULT);
         constants.put("VIDEO_CALL", VIDEO_CALL);
@@ -335,31 +329,26 @@ class AudioModeModule extends ReactContextBaseJavaModule
     }
 
     /**
-     * Gets the list of available audio device categories, i.e. 'bluetooth',
-     * 'earpiece ', 'speaker', 'headphones'.
-     *
-     * @param promise a {@link Promise} which will be resolved with an object
-     *                containing a 'devices' key with a list of devices, plus a
-     *                'selected' key with the selected one.
+     * Notifies JS land that the devices list has changed.
      */
-    @ReactMethod
-    public void getAudioDevices(final Promise promise) {
+    private void notifyDevicesChanged() {
         runInAudioThread(new Runnable() {
             @Override
             public void run() {
-                WritableMap map = Arguments.createMap();
-                map.putString("selected", selectedDevice);
-                WritableArray devices = Arguments.createArray();
+                WritableArray data = Arguments.createArray();
+                final boolean hasHeadphones = availableDevices.contains(DEVICE_HEADPHONES);
                 for (String device : availableDevices) {
-                    if (mode == VIDEO_CALL && device.equals(DEVICE_EARPIECE)) {
-                        // Skip earpiece when in video call mode.
+                    if (hasHeadphones && device.equals(DEVICE_EARPIECE)) {
+                        // Skip earpiece when headphones are plugged in.
                         continue;
                     }
-                    devices.pushString(device);
+                    WritableMap deviceInfo = Arguments.createMap();
+                    deviceInfo.putString("type", device);
+                    deviceInfo.putBoolean("selected", device.equals(selectedDevice));
+                    data.pushMap(deviceInfo);
                 }
-                map.putArray("devices", devices);
-
-                promise.resolve(map);
+                ReactInstanceManagerHolder.emitEvent(DEVICE_CHANGE_EVENT, data);
+                JitsiMeetLogger.i(TAG + " Updating audio device list");
             }
         });
     }
@@ -442,8 +431,7 @@ class AudioModeModule extends ReactContextBaseJavaModule
                 if (audioDevicesChanged) {
                     supportedRouteMask = newSupportedRoutes;
                     availableDevices = routesToDeviceNames(supportedRouteMask);
-                    Log.d(TAG,
-                          "Available audio devices: "
+                    JitsiMeetLogger.i(TAG + " Available audio devices: "
                                   + availableDevices.toString());
                 }
 
@@ -477,7 +465,7 @@ class AudioModeModule extends ReactContextBaseJavaModule
     public void onAudioFocusChange(int focusChange) {
         switch (focusChange) {
         case AudioManager.AUDIOFOCUS_GAIN: {
-            Log.d(TAG, "Audio focus gained");
+            JitsiMeetLogger.d(TAG + " Audio focus gained");
             // Some other application potentially stole our audio focus
             // temporarily. Restore our mode.
             if (audioFocusLost) {
@@ -489,7 +477,7 @@ class AudioModeModule extends ReactContextBaseJavaModule
         case AudioManager.AUDIOFOCUS_LOSS:
         case AudioManager.AUDIOFOCUS_LOSS_TRANSIENT:
         case AudioManager.AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK: {
-            Log.d(TAG, "Audio focus lost");
+            JitsiMeetLogger.d(TAG + " Audio focus lost");
             audioFocusLost = true;
             break;
         }
@@ -516,13 +504,13 @@ class AudioModeModule extends ReactContextBaseJavaModule
             @Override
             public void run() {
                 if (!availableDevices.contains(device)) {
-                    Log.d(TAG, "Audio device not available: " + device);
+                    JitsiMeetLogger.w(TAG + " Audio device not available: " + device);
                     userSelectedDevice = null;
                     return;
                 }
 
                 if (mode != -1) {
-                    Log.d(TAG, "User selected device set to: " + device);
+                    JitsiMeetLogger.i(TAG + " User selected device set to: " + device);
                     userSelectedDevice = device;
                     updateAudioRoute(mode);
                 }
@@ -584,7 +572,7 @@ class AudioModeModule extends ReactContextBaseJavaModule
             return;
         }
 
-        Runnable r = new Runnable() {
+        runInAudioThread(new Runnable() {
             @Override
             public void run() {
                 boolean success;
@@ -593,10 +581,7 @@ class AudioModeModule extends ReactContextBaseJavaModule
                     success = updateAudioRoute(mode);
                 } catch (Throwable e) {
                     success = false;
-                    Log.e(
-                            TAG,
-                            "Failed to update audio route for mode: " + mode,
-                            e);
+                    JitsiMeetLogger.e(e, TAG + " Failed to update audio route for mode: " + mode);
                 }
                 if (success) {
                     AudioModeModule.this.mode = mode;
@@ -607,8 +592,7 @@ class AudioModeModule extends ReactContextBaseJavaModule
                             "Failed to set audio mode to " + mode);
                 }
             }
-        };
-        runInAudioThread(r);
+        });
     }
 
     /**
@@ -633,14 +617,14 @@ class AudioModeModule extends ReactContextBaseJavaModule
                     @Override
                     public void onAudioDevicesAdded(
                             AudioDeviceInfo[] addedDevices) {
-                        Log.d(TAG, "Audio devices added");
+                        JitsiMeetLogger.d(TAG + " Audio devices added");
                         onAudioDeviceChange();
                     }
 
                     @Override
                     public void onAudioDevicesRemoved(
                             AudioDeviceInfo[] removedDevices) {
-                        Log.d(TAG, "Audio devices removed");
+                        JitsiMeetLogger.d(TAG + " Audio devices removed");
                         onAudioDeviceChange();
                     }
                 };
@@ -659,7 +643,7 @@ class AudioModeModule extends ReactContextBaseJavaModule
         BroadcastReceiver wiredHeadsetReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
-                Log.d(TAG, "Wired headset added / removed");
+                JitsiMeetLogger.d(TAG + " Wired headset added / removed");
                 onHeadsetDeviceChange();
             }
         };
@@ -677,7 +661,7 @@ class AudioModeModule extends ReactContextBaseJavaModule
      * {@code false}, otherwise.
      */
     private boolean updateAudioRoute(int mode) {
-        Log.d(TAG, "Update audio route for mode: " + mode);
+        JitsiMeetLogger.i(TAG + " Update audio route for mode: " + mode);
 
         if (mode == DEFAULT) {
             if (!useConnectionService()) {
@@ -690,6 +674,7 @@ class AudioModeModule extends ReactContextBaseJavaModule
             selectedDevice = null;
             userSelectedDevice = null;
 
+            notifyDevicesChanged();
             return true;
         }
 
@@ -702,13 +687,12 @@ class AudioModeModule extends ReactContextBaseJavaModule
                     AudioManager.STREAM_VOICE_CALL,
                     AudioManager.AUDIOFOCUS_GAIN)
                     == AudioManager.AUDIOFOCUS_REQUEST_FAILED) {
-                Log.d(TAG, "Audio focus request failed");
+                JitsiMeetLogger.w(TAG + " Audio focus request failed");
                 return false;
             }
         }
 
         boolean bluetoothAvailable = availableDevices.contains(DEVICE_BLUETOOTH);
-        boolean earpieceAvailable = availableDevices.contains(DEVICE_EARPIECE);
         boolean headsetAvailable = availableDevices.contains(DEVICE_HEADPHONES);
 
         // Pick the desired device based on what's available and the mode.
@@ -717,8 +701,6 @@ class AudioModeModule extends ReactContextBaseJavaModule
             audioDevice = DEVICE_BLUETOOTH;
         } else if (headsetAvailable) {
             audioDevice = DEVICE_HEADPHONES;
-        } else if (mode == AUDIO_CALL && earpieceAvailable) {
-            audioDevice = DEVICE_EARPIECE;
         } else {
             audioDevice = DEVICE_SPEAKER;
         }
@@ -736,7 +718,7 @@ class AudioModeModule extends ReactContextBaseJavaModule
         }
 
         selectedDevice = audioDevice;
-        Log.d(TAG, "Selected audio device: " + audioDevice);
+        JitsiMeetLogger.i(TAG + " Selected audio device: " + audioDevice);
 
         if (useConnectionService()) {
             setAudioRoute(audioDevice);
@@ -744,6 +726,7 @@ class AudioModeModule extends ReactContextBaseJavaModule
             setAudioRoutePreO(audioDevice);
         }
 
+        notifyDevicesChanged();
         return true;
     }
 }

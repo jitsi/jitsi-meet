@@ -37,6 +37,7 @@ set -e
 # IOS_TEAM_ID - the team ID inserted into build-ipa-.plist.template file in
 # place of "YOUR_TEAM_ID".
 
+
 # Travis will not print the last echo if there's no sleep 1
 function echoSleepAndExit1() {
     echo $1
@@ -55,10 +56,6 @@ if [ -z $PR_BRANCH ]; then
 fi
 if [ -z $IPA_DEPLOY_LOCATION ]; then
     echoSleepAndExit1 "No IPA_DEPLOY_LOCATION defined"
-fi
-
-if [ -z $APPLE_CERT_URL ]; then
-    APPLE_CERT_URL="http://developer.apple.com/certificationauthority/AppleWWDRCA.cer"
 fi
 
 echo "PR_REPO_SLUG=${PR_REPO_SLUG} PR_BRANCH=${PR_BRANCH}"
@@ -88,11 +85,10 @@ fi
 
 git log -20 --graph --pretty=format':%C(yellow)%h%Cblue%d%Creset %s %C(white) %an, %ar%Creset'
 
-# certificates
-
+#certificates
 CERT_DIR="ios/travis-ci/certs"
 
-mkdir $CERT_DIR
+mkdir -p $CERT_DIR
 
 curl -L -o ${CERT_DIR}/AppleWWDRCA.cer 'http://developer.apple.com/certificationauthority/AppleWWDRCA.cer'
 curl -L -o ${CERT_DIR}/dev-cert.cer.enc ${IOS_DEV_CERT_URL}
@@ -130,19 +126,18 @@ cp "${CERT_DIR}/dev-profile.mobileprovision"  ~/Library/MobileDevice/Provisionin
 npm install
 
 cd ios
-pod update
-pod install
+pod install --repo-update --no-ansi
 cd ..
 
 mkdir -p /tmp/jitsi-meet/
 
 xcodebuild archive -quiet -workspace ios/jitsi-meet.xcworkspace -scheme jitsi-meet -configuration Release -archivePath /tmp/jitsi-meet/jitsi-meet.xcarchive
 
-sed -e "s/YOUR_TEAM_ID/${IOS_TEAM_ID}/g" ios/travis-ci/build-ipa.plist.template > ios/travis-ci/build-ipa.plist
+sed -e "s/YOUR_TEAM_ID/${IOS_TEAM_ID}/g" ios/ci/build-ipa.plist.template > ios/ci/build-ipa.plist
 
 IPA_EXPORT_DIR=/tmp/jitsi-meet/jitsi-meet-ipa
 
-xcodebuild -quiet -exportArchive -archivePath /tmp/jitsi-meet/jitsi-meet.xcarchive -exportPath $IPA_EXPORT_DIR  -exportOptionsPlist ios/travis-ci/build-ipa.plist
+xcodebuild -quiet -exportArchive -archivePath /tmp/jitsi-meet/jitsi-meet.xcarchive -exportPath $IPA_EXPORT_DIR  -exportOptionsPlist ios/ci/build-ipa.plist
 
 echo "Will try deploy the .ipa to: ${IPA_DEPLOY_LOCATION}"
 

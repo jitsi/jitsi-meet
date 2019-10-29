@@ -24,6 +24,7 @@
 #import "ReactUtils.h"
 
 #import <RNGoogleSignin/RNGoogleSignin.h>
+#import <WebRTC/RTCLogging.h>
 
 
 @implementation JitsiMeet {
@@ -51,6 +52,14 @@
 
         // Register a fatal error handler for React.
         registerReactFatalErrorHandler();
+
+        // Register a log handler for React.
+        registerReactLogHandler();
+
+#if 0
+        // Enable WebRTC logs
+        RTCSetMinDebugLogLevel(RTCLoggingSeverityInfo);
+#endif
     }
 
     return self;
@@ -87,8 +96,7 @@
 
     if ([RNGoogleSignin application:app
                             openURL:url
-                  sourceApplication:options[UIApplicationOpenURLOptionsSourceApplicationKey]
-                         annotation:options[UIApplicationOpenURLOptionsAnnotationKey]]) {
+                            options:options]) {
         return YES;
     }
 
@@ -174,6 +182,15 @@
 
 - (NSArray<NSString *> *)universalLinkDomains {
     return _universalLinkDomains ? _universalLinkDomains : @[];
+}
+
+- (void)setDefaultConferenceOptions:(JitsiMeetConferenceOptions *)defaultConferenceOptions {
+    if (defaultConferenceOptions != nil && _defaultConferenceOptions.room != nil) {
+        @throw [NSException exceptionWithName:@"RuntimeError"
+                                       reason:@"'room' must be null in the default conference options"
+                                     userInfo:nil];
+    }
+    _defaultConferenceOptions = defaultConferenceOptions;
 }
 
 #pragma mark - Private API methods

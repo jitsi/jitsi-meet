@@ -147,7 +147,7 @@ ColorSchemeRegistry.register('BottomSheet', {
      * Style for the label in a generic item rendered in the menu.
      */
     labelStyle: {
-        color: schemeColor('label'),
+        color: schemeColor('text'),
         flexShrink: 1,
         fontSize: MD_FONT_SIZE,
         marginLeft: 32,

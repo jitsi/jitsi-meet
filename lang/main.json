@@ -662,6 +662,9 @@
         "Yes": "是",
         "yourEntireScreen": "你的整个屏幕"
     },
+    "documentSharing" : {
+        "title": "Shared Document"
+    },
     "feedback": {
         "average": "平均",
         "bad": "差",

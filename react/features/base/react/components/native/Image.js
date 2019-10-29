@@ -9,9 +9,9 @@ import { Image } from 'react-native';
 type Props = {
 
     /**
-     * The URL to be rendered as image.
+     * The ImageSource to be rendered as image.
      */
-    src: string,
+    src: Object,
 
     /**
      * The component's external style

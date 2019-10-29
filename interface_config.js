@@ -221,6 +221,13 @@ var interfaceConfig = {
      * milliseconds, those notifications should remain displayed.
      */
     // ENFORCE_NOTIFICATION_AUTO_DISMISS_TIMEOUT: 15000,
+
+    // List of undocumented settings
+    /**
+     INDICATOR_FONT_SIZES
+     MOBILE_DYNAMIC_LINK
+     PHONE_NUMBER_REGEX
+    */
 };
 
 /* eslint-enable no-unused-vars, no-var, max-len */

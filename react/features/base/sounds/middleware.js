@@ -3,8 +3,7 @@
 import { MiddlewareRegistry } from '../redux';
 
 import { PLAY_SOUND, STOP_SOUND } from './actionTypes';
-
-const logger = require('jitsi-meet-logger').getLogger(__filename);
+import logger from './logger';
 
 /**
  * Implements the entry point of the middleware of the feature base/media.

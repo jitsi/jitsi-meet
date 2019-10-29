@@ -1,16 +1,6 @@
 /* eslint-disable no-unused-vars, no-var */
 
 var config = {
-    // Configuration
-    //
-
-    // Alternative location for the configuration.
-    // configLocation: './config.json',
-
-    // Custom function which given the URL path should return a room name.
-    // getroomnode: function (path) { return 'someprefixpossiblybasedonpath'; },
-
-
     // Connection
     //
 
@@ -62,6 +52,10 @@ var config = {
 
         // Enables the test specific features consumed by jitsi-meet-torture
         // testMode: false
+
+        // Disables the auto-play behavior of *all* newly created video element.
+        // This is useful when the client runs on a host with limited resources.
+        // noAutoPlayVideo: false
     },
 
     // Disables ICE/UDP by filtering out local and remote UDP candidates in
@@ -120,10 +114,6 @@ var config = {
     // layers are not in use will be suspended (no longer sent) until they
     // are requested again.
     // enableLayerSuspension: false,
-
-    // Suspend sending video if bandwidth estimation is too low. This may cause
-    // problems with audio playback. Disabled until these are fixed.
-    disableSuspendVideo: true,
 
     // Every participant after the Nth will start video muted.
     startVideoMuted: 10,
@@ -186,6 +176,9 @@ var config = {
     // Transcription (in interface_config,
     // subtitles and buttons can be configured)
     //transcribingEnabled: false,
+
+    // Enables automatic turning on captions when recording is started
+    // autoCaptionOnRecord: false,
 
     // Misc
 
@@ -407,6 +400,16 @@ var config = {
     // A property to disable the right click context menu for localVideo
     // the menu has option to flip the locally seen video for local presentations
     // disableLocalVideoFlip: false
+
+    // Deployment specific URLs.
+    // deploymentUrls: {
+    //    // If specified a 'Help' button will be displayed in the overflow menu with a link to the specified URL for
+    //    // user documentation.
+    //    userDocumentationURL: 'https://docs.example.com/video-meetings.html',
+    //    // If specified a 'Download our apps' button will be displayed in the overflow menu with a link
+    //    // to the specified URL for an app download page.
+    //    downloadAppsUrl: 'https://docs.example.com/our-apps.html'
+    // }
 
     // List of undocumented settings used in jitsi-meet
     etherpad_base: 'https://i.vmeeting.top/etherpad/p/'

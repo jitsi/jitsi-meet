@@ -25,6 +25,11 @@ export type Props = {
     children: React$Node,
 
     /**
+     * Class names of the component (for web).
+     */
+    className?: string,
+
+    /**
      * The event handler/listener to be invoked when this
      * {@code AbstractContainer} is clicked on Web or pressed on React
      * Native. If {@code onClick} is defined and {@link touchFeedback} is

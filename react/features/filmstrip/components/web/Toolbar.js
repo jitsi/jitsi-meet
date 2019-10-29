@@ -40,12 +40,12 @@ class Toolbar extends Component<Props> {
             <div
                 className = 'filmstrip-toolbox'
                 id = 'new-toolbox'>
-                <AudioMuteButton
-                    tooltipPosition = 'left'
-                    visible = { this._shouldShowButton('microphone') } />
                 <HangupButton
                     tooltipPosition = 'left'
                     visible = { this._shouldShowButton('hangup') } />
+                <AudioMuteButton
+                    tooltipPosition = 'left'
+                    visible = { this._shouldShowButton('microphone') } />
                 <VideoMuteButton
                     tooltipPosition = 'left'
                     visible = { this._shouldShowButton('camera') } />
