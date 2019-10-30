@@ -21,7 +21,8 @@
         "bluetooth": "蓝牙",
         "headphones": "耳机",
         "phone": "电话",
-        "speaker": "发言人"
+        "speaker": "扬声器",
+        "none": "没有可选择设备"
     },
 
     "contactlist": "",

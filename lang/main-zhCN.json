@@ -21,7 +21,8 @@
         "bluetooth": "蓝牙",
         "headphones": "耳机",
         "phone": "电话",
-        "speaker": "发言人"
+        "speaker": "扬声器",
+        "none": "没有可选择设备"
     },
 
     "contactlist": "",
@@ -661,6 +662,9 @@
         "WaitingForHost": "等待主持人。。。",
         "Yes": "是",
         "yourEntireScreen": "你的整个屏幕"
+    },
+    "documentSharing" : {
+        "title": "Shared Document"
     },
     "feedback": {
         "average": "平均",

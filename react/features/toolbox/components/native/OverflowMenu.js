@@ -111,7 +111,7 @@ class OverflowMenu extends Component<Props> {
                 <InviteButton { ...buttonProps } />
                 {/* <InfoDialogButton { ...buttonProps } /> */}
                 <RaiseHandButton { ...buttonProps } />
-                <SharedDocumentButton { ...buttonProps } />
+                {/* <SharedDocumentButton { ...buttonProps } /> */}
                 <HelpButton { ...buttonProps } />
             </BottomSheet>
         );
