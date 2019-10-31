@@ -5,6 +5,8 @@ import React, { Component } from 'react';
 import { connect } from '../../../base/redux';
 import { isToolboxVisible } from '../../../toolbox';
 
+import ParticipantsCount from './ParticipantsCount';
+
 /**
  * The type of the React {@code Component} props of {@link Subject}.
  */
@@ -39,7 +41,8 @@ class Subject extends Component<Props> {
 
         return (
             <div className = { `subject ${_visible ? 'visible' : ''}` }>
-                { _subject }
+                <span className = 'subject-text'>{ _subject }</span>
+                <ParticipantsCount />
             </div>
         );
     }
