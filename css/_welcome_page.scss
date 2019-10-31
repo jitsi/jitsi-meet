@@ -38,19 +38,21 @@ body.welcome-page {
 
         .header-text-title {
             color: $welcomePageTitleColor;
-            font-size: 2.5rem;
-            font-weight: 500;
-            line-height: 1.18;
+            font-size: $welcomePageHeaderTextTitleFontSize;
+            font-weight: $welcomePageHeaderTextTitleFontWeight;
+            line-height: $welcomePageHeaderTextTitleLineHeight;
             margin-bottom: $welcomePageHeaderTextTitleMarginBottom;
+            opacity: $welcomePageHeaderTextTitleOpacity;
         }
 
         .header-text-description {
             display: $welcomePageHeaderTextDescriptionDisplay;
             color: $welcomePageDescriptionColor;
-            font-size: 1rem;
-            font-weight: 400;
-            line-height: 24px;
-            margin-bottom: 20px;
+            font-size: $welcomePageHeaderTextDescriptionFontSize;
+            font-weight: $welcomePageHeaderTextDescriptionFontWeight;
+            line-height: $welcomePageHeaderTextDescriptionLineHeight;
+            margin-bottom: $welcomePageHeaderTextDescriptionMarginBottom;
+            align-self: $welcomePageHeaderTextDescriptionAlignSelf;
         }
 
         #enter_room {
@@ -148,8 +150,9 @@ body.welcome-page {
 
     .welcome-page-button {
         width: $welcomePageButtonWidth;
+        min-width: $welcomePageButtonMinWidth;
         height: $welcomePageButtonHeight;
-        font-size: 14px;
+        font-size: $welcomePageButtonFontSize;
         font-weight: $welcomePageButtonFontWeight;
         background: #0074E0;
         border-radius: $welcomePageButtonBorderRadius;

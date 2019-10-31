@@ -29,12 +29,17 @@ import org.jitsi.meet.sdk.log.JitsiMeetLogger;
  */
 @RequiresApi(api = Build.VERSION_CODES.O)
 @ReactModule(name = RNConnectionService.NAME)
-class RNConnectionService
-    extends ReactContextBaseJavaModule {
+class RNConnectionService extends ReactContextBaseJavaModule {
 
     public static final String NAME = "ConnectionService";
 
     private static final String TAG = ConnectionService.TAG;
+
+    /**
+     * Handler for dealing with call state changes. We are acting as a proxy between ConnectionService
+     * and other modules such as {@link AudioModeModule}.
+     */
+    private CallAudioStateListener callAudioStateListener;
 
     /**
      * Sets the audio route on all existing {@link android.telecom.Connection}s
@@ -167,5 +172,29 @@ class RNConnectionService
     @ReactMethod
     public void updateCall(String callUUID, ReadableMap callState) {
         ConnectionService.updateCall(callUUID, callState);
+    }
+
+    public CallAudioStateListener getCallAudioStateListener() {
+        return callAudioStateListener;
+    }
+
+    public void setCallAudioStateListener(CallAudioStateListener callAudioStateListener) {
+        this.callAudioStateListener = callAudioStateListener;
+    }
+
+    /**
+     * Handler for call state changes. {@code ConnectionServiceImpl} will call this handler when the
+     * call audio state changes.
+     *
+     * @param callAudioState The current call's audio state.
+     */
+    void onCallAudioStateChange(android.telecom.CallAudioState callAudioState) {
+        if (callAudioStateListener != null) {
+            callAudioStateListener.onCallAudioStateChange(callAudioState);
+        }
+    }
+
+    interface CallAudioStateListener {
+        void onCallAudioStateChange(android.telecom.CallAudioState callAudioState);
     }
 }

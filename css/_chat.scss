@@ -82,9 +82,10 @@
 
 #chat-recipient {
     align-items: center;
-    background-color: $defaultWarningColor;
+    background-color: $chatPrivateMessageBackgroundColor;
     display: flex;
     flex-direction: row;
+    font-weight: 100;
     padding: 10px;
 
     span {
@@ -132,6 +133,7 @@
 #chat-input {
     border-top: 1px solid $chatInputSeparatorColor;
     display: flex;
+    padding: 5px 10px;
 
     * {
         background-color: transparent;
@@ -152,8 +154,7 @@
     box-shadow: none;
     color: white;
     font-size: 15px;
-    line-height: 30px;
-    padding: 5px;
+    padding: 10px;
     overflow-y: auto;
     resize: none;
     width: 100%;
@@ -183,6 +184,7 @@
     .display-name {
         font-size: 13px;
         font-weight: bold;
+        margin-bottom: 5px;
         white-space: nowrap;
         text-overflow: ellipsis;
         overflow: hidden;
@@ -196,7 +198,6 @@
     color: white;
     margin-top: 3px;
     max-width: 100%;
-    padding-bottom: 3px;
     position: relative;
 
     &.localuser {
@@ -219,8 +220,12 @@
     }
 
     .privatemessagenotice {
-        color: $defaultWarningColor;
-        font-style: italic;
+        font-size: 11px;
+        font-weight: 100;
+    }
+
+    .messagecontent {
+        margin: 5px 10px;
     }
 }
 
@@ -297,10 +302,6 @@
     cursor: pointer;
 }
 
-#usermsg::-webkit-input-placeholder {
-    line-height: 30px;
-}
-
 #usermsg::-webkit-scrollbar-track-piece {
     background: #3a3a3a;
 }
@@ -315,6 +316,10 @@
         .chatmessage {
             background-color: $chatLocalMessageBackgroundColor;
             border-radius: 6px 0px 6px 6px;
+
+            &.privatemessage {
+                background-color: $chatPrivateMessageBackgroundColor;
+            }
         }
 
         .display-name {
@@ -328,8 +333,9 @@
 
     &.error {
         .chatmessage {
+            background-color: $defaultWarningColor;
             border-radius: 0px;
-            color: red;
+            font-weight: 100;
         }
 
         .display-name {
@@ -345,8 +351,17 @@
             flex-direction: row;
             align-items: center;
 
-            .toolbox-icon {
-                cursor: pointer;
+            .messageactions {
+                align-self: stretch;
+                border-left: 1px solid $chatActionsSeparatorColor;
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                padding: 5px;
+
+                .toolbox-icon {
+                    cursor: pointer;
+                }
             }
         }
     }
@@ -357,6 +372,9 @@
         display: inline-block;
         margin-top: 3px;
         color: white;
-        padding: 8px;
+
+        &.privatemessage {
+            background-color: $chatPrivateMessageBackgroundColor;
+        }
     }
 }

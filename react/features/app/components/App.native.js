@@ -6,7 +6,7 @@ import '../../analytics';
 import '../../authentication';
 import { setColorScheme } from '../../base/color-scheme';
 import { DialogContainer } from '../../base/dialog';
-import { updateFlags } from '../../base/flags';
+import { CALL_INTEGRATION_ENABLED, updateFlags } from '../../base/flags';
 import '../../base/jwt';
 import { Platform } from '../../base/react';
 import {
@@ -100,6 +100,13 @@ export class App extends AbstractApp {
             dispatch(setColorScheme(this.props.colorScheme));
             dispatch(updateFlags(this.props.flags));
             dispatch(updateSettings(this.props.userInfo || {}));
+
+            // Update settings with feature-flag.
+            const callIntegrationEnabled = this.props.flags[CALL_INTEGRATION_ENABLED];
+
+            if (typeof callIntegrationEnabled !== 'undefined') {
+                dispatch(updateSettings({ disableCallIntegration: !callIntegrationEnabled }));
+            }
         });
     }
 
