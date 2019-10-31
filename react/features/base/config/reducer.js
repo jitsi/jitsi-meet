@@ -50,6 +50,8 @@ const INITIAL_RN_STATE = {
     // fastest to merely disable them.
     disableAudioLevels: true,
 
+    disableH264: !RN_ENABLE_H264,
+
     p2p: {
         disableH264: !RN_ENABLE_H264,
         preferH264: RN_ENABLE_H264
