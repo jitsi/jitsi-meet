@@ -132,6 +132,15 @@ export default class RnnoiseProcessor {
     }
 
     /**
+     * Such comment very wow.
+     *
+     * @returns {number}
+     */
+    getSampleLength() {
+        return RNNOISE_SAMPLE_LENGTH;
+    }
+
+    /**
      * Release any resources required by the rnnoise context this needs to be called
      * before destroying any context that uses the processor.
      *

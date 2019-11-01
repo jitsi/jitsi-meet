@@ -33,12 +33,14 @@ function getPerformanceHints(size) {
 const config = {
     devServer: {
         https: true,
+        logLevel: 'debug',
         inline: true,
         proxy: {
             '/': {
                 bypass: devServerProxyBypass,
                 secure: false,
-                target: devServerProxyTarget
+                target: devServerProxyTarget,
+                logLevel: 'debug'
             }
         }
     },
@@ -276,11 +278,13 @@ module.exports = [
  * target, undefined; otherwise, the path to the local file to be served.
  */
 function devServerProxyBypass({ path }) {
+    console.log('Fetching path: ', path);
     if (path.startsWith('/css/') || path.startsWith('/doc/')
             || path.startsWith('/fonts/') || path.startsWith('/images/')
             || path.startsWith('/sounds/')
             || path.startsWith('/static/')
-            || path.endsWith('.wasm')) {
+            || path.endsWith('.wasm')
+            || path.startsWith('/libs/lib-jitsi-meet')) {
         return path;
     }
 
