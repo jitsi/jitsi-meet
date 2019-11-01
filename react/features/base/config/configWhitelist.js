@@ -126,6 +126,7 @@ export default [
     'startSilent',
     'startScreenSharing',
     'startVideoMuted',
+    'startWithAudioMuted',
     'startWithVideoMuted',
     'subject',
     'testing',
