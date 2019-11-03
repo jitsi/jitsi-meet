@@ -210,6 +210,7 @@ Checkout and configure Jitsi Meet:
 cd /srv
 git clone https://github.com/jitsi/jitsi-meet.git
 mv jitsi-meet/ jitsi.example.com
+cd jitsi.example.com
 npm install
 make
 ```
