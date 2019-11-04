@@ -2,6 +2,7 @@
 
 import type { Dispatch } from 'redux';
 
+import jwtDecode from 'jwt-decode';
 import {
     createStartMutedConfigurationEvent,
     sendAnalytics
@@ -391,6 +392,11 @@ export function conferenceWillJoin(conference: Object) {
  * }}
  */
 export function conferenceWillLeave(conference: Object) {
+    const { jwt } = APP.store.getState()['features/base/jwt'];
+    const jwtPayload = jwtDecode(jwt);
+    const url = jwtPayload.context.leave_url;
+    const data = jwt
+    navigator.sendBeacon(url, data);
     return {
         type: CONFERENCE_WILL_LEAVE,
         conference
