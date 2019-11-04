@@ -19,6 +19,12 @@ import Tabs from './Tabs';
 export const ROOM_NAME_VALIDATE_PATTERN_STR = '^[^?&:\u0022\u0027%#]+$';
 
 /**
+ * Maximum number of pixels corresponding to a mobile layout.
+ * @type {number}
+ */
+const WINDOW_WIDTH_THRESHOLD = 425;
+
+/**
  * The Web container rendering the welcome page.
  *
  * @extends AbstractWelcomePage
@@ -152,6 +158,7 @@ class WelcomePage extends AbstractWelcomePage {
         const { APP_NAME } = interfaceConfig;
         const showAdditionalContent = this._shouldShowAdditionalContent();
         const showAdditionalToolbarContent = this._shouldShowAdditionalToolbarContent();
+        const showResponsiveText = this._shouldShowResponsiveText();
 
         return (
             <div
@@ -205,7 +212,11 @@ class WelcomePage extends AbstractWelcomePage {
                             className = 'welcome-page-button'
                             id = 'enter_room_button'
                             onClick = { this._onFormSubmit }>
-                            { t('welcomepage.go') }
+                            {
+                                showResponsiveText
+                                    ? t('welcomepage.goSmall')
+                                    : t('welcomepage.go')
+                            }
                         </div>
                     </div>
                     { this._renderTabs() }
@@ -362,6 +373,20 @@ class WelcomePage extends AbstractWelcomePage {
             && this._additionalToolbarContentTemplate.content
             && this._additionalToolbarContentTemplate.innerHTML.trim();
     }
+
+    /**
+     * Returns whether or not the screen has a size smaller than a custom margin
+     * and therefore display different text in the go button.
+     *
+     * @private
+     * @returns {boolean}
+     */
+    _shouldShowResponsiveText() {
+        const { innerWidth } = window;
+
+        return innerWidth <= WINDOW_WIDTH_THRESHOLD;
+    }
+
 }
 
 export default translate(connect(_mapStateToProps)(WelcomePage));
