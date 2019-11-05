@@ -19,7 +19,8 @@
     }
 
     a {
-        text-decoration: none
+        text-decoration: none;
+        color: $deepLinkingMobileLinkColor;
     }
 
     &__body {
@@ -41,6 +42,8 @@
 
     &__text {
         font-weight: bolder;
+        font-size: $deepLinkingMobileTextFontSize;
+        line-height: $deepLinkingMobileTextLineHeight;
         padding: 10px 10px 0px 10px;
     }
 
@@ -65,11 +68,28 @@
         }
 
         .dial-in-conference-id {
-            margin: 10px 0 10px 0;
+            margin: $deepLinkingDialInConferenceIdMargin;
+            padding: $deepLinkingDialInConferenceIdPadding;
+            background-color: $deepLinkingDialInConferenceIdBackgroundColor;
+            border-radius: $deepLinkingDialInConferenceIdBorderRadius;
+        }
+
+        .dial-in-conference-name {
+            font-size: $deepLinkingDialInConferenceNameFontSize;
+            line-height: $deepLinkingDialInConferenceNameLineHeight;
+            margin-bottom: $deepLinkingDialInConferenceNameMarginBottom;
+            font-weight: $deepLinkingDialInConferenceNameFontWeight;
         }
 
         .dial-in-conference-description {
-            font-size: 0.8em;
+            font-size: $deepLinkingDialInConferenceDescriptionFontSize;
+            line-height: $deepLinkingDialInConferenceDescriptionLineHeight;
+            margin-bottom: $deepLinkingDialInConferenceDescriptionMarginBottom;
+        }
+
+        .dial-in-conference-pin {
+            font-size: $deepLinkingDialInConferencePinFontSize;
+            line-height: $deepLinkingDialInConferencePinLineHeight;
         }
 
         .toll-free-list {
@@ -88,25 +108,27 @@
 
     &__href {
         height: 2.2857142857142856em;
-        line-height: 2.2857142857142856em;
+        line-height: $depLinkingMobileHrefLineHeight;
         margin: 18px auto 20px;
         max-width: 300px;
         width: auto;
-        font-weight: bolder;
+        font-weight: $deepLinkingMobileHrefFontWeight;
+        font-size: $deepLinkingMobileHrefFontSize;
     }
 
     &__button {
         border: 0;
-        height: 2.2857142857142856em;
-        line-height: 2.2857142857142856em;
-        margin: 18px auto 10px;
+        height: $deepLinkingMobileButtonHeight;
+        line-height: $deepLinkingMobileButtonLineHeight;
+        margin: $deepLinkingMobileButtonMargin;
         padding: 0px 10px 0px 10px;
         max-width: 300px;
-        width: auto;
+        width: $deepLinkingMobileButtonWidth;
         @include border-radius(3px);
         background-color: $unsupportedBrowserButtonBgColor;
         color: #505F79;
-        font-weight: bold;
+        font-weight: $deepLinkingMobileButtonFontWeight;
+        font-size: $deepLinkingMobileButtonFontSize;
 
         &:active {
             background-color: $unsupportedBrowserButtonBgColor;
@@ -115,7 +137,7 @@
         &_primary {
             background-color: $primaryUnsupportedBrowserButtonBgColor;
             color: #FFFFFF;
-
+            border-radius: $primaryDeepLinkingMobileButtonBorderRadius;
             &:active {
                 background-color: $primaryUnsupportedBrowserButtonBgColor;
             }
