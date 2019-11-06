@@ -2,6 +2,7 @@
 
 import React, { Component } from 'react';
 
+import { getConferenceName } from '../../../base/conference/functions';
 import { connect } from '../../../base/redux';
 import { isToolboxVisible } from '../../../toolbox';
 
@@ -13,7 +14,8 @@ import ParticipantsCount from './ParticipantsCount';
 type Props = {
 
     /**
-     * The subject of the conference.
+     * The subject or the of the conference.
+     * Falls back to conference name.
      */
     _subject: string,
 
@@ -60,10 +62,9 @@ class Subject extends Component<Props> {
  * }}
  */
 function _mapStateToProps(state) {
-    const { subject } = state['features/base/conference'];
 
     return {
-        _subject: subject,
+        _subject: getConferenceName(state),
         _visible: isToolboxVisible(state)
     };
 }
