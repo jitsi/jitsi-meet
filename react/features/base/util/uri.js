@@ -1,5 +1,7 @@
 // @flow
 
+import { normalizeNFKC } from './strings';
+
 /**
  * The app linking scheme.
  * TODO: This should be read from the manifest files later.
@@ -120,8 +122,8 @@ export function getBackendSafeRoomName(room: ?string): ?string {
         // But in this case we're fine goin on...
     }
 
-    // Normalize the character set
-    room = room.normalize('NFKC');
+    // Normalize the character set.
+    room = normalizeNFKC(room);
 
     // Only decoded and normalized strings can be lowercased properly.
     room = room.toLowerCase();
