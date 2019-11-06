@@ -126,6 +126,7 @@
     "precommit-hook": "3.0.0",
     "string-replace-loader": "2.1.1",
     "style-loader": "0.19.0",
+    "unorm": "1.6.0",
     "webpack": "4.27.1",
     "webpack-bundle-analyzer": "3.4.1",
     "webpack-cli": "3.1.2",
