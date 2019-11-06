@@ -1,6 +1,6 @@
 // @flow
 
-import React, { Component } from 'react';
+import React, { PureComponent } from 'react';
 import { View } from 'react-native';
 
 import { ColorSchemeRegistry } from '../../../base/color-scheme';
@@ -47,36 +47,9 @@ type Props = {
 };
 
 /**
- * The type of {@link Toolbox}'s React {@code Component} state.
- */
-type State = {
-
-    /**
-     * The detected width for this component.
-     */
-    width: number
-};
-
-/**
  * Implements the conference toolbox on React Native.
  */
-class Toolbox extends Component<Props, State> {
-    state = {
-        width: 0
-    };
-
-    /**
-     *  Initializes a new {@code Toolbox} instance.
-     *
-     * @inheritdoc
-     */
-    constructor(props: Props) {
-        super(props);
-
-        // Bind event handlers so they are only bound once per instance.
-        this._onLayout = this._onLayout.bind(this);
-    }
-
+class Toolbox extends PureComponent<Props> {
     /**
      * Implements React's {@link Component#render()}.
      *
@@ -86,7 +59,6 @@ class Toolbox extends Component<Props, State> {
     render() {
         return (
             <Container
-                onLayout = { this._onLayout }
                 style = { styles.toolbox }
                 visible = { this.props._visible }>
                 { this._renderToolbar() }
@@ -123,20 +95,6 @@ class Toolbox extends Component<Props, State> {
                 _styles.chatButtonOverride.toggled
             ]
         };
-    }
-
-    _onLayout: (Object) => void;
-
-    /**
-     * Handles the "on layout" View's event and stores the width as state.
-     *
-     * @param {Object} event - The "on layout" event object/structure passed
-     * by react-native.
-     * @private
-     * @returns {void}
-     */
-    _onLayout({ nativeEvent: { layout: { width } } }) {
-        this.setState({ width });
     }
 
     /**
