@@ -11,6 +11,11 @@ export const RNNOISE_SAMPLE_LENGTH: number = 480;
 const RNNOISE_BUFFER_SIZE: number = RNNOISE_SAMPLE_LENGTH * 4;
 
 /**
+ *  Constant. Rnnoise only takes operates on 44.1Khz float 32 little endian PCM.
+ */
+const PCM_FREQUENCY: number = 44100;
+
+/**
  * Represents an adaptor for the rnnoise library compiled to webassembly. The class takes care of webassembly
  * memory management and exposes rnnoise functionality such as PCM audio denoising and VAD (voice activity
  * detection) scores.
@@ -132,12 +137,21 @@ export default class RnnoiseProcessor {
     }
 
     /**
-     * Such comment very wow.
+     * Rnnoise can only operate on a certain PCM array size.
      *
-     * @returns {number}
+     * @returns {number} - The PCM sample array size as required by rnnoise.
      */
     getSampleLength() {
         return RNNOISE_SAMPLE_LENGTH;
+    }
+
+    /**
+     * Rnnoise can only operate on a certain format of PCM sample namely float 32 44.1Kz.
+     *
+     * @returns {number} - PCM sample frequency as required by rnnoise.
+     */
+    getRequiredPCMFrequency() {
+        return PCM_FREQUENCY;
     }
 
     /**
