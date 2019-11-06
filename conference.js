@@ -1268,7 +1268,7 @@ export default {
         options.applicationName = interfaceConfig.APP_NAME;
         options.getWiFiStatsMethod = this._getWiFiStatsMethod;
         options.confID = `${locationURL.host}${locationURL.pathname}`;
-        options.vadProcessor = createRnnoiseProcessorPromise;
+        options.createVADProcessor = createRnnoiseProcessorPromise;
 
         return options;
     },

@@ -1,11 +1,10 @@
 // @flow
 
+import { createRnnoiseProcessorPromise } from '../../../../rnnoise';
 import EventEmitter from 'events';
 import logger from '../../logger';
-import TrackVADEmitter from './TrackVADEmitter';
-import { VAD_SCORE_PUBLISHED, VAD_REPORT_PUBLISHED } from './Events';
-import type { VADScore } from './TrackVADEmitter';
-export type { VADScore };
+import JitsiMeetJS, { JitsiDetectionEvents } from '../../../lib-jitsi-meet';
+import { VAD_REPORT_PUBLISHED } from './Events';
 
 /**
  * Sample rate used by TrackVADEmitter, this value determines how often the ScriptProcessorNode is going to call the
@@ -30,35 +29,13 @@ type VADDeviceContext = {
     /**
      * Array with VAD scores publish from the emitter.
      */
-    scoreArray: Array<VADScore>,
+    scoreArray: Array<Object>,
 
     /**
      * TrackVADEmitter associated with media device
      */
-    vadEmitter: TrackVADEmitter
+    vadEmitter: Object
 };
-
-/**
- * The structure used by VADReportingService to relay a score report
- */
-export type VADReportScore = {
-
-    /**
-     * Device ID associated with the VAD score
-     */
-    deviceId: string,
-
-    /**
-     * The PCM score from 0 - 1 i.e. 0.60
-     */
-    score: number,
-
-    /**
-     * Epoch time at which PCM was recorded
-     */
-    timestamp: number
-};
-
 
 /**
  * Voice activity detection reporting service. The service create TrackVADEmitters for the provided devices and
@@ -111,7 +88,7 @@ export default class VADReportingService extends EventEmitter {
      *
      * @returns {Promise<VADReportingService>}
      */
-    static create(micDeviceList: Array<MediaDeviceInfo>, intervalDelay: number) {
+    static async create(micDeviceList: Array<MediaDeviceInfo>, intervalDelay: number) {
         const vadReportingService = new VADReportingService(intervalDelay);
         const emitterPromiseArray = [];
 
@@ -125,8 +102,17 @@ export default class VADReportingService extends EventEmitter {
 
             logger.log(`Initializing VAD context for mic: ${micDevice.label} -> ${micDevice.deviceId}`);
 
-            const emitterPromise = TrackVADEmitter.create(micDevice.deviceId, SCRIPT_NODE_SAMPLE_RATE).then(emitter => {
-                emitter.on(VAD_SCORE_PUBLISHED, vadReportingService._devicePublishVADScore.bind(vadReportingService));
+            const rnnoiseProcessor = await createRnnoiseProcessorPromise();
+
+            const emitterPromise = JitsiMeetJS.createTrackVADEmitter(
+                micDevice.deviceId,
+                SCRIPT_NODE_SAMPLE_RATE,
+                rnnoiseProcessor
+            ).then(emitter => {
+                emitter.on(
+                    JitsiDetectionEvents.VAD_SCORE_PUBLISHED,
+                    vadReportingService._devicePublishVADScore.bind(vadReportingService)
+                );
 
                 return {
                     vadEmitter: emitter,
@@ -216,6 +202,7 @@ export default class VADReportingService extends EventEmitter {
      * Function called at set interval with selected compute. The result will be published on the set callback.
      *
      * @returns {void}
+     * @fires VAD_REPORT_PUBLISHED
      */
     _reportVadScore() {
         const vadComputeScoreArray = [];
@@ -243,16 +230,30 @@ export default class VADReportingService extends EventEmitter {
             });
         }
 
+        /**
+         * Once the computation for all the tracked devices is done, fire an event containing all the necessary
+         * information.
+         *
+         * @event VAD_REPORT_PUBLISHED
+         * @type Array<Object> with the following structure:
+         * @property {Date} timestamp - Timestamo at which the compute took place.
+         * @property {number} avgVAD - Average VAD score over monitored period of time.
+         * @property {string} deviceId - Associate local audio device ID.
+         */
         this.emit(VAD_REPORT_PUBLISHED, vadComputeScoreArray);
     }
 
     /**
      * Callback method passed to vad emitters in order to publish their score.
      *
-     * @param {VADScore} vadScore - Mic publishing the score.
+     * @param {Object} vadScore -VAD score emitted by.
+     * @param {Date}   vadScore.timestamp - Exact time at which processed PCM sample was generated.
+     * @param {number} vadScore.score - VAD score on a scale from 0 to 1 (i.e. 0.7).
+     * @param {string} vadScore.deviceId - Device id of the associated track.
      * @returns {void}
+     * @listens VAD_SCORE_PUBLISHED
      */
-    _devicePublishVADScore(vadScore: VADScore) {
+    _devicePublishVADScore(vadScore: Object) {
         const context = this._contextMap.get(vadScore.deviceId);
 
         if (context) {
@@ -280,5 +281,4 @@ export default class VADReportingService extends EventEmitter {
         this._clearContextMap();
         this._destroyed = true;
     }
-
 }
