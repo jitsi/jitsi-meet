@@ -120,12 +120,8 @@ export function getBackendSafeRoomName(room: ?string): ?string {
         // But in this case we're fine goin on...
     }
 
-    try {
-        // Normalize the character set
-        room = room.normalize('NFKC');
-    } catch (e) {
-        // Android's JSC does not seem to be a full-ICU build so this will raise an exception.
-    }
+    // Normalize the character set
+    room = room.normalize('NFKC');
 
     // Only decoded and normalized strings can be lowercased properly.
     room = room.toLowerCase();
