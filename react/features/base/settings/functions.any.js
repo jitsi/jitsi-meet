@@ -1,6 +1,5 @@
 // @flow
-
-import { parseURLParams } from '../config';
+import { CONFIG_WHITELIST, parseURLParams } from '../config';
 import { toState } from '../redux';
 
 import { DEFAULT_SERVER_URL } from './constants';
@@ -55,12 +54,14 @@ export function getPropertyValue(
 
     // urlParams
     if (sources.urlParams) {
-        const urlParams
-            = parseURLParams(state['features/base/connection'].locationURL);
-        const value = urlParams[`config.${propertyName}`];
+        if (CONFIG_WHITELIST.indexOf(propertyName) !== -1) {
+            const urlParams
+                = parseURLParams(state['features/base/connection'].locationURL);
+            const value = urlParams[`config.${propertyName}`];
 
-        if (typeof value !== 'undefined') {
-            return value;
+            if (typeof value !== 'undefined') {
+                return value;
+            }
         }
     }
 

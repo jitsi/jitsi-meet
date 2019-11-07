@@ -733,6 +733,7 @@
         "enterRoomTitle": "Start a new meeting",
         "roomNameAllowedChars": "Meeting name should not contain any of these characters: ?, &, :, ', \", %, #.",
         "go": "GO",
+        "goSmall": "GO",
         "join": "JOIN",
         "info": "Info",
         "privacy": "Privacy",
