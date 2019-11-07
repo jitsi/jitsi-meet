@@ -1,7 +1,7 @@
 // @flow
 
 import React, { PureComponent } from 'react';
-import { SafeAreaView, View } from 'react-native';
+import { Platform, SafeAreaView, View } from 'react-native';
 import { WebView } from 'react-native-webview';
 import type { Dispatch } from 'redux';
 
@@ -71,6 +71,13 @@ class SharedDocument extends PureComponent<Props> {
     render() {
         const { _documentUrl, _isOpen } = this.props;
         const webViewStyles = this._getWebViewStyles();
+        const extraWebViewProps = {};
+
+        // FIXME HACK: workaround nginx spartan config issue on meet.jit.si
+        if (Platform.OS === 'android') {
+            // eslint-disable-next-line max-len
+            extraWebViewProps.userAgent = 'Mozilla/5.0 (Linux; Android 8.0.0;) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/78.0.3904.96 Mobile Safari/537.36';
+        }
 
         return (
             <SlidingView
@@ -86,7 +93,8 @@ class SharedDocument extends PureComponent<Props> {
                             onError = { this._onError }
                             renderLoading = { this._renderLoading }
                             source = {{ uri: _documentUrl }}
-                            startInLoadingState = { true } />
+                            startInLoadingState = { true }
+                            { ...extraWebViewProps } />
                     </SafeAreaView>
                 </View>
             </SlidingView>
