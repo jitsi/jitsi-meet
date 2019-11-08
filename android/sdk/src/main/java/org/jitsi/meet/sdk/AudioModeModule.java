@@ -136,8 +136,6 @@ class AudioModeModule extends ReactContextBaseJavaModule {
      */
     public AudioModeModule(ReactApplicationContext reactContext) {
         super(reactContext);
-
-        setAudioDeviceHandler();
     }
 
     /**
@@ -191,6 +189,16 @@ class AudioModeModule extends ReactContextBaseJavaModule {
     @Override
     public String getName() {
         return NAME;
+    }
+
+    /**
+     * Initializes the audio device handler module. This function is called *after* all Catalyst
+     * modules have been created, and that's why we use it, because {@link AudioDeviceHandlerConnectionService}
+     * needs access to another Catalyst module, so doing this in the constructor would be too early.
+     */
+    @Override
+    public void initialize() {
+        setAudioDeviceHandler();
     }
 
     private void setAudioDeviceHandler() {
