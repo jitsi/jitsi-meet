@@ -13,16 +13,14 @@ const DEFAULT_STATE = {
     reducedUI: false
 };
 
-ReducerRegistry.register(
-    'features/base/responsive-ui',
-    (state = DEFAULT_STATE, action) => {
-        switch (action.type) {
-        case SET_ASPECT_RATIO:
-            return set(state, 'aspectRatio', action.aspectRatio);
+ReducerRegistry.register('features/base/responsive-ui', (state = DEFAULT_STATE, action) => {
+    switch (action.type) {
+    case SET_ASPECT_RATIO:
+        return set(state, 'aspectRatio', action.aspectRatio);
 
-        case SET_REDUCED_UI:
-            return set(state, 'reducedUI', action.reducedUI);
-        }
+    case SET_REDUCED_UI:
+        return set(state, 'reducedUI', action.reducedUI);
+    }
 
-        return state;
-    });
+    return state;
+});
