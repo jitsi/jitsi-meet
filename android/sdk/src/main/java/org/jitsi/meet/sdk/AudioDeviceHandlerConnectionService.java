@@ -18,6 +18,7 @@ package org.jitsi.meet.sdk;
 
 import android.content.Context;
 import android.os.Build;
+import android.telecom.CallAudioState;
 import androidx.annotation.RequiresApi;
 
 import java.util.HashSet;
@@ -52,20 +53,20 @@ class AudioDeviceHandlerConnectionService implements
      */
     private static int audioDeviceToRouteInt(String audioDevice) {
         if (audioDevice == null) {
-            return android.telecom.CallAudioState.ROUTE_EARPIECE;
+            return CallAudioState.ROUTE_EARPIECE;
         }
         switch (audioDevice) {
             case AudioModeModule.DEVICE_BLUETOOTH:
-                return android.telecom.CallAudioState.ROUTE_BLUETOOTH;
+                return CallAudioState.ROUTE_BLUETOOTH;
             case AudioModeModule.DEVICE_EARPIECE:
-                return android.telecom.CallAudioState.ROUTE_EARPIECE;
+                return CallAudioState.ROUTE_EARPIECE;
             case AudioModeModule.DEVICE_HEADPHONES:
-                return android.telecom.CallAudioState.ROUTE_WIRED_HEADSET;
+                return CallAudioState.ROUTE_WIRED_HEADSET;
             case AudioModeModule.DEVICE_SPEAKER:
-                return android.telecom.CallAudioState.ROUTE_SPEAKER;
+                return CallAudioState.ROUTE_SPEAKER;
             default:
                 JitsiMeetLogger.e(TAG + " Unsupported device name: " + audioDevice);
-                return android.telecom.CallAudioState.ROUTE_EARPIECE;
+                return CallAudioState.ROUTE_EARPIECE;
         }
     }
 
@@ -78,20 +79,16 @@ class AudioDeviceHandlerConnectionService implements
      */
     private static Set<String> routesToDeviceNames(int supportedRouteMask) {
         Set<String> devices = new HashSet<>();
-        if ((supportedRouteMask & android.telecom.CallAudioState.ROUTE_EARPIECE)
-                == android.telecom.CallAudioState.ROUTE_EARPIECE) {
+        if ((supportedRouteMask & CallAudioState.ROUTE_EARPIECE) == CallAudioState.ROUTE_EARPIECE) {
             devices.add(AudioModeModule.DEVICE_EARPIECE);
         }
-        if ((supportedRouteMask & android.telecom.CallAudioState.ROUTE_BLUETOOTH)
-                == android.telecom.CallAudioState.ROUTE_BLUETOOTH) {
+        if ((supportedRouteMask & CallAudioState.ROUTE_BLUETOOTH) == CallAudioState.ROUTE_BLUETOOTH) {
             devices.add(AudioModeModule.DEVICE_BLUETOOTH);
         }
-        if ((supportedRouteMask & android.telecom.CallAudioState.ROUTE_SPEAKER)
-                == android.telecom.CallAudioState.ROUTE_SPEAKER) {
+        if ((supportedRouteMask & CallAudioState.ROUTE_SPEAKER) == CallAudioState.ROUTE_SPEAKER) {
             devices.add(AudioModeModule.DEVICE_SPEAKER);
         }
-        if ((supportedRouteMask & android.telecom.CallAudioState.ROUTE_WIRED_HEADSET)
-                == android.telecom.CallAudioState.ROUTE_WIRED_HEADSET) {
+        if ((supportedRouteMask & CallAudioState.ROUTE_WIRED_HEADSET) == CallAudioState.ROUTE_WIRED_HEADSET) {
             devices.add(AudioModeModule.DEVICE_HEADPHONES);
         }
         return devices;
@@ -109,13 +106,13 @@ class AudioDeviceHandlerConnectionService implements
     }
 
     @Override
-    public void onCallAudioStateChange(final android.telecom.CallAudioState callAudioState) {
+    public void onCallAudioStateChange(final CallAudioState state) {
         module.runInAudioThread(new Runnable() {
             @Override
             public void run() {
                 boolean audioRouteChanged
-                    = audioDeviceToRouteInt(module.getSelectedDevice()) != callAudioState.getRoute();
-                int newSupportedRoutes = callAudioState.getSupportedRouteMask();
+                    = audioDeviceToRouteInt(module.getSelectedDevice()) != state.getRoute();
+                int newSupportedRoutes = state.getSupportedRouteMask();
                 boolean audioDevicesChanged = supportedRouteMask != newSupportedRoutes;
                 if (audioDevicesChanged) {
                     supportedRouteMask = newSupportedRoutes;
