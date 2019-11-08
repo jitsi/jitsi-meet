@@ -198,11 +198,11 @@ class AudioDeviceHandlerGeneric implements
 
     @Override
     public void setAudioRoute(String device) {
-        // Turn bluetooth on / off
-        setBluetoothAudioRoute(device.equals(AudioModeModule.DEVICE_BLUETOOTH));
-
         // Turn speaker on / off
         audioManager.setSpeakerphoneOn(device.equals(AudioModeModule.DEVICE_SPEAKER));
+
+        // Turn bluetooth on / off
+        setBluetoothAudioRoute(device.equals(AudioModeModule.DEVICE_BLUETOOTH));
     }
 
     @Override
