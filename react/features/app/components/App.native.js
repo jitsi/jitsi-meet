@@ -9,10 +9,7 @@ import { DialogContainer } from '../../base/dialog';
 import { CALL_INTEGRATION_ENABLED, updateFlags } from '../../base/flags';
 import '../../base/jwt';
 import { Platform } from '../../base/react';
-import {
-    AspectRatioDetector,
-    ReducedUIDetector
-} from '../../base/responsive-ui';
+import '../../base/responsive-ui';
 import { updateSettings } from '../../base/settings';
 import '../../google-api';
 import '../../mobile/audio-mode';
@@ -108,22 +105,6 @@ export class App extends AbstractApp {
                 dispatch(updateSettings({ disableCallIntegration: !callIntegrationEnabled }));
             }
         });
-    }
-
-    /**
-     * Injects {@link AspectRatioDetector} in order to detect the aspect ratio
-     * of this {@code App}'s user interface and afford {@link AspectRatioAware}.
-     *
-     * @override
-     */
-    _createMainElement(component, props) {
-        return (
-            <AspectRatioDetector>
-                <ReducedUIDetector>
-                    { super._createMainElement(component, props) }
-                </ReducedUIDetector>
-            </AspectRatioDetector>
-        );
     }
 
     /**
