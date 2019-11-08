@@ -137,6 +137,8 @@ class AudioDeviceHandlerConnectionService implements
         RNConnectionService rcs = ReactInstanceManagerHolder.getNativeModule(RNConnectionService.class);
         if (rcs != null) {
             rcs.setCallAudioStateListener(this);
+        } else {
+            JitsiMeetLogger.w(TAG + " Couldn't set call audio state listener, module is null");
         }
     }
 
@@ -145,6 +147,8 @@ class AudioDeviceHandlerConnectionService implements
         RNConnectionService rcs = ReactInstanceManagerHolder.getNativeModule(RNConnectionService.class);
         if (rcs != null) {
             rcs.setCallAudioStateListener(null);
+        } else {
+            JitsiMeetLogger.w(TAG + " Couldn't set call audio state listener, module is null");
         }
     }
 
