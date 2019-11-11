@@ -91,6 +91,7 @@ export default [
     'displayJids',
     'e2eping',
     'enableDisplayNameInStats',
+    'enableEmailInStats',
     'enableLayerSuspension',
     'enableLipSync',
     'disableLocalVideoFlip',

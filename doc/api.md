@@ -30,6 +30,7 @@ Its constructor gets a number of options:
     * **onload**: (optional) handler for the iframe onload event.
     * **invitees**: (optional) Array of objects containing information about new participants that will be invited in the call.
     * **devices**: (optional) A map containing information about the initial devices that will be used in the call.
+    * **userInfo**: (optional) JS object containing information about the participant opening the meeting, such as `email`.
 
 Example:
 
@@ -83,6 +84,19 @@ const options = {
 };
 const api = new JitsiMeetExternalAPI(domain, options);
  ```
+
+You can set the userInfo(email) for the call:
+
+```javascript
+var domain = "meet.jit.si";
+var options = {
+    ...
+    userInfo: {
+        email: 'email@jitsiexamplemail.com'
+    }
+}
+var api = new JitsiMeetExternalAPI(domain, options);
+```
 
 ### Controlling the embedded Jitsi Meet Conference
 

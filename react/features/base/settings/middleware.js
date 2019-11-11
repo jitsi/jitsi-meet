@@ -1,7 +1,10 @@
 // @flow
+import _ from 'lodash';
 
 import { APP_WILL_MOUNT } from '../app';
 import { setAudioOnly } from '../audio-only';
+import parseURLParams from '../config/parseURLParams'; // minimize imports to avoid circular imports
+import { SET_LOCATION_URL } from '../connection/actionTypes'; // minimize imports to avoid circular imports
 import { getLocalParticipant, participantUpdated } from '../participants';
 import { MiddlewareRegistry } from '../redux';
 
@@ -27,6 +30,9 @@ MiddlewareRegistry.register(store => next => action => {
         _maybeHandleCallIntegrationChange(action);
         _maybeSetAudioOnly(store, action);
         _updateLocalParticipant(store, action);
+        break;
+    case SET_LOCATION_URL:
+        _updateLocalParticipantFromUrl(store);
         break;
     }
 
@@ -117,4 +123,31 @@ function _updateLocalParticipant({ dispatch, getState }, action) {
     }
 
     dispatch(participantUpdated(newLocalParticipant));
+}
+
+
+/**
+ * Returns the userInfo set in the URL.
+ *
+ * @param {Store} store - The redux store.
+ * @private
+ * @returns {void}
+ */
+function _updateLocalParticipantFromUrl({ dispatch, getState }) {
+    const urlParams
+        = parseURLParams(getState()['features/base/connection'].locationURL);
+    const urlEmail = urlParams['userInfo.email'];
+
+    if (!urlEmail) {
+        return;
+    }
+
+    const localParticipant = getLocalParticipant(getState());
+
+    if (localParticipant) {
+        dispatch(participantUpdated({
+            ...localParticipant,
+            email: _.escape(urlEmail)
+        }));
+    }
 }

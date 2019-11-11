@@ -1205,12 +1205,16 @@ export default {
 
     _getConferenceOptions() {
         const options = config;
+        const { email, name: nick } = getLocalParticipant(APP.store.getState());
 
-        const nick = APP.store.getState()['features/base/settings'].displayName;
         const { locationURL } = APP.store.getState()['features/base/connection'];
 
         if (nick) {
             options.displayName = nick;
+        }
+
+        if (email) {
+            options.email = email;
         }
 
         options.applicationName = interfaceConfig.APP_NAME;

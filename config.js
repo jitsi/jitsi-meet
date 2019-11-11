@@ -299,6 +299,8 @@ var config = {
     // enables sending participants display name to callstats
     // enableDisplayNameInStats: false
 
+    // enables sending participants email if available to callstats and other analytics
+    // enableEmailInStats: false
 
     // Privacy
     //

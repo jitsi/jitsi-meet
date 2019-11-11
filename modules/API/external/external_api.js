@@ -232,6 +232,8 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
      * information about new participants that will be invited in the call.
      * @param {Array<Object>} [options.devices] - Array of objects containing
      * information about the initial devices that will be used in the call.
+     * @param {Object} [options.userInfo] - Object containing information about
+     * the participant opening the meeting.
      */
     constructor(domain, ...args) {
         super();
@@ -246,7 +248,8 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
             jwt = undefined,
             onload = undefined,
             invitees,
-            devices
+            devices,
+            userInfo
         } = parseArguments(args);
 
         this._parentNode = parentNode;
@@ -256,7 +259,8 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
             jwt,
             noSSL,
             roomName,
-            devices
+            devices,
+            userInfo
         });
         this._createIFrame(height, width, onload);
         this._transport = new Transport({
