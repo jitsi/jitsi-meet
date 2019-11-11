@@ -1209,12 +1209,12 @@ export default {
 
         const { locationURL } = APP.store.getState()['features/base/connection'];
 
-        if (nick) {
-            options.displayName = nick;
+        if (options.enableDisplayNameInStats && nick) {
+            options.statisticsDisplayName = nick;
         }
 
-        if (email) {
-            options.email = email;
+        if (options.enableEmailInStats && email) {
+            options.statisticsId = email;
         }
 
         options.applicationName = interfaceConfig.APP_NAME;
