@@ -16,17 +16,19 @@ export default class JitsiStreamCropPersonEffect {
      *
      * @class
      * @param {BodyPix} bpModel - BodyPix model.
+     * @param {MediaStream} stream - The video stream on which crop is applied.
      */
     constructor(bpModel, stream) {
         this._bpModel = bpModel;
         this._videoStream = stream;
+        const videoTrack = stream.getVideoTracks()[0];
 
         // Bind event handler so it is only bound once for every instance.
         this._onMaskFrameTimer = this._onMaskFrameTimer.bind(this);
         this._onVideoFrameTimer = this._onVideoFrameTimer.bind(this);
-
         this._outputCanvasElement = document.createElement('canvas');
-        // Workaround for FF issue 
+
+        // Workaround for FF issue
         // https://bugzilla.mozilla.org/show_bug.cgi?id=1388974
         this._ctx = this._outputCanvasElement.getContext('2d');
 
@@ -34,15 +36,15 @@ export default class JitsiStreamCropPersonEffect {
         this._inputVideoElement = document.createElement('video');
         this._inputDesktopElement = document.createElement('video');
 
-        // get the stream properties for the camera
-        const videoTrack = this._videoStream.getVideoTracks()[0];
+        // get the stream properties for the camera and set the
+        // properties of the input video element.
         this._cameraWidth = videoTrack.getSettings().width;
         this._cameraHeight = videoTrack.getSettings().height;
         this._cameraFrameRate = videoTrack.getSettings().frameRate;
         this._inputVideoElement.width = this._cameraWidth;
         this._inputVideoElement.height = this._cameraHeight;
         this._inputVideoElement.autoplay = true;
-        this._inputVideoElement.srcObject = this._videoStream;
+        this._inputVideoElement.srcObject = stream;
 
         this._videoFrameTimerWorker = new Worker(timerWorkerScript);
         this._maskFrameTimerWorker = new Worker(timerWorkerScript);
@@ -79,16 +81,18 @@ export default class JitsiStreamCropPersonEffect {
     /**
      * Starts loop to capture video frame and render the segmentation mask.
      *
-     * @param {MediaStream} stream - Stream to be used for processing.
+     * @param {MediaStream} desktopStream - Stream to be used for processing.
      * @returns {MediaStream} - The stream with the applied effect.
      */
     startEffect(desktopStream) {
-        
-        // get the stream properties for the screenshare
+
+        // get the stream properties for the screenshare.
         const desktopTrack = desktopStream.getVideoTracks()[0];
         const { height, frameRate, width }
             = desktopTrack.getSettings ? desktopTrack.getSettings()
                 : desktopTrack.getConstraints();
+        const videoDiv = document.createElement('div');
+
         this._height = height;
         this._width = width;
         this._frameRate = frameRate;
@@ -97,12 +101,12 @@ export default class JitsiStreamCropPersonEffect {
         this._inputDesktopElement.autoplay = true;
         this._inputDesktopElement.srcObject = desktopStream;
 
-        const videoDiv = document.createElement("div");
         document.body.appendChild(videoDiv);
         videoDiv.appendChild(this._inputVideoElement);
         videoDiv.appendChild(this._inputDesktopElement);
+
         // set the style attribute of the div to make it invisible
-        videoDiv.style.display = "none";
+        videoDiv.style.display = 'none';
 
         this._maskCanvasElement.width = this._cameraWidth;
         this._maskCanvasElement.height = this._cameraHeight;
@@ -137,7 +141,7 @@ export default class JitsiStreamCropPersonEffect {
     }
 
     /**
-     * Loop function to render the video frame input and draw blur effect.
+     * Loop function to render the canvas and draw the crop effect.
      *
      * @private
      * @returns {void}
@@ -146,14 +150,15 @@ export default class JitsiStreamCropPersonEffect {
         this._maskCanvasContext.drawImage(this._inputVideoElement, 0, 0,
             this._cameraWidth, this._cameraHeight);
         if (this._segmentationData) {
-            const img = this._maskCanvasContext.getImageData(0, 0, 
+            const img = this._maskCanvasContext.getImageData(0, 0,
                 this._cameraWidth, this._cameraHeight);
-            let pixels = img.data;
+            const pixels = img.data;
             const data = this._segmentationData.data;
+
             for (let i = 0; i < data.length; i++) {
-                // if the pixel doesn't belong to the person, set the 
-                // alpha channel value to 0 to make it transparent
-                pixels[i * 4 + 3] = data[i] == 0 ? 0 : 255;
+                // if the pixel doesn't belong to the person, set the
+                // alpha channel value to 0 to make it transparent.
+                pixels[(i * 4) + 3] = data[i] === 0 ? 0 : 255;
             }
             this._maskCanvasContext.putImageData(img, 0, 0);
         }

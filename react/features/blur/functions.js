@@ -14,5 +14,6 @@ export function getBlurEffect() {
         return ns.effects.createBlurEffect();
     }
 
-    return loadScript('libs/video-blur-effect.min.js').then(() => ns.effects.createBlurEffect());
+    return loadScript('libs/tensorflow-effects.min.js')
+        .then(() => ns.effects.createBlurEffect());
 }

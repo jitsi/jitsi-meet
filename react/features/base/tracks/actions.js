@@ -323,9 +323,9 @@ export function replaceLocalTrack(oldTrack, newTrack, conference) {
 }
 
 /**
- * Create an action for when a new presenter track has been created and the 
+ * Create an action for when a new presenter track has been created and the
  * video track is updated after applying the presenter stream effect.
- * 
+ *
  * @param {JitsiLocalTrack} track - JitsiLocalTrack instance.
  * @returns {{ type: PRESENTER_TRACK_ADDED, track: Track }}
  */
@@ -334,10 +334,7 @@ export function presenterTrackAdded(track) {
     return (dispatch, getState) => {
         const local = track.isLocal();
         const mediaType = track.getType();
-        let participantId;
-        if (local) {
-            participantId = getLocalParticipant(getState);
-        }
+        const participantId = getLocalParticipant(getState);
 
         return dispatch({
             type: PRESENTER_TRACK_ADDED,
@@ -346,7 +343,7 @@ export function presenterTrackAdded(track) {
                 local,
                 mediaType,
                 participantId,
-                muted: track.isMuted(),
+                muted: track.isMuted()
             }
         });
     };

@@ -5,32 +5,43 @@ import {
     timerWorkerScript
 } from './TimerWorker';
 
+/**
+ * Represents a modified MediaStream that adds video as pip on a desktop stream.
+ * <tt>JitsiStreamPresenterEffect</tt> does the processing of the original
+ * desktop stream.
+ */
 export default class JitsiStreamPresenterEffect {
 
     /**
-     * Represents a modified MediaStream that adds a camera track at the 
+     * Represents a modified MediaStream that adds a camera track at the
      * bottom right corner of the desktop track using a HTML canvas.
      * <tt>JitsiStreamCanvasEffect</tt> does the processing of the original
      * video stream.
+     *
+     * @param {MediaStream} videoStream - The video stream which is user for
+     * creating the canvas.
      */
     constructor(videoStream) {
         const videoDiv = document.createElement('div');
-        this._canvas = document.createElement('canvas');
         const firstVideoTrack = videoStream.getVideoTracks()[0];
         const { height, width, frameRate } = firstVideoTrack.getSettings
             ? firstVideoTrack.getSettings()
             : firstVideoTrack.getConstraints();
 
-        // Workaround for FF issue https://bugzilla.mozilla.org/show_bug.cgi?id=1388974
+        this._canvas = document.createElement('canvas');
+
+        // Workaround for FF issue
+        // https://bugzilla.mozilla.org/show_bug.cgi?id=1388974
         this._ctx = this._canvas.getContext('2d');
         document.body.appendChild(this._canvas);
-        
+
         this._desktopElement = document.createElement('video');
         this._videoElement = document.createElement('video');
         document.body.appendChild(videoDiv);
         videoDiv.appendChild(this._videoElement);
         videoDiv.appendChild(this._desktopElement);
 
+        // Set the video element properties
         this._frameRate = frameRate;
         this._videoHeight = height;
         this._videoWidth = width;
@@ -40,7 +51,7 @@ export default class JitsiStreamPresenterEffect {
         this._videoElement.srcObject = videoStream;
 
         // set the style attribute of the div to make it invisible
-        videoDiv.setAttribute('style', 'display:none');
+        videoDiv.style.display = 'none';
 
         // Bind event handler so it is only bound once for every instance.
         this._onVideoFrameTimer = this._onVideoFrameTimer.bind(this);
@@ -62,32 +73,30 @@ export default class JitsiStreamPresenterEffect {
     }
 
     /**
-     * Loop function to render the video frame input and draw blur effect.
+     * Loop function to render the video frame input and draw presenter effect.
      *
      * @private
      * @returns {void}
      */
     _renderVideo() {
-        // flip the image horizontally before drawing it on the desktop image
-        /*const videoCanvas = document.createElement('canvas');
-        const videoCtx = videoCanvas.getContext('2d');
-        videoCanvas.width = this._videoWidth;
-        videoCanvas.height = this._videoHeight;
-        videoCtx.translate(-this._videoWidth, 0);
-        videoCtx.scale(-1, 1);
-        videoCtx.drawImage(this._videoElement, 0, 0, this._videoWidth, this._videoHeight);*/
-        
         this._ctx.drawImage(this._desktopElement, 0, 0, this._desktopWidth, this._desktopHeight);
         this._ctx.drawImage(this._videoElement, this._desktopWidth - this._videoWidth,
             this._desktopHeight - this._videoHeight, this._videoWidth, this._videoHeight);
     }
 
+    /**
+     * Starts loop to capture video frame and render presenter effect.
+     *
+     * @param {MediaStream} desktopStream - Stream to be used for processing.
+     * @returns {MediaStream} - The stream with the applied effect.
+     */
     startEffect(desktopStream) {
         const firstVideoTrack = desktopStream.getVideoTracks()[0];
         const { height, width }
             = firstVideoTrack.getSettings ? firstVideoTrack.getSettings()
-            : firstVideoTrack.getConstraints();
+                : firstVideoTrack.getConstraints();
 
+        // set the desktop element properties
         this._desktopWidth = width;
         this._desktopHeight = height;
         this._desktopElement.width = width;
@@ -97,7 +106,7 @@ export default class JitsiStreamPresenterEffect {
 
         this._canvas.width = width;
         this._canvas.height = height;
-        
+
         this._videoFrameTimerWorker.postMessage({
             id: SET_INTERVAL,
             timeMs: 1000 / this._frameRate
@@ -106,6 +115,11 @@ export default class JitsiStreamPresenterEffect {
         return this._canvas.captureStream(this._frameRate);
     }
 
+    /**
+     * Stops the capture and render loop.
+     *
+     * @returns {void}
+     */
     stopEffect() {
         this._videoFrameTimerWorker.postMessage({
             id: CLEAR_INTERVAL

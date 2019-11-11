@@ -2,8 +2,7 @@
 
 import { ReducerRegistry } from '../base/redux';
 import { PersistenceRegistry } from '../base/storage';
-
-import { CROP_ENABLED, CROP_DISABLED } from './actionTypes';
+import { SET_CROP_ENABLED } from './actionTypes';
 
 PersistenceRegistry.register('features/cropPerson', true, {
     cropEnabled: false
@@ -11,19 +10,11 @@ PersistenceRegistry.register('features/cropPerson', true, {
 
 ReducerRegistry.register('features/cropPerson', (state = {}, action) => {
 
-    switch (action.type) {
-    case CROP_ENABLED: {
+    if (action.type === SET_CROP_ENABLED) {
         return {
             ...state,
-            cropEnabled: true
+            cropEnabled: action.enabled
         };
-    }
-    case CROP_DISABLED: {
-        return {
-            ...state,
-            cropEnabled: false
-        };
-    }
     }
 
     return state;

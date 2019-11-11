@@ -163,7 +163,7 @@ function _video(state = _VIDEO_INITIAL_MEDIA_STATE, action) {
  */
 export const _PRESENTER_INITIAL_MEDIA_STATE = {
     available: true,
-    muted: 0,
+    muted: 0
 };
 
 /**

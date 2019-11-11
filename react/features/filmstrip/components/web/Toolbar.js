@@ -7,7 +7,6 @@ import { SettingsButton } from '../../../settings';
 import {
     AudioMuteButton,
     HangupButton,
-    PresenterMuteButton,
     VideoMuteButton
 } from '../../../toolbox';
 
@@ -47,9 +46,6 @@ class Toolbar extends Component<Props> {
                 <AudioMuteButton
                     tooltipPosition = 'left'
                     visible = { this._shouldShowButton('microphone') } />
-                <PresenterMuteButton
-                    tooltipPosition = 'left'
-                    visible = { this._shouldShowButton('presenter') } />
                 <VideoMuteButton
                     tooltipPosition = 'left'
                     visible = { this._shouldShowButton('camera') } />

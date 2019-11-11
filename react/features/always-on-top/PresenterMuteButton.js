@@ -60,17 +60,6 @@ export default class PresenterMuteButton
     componentDidMount() {
         api.on('videoAvailabilityChanged', this._videoAvailabilityListener);
         api.on('presenterMuteStatusChanged', this._presenterMutedListener);
-
-        Promise.all([
-            api.isVideoAvailable(),
-            api.isPresenterMuted()
-        ])
-            .then(([ videoAvailable, presenterMuted ]) =>
-                this.setState({
-                    videoAvailable,
-                    presenterMuted
-                }))
-            .catch(console.error);
     }
 
     /**

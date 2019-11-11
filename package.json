@@ -142,7 +142,9 @@
     "postinstall": "jetify",
     "validate": "npm ls"
   },
-  "pre-commit": [],
+  "pre-commit": [
+    "lint"
+  ],
   "browser": {
     "jQuery-Impromptu": "jQuery-Impromptu/src/jquery-impromptu.js"
   }

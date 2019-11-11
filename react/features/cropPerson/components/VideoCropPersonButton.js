@@ -34,9 +34,9 @@ type Props = AbstractButtonProps & {
 class VideoCropPersonButton extends AbstractButton<Props, *> {
     accessibilityLabel = 'toolbar.accessibilityLabel.cropperson';
     icon = IconCropForeground;
-    label = 'toolbar.startcropperson';
-    tooltip = 'toolbar.startcropperson';
-    toggledLabel = 'toolbar.stopcropperson';
+    label = 'toolbar.startCropPerson';
+    tooltip = 'toolbar.startCropPerson';
+    toggledLabel = 'toolbar.stopCropPerson';
 
     /**
      * Helper function to be implemented by subclasses, which returns

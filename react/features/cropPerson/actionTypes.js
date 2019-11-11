@@ -1,21 +1,11 @@
 // @flow
 
 /**
- * The type of redux action dispatched which represents that the crop effect
- * is enabled.
+ * The type of redux action dispatched to set the enabled state of the crop effect.
  *
  * {
- *      type: CROP_ENABLED
+ *      type: SET_CROP_ENABLED,
+ *      enabled: boolean
  * }
  */
-export const CROP_ENABLED = 'CROP_ENABLED';
-
-/**
- * The type of redux action dispatched which represents that the crop effect
- * is disabled.
- *
- * {
- *      type: CROP_DISABLED
- * }
- */
-export const CROP_DISABLED = 'CROP_DISABLED';
+export const SET_CROP_ENABLED = 'SET_CROP_ENABLED';

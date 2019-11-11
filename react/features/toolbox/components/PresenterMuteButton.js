@@ -49,9 +49,9 @@ type Props = AbstractButtonProps & {
  * @extends AbstractPresenterMuteButton
  */
 class PresenterMuteButton extends AbstractPresenterMuteButton<Props, *> {
-    accessibilityLabel = 'toolbar.accessibilityLabel.presentermute';
-    label = 'toolbar.presentermute';
-    tooltip = 'toolbar.presentermute';
+    accessibilityLabel = 'toolbar.accessibilityLabel.presenterMute';
+    label = 'toolbar.presenterMute';
+    tooltip = 'toolbar.presenterMute';
 
     /**
      * Initializes a new {@code PresenterMuteButton} instance.

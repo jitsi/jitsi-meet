@@ -46,8 +46,8 @@ deploy-appbundle:
 		$(OUTPUT_DIR)/analytics-ga.js \
 		$(BUILD_DIR)/analytics-ga.min.js \
 		$(BUILD_DIR)/analytics-ga.min.map \
-		$(BUILD_DIR)/video-blur-effect.min.js \
-		$(BUILD_DIR)/video-blur-effect.min.map \
+		$(BUILD_DIR)/tensorflow-effects.min.js \
+		$(BUILD_DIR)/tensorflow-effects.min.map \
 		$(BUILD_DIR)/rnnoise-processor.min.js \
 		$(BUILD_DIR)/rnnoise-processor.min.map \
 		$(DEPLOY_DIR)

@@ -5,8 +5,11 @@ import { toState } from '../redux';
 import { VIDEO_MUTISM_AUTHORITY } from './constants';
 
 /**
- * 
- * @param {*} stateful 
+ * Determines whether presenter is currently muted by the audio-only authority.
+ *
+ * @param {Function|Object} stateful - The redux store, state, or
+ * {@code getState} function.
+ * @returns {boolean}
  */
 export function isPresenterMutedByAudioOnly(stateful: Function | Object) {
     return (
@@ -14,9 +17,15 @@ export function isPresenterMutedByAudioOnly(stateful: Function | Object) {
 }
 
 /**
- * 
- * @param {*} stateful 
- * @param {*} videoMutismAuthority 
+ * Determines whether presenter is currently muted by a specific
+ * {@code VIDEO_MUTISM_AUTHORITY}.
+ *
+ * @param {Function|Object} stateful - The redux store, state, or
+ * {@code getState} function.
+ * @param {number} videoMutismAuthority - The {@code VIDEO_MUTISM_AUTHORITY}
+ * which is to be checked whether it has muted video.
+ * @returns {boolean} If presenter is currently muted by the specified
+ * {@code videoMutismAuthority}, then {@code true}; otherwise, {@code false}.
  */
 function _isPresenterMutedByAuthority(
         stateful: Function | Object,
@@ -28,8 +37,11 @@ function _isPresenterMutedByAuthority(
 }
 
 /**
- * 
- * @param {*} stateful 
+ * Determines whether presenter is currently muted by the user authority.
+ *
+ * @param {Function|Object} stateful - The redux store, state, or
+ * {@code getState} function.
+ * @returns {boolean}
  */
 export function isPresenterMutedByUser(stateful: Function | Object) {
     return _isPresenterMutedByAuthority(stateful, VIDEO_MUTISM_AUTHORITY.USER);

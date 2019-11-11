@@ -136,6 +136,11 @@ type Props = {
     _isGuest: boolean,
 
     /**
+     * Whether or not the local participant is running in presenter mode.
+     */
+    _isPresenter: boolean,
+
+    /**
      * The ID of the local participant.
      */
     _localParticipantID: String,
@@ -150,10 +155,6 @@ type Props = {
      */
     _overflowMenuVisible: boolean,
 
-    /**
-     * Whether or not the local participant is in presenter mode.
-     */
-    _presenterMode: boolean,
     /**
      * Whether or not the local participant's hand is raised.
      */
@@ -960,7 +961,7 @@ class Toolbox extends Component<Props, State> {
             <VideoCropPersonButton
                 key = 'videocropforeground'
                 showLabel = { true }
-                visible = { this._shouldShowButton('videocropforeground') && _screensharing && _isPresenter } />,
+                visible = { this._shouldShowButton('videocropforeground') && _isPresenter } />,
             <SettingsButton
                 key = 'settings'
                 showLabel = { true }
@@ -1309,13 +1310,13 @@ function _mapStateToProps(state) {
         _hideInviteButton:
             iAmRecorder || (!addPeopleEnabled && !dialOutEnabled),
         _isGuest: state['features/base/jwt'].isGuest,
-        _isPresenter: localPresenter,
+        _isPresenter: Boolean(localPresenter),
         _fullScreen: fullScreen,
         _localParticipantID: localParticipant.id,
         _localRecState: localRecordingStates,
         _overflowMenuVisible: overflowMenuVisible,
         _raisedHand: localParticipant.raisedHand,
-        _screensharing: localVideo && localVideo.videoType === 'desktop',
+        _screensharing: Boolean(localVideo) && localVideo.videoType === 'desktop',
         _sharingVideo: sharedVideoStatus === 'playing'
             || sharedVideoStatus === 'start'
             || sharedVideoStatus === 'pause',

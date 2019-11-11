@@ -71,8 +71,8 @@ import {
     JitsiTrackEvents
 } from './react/features/base/lib-jitsi-meet';
 import {
-    isVideoMutedByUser,
     isPresenterMutedByUser,
+    isVideoMutedByUser,
     MEDIA_TYPE,
     setAudioAvailable,
     setAudioMuted,
@@ -108,6 +108,7 @@ import {
     trackRemoved
 } from './react/features/base/tracks';
 import { getJitsiMeetGlobalNS } from './react/features/base/util';
+import { setCropEnabled } from './react/features/cropPerson';
 import { showDesktopPicker } from './react/features/desktop-picker';
 import { appendSuffix } from './react/features/display-name';
 import {
@@ -117,8 +118,8 @@ import {
 import { mediaPermissionPromptVisibilityChanged } from './react/features/overlay';
 import { suspendDetected } from './react/features/power-monitor';
 import { setSharedVideoStatus } from './react/features/shared-video';
+import { createPresenterEffect } from './react/features/stream-effects/presenter';
 import { endpointMessageReceived } from './react/features/subtitles';
-import { getPresenterEffect } from './react/features/presenter';
 
 const logger = require('jitsi-meet-logger').getLogger(__filename);
 
@@ -200,16 +201,6 @@ function getDisplayName(id) {
  */
 function muteLocalAudio(muted) {
     APP.store.dispatch(setAudioMuted(muted));
-}
-
-/**
- * Mute or unmute local presenter video stream if it exists.
- * @param {boolean} muted if presenter video stream should be
- * muted or unmuted.
- *
- */
-function muteLocalPresenter(muted) {
-    APP.store.dispatch(setPresenterMuted(muted));
 }
 
 /**
@@ -703,9 +694,6 @@ export default {
                     this.setVideoMuteStatus(true);
                 }
 
-                // set the presenter mode status to falsey
-                this.setPresenterMuteStatus(true);
-
                 // Initialize device list a second time to ensure device labels
                 // get populated in case of an initial gUM acceptance; otherwise
                 // they may remain as empty strings.
@@ -722,10 +710,6 @@ export default {
                         titleKey: 'notify.startSilentTitle'
                     }));
                 }
-
-                // hack
-                interfaceConfig.TOOLBAR_BUTTONS.push('presenter');
-                interfaceConfig.TOOLBAR_BUTTONS.push('videocropforeground');
 
                 // XXX The API will take care of disconnecting from the XMPP
                 // server (and, thus, leaving the room) on unload.
@@ -842,7 +826,7 @@ export default {
     },
 
     /**
-     * Simulates toolbar button click for presenter video mute. Used by 
+     * Simulates toolbar button click for presenter video mute. Used by
      * shortcuts and API.
      * @param mute true for mute and false for unmute.
      * @param {boolean} [showUI] when set to false will not display any error
@@ -861,14 +845,17 @@ export default {
         };
 
         if (!mute && this.localPresenterVideo) {
-            getPresenterEffect(this.localPresenterVideo.stream)
-                .then(presenterEffect => this.localVideo.setEffect(presenterEffect))
-                .then(() => this.setPresenterMuteStatus(his.isLocalPresenterMuted()))
+            const presenterEffect = createPresenterEffect(
+                this.localPresenterVideo.stream);
+
+            this.localVideo.setEffect(presenterEffect)
+                .then(() => APP.API.notifyPresenterMutedStatusChanged(mute))
                 .catch(err => {
 
                     // dispose the track if setEffect fails
                     logger.error('setEffect failed on local video: ', err);
-                    muteLocalPresenter(true);
+                    APP.store.dispatch(setPresenterMuted(true));
+
                     return null;
                 });
 
@@ -881,12 +868,14 @@ export default {
                 = this._createCameraConstraints(height);
 
             createLocalTracksF({
+                constraints: presenterCameraConstraints,
                 devices: [ 'video' ],
-                presenterMode: presenterCameraConstraints
+                ignoreEffects: true
             })
             .then(([ videoTrack ]) => {
                 this.localPresenterVideo = videoTrack;
-                return getPresenterEffect(videoTrack.stream);
+
+                return createPresenterEffect(videoTrack.stream);
             })
             .catch(error => {
 
@@ -900,25 +889,28 @@ export default {
             .then(() => {
                 this.localPresenterVideo.type = MEDIA_TYPE.PRESENTER;
                 APP.store.dispatch(presenterTrackAdded(this.localPresenterVideo));
-                this.setPresenterMuteStatus(mute);
+                APP.API.notifyPresenterMutedStatusChanged(mute);
             })
             .catch(err => {
 
                 // dispose the track if setEffect fails
                 logger.error('setEffect failed on local video: ', err);
-                muteLocalPresenter(true);
+                APP.store.dispatch(setPresenterMuted(true));
+
                 return null;
             });
-            
+
         } else {
             this.localVideo.setEffect(undefined)
             .then(() => {
-                muteLocalPresenter(mute);
+                APP.store.dispatch(setPresenterMuted(mute));
+                APP.API.notifyPresenterMutedStatusChanged(mute);
                 APP.store.dispatch(presenterTrackRemoved(this.localPresenterVideo));
                 this.localPresenterVideo = null;
             })
             .catch(err => {
                 maybeShowErrorDialog(err);
+
                 return null;
             });
         }
@@ -978,14 +970,6 @@ export default {
             // FIXME show error dialog if it fails (should be handled by react)
             muteLocalVideo(mute);
         }
-    },
-
-    /**
-     *
-     * @param {*} showUI
-     */
-    togglePresenterMuted(showUI = true) {
-        this.mutePresenterVideo(!this.isLocalPresenterMuted(), showUI);
     },
 
     /**
@@ -1470,6 +1454,33 @@ export default {
     _untoggleScreenSharing: null,
 
     /**
+     * Creates a promise which turns off presenter mode and dispatches actions
+     * for removing the presenter track and for updating the presenter muted
+     * state.
+     * @return {Promise} resolved after the presenter mode is turned off,
+     * or rejected with some error if the setEffect call fails.
+     * @private
+     */
+    _turnPresenterModeOff() {
+
+        return new Promise(resolve => {
+            if (this.localPresenterVideo) {
+                this.localPresenterVideo.setEffect(undefined)
+                    .then(() => {
+                        APP.store.dispatch(setPresenterMuted(true));
+                        APP.store.dispatch(setCropEnabled(false));
+                        APP.store.dispatch(
+                            presenterTrackRemoved(this.localPresenterVideo));
+                        this.localPresenterVideo = null;
+                    })
+                    .then(resolve);
+            } else {
+                resolve();
+            }
+        });
+    },
+
+    /**
      * Creates a Promise which turns off the screen sharing and restores
      * the previous state described by the arguments.
      *
@@ -1492,17 +1503,6 @@ export default {
 
         if (receiver) {
             receiver.stop();
-        }
-        
-        // Get rid of the presenter video track if present.
-        if (this.localPresenterVideo) {
-            this.localVideo.setEffect(undefined)
-                .then(() => {
-                    muteLocalPresenter(true);
-                    APP.store.dispatch(
-                        presenterTrackRemoved(this.localPresenterVideo));
-                    this.localPresenterVideo = null;
-                });
         }
 
         this._stopProxyConnection();
@@ -1535,11 +1535,12 @@ export default {
             promise = this.useVideoStream(null);
         }
 
-        return promise.then(
-            () => {
+        return this._turnPresenterModeOff()
+            .then(() => promise)
+            .then(() => {
                 this.videoSwitchInProgress = false;
-            },
-            error => {
+            })
+            .catch(error => {
                 this.videoSwitchInProgress = false;
                 throw error;
             });
@@ -1678,22 +1679,25 @@ export default {
     },
 
     /**
-     * 
-     * @param {*} desktopHeight 
+     * Calculate the constriants (height) for the presenter camera based on
+     * the height of the screenshare that is in progress.
+     *
+     * @param {number} [desktopHeight] - the height of the desktop that is
+     * being shared.
+     *
+     * @return {Object} - video constraints for the presenter camera.
+     *
+     * @private
      */
     _createCameraConstraints(desktopHeight) {
         const cameraHeights = [ 180, 270, 360, 540, 720 ];
-        let result;
-
-        cameraHeights.forEach(height => {
-            if ((desktopHeight / 5) < height && !result) {
-                result = height;
-            }
-        });
+        const proportion = 4;
+        const result = cameraHeights.find(
+            height => (desktopHeight / proportion) < height);
 
         return {
             video: {
-                aspectRatio: 1,
+                aspectRatio: 4 / 3,
                 height: {
                     exact: result
                 }
@@ -2924,15 +2928,6 @@ export default {
         }
 
         this._proxyConnection.processMessage(event);
-    },
-
-    /**
-     * Sets the presenter muted status.
-     *
-     * @param {boolean} muted - New muted status.
-     */
-    setPresenterMuteStatus(muted) {
-        APP.API.notifyPresenterMutedStatusChanged(muted);
     },
 
     /**

@@ -53,25 +53,26 @@ export function createLocalTracksF(
 
     const state = store.getState();
     const {
-        constraints,
         desktopSharingFrameRate,
         firefox_fake_device, // eslint-disable-line camelcase
         resolution
     } = state['features/base/config'];
-    const loadEffectsPromise = !options.presenterMode
+    const constraints = options.constraints
+        ? options.constraints
+        : state['features/base/config'].constraints;
+
+    // Do not load blur effect if option for ignoring effects is present.
+    // This is needed when we are creating a video track for presenter mode.
+    const loadEffectsPromise = !options.ignoreEffects
         && state['features/blur'].blurEnabled ? getBlurEffect()
             .then(blurEffect => [ blurEffect ])
             .catch(error => {
-                logger.error('Failed to obtain the blur effect instance with error: ', error);
+                logger.error('Failed to obtain the blur effect instance with'
+                    + ' error: ', error);
 
                 return Promise.resolve([]);
             })
         : Promise.resolve([]);
-    let presenterCameraConstraints;
-
-    if (options.presenterMode) {
-        presenterCameraConstraints = options.presenterMode;
-    }
 
     return (
         loadEffectsPromise.then(effects =>
@@ -91,7 +92,6 @@ export function createLocalTracksF(
                     effects,
                     firefox_fake_device, // eslint-disable-line camelcase
                     micDeviceId,
-                    presenterCameraConstraints,
                     resolution
                 },
                 firePermissionPromptIsShownEvent)
@@ -155,7 +155,7 @@ export function getLocalTracks(tracks, includePending = false) {
 
 /**
  * Returns local presenter track.
- * 
+ *
  * @param {Track[]} tracks - List of all tracks.
  * @returns {(Track|undefined)}
  */
@@ -277,10 +277,6 @@ export function setTrackMuted(track, muted) {
     }
 
     const f = muted ? 'mute' : 'unmute';
-
-    if (track.type === 'presenter') {
-        return Promise.resolve();
-    }
 
     return track[f]().catch(error => {
         // Track might be already disposed so ignore such an error.
