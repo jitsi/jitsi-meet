@@ -96,7 +96,6 @@ export default [
     'enableLipSync',
     'disableLocalVideoFlip',
     'enableRemb',
-    'enableStatsID',
     'enableTalkWhileMuted',
     'enableTcc',
     'etherpad_base',
