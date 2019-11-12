@@ -62,6 +62,7 @@ platform :ios do
 
     # Upload the build to TestFlight (but don't distribute it)
     upload_to_testflight(
+      changelog: ENV["JITSI_CHANGELOG"],
       distribute_external: true,
       reject_build_waiting_for_review: true,
       skip_submission: false,
