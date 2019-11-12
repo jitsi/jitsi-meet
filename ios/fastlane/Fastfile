@@ -61,7 +61,11 @@ platform :ios do
     )
 
     # Upload the build to TestFlight (but don't distribute it)
-    upload_to_testflight(skip_submission: true, skip_waiting_for_build_processing: true)
+    upload_to_testflight(
+      distribute_external: true,
+      reject_build_waiting_for_review: true,
+      skip_submission: false,
+      skip_waiting_for_build_processing: false)
 
     # Cleanup
     clean_build_artifacts
