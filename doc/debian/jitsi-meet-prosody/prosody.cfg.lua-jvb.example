@@ -1,5 +1,4 @@
--- Plugins path gets uncommented during jitsi-meet-tokens package install - that's where token plugin is located
---plugin_paths = { "/usr/share/jitsi-meet/prosody-plugins/" }
+plugin_paths = { "/usr/share/jitsi-meet/prosody-plugins/" }
 
 VirtualHost "jitmeet.example.com"
         -- enabled = false -- Remove this line to enable this host
