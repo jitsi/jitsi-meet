@@ -973,6 +973,15 @@ export default {
     },
 
     /**
+     * Simulates toolbar button click for presenter mute. Used by shortcuts and API.
+     * @param {boolean} [showUI] when set to false will not display any error
+     * dialogs in case of media permissions error.
+     */
+    togglePresenterMuted(showUI = true) {
+        this.mutePresenterVideo(!this.isLocalPresenterMuted(), showUI);
+    },
+
+    /**
      * Simulates toolbar button click for video mute. Used by shortcuts and API.
      * @param {boolean} [showUI] when set to false will not display any error
      * dialogs in case of media permissions error.
