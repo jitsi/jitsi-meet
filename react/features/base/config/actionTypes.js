@@ -34,3 +34,17 @@ export const LOAD_CONFIG_ERROR = 'LOAD_CONFIG_ERROR';
  * }
  */
 export const SET_CONFIG = 'SET_CONFIG';
+
+/**
+ * The redux action which updates the configuration represented by the feature
+ * base/config. The configuration is defined and consumed by the library
+ * lib-jitsi-meet but some of its properties are consumed by the application
+ * jitsi-meet as well. A merge operation is performed between the existing config
+ * and the passed object.
+ *
+ * {
+ *     type: _UPDATE_CONFIG,
+ *     config: Object
+ * }
+ */
+export const _UPDATE_CONFIG = '_UPDATE_CONFIG';

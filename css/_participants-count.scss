@@ -1,0 +1,26 @@
+.participants-count {
+    background: #fff;
+    border-radius: 4px;
+    color: #5e6d7a;
+    cursor: pointer;
+    display: inline-block;
+    font-size: 13px;
+    line-height: 20px;
+    margin-left: 16px;
+    padding: 4px 8px;
+    pointer-events: auto;
+
+    &-number {
+        margin-right: 8px;
+        vertical-align: middle;
+    }
+
+    &-icon {
+        background: url('../images/user-groups.svg');
+        background-repeat: no-repeat;
+        display: inline-block;
+        height: 16px;
+        width: 16px;
+        vertical-align: middle;
+    }
+}
