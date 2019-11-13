@@ -79,6 +79,7 @@ export default createStyleSheet({
      * Standard text input field style.
      */
     textInputField: {
+        color: ColorPalette.black,
         flex: 1,
         fontSize: TEXT_SIZE,
         textAlign: 'right'
