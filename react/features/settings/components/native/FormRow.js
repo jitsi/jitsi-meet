@@ -5,7 +5,7 @@ import { Text, View } from 'react-native';
 
 import { translate } from '../../../base/i18n';
 
-import styles, { ANDROID_UNDERLINE_COLOR } from './styles';
+import styles, { ANDROID_UNDERLINE_COLOR, PLACEHOLDER_COLOR } from './styles';
 
 /**
  * The type of the React {@code Component} props of {@link FormRow}
@@ -107,6 +107,7 @@ class FormRow extends Component<Props> {
             switch (field.type.displayName) {
             case 'TextInput':
                 return {
+                    placeholderTextColor: PLACEHOLDER_COLOR,
                     style: styles.textInputField,
                     underlineColorAndroid: ANDROID_UNDERLINE_COLOR
                 };
