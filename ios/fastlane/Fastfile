@@ -62,11 +62,19 @@ platform :ios do
 
     # Upload the build to TestFlight (but don't distribute it)
     upload_to_testflight(
+      beta_app_description: ENV["JITSI_CHANGELOG"],
+      beta_app_feedback_email: ENV["JITSI_REVIEW_EMAIL"],
+      beta_app_review_info: {
+        contact_email: ENV["JITSI_REVIEW_EMAIL"],
+        demo_account_name: ENV["JITSI_DEMO_ACCOUNT"],
+        demo_account_password: ENV["JITSI_DEMO_PASSWORD"],
+      },
       changelog: ENV["JITSI_CHANGELOG"],
+      demo_account_required: false,
       distribute_external: true,
-      reject_build_waiting_for_review: true,
-      skip_submission: false,
-      skip_waiting_for_build_processing: false)
+      reject_build_waiting_for_review: true
+      uses_non_exempt_encryption: false
+    )
 
     # Cleanup
     clean_build_artifacts
