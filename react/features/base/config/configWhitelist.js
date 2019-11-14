@@ -128,6 +128,7 @@ export default [
     'startVideoMuted',
     'startWithAudioMuted',
     'startWithVideoMuted',
+    'stereo',
     'subject',
     'testing',
     'useIPv6',
