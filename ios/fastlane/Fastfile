@@ -72,7 +72,7 @@ platform :ios do
       changelog: ENV["JITSI_CHANGELOG"],
       demo_account_required: false,
       distribute_external: true,
-      reject_build_waiting_for_review: true
+      reject_build_waiting_for_review: true,
       uses_non_exempt_encryption: false
     )
 
