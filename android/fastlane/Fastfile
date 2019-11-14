@@ -24,7 +24,7 @@ platform :android do
 
         # Upload built artifact to the Closed Beta track
         upload_to_play_store(
-            track: "Beta",
+            track: "beta",
             json_key: ENV["JITSI_JSON_KEY_FILE"],
             skip_upload_metadata: true,
             skip_upload_images: true,
