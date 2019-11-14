@@ -127,6 +127,7 @@ export default [
     'startScreenSharing',
     'startVideoMuted',
     'startWithVideoMuted',
+    'stereo',
     'subject',
     'testing',
     'useIPv6',
