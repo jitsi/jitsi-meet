@@ -93,6 +93,12 @@ class DeepLinkingMobilePage extends Component<Props> {
         const { NATIVE_APP_NAME, SHOW_DEEP_LINKING_IMAGE } = interfaceConfig;
         const downloadButtonClassName
             = `${_SNS}__button ${_SNS}__button_primary`;
+        const onOpenLinkProperties = _URLS[Platform.OS]
+            ? {}
+            : {
+                target: '_blank',
+                rel: 'noopener noreferrer'
+            };
 
         return (
             <div className = { _SNS }>
@@ -113,6 +119,7 @@ class DeepLinkingMobilePage extends Component<Props> {
                         { t(`${_TNS}.appNotInstalled`, { app: NATIVE_APP_NAME }) }
                     </p>
                     <a
+                        { ...onOpenLinkProperties }
                         href = { this._generateDownloadURL() }
                         onClick = { this._onDownloadApp }>
                         <button className = { downloadButtonClassName }>
@@ -120,6 +127,7 @@ class DeepLinkingMobilePage extends Component<Props> {
                         </button>
                     </a>
                     <a
+                        { ...onOpenLinkProperties }
                         className = { `${_SNS}__href` }
                         href = { generateDeepLinkingURL() }
                         onClick = { this._onOpenApp }>
