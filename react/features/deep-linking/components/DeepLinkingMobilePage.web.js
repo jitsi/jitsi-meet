@@ -93,9 +93,20 @@ class DeepLinkingMobilePage extends Component<Props> {
         const { NATIVE_APP_NAME, SHOW_DEEP_LINKING_IMAGE } = interfaceConfig;
         const downloadButtonClassName
             = `${_SNS}__button ${_SNS}__button_primary`;
+
+
         const onOpenLinkProperties = _URLS[Platform.OS]
-            ? {}
+            ? {
+                // When opening a link to the download page, we want to let the
+                // OS itself handle intercepting and opening the appropriate
+                // app store. This avoids potential issues with browsers, such
+                // as iOS Chrome, not opening the store properly.
+            }
             : {
+                // When falling back to another URL (Firebase) let the page be
+                // opened in a new window. This helps prevent the user getting
+                // trapped in an app-open-cycle where going back to the mobile
+                // browser re-triggers the app-open behavior.
                 target: '_blank',
                 rel: 'noopener noreferrer'
             };
