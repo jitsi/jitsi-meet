@@ -94,6 +94,23 @@ class DeepLinkingMobilePage extends Component<Props> {
         const downloadButtonClassName
             = `${_SNS}__button ${_SNS}__button_primary`;
 
+
+        const onOpenLinkProperties = _URLS[Platform.OS]
+            ? {
+                // When opening a link to the download page, we want to let the
+                // OS itself handle intercepting and opening the appropriate
+                // app store. This avoids potential issues with browsers, such
+                // as iOS Chrome, not opening the store properly.
+            }
+            : {
+                // When falling back to another URL (Firebase) let the page be
+                // opened in a new window. This helps prevent the user getting
+                // trapped in an app-open-cycle where going back to the mobile
+                // browser re-triggers the app-open behavior.
+                target: '_blank',
+                rel: 'noopener noreferrer'
+            };
+
         return (
             <div className = { _SNS }>
                 <div className = 'header'>
@@ -113,20 +130,18 @@ class DeepLinkingMobilePage extends Component<Props> {
                         { t(`${_TNS}.appNotInstalled`, { app: NATIVE_APP_NAME }) }
                     </p>
                     <a
+                        { ...onOpenLinkProperties }
                         href = { this._generateDownloadURL() }
-                        onClick = { this._onDownloadApp }
-                        rel = 'noopener noreferrer'
-                        target = '_blank'>
+                        onClick = { this._onDownloadApp }>
                         <button className = { downloadButtonClassName }>
                             { t(`${_TNS}.downloadApp`) }
                         </button>
                     </a>
                     <a
+                        { ...onOpenLinkProperties }
                         className = { `${_SNS}__href` }
                         href = { generateDeepLinkingURL() }
-                        onClick = { this._onOpenApp }
-                        rel = 'noopener noreferrer'
-                        target = '_blank'>
+                        onClick = { this._onOpenApp }>
                         {/* <button className = { `${_SNS}__button` }> */}
                         { t(`${_TNS}.openApp`) }
                         {/* </button> */}
