@@ -27,9 +27,17 @@ You can download Debian/Ubuntu binaries:
 You can download source archives (produced by ```make source-package```):
 * [source builds](https://download.jitsi.org/jitsi-meet/src/)
 
+### Mobile apps
+
 You can get our mobile versions from here:
+
 * [Android](https://play.google.com/store/apps/details?id=org.jitsi.meet)
 * [iOS](https://itunes.apple.com/us/app/jitsi-meet/id1165103905)
+
+You can also sign up for our open beta testing here:
+
+* [Android](https://play.google.com/apps/testing/org.jitsi.meet)
+* [iOS](https://testflight.apple.com/join/isy6ja7S)
 
 ## Development
 
