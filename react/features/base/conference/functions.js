@@ -11,6 +11,7 @@ import {
     participantLeft
 } from '../participants';
 import { toState } from '../redux';
+import { safeDecodeURIComponent } from '../util';
 
 import {
     AVATAR_ID_COMMAND,
@@ -163,7 +164,7 @@ export function getConferenceName(stateful: Function | Object): string {
         || subject
         || callDisplayName
         || (callee && callee.name)
-        || _.startCase(decodeURIComponent(room));
+        || _.startCase(safeDecodeURIComponent(room));
 }
 
 /**

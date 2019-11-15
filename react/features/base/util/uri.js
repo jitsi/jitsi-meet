@@ -374,6 +374,23 @@ function _standardURIToString(thiz: ?Object) {
 }
 
 /**
+ * Sometimes we receive strings that we don't know if already percent-encoded, or not, due to the
+ * various sources we get URLs or room names. This function encapsulates the decoding in a safe way.
+ *
+ * @param {string} text - The text to decode.
+ * @returns {string}
+ */
+export function safeDecodeURIComponent(text: string) {
+    try {
+        return decodeURIComponent(text);
+    } catch (e) {
+        // The text wasn't encoded.
+    }
+
+    return text;
+}
+
+/**
  * Attempts to return a {@code String} representation of a specific
  * {@code Object} which is supposed to represent a URL. Obviously, if a
  * {@code String} is specified, it is returned. If a {@code URL} is specified,
