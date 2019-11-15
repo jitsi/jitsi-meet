@@ -429,6 +429,8 @@ export class VideoContainer extends LargeContainer {
             return;
         }
 
+        this.positionRemoteStatusMessages();
+
         const [ width, height ] = this._getVideoSize(containerWidth, containerHeight);
 
         if (width === 0 || height === 0) {
@@ -456,8 +458,6 @@ export class VideoContainer extends LargeContainer {
         const top = (containerHeight / 2) - (this.avatarHeight / 4 * 3);
 
         this.$avatar.css('top', top);
-
-        this.positionRemoteStatusMessages();
 
         this.$wrapper.animate({
             width,
