@@ -15,6 +15,6 @@ export function createPresenterEffect(stream: MediaStream) {
             + 'supported!'));
     }
 
-    return new JitsiStreamPresenterEffect(stream);
+    return Promise.resolve(new JitsiStreamPresenterEffect(stream));
 }
 

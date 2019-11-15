@@ -82,6 +82,14 @@ export default class JitsiStreamPresenterEffect {
         this._ctx.drawImage(this._desktopElement, 0, 0, this._desktopWidth, this._desktopHeight);
         this._ctx.drawImage(this._videoElement, this._desktopWidth - this._videoWidth,
             this._desktopHeight - this._videoHeight, this._videoWidth, this._videoHeight);
+
+        // draw a border around the video element.
+        this._ctx.beginPath();
+        this._ctx.lineWidth = '2';
+        this._ctx.strokeStyle = '#0376DA';
+        this._ctx.rect(this._desktopWidth - this._videoWidth,
+            this._desktopHeight - this._videoHeight, this._videoWidth, this._videoHeight);
+        this._ctx.stroke();
     }
 
     /**

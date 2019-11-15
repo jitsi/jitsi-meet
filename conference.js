@@ -832,7 +832,7 @@ export default {
      * @param {boolean} [showUI] when set to false will not display any error
      * dialogs in case of media permissions error.
      */
-    mutePresenterVideo(mute, showUI = true) {
+    async mutePresenterVideo(mute, showUI = true) {
         if (!mute
                 && isUserInteractionRequiredForUnmute(APP.store.getState())) {
             logger.error('Unmuting video requires user interaction');
@@ -845,7 +845,7 @@ export default {
         };
 
         if (!mute && this.localPresenterVideo) {
-            const presenterEffect = createPresenterEffect(
+            const presenterEffect = await createPresenterEffect(
                 this.localPresenterVideo.stream);
 
             this.localVideo.setEffect(presenterEffect)
@@ -903,6 +903,7 @@ export default {
         } else {
             this.localVideo.setEffect(undefined)
             .then(() => {
+                APP.store.dispatch(setCropEnabled(false));
                 APP.store.dispatch(setPresenterMuted(mute));
                 APP.API.notifyPresenterMutedStatusChanged(mute);
                 APP.store.dispatch(presenterTrackRemoved(this.localPresenterVideo));
