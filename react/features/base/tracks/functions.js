@@ -11,6 +11,47 @@ import {
 import logger from './logger';
 
 /**
+ * Creates a local video track for presenter. The constraints are computed based
+ * on the height of the desktop that is being shared.
+ *
+ * @param {Object} options - The options with which the local presenter track
+ * is to be created.
+ * @param {string|null} [options.cameraDeviceId] - Camera device id or
+ * {@code undefined} to use app's settings.
+ * @param {number} desktopHeight - The height of the desktop that is being
+ * shared.
+ * @returns {Promise<JitsiLocalTrack>}
+ */
+export async function createLocalPresenterTrack(options, desktopHeight) {
+    const { cameraDeviceId } = options;
+
+    // compute the constraints of the camera track based on the resolution
+    // of the desktop screen that is being shared.
+    const cameraHeights = [ 180, 270, 360, 540, 720 ];
+    const proportion = 4;
+    const result = cameraHeights.find(
+            height => (desktopHeight / proportion) < height);
+    const constraints = {
+        video: {
+            aspectRatio: 4 / 3,
+            height: {
+                exact: result
+            }
+        }
+    };
+    const [ videoTrack ] = await JitsiMeetJS.createLocalTracks(
+        {
+            cameraDeviceId,
+            constraints,
+            devices: [ 'video' ]
+        });
+
+    videoTrack.type = MEDIA_TYPE.PRESENTER;
+
+    return videoTrack;
+}
+
+/**
  * Create local tracks of specific types.
  *
  * @param {Object} options - The options with which the local tracks are to be
@@ -53,11 +94,15 @@ export function createLocalTracksF(
 
     const state = store.getState();
     const {
-        constraints,
         desktopSharingFrameRate,
         firefox_fake_device, // eslint-disable-line camelcase
         resolution
     } = state['features/base/config'];
+    const constraints = options.constraints
+        ?? state['features/base/config'].constraints;
+
+    // Do not load blur effect if option for ignoring effects is present.
+    // This is needed when we are creating a video track for presenter mode.
     const loadEffectsPromise = state['features/blur'].blurEnabled
         ? getBlurEffect()
             .then(blurEffect => [ blurEffect ])
@@ -158,6 +203,18 @@ export function getLocalVideoTrack(tracks) {
 }
 
 /**
+ * Returns the media type of the local video, presenter or video.
+ *
+ * @param {Track[]} tracks - List of all tracks.
+ * @returns {MEDIA_TYPE}
+ */
+export function getLocalVideoType(tracks) {
+    const presenterTrack = getLocalTrack(tracks, MEDIA_TYPE.PRESENTER);
+
+    return presenterTrack ? MEDIA_TYPE.PRESENTER : MEDIA_TYPE.VIDEO;
+}
+
+/**
  * Returns track of specified media type for specified participant id.
  *
  * @param {Track[]} tracks - List of all tracks.
@@ -195,6 +252,29 @@ export function getTrackByJitsiTrack(tracks, jitsiTrack) {
  */
 export function getTracksByMediaType(tracks, mediaType) {
     return tracks.filter(t => t.mediaType === mediaType);
+}
+
+/**
+ * Checks if the local video track in the given set of tracks is muted.
+ *
+ * @param {Track[]} tracks - List of all tracks.
+ * @returns {Track[]}
+ */
+export function isLocalVideoTrackMuted(tracks) {
+    const presenterTrack = getLocalTrack(tracks, MEDIA_TYPE.PRESENTER);
+    const videoTrack = getLocalTrack(tracks, MEDIA_TYPE.VIDEO);
+
+    // Make sure we check the mute status of only camera tracks, i.e.,
+    // presenter track when it exists, camera track when the presenter
+    // track doesn't exist.
+    if (presenterTrack) {
+        return isLocalTrackMuted(tracks, MEDIA_TYPE.PRESENTER);
+    } else if (videoTrack) {
+        return videoTrack.videoType === 'camera'
+            ? isLocalTrackMuted(tracks, MEDIA_TYPE.VIDEO) : true;
+    }
+
+    return true;
 }
 
 /**

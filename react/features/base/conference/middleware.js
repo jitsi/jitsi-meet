@@ -46,6 +46,7 @@ import {
     getCurrentConference
 } from './functions';
 import logger from './logger';
+import { MEDIA_TYPE } from '../media';
 
 declare var APP: Object;
 
@@ -589,7 +590,10 @@ function _syncReceiveVideoQuality({ getState }, next, action) {
 function _trackAddedOrRemoved(store, next, action) {
     const track = action.track;
 
-    if (track && track.local) {
+    // TODO All track swapping should happen here instead of conference.js.
+    // Since we swap the tracks for the web client in conference.js, ignore
+    // presenter tracks here and do not add/remove them to/from the conference.
+    if (track && track.local && track.mediaType !== MEDIA_TYPE.PRESENTER) {
         return (
             _syncConferenceLocalTracksWithState(store, action)
                 .then(() => next(action)));
