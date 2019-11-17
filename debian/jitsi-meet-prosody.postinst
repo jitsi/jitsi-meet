@@ -93,7 +93,7 @@ case "$1" in
             PROSODY_CONFIG_PRESENT="false"
             mkdir -p /etc/prosody/conf.avail/
             mkdir -p /etc/prosody/conf.d/
-            cp /usr/share/doc/jitsi-meet-prosody/prosody.cfg.lua-jvb.example $PROSODY_HOST_CONFIG
+            cp /usr/share/jitsi-meet-prosody/prosody.cfg.lua-jvb.example $PROSODY_HOST_CONFIG
             sed -i "s/jitmeet.example.com/$JVB_HOSTNAME/g" $PROSODY_HOST_CONFIG
             sed -i "s/jitmeetSecret/$JVB_SECRET/g" $PROSODY_HOST_CONFIG
             sed -i "s/focusSecret/$JICOFO_SECRET/g" $PROSODY_HOST_CONFIG
