@@ -1,5 +1,3 @@
-interface_config.js		/usr/share/jitsi-meet/
-logging_config.js		/usr/share/jitsi-meet/
 *.json					/usr/share/jitsi-meet/
 *.html					/usr/share/jitsi-meet/
 *.ico					/usr/share/jitsi-meet/

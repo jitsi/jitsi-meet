@@ -35,6 +35,14 @@
   <Location /config.js>
     Require all granted
   </Location>
+  Alias "/interface_config.js" "/etc/jitsi/meet/interface_config.js"
+  <Location /interface_config.js>
+    Require all granted
+  </Location>
+  Alias "/logging_config.js" "/etc/jitsi/meet/logging_config.js"
+  <Location /logging_config.js>
+    Require all granted
+  </Location>
 
   Alias "/external_api.js" "/usr/share/jitsi-meet/libs/external_api.min.js"
   <Location /external_api.js>
