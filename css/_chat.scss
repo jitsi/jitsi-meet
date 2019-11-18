@@ -226,6 +226,8 @@
 
     .messagecontent {
         margin: 5px 10px;
+        max-width: 100%;
+        overflow: hidden;
     }
 }
 
