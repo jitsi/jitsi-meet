@@ -3,6 +3,7 @@
 import React, { Component } from 'react';
 
 import { getConferenceName } from '../../../base/conference/functions';
+import { getParticipantCount } from '../../../base/participants/functions';
 import { connect } from '../../../base/redux';
 import { isToolboxVisible } from '../../../toolbox';
 
@@ -12,6 +13,11 @@ import ParticipantsCount from './ParticipantsCount';
  * The type of the React {@code Component} props of {@link Subject}.
  */
 type Props = {
+
+    /**
+     * Whether then participant count should be shown or not.
+     */
+    _showParticipantCount: boolean,
 
     /**
      * The subject or the of the conference.
@@ -39,12 +45,12 @@ class Subject extends Component<Props> {
      * @returns {ReactElement}
      */
     render() {
-        const { _subject, _visible } = this.props;
+        const { _showParticipantCount, _subject, _visible } = this.props;
 
         return (
             <div className = { `subject ${_visible ? 'visible' : ''}` }>
                 <span className = 'subject-text'>{ _subject }</span>
-                <ParticipantsCount />
+                { _showParticipantCount && <ParticipantsCount /> }
             </div>
         );
     }
@@ -62,8 +68,10 @@ class Subject extends Component<Props> {
  * }}
  */
 function _mapStateToProps(state) {
+    const participantCount = getParticipantCount(state);
 
     return {
+        _showParticipantCount: participantCount > 2,
         _subject: getConferenceName(state),
         _visible: isToolboxVisible(state)
     };
