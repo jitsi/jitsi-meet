@@ -20,7 +20,7 @@ export function notifyKickedOut(participant: Object, _: ?Function) { // eslint-d
     return (dispatch: Dispatch<any>, getState: Function) => {
         const args = {
             participantDisplayName:
-                getParticipantDisplayName(getState, participant.getDisplayName())
+                getParticipantDisplayName(getState, participant.getId())
         };
 
         dispatch(showNotification({
