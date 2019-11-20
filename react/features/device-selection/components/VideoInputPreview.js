@@ -2,7 +2,7 @@
 
 import React, { Component } from 'react';
 
-import { Video } from '../../base/media';
+import Video from '../../base/media/components/Video';
 
 const VIDEO_ERROR_CLASS = 'video-preview-has-error';
 
@@ -15,7 +15,7 @@ type Props = {
      * An error message to display instead of a preview. Displaying an error
      * will take priority over displaying a video preview.
      */
-    error: string,
+    error: ?string,
 
     /**
      * The JitsiLocalTrack to display.

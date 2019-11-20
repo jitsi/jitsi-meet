@@ -1,0 +1,66 @@
+.filmstrip-toolbox,
+.always-on-top-toolbox {
+    background-color: $newToolbarBackgroundColor;
+    border-radius: 3px;
+    display: flex;
+    z-index: $toolbarZ;
+
+    .toolbox-icon {
+        cursor: pointer;
+        padding: 7px;
+
+        &.toggled {
+            background: $AOTToolbarButtonToggleColor;
+        }
+
+        &.disabled {
+            cursor: initial;
+        }
+    }
+}
+
+.always-on-top-toolbox {
+    flex-direction: row;
+    left: 50%;
+    position: absolute;
+    top: 10px;
+    transform: translateX(-50%);
+
+    .toolbox-button {
+        &:first-child {
+            .toolbox-icon {
+                border-top-left-radius: 3px;
+                border-bottom-left-radius: 3px;
+            }
+        }
+
+        &:nth-child(2) {
+            svg {
+                fill: $hangupColor;
+            }
+        }
+
+        &:last-child {
+            .toolbox-icon {
+                border-top-right-radius: 3px;
+                border-bottom-right-radius: 3px;
+            }
+        }
+    }
+}
+
+.filmstrip-toolbox {
+    flex-direction: column;
+
+    .toolbox-button {
+        &:nth-child(1) {
+            svg {
+                fill: $hangupColor;
+            }
+        }
+
+        .toolbox-icon {
+            border-radius: 3px;
+        }
+    }
+}

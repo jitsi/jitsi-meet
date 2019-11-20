@@ -1,6 +1,6 @@
 // @flow
 
-import { BoxModel, ColorPalette, createStyleSheet } from '../../../styles';
+import { BoxModel, ColorPalette } from '../../../styles';
 
 const OVERLAY_FONT_COLOR = 'rgba(255, 255, 255, 0.6)';
 const SECONDARY_ACTION_BUTTON_SIZE = 30;
@@ -212,7 +212,7 @@ export const TINTED_VIEW_DEFAULT = {
  * The styles of the generic React {@code Component}s implemented by the feature
  * base/react.
  */
-export default createStyleSheet({
+export default {
     ...PAGED_LIST_STYLES,
     ...SECTION_LIST_STYLES
-});
+};

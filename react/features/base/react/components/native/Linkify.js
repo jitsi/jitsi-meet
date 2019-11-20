@@ -45,7 +45,7 @@ export default class Linkify extends Component<Props> {
         return (
             <ReactLinkify
                 componentDecorator = { this._componentDecorator }>
-                <Text>
+                <Text selectable = { true }>
                     { this.props.children }
                 </Text>
             </ReactLinkify>

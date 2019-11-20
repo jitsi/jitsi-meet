@@ -26,7 +26,9 @@
 */
 __attribute__((constructor))
 static void initializeLogger() {
-    [DDLog addLogger:[DDOSLogger sharedInstance]];
+    NSString *mainBundleId = [NSBundle mainBundle].bundleIdentifier;
+    DDOSLogger *osLogger = [[DDOSLogger alloc] initWithSubsystem:mainBundleId category:@"JitsiMeetSDK"];
+    [DDLog addLogger:osLogger];
 }
 
 + (void)addHandler:(JitsiMeetBaseLogHandler *)handler {

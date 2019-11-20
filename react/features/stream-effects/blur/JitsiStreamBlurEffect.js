@@ -100,7 +100,7 @@ export default class JitsiStreamBlurEffect {
         });
         this._maskFrameTimerWorker.postMessage({
             id: SET_INTERVAL,
-            timeMs: 200
+            timeMs: 50
         });
 
         return this._outputCanvasElement.captureStream(this._frameRate);
@@ -136,6 +136,11 @@ export default class JitsiStreamBlurEffect {
                 7, // Constant for background blur, integer values between 0-20
                 7 // Constant for edge blur, integer values between 0-20
             );
+
+            // Make sure we clear this buffer before feeding the segmentation data
+            // to drawBokehEffect for creating the blur. This fixes the memory leak
+            // that started happening in WebGL in Chrome 77 and up.
+            this._segmentationData = null;
         }
     }
 

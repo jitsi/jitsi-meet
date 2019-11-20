@@ -2,6 +2,7 @@
 
 import { toggleAudioOnly } from '../../../base/audio-only';
 import { translate } from '../../../base/i18n';
+import { IconAudioOnly, IconAudioOnlyOff } from '../../../base/icons';
 import { connect } from '../../../base/redux';
 import { AbstractButton } from '../../../base/toolbox';
 import type { AbstractButtonProps } from '../../../base/toolbox';
@@ -27,9 +28,9 @@ type Props = AbstractButtonProps & {
  */
 class AudioOnlyButton extends AbstractButton<Props, *> {
     accessibilityLabel = 'toolbar.accessibilityLabel.audioOnly';
-    iconName = 'visibility';
+    icon = IconAudioOnly;
     label = 'toolbar.audioOnlyOn';
-    toggledIconName = 'visibility-off';
+    toggledIcon = IconAudioOnlyOff;
     toggledLabel = 'toolbar.audioOnlyOff';
 
     /**

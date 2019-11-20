@@ -48,7 +48,7 @@ export type Props = {
  *
  * @abstract
  */
-export class AbstractSettingsView<P: Props> extends Component<P> {
+export class AbstractSettingsView<P: Props, S: *> extends Component<P, S> {
 
     /**
      * Initializes a new {@code AbstractSettingsView} instance.

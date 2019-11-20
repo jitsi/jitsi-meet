@@ -46,13 +46,16 @@
         "today": "Today"
     },
     "chat": {
-        "error": "Error: your message \"{{originalText}}\" was not sent. Reason: {{error}}",
+        "error": "Error: your message was not sent. Reason: {{error}}",
         "messagebox": "Type a message",
+        "messageTo": "Private message to {{recipient}}",
         "nickname": {
             "popover": "Choose a nickname",
             "title": "Enter a nickname to use chat"
         },
-        "title": "Chat"
+        "privateNotice": "Private message to {{recipient}}",
+        "title": "Chat",
+        "you": "you"
     },
     "connectingOverlay": {
         "joiningRoom": "Connecting you to your meeting..."
@@ -235,6 +238,10 @@
         "screenSharingFirefoxPermissionDeniedError": "Something went wrong while we were trying to share your screen. Please make sure that you have given us permission to do so. ",
         "screenSharingFirefoxPermissionDeniedTitle": "Oops! We weren’t able to start screen sharing!",
         "screenSharingPermissionDeniedError": "Oops! Something went wrong with your screen sharing extension permissions. Please reload and try again.",
+        "sendPrivateMessage": "You recently received a private message. Did you intend to reply to that privately, or you want to send your message to the group?",
+        "sendPrivateMessageCancel": "Send to the group",
+        "sendPrivateMessageOk": "Send privately",
+        "sendPrivateMessageTitle": "Send privately?",
         "serviceUnavailable": "Service unavailable",
         "sessTerminated": "Call terminated",
         "Share": "Share",
@@ -267,6 +274,9 @@
     },
     "dialOut": {
         "statusMessage": "is now {{status}}"
+    },
+    "documentSharing" : {
+        "title": "Shared Document"
     },
     "feedback": {
         "average": "Average",
@@ -362,7 +372,9 @@
         "getStreamKeyManually": "We weren’t able to fetch any live streams. Try getting your live stream key from YouTube.",
         "invalidStreamKey": "Live stream key may be incorrect.",
         "off": "Live Streaming stopped",
+        "offBy": "{{name}} stopped the live streaming",
         "on": "Live Streaming",
+        "onBy": "{{name}} started the live streaming",
         "pending": "Starting Live Stream...",
         "serviceName": "Live Streaming service",
         "signedInAs": "You are currently signed in as:",
@@ -475,7 +487,9 @@
         "live": "LIVE",
         "loggedIn": "Logged in as {{userName}}",
         "off": "Recording stopped",
+        "offBy": "{{name}} stopped the recording",
         "on": "Recording",
+        "onBy": "{{name}} started the recording",
         "pending": "Preparing to record the meeting...",
         "rec": "REC",
         "serviceDescription": "Your recording will be saved by the recording service",
@@ -512,16 +526,20 @@
         "title": "Settings"
     },
     "settingsView": {
+        "advanced": "Advanced",
         "alertOk": "OK",
         "alertTitle": "Warning",
         "alertURLText": "The entered server URL is invalid",
         "buildInfoSection": "Build Information",
         "conferenceSection": "Conference",
+        "disableCallIntegration": "Disable native call integration",
+        "disableP2P": "Disable Peer-To-Peer mode",
         "displayName": "Display name",
         "email": "Email",
         "header": "Settings",
         "profileSection": "Profile",
         "serverURL": "Server URL",
+        "showAdvanced": "Show advanced settings",
         "startWithAudioMuted": "Start with audio muted",
         "startWithVideoMuted": "Start with video muted",
         "version": "Version"
@@ -556,9 +574,11 @@
             "cc": "Toggle subtitles",
             "chat": "Toggle chat window",
             "document": "Toggle shared document",
+            "download": "Download our apps",
             "feedback": "Leave feedback",
             "fullScreen": "Toggle full screen",
             "hangup": "Leave the call",
+            "help": "Help",
             "invite": "Invite people",
             "kick": "Kick participant",
             "localRecording": "Toggle local recording controls",
@@ -567,6 +587,7 @@
             "moreActionsMenu": "More actions menu",
             "mute": "Toggle mute audio",
             "pip": "Toggle Picture-in-Picture mode",
+            "privateMessage": "Send private message",
             "profile": "Edit your profile",
             "raiseHand": "Toggle raise hand",
             "recording": "Toggle recording",
@@ -593,12 +614,14 @@
         "closeChat": "Close chat",
         "documentClose": "Close shared document",
         "documentOpen": "Open shared document",
+        "download": "Download our apps",
         "enterFullScreen": "View full screen",
         "enterTileView": "Enter tile view",
         "exitFullScreen": "Exit full screen",
         "exitTileView": "Exit tile view",
         "feedback": "Leave feedback",
         "hangup": "Leave",
+        "help": "Help",
         "invite": "Invite people",
         "login": "Login",
         "logout": "Logout",
@@ -607,6 +630,7 @@
         "mute": "Mute / Unmute",
         "openChat": "Open chat",
         "pip": "Enter Picture-in-Picture mode",
+        "privateMessage": "Send private message",
         "profile": "Edit your profile",
         "raiseHand": "Raise / Lower your hand",
         "raiseYourHand": "Raise your hand",
@@ -707,7 +731,9 @@
         "connectCalendarButton": "Connect your calendar",
         "connectCalendarText": "Connect your calendar to view all your meetings in {{app}}. Plus, add {{provider}} meetings to your calendar and start them with one click.",
         "enterRoomTitle": "Start a new meeting",
+        "roomNameAllowedChars": "Meeting name should not contain any of these characters: ?, &, :, ', \", %, #.",
         "go": "GO",
+        "goSmall": "GO",
         "join": "JOIN",
         "info": "Info",
         "privacy": "Privacy",

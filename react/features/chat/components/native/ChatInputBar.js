@@ -3,7 +3,7 @@
 import React, { Component } from 'react';
 import { TextInput, TouchableOpacity, View } from 'react-native';
 
-import { Icon } from '../../../base/font-icons';
+import { Icon, IconChatSend } from '../../../base/icons';
 import { Platform } from '../../../base/react';
 
 import styles from './styles';
@@ -82,7 +82,7 @@ export default class ChatInputBar extends Component<Props, State> {
                 {
                     this.state.showSend && <TouchableOpacity onPress = { this._onSubmit }>
                         <Icon
-                            name = 'send'
+                            src = { IconChatSend }
                             style = { styles.sendButtonIcon } />
                     </TouchableOpacity>
                 }

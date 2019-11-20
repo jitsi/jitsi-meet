@@ -8,6 +8,7 @@ export { default as MuteButton } from './MuteButton';
 export {
     default as MuteRemoteParticipantDialog
 } from './MuteRemoteParticipantDialog';
+export { default as PrivateMessageMenuButton } from './PrivateMessageMenuButton';
 export {
     REMOTE_CONTROL_MENU_STATES,
     default as RemoteControlButton

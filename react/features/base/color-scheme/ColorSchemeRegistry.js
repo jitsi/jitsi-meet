@@ -153,6 +153,8 @@ class ColorSchemeRegistry {
         const colorScheme = toState(stateful)['features/base/color-scheme'];
 
         return {
+            ...defaultScheme._defaultTheme,
+            ...colorScheme._defaultTheme,
             ...defaultScheme[componentName],
             ...colorScheme[componentName]
         }[colorDefinition];

@@ -72,6 +72,46 @@ public class JitsiMeetConferenceOptions implements Parcelable {
      */
     private JitsiMeetUserInfo userInfo;
 
+    public URL getServerURL() {
+        return serverURL;
+    }
+
+    public String getRoom() {
+        return room;
+    }
+
+    public String getSubject() {
+        return subject;
+    }
+
+    public String getToken() {
+        return token;
+    }
+
+    public Bundle getColorScheme() {
+        return colorScheme;
+    }
+
+    public Bundle getFeatureFlags() {
+        return featureFlags;
+    }
+
+    public boolean getAudioMuted() {
+        return audioMuted;
+    }
+
+    public boolean getAudioOnly() {
+        return audioOnly;
+    }
+
+    public boolean getVideoMuted() {
+        return videoMuted;
+    }
+
+    public JitsiMeetUserInfo getUserInfo() {
+        return userInfo;
+    }
+
     /**
      * Class used to build the immutable {@link JitsiMeetConferenceOptions} object.
      */
@@ -309,7 +349,7 @@ public class JitsiMeetConferenceOptions implements Parcelable {
             urlProps.putString("jwt", token);
         }
 
-        if (token == null && userInfo != null) {
+        if (userInfo != null) {
             props.putBundle("userInfo", userInfo.asBundle());
         }
 

@@ -4,6 +4,8 @@ import {
 } from '../../../base/styles';
 
 export const ANDROID_UNDERLINE_COLOR = 'transparent';
+export const PLACEHOLDER_COLOR = ColorPalette.lightGrey;
+
 const TEXT_SIZE = 17;
 
 /**
@@ -60,7 +62,6 @@ export default createStyleSheet({
      */
     formSectionTitle: {
         backgroundColor: 'rgba(0, 0, 0, 0.1)',
-        marginTop: 5,
         padding: 5
     },
 
@@ -80,6 +81,7 @@ export default createStyleSheet({
      * Standard text input field style.
      */
     textInputField: {
+        color: ColorPalette.black,
         flex: 1,
         fontSize: TEXT_SIZE,
         textAlign: 'right'

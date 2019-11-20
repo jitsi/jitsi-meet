@@ -3,7 +3,7 @@ import {
     getLocalizedDurationFormatter
 } from '../base/i18n';
 import { NavigateSectionList } from '../base/react';
-import { parseURIString } from '../base/util';
+import { parseURIString, safeDecodeURIComponent } from '../base/util';
 
 /**
  * Creates a displayable list item of a recent list entry.
@@ -31,7 +31,7 @@ function toDisplayableItem(item, defaultServerURL, t) {
             _toDurationString(item.duration),
             serverName
         ],
-        title: decodeURIComponent(location.room),
+        title: safeDecodeURIComponent(location.room),
         url: item.conference
     };
 }

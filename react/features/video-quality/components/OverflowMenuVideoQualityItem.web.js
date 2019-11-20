@@ -4,6 +4,13 @@ import React, { Component } from 'react';
 
 import { VIDEO_QUALITY_LEVELS } from '../../base/conference';
 import { translate } from '../../base/i18n';
+import {
+    Icon,
+    IconVideoQualityAudioOnly,
+    IconVideoQualityHD,
+    IconVideoQualityLD,
+    IconVideoQualitySD
+} from '../../base/icons';
 import { connect } from '../../base/redux';
 
 /**
@@ -13,9 +20,9 @@ import { connect } from '../../base/redux';
  * @type {Object}
  */
 const VIDEO_QUALITY_TO_ICON = {
-    [VIDEO_QUALITY_LEVELS.HIGH]: 'icon-HD',
-    [VIDEO_QUALITY_LEVELS.STANDARD]: 'icon-SD',
-    [VIDEO_QUALITY_LEVELS.LOW]: 'icon-LD'
+    [VIDEO_QUALITY_LEVELS.HIGH]: IconVideoQualityHD,
+    [VIDEO_QUALITY_LEVELS.STANDARD]: IconVideoQualitySD,
+    [VIDEO_QUALITY_LEVELS.LOW]: IconVideoQualityLD
 };
 
 /**
@@ -63,7 +70,7 @@ class OverflowMenuVideoQualityItem extends Component<Props> {
     render() {
         const { _audioOnly, _receiverVideoQuality } = this.props;
         const icon = _audioOnly || !_receiverVideoQuality
-            ? 'icon-AUD'
+            ? IconVideoQualityAudioOnly
             : VIDEO_QUALITY_TO_ICON[_receiverVideoQuality];
 
         return (
@@ -73,7 +80,7 @@ class OverflowMenuVideoQualityItem extends Component<Props> {
                 className = 'overflow-menu-item'
                 onClick = { this.props.onClick }>
                 <span className = 'overflow-menu-item-icon'>
-                    <i className = { icon } />
+                    <Icon src = { icon } />
                 </span>
                 <span className = 'profile-text'>
                     { this.props.t('toolbar.callQuality') }

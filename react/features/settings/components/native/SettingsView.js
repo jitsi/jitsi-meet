@@ -32,12 +32,20 @@ type Props = AbstractProps & {
     _headerStyles: Object
 }
 
+type State = {
+
+    /**
+     * Whether to show advanced settings or not.
+     */
+    showAdvanced: boolean
+}
+
 /**
  * The native container rendering the app settings page.
  *
  * @extends AbstractSettingsView
  */
-class SettingsView extends AbstractSettingsView<Props> {
+class SettingsView extends AbstractSettingsView<Props, State> {
     _urlField: Object;
 
     /**
@@ -48,9 +56,16 @@ class SettingsView extends AbstractSettingsView<Props> {
     constructor(props) {
         super(props);
 
+        this.state = {
+            showAdvanced: false
+        };
+
         // Bind event handlers so they are only bound once per instance.
         this._onBlurServerURL = this._onBlurServerURL.bind(this);
+        this._onDisableCallIntegration = this._onDisableCallIntegration.bind(this);
+        this._onDisableP2P = this._onDisableP2P.bind(this);
         this._onRequestClose = this._onRequestClose.bind(this);
+        this._onShowAdvanced = this._onShowAdvanced.bind(this);
         this._setURLFieldReference = this._setURLFieldReference.bind(this);
         this._showURLAlert = this._showURLAlert.bind(this);
     }
@@ -94,6 +109,38 @@ class SettingsView extends AbstractSettingsView<Props> {
 
     _onChangeServerURL: (string) => void;
 
+    _onDisableCallIntegration: (boolean) => void;
+
+    /**
+     * Handles the disable call integration change event.
+     *
+     * @param {boolean} newValue - The new value
+     * option.
+     * @private
+     * @returns {void}
+     */
+    _onDisableCallIntegration(newValue) {
+        this._updateSettings({
+            disableCallIntegration: newValue
+        });
+    }
+
+    _onDisableP2P: (boolean) => void;
+
+    /**
+     * Handles the disable P2P change event.
+     *
+     * @param {boolean} newValue - The new value
+     * option.
+     * @private
+     * @returns {void}
+     */
+    _onDisableP2P(newValue) {
+        this._updateSettings({
+            disableP2P: newValue
+        });
+    }
+
     _onRequestClose: () => void;
 
     /**
@@ -103,7 +150,19 @@ class SettingsView extends AbstractSettingsView<Props> {
      * @returns {void}
      */
     _onRequestClose() {
+        this.setState({ showAdvanced: false });
         this._processServerURL(true /* hideOnSuccess */);
+    }
+
+    _onShowAdvanced: () => void;
+
+    /**
+     * Handles the advanced settings button.
+     *
+     * @returns {void}
+     */
+    _onShowAdvanced() {
+        this.setState({ showAdvanced: !this.state.showAdvanced });
     }
 
     _onStartAudioMutedChange: (boolean) => void;
@@ -131,6 +190,48 @@ class SettingsView extends AbstractSettingsView<Props> {
                 this.props.dispatch(setSettingsViewVisible(false));
             }
         }
+    }
+
+    /**
+     * Renders the advanced settings options.
+     *
+     * @private
+     * @returns {React$Element}
+     */
+    _renderAdvancedSettings() {
+        const { _settings } = this.props;
+        const { showAdvanced } = this.state;
+
+        if (!showAdvanced) {
+            return (
+                <FormRow
+                    fieldSeparator = { true }
+                    label = 'settingsView.showAdvanced'>
+                    <Switch
+                        onValueChange = { this._onShowAdvanced }
+                        value = { showAdvanced } />
+                </FormRow>
+            );
+        }
+
+        return (
+            <>
+                <FormRow
+                    fieldSeparator = { true }
+                    label = 'settingsView.disableCallIntegration'>
+                    <Switch
+                        onValueChange = { this._onDisableCallIntegration }
+                        value = { _settings.disableCallIntegration } />
+                </FormRow>
+                <FormRow
+                    fieldSeparator = { true }
+                    label = 'settingsView.disableP2P'>
+                    <Switch
+                        onValueChange = { this._onDisableP2P }
+                        value = { _settings.disableP2P } />
+                </FormRow>
+            </>
+        );
     }
 
     /**
@@ -193,12 +294,14 @@ class SettingsView extends AbstractSettingsView<Props> {
                     <FormSectionHeader
                         label = 'settingsView.buildInfoSection' />
                     <FormRow
-                        fieldSeparator = { true }
                         label = 'settingsView.version'>
                         <Text>
                             { `${AppInfo.version} build ${AppInfo.buildNumber}` }
                         </Text>
                     </FormRow>
+                    <FormSectionHeader
+                        label = 'settingsView.advanced' />
+                    { this._renderAdvancedSettings() }
                 </ScrollView>
             </SafeAreaView>
         );
@@ -252,6 +355,8 @@ class SettingsView extends AbstractSettingsView<Props> {
             ]
         );
     }
+
+    _updateSettings: (Object) => void;
 }
 
 /**

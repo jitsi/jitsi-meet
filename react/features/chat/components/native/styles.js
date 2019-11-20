@@ -1,6 +1,9 @@
 // @flow
 
+import { ColorSchemeRegistry, schemeColor } from '../../../base/color-scheme';
 import { BoxModel, ColorPalette } from '../../../base/styles';
+
+const BUBBLE_RADIUS = 8;
 
 /**
  * The styles of the feature chat.
@@ -20,14 +23,6 @@ export default {
         width: 32
     },
 
-    /**
-     * Background of the chat screen.
-     */
-    backdrop: {
-        backgroundColor: ColorPalette.white,
-        flex: 1
-    },
-
     chatContainer: {
         alignItems: 'stretch',
         flex: 1,
@@ -45,14 +40,6 @@ export default {
         alignItems: 'flex-start',
         flex: 1,
         flexDirection: 'column'
-    },
-
-    /**
-     * The text node for the display name.
-     */
-    displayName: {
-        color: 'rgb(118, 136, 152)',
-        fontSize: 13
     },
 
     /**
@@ -76,16 +63,14 @@ export default {
         height: 48
     },
 
-    messageContainer: {
-        flex: 1
+    messageBubble: {
+        alignItems: 'center',
+        borderRadius: BUBBLE_RADIUS,
+        flexDirection: 'row'
     },
 
-    /**
-     * The message text itself.
-     */
-    messageText: {
-        color: 'rgb(28, 32, 37)',
-        fontSize: 15
+    messageContainer: {
+        flex: 1
     },
 
     /**
@@ -106,13 +91,9 @@ export default {
         alignItems: 'flex-end'
     },
 
-    /**
-     * Style modifier for the {@code textWrapper} for own messages.
-     */
-    ownTextWrapper: {
-        backgroundColor: 'rgb(210, 231, 249)',
-        borderTopLeftRadius: 8,
-        borderTopRightRadius: 0
+    replyWrapper: {
+        alignItems: 'center',
+        flexDirection: 'row'
     },
 
     sendButtonIcon: {
@@ -123,7 +104,7 @@ export default {
     /**
      * Style modifier for system (error) messages.
      */
-    systemTextWrapper: {
+    systemMessageBubble: {
         backgroundColor: 'rgb(247, 215, 215)'
     },
 
@@ -132,9 +113,6 @@ export default {
      */
     textWrapper: {
         alignItems: 'flex-start',
-        backgroundColor: 'rgb(240, 243, 247)',
-        borderRadius: 8,
-        borderTopLeftRadius: 0,
         flexDirection: 'column',
         padding: 9
     },
@@ -147,3 +125,73 @@ export default {
         fontSize: 13
     }
 };
+
+ColorSchemeRegistry.register('Chat', {
+    /**
+     * Background of the chat screen.
+     */
+    backdrop: {
+        backgroundColor: schemeColor('background'),
+        flex: 1
+    },
+
+    /**
+     * The text node for the display name.
+     */
+    displayName: {
+        color: schemeColor('displayName'),
+        fontSize: 13
+    },
+
+    localMessageBubble: {
+        backgroundColor: schemeColor('localMsgBackground'),
+        borderTopRightRadius: 0
+    },
+
+    messageRecipientCancelIcon: {
+        color: schemeColor('icon'),
+        fontSize: 18
+    },
+
+    messageRecipientContainer: {
+        alignItems: 'center',
+        backgroundColor: schemeColor('privateMsgBackground'),
+        flexDirection: 'row',
+        padding: BoxModel.padding
+    },
+
+    messageRecipientText: {
+        color: schemeColor('text'),
+        flex: 1
+    },
+
+    privateNotice: {
+        color: schemeColor('privateMsgNotice'),
+        fontSize: 11,
+        marginTop: 6
+    },
+
+    privateMessageBubble: {
+        backgroundColor: schemeColor('privateMsgBackground')
+    },
+
+    remoteMessageBubble: {
+        backgroundColor: schemeColor('remoteMsgBackground'),
+        borderTopLeftRadius: 0
+    },
+
+    replyContainer: {
+        alignSelf: 'stretch',
+        borderLeftColor: schemeColor('replyBorder'),
+        borderLeftWidth: 1,
+        justifyContent: 'center'
+    },
+
+    replyStyles: {
+        iconStyle: {
+            color: schemeColor('replyIcon'),
+            fontSize: 22,
+            padding: 8
+        }
+    }
+});

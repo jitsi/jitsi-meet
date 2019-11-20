@@ -1,6 +1,6 @@
 /* @flow */
 
-import React, { Component } from 'react';
+import { Component } from 'react';
 
 /**
  * The type of the React {@code Component} props of
@@ -15,9 +15,9 @@ export type Props = {
     accessibilityLabel: string,
 
     /**
-     * The name of the Icon of this {@code AbstractToolbarButton}.
+     * The Icon of this {@code AbstractToolbarButton}.
      */
-    iconName: string,
+    icon: Object,
 
     /**
      * The style of the Icon of this {@code AbstractToolbarButton}.
@@ -33,6 +33,11 @@ export type Props = {
      * {@code AbstractToolbarButton} styles.
      */
     style?: Array<string> | Object,
+
+    /**
+     * An optional modifier to render the button toggled.
+     */
+    toggled?: boolean,
 
     /**
      * The color underlaying the button.
@@ -85,27 +90,7 @@ export default class AbstractToolbarButton<P: Props> extends Component<P> {
         return this._renderButton(this._renderIcon());
     }
 
-    _renderButton: (React$Element<*> | null) => React$Element<*>;
+    _renderButton: (React$Element<any> | null) => React$Element<any>;
 
-    /**
-     * Renders the icon of this {@code AbstractToolbarButton}.
-     *
-     * @param {string|ReactClass} type - The React Component type of the icon to
-     * be rendered.
-     * @protected
-     * @returns {ReactElement|null} The icon of this
-     * {@code AbstractToolbarButton}.
-     */
-    _renderIcon(type) {
-        if (!type) {
-            return null;
-        }
-
-        const props = {};
-
-        'iconName' in this.props && (props.name = this.props.iconName);
-        'iconStyle' in this.props && (props.style = this.props.iconStyle);
-
-        return React.createElement(type, props);
-    }
+    _renderIcon: () => React$Element<any> | null;
 }

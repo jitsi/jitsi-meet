@@ -4,7 +4,7 @@ import React, { Component } from 'react';
 import { TouchableOpacity } from 'react-native';
 
 import { ColorSchemeRegistry } from '../../../color-scheme';
-import { Icon } from '../../../font-icons';
+import { Icon, IconArrowBack } from '../../../icons';
 import { connect } from '../../../redux';
 
 /**
@@ -44,7 +44,7 @@ class BackButton extends Component<Props> {
                 accessibilityLabel = { 'Back' }
                 onPress = { this.props.onPress }>
                 <Icon
-                    name = { 'arrow_back' }
+                    src = { IconArrowBack }
                     style = { [
                         this.props._headerStyles.headerButtonIcon,
                         this.props.style

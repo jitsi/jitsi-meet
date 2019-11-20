@@ -4,6 +4,7 @@ import React, { Component } from 'react';
 import Tooltip from '@atlaskit/tooltip';
 
 import { translate } from '../../../i18n';
+import { Icon } from '../../../icons';
 
 /**
  * The type of the React {@code Component} props of {@link BaseIndicator}.
@@ -16,9 +17,19 @@ type Props = {
     className: string,
 
     /**
-     * The CSS classnames to set on the icon element of the component.
+     * The icon component to use.
      */
+    icon: Object,
+
+    /**
+     * The CSS classnames to set on the icon element of the component.
+    */
     iconClassName: string,
+
+    /**
+     * Id of the icon to be rendered.
+     */
+    iconId?: string,
 
     /**
      * The font size for the icon.
@@ -61,8 +72,7 @@ class BaseIndicator extends Component<Props> {
      */
     static defaultProps = {
         className: '',
-        iconClassName: '',
-        iconSize: 'auto',
+        iconSize: 13,
         id: '',
         tooltipPosition: 'top'
     };
@@ -76,7 +86,9 @@ class BaseIndicator extends Component<Props> {
     render() {
         const {
             className,
+            icon,
             iconClassName,
+            iconId,
             iconSize,
             id,
             t,
@@ -94,8 +106,10 @@ class BaseIndicator extends Component<Props> {
                     <span
                         className = { iconContainerClassName }
                         id = { id }>
-                        <i
+                        <Icon
                             className = { iconClassName }
+                            id = { iconId }
+                            src = { icon }
                             style = {{ fontSize: iconSize }} />
                     </span>
                 </Tooltip>

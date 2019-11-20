@@ -4,6 +4,8 @@ import md5 from 'js-md5';
 
 import logger from './logger';
 
+declare var __DEV__;
+
 /**
  * The name of the {@code localStorage} store where the app persists its values.
  */
@@ -87,7 +89,9 @@ class PersistenceRegistry {
         // Initialize the checksum.
         this._checksum = this._calculateChecksum(filteredPersistedState);
 
-        logger.info('redux state rehydrated as', filteredPersistedState);
+        if (typeof __DEV__ !== 'undefined' && __DEV__) {
+            logger.info('redux state rehydrated as', filteredPersistedState);
+        }
 
         return filteredPersistedState;
     }
@@ -113,7 +117,6 @@ class PersistenceRegistry {
                     logger.error(
                         'Error persisting redux subtree',
                         subtreeName,
-                        filteredState[subtreeName],
                         error);
                 }
             }
@@ -153,7 +156,7 @@ class PersistenceRegistry {
         try {
             return md5.hex(JSON.stringify(state) || '');
         } catch (error) {
-            logger.error('Error calculating checksum for state', state, error);
+            logger.error('Error calculating checksum for state', error);
 
             return '';
         }

@@ -9,6 +9,7 @@ import {
     createToolbarEvent,
     sendAnalytics
 } from '../../../analytics';
+import { Icon, IconMenuDown, IconMenuUp } from '../../../base/icons';
 import { connect } from '../../../base/redux';
 import { dockToolbox } from '../../../toolbox';
 
@@ -270,14 +271,14 @@ class Filmstrip extends Component <Props> {
      * @returns {ReactElement}
      */
     _renderToggleButton() {
-        const icon = this.props._visible ? 'icon-menu-down' : 'icon-menu-up';
+        const icon = this.props._visible ? IconMenuDown : IconMenuUp;
 
         return (
             <div className = 'filmstrip__toolbar'>
                 <button
                     id = 'toggleFilmstripButton'
                     onClick = { this._onToolbarToggleFilmstrip }>
-                    <i className = { icon } />
+                    <Icon src = { icon } />
                 </button>
             </div>
         );

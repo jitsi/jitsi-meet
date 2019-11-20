@@ -14,8 +14,8 @@ import {
 } from 'react-native';
 
 import { AlertDialog, openDialog } from '../../../../base/dialog';
-import { Icon } from '../../../../base/font-icons';
 import { translate } from '../../../../base/i18n';
+import { Icon, IconCancelSelection, IconCheck, IconClose, IconPhone, IconSearch } from '../../../../base/icons';
 import {
     AvatarListItem,
     HeaderWithNavigation,
@@ -172,7 +172,7 @@ class AddPeopleDialog extends AbstractAddPeopleDialog<Props, State> {
                                         color = { DARK_GREY }
                                         size = 'small' />
                                     : <Icon
-                                        name = { 'search' }
+                                        src = { IconSearch }
                                         style = { styles.searchIcon } />}
                             </View>
                             <TextInput
@@ -232,7 +232,7 @@ class AddPeopleDialog extends AbstractAddPeopleDialog<Props, State> {
         switch (item.type) {
         case 'phone':
             return {
-                avatar: 'icon://phone',
+                avatar: IconPhone,
                 key: item.number,
                 title: item.number
             };
@@ -414,14 +414,14 @@ class AddPeopleDialog extends AbstractAddPeopleDialog<Props, State> {
                 style = { styles.clearButton }>
                 <View style = { styles.clearIconContainer }>
                     <Icon
-                        name = 'close'
+                        src = { IconClose }
                         style = { styles.clearIcon } />
                 </View>
             </TouchableOpacity>
         );
     }
 
-    _renderInvitedItem: Object => ?React$Element<*>
+    _renderInvitedItem: Object => React$Element<any> | null
 
     /**
      * Renders a single item in the invited {@code FlatList}.
@@ -429,9 +429,9 @@ class AddPeopleDialog extends AbstractAddPeopleDialog<Props, State> {
      * @param {Object} flatListItem - An item of the data array of the
      * {@code FlatList}.
      * @param {number} index - The index of the currently rendered item.
-     * @returns {?React$Element<*>}
+     * @returns {?React$Element<any>}
      */
-    _renderInvitedItem(flatListItem, index) {
+    _renderInvitedItem(flatListItem, index): React$Element<any> | null {
         const { item } = flatListItem;
         const renderableItem = this._getRenderableItem(flatListItem);
 
@@ -450,14 +450,14 @@ class AddPeopleDialog extends AbstractAddPeopleDialog<Props, State> {
                         linesStyle = { styles.itemLinesStyle }
                         titleStyle = { styles.itemText } />
                     <Icon
-                        name = 'cancel'
+                        src = { IconCancelSelection }
                         style = { styles.unselectIcon } />
                 </View>
             </TouchableOpacity>
         );
     }
 
-    _renderItem: Object => ?React$Element<*>
+    _renderItem: Object => React$Element<any> | null
 
     /**
      * Renders a single item in the search result {@code FlatList}.
@@ -467,7 +467,7 @@ class AddPeopleDialog extends AbstractAddPeopleDialog<Props, State> {
      * @param {number} index - The index of the currently rendered item.
      * @returns {?React$Element<*>}
      */
-    _renderItem(flatListItem, index) {
+    _renderItem(flatListItem, index): React$Element<any> | null {
         const { item } = flatListItem;
         const { inviteItems } = this.state;
         let selected = false;
@@ -504,7 +504,7 @@ class AddPeopleDialog extends AbstractAddPeopleDialog<Props, State> {
                         linesStyle = { styles.itemLinesStyle }
                         titleStyle = { styles.itemText } />
                     { selected && <Icon
-                        name = 'check'
+                        src = { IconCheck }
                         style = { styles.selectedIcon } /> }
                 </View>
             </TouchableOpacity>

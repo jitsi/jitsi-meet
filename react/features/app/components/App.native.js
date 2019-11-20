@@ -6,13 +6,10 @@ import '../../analytics';
 import '../../authentication';
 import { setColorScheme } from '../../base/color-scheme';
 import { DialogContainer } from '../../base/dialog';
-import { updateFlags } from '../../base/flags';
+import { CALL_INTEGRATION_ENABLED, updateFlags } from '../../base/flags';
 import '../../base/jwt';
 import { Platform } from '../../base/react';
-import {
-    AspectRatioDetector,
-    ReducedUIDetector
-} from '../../base/responsive-ui';
+import '../../base/responsive-ui';
 import { updateSettings } from '../../base/settings';
 import '../../google-api';
 import '../../mobile/audio-mode';
@@ -100,23 +97,14 @@ export class App extends AbstractApp {
             dispatch(setColorScheme(this.props.colorScheme));
             dispatch(updateFlags(this.props.flags));
             dispatch(updateSettings(this.props.userInfo || {}));
-        });
-    }
 
-    /**
-     * Injects {@link AspectRatioDetector} in order to detect the aspect ratio
-     * of this {@code App}'s user interface and afford {@link AspectRatioAware}.
-     *
-     * @override
-     */
-    _createMainElement(component, props) {
-        return (
-            <AspectRatioDetector>
-                <ReducedUIDetector>
-                    { super._createMainElement(component, props) }
-                </ReducedUIDetector>
-            </AspectRatioDetector>
-        );
+            // Update settings with feature-flag.
+            const callIntegrationEnabled = this.props.flags[CALL_INTEGRATION_ENABLED];
+
+            if (typeof callIntegrationEnabled !== 'undefined') {
+                dispatch(updateSettings({ disableCallIntegration: !callIntegrationEnabled }));
+            }
+        });
     }
 
     /**

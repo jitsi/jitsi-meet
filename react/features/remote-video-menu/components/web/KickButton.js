@@ -3,6 +3,7 @@
 import React from 'react';
 
 import { translate } from '../../../base/i18n';
+import { IconKick } from '../../../base/icons';
 import { connect } from '../../../base/redux';
 
 import AbstractKickButton, {
@@ -46,7 +47,7 @@ class KickButton extends AbstractKickButton {
             <RemoteVideoMenuButton
                 buttonText = { t('videothumbnail.kick') }
                 displayClass = 'kicklink'
-                iconClass = 'icon-kick'
+                icon = { IconKick }
                 id = { `ejectlink_${participantID}` }
                 // eslint-disable-next-line react/jsx-handler-names
                 onClick = { this._handleClick } />

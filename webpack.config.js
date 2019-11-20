@@ -8,7 +8,7 @@ const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
  * development with webpack-dev-server.
  */
 const devServerProxyTarget
-    = process.env.WEBPACK_DEV_SERVER_PROXY_TARGET || 'https://beta.meet.jit.si';
+    = process.env.WEBPACK_DEV_SERVER_PROXY_TARGET || 'https://alpha.jitsi.net';
 
 const analyzeBundle = process.argv.indexOf('--analyze-bundle') !== -1;
 
@@ -120,6 +120,15 @@ const config = {
                     'react-focus-lock': `${__dirname}/node_modules/react-focus-lock`
                 }
             }
+        }, {
+            test: /\.svg$/,
+            use: [ {
+                loader: '@svgr/webpack',
+                options: {
+                    dimensions: false,
+                    expandProps: 'start'
+                }
+            } ]
         } ]
     },
     node: {
@@ -173,7 +182,7 @@ module.exports = [
         entry: {
             'device_selection_popup_bundle': './react/features/settings/popup.js'
         },
-        performance: getPerformanceHints(2.5 * 1024 * 1024)
+        performance: getPerformanceHints(700 * 1024)
     }),
     Object.assign({}, config, {
         entry: {
@@ -205,16 +214,46 @@ module.exports = [
         },
         performance: getPerformanceHints(5 * 1024)
     }),
+
+    // Because both video-blur-effect and rnnoise-processor modules are loaded
+    // in a lazy manner using the loadScript function with a hard coded name,
+    // i.e.loadScript('libs/rnnoise-processor.min.js'), webpack dev server
+    // won't know how to properly load them using the default config filename
+    // and sourceMapFilename parameters which target libs without .min in dev
+    // mode. Thus we change these modules to have the same filename in both
+    // prod and dev mode.
     Object.assign({}, config, {
         entry: {
             'video-blur-effect': './react/features/stream-effects/blur/index.js'
         },
         output: Object.assign({}, config.output, {
             library: [ 'JitsiMeetJS', 'app', 'effects' ],
-            libraryTarget: 'window'
+            libraryTarget: 'window',
+            filename: '[name].min.js',
+            sourceMapFilename: '[name].min.map'
         }),
         performance: getPerformanceHints(1 * 1024 * 1024)
     }),
+
+    Object.assign({}, config, {
+        entry: {
+            'rnnoise-processor': './react/features/stream-effects/rnnoise/index.js'
+        },
+        node: {
+            // Emscripten generated glue code "rnnoise.js" expects node fs module,
+            // we need to specify this parameter so webpack knows how to properly
+            // interpret it when encountered.
+            fs: 'empty'
+        },
+        output: Object.assign({}, config.output, {
+            library: [ 'JitsiMeetJS', 'app', 'effects', 'rnnoise' ],
+            libraryTarget: 'window',
+            filename: '[name].min.js',
+            sourceMapFilename: '[name].min.map'
+        }),
+        performance: getPerformanceHints(30 * 1024)
+    }),
+
     Object.assign({}, config, {
         entry: {
             'external_api': './modules/API/external/index.js'
@@ -240,7 +279,8 @@ function devServerProxyBypass({ path }) {
     if (path.startsWith('/css/') || path.startsWith('/doc/')
             || path.startsWith('/fonts/') || path.startsWith('/images/')
             || path.startsWith('/sounds/')
-            || path.startsWith('/static/')) {
+            || path.startsWith('/static/')
+            || path.endsWith('.wasm')) {
         return path;
     }
 
@@ -249,7 +289,7 @@ function devServerProxyBypass({ path }) {
     /* eslint-disable array-callback-return, indent */
 
     if ((Array.isArray(configs) ? configs : Array(configs)).some(c => {
-                if (path.startsWith(c.output.publicPath)) {
+            if (path.startsWith(c.output.publicPath)) {
                     if (!minimize) {
                         // Since webpack-dev-server is serving non-minimized
                         // artifacts, serve them even if the minimized ones are
@@ -270,5 +310,7 @@ function devServerProxyBypass({ path }) {
         return path;
     }
 
-    /* eslint-enable array-callback-return, indent */
+    if (path.startsWith('/libs/')) {
+        return path;
+    }
 }
