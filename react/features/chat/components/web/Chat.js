@@ -4,6 +4,7 @@ import React from 'react';
 import Transition from 'react-transition-group/Transition';
 
 import { translate } from '../../../base/i18n';
+import { Icon, IconClose } from '../../../base/icons';
 import { connect } from '../../../base/redux';
 
 import AbstractChat, {
@@ -14,6 +15,7 @@ import AbstractChat, {
 import ChatInput from './ChatInput';
 import DisplayNameForm from './DisplayNameForm';
 import MessageContainer from './MessageContainer';
+import MessageRecipient from './MessageRecipient';
 
 /**
  * React Component for holding the chat feature in a side panel that slides in
@@ -116,7 +118,10 @@ class Chat extends AbstractChat<Props> {
                 <MessageContainer
                     messages = { this.props._messages }
                     ref = { this._messageContainerRef } />
-                <ChatInput onResize = { this._onChatInputResize } />
+                <MessageRecipient />
+                <ChatInput
+                    onResize = { this._onChatInputResize }
+                    onSend = { this.props._onSendMessage } />
             </>
         );
     }
@@ -133,7 +138,9 @@ class Chat extends AbstractChat<Props> {
             <div className = 'chat-header'>
                 <div
                     className = 'chat-close'
-                    onClick = { this.props._onToggleChat }>X</div>
+                    onClick = { this.props._onToggleChat }>
+                    <Icon src = { IconClose } />
+                </div>
             </div>
         );
     }

@@ -683,8 +683,8 @@ export default class LargeVideoManager {
     }
 
     /**
-     * Dispatches an action to update the known resolution state of the
-     * large video and adjusts container sizes when the resolution changes.
+     * Dispatches an action to update the known resolution state of the large video and adjusts container sizes when the
+     * resolution changes.
      *
      * @private
      * @returns {void}
@@ -697,7 +697,7 @@ export default class LargeVideoManager {
             APP.store.dispatch(updateKnownLargeVideoResolution(height));
         }
 
-        const currentAspectRatio = width / height;
+        const currentAspectRatio = height === 0 ? 0 : width / height;
 
         if (this._videoAspectRatio !== currentAspectRatio) {
             this._videoAspectRatio = currentAspectRatio;

@@ -17,8 +17,7 @@ import { SoundCollection } from '../../sounds';
 import { PersistenceRegistry } from '../../storage';
 
 import { appWillMount, appWillUnmount } from '../actions';
-
-const logger = require('jitsi-meet-logger').getLogger(__filename);
+import logger from '../logger';
 
 declare var APP: Object;
 

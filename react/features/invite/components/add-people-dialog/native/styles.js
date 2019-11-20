@@ -1,6 +1,6 @@
 // @flow
 
-import { ColorPalette } from '../../../../base/styles';
+import { BoxModel, ColorPalette } from '../../../../base/styles';
 
 export const AVATAR_SIZE = 40;
 export const DARK_GREY = 'rgb(28, 32, 37)';
@@ -15,7 +15,7 @@ export default {
     },
 
     avatarText: {
-        color: 'rgb(28, 32, 37)',
+        color: DARK_GREY,
         fontSize: 12
     },
 
@@ -48,7 +48,12 @@ export default {
         alignItems: 'stretch',
         backgroundColor: ColorPalette.white,
         flex: 1,
-        flexDirection: 'column'
+        flexDirection: 'column',
+        justifyContent: 'flex-start'
+    },
+
+    invitedList: {
+        padding: 3
     },
 
     itemLinesStyle: {
@@ -68,13 +73,8 @@ export default {
         paddingLeft: 5
     },
 
-    radioButton: {
-        color: DARK_GREY,
-        fontSize: 16,
-        padding: 2
-    },
-
     resultList: {
+        flex: 1,
         padding: 5
     },
 
@@ -86,6 +86,13 @@ export default {
         flex: 1,
         fontSize: 17,
         paddingVertical: 7
+    },
+
+    selectedIcon: {
+        color: DARK_GREY,
+        fontSize: 20,
+        marginRight: BoxModel.margin,
+        padding: 2
     },
 
     separator: {
@@ -115,5 +122,13 @@ export default {
         flexDirection: 'row',
         justifyContent: 'center',
         width: ICON_SIZE + 16
+    },
+
+    unselectIcon: {
+        color: LIGHT_GREY,
+        fontSize: 16,
+        left: AVATAR_SIZE / -3,
+        position: 'relative',
+        top: AVATAR_SIZE / -3
     }
 };

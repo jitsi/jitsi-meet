@@ -16,8 +16,7 @@ import { setFilmstripVisible } from '../filmstrip';
 import { setTileView } from '../video-layout';
 
 import { FOLLOW_ME_COMMAND } from './constants';
-
-const logger = require('jitsi-meet-logger').getLogger(__filename);
+import logger from './logger';
 
 declare var APP: Object;
 
@@ -140,7 +139,6 @@ function _onFollowMeCommand(attributes = {}, id, store) {
     // For now gate etherpad checks behind a web-app check to be extra safe
     // against calling a web-app global.
     if (typeof APP !== 'undefined'
-        && state['features/etherpad'].initialized
         && oldState.sharedDocumentVisible !== attributes.sharedDocumentVisible) {
         const isEtherpadVisible = attributes.sharedDocumentVisible === 'true';
         const documentManager = APP.UI.getSharedDocumentManager();

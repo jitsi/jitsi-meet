@@ -13,7 +13,7 @@ export default class AmplitudeHandler extends AbstractHandler {
      * by the Amplitude API.
      */
     constructor(options) {
-        super();
+        super(options);
 
         const { amplitudeAPPKey, host, user } = options;
 

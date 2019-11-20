@@ -63,13 +63,13 @@ export default class JitsiMeetLogStorage {
         for (let i = 0, len = logEntries.length; i < len; i++) {
             const logEntry = logEntries[i];
 
-            if (typeof logEntry === 'object') {
-                // Aggregated message
-                logMessage += `(${logEntry.count}) ${logEntry.text}\n`;
-            } else {
-                // Regular message
-                logMessage += `${logEntry}\n`;
+            if (logEntry.timestamp) {
+                logMessage += `${logEntry.timestamp} `;
             }
+            if (logEntry.count > 1) {
+                logMessage += `(${logEntry.count}) `;
+            }
+            logMessage += `${logEntry.text}\n`;
         }
         logMessage += '"}';
 

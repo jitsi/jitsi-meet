@@ -5,7 +5,7 @@ import { addKnownDomains } from '../known-domains';
 import { MiddlewareRegistry } from '../redux';
 import { parseURIString } from '../util';
 
-import { SET_CONFIG } from './actionTypes';
+import { _UPDATE_CONFIG, SET_CONFIG } from './actionTypes';
 import { _CONFIG_STORE_PREFIX } from './constants';
 
 /**
@@ -93,11 +93,25 @@ function _appWillMount(store, next, action) {
  * @private
  * @returns {*} The return value of {@code next(action)}.
  */
-function _setConfig({ getState }, next, action) {
+function _setConfig({ dispatch, getState }, next, action) {
     // The reducer is doing some alterations to the config passed in the action,
     // so make sure it's the final state by waiting for the action to be
     // reduced.
     const result = next(action);
+    const state = getState();
+
+    // Update the config with user defined settings.
+    const settings = state['features/base/settings'];
+    const config = {};
+
+    if (typeof settings.disableP2P !== 'undefined') {
+        config.p2p = { enabled: !settings.disableP2P };
+    }
+
+    dispatch({
+        type: _UPDATE_CONFIG,
+        config
+    });
 
     // FIXME On Web we rely on the global 'config' variable which gets altered
     // multiple times, before it makes it to the reducer. At some point it may
@@ -105,7 +119,7 @@ function _setConfig({ getState }, next, action) {
     // different merge methods being used along the way. The global variable
     // must be synchronized with the final state resolved by the reducer.
     if (typeof window.config !== 'undefined') {
-        window.config = getState()['features/base/config'];
+        window.config = state['features/base/config'];
     }
 
     return result;

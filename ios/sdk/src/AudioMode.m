@@ -20,6 +20,8 @@
 #import <React/RCTLog.h>
 #import <WebRTC/WebRTC.h>
 
+#import "LogUtils.h"
+
 
 // Audio mode
 typedef enum {
@@ -167,7 +169,7 @@ RCT_EXPORT_METHOD(setMode:(int)mode
 RCT_EXPORT_METHOD(setAudioDevice:(NSString *)device
                   resolve:(RCTPromiseResolveBlock)resolve
                   reject:(RCTPromiseRejectBlock)reject) {
-    NSLog(@"[AudioMode] Selected device: %@", device);
+    DDLogInfo(@"[AudioMode] Selected device: %@", device);
     
     RTCAudioSession *session = [RTCAudioSession sharedInstance];
     [session lockForConfiguration];
@@ -260,7 +262,7 @@ RCT_EXPORT_METHOD(updateDeviceList) {
         // This is to play well with other components which could be integrated
         // into the final application.
         if (self->activeMode != kAudioModeDefault) {
-            NSLog(@"[AudioMode] Route changed, reapplying RTCAudioSession config");
+            DDLogInfo(@"[AudioMode] Route changed, reapplying RTCAudioSession config");
             RTCAudioSessionConfiguration *config = [self configForMode:self->activeMode];
             [self setConfig:config error:nil];
             if (self->forceSpeaker && !self->isSpeakerOn) {
@@ -274,7 +276,7 @@ RCT_EXPORT_METHOD(updateDeviceList) {
 }
 
 - (void)audioSession:(RTCAudioSession *)audioSession didSetActive:(BOOL)active {
-    NSLog(@"[AudioMode] Audio session didSetActive:%d", active);
+    DDLogInfo(@"[AudioMode] Audio session didSetActive:%d", active);
 }
 
 #pragma mark - Helper methods

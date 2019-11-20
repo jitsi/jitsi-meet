@@ -33,6 +33,9 @@ public class JitsiMeet {
     }
 
     public static void setDefaultConferenceOptions(JitsiMeetConferenceOptions options) {
+        if (options != null && options.getRoom() != null) {
+            throw new RuntimeException("'room' must be null in the default conference options");
+        }
         defaultConferenceOptions = options;
     }
 

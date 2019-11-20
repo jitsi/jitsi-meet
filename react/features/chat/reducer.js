@@ -2,12 +2,18 @@
 
 import { ReducerRegistry } from '../base/redux';
 
-import { ADD_MESSAGE, CLEAR_MESSAGES, TOGGLE_CHAT } from './actionTypes';
+import {
+    ADD_MESSAGE,
+    CLEAR_MESSAGES,
+    SET_PRIVATE_MESSAGE_RECIPIENT,
+    TOGGLE_CHAT
+} from './actionTypes';
 
 const DEFAULT_STATE = {
     isOpen: false,
     lastReadMessage: undefined,
-    messages: []
+    messages: [],
+    privateMessageRecipient: undefined
 };
 
 ReducerRegistry.register('features/chat', (state = DEFAULT_STATE, action) => {
@@ -19,6 +25,8 @@ ReducerRegistry.register('features/chat', (state = DEFAULT_STATE, action) => {
             id: action.id,
             messageType: action.messageType,
             message: action.message,
+            privateMessage: action.privateMessage,
+            recipient: action.recipient,
             timestamp: action.timestamp
         };
 
@@ -48,12 +56,20 @@ ReducerRegistry.register('features/chat', (state = DEFAULT_STATE, action) => {
             messages: []
         };
 
+    case SET_PRIVATE_MESSAGE_RECIPIENT:
+        return {
+            ...state,
+            isOpen: Boolean(action.participant) || state.isOpen,
+            privateMessageRecipient: action.participant
+        };
+
     case TOGGLE_CHAT:
         return {
             ...state,
             isOpen: !state.isOpen,
             lastReadMessage: state.messages[
-                navigator.product === 'ReactNative' ? 0 : state.messages.length - 1]
+                navigator.product === 'ReactNative' ? 0 : state.messages.length - 1],
+            privateMessageRecipient: state.isOpen ? undefined : state.privateMessageRecipient
         };
     }
 

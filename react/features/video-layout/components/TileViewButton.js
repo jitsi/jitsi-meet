@@ -1,6 +1,5 @@
 // @flow
 
-import Logger from 'jitsi-meet-logger';
 import type { Dispatch } from 'redux';
 
 import {
@@ -8,6 +7,7 @@ import {
     sendAnalytics
 } from '../../analytics';
 import { translate } from '../../base/i18n';
+import { IconTileView } from '../../base/icons';
 import { connect } from '../../base/redux';
 import {
     AbstractButton,
@@ -15,8 +15,7 @@ import {
 } from '../../base/toolbox';
 
 import { setTileView } from '../actions';
-
-const logger = Logger.getLogger(__filename);
+import logger from '../logger';
 
 /**
  * The type of the React {@code Component} props of {@link TileViewButton}.
@@ -41,10 +40,9 @@ type Props = AbstractButtonProps & {
  */
 class TileViewButton<P: Props> extends AbstractButton<P, *> {
     accessibilityLabel = 'toolbar.accessibilityLabel.tileView';
-    iconName = 'icon-tiles-many';
+    icon = IconTileView;
     label = 'toolbar.enterTileView';
     toggledLabel = 'toolbar.exitTileView';
-    toggledIconName = 'icon-tiles-many toggled';
     tooltip = 'toolbar.tileViewToggle';
 
     /**

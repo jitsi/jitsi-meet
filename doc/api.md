@@ -30,6 +30,7 @@ Its constructor gets a number of options:
     * **onload**: (optional) handler for the iframe onload event.
     * **invitees**: (optional) Array of objects containing information about new participants that will be invited in the call.
     * **devices**: (optional) A map containing information about the initial devices that will be used in the call.
+    * **userInfo**: (optional) JS object containing information about the participant opening the meeting, such as `email`.
 
 Example:
 
@@ -83,6 +84,19 @@ const options = {
 };
 const api = new JitsiMeetExternalAPI(domain, options);
  ```
+
+You can set the userInfo(email) for the call:
+
+```javascript
+var domain = "meet.jit.si";
+var options = {
+    ...
+    userInfo: {
+        email: 'email@jitsiexamplemail.com'
+    }
+}
+var api = new JitsiMeetExternalAPI(domain, options);
+```
 
 ### Controlling the embedded Jitsi Meet Conference
 
@@ -195,6 +209,15 @@ api.executeCommand('displayName', 'New Nickname');
 * **password** - Sets the password for the room. This command requires one argument - the password name to be set.
 ```javascript
 api.executeCommand('password', 'The Password');
+```
+
+* **sendTones** - Play touch tones.
+```javascript
+api.executeCommand('sendTones', {
+    tones: string, // The dial pad touch tones to play. For example, '12345#'.
+    duration: number, // Optional. The number of milliseconds each tone should play. The default is 200.
+    pause: number // Optional. The number of milliseconds between each tone. The default is 200.
+});
 ```
 
 * **subject** - Sets the subject of the conference. This command requires one argument - the new subject to be set.

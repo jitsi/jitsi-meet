@@ -2,6 +2,8 @@
 
 import React from 'react';
 
+import { Icon } from '../../../icons';
+
 import AbstractStatelessAvatar, { type Props as AbstractProps } from '../AbstractStatelessAvatar';
 
 type Props = AbstractProps & {
@@ -34,15 +36,14 @@ export default class StatelessAvatar extends AbstractStatelessAvatar<Props> {
      */
     render() {
         const { initials, url } = this.props;
-        const icon = this._parseIconUrl(url);
 
-        if (icon) {
+        if (this._isIcon(url)) {
             return (
                 <div
                     className = { this._getAvatarClassName() }
                     id = { this.props.id }
                     style = { this._getAvatarStyle(this.props.color) }>
-                    <i className = { `icon-${icon}` } />
+                    <Icon src = { url } />
                 </div>
             );
         }
@@ -119,5 +120,5 @@ export default class StatelessAvatar extends AbstractStatelessAvatar<Props> {
         return `avatar ${additional || ''} ${this.props.className || ''}`;
     }
 
-    _parseIconUrl: ?string => ?string
+    _isIcon: (?string | ?Object) => boolean
 }

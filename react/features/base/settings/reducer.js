@@ -10,8 +10,7 @@ import { PersistenceRegistry } from '../storage';
 import { assignIfDefined } from '../util';
 
 import { SETTINGS_UPDATED } from './actionTypes';
-
-const logger = require('jitsi-meet-logger').getLogger(__filename);
+import logger from './logger';
 
 /**
  * The default/initial redux state of the feature {@code base/settings}.
@@ -23,6 +22,8 @@ const DEFAULT_STATE = {
     avatarID: undefined,
     avatarURL: undefined,
     cameraDeviceId: undefined,
+    disableCallIntegration: undefined,
+    disableP2P: undefined,
     displayName: undefined,
     email: undefined,
     localFlipX: true,

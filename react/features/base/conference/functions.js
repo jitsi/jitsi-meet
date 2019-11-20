@@ -11,6 +11,7 @@ import {
     participantLeft
 } from '../participants';
 import { toState } from '../redux';
+import { safeDecodeURIComponent } from '../util';
 
 import {
     AVATAR_ID_COMMAND,
@@ -19,8 +20,7 @@ import {
     JITSI_CONFERENCE_URL_KEY,
     VIDEO_QUALITY_LEVELS
 } from './constants';
-
-const logger = require('jitsi-meet-logger').getLogger(__filename);
+import logger from './logger';
 
 /**
  * Attach a set of local tracks to a conference.
@@ -164,7 +164,7 @@ export function getConferenceName(stateful: Function | Object): string {
         || subject
         || callDisplayName
         || (callee && callee.name)
-        || _.startCase(decodeURIComponent(room));
+        || _.startCase(safeDecodeURIComponent(room));
 }
 
 /**
@@ -178,13 +178,15 @@ export function getConferenceName(stateful: Function | Object): string {
  * @returns {JitsiConference|undefined}
  */
 export function getCurrentConference(stateful: Function | Object) {
-    const { conference, joining, leaving }
+    const { conference, joining, leaving, passwordRequired }
         = toState(stateful)['features/base/conference'];
 
-    return (
-        conference
-            ? conference === leaving ? undefined : conference
-            : joining);
+    // There is a precendence
+    if (conference) {
+        return conference === leaving ? undefined : conference;
+    }
+
+    return joining || passwordRequired;
 }
 
 /**

@@ -7,8 +7,7 @@ import { PIP_ENABLED, getFeatureFlag } from '../../base/flags';
 import { Platform } from '../../base/react';
 
 import { ENTER_PICTURE_IN_PICTURE } from './actionTypes';
-
-const logger = require('jitsi-meet-logger').getLogger(__filename);
+import logger from './logger';
 
 /**
  * Enters (or rather initiates entering) picture-in-picture.

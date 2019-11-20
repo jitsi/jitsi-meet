@@ -1,10 +1,15 @@
 // @flow
+import _ from 'lodash';
 
+import { APP_WILL_MOUNT } from '../app';
 import { setAudioOnly } from '../audio-only';
+import parseURLParams from '../config/parseURLParams'; // minimize imports to avoid circular imports
+import { SET_LOCATION_URL } from '../connection/actionTypes'; // minimize imports to avoid circular imports
 import { getLocalParticipant, participantUpdated } from '../participants';
 import { MiddlewareRegistry } from '../redux';
 
 import { SETTINGS_UPDATED } from './actionTypes';
+import { handleCallIntegrationChange } from './functions';
 
 /**
  * The middleware of the feature base/settings. Distributes changes to the state
@@ -18,13 +23,36 @@ MiddlewareRegistry.register(store => next => action => {
     const result = next(action);
 
     switch (action.type) {
+    case APP_WILL_MOUNT:
+        _initializeCallIntegration(store);
+        break;
     case SETTINGS_UPDATED:
+        _maybeHandleCallIntegrationChange(action);
         _maybeSetAudioOnly(store, action);
         _updateLocalParticipant(store, action);
+        break;
+    case SET_LOCATION_URL:
+        _updateLocalParticipantFromUrl(store);
+        break;
     }
 
     return result;
 });
+
+/**
+ * Initializes the audio device handler based on the `disableCallIntegration` setting.
+ *
+ * @param {Store} store - The redux store.
+ * @private
+ * @returns {void}
+ */
+function _initializeCallIntegration({ getState }) {
+    const { disableCallIntegration } = getState()['features/base/settings'];
+
+    if (typeof disableCallIntegration === 'boolean') {
+        handleCallIntegrationChange(disableCallIntegration);
+    }
+}
 
 /**
  * Maps the settings field names to participant names where they don't match.
@@ -41,6 +69,19 @@ function _mapSettingsFieldToParticipant(settingsField) {
     }
 
     return settingsField;
+}
+
+/**
+ * Handles a change in the `disableCallIntegration` setting.
+ *
+ * @param {Object} action - The redux action.
+ * @private
+ * @returns {void}
+ */
+function _maybeHandleCallIntegrationChange({ settings: { disableCallIntegration } }) {
+    if (typeof disableCallIntegration === 'boolean') {
+        handleCallIntegrationChange(disableCallIntegration);
+    }
 }
 
 /**
@@ -82,4 +123,31 @@ function _updateLocalParticipant({ dispatch, getState }, action) {
     }
 
     dispatch(participantUpdated(newLocalParticipant));
+}
+
+
+/**
+ * Returns the userInfo set in the URL.
+ *
+ * @param {Store} store - The redux store.
+ * @private
+ * @returns {void}
+ */
+function _updateLocalParticipantFromUrl({ dispatch, getState }) {
+    const urlParams
+        = parseURLParams(getState()['features/base/connection'].locationURL);
+    const urlEmail = urlParams['userInfo.email'];
+
+    if (!urlEmail) {
+        return;
+    }
+
+    const localParticipant = getLocalParticipant(getState());
+
+    if (localParticipant) {
+        dispatch(participantUpdated({
+            ...localParticipant,
+            email: _.escape(urlEmail)
+        }));
+    }
 }

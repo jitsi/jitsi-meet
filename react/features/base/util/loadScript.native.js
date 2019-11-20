@@ -1,6 +1,9 @@
 // @flow
 
-import { timeoutPromise } from './timeoutPromise';
+/**
+ * Default timeout for loading scripts.
+ */
+const DEFAULT_TIMEOUT = 5000;
 
 /**
  * Loads a script from a specific URL. React Native cannot load a JS
@@ -13,63 +16,49 @@ import { timeoutPromise } from './timeoutPromise';
  * @param {number} [timeout] - The timeout in millisecnods after which the
  * loading of the specified {@code url} is to be aborted/rejected (if not
  * settled yet).
+ * @param {boolean} skipEval - Wether we want to skip evaluating the loaded content or not.
  * @returns {void}
  */
-export function loadScript(url: string, timeout: ?number): Promise<void> {
-    return new Promise((resolve, reject) => {
-        // XXX The implementation of fetch on Android will throw an Exception on
-        // the Java side which will break the app if the URL is invalid (which
-        // the implementation of fetch on Android calls 'unexpected url'). In
-        // order to try to prevent the breakage of the app, try to fail on an
-        // invalid URL as soon as possible.
-        const { hostname, pathname, protocol } = new URL(url);
+export async function loadScript(
+        url: string, timeout: number = DEFAULT_TIMEOUT, skipEval: boolean = false): Promise<any> {
+    // XXX The implementation of fetch on Android will throw an Exception on
+    // the Java side which will break the app if the URL is invalid (which
+    // the implementation of fetch on Android calls 'unexpected url'). In
+    // order to try to prevent the breakage of the app, try to fail on an
+    // invalid URL as soon as possible.
+    const { hostname, pathname, protocol } = new URL(url);
 
-        // XXX The standard URL implementation should throw an Error if the
-        // specified URL is relative. Unfortunately, the polyfill used on
-        // react-native does not.
-        if (!hostname || !pathname || !protocol) {
-            reject(`unexpected url: ${url}`);
+    // XXX The standard URL implementation should throw an Error if the
+    // specified URL is relative. Unfortunately, the polyfill used on
+    // react-native does not.
+    if (!hostname || !pathname || !protocol) {
+        throw new Error(`unexpected url: ${url}`);
+    }
 
-            return;
+    const controller = new AbortController();
+    const signal = controller.signal;
+
+    const timer = setTimeout(() => {
+        controller.abort();
+    }, timeout);
+
+    const response = await fetch(url, { signal });
+
+    // If the timeout hits the above will raise AbortError.
+
+    clearTimeout(timer);
+
+    switch (response.status) {
+    case 200: {
+        const txt = await response.text();
+
+        if (skipEval) {
+            return txt;
         }
 
-        let fetch_ = fetch(url, { method: 'GET' });
-
-        // The implementation of fetch provided by react-native is based on
-        // XMLHttpRequest. Which defines timeout as an unsigned long with
-        // default value 0, which means there is no timeout.
-        if (timeout) {
-            // FIXME I don't like the approach with timeoutPromise because:
-            //
-            // * It merely abandons the underlying XHR and, consequently, opens
-            //   us to potential issues with NetworkActivityIndicator which
-            //   tracks XHRs.
-            //
-            // * @paweldomas also reported that timeouts seem to be respected by
-            //   the XHR implementation on iOS. Given that we have
-            //   implementation of loadScript based on fetch and XHR (in an
-            //   earlier revision), I don't see why we're not using an XHR
-            //   directly on iOS.
-            //
-            // * The approach of timeoutPromise I found on the Internet is to
-            //   directly use XHR instead of fetch and abort the XHR on timeout.
-            //   Which may deal with the NetworkActivityIndicator at least.
-            fetch_ = timeoutPromise(fetch_, timeout);
-        }
-
-        fetch_
-            .then(response => {
-                switch (response.status) {
-                case 200:
-                    return response.responseText || response.text();
-
-                default:
-                    throw response.statusText;
-                }
-            })
-            .then(responseText => {
-                eval.call(window, responseText); // eslint-disable-line no-eval
-            })
-            .then(resolve, reject);
-    });
+        return eval.call(window, txt); // eslint-disable-line no-eval
+    }
+    default:
+        throw new Error(`loadScript error: ${response.statusText}`);
+    }
 }

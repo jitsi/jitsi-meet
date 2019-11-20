@@ -1,5 +1,5 @@
 /*
- * Copyright @ 2017-present Atlassian Pty Ltd
+ * Copyright @ 2017-present 8x8, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,7 +24,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.media.AudioManager;
-import android.util.Log;
+
+import org.jitsi.meet.sdk.log.JitsiMeetLogger;
 
 /**
  * Helper class to detect and handle Bluetooth device changes.  It monitors
@@ -32,15 +33,17 @@ import android.util.Log;
  * about device changes when this occurs.
  */
 class BluetoothHeadsetMonitor {
-    /**
-     * {@link AudioModeModule} where this monitor reports.
-     */
-    private final AudioModeModule audioModeModule;
+    private final static String TAG = BluetoothHeadsetMonitor.class.getSimpleName();
 
     /**
-     * The {@link Context} in which {@link #audioModeModule} executes.
+     * The {@link Context} in which this module executes.
      */
     private final Context context;
+
+    /**
+     * Reference to the {@link BluetoothAdapter} object, used to access Bluetooth functionality.
+     */
+    private BluetoothAdapter adapter;
 
     /**
      * Reference to a proxy object which allows us to query connected devices.
@@ -48,52 +51,25 @@ class BluetoothHeadsetMonitor {
     private BluetoothHeadset headset;
 
     /**
-     * Flag indicating if there are any Bluetooth headset devices currently
-     * available.
+     * receiver registered for receiving Bluetooth connection state changes.
      */
-    private boolean headsetAvailable = false;
+    private BroadcastReceiver receiver;
 
     /**
-     * Helper for running Bluetooth operations on the main thread.
+     * Listener for receiving Bluetooth device change events.
      */
-    private final Runnable updateDevicesRunnable
-        = new Runnable() {
-            @Override
-            public void run() {
-                headsetAvailable
-                    = (headset != null)
-                        && !headset.getConnectedDevices().isEmpty();
-                audioModeModule.onBluetoothDeviceChange();
-            }
-        };
+    private Listener listener;
 
-    public BluetoothHeadsetMonitor(
-            AudioModeModule audioModeModule,
-            Context context) {
-        this.audioModeModule = audioModeModule;
+    public BluetoothHeadsetMonitor(Context context, Listener listener) {
         this.context = context;
-
-        AudioManager audioManager
-            = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
-
-        if (!audioManager.isBluetoothScoAvailableOffCall()) {
-            Log.w(AudioModeModule.TAG, "Bluetooth SCO is not available");
-            return;
-        }
-
-        if (getBluetoothHeadsetProfileProxy()) {
-            registerBluetoothReceiver();
-
-            // Initial detection.
-            updateDevices();
-        }
+        this.listener = listener;
     }
 
     private boolean getBluetoothHeadsetProfileProxy() {
-        BluetoothAdapter adapter = BluetoothAdapter.getDefaultAdapter();
+        adapter = BluetoothAdapter.getDefaultAdapter();
 
         if (adapter == null) {
-            Log.w(AudioModeModule.TAG, "Device doesn't support Bluetooth");
+            JitsiMeetLogger.w(TAG + " Device doesn't support Bluetooth");
             return false;
         }
 
@@ -103,9 +79,7 @@ class BluetoothHeadsetMonitor {
         BluetoothProfile.ServiceListener listener
             = new BluetoothProfile.ServiceListener() {
                 @Override
-                public void onServiceConnected(
-                        int profile,
-                        BluetoothProfile proxy) {
+                public void onServiceConnected(int profile, BluetoothProfile proxy) {
                     if (profile == BluetoothProfile.HEADSET) {
                         headset = (BluetoothHeadset) proxy;
                         updateDevices();
@@ -119,21 +93,7 @@ class BluetoothHeadsetMonitor {
                 }
             };
 
-        return
-            adapter.getProfileProxy(
-                    context,
-                    listener,
-                    BluetoothProfile.HEADSET);
-    }
-
-    /**
-     * Returns the current headset availability.
-     *
-     * @return {@code true} if there is a Bluetooth headset connected;
-     * {@code false}, otherwise.
-     */
-    public boolean isHeadsetAvailable() {
-        return headsetAvailable;
+        return adapter.getProfileProxy(context, listener, BluetoothProfile.HEADSET);
     }
 
     private void onBluetoothReceiverReceive(Context context, Intent intent) {
@@ -148,9 +108,7 @@ class BluetoothHeadsetMonitor {
             switch (state) {
             case BluetoothHeadset.STATE_CONNECTED:
             case BluetoothHeadset.STATE_DISCONNECTED:
-                Log.d(
-                        AudioModeModule.TAG,
-                        "BT headset connection state changed: " + state);
+                JitsiMeetLogger.d(TAG + " BT headset connection state changed: " + state);
                 updateDevices();
                 break;
             }
@@ -158,15 +116,12 @@ class BluetoothHeadsetMonitor {
             // XXX: This action will be fired when the connection established
             // with a Bluetooth headset (called a SCO connection) changes state.
             // When the SCO connection is active we route audio to it.
-            int state
-                = intent.getIntExtra(AudioManager.EXTRA_SCO_AUDIO_STATE, -99);
+            int state = intent.getIntExtra(AudioManager.EXTRA_SCO_AUDIO_STATE, -99);
 
             switch (state) {
             case AudioManager.SCO_AUDIO_STATE_CONNECTED:
             case AudioManager.SCO_AUDIO_STATE_DISCONNECTED:
-                Log.d(
-                        AudioModeModule.TAG,
-                        "BT SCO connection state changed: " + state);
+                JitsiMeetLogger.d(TAG + " BT SCO connection state changed: " + state);
                 updateDevices();
                 break;
             }
@@ -174,24 +129,63 @@ class BluetoothHeadsetMonitor {
     }
 
     private void registerBluetoothReceiver() {
-        BroadcastReceiver receiver = new BroadcastReceiver() {
+        receiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
                 onBluetoothReceiverReceive(context, intent);
             }
         };
-        IntentFilter filter = new IntentFilter();
 
+        IntentFilter filter = new IntentFilter();
         filter.addAction(AudioManager.ACTION_SCO_AUDIO_STATE_UPDATED);
         filter.addAction(BluetoothHeadset.ACTION_CONNECTION_STATE_CHANGED);
+
         context.registerReceiver(receiver, filter);
     }
 
     /**
      * Detects if there are new devices connected / disconnected and fires the
-     * {@link AudioModeModule#onAudioDeviceChange()} callback.
+     * {@link Listener} registered event.
      */
     private void updateDevices() {
-        audioModeModule.runInAudioThread(updateDevicesRunnable);
+        boolean headsetAvailable = (headset != null) && !headset.getConnectedDevices().isEmpty();
+        listener.onBluetoothDeviceChange(headsetAvailable);
+    }
+
+    public void start() {
+        AudioManager audioManager = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
+
+        if (!audioManager.isBluetoothScoAvailableOffCall()) {
+            JitsiMeetLogger.w(TAG + " Bluetooth SCO is not available");
+            return;
+        }
+
+        if (!getBluetoothHeadsetProfileProxy()) {
+            JitsiMeetLogger.w(TAG + " Couldn't get BT profile proxy");
+            return;
+        }
+
+        registerBluetoothReceiver();
+
+        // Initial detection.
+        updateDevices();
+    }
+
+    public void stop() {
+        if (receiver != null) {
+            context.unregisterReceiver(receiver);
+        }
+
+        if (adapter != null && headset != null) {
+            adapter.closeProfileProxy(BluetoothProfile.HEADSET, headset);
+        }
+
+        receiver = null;
+        headset = null;
+        adapter = null;
+    }
+
+    interface Listener {
+        void onBluetoothDeviceChange(boolean deviceAvailable);
     }
 }

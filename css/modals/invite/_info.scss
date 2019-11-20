@@ -63,6 +63,8 @@
         width: -webkit-max-content;
         word-break: break-all;
         max-width: 400px;
+        display: flex;
+        align-items: center;
     }
 
     .info-dialog-dial-in {
@@ -84,6 +86,15 @@
     .info-dialog-url-text:hover {
         color: inherit;
         cursor: inherit;
+    }
+
+    .info-dialog-url-icon {
+        display: inline-block;
+        margin-left: 5px;
+
+        svg {
+            cursor: pointer;
+        }
     }
 
     .info-dialog-title {
@@ -213,5 +224,11 @@
         user-select: text;
         -moz-user-select: text;
         -webkit-user-select: text;
+    }
+
+    .info-dialog-url-text-unselectable {
+        user-select: none;
+        -moz-user-select: none;
+        -webkit-user-select: none;
     }
 }

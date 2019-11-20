@@ -29,14 +29,14 @@ export type Props = {
  *
  * @extends Component
  */
-class AbstractDialogTab extends Component<Props> {
+class AbstractDialogTab<P: Props, S: *> extends Component<P, S> {
     /**
      * Initializes a new {@code AbstractDialogTab} instance.
      *
-     * @param {Object} props - The read-only properties with which the new
+     * @param {P} props - The read-only properties with which the new
      * instance is to be initialized.
      */
-    constructor(props: Props) {
+    constructor(props: P) {
         super(props);
 
         // Bind event handler so it is only bound once for every instance.

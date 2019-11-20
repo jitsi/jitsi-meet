@@ -1,7 +1,5 @@
 // @flow
 
-import { getLogger } from 'jitsi-meet-logger';
-
 import { SET_FILMSTRIP_ENABLED } from '../../filmstrip/actionTypes';
 import { SELECT_LARGE_VIDEO_PARTICIPANT } from '../../large-video/actionTypes';
 import { APP_STATE_CHANGED } from '../../mobile/background/actionTypes';
@@ -12,8 +10,9 @@ import { CONFERENCE_JOINED } from '../conference/actionTypes';
 import { getParticipantById } from '../participants/functions';
 import { MiddlewareRegistry } from '../redux';
 
+import logger from './logger';
+
 declare var APP: Object;
-const logger = getLogger('features/base/lastn');
 
 
 MiddlewareRegistry.register(store => next => action => {

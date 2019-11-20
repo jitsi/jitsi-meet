@@ -16,6 +16,9 @@ import { AppRegistry } from 'react-native';
 import { App } from './features/app';
 import { IncomingCallApp } from './features/mobile/incoming-call';
 
+// It's crucial that the native loggers are created ASAP, not to lose any data.
+import { _initLogging } from './features/base/logging/functions';
+
 declare var __DEV__;
 
 /**
@@ -50,6 +53,9 @@ class Root extends PureComponent<Props> {
         );
     }
 }
+
+// Initialize logging.
+_initLogging();
 
 // HORRIBLE HACK ALERT! React Native logs the initial props with `console.log`. Here we are quickly patching it
 // to avoid logging potentially sensitive information.

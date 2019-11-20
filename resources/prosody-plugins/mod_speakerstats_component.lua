@@ -1,4 +1,5 @@
 local get_room_from_jid = module:require "util".get_room_from_jid;
+local room_jid_match_rewrite = module:require "util".room_jid_match_rewrite;
 local jid_resource = require "util.jid".resource;
 local ext_events = module:require "ext_events"
 local st = require "util.stanza";
@@ -25,7 +26,7 @@ function on_message(event)
         = event.stanza:get_child('speakerstats', 'http://jitsi.org/jitmeet');
     if speakerStats then
         local roomAddress = speakerStats.attr.room;
-        local room = get_room_from_jid(roomAddress);
+        local room = get_room_from_jid(room_jid_match_rewrite(roomAddress));
 
         if not room then
             log("warn", "No room found %s", roomAddress);
@@ -62,11 +63,12 @@ end
 local SpeakerStats = {};
 SpeakerStats.__index = SpeakerStats;
 
-function new_SpeakerStats(nick)
+function new_SpeakerStats(nick, context_user)
     return setmetatable({
         totalDominantSpeakerTime = 0;
         _dominantSpeakerStart = 0;
         nick = nick;
+        context_user = context_user;
         displayName = nil;
     }, SpeakerStats);
 end
@@ -106,6 +108,7 @@ end
 function occupant_joined(event)
     local room = event.room;
     local occupant = event.occupant;
+
     local nick = jid_resource(occupant.nick);
 
     if room.speakerStats then
@@ -150,7 +153,8 @@ function occupant_joined(event)
             room:route_stanza(stanza);
         end
 
-        room.speakerStats[occupant.jid] = new_SpeakerStats(nick);
+        local context_user = event.origin and event.origin.jitsi_meet_context_user or nil;
+        room.speakerStats[occupant.jid] = new_SpeakerStats(nick, context_user);
     end
 end
 

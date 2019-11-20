@@ -1,7 +1,5 @@
 // @flow
 
-const logger = require('jitsi-meet-logger').getLogger(__filename);
-
 /**
  * Creates a deferred object.
  *
@@ -16,6 +14,24 @@ export function createDeferred(): Object {
     });
 
     return deferred;
+}
+
+const MATCH_OPERATOR_REGEXP = /[|\\{}()[\]^$+*?.-]/g;
+
+/**
+ * Escape RegExp special characters.
+ *
+ * Based on https://github.com/sindresorhus/escape-string-regexp.
+ *
+ * @param {string} s - The regexp string to escape.
+ * @returns {string}
+ */
+export function escapeRegexp(s: string) {
+    if (typeof s !== 'string') {
+        throw new TypeError('Expected a string');
+    }
+
+    return s.replace(MATCH_OPERATOR_REGEXP, '\\$&');
 }
 
 /**
@@ -88,6 +104,6 @@ export function assignIfDefined(target: Object, source: Object) {
  * @returns {void}
  */
 export function reportError(e: Object, msg: string = '') {
-    logger.error(msg, e);
+    console.error(msg, e);
     window.onerror && window.onerror(msg, null, null, null, e);
 }

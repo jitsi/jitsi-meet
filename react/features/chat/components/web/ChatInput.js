@@ -8,8 +8,6 @@ import type { Dispatch } from 'redux';
 import { translate } from '../../../base/i18n';
 import { connect } from '../../../base/redux';
 
-import { sendMessage } from '../../actions';
-
 import SmileysPanel from './SmileysPanel';
 
 /**
@@ -27,6 +25,11 @@ type Props = {
      * fit overflowing text.
      */
     onResize: ?Function,
+
+    /**
+     * Callback to invoke on message send.
+     */
+    onSend: Function,
 
     /**
      * Invoked to obtain translated strings.
@@ -163,7 +166,7 @@ class ChatInput extends Component<Props, State> {
             const trimmed = this.state.message.trim();
 
             if (trimmed) {
-                this.props.dispatch(sendMessage(trimmed));
+                this.props.onSend(trimmed);
 
                 this.setState({ message: '' });
             }

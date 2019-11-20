@@ -3,8 +3,8 @@
 import React, { Component } from 'react';
 import { Text, View } from 'react-native';
 
-import { Icon } from '../../../font-icons';
 import { translate } from '../../../i18n';
+import { Icon, IconMenuDown } from '../../../icons';
 
 import styles from './styles';
 
@@ -38,7 +38,7 @@ class NavigateSectionListEmptyComponent extends Component<Props> {
                     { t('sectionList.pullToRefresh') }
                 </Text>
                 <Icon
-                    name = 'menu-down'
+                    src = { IconMenuDown }
                     style = { styles.pullToRefreshIcon } />
             </View>
         );

@@ -37,6 +37,7 @@ set -e
 # IOS_TEAM_ID - the team ID inserted into build-ipa-.plist.template file in
 # place of "YOUR_TEAM_ID".
 
+
 # Travis will not print the last echo if there's no sleep 1
 function echoSleepAndExit1() {
     echo $1
@@ -55,10 +56,6 @@ if [ -z $PR_BRANCH ]; then
 fi
 if [ -z $IPA_DEPLOY_LOCATION ]; then
     echoSleepAndExit1 "No IPA_DEPLOY_LOCATION defined"
-fi
-
-if [ -z $APPLE_CERT_URL ]; then
-    APPLE_CERT_URL="http://developer.apple.com/certificationauthority/AppleWWDRCA.cer"
 fi
 
 echo "PR_REPO_SLUG=${PR_REPO_SLUG} PR_BRANCH=${PR_BRANCH}"
@@ -88,47 +85,17 @@ fi
 
 git log -20 --graph --pretty=format':%C(yellow)%h%Cblue%d%Creset %s %C(white) %an, %ar%Creset'
 
-# certificates
-
+#certificates
 CERT_DIR="ios/travis-ci/certs"
 
-mkdir $CERT_DIR
+mkdir -p $CERT_DIR
 
-curl -L -o ${CERT_DIR}/AppleWWDRCA.cer 'http://developer.apple.com/certificationauthority/AppleWWDRCA.cer'
-curl -L -o ${CERT_DIR}/dev-cert.cer.enc ${IOS_DEV_CERT_URL}
-curl -L -o ${CERT_DIR}/dev-key.p12.enc ${IOS_DEV_CERT_KEY_URL}
-curl -L -o ${CERT_DIR}/dev-profile.mobileprovision.enc ${IOS_DEV_PROV_PROFILE_URL}
-curl -L -o ${CERT_DIR}/dev-watch-profile.mobileprovision.enc ${IOS_DEV_WATCH_PROV_PROFILE_URL}
+./ios/ci/setup-certificates.sh $CERT_DIR
+
 curl -L -o ${CERT_DIR}/id_rsa.enc ${DEPLOY_SSH_CERT_URL}
-
-openssl aes-256-cbc -k "$ENCRYPTION_PASSWORD" -in ${CERT_DIR}/dev-cert.cer.enc -d -a -out ${CERT_DIR}/dev-cert.cer
-openssl aes-256-cbc -k "$ENCRYPTION_PASSWORD" -in ${CERT_DIR}/dev-key.p12.enc -d -a -out ${CERT_DIR}/dev-key.p12
-openssl aes-256-cbc -k "$ENCRYPTION_PASSWORD" -in ${CERT_DIR}/dev-profile.mobileprovision.enc -d -a -out ${CERT_DIR}/dev-profile.mobileprovision
-openssl aes-256-cbc -k "$ENCRYPTION_PASSWORD" -in ${CERT_DIR}/dev-watch-profile.mobileprovision.enc -d -a -out ${CERT_DIR}/dev-watch-profile.mobileprovision
 openssl aes-256-cbc -k "$ENCRYPTION_PASSWORD" -in ${CERT_DIR}/id_rsa.enc -d -a -out ${CERT_DIR}/id_rsa
 chmod 0600 ${CERT_DIR}/id_rsa
-
-security create-keychain -p $ENCRYPTION_PASSWORD ios-build.keychain
-security default-keychain -s ios-build.keychain
-security unlock-keychain -p $ENCRYPTION_PASSWORD ios-build.keychain
-security set-keychain-settings -t 3600 -l ~/Library/Keychains/ios-build.keychain
-
-echo "importing Apple cert"
-security import ${CERT_DIR}/AppleWWDRCA.cer -k ios-build.keychain -A
-echo "importing dev-cert.cer"
-security import ${CERT_DIR}/dev-cert.cer -k ios-build.keychain -A
-echo "importing dev-key.p12"
-security import ${CERT_DIR}/dev-key.p12 -k ios-build.keychain -P $IOS_SIGNING_CERT_PASSWORD -A
-
-echo "will set-key-partition-list"
-# Fix for OS X Sierra that hungs in the codesign step
-security set-key-partition-list -S apple-tool:,apple: -s -k $ENCRYPTION_PASSWORD ios-build.keychain > /dev/null
-echo "done set-key-partition-list"
-
-mkdir -p ~/Library/MobileDevice/Provisioning\ Profiles
-
-cp "${CERT_DIR}/dev-profile.mobileprovision"  ~/Library/MobileDevice/Provisioning\ Profiles/
-cp "${CERT_DIR}/dev-watch-profile.mobileprovision"  ~/Library/MobileDevice/Provisioning\ Profiles/
+ssh-add ${CERT_DIR}/id_rsa
 
 npm install
 
@@ -136,23 +103,20 @@ npm install
 ./node_modules/react-native-webrtc/tools/downloadBitcode.sh
 
 cd ios
-pod update
-pod install
+pod install --repo-update --no-ansi
 cd ..
 
 mkdir -p /tmp/jitsi-meet/
 
 xcodebuild archive -quiet -workspace ios/jitsi-meet.xcworkspace -scheme jitsi-meet -configuration Release -archivePath /tmp/jitsi-meet/jitsi-meet.xcarchive
 
-sed -e "s/YOUR_TEAM_ID/${IOS_TEAM_ID}/g" ios/travis-ci/build-ipa.plist.template > ios/travis-ci/build-ipa.plist
+sed -e "s/YOUR_TEAM_ID/${IOS_TEAM_ID}/g" ios/ci/build-ipa.plist.template > ios/ci/build-ipa.plist
 
 IPA_EXPORT_DIR=/tmp/jitsi-meet/jitsi-meet-ipa
 
-xcodebuild -quiet -exportArchive -archivePath /tmp/jitsi-meet/jitsi-meet.xcarchive -exportPath $IPA_EXPORT_DIR  -exportOptionsPlist ios/travis-ci/build-ipa.plist
+xcodebuild -quiet -exportArchive -archivePath /tmp/jitsi-meet/jitsi-meet.xcarchive -exportPath $IPA_EXPORT_DIR  -exportOptionsPlist ios/ci/build-ipa.plist
 
 echo "Will try deploy the .ipa to: ${IPA_DEPLOY_LOCATION}"
-
-ssh-add ${CERT_DIR}/id_rsa
 
 if [ ! -z ${SCP_PROXY_HOST} ];
 then

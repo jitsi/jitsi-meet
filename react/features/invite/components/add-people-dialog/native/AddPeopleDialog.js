@@ -14,8 +14,8 @@ import {
 } from 'react-native';
 
 import { AlertDialog, openDialog } from '../../../../base/dialog';
-import { Icon } from '../../../../base/font-icons';
 import { translate } from '../../../../base/i18n';
+import { Icon, IconCancelSelection, IconCheck, IconClose, IconPhone, IconSearch } from '../../../../base/icons';
 import {
     AvatarListItem,
     HeaderWithNavigation,
@@ -106,6 +106,7 @@ class AddPeopleDialog extends AbstractAddPeopleDialog<Props, State> {
         this.state = this.defaultState;
 
         this._keyExtractor = this._keyExtractor.bind(this);
+        this._renderInvitedItem = this._renderInvitedItem.bind(this);
         this._renderItem = this._renderItem.bind(this);
         this._renderSeparator = this._renderSeparator.bind(this);
         this._onClearField = this._onClearField.bind(this);
@@ -138,7 +139,7 @@ class AddPeopleDialog extends AbstractAddPeopleDialog<Props, State> {
             _addPeopleEnabled,
             _dialOutEnabled
         } = this.props;
-        const { inviteItems } = this.state;
+        const { inviteItems, selectableItems } = this.state;
 
         let placeholderKey = 'searchPlaceholder';
 
@@ -171,7 +172,7 @@ class AddPeopleDialog extends AbstractAddPeopleDialog<Props, State> {
                                         color = { DARK_GREY }
                                         size = 'small' />
                                     : <Icon
-                                        name = { 'search' }
+                                        src = { IconSearch }
                                         style = { styles.searchIcon } />}
                             </View>
                             <TextInput
@@ -187,14 +188,23 @@ class AddPeopleDialog extends AbstractAddPeopleDialog<Props, State> {
                                 value = { this.state.fieldValue } />
                             { this._renderAndroidClearButton() }
                         </View>
-                        <FlatList
-                            ItemSeparatorComponent = { this._renderSeparator }
-                            data = { this.state.selectableItems }
-                            extraData = { inviteItems }
-                            keyExtractor = { this._keyExtractor }
-                            keyboardShouldPersistTaps = 'always'
-                            renderItem = { this._renderItem }
-                            style = { styles.resultList } />
+                        { Boolean(inviteItems.length) && <View style = { styles.invitedList }>
+                            <FlatList
+                                data = { inviteItems }
+                                horizontal = { true }
+                                keyExtractor = { this._keyExtractor }
+                                keyboardShouldPersistTaps = 'always'
+                                renderItem = { this._renderInvitedItem } />
+                        </View> }
+                        <View style = { styles.resultList }>
+                            <FlatList
+                                ItemSeparatorComponent = { this._renderSeparator }
+                                data = { selectableItems }
+                                extraData = { inviteItems }
+                                keyExtractor = { this._keyExtractor }
+                                keyboardShouldPersistTaps = 'always'
+                                renderItem = { this._renderItem } />
+                        </View>
                     </SafeAreaView>
                 </KeyboardAvoidingView>
             </SlidingView>
@@ -208,6 +218,33 @@ class AddPeopleDialog extends AbstractAddPeopleDialog<Props, State> {
      */
     _clearState() {
         this.setState(this.defaultState);
+    }
+
+    /**
+     * Returns an object capable of being rendered by an {@code AvatarListItem}.
+     *
+     * @param {Object} flatListItem - An item of the data array of the {@code FlatList}.
+     * @returns {?Object}
+     */
+    _getRenderableItem(flatListItem) {
+        const { item } = flatListItem;
+
+        switch (item.type) {
+        case 'phone':
+            return {
+                avatar: IconPhone,
+                key: item.number,
+                title: item.number
+            };
+        case 'user':
+            return {
+                avatar: item.avatar,
+                key: item.id || item.user_id,
+                title: item.name
+            };
+        default:
+            return null;
+        }
     }
 
     _invite: Array<Object> => Promise<Array<Object>>
@@ -303,7 +340,7 @@ class AddPeopleDialog extends AbstractAddPeopleDialog<Props, State> {
                 });
             } else {
                 // Item is not selected yet, need to add to the list.
-                const items: Array<*> = inviteItems.concat(item);
+                const items: Array<Object> = inviteItems.concat(item);
 
                 this.setState({
                     inviteItems: _.sortBy(items, [ 'name', 'number' ])
@@ -344,27 +381,8 @@ class AddPeopleDialog extends AbstractAddPeopleDialog<Props, State> {
      */
     _performSearch(query) {
         this._query(query).then(results => {
-            const { inviteItems } = this.state;
-
-            let selectableItems = results.filter(result => {
-                switch (result.type) {
-                case 'phone':
-                    return result.allowed && result.number
-                        && !inviteItems.find(
-                            _.matchesProperty('number', result.number));
-                case 'user':
-                    return !inviteItems.find(
-                        (result.user_id && _.matchesProperty('id', result.id))
-                        || (result.user_id && _.matchesProperty('user_id', result.user_id)));
-                default:
-                    return false;
-                }
-            });
-
-            selectableItems = _.sortBy(selectableItems, [ 'name', 'number' ]);
-
             this.setState({
-                selectableItems: this.state.inviteItems.concat(selectableItems)
+                selectableItems: _.sortBy(results, [ 'name', 'number' ])
             });
         })
         .finally(() => {
@@ -377,8 +395,6 @@ class AddPeopleDialog extends AbstractAddPeopleDialog<Props, State> {
     }
 
     _query: (string) => Promise<Array<Object>>;
-
-    _renderItem: Object => ?React$Element<*>
 
     /**
      * Renders a button to clear the text field on Android.
@@ -398,47 +414,77 @@ class AddPeopleDialog extends AbstractAddPeopleDialog<Props, State> {
                 style = { styles.clearButton }>
                 <View style = { styles.clearIconContainer }>
                     <Icon
-                        name = 'close'
+                        src = { IconClose }
                         style = { styles.clearIcon } />
                 </View>
             </TouchableOpacity>
         );
     }
 
+    _renderInvitedItem: Object => React$Element<any> | null
+
     /**
-     * Renders a single item in the {@code FlatList}.
+     * Renders a single item in the invited {@code FlatList}.
+     *
+     * @param {Object} flatListItem - An item of the data array of the
+     * {@code FlatList}.
+     * @param {number} index - The index of the currently rendered item.
+     * @returns {?React$Element<any>}
+     */
+    _renderInvitedItem(flatListItem, index): React$Element<any> | null {
+        const { item } = flatListItem;
+        const renderableItem = this._getRenderableItem(flatListItem);
+
+        return (
+            <TouchableOpacity onPress = { this._onPressItem(item) } >
+                <View
+                    pointerEvents = 'box-only'
+                    style = { styles.itemWrapper }>
+                    <AvatarListItem
+                        avatarOnly = { true }
+                        avatarSize = { AVATAR_SIZE }
+                        avatarStyle = { styles.avatar }
+                        avatarTextStyle = { styles.avatarText }
+                        item = { renderableItem }
+                        key = { index }
+                        linesStyle = { styles.itemLinesStyle }
+                        titleStyle = { styles.itemText } />
+                    <Icon
+                        src = { IconCancelSelection }
+                        style = { styles.unselectIcon } />
+                </View>
+            </TouchableOpacity>
+        );
+    }
+
+    _renderItem: Object => React$Element<any> | null
+
+    /**
+     * Renders a single item in the search result {@code FlatList}.
      *
      * @param {Object} flatListItem - An item of the data array of the
      * {@code FlatList}.
      * @param {number} index - The index of the currently rendered item.
      * @returns {?React$Element<*>}
      */
-    _renderItem(flatListItem, index) {
+    _renderItem(flatListItem, index): React$Element<any> | null {
         const { item } = flatListItem;
         const { inviteItems } = this.state;
         let selected = false;
-        let renderableItem;
+        const renderableItem = this._getRenderableItem(flatListItem);
+
+        if (!renderableItem) {
+            return null;
+        }
 
         switch (item.type) {
         case 'phone':
-            selected
-                = inviteItems.find(_.matchesProperty('number', item.number));
-            renderableItem = {
-                avatar: 'icon://phone',
-                key: item.number,
-                title: item.number
-            };
+            selected = inviteItems.find(_.matchesProperty('number', item.number));
             break;
         case 'user':
-            selected
-                = item.id
-                    ? inviteItems.find(_.matchesProperty('id', item.id))
-                    : inviteItems.find(_.matchesProperty('user_id', item.user_id));
-            renderableItem = {
-                avatar: item.avatar,
-                key: item.id || item.user_id,
-                title: item.name
-            };
+            selected = item.id
+                ? inviteItems.find(_.matchesProperty('id', item.id))
+                : inviteItems.find(_.matchesProperty('user_id', item.user_id));
             break;
         default:
             return null;
@@ -449,11 +495,6 @@ class AddPeopleDialog extends AbstractAddPeopleDialog<Props, State> {
                 <View
                     pointerEvents = 'box-only'
                     style = { styles.itemWrapper }>
-                    <Icon
-                        name = { selected
-                            ? 'radio_button_checked'
-                            : 'radio_button_unchecked' }
-                        style = { styles.radioButton } />
                     <AvatarListItem
                         avatarSize = { AVATAR_SIZE }
                         avatarStyle = { styles.avatar }
@@ -462,6 +503,9 @@ class AddPeopleDialog extends AbstractAddPeopleDialog<Props, State> {
                         key = { index }
                         linesStyle = { styles.itemLinesStyle }
                         titleStyle = { styles.itemText } />
+                    { selected && <Icon
+                        src = { IconCheck }
+                        style = { styles.selectedIcon } /> }
                 </View>
             </TouchableOpacity>
         );

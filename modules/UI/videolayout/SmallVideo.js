@@ -12,6 +12,7 @@ import { AudioLevelIndicator }
     from '../../../react/features/audio-level-indicator';
 import { Avatar as AvatarDisplay } from '../../../react/features/base/avatar';
 import {
+    getParticipantCount,
     getPinnedParticipant,
     pinParticipant
 } from '../../../react/features/base/participants';
@@ -198,7 +199,7 @@ SmallVideo.createStreamElement = function(stream) {
         element.muted = true;
     }
 
-    element.autoplay = true;
+    element.autoplay = !config.testing?.noAutoPlayVideo;
     element.id = SmallVideo.getStreamElementID(stream);
 
     return element;
@@ -510,7 +511,7 @@ SmallVideo.prototype.isCurrentlyOnLargeVideo = function() {
  * or <tt>false</tt> otherwise.
  */
 SmallVideo.prototype.isVideoPlayable = function() {
-    return this.videoStream && !this.isVideoMuted && !this.videoStream.isMuted();
+    return this.videoStream && !this.isVideoMuted && !APP.conference.isAudioOnly();
 };
 
 /**
@@ -519,40 +520,33 @@ SmallVideo.prototype.isVideoPlayable = function() {
  * @return {number} one of <tt>DISPLAY_VIDEO</tt>,<tt>DISPLAY_AVATAR</tt>
  * or <tt>DISPLAY_BLACKNESS_WITH_NAME</tt>.
  */
-SmallVideo.prototype.selectDisplayMode = function() {
-    const isAudioOnly = APP.conference.isAudioOnly();
-    const tileViewEnabled = shouldDisplayTileView(APP.store.getState());
-    const isVideoPlayable = this.isVideoPlayable();
-    const hasVideo = Boolean(this.selectVideoElement().length);
+SmallVideo.prototype.selectDisplayMode = function(input) {
 
     // Display name is always and only displayed when user is on the stage
-    if (this.isCurrentlyOnLargeVideo() && !tileViewEnabled) {
-        return isVideoPlayable && !isAudioOnly ? DISPLAY_BLACKNESS_WITH_NAME : DISPLAY_AVATAR_WITH_NAME;
-    } else if (isVideoPlayable && hasVideo && !isAudioOnly) {
+    if (input.isCurrentlyOnLargeVideo && !input.tileViewEnabled) {
+        return input.isVideoPlayable && !input.isAudioOnly ? DISPLAY_BLACKNESS_WITH_NAME : DISPLAY_AVATAR_WITH_NAME;
+    } else if (input.isVideoPlayable && input.hasVideo && !input.isAudioOnly) {
         // check hovering and change state to video with name
-        return this._isHovered() ? DISPLAY_VIDEO_WITH_NAME : DISPLAY_VIDEO;
+        return input.isHovered ? DISPLAY_VIDEO_WITH_NAME : DISPLAY_VIDEO;
     }
 
     // check hovering and change state to avatar with name
-    return this._isHovered() ? DISPLAY_AVATAR_WITH_NAME : DISPLAY_AVATAR;
+    return input.isHovered ? DISPLAY_AVATAR_WITH_NAME : DISPLAY_AVATAR;
 };
 
 /**
- * Prints information about the current display mode.
+ * Computes information that determine the display mode.
  *
- * @param {string} mode - The current mode.
- * @returns {void}
+ * @returns {Object}
  */
-SmallVideo.prototype._printDisplayModeInfo = function(mode) {
-    const isAudioOnly = APP.conference.isAudioOnly();
-    const tileViewEnabled = shouldDisplayTileView(APP.store.getState());
-    const isVideoPlayable = this.isVideoPlayable();
-    const hasVideo = Boolean(this.selectVideoElement().length);
-    const displayModeInfo = {
-        isAudioOnly,
-        tileViewEnabled,
-        isVideoPlayable,
-        hasVideo,
+SmallVideo.prototype.computeDisplayModeInput = function() {
+    return {
+        isCurrentlyOnLargeVideo: this.isCurrentlyOnLargeVideo(),
+        isHovered: this._isHovered(),
+        isAudioOnly: APP.conference.isAudioOnly(),
+        tileViewEnabled: shouldDisplayTileView(APP.store.getState()),
+        isVideoPlayable: this.isVideoPlayable(),
+        hasVideo: Boolean(this.selectVideoElement().length),
         connectionStatus: APP.conference.getParticipantConnectionStatus(this.id),
         mutedWhileDisconnected: this.mutedWhileDisconnected,
         wasVideoPlayed: this.wasVideoPlayed,
@@ -560,8 +554,6 @@ SmallVideo.prototype._printDisplayModeInfo = function(mode) {
         isVideoMuted: this.isVideoMuted,
         videoStreamMuted: this.videoStream ? this.videoStream.isMuted() : 'no stream'
     };
-
-    logger.debug(`Displaying ${mode} for ${this.id}, reason: [${JSON.stringify(displayModeInfo)}]`);
 };
 
 /**
@@ -595,8 +587,10 @@ SmallVideo.prototype.updateView = function() {
     const oldDisplayMode = this.displayMode;
     let displayModeString = '';
 
+    const displayModeInput = this.computeDisplayModeInput();
+
     // Determine whether video, avatar or blackness should be displayed
-    this.displayMode = this.selectDisplayMode();
+    this.displayMode = this.selectDisplayMode(displayModeInput);
 
     switch (this.displayMode) {
     case DISPLAY_AVATAR_WITH_NAME:
@@ -623,7 +617,7 @@ SmallVideo.prototype.updateView = function() {
     }
 
     if (this.displayMode !== oldDisplayMode) {
-        this._printDisplayModeInfo(displayModeString);
+        logger.debug(`Displaying ${displayModeString} for ${this.id}, data: [${JSON.stringify(displayModeInput)}]`);
     }
 };
 
@@ -836,7 +830,9 @@ SmallVideo.prototype.updateIndicators = function() {
     const iconSize = UIUtil.getIndicatorFontSize();
     const showConnectionIndicator = this.videoIsHovered
         || !interfaceConfig.CONNECTION_INDICATOR_AUTO_HIDE_ENABLED;
-    const currentLayout = getCurrentLayout(APP.store.getState());
+    const state = APP.store.getState();
+    const currentLayout = getCurrentLayout(state);
+    const participantCount = getParticipantCount(state);
     let statsPopoverPosition, tooltipPosition;
 
     if (currentLayout === LAYOUTS.TILE_VIEW) {
@@ -871,7 +867,7 @@ SmallVideo.prototype.updateIndicators = function() {
                             iconSize = { iconSize }
                             participantId = { this.id }
                             tooltipPosition = { tooltipPosition } />
-                        { this._showDominantSpeaker
+                        { this._showDominantSpeaker && participantCount > 2
                             ? <DominantSpeakerIndicator
                                 iconSize = { iconSize }
                                 tooltipPosition = { tooltipPosition } />
