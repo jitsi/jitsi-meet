@@ -178,13 +178,15 @@ export function getConferenceName(stateful: Function | Object): string {
  * @returns {JitsiConference|undefined}
  */
 export function getCurrentConference(stateful: Function | Object) {
-    const { conference, joining, leaving }
+    const { conference, joining, leaving, passwordRequired }
         = toState(stateful)['features/base/conference'];
 
-    return (
-        conference
-            ? conference === leaving ? undefined : conference
-            : joining);
+    // There is a precendence
+    if (conference) {
+        return conference === leaving ? undefined : conference;
+    }
+
+    return joining || passwordRequired;
 }
 
 /**
