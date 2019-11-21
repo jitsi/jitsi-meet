@@ -15,7 +15,7 @@ export type Props = {
  *
  * @extends PureComponent
  */
-export default class AbstractMessageContainer extends PureComponent<Props> {
+export default class AbstractMessageContainer<P: Props> extends PureComponent<P> {
     static defaultProps = {
         messages: []
     };
@@ -46,7 +46,7 @@ export default class AbstractMessageContainer extends PureComponent<Props> {
             }
         }
 
-        groups.push(currentGrouping);
+        currentGrouping.length && groups.push(currentGrouping);
 
         return groups;
     }

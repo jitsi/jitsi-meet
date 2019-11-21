@@ -47,8 +47,10 @@
     },
     "chat": {
         "error": "Error: your message was not sent. Reason: {{error}}",
+        "fieldPlaceHolder": "Type your message here",
         "messagebox": "Type a message",
         "messageTo": "Private message to {{recipient}}",
+        "noMessagesMessage": "There are no messages in the meeting yet. Start a conversation here!",
         "nickname": {
             "popover": "Choose a nickname",
             "title": "Enter a nickname to use chat"
