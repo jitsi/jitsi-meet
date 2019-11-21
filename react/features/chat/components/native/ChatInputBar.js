@@ -3,6 +3,7 @@
 import React, { Component } from 'react';
 import { TextInput, TouchableOpacity, View } from 'react-native';
 
+import { translate } from '../../../base/i18n';
 import { Icon, IconChatSend } from '../../../base/icons';
 import { Platform } from '../../../base/react';
 
@@ -13,7 +14,12 @@ type Props = {
     /**
      * Callback to invoke on message send.
      */
-    onSend: Function
+    onSend: Function,
+
+    /**
+     * Function to be used to translate i18n labels.
+     */
+    t: Function
 };
 
 type State = {
@@ -37,7 +43,7 @@ type State = {
 /**
  * Implements the chat input bar with text field and action(s).
  */
-export default class ChatInputBar extends Component<Props, State> {
+class ChatInputBar extends Component<Props, State> {
     /**
      * Instantiates a new instance of the component.
      *
@@ -53,6 +59,7 @@ export default class ChatInputBar extends Component<Props, State> {
         };
 
         this._onChangeText = this._onChangeText.bind(this);
+        this._onFieldReferenceAvailable = this._onFieldReferenceAvailable.bind(this);
         this._onFocused = this._onFocused.bind(this);
         this._onSubmit = this._onSubmit.bind(this);
     }
@@ -76,6 +83,8 @@ export default class ChatInputBar extends Component<Props, State> {
                     onChangeText = { this._onChangeText }
                     onFocus = { this._onFocused(true) }
                     onSubmitEditing = { this._onSubmit }
+                    placeholder = { this.props.t('chat.fieldPlaceHolder') }
+                    ref = { this._onFieldReferenceAvailable }
                     returnKeyType = 'send'
                     style = { styles.inputField }
                     value = { this.state.message } />
@@ -103,6 +112,18 @@ export default class ChatInputBar extends Component<Props, State> {
             message: text,
             showSend: Boolean(text)
         });
+    }
+
+    _onFieldReferenceAvailable: Object => void;
+
+    /**
+     * Callback to be invoked when the field reference is available.
+     *
+     * @param {Object} field - The reference to the field.
+     * @returns {void}
+     */
+    _onFieldReferenceAvailable(field) {
+        field && field.focus();
     }
 
     _onFocused: boolean => Function;
@@ -138,3 +159,5 @@ export default class ChatInputBar extends Component<Props, State> {
         });
     }
 }
+
+export default translate(ChatInputBar);
