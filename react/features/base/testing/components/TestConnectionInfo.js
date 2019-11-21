@@ -117,8 +117,8 @@ class TestConnectionInfo extends Component<Props, State> {
         this.setState({
             stats: {
                 bitrate: {
-                    download: stats.bitrate.download,
-                    upload: stats.bitrate.upload
+                    download: stats.bitrate?.download || 0,
+                    upload: stats.bitrate?.upload || 0
                 }
             }
         });
