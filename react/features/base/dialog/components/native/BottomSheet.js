@@ -1,7 +1,7 @@
 // @flow
 
 import React, { PureComponent, type Node } from 'react';
-import { Platform, SafeAreaView, ScrollView, View } from 'react-native';
+import { SafeAreaView, ScrollView, View } from 'react-native';
 
 import { ColorSchemeRegistry } from '../../../color-scheme';
 import { SlidingView } from '../../../react';
@@ -61,40 +61,17 @@ class BottomSheet extends PureComponent<Props> {
                             styles.sheetItemContainer,
                             _styles.sheet
                         ] }>
-                        { this._getWrappedContent() }
+                        <SafeAreaView>
+                            <ScrollView
+                                bounces = { false }
+                                showsVerticalScrollIndicator = { false } >
+                                { this.props.children }
+                            </ScrollView>
+                        </SafeAreaView>
                     </View>
                 </View>
             </SlidingView>
         );
-    }
-
-    /**
-     * Wraps the content when needed (iOS 11 and above), or just returns the original content.
-     *
-     * @returns {React$Element}
-     */
-    _getWrappedContent() {
-        const content = (
-            <ScrollView
-                bounces = { false }
-                showsVerticalScrollIndicator = { false } >
-                { this.props.children }
-            </ScrollView>
-        );
-
-        if (Platform.OS === 'ios') {
-            const majorVersionIOS = parseInt(Platform.Version, 10);
-
-            if (majorVersionIOS > 10) {
-                return (
-                    <SafeAreaView>
-                        { content }
-                    </SafeAreaView>
-                );
-            }
-        }
-
-        return content;
     }
 }
 
