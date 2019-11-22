@@ -2,7 +2,6 @@
 
 import _ from 'lodash';
 
-import Platform from '../react/Platform';
 import { equals, ReducerRegistry, set } from '../redux';
 
 import { _UPDATE_CONFIG, CONFIG_WILL_LOAD, LOAD_CONFIG_ERROR, SET_CONFIG } from './actionTypes';
@@ -20,15 +19,6 @@ import { _cleanupConfig } from './functions';
  */
 const INITIAL_NON_RN_STATE = {
 };
-
-/**
- * When we should enable H.264 on mobile. iOS 10 crashes so we disable it there.
- * See: https://bugs.chromium.org/p/webrtc/issues/detail?id=11002
- * Note that this is only used for P2P calls.
- *
- * @type {boolean}
- */
-const RN_ENABLE_H264 = navigator.product === 'ReactNative' && !(Platform.OS === 'ios' && Platform.Version === 10);
 
 /**
  * The initial state of the feature base/config when executing in a React Native
@@ -50,11 +40,9 @@ const INITIAL_RN_STATE = {
     // fastest to merely disable them.
     disableAudioLevels: true,
 
-    disableH264: !RN_ENABLE_H264,
-
     p2p: {
-        disableH264: !RN_ENABLE_H264,
-        preferH264: RN_ENABLE_H264
+        disableH264: false,
+        preferH264: true
     }
 };
 
