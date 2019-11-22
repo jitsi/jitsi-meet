@@ -57,7 +57,10 @@ import {
 } from '../../../settings';
 import { toggleSharedVideo } from '../../../shared-video';
 import { SpeakerStats } from '../../../speaker-stats';
-import { TileViewButton } from '../../../video-layout';
+import {
+    TileViewButton,
+    toggleTileView
+} from '../../../video-layout';
 import {
     OverflowMenuVideoQualityItem,
     VideoQualityDialog
@@ -121,6 +124,11 @@ type Props = {
      * Whether or not the app is currently in full screen.
      */
     _fullScreen: boolean,
+
+    /**
+     * Whether or not the tile view is enabled.
+     */
+    _tileViewEnabled: boolean,
 
     /**
      * Whether or not invite should be hidden, regardless of feature
@@ -236,6 +244,7 @@ class Toolbox extends Component<Props, State> {
         this._onToolbarToggleScreenshare = this._onToolbarToggleScreenshare.bind(this);
         this._onToolbarToggleSharedVideo = this._onToolbarToggleSharedVideo.bind(this);
         this._onToolbarOpenLocalRecordingInfoDialog = this._onToolbarOpenLocalRecordingInfoDialog.bind(this);
+        this._onShortcutToggleTileView = this._onShortcutToggleTileView.bind(this);
 
         this.state = {
             windowWidth: window.innerWidth
@@ -274,6 +283,11 @@ class Toolbox extends Component<Props, State> {
                 character: 'S',
                 exec: this._onShortcutToggleFullScreen,
                 helpDescription: 'keyboardShortcuts.fullScreen'
+            },
+            this._shouldShowButton('tileview') && {
+                character: 'W',
+                exec: this._onShortcutToggleTileView,
+                helpDescription: 'toolbar.tileViewToggle'
             }
         ];
 
@@ -475,6 +489,16 @@ class Toolbox extends Component<Props, State> {
         this.props.dispatch(toggleDialog(VideoQualityDialog));
     }
 
+    /**
+     * Dispaches an action to toggle tile view.
+     *
+     * @private
+     * @returns {void}
+     */
+    _doToggleTileView() {
+        this.props.dispatch(toggleTileView());
+    }
+
     _onMouseOut: () => void;
 
     /**
@@ -563,6 +587,24 @@ class Toolbox extends Component<Props, State> {
         sendAnalytics(createShortcutEvent('video.quality'));
 
         this._doToggleVideoQuality();
+    }
+
+    _onShortcutToggleTileView: () => void;
+
+    /**
+     * Dispatches an action for toggling the tile view.
+     *
+     * @private
+     * @returns {void}
+     */
+    _onShortcutToggleTileView() {
+        sendAnalytics(createShortcutEvent(
+            'toggle.tileview',
+            {
+                enable: !this.props._tileViewEnabled
+            }));
+
+        this._doToggleTileView();
     }
 
     _onShortcutToggleFullScreen: () => void;
@@ -1295,6 +1337,7 @@ function _mapStateToProps(state) {
             iAmRecorder || (!addPeopleEnabled && !dialOutEnabled),
         _isGuest: state['features/base/jwt'].isGuest,
         _fullScreen: fullScreen,
+        _tileViewEnabled: state['features/video-layout'].tileViewEnabled,
         _localParticipantID: localParticipant.id,
         _localRecState: localRecordingStates,
         _overflowMenuVisible: overflowMenuVisible,
