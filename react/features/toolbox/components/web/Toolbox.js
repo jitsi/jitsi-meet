@@ -126,6 +126,11 @@ type Props = {
     _fullScreen: boolean,
 
     /**
+     * Whether or not the tile view is enabled.
+     */
+    _tileViewEnabled: boolean,
+
+    /**
      * Whether or not invite should be hidden, regardless of feature
      * availability.
      */
@@ -593,6 +598,12 @@ class Toolbox extends Component<Props, State> {
      * @returns {void}
      */
     _onShortcutToggleTileView() {
+        sendAnalytics(createShortcutEvent(
+            'toggle.tileview',
+            {
+                enable: !this.props._tileViewEnabled
+            }));
+
         this._doToggleTileView();
     }
 
@@ -1326,6 +1337,7 @@ function _mapStateToProps(state) {
             iAmRecorder || (!addPeopleEnabled && !dialOutEnabled),
         _isGuest: state['features/base/jwt'].isGuest,
         _fullScreen: fullScreen,
+        _tileViewEnabled: state['features/video-layout'].tileViewEnabled,
         _localParticipantID: localParticipant.id,
         _localRecState: localRecordingStates,
         _overflowMenuVisible: overflowMenuVisible,
