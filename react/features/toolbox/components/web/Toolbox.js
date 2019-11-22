@@ -287,7 +287,7 @@ class Toolbox extends Component<Props, State> {
             this._shouldShowButton('tileview') && {
                 character: 'W',
                 exec: this._onShortcutToggleTileView,
-                helpDescription: 'keyboardShortcuts.toggleTileView'
+                helpDescription: 'toolbar.tileViewToggle'
             }
         ];
 
