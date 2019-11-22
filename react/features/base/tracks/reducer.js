@@ -141,7 +141,7 @@ ReducerRegistry.register('features/base/tracks', (state = [], action) => {
 ReducerRegistry.register('features/base/no-src-data', (state = {}, action) => {
     switch (action.type) {
     case SET_NO_SRC_DATA_NOTI_UID:
-        return set(state, 'noSrcDataNotiUid', action.uid);
+        return set(state, 'noSrcDataNotificationUid', action.uid);
 
     default:
         return state;

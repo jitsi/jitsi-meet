@@ -1,6 +1,6 @@
 // @flow
 
-import { SET_NO_AUDIO_SIGNAL_NOTI_UID } from './actionTypes';
+import { SET_NO_AUDIO_SIGNAL_NOTIFICATION_UID } from './actionTypes';
 
 /**
  * Sets UID of the the pending notification to use it when hiding
@@ -9,13 +9,13 @@ import { SET_NO_AUDIO_SIGNAL_NOTI_UID } from './actionTypes';
  *
  * @param {?number} uid - The UID of the notification.
  * @returns {{
- *     type: SET_NO_AUDIO_SIGNAL_NOTI_UID,
+ *     type: SET_NO_AUDIO_SIGNAL_NOTIFICATION_UID,
  *     uid: number
  * }}
  */
 export function setNoAudioSignalNotificationUid(uid: ?number) {
     return {
-        type: SET_NO_AUDIO_SIGNAL_NOTI_UID,
+        type: SET_NO_AUDIO_SIGNAL_NOTIFICATION_UID,
         uid
     };
 }
