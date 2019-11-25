@@ -270,8 +270,8 @@ class AudioRoutePickerDialog extends Component<Props, State> {
                 <View style = { styles.deviceRow } >
                     <Icon
                         src = { icon }
-                        style = { [ styles.deviceIcon, _bottomSheetStyles.iconStyle, selectedStyle ] } />
-                    <Text style = { [ styles.deviceText, _bottomSheetStyles.labelStyle, selectedStyle ] } >
+                        style = { [ styles.deviceIcon, _bottomSheetStyles.buttons.iconStyle, selectedStyle ] } />
+                    <Text style = { [ styles.deviceText, _bottomSheetStyles.buttons.labelStyle, selectedStyle ] } >
                         { text }
                     </Text>
                 </View>
@@ -292,8 +292,8 @@ class AudioRoutePickerDialog extends Component<Props, State> {
             <View style = { styles.deviceRow } >
                 <Icon
                     src = { deviceInfoMap.SPEAKER.icon }
-                    style = { [ styles.deviceIcon, _bottomSheetStyles.iconStyle ] } />
-                <Text style = { [ styles.deviceText, _bottomSheetStyles.labelStyle ] } >
+                    style = { [ styles.deviceIcon, _bottomSheetStyles.buttons.iconStyle ] } />
+                <Text style = { [ styles.deviceText, _bottomSheetStyles.buttons.labelStyle ] } >
                     { t('audioDevices.none') }
                 </Text>
             </View>

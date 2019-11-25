@@ -29,7 +29,12 @@ type Props = {
      * Handler for the cancel event, which happens when the user dismisses
      * the sheet.
      */
-    onCancel: ?Function
+    onCancel: ?Function,
+
+    /**
+     * Function to render a bottom sheet header element, if necessary.
+     */
+    renderHeader: ?Function
 };
 
 /**
@@ -43,7 +48,7 @@ class BottomSheet extends PureComponent<Props> {
      * @returns {ReactElement}
      */
     render() {
-        const { _styles } = this.props;
+        const { _styles, renderHeader } = this.props;
 
         return (
             <SlidingView
@@ -56,19 +61,19 @@ class BottomSheet extends PureComponent<Props> {
                     <View
                         pointerEvents = 'box-none'
                         style = { styles.sheetAreaCover } />
-                    <View
+                    { renderHeader && renderHeader() }
+                    <SafeAreaView
                         style = { [
                             styles.sheetItemContainer,
                             _styles.sheet
                         ] }>
-                        <SafeAreaView>
-                            <ScrollView
-                                bounces = { false }
-                                showsVerticalScrollIndicator = { false } >
-                                { this.props.children }
-                            </ScrollView>
-                        </SafeAreaView>
-                    </View>
+                        <ScrollView
+                            bounces = { false }
+                            showsVerticalScrollIndicator = { false }
+                            style = { styles.scrollView } >
+                            { this.props.children }
+                        </ScrollView>
+                    </SafeAreaView>
                 </View>
             </SlidingView>
         );
