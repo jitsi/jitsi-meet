@@ -3,11 +3,11 @@
  * no data from source notification. Used to check if such a notification was previously displayed.
  *
  * {
- *     type: SET_NO_SRC_DATA_NOTI_UID,
+ *     type: SET_NO_SRC_DATA_NOTIFICATION_UID,
  *     uid: ?number
  * }
  */
-export const SET_NO_SRC_DATA_NOTI_UID = 'SET_NO_SRC_DATA_NOTI_UID';
+export const SET_NO_SRC_DATA_NOTIFICATION_UID = 'SET_NO_SRC_DATA_NOTIFICATION_UID';
 
 /**
  * The type of redux action dispatched to disable screensharing or to start the

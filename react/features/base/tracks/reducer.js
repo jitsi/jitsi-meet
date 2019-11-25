@@ -2,7 +2,7 @@ import { PARTICIPANT_ID_CHANGED } from '../participants';
 import { ReducerRegistry, set } from '../redux';
 
 import {
-    SET_NO_SRC_DATA_NOTI_UID,
+    SET_NO_SRC_DATA_NOTIFICATION_UID,
     TRACK_ADDED,
     TRACK_CREATE_CANCELED,
     TRACK_CREATE_ERROR,
@@ -140,7 +140,7 @@ ReducerRegistry.register('features/base/tracks', (state = [], action) => {
  */
 ReducerRegistry.register('features/base/no-src-data', (state = {}, action) => {
     switch (action.type) {
-    case SET_NO_SRC_DATA_NOTI_UID:
+    case SET_NO_SRC_DATA_NOTIFICATION_UID:
         return set(state, 'noSrcDataNotificationUid', action.uid);
 
     default:
