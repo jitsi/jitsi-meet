@@ -80,7 +80,7 @@ class RemoteVideoMenu extends Component<Props> {
             afterClick: this._onCancel,
             showLabel: true,
             participantID: participant.id,
-            styles: this.props._bottomSheetStyles
+            styles: this.props._bottomSheetStyles.buttons
         };
 
         return (
