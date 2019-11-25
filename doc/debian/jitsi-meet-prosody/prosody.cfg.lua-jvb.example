@@ -26,7 +26,10 @@ VirtualHost "jitmeet.example.com"
 
 Component "conference.jitmeet.example.com" "muc"
     storage = "null"
-    --modules_enabled = { "token_verification" }
+    modules_enabled = {
+        "muc_meeting_id";
+        -- "token_verification";
+    }
 admins = { "focusUser@auth.jitmeet.example.com" }
 
 Component "jitsi-videobridge.jitmeet.example.com"
