@@ -14,7 +14,7 @@ import {
 import { getLocalParticipant } from '../participants';
 
 import {
-    SET_NO_SRC_DATA_NOTI_UID,
+    SET_NO_SRC_DATA_NOTIFICATION_UID,
     TOGGLE_SCREENSHARING,
     TRACK_ADDED,
     TRACK_CREATE_CANCELED,
@@ -661,7 +661,7 @@ function _trackCreateCanceled(mediaType) {
     */
 export function setNoSrcDataNotificationUid(uid) {
     return {
-        type: SET_NO_SRC_DATA_NOTI_UID,
+        type: SET_NO_SRC_DATA_NOTIFICATION_UID,
         uid
     };
 }
