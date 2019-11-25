@@ -1,5 +1,7 @@
 // @flow
 import { setNoAudioSignalNotificationUid } from './actions';
+import { NO_AUDIO_SIGNAL_SOUND_ID } from './constants';
+import { NO_AUDIO_SIGNAL_SOUND_FILE } from './sounds';
 import { APP_WILL_MOUNT, APP_WILL_UNMOUNT } from '../base/app';
 import { CONFERENCE_JOINED } from '../base/conference';
 import {
@@ -10,9 +12,7 @@ import JitsiMeetJS, { JitsiConferenceEvents } from '../base/lib-jitsi-meet';
 import { MiddlewareRegistry } from '../base/redux';
 import { updateSettings } from '../base/settings';
 import { playSound, registerSound, unregisterSound } from '../base/sounds';
-import { NO_AUDIO_SIGNAL_SOUND_ID } from './constants';
 import { hideNotification, showNotification } from '../notifications';
-import { NO_AUDIO_SIGNAL_SOUND_FILE } from './sounds';
 
 MiddlewareRegistry.register(store => next => async action => {
     const result = next(action);
@@ -34,6 +34,7 @@ MiddlewareRegistry.register(store => next => async action => {
 
             confAudioInputState = hasAudioInput;
 
+            // In case the notification is displayed but the conference detected audio input signal we hide it.
             if (noAudioSignalNotificationUid && hasAudioInput) {
                 dispatch(hideNotification(noAudioSignalNotificationUid));
                 dispatch(setNoAudioSignalNotificationUid());
@@ -50,7 +51,7 @@ MiddlewareRegistry.register(store => next => async action => {
             }
 
             // Force the flag to false in case AUDIO_INPUT_STATE_CHANGE is received after the notification is displayed,
-            // thus making sure we check properly if the notification should display.
+            // possibly preventing the notification from displaying because of an outdated state.
             confAudioInputState = false;
 
 
