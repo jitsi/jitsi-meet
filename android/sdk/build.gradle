@@ -37,10 +37,12 @@ dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
-    implementation 'androidx.appcompat:appcompat:1.0.2'
-    implementation 'androidx.fragment:fragment:1.0.0'
+    implementation 'androidx.appcompat:appcompat:1.1.0'
+    implementation 'androidx.fragment:fragment:1.1.0'
 
+    //noinspection GradleDynamicVersion
     api 'com.facebook.react:react-native:+'
+    //noinspection GradleDynamicVersion
     implementation 'org.webkit:android-jsc:+'
 
     implementation 'com.dropbox.core:dropbox-core-sdk:3.0.8'
