@@ -16,7 +16,7 @@ import { NOTIFICATION_TYPE_PRIORITIES } from './constants';
  * @type {array}
  */
 const DEFAULT_STATE = {
-    enabled: true,
+    enabled: false,
     notifications: []
 };
 

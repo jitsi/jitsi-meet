@@ -161,7 +161,7 @@ const _throttledNotifyParticipantConnected = throttle((dispatch: Dispatch<any>) 
 
     joinedParticipantsNames = [];
 
-}, 500, { leading: false });
+}, 5000, { leading: false });
 
 /**
  * Queues the display of a notification of a participant having connected to
