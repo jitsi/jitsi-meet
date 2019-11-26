@@ -53,7 +53,7 @@ class AudioDeviceHandlerConnectionService implements
      */
     private static int audioDeviceToRouteInt(String audioDevice) {
         if (audioDevice == null) {
-            return CallAudioState.ROUTE_EARPIECE;
+            return CallAudioState.ROUTE_SPEAKER;
         }
         switch (audioDevice) {
             case AudioModeModule.DEVICE_BLUETOOTH:
@@ -66,7 +66,7 @@ class AudioDeviceHandlerConnectionService implements
                 return CallAudioState.ROUTE_SPEAKER;
             default:
                 JitsiMeetLogger.e(TAG + " Unsupported device name: " + audioDevice);
-                return CallAudioState.ROUTE_EARPIECE;
+                return CallAudioState.ROUTE_SPEAKER;
         }
     }
 
