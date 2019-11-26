@@ -147,9 +147,10 @@ MiddlewareRegistry.register(store => next => action => {
         const state = getState();
         const { localTracksDuration } = state['features/analytics'];
 
-        if (localTracksDuration.conference.startedTime === -1) {
+        if (localTracksDuration.conference.startedTime === -1 || action.mediaType === 'presenter') {
             // We don't want to track the media duration if the conference is not joined yet because otherwise we won't
             // be able to compare them with the conference duration (from conference join to conference will leave).
+            // Also, do not track media duration for presenter tracks.
             break;
         }
         dispatch({

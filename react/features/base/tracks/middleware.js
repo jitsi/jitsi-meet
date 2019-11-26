@@ -6,6 +6,7 @@ import {
     SET_AUDIO_MUTED,
     SET_CAMERA_FACING_MODE,
     SET_VIDEO_MUTED,
+    VIDEO_MUTISM_AUTHORITY,
     TOGGLE_CAMERA_FACING_MODE,
     toggleCameraFacingMode
 } from '../media';
@@ -89,7 +90,7 @@ MiddlewareRegistry.register(store => next => action => {
             return;
         }
 
-        _setMuted(store, action, MEDIA_TYPE.VIDEO);
+        _setMuted(store, action, action.mediaType);
         break;
 
     case TOGGLE_CAMERA_FACING_MODE: {
@@ -131,7 +132,7 @@ MiddlewareRegistry.register(store => next => action => {
             const { jitsiTrack } = action.track;
             const muted = jitsiTrack.isMuted();
             const participantID = jitsiTrack.getParticipantId();
-            const isVideoTrack = jitsiTrack.isVideoTrack();
+            const isVideoTrack = jitsiTrack.type !== MEDIA_TYPE.AUDIO;
 
             if (isVideoTrack) {
                 if (jitsiTrack.isLocal()) {
@@ -255,7 +256,7 @@ function _removeNoDataFromSourceNotification({ getState, dispatch }, track) {
  * @private
  * @returns {void}
  */
-function _setMuted(store, { ensureTrack, muted }, mediaType: MEDIA_TYPE) {
+function _setMuted(store, { ensureTrack, authority, muted }, mediaType: MEDIA_TYPE) {
     const localTrack
         = _getLocalTrack(store, mediaType, /* includePending */ true);
 
@@ -265,8 +266,12 @@ function _setMuted(store, { ensureTrack, muted }, mediaType: MEDIA_TYPE) {
         // `jitsiTrack`, then the `muted` state will be applied once the
         // `jitsiTrack` is created.
         const { jitsiTrack } = localTrack;
+        const isAudioOnly = authority === VIDEO_MUTISM_AUTHORITY.AUDIO_ONLY;
 
-        jitsiTrack && setTrackMuted(jitsiTrack, muted);
+        // screenshare cannot be muted or unmuted using the video mute button
+        // anymore, unless it is muted by audioOnly.
+        jitsiTrack && (jitsiTrack.videoType !== 'desktop' || isAudioOnly)
+            && setTrackMuted(jitsiTrack, muted);
     } else if (!muted && ensureTrack && typeof APP === 'undefined') {
         // FIXME: This only runs on mobile now because web has its own way of
         // creating local tracks. Adjust the check once they are unified.
