@@ -43,7 +43,9 @@ export default class StatelessAvatar extends AbstractStatelessAvatar<Props> {
                     className = { this._getAvatarClassName() }
                     id = { this.props.id }
                     style = { this._getAvatarStyle(this.props.color) }>
-                    <Icon src = { url } />
+                    <Icon
+                        size = '50%'
+                        src = { url } />
                 </div>
             );
         }
