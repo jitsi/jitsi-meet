@@ -105,13 +105,16 @@ class RNConnectionService extends ReactContextBaseJavaModule {
 
         ConnectionService.registerStartCallPromise(callUUID, promise);
 
-        try {
-            TelecomManager tm
-                = (TelecomManager) ctx.getSystemService(
-                        Context.TELECOM_SERVICE);
+        TelecomManager tm = null;
 
+        try {
+            tm = (TelecomManager) ctx.getSystemService(Context.TELECOM_SERVICE);
             tm.placeCall(address, extras);
         } catch (Exception e) {
+            JitsiMeetLogger.e(e, TAG + " error in startCall");
+            if (tm != null) {
+                tm.unregisterPhoneAccount(accountHandle);
+            }
             ConnectionService.unregisterStartCallPromise(callUUID);
             promise.reject(e);
         }
