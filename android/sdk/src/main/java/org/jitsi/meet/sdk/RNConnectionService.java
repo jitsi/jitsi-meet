@@ -116,7 +116,11 @@ class RNConnectionService extends ReactContextBaseJavaModule {
                 tm.unregisterPhoneAccount(accountHandle);
             }
             ConnectionService.unregisterStartCallPromise(callUUID);
-            promise.reject(e);
+            if (e instanceof SecurityException) {
+                promise.reject("SECURITY_ERROR", "Required permissions not granted.");
+            } else {
+                promise.reject(e);
+            }
         }
     }
 
