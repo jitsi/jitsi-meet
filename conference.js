@@ -825,8 +825,6 @@ export default {
                 await this.localVideo.setEffect(undefined);
                 APP.store.dispatch(
                     setVideoMuted(mute, MEDIA_TYPE.PRESENTER));
-                this._untoggleScreenSharing
-                    = this._turnScreenSharingOff.bind(this, false);
             } catch (err) {
                 logger.error('Failed to mute the Presenter video');
             }
@@ -850,8 +848,6 @@ export default {
         try {
             await this.localVideo.setEffect(effect);
             APP.store.dispatch(setVideoMuted(mute, MEDIA_TYPE.PRESENTER));
-            this._untoggleScreenSharing
-                = this._turnScreenSharingOff.bind(this, true);
         } catch (err) {
             logger.error('Failed to apply the Presenter effect', err);
         }
@@ -1496,38 +1492,12 @@ export default {
         }
 
         if (toggle) {
-            const wasVideoMuted = this.isLocalVideoMuted();
-
             try {
                 await this._switchToScreenSharing(options);
+
+                return;
             } catch (err) {
                 logger.error('Failed to switch to screensharing', err);
-
-                return;
-            }
-            if (wasVideoMuted) {
-                return;
-            }
-            const { height } = this.localVideo.track.getSettings();
-            const defaultCamera
-                = getUserSelectedCameraDeviceId(APP.store.getState());
-            let effect;
-
-            try {
-                effect = await this._createPresenterStreamEffect(
-                    height, defaultCamera);
-            } catch (err) {
-                logger.error('Failed to create the presenter effect');
-
-                return;
-            }
-            try {
-                await this.localVideo.setEffect(effect);
-                muteLocalVideo(false);
-
-                return;
-            } catch (err) {
-                logger.error('Failed to create the presenter effect', err);
 
                 return;
             }
@@ -1555,7 +1525,7 @@ export default {
     _createDesktopTrack(options = {}) {
         let externalInstallation = false;
         let DSExternalInstallationInProgress = false;
-        const didHaveVideo = Boolean(this.localVideo);
+        const didHaveVideo = !this.isLocalVideoMuted();
 
         const getDesktopStreamPromise = options.desktopStream
             ? Promise.resolve([ options.desktopStream ])
