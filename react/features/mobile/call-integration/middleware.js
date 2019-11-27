@@ -1,6 +1,6 @@
 // @flow
 
-import { Alert, Platform } from 'react-native';
+import { Alert, NativeModules, Platform } from 'react-native';
 import uuid from 'uuid';
 
 import { createTrackMutedEvent, sendAnalytics } from '../../analytics';
@@ -36,6 +36,7 @@ import CallKit from './CallKit';
 import ConnectionService from './ConnectionService';
 import { isCallIntegrationEnabled } from './functions';
 
+const { AudioMode } = NativeModules;
 const CallIntegration = CallKit || ConnectionService;
 
 /**
@@ -276,7 +277,8 @@ function _conferenceWillJoin({ dispatch, getState }, next, action) {
             }
         })
         .catch(error => {
-            // Currently this error code is emitted only by Android.
+            // Currently this error codes are emitted only by Android.
+            //
             if (error.code === 'CREATE_OUTGOING_CALL_FAILED') {
                 // We're not tracking the call anymore - it doesn't exist on
                 // the native side.
@@ -290,6 +292,18 @@ function _conferenceWillJoin({ dispatch, getState }, next, action) {
                         { text: 'OK' }
                     ],
                     { cancelable: false });
+            } else if (error.code === 'SECURITY_ERROR') {
+                // Some devices fail because the CALL_PHONE permission is not granted, which is
+                // nonsense, because it's not needed for self-managed connections. Alas, this also
+                // means audio device management would be broken, so fallback to not using ConnectionService.
+                // NOTE: We are not storing this in Settings, in case it's a transient issue, as far fetched as
+                // that may be.
+                if (AudioMode.setUseConnectionService) {
+                    AudioMode.setUseConnectionService(false);
+
+                    // Set the desired audio mode, since we just reset the whole thing.
+                    AudioMode.setMode(hasVideo ? AudioMode.VIDEO_CALL : AudioMode.AUDIO_CALL);
+                }
             }
         });
 
