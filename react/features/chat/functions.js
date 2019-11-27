@@ -32,7 +32,7 @@ const EMOTICON_REGEXP_ARRAY: Array<Array<Object>> = [];
         // Adding slack-type emoji format
         escapedValues.push(escapeRegexp(`:${key}:`));
 
-        const regexp = `(${escapedValues.join('|')})`;
+        const regexp = `\\B(${escapedValues.join('|')})\\B`;
 
         EMOTICON_REGEXP_ARRAY.push([ new RegExp(regexp, 'g'), value ]);
     }
