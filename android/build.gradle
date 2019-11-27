@@ -165,50 +165,6 @@ ext {
     libreBuild = (System.env.LIBRE_BUILD ?: "false").toBoolean()
 }
 
-// If Android SDK is not installed, accept its license so that it
-// is automatically downloaded.
-afterEvaluate { project ->
-    // Either the environment variable ANDROID_HOME or the property sdk.dir in
-    // local.properties identifies where Android SDK is installed.
-    def androidHome = System.env.ANDROID_HOME
-    if (!androidHome) {
-        // ANDROID_HOME is not set. Is sdk.dir set?
-        def file = file("${project.rootDir}/local.properties")
-        def props = new Properties()
-        if (file.canRead()) {
-            file.withInputStream {
-                props.load(it)
-                androidHome = props.'sdk.dir'
-            }
-        }
-        if (!androidHome && (!file.exists() || file.canWrite())) {
-            // Neither ANDROID_HOME nor sdk.dir is set. Set sdk.dir (because
-            // environment variables cannot be set).
-            props.'sdk.dir' = "${project.buildDir}/android-sdk".toString()
-            file.withOutputStream {
-                props.store(it, null)
-                androidHome = props.'sdk.dir'
-            }
-        }
-    }
-    // If the license is not accepted, accept it so that automatic downloading
-    // kicks in.
-    // The license hash can be taken from the accepted licenses, by doing this
-    // on your local machine the file is
-    // ${androidHome}/licenses/android-sdk-license
-    if (androidHome) {
-        def dir = file("${androidHome}/licenses")
-        dir.mkdirs()
-        def file = file("${dir.path}/android-sdk-license")
-        if (!file.exists()) {
-            file.withWriter {
-                def hash = 'd56f5187479451eabf01fb78af6dfcb131a6481e'
-                it.write(hash, 0, hash.length())
-            }
-        }
-    }
-}
-
 // Force the version of the Android build tools we have chosen on all
 // subprojects. The forcing was introduced for react-native and the third-party
 // modules that we utilize such as react-native-background-timer.
