@@ -116,6 +116,8 @@ class WelcomePage extends AbstractWelcomePage {
      * @returns {void}
      */
     componentDidMount() {
+        super.componentDidMount();
+
         document.body.classList.add('welcome-page');
         document.title = interfaceConfig.APP_NAME;
 
