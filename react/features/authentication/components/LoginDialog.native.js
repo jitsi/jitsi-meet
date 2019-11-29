@@ -5,6 +5,7 @@ import { Text, TextInput, View } from 'react-native';
 import { connect as reduxConnect } from 'react-redux';
 import type { Dispatch } from 'redux';
 
+import { ColorSchemeRegistry } from '../../base/color-scheme';
 import { toJid } from '../../base/connection';
 import { connect } from '../../base/connection/actions.native';
 import {
@@ -19,7 +20,9 @@ import { JitsiConnectionErrors } from '../../base/lib-jitsi-meet';
 import type { StyleType } from '../../base/styles';
 
 import { authenticateAndUpgradeRole, cancelLogin } from '../actions';
-import styles from './styles';
+
+// Register styles.
+import './styles';
 
 /**
  * The type of the React {@link Component} props of {@link LoginDialog}.
@@ -57,6 +60,11 @@ type Props = {
      * and upgrading the role of the local participant/user.
      */
     _progress: number,
+
+    /**
+     * The color-schemed stylesheet of this feature.
+     */
+    _styles: StyleType,
 
     /**
      * Redux store dispatch method.
@@ -144,45 +152,9 @@ class LoginDialog extends Component<Props, State> {
         const {
             _connecting: connecting,
             _dialogStyles,
-            _error: error,
-            _progress: progress,
+            _styles: styles,
             t
         } = this.props;
-
-        let messageKey;
-        const messageOptions = {};
-
-        if (progress && progress < 1) {
-            messageKey = 'connection.FETCH_SESSION_ID';
-        } else if (error) {
-            const { name } = error;
-
-            if (name === JitsiConnectionErrors.PASSWORD_REQUIRED) {
-                // Show a message that the credentials are incorrect only if the
-                // credentials which have caused the connection to fail are the
-                // ones which the user sees.
-                const { credentials } = error;
-
-                if (credentials
-                        && credentials.jid
-                            === toJid(
-                                this.state.username,
-                                this.props._configHosts)
-                        && credentials.password === this.state.password) {
-                    messageKey = 'dialog.incorrectPassword';
-                }
-            } else if (name) {
-                messageKey = 'dialog.connectErrorWithMsg';
-                messageOptions.msg = `${name} ${error.message}`;
-            }
-        }
-
-        const showMessage = messageKey || connecting;
-        const message = messageKey
-            ? t(messageKey, messageOptions)
-            : connecting
-                ? t('connection.CONNECTING')
-                : '';
 
         return (
             <CustomSubmitDialog
@@ -210,14 +182,75 @@ class LoginDialog extends Component<Props, State> {
                         ] }
                         underlineColorAndroid = { FIELD_UNDERLINE }
                         value = { this.state.password } />
-                    { showMessage && (
-                        <Text style = { styles.dialogText }>
-                            { message }
-                        </Text>
-                    ) }
+                    { this._renderMessage() }
                 </View>
             </CustomSubmitDialog>
         );
+    }
+
+    /**
+     * Renders an optional message, if applicable.
+     *
+     * @returns {ReactElement}
+     * @private
+     */
+    _renderMessage() {
+        const {
+            _connecting: connecting,
+            _error: error,
+            _progress: progress,
+            _styles: styles,
+            t
+        } = this.props;
+
+        let messageKey;
+        let messageIsError = false;
+        const messageOptions = {};
+
+        if (progress && progress < 1) {
+            messageKey = 'connection.FETCH_SESSION_ID';
+        } else if (error) {
+            const { name } = error;
+
+            if (name === JitsiConnectionErrors.PASSWORD_REQUIRED) {
+                // Show a message that the credentials are incorrect only if the
+                // credentials which have caused the connection to fail are the
+                // ones which the user sees.
+                const { credentials } = error;
+
+                if (credentials
+                        && credentials.jid
+                            === toJid(
+                                this.state.username,
+                                this.props._configHosts)
+                        && credentials.password === this.state.password) {
+                    messageKey = 'dialog.incorrectPassword';
+                    messageIsError = true;
+                }
+            } else if (name) {
+                messageKey = 'dialog.connectErrorWithMsg';
+                messageOptions.msg = `${name} ${error.message}`;
+                messageIsError = true;
+            }
+        } else if (connecting) {
+            messageKey = 'connection.CONNECTING';
+        }
+
+        if (messageKey) {
+            const message = t(messageKey, messageOptions);
+            const messageStyles = [
+                styles.dialogText,
+                messageIsError ? styles.errorMessage : styles.progressMessage
+            ];
+
+            return (
+                <Text style = { messageStyles }>
+                    { message }
+                </Text>
+            );
+        }
+
+        return null;
     }
 
     _onUsernameChange: (string) => void;
@@ -295,14 +328,7 @@ class LoginDialog extends Component<Props, State> {
  *
  * @param {Object} state - The Redux state.
  * @private
- * @returns {{
- *     _conference: JitsiConference,
- *     _configHosts: Object,
- *     _connecting: boolean,
- *     _dialogStyles: StyleType,
- *     _error: Object,
- *     _progress: number
- * }}
+ * @returns {Props}
  */
 function _mapStateToProps(state) {
     const {
@@ -323,7 +349,8 @@ function _mapStateToProps(state) {
         _configHosts: configHosts,
         _connecting: Boolean(connecting) || Boolean(thenableWithCancel),
         _error: connectionError || authenticateAndUpgradeRoleError,
-        _progress: progress
+        _progress: progress,
+        _styles: ColorSchemeRegistry.get(state, 'LoginDialog')
     };
 }
 
