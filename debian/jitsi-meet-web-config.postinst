@@ -102,12 +102,13 @@ case "$1" in
             sed -i "s/jitsi-meet.example.com/$JVB_HOSTNAME/g" $JITSI_MEET_CONFIG
         fi
 
+        JVB_CONFIG="/etc/jitsi/videobridge/sip-communicator.properties"
+
         # this is new install let's configure jvb to serve meet
         # no-nginx, no-apache installed on machine, this is new install or reconfiguring old one which have jvb_serve set
         if [[ -z "$FORCE_NGINX" && -z "$FORCE_APACHE" && ( -z "$JVB_HOSTNAME_OLD" || ( "$JVB_SERVE" = "true" && "$RECONFIGURING" = "true" )) ]] ; then
 
             JVB_ETC_CONFIG="/etc/jitsi/videobridge/config"
-            JVB_CONFIG="/etc/jitsi/videobridge/sip-communicator.properties"
 
             # this is a reconfigure, lets just delete old links
             if [ "$RECONFIGURING" = "true" ] ; then
@@ -130,8 +131,8 @@ case "$1" in
             echo "org.jitsi.videobridge.rest.jetty.ProxyServlet.proxyTo=http://localhost:5280/http-bind" >> $JVB_CONFIG
             echo "org.jitsi.videobridge.rest.jetty.ResourceHandler.resourceBase=/usr/share/jitsi-meet" >> $JVB_CONFIG
             echo "org.jitsi.videobridge.rest.jetty.ResourceHandler.alias./config.js=/etc/jitsi/meet/$JVB_HOSTNAME-config.js" >> $JVB_CONFIG
-            echo "org.jitsi.videobridge.rest.jetty.ResourceHandler.alias./interface_config.js=/usr/share/jitsi-meet/interface_config.js" >> $JVB_CONFIG
-            echo "org.jitsi.videobridge.rest.jetty.ResourceHandler.alias./logging_config.js=/usr/share/jitsi-meet/logging_config.js" >> $JVB_CONFIG
+            echo "org.jitsi.videobridge.rest.jetty.ResourceHandler.alias./interface_config.js=/etc/jitsi/meet/interface_config.js" >> $JVB_CONFIG
+            echo "org.jitsi.videobridge.rest.jetty.ResourceHandler.alias./logging_config.js=/etc/jitsi/meet/logging_config.js" >> $JVB_CONFIG
             echo "org.jitsi.videobridge.rest.jetty.ResourceHandler.alias./external_api.js=/usr/share/jitsi-meet/libs/external_api.min.js" >> $JVB_CONFIG
             echo "org.jitsi.videobridge.rest.jetty.RewriteHandler.regex=^/([a-zA-Z0-9]+)$" >> $JVB_CONFIG
             echo "org.jitsi.videobridge.rest.jetty.RewriteHandler.replacement=/" >> $JVB_CONFIG
@@ -225,6 +226,32 @@ case "$1" in
                     /etc/apache2/sites-available/$JVB_HOSTNAME.conf
             fi
 
+            invoke-rc.d apache2 reload
+        fi
+
+        # Moving interface config and logging config to /etc we need to port changes
+        # to already installed deployments so we do not break them
+        if [[ -z "$FORCE_NGINX" && -z "$FORCE_APACHE" && "$JVB_SERVE" = "true" ]] ; then
+            sed -i "s#alias./interface_config.js=/usr/share/jitsi-meet/interface_config.js#alias./interface_config.js=/etc/jitsi/meet/interface_config.js#g" $JVB_CONFIG
+            sed -i "s#alias./logging_config.js=/usr/share/jitsi-meet/logging_config.js#alias./logging_config.js=/etc/jitsi/meet/logging_config.js#g" $JVB_CONFIG
+            invoke-rc.d jitsi-videobridge restart
+        elif [[ "$FORCE_NGINX" = "true" ]] ; then
+            NGINX_CONFIG_FILE="/etc/nginx/sites-available/$JVB_HOSTNAME.conf"
+            if ! grep -q "location = /interface_config.js" "$NGINX_CONFIG_FILE" ;then
+                sed -i "s#location = /config.js#location = /interface_config.js { alias /etc/jitsi/meet/interface_config.js; }\n    location = /config.js#g" $NGINX_CONFIG_FILE
+            fi
+            if ! grep -q "location = /logging_config.js" "$NGINX_CONFIG_FILE" ;then
+                sed -i "s#location = /config.js#location = /logging_config.js { alias /etc/jitsi/meet/logging_config.js; }\n    location = /config.js#g" $NGINX_CONFIG_FILE
+            fi
+            invoke-rc.d nginx reload
+        elif [[ "$FORCE_APACHE" = "true" ]] ; then
+            APACHE_CONFIG_FILE="/etc/apache2/sites-available/$JVB_HOSTNAME.conf"
+            if ! grep -q "Alias \"/interface_config.js\"" "$APACHE_CONFIG_FILE" ;then
+                sed -i "s#Alias \"/config.js\"#Alias \"/interface_config.js\" \"/etc/jitsi/meet/interface_config.js\"\n  <Location /interface_config.js>\n    Require all granted\n  </Location>\n  Alias \"/config.js\"#g" $APACHE_CONFIG_FILE
+            fi
+            if ! grep -q "Alias \"/logging_config.js\"" "$APACHE_CONFIG_FILE" ;then
+                sed -i "s#Alias \"/config.js\"#Alias \"/logging_config.js\" \"/etc/jitsi/meet/logging_config.js\"\n  <Location /logging_config.js>\n    Require all granted\n  </Location>\n  Alias \"/config.js\"#g" $APACHE_CONFIG_FILE
+            fi
             invoke-rc.d apache2 reload
         fi
 
