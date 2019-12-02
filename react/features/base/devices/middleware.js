@@ -23,22 +23,6 @@ import { updateSettings } from '../settings';
 import { setAudioOutputDeviceId } from './functions';
 import logger from './logger';
 
-const JITSI_TRACK_ERROR_TO_MESSAGE_KEY_MAP = {
-    microphone: {
-        [JitsiTrackErrors.CONSTRAINT_FAILED]: 'dialog.micConstraintFailedError',
-        [JitsiTrackErrors.GENERAL]: 'dialog.micUnknownError',
-        [JitsiTrackErrors.NOT_FOUND]: 'dialog.micNotFoundError',
-        [JitsiTrackErrors.PERMISSION_DENIED]: 'dialog.micPermissionDeniedError'
-    },
-    camera: {
-        [JitsiTrackErrors.CONSTRAINT_FAILED]: 'dialog.cameraConstraintFailedError',
-        [JitsiTrackErrors.GENERAL]: 'dialog.cameraUnknownError',
-        [JitsiTrackErrors.NOT_FOUND]: 'dialog.cameraNotFoundError',
-        [JitsiTrackErrors.PERMISSION_DENIED]: 'dialog.cameraPermissionDeniedError',
-        [JitsiTrackErrors.UNSUPPORTED_RESOLUTION]: 'dialog.cameraUnsupportedResolutionError'
-    }
-};
-
 /**
  * Implements the middleware of the feature base/devices.
  *
@@ -47,6 +31,25 @@ const JITSI_TRACK_ERROR_TO_MESSAGE_KEY_MAP = {
  */
 // eslint-disable-next-line no-unused-vars
 MiddlewareRegistry.register(store => next => action => {
+    // If defined in the global scope, it causes ReferenceError for JitsiTrackErrors. It seems that circular
+    // dependancies are causing the imported variables to be set initially to undefined in the global scope and
+    // initialized later.
+    const JITSI_TRACK_ERROR_TO_MESSAGE_KEY_MAP = {
+        microphone: {
+            [JitsiTrackErrors.CONSTRAINT_FAILED]: 'dialog.micConstraintFailedError',
+            [JitsiTrackErrors.GENERAL]: 'dialog.micUnknownError',
+            [JitsiTrackErrors.NOT_FOUND]: 'dialog.micNotFoundError',
+            [JitsiTrackErrors.PERMISSION_DENIED]: 'dialog.micPermissionDeniedError'
+        },
+        camera: {
+            [JitsiTrackErrors.CONSTRAINT_FAILED]: 'dialog.cameraConstraintFailedError',
+            [JitsiTrackErrors.GENERAL]: 'dialog.cameraUnknownError',
+            [JitsiTrackErrors.NOT_FOUND]: 'dialog.cameraNotFoundError',
+            [JitsiTrackErrors.PERMISSION_DENIED]: 'dialog.cameraPermissionDeniedError',
+            [JitsiTrackErrors.UNSUPPORTED_RESOLUTION]: 'dialog.cameraUnsupportedResolutionError'
+        }
+    };
+
     switch (action.type) {
     case CONFERENCE_JOINED:
         return _conferenceJoined(store, next, action);

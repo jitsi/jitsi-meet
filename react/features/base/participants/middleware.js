@@ -1,5 +1,7 @@
 // @flow
 
+import escape from 'lodash/escape';
+
 import UIEvents from '../../../../service/UI/UIEvents';
 
 import { NOTIFICATION_TIMEOUT, showNotification } from '../../notifications';
@@ -11,6 +13,8 @@ import {
     forEachConference,
     getCurrentConference
 } from '../conference';
+import { parseURLParams } from '../config';
+import { SET_LOCATION_URL } from '../connection';
 import { JitsiConferenceEvents } from '../lib-jitsi-meet';
 import { MiddlewareRegistry, StateListenerRegistry } from '../redux';
 import { playSound, registerSound, unregisterSound } from '../sounds';
@@ -56,7 +60,9 @@ declare var APP: Object;
  * @returns {Function}
  */
 MiddlewareRegistry.register(store => next => action => {
-    switch (action.type) {
+    const { type } = action;
+
+    switch (type) {
     case APP_WILL_MOUNT:
         _registerSounds(store);
 
@@ -130,7 +136,13 @@ MiddlewareRegistry.register(store => next => action => {
         return _participantJoinedOrUpdated(store, next, action);
     }
 
-    return next(action);
+    const result = next(action);
+
+    if (type === SET_LOCATION_URL) {
+        _updateLocalParticipantFromUrl(store);
+    }
+
+    return result;
 });
 
 /**
@@ -405,6 +417,26 @@ function _registerSounds({ dispatch }) {
     dispatch(
         registerSound(PARTICIPANT_JOINED_SOUND_ID, PARTICIPANT_JOINED_FILE));
     dispatch(registerSound(PARTICIPANT_LEFT_SOUND_ID, PARTICIPANT_LEFT_FILE));
+}
+
+/**
+ * Parses the userInfo from the URL and updates the local participant if needed.
+ *
+ * @param {Store} store - The redux store.
+ * @private
+ * @returns {void}
+ */
+function _updateLocalParticipantFromUrl({ dispatch, getState }) {
+    const localParticipant = getLocalParticipant(getState());
+
+    if (localParticipant) {
+        const urlParams = parseURLParams(getState()['features/base/connection'].locationURL);
+
+        dispatch(participantUpdated({
+            ...localParticipant,
+            email: escape(urlParams['userInfo.email']) || localParticipant.email
+        }));
+    }
 }
 
 /**
