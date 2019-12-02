@@ -179,7 +179,7 @@ case "$1" in
         fi
 
         if [ "$PROSODY_CONFIG_PRESENT" = "false" ]; then
-            invoke-rc.d prosody restart
+            invoke-rc.d prosody restart || true
         fi
     ;;
 
