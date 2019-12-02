@@ -78,7 +78,7 @@ case "$1" in
                 fi
 
                 if [ -x "/etc/init.d/prosody" ]; then
-                    invoke-rc.d prosody restart
+                    invoke-rc.d prosody restart || true
                 fi
             fi
         else
