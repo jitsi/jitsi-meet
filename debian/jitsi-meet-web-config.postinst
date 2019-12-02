@@ -167,7 +167,7 @@ case "$1" in
 
             db_set jitsi-meet/jvb-serve "true"
 
-            invoke-rc.d jitsi-videobridge restart
+            invoke-rc.d jitsi-videobridge restart || true
         elif [[ "$FORCE_NGINX" = "true" && ( -z "$JVB_HOSTNAME_OLD" || "$RECONFIGURING" = "true" ) ]] ; then
             # this is a reconfigure, lets just delete old links
             if [ "$RECONFIGURING" = "true" ] ; then
@@ -196,7 +196,7 @@ case "$1" in
                     /etc/nginx/sites-available/$JVB_HOSTNAME.conf
             fi
 
-            invoke-rc.d nginx reload
+            invoke-rc.d nginx reload || true
         elif [[ "$FORCE_APACHE" = "true" && ( -z "$JVB_HOSTNAME_OLD" || "$RECONFIGURING" = "true" ) ]] ; then
             # this is a reconfigure, lets just delete old links
             if [ "$RECONFIGURING" = "true" ] ; then
@@ -225,7 +225,7 @@ case "$1" in
                     /etc/apache2/sites-available/$JVB_HOSTNAME.conf
             fi
 
-            invoke-rc.d apache2 reload
+            invoke-rc.d apache2 reload || true
         fi
 
         echo "----------------"
