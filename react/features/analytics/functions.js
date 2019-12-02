@@ -4,10 +4,23 @@ import JitsiMeetJS, {
     analytics,
     isAnalyticsEnabled
 } from '../base/lib-jitsi-meet';
+import { parseURLParams } from '../base/config';
 import { getJitsiMeetGlobalNS, loadScript } from '../base/util';
 
 import { AmplitudeHandler } from './handlers';
 import logger from './logger';
+
+/**
+ * Returns the analytics ID from the URL.
+ *
+ * @param {URL} URL - The URL.
+ * @returns {string|undefined} - The analytics ID from the URL.
+ */
+function getAnalyticsIDFromURL(URL) {
+    const urlParams = parseURLParams(URL);
+
+    return urlParams['userInfo.analyticsID'];
+}
 
 /**
  * Sends an event through the lib-jitsi-meet AnalyticsAdapter interface.
@@ -78,7 +91,7 @@ export function initAnalytics({ getState }: { getState: Function }) {
         host,
         product: deploymentInfo && deploymentInfo.product,
         subproduct: deploymentInfo && deploymentInfo.environment,
-        user: user && user.id,
+        user: (user && user.id) || getAnalyticsIDFromURL(state['features/base/connection'].locationURL),
         version: JitsiMeetJS.version,
         whiteListedEvents
     };
