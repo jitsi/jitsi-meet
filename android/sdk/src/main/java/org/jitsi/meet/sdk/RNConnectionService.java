@@ -158,8 +158,11 @@ class RNConnectionService extends ReactContextBaseJavaModule {
     @ReactMethod
     public void reportConnectedOutgoingCall(String callUUID, Promise promise) {
         JitsiMeetLogger.d(TAG + " reportConnectedOutgoingCall " + callUUID);
-        ConnectionService.setConnectionActive(callUUID);
-        promise.resolve(null);
+        if (ConnectionService.setConnectionActive(callUUID)) {
+            promise.resolve(null);
+        } else {
+            promise.reject("CONNECTION_NOT_FOUND_ERROR", "Connection wasn't found.");
+        }
     }
 
     @Override
