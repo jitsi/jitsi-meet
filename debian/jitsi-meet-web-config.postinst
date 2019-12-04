@@ -99,6 +99,8 @@ case "$1" in
         JITSI_MEET_CONFIG="/etc/jitsi/meet/$JVB_HOSTNAME-config.js"
         if [ ! -f $JITSI_MEET_CONFIG ] ; then
             cp /usr/share/jitsi-meet-web-config/config.js $JITSI_MEET_CONFIG
+            # replaces needed config for multidomain as it works only with nginx
+            sed -i "s/conference.jitsi-meet.example.com/conference.<\!--# echo var=\"subdomain\" default=\"\" -->jitsi-meet.example.com/g" $JITSI_MEET_CONFIG
             sed -i "s/jitsi-meet.example.com/$JVB_HOSTNAME/g" $JITSI_MEET_CONFIG
         fi
 
