@@ -18,13 +18,14 @@ VirtualHost "jitmeet.example.com"
                 key = "/etc/prosody/certs/jitmeet.example.com.key";
                 certificate = "/etc/prosody/certs/jitmeet.example.com.crt";
         }
+        speakerstats_component = "speakerstats.jitmeet.example.com"
         -- we need bosh
         modules_enabled = {
             "bosh";
             "pubsub";
             "ping"; -- Enable mod_ping
+            "speakerstats";
         }
-
         c2s_require_encryption = false
 
 Component "conference.jitmeet.example.com" "muc"
@@ -44,3 +45,6 @@ VirtualHost "auth.jitmeet.example.com"
 
 Component "focus.jitmeet.example.com"
     component_secret = "focusSecret"
+
+Component "speakerstats.jitmeet.example.com" "speakerstats_component"
+    muc_component = "conference.jitmeet.example.com"
