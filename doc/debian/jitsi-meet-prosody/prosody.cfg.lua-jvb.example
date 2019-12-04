@@ -1,5 +1,8 @@
 plugin_paths = { "/usr/share/jitsi-meet/prosody-plugins/" }
 
+-- domain mapper options, must at least have domain base set to use the mapper
+muc_mapper_domain_base = "jitmeet.example.com";
+
 VirtualHost "jitmeet.example.com"
         -- enabled = false -- Remove this line to enable this host
         authentication = "anonymous"
@@ -28,6 +31,7 @@ Component "conference.jitmeet.example.com" "muc"
     storage = "null"
     modules_enabled = {
         "muc_meeting_id";
+        "muc_domain_mapper";
         -- "token_verification";
     }
 admins = { "focusUser@auth.jitmeet.example.com" }

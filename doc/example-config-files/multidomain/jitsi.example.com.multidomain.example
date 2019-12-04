@@ -36,10 +36,6 @@ server {
         rewrite ^/(.*)$ / break;
     }
 
-    location / {
-        ssi on;
-    }
-
     location ~ ^/([^/?&:'"]+)/config.js$
     {
        set $subdomain "$1.";

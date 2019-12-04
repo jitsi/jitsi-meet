@@ -19,7 +19,11 @@ server {
     ssl_certificate_key /etc/jitsi/meet/jitsi-meet.example.com.key;
 
     root /usr/share/jitsi-meet;
+
+    # ssi on with javascript for multidomain variables in config.js
     ssi on;
+    ssi_types application/x-javascript application/javascript;
+
     index index.html index.htm;
     error_page 404 /static/404.html;
 
@@ -51,5 +55,29 @@ server {
 
     location @root_path {
         rewrite ^/(.*)$ / break;
+    }
+
+    location ~ ^/([^/?&:'"]+)/config.js$
+    {
+       set $subdomain "$1.";
+       set $subdir "$1/";
+
+       alias /etc/jitsi/meet/jitsi-meet.example.com-config.js;
+    }
+
+    #Anything that didn't match above, and isn't a real file, assume it's a room name and redirect to /
+    location ~ ^/([^/?&:'"]+)/(.*)$ {
+        set $subdomain "$1.";
+        set $subdir "$1/";
+        rewrite ^/([^/?&:'"]+)/(.*)$ /$2;
+    }
+
+    # BOSH for subdomains
+    location ~ ^/([^/?&:'"]+)/http-bind {
+        set $subdomain "$1.";
+        set $subdir "$1/";
+        set $prefix "$1";
+
+        rewrite ^/(.*)$ /http-bind;
     }
 }
