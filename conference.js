@@ -815,7 +815,7 @@ export default {
      * @param {boolean} [showUI] when set to false will not display any error
      * dialogs in case of media permissions error.
      */
-    async mutePresenterVideo(mute, showUI = true) {
+    async mutePresenter(mute, showUI = true) {
         const maybeShowErrorDialog = error => {
             showUI && APP.store.dispatch(notifyCameraError(error));
         };
@@ -823,33 +823,17 @@ export default {
         if (mute) {
             try {
                 await this.localVideo.setEffect(undefined);
-                APP.store.dispatch(
-                    setVideoMuted(mute, MEDIA_TYPE.PRESENTER));
             } catch (err) {
-                logger.error('Failed to mute the Presenter video');
+                logger.error('Failed to remove the presenter effect', err);
+                maybeShowErrorDialog(err);
             }
-
-            return;
-        }
-        const { height } = this.localVideo.track.getSettings();
-        const defaultCamera
-            = getUserSelectedCameraDeviceId(APP.store.getState());
-        let effect;
-
-        try {
-            effect = await this._createPresenterStreamEffect(height,
-                defaultCamera);
-        } catch (err) {
-            logger.error('Failed to unmute Presenter Video');
-            maybeShowErrorDialog(err);
-
-            return;
-        }
-        try {
-            await this.localVideo.setEffect(effect);
-            APP.store.dispatch(setVideoMuted(mute, MEDIA_TYPE.PRESENTER));
-        } catch (err) {
-            logger.error('Failed to apply the Presenter effect', err);
+        } else {
+            try {
+                await this.localVideo.setEffect(await this._createPresenterStreamEffect());
+            } catch (err) {
+                logger.error('Failed to apply the presenter effect', err);
+                maybeShowErrorDialog(err);
+            }
         }
     },
 
@@ -868,7 +852,7 @@ export default {
         }
 
         if (this.isSharingScreen) {
-            return this.mutePresenterVideo(mute);
+            return this._mutePresenterVideo(mute);
         }
 
         // If not ready to modify track's state yet adjust the base/media
@@ -1612,31 +1596,63 @@ export default {
      * @return {Promise<JitsiStreamPresenterEffect>} - A promise resolved with
      * {@link JitsiStreamPresenterEffect} if it succeeds.
      */
-    async _createPresenterStreamEffect(height, cameraDeviceId = null) {
-        let presenterTrack;
+    async _createPresenterStreamEffect(height = null, cameraDeviceId = null) {
+        if (!this.localPresenterVideo) {
+            try {
+                this.localPresenterVideo = await createLocalPresenterTrack({ cameraDeviceId }, height);
+            } catch (err) {
+                logger.error('Failed to create a camera track for presenter', err);
 
-        try {
-            presenterTrack = await createLocalPresenterTrack({
-                cameraDeviceId
-            },
-            height);
-        } catch (err) {
-            logger.error('Failed to create a camera track for presenter', err);
-
-            return;
-        }
-        this.localPresenterVideo = presenterTrack;
-        try {
-            const effect = await createPresenterEffect(presenterTrack.stream);
-
+                return;
+            }
             APP.store.dispatch(trackAdded(this.localPresenterVideo));
+        }
+        try {
+            const effect = await createPresenterEffect(this.localPresenterVideo.stream);
 
             return effect;
         } catch (err) {
             logger.error('Failed to create the presenter effect', err);
-            APP.store.dispatch(
-                setVideoMuted(true, MEDIA_TYPE.PRESENTER));
-            APP.store.dispatch(notifyCameraError(err));
+        }
+    },
+
+    /**
+     * Tries to turn the presenter video track on or off. If a presenter track
+     * doesn't exist, a new video track is created.
+     *
+     * @param mute - true for mute and false for unmute.
+     *
+     * @private
+     */
+    async _mutePresenterVideo(mute) {
+        const maybeShowErrorDialog = error => {
+            APP.store.dispatch(notifyCameraError(error));
+        };
+
+        if (!this.localPresenterVideo && !mute) {
+            // create a new presenter track and apply the presenter effect.
+            const { height } = this.localVideo.track.getSettings();
+            const defaultCamera
+                = getUserSelectedCameraDeviceId(APP.store.getState());
+            let effect;
+
+            try {
+                effect = await this._createPresenterStreamEffect(height,
+                    defaultCamera);
+            } catch (err) {
+                logger.error('Failed to unmute Presenter Video');
+                maybeShowErrorDialog(err);
+
+                return;
+            }
+            try {
+                await this.localVideo.setEffect(effect);
+                APP.store.dispatch(setVideoMuted(mute, MEDIA_TYPE.PRESENTER));
+            } catch (err) {
+                logger.error('Failed to apply the Presenter effect', err);
+            }
+        } else {
+            APP.store.dispatch(setVideoMuted(mute, MEDIA_TYPE.PRESENTER));
         }
     },
 
@@ -2108,23 +2124,29 @@ export default {
 
                     // dispose the existing presenter track and create a new
                     // camera track.
-                    APP.store.dispatch(setVideoMuted(true, MEDIA_TYPE.PRESENTER));
+                    this.localPresenterVideo.dispose();
+                    this.localPresenterVideo = null;
 
                     return this._createPresenterStreamEffect(height, cameraDeviceId)
                         .then(effect => this.localVideo.setEffect(effect))
                         .then(() => {
-                            muteLocalVideo(false);
                             this.setVideoMuteStatus(false);
                             logger.log('switched local video device');
                             this._updateVideoDeviceId();
                         })
                         .catch(err => APP.store.dispatch(notifyCameraError(err)));
 
-                // If screenshare is in progress but video is muted,
-                // update the default device id for video.
+                // If screenshare is in progress but video is muted, update the default device
+                // id for video, dispose the existing presenter track and create a new effect
+                // that can be applied on un-mute.
                 } else if (this.isSharingScreen && videoWasMuted) {
                     logger.log('switched local video device');
+                    const { height } = this.localVideo.track.getSettings();
+
                     this._updateVideoDeviceId();
+                    this.localPresenterVideo.dispose();
+                    this.localPresenterVideo = null;
+                    this._createPresenterStreamEffect(height, cameraDeviceId);
 
                 // if there is only video, switch to the new camera stream.
                 } else {
@@ -2377,6 +2399,13 @@ export default {
             && this.localVideo.videoType === 'camera') {
             APP.store.dispatch(updateSettings({
                 cameraDeviceId: this.localVideo.getDeviceId()
+            }));
+        }
+
+        // If screenshare is in progress, get the device id from the presenter track.
+        if (this.localPresenterVideo) {
+            APP.store.dispatch(updateSettings({
+                cameraDeviceId: this.localPresenterVideo.getDeviceId()
             }));
         }
     },
