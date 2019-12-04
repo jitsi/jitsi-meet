@@ -35,7 +35,7 @@ export async function createLocalPresenterTrack(options, desktopHeight) {
         video: {
             aspectRatio: 4 / 3,
             height: {
-                exact: result
+                ideal: result
             }
         }
     };
