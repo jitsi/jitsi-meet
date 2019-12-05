@@ -1,0 +1,14 @@
+var subdomain = "<!--# echo var="subdomain" default="" -->";
+if (subdomain) {
+    subdomain = subdomain.substr(0,subdomain.length-1).split('.').join('_').toLowerCase() + '.';
+}
+
+var config = {
+    hosts: {
+        domain: 'jitsi.example.com',
+        muc: 'conference.'+subdomain+'jitsi.example.com', // FIXME: use XEP-0030
+        focus: 'focus.jitsi.example.com',
+    },
+    useNicks: false,
+    bosh: '//jitsi.example.com/http-bind' // FIXME: use xep-0156 for that
+};

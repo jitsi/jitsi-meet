@@ -7,8 +7,7 @@ import { BoxModel } from '../../../styles';
 
 const HEADER_FONT_SIZE = 18;
 const HEADER_HEIGHT = 48;
-
-export const HEADER_PADDING = BoxModel.padding / 2;
+const HEADER_PADDING = BoxModel.padding / 2;
 
 ColorSchemeRegistry.register('Header', {
 

@@ -101,6 +101,7 @@ export class AbstractWelcomePage extends Component<Props, *> {
      */
     componentDidMount() {
         this._mounted = true;
+        sendAnalytics(createWelcomePageEvent('viewed', undefined, { value: 1 }));
     }
 
     /**
@@ -192,7 +193,7 @@ export class AbstractWelcomePage extends Component<Props, *> {
             const onAppNavigateSettled
                 = () => this._mounted && this.setState({ joining: false });
 
-            this.props.dispatch(appNavigate(encodeURI(room)))
+            this.props.dispatch(appNavigate(room))
                 .then(onAppNavigateSettled, onAppNavigateSettled);
         }
     }

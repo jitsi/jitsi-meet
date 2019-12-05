@@ -5,7 +5,11 @@ import {
     createApiEvent,
     sendAnalytics
 } from '../../react/features/analytics';
-import { setPassword, setSubject } from '../../react/features/base/conference';
+import {
+    sendTones,
+    setPassword,
+    setSubject
+} from '../../react/features/base/conference';
 import { parseJWTFromURLParams } from '../../react/features/base/jwt';
 import { invite } from '../../react/features/invite';
 import { toggleTileView } from '../../react/features/video-layout';
@@ -89,6 +93,11 @@ function initCommands() {
         },
         'proxy-connection-event': event => {
             APP.conference.onProxyConnectionEvent(event);
+        },
+        'send-tones': (options = {}) => {
+            const { duration, tones, pause } = options;
+
+            APP.store.dispatch(sendTones(tones, duration, pause));
         },
         'subject': subject => {
             sendAnalytics(createApiEvent('subject.changed'));

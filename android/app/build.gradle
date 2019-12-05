@@ -34,8 +34,6 @@ android {
 
     buildTypes {
         debug {
-            minifyEnabled true
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules-debug.pro'
             buildConfigField "boolean", "GOOGLE_SERVICES_ENABLED", "${googleServicesEnabled}"
             buildConfigField "boolean", "LIBRE_BUILD", "${rootProject.ext.libreBuild}"
         }
@@ -71,7 +69,9 @@ repositories {
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
-    implementation 'androidx.appcompat:appcompat:1.0.2'
+    implementation 'androidx.appcompat:appcompat:1.1.0'
+
+    debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.0-beta-5'
 
     if (!rootProject.ext.libreBuild) {
         implementation 'com.google.android.gms:play-services-auth:16.0.1'
@@ -85,9 +85,6 @@ dependencies {
     }
 
     implementation project(':sdk')
-
-    debugImplementation 'com.squareup.leakcanary:leakcanary-android:1.6.1'
-    releaseImplementation 'com.squareup.leakcanary:leakcanary-android-no-op:1.6.1'
 }
 
 gradle.projectsEvaluated {

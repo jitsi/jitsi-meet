@@ -5,6 +5,7 @@ import {
     sendAnalytics
 } from '../../analytics';
 import { openDialog } from '../../base/dialog';
+import { IconMicDisabled } from '../../base/icons';
 import { MEDIA_TYPE } from '../../base/media';
 import {
     AbstractButton,
@@ -44,7 +45,7 @@ export type Props = AbstractButtonProps & {
  */
 export default class AbstractMuteButton extends AbstractButton<Props, *> {
     accessibilityLabel = 'toolbar.accessibilityLabel.remoteMute';
-    iconName = 'icon-mic-disabled';
+    icon = IconMicDisabled;
     label = 'videothumbnail.domute';
     toggledLabel = 'videothumbnail.muted';
 

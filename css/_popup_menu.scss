@@ -6,7 +6,7 @@
     min-width: 75px;
     text-align: left;
     padding: 0px;
-    width: 150px;
+    width: 180px;
     white-space: nowrap;
 
     &__item {
@@ -87,6 +87,7 @@
         display: inline-block;
         min-width: 20px;
         height: 100%;
+        padding-right: 10px;
 
         > * {
             @include absoluteAligning();

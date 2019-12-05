@@ -2,6 +2,8 @@
 
 import React from 'react';
 
+import { MESSAGE_TYPE_REMOTE } from '../../constants';
+
 import AbstractMessageContainer, { type Props }
     from '../AbstractMessageContainer';
 
@@ -12,7 +14,7 @@ import ChatMessageGroup from './ChatMessageGroup';
  *
  * @extends AbstractMessageContainer
  */
-export default class MessageContainer extends AbstractMessageContainer {
+export default class MessageContainer extends AbstractMessageContainer<Props> {
     /**
      * Whether or not chat has been scrolled to the bottom of the screen. Used
      * to determine if chat should be scrolled automatically to the bottom when
@@ -61,7 +63,7 @@ export default class MessageContainer extends AbstractMessageContainer {
 
             return (
                 <ChatMessageGroup
-                    className = { messageType || 'remote' }
+                    className = { messageType || MESSAGE_TYPE_REMOTE }
                     key = { index }
                     messages = { group } />
             );

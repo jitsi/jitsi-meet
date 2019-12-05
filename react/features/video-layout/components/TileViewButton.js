@@ -7,6 +7,7 @@ import {
     sendAnalytics
 } from '../../analytics';
 import { translate } from '../../base/i18n';
+import { IconTileView } from '../../base/icons';
 import { connect } from '../../base/redux';
 import {
     AbstractButton,
@@ -39,10 +40,9 @@ type Props = AbstractButtonProps & {
  */
 class TileViewButton<P: Props> extends AbstractButton<P, *> {
     accessibilityLabel = 'toolbar.accessibilityLabel.tileView';
-    iconName = 'icon-tiles-many';
+    icon = IconTileView;
     label = 'toolbar.enterTileView';
     toggledLabel = 'toolbar.exitTileView';
-    toggledIconName = 'icon-tiles-many toggled';
     tooltip = 'toolbar.tileViewToggle';
 
     /**

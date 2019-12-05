@@ -3,7 +3,7 @@
 import React, { Component } from 'react';
 import { SafeAreaView, Text, TouchableOpacity, View } from 'react-native';
 
-import { Icon } from '../../../font-icons';
+import { Icon } from '../../../icons';
 import { connect } from '../../../redux';
 
 import styles from './styles';
@@ -252,7 +252,7 @@ class PagedList extends Component<Props, State> {
                 style = { styles.pageIndicator } >
                 <View style = { styles.pageIndicatorContent }>
                     <Icon
-                        name = { page.icon }
+                        src = { page.icon }
                         style = { [
                             styles.pageIndicatorIcon,
                             this._getIndicatorStyle(index)

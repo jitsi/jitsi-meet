@@ -163,12 +163,6 @@ function _initLogging({ dispatch, getState }, loggingConfig, isTestingEnabled) {
         logCollector.stop();
         dispatch(setLogCollector(undefined));
     }
-
-    // Disable caller function info.
-    if (navigator.product === 'ReactNative') {
-        Logger.setGlobalOptions({ disableCallerInfo: true });
-        JitsiMeetJS.setGlobalLogOptions({ disableCallerInfo: true });
-    }
 }
 
 /**

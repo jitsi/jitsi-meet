@@ -18,8 +18,6 @@ import {
     setVideoInputDevice
 } from './functions';
 
-const logger = require('jitsi-meet-logger').getLogger(__filename);
-
 const ALWAYS_ON_TOP_FILENAMES = [
     'css/all.css', 'libs/alwaysontop.min.js'
 ];
@@ -34,6 +32,7 @@ const commands = {
     email: 'email',
     hangup: 'video-hangup',
     password: 'password',
+    sendTones: 'send-tones',
     subject: 'subject',
     submitFeedback: 'submit-feedback',
     toggleAudio: 'toggle-audio',
@@ -233,6 +232,8 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
      * information about new participants that will be invited in the call.
      * @param {Array<Object>} [options.devices] - Array of objects containing
      * information about the initial devices that will be used in the call.
+     * @param {Object} [options.userInfo] - Object containing information about
+     * the participant opening the meeting.
      */
     constructor(domain, ...args) {
         super();
@@ -247,7 +248,8 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
             jwt = undefined,
             onload = undefined,
             invitees,
-            devices
+            devices,
+            userInfo
         } = parseArguments(args);
 
         this._parentNode = parentNode;
@@ -257,7 +259,8 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
             jwt,
             noSSL,
             roomName,
-            devices
+            devices,
+            userInfo
         });
         this._createIFrame(height, width, onload);
         this._transport = new Transport({
@@ -617,7 +620,7 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
      */
     executeCommand(name, ...args) {
         if (!(name in commands)) {
-            logger.error('Not supported command name.');
+            console.error('Not supported command name.');
 
             return;
         }

@@ -35,6 +35,7 @@ import {
     CONFERENCE_SUBJECT_CHANGED,
     CONFERENCE_WILL_LEAVE,
     DATA_CHANNEL_OPENED,
+    SEND_TONES,
     SET_PENDING_SUBJECT_CHANGE,
     SET_ROOM
 } from './actionTypes';
@@ -45,6 +46,7 @@ import {
     getCurrentConference
 } from './functions';
 import logger from './logger';
+import { MEDIA_TYPE } from '../media';
 
 declare var APP: Object;
 
@@ -88,6 +90,9 @@ MiddlewareRegistry.register(store => next => action => {
 
     case PIN_PARTICIPANT:
         return _pinParticipant(store, next, action);
+
+    case SEND_TONES:
+        return _sendTones(store, next, action);
 
     case SET_ROOM:
         return _setRoom(store, next, action);
@@ -447,6 +452,31 @@ function _pinParticipant({ getState }, next, action) {
 }
 
 /**
+ * Requests the specified tones to be played.
+ *
+ * @param {Store} store - The redux store in which the specified {@code action}
+ * is being dispatched.
+ * @param {Dispatch} next - The redux {@code dispatch} function to dispatch the
+ * specified {@code action} to the specified {@code store}.
+ * @param {Action} action - The redux action {@code SEND_TONES} which is
+ * being dispatched in the specified {@code store}.
+ * @private
+ * @returns {Object} The value returned by {@code next(action)}.
+ */
+function _sendTones({ getState }, next, action) {
+    const state = getState();
+    const { conference } = state['features/base/conference'];
+
+    if (conference) {
+        const { duration, tones, pause } = action;
+
+        conference.sendTones(tones, duration, pause);
+    }
+
+    return next(action);
+}
+
+/**
  * Helper function for updating the preferred receiver video constraint, based
  * on the user preference and the internal maximum.
  *
@@ -560,7 +590,10 @@ function _syncReceiveVideoQuality({ getState }, next, action) {
 function _trackAddedOrRemoved(store, next, action) {
     const track = action.track;
 
-    if (track && track.local) {
+    // TODO All track swapping should happen here instead of conference.js.
+    // Since we swap the tracks for the web client in conference.js, ignore
+    // presenter tracks here and do not add/remove them to/from the conference.
+    if (track && track.local && track.mediaType !== MEDIA_TYPE.PRESENTER) {
         return (
             _syncConferenceLocalTracksWithState(store, action)
                 .then(() => next(action)));

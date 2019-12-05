@@ -22,7 +22,6 @@ import SharedVideoThumb from '../shared_video/SharedVideoThumb';
 
 import Filmstrip from './Filmstrip';
 import UIEvents from '../../../service/UI/UIEvents';
-import UIUtil from '../util/UIUtil';
 
 import RemoteVideo from './RemoteVideo';
 import LargeVideoManager from './LargeVideoManager';
@@ -200,7 +199,11 @@ const VideoLayout = {
         const id = stream.getParticipantId();
         const remoteVideo = remoteVideos[id];
 
+        logger.debug(`Received a new ${stream.getType()} stream for ${id}`);
+
         if (!remoteVideo) {
+            logger.debug('No remote video element to add stream');
+
             return;
         }
 
@@ -658,14 +661,6 @@ const VideoLayout = {
         if (largeVideo) {
             largeVideo.updateContainerSize();
             largeVideo.resize(animate);
-        }
-
-        // Calculate available width and height.
-        const availableHeight = window.innerHeight;
-        const availableWidth = UIUtil.getAvailableVideoWidth();
-
-        if (availableWidth < 0 || availableHeight < 0) {
-            return;
         }
     },
 

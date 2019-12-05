@@ -3,6 +3,8 @@
 import Tooltip from '@atlaskit/tooltip';
 import React from 'react';
 
+import { Icon } from '../../../base/icons';
+
 import AbstractToolbarButton from '../AbstractToolbarButton';
 import type { Props as AbstractToolbarButtonProps }
     from '../AbstractToolbarButton';
@@ -71,8 +73,8 @@ class ToolbarButton extends AbstractToolbarButton<Props> {
      */
     _renderIcon() {
         return (
-            <div className = 'toolbox-icon'>
-                <i className = { this.props.iconName } />
+            <div className = { `toolbox-icon ${this.props.toggled ? 'toggled' : ''}` }>
+                <Icon src = { this.props.icon } />
             </div>
         );
     }

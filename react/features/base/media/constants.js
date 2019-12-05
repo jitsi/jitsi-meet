@@ -15,6 +15,7 @@ export const CAMERA_FACING_MODE = {
  */
 export const MEDIA_TYPE = {
     AUDIO: 'audio',
+    PRESENTER: 'presenter',
     VIDEO: 'video'
 };
 

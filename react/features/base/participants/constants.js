@@ -1,3 +1,7 @@
+// @flow
+
+import { IconPhone } from '../icons';
+
 /**
  * The relative path to the default/stock avatar (image) file used on both
  * Web/React and mobile/React Native (for the purposes of consistency).
@@ -18,7 +22,7 @@ export const DEFAULT_AVATAR_RELATIVE_PATH = 'images/avatar.png';
  *
  * @type {string}
  */
-export const JIGASI_PARTICIPANT_ICON = 'icon://phone';
+export const JIGASI_PARTICIPANT_ICON = IconPhone;
 
 /**
  * The local participant might not have real ID until she joins a conference,

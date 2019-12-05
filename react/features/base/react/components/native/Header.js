@@ -1,18 +1,14 @@
 // @flow
 
-import React, { Component, type Node } from 'react';
-import { Platform, SafeAreaView, StatusBar, View } from 'react-native';
+import React, { PureComponent, type Node } from 'react';
+import { SafeAreaView, StatusBar, View } from 'react-native';
 
 import { ColorSchemeRegistry } from '../../../color-scheme';
 import { connect } from '../../../redux';
 import { isDarkColor } from '../../../styles';
 
-import { HEADER_PADDING } from './headerstyles';
-
-/**
- * Compatibility header padding size for iOS 10 (and older) devices.
- */
-const IOS10_PADDING = 20;
+// Register style
+import './headerstyles';
 
 /**
  * Constanst for the (currently) supported statusbar colors.
@@ -44,19 +40,7 @@ type Props = {
 /**
  * A generic screen header component.
  */
-class Header extends Component<Props> {
-    /**
-     * Initializes a new {@code Header} instance.
-     *
-     * @inheritdoc
-     */
-    constructor(props: Props) {
-        super(props);
-
-        this._getIOS10CompatiblePadding
-            = this._getIOS10CompatiblePadding.bind(this);
-    }
-
+class Header extends PureComponent<Props> {
     /**
      * Implements React's {@link Component#render()}.
      *
@@ -66,11 +50,7 @@ class Header extends Component<Props> {
         const { _styles } = this.props;
 
         return (
-            <View
-                style = { [
-                    _styles.headerOverlay,
-                    this._getIOS10CompatiblePadding()
-                ] } >
+            <View style = { _styles.headerOverlay }>
                 <StatusBar
                     backgroundColor = { _styles.statusBar }
                     barStyle = { this._getStatusBarContentColor() }
@@ -88,32 +68,6 @@ class Header extends Component<Props> {
                 </SafeAreaView>
             </View>
         );
-    }
-
-    _getIOS10CompatiblePadding: () => Object;
-
-    /**
-     * Adds a padding for iOS 10 (and older) devices to avoid clipping with the
-     * status bar.
-     * Note: This is a workaround for iOS 10 (and older) devices only to fix
-     * usability, but it doesn't take orientation into account, so unnecessary
-     * padding is rendered in some cases.
-     *
-     * @private
-     * @returns {Object}
-     */
-    _getIOS10CompatiblePadding() {
-        if (Platform.OS === 'ios') {
-            const majorVersionIOS = parseInt(Platform.Version, 10);
-
-            if (majorVersionIOS <= 10) {
-                return {
-                    paddingTop: HEADER_PADDING + IOS10_PADDING
-                };
-            }
-        }
-
-        return null;
     }
 
     /**

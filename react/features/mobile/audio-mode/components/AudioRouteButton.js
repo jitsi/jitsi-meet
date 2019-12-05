@@ -2,6 +2,7 @@
 
 import { openDialog } from '../../../base/dialog';
 import { translate } from '../../../base/i18n';
+import { IconAudioRoute } from '../../../base/icons';
 import { connect } from '../../../base/redux';
 import { AbstractButton } from '../../../base/toolbox';
 import type { AbstractButtonProps } from '../../../base/toolbox';
@@ -23,7 +24,7 @@ type Props = AbstractButtonProps & {
  */
 class AudioRouteButton extends AbstractButton<Props, *> {
     accessibilityLabel = 'toolbar.accessibilityLabel.audioRoute';
-    iconName = 'icon-volume';
+    icon = IconAudioRoute;
     label = 'toolbar.audioRoute';
 
     /**

@@ -1,5 +1,6 @@
 // @flow
 
+import { IconChat, IconChatUnread } from '../../../base/icons';
 import { getLocalParticipant } from '../../../base/participants';
 import { connect } from '../../../base/redux';
 import {
@@ -42,9 +43,9 @@ type Props = AbstractButtonProps & {
  */
 class ChatButton extends AbstractButton<Props, *> {
     accessibilityLabel = 'toolbar.accessibilityLabel.chat';
-    iconName = 'chat';
+    icon = IconChat;
     label = 'toolbar.chat';
-    toggledIconName = 'chat-unread';
+    toggledIcon = IconChatUnread;
 
     /**
      * Handles clicking / pressing the button, and opens the appropriate dialog.

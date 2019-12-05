@@ -20,9 +20,9 @@ import {
     setVideoInputDevice
 } from '../../../../../modules/API/external/functions';
 
-import { parseURLParams } from '../../../base/config';
-import { DialogWithTabs } from '../../../base/dialog';
-import { DeviceSelection } from '../../../device-selection';
+import parseURLParams from '../../../base/config/parseURLParams';
+import DialogWithTabs from '../../../base/dialog/components/web/DialogWithTabs';
+import DeviceSelection from '../../../device-selection/components/DeviceSelection';
 
 /**
  * Implements a class that renders the React components for the device selection

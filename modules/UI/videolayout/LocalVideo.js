@@ -273,7 +273,7 @@ LocalVideo.prototype._updateVideoElement = function() {
     // case video does not autoplay.
     const video = this.container.querySelector('video');
 
-    video && video.play();
+    video && !config.testing?.noAutoPlayVideo && video.play();
 };
 
 export default LocalVideo;

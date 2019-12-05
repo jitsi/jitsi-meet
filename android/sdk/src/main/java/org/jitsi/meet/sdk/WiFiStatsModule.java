@@ -19,7 +19,6 @@ package org.jitsi.meet.sdk;
 import android.content.Context;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
-import android.util.Log;
 
 import com.facebook.react.bridge.Promise;
 import com.facebook.react.bridge.ReactApplicationContext;
@@ -27,6 +26,7 @@ import com.facebook.react.bridge.ReactContextBaseJavaModule;
 import com.facebook.react.bridge.ReactMethod;
 import com.facebook.react.module.annotations.ReactModule;
 
+import org.jitsi.meet.sdk.log.JitsiMeetLogger;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -184,17 +184,15 @@ class WiFiStatsModule
 
                         }
                     } catch (SocketException e) {
-                        Log.wtf(TAG,
-                            "Unable to NetworkInterface.getNetworkInterfaces()"
-                        );
+                        JitsiMeetLogger.e(e, TAG + " Unable to NetworkInterface.getNetworkInterfaces()");
                     }
 
                     result.put("addresses", addresses);
                     promise.resolve(result.toString());
 
-                    Log.d(TAG, "WiFi stats: " + result.toString());
+                    JitsiMeetLogger.d(TAG + " WiFi stats: " + result.toString());
                 } catch (Throwable e) {
-                    Log.e(TAG, "Failed to obtain wifi stats", e);
+                    JitsiMeetLogger.e(e, TAG + " Failed to obtain wifi stats");
                     promise.reject(
                         new Exception("Failed to obtain wifi stats"));
                 }

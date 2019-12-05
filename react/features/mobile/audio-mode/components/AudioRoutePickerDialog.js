@@ -7,7 +7,13 @@ import { NativeModules, Text, TouchableHighlight, View } from 'react-native';
 import { ColorSchemeRegistry } from '../../../base/color-scheme';
 import { hideDialog, BottomSheet } from '../../../base/dialog';
 import { translate } from '../../../base/i18n';
-import { Icon } from '../../../base/font-icons';
+import {
+    Icon,
+    IconDeviceBluetooth,
+    IconDeviceEarpiece,
+    IconDeviceHeadphone,
+    IconDeviceSpeaker
+} from '../../../base/icons';
 import { connect } from '../../../base/redux';
 import { ColorPalette, type StyleType } from '../../../base/styles';
 
@@ -23,7 +29,7 @@ type Device = {
     /**
      * Name of the icon which will be rendered on the right.
      */
-    iconName: string,
+    icon: Object,
 
     /**
      * True if the element is selected (will be highlighted in blue),
@@ -115,22 +121,22 @@ type State = {
  */
 const deviceInfoMap = {
     BLUETOOTH: {
-        iconName: 'bluetooth',
+        icon: IconDeviceBluetooth,
         text: 'audioDevices.bluetooth',
         type: 'BLUETOOTH'
     },
     EARPIECE: {
-        iconName: 'phone-talk',
+        icon: IconDeviceEarpiece,
         text: 'audioDevices.phone',
         type: 'EARPIECE'
     },
     HEADPHONES: {
-        iconName: 'headset',
+        icon: IconDeviceHeadphone,
         text: 'audioDevices.headphones',
         type: 'HEADPHONES'
     },
     SPEAKER: {
-        iconName: 'volume',
+        icon: IconDeviceSpeaker,
         text: 'audioDevices.speaker',
         type: 'SPEAKER'
     }
@@ -253,7 +259,7 @@ class AudioRoutePickerDialog extends Component<Props, State> {
      */
     _renderDevice(device: Device) {
         const { _bottomSheetStyles } = this.props;
-        const { iconName, selected, text } = device;
+        const { icon, selected, text } = device;
         const selectedStyle = selected ? styles.selectedText : {};
 
         return (
@@ -263,9 +269,9 @@ class AudioRoutePickerDialog extends Component<Props, State> {
                 underlayColor = { ColorPalette.overflowMenuItemUnderlay } >
                 <View style = { styles.deviceRow } >
                     <Icon
-                        name = { iconName }
-                        style = { [ styles.deviceIcon, _bottomSheetStyles.iconStyle, selectedStyle ] } />
-                    <Text style = { [ styles.deviceText, _bottomSheetStyles.labelStyle, selectedStyle ] } >
+                        src = { icon }
+                        style = { [ styles.deviceIcon, _bottomSheetStyles.buttons.iconStyle, selectedStyle ] } />
+                    <Text style = { [ styles.deviceText, _bottomSheetStyles.buttons.labelStyle, selectedStyle ] } >
                         { text }
                     </Text>
                 </View>
@@ -285,9 +291,9 @@ class AudioRoutePickerDialog extends Component<Props, State> {
         return (
             <View style = { styles.deviceRow } >
                 <Icon
-                    name = { deviceInfoMap.SPEAKER.iconName }
-                    style = { [ styles.deviceIcon, _bottomSheetStyles.iconStyle ] } />
-                <Text style = { [ styles.deviceText, _bottomSheetStyles.labelStyle ] } >
+                    src = { deviceInfoMap.SPEAKER.icon }
+                    style = { [ styles.deviceIcon, _bottomSheetStyles.buttons.iconStyle ] } />
+                <Text style = { [ styles.deviceText, _bottomSheetStyles.buttons.labelStyle ] } >
                     { t('audioDevices.none') }
                 </Text>
             </View>

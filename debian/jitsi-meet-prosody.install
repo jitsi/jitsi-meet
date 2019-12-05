@@ -1,0 +1,2 @@
+doc/debian/jitsi-meet-prosody/prosody.cfg.lua-jvb.example   /usr/share/jitsi-meet-prosody/
+resources/prosody-plugins/                                  /usr/share/jitsi-meet/

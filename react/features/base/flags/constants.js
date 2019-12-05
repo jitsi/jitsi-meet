@@ -7,6 +7,13 @@
 export const CALENDAR_ENABLED = 'calendar.enabled';
 
 /**
+ * Flag indicating if call integration (CallKit on iOS, ConnectionService on Android)
+ * should be enabled.
+ * Default: enabled (true).
+ */
+export const CALL_INTEGRATION_ENABLED = 'call-integration.enabled';
+
+/**
  * Flag indicating if chat should be enabled.
  * Default: enabled (true).
  */
@@ -16,7 +23,13 @@ export const CHAT_ENABLED = 'chat.enabled';
  * Default toolbar buttons to display.
  */
 export const DEFAULT_TOOLBAR_BUTTONS = 'audiomute,audioonly,audioroute,closedcaption,hangup,infodialog,invite'
-+ 'recording,livestream,overflowmenu,raisehand,roomlock,tileview,togglecamera,videomute';
++ 'recording,livestream,overflowmenu,raisehand,roomlock,tileview,togglecamera,videomute,shareddocument,help';
+
+/**
+ * Flag indicating if invite functionality should be enabled.
+ * Default: enabled (true).
+ */
+export const INVITE_ENABLED = 'invite.enabled';
 
 /**
  * Flag indicating if recording should be enabled in iOS.

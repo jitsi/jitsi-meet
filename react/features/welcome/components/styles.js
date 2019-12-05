@@ -1,6 +1,8 @@
 // @flow
 
-import { BoxModel, ColorPalette, createStyleSheet } from '../../base/styles';
+import { StyleSheet } from 'react-native';
+
+import { BoxModel, ColorPalette } from '../../base/styles';
 
 export const PLACEHOLDER_TEXT_COLOR = 'rgba(255, 255, 255, 0.3)';
 
@@ -21,7 +23,7 @@ const TEXT_COLOR = ColorPalette.white;
  * The styles of the React {@code Components} of the feature welcome including
  * {@code WelcomePage} and {@code BlankPage}.
  */
-export default createStyleSheet({
+export default {
 
     /**
      * The audio-video switch itself.
@@ -36,6 +38,17 @@ export default createStyleSheet({
     audioVideoSwitchContainer: {
         alignItems: 'center',
         flexDirection: 'row'
+    },
+
+    /**
+     * View that is rendered when there is no welcome page.
+     */
+    blankPageWrapper: {
+        ...StyleSheet.absoluteFillObject,
+        alignItems: 'center',
+        flex: 1,
+        flexDirection: 'column',
+        justifyContent: 'center'
     },
 
     /**
@@ -276,4 +289,4 @@ export default createStyleSheet({
         backgroundColor: ColorPalette.blue,
         overflow: 'hidden'
     }
-});
+};

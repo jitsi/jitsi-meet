@@ -2,6 +2,8 @@
 
 import React, { Component } from 'react';
 
+import { Icon } from '../../../base/icons';
+
 /**
  * The type of the React {@code Component} props of
  * {@link RemoteVideoMenuButton}.
@@ -19,9 +21,9 @@ type Props = {
     displayClass?: string,
 
     /**
-     * The CSS classes for the icon that will display within the component.
+     * The icon that will display within the component.
      */
-    iconClass: string,
+    icon: Object,
 
     /**
      * The id attribute to be added to the component's DOM for retrieval when
@@ -51,7 +53,7 @@ export default class RemoteVideoMenuButton extends Component<Props> {
         const {
             buttonText,
             displayClass,
-            iconClass,
+            icon,
             id,
             onClick
         } = this.props;
@@ -65,7 +67,7 @@ export default class RemoteVideoMenuButton extends Component<Props> {
                     id = { id }
                     onClick = { onClick }>
                     <span className = 'popupmenu__icon'>
-                        <i className = { iconClass } />
+                        <Icon src = { icon } />
                     </span>
                     <span className = 'popupmenu__text'>
                         { buttonText }

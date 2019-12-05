@@ -2,7 +2,9 @@
 
 import type { Dispatch } from 'redux';
 
+import { getFeatureFlag, INVITE_ENABLED } from '../../../../base/flags';
 import { translate } from '../../../../base/i18n';
+import { IconAddPeople } from '../../../../base/icons';
 import { connect } from '../../../../base/redux';
 import { AbstractButton } from '../../../../base/toolbox';
 import type { AbstractButtonProps } from '../../../../base/toolbox';
@@ -24,7 +26,7 @@ type Props = AbstractButtonProps & {
  */
 class InviteButton extends AbstractButton<Props, *> {
     accessibilityLabel = 'toolbar.accessibilityLabel.shareRoom';
-    iconName = 'icon-link';
+    icon = IconAddPeople;
     label = 'toolbar.shareRoom';
 
     /**
@@ -49,7 +51,8 @@ class InviteButton extends AbstractButton<Props, *> {
  * @returns {Object}
  */
 function _mapStateToProps(state: Object, ownProps: Object) {
-    const addPeopleEnabled = isAddPeopleEnabled(state) || isDialOutEnabled(state);
+    const addPeopleEnabled = getFeatureFlag(state, INVITE_ENABLED, true)
+        && (isAddPeopleEnabled(state) || isDialOutEnabled(state));
     const { visible = Boolean(addPeopleEnabled) } = ownProps;
 
     return {

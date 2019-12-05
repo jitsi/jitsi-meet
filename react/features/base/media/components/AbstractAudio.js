@@ -36,7 +36,7 @@ type Props = {
      * @type {Object | string}
      */
     src: Object | string,
-    stream: Object,
+    stream?: Object,
     loop?: ?boolean
 }
 

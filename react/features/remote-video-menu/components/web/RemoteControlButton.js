@@ -7,6 +7,7 @@ import {
     sendAnalytics
 } from '../../../analytics';
 import { translate } from '../../../base/i18n';
+import { IconRemoteControlStart, IconRemoteControlStop } from '../../../base/icons';
 
 import RemoteVideoMenuButton from './RemoteVideoMenuButton';
 
@@ -84,14 +85,14 @@ class RemoteControlButton extends Component<Props> {
 
         switch (remoteControlState) {
         case REMOTE_CONTROL_MENU_STATES.NOT_STARTED:
-            icon = 'icon-play';
+            icon = IconRemoteControlStart;
             break;
         case REMOTE_CONTROL_MENU_STATES.REQUESTING:
             className = ' disabled';
-            icon = 'icon-play';
+            icon = IconRemoteControlStart;
             break;
         case REMOTE_CONTROL_MENU_STATES.STARTED:
-            icon = 'icon-stop';
+            icon = IconRemoteControlStop;
             break;
         case REMOTE_CONTROL_MENU_STATES.NOT_SUPPORTED:
 
@@ -104,7 +105,7 @@ class RemoteControlButton extends Component<Props> {
             <RemoteVideoMenuButton
                 buttonText = { t('videothumbnail.remoteControl') }
                 displayClass = { className }
-                iconClass = { icon }
+                icon = { icon }
                 id = { `remoteControl_${participantID}` }
                 onClick = { this._onClick } />
         );

@@ -20,11 +20,12 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.util.Log;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.FragmentActivity;
 
 import com.facebook.react.modules.core.PermissionListener;
+
+import org.jitsi.meet.sdk.log.JitsiMeetLogger;
 
 import java.util.Map;
 
@@ -208,19 +209,19 @@ public class JitsiMeetActivity extends FragmentActivity
 
     @Override
     public void onConferenceJoined(Map<String, Object> data) {
-        Log.d(TAG, "Conference joined: " + data);
+        JitsiMeetLogger.i("Conference joined: " + data);
         // Launch the service for the ongoing notification.
         JitsiMeetOngoingConferenceService.launch(this);
     }
 
     @Override
     public void onConferenceTerminated(Map<String, Object> data) {
-        Log.d(TAG, "Conference terminated: " + data);
+        JitsiMeetLogger.i("Conference terminated: " + data);
         finish();
     }
 
     @Override
     public void onConferenceWillJoin(Map<String, Object> data) {
-        Log.d(TAG, "Conference will join: " + data);
+        JitsiMeetLogger.i("Conference will join: " + data);
     }
 }

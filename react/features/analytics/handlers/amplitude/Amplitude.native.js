@@ -35,9 +35,12 @@ class Amplitude {
      * Sets an identifier for the current user.
      *
      * @param {string} userId - The new user id.
+     * @param {string} opt_userId - Currently not used.
+     * @param {Object} opt_config - Currently not used.
+     * @param {Function} opt_callback - Currently not used.
      * @returns {void}
      */
-    setUserId(userId) {
+    setUserId(userId, opt_userId, opt_config, opt_callback) { // eslint-disable-line camelcase, no-unused-vars
         AmplitudeNative.setUserId(this._instanceName, userId);
     }
 

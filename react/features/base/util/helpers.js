@@ -1,7 +1,5 @@
 // @flow
 
-import logger from './logger';
-
 /**
  * Creates a deferred object.
  *
@@ -106,6 +104,6 @@ export function assignIfDefined(target: Object, source: Object) {
  * @returns {void}
  */
 export function reportError(e: Object, msg: string = '') {
-    logger.error(msg, e);
+    console.error(msg, e);
     window.onerror && window.onerror(msg, null, null, null, e);
 }

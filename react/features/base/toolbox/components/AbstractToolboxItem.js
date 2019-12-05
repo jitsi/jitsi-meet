@@ -47,9 +47,9 @@ export type Props = {
     elementAfter?: React$Node,
 
     /**
-     * The name of the icon of this {@code ToolboxItem}.
+     * The icon to render for this {@code ToolboxItem}.
      */
-    iconName: string,
+    icon: Object,
 
     /**
      * The text associated with this item. When `showLabel` is set to
@@ -76,6 +76,11 @@ export type Props = {
      * Invoked to obtain translated strings.
      */
     t: ?Function,
+
+    /**
+     * True if the item is toggled, false otherwise.
+     */
+    toggled: boolean,
 
     /**
      * The text to display in the tooltip. Used only on web.
