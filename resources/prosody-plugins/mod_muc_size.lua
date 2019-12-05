@@ -7,6 +7,13 @@ local it = require "util.iterators";
 local json = require "util.json";
 local iterators = require "util.iterators";
 local array = require"util.array";
+
+local have_async = pcall(require, "util.async");
+if not have_async then
+    module:log("error", "requires a version of Prosody with util.async");
+    return;
+end
+
 local wrap_async_run = module:require "util".wrap_async_run;
 
 local tostring = tostring;

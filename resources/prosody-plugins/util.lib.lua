@@ -1,6 +1,5 @@
 local jid = require "util.jid";
-local runner, waiter = require "util.async".runner, require "util.async".waiter;
-
+local have_async, async = pcall(require, "util.async");
 local muc_domain_prefix
     = module:get_option_string("muc_mapper_domain_prefix", "conference");
 
@@ -62,6 +61,13 @@ end
 
 
 function wrap_async_run(event,handler)
+    local have_async = pcall(require, "util.async");
+    if not have_async then
+        module:log("error", "requires a version of Prosody with util.async");
+        return nil;
+    end
+
+    local runner = async.runner;
     -- Grab a local response so that we can send the http response when
     -- the handler is done.
     local response = event.response;
