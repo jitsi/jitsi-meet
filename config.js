@@ -73,6 +73,11 @@ var config = {
     // Disable measuring of audio levels.
     // disableAudioLevels: false,
 
+    // Enabling this will run the lib-jitsi-meet no audio detection module which
+    // will notify the user if the current selected microphone has no audio
+    // input and will suggest another valid device if one is present.
+    // enableNoAudioDetection: false
+
     // Start the conference in audio only mode (no video is being received nor
     // sent).
     // startAudioOnly: false,
@@ -470,7 +475,6 @@ var config = {
      disableNS
      enableLipSync
      enableTalkWhileMuted
-     enableNoAudioDetection
      forceJVB121Ratio
      hiddenDomain
      ignoreStartMuted
