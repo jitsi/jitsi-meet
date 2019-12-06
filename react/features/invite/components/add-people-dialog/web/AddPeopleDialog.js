@@ -1,11 +1,11 @@
 // @flow
 
-import Avatar from '@atlaskit/avatar';
 import InlineMessage from '@atlaskit/inline-message';
 import React from 'react';
 import type { Dispatch } from 'redux';
 
 import { createInviteDialogEvent, sendAnalytics } from '../../../../analytics';
+import { Avatar } from '../../../../base/avatar';
 import { Dialog, hideDialog } from '../../../../base/dialog';
 import { translate, translateToHTML } from '../../../../base/i18n';
 import { Icon, IconPhone } from '../../../../base/icons';
@@ -289,13 +289,15 @@ class AddPeopleDialog extends AbstractAddPeopleDialog<Props, State> {
             return {
                 content: user.name,
                 elemBefore: <Avatar
-                    size = 'small'
-                    src = { user.avatar } />,
+                    className = { 'avatar-small' }
+                    status = { user.status }
+                    url = { user.avatar } />,
                 item: user,
                 tag: {
                     elemBefore: <Avatar
-                        size = 'xsmall'
-                        src = { user.avatar } />
+                        className = { 'avatar-xsmall' }
+                        status = { user.status }
+                        url = { user.avatar } />
                 },
                 value: user.id || user.user_id
             };
