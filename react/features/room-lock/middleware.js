@@ -2,6 +2,7 @@
 
 import {
     CONFERENCE_FAILED,
+    CONFERENCE_JOINED,
     LOCK_STATE_CHANGED,
     SET_PASSWORD_FAILED
 } from '../base/conference';
@@ -32,6 +33,9 @@ MiddlewareRegistry.register(store => next => action => {
     switch (action.type) {
     case CONFERENCE_FAILED:
         return _conferenceFailed(store, next, action);
+
+    case CONFERENCE_JOINED:
+        return _conferenceJoined(store, next, action);
 
     case LOCK_STATE_CHANGED: {
         // TODO Remove this logic when all components interested in the lock
@@ -66,6 +70,25 @@ MiddlewareRegistry.register(store => next => action => {
 
     return next(action);
 });
+
+/**
+ * Handles cleanup of lock prompt state when a conference is joined.
+ *
+ * @param {Store} store - The redux store in which the specified action is being
+ * dispatched.
+ * @param {Dispatch} next - The redux {@code dispatch} function to dispatch the
+ * specified action to the specified store.
+ * @param {Action} action - The redux action {@code CONFERENCE_JOINED} which
+ * specifies the details associated with joining the conference.
+ * @private
+ * @returns {*}
+ */
+function _conferenceJoined({ dispatch }, next, action) {
+    dispatch(hideDialog(PasswordRequiredPrompt));
+    dispatch(hideDialog(RoomLockPrompt));
+
+    return next(action);
+}
 
 /**
  * Handles errors that occur when a conference fails.
