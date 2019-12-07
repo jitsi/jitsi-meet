@@ -1,6 +1,6 @@
 // @flow
 
-import React, { Component } from 'react';
+import React, { PureComponent } from 'react';
 import { View } from 'react-native';
 
 import styles from './styles';
@@ -25,7 +25,7 @@ type Props = {
  * A {@link View} which captures the 'onLayout' event and calls a prop with the
  * component size.
  */
-export default class DimensionsDetector extends Component<Props> {
+export default class DimensionsDetector extends PureComponent<Props> {
     /**
      * Initializes a new DimensionsDetector instance.
      *

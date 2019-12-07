@@ -27,7 +27,7 @@ export default class AmplitudeHandler extends AbstractHandler {
             host
         };
 
-        amplitude.getInstance(this._amplitudeOptions).init(amplitudeAPPKey);
+        amplitude.getInstance(this._amplitudeOptions).init(amplitudeAPPKey, undefined, { includeReferrer: true });
 
         if (user) {
             amplitude.getInstance(this._amplitudeOptions).setUserId(user);

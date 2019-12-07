@@ -36,12 +36,7 @@ let transport;
  */
 export function getJitsiMeetTransport() {
     if (!transport) {
-        transport = new Transport({
-            backend: new PostMessageTransportBackend({
-                enableLegacyFormat: true,
-                postisOptions
-            })
-        });
+        transport = new Transport({ backend: new PostMessageTransportBackend({ postisOptions }) });
     }
 
     return transport;

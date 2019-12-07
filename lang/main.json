@@ -47,8 +47,10 @@
     },
     "chat": {
         "error": "Error: your message was not sent. Reason: {{error}}",
+        "fieldPlaceHolder": "Type your message here",
         "messagebox": "Type a message",
         "messageTo": "Private message to {{recipient}}",
+        "noMessagesMessage": "There are no messages in the meeting yet. Start a conversation here!",
         "nickname": {
             "popover": "Choose a nickname",
             "title": "Enter a nickname to use chat"
@@ -526,16 +528,20 @@
         "title": "Settings"
     },
     "settingsView": {
+        "advanced": "Advanced",
         "alertOk": "OK",
         "alertTitle": "Warning",
         "alertURLText": "The entered server URL is invalid",
         "buildInfoSection": "Build Information",
         "conferenceSection": "Conference",
+        "disableCallIntegration": "Disable native call integration",
+        "disableP2P": "Disable Peer-To-Peer mode",
         "displayName": "Display name",
         "email": "Email",
         "header": "Settings",
         "profileSection": "Profile",
         "serverURL": "Server URL",
+        "showAdvanced": "Show advanced settings",
         "startWithAudioMuted": "Start with audio muted",
         "startWithVideoMuted": "Start with video muted",
         "version": "Version"
@@ -624,6 +630,10 @@
         "lowerYourHand": "Lower your hand",
         "moreActions": "More actions",
         "mute": "Mute / Unmute",
+
+        "noAudioSignalTitle": "There is no input coming from your mic!",
+        "noAudioSignalDesc": "If you did not purposely mute it from system settings or hardware, consider changing the device.",
+        "noAudioSignalDescSuggestion": "If you did not purposely mute it from system settings or hardware, consider using the following device:",
         "openChat": "Open chat",
         "pip": "Enter Picture-in-Picture mode",
         "privateMessage": "Send private message",
@@ -729,6 +739,7 @@
         "enterRoomTitle": "Start a new meeting",
         "roomNameAllowedChars": "Meeting name should not contain any of these characters: ?, &, :, ', \", %, #.",
         "go": "GO",
+        "goSmall": "GO",
         "join": "JOIN",
         "info": "Info",
         "privacy": "Privacy",

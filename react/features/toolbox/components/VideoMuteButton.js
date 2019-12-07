@@ -10,14 +10,13 @@ import {
 import { setAudioOnly } from '../../base/audio-only';
 import { translate } from '../../base/i18n';
 import {
-    MEDIA_TYPE,
     VIDEO_MUTISM_AUTHORITY,
     setVideoMuted
 } from '../../base/media';
 import { connect } from '../../base/redux';
 import { AbstractVideoMuteButton } from '../../base/toolbox';
 import type { AbstractButtonProps } from '../../base/toolbox';
-import { isLocalTrackMuted } from '../../base/tracks';
+import { getLocalVideoType, isLocalVideoTrackMuted } from '../../base/tracks';
 import UIEvents from '../../../../service/UI/UIEvents';
 
 declare var APP: Object;
@@ -31,6 +30,11 @@ type Props = AbstractButtonProps & {
      * Whether the current conference is in audio only mode or not.
      */
     _audioOnly: boolean,
+
+    /**
+     * MEDIA_TYPE of the local video.
+     */
+    _videoMediaType: string,
 
     /**
      * Whether video is currently muted or not.
@@ -136,10 +140,12 @@ class VideoMuteButton extends AbstractVideoMuteButton<Props, *> {
             this.props.dispatch(
                 setAudioOnly(false, /* ensureTrack */ true));
         }
+        const mediaType = this.props._videoMediaType;
 
         this.props.dispatch(
             setVideoMuted(
                 videoMuted,
+                mediaType,
                 VIDEO_MUTISM_AUTHORITY.USER,
                 /* ensureTrack */ true));
 
@@ -167,7 +173,8 @@ function _mapStateToProps(state): Object {
 
     return {
         _audioOnly: Boolean(audioOnly),
-        _videoMuted: isLocalTrackMuted(tracks, MEDIA_TYPE.VIDEO)
+        _videoMediaType: getLocalVideoType(tracks),
+        _videoMuted: isLocalVideoTrackMuted(tracks)
     };
 }
 

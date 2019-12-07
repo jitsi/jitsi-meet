@@ -1,4 +1,5 @@
 local get_room_from_jid = module:require "util".get_room_from_jid;
+local room_jid_match_rewrite = module:require "util".room_jid_match_rewrite;
 local jid_resource = require "util.jid".resource;
 local ext_events = module:require "ext_events"
 local st = require "util.stanza";
@@ -25,7 +26,7 @@ function on_message(event)
         = event.stanza:get_child('speakerstats', 'http://jitsi.org/jitmeet');
     if speakerStats then
         local roomAddress = speakerStats.attr.room;
-        local room = get_room_from_jid(roomAddress);
+        local room = get_room_from_jid(room_jid_match_rewrite(roomAddress));
 
         if not room then
             log("warn", "No room found %s", roomAddress);

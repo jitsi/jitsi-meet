@@ -349,7 +349,7 @@ public class JitsiMeetConferenceOptions implements Parcelable {
             urlProps.putString("jwt", token);
         }
 
-        if (token == null && userInfo != null) {
+        if (userInfo != null) {
             props.putBundle("userInfo", userInfo.asBundle());
         }
 

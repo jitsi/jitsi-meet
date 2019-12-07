@@ -1,5 +1,7 @@
 // @flow
 
+import { normalizeNFKC } from './strings';
+
 /**
  * The app linking scheme.
  * TODO: This should be read from the manifest files later.
@@ -120,8 +122,8 @@ export function getBackendSafeRoomName(room: ?string): ?string {
         // But in this case we're fine goin on...
     }
 
-    // Normalize the character set
-    room = room.normalize('NFKC');
+    // Normalize the character set.
+    room = normalizeNFKC(room);
 
     // Only decoded and normalized strings can be lowercased properly.
     room = room.toLowerCase();
@@ -372,6 +374,23 @@ function _standardURIToString(thiz: ?Object) {
 }
 
 /**
+ * Sometimes we receive strings that we don't know if already percent-encoded, or not, due to the
+ * various sources we get URLs or room names. This function encapsulates the decoding in a safe way.
+ *
+ * @param {string} text - The text to decode.
+ * @returns {string}
+ */
+export function safeDecodeURIComponent(text: string) {
+    try {
+        return decodeURIComponent(text);
+    } catch (e) {
+        // The text wasn't encoded.
+    }
+
+    return text;
+}
+
+/**
  * Attempts to return a {@code String} representation of a specific
  * {@code Object} which is supposed to represent a URL. Obviously, if a
  * {@code String} is specified, it is returned. If a {@code URL} is specified,
@@ -508,7 +527,7 @@ export function urlObjectToString(o: Object): ?string {
 
     let { hash } = url;
 
-    for (const urlPrefix of [ 'config', 'interfaceConfig', 'devices' ]) {
+    for (const urlPrefix of [ 'config', 'interfaceConfig', 'devices', 'userInfo' ]) {
         const urlParamsArray
             = _objectToURLParamsArray(
                 o[`${urlPrefix}Overwrite`]

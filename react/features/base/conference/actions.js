@@ -14,6 +14,7 @@ import { JitsiConferenceEvents } from '../lib-jitsi-meet';
 import { setAudioMuted, setVideoMuted } from '../media';
 import {
     dominantSpeakerChanged,
+    getLocalParticipant,
     getNormalizedDisplayName,
     participantConnectionStatusChanged,
     participantKicked,
@@ -393,14 +394,18 @@ export function createConference() {
             throw new Error('Cannot join a conference without a room name!');
         }
 
+        const config = state['features/base/config'];
+        const { email, name: nick } = getLocalParticipant(state);
         const conference
             = connection.initJitsiConference(
 
                 getBackendSafeRoomName(room), {
-                    ...state['features/base/config'],
+                    ...config,
                     applicationName: getName(),
                     getWiFiStatsMethod: getJitsiMeetGlobalNS().getWiFiStats,
-                    confID: `${locationURL.host}${locationURL.pathname}`
+                    confID: `${locationURL.host}${locationURL.pathname}`,
+                    statisticsDisplayName: config.enableDisplayNameInStats ? nick : undefined,
+                    statisticsId: config.enableEmailInStats ? email : undefined
                 });
 
         connection[JITSI_CONNECTION_CONFERENCE_KEY] = conference;

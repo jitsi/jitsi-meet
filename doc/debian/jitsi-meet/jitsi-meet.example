@@ -45,7 +45,7 @@ server {
         proxy_set_header Host $http_host;
     }
 
-    location ~ ^/([^?&:’“]+)$ {
+    location ~ ^/([^/?&:'"]+)$ {
         try_files $uri @root_path;
     }
 

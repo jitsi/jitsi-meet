@@ -1,6 +1,6 @@
 // @flow
 
-import { Alert, Platform } from 'react-native';
+import { Alert, NativeModules, Platform } from 'react-native';
 import uuid from 'uuid';
 
 import { createTrackMutedEvent, sendAnalytics } from '../../analytics';
@@ -34,7 +34,9 @@ import { _SET_CALL_INTEGRATION_SUBSCRIPTIONS } from './actionTypes';
 
 import CallKit from './CallKit';
 import ConnectionService from './ConnectionService';
+import { isCallIntegrationEnabled } from './functions';
 
+const { AudioMode } = NativeModules;
 const CallIntegration = CallKit || ConnectionService;
 
 /**
@@ -139,8 +141,12 @@ function _appWillMount({ dispatch, getState }, next, action) {
  * @private
  * @returns {*} The value returned by {@code next(action)}.
  */
-function _conferenceFailed(store, next, action) {
+function _conferenceFailed({ getState }, next, action) {
     const result = next(action);
+
+    if (!isCallIntegrationEnabled(getState)) {
+        return result;
+    }
 
     // XXX Certain CONFERENCE_FAILED errors are recoverable i.e. they have
     // prevented the user from joining a specific conference but the app may be
@@ -173,16 +179,32 @@ function _conferenceFailed(store, next, action) {
 function _conferenceJoined({ getState }, next, action) {
     const result = next(action);
 
+    if (!isCallIntegrationEnabled(getState)) {
+        return result;
+    }
+
     const { callUUID } = action.conference;
 
     if (callUUID) {
-        CallIntegration.reportConnectedOutgoingCall(callUUID).then(() => {
-            // iOS 13 doesn't like the mute state to be false before the call is started
-            // so we update it here in case the user selected startWithAudioMuted.
-            if (Platform.OS === 'ios') {
-                _updateCallIntegrationMuted(action.conference, getState());
-            }
-        });
+        CallIntegration.reportConnectedOutgoingCall(callUUID)
+            .then(() => {
+                // iOS 13 doesn't like the mute state to be false before the call is started
+                // so we update it here in case the user selected startWithAudioMuted.
+                if (Platform.OS === 'ios') {
+                    _updateCallIntegrationMuted(action.conference, getState());
+                }
+            })
+            .catch(error => {
+                // Currently this error code is emitted only by Android.
+                //
+                if (error.code === 'CONNECTION_NOT_FOUND_ERROR') {
+                    // Some Samsung devices will fail to fully engage ConnectionService if no SIM card
+                    // was ever installed on the device. We could check for it, but it would require
+                    // the CALL_PHONE permission, which is not something we want to do, so fallback to
+                    // not using ConnectionService.
+                    _handleConnectionServiceFailure(getState());
+                }
+            });
     }
 
     return result;
@@ -201,8 +223,12 @@ function _conferenceJoined({ getState }, next, action) {
  * @private
  * @returns {*} The value returned by {@code next(action)}.
  */
-function _conferenceLeft(store, next, action) {
+function _conferenceLeft({ getState }, next, action) {
     const result = next(action);
+
+    if (!isCallIntegrationEnabled(getState)) {
+        return result;
+    }
 
     const { callUUID } = action.conference;
 
@@ -229,6 +255,10 @@ function _conferenceLeft(store, next, action) {
  */
 function _conferenceWillJoin({ dispatch, getState }, next, action) {
     const result = next(action);
+
+    if (!isCallIntegrationEnabled(getState)) {
+        return result;
+    }
 
     const { conference } = action;
     const state = getState();
@@ -259,7 +289,8 @@ function _conferenceWillJoin({ dispatch, getState }, next, action) {
             }
         })
         .catch(error => {
-            // Currently this error code is emitted only by Android.
+            // Currently this error codes are emitted only by Android.
+            //
             if (error.code === 'CREATE_OUTGOING_CALL_FAILED') {
                 // We're not tracking the call anymore - it doesn't exist on
                 // the native side.
@@ -273,10 +304,43 @@ function _conferenceWillJoin({ dispatch, getState }, next, action) {
                         { text: 'OK' }
                     ],
                     { cancelable: false });
+            } else if (error.code === 'SECURITY_ERROR') {
+                // Some devices fail because the CALL_PHONE permission is not granted, which is
+                // nonsense, because it's not needed for self-managed connections.
+
+                _handleConnectionServiceFailure(state);
             }
         });
 
     return result;
+}
+
+/**
+ * Handles a ConnectionService fatal error by falling back to non-ConnectionService device management.
+ *
+ * @param {Object} state - Redux store.
+ * @returns {void}
+ */
+function _handleConnectionServiceFailure(state: Object) {
+    const conference = getCurrentConference(state);
+
+    if (conference) {
+        // We're not tracking the call anymore.
+        delete conference.callUUID;
+
+        // ConnectionService has fatally failed. Alas, this also means audio device management would be broken, so
+        // fallback to not using ConnectionService.
+        // NOTE: We are not storing this in Settings, in case it's a transient issue, as far fetched as
+        // that may be.
+        if (AudioMode.setUseConnectionService) {
+            AudioMode.setUseConnectionService(false);
+
+            const hasVideo = !isVideoMutedByAudioOnly(state);
+
+            // Set the desired audio mode, since we just reset the whole thing.
+            AudioMode.setMode(hasVideo ? AudioMode.VIDEO_CALL : AudioMode.AUDIO_CALL);
+        }
+    }
 }
 
 /**
@@ -341,6 +405,11 @@ function _onPerformSetMutedCallAction({ callUUID, muted }) {
 function _setAudioOnly({ getState }, next, action) {
     const result = next(action);
     const state = getState();
+
+    if (!isCallIntegrationEnabled(state)) {
+        return result;
+    }
+
     const conference = getCurrentConference(state);
 
     if (conference && conference.callUUID) {
@@ -393,6 +462,11 @@ function _setCallKitSubscriptions({ getState }, next, action) {
  */
 function _syncTrackState({ getState }, next, action) {
     const result = next(action);
+
+    if (!isCallIntegrationEnabled(getState)) {
+        return result;
+    }
+
     const { jitsiTrack } = action.track;
     const state = getState();
     const conference = getCurrentConference(state);

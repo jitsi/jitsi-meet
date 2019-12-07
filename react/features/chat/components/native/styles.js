@@ -42,6 +42,13 @@ export default {
         flexDirection: 'column'
     },
 
+    emptyComponentWrapper: {
+        alignSelf: 'center',
+        flex: 1,
+        padding: BoxModel.padding,
+        paddingTop: '10%'
+    },
+
     /**
      * A special padding to avoid issues on some devices (such as Android devices with custom suggestions bar).
      */
@@ -141,6 +148,11 @@ ColorSchemeRegistry.register('Chat', {
     displayName: {
         color: schemeColor('displayName'),
         fontSize: 13
+    },
+
+    emptyComponentText: {
+        color: schemeColor('displayName'),
+        textAlign: 'center'
     },
 
     localMessageBubble: {

@@ -1,11 +1,8 @@
 // @flow
 
-import React from 'react';
-
 import { translate } from '../../../../base/i18n';
 import { IconLiveStreaming } from '../../../../base/icons';
 import { connect } from '../../../../base/redux';
-import { BetaTag } from '../../../../base/toolbox';
 
 import AbstractLiveStreamButton, {
     _mapStateToProps as _abstractMapStateToProps,
@@ -36,18 +33,6 @@ type Props = AbstractProps & {
  */
 class LiveStreamButton extends AbstractLiveStreamButton<Props> {
     icon = IconLiveStreaming;
-
-    /**
-     * Helper function to be implemented by subclasses, which returns
-     * a React Element to display (a beta tag) at the end of the button.
-     *
-     * @override
-     * @protected
-     * @returns {ReactElement}
-     */
-    _getElementAfter() {
-        return <BetaTag />;
-    }
 
     /**
      * Returns the tooltip that should be displayed when the button is disabled.

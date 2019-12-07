@@ -225,7 +225,7 @@ static NSString *const WelcomePageEnabledFeatureFlag = @"welcomepage.enabled";
         urlProps[@"jwt"] = _token;
     }
 
-    if (_token == nil && _userInfo != nil) {
+    if (_userInfo != nil) {
         props[@"userInfo"] = [self.userInfo asDict];
     }
 

@@ -1,10 +1,13 @@
 // @flow
 
-import React, { Component } from 'react';
-import { Platform } from 'react-native';
+import React, { PureComponent } from 'react';
+import { Platform, TouchableOpacity } from 'react-native';
+import Collapsible from 'react-native-collapsible';
+import GestureRecognizer, { swipeDirections } from 'react-native-swipe-gestures';
 
 import { ColorSchemeRegistry } from '../../../base/color-scheme';
 import { BottomSheet, hideDialog, isDialogOpen } from '../../../base/dialog';
+import { IconDragHandle } from '../../../base/icons';
 import { CHAT_ENABLED, IOS_RECORDING_ENABLED, getFeatureFlag } from '../../../base/flags';
 import { connect } from '../../../base/redux';
 import { StyleType } from '../../../base/styles';
@@ -16,10 +19,12 @@ import { RoomLockButton } from '../../../room-lock';
 import { ClosedCaptionButton } from '../../../subtitles';
 import { TileViewButton } from '../../../video-layout';
 
-import AudioOnlyButton from './AudioOnlyButton';
 import HelpButton from '../HelpButton';
+
+import AudioOnlyButton from './AudioOnlyButton';
 import RaiseHandButton from './RaiseHandButton';
 import ToggleCameraButton from './ToggleCameraButton';
+import styles from './styles';
 
 /**
  * The type of the React {@code Component} props of {@link OverflowMenu}.
@@ -52,6 +57,14 @@ type Props = {
     dispatch: Function
 };
 
+type State = {
+
+    /**
+     * True if the 'more' button set needas to be rendered.
+     */
+    showMore: boolean
+}
+
 /**
  * The exported React {@code Component}. We need it to execute
  * {@link hideDialog}.
@@ -65,7 +78,7 @@ let OverflowMenu_; // eslint-disable-line prefer-const
  * Implements a React {@code Component} with some extra actions in addition to
  * those in the toolbar.
  */
-class OverflowMenu extends Component<Props> {
+class OverflowMenu extends PureComponent<Props, State> {
     /**
      * Initializes a new {@code OverflowMenu} instance.
      *
@@ -74,8 +87,15 @@ class OverflowMenu extends Component<Props> {
     constructor(props: Props) {
         super(props);
 
+        this.state = {
+            showMore: false
+        };
+
         // Bind event handlers so they are only bound once per instance.
         this._onCancel = this._onCancel.bind(this);
+        this._onSwipe = this._onSwipe.bind(this);
+        this._onToggleMenu = this._onToggleMenu.bind(this);
+        this._renderMenuExpandToggle = this._renderMenuExpandToggle.bind(this);
     }
 
     /**
@@ -85,34 +105,68 @@ class OverflowMenu extends Component<Props> {
      * @returns {ReactElement}
      */
     render() {
+        const { _bottomSheetStyles } = this.props;
+        const { showMore } = this.state;
+
         const buttonProps = {
             afterClick: this._onCancel,
             showLabel: true,
-            styles: this.props._bottomSheetStyles
+            styles: _bottomSheetStyles.buttons
         };
 
         return (
-            <BottomSheet onCancel = { this._onCancel }>
+            <BottomSheet
+                onCancel = { this._onCancel }
+                renderHeader = { this._renderMenuExpandToggle }>
                 <AudioRouteButton { ...buttonProps } />
                 <ToggleCameraButton { ...buttonProps } />
                 <AudioOnlyButton { ...buttonProps } />
-                <RoomLockButton { ...buttonProps } />
-                <ClosedCaptionButton { ...buttonProps } />
-                {
-                    this.props._recordingEnabled
-                        && <RecordButton { ...buttonProps } />
-                }
-                <LiveStreamButton { ...buttonProps } />
-                <TileViewButton { ...buttonProps } />
-                <InviteButton { ...buttonProps } />
-                {
-                    this.props._chatEnabled
-                        && <InfoDialogButton { ...buttonProps } />
-                }
-                <RaiseHandButton { ...buttonProps } />
-                <SharedDocumentButton { ...buttonProps } />
-                <HelpButton { ...buttonProps } />
+                <Collapsible collapsed = { !showMore }>
+                    <RoomLockButton { ...buttonProps } />
+                    <ClosedCaptionButton { ...buttonProps } />
+                    {
+                        this.props._recordingEnabled
+                            && <RecordButton { ...buttonProps } />
+                    }
+                    <LiveStreamButton { ...buttonProps } />
+                    <TileViewButton { ...buttonProps } />
+                    <InviteButton { ...buttonProps } />
+                    {
+                        this.props._chatEnabled
+                            && <InfoDialogButton { ...buttonProps } />
+                    }
+                    <RaiseHandButton { ...buttonProps } />
+                    <SharedDocumentButton { ...buttonProps } />
+                    <HelpButton { ...buttonProps } />
+                </Collapsible>
             </BottomSheet>
+        );
+    }
+
+    _renderMenuExpandToggle: () => React$Element<any>;
+
+    /**
+     * Function to render the menu toggle in the bottom sheet header area.
+     *
+     * @returns {React$Element}
+     */
+    _renderMenuExpandToggle() {
+        return (
+            <GestureRecognizer
+                config = {{
+                    velocityThreshold: 0.1,
+                    directionalOffsetThreshold: 30
+                }}
+                onSwipe = { this._onSwipe }
+                style = { [
+                    this.props._bottomSheetStyles.sheet,
+                    styles.expandMenuContainer
+                ] }>
+                <TouchableOpacity onPress = { this._onToggleMenu }>
+                    { /* $FlowFixMeProps */ }
+                    <IconDragHandle style = { this.props._bottomSheetStyles.expandIcon } />
+                </TouchableOpacity>
+            </GestureRecognizer>
         );
     }
 
@@ -132,6 +186,50 @@ class OverflowMenu extends Component<Props> {
         }
 
         return false;
+    }
+
+    _onSwipe: (string) => void;
+
+    /**
+     * Callback to be invoked when a swipe gesture is detected on the menu.
+     *
+     * @param {string} gestureName - The name of the swipe gesture.
+     * @returns {void}
+     */
+    _onSwipe(gestureName) {
+        const { showMore } = this.state;
+
+        switch (gestureName) {
+        case swipeDirections.SWIPE_UP:
+            !showMore && this.setState({
+                showMore: true
+            });
+            break;
+        case swipeDirections.SWIPE_DOWN:
+            if (showMore) {
+                // If the menu is expanded, we collapse it.
+                this.setState({
+                    showMore: false
+                });
+            } else {
+                // If the menu is not expanded, we close the menu
+                this._onCancel();
+            }
+            break;
+        }
+    }
+
+    _onToggleMenu: () => void;
+
+    /**
+     * Callback to be invoked when the expand menu button is pressed.
+     *
+     * @returns {void}
+     */
+    _onToggleMenu() {
+        this.setState({
+            showMore: !this.state.showMore
+        });
     }
 }
 
