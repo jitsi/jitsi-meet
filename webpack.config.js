@@ -200,7 +200,7 @@ module.exports = [
         entry: {
             'do_external_connect': './connection_optimization/do_external_connect.js'
         },
-        performance: getPerformanceHints(5 * 1024)
+        performance: getPerformanceHints(7 * 1024)
     }),
     Object.assign({}, config, {
         entry: {
@@ -212,7 +212,7 @@ module.exports = [
         entry: {
             'analytics-ga': './react/features/analytics/handlers/GoogleAnalyticsHandler.js'
         },
-        performance: getPerformanceHints(5 * 1024)
+        performance: getPerformanceHints(8 * 1024)
     }),
 
     // Because both video-blur-effect and rnnoise-processor modules are loaded
