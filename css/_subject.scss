@@ -9,7 +9,7 @@
     text-align: center;
     font-size: 17px;
     color: #fff;
-    z-index: $toolbarBackgroundZ;
+    z-index: $zindex10;
     overflow: hidden;
     text-overflow: ellipsis;
     box-sizing: border-box;
@@ -18,5 +18,9 @@
 
     &.visible {
         top: 0px;
+    }
+
+    &-text {
+        vertical-align: middle;
     }
 }

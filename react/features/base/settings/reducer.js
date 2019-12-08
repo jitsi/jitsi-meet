@@ -22,6 +22,8 @@ const DEFAULT_STATE = {
     avatarID: undefined,
     avatarURL: undefined,
     cameraDeviceId: undefined,
+    disableCallIntegration: undefined,
+    disableP2P: undefined,
     displayName: undefined,
     email: undefined,
     localFlipX: true,

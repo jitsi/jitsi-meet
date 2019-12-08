@@ -102,6 +102,7 @@ export class AbstractWelcomePage extends Component<Props, *> {
      */
     componentDidMount() {
         this._mounted = true;
+        sendAnalytics(createWelcomePageEvent('viewed', undefined, { value: 1 }));
     }
 
     /**

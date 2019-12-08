@@ -75,6 +75,11 @@ var config = {
     // Disable measuring of audio levels.
     // disableAudioLevels: false,
 
+    // Enabling this will run the lib-jitsi-meet no audio detection module which
+    // will notify the user if the current selected microphone has no audio
+    // input and will suggest another valid device if one is present.
+    // enableNoAudioDetection: false
+
     // Start the conference in audio only mode (no video is being received nor
     // sent).
     // startAudioOnly: false,
@@ -271,13 +276,11 @@ var config = {
     // callStatsID: '',
     // callStatsSecret: '',
 
-    // enables callstatsUsername to be reported as statsId and used
-    // by callstats as repoted remote id
-    // enableStatsID: false
-
     // enables sending participants display name to callstats
     // enableDisplayNameInStats: false
 
+    // enables sending participants email if available to callstats and other analytics
+    // enableEmailInStats: false
 
     // Privacy
     //

@@ -17,7 +17,11 @@ import { getPropertyValue } from '../settings';
 import { setTrackMuted, TRACK_ADDED } from '../tracks';
 
 import { setAudioMuted, setCameraFacingMode, setVideoMuted } from './actions';
-import { CAMERA_FACING_MODE, VIDEO_MUTISM_AUTHORITY } from './constants';
+import {
+    CAMERA_FACING_MODE,
+    MEDIA_TYPE,
+    VIDEO_MUTISM_AUTHORITY
+} from './constants';
 import logger from './logger';
 import {
     _AUDIO_INITIAL_MEDIA_STATE,
@@ -45,7 +49,10 @@ MiddlewareRegistry.register(store => next => action => {
         const result = next(action);
         const { track } = action;
 
-        track.local && _syncTrackMutedState(store, track);
+        // Don't sync track mute state with the redux store for screenshare
+        // since video mute state represents local camera mute state only.
+        track.local && track.videoType !== 'desktop'
+            && _syncTrackMutedState(store, track);
 
         return result;
     }
@@ -72,7 +79,7 @@ function _appStateChanged({ dispatch }, next, action) {
 
     sendAnalytics(createTrackMutedEvent('video', 'background mode', mute));
 
-    dispatch(setVideoMuted(mute, VIDEO_MUTISM_AUTHORITY.BACKGROUND));
+    dispatch(setVideoMuted(mute, MEDIA_TYPE.VIDEO, VIDEO_MUTISM_AUTHORITY.BACKGROUND));
 
     return next(action);
 }
@@ -94,7 +101,11 @@ function _setAudioOnly({ dispatch }, next, action) {
 
     sendAnalytics(createTrackMutedEvent('video', 'audio-only mode', audioOnly));
 
-    dispatch(setVideoMuted(audioOnly, VIDEO_MUTISM_AUTHORITY.AUDIO_ONLY, ensureVideoTrack));
+    // Make sure we mute both the desktop and video tracks.
+    dispatch(setVideoMuted(
+        audioOnly, MEDIA_TYPE.VIDEO, VIDEO_MUTISM_AUTHORITY.AUDIO_ONLY, ensureVideoTrack));
+    dispatch(setVideoMuted(
+        audioOnly, MEDIA_TYPE.PRESENTER, VIDEO_MUTISM_AUTHORITY.AUDIO_ONLY, ensureVideoTrack));
 
     return next(action);
 }
@@ -231,7 +242,9 @@ function _setRoom({ dispatch, getState }, next, action) {
  */
 function _syncTrackMutedState({ getState }, track) {
     const state = getState()['features/base/media'];
-    const muted = Boolean(state[track.mediaType].muted);
+    const mediaType = track.mediaType === MEDIA_TYPE.PRESENTER
+        ? MEDIA_TYPE.VIDEO : track.mediaType;
+    const muted = Boolean(state[mediaType].muted);
 
     // XXX If muted state of track when it was added is different from our media
     // muted state, we need to mute track and explicitly modify 'muted' property

@@ -15,10 +15,6 @@ export default [
     'autoRecord',
     'autoRecordToken',
     'avgRtpStatsN',
-    'callFlowsEnabled',
-    'callStatsConfIDNamespace',
-    'callStatsID',
-    'callStatsSecret',
 
     /**
      * The display name of the CallKit call representing the conference/meeting
@@ -34,6 +30,7 @@ export default [
      * @type string
      */
     'callDisplayName',
+    'callFlowsEnabled',
 
     /**
      * The handle
@@ -48,6 +45,9 @@ export default [
      * @type string
      */
     'callHandle',
+    'callStatsConfIDNamespace',
+    'callStatsID',
+    'callStatsSecret',
 
     /**
      * The UUID of the CallKit call representing the conference/meeting
@@ -73,8 +73,8 @@ export default [
     'desktopSharingChromeExtId',
     'desktopSharingChromeMinExtVersion',
     'desktopSharingChromeSources',
-    'desktopSharingFrameRate',
     'desktopSharingFirefoxDisabled',
+    'desktopSharingFrameRate',
     'desktopSharingSources',
     'disable1On1Mode',
     'disableAEC',
@@ -84,6 +84,7 @@ export default [
     'disableDeepLinking',
     'disableH264',
     'disableHPF',
+    'disableLocalVideoFlip',
     'disableNS',
     'disableRemoteControl',
     'disableRtx',
@@ -91,11 +92,10 @@ export default [
     'displayJids',
     'e2eping',
     'enableDisplayNameInStats',
+    'enableEmailInStats',
     'enableLayerSuspension',
     'enableLipSync',
-    'disableLocalVideoFlip',
     'enableRemb',
-    'enableStatsID',
     'enableTalkWhileMuted',
     'enableTcc',
     'etherpad_base',
@@ -123,10 +123,12 @@ export default [
     'startAudioMuted',
     'startAudioOnly',
     'startBitrate',
-    'startSilent',
     'startScreenSharing',
+    'startSilent',
     'startVideoMuted',
+    'startWithAudioMuted',
     'startWithVideoMuted',
+    'stereo',
     'subject',
     'testing',
     'useIPv6',

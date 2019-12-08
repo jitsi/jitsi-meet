@@ -25,6 +25,7 @@ export { default as IconDeviceHeadphone } from './headset.svg';
 export { default as IconDeviceSpeaker } from './volume.svg';
 export { default as IconDominantSpeaker } from './dominant-speaker.svg';
 export { default as IconDownload } from './download.svg';
+export { default as IconDragHandle } from './drag-handle.svg';
 export { default as IconEventNote } from './event_note.svg';
 export { default as IconExitFullScreen } from './exit-full-screen.svg';
 export { default as IconFeedback } from './feedback.svg';

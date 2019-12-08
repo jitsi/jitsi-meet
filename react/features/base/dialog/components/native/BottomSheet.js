@@ -1,7 +1,7 @@
 // @flow
 
 import React, { PureComponent, type Node } from 'react';
-import { Platform, SafeAreaView, ScrollView, View } from 'react-native';
+import { SafeAreaView, ScrollView, View } from 'react-native';
 
 import { ColorSchemeRegistry } from '../../../color-scheme';
 import { SlidingView } from '../../../react';
@@ -29,7 +29,12 @@ type Props = {
      * Handler for the cancel event, which happens when the user dismisses
      * the sheet.
      */
-    onCancel: ?Function
+    onCancel: ?Function,
+
+    /**
+     * Function to render a bottom sheet header element, if necessary.
+     */
+    renderHeader: ?Function
 };
 
 /**
@@ -43,7 +48,7 @@ class BottomSheet extends PureComponent<Props> {
      * @returns {ReactElement}
      */
     render() {
-        const { _styles } = this.props;
+        const { _styles, renderHeader } = this.props;
 
         return (
             <SlidingView
@@ -56,45 +61,22 @@ class BottomSheet extends PureComponent<Props> {
                     <View
                         pointerEvents = 'box-none'
                         style = { styles.sheetAreaCover } />
-                    <View
+                    { renderHeader && renderHeader() }
+                    <SafeAreaView
                         style = { [
                             styles.sheetItemContainer,
                             _styles.sheet
                         ] }>
-                        { this._getWrappedContent() }
-                    </View>
+                        <ScrollView
+                            bounces = { false }
+                            showsVerticalScrollIndicator = { false }
+                            style = { styles.scrollView } >
+                            { this.props.children }
+                        </ScrollView>
+                    </SafeAreaView>
                 </View>
             </SlidingView>
         );
-    }
-
-    /**
-     * Wraps the content when needed (iOS 11 and above), or just returns the original content.
-     *
-     * @returns {React$Element}
-     */
-    _getWrappedContent() {
-        const content = (
-            <ScrollView
-                bounces = { false }
-                showsVerticalScrollIndicator = { false } >
-                { this.props.children }
-            </ScrollView>
-        );
-
-        if (Platform.OS === 'ios') {
-            const majorVersionIOS = parseInt(Platform.Version, 10);
-
-            if (majorVersionIOS > 10) {
-                return (
-                    <SafeAreaView>
-                        { content }
-                    </SafeAreaView>
-                );
-            }
-        }
-
-        return content;
     }
 }
 

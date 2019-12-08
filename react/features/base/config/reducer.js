@@ -2,10 +2,9 @@
 
 import _ from 'lodash';
 
-import Platform from '../react/Platform';
 import { equals, ReducerRegistry, set } from '../redux';
 
-import { CONFIG_WILL_LOAD, LOAD_CONFIG_ERROR, SET_CONFIG } from './actionTypes';
+import { _UPDATE_CONFIG, CONFIG_WILL_LOAD, LOAD_CONFIG_ERROR, SET_CONFIG } from './actionTypes';
 import { _cleanupConfig } from './functions';
 
 /**
@@ -20,15 +19,6 @@ import { _cleanupConfig } from './functions';
  */
 const INITIAL_NON_RN_STATE = {
 };
-
-/**
- * When we should enable H.264 on mobile. iOS 10 crashes so we disable it there.
- * See: https://bugs.chromium.org/p/webrtc/issues/detail?id=11002
- * Note that this is only used for P2P calls.
- *
- * @type {boolean}
- */
-const RN_ENABLE_H264 = navigator.product === 'ReactNative' && !(Platform.OS === 'ios' && Platform.Version === 10);
 
 /**
  * The initial state of the feature base/config when executing in a React Native
@@ -51,54 +41,55 @@ const INITIAL_RN_STATE = {
     disableAudioLevels: true,
 
     p2p: {
-        disableH264: !RN_ENABLE_H264,
-        preferH264: RN_ENABLE_H264
+        disableH264: false,
+        preferH264: true
     }
 };
 
-ReducerRegistry.register(
-    'features/base/config',
-    (state = _getInitialState(), action) => {
-        switch (action.type) {
-        case CONFIG_WILL_LOAD:
+ReducerRegistry.register('features/base/config', (state = _getInitialState(), action) => {
+    switch (action.type) {
+    case _UPDATE_CONFIG:
+        return _updateConfig(state, action);
+
+    case CONFIG_WILL_LOAD:
+        return {
+            error: undefined,
+
+            /**
+                * The URL of the location associated with/configured by this
+                * configuration.
+                *
+                * @type URL
+                */
+            locationURL: action.locationURL
+        };
+
+    case LOAD_CONFIG_ERROR:
+        // XXX LOAD_CONFIG_ERROR is one of the settlement execution paths of
+        // the asynchronous "loadConfig procedure/process" started with
+        // CONFIG_WILL_LOAD. Due to the asynchronous nature of it, whoever
+        // is settling the process needs to provide proof that they have
+        // started it and that the iteration of the process being completed
+        // now is still of interest to the app.
+        if (state.locationURL === action.locationURL) {
             return {
-                error: undefined,
-
                 /**
-                 * The URL of the location associated with/configured by this
-                 * configuration.
-                 *
-                 * @type URL
-                 */
-                locationURL: action.locationURL
+                    * The {@link Error} which prevented the loading of the
+                    * configuration of the associated {@code locationURL}.
+                    *
+                    * @type Error
+                    */
+                error: action.error
             };
-
-        case LOAD_CONFIG_ERROR:
-            // XXX LOAD_CONFIG_ERROR is one of the settlement execution paths of
-            // the asynchronous "loadConfig procedure/process" started with
-            // CONFIG_WILL_LOAD. Due to the asynchronous nature of it, whoever
-            // is settling the process needs to provide proof that they have
-            // started it and that the iteration of the process being completed
-            // now is still of interest to the app.
-            if (state.locationURL === action.locationURL) {
-                return {
-                    /**
-                     * The {@link Error} which prevented the loading of the
-                     * configuration of the associated {@code locationURL}.
-                     *
-                     * @type Error
-                     */
-                    error: action.error
-                };
-            }
-            break;
-
-        case SET_CONFIG:
-            return _setConfig(state, action);
         }
+        break;
 
-        return state;
-    });
+    case SET_CONFIG:
+        return _setConfig(state, action);
+    }
+
+    return state;
+});
 
 /**
  * Gets the initial state of the feature base/config. The mandatory
@@ -120,11 +111,10 @@ function _getInitialState() {
  * Reduces a specific Redux action SET_CONFIG of the feature
  * base/lib-jitsi-meet.
  *
- * @param {Object} state - The Redux state of the feature base/lib-jitsi-meet.
+ * @param {Object} state - The Redux state of the feature base/config.
  * @param {Action} action - The Redux action SET_CONFIG to reduce.
  * @private
- * @returns {Object} The new state of the feature base/lib-jitsi-meet after the
- * reduction of the specified action.
+ * @returns {Object} The new state after the reduction of the specified action.
  */
 function _setConfig(state, { config }) {
     // The mobile app bundles jitsi-meet and lib-jitsi-meet at build time and
@@ -206,4 +196,20 @@ function _translateLegacyConfig(oldValue: Object) {
     });
 
     return newValue;
+}
+
+/**
+ * Updates the stored configuration with the given extra options.
+ *
+ * @param {Object} state - The Redux state of the feature base/config.
+ * @param {Action} action - The Redux action to reduce.
+ * @private
+ * @returns {Object} The new state after the reduction of the specified action.
+ */
+function _updateConfig(state, { config }) {
+    const newState = _.merge({}, state, config);
+
+    _cleanupConfig(newState);
+
+    return equals(state, newState) ? state : newState;
 }
