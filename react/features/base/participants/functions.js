@@ -234,6 +234,7 @@ export function getParticipantPresenceStatus(
     return participantById.presence;
 }
 
+
 /**
  * Selectors for getting all known participants with fake participants filtered
  * out.
@@ -332,7 +333,6 @@ export function isLocalParticipantModerator(
                 || !state['features/base/config'].enableUserRolesBasedOnToken
                 || !state['features/base/jwt'].isGuest));
 }
-
 
 /**
  * Returns true if the video of the participant should be rendered.

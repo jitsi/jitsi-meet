@@ -6,11 +6,9 @@ import {
     createRecordingDialogEvent,
     sendAnalytics
 } from '../../../analytics';
-
 import { JitsiRecordingConstants } from '../../../base/lib-jitsi-meet';
 
 import { getActiveSession } from '../../functions';
-// import { showDownloadDialog } from '../../functions';
 
 /**
  * The type of the React {@code Component} props of
@@ -69,14 +67,10 @@ export default class AbstractStopRecordingDialog<P: Props>
 
         if (_fileRecordingSession) {
             this.props._conference.stopRecording(_fileRecordingSession.id);
-            
         }
-
-        // showDownloadDialog(APP.conference.roomName);
 
         return true;
     }
-    
 }
 
 /**

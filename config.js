@@ -94,23 +94,23 @@ var config = {
     // Video
 
     // Sets the preferred resolution (height) for local video. Defaults to 720.
-    // resolution: 1080,
+    resolution: 720,
 
     // w3c spec-compliant video constraints to use for video capture. Currently
     // used by browsers that return true from lib-jitsi-meet's
     // util#browser#usesNewGumFlow. The constraints are independency from
     // this config's resolution value. Defaults to requesting an ideal aspect
     // ratio of 16:9 with an ideal resolution of 720.
-    // constraints: {
-    //     video: {
-    //         aspectRatio: 16 / 9,
-    //         height: {
-    //             ideal: 1080,
-    //             max: 1080,
-    //             min: 240
-    //         }
-    //     }
-    // },
+    constraints: {
+        video: {
+            aspectRatio: 16 / 9,
+            height: {
+                ideal: 720,
+                max: 720,
+                min: 240
+            }
+        }
+    },
 
     // Enable / disable simulcast support.
     disableSimulcast: false,
@@ -188,7 +188,7 @@ var config = {
     // Misc
 
     // Default value for the channel "last N" attribute. -1 for unlimited.
-    channelLastN: 10,
+    channelLastN: -1,
 
     // Disables or enables RTX (RFC 4588) (defaults to false).
     // disableRtx: false,

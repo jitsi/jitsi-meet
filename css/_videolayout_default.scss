@@ -258,15 +258,12 @@
  */
 #alwaysOnTop .displayname,
 .videocontainer .displayname,
-.speakerDisplayNamecontainer,
-.speakerDisplayName,
-
 .videocontainer .editdisplayname {
     display: inline-block;
     position: absolute;
     left: 10%;
     width: 80%;
-    top: 85%;
+    top: 50%;
     @include transform(translateY(-40%));
     color: $participantNameColor;
     text-align: center;
@@ -277,7 +274,6 @@
     white-space: nowrap;
     line-height: $thumbnailToolbarHeight;
     z-index: $zindex2;
-    font-family: '黑体';
 }
 
 #alwaysOnTop .displayname {
@@ -289,32 +285,6 @@
     margin-top: 10px;
 }
 
-.speakerDisplayNamecontainer {
-    position: absolute;
-    width: 100%;
-    left: 0px;
-    top: 90%;
-    overflow: visible;
-    height:auto;
-}
-.speakerDisplayName {
-    display: inline-block;
-    position: absolute;
-    left: 10%;
-    width: 80%;
-    top: 20px;
-    @include transform(translateY(-40%));
-    color: $participantNameColor;
-    text-align: center;
-    text-overflow: ellipsis;
-    font-size: 48px;
-    font-weight: 100;
-    white-space: nowrap;
-    line-height: $thumbnailToolbarHeight;
-    z-index: $zindex2;
-    overflow: visible;
-    font-family: '黑体';
-}
 /**
  * Positions video thumbnail display name editor.
  */
@@ -737,7 +707,7 @@
     }
 
     .displayNameContainer {
-        visibility: visible;
+        visibility: hidden;
     }
 
     .videocontainer__hoverOverlay {

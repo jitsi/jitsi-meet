@@ -39,7 +39,6 @@ export const MAX_LIST_SIZE = 30;
  */
 const STORE_NAME = 'features/recent-list';
 
-
 /**
  * Sets up the persistence of the feature {@code recent-list}.
  */
@@ -60,7 +59,7 @@ ReducerRegistry.register(
             case _STORE_CURRENT_CONFERENCE:
                 return _storeCurrentConference(state, action);
 
-            case _UPDATE_CONFERENCE_DURATION:    
+            case _UPDATE_CONFERENCE_DURATION:
                 return _updateConferenceDuration(state, action);
             default:
                 return state;
@@ -154,7 +153,6 @@ function _storeCurrentConference(state, { locationURL }) {
         date: Date.now(),
         duration: 2000 // We don't have the duration yet!
     });
-
 
     // Ensure the list doesn't exceed a/the maximum size.
     nextState.splice(0, nextState.length - MAX_LIST_SIZE);

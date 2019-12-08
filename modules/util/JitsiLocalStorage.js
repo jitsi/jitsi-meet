@@ -34,7 +34,7 @@ class JitsiLocalStorage extends DummyLocalStorage {
      */
     constructor() {
         super();
-        // let storage;
+        let storage;
 
         // try {
         //     storage = window.localStorage;

@@ -1,5 +1,6 @@
 // @flow
 
+import type { Dispatch } from 'redux';
 import { refreshCalendar, setCalendarEvents } from './actions';
 import { createCalendarConnectedEvent, sendAnalytics } from '../analytics';
 
@@ -12,7 +13,6 @@ import {
     SET_LOADING_CALENDAR_EVENTS
 } from './actionTypes';
 import { _getCalendarIntegration, isCalendarEnabled } from './functions';
-import { generateRoomWithoutSeparator } from '../welcome';
 import logger from './logger';
 
 export * from './actions.any';
@@ -191,7 +191,7 @@ export function setIntegrationReady(integrationType: string) {
  * @returns {Function}
  */
 export function signIn(calendarType: string): Function {
-    return (dispatch: Dispatch<*>) => {
+    return (dispatch: Dispatch<any>) => {
         const integration = _getCalendarIntegration(calendarType);
 
         if (!integration) {
@@ -223,7 +223,7 @@ export function signIn(calendarType: string): Function {
  * @returns {Function}
  */
 export function updateCalendarEvent(id: string, calendarId: string): Function {
-    return (dispatch: Dispatch<*>, getState: Function) => {
+    return (dispatch: Dispatch<any>, getState: Function) => {
 
         const { integrationType } = getState()['features/calendar-sync'];
         const integration = _getCalendarIntegration(integrationType);
@@ -270,7 +270,7 @@ export function updateCalendarEvent(id: string, calendarId: string): Function {
  * @returns {Function}
  */
 export function updateProfile(calendarType: string): Function {
-    return (dispatch: Dispatch<*>) => {
+    return (dispatch: Dispatch<any>) => {
         const integration = _getCalendarIntegration(calendarType);
 
         if (!integration) {

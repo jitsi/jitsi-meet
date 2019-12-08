@@ -204,30 +204,7 @@ export default class AlwaysOnTop extends Component<*, State> {
             </div>
         );
     }
-    /**
-     * Renders display my camera.
-     *
-     * @returns {ReactElement}
-     */
-    _renderShowMyCamera() {
-        logger.log("_renderShowMyCamera ");
-        if (typeof APP === 'object') {
 
-            const state = APP.store.getState();
-            const { whiteBoardOpen } = state['features/openboard'];
-            logger.log("whiteBoardOpen "+whiteBoardOpen);
-            if(!whiteBoardOpen){
-                return null;
-            }
-            return (
-                <div id = 'showMyCamera'>
-                    
-                </div>
-            );
-        }
-        return null;
-    }
-    
     /**
      * Sets mouse move listener and initial toolbar timeout.
      *
@@ -290,8 +267,6 @@ export default class AlwaysOnTop extends Component<*, State> {
                     onMouseOut = { this._onMouseOut }
                     onMouseOver = { this._onMouseOver } />
                 { this._renderVideoNotAvailableScreen() }
-                { this._renderShowMyCamera() }
-
             </div>
         );
     }

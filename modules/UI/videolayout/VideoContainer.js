@@ -510,10 +510,10 @@ export class VideoContainer extends LargeContainer {
             this.stream = null;
         }
 
-        this.videoType = videoType;
         this.stream = stream;
+        this.videoType = videoType;
 
-        if (!stream || !this.stream) {
+        if (!stream) {
             return;
         }
 

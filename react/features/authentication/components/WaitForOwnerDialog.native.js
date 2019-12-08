@@ -1,11 +1,11 @@
 // @flow
 
 import React, { Component } from 'react';
-import { connect } from 'react-redux';
 import type { Dispatch } from 'redux';
 
 import { ConfirmDialog } from '../../base/dialog';
 import { translate } from '../../base/i18n';
+import { connect } from '../../base/redux';
 
 import { cancelWaitForOwner, _openLoginDialog } from '../actions';
 import { convertForTrans } from '../../base/util';
@@ -62,7 +62,6 @@ class WaitForOwnerDialog extends Component<Props> {
         const {
             _room: room
         } = this.props;
-
 
         return (
             <ConfirmDialog

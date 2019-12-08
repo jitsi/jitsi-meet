@@ -59,7 +59,10 @@ import {
 import { toggleSharedVideo } from '../../../shared-video';
 import { toggleShareWhiteBoard } from '../../../openboard';
 import { SpeakerStats } from '../../../speaker-stats';
-import { TileViewButton } from '../../../video-layout';
+import {
+    TileViewButton,
+    toggleTileView
+} from '../../../video-layout';
 import {
     OverflowMenuVideoQualityItem,
     VideoQualityDialog
@@ -126,6 +129,11 @@ type Props = {
      * Whether or not the app is currently in full screen.
      */
     _fullScreen: boolean,
+
+    /**
+     * Whether or not the tile view is enabled.
+     */
+    _tileViewEnabled: boolean,
 
     /**
      * Whether or not invite should be hidden, regardless of feature
@@ -242,35 +250,15 @@ class Toolbox extends Component<Props, State> {
         this._onToolbarOpenSpeakerStats = this._onToolbarOpenSpeakerStats.bind(this);
         this._onToolbarOpenVideoQuality = this._onToolbarOpenVideoQuality.bind(this);
         this._onToolbarToggleChat = this._onToolbarToggleChat.bind(this);
-<<<<<<< HEAD
         this._onToolbarOpenManagerWindow = this._onToolbarOpenManagerWindow.bind(this);
         this._onToolbarWhiteBoard = this._onToolbarWhiteBoard.bind(this);
-        
-        this._onToolbarShareVideo = this._onToolbarShareVideo.bind(this);
-        this._onToolbarToggleEtherpad
-            = this._onToolbarToggleEtherpad.bind(this);
-        this._onToolbarToggleFullScreen
-            = this._onToolbarToggleFullScreen.bind(this);
-        this._onToolbarToggleProfile
-            = this._onToolbarToggleProfile.bind(this);
-        this._onToolbarToggleRaiseHand
-            = this._onToolbarToggleRaiseHand.bind(this);
-        this._onToolbarToggleScreenshare
-            = this._onToolbarToggleScreenshare.bind(this);            
-        this._onToolbarToggleSteroMix
-            = this._onToolbarToggleSteroMix.bind(this);
-        this._onToolbarToggleSharedVideo
-            = this._onToolbarToggleSharedVideo.bind(this);
-        this._onToolbarOpenLocalRecordingInfoDialog
-            = this._onToolbarOpenLocalRecordingInfoDialog.bind(this);
-=======
         this._onToolbarToggleFullScreen = this._onToolbarToggleFullScreen.bind(this);
         this._onToolbarToggleProfile = this._onToolbarToggleProfile.bind(this);
         this._onToolbarToggleRaiseHand = this._onToolbarToggleRaiseHand.bind(this);
         this._onToolbarToggleScreenshare = this._onToolbarToggleScreenshare.bind(this);
         this._onToolbarToggleSharedVideo = this._onToolbarToggleSharedVideo.bind(this);
         this._onToolbarOpenLocalRecordingInfoDialog = this._onToolbarOpenLocalRecordingInfoDialog.bind(this);
->>>>>>> master
+        this._onShortcutToggleTileView = this._onShortcutToggleTileView.bind(this);
 
         this.state = {
             windowWidth: window.innerWidth
@@ -309,6 +297,11 @@ class Toolbox extends Component<Props, State> {
                 character: 'S',
                 exec: this._onShortcutToggleFullScreen,
                 helpDescription: 'keyboardShortcuts.fullScreen'
+            },
+            this._shouldShowButton('tileview') && {
+                character: 'W',
+                exec: this._onShortcutToggleTileView,
+                helpDescription: 'toolbar.tileViewToggle'
             }
         ];
 
@@ -489,15 +482,7 @@ class Toolbox extends Component<Props, State> {
             this.props.dispatch(toggleScreensharing());
         }
     }
-/**
-     * Dispatches an action to toggle screensharing.
-     *
-     * @private
-     * @returns {void}
-     */
-    _doToggleSteroMix() {
-        // this.props.dispatch(toggleSteroMix());
-    }
+
     /**
      * Dispatches an action to toggle YouTube video sharing.
      *
@@ -516,6 +501,16 @@ class Toolbox extends Component<Props, State> {
      */
     _doToggleVideoQuality() {
         this.props.dispatch(toggleDialog(VideoQualityDialog));
+    }
+
+    /**
+     * Dispaches an action to toggle tile view.
+     *
+     * @private
+     * @returns {void}
+     */
+    _doToggleTileView() {
+        this.props.dispatch(toggleTileView());
     }
 
     _onMouseOut: () => void;
@@ -606,6 +601,24 @@ class Toolbox extends Component<Props, State> {
         sendAnalytics(createShortcutEvent('video.quality'));
 
         this._doToggleVideoQuality();
+    }
+
+    _onShortcutToggleTileView: () => void;
+
+    /**
+     * Dispatches an action for toggling the tile view.
+     *
+     * @private
+     * @returns {void}
+     */
+    _onShortcutToggleTileView() {
+        sendAnalytics(createShortcutEvent(
+            'toggle.tileview',
+            {
+                enable: !this.props._tileViewEnabled
+            }));
+
+        this._doToggleTileView();
     }
 
     _onShortcutToggleFullScreen: () => void;
@@ -783,20 +796,6 @@ class Toolbox extends Component<Props, State> {
         console.warn('come in _onToolbarWhiteBoard ');
         this.props.dispatch(toggleShareWhiteBoard());
     }
-    _onToolbarShareVideo: () => void;
-    /**
-     * Creates an analytics toolbar event and dispatches an action for toggling
-     * the display of chat.
-     *
-     * @private
-     * @returns {void}
-     */
-    _onToolbarShareVideo() {
-        // this.props._shareVideo = !this.props._shareVideo;
-        // console.warn('come in _onToolbarShareVideo '+this.props._mgrwinOpen);
-        // APP.API.notifyOpenMgrWin(this.props._mgrwinOpen);
-    }
-
     _onToolbarToggleFullScreen: () => void;
 
     /**
@@ -872,19 +871,7 @@ class Toolbox extends Component<Props, State> {
 
         this._doToggleScreenshare();
     }
-    _onToolbarToggleSteroMix: () => void;
 
-    /**
-     * Creates an analytics toolbar event and dispatches an action for toggling
-     * screensharing.
-     *
-     * @private
-     * @returns {void}
-     */
-    _onToolbarToggleSteroMix() {
-
-        this._doToggleSteroMix();
-    }
     _onToolbarToggleSharedVideo: () => void;
 
     /**
@@ -931,42 +918,7 @@ class Toolbox extends Component<Props, State> {
 
         return _desktopSharingEnabled || _desktopSharingDisabledTooltipKey;
     }
-/**
-     * Renders a button for toggleing stero mix.
-     *
-     * @private
-     * @param {boolean} isInOverflowMenu - True if the button is moved to the
-     * overflow menu.
-     * @returns {ReactElement|null}
-     */
-    _renderSteroMixButton(isInOverflowMenu = false) {
 
-        const {
-            _desktopSharingEnabled,
-            _steroMix,
-            t
-        } = this.props;
-
-        if (isInOverflowMenu) {
-            return;
-        }
-
-        const classNames = `icon-speaker ${
-            _steroMix ? 'toggled' : ''} ${
-            _desktopSharingEnabled ? '' : 'disabled'}`;
-        const tooltip = t(
-            _desktopSharingEnabled
-                ? 'dialog.steroMix' : 'dialog.steroMix');
-
-        return (
-            <ToolbarButton
-                accessibilityLabel
-                    = { t('toolbar.accessibilityLabel.steroMix') }
-                iconName = { classNames }
-                onClick = { this._onToolbarToggleSteroMix }
-                tooltip = { tooltip } />
-        );
-    }
     /**
      * Renders a button for toggleing screen sharing.
      *
@@ -1007,12 +959,6 @@ class Toolbox extends Component<Props, State> {
             );
         }
 
-<<<<<<< HEAD
-        const classNames = `icon-share-desktop ${
-            _screensharing && !_whiteBoardOpen ? 'toggled' : ''} ${
-            _desktopSharingEnabled ? '' : 'disabled'}`;
-=======
->>>>>>> master
         const tooltip = t(
             _desktopSharingEnabled
                 ? 'dialog.shareYourScreen' : _desktopSharingDisabledTooltipKey);
@@ -1068,16 +1014,9 @@ class Toolbox extends Component<Props, State> {
                     icon = { _fullScreen ? IconExitFullScreen : IconFullScreen }
                     key = 'fullscreen'
                     onClick = { this._onToolbarToggleFullScreen }
-<<<<<<< HEAD
                     text = { _fullScreen
                         ? t('toolbar.exitFullScreen')
                         : t('toolbar.enterFullScreen') } />,
-=======
-                    text = { _fullScreen ? t('toolbar.exitFullScreen') : t('toolbar.enterFullScreen') } />,
-            <LiveStreamButton
-                key = 'livestreaming'
-                showLabel = { true } />,
->>>>>>> master
             <RecordButton
                 key = 'record'
                 showLabel = { true } />,
@@ -1368,18 +1307,6 @@ class Toolbox extends Component<Props, State> {
                         visible = { this._shouldShowButton('camera') } />
                 </div>
                 <div className = 'button-group-right'>
-                    {/* {   _isLocalParticipantModerator
-                        &&
-                        browser.isElectron()
-                        &&
-                        Platform.OS == 'windows'
-                        && <ToolbarButton
-                            accessibilityLabel =
-                                { t('toolbar.accessibilityLabel.sharedvideo') }
-                            iconName = 'icon-shared-video'
-                            onClick = { this._onToolbarShareVideo }
-                            tooltip = { t('toolbar.sharedvideo') } />
-                    } */}
                     { buttonsRight.indexOf('localrecording') !== -1
                         &&
                         browser.isElectron()
@@ -1451,10 +1378,8 @@ function _mapStateToProps(state) {
     const {
         fullScreen,
         mgrwinOpen,
-        steroMix,
         shareVideo,
         overflowMenuVisible,
-        timeoutID,
         visible
     } = state['features/toolbox'];
     const localParticipant = getLocalParticipant(state);
@@ -1485,7 +1410,6 @@ function _mapStateToProps(state) {
 
     return {
         _chatOpen: state['features/chat'].isOpen,
-        _shareVideo: shareVideo,
         _conference: conference,
         _mgrwinOpen: mgrwinOpen,
         _whiteBoardOpen: state['features/openboard'].whiteBoardOpen,
@@ -1497,13 +1421,13 @@ function _mapStateToProps(state) {
             iAmRecorder || (!addPeopleEnabled && !dialOutEnabled),
         _isGuest: state['features/base/jwt'].isGuest,
         _fullScreen: fullScreen,
+        _tileViewEnabled: state['features/video-layout'].tileViewEnabled,
         _localParticipantID: localParticipant.id,
         _isLocalParticipantModerator: isModerator,
         _localRecState: localRecordingStates,
         _overflowMenuVisible: overflowMenuVisible,
         _raisedHand: localParticipant.raisedHand,
         _screensharing: localVideo && localVideo.videoType === 'desktop',
-        _steroMix: steroMix,
         _sharingVideo: sharedVideoStatus === 'playing'
             || sharedVideoStatus === 'start'
             || sharedVideoStatus === 'pause',
