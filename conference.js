@@ -1641,7 +1641,7 @@ export default {
 
             // Workaround for Firefox since it doesn't return the correct width/height of the desktop stream
             // that is being currently shared.
-            if (!height || height === 0) {
+            if (!height) {
                 const desktopResizeConstraints = {
                     width: 1280,
                     height: 720,
