@@ -22,7 +22,9 @@ import {
     IconRaisedHand,
     IconRec,
     IconShareDesktop,
-    IconShareVideo
+    IconShareVideo,
+    IconContactList,
+    IconWindow
 } from '../../../base/icons';
 import {
     getLocalParticipant,
@@ -59,10 +61,7 @@ import {
 import { toggleSharedVideo } from '../../../shared-video';
 import { toggleShareWhiteBoard } from '../../../openboard';
 import { SpeakerStats } from '../../../speaker-stats';
-import {
-    TileViewButton,
-    toggleTileView
-} from '../../../video-layout';
+import { TileViewButton } from '../../../video-layout';
 import {
     OverflowMenuVideoQualityItem,
     VideoQualityDialog
@@ -129,11 +128,6 @@ type Props = {
      * Whether or not the app is currently in full screen.
      */
     _fullScreen: boolean,
-
-    /**
-     * Whether or not the tile view is enabled.
-     */
-    _tileViewEnabled: boolean,
 
     /**
      * Whether or not invite should be hidden, regardless of feature
@@ -258,7 +252,7 @@ class Toolbox extends Component<Props, State> {
         this._onToolbarToggleScreenshare = this._onToolbarToggleScreenshare.bind(this);
         this._onToolbarToggleSharedVideo = this._onToolbarToggleSharedVideo.bind(this);
         this._onToolbarOpenLocalRecordingInfoDialog = this._onToolbarOpenLocalRecordingInfoDialog.bind(this);
-        this._onShortcutToggleTileView = this._onShortcutToggleTileView.bind(this);
+        
 
         this.state = {
             windowWidth: window.innerWidth
@@ -297,11 +291,6 @@ class Toolbox extends Component<Props, State> {
                 character: 'S',
                 exec: this._onShortcutToggleFullScreen,
                 helpDescription: 'keyboardShortcuts.fullScreen'
-            },
-            this._shouldShowButton('tileview') && {
-                character: 'W',
-                exec: this._onShortcutToggleTileView,
-                helpDescription: 'toolbar.tileViewToggle'
             }
         ];
 
@@ -503,16 +492,6 @@ class Toolbox extends Component<Props, State> {
         this.props.dispatch(toggleDialog(VideoQualityDialog));
     }
 
-    /**
-     * Dispaches an action to toggle tile view.
-     *
-     * @private
-     * @returns {void}
-     */
-    _doToggleTileView() {
-        this.props.dispatch(toggleTileView());
-    }
-
     _onMouseOut: () => void;
 
     /**
@@ -601,24 +580,6 @@ class Toolbox extends Component<Props, State> {
         sendAnalytics(createShortcutEvent('video.quality'));
 
         this._doToggleVideoQuality();
-    }
-
-    _onShortcutToggleTileView: () => void;
-
-    /**
-     * Dispatches an action for toggling the tile view.
-     *
-     * @private
-     * @returns {void}
-     */
-    _onShortcutToggleTileView() {
-        sendAnalytics(createShortcutEvent(
-            'toggle.tileview',
-            {
-                enable: !this.props._tileViewEnabled
-            }));
-
-        this._doToggleTileView();
     }
 
     _onShortcutToggleFullScreen: () => void;
@@ -967,7 +928,7 @@ class Toolbox extends Component<Props, State> {
             <ToolbarButton
                 accessibilityLabel
                     = { t('toolbar.accessibilityLabel.shareYourScreen') }
-                disabled = { !_desktopSharingEnabled }
+                disabled = { !_desktopSharingEnabled || !_whiteBoardOpen  }
                 icon = { IconShareDesktop }
                 onClick = { this._onToolbarToggleScreenshare }
                 toggled = { _screensharing }
@@ -1163,6 +1124,7 @@ class Toolbox extends Component<Props, State> {
             _raisedHand,
             _isLocalParticipantModerator,
             _whiteBoardOpen,
+            _mgrwinOpen,
             _desktopSharingEnabled,
             t
         } = this.props;
@@ -1243,9 +1205,6 @@ class Toolbox extends Component<Props, State> {
         overflowMenuContent.splice(
             1, 0, ...this._renderMovedButtons(movedButtons));
         
-        const whiteBoardClassName = `icon-window ${
-            _whiteBoardOpen ? 'toggled' : ''} ${
-            _desktopSharingEnabled ? '' : 'disabled'}`;
 
         return (
             <div className = 'toolbox-content'>
@@ -1261,11 +1220,11 @@ class Toolbox extends Component<Props, State> {
                         && <ToolbarButton
                             accessibilityLabel =
                                 { t('toolbar.accessibilityLabel.whiteBoard') }
-                            iconName = { whiteBoardClassName }
+                            disabled = {!_desktopSharingEnabled}
+                            icon = { IconWindow }
                             onClick = { this._onToolbarWhiteBoard }
+                            toggled = { _whiteBoardOpen }
                             tooltip = { t('toolbar.whiteBoard') } />}
-                    {/* { buttonsLeft.indexOf('desktop') !== -1
-                        && this._renderSteroMixButton() } */}
                     { buttonsLeft.indexOf('raisehand') !== -1
                         && <ToolbarButton
                             accessibilityLabel = { t('toolbar.accessibilityLabel.raiseHand') }
@@ -1287,17 +1246,19 @@ class Toolbox extends Component<Props, State> {
                         buttonsLeft.indexOf('closedcaptions') !== -1
                             && <ClosedCaptionButton />
                     }
-                </div>
-                <div className = 'button-group-center'>
+                    
                    {  _isLocalParticipantModerator
                       &&
                       browser.isElectron()
                       &&   <ToolbarButton
                                 accessibilityLabel =
                                     { t('toolbar.accessibilityLabel.contactlist') }
-                                iconName = 'icon-contactlist'
+                                icon = { IconContactList }
                                 onClick = { this._onToolbarOpenManagerWindow }
+                                toggled = { _mgrwinOpen }
                                 tooltip = { t('toolbar.contactlist') } />}
+                </div>
+                <div className = 'button-group-center'>
                    
                     <AudioMuteButton
                         visible = { this._shouldShowButton('microphone') } />
@@ -1378,9 +1339,7 @@ function _mapStateToProps(state) {
     const {
         fullScreen,
         mgrwinOpen,
-        shareVideo,
-        overflowMenuVisible,
-        visible
+        overflowMenuVisible
     } = state['features/toolbox'];
     const localParticipant = getLocalParticipant(state);
     const isModerator = isLocalParticipantModerator(state);
@@ -1421,7 +1380,6 @@ function _mapStateToProps(state) {
             iAmRecorder || (!addPeopleEnabled && !dialOutEnabled),
         _isGuest: state['features/base/jwt'].isGuest,
         _fullScreen: fullScreen,
-        _tileViewEnabled: state['features/video-layout'].tileViewEnabled,
         _localParticipantID: localParticipant.id,
         _isLocalParticipantModerator: isModerator,
         _localRecState: localRecordingStates,
