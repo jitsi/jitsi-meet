@@ -1672,6 +1672,7 @@ export default {
             try {
                 await this.localVideo.setEffect(effect);
                 APP.store.dispatch(setVideoMuted(mute, MEDIA_TYPE.PRESENTER));
+                this.setVideoMuteStatus(mute);
             } catch (err) {
                 logger.error('Failed to apply the Presenter effect', err);
             }
