@@ -120,6 +120,10 @@ var config = {
     // are requested again.
     // enableLayerSuspension: false,
 
+    // Suspend sending video if bandwidth estimation is too low. This may cause
+    // problems with audio playback. Disabled until these are fixed.
+    disableSuspendVideo: true,
+
     // Every participant after the Nth will start video muted.
     startVideoMuted: 10,
 
