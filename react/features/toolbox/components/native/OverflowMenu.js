@@ -1,9 +1,8 @@
 // @flow
 
 import React, { PureComponent } from 'react';
-import { Platform, TouchableOpacity } from 'react-native';
+import { Platform, TouchableOpacity, View } from 'react-native';
 import Collapsible from 'react-native-collapsible';
-import GestureRecognizer, { swipeDirections } from 'react-native-swipe-gestures';
 
 import { ColorSchemeRegistry } from '../../../base/color-scheme';
 import { BottomSheet, hideDialog, isDialogOpen } from '../../../base/dialog';
@@ -60,6 +59,11 @@ type Props = {
 type State = {
 
     /**
+     * True if the bottom scheet is scrolled to the top.
+     */
+    scrolledToTop: boolean,
+
+    /**
      * True if the 'more' button set needas to be rendered.
      */
     showMore: boolean
@@ -88,6 +92,7 @@ class OverflowMenu extends PureComponent<Props, State> {
         super(props);
 
         this.state = {
+            scrolledToTop: true,
             showMore: false
         };
 
@@ -117,6 +122,7 @@ class OverflowMenu extends PureComponent<Props, State> {
         return (
             <BottomSheet
                 onCancel = { this._onCancel }
+                onSwipe = { this._onSwipe }
                 renderHeader = { this._renderMenuExpandToggle }>
                 <AudioRouteButton { ...buttonProps } />
                 <ToggleCameraButton { ...buttonProps } />
@@ -152,12 +158,7 @@ class OverflowMenu extends PureComponent<Props, State> {
      */
     _renderMenuExpandToggle() {
         return (
-            <GestureRecognizer
-                config = {{
-                    velocityThreshold: 0.1,
-                    directionalOffsetThreshold: 30
-                }}
-                onSwipe = { this._onSwipe }
+            <View
                 style = { [
                     this.props._bottomSheetStyles.sheet,
                     styles.expandMenuContainer
@@ -166,7 +167,7 @@ class OverflowMenu extends PureComponent<Props, State> {
                     { /* $FlowFixMeProps */ }
                     <IconDragHandle style = { this.props._bottomSheetStyles.expandIcon } />
                 </TouchableOpacity>
-            </GestureRecognizer>
+            </View>
         );
     }
 
@@ -188,34 +189,31 @@ class OverflowMenu extends PureComponent<Props, State> {
         return false;
     }
 
-    _onSwipe: (string) => void;
+    _onSwipe: string => void;
 
     /**
-     * Callback to be invoked when a swipe gesture is detected on the menu.
+     * Callback to be invoked when swipe gesture is detected on the menu. Returns true
+     * if the swipe gesture is handled by the menu, false otherwise.
      *
-     * @param {string} gestureName - The name of the swipe gesture.
-     * @returns {void}
+     * @param {string} direction - Direction of 'up' or 'down'.
+     * @returns {boolean}
      */
-    _onSwipe(gestureName) {
+    _onSwipe(direction) {
         const { showMore } = this.state;
 
-        switch (gestureName) {
-        case swipeDirections.SWIPE_UP:
+        switch (direction) {
+        case 'up':
             !showMore && this.setState({
                 showMore: true
             });
-            break;
-        case swipeDirections.SWIPE_DOWN:
-            if (showMore) {
-                // If the menu is expanded, we collapse it.
-                this.setState({
-                    showMore: false
-                });
-            } else {
-                // If the menu is not expanded, we close the menu
-                this._onCancel();
-            }
-            break;
+
+            return !showMore;
+        case 'down':
+            showMore && this.setState({
+                showMore: false
+            });
+
+            return showMore;
         }
     }
 
