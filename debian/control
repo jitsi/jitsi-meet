@@ -21,7 +21,7 @@ Description: WebRTC JavaScript video conferences
 
 Package: jitsi-meet-web-config
 Architecture: all
-Depends: openssl, openjdk-8-jre-headless | nginx | nginx-extras | apache2
+Depends: openssl, nginx | nginx-extras | apache2
 Description: Configuration for web serving of Jitsi Meet
  Jitsi Meet is a WebRTC JavaScript application that uses Jitsi
  Videobridge to provide high quality, scalable video conferences.
