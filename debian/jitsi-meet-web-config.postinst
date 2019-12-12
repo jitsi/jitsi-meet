@@ -43,10 +43,12 @@ case "$1" in
         fi
 
         JVB_SERVE="false"
-        db_get jitsi-meet/jvb-serve
+        # this detect only old installations
+        db_get jitsi-meet/jvb-serve || true
         if [ -n "$RET" ] && [ "$RET" = "true" ] ; then
             JVB_SERVE="true"
         fi
+        echo "------> $JVB_SERVE"
 
         # stores the hostname so we will reuse it later, like in purge
         db_set jitsi-meet/jvb-hostname $JVB_HOSTNAME
@@ -106,70 +108,17 @@ case "$1" in
 
         # this is new install let's configure jvb to serve meet
         # no-nginx, no-apache installed on machine, this is new install or reconfiguring old one which have jvb_serve set
-        if [[ -z "$FORCE_NGINX" && -z "$FORCE_APACHE" && ( -z "$JVB_HOSTNAME_OLD" || ( "$JVB_SERVE" = "true" && "$RECONFIGURING" = "true" )) ]] ; then
-
-            JVB_ETC_CONFIG="/etc/jitsi/videobridge/config"
-            JVB_CONFIG="/etc/jitsi/videobridge/sip-communicator.properties"
-
-            # this is a reconfigure, lets just delete old links
-            if [ "$RECONFIGURING" = "true" ] ; then
-                rm -f $JVB_CONFIG
-            fi
-
-            # we will write to the file if missing create it
-            if [ ! -f $JVB_CONFIG ] ; then
-                touch $JVB_CONFIG
-            fi
-
-            # configure jvb
-            echo "AUTHBIND=yes" >> $JVB_ETC_CONFIG
-            sed -i "s/JVB_OPTS=.*/JVB_OPTS=--apis=rest,xmpp/g" $JVB_ETC_CONFIG
-
-            echo "org.jitsi.videobridge.rest.jetty.host=::" >> $JVB_CONFIG
-            echo "org.jitsi.videobridge.rest.jetty.port=443" >> $JVB_CONFIG
-            echo "org.jitsi.videobridge.rest.jetty.ProxyServlet.hostHeader=$JVB_HOSTNAME" >> $JVB_CONFIG
-            echo "org.jitsi.videobridge.rest.jetty.ProxyServlet.pathSpec=/http-bind" >> $JVB_CONFIG
-            echo "org.jitsi.videobridge.rest.jetty.ProxyServlet.proxyTo=http://localhost:5280/http-bind" >> $JVB_CONFIG
-            echo "org.jitsi.videobridge.rest.jetty.ResourceHandler.resourceBase=/usr/share/jitsi-meet" >> $JVB_CONFIG
-            echo "org.jitsi.videobridge.rest.jetty.ResourceHandler.alias./config.js=/etc/jitsi/meet/$JVB_HOSTNAME-config.js" >> $JVB_CONFIG
-            echo "org.jitsi.videobridge.rest.jetty.ResourceHandler.alias./interface_config.js=/usr/share/jitsi-meet/interface_config.js" >> $JVB_CONFIG
-            echo "org.jitsi.videobridge.rest.jetty.ResourceHandler.alias./logging_config.js=/usr/share/jitsi-meet/logging_config.js" >> $JVB_CONFIG
-            echo "org.jitsi.videobridge.rest.jetty.ResourceHandler.alias./external_api.js=/usr/share/jitsi-meet/libs/external_api.min.js" >> $JVB_CONFIG
-            echo "org.jitsi.videobridge.rest.jetty.RewriteHandler.regex=^/([a-zA-Z0-9]+)$" >> $JVB_CONFIG
-            echo "org.jitsi.videobridge.rest.jetty.RewriteHandler.replacement=/" >> $JVB_CONFIG
-            echo "org.jitsi.videobridge.rest.jetty.SSIResourceHandler.paths=/" >> $JVB_CONFIG
-            echo "org.jitsi.videobridge.rest.jetty.tls.port=443" >> $JVB_CONFIG
-            echo "org.jitsi.videobridge.TCP_HARVESTER_PORT=443" >> $JVB_CONFIG
-            echo "org.jitsi.videobridge.rest.jetty.sslContextFactory.keyStorePath=/etc/jitsi/videobridge/$JVB_HOSTNAME.jks" >> $JVB_CONFIG
-            echo "org.jitsi.videobridge.rest.jetty.sslContextFactory.keyStorePassword=changeit" >> $JVB_CONFIG
-
-            # configure authbind to allow jvb to bind to privileged ports
-            OWNER=$(stat -c '%U' /usr/share/jitsi-videobridge)
-            GROUP=$(stat -c '%G' /usr/share/jitsi-videobridge)
-            JVB_UID="`id -u $OWNER`"
-            if [ ! -f "/etc/authbind/byport/443" ] ; then
-                if [ ! -d "/etc/authbind/byport" ] ; then
-                        mkdir -p /etc/authbind/byport
-                        chmod 755 /etc/authbind
-                        chmod 755 /etc/authbind/byport
-                fi
-                touch /etc/authbind/byport/443
-                chown $OWNER /etc/authbind/byport/443
-                chmod 755 /etc/authbind/byport/443
-            fi
-
-            CERT_P12="/etc/jitsi/videobridge/$JVB_HOSTNAME.p12"
-            CERT_JKS="/etc/jitsi/videobridge/$JVB_HOSTNAME.jks"
-            # create jks from  certs
-            openssl pkcs12 -export \
-                -in $CERT_CRT -inkey $CERT_KEY -passout pass:changeit > $CERT_P12
-            keytool -importkeystore -destkeystore $CERT_JKS \
-                -srckeystore $CERT_P12 -srcstoretype pkcs12 \
-                -noprompt -storepass changeit -srcstorepass changeit
-
-            db_set jitsi-meet/jvb-serve "true"
-
-            invoke-rc.d jitsi-videobridge restart || true
+        if [[ "$JVB_SERVE" = "true" ]] ; then
+            echo ""
+            echo "------------------------------------------------"
+            echo "You are using jetty to serve jitsi-meet, it is recommended to uninstall(purge) and use default installation that comes with nginx!"
+            echo ""
+            echo "When using the following command any custom config will be LOST!!!"
+            echo ""
+            echo "You can purge your installation using the following command:"
+            echo "apt-get purge jitsi-meet jitsi-meet-web-config jitsi-meet-prosody jitsi-meet-web jicofo jitsi-videobridge"
+            echo "------------------------------------------------"
+            echo ""
         elif [[ "$FORCE_NGINX" = "true" && ( -z "$JVB_HOSTNAME_OLD" || "$RECONFIGURING" = "true" ) ]] ; then
             # this is a reconfigure, lets just delete old links
             if [ "$RECONFIGURING" = "true" ] ; then

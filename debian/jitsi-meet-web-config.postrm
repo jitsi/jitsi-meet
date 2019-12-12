@@ -40,8 +40,6 @@ case "$1" in
             rm -f /etc/nginx/sites-enabled/$JVB_HOSTNAME.conf
             rm -f /etc/apache2/sites-available/$JVB_HOSTNAME.conf
             rm -f /etc/apache2/sites-enabled/$JVB_HOSTNAME.conf
-            rm -f /etc/jitsi/videobridge/$JVB_HOSTNAME.jks
-            rm -f /etc/jitsi/videobridge/$JVB_HOSTNAME.p12
             rm -f /etc/jitsi/meet/$JVB_HOSTNAME.key
             rm -f /etc/jitsi/meet/$JVB_HOSTNAME.crt
         fi
