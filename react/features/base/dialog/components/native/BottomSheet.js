@@ -1,7 +1,7 @@
 // @flow
 
 import React, { PureComponent, type Node } from 'react';
-import { SafeAreaView, ScrollView, View } from 'react-native';
+import { PanResponder, SafeAreaView, ScrollView, View } from 'react-native';
 
 import { ColorSchemeRegistry } from '../../../color-scheme';
 import { SlidingView } from '../../../react';
@@ -9,6 +9,16 @@ import { connect } from '../../../redux';
 import { StyleType } from '../../../styles';
 
 import { bottomSheetStyles as styles } from './styles';
+
+/**
+ * Minimal distance that needs to be moved by the finger to consider it a swipe.
+ */
+const GESTURE_DISTANCE_THRESHOLD = 5;
+
+/**
+ * The minimal speed needed to be achieved by the finger to consider it as a swipe.
+ */
+const GESTURE_SPEED_THRESHOLD = 0.2;
 
 /**
  * The type of {@code BottomSheet}'s React {@code Component} prop types.
@@ -32,6 +42,11 @@ type Props = {
     onCancel: ?Function,
 
     /**
+     * Callback to be attached to the custom swipe event of the BottomSheet.
+     */
+    onSwipe?: Function,
+
+    /**
      * Function to render a bottom sheet header element, if necessary.
      */
     renderHeader: ?Function
@@ -41,6 +56,23 @@ type Props = {
  * A component emulating Android's BottomSheet.
  */
 class BottomSheet extends PureComponent<Props> {
+    panResponder: Object;
+
+    /**
+     * Instantiates a new component.
+     *
+     * @inheritdoc
+     */
+    constructor(props: Props) {
+        super(props);
+
+        this.panResponder = PanResponder.create({
+            onStartShouldSetPanResponder: this._onShouldSetResponder.bind(this),
+            onMoveShouldSetPanResponder: this._onShouldSetResponder.bind(this),
+            onPanResponderRelease: this._onGestureEnd.bind(this)
+        });
+    }
+
     /**
      * Implements React's {@link Component#render()}.
      *
@@ -66,7 +98,8 @@ class BottomSheet extends PureComponent<Props> {
                         style = { [
                             styles.sheetItemContainer,
                             _styles.sheet
-                        ] }>
+                        ] }
+                        { ...this.panResponder.panHandlers }>
                         <ScrollView
                             bounces = { false }
                             showsVerticalScrollIndicator = { false }
@@ -77,6 +110,48 @@ class BottomSheet extends PureComponent<Props> {
                 </View>
             </SlidingView>
         );
+    }
+
+    /**
+     * Callback to handle a gesture end event.
+     *
+     * @param {Object} evt - The native gesture event.
+     * @param {Object} gestureState - The gesture state.
+     * @returns {void}
+     */
+    _onGestureEnd(evt, gestureState) {
+        const verticalSwipe = Math.abs(gestureState.vy) > Math.abs(gestureState.vx)
+            && Math.abs(gestureState.vy) > GESTURE_SPEED_THRESHOLD;
+
+        if (verticalSwipe) {
+            const direction = gestureState.vy > 0 ? 'down' : 'up';
+            const { onCancel, onSwipe } = this.props;
+            let isSwipeHandled = false;
+
+            if (onSwipe) {
+                isSwipeHandled = onSwipe(direction);
+            }
+
+            if (direction === 'down' && !isSwipeHandled) {
+                // Swipe down is a special gesture that can be used to close the
+                // BottomSheet, so if the swipe is not handled by the parent
+                // component, we consider it as a request to close.
+                onCancel && onCancel();
+            }
+        }
+    }
+
+    /**
+     * Returns true if the pan responder should activate, false otherwise.
+     *
+     * @param {Object} evt - The native gesture event.
+     * @param {Object} gestureState - The gesture state.
+     * @returns {boolean}
+     */
+    _onShouldSetResponder({ nativeEvent }, gestureState) {
+        return nativeEvent.touches.length === 1
+            && Math.abs(gestureState.dx) > GESTURE_DISTANCE_THRESHOLD
+            && Math.abs(gestureState.dy) > GESTURE_DISTANCE_THRESHOLD;
     }
 }
 
