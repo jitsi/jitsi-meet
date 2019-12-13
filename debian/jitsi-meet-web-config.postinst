@@ -48,7 +48,6 @@ case "$1" in
         if [ -n "$RET" ] && [ "$RET" = "true" ] ; then
             JVB_SERVE="true"
         fi
-        echo "------> $JVB_SERVE"
 
         # stores the hostname so we will reuse it later, like in purge
         db_set jitsi-meet/jvb-hostname $JVB_HOSTNAME
@@ -106,6 +105,8 @@ case "$1" in
             sed -i "s/jitsi-meet.example.com/$JVB_HOSTNAME/g" $JITSI_MEET_CONFIG
         fi
 
+        JVB_CONFIG="/etc/jitsi/videobridge/sip-communicator.properties"
+
         # this is new install let's configure jvb to serve meet
         # no-nginx, no-apache installed on machine, this is new install or reconfiguring old one which have jvb_serve set
         if [[ "$JVB_SERVE" = "true" ]] ; then
@@ -113,13 +114,19 @@ case "$1" in
             echo "------------------------------------------------"
             echo "You are using jetty to serve jitsi-meet, it is recommended to uninstall(purge) and use default installation that comes with nginx!"
             echo ""
-            echo "When using the following command any custom config will be LOST!!!"
+            echo "When using the following command, any custom config will be LOST, please backup /etc/jitsi !!!"
             echo ""
             echo "You can purge your installation using the following command:"
             echo "apt-get purge jitsi-meet jitsi-meet-web-config jitsi-meet-prosody jitsi-meet-web jicofo jitsi-videobridge"
             echo "------------------------------------------------"
             echo ""
         elif [[ "$FORCE_NGINX" = "true" && ( -z "$JVB_HOSTNAME_OLD" || "$RECONFIGURING" = "true" ) ]] ; then
+            # disables tcp harvester to make sure jvb will not take port 443
+            if [[ -f $JVB_CONFIG ]] && ! grep -q "org.jitsi.videobridge.DISABLE_TCP_HARVESTER" "$JVB_CONFIG"  ;then
+                echo "org.jitsi.videobridge.DISABLE_TCP_HARVESTER=true" >> $JVB_CONFIG
+                invoke-rc.d jvb restart || true
+            fi
+
             # this is a reconfigure, lets just delete old links
             if [ "$RECONFIGURING" = "true" ] ; then
                 rm -f /etc/nginx/sites-enabled/$JVB_HOSTNAME_OLD.conf
@@ -149,6 +156,12 @@ case "$1" in
 
             invoke-rc.d nginx reload || true
         elif [[ "$FORCE_APACHE" = "true" && ( -z "$JVB_HOSTNAME_OLD" || "$RECONFIGURING" = "true" ) ]] ; then
+            # disables tcp harvester to make sure jvb will not take port 443
+            if [[ -f $JVB_CONFIG ]] && ! grep -q "org.jitsi.videobridge.DISABLE_TCP_HARVESTER" "$JVB_CONFIG"  ;then
+                echo "org.jitsi.videobridge.DISABLE_TCP_HARVESTER=true" >> $JVB_CONFIG
+                invoke-rc.d jvb restart || true
+            fi
+
             # this is a reconfigure, lets just delete old links
             if [ "$RECONFIGURING" = "true" ] ; then
                 a2dissite $JVB_HOSTNAME_OLD.conf
