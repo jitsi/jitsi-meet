@@ -120,6 +120,7 @@ android.libraryVariants.all { def variant ->
                 "--bundle-output", jsBundleFile,
                 "--assets-dest", resourcesDir)
 
+
         // Disable bundling on dev builds
         enabled !devEnabled
     }
