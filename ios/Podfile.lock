@@ -344,13 +344,7 @@ PODS:
     - React
   - RNSVG (9.7.1):
     - React
-<<<<<<< HEAD
-  - yoga (0.59.8.React)
-=======
-  - RNWatch (0.2.0):
-    - React
   - Yoga (1.14.0)
->>>>>>> master
 
 DEPENDENCIES:
   - Amplitude-iOS (~> 4.0.4)
@@ -396,14 +390,8 @@ DEPENDENCIES:
   - "RNCAsyncStorage (from `../node_modules/@react-native-community/async-storage`)"
   - "RNGoogleSignin (from `../node_modules/@react-native-community/google-signin`)"
   - RNSound (from `../node_modules/react-native-sound`)
-<<<<<<< HEAD
-  - RNVectorIcons (from `../node_modules/react-native-vector-icons`)
-  - yoga (from `../node_modules/react-native/ReactCommon/yoga`)
-=======
   - RNSVG (from `../node_modules/react-native-svg`)
-  - RNWatch (from `../node_modules/react-native-watch-connectivity`)
   - Yoga (from `../node_modules/react-native/ReactCommon/yoga`)
->>>>>>> master
 
 SPEC REPOS:
   https://github.com/CocoaPods/Specs.git:
@@ -497,17 +485,9 @@ EXTERNAL SOURCES:
     :path: "../node_modules/@react-native-community/google-signin"
   RNSound:
     :path: "../node_modules/react-native-sound"
-<<<<<<< HEAD
-  RNVectorIcons:
-    :path: "../node_modules/react-native-vector-icons"
-  yoga:
-=======
   RNSVG:
     :path: "../node_modules/react-native-svg"
-  RNWatch:
-    :path: "../node_modules/react-native-watch-connectivity"
   Yoga:
->>>>>>> master
     :path: "../node_modules/react-native/ReactCommon/yoga"
 
 SPEC CHECKSUMS:
@@ -562,23 +542,10 @@ SPEC CHECKSUMS:
   React-RCTVibration: 262588c97551b0b1c675468cda857466ba5af18f
   ReactCommon: c2c63d9290b422ca6ad5b3663073a015dd892ae9
   RNCAsyncStorage: 8e31405a9f12fbf42c2bb330e4560bfd79c18323
-<<<<<<< HEAD
-  RNGoogleSignin: d030c6c6591db24c3cee649f64c7babf0a1699a0
-  RNSound: e157320f503bdd4f4ee6d8542e948d54f90c3c3a
-  RNVectorIcons: d819334932bcda3332deb3d2c8ea4d069e0b98f9
-  yoga: 92b2102c3d373d1a790db4ab761d2b0ffc634f64
-
-PODFILE CHECKSUM: ba8e034c15fc15eef4d62f55406defbef45f1c9c
-
-COCOAPODS: 1.6.1
-=======
-  RNGoogleSignin: 39336070b35fc4cea6a98cf111e00480317be0ae
   RNSound: c980916b596cc15c8dcd2f6ecd3b13c4881dbe20
   RNSVG: aac12785382e8fd4f28d072fe640612e34914631
-  RNWatch: 09738b339eceb66e4d80a2371633ca5fb380fa42
   Yoga: 02036f6383c0008edb7ef0773a0e6beb6ce82bd1
 
 PODFILE CHECKSUM: 0fdfa45ae809c9460c80be3e0d4bbb822fccc418
 
 COCOAPODS: 1.8.1
->>>>>>> master
