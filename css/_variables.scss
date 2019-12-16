@@ -37,7 +37,6 @@ $presence-idle: rgb(172, 172, 172);
 /**
  * Toolbar
  */
-$defaultToolbarSize: 50px;
 $newToolbarBackgroundColor: rgba(22, 38, 55, 0.8);
 $newToolbarButtonHoverColor: rgba(255, 255, 255, 0.15);
 $newToolbarButtonToggleColor: rgba(255, 255, 255, 0.2);
@@ -106,6 +105,7 @@ $defaultWatermarkLink: '../images/watermark.png';
 $popoverMenuPadding: 13px;
 $happySoftwareBackground: transparent;
 $desktopAppDragBarHeight: 25px;
+$scrollHeight: 7px;
 
 /**
  * Z-indexes. TODO: Replace this by a function.

@@ -13,9 +13,24 @@
     @extend %align-right;
     transition: bottom .3s;
     z-index: $filmstripVideosZ;
+    box-sizing: border-box;
+    width: 100%;
+    position: fixed;
+
+    /*
+     * Firefox sets flex items to min-height: auto and min-width: auto,
+     * preventing flex children from shrinking like they do on other browsers.
+     * Setting min-height and min-width 0 is a workaround for the issue so
+     * Firefox behaves like other browsers.
+     * https://bugzilla.mozilla.org/show_bug.cgi?id=1043520
+     */
+     @mixin minHWAutoFix() {
+        min-height: 0;
+        min-width: 0;
+    }
 
     &.reduce-height {
-        bottom: $newToolbarSizeWithPadding;
+        bottom: calc(#{$newToolbarSizeWithPadding} + #{$scrollHeight});
     }
 
     &__videos {
@@ -29,8 +44,9 @@
 
         &#remoteVideos {
             border: $thumbnailsBorder solid transparent;
-            padding-left: $defaultToolbarSize + 5;
             transition: bottom 2s;
+            flex-grow: 1;
+            @include minHWAutoFix()
         }
 
         /**
@@ -74,4 +90,51 @@
             pointer-events: none;
         }
     }
+
+    #filmstripRemoteVideos {
+        @include minHWAutoFix();
+
+        display: flex;
+        flex: 1;
+        width: auto;
+        justify-content: flex-end;
+        flex-direction: row;
+
+        #filmstripRemoteVideosContainer {
+            flex-direction: row-reverse;
+            /**
+             * Add padding as a hack for Firefox not to show scrollbars when
+             * unnecessary.
+             */
+            padding: 1px 0;
+            overflow-y: hidden;
+        }
+    }
+
+    .videocontainer {
+        margin-bottom: 10px;
+    }
+}
+
+
+/**
+ * Workarounds for Edge and Firefox not handling scrolling properly with
+ * flex-direction: row-reverse.
+ */
+ @mixin undoRowReverseVideos() {
+    .horizontal-filmstrip {
+        #remoteVideos #filmstripRemoteVideos #filmstripRemoteVideosContainer {
+            flex-direction: row;
+        }
+    }
+}
+
+/** Firefox detection hack **/
+@-moz-document url-prefix() {
+    @include undoRowReverseVideos();
+}
+
+/** Edge detection hack **/
+@supports (-ms-ime-align:auto) {
+    @include undoRowReverseVideos();
 }
