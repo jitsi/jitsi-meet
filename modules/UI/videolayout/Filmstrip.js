@@ -64,11 +64,9 @@ const Filmstrip = {
             return this._calculateThumbnailSizeForTileView();
         }
 
-        const availableSizes = this.calculateAvailableSize();
-        const width = availableSizes.availableWidth;
-        const height = availableSizes.availableHeight;
+        const { availableWidth, availableHeight } = this.calculateAvailableSize();
 
-        return this.calculateThumbnailSizeFromAvailable(width, height);
+        return this.calculateThumbnailSizeFromAvailable(availableWidth, availableHeight);
     },
 
     /**
@@ -80,8 +78,7 @@ const Filmstrip = {
     calculateAvailableSize() {
         const state = APP.store.getState();
         const currentLayout = getCurrentLayout(state);
-        const isHorizontalFilmstripView
-            = currentLayout === LAYOUTS.HORIZONTAL_FILMSTRIP_VIEW;
+        const isHorizontalFilmstripView = currentLayout === LAYOUTS.HORIZONTAL_FILMSTRIP_VIEW;
 
         /**
          * If the videoAreaAvailableWidth is set we use this one to calculate
@@ -100,7 +97,6 @@ const Filmstrip = {
 
         let availableHeight = interfaceConfig.FILM_STRIP_MAX_HEIGHT;
         let availableWidth = videoAreaAvailableWidth;
-
         const thumbs = this.getThumbs(true);
 
         // If local thumb is not hidden
@@ -149,15 +145,11 @@ const Filmstrip = {
             );
         }
 
-        const maxHeight
+        // If the MAX_HEIGHT property hasn't been specified
+        // we have the static value.
+        const maxHeight = Math.min(interfaceConfig.FILM_STRIP_MAX_HEIGHT || 120, availableHeight);
 
-            // If the MAX_HEIGHT property hasn't been specified
-            // we have the static value.
-            = Math.min(interfaceConfig.FILM_STRIP_MAX_HEIGHT || 120,
-            availableHeight);
-
-        availableHeight
-            = Math.min(maxHeight, window.innerHeight - 18);
+        availableHeight = Math.min(maxHeight, window.innerHeight - 18);
 
         return {
             availableHeight,
@@ -239,13 +231,10 @@ const Filmstrip = {
          * availableHeight/h > availableWidth/totalWidth otherwise 2) is true
          */
 
-        const remoteThumbsInRow = interfaceConfig.VERTICAL_FILMSTRIP
-            ? 0 : this.getThumbs(true).remoteThumbs.length;
-        const remoteLocalWidthRatio = interfaceConfig.REMOTE_THUMBNAIL_RATIO
-            / interfaceConfig.LOCAL_THUMBNAIL_RATIO;
-        const lW = Math.min(availableWidth
-            / ((remoteLocalWidthRatio * remoteThumbsInRow) + 1), availableHeight
-            * interfaceConfig.LOCAL_THUMBNAIL_RATIO);
+        const remoteThumbsInRow = interfaceConfig.VERTICAL_FILMSTRIP ? 0 : this.getThumbs(true).remoteThumbs.length;
+        const remoteLocalWidthRatio = interfaceConfig.REMOTE_THUMBNAIL_RATIO / interfaceConfig.LOCAL_THUMBNAIL_RATIO;
+        const lW = Math.min(availableWidth / ((remoteLocalWidthRatio * remoteThumbsInRow) + 1),
+            availableHeight * interfaceConfig.LOCAL_THUMBNAIL_RATIO);
         const h = lW / interfaceConfig.LOCAL_THUMBNAIL_RATIO;
 
         const remoteVideoWidth = lW * remoteLocalWidthRatio;
@@ -333,18 +322,12 @@ const Filmstrip = {
         if (shouldDisplayTileView(state)) {
             // The size of the side margins for each tile as set in CSS.
             const sideMargins = 10 * 2;
-            const {
-                columns,
-                rows
-            } = getTileViewGridDimensions(state, getMaxColumnCount());
+            const { columns, rows } = getTileViewGridDimensions(state, getMaxColumnCount());
             const hasOverflow = rows > columns;
 
             // Width is set so that the flex layout can automatically wrap
             // tiles onto new rows.
-            this.filmstripRemoteVideos.css({
-                width: (local.thumbWidth * columns) + (columns * sideMargins)
-            });
-
+            this.filmstripRemoteVideos.css({ width: (local.thumbWidth * columns) + (columns * sideMargins) });
             this.filmstripRemoteVideos.toggleClass('has-overflow', hasOverflow);
         } else {
             this.filmstripRemoteVideos.css('width', '');
