@@ -76,10 +76,6 @@ const Filmstrip = {
      * @returns {{availableWidth: number, availableHeight: number}}
      */
     calculateAvailableSize() {
-        const state = APP.store.getState();
-        const currentLayout = getCurrentLayout(state);
-        const isHorizontalFilmstripView = currentLayout === LAYOUTS.HORIZONTAL_FILMSTRIP_VIEW;
-
         /**
          * If the videoAreaAvailableWidth is set we use this one to calculate
          * the filmstrip width, because we're probably in a state where the
@@ -87,69 +83,30 @@ const Filmstrip = {
          */
         const videoAreaAvailableWidth
             = UIUtil.getAvailableVideoWidth()
-            - this._getFilmstripExtraPanelsWidth()
-            - UIUtil.parseCssInt(this.filmstrip.css('right'), 10)
-            - UIUtil.parseCssInt(this.filmstrip.css('paddingLeft'), 10)
-            - UIUtil.parseCssInt(this.filmstrip.css('paddingRight'), 10)
-            - UIUtil.parseCssInt(this.filmstrip.css('borderLeftWidth'), 10)
-            - UIUtil.parseCssInt(this.filmstrip.css('borderRightWidth'), 10)
-            - 5;
+                - this._getFilmstripExtraPanelsWidth()
+                - UIUtil.parseCssInt(this.filmstrip.css('right'), 10)
+                - UIUtil.parseCssInt(this.filmstrip.css('paddingLeft'), 10)
+                - UIUtil.parseCssInt(this.filmstrip.css('paddingRight'), 10)
+                - UIUtil.parseCssInt(this.filmstrip.css('borderLeftWidth'), 10)
+                - UIUtil.parseCssInt(this.filmstrip.css('borderRightWidth'), 10)
+                - 5;
 
-        let availableHeight = interfaceConfig.FILM_STRIP_MAX_HEIGHT;
+        const availableHeight = Math.min(interfaceConfig.FILM_STRIP_MAX_HEIGHT || 120, window.innerHeight - 18);
         let availableWidth = videoAreaAvailableWidth;
-        const thumbs = this.getThumbs(true);
+        const localVideoContainer = $('#localVideoContainer');
 
         // If local thumb is not hidden
-        if (thumbs.localThumb) {
-            const localVideoContainer = $('#localVideoContainer');
-
+        if (!localVideoContainer.has('hidden')) {
             availableWidth = Math.floor(
                 videoAreaAvailableWidth - (
-                    UIUtil.parseCssInt(
-                        localVideoContainer.css('borderLeftWidth'), 10)
-                    + UIUtil.parseCssInt(
-                        localVideoContainer.css('borderRightWidth'), 10)
-                    + UIUtil.parseCssInt(
-                        localVideoContainer.css('paddingLeft'), 10)
-                    + UIUtil.parseCssInt(
-                        localVideoContainer.css('paddingRight'), 10)
-                    + UIUtil.parseCssInt(
-                        localVideoContainer.css('marginLeft'), 10)
-                    + UIUtil.parseCssInt(
-                        localVideoContainer.css('marginRight'), 10))
+                    UIUtil.parseCssInt(localVideoContainer.css('borderLeftWidth'), 10)
+                    + UIUtil.parseCssInt(localVideoContainer.css('borderRightWidth'), 10)
+                    + UIUtil.parseCssInt(localVideoContainer.css('paddingLeft'), 10)
+                    + UIUtil.parseCssInt(localVideoContainer.css('paddingRight'), 10)
+                    + UIUtil.parseCssInt(localVideoContainer.css('marginLeft'), 10)
+                    + UIUtil.parseCssInt(localVideoContainer.css('marginRight'), 10))
             );
         }
-
-        // If the number of videos is 0 or undefined or we're not in horizontal
-        // filmstrip mode we don't need to calculate further any adjustments
-        // to width based on the number of videos present.
-        const numvids = thumbs.remoteThumbs.length;
-
-        if (numvids && isHorizontalFilmstripView) {
-            const remoteVideoContainer = thumbs.remoteThumbs.eq(0);
-
-            availableWidth = Math.floor(
-                videoAreaAvailableWidth - (numvids * (
-                    UIUtil.parseCssInt(
-                        remoteVideoContainer.css('borderLeftWidth'), 10)
-                    + UIUtil.parseCssInt(
-                        remoteVideoContainer.css('borderRightWidth'), 10)
-                    + UIUtil.parseCssInt(
-                        remoteVideoContainer.css('paddingLeft'), 10)
-                    + UIUtil.parseCssInt(
-                        remoteVideoContainer.css('paddingRight'), 10)
-                    + UIUtil.parseCssInt(
-                        remoteVideoContainer.css('marginLeft'), 10)
-                    + UIUtil.parseCssInt(
-                        remoteVideoContainer.css('marginRight'), 10)))
-            );
-        }
-
-        // If the MAX_HEIGHT property hasn't been specified
-        // we have the static value.
-        const maxHeight = Math.min(interfaceConfig.FILM_STRIP_MAX_HEIGHT || 120, availableHeight);
-
-        availableHeight = Math.min(maxHeight, window.innerHeight - 18);
 
         return {
             availableHeight,
@@ -231,10 +188,8 @@ const Filmstrip = {
          * availableHeight/h > availableWidth/totalWidth otherwise 2) is true
          */
 
-        const remoteThumbsInRow = interfaceConfig.VERTICAL_FILMSTRIP ? 0 : this.getThumbs(true).remoteThumbs.length;
         const remoteLocalWidthRatio = interfaceConfig.REMOTE_THUMBNAIL_RATIO / interfaceConfig.LOCAL_THUMBNAIL_RATIO;
-        const lW = Math.min(availableWidth / ((remoteLocalWidthRatio * remoteThumbsInRow) + 1),
-            availableHeight * interfaceConfig.LOCAL_THUMBNAIL_RATIO);
+        const lW = Math.min(availableWidth, availableHeight * interfaceConfig.LOCAL_THUMBNAIL_RATIO);
         const h = lW / interfaceConfig.LOCAL_THUMBNAIL_RATIO;
 
         const remoteVideoWidth = lW * remoteLocalWidthRatio;
@@ -378,8 +333,8 @@ const Filmstrip = {
             });
         } else if (currentLayout === LAYOUTS.HORIZONTAL_FILMSTRIP_VIEW) {
             this.filmstrip.css({
-                // adds 4 px because of small video 2px border
-                height: `${remote.thumbHeight + 4}px`
+                // adds 4 px because of small video 2px border and 10px margin for the scroll
+                height: `${remote.thumbHeight + 14}px`
             });
         }
 
