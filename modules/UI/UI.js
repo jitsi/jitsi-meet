@@ -699,10 +699,6 @@ UI.showExtensionInlineInstallationDialog = function(callback) {
     });
 };
 
-UI.updateDevicesAvailability = function(id, devices) {
-    VideoLayout.setDeviceAvailabilityIcons(id, devices);
-};
-
 /**
  * Show shared video.
  * @param {string} id the id of the sender of the command

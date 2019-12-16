@@ -20,260 +20,264 @@ import SmallVideo from './SmallVideo';
 /**
  *
  */
-function LocalVideo(VideoLayout, emitter, streamEndedCallback) {
-    this.videoSpanId = 'localVideoContainer';
-    this.streamEndedCallback = streamEndedCallback;
-    this.container = this.createContainer();
-    this.$container = $(this.container);
-    this.updateDOMLocation();
+export default class LocalVideo extends SmallVideo {
+    /**
+     *
+     * @param {*} VideoLayout
+     * @param {*} emitter
+     * @param {*} streamEndedCallback
+     */
+    constructor(VideoLayout, emitter, streamEndedCallback) {
+        super(VideoLayout);
+        this.videoSpanId = 'localVideoContainer';
+        this.streamEndedCallback = streamEndedCallback;
+        this.container = this.createContainer();
+        this.$container = $(this.container);
+        this.updateDOMLocation();
 
-    this.localVideoId = null;
-    this.bindHoverHandler();
-    if (!config.disableLocalVideoFlip) {
-        this._buildContextMenu();
-    }
-    this.isLocal = true;
-    this.emitter = emitter;
-    this.statsPopoverLocation = interfaceConfig.VERTICAL_FILMSTRIP
-        ? 'left top' : 'top center';
-
-    Object.defineProperty(this, 'id', {
-        get() {
-            return APP.conference.getMyUserId();
+        this.localVideoId = null;
+        this.bindHoverHandler();
+        if (!config.disableLocalVideoFlip) {
+            this._buildContextMenu();
         }
-    });
-    this.initBrowserSpecificProperties();
+        this.isLocal = true;
+        this.emitter = emitter;
+        this.statsPopoverLocation = interfaceConfig.VERTICAL_FILMSTRIP
+            ? 'left top' : 'top center';
 
-    SmallVideo.call(this, VideoLayout);
+        Object.defineProperty(this, 'id', {
+            get() {
+                return APP.conference.getMyUserId();
+            }
+        });
+        this.initBrowserSpecificProperties();
 
-    // Set default display name.
-    this.updateDisplayName();
+        // Set default display name.
+        this.updateDisplayName();
 
-    // Initialize the avatar display with an avatar url selected from the redux
-    // state. Redux stores the local user with a hardcoded participant id of
-    // 'local' if no id has been assigned yet.
-    this.initializeAvatar();
+        // Initialize the avatar display with an avatar url selected from the redux
+        // state. Redux stores the local user with a hardcoded participant id of
+        // 'local' if no id has been assigned yet.
+        this.initializeAvatar();
 
-    this.addAudioLevelIndicator();
-    this.updateIndicators();
+        this.addAudioLevelIndicator();
+        this.updateIndicators();
 
-    this.container.onclick = this._onContainerClick;
-}
-
-LocalVideo.prototype = Object.create(SmallVideo.prototype);
-LocalVideo.prototype.constructor = LocalVideo;
-
-LocalVideo.prototype.createContainer = function() {
-    const containerSpan = document.createElement('span');
-
-    containerSpan.classList.add('videocontainer');
-    containerSpan.id = this.videoSpanId;
-
-    containerSpan.innerHTML = `
-        <div class = 'videocontainer__background'></div>
-        <span id = 'localVideoWrapper'></span>
-        <div class = 'videocontainer__toolbar'></div>
-        <div class = 'videocontainer__toptoolbar'></div>
-        <div class = 'videocontainer__hoverOverlay'></div>
-        <div class = 'displayNameContainer'></div>
-        <div class = 'avatar-container'></div>`;
-
-    return containerSpan;
-};
-
-/**
- * Triggers re-rendering of the display name using current instance state.
- *
- * @returns {void}
- */
-LocalVideo.prototype.updateDisplayName = function() {
-    if (!this.container) {
-        logger.warn(
-                `Unable to set displayName - ${this.videoSpanId
-                } does not exist`);
-
-        return;
+        this.container.onclick = this._onContainerClick;
     }
 
-    this._renderDisplayName({
-        allowEditing: APP.store.getState()['features/base/jwt'].isGuest,
-        displayNameSuffix: interfaceConfig.DEFAULT_LOCAL_DISPLAY_NAME,
-        elementID: 'localDisplayName',
-        participantID: this.id
-    });
-};
+    /**
+     *
+     */
+    createContainer() {
+        const containerSpan = document.createElement('span');
 
-LocalVideo.prototype.changeVideo = function(stream) {
-    this.videoStream = stream;
+        containerSpan.classList.add('videocontainer');
+        containerSpan.id = this.videoSpanId;
 
-    this.localVideoId = `localVideo_${stream.getId()}`;
+        containerSpan.innerHTML = `
+            <div class = 'videocontainer__background'></div>
+            <span id = 'localVideoWrapper'></span>
+            <div class = 'videocontainer__toolbar'></div>
+            <div class = 'videocontainer__toptoolbar'></div>
+            <div class = 'videocontainer__hoverOverlay'></div>
+            <div class = 'displayNameContainer'></div>
+            <div class = 'avatar-container'></div>`;
 
-    this._updateVideoElement();
+        return containerSpan;
+    }
 
-    // eslint-disable-next-line eqeqeq
-    const isVideo = stream.videoType != 'desktop';
-    const settings = APP.store.getState()['features/base/settings'];
+    /**
+     * Triggers re-rendering of the display name using current instance state.
+     *
+     * @returns {void}
+     */
+    updateDisplayName() {
+        if (!this.container) {
+            logger.warn(
+                    `Unable to set displayName - ${this.videoSpanId
+                    } does not exist`);
 
-    this._enableDisableContextMenu(isVideo);
-    this.setFlipX(isVideo ? settings.localFlipX : false);
-
-    const endedHandler = () => {
-        const localVideoContainer
-            = document.getElementById('localVideoWrapper');
-
-        // Only remove if there is no video and not a transition state.
-        // Previous non-react logic created a new video element with each track
-        // removal whereas react reuses the video component so it could be the
-        // stream ended but a new one is being used.
-        if (localVideoContainer && this.videoStream.isEnded()) {
-            ReactDOM.unmountComponentAtNode(localVideoContainer);
+            return;
         }
 
-        this._notifyOfStreamEnded();
-        stream.off(JitsiTrackEvents.LOCAL_TRACK_STOPPED, endedHandler);
-    };
-
-    stream.on(JitsiTrackEvents.LOCAL_TRACK_STOPPED, endedHandler);
-};
-
-/**
- * Notify any subscribers of the local video stream ending.
- *
- * @private
- * @returns {void}
- */
-LocalVideo.prototype._notifyOfStreamEnded = function() {
-    if (this.streamEndedCallback) {
-        this.streamEndedCallback(this.id);
+        this._renderDisplayName({
+            allowEditing: APP.store.getState()['features/base/jwt'].isGuest,
+            displayNameSuffix: interfaceConfig.DEFAULT_LOCAL_DISPLAY_NAME,
+            elementID: 'localDisplayName',
+            participantID: this.id
+        });
     }
-};
 
-/**
- * Shows or hides the local video container.
- * @param {boolean} true to make the local video container visible, false
- * otherwise
- */
-LocalVideo.prototype.setVisible = function(visible) {
+    /**
+     *
+     * @param {*} stream
+     */
+    changeVideo(stream) {
+        this.videoStream = stream;
+        this.localVideoId = `localVideo_${stream.getId()}`;
+        this._updateVideoElement();
 
-    // We toggle the hidden class as an indication to other interested parties
-    // that this container has been hidden on purpose.
-    this.$container.toggleClass('hidden');
+        // eslint-disable-next-line eqeqeq
+        const isVideo = stream.videoType != 'desktop';
+        const settings = APP.store.getState()['features/base/settings'];
 
-    // We still show/hide it as we need to overwrite the style property if we
-    // want our action to take effect. Toggling the display property through
-    // the above css class didn't succeed in overwriting the style.
-    if (visible) {
-        this.$container.show();
-    } else {
-        this.$container.hide();
+        this._enableDisableContextMenu(isVideo);
+        this.setFlipX(isVideo ? settings.localFlipX : false);
+
+        const endedHandler = () => {
+            const localVideoContainer
+                = document.getElementById('localVideoWrapper');
+
+            // Only remove if there is no video and not a transition state.
+            // Previous non-react logic created a new video element with each track
+            // removal whereas react reuses the video component so it could be the
+            // stream ended but a new one is being used.
+            if (localVideoContainer && this.videoStream.isEnded()) {
+                ReactDOM.unmountComponentAtNode(localVideoContainer);
+            }
+
+            this._notifyOfStreamEnded();
+            stream.off(JitsiTrackEvents.LOCAL_TRACK_STOPPED, endedHandler);
+        };
+
+        stream.on(JitsiTrackEvents.LOCAL_TRACK_STOPPED, endedHandler);
     }
-};
 
-/**
- * Sets the flipX state of the video.
- * @param val {boolean} true for flipped otherwise false;
- */
-LocalVideo.prototype.setFlipX = function(val) {
-    this.emitter.emit(UIEvents.LOCAL_FLIPX_CHANGED, val);
-    if (!this.localVideoId) {
-        return;
+    /**
+     * Notify any subscribers of the local video stream ending.
+     *
+     * @private
+     * @returns {void}
+     */
+    _notifyOfStreamEnded() {
+        if (this.streamEndedCallback) {
+            this.streamEndedCallback(this.id);
+        }
     }
-    if (val) {
-        this.selectVideoElement().addClass('flipVideoX');
-    } else {
-        this.selectVideoElement().removeClass('flipVideoX');
+
+    /**
+     * Shows or hides the local video container.
+     * @param {boolean} true to make the local video container visible, false
+     * otherwise
+     */
+    setVisible(visible) {
+        // We toggle the hidden class as an indication to other interested parties
+        // that this container has been hidden on purpose.
+        this.$container.toggleClass('hidden');
+
+        // We still show/hide it as we need to overwrite the style property if we
+        // want our action to take effect. Toggling the display property through
+        // the above css class didn't succeed in overwriting the style.
+        if (visible) {
+            this.$container.show();
+        } else {
+            this.$container.hide();
+        }
     }
-};
 
-/**
- * Builds the context menu for the local video.
- */
-LocalVideo.prototype._buildContextMenu = function() {
-    $.contextMenu({
-        selector: `#${this.videoSpanId}`,
-        zIndex: 10000,
-        items: {
-            flip: {
-                name: 'Flip',
-                callback: () => {
-                    const { store } = APP;
-                    const val = !store.getState()['features/base/settings']
-                    .localFlipX;
+    /**
+     * Sets the flipX state of the video.
+     * @param val {boolean} true for flipped otherwise false;
+     */
+    setFlipX(val) {
+        this.emitter.emit(UIEvents.LOCAL_FLIPX_CHANGED, val);
+        if (!this.localVideoId) {
+            return;
+        }
+        if (val) {
+            this.selectVideoElement().addClass('flipVideoX');
+        } else {
+            this.selectVideoElement().removeClass('flipVideoX');
+        }
+    }
 
-                    this.setFlipX(val);
-                    store.dispatch(updateSettings({
-                        localFlipX: val
-                    }));
+    /**
+     * Builds the context menu for the local video.
+     */
+    _buildContextMenu() {
+        $.contextMenu({
+            selector: `#${this.videoSpanId}`,
+            zIndex: 10000,
+            items: {
+                flip: {
+                    name: 'Flip',
+                    callback: () => {
+                        const { store } = APP;
+                        const val = !store.getState()['features/base/settings']
+                        .localFlipX;
+
+                        this.setFlipX(val);
+                        store.dispatch(updateSettings({
+                            localFlipX: val
+                        }));
+                    }
+                }
+            },
+            events: {
+                show(options) {
+                    options.items.flip.name
+                        = APP.translation.generateTranslationHTML(
+                            'videothumbnail.flip');
                 }
             }
-        },
-        events: {
-            show(options) {
-                options.items.flip.name
-                    = APP.translation.generateTranslationHTML(
-                        'videothumbnail.flip');
-            }
+        });
+    }
+
+    /**
+     * Enables or disables the context menu for the local video.
+     * @param enable {boolean} true for enable, false for disable
+     */
+    _enableDisableContextMenu(enable) {
+        if (this.$container.contextMenu) {
+            this.$container.contextMenu(enable);
         }
-    });
-};
-
-/**
- * Enables or disables the context menu for the local video.
- * @param enable {boolean} true for enable, false for disable
- */
-LocalVideo.prototype._enableDisableContextMenu = function(enable) {
-    if (this.$container.contextMenu) {
-        this.$container.contextMenu(enable);
-    }
-};
-
-/**
- * Places the {@code LocalVideo} in the DOM based on the current video layout.
- *
- * @returns {void}
- */
-LocalVideo.prototype.updateDOMLocation = function() {
-    if (!this.container) {
-        return;
     }
 
-    if (this.container.parentElement) {
-        this.container.parentElement.removeChild(this.container);
+    /**
+     * Places the {@code LocalVideo} in the DOM based on the current video layout.
+     *
+     * @returns {void}
+     */
+    updateDOMLocation() {
+        if (!this.container) {
+            return;
+        }
+        if (this.container.parentElement) {
+            this.container.parentElement.removeChild(this.container);
+        }
+
+        const appendTarget = shouldDisplayTileView(APP.store.getState())
+            ? document.getElementById('localVideoTileViewContainer')
+            : document.getElementById('filmstripLocalVideoThumbnail');
+
+        appendTarget && appendTarget.appendChild(this.container);
+        this._updateVideoElement();
     }
 
-    const appendTarget = shouldDisplayTileView(APP.store.getState())
-        ? document.getElementById('localVideoTileViewContainer')
-        : document.getElementById('filmstripLocalVideoThumbnail');
+    /**
+     * Renders the React Element for displaying video in {@code LocalVideo}.
+     *
+     */
+    _updateVideoElement() {
+        const localVideoContainer = document.getElementById('localVideoWrapper');
+        const videoTrack
+            = getLocalVideoTrack(APP.store.getState()['features/base/tracks']);
 
-    appendTarget && appendTarget.appendChild(this.container);
+        ReactDOM.render(
+            <Provider store = { APP.store }>
+                <VideoTrack
+                    id = 'localVideo_container'
+                    videoTrack = { videoTrack } />
+            </Provider>,
+            localVideoContainer
+        );
 
-    this._updateVideoElement();
-};
+        // Ensure the video gets play() called on it. This may be necessary in the
+        // case where the local video container was moved and re-attached, in which
+        // case video does not autoplay.
+        const video = this.container.querySelector('video');
 
-/**
- * Renders the React Element for displaying video in {@code LocalVideo}.
- *
- */
-LocalVideo.prototype._updateVideoElement = function() {
-    const localVideoContainer = document.getElementById('localVideoWrapper');
-    const videoTrack
-        = getLocalVideoTrack(APP.store.getState()['features/base/tracks']);
-
-    ReactDOM.render(
-        <Provider store = { APP.store }>
-            <VideoTrack
-                id = 'localVideo_container'
-                videoTrack = { videoTrack } />
-        </Provider>,
-        localVideoContainer
-    );
-
-    // Ensure the video gets play() called on it. This may be necessary in the
-    // case where the local video container was moved and re-attached, in which
-    // case video does not autoplay.
-    const video = this.container.querySelector('video');
-
-    video && !config.testing?.noAutoPlayVideo && video.play();
-};
-
-export default LocalVideo;
+        video && !config.testing?.noAutoPlayVideo && video.play();
+    }
+}
