@@ -1,44 +1,27 @@
 // @flow
 
-import { load } from '@tensorflow-models/body-pix';
-import * as tfc from '@tensorflow/tfjs-core';
+import * as bodyPix from '@tensorflow-models/body-pix';
 import JitsiStreamBlurEffect from './JitsiStreamBlurEffect';
 
 /**
- * This promise represents the loading of the BodyPix model that is used
- * to extract person segmentation. A multiplier of 0.25 is used to for
- * improved performance on a larger range of CPUs.
- */
-const bpModelPromise = load(0.25);
-
-/**
- * Configure the Tensor Flow model to use the webgl backend which is the
- * most powerful backend for the browser.
- */
-const webGlBackend = 'webgl';
-
-/**
- * Creates a new instance of JitsiStreamBlurEffect.
+ * Creates a new instance of JitsiStreamBlurEffect. This loads the bodyPix model that is used to
+ * extract person segmentation.
  *
  * @returns {Promise<JitsiStreamBlurEffect>}
  */
-export function createBlurEffect() {
+export async function createBlurEffect() {
     if (!MediaStreamTrack.prototype.getSettings && !MediaStreamTrack.prototype.getConstraints) {
-        return Promise.reject(new Error('JitsiStreamBlurEffect not supported!'));
+        throw new Error('JitsiStreamBlurEffect not supported!');
     }
 
-    const setBackendPromise = new Promise((resolve, reject) => {
-        if (tfc.getBackend() === webGlBackend) {
-            resolve();
-
-            return;
-        }
-
-        return tfc.setBackend(webGlBackend)
-            .then(resolve, reject);
+    // An output stride of 16 and a multiplier of 0.5 are used for improved
+    // performance on a larger range of CPUs.
+    const bpModel = await bodyPix.load({
+        architecture: 'MobileNetV1',
+        outputStride: 16,
+        multiplier: 0.50,
+        quantBytes: 2
     });
 
-    return setBackendPromise
-        .then(() => bpModelPromise)
-        .then(bpmodel => new JitsiStreamBlurEffect(bpmodel));
+    return new JitsiStreamBlurEffect(bpModel);
 }
