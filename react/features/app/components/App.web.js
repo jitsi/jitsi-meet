@@ -8,6 +8,7 @@ import '../../base/user-interaction';
 import '../../chat';
 import '../../external-api';
 import '../../no-audio-signal';
+import '../../noise-detection';
 import '../../power-monitor';
 import '../../room-lock';
 import '../../talk-while-muted';
