@@ -1,6 +1,6 @@
+// @flow
 
-import { drawBokehEffect } from '@tensorflow-models/body-pix';
-
+import * as bodyPix from '@tensorflow-models/body-pix';
 import {
     CLEAR_INTERVAL,
     INTERVAL_TIMEOUT,
@@ -14,44 +14,37 @@ import {
  * video stream.
  */
 export default class JitsiStreamBlurEffect {
+    _bpModel: Object;
+    _inputVideoElement: HTMLVideoElement;
+    _onMaskFrameTimer: Function;
+    _maskFrameTimerWorker: Worker;
+    _maskInProgress: boolean;
+    _outputCanvasElement: HTMLCanvasElement;
+    _renderMask: Function;
+    _segmentationData: Object;
+    isEnabled: Function;
+    startEffect: Function;
+    stopEffect: Function;
+
     /**
      * Represents a modified video MediaStream track.
      *
      * @class
      * @param {BodyPix} bpModel - BodyPix model.
      */
-    constructor(bpModel) {
+    constructor(bpModel: Object) {
         this._bpModel = bpModel;
 
         // Bind event handler so it is only bound once for every instance.
         this._onMaskFrameTimer = this._onMaskFrameTimer.bind(this);
-        this._onVideoFrameTimer = this._onVideoFrameTimer.bind(this);
-
-        this._outputCanvasElement = document.createElement('canvas');
 
         // Workaround for FF issue https://bugzilla.mozilla.org/show_bug.cgi?id=1388974
+        this._outputCanvasElement = document.createElement('canvas');
         this._outputCanvasElement.getContext('2d');
-
-        this._maskCanvasElement = document.createElement('canvas');
         this._inputVideoElement = document.createElement('video');
 
-        this._videoFrameTimerWorker = new Worker(timerWorkerScript);
         this._maskFrameTimerWorker = new Worker(timerWorkerScript);
-        this._videoFrameTimerWorker.onmessage = this._onVideoFrameTimer;
         this._maskFrameTimerWorker.onmessage = this._onMaskFrameTimer;
-    }
-
-    /**
-     * EventHandler onmessage for the videoFrameTimerWorker WebWorker.
-     *
-     * @private
-     * @param {EventHandler} response - The onmessage EventHandler parameter.
-     * @returns {void}
-     */
-    _onVideoFrameTimer(response) {
-        if (response.data.id === INTERVAL_TIMEOUT) {
-            this._renderVideo();
-        }
     }
 
     /**
@@ -61,86 +54,11 @@ export default class JitsiStreamBlurEffect {
      * @param {EventHandler} response - The onmessage EventHandler parameter.
      * @returns {void}
      */
-    _onMaskFrameTimer(response) {
+    async _onMaskFrameTimer(response: Object) {
         if (response.data.id === INTERVAL_TIMEOUT) {
-            this._renderMask();
-        }
-    }
-
-    /**
-     * Starts loop to capture video frame and render the segmentation mask.
-     *
-     * @param {MediaStream} stream - Stream to be used for processing.
-     * @returns {MediaStream} - The stream with the applied effect.
-     */
-    startEffect(stream) {
-        const firstVideoTrack = stream.getVideoTracks()[0];
-        const { height, frameRate, width }
-            = firstVideoTrack.getSettings ? firstVideoTrack.getSettings() : firstVideoTrack.getConstraints();
-
-        this._frameRate = frameRate;
-        this._height = height;
-        this._width = width;
-
-        this._outputCanvasElement.width = width;
-        this._outputCanvasElement.height = height;
-
-        this._maskCanvasElement.width = width;
-        this._maskCanvasElement.height = height;
-
-        this._maskCanvasContext = this._maskCanvasElement.getContext('2d');
-        this._inputVideoElement.width = width;
-        this._inputVideoElement.height = height;
-        this._inputVideoElement.autoplay = true;
-        this._inputVideoElement.srcObject = stream;
-
-        this._videoFrameTimerWorker.postMessage({
-            id: SET_INTERVAL,
-            timeMs: 1000 / this._frameRate
-        });
-        this._maskFrameTimerWorker.postMessage({
-            id: SET_INTERVAL,
-            timeMs: 50
-        });
-
-        return this._outputCanvasElement.captureStream(this._frameRate);
-    }
-
-    /**
-     * Stops the capture and render loop.
-     *
-     * @returns {void}
-     */
-    stopEffect() {
-        this._videoFrameTimerWorker.postMessage({
-            id: CLEAR_INTERVAL
-        });
-        this._maskFrameTimerWorker.postMessage({
-            id: CLEAR_INTERVAL
-        });
-    }
-
-    /**
-     * Loop function to render the video frame input and draw blur effect.
-     *
-     * @private
-     * @returns {void}
-     */
-    _renderVideo() {
-        this._maskCanvasContext.drawImage(this._inputVideoElement, 0, 0, this._width, this._height);
-        if (this._segmentationData) {
-            drawBokehEffect(
-                this._outputCanvasElement,
-                this._inputVideoElement,
-                this._segmentationData,
-                7, // Constant for background blur, integer values between 0-20
-                7 // Constant for edge blur, integer values between 0-20
-            );
-
-            // Make sure we clear this buffer before feeding the segmentation data
-            // to drawBokehEffect for creating the blur. This fixes the memory leak
-            // that started happening in WebGL in Chrome 77 and up.
-            this._segmentationData = null;
+            if (!this._maskInProgress) {
+                await this._renderMask();
+            }
         }
     }
 
@@ -150,15 +68,21 @@ export default class JitsiStreamBlurEffect {
      * @private
      * @returns {void}
      */
-    _renderMask() {
-        this._bpModel.estimatePersonSegmentation(
-            this._maskCanvasElement,
-            32, // Chose 32 for better performance
-            0.75 // Represents probability that a pixel belongs to a person
-        )
-        .then(value => {
-            this._segmentationData = value;
+    async _renderMask() {
+        this._maskInProgress = true;
+        this._segmentationData = await this._bpModel.segmentPerson(this._inputVideoElement, {
+            internalResolution: 'low', // resized to 0.25 times of the original resolution before inference
+            maxDetections: 1, // max. number of person poses to detect per image
+            segmentationThreshold: 0.7 // represents probability that a pixel belongs to a person
         });
+        this._maskInProgress = false;
+        bodyPix.drawBokehEffect(
+            this._outputCanvasElement,
+            this._inputVideoElement,
+            this._segmentationData,
+            7, // Constant for background blur, integer values between 0-20
+            7 // Constant for edge blur, integer values between 0-20
+        );
     }
 
     /**
@@ -168,9 +92,45 @@ export default class JitsiStreamBlurEffect {
      * @returns {boolean} - Returns true if this effect can run on the specified track
      * false otherwise.
      */
-    isEnabled(jitsiLocalTrack) {
+    isEnabled(jitsiLocalTrack: Object) {
         return jitsiLocalTrack.isVideoTrack() && jitsiLocalTrack.videoType === 'camera';
     }
+
+    /**
+     * Starts loop to capture video frame and render the segmentation mask.
+     *
+     * @param {MediaStream} stream - Stream to be used for processing.
+     * @returns {MediaStream} - The stream with the applied effect.
+     */
+    startEffect(stream: MediaStream) {
+        const firstVideoTrack = stream.getVideoTracks()[0];
+        const { height, frameRate, width }
+            = firstVideoTrack.getSettings ? firstVideoTrack.getSettings() : firstVideoTrack.getConstraints();
+
+        this._outputCanvasElement.width = parseInt(width, 10);
+        this._outputCanvasElement.height = parseInt(height, 10);
+        this._inputVideoElement.width = parseInt(width, 10);
+        this._inputVideoElement.height = parseInt(height, 10);
+        this._inputVideoElement.autoplay = true;
+        this._inputVideoElement.srcObject = stream;
+        this._inputVideoElement.onloadeddata = () => {
+            this._maskFrameTimerWorker.postMessage({
+                id: SET_INTERVAL,
+                timeMs: 1000 / parseInt(frameRate, 10)
+            });
+        };
+
+        return this._outputCanvasElement.captureStream(parseInt(frameRate, 10));
+    }
+
+    /**
+     * Stops the capture and render loop.
+     *
+     * @returns {void}
+     */
+    stopEffect() {
+        this._maskFrameTimerWorker.postMessage({
+            id: CLEAR_INTERVAL
+        });
+    }
 }
-
-
