@@ -35,10 +35,15 @@ Component "conference.jitmeet.example.com" "muc"
         "muc_domain_mapper";
         -- "token_verification";
     }
-admins = { "focusUser@auth.jitmeet.example.com" }
+    admins = { "focusUser@auth.jitmeet.example.com" }
 
-Component "jitsi-videobridge.jitmeet.example.com"
-    component_secret = "jitmeetSecret"
+-- internal muc component
+Component "internal.auth.jitmeet.example.com" "muc"
+    storage = "null"
+    modules_enabled = {
+      "ping";
+    }
+    admins = { "focusUser@auth.jitmeet.example.com", "jvb@auth.jitmeet.example.com" }
 
 VirtualHost "auth.jitmeet.example.com"
     authentication = "internal_plain"
