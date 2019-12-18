@@ -95,7 +95,6 @@ case "$1" in
             mkdir -p /etc/prosody/conf.d/
             cp /usr/share/jitsi-meet-prosody/prosody.cfg.lua-jvb.example $PROSODY_HOST_CONFIG
             sed -i "s/jitmeet.example.com/$JVB_HOSTNAME/g" $PROSODY_HOST_CONFIG
-            sed -i "s/jitmeetSecret/$JVB_SECRET/g" $PROSODY_HOST_CONFIG
             sed -i "s/focusSecret/$JICOFO_SECRET/g" $PROSODY_HOST_CONFIG
             sed -i "s/focusUser/$JICOFO_AUTH_USER/g" $PROSODY_HOST_CONFIG
             if [ ! -f /etc/prosody/conf.d/$JVB_HOSTNAME.cfg.lua ]; then
@@ -114,6 +113,18 @@ case "$1" in
             prosodyctl register $JICOFO_AUTH_USER $JICOFO_AUTH_DOMAIN $JICOFO_AUTH_PASSWORD
             # trigger a restart
             PROSODY_CONFIG_PRESENT="false"
+        fi
+
+        # we always try to create the user 'jvb' and not fail configure if user exists
+        prosodyctl register jvb $JICOFO_AUTH_DOMAIN $JVB_SECRET || true
+
+        # Check whether prosody config has the internal muc, if not add it,
+        # as we are migrating configs
+        if ! grep -q "internal.auth.$JVB_HOSTNAME" $PROSODY_HOST_CONFIG; then
+            echo -e "\nComponent \"internal.auth.$JVB_HOSTNAME\" \"muc\"" >> $PROSODY_HOST_CONFIG
+            echo -e "    storage = \"null\"" >> $PROSODY_HOST_CONFIG
+            echo -e "    modules_enabled = { \"ping\"; }" >> $PROSODY_HOST_CONFIG
+            echo -e "    admins = { \"focusUser@auth.jitmeet.example.com\", \"jvb@auth.jitmeet.example.com\" }" >> $PROSODY_HOST_CONFIG
         fi
 
         if [ ! -f /var/lib/prosody/$JVB_HOSTNAME.crt ]; then
