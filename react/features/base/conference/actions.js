@@ -35,6 +35,7 @@ import {
     CONFERENCE_JOINED,
     CONFERENCE_LEFT,
     CONFERENCE_SUBJECT_CHANGED,
+    CONFERENCE_TIMESTAMP_CHANGED,
     CONFERENCE_WILL_JOIN,
     CONFERENCE_WILL_LEAVE,
     DATA_CHANNEL_OPENED,
@@ -93,9 +94,15 @@ function _addConferenceListeners(conference, dispatch) {
         (...args) => dispatch(conferenceJoined(conference, ...args)));
     conference.on(
         JitsiConferenceEvents.CONFERENCE_LEFT,
-        (...args) => dispatch(conferenceLeft(conference, ...args)));
+        (...args) => {
+            dispatch(conferenceTimestampChanged(0));
+            dispatch(conferenceLeft(conference, ...args));
+        });
     conference.on(JitsiConferenceEvents.SUBJECT_CHANGED,
         (...args) => dispatch(conferenceSubjectChanged(...args)));
+
+    conference.on(JitsiConferenceEvents.CONFERENCE_CREATED_TIMESTAMP,
+        (...args) => dispatch(conferenceTimestampChanged(...args)));
 
     conference.on(
         JitsiConferenceEvents.KICKED,
@@ -310,6 +317,22 @@ export function conferenceSubjectChanged(subject: string) {
     return {
         type: CONFERENCE_SUBJECT_CHANGED,
         subject
+    };
+}
+
+/**
+* Signals that the conference timestamp has been changed.
+*
+* @param {number} conferenceTimestamp - The UTC timestamp.
+* @returns {{
+*       type: CONFERENCE_TIMESTAMP_CHANGED,
+*       conferenceTimestamp
+* }}
+*/
+export function conferenceTimestampChanged(conferenceTimestamp: number) {
+    return {
+        type: CONFERENCE_TIMESTAMP_CHANGED,
+        conferenceTimestamp
     };
 }
 

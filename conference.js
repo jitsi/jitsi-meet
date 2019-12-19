@@ -41,6 +41,7 @@ import {
     conferenceJoined,
     conferenceLeft,
     conferenceSubjectChanged,
+    conferenceTimestampChanged,
     conferenceWillJoin,
     conferenceWillLeave,
     dataChannelOpened,
@@ -1818,7 +1819,10 @@ export default {
 
         room.on(
             JitsiConferenceEvents.CONFERENCE_LEFT,
-            (...args) => APP.store.dispatch(conferenceLeft(room, ...args)));
+            (...args) => {
+                APP.store.dispatch(conferenceTimestampChanged(0));
+                APP.store.dispatch(conferenceLeft(room, ...args));
+            });
 
         room.on(
             JitsiConferenceEvents.AUTH_STATUS_CHANGED,
@@ -1947,6 +1951,10 @@ export default {
         room.on(
             JitsiConferenceEvents.DOMINANT_SPEAKER_CHANGED,
             id => APP.store.dispatch(dominantSpeakerChanged(id, room)));
+
+        room.on(
+            JitsiConferenceEvents.CONFERENCE_CREATED_TIMESTAMP,
+            conferenceTimestamp => APP.store.dispatch(conferenceTimestampChanged(conferenceTimestamp)));
 
         room.on(JitsiConferenceEvents.CONNECTION_INTERRUPTED, () => {
             APP.store.dispatch(localParticipantConnectionStatusChanged(
