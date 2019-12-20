@@ -6,7 +6,7 @@ var config = {
 
     hosts: {
         // XMPP domain.
-        domain: 'jitsi-meet.example.com',
+        domain: 'meet.intul.se',
 
         // When using authentication, domain for guest users.
         // anonymousdomain: 'guest.example.com',
@@ -18,17 +18,17 @@ var config = {
         // jirecon: 'jirecon.jitsi-meet.example.com',
 
         // Call control component (Jigasi).
-        // call_control: 'callcontrol.jitsi-meet.example.com',
+        call_control: 'callcontrol.meet.intul.se',
 
         // Focus component domain. Defaults to focus.<domain>.
         // focus: 'focus.jitsi-meet.example.com',
 
         // XMPP MUC domain. FIXME: use XEP-0030 to discover it.
-        muc: 'conference.jitsi-meet.example.com'
+        muc: 'conference.meet.intul.se'
     },
 
     // BOSH URL. FIXME: use XEP-0156 to discover it.
-    bosh: '//jitsi-meet.example.com/http-bind',
+    bosh: '//meet.intul.se/http-bind',
 
     // The name of client node advertised in XEP-0115 'c' stanza
     clientNode: 'http://jitsi.org/jitsimeet',
@@ -375,7 +375,7 @@ var config = {
         // shard: "shard1",
         // region: "europe",
         // userRegion: "asia"
-    }
+    },
 
     // Local Recording
     //
@@ -482,6 +482,8 @@ var config = {
      startBitrate
      */
 
+    dialInNumbersUrl: 'https://meet.intul.se/phoneNumberList.json',
+    dialInConfCodeUrl: 'https://jitsi-api.jitsi.net/conferenceMapper'
 };
 
 /* eslint-enable no-unused-vars, no-var */
