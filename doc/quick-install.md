@@ -6,7 +6,7 @@ Debian Wheezy and other older systems may require additional things to be done. 
 
 Also note that a recent default Ubuntu installation has only the `main` repository enabled, and Jitsi Meet needs packages from `universe`. Check your `/etc/apt/sources.list` file, and if `universe` is not present refer to [Ubuntu's documentation](https://help.ubuntu.com/community/Repositories/Ubuntu) on how to enable it. (Usually it amounts to copying the `main` lines and changing to `universe`.)
 
-N.B.: 
+N.B.:
 
 a.) All commands are supposed to be run by root. If you are logged in as a regular user with sudo rights, please prepend ___sudo___ to each of the commands.
 
@@ -46,7 +46,7 @@ During the installation, you will be asked to enter the hostname of the Jitsi Me
 
 This hostname (or IP address) will be used for virtualhost configuration inside the Jitsi Meet and also, you and your correspondents will be using it to access the web conferences.
 
-### Generate a Let's Encrypt certificate 
+### Generate a Let's Encrypt certificate
 
 Simply run the following in your shell
 
@@ -109,7 +109,7 @@ Enjoy!
 ## Uninstall
 
 ```sh
-apt-get purge jigasi jitsi-meet jitsi-meet-web-config jitsi-meet-prosody jitsi-meet-web jicofo jitsi-videobridge
+apt-get purge jigasi jitsi-meet jitsi-meet-web-config jitsi-meet-prosody jitsi-meet-turnserver jitsi-meet-web jicofo jitsi-videobridge
 ```
 
 Sometimes the following packages will fail to uninstall properly:

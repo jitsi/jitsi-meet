@@ -80,6 +80,15 @@ case "$1" in
         # stores the hostname so we will reuse it later, like in purge
         db_set jitsi-meet-prosody/jvb-hostname "$JVB_HOSTNAME"
 
+        db_get jitsi-meet-prosody/turn-secret
+        if [ -z "$RET" ] ; then
+            # 8-chars random secret used for the turnserver
+            TURN_SECRET=`head -c 8 /dev/urandom | tr '\0-\377' 'a-zA-Z0-9a-zA-Z0-9a-zA-Z0-9a-zA-Z0-9@@@@####'`
+            db_set jitsi-meet-prosody/turn-secret "$TURN_SECRET"
+        else
+            TURN_SECRET="$RET"
+        fi
+
         # and we're done with debconf
         db_stop
 
@@ -97,6 +106,7 @@ case "$1" in
             sed -i "s/jitmeet.example.com/$JVB_HOSTNAME/g" $PROSODY_HOST_CONFIG
             sed -i "s/focusSecret/$JICOFO_SECRET/g" $PROSODY_HOST_CONFIG
             sed -i "s/focusUser/$JICOFO_AUTH_USER/g" $PROSODY_HOST_CONFIG
+            sed -i "s/__turnSecret__/$TURN_SECRET/g" $PROSODY_HOST_CONFIG
             if [ ! -f /etc/prosody/conf.d/$JVB_HOSTNAME.cfg.lua ]; then
                 ln -s $PROSODY_HOST_CONFIG /etc/prosody/conf.d/$JVB_HOSTNAME.cfg.lua
             fi
