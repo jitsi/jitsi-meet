@@ -7,27 +7,28 @@
         "failedToAdd": "",
         "footerText": "",
         "loading": "",
-        "loadingNumber": "",
-        "loadingPeople": "",
+        "loadingNumber": "اعتبار سنجی شماره تلفن",
+        "loadingPeople": "جستجوی افراد برای دعوت",
         "noResults": "",
-        "noValidNumbers": "",
-        "searchNumbers": "",
-        "searchPeople": "",
-        "searchPeopleAndNumbers": "",
+        "noValidNumbers": "لطفاً یک شماره تلفن وارد کنید",
+        "searchNumbers": "اضافه کردن شماره تلفن ها",
+        "searchPeople": "جستجوی افراد",
+        "searchPeopleAndNumbers": "جستجوی افراد یا اضافه کردن شماره تلفن آن ها",
         "telephone": "",
-        "title": ""
+        "title": "دعوت افراد به این جلسه"
     },
     "audioDevices": {
         "bluetooth": "بلوتوث",
         "headphones": "هدفون",
         "phone": "تلفن",
-        "speaker": "بلندگو"
+        "speaker": "بلندگو",
+        "none": "هیچ دستگاه صوتی در دسترس نیست"
     },
     "audioOnly": {
-        "audioOnly": "فقط صدا"
+        "audioOnly": "پهنای باند پایین"
     },
     "calendarSync": {
-        "addMeetingURL": "",
+        "addMeetingURL": "افزودن پیوند جلسه",
         "confirmAddLink": "",
         "error": {
             "appConfiguration": "",
@@ -46,12 +47,17 @@
     },
     "chat": {
         "error": "",
+        "fieldPlaceHolder": "",
         "messagebox": "",
+        "messageTo": "",
+        "noMessagesMessage": "",
         "nickname": {
             "popover": "",
             "title": ""
         },
-        "title": ""
+        "privateNotice": "",
+        "title": "",
+        "you": ""
     },
     "connectingOverlay": {
         "joiningRoom": ""
@@ -68,7 +74,6 @@
         "ERROR": "",
         "RECONNECTING": ""
     },
-    "\u0005connection": {},
     "connectionindicator": {
         "address": "",
         "bandwidth": "",
@@ -92,8 +97,7 @@
         "remoteport": "",
         "resolution": "",
         "status": "",
-        "transport": "",
-        "turn": ""
+        "transport": ""
     },
     "dateUtils": {
         "earlier": "",
@@ -111,6 +115,7 @@
         "tryAgainButton": ""
     },
     "defaultLink": "مثال__{{url}}",
+    "defaultNickname": "برای مثال مجید مجیدی",
     "deviceError": {
         "cameraError": "",
         "cameraPermission": "",
@@ -224,6 +229,10 @@
         "screenSharingFirefoxPermissionDeniedError": "",
         "screenSharingFirefoxPermissionDeniedTitle": "",
         "screenSharingPermissionDeniedError": "",
+        "sendPrivateMessage": "",
+        "sendPrivateMessageCancel": "",
+        "sendPrivateMessageOk": "",
+        "sendPrivateMessageTitle": "",
         "serviceUnavailable": "",
         "sessTerminated": "",
         "Share": "",
@@ -256,6 +265,9 @@
     },
     "dialOut": {
         "statusMessage": ""
+    },
+    "documentSharing": {
+        "title": ""
     },
     "feedback": {
         "average": "",
@@ -331,7 +343,8 @@
         "toggleFilmstrip": "",
         "toggleScreensharing": "تغییر بین دوربین و اشتراک گذاشتن صفحه",
         "toggleShortcuts": "نمایش یا مخفی کردن صفحه‌کلید میانبر",
-        "videoMute": "شروع یا توقف دوربین"
+        "videoMute": "شروع یا توقف دوربین",
+        "videoQuality": "مدیریت کیفیت تماس"
     },
     "liveStreaming": {
         "busy": "",
@@ -350,7 +363,9 @@
         "getStreamKeyManually": "",
         "invalidStreamKey": "",
         "off": "",
+        "offBy": "",
         "on": "",
+        "onBy": "",
         "pending": "",
         "serviceName": "",
         "signedInAs": "",
@@ -417,7 +432,7 @@
         "somebody": "",
         "startSilentTitle": "",
         "startSilentDescription": "",
-        "suboptimalExperienceDescription": "",
+        "suboptimalBrowserWarning": "",
         "suboptimalExperienceTitle": "",
         "unmute": "",
         "newDeviceCameraTitle": "",
@@ -447,6 +462,7 @@
         "setEmailLabel": "",
         "title": ""
     },
+    "raisedHand": "می خواهم حرف بزنم",
     "recording": {
         "authDropboxText": "",
         "availableSpace": "",
@@ -462,7 +478,9 @@
         "live": "",
         "loggedIn": "",
         "off": "",
+        "offBy": "",
         "on": "",
+        "onBy": "",
         "pending": "",
         "rec": "",
         "serviceDescription": "",
@@ -498,18 +516,21 @@
         "startVideoMuted": "همه با صدای قطع شده شروع کنند",
         "title": ""
     },
-    "\u0005settings": {},
     "settingsView": {
+        "advanced": "",
         "alertOk": "",
         "alertTitle": "",
         "alertURLText": "",
         "buildInfoSection": "",
         "conferenceSection": "",
+        "disableCallIntegration": "",
+        "disableP2P": "",
         "displayName": "",
         "email": "",
         "header": "",
         "profileSection": "",
         "serverURL": "",
+        "showAdvanced": "",
         "startWithAudioMuted": "",
         "startWithVideoMuted": "",
         "version": ""
@@ -540,13 +561,15 @@
         "accessibilityLabel": {
             "audioOnly": "",
             "audioRoute": "",
-            "callQuality": "",
+            "callQuality": "مدیریت کیفیت تماس",
             "cc": "تغییر زیر نویس ها",
             "chat": "تعویض پنجره چت",
             "document": "",
+            "download": "",
             "feedback": "گذاشتن بازخورد",
             "fullScreen": "",
             "hangup": "قطع کردن تماس",
+            "help": "",
             "invite": "",
             "kick": "",
             "localRecording": "تغییر تنظیمات کنترل ضبط",
@@ -555,6 +578,7 @@
             "moreActionsMenu": "",
             "mute": "",
             "pip": "",
+            "privateMessage": "",
             "profile": "",
             "raiseHand": "",
             "recording": "تغییر ضبط",
@@ -581,20 +605,26 @@
         "closeChat": "",
         "documentClose": "",
         "documentOpen": "",
+        "download": "",
         "enterFullScreen": "نمایش تمام صفحه",
         "enterTileView": "",
         "exitFullScreen": "اتمام حالت تمام صفحه",
         "exitTileView": "",
         "feedback": "گذاشتن بازخورد",
         "hangup": "ترک کردن",
+        "help": "",
         "invite": "",
         "login": "ورود",
         "logout": "",
         "lowerYourHand": "",
         "moreActions": "کارهای بیشتر",
         "mute": "قطع / وصل صدا",
+        "noAudioSignalTitle": "",
+        "noAudioSignalDesc": "",
+        "noAudioSignalDescSuggestion": "",
         "openChat": "",
         "pip": "",
+        "privateMessage": "",
         "profile": "",
         "raiseHand": "بلند کردن دست یا پایین آوردن",
         "raiseYourHand": "",
@@ -615,7 +645,6 @@
         "startvideoblur": "",
         "stopvideoblur": ""
     },
-    "\u0005toolbar": {},
     "transcribing": {
         "ccButtonTooltip": "",
         "error": "",
@@ -655,10 +684,12 @@
         "audioOnlyExpanded": "",
         "callQuality": "",
         "hd": "",
+        "hdTooltip": "",
         "highDefinition": "",
         "labelTooiltipNoVideo": "",
         "labelTooltipAudioOnly": "",
         "ld": "",
+        "ldTooltip": "",
         "lowDefinition": "",
         "onlyAudioAvailable": "",
         "onlyAudioSupported": "",
@@ -666,6 +697,7 @@
         "p2pVideoQualityDescription": "",
         "recHighDefinitionOnly": "",
         "sd": "",
+        "sdTooltip": "",
         "standardDefinition": ""
     },
     "videothumbnail": {
@@ -693,8 +725,10 @@
         "connectCalendarButton": "تقویم خود را وصل کنید",
         "connectCalendarText": "",
         "enterRoomTitle": "شروع دیدار جدید",
+        "roomNameAllowedChars": "",
         "go": "برو",
-        "join": "الحاق",
+        "goSmall": "برو",
+        "join": "",
         "info": "",
         "privacy": "حریم خصوصی",
         "recentList": "جدید",
@@ -706,6 +740,5 @@
         "sendFeedback": "ارسال بازخورد",
         "terms": "اصطلاحات",
         "title": ""
-    },
-    "\u0005welcomepage": {}
+    }
 }
