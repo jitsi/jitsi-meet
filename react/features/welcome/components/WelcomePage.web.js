@@ -1,3 +1,4 @@
+/* eslint-disable linebreak-style */
 /* global interfaceConfig */
 
 import React from 'react';
@@ -121,6 +122,7 @@ class WelcomePage extends AbstractWelcomePage {
         document.body.classList.add('welcome-page');
         document.title = interfaceConfig.APP_NAME;
 
+        /*
         if (this.state.generateRoomnames) {
             this._updateRoomname();
         }
@@ -135,6 +137,7 @@ class WelcomePage extends AbstractWelcomePage {
                 this._additionalToolbarContentTemplate.content.cloneNode(true)
             );
         }
+        */
     }
 
     /**
@@ -162,6 +165,8 @@ class WelcomePage extends AbstractWelcomePage {
         const showAdditionalToolbarContent = this._shouldShowAdditionalToolbarContent();
         const showResponsiveText = this._shouldShowResponsiveText();
 
+        
+        /*
         return (
             <div
                 className = { `welcome ${showAdditionalContent
@@ -230,6 +235,8 @@ class WelcomePage extends AbstractWelcomePage {
                     : null }
             </div>
         );
+        */
+        return (<h1>Intulse Test</h1>);
     }
 
     /**
