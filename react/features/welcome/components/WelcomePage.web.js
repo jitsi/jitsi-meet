@@ -257,15 +257,11 @@ class WelcomePage extends AbstractWelcomePage {
                     </div>
                     <div className = 'header-image' />
                     <div className = 'header-text'>
-                        <h1 className = 'header-text-title'>
-                            { t('welcomepage.title') }
-                        </h1>
+                        <h1 className = 'header-text-title'>Thank you for using Intulse Meetings!</h1>
                         <p className = 'header-text-description'>
-                            { t('welcomepage.appDescription',
-                                { app: APP_NAME }) }
+                            Your meeting invitation should have included a valid meeting Id in the Url.  Please visit the exact Url you were sent in an invitation.
                         </p>
                     </div>
-                    
                 </div>
                 { showAdditionalContent
                     ? <div
