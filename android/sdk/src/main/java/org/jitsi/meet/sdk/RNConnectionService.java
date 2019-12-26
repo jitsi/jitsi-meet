@@ -113,7 +113,12 @@ class RNConnectionService extends ReactContextBaseJavaModule {
         } catch (Exception e) {
             JitsiMeetLogger.e(e, TAG + " error in startCall");
             if (tm != null) {
-                tm.unregisterPhoneAccount(accountHandle);
+                try {
+                    tm.unregisterPhoneAccount(accountHandle);
+                } catch (Throwable tr) {
+                    // UnsupportedOperationException: System does not support feature android.software.connectionservice
+                    // was observed here. Ignore.
+                }
             }
             ConnectionService.unregisterStartCallPromise(callUUID);
             if (e instanceof SecurityException) {
