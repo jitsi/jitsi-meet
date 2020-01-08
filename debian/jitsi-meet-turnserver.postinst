@@ -52,7 +52,7 @@ case "$1" in
         fi
         TURN_SECRET="$RET"
 
-        if [ ! -f $TURN_CONFIG ] ; then
+        if [[ -f $TURN_CONFIG ]] && ! grep -q "jitsi-meet coturn config" "$TURN_CONFIG" ; then
             PUBLIC_IP=$(dig +short myip.opendns.com @resolver1.opendns.com)
             cp /usr/share/jitsi-meet-turnserver/turnserver.conf $TURN_CONFIG
             sed -i "s/jitsi-meet.example.com/$JVB_HOSTNAME/g" $TURN_CONFIG
@@ -81,9 +81,10 @@ case "$1" in
             sed -i "s/#TURNSERVER_ENABLED/TURNSERVER_ENABLED/g" /etc/default/coturn
             invoke-rc.d coturn restart || true
 
-            NGINX_STREAM_CONFIG="/etc/nginx/modules-enabled/50-jitsi-meet.conf"
+            NGINX_STREAM_CONFIG="/etc/nginx/modules-enabled/60-jitsi-meet.conf"
             if [ -f $NGINX_STREAM_CONFIG ] ; then
                 sed -i "s/listen 443 ssl/listen 4444 ssl http2/g" /etc/nginx/sites-available/$JVB_HOSTNAME.conf
+                invoke-rc.d nginx reload || true
             fi
         fi
 
