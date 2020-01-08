@@ -89,9 +89,17 @@ class RNConnectionService extends ReactContextBaseJavaModule {
         ReactApplicationContext ctx = getReactApplicationContext();
 
         Uri address = Uri.fromParts(PhoneAccount.SCHEME_SIP, handle, null);
-        PhoneAccountHandle accountHandle
-            = ConnectionService.registerPhoneAccount(
-                    getReactApplicationContext(), address, callUUID);
+        PhoneAccountHandle accountHandle;
+
+        try {
+            accountHandle
+                = ConnectionService.registerPhoneAccount(getReactApplicationContext(), address, callUUID);
+        } catch (Throwable tr) {
+            JitsiMeetLogger.e(tr, TAG + " error in startCall");
+
+            promise.reject(tr);
+            return;
+        }
 
         Bundle extras = new Bundle();
         extras.putParcelable(
@@ -110,22 +118,18 @@ class RNConnectionService extends ReactContextBaseJavaModule {
         try {
             tm = (TelecomManager) ctx.getSystemService(Context.TELECOM_SERVICE);
             tm.placeCall(address, extras);
-        } catch (Exception e) {
-            JitsiMeetLogger.e(e, TAG + " error in startCall");
+        } catch (Throwable tr) {
+            JitsiMeetLogger.e(tr, TAG + " error in startCall");
             if (tm != null) {
                 try {
                     tm.unregisterPhoneAccount(accountHandle);
-                } catch (Throwable tr) {
+                } catch (Throwable tr1) {
                     // UnsupportedOperationException: System does not support feature android.software.connectionservice
                     // was observed here. Ignore.
                 }
             }
             ConnectionService.unregisterStartCallPromise(callUUID);
-            if (e instanceof SecurityException) {
-                promise.reject("SECURITY_ERROR", "Required permissions not granted.");
-            } else {
-                promise.reject(e);
-            }
+            promise.reject(tr);
         }
     }
 
