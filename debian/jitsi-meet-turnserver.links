@@ -1,1 +1,1 @@
-/usr/share/jitsi-meet-turnserver/jitsi-meet.conf /etc/nginx/modules-enabled/50-jitsi-meet.conf
+/usr/share/jitsi-meet-turnserver/jitsi-meet.conf /etc/nginx/modules-enabled/60-jitsi-meet.conf
