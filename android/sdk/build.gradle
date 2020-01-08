@@ -42,8 +42,11 @@ dependencies {
 
     //noinspection GradleDynamicVersion
     api 'com.facebook.react:react-native:+'
-    //noinspection GradleDynamicVersion
-    implementation 'org.webkit:android-jsc:+'
+
+    // Hermes JS engine
+    def hermesPath = "../../node_modules/hermes-engine/android/"
+    debugImplementation files(hermesPath + "hermes-debug.aar")
+    releaseImplementation files(hermesPath + "hermes-release.aar")
 
     implementation 'com.dropbox.core:dropbox-core-sdk:3.0.8'
     implementation 'com.jakewharton.timber:timber:4.7.1'
