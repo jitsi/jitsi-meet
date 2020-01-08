@@ -83,7 +83,7 @@ case "$1" in
         db_get jitsi-meet-prosody/turn-secret
         if [ -z "$RET" ] ; then
             # 8-chars random secret used for the turnserver
-            TURN_SECRET=`head -c 8 /dev/urandom | tr '\0-\377' 'a-zA-Z0-9a-zA-Z0-9a-zA-Z0-9a-zA-Z0-9@@@@####'`
+            TURN_SECRET=`cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 8 | head -n 1`
             db_set jitsi-meet-prosody/turn-secret "$TURN_SECRET"
         else
             TURN_SECRET="$RET"
